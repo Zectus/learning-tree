@@ -1,0 +1,913 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #f6f6f3;
+  --surface:  #ffffff;
+  --border:   #e0e0db;
+  --border-h: #a8a8a0;
+  --text:     #1a1a17;
+  --text-m:   #7a7a72;
+  --accent:   #1a1a17;
+  --line:     #d4d4ce;
+  --line-h:   #6a6a62;
+  --font:     -apple-system, 'Inter', 'Segoe UI', sans-serif;
+
+  /* status palette */
+  --done-bg:    #1a6640;
+  --done-bdr:   #145533;
+  --done-text:  #ffffff;
+  --avail-bdr:  #2a6abf;
+  --avail-text: #0f2a54;
+  --lock-text:  #9a9a92;
+  --edge-done:  #1a6640;
+  --edge-avail: #2a6abf;
+  --edge-lock:  #d4d4ce;
+  --edge-link:  #e8883a;
+
+  /* depth-tint borders (locked nodes) */
+  --d1: #dbd8f0;
+  --d2: #d8ecde;
+  --d3: #f0e4d8;
+  --d4: #fce4e4;
+
+  /* inverted pill (active toolbar btn, verify btn) — tracks --text/--bg automatically */
+  --invert-bg:   var(--text);
+  --invert-text: var(--bg);
+
+  /* soft status washes */
+  --ok-soft-bg:        #f2faf6;
+  --err-soft-bg:       #fff5f5;
+  --err-text:          #c0392b;
+  --err-border:        #d9534f;
+  --info-soft-bg:      #f0f5ff;
+  --danger-soft-bg:    #fee;
+  --danger-soft-bdr:   #f0a0a0;
+  --danger-text:       #b03030;
+  --btn-soft-bg:       rgba(0,0,0,.04);
+  --btn-soft-bg-hover: rgba(0,0,0,.08);
+}
+
+body.dark {
+  --bg:       #15161a;
+  --surface:  #1e2024;
+  --border:   #2c2e33;
+  --border-h: #45474d;
+  --text:     #e9e9e6;
+  --text-m:   #9b9b95;
+  --accent:   #e9e9e6;
+  --line:     #34363b;
+  --line-h:   #56585e;
+
+  --done-bg:    #1f7a4c;
+  --done-bdr:   #2a9f63;
+  --done-text:  #ffffff;
+  --avail-bdr:  #4d8fe0;
+  --avail-text: #bcdcff;
+  --lock-text:  #7d7d78;
+  --edge-done:  #2a9f63;
+  --edge-avail: #4d8fe0;
+  --edge-lock:  #34363b;
+  --edge-link:  #f0934a;
+
+  --d1: #423d63;
+  --d2: #38503f;
+  --d3: #574734;
+  --d4: #573636;
+
+  --ok-soft-bg:        rgba(31,122,76,.18);
+  --err-soft-bg:       rgba(192,57,43,.16);
+  --err-text:          #ff7a6b;
+  --err-border:        #c0392b;
+  --info-soft-bg:      rgba(77,143,224,.16);
+  --danger-soft-bg:    rgba(176,48,48,.18);
+  --danger-soft-bdr:   #8a3030;
+  --danger-text:       #ff8f80;
+  --btn-soft-bg:       rgba(255,255,255,.06);
+  --btn-soft-bg-hover: rgba(255,255,255,.12);
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  transition: background .15s ease, color .15s ease;
+}
+
+/* ── canvas ── */
+#canvas {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+#canvas.dragging { cursor: grabbing; }
+
+#svg-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+#world {
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* ── nodes — fractal sizing model (same as original) ── */
+.node {
+  position: absolute;
+  transform-origin: top left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: box-shadow .2s ease, border-color .2s ease;
+  will-change: transform;
+}
+.node:hover { box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 0 0 1.5px rgba(0,0,0,.09); }
+
+.node-inner {
+  position: relative;
+  padding: 10px 14px 11px;
+  border-radius: 10px;
+  transition: box-shadow .18s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+}
+.node:hover .node-inner {
+  box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 0 0 1.5px rgba(0,0,0,.09);
+}
+
+/* depth tints — base (locked) state */
+.node.root  { border-width: 1.5px; border-color: var(--border); }
+.node.d1    { border-color: var(--d1); }
+.node.d2    { border-color: var(--d2); }
+.node.d3    { border-color: var(--d3); }
+.node.d4    { border-color: var(--d4); }
+
+/* status overrides */
+.node.status-done {
+  background: var(--done-bg);
+  border-color: var(--done-bdr) !important;
+  box-shadow: 0 2px 10px rgba(26,102,64,.22);
+}
+.node.status-done:hover {
+  box-shadow: 0 8px 24px rgba(26,102,64,.32);
+}
+.node.status-done .node-inner {
+  box-shadow: none;
+}
+.node.status-available {
+  border-color: var(--avail-bdr) !important;
+  box-shadow: 0 2px 10px rgba(42,106,191,.13);
+}
+.node.status-available:hover {
+  box-shadow: 0 8px 22px rgba(42,106,191,.25);
+}
+.node.status-locked {
+  opacity: .72;
+}
+
+/* link-source orange ring */
+.node.link-source {
+  outline: 2.5px solid var(--edge-link);
+  outline-offset: 2px;
+}
+
+/* ── status badge ── */
+.node-badge {
+  font-size: 10px;
+  letter-spacing: .01em;
+  margin-bottom: 4px;
+  opacity: .75;
+  min-height: 14px;
+  line-height: 1;
+}
+.node.status-done      .node-badge { color: rgba(255,255,255,.9); }
+.node.status-available .node-badge { color: var(--avail-bdr); }
+.node.status-locked    .node-badge { color: var(--lock-text); }
+
+/* ── node text ── */
+.node-text {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text);
+  outline: none;
+  cursor: text;
+  min-height: 20px;
+  word-break: break-word;
+  caret-color: var(--accent);
+  touch-action: auto;
+}
+.node.root .node-text     { font-size: 15px; font-weight: 500; letter-spacing: -.01em; }
+.node.status-done .node-text     { color: var(--done-text); }
+.node.status-available .node-text { color: var(--avail-text); font-weight: 500; }
+.node.status-locked .node-text   { color: var(--lock-text); }
+
+.node-text:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-m);
+  pointer-events: none;
+  opacity: .5;
+}
+
+/* ── optional tag ── */
+.node-tag {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 99px;
+  border: 1px solid currentColor;
+  opacity: .55;
+  line-height: 1.5;
+}
+.node.status-done .node-tag     { color: rgba(255,255,255,.8); }
+.node.status-available .node-tag { color: var(--avail-bdr); }
+.node.status-locked .node-tag   { color: var(--lock-text); }
+
+/* ── node actions (edit mode only) ── */
+.node-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s, max-height .14s ease, margin-top .14s ease;
+}
+.node:hover .node-actions,
+.node.link-source .node-actions,
+.node.actions-open .node-actions {
+  opacity: 1;
+  max-height: 90px;
+  margin-top: 8px;
+  pointer-events: auto;
+}
+body:not(.edit-mode) .node-actions { display: none !important; }
+
+/* Expanding on hover makes the node taller (see .node-actions above); lift
+   it above sibling nodes while that's happening so the growth isn't
+   clipped underneath whatever's positioned next to it. Scoped to edit
+   mode since that's the only mode where hovering grows the node at all. */
+body.edit-mode .node:hover,
+body.edit-mode .node.link-source,
+body.edit-mode .node.actions-open { z-index: 20; }
+
+/* Touch equivalent of hover — see the click handler in nodes.js. Hidden
+   whenever the device has real hover (mouse/trackpad), since hovering
+   already does the job there without adding a second, redundant control. */
+.node-more-btn {
+  display: none;
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-m);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+body:not(.edit-mode) .node-more-btn { display: none !important; }
+@media (hover: none) {
+  body.edit-mode .node-more-btn { display: block; }
+}
+
+.btn {
+  background: var(--btn-soft-bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-size: 10.5px;
+  font-family: var(--font);
+  color: var(--text-m);
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.5;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.node.status-done .btn {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.25);
+  color: rgba(255,255,255,.8);
+}
+.btn:hover { background: var(--btn-soft-bg-hover); border-color: var(--border-h); color: var(--text); }
+.btn.danger:hover { background: var(--danger-soft-bg); border-color: var(--danger-soft-bdr); color: var(--danger-text); }
+.node.status-done .btn:hover {
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.5);
+  color: #fff;
+}
+
+/* ── connectors ── */
+.connector {
+  fill: none;
+  stroke: var(--edge-lock);
+  stroke-linecap: round;
+  opacity: 0.18;
+  transition: stroke .15s, stroke-width .15s, opacity .15s;
+}
+.connector.edge-done      { stroke: var(--edge-done);  opacity: 0.32; }
+.connector.edge-available { stroke: var(--edge-avail); opacity: 0.45; }
+
+/* arrowheads — match connector colors exactly so they re-theme with everything else */
+.arrow-marker path { fill: var(--edge-lock); }
+.arrow-avail path  { fill: var(--edge-avail); }
+.arrow-done path   { fill: var(--edge-done); }
+
+/* hover focus: prereq edges turn blue, dependent edges turn orange */
+.connector.hi-prereq {
+  stroke: var(--avail-bdr) !important;
+  opacity: 1 !important;
+  stroke-width: 2px !important;
+}
+.connector.hi-dep {
+  stroke: var(--edge-link) !important;
+  opacity: 1 !important;
+  stroke-width: 2px !important;
+}
+/* everything else fades to near-invisible when a node is focused */
+body.node-focused .connector:not(.hi-prereq):not(.hi-dep) {
+  opacity: 0.05 !important;
+}
+
+/* ── progress bar ── */
+#progress-bar-wrap {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--border);
+  z-index: 200;
+  pointer-events: none;
+}
+#progress-bar {
+  height: 100%;
+  background: var(--done-bg);
+  width: 0%;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── toolbar ── */
+#toolbar {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+  user-select: none;
+}
+.tbtn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+  transition: box-shadow .15s, border-color .15s;
+  white-space: nowrap;
+}
+.tbtn:hover { border-color: var(--border-h); box-shadow: 0 6px 20px rgba(0,0,0,.11); }
+.tbtn.muted { color: var(--text-m); }
+label.tbtn { cursor: pointer; }
+.tbtn.active {
+  background: var(--invert-bg);
+  color: var(--invert-text);
+  border-color: var(--invert-bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.12);
+}
+.tbtn.active:hover { border-color: var(--invert-bg); box-shadow: 0 6px 20px rgba(0,0,0,.22); }
+#btn-add-node { display: none; }
+body.edit-mode #btn-add-node { display: block; }
+
+/* ── export menu ── */
+.export-wrap { position: relative; }
+.export-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 230px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.16), 0 0 0 1px rgba(0,0,0,.04);
+  z-index: 150;
+}
+.export-menu.open { display: flex; }
+.export-menu-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background .12s;
+}
+.export-menu-item:hover { background: var(--btn-soft-bg-hover); }
+.export-menu-item .emi-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-m);
+}
+
+/* link-mode crosshair */
+body.linking-mode #canvas,
+body.linking-mode .node { cursor: crosshair !important; }
+
+/* mark-known mode */
+body.mark-known-mode .node:not(.status-locked) { cursor: cell !important; }
+body.mark-known-mode .node.status-available { box-shadow: 0 0 0 2px var(--done-bg), 0 2px 10px rgba(26,102,64,.15); }
+body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-bg), 0 2px 10px rgba(26,102,64,.25); }
+
+/* ── learn modal ── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20,20,17,.45);
+  z-index: 400;
+  align-items: center;
+  justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+
+.modal-shell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.06);
+  width: min(680px, 94vw);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modal-in .18s cubic-bezier(.4,0,.2,1);
+}
+@keyframes modal-in {
+  from { opacity:0; transform: translateY(10px) scale(.98); }
+  to   { opacity:1; transform: none; }
+}
+
+.modal-header-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.modal-meta {
+  font-size: 11.5px;
+  color: var(--text-m);
+  margin-top: 3px;
+  font-weight: 400;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-m);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 5px;
+  transition: background .12s, color .12s;
+  flex-shrink: 0;
+}
+.modal-close-btn:hover { background: var(--bg); color: var(--text); }
+
+.modal-body {
+  overflow-y: auto;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* prompt box */
+.prompt-wrap { position: relative; }
+.prompt-ta {
+  width: 100%;
+  height: 220px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  resize: none;
+  outline: none;
+  tab-size: 2;
+}
+.copy-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-family: var(--font);
+  color: var(--text-m);
+  cursor: pointer;
+  transition: all .12s;
+}
+.copy-btn:hover { border-color: var(--border-h); color: var(--text); }
+.copy-btn.copied { background: var(--done-bg); color: #fff; border-color: var(--done-bdr); }
+
+/* ── session viewer ── */
+#session-viewer {
+  position: fixed; inset: 0;
+  background: rgba(20,20,17,.45);
+  z-index: 300;
+  display: none;
+}
+#session-viewer.sv-open { display: block; }
+
+#sv-window {
+  position: fixed;
+  width: 760px; height: 600px;
+  min-width: 380px; min-height: 280px;
+  background: var(--surface);
+  border-radius: 10px;
+  box-shadow: 0 12px 52px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.08);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: modal-in .18s cubic-bezier(.4,0,.2,1);
+  will-change: left, top;
+}
+
+#sv-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  cursor: grab;
+  user-select: none;
+  border-radius: 10px 10px 0 0;
+}
+#sv-header:active { cursor: grabbing; }
+#sv-topic { font-size: 14px; font-weight: 600; flex: 1; }
+
+/* session progress bar — mirrors #progress-bar-wrap at the page level.
+   Checkpoint dots mark each question's position; "done" (answered,
+   right or wrong) dots fill in. See updateSessionProgress() in
+   viewer.js for how the fill width is computed and clamped. */
+#sv-progress-wrap {
+  position: relative;
+  height: 5px;
+  flex-shrink: 0;
+}
+#sv-progress-track {
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 3px;
+  transform: translateY(-50%);
+  background: var(--border);
+}
+#sv-progress-bar {
+  position: absolute;
+  left: 0; top: 50%;
+  height: 3px;
+  transform: translateY(-50%);
+  background: var(--done-bg);
+  width: 0%;
+  transition: width .3s cubic-bezier(.4,0,.2,1);
+}
+#sv-progress-checkpoints { position: absolute; inset: 0; }
+.sv-checkpoint {
+  position: absolute; top: 50%;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border-h);
+  box-shadow: 0 0 0 2px var(--surface);
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+.sv-checkpoint.done { background: var(--done-bg); border-color: var(--done-bdr); }
+
+#sv-score {
+  font-size: 11.5px; font-weight: 500; color: var(--text-m);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2px 11px; white-space: nowrap;
+}
+#sv-score.sv-perfect { color: var(--done-bdr); border-color: var(--done-bdr); background: var(--done-bg); }
+#btn-close-viewer {
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  width: 26px; height: 26px; cursor: pointer; font-size: 12px;
+  color: var(--text-m); transition: all .12s; flex-shrink: 0;
+}
+#btn-close-viewer:hover { border-color: var(--border-h); color: var(--text); }
+
+#btn-toggle-notes {
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  width: 26px; height: 26px; cursor: pointer; font-size: 12px;
+  color: var(--text-m); transition: all .12s; flex-shrink: 0;
+}
+#btn-toggle-notes:hover { border-color: var(--border-h); color: var(--text); }
+#btn-toggle-notes.active {
+  background: var(--invert-bg); color: var(--invert-text); border-color: var(--invert-bg);
+}
+
+/* notes panel — a sidebar anchored to the right of #sv-window, synced to
+   its position/size in JS (see syncNotesPanelPosition in viewer.js) since
+   #sv-window itself is draggable/resizable and clips overflow. */
+#sv-notes-panel {
+  display: none;
+  position: fixed;
+  width: 260px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 52px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.08);
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 300;
+  will-change: left, top;
+}
+#sv-notes-panel.open { display: flex; }
+#sv-notes-label {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px; font-weight: 600; color: var(--text-m);
+  flex-shrink: 0;
+}
+#sv-notes-ta {
+  flex: 1;
+  border: none; outline: none; resize: none;
+  padding: 14px 16px;
+  font-family: var(--font);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text);
+  background: transparent;
+  tab-size: 4;
+}
+#sv-notes-ta::placeholder { color: var(--text-m); opacity: .6; }
+#sv-notes-resize {
+  position: absolute; bottom: 0; right: 0;
+  width: 18px; height: 18px; cursor: se-resize; z-index: 1;
+}
+#sv-notes-resize::after {
+  content: '';
+  position: absolute; bottom: 4px; right: 4px;
+  border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);
+  width: 8px; height: 8px;
+}
+
+#sv-body {
+  flex: 1; overflow-y: auto;
+  padding: 32px 48px 60px;
+  font-size: 15.5px; line-height: 1.82; color: var(--text);
+}
+
+/* No visible scrollbars anywhere inside the viewer — they clash with the
+   floating-window look and everything here is still fully scrollable via
+   wheel/trackpad/keyboard without one. */
+#session-viewer, #session-viewer * {
+  scrollbar-width: none;    /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+}
+#session-viewer::-webkit-scrollbar,
+#session-viewer *::-webkit-scrollbar {
+  display: none;             /* Chromium/Safari */
+  width: 0; height: 0;
+}
+
+/* resize handle */
+#sv-resize {
+  position: absolute; bottom: 0; right: 0;
+  width: 18px; height: 18px; cursor: se-resize; z-index: 1;
+}
+#sv-resize::after {
+  content: '';
+  position: absolute; bottom: 4px; right: 4px;
+  border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);
+  width: 8px; height: 8px;
+}
+
+.sv-section { margin-bottom: 56px; }
+.sv-section-title {
+  font-size: 19px; font-weight: 700; letter-spacing: -.005em;
+  color: var(--text);
+  padding-bottom: 11px; border-bottom: 1px solid var(--border);
+  margin-bottom: 26px;
+}
+.sv-prose p { margin: 0 0 1.05em; }
+.sv-prose p:last-child { margin-bottom: 0; }
+.katex-display { margin: 1.4em 0 !important; overflow-x: auto; overflow-y: visible; }
+
+/* [TABLE]...[/TABLE] */
+.sv-table-wrap { margin: 26px 0; overflow-x: auto; }
+.sv-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.sv-table th, .sv-table td {
+  padding: 9px 14px; text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: normal;
+}
+.sv-table th {
+  font-weight: 600; color: var(--text-m);
+  font-size: 12px; text-transform: uppercase; letter-spacing: .03em;
+  border-bottom: 2px solid var(--border);
+}
+.sv-table tbody tr:last-child td { border-bottom: none; }
+
+/* [TIMELINE]...[/TIMELINE] */
+.sv-timeline { margin: 30px 4px; position: relative; }
+.sv-tl-item { position: relative; display: flex; gap: 18px; padding-bottom: 24px; }
+.sv-tl-item:last-child { padding-bottom: 0; }
+.sv-tl-dot {
+  flex-shrink: 0; width: 10px; height: 10px; margin-top: 5px;
+  border-radius: 50%; background: var(--avail-bdr);
+  position: relative; z-index: 1;
+}
+.sv-tl-item:not(:last-child) .sv-tl-dot::after {
+  content: ''; position: absolute; top: 10px; left: 50%;
+  width: 1px; height: calc(100% + 24px);
+  background: var(--border); transform: translateX(-50%);
+}
+.sv-tl-content { flex: 1; min-width: 0; }
+.sv-tl-marker { font-weight: 600; font-size: 13.5px; color: var(--avail-bdr); margin-bottom: 2px; }
+.sv-tl-text { font-size: 14.5px; line-height: 1.55; color: var(--text); }
+
+/* question cards */
+.q-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px 22px 16px; margin: 30px 0;
+}
+.q-num {
+  font-size: 10px; font-weight: 700; letter-spacing: .11em;
+  text-transform: uppercase; color: var(--text-m); margin-bottom: 9px;
+}
+.q-body p { margin: 0 0 .5em; }
+.q-body p:last-child { margin-bottom: 14px; }
+.q-opts { display: flex; flex-direction: column; gap: 6px; }
+.q-opt {
+  display: flex; align-items: baseline; gap: 11px; text-align: left;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 9px 14px; cursor: pointer; font-family: var(--font);
+  font-size: 14px; color: var(--text); transition: border-color .1s, background .1s;
+}
+.q-opt:hover:not(:disabled) { border-color: var(--avail-bdr); background: var(--info-soft-bg); }
+.q-opt:disabled { cursor: default; }
+.q-letter { font-weight: 700; font-size: 12px; color: var(--text-m); min-width: 14px; flex-shrink: 0; }
+.q-opt.q-correct { border-color: var(--done-bdr); background: var(--ok-soft-bg); }
+.q-opt.q-correct .q-letter { color: var(--done-bdr); }
+.q-opt.q-wrong   { border-color: var(--err-border); background: var(--err-soft-bg); }
+.q-opt.q-wrong .q-letter { color: var(--err-text); }
+.q-feedback { font-size: 12.5px; font-weight: 500; margin-top: 11px; }
+.fb-correct { color: var(--done-bdr); }
+.fb-wrong   { color: var(--err-text); }
+
+/* recap dropdown */
+#sv-recap {
+  margin-top: 48px;
+  border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+#sv-recap summary {
+  display: flex; align-items: center; gap: 8px;
+  padding: 13px 18px; cursor: pointer;
+  font-size: 12px; font-weight: 600; color: var(--text-m);
+  background: var(--surface); user-select: none; list-style: none;
+}
+#sv-recap summary::-webkit-details-marker { display: none; }
+#sv-recap summary .recap-arrow {
+  font-size: 9px; transition: transform .18s; display: inline-block;
+}
+#sv-recap[open] summary .recap-arrow { transform: rotate(90deg); }
+#sv-recap-body { padding: 0 16px 8px; }
+
+/* upload label in modal */
+.upload-dropzone {
+  display: block; margin-top: 9px; text-align: center; padding: 8px 14px;
+  border: 1.5px dashed var(--border); border-radius: 8px; cursor: pointer;
+  font-size: 12.5px; color: var(--text-m); transition: all .12s;
+}
+.upload-dropzone:hover { border-color: var(--avail-bdr); color: var(--avail-bdr); background: var(--info-soft-bg); }
+
+/* create-tree modal fields */
+.field-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-m);
+  margin-bottom: 6px;
+}
+.field-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color .12s;
+}
+.field-input:focus { border-color: var(--avail-bdr); }
+.field-row { margin-bottom: 14px; }
+.field-row:last-of-type { margin-bottom: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE  (≤700px — phones and small tablets in portrait)
+   Panning/zooming the canvas already has its own touch handling
+   (see io.js); everything below is layout/sizing only.
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  /* Toolbar: 8+ buttons in a fixed centered row would overflow off both
+     edges of a phone screen. Turn it into a horizontally-scrollable
+     strip (a standard mobile pattern) instead of wrapping, which would
+     otherwise eat vertical space from the canvas and push the bottom
+     buttons around unpredictably as edit mode toggles #btn-add-node. */
+  #toolbar {
+    left: 0; right: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0 14px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #toolbar::-webkit-scrollbar { display: none; }
+  .tbtn { flex-shrink: 0; padding: 9px 15px; }
+
+  /* Node action buttons get a real tap target once they're only reachable
+     by tapping .node-more-btn instead of hovering. */
+  .btn { padding: 7px 11px; font-size: 12px; }
+  .node-actions { max-height: 130px; gap: 6px; }
+
+  /* Prevent iOS Safari's automatic zoom-in when focusing a text field
+     with a computed font-size under 16px. */
+  .node-text, .field-input, #sv-notes-ta, .prompt-ta { font-size: 16px; }
+
+  .modal-header-bar { padding: 16px 16px 12px; }
+  .modal-body { padding: 16px; }
+  .prompt-ta { height: 160px; }
+
+  /* Session viewer: a floating, draggable/resizable window is awkward to
+     use with a finger, and doesn't reliably support mouse-only drag
+     gestures on touch anyway. Go fullscreen instead — the `!important`s
+     are there specifically to win over the inline left/top/width/height
+     that openViewer()/the drag & resize handlers in viewer.js set; no JS
+     changes needed; those calls simply stop being visible here. */
+  #sv-window {
+    left: 0 !important; top: 0 !important;
+    width: 100% !important; height: 100% !important;
+    border-radius: 0;
+  }
+  #sv-header { cursor: default; }
+  #sv-resize { display: none; }
+  #sv-body { padding: 24px 18px 52px; }
+
+  /* Notes become a bottom sheet instead of a sidebar anchored to the
+     window's right edge — there's no "right edge" worth anchoring to
+     once the window itself is fullscreen. */
+  #sv-notes-panel {
+    left: 0 !important; right: 0; top: auto !important; bottom: 0;
+    width: 100% !important; max-width: 100%;
+    max-height: 60vh;
+    border-radius: 14px 14px 0 0;
+  }
+  #sv-notes-resize { display: none; }
+}
