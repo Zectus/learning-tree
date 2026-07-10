@@ -2,11 +2,11 @@
    NODE LESSON PROMPT — pure text template
    This is the prompt copied out of the app and pasted into a
    Claude conversation to generate one node's .txt lesson file.
-   Called from buildPrompt() in tree.js, which computes all of
+   Called from buildPrompt() in io.js, which computes all of
    these values for a given node; this file holds no logic of
    its own, just the prompt text and where each value drops in.
 ═══════════════════════════════════════════════════════════ */
-function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, languageClause }) {
+function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, languageClause }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
 
 Deliver this as a downloadable file named ${nodeId}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.
@@ -78,6 +78,7 @@ Marker 2 | What happened or what this stage is
 ${languageClause}
 
 CONTEXT
+${treeTopicLine}
 ${prereqLine}
 ${leadsToLine}
 ${contextLine}

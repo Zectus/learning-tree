@@ -209,7 +209,7 @@ btnEditMode.addEventListener('click', () => { state.editMode=!state.editMode; ap
 
 /* ═══════════════════════════════════════════════════════════
    JSON  import / export
-   Format: { "nodes": [{ "id":"a", "label":"...", "requires":["b","c"], "optional":true, "done":false, "content":"..." }] }
+   Format: { "language": "Spanish", "nodes": [{ "id":"a", "label":"...", "requires":["b","c"], "optional":true, "done":false, "content":"..." }] }
    `content` is optional and, when present, is the full generated
    lesson .txt for that node (the same text you'd otherwise upload
    by hand). It's only written when the "Structure + content"
@@ -218,6 +218,15 @@ btnEditMode.addEventListener('click', () => { state.editMode=!state.editMode; ap
    has it restored straight into node._sessionTxt (and its answer
    key re-parsed from the [KEY: ...] line), so its session can be
    reopened immediately with no re-upload needed.
+   `language` is optional too, and is the tree-wide language it was
+   designed in (see buildTreePrompt). It's read into state.language on
+   import, which prefills — but doesn't lock in — each node's own
+   language field in the learn modal whenever that field is blank, so
+   generating per-node content defaults to the tree's language instead
+   of English without forcing it.
+   `topic` is the tree's subject name, read into state.topic on import.
+   Used for the exported filename (instead of a generic one) and quoted
+   in each node's own prompt for a little broader context.
 ═══════════════════════════════════════════════════════════ */
 function clearMap() {
   state.nodes.forEach(n => n.el?.remove());
@@ -226,6 +235,8 @@ function clearMap() {
   state.edges.clear();
   state.nextId = 1;
   state.linkSource = null;
+  state.language = '';
+  state.topic = '';
 }
 
 /* ── slug helper: used for prompt filenames and round-tripping JSON ids ── */
@@ -239,6 +250,8 @@ function slugify(label) {
 function loadFromJSON(obj) {
   if (!obj || !Array.isArray(obj.nodes)) return;
   clearMap();
+  state.language = typeof obj.language === 'string' ? obj.language.trim() : '';
+  state.topic = typeof obj.topic === 'string' ? obj.topic.trim() : '';
 
   const idMap = new Map();
   obj.nodes.forEach(n => {
@@ -288,11 +301,16 @@ function exportToJSON(includeContent) {
     if (includeContent && n._sessionTxt) obj.content=n._sessionTxt;
     nodes.push(obj);
   });
-  const json=JSON.stringify({nodes},null,2);
+  const out = {};
+  if (state.topic) out.topic = state.topic;
+  if (state.language) out.language = state.language;
+  out.nodes = nodes;
+  const json=JSON.stringify(out,null,2);
   const blob=new Blob([json],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url; a.download = includeContent ? 'progress-tree-with-content.json' : 'progress-tree.json'; a.click();
+  const filenameBase = state.topic ? slugify(state.topic) : 'progress-tree';
+  a.href=url; a.download = includeContent ? `${filenameBase}-with-content.json` : `${filenameBase}.json`; a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -514,12 +532,13 @@ function buildPrompt(id, language) {
   const prereqLine  = prereqs.length    ? `The reader has already been through, earlier in this sequence: ${prereqs.join(', ')}. Refer back to this the way one lesson naturally refers to an earlier one — "recall that...", "as seen when X was introduced...", "earlier, we found..." — rather than the word "prerequisite," which reads like a syllabus line rather than something anyone would actually say.` : `This is the first topic in the sequence — there is nothing earlier to refer back to.`;
   const leadsToLine = dependents.length ? `Material the reader hasn't seen yet will build on this one afterward: ${dependents.join(', ')}. Don't teach toward it or mention it by name here.` : '';
   const contextLine = doneNodes.length  ? `The reader has also separately already been through: ${doneNodes.join(', ')}.` : '';
+  const treeTopicLine = state.topic ? `This node belongs to a larger tree on ${state.topic}.` : '';
   const plainKey    = answers.map((a,i)=>`${i+1}${a}`).join(' ');
   const languageClause = language
     ? `\nLANGUAGE\nWrite the entire document in ${language} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", the option markers "(A)" through "(E)", the final "[KEY: ...]" line, "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", and "[BONUS N]" / "[ANSWER: X]" / "[/BONUS]". Only the human-readable content moves to ${language} — none of that markup does.\n`
     : '';
 
-  return renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, languageClause });
+  return renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, languageClause });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -529,14 +548,15 @@ function buildPrompt(id, language) {
    in tree-prompt.js, via renderTreePrompt().
 ═══════════════════════════════════════════════════════════ */
 function buildTreePrompt(topic, startPoint, language) {
+  const fileSlug = slugify(topic);
   const startClause = startPoint
     ? `\n\nAssume the person already knows everything up through: ${startPoint}. Don't include nodes for material at or before that point — the tree should start from genuinely new material just past it, with root nodes representing the first new things someone would learn next.`
     : '';
   const languageClause = language
-    ? `\n\nLANGUAGE\nWrite every node's "label" value in ${language}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them.`
+    ? `\n\nLANGUAGE\nWrite every node's "label" value in ${language}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${language}" verbatim (see OUTPUT SCHEMA) — that's what lets each node's own lesson default to this same language later instead of English.`
     : '';
 
-  return renderTreePrompt({ topic, startClause, languageClause });
+  return renderTreePrompt({ topic, fileSlug, startClause, languageClause });
 }
 
 /* ── modal state ── */
@@ -547,7 +567,12 @@ function openLearnModal(id) {
   if (!node) return;
 
   _modalNodeId = id;
-  const language = document.getElementById('node-language-input').value.trim();
+  const languageInput = document.getElementById('node-language-input');
+  // Default to the tree's own language (if it has one) instead of English
+  // whenever the field is currently empty — still just a prefill, so the
+  // person can clear or override it for this one node if they want.
+  if (!languageInput.value.trim() && state.language) languageInput.value = state.language;
+  const language = languageInput.value.trim();
   const prompt = buildPrompt(id, language);
 
   document.getElementById('modal-title').textContent = node.label;
@@ -611,6 +636,7 @@ document.getElementById('tree-json-input').addEventListener('change', e => {
     try {
       const obj = JSON.parse(ev.target.result);
       loadFromJSON(obj);
+      if (!state.topic) state.topic = document.getElementById('tree-topic-input').value.trim();
       closeTreeModal();
     } catch {}
   };

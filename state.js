@@ -16,6 +16,8 @@ const state = {
   editMode:      false,
   markKnownMode: false,
   linkSource:    null,
+  language:      '',   // tree-wide default language (from a loaded tree's "language" field, if any) — used to prefill each node's own language field when it's left blank
+  topic:         '',   // tree-wide subject name (from a loaded tree's "topic" field, if any) — used for the export filename and mentioned in each node's prompt for context
 };
 
 /* ═══════════════════════════════════════════════════════════

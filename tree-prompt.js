@@ -3,22 +3,28 @@
    This is the prompt copied out of the "new tree" modal and
    pasted into a Claude conversation to generate a whole new
    tree .json for a subject. Called from buildTreePrompt() in
-   tree.js, which computes startClause; this file holds no
-   logic of its own, just the prompt text.
+   io.js, which computes fileSlug/startClause/languageClause;
+   this file holds no logic of its own, just the prompt text.
 ═══════════════════════════════════════════════════════════ */
-function renderTreePrompt({ topic, startClause, languageClause }) {
+function renderTreePrompt({ topic, fileSlug, startClause, languageClause }) {
   return `You are designing a prerequisite tree for the subject: ${topic}
+
+Deliver this as a downloadable file named ${fileSlug}-tree.json — not as JSON pasted into the chat as text. Do all planning and double-checking in your thinking; your visible output should contain nothing but the file itself, no preamble, no summary, no commentary before or after it.
 
 Each node in this tree becomes its own generated lesson later (a separate process turns one node into a full document someone reads in one sitting). Keep that in mind as the real constraint behind everything below: a node isn't a label on a graph, it's a promise about how much material someone is about to sit down and learn in one piece.${startClause}${languageClause}
 
 OUTPUT SCHEMA
 
 {
+  "topic": "${topic}",
+  "language": "Spanish",
   "nodes": [
     { "id": "slug", "label": "Display Name", "requires": ["slug1","slug2"], "optional": false }
   ]
 }
 
+- topic: the exact subject this tree was designed for, exactly as given above. Always include this — it's used to label the tree and name its downloaded file.
+- language: the language every node's "label" is written in, exactly as given to you above. Omit this key entirely if no language was specified — the default is English and there's nothing to record.
 - id: a short, stable, lowercase snake_case slug. Only used to wire up "requires" — never shown to anyone. Pick something you'll still recognize if you have to reference it later.
 - label: the human-readable name on the node card, and the thing the later lesson-generation step is handed as its topic. Name an actual concept, law, definition, or technique — not a chapter title, not a vague theme.
 - requires: the ids of every node that must be completed before this one unlocks. Omit the key entirely for a root. Everything listed is ANDed — all of them must be done, not just one of them.
