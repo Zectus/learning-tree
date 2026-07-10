@@ -698,15 +698,19 @@ body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-b
   font-size: 15.5px; line-height: 1.82; color: var(--text);
 }
 
-/* No visible scrollbars anywhere inside the viewer — they clash with the
-   floating-window look and everything here is still fully scrollable via
-   wheel/trackpad/keyboard without one. */
-#session-viewer, #session-viewer * {
+/* No visible scrollbars anywhere inside the viewer or the modals — they
+   clash with the floating-window look and everything here is still
+   fully scrollable via wheel/trackpad/keyboard without one. Shared
+   across #session-viewer and .modal-shell (the learn modal and the
+   "new tree" modal both use .modal-shell) rather than repeated per
+   component. */
+#session-viewer, #session-viewer *,
+.modal-shell, .modal-shell * {
   scrollbar-width: none;    /* Firefox */
   -ms-overflow-style: none; /* legacy Edge/IE */
 }
-#session-viewer::-webkit-scrollbar,
-#session-viewer *::-webkit-scrollbar {
+#session-viewer::-webkit-scrollbar, #session-viewer *::-webkit-scrollbar,
+.modal-shell::-webkit-scrollbar, .modal-shell *::-webkit-scrollbar {
   display: none;             /* Chromium/Safari */
   width: 0; height: 0;
 }
