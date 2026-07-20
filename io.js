@@ -534,9 +534,8 @@ function buildPrompt(id, language) {
   const contextLine = doneNodes.length  ? `The reader has also separately already been through: ${doneNodes.join(', ')}.` : '';
   const treeTopicLine = state.topic ? `This node belongs to a larger tree on ${state.topic}.` : '';
   const plainKey    = answers.map((a,i)=>`${i+1}${a}`).join(' ');
-  const languageClause = language
-    ? `\nLANGUAGE\nWrite the entire document in ${language} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", the option markers "(A)" through "(E)", the final "[KEY: ...]" line, "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", and "[BONUS N]" / "[ANSWER: X]" / "[/BONUS]". Only the human-readable content moves to ${language} — none of that markup does.\n`
-    : '';
+  const lang = language || 'English';
+  const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", the option markers "(A)" through "(E)", the final "[KEY: ...]" line, "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", and "[BONUS N]" / "[ANSWER: X]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does.\n`;
 
   return renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, languageClause });
 }
@@ -552,9 +551,8 @@ function buildTreePrompt(topic, startPoint, language) {
   const startClause = startPoint
     ? `\n\nAssume the person already knows everything up through: ${startPoint}. Don't include nodes for material at or before that point — the tree should start from genuinely new material just past it, with root nodes representing the first new things someone would learn next.`
     : '';
-  const languageClause = language
-    ? `\n\nLANGUAGE\nWrite every node's "label" value in ${language}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${language}" verbatim (see OUTPUT SCHEMA) — that's what lets each node's own lesson default to this same language later instead of English.`
-    : '';
+  const lang = language || 'English';
+  const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
 
   return renderTreePrompt({ topic, fileSlug, startClause, languageClause });
 }

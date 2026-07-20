@@ -24,7 +24,7 @@ OUTPUT SCHEMA
 }
 
 - topic: the exact subject this tree was designed for, exactly as given above. Always include this — it's used to label the tree and name its downloaded file.
-- language: the language every node's "label" is written in, exactly as given to you above. Omit this key entirely if no language was specified — the default is English and there's nothing to record.
+- language: the language every node's "label" is written in, exactly as given to you above.
 - id: a short, stable, lowercase snake_case slug. Only used to wire up "requires" — never shown to anyone. Pick something you'll still recognize if you have to reference it later.
 - label: the human-readable name on the node card, and the thing the later lesson-generation step is handed as its topic. Name an actual concept, law, definition, or technique — not a chapter title, not a vague theme.
 - requires: the ids of every node that must be completed before this one unlocks. Omit the key entirely for a root. Everything listed is ANDed — all of them must be done, not just one of them.
