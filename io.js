@@ -73,20 +73,49 @@ const resetViewportForTreeLoad = (function () {
   };
 })();
 
-/* ── pan ── */
-canvas.addEventListener('mousedown', e => {
+/* ── pan ──
+   Pointer Events + setPointerCapture, not mousedown/mousemove/mouseup.
+   Plain mouse events only keep arriving on `window` for as long as the
+   browser's own hit-test still thinks the cursor is inside the viewport;
+   near an edge, that boundary is rounded to actual rendered pixels, and
+   at a browser zoom other than 100% that rounding no longer lines up with
+   the CSS-pixel coordinates our code reads (clientX/clientY, innerWidth).
+   The result is the mismatch you saw: the cursor icon (a separate,
+   always-accurate hit-test) says one thing, event delivery says another.
+   setPointerCapture pins all subsequent pointer events to #canvas
+   directly, regardless of where the cursor drifts or how the page is
+   zoomed, so there's no boundary check left to disagree with itself. */
+canvas.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'touch') return; // touch has its own pan/pinch handling below
   if (e.target.closest('.node')) return;
+  // Middle-click ("pressing the wheel") triggers the browser's native
+  // autoscroll mode by default — a separate scroll behavior that runs on
+  // top of our own drag-pan below. The two disagree about pixel math once
+  // the page isn't at 100% browser zoom, so the view jitters/drifts.
+  // preventDefault() here stops the native autoscroll from ever starting,
+  // leaving our drag-pan as the only thing moving the canvas.
+  if (e.button === 1) e.preventDefault();
   cancelLink();
+  canvas.setPointerCapture(e.pointerId);
   state.drag = { active:true, startX:e.clientX, startY:e.clientY, ox:state.viewport.x, oy:state.viewport.y };
   canvas.classList.add('dragging');
 });
-window.addEventListener('mousemove', e => {
+canvas.addEventListener('pointermove', e => {
   if (!state.drag.active) return;
   state.viewport.x = state.drag.ox + (e.clientX - state.drag.startX);
   state.viewport.y = state.drag.oy + (e.clientY - state.drag.startY);
   applyTransform(false);
 });
-window.addEventListener('mouseup', () => { state.drag.active=false; canvas.classList.remove('dragging'); });
+canvas.addEventListener('pointerup', e => {
+  state.drag.active = false;
+  canvas.classList.remove('dragging');
+  if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointercancel', e => {
+  state.drag.active = false;
+  canvas.classList.remove('dragging');
+  if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
+});
 
 /* ── zoom ── */
 canvas.addEventListener('wheel', e => {
