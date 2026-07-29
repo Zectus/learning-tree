@@ -85,8 +85,27 @@ function extractAnswerKey(raw) {
 }
 function stripKeyLine(raw) { return raw.replace(/\[KEY:[^\]]+\]/gi, ''); }
 
+/* Collapses newlines inside \[...\] and \(...\) math spans into a single
+   space, before any paragraph/line splitting happens. renderProse() (see
+   below) splits prose into paragraphs on blank lines and turns every
+   remaining newline into <br> — either of those slices a multi-line
+   display equation into separate DOM text nodes, and KaTeX's auto-render
+   only matches delimiters within a single text node, so a display block
+   written across multiple lines (the normal way to write anything but
+   the shortest expression) would render as broken, unrendered raw LaTeX
+   instead of typeset math. Collapsing here, once, centrally, before
+   parseTxtSession does any splitting, means every block downstream —
+   prose, questions, bonuses, table cells, timeline entries — is already
+   a single line by the time paragraph/line splitting ever sees it. */
+function collapseMathNewlines(raw) {
+  return raw
+    .replace(/\\\[[\s\S]*?\\\]/g, m => m.replace(/\s*\n\s*/g, ' '))
+    .replace(/\\\([\s\S]*?\\\)/g, m => m.replace(/\s*\n\s*/g, ' '));
+}
+
 /* ── Parser ────── */
 function parseTxtSession(raw) {
+  raw = collapseMathNewlines(raw);
   const questions = new Map(), bonuses = new Map(), tables = new Map(), timelines = new Map();
   let cleaned = raw.replace(/\[QUESTION\s+(\d+)\]([\s\S]*?)\[\/QUESTION\]/gi, (_, n, body) => {
     questions.set(parseInt(n), parseQuestionBody(parseInt(n), body));
@@ -108,10 +127,10 @@ function parseTxtSession(raw) {
     timelines.set(id, parseTimelineBody(body));
     return `\x00L:${id}\x00`;
   });
-  const parts = cleaned.split(/^===\s*SECTION\s+(\d+)[:.]\s*(.+?)\s*===/im);
+  const parts = cleaned.split(/^===\s*SECTION\s+\d+[:.]\s*(.+?)\s*===/im);
   const sections = [];
-  for (let i = 1; i < parts.length; i += 3)
-    sections.push({ num: parts[i].trim(), title: parts[i+1].trim(), body: (parts[i+2] || '').trim() });
+  for (let i = 1; i < parts.length; i += 2)
+    sections.push({ title: parts[i].trim(), body: (parts[i+1] || '').trim() });
   return { sections, questions, bonuses, tables, timelines };
 }
 /* [TABLE] rows are "cell | cell | cell" — first row is the header. */
@@ -193,7 +212,7 @@ function renderSession(parsed) {
       else if (type === 'T') { const t = parsed.tables.get(id);    if (t) inner += renderTable(t); }
       else if (type === 'L') { const l = parsed.timelines.get(id); if (l) inner += renderTimeline(l); }
     }
-    return `<div class="sv-section"><div class="sv-section-label">SECTION ${svEsc(sec.num)}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
+    return `<div class="sv-section"><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
   }).join('');
 }
 function buildBonusSection(bonuses) {
@@ -363,7 +382,6 @@ function continueViewer(nodeId) {
 
 function closeViewer() {
   // Don't clear viewer state — answers and scroll position are preserved in the DOM
-  stopSvAutoscroll();
   document.getElementById('session-viewer').classList.remove('sv-open');
 }
 
@@ -459,213 +477,33 @@ document.addEventListener('keydown', e => {
     closeViewer();
 });
 
-/* ── Middle-click autoscroll for the lesson text (and anything else
-   scrollable inside the viewer, e.g. a horizontally-overflowing
-   \[ ... \] display formula) ──────
-   Matches Chrome's native middle-click autoscroll (verified against
-   Chromium's actual source, autoscroll_controller.cc):
-   - Press and release without moving (a tap): autoscroll goes "sticky" —
-     it keeps running with no button held, following the cursor, until
-     the next mousedown of ANY button, anywhere, or Escape cancels it.
-   - Press, drag, and release: scrolls while held, and stops the instant
-     the button comes up.
-   Speed is not linear — Chromium computes it per axis as
-   distance^2.2 * 0.000008 (distance zeroed inside a 15px dead zone),
-   which is why it ramps up far more aggressively than a straight-line
-   drag the further the cursor gets from the anchor. The 2.2 exponent
-   and 15px radius are exact; the 0.000008 coefficient feeds into
-   Chromium's compositor-side fling system before becoming an actual
-   scroll amount, which isn't visible from the page, so SV_AS_COEFF and
-   the SV_AS_MAX_SPEED cap below are recalibrated to produce comparably
-   aggressive results directly as px/frame rather than an exact port.
-   The scrollable target is whichever element (found by walking up from
-   whatever's under the cursor) actually has overflow to scroll in some
-   direction — not always #sv-body itself. */
-const svRootEl = document.getElementById('session-viewer');
-const svAS = { active:false, sticky:false, anchorX:0, anchorY:0, curX:0, curY:0, moved:false, raf:null, target:null, canX:false, canY:false, curDir:undefined };
-const SV_AS_DEADZONE  = 15;      // px — exact value from Chromium (kNoMiddleClickAutoscrollRadius)
-const SV_AS_EXPONENT  = 2.2;     // exact value from Chromium (kExponent)
-const SV_AS_COEFF     = 0.0006;  // recalibrated (Chromium's 0.000008 isn't a direct px/frame value — see note above)
-const SV_AS_MAX_SPEED = 220;     // px/frame cap so it stays controllable at extreme distances
-const SV_AS_MOVE_TOL  = 6;       // px of movement that still counts as "didn't move" (a tap)
-
-function findScrollTarget(el) {
-  let node = el;
-  while (node && node !== svRootEl && svRootEl.contains(node)) {
-    const cs   = getComputedStyle(node);
-    const canY = /(auto|scroll)/.test(cs.overflowY) && node.scrollHeight > node.clientHeight;
-    const canX = /(auto|scroll)/.test(cs.overflowX) && node.scrollWidth  > node.clientWidth;
-    if (canY || canX) return { el: node, canX, canY };
-    node = node.parentElement;
-  }
-  return null;
-}
-
-/* ── Directional cursor, generated to match Chromium's 11-cursor set
-   (NoMove2D/NoMoveHoriz/NoMoveVert at rest, 8 compass Pan* cursors while
-   moving) — a center dot with arrow spokes for each scrollable axis, the
-   active direction's arrow drawn bold, the rest faint. Cached per
-   direction+capability combo and only swapped when it actually changes,
-   since regenerating a data-URI every animation frame would be wasteful. */
-const SV_CURSOR_ANGLE = { E:0, SE:45, S:90, SW:135, W:180, NW:225, N:270, NE:315 };
-const svCursorCache = new Map();
-function buildPanCursorSVG(activeDir, canX, canY) {
-  let dirs = [];
-  if (canY) dirs.push('N', 'S');
-  if (canX) dirs.push('E', 'W');
-  if (canX && canY) dirs.push('NE', 'SE', 'SW', 'NW');
-  let arrows = '';
-  for (const d of dirs) {
-    const active = d === activeDir;
-    const tip = active ? 15 : 11;
-    const halfW = active ? 6 : 4.5;
-    const base = 4;
-    const fill = active ? '#111' : '#ffffffdd';
-    const stroke = active ? '#fff' : '#111';
-    const sw = active ? 1.6 : 1.1;
-    arrows += `<g transform="rotate(${SV_CURSOR_ANGLE[d]})"><polygon points="${tip},0 ${base},-${halfW} ${base},${halfW}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/></g>`;
-  }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-16 -16 32 32">${arrows}<circle r="3" fill="#111" stroke="#fff" stroke-width="1.4"/></svg>`;
-}
-function svCursorFor(activeDir, canX, canY) {
-  const key = `${activeDir}|${canX}|${canY}`;
-  let url = svCursorCache.get(key);
-  if (!url) {
-    url = `url("data:image/svg+xml,${encodeURIComponent(buildPanCursorSVG(activeDir, canX, canY))}") 16 16, all-scroll`;
-    svCursorCache.set(key, url);
-  }
-  return url;
-}
-// Same priority order Chromium uses: vertical (combined with horizontal
-// for a diagonal) takes precedence over a pure horizontal direction.
-function dirFor(dx, dy, canX, canY) {
-  const north = dy < 0, south = dy > 0, east = dx > 0, west = dx < 0;
-  if (north && canY) { if (canX) { if (east) return 'NE'; if (west) return 'NW'; } return 'N'; }
-  if (south && canY) { if (canX) { if (east) return 'SE'; if (west) return 'SW'; } return 'S'; }
-  if (east && canX) return 'E';
-  if (west && canX) return 'W';
-  return null; // at rest in the dead zone
-}
-
-function svAutoscrollStep() {
-  if (!svAS.active) return;
-  let dx = svAS.curX - svAS.anchorX;
-  let dy = svAS.curY - svAS.anchorY;
-  if (Math.abs(dx) <= SV_AS_DEADZONE) dx = 0;
-  if (Math.abs(dy) <= SV_AS_DEADZONE) dy = 0;
-  if (svAS.canX && dx !== 0) {
-    const speed = Math.min(SV_AS_MAX_SPEED, Math.pow(Math.abs(dx), SV_AS_EXPONENT) * SV_AS_COEFF);
-    svAS.target.scrollLeft += Math.sign(dx) * speed;
-  }
-  if (svAS.canY && dy !== 0) {
-    const speed = Math.min(SV_AS_MAX_SPEED, Math.pow(Math.abs(dy), SV_AS_EXPONENT) * SV_AS_COEFF);
-    svAS.target.scrollTop += Math.sign(dy) * speed;
-  }
-  const dir = dirFor(dx, dy, svAS.canX, svAS.canY);
-  if (dir !== svAS.curDir) {
-    svAS.curDir = dir;
-    svAS.target.style.setProperty('cursor', svCursorFor(dir, svAS.canX, svAS.canY));
-  }
-  svAS.raf = requestAnimationFrame(svAutoscrollStep);
-}
-
-// Capture phase, and always live while active (hold OR sticky) — this is
-// what makes a second click actually cancel instead of restarting: it
-// runs and calls stopPropagation() before the event ever reaches the
-// pointerdown listener below that would otherwise start a new session.
-function svAutoscrollCancel(e) {
-  if (!svAS.active) return;
-  e.preventDefault();
-  e.stopPropagation();
-  stopSvAutoscroll();
-}
-function svAutoscrollCancelOnEscape(e) { if (e.key === 'Escape') stopSvAutoscroll(); }
-
-function startSvAutoscroll(target, x, y) {
-  svAS.active = true; svAS.sticky = false; svAS.moved = false; svAS.curDir = undefined;
-  svAS.target = target.el; svAS.canX = target.canX; svAS.canY = target.canY;
-  svAS.anchorX = x; svAS.anchorY = y; svAS.curX = x; svAS.curY = y;
-  svAS.target.classList.add('sv-autoscroll');
-  svAS.target.style.setProperty('cursor', svCursorFor(null, svAS.canX, svAS.canY));
-  document.addEventListener('pointerdown', svAutoscrollCancel, true);
-  document.addEventListener('keydown', svAutoscrollCancelOnEscape);
-  svAS.raf = requestAnimationFrame(svAutoscrollStep);
-}
-function stopSvAutoscroll() {
-  if (!svAS.active) return;
-  svAS.active = false;
-  if (svAS.target) { svAS.target.classList.remove('sv-autoscroll'); svAS.target.style.removeProperty('cursor'); }
-  if (svAS.raf) cancelAnimationFrame(svAS.raf);
-  document.removeEventListener('pointerdown', svAutoscrollCancel, true);
-  document.removeEventListener('keydown', svAutoscrollCancelOnEscape);
-  svAS.target = null;
-}
-
-svRootEl.addEventListener('pointerdown', e => {
-  if (e.button !== 1 || svAS.active) return; // already active → svAutoscrollCancel (capture phase) handles it instead
-  const target = findScrollTarget(e.target);
-  if (!target) return;
-  e.preventDefault();
-  target.el.setPointerCapture(e.pointerId);
-  startSvAutoscroll(target, e.clientX, e.clientY);
-});
-document.addEventListener('pointermove', e => {
-  if (!svAS.active) return;
-  svAS.curX = e.clientX; svAS.curY = e.clientY;
-  if (Math.hypot(e.clientX - svAS.anchorX, e.clientY - svAS.anchorY) > SV_AS_MOVE_TOL) svAS.moved = true;
-});
-document.addEventListener('pointerup', e => {
-  if (!svAS.active) return;
-  if (svAS.target?.hasPointerCapture?.(e.pointerId)) svAS.target.releasePointerCapture(e.pointerId);
-  if (svAS.moved) stopSvAutoscroll();
-  else svAS.sticky = true; // stays active — only the cancel handler above or Escape stops it from here
-});
-document.addEventListener('pointercancel', () => stopSvAutoscroll());
-
-/* ── Drag ──────
-   Pointer Events + setPointerCapture, not mousedown/mousemove/mouseup.
-   The old version tracked movement via mousemove/mouseup on `document`,
-   which only keeps firing for as long as the browser's own hit-test
-   still thinks the cursor is over the page. Near the window's edge that
-   boundary is measured in actual rendered pixels, so at a browser zoom
-   other than 100% it stops lining up with the CSS-pixel clientX/clientY
-   values this code reads — the drag silently stops updating, or the
-   resize handle's cursor stays active with nothing actually resizing.
-   setPointerCapture pins every subsequent pointer event to the handle
-   that started the drag, independent of where the cursor drifts or how
-   the page is zoomed, so there's no boundary left to fall out of sync. */
+/* ── Drag ────── */
 const svDrag = { active: false, startX: 0, startY: 0, winX: 0, winY: 0 };
-const svHeaderEl = document.getElementById('sv-header');
-svHeaderEl.addEventListener('pointerdown', e => {
-  if (e.button !== 0 || e.target.id === 'btn-close-viewer') return;
+document.getElementById('sv-header').addEventListener('mousedown', e => {
+  if (e.button !== 0 || e.target.closest('button')) return;
   const r = document.getElementById('sv-window').getBoundingClientRect();
   Object.assign(svDrag, { active: true, startX: e.clientX, startY: e.clientY, winX: r.left, winY: r.top });
-  svHeaderEl.setPointerCapture(e.pointerId);
   e.preventDefault();
 });
 
 /* ── Resize ────── */
 const svResize = { active: false, startX: 0, startY: 0, startW: 0, startH: 0 };
-const svResizeEl = document.getElementById('sv-resize');
-svResizeEl.addEventListener('pointerdown', e => {
+document.getElementById('sv-resize').addEventListener('mousedown', e => {
   if (e.button !== 0) return;
   const win = document.getElementById('sv-window');
   Object.assign(svResize, { active: true, startX: e.clientX, startY: e.clientY, startW: win.offsetWidth, startH: win.offsetHeight });
-  svResizeEl.setPointerCapture(e.pointerId);
   e.preventDefault(); e.stopPropagation();
 });
 
 const notesResize = { active: false, startX: 0, startY: 0, startW: 0, startH: 0 };
-const notesResizeEl = document.getElementById('sv-notes-resize');
-notesResizeEl.addEventListener('pointerdown', e => {
+document.getElementById('sv-notes-resize').addEventListener('mousedown', e => {
   if (e.button !== 0) return;
   const panel = document.getElementById('sv-notes-panel');
   Object.assign(notesResize, { active: true, startX: e.clientX, startY: e.clientY, startW: panel.offsetWidth, startH: panel.offsetHeight });
-  notesResizeEl.setPointerCapture(e.pointerId);
   e.preventDefault(); e.stopPropagation();
 });
 
-document.addEventListener('pointermove', e => {
+document.addEventListener('mousemove', e => {
   if (svDrag.active) {
     const win = document.getElementById('sv-window');
     win.style.left = Math.max(0, Math.min(window.innerWidth  - 80, svDrag.winX  + e.clientX - svDrag.startX))  + 'px';
@@ -684,12 +522,7 @@ document.addEventListener('pointermove', e => {
     panel.style.height = Math.max(200, notesResize.startH + e.clientY - notesResize.startY) + 'px';
   }
 });
-document.addEventListener('pointerup', e => {
-  svDrag.active = false; svResize.active = false; notesResize.active = false;
-  if (svHeaderEl.hasPointerCapture(e.pointerId)) svHeaderEl.releasePointerCapture(e.pointerId);
-  if (svResizeEl.hasPointerCapture(e.pointerId)) svResizeEl.releasePointerCapture(e.pointerId);
-  if (notesResizeEl.hasPointerCapture(e.pointerId)) notesResizeEl.releasePointerCapture(e.pointerId);
-});
+document.addEventListener('mouseup', () => { svDrag.active = false; svResize.active = false; notesResize.active = false; });
 
 /* ── Wiring ────── */
 document.getElementById('session-file-input').addEventListener('change', e => {
