@@ -1,0 +1,289 @@
+/* ═══════════════════════════════════════════════════════════
+   nodes.css — everything about a single node card: the fractal
+   sizing model, depth-tint borders, done/available/locked status
+   styling, the link-source ring, the badge/label/optional-tag,
+   the hover- (and touch-⋯-) revealed action row and explanation
+   textarea, and the SVG prerequisite connectors drawn between
+   nodes (edge color/opacity by status, hover highlight). Pairs
+   with nodes.js (node DOM + the action-row reveal/close) and
+   layout.js (edge rendering, status classes).
+   Depends on theme.css.
+═══════════════════════════════════════════════════════════ */
+
+/* ── nodes — fractal sizing model (same as original) ── */
+.node {
+  position: absolute;
+  transform-origin: top left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: box-shadow .2s ease, border-color .2s ease;
+  will-change: transform;
+}
+.node:hover { box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 0 0 1.5px rgba(0,0,0,.09); }
+
+.node-inner {
+  position: relative;
+  padding: 10px 14px 11px;
+  border-radius: 10px;
+  transition: box-shadow .18s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+}
+.node:hover .node-inner {
+  box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 0 0 1.5px rgba(0,0,0,.09);
+}
+
+/* depth tints — base (locked) state */
+.node.root  { border-width: 1.5px; border-color: var(--border); }
+.node.d1    { border-color: var(--d1); }
+.node.d2    { border-color: var(--d2); }
+.node.d3    { border-color: var(--d3); }
+.node.d4    { border-color: var(--d4); }
+
+/* status overrides */
+.node.status-done {
+  background: var(--done-bg);
+  border-color: var(--done-bdr) !important;
+  box-shadow: 0 2px 10px rgba(26,102,64,.22);
+}
+.node.status-done:hover {
+  box-shadow: 0 8px 24px rgba(26,102,64,.32);
+}
+.node.status-done .node-inner {
+  box-shadow: none;
+}
+.node.status-available {
+  border-color: var(--avail-bdr) !important;
+  box-shadow: 0 2px 10px rgba(42,106,191,.13);
+}
+.node.status-available:hover {
+  box-shadow: 0 8px 22px rgba(42,106,191,.25);
+}
+.node.status-locked {
+  opacity: .72;
+}
+
+/* link-source orange ring */
+.node.link-source {
+  outline: 2.5px solid var(--edge-link);
+  outline-offset: 2px;
+}
+
+/* ── status badge ── */
+.node-badge {
+  font-size: 10px;
+  letter-spacing: .01em;
+  margin-bottom: 4px;
+  opacity: .75;
+  min-height: 14px;
+  line-height: 1;
+}
+.node.status-done      .node-badge { color: rgba(255,255,255,.9); }
+.node.status-available .node-badge { color: var(--avail-bdr); }
+.node.status-locked    .node-badge { color: var(--lock-text); }
+
+/* ── node text ── */
+.node-text {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text);
+  outline: none;
+  cursor: text;
+  min-height: 20px;
+  word-break: break-word;
+  caret-color: var(--accent);
+  touch-action: auto;
+}
+.node.root .node-text     { font-size: 15px; font-weight: 500; letter-spacing: -.01em; }
+.node.status-done .node-text     { color: var(--done-text); }
+.node.status-available .node-text { color: var(--avail-text); font-weight: 500; }
+.node.status-locked .node-text   { color: var(--lock-text); }
+
+.node-text:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-m);
+  pointer-events: none;
+  opacity: .5;
+}
+
+/* ── optional tag ── */
+.node-tag {
+  position: absolute;
+  top: 7px; right: 12px;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 99px;
+  border: 1px solid currentColor;
+  opacity: .55;
+  line-height: 1.5;
+}
+.node.status-done .node-tag     { color: rgba(255,255,255,.8); }
+.node.status-available .node-tag { color: var(--avail-bdr); }
+.node.status-locked .node-tag   { color: var(--lock-text); }
+
+/* ── node actions (edit mode only) ── */
+.node-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s, max-height .14s ease, margin-top .14s ease;
+}
+.node:hover .node-actions,
+.node.link-source .node-actions,
+.node.actions-open .node-actions {
+  opacity: 1;
+  max-height: 90px;
+  margin-top: 8px;
+  pointer-events: auto;
+}
+body:not(.edit-mode) .node-actions { display: none !important; }
+
+/* ── explanation (scope note) — same reveal behavior as .node-actions,
+   sitting just below it, edit mode only ── */
+.node-explanation-wrap {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s, max-height .14s ease, margin-top .14s ease;
+}
+.node:hover .node-explanation-wrap,
+.node.link-source .node-explanation-wrap,
+.node.actions-open .node-explanation-wrap {
+  opacity: 1;
+  max-height: 140px;
+  margin-top: 8px;
+  pointer-events: auto;
+}
+body:not(.edit-mode) .node-explanation-wrap { display: none !important; }
+.node-explanation-label {
+  font-size: 9.5px;
+  line-height: 1.4;
+  color: var(--text-m);
+  margin-bottom: 4px;
+}
+.node-explanation-ta {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 11px;
+  line-height: 1.45;
+  padding: 6px 8px;
+  outline: none;
+  transition: border-color .12s;
+  /* Scrollbar hidden (scroll still works via wheel/touch/drag-select —
+     see the canvas wheel handler in io.js, which lets wheel events over
+     this field through instead of treating them as canvas zoom) so a
+     thin field with overflowing text doesn't sprout a scrollbar track
+     that visually fights with the node's small footprint. */
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* old Edge/IE */
+}
+.node-explanation-ta::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.node-explanation-ta:focus { border-color: var(--avail-bdr); }
+.node.status-done .node-explanation-ta {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.25);
+  color: var(--done-text);
+}
+.node.status-done .node-explanation-ta::placeholder { color: rgba(255,255,255,.5); }
+
+/* Expanding on hover makes the node taller (see .node-actions above); lift
+   it above sibling nodes while that's happening so the growth isn't
+   clipped underneath whatever's positioned next to it. Scoped to edit
+   mode since that's the only mode where hovering grows the node at all. */
+body.edit-mode .node:hover,
+body.edit-mode .node.link-source,
+body.edit-mode .node.actions-open { z-index: 20; }
+
+/* Touch equivalent of hover — see the click handler in nodes.js. Hidden
+   whenever the device has real hover (mouse/trackpad), since hovering
+   already does the job there without adding a second, redundant control. */
+.node-more-btn {
+  display: none;
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-m);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+body:not(.edit-mode) .node-more-btn { display: none !important; }
+@media (hover: none) {
+  body.edit-mode .node-more-btn { display: block; }
+}
+
+.btn {
+  background: var(--btn-soft-bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-size: 10.5px;
+  font-family: var(--font);
+  color: var(--text-m);
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.5;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.node.status-done .btn {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.25);
+  color: rgba(255,255,255,.8);
+}
+.btn:hover { background: var(--btn-soft-bg-hover); border-color: var(--border-h); color: var(--text); }
+.btn.danger:hover { background: var(--danger-soft-bg); border-color: var(--danger-soft-bdr); color: var(--danger-text); }
+.node.status-done .btn:hover {
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.5);
+  color: #fff;
+}
+
+/* ── connectors ── */
+.connector {
+  fill: none;
+  stroke: var(--edge-lock);
+  stroke-linecap: round;
+  opacity: 0.18;
+  transition: stroke .15s, stroke-width .15s, opacity .15s;
+}
+.connector.edge-done      { stroke: var(--edge-done);  opacity: 0.32; }
+.connector.edge-available { stroke: var(--edge-avail); opacity: 0.45; }
+
+/* arrowheads — match connector colors exactly so they re-theme with everything else */
+.arrow-marker path { fill: var(--edge-lock); }
+.arrow-avail path  { fill: var(--edge-avail); }
+.arrow-done path   { fill: var(--edge-done); }
+
+/* hover focus: prereq edges turn blue, dependent edges turn orange */
+.connector.hi-prereq {
+  stroke: var(--avail-bdr) !important;
+  opacity: 1 !important;
+  stroke-width: 2px !important;
+}
+.connector.hi-dep {
+  stroke: var(--edge-link) !important;
+  opacity: 1 !important;
+  stroke-width: 2px !important;
+}
+/* everything else fades to near-invisible when a node is focused */
+body.node-focused .connector:not(.hi-prereq):not(.hi-dep) {
+  opacity: 0.05 !important;
+}
+

@@ -1,0 +1,115 @@
+/* ═══════════════════════════════════════════════════════════
+   toolbar.css — the page-level progress bar, the floating
+   toolbar and its buttons (including the active/muted states),
+   the export dropdown menu, and the cursor changes for linking
+   mode and mark-known mode. Pairs with toolbar.js (mode toggles,
+   button wiring) and progress.js (the reset-progress button also
+   styled by .tbtn here).
+   Depends on theme.css.
+═══════════════════════════════════════════════════════════ */
+
+/* ── progress bar ── */
+#progress-bar-wrap {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--border);
+  z-index: 200;
+  pointer-events: none;
+}
+#progress-bar {
+  height: 100%;
+  background: var(--done-bg);
+  width: 0%;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── toolbar ── */
+#toolbar {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+  user-select: none;
+}
+.tbtn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+  transition: box-shadow .15s, border-color .15s;
+  white-space: nowrap;
+}
+.tbtn:hover { border-color: var(--border-h); box-shadow: 0 6px 20px rgba(0,0,0,.11); }
+.tbtn.muted { color: var(--text-m); }
+label.tbtn { cursor: pointer; }
+.tbtn.active {
+  background: var(--invert-bg);
+  color: var(--invert-text);
+  border-color: var(--invert-bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.12);
+}
+.tbtn.active:hover { border-color: var(--invert-bg); box-shadow: 0 6px 20px rgba(0,0,0,.22); }
+#btn-add-node { display: none; }
+body.edit-mode #btn-add-node { display: block; }
+
+/* ── export menu ── */
+.export-wrap { position: relative; }
+.export-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 230px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.16), 0 0 0 1px rgba(0,0,0,.04);
+  z-index: 150;
+}
+.export-menu.open { display: flex; }
+.export-menu-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background .12s;
+}
+.export-menu-item:hover { background: var(--btn-soft-bg-hover); }
+.export-menu-item .emi-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-m);
+}
+
+/* link-mode crosshair */
+body.linking-mode #canvas,
+body.linking-mode .node { cursor: crosshair !important; }
+
+/* mark-known mode */
+body.mark-known-mode .node:not(.status-locked) { cursor: cell !important; }
+body.mark-known-mode .node.status-available { box-shadow: 0 0 0 2px var(--done-bg), 0 2px 10px rgba(26,102,64,.15); }
+body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-bg), 0 2px 10px rgba(26,102,64,.25); }
+

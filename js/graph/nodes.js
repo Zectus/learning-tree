@@ -1,6 +1,8 @@
 /* ═══════════════════════════════════════════════════════════
    nodes.js — individual node DOM construction, completion
-   toggling, the linking gesture, add/delete.
+   toggling, the linking gesture, add/delete, and the touch
+   "tap ⋯ to reveal actions" mechanism (both opening it, in
+   buildEl below, and closing it, at the bottom of this file).
    Depends on state.js and layout.js.
 ═══════════════════════════════════════════════════════════ */
 
@@ -82,8 +84,26 @@ function buildEl(node) {
     if (e.key === 'Escape') explTa.blur();
   });
 
+  // Touch equivalent of hover (see .node-more-btn in nodes.css, which hides
+  // this on real-hover devices and only shows it under @media(hover:none)
+  // in edit mode). Tapping it reveals this node's actions/explanation the
+  // same way .node:hover does on desktop, since touch has no :hover to
+  // trigger that reveal. stopPropagation keeps the tap from also reaching
+  // el's own click handler below (which would otherwise focus the label
+  // or start a link gesture).
+  const moreBtn = document.createElement('button');
+  moreBtn.className = 'node-more-btn';
+  moreBtn.textContent = '⋯';
+  moreBtn.title = 'Show actions';
+  moreBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const opening = !el.classList.contains('actions-open');
+    document.querySelectorAll('.node.actions-open').forEach(n => { if (n !== el) n.classList.remove('actions-open'); });
+    el.classList.toggle('actions-open', opening);
+  });
+
   inner.append(badge, textEl, actions, explWrap);
-  el.append(inner);
+  el.append(inner, moreBtn);
 
   textEl.addEventListener('input', () => { node.label = textEl.textContent; });
   textEl.addEventListener('keydown', e => {
@@ -300,3 +320,18 @@ function deleteNodeTxt(id) {
   autoSaveProgress();
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TOUCH ACTION-ROW CLEANUP
+   Pairs with the moreBtn toggle-on logic in buildEl above — kept
+   in the same file so the whole "tap ⋯ to reveal, tap outside or
+   Escape to close" mechanism lives in one place rather than split
+   across files. Tapping anywhere outside the open node, or
+   Escape, closes it.
+═══════════════════════════════════════════════════════════ */
+document.addEventListener('click', e => {
+  if (e.target.closest('.node.actions-open')) return;
+  document.querySelectorAll('.node.actions-open').forEach(el => el.classList.remove('actions-open'));
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.node.actions-open').forEach(el => el.classList.remove('actions-open'));
+});

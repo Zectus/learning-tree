@@ -1,0 +1,186 @@
+/* ═══════════════════════════════════════════════════════════
+   modals.css — the shared modal chrome (backdrop, shell, header
+   bar, close button, scrollable body) used by both the single-
+   node "learn" modal and the "new tree" modal, plus the pieces
+   specific to each: the prompt textarea + copy button, the
+   create-tree form fields and from-a-topic/from-a-file tabs, and
+   the shared upload-dropzone control. Pairs with prompts.js,
+   which owns both modals' open/close/wiring logic.
+   Depends on theme.css.
+═══════════════════════════════════════════════════════════ */
+
+/* ── learn modal ── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20,20,17,.45);
+  z-index: 400;
+  align-items: center;
+  justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+
+.modal-shell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.06);
+  width: min(680px, 94vw);
+  max-height: 86vh;
+  max-height: 86dvh; /* see the body rule above — same fix, same reason */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modal-in .18s cubic-bezier(.4,0,.2,1);
+}
+@keyframes modal-in {
+  from { opacity:0; transform: translateY(10px) scale(.98); }
+  to   { opacity:1; transform: none; }
+}
+
+.modal-header-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.modal-meta {
+  font-size: 11.5px;
+  color: var(--text-m);
+  margin-top: 3px;
+  font-weight: 400;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-m);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 5px;
+  transition: background .12s, color .12s;
+  flex-shrink: 0;
+}
+.modal-close-btn:hover { background: var(--bg); color: var(--text); }
+
+.modal-body {
+  overflow-y: auto;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* prompt box */
+.prompt-wrap { position: relative; }
+.prompt-ta {
+  width: 100%;
+  height: 220px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  resize: none;
+  outline: none;
+  tab-size: 2;
+}
+.copy-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-family: var(--font);
+  color: var(--text-m);
+  cursor: pointer;
+  transition: all .12s;
+}
+.copy-btn:hover { border-color: var(--border-h); color: var(--text); }
+.copy-btn.copied { background: var(--done-bg); color: #fff; border-color: var(--done-bdr); }
+
+
+/* upload label in modal */
+.upload-dropzone {
+  display: block; margin-top: 9px; text-align: center; padding: 8px 14px;
+  border: 1.5px dashed var(--border); border-radius: 8px; cursor: pointer;
+  font-size: 12.5px; color: var(--text-m); transition: all .12s;
+}
+.upload-dropzone:hover { border-color: var(--avail-bdr); color: var(--avail-bdr); background: var(--info-soft-bg); }
+
+/* create-tree modal fields */
+.field-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-m);
+  margin-bottom: 6px;
+}
+.field-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color .12s;
+}
+.field-input:focus { border-color: var(--avail-bdr); }
+.field-row { margin-bottom: 14px; }
+.field-row:last-of-type { margin-bottom: 0; }
+
+.hidden { display: none; }
+
+/* create-tree modal: "from a topic" vs "from a file" tabs */
+.tree-mode-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.tree-mode-tab {
+  flex: 1;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-m);
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+}
+.tree-mode-tab:hover { color: var(--text); }
+.tree-mode-tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04);
+}
+.tree-mode-file-help {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-m);
+  margin-bottom: 14px;
+}
+

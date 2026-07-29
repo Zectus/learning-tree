@@ -1,0 +1,137 @@
+/* ═══════════════════════════════════════════════════════════
+   mobile.css — every responsive/touch-specific override, kept
+   together rather than split per-component: the portrait-lock
+   overlay, and the full max-width:700px block covering toolbar
+   wrapping, node action-row sizing, iOS zoom prevention, and the
+   session viewer/notes panel going fullscreen. These only make
+   sense read as one "what changes on a phone" unit, so — unlike
+   the rest of this split — this one stays a single cross-cutting
+   file on purpose.
+   Loads last so its overrides win over every component file above.
+═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   PORTRAIT LOCK
+   The web platform has no real "lock this page to portrait" outside a
+   fullscreen PWA context, so the standard substitute is this: block the
+   screen with an unmissable, unclosable overlay whenever a touch device
+   is held in landscape, and let the app itself only ever be usable in
+   portrait. (pointer: coarse) scopes this to actual touch devices, so a
+   wide desktop browser window never triggers it.
+═══════════════════════════════════════════════════════════ */
+#rotate-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  z-index: 999999;
+  background: var(--bg);
+  color: var(--text);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px;
+  text-align: center;
+  padding: 0 40px;
+}
+#rotate-overlay-icon {
+  font-size: 48px;
+  animation: rotate-overlay-spin 1.8s ease-in-out infinite;
+}
+#rotate-overlay-text {
+  font-size: 15px;
+  color: var(--text-m);
+  max-width: 260px;
+}
+@keyframes rotate-overlay-spin {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(-90deg); }
+}
+@media (pointer: coarse) and (orientation: landscape) {
+  #rotate-overlay { display: flex; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE  (≤700px — phones and small tablets in portrait)
+   Panning/zooming the canvas already has its own touch handling
+   (see io.js); everything below is layout/sizing only.
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  /* Toolbar: wrap into two centered rows instead of a horizontal-scroll
+     strip — buttons you can't see the existence of past an edge are easy
+     to miss on a phone, and a strip also forces every button down to a
+     cramped size to fit. Wrapping keeps every button visible at once, at
+     a size worth tapping with a finger. Two rows is what a typical
+     button set actually settles into at phone widths; edit mode adding
+     #btn-add-node just adds a button to whichever row has room, it
+     doesn't break the layout. */
+  #toolbar {
+    top: max(14px, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(94vw, 420px);
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .tbtn {
+    flex: 0 0 auto;
+    padding: 12px 18px;
+    font-size: 14.5px;
+    min-height: 44px; /* standard minimum comfortable touch target */
+  }
+
+  /* Node action buttons get a real tap target once they're only reachable
+     by tapping .node-more-btn instead of hovering. */
+  .btn { padding: 7px 11px; font-size: 12px; }
+  .node-actions { max-height: 130px; gap: 6px; }
+  .node-explanation-wrap { max-height: 180px; }
+  .node-explanation-ta { font-size: 13px; }
+
+  /* Prevent iOS Safari's automatic zoom-in when focusing a text field
+     with a computed font-size under 16px. */
+  .node-text, .field-input, #sv-notes-ta, .prompt-ta { font-size: 16px; }
+
+  .modal-header-bar { padding: 16px 16px 12px; }
+  .modal-body { padding: 16px; }
+  .prompt-ta { height: 160px; }
+
+  /* Session viewer: a floating, draggable/resizable window is awkward to
+     use with a finger, and doesn't reliably support mouse-only drag
+     gestures on touch anyway. Go fullscreen instead — the `!important`s
+     are there specifically to win over the inline left/top/width/height
+     that openViewer()/the drag & resize handlers in viewer.js set; no JS
+     changes needed; those calls simply stop being visible here.
+     height uses dvh (with % as a fallback) for the same reason as the
+     body rule above: on a `position: fixed` element, height:100% resolves
+     against the address-bar-hidden viewport size, which is taller than
+     what's actually visible when the bar IS showing — the viewer's own
+     bottom edge ends up cut off below the visible screen. dvh fixes it
+     the same way it fixes the body. */
+  #sv-window {
+    left: 0 !important; top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    border-radius: 0;
+  }
+  #sv-header {
+    cursor: default;
+    padding-top: max(11px, env(safe-area-inset-top));
+  }
+  #sv-resize { display: none; }
+  #sv-body {
+    padding: 24px 18px calc(52px + env(safe-area-inset-bottom));
+    font-size: 16.5px;   /* desktop's 15.5px reads small at arm's length on a phone */
+    line-height: 1.75;
+  }
+
+  /* Notes become a bottom sheet instead of a sidebar anchored to the
+     window's right edge — there's no "right edge" worth anchoring to
+     once the window itself is fullscreen. */
+  #sv-notes-panel {
+    left: 0 !important; right: 0; top: auto !important; bottom: 0;
+    width: 100% !important; max-width: 100%;
+    max-height: 60vh;
+    max-height: 60dvh;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-radius: 14px 14px 0 0;
+  }
+  #sv-notes-resize { display: none; }
+}

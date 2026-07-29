@@ -5,6 +5,19 @@
    Called from buildPrompt() in io.js, which computes all of
    these values for a given node; this file holds no logic of
    its own, just the prompt text and where each value drops in.
+
+   PROMPT DESIGN RULE: this file writes lessons on every subject
+   there is, so no instruction in it should carry a worked example
+   from one specific topic (a named formula, a named theorem, a
+   named historical event). A topic-specific example anchors the
+   instruction to that one subject instead of the general shape of
+   the mistake being warned against, and reads as if that subject
+   is what's being taught. State each rule generally enough to fit
+   any topic — but not so generally that it goes vague: describe
+   the exact structural pattern (what the prose does, what the
+   question then does, why that sequence fails) in placeholder
+   terms, precise enough that the failure is unmistakable without
+   ever anchoring it to one domain's content.
 ═══════════════════════════════════════════════════════════ */
 function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, explanationLine, languageClause }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
@@ -128,6 +141,10 @@ QUESTION CONSTRUCTION RULES (guidelines, not bureaucratic checklists — use jud
 2. No duplicate options.
 3. For complex or subtle topics, aim for questions where understanding the material is genuinely required — setups with a conceptual trap, cases where the obvious mechanical approach fails, situations where you must identify which principle, rule, or piece of evidence applies before you can proceed. For simpler topics, straightforward questions are fine and probably better — don't manufacture artificial complexity where none exists.
 4. If working through a question requires some intermediate quantity or fact that follows from the given setup by a short, easy step, let the reader work that out themselves rather than stating it for them in the question. This is different from genuinely given data — measured values, constants, configuration the reader couldn't otherwise know — which should stay. The line is whether deriving it is itself a small piece of what makes the question worth doing; if it is, handing it over for free turns the question into a last-step fill-in instead of something the reader has to actually work through. The same applies to the reasoning path itself, not just numeric quantities: if the stem already spells out the specific relationship, mechanism, or chain of implications that leads to the answer, it has done the reader's thinking for them just as much as handing over a number would, and the question is only checking whether they can read.
+
+Name the most common version of this so it's easy to catch while drafting: the prose derives some formula, rule, or relationship, and the very next question opens by restating that exact same formula, rule, or relationship before asking the reader to apply it — "Using [the thing just derived], find/compute/determine [some single substitution]." Once the stem re-serves the tool at the exact moment it's needed, nothing is left for the reader but one plug-in operation; the derivation was the real content, and restating its result at the point of use hands back the one thing the question should have been testing recall of. If a result was already established earlier in the document, trust the reader to recall it unprompted rather than re-stating it in the stem. If several established results are legitimately in play and naming them is genuinely needed for clarity, that naming must not leave the rest of the question as a single plug-in — pair it with a real decision the reader still has to make (which of several cases or results actually applies here, what sign or direction is correct, how two pieces combine) so recalling the formula is only the entry ticket, not the whole task.
+
+5. Watch for this independent of whether a formula gets restated: a question whose entire work reduces to one arithmetic operation on numbers already sitting in the stem (one multiplication, one substitution, one subtraction) tests whether the reader can compute, not whether the concept landed. Before finalizing a question, count the genuine decision points between reading the stem and arriving at the answer — which fact applies, which case this is, what the correct sign or setup is, how two results combine. Zero decision points, only arithmetic, means the question needs another real step built in, not just a change of numbers.
 
 The goal is questions that are worth the learner's time given the topic's difficulty. A well-crafted simple question beats a convoluted one every time.`;
 }

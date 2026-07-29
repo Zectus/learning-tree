@@ -1,0 +1,35 @@
+/* ═══════════════════════════════════════════════════════════
+   canvas.css — the base page (body) plus the pannable/zoomable
+   canvas surface itself (#canvas, #svg-layer, #world). Pairs
+   with viewport.js, which is what actually moves these elements
+   around; nothing here is node-, toolbar-, or modal-specific.
+   Depends on theme.css for its custom properties.
+═══════════════════════════════════════════════════════════ */
+
+/* ── canvas ── */
+#canvas {
+  position: fixed; /* not absolute — absolute anchors to the initial containing
+                       block, which follows body's box (and body's own vh/dvh
+                       sizing quirks); fixed anchors directly to the visual
+                       viewport itself, sidestepping that entirely. */
+  inset: 0;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+#canvas.dragging { cursor: grabbing; }
+
+#svg-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+#world {
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
