@@ -128,9 +128,18 @@ function parseTxtSession(raw) {
     return `\x00L:${id}\x00`;
   });
   const parts = cleaned.split(/^===\s*SECTION\s+(\d+)[:.]\s*(.+?)\s*===/im);
+  // Everything before the first "=== SECTION N: TITLE ===" match lands in
+  // parts[0]. The prompt now instructs Claude to never write anything
+  // there (see node-prompt.js) — but if it slips up anyway, that text
+  // shouldn't just vanish. Fold it into Section 1 as its own opening
+  // prose, same as if it had been written in the right place to begin
+  // with, rather than silently discarding it.
+  const leading = (parts[0] || '').trim();
   const sections = [];
   for (let i = 1; i < parts.length; i += 3)
     sections.push({ num: parts[i], title: parts[i+1].trim(), body: (parts[i+2] || '').trim() });
+  if (leading && sections.length)
+    sections[0].body = sections[0].body ? `${leading}\n\n${sections[0].body}` : leading;
   return { sections, questions, bonuses, tables, timelines };
 }
 /* [TABLE] rows are "cell | cell | cell" — first row is the header. */

@@ -6,20 +6,30 @@
    these values for a given node; this file holds no logic of
    its own, just the prompt text and where each value drops in.
 
-   PROMPT DESIGN RULE: this file writes lessons on every subject
-   there is, so no instruction in it should carry a worked example
-   from one specific topic (a named formula, a named theorem, a
-   named historical event). A topic-specific example anchors the
-   instruction to that one subject instead of the general shape of
-   the mistake being warned against, and reads as if that subject
-   is what's being taught. State each rule generally enough to fit
-   any topic — but not so generally that it goes vague: describe
-   the exact structural pattern (what the prose does, what the
-   question then does, why that sequence fails) in placeholder
-   terms, precise enough that the failure is unmistakable without
-   ever anchoring it to one domain's content.
+   PROMPT DESIGN RULES:
+   1. This file writes lessons on every subject there is, so no
+      instruction in it should carry a worked example from one
+      specific topic (a named formula, a named theorem, a named
+      historical event). A topic-specific example anchors the
+      instruction to that one subject instead of the general shape
+      of the mistake being warned against, and reads as if that
+      subject is what's being taught. State each rule generally
+      enough to fit any topic — but not so generally that it goes
+      vague: describe the exact structural pattern (what the prose
+      does, what the question then does, why that sequence fails)
+      in placeholder terms, precise enough that the failure is
+      unmistakable without ever anchoring it to one domain's content.
+   2. This template's inputs describe the *node* — its scope, its
+      place in the tree — never a specific reader's own progress
+      through it (which nodes they personally have or haven't
+      completed). Progress is per-user session state computed
+      elsewhere (see prompts.js); it must never be threaded into a
+      prompt input here. Context about the tree's structure
+      (prerequisites, what a node leads to) is fine, since that's
+      the same for every reader — the line is whether the fact
+      belongs to the tree or to one person's history with it.
 ═══════════════════════════════════════════════════════════ */
-function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, explanationLine, languageClause }) {
+function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
 
 Deliver this as a downloadable file named ${nodeId}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.
@@ -36,7 +46,7 @@ Some questions will hinge on a distinction that's easy to get backwards by accid
 
 If a question's content is naturally tied to material that only exists in one particular section (so it has to be placed there), check that some natural, non-contrived choice of values, example, or configuration in that context can actually produce the target answer before you commit to that placement. If it can't, look for freedom you haven't used yet — a relative sign or magnitude, a direction, which object or figure plays which role, which specific case or example you reach for — before forcing a strained setup.
 
-Most documents land somewhere between a handful and a dozen or so main questions, but let the material's density decide — a rich, densely-connected node may earn more, a short foundational one may only need two or three. When you write the final [KEY: ...] line at the end of the document (see below), it must contain only the entries you actually used, trimmed to your real question count and in the same order — not the full bank above.
+The number of main questions should be however many it actually takes to verify that every main idea in this document has landed — and landed as something the reader can use, not just something they can recognize or recite. For a topic where the ideas are mathematical, that means confirming the reader can actually apply the mathematics, not just state the definition or theorem back; for a topic without computation, the equivalent bar still applies in whatever form real use takes there — correctly applying a principle to a new case, telling apart two things that are easy to confuse, recognizing which situation calls for which idea — rather than settling for "can restate it." Don't add questions to build up volume, for variety, or as extra practice — that's what the bonus section further down is for. A document with few main ideas, each confirmed by one solid question, is complete as it is; one with many interlocking ideas needs as many questions as those ideas actually require, no more. When you write the final [KEY: ...] line at the end of the document (see below), it must contain only the entries you actually used, trimmed to your real question count and in the same order — not the full bank above.
 
 PLAN FIRST — ask yourself all of these:
 - What are every sub-object and sub-result that must be established to reach the central result of ${topic}? List them in dependency order — if this node's scope note (see CONTEXT below) names specific sub-results or siblings, that list is the authoritative boundary, not just the topic name.
@@ -59,6 +69,8 @@ This is a plain .txt file. Rules:
 
 Section headers:
 === SECTION N: TITLE ===
+
+The very first line of the document must be "=== SECTION 1: TITLE ===" — nothing precedes it. No title line, no opening sentence, no framing paragraph sits above the first section header; the parser only reads content from that marker onward, so anything placed before it is silently dropped and never reaches the reader. Whatever you'd otherwise be tempted to put before Section 1 — including the motivating hook described under DOCUMENT STRUCTURE below — belongs inside Section 1, as its own opening prose, not above it.
 
 Questions must use this format exactly:
 
@@ -95,12 +107,11 @@ ${treeTopicLine}
 ${explanationLine}
 ${prereqLine}
 ${leadsToLine}
-${contextLine}
 
 
 DOCUMENT STRUCTURE
 
-Open with one concrete problem or situation that demands ${topic} as a whole. This is the only motivating hook in the document — establish it once, here, and don't restate "why does this matter" again later. Do not open with a definition or "X is a...".
+Open with one concrete problem or situation that demands ${topic} as a whole. This is the only motivating hook in the document — establish it once, here, and don't restate "why does this matter" again later. Do not open with a definition or "X is a...". This hook is the opening prose of Section 1 itself (see the OUTPUT FORMAT rule above — nothing may appear before the first "=== SECTION 1: TITLE ===" line), not a separate introduction standing before any section.
 
 Then divide everything else into sections by content, not by teaching stage. Take the dependency-ordered list of sub-objects and sub-results from your planning step and use that as your section list — each section is one coherent piece of the subject, built out fully, with whatever mix of intuition, formal definition, and derivation that particular piece needs, before moving to the next.
 
