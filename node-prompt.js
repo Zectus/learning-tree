@@ -6,7 +6,7 @@
    these values for a given node; this file holds no logic of
    its own, just the prompt text and where each value drops in.
 ═══════════════════════════════════════════════════════════ */
-function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, languageClause }) {
+function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, explanationLine, languageClause }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
 
 Deliver this as a downloadable file named ${nodeId}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.
@@ -26,7 +26,7 @@ If a question's content is naturally tied to material that only exists in one pa
 Most documents land somewhere between a handful and a dozen or so main questions, but let the material's density decide — a rich, densely-connected node may earn more, a short foundational one may only need two or three. When you write the final [KEY: ...] line at the end of the document (see below), it must contain only the entries you actually used, trimmed to your real question count and in the same order — not the full bank above.
 
 PLAN FIRST — ask yourself all of these:
-- What are every sub-object and sub-result that must be established to reach the central result of ${topic}? List them in dependency order.
+- What are every sub-object and sub-result that must be established to reach the central result of ${topic}? List them in dependency order — if this node's scope note (see CONTEXT below) names specific sub-results or siblings, that list is the authoritative boundary, not just the topic name.
 - Where does the standard textbook presentation say "it can be shown" or silently assert something without justification? Those are the bugs you must fix.
 - Is every claim you make actually established, not just asserted? By the end of the document, could the reader work through a concrete instance of the central result themselves, using only what's been laid out here?
 - What single concrete problem makes the reader feel the friction that ${topic} resolves, before they know what the concept is called?
@@ -79,6 +79,7 @@ ${languageClause}
 
 CONTEXT
 ${treeTopicLine}
+${explanationLine}
 ${prereqLine}
 ${leadsToLine}
 ${contextLine}

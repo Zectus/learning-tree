@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Progress Tree</title>
 <link rel="stylesheet" href="tree.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -10,6 +10,10 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
+<div id="rotate-overlay">
+  <div id="rotate-overlay-icon">⟳</div>
+  <div id="rotate-overlay-text">Rotate your device back to portrait to use this app</div>
+</div>
 <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
 
 <div id="canvas">
@@ -89,27 +93,43 @@
     <div class="modal-header-bar">
       <div>
         <div class="modal-title">Design a new tree</div>
-        <div class="modal-meta">fill in the fields → copy the prompt → paste into Claude → upload the .json it gives you</div>
+        <div class="modal-meta" id="tree-modal-meta">fill in the fields → copy the prompt → paste into Claude → upload the .json it gives you</div>
       </div>
       <button id="tree-modal-close" class="modal-close-btn" title="Close">✕</button>
     </div>
     <div class="modal-body">
-      <div class="field-row">
-        <label class="field-label" for="tree-topic-input">Topic</label>
-        <input type="text" id="tree-topic-input" class="field-input" placeholder="e.g. Vector Calculus">
+      <div class="tree-mode-tabs">
+        <button class="tree-mode-tab active" id="tree-mode-tab-topic" data-mode="topic">From a topic</button>
+        <button class="tree-mode-tab" id="tree-mode-tab-file" data-mode="file">From a file</button>
       </div>
-      <div class="field-row">
-        <label class="field-label" for="tree-start-input">Starting point (optional)</label>
-        <input type="text" id="tree-start-input" class="field-input" placeholder="e.g. end of Calculus II">
+
+      <div id="tree-mode-topic-panel">
+        <div class="field-row">
+          <label class="field-label" for="tree-topic-input">Topic</label>
+          <input type="text" id="tree-topic-input" class="field-input" placeholder="e.g. Vector Calculus">
+        </div>
+        <div class="field-row">
+          <label class="field-label" for="tree-start-input">Starting point (optional)</label>
+          <input type="text" id="tree-start-input" class="field-input" placeholder="e.g. end of Calculus II">
+        </div>
+        <div class="field-row">
+          <label class="field-label" for="tree-language-input">Language (optional)</label>
+          <input type="text" id="tree-language-input" class="field-input" placeholder="leave blank for English">
+        </div>
+        <div class="prompt-wrap">
+          <textarea id="tree-prompt-box" class="prompt-ta" readonly spellcheck="false"></textarea>
+          <button id="btn-copy-tree-prompt" class="copy-btn">copy</button>
+        </div>
       </div>
-      <div class="field-row">
-        <label class="field-label" for="tree-language-input">Language (optional)</label>
-        <input type="text" id="tree-language-input" class="field-input" placeholder="leave blank for English">
+
+      <div id="tree-mode-file-panel" class="hidden">
+        <p class="tree-mode-file-help">For a paper, a textbook excerpt, lecture notes, a photo of a problem you're stuck on — anything you want to fully understand but feel like you're missing a lot of what leads up to it. Copy this prompt, paste it into a new Claude conversation, and attach the file(s) there alongside it. Nothing to fill in here — Claude reads the file(s) itself to work out the topic, a sensible starting point, and the language.</p>
+        <div class="prompt-wrap">
+          <textarea id="tree-file-prompt-box" class="prompt-ta" readonly spellcheck="false"></textarea>
+          <button id="btn-copy-tree-file-prompt" class="copy-btn">copy</button>
+        </div>
       </div>
-      <div class="prompt-wrap">
-        <textarea id="tree-prompt-box" class="prompt-ta" readonly spellcheck="false"></textarea>
-        <button id="btn-copy-tree-prompt" class="copy-btn">copy</button>
-      </div>
+
       <label class="upload-dropzone">
         📄 upload the resulting tree .json
         <input type="file" id="tree-json-input" accept=".json" style="display:none">
@@ -141,6 +161,10 @@
   </div>
 </div>
 
+<!-- Page-wide middle-click autoscroll (see autoscroll.js) — loaded first
+     since it's self-contained and doesn't depend on any of the app's own
+     state or DOM being ready beyond `document` itself. -->
+<script src="autoscroll.js"></script>
 <script src="node-prompt.js"></script>
 <script src="tree-prompt.js"></script>
 <script src="state.js"></script>

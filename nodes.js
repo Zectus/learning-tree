@@ -57,7 +57,32 @@ function buildEl(node) {
   delBtn.addEventListener('click', e => { e.stopPropagation(); deleteNode(node.id); });
 
   actions.append(linkBtn, optBtn, delTxtBtn, delBtn);
-  inner.append(badge, textEl, actions);
+
+  const explWrap = document.createElement('div');
+  explWrap.className = 'node-explanation-wrap';
+
+  const explLabel = document.createElement('div');
+  explLabel.className = 'node-explanation-label';
+  explLabel.textContent = 'explanation (private — sent to the lesson prompt, never shown to the learner)';
+
+  const explTa = document.createElement('textarea');
+  explTa.className = 'node-explanation-ta';
+  explTa.spellcheck = false;
+  explTa.readOnly = !state.editMode;
+  explTa.placeholder = 'Pin down exactly what this node covers and where its edges are…';
+  explTa.value = node.explanation || '';
+
+  explWrap.append(explLabel, explTa);
+
+  explTa.addEventListener('mousedown', e => e.stopPropagation());
+  explTa.addEventListener('click', e => e.stopPropagation());
+  explTa.addEventListener('input', () => { node.explanation = explTa.value; });
+  explTa.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Escape') explTa.blur();
+  });
+
+  inner.append(badge, textEl, actions, explWrap);
   el.append(inner);
 
   textEl.addEventListener('input', () => { node.label = textEl.textContent; });
@@ -234,7 +259,7 @@ function removeRedundantEdges() {
 ═══════════════════════════════════════════════════════════ */
 function doAddNode() {
   const id   = state.nextId++;
-  const node = { id, label:'', optional:false, done:false, depth:0, x:0, y:0, el:null };
+  const node = { id, label:'', explanation:'', optional:false, done:false, depth:0, x:0, y:0, el:null };
   state.nodes.set(id, node);
   buildEl(node);
   layout();

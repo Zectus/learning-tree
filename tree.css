@@ -93,12 +93,21 @@ body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  height: 100dvh; /* mobile browsers shrink this as their address bar shows/hides;
+                     100vh alone is sized for the address-bar-hidden case, which is
+                     taller than what's actually visible — that mismatch is what
+                     produces the native scrollbar/bounce you're seeing. dvh tracks
+                     the real, currently-visible viewport instead. Plain vh stays
+                     as a fallback for browsers that don't support dvh. */
   transition: background .15s ease, color .15s ease;
 }
 
 /* ── canvas ── */
 #canvas {
-  position: absolute;
+  position: fixed; /* not absolute — absolute anchors to the initial containing
+                       block, which follows body's box (and body's own vh/dvh
+                       sizing quirks); fixed anchors directly to the visual
+                       viewport itself, sidestepping that entirely. */
   inset: 0;
   cursor: grab;
   user-select: none;
@@ -219,9 +228,9 @@ body {
 
 /* ── optional tag ── */
 .node-tag {
-  display: inline-block;
-  margin-top: 5px;
-  font-size: 10px;
+  position: absolute;
+  top: 7px; right: 12px;
+  font-size: 9px;
   padding: 1px 6px;
   border-radius: 99px;
   border: 1px solid currentColor;
@@ -253,6 +262,62 @@ body {
   pointer-events: auto;
 }
 body:not(.edit-mode) .node-actions { display: none !important; }
+
+/* ── explanation (scope note) — same reveal behavior as .node-actions,
+   sitting just below it, edit mode only ── */
+.node-explanation-wrap {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s, max-height .14s ease, margin-top .14s ease;
+}
+.node:hover .node-explanation-wrap,
+.node.link-source .node-explanation-wrap,
+.node.actions-open .node-explanation-wrap {
+  opacity: 1;
+  max-height: 140px;
+  margin-top: 8px;
+  pointer-events: auto;
+}
+body:not(.edit-mode) .node-explanation-wrap { display: none !important; }
+.node-explanation-label {
+  font-size: 9.5px;
+  line-height: 1.4;
+  color: var(--text-m);
+  margin-bottom: 4px;
+}
+.node-explanation-ta {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 11px;
+  line-height: 1.45;
+  padding: 6px 8px;
+  outline: none;
+  transition: border-color .12s;
+  /* Scrollbar hidden (scroll still works via wheel/touch/drag-select —
+     see the canvas wheel handler in io.js, which lets wheel events over
+     this field through instead of treating them as canvas zoom) so a
+     thin field with overflowing text doesn't sprout a scrollbar track
+     that visually fights with the node's small footprint. */
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* old Edge/IE */
+}
+.node-explanation-ta::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.node-explanation-ta:focus { border-color: var(--avail-bdr); }
+.node.status-done .node-explanation-ta {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.25);
+  color: var(--done-text);
+}
+.node.status-done .node-explanation-ta::placeholder { color: rgba(255,255,255,.5); }
 
 /* Expanding on hover makes the node taller (see .node-actions above); lift
    it above sibling nodes while that's happening so the growth isn't
@@ -465,6 +530,7 @@ body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-b
   box-shadow: 0 24px 64px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.06);
   width: min(680px, 94vw);
   max-height: 86vh;
+  max-height: 86dvh; /* see the body rule above — same fix, same reason */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -855,35 +921,116 @@ body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-b
 .field-row { margin-bottom: 14px; }
 .field-row:last-of-type { margin-bottom: 0; }
 
+.hidden { display: none; }
+
+/* create-tree modal: "from a topic" vs "from a file" tabs */
+.tree-mode-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.tree-mode-tab {
+  flex: 1;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-m);
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+}
+.tree-mode-tab:hover { color: var(--text); }
+.tree-mode-tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04);
+}
+.tree-mode-file-help {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-m);
+  margin-bottom: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PORTRAIT LOCK
+   The web platform has no real "lock this page to portrait" outside a
+   fullscreen PWA context, so the standard substitute is this: block the
+   screen with an unmissable, unclosable overlay whenever a touch device
+   is held in landscape, and let the app itself only ever be usable in
+   portrait. (pointer: coarse) scopes this to actual touch devices, so a
+   wide desktop browser window never triggers it.
+═══════════════════════════════════════════════════════════ */
+#rotate-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  z-index: 999999;
+  background: var(--bg);
+  color: var(--text);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px;
+  text-align: center;
+  padding: 0 40px;
+}
+#rotate-overlay-icon {
+  font-size: 48px;
+  animation: rotate-overlay-spin 1.8s ease-in-out infinite;
+}
+#rotate-overlay-text {
+  font-size: 15px;
+  color: var(--text-m);
+  max-width: 260px;
+}
+@keyframes rotate-overlay-spin {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(-90deg); }
+}
+@media (pointer: coarse) and (orientation: landscape) {
+  #rotate-overlay { display: flex; }
+}
+
 /* ═══════════════════════════════════════════════════════════
    MOBILE  (≤700px — phones and small tablets in portrait)
    Panning/zooming the canvas already has its own touch handling
    (see io.js); everything below is layout/sizing only.
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 700px) {
-  /* Toolbar: 8+ buttons in a fixed centered row would overflow off both
-     edges of a phone screen. Turn it into a horizontally-scrollable
-     strip (a standard mobile pattern) instead of wrapping, which would
-     otherwise eat vertical space from the canvas and push the bottom
-     buttons around unpredictably as edit mode toggles #btn-add-node. */
+  /* Toolbar: wrap into two centered rows instead of a horizontal-scroll
+     strip — buttons you can't see the existence of past an edge are easy
+     to miss on a phone, and a strip also forces every button down to a
+     cramped size to fit. Wrapping keeps every button visible at once, at
+     a size worth tapping with a finger. Two rows is what a typical
+     button set actually settles into at phone widths; edit mode adding
+     #btn-add-node just adds a button to whichever row has room, it
+     doesn't break the layout. */
   #toolbar {
-    left: 0; right: 0;
-    transform: none;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    justify-content: flex-start;
-    padding: 0 14px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    top: max(14px, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(94vw, 420px);
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
   }
-  #toolbar::-webkit-scrollbar { display: none; }
-  .tbtn { flex-shrink: 0; padding: 9px 15px; }
+  .tbtn {
+    flex: 0 0 auto;
+    padding: 12px 18px;
+    font-size: 14.5px;
+    min-height: 44px; /* standard minimum comfortable touch target */
+  }
 
   /* Node action buttons get a real tap target once they're only reachable
      by tapping .node-more-btn instead of hovering. */
   .btn { padding: 7px 11px; font-size: 12px; }
   .node-actions { max-height: 130px; gap: 6px; }
+  .node-explanation-wrap { max-height: 180px; }
+  .node-explanation-ta { font-size: 13px; }
 
   /* Prevent iOS Safari's automatic zoom-in when focusing a text field
      with a computed font-size under 16px. */
@@ -898,15 +1045,30 @@ body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-b
      gestures on touch anyway. Go fullscreen instead — the `!important`s
      are there specifically to win over the inline left/top/width/height
      that openViewer()/the drag & resize handlers in viewer.js set; no JS
-     changes needed; those calls simply stop being visible here. */
+     changes needed; those calls simply stop being visible here.
+     height uses dvh (with % as a fallback) for the same reason as the
+     body rule above: on a `position: fixed` element, height:100% resolves
+     against the address-bar-hidden viewport size, which is taller than
+     what's actually visible when the bar IS showing — the viewer's own
+     bottom edge ends up cut off below the visible screen. dvh fixes it
+     the same way it fixes the body. */
   #sv-window {
     left: 0 !important; top: 0 !important;
-    width: 100% !important; height: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    height: 100dvh !important;
     border-radius: 0;
   }
-  #sv-header { cursor: default; }
+  #sv-header {
+    cursor: default;
+    padding-top: max(11px, env(safe-area-inset-top));
+  }
   #sv-resize { display: none; }
-  #sv-body { padding: 24px 18px 52px; }
+  #sv-body {
+    padding: 24px 18px calc(52px + env(safe-area-inset-bottom));
+    font-size: 16.5px;   /* desktop's 15.5px reads small at arm's length on a phone */
+    line-height: 1.75;
+  }
 
   /* Notes become a bottom sheet instead of a sidebar anchored to the
      window's right edge — there's no "right edge" worth anchoring to
@@ -915,6 +1077,8 @@ body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-b
     left: 0 !important; right: 0; top: auto !important; bottom: 0;
     width: 100% !important; max-width: 100%;
     max-height: 60vh;
+    max-height: 60dvh;
+    padding-bottom: env(safe-area-inset-bottom);
     border-radius: 14px 14px 0 0;
   }
   #sv-notes-resize { display: none; }

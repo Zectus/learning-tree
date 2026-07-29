@@ -39,8 +39,57 @@ const resetViewportForTreeLoad = (function () {
     applyTransform(true);
   }
 
+  // Mobile: fitting the WHOLE tree into view (like fitToContent below
+  // does for desktop) means the more columns a tree has, the smaller
+  // everything gets — on a wide tree a phone screen would end up showing
+  // illegibly tiny nodes just to fit every column's width at once.
+  // Instead: horizontally center on the leftmost column (depth 0, i.e.
+  // where you actually start), and pick ONE zoom level sized to whatever
+  // the TALLEST column anywhere in the tree needs — not just the
+  // leftmost one — so that panning right to reach a taller column later
+  // never requires a re-zoom; the scale already has room for it.
+  function fitMobileInitialView(margin) {
+    const byDepth = new Map();
+    state.nodes.forEach(d => {
+      if (!byDepth.has(d.depth)) byDepth.set(d.depth, []);
+      byDepth.get(d.depth).push(d);
+    });
+
+    let minDepth = Infinity, tallestH = 0;
+    byDepth.forEach((colNodes, depth) => {
+      let colMinY = Infinity, colMaxY = -Infinity;
+      colNodes.forEach(d => {
+        colMinY = Math.min(colMinY, d.y);
+        colMaxY = Math.max(colMaxY, d.y + nodeH(d.depth));
+      });
+      tallestH = Math.max(tallestH, colMaxY - colMinY);
+      if (depth < minDepth) minDepth = depth;
+    });
+
+    const leftCol = byDepth.get(minDepth);
+    let leftMinY = Infinity, leftMaxY = -Infinity;
+    leftCol.forEach(d => {
+      leftMinY = Math.min(leftMinY, d.y);
+      leftMaxY = Math.max(leftMaxY, d.y + nodeH(d.depth));
+    });
+    const leftColH = leftMaxY - leftMinY;
+    const leftColX = minDepth * COL_W; // layout() places every node's x at depth*COL_W
+    const leftColW = nodeW(minDepth);
+
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const scale = Math.min((vh - margin * 2) / tallestH, 1.0);
+
+    state.viewport = {
+      x: vw / 2 - (leftColX + leftColW / 2) * scale,
+      y: (vh - leftColH * scale) / 2 - leftMinY * scale,
+      scale
+    };
+    applyTransform(true);
+  }
+
   function fitToContent(margin = window.innerWidth < 700 ? 28 : 60) {
     if (state.nodes.size === 0) return;
+    if (window.innerWidth < 700) { fitMobileInitialView(margin); return; }
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     state.nodes.forEach(data => {
       const w = nodeW(data.depth);
@@ -117,8 +166,17 @@ canvas.addEventListener('pointercancel', e => {
   if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
 });
 
-/* ── zoom ── */
+/* ── zoom ──
+   Skip canvas zoom when the wheel event is over a scrollable text field
+   inside the canvas (currently just the node explanation textarea) —
+   otherwise scrolling that field's content is impossible to do with the
+   wheel, since the canvas's own zoom handler grabs every wheel event
+   over #canvas and preventDefault()s it before the field ever sees it.
+   Letting the event fall through here (no preventDefault, no return
+   early into zoom logic) hands it back to the browser's normal
+   textarea-scroll behavior. */
 canvas.addEventListener('wheel', e => {
+  if (e.target.closest('.node-explanation-ta')) return;
   e.preventDefault();
   const factor = e.deltaY < 0 ? 1.07 : 1/1.07;
   const ns = Math.min(10, Math.max(0.01, state.viewport.scale*factor));
@@ -226,6 +284,8 @@ function applyEditMode() {
   state.nodes.forEach(node => {
     const t = node.el?.querySelector('.node-text');
     if (t) t.contentEditable = on ? 'true' : 'false';
+    const expl = node.el?.querySelector('.node-explanation-ta');
+    if (expl) expl.readOnly = !on;
   });
   if (!on) {
     cancelLink();
@@ -286,7 +346,7 @@ function loadFromJSON(obj) {
   obj.nodes.forEach(n => {
     const numId = state.nextId++;
     idMap.set(String(n.id), numId);
-    const node = { id:numId, slug:String(n.id), label:n.label??n.text??'', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
+    const node = { id:numId, slug:String(n.id), label:n.label??n.text??'', explanation:typeof n.explanation==='string'?n.explanation.trim():'', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
     if (typeof n.content === 'string' && n.content.trim()) {
       node._sessionTxt = n.content;
       const key = extractAnswerKey(n.content);
@@ -324,6 +384,7 @@ function exportToJSON(includeContent) {
   const nodes=[];
   state.nodes.forEach((n,id)=>{
     const obj={id:idToStr.get(id), label:n.label};
+    if (n.explanation) obj.explanation=n.explanation;
     const reqs=prereqsOf(id).map(p=>idToStr.get(p)).filter(Boolean);
     if (reqs.length) obj.requires=reqs;
     if (n.optional) obj.optional=true;
@@ -562,11 +623,14 @@ function buildPrompt(id, language) {
   const leadsToLine = dependents.length ? `Material the reader hasn't seen yet will build on this one afterward: ${dependents.join(', ')}. Don't teach toward it or mention it by name here.` : '';
   const contextLine = doneNodes.length  ? `The reader has also separately already been through: ${doneNodes.join(', ')}.` : '';
   const treeTopicLine = state.topic ? `This node belongs to a larger tree on ${state.topic}.` : '';
+  const explanationLine = node.explanation
+    ? `This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): ${node.explanation} Treat this as the precise boundary of what belongs in this document — the topic name above is just the label; this defines which specific sub-results, cases, or pieces to cover, and which adjacent ones belong to a different node and should stay out even if a fuller treatment would naturally reach for them.`
+    : '';
   const plainKey    = answers.map((a,i)=>`${i+1}${a}`).join(' ');
   const lang = language || 'English';
   const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", the option markers "(A)" through "(E)", the final "[KEY: ...]" line, "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", and "[BONUS N]" / "[ANSWER: X]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does.\n`;
 
-  return renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, languageClause });
+  return renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, contextLine, treeTopicLine, explanationLine, languageClause });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -584,6 +648,15 @@ function buildTreePrompt(topic, startPoint, language) {
   const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
 
   return renderTreePrompt({ topic, fileSlug, startClause, languageClause });
+}
+
+// No inputs to compute — topic/starting point/language are all derived
+// by Claude itself from the attached file(s), not by this app — but kept
+// as a real function (rather than calling renderTreePromptFromFile()
+// directly from io.js's wiring below) to match buildTreePrompt's role as
+// the one place that sits between the modal and the template.
+function buildTreePromptFromFile() {
+  return renderTreePromptFromFile();
 }
 
 /* ── modal state ── */
@@ -637,7 +710,26 @@ function updateTreePromptPreview() {
     : 'Fill in a topic above to generate the prompt.';
 }
 
+const TREE_MODAL_META = {
+  topic: 'fill in the fields → copy the prompt → paste into Claude → upload the .json it gives you',
+  file:  'copy the prompt → paste into Claude, attaching the file(s) you want to understand → upload the .json it gives you',
+};
+
+function setTreeMode(mode) {
+  document.getElementById('tree-mode-tab-topic').classList.toggle('active', mode === 'topic');
+  document.getElementById('tree-mode-tab-file').classList.toggle('active', mode === 'file');
+  document.getElementById('tree-mode-topic-panel').classList.toggle('hidden', mode !== 'topic');
+  document.getElementById('tree-mode-file-panel').classList.toggle('hidden', mode !== 'file');
+  document.getElementById('tree-modal-meta').textContent = TREE_MODAL_META[mode];
+  if (mode === 'file' && !document.getElementById('tree-file-prompt-box').value) {
+    document.getElementById('tree-file-prompt-box').value = buildTreePromptFromFile();
+  }
+}
+document.getElementById('tree-mode-tab-topic').addEventListener('click', () => setTreeMode('topic'));
+document.getElementById('tree-mode-tab-file').addEventListener('click', () => setTreeMode('file'));
+
 function openTreeModal() {
+  setTreeMode('topic');
   updateTreePromptPreview();
   document.getElementById('tree-modal-backdrop').classList.add('open');
   document.getElementById('tree-topic-input').focus();
@@ -711,6 +803,7 @@ function wireCopyButton(btnId, taId) {
 }
 wireCopyButton('btn-copy-prompt', 'prompt-box');
 wireCopyButton('btn-copy-tree-prompt', 'tree-prompt-box');
+wireCopyButton('btn-copy-tree-file-prompt', 'tree-file-prompt-box');
 
 /* ═══════════════════════════════════════════════════════════
    INIT

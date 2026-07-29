@@ -127,10 +127,10 @@ function parseTxtSession(raw) {
     timelines.set(id, parseTimelineBody(body));
     return `\x00L:${id}\x00`;
   });
-  const parts = cleaned.split(/^===\s*SECTION\s+\d+[:.]\s*(.+?)\s*===/im);
+  const parts = cleaned.split(/^===\s*SECTION\s+(\d+)[:.]\s*(.+?)\s*===/im);
   const sections = [];
-  for (let i = 1; i < parts.length; i += 2)
-    sections.push({ title: parts[i].trim(), body: (parts[i+1] || '').trim() });
+  for (let i = 1; i < parts.length; i += 3)
+    sections.push({ num: parts[i], title: parts[i+1].trim(), body: (parts[i+2] || '').trim() });
   return { sections, questions, bonuses, tables, timelines };
 }
 /* [TABLE] rows are "cell | cell | cell" — first row is the header. */
@@ -212,7 +212,7 @@ function renderSession(parsed) {
       else if (type === 'T') { const t = parsed.tables.get(id);    if (t) inner += renderTable(t); }
       else if (type === 'L') { const l = parsed.timelines.get(id); if (l) inner += renderTimeline(l); }
     }
-    return `<div class="sv-section"><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
+    return `<div class="sv-section"><div class="sv-section-label">Section ${sec.num}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
   }).join('');
 }
 function buildBonusSection(bonuses) {
