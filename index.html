@@ -14,6 +14,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<!-- Graph tool (tools.js): Plotly for rendering, math.js for evaluating the
+     expressions a [GRAPH] block's traces are written in. Both deferred,
+     same as KaTeX above — neither is touched until a session with a graph
+     in it is actually opened, well after page load. -->
+<script defer src="https://cdn.plot.ly/plotly-3.6.0.min.js" charset="utf-8"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0"></script>
 </head>
 <body>
 <div id="rotate-overlay">
@@ -115,8 +121,8 @@
           <input type="text" id="tree-topic-input" class="field-input" placeholder="e.g. Vector Calculus">
         </div>
         <div class="field-row">
-          <label class="field-label" for="tree-start-input">Starting point (optional)</label>
-          <input type="text" id="tree-start-input" class="field-input" placeholder="e.g. end of Calculus II">
+          <label class="field-label" for="tree-start-input">Rough background (optional)</label>
+          <input type="text" id="tree-start-input" class="field-input" placeholder="e.g. finished Calculus II a while ago — Claude will also ask a few quick questions to confirm">
         </div>
         <div class="field-row">
           <label class="field-label" for="tree-language-input">Language (optional)</label>
@@ -129,7 +135,7 @@
       </div>
 
       <div id="tree-mode-file-panel" class="hidden">
-        <p class="tree-mode-file-help">For a paper, a textbook excerpt, lecture notes, a photo of a problem you're stuck on — anything you want to fully understand but feel like you're missing a lot of what leads up to it. Copy this prompt, paste it into a new Claude conversation, and attach the file(s) there alongside it. Nothing to fill in here — Claude reads the file(s) itself to work out the topic, a sensible starting point, and the language.</p>
+        <p class="tree-mode-file-help">For a paper, a textbook excerpt, lecture notes, a photo of a problem you're stuck on — anything you want to fully understand but feel like you're missing a lot of what leads up to it. Copy this prompt, paste it into a new Claude conversation, and attach the file(s) there alongside it. Nothing to fill in here — Claude reads the file(s) itself to work out the topic and the language, then asks you a few quick questions to confirm where the tree should actually start before building it.</p>
         <div class="prompt-wrap">
           <textarea id="tree-file-prompt-box" class="prompt-ta" readonly spellcheck="false"></textarea>
           <button id="btn-copy-tree-file-prompt" class="copy-btn">copy</button>
@@ -181,6 +187,7 @@
 <script src="js/persistence/progress.js"></script>
 <script src="js/persistence/io.js"></script>
 <script src="js/learn/prompts.js"></script>
+<script src="js/learn/tools.js"></script>
 <script src="js/learn/viewer.js"></script>
 </body>
 </html>
