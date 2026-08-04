@@ -1,7 +1,11 @@
 /* ═══════════════════════════════════════════════════════════
    viewer.js — session viewer: .txt parsing, question UI,
    answer-click handling, score tracking, drag/resize.
-   Depends on state.js, layout.js, io.js.
+   Depends on state.js, layout.js, io.js, and tools.js (svEsc,
+   renderMath, collapseMathNewlines, and the BLOCK_TOOLS registry
+   that TABLE/TIMELINE/GRAPH blocks are parsed and rendered
+   through — see tools.js's header for what lives there instead
+   of here, and why).
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
@@ -85,28 +89,13 @@ function extractAnswerKey(raw) {
 }
 function stripKeyLine(raw) { return raw.replace(/\[KEY:[^\]]+\]/gi, ''); }
 
-/* Collapses newlines inside \[...\] and \(...\) math spans into a single
-   space, before any paragraph/line splitting happens. renderProse() (see
-   below) splits prose into paragraphs on blank lines and turns every
-   remaining newline into <br> — either of those slices a multi-line
-   display equation into separate DOM text nodes, and KaTeX's auto-render
-   only matches delimiters within a single text node, so a display block
-   written across multiple lines (the normal way to write anything but
-   the shortest expression) would render as broken, unrendered raw LaTeX
-   instead of typeset math. Collapsing here, once, centrally, before
-   parseTxtSession does any splitting, means every block downstream —
-   prose, questions, bonuses, table cells, timeline entries — is already
-   a single line by the time paragraph/line splitting ever sees it. */
-function collapseMathNewlines(raw) {
-  return raw
-    .replace(/\\\[[\s\S]*?\\\]/g, m => m.replace(/\s*\n\s*/g, ' '))
-    .replace(/\\\([\s\S]*?\\\)/g, m => m.replace(/\s*\n\s*/g, ' '));
-}
-
 /* ── Parser ────── */
 function parseTxtSession(raw) {
   raw = collapseMathNewlines(raw);
-  const questions = new Map(), bonuses = new Map(), tables = new Map(), timelines = new Map();
+  const questions = new Map(), bonuses = new Map();
+  const blockMaps = {};
+  BLOCK_TOOLS.forEach(t => { blockMaps[t.key] = new Map(); });
+
   let cleaned = raw.replace(/\[QUESTION\s+(\d+)\]([\s\S]*?)\[\/QUESTION\]/gi, (_, n, body) => {
     questions.set(parseInt(n), parseQuestionBody(parseInt(n), body));
     return `\x00Q:${n}\x00`;
@@ -115,18 +104,22 @@ function parseTxtSession(raw) {
     bonuses.set(parseInt(n), parseBonusBody(parseInt(n), body));
     return '';  // bonus blocks removed from main flow
   });
-  let tableId = 0;
-  cleaned = cleaned.replace(/\[TABLE\]([\s\S]*?)\[\/TABLE\]/gi, (_, body) => {
-    const id = ++tableId;
-    tables.set(id, parseTableBody(body));
-    return `\x00T:${id}\x00`;
+
+  // Every other block type — tables, timelines, graphs, and anything
+  // registered in tools.js later — follows the identical extract/replace/
+  // store pattern, so it's driven from the BLOCK_TOOLS registry instead of
+  // one hardcoded regex-replace per type here. Adding a future tool means
+  // adding one entry to BLOCK_TOOLS in tools.js; nothing here changes.
+  BLOCK_TOOLS.forEach(tool => {
+    let id = 0;
+    const re = new RegExp(`\\[${tool.tag}\\]([\\s\\S]*?)\\[/${tool.tag}\\]`, 'gi');
+    cleaned = cleaned.replace(re, (_, body) => {
+      id++;
+      blockMaps[tool.key].set(id, tool.parse(body));
+      return `\x00${tool.code}:${id}\x00`;
+    });
   });
-  let timelineId = 0;
-  cleaned = cleaned.replace(/\[TIMELINE\]([\s\S]*?)\[\/TIMELINE\]/gi, (_, body) => {
-    const id = ++timelineId;
-    timelines.set(id, parseTimelineBody(body));
-    return `\x00L:${id}\x00`;
-  });
+
   const parts = cleaned.split(/^===\s*SECTION\s+(\d+)[:.]\s*(.+?)\s*===/im);
   // Everything before the first "=== SECTION N: TITLE ===" match lands in
   // parts[0]. The prompt now instructs Claude to never write anything
@@ -140,22 +133,7 @@ function parseTxtSession(raw) {
     sections.push({ num: parts[i], title: parts[i+1].trim(), body: (parts[i+2] || '').trim() });
   if (leading && sections.length)
     sections[0].body = sections[0].body ? `${leading}\n\n${sections[0].body}` : leading;
-  return { sections, questions, bonuses, tables, timelines };
-}
-/* [TABLE] rows are "cell | cell | cell" — first row is the header. */
-function parseTableBody(raw) {
-  const rows = raw.split('\n').map(l => l.trim()).filter(Boolean)
-    .map(line => line.split('|').map(cell => cell.trim()));
-  const [header, ...body] = rows;
-  return { header: header || [], rows: body };
-}
-/* [TIMELINE] rows are "marker | description" — marker is often a date/year
-   but can be any short label (a stage name, "Step 1", etc). */
-function parseTimelineBody(raw) {
-  return raw.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
-    const i = line.indexOf('|');
-    return i === -1 ? { marker: '', text: line } : { marker: line.slice(0, i).trim(), text: line.slice(i + 1).trim() };
-  });
+  return { sections, questions, bonuses, ...blockMaps };
 }
 function parseQuestionBody(n, raw) {
   const lines = raw.split('\n'), options = {}, textLines = [];
@@ -180,7 +158,6 @@ function parseBonusBody(n, raw) {
 }
 
 /* ── Renderer ────── */
-function svEsc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function renderProse(text) {
   return text.split(/\n{2,}/).map(c=>c.trim()).filter(Boolean)
     .map(c=>`<p>${svEsc(c).replace(/\n/g,'<br>')}</p>`).join('');
@@ -197,29 +174,27 @@ function renderQuestionCard(q) {
     <div class="q-feedback" id="qfb-${q.n}"></div>
   </div>`;
 }
-function renderTable(t) {
-  const head = t.header.length ? `<thead><tr>${t.header.map(h => `<th>${svEsc(h)}</th>`).join('')}</tr></thead>` : '';
-  const body = t.rows.map(r => `<tr>${r.map(c => `<td>${svEsc(c)}</td>`).join('')}</tr>`).join('');
-  return `<div class="sv-table-wrap"><table class="sv-table">${head}<tbody>${body}</tbody></table></div>`;
-}
-function renderTimeline(items) {
-  const rows = items.map(it => `<div class="sv-tl-item">
-    <div class="sv-tl-dot"></div>
-    <div class="sv-tl-content"><div class="sv-tl-marker">${svEsc(it.marker)}</div><div class="sv-tl-text">${svEsc(it.text)}</div></div>
-  </div>`).join('');
-  return `<div class="sv-timeline">${rows}</div>`;
-}
+// One token regex covering every registered block type's placeholder code
+// plus 'Q' for questions, built once from BLOCK_TOOLS (tools.js) rather
+// than hardcoded — a future tool's code just needs to exist in the
+// registry, not be added here by hand.
+const SV_TOKEN_RE   = new RegExp(`\\x00(Q|${BLOCK_TOOLS.map(t => t.code).join('|')}):(\\d+)\\x00`);
+const SV_TOOLS_BY_CODE = Object.fromEntries(BLOCK_TOOLS.map(t => [t.code, t]));
 function renderSession(parsed) {
   return parsed.sections.map(sec => {
-    const parts = sec.body.split(/\x00(Q|T|L):(\d+)\x00/);
+    const parts = sec.body.split(SV_TOKEN_RE);
     let inner = '';
     for (let i = 0; i < parts.length; i += 3) {
       const plain = parts[i];
       if (plain && plain.trim()) inner += `<div class="sv-prose">${renderProse(plain.trim())}</div>`;
       const type = parts[i+1], id = parseInt(parts[i+2]);
-      if      (type === 'Q') { const q = parsed.questions.get(id); if (q) inner += renderQuestionCard(q); }
-      else if (type === 'T') { const t = parsed.tables.get(id);    if (t) inner += renderTable(t); }
-      else if (type === 'L') { const l = parsed.timelines.get(id); if (l) inner += renderTimeline(l); }
+      if (type === 'Q') {
+        const q = parsed.questions.get(id); if (q) inner += renderQuestionCard(q);
+      } else if (type && SV_TOOLS_BY_CODE[type]) {
+        const tool = SV_TOOLS_BY_CODE[type];
+        const item = parsed[tool.key].get(id);
+        if (item) inner += tool.render(item, id);
+      }
     }
     return `<div class="sv-section"><div class="sv-section-label">Section ${sec.num}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
   }).join('');
@@ -316,7 +291,16 @@ function openViewer(txtContent, nodeId) {
   parsed.bonuses.forEach((b, n) => { if (b.answer) viewer.bonusKeys.set(n, b.answer); });
 
   body.innerHTML = renderSession(parsed) + buildBonusSection(parsed.bonuses);
-  if (window.renderMathInElement) renderMathInElement(body, { delimiters: [{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}], throwOnError: false });
+  renderMath(body);
+
+  // Any tool that needs to attach a live widget after its markup is
+  // actually in the DOM (Plotly needs a real element to measure and draw
+  // into — same reason renderMath above and the window-centering below
+  // both wait for this point) gets its mount step run here.
+  BLOCK_TOOLS.forEach(tool => {
+    if (!tool.mount) return;
+    parsed[tool.key].forEach((item, id) => tool.mount(item, id));
+  });
 
   body.querySelectorAll('.q-opt[data-qn]').forEach(btn => btn.addEventListener('click', () => handleOptionClick(btn)));
   body.querySelectorAll('.q-opt[data-bn]').forEach(btn => btn.addEventListener('click', () => handleBonusClick(btn)));

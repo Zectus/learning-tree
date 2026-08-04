@@ -76,10 +76,21 @@ DON'T HAND-WRING OVER TRANSITIVE REDUNDANCY
 
 If C requires B and B already requires A, you don't need to also list A directly under C just to be thorough — the tool detects edges that are already implied by another path and removes them automatically. Get the real, direct dependency right for each node; don't burn effort manually tracing every possible indirect path.
 
+FIND THE REAL STARTING POINT BY ASKING, NOT GUESSING
+
+A free-text description of what someone already knows — even a good-faith one — is a genuinely unreliable way to pin down where a tree should start. People don't reliably know their own gaps: "I know linear algebra" can mean anything from a full course to a half-remembered term, and the boundary that actually matters — the first thing they'd genuinely struggle with — is usually invisible to the person standing on one side of it. If a rough starting point was given to you above, treat it only as a hint for which range to calibrate around, not as settled fact.
+
+Before designing anything, run a short calibration with the person. Pick a handful of concrete checkpoint concepts spread across the plausible range for ${topic} — from clearly foundational to clearly advanced for what this tree is about to cover — and for each one, ask something that tests it directly rather than asking them to self-rate. "Would you know how to [a specific, concrete task]?" or "Have you worked with [a specific named technique] before?" gets a far more honest answer than "are you comfortable with X?" — self-rated comfort with a named topic is exactly the kind of question people are worst at answering accurately about themselves, especially for gaps they don't know they have. Keep it brief: a handful of well-chosen checkpoints that bisect the plausible range, not an exhaustive quiz that exhausts the person's patience before the tree even exists.
+
+If you have a way to present these as selectable options for the person to choose from, use it. If you don't have that capability in this conversation, just ask the questions plainly, as ordinary conversational text, and wait for a reply before doing anything else.
+
+Once you have real answers, use them — not a guess, not the free-text hint alone — to fix the actual starting point. Then continue straight into designing and outputting the tree in this same conversation. Don't ask the person to re-paste anything or treat this as a separate task; the calibration is step one of this same job, not a prerequisite conversation that ends before the real one begins.
+
 PLAN FIRST
 
 The output here is short — a few dozen lines of JSON, nowhere near the length of an actual lesson. That means almost all of your effort should go into working out the structure, not into writing the file. Don't start typing nodes as you think of them. Before you write a single line of JSON:
 
+- Run the calibration in FIND THE REAL STARTING POINT above and get the person's answers. Nothing else on this list can be done honestly until you know where the tree actually needs to start.
 - List every concept, law, definition, or technique a complete treatment of the subject would need, in roughly the order someone would need to learn them. This is your candidate node list, built before you've committed to any ids or edges.
 - Go down that list and run the granularity question on each candidate: what does it teach that its neighbors don't? Merge anything that fails that test, split anything that's secretly two ideas bundled together.
 - Run each candidate through SIZE EACH NODE TO A REAL DOCUMENT too: does it honestly have five to eight sections' worth of distinct content, or would writing it in full mean padding out one thin result? Broaden anything too thin into its natural sibling family before moving on, and draft the explanation that will pin down the broadened scope.
@@ -115,7 +126,7 @@ function renderTreePromptFromFile() {
 Read every attached file in full before doing anything else. From them, you need to work out three things yourself — none of it is given to you here:
 
 - THE TOPIC. Not the broad field the material happens to sit in, but the actual, specific thing being taught or asked — the concept, result, or problem the file is built around. If several files are attached together, treat them as one body of material and find the topic that ties them together (or, if they're genuinely unrelated, go with whichever is clearly the main subject and treat the rest as supporting context).
-- THE STARTING POINT. Look at what the file assumes without explaining — notation used without defining it, results cited without proving them, techniques applied without introducing them first. That's the level the tree should start from. Don't build from absolute scratch, and don't guess at a generic "intro" level; infer it from what the material itself is already taking for granted.
+- THE STARTING POINT. Look at what the file assumes without explaining — notation used without defining it, results cited without proving them, techniques applied without introducing them first. That's a first hypothesis for the level the tree should start from — don't build from absolute scratch, and don't guess at a generic "intro" level; infer it from what the material itself is already taking for granted. But treat it as exactly that, a hypothesis: what a file assumes its reader knows and what the actual person attaching it here really knows are two different things, and only one of them is who the tree is for. See FIND THE REAL STARTING POINT BY ASKING, NOT GUESSING below for how to confirm it with them before treating it as settled.
 - THE LANGUAGE. Match whatever language the attached file(s) are written in. If they're in more than one, follow whichever the core material is in.
 
 Deliver this as a downloadable file named after a short lowercase snake_case slug you derive from the topic you identify — e.g. subject_name-tree.json — not as JSON pasted into the chat as text. Do all reading, planning, and double-checking in your thinking; your visible output should contain nothing but the file itself, no preamble, no summary, no commentary before or after it.
@@ -189,11 +200,21 @@ DON'T HAND-WRING OVER TRANSITIVE REDUNDANCY
 
 If C requires B and B already requires A, you don't need to also list A directly under C just to be thorough — the tool detects edges that are already implied by another path and removes them automatically. Get the real, direct dependency right for each node; don't burn effort manually tracing every possible indirect path.
 
+FIND THE REAL STARTING POINT BY ASKING, NOT GUESSING
+
+What the file assumes its reader already knows is a reasonable first hypothesis, but it's still only a hypothesis about the person actually attached to this conversation, not a confirmed fact about them — someone might attach a paper that assumes real fluency they don't have, or undersell what they already know by attaching something introductory. Don't skip straight from "here's what the file assumes" to designing the tree.
+
+Before designing anything, run a short calibration with the person. From what the file assumes and what it's actually teaching, pick a handful of concrete checkpoint concepts spread across the plausible range — from clearly foundational to clearly advanced for what this tree is about to cover — and for each one, ask something that tests it directly rather than asking them to self-rate. "Would you know how to [a specific, concrete task]?" or "Have you worked with [a specific named technique] before?" gets a far more honest answer than "are you comfortable with X?" — self-rated comfort with a named topic is exactly the kind of question people are worst at answering accurately about themselves, especially for gaps they don't know they have. Keep it brief: a handful of well-chosen checkpoints that bisect the plausible range, not an exhaustive quiz that exhausts the person's patience before the tree even exists.
+
+If you have a way to present these as selectable options for the person to choose from, use it. If you don't have that capability in this conversation, just ask the questions plainly, as ordinary conversational text, and wait for a reply before doing anything else.
+
+Once you have real answers, use them — not the file-based hypothesis alone — to fix the actual starting point. Then continue straight into designing and outputting the tree in this same conversation. Don't ask the person to re-attach the file or treat this as a separate task; the calibration is step one of this same job, not a prerequisite conversation that ends before the real one begins.
+
 PLAN FIRST
 
 The output here is short — a few dozen lines of JSON, nowhere near the length of an actual lesson. That means almost all of your effort should go into reading the file and working out the structure, not into writing the file. Don't start typing nodes as you think of them. Before you write a single line of JSON:
 
-- Read the attached file(s) fully and settle THE TOPIC, THE STARTING POINT, and THE LANGUAGE from above. These decide everything that follows, so get them right before anything else.
+- Read the attached file(s) fully and settle THE TOPIC and THE LANGUAGE from above. For THE STARTING POINT, run the calibration in FIND THE REAL STARTING POINT above and get the person's answers — don't settle it from the file-based hypothesis alone. These three decide everything that follows, so get them right before anything else.
 - List every concept, law, definition, or technique someone would need to go from that starting point to fully understanding the file's actual content, in roughly the order they'd need to learn them. This is your candidate node list, built before you've committed to any ids or edges.
 - Go down that list and run the granularity question on each candidate: what does it teach that its neighbors don't? Merge anything that fails that test, split anything that's secretly two ideas bundled together.
 - Run each candidate through SIZE EACH NODE TO A REAL DOCUMENT too: does it honestly have five to eight sections' worth of distinct content, or would writing it in full mean padding out one thin result? Broaden anything too thin into its natural sibling family before moving on, and draft the explanation that will pin down the broadened scope.
