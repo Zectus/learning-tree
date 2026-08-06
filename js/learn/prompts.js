@@ -73,15 +73,12 @@ function buildPrompt(id, language) {
    whole new prerequisite tree. The actual prompt text lives
    in tree-prompt.js, via renderTreePrompt().
 ═══════════════════════════════════════════════════════════ */
-function buildTreePrompt(topic, startPoint, language) {
+function buildTreePrompt(topic, language) {
   const fileSlug = slugify(topic);
-  const startClause = startPoint
-    ? `\n\nThe person gave this rough description of their background, as a starting hint for calibration: "${startPoint}". This is not a settled boundary — see FIND THE REAL STARTING POINT BY ASKING, NOT GUESSING below for what to do with it.`
-    : '';
   const lang = language || 'English';
   const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
 
-  return renderTreePrompt({ topic, fileSlug, startClause, languageClause });
+  return renderTreePrompt({ topic, fileSlug, languageClause });
 }
 
 // No inputs to compute — topic/starting point/language are all derived
@@ -137,10 +134,9 @@ document.getElementById('modal-backdrop').addEventListener('click', e => {
 /* ── create-tree modal ── */
 function updateTreePromptPreview() {
   const topic = document.getElementById('tree-topic-input').value.trim();
-  const startPoint = document.getElementById('tree-start-input').value.trim();
   const language = document.getElementById('tree-language-input').value.trim();
   document.getElementById('tree-prompt-box').value = topic
-    ? buildTreePrompt(topic, startPoint, language)
+    ? buildTreePrompt(topic, language)
     : 'Fill in a topic above to generate the prompt.';
 }
 
@@ -179,7 +175,6 @@ document.getElementById('tree-modal-backdrop').addEventListener('click', e => {
   if (e.target === document.getElementById('tree-modal-backdrop')) closeTreeModal();
 });
 document.getElementById('tree-topic-input').addEventListener('input', updateTreePromptPreview);
-document.getElementById('tree-start-input').addEventListener('input', updateTreePromptPreview);
 document.getElementById('tree-language-input').addEventListener('input', updateTreePromptPreview);
 
 document.getElementById('tree-json-input').addEventListener('change', e => {
