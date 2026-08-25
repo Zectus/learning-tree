@@ -6,12 +6,14 @@
    (viewport.js, toolbar.js, progress.js, prompts.js) and this
    file now does exactly what its name says — reads and writes
    the tree's JSON.
-   Depends on state.js, layout.js, nodes.js (buildEl,
+   Depends on state.js, layout.js (buildEl,
    removeRedundantEdges), viewport.js (resetViewportForTreeLoad),
    progress.js (autoRestoreProgress), and viewer.js
    (extractAnswerKey — only called once a user actually loads a
    file, by which point every script has already finished
    loading, so the fact viewer.js loads after this file is fine).
+   library.js (the local "My Trees" save/load feature) depends on
+   buildTreeJSON and loadFromJSON below, and loads after this file.
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
@@ -44,6 +46,7 @@ function clearMap() {
   state.linkSource = null;
   state.language = '';
   state.topic = '';
+  state.libraryId = null; // any fresh load starts unlinked; openLibraryEntry() (library.js) re-links it right after, if that's where the load came from
 }
 
 /* ── slug helper: used for prompt filenames and round-tripping JSON ids ── */
@@ -88,8 +91,13 @@ function loadFromJSON(obj) {
   autoRestoreProgress();
 }
 
-function exportToJSON(includeContent) {
-  if (!state.nodes.size) return;
+/* Builds the exportable JSON shape from the live state.nodes/state.edges —
+   pulled out of exportToJSON (below) so library.js's local "save" can
+   produce the exact same shape without duplicating this id-mapping logic.
+   Everything downstream of this (blob+download vs. localStorage) is the
+   only thing that actually differs between the two callers. */
+function buildTreeJSON(includeContent) {
+  if (!state.nodes.size) return null;
   const idToStr = new Map();
   const used = new Set();
   state.nodes.forEach((n,id)=>{
@@ -113,6 +121,12 @@ function exportToJSON(includeContent) {
   if (state.topic) out.topic = state.topic;
   if (state.language) out.language = state.language;
   out.nodes = nodes;
+  return out;
+}
+
+function exportToJSON(includeContent) {
+  const out = buildTreeJSON(includeContent);
+  if (!out) return;
   const json=JSON.stringify(out,null,2);
   const blob=new Blob([json],{type:'application/json'});
   const url=URL.createObjectURL(blob);
