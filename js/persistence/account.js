@@ -7,17 +7,25 @@
    and cloud.js calls on every change, including once at load
    with whatever session was already persisted.
 
-   USERNAME: collected only at sign-up (sign-in still only needs
-   email + password — the username is a display identity, not a
-   login credential). Since claiming it can fail (already taken)
-   only *after* the Firebase account itself has been created —
-   there's no atomic "create account + reserve name" operation
-   available client-side — a failed claim rolls the just-created
-   account back via cloud.deleteCurrentUser() rather than leaving
-   an orphaned, username-less account behind. This does mean
-   onAuthStateChanged may briefly report a signed-in user with no
-   username in between; handleCloudAuthChange below tolerates that
-   the same way it'd tolerate any other momentary null username.
+   USERNAME DISPLAY: two things make this trickier than it looks.
+
+   1. On sign-up, Firebase's onAuthStateChanged fires the instant
+      the account is created — before claimUsername() has actually
+      written anything to the database. handleCloudAuthChange
+      below runs right then, finds no username yet, and falls back
+      to email. Since the uid never changes again afterward, that
+      listener never fires a second time to fix it — so submitAccountForm
+      updates state.accountUser directly the moment claimUsername
+      actually succeeds, instead of hoping another auth event will
+      come along and pick it up. This is the fix for "sometimes shows
+      the email instead of the username."
+   2. Firebase can also fire onAuthStateChanged more than once in
+      quick succession (e.g. a fast sign-out immediately followed by
+      a sign-in). Each call kicks off its own async getUsername()
+      lookup, and network timing offers no guarantee they resolve in
+      the order they were fired — authGeneration below is a simple
+      "ignore me if a newer call has already started" guard so an
+      older, slower lookup can never overwrite a newer one.
 
    Depends on state.js (state.accountUser), library.js
    (refreshLibraryFromSource — signing in/out is what decides
@@ -26,6 +34,7 @@
 ═══════════════════════════════════════════════════════════ */
 
 let accountMode = 'signin'; // 'signin' | 'signup' — which form the modal is currently showing
+let authGeneration = 0;     // bumped on every auth event; a stale in-flight lookup checks this before writing state
 
 function setAccountMode(mode) {
   accountMode = mode;
@@ -49,8 +58,30 @@ function showAccountError(msg) {
   el.classList.remove('hidden');
 }
 
+/* Re-checks the username for the currently signed-in user and updates
+   every place it's displayed, if it turns out we have one but weren't
+   showing it. Called right after a successful signup claim (see
+   submitAccountForm) and defensively whenever the account modal is
+   opened, as a general safety net against any other way this could have
+   gone stale (a slow network request that failed silently, etc). */
+function applyAccountUser(user) {
+  state.accountUser = user;
+  updateAccountButton();
+  if (user) showSignedInPanel(user); else showSignedOutPanel();
+  if (typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource();
+}
+
 function openAccountModal() {
   document.getElementById('account-modal-backdrop').classList.add('open');
+  if (state.accountUser && !state.accountUser.username && window.cloud) {
+    window.cloud.getUsername(state.accountUser.uid).then(username => {
+      if (username && state.accountUser) {
+        state.accountUser.username = username;
+        updateAccountButton();
+        showSignedInPanel(state.accountUser);
+      }
+    }).catch(() => {});
+  }
 }
 function closeAccountModal() {
   document.getElementById('account-modal-backdrop').classList.remove('open');
@@ -81,22 +112,20 @@ function updateAccountButton() {
   }
 }
 
-/* The one hook cloud.js calls into (via Firebase's onAuthStateChanged),
-   every time the signed-in user changes — including once, right after
-   page load, with whatever session Firebase already had persisted. This
-   is the single place that decides which library source library.js
-   should be reading from; see refreshLibraryFromSource() there. */
+/* The hook cloud.js calls into (via Firebase's onAuthStateChanged), every
+   time the signed-in user changes — including once, right after page
+   load, with whatever session Firebase already had persisted. See the
+   file header above for the two race conditions this guards against. */
 window.handleCloudAuthChange = async function (user) {
-  if (user) {
-    let username = null;
-    try { username = await window.cloud.getUsername(user.uid); } catch {}
-    state.accountUser = { uid: user.uid, email: user.email, username };
-  } else {
-    state.accountUser = null;
+  const gen = ++authGeneration;
+  if (!user) {
+    applyAccountUser(null);
+    return;
   }
-  updateAccountButton();
-  if (state.accountUser) showSignedInPanel(state.accountUser); else showSignedOutPanel();
-  if (typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource();
+  let username = null;
+  try { username = await window.cloud.getUsername(user.uid); } catch {}
+  if (gen !== authGeneration) return; // a newer auth event has already superseded this one — don't clobber it
+  applyAccountUser({ uid: user.uid, email: user.email, username });
 };
 
 function isValidUsername(name) {
@@ -141,6 +170,13 @@ async function submitAccountForm() {
         showAccountError('That username is already taken — try another.');
         return;
       }
+      // onAuthStateChanged already fired once, right when the account was
+      // created — before this claim existed — and cached a null username
+      // (see the file header). It won't fire again for the same uid, so
+      // apply the now-known-good state directly rather than waiting for
+      // an event that isn't coming.
+      authGeneration++; // invalidate that earlier, now-stale lookup if it's still in flight
+      applyAccountUser({ uid: cred.user.uid, email: cred.user.email, username });
     } else {
       await window.cloud.signIn(email, password);
     }
