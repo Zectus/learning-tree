@@ -6,6 +6,19 @@
    through window.handleCloudAuthChange, which this file defines
    and cloud.js calls on every change, including once at load
    with whatever session was already persisted.
+
+   USERNAME: collected only at sign-up (sign-in still only needs
+   email + password — the username is a display identity, not a
+   login credential). Since claiming it can fail (already taken)
+   only *after* the Firebase account itself has been created —
+   there's no atomic "create account + reserve name" operation
+   available client-side — a failed claim rolls the just-created
+   account back via cloud.deleteCurrentUser() rather than leaving
+   an orphaned, username-less account behind. This does mean
+   onAuthStateChanged may briefly report a signed-in user with no
+   username in between; handleCloudAuthChange below tolerates that
+   the same way it'd tolerate any other momentary null username.
+
    Depends on state.js (state.accountUser), library.js
    (refreshLibraryFromSource — signing in/out is what decides
    whether "My Trees" reads from this browser or from the
@@ -17,6 +30,7 @@ let accountMode = 'signin'; // 'signin' | 'signup' — which form the modal is c
 function setAccountMode(mode) {
   accountMode = mode;
   const isSignup = mode === 'signup';
+  document.getElementById('account-username-row').classList.toggle('hidden', !isSignup);
   document.getElementById('account-modal-title').textContent   = isSignup ? 'Create an account' : 'Sign in';
   document.getElementById('account-submit-btn').textContent    = isSignup ? 'Sign up' : 'Sign in';
   document.getElementById('account-toggle-text').textContent   = isSignup ? 'Already have an account? ' : "Don't have an account? ";
@@ -47,17 +61,19 @@ function showSignedOutPanel() {
   document.getElementById('account-signed-in-panel').classList.add('hidden');
   document.getElementById('account-modal-meta').textContent = 'sign in to sync your trees across devices';
 }
-function showSignedInPanel(email) {
+function showSignedInPanel(user) {
   document.getElementById('account-form-panel').classList.add('hidden');
   document.getElementById('account-signed-in-panel').classList.remove('hidden');
-  document.getElementById('account-email-display').textContent = email;
+  document.getElementById('account-name-display').textContent = user.username || user.email;
+  document.getElementById('account-email-line').textContent = user.username ? user.email : '';
+  document.getElementById('account-email-line').classList.toggle('hidden', !user.username);
   document.getElementById('account-modal-meta').textContent = 'your trees are synced to this account';
 }
 
 function updateAccountButton() {
   const btn = document.getElementById('btn-account');
   if (state.accountUser) {
-    btn.textContent = '👤 ' + state.accountUser.email;
+    btn.textContent = '👤 ' + (state.accountUser.username || state.accountUser.email);
     btn.classList.add('active');
   } else {
     btn.textContent = '👤 sign in';
@@ -70,12 +86,22 @@ function updateAccountButton() {
    page load, with whatever session Firebase already had persisted. This
    is the single place that decides which library source library.js
    should be reading from; see refreshLibraryFromSource() there. */
-window.handleCloudAuthChange = function (user) {
-  state.accountUser = user ? { uid: user.uid, email: user.email } : null;
+window.handleCloudAuthChange = async function (user) {
+  if (user) {
+    let username = null;
+    try { username = await window.cloud.getUsername(user.uid); } catch {}
+    state.accountUser = { uid: user.uid, email: user.email, username };
+  } else {
+    state.accountUser = null;
+  }
   updateAccountButton();
-  if (user) showSignedInPanel(user.email); else showSignedOutPanel();
+  if (state.accountUser) showSignedInPanel(state.accountUser); else showSignedOutPanel();
   if (typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource();
 };
+
+function isValidUsername(name) {
+  return /^[a-zA-Z0-9_-]{3,20}$/.test(name);
+}
 
 function friendlyAuthError(err) {
   switch (err?.code) {
@@ -93,22 +119,34 @@ function friendlyAuthError(err) {
 async function submitAccountForm() {
   const email    = document.getElementById('account-email-input').value.trim();
   const password = document.getElementById('account-password-input').value;
+  const username = document.getElementById('account-username-input').value.trim();
   clearAccountError();
 
-  if (!email || !password)  { showAccountError('Enter an email and password.'); return; }
+  if (!email || !password) { showAccountError('Enter an email and password.'); return; }
   if (password.length < 6)  { showAccountError('Password must be at least 6 characters.'); return; }
-  if (!window.cloud)        { showAccountError('Still connecting — try again in a moment.'); return; }
+  if (accountMode === 'signup' && !isValidUsername(username)) {
+    showAccountError('Usernames are 3–20 characters: letters, numbers, underscores, or hyphens.');
+    return;
+  }
+  if (!window.cloud) { showAccountError('Still connecting — try again in a moment.'); return; }
 
   const btn = document.getElementById('account-submit-btn');
   btn.disabled = true;
   try {
-    if (accountMode === 'signup') await window.cloud.signUp(email, password);
-    else                          await window.cloud.signIn(email, password);
+    if (accountMode === 'signup') {
+      const cred = await window.cloud.signUp(email, password);
+      const claimed = await window.cloud.claimUsername(cred.user.uid, username);
+      if (!claimed) {
+        await window.cloud.deleteCurrentUser(); // roll back — don't leave a username-less account behind
+        showAccountError('That username is already taken — try another.');
+        return;
+      }
+    } else {
+      await window.cloud.signIn(email, password);
+    }
+    document.getElementById('account-username-input').value = '';
     document.getElementById('account-email-input').value = '';
     document.getElementById('account-password-input').value = '';
-    // handleCloudAuthChange above fires on its own once Firebase's auth
-    // state actually updates — closing the modal here doesn't need to
-    // wait for that round-trip.
     closeAccountModal();
   } catch (err) {
     showAccountError(friendlyAuthError(err));

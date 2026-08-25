@@ -221,7 +221,7 @@ function renderLibraryGrid() {
   const ids   = Object.keys(libraryCache).sort((a, b) => (libraryCache[b].savedAt || 0) - (libraryCache[a].savedAt || 0));
 
   document.getElementById('library-modal-meta').textContent = state.accountUser
-    ? `synced to ${state.accountUser.email}`
+    ? `synced to ${state.accountUser.username || state.accountUser.email}`
     : 'saved locally in this browser — sign in to sync across devices';
 
   const hasCurrentTree = state.nodes.size > 0;
