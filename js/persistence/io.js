@@ -5,15 +5,20 @@
    all lived here too); everything else has moved to its own file
    (viewport.js, toolbar.js, progress.js, prompts.js) and this
    file now does exactly what its name says — reads and writes
-   the tree's JSON.
+   the tree's JSON. "Load JSON" and both export options now live
+   as .dropdown-item entries inside the Tree ▾ toolbar menu (see
+   index.html) rather than standalone buttons; the open/close
+   behavior for that dropdown is generic now (toolbar.js), so this
+   file only wires up what each item actually does.
    Depends on state.js, layout.js (buildEl,
    removeRedundantEdges), viewport.js (resetViewportForTreeLoad),
    progress.js (autoRestoreProgress), and viewer.js
    (extractAnswerKey — only called once a user actually loads a
    file, by which point every script has already finished
    loading, so the fact viewer.js loads after this file is fine).
-   library.js (the local "My Trees" save/load feature) depends on
-   buildTreeJSON and loadFromJSON below, and loads after this file.
+   library.js (the local/cloud "My Trees" save/load feature)
+   depends on buildTreeJSON and loadFromJSON below, and loads
+   after this file.
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
@@ -92,10 +97,9 @@ function loadFromJSON(obj) {
 }
 
 /* Builds the exportable JSON shape from the live state.nodes/state.edges —
-   pulled out of exportToJSON (below) so library.js's local "save" can
-   produce the exact same shape without duplicating this id-mapping logic.
-   Everything downstream of this (blob+download vs. localStorage) is the
-   only thing that actually differs between the two callers. */
+   shared by exportToJSON (file download) and library.js (local/cloud
+   save), since both just want the same plain-object shape; only what
+   happens to the result differs. */
 function buildTreeJSON(includeContent) {
   if (!state.nodes.size) return null;
   const idToStr = new Map();
@@ -148,21 +152,5 @@ document.getElementById('file-input').addEventListener('change', e => {
   reader.readAsText(file);
   e.target.value='';
 });
-document.getElementById('btn-export').addEventListener('click', e => {
-  e.stopPropagation();
-  document.getElementById('export-menu').classList.toggle('open');
-});
-document.getElementById('btn-export-structure').addEventListener('click', () => {
-  document.getElementById('export-menu').classList.remove('open');
-  exportToJSON(false);
-});
-document.getElementById('btn-export-content').addEventListener('click', () => {
-  document.getElementById('export-menu').classList.remove('open');
-  exportToJSON(true);
-});
-document.addEventListener('click', e => {
-  if (!e.target.closest('.export-wrap')) document.getElementById('export-menu').classList.remove('open');
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.getElementById('export-menu').classList.remove('open');
-});
+document.getElementById('menu-export-structure').addEventListener('click', () => exportToJSON(false));
+document.getElementById('menu-export-content').addEventListener('click', () => exportToJSON(true));

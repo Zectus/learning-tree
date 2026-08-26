@@ -49,31 +49,54 @@
   <div id="world"></div>
 </div>
 
+<!-- ── toolbar ──
+     Four groups: Mode ▾ (browse/edit/mark-known — mutually
+     exclusive, see toolbar.js), the standalone "+ node" button
+     (only visible in edit mode), 📚 My Trees (the single most
+     load-bearing action, so it keeps its own slot), Tree ▾ (new/
+     load/export — anything that gets a tree onto or off the
+     canvas), and 👤 ▾ (account, reset progress, dark mode — the
+     rarely-touched stuff). Mode/Tree/Account all share one
+     generic dropdown mechanism defined in toolbar.js. -->
 <div id="toolbar">
-  <button class="tbtn" id="btn-account" title="Sign in to sync your trees across devices">👤 sign in</button>
-  <button class="tbtn" id="btn-my-trees" title="Saved trees">📚 my trees</button>
-  <button class="tbtn" id="btn-edit-mode">✏️ edit</button>
+  <div class="dropdown-wrap">
+    <button class="tbtn" id="btn-mode">👁 Browse ▾</button>
+    <div class="dropdown-menu" id="mode-menu">
+      <button class="dropdown-item" id="mode-browse-item">👁 Browse</button>
+      <button class="dropdown-item" id="mode-edit-item">✏️ Edit</button>
+      <button class="dropdown-item" id="mode-mark-known-item">✓ Mark known</button>
+    </div>
+  </div>
   <button class="tbtn" id="btn-add-node">+ node</button>
-  <button class="tbtn muted" id="btn-autocomplete">✓ mark known</button>
-  <button class="tbtn muted" id="btn-reset-progress" title="Hold shift (or long-press on touch) to reset every tree's progress instead">↺ reset tree progress</button>
-  <label class="tbtn">📂 load JSON
-    <input type="file" id="file-input" accept=".json" style="display:none">
-  </label>
-  <div class="export-wrap">
-    <button class="tbtn" id="btn-export">⬇ export JSON</button>
-    <div class="export-menu" id="export-menu">
-      <button class="export-menu-item" id="btn-export-structure">
-        Structure only
-        <span class="emi-sub">labels &amp; requirements, no lesson text</span>
+
+  <button class="tbtn" id="btn-my-trees" title="Saved trees">📚 My Trees</button>
+
+  <div class="dropdown-wrap">
+    <button class="tbtn" id="btn-tree-menu">Tree ▾</button>
+    <div class="dropdown-menu" id="tree-menu">
+      <button class="dropdown-item" id="menu-new-tree">🌱 New tree</button>
+      <label class="dropdown-item" id="menu-load-json">📂 Load JSON
+        <input type="file" id="file-input" accept=".json" style="display:none">
+      </label>
+      <button class="dropdown-item" id="menu-export-structure">
+        ⬇ Export — structure only
+        <span class="dropdown-item-sub">labels &amp; requirements, no lesson text</span>
       </button>
-      <button class="export-menu-item" id="btn-export-content">
-        Structure + content
-        <span class="emi-sub">also bundles each node's generated .txt</span>
+      <button class="dropdown-item" id="menu-export-content">
+        ⬇ Export — structure + content
+        <span class="dropdown-item-sub">also bundles each node's generated .txt</span>
       </button>
     </div>
   </div>
-  <button class="tbtn" id="btn-create-tree">🌱 new tree</button>
-  <button class="tbtn muted" id="btn-dark-mode" title="Toggle dark mode">🌙 dark</button>
+
+  <div class="dropdown-wrap">
+    <button class="tbtn" id="btn-account-menu" title="Sign in to sync your trees across devices">👤 sign in ▾</button>
+    <div class="dropdown-menu" id="account-menu">
+      <button class="dropdown-item" id="menu-account">👤 Account</button>
+      <button class="dropdown-item" id="menu-reset-progress" title="Hold shift (or long-press on touch) to reset every tree's progress instead">↺ Reset tree progress</button>
+      <button class="dropdown-item" id="menu-dark-mode">🌙 Dark mode</button>
+    </div>
+  </div>
 </div>
 
 <!-- ── learn modal ── -->
@@ -157,7 +180,9 @@
      Firebase directly; it only calls window.cloud.* (cloud.js, a module
      loaded at the very end of this page) and reacts to auth changes via
      window.handleCloudAuthChange, which account.js defines and cloud.js
-     calls into. -->
+     calls into. Opened via the "👤 Account" item inside the 👤 ▾ toolbar
+     dropdown, not the dropdown's trigger button itself (see toolbar.js's
+     generic mechanism — the trigger only opens the menu). -->
 <div id="account-modal-backdrop" class="modal-backdrop">
   <div class="modal-shell" id="account-modal-shell">
     <div class="modal-header-bar">

@@ -4,12 +4,15 @@
    independent of the tree's own JSON (see io.js) — a tree's
    structure and a learner's progress through it are saved
    separately on purpose (see treeSignature below). Also owns
-   the "reset progress" button, including its shift-click / long-
-   press "reset every tree" variant.
+   the "reset progress" control, including its shift-click / long-
+   press "reset every tree" variant. Lives as a .dropdown-item
+   inside the 👤 ▾ toolbar menu (see index.html/toolbar.js) rather
+   than a standalone button, but the element itself and all the
+   logic below are otherwise unchanged.
    Depends on state.js, layout.js (prereqsOf, via state.js), and
-   viewer.js (closeViewer — only called on a button click, after
-   every script has finished loading, so viewer.js loading after
-   this file is fine).
+   viewer.js (closeViewer — only called on a click, after every
+   script has finished loading, so viewer.js loading after this
+   file is fine).
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
@@ -93,15 +96,15 @@ function autoRestoreProgress() {
    saved. No confirmation dialog on purpose — mark-known mode already
    lets you freely toggle any node's done state with no safeguard, so
    this isn't introducing a new class of "undoable" risk. */
-const btnResetProgress = document.getElementById('btn-reset-progress');
-document.addEventListener('keydown', e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ reset ALL progress'; });
-document.addEventListener('keyup',   e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ reset tree progress'; });
+const btnResetProgress = document.getElementById('menu-reset-progress');
+document.addEventListener('keydown', e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ Reset ALL progress'; });
+document.addEventListener('keyup',   e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ Reset tree progress'; });
 
 let resetAllArmed = false, resetPressTimer = null;
 btnResetProgress.addEventListener('touchstart', () => {
   resetPressTimer = setTimeout(() => {
     resetAllArmed = true;
-    btnResetProgress.textContent = '↺ reset ALL progress';
+    btnResetProgress.textContent = '↺ Reset ALL progress';
     if (navigator.vibrate) navigator.vibrate(15);
   }, 550);
 }, { passive:true });
@@ -109,7 +112,7 @@ btnResetProgress.addEventListener('touchend', () => clearTimeout(resetPressTimer
 btnResetProgress.addEventListener('touchcancel', () => {
   clearTimeout(resetPressTimer);
   resetAllArmed = false;
-  btnResetProgress.textContent = '↺ reset tree progress';
+  btnResetProgress.textContent = '↺ Reset tree progress';
 }, { passive:true });
 
 function clearNodeProgressFields(node) {
@@ -135,7 +138,7 @@ btnResetProgress.addEventListener('click', e => {
     } catch {}
     state.nodes.forEach(clearNodeProgressFields);
   }
-  btnResetProgress.textContent = '↺ reset tree progress';
+  btnResetProgress.textContent = '↺ Reset tree progress';
   closeViewer();
   // closeViewer() deliberately leaves viewer.nodeId alone so closing and
   // reopening the SAME session normally skips a full rebuild (see its own

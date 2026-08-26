@@ -7,6 +7,16 @@
    and cloud.js calls on every change, including once at load
    with whatever session was already persisted.
 
+   TOOLBAR SPLIT: "👤 ..." is now the trigger for a dropdown (see
+   toolbar.js's generic mechanism) rather than a button that
+   directly opened this modal. #btn-account-menu is that trigger —
+   its own label shows the signed-in identity (or "sign in") the
+   same way the Mode trigger always shows the current mode — and
+   #menu-account is the actual item inside that dropdown whose
+   click opens this modal. Reset progress and dark mode live in
+   the same dropdown but are wired up in progress.js/toolbar.js,
+   not here.
+
    USERNAME DISPLAY: two things make this trickier than it looks.
 
    1. On sign-up, Firebase's onAuthStateChanged fires the instant
@@ -17,8 +27,7 @@
       listener never fires a second time to fix it — so submitAccountForm
       updates state.accountUser directly the moment claimUsername
       actually succeeds, instead of hoping another auth event will
-      come along and pick it up. This is the fix for "sometimes shows
-      the email instead of the username."
+      come along and pick it up.
    2. Firebase can also fire onAuthStateChanged more than once in
       quick succession (e.g. a fast sign-out immediately followed by
       a sign-in). Each call kicks off its own async getUsername()
@@ -58,12 +67,9 @@ function showAccountError(msg) {
   el.classList.remove('hidden');
 }
 
-/* Re-checks the username for the currently signed-in user and updates
-   every place it's displayed, if it turns out we have one but weren't
-   showing it. Called right after a successful signup claim (see
-   submitAccountForm) and defensively whenever the account modal is
-   opened, as a general safety net against any other way this could have
-   gone stale (a slow network request that failed silently, etc). */
+/* Applies a signed-in/signed-out user everywhere it's displayed: the
+   toolbar trigger label, the modal panel, and (via refreshLibraryFromSource)
+   which storage source "My Trees" reads from. */
 function applyAccountUser(user) {
   state.accountUser = user;
   updateAccountButton();
@@ -71,6 +77,12 @@ function applyAccountUser(user) {
   if (typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource();
 }
 
+/* Re-checks the username for the currently signed-in user and updates
+   every place it's displayed, if it turns out we have one but weren't
+   showing it. Called right after a successful signup claim (see
+   submitAccountForm) and defensively whenever the account modal is
+   opened, as a general safety net against any other way this could have
+   gone stale (a slow network request that failed silently, etc). */
 function openAccountModal() {
   document.getElementById('account-modal-backdrop').classList.add('open');
   if (state.accountUser && !state.accountUser.username && window.cloud) {
@@ -101,13 +113,18 @@ function showSignedInPanel(user) {
   document.getElementById('account-modal-meta').textContent = 'your trees are synced to this account';
 }
 
+/* Updates the toolbar dropdown TRIGGER (#btn-account-menu) — the label
+   that's visible without opening the menu at all, same convention as the
+   Mode trigger always showing the current mode. The item inside the menu
+   that actually opens this modal (#menu-account) stays static; see the
+   click wiring at the bottom of this file. */
 function updateAccountButton() {
-  const btn = document.getElementById('btn-account');
+  const btn = document.getElementById('btn-account-menu');
   if (state.accountUser) {
-    btn.textContent = '👤 ' + (state.accountUser.username || state.accountUser.email);
+    btn.textContent = '👤 ' + (state.accountUser.username || state.accountUser.email) + ' ▾';
     btn.classList.add('active');
   } else {
-    btn.textContent = '👤 sign in';
+    btn.textContent = '👤 sign in ▾';
     btn.classList.remove('active');
   }
 }
@@ -197,7 +214,7 @@ async function submitSignOut() {
   closeAccountModal();
 }
 
-document.getElementById('btn-account').addEventListener('click', openAccountModal);
+document.getElementById('menu-account').addEventListener('click', openAccountModal);
 document.getElementById('account-modal-close').addEventListener('click', closeAccountModal);
 document.getElementById('account-modal-backdrop').addEventListener('click', e => {
   if (e.target === document.getElementById('account-modal-backdrop')) closeAccountModal();

@@ -1,10 +1,15 @@
 /* ═══════════════════════════════════════════════════════════
    toolbar.css — the page-level progress bar, the floating
-   toolbar and its buttons (including the active/muted states),
-   the export dropdown menu, and the cursor changes for linking
-   mode and mark-known mode. Pairs with toolbar.js (mode toggles,
-   button wiring) and progress.js (the reset-progress button also
-   styled by .tbtn here).
+   toolbar and its buttons (including the active state), the
+   generic dropdown menu every grouped toolbar button (Mode,
+   Tree, Account) shares, and the cursor changes for linking mode
+   and mark-known mode. Pairs with toolbar.js (dropdown open/
+   close, mode switching), progress.js (the reset-progress item,
+   styled as a .dropdown-item here), io.js (the two export
+   items), prompts.js (the new-tree item), and account.js (the
+   account item) — all four of those live inside the Tree/Account
+   dropdowns markup-wise (see index.html) but are wired up in
+   whichever file already owns that feature, not here.
    Depends on theme.css.
 ═══════════════════════════════════════════════════════════ */
 
@@ -49,7 +54,6 @@
   white-space: nowrap;
 }
 .tbtn:hover { border-color: var(--border-h); box-shadow: 0 6px 20px rgba(0,0,0,.11); }
-.tbtn.muted { color: var(--text-m); }
 label.tbtn { cursor: pointer; }
 .tbtn.active {
   background: var(--invert-bg);
@@ -61,9 +65,14 @@ label.tbtn { cursor: pointer; }
 #btn-add-node { display: none; }
 body.edit-mode #btn-add-node { display: block; }
 
-/* ── export menu ── */
-.export-wrap { position: relative; }
-.export-menu {
+/* ── grouped dropdowns (Mode ▾ / Tree ▾ / Account ▾) ──
+   One shared mechanism (see toolbar.js) for all three: a
+   .dropdown-wrap containing exactly one .tbtn trigger followed
+   by one .dropdown-menu. Generalized from what used to be a
+   single export-only dropdown, since Mode and Account need the
+   exact same open/close/click-outside behavior. */
+.dropdown-wrap { position: relative; }
+.dropdown-menu {
   position: absolute;
   top: calc(100% + 8px);
   left: 50%;
@@ -79,8 +88,8 @@ body.edit-mode #btn-add-node { display: block; }
   box-shadow: 0 10px 30px rgba(0,0,0,.16), 0 0 0 1px rgba(0,0,0,.04);
   z-index: 150;
 }
-.export-menu.open { display: flex; }
-.export-menu-item {
+.dropdown-menu.open { display: flex; }
+.dropdown-item {
   display: block;
   width: 100%;
   background: none;
@@ -95,8 +104,10 @@ body.edit-mode #btn-add-node { display: block; }
   cursor: pointer;
   transition: background .12s;
 }
-.export-menu-item:hover { background: var(--btn-soft-bg-hover); }
-.export-menu-item .emi-sub {
+.dropdown-item:hover { background: var(--btn-soft-bg-hover); }
+/* the option matching the toolbar's current mode, in the Mode ▾ menu */
+.dropdown-item.current { color: var(--avail-bdr); font-weight: 700; }
+.dropdown-item-sub {
   display: block;
   margin-top: 2px;
   font-size: 11px;
@@ -112,4 +123,3 @@ body.linking-mode .node { cursor: crosshair !important; }
 body.mark-known-mode .node:not(.status-locked) { cursor: cell !important; }
 body.mark-known-mode .node.status-available { box-shadow: 0 0 0 2px var(--done-bg), 0 2px 10px rgba(26,102,64,.15); }
 body.mark-known-mode .node.status-done      { box-shadow: 0 0 0 2px var(--done-bg), 0 2px 10px rgba(26,102,64,.25); }
-

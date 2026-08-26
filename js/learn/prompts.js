@@ -5,6 +5,10 @@
    tree-prompt.js; also owns both modals built around those
    prompts (the single-node "learn" modal and the "new tree"
    modal) and the copy-to-clipboard buttons shared by both.
+   "New tree" is now a .dropdown-item inside the Tree ▾ toolbar
+   menu (see index.html/toolbar.js) rather than a standalone
+   button — only the element id below changed to match; the modal
+   itself and all the prompt-building logic are unaffected.
    Depends on state.js, layout.js (prereqsOf/dependentsOf, via
    state.js), node-prompt.js, tree-prompt.js, io.js (slugify,
    loadFromJSON).
@@ -169,7 +173,7 @@ function closeTreeModal() {
   document.getElementById('tree-modal-backdrop').classList.remove('open');
 }
 
-document.getElementById('btn-create-tree').addEventListener('click', openTreeModal);
+document.getElementById('menu-new-tree').addEventListener('click', openTreeModal);
 document.getElementById('tree-modal-close').addEventListener('click', closeTreeModal);
 document.getElementById('tree-modal-backdrop').addEventListener('click', e => {
   if (e.target === document.getElementById('tree-modal-backdrop')) closeTreeModal();
