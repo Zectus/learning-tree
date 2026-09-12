@@ -517,6 +517,38 @@ document.addEventListener('mousemove', e => {
 });
 document.addEventListener('mouseup', () => { svDrag.active = false; svResize.active = false; notesResize.active = false; });
 
+/* ── Keep the session viewer at the same PHYSICAL screen position
+   through browser-chrome changes (F11 fullscreen, etc) ──────
+   window.screenX/screenY is where the page's own viewport starts on the
+   physical screen. Toggling F11 fullscreen changes screenY specifically —
+   the browser's tab/address-bar strip disappearing (or reappearing) moves
+   the top of the viewport itself, which otherwise makes a fixed-position
+   window visibly jump even though its own "top" value never changed.
+   Compensating #sv-window's (and, via syncNotesPanelPosition, the notes
+   panel's) position by the exact same delta cancels that out.
+   This deliberately does NOT fire on ordinary window resizing where the
+   viewport's own top-left corner doesn't move (e.g. dragging the
+   bottom-right corner of the window) — screenX/screenY stay unchanged in
+   that case, so dx/dy are both 0 and nothing happens. That's intentional:
+   this is a "the browser's chrome around us changed" correction, not a
+   general "keep resisting whatever the user does" behavior (see
+   scale.js, which for the same reason deliberately stopped reacting to
+   plain resizing too). */
+let lastScreenX = window.screenX;
+let lastScreenY = window.screenY;
+window.addEventListener('resize', () => {
+  const dx = window.screenX - lastScreenX;
+  const dy = window.screenY - lastScreenY;
+  lastScreenX = window.screenX;
+  lastScreenY = window.screenY;
+  if (!dx && !dy) return;
+  const win = document.getElementById('sv-window');
+  if (!win.style.top && !win.style.left) return; // never opened yet — nothing to preserve
+  if (win.style.left) win.style.left = Math.max(0, parseFloat(win.style.left) - dx) + 'px';
+  if (win.style.top)  win.style.top  = Math.max(0, parseFloat(win.style.top)  - dy) + 'px';
+  syncNotesPanelPosition();
+});
+
 /* ── Wiring ────── */
 document.getElementById('session-file-input').addEventListener('change', e => {
   const file = e.target.files?.[0]; if (!file) return;
