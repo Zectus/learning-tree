@@ -519,34 +519,48 @@ document.addEventListener('mouseup', () => { svDrag.active = false; svResize.act
 
 /* ── Keep the session viewer at the same PHYSICAL screen position
    through browser-chrome changes (F11 fullscreen, etc) ──────
-   window.screenX/screenY is where the page's own viewport starts on the
-   physical screen. Toggling F11 fullscreen changes screenY specifically —
-   the browser's tab/address-bar strip disappearing (or reappearing) moves
-   the top of the viewport itself, which otherwise makes a fixed-position
-   window visibly jump even though its own "top" value never changed.
-   Compensating #sv-window's (and, via syncNotesPanelPosition, the notes
-   panel's) position by the exact same delta cancels that out.
-   This deliberately does NOT fire on ordinary window resizing where the
-   viewport's own top-left corner doesn't move (e.g. dragging the
-   bottom-right corner of the window) — screenX/screenY stay unchanged in
-   that case, so dx/dy are both 0 and nothing happens. That's intentional:
-   this is a "the browser's chrome around us changed" correction, not a
-   general "keep resisting whatever the user does" behavior (see
-   scale.js, which for the same reason deliberately stopped reacting to
-   plain resizing too). */
-let lastScreenX = window.screenX;
-let lastScreenY = window.screenY;
+   window.screenX/screenY (tried first, and removed) track the browser
+   window's OUTER frame position — which usually doesn't move at all when
+   F11 is pressed, especially if the window was already maximized. What
+   actually shifts the content is the tab/address-bar strip collapsing
+   INSIDE that same outer frame, growing window.innerHeight without
+   moving the frame itself — invisible to screenX/screenY entirely.
+
+   The reliable signal is comparing the window's outer size to the
+   physical screen: an ordinary maximized window is capped at
+   screen.availHeight/availWidth (leaving room for the OS taskbar), while
+   true F11 fullscreen expands to cover the entire physical screen,
+   taskbar included. isBrowserFullscreen() below detects that specific
+   transition, so the compensation only fires exactly when fullscreen is
+   toggled — never on an ordinary resize (dragging a corner never gets a
+   window bigger than availHeight/availWidth in the first place, so the
+   two states this checks never differ during one), keeping this separate
+   from the general "don't react to plain resizing" decision made for
+   scale.js. */
+function isBrowserFullscreen() {
+  return window.outerHeight >= screen.height - 4 && window.outerWidth >= screen.width - 4;
+}
+let wasBrowserFullscreen = isBrowserFullscreen();
+let prevInnerW = window.innerWidth;
+let prevInnerH = window.innerHeight;
 window.addEventListener('resize', () => {
-  const dx = window.screenX - lastScreenX;
-  const dy = window.screenY - lastScreenY;
-  lastScreenX = window.screenX;
-  lastScreenY = window.screenY;
-  if (!dx && !dy) return;
-  const win = document.getElementById('sv-window');
-  if (!win.style.top && !win.style.left) return; // never opened yet — nothing to preserve
-  if (win.style.left) win.style.left = Math.max(0, parseFloat(win.style.left) - dx) + 'px';
-  if (win.style.top)  win.style.top  = Math.max(0, parseFloat(win.style.top)  - dy) + 'px';
-  syncNotesPanelPosition();
+  const nowFullscreen = isBrowserFullscreen();
+  if (nowFullscreen !== wasBrowserFullscreen) {
+    // Chrome collapsing/reappearing adds or removes space at the top (and
+    // occasionally a sliver at the sides) — the exact amount is just
+    // however much innerWidth/innerHeight changed by this transition.
+    const dw = window.innerWidth  - prevInnerW;
+    const dh = window.innerHeight - prevInnerH;
+    const win = document.getElementById('sv-window');
+    if (win.style.top || win.style.left) {
+      if (win.style.left) win.style.left = Math.max(0, parseFloat(win.style.left) + dw) + 'px';
+      if (win.style.top)  win.style.top  = Math.max(0, parseFloat(win.style.top)  + dh) + 'px';
+      syncNotesPanelPosition();
+    }
+    wasBrowserFullscreen = nowFullscreen;
+  }
+  prevInnerW = window.innerWidth;
+  prevInnerH = window.innerHeight;
 });
 
 /* ── Wiring ────── */
