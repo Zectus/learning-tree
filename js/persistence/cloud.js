@@ -59,6 +59,8 @@ import {
   signOut,
   deleteUser,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import {
   getDatabase,
@@ -82,6 +84,21 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getDatabase(app);
+const googleProvider = new GoogleAuthProvider();
+
+/* Google sign-in creates the Firebase account automatically on first use —
+   there's no separate "sign up" step the way email/password has one. What
+   it does NOT give us for free is a claimed username (see claimUsername
+   above): a brand-new Google user has an auth record but no /users/{uid}/
+   username yet. account.js checks for that after this resolves and, if
+   missing, shows an inline "choose a username" step before treating the
+   sign-in as fully complete — same uniqueness guarantee as the
+   email/password path, just triggered from a different place. */
+async function signInWithGoogle() {
+  const result = await signInWithPopup(auth, googleProvider);
+  const u = result.user;
+  return { uid: u.uid, email: u.email, displayName: u.displayName || '' };
+}
 
 async function claimUsername(uid, username) {
   const key = username.toLowerCase();
@@ -99,6 +116,7 @@ window.cloud = {
   signIn:      (email, password) => signInWithEmailAndPassword(auth, email, password),
   signOutUser: () => signOut(auth),
   deleteCurrentUser: () => (auth.currentUser ? deleteUser(auth.currentUser) : Promise.resolve()),
+  signInWithGoogle,
 
   claimUsername,
   async getUsername(uid) {

@@ -36,14 +36,27 @@
       "ignore me if a newer call has already started" guard so an
       older, slower lookup can never overwrite a newer one.
 
+   GOOGLE SIGN-IN: unlike email/password sign-up, a Google account
+   never goes through submitAccountForm, so there's no single place
+   that already collects a username before the account exists. A
+   brand-new Google sign-in can therefore land signed-in but with no
+   username at all — pendingGoogleUser + the "choose a username" panel
+   (showGoogleUsernamePanel/submitGoogleUsername) exist to close that
+   gap right after the popup returns. openAccountModal's defensive
+   re-check below also treats "signed in, no username, modal opened
+   again later" as the same situation, so a Google user who closed
+   that step early gets asked again instead of staying username-less
+   forever.
+
    Depends on state.js (state.accountUser), library.js
    (refreshLibraryFromSource — signing in/out is what decides
    whether "My Trees" reads from this browser or from the
    account's cloud copy, so every auth change re-triggers it).
 ═══════════════════════════════════════════════════════════ */
 
-let accountMode = 'signin'; // 'signin' | 'signup' — which form the modal is currently showing
-let authGeneration = 0;     // bumped on every auth event; a stale in-flight lookup checks this before writing state
+let accountMode = 'signin';
+let authGeneration = 0;
+let pendingGoogleUser = null; // set while the "choose a username" step is showing
 
 function setAccountMode(mode) {
   accountMode = mode;
@@ -86,31 +99,64 @@ function applyAccountUser(user) {
 function openAccountModal() {
   document.getElementById('account-modal-backdrop').classList.add('open');
   if (state.accountUser && !state.accountUser.username && window.cloud) {
+    // Covers two cases with one check: a slow username lookup from a
+    // previous session that hadn't resolved yet, and a Google sign-in
+    // that was closed before the username step below completed. Either
+    // way, if a fresh lookup still comes back empty, let them claim one
+    // right here instead of leaving the account permanently username-less.
     window.cloud.getUsername(state.accountUser.uid).then(username => {
-      if (username && state.accountUser) {
+      if (!state.accountUser) return;
+      if (username) {
         state.accountUser.username = username;
         updateAccountButton();
         showSignedInPanel(state.accountUser);
+      } else {
+        showGoogleUsernamePanel({ uid: state.accountUser.uid, email: state.accountUser.email, displayName: '' });
       }
     }).catch(() => {});
   }
 }
 function closeAccountModal() {
   document.getElementById('account-modal-backdrop').classList.remove('open');
+  pendingGoogleUser = null;
+  document.getElementById('account-google-username-panel').classList.add('hidden');
+  if (!state.accountUser) document.getElementById('account-form-panel').classList.remove('hidden');
 }
 
 function showSignedOutPanel() {
   document.getElementById('account-form-panel').classList.remove('hidden');
+  document.getElementById('account-google-username-panel').classList.add('hidden');
   document.getElementById('account-signed-in-panel').classList.add('hidden');
   document.getElementById('account-modal-meta').textContent = 'sign in to sync your trees across devices';
 }
 function showSignedInPanel(user) {
   document.getElementById('account-form-panel').classList.add('hidden');
+  document.getElementById('account-google-username-panel').classList.add('hidden');
   document.getElementById('account-signed-in-panel').classList.remove('hidden');
   document.getElementById('account-name-display').textContent = user.username || user.email;
   document.getElementById('account-email-line').textContent = user.username ? user.email : '';
   document.getElementById('account-email-line').classList.toggle('hidden', !user.username);
   document.getElementById('account-modal-meta').textContent = 'your trees are synced to this account';
+}
+
+// Turns a Google display name or email into a starting-point username —
+// just a prefill the person can edit, not a guarantee it's available.
+function suggestUsernameFrom(seed) {
+  let base = String(seed || '').split('@')[0].replace(/[^a-zA-Z0-9_-]/g, '');
+  if (base.length < 3) base += Math.random().toString(36).slice(2, 5);
+  return base.slice(0, 20);
+}
+
+function showGoogleUsernamePanel(user) {
+  pendingGoogleUser = user;
+  clearAccountError();
+  document.getElementById('account-form-panel').classList.add('hidden');
+  document.getElementById('account-signed-in-panel').classList.add('hidden');
+  document.getElementById('account-google-username-panel').classList.remove('hidden');
+  document.getElementById('account-modal-title').textContent = 'Choose a username';
+  const input = document.getElementById('account-google-username-input');
+  input.value = suggestUsernameFrom(user.displayName || user.email);
+  input.focus();
 }
 
 /* Updates the toolbar dropdown TRIGGER (#btn-account-menu) — the label
@@ -158,6 +204,9 @@ function friendlyAuthError(err) {
     case 'auth/wrong-password':       return 'Email or password is incorrect.';
     case 'auth/weak-password':        return 'Password must be at least 6 characters.';
     case 'auth/too-many-requests':    return 'Too many attempts — wait a moment and try again.';
+    case 'auth/popup-blocked':        return 'Your browser blocked the sign-in popup — allow popups for this site and try again.';
+    case 'auth/account-exists-with-different-credential':
+      return 'An account already exists for this email using a different sign-in method.';
     default: return err?.message || 'Something went wrong — try again.';
   }
 }
@@ -208,6 +257,62 @@ async function submitAccountForm() {
   }
 }
 
+/* Google sign-in has no separate "signup" mode — the same button
+   signs an existing account in or creates a new one, and Firebase
+   tells us which happened only indirectly (by whether a username
+   already exists for that uid). If not, showGoogleUsernamePanel picks
+   up right where submitAccountForm's signup branch would have. */
+async function submitGoogleSignIn() {
+  clearAccountError();
+  if (!window.cloud) { showAccountError('Still connecting — try again in a moment.'); return; }
+  const btn = document.getElementById('account-google-btn');
+  btn.disabled = true;
+  try {
+    const user = await window.cloud.signInWithGoogle();
+    const username = await window.cloud.getUsername(user.uid);
+    if (username) {
+      authGeneration++; // pre-empt the auth-listener's own slower lookup — see file header
+      applyAccountUser({ uid: user.uid, email: user.email, username });
+      closeAccountModal();
+    } else {
+      showGoogleUsernamePanel(user);
+    }
+  } catch (err) {
+    // A closed/cancelled popup isn't a real error — the person just
+    // changed their mind, nothing to show them.
+    if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
+      showAccountError(friendlyAuthError(err));
+    }
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function submitGoogleUsername() {
+  const username = document.getElementById('account-google-username-input').value.trim();
+  clearAccountError();
+  if (!isValidUsername(username)) {
+    showAccountError('Usernames are 3–20 characters: letters, numbers, underscores, or hyphens.');
+    return;
+  }
+  if (!pendingGoogleUser) return;
+  const btn = document.getElementById('account-google-username-submit');
+  btn.disabled = true;
+  try {
+    const claimed = await window.cloud.claimUsername(pendingGoogleUser.uid, username);
+    if (!claimed) { showAccountError('That username is already taken — try another.'); return; }
+    authGeneration++;
+    applyAccountUser({ uid: pendingGoogleUser.uid, email: pendingGoogleUser.email, username });
+    pendingGoogleUser = null;
+    document.getElementById('account-google-username-input').value = '';
+    closeAccountModal();
+  } catch (err) {
+    showAccountError(friendlyAuthError(err));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 async function submitSignOut() {
   if (!window.cloud) return;
   try { await window.cloud.signOutUser(); } catch {}
@@ -221,8 +326,11 @@ document.getElementById('account-modal-backdrop').addEventListener('click', e =>
 });
 document.getElementById('account-toggle-btn').addEventListener('click', () => setAccountMode(accountMode === 'signin' ? 'signup' : 'signin'));
 document.getElementById('account-submit-btn').addEventListener('click', submitAccountForm);
+document.getElementById('account-google-btn').addEventListener('click', submitGoogleSignIn);
+document.getElementById('account-google-username-submit').addEventListener('click', submitGoogleUsername);
 document.getElementById('account-signout-btn').addEventListener('click', submitSignOut);
 document.getElementById('account-password-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitAccountForm(); });
+document.getElementById('account-google-username-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitGoogleUsername(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && document.getElementById('account-modal-backdrop').classList.contains('open')) closeAccountModal();
 });
