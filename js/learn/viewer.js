@@ -498,6 +498,7 @@ document.getElementById('sv-notes-resize').addEventListener('mousedown', e => {
 
 document.addEventListener('mousemove', e => {
   if (svDrag.active) {
+    svUserPositioned = true; // an actual drag happened — stop auto-centering this window on resize (see below)
     const win = document.getElementById('sv-window');
     win.style.left = Math.max(0, Math.min(window.innerWidth  - 80, svDrag.winX  + e.clientX - svDrag.startX))  + 'px';
     win.style.top  = Math.max(0, Math.min(window.innerHeight - 40, svDrag.winY  + e.clientY - svDrag.startY))  + 'px';
@@ -517,50 +518,41 @@ document.addEventListener('mousemove', e => {
 });
 document.addEventListener('mouseup', () => { svDrag.active = false; svResize.active = false; notesResize.active = false; });
 
-/* ── Keep the session viewer at the same PHYSICAL screen position
-   through browser-chrome changes (F11 fullscreen, etc) ──────
-   window.screenX/screenY (tried first, and removed) track the browser
-   window's OUTER frame position — which usually doesn't move at all when
-   F11 is pressed, especially if the window was already maximized. What
-   actually shifts the content is the tab/address-bar strip collapsing
-   INSIDE that same outer frame, growing window.innerHeight without
-   moving the frame itself — invisible to screenX/screenY entirely.
+/* ── Keep the session viewer looking centered through window/viewport
+   size changes (F11 fullscreen, DevTools opening, etc) ──────
+   Comparing outerHeight/outerWidth to screen.height/width (tried first,
+   and removed) turned out to be a dead end: in at least some browsers
+   (Firefox in particular, likely as an anti-fingerprinting measure)
+   screen.width/height simply mirror the window's own current size rather
+   than reporting the physical monitor — so that comparison was
+   effectively comparing a number to itself and could never detect
+   anything.
 
-   The reliable signal is comparing the window's outer size to the
-   physical screen: an ordinary maximized window is capped at
-   screen.availHeight/availWidth (leaving room for the OS taskbar), while
-   true F11 fullscreen expands to cover the entire physical screen,
-   taskbar included. isBrowserFullscreen() below detects that specific
-   transition, so the compensation only fires exactly when fullscreen is
-   toggled — never on an ordinary resize (dragging a corner never gets a
-   window bigger than availHeight/availWidth in the first place, so the
-   two states this checks never differ during one), keeping this separate
-   from the general "don't react to plain resizing" decision made for
-   scale.js. */
-function isBrowserFullscreen() {
-  return window.outerHeight >= screen.height - 4 && window.outerWidth >= screen.width - 4;
-}
-let wasBrowserFullscreen = isBrowserFullscreen();
-let prevInnerW = window.innerWidth;
-let prevInnerH = window.innerHeight;
+   What actually happens (confirmed by testing): pressing F11 doesn't
+   move the top of the page at all — it just reveals more space below,
+   since the chrome that disappears was never below the content to begin
+   with. The real, visible problem is narrower than "the window jumps":
+   #sv-window was centered ONCE, in openViewer(), using whatever
+   window.innerHeight was at that moment. If the viewport later gets
+   taller (F11, DevTools closing, anything), that fixed top offset no
+   longer corresponds to "centered" — it just sits too high with a
+   growing dead gap underneath, which reads as "moved" even though its
+   own top/left never changed.
+
+   Fix: re-run that same centering calculation on any resize. This is
+   deliberately scoped to never fight a deliberate placement — if the
+   user has actually dragged the window (svUserPositioned), resizing
+   leaves it exactly where they put it, the same way scale.js leaving
+   the overall UI alone on resize respects the user rather than
+   "helpfully" undoing what they did. */
+let svUserPositioned = false;
 window.addEventListener('resize', () => {
-  const nowFullscreen = isBrowserFullscreen();
-  if (nowFullscreen !== wasBrowserFullscreen) {
-    // Chrome collapsing/reappearing adds or removes space at the top (and
-    // occasionally a sliver at the sides) — the exact amount is just
-    // however much innerWidth/innerHeight changed by this transition.
-    const dw = window.innerWidth  - prevInnerW;
-    const dh = window.innerHeight - prevInnerH;
-    const win = document.getElementById('sv-window');
-    if (win.style.top || win.style.left) {
-      if (win.style.left) win.style.left = Math.max(0, parseFloat(win.style.left) + dw) + 'px';
-      if (win.style.top)  win.style.top  = Math.max(0, parseFloat(win.style.top)  + dh) + 'px';
-      syncNotesPanelPosition();
-    }
-    wasBrowserFullscreen = nowFullscreen;
-  }
-  prevInnerW = window.innerWidth;
-  prevInnerH = window.innerHeight;
+  const win = document.getElementById('sv-window');
+  if (!win.style.top && !win.style.left) return; // never opened yet — nothing to center
+  if (svUserPositioned) return; // they put it somewhere on purpose — leave it alone
+  win.style.left = Math.max(0, (window.innerWidth  - win.offsetWidth)  / 2) + 'px';
+  win.style.top  = Math.max(0, (window.innerHeight - win.offsetHeight) / 2) + 'px';
+  syncNotesPanelPosition();
 });
 
 /* ── Wiring ────── */
