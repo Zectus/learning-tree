@@ -1,0 +1,183 @@
+=== SECTION 1: DISTANCE, NEIGHBORHOODS, AND OPEN SETS ===
+
+Consider the function \( f(z) = \dfrac{(\operatorname{Re} z)(\operatorname{Im} z)}{\lvert z \rvert^2} \) for \( z \neq 0 \), and ask what happens to \( f(z) \) as \( z \) approaches \( 0 \). Along the real axis, \( \operatorname{Im} z = 0 \), so \( f(z) = 0 \) the whole way in. Along the imaginary axis, \( \operatorname{Re} z = 0 \), so again \( f(z) = 0 \). A student trained only on real-variable limits, where "approaching a point" means coming from the left or the right, might reasonably stop here and declare the limit \( 0 \). But writing \( z = r e^{i\theta} \) gives \( f(z) = \cos\theta \sin\theta = \tfrac{1}{2}\sin(2\theta) \), a value that depends only on the angle of approach and not at all on how close \( z \) is to \( 0 \). Along the ray \( \theta = \pi/4 \) (the line \( y = x \)), \( f(z) = \tfrac{1}{2} \) for every point on that ray, no matter how near the origin. Two directions of approach, two different answers. In the real line there are only two directions to approach a point from; in the plane there are infinitely many, and a definition of "limit" that only checks a couple of them is not checking enough. Making this precise — what it even means for a point to be "near" another point in \( \mathbb{C} \), and what it means for a set of such points to have no gaps, no missing edges, or to come in one connected piece rather than several — is the business of this document, and it is what the definition of a limit in Section 6 will ultimately depend on.
+
+The starting point is a notion of distance. For \( z_1, z_2 \in \mathbb{C} \), the distance between them is \( \lvert z_1 - z_2 \rvert \), the modulus of their difference. This is already familiar arithmetic, and its basic properties — \( \lvert z_1 - z_2 \rvert \geq 0 \) with equality only when \( z_1 = z_2 \), symmetry \( \lvert z_1 - z_2 \rvert = \lvert z_2 - z_1 \rvert \), and the triangle inequality \( \lvert z_1 - z_3 \rvert \leq \lvert z_1 - z_2 \rvert + \lvert z_2 - z_3 \rvert \) — are consequences of properties of the modulus already established elsewhere. What matters here is that this distance function lets every question about "closeness" in \( \mathbb{C} \) be phrased geometrically.
+
+The basic neighborhood of a point \( z_0 \) is the open disk \( D(z_0, r) = \{ z \in \mathbb{C} : \lvert z - z_0 \rvert < r \} \), the set of points strictly within distance \( r \) of \( z_0 \). It is open, not closed, by choice: the boundary circle \( \lvert z - z_0 \rvert = r \) is deliberately excluded, so that every point already inside the disk has some room around it. This is exactly what licenses the next definition. A set \( S \subseteq \mathbb{C} \) is called open if every \( z \in S \) is the center of some disk \( D(z, r) \) (with \( r \) depending on \( z \)) that is entirely contained in \( S \). The phrase "depending on \( z \)" matters: near the "middle" of a set there may be lots of room, while near a place where the set pinches close to its own edge, only a very small \( r \) will work — the definition only asks that some positive \( r \) exists for each point, not a single \( r \) that works everywhere.
+
+A set is closed if its complement \( \mathbb{C} \setminus S \) is open. A set is bounded if it is contained in some disk \( D(0, R) \) for a finite \( R \) — equivalently, if \( \sup_{z \in S} \lvert z \rvert \) is finite. These three properties are independent of one another: a set can be open and bounded, closed and unbounded, bounded but neither open nor closed, and so on.
+
+[TABLE]
+Property | Definition | Example
+Open | every point has a disk \( D(z,r) \subseteq S \) | \( D(0,1) = \{ z : \lvert z \rvert < 1 \} \)
+Closed | complement \( \mathbb{C} \setminus S \) is open | \( \{ z : \lvert z \rvert \le 1 \} \)
+Bounded | \( S \subseteq D(0,R) \) for some finite \( R \) | \( \{ z : \lvert z \rvert < 5 \} \)
+[/TABLE]
+
+The open disk itself is the cleanest example of an open set: for \( z \in D(z_0, r) \), let \( \rho = r - \lvert z - z_0 \rvert > 0 \). Any \( w \) with \( \lvert w - z \rvert < \rho \) satisfies, by the triangle inequality, \( \lvert w - z_0 \rvert \leq \lvert w - z \rvert + \lvert z - z_0 \rvert < \rho + \lvert z - z_0 \rvert = r \), so \( D(z, \rho) \subseteq D(z_0, r) \). This is the general pattern used to certify that a set is open: given an arbitrary point, exhibit a radius that works.
+
+[QUESTION 1]
+Which of the following subsets of \( \mathbb{C} \) is open but not bounded?
+
+(A) \( \{ z : \lvert z \rvert \le 3 \} \)
+(B) \( \{ z : \lvert z - 2i \rvert = 1 \} \)
+(C) \( \{ z : \operatorname{Re} z > -1 \} \)
+(D) \( \{ z : \lvert z \rvert < 1 \} \cup \{2\} \)
+(E) \( \{ z : \operatorname{Im} z \ge 0 \} \)
+[/QUESTION]
+
+=== SECTION 2: BOUNDARY, CLOSURE, AND INTERIOR ===
+
+Openness is a statement about a set from the inside — every point has breathing room. It says nothing about what the set looks like from the outside, and in particular it says nothing about the points that sit right at the edge, in either direction. A point \( z_0 \) (whether or not it belongs to \( S \)) is a boundary point of \( S \) if every disk \( D(z_0, r) \), for every \( r > 0 \), contains at least one point of \( S \) and at least one point of \( \mathbb{C} \setminus S \). The collection of all such points is the boundary of \( S \), written \( \partial S \). The closure of \( S \), written \( \overline{S} \), is \( S \cup \partial S \): the set together with whatever edge it has. The interior of \( S \), written \( S^\circ \), is the set of points of \( S \) that have some disk around them entirely inside \( S \) — precisely the condition that made \( S \) open when it held at every point. A set is open exactly when \( S = S^\circ \), and closed exactly when \( S = \overline{S} \), i.e. when \( S \) already contains its own boundary.
+
+Consider \( S = \{ z : 0 < \lvert z \rvert < 1 \} \), the open unit disk with its center removed. Every point of \( S \) is an interior point: for \( z \) with \( 0 < \lvert z \rvert < 1 \), the smaller of \( \lvert z \rvert \) and \( 1 - \lvert z \rvert \) gives a workable disk radius, so \( S \) is open, matching intuition. Its boundary is more interesting than it first looks. The unit circle \( \{ \lvert z \rvert = 1 \} \) is boundary as expected — any disk around such a point catches points just inside \( S \) and points just outside with \( \lvert z \rvert > 1 \). But \( 0 \) is also a boundary point, even though it sits nowhere near that circle: any disk \( D(0, r) \), however small, contains points \( z \) with \( 0 < \lvert z \rvert < r \), which lie in \( S \), and it also contains \( 0 \) itself, which does not lie in \( S \) (since \( S \) requires \( \lvert z \rvert > 0 \) strictly). So \( 0 \) satisfies the definition of a boundary point even though it is an isolated distance from the rest of \( \partial S \) — the definition never asked for the boundary to be a single connected curve, only that every neighborhood of the point straddle \( S \) and its complement. This is why the definition is phrased in terms of every disk touching both sides, rather than in terms of some more visual notion like "edge of a region": a punctured disk has an edge that is not just its outer rim. The closure of \( S \) is \( \overline{S} = S \cup \partial S = \{ z : \lvert z \rvert \leq 1 \} \), the full closed disk, since adjoining both the missing center and the missing circle to \( S \) fills it in completely.
+
+[QUESTION 2]
+Let \( S = \{ z : \lvert z \rvert < 1 \text{ and } \operatorname{Im} z > 0 \} \), the open upper half of the unit disk. Which of the following points is an interior point of \( S \)?
+
+(A) \( 0 \)
+(B) \( i/2 \)
+(C) \( 1 \)
+(D) \( i \)
+(E) \( -1 \)
+[/QUESTION]
+
+A domain — the term used going forward for the natural setting of a function of a complex variable — will turn out to be an open set with one further property, taken up next: it must come in a single connected piece.
+
+=== SECTION 3: CONNECTEDNESS, PATH-CONNECTEDNESS, AND DOMAINS ===
+
+A set \( S \) is disconnected if it can be split as \( S = A \cup B \) where \( A \) and \( B \) are nonempty, disjoint, and both open relative to \( S \) (meaning each is the intersection of an open subset of \( \mathbb{C} \) with \( S \)); such a pair is called a separation of \( S \). A set is connected if no separation exists. This definition is deliberately about the impossibility of a certain kind of split, rather than about any visual notion of "one piece," because the visual notion is exactly what needs pinning down.
+
+A more hands-on notion is path-connectedness: \( S \) is path-connected if any two points of \( S \) can be joined by a continuous path lying entirely in \( S \). It is intuitively clear that a path-connected set cannot be separated — a path from a point of \( A \) to a point of \( B \) would have to cross from one to the other, and continuity would force it through a point belonging to neither piece cleanly, contradicting that \( A \) and \( B \) partition \( S \) — so path-connected always implies connected. The converse is not true for general sets, but it is true for open sets, and this is the fact worth proving in full, since it is what lets "connected" and "path-connected" be used interchangeably for domains from here on.
+
+Claim: if \( S \subseteq \mathbb{C} \) is open and connected, it is path-connected, and in fact any two points of \( S \) can be joined by a polygonal path (a path made of finitely many straight segments) lying in \( S \).
+
+Fix \( z_0 \in S \) and let \( U = \{ z \in S : \text{some polygonal path in } S \text{ joins } z_0 \text{ to } z \} \). \( U \) is nonempty, since \( z_0 \in U \) trivially (a path of zero segments). \( U \) is open: for \( w \in U \), openness of \( S \) gives a disk \( D(w, r) \subseteq S \); every point \( u \) of this disk is joined to \( w \) by the straight segment \( [w, u] \), which lies in the disk and hence in \( S \), so appending this segment to the polygonal path from \( z_0 \) to \( w \) gives a polygonal path from \( z_0 \) to \( u \); hence \( D(w,r) \subseteq U \). The complement \( S \setminus U \) is open by the same argument run in reverse: for \( w \in S \setminus U \), take a disk \( D(w,r) \subseteq S \); if any point \( u \) of this disk were in \( U \), the segment \( [u, w] \) together with a polygonal path from \( z_0 \) to \( u \) would produce one from \( z_0 \) to \( w \), putting \( w \) in \( U \), a contradiction; so \( D(w,r) \subseteq S \setminus U \). Now \( U \) and \( S \setminus U \) are disjoint open sets whose union is \( S \); if \( S \setminus U \) were nonempty, this pair would be a separation of \( S \), contradicting connectedness. So \( S \setminus U = \emptyset \), meaning \( U = S \): every point of \( S \) is reachable from \( z_0 \) by a polygonal path. Since \( z_0 \) was arbitrary among a fixed starting point, and any two such paths can be concatenated (path from \( z \) to \( z_0 \) to \( w \)), any two points of \( S \) are joined by a polygonal path.
+
+Openness was used twice in this proof, both times to guarantee that a whole disk — not just the one point being checked — could be added to \( U \) or to its complement. Without openness the argument breaks, and it is worth seeing a case where connected genuinely does not imply path-connected. Take \( T = \{ x + i\sin(1/x) : 0 < x \leq 1 \} \cup \{ iy : -1 \leq y \leq 1 \} \): the graph of \( \sin(1/x) \) for \( x \) near \( 0 \) oscillates faster and faster, and as \( x \to 0^+ \) the graph passes arbitrarily close to every point of the segment \( \{iy : -1 \le y \le 1\} \) on the imaginary axis without ever reaching it directly. This accumulation is enough to make \( T \) connected — no separation into two open (relative to \( T \)) pieces can be found, since any piece containing part of the oscillating graph must, by the accumulation, also touch the segment, and vice versa. Yet \( T \) is not path-connected: a continuous path starting on the segment and ending on the graph would have to make infinitely many oscillations in a finite amount of path length near \( x = 0 \), which no continuous path can do. \( T \) is not open — the segment points have no disk around them lying inside \( T \) — so this does not contradict the claim just proved; it shows why the claim needed that hypothesis.
+
+A domain is defined as an open, connected subset of \( \mathbb{C} \). By the claim above, "connected" can equivalently be read as "path-connected" whenever the set in question is open, which every domain is by definition.
+
+[QUESTION 3]
+Which of the following sets is not a domain?
+
+(A) \( \{ z : \lvert z \rvert < 1 \} \)
+(B) \( \{ z : \lvert z \rvert < 1 \} \cup \{ z : \lvert z - 3 \rvert < 1 \} \)
+(C) \( \{ z : \operatorname{Re} z > 0 \text{ and } \operatorname{Im} z > 0 \} \)
+(D) \( \{ z : 1 < \lvert z \rvert < 2 \} \)
+(E) \( \mathbb{C} \setminus \{0\} \)
+[/QUESTION]
+
+=== SECTION 4: CONVERGENCE OF COMPLEX SEQUENCES ===
+
+A sequence \( (z_n) \) of complex numbers converges to a limit \( L \), written \( z_n \to L \), if \( \lvert z_n - L \rvert \to 0 \) as \( n \to \infty \) — that is, for every \( \varepsilon > 0 \) there is an \( N \) such that \( n > N \) implies \( \lvert z_n - L \rvert < \varepsilon \). This is the disk-based idea from Section 1 read as a statement about eventually landing, and staying, inside \( D(L, \varepsilon) \) for every \( \varepsilon \), however small.
+
+Every complex number splits into a real and an imaginary part, and it is natural to ask whether convergence of \( (z_n) \) is really just convergence of two real sequences in disguise. It is, and the reason is a pair of inequalities relating \( \lvert w \rvert \) to \( \lvert \operatorname{Re} w \rvert \) and \( \lvert \operatorname{Im} w \rvert \) for any complex number \( w = a + bi \): since \( \lvert w \rvert = \sqrt{a^2+b^2} \), and \( a^2 \le a^2+b^2 \) while also \( a^2 + b^2 \le a^2 + 2\lvert a \rvert \lvert b \rvert + b^2 = (\lvert a \rvert + \lvert b \rvert)^2 \), taking square roots gives
+\[ \max(\lvert a \rvert, \lvert b \rvert) \leq \lvert w \rvert \leq \lvert a \rvert + \lvert b \rvert. \]
+Apply this with \( w = z_n - L \), \( a = \operatorname{Re}(z_n) - \operatorname{Re}(L) \), \( b = \operatorname{Im}(z_n) - \operatorname{Im}(L) \). Suppose \( z_n \to L \): given \( \varepsilon > 0 \), take \( N \) so that \( n > N \) implies \( \lvert z_n - L \rvert < \varepsilon \); then the left inequality gives \( \lvert \operatorname{Re}(z_n) - \operatorname{Re}(L) \rvert \le \lvert z_n - L \rvert < \varepsilon \) and likewise for the imaginary part, for the same \( N \). So \( \operatorname{Re}(z_n) \to \operatorname{Re}(L) \) and \( \operatorname{Im}(z_n) \to \operatorname{Im}(L) \). Conversely, suppose both real sequences converge: given \( \varepsilon > 0 \), choose \( N_1 \) so \( n > N_1 \) implies \( \lvert \operatorname{Re}(z_n) - \operatorname{Re}(L) \rvert < \varepsilon/2 \), and \( N_2 \) so \( n > N_2 \) implies \( \lvert \operatorname{Im}(z_n) - \operatorname{Im}(L) \rvert < \varepsilon/2 \); for \( n > \max(N_1, N_2) \), the right inequality gives \( \lvert z_n - L \rvert \le \lvert \operatorname{Re}(z_n)-\operatorname{Re}(L) \rvert + \lvert \operatorname{Im}(z_n) - \operatorname{Im}(L) \rvert < \varepsilon \). So \( z_n \to L \). Both directions hold:
+\[ z_n \to L \iff \operatorname{Re}(z_n) \to \operatorname{Re}(L) \text{ and } \operatorname{Im}(z_n) \to \operatorname{Im}(L). \]
+This reduces every question about complex convergence to two ordinary real-sequence questions, and it is the fact this whole document leans on repeatedly from here forward.
+
+As a worked instance, let \( z_n = \dfrac{1}{n} + i\left(1 - \dfrac{1}{n^2}\right) \). The real part \( 1/n \to 0 \) and the imaginary part \( 1 - 1/n^2 \to 1 \), both by ordinary real-sequence limits, so \( z_n \to i \).
+
+[QUESTION 4]
+Consider the sequence \( z_n = \dfrac{\cos n + i \sin n}{n} + 3 - i \). Which of the following is correct?
+
+(A) It diverges, since \( \cos n \) and \( \sin n \) do not individually converge as \( n \to \infty \).
+(B) It converges to \( 4 - i \).
+(C) It converges to \( 3 - i \).
+(D) It converges to \( i(3-i) \).
+(E) It diverges, because the values \( e^{in} \) are dense on the unit circle and so never settle down.
+[/QUESTION]
+
+=== SECTION 5: CONVERGENCE OF COMPLEX SERIES ===
+
+A series \( \sum_{n=0}^\infty a_n \) of complex numbers converges to a sum \( S \) if its sequence of partial sums \( S_N = \sum_{n=0}^N a_n \) converges to \( S \) as a complex sequence, in the sense of Section 4. Since that sense is itself equivalent to convergence of the real and imaginary parts separately, a complex series converges precisely when the series of real parts and the series of imaginary parts of the \( a_n \) both converge as ordinary real series — again nothing new is required beyond real-variable tools already assumed, applied to two coordinates at once.
+
+One consequence of the definition is worth isolating on its own, independent of any specific series: if \( \sum a_n \) converges to \( S \), then \( a_n \to 0 \). This is because \( a_n = S_n - S_{n-1} \) for \( n \ge 1 \), and if \( S_n \to S \) and \( S_{n-1} \to S \) (the second is the same statement shifted by one index), then \( a_n = S_n - S_{n-1} \to S - S = 0 \), using that the difference of two convergent complex sequences converges to the difference of their limits (itself immediate from the triangle inequality applied to \( \lvert (S_n - S_{n-1}) - (S-S) \rvert \le \lvert S_n - S \rvert + \lvert S_{n-1}-S \rvert \)). So a complex series whose terms do not tend to \( 0 \) cannot converge.
+
+The geometric series is the standard worked example. For fixed \( z \) with \( \lvert z \rvert < 1 \), the partial sum \( S_N = \sum_{n=0}^N z^n \) satisfies \( (1-z)S_N = 1 - z^{N+1} \) (multiply \( S_N \) by \( 1-z \) and watch the interior terms cancel), so \( S_N = \dfrac{1 - z^{N+1}}{1-z} \) for \( z \ne 1 \). Since \( \lvert z \rvert < 1 \), \( \lvert z^{N+1} \rvert = \lvert z \rvert^{N+1} \to 0 \) as \( N \to \infty \), so \( z^{N+1} \to 0 \) and \( S_N \to \dfrac{1}{1-z} \). For \( \lvert z \rvert > 1 \), \( \lvert z \rvert^{N+1} \to \infty \), so the terms themselves do not tend to \( 0 \) and the series diverges by the fact above. The boundary case \( \lvert z \rvert = 1 \) is not covered by either argument: the algebraic identity for \( S_N \) still holds, but \( z^{N+1} \) neither shrinks to \( 0 \) nor grows without bound — it simply stays on the unit circle forever, and whether the series converges has to be examined separately for each such \( z \).
+
+[QUESTION 5]
+Consider the series \( \sum_{n=1}^\infty i^n \). Which statement is correct?
+
+(A) It converges absolutely, since \( \lvert i^n \rvert = 1 \) for every \( n \), so the terms are bounded.
+(B) It converges conditionally, since the sequences of real parts and imaginary parts of the partial sums are each alternating and bounded.
+(C) It converges to \( 0 \), since the four values \( i, -1, -i, 1 \) sum to \( 0 \) over each block of four consecutive terms.
+(D) It diverges, since the partial sums cycle repeatedly through the four values \( 1, -1, i, -i \) without settling near any one of them.
+(E) It diverges, since the terms \( i^n \) do not tend to \( 0 \), which is necessary for any complex series to converge.
+[/QUESTION]
+
+=== SECTION 6: LIMITS OF COMPLEX FUNCTIONS ===
+
+Let \( f \) be defined on some set containing points arbitrarily close to \( z_0 \) (though not necessarily at \( z_0 \) itself). The statement \( \lim_{z \to z_0} f(z) = L \) means: for every \( \varepsilon > 0 \) there exists \( \delta > 0 \) such that \( 0 < \lvert z - z_0 \rvert < \delta \) implies \( \lvert f(z) - L \rvert < \varepsilon \). In words, \( f(z) \) can be forced into the disk \( D(L, \varepsilon) \) by keeping \( z \) inside the punctured disk \( D(z_0, \delta) \setminus \{z_0\} \). Nothing here differs symbolically from the one-variable real definition, but the content is different in a way that matters: in \( \mathbb{R} \), a punctured interval around \( x_0 \) consists of exactly two rays, and checking a limit is sometimes done by checking left and right separately. In \( \mathbb{C} \), the punctured disk \( D(z_0,\delta)\setminus\{z_0\} \) is not a union of two pieces — it is every direction at once — and the single \( \delta \) in the definition must work simultaneously for all of them. This is exactly the gap the opening example exploited: no single \( \delta \) can make \( f(z) = (\operatorname{Re} z)(\operatorname{Im} z)/\lvert z \rvert^2 \) land near one value \( L \), because for every \( \delta \), the punctured disk \( D(0,\delta) \setminus \{0\} \) contains points with \( f(z) = 0 \) (on the axes) and points with \( f(z) = 1/2 \) (on the line \( y=x \)), however small \( \delta \) is chosen — both values are always present together, no matter how far in one looks.
+
+This gives a general tool for showing a limit fails to exist: if \( f(z) \to L \) as \( z \to z_0 \), and \( \gamma(t) \) is any path with \( \gamma(t) \to z_0 \), then \( f(\gamma(t)) \to L \) as well, since for any \( \varepsilon \) the same \( \delta \) that controls \( f \) near \( z_0 \) eventually controls \( f(\gamma(t)) \) once \( \gamma(t) \) is within \( \delta \) of \( z_0 \), which happens for \( t \) large enough because \( \gamma(t) \to z_0 \). So if two different paths into \( z_0 \) produce two different limiting values of \( f \), no limit \( L \) can exist — every path would have to agree with it, and a single \( L \) cannot equal two different numbers. This was the underlying reason the axis approach and the \( y=x \) approach, giving \( 0 \) and \( 1/2 \) respectively, were already enough to rule out any limit at \( 0 \).
+
+[GRAPH]
+type: function2d
+title: \( f \) restricted to the ray at angle \( \theta \), as a function of \( \theta \)
+xlabel: \( \theta \)
+ylabel: value of \( f \) on that ray
+xrange: 0, 6.283
+trace: 0.5*sin(2*x) | label: \( \tfrac{1}{2}\sin(2\theta) \)
+[/GRAPH]
+
+The curve above shows the value \( f \) takes along the ray at angle \( \theta \) — a constant, independent of how far out the ray is followed, but visibly different for different \( \theta \), which is the graphical form of the same fact just proved algebraically.
+
+Limits also connect back to sequences: \( \lim_{z\to z_0} f(z) = L \) if and only if \( f(z_n) \to L \) for every sequence \( z_n \to z_0 \) with \( z_n \ne z_0 \). This is the path criterion above specialized to sequences rather than continuous paths, and it is often the most convenient form to use in practice, since Section 4 already gives full control over sequence convergence.
+
+[QUESTION 6]
+Consider \( g(z) = \dfrac{\overline{z}}{z} \) for \( z \ne 0 \). Which statement about \( \lim_{z \to 0} g(z) \) is correct?
+
+(A) The limit is \( 1 \), since \( g(z) \to 1 \) along the real axis, and this generalizes to every direction.
+(B) The limit does not exist, since \( \lvert g(z) \rvert \to 1 \) as \( z \to 0 \), so \( g(z) \) cannot approach any single finite value.
+(C) The limit does not exist, since \( g(z) \) takes different constant values along different rays through the origin, and a limit requires the same value regardless of the path of approach.
+(D) The limit exists and equals \( i \), obtained by approaching along the ray \( \theta = \pi/4 \).
+(E) The limit is \( 0 \), since \( \overline{z} \to 0 \) and \( z \to 0 \) together as \( z \to 0 \).
+[/QUESTION]
+
+=== SECTION 7: CONTINUITY ===
+
+A function \( f \) is continuous at \( z_0 \) (a point of its domain) if \( \lim_{z \to z_0} f(z) = f(z_0) \) — the limit exists, and it agrees with the value the function actually takes there. Written out, this means for every \( \varepsilon > 0 \) there is \( \delta > 0 \) such that \( \lvert z - z_0 \rvert < \delta \) implies \( \lvert f(z) - f(z_0) \rvert < \varepsilon \); the punctured disk of the limit definition becomes an ordinary disk here, since there is no longer any need to exclude \( z_0 \) itself. \( f \) is continuous on a domain if it is continuous at every point of that domain.
+
+Sums, differences, products, and quotients (away from zeros of the denominator) of continuous functions are continuous, by the same triangle-inequality arguments used for real-valued functions, applied coordinatewise via the equivalence from Section 4. The coordinate functions themselves, \( \operatorname{Re} z \), \( \operatorname{Im} z \), \( \overline{z} \), and \( \lvert z \rvert \), are all continuous everywhere, directly from the definitions: for instance \( \lvert \operatorname{Re}(z) - \operatorname{Re}(z_0) \rvert \le \lvert z - z_0 \rvert \) means \( \delta = \varepsilon \) always works for \( \operatorname{Re} z \). Consequently every polynomial in \( z \) is continuous on all of \( \mathbb{C} \), and every rational function is continuous everywhere its denominator is nonzero.
+
+A subtlety worth being careful with is what happens when a formula for \( f \) is only valid away from a single point, and a value is assigned there separately.
+
+[QUESTION 7]
+Define \( h(z) = \dfrac{z^2 - 1}{z - 1} \) for \( z \ne 1 \), and \( h(1) = c \) for some constant \( c \). For which value of \( c \) is \( h \) continuous at \( z = 1 \)?
+
+(A) \( c = 2 \)
+(B) \( c = 0 \)
+(C) \( c = 1 \)
+(D) \( c = -2 \)
+(E) \( h \) cannot be made continuous at \( z=1 \) for any choice of \( c \)
+[/QUESTION]
+
+Continuity, as defined here, is a pointwise notion — it says something about \( f \) at each point of its domain individually. Together with the topological structure of Sections 1 through 3, it sets up exactly the language needed to ask, of a function on a domain, whether it behaves not just continuously but differentiably at each point — the question taken up next.
+
+[KEY: 1C 2B 3B 4C 5E 6C 7A]
+
+[BONUS 1]
+[ANSWER: B]
+Let \( S = \{ z : \lvert z \rvert < 1 \} \cup \{ z : \lvert z - 2 \rvert < 1 \} \), two open unit disks centered at \( 0 \) and at \( 2 \), tangent to each other at the point \( z = 1 \). Which of the following is true about \( S \)?
+
+(A) \( S \) is connected, since the two disks share the point \( z = 1 \) on their common boundary.
+(B) \( S \) is not connected, since \( z=1 \) belongs to neither open disk, so there is no path in \( S \) from a point of one disk to a point of the other without leaving \( S \).
+(C) \( S \) is connected, since both disks are individually connected, and a union of connected sets is always connected.
+(D) \( S \) is a domain, since it is open and bounded.
+(E) \( S \) is closed, since it is built from a union of two disks.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Evaluate \( \displaystyle\sum_{n=0}^\infty \left(\frac{i}{2}\right)^n \).
+
+(A) \( \dfrac{4+2i}{5} \)
+(B) \( \dfrac{4-2i}{5} \)
+(C) \( \dfrac{2+i}{5} \)
+(D) \( 1 + \dfrac{i}{2} \)
+(E) The series diverges, since \( i/2 \) is not a real number and the geometric series formula only applies to real ratios.
+[/BONUS]

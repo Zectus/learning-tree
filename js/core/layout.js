@@ -2,18 +2,37 @@
    layout.js — pure graph-computation layer.
    Depth assignment, left-to-right layout, node-status
    resolution, SVG edge rendering, and hover highlight.
-   No user interaction; depends on state.js only.
+   No user interaction; depends on state.js only, plus scale.js
+   (window.UI_SCALE) for the pixel constants below.
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
    LAYOUT CONSTANTS
+   These are `let`, not `const`, and recomputed by
+   updateLayoutScale() below — called once here at load (using
+   whatever window.UI_SCALE scale.js already set, since it loads
+   first) and again by scale.js whenever the desktop UI-scale
+   factor changes on a live window resize, so a node's on-screen
+   size (and the spacing between them) stays proportioned the same
+   way relative to the screen as everything else in the app's
+   chrome, instead of staying fixed while the toolbar/modals around
+   it scale. See scale.js for why this factor exists at all.
 ═══════════════════════════════════════════════════════════ */
-const BASE_W      = 190;
-const BASE_H      = 72;
+let BASE_W = 190;
+let BASE_H = 72;
+let COL_W  = 260;   // horizontal px between depth columns
+let ROW_H  = 110;   // vertical px between nodes in the same column
 const DEPTH_SCALE = 1.0;   // uniform node size — no shrinking by depth
 const MIN_SCALE   = 1.0;
-const COL_W       = 260;   // horizontal px between depth columns
-const ROW_H       = 110;   // vertical px between nodes in the same column
+
+function updateLayoutScale() {
+  const s = window.UI_SCALE || 1;
+  BASE_W = 190 * s;
+  BASE_H = 72  * s;
+  COL_W  = 260 * s;
+  ROW_H  = 110 * s;
+}
+updateLayoutScale();
 
 function depthS(d)  { return Math.max(MIN_SCALE, Math.pow(DEPTH_SCALE, d)); }
 function nodeW(d)   { return Math.round(BASE_W * depthS(d)); }
@@ -103,7 +122,11 @@ function updateDepthClasses() {
     if (!data.el) return;
     data.el.classList.remove('root','d1','d2','d3','d4');
     data.el.classList.add(data.depth === 0 ? 'root' : `d${Math.min(data.depth, 4)}`);
-    const s = depthS(data.depth);
+    // Combines the existing per-depth fractal shrink (depthS) with the
+    // desktop UI-scale factor (see scale.js) into one multiplier, so a
+    // node's text/badge/padding scale the same way the rest of the app's
+    // chrome does, on top of whatever depth-based sizing already applied.
+    const s = depthS(data.depth) * (window.UI_SCALE || 1);
     const textEl = data.el.querySelector('.node-text');
     if (textEl) {
       textEl.style.fontSize   = (data.depth === 0 ? 15 : 13.5) * s + 'px';
@@ -239,4 +262,3 @@ function clearEdgeHighlight() {
     p.classList.remove('hi-prereq', 'hi-dep');
   });
 }
-

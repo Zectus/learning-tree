@@ -1,9 +1,13 @@
 /* ═══════════════════════════════════════════════════════════
-   theme.css — the CSS reset and every themeable value: colors,
-   fonts, and the light/dark variable sets everything else in the
-   app reads from. Nothing in here targets a specific component;
-   every other stylesheet depends on the custom properties defined
-   here, so this loads first.
+   theme.css — the CSS reset, the root font-size that every rem
+   value in the app scales against (see scale.js — the app's
+   chrome is sized in rem specifically so that one JS-computed
+   factor, --ui-scale, standardizes its size across different
+   screens/zoom levels), and every themeable value: colors, fonts,
+   and the light/dark variable sets everything else in the app
+   reads from. Nothing in here targets a specific component; every
+   other stylesheet depends on the custom properties defined here,
+   so this loads first.
 ═══════════════════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,6 +23,14 @@
   --line:     #d4d4ce;
   --line-h:   #6a6a62;
   --font:     -apple-system, 'Inter', 'Segoe UI', sans-serif;
+
+  /* Desktop UI-scale factor — set at runtime by scale.js from the
+     window's logical width; 1 is just the pre-JS fallback so nothing's
+     unstyled for the one frame before that script runs (it's loaded
+     synchronously in <head>, so in practice this fallback is never
+     actually seen). Drives the html{font-size} rule below, which is what
+     every rem value everywhere else in the app's chrome scales against. */
+  --ui-scale: 1;
 
   /* status palette */
   --done-bg:    #1a6640;
@@ -53,6 +65,16 @@
   --danger-text:       #b03030;
   --btn-soft-bg:       rgba(0,0,0,.04);
   --btn-soft-bg-hover: rgba(0,0,0,.08);
+}
+
+/* The single scaling point: every rem in the app is relative to this.
+   At --ui-scale: 1 (the 1920×1080 @150%-zoom reference logical width,
+   or the whole app below the 700px mobile breakpoint — see scale.js)
+   this is exactly 16px, so every "Npx" value converted to rem elsewhere
+   renders at that literal same Npx, unchanged from today. Away from the
+   reference width, it scales proportionally instead of staying fixed. */
+html {
+  font-size: calc(16px * var(--ui-scale));
 }
 
 body.dark {
@@ -109,4 +131,3 @@ body {
                      as a fallback for browsers that don't support dvh. */
   transition: background .15s ease, color .15s ease;
 }
-

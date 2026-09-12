@@ -5,6 +5,15 @@
    (sections, prose, KaTeX, tables, timelines), and the quiz UI
    (question cards, options, correct/wrong feedback, the bonus-
    practice dropdown). Pairs with viewer.js.
+   Sizes are in rem so they scale with --ui-scale (see
+   scale.js/theme.css) — this matters here more than almost
+   anywhere else in the app, since #sv-window/#sv-notes-panel are
+   dragged and resized via raw mouse-pixel deltas (see viewer.js);
+   rem-based sizing means the browser computes genuinely bigger
+   boxes at a bigger scale, so that JS math (which reads real
+   offsetWidth/getBoundingClientRect() values) stays correct
+   without any special-casing, unlike a visual-only CSS transform
+   layered on top would require.
    Depends on theme.css. Note: the "no visible scrollbars" rule
    below also targets .modal-shell (defined in modals.css) — the
    two components share that one rule rather than each repeating
@@ -22,10 +31,10 @@
 
 #sv-window {
   position: fixed;
-  width: 760px; height: 600px;
-  min-width: 380px; min-height: 280px;
+  width: 47.5rem; height: 37.5rem;
+  min-width: 23.75rem; min-height: 17.5rem;
   background: var(--surface);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   box-shadow: 0 12px 52px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.08);
   display: flex; flex-direction: column;
   overflow: hidden;
@@ -34,17 +43,17 @@
 }
 
 #sv-header {
-  display: flex; align-items: center; gap: 14px;
-  padding: 11px 16px;
+  display: flex; align-items: center; gap: 0.875rem;
+  padding: 0.6875rem 1rem;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   flex-shrink: 0;
   cursor: grab;
   user-select: none;
-  border-radius: 10px 10px 0 0;
+  border-radius: 0.625rem 0.625rem 0 0;
 }
 #sv-header:active { cursor: grabbing; }
-#sv-topic { font-size: 14px; font-weight: 600; flex: 1; }
+#sv-topic { font-size: 0.875rem; font-weight: 600; flex: 1; }
 
 /* session progress bar — mirrors #progress-bar-wrap at the page level.
    Checkpoint dots mark each question's position; "done" (answered,
@@ -52,20 +61,20 @@
    viewer.js for how the fill width is computed and clamped. */
 #sv-progress-wrap {
   position: relative;
-  height: 5px;
+  height: 0.3125rem;
   flex-shrink: 0;
 }
 #sv-progress-track {
   position: absolute;
   left: 0; right: 0; top: 50%;
-  height: 3px;
+  height: 0.1875rem;
   transform: translateY(-50%);
   background: var(--border);
 }
 #sv-progress-bar {
   position: absolute;
   left: 0; top: 50%;
-  height: 3px;
+  height: 0.1875rem;
   transform: translateY(-50%);
   background: var(--done-bg);
   width: 0%;
@@ -74,7 +83,7 @@
 #sv-progress-checkpoints { position: absolute; inset: 0; }
 .sv-checkpoint {
   position: absolute; top: 50%;
-  width: 8px; height: 8px;
+  width: 0.5rem; height: 0.5rem;
   border-radius: 50%;
   background: var(--surface);
   border: 2px solid var(--border-h);
@@ -85,21 +94,21 @@
 .sv-checkpoint.done { background: var(--done-bg); border-color: var(--done-bdr); }
 
 #sv-score {
-  font-size: 11.5px; font-weight: 500; color: var(--text-m);
+  font-size: 0.71875rem; font-weight: 500; color: var(--text-m);
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 2px 11px; white-space: nowrap;
+  border-radius: 1.25rem; padding: 0.125rem 0.6875rem; white-space: nowrap;
 }
 #sv-score.sv-perfect { color: var(--done-bdr); border-color: var(--done-bdr); background: var(--done-bg); }
 #btn-close-viewer {
-  background: none; border: 1px solid var(--border); border-radius: 6px;
-  width: 26px; height: 26px; cursor: pointer; font-size: 12px;
+  background: none; border: 1px solid var(--border); border-radius: 0.375rem;
+  width: 1.625rem; height: 1.625rem; cursor: pointer; font-size: 0.75rem;
   color: var(--text-m); transition: all .12s; flex-shrink: 0;
 }
 #btn-close-viewer:hover { border-color: var(--border-h); color: var(--text); }
 
 #btn-toggle-notes {
-  background: none; border: 1px solid var(--border); border-radius: 6px;
-  width: 26px; height: 26px; cursor: pointer; font-size: 12px;
+  background: none; border: 1px solid var(--border); border-radius: 0.375rem;
+  width: 1.625rem; height: 1.625rem; cursor: pointer; font-size: 0.75rem;
   color: var(--text-m); transition: all .12s; flex-shrink: 0;
 }
 #btn-toggle-notes:hover { border-color: var(--border-h); color: var(--text); }
@@ -113,10 +122,10 @@
 #sv-notes-panel {
   display: none;
   position: fixed;
-  width: 260px;
+  width: 16.25rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   box-shadow: 0 12px 52px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.08);
   flex-direction: column;
   overflow: hidden;
@@ -125,17 +134,17 @@
 }
 #sv-notes-panel.open { display: flex; }
 #sv-notes-label {
-  padding: 11px 16px;
+  padding: 0.6875rem 1rem;
   border-bottom: 1px solid var(--border);
-  font-size: 12px; font-weight: 600; color: var(--text-m);
+  font-size: 0.75rem; font-weight: 600; color: var(--text-m);
   flex-shrink: 0;
 }
 #sv-notes-ta {
   flex: 1;
   border: none; outline: none; resize: none;
-  padding: 14px 16px;
+  padding: 0.875rem 1rem;
   font-family: var(--font);
-  font-size: 13.5px;
+  font-size: 0.84375rem;
   line-height: 1.6;
   color: var(--text);
   background: transparent;
@@ -144,19 +153,19 @@
 #sv-notes-ta::placeholder { color: var(--text-m); opacity: .6; }
 #sv-notes-resize {
   position: absolute; bottom: 0; right: 0;
-  width: 18px; height: 18px; cursor: se-resize; z-index: 1;
+  width: 1.125rem; height: 1.125rem; cursor: se-resize; z-index: 1;
 }
 #sv-notes-resize::after {
   content: '';
-  position: absolute; bottom: 4px; right: 4px;
+  position: absolute; bottom: 0.25rem; right: 0.25rem;
   border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);
-  width: 8px; height: 8px;
+  width: 0.5rem; height: 0.5rem;
 }
 
 #sv-body {
   flex: 1; overflow-y: auto;
-  padding: 32px 48px 60px;
-  font-size: 15.5px; line-height: 1.82; color: var(--text);
+  padding: 2rem 3rem 3.75rem;
+  font-size: 0.96875rem; line-height: 1.82; color: var(--text);
 }
 
 /* No visible scrollbars anywhere inside the viewer or the modals — they
@@ -179,108 +188,107 @@
 /* resize handle */
 #sv-resize {
   position: absolute; bottom: 0; right: 0;
-  width: 18px; height: 18px; cursor: se-resize; z-index: 1;
+  width: 1.125rem; height: 1.125rem; cursor: se-resize; z-index: 1;
 }
 #sv-resize::after {
   content: '';
-  position: absolute; bottom: 4px; right: 4px;
+  position: absolute; bottom: 0.25rem; right: 0.25rem;
   border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);
-  width: 8px; height: 8px;
+  width: 0.5rem; height: 0.5rem;
 }
 
-.sv-section { margin-bottom: 56px; }
+.sv-section { margin-bottom: 3.5rem; }
 .sv-section-label {
-  font-size: 10px; font-weight: 700; letter-spacing: .11em;
-  text-transform: uppercase; color: var(--text-m); margin-bottom: 6px;
+  font-size: 0.625rem; font-weight: 700; letter-spacing: .11em;
+  text-transform: uppercase; color: var(--text-m); margin-bottom: 0.375rem;
 }
 .sv-section-title {
-  font-size: 19px; font-weight: 700; letter-spacing: -.005em;
+  font-size: 1.1875rem; font-weight: 700; letter-spacing: -.005em;
   color: var(--text);
-  padding-bottom: 11px; border-bottom: 1px solid var(--border);
-  margin-bottom: 26px;
+  padding-bottom: 0.6875rem; border-bottom: 1px solid var(--border);
+  margin-bottom: 1.625rem;
 }
 .sv-prose p { margin: 0 0 1.05em; }
 .sv-prose p:last-child { margin-bottom: 0; }
 .katex-display { margin: 1.4em 0 !important; overflow-x: auto; overflow-y: visible; }
 
 /* [TABLE]...[/TABLE] */
-.sv-table-wrap { margin: 26px 0; overflow-x: auto; }
-.sv-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.sv-table-wrap { margin: 1.625rem 0; overflow-x: auto; }
+.sv-table { width: 100%; border-collapse: collapse; font-size: 0.90625rem; }
 .sv-table th, .sv-table td {
-  padding: 9px 14px; text-align: left;
+  padding: 0.5625rem 0.875rem; text-align: left;
   border-bottom: 1px solid var(--border);
   white-space: normal;
 }
 .sv-table th {
   font-weight: 600; color: var(--text-m);
-  font-size: 12px; text-transform: uppercase; letter-spacing: .03em;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: .03em;
   border-bottom: 2px solid var(--border);
 }
 .sv-table tbody tr:last-child td { border-bottom: none; }
 
 /* [TIMELINE]...[/TIMELINE] */
-.sv-timeline { margin: 30px 4px; position: relative; }
-.sv-tl-item { position: relative; display: flex; gap: 18px; padding-bottom: 24px; }
+.sv-timeline { margin: 1.875rem 0.25rem; position: relative; }
+.sv-tl-item { position: relative; display: flex; gap: 1.125rem; padding-bottom: 1.5rem; }
 .sv-tl-item:last-child { padding-bottom: 0; }
 .sv-tl-dot {
-  flex-shrink: 0; width: 10px; height: 10px; margin-top: 5px;
+  flex-shrink: 0; width: 0.625rem; height: 0.625rem; margin-top: 0.3125rem;
   border-radius: 50%; background: var(--avail-bdr);
   position: relative; z-index: 1;
 }
 .sv-tl-item:not(:last-child) .sv-tl-dot::after {
-  content: ''; position: absolute; top: 10px; left: 50%;
-  width: 1px; height: calc(100% + 24px);
+  content: ''; position: absolute; top: 0.625rem; left: 50%;
+  width: 1px; height: calc(100% + 1.5rem);
   background: var(--border); transform: translateX(-50%);
 }
 .sv-tl-content { flex: 1; min-width: 0; }
-.sv-tl-marker { font-weight: 600; font-size: 13.5px; color: var(--avail-bdr); margin-bottom: 2px; }
-.sv-tl-text { font-size: 14.5px; line-height: 1.55; color: var(--text); }
+.sv-tl-marker { font-weight: 600; font-size: 0.84375rem; color: var(--avail-bdr); margin-bottom: 0.125rem; }
+.sv-tl-text { font-size: 0.90625rem; line-height: 1.55; color: var(--text); }
 
 /* question cards */
 .q-card {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 20px 22px 16px; margin: 30px 0;
+  border-radius: 0.625rem; padding: 1.25rem 1.375rem 1rem; margin: 1.875rem 0;
 }
 .q-num {
-  font-size: 10px; font-weight: 700; letter-spacing: .11em;
-  text-transform: uppercase; color: var(--text-m); margin-bottom: 9px;
+  font-size: 0.625rem; font-weight: 700; letter-spacing: .11em;
+  text-transform: uppercase; color: var(--text-m); margin-bottom: 0.5625rem;
 }
 .q-body p { margin: 0 0 .5em; }
-.q-body p:last-child { margin-bottom: 14px; }
-.q-opts { display: flex; flex-direction: column; gap: 6px; }
+.q-body p:last-child { margin-bottom: 0.875rem; }
+.q-opts { display: flex; flex-direction: column; gap: 0.375rem; }
 .q-opt {
-  display: flex; align-items: baseline; gap: 11px; text-align: left;
-  background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
-  padding: 9px 14px; cursor: pointer; font-family: var(--font);
-  font-size: 14px; color: var(--text); transition: border-color .1s, background .1s;
+  display: flex; align-items: baseline; gap: 0.6875rem; text-align: left;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 0.5rem;
+  padding: 0.5625rem 0.875rem; cursor: pointer; font-family: var(--font);
+  font-size: 0.875rem; color: var(--text); transition: border-color .1s, background .1s;
 }
 .q-opt:hover:not(:disabled) { border-color: var(--avail-bdr); background: var(--info-soft-bg); }
 .q-opt:disabled { cursor: default; }
-.q-letter { font-weight: 700; font-size: 12px; color: var(--text-m); min-width: 14px; flex-shrink: 0; }
+.q-letter { font-weight: 700; font-size: 0.75rem; color: var(--text-m); min-width: 0.875rem; flex-shrink: 0; }
 .q-opt.q-correct { border-color: var(--done-bdr); background: var(--ok-soft-bg); }
 .q-opt.q-correct .q-letter { color: var(--done-bdr); }
 .q-opt.q-wrong   { border-color: var(--err-border); background: var(--err-soft-bg); }
 .q-opt.q-wrong .q-letter { color: var(--err-text); }
-.q-feedback { font-size: 12.5px; font-weight: 500; margin-top: 11px; }
+.q-feedback { font-size: 0.78125rem; font-weight: 500; margin-top: 0.6875rem; }
 .fb-correct { color: var(--done-bdr); }
 .fb-wrong   { color: var(--err-text); }
 
 /* recap dropdown */
 #sv-recap {
-  margin-top: 48px;
+  margin-top: 3rem;
   border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden;
+  border-radius: 0.625rem; overflow: hidden;
 }
 #sv-recap summary {
-  display: flex; align-items: center; gap: 8px;
-  padding: 13px 18px; cursor: pointer;
-  font-size: 12px; font-weight: 600; color: var(--text-m);
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.8125rem 1.125rem; cursor: pointer;
+  font-size: 0.75rem; font-weight: 600; color: var(--text-m);
   background: var(--surface); user-select: none; list-style: none;
 }
 #sv-recap summary::-webkit-details-marker { display: none; }
 #sv-recap summary .recap-arrow {
-  font-size: 9px; transition: transform .18s; display: inline-block;
+  font-size: 0.5625rem; transition: transform .18s; display: inline-block;
 }
 #sv-recap[open] summary .recap-arrow { transform: rotate(90deg); }
-#sv-recap-body { padding: 0 16px 8px; }
-
+#sv-recap-body { padding: 0 1rem 0.5rem; }

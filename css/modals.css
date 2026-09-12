@@ -6,6 +6,11 @@
    create-tree form fields and from-a-topic/from-a-file tabs, and
    the shared upload-dropzone control. Pairs with prompts.js,
    which owns both modals' open/close/wiring logic.
+   Sizes are in rem so they scale with --ui-scale (see
+   scale.js/theme.css); the modal-shell width cap still uses vw
+   alongside the rem value (min(42.5rem, 94vw)) so a very narrow
+   window still gets a real percentage-based fallback rather than
+   just a scaled-down fixed width.
    Depends on theme.css.
 ═══════════════════════════════════════════════════════════ */
 
@@ -24,9 +29,9 @@
 .modal-shell {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 0.875rem;
   box-shadow: 0 24px 64px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.06);
-  width: min(680px, 94vw);
+  width: min(42.5rem, 94vw);
   max-height: 86vh;
   max-height: 86dvh; /* see the body rule above — same fix, same reason */
   display: flex;
@@ -35,28 +40,28 @@
   animation: modal-in .18s cubic-bezier(.4,0,.2,1);
 }
 @keyframes modal-in {
-  from { opacity:0; transform: translateY(10px) scale(.98); }
+  from { opacity:0; transform: translateY(0.625rem) scale(.98); }
   to   { opacity:1; transform: none; }
 }
 
 .modal-header-bar {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 20px 22px 16px;
+  gap: 0.75rem;
+  padding: 1.25rem 1.375rem 1rem;
   border-bottom: 1px solid var(--border);
 }
 .modal-title {
   flex: 1;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text);
   line-height: 1.3;
 }
 .modal-meta {
-  font-size: 11.5px;
+  font-size: 0.71875rem;
   color: var(--text-m);
-  margin-top: 3px;
+  margin-top: 0.1875rem;
   font-weight: 400;
 }
 .modal-close-btn {
@@ -64,10 +69,10 @@
   border: none;
   cursor: pointer;
   color: var(--text-m);
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1;
-  padding: 2px 4px;
-  border-radius: 5px;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.3125rem;
   transition: background .12s, color .12s;
   flex-shrink: 0;
 }
@@ -75,23 +80,23 @@
 
 .modal-body {
   overflow-y: auto;
-  padding: 20px 22px;
+  padding: 1.25rem 1.375rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 /* prompt box */
 .prompt-wrap { position: relative; }
 .prompt-ta {
   width: 100%;
-  height: 220px;
+  height: 13.75rem;
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-  font-size: 11.5px;
+  font-size: 0.71875rem;
   line-height: 1.6;
-  padding: 13px 14px;
+  padding: 0.8125rem 0.875rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background: var(--bg);
   color: var(--text);
   resize: none;
@@ -100,12 +105,12 @@
 }
 .copy-btn {
   position: absolute;
-  top: 8px; right: 8px;
+  top: 0.5rem; right: 0.5rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 11.5px;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.71875rem;
   font-family: var(--font);
   color: var(--text-m);
   cursor: pointer;
@@ -117,34 +122,34 @@
 
 /* upload label in modal */
 .upload-dropzone {
-  display: block; margin-top: 9px; text-align: center; padding: 8px 14px;
-  border: 1.5px dashed var(--border); border-radius: 8px; cursor: pointer;
-  font-size: 12.5px; color: var(--text-m); transition: all .12s;
+  display: block; margin-top: 0.5625rem; text-align: center; padding: 0.5rem 0.875rem;
+  border: 1.5px dashed var(--border); border-radius: 0.5rem; cursor: pointer;
+  font-size: 0.78125rem; color: var(--text-m); transition: all .12s;
 }
 .upload-dropzone:hover { border-color: var(--avail-bdr); color: var(--avail-bdr); background: var(--info-soft-bg); }
 
 /* create-tree modal fields */
 .field-label {
   display: block;
-  font-size: 11.5px;
+  font-size: 0.71875rem;
   font-weight: 600;
   color: var(--text-m);
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 .field-input {
   width: 100%;
-  padding: 9px 12px;
+  padding: 0.5625rem 0.75rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
-  font-size: 13.5px;
+  font-size: 0.84375rem;
   outline: none;
   transition: border-color .12s;
 }
 .field-input:focus { border-color: var(--avail-bdr); }
-.field-row { margin-bottom: 14px; }
+.field-row { margin-bottom: 0.875rem; }
 .field-row:last-of-type { margin-bottom: 0; }
 
 .hidden { display: none; }
@@ -152,21 +157,21 @@
 /* create-tree modal: "from a topic" vs "from a file" tabs */
 .tree-mode-tabs {
   display: flex;
-  gap: 4px;
-  padding: 3px;
+  gap: 0.25rem;
+  padding: 0.1875rem;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 9px;
+  border-radius: 0.5625rem;
 }
 .tree-mode-tab {
   flex: 1;
-  padding: 7px 10px;
+  padding: 0.4375rem 0.625rem;
   border: none;
-  border-radius: 7px;
+  border-radius: 0.4375rem;
   background: transparent;
   color: var(--text-m);
   font-family: var(--font);
-  font-size: 12.5px;
+  font-size: 0.78125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all .12s;
@@ -178,9 +183,8 @@
   box-shadow: 0 1px 4px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04);
 }
 .tree-mode-file-help {
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.55;
   color: var(--text-m);
-  margin-bottom: 14px;
+  margin-bottom: 0.875rem;
 }
-
