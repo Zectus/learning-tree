@@ -175,9 +175,35 @@ function parseBonusBody(n, raw) {
 }
 
 /* ── Renderer ────── */
+
+/* ── Section cross-reference links ──────
+   Lesson prose frequently refers back to earlier material by section
+   number — "insert the completeness relation from Section 3", "By
+   conjugate symmetry (Section 2)", "obtained by substituting the
+   eigenvalue equation into the matrix-element formula of Section 4" — as
+   a natural side effect of how the node-prompt.js instructions ask for
+   material to build on what came before. That's Claude's own writing
+   style emerging from the content requirements, not something this file
+   asks for, and nothing here should make it happen more or less often —
+   this only makes an existing "Section N" mention clickable, jumping the
+   reader to that section in place of leaving them to scroll and hunt for
+   it by hand.
+
+   Applied to already-HTML-escaped text (see renderProse below), so this
+   only ever matches plain reference text in prose, never markup. The
+   match is deliberately narrow — literal "Section" plus a number, nothing
+   else — so it never fires on "Sections 2 and 3" (plural) or anything
+   resembling "Section 4.2"; this app's own "=== SECTION N ===" format
+   never produces either of those anyway, so there's nothing currently
+   written that needs the broader match. */
+function linkifySectionRefs(escapedHtml) {
+  return escapedHtml.replace(/\bSection\s+(\d+)\b/g,
+    (whole, num) => `<a href="#" class="sv-sec-ref" data-sec="${num}">${whole}</a>`);
+}
+
 function renderProse(text) {
   return text.split(/\n{2,}/).map(c=>c.trim()).filter(Boolean)
-    .map(c=>`<p>${svEsc(c).replace(/\n/g,'<br>')}</p>`).join('');
+    .map(c=>`<p>${linkifySectionRefs(svEsc(c)).replace(/\n/g,'<br>')}</p>`).join('');
 }
 function renderQuestionCard(q) {
   const opts = ['A','B','C','D','E'].filter(l => q.options[l] !== undefined)
@@ -213,7 +239,10 @@ function renderSession(parsed) {
         if (item) inner += tool.render(item, id);
       }
     }
-    return `<div class="sv-section"><div class="sv-section-label">Section ${sec.num}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
+    // id="sv-section-N" is the scroll target linkifySectionRefs' anchors
+    // (data-sec="N") jump to — see the click handler in the Wiring
+    // section at the bottom of this file.
+    return `<div class="sv-section" id="sv-section-${sec.num}"><div class="sv-section-label">Section ${sec.num}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
   }).join('');
 }
 function buildBonusSection(bonuses) {
@@ -512,6 +541,19 @@ document.getElementById('sv-body').addEventListener('scroll', e => {
   updateSessionProgress();
   clearTimeout(scrollSaveTimer);
   scrollSaveTimer = setTimeout(autoSaveProgress, 500);
+});
+
+// Section cross-reference clicks (see linkifySectionRefs above). Delegated
+// on #sv-body itself rather than attached to each individual link, since
+// #sv-body's whole innerHTML is replaced fresh on every openViewer() call
+// — a per-link listener would just be thrown away and need re-wiring on
+// every open, where a single delegated listener here needs it once, ever.
+document.getElementById('sv-body').addEventListener('click', e => {
+  const link = e.target.closest('.sv-sec-ref');
+  if (!link) return;
+  e.preventDefault();
+  const target = document.getElementById(`sv-section-${link.dataset.sec}`);
+  target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 document.addEventListener('keydown', e => {
