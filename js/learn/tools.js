@@ -56,16 +56,21 @@ function svEsc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(
    the shuffle that used to happen at generation time now happens here,
    at parse/render time, entirely on the app's side.
 
-   This has to be DETERMINISTIC, not re-randomized on every view: a
-   saved answer is stored as a post-shuffle letter (see
-   node._sessionAnswers / node._bonusAnswers in progress.js), and
-   re-parsing the same .txt later — reopening a session, reloading a
-   saved tree — has to reproduce the exact same lettering, or a stored
-   answer would silently end up pointing at a different option than the
-   one the reader actually picked. Seeding the shuffle off the question's
-   own text (not anything session- or time-specific) guarantees that:
-   the same question text always shuffles the same way, on any device,
-   any time it's parsed. */
+   The shuffle is seeded off the question's own text, which keeps it
+   deterministic for a given render, but a saved answer must NOT depend
+   on that determinism holding across every future reopen — a different
+   parse pass (a different device, a slightly reformatted saved copy,
+   anything) reshuffling differently would otherwise silently turn a
+   correct answer into a wrong one, or vice versa, purely because the
+   on-screen letter it was saved under no longer points at the same
+   option. So this returns two small lookup maps alongside the shuffled
+   options — origOf (new letter → original letter) and newOf (original
+   letter → new letter) — so callers can persist and restore an answer by
+   the option's actual, shuffle-invariant identity (its original letter
+   in the raw .txt) instead of by whatever letter happened to be on
+   screen at the moment it was picked. See viewer.js's
+   handleOptionClick/handleBonusClick (store via origOf) and openViewer's
+   restore loop (redisplay via newOf) for how this is used. */
 function hashStr(s) {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -83,9 +88,18 @@ function mulberry32(seed) {
    whatever order the model happened to list them. correctLetter: which
    of those raw letters the model marked as correct via [ANSWER: X].
    seedKey: a string unique to this question (e.g. "Q3|<question text>")
-   used to derive a stable per-question shuffle. Returns the same options
-   keyed under new (A)-(E) letters in shuffled order, plus which new
-   letter is now correct. */
+   used to derive this render's shuffle. Returns:
+     - options:  the same option text keyed under new (A)-(E) letters,
+                 in shuffled order — what actually gets rendered.
+     - correct:  which NEW letter is correct, for this render.
+     - origOf:   new letter  → original letter (which raw option ended
+                 up at this on-screen position).
+     - newOf:    original letter → new letter (where a given raw option
+                 landed on screen this time).
+   origOf/newOf exist purely so a caller can save and restore an answer
+   by the option's actual identity (its original letter) rather than by
+   a letter that's only meaningful for this one render — see the file
+   header above for why that distinction matters. */
 function shuffleOptions(rawOptions, correctLetter, seedKey) {
   const origLetters = ['A','B','C','D','E'].filter(l => rawOptions[l] !== undefined);
   const rand = mulberry32(hashStr(seedKey));
@@ -95,13 +109,17 @@ function shuffleOptions(rawOptions, correctLetter, seedKey) {
     [order[i], order[j]] = [order[j], order[i]];
   }
   const options = {};
+  const origOf = {}; // newLetter  → origLetter
+  const newOf  = {}; // origLetter → newLetter
   let correct = null;
   order.forEach((origLetter, idx) => {
     const newLetter = origLetters[idx];
     options[newLetter] = rawOptions[origLetter];
+    origOf[newLetter] = origLetter;
+    newOf[origLetter] = newLetter;
     if (origLetter === correctLetter) correct = newLetter;
   });
-  return { options, correct };
+  return { options, correct, origOf, newOf };
 }
 
 /* ── KaTeX ────── 

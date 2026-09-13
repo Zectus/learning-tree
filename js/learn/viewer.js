@@ -11,7 +11,7 @@
 /* ═══════════════════════════════════════════════════════════
    SESSION VIEWER
 ═══════════════════════════════════════════════════════════ */
-const viewer = { nodeId: null, answers: new Map(), score: 0, total: 0, answerKey: [], bonusAnswers: new Map(), bonusKeys: new Map(), checkpoints: [] };
+const viewer = { nodeId: null, answers: new Map(), score: 0, total: 0, answerKey: [], bonusAnswers: new Map(), bonusKeys: new Map(), checkpoints: [], questions: new Map(), bonuses: new Map() };
 
 /* ── Session progress bar ──────
    "Progress" is scroll position through the lesson, rescaled so the last
@@ -77,10 +77,20 @@ function updateSessionProgress() {
    and the whole pre-generated-answer-bank machinery that used to justify
    it (see prompts.js's history), is gone. The options a reader actually
    sees are also no longer the raw (A)-(E) order the model wrote them in:
-   shuffleOptions (tools.js) reorders them deterministically, seeded off
-   each question's own text, so the correct answer's on-screen letter is
-   randomized by the app rather than left to however the model happened
-   to place it while writing. */
+   shuffleOptions (tools.js) reorders them, seeded off each question's own
+   text, so the correct answer's on-screen letter is randomized by the app
+   rather than left to however the model happened to place it while
+   writing.
+
+   A saved answer is persisted by the option's ORIGINAL (pre-shuffle)
+   letter — see handleOptionClick/handleBonusClick below — not by whatever
+   letter happened to be on screen at the moment it was picked. That's
+   what origOf/newOf (from shuffleOptions) are for: on any later reopen,
+   the current parse's newOf map translates that stored original letter to
+   wherever the option lands THIS time, so a correct answer can never
+   silently read back as wrong just because a reshuffle put things in a
+   different order — the identity being checked is the option itself, not
+   its transient screen position. */
 function parseTxtSession(raw) {
   raw = collapseMathNewlines(raw);
   const questions = new Map(), bonuses = new Map();
@@ -146,8 +156,8 @@ function parseQuestionBody(n, raw) {
     else   textLines.push(line);
   }
   const text = textLines.join('\n').trim();
-  const { options, correct } = shuffleOptions(rawOptions, correctRaw, `Q${n}|${text}`);
-  return { n, text, options, correct };
+  const { options, correct, origOf, newOf } = shuffleOptions(rawOptions, correctRaw, `Q${n}|${text}`);
+  return { n, text, options, correct, origOf, newOf, correctOrig: correctRaw };
 }
 function parseBonusBody(n, raw) {
   const ansM = raw.match(/\[ANSWER:\s*([A-Ea-e])\]/i);
@@ -160,8 +170,8 @@ function parseBonusBody(n, raw) {
     else   textLines.push(line);
   }
   const text = textLines.join('\n').trim();
-  const { options, correct } = shuffleOptions(rawOptions, correctRaw, `B${n}|${text}`);
-  return { n, text, options, answer: correct };
+  const { options, correct, origOf, newOf } = shuffleOptions(rawOptions, correctRaw, `B${n}|${text}`);
+  return { n, text, options, answer: correct, origOf, newOf, correctOrig: correctRaw };
 }
 
 /* ── Renderer ────── */
@@ -242,11 +252,18 @@ function applyAnswer(qn, letter, correct) {
   });
 }
 function handleOptionClick(btn) {
-  const qn = parseInt(btn.dataset.qn), letter = btn.dataset.letter;
+  const qn = parseInt(btn.dataset.qn), letter = btn.dataset.letter; // letter = this render's on-screen letter
   if (viewer.answers.has(qn)) return;
   const correct = viewer.answerKey[qn - 1];
   const node = state.nodes.get(viewer.nodeId);
-  if (node) { if (!node._sessionAnswers) node._sessionAnswers = {}; node._sessionAnswers[qn] = letter; }
+  // Persist by the option's ORIGINAL letter (origOf), not the on-screen
+  // one — see the Parser header comment above for why: the on-screen
+  // letter is only meaningful for this exact render, and saving it
+  // directly is what let a later reshuffle silently flip a correct
+  // answer to wrong (or vice versa) on reopen.
+  const q = viewer.questions.get(qn);
+  const origLetter = q?.origOf?.[letter] ?? letter;
+  if (node) { if (!node._sessionAnswers) node._sessionAnswers = {}; node._sessionAnswers[qn] = origLetter; }
   applyAnswer(qn, letter, correct);
   updateViewerScore();
   computeCheckpoints();
@@ -257,12 +274,14 @@ function handleOptionClick(btn) {
   }
 }
 function handleBonusClick(btn) {
-  const bn = parseInt(btn.dataset.bn), letter = btn.dataset.letter;
+  const bn = parseInt(btn.dataset.bn), letter = btn.dataset.letter; // letter = this render's on-screen letter
   if (viewer.bonusAnswers.has(bn)) return;
   const correct = viewer.bonusKeys.get(bn);
-  viewer.bonusAnswers.set(bn, letter);
+  const bonus = viewer.bonuses.get(bn);
+  const origLetter = bonus?.origOf?.[letter] ?? letter; // see handleOptionClick above for why this, not `letter`, gets stored
+  viewer.bonusAnswers.set(bn, origLetter);
   const node = state.nodes.get(viewer.nodeId);
-  if (node) { if (!node._bonusAnswers) node._bonusAnswers = {}; node._bonusAnswers[bn] = letter; }
+  if (node) { if (!node._bonusAnswers) node._bonusAnswers = {}; node._bonusAnswers[bn] = origLetter; }
   document.querySelectorAll(`.q-card[data-bn="${bn}"]`).forEach(card => {
     card.querySelectorAll('.q-opt').forEach(b => {
       b.disabled = true;
@@ -296,6 +315,11 @@ function openViewer(txtContent, nodeId) {
 
   viewer.nodeId = nodeId; viewer.answers = new Map(); viewer.score = 0; viewer.total = viewer.answerKey.length;
   viewer.bonusAnswers = new Map(); viewer.bonusKeys = new Map(); viewer.checkpoints = [];
+  // Kept for the lifetime of this render so click handlers (which only
+  // get a qn/bn and an on-screen letter from the DOM) can look up this
+  // question's origOf map — see handleOptionClick/handleBonusClick.
+  viewer.questions = parsed.questions;
+  viewer.bonuses = parsed.bonuses;
   document.getElementById('sv-topic').textContent = node?.label ?? 'Session';
 
   const body = document.getElementById('sv-body');
@@ -318,16 +342,28 @@ function openViewer(txtContent, nodeId) {
   body.querySelectorAll('.q-opt[data-qn]').forEach(btn => btn.addEventListener('click', () => handleOptionClick(btn)));
   body.querySelectorAll('.q-opt[data-bn]').forEach(btn => btn.addEventListener('click', () => handleBonusClick(btn)));
 
-  // Restore saved answers
+  // Restore saved answers. What's stored under each qn is the option's
+  // ORIGINAL (pre-shuffle) letter (see handleOptionClick) — translate it
+  // through THIS render's newOf map to find wherever that same option
+  // landed this time before handing it to applyAnswer, which only deals
+  // in on-screen letters. This is what makes a saved answer immune to
+  // the shuffle coming out differently on a later reopen.
   const saved = node?._sessionAnswers || {};
-  for (const [qn, letter] of Object.entries(saved))
-    applyAnswer(parseInt(qn), letter, viewer.answerKey[qn - 1]);
+  for (const [qn, origLetter] of Object.entries(saved)) {
+    const qni = parseInt(qn);
+    const q = parsed.questions.get(qni);
+    const letter = q?.newOf?.[origLetter] ?? origLetter;
+    applyAnswer(qni, letter, viewer.answerKey[qni - 1]);
+  }
 
-  // Restore saved bonus answers
+  // Restore saved bonus answers — same origLetter → this-render's letter
+  // translation as above.
   const savedBonus = node?._bonusAnswers || {};
-  for (const [bn, letter] of Object.entries(savedBonus)) {
+  for (const [bn, origLetter] of Object.entries(savedBonus)) {
     const bni = parseInt(bn);
-    viewer.bonusAnswers.set(bni, letter);
+    const bonus = parsed.bonuses.get(bni);
+    const letter = bonus?.newOf?.[origLetter] ?? origLetter;
+    viewer.bonusAnswers.set(bni, origLetter);
     const correct = viewer.bonusKeys.get(bni);
     document.querySelectorAll(`.q-card[data-bn="${bni}"]`).forEach(card => {
       card.querySelectorAll('.q-opt').forEach(b => {
