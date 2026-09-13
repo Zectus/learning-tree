@@ -8,6 +8,13 @@
    a mount function that runs after that markup is actually in
    the page.
 
+   Also owns shuffleOptions (see below), the deterministic
+   question-option shuffle shared by viewer.js's question and
+   bonus parsers — it isn't really a "content-block tool" itself,
+   but it's small, self-contained, and used from the same file
+   (viewer.js) as everything else in this registry, so it lives
+   alongside them rather than opening a new file for one function.
+
    What's deliberately NOT here: questions and bonuses. They look
    like content blocks too, but they're wired into session state
    (answer keys, scoring, checkpoints, per-node persistence) in a
@@ -32,6 +39,70 @@
 
 /* ── shared small helpers ────── */
 function svEsc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Deterministic option shuffling ──────
+   node-prompt.js used to hand the model a long pre-generated bank of
+   random target letters and ask it to design each question's setup and
+   values to land on whichever letter the bank assigned. That forced
+   backward design on computational questions — reverse-engineering
+   numbers just to force a derivation onto a pre-picked letter — instead
+   of letting the model simply work out the right answer and say so.
+
+   Now the model always writes its most natural version of a question and
+   marks the actually-correct option inline with [ANSWER: X] (the same
+   mechanism [BONUS] blocks already used). Whatever letter ends up
+   correct in the raw .txt is therefore not randomized at all — an LLM
+   will tend to cluster correct answers on certain letters/positions — so
+   the shuffle that used to happen at generation time now happens here,
+   at parse/render time, entirely on the app's side.
+
+   This has to be DETERMINISTIC, not re-randomized on every view: a
+   saved answer is stored as a post-shuffle letter (see
+   node._sessionAnswers / node._bonusAnswers in progress.js), and
+   re-parsing the same .txt later — reopening a session, reloading a
+   saved tree — has to reproduce the exact same lettering, or a stored
+   answer would silently end up pointing at a different option than the
+   one the reader actually picked. Seeding the shuffle off the question's
+   own text (not anything session- or time-specific) guarantees that:
+   the same question text always shuffles the same way, on any device,
+   any time it's parsed. */
+function hashStr(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+/* rawOptions: { 'A': text, 'B': text, ... } as written in the .txt, in
+   whatever order the model happened to list them. correctLetter: which
+   of those raw letters the model marked as correct via [ANSWER: X].
+   seedKey: a string unique to this question (e.g. "Q3|<question text>")
+   used to derive a stable per-question shuffle. Returns the same options
+   keyed under new (A)-(E) letters in shuffled order, plus which new
+   letter is now correct. */
+function shuffleOptions(rawOptions, correctLetter, seedKey) {
+  const origLetters = ['A','B','C','D','E'].filter(l => rawOptions[l] !== undefined);
+  const rand = mulberry32(hashStr(seedKey));
+  const order = [...origLetters];
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  const options = {};
+  let correct = null;
+  order.forEach((origLetter, idx) => {
+    const newLetter = origLetters[idx];
+    options[newLetter] = rawOptions[origLetter];
+    if (origLetter === correctLetter) correct = newLetter;
+  });
+  return { options, correct };
+}
 
 /* ── KaTeX ────── 
    Single shared entry point for typesetting math after a block of HTML

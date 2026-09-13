@@ -15,36 +15,24 @@
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
-   LEARN SYSTEM — computes the per-node values (answer key bank,
-   prerequisite context) and hands them to renderNodePrompt(),
-   defined in node-prompt.js, which holds the actual prompt text.
-   Answer verification lives further down, in the SESSION VIEWER
-   section.
+   LEARN SYSTEM — computes the per-node values (prerequisite
+   context, tree-topic/scope framing) and hands them to
+   renderNodePrompt(), defined in node-prompt.js, which holds the
+   actual prompt text. Answer verification lives in viewer.js: each
+   question now marks its own correct option inline with
+   [ANSWER: X] (same mechanism as the [BONUS] format), and the app
+   shuffles each question's options deterministically at parse time
+   (see shuffleOptions in tools.js) rather than the model being
+   handed a pre-generated bank of target letters to write toward.
+   That removed the need for anything here to generate or track an
+   answer key up front — there's nothing left to compute for it.
 ═══════════════════════════════════════════════════════════ */
-
-/* ── a long, fixed-length bank of candidate answers. The document only
-   ever uses a prefix of this (see the ANSWER KEY section of the prompt
-   in node-prompt.js) — a generous constant length comfortably covers
-   even a very question-dense node without ever running out, while
-   leaving the actual question count entirely up to the model. ── */
-const ANSWER_BANK_SIZE = 40;
-function randomAnswerKey(n = ANSWER_BANK_SIZE) {
-  const letters = ['A','B','C','D','E'];
-  return Array.from({length:n}, () => letters[Math.floor(Math.random()*5)]);
-}
 
 /* ── compute prompt inputs for this node, then render ── */
 function buildPrompt(id, language) {
   const node       = state.nodes.get(id);
   const topic      = node.label;
   const nodeId     = node.slug || slugify(node.label);
-  const answers    = randomAnswerKey();
-
-  // store for verification (fallback if the uploaded file's key line ever
-  // fails to parse). This is the full bank, not the trimmed count the
-  // model actually ends up using — fine as a last-resort fallback, since
-  // the normal path reads the real (shorter) key straight off the file.
-  node._answerKey  = answers;
 
   const prereqs    = prereqsOf(id).map(pid => state.nodes.get(pid)?.label).filter(Boolean);
   const dependents = dependentsOf(id).map(pid => state.nodes.get(pid)?.label).filter(Boolean);
@@ -64,11 +52,10 @@ function buildPrompt(id, language) {
   const explanationLine = node.explanation
     ? `This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): ${node.explanation} Treat this as the precise boundary of what belongs in this document — the topic name above is just the label; this defines which specific sub-results, cases, or pieces to cover, and which adjacent ones belong to a different node and should stay out even if a fuller treatment would naturally reach for them.`
     : '';
-  const plainKey    = answers.map((a,i)=>`${i+1}${a}`).join(' ');
   const lang = language || 'English';
-  const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", the option markers "(A)" through "(E)", the final "[KEY: ...]" line, "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]", and "[BONUS N]" / "[ANSWER: X]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does. This extends inside [GRAPH] blocks specifically: the field names themselves (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, label, color, z, u, v) are parser keywords and must stay in English exactly as written in the spec, and every math expression (a trace's formula, z, u, v) must stay in plain ASCII math syntax regardless of document language, since a separate library evaluates them as expressions, not as text. Only the actual values after title:, xlabel:, ylabel:, zlabel:, and label: move to ${lang} — everything else in a [GRAPH] block does not.\n`;
+  const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", the option markers "(A)" through "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]", and "[BONUS N]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does. This extends inside [GRAPH] blocks specifically: the field names themselves (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, label, color, z, u, v) are parser keywords and must stay in English exactly as written in the spec, and every math expression (a trace's formula, z, u, v) must stay in plain ASCII math syntax regardless of document language, since a separate library evaluates them as expressions, not as text. Only the actual values after title:, xlabel:, ylabel:, zlabel:, and label: move to ${lang} — everything else in a [GRAPH] block does not.\n`;
 
-  return renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause });
+  return renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause });
 }
 
 /* ═══════════════════════════════════════════════════════════

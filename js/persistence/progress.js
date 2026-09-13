@@ -19,9 +19,14 @@
    PROGRESS  save / load / auto-save
    Storage is per-node: each node (keyed by label, under a
    per-tree signature) gets its own record — done flag, session
-   quiz answers, bonus answers, the fallback answer key, and any
-   notes — restored independently so nodes never share or
-   clobber each other's state.
+   quiz answers, bonus answers, and any notes — restored
+   independently so nodes never share or clobber each other's
+   state. A node's correct answers are no longer stored here:
+   each question now carries its own [ANSWER: X] inline in the
+   saved lesson text itself (see node._sessionTxt / viewer.js's
+   parseQuestionBody), re-derived together with a deterministic
+   option shuffle every time that text is parsed, so there's
+   nothing separate left to persist for it.
    • Auto-save: written to localStorage on every relevant change
      (done toggle, answering a question, editing notes) — this
      is the only save path, there is no manual save button.
@@ -57,7 +62,6 @@ function autoSaveProgress() {
         done:           !!node.done,
         sessionAnswers: node._sessionAnswers || undefined,
         bonusAnswers:   node._bonusAnswers   || undefined,
-        answerKey:      node._answerKey      || undefined,
         notes:          node._notes          || undefined,
         scrollTop:      node._scrollTop,
       };
@@ -81,7 +85,6 @@ function autoRestoreProgress() {
       if (rec.done) { node.done = true; changed = true; }
       if (rec.sessionAnswers) node._sessionAnswers = rec.sessionAnswers;
       if (rec.bonusAnswers)   node._bonusAnswers   = rec.bonusAnswers;
-      if (rec.answerKey)      node._answerKey      = rec.answerKey;
       if (rec.notes)          node._notes          = rec.notes;
       if (rec.scrollTop != null) node._scrollTop   = rec.scrollTop;
     });
@@ -119,7 +122,6 @@ function clearNodeProgressFields(node) {
   node.done = false;
   delete node._sessionAnswers;
   delete node._bonusAnswers;
-  delete node._answerKey;
   delete node._notes;
   delete node._scrollTop;
 }

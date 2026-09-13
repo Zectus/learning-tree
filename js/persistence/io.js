@@ -12,13 +12,9 @@
    file only wires up what each item actually does.
    Depends on state.js, layout.js (buildEl,
    removeRedundantEdges), viewport.js (resetViewportForTreeLoad),
-   progress.js (autoRestoreProgress), and viewer.js
-   (extractAnswerKey — only called once a user actually loads a
-   file, by which point every script has already finished
-   loading, so the fact viewer.js loads after this file is fine).
-   library.js (the local/cloud "My Trees" save/load feature)
-   depends on buildTreeJSON and loadFromJSON below, and loads
-   after this file.
+   progress.js (autoRestoreProgress). library.js (the local/cloud
+   "My Trees" save/load feature) depends on buildTreeJSON and
+   loadFromJSON below, and loads after this file.
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
@@ -29,9 +25,14 @@
    by hand). It's only written when the "Structure + content"
    export option is chosen (see exportToJSON) — plain "structure
    only" exports omit it entirely. On import, a node with `content`
-   has it restored straight into node._sessionTxt (and its answer
-   key re-parsed from the [KEY: ...] line), so its session can be
-   reopened immediately with no re-upload needed.
+   has it restored straight into node._sessionTxt, so its session
+   can be reopened immediately with no re-upload needed. Each
+   question's correct answer lives inline in that text (an
+   [ANSWER: X] tag per [QUESTION]/[BONUS] block — see viewer.js's
+   parseQuestionBody/parseBonusBody) and is re-derived, along with
+   a fresh deterministic option shuffle (tools.js's shuffleOptions),
+   every time the session is opened — there's no separate answer
+   key to extract or restore here.
    `language` is optional too, and is the tree-wide language it was
    designed in (see buildTreePrompt). It's read into state.language on
    import, which prefills — but doesn't lock in — each node's own
@@ -75,8 +76,10 @@ function loadFromJSON(obj) {
     const node = { id:numId, slug:String(n.id), label:n.label??n.text??'', explanation:typeof n.explanation==='string'?n.explanation.trim():'', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
     if (typeof n.content === 'string' && n.content.trim()) {
       node._sessionTxt = n.content;
-      const key = extractAnswerKey(n.content);
-      if (key) node._answerKey = key;
+      // Correct answers and their on-screen letters are re-derived (with
+      // their own deterministic shuffle) whenever the session is opened —
+      // see parseQuestionBody/parseBonusBody in viewer.js. No separate
+      // key to extract or stash on the node here anymore.
     }
     state.nodes.set(numId, node);
     buildEl(node);

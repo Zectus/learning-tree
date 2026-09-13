@@ -2,10 +2,10 @@
    viewer.js — session viewer: .txt parsing, question UI,
    answer-click handling, score tracking, drag/resize.
    Depends on state.js, layout.js, io.js, and tools.js (svEsc,
-   renderMath, collapseMathNewlines, and the BLOCK_TOOLS registry
-   that TABLE/TIMELINE/GRAPH blocks are parsed and rendered
-   through — see tools.js's header for what lives there instead
-   of here, and why).
+   renderMath, collapseMathNewlines, shuffleOptions, and the
+   BLOCK_TOOLS registry that TABLE/TIMELINE/GRAPH blocks are
+   parsed and rendered through — see tools.js's header for what
+   lives there instead of here, and why).
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
@@ -70,26 +70,17 @@ function updateSessionProgress() {
   });
 }
 
-/* ── Key extraction ──────
-   Requires every token to be <digits><single letter A-E>. A key line
-   from a stale or hand-edited file that doesn't match this exactly is
-   rejected outright (returns null) rather than partially parsed —
-   letters outside A-E should never reach the UI as a "correct answer". */
-function extractAnswerKey(raw) {
-  const m = raw.match(/\[KEY:\s*([^\]]+)\]/i);
-  if (!m) return null;
-  const tokens = m[1].trim().split(/\s+/);
-  const key = [];
-  for (const tok of tokens) {
-    const tm = tok.match(/^(\d+)([A-E])$/i);
-    if (!tm) return null;
-    key.push(tm[2].toUpperCase());
-  }
-  return key.length ? key : null;
-}
-function stripKeyLine(raw) { return raw.replace(/\[KEY:[^\]]+\]/gi, ''); }
-
-/* ── Parser ────── */
+/* ── Parser ────── 
+   Each question and bonus now carries its own correct answer inline
+   ([ANSWER: X], read out in parseQuestionBody/parseBonusBody below) rather
+   than the document ending in one collected [KEY: ...] line — that line,
+   and the whole pre-generated-answer-bank machinery that used to justify
+   it (see prompts.js's history), is gone. The options a reader actually
+   sees are also no longer the raw (A)-(E) order the model wrote them in:
+   shuffleOptions (tools.js) reorders them deterministically, seeded off
+   each question's own text, so the correct answer's on-screen letter is
+   randomized by the app rather than left to however the model happened
+   to place it while writing. */
 function parseTxtSession(raw) {
   raw = collapseMathNewlines(raw);
   const questions = new Map(), bonuses = new Map();
@@ -135,26 +126,42 @@ function parseTxtSession(raw) {
     sections[0].body = sections[0].body ? `${leading}\n\n${sections[0].body}` : leading;
   return { sections, questions, bonuses, ...blockMaps };
 }
+
+/* Pulls the model's own [ANSWER: X] tag and raw (A)-(E) options out of a
+   question body, then hands them to shuffleOptions (tools.js) to produce
+   the on-screen order and the corresponding (possibly different) correct
+   letter. Seeding the shuffle on "Q<n>|<question text>" ties the shuffle
+   to this exact question's content, so the same .txt always reshuffles
+   the same way — required for a saved answer letter to still mean the
+   same option when a session is reopened later (see tools.js's own
+   header for why this has to be deterministic, not random-per-view). */
 function parseQuestionBody(n, raw) {
-  const lines = raw.split('\n'), options = {}, textLines = [];
+  const ansM = raw.match(/\[ANSWER:\s*([A-Ea-e])\]/i);
+  const correctRaw = ansM ? ansM[1].toUpperCase() : null;
+  const cleaned = raw.replace(/\[ANSWER:[^\]]+\]/gi, '');
+  const lines = cleaned.split('\n'), rawOptions = {}, textLines = [];
   for (const line of lines) {
     const m = line.match(/^\(([A-Ea-e])\)\s+(.*)/);
-    if (m) options[m[1].toUpperCase()] = m[2].trim();
+    if (m) rawOptions[m[1].toUpperCase()] = m[2].trim();
     else   textLines.push(line);
   }
-  return { n, text: textLines.join('\n').trim(), options };
+  const text = textLines.join('\n').trim();
+  const { options, correct } = shuffleOptions(rawOptions, correctRaw, `Q${n}|${text}`);
+  return { n, text, options, correct };
 }
 function parseBonusBody(n, raw) {
   const ansM = raw.match(/\[ANSWER:\s*([A-Ea-e])\]/i);
-  const answer = ansM ? ansM[1].toUpperCase() : null;
+  const correctRaw = ansM ? ansM[1].toUpperCase() : null;
   const cleaned = raw.replace(/\[ANSWER:[^\]]+\]/gi, '');
-  const lines = cleaned.split('\n'), options = {}, textLines = [];
+  const lines = cleaned.split('\n'), rawOptions = {}, textLines = [];
   for (const line of lines) {
     const m = line.match(/^\(([A-Ea-e])\)\s+(.*)/);
-    if (m) options[m[1].toUpperCase()] = m[2].trim();
+    if (m) rawOptions[m[1].toUpperCase()] = m[2].trim();
     else   textLines.push(line);
   }
-  return { n, text: textLines.join('\n').trim(), options, answer };
+  const text = textLines.join('\n').trim();
+  const { options, correct } = shuffleOptions(rawOptions, correctRaw, `B${n}|${text}`);
+  return { n, text, options, answer: correct };
 }
 
 /* ── Renderer ────── */
@@ -275,7 +282,14 @@ function updateViewerScore() {
 /* ── Open / Close ────── */
 function openViewer(txtContent, nodeId) {
   const node = state.nodes.get(nodeId);
-  viewer.answerKey = extractAnswerKey(txtContent) || node?._answerKey || [];
+  const parsed = parseTxtSession(txtContent);
+
+  // Each question now carries its own correct letter (already resolved
+  // against that question's own shuffled option order by
+  // parseQuestionBody above) — build the ordered answer key straight from
+  // the parsed questions instead of reading a separate [KEY: ...] line.
+  const qNums = [...parsed.questions.keys()].sort((a, b) => a - b);
+  viewer.answerKey = qNums.map(qn => parsed.questions.get(qn).correct);
   if (!viewer.answerKey.length) return;
 
   if (node) node._sessionTxt = txtContent;
@@ -284,8 +298,7 @@ function openViewer(txtContent, nodeId) {
   viewer.bonusAnswers = new Map(); viewer.bonusKeys = new Map(); viewer.checkpoints = [];
   document.getElementById('sv-topic').textContent = node?.label ?? 'Session';
 
-  const body   = document.getElementById('sv-body');
-  const parsed = parseTxtSession(stripKeyLine(txtContent));
+  const body = document.getElementById('sv-body');
 
   // Populate bonus answer keys
   parsed.bonuses.forEach((b, n) => { if (b.answer) viewer.bonusKeys.set(n, b.answer); });

@@ -28,21 +28,36 @@
       (prerequisites, what a node leads to) is fine, since that's
       the same for every reader — the line is whether the fact
       belongs to the tree or to one person's history with it.
+   3. Which letter ends up correct for a given question is not this
+      file's concern at all. Every main question marks its own
+      correct option inline with [ANSWER: X] — exactly the same
+      mechanism the [BONUS] format already used — and the app
+      shuffles each question's options into a random order and
+      relabels them at render time (see shuffleOptions in tools.js).
+      This used to work the other way around: a long pre-generated
+      bank of random target letters was handed to the model, which
+      had to design each question's setup and values to land on
+      whichever letter the bank assigned. That forced backward
+      design on computational questions — reverse-engineering
+      numbers to force a derivation onto a pre-picked letter — and
+      is exactly the kind of contorted setup GETTING THE TARGET
+      RIGHT below warns against. Marking the true answer after
+      working it out, and letting the app handle letter position
+      and distribution entirely on its own, removes that problem
+      instead of managing it.
 ═══════════════════════════════════════════════════════════ */
-function renderNodePrompt({ topic, nodeId, plainKey, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause }) {
+function renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
 
 Deliver this as a downloadable file named ${nodeId}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.
 
 Think of this as a software engineering task. Your output is a file artifact — every part must serve a precise purpose, every gap in the argument is a bug, and filler is waste. Before writing a single word of content, work through the following completely in your head.
 
-ANSWER KEY — read this before planning anything else
+HOW MANY QUESTIONS, AND HOW EACH ONE IS MARKED
 
-Here is a long bank of pre-generated answers: ${plainKey}. This bank is deliberately much longer than any one document needs — decide for yourself, based on how much the material actually supports, how many main questions this document earns; there's no target count, and using the whole bank is not the goal. Whatever count you land on, take that many entries off the FRONT of the bank, in order, as the target answers for question 1, question 2, question 3, and so on. Design each question, and its wrong options, around its assigned target — never derive a result first and then check whether it happens to match. If your first instinct is to work out what a question's "natural" answer would be and only then check it against the bank, you're already doing it backwards; the target answer comes first, the setup that produces it comes second.
+The number of main questions should be however many it actually takes to verify that every main idea in this document has landed — and landed as something the reader can use, not just something they can recognize or recite. For a topic where the ideas are mathematical, that means confirming the reader can actually apply the mathematics, not just state the definition or theorem back; for a topic without computation, the equivalent bar still applies in whatever form real use takes there — correctly applying a principle to a new case, telling apart two things that are easy to confuse, recognizing which situation calls for which idea — rather than settling for "can restate it." Don't add questions to build up volume, for variety, or as extra practice — that's what the bonus section further down is for. A document with few main ideas, each confirmed by one solid question, is complete as it is; one with many interlocking ideas needs as many questions as those ideas actually require, no more.
 
-For any question whose answer depends on specific values, a chosen example, or which of several plausible options gets picked, choose that value, example, or option so it lands exactly on the target answer — work this out before drafting any of the surrounding prose.
-
-The number of main questions should be however many it actually takes to verify that every main idea in this document has landed — and landed as something the reader can use, not just something they can recognize or recite. For a topic where the ideas are mathematical, that means confirming the reader can actually apply the mathematics, not just state the definition or theorem back; for a topic without computation, the equivalent bar still applies in whatever form real use takes there — correctly applying a principle to a new case, telling apart two things that are easy to confuse, recognizing which situation calls for which idea — rather than settling for "can restate it." Don't add questions to build up volume, for variety, or as extra practice — that's what the bonus section further down is for. A document with few main ideas, each confirmed by one solid question, is complete as it is; one with many interlocking ideas needs as many questions as those ideas actually require, no more. When you write the final [KEY: ...] line at the end of the document (see below), it must contain only the entries you actually used, trimmed to your real question count and in the same order — not the full bank above.
+Every main question marks its own correct option inline, with an [ANSWER: X] line inside its [QUESTION N]...[/QUESTION] block — see OUTPUT FORMAT below. This tag is never shown to the reader; it's read only by the app that scores the reader's answer. Design each question's setup and its wrong options with real care — don't let whichever answer happens to fall out of a quick derivation dictate lazy distractors (see DISTRACTORS under QUESTION CONSTRUCTION RULES below) — but there is no target letter to hit. Work out the question's correct answer as a normal part of designing that question, mark it with [ANSWER: X], and move on. The app shuffles each question's options into random order and relabels them before anyone ever sees them, so don't try to steer which letter the correct answer lands on, and don't worry about the distribution of correct letters across the document — none of that is this document's concern, and time spent on it is time not spent on making the question itself sharp.
 
 PLAN FIRST — ask yourself all of these:
 - What are every sub-object and sub-result that must be established to reach the central result of ${topic}? List them in dependency order — if this node's scope note (see CONTEXT below) names specific sub-results or siblings, that list is the authoritative boundary, not just the topic name.
@@ -51,7 +66,7 @@ PLAN FIRST — ask yourself all of these:
 - What single concrete problem makes the reader feel the friction that ${topic} resolves, before they know what the concept is called?
 - What is the subtlest step students usually accept without understanding?
 - What problems genuinely test whether the ideas landed — not just whether the reader can recognize a keyword or formula?
-- For each question you're planning, work out the concrete values, example, or configuration that hits its required target answer now — not later, while drafting the prose around it.
+- For each question you're planning, work out the concrete values, example, or configuration and which option they make correct now, while you're designing the question — not as an afterthought once the surrounding prose is already written.
 
 Only after exhausting this planning process, write the document.
 
@@ -71,6 +86,7 @@ The very first line of the document must be "=== SECTION 1: TITLE ===" — nothi
 Questions must use this format exactly:
 
 [QUESTION N]
+[ANSWER: X]
 Question text here, with \\( LaTeX \\) as needed.
 
 (A) first option
@@ -79,6 +95,8 @@ Question text here, with \\( LaTeX \\) as needed.
 (D) fourth option
 (E) fifth option
 [/QUESTION]
+
+Replace X with whichever letter is actually correct, as (A)-(E) are written above. This works exactly like the [ANSWER: X] tag in the [BONUS] format further down — hidden from the reader, read only by the app, and not something to think about when deciding where to place the correct option among (A)-(E); place it wherever it naturally falls as you write the options, in any order you like.
 
 Four optional tools are available if the topic calls for them — none of them are mandatory, and a topic with no natural use for one just doesn't use it. Reach for whichever actually fits the material; don't force a topic without math into using KaTeX, and don't force a topic without a chronology, tabular structure, or a function/field worth seeing into a timeline, table, or graph just because the option exists.
 
@@ -171,11 +189,7 @@ When an explicit derivation or argument replaces a quicker informal justificatio
 
 Scatter your main questions throughout the document, embedded at the natural moment right after the concept or technique they test has just been introduced. A question about a definition should appear right after that definition, while it is fresh. A question about a derived result should appear immediately after the derivation. Questions should feel like a natural pause in the reading — "try this now" — not a separate block at the end. Do not group them, do not create a separate exercises section, do not label them "Practice Set" anything. Once a question is posed, nothing else in the document — not the sentences leading into it, not the transition that follows it, no matter how far downstream — may discuss, justify, hint at, or evaluate its answer or any of its options. One disguise of this is easy to miss while writing it: a reflective aside, introduced as "worth noting" or "worth pausing on," that revisits why a particular wrong option might have looked tempting. Framing it as a general observation doesn't change what it is — it's still explaining one of the question's own options, and it counts the same as putting that explanation directly beneath the question. The reader can scroll ahead or back freely, so anything said nearby about why a choice is right or wrong is visible before, or instead of, working it out. After a question, move forward into the next new piece of content; don't loop back to recap, defend, or unpack what was just tested. Just use the [QUESTION N] format inline, numbered consecutively in the order they appear. Everything about what makes a good question, once you're at the point of writing one, is collected under QUESTION CONSTRUCTION RULES below — read it before drafting your first one.
 
-On the very last line of the document, after all sections, write a line in exactly this form:
-[KEY: 1A 2C 3E ...]
-using the same digit+letter tokens as the bank above (each token is the question's number immediately followed by its letter, space-separated) — but only as many tokens as you actually have main questions, trimmed from the front of the bank, in order, not the full bank. This is read by the viewer for answer verification, so the format must match exactly and the letters must be unaltered from the bank.
-
-After the key line, add bonus practice questions using this separate format — genuine extra practice, not a preview of anything not yet covered. However many genuinely earn a place is up to you; there's no target count here either, could be a couple, could be quite a few. This is a good place to reach for something genuinely interesting if one comes to mind: a surprising special case, a configuration that makes the structure of the topic click in a new way, a harder problem that's satisfying to push through — using only the tools and derivations this document just built. Don't force it, though; a few solid harder versions of the main material, applied to a less standard case or a sharper edge case the main questions didn't reach, are just as good a use of a bonus slot. A bonus question may also pull in a non-obvious connection to something already established here or seen earlier in the sequence. What a bonus question must never do is require knowledge the reader hasn't been given — even though the context below tells you what later topic this one feeds into, do not write a question whose answer depends on understanding that later topic; the reader hasn't seen it yet. This includes facts that feel like a small, natural step from what's already established: if the document never actually states or demonstrates it, even once, it hasn't been given, no matter how obvious the step feels while writing it — a reader who hasn't had that exact leap modeled for them has no way to know it's expected. Gesturing at a real-world structure or application this machinery is used for elsewhere is fine as flavor in the setup, but the question itself must be fully answerable using only what this document derived.
+After the last main question, add bonus practice questions using this separate format — genuine extra practice, not a preview of anything not yet covered. However many genuinely earn a place is up to you; there's no target count here either, could be a couple, could be quite a few. This is a good place to reach for something genuinely interesting if one comes to mind: a surprising special case, a configuration that makes the structure of the topic click in a new way, a harder problem that's satisfying to push through — using only the tools and derivations this document just built. Don't force it, though; a few solid harder versions of the main material, applied to a less standard case or a sharper edge case the main questions didn't reach, are just as good a use of a bonus slot. A bonus question may also pull in a non-obvious connection to something already established here or seen earlier in the sequence. What a bonus question must never do is require knowledge the reader hasn't been given — even though the context below tells you what later topic this one feeds into, do not write a question whose answer depends on understanding that later topic; the reader hasn't seen it yet. This includes facts that feel like a small, natural step from what's already established: if the document never actually states or demonstrates it, even once, it hasn't been given, no matter how obvious the step feels while writing it — a reader who hasn't had that exact leap modeled for them has no way to know it's expected. Gesturing at a real-world structure or application this machinery is used for elsewhere is fine as flavor in the setup, but the question itself must be fully answerable using only what this document derived.
 
 [BONUS 1]
 [ANSWER: X]
@@ -188,7 +202,7 @@ Question text here.
 (E) option
 [/BONUS]
 
-Replace X with the correct letter. The answer tag is hidden from the reader and used only for feedback. Same question construction rules apply as for the main questions.
+Replace X with the correct letter, same as for main questions above. The answer tag is hidden from the reader and used only for feedback. Same question construction rules apply as for the main questions.
 
 
 QUESTION CONSTRUCTION RULES (guidelines, not a bureaucratic checklist — use judgment, and read this in full before drafting your first question)
@@ -207,7 +221,7 @@ CONCISENESS. State what's given and what's being asked, then stop. Re-explaining
 
 DISTRACTORS. Should be clearly wrong on reflection; for mathematical questions, avoid options that are equivalent in value even if written differently, and never duplicate an option outright. When a question's real content is that some quantity turns out to be independent of a variable that looks like it should matter — the same for every case, every index, every choice of an otherwise-free parameter — that independence claim is exactly what a distractor should test: include at least one option representing what the value would be if it did depend on that variable, not just numeric variants clustered around the right magnitude. Otherwise the question can be answered by guessing "it's probably the boring constant one" without ever engaging with why it's constant.
 
-GETTING THE TARGET RIGHT. Some questions hinge on a distinction that's easy to get backwards by accident — which of two similar things is which, which direction a relationship or cause runs, what happened before what, which side an effect lands on, what gets added versus subtracted. When a question's target answer (see ANSWER KEY above) depends on a choice like this, work it out deliberately and double-check it before finalizing — this is the single most common way a question quietly drifts from the answer it was supposed to hit. And if a question's content is naturally tied to material that only exists in one particular section, confirm before committing to that placement that some natural, non-contrived choice of values or configuration there can actually produce the target answer; if it can't, look for freedom you haven't used yet — a relative sign or magnitude, a direction, which object plays which role, which specific case you reach for — before forcing a strained setup.
+GETTING THE TARGET RIGHT. Some questions hinge on a distinction that's easy to get backwards by accident — which of two similar things is which, which direction a relationship or cause runs, what happened before what, which side an effect lands on, what gets added versus subtracted. When a question's correct answer depends on a choice like this, work it out deliberately and double-check it before finalizing — this is the single most common way a question quietly drifts toward the wrong answer without anyone noticing while drafting. And if a question's content is naturally tied to material that only exists in one particular section, confirm before committing to that placement that some natural, non-contrived choice of values or configuration there can actually produce a clean, defensible answer; if it can't, look for freedom you haven't used yet — a relative sign or magnitude, a direction, which object plays which role, which specific case you reach for — before forcing a strained setup.
 
 FINAL REVIEW — before treating the document as finished, reread it once, straight through, in the order a reader will actually meet it. Everything above is written to be applied while drafting each piece — a section, a question, a table — and checking a piece against a rule while writing it will not catch a problem that only exists in how two pieces relate to each other across a distance. That's what this pass is for: read it the way a first-time reader would, start to end, and watch for failures that are invisible piece-by-piece but obvious once the whole thing is visible at once.
 
@@ -217,6 +231,7 @@ FINAL REVIEW — before treating the document as finished, reread it once, strai
 - No "using the ___" openers anywhere, and no stem that restates an already-derived tool right before asking the reader to apply it.
 - No paragraph anywhere in the document — before a question, immediately after it, or much later, however it's framed — that discusses, defends, hints at, or explains why a specific option is right or wrong.
 - Every bonus question's reasoning traceable to something the main document actually stated or demonstrated on the page — not a natural-feeling extension of it that was never actually shown.
+- Every main and bonus question has exactly one [ANSWER: X] tag naming a letter that is actually one of that question's own listed options — a missing, mistyped, or dangling tag means that question silently fails to score.
 - No literal "|" sitting inside a table cell outside \\lvert \\rvert.
 
 If the read-through turns up any of these, fix it before finalizing. Having applied a rule correctly while drafting a piece is not the same guarantee as the finished document actually being right — the read-through is what confirms it, not an assumption that following the rules along the way was enough.`;
