@@ -195,10 +195,21 @@ function parseBonusBody(n, raw) {
    else — so it never fires on "Sections 2 and 3" (plural) or anything
    resembling "Section 4.2"; this app's own "=== SECTION N ===" format
    never produces either of those anyway, so there's nothing currently
-   written that needs the broader match. */
+   written that needs the broader match.
+
+   Deliberately a <span>, not an <a href="#">: a real anchor has its own
+   default action (fragment navigation) and its own default focus-scroll
+   behavior, and even with preventDefault() on the click those fight with
+   #sv-window's fixed positioning — that's what was blowing the window's
+   layout out (header/progress bar disappearing) when a link was clicked.
+   A span has no default action to fight with at all. role="link" +
+   tabindex="0" keep it keyboard-reachable and announced correctly by a
+   screen reader despite not being a real anchor; the matching keydown
+   handler further down (next to the click handler) is what makes Enter/
+   Space actually activate it, same as a real link would. */
 function linkifySectionRefs(escapedHtml) {
   return escapedHtml.replace(/\bSection\s+(\d+)\b/g,
-    (whole, num) => `<a href="#" class="sv-sec-ref" data-sec="${num}">${whole}</a>`);
+    (whole, num) => `<span class="sv-sec-ref" data-sec="${num}" role="link" tabindex="0">${whole}</span>`);
 }
 
 function renderProse(text) {
@@ -548,12 +559,24 @@ document.getElementById('sv-body').addEventListener('scroll', e => {
 // #sv-body's whole innerHTML is replaced fresh on every openViewer() call
 // — a per-link listener would just be thrown away and need re-wiring on
 // every open, where a single delegated listener here needs it once, ever.
+// No preventDefault() needed — .sv-sec-ref is a plain span (see
+// linkifySectionRefs), which has no default browser action to cancel.
+function scrollToSectionRef(link) {
+  document.getElementById(`sv-section-${link.dataset.sec}`)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 document.getElementById('sv-body').addEventListener('click', e => {
   const link = e.target.closest('.sv-sec-ref');
+  if (link) scrollToSectionRef(link);
+});
+// Keyboard equivalent, since the span is reachable via tabindex="0" but
+// (unlike a real <a>) doesn't activate on Enter/Space on its own.
+document.getElementById('sv-body').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const link = e.target.closest?.('.sv-sec-ref');
   if (!link) return;
-  e.preventDefault();
-  const target = document.getElementById(`sv-section-${link.dataset.sec}`);
-  target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  e.preventDefault(); // stop Space from also scrolling #sv-body itself
+  scrollToSectionRef(link);
 });
 
 document.addEventListener('keydown', e => {
