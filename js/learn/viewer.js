@@ -561,9 +561,23 @@ document.getElementById('sv-body').addEventListener('scroll', e => {
 // every open, where a single delegated listener here needs it once, ever.
 // No preventDefault() needed — .sv-sec-ref is a plain span (see
 // linkifySectionRefs), which has no default browser action to cancel.
+//
+// Deliberately NOT target.scrollIntoView(): that asks the browser to walk
+// the whole ancestor chain and decide for itself what to scroll, and in
+// this app's nested fixed-position structure (#session-viewer → #sv-window
+// → #sv-body, with KaTeX's own .katex-display blocks — which set their own
+// overflow-x: auto — scattered through the content in between) that guess
+// was landing on the wrong container and visibly distorting #sv-window
+// itself instead of just moving the lesson content. Computing the target's
+// offset relative to #sv-body directly and setting only #sv-body's own
+// scrollTop sidesteps that ambiguity entirely — nothing else on the page
+// is ever asked to scroll.
 function scrollToSectionRef(link) {
-  document.getElementById(`sv-section-${link.dataset.sec}`)
-    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const body = document.getElementById('sv-body');
+  const target = document.getElementById(`sv-section-${link.dataset.sec}`);
+  if (!body || !target) return;
+  const targetTop = target.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
+  body.scrollTo({ top: targetTop, behavior: 'smooth' });
 }
 document.getElementById('sv-body').addEventListener('click', e => {
   const link = e.target.closest('.sv-sec-ref');
