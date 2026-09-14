@@ -11,6 +11,8 @@
                                            chosen username turned out taken
      cloud.getLibrary(uid)              → whole "My Trees" blob for this user
      cloud.setLibrary(uid, obj)         → overwrite it
+     cloud.getProgress(uid)             → whole per-node progress blob for this user
+     cloud.setProgress(uid, obj)        → overwrite it
    and calls window.handleCloudAuthChange(user) — defined in
    account.js — on every auth-state change, including once right
    after load with whatever session Firebase already had
@@ -50,6 +52,13 @@
          ".write": "auth != null && !data.exists() && newData.val() === auth.uid"
        }
      }
+
+   ⚠ getProgress/setProgress read and write /users/{uid}/progress.
+   progress.js is responsible for sanitizing the keys it puts in that
+   object before ever calling setProgress (tree signatures and node
+   labels are arbitrary text that can contain characters — '.', '#',
+   '$', '[', ']', '/' — that Firebase RTDB keys reject outright); this
+   file just stores whatever object it's handed under that path.
 ═══════════════════════════════════════════════════════════ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import {
@@ -134,6 +143,20 @@ window.cloud = {
   },
   async setLibrary(uid, libraryObj) {
     await set(ref(db, `users/${uid}/library`), libraryObj);
+  },
+
+  /* Whole-progress reads/writes — same {signature: {label: record}} shape
+     as the localStorage 'tree-progress' blob (see PROGRESS_KEY in
+     progress.js), just living under this user's own uid instead of in
+     this one browser. Keys are pre-sanitized by progress.js before ever
+     reaching here — see this file's header for why that has to happen
+     on that side, not this one. */
+  async getProgress(uid) {
+    const snap = await get(ref(db, `users/${uid}/progress`));
+    return snap.exists() ? snap.val() : {};
+  },
+  async setProgress(uid, progressObj) {
+    await set(ref(db, `users/${uid}/progress`), progressObj);
   },
 };
 

@@ -49,9 +49,10 @@
    forever.
 
    Depends on state.js (state.accountUser), library.js
-   (refreshLibraryFromSource — signing in/out is what decides
-   whether "My Trees" reads from this browser or from the
-   account's cloud copy, so every auth change re-triggers it).
+   (refreshLibraryFromSource) and progress.js (refreshProgressFromSource)
+   — signing in/out is what decides whether "My Trees" and per-node
+   progress read from this browser or from the account's cloud copy, so
+   every auth change re-triggers both.
 ═══════════════════════════════════════════════════════════ */
 
 let accountMode = 'signin';
@@ -81,13 +82,15 @@ function showAccountError(msg) {
 }
 
 /* Applies a signed-in/signed-out user everywhere it's displayed: the
-   toolbar trigger label, the modal panel, and (via refreshLibraryFromSource)
-   which storage source "My Trees" reads from. */
+   toolbar trigger label, the modal panel, and (via refreshLibraryFromSource
+   / refreshProgressFromSource) which storage source "My Trees" and
+   per-node progress read from. */
 function applyAccountUser(user) {
   state.accountUser = user;
   updateAccountButton();
   if (user) showSignedInPanel(user); else showSignedOutPanel();
   if (typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource();
+  if (typeof refreshProgressFromSource === 'function') refreshProgressFromSource();
 }
 
 /* Re-checks the username for the currently signed-in user and updates
