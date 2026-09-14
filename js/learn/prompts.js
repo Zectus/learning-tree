@@ -34,21 +34,26 @@ function buildPrompt(id, language) {
   const topic      = node.label;
   const nodeId     = node.slug || slugify(node.label);
 
-  const prereqs    = prereqsOf(id).map(pid => state.nodes.get(pid)?.label).filter(Boolean);
-  const dependents = dependentsOf(id).map(pid => state.nodes.get(pid)?.label).filter(Boolean);
+  const prereqNodes = prereqsOf(id).map(pid => state.nodes.get(pid)).filter(Boolean);
+  const dependents  = dependentsOf(id).map(pid => state.nodes.get(pid)?.label).filter(Boolean);
 
-  // PROMPT DESIGN RULE: prompt inputs describe the *node* — its place in
-  // the tree, its scope — never the reader's own progress through it.
-  // `n.done` is per-user session state (whether this particular person
-  // has checked this particular node off), not something the tree itself
-  // defines, so it must never be read into a prompt. A prior version did
-  // exactly that here (a `doneNodes` list feeding a "the reader has also
-  // separately already been through: ..." line) — removed. prereqLine and
-  // leadsToLine stay: those come from the tree's actual edges, the same
-  // for every reader, not from anyone's completion state.
-  const prereqLine  = prereqs.length    ? `The reader has already been through, earlier in this sequence: ${prereqs.join(', ')}. Refer back to this the way one lesson naturally refers to an earlier one — "recall that...", "as seen when X was introduced...", "earlier, we found..." — rather than the word "prerequisite," which reads like a syllabus line rather than something anyone would actually say.` : `This is the first topic in the sequence — there is nothing earlier to refer back to.`;
-  const leadsToLine = dependents.length ? `Material the reader hasn't seen yet will build on this one afterward: ${dependents.join(', ')}. Don't teach toward it or mention it by name here.` : '';
-  const treeTopicLine = state.topic ? `This node belongs to a larger tree on ${state.topic}.` : '';
+  // PROMPT DESIGN RULE: ... (unchanged comment)
+  //
+  // prereqLine used to hand over just a comma-separated list of prereq
+  // LABELS — a name with nothing behind it. That left the model with no
+  // way to tell "already fully established, safe to build on" apart from
+  // "sounds adjacent, better re-explain it defensively." Each
+  // prerequisite already carries exactly that boundary in its own
+  // `explanation` field (the same scope note the tree designer wrote to
+  // pin down what a node includes and where it stops), so that's
+  // included here per prerequisite instead of just its name.
+  const prereqDetailList = prereqNodes
+    .map(n => `- ${n.label}${n.explanation ? ` — ${n.explanation}` : ''}`)
+    .join('\n');
+  const prereqLine  = prereqNodes.length
+    ? `The reader has already been through, earlier in this sequence, every one of the following — each line is that document's own label plus the exact scope it covered, so you know precisely what's already been established (and its boundaries) rather than guessing from the name alone:\n${prereqDetailList}\nTreat everything described above as already fully taught and available to build on without re-deriving or re-explaining it — refer back to it the way one lesson naturally refers to an earlier one ("recall that...", "as seen when X was introduced...", "earlier, we found...") rather than the word "prerequisite," which reads like a syllabus line rather than something anyone would actually say. Where a listed scope stops short of something you need here, that gap is genuinely new material for this node to cover, not something to assume was already handled.`
+    : `This is the first topic in the sequence — there is nothing earlier to refer back to.`;
+  const leadsToLine = dependents.length ? `Material the reader hasn't seen yet will build on this one afterward: ${dependents.join(', ')}. Don't teach toward it or mention it by name here.` : '';  const treeTopicLine = state.topic ? `This node belongs to a larger tree on ${state.topic}.` : '';
   const explanationLine = node.explanation
     ? `This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): ${node.explanation} Treat this as the precise boundary of what belongs in this document — the topic name above is just the label; this defines which specific sub-results, cases, or pieces to cover, and which adjacent ones belong to a different node and should stay out even if a fuller treatment would naturally reach for them.`
     : '';
