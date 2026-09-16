@@ -1,253 +1,305 @@
 /* ═══════════════════════════════════════════════════════════
-   progress.js — persistence of per-node progress (done flag,
-   quiz/bonus answers, notes, scroll position), independent of
-   the tree's own JSON (see io.js) — a tree's structure and a
-   learner's progress through it are saved separately on purpose
-   (see treeSignature below). Also owns the "reset progress"
-   control, including its shift-click / long-press "reset every
-   tree" variant. Lives as a .dropdown-item inside the 👤 ▾ toolbar
-   menu (see index.html/toolbar.js) rather than a standalone
-   button, but the element itself and all the logic below are
-   otherwise unchanged.
+   library.js — "My Trees": a save/load library for whole trees
+   (structure + each node's generated lesson content), separate
+   from the manual JSON import/export in io.js and the per-node
+   progress tracking in progress.js.
 
-   STORAGE SOURCE: same local/cloud split as library.js (see that
-   file's own header for the fuller rationale). Signed out, every
-   tree's progress lives in this browser's localStorage
-   (PROGRESS_KEY below) — no account needed. Signed in (see
-   account.js/cloud.js), it lives instead under this user's own
-   uid in Firebase, so progress follows the account across
-   devices. refreshProgressFromSource() and persistProgress() are
-   the only two functions that know which of those two is
-   currently active (progressSource) — every other function in
-   this file just reads/writes the in-memory progressCache and
-   doesn't care where it came from. window.handleCloudAuthChange
-   (account.js) calls refreshProgressFromSource() on every sign-in/
+   A library entry is just a stored snapshot in the exact shape
+   loadFromJSON() already knows how to read (the same shape
+   buildTreeJSON() in io.js produces for a file export) — this
+   file only adds the "usual" save/open/rename/duplicate/delete
+   operations, and the card-grid UI, on top of that. Progress
+   (done flags, quiz answers, notes) is deliberately NOT stored
+   here a second time — it already persists independently via
+   progress.js, keyed by treeSignature() — so opening a library
+   entry restores its progress for free, and this file reads that
+   same in-memory progressCache (not localStorage directly) so the
+   done/total counts shown here stay correct regardless of whether
+   progress.js's active source is local or cloud (see
+   libraryProgressFor below).
+
+   STORAGE SOURCE: signed out, the whole library lives in this
+   browser's localStorage (LIBRARY_KEY below) — no account
+   needed. Signed in (see account.js/cloud.js), it lives instead
+   under this user's own uid in Firebase, so it follows them
+   across devices. refreshLibraryFromSource() and persistLibrary()
+   are the only two functions that know which of those two is
+   currently active (librarySource) — every other function in this
+   file just reads/writes the in-memory libraryCache and doesn't
+   care where it came from. window.handleCloudAuthChange (in
+   account.js) calls refreshLibraryFromSource() on every sign-in/
    sign-out, which is what actually switches the source.
 
-   FIREBASE KEY SAFETY: progressCache is keyed first by tree
-   signature (treeSignature() below) and then by node label —
-   both are arbitrary text a person typed or a tree author wrote,
-   which can contain characters ('.', '#', '$', '[', ']', '/')
-   that Firebase Realtime Database keys reject outright.
-   localStorage has no such restriction, so the in-memory shape
-   and the local storage shape stay exactly as before; only the
-   object actually handed to cloud.setProgress, and read back
-   from cloud.getProgress, goes through
-   encodeProgressForCloud/decodeProgressFromCloud below.
+   state.libraryId tracks which saved entry (if any) the tree
+   currently on the canvas came from, so "save" can tell whether
+   to update that entry in place or create a new one. It's reset
+   to null by clearMap() (io.js) on every load, and set explicitly
+   by openLibraryEntry() below right after — the one place a load
+   should actually count as "this IS that saved entry" rather than
+   "a tree that happens to look like it."
 
-   Depends on state.js, layout.js (prereqsOf, via state.js), and
-   viewer.js (closeViewer — only called on a click, after every
-   script has finished loading, so viewer.js loading after this
-   file is fine).
+   Depends on state.js, io.js (buildTreeJSON, loadFromJSON,
+   slugify), progress.js (progressCache — the in-memory mirror of
+   whichever progress source, local or cloud, is currently active;
+   see that file's own header), tools.js (svEsc), and — only once a
+   person actually signs in — window.cloud, set up by cloud.js (a
+   module that runs after this file; see its own header for why
+   that ordering is safe).
 ═══════════════════════════════════════════════════════════ */
-const PROGRESS_KEY = 'tree-progress';
 
-let progressCache  = {};      // in-memory mirror of whichever source is currently active
-let progressSource = 'local'; // 'local' | 'cloud'
+const LIBRARY_KEY = 'tree-library';
 
-function readLocalProgress() {
-  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); } catch { return {}; }
-}
-function writeLocalProgress(obj) {
-  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(obj)); } catch {}
-}
+let libraryCache  = {};      // in-memory mirror of whichever source is currently active
+let librarySource = 'local'; // 'local' | 'cloud'
 
-/* ── Firebase key sanitization (cloud storage only — see file header) ──
-   encodeURIComponent already escapes '#', '$', '[', ']', '/' (all invalid
-   in an RTDB key); '.' survives encodeURIComponent untouched since it's a
-   legal URI character, so it needs its own extra pass. */
-function toFirebaseKey(k) {
-  return encodeURIComponent(String(k)).replace(/\./g, '%2E');
+function readLocalLibrary() {
+  try { return JSON.parse(localStorage.getItem(LIBRARY_KEY) || '{}'); } catch { return {}; }
 }
-function fromFirebaseKey(k) {
-  try { return decodeURIComponent(k); } catch { return k; }
+function writeLocalLibrary(lib) {
+  try { localStorage.setItem(LIBRARY_KEY, JSON.stringify(lib)); } catch {}
 }
-function encodeProgressForCloud(cache) {
-  const out = {};
-  for (const sig of Object.keys(cache)) {
-    const encPerNode = {};
-    for (const label of Object.keys(cache[sig] || {})) encPerNode[toFirebaseKey(label)] = cache[sig][label];
-    out[toFirebaseKey(sig)] = encPerNode;
-  }
-  return out;
-}
-function decodeProgressFromCloud(obj) {
-  const out = {};
-  for (const encSig of Object.keys(obj || {})) {
-    const decPerNode = {};
-    for (const encLabel of Object.keys(obj[encSig] || {})) decPerNode[fromFirebaseKey(encLabel)] = obj[encSig][encLabel];
-    out[fromFirebaseKey(encSig)] = decPerNode;
-  }
-  return out;
+function genLibraryId() {
+  return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
-/* Identifies "this tree" across re-exports/minor edits without matching
-   labels against every OTHER tree ever loaded. Built from the sorted set
-   of root labels (nodes with no prerequisites) — stable across small edits
-   to a tree, but distinct enough that two different subjects effectively
-   never collide. Without this, a node named e.g. "Chain Rule" or "Dot
-   Product" could silently show as complete on a brand-new, unrelated tree
-   just because a past tree happened to use the same label. */
-function treeSignature() {
-  const roots = [];
-  state.nodes.forEach((n, id) => { if (prereqsOf(id).length === 0) roots.push(n.label.trim().toLowerCase()); });
+/* Mirrors treeSignature() in progress.js exactly (sorted, lowercased root
+   labels) but works off a plain node array — a stored entry's own
+   data.nodes — instead of the live state.nodes Map, so a saved entry's
+   progress can be looked up without loading it onto the canvas first. */
+function signatureFromNodes(nodesArr) {
+  const roots = (nodesArr || [])
+    .filter(n => !n.requires || !n.requires.length)
+    .map(n => String(n.label || '').trim().toLowerCase());
   return roots.sort().join('|') || '(empty)';
 }
 
+/* Reads from progress.js's own in-memory progressCache rather than
+   localStorage directly — progressCache is what actually gets swapped to
+   the signed-in account's cloud copy (see refreshProgressFromSource in
+   progress.js), so reading localStorage here would silently show 0/N for
+   an account's saved trees on any device/browser that never happened to
+   save that progress locally too. progressCache already holds whichever
+   source (local or cloud) is currently active, so this stays correct
+   either way with no source-awareness needed in this file at all. */
+function libraryProgressFor(entryData) {
+  const total = entryData.nodes?.length || 0;
+  if (!total) return { done: 0, total: 0 };
+  const rec = progressCache[signatureFromNodes(entryData.nodes)];
+  if (!rec) return { done: 0, total };
+  const done = entryData.nodes.filter(n => rec[n.label]?.done).length;
+  return { done, total };
+}
+
 /* ── source switching ──────
-   Called once at load (guest view, so progress works before Firebase has
-   even resolved whether there's a persisted session) and again by
+   Called once at load (guest view, so "My Trees" works before Firebase
+   has even resolved whether there's a persisted session) and again by
    window.handleCloudAuthChange (account.js) on every sign-in/sign-out. */
-async function refreshProgressFromSource() {
+async function refreshLibraryFromSource() {
   if (state.accountUser) {
-    progressSource = 'cloud';
+    librarySource = 'cloud';
     try {
-      progressCache = decodeProgressFromCloud(await window.cloud.getProgress(state.accountUser.uid));
+      libraryCache = await window.cloud.getLibrary(state.accountUser.uid);
     } catch (e) {
-      console.error('Could not load cloud progress:', e);
-      progressCache = {};
+      console.error('Could not load cloud library:', e);
+      libraryCache = {};
     }
-    // One-time convenience, mirroring library.js: a fresh account with an
-    // empty cloud progress blob, but progress saved locally before
-    // signing in, gets that local progress copied up rather than
-    // silently orphaned — signing in shouldn't make progress someone
-    // already made disappear.
-    const local = readLocalProgress();
-    if (Object.keys(progressCache).length === 0 && Object.keys(local).length > 0) {
-      progressCache = local;
-      await persistProgress();
+    // One-time convenience: a fresh account with an empty cloud library,
+    // but trees saved locally before signing in, gets those local trees
+    // copied up rather than silently orphaned — signing in shouldn't make
+    // work someone already did disappear from "My Trees".
+    const local = readLocalLibrary();
+    if (Object.keys(libraryCache).length === 0 && Object.keys(local).length > 0) {
+      libraryCache = local;
+      await persistLibrary();
     }
   } else {
-    progressSource = 'local';
-    progressCache = readLocalProgress();
+    librarySource = 'local';
+    libraryCache = readLocalLibrary();
   }
-
-  // The source (and therefore the progress data itself) may have just
-  // changed out from under whatever tree is currently on the canvas —
-  // e.g. signing in mid-session should pull in that account's own
-  // done/answer state for the tree already open, not leave the guest
-  // session's state sitting there. Clear every node's in-memory progress
-  // fields first so a node that was done under the old source but has no
-  // matching record under the new one doesn't stay stuck looking done.
-  if (state.nodes.size) {
-    state.nodes.forEach(clearNodeProgressFields);
-    autoRestoreProgress();
-    if (typeof closeViewer === 'function') closeViewer();
-    // See the reset-progress handler's own comment below for why nodeId
-    // needs clearing too, not just closing the viewer.
-    if (typeof viewer !== 'undefined') viewer.nodeId = null;
-    updateAllStatuses();
+  if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) {
+    renderLibraryGrid();
   }
 }
 
-async function persistProgress() {
-  if (progressSource === 'cloud' && state.accountUser) {
-    try { await window.cloud.setProgress(state.accountUser.uid, encodeProgressForCloud(progressCache)); }
-    catch (e) { console.error('Cloud progress save failed:', e); }
+async function persistLibrary() {
+  if (librarySource === 'cloud' && state.accountUser) {
+    try { await window.cloud.setLibrary(state.accountUser.uid, libraryCache); }
+    catch (e) { console.error('Cloud save failed:', e); }
   } else {
-    writeLocalProgress(progressCache);
+    writeLocalLibrary(libraryCache);
   }
 }
 
-/* Serializes every current node into its own keyed record under this
-   tree's signature, into progressCache, then persists to whichever
-   source (local or cloud) is currently active. Called on any change
-   worth remembering — a done toggle, a quiz answer, a notes edit — so
-   "where you are" in a node's session (and its notes) is never lost
-   while working through a tree. */
-function autoSaveProgress() {
-  const perNode = {};
-  state.nodes.forEach(node => {
-    perNode[node.label] = {
-      done:           !!node.done,
-      sessionAnswers: node._sessionAnswers || undefined,
-      bonusAnswers:   node._bonusAnswers   || undefined,
-      notes:          node._notes          || undefined,
-      scrollTop:      node._scrollTop,
-    };
-  });
-  progressCache[treeSignature()] = perNode;
-  persistProgress(); // fire-and-forget, same as every other call site here — all synchronous event handlers
-}
+/* ── save ──────
+   Plain "save": if the current tree is already linked to a library entry
+   (state.libraryId), overwrite that entry's data in place — this is the
+   path for "I edited a tree I opened from here, save my changes back."
+   Otherwise it's a first save, so ask for a name and create a new entry. */
+async function saveCurrentTreeToLibrary() {
+  const snapshot = buildTreeJSON(true);
+  if (!snapshot) return;
 
-/** Restores each node's own record independently (done flag, session
-    answers, notes, scroll position) from progressCache. */
-function autoRestoreProgress() {
-  const saved = progressCache[treeSignature()];
-  if (!saved) return;
-  let changed = false;
-  state.nodes.forEach(node => {
-    const rec = saved[node.label];
-    if (!rec) return;
-    if (rec.done) { node.done = true; changed = true; }
-    if (rec.sessionAnswers) node._sessionAnswers = rec.sessionAnswers;
-    if (rec.bonusAnswers)   node._bonusAnswers   = rec.bonusAnswers;
-    if (rec.notes)          node._notes          = rec.notes;
-    if (rec.scrollTop != null) node._scrollTop   = rec.scrollTop;
-  });
-  if (changed) updateAllStatuses();
-}
-
-/* Reset progress — clears the persisted record(s) plus the matching
-   in-memory fields on every node, so the effect is immediate without a
-   reload. Plain click: this tree only. Shift+click (or a long-press,
-   for touch where there's no Shift key to hold): every tree ever
-   saved. No confirmation dialog on purpose — mark-known mode already
-   lets you freely toggle any node's done state with no safeguard, so
-   this isn't introducing a new class of "undoable" risk.
-   Now routed through progressCache/persistProgress instead of talking to
-   localStorage directly, so a reset while signed in actually clears the
-   account's cloud copy too, not just this browser's local copy. */
-const btnResetProgress = document.getElementById('menu-reset-progress');
-document.addEventListener('keydown', e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ Reset ALL progress'; });
-document.addEventListener('keyup',   e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ Reset tree progress'; });
-
-let resetAllArmed = false, resetPressTimer = null;
-btnResetProgress.addEventListener('touchstart', () => {
-  resetPressTimer = setTimeout(() => {
-    resetAllArmed = true;
-    btnResetProgress.textContent = '↺ Reset ALL progress';
-    if (navigator.vibrate) navigator.vibrate(15);
-  }, 550);
-}, { passive:true });
-btnResetProgress.addEventListener('touchend', () => clearTimeout(resetPressTimer), { passive:true });
-btnResetProgress.addEventListener('touchcancel', () => {
-  clearTimeout(resetPressTimer);
-  resetAllArmed = false;
-  btnResetProgress.textContent = '↺ Reset tree progress';
-}, { passive:true });
-
-function clearNodeProgressFields(node) {
-  node.done = false;
-  delete node._sessionAnswers;
-  delete node._bonusAnswers;
-  delete node._notes;
-  delete node._scrollTop;
-}
-
-btnResetProgress.addEventListener('click', async e => {
-  const resetAll = e.shiftKey || resetAllArmed;
-  resetAllArmed = false;
-  if (resetAll) {
-    progressCache = {};
-  } else {
-    delete progressCache[treeSignature()];
+  if (state.libraryId && libraryCache[state.libraryId]) {
+    libraryCache[state.libraryId].data = snapshot;
+    libraryCache[state.libraryId].savedAt = Date.now();
+    await persistLibrary();
+    renderLibraryGrid();
+    return;
   }
-  state.nodes.forEach(clearNodeProgressFields);
-  await persistProgress();
-  btnResetProgress.textContent = '↺ Reset tree progress';
-  closeViewer();
-  // closeViewer() deliberately leaves viewer.nodeId alone so closing and
-  // reopening the SAME session normally skips a full rebuild (see its own
-  // comment). That shortcut is wrong right after a reset — reopening a
-  // node whose data we just cleared needs to actually re-read that
-  // (now-empty) data, not re-reveal the stale answers/notes/scroll
-  // position still sitting in the DOM from before the reset.
-  viewer.nodeId = null;
-  updateAllStatuses();
+
+  const suggested = state.topic || 'Untitled tree';
+  const name = (window.prompt('Name this tree:', suggested) || '').trim();
+  if (!name) return;
+
+  const id = genLibraryId();
+  libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
+  await persistLibrary();
+  state.libraryId = id;
+  renderLibraryGrid();
+}
+
+/* "Save as a new copy" — only relevant once a tree IS already linked to an
+   entry (see the button's own visibility in renderLibraryGrid): lets you
+   branch off the saved version currently open without overwriting it. */
+async function saveCurrentTreeAsNewCopy() {
+  const snapshot = buildTreeJSON(true);
+  if (!snapshot) return;
+  const suggested = (state.topic || 'Untitled tree') + ' copy';
+  const name = (window.prompt('Name this copy:', suggested) || '').trim();
+  if (!name) return;
+  const id = genLibraryId();
+  libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
+  await persistLibrary();
+  state.libraryId = id;
+  renderLibraryGrid();
+}
+
+/* ── open / rename / duplicate / delete ────── */
+function openLibraryEntry(id) {
+  const entry = libraryCache[id];
+  if (!entry) return;
+  loadFromJSON(entry.data);   // clearMap() inside this resets state.libraryId to null first
+  state.libraryId = id;       // ...then this re-links it, since this load really is that entry
+  closeLibraryModal();
+}
+
+async function renameLibraryEntry(id) {
+  const entry = libraryCache[id];
+  if (!entry) return;
+  const name = (window.prompt('Rename tree:', entry.name) || '').trim();
+  if (!name) return;
+  entry.name = name;
+  await persistLibrary();
+  renderLibraryGrid();
+}
+
+async function duplicateLibraryEntry(id) {
+  const entry = libraryCache[id];
+  if (!entry) return;
+  const newId = genLibraryId();
+  libraryCache[newId] = { name: entry.name + ' copy', savedAt: Date.now(), data: entry.data };
+  await persistLibrary();
+  renderLibraryGrid();
+}
+
+async function deleteLibraryEntry(id) {
+  const entry = libraryCache[id];
+  if (!entry) return;
+  if (!window.confirm(`Delete "${entry.name}"? This can't be undone.`)) return;
+  delete libraryCache[id];
+  await persistLibrary();
+  if (state.libraryId === id) state.libraryId = null;
+  renderLibraryGrid();
+}
+
+/* ── rendering ────── */
+function formatSavedAt(ts) {
+  const diffMs = Date.now() - ts;
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1)  return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)  return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7)  return `${days}d ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function renderLibraryGrid() {
+  const grid  = document.getElementById('library-grid');
+  const empty = document.getElementById('library-empty');
+  const ids   = Object.keys(libraryCache).sort((a, b) => (libraryCache[b].savedAt || 0) - (libraryCache[a].savedAt || 0));
+
+  document.getElementById('library-modal-meta').textContent = state.accountUser
+    ? `synced to ${state.accountUser.username || state.accountUser.email}`
+    : 'saved locally in this browser — sign in to sync across devices';
+
+  const hasCurrentTree = state.nodes.size > 0;
+  const linkedToOpen    = !!(state.libraryId && libraryCache[state.libraryId]);
+
+  const saveBtn = document.getElementById('btn-save-current-tree');
+  saveBtn.classList.toggle('hidden', !hasCurrentTree);
+  saveBtn.textContent = linkedToOpen ? '💾 update saved copy' : '💾 save current tree';
+
+  const saveCopyBtn = document.getElementById('btn-save-current-tree-copy');
+  saveCopyBtn.classList.toggle('hidden', !(hasCurrentTree && linkedToOpen));
+
+  empty.classList.toggle('hidden', ids.length !== 0);
+  grid.innerHTML = '';
+
+  ids.forEach(id => {
+    const entry = libraryCache[id];
+    const total = entry.data.nodes?.length || 0;
+    const { done } = libraryProgressFor(entry.data);
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    const isOpen = state.libraryId === id;
+
+    const card = document.createElement('div');
+    card.className = 'library-card' + (isOpen ? ' library-card-open' : '');
+    card.innerHTML = `
+      <div class="lc-name">${svEsc(entry.name)}</div>
+      <div class="lc-meta">${total} node${total !== 1 ? 's' : ''}${entry.data.language ? ' · ' + svEsc(entry.data.language) : ''}</div>
+      <div class="lc-progress-track"><div class="lc-progress-bar" style="width:${pct}%"></div></div>
+      <div class="lc-meta">${done}/${total} complete · saved ${formatSavedAt(entry.savedAt)}${isOpen ? ' · currently open' : ''}</div>
+      <div class="lc-actions">
+        <button class="btn lc-open">open</button>
+        <button class="btn lc-rename">rename</button>
+        <button class="btn lc-dup">duplicate</button>
+        <button class="btn danger lc-del">delete</button>
+      </div>
+    `;
+    card.querySelector('.lc-open').addEventListener('click', () => openLibraryEntry(id));
+    card.querySelector('.lc-rename').addEventListener('click', () => renameLibraryEntry(id));
+    card.querySelector('.lc-dup').addEventListener('click', () => duplicateLibraryEntry(id));
+    card.querySelector('.lc-del').addEventListener('click', () => deleteLibraryEntry(id));
+    grid.appendChild(card);
+  });
+}
+
+/* ── modal open/close ────── */
+async function openLibraryModal() {
+  document.getElementById('library-modal-backdrop').classList.add('open');
+  await refreshLibraryFromSource();
+  renderLibraryGrid();
+}
+function closeLibraryModal() {
+  document.getElementById('library-modal-backdrop').classList.remove('open');
+}
+
+document.getElementById('btn-my-trees').addEventListener('click', openLibraryModal);
+document.getElementById('library-modal-close').addEventListener('click', closeLibraryModal);
+document.getElementById('library-modal-backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('library-modal-backdrop')) closeLibraryModal();
+});
+document.getElementById('btn-save-current-tree').addEventListener('click', saveCurrentTreeToLibrary);
+document.getElementById('btn-save-current-tree-copy').addEventListener('click', saveCurrentTreeAsNewCopy);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('library-modal-backdrop').classList.contains('open'))
+    closeLibraryModal();
 });
 
 // Guest view is available immediately; refreshed again the moment
 // Firebase reports an actual signed-in session (see handleCloudAuthChange
 // in account.js), which may swap the source out from under this.
-refreshProgressFromSource();
+refreshLibraryFromSource();
