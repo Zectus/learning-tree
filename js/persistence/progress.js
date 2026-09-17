@@ -34,6 +34,17 @@
    (account.js) calls refreshProgressFromSource() on every sign-in/
    sign-out, which is what actually switches the source.
 
+   CLOUD WRITE BATCHING: persistProgress() is called very often —
+   every done toggle, every quiz answer, every notes keystroke —
+   which is fine for the free local-storage path but would mean a
+   database write every few keystrokes for a signed-in user. See
+   the block around CLOUD_PROGRESS_DEBOUNCE_MS below: cloud writes
+   are debounced and coalesced into one send after a short quiet
+   period, flushed early on tab-hide/unload so nothing recent gets
+   stranded, and bypassed entirely (persistProgressNow) for the
+   couple of call sites — first-time cloud seeding, explicit reset
+   — where a write has to land right away.
+
    FIREBASE KEY SAFETY: progressCache is keyed first by tree
    signature (treeSignature() below) and then by node label —
    both are arbitrary text a person typed or a tree author wrote,
@@ -125,7 +136,7 @@ async function refreshProgressFromSource() {
     const local = readLocalProgress();
     if (Object.keys(progressCache).length === 0 && Object.keys(local).length > 0) {
       progressCache = local;
-      await persistProgress();
+      await persistProgressNow();
     }
   } else {
     progressSource = 'local';
@@ -159,14 +170,88 @@ async function refreshProgressFromSource() {
   }
 }
 
+async function writeProgressToCloud() {
+  if (!state.accountUser) return;
+  try { await window.cloud.setProgress(state.accountUser.uid, encodeProgressForCloud(progressCache)); }
+  catch (e) { console.error('Cloud progress save failed:', e); }
+}
+
+/* ── cloud write batching ──────
+   autoSaveProgress() fires on every done toggle, every quiz/bonus answer,
+   and (already debounced 500ms upstream, in viewer.js) every notes edit
+   or scroll-position update — writing straight to Firebase on each of
+   those would mean a database write every few keystrokes while someone's
+   mid-quiz or mid-typing. Local storage is free, so persistProgress()
+   below still writes it synchronously every time, same as before; only
+   the cloud path is batched here. A save while signed in just marks a
+   write as pending and (re)starts a short timer; rapid successive saves
+   keep pushing the timer back, so a burst of changes collapses into one
+   write, sent CLOUD_PROGRESS_DEBOUNCE_MS after things go quiet — and
+   since it's always progressCache in full at send time, whichever save
+   actually fires the write carries every change made up to that point,
+   not just the one that scheduled it. */
+const CLOUD_PROGRESS_DEBOUNCE_MS = 4000;
+let cloudProgressTimer = null;
+let cloudProgressPending = false;
+
+function scheduleCloudProgressSave() {
+  cloudProgressPending = true;
+  clearTimeout(cloudProgressTimer);
+  cloudProgressTimer = setTimeout(flushCloudProgress, CLOUD_PROGRESS_DEBOUNCE_MS);
+}
+
+/* Sends the pending write right now instead of waiting out the debounce —
+   called on tab-hide/unload below (so closing the tab mid-quiz doesn't
+   drop the last few seconds of progress) and is safe to call even when
+   nothing is pending (a no-op) or signed out (writeProgressToCloud itself
+   checks state.accountUser). */
+async function flushCloudProgress() {
+  clearTimeout(cloudProgressTimer);
+  cloudProgressTimer = null;
+  if (!cloudProgressPending) return;
+  cloudProgressPending = false;
+  await writeProgressToCloud();
+}
+
 async function persistProgress() {
   if (progressSource === 'cloud' && state.accountUser) {
-    try { await window.cloud.setProgress(state.accountUser.uid, encodeProgressForCloud(progressCache)); }
-    catch (e) { console.error('Cloud progress save failed:', e); }
+    scheduleCloudProgressSave();
   } else {
     writeLocalProgress(progressCache);
   }
 }
+
+/* Bypasses the debounce above for the couple of call sites where a write
+   genuinely needs to land immediately rather than a few seconds from now:
+   seeding a brand-new cloud account with progress that was saved locally
+   before signing in, and an explicit "reset progress" click — both are
+   one-off, deliberate actions, not part of the steady stream of saves
+   autoSaveProgress() produces while using the app. */
+async function persistProgressNow() {
+  clearTimeout(cloudProgressTimer);
+  cloudProgressTimer = null;
+  cloudProgressPending = false;
+  if (progressSource === 'cloud' && state.accountUser) {
+    await writeProgressToCloud();
+  } else {
+    writeLocalProgress(progressCache);
+  }
+}
+
+/* Best-effort flush whenever the tab is about to go away or out of view —
+   covers closing the tab, navigating away, or switching apps on mobile
+   mid-quiz, any of which could otherwise strand up to
+   CLOUD_PROGRESS_DEBOUNCE_MS of progress that was saved locally-in-memory
+   but never made it to the cloud. pagehide fires more reliably than
+   beforeunload across mobile browsers/Safari, so both are wired up
+   rather than relying on just one. Neither can guarantee the network
+   request actually completes before the page is gone — there's no
+   Firebase-RTDB equivalent of navigator.sendBeacon for this — but it
+   gives the write a head start instead of doing nothing. */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushCloudProgress();
+});
+window.addEventListener('pagehide', () => { flushCloudProgress(); });
 
 /* Serializes every current node into its own keyed record under this
    tree's signature, into progressCache, then persists to whichever
@@ -253,7 +338,7 @@ btnResetProgress.addEventListener('click', async e => {
     delete progressCache[treeSignature()];
   }
   state.nodes.forEach(clearNodeProgressFields);
-  await persistProgress();
+  await persistProgressNow();
   btnResetProgress.textContent = '↺ Reset tree progress';
   closeViewer();
   // closeViewer() deliberately leaves viewer.nodeId alone so closing and
