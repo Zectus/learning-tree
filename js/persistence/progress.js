@@ -87,7 +87,17 @@ function encodeProgressForCloud(cache) {
   const out = {};
   for (const sig of Object.keys(cache)) {
     const encPerNode = {};
-    for (const label of Object.keys(cache[sig] || {})) encPerNode[toFirebaseKey(label)] = cache[sig][label];
+    for (const label of Object.keys(cache[sig] || {})) {
+      // Each record can carry sessionAnswers/bonusAnswers/notes as
+      // literal `undefined` when a node has none yet (see
+      // autoSaveProgress) — harmless for localStorage, since
+      // JSON.stringify there silently drops undefined-valued keys, but
+      // Firebase's set() validates the raw object directly and rejects
+      // any property that's literally `undefined`. Round-tripping
+      // through JSON here strips those keys the same way the local path
+      // already does, before the object ever reaches Firebase.
+      encPerNode[toFirebaseKey(label)] = JSON.parse(JSON.stringify(cache[sig][label]));
+    }
     out[toFirebaseKey(sig)] = encPerNode;
   }
   return out;
