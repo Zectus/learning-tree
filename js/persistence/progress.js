@@ -179,35 +179,22 @@ async function writeProgressToCloud() {
 /* ── cloud write batching ──────
    autoSaveProgress() fires on every done toggle, every quiz/bonus answer,
    and (already debounced 500ms upstream, in viewer.js) every notes edit
-   or scroll-position update — writing straight to Firebase on each of
-   those would mean a database write every few keystrokes while someone's
-   mid-quiz or mid-typing. Local storage is free, so persistProgress()
-   below still writes it synchronously every time, same as before; only
-   the cloud path is batched here. A save while signed in just marks a
-   write as pending and (re)starts a short timer; rapid successive saves
-   keep pushing the timer back, so a burst of changes collapses into one
-   write, sent CLOUD_PROGRESS_DEBOUNCE_MS after things go quiet — and
-   since it's always progressCache in full at send time, whichever save
-   actually fires the write carries every change made up to that point,
-   not just the one that scheduled it. */
-const CLOUD_PROGRESS_DEBOUNCE_MS = 4000;
-let cloudProgressTimer = null;
+   or scroll-position update — far too often to hit Firebase on each one.
+   Local storage is free, so persistProgress() below still writes it
+   synchronously every time, same as before; the cloud path instead just
+   marks a write as pending and does nothing else. The actual write only
+   ever happens when the tab is hidden or unloaded (see the
+   visibilitychange/pagehide listeners below) or via persistProgressNow()
+   for the couple of call sites that need one right away — never on a
+   timer while the tab stays open, so working through a tree doesn't
+   generate a stream of database writes at all; it generates exactly one,
+   whenever you actually leave. */
 let cloudProgressPending = false;
 
-function scheduleCloudProgressSave() {
-  cloudProgressPending = true;
-  clearTimeout(cloudProgressTimer);
-  cloudProgressTimer = setTimeout(flushCloudProgress, CLOUD_PROGRESS_DEBOUNCE_MS);
-}
-
-/* Sends the pending write right now instead of waiting out the debounce —
-   called on tab-hide/unload below (so closing the tab mid-quiz doesn't
-   drop the last few seconds of progress) and is safe to call even when
-   nothing is pending (a no-op) or signed out (writeProgressToCloud itself
-   checks state.accountUser). */
+/* Sends the pending write right now — called on tab-hide/unload below,
+   and safe to call even when nothing is pending (a no-op) or signed out
+   (writeProgressToCloud itself checks state.accountUser). */
 async function flushCloudProgress() {
-  clearTimeout(cloudProgressTimer);
-  cloudProgressTimer = null;
   if (!cloudProgressPending) return;
   cloudProgressPending = false;
   await writeProgressToCloud();
@@ -215,21 +202,19 @@ async function flushCloudProgress() {
 
 async function persistProgress() {
   if (progressSource === 'cloud' && state.accountUser) {
-    scheduleCloudProgressSave();
+    cloudProgressPending = true;
   } else {
     writeLocalProgress(progressCache);
   }
 }
 
-/* Bypasses the debounce above for the couple of call sites where a write
-   genuinely needs to land immediately rather than a few seconds from now:
+/* Bypasses the above for the couple of call sites where a write genuinely
+   needs to land immediately rather than waiting for the tab to close:
    seeding a brand-new cloud account with progress that was saved locally
    before signing in, and an explicit "reset progress" click — both are
    one-off, deliberate actions, not part of the steady stream of saves
    autoSaveProgress() produces while using the app. */
 async function persistProgressNow() {
-  clearTimeout(cloudProgressTimer);
-  cloudProgressTimer = null;
   cloudProgressPending = false;
   if (progressSource === 'cloud' && state.accountUser) {
     await writeProgressToCloud();
@@ -238,11 +223,12 @@ async function persistProgressNow() {
   }
 }
 
-/* Best-effort flush whenever the tab is about to go away or out of view —
-   covers closing the tab, navigating away, or switching apps on mobile
-   mid-quiz, any of which could otherwise strand up to
-   CLOUD_PROGRESS_DEBOUNCE_MS of progress that was saved locally-in-memory
-   but never made it to the cloud. pagehide fires more reliably than
+/* The only place a routine progress edit actually reaches the cloud:
+   when the tab is about to go away or out of view — closing the tab,
+   navigating away, or switching apps on mobile. Without this, progress
+   made during a session would sit in cloudProgressPending forever and
+   never actually get written, since nothing else triggers a cloud write
+   on any kind of timer anymore. pagehide fires more reliably than
    beforeunload across mobile browsers/Safari, so both are wired up
    rather than relying on just one. Neither can guarantee the network
    request actually completes before the page is gone — there's no
