@@ -34,16 +34,14 @@
    (account.js) calls refreshProgressFromSource() on every sign-in/
    sign-out, which is what actually switches the source.
 
-   CLOUD WRITE BATCHING: persistProgress() is called very often —
-   every done toggle, every quiz answer, every notes keystroke —
-   which is fine for the free local-storage path but would mean a
-   database write every few keystrokes for a signed-in user. See
-   the block around CLOUD_PROGRESS_DEBOUNCE_MS below: cloud writes
-   are debounced and coalesced into one send after a short quiet
-   period, flushed early on tab-hide/unload so nothing recent gets
-   stranded, and bypassed entirely (persistProgressNow) for the
-   couple of call sites — first-time cloud seeding, explicit reset
-   — where a write has to land right away.
+   WRITE BATCHING: persistProgress() is called very often — every done
+   toggle, every quiz answer, every notes keystroke — so neither the
+   local-storage write nor the cloud write happens inline when that's
+   called. Both just mark a write as pending; the actual write, to
+   whichever source is active, happens only when the tab is hidden or
+   unloaded (see the write-batching block further down), or immediately
+   via persistProgressNow() for the couple of call sites — first-time
+   cloud seeding, explicit reset — that need one right away.
 
    FIREBASE KEY SAFETY: progressCache is keyed first by tree
    signature (treeSignature() below) and then by node label —
@@ -186,36 +184,38 @@ async function writeProgressToCloud() {
   catch (e) { console.error('Cloud progress save failed:', e); }
 }
 
-/* ── cloud write batching ──────
+/* ── write batching ──────
    autoSaveProgress() fires on every done toggle, every quiz/bonus answer,
    and (already debounced 500ms upstream, in viewer.js) every notes edit
-   or scroll-position update — far too often to hit Firebase on each one.
-   Local storage is free, so persistProgress() below still writes it
-   synchronously every time, same as before; the cloud path instead just
-   marks a write as pending and does nothing else. The actual write only
-   ever happens when the tab is hidden or unloaded (see the
-   visibilitychange/pagehide listeners below) or via persistProgressNow()
-   for the couple of call sites that need one right away — never on a
-   timer while the tab stays open, so working through a tree doesn't
-   generate a stream of database writes at all; it generates exactly one,
-   whenever you actually leave. */
-let cloudProgressPending = false;
+   or scroll-position update — far too often to actually write on each
+   one, whether that write goes to Firebase or to localStorage. A
+   synchronous JSON.stringify + localStorage.setItem is cheap in
+   isolation, but running it inline at the tail of that 500ms debounce
+   means it executes on the main thread at an arbitrary moment that can
+   land mid-scroll, showing up as a small stutter while reading — so both
+   paths get the same treatment: persistProgress() just marks a write as
+   pending and does nothing else. The actual write, to whichever source
+   (local or cloud) is currently active, only happens when the tab is
+   hidden or unloaded (see the visibilitychange/pagehide listeners below)
+   or via persistProgressNow() for the couple of call sites that need one
+   right away — never inline in a scroll/input handler, and never on a
+   timer while the tab stays open. */
+let progressPending = false;
 
 /* Sends the pending write right now — called on tab-hide/unload below,
-   and safe to call even when nothing is pending (a no-op) or signed out
-   (writeProgressToCloud itself checks state.accountUser). */
-async function flushCloudProgress() {
-  if (!cloudProgressPending) return;
-  cloudProgressPending = false;
-  await writeProgressToCloud();
-}
-
-async function persistProgress() {
+   and safe to call even when nothing is pending (a no-op). */
+async function flushProgress() {
+  if (!progressPending) return;
+  progressPending = false;
   if (progressSource === 'cloud' && state.accountUser) {
-    cloudProgressPending = true;
+    await writeProgressToCloud();
   } else {
     writeLocalProgress(progressCache);
   }
+}
+
+async function persistProgress() {
+  progressPending = true;
 }
 
 /* Bypasses the above for the couple of call sites where a write genuinely
@@ -225,7 +225,7 @@ async function persistProgress() {
    one-off, deliberate actions, not part of the steady stream of saves
    autoSaveProgress() produces while using the app. */
 async function persistProgressNow() {
-  cloudProgressPending = false;
+  progressPending = false;
   if (progressSource === 'cloud' && state.accountUser) {
     await writeProgressToCloud();
   } else {
@@ -233,21 +233,22 @@ async function persistProgressNow() {
   }
 }
 
-/* The only place a routine progress edit actually reaches the cloud:
-   when the tab is about to go away or out of view — closing the tab,
-   navigating away, or switching apps on mobile. Without this, progress
-   made during a session would sit in cloudProgressPending forever and
-   never actually get written, since nothing else triggers a cloud write
-   on any kind of timer anymore. pagehide fires more reliably than
-   beforeunload across mobile browsers/Safari, so both are wired up
-   rather than relying on just one. Neither can guarantee the network
-   request actually completes before the page is gone — there's no
-   Firebase-RTDB equivalent of navigator.sendBeacon for this — but it
-   gives the write a head start instead of doing nothing. */
+/* The only place a routine progress edit actually gets written: when the
+   tab is about to go away or out of view — closing the tab, navigating
+   away, or switching apps on mobile. Without this, a pending write would
+   sit in progressPending forever and never land anywhere, since nothing
+   else triggers a write on any kind of timer. pagehide fires more
+   reliably than beforeunload across mobile browsers/Safari, so both are
+   wired up rather than relying on just one. Neither guarantees the
+   network request (for the cloud path) actually completes before the
+   page is gone — there's no Firebase-RTDB equivalent of
+   navigator.sendBeacon — but it gives the write a head start instead of
+   doing nothing; the local-storage path completes synchronously either
+   way, so it's unaffected by that caveat. */
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') flushCloudProgress();
+  if (document.visibilityState === 'hidden') flushProgress();
 });
-window.addEventListener('pagehide', () => { flushCloudProgress(); });
+window.addEventListener('pagehide', () => { flushProgress(); });
 
 /* Serializes every current node into its own keyed record under this
    tree's signature, into progressCache, then persists to whichever

@@ -86,18 +86,19 @@ function showAccountError(msg) {
    / refreshProgressFromSource) which storage source "My Trees" and
    per-node progress read from. */
 function applyAccountUser(user) {
-  // Progress saves while signed in only mark a write as "pending" and
-  // wait for the tab to close/hide before actually sending it (see
-  // progress.js's cloud-write-batching block) — deliberately, to avoid
-  // hitting the database on every quiz click. That means a sign-out (or
-  // switching accounts) mid-session, with no tab-close in between, would
-  // otherwise strand whatever's pending under the account being left.
-  // flushCloudProgress() reads state.accountUser synchronously the
-  // instant it's called — before the reassignment on the next line — so
-  // calling it here, first, sends that pending write to the outgoing
-  // account rather than losing it or (worse) sending it to whichever
-  // account is about to become current.
-  if (typeof flushCloudProgress === 'function') flushCloudProgress();
+  // Progress saves only mark a write as "pending" and wait for the tab
+  // to close/hide before actually writing it anywhere, local or cloud
+  // (see progress.js's write-batching block) — deliberately, to avoid
+  // touching localStorage or the database on every quiz click. That
+  // means a sign-out (or switching accounts) mid-session, with no
+  // tab-close in between, would otherwise strand whatever's pending
+  // under the account/source being left. flushProgress() reads
+  // state.accountUser/progressSource synchronously the instant it's
+  // called — before the reassignment on the next line — so calling it
+  // here, first, sends that pending write to the outgoing source rather
+  // than losing it or (worse) sending it to whichever one is about to
+  // become current.
+  if (typeof flushProgress === 'function') flushProgress();
   state.accountUser = user;
   updateAccountButton();
   if (user) showSignedInPanel(user); else showSignedOutPanel();
