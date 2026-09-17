@@ -10,9 +10,13 @@
    file only adds the "usual" save/open/rename/duplicate/delete
    operations, and the card-grid UI, on top of that. Progress
    (done flags, quiz answers, notes) is deliberately NOT stored
-   here a second time — it already persists independently in
-   localStorage, keyed by treeSignature() (see progress.js), so
-   opening a library entry restores its progress for free.
+   here a second time — it already persists independently via
+   progress.js, keyed by treeSignature() — so opening a library
+   entry restores its progress for free, and this file reads that
+   same in-memory progressCache (not localStorage directly) so the
+   done/total counts shown here stay correct regardless of whether
+   progress.js's active source is local or cloud (see
+   libraryProgressFor below).
 
    STORAGE SOURCE: signed out, the whole library lives in this
    browser's localStorage (LIBRARY_KEY below) — no account
@@ -35,11 +39,12 @@
    "a tree that happens to look like it."
 
    Depends on state.js, io.js (buildTreeJSON, loadFromJSON,
-   slugify), progress.js (PROGRESS_KEY, and the same per-node
-   record shape autoSaveProgress writes), tools.js (svEsc), and
-   — only once a person actually signs in — window.cloud, set up
-   by cloud.js (a module that runs after this file; see its own
-   header for why that ordering is safe).
+   slugify), progress.js (progressCache — the in-memory mirror of
+   whichever progress source, local or cloud, is currently active;
+   see that file's own header), tools.js (svEsc), and — only once a
+   person actually signs in — window.cloud, set up by cloud.js (a
+   module that runs after this file; see its own header for why
+   that ordering is safe).
 ═══════════════════════════════════════════════════════════ */
 
 const LIBRARY_KEY = 'tree-library';
@@ -68,16 +73,21 @@ function signatureFromNodes(nodesArr) {
   return roots.sort().join('|') || '(empty)';
 }
 
+/* Reads from progress.js's own in-memory progressCache rather than
+   localStorage directly — progressCache is what actually gets swapped to
+   the signed-in account's cloud copy (see refreshProgressFromSource in
+   progress.js), so reading localStorage here would silently show 0/N for
+   an account's saved trees on any device/browser that never happened to
+   save that progress locally too. progressCache already holds whichever
+   source (local or cloud) is currently active, so this stays correct
+   either way with no source-awareness needed in this file at all. */
 function libraryProgressFor(entryData) {
   const total = entryData.nodes?.length || 0;
   if (!total) return { done: 0, total: 0 };
-  try {
-    const all = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
-    const rec = all[signatureFromNodes(entryData.nodes)];
-    if (!rec) return { done: 0, total };
-    const done = entryData.nodes.filter(n => rec[n.label]?.done).length;
-    return { done, total };
-  } catch { return { done: 0, total }; }
+  const rec = progressCache[signatureFromNodes(entryData.nodes)];
+  if (!rec) return { done: 0, total };
+  const done = entryData.nodes.filter(n => rec[n.label]?.done).length;
+  return { done, total };
 }
 
 /* ── source switching ──────
