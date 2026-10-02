@@ -328,8 +328,19 @@ function captionSpec(str) {
   if (whole && !whole[1].includes('\\)') && window.katex) return { text: whole[1].trim(), katex: true };
   return { text: s.replace(/\\\(|\\\)/g, '').trim(), katex: false };
 }
+let graphFontPx = 16; // set per board from the surrounding page's own text size
 function labelAttrs(spec, color, extra) {
-  return Object.assign({ strokeColor: color, fontSize: 14, useKatex: spec.katex, display: 'html' }, extra || {});
+  return Object.assign({ strokeColor: color, fontSize: graphFontPx, useKatex: spec.katex, display: 'html' }, extra || {});
+}
+/* JSXGraph draws its text (tick numbers, axis names, point and segment labels)
+   in its own font and size. Read the page's font where the plot sits, before
+   the board adds its own classes, and force the board's text to match. */
+function matchPageFont(el) {
+  const cs = getComputedStyle(el);
+  graphFontPx = parseFloat(cs.fontSize) || 16;
+  let st = document.getElementById('sv-graph-font-css');
+  if (!st) { st = document.createElement('style'); st.id = 'sv-graph-font-css'; document.head.appendChild(st); }
+  st.textContent = `.sv-graph-plot .JXGtext, .sv-graph-plot svg text { font-family: ${cs.fontFamily} !important; }`;
 }
 
 function makeSliders(g) {
@@ -409,6 +420,7 @@ function mountSurface3d(g, el) {
 function mountBoard2d(g, el, id) {
   freeStaleBoards();
   const textColor = getComputedStyle(el).color || '#333';
+  matchPageFont(el);
   if (el.clientHeight < 120) el.style.height = GRAPH_HEIGHT_2D + 'px';
   const wPx = el.clientWidth || 600, hPx = el.clientHeight || GRAPH_HEIGHT_2D;
 
@@ -472,7 +484,7 @@ function mountBoard2d(g, el, id) {
   if (g.type !== 'function2d' || /^equal$/i.test(g.aspect)) [xr, yr] = fitAspect(xr, yr, wPx, hPx);
 
   const xCap = captionSpec(g.xlabel), yCap = captionSpec(g.ylabel);
-  const axisTicks = { strokeColor: textColor, strokeOpacity: 0.5, label: { strokeColor: textColor, fontSize: 12 } };
+  const axisTicks = { strokeColor: textColor, strokeOpacity: 0.5, label: { strokeColor: textColor, fontSize: graphFontPx } };
   const board = JXG.JSXGraph.initBoard(el.id, {
     boundingbox: [xr[0], yr[1], xr[1], yr[0]],
     axis: true, grid: false,
