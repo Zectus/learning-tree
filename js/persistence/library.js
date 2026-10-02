@@ -1,71 +1,50 @@
 /* ═══════════════════════════════════════════════════════════
-   library.js — "My Trees": a save/load library for whole trees
-   (structure + each node's generated lesson content), separate
-   from the manual JSON import/export in io.js and the per-node
-   progress tracking in progress.js.
+   library.js — "My Trees": a save/load library for whole trees (structure
+   + each node's generated lesson content), separate from the manual JSON
+   import/export in io.js and the progress tracking in progress.js.
 
-   A library entry is just a stored snapshot in the exact shape
-   loadFromJSON() already knows how to read (the same shape
-   buildTreeJSON() in io.js produces for a file export) — this
-   file only adds the "usual" save/open/rename/duplicate/delete
-   operations, and the card-grid UI, on top of that. Progress
-   (done flags, quiz answers, notes) is deliberately NOT stored
-   here a second time — it already persists independently via
-   progress.js, keyed by treeSignature() — so opening a library
-   entry restores its progress for free, and this file reads that
-   same in-memory progressCache (not localStorage directly) so the
-   done/total counts shown here stay correct regardless of whether
-   progress.js's active source is local or cloud (see
-   libraryProgressFor below).
+   An entry is a stored snapshot in the exact shape loadFromJSON() reads
+   (what buildTreeJSON() produces). Progress is deliberately not stored a
+   second time: it already persists via progress.js, keyed by
+   treeSignature(), so opening an entry restores its progress for free, and
+   this file reads progressCache (not localStorage) so the done/total counts
+   are right whichever source is active.
 
-   STORAGE SOURCE: signed out, the whole library lives in this
-   browser's localStorage (LIBRARY_KEY below) — no account
-   needed. Signed in (see account.js/cloud.js), it lives instead
-   under this user's own uid in Firebase, so it follows them
-   across devices. refreshLibraryFromSource() and persistLibrary()
-   are the only two functions that know which of those two is
-   currently active (librarySource) — every other function in this
-   file just reads/writes the in-memory libraryCache and doesn't
-   care where it came from. window.handleCloudAuthChange (in
-   account.js) calls refreshLibraryFromSource() on every sign-in/
-   sign-out, which is what actually switches the source.
+   STORAGE SOURCE: signed out, the library is this browser's localStorage
+   (LIBRARY_KEY); signed in (account.js/cloud.js) it lives under the user's
+   uid in Firebase. refreshLibraryFromSource() and persistLibrary() are the
+   only two functions that know which; everything else works on libraryCache.
 
-   state.libraryId tracks which saved entry (if any) the tree
-   currently on the canvas came from, so "save" can tell whether
-   to update that entry in place or create a new one. It's reset
-   to null by clearMap() (io.js) on every load, and set explicitly
-   by openLibraryEntry() below right after — the one place a load
-   should actually count as "this IS that saved entry" rather than
-   "a tree that happens to look like it."
+   state.libraryId tracks which entry the tree on the canvas came from, so
+   "save" can update it in place. clearMap() resets it; openLibraryEntry()
+   re-links it, the one place a load counts as "this IS that entry".
 
-   Depends on state.js, io.js (buildTreeJSON, loadFromJSON,
-   slugify), progress.js (progressCache — the in-memory mirror of
-   whichever progress source, local or cloud, is currently active;
-   see that file's own header), tools.js (svEsc), and — only once a
-   person actually signs in — window.cloud, set up by cloud.js (a
-   module that runs after this file; see its own header for why
-   that ordering is safe).
+   Depends on state.js, io.js (buildTreeJSON, loadFromJSON), progress.js
+   (progressCache), tools.js (svEsc), escape.js, toast.js, and — once
+   signed in — window.cloud (cloud.js, a module that runs after this file).
 ═══════════════════════════════════════════════════════════ */
-
 const LIBRARY_KEY = 'tree-library';
 
-let libraryCache  = {};      // in-memory mirror of whichever source is currently active
+let libraryCache  = {};      // in-memory mirror of whichever source is active
 let librarySource = 'local'; // 'local' | 'cloud'
 
 function readLocalLibrary() {
   try { return JSON.parse(localStorage.getItem(LIBRARY_KEY) || '{}'); } catch { return {}; }
 }
 function writeLocalLibrary(lib) {
-  try { localStorage.setItem(LIBRARY_KEY, JSON.stringify(lib)); } catch {}
+  try { localStorage.setItem(LIBRARY_KEY, JSON.stringify(lib)); return true; }
+  catch {
+    showToast("Couldn't save — this browser's storage is full or blocked. Export the tree as JSON instead, or sign in to store it in your account.");
+    return false;
+  }
 }
 function genLibraryId() {
   return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
-/* Mirrors treeSignature() in progress.js exactly (sorted, lowercased root
-   labels) but works off a plain node array — a stored entry's own
-   data.nodes — instead of the live state.nodes Map, so a saved entry's
-   progress can be looked up without loading it onto the canvas first. */
+/* Mirrors treeSignature() in progress.js (sorted, lowercased root labels) over
+   a plain node array, so a stored entry's progress can be found without
+   loading it onto the canvas. */
 function signatureFromNodes(nodesArr) {
   const roots = (nodesArr || [])
     .filter(n => !n.requires || !n.requires.length)
@@ -73,27 +52,17 @@ function signatureFromNodes(nodesArr) {
   return roots.sort().join('|') || '(empty)';
 }
 
-/* Reads from progress.js's own in-memory progressCache rather than
-   localStorage directly — progressCache is what actually gets swapped to
-   the signed-in account's cloud copy (see refreshProgressFromSource in
-   progress.js), so reading localStorage here would silently show 0/N for
-   an account's saved trees on any device/browser that never happened to
-   save that progress locally too. progressCache already holds whichever
-   source (local or cloud) is currently active, so this stays correct
-   either way with no source-awareness needed in this file at all. */
 function libraryProgressFor(entryData) {
   const total = entryData.nodes?.length || 0;
   if (!total) return { done: 0, total: 0 };
   const rec = progressCache[signatureFromNodes(entryData.nodes)];
   if (!rec) return { done: 0, total };
-  const done = entryData.nodes.filter(n => rec[n.label]?.done).length;
-  return { done, total };
+  return { done: entryData.nodes.filter(n => rec[n.label]?.done).length, total };
 }
 
-/* ── source switching ──────
-   Called once at load (guest view, so "My Trees" works before Firebase
-   has even resolved whether there's a persisted session) and again by
-   window.handleCloudAuthChange (account.js) on every sign-in/sign-out. */
+/* ── source switching ──
+   Called at load (guest view, before Firebase resolves a persisted session)
+   and by handleCloudAuthChange (account.js) on every sign-in/out. */
 async function refreshLibraryFromSource() {
   if (state.accountUser) {
     librarySource = 'cloud';
@@ -101,12 +70,11 @@ async function refreshLibraryFromSource() {
       libraryCache = await window.cloud.getLibrary(state.accountUser.uid);
     } catch (e) {
       console.error('Could not load cloud library:', e);
+      showToast("Couldn't load your saved trees from your account.");
       libraryCache = {};
     }
-    // One-time convenience: a fresh account with an empty cloud library,
-    // but trees saved locally before signing in, gets those local trees
-    // copied up rather than silently orphaned — signing in shouldn't make
-    // work someone already did disappear from "My Trees".
+    // A fresh account with an empty cloud library but trees saved locally
+    // before signing in gets those copied up rather than orphaned.
     const local = readLocalLibrary();
     if (Object.keys(libraryCache).length === 0 && Object.keys(local).length > 0) {
       libraryCache = local;
@@ -116,70 +84,70 @@ async function refreshLibraryFromSource() {
     librarySource = 'local';
     libraryCache = readLocalLibrary();
   }
-  if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) {
-    renderLibraryGrid();
-  }
+  if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
 }
 
+// Resolves to whether the write succeeded; failures are reported to the person.
 async function persistLibrary() {
   if (librarySource === 'cloud' && state.accountUser) {
-    try { await window.cloud.setLibrary(state.accountUser.uid, libraryCache); }
-    catch (e) { console.error('Cloud save failed:', e); }
-  } else {
-    writeLocalLibrary(libraryCache);
+    try { await window.cloud.setLibrary(state.accountUser.uid, libraryCache); return true; }
+    catch (e) {
+      console.error('Cloud save failed:', e);
+      showToast("Couldn't save to your account — check your connection and try again.");
+      return false;
+    }
   }
+  return writeLocalLibrary(libraryCache);
 }
 
-/* ── save ──────
-   Plain "save": if the current tree is already linked to a library entry
-   (state.libraryId), overwrite that entry's data in place — this is the
-   path for "I edited a tree I opened from here, save my changes back."
-   Otherwise it's a first save, so ask for a name and create a new entry. */
+/* ── save ──
+   If the tree is already linked to an entry, overwrite it in place ("I edited
+   a tree I opened from here, save my changes back"); otherwise it's a first
+   save, so ask for a name. A failed write is rolled back so the grid never
+   shows something that isn't actually stored. */
 async function saveCurrentTreeToLibrary() {
   const snapshot = buildTreeJSON(true);
   if (!snapshot) return;
 
   if (state.libraryId && libraryCache[state.libraryId]) {
-    libraryCache[state.libraryId].data = snapshot;
-    libraryCache[state.libraryId].savedAt = Date.now();
-    await persistLibrary();
+    const entry = libraryCache[state.libraryId];
+    const before = { data: entry.data, savedAt: entry.savedAt };
+    entry.data = snapshot;
+    entry.savedAt = Date.now();
+    if (!(await persistLibrary())) Object.assign(entry, before);
     renderLibraryGrid();
     return;
   }
 
-  const suggested = state.topic || 'Untitled tree';
-  const name = (window.prompt('Name this tree:', suggested) || '').trim();
+  const name = (window.prompt('Name this tree:', state.topic || 'Untitled tree') || '').trim();
   if (!name) return;
-
   const id = genLibraryId();
   libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
-  await persistLibrary();
-  state.libraryId = id;
+  if (await persistLibrary()) state.libraryId = id;
+  else delete libraryCache[id];
   renderLibraryGrid();
 }
 
-/* "Save as a new copy" — only relevant once a tree IS already linked to an
-   entry (see the button's own visibility in renderLibraryGrid): lets you
-   branch off the saved version currently open without overwriting it. */
+/* "Save as new copy" — only offered once the tree is linked to an entry:
+   branch off the saved version without overwriting it. */
 async function saveCurrentTreeAsNewCopy() {
   const snapshot = buildTreeJSON(true);
   if (!snapshot) return;
-  const suggested = (state.topic || 'Untitled tree') + ' copy';
-  const name = (window.prompt('Name this copy:', suggested) || '').trim();
+  const name = (window.prompt('Name this copy:', (state.topic || 'Untitled tree') + ' copy') || '').trim();
   if (!name) return;
   const id = genLibraryId();
   libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
-  await persistLibrary();
-  state.libraryId = id;
+  if (await persistLibrary()) state.libraryId = id;
+  else delete libraryCache[id];
   renderLibraryGrid();
 }
 
-/* ── open / rename / duplicate / delete ────── */
+/* ── open / rename / duplicate / delete ── */
 function openLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
-  loadFromJSON(entry.data);   // clearMap() inside this resets state.libraryId to null first
-  state.libraryId = id;       // ...then this re-links it, since this load really is that entry
+  if (!loadFromJSON(entry.data)) return; // clearMap() inside resets state.libraryId to null…
+  state.libraryId = id;                  // …so re-link it: this load really is that entry
   closeLibraryModal();
 }
 
@@ -188,8 +156,9 @@ async function renameLibraryEntry(id) {
   if (!entry) return;
   const name = (window.prompt('Rename tree:', entry.name) || '').trim();
   if (!name) return;
+  const before = entry.name;
   entry.name = name;
-  await persistLibrary();
+  if (!(await persistLibrary())) entry.name = before;
   renderLibraryGrid();
 }
 
@@ -198,7 +167,7 @@ async function duplicateLibraryEntry(id) {
   if (!entry) return;
   const newId = genLibraryId();
   libraryCache[newId] = { name: entry.name + ' copy', savedAt: Date.now(), data: entry.data };
-  await persistLibrary();
+  if (!(await persistLibrary())) delete libraryCache[newId];
   renderLibraryGrid();
 }
 
@@ -207,15 +176,14 @@ async function deleteLibraryEntry(id) {
   if (!entry) return;
   if (!window.confirm(`Delete "${entry.name}"? This can't be undone.`)) return;
   delete libraryCache[id];
-  await persistLibrary();
-  if (state.libraryId === id) state.libraryId = null;
+  if (!(await persistLibrary())) libraryCache[id] = entry;
+  else if (state.libraryId === id) state.libraryId = null;
   renderLibraryGrid();
 }
 
-/* ── rendering ────── */
+/* ── rendering ── */
 function formatSavedAt(ts) {
-  const diffMs = Date.now() - ts;
-  const mins = Math.floor(diffMs / 60000);
+  const mins = Math.floor((Date.now() - ts) / 60000);
   if (mins < 1)  return 'just now';
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
@@ -235,14 +203,12 @@ function renderLibraryGrid() {
     : 'saved locally in this browser — sign in to sync across devices';
 
   const hasCurrentTree = state.nodes.size > 0;
-  const linkedToOpen    = !!(state.libraryId && libraryCache[state.libraryId]);
+  const linkedToOpen   = !!(state.libraryId && libraryCache[state.libraryId]);
 
   const saveBtn = document.getElementById('btn-save-current-tree');
   saveBtn.classList.toggle('hidden', !hasCurrentTree);
   saveBtn.textContent = linkedToOpen ? '💾 update saved copy' : '💾 save current tree';
-
-  const saveCopyBtn = document.getElementById('btn-save-current-tree-copy');
-  saveCopyBtn.classList.toggle('hidden', !(hasCurrentTree && linkedToOpen));
+  document.getElementById('btn-save-current-tree-copy').classList.toggle('hidden', !(hasCurrentTree && linkedToOpen));
 
   empty.classList.toggle('hidden', ids.length !== 0);
   grid.innerHTML = '';
@@ -276,7 +242,7 @@ function renderLibraryGrid() {
   });
 }
 
-/* ── modal open/close ────── */
+/* ── modal open/close ── */
 async function openLibraryModal() {
   document.getElementById('library-modal-backdrop').classList.add('open');
   await refreshLibraryFromSource();
@@ -294,12 +260,11 @@ document.getElementById('library-modal-backdrop').addEventListener('click', e =>
 document.getElementById('btn-save-current-tree').addEventListener('click', saveCurrentTreeToLibrary);
 document.getElementById('btn-save-current-tree-copy').addEventListener('click', saveCurrentTreeAsNewCopy);
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('library-modal-backdrop').classList.contains('open'))
-    closeLibraryModal();
+onEscape(100, () => {
+  if (!document.getElementById('library-modal-backdrop').classList.contains('open')) return false;
+  closeLibraryModal();
+  return true;
 });
 
-// Guest view is available immediately; refreshed again the moment
-// Firebase reports an actual signed-in session (see handleCloudAuthChange
-// in account.js), which may swap the source out from under this.
+// Guest view is available immediately; refreshed again when Firebase reports a signed-in session.
 refreshLibraryFromSource();

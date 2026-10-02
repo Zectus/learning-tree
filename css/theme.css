@@ -1,18 +1,16 @@
 /* ═══════════════════════════════════════════════════════════
-   theme.css — the CSS reset, the root font-size that every rem
-   value in the app scales against (see scale.js — the app's
-   chrome is sized in rem specifically so that one JS-computed
-   factor, --ui-scale, standardizes its size across different
-   screens/zoom levels), and every themeable value: colors, fonts,
-   and the light/dark variable sets everything else in the app
-   reads from. Nothing in here targets a specific component; every
-   other stylesheet depends on the custom properties defined here,
-   so this loads first.
+   theme.css — the CSS reset, the root font-size every rem in the app
+   scales against (see scale.js), and every themeable value: colors,
+   fonts, and the light/dark variable sets. Nothing here targets a
+   specific component; every other stylesheet reads these custom
+   properties, so this loads first.
 ═══════════════════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  color-scheme: light; /* native controls, scrollbars and form fields follow the theme */
+
   --bg:       #f6f6f3;
   --surface:  #ffffff;
   --border:   #e0e0db;
@@ -24,12 +22,8 @@
   --line-h:   #6a6a62;
   --font:     -apple-system, 'Inter', 'Segoe UI', sans-serif;
 
-  /* Desktop UI-scale factor — set at runtime by scale.js from the
-     window's logical width; 1 is just the pre-JS fallback so nothing's
-     unstyled for the one frame before that script runs (it's loaded
-     synchronously in <head>, so in practice this fallback is never
-     actually seen). Drives the html{font-size} rule below, which is what
-     every rem value everywhere else in the app's chrome scales against. */
+  /* Desktop UI-scale factor, set at load by scale.js from the window's logical
+     width. 1 is just the fallback for the frame before that script runs. */
   --ui-scale: 1;
 
   /* status palette */
@@ -50,7 +44,7 @@
   --d3: #f0e4d8;
   --d4: #fce4e4;
 
-  /* inverted pill (active toolbar btn, verify btn) — tracks --text/--bg automatically */
+  /* inverted pill (active toolbar btn, verify btn, toast) — tracks --text/--bg automatically */
   --invert-bg:   var(--text);
   --invert-text: var(--bg);
 
@@ -67,17 +61,18 @@
   --btn-soft-bg-hover: rgba(0,0,0,.08);
 }
 
-/* The single scaling point: every rem in the app is relative to this.
-   At --ui-scale: 1 (the 1920×1080 @150%-zoom reference logical width,
-   or the whole app below the 700px mobile breakpoint — see scale.js)
-   this is exactly 16px, so every "Npx" value converted to rem elsewhere
-   renders at that literal same Npx, unchanged from today. Away from the
-   reference width, it scales proportionally instead of staying fixed. */
+/* The single scaling point: every rem in the app is relative to this. A
+   percentage (not a fixed 16px) so the browser's own font-size setting still
+   applies; at the default 16px and --ui-scale: 1 it is exactly 16px. */
 html {
-  font-size: calc(16px * var(--ui-scale));
+  font-size: calc(100% * var(--ui-scale));
 }
 
-body.dark {
+/* The dark class is set on <html> by the inline script in index.html's <head>,
+   so the right theme is in place before first paint. */
+html.dark {
+  color-scheme: dark;
+
   --bg:       #15161a;
   --surface:  #1e2024;
   --border:   #2c2e33;
@@ -123,11 +118,21 @@ body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
-  height: 100dvh; /* mobile browsers shrink this as their address bar shows/hides;
-                     100vh alone is sized for the address-bar-hidden case, which is
-                     taller than what's actually visible — that mismatch is what
-                     produces the native scrollbar/bounce you're seeing. dvh tracks
-                     the real, currently-visible viewport instead. Plain vh stays
-                     as a fallback for browsers that don't support dvh. */
+  height: 100dvh; /* dvh tracks the currently visible viewport as a mobile address bar shows/hides;
+                     100vh is sized for the bar-hidden case, which is taller than what's visible.
+                     Plain vh stays as the fallback for browsers without dvh. */
   transition: background .15s ease, color .15s ease;
+}
+
+/* Buttons and labels are tapped, not zoomed: this removes the double-tap-to-zoom
+   delay without disabling pinch-zoom of the page. */
+button, label { touch-action: manipulation; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

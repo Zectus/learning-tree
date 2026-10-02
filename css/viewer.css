@@ -1,26 +1,16 @@
 /* ═══════════════════════════════════════════════════════════
-   viewer.css — the session viewer: its draggable/resizable
-   window, header, per-session progress bar + checkpoint dots,
-   score badge, the notes side panel, rendered lesson content
-   (sections, prose, KaTeX, tables, timelines), and the quiz UI
-   (question cards, options, correct/wrong feedback, the bonus-
-   practice dropdown). Pairs with viewer.js.
-   Sizes are in rem so they scale with --ui-scale (see
-   scale.js/theme.css) — this matters here more than almost
-   anywhere else in the app, since #sv-window/#sv-notes-panel are
-   dragged and resized via raw mouse-pixel deltas (see viewer.js);
-   rem-based sizing means the browser computes genuinely bigger
-   boxes at a bigger scale, so that JS math (which reads real
-   offsetWidth/getBoundingClientRect() values) stays correct
-   without any special-casing, unlike a visual-only CSS transform
-   layered on top would require.
-   Depends on theme.css. Note: the "no visible scrollbars" rule
-   below also targets .modal-shell (defined in modals.css) — the
-   two components share that one rule rather than each repeating
-   it themselves.
+   viewer.css — the session viewer: draggable/resizable window, header,
+   progress bar + checkpoint dots, score badge, notes panel, rendered
+   lesson content (sections, prose, KaTeX, tables, timelines, graphs) and
+   the quiz UI (question cards, options, feedback, bonus dropdown).
+   Pairs with viewer.js. Sizes are in rem so they scale with --ui-scale;
+   that matters here because #sv-window / #sv-notes-panel are dragged and
+   resized with raw pixel deltas — rem sizing gives genuinely bigger boxes,
+   so that JS math (which reads real offsetWidth values) stays correct.
+   Depends on theme.css. The "no visible scrollbars" rule below also covers
+   .modal-shell (modals.css), which shares it.
 ═══════════════════════════════════════════════════════════ */
 
-/* ── session viewer ── */
 #session-viewer {
   position: fixed; inset: 0;
   background: rgba(20,20,17,.45);
@@ -50,15 +40,15 @@
   flex-shrink: 0;
   cursor: grab;
   user-select: none;
+  touch-action: none; /* the header is a drag handle for pointer events (see viewer.js) */
   border-radius: 0.625rem 0.625rem 0 0;
 }
 #sv-header:active { cursor: grabbing; }
 #sv-topic { font-size: 0.875rem; font-weight: 600; flex: 1; }
 
 /* session progress bar — mirrors #progress-bar-wrap at the page level.
-   Checkpoint dots mark each question's position; "done" (answered,
-   right or wrong) dots fill in. See updateSessionProgress() in
-   viewer.js for how the fill width is computed and clamped. */
+   Checkpoint dots mark each question's position; answered dots fill in.
+   See updateSessionProgress() in viewer.js. */
 #sv-progress-wrap {
   position: relative;
   height: 0.3125rem;
@@ -99,26 +89,17 @@
   border-radius: 1.25rem; padding: 0.125rem 0.6875rem; white-space: nowrap;
 }
 #sv-score.sv-perfect { color: var(--done-bdr); border-color: var(--done-bdr); background: var(--done-bg); }
-#btn-close-viewer {
+#btn-close-viewer, #btn-toggle-notes {
   background: none; border: 1px solid var(--border); border-radius: 0.375rem;
   width: 1.625rem; height: 1.625rem; cursor: pointer; font-size: 0.75rem;
   color: var(--text-m); transition: all .12s; flex-shrink: 0;
 }
-#btn-close-viewer:hover { border-color: var(--border-h); color: var(--text); }
+#btn-close-viewer:hover, #btn-toggle-notes:hover { border-color: var(--border-h); color: var(--text); }
+#btn-toggle-notes.active { background: var(--invert-bg); color: var(--invert-text); border-color: var(--invert-bg); }
 
-#btn-toggle-notes {
-  background: none; border: 1px solid var(--border); border-radius: 0.375rem;
-  width: 1.625rem; height: 1.625rem; cursor: pointer; font-size: 0.75rem;
-  color: var(--text-m); transition: all .12s; flex-shrink: 0;
-}
-#btn-toggle-notes:hover { border-color: var(--border-h); color: var(--text); }
-#btn-toggle-notes.active {
-  background: var(--invert-bg); color: var(--invert-text); border-color: var(--invert-bg);
-}
-
-/* notes panel — a sidebar anchored to the right of #sv-window, synced to
-   its position/size in JS (see syncNotesPanelPosition in viewer.js) since
-   #sv-window itself is draggable/resizable and clips overflow. */
+/* notes panel — a sidebar anchored to the right of #sv-window, synced to its
+   position in JS (syncNotesPanelPosition) since #sv-window is draggable,
+   resizable and clips overflow. */
 #sv-notes-panel {
   display: none;
   position: fixed;
@@ -151,11 +132,14 @@
   tab-size: 4;
 }
 #sv-notes-ta::placeholder { color: var(--text-m); opacity: .6; }
-#sv-notes-resize {
+
+/* resize handles (pointer-event drag targets — see viewer.js) */
+#sv-resize, #sv-notes-resize {
   position: absolute; bottom: 0; right: 0;
   width: 1.125rem; height: 1.125rem; cursor: se-resize; z-index: 1;
+  touch-action: none;
 }
-#sv-notes-resize::after {
+#sv-resize::after, #sv-notes-resize::after {
   content: '';
   position: absolute; bottom: 0.25rem; right: 0.25rem;
   border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);
@@ -168,33 +152,18 @@
   font-size: 0.96875rem; line-height: 1.82; color: var(--text);
 }
 
-/* No visible scrollbars anywhere inside the viewer or the modals — they
-   clash with the floating-window look and everything here is still
-   fully scrollable via wheel/trackpad/keyboard without one. Shared
-   across #session-viewer and .modal-shell (the learn modal and the
-   "new tree" modal both use .modal-shell) rather than repeated per
-   component. */
+/* No visible scrollbars in the viewer or the modals — they clash with the
+   floating-window look, and everything is still scrollable by wheel,
+   trackpad and keyboard. Shared with .modal-shell (modals.css). */
 #session-viewer, #session-viewer *,
 .modal-shell, .modal-shell * {
-  scrollbar-width: none;    /* Firefox */
-  -ms-overflow-style: none; /* legacy Edge/IE */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 #session-viewer::-webkit-scrollbar, #session-viewer *::-webkit-scrollbar,
 .modal-shell::-webkit-scrollbar, .modal-shell *::-webkit-scrollbar {
-  display: none;             /* Chromium/Safari */
+  display: none;
   width: 0; height: 0;
-}
-
-/* resize handle */
-#sv-resize {
-  position: absolute; bottom: 0; right: 0;
-  width: 1.125rem; height: 1.125rem; cursor: se-resize; z-index: 1;
-}
-#sv-resize::after {
-  content: '';
-  position: absolute; bottom: 0.25rem; right: 0.25rem;
-  border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);
-  width: 0.5rem; height: 0.5rem;
 }
 
 .sv-section { margin-bottom: 3.5rem; }
@@ -212,14 +181,8 @@
 .sv-prose p:last-child { margin-bottom: 0; }
 .katex-display { margin: 1.4em 0 !important; overflow-x: auto; overflow-y: visible; }
 
-/* Section cross-reference links (see linkifySectionRefs in viewer.js) —
-   an inline mention like "...from Section 3" becomes clickable, jumping
-   the reader to that section (#sv-section-N) instead of leaving them to
-   scroll and hunt for it. Styled to read as "this plain piece of text
-   happens to be clickable" rather than a normal hyperlink shouting for
-   attention in the middle of a wall of prose — inherits the surrounding
-   text color, a dotted underline instead of a solid one, and only picks
-   up the app's link-blue on hover. */
+/* Section cross-references (linkifySectionRefs in viewer.js): plain text that
+   happens to be clickable, so a dotted underline that only turns link-blue on hover. */
 .sv-sec-ref {
   color: inherit;
   text-decoration: underline;
@@ -271,11 +234,20 @@
 .sv-tl-marker { font-weight: 600; font-size: 0.84375rem; color: var(--avail-bdr); margin-bottom: 0.125rem; }
 .sv-tl-text { font-size: 0.90625rem; line-height: 1.55; color: var(--text); }
 
+/* [GRAPH]...[/GRAPH] — the plot has a fixed height (Plotly's own default is
+   450px) so the lesson's layout doesn't jump when the graph libraries finish
+   loading and the checkpoint positions computed before that stay right. */
+.sv-graph-wrap { margin: 1.75rem 0; }
+.sv-graph-title { font-size: 0.8125rem; font-weight: 600; color: var(--text-m); margin-bottom: 0.5rem; }
+.sv-graph-plot { height: 28rem; }
+.sv-graph-loading::after { content: 'Loading graph…'; font-size: 0.8125rem; color: var(--text-m); }
+
 /* question cards */
 .q-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 0.625rem; padding: 1.25rem 1.375rem 1rem; margin: 1.875rem 0;
 }
+.q-card-invalid { opacity: .75; border-style: dashed; }
 .q-num {
   font-size: 0.625rem; font-weight: 700; letter-spacing: .11em;
   text-transform: uppercase; color: var(--text-m); margin-bottom: 0.5625rem;

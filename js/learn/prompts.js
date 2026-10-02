@@ -1,59 +1,42 @@
 /* ═══════════════════════════════════════════════════════════
    prompts.js — computes the per-node and per-tree prompt inputs
-   (buildPrompt, buildTreePrompt, buildTreePromptFromFile) and
-   hands them to the pure-text templates in node-prompt.js /
-   tree-prompt.js; also owns both modals built around those
-   prompts (the single-node "learn" modal and the "new tree"
-   modal) and the copy-to-clipboard buttons shared by both.
-   "New tree" is now a .dropdown-item inside the Tree ▾ toolbar
-   menu (see index.html/toolbar.js) rather than a standalone
-   button — only the element id below changed to match; the modal
-   itself and all the prompt-building logic are unaffected.
-   Depends on state.js, layout.js (prereqsOf/dependentsOf, via
-   state.js), node-prompt.js, tree-prompt.js, io.js (slugify,
-   loadFromJSON).
+   (buildPrompt, buildTreePrompt, buildTreePromptFromFile), hands them to
+   the pure-text templates in node-prompt.js / tree-prompt.js, and owns the
+   two modals built around those prompts (the single-node "learn" modal and
+   the "new tree" modal) plus their copy-to-clipboard buttons.
+   Depends on state.js, escape.js, node-prompt.js, tree-prompt.js and io.js
+   (slugify, readJSONFile, loadFromJSON).
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
-   LEARN SYSTEM — computes the per-node values (prerequisite
-   context, tree-topic/scope framing) and hands them to
-   renderNodePrompt(), defined in node-prompt.js, which holds the
-   actual prompt text. Answer verification lives in viewer.js: each
-   question now marks its own correct option inline with
-   [ANSWER: X] (same mechanism as the [BONUS] format), and the app
-   shuffles each question's options deterministically at parse time
-   (see shuffleOptions in tools.js) rather than the model being
-   handed a pre-generated bank of target letters to write toward.
-   That removed the need for anything here to generate or track an
-   answer key up front — there's nothing left to compute for it.
+   NODE LESSON PROMPT — per-node values (prerequisite context, tree topic,
+   scope note) handed to renderNodePrompt(). Answer checking lives in
+   viewer.js: each question marks its own correct option with [ANSWER: X]
+   and the app shuffles options at parse time (shuffleOptions in tools.js),
+   so nothing here computes an answer key.
 ═══════════════════════════════════════════════════════════ */
-
-/* ── compute prompt inputs for this node, then render ── */
 function buildPrompt(id, language) {
-  const node       = state.nodes.get(id);
-  const topic      = node.label;
-  const nodeId     = node.slug || slugify(node.label);
+  const node   = state.nodes.get(id);
+  const topic  = node.label;
+  const nodeId = node.slug || slugify(node.label);
 
   const prereqNodes = prereqsOf(id).map(pid => state.nodes.get(pid)).filter(Boolean);
   const dependents  = dependentsOf(id).map(pid => state.nodes.get(pid)?.label).filter(Boolean);
 
-  // PROMPT DESIGN RULE: ... (unchanged comment)
-  //
-  // prereqLine used to hand over just a comma-separated list of prereq
-  // LABELS — a name with nothing behind it. That left the model with no
-  // way to tell "already fully established, safe to build on" apart from
-  // "sounds adjacent, better re-explain it defensively." Each
-  // prerequisite already carries exactly that boundary in its own
-  // `explanation` field (the same scope note the tree designer wrote to
-  // pin down what a node includes and where it stops), so that's
-  // included here per prerequisite instead of just its name.
+  // Each prerequisite is listed with its own `explanation` (the scope note the
+  // tree designer wrote), not just its name, so the model can tell "fully
+  // established, safe to build on" from "sounds adjacent, re-explain
+  // defensively".
   const prereqDetailList = prereqNodes
     .map(n => `- ${n.label}${n.explanation ? ` — ${n.explanation}` : ''}`)
     .join('\n');
-  const prereqLine  = prereqNodes.length
+  const prereqLine = prereqNodes.length
     ? `The reader has already been through, earlier in this sequence, every one of the following — each line is that document's own label plus the exact scope it covered, so you know precisely what's already been established (and its boundaries) rather than guessing from the name alone:\n${prereqDetailList}\nTreat everything described above as already fully taught and available to build on without re-deriving or re-explaining it — refer back to it the way one lesson naturally refers to an earlier one ("recall that...", "as seen when X was introduced...", "earlier, we found...") rather than the word "prerequisite," which reads like a syllabus line rather than something anyone would actually say. Where a listed scope stops short of something you need here, that gap is genuinely new material for this node to cover, not something to assume was already handled.`
     : `This is the first topic in the sequence — there is nothing earlier to refer back to.`;
-  const leadsToLine = dependents.length ? `Material the reader hasn't seen yet will build on this one afterward: ${dependents.join(', ')}. Don't teach toward it or mention it by name here.` : '';  const treeTopicLine = state.topic ? `This node belongs to a larger tree on ${state.topic}.` : '';
+  const leadsToLine = dependents.length
+    ? `Material the reader hasn't seen yet will build on this one afterward: ${dependents.join(', ')}. Don't teach toward it or mention it by name here.`
+    : '';
+  const treeTopicLine = state.topic ? `This node belongs to a larger tree on ${state.topic}.` : '';
   const explanationLine = node.explanation
     ? `This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): ${node.explanation} Treat this as the precise boundary of what belongs in this document — the topic name above is just the label; this defines which specific sub-results, cases, or pieces to cover, and which adjacent ones belong to a different node and should stay out even if a fuller treatment would naturally reach for them.`
     : '';
@@ -64,30 +47,26 @@ function buildPrompt(id, language) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TREE DESIGN PROMPT — a separate flow from the per-node
-   lesson prompt above; generates a prompt for designing a
-   whole new prerequisite tree. The actual prompt text lives
-   in tree-prompt.js, via renderTreePrompt().
+   TREE DESIGN PROMPT — a separate flow that generates a prompt for
+   designing a whole new prerequisite tree. The text lives in tree-prompt.js.
 ═══════════════════════════════════════════════════════════ */
 function buildTreePrompt(topic, language) {
   const fileSlug = slugify(topic);
   const lang = language || 'English';
   const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
-
-  return renderTreePrompt({ topic, fileSlug, languageClause });
+  return renderTreePrompt({ topic, fileSlug, language: lang, languageClause });
 }
 
-// No inputs to compute — topic/starting point/language are all derived
-// by Claude itself from the attached file(s), not by this app — but kept
-// as a real function (rather than calling renderTreePromptFromFile()
-// directly from io.js's wiring below) to match buildTreePrompt's role as
-// the one place that sits between the modal and the template.
+// No inputs: topic, starting point and language are all derived by Claude from
+// the attached file(s). Kept as a function so this file stays the one place
+// between the modal and the templates.
 function buildTreePromptFromFile() {
   return renderTreePromptFromFile();
 }
 
-/* ── modal state ── */
+/* ── learn modal ── */
 let _modalNodeId = null;
+let _languagePrefill = ''; // what we last put in the language field ourselves
 
 function openLearnModal(id) {
   const node = state.nodes.get(id);
@@ -95,16 +74,19 @@ function openLearnModal(id) {
 
   _modalNodeId = id;
   const languageInput = document.getElementById('node-language-input');
-  // Default to the tree's own language (if it has one) instead of English
-  // whenever the field is currently empty — still just a prefill, so the
-  // person can clear or override it for this one node if they want.
-  if (!languageInput.value.trim() && state.language) languageInput.value = state.language;
-  const language = languageInput.value.trim();
-  const prompt = buildPrompt(id, language);
+  // Prefill with the tree's language, but only over a blank field or a value we
+  // put there ourselves — so a language typed by hand survives, while the
+  // previous tree's language doesn't leak into this one.
+  const current = languageInput.value.trim();
+  if (!current || current === _languagePrefill) {
+    languageInput.value = state.language || '';
+    _languagePrefill = state.language || '';
+  }
+  const prompt = buildPrompt(id, languageInput.value.trim());
 
   document.getElementById('modal-title').textContent = node.label;
   document.getElementById('modal-meta').textContent =
-    `${prereqsOf(id).length} prerequisite${prereqsOf(id).length!==1?'s':''} · copy prompt → paste into Claude → upload the .txt file`;
+    `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · copy prompt → paste into Claude → upload the .txt file`;
   document.getElementById('prompt-box').value = prompt;
   resetCopyButton('btn-copy-prompt');
   document.getElementById('modal-backdrop').classList.add('open');
@@ -112,8 +94,7 @@ function openLearnModal(id) {
 
 document.getElementById('node-language-input').addEventListener('input', () => {
   if (_modalNodeId === null) return;
-  const language = document.getElementById('node-language-input').value.trim();
-  document.getElementById('prompt-box').value = buildPrompt(_modalNodeId, language);
+  document.getElementById('prompt-box').value = buildPrompt(_modalNodeId, document.getElementById('node-language-input').value.trim());
   resetCopyButton('btn-copy-prompt');
 });
 
@@ -174,24 +155,21 @@ document.getElementById('tree-topic-input').addEventListener('input', updateTree
 document.getElementById('tree-language-input').addEventListener('input', updateTreePromptPreview);
 
 document.getElementById('tree-json-input').addEventListener('change', e => {
-  const file = e.target.files?.[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const obj = JSON.parse(ev.target.result);
-      loadFromJSON(obj);
+  const file = e.target.files?.[0];
+  if (file) {
+    readJSONFile(file, obj => {
+      if (!loadFromJSON(obj)) return; // the modal stays open so they can try another file
       if (!state.topic) state.topic = document.getElementById('tree-topic-input').value.trim();
       closeTreeModal();
-    } catch {}
-  };
-  reader.readAsText(file);
+    });
+  }
   e.target.value = '';
 });
 
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape') return;
-  if (document.getElementById('tree-modal-backdrop').classList.contains('open')) closeTreeModal();
-  else closeModal();
+onEscape(100, () => {
+  if (document.getElementById('tree-modal-backdrop').classList.contains('open')) { closeTreeModal(); return true; }
+  if (document.getElementById('modal-backdrop').classList.contains('open'))      { closeModal();     return true; }
+  return false;
 });
 
 /* ── copy buttons (shared by both modals) ── */
@@ -214,11 +192,10 @@ function wireCopyButton(btnId, taId) {
       let ok = false;
       try { ok = document.execCommand('copy'); } catch {}
       if (ok) onCopied();
+      else showToast("Couldn't copy automatically — select the prompt text and copy it by hand.");
     };
-    // The async Clipboard API needs a secure context; this app is meant to
-    // run from file://, where it's frequently unavailable or blocked
-    // (Firefox refuses it outright on file://). Fall back to the older
-    // selection-based copy instead of failing silently.
+    // The async Clipboard API needs a secure context (so not file://, and
+    // Firefox refuses it there outright); fall back to selection-based copy.
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(ta.value).then(onCopied).catch(fallbackCopy);
     } else {

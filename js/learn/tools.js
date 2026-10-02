@@ -1,76 +1,34 @@
 /* ═══════════════════════════════════════════════════════════
-   tools.js — self-contained content-block "tools": tables,
-   timelines, and math graphs, plus the KaTeX plumbing they (and
-   plain prose) all share. Anything here follows the same shape:
-   a [TAG]...[/TAG] block in the .txt, a parse function, a render
-   function that returns markup, and — for tools that need a real
-   DOM element to attach to (currently just graphs, via Plotly) —
-   a mount function that runs after that markup is actually in
-   the page.
+   tools.js — self-contained content-block "tools": tables, timelines and
+   math graphs, plus the KaTeX plumbing they share with plain prose. Each
+   is a [TAG]...[/TAG] block in the .txt with a parse function, a render
+   function returning markup, and (graphs only) a mount function that runs
+   once that markup is in the page. Also owns shuffleOptions, the
+   deterministic option shuffle shared by viewer.js's question and bonus
+   parsers.
 
-   Also owns shuffleOptions (see below), the deterministic
-   question-option shuffle shared by viewer.js's question and
-   bonus parsers — it isn't really a "content-block tool" itself,
-   but it's small, self-contained, and used from the same file
-   (viewer.js) as everything else in this registry, so it lives
-   alongside them rather than opening a new file for one function.
+   Questions and bonuses are deliberately NOT here: they're tied into
+   session state (scoring, checkpoints, persistence) and live in viewer.js.
 
-   What's deliberately NOT here: questions and bonuses. They look
-   like content blocks too, but they're wired into session state
-   (answer keys, scoring, checkpoints, per-node persistence) in a
-   way none of these are — that's the interactive exercise engine,
-   and it stays in viewer.js.
+   viewer.js loops over BLOCK_TOOLS instead of hard-coding a branch per
+   type; adding a tool means adding one entry there.
 
-   Depends on: nothing outside the browser globals it uses
-   (window.renderMathInElement from KaTeX's auto-render, window.Plotly,
-   window.math from math.js). viewer.js depends on this file — see
-   BLOCK_TOOLS below, which viewer.js's parser and renderer loop over
-   generically instead of hardcoding a branch per block type. Adding a
-   future tool means adding one entry to BLOCK_TOOLS; nothing in
-   viewer.js has to change.
-
-   EXTERNAL SCRIPTS REQUIRED (add to index.html, not loaded here):
-   - KaTeX + the auto-render extension (already required before this
-     file existed; unchanged)
-   - Plotly.js, for GRAPH blocks
-   - math.js (exposes the global `math`), for evaluating the
-     expressions a GRAPH block's traces are written in
+   External libraries: KaTeX (+ auto-render) is loaded by index.html.
+   Plotly and math.js are large and only needed for [GRAPH] blocks, so they
+   are loaded on first use (loadGraphLibs below).
 ═══════════════════════════════════════════════════════════ */
 
-/* ── shared small helpers ────── */
 function svEsc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* ── Deterministic option shuffling ──────
-   node-prompt.js used to hand the model a long pre-generated bank of
-   random target letters and ask it to design each question's setup and
-   values to land on whichever letter the bank assigned. That forced
-   backward design on computational questions — reverse-engineering
-   numbers just to force a derivation onto a pre-picked letter — instead
-   of letting the model simply work out the right answer and say so.
-
-   Now the model always writes its most natural version of a question and
-   marks the actually-correct option inline with [ANSWER: X] (the same
-   mechanism [BONUS] blocks already used). Whatever letter ends up
-   correct in the raw .txt is therefore not randomized at all — an LLM
-   will tend to cluster correct answers on certain letters/positions — so
-   the shuffle that used to happen at generation time now happens here,
-   at parse/render time, entirely on the app's side.
-
-   The shuffle is seeded off the question's own text, which keeps it
-   deterministic for a given render, but a saved answer must NOT depend
-   on that determinism holding across every future reopen — a different
-   parse pass (a different device, a slightly reformatted saved copy,
-   anything) reshuffling differently would otherwise silently turn a
-   correct answer into a wrong one, or vice versa, purely because the
-   on-screen letter it was saved under no longer points at the same
-   option. So this returns two small lookup maps alongside the shuffled
-   options — origOf (new letter → original letter) and newOf (original
-   letter → new letter) — so callers can persist and restore an answer by
-   the option's actual, shuffle-invariant identity (its original letter
-   in the raw .txt) instead of by whatever letter happened to be on
-   screen at the moment it was picked. See viewer.js's
-   handleOptionClick/handleBonusClick (store via origOf) and openViewer's
-   restore loop (redisplay via newOf) for how this is used. */
+/* ── Deterministic option shuffling ──
+   The model marks the correct option with [ANSWER: X] wherever it happened
+   to write it, and LLMs cluster correct answers on certain letters, so the
+   app reshuffles each question's options at parse time. The shuffle is
+   seeded from the question text so a given .txt always shuffles the same
+   way, but a saved answer never depends on that: answers are stored by the
+   option's ORIGINAL letter, and origOf / newOf translate between original
+   and on-screen letters for the current render (see viewer.js
+   handleOptionClick / openViewer). */
 function hashStr(s) {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -84,22 +42,12 @@ function mulberry32(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-/* rawOptions: { 'A': text, 'B': text, ... } as written in the .txt, in
-   whatever order the model happened to list them. correctLetter: which
-   of those raw letters the model marked as correct via [ANSWER: X].
-   seedKey: a string unique to this question (e.g. "Q3|<question text>")
-   used to derive this render's shuffle. Returns:
-     - options:  the same option text keyed under new (A)-(E) letters,
-                 in shuffled order — what actually gets rendered.
-     - correct:  which NEW letter is correct, for this render.
-     - origOf:   new letter  → original letter (which raw option ended
-                 up at this on-screen position).
-     - newOf:    original letter → new letter (where a given raw option
-                 landed on screen this time).
-   origOf/newOf exist purely so a caller can save and restore an answer
-   by the option's actual identity (its original letter) rather than by
-   a letter that's only meaningful for this one render — see the file
-   header above for why that distinction matters. */
+/* rawOptions: { A: text, ... } as written; correctLetter: the raw letter marked
+   correct; seedKey: unique to this question. Returns
+     options: text under new (A)-(E) letters, shuffled — what gets rendered
+     correct: the NEW letter that is correct (null if correctLetter matches nothing)
+     origOf:  new letter → original letter
+     newOf:   original letter → new letter */
 function shuffleOptions(rawOptions, correctLetter, seedKey) {
   const origLetters = ['A','B','C','D','E'].filter(l => rawOptions[l] !== undefined);
   const rand = mulberry32(hashStr(seedKey));
@@ -108,9 +56,7 @@ function shuffleOptions(rawOptions, correctLetter, seedKey) {
     const j = Math.floor(rand() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
-  const options = {};
-  const origOf = {}; // newLetter  → origLetter
-  const newOf  = {}; // origLetter → newLetter
+  const options = {}, origOf = {}, newOf = {};
   let correct = null;
   order.forEach((origLetter, idx) => {
     const newLetter = origLetters[idx];
@@ -122,13 +68,9 @@ function shuffleOptions(rawOptions, correctLetter, seedKey) {
   return { options, correct, origOf, newOf };
 }
 
-/* ── KaTeX ────── 
-   Single shared entry point for typesetting math after a block of HTML
-   is inserted into the DOM — must run after insertion, not before, since
-   KaTeX's auto-render walks real DOM text nodes. The delimiter config
-   lives in exactly one place here, since prose, tables, timelines,
-   graphs, and questions (rendered from viewer.js) all rely on the same
-   pass over the same #sv-body. */
+/* ── KaTeX ──
+   The one entry point for typesetting after HTML is in the DOM (auto-render
+   walks real text nodes, so it can't run before insertion). */
 function renderMath(el) {
   if (!window.renderMathInElement) return;
   renderMathInElement(el, {
@@ -140,37 +82,19 @@ function renderMath(el) {
   });
 }
 
-/* Collapses newlines inside \[...\] and \(...\) math spans into a single
-   space, before any paragraph/line splitting happens. Splitting prose (or
-   a table cell, timeline entry, graph label) into lines/paragraphs turns
-   a multi-line display equation into separate DOM text nodes, and KaTeX's
-   auto-render only matches delimiters within a single text node — so a
-   display block written across multiple lines would otherwise render as
-   broken, unrendered raw LaTeX instead of typeset math. Collapsing here,
-   once, centrally, before parseTxtSession does any splitting, means every
-   block downstream is already a single line by the time paragraph/line
-   splitting ever sees it. */
+/* Collapses newlines inside \[...\] and \(...\) spans to one space before any
+   paragraph/line splitting: splitting a multi-line equation into separate DOM
+   text nodes breaks KaTeX, which only matches delimiters within one node. */
 function collapseMathNewlines(raw) {
   return raw
     .replace(/\\\[[\s\S]*?\\\]/g, m => m.replace(/\s*\n\s*/g, ' '))
     .replace(/\\\([\s\S]*?\\\)/g, m => m.replace(/\s*\n\s*/g, ' '));
 }
 
-/* ── TABLE ────── 
-   [TABLE] rows are "cell | cell | cell" — first row is the header. Only a
-   "|" with whitespace on both sides counts as a real column separator —
-   that's what the format spec itself asks for ("cell | cell", always
-   spaced) and it's also what actually distinguishes an intentional
-   divider from a literal "|" that's part of a cell's own content: an
-   absolute value bar, a \left|...\right| pair, a norm. "|x-y|" has no
-   space on either side of either bar, so it never matches, regardless of
-   whether it's wrapped in \( \), escaped, or — the case that actually
-   broke this — not wrapped in math delimiters at all. Splitting on every
-   bare "|" (what this used to do, and what a "protect math spans first"
-   version of this still did) breaks the moment a cell's own content has
-   that character and something upstream didn't wrap it the way it was
-   supposed to; this doesn't depend on that having gone right. Shared with
-   [TIMELINE] below, which has the identical problem on its own "|" split. */
+/* ── TABLE ──
+   Rows are "cell | cell | cell"; the first row is the header. Only a "|" with
+   whitespace on both sides is a column divider, so a literal bar inside a
+   cell (absolute value, norm) never splits it — even unwrapped in \( \). */
 function parseTableBody(raw) {
   const rows = raw.split('\n').map(l => l.trim()).filter(Boolean)
     .map(line => line.split(/\s\|\s/).map(cell => cell.trim()));
@@ -183,12 +107,9 @@ function renderTable(t) {
   return `<div class="sv-table-wrap"><table class="sv-table">${head}<tbody>${body}</tbody></table></div>`;
 }
 
-/* ── TIMELINE ────── 
-   [TIMELINE] rows are "marker | description" — marker is often a date/year
-   but can be any short label (a stage name, "Step 1", etc). Same
-   whitespace-boundary rule as TABLE: only the first whitespace-bounded
-   "|" is the marker/text divider, so a math "|" inside either half —
-   wrapped or not — can't be mistaken for it. */
+/* ── TIMELINE ──
+   Rows are "marker | description" (marker: a date, stage name, "Step 1"…).
+   Same spaced-bar rule as TABLE; only the first one divides marker from text. */
 function parseTimelineBody(raw) {
   return raw.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
     const m = line.match(/\s\|\s/);
@@ -204,24 +125,16 @@ function renderTimeline(items) {
   return `<div class="sv-timeline">${rows}</div>`;
 }
 
-/* ── GRAPH ────── 
-   [GRAPH] blocks are "key: value" lines, plus one or more "trace: ..."
-   lines for the types that support multiple traces. See node-prompt.js's
-   OUTPUT FORMAT section for the authoritative spec handed to the model —
-   this parser only has to accept exactly what that spec asks for.
-
-   Recognized types: function2d, parametric2d, surface3d, vectorfield2d.
-   Recognized keys: type, title, xlabel, ylabel, zlabel, xrange, yrange,
-   trange, z (surface3d), u/v (vectorfield2d, the two component
-   expressions), and repeated trace lines (function2d/parametric2d):
+/* ── GRAPH ──
+   "key: value" lines plus repeatable "trace:" lines. The authoritative
+   format spec is in node-prompt.js; this parser accepts exactly that.
+   Types: function2d, parametric2d, surface3d, vectorfield2d. Keys: type,
+   title, xlabel, ylabel, zlabel, xrange, yrange, trange, z (surface3d),
+   u/v (vectorfield2d), trace (function2d/parametric2d):
      trace: <expression> | label: <text> | color: <optional>
-   parametric2d traces pack two expressions into one trace line, comma-
-   separated: trace: cos(t), sin(t) | label: unit circle
-
-   Titles/axis labels are plain captions rendered through the app's own
-   KaTeX pass (see renderGraph below), not through Plotly's own title
-   (which uses MathJax) — one math-typesetting engine for the whole app,
-   and \( \) math notation works in graph labels for free as a result. */
+   A parametric2d trace packs both components comma-separated.
+   Titles and axis labels are captions typeset by the app's own KaTeX pass,
+   not Plotly's MathJax — one math engine for the whole app. */
 function parseGraphBody(raw) {
   const g = { type: 'function2d', title: '', xlabel: '', ylabel: '', zlabel: '', traces: [] };
   raw.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
@@ -229,11 +142,7 @@ function parseGraphBody(raw) {
     if (!m) return;
     const key = m[1].toLowerCase(), val = m[2].trim();
     if (key === 'trace') {
-      // Same whitespace-boundary rule as TABLE/TIMELINE — expressions here
-      // shouldn't contain a bare "|" at all (mathjs syntax uses abs(), not
-      // bars, per the prompt spec), but splitting only on a spaced "|"
-      // rather than every "|" costs nothing and means a slip doesn't
-      // silently corrupt the trace.
+      // Split only on a spaced "|" (same rule as TABLE), so a slip can't corrupt the trace.
       const [expr, ...metaParts] = val.split(/\s\|\s/).map(s => s.trim());
       const trace = { expr };
       metaParts.forEach(mp => {
@@ -250,9 +159,7 @@ function parseGraphBody(raw) {
   return g;
 }
 
-/* Splits "cos(t), sin(t)" into ["cos(t)", "sin(t)"] without breaking on a
-   comma that's inside a function call's own argument list (e.g. an
-   expression using atan2(y, x) as one of the two parametric components). */
+/* "cos(t), sin(t)" → ["cos(t)", "sin(t)"], ignoring commas inside a call's arguments. */
 function splitTopLevelComma(str) {
   let depth = 0, cur = '';
   const parts = [];
@@ -270,9 +177,48 @@ function graphLinspace(lo, hi, n) {
   const step = (hi - lo) / (n - 1);
   return Array.from({ length: n }, (_, i) => lo + i * step);
 }
-function compileGraphExpr(expr) {
-  try { return math.compile(expr); } catch (e) { console.error('Graph expression could not be parsed:', expr, e); return null; }
+
+/* ── graph libraries: loaded on first use ── */
+const PLOTLY_URL = 'https://cdn.plot.ly/plotly-3.6.0.min.js';
+const MATHJS_URL = 'https://cdn.jsdelivr.net/npm/mathjs@15.2.0';
+const scriptLoads = new Map();
+function loadScriptOnce(src) {
+  if (!scriptLoads.has(src)) {
+    scriptLoads.set(src, new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.charset = 'utf-8';
+      s.onload = resolve;
+      s.onerror = () => { scriptLoads.delete(src); reject(new Error(`Failed to load ${src}`)); }; // allow a retry
+      document.head.appendChild(s);
+    }));
+  }
+  return scriptLoads.get(src);
 }
+function loadGraphLibs() { return Promise.all([loadScriptOnce(PLOTLY_URL), loadScriptOnce(MATHJS_URL)]); }
+
+/* Graph expressions come from lesson files, and trees are shareable files, so
+   they are untrusted input. Compile through a math.js instance with the
+   functions that can reach the outside disabled (per math.js's security docs).
+   `compile` is read first so it's already built before the overrides land. */
+let safeMath = null;
+function getSafeMath() {
+  if (safeMath) return safeMath;
+  const instance = math.create(math.all);
+  const compile = instance.compile;
+  const disabled = () => { throw new Error('Function is disabled'); };
+  instance.import({
+    import: disabled, createUnit: disabled, reviver: disabled, evaluate: disabled,
+    parse: disabled, simplify: disabled, derivative: disabled, resolve: disabled, compile: disabled,
+  }, { override: true });
+  safeMath = { compile };
+  return safeMath;
+}
+function compileGraphExpr(expr) {
+  const c = getSafeMath().compile(expr); // throws on a bad expression; mountGraph reports it
+  return c;
+}
+
 const GRAPH_DEFAULT_RANGE = [-10, 10];
 const GRAPH_SAMPLES_1D    = 300; // function2d / parametric2d curve resolution
 const GRAPH_SAMPLES_GRID  = 40;  // surface3d, per axis
@@ -283,14 +229,21 @@ function renderGraph(g, id) {
   return `<div class="sv-graph-wrap">${title}<div class="sv-graph-plot" id="sv-graph-${id}"></div></div>`;
 }
 
-/* Plotly needs a real, attached DOM element to measure and draw into —
-   same reason KaTeX rendering and the session-window centering in
-   viewer.js both wait until after their markup exists in the page — so
-   this can't run at render time, only after renderGraph()'s output is
-   actually in the DOM. viewer.js calls this via the BLOCK_TOOLS registry. */
-function mountGraph(g, id) {
+/* Runs after renderGraph()'s markup is in a visible page: Plotly must measure
+   a real, laid-out element. Async because the libraries load on first use. */
+async function mountGraph(g, id) {
   const el = document.getElementById(`sv-graph-${id}`);
-  if (!el || typeof Plotly === 'undefined' || typeof math === 'undefined') return;
+  if (!el) return;
+  el.classList.add('sv-graph-loading');
+  try {
+    await loadGraphLibs();
+  } catch {
+    el.classList.remove('sv-graph-loading');
+    el.textContent = "This graph couldn't be loaded — check your connection and reopen the lesson.";
+    return;
+  }
+  el.classList.remove('sv-graph-loading');
+  if (!el.isConnected) return; // the viewer moved on to another lesson while the libraries loaded
 
   const layout = {
     margin: { t: 10, r: 10, b: 40, l: 50 },
@@ -327,8 +280,7 @@ function mountGraph(g, id) {
       const xs = graphLinspace(xlo, xhi, GRAPH_SAMPLES_GRID);
       const ys = graphLinspace(ylo, yhi, GRAPH_SAMPLES_GRID);
       const f  = compileGraphExpr(g.z);
-      // Plotly's surface convention: z is rows-of-y, columns-of-x, i.e.
-      // z[iy][ix] is the value at (xs[ix], ys[iy]).
+      // Plotly's surface convention: z[iy][ix] is the value at (xs[ix], ys[iy]).
       const zGrid = ys.map(y => xs.map(x => { try { return f.evaluate({ x, y }); } catch { return null; } }));
       traces = [{ x: xs, y: ys, z: zGrid, type: 'surface', showscale: false }];
       layout.scene = { xaxis: { title: g.xlabel || '' }, yaxis: { title: g.ylabel || '' }, zaxis: { title: g.zlabel || '' } };
@@ -348,10 +300,8 @@ function mountGraph(g, id) {
         mag.push(Math.hypot(u, v));
       }));
       const maxMag = Math.max(...mag, 1e-9);
-      // Plotly's 'arrow' marker symbol with a per-point angle draws a
-      // quiver plot directly — no manual line-segment/arrowhead building
-      // needed. Size scales with local field magnitude so the arrows
-      // themselves carry that information, not just their direction.
+      // Plotly's 'arrow' marker with a per-point angle is a quiver plot; size
+      // scales with field magnitude so the arrows carry that too.
       traces = [{
         x: px, y: py, type: 'scatter', mode: 'markers', hoverinfo: 'skip',
         marker: { symbol: 'arrow', angle, size: mag.map(m => 8 + 14 * (m / maxMag)), color: g.traces[0]?.color || undefined },
@@ -366,13 +316,10 @@ function mountGraph(g, id) {
   Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true });
 }
 
-/* ── Registry ────── 
-   Every entry here is one full "tool": the bracket tag it's written with
-   in the .txt, the single-letter code used in the placeholder token that
-   stands in for it during section-splitting, the Map key it's stored
-   under on the parsed-session object, and its parse/render/mount
-   functions. viewer.js's parseTxtSession and renderSession loop over this
-   instead of hardcoding a branch per type — see the header comment above. */
+/* ── Registry ──
+   tag: the bracket tag in the .txt; code: the letter in the placeholder token
+   that stands in for the block during section splitting; key: the Map key on
+   the parsed session; parse / render / optional mount. */
 const BLOCK_TOOLS = [
   { tag: 'TABLE',    code: 'T', key: 'tables',    parse: parseTableBody,    render: renderTable },
   { tag: 'TIMELINE', code: 'L', key: 'timelines', parse: parseTimelineBody, render: renderTimeline },

@@ -2,12 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<!-- No maximum-scale / user-scalable=no: people need to be able to pinch-zoom the
+     page chrome. The canvas handles its own gestures (touch-action: none). -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Progress Tree</title>
-<!-- Sets --ui-scale (read by every stylesheet below) before any of them
-     are even applied — see scale.js's own header for what this does and
-     why it has to run this early, ahead of every other script on the
-     page, to avoid a flash of default-then-corrected sizing. -->
+<!-- Sets the dark class before first paint (no light flash): an explicit saved
+     choice wins, otherwise follow the OS. toolbar.js handles toggling. -->
+<script>
+try {
+  var d = localStorage.getItem('tree-dark-mode');
+  if (d === null) d = window.matchMedia('(prefers-color-scheme: dark)').matches ? '1' : '0';
+  document.documentElement.classList.toggle('dark', d === '1');
+} catch (e) {}
+</script>
+<!-- Sets --ui-scale before any stylesheet applies — see scale.js. -->
 <script src="js/core/scale.js"></script>
 <link rel="stylesheet" href="css/theme.css">
 <link rel="stylesheet" href="css/canvas.css">
@@ -17,16 +25,13 @@
 <link rel="stylesheet" href="css/library.css">
 <link rel="stylesheet" href="css/account.css">
 <link rel="stylesheet" href="css/viewer.css">
+<link rel="stylesheet" href="css/toast.css">
 <link rel="stylesheet" href="css/mobile.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-<!-- Graph tool (tools.js): Plotly for rendering, math.js for evaluating the
-     expressions a [GRAPH] block's traces are written in. Both deferred,
-     same as KaTeX above — neither is touched until a session with a graph
-     in it is actually opened, well after page load. -->
-<script defer src="https://cdn.plot.ly/plotly-3.6.0.min.js" charset="utf-8"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0"></script>
+<!-- Plotly and math.js (for [GRAPH] blocks) are not listed here: they're large,
+     so tools.js loads them the first time a lesson with a graph is opened. -->
 </head>
 <body>
 <div id="rotate-overlay">
@@ -55,21 +60,17 @@
 </div>
 
 <!-- ── toolbar ──
-     Four groups: Mode ▾ (browse/edit/mark-known — mutually
-     exclusive, see toolbar.js), the standalone "+ node" button
-     (only visible in edit mode), 📚 My Trees (the single most
-     load-bearing action, so it keeps its own slot), Tree ▾ (new/
-     load/export — anything that gets a tree onto or off the
-     canvas), and 👤 ▾ (account, reset progress, dark mode — the
-     rarely-touched stuff). Mode/Tree/Account all share one
-     generic dropdown mechanism defined in toolbar.js. -->
+     Mode ▾ (browse/edit/mark-known), the standalone "+ node" button (edit
+     mode only), 📚 My Trees (the most load-bearing action, so it keeps its own
+     slot), Tree ▾ (new/load/export) and 👤 ▾ (account, reset progress, dark
+     mode). The three dropdowns share one mechanism in toolbar.js. -->
 <div id="toolbar">
   <div class="dropdown-wrap">
     <button class="tbtn" id="btn-mode">👁 Browse ▾</button>
-    <div class="dropdown-menu" id="mode-menu">
-      <button class="dropdown-item" id="mode-browse-item">👁 Browse</button>
-      <button class="dropdown-item" id="mode-edit-item">✏️ Edit</button>
-      <button class="dropdown-item" id="mode-mark-known-item">✓ Mark known</button>
+    <div class="dropdown-menu" id="mode-menu" role="menu">
+      <button class="dropdown-item" id="mode-browse-item" role="menuitem">👁 Browse</button>
+      <button class="dropdown-item" id="mode-edit-item" role="menuitem">✏️ Edit</button>
+      <button class="dropdown-item" id="mode-mark-known-item" role="menuitem">✓ Mark known</button>
     </div>
   </div>
   <button class="tbtn" id="btn-add-node">+ node</button>
@@ -78,16 +79,16 @@
 
   <div class="dropdown-wrap">
     <button class="tbtn" id="btn-tree-menu">Tree ▾</button>
-    <div class="dropdown-menu" id="tree-menu">
-      <button class="dropdown-item" id="menu-new-tree">🌱 New tree</button>
-      <label class="dropdown-item" id="menu-load-json">📂 Load JSON
+    <div class="dropdown-menu" id="tree-menu" role="menu">
+      <button class="dropdown-item" id="menu-new-tree" role="menuitem">🌱 New tree</button>
+      <label class="dropdown-item" id="menu-load-json" role="menuitem">📂 Load JSON
         <input type="file" id="file-input" accept=".json" style="display:none">
       </label>
-      <button class="dropdown-item" id="menu-export-structure">
+      <button class="dropdown-item" id="menu-export-structure" role="menuitem">
         ⬇ Export — structure only
         <span class="dropdown-item-sub">labels &amp; requirements, no lesson text</span>
       </button>
-      <button class="dropdown-item" id="menu-export-content">
+      <button class="dropdown-item" id="menu-export-content" role="menuitem">
         ⬇ Export — structure + content
         <span class="dropdown-item-sub">also bundles each node's generated .txt</span>
       </button>
@@ -96,23 +97,23 @@
 
   <div class="dropdown-wrap">
     <button class="tbtn" id="btn-account-menu" title="Sign in to sync your trees across devices">👤 sign in ▾</button>
-    <div class="dropdown-menu" id="account-menu">
-      <button class="dropdown-item" id="menu-account">👤 Account</button>
-      <button class="dropdown-item" id="menu-reset-progress" title="Hold shift (or long-press on touch) to reset every tree's progress instead">↺ Reset tree progress</button>
-      <button class="dropdown-item" id="menu-dark-mode">🌙 Dark mode</button>
+    <div class="dropdown-menu" id="account-menu" role="menu">
+      <button class="dropdown-item" id="menu-account" role="menuitem">👤 Account</button>
+      <button class="dropdown-item" id="menu-reset-progress" role="menuitem" title="Hold shift (or long-press on touch) to reset every tree's progress instead">↺ Reset tree progress</button>
+      <button class="dropdown-item" id="menu-dark-mode" role="menuitem">🌙 Dark mode</button>
     </div>
   </div>
 </div>
 
 <!-- ── learn modal ── -->
 <div id="modal-backdrop" class="modal-backdrop">
-  <div class="modal-shell">
+  <div class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-header-bar">
       <div>
         <div id="modal-title" class="modal-title">Topic</div>
         <div id="modal-meta" class="modal-meta"></div>
       </div>
-      <button id="modal-close" class="modal-close-btn" title="Close">✕</button>
+      <button id="modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
       <div class="field-row">
@@ -120,7 +121,7 @@
         <input type="text" id="node-language-input" class="field-input" placeholder="leave blank for English">
       </div>
       <div class="prompt-wrap">
-        <textarea id="prompt-box" class="prompt-ta" readonly spellcheck="false"></textarea>
+        <textarea id="prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Lesson prompt"></textarea>
         <button id="btn-copy-prompt" class="copy-btn">copy</button>
       </div>
       <label class="upload-dropzone">
@@ -133,13 +134,13 @@
 
 <!-- ── create-tree modal ── -->
 <div id="tree-modal-backdrop" class="modal-backdrop">
-  <div class="modal-shell">
+  <div class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="tree-modal-title">
     <div class="modal-header-bar">
       <div>
-        <div class="modal-title">Design a new tree</div>
+        <div class="modal-title" id="tree-modal-title">Design a new tree</div>
         <div class="modal-meta" id="tree-modal-meta">fill in the fields → copy the prompt → paste into Claude → upload the .json it gives you</div>
       </div>
-      <button id="tree-modal-close" class="modal-close-btn" title="Close">✕</button>
+      <button id="tree-modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
       <div class="tree-mode-tabs">
@@ -157,7 +158,7 @@
           <input type="text" id="tree-language-input" class="field-input" placeholder="leave blank for English">
         </div>
         <div class="prompt-wrap">
-          <textarea id="tree-prompt-box" class="prompt-ta" readonly spellcheck="false"></textarea>
+          <textarea id="tree-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt"></textarea>
           <button id="btn-copy-tree-prompt" class="copy-btn">copy</button>
         </div>
       </div>
@@ -165,7 +166,7 @@
       <div id="tree-mode-file-panel" class="hidden">
         <p class="tree-mode-file-help">For a paper, a textbook excerpt, lecture notes, a photo of a problem you're stuck on — anything you want to fully understand but feel like you're missing a lot of what leads up to it. Copy this prompt, paste it into a new Claude conversation, and attach the file(s) there alongside it. Nothing to fill in here — Claude reads the file(s) itself to work out the topic and the language, then asks you a few quick questions to confirm where the tree should actually start before building it.</p>
         <div class="prompt-wrap">
-          <textarea id="tree-file-prompt-box" class="prompt-ta" readonly spellcheck="false"></textarea>
+          <textarea id="tree-file-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt (from a file)"></textarea>
           <button id="btn-copy-tree-file-prompt" class="copy-btn">copy</button>
         </div>
       </div>
@@ -180,26 +181,22 @@
 
 <!-- ── account modal ──
      Email/password sign up (with a display username, collected only at
-     sign-up — see account.js), sign in, and (once authenticated) a
-     signed-in panel with a sign-out button. This file never talks to
-     Firebase directly; it only calls window.cloud.* (cloud.js, a module
-     loaded at the very end of this page) and reacts to auth changes via
-     window.handleCloudAuthChange, which account.js defines and cloud.js
-     calls into. Opened via the "👤 Account" item inside the 👤 ▾ toolbar
-     dropdown, not the dropdown's trigger button itself (see toolbar.js's
-     generic mechanism — the trigger only opens the menu). -->
+     sign-up), sign in, and a signed-in panel with sign-out. This file never
+     talks to Firebase; account.js calls window.cloud.* (cloud.js) and reacts
+     to auth changes via window.handleCloudAuthChange. Opened from the
+     "👤 Account" item in the 👤 ▾ dropdown. -->
 <div id="account-modal-backdrop" class="modal-backdrop">
-  <div class="modal-shell" id="account-modal-shell">
+  <div class="modal-shell" id="account-modal-shell" role="dialog" aria-modal="true" aria-labelledby="account-modal-title">
     <div class="modal-header-bar">
       <div>
         <div class="modal-title" id="account-modal-title">Sign in</div>
         <div class="modal-meta" id="account-modal-meta">sign in to sync your trees across devices</div>
       </div>
-      <button id="account-modal-close" class="modal-close-btn" title="Close">✕</button>
+      <button id="account-modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
 
-      <div class="account-error hidden" id="account-error"></div>
+      <div class="account-error hidden" id="account-error" role="alert"></div>
 
       <div id="account-form-panel">
         <div class="field-row hidden" id="account-username-row">
@@ -243,13 +240,13 @@
         <button class="tbtn" id="account-google-username-submit" type="button" style="width:100%;">Continue</button>
       </div>
 
-      <div id="account-signed-in-panel" class="hidden" style="display:flex;flex-direction:column;gap:14px;">
+      <div id="account-signed-in-panel" class="account-signed-in-panel hidden">
         <div class="account-status">
           Signed in as <strong id="account-name-display"></strong>.<br>
           <span id="account-email-line" class="hidden"></span>
           Your trees sync automatically to this account.
         </div>
-        <button class="tbtn muted" id="account-signout-btn" style="width:100%;">Sign out</button>
+        <button class="tbtn" id="account-signout-btn" style="width:100%;">Sign out</button>
       </div>
 
     </div>
@@ -257,27 +254,24 @@
 </div>
 
 <!-- ── my trees library modal ──
-     A save/load library (see library.js): whole trees (structure + each
-     node's generated lesson content). Lives in this browser's localStorage
-     when signed out, or under the signed-in account in Firebase when
-     signed in (see cloud.js) — either way, an entry is just a stored
-     snapshot in the same shape loadFromJSON() already understands, so
-     opening one goes through the exact same load path as opening a file,
-     and its progress comes along for free via progress.js's own
-     signature-based restore. -->
+     A save/load library (see library.js) of whole trees, stored in this
+     browser's localStorage when signed out or in the signed-in account's
+     Firebase data otherwise. An entry is a snapshot in the shape
+     loadFromJSON() reads, so opening one uses the same load path as opening
+     a file, and its progress comes back via progress.js's signature lookup. -->
 <div id="library-modal-backdrop" class="modal-backdrop">
-  <div class="modal-shell" id="library-modal-shell">
+  <div class="modal-shell" id="library-modal-shell" role="dialog" aria-modal="true" aria-labelledby="library-modal-title">
     <div class="modal-header-bar">
       <div>
-        <div class="modal-title">My Trees</div>
+        <div class="modal-title" id="library-modal-title">My Trees</div>
         <div class="modal-meta" id="library-modal-meta">saved locally in this browser — sign in to sync across devices</div>
       </div>
-      <button id="library-modal-close" class="modal-close-btn" title="Close">✕</button>
+      <button id="library-modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
       <div class="library-save-row">
         <button class="tbtn hidden" id="btn-save-current-tree">💾 save current tree</button>
-        <button class="tbtn muted hidden" id="btn-save-current-tree-copy">💾 save as new copy</button>
+        <button class="tbtn hidden" id="btn-save-current-tree-copy">💾 save as new copy</button>
       </div>
       <div id="library-empty" class="hidden">No saved trees yet — build one and save it here.</div>
       <div id="library-grid" class="library-grid"></div>
@@ -286,12 +280,12 @@
 </div>
 
 <div id="session-viewer">
-  <div id="sv-window">
+  <div id="sv-window" role="dialog" aria-modal="true" aria-labelledby="sv-topic">
     <div id="sv-header">
       <span id="sv-topic"></span>
       <span id="sv-score">— / —</span>
-      <button id="btn-toggle-notes" title="Notes for this topic">📝</button>
-      <button id="btn-close-viewer" title="Close">✕</button>
+      <button id="btn-toggle-notes" title="Notes for this topic" aria-label="Notes for this topic">📝</button>
+      <button id="btn-close-viewer" title="Close" aria-label="Close">✕</button>
     </div>
     <div id="sv-progress-wrap">
       <div id="sv-progress-track"></div>
@@ -308,14 +302,16 @@
   </div>
 </div>
 
-<!-- Page-wide middle-click autoscroll (see autoscroll.js) — loaded first
-     among the app's own DOM/state scripts since it's self-contained and
-     doesn't depend on anything besides `document`. scale.js above it
-     (in <head>) already ran before any of this parsed. -->
+<!-- App scripts. Order matters (each file's header lists what it depends on):
+     autoscroll depends on nothing; state.js comes before everything that reads
+     state; escape/toast before anything that registers Escape handlers or
+     shows messages; a11y.js last, once every modal exists. -->
 <script src="js/lib/autoscroll.js"></script>
 <script src="js/learn/node-prompt.js"></script>
 <script src="js/learn/tree-prompt.js"></script>
 <script src="js/core/state.js"></script>
+<script src="js/core/escape.js"></script>
+<script src="js/core/toast.js"></script>
 <script src="js/core/layout.js"></script>
 <script src="js/graph/nodes.js"></script>
 <script src="js/graph/viewport.js"></script>
@@ -327,10 +323,10 @@
 <script src="js/persistence/library.js"></script>
 <script src="js/persistence/account.js"></script>
 <script src="js/learn/viewer.js"></script>
-<!-- Firebase wiring, as a module — see cloud.js's own header for why it
-     has to be last (module scripts always run after every classic script
-     on the page, regardless of tag position, so this is really just
-     documentation-by-placement rather than a hard requirement). -->
+<script src="js/core/a11y.js"></script>
+<!-- Firebase wiring, as a module. Modules always run after every classic script
+     regardless of tag position, so this placement is documentation. NOTE: module
+     scripts don't load from file:// — serve the folder over http (see README). -->
 <script type="module" src="js/persistence/cloud.js"></script>
 </body>
 </html>

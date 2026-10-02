@@ -1,14 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
-   account.css — the account modal (sign up / sign in form, and
-   the signed-in panel it swaps to once authenticated). Reuses
-   the shared modal chrome from modals.css plus the existing
-   field-row/field-input/tbtn styles, so this only adds what's
-   actually specific to this modal: the inline error banner, the
-   sign-up/sign-in toggle line, and the signed-in status text.
-   Sizes are in rem so they scale with --ui-scale (see
-   scale.js/theme.css).
-   Pairs with account.js.
-   Depends on modals.css, theme.css.
+   account.css — the account modal (sign up / sign in form and the
+   signed-in panel it swaps to). Reuses the shared modal chrome from
+   modals.css and the existing field/tbtn styles; this adds only the error
+   banner, the sign-up/sign-in toggle line, and the signed-in status text.
+   Depends on modals.css (.hidden) and theme.css.
 ═══════════════════════════════════════════════════════════ */
 
 .account-error {
@@ -44,8 +39,16 @@
 }
 .account-status strong { color: var(--text); }
 
-/* the "👤 ..." toolbar dropdown trigger (see index.html/toolbar.js) —
-   styled active once signed in, same convention as the Mode trigger */
+/* :not(.hidden) so the layout rule can't override .hidden's display:none
+   (an inline style on this panel did exactly that, showing "Signed in as ."
+   to signed-out users). */
+.account-signed-in-panel:not(.hidden) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+/* the "👤 …" toolbar dropdown trigger — styled active once signed in, same as the Mode trigger */
 #btn-account-menu.active {
   background: var(--invert-bg);
   color: var(--invert-text);

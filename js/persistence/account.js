@@ -1,58 +1,35 @@
 /* ═══════════════════════════════════════════════════════════
-   account.js — the sign up / sign in / signed-in account modal.
-   Owns nothing Firebase-specific itself — it only ever calls
-   window.cloud.* (set up by cloud.js, a module that runs after
-   this file — see index.html) and reacts to auth-state changes
-   through window.handleCloudAuthChange, which this file defines
-   and cloud.js calls on every change, including once at load
-   with whatever session was already persisted.
+   account.js — the sign up / sign in / signed-in account modal. It owns
+   nothing Firebase-specific: it only calls window.cloud.* (cloud.js, a
+   module that runs after this file — see index.html) and reacts to auth
+   changes through window.handleCloudAuthChange, which this file defines and
+   cloud.js calls on every change, including once at load with any persisted
+   session.
 
-   TOOLBAR SPLIT: "👤 ..." is now the trigger for a dropdown (see
-   toolbar.js's generic mechanism) rather than a button that
-   directly opened this modal. #btn-account-menu is that trigger —
-   its own label shows the signed-in identity (or "sign in") the
-   same way the Mode trigger always shows the current mode — and
-   #menu-account is the actual item inside that dropdown whose
-   click opens this modal. Reset progress and dark mode live in
-   the same dropdown but are wired up in progress.js/toolbar.js,
-   not here.
+   TOOLBAR: "👤 …" (#btn-account-menu) is a dropdown trigger whose label shows
+   the signed-in identity, like the Mode trigger shows the mode; the
+   #menu-account item inside that dropdown opens this modal.
 
-   USERNAME DISPLAY: two things make this trickier than it looks.
+   USERNAME DISPLAY has two race conditions to keep in mind:
+   1. On sign-up, onAuthStateChanged fires the instant the account exists —
+      before claimUsername() has written anything — so handleCloudAuthChange
+      sees no username and falls back to email. The uid never changes again,
+      so that listener won't fire a second time; submitAccountForm therefore
+      updates state.accountUser itself as soon as the claim succeeds.
+   2. onAuthStateChanged can fire several times in quick succession, each
+      starting an async getUsername() that may resolve out of order.
+      authGeneration is an "ignore me if a newer call has started" guard.
 
-   1. On sign-up, Firebase's onAuthStateChanged fires the instant
-      the account is created — before claimUsername() has actually
-      written anything to the database. handleCloudAuthChange
-      below runs right then, finds no username yet, and falls back
-      to email. Since the uid never changes again afterward, that
-      listener never fires a second time to fix it — so submitAccountForm
-      updates state.accountUser directly the moment claimUsername
-      actually succeeds, instead of hoping another auth event will
-      come along and pick it up.
-   2. Firebase can also fire onAuthStateChanged more than once in
-      quick succession (e.g. a fast sign-out immediately followed by
-      a sign-in). Each call kicks off its own async getUsername()
-      lookup, and network timing offers no guarantee they resolve in
-      the order they were fired — authGeneration below is a simple
-      "ignore me if a newer call has already started" guard so an
-      older, slower lookup can never overwrite a newer one.
+   GOOGLE SIGN-IN never goes through submitAccountForm, so nothing has
+   collected a username before the account exists. pendingGoogleUser and the
+   "choose a username" panel close that gap right after the popup returns;
+   openAccountModal re-checks so a Google user who closed that step early is
+   asked again instead of staying username-less.
 
-   GOOGLE SIGN-IN: unlike email/password sign-up, a Google account
-   never goes through submitAccountForm, so there's no single place
-   that already collects a username before the account exists. A
-   brand-new Google sign-in can therefore land signed-in but with no
-   username at all — pendingGoogleUser + the "choose a username" panel
-   (showGoogleUsernamePanel/submitGoogleUsername) exist to close that
-   gap right after the popup returns. openAccountModal's defensive
-   re-check below also treats "signed in, no username, modal opened
-   again later" as the same situation, so a Google user who closed
-   that step early gets asked again instead of staying username-less
-   forever.
-
-   Depends on state.js (state.accountUser), library.js
-   (refreshLibraryFromSource) and progress.js (refreshProgressFromSource)
-   — signing in/out is what decides whether "My Trees" and per-node
-   progress read from this browser or from the account's cloud copy, so
-   every auth change re-triggers both.
+   Depends on state.js, escape.js, library.js (refreshLibraryFromSource) and
+   progress.js (refreshProgressFromSource, flushProgress): signing in/out
+   decides whether "My Trees" and progress read from this browser or the
+   account's cloud copy.
 ═══════════════════════════════════════════════════════════ */
 
 let accountMode = 'signin';
@@ -63,10 +40,12 @@ function setAccountMode(mode) {
   accountMode = mode;
   const isSignup = mode === 'signup';
   document.getElementById('account-username-row').classList.toggle('hidden', !isSignup);
-  document.getElementById('account-modal-title').textContent   = isSignup ? 'Create an account' : 'Sign in';
-  document.getElementById('account-submit-btn').textContent    = isSignup ? 'Sign up' : 'Sign in';
-  document.getElementById('account-toggle-text').textContent   = isSignup ? 'Already have an account? ' : "Don't have an account? ";
-  document.getElementById('account-toggle-btn').textContent    = isSignup ? 'Sign in' : 'Sign up';
+  document.getElementById('account-modal-title').textContent = isSignup ? 'Create an account' : 'Sign in';
+  document.getElementById('account-submit-btn').textContent  = isSignup ? 'Sign up' : 'Sign in';
+  document.getElementById('account-toggle-text').textContent = isSignup ? 'Already have an account? ' : "Don't have an account? ";
+  document.getElementById('account-toggle-btn').textContent  = isSignup ? 'Sign in' : 'Sign up';
+  // Tells password managers whether to offer a saved password or suggest a new one.
+  document.getElementById('account-password-input').autocomplete = isSignup ? 'new-password' : 'current-password';
   clearAccountError();
 }
 
@@ -81,23 +60,16 @@ function showAccountError(msg) {
   el.classList.remove('hidden');
 }
 
-/* Applies a signed-in/signed-out user everywhere it's displayed: the
-   toolbar trigger label, the modal panel, and (via refreshLibraryFromSource
-   / refreshProgressFromSource) which storage source "My Trees" and
-   per-node progress read from. */
+/* Applies a signed-in/out user everywhere it's shown: the toolbar trigger, the
+   modal panel, and (via refreshLibraryFromSource / refreshProgressFromSource)
+   which storage source "My Trees" and progress read from. */
 function applyAccountUser(user) {
-  // Progress saves only mark a write as "pending" and wait for the tab
-  // to close/hide before actually writing it anywhere, local or cloud
-  // (see progress.js's write-batching block) — deliberately, to avoid
-  // touching localStorage or the database on every quiz click. That
-  // means a sign-out (or switching accounts) mid-session, with no
-  // tab-close in between, would otherwise strand whatever's pending
-  // under the account/source being left. flushProgress() reads
-  // state.accountUser/progressSource synchronously the instant it's
-  // called — before the reassignment on the next line — so calling it
-  // here, first, sends that pending write to the outgoing source rather
-  // than losing it or (worse) sending it to whichever one is about to
-  // become current.
+  // Progress writes only go out when the tab hides or closes (see progress.js),
+  // so switching accounts mid-session would strand whatever is pending under
+  // the outgoing one. flushProgress() reads state.accountUser synchronously, so
+  // calling it before the reassignment below sends the write to the outgoing
+  // source. (An explicit sign-out flushes earlier still — see submitSignOut —
+  // because by the time this runs for a sign-out, auth is already revoked.)
   if (typeof flushProgress === 'function') flushProgress();
   state.accountUser = user;
   updateAccountButton();
@@ -106,20 +78,13 @@ function applyAccountUser(user) {
   if (typeof refreshProgressFromSource === 'function') refreshProgressFromSource();
 }
 
-/* Re-checks the username for the currently signed-in user and updates
-   every place it's displayed, if it turns out we have one but weren't
-   showing it. Called right after a successful signup claim (see
-   submitAccountForm) and defensively whenever the account modal is
-   opened, as a general safety net against any other way this could have
-   gone stale (a slow network request that failed silently, etc). */
+/* Opens the modal. If we're signed in but have no username yet — a slow lookup
+   from a previous session, or a Google sign-in closed before the username step
+   finished — look it up again, and if there still isn't one, let them claim
+   one right here instead of leaving the account permanently username-less. */
 function openAccountModal() {
   document.getElementById('account-modal-backdrop').classList.add('open');
   if (state.accountUser && !state.accountUser.username && window.cloud) {
-    // Covers two cases with one check: a slow username lookup from a
-    // previous session that hadn't resolved yet, and a Google sign-in
-    // that was closed before the username step below completed. Either
-    // way, if a fresh lookup still comes back empty, let them claim one
-    // right here instead of leaving the account permanently username-less.
     window.cloud.getUsername(state.accountUser.uid).then(username => {
       if (!state.accountUser) return;
       if (username) {
@@ -155,8 +120,7 @@ function showSignedInPanel(user) {
   document.getElementById('account-modal-meta').textContent = 'your trees are synced to this account';
 }
 
-// Turns a Google display name or email into a starting-point username —
-// just a prefill the person can edit, not a guarantee it's available.
+// A Google display name or email as a starting-point username — a prefill, not a guarantee it's free.
 function suggestUsernameFrom(seed) {
   let base = String(seed || '').split('@')[0].replace(/[^a-zA-Z0-9_-]/g, '');
   if (base.length < 3) base += Math.random().toString(36).slice(2, 5);
@@ -175,11 +139,8 @@ function showGoogleUsernamePanel(user) {
   input.focus();
 }
 
-/* Updates the toolbar dropdown TRIGGER (#btn-account-menu) — the label
-   that's visible without opening the menu at all, same convention as the
-   Mode trigger always showing the current mode. The item inside the menu
-   that actually opens this modal (#menu-account) stays static; see the
-   click wiring at the bottom of this file. */
+/* Updates the dropdown TRIGGER's label (visible without opening the menu). The
+   #menu-account item inside stays static. */
 function updateAccountButton() {
   const btn = document.getElementById('btn-account-menu');
   if (state.accountUser) {
@@ -191,10 +152,8 @@ function updateAccountButton() {
   }
 }
 
-/* The hook cloud.js calls into (via Firebase's onAuthStateChanged), every
-   time the signed-in user changes — including once, right after page
-   load, with whatever session Firebase already had persisted. See the
-   file header above for the two race conditions this guards against. */
+/* The hook cloud.js calls (via onAuthStateChanged) whenever the signed-in user
+   changes, including once after page load with any persisted session. */
 window.handleCloudAuthChange = async function (user) {
   const gen = ++authGeneration;
   if (!user) {
@@ -203,7 +162,7 @@ window.handleCloudAuthChange = async function (user) {
   }
   let username = null;
   try { username = await window.cloud.getUsername(user.uid); } catch {}
-  if (gen !== authGeneration) return; // a newer auth event has already superseded this one — don't clobber it
+  if (gen !== authGeneration) return; // a newer auth event superseded this one
   applyAccountUser({ uid: user.uid, email: user.email, username });
 };
 
@@ -246,18 +205,22 @@ async function submitAccountForm() {
   try {
     if (accountMode === 'signup') {
       const cred = await window.cloud.signUp(email, password);
-      const claimed = await window.cloud.claimUsername(cred.user.uid, username);
+      let claimed = false;
+      try {
+        claimed = await window.cloud.claimUsername(cred.user.uid, username);
+      } catch (err) {
+        // The claim itself failed (network, database rules): don't leave a username-less account behind.
+        await window.cloud.deleteCurrentUser().catch(() => {});
+        throw err;
+      }
       if (!claimed) {
-        await window.cloud.deleteCurrentUser(); // roll back — don't leave a username-less account behind
+        await window.cloud.deleteCurrentUser(); // taken: roll the account back too
         showAccountError('That username is already taken — try another.');
         return;
       }
-      // onAuthStateChanged already fired once, right when the account was
-      // created — before this claim existed — and cached a null username
-      // (see the file header). It won't fire again for the same uid, so
-      // apply the now-known-good state directly rather than waiting for
-      // an event that isn't coming.
-      authGeneration++; // invalidate that earlier, now-stale lookup if it's still in flight
+      // onAuthStateChanged already fired, before this claim existed, and cached a
+      // null username (see the header); apply the known-good state directly.
+      authGeneration++; // invalidate that earlier lookup if it's still in flight
       applyAccountUser({ uid: cred.user.uid, email: cred.user.email, username });
     } else {
       await window.cloud.signIn(email, password);
@@ -273,11 +236,8 @@ async function submitAccountForm() {
   }
 }
 
-/* Google sign-in has no separate "signup" mode — the same button
-   signs an existing account in or creates a new one, and Firebase
-   tells us which happened only indirectly (by whether a username
-   already exists for that uid). If not, showGoogleUsernamePanel picks
-   up right where submitAccountForm's signup branch would have. */
+/* Google has no separate "sign up": the same button signs in or creates the
+   account, and the only tell is whether a username already exists for that uid. */
 async function submitGoogleSignIn() {
   clearAccountError();
   if (!window.cloud) { showAccountError('Still connecting — try again in a moment.'); return; }
@@ -287,15 +247,14 @@ async function submitGoogleSignIn() {
     const user = await window.cloud.signInWithGoogle();
     const username = await window.cloud.getUsername(user.uid);
     if (username) {
-      authGeneration++; // pre-empt the auth-listener's own slower lookup — see file header
+      authGeneration++; // pre-empt the auth listener's own slower lookup
       applyAccountUser({ uid: user.uid, email: user.email, username });
       closeAccountModal();
     } else {
       showGoogleUsernamePanel(user);
     }
   } catch (err) {
-    // A closed/cancelled popup isn't a real error — the person just
-    // changed their mind, nothing to show them.
+    // A closed/cancelled popup means they changed their mind — nothing to report.
     if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
       showAccountError(friendlyAuthError(err));
     }
@@ -331,6 +290,9 @@ async function submitGoogleUsername() {
 
 async function submitSignOut() {
   if (!window.cloud) return;
+  // Flush while still authenticated: once signOutUser() resolves the database
+  // rejects writes, and the flush in applyAccountUser would be too late.
+  if (typeof flushProgress === 'function') await flushProgress();
   try { await window.cloud.signOutUser(); } catch {}
   closeAccountModal();
 }
@@ -347,8 +309,10 @@ document.getElementById('account-google-username-submit').addEventListener('clic
 document.getElementById('account-signout-btn').addEventListener('click', submitSignOut);
 document.getElementById('account-password-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitAccountForm(); });
 document.getElementById('account-google-username-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitGoogleUsername(); });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('account-modal-backdrop').classList.contains('open')) closeAccountModal();
+onEscape(100, () => {
+  if (!document.getElementById('account-modal-backdrop').classList.contains('open')) return false;
+  closeAccountModal();
+  return true;
 });
 
 setAccountMode('signin');

@@ -1,60 +1,52 @@
 /* ═══════════════════════════════════════════════════════════
    viewport.js — canvas viewport: applyTransform, the load-time
-   center+fit logic (resetViewportForTreeLoad), mouse pan/wheel-
-   zoom, and touch one-finger-pan/two-finger-pinch. Also owns the
-   global Escape shortcut for canceling a link gesture and mark-
-   known mode, and the app's one-time startup init.
-   This used to live inside the old io.js god-file; split out on
-   its own since "move the camera around" has nothing to do with
-   JSON import/export, toolbar mode toggles, or prompt-building —
-   the other things that file used to also be responsible for.
-   Depends on state.js, layout.js (nodeW/nodeH/COL_W, used by
-   fitToContent/fitMobileInitialView), and nodes.js (cancelLink).
+   center+fit (resetViewportForTreeLoad), mouse pan / wheel zoom, and
+   touch one-finger pan / two-finger pinch. Also the startup init.
+   Depends on state.js, layout.js (nodeW/nodeH/COL_W), scale.js
+   (isMobileViewport), and nodes.js (cancelLink).
 ═══════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════
-   VIEWPORT
-═══════════════════════════════════════════════════════════ */
+let currentTransform = '', transformTimer = null;
 function applyTransform(animated) {
-  const {x,y,scale} = state.viewport;
-  const t = `translate(${x}px,${y}px) scale(${scale})`;
+  const { x, y, scale } = state.viewport;
+  currentTransform = `translate(${x}px,${y}px) scale(${scale})`;
+  clearTimeout(transformTimer);
   if (animated) {
-    const ease = 'transform .38s cubic-bezier(.4,0,.2,1)';
-    world.style.transition = svgWorld.style.transition = ease;
-    requestAnimationFrame(() => {
-      world.style.transform = svgWorld.style.transform = t;
-    });
-    setTimeout(() => { world.style.transition = svgWorld.style.transition = ''; }, 420);
+    world.style.transition = svgWorld.style.transition = 'transform .38s cubic-bezier(.4,0,.2,1)';
+    // Apply whatever is current when the frame fires, so a non-animated update
+    // issued in between isn't overwritten by a stale target.
+    requestAnimationFrame(() => { world.style.transform = svgWorld.style.transform = currentTransform; });
+    transformTimer = setTimeout(() => { world.style.transition = svgWorld.style.transition = ''; }, 420);
   } else {
-    world.style.transform = svgWorld.style.transform = t;
+    world.style.transition = svgWorld.style.transition = ''; // cancel any easing still in flight
+    world.style.transform = svgWorld.style.transform = currentTransform;
   }
 }
 
-// Centering the viewport and fitting it to loaded content are bundled
-// behind ONE entry point and kept out of reach on purpose: this is a
-// load-time operation, not a general "recenter the view" utility. The two
-// pieces below are closures — nothing outside this IIFE can call them
-// directly — so the only way to trigger a viewport reset anywhere in the
-// app is through the single function this returns, which has exactly two
-// callers: the tree-load path in loadFromJSON(), and the startup IIFE for
-// the empty canvas. Nothing else (a toolbar button, a node click, a future
-// feature) can reach in and yank a user's pan/zoom out from under them
-// mid-session, because there's simply no name left to call.
+/* Zoom to `newScale` keeping the point (mx,my) fixed on screen. `base` is the
+   viewport the zoom is measured from (the current one for the wheel; the one
+   captured at gesture start for a pinch). */
+function zoomAbout(mx, my, base, newScale) {
+  const ns = Math.min(10, Math.max(0.01, newScale));
+  state.viewport.x = mx - (mx - base.x) * (ns / base.scale);
+  state.viewport.y = my - (my - base.y) * (ns / base.scale);
+  state.viewport.scale = ns;
+  applyTransform(false);
+}
+
+/* Centering and fitting are one load-time operation behind a single entry
+   point on purpose: the pieces below are closures, so nothing else in the app
+   (a toolbar button, a node click) can yank the user's pan/zoom mid-session.
+   The only callers are loadFromJSON() and the startup init at the bottom. */
 const resetViewportForTreeLoad = (function () {
   function centerViewport() {
-    state.viewport = { x: window.innerWidth/2, y: window.innerHeight/2, scale: 1 };
+    state.viewport = { x: window.innerWidth / 2, y: window.innerHeight / 2, scale: 1 };
     applyTransform(true);
   }
 
-  // Mobile: fitting the WHOLE tree into view (like fitToContent below
-  // does for desktop) means the more columns a tree has, the smaller
-  // everything gets — on a wide tree a phone screen would end up showing
-  // illegibly tiny nodes just to fit every column's width at once.
-  // Instead: horizontally center on the leftmost column (depth 0, i.e.
-  // where you actually start), and pick ONE zoom level sized to whatever
-  // the TALLEST column anywhere in the tree needs — not just the
-  // leftmost one — so that panning right to reach a taller column later
-  // never requires a re-zoom; the scale already has room for it.
+  // Mobile: fitting the whole tree shrinks nodes to illegibility on wide trees.
+  // Instead centre on the leftmost column (where you start) and pick one zoom
+  // sized for the TALLEST column anywhere, so panning right never needs a re-zoom.
   function fitMobileInitialView(margin) {
     const byDepth = new Map();
     state.nodes.forEach(d => {
@@ -67,54 +59,42 @@ const resetViewportForTreeLoad = (function () {
       let colMinY = Infinity, colMaxY = -Infinity;
       colNodes.forEach(d => {
         colMinY = Math.min(colMinY, d.y);
-        colMaxY = Math.max(colMaxY, d.y + nodeH(d.depth));
+        colMaxY = Math.max(colMaxY, d.y + nodeH());
       });
       tallestH = Math.max(tallestH, colMaxY - colMinY);
       if (depth < minDepth) minDepth = depth;
     });
 
-    const leftCol = byDepth.get(minDepth);
     let leftMinY = Infinity, leftMaxY = -Infinity;
-    leftCol.forEach(d => {
+    byDepth.get(minDepth).forEach(d => {
       leftMinY = Math.min(leftMinY, d.y);
-      leftMaxY = Math.max(leftMaxY, d.y + nodeH(d.depth));
+      leftMaxY = Math.max(leftMaxY, d.y + nodeH());
     });
-    const leftColH = leftMaxY - leftMinY;
-    const leftColX = minDepth * COL_W; // layout() places every node's x at depth*COL_W
-    const leftColW = nodeW(minDepth);
+    const leftColX = minDepth * COL_W; // layout() puts every node's x at depth*COL_W
 
     const vw = window.innerWidth, vh = window.innerHeight;
     const scale = Math.min((vh - margin * 2) / tallestH, 1.0);
-
     state.viewport = {
-      x: vw / 2 - (leftColX + leftColW / 2) * scale,
-      y: (vh - leftColH * scale) / 2 - leftMinY * scale,
+      x: vw / 2 - (leftColX + nodeW() / 2) * scale,
+      y: (vh - (leftMaxY - leftMinY) * scale) / 2 - leftMinY * scale,
       scale
     };
     applyTransform(true);
   }
 
-  function fitToContent(margin = window.innerWidth < 700 ? 28 : 60) {
+  function fitToContent(margin = isMobileViewport() ? 28 : 60) {
     if (state.nodes.size === 0) return;
-    if (window.innerWidth < 700) { fitMobileInitialView(margin); return; }
+    if (isMobileViewport()) { fitMobileInitialView(margin); return; }
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     state.nodes.forEach(data => {
-      const w = nodeW(data.depth);
-      const h = nodeH(data.depth);
       minX = Math.min(minX, data.x);
       minY = Math.min(minY, data.y);
-      maxX = Math.max(maxX, data.x + w);
-      maxY = Math.max(maxY, data.y + h);
+      maxX = Math.max(maxX, data.x + nodeW());
+      maxY = Math.max(maxY, data.y + nodeH());
     });
-    const treeW = maxX - minX;
-    const treeH = maxY - minY;
-    const vw    = window.innerWidth;
-    const vh    = window.innerHeight;
-    const scale = Math.min(
-      (vw - margin * 2) / treeW,
-      (vh - margin * 2) / treeH,
-      1.0  // never zoom in beyond 100%
-    );
+    const treeW = maxX - minX, treeH = maxY - minY;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const scale = Math.min((vw - margin * 2) / treeW, (vh - margin * 2) / treeH, 1.0); // never zoom past 100%
     state.viewport = {
       x: (vw - treeW * scale) / 2 - minX * scale,
       y: (vh - treeH * scale) / 2 - minY * scale,
@@ -130,26 +110,21 @@ const resetViewportForTreeLoad = (function () {
 })();
 
 /* ── pan ──
-   Pointer Events + setPointerCapture, not mousedown/mousemove/mouseup.
-   Plain mouse events only keep arriving on `window` for as long as the
-   browser's own hit-test still thinks the cursor is inside the viewport;
-   near an edge, that boundary is rounded to actual rendered pixels, and
-   at a browser zoom other than 100% that rounding no longer lines up with
-   the CSS-pixel coordinates our code reads (clientX/clientY, innerWidth).
-   The result is the mismatch you saw: the cursor icon (a separate,
-   always-accurate hit-test) says one thing, event delivery says another.
-   setPointerCapture pins all subsequent pointer events to #canvas
-   directly, regardless of where the cursor drifts or how the page is
-   zoomed, so there's no boundary check left to disagree with itself. */
+   Pointer Events + setPointerCapture rather than mouse events: plain mouse
+   events stop arriving near a window edge when the browser zoom isn't 100%
+   (its pixel hit-test and our CSS-pixel math disagree). Capture pins every
+   later event to #canvas regardless of where the cursor drifts. */
+function endPan(e) {
+  state.drag.active = false;
+  canvas.classList.remove('dragging');
+  if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
+}
 canvas.addEventListener('pointerdown', e => {
   if (e.pointerType === 'touch') return; // touch has its own pan/pinch handling below
+  if (e.button === 2) return;            // right button is for the context menu, not panning
   if (e.target.closest('.node')) return;
-  // Middle-click ("pressing the wheel") triggers the browser's native
-  // autoscroll mode by default — a separate scroll behavior that runs on
-  // top of our own drag-pan below. The two disagree about pixel math once
-  // the page isn't at 100% browser zoom, so the view jitters/drifts.
-  // preventDefault() here stops the native autoscroll from ever starting,
-  // leaving our drag-pan as the only thing moving the canvas.
+  // Middle button would start the browser's native autoscroll on top of our
+  // drag-pan; the two disagree once browser zoom isn't 100%, so block it.
   if (e.button === 1) e.preventDefault();
   cancelLink();
   canvas.setPointerCapture(e.pointerId);
@@ -162,59 +137,44 @@ canvas.addEventListener('pointermove', e => {
   state.viewport.y = state.drag.oy + (e.clientY - state.drag.startY);
   applyTransform(false);
 });
-canvas.addEventListener('pointerup', e => {
-  state.drag.active = false;
-  canvas.classList.remove('dragging');
-  if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
-});
-canvas.addEventListener('pointercancel', e => {
-  state.drag.active = false;
-  canvas.classList.remove('dragging');
-  if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
-});
+canvas.addEventListener('pointerup', endPan);
+canvas.addEventListener('pointercancel', endPan);
 
 /* ── zoom ──
-   Skip canvas zoom when the wheel event is over a scrollable text field
-   inside the canvas (currently just the node explanation textarea) —
-   otherwise scrolling that field's content is impossible to do with the
-   wheel, since the canvas's own zoom handler grabs every wheel event
-   over #canvas and preventDefault()s it before the field ever sees it.
-   Letting the event fall through here (no preventDefault, no return
-   early into zoom logic) hands it back to the browser's normal
-   textarea-scroll behavior. */
+   Wheel events over the node explanation textarea are left alone so the
+   field can scroll its own content. Zoom is proportional to the wheel delta
+   (a 100-unit mouse notch = 7%, the old fixed step), so a trackpad's stream
+   of small deltas zooms smoothly instead of 7% per event. */
+const WHEEL_ZOOM_RATE = Math.log(1.07) / 100;
 canvas.addEventListener('wheel', e => {
   if (e.target.closest('.node-explanation-ta')) return;
   e.preventDefault();
-  const factor = e.deltaY < 0 ? 1.07 : 1/1.07;
-  const ns = Math.min(10, Math.max(0.01, state.viewport.scale*factor));
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX-rect.left, my = e.clientY-rect.top;
-  state.viewport.x = mx - (mx-state.viewport.x)*(ns/state.viewport.scale);
-  state.viewport.y = my - (my-state.viewport.y)*(ns/state.viewport.scale);
-  state.viewport.scale = ns;
-  applyTransform(false);
+  const unit  = e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 800 : 1; // lines / pages → pixels
+  const delta = Math.max(-200, Math.min(200, e.deltaY * unit));
+  const rect  = canvas.getBoundingClientRect();
+  zoomAbout(e.clientX - rect.left, e.clientY - rect.top, { ...state.viewport }, state.viewport.scale * Math.exp(-delta * WHEEL_ZOOM_RATE));
 }, { passive:false });
 
 /* ── touch: one-finger pan, two-finger pinch-zoom ──
-   Mirrors the mouse pan/wheel-zoom logic above. `touchState` holds
-   whichever gesture is currently active; switching finger count
-   mid-gesture (e.g. lifting one finger during a pinch) just restarts
-   state for whatever's left, same as picking the gesture up fresh. */
+   touchState holds the active gesture; changing finger count mid-gesture
+   just restarts state for whatever's left. */
 let touchState = null;
 
 function pinchDist(a, b) { return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY); }
 function pinchMid(a, b)  { return { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 }; }
+function startTouchPan(t) {
+  touchState = { mode:'pan', x:t.clientX, y:t.clientY, ox:state.viewport.x, oy:state.viewport.y };
+}
 
 canvas.addEventListener('touchstart', e => {
   if (e.target.closest('.node')) { touchState = null; return; }
   cancelLink();
   if (e.touches.length === 1) {
-    const t = e.touches[0];
-    touchState = { mode:'pan', x:t.clientX, y:t.clientY, ox:state.viewport.x, oy:state.viewport.y };
+    startTouchPan(e.touches[0]);
   } else if (e.touches.length === 2) {
-    const [a,b] = e.touches;
-    const mid = pinchMid(a,b);
-    touchState = { mode:'pinch', dist:pinchDist(a,b), midX:mid.x, midY:mid.y, scale:state.viewport.scale, vx:state.viewport.x, vy:state.viewport.y };
+    const [a, b] = e.touches;
+    const mid = pinchMid(a, b);
+    touchState = { mode:'pinch', dist:pinchDist(a, b), midX:mid.x, midY:mid.y, scale:state.viewport.scale, vx:state.viewport.x, vy:state.viewport.y };
   }
 }, { passive:true });
 
@@ -226,36 +186,23 @@ canvas.addEventListener('touchmove', e => {
     state.viewport.y = touchState.oy + (t.clientY - touchState.y);
     applyTransform(false);
   } else if (touchState.mode === 'pinch' && e.touches.length === 2) {
-    const [a,b] = e.touches;
-    const dist   = pinchDist(a,b);
-    const factor = dist / touchState.dist;
-    const ns     = Math.min(10, Math.max(0.01, touchState.scale * factor));
-    const rect   = canvas.getBoundingClientRect();
-    const mx = touchState.midX - rect.left, my = touchState.midY - rect.top;
-    state.viewport.x = mx - (mx - touchState.vx) * (ns / touchState.scale);
-    state.viewport.y = my - (my - touchState.vy) * (ns / touchState.scale);
-    state.viewport.scale = ns;
-    applyTransform(false);
+    const [a, b] = e.touches;
+    const rect = canvas.getBoundingClientRect();
+    zoomAbout(
+      touchState.midX - rect.left, touchState.midY - rect.top,
+      { x: touchState.vx, y: touchState.vy, scale: touchState.scale },
+      touchState.scale * (pinchDist(a, b) / touchState.dist)
+    );
   }
 }, { passive:true });
 
 canvas.addEventListener('touchend', e => {
-  if (e.touches.length === 1) {
-    // Dropped from a pinch to one finger — keep going as a pan instead
-    // of ending the gesture outright.
-    const t = e.touches[0];
-    touchState = { mode:'pan', x:t.clientX, y:t.clientY, ox:state.viewport.x, oy:state.viewport.y };
-  } else if (e.touches.length === 0) {
-    touchState = null;
-  }
+  if (e.touches.length === 1) startTouchPan(e.touches[0]); // dropped from a pinch: keep going as a pan
+  else if (e.touches.length === 0) touchState = null;
 }, { passive:true });
 canvas.addEventListener('touchcancel', () => { touchState = null; }, { passive:true });
 
 /* ═══════════════════════════════════════════════════════════
-   INIT
+   INIT — centre the empty canvas. Load a JSON via the Tree menu to start.
 ═══════════════════════════════════════════════════════════ */
-(function init() {
-  resetViewportForTreeLoad();
-  // Load a JSON via the 📂 button to get started.
-})();
-
+resetViewportForTreeLoad();

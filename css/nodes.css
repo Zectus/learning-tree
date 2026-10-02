@@ -1,24 +1,16 @@
 /* ═══════════════════════════════════════════════════════════
-   nodes.css — everything about a single node card: the fractal
-   sizing model, depth-tint borders, done/available/locked status
-   styling, the link-source ring, the badge/label/optional-tag,
-   the hover- (and touch-⋯-) revealed action row and explanation
-   textarea, and the SVG prerequisite connectors drawn between
-   nodes (edge color/opacity by status, hover highlight). Pairs
-   with nodes.js (node DOM + the action-row reveal/close) and
-   layout.js (edge rendering, status classes).
-   Sizes are in rem so the static/default state here scales with
-   --ui-scale the same as everything else — note that several of
-   these (node-text/badge/tag font-size, node-inner padding) are
-   also set directly as inline px styles per node by
-   updateDepthClasses() in layout.js, which already factors in
-   window.UI_SCALE itself; the rem values here are what a node
-   looks like before that JS runs, not a second competing source
-   of truth.
+   nodes.css — a single node card: depth-tint borders, done/available/
+   locked status styling, the link-source ring, badge/label/optional-tag,
+   the hover- (and touch-⋯-) revealed action row and explanation textarea,
+   and the SVG prerequisite connectors between nodes. Pairs with nodes.js
+   (node DOM, action-row reveal/close) and layout.js (edge rendering, status
+   classes). Sizes are in rem so they scale with --ui-scale; several (node
+   text/badge/tag font-size, node-inner padding) are also set as inline px
+   styles by updateDepthClasses() in layout.js, which applies UI_SCALE itself
+   — the rem values here are only the look before that JS runs.
    Depends on theme.css.
 ═══════════════════════════════════════════════════════════ */
 
-/* ── nodes — fractal sizing model (same as original) ── */
 .node {
   position: absolute;
   transform-origin: top left;
@@ -27,9 +19,9 @@
   border-radius: 0.625rem;
   cursor: pointer;
   transition: box-shadow .2s ease, border-color .2s ease;
-  will-change: transform;
 }
 .node:hover { box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 0 0 1.5px rgba(0,0,0,.09); }
+.node:focus-visible { outline: 2px solid var(--avail-bdr); outline-offset: 2px; }
 
 .node-inner {
   position: relative;
@@ -55,22 +47,14 @@
   border-color: var(--done-bdr) !important;
   box-shadow: 0 2px 10px rgba(26,102,64,.22);
 }
-.node.status-done:hover {
-  box-shadow: 0 8px 24px rgba(26,102,64,.32);
-}
-.node.status-done .node-inner {
-  box-shadow: none;
-}
+.node.status-done:hover { box-shadow: 0 8px 24px rgba(26,102,64,.32); }
+.node.status-done .node-inner { box-shadow: none; }
 .node.status-available {
   border-color: var(--avail-bdr) !important;
   box-shadow: 0 2px 10px rgba(42,106,191,.13);
 }
-.node.status-available:hover {
-  box-shadow: 0 8px 22px rgba(42,106,191,.25);
-}
-.node.status-locked {
-  opacity: .72;
-}
+.node.status-available:hover { box-shadow: 0 8px 22px rgba(42,106,191,.25); }
+.node.status-locked { opacity: .72; }
 
 /* link-source orange ring */
 .node.link-source {
@@ -103,10 +87,10 @@
   caret-color: var(--accent);
   touch-action: auto;
 }
-.node.root .node-text     { font-size: 0.9375rem; font-weight: 500; letter-spacing: -.01em; }
-.node.status-done .node-text     { color: var(--done-text); }
+.node.root .node-text             { font-size: 0.9375rem; font-weight: 500; letter-spacing: -.01em; }
+.node.status-done .node-text      { color: var(--done-text); }
 .node.status-available .node-text { color: var(--avail-text); font-weight: 500; }
-.node.status-locked .node-text   { color: var(--lock-text); }
+.node.status-locked .node-text    { color: var(--lock-text); }
 
 .node-text:empty::before {
   content: attr(data-placeholder);
@@ -126,9 +110,9 @@
   opacity: .55;
   line-height: 1.5;
 }
-.node.status-done .node-tag     { color: rgba(255,255,255,.8); }
+.node.status-done .node-tag      { color: rgba(255,255,255,.8); }
 .node.status-available .node-tag { color: var(--avail-bdr); }
-.node.status-locked .node-tag   { color: var(--lock-text); }
+.node.status-locked .node-tag    { color: var(--lock-text); }
 
 /* ── node actions (edit mode only) ── */
 .node-actions {
@@ -152,8 +136,7 @@
 }
 body:not(.edit-mode) .node-actions { display: none !important; }
 
-/* ── explanation (scope note) — same reveal behavior as .node-actions,
-   sitting just below it, edit mode only ── */
+/* ── explanation (scope note) — same reveal as .node-actions, just below it, edit mode only ── */
 .node-explanation-wrap {
   max-height: 0;
   overflow: hidden;
@@ -191,15 +174,13 @@ body:not(.edit-mode) .node-explanation-wrap { display: none !important; }
   padding: 0.375rem 0.5rem;
   outline: none;
   transition: border-color .12s;
-  /* Scrollbar hidden (scroll still works via wheel/touch/drag-select —
-     see the canvas wheel handler in io.js, which lets wheel events over
-     this field through instead of treating them as canvas zoom) so a
-     thin field with overflowing text doesn't sprout a scrollbar track
-     that visually fights with the node's small footprint. */
-  scrollbar-width: none;       /* Firefox */
-  -ms-overflow-style: none;    /* old Edge/IE */
+  /* Scrollbar hidden so a thin, overflowing field doesn't grow a track that
+     fights the node's small footprint. It still scrolls (the canvas wheel
+     handler in viewport.js lets wheel events over it through). */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.node-explanation-ta::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.node-explanation-ta::-webkit-scrollbar { display: none; }
 .node-explanation-ta:focus { border-color: var(--avail-bdr); }
 .node.status-done .node-explanation-ta {
   background: rgba(255,255,255,.08);
@@ -208,17 +189,14 @@ body:not(.edit-mode) .node-explanation-wrap { display: none !important; }
 }
 .node.status-done .node-explanation-ta::placeholder { color: rgba(255,255,255,.5); }
 
-/* Expanding on hover makes the node taller (see .node-actions above); lift
-   it above sibling nodes while that's happening so the growth isn't
-   clipped underneath whatever's positioned next to it. Scoped to edit
-   mode since that's the only mode where hovering grows the node at all. */
+/* Hovering in edit mode makes the node taller (see .node-actions); lift it
+   above its neighbours so the growth isn't clipped. */
 body.edit-mode .node:hover,
 body.edit-mode .node.link-source,
 body.edit-mode .node.actions-open { z-index: 20; }
 
-/* Touch equivalent of hover — see the click handler in nodes.js. Hidden
-   whenever the device has real hover (mouse/trackpad), since hovering
-   already does the job there without adding a second, redundant control. */
+/* Touch equivalent of hover — see the click handler in nodes.js. Hidden on
+   devices with real hover, where hovering already does the job. */
 .node-more-btn {
   display: none;
   position: absolute;
@@ -274,12 +252,12 @@ body:not(.edit-mode) .node-more-btn { display: none !important; }
 .connector.edge-done      { stroke: var(--edge-done);  opacity: 0.32; }
 .connector.edge-available { stroke: var(--edge-avail); opacity: 0.45; }
 
-/* arrowheads — match connector colors exactly so they re-theme with everything else */
+/* arrowheads match connector colors so they re-theme with everything else */
 .arrow-marker path { fill: var(--edge-lock); }
 .arrow-avail path  { fill: var(--edge-avail); }
 .arrow-done path   { fill: var(--edge-done); }
 
-/* hover focus: prereq edges turn blue, dependent edges turn orange */
+/* hover focus: prerequisite edges blue, dependent edges orange */
 .connector.hi-prereq {
   stroke: var(--avail-bdr) !important;
   opacity: 1 !important;
@@ -290,7 +268,5 @@ body:not(.edit-mode) .node-more-btn { display: none !important; }
   opacity: 1 !important;
   stroke-width: 2px !important;
 }
-/* everything else fades to near-invisible when a node is focused */
-body.node-focused .connector:not(.hi-prereq):not(.hi-dep) {
-  opacity: 0.05 !important;
-}
+/* everything else fades when a node is focused */
+body.node-focused .connector:not(.hi-prereq):not(.hi-dep) { opacity: 0.05 !important; }

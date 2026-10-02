@@ -2,7 +2,7 @@
    NODE LESSON PROMPT — pure text template
    This is the prompt copied out of the app and pasted into a
    Claude conversation to generate one node's .txt lesson file.
-   Called from buildPrompt() in io.js, which computes all of
+   Called from buildPrompt() in prompts.js, which computes all of
    these values for a given node; this file holds no logic of
    its own, just the prompt text and where each value drops in.
 

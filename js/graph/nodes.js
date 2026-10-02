@@ -1,18 +1,18 @@
 /* ═══════════════════════════════════════════════════════════
-   nodes.js — individual node DOM construction, completion
-   toggling, the linking gesture, add/delete, and the touch
-   "tap ⋯ to reveal actions" mechanism (both opening it, in
-   buildEl below, and closing it, at the bottom of this file).
-   Depends on state.js and layout.js.
+   nodes.js — node DOM construction, the linking gesture, add/delete,
+   and the touch "tap ⋯ to reveal actions" mechanism (opening in buildEl,
+   closing at the bottom of this file). Depends on state.js and layout.js.
 ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
    NODE DOM
 ═══════════════════════════════════════════════════════════ */
 function buildEl(node) {
+  const editing = state.mode === 'edit';
   const el = document.createElement('div');
   el.className = 'node status-locked';
   el.dataset.id = node.id;
+  el.tabIndex = 0;
 
   const inner = document.createElement('div');
   inner.className = 'node-inner';
@@ -23,7 +23,7 @@ function buildEl(node) {
 
   const textEl = document.createElement('div');
   textEl.className = 'node-text';
-  textEl.contentEditable = state.editMode ? 'true' : 'false';
+  textEl.contentEditable = editing ? 'true' : 'false';
   textEl.spellcheck = false;
   textEl.dataset.placeholder = node.depth === 0 ? 'Root concept…' : 'Topic name…';
   textEl.textContent = node.label;
@@ -50,7 +50,7 @@ function buildEl(node) {
   const delTxtBtn = document.createElement('button');
   delTxtBtn.className = 'btn danger';
   delTxtBtn.textContent = '🗑 delete txt';
-  delTxtBtn.title = 'Clear this node\'s generated lesson & quiz progress';
+  delTxtBtn.title = "Clear this node's generated lesson & quiz progress";
   delTxtBtn.addEventListener('click', e => { e.stopPropagation(); deleteNodeTxt(node.id); });
 
   const delBtn = document.createElement('button');
@@ -70,13 +70,12 @@ function buildEl(node) {
   const explTa = document.createElement('textarea');
   explTa.className = 'node-explanation-ta';
   explTa.spellcheck = false;
-  explTa.readOnly = !state.editMode;
+  explTa.readOnly = !editing;
   explTa.placeholder = 'Pin down exactly what this node covers and where its edges are…';
   explTa.value = node.explanation || '';
 
   explWrap.append(explLabel, explTa);
 
-  explTa.addEventListener('mousedown', e => e.stopPropagation());
   explTa.addEventListener('click', e => e.stopPropagation());
   explTa.addEventListener('input', () => { node.explanation = explTa.value; });
   explTa.addEventListener('keydown', e => {
@@ -84,17 +83,14 @@ function buildEl(node) {
     if (e.key === 'Escape') explTa.blur();
   });
 
-  // Touch equivalent of hover (see .node-more-btn in nodes.css, which hides
-  // this on real-hover devices and only shows it under @media(hover:none)
-  // in edit mode). Tapping it reveals this node's actions/explanation the
-  // same way .node:hover does on desktop, since touch has no :hover to
-  // trigger that reveal. stopPropagation keeps the tap from also reaching
-  // el's own click handler below (which would otherwise focus the label
-  // or start a link gesture).
+  // Touch equivalent of hover (hidden on real-hover devices — see .node-more-btn
+  // in nodes.css). stopPropagation keeps the tap from also reaching el's click
+  // handler below, which would focus the label or start a link.
   const moreBtn = document.createElement('button');
   moreBtn.className = 'node-more-btn';
   moreBtn.textContent = '⋯';
   moreBtn.title = 'Show actions';
+  moreBtn.setAttribute('aria-label', 'Show actions');
   moreBtn.addEventListener('click', e => {
     e.stopPropagation();
     const opening = !el.classList.contains('actions-open');
@@ -105,36 +101,45 @@ function buildEl(node) {
   inner.append(badge, textEl, actions, explWrap);
   el.append(inner, moreBtn);
 
+  // A label is a single plain-text line: no pasted markup, no line breaks.
   textEl.addEventListener('input', () => { node.label = textEl.textContent; });
+  textEl.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\s*[\r\n]+\s*/g, ' ');
+    document.execCommand('insertText', false, text);
+  });
+  textEl.addEventListener('drop', e => e.preventDefault());
   textEl.addEventListener('keydown', e => {
-    if (!state.editMode) return;
+    if (state.mode !== 'edit') return;
+    if (e.key === 'Enter')  { e.preventDefault(); textEl.blur(); }
     if (e.key === 'Escape') { textEl.blur(); cancelLink(); }
-    if (e.key === 'Tab') { e.preventDefault(); doAddNode(); }
+    if (e.key === 'Tab')    { e.preventDefault(); doAddNode(); }
   });
 
-  el.addEventListener('mousedown', e => e.stopPropagation());
   el.addEventListener('mouseenter', () => highlightEdges(node.id));
   el.addEventListener('mouseleave', clearEdgeHighlight);
   el.addEventListener('click', e => {
     if (e.target.closest('.node-actions')) return;
-    if (state.editMode) {
+    if (state.mode === 'edit') {
       if (state.linkSource !== null) finishLink(node.id);
       else textEl.focus();
-    } else if (state.markKnownMode) {
-      const s = nodeStatus(node.id);
-      if (s !== 'locked') {
+    } else if (state.mode === 'markKnown') {
+      if (nodeStatus(node.id) !== 'locked') {
         node.done = !node.done;
         if (!node.done) cascadeUncomplete(node.id);
         updateAllStatuses();
         autoSaveProgress();
       }
-    } else {
-      const s = nodeStatus(node.id);
-      if (s !== 'locked') {
-        if (node._sessionTxt) continueViewer(node.id);
-        else openLearnModal(node.id);
-      }
+    } else if (nodeStatus(node.id) !== 'locked') {
+      if (node._sessionTxt) continueViewer(node.id);
+      else openLearnModal(node.id);
     }
+  });
+  // Keyboard equivalent of clicking the card (only when the card itself has focus).
+  el.addEventListener('keydown', e => {
+    if (e.target !== el || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    el.click();
   });
 
   node.el = el;
@@ -157,7 +162,7 @@ function refreshTag(el, node) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TOGGLE COMPLETION
+   COMPLETION
 ═══════════════════════════════════════════════════════════ */
 function cascadeUncomplete(id) {
   dependentsOf(id).forEach(dep => {
@@ -179,10 +184,7 @@ function startLink(sourceId) {
 function finishLink(targetId) {
   const src = state.linkSource;
   if (src === null) return;
-
-  if (src === targetId) {
-    cancelLink(); return;
-  }
+  if (src === targetId) { cancelLink(); return; }
 
   // src = dependent, targetId = prereq → edge goes prereq→dependent
   const from = targetId, to = src;
@@ -196,7 +198,9 @@ function finishLink(targetId) {
     return;
   }
   if (wouldCycle(from, to)) {
-    cancelLink(); return;
+    showToast("That link would create a loop — a topic can't depend, even indirectly, on something that depends on it.");
+    cancelLink();
+    return;
   }
 
   addEdge(from, to);
@@ -213,6 +217,7 @@ function cancelLink() {
   document.body.classList.remove('linking-mode');
 }
 
+// Would adding from→to create a cycle? Only if `from` is already reachable from `to`.
 function wouldCycle(from, to) {
   const visited = new Set(), stack = [to];
   while (stack.length) {
@@ -227,49 +232,23 @@ function wouldCycle(from, to) {
 
 /* ═══════════════════════════════════════════════════════════
    TRANSITIVE REDUCTION
-   An edge A→C is redundant if C is already reachable from A
-   through another path (e.g. A→B→C).  Removing such edges
-   keeps the graph minimal without losing any information.
+   An edge A→C is redundant if C is already reachable from A through
+   another path (e.g. A→B→C); removing it loses no information.
 ═══════════════════════════════════════════════════════════ */
 function removeRedundantEdges() {
-  if (state.edges.size === 0) return;
-
-  // Build adjacency list once for efficiency
-  const adj = new Map();
-  state.nodes.forEach((_, id) => adj.set(id, []));
-  for (const key of state.edges) {
-    const [f, t] = key.split('→').map(Number);
-    adj.get(f)?.push(t);
-  }
-
-  const toRemove = [];
-
-  for (const key of state.edges) {
-    const [from, to] = key.split('→').map(Number);
-
-    // BFS from `from`'s other neighbors (skip the direct edge to `to`).
-    // If we reach `to` this way, the direct edge is redundant.
-    const visited = new Set();
-    const queue   = [];
-    for (const nb of adj.get(from) || []) {
-      if (nb !== to) { visited.add(nb); queue.push(nb); }
+  const redundant = [];
+  forEachEdge((from, to) => {
+    // Search from `from`'s *other* neighbours; reaching `to` means the direct edge is implied.
+    const seen = new Set(), queue = [];
+    state.dependents.get(from)?.forEach(nb => { if (nb !== to) { seen.add(nb); queue.push(nb); } });
+    for (let i = 0; i < queue.length; i++) {
+      const cur = queue[i];
+      if (cur === to) { redundant.push([from, to]); return; }
+      state.dependents.get(cur)?.forEach(nb => { if (!seen.has(nb)) { seen.add(nb); queue.push(nb); } });
     }
-
-    let redundant = false, qi = 0;
-    while (qi < queue.length && !redundant) {
-      const cur = queue[qi++];
-      if (cur === to) { redundant = true; break; }
-      for (const nb of adj.get(cur) || []) {
-        if (!visited.has(nb)) { visited.add(nb); queue.push(nb); }
-      }
-    }
-
-    if (redundant) toRemove.push(key);
-  }
-
-  if (toRemove.length === 0) return;
-
-  toRemove.forEach(key => state.edges.delete(key));
+  });
+  if (!redundant.length) return;
+  redundant.forEach(([f, t]) => removeEdge(f, t));
   layout();
   updateAllStatuses();
 }
@@ -289,10 +268,7 @@ function doAddNode() {
 }
 
 function deleteNode(id) {
-  for (const k of [...state.edges]) {
-    const [f,t] = k.split('→').map(Number);
-    if (f===id||t===id) state.edges.delete(k);
-  }
+  removeEdgesOf(id);
   state.nodes.get(id)?.el?.remove();
   state.nodes.delete(id);
   if (state.linkSource === id) cancelLink();
@@ -300,38 +276,32 @@ function deleteNode(id) {
   updateAllStatuses();
 }
 
-/* Clears a node's stored lesson text along with everything tied to that
-   session — answer key, main/bonus answers, scroll position, notes, and
-   the done flag. If the session viewer is currently showing this node,
-   close it too, since the text it's rendering would otherwise go stale
-   mid-view. */
+/* Clears a node's stored lesson and everything tied to it — answers, scroll
+   position, notes, and the done flag. Closes the viewer if it's showing this node. */
 function deleteNodeTxt(id) {
   const node = state.nodes.get(id);
   if (!node || !node._sessionTxt) return;
   delete node._sessionTxt;
-  delete node._answerKey;
   delete node._sessionAnswers;
   delete node._bonusAnswers;
   delete node._scrollTop;
   delete node._notes;
   if (node.done) { node.done = false; cascadeUncomplete(id); }
-  if (viewer.nodeId === id) closeViewer();
+  if (viewer.nodeId === id) { closeViewer(); viewer.nodeId = null; }
   updateAllStatuses();
   autoSaveProgress();
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TOUCH ACTION-ROW CLEANUP
-   Pairs with the moreBtn toggle-on logic in buildEl above — kept
-   in the same file so the whole "tap ⋯ to reveal, tap outside or
-   Escape to close" mechanism lives in one place rather than split
-   across files. Tapping anywhere outside the open node, or
-   Escape, closes it.
+   TOUCH ACTION-ROW CLEANUP — tapping outside an open node, or Escape,
+   closes its action row (the opening half is the moreBtn above).
 ═══════════════════════════════════════════════════════════ */
 document.addEventListener('click', e => {
   if (e.target.closest('.node.actions-open')) return;
   document.querySelectorAll('.node.actions-open').forEach(el => el.classList.remove('actions-open'));
 });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.node.actions-open').forEach(el => el.classList.remove('actions-open'));
+onEscape(10, () => {
+  const open = document.querySelectorAll('.node.actions-open');
+  open.forEach(el => el.classList.remove('actions-open'));
+  return open.length > 0;
 });

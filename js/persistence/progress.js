@@ -1,132 +1,96 @@
 /* ═══════════════════════════════════════════════════════════
-   progress.js — persistence of per-node progress (done flag,
-   quiz/bonus answers, notes, scroll position), independent of
-   the tree's own JSON (see io.js) — a tree's structure and a
-   learner's progress through it are saved separately on purpose
-   (see treeSignature below). Also owns the "reset progress"
-   control, including its shift-click / long-press "reset every
-   tree" variant. Lives as a .dropdown-item inside the 👤 ▾ toolbar
-   menu (see index.html/toolbar.js) rather than a standalone
-   button, but the element itself and all the logic below are
-   otherwise unchanged.
+   progress.js — persistence of per-node progress (done flag, quiz/bonus
+   answers, notes, scroll position), independent of the tree's own JSON
+   (see io.js): a tree's structure and a learner's progress through it are
+   saved separately on purpose (see treeSignature). Also owns the "reset
+   progress" control, including its shift-click / long-press "reset every
+   tree" variant.
 
-   THIS FILE IS NOT library.js. If you ever see functions named
-   renderLibraryGrid/openLibraryModal/libraryProgressFor or a
-   constant named LIBRARY_KEY inside this file, the wrong content
-   got pasted in here — that content belongs in
-   js/persistence/library.js instead. The two files are loaded
-   together (progress.js first, library.js second — see
-   index.html) and library.js's libraryProgressFor() reads this
-   file's progressCache directly, so both need to actually contain
-   their own distinct code for either to work.
+   STORAGE SOURCE: signed out, progress lives in this browser's
+   localStorage (PROGRESS_KEY); signed in (account.js/cloud.js) it lives
+   under the user's uid in Firebase. refreshProgressFromSource() and
+   writeProgressNow() are the only functions that know which is active
+   (progressSource); everything else works on the in-memory progressCache.
+   window.handleCloudAuthChange (account.js) triggers a refresh on every
+   sign-in/out. library.js reads progressCache too, so its done/total
+   counts are right for either source.
 
-   STORAGE SOURCE: same local/cloud split as library.js (see that
-   file's own header for the fuller rationale). Signed out, every
-   tree's progress lives in this browser's localStorage
-   (PROGRESS_KEY below) — no account needed. Signed in (see
-   account.js/cloud.js), it lives instead under this user's own
-   uid in Firebase, so progress follows the account across
-   devices. refreshProgressFromSource() and persistProgress() are
-   the only two functions that know which of those two is
-   currently active (progressSource) — every other function in
-   this file just reads/writes the in-memory progressCache and
-   doesn't care where it came from. window.handleCloudAuthChange
-   (account.js) calls refreshProgressFromSource() on every sign-in/
-   sign-out, which is what actually switches the source.
+   WRITE BATCHING: autoSaveProgress() runs on every done toggle, quiz answer
+   and (debounced upstream) notes edit or scroll — far too often to write
+   each time, and a synchronous localStorage write mid-scroll shows up as
+   stutter. persistProgress() only marks a write pending; the actual write
+   happens when the tab is hidden or unloaded, or immediately through
+   persistProgressNow() for one-off deliberate actions (seeding a new
+   account, reset). A failed write leaves the write pending so a later flush
+   retries it.
 
-   WRITE BATCHING: persistProgress() is called very often — every done
-   toggle, every quiz answer, every notes keystroke — so neither the
-   local-storage write nor the cloud write happens inline when that's
-   called. Both just mark a write as pending; the actual write, to
-   whichever source is active, happens only when the tab is hidden or
-   unloaded (see the write-batching block further down), or immediately
-   via persistProgressNow() for the couple of call sites — first-time
-   cloud seeding, explicit reset — that need one right away.
+   FIREBASE KEY SAFETY: progressCache is keyed by tree signature and then by
+   node label — arbitrary text that may contain characters ('.', '#', '$',
+   '[', ']', '/') Firebase keys reject. localStorage doesn't care, so only
+   the object sent to / read from the cloud goes through
+   encodeProgressForCloud/decodeProgressFromCloud.
 
-   FIREBASE KEY SAFETY: progressCache is keyed first by tree
-   signature (treeSignature() below) and then by node label —
-   both are arbitrary text a person typed or a tree author wrote,
-   which can contain characters ('.', '#', '$', '[', ']', '/')
-   that Firebase Realtime Database keys reject outright.
-   localStorage has no such restriction, so the in-memory shape
-   and the local storage shape stay exactly as before; only the
-   object actually handed to cloud.setProgress, and read back
-   from cloud.getProgress, goes through
-   encodeProgressForCloud/decodeProgressFromCloud below.
-
-   Depends on state.js, layout.js (prereqsOf, via state.js), and
-   viewer.js (closeViewer — only called on a click, after every
-   script has finished loading, so viewer.js loading after this
-   file is fine).
+   Depends on state.js, toast.js, and viewer.js (closeViewer — only called on
+   a click, after everything has loaded).
 ═══════════════════════════════════════════════════════════ */
 const PROGRESS_KEY = 'tree-progress';
 
-let progressCache  = {};      // in-memory mirror of whichever source is currently active
+let progressCache  = {};      // in-memory mirror of whichever source is active
 let progressSource = 'local'; // 'local' | 'cloud'
 
 function readLocalProgress() {
   try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); } catch { return {}; }
 }
 function writeLocalProgress(obj) {
-  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(obj)); } catch {}
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(obj)); return true; }
+  catch {
+    showToast("Couldn't save your progress — this browser's storage is full or blocked. Signing in stores it in your account instead.");
+    return false;
+  }
 }
 
-/* ── Firebase key sanitization (cloud storage only — see file header) ──
-   encodeURIComponent already escapes '#', '$', '[', ']', '/' (all invalid
-   in an RTDB key); '.' survives encodeURIComponent untouched since it's a
-   legal URI character, so it needs its own extra pass. */
-function toFirebaseKey(k) {
-  return encodeURIComponent(String(k)).replace(/\./g, '%2E');
-}
-function fromFirebaseKey(k) {
-  try { return decodeURIComponent(k); } catch { return k; }
-}
+/* ── Firebase key sanitization (cloud storage only) ──
+   encodeURIComponent escapes '#', '$', '[', ']', '/'; '.' survives it, so it
+   needs its own pass. */
+function toFirebaseKey(k)   { return encodeURIComponent(String(k)).replace(/\./g, '%2E'); }
+function fromFirebaseKey(k) { try { return decodeURIComponent(k); } catch { return k; } }
 function encodeProgressForCloud(cache) {
   const out = {};
   for (const sig of Object.keys(cache)) {
-    const encPerNode = {};
+    const perNode = {};
     for (const label of Object.keys(cache[sig] || {})) {
-      // Each record can carry sessionAnswers/bonusAnswers/notes as
-      // literal `undefined` when a node has none yet (see
-      // autoSaveProgress) — harmless for localStorage, since
-      // JSON.stringify there silently drops undefined-valued keys, but
-      // Firebase's set() validates the raw object directly and rejects
-      // any property that's literally `undefined`. Round-tripping
-      // through JSON here strips those keys the same way the local path
-      // already does, before the object ever reaches Firebase.
-      encPerNode[toFirebaseKey(label)] = JSON.parse(JSON.stringify(cache[sig][label]));
+      // Records can hold `undefined` fields; JSON.stringify drops them for
+      // localStorage, but Firebase's set() rejects them, so round-trip here.
+      perNode[toFirebaseKey(label)] = JSON.parse(JSON.stringify(cache[sig][label]));
     }
-    out[toFirebaseKey(sig)] = encPerNode;
+    out[toFirebaseKey(sig)] = perNode;
   }
   return out;
 }
 function decodeProgressFromCloud(obj) {
   const out = {};
   for (const encSig of Object.keys(obj || {})) {
-    const decPerNode = {};
-    for (const encLabel of Object.keys(obj[encSig] || {})) decPerNode[fromFirebaseKey(encLabel)] = obj[encSig][encLabel];
-    out[fromFirebaseKey(encSig)] = decPerNode;
+    const perNode = {};
+    for (const encLabel of Object.keys(obj[encSig] || {})) perNode[fromFirebaseKey(encLabel)] = obj[encSig][encLabel];
+    out[fromFirebaseKey(encSig)] = perNode;
   }
   return out;
 }
 
-/* Identifies "this tree" across re-exports/minor edits without matching
-   labels against every OTHER tree ever loaded. Built from the sorted set
-   of root labels (nodes with no prerequisites) — stable across small edits
-   to a tree, but distinct enough that two different subjects effectively
-   never collide. Without this, a node named e.g. "Chain Rule" or "Dot
-   Product" could silently show as complete on a brand-new, unrelated tree
-   just because a past tree happened to use the same label. */
+/* Identifies "this tree" across re-exports and small edits without matching
+   labels against every other tree ever loaded: the sorted set of root labels.
+   Without it a node named "Chain Rule" could show as complete on an unrelated
+   tree that once used the same label. */
 function treeSignature() {
   const roots = [];
   state.nodes.forEach((n, id) => { if (prereqsOf(id).length === 0) roots.push(n.label.trim().toLowerCase()); });
   return roots.sort().join('|') || '(empty)';
 }
 
-/* ── source switching ──────
+/* ── source switching ──
    Called once at load (guest view, so progress works before Firebase has
-   even resolved whether there's a persisted session) and again by
-   window.handleCloudAuthChange (account.js) on every sign-in/sign-out. */
+   resolved a persisted session) and by handleCloudAuthChange on every
+   sign-in/out. */
 async function refreshProgressFromSource() {
   if (state.accountUser) {
     progressSource = 'cloud';
@@ -136,11 +100,8 @@ async function refreshProgressFromSource() {
       console.error('Could not load cloud progress:', e);
       progressCache = {};
     }
-    // One-time convenience, mirroring library.js: a fresh account with an
-    // empty cloud progress blob, but progress saved locally before
-    // signing in, gets that local progress copied up rather than
-    // silently orphaned — signing in shouldn't make progress someone
-    // already made disappear.
+    // A fresh account with no cloud progress but local progress from before
+    // signing in gets the local copy uploaded rather than orphaned.
     const local = readLocalProgress();
     if (Object.keys(progressCache).length === 0 && Object.keys(local).length > 0) {
       progressCache = local;
@@ -151,111 +112,69 @@ async function refreshProgressFromSource() {
     progressCache = readLocalProgress();
   }
 
-  // The source (and therefore the progress data itself) may have just
-  // changed out from under whatever tree is currently on the canvas —
-  // e.g. signing in mid-session should pull in that account's own
-  // done/answer state for the tree already open, not leave the guest
-  // session's state sitting there. Clear every node's in-memory progress
-  // fields first so a node that was done under the old source but has no
-  // matching record under the new one doesn't stay stuck looking done.
+  // The data may have just changed under the tree on screen (e.g. signing in
+  // mid-session): clear every node's in-memory progress, then restore from the
+  // new source, so a node done under the old source doesn't stay stuck done.
   if (state.nodes.size) {
     state.nodes.forEach(clearNodeProgressFields);
     autoRestoreProgress();
     if (typeof closeViewer === 'function') closeViewer();
-    // See the reset-progress handler's own comment below for why nodeId
-    // needs clearing too, not just closing the viewer.
-    if (typeof viewer !== 'undefined') viewer.nodeId = null;
+    if (typeof viewer !== 'undefined') viewer.nodeId = null; // see the reset handler below
     updateAllStatuses();
   }
 
-  // library.js's grid reads progressCache too (see libraryProgressFor
-  // there); if the library modal happens to be open when the source
-  // switches (e.g. signing in from within it), refresh it here too so
-  // the done/total counts update immediately rather than only on next
-  // open.
   if (document.getElementById('library-modal-backdrop')?.classList.contains('open') && typeof renderLibraryGrid === 'function') {
     renderLibraryGrid();
   }
 }
 
 async function writeProgressToCloud() {
-  if (!state.accountUser) return;
-  try { await window.cloud.setProgress(state.accountUser.uid, encodeProgressForCloud(progressCache)); }
-  catch (e) { console.error('Cloud progress save failed:', e); }
+  if (!state.accountUser) return false;
+  try {
+    await window.cloud.setProgress(state.accountUser.uid, encodeProgressForCloud(progressCache));
+    return true;
+  } catch (e) {
+    console.error('Cloud progress save failed:', e);
+    showToast("Couldn't sync your progress to your account. It will retry the next time the page is hidden or closed.");
+    return false;
+  }
 }
 
-/* ── write batching ──────
-   autoSaveProgress() fires on every done toggle, every quiz/bonus answer,
-   and (already debounced 500ms upstream, in viewer.js) every notes edit
-   or scroll-position update — far too often to actually write on each
-   one, whether that write goes to Firebase or to localStorage. A
-   synchronous JSON.stringify + localStorage.setItem is cheap in
-   isolation, but running it inline at the tail of that 500ms debounce
-   means it executes on the main thread at an arbitrary moment that can
-   land mid-scroll, showing up as a small stutter while reading — so both
-   paths get the same treatment: persistProgress() just marks a write as
-   pending and does nothing else. The actual write, to whichever source
-   (local or cloud) is currently active, only happens when the tab is
-   hidden or unloaded (see the visibilitychange/pagehide listeners below)
-   or via persistProgressNow() for the couple of call sites that need one
-   right away — never inline in a scroll/input handler, and never on a
-   timer while the tab stays open. */
+/* Writes to whichever source is active; resolves to whether it succeeded.
+   The local branch runs synchronously, which matters on pagehide. */
+function writeProgressNow() {
+  if (progressSource === 'cloud' && state.accountUser) return writeProgressToCloud();
+  return Promise.resolve(writeLocalProgress(progressCache));
+}
+
 let progressPending = false;
 
-/* Sends the pending write right now — called on tab-hide/unload below,
-   and safe to call even when nothing is pending (a no-op). */
+/* Sends the pending write now — on tab-hide/unload, before sign-out, and
+   safe to call when nothing is pending. A failure re-marks it pending. */
 async function flushProgress() {
   if (!progressPending) return;
   progressPending = false;
-  if (progressSource === 'cloud' && state.accountUser) {
-    await writeProgressToCloud();
-  } else {
-    writeLocalProgress(progressCache);
-  }
+  if (!(await writeProgressNow())) progressPending = true;
 }
 
-async function persistProgress() {
-  progressPending = true;
-}
+function persistProgress() { progressPending = true; }
 
-/* Bypasses the above for the couple of call sites where a write genuinely
-   needs to land immediately rather than waiting for the tab to close:
-   seeding a brand-new cloud account with progress that was saved locally
-   before signing in, and an explicit "reset progress" click — both are
-   one-off, deliberate actions, not part of the steady stream of saves
-   autoSaveProgress() produces while using the app. */
 async function persistProgressNow() {
   progressPending = false;
-  if (progressSource === 'cloud' && state.accountUser) {
-    await writeProgressToCloud();
-  } else {
-    writeLocalProgress(progressCache);
-  }
+  if (!(await writeProgressNow())) progressPending = true;
 }
 
-/* The only place a routine progress edit actually gets written: when the
-   tab is about to go away or out of view — closing the tab, navigating
-   away, or switching apps on mobile. Without this, a pending write would
-   sit in progressPending forever and never land anywhere, since nothing
-   else triggers a write on any kind of timer. pagehide fires more
-   reliably than beforeunload across mobile browsers/Safari, so both are
-   wired up rather than relying on just one. Neither guarantees the
-   network request (for the cloud path) actually completes before the
-   page is gone — there's no Firebase-RTDB equivalent of
-   navigator.sendBeacon — but it gives the write a head start instead of
-   doing nothing; the local-storage path completes synchronously either
-   way, so it's unaffected by that caveat. */
+// pagehide is more reliable than beforeunload on mobile/Safari, so wire both
+// events that mean "this tab is going away or out of view". Neither guarantees
+// a network write finishes (there's no sendBeacon for Firebase RTDB), but the
+// local write is synchronous.
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') flushProgress();
 });
 window.addEventListener('pagehide', () => { flushProgress(); });
 
-/* Serializes every current node into its own keyed record under this
-   tree's signature, into progressCache, then persists to whichever
-   source (local or cloud) is currently active. Called on any change
-   worth remembering — a done toggle, a quiz answer, a notes edit — so
-   "where you are" in a node's session (and its notes) is never lost
-   while working through a tree. */
+/* Serializes every node into its record under this tree's signature, then
+   marks a write pending. Called on any change worth remembering. */
 function autoSaveProgress() {
   const perNode = {};
   state.nodes.forEach(node => {
@@ -268,11 +187,10 @@ function autoSaveProgress() {
     };
   });
   progressCache[treeSignature()] = perNode;
-  persistProgress(); // fire-and-forget, same as every other call site here — all synchronous event handlers
+  persistProgress();
 }
 
-/** Restores each node's own record independently (done flag, session
-    answers, notes, scroll position) from progressCache. */
+/* Restores each node's record (done flag, answers, notes, scroll) from progressCache. */
 function autoRestoreProgress() {
   const saved = progressCache[treeSignature()];
   if (!saved) return;
@@ -289,25 +207,22 @@ function autoRestoreProgress() {
   if (changed) updateAllStatuses();
 }
 
-/* Reset progress — clears the persisted record(s) plus the matching
-   in-memory fields on every node, so the effect is immediate without a
-   reload. Plain click: this tree only. Shift+click (or a long-press,
-   for touch where there's no Shift key to hold): every tree ever
-   saved. No confirmation dialog on purpose — mark-known mode already
-   lets you freely toggle any node's done state with no safeguard, so
-   this isn't introducing a new class of "undoable" risk.
-   Routed through progressCache/persistProgress instead of talking to
-   localStorage directly, so a reset while signed in actually clears the
-   account's cloud copy too, not just this browser's local copy. */
+/* ── reset progress ──
+   Plain click: this tree only. Shift+click (or long-press on touch, where
+   there's no Shift): every tree. Resetting one tree needs no confirmation —
+   mark-known mode already toggles any node freely — but wiping every tree
+   (including the synced copy) does. Goes through progressCache/persist so a
+   reset while signed in clears the account's copy too. */
 const btnResetProgress = document.getElementById('menu-reset-progress');
-document.addEventListener('keydown', e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ Reset ALL progress'; });
-document.addEventListener('keyup',   e => { if (e.key === 'Shift') btnResetProgress.textContent = '↺ Reset tree progress'; });
+const RESET_LABEL_TREE = '↺ Reset tree progress', RESET_LABEL_ALL = '↺ Reset ALL progress';
+document.addEventListener('keydown', e => { if (e.key === 'Shift') btnResetProgress.textContent = RESET_LABEL_ALL; });
+document.addEventListener('keyup',   e => { if (e.key === 'Shift') btnResetProgress.textContent = RESET_LABEL_TREE; });
 
 let resetAllArmed = false, resetPressTimer = null;
 btnResetProgress.addEventListener('touchstart', () => {
   resetPressTimer = setTimeout(() => {
     resetAllArmed = true;
-    btnResetProgress.textContent = '↺ Reset ALL progress';
+    btnResetProgress.textContent = RESET_LABEL_ALL;
     if (navigator.vibrate) navigator.vibrate(15);
   }, 550);
 }, { passive:true });
@@ -315,7 +230,7 @@ btnResetProgress.addEventListener('touchend', () => clearTimeout(resetPressTimer
 btnResetProgress.addEventListener('touchcancel', () => {
   clearTimeout(resetPressTimer);
   resetAllArmed = false;
-  btnResetProgress.textContent = '↺ Reset tree progress';
+  btnResetProgress.textContent = RESET_LABEL_TREE;
 }, { passive:true });
 
 function clearNodeProgressFields(node) {
@@ -329,26 +244,21 @@ function clearNodeProgressFields(node) {
 btnResetProgress.addEventListener('click', async e => {
   const resetAll = e.shiftKey || resetAllArmed;
   resetAllArmed = false;
-  if (resetAll) {
-    progressCache = {};
-  } else {
-    delete progressCache[treeSignature()];
-  }
+  btnResetProgress.textContent = RESET_LABEL_TREE;
+  if (resetAll && !window.confirm(`Reset progress on every tree${state.accountUser ? ', including the copy synced to your account' : ''}? This can't be undone.`)) return;
+
+  if (resetAll) progressCache = {};
+  else delete progressCache[treeSignature()];
   state.nodes.forEach(clearNodeProgressFields);
   await persistProgressNow();
-  btnResetProgress.textContent = '↺ Reset tree progress';
   closeViewer();
-  // closeViewer() deliberately leaves viewer.nodeId alone so closing and
-  // reopening the SAME session normally skips a full rebuild (see its own
-  // comment). That shortcut is wrong right after a reset — reopening a
-  // node whose data we just cleared needs to actually re-read that
-  // (now-empty) data, not re-reveal the stale answers/notes/scroll
-  // position still sitting in the DOM from before the reset.
+  // closeViewer() leaves viewer.nodeId alone so reopening the SAME session
+  // normally skips a rebuild. After a reset that shortcut would re-reveal the
+  // stale answers/notes still in the DOM, so force a real rebuild next time.
   viewer.nodeId = null;
   updateAllStatuses();
 });
 
-// Guest view is available immediately; refreshed again the moment
-// Firebase reports an actual signed-in session (see handleCloudAuthChange
-// in account.js), which may swap the source out from under this.
+// Guest view is available immediately; refreshed again when Firebase reports
+// a signed-in session (see handleCloudAuthChange in account.js).
 refreshProgressFromSource();

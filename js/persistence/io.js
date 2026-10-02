@@ -1,94 +1,101 @@
 /* ═══════════════════════════════════════════════════════════
-   io.js — JSON import/export only: serializing the tree to the
-   on-disk format and parsing it back. This used to be one section
-   inside a much larger file (viewport/toolbar/progress/prompts
-   all lived here too); everything else has moved to its own file
-   (viewport.js, toolbar.js, progress.js, prompts.js) and this
-   file now does exactly what its name says — reads and writes
-   the tree's JSON. "Load JSON" and both export options now live
-   as .dropdown-item entries inside the Tree ▾ toolbar menu (see
-   index.html) rather than standalone buttons; the open/close
-   behavior for that dropdown is generic now (toolbar.js), so this
-   file only wires up what each item actually does.
-   Depends on state.js, layout.js (buildEl,
+   io.js — JSON import/export: serializing the tree to the on-disk
+   format and parsing it back, with validation on the way in.
+   Depends on state.js, layout.js, nodes.js (buildEl, wouldCycle,
    removeRedundantEdges), viewport.js (resetViewportForTreeLoad),
-   progress.js (autoRestoreProgress). library.js (the local/cloud
-   "My Trees" save/load feature) depends on buildTreeJSON and
-   loadFromJSON below, and loads after this file.
-═══════════════════════════════════════════════════════════ */
+   progress.js (autoRestoreProgress), toast.js. library.js builds on
+   buildTreeJSON and loadFromJSON below.
 
-/* ═══════════════════════════════════════════════════════════
-   JSON  import / export
-   Format: { "language": "Spanish", "nodes": [{ "id":"a", "label":"...", "requires":["b","c"], "optional":true, "done":false, "content":"..." }] }
-   `content` is optional and, when present, is the full generated
-   lesson .txt for that node (the same text you'd otherwise upload
-   by hand). It's only written when the "Structure + content"
-   export option is chosen (see exportToJSON) — plain "structure
-   only" exports omit it entirely. On import, a node with `content`
-   has it restored straight into node._sessionTxt, so its session
-   can be reopened immediately with no re-upload needed. Each
-   question's correct answer lives inline in that text (an
-   [ANSWER: X] tag per [QUESTION]/[BONUS] block — see viewer.js's
-   parseQuestionBody/parseBonusBody) and is re-derived, along with
-   a fresh deterministic option shuffle (tools.js's shuffleOptions),
-   every time the session is opened — there's no separate answer
-   key to extract or restore here.
-   `language` is optional too, and is the tree-wide language it was
-   designed in (see buildTreePrompt). It's read into state.language on
-   import, which prefills — but doesn't lock in — each node's own
-   language field in the learn modal whenever that field is blank, so
-   generating per-node content defaults to the tree's language instead
-   of English without forcing it.
-   `topic` is the tree's subject name, read into state.topic on import.
-   Used for the exported filename (instead of a generic one) and quoted
-   in each node's own prompt for a little broader context.
+   Format: { "topic": "...", "language": "Spanish", "nodes": [
+     { "id":"a", "label":"...", "explanation":"...", "requires":["b","c"], "optional":true, "content":"..." } ] }
+   - `content` is the node's generated lesson .txt; it is only written by the
+     "Structure + content" export. On import it goes straight into
+     node._sessionTxt so the session reopens with no re-upload. Correct
+     answers live inline in that text ([ANSWER: X]) and are re-derived, with a
+     fresh deterministic option shuffle, whenever a session is opened.
+   - `language` is the tree-wide default; it prefills (never locks) each
+     node's language field in the learn modal.
+   - `topic` names the exported file and is quoted in each node's prompt.
 ═══════════════════════════════════════════════════════════ */
 function clearMap() {
+  cancelLink();
+  // Node ids restart at 1 on every load, so a viewer left pointing at "node 1"
+  // would otherwise be re-revealed for the wrong tree.
+  closeViewer();
+  viewer.nodeId = null;
   state.nodes.forEach(n => n.el?.remove());
-  document.querySelectorAll('.connector').forEach(c=>c.remove());
+  clearEdgeEls();
+  clearEdges();
   state.nodes.clear();
-  state.edges.clear();
   state.nextId = 1;
-  state.linkSource = null;
   state.language = '';
   state.topic = '';
-  state.libraryId = null; // any fresh load starts unlinked; openLibraryEntry() (library.js) re-links it right after, if that's where the load came from
+  state.libraryId = null; // a fresh load starts unlinked; openLibraryEntry() re-links it if that's where the load came from
 }
 
-/* ── slug helper: used for prompt filenames and round-tripping JSON ids ── */
+// Unicode-aware, so a non-Latin topic still gets a usable filename/id
+// instead of collapsing to "node".
 function slugify(label) {
   const s = String(label || '').toLowerCase().trim()
-    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/[^\p{L}\p{N}]+/gu, '_')
     .replace(/^_+|_+$/g, '');
   return s || 'node';
 }
 
+/* Reads a picked .json file and hands the parsed object to onLoad; a file
+   that can't be read or parsed is reported instead of silently ignored. */
+function readJSONFile(file, onLoad) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    let obj;
+    try { obj = JSON.parse(ev.target.result); }
+    catch { showToast(`"${file.name}" isn't valid JSON.`); return; }
+    onLoad(obj);
+  };
+  reader.onerror = () => showToast(`Couldn't read "${file.name}".`);
+  reader.readAsText(file);
+}
+
+/* Loads a tree object. Returns true on success. Problems that can be
+   repaired (unknown prerequisites, self-links, links that would form a loop,
+   repeated ids) are dropped and reported; a file that isn't a tree at all is
+   rejected without touching whatever is currently on the canvas. */
 function loadFromJSON(obj) {
-  if (!obj || !Array.isArray(obj.nodes)) return;
+  if (!obj || !Array.isArray(obj.nodes)) {
+    showToast('That file isn\'t a tree — expected a JSON object with a "nodes" list.');
+    return false;
+  }
+  const rawNodes = obj.nodes.filter(n => n && typeof n === 'object');
+  if (!rawNodes.length) { showToast('That tree has no nodes.'); return false; }
+
   clearMap();
   state.language = typeof obj.language === 'string' ? obj.language.trim() : '';
-  state.topic = typeof obj.topic === 'string' ? obj.topic.trim() : '';
+  state.topic    = typeof obj.topic === 'string' ? obj.topic.trim() : '';
 
-  const idMap = new Map();
-  obj.nodes.forEach(n => {
+  const problems = { unknown: 0, self: 0, loop: 0, dupId: 0 };
+  const idMap = new Map(); // string id → numeric id (first occurrence wins)
+  const created = [];
+
+  rawNodes.forEach(n => {
     const numId = state.nextId++;
-    idMap.set(String(n.id), numId);
-    const node = { id:numId, slug:String(n.id), label:n.label??n.text??'', explanation:typeof n.explanation==='string'?n.explanation.trim():'', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
-    if (typeof n.content === 'string' && n.content.trim()) {
-      node._sessionTxt = n.content;
-      // Correct answers and their on-screen letters are re-derived (with
-      // their own deterministic shuffle) whenever the session is opened —
-      // see parseQuestionBody/parseBonusBody in viewer.js. No separate
-      // key to extract or stash on the node here anymore.
-    }
+    const label = n.label ?? '';
+    const key   = String(n.id ?? slugify(label));
+    if (idMap.has(key)) problems.dupId++; else idMap.set(key, numId);
+    const node = { id:numId, slug:key, label, explanation:typeof n.explanation === 'string' ? n.explanation.trim() : '', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
+    if (typeof n.content === 'string' && n.content.trim()) node._sessionTxt = n.content;
     state.nodes.set(numId, node);
     buildEl(node);
+    created.push({ n, numId });
   });
-  obj.nodes.forEach(n => {
-    const toId = idMap.get(String(n.id));
-    (n.requires||[]).forEach(r => {
+
+  created.forEach(({ n, numId }) => {
+    (Array.isArray(n.requires) ? n.requires : []).forEach(r => {
       const fromId = idMap.get(String(r));
-      if (fromId!=null && toId!=null) addEdge(fromId, toId);
+      if (fromId === undefined)          { problems.unknown++; return; }
+      if (fromId === numId)              { problems.self++;    return; }
+      if (hasEdge(fromId, numId))        return;
+      if (wouldCycle(fromId, numId))     { problems.loop++;    return; }
+      addEdge(fromId, numId);
     });
   });
 
@@ -97,35 +104,40 @@ function loadFromJSON(obj) {
   resetViewportForTreeLoad();
   removeRedundantEdges();
   autoRestoreProgress();
+
+  const notes = [];
+  if (problems.unknown) notes.push(`${problems.unknown} prerequisite${problems.unknown > 1 ? 's' : ''} pointing at a topic that doesn't exist`);
+  if (problems.self)    notes.push(`${problems.self} topic${problems.self > 1 ? 's' : ''} listing itself as a prerequisite`);
+  if (problems.loop)    notes.push(`${problems.loop} link${problems.loop > 1 ? 's' : ''} that would form a loop`);
+  if (problems.dupId)   notes.push(`${problems.dupId} repeated id${problems.dupId > 1 ? 's' : ''}`);
+  if (notes.length) showToast(`Loaded, but ignored: ${notes.join('; ')}.`);
+  return true;
 }
 
-/* Builds the exportable JSON shape from the live state.nodes/state.edges —
-   shared by exportToJSON (file download) and library.js (local/cloud
-   save), since both just want the same plain-object shape; only what
-   happens to the result differs. */
+/* Exportable JSON shape from the live nodes/edges — shared by exportToJSON
+   (file download) and library.js (local/cloud save). */
 function buildTreeJSON(includeContent) {
   if (!state.nodes.size) return null;
-  const idToStr = new Map();
-  const used = new Set();
-  state.nodes.forEach((n,id)=>{
+  const idToStr = new Map(), used = new Set();
+  state.nodes.forEach((n, id) => {
     const base = n.slug || slugify(n.label);
     let s = base, i = 2;
     while (used.has(s)) s = `${base}_${i++}`;
     used.add(s);
     idToStr.set(id, s);
   });
-  const nodes=[];
-  state.nodes.forEach((n,id)=>{
-    const obj={id:idToStr.get(id), label:n.label};
-    if (n.explanation) obj.explanation=n.explanation;
-    const reqs=prereqsOf(id).map(p=>idToStr.get(p)).filter(Boolean);
-    if (reqs.length) obj.requires=reqs;
-    if (n.optional) obj.optional=true;
-    if (includeContent && n._sessionTxt) obj.content=n._sessionTxt;
+  const nodes = [];
+  state.nodes.forEach((n, id) => {
+    const obj = { id: idToStr.get(id), label: n.label };
+    if (n.explanation) obj.explanation = n.explanation;
+    const reqs = prereqsOf(id).map(p => idToStr.get(p)).filter(Boolean);
+    if (reqs.length) obj.requires = reqs;
+    if (n.optional) obj.optional = true;
+    if (includeContent && n._sessionTxt) obj.content = n._sessionTxt;
     nodes.push(obj);
   });
   const out = {};
-  if (state.topic) out.topic = state.topic;
+  if (state.topic)    out.topic = state.topic;
   if (state.language) out.language = state.language;
   out.nodes = nodes;
   return out;
@@ -134,26 +146,20 @@ function buildTreeJSON(includeContent) {
 function exportToJSON(includeContent) {
   const out = buildTreeJSON(includeContent);
   if (!out) return;
-  const json=JSON.stringify(out,null,2);
-  const blob=new Blob([json],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  const filenameBase = state.topic ? slugify(state.topic) : 'progress-tree';
-  a.href=url; a.download = includeContent ? `${filenameBase}-with-content.json` : `${filenameBase}.json`; a.click();
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type:'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const base = state.topic ? slugify(state.topic) : 'progress-tree';
+  a.href = url;
+  a.download = includeContent ? `${base}-with-content.json` : `${base}.json`;
+  a.click();
   URL.revokeObjectURL(url);
 }
 
 document.getElementById('file-input').addEventListener('change', e => {
-  const file=e.target.files?.[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try {
-      const obj = JSON.parse(ev.target.result);
-      loadFromJSON(obj);
-    } catch {}
-  };
-  reader.readAsText(file);
-  e.target.value='';
+  const file = e.target.files?.[0];
+  if (file) readJSONFile(file, loadFromJSON);
+  e.target.value = '';
 });
 document.getElementById('menu-export-structure').addEventListener('click', () => exportToJSON(false));
 document.getElementById('menu-export-content').addEventListener('click', () => exportToJSON(true));

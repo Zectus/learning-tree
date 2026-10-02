@@ -1,59 +1,31 @@
 /* ═══════════════════════════════════════════════════════════
-   autoscroll.js — page-wide middle-click autoscroll.
-   Depends on nothing but the DOM; loads independently of
-   state.js/nodes.js/etc. so it works identically everywhere
-   in the app (session viewer, the "new tree" modal's scrolling
-   body, a node's explanation textarea, any future scrollable
-   region) without any of them needing to know it exists.
+   autoscroll.js — page-wide middle-click autoscroll. Depends on nothing
+   but the DOM, so it works the same in the session viewer, modal bodies,
+   textareas, and any scrollable region added later.
 
-   This started out living inside viewer.js, scoped to just the
-   session viewer window, because Chrome's native middle-click
-   autoscroll behaved badly there. The same problem isn't
-   specific to that one screen — any scrollable region on the
-   page inherits the same native behavior — so this generalizes
-   the fix to the whole document instead of re-solving it
-   per-screen, and lives in its own file since it's no longer
-   tied to the viewer's concerns.
+   Chrome's native middle-click autoscroll misbehaves in this app, so this
+   reimplements it to match Chromium's autoscroll_controller.cc:
+   - Press and release without moving (a tap): stays running with no button
+     held, following the cursor, until the next pointerdown or Escape.
+   - Press, drag, release: scrolls while held, stops when the button comes up.
+   Speed per axis is distance^2.2 * coefficient, with a 15px dead zone. The
+   2.2 exponent and 15px radius are Chromium's; the coefficient is
+   recalibrated to px/frame because Chromium's value feeds a compositor-side
+   fling system that isn't visible from the page.
+
+   The scroll target is the nearest ancestor of the element under the cursor
+   that actually has overflow to scroll — no container is special-cased.
 ═══════════════════════════════════════════════════════════ */
+const mca = { active:false, anchorX:0, anchorY:0, curX:0, curY:0, moved:false, raf:null, last:0, remX:0, remY:0, target:null, canX:false, canY:false, curDir:undefined };
+const MCA_DEADZONE  = 15;      // px — Chromium's kNoMiddleClickAutoscrollRadius
+const MCA_EXPONENT  = 2.2;     // Chromium's kExponent
+const MCA_COEFF     = 0.0006;  // recalibrated, see above
+const MCA_MAX_SPEED = 220;     // px per 60Hz frame, cap so it stays controllable
+const MCA_MOVE_TOL  = 6;       // px of movement that still counts as a tap
+const MCA_FRAME_MS  = 1000 / 60;
 
-/* ── Middle-click autoscroll, matching Chrome's native behavior
-   (verified against Chromium's actual source, autoscroll_controller.cc):
-   - Press and release without moving (a tap): autoscroll goes "sticky" —
-     it keeps running with no button held, following the cursor, until
-     the next pointerdown of ANY button, anywhere, or Escape cancels it.
-   - Press, drag, and release: scrolls while held, and stops the instant
-     the button comes up.
-   Speed is not linear — Chromium computes it per axis as
-   distance^2.2 * 0.000008 (distance zeroed inside a 15px dead zone),
-   which is why it ramps up far more aggressively than a straight-line
-   drag the further the cursor gets from the anchor. The 2.2 exponent
-   and 15px radius are exact; the 0.000008 coefficient feeds into
-   Chromium's compositor-side fling system before becoming an actual
-   scroll amount, which isn't visible from the page, so MCA_COEFF and
-   the MCA_MAX_SPEED cap below are recalibrated to produce comparably
-   aggressive results directly as px/frame rather than an exact port.
-
-   The scrollable target is whichever element — found by walking up
-   from whatever's under the cursor, all the way to the document root —
-   actually has overflow to scroll in some direction. This is what makes
-   it page-wide rather than tied to one container: it doesn't know or
-   care whether that element is the session viewer's body, a modal's
-   body, a textarea, or anything added later. */
-const mca = { active:false, sticky:false, anchorX:0, anchorY:0, curX:0, curY:0, moved:false, raf:null, target:null, canX:false, canY:false, curDir:undefined };
-const MCA_DEADZONE  = 15;      // px — exact value from Chromium (kNoMiddleClickAutoscrollRadius)
-const MCA_EXPONENT  = 2.2;     // exact value from Chromium (kExponent)
-const MCA_COEFF     = 0.0006;  // recalibrated (Chromium's 0.000008 isn't a direct px/frame value — see note above)
-const MCA_MAX_SPEED = 220;     // px/frame cap so it stays controllable at extreme distances
-const MCA_MOVE_TOL  = 6;       // px of movement that still counts as "didn't move" (a tap)
-
-/* Walks up from `el` looking for the nearest ancestor that actually has
-   overflow to scroll in some direction. No container is special-cased —
-   this is what lets the feature work anywhere (the "new tree" modal's
-   body, a node's explanation textarea, the session viewer, etc.) without
-   ever needing to be told those elements exist. Falls back to the page
-   itself in case a layout ever needs real page-level scrolling, though
-   nothing in this app currently does (every scrollable region here is
-   its own overflow:auto container, not the page). */
+/* Walks up from `el` to the nearest ancestor with real overflow in some
+   direction; falls back to the page itself. */
 function findScrollTarget(el) {
   let node = el;
   while (node && node !== document.documentElement) {
@@ -70,28 +42,21 @@ function findScrollTarget(el) {
   return null;
 }
 
-/* ── Directional cursor, generated to match Chromium's 11-cursor set
-   (NoMove2D/NoMoveHoriz/NoMoveVert at rest, 8 compass Pan* cursors while
-   moving) — a center dot with arrow spokes for each scrollable axis, the
-   active direction's arrow drawn bold, the rest faint. Cached per
-   direction+capability combo and only swapped when it actually changes,
-   since regenerating a data-URI every animation frame would be wasteful. */
+/* ── Directional cursor, generated to match Chromium's 11-cursor set: a
+   center dot with an arrow per scrollable axis, the active direction bold.
+   Cached per direction+capability so a data URI isn't rebuilt every frame. */
 const MCA_CURSOR_ANGLE = { E:0, SE:45, S:90, SW:135, W:180, NW:225, N:270, NE:315 };
 const mcaCursorCache = new Map();
 function buildPanCursorSVG(activeDir, canX, canY) {
-  let dirs = [];
+  const dirs = [];
   if (canY) dirs.push('N', 'S');
   if (canX) dirs.push('E', 'W');
   if (canX && canY) dirs.push('NE', 'SE', 'SW', 'NW');
   let arrows = '';
   for (const d of dirs) {
     const active = d === activeDir;
-    const tip = active ? 15 : 11;
-    const halfW = active ? 6 : 4.5;
-    const base = 4;
-    const fill = active ? '#111' : '#ffffffdd';
-    const stroke = active ? '#fff' : '#111';
-    const sw = active ? 1.6 : 1.1;
+    const tip = active ? 15 : 11, halfW = active ? 6 : 4.5, base = 4;
+    const fill = active ? '#111' : '#ffffffdd', stroke = active ? '#fff' : '#111', sw = active ? 1.6 : 1.1;
     arrows += `<g transform="rotate(${MCA_CURSOR_ANGLE[d]})"><polygon points="${tip},0 ${base},-${halfW} ${base},${halfW}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/></g>`;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-16 -16 32 32">${arrows}<circle r="3" fill="#111" stroke="#fff" stroke-width="1.4"/></svg>`;
@@ -105,8 +70,7 @@ function cursorFor(activeDir, canX, canY) {
   }
   return url;
 }
-// Same priority order Chromium uses: vertical (combined with horizontal
-// for a diagonal) takes precedence over a pure horizontal direction.
+// Chromium's priority: vertical (combined with horizontal for a diagonal) beats pure horizontal.
 function dirFor(dx, dy, canX, canY) {
   const north = dy < 0, south = dy > 0, east = dx > 0, west = dx < 0;
   if (north && canY) { if (canX) { if (east) return 'NE'; if (west) return 'NW'; } return 'N'; }
@@ -116,20 +80,32 @@ function dirFor(dx, dy, canX, canY) {
   return null; // at rest in the dead zone
 }
 
-function autoscrollStep() {
+/* Scrolls one axis by this frame's share of the speed. Fractional pixels are
+   carried in `rem` because browsers snap fractional scroll offsets, which
+   would freeze slow scrolling near the dead zone. Returns the new remainder. */
+function stepAxis(prop, distance, rem, frames) {
+  const speed = Math.min(MCA_MAX_SPEED, Math.pow(Math.abs(distance), MCA_EXPONENT) * MCA_COEFF) * frames;
+  rem += Math.sign(distance) * speed;
+  const whole = Math.trunc(rem);
+  if (whole === 0) return rem;
+  const before = mca.target[prop];
+  mca.target[prop] += whole;
+  return mca.target[prop] === before ? 0 : rem - whole; // hit the end: drop the remainder
+}
+
+function autoscrollStep(now) {
   if (!mca.active) return;
+  // Scale by elapsed time so a 144Hz display isn't 2.4× faster than 60Hz.
+  const frames = Math.min(3, (now - mca.last) / MCA_FRAME_MS);
+  mca.last = now;
+
   let dx = mca.curX - mca.anchorX;
   let dy = mca.curY - mca.anchorY;
   if (Math.abs(dx) <= MCA_DEADZONE) dx = 0;
   if (Math.abs(dy) <= MCA_DEADZONE) dy = 0;
-  if (mca.canX && dx !== 0) {
-    const speed = Math.min(MCA_MAX_SPEED, Math.pow(Math.abs(dx), MCA_EXPONENT) * MCA_COEFF);
-    mca.target.scrollLeft += Math.sign(dx) * speed;
-  }
-  if (mca.canY && dy !== 0) {
-    const speed = Math.min(MCA_MAX_SPEED, Math.pow(Math.abs(dy), MCA_EXPONENT) * MCA_COEFF);
-    mca.target.scrollTop += Math.sign(dy) * speed;
-  }
+  if (mca.canX && dx !== 0) mca.remX = stepAxis('scrollLeft', dx, mca.remX, frames);
+  if (mca.canY && dy !== 0) mca.remY = stepAxis('scrollTop',  dy, mca.remY, frames);
+
   const dir = dirFor(dx, dy, mca.canX, mca.canY);
   if (dir !== mca.curDir) {
     mca.curDir = dir;
@@ -138,49 +114,45 @@ function autoscrollStep() {
   mca.raf = requestAnimationFrame(autoscrollStep);
 }
 
-// Capture phase, and always live while active (hold OR sticky) — this is
-// what makes a second click actually cancel instead of restarting: it
-// runs and calls stopPropagation() before the event ever reaches the
-// pointerdown listener below that would otherwise try to start a new
-// session (or, on an element with its own middle-click handling, before
-// that handler sees the click at all).
+// Capture phase, live for the whole session (held or sticky): a second click
+// cancels instead of restarting, because this runs and stops propagation
+// before the pointerdown listener below could start a new session.
 function autoscrollCancel(e) {
   if (!mca.active) return;
   e.preventDefault();
   e.stopPropagation();
   stopAutoscroll();
 }
-function autoscrollCancelOnEscape(e) { if (e.key === 'Escape') stopAutoscroll(); }
+// Also capture + stopPropagation, so this Escape doesn't additionally close
+// whatever modal the central handler (escape.js) would otherwise close.
+function autoscrollCancelOnEscape(e) {
+  if (e.key !== 'Escape') return;
+  e.stopPropagation();
+  stopAutoscroll();
+}
 
 function startAutoscroll(target, x, y) {
-  mca.active = true; mca.sticky = false; mca.moved = false; mca.curDir = undefined;
+  mca.active = true; mca.moved = false; mca.curDir = undefined; mca.remX = mca.remY = 0;
   mca.target = target.el; mca.canX = target.canX; mca.canY = target.canY;
   mca.anchorX = x; mca.anchorY = y; mca.curX = x; mca.curY = y;
-  mca.target.classList.add('mca-active');
+  mca.last = performance.now();
   mca.target.style.setProperty('cursor', cursorFor(null, mca.canX, mca.canY));
   document.addEventListener('pointerdown', autoscrollCancel, true);
-  document.addEventListener('keydown', autoscrollCancelOnEscape);
+  document.addEventListener('keydown', autoscrollCancelOnEscape, true);
   mca.raf = requestAnimationFrame(autoscrollStep);
 }
 function stopAutoscroll() {
   if (!mca.active) return;
   mca.active = false;
-  if (mca.target) { mca.target.classList.remove('mca-active'); mca.target.style.removeProperty('cursor'); }
+  if (mca.target) mca.target.style.removeProperty('cursor');
   if (mca.raf) cancelAnimationFrame(mca.raf);
   document.removeEventListener('pointerdown', autoscrollCancel, true);
-  document.removeEventListener('keydown', autoscrollCancelOnEscape);
+  document.removeEventListener('keydown', autoscrollCancelOnEscape, true);
   mca.target = null;
 }
 
-// e.defaultPrevented lets any element that already does its own thing
-// with the middle button (e.g. the canvas repurposing it for pan) opt
-// itself out simply by calling preventDefault() first, same as it would
-// need to for the browser's own native autoscroll — no special-casing
-// of that element needed here. In practice this rarely even matters:
-// findScrollTarget() only matches elements with real CSS overflow to
-// scroll, which the canvas doesn't have (it pans via transform, not
-// native scrolling), so a click there falls through to "no target"
-// regardless.
+// An element that repurposes the middle button (the canvas uses it to pan)
+// opts out by calling preventDefault() first; e.defaultPrevented covers it.
 document.addEventListener('pointerdown', e => {
   if (e.button !== 1 || mca.active || e.defaultPrevented) return;
   const target = findScrollTarget(e.target);
@@ -197,7 +169,6 @@ document.addEventListener('pointermove', e => {
 document.addEventListener('pointerup', e => {
   if (!mca.active) return;
   if (mca.target?.hasPointerCapture?.(e.pointerId)) mca.target.releasePointerCapture(e.pointerId);
-  if (mca.moved) stopAutoscroll();
-  else mca.sticky = true; // stays active — only the cancel handler above or Escape stops it from here
+  if (mca.moved) stopAutoscroll(); // a tap (no movement) leaves it running until the next click or Escape
 });
 document.addEventListener('pointercancel', () => stopAutoscroll());

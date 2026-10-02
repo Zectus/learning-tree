@@ -1,105 +1,74 @@
 /* ═══════════════════════════════════════════════════════════
-   layout.js — pure graph-computation layer.
-   Depth assignment, left-to-right layout, node-status
-   resolution, SVG edge rendering, and hover highlight.
-   No user interaction; depends on state.js only, plus scale.js
-   (window.UI_SCALE) for the pixel constants below.
+   layout.js — pure graph-computation layer: depth assignment,
+   left-to-right layout, node-status resolution, SVG edge rendering,
+   hover highlight. No user interaction. Depends on state.js and
+   scale.js (window.UI_SCALE).
 ═══════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════
-   LAYOUT CONSTANTS
-   These are `let`, not `const`, and recomputed by
-   updateLayoutScale() below — called once here at load (using
-   whatever window.UI_SCALE scale.js already set, since it loads
-   first) and again by scale.js whenever the desktop UI-scale
-   factor changes on a live window resize, so a node's on-screen
-   size (and the spacing between them) stays proportioned the same
-   way relative to the screen as everything else in the app's
-   chrome, instead of staying fixed while the toolbar/modals around
-   it scale. See scale.js for why this factor exists at all.
-═══════════════════════════════════════════════════════════ */
-let BASE_W = 190;
-let BASE_H = 72;
-let COL_W  = 260;   // horizontal px between depth columns
-let ROW_H  = 110;   // vertical px between nodes in the same column
-const DEPTH_SCALE = 1.0;   // uniform node size — no shrinking by depth
-const MIN_SCALE   = 1.0;
+// Node pixel sizes are fixed at load from the UI scale (see scale.js).
+const LAYOUT_SCALE = window.UI_SCALE || 1;
+const BASE_W = 190 * LAYOUT_SCALE;
+const BASE_H = 72  * LAYOUT_SCALE;
+const COL_W  = 260 * LAYOUT_SCALE;  // horizontal px between depth columns
+const ROW_H  = 110 * LAYOUT_SCALE;  // vertical px between nodes in the same column
 
-function updateLayoutScale() {
-  const s = window.UI_SCALE || 1;
-  BASE_W = 190 * s;
-  BASE_H = 72  * s;
-  COL_W  = 260 * s;
-  ROW_H  = 110 * s;
-}
-updateLayoutScale();
-
-function depthS(d)  { return Math.max(MIN_SCALE, Math.pow(DEPTH_SCALE, d)); }
-function nodeW(d)   { return Math.round(BASE_W * depthS(d)); }
-function nodeH(d)   { return Math.round(BASE_H * depthS(d)); }
+function nodeW() { return Math.round(BASE_W); }
+function nodeH() { return Math.round(BASE_H); }
 
 /* ═══════════════════════════════════════════════════════════
-   DEPTH ASSIGNMENT
+   DEPTH ASSIGNMENT — longest path from any root (Kahn's algorithm).
+   Nodes caught in a cycle are never dequeued and fall back to depth 0;
+   loadFromJSON and finishLink both refuse to create cycles.
 ═══════════════════════════════════════════════════════════ */
 function recomputeDepths() {
-  const depth = new Map();
-  const ids   = [...state.nodes.keys()];
-  ids.forEach(id => { if (prereqsOf(id).length === 0) depth.set(id, 0); });
-  let changed = true, guard = 0;
-  while (changed && guard++ < 500) {
-    changed = false;
-    for (const k of state.edges) {
-      const [f,t] = k.split('→').map(Number);
-      const nd = (depth.get(f) ?? 0) + 1;
-      if (!depth.has(t) || depth.get(t) < nd) { depth.set(t, nd); changed = true; }
-    }
+  const depth = new Map(), indegree = new Map(), queue = [];
+  state.nodes.forEach((_, id) => {
+    const n = state.prereqs.get(id)?.size ?? 0;
+    indegree.set(id, n);
+    if (n === 0) { depth.set(id, 0); queue.push(id); }
+  });
+  for (let i = 0; i < queue.length; i++) {
+    const id = queue[i];
+    state.dependents.get(id)?.forEach(t => {
+      depth.set(t, Math.max(depth.get(t) ?? 0, depth.get(id) + 1));
+      indegree.set(t, indegree.get(t) - 1);
+      if (indegree.get(t) === 0) queue.push(t);
+    });
   }
-  ids.forEach(id => { if (!depth.has(id)) depth.set(id, 0); });
   state.nodes.forEach((node, id) => { node.depth = depth.get(id) ?? 0; });
 }
 
 /* ═══════════════════════════════════════════════════════════
-   LEFT-TO-RIGHT PROGRESS TREE LAYOUT
-   Depth 0 (no prerequisites) on the left; each level one
-   column to the right.  Nodes in each column are sorted by
-   the average y-position of their prerequisites so edges
+   LEFT-TO-RIGHT LAYOUT — depth 0 on the left, one column per level;
+   each column sorted by the average y of its prerequisites so edges
    stay as untangled as possible.
 ═══════════════════════════════════════════════════════════ */
 function layout() {
   if (state.nodes.size === 0) { renderEdges(); return; }
   recomputeDepths();
 
-  // 1. Group node ids by depth level
   const byDepth = new Map();
   state.nodes.forEach((node, id) => {
-    const d = node.depth;
-    if (!byDepth.has(d)) byDepth.set(d, []);
-    byDepth.get(d).push(id);
+    if (!byDepth.has(node.depth)) byDepth.set(node.depth, []);
+    byDepth.get(node.depth).push(id);
   });
-  const depthLevels = [...byDepth.keys()].sort((a, b) => a - b);
 
-  // 2. Process columns left → right; sort each by average prereq y
-  //    (prereqs are placed in the previous iteration, so their _cy is ready)
-  depthLevels.forEach(depth => {
+  [...byDepth.keys()].sort((a, b) => a - b).forEach(depth => {
     const col = byDepth.get(depth);
+    // Prerequisites sit in earlier columns, so their _cy is already set.
+    const avgPrereqY = id => {
+      const ps = prereqsOf(id);
+      if (!ps.length) return id; // roots: stable order by id
+      return ps.reduce((s, pid) => s + (state.nodes.get(pid)?._cy ?? 0), 0) / ps.length;
+    };
+    col.sort((a, b) => avgPrereqY(a) - avgPrereqY(b));
 
-    col.sort((a, b) => {
-      const avgPrereqY = id => {
-        const ps = prereqsOf(id);
-        if (!ps.length) return id; // roots: stable order by id
-        return ps.reduce((s, pid) => s + (state.nodes.get(pid)?._cy ?? 0), 0) / ps.length;
-      };
-      return avgPrereqY(a) - avgPrereqY(b);
-    });
-
-    const count = col.length;
     col.forEach((id, i) => {
       const node = state.nodes.get(id);
-      const cy   = (i - (count - 1) / 2) * ROW_H;
-      node.x     = depth * COL_W;
-      node.y     = cy - nodeH(depth) / 2;
-      node._cx   = depth * COL_W + nodeW(depth) / 2;
-      node._cy   = cy;
+      const cy = (i - (col.length - 1) / 2) * ROW_H;
+      node.x   = depth * COL_W;
+      node.y   = cy - nodeH() / 2;
+      node._cy = cy;
     });
   });
 
@@ -113,20 +82,17 @@ function applyNodePositions() {
     if (!data.el) return;
     data.el.style.left  = data.x + 'px';
     data.el.style.top   = data.y + 'px';
-    data.el.style.width = nodeW(data.depth) + 'px';
+    data.el.style.width = nodeW() + 'px';
   });
 }
 
 function updateDepthClasses() {
   state.nodes.forEach(data => {
     if (!data.el) return;
-    data.el.classList.remove('root','d1','d2','d3','d4');
+    data.el.classList.remove('root', 'd1', 'd2', 'd3', 'd4');
     data.el.classList.add(data.depth === 0 ? 'root' : `d${Math.min(data.depth, 4)}`);
-    // Combines the existing per-depth fractal shrink (depthS) with the
-    // desktop UI-scale factor (see scale.js) into one multiplier, so a
-    // node's text/badge/padding scale the same way the rest of the app's
-    // chrome does, on top of whatever depth-based sizing already applied.
-    const s = depthS(data.depth) * (window.UI_SCALE || 1);
+    // Text/badge/padding sizes are set inline (not in rem) so they track the UI scale.
+    const s = LAYOUT_SCALE;
     const textEl = data.el.querySelector('.node-text');
     if (textEl) {
       textEl.style.fontSize   = (data.depth === 0 ? 15 : 13.5) * s + 'px';
@@ -137,8 +103,7 @@ function updateDepthClasses() {
     const tag = data.el.querySelector('.node-tag');
     if (tag) tag.style.fontSize = (10 * s) + 'px';
     const inner = data.el.querySelector('.node-inner');
-    if (inner) inner.style.padding =
-      `${Math.round(10*s)}px ${Math.round(14*s)}px ${Math.round(11*s)}px`;
+    if (inner) inner.style.padding = `${Math.round(10*s)}px ${Math.round(14*s)}px ${Math.round(11*s)}px`;
   });
 }
 
@@ -149,20 +114,26 @@ function nodeStatus(id) {
   const node = state.nodes.get(id);
   if (!node) return 'locked';
   if (node.done) return 'done';
-  const prereqs = prereqsOf(id);
-  return prereqs.every(pid => state.nodes.get(pid)?.done) ? 'available' : 'locked';
+  return prereqsOf(id).every(pid => state.nodes.get(pid)?.done) ? 'available' : 'locked';
 }
 
 function updateAllStatuses() {
+  const editing = state.mode === 'edit';
   state.nodes.forEach((node, id) => {
     if (!node.el) return;
     const s = nodeStatus(id);
-    node.el.classList.remove('status-done','status-available','status-locked');
+    node.el.classList.remove('status-done', 'status-available', 'status-locked');
     node.el.classList.add(`status-${s}`);
     const badge = node.el.querySelector('.node-badge');
-    if (badge) {
-      badge.textContent = s === 'done' ? '✓ complete'
-                        : s === 'available' ? '● available' : '○ locked';
+    if (badge) badge.textContent = s === 'done' ? '✓ complete' : s === 'available' ? '● available' : '○ locked';
+
+    // Outside edit mode a node is one button; in edit mode it holds its own controls.
+    if (editing) {
+      ['role', 'aria-label', 'aria-disabled'].forEach(a => node.el.removeAttribute(a));
+    } else {
+      node.el.setAttribute('role', 'button');
+      node.el.setAttribute('aria-label', `${node.label || 'Untitled'}, ${s === 'done' ? 'complete' : s}`);
+      node.el.setAttribute('aria-disabled', s === 'locked' ? 'true' : 'false');
     }
   });
   updateEdgeStyles();
@@ -172,26 +143,28 @@ function updateAllStatuses() {
 function updateProgress() {
   const total = state.nodes.size;
   const done  = [...state.nodes.values()].filter(n => n.done).length;
-  progBar.style.width = total ? (done/total*100)+'%' : '0%';
+  progBar.style.width = total ? (done / total * 100) + '%' : '0%';
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDGE RENDERING  — center-to-center bezier curves
+   EDGE RENDERING
+   Edges always run from a lower depth column to a higher one, so each
+   curve starts at the prerequisite's right edge and ends at the
+   dependent's left edge — that's what keeps the arrowhead visible
+   instead of buried under the opaque node card.
+   Path elements are cached by edge key; nothing queries the DOM per edge.
 ═══════════════════════════════════════════════════════════ */
-function nodeCenter(data) {
-  // Use the pre-computed center from layout if available
-  if (data._cx != null) return { x: data._cx, y: data._cy };
-  const el = data.el;
-  const h  = el ? (el.offsetHeight || nodeH(data.depth)) : nodeH(data.depth);
-  return {
-    x: data.x + nodeW(data.depth) / 2,
-    y: data.y + h / 2,
-  };
+const edgeEls = new Map(); // edge key → <path>
+
+function nodeCenterY(data) { return data._cy ?? (data.y + nodeH() / 2); }
+
+function clearEdgeEls() {
+  edgeEls.forEach(p => p.remove());
+  edgeEls.clear();
 }
 
 function edgeStatus(fromId, toId) {
-  const f = state.nodes.get(fromId);
-  const t = state.nodes.get(toId);
+  const f = state.nodes.get(fromId), t = state.nodes.get(toId);
   if (!f || !t) return 'lock';
   if (f.done && t.done) return 'done';
   if (f.done) return 'available';
@@ -199,66 +172,58 @@ function edgeStatus(fromId, toId) {
 }
 
 function renderEdges() {
-  document.querySelectorAll('.connector').forEach(p => {
-    if (!state.edges.has(p.dataset.edge)) p.remove();
+  edgeEls.forEach((path, key) => {
+    if (!state.edges.has(key)) { path.remove(); edgeEls.delete(key); }
   });
 
-  for (const key of state.edges) {
-    const [fid, tid] = key.split('→').map(Number);
-    const from = state.nodes.get(fid);
-    const to   = state.nodes.get(tid);
-    if (!from || !to) continue;
+  forEachEdge((fid, tid, key) => {
+    const from = state.nodes.get(fid), to = state.nodes.get(tid);
+    if (!from || !to) return;
 
-    let path = document.querySelector(`[data-edge="${key}"]`);
+    let path = edgeEls.get(key);
     if (!path) {
-      path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.classList.add('connector');
       path.dataset.edge = key;
       svgWorld.appendChild(path);
+      edgeEls.set(key, path);
     }
 
-    const fc = nodeCenter(from);
-    const tc = nodeCenter(to);
-    const mx = (fc.x + tc.x) / 2;
-    const my = (fc.y + tc.y) / 2;
-    path.setAttribute('d', `M${fc.x},${fc.y} C${mx},${fc.y} ${mx},${tc.y} ${tc.x},${tc.y}`);
-    path.setAttribute('stroke-width', Math.max(1, 1.8 * depthS(from.depth)));
-  }
+    const sx = from.x + nodeW(), sy = nodeCenterY(from);
+    const tx = to.x,             ty = nodeCenterY(to);
+    const mx = (sx + tx) / 2;
+    path.setAttribute('d', `M${sx},${sy} C${mx},${sy} ${mx},${ty} ${tx},${ty}`);
+    path.setAttribute('stroke-width', 1.8);
+  });
   updateEdgeStyles();
 }
 
+const EDGE_MARKERS = { done: 'arrow-done', available: 'arrow-avail', lock: 'arrow-lock' };
+
 function updateEdgeStyles() {
-  for (const key of state.edges) {
-    const path = document.querySelector(`[data-edge="${key}"]`);
-    if (!path) continue;
-    const [fid,tid] = key.split('→').map(Number);
-    const es = edgeStatus(fid,tid);
-    path.classList.remove('edge-done','edge-available','edge-lock');
-    path.classList.add(`edge-${es === 'lock' ? 'lock' : es}`);
-    const markers = { done:'arrow-done', available:'arrow-avail', lock:'arrow-lock' };
-    path.setAttribute('marker-end', `url(#${markers[es]??'arrow-lock'})`);
-  }
+  forEachEdge((fid, tid, key) => {
+    const path = edgeEls.get(key);
+    if (!path) return;
+    const es = edgeStatus(fid, tid);
+    path.classList.remove('edge-done', 'edge-available', 'edge-lock');
+    path.classList.add(`edge-${es}`);
+    path.setAttribute('marker-end', `url(#${EDGE_MARKERS[es]})`);
+  });
 }
 
-/* ═══════════════════════════════════════════════════════════
-   EDGE HIGHLIGHT ON HOVER
-   Prereq edges → blue   Dependent edges → orange
-   Everything else fades to near-invisible.
-═══════════════════════════════════════════════════════════ */
+/* Hover focus: prerequisite edges turn blue, dependent edges orange,
+   everything else fades. */
 function highlightEdges(id) {
   document.body.classList.add('node-focused');
-  for (const key of state.edges) {
-    const path = document.querySelector(`[data-edge="${key}"]`);
-    if (!path) continue;
-    const [fid, tid] = key.split('→').map(Number);
-    if (tid === id) path.classList.add('hi-prereq');   // points INTO hovered node
-    else if (fid === id) path.classList.add('hi-dep'); // points OUT of hovered node
-  }
+  forEachEdge((fid, tid, key) => {
+    const path = edgeEls.get(key);
+    if (!path) return;
+    if (tid === id) path.classList.add('hi-prereq');
+    else if (fid === id) path.classList.add('hi-dep');
+  });
 }
 
 function clearEdgeHighlight() {
   document.body.classList.remove('node-focused');
-  document.querySelectorAll('.hi-prereq, .hi-dep').forEach(p => {
-    p.classList.remove('hi-prereq', 'hi-dep');
-  });
+  edgeEls.forEach(p => p.classList.remove('hi-prereq', 'hi-dep'));
 }

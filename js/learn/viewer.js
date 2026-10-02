@@ -1,35 +1,25 @@
 /* ═══════════════════════════════════════════════════════════
-   viewer.js — session viewer: .txt parsing, question UI,
-   answer-click handling, score tracking, drag/resize.
-   Depends on state.js, layout.js, io.js, and tools.js (svEsc,
-   renderMath, collapseMathNewlines, shuffleOptions, and the
-   BLOCK_TOOLS registry that TABLE/TIMELINE/GRAPH blocks are
-   parsed and rendered through — see tools.js's header for what
-   lives there instead of here, and why).
+   viewer.js — session viewer: .txt parsing, question UI, answer
+   handling, score tracking, notes, drag/resize.
+   Depends on state.js, layout.js, io.js, toast.js, escape.js and tools.js
+   (svEsc, renderMath, collapseMathNewlines, shuffleOptions, and the
+   BLOCK_TOOLS registry that TABLE/TIMELINE/GRAPH blocks go through).
 ═══════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════
-   SESSION VIEWER
-═══════════════════════════════════════════════════════════ */
-const viewer = { nodeId: null, answers: new Map(), score: 0, total: 0, answerKey: [], bonusAnswers: new Map(), bonusKeys: new Map(), checkpoints: [], questions: new Map(), bonuses: new Map() };
+const viewer = { nodeId: null, answers: new Map(), score: 0, total: 0, bonusAnswers: new Map(), checkpoints: [], questions: new Map(), bonuses: new Map() };
+let svUserPositioned = false; // set once the window is dragged; stops auto-centering on resize
 
-/* ── Session progress bar ──────
+/* ── Session progress bar ──
    "Progress" is scroll position through the lesson, rescaled so the last
-   question's position is 100%. Each question is a "checkpoint" at its own
-   rescaled position; a checkpoint completes when that question is answered
-   (right or wrong). The bar's fill is clamped between the last checkpoint
-   completed *in order* and the next one still to come — so it tracks raw
-   scrolling within that window, but can't run ahead of an unanswered
-   question, and answering questions out of order (e.g. Q3 before Q2)
-   doesn't advance it past Q1. */
+   question is 100%. Each question is a checkpoint; one completes when it's
+   answered (right or wrong). The fill is clamped between the last checkpoint
+   completed in order and the next one to come, so it can't run ahead of an
+   unanswered question, and answering out of order doesn't skip ahead. */
 function computeCheckpoints() {
   const body = document.getElementById('sv-body');
   const bodyRect = body.getBoundingClientRect();
   viewer.checkpoints = [...body.querySelectorAll('.q-card[data-qn]')]
-    .map(el => ({
-      qn:  parseInt(el.dataset.qn),
-      top: el.getBoundingClientRect().top - bodyRect.top + body.scrollTop
-    }))
+    .map(el => ({ qn: parseInt(el.dataset.qn), top: el.getBoundingClientRect().top - bodyRect.top + body.scrollTop }))
     .sort((a, b) => a.qn - b.qn);
   renderCheckpointDots();
 }
@@ -62,7 +52,6 @@ function updateSessionProgress() {
   const floorPct = lastDoneIdx >= 0 ? Math.min(100, (cps[lastDoneIdx].top / lastTop) * 100) : 0;
   const nextIdx  = lastDoneIdx + 1;
   const ceilPct  = nextIdx < cps.length ? Math.min(100, (cps[nextIdx].top / lastTop) * 100) : 100;
-
   bar.style.width = Math.min(ceilPct, Math.max(floorPct, raw)) + '%';
 
   document.querySelectorAll('#sv-progress-checkpoints .sv-checkpoint').forEach(dot => {
@@ -70,27 +59,16 @@ function updateSessionProgress() {
   });
 }
 
-/* ── Parser ────── 
-   Each question and bonus now carries its own correct answer inline
-   ([ANSWER: X], read out in parseQuestionBody/parseBonusBody below) rather
-   than the document ending in one collected [KEY: ...] line — that line,
-   and the whole pre-generated-answer-bank machinery that used to justify
-   it (see prompts.js's history), is gone. The options a reader actually
-   sees are also no longer the raw (A)-(E) order the model wrote them in:
-   shuffleOptions (tools.js) reorders them, seeded off each question's own
-   text, so the correct answer's on-screen letter is randomized by the app
-   rather than left to however the model happened to place it while
-   writing.
+/* ── Parser ──
+   Each question and bonus carries its own correct answer inline
+   ([ANSWER: X]). shuffleOptions (tools.js) reorders the options on screen,
+   seeded off the question text, so the on-screen letter of the correct
+   answer is randomized by the app rather than left to the model.
 
-   A saved answer is persisted by the option's ORIGINAL (pre-shuffle)
-   letter — see handleOptionClick/handleBonusClick below — not by whatever
-   letter happened to be on screen at the moment it was picked. That's
-   what origOf/newOf (from shuffleOptions) are for: on any later reopen,
-   the current parse's newOf map translates that stored original letter to
-   wherever the option lands THIS time, so a correct answer can never
-   silently read back as wrong just because a reshuffle put things in a
-   different order — the identity being checked is the option itself, not
-   its transient screen position. */
+   Saved answers are stored by the option's ORIGINAL letter, not the
+   on-screen one, and translated back through origOf/newOf, so a reshuffle
+   can never turn a saved correct answer into a wrong one. */
+
 function parseTxtSession(raw) {
   raw = collapseMathNewlines(raw);
   const questions = new Map(), bonuses = new Map();
@@ -103,14 +81,10 @@ function parseTxtSession(raw) {
   });
   cleaned = cleaned.replace(/\[BONUS\s+(\d+)\]([\s\S]*?)\[\/BONUS\]/gi, (_, n, body) => {
     bonuses.set(parseInt(n), parseBonusBody(parseInt(n), body));
-    return '';  // bonus blocks removed from main flow
+    return ''; // bonus blocks are pulled out of the main flow
   });
 
-  // Every other block type — tables, timelines, graphs, and anything
-  // registered in tools.js later — follows the identical extract/replace/
-  // store pattern, so it's driven from the BLOCK_TOOLS registry instead of
-  // one hardcoded regex-replace per type here. Adding a future tool means
-  // adding one entry to BLOCK_TOOLS in tools.js; nothing here changes.
+  // Every other block type follows the same extract / placeholder / store pattern.
   BLOCK_TOOLS.forEach(tool => {
     let id = 0;
     const re = new RegExp(`\\[${tool.tag}\\]([\\s\\S]*?)\\[/${tool.tag}\\]`, 'gi');
@@ -122,12 +96,7 @@ function parseTxtSession(raw) {
   });
 
   const parts = cleaned.split(/^===\s*SECTION\s+(\d+)[:.]\s*(.+?)\s*===/im);
-  // Everything before the first "=== SECTION N: TITLE ===" match lands in
-  // parts[0]. The prompt now instructs Claude to never write anything
-  // there (see node-prompt.js) — but if it slips up anyway, that text
-  // shouldn't just vanish. Fold it into Section 1 as its own opening
-  // prose, same as if it had been written in the right place to begin
-  // with, rather than silently discarding it.
+  // Text before the first section header would otherwise vanish; fold it into Section 1.
   const leading = (parts[0] || '').trim();
   const sections = [];
   for (let i = 1; i < parts.length; i += 3)
@@ -137,102 +106,66 @@ function parseTxtSession(raw) {
   return { sections, questions, bonuses, ...blockMaps };
 }
 
-/* Pulls the model's own [ANSWER: X] tag and raw (A)-(E) options out of a
-   question body, then hands them to shuffleOptions (tools.js) to produce
-   the on-screen order and the corresponding (possibly different) correct
-   letter. Seeding the shuffle on "Q<n>|<question text>" ties the shuffle
-   to this exact question's content, so the same .txt always reshuffles
-   the same way — required for a saved answer letter to still mean the
-   same option when a session is reopened later (see tools.js's own
-   header for why this has to be deterministic, not random-per-view). */
-function parseQuestionBody(n, raw) {
-  const ansM = raw.match(/\[ANSWER:\s*([A-Ea-e])\]/i);
-  const correctRaw = ansM ? ansM[1].toUpperCase() : null;
+/* Shared by questions and bonuses: pulls out [ANSWER: X] and the raw (A)-(E)
+   options, shuffles them, and reports whether the block is scoreable (`valid`:
+   its answer letter names one of its own options). */
+function parseChoiceBlock(prefix, n, raw) {
+  const ansMatch = raw.match(/\[ANSWER:\s*([A-Ea-e])\]/i);
+  const correctRaw = ansMatch ? ansMatch[1].toUpperCase() : null;
   const cleaned = raw.replace(/\[ANSWER:[^\]]+\]/gi, '');
-  const lines = cleaned.split('\n'), rawOptions = {}, textLines = [];
-  for (const line of lines) {
+  const rawOptions = {}, textLines = [];
+  for (const line of cleaned.split('\n')) {
     const m = line.match(/^\(([A-Ea-e])\)\s+(.*)/);
     if (m) rawOptions[m[1].toUpperCase()] = m[2].trim();
     else   textLines.push(line);
   }
   const text = textLines.join('\n').trim();
-  const { options, correct, origOf, newOf } = shuffleOptions(rawOptions, correctRaw, `Q${n}|${text}`);
-  return { n, text, options, correct, origOf, newOf, correctOrig: correctRaw };
+  const { options, correct, origOf, newOf } = shuffleOptions(rawOptions, correctRaw, `${prefix}${n}|${text}`);
+  return { n, text, options, correct, origOf, newOf, correctOrig: correctRaw, valid: correct !== null };
 }
-function parseBonusBody(n, raw) {
-  const ansM = raw.match(/\[ANSWER:\s*([A-Ea-e])\]/i);
-  const correctRaw = ansM ? ansM[1].toUpperCase() : null;
-  const cleaned = raw.replace(/\[ANSWER:[^\]]+\]/gi, '');
-  const lines = cleaned.split('\n'), rawOptions = {}, textLines = [];
-  for (const line of lines) {
-    const m = line.match(/^\(([A-Ea-e])\)\s+(.*)/);
-    if (m) rawOptions[m[1].toUpperCase()] = m[2].trim();
-    else   textLines.push(line);
-  }
-  const text = textLines.join('\n').trim();
-  const { options, correct, origOf, newOf } = shuffleOptions(rawOptions, correctRaw, `B${n}|${text}`);
-  return { n, text, options, answer: correct, origOf, newOf, correctOrig: correctRaw };
-}
+const parseQuestionBody = (n, raw) => parseChoiceBlock('Q', n, raw);
+const parseBonusBody    = (n, raw) => parseChoiceBlock('B', n, raw);
 
-/* ── Renderer ────── */
+/* ── Renderer ── */
 
-/* ── Section cross-reference links ──────
-   Lesson prose frequently refers back to earlier material by section
-   number — "insert the completeness relation from Section 3", "By
-   conjugate symmetry (Section 2)", "obtained by substituting the
-   eigenvalue equation into the matrix-element formula of Section 4" — as
-   a natural side effect of how the node-prompt.js instructions ask for
-   material to build on what came before. That's Claude's own writing
-   style emerging from the content requirements, not something this file
-   asks for, and nothing here should make it happen more or less often —
-   this only makes an existing "Section N" mention clickable, jumping the
-   reader to that section in place of leaving them to scroll and hunt for
-   it by hand.
-
-   Applied to already-HTML-escaped text (see renderProse below), so this
-   only ever matches plain reference text in prose, never markup. The
-   match is deliberately narrow — literal "Section" plus a number, nothing
-   else — so it never fires on "Sections 2 and 3" (plural) or anything
-   resembling "Section 4.2"; this app's own "=== SECTION N ===" format
-   never produces either of those anyway, so there's nothing currently
-   written that needs the broader match.
-
-   Deliberately a <span>, not an <a href="#">: a real anchor has its own
-   default action (fragment navigation) and its own default focus-scroll
-   behavior, and even with preventDefault() on the click those fight with
-   #sv-window's fixed positioning — that's what was blowing the window's
-   layout out (header/progress bar disappearing) when a link was clicked.
-   A span has no default action to fight with at all. role="link" +
-   tabindex="0" keep it keyboard-reachable and announced correctly by a
-   screen reader despite not being a real anchor; the matching keydown
-   handler further down (next to the click handler) is what makes Enter/
-   Space actually activate it, same as a real link would. */
+/* Makes an existing "Section N" mention in prose clickable (the lesson text
+   refers back to earlier sections on its own; this only adds the jump). Works
+   on already-escaped text and matches only literal "Section" + number.
+   It's a <span role="link">, not an <a href>: an anchor's default fragment
+   navigation and focus-scroll fight #sv-window's fixed positioning and blew
+   its layout out. The keydown handler near the bottom adds Enter/Space. */
 function linkifySectionRefs(escapedHtml) {
   return escapedHtml.replace(/\bSection\s+(\d+)\b/g,
     (whole, num) => `<span class="sv-sec-ref" data-sec="${num}" role="link" tabindex="0">${whole}</span>`);
 }
 
 function renderProse(text) {
-  return text.split(/\n{2,}/).map(c=>c.trim()).filter(Boolean)
-    .map(c=>`<p>${linkifySectionRefs(svEsc(c)).replace(/\n/g,'<br>')}</p>`).join('');
+  return text.split(/\n{2,}/).map(c => c.trim()).filter(Boolean)
+    .map(c => `<p>${linkifySectionRefs(svEsc(c)).replace(/\n/g, '<br>')}</p>`).join('');
 }
-function renderQuestionCard(q) {
+
+/* One card for a main question (kind 'q') or a bonus (kind 'b'). A block with
+   no valid answer key is shown, disabled and flagged, but not scored and not a
+   progress checkpoint (it carries no data-qn / data-bn). */
+function renderChoiceCard(kind, q) {
+  const attr  = kind === 'q' ? 'qn' : 'bn';
+  const label = kind === 'q' ? 'Question' : 'Bonus';
+  const keyAttr = q.valid ? ` data-${attr}="${q.n}"` : '';
   const opts = ['A','B','C','D','E'].filter(l => q.options[l] !== undefined)
-    .map(l => `<button class="q-opt" data-qn="${q.n}" data-letter="${l}">
+    .map(l => `<button class="q-opt"${keyAttr} data-letter="${l}"${q.valid ? '' : ' disabled'}>
       <span class="q-letter">${l}</span><span class="q-text">${svEsc(q.options[l])}</span>
     </button>`).join('');
-  return `<div class="q-card" data-qn="${q.n}">
-    <div class="q-num">Question ${q.n}</div>
+  const note = q.valid ? '' : `<div class="q-feedback fb-wrong">This ${label.toLowerCase()} has no valid answer key, so it can't be scored.</div>`;
+  return `<div class="q-card${q.valid ? '' : ' q-card-invalid'}"${keyAttr}>
+    <div class="q-num">${label} ${q.n}</div>
     <div class="q-body">${renderProse(q.text)}</div>
     <div class="q-opts">${opts}</div>
-    <div class="q-feedback" id="qfb-${q.n}"></div>
+    <div class="q-feedback" id="${kind}fb-${q.n}"></div>${note}
   </div>`;
 }
-// One token regex covering every registered block type's placeholder code
-// plus 'Q' for questions, built once from BLOCK_TOOLS (tools.js) rather
-// than hardcoded — a future tool's code just needs to exist in the
-// registry, not be added here by hand.
-const SV_TOKEN_RE   = new RegExp(`\\x00(Q|${BLOCK_TOOLS.map(t => t.code).join('|')}):(\\d+)\\x00`);
+
+// One token regex for every block type's placeholder code plus 'Q' for questions.
+const SV_TOKEN_RE      = new RegExp(`\\x00(Q|${BLOCK_TOOLS.map(t => t.code).join('|')}):(\\d+)\\x00`);
 const SV_TOOLS_BY_CODE = Object.fromEntries(BLOCK_TOOLS.map(t => [t.code, t]));
 function renderSession(parsed) {
   return parsed.sections.map(sec => {
@@ -243,94 +176,73 @@ function renderSession(parsed) {
       if (plain && plain.trim()) inner += `<div class="sv-prose">${renderProse(plain.trim())}</div>`;
       const type = parts[i+1], id = parseInt(parts[i+2]);
       if (type === 'Q') {
-        const q = parsed.questions.get(id); if (q) inner += renderQuestionCard(q);
+        const q = parsed.questions.get(id); if (q) inner += renderChoiceCard('q', q);
       } else if (type && SV_TOOLS_BY_CODE[type]) {
         const tool = SV_TOOLS_BY_CODE[type];
         const item = parsed[tool.key].get(id);
         if (item) inner += tool.render(item, id);
       }
     }
-    // id="sv-section-N" is the scroll target linkifySectionRefs' anchors
-    // (data-sec="N") jump to — see the click handler in the Wiring
-    // section at the bottom of this file.
+    // id="sv-section-N" is the scroll target for the "Section N" links.
     return `<div class="sv-section" id="sv-section-${sec.num}"><div class="sv-section-label">Section ${sec.num}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
   }).join('');
 }
 function buildBonusSection(bonuses) {
   if (!bonuses.size) return '';
-  const nums = [...bonuses.keys()].sort((a,b)=>a-b);
-  const cards = nums.map(n => {
-    const b = bonuses.get(n);
-    const opts = ['A','B','C','D','E'].filter(l => b.options[l] !== undefined)
-      .map(l => `<button class="q-opt" data-bn="${b.n}" data-letter="${l}">
-        <span class="q-letter">${l}</span><span class="q-text">${svEsc(b.options[l])}</span>
-      </button>`).join('');
-    return `<div class="q-card" data-bn="${b.n}">
-      <div class="q-num">Bonus ${b.n}</div>
-      <div class="q-body">${renderProse(b.text)}</div>
-      <div class="q-opts">${opts}</div>
-      <div class="q-feedback" id="bfb-${b.n}"></div>
-    </div>`;
-  }).join('');
+  const nums = [...bonuses.keys()].sort((a, b) => a - b);
+  const cards = nums.map(n => renderChoiceCard('b', bonuses.get(n))).join('');
   return `<details id="sv-recap">
-    <summary><span class="recap-arrow">▶</span> Bonus Practice — ${nums.length} extra question${nums.length!==1?'s':''}</summary>
+    <summary><span class="recap-arrow">▶</span> Bonus Practice — ${nums.length} extra question${nums.length !== 1 ? 's' : ''}</summary>
     <div id="sv-recap-body">${cards}</div>
   </details>`;
 }
 
+/* Marks a card as answered: disables its options, highlights the correct and
+   any wrong pick, and writes the feedback line. */
+function showResult(card, letter, correct) {
+  card.querySelectorAll('.q-opt').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.letter === correct) b.classList.add('q-correct');
+    if (b.dataset.letter === letter && letter !== correct) b.classList.add('q-wrong');
+  });
+  const fb = card.querySelector('.q-feedback');
+  if (fb) {
+    fb.textContent = letter === correct ? '✓ Correct' : `✗  Correct answer: ${correct}`;
+    fb.className = 'q-feedback ' + (letter === correct ? 'fb-correct' : 'fb-wrong');
+  }
+}
 function applyAnswer(qn, letter, correct) {
   viewer.answers.set(qn, letter);
   if (letter === correct) viewer.score++;
-  document.querySelectorAll(`.q-card[data-qn="${qn}"]`).forEach(card => {
-    card.querySelectorAll('.q-opt').forEach(b => {
-      b.disabled = true;
-      if (b.dataset.letter === correct) b.classList.add('q-correct');
-      if (b.dataset.letter === letter && letter !== correct) b.classList.add('q-wrong');
-    });
-    const fb = card.querySelector('.q-feedback');
-    if (fb) { fb.textContent = letter === correct ? '✓ Correct' : `✗  Correct answer: ${correct}`; fb.className = 'q-feedback ' + (letter === correct ? 'fb-correct' : 'fb-wrong'); }
-  });
+  document.querySelectorAll(`.q-card[data-qn="${qn}"]`).forEach(card => showResult(card, letter, correct));
 }
 function handleOptionClick(btn) {
   const qn = parseInt(btn.dataset.qn), letter = btn.dataset.letter; // letter = this render's on-screen letter
   if (viewer.answers.has(qn)) return;
-  const correct = viewer.answerKey[qn - 1];
-  const node = state.nodes.get(viewer.nodeId);
-  // Persist by the option's ORIGINAL letter (origOf), not the on-screen
-  // one — see the Parser header comment above for why: the on-screen
-  // letter is only meaningful for this exact render, and saving it
-  // directly is what let a later reshuffle silently flip a correct
-  // answer to wrong (or vice versa) on reopen.
   const q = viewer.questions.get(qn);
-  const origLetter = q?.origOf?.[letter] ?? letter;
-  if (node) { if (!node._sessionAnswers) node._sessionAnswers = {}; node._sessionAnswers[qn] = origLetter; }
-  applyAnswer(qn, letter, correct);
+  if (!q?.valid) return;
+  const node = state.nodes.get(viewer.nodeId);
+  // Persist by the ORIGINAL letter (see the Parser comment above).
+  if (node) { if (!node._sessionAnswers) node._sessionAnswers = {}; node._sessionAnswers[qn] = q.origOf?.[letter] ?? letter; }
+  applyAnswer(qn, letter, q.correct);
   updateViewerScore();
   computeCheckpoints();
   updateSessionProgress();
-  // Auto-complete: all main questions answered → mark topic done (good faith)
-  if (viewer.answers.size === viewer.total) {
-    if (node && !node.done) { node.done = true; updateAllStatuses(); autoSaveProgress(); }
+  // All scoreable questions answered → mark the topic done (taken in good faith).
+  if (viewer.answers.size === viewer.total && node && !node.done) {
+    node.done = true; updateAllStatuses(); autoSaveProgress();
   }
 }
 function handleBonusClick(btn) {
-  const bn = parseInt(btn.dataset.bn), letter = btn.dataset.letter; // letter = this render's on-screen letter
+  const bn = parseInt(btn.dataset.bn), letter = btn.dataset.letter;
   if (viewer.bonusAnswers.has(bn)) return;
-  const correct = viewer.bonusKeys.get(bn);
   const bonus = viewer.bonuses.get(bn);
-  const origLetter = bonus?.origOf?.[letter] ?? letter; // see handleOptionClick above for why this, not `letter`, gets stored
+  if (!bonus?.valid) return;
+  const origLetter = bonus.origOf?.[letter] ?? letter;
   viewer.bonusAnswers.set(bn, origLetter);
   const node = state.nodes.get(viewer.nodeId);
   if (node) { if (!node._bonusAnswers) node._bonusAnswers = {}; node._bonusAnswers[bn] = origLetter; }
-  document.querySelectorAll(`.q-card[data-bn="${bn}"]`).forEach(card => {
-    card.querySelectorAll('.q-opt').forEach(b => {
-      b.disabled = true;
-      if (b.dataset.letter === correct) b.classList.add('q-correct');
-      if (b.dataset.letter === letter && letter !== correct) b.classList.add('q-wrong');
-    });
-    const fb = card.querySelector('.q-feedback');
-    if (fb) { fb.textContent = letter === correct ? '✓ Correct' : `✗  Correct answer: ${correct}`; fb.className = 'q-feedback ' + (letter === correct ? 'fb-correct' : 'fb-wrong'); }
-  });
+  document.querySelectorAll(`.q-card[data-bn="${bn}"]`).forEach(card => showResult(card, letter, bonus.correct));
 }
 function updateViewerScore() {
   const badge = document.getElementById('sv-score'); if (!badge) return;
@@ -338,117 +250,82 @@ function updateViewerScore() {
   badge.classList.toggle('sv-perfect', viewer.answers.size === viewer.total && viewer.total > 0 && viewer.score === viewer.total);
 }
 
-/* ── Open / Close ────── */
+/* ── Open / Close ── */
 function openViewer(txtContent, nodeId) {
   const node = state.nodes.get(nodeId);
   const parsed = parseTxtSession(txtContent);
 
-  // Each question now carries its own correct letter (already resolved
-  // against that question's own shuffled option order by
-  // parseQuestionBody above) — build the ordered answer key straight from
-  // the parsed questions instead of reading a separate [KEY: ...] line.
-  const qNums = [...parsed.questions.keys()].sort((a, b) => a - b);
-  viewer.answerKey = qNums.map(qn => parsed.questions.get(qn).correct);
-  if (!viewer.answerKey.length) return;
+  const scoreable = [...parsed.questions.values()].filter(q => q.valid);
+  if (!scoreable.length) {
+    showToast(parsed.questions.size
+      ? 'None of this lesson\'s questions has a valid answer key ([ANSWER: X]), so it can\'t be opened. Regenerate it with the current prompt.'
+      : 'That file has no [QUESTION] blocks, so it isn\'t a lesson this viewer can open.');
+    return;
+  }
+  const skipped = parsed.questions.size - scoreable.length;
+  if (skipped) showToast(`${skipped} question${skipped > 1 ? 's' : ''} in this lesson ${skipped > 1 ? 'have' : 'has'} no valid answer key and won't be scored.`);
 
   if (node) node._sessionTxt = txtContent;
-
-  viewer.nodeId = nodeId; viewer.answers = new Map(); viewer.score = 0; viewer.total = viewer.answerKey.length;
-  viewer.bonusAnswers = new Map(); viewer.bonusKeys = new Map(); viewer.checkpoints = [];
-  // Kept for the lifetime of this render so click handlers (which only
-  // get a qn/bn and an on-screen letter from the DOM) can look up this
-  // question's origOf map — see handleOptionClick/handleBonusClick.
-  viewer.questions = parsed.questions;
-  viewer.bonuses = parsed.bonuses;
+  Object.assign(viewer, {
+    nodeId, answers: new Map(), score: 0, total: scoreable.length, bonusAnswers: new Map(), checkpoints: [],
+    // Kept for this render so click handlers (which only see a number and an on-screen letter) can look up origOf/correct.
+    questions: parsed.questions, bonuses: parsed.bonuses,
+  });
+  svUserPositioned = false; // this open re-centres the window, so auto-centering on resize applies again
   document.getElementById('sv-topic').textContent = node?.label ?? 'Session';
 
   const body = document.getElementById('sv-body');
-
-  // Populate bonus answer keys
-  parsed.bonuses.forEach((b, n) => { if (b.answer) viewer.bonusKeys.set(n, b.answer); });
-
   body.innerHTML = renderSession(parsed) + buildBonusSection(parsed.bonuses);
   renderMath(body);
-
-  // Any tool that needs to attach a live widget after its markup is
-  // actually in the DOM (Plotly needs a real element to measure and draw
-  // into — same reason renderMath above and the window-centering below
-  // both wait for this point) gets its mount step run here.
-  BLOCK_TOOLS.forEach(tool => {
-    if (!tool.mount) return;
-    parsed[tool.key].forEach((item, id) => tool.mount(item, id));
-  });
 
   body.querySelectorAll('.q-opt[data-qn]').forEach(btn => btn.addEventListener('click', () => handleOptionClick(btn)));
   body.querySelectorAll('.q-opt[data-bn]').forEach(btn => btn.addEventListener('click', () => handleBonusClick(btn)));
 
-  // Restore saved answers. What's stored under each qn is the option's
-  // ORIGINAL (pre-shuffle) letter (see handleOptionClick) — translate it
-  // through THIS render's newOf map to find wherever that same option
-  // landed this time before handing it to applyAnswer, which only deals
-  // in on-screen letters. This is what makes a saved answer immune to
-  // the shuffle coming out differently on a later reopen.
-  const saved = node?._sessionAnswers || {};
-  for (const [qn, origLetter] of Object.entries(saved)) {
-    const qni = parseInt(qn);
-    const q = parsed.questions.get(qni);
-    const letter = q?.newOf?.[origLetter] ?? origLetter;
-    applyAnswer(qni, letter, viewer.answerKey[qni - 1]);
+  // Restore saved answers. Stored values are ORIGINAL letters; newOf says where
+  // that option landed in THIS render.
+  for (const [qn, origLetter] of Object.entries(node?._sessionAnswers || {})) {
+    const q = parsed.questions.get(parseInt(qn));
+    if (!q?.valid) continue;
+    applyAnswer(q.n, q.newOf?.[origLetter] ?? origLetter, q.correct);
   }
-
-  // Restore saved bonus answers — same origLetter → this-render's letter
-  // translation as above.
-  const savedBonus = node?._bonusAnswers || {};
-  for (const [bn, origLetter] of Object.entries(savedBonus)) {
-    const bni = parseInt(bn);
-    const bonus = parsed.bonuses.get(bni);
-    const letter = bonus?.newOf?.[origLetter] ?? origLetter;
-    viewer.bonusAnswers.set(bni, origLetter);
-    const correct = viewer.bonusKeys.get(bni);
-    document.querySelectorAll(`.q-card[data-bn="${bni}"]`).forEach(card => {
-      card.querySelectorAll('.q-opt').forEach(b => {
-        b.disabled = true;
-        if (b.dataset.letter === correct) b.classList.add('q-correct');
-        if (b.dataset.letter === letter && letter !== correct) b.classList.add('q-wrong');
-      });
-      const fb = card.querySelector('.q-feedback');
-      if (fb) { fb.textContent = letter === correct ? '✓ Correct' : `✗  Correct answer: ${correct}`; fb.className = 'q-feedback ' + (letter === correct ? 'fb-correct' : 'fb-wrong'); }
-    });
+  for (const [bn, origLetter] of Object.entries(node?._bonusAnswers || {})) {
+    const bonus = parsed.bonuses.get(parseInt(bn));
+    if (!bonus?.valid) continue;
+    viewer.bonusAnswers.set(bonus.n, origLetter);
+    const letter = bonus.newOf?.[origLetter] ?? origLetter;
+    document.querySelectorAll(`.q-card[data-bn="${bonus.n}"]`).forEach(card => showResult(card, letter, bonus.correct));
   }
-
   updateViewerScore();
 
   document.getElementById('modal-backdrop').classList.remove('open');
   document.getElementById('session-viewer').classList.add('sv-open');
 
-  // Must measure AFTER the viewer is visible: while #session-viewer still
-  // had display:none, #sv-window's offsetWidth/offsetHeight both read as 0
-  // (a hidden ancestor means nothing inside it is laid out yet), which
-  // silently turned "center the window" into "pin its top-left corner to
-  // screen-center" — the window ended up shifted toward the bottom-right
-  // by roughly half its own size instead of actually centered.
+  // Everything below measures layout, so it must run after the viewer is visible
+  // (a display:none ancestor makes every size read as 0).
   const win = document.getElementById('sv-window');
   win.style.left = Math.max(0, (window.innerWidth  - win.offsetWidth)  / 2) + 'px';
   win.style.top  = Math.max(0, (window.innerHeight - win.offsetHeight) / 2) + 'px';
+  body.scrollTop = node?._scrollTop || 0; // resume this node's own reading position
 
-  // Resume this node's own reading position rather than always starting at
-  // the top — restored per node, so switching to a different node's
-  // session and back doesn't leave you scrolled to wherever that other
-  // node happened to be.
-  body.scrollTop = node?._scrollTop || 0;
+  // Tools that attach a live widget (Plotly) mount now that they can measure.
+  const mounts = [];
+  BLOCK_TOOLS.forEach(tool => {
+    if (tool.mount) parsed[tool.key].forEach((item, id) => mounts.push(tool.mount(item, id)));
+  });
 
-  // Must also come after the viewer is visible, for the same
-  // display:none/getBoundingClientRect reason as the centering above.
   computeCheckpoints();
   updateSessionProgress();
+  // Graphs load their libraries asynchronously; re-measure once they've settled.
+  Promise.allSettled(mounts).then(() => {
+    if (viewer.nodeId === nodeId) { computeCheckpoints(); updateSessionProgress(); }
+  });
 
   loadNotesForCurrentNode();
   syncNotesPanelPosition();
 }
 
-// Reopen a session for this node. If the viewer is already showing this
-// exact node, just re-reveal it (preserves scroll position). Otherwise
-// rebuild for the requested node — each node has its own saved progress.
+// Reopen a node's session. If the viewer already shows this node, just
+// re-reveal it (keeps scroll position); otherwise rebuild for that node.
 function continueViewer(nodeId) {
   const node = state.nodes.get(nodeId);
   if (!node?._sessionTxt) return;
@@ -463,19 +340,20 @@ function continueViewer(nodeId) {
 }
 
 function closeViewer() {
-  // Don't clear viewer state — answers and scroll position are preserved in the DOM
+  // viewer state is kept: answers and scroll position live on in the DOM
   document.getElementById('session-viewer').classList.remove('sv-open');
 }
 
-/* ── Per-node notes ────── 
-   A simple sidebar textarea anchored to the right edge of the session
-   window. Saved per node (keyed by label, alongside session progress) so
-   switching between nodes never mixes notes up — "don't overcomplicate
-   it" means no rich text, no per-topic tabs, just one plain textarea
-   whose content follows whichever node's session is currently open.
-   Position (left/top) tracks the session window as it's dragged/resized;
-   its own width/height are independent and user-resizable via
-   #sv-notes-resize, same as the session window itself. */
+onEscape(60, () => {
+  if (!document.getElementById('session-viewer').classList.contains('sv-open')) return false;
+  closeViewer();
+  return true;
+});
+
+/* ── Per-node notes ──
+   A plain textarea on the right edge of the session window, saved per node
+   alongside its progress. Its left/top track the session window; its own
+   size is independent and user-resizable. */
 let notesSaveTimer = null;
 
 function syncNotesPanelPosition() {
@@ -486,11 +364,9 @@ function syncNotesPanelPosition() {
   panel.style.top  = r.top + 'px';
 }
 
-// Pads the textarea with enough blank lines that every visible row is a
-// real line a click can land on — "as if you had spammed the enter key
-// beforehand" — rather than dead space below the last typed line that
-// just dumps the cursor at the end of the text. Trimmed back off before
-// anything is actually saved (see the input listener below).
+// Pads the textarea with blank lines so every visible row is a line a click can
+// land on, instead of dead space that dumps the cursor at the end. Trimmed off
+// again before saving.
 const NOTES_PAD_LINES = 60;
 function padNotes(text) {
   const lines = text.split('\n').length;
@@ -509,8 +385,7 @@ function toggleNotesPanel() {
   document.getElementById('btn-toggle-notes').classList.toggle('active', open);
   if (open) {
     loadNotesForCurrentNode();
-    // Default size on first-ever open only; a manual resize (which sets
-    // an inline style) is left alone on every open after that.
+    // Default height on first open only; a manual resize (inline style) is kept.
     if (!panel.style.height) panel.style.height = document.getElementById('sv-window').getBoundingClientRect().height + 'px';
     syncNotesPanelPosition();
   }
@@ -520,10 +395,7 @@ document.getElementById('btn-toggle-notes').addEventListener('click', toggleNote
 document.getElementById('sv-notes-ta').addEventListener('input', e => {
   const node = state.nodes.get(viewer.nodeId);
   if (!node) return;
-  // Strip the padding lines back off before persisting — the textarea's
-  // own value (with padding intact) is left untouched so clicking further
-  // down still works for the rest of this session.
-  node._notes = e.target.value.replace(/\n+$/, '');
+  node._notes = e.target.value.replace(/\n+$/, ''); // strip the padding before persisting
   clearTimeout(notesSaveTimer);
   notesSaveTimer = setTimeout(autoSaveProgress, 500);
 });
@@ -537,13 +409,7 @@ document.getElementById('sv-notes-ta').addEventListener('keydown', e => {
   ta.dispatchEvent(new Event('input', { bubbles: true }));
 });
 
-/* ── Per-node scroll position ────── 
-   Remembers how far into each node's lesson the reader has scrolled, keyed
-   to that node specifically — so switching to a different node's session
-   and back resumes where you left off instead of resetting to the top
-   (previously there was nowhere for this to live except the live DOM, so
-   it was really just whichever node happened to be open, not a per-node
-   memory at all). */
+/* ── Per-node scroll position ── remembered per node so switching sessions and back resumes where you were. */
 let scrollSaveTimer = null;
 document.getElementById('sv-body').addEventListener('scroll', e => {
   const node = state.nodes.get(viewer.nodeId);
@@ -554,24 +420,10 @@ document.getElementById('sv-body').addEventListener('scroll', e => {
   scrollSaveTimer = setTimeout(autoSaveProgress, 500);
 });
 
-// Section cross-reference clicks (see linkifySectionRefs above). Delegated
-// on #sv-body itself rather than attached to each individual link, since
-// #sv-body's whole innerHTML is replaced fresh on every openViewer() call
-// — a per-link listener would just be thrown away and need re-wiring on
-// every open, where a single delegated listener here needs it once, ever.
-// No preventDefault() needed — .sv-sec-ref is a plain span (see
-// linkifySectionRefs), which has no default browser action to cancel.
-//
-// Deliberately NOT target.scrollIntoView(): that asks the browser to walk
-// the whole ancestor chain and decide for itself what to scroll, and in
-// this app's nested fixed-position structure (#session-viewer → #sv-window
-// → #sv-body, with KaTeX's own .katex-display blocks — which set their own
-// overflow-x: auto — scattered through the content in between) that guess
-// was landing on the wrong container and visibly distorting #sv-window
-// itself instead of just moving the lesson content. Computing the target's
-// offset relative to #sv-body directly and setting only #sv-body's own
-// scrollTop sidesteps that ambiguity entirely — nothing else on the page
-// is ever asked to scroll.
+/* "Section N" link clicks, delegated on #sv-body because its innerHTML is
+   replaced on every open. Deliberately not scrollIntoView(): in this nested
+   fixed-position structure the browser picked the wrong scroll container and
+   distorted #sv-window. Setting only #sv-body's own scroll offset avoids that. */
 function scrollToSectionRef(link) {
   const body = document.getElementById('sv-body');
   const target = document.getElementById(`sv-section-${link.dataset.sec}`);
@@ -583,111 +435,102 @@ document.getElementById('sv-body').addEventListener('click', e => {
   const link = e.target.closest('.sv-sec-ref');
   if (link) scrollToSectionRef(link);
 });
-// Keyboard equivalent, since the span is reachable via tabindex="0" but
-// (unlike a real <a>) doesn't activate on Enter/Space on its own.
 document.getElementById('sv-body').addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
   const link = e.target.closest?.('.sv-sec-ref');
   if (!link) return;
-  e.preventDefault(); // stop Space from also scrolling #sv-body itself
+  e.preventDefault(); // Space would otherwise also scroll #sv-body
   scrollToSectionRef(link);
 });
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('session-viewer').classList.contains('sv-open'))
-    closeViewer();
-});
+/* ── Drag / resize ──
+   Pointer events with capture (not mouse events), so dragging and resizing
+   also work with a finger or pen on a tablet wide enough to get the
+   floating window instead of the fullscreen mobile layout. */
+function bindPointerDrag(el, { start, move, ignore }) {
+  let active = false;
+  el.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || (ignore && ignore(e))) return;
+    active = true;
+    el.setPointerCapture(e.pointerId);
+    start(e);
+    e.preventDefault(); e.stopPropagation();
+  });
+  el.addEventListener('pointermove', e => { if (active) move(e); });
+  const end = e => {
+    if (!active) return;
+    active = false;
+    if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
 
-/* ── Drag ────── */
-const svDrag = { active: false, startX: 0, startY: 0, winX: 0, winY: 0 };
-document.getElementById('sv-header').addEventListener('mousedown', e => {
-  if (e.button !== 0 || e.target.closest('button')) return;
-  const r = document.getElementById('sv-window').getBoundingClientRect();
-  Object.assign(svDrag, { active: true, startX: e.clientX, startY: e.clientY, winX: r.left, winY: r.top });
-  e.preventDefault();
-});
-
-/* ── Resize ────── */
-const svResize = { active: false, startX: 0, startY: 0, startW: 0, startH: 0 };
-document.getElementById('sv-resize').addEventListener('mousedown', e => {
-  if (e.button !== 0) return;
-  const win = document.getElementById('sv-window');
-  Object.assign(svResize, { active: true, startX: e.clientX, startY: e.clientY, startW: win.offsetWidth, startH: win.offsetHeight });
-  e.preventDefault(); e.stopPropagation();
-});
-
-const notesResize = { active: false, startX: 0, startY: 0, startW: 0, startH: 0 };
-document.getElementById('sv-notes-resize').addEventListener('mousedown', e => {
-  if (e.button !== 0) return;
-  const panel = document.getElementById('sv-notes-panel');
-  Object.assign(notesResize, { active: true, startX: e.clientX, startY: e.clientY, startW: panel.offsetWidth, startH: panel.offsetHeight });
-  e.preventDefault(); e.stopPropagation();
-});
-
-document.addEventListener('mousemove', e => {
-  if (svDrag.active) {
-    svUserPositioned = true; // an actual drag happened — stop auto-centering this window on resize (see below)
+const svDrag = { startX: 0, startY: 0, winX: 0, winY: 0 };
+bindPointerDrag(document.getElementById('sv-header'), {
+  ignore: e => e.target.closest('button'),
+  start: e => {
+    const r = document.getElementById('sv-window').getBoundingClientRect();
+    Object.assign(svDrag, { startX: e.clientX, startY: e.clientY, winX: r.left, winY: r.top });
+  },
+  move: e => {
+    svUserPositioned = true;
     const win = document.getElementById('sv-window');
-    win.style.left = Math.max(0, Math.min(window.innerWidth  - 80, svDrag.winX  + e.clientX - svDrag.startX))  + 'px';
-    win.style.top  = Math.max(0, Math.min(window.innerHeight - 40, svDrag.winY  + e.clientY - svDrag.startY))  + 'px';
+    win.style.left = Math.max(0, Math.min(window.innerWidth  - 80, svDrag.winX + e.clientX - svDrag.startX)) + 'px';
+    win.style.top  = Math.max(0, Math.min(window.innerHeight - 40, svDrag.winY + e.clientY - svDrag.startY)) + 'px';
     syncNotesPanelPosition();
-  }
-  if (svResize.active) {
+  },
+});
+
+const svResize = { startX: 0, startY: 0, startW: 0, startH: 0 };
+bindPointerDrag(document.getElementById('sv-resize'), {
+  start: e => {
+    const win = document.getElementById('sv-window');
+    Object.assign(svResize, { startX: e.clientX, startY: e.clientY, startW: win.offsetWidth, startH: win.offsetHeight });
+  },
+  move: e => {
     const win = document.getElementById('sv-window');
     win.style.width  = Math.max(380, svResize.startW + e.clientX - svResize.startX) + 'px';
     win.style.height = Math.max(280, svResize.startH + e.clientY - svResize.startY) + 'px';
     syncNotesPanelPosition();
-  }
-  if (notesResize.active) {
+  },
+});
+
+const notesResize = { startX: 0, startY: 0, startW: 0, startH: 0 };
+bindPointerDrag(document.getElementById('sv-notes-resize'), {
+  start: e => {
+    const panel = document.getElementById('sv-notes-panel');
+    Object.assign(notesResize, { startX: e.clientX, startY: e.clientY, startW: panel.offsetWidth, startH: panel.offsetHeight });
+  },
+  move: e => {
     const panel = document.getElementById('sv-notes-panel');
     panel.style.width  = Math.max(200, notesResize.startW + e.clientX - notesResize.startX) + 'px';
     panel.style.height = Math.max(200, notesResize.startH + e.clientY - notesResize.startY) + 'px';
-  }
+  },
 });
-document.addEventListener('mouseup', () => { svDrag.active = false; svResize.active = false; notesResize.active = false; });
 
-/* ── Keep the session viewer looking centered through window/viewport
-   size changes (F11 fullscreen, DevTools opening, etc) ──────
-   Comparing outerHeight/outerWidth to screen.height/width (tried first,
-   and removed) turned out to be a dead end: in at least some browsers
-   (Firefox in particular, likely as an anti-fingerprinting measure)
-   screen.width/height simply mirror the window's own current size rather
-   than reporting the physical monitor — so that comparison was
-   effectively comparing a number to itself and could never detect
-   anything.
-
-   What actually happens (confirmed by testing): pressing F11 doesn't
-   move the top of the page at all — it just reveals more space below,
-   since the chrome that disappears was never below the content to begin
-   with. The real, visible problem is narrower than "the window jumps":
-   #sv-window was centered ONCE, in openViewer(), using whatever
-   window.innerHeight was at that moment. If the viewport later gets
-   taller (F11, DevTools closing, anything), that fixed top offset no
-   longer corresponds to "centered" — it just sits too high with a
-   growing dead gap underneath, which reads as "moved" even though its
-   own top/left never changed.
-
-   Fix: re-run that same centering calculation on any resize. This is
-   deliberately scoped to never fight a deliberate placement — if the
-   user has actually dragged the window (svUserPositioned), resizing
-   leaves it exactly where they put it, the same way scale.js leaving
-   the overall UI alone on resize respects the user rather than
-   "helpfully" undoing what they did. */
-let svUserPositioned = false;
+/* Keep the window centred through viewport changes (F11, DevTools opening):
+   it was centred once in openViewer() using the height at that moment, so a
+   later resize leaves it too high with a dead gap below. Re-centre on resize
+   unless the person has dragged it somewhere on purpose. */
 window.addEventListener('resize', () => {
   const win = document.getElementById('sv-window');
-  if (!win.style.top && !win.style.left) return; // never opened yet — nothing to center
-  if (svUserPositioned) return; // they put it somewhere on purpose — leave it alone
+  if (!win.style.top && !win.style.left) return; // never opened yet
+  if (svUserPositioned) return;
   win.style.left = Math.max(0, (window.innerWidth  - win.offsetWidth)  / 2) + 'px';
   win.style.top  = Math.max(0, (window.innerHeight - win.offsetHeight) / 2) + 'px';
   syncNotesPanelPosition();
 });
 
-/* ── Wiring ────── */
+/* ── Wiring ── */
 document.getElementById('session-file-input').addEventListener('change', e => {
-  const file = e.target.files?.[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => openViewer(ev.target.result, _modalNodeId);
-  reader.readAsText(file); e.target.value = '';
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload  = ev => openViewer(ev.target.result, _modalNodeId);
+    reader.onerror = () => showToast(`Couldn't read "${file.name}".`);
+    reader.readAsText(file);
+  }
+  e.target.value = '';
 });
 document.getElementById('btn-close-viewer').addEventListener('click', closeViewer);
