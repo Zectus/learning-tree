@@ -45,6 +45,16 @@
       working it out, and letting the app handle letter position
       and distribution entirely on its own, removes that problem
       instead of managing it.
+   4. Graphs need a positive trigger, not just permission. When the
+      tools paragraph only said graphs were optional and not to force
+      them, the model took that as a reason never to draw one, even
+      for sections whose whole subject is a shape. The paragraph now
+      says graphs are the default wherever a section's central object
+      has a shape, and the final review checks for the omission. Keep
+      that framing when editing, and keep the trigger stated in terms
+      of kinds of object (function, curve, surface, field, points and
+      lines), never a named topic (see rule 1). The graph syntax is
+      parsed by parseGraphBody in tools.js; the two must stay in sync.
 ═══════════════════════════════════════════════════════════ */
 function renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
@@ -66,6 +76,7 @@ PLAN FIRST — ask yourself all of these:
 - For each definition on your list, is there a concrete case or computation that produces it before it has a name — and if so, plan to reach it that way rather than stating it first?
 - What is the subtlest step students usually accept without understanding?
 - What problems genuinely test whether the ideas landed — not just whether the reader can recognize a keyword or formula?
+- For each section on your list: is there something in it with a shape — a function, a curve, a surface, a field, or a set of points and lines? If so, which graph type shows it, where in the section does it go, which ranges make the relevant feature visible, and would a marked point, a drawn segment, or a slider let the picture do what the prose is about to describe?
 - For each question you're planning, work out the concrete values, example, or configuration and which option they make correct now, while you're designing the question — not as an afterthought once the surrounding prose is already written.
 
 Only after exhausting this planning process, write the document.
@@ -75,8 +86,8 @@ OUTPUT FORMAT (follow exactly — a parser will read this file)
 
 This is a plain .txt file. Rules:
 - No markdown: no **, no ##, no backticks, no bullet points using *, no _italics_ — including using ** to fake bold for a vector symbol (e.g. **S**); that's KaTeX's job (\\mathbf{}), not markdown's, see the Math rule below
-- No HTML, no code blocks, no widgets, no interactive elements of any kind
-- Prose only — use plain paragraphs and the section/question/table/timeline markers below
+- No HTML, no code blocks, no widgets, and no interactive elements of any kind — the one exception is the slider line a graph block can carry (see Graphs below), which is part of the graph format, not HTML
+- Prose only — use plain paragraphs and the section/question/table/timeline/graph markers below
 
 Section headers:
 === SECTION N: TITLE ===
@@ -98,7 +109,7 @@ Question text here, with \\( LaTeX \\) as needed.
 
 Replace X with whichever letter is actually correct, as (A)-(E) are written above. This works exactly like the [ANSWER: X] tag in the [BONUS] format further down — hidden from the reader, read only by the app, and not something to think about when deciding where to place the correct option among (A)-(E); place it wherever it naturally falls as you write the options, in any order you like. Nothing anywhere else in the document — before this block, after it, or much later — may explain, defend, or hint at why the correct option is correct or a wrong option is wrong. [ANSWER: X] is the only place that answer lives.
 
-Four optional tools are available if the topic calls for them — none of them are mandatory, and a topic with no natural use for one just doesn't use it. Reach for whichever actually fits the material; don't force a topic without math into using KaTeX, and don't force a topic without a chronology, tabular structure, or a function/field worth seeing into a timeline, table, or graph just because the option exists.
+Four tools are available. Math, tables and timelines are for material that has something to typeset, compare, or put in order: don't force KaTeX onto a topic without math, or a table or timeline onto material with no tabular or chronological structure. Graphs are different: they are the default, not an extra. Whenever a section's central object has a shape — a function, a curve, a surface, a field, a relationship between two quantities, a configuration of points and lines in a plane — draw it, at the point where that section first works with it, so the reader sees the object while the prose is analyzing it. Prose alone asks the reader to hold in their head a picture that a graph hands over for free. Skip a graph only when the section has nothing visual to show: purely symbolic manipulation, a definition with no geometric content, non-quantitative material. A document on a topic with geometry in it that comes out with no graph at all has a gap, and the final review below checks for it.
 
 - Math: inline with \\( ... \\), display with \\[ ... \\]. Skip entirely for a topic with nothing to typeset. This applies uniformly — there is no such thing as a mathematical symbol too minor or too casual to wrap. A single variable name, a subscript, a dot or cross product, a vector mentioned in passing mid-sentence: if it's math, it goes in \\( \\), with exactly the same treatment as a formula on its own display line. Don't let a symbol's position — sitting inside a flowing sentence versus standing alone — decide whether it gets KaTeX; a parser reading this file can't tell "casual mention" from "official equation," and treating them differently is what produces a document that's formatted one way in its displayed equations and drifts into bare ASCII (r_u, F · n) the moment the same math shows up in prose. Bold or vector notation is no exception to the no-markdown rule either — never fake it with ** (e.g. **S** for a bold vector); use the real KaTeX command (\\mathbf{}) inside \\( \\) instead.
 - Tables, for anything genuinely tabular — a comparison across several things along the same dimensions, a small reference of values, anything a reader would otherwise have to hold in their head across several sentences:
@@ -114,7 +125,7 @@ Marker 1 | What happened or what this stage is
 Marker 2 | What happened or what this stage is
 [/TIMELINE]
   The marker is usually a date or year but can be any short label — a stage name, "Step 1," an era — whatever the sequence is actually ordered by. One line per point on the timeline, marker and description separated by " | " (spaced, same convention as TABLE above, for the same reason — it's what tells a real divider apart from a bare pipe that happens to sit inside the marker or description's own math).
-- Graphs, for a function, curve, surface, or field that's genuinely worth seeing rather than just stating — reach for this when a shape, a trend, a comparison between curves, or a spatial pattern is the actual point, not for a graph's own sake. There are four types:
+- Graphs, for a function, curve, surface, field, or set of points and lines that is worth seeing rather than just describing — see the paragraph above for when a graph is expected, and the notes after the four types for how to make one earn its place. There are four types:
 
   function2d — one or more y = f(x) curves on the same axes:
 [GRAPH]
@@ -161,9 +172,31 @@ u: -y
 v: x
 [/GRAPH]
 
-  Every field on its own "key: value" line. title/xlabel/ylabel/zlabel are always optional but should usually be filled in; xrange/yrange/trange are required whenever the type uses them (all four types need xrange and, for surface3d and vectorfield2d, yrange; parametric2d needs trange instead) — pick bounds that actually show what the graph is for, the way a chosen numeric example elsewhere in this document is chosen to land on its point, not a generic default. function2d and parametric2d can repeat the trace line for more than one curve on the same axes; surface3d and vectorfield2d take exactly one z (or one u and one v) — nothing to repeat there. label and color on a trace line are both optional. A parametric2d trace line packs both components into one line, comma-separated: trace: cos(t), sin(t) | label: ....
+  function2d, parametric2d and vectorfield2d graphs can also carry marked points, drawn segments, and sliders: extra lines in the same block, all optional, repeatable, and not available for surface3d. Optional too is "aspect: equal" (function2d), which gives both axes the same unit length — use it whenever the true shape or an angle matters; parametric2d and vectorfield2d already do this on their own.
 
-  Every expression (trace, z, u, v) is evaluated as a plain math expression by a separate library, not typeset by KaTeX — write x^2, sin(x), sqrt(x^2 + y^2), atan2(y, x), abs(x) in ordinary calculator-style notation (abs(x), not |x| — bars aren't valid syntax here), never inside \\( \\) and never with LaTeX commands like \\sin or \\frac{}{}. title, xlabel, ylabel, and zlabel are the opposite: those are prose captions that do go through the normal KaTeX pass like anything else in this document, so \\( \\) works there exactly as it would in a sentence. Keep the two apart — an expression written in LaTeX syntax won't evaluate, and a label written in plain-expression syntax just won't typeset.
+point: x, y | label: caption | color: optional | offset: dx, dy
+segment: x1, y1, x2, y2 | label: caption | color: optional | dashed: true
+slider: name | range: min, max | init: value | step: size
+
+  A point marks one specific location the prose works with (a given data point, an intercept, a place of interest). A segment connects two locations (a distance, a change along each axis, a side of a figure, a stretch between two points). Their coordinates are plain expressions in the same calculator notation as the traces. A slider adds a draggable control under the plot, and any trace, point, or segment expression that uses the slider's name as a variable is redrawn as it moves (a vector field is drawn once, at the slider's starting value). Use a slider when what the section is about is how something changes as a parameter varies: the reader dragging it and watching the picture respond is something prose can only describe. A complete example, for the syntax only:
+[GRAPH]
+type: function2d
+title: what this graph shows
+xlabel: x
+ylabel: y
+xrange: -4, 4
+trace: s*x | label: family member
+point: 2, 2*s | label: P
+segment: 0, 0, 2, 2*s | dashed: true
+slider: s | range: -3, 3 | init: 1 | step: 0.1
+[/GRAPH]
+  Expressions are self-contained: there are no user-defined functions, so a quantity built from another curve is written out in full, in terms of x (or t) and the slider names.
+
+  A graph is part of the exposition, so it follows the same rules as the prose around it. It may show the instances the text works through and the general shape of the objects involved; it must not plot the specific object a nearby question asks about, mark that question's answer, or otherwise do the reader's work for it. It should earn its place: take the graph away and the surrounding prose should lose something. Mark the points the prose actually computes with, draw the segments the prose names, and use a slider when the prose compares many members of one family. One graph per idea is plenty; don't plot the same object twice, and keep a plot to a handful of curves so it stays readable. The block sits on its own lines between paragraphs, like a table.
+
+  Every field on its own "key: value" line. title/xlabel/ylabel/zlabel are always optional but should usually be filled in. The range requirements depend on the type: function2d needs xrange (yrange is optional — left out, the vertical window is fitted to the curves, so give it only when a specific window matters), parametric2d needs trange (xrange and yrange are optional there too), and surface3d and vectorfield2d need both xrange and yrange. Pick bounds that actually show what the graph is for, the way a chosen numeric example elsewhere in this document is chosen to land on its point, not a generic default. function2d and parametric2d can repeat the trace line for more than one curve on the same axes; surface3d and vectorfield2d take exactly one z (or one u and one v) — nothing to repeat there. label and color on a trace line are both optional. A parametric2d trace line packs both components into one line, comma-separated: trace: cos(t), sin(t) | label: .... The fields of a line are separated by " | " with a space on each side, exactly as in a table row.
+
+  Every expression (trace, z, u, v, and the coordinates of a point or segment) is evaluated as a plain math expression by a separate library, not typeset by KaTeX — write x^2, sin(x), sqrt(x^2 + y^2), atan2(y, x), abs(x) in ordinary calculator-style notation (abs(x), not |x| — bars aren't valid syntax here), never inside \\( \\) and never with LaTeX commands like \\sin or \\frac{}{}. Captions are the opposite, with one wrinkle. The title and the label on a trace go through the normal KaTeX pass like anything else in this document, so \\( \\) works there exactly as it would in a sentence. The xlabel, the ylabel, and the label on a point or a segment are drawn inside the plot itself, where a label must be either one single \\( ... \\) span (the whole label is math) or plain text with no math in it; never mix prose and a math span in one of those, and keep them short. The zlabel is plain text. Keep the two apart — an expression written in LaTeX syntax won't evaluate, and a label written in plain-expression syntax just won't typeset.
 ${languageClause}
 
 CONTEXT
@@ -231,6 +264,8 @@ FINAL REVIEW — before treating the document as finished, reread it once, strai
 - No paragraph anywhere in the document — before a question, immediately after it, or much later, however it's framed — that discusses, defends, hints at, or explains why a specific option is right or wrong.
 - Every bonus question's reasoning traceable to something the main document actually stated or demonstrated on the page — not a natural-feeling extension of it that was never actually shown.
 - Every main and bonus question has exactly one [ANSWER: X] tag naming a letter that is actually one of that question's own listed options — a missing, mistyped, or dangling tag means that question silently fails to score.
+- Every section whose central object has a shape: does it have a graph, placed where the section first works with that object? A section about a visible object that is explained in prose alone is a gap to fix now.
+- Every graph block: expressions in plain calculator notation (no LaTeX, no bars for absolute value, ^ for powers); every slider name used in an expression is defined by a slider line; ranges that actually show the feature the prose is about; no graph plots or marks the specific object a nearby question asks about; xlabel, ylabel, point and segment labels are each one math span or plain text, never a mix; fields separated by " | " with spaces.
 - No literal "|" sitting inside a table cell outside \\lvert \\rvert.
 
 If the read-through turns up any of these, fix it before finalizing. Having applied a rule correctly while drafting a piece is not the same guarantee as the finished document actually being right — the read-through is what confirms it, not an assumption that following the rules along the way was enough.`;
