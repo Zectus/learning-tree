@@ -71,12 +71,11 @@ function applyAccountUser(user) {
   // source. (An explicit sign-out flushes earlier still — see submitSignOut —
   // because by the time this runs for a sign-out, auth is already revoked.)
   if (typeof flushProgress === 'function') flushProgress();
-  const sourceChanged = state.accountUser?.uid !== user?.uid;
   state.accountUser = user;
   updateAccountButton();
   if (user) showSignedInPanel(user); else showSignedOutPanel();
-  if (sourceChanged && typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource().catch(() => showToast('Could not load saved trees.'));
-  if (sourceChanged && typeof refreshProgressFromSource === 'function') refreshProgressFromSource().catch(() => showToast('Could not load progress.'));
+  if (typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource();
+  if (typeof refreshProgressFromSource === 'function') refreshProgressFromSource();
 }
 
 /* Opens the modal. If we're signed in but have no username yet — a slow lookup
@@ -182,9 +181,7 @@ function friendlyAuthError(err) {
     case 'auth/too-many-requests':    return 'Too many attempts — wait a moment and try again.';
     case 'auth/popup-blocked':        return 'Your browser blocked the sign-in popup — allow popups for this site and try again.';
     case 'auth/account-exists-with-different-credential':
-      return 'Sign in with the existing email and password to connect Google to that same account.';
-    case 'auth/provider-already-linked': return 'This sign-in method is already connected.';
-    case 'auth/requires-recent-login': return 'Sign out and sign in again, then retry connecting this sign-in method.';
+      return 'An account already exists for this email using a different sign-in method.';
     default: return err?.message || 'Something went wrong — try again.';
   }
 }
@@ -259,10 +256,6 @@ async function submitGoogleSignIn() {
   } catch (err) {
     // A closed/cancelled popup means they changed their mind — nothing to report.
     if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
-      if (err?.code === 'auth/account-exists-with-different-credential') {
-        setAccountMode('signin');
-        document.getElementById('account-email-input').value = err.customData?.email || '';
-      }
       showAccountError(friendlyAuthError(err));
     }
   } finally {
@@ -281,8 +274,6 @@ async function submitGoogleUsername() {
   const btn = document.getElementById('account-google-username-submit');
   btn.disabled = true;
   try {
-    const password = document.getElementById('account-google-password').value;
-    if (password) { await window.cloud.addPassword(password); document.getElementById('account-google-password').value = ''; }
     const claimed = await window.cloud.claimUsername(pendingGoogleUser.uid, username);
     if (!claimed) { showAccountError('That username is already taken — try another.'); return; }
     authGeneration++;
@@ -306,17 +297,6 @@ async function submitSignOut() {
   closeAccountModal();
 }
 
-document.getElementById('account-add-password-btn').addEventListener('click', async () => {
-  clearAccountError();
-  const input = document.getElementById('account-add-password');
-  try { await window.cloud.addPassword(input.value); input.value = ''; showToast('Email sign-in is now connected to this account.'); }
-  catch (error) { showAccountError(friendlyAuthError(error)); }
-});
-document.getElementById('account-link-google-btn').addEventListener('click', async () => {
-  clearAccountError();
-  try { await window.cloud.linkGoogle(); showToast('Google is now connected to this account.'); }
-  catch (error) { showAccountError(friendlyAuthError(error)); }
-});
 document.getElementById('menu-account').addEventListener('click', openAccountModal);
 document.getElementById('account-modal-close').addEventListener('click', closeAccountModal);
 document.getElementById('account-modal-backdrop').addEventListener('click', e => {

@@ -1,15 +1,48 @@
-/* Learner progress is separate from structure. Stable tree/node IDs survive
-   label edits; legacy signatures/labels remain readable for migration.
-   IndexedDB backs guest storage. Cloud writes patch only changed fields.
-   Saves flush after a short debounce and when the page is hidden. */
+/* ═══════════════════════════════════════════════════════════
+   progress.js — persistence of per-node progress (done flag, quiz/bonus
+   answers, notes, scroll position), independent of the tree's own JSON
+   (see io.js): a tree's structure and a learner's progress through it are
+   saved separately on purpose (see treeSignature). Also owns the "reset
+   progress" control, including its shift-click / long-press "reset every
+   tree" variant.
+
+   STORAGE SOURCE: signed out, progress lives in this browser's
+   localStorage (PROGRESS_KEY); signed in (account.js/cloud.js) it lives
+   under the user's uid in Firebase. refreshProgressFromSource() and
+   writeProgressNow() are the only functions that know which is active
+   (progressSource); everything else works on the in-memory progressCache.
+   window.handleCloudAuthChange (account.js) triggers a refresh on every
+   sign-in/out. library.js reads progressCache too, so its done/total
+   counts are right for either source.
+
+   WRITE BATCHING: autoSaveProgress() runs on every done toggle, quiz answer
+   and (debounced upstream) notes edit or scroll — far too often to write
+   each time, and a synchronous localStorage write mid-scroll shows up as
+   stutter. persistProgress() only marks a write pending; the actual write
+   happens when the tab is hidden or unloaded, or immediately through
+   persistProgressNow() for one-off deliberate actions (seeding a new
+   account, reset). A failed write leaves the write pending so a later flush
+   retries it.
+
+   FIREBASE KEY SAFETY: progressCache is keyed by tree signature and then by
+   node label — arbitrary text that may contain characters ('.', '#', '$',
+   '[', ']', '/') Firebase keys reject. localStorage doesn't care, so only
+   the object sent to / read from the cloud goes through
+   encodeProgressForCloud/decodeProgressFromCloud.
+
+   Depends on state.js, toast.js, and viewer.js (closeViewer — only called on
+   a click, after everything has loaded).
+═══════════════════════════════════════════════════════════ */
 const PROGRESS_KEY = 'tree-progress';
 
 let progressCache  = {};      // in-memory mirror of whichever source is active
 let progressSource = 'local'; // 'local' | 'cloud'
 
-async function readLocalProgress() { return browserStore.read(PROGRESS_KEY); }
-async function writeLocalProgress(obj) {
-  try { await browserStore.write(PROGRESS_KEY, obj); return true; }
+function readLocalProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); } catch { return {}; }
+}
+function writeLocalProgress(obj) {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(obj)); return true; }
   catch {
     showToast("Couldn't save your progress — this browser's storage is full or blocked. Signing in stores it in your account instead.");
     return false;
@@ -58,37 +91,25 @@ function treeSignature() {
    Called once at load (guest view, so progress works before Firebase has
    resolved a persisted session) and by handleCloudAuthChange on every
    sign-in/out. */
-let progressRefreshGeneration = 0;
 async function refreshProgressFromSource() {
-  const generation = ++progressRefreshGeneration;
-  const uid = state.accountUser?.uid;
-  const originalCache = progressCache;
   if (state.accountUser) {
     progressSource = 'cloud';
     try {
-      const loaded = decodeProgressFromCloud(await window.cloud.getProgress(state.accountUser.uid));
-      if (generation !== progressRefreshGeneration || uid !== state.accountUser?.uid) return;
-      progressCache = loaded;
+      progressCache = decodeProgressFromCloud(await window.cloud.getProgress(state.accountUser.uid));
     } catch (e) {
       console.error('Could not load cloud progress:', e);
-      return;
+      progressCache = {};
     }
     // A fresh account with no cloud progress but local progress from before
     // signing in gets the local copy uploaded rather than orphaned.
-    const local = await readLocalProgress();
-    if (generation !== progressRefreshGeneration || uid !== state.accountUser?.uid) return;
+    const local = readLocalProgress();
     if (Object.keys(progressCache).length === 0 && Object.keys(local).length > 0) {
       progressCache = local;
       await persistProgressNow();
     }
   } else {
     progressSource = 'local';
-    if (!window.indexedDB) progressCache = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
-    else {
-      const loaded = await readLocalProgress();
-      if (generation !== progressRefreshGeneration || uid !== state.accountUser?.uid || progressCache !== originalCache) return;
-      progressCache = loaded;
-    }
+    progressCache = readLocalProgress();
   }
 
   // The data may have just changed under the tree on screen (e.g. signing in
@@ -110,9 +131,7 @@ async function refreshProgressFromSource() {
 async function writeProgressToCloud() {
   if (!state.accountUser) return false;
   try {
-    const uid = state.accountUser.uid;
-    const snapshot = encodeProgressForCloud(progressCache);
-    await window.cloud.setProgress(uid, snapshot);
+    await window.cloud.setProgress(state.accountUser.uid, encodeProgressForCloud(progressCache));
     return true;
   } catch (e) {
     console.error('Cloud progress save failed:', e);
@@ -122,7 +141,7 @@ async function writeProgressToCloud() {
 }
 
 /* Writes to whichever source is active; resolves to whether it succeeded.
-   IndexedDB commits asynchronously; debounced saves run while the tab is active. */
+   The local branch runs synchronously, which matters on pagehide. */
 function writeProgressNow() {
   if (progressSource === 'cloud' && state.accountUser) return writeProgressToCloud();
   return Promise.resolve(writeLocalProgress(progressCache));
@@ -132,44 +151,34 @@ let progressPending = false;
 
 /* Sends the pending write now — on tab-hide/unload, before sign-out, and
    safe to call when nothing is pending. A failure re-marks it pending. */
-let progressFlushInFlight = null;
 async function flushProgress() {
-  if (progressFlushInFlight) { await progressFlushInFlight; return flushProgress(); }
   if (!progressPending) return;
   progressPending = false;
-  progressFlushInFlight = writeProgressNow();
-  try { if (!(await progressFlushInFlight)) progressPending = true; }
-  finally { progressFlushInFlight = null; }
+  if (!(await writeProgressNow())) progressPending = true;
 }
 
-let progressSaveTimer;
-function persistProgress() {
-  progressPending = true;
-  clearTimeout(progressSaveTimer);
-  progressSaveTimer = setTimeout(flushProgress, 500);
-}
+function persistProgress() { progressPending = true; }
 
 async function persistProgressNow() {
-  progressPending = true;
-  await flushProgress();
+  progressPending = false;
+  if (!(await writeProgressNow())) progressPending = true;
 }
 
 // pagehide is more reliable than beforeunload on mobile/Safari, so wire both
 // events that mean "this tab is going away or out of view". Neither guarantees
 // a network write finishes (there's no sendBeacon for Firebase RTDB), but the
-// IndexedDB write also needs time to commit.
+// local write is synchronous.
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') flushProgress();
 });
 window.addEventListener('pagehide', () => { flushProgress(); });
 
-/* Serializes every node into its record under this tree's stable ID, then
+/* Serializes every node into its record under this tree's signature, then
    marks a write pending. Called on any change worth remembering. */
 function autoSaveProgress() {
   const perNode = {};
   state.nodes.forEach(node => {
-    if (!node.progressId) node.progressId = crypto.randomUUID();
-    perNode[node.progressId] = {
+    perNode[node.label] = {
       done:           !!node.done,
       sessionAnswers: node._sessionAnswers || undefined,
       bonusAnswers:   node._bonusAnswers   || undefined,
@@ -177,17 +186,17 @@ function autoSaveProgress() {
       scrollTop:      node._scrollTop,
     };
   });
-  progressCache[currentTreeId()] = perNode;
+  progressCache[treeSignature()] = perNode;
   persistProgress();
 }
 
 /* Restores each node's record (done flag, answers, notes, scroll) from progressCache. */
 function autoRestoreProgress() {
-  const saved = progressCache[currentTreeId()] || progressCache[treeSignature()];
+  const saved = progressCache[treeSignature()];
   if (!saved) return;
   let changed = false;
   state.nodes.forEach(node => {
-    const rec = saved[node.progressId] || saved[node.label];
+    const rec = saved[node.label];
     if (!rec) return;
     if (rec.done) { node.done = true; changed = true; }
     if (rec.sessionAnswers) node._sessionAnswers = rec.sessionAnswers;
@@ -239,7 +248,7 @@ btnResetProgress.addEventListener('click', async e => {
   if (resetAll && !window.confirm(`Reset progress on every tree${state.accountUser ? ', including the copy synced to your account' : ''}? This can't be undone.`)) return;
 
   if (resetAll) progressCache = {};
-  else { delete progressCache[currentTreeId()]; delete progressCache[treeSignature()]; }
+  else delete progressCache[treeSignature()];
   state.nodes.forEach(clearNodeProgressFields);
   await persistProgressNow();
   closeViewer();
@@ -252,4 +261,4 @@ btnResetProgress.addEventListener('click', async e => {
 
 // Guest view is available immediately; refreshed again when Firebase reports
 // a signed-in session (see handleCloudAuthChange in account.js).
-refreshProgressFromSource().catch(() => showToast("Couldn't load this browser's progress."));
+refreshProgressFromSource();
