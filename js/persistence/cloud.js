@@ -79,9 +79,14 @@ async function claimUsername(uid, username) {
 const cloudBaselines = new Map();
 const clone = value => JSON.parse(JSON.stringify(value));
 function comparable(value) {
-  if (Array.isArray(value)) return value.map(comparable);
-  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, comparable(value[key])]));
-  return value;
+  // Realtime Database drops null/empty children and may return arrays as
+  // numeric-key objects. Compare the stored representation in both directions.
+  if (value && typeof value === 'object') {
+    const entries = Object.keys(value).sort().map(key => [key, comparable(value[key])])
+      .filter(([, child]) => child !== null);
+    return entries.length ? Object.fromEntries(entries) : null;
+  }
+  return value == null ? null : value;
 }
 const sameValue = (a, b) => JSON.stringify(comparable(a)) === JSON.stringify(comparable(b));
 function diffFields(before, after, prefix = '', out = {}) {
@@ -109,7 +114,11 @@ async function writeCollection(uid, collection, value) {
   if (collection === 'library') {
     for (const id of new Set([...Object.keys(before), ...Object.keys(snapshot)])) {
       if (sameValue(before[id], snapshot[id])) continue;
-      const result = await runTransaction(ref(db, `users/${uid}/library/${id}`), current => {
+      const entryRef = ref(db, `users/${uid}/library/${id}`);
+      // Prime the transaction cache: an unloaded existing entry can otherwise
+      // arrive as null on the first callback and abort before checking the server.
+      await get(entryRef);
+      const result = await runTransaction(entryRef, current => {
         if (!sameValue(current, before[id] || null)) return;
         return snapshot[id] || null;
       }, { applyLocally: false });

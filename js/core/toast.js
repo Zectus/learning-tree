@@ -12,11 +12,17 @@ function showToast(message, duration = 7000) {
     host.setAttribute('aria-live', 'polite');
     document.body.appendChild(host);
   }
+  const existing = [...host.children].find(toast => toast.textContent === message);
+  if (existing) {
+    clearTimeout(existing.dismissTimer);
+    existing.dismissTimer = setTimeout(() => existing.remove(), duration);
+    return;
+  }
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = message;
   toast.title = 'Click to dismiss';
   toast.addEventListener('click', () => toast.remove());
   host.appendChild(toast);
-  setTimeout(() => toast.remove(), duration);
+  toast.dismissTimer = setTimeout(() => toast.remove(), duration);
 }

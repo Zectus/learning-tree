@@ -5,6 +5,20 @@ const LIBRARY_KEY = 'tree-library';
 
 let libraryCache  = {};      // in-memory mirror of whichever source is active
 let librarySource = 'local'; // 'local' | 'cloud'
+let libraryMutationPending = false;
+
+function guardLibraryMutation(action) {
+  return async (...args) => {
+    if (libraryMutationPending) return;
+    libraryMutationPending = true;
+    renderLibraryGrid();
+    try { return await action(...args); }
+    finally {
+      libraryMutationPending = false;
+      renderLibraryGrid();
+    }
+  };
+}
 
 async function readLocalLibrary() { return browserStore.read(LIBRARY_KEY); }
 async function writeLocalLibrary(lib) {
@@ -41,6 +55,7 @@ function libraryProgressFor(entryData) {
    and by handleCloudAuthChange (account.js) on every sign-in/out. */
 let libraryRefreshGeneration = 0;
 async function refreshLibraryFromSource() {
+  if (libraryMutationPending) return;
   const generation = ++libraryRefreshGeneration;
   const uid = state.accountUser?.uid;
   const originalCache = libraryCache;
@@ -229,6 +244,9 @@ function renderLibraryGrid() {
     card.querySelector('.lc-del').addEventListener('click', () => deleteLibraryEntry(id));
     grid.appendChild(card);
   });
+  for (const button of document.querySelectorAll('.library-save-row button, #library-grid button')) {
+    button.disabled = libraryMutationPending;
+  }
 }
 
 /* ── modal open/close ── */
@@ -240,6 +258,12 @@ async function openLibraryModal() {
 function closeLibraryModal() {
   document.getElementById('library-modal-backdrop').classList.remove('open');
 }
+
+saveCurrentTreeToLibrary = guardLibraryMutation(saveCurrentTreeToLibrary);
+saveCurrentTreeAsNewCopy = guardLibraryMutation(saveCurrentTreeAsNewCopy);
+renameLibraryEntry = guardLibraryMutation(renameLibraryEntry);
+duplicateLibraryEntry = guardLibraryMutation(duplicateLibraryEntry);
+deleteLibraryEntry = guardLibraryMutation(deleteLibraryEntry);
 
 document.getElementById('btn-my-trees').addEventListener('click', openLibraryModal);
 document.getElementById('library-modal-close').addEventListener('click', closeLibraryModal);

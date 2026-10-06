@@ -114,3 +114,58 @@ test('IndexedDB migration removes the legacy copy only after transaction commit'
   assert.equal(records.get('tree-library').saved.name,'Legacy');
   assert.equal(legacy.has('tree-library'),false);
 });
+
+test('library saves compare Firebase shapes and prime each transaction cache', async () => {
+  const {ctx} = cloudContext();
+  let remote = {name:'Tree',savedAt:1,data:{nodes:[{id:'root',requires:[]}]}};
+  let primed = false;
+  ctx.get = async path => {
+    if (path.endsWith('/tree')) primed = true;
+    return {exists:()=>true,val:()=>path.endsWith('/tree') ? remote : {tree:remote}};
+  };
+  ctx.runTransaction = async (path, callback) => {
+    assert.equal(primed, true);
+    primed = false;
+    // Firebase strips empty arrays and can expose numeric-key objects.
+    const stored = JSON.parse(JSON.stringify(remote));
+    stored.data.nodes = {0:{id:'root'}};
+    const next = callback(stored);
+    assert.notEqual(next, undefined);
+    remote = next;
+    return {committed:true};
+  };
+  await vm.runInContext(`window.cloud.getLibrary('u')`,ctx);
+  for (const savedAt of [2,3]) {
+    await vm.runInContext(`window.cloud.setLibrary('u',{tree:{name:'Tree',savedAt:${savedAt},data:{nodes:[{id:'root',requires:[]}]}}})`,ctx);
+  }
+  assert.equal(remote.savedAt,3);
+});
+
+test('rapid library saves share one pending mutation and recover after failure', async () => {
+  const app = loadApp();
+  let release;
+  let saves = 0;
+  app.window.cloud = {setLibrary:async()=>{saves++; await new Promise(resolve=>{release=resolve;}); throw new Error('offline');}};
+  app.ev(`loadFromJSON({nodes:[{id:'root',label:'Root'}]});
+    state.accountUser={uid:'u'}; librarySource='cloud';
+    libraryCache={saved:{name:'Tree',savedAt:1,data:buildTreeJSON(true)}};
+    state.libraryId='saved';`);
+  const first = app.ev('saveCurrentTreeToLibrary()');
+  await app.ev('saveCurrentTreeToLibrary()');
+  assert.equal(saves,1);
+  assert.equal(app.document.getElementById('btn-save-current-tree').disabled,true);
+  release();
+  await first;
+  assert.equal(app.ev('libraryCache.saved.savedAt'),1);
+  assert.equal(app.document.getElementById('btn-save-current-tree').disabled,false);
+  app.dom.window.close();
+});
+
+test('repeated conflict warnings display a single dismissible toast', () => {
+  const app = loadApp();
+  app.ev(`for(let i=0;i<4;i++) showToast('Saved tree conflict');`);
+  assert.deepEqual(app.toasts(),['Saved tree conflict']);
+  app.document.querySelector('#toast-host .toast').click();
+  assert.deepEqual(app.toasts(),[]);
+  app.dom.window.close();
+});
