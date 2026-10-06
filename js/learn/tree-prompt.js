@@ -16,7 +16,7 @@
 
 /* ── shared pieces ── */
 
-const TREE_NODE_FRAMING = `Each node in this tree becomes its own generated lesson later (a separate process turns one node into a full document someone reads in one sitting). Keep that in mind as the real constraint behind everything below: a node isn't a label on a graph, it's a promise about how much material someone is about to sit down and learn in one piece.`;
+const TREE_NODE_FRAMING = `Each node in this tree becomes its own generated lesson later (a separate process turns one node into a full document someone reads in one sitting). Keep that in mind as the real constraint behind everything below: a node is a manageable learning goal: something a reader can understand and use after one sitting. Its length follows that goal, rather than determining its scope.`;
 
 // Both flows run an interactive calibration BEFORE building, so "output nothing
 // but the file" applies only to the final message, not the whole conversation.
@@ -24,26 +24,28 @@ const TREE_FINAL_MESSAGE_RULE = `the calibration questions described below come 
 
 const TREE_FIELD_NOTES = `- id: a short, stable, lowercase snake_case slug. Only used to wire up "requires" — never shown to anyone. Pick something you'll still recognize if you have to reference it later.
 - label: the human-readable name on the node card, and the thing the later lesson-generation step is handed as its topic. Name an actual concept, law, definition, or technique — not a chapter title, not a vague theme.
-- explanation: a private note, never shown to the learner — it's handed straight to the later lesson-generation step alongside the label, as the actual working spec of what this node covers. The label is a name; the explanation is the boundary. Say which specific sub-results, cases, or siblings belong inside this node, and — just as importantly — which adjacent ones don't, so the later step isn't left guessing at scope from a two- or three-word title. This is also where you write down the broader family a narrow-sounding label actually belongs to (see SIZE EACH NODE TO A REAL DOCUMENT below) when the label alone wouldn't convey it. Always include it, even if it's short.
+- explanation: a private teaching brief passed to the lesson generator with the label. State what the learner should be able to do, the central idea and supporting content needed for that ability, and the important boundary with neighboring nodes. Include a useful motivating question or predictable misconception when it affects how this node should be taught. Identify any assumed background not supplied by the listed prerequisites; it must match the calibration. Write compact connected sentences, not a catalog of every related case. Excluding later methods or formalism must still leave room to show why the idea is useful. Always include this field.
 - requires: the ids of every node that must be completed before this one unlocks. Omit the key entirely for a root. Everything listed is ANDed — all of them must be done, not just one of them.
 - optional: true tags a node as enrichment — interesting, not load-bearing for the rest of the tree. It's purely a label for the learner; it does not loosen locking. A node that requires an optional node still needs it done. Leave this off unless you mean it.
 - done: don't set this. It only exists for re-importing a tree that already has progress on it.`;
 
-const TREE_DESIGN_PRINCIPLES = `THE QUESTION TO ASK FOR EVERY NODE
+const TREE_DESIGN_PRINCIPLES = `THE LEARNING GOAL FOR EVERY NODE
 
-What, concretely, does this node teach that wasn't already taught by its prerequisites? If you can't answer without basically restating something a prerequisite covers, the node doesn't earn its place yet — either fold it into whichever node already covers that ground, or sharpen it until it has real content of its own that a reader couldn't get from its prerequisites alone.
+What can the learner interpret, explain, distinguish, or do after this node that they could not do after its prerequisites? Name an observable ability, then choose the content needed to develop it. A topic list alone is not a learning goal. Merge a candidate that merely repeats an earlier ability; sharpen or split one whose goal hides several independent learning challenges.
 
-GRANULARITY
+GRANULARITY AND LEARNING LOAD
 
-A node is one law, one definition, one named result, one technique with its own derivation — not a multi-topic chapter, and not a single isolated fact either. If you're tempted to write a label like "Introduction to X" or "X Basics," that's usually a sign the node is actually several nodes squashed together, or so thin it should be folded into its neighbor.
+A node develops one coherent concept, result, or method at the learner's current level. It needs enough explanation and practice to make that idea usable, but no fixed number of sections or questions. A short complete lesson is preferable to enlarging its scope to fill a document.
 
-BUNDLE WHEN THE NEXT STEP IS A REFRAMING, SPLIT WHEN IT NEEDS REAL NEW MACHINERY
+Bundle consequences or representations that help the learner understand and use the same idea without introducing a separate difficulty. Split when another concept, method, or unfamiliar body of knowledge needs its own explanation and practice. This applies to conceptual distinctions as well as new theorems or derivations. Several related exceptions can still overload an introductory node; belonging to the same family does not make them appropriate to teach together.
 
-If the immediate consequence of an idea is a small move — dividing by something, restating the same content in different notation, a one-line corollary — that consequence belongs in the SAME node as the idea it falls out of. Don't manufacture a second node whose entire content is "and therefore X," because that node will have almost nothing to say that the first node didn't already say. But if the next step needs a genuinely new piece of machinery — a new theorem or principle, a real derivation or argument, a different technique or method — give it its own node, even if it feels like the "obvious next thing" to glue on. The test is the same one as above: a node that's just a short corollary of its parent fails the "what does this teach on its own" question and should be folded back in.
+CHECK THE LESSON BEFORE FIXING ITS SCOPE
 
-SIZE EACH NODE TO A REAL DOCUMENT, NOT A SINGLE FACT
+Sketch how a first-time learner would encounter the idea: a meaningful question, an accessible concrete case, the general meaning or method, and a chance to use it. These are planning checks, not mandatory section titles. Distinguish the central idea from supporting illustrations and material that belongs later. Do not turn every item in the brief into an equally weighted section.
 
-Each node becomes a self-contained document of roughly five to eight content sections and a handful to a dozen main questions, built entirely from that node's own real material — no padding. Before locking in a node's scope, list its content honestly, section by section, and check there's actually that much distinct, non-repetitive substance in it. One named result plus nothing but its own trivial restatements and edge cases does not clear that bar — a document forced out of a topic that thin ends up manufacturing filler to reach a reasonable length: special cases that don't teach anything genuinely new, a detour into some adjacent technique that isn't really this node's material. That's a symptom of the topic being too narrow, not a sign the node needs more padding — broaden it instead to the natural family that result belongs to. A single rule sits alongside the other rules in the same family; a single special case sits alongside the general result and its other special cases; a single technique sits alongside the other techniques that solve the same class of problem. Use the explanation field (see OUTPUT SCHEMA) to record precisely which of these siblings this node includes, so the label can stay a short, recognizable name while the real boundary lives in the explanation. The opposite failure is just as real and just as common: a topic that actually needs fifteen sections to do justice to isn't one node, it's several — split it the way GRANULARITY above already describes.
+If a candidate is too thin, first check whether it belongs with a neighboring goal. If it is too broad, separate its learning challenges rather than compressing their explanations. Never add sibling rules, edge cases, or advanced justifications solely to meet a length target. Record the resulting goal and boundaries in the explanation field.
+
+Choose examples whose required knowledge is supplied by the calibration or earlier nodes. An introductory goal should not quietly depend on a sophisticated example from another branch. Boundaries such as "no formal definition" or "no calculation techniques" constrain the treatment; they do not remove the need for motivation, concrete interpretation, or useful practice.
 
 MULTIPLE ROOTS ARE FINE
 
@@ -63,7 +65,7 @@ If several branches each go through a similarly-shaped stage, that doesn't mean 
 
 const TREE_NAMING_AND_REDUNDANCY = `NAMING
 
-Use the real name of the law, theorem, or concept as the label. Add a short parenthetical qualifier only when two nodes share a name and need to be told apart by form or version (e.g. one node being an early, restricted form of a result and another being the general version). Don't invent chapter-style titles that don't correspond to what's actually taught. A label can and often should stay narrow-sounding even when SIZE EACH NODE TO A REAL DOCUMENT above led you to broaden the node's actual content — that's exactly what the explanation field is for; don't pad the label itself into a run-on chapter title just to signal the broader scope.
+Use a recognizable name for the concept, result, or method actually taught. Add a short qualifier when it distinguishes an introductory interpretation from a later formal treatment, or one form from another. The label and explanation must agree: do not keep a narrow label while hiding a much broader chapter in its scope note. Avoid vague titles that give the lesson generator no clear subject.
 
 DON'T HAND-WRING OVER TRANSITIVE REDUNDANCY
 
@@ -79,7 +81,7 @@ If you have a way to present these as selectable options for the person to choos
 
 // The middle of the PLAN FIRST checklist that is identical in both flows.
 const TREE_PLAN_SHARED = `- Go down that list and run the granularity question on each candidate: what does it teach that its neighbors don't? Merge anything that fails that test, split anything that's secretly two ideas bundled together.
-- Run each candidate through SIZE EACH NODE TO A REAL DOCUMENT too: does it honestly have five to eight sections' worth of distinct content, or would writing it in full mean padding out one thin result? Broaden anything too thin into its natural sibling family before moving on, and draft the explanation that will pin down the broadened scope.
+- Sketch each candidate as a learnable lesson: what motivates it, what concrete case introduces it, what ability is practiced, and what background those steps require. Adjust scope for learning load, without a section quota, and write the explanation as a teaching brief with a central goal and clear boundaries.
 - For every place one topic seems to lead into the next, decide explicitly: is the second one a reframing of the first (bundle), or does it need real new machinery (split)?
 - Identify the genuine starting points — the things that don't depend on anything else in your list — and don't force them into a single shared root if the subject doesn't actually have one.
 - Identify the real convergence points: the handful of places where something only exists because two or more earlier threads come together. Everything else should carry the minimum prerequisites it actually needs, not a chain padded out for the sake of it.`;
@@ -98,7 +100,7 @@ OUTPUT SCHEMA
   "topic": "${topic}",
   "language": "${language}",
   "nodes": [
-    { "id": "slug", "label": "Display Name", "explanation": "1-3 sentences pinning down exactly what this node covers and where its edges are", "requires": ["slug1","slug2"], "optional": false }
+    { "id": "slug", "label": "Display Name", "explanation": "A compact teaching brief: learner ability, central content, assumed background, and boundaries", "requires": ["slug1","slug2"], "optional": false }
   ]
 }
 
@@ -160,7 +162,7 @@ OUTPUT SCHEMA
   "topic": "Subject Name",
   "language": "Language Name",
   "nodes": [
-    { "id": "slug", "label": "Display Name", "explanation": "1-3 sentences pinning down exactly what this node covers and where its edges are", "requires": ["slug1","slug2"], "optional": false }
+    { "id": "slug", "label": "Display Name", "explanation": "A compact teaching brief: learner ability, central content, assumed background, and boundaries", "requires": ["slug1","slug2"], "optional": false }
   ]
 }
 
