@@ -12,7 +12,9 @@
    PORTRAIT LOCK
    The web platform can't lock a page to portrait outside a fullscreen PWA,
    so the standard substitute is an unclosable overlay whenever a touch
-   device is in landscape. (pointer: coarse) scopes it to real touch
+   device is in landscape. orientation.js uses screen orientation because
+   the on-screen keyboard can make a portrait viewport look landscape.
+   (pointer: coarse) scopes it to real touch
    devices, so a wide desktop window never triggers it.
 ═══════════════════════════════════════════════════════════ */
 #rotate-overlay {
@@ -39,8 +41,8 @@
   0%, 100% { transform: rotate(0deg); }
   50%      { transform: rotate(-90deg); }
 }
-@media (pointer: coarse) and (orientation: landscape) {
-  #rotate-overlay { display: flex; }
+@media (pointer: coarse) {
+  html[data-screen-landscape] #rotate-overlay { display: flex; }
 }
 
 /* ═══════════════════════════════════════════════════════════

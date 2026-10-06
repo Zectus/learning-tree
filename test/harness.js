@@ -8,11 +8,17 @@ const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..');
 
-function loadApp({ innerWidth = 1280 } = {}) {
+function loadApp({ innerWidth = 1280, screenOrientation, deviceOrientation, screenWidth = 0, screenHeight = 0 } = {}) {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const dom = new JSDOM(html, { runScripts: 'outside-only', pretendToBeVisual: true, url: 'http://localhost/' });
   const { window } = dom;
   window.innerWidth = innerWidth;
+  Object.defineProperties(window.screen, {
+    width: { value: screenWidth, configurable: true },
+    height: { value: screenHeight, configurable: true },
+  });
+  if (screenOrientation) Object.defineProperty(window.screen, 'orientation', { value: screenOrientation });
+  if (deviceOrientation !== undefined) window.orientation = deviceOrientation;
 
   // Stylesheets that decide visibility (so computed-style assertions are real).
   // (modals.css is where .hidden is defined; a partial checkout without it gets the same one-line rule.)

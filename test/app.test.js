@@ -321,6 +321,33 @@ test('mobile breakpoint is one shared, inclusive definition', () => {
 });
 
 /* ── viewport ── */
+test('portrait guard ignores keyboard viewport resizing but follows device rotation', () => {
+  const { window: orientationWindow } = new (require('jsdom').JSDOM)();
+  const orientation = new orientationWindow.EventTarget();
+  orientation.type = 'portrait-primary';
+  const app = loadApp({ innerWidth: 400, screenOrientation: orientation });
+  const guarded = () => app.document.documentElement.hasAttribute('data-screen-landscape');
+  app.window.innerHeight = 250;
+  app.window.dispatchEvent(new app.window.Event('resize'));
+  assert.equal(guarded(), false);
+  orientation.type = 'landscape-primary';
+  orientation.dispatchEvent(new orientationWindow.Event('change'));
+  assert.equal(guarded(), true);
+  orientation.type = 'portrait-secondary';
+  app.window.dispatchEvent(new app.window.Event('orientationchange'));
+  assert.equal(guarded(), false);
+});
+
+test('portrait guard supports legacy device angles and screen dimensions', () => {
+  const app = loadApp({ deviceOrientation: 0, screenWidth: 800, screenHeight: 400 });
+  assert.equal(app.document.documentElement.hasAttribute('data-screen-landscape'), false);
+  app.window.orientation = -90;
+  app.window.dispatchEvent(new app.window.Event('orientationchange'));
+  assert.equal(app.document.documentElement.hasAttribute('data-screen-landscape'), true);
+  assert.equal(loadApp({ screenWidth: 400, screenHeight: 800 }).document.documentElement.hasAttribute('data-screen-landscape'), false);
+  assert.equal(loadApp({ screenWidth: 800, screenHeight: 400 }).document.documentElement.hasAttribute('data-screen-landscape'), true);
+});
+
 test('a non-animated transform is not overwritten by an animated one still in flight', async () => {
   const app = loadApp();
   app.ev('state.viewport = { x: 10, y: 10, scale: 1 }; applyTransform(true)');
