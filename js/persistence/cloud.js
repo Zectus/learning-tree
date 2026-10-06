@@ -1,65 +1,7 @@
-/* ═══════════════════════════════════════════════════════════
-   cloud.js — the only file that talks to Firebase directly.
-   Sets up the app/auth/database once, then exposes a small
-   surface (window.cloud) for everything else to call:
-     cloud.signUp(email, password)      → resolves with the UserCredential
-     cloud.signIn(email, password)
-     cloud.signOutUser()
-     cloud.claimUsername(uid, username) → true if claimed, false if taken
-     cloud.getUsername(uid)             → this user's claimed username, or null
-     cloud.deleteCurrentUser()          → used to roll back a signup whose
-                                           chosen username turned out taken
-     cloud.getLibrary(uid)              → whole "My Trees" blob for this user
-     cloud.setLibrary(uid, obj)         → overwrite it
-     cloud.getProgress(uid)             → whole per-node progress blob for this user
-     cloud.setProgress(uid, obj)        → overwrite it
-   and calls window.handleCloudAuthChange(user) — defined in
-   account.js — on every auth-state change, including once right
-   after load with whatever session Firebase already had
-   persisted, so account.js never has to poll for it.
-
-   USERNAME UNIQUENESS: real email/password auth (unlike the
-   username-as-fake-email trick this was adapted from) doesn't
-   give username uniqueness for free, so this reserves one
-   explicitly at /usernames/{lowercased} via a transaction that
-   only succeeds if that key doesn't already hold a uid — the
-   Realtime Database equivalent of an atomic "insert if absent."
-   /users/{uid}/username stores the *display* casing separately,
-   since that's what's actually shown; the lowercase index exists
-   purely to make collisions impossible regardless of casing.
-
-   Loaded as a module (see index.html) so it can use Firebase's
-   ES-module SDK straight from the CDN, same as the file these
-   credentials were copied from. Module scripts always execute
-   after every classic <script> on the page has already run,
-   regardless of tag order — so it's safe for this file to assume
-   account.js and library.js have already defined everything it
-   calls into by the time this runs.
-
-   The apiKey/appId/etc. below are the client-side Firebase config
-   for this project — these are not secrets (Firebase's own docs
-   are explicit about this); access is actually controlled by the
-   database's security rules, not by hiding this object.
-
-   ⚠ This introduces a new top-level /usernames path alongside the
-   existing /users path — your database rules need to allow an
-   authenticated user to read any /usernames/{key} (to check
-   availability) and write only a key that doesn't already exist,
-   e.g.:
-     "usernames": {
-       "$key": {
-         ".read": "auth != null",
-         ".write": "auth != null && !data.exists() && newData.val() === auth.uid"
-       }
-     }
-
-   ⚠ getProgress/setProgress read and write /users/{uid}/progress.
-   progress.js is responsible for sanitizing the keys it puts in that
-   object before ever calling setProgress (tree signatures and node
-   labels are arbitrary text that can contain characters — '.', '#',
-   '$', '[', ']', '/' — that Firebase RTDB keys reject outright); this
-   file just stores whatever object it's handed under that path.
-═══════════════════════════════════════════════════════════ */
+/* Firebase boundary. Progress uses field-level updates against the last loaded
+   snapshot; library writes use per-entry transactions and reject stale edits.
+   Existing /users/{uid} ownership rules cover both. Legacy data is retained.
+   Provider linking preserves the Firebase UID and its stored learning data. */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import {
   getAuth,
@@ -70,6 +12,10 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  linkWithCredential,
+  linkWithPopup,
+  EmailAuthProvider,
+  sendPasswordResetEmail,
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import {
   getDatabase,
@@ -77,6 +23,7 @@ import {
   set,
   get,
   runTransaction,
+  update,
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -103,8 +50,17 @@ const googleProvider = new GoogleAuthProvider();
    missing, shows an inline "choose a username" step before treating the
    sign-in as fully complete — same uniqueness guarantee as the
    email/password path, just triggered from a different place. */
+let pendingGoogleCredential = null, pendingGoogleEmail = null;
 async function signInWithGoogle() {
-  const result = await signInWithPopup(auth, googleProvider);
+  let result;
+  try { result = await signInWithPopup(auth, googleProvider); }
+  catch (error) {
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      pendingGoogleCredential = GoogleAuthProvider.credentialFromError(error);
+      pendingGoogleEmail = error.customData?.email;
+    }
+    throw error;
+  }
   const u = result.user;
   return { uid: u.uid, email: u.email, displayName: u.displayName || '' };
 }
@@ -112,7 +68,7 @@ async function signInWithGoogle() {
 async function claimUsername(uid, username) {
   const key = username.toLowerCase();
   const result = await runTransaction(ref(db, `usernames/${key}`), current => {
-    if (current !== null) return; // already claimed — returning undefined aborts the transaction, no write happens
+    if (current !== null && current !== uid) return; // already claimed — returning undefined aborts the transaction, no write happens
     return uid;
   });
   if (!result.committed) return false;
@@ -120,9 +76,67 @@ async function claimUsername(uid, username) {
   return true;
 }
 
+const cloudBaselines = new Map();
+const clone = value => JSON.parse(JSON.stringify(value));
+function comparable(value) {
+  if (Array.isArray(value)) return value.map(comparable);
+  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, comparable(value[key])]));
+  return value;
+}
+const sameValue = (a, b) => JSON.stringify(comparable(a)) === JSON.stringify(comparable(b));
+function diffFields(before, after, prefix = '', out = {}) {
+  for (const key of new Set([...Object.keys(before || {}), ...Object.keys(after || {})])) {
+    const path = prefix ? prefix + '/' + key : key;
+    const a = before?.[key], b = after?.[key];
+    if (sameValue(a, b)) continue;
+    if (b === undefined) out[path] = null;
+    else if (b && typeof b === 'object' && !Array.isArray(b)) diffFields(a, b, path, out);
+    else out[path] = b;
+  }
+  return out;
+}
+async function readCollection(uid, collection) {
+  const snap = await get(ref(db, `users/${uid}/${collection}`));
+  const value = snap.exists() ? snap.val() : {};
+  cloudBaselines.set(uid + '/' + collection, clone(value));
+  return value;
+}
+async function writeCollection(uid, collection, value) {
+  const key = uid + '/' + collection;
+  if (!cloudBaselines.has(key)) throw new Error('Load account data before saving.');
+  const snapshot = clone(value);
+  const before = cloudBaselines.get(key);
+  if (collection === 'library') {
+    for (const id of new Set([...Object.keys(before), ...Object.keys(snapshot)])) {
+      if (sameValue(before[id], snapshot[id])) continue;
+      const result = await runTransaction(ref(db, `users/${uid}/library/${id}`), current => {
+        if (!sameValue(current, before[id] || null)) return;
+        return snapshot[id] || null;
+      }, { applyLocally: false });
+      if (!result.committed) throw new Error('This saved tree changed on another device. Reopen My Trees before editing it again.');
+      // Advance only committed entries, so a partial failure can be retried.
+      if (snapshot[id]) before[id] = clone(snapshot[id]); else delete before[id];
+    }
+    return;
+  }
+  const changes = diffFields(before, snapshot);
+  if (Object.keys(changes).length) await update(ref(db, `users/${uid}/${collection}`), changes);
+  cloudBaselines.set(key, snapshot);
+}
 window.cloud = {
   signUp:      (email, password) => createUserWithEmailAndPassword(auth, email, password),
-  signIn:      (email, password) => signInWithEmailAndPassword(auth, email, password),
+  async signIn(email, password) {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    if (pendingGoogleCredential && result.user.email?.toLowerCase() === pendingGoogleEmail?.toLowerCase()) {
+      await linkWithCredential(result.user, pendingGoogleCredential);
+      pendingGoogleCredential = null;
+      pendingGoogleEmail = null;
+    }
+    return result;
+  },
+  addPassword: password => linkWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, password)),
+  linkGoogle: () => linkWithPopup(auth.currentUser, googleProvider),
+  resetPassword: email => sendPasswordResetEmail(auth, email),
   signOutUser: () => signOut(auth),
   deleteCurrentUser: () => (auth.currentUser ? deleteUser(auth.currentUser) : Promise.resolve()),
   signInWithGoogle,
@@ -137,13 +151,8 @@ window.cloud = {
      the localStorage 'tree-library' blob library.js already knows how to
      render (see LIBRARY_KEY there), just living under this user's own uid
      in the database instead of in this one browser. */
-  async getLibrary(uid) {
-    const snap = await get(ref(db, `users/${uid}/library`));
-    return snap.exists() ? snap.val() : {};
-  },
-  async setLibrary(uid, libraryObj) {
-    await set(ref(db, `users/${uid}/library`), libraryObj);
-  },
+  getLibrary: uid => readCollection(uid, 'library'),
+  setLibrary: (uid, value) => writeCollection(uid, 'library', value),
 
   /* Whole-progress reads/writes — same {signature: {label: record}} shape
      as the localStorage 'tree-progress' blob (see PROGRESS_KEY in
@@ -151,13 +160,8 @@ window.cloud = {
      this one browser. Keys are pre-sanitized by progress.js before ever
      reaching here — see this file's header for why that has to happen
      on that side, not this one. */
-  async getProgress(uid) {
-    const snap = await get(ref(db, `users/${uid}/progress`));
-    return snap.exists() ? snap.val() : {};
-  },
-  async setProgress(uid, progressObj) {
-    await set(ref(db, `users/${uid}/progress`), progressObj);
-  },
+  getProgress: uid => readCollection(uid, 'progress'),
+  setProgress: (uid, value) => writeCollection(uid, 'progress', value),
 };
 
 onAuthStateChanged(auth, user => {

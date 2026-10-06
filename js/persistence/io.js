@@ -30,6 +30,7 @@ function clearMap() {
   state.nextId = 1;
   state.language = '';
   state.topic = '';
+  state.treeId = null;
   state.libraryId = null; // a fresh load starts unlinked; openLibraryEntry() re-links it if that's where the load came from
 }
 
@@ -71,6 +72,7 @@ function loadFromJSON(obj) {
   clearMap();
   state.language = typeof obj.language === 'string' ? obj.language.trim() : '';
   state.topic    = typeof obj.topic === 'string' ? obj.topic.trim() : '';
+  state.treeId = typeof obj.treeId === 'string' && obj.treeId ? obj.treeId : stableTreeId(signatureFromNodes(rawNodes));
 
   const problems = { unknown: 0, self: 0, loop: 0, dupId: 0 };
   const idMap = new Map(); // string id → numeric id (first occurrence wins)
@@ -81,7 +83,7 @@ function loadFromJSON(obj) {
     const label = n.label ?? '';
     const key   = String(n.id ?? slugify(label));
     if (idMap.has(key)) problems.dupId++; else idMap.set(key, numId);
-    const node = { id:numId, slug:key, label, explanation:typeof n.explanation === 'string' ? n.explanation.trim() : '', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
+    const node = { id:numId, slug:key, progressId:String(n.progressId || key), label, explanation:typeof n.explanation === 'string' ? n.explanation.trim() : '', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
     if (typeof n.content === 'string' && n.content.trim()) node._sessionTxt = n.content;
     state.nodes.set(numId, node);
     buildEl(node);
@@ -128,7 +130,8 @@ function buildTreeJSON(includeContent) {
   });
   const nodes = [];
   state.nodes.forEach((n, id) => {
-    const obj = { id: idToStr.get(id), label: n.label };
+    if (!n.progressId) n.progressId = crypto.randomUUID();
+    const obj = { id: idToStr.get(id), progressId: n.progressId, label: n.label };
     if (n.explanation) obj.explanation = n.explanation;
     const reqs = prereqsOf(id).map(p => idToStr.get(p)).filter(Boolean);
     if (reqs.length) obj.requires = reqs;
@@ -136,7 +139,7 @@ function buildTreeJSON(includeContent) {
     if (includeContent && n._sessionTxt) obj.content = n._sessionTxt;
     nodes.push(obj);
   });
-  const out = {};
+  const out = { treeId: currentTreeId() };
   if (state.topic)    out.topic = state.topic;
   if (state.language) out.language = state.language;
   out.nodes = nodes;

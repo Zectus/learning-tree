@@ -1,38 +1,14 @@
-/* ═══════════════════════════════════════════════════════════
-   library.js — "My Trees": a save/load library for whole trees (structure
-   + each node's generated lesson content), separate from the manual JSON
-   import/export in io.js and the progress tracking in progress.js.
-
-   An entry is a stored snapshot in the exact shape loadFromJSON() reads
-   (what buildTreeJSON() produces). Progress is deliberately not stored a
-   second time: it already persists via progress.js, keyed by
-   treeSignature(), so opening an entry restores its progress for free, and
-   this file reads progressCache (not localStorage) so the done/total counts
-   are right whichever source is active.
-
-   STORAGE SOURCE: signed out, the library is this browser's localStorage
-   (LIBRARY_KEY); signed in (account.js/cloud.js) it lives under the user's
-   uid in Firebase. refreshLibraryFromSource() and persistLibrary() are the
-   only two functions that know which; everything else works on libraryCache.
-
-   state.libraryId tracks which entry the tree on the canvas came from, so
-   "save" can update it in place. clearMap() resets it; openLibraryEntry()
-   re-links it, the one place a load counts as "this IS that entry".
-
-   Depends on state.js, io.js (buildTreeJSON, loadFromJSON), progress.js
-   (progressCache), tools.js (svEsc), escape.js, toast.js, and — once
-   signed in — window.cloud (cloud.js, a module that runs after this file).
-═══════════════════════════════════════════════════════════ */
+/* My Trees stores structure/content separately from learner progress.
+   IndexedDB backs guest snapshots; cloud writes operate on individual entries
+   and reject stale edits. Exported tree IDs identify each progress record. */
 const LIBRARY_KEY = 'tree-library';
 
 let libraryCache  = {};      // in-memory mirror of whichever source is active
 let librarySource = 'local'; // 'local' | 'cloud'
 
-function readLocalLibrary() {
-  try { return JSON.parse(localStorage.getItem(LIBRARY_KEY) || '{}'); } catch { return {}; }
-}
-function writeLocalLibrary(lib) {
-  try { localStorage.setItem(LIBRARY_KEY, JSON.stringify(lib)); return true; }
+async function readLocalLibrary() { return browserStore.read(LIBRARY_KEY); }
+async function writeLocalLibrary(lib) {
+  try { await browserStore.write(LIBRARY_KEY, lib); return true; }
   catch {
     showToast("Couldn't save — this browser's storage is full or blocked. Export the tree as JSON instead, or sign in to store it in your account.");
     return false;
@@ -55,34 +31,46 @@ function signatureFromNodes(nodesArr) {
 function libraryProgressFor(entryData) {
   const total = entryData.nodes?.length || 0;
   if (!total) return { done: 0, total: 0 };
-  const rec = progressCache[signatureFromNodes(entryData.nodes)];
+  const rec = progressCache[entryData.treeId] || progressCache[signatureFromNodes(entryData.nodes)];
   if (!rec) return { done: 0, total };
-  return { done: entryData.nodes.filter(n => rec[n.label]?.done).length, total };
+  return { done: entryData.nodes.filter(n => (rec[n.progressId || n.id] || rec[n.label])?.done).length, total };
 }
 
 /* ── source switching ──
    Called at load (guest view, before Firebase resolves a persisted session)
    and by handleCloudAuthChange (account.js) on every sign-in/out. */
+let libraryRefreshGeneration = 0;
 async function refreshLibraryFromSource() {
+  const generation = ++libraryRefreshGeneration;
+  const uid = state.accountUser?.uid;
+  const originalCache = libraryCache;
   if (state.accountUser) {
     librarySource = 'cloud';
     try {
-      libraryCache = await window.cloud.getLibrary(state.accountUser.uid);
+      const loaded = await window.cloud.getLibrary(state.accountUser.uid);
+      if (generation !== libraryRefreshGeneration || uid !== state.accountUser?.uid) return;
+      libraryCache = loaded;
     } catch (e) {
       console.error('Could not load cloud library:', e);
       showToast("Couldn't load your saved trees from your account.");
-      libraryCache = {};
+      return;
     }
     // A fresh account with an empty cloud library but trees saved locally
     // before signing in gets those copied up rather than orphaned.
-    const local = readLocalLibrary();
+    const local = await readLocalLibrary();
+    if (generation !== libraryRefreshGeneration || uid !== state.accountUser?.uid) return;
     if (Object.keys(libraryCache).length === 0 && Object.keys(local).length > 0) {
       libraryCache = local;
       await persistLibrary();
     }
   } else {
     librarySource = 'local';
-    libraryCache = readLocalLibrary();
+    if (!window.indexedDB) libraryCache = JSON.parse(localStorage.getItem(LIBRARY_KEY) || '{}');
+    else {
+      const loaded = await readLocalLibrary();
+      if (generation !== libraryRefreshGeneration || uid !== state.accountUser?.uid || libraryCache !== originalCache) return;
+      libraryCache = loaded;
+    }
   }
   if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
 }
@@ -93,7 +81,7 @@ async function persistLibrary() {
     try { await window.cloud.setLibrary(state.accountUser.uid, libraryCache); return true; }
     catch (e) {
       console.error('Cloud save failed:', e);
-      showToast("Couldn't save to your account — check your connection and try again.");
+      showToast(e.message || "Couldn't save to your account — check your connection and try again.");
       return false;
     }
   }
@@ -133,11 +121,12 @@ async function saveCurrentTreeToLibrary() {
 async function saveCurrentTreeAsNewCopy() {
   const snapshot = buildTreeJSON(true);
   if (!snapshot) return;
+  snapshot.treeId = 'tree_' + crypto.randomUUID();
   const name = (window.prompt('Name this copy:', (state.topic || 'Untitled tree') + ' copy') || '').trim();
   if (!name) return;
   const id = genLibraryId();
   libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
-  if (await persistLibrary()) state.libraryId = id;
+  if (await persistLibrary()) { state.libraryId = id; state.treeId = snapshot.treeId; }
   else delete libraryCache[id];
   renderLibraryGrid();
 }
@@ -166,7 +155,7 @@ async function duplicateLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
   const newId = genLibraryId();
-  libraryCache[newId] = { name: entry.name + ' copy', savedAt: Date.now(), data: entry.data };
+  libraryCache[newId] = { name: entry.name + ' copy', savedAt: Date.now(), data: { ...JSON.parse(JSON.stringify(entry.data)), treeId: 'tree_' + crypto.randomUUID() } };
   if (!(await persistLibrary())) delete libraryCache[newId];
   renderLibraryGrid();
 }
@@ -245,7 +234,7 @@ function renderLibraryGrid() {
 /* ── modal open/close ── */
 async function openLibraryModal() {
   document.getElementById('library-modal-backdrop').classList.add('open');
-  await refreshLibraryFromSource();
+  await refreshLibraryFromSource().catch(() => showToast("Couldn't load this browser's saved trees."));
   renderLibraryGrid();
 }
 function closeLibraryModal() {
@@ -267,4 +256,4 @@ onEscape(100, () => {
 });
 
 // Guest view is available immediately; refreshed again when Firebase reports a signed-in session.
-refreshLibraryFromSource();
+refreshLibraryFromSource().catch(() => showToast("Couldn't load this browser's saved trees."));
