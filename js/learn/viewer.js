@@ -140,8 +140,13 @@ function linkifySectionRefs(escapedHtml) {
 }
 
 function renderProse(text) {
-  return text.split(/\n{2,}/).map(c => c.trim()).filter(Boolean)
-    .map(c => `<p>${linkifySectionRefs(svEsc(c)).replace(/\n/g, '<br>')}</p>`).join('');
+  // Choice bodies are extracted before session-level tools, so their tables
+  // must be rendered here. Keep block markup outside paragraph elements.
+  return text.split(/\[TABLE\]([\s\S]*?)\[\/TABLE\]/gi).map((part, i) => {
+    if (i % 2) return renderTable(parseTableBody(part));
+    return part.split(/\n{2,}/).map(c => c.trim()).filter(Boolean)
+      .map(c => `<p>${linkifySectionRefs(svEsc(c)).replace(/\n/g, '<br>')}</p>`).join('');
+  }).join('');
 }
 
 /* One card for a main question (kind 'q') or a bonus (kind 'b'). A block with
