@@ -145,7 +145,7 @@ function buildTreeJSON(includeContent) {
 
 function exportToJSON(includeContent) {
   const out = buildTreeJSON(includeContent);
-  if (!out) return;
+  if (!out) { showToast('Add a topic before exporting the tree.', 3000); return; }
   const blob = new Blob([JSON.stringify(out, null, 2)], { type:'application/json' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');

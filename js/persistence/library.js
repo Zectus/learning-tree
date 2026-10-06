@@ -107,7 +107,7 @@ async function persistLibrary() {
    shows something that isn't actually stored. */
 async function saveCurrentTreeToLibrary() {
   const snapshot = buildTreeJSON(true);
-  if (!snapshot) return;
+  if (!snapshot) { showToast('Add a topic before saving the tree.', 3000); return; }
 
   if (state.libraryId && libraryCache[state.libraryId]) {
     const entry = libraryCache[state.libraryId];
@@ -115,6 +115,7 @@ async function saveCurrentTreeToLibrary() {
     entry.data = snapshot;
     entry.savedAt = Date.now();
     if (!(await persistLibrary())) Object.assign(entry, before);
+    else showToast(`Saved changes to "${entry.name}".`, 3000);
     renderLibraryGrid();
     return;
   }
@@ -132,7 +133,7 @@ async function saveCurrentTreeToLibrary() {
    branch off the saved version without overwriting it. */
 async function saveCurrentTreeAsNewCopy() {
   const snapshot = buildTreeJSON(true);
-  if (!snapshot) return;
+  if (!snapshot) { showToast('Add a topic before saving the tree.', 3000); return; }
   const name = (window.prompt('Name this copy:', (state.topic || 'Untitled tree') + ' copy') || '').trim();
   if (!name) return;
   const id = genLibraryId();

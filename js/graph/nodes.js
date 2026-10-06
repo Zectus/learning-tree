@@ -280,7 +280,11 @@ function deleteNode(id) {
    position, notes, and the done flag. Closes the viewer if it's showing this node. */
 function deleteNodeTxt(id) {
   const node = state.nodes.get(id);
-  if (!node || !node._sessionTxt) return;
+  if (!node) return;
+  if (!node._sessionTxt) {
+    showToast('This topic has no TXT to delete.', 3000);
+    return;
+  }
   delete node._sessionTxt;
   delete node._sessionAnswers;
   delete node._bonusAnswers;
@@ -290,6 +294,7 @@ function deleteNodeTxt(id) {
   if (viewer.nodeId === id) { closeViewer(); viewer.nodeId = null; }
   updateAllStatuses();
   autoSaveProgress();
+  showToast(`TXT and lesson progress cleared for "${node.label || 'Untitled topic'}".`, 3500);
 }
 
 /* ═══════════════════════════════════════════════════════════
