@@ -163,7 +163,12 @@ Your answer is saved with this topic. Answering every regular question completes
     const clamp = (v, low, high) => Math.max(low, Math.min(v, Math.max(low, high)));
     // A narrower hint can fit beside a full-size dialog on a laptop.
     const sideSpace = Math.max(obstacle.left - margin - gap, width - obstacle.right - margin - gap);
-    if (panel && sideSpace >= 340) card.style.width = Math.min(card.getBoundingClientRect().width, sideSpace) + 'px';
+    if (panel && sideSpace >= 340) {
+      card.style.width = Math.min(card.getBoundingClientRect().width, sideSpace) + 'px';
+      // A hint beside a dialog can use the available screen height. The
+      // overlay height limit otherwise leaves long hints in a tiny scrollbox.
+      card.style.maxHeight = (height - margin * 2) + 'px';
+    }
     function candidates(bounds) {
       const c = card.getBoundingClientRect(), w = c.width, h = c.height;
       const x = clamp((bounds.left + bounds.right - w) / 2, margin, width - w - margin);
@@ -177,7 +182,12 @@ Your answer is saved with this topic. Answering every regular question completes
     }
     const fits = c => c.left >= margin && c.top >= margin && c.right <= width - margin + 1 && c.bottom <= height - margin + 1;
     const clear = bounds => candidates(bounds).find(c => fits(c) && !overlap(c, bounds));
-    let chosen = clear(obstacle) || clear(r);
+    let chosen = clear(obstacle);
+    if (!chosen) {
+      // Restore the shorter overlay before looking for space over the panel.
+      card.style.maxHeight = '';
+      chosen = clear(obstacle) || clear(r);
+    }
     if (!chosen && panel && hintExpanded === null) { setCompact(true); chosen = clear(obstacle) || clear(r); }
     // Small screens can require floating over an unused part of the dialog.
     // Favor the highlighted control, and keep both Skip and Next available.
