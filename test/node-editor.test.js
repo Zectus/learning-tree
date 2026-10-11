@@ -1,3 +1,4 @@
+const { goToStep } = require('./tutorial-navigation');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadApp} = require('./harness');
@@ -85,8 +86,7 @@ test('mobile tour restores an open editor, original fields, and live prerequisit
     el(app,'node-editor-prerequisites').open=true;
     const originalChoice = app.document.querySelector('#node-editor-links input[data-node-id="1"]');
     el(app,'menu-tutorial').click();
-    el(app,'tutorial-section').value='13';
-    el(app,'tutorial-section').dispatchEvent(new app.window.Event('change'));
+    await goToStep(app,13);
     app.ev('state.nodes.get(2).el.click()');
     el(app,'node-editor-name').value='Only the demo';
     el(app,'node-editor-name').dispatchEvent(new app.window.Event('input'));

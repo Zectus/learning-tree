@@ -5,7 +5,7 @@
   const KEY = 'tree-tutorial-seen';
   const $ = id => document.getElementById(id);
   const layer = $('tutorial-layer'), card = $('tutorial-card'), replay = $('menu-tutorial');
-  const section = $('tutorial-section'), next = $('tutorial-next'), back = $('tutorial-back');
+  const next = $('tutorial-next'), back = $('tutorial-back');
   const demoLesson = `=== SECTION 1: A small first step ===
 A prerequisite is something you learn before a topic that builds on it. Follow the arrows from foundations to more advanced ideas.
 
@@ -54,7 +54,7 @@ Your answer is saved with this topic. Answering every regular question completes
     { name: 'Account settings', title: 'Account settings', text: 'Switch the theme or interface language here. Account opens sign-in and sync. View tutorial appears here after finishing or skipping.', menu: 'account-menu', target: '#account-menu', allow: '#menu-dark-mode, #menu-language, #menu-account', advance: '#menu-account', show: () => click('menu-account'), theme: true, nextLabel: 'Sign in →' },
     { name: 'Account and sync', title: 'Sync across devices', text: 'Sign in or create an account to sync your saved trees across devices.', phase: 'account', target: '#account-modal-shell', allow: '' }
   ];
-  let index = 0, saved = null, inert = [], busy = false, frame = null, advanceTimer = null, demoAnswer = null, editId = 2, runId = 0, hintExpanded = null;
+  let index = 0, saved = null, inert = [], busy = false, frame = null, advanceTimer = null, demoAnswer = null, editId = 2, runId = 0;
   const targetElement = () => steps[index].edit ? (isMobileViewport() && nodeEditor.classList.contains('open') ? $('node-editor-shell') : state.nodes.get(editId)?.el || world.querySelector('.node') || canvas) : document.querySelector(steps[index].target);
   const mobileHints = {
     0: 'Tap Tree to create or import a learning tree. This tour uses a sample, so you can try everything safely.',
@@ -78,10 +78,6 @@ Your answer is saved with this topic. Answering every regular question completes
   let seen = false;
   try { seen = localStorage.getItem(KEY) === '1'; } catch {}
   replay.hidden = !seen;
-  steps.forEach((step, i) => {
-    const option = document.createElement('option');
-    option.value = String(i); uiText(option, step.name); section.appendChild(option);
-  });
 
   const stash = el => { const fragment = document.createDocumentFragment(); while (el.firstChild) fragment.appendChild(el.firstChild); return fragment; };
   function clearInert() { inert.forEach(el => el.removeAttribute('inert')); inert = []; }
@@ -174,15 +170,9 @@ Your answer is saved with this topic. Answering every regular question completes
     // The tour exposes real dialog controls alongside its coachmark.
     document.querySelectorAll('[aria-modal="true"]').forEach(el => el.setAttribute('aria-modal', 'false'));
   }
-  function setCompact(compact) {
-    card.classList.toggle('tutorial-compact', compact);
-    uiText($('tutorial-toggle'), compact ? 'Show hint' : 'Hide hint');
-    $('tutorial-toggle').setAttribute('aria-expanded', String(!compact));
-  }
   function placeCard(target, r) {
     // Reset only the coachmark. Never reserve space by resizing app windows.
     card.style.cssText = '';
-    setCompact(hintExpanded === false);
     if (isMobileViewport()) {
       const inset = parseFloat(document.documentElement.style.getPropertyValue('--mobile-keyboard-inset')) || 0;
       const height = Math.ceil(card.getBoundingClientRect().height + inset);
@@ -225,7 +215,6 @@ Your answer is saved with this topic. Answering every regular question completes
       card.style.maxHeight = '';
       chosen = clear(obstacle) || clear(r);
     }
-    if (!chosen && panel && hintExpanded === null) { setCompact(true); chosen = clear(obstacle) || clear(r); }
     // Small screens can require floating over an unused part of the dialog.
     // Favor the highlighted control, and keep both Skip and Next available.
     if (!chosen) chosen = clear(target.getBoundingClientRect());
@@ -282,11 +271,10 @@ Your answer is saved with this topic. Answering every regular question completes
     if (index === 8) demoAnswer = state.nodes.get(2)?._sessionAnswers?.[1] || null;
     const resetSample = !saved || i !== index + 1;
     index = i;
-    hintExpanded = null;
     uiText($('tutorial-title'), steps[i].title); uiText($('tutorial-intro'), isMobileViewport() && mobileHints[i] ? mobileHints[i] : steps[i].text);
     uiText($('tutorial-skip'), isMobileViewport() ? 'Skip ✕' : 'Skip tutorial ✕');
     uiText($('tutorial-count'), `${i + 1} / ${steps.length}`);
-    section.value = String(i); back.disabled = i === 0;
+    back.disabled = i === 0;
     uiText(next, i === steps.length - 1 ? 'Finish ✓' : steps[i].nextLabel || (isMobileViewport() ? 'Next →' : steps[i].show || steps[i].advance ? 'Show me →' : 'Next →'));
     position(); enterStep(steps[i], resetSample); protectPage();
     const target = document.querySelector(steps[i].target);
@@ -437,14 +425,9 @@ Your answer is saved with this topic. Answering every regular question completes
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(schedulePosition).observe(card);
   onEscape(200, e => { if (!state.tutorialActive) return false; e.preventDefault(); endTutorial(); return true; });
   $('tutorial-skip').addEventListener('click', endTutorial);
-  $('tutorial-toggle').addEventListener('click', () => {
-    hintExpanded = card.classList.contains('tutorial-compact');
-    position();
-  });
   card.addEventListener('click', e => e.stopPropagation());
   next.addEventListener('click', showNext);
   back.addEventListener('click', () => { if (!busy && index > 0) go(index - 1); });
-  section.addEventListener('change', () => { if (!busy) go(Number(section.value)); });
   replay.addEventListener('click', openTutorial);
   if (!seen) openTutorial();
 })();

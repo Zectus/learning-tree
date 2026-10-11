@@ -1,3 +1,4 @@
+const { stepCount, goToStep } = require('./tutorial-navigation');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadApp} = require('./harness');
@@ -131,15 +132,14 @@ test('complete Spanish tutorial, language switching mid-tour, and restoration ke
  const app=loadApp({uiLanguage:'es',tutorialSeen:false});
  try {
   const errors=[]; app.window.addEventListener('error',e=>errors.push(e.error));
-  const count=el(app,'tutorial-section').options.length;
+  const count=stepCount(app);
   for(let i=0;i<count;i++){
-   el(app,'tutorial-section').value=String(i); el(app,'tutorial-section').dispatchEvent(new app.window.Event('change'));
-   await tick();
+   await goToStep(app,i);
    const english=el(app,'tutorial-title').dataset.uiText;
    assert.notEqual(el(app,'tutorial-title').textContent,english);
    assert.notEqual(el(app,'tutorial-intro').textContent,el(app,'tutorial-intro').dataset.uiText);
   }
-  el(app,'tutorial-section').value='20'; el(app,'tutorial-section').dispatchEvent(new app.window.Event('change'));
+  await goToStep(app,20);
   el(app,'menu-language').click();
   assert.equal(app.document.documentElement.lang,'en');
   assert.equal(el(app,'tutorial-title').textContent,'Account settings');

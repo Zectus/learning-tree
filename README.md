@@ -41,15 +41,13 @@ The UI tour opens on the first visit in each browser. A spotlight highlights
 actual controls; you can click them, answer a sample question, write or draw notes, edit
 nodes, and save a sample in the real My Trees panel. **Show me / Next** can
 demonstrate each action for you. No content generation or file upload is needed.
-Every step has **Skip tutorial**; Escape skips the whole tour. Use Back or the
-step picker to browse at your own pace.
+Every step has **Skip tutorial**; Escape skips the whole tour. Use Back and Next
+to browse at your own pace.
 
 On desktop, the tour keeps dialogs, lessons, and notes at their normal sizes. Its hint sits
-beside the active window when space allows; on smaller screens it becomes a
-compact hint. On phones, the hint stays in a bottom dock and the active window
-uses the space above it. Instructions start visible on every step; **Show hint /
-Hide hint** lets you make more room while practicing. Skip and navigation remain
-available. Moving forward keeps your practice edits until the tour ends.
+beside the active window when space allows. On phones, the hint stays in a
+bottom dock and the active window uses the space above it. Instructions stay visible on every step, with
+Back, Next, and Skip available. Moving forward keeps your practice edits until the tour ends.
 
 On phones, choose **Edit** and tap a topic to open its editor. Change its name,
 scope, optional setting, and prerequisites in a panel that stays readable at any

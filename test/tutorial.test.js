@@ -4,11 +4,7 @@ const { loadApp } = require('./harness');
 const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 const el = (app, id) => app.document.getElementById(id);
 const active = app => app.ev('state.tutorialActive');
-async function jump(app, i) {
-  el(app, 'tutorial-section').value = String(i);
-  el(app, 'tutorial-section').dispatchEvent(new app.window.Event('change'));
-  await tick();
-}
+const { stepIndex, goToStep: jump } = require('./tutorial-navigation');
 async function next(app) { el(app, 'tutorial-next').click(); await tick(); }
 async function dispose(app) { if (active(app)) el(app, 'tutorial-skip').click(); await tick(); app.window.close(); }
 
@@ -45,10 +41,10 @@ test('every stage can be skipped; replay resets the tour and never saves demo da
   const app = fresh();
   try {
     const storageBefore = JSON.stringify(app.window.localStorage);
-    const count = el(app, 'tutorial-section').options.length;
+    const count = 22;
     for (let i = 0; i < count; i++) {
       el(app, 'menu-tutorial').click();
-      assert.equal(el(app, 'tutorial-section').value, '0');
+      assert.equal(stepIndex(app), 0);
       await jump(app, i);
       el(app, 'tutorial-skip').click(); await tick();
       assert.equal(active(app), false);
@@ -114,18 +110,18 @@ test('highlighted controls perform actual actions; upload uses the prepared samp
     assert.match(el(app, 'tree-prompt-box').value, /Algebra/);
     await jump(app, 4);
     app.document.querySelector('#tree-modal-backdrop .upload-dropzone').click(); await tick();
-    assert.equal(el(app, 'tutorial-section').value, '5');
+    assert.equal(stepIndex(app), 5);
     await jump(app, 6);
     app.ev('state.nodes.get(2).el.click()'); await tick();
-    assert.equal(el(app, 'tutorial-section').value, '7');
+    assert.equal(stepIndex(app), 7);
     assert.equal(el(app, 'modal-backdrop').classList.contains('open'), true);
     await next(app);
     app.document.querySelector('#sv-body .q-opt').click(); await tick();
-    assert.equal(el(app, 'tutorial-section').value, '9');
+    assert.equal(stepIndex(app), 9);
     assert.equal(app.ev('viewer.answers.size'), 1);
     await jump(app, 10);
     el(app, 'btn-toggle-notes').click(); await tick();
-    assert.equal(el(app, 'tutorial-section').value, '11');
+    assert.equal(stepIndex(app), 11);
     el(app, 'sv-notes-ta').value = 'Temporary note';
     el(app, 'sv-notes-ta').dispatchEvent(new app.window.Event('input'));
     assert.equal(app.ev('state.nodes.get(2)._notes'), 'Temporary note');
@@ -137,7 +133,7 @@ test('highlighted controls perform actual actions; upload uses the prepared samp
     assert.equal(app.ev('nodeStatus(3)'), 'available');
     await jump(app, 17);
     el(app, 'btn-save-current-tree').click(); await tick();
-    assert.equal(el(app, 'tutorial-section').value, '18');
+    assert.equal(stepIndex(app), 18);
     assert.equal(app.document.querySelectorAll('#library-grid .library-card').length, 1);
     assert.deepEqual(app.errors, []);
   } finally { await dispose(app); }
@@ -245,7 +241,7 @@ test('in-flight cloud reads are deferred without replacing the demo or saving it
 test('keyboard navigation includes highlighted controls, and Back restores the right UI', async () => {
   const app = fresh({tutorialSeen:false});
   try {
-    for (const id of ['btn-tree-menu','tutorial-skip','tutorial-back','tutorial-section','tutorial-next']) {
+    for (const id of ['btn-tree-menu','tutorial-skip','tutorial-back','tutorial-next']) {
       el(app,id).getClientRects = () => el(app,id).disabled ? [] : [{}];
     }
     el(app,'tutorial-card').focus();
@@ -255,7 +251,7 @@ test('keyboard navigation includes highlighted controls, and Back restores the r
     assert.equal(app.document.activeElement.id,'tutorial-skip');
     await next(app); await next(app);
     el(app,'tutorial-back').click(); await tick();
-    assert.equal(el(app,'tutorial-section').value,'1');
+    assert.equal(stepIndex(app), 1);
     assert.equal(el(app,'tree-menu').classList.contains('open'),true);
     assert.equal(el(app,'tree-modal-backdrop').classList.contains('open'),false);
     app.press('Escape'); await tick();
@@ -264,7 +260,7 @@ test('keyboard navigation includes highlighted controls, and Back restores the r
   } finally { await dispose(app); }
 });
 
-test('hint expansion preserves the normal dialog sizing and edited prompt fields', async () => {
+test('visible tutorial instructions preserve normal dialog sizing and edited prompt fields', async () => {
   const app = fresh({tutorialSeen:false});
   try {
     await jump(app, 2);
@@ -280,15 +276,13 @@ test('hint expansion preserves the normal dialog sizing and edited prompt fields
     el(app,'tree-topic-input').value = 'My custom topic';
     el(app,'tree-topic-input').dispatchEvent(new app.window.Event('input'));
     const prompt = el(app,'tree-prompt-box').value;
-    const expanded = el(app,'tutorial-toggle').getAttribute('aria-expanded');
-    el(app,'tutorial-toggle').click();
-    assert.notEqual(el(app,'tutorial-toggle').getAttribute('aria-expanded'), expanded);
+    app.window.dispatchEvent(new app.window.Event('resize'));
+    await new Promise(resolve => app.window.requestAnimationFrame(resolve));
+    assert.notEqual(app.window.getComputedStyle(el(app,'tutorial-content')).display, 'none');
     assert.deepEqual(sizing(), duringTour);
-    el(app,'tutorial-toggle').click();
-    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'), expanded);
     assert.equal(el(app,'tree-topic-input').value, 'My custom topic');
     assert.equal(el(app,'tree-prompt-box').value, prompt);
-    assert.equal(el(app,'tutorial-section').value,'2');
+    assert.equal(stepIndex(app), 2);
     assert.deepEqual(app.errors,[]);
   } finally { await dispose(app); }
 });
@@ -304,29 +298,23 @@ test('progress step starts expanded even when the viewer fills the available spa
     score.getBoundingClientRect = () => box(1000, 40, 1150, 70);
     progress.getBoundingClientRect = () => box(32, 80, 1248, 96);
     await jump(app, 9);
-    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
-    assert.equal(el(app,'tutorial-card').classList.contains('tutorial-compact'),false);
+    assert.notEqual(app.window.getComputedStyle(el(app,'tutorial-content')).display,'none');
     assert.equal(app.document.querySelectorAll('#tutorial-mask rect[id^="tutorial-hole"]').length,2);
-    el(app,'tutorial-toggle').click();
-    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'false');
-    el(app,'tutorial-toggle').click();
-    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
     assert.deepEqual(app.errors,[]);
   } finally { await dispose(app); }
 });
 
-test('mobile lesson instructions start expanded, and each new step restores a manually hidden hint', async () => {
+test('mobile instructions stay visible without hint or step selection controls', async () => {
   const app = fresh({tutorialSeen:false,innerWidth:390});
   try {
     await jump(app,7);
-    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
+    assert.equal(el(app,'tutorial-toggle'),null);
+    assert.equal(el(app,'tutorial-section'),null);
+    assert.notEqual(app.window.getComputedStyle(el(app,'tutorial-content')).display,'none');
     assert.match(el(app,'tutorial-intro').textContent,/Tap Try lesson/);
     assert.equal(el(app,'tutorial-next').textContent,'Try lesson →');
-    el(app,'tutorial-toggle').click();
-    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'false');
     await next(app);
-    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
-    assert.equal(el(app,'tutorial-card').classList.contains('tutorial-compact'),false);
+    assert.notEqual(app.window.getComputedStyle(el(app,'tutorial-content')).display,'none');
     assert.deepEqual(app.errors,[]);
   } finally {await dispose(app);}
 });
@@ -340,12 +328,12 @@ test('unlock, My Trees, save, and reopening steps explain and perform the actual
     assert.match(el(app,'tutorial-intro').textContent,/Tap 📚/);
     assert.equal(el(app,'btn-my-trees').hasAttribute('inert'),false);
     el(app,'btn-my-trees').click(); await tick();
-    assert.equal(el(app,'tutorial-section').value,'17');
+    assert.equal(stepIndex(app), 17);
     assert.equal(el(app,'library-modal-backdrop').classList.contains('open'),true);
     assert.equal(el(app,'tutorial-next').textContent,'Save sample →');
     assert.match(el(app,'tutorial-intro').textContent,/name this sample Tutorial tree/);
     await next(app);
-    assert.equal(el(app,'tutorial-section').value,'18');
+    assert.equal(stepIndex(app), 18);
     assert.equal(app.document.querySelector('.lc-name').textContent,'Tutorial tree');
     assert.equal(el(app,'tutorial-next').textContent,'Open tree →');
     assert.equal(app.window.localStorage.getItem('tree-library'),null);
@@ -358,7 +346,7 @@ test('unlock, My Trees, save, and reopening steps explain and perform the actual
     assert.equal(app.document.querySelectorAll('.library-card').length,2);
     assert.equal(app.window.localStorage.getItem('tree-library'),null);
     await next(app);
-    assert.equal(el(app,'tutorial-section').value,'19');
+    assert.equal(stepIndex(app), 19);
     assert.equal(el(app,'library-modal-backdrop').classList.contains('open'),false);
     assert.equal(el(app,'tree-menu').classList.contains('open'),true);
     assert.equal(app.ev('state.libraryId !== null'),true);
@@ -409,7 +397,8 @@ test('file tab and prompt have separate spotlights that leave the topic tab shad
     tab.getClientRects = panel.getClientRects = () => [{}];
     tab.getBoundingClientRect = () => box(300, 100, 500, 140);
     panel.getBoundingClientRect = () => box(100, 170, 500, 400);
-    el(app, 'tutorial-toggle').click();
+    app.window.dispatchEvent(new app.window.Event('resize'));
+    await new Promise(resolve => app.window.requestAnimationFrame(resolve));
     const holes = [...app.document.querySelectorAll('#tutorial-mask rect[id^="tutorial-hole"]')];
     assert.equal(holes.length, 2);
     assert.equal(+holes[0].getAttribute('x'), 300);
