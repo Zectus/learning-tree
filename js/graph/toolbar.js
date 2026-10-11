@@ -96,11 +96,12 @@ function setMode(mode) {
   document.body.classList.toggle('mark-known-mode', mode === 'markKnown');
   state.nodes.forEach(node => {
     const t = node.el?.querySelector('.node-text');
-    if (t) t.contentEditable = editing ? 'true' : 'false';
+    if (t) t.contentEditable = editing && !isMobileViewport() ? 'true' : 'false';
     const expl = node.el?.querySelector('.node-explanation-ta');
     if (expl) expl.readOnly = !editing;
   });
   if (wasEditing && !editing) {
+    closeNodeEditor();
     cancelLink();
     document.activeElement?.blur?.();
     document.querySelectorAll('.node.actions-open').forEach(el => el.classList.remove('actions-open'));

@@ -55,7 +55,24 @@ Your answer is saved with this topic. Answering every regular question completes
     { name: 'Account and sync', title: 'Sync across devices', text: 'Sign in or create an account to sync your saved trees across devices.', phase: 'account', target: '#account-modal-shell', allow: '' }
   ];
   let index = 0, saved = null, inert = [], busy = false, frame = null, advanceTimer = null, demoAnswer = null, editId = 2, runId = 0, hintExpanded = null;
-  const targetElement = () => steps[index].edit ? state.nodes.get(editId)?.el || world.querySelector('.node') || canvas : document.querySelector(steps[index].target);
+  const targetElement = () => steps[index].edit ? (isMobileViewport() && nodeEditor.classList.contains('open') ? $('node-editor-shell') : state.nodes.get(editId)?.el || world.querySelector('.node') || canvas) : document.querySelector(steps[index].target);
+  const mobileHints = {
+    0: 'Tap Tree to create or import a learning tree. This tour uses a sample, so you can try everything safely.',
+    2: 'Enter a topic, then copy the prompt into an AI chatbot. For this tour, tap Next to keep exploring.',
+    3: 'Have notes or a paper? Copy this prompt and attach your file in the chatbot. No upload is needed during this tour.',
+    4: 'Upload the chatbot’s .json here to build your tree. Tap Next to load our sample tree.',
+    5: 'Drag to explore; pinch to zoom. Green topics are complete, blue topics are ready, and faded topics need prerequisites.',
+    6: 'Tap the blue topic to get a lesson. You can also tap Next to open it for you.',
+    7: 'Copy the prompt into an AI chatbot, then upload its .txt lesson here. Tap Next to try our sample lesson.',
+    8: 'Tap an answer to try the quiz. Your answers save as you go.',
+    10: 'Tap Notes to write or draw something you want to remember.',
+    11: 'Try writing a note, or tap Draw to sketch. Notes stay with this topic.',
+    13: 'Tap a topic to edit its name, scope, or prerequisites. Use + to add a topic. Changes here only affect the sample.',
+    15: 'Tap this topic to mark it complete. Tap it again to undo.',
+    17: 'Tap Save current tree to name your tree. Your real trees live in the 📚 menu.',
+    18: 'Saved trees can be reopened, renamed, or copied. Tap Next to continue.',
+    21: 'Sign in to sync your trees across devices. You can also use the app without an account. Tap Finish to start.'
+  };
   const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'topic', 'libraryId'];
   let seen = false;
   try { seen = localStorage.getItem(KEY) === '1'; } catch {}
@@ -70,7 +87,7 @@ Your answer is saved with this topic. Answering every regular question completes
   function protectPage() {
     clearInert();
     const step = steps[index];
-    const roots = [layer, ...document.querySelectorAll([step.target, step.allow].filter(Boolean).join(','))];
+    const roots = [layer, ...document.querySelectorAll([step.target, step.allow, step.edit && isMobileViewport() ? '#node-editor-backdrop' : ''].filter(Boolean).join(','))];
     function visit(el) {
       if (el.tagName === 'SCRIPT' || roots.some(root => root === el || root.contains(el))) return;
       if (roots.some(root => el.contains(root))) [...el.children].forEach(visit);
@@ -80,6 +97,7 @@ Your answer is saved with this topic. Answering every regular question completes
   }
   function prepareSample() {
     loadFromJSON({ ...demoTree, topic:t(demoTree.topic), language:uiLanguage==='es'?'Español':'English', nodes:demoTree.nodes.map(node=>({...node,label:t(node.label),explanation:node.explanation?t(node.explanation):undefined})) });
+    if (isMobileViewport()) return; // Use the same readable, pannable tree view as the app.
     // Demo nodes use the real layout. Center them in the space above the card.
     const width = window.innerWidth, height = window.innerHeight - card.getBoundingClientRect().height - 110;
     const bounds = [...state.nodes.values()];
@@ -91,17 +109,19 @@ Your answer is saved with this topic. Answering every regular question completes
     applyTransform(false);
   }
   function resetPanels() {
+    closeNodeEditor();
     closeAllDropdowns();
     document.querySelectorAll('.modal-backdrop').forEach(el => el.classList.remove('open'));
     closeModal(); closeViewer();
     $('sv-notes-panel').classList.remove('open'); $('btn-toggle-notes').classList.remove('active');
     cancelLink(); setMode('browse');
   }
-  function enterStep(step) {
-    resetPanels(); setNotesMode(false); prepareSample();
+  function enterStep(step, resetSample) {
+    resetPanels(); setNotesMode(false);
+    if (resetSample || !state.nodes.has(2)) prepareSample();
     const phase = step.phase;
     if (['tree', 'file'].includes(phase)) {
-      $('tree-topic-input').value = t('Learning something new'); $('tree-language-input').value = '';
+      if (resetSample || !$('tree-topic-input').value) { $('tree-topic-input').value = t('Learning something new'); $('tree-language-input').value = ''; }
       openTreeModal(); if (phase === 'file') setTreeMode('file');
     }
     if (phase === 'learn') openLearnModal(2);
@@ -109,7 +129,7 @@ Your answer is saved with this topic. Answering every regular question completes
       if (phase !== 'lesson') state.nodes.get(2)._sessionAnswers = { 1: demoAnswer || 'A' };
       openViewer(t(demoLesson), 2);
       if (phase === 'notes') {
-        toggleNotesPanel(); $('sv-notes-ta').value = t('My sample note…');
+        toggleNotesPanel(); if (!state.nodes.get(2)._notes) $('sv-notes-ta').value = t('My sample note…');
         // Center the two full-size panels together when there is room. Moving
         // the demo viewer keeps the notes visible without changing either size.
         if (!isMobileViewport()) {
@@ -121,7 +141,7 @@ Your answer is saved with this topic. Answering every regular question completes
         }
       }
     }
-    if (phase === 'edit') { editId = 2; setMode('edit'); demoNode().classList.add('actions-open'); }
+    if (phase === 'edit') { editId = 2; setMode('edit'); if (!isMobileViewport()) demoNode().classList.add('actions-open'); }
     if (phase === 'known') setMode('markKnown');
     if (phase === 'unlocked') { state.nodes.get(2).done = true; updateAllStatuses(); }
     if (['library', 'saved'].includes(phase)) {
@@ -153,6 +173,13 @@ Your answer is saved with this topic. Answering every regular question completes
     // Reset only the coachmark. Never reserve space by resizing app windows.
     card.style.cssText = '';
     setCompact(hintExpanded === false);
+    if (isMobileViewport()) {
+      const inset = parseFloat(document.documentElement.style.getPropertyValue('--mobile-keyboard-inset')) || 0;
+      const height = Math.ceil(card.getBoundingClientRect().height + inset);
+      document.body.style.setProperty('--tutorial-height', height + 'px');
+      return;
+    }
+    document.body.style.removeProperty('--tutorial-height');
     const width = window.innerWidth, height = window.innerHeight, margin = 12, gap = 12;
     // Freeze the measured width before switching from right/bottom anchors to
     // left/top; mobile's width:auto would otherwise grow to its content width.
@@ -220,6 +247,7 @@ Your answer is saved with this topic. Answering every regular question completes
       const padding = element.id === 'tree-mode-tab-file' ? 0 : 6;
       let left = Math.max(6, bounds.left - padding), top = Math.max(6, bounds.top - padding);
       let right = Math.min(window.innerWidth - 6, bounds.right + padding), bottom = Math.min(window.innerHeight - 6, bounds.bottom + padding);
+      if (isMobileViewport()) bottom = Math.min(bottom, card.getBoundingClientRect().top - 6);
       for (let parent = element.parentElement; parent && parent !== document.body; parent = parent.parentElement) {
         if (['auto', 'scroll'].includes(getComputedStyle(parent).overflowY)) {
           const pr = parent.getBoundingClientRect(); top = Math.max(top, pr.top); bottom = Math.min(bottom, pr.bottom);
@@ -242,13 +270,15 @@ Your answer is saved with this topic. Answering every regular question completes
     if (!state.tutorialActive) return;
     clearTimeout(advanceTimer); clearInert();
     if (index === 8) demoAnswer = state.nodes.get(2)?._sessionAnswers?.[1] || null;
+    const resetSample = !saved || i !== index + 1;
     index = i;
     hintExpanded = null;
-    uiText($('tutorial-title'), steps[i].title); uiText($('tutorial-intro'), steps[i].text);
+    uiText($('tutorial-title'), steps[i].title); uiText($('tutorial-intro'), isMobileViewport() && mobileHints[i] ? mobileHints[i] : steps[i].text);
+    uiText($('tutorial-skip'), isMobileViewport() ? 'Skip ✕' : 'Skip tutorial ✕');
     uiText($('tutorial-count'), `${i + 1} / ${steps.length}`);
     section.value = String(i); back.disabled = i === 0;
-    uiText(next, i === steps.length - 1 ? 'Finish ✓' : steps[i].show || steps[i].advance ? 'Show me →' : 'Next →');
-    position(); enterStep(steps[i]); protectPage();
+    uiText(next, i === steps.length - 1 ? 'Finish ✓' : isMobileViewport() ? 'Next →' : steps[i].show || steps[i].advance ? 'Show me →' : 'Next →');
+    position(); enterStep(steps[i], resetSample); protectPage();
     const target = document.querySelector(steps[i].target);
     if (target?.closest('.modal-body, #sv-body')) target.scrollIntoView?.({ block: 'nearest' });
     card.focus({ preventScroll: true }); position(); schedulePosition();
@@ -266,6 +296,7 @@ Your answer is saved with this topic. Answering every regular question completes
       tree: Object.fromEntries(treeKeys.map(key => [key, state[key]])),
       viewer: { ...viewer }, library: libraryCache, edges: new Map(edgeEls),
       modalNode: _modalNodeId, positioned: svUserPositioned, scroll: $('sv-body').scrollTop,
+      editorNode: mobileEditId,
       dark: document.documentElement.classList.contains('dark'),
       uiLanguage, drawingTool, drawingGesture, notesOffset: { ...notesOffset },
       attrs: [...document.body.querySelectorAll('*'), document.body].map(el => ({ el,
@@ -275,7 +306,7 @@ Your answer is saved with this topic. Answering every regular question completes
         text: ['btn-mode', 'menu-reset-progress', 'btn-save-current-tree', 'library-modal-meta', 'tree-modal-meta', 'prompt-box', 'btn-copy-prompt', 'btn-copy-tree-prompt', 'btn-copy-tree-file-prompt', 'sv-topic', 'sv-score'].includes(el.id) ? el.textContent : undefined
       }))
     };
-    saved.world = stash(world); saved.svg = stash(svgWorld); saved.body = stash($('sv-body')); saved.checkpoints = stash($('sv-progress-checkpoints')); saved.libraryDOM = stash($('library-grid')); saved.drawingDOM = stash(drawingPad);
+    saved.world = stash(world); saved.svg = stash(svgWorld); saved.body = stash($('sv-body')); saved.checkpoints = stash($('sv-progress-checkpoints')); saved.libraryDOM = stash($('library-grid')); saved.drawingDOM = stash(drawingPad); saved.editorLinks = stash($('node-editor-links'));
     drawingGesture = null; Object.assign(notesOffset, { x: 0, y: 0 });
     edgeEls.clear(); libraryCache = {};
     for (const key of ['nodes', 'prereqs', 'dependents']) state[key] = new Map();
@@ -296,10 +327,12 @@ Your answer is saved with this topic. Answering every regular question completes
     world.replaceChildren(saved.world); svgWorld.replaceChildren(saved.svg);
     $('sv-body').replaceChildren(saved.body); $('sv-progress-checkpoints').replaceChildren(saved.checkpoints);
     $('library-grid').replaceChildren(saved.libraryDOM); drawingPad.replaceChildren(saved.drawingDOM);
+    $('node-editor-links').replaceChildren(saved.editorLinks);
     drawingTool = saved.drawingTool; drawingGesture = saved.drawingGesture; Object.assign(notesOffset, saved.notesOffset);
     Object.assign(state, saved.tree); Object.assign(viewer, saved.viewer); libraryCache = saved.library;
     edgeEls.clear(); saved.edges.forEach((path, key) => edgeEls.set(key, path));
     _modalNodeId = saved.modalNode; svUserPositioned = saved.positioned;
+    mobileEditId = saved.editorNode;
     saved.attrs.forEach(({ el, className, style, aria, value, text, hidden, selected, pressed, disabled, uiSource, uiAttrs }) => {
       for (const [attr, val] of [['class', className], ['style', style], ['aria-modal', aria], ['aria-selected', selected], ['aria-pressed', pressed], ['data-ui-text', uiSource], ['data-ui-attrs', uiAttrs]]) {
         if (val === null) el.removeAttribute(attr); else el.setAttribute(attr, val);
@@ -334,7 +367,7 @@ Your answer is saved with this topic. Answering every regular question completes
     } finally { if (runId === run) busy = false; }
   }
   function allowed(target) {
-    return card.contains(target) || !!(steps[index].allow && target.closest(steps[index].allow));
+    return card.contains(target) || !!(steps[index].edit && isMobileViewport() && target.closest('#node-editor-backdrop')) || !!(steps[index].allow && target.closest(steps[index].allow));
   }
   document.addEventListener('click', e => {
     if (!state.tutorialActive || card.contains(e.target)) return;
@@ -384,6 +417,8 @@ Your answer is saved with this topic. Answering every regular question completes
   document.addEventListener('scroll', schedulePosition, true);
   document.addEventListener('pointermove', schedulePosition);
   window.addEventListener('resize', schedulePosition);
+  window.visualViewport?.addEventListener('resize', schedulePosition);
+  window.visualViewport?.addEventListener('scroll', schedulePosition);
   document.addEventListener('ui-language-change', () => { if (state.tutorialActive) schedulePosition(); });
   // Restore the real tree before the library's page-exit save runs.
   window.addEventListener('pagehide', () => { if (state.tutorialActive) endTutorial(); }, { capture: true });

@@ -31,13 +31,25 @@
 /* The tour moves its own card; dialogs and the lesson viewer keep their sizes. */
 body.tutorial-active .modal-shell, body.tutorial-active #sv-window, body.tutorial-active .node { animation: none; transition: none; }
 @media (max-width: 700px) {
-  #tutorial-card { left: 10px; right: 10px; bottom: max(10px, env(safe-area-inset-bottom)); width: auto; padding: .8rem; max-height: min(calc(100dvh - 24px), max(48dvh, 16.25rem)); }
-  #tutorial-card button { min-height: 44px; }
-  #tutorial-section { font-size: 16px; padding-left: .25rem; }
-}
-@media (max-width: 360px) {
-  /* Leave room for the real editing controls on narrow phones. */
-  #tutorial-card { max-height: min(calc(100dvh - 24px), max(38dvh, 16.25rem)); }
+  /* One stable dock: instructions stay visible and app controls use the
+     space above it instead of competing with a moving overlay. */
+  #tutorial-card { left: 0; right: 0; bottom: var(--mobile-keyboard-inset, 0px); width: auto; padding: 12px 12px max(12px, env(safe-area-inset-bottom)); max-height: min(48dvh, 340px, calc(var(--mobile-viewport-height, 100dvh) - 144px)); border-radius: 16px 16px 0 0; }
+  #tutorial-card button { min-height: 44px; padding: 8px; font-size: 13px; }
+  #tutorial-card .tutorial-header { grid-template-columns: auto 1fr auto; gap: 8px; margin-bottom: 4px; }
+  #tutorial-card #tutorial-toggle { grid-column: 2; grid-row: 1; justify-self: end; }
+  #tutorial-card #tutorial-skip { grid-column: 3; grid-row: 1; }
+  #tutorial-card .tutorial-footer { grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; margin-top: 8px; }
+  #tutorial-card #tutorial-back { grid-column: 1; grid-row: 1; }
+  #tutorial-card #tutorial-section { grid-column: 2; grid-row: 1; font-size: 16px; padding: 8px 4px; min-height: 44px; }
+  #tutorial-card #tutorial-next { grid-column: 3; grid-row: 1; }
+  #tutorial-title { font-size: 16px; margin: 4px 0; }
+  #tutorial-intro { font-size: 14px; line-height: 1.5; margin: 4px 0; }
+  body.tutorial-active #canvas, body.tutorial-active .modal-backdrop { bottom: var(--tutorial-height, 240px); }
+  body.tutorial-active .modal-shell { max-height: calc(100dvh - var(--tutorial-height, 240px) - 16px); }
+  body.tutorial-active #sv-window { height: calc(100dvh - var(--tutorial-height, 240px)) !important; }
+  body.tutorial-active #sv-notes-panel { bottom: var(--tutorial-height, 240px); max-height: min(60dvh, calc(100dvh - var(--tutorial-height, 240px) - 64px)); }
+  body.tutorial-active #node-editor-shell { max-height: calc(100dvh - var(--tutorial-height, 240px) - 72px); }
+  body.tutorial-active #node-editor-backdrop { bottom: var(--tutorial-height, 240px); }
 }
 
 /* Long Spanish labels and larger text get a second header row. */

@@ -75,10 +75,12 @@
   #btn-add-node, #btn-my-trees, #btn-account-menu { width: 44px; min-width: 44px; padding-inline: 0; }
   #toolbar .toolbar-label { display: none; }
 
-  /* Node action buttons need a real tap target once they're only reachable via .node-more-btn instead of hover. */
+  /* Keep action labels readable; the mobile editor provides full tap targets. */
   .btn { padding: 7px 11px; font-size: 12px; }
-  .node-actions { max-height: 130px; gap: 6px; }
-  .node-explanation-wrap { max-height: 180px; }
+  /* Tap a topic to edit in a full-size panel. Hidden inline controls must
+     never reserve blank space or grow over neighbouring canvas cards. */
+  .node-actions, .node-explanation-wrap, body.edit-mode .node-more-btn { display: none !important; }
+  body.edit-mode .node-text { cursor: pointer; }
   .node-explanation-ta { font-size: 13px; }
 
   /* Stop iOS Safari's automatic zoom when focusing a field under 16px. */
@@ -87,6 +89,25 @@
   .modal-header-bar { padding: 16px 16px 12px; }
   .modal-body { padding: 16px; }
   .prompt-ta { height: 160px; }
+  .copy-btn, .tree-mode-tab, .upload-dropzone { min-height: 44px; font-size: 14px; }
+  .copy-btn { min-width: 44px; padding: 8px; }
+  .prompt-ta { padding-top: 56px; }
+
+  #node-editor-backdrop { align-items: flex-end; bottom: var(--mobile-keyboard-inset, 0px); }
+  #node-editor-shell { width: 100%; max-height: calc(var(--mobile-viewport-height, 100dvh) - 72px); border-radius: 16px 16px 0 0; }
+  #node-editor-shell .modal-title { margin: 0; }
+  #node-editor-shell .modal-header-bar { align-items: center; }
+  #node-editor-shell .modal-body { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  #node-editor-shell .btn { min-height: 44px; }
+  #node-editor-scope { resize: vertical; }
+  #node-editor-prerequisites { border: 0; padding: 0; min-width: 0; }
+  .node-editor-choice { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 16px; cursor: pointer; overflow-wrap: anywhere; }
+  .node-editor-choice input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--avail-bdr); }
+  .node-editor-choice:has(input:disabled) { opacity: .5; cursor: default; }
+  .node-editor-help { font-size: 13px; line-height: 1.5; color: var(--text-m); margin: 0 0 8px; }
+  .node-editor-delete { display: flex; flex-wrap: wrap; gap: 8px; }
+  .node-editor-delete .danger { color: var(--danger-text); }
+  #node-editor-shell button:disabled { opacity: .45; cursor: default; }
 
   /* Session viewer: a floating window is awkward with a finger, so go
      fullscreen. The !importants win over the inline left/top/width/height
@@ -109,11 +130,14 @@
     padding-top: max(11px, env(safe-area-inset-top));
   }
   #sv-resize { display: none; }
+  #btn-toggle-notes, #btn-close-viewer { min-width: 44px; min-height: 44px; }
+  .notes-button-label { display: inline; }
   #sv-body {
     padding: 24px 18px calc(52px + env(safe-area-inset-bottom));
     font-size: 16.5px;   /* desktop's 15.5px reads small at arm's length on a phone */
     line-height: 1.75;
   }
+  .q-opt { min-height: 44px; }
 
   /* Notes become a bottom sheet instead of a sidebar anchored to the window's
      right edge — there is no useful right edge once the window is fullscreen. */

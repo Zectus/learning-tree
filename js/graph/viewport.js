@@ -159,6 +159,7 @@ canvas.addEventListener('wheel', e => {
    touchState holds the active gesture; changing finger count mid-gesture
    just restarts state for whatever's left. */
 let touchState = null;
+let suppressTouchClickUntil = 0;
 
 function pinchDist(a, b) { return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY); }
 function pinchMid(a, b)  { return { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 }; }
@@ -167,8 +168,10 @@ function startTouchPan(t) {
 }
 
 canvas.addEventListener('touchstart', e => {
-  if (e.target.closest('.node')) { touchState = null; return; }
-  cancelLink();
+  // A drag or pinch can start on a card; only actual editor controls need
+  // their native touch behavior. A stationary tap still opens the topic.
+  if (e.touches.length === 1 && e.target.closest('button, input, textarea, [contenteditable="true"]')) { touchState = null; return; }
+  if (!e.target.closest('.node') || e.touches.length === 2) cancelLink();
   if (e.touches.length === 1) {
     startTouchPan(e.touches[0]);
   } else if (e.touches.length === 2) {
@@ -182,10 +185,13 @@ canvas.addEventListener('touchmove', e => {
   if (!touchState) return;
   if (touchState.mode === 'pan' && e.touches.length === 1) {
     const t = e.touches[0];
+    if (Math.hypot(t.clientX - touchState.x, t.clientY - touchState.y) < 8) return;
+    cancelLink(); touchState.moved = true; suppressTouchClickUntil = Date.now() + 500;
     state.viewport.x = touchState.ox + (t.clientX - touchState.x);
     state.viewport.y = touchState.oy + (t.clientY - touchState.y);
     applyTransform(false);
   } else if (touchState.mode === 'pinch' && e.touches.length === 2) {
+    touchState.moved = true; suppressTouchClickUntil = Date.now() + 500;
     const [a, b] = e.touches;
     const rect = canvas.getBoundingClientRect();
     zoomAbout(
@@ -197,10 +203,14 @@ canvas.addEventListener('touchmove', e => {
 }, { passive:true });
 
 canvas.addEventListener('touchend', e => {
+  if (touchState?.moved) suppressTouchClickUntil = Date.now() + 500;
   if (e.touches.length === 1) startTouchPan(e.touches[0]); // dropped from a pinch: keep going as a pan
   else if (e.touches.length === 0) touchState = null;
 }, { passive:true });
 canvas.addEventListener('touchcancel', () => { touchState = null; }, { passive:true });
+canvas.addEventListener('click', e => {
+  if (Date.now() < suppressTouchClickUntil) { e.preventDefault(); e.stopImmediatePropagation(); }
+}, true);
 
 /* ═══════════════════════════════════════════════════════════
    INIT — centre the empty canvas. Load a JSON via the Tree menu to start.

@@ -18,6 +18,7 @@
    - `topic` names the exported file and is quoted in each node's prompt.
 ═══════════════════════════════════════════════════════════ */
 function clearMap() {
+  closeNodeEditor();
   cancelLink();
   // Node ids restart at 1 on every load, so a viewer left pointing at "node 1"
   // would otherwise be re-revealed for the wrong tree.

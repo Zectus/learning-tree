@@ -315,6 +315,39 @@ test('progress step starts expanded even when the viewer fills the available spa
   } finally { await dispose(app); }
 });
 
+test('mobile lesson instructions start expanded, and each new step restores a manually hidden hint', async () => {
+  const app = fresh({tutorialSeen:false,innerWidth:390});
+  try {
+    await jump(app,7);
+    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
+    assert.match(el(app,'tutorial-intro').textContent,/Tap Next to try our sample lesson/);
+    assert.equal(el(app,'tutorial-next').textContent,'Next →');
+    el(app,'tutorial-toggle').click();
+    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'false');
+    await next(app);
+    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
+    assert.equal(el(app,'tutorial-card').classList.contains('tutorial-compact'),false);
+    assert.deepEqual(app.errors,[]);
+  } finally {await dispose(app);}
+});
+
+test('advancing through the tutorial keeps practice edits until the tour ends', async () => {
+  const app = fresh({tutorialSeen:false});
+  try {
+    await jump(app,13);
+    const label = app.ev('state.nodes.get(2).el.querySelector(".node-text")');
+    label.textContent='My practice topic';
+    label.dispatchEvent(new app.window.Event('input'));
+    await next(app);
+    assert.equal(app.ev('state.nodes.get(2).label'),'My practice topic');
+    await next(app);
+    assert.equal(app.ev('state.nodes.get(2).label'),'My practice topic');
+    el(app,'tutorial-skip').click();
+    assert.equal(app.ev('state.nodes.size'),0);
+    assert.deepEqual(app.errors,[]);
+  } finally {await dispose(app);}
+});
+
 test('file tab and prompt have separate spotlights that leave the topic tab shaded', async () => {
   const app = fresh({tutorialSeen:false});
   try {

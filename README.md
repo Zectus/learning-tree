@@ -44,10 +44,17 @@ demonstrate each action for you. No content generation or file upload is needed.
 Every step has **Skip tutorial**; Escape skips the whole tour. Use Back or the
 step picker to browse at your own pace.
 
-The tour keeps dialogs, lessons, and notes at their normal sizes. Its hint sits
+On desktop, the tour keeps dialogs, lessons, and notes at their normal sizes. Its hint sits
 beside the active window when space allows; on smaller screens it becomes a
-compact overlay. **Show hint / Hide hint** expands or collapses the explanation
-without resizing the app window. Skip and navigation remain available.
+compact hint. On phones, the hint stays in a bottom dock and the active window
+uses the space above it. Instructions start visible on every step; **Show hint /
+Hide hint** lets you make more room while practicing. Skip and navigation remain
+available. Moving forward keeps your practice edits until the tour ends.
+
+On phones, choose **Edit** and tap a topic to open its editor. Change its name,
+scope, optional setting, and prerequisites in a panel that stays readable at any
+tree zoom. **+** adds a topic and opens its editor. Dragging or pinching can start
+on a topic without opening it. Desktop editing stays inside the topic cards.
 
 The tour temporarily puts aside the current tree and lesson DOM, uses a demo
 tree and library in memory, and restores your unsaved work and viewport on exit.

@@ -23,7 +23,7 @@ function buildEl(node) {
 
   const textEl = document.createElement('div');
   textEl.className = 'node-text';
-  textEl.contentEditable = editing ? 'true' : 'false';
+  textEl.contentEditable = editing && !isMobileViewport() ? 'true' : 'false';
   textEl.spellcheck = false;
   uiAttr(textEl, 'data-placeholder', node.depth === 0 ? 'Root concept…' : 'Topic name…');
   textEl.textContent = node.label;
@@ -123,6 +123,7 @@ function buildEl(node) {
     if (e.target.closest('.node-actions')) return;
     if (state.mode === 'edit') {
       if (state.linkSource !== null) finishLink(node.id);
+      else if (isMobileViewport()) openNodeEditor(node.id);
       else textEl.focus();
     } else if (state.mode === 'markKnown') {
       if (nodeStatus(node.id) !== 'locked') {
@@ -264,7 +265,13 @@ function doAddNode() {
   buildEl(node);
   layout();
   updateAllStatuses();
-  setTimeout(() => node.el?.querySelector('.node-text')?.focus(), 40);
+  if (isMobileViewport()) {
+    const scale = state.viewport.scale;
+    state.viewport.x = window.innerWidth / 2 - (node.x + nodeW() / 2) * scale;
+    state.viewport.y = canvas.getBoundingClientRect().height / 2 - (node.y + nodeH() / 2) * scale;
+    applyTransform(false);
+    openNodeEditor(id);
+  } else setTimeout(() => node.el?.querySelector('.node-text')?.focus(), 40);
   return node;
 }
 
