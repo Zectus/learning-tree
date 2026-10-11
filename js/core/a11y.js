@@ -19,6 +19,8 @@
   const topModal = () => backdrops.find(isOpen) || (isOpen(viewerEl) ? viewerEl : null);
 
   const observer = new MutationObserver(records => {
+    // The UI tour owns focus across its coachmark and highlighted real controls.
+    if (state.tutorialActive) { returnFocus.clear(); return; }
     for (const { target: el } of records) {
       if (isOpen(el) && !returnFocus.has(el)) {
         returnFocus.set(el, document.activeElement);
@@ -36,6 +38,7 @@
   [...backdrops, viewerEl].forEach(el => observer.observe(el, { attributes: true, attributeFilter: ['class'] }));
 
   document.addEventListener('keydown', e => {
+    if (state.tutorialActive) return;
     if (e.key !== 'Tab') return;
     const top = topModal();
     if (!top) return;

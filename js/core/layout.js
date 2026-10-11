@@ -125,14 +125,14 @@ function updateAllStatuses() {
     node.el.classList.remove('status-done', 'status-available', 'status-locked');
     node.el.classList.add(`status-${s}`);
     const badge = node.el.querySelector('.node-badge');
-    if (badge) badge.textContent = s === 'done' ? '✓ complete' : s === 'available' ? '● available' : '○ locked';
+    if (badge) uiText(badge, s === 'done' ? '✓ Complete' : s === 'available' ? '● Available' : '○ Locked');
 
     // Outside edit mode a node is one button; in edit mode it holds its own controls.
     if (editing) {
       ['role', 'aria-label', 'aria-disabled'].forEach(a => node.el.removeAttribute(a));
     } else {
       node.el.setAttribute('role', 'button');
-      node.el.setAttribute('aria-label', `${node.label || 'Untitled'}, ${s === 'done' ? 'complete' : s}`);
+      uiAttr(node.el, 'aria-label', `${node.label || t('Untitled')}, ${s === 'done' ? 'complete' : s}`);
       node.el.setAttribute('aria-disabled', s === 'locked' ? 'true' : 'false');
     }
   });
@@ -227,3 +227,5 @@ function clearEdgeHighlight() {
   document.body.classList.remove('node-focused');
   edgeEls.forEach(p => p.classList.remove('hi-prereq', 'hi-dep'));
 }
+
+document.addEventListener('ui-language-change', updateAllStatuses);

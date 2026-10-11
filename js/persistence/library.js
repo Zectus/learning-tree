@@ -70,13 +70,18 @@ function libraryProgressFor(entryData) {
    Called at load (guest view, before Firebase resolves a persisted session)
    and by handleCloudAuthChange (account.js) on every sign-in/out. */
 async function refreshLibraryFromSource() {
+  if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
   libraryReady = false;
   if (state.accountUser) {
     librarySource = 'cloud';
     try {
-      libraryCache = await window.cloud.getLibrary(state.accountUser.uid);
+      const data = await window.cloud.getLibrary(state.accountUser.uid);
+      if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
+      libraryCache = data;
       await retryTreeExitSaves(state.accountUser.uid);
+      if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
     } catch (e) {
+      if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
       console.error('Could not load cloud library:', e);
       showToast("Couldn't load your saved trees from your account.");
       libraryCache = {};
@@ -93,12 +98,14 @@ async function refreshLibraryFromSource() {
     librarySource = 'local';
     libraryCache = readLocalLibrary();
   }
+  if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
   libraryReady = true;
   if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
 }
 
 // Resolves to whether the write succeeded; failures are reported to the person.
 async function persistLibrary() {
+  if (state.tutorialActive) return true; // demo saves stay in the temporary cache
   if (librarySource === 'cloud' && state.accountUser) {
     const uid = state.accountUser.uid;
     const snapshot = JSON.parse(JSON.stringify(libraryCache));
@@ -163,18 +170,19 @@ async function sendTreeExitSave(uid, id, entry) {
 async function retryTreeExitSaves(uid) {
   const queue = readTreeExitQueue(uid);
   for (const [id, entry] of Object.entries(queue)) {
+    if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
     libraryCache[id] = entry;
     await sendTreeExitSave(uid, id, entry);
   }
 }
 function autosaveTreeOnPageExit() {
-  if (!libraryReady) return;
+  if (state.tutorialActive || !libraryReady) return;
   const snapshot = buildTreeJSON(true);
   if (!snapshot) return;
   const previous = state.libraryId && libraryCache[state.libraryId];
   if (previous && treeContentKey(previous.data) === treeContentKey(snapshot)) return;
   const id = previous ? state.libraryId : genLibraryId();
-  const entry = { name: previous ? previous.name : (state.topic || 'Untitled tree'), savedAt: Date.now(), data: snapshot };
+  const entry = { name: previous ? previous.name : (state.topic || t('Untitled tree')), savedAt: Date.now(), data: snapshot };
   if (librarySource === 'cloud' && state.accountUser) {
     const uid = state.accountUser.uid;
     const queue = readTreeExitQueue(uid);
@@ -216,7 +224,7 @@ async function saveCurrentTreeToLibrary() {
     return;
   }
 
-  const name = (window.prompt('Name this tree:', state.topic || 'Untitled tree') || '').trim();
+  const name = state.tutorialActive ? t('Tutorial tree') : (window.prompt(t('Name this tree:'), state.topic || t('Untitled tree')) || '').trim();
   if (!name) return;
   const id = genLibraryId();
   libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
@@ -230,7 +238,7 @@ async function saveCurrentTreeToLibrary() {
 async function saveCurrentTreeAsNewCopy() {
   const snapshot = buildTreeJSON(true);
   if (!snapshot) { showToast('Add a topic before saving the tree.', 3000); return; }
-  const name = (window.prompt('Name this copy:', (state.topic || 'Untitled tree') + ' copy') || '').trim();
+  const name = (window.prompt(t('Name this copy:'), (state.topic || t('Untitled tree')) + t(' copy')) || '').trim();
   if (!name) return;
   const id = genLibraryId();
   libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
@@ -251,7 +259,7 @@ function openLibraryEntry(id) {
 async function renameLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
-  const name = (window.prompt('Rename tree:', entry.name) || '').trim();
+  const name = (window.prompt(t('Rename tree:'), entry.name) || '').trim();
   if (!name) return;
   const before = entry.name;
   entry.name = name;
@@ -263,7 +271,7 @@ async function duplicateLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
   const newId = genLibraryId();
-  libraryCache[newId] = { name: entry.name + ' copy', savedAt: Date.now(), data: entry.data };
+  libraryCache[newId] = { name: entry.name + t(' copy'), savedAt: Date.now(), data: entry.data };
   if (!(await persistLibrary())) delete libraryCache[newId];
   renderLibraryGrid();
 }
@@ -271,7 +279,7 @@ async function duplicateLibraryEntry(id) {
 async function deleteLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
-  if (!window.confirm(`Delete "${entry.name}"? This can't be undone.`)) return;
+  if (!window.confirm(t(`Delete "${entry.name}"? This can't be undone.`))) return;
   delete libraryCache[id];
   if (!(await persistLibrary())) libraryCache[id] = entry;
   else if (state.libraryId === id) state.libraryId = null;
@@ -287,7 +295,7 @@ function formatSavedAt(ts) {
   if (hrs < 24)  return `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
   if (days < 7)  return `${days}d ago`;
-  return new Date(ts).toLocaleDateString();
+  return new Date(ts).toLocaleDateString(uiLanguage);
 }
 
 function renderLibraryGrid() {
@@ -295,16 +303,16 @@ function renderLibraryGrid() {
   const empty = document.getElementById('library-empty');
   const ids   = Object.keys(libraryCache).sort((a, b) => (libraryCache[b].savedAt || 0) - (libraryCache[a].savedAt || 0));
 
-  document.getElementById('library-modal-meta').textContent = state.accountUser
-    ? `synced to ${state.accountUser.username || state.accountUser.email}`
-    : 'saved locally in this browser — sign in to sync across devices';
+  uiText(document.getElementById('library-modal-meta'), state.accountUser
+    ? `Synced to ${state.accountUser.username || state.accountUser.email}`
+    : 'Saved locally in this browser — sign in to sync across devices');
 
   const hasCurrentTree = state.nodes.size > 0;
   const linkedToOpen   = !!(state.libraryId && libraryCache[state.libraryId]);
 
   const saveBtn = document.getElementById('btn-save-current-tree');
   saveBtn.classList.toggle('hidden', !hasCurrentTree);
-  saveBtn.textContent = linkedToOpen ? '💾 update saved copy' : '💾 save current tree';
+  uiText(saveBtn, linkedToOpen ? '💾 Update saved copy' : '💾 Save current tree');
   document.getElementById('btn-save-current-tree-copy').classList.toggle('hidden', !(hasCurrentTree && linkedToOpen));
 
   empty.classList.toggle('hidden', ids.length !== 0);
@@ -321,14 +329,14 @@ function renderLibraryGrid() {
     card.className = 'library-card' + (isOpen ? ' library-card-open' : '');
     card.innerHTML = `
       <div class="lc-name">${svEsc(entry.name)}</div>
-      <div class="lc-meta">${total} node${total !== 1 ? 's' : ''}${entry.data.language ? ' · ' + svEsc(entry.data.language) : ''}</div>
+      <div class="lc-meta">${uiHTML(total === 1 ? '{n} node' : '{n} nodes', {n:total})}${entry.data.language ? ' · ' + svEsc(entry.data.language) : ''}</div>
       <div class="lc-progress-track"><div class="lc-progress-bar" style="width:${pct}%"></div></div>
-      <div class="lc-meta">${done}/${total} complete · saved ${formatSavedAt(entry.savedAt)}${isOpen ? ' · currently open' : ''}</div>
+      <div class="lc-meta">${uiHTML('{done}/{total} complete · saved {time}', {done,total,time:formatSavedAt(entry.savedAt)})}${isOpen ? uiHTML(' · currently open') : ''}</div>
       <div class="lc-actions">
-        <button class="btn lc-open">open</button>
-        <button class="btn lc-rename">rename</button>
-        <button class="btn lc-dup">duplicate</button>
-        <button class="btn danger lc-del">delete</button>
+        <button class="btn lc-open">${uiHTML('Open')}</button>
+        <button class="btn lc-rename">${uiHTML('Rename')}</button>
+        <button class="btn lc-dup">${uiHTML('Duplicate')}</button>
+        <button class="btn danger lc-del">${uiHTML('Delete')}</button>
       </div>
     `;
     card.querySelector('.lc-open').addEventListener('click', () => openLibraryEntry(id));
@@ -365,3 +373,5 @@ onEscape(100, () => {
 
 // Guest view is available immediately; refreshed again when Firebase reports a signed-in session.
 refreshLibraryFromSource();
+
+document.addEventListener('ui-language-change', renderLibraryGrid);

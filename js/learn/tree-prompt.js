@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
    TREE DESIGN PROMPTS — pure text templates.
    renderTreePrompt: the prompt copied out of the "new tree" modal (from a
-   topic) and pasted into a Claude conversation to generate a tree .json.
+   topic) and pasted into a conversation with an AI chatbot to generate a tree .json.
    renderTreePromptFromFile: the same job, but the person attaches a file
-   (a paper, a textbook excerpt, a photo of a problem) and Claude derives
+   (a paper, a textbook excerpt, a photo of a problem) and the AI chatbot derives
    the topic, starting point and language from it; the tree's destination is
    that file's own content, not a generic survey of its field.
    Called from prompts.js, which computes topic/fileSlug/language and

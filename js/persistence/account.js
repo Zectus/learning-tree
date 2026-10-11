@@ -40,10 +40,10 @@ function setAccountMode(mode) {
   accountMode = mode;
   const isSignup = mode === 'signup';
   document.getElementById('account-username-row').classList.toggle('hidden', !isSignup);
-  document.getElementById('account-modal-title').textContent = isSignup ? 'Create an account' : 'Sign in';
-  document.getElementById('account-submit-btn').textContent  = isSignup ? 'Sign up' : 'Sign in';
-  document.getElementById('account-toggle-text').textContent = isSignup ? 'Already have an account? ' : "Don't have an account? ";
-  document.getElementById('account-toggle-btn').textContent  = isSignup ? 'Sign in' : 'Sign up';
+  uiText(document.getElementById('account-modal-title'), isSignup ? 'Create an account' : 'Sign in');
+  uiText(document.getElementById('account-submit-btn'), isSignup ? 'Sign up' : 'Sign in');
+  uiText(document.getElementById('account-toggle-text'), isSignup ? 'Already have an account? ' : "Don't have an account? ");
+  uiText(document.getElementById('account-toggle-btn'), isSignup ? 'Sign in' : 'Sign up');
   // Tells password managers whether to offer a saved password or suggest a new one.
   document.getElementById('account-password-input').autocomplete = isSignup ? 'new-password' : 'current-password';
   clearAccountError();
@@ -51,12 +51,13 @@ function setAccountMode(mode) {
 
 function clearAccountError() {
   const el = document.getElementById('account-error');
-  el.textContent = '';
+  uiText(el, '');
   el.classList.add('hidden');
 }
 function showAccountError(msg) {
   const el = document.getElementById('account-error');
-  el.textContent = msg;
+  uiText(el, msg);
+  if (uiLanguage === 'es' && t(msg) === msg) el.textContent = t('Something went wrong — try again.');
   el.classList.remove('hidden');
 }
 
@@ -64,6 +65,12 @@ function showAccountError(msg) {
    modal panel, and (via refreshLibraryFromSource / refreshProgressFromSource)
    which storage source "My Trees" and progress read from. */
 function applyAccountUser(user) {
+  // Firebase may resolve the existing sign-in while the first-visit tour is
+  // running. Apply the latest auth event only after the real tree is restored.
+  if (state.tutorialActive) {
+    state.tutorialPendingAuth = { user };
+    return;
+  }
   // Progress writes only go out when the tab hides or closes (see progress.js),
   // so switching accounts mid-session would strand whatever is pending under
   // the outgoing one. flushProgress() reads state.accountUser synchronously, so
@@ -108,7 +115,7 @@ function showSignedOutPanel() {
   document.getElementById('account-form-panel').classList.remove('hidden');
   document.getElementById('account-google-username-panel').classList.add('hidden');
   document.getElementById('account-signed-in-panel').classList.add('hidden');
-  document.getElementById('account-modal-meta').textContent = 'sign in to sync your trees across devices';
+  uiText(document.getElementById('account-modal-meta'), 'Sign in to sync your trees across devices');
 }
 function showSignedInPanel(user) {
   document.getElementById('account-form-panel').classList.add('hidden');
@@ -117,7 +124,7 @@ function showSignedInPanel(user) {
   document.getElementById('account-name-display').textContent = user.username || user.email;
   document.getElementById('account-email-line').textContent = user.username ? user.email : '';
   document.getElementById('account-email-line').classList.toggle('hidden', !user.username);
-  document.getElementById('account-modal-meta').textContent = 'your trees are synced to this account';
+  uiText(document.getElementById('account-modal-meta'), 'Your trees are synced to this account');
 }
 
 // A Google display name or email as a starting-point username — a prefill, not a guarantee it's free.
@@ -133,7 +140,7 @@ function showGoogleUsernamePanel(user) {
   document.getElementById('account-form-panel').classList.add('hidden');
   document.getElementById('account-signed-in-panel').classList.add('hidden');
   document.getElementById('account-google-username-panel').classList.remove('hidden');
-  document.getElementById('account-modal-title').textContent = 'Choose a username';
+  uiText(document.getElementById('account-modal-title'), 'Choose a username');
   const input = document.getElementById('account-google-username-input');
   input.value = suggestUsernameFrom(user.displayName || user.email);
   input.focus();
@@ -144,10 +151,10 @@ function showGoogleUsernamePanel(user) {
 function updateAccountButton() {
   const btn = document.getElementById('btn-account-menu');
   if (state.accountUser) {
-    btn.textContent = '👤 ' + (state.accountUser.username || state.accountUser.email) + ' ▾';
+    userText(btn, '👤 ' + (state.accountUser.username || state.accountUser.email) + ' ▾');
     btn.classList.add('active');
   } else {
-    btn.textContent = '👤 sign in ▾';
+    uiText(btn, '👤 Sign in ▾');
     btn.classList.remove('active');
   }
 }
@@ -316,3 +323,8 @@ onEscape(100, () => {
 });
 
 setAccountMode('signin');
+
+document.addEventListener('ui-language-change', () => {
+  const error = document.getElementById('account-error');
+  if (!error.classList.contains('hidden')) showAccountError(error.dataset.uiText || 'Something went wrong — try again.');
+});

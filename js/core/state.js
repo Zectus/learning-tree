@@ -4,6 +4,7 @@
    among the app's own scripts and everything else reads from it.
 ═══════════════════════════════════════════════════════════ */
 const state = {
+  tutorialActive: false, // real UI tour uses a temporary tree; never persist its data
   nodes:      new Map(),  // id → { id, label, explanation, optional, done, depth, x, y, el }
   edges:      new Set(),  // "fromId→toId" (prereq → dependent) — canonical key set, also the DOM key for connector paths
   prereqs:    new Map(),  // id → Set of prerequisite ids (adjacency, kept in sync by the edge helpers below)

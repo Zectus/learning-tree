@@ -92,11 +92,15 @@ function treeSignature() {
    resolved a persisted session) and by handleCloudAuthChange on every
    sign-in/out. */
 async function refreshProgressFromSource() {
+  if (state.tutorialActive) return;
   if (state.accountUser) {
     progressSource = 'cloud';
     try {
-      progressCache = decodeProgressFromCloud(await window.cloud.getProgress(state.accountUser.uid));
+      const data = await window.cloud.getProgress(state.accountUser.uid);
+      if (state.tutorialActive) { state.tutorialRefreshProgress = true; return; }
+      progressCache = decodeProgressFromCloud(data);
     } catch (e) {
+      if (state.tutorialActive) { state.tutorialRefreshProgress = true; return; }
       console.error('Could not load cloud progress:', e);
       progressCache = {};
     }
@@ -112,6 +116,7 @@ async function refreshProgressFromSource() {
     progressCache = readLocalProgress();
   }
 
+  if (state.tutorialActive) { state.tutorialRefreshProgress = true; return; }
   // The data may have just changed under the tree on screen (e.g. signing in
   // mid-session): clear every node's in-memory progress, then restore from the
   // new source, so a node done under the old source doesn't stay stuck done.
@@ -176,6 +181,7 @@ window.addEventListener('pagehide', () => { flushProgress(); });
 /* Serializes every node into its record under this tree's signature, then
    marks a write pending. Called on any change worth remembering. */
 function autoSaveProgress() {
+  if (state.tutorialActive) return;
   const perNode = {};
   state.nodes.forEach(node => {
     perNode[node.label] = {
@@ -193,6 +199,7 @@ function autoSaveProgress() {
 
 /* Restores each node's record (done flag, answers, notes, scroll) from progressCache. */
 function autoRestoreProgress() {
+  if (state.tutorialActive) return;
   const saved = progressCache[treeSignature()];
   if (!saved) return;
   let changed = false;
@@ -217,14 +224,14 @@ function autoRestoreProgress() {
    reset while signed in clears the account's copy too. */
 const btnResetProgress = document.getElementById('menu-reset-progress');
 const RESET_LABEL_TREE = '↺ Reset tree progress', RESET_LABEL_ALL = '↺ Reset ALL progress';
-document.addEventListener('keydown', e => { if (e.key === 'Shift') btnResetProgress.textContent = RESET_LABEL_ALL; });
-document.addEventListener('keyup',   e => { if (e.key === 'Shift') btnResetProgress.textContent = RESET_LABEL_TREE; });
+document.addEventListener('keydown', e => { if (e.key === 'Shift') uiText(btnResetProgress, RESET_LABEL_ALL); });
+document.addEventListener('keyup',   e => { if (e.key === 'Shift') uiText(btnResetProgress, RESET_LABEL_TREE); });
 
 let resetAllArmed = false, resetPressTimer = null;
 btnResetProgress.addEventListener('touchstart', () => {
   resetPressTimer = setTimeout(() => {
     resetAllArmed = true;
-    btnResetProgress.textContent = RESET_LABEL_ALL;
+    uiText(btnResetProgress, RESET_LABEL_ALL);
     if (navigator.vibrate) navigator.vibrate(15);
   }, 550);
 }, { passive:true });
@@ -232,7 +239,7 @@ btnResetProgress.addEventListener('touchend', () => clearTimeout(resetPressTimer
 btnResetProgress.addEventListener('touchcancel', () => {
   clearTimeout(resetPressTimer);
   resetAllArmed = false;
-  btnResetProgress.textContent = RESET_LABEL_TREE;
+  uiText(btnResetProgress, RESET_LABEL_TREE);
 }, { passive:true });
 
 function clearNodeProgressFields(node) {
@@ -247,8 +254,8 @@ function clearNodeProgressFields(node) {
 btnResetProgress.addEventListener('click', async e => {
   const resetAll = e.shiftKey || resetAllArmed;
   resetAllArmed = false;
-  btnResetProgress.textContent = RESET_LABEL_TREE;
-  if (resetAll && !window.confirm(`Reset progress on every tree${state.accountUser ? ', including the copy synced to your account' : ''}? This can't be undone.`)) return;
+  uiText(btnResetProgress, RESET_LABEL_TREE);
+  if (resetAll && !window.confirm(t(`Reset progress on every tree${state.accountUser ? ', including the copy synced to your account' : ''}? This can't be undone.`))) return;
 
   if (resetAll) progressCache = {};
   else delete progressCache[treeSignature()];

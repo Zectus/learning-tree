@@ -19,13 +19,13 @@ function buildEl(node) {
 
   const badge = document.createElement('div');
   badge.className = 'node-badge';
-  badge.textContent = '○ locked';
+  uiText(badge, '○ Locked');
 
   const textEl = document.createElement('div');
   textEl.className = 'node-text';
   textEl.contentEditable = editing ? 'true' : 'false';
   textEl.spellcheck = false;
-  textEl.dataset.placeholder = node.depth === 0 ? 'Root concept…' : 'Topic name…';
+  uiAttr(textEl, 'data-placeholder', node.depth === 0 ? 'Root concept…' : 'Topic name…');
   textEl.textContent = node.label;
 
   const actions = document.createElement('div');
@@ -33,29 +33,29 @@ function buildEl(node) {
 
   const linkBtn = document.createElement('button');
   linkBtn.className = 'btn';
-  linkBtn.textContent = '⟵ link prereq';
-  linkBtn.title = 'Click, then click a prerequisite node';
+  uiText(linkBtn, '⟵ Link prereq');
+  uiAttr(linkBtn, 'title', 'Click, then click a prerequisite node');
   linkBtn.addEventListener('click', e => { e.stopPropagation(); startLink(node.id); });
 
   const optBtn = document.createElement('button');
   optBtn.className = 'btn';
-  optBtn.textContent = node.optional ? '★ optional' : '☆ optional';
+  uiText(optBtn, node.optional ? '★ Optional' : '☆ Optional');
   optBtn.addEventListener('click', e => {
     e.stopPropagation();
     node.optional = !node.optional;
-    optBtn.textContent = node.optional ? '★ optional' : '☆ optional';
+    uiText(optBtn, node.optional ? '★ Optional' : '☆ Optional');
     refreshTag(el, node);
   });
 
   const delTxtBtn = document.createElement('button');
   delTxtBtn.className = 'btn danger';
-  delTxtBtn.textContent = '🗑 delete txt';
-  delTxtBtn.title = "Clear this node's generated lesson & quiz progress";
+  uiText(delTxtBtn, '🗑 Delete TXT');
+  uiAttr(delTxtBtn, 'title', "Clear this node's generated lesson & quiz progress");
   delTxtBtn.addEventListener('click', e => { e.stopPropagation(); deleteNodeTxt(node.id); });
 
   const delBtn = document.createElement('button');
   delBtn.className = 'btn danger';
-  delBtn.textContent = '✕ delete';
+  uiText(delBtn, '✕ Delete');
   delBtn.addEventListener('click', e => { e.stopPropagation(); deleteNode(node.id); });
 
   actions.append(linkBtn, optBtn, delTxtBtn, delBtn);
@@ -65,13 +65,13 @@ function buildEl(node) {
 
   const explLabel = document.createElement('div');
   explLabel.className = 'node-explanation-label';
-  explLabel.textContent = 'explanation (private — sent to the lesson prompt, never shown to the learner)';
+  uiText(explLabel, 'Explanation (private — sent to the lesson prompt, never shown to the learner)');
 
   const explTa = document.createElement('textarea');
   explTa.className = 'node-explanation-ta';
   explTa.spellcheck = false;
   explTa.readOnly = !editing;
-  explTa.placeholder = 'Pin down exactly what this node covers and where its edges are…';
+  uiAttr(explTa, 'placeholder', 'Pin down exactly what this node covers and where its edges are…');
   explTa.value = node.explanation || '';
 
   explWrap.append(explLabel, explTa);
@@ -88,9 +88,9 @@ function buildEl(node) {
   // handler below, which would focus the label or start a link.
   const moreBtn = document.createElement('button');
   moreBtn.className = 'node-more-btn';
-  moreBtn.textContent = '⋯';
-  moreBtn.title = 'Show actions';
-  moreBtn.setAttribute('aria-label', 'Show actions');
+  uiText(moreBtn, '⋯');
+  uiAttr(moreBtn, 'title', 'Show actions');
+  uiAttr(moreBtn, 'aria-label', 'Show actions');
   moreBtn.addEventListener('click', e => {
     e.stopPropagation();
     const opening = !el.classList.contains('actions-open');
@@ -155,7 +155,7 @@ function refreshTag(el, node) {
       tag.className = 'node-tag';
       el.querySelector('.node-inner').appendChild(tag);
     }
-    tag.textContent = 'optional';
+    uiText(tag, 'Optional');
   } else if (tag) {
     tag.remove();
   }

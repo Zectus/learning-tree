@@ -8,10 +8,18 @@ const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..');
 
-function loadApp({ innerWidth = 1280, screenOrientation, deviceOrientation, screenWidth = 0, screenHeight = 0 } = {}) {
+function loadApp({ innerWidth = 1280, screenOrientation, deviceOrientation, screenWidth = 0, screenHeight = 0, tutorialSeen = true, uiLanguage = 'en', storageUnavailable = false } = {}) {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const dom = new JSDOM(html, { runScripts: 'outside-only', pretendToBeVisual: true, url: 'http://localhost/' });
   const { window } = dom;
+  // Existing workflow tests represent returning visitors. Tutorial tests opt
+  // into a fresh browser or unavailable storage before any app script runs.
+  if (tutorialSeen) window.localStorage.setItem('tree-tutorial-seen', '1');
+  window.localStorage.setItem('tree-ui-language', uiLanguage);
+  if (storageUnavailable) {
+    window.Storage.prototype.getItem = () => { throw new Error('Storage blocked'); };
+    window.Storage.prototype.setItem = () => { throw new Error('Storage blocked'); };
+  }
   window.innerWidth = innerWidth;
   Object.defineProperties(window.screen, {
     width: { value: screenWidth, configurable: true },
@@ -22,7 +30,7 @@ function loadApp({ innerWidth = 1280, screenOrientation, deviceOrientation, scre
 
   // Stylesheets that decide visibility (so computed-style assertions are real).
   // (modals.css is where .hidden is defined; a partial checkout without it gets the same one-line rule.)
-  for (const css of ['css/modals.css', 'css/account.css']) {
+  for (const css of ['css/modals.css', 'css/account.css', 'css/tutorial.css']) {
     const file = path.join(ROOT, css);
     const style = window.document.createElement('style');
     style.textContent = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '.hidden { display: none; }';

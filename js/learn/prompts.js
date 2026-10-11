@@ -40,6 +40,14 @@ function buildPrompt(id, language) {
   const explanationLine = node.explanation
     ? `This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): ${node.explanation} Use this brief to identify the intended learner ability, central idea, supporting content, and scope boundaries. If it is written as a topic list, organize those items into a learnable progression rather than equal-length treatments. Keep explicit exclusions, but still show a meaningful use of the idea at this level.`
     : '';
+  if (uiLanguage === 'es') {
+    return renderNodePromptEs({ topic, nodeId, language: language || 'Español',
+      treeTopicLine: state.topic ? `Este nodo pertenece a un árbol más amplio sobre ${state.topic}.` : '',
+      explanationLine: node.explanation ? `Alcance de este nodo según las notas de diseño privadas del árbol: ${node.explanation} Usa esta guía para identificar la capacidad prevista, la idea central, el contenido de apoyo y los límites. Si es una lista de temas, organízalos como una progresión aprendible. Respeta las exclusiones explícitas y muestra un uso significativo de la idea a este nivel.` : '',
+      prereqLine: prereqNodes.length ? `El estudiante ya ha estudiado todos los elementos siguientes. Cada línea contiene su nombre y alcance exacto, para saber qué se ha establecido y cuáles son sus límites:\n${prereqDetailList}\nTrata todo lo descrito como ya enseñado y disponible sin volver a derivarlo ni explicarlo. Remítete a ello de forma natural, como «recuerda que…» o «antes vimos…», no como una línea de un programa de estudios. Si un alcance anterior no cubre algo necesario aquí, esa laguna es material nuevo para este nodo.` : 'Este es el primer tema de la secuencia: no hay temas anteriores a los que remitirse.',
+      leadsToLine: dependents.length ? `Los temas posteriores se apoyarán en este: ${dependents.join(', ')}. No los enseñes ni los menciones por su nombre aquí.` : ''
+    });
+  }
   const lang = language || 'English';
   const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", the option markers "(A)" through "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]", and "[BONUS N]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does. This extends inside [GRAPH] blocks specifically: the field names themselves (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, label, color, z, u, v) are parser keywords and must stay in English exactly as written in the spec, and every math expression (a trace's formula, z, u, v) must stay in plain ASCII math syntax regardless of document language, since a separate library evaluates them as expressions, not as text. Only the actual values after title:, xlabel:, ylabel:, zlabel:, and label: move to ${lang} — everything else in a [GRAPH] block does not.\n`;
 
@@ -52,16 +60,17 @@ function buildPrompt(id, language) {
 ═══════════════════════════════════════════════════════════ */
 function buildTreePrompt(topic, language) {
   const fileSlug = slugify(topic);
+  if (uiLanguage === 'es') return renderTreePromptEs({topic, fileSlug, language: language || 'Español'});
   const lang = language || 'English';
   const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
   return renderTreePrompt({ topic, fileSlug, language: lang, languageClause });
 }
 
-// No inputs: topic, starting point and language are all derived by Claude from
+// No inputs: topic, starting point and language are all derived by the AI chatbot from
 // the attached file(s). Kept as a function so this file stays the one place
 // between the modal and the templates.
 function buildTreePromptFromFile() {
-  return renderTreePromptFromFile();
+  return uiLanguage === 'es' ? renderTreePromptEs({}, true) : renderTreePromptFromFile();
 }
 
 /* ── learn modal ── */
@@ -85,8 +94,7 @@ function openLearnModal(id) {
   const prompt = buildPrompt(id, languageInput.value.trim());
 
   document.getElementById('modal-title').textContent = node.label;
-  document.getElementById('modal-meta').textContent =
-    `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · copy prompt → paste into Claude → upload the .txt file`;
+  uiText(document.getElementById('modal-meta'), `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · copy prompt → paste into an AI chatbot → upload the .txt file`);
   document.getElementById('prompt-box').value = prompt;
   resetCopyButton('btn-copy-prompt');
   document.getElementById('modal-backdrop').classList.add('open');
@@ -114,12 +122,12 @@ function updateTreePromptPreview() {
   const language = document.getElementById('tree-language-input').value.trim();
   document.getElementById('tree-prompt-box').value = topic
     ? buildTreePrompt(topic, language)
-    : 'Fill in a topic above to generate the prompt.';
+    : t('Fill in a topic above to generate the prompt.');
 }
 
 const TREE_MODAL_META = {
-  topic: 'fill in the fields → copy the prompt → paste into Claude → answer its few quick calibration questions → upload the .json it gives you',
-  file:  'copy the prompt → paste into Claude, attaching the file(s) you want to understand → answer its few quick calibration questions → upload the .json it gives you',
+  topic: 'Fill in the fields → copy the prompt → paste into an AI chatbot → answer its few quick calibration questions → upload the .json it gives you',
+  file:  'Copy the prompt → paste into an AI chatbot, attaching the file(s) you want to understand → answer its few quick calibration questions → upload the .json it gives you',
 };
 
 function setTreeMode(mode) {
@@ -127,7 +135,7 @@ function setTreeMode(mode) {
   document.getElementById('tree-mode-tab-file').classList.toggle('active', mode === 'file');
   document.getElementById('tree-mode-topic-panel').classList.toggle('hidden', mode !== 'topic');
   document.getElementById('tree-mode-file-panel').classList.toggle('hidden', mode !== 'file');
-  document.getElementById('tree-modal-meta').textContent = TREE_MODAL_META[mode];
+  uiText(document.getElementById('tree-modal-meta'), TREE_MODAL_META[mode]);
   if (mode === 'file' && !document.getElementById('tree-file-prompt-box').value) {
     document.getElementById('tree-file-prompt-box').value = buildTreePromptFromFile();
   }
@@ -175,7 +183,7 @@ onEscape(100, () => {
 /* ── copy buttons (shared by both modals) ── */
 function resetCopyButton(btnId) {
   const btn = document.getElementById(btnId);
-  btn.textContent = 'copy';
+  uiText(btn, 'Copy');
   btn.classList.remove('copied');
 }
 function wireCopyButton(btnId, taId) {
@@ -183,7 +191,7 @@ function wireCopyButton(btnId, taId) {
     const ta = document.getElementById(taId);
     const onCopied = () => {
       const btn = document.getElementById(btnId);
-      btn.textContent = 'copied ✓';
+      uiText(btn, 'Copied ✓');
       btn.classList.add('copied');
       setTimeout(() => resetCopyButton(btnId), 2000);
     };
@@ -206,3 +214,12 @@ function wireCopyButton(btnId, taId) {
 wireCopyButton('btn-copy-prompt', 'prompt-box');
 wireCopyButton('btn-copy-tree-prompt', 'tree-prompt-box');
 wireCopyButton('btn-copy-tree-file-prompt', 'tree-file-prompt-box');
+
+// Rebuild app-owned instructions without touching any editable field.
+document.addEventListener('ui-language-change', () => {
+  updateTreePromptPreview();
+  document.getElementById('tree-file-prompt-box').value = buildTreePromptFromFile();
+  if (_modalNodeId !== null && state.nodes.has(_modalNodeId)) {
+    document.getElementById('prompt-box').value = buildPrompt(_modalNodeId, document.getElementById('node-language-input').value.trim());
+  }
+});

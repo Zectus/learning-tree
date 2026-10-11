@@ -135,7 +135,7 @@ const parseBonusBody    = (n, raw) => parseChoiceBlock('B', n, raw);
    navigation and focus-scroll fight #sv-window's fixed positioning and blew
    its layout out. The keydown handler near the bottom adds Enter/Space. */
 function linkifySectionRefs(escapedHtml) {
-  return escapedHtml.replace(/\bSection\s+(\d+)\b/g,
+  return escapedHtml.replace(/\b(?:Section|Secci[oó]n)\s+(\d+)\b/gi,
     (whole, num) => `<span class="sv-sec-ref" data-sec="${num}" role="link" tabindex="0">${whole}</span>`);
 }
 
@@ -160,9 +160,9 @@ function renderChoiceCard(kind, q) {
     .map(l => `<button class="q-opt"${keyAttr} data-letter="${l}"${q.valid ? '' : ' disabled'}>
       <span class="q-letter">${l}</span><span class="q-text">${svEsc(q.options[l])}</span>
     </button>`).join('');
-  const note = q.valid ? '' : `<div class="q-feedback fb-wrong">This ${label.toLowerCase()} has no valid answer key, so it can't be scored.</div>`;
+  const note = q.valid ? '' : `<div class="q-feedback fb-wrong">${uiHTML(`This ${label.toLowerCase()} has no valid answer key, so it can't be scored.`)}</div>`;
   return `<div class="q-card${q.valid ? '' : ' q-card-invalid'}"${keyAttr}>
-    <div class="q-num">${label} ${q.n}</div>
+    <div class="q-num">${uiHTML(label+' {n}',{n:q.n})}</div>
     <div class="q-body">${renderProse(q.text)}</div>
     <div class="q-opts">${opts}</div>
     <div class="q-feedback" id="${kind}fb-${q.n}"></div>${note}
@@ -189,7 +189,7 @@ function renderSession(parsed) {
       }
     }
     // id="sv-section-N" is the scroll target for the "Section N" links.
-    return `<div class="sv-section" id="sv-section-${sec.num}"><div class="sv-section-label">Section ${sec.num}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
+    return `<div class="sv-section" id="sv-section-${sec.num}"><div class="sv-section-label">${uiHTML('Section {n}',{n:sec.num})}</div><div class="sv-section-title">${svEsc(sec.title)}</div>${inner}</div>`;
   }).join('');
 }
 function buildBonusSection(bonuses) {
@@ -197,7 +197,7 @@ function buildBonusSection(bonuses) {
   const nums = [...bonuses.keys()].sort((a, b) => a - b);
   const cards = nums.map(n => renderChoiceCard('b', bonuses.get(n))).join('');
   return `<details id="sv-recap">
-    <summary><span class="recap-arrow">▶</span> Bonus Practice — ${nums.length} extra question${nums.length !== 1 ? 's' : ''}</summary>
+    <summary><span class="recap-arrow">▶</span> ${uiHTML(nums.length===1?'Bonus Practice — {n} extra question':'Bonus Practice — {n} extra questions',{n:nums.length})}</summary>
     <div id="sv-recap-body">${cards}</div>
   </details>`;
 }
@@ -212,7 +212,7 @@ function showResult(card, letter, correct) {
   });
   const fb = card.querySelector('.q-feedback');
   if (fb) {
-    fb.textContent = letter === correct ? '✓ Correct' : `✗  Correct answer: ${correct}`;
+    uiText(fb, letter === correct ? '✓ Correct' : `✗  Correct answer: ${correct}`);
     fb.className = 'q-feedback ' + (letter === correct ? 'fb-correct' : 'fb-wrong');
   }
 }
@@ -251,7 +251,7 @@ function handleBonusClick(btn) {
 }
 function updateViewerScore() {
   const badge = document.getElementById('sv-score'); if (!badge) return;
-  badge.textContent = viewer.total > 0 ? `${viewer.score} / ${viewer.total} correct` : '— / —';
+  uiText(badge, viewer.total > 0 ? `${viewer.score} / ${viewer.total} correct` : '— / —');
   badge.classList.toggle('sv-perfect', viewer.answers.size === viewer.total && viewer.total > 0 && viewer.score === viewer.total);
 }
 
@@ -277,7 +277,7 @@ function openViewer(txtContent, nodeId) {
     questions: parsed.questions, bonuses: parsed.bonuses,
   });
   svUserPositioned = false; // this open re-centres the window, so auto-centering on resize applies again
-  document.getElementById('sv-topic').textContent = node?.label ?? 'Session';
+  if (node?.label) userText(document.getElementById('sv-topic'), node.label); else uiText(document.getElementById('sv-topic'), 'Session');
 
   const body = document.getElementById('sv-body');
   body.innerHTML = renderSession(parsed) + buildBonusSection(parsed.bonuses);

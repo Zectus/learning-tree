@@ -5,7 +5,7 @@
 <!-- No maximum-scale / user-scalable=no: people need to be able to pinch-zoom the
      page chrome. The canvas handles its own gestures (touch-action: none). -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
-<title>Progress Tree</title>
+<title data-ui-text="Progress Tree">Progress Tree</title>
 <!-- Sets the dark class before first paint (no light flash): an explicit saved
      choice wins, otherwise follow the OS. toolbar.js handles toggling. -->
 <script>
@@ -27,6 +27,7 @@ try {
 <link rel="stylesheet" href="css/account.css">
 <link rel="stylesheet" href="css/viewer.css">
 <link rel="stylesheet" href="css/toast.css">
+<link rel="stylesheet" href="css/tutorial.css">
 <link rel="stylesheet" href="css/mobile.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -37,7 +38,7 @@ try {
 <body>
 <div id="rotate-overlay">
   <div id="rotate-overlay-icon">⟳</div>
-  <div id="rotate-overlay-text">Rotate your device back to portrait to use this app</div>
+  <div id="rotate-overlay-text"><span data-ui-text="Rotate your device back to portrait to use this app">Rotate your device back to portrait to use this app</span></div>
 </div>
 <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
 
@@ -67,41 +68,68 @@ try {
      mode). The three dropdowns share one mechanism in toolbar.js. -->
 <div id="toolbar">
   <div class="dropdown-wrap">
-    <button class="tbtn" id="btn-mode">👁 Browse ▾</button>
+    <button class="tbtn" id="btn-mode"><span data-ui-text="👁 Browse ▾">👁 Browse ▾</span></button>
     <div class="dropdown-menu" id="mode-menu" role="menu">
-      <button class="dropdown-item" id="mode-browse-item" role="menuitem">👁 Browse</button>
-      <button class="dropdown-item" id="mode-edit-item" role="menuitem">✏️ Edit</button>
-      <button class="dropdown-item" id="mode-mark-known-item" role="menuitem">✓ Mark known</button>
+      <button class="dropdown-item" id="mode-browse-item" role="menuitem"><span data-ui-text="👁 Browse">👁 Browse</span></button>
+      <button class="dropdown-item" id="mode-edit-item" role="menuitem"><span data-ui-text="✏️ Edit">✏️ Edit</span></button>
+      <button class="dropdown-item" id="mode-mark-known-item" role="menuitem"><span data-ui-text="✓ Mark known">✓ Mark known</span></button>
     </div>
   </div>
-  <button class="tbtn" id="btn-add-node">+ node</button>
+  <button class="tbtn" id="btn-add-node"><span data-ui-text="+ Node">+ Node</span></button>
 
-  <button class="tbtn" id="btn-my-trees" title="Saved trees">📚 My Trees</button>
+  <button class="tbtn" id="btn-my-trees" title="Saved trees" data-ui-attrs="{&quot;title&quot;: &quot;Saved trees&quot;}"><span data-ui-text="📚 My Trees">📚 My Trees</span></button>
 
   <div class="dropdown-wrap">
-    <button class="tbtn" id="btn-tree-menu">Tree ▾</button>
+    <button class="tbtn" id="btn-tree-menu"><span data-ui-text="Tree ▾">Tree ▾</span></button>
     <div class="dropdown-menu" id="tree-menu" role="menu">
-      <button class="dropdown-item" id="menu-new-tree" role="menuitem">🌱 New tree</button>
-      <label class="dropdown-item" id="menu-load-json" role="menuitem">📂 Load JSON
+      <button class="dropdown-item" id="menu-new-tree" role="menuitem"><span data-ui-text="🌱 New tree">🌱 New tree</span></button>
+      <label class="dropdown-item" id="menu-load-json" role="menuitem"><span data-ui-text="📂 Load JSON">📂 Load JSON</span>
         <input type="file" id="file-input" accept=".json" style="display:none">
       </label>
       <button class="dropdown-item" id="menu-export-structure" role="menuitem">
-        ⬇ Export — structure only
-        <span class="dropdown-item-sub">labels &amp; requirements, no lesson text</span>
+        <span data-ui-text="⬇ Export — structure only">⬇ Export — structure only</span>
+        <span class="dropdown-item-sub"><span data-ui-text="labels &amp; requirements, no lesson text">labels &amp; requirements, no lesson text</span></span>
       </button>
       <button class="dropdown-item" id="menu-export-content" role="menuitem">
-        ⬇ Export — structure + content
-        <span class="dropdown-item-sub">also bundles each node's generated .txt</span>
+        <span data-ui-text="⬇ Export — structure + content">⬇ Export — structure + content</span>
+        <span class="dropdown-item-sub"><span data-ui-text="also bundles each node&#x27;s generated .txt">also bundles each node&#x27;s generated .txt</span></span>
       </button>
     </div>
   </div>
 
   <div class="dropdown-wrap">
-    <button class="tbtn" id="btn-account-menu" title="Sign in to sync your trees across devices">👤 sign in ▾</button>
+    <button class="tbtn" id="btn-account-menu" title="Sign in to sync your trees across devices" data-ui-attrs="{&quot;title&quot;: &quot;Sign in to sync your trees across devices&quot;}"><span data-ui-text="👤 Sign in ▾">👤 Sign in ▾</span></button>
     <div class="dropdown-menu" id="account-menu" role="menu">
-      <button class="dropdown-item" id="menu-account" role="menuitem">👤 Account</button>
-      <button class="dropdown-item" id="menu-reset-progress" role="menuitem" title="Hold shift (or long-press on touch) to reset every tree's progress instead">↺ Reset tree progress</button>
-      <button class="dropdown-item" id="menu-dark-mode" role="menuitem">🌙 Dark mode</button>
+      <button class="dropdown-item" id="menu-account" role="menuitem"><span data-ui-text="👤 Account">👤 Account</span></button>
+      <button class="dropdown-item" id="menu-language" role="menuitem">🌐 Español</button>
+      <button class="dropdown-item" id="menu-tutorial" role="menuitem" hidden><span data-ui-text="◇ View tutorial">◇ View tutorial</span></button>
+      <button class="dropdown-item" id="menu-reset-progress" role="menuitem" title="Hold shift (or long-press on touch) to reset every tree's progress instead" data-ui-attrs="{&quot;title&quot;: &quot;Hold shift (or long-press on touch) to reset every tree&#x27;s progress instead&quot;}"><span data-ui-text="↺ Reset tree progress">↺ Reset tree progress</span></button>
+      <button class="dropdown-item" id="menu-dark-mode" role="menuitem"><span data-ui-text="🌙 Dark mode">🌙 Dark mode</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- The tour spotlights and uses the actual UI, with a temporary demo tree. -->
+<div id="tutorial-layer" hidden>
+  <svg id="tutorial-shade" aria-hidden="true" width="100%" height="100%">
+    <defs><mask id="tutorial-mask"><rect width="100%" height="100%" fill="white"/><rect id="tutorial-hole" rx="8" fill="black"/></mask></defs>
+    <rect width="100%" height="100%" fill="rgba(0,0,0,.55)" mask="url(#tutorial-mask)"/>
+    <rect id="tutorial-ring" rx="8" fill="none" stroke="var(--avail-bdr)" stroke-width="2"/>
+  </svg>
+  <div id="tutorial-card" role="dialog" aria-modal="false" aria-labelledby="tutorial-title" aria-describedby="tutorial-intro" tabindex="-1">
+    <div class="tutorial-header">
+      <span id="tutorial-count"></span>
+      <button id="tutorial-toggle" type="button" aria-expanded="true" aria-controls="tutorial-content"><span data-ui-text="Hide hint">Hide hint</span></button>
+      <button id="tutorial-skip" type="button"><span data-ui-text="Skip tutorial ✕">Skip tutorial ✕</span></button>
+    </div>
+    <div id="tutorial-content" aria-live="polite" aria-atomic="true">
+      <h2 id="tutorial-title"></h2>
+      <p id="tutorial-intro"></p>
+    </div>
+    <div class="tutorial-footer">
+      <button id="tutorial-back" type="button"><span data-ui-text="← Back">← Back</span></button>
+      <select id="tutorial-section" aria-label="Jump to tutorial step" data-ui-attrs="{&quot;aria-label&quot;: &quot;Jump to tutorial step&quot;}"></select>
+      <button id="tutorial-next" type="button"><span data-ui-text="Show me →">Show me →</span></button>
     </div>
   </div>
 </div>
@@ -111,22 +139,22 @@ try {
   <div class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-header-bar">
       <div>
-        <div id="modal-title" class="modal-title">Topic</div>
+        <div id="modal-title" class="modal-title"><span data-ui-text="Topic">Topic</span></div>
         <div id="modal-meta" class="modal-meta"></div>
       </div>
-      <button id="modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
+      <button id="modal-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs="{&quot;title&quot;: &quot;Close&quot;, &quot;aria-label&quot;: &quot;Close&quot;}">✕</button>
     </div>
     <div class="modal-body">
       <div class="field-row">
-        <label class="field-label" for="node-language-input">Language (optional)</label>
-        <input type="text" id="node-language-input" class="field-input" placeholder="leave blank for English">
+        <label class="field-label" for="node-language-input"><span data-ui-text="Language (optional)">Language (optional)</span></label>
+        <input type="text" id="node-language-input" class="field-input" placeholder="Leave blank for English" data-ui-attrs="{&quot;placeholder&quot;: &quot;Leave blank for English&quot;}">
       </div>
       <div class="prompt-wrap">
-        <textarea id="prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Lesson prompt"></textarea>
-        <button id="btn-copy-prompt" class="copy-btn">copy</button>
+        <textarea id="prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Lesson prompt" data-ui-attrs="{&quot;aria-label&quot;: &quot;Lesson prompt&quot;}"></textarea>
+        <button id="btn-copy-prompt" class="copy-btn"><span data-ui-text="Copy">Copy</span></button>
       </div>
       <label class="upload-dropzone">
-        📄 upload .txt session to open viewer
+        <span data-ui-text="📄 Upload .txt session to open viewer">📄 Upload .txt session to open viewer</span>
         <input type="file" id="session-file-input" accept=".txt" style="display:none">
       </label>
     </div>
@@ -138,42 +166,42 @@ try {
   <div class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="tree-modal-title">
     <div class="modal-header-bar">
       <div>
-        <div class="modal-title" id="tree-modal-title">Design a new tree</div>
-        <div class="modal-meta" id="tree-modal-meta">fill in the fields → copy the prompt → paste into Claude → upload the .json it gives you</div>
+        <div class="modal-title" id="tree-modal-title"><span data-ui-text="Design a new tree">Design a new tree</span></div>
+        <div class="modal-meta" id="tree-modal-meta"><span data-ui-text="Fill in the fields → copy the prompt → paste into an AI chatbot → upload the .json it gives you">Fill in the fields → copy the prompt → paste into an AI chatbot → upload the .json it gives you</span></div>
       </div>
-      <button id="tree-modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
+      <button id="tree-modal-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs="{&quot;title&quot;: &quot;Close&quot;, &quot;aria-label&quot;: &quot;Close&quot;}">✕</button>
     </div>
     <div class="modal-body">
       <div class="tree-mode-tabs">
-        <button class="tree-mode-tab active" id="tree-mode-tab-topic" data-mode="topic">From a topic</button>
-        <button class="tree-mode-tab" id="tree-mode-tab-file" data-mode="file">From a file</button>
+        <button class="tree-mode-tab active" id="tree-mode-tab-topic" data-mode="topic"><span data-ui-text="From a topic">From a topic</span></button>
+        <button class="tree-mode-tab" id="tree-mode-tab-file" data-mode="file"><span data-ui-text="From a file">From a file</span></button>
       </div>
 
       <div id="tree-mode-topic-panel">
         <div class="field-row">
-          <label class="field-label" for="tree-topic-input">Topic</label>
-          <input type="text" id="tree-topic-input" class="field-input" placeholder="e.g. Vector Calculus">
+          <label class="field-label" for="tree-topic-input"><span data-ui-text="Topic">Topic</span></label>
+          <input type="text" id="tree-topic-input" class="field-input" placeholder="E.g. Vector Calculus" data-ui-attrs="{&quot;placeholder&quot;: &quot;E.g. Vector Calculus&quot;}">
         </div>
         <div class="field-row">
-          <label class="field-label" for="tree-language-input">Language (optional)</label>
-          <input type="text" id="tree-language-input" class="field-input" placeholder="leave blank for English">
+          <label class="field-label" for="tree-language-input"><span data-ui-text="Language (optional)">Language (optional)</span></label>
+          <input type="text" id="tree-language-input" class="field-input" placeholder="Leave blank for English" data-ui-attrs="{&quot;placeholder&quot;: &quot;Leave blank for English&quot;}">
         </div>
         <div class="prompt-wrap">
-          <textarea id="tree-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt"></textarea>
-          <button id="btn-copy-tree-prompt" class="copy-btn">copy</button>
+          <textarea id="tree-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt" data-ui-attrs="{&quot;aria-label&quot;: &quot;Tree design prompt&quot;}"></textarea>
+          <button id="btn-copy-tree-prompt" class="copy-btn"><span data-ui-text="Copy">Copy</span></button>
         </div>
       </div>
 
       <div id="tree-mode-file-panel" class="hidden">
-        <p class="tree-mode-file-help">For a paper, a textbook excerpt, lecture notes, a photo of a problem you're stuck on — anything you want to fully understand but feel like you're missing a lot of what leads up to it. Copy this prompt, paste it into a new Claude conversation, and attach the file(s) there alongside it. Nothing to fill in here — Claude reads the file(s) itself to work out the topic and the language, then asks you a few quick questions to confirm where the tree should actually start before building it.</p>
+        <p class="tree-mode-file-help"><span data-ui-text="For a paper, a textbook excerpt, lecture notes, a photo of a problem you&#x27;re stuck on — anything you want to fully understand but feel like you&#x27;re missing a lot of what leads up to it. Copy this prompt, paste it into a new conversation with an AI chatbot, and attach the file(s) there alongside it. Nothing to fill in here — The chatbot reads the file(s) itself to work out the topic and the language, then asks you a few quick questions to confirm where the tree should actually start before building it.">For a paper, a textbook excerpt, lecture notes, a photo of a problem you&#x27;re stuck on — anything you want to fully understand but feel like you&#x27;re missing a lot of what leads up to it. Copy this prompt, paste it into a new conversation with an AI chatbot, and attach the file(s) there alongside it. Nothing to fill in here — The chatbot reads the file(s) itself to work out the topic and the language, then asks you a few quick questions to confirm where the tree should actually start before building it.</span></p>
         <div class="prompt-wrap">
-          <textarea id="tree-file-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt (from a file)"></textarea>
-          <button id="btn-copy-tree-file-prompt" class="copy-btn">copy</button>
+          <textarea id="tree-file-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt (from a file)" data-ui-attrs="{&quot;aria-label&quot;: &quot;Tree design prompt (from a file)&quot;}"></textarea>
+          <button id="btn-copy-tree-file-prompt" class="copy-btn"><span data-ui-text="Copy">Copy</span></button>
         </div>
       </div>
 
       <label class="upload-dropzone">
-        📄 upload the resulting tree .json
+        <span data-ui-text="📄 Upload the resulting tree .json">📄 Upload the resulting tree .json</span>
         <input type="file" id="tree-json-input" accept=".json" style="display:none">
       </label>
     </div>
@@ -190,10 +218,10 @@ try {
   <div class="modal-shell" id="account-modal-shell" role="dialog" aria-modal="true" aria-labelledby="account-modal-title">
     <div class="modal-header-bar">
       <div>
-        <div class="modal-title" id="account-modal-title">Sign in</div>
-        <div class="modal-meta" id="account-modal-meta">sign in to sync your trees across devices</div>
+        <div class="modal-title" id="account-modal-title"><span data-ui-text="Sign in">Sign in</span></div>
+        <div class="modal-meta" id="account-modal-meta"><span data-ui-text="Sign in to sync your trees across devices">Sign in to sync your trees across devices</span></div>
       </div>
-      <button id="account-modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
+      <button id="account-modal-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs="{&quot;title&quot;: &quot;Close&quot;, &quot;aria-label&quot;: &quot;Close&quot;}">✕</button>
     </div>
     <div class="modal-body">
 
@@ -201,20 +229,20 @@ try {
 
       <div id="account-form-panel">
         <div class="field-row hidden" id="account-username-row">
-          <label class="field-label" for="account-username-input">Username</label>
-          <input type="text" id="account-username-input" class="field-input" placeholder="letters, numbers, _ or -" autocomplete="off" maxlength="20">
+          <label class="field-label" for="account-username-input"><span data-ui-text="Username">Username</span></label>
+          <input type="text" id="account-username-input" class="field-input" placeholder="Letters, numbers, _ or -" autocomplete="off" maxlength="20" data-ui-attrs="{&quot;placeholder&quot;: &quot;Letters, numbers, _ or -&quot;}">
         </div>
         <div class="field-row">
-          <label class="field-label" for="account-email-input">Email</label>
-          <input type="email" id="account-email-input" class="field-input" placeholder="you@example.com" autocomplete="username">
+          <label class="field-label" for="account-email-input"><span data-ui-text="Email">Email</span></label>
+          <input type="email" id="account-email-input" class="field-input" placeholder="you@example.com" autocomplete="username" data-ui-attrs="{&quot;placeholder&quot;: &quot;you@example.com&quot;}">
         </div>
         <div class="field-row">
-          <label class="field-label" for="account-password-input">Password</label>
-          <input type="password" id="account-password-input" class="field-input" placeholder="At least 6 characters" autocomplete="current-password">
+          <label class="field-label" for="account-password-input"><span data-ui-text="Password">Password</span></label>
+          <input type="password" id="account-password-input" class="field-input" placeholder="At least 6 characters" autocomplete="current-password" data-ui-attrs="{&quot;placeholder&quot;: &quot;At least 6 characters&quot;}">
         </div>
-        <button class="tbtn" id="account-submit-btn" style="width:100%;">Sign in</button>
+        <button class="tbtn" id="account-submit-btn" style="width:100%;"><span data-ui-text="Sign in">Sign in</span></button>
 
-        <div class="account-divider"><span>or</span></div>
+        <div class="account-divider"><span><span data-ui-text="Or">Or</span></span></div>
 
         <button class="tbtn google-btn" id="account-google-btn" type="button" style="width:100%;">
           <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true">
@@ -223,31 +251,31 @@ try {
             <path fill="#FBBC05" d="M3.97 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.33z"/>
             <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
           </svg>
-          Continue with Google
+          <span data-ui-text="Continue with Google">Continue with Google</span>
         </button>
 
         <div class="account-toggle">
-          <span id="account-toggle-text">Don't have an account? </span>
-          <button id="account-toggle-btn">Sign up</button>
+          <span id="account-toggle-text"><span data-ui-text="Don&#x27;t have an account?">Don&#x27;t have an account?</span> </span>
+          <button id="account-toggle-btn"><span data-ui-text="Sign up">Sign up</span></button>
         </div>
       </div>
 
       <div id="account-google-username-panel" class="hidden">
-        <p class="account-status" style="margin-bottom:0.875rem;">Almost done — pick a username for your account.</p>
+        <p class="account-status" style="margin-bottom:0.875rem;"><span data-ui-text="Almost done — pick a username for your account.">Almost done — pick a username for your account.</span></p>
         <div class="field-row">
-          <label class="field-label" for="account-google-username-input">Username</label>
-          <input type="text" id="account-google-username-input" class="field-input" placeholder="letters, numbers, _ or -" autocomplete="off" maxlength="20">
+          <label class="field-label" for="account-google-username-input"><span data-ui-text="Username">Username</span></label>
+          <input type="text" id="account-google-username-input" class="field-input" placeholder="Letters, numbers, _ or -" autocomplete="off" maxlength="20" data-ui-attrs="{&quot;placeholder&quot;: &quot;Letters, numbers, _ or -&quot;}">
         </div>
-        <button class="tbtn" id="account-google-username-submit" type="button" style="width:100%;">Continue</button>
+        <button class="tbtn" id="account-google-username-submit" type="button" style="width:100%;"><span data-ui-text="Continue">Continue</span></button>
       </div>
 
       <div id="account-signed-in-panel" class="account-signed-in-panel hidden">
         <div class="account-status">
-          Signed in as <strong id="account-name-display"></strong>.<br>
+          <span data-ui-text="Signed in as">Signed in as</span> <strong id="account-name-display"></strong>.<br>
           <span id="account-email-line" class="hidden"></span>
-          Your trees sync automatically to this account.
+          <span data-ui-text="Your trees sync automatically to this account.">Your trees sync automatically to this account.</span>
         </div>
-        <button class="tbtn" id="account-signout-btn" style="width:100%;">Sign out</button>
+        <button class="tbtn" id="account-signout-btn" style="width:100%;"><span data-ui-text="Sign out">Sign out</span></button>
       </div>
 
     </div>
@@ -264,17 +292,17 @@ try {
   <div class="modal-shell" id="library-modal-shell" role="dialog" aria-modal="true" aria-labelledby="library-modal-title">
     <div class="modal-header-bar">
       <div>
-        <div class="modal-title" id="library-modal-title">My Trees</div>
-        <div class="modal-meta" id="library-modal-meta">saved locally in this browser — sign in to sync across devices</div>
+        <div class="modal-title" id="library-modal-title"><span data-ui-text="My Trees">My Trees</span></div>
+        <div class="modal-meta" id="library-modal-meta"><span data-ui-text="Saved locally in this browser — sign in to sync across devices">Saved locally in this browser — sign in to sync across devices</span></div>
       </div>
-      <button id="library-modal-close" class="modal-close-btn" title="Close" aria-label="Close">✕</button>
+      <button id="library-modal-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs="{&quot;title&quot;: &quot;Close&quot;, &quot;aria-label&quot;: &quot;Close&quot;}">✕</button>
     </div>
     <div class="modal-body">
       <div class="library-save-row">
-        <button class="tbtn hidden" id="btn-save-current-tree">💾 save current tree</button>
-        <button class="tbtn hidden" id="btn-save-current-tree-copy">💾 save as new copy</button>
+        <button class="tbtn hidden" id="btn-save-current-tree"><span data-ui-text="💾 Save current tree">💾 Save current tree</span></button>
+        <button class="tbtn hidden" id="btn-save-current-tree-copy"><span data-ui-text="💾 Save as new copy">💾 Save as new copy</span></button>
       </div>
-      <div id="library-empty" class="hidden">No saved trees yet — build one and save it here.</div>
+      <div id="library-empty" class="hidden"><span data-ui-text="No saved trees yet — build one and save it here.">No saved trees yet — build one and save it here.</span></div>
       <div id="library-grid" class="library-grid"></div>
     </div>
   </div>
@@ -285,8 +313,8 @@ try {
     <div id="sv-header">
       <span id="sv-topic"></span>
       <span id="sv-score">— / —</span>
-      <button id="btn-toggle-notes" title="Notes for this topic" aria-label="Notes for this topic">📝</button>
-      <button id="btn-close-viewer" title="Close" aria-label="Close">✕</button>
+      <button id="btn-toggle-notes" title="Notes for this topic" aria-label="Notes for this topic" data-ui-attrs="{&quot;title&quot;: &quot;Notes for this topic&quot;, &quot;aria-label&quot;: &quot;Notes for this topic&quot;}">📝</button>
+      <button id="btn-close-viewer" title="Close" aria-label="Close" data-ui-attrs="{&quot;title&quot;: &quot;Close&quot;, &quot;aria-label&quot;: &quot;Close&quot;}">✕</button>
     </div>
     <div id="sv-progress-wrap">
       <div id="sv-progress-track"></div>
@@ -297,25 +325,25 @@ try {
     <div id="sv-resize"></div>
   </div>
   <div id="sv-notes-panel">
-    <div id="sv-notes-label">Notes
-      <div id="sv-notes-tabs" role="tablist" aria-label="Note type">
-        <button id="sv-notes-text-tab" role="tab" aria-selected="true" aria-controls="sv-notes-ta">Text</button>
-        <button id="sv-notes-draw-tab" role="tab" aria-selected="false" aria-controls="sv-notes-drawing">Draw</button>
+    <div id="sv-notes-label"><span data-ui-text="Notes">Notes</span>
+      <div id="sv-notes-tabs" role="tablist" aria-label="Note type" data-ui-attrs="{&quot;aria-label&quot;: &quot;Note type&quot;}">
+        <button id="sv-notes-text-tab" role="tab" aria-selected="true" aria-controls="sv-notes-ta"><span data-ui-text="Text">Text</span></button>
+        <button id="sv-notes-draw-tab" role="tab" aria-selected="false" aria-controls="sv-notes-drawing"><span data-ui-text="Draw">Draw</span></button>
       </div>
     </div>
-    <textarea id="sv-notes-ta" placeholder="Anything worth remembering about this topic…" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off"></textarea>
+    <textarea id="sv-notes-ta" placeholder="Anything worth remembering about this topic…" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" data-ui-attrs="{&quot;placeholder&quot;: &quot;Anything worth remembering about this topic…&quot;}"></textarea>
     <div id="sv-notes-drawing" hidden>
       <div id="sv-drawing-tools">
-        <span>Draw with a mouse, finger, or pen</span>
-        <button data-drawing-tool="default" aria-label="Theme ink" title="Black in light mode, white in dark mode" aria-pressed="true"><span class="drawing-swatch" aria-hidden="true"></span></button>
-        <button data-drawing-tool="red" aria-label="Red ink" title="Red ink" aria-pressed="false"><span class="drawing-swatch" aria-hidden="true"></span></button>
-        <button data-drawing-tool="blue" aria-label="Light blue ink" title="Light blue ink" aria-pressed="false"><span class="drawing-swatch" aria-hidden="true"></span></button>
-        <button data-drawing-tool="eraser" aria-label="Eraser" title="Eraser" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13 14 3a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3L11 20H7l-3-3a3 3 0 0 1 0-4Z"/><path d="m9 8 8 8M11 20h10"/></svg></button>
-        <button id="sv-drawing-undo" disabled>Undo</button>
-        <button id="sv-drawing-clear" disabled>Clear</button>
+        <span><span data-ui-text="Draw with a mouse, finger, or pen">Draw with a mouse, finger, or pen</span></span>
+        <button data-drawing-tool="default" aria-label="Theme ink" title="Black in light mode, white in dark mode" aria-pressed="true" data-ui-attrs="{&quot;aria-label&quot;: &quot;Theme ink&quot;, &quot;title&quot;: &quot;Black in light mode, white in dark mode&quot;}"><span class="drawing-swatch" aria-hidden="true"></span></button>
+        <button data-drawing-tool="red" aria-label="Red ink" title="Red ink" aria-pressed="false" data-ui-attrs="{&quot;aria-label&quot;: &quot;Red ink&quot;, &quot;title&quot;: &quot;Red ink&quot;}"><span class="drawing-swatch" aria-hidden="true"></span></button>
+        <button data-drawing-tool="blue" aria-label="Light blue ink" title="Light blue ink" aria-pressed="false" data-ui-attrs="{&quot;aria-label&quot;: &quot;Light blue ink&quot;, &quot;title&quot;: &quot;Light blue ink&quot;}"><span class="drawing-swatch" aria-hidden="true"></span></button>
+        <button data-drawing-tool="eraser" aria-label="Eraser" title="Eraser" aria-pressed="false" data-ui-attrs="{&quot;aria-label&quot;: &quot;Eraser&quot;, &quot;title&quot;: &quot;Eraser&quot;}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13 14 3a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3L11 20H7l-3-3a3 3 0 0 1 0-4Z"/><path d="m9 8 8 8M11 20h10"/></svg></button>
+        <button id="sv-drawing-undo" disabled><span data-ui-text="Undo">Undo</span></button>
+        <button id="sv-drawing-clear" disabled><span data-ui-text="Clear">Clear</span></button>
       </div>
-      <div id="sv-drawing-scroll" tabindex="0" role="region" aria-label="Scrollable drawing area">
-        <svg id="sv-drawing-pad" viewBox="0 0 1600 2400" role="img" aria-label="Drawing for this topic"></svg>
+      <div id="sv-drawing-scroll" tabindex="0" role="region" aria-label="Scrollable drawing area" data-ui-attrs="{&quot;aria-label&quot;: &quot;Scrollable drawing area&quot;}">
+        <svg id="sv-drawing-pad" viewBox="0 0 1600 2400" role="img" aria-label="Drawing for this topic" data-ui-attrs="{&quot;aria-label&quot;: &quot;Drawing for this topic&quot;}"></svg>
       </div>
     </div>
     <div id="sv-notes-resize"></div>
@@ -325,8 +353,11 @@ try {
 <!-- App scripts. Order matters (each file's header lists what it depends on):
      autoscroll depends on nothing; state.js comes before everything that reads
      state; escape/toast before anything that registers Escape handlers or
-     shows messages; a11y.js last, once every modal exists. -->
+     shows messages; a11y.js once every modal exists, before tutorial startup. -->
 <script src="js/lib/autoscroll.js"></script>
+<script src="js/i18n/es.js"></script>
+<script src="js/i18n/interface.js"></script>
+<script src="js/learn/prompts-es.js"></script>
 <script src="js/learn/node-prompt.js"></script>
 <script src="js/learn/tree-prompt.js"></script>
 <script src="js/core/state.js"></script>
@@ -344,6 +375,7 @@ try {
 <script src="js/persistence/account.js"></script>
 <script src="js/learn/viewer.js"></script>
 <script src="js/core/a11y.js"></script>
+<script src="js/core/tutorial.js"></script>
 <!-- Firebase wiring, as a module. Modules always run after every classic script
      regardless of tag position, so this placement is documentation. NOTE: module
      scripts don't load from file:// — serve the folder over http (see README). -->

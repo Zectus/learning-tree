@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    toolbar.js — the toolbar's three grouped dropdowns (Mode ▾ / Tree ▾ /
    👤 ▾, see index.html) sharing one open/close mechanism, the standalone
-   "+ node" button, the Mode group's switching logic, and dark mode.
+   "+ Node" button, the Mode group's switching logic, and dark mode.
    Depends on state.js, escape.js, and nodes.js (cancelLink, doAddNode).
 ═══════════════════════════════════════════════════════════ */
 
@@ -15,6 +15,15 @@
 function setMenuOpen(menu, open) {
   menu.classList.toggle('open', open);
   menu.previousElementSibling?.setAttribute('aria-expanded', String(open));
+  if (open) {
+    menu.style.removeProperty('left'); menu.style.removeProperty('transform');
+    const rect = menu.getBoundingClientRect(), margin = 8;
+    if (rect.left < margin || rect.right > window.innerWidth - margin) {
+      const left = Math.max(margin, Math.min(rect.left, window.innerWidth - rect.width - margin));
+      menu.style.left = left - menu.parentElement.getBoundingClientRect().left + 'px';
+      menu.style.transform = 'none';
+    }
+  }
 }
 function closeAllDropdowns() {
   document.querySelectorAll('.dropdown-menu.open').forEach(m => setMenuOpen(m, false));
@@ -53,7 +62,7 @@ onEscape(5, () => {
   return true;
 });
 
-/* "+ node" stays a standalone button (visible only in edit mode) — it's the
+/* "+ Node" stays a standalone button (visible only in edit mode) — it's the
    one action you'd hit repeatedly in a row while editing. */
 document.getElementById('btn-add-node').addEventListener('click', doAddNode);
 
@@ -71,7 +80,7 @@ const MODE_UI = {
 function updateModeLabel() {
   const ui  = MODE_UI[state.mode];
   const btn = document.getElementById('btn-mode');
-  btn.textContent = ui.label;
+  uiText(btn, ui.label);
   btn.classList.toggle('active', state.mode !== 'browse');
   document.querySelectorAll('#mode-menu .dropdown-item').forEach(el => el.classList.toggle('current', el.id === ui.item));
 }
@@ -111,7 +120,7 @@ const DARK_MODE_KEY = 'tree-dark-mode';
 const menuDarkMode = document.getElementById('menu-dark-mode');
 function setDarkMode(on, persist = true) {
   document.documentElement.classList.toggle('dark', on);
-  menuDarkMode.textContent = on ? '☀️ Light mode' : '🌙 Dark mode';
+  uiText(menuDarkMode, on ? '☀️ Light mode' : '🌙 Dark mode');
   if (persist) { try { localStorage.setItem(DARK_MODE_KEY, on ? '1' : '0'); } catch {} }
 }
 menuDarkMode.addEventListener('click', () => setDarkMode(!document.documentElement.classList.contains('dark')));

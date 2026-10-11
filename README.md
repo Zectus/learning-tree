@@ -15,11 +15,50 @@ python3 -m http.server 8000     # or any static server
 
 ## How it's used
 
-1. **Tree ▾ → New tree** gives you a prompt to paste into Claude (from a topic, or with a file attached). Upload the `.json` it produces.
+1. **Tree ▾ → New tree** gives you a prompt to paste into an AI chatbot (from a topic, or with a file attached). Upload the `.json` it produces.
 2. Click an available node: **the learn modal** gives you a prompt for that node's lesson. Upload the `.txt` it produces to open the session viewer and answer the questions.
 3. **📚 My Trees** saves whole trees (with their lessons) in this browser, or in your account when signed in.
 
 Lesson files mark each question's correct option inline with `[ANSWER: X]`.
+
+## Interface language
+
+Choose **Account → Español / English** to switch the entire interface without
+reloading. The choice is remembered in this browser. Menus, dialogs, tooltips,
+errors, lesson controls, drawing tools, tutorial examples, and built-in generation
+prompts are available in both languages. Blank generation-language fields default
+to the interface language; an explicit language or one stored in a tree is preserved.
+
+Imported lesson text, tree names, node labels and explanations, account identities,
+notes, drawings, and editable field values stay as written. Switching the interface
+does not regenerate lessons or reset answers, progress, or the current tree.
+
+## First-visit tutorial
+
+The UI tour opens on the first visit in each browser. A spotlight highlights
+actual controls; you can click them, answer a sample question, write or draw notes, edit
+nodes, and save a sample in the real My Trees panel. **Show me / Next** can
+demonstrate each action for you. No content generation or file upload is needed.
+Every step has **Skip tutorial**; Escape skips the whole tour. Use Back or the
+step picker to browse at your own pace.
+
+The tour keeps dialogs, lessons, and notes at their normal sizes. Its hint sits
+beside the active window when space allows; on smaller screens it becomes a
+compact overlay. **Show hint / Hide hint** expands or collapses the explanation
+without resizing the app window. Skip and navigation remain available.
+
+The tour temporarily puts aside the current tree and lesson DOM, uses a demo
+tree and library in memory, and restores your unsaved work and viewport on exit.
+Demo progress, notes, tree saves, and theme changes are never persisted or synced.
+Authentication/source refreshes that resolve during the tour are deferred until
+the real page is restored. Closing the page restores the real tree before
+the usual save-on-exit runs.
+
+Finishing or skipping remembers the choice in this browser and reveals
+**Account dropdown → View tutorial**, with the menu revealed and a reminder shown
+after dismissal (an already-open lesson or dialog is restored instead).
+If browser storage is blocked, the app and replay still work, but the choice
+cannot be remembered across reloads.
 
 ## Layout
 

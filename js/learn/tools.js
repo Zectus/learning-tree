@@ -382,7 +382,7 @@ async function mountGraph(g, id) {
     await loadGraphLibs(g.type);
   } catch {
     el.classList.remove('sv-graph-loading');
-    el.textContent = "This graph couldn't be loaded — check your connection and reopen the lesson.";
+    uiText(el, "This graph couldn't be loaded — check your connection and reopen the lesson.");
     return;
   }
   el.classList.remove('sv-graph-loading');
@@ -393,7 +393,7 @@ async function mountGraph(g, id) {
     else mountBoard2d(g, el, id);
   } catch (e) {
     console.error('Graph render error:', e);
-    el.textContent = 'This graph could not be rendered.';
+    uiText(el, 'This graph could not be rendered.');
   }
 }
 
