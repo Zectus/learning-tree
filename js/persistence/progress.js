@@ -183,6 +183,7 @@ function autoSaveProgress() {
       sessionAnswers: node._sessionAnswers || undefined,
       bonusAnswers:   node._bonusAnswers   || undefined,
       notes:          node._notes          || undefined,
+      drawing:        node._drawing?.length ? node._drawing : undefined,
       scrollTop:      node._scrollTop,
     };
   });
@@ -202,6 +203,7 @@ function autoRestoreProgress() {
     if (rec.sessionAnswers) node._sessionAnswers = rec.sessionAnswers;
     if (rec.bonusAnswers)   node._bonusAnswers   = rec.bonusAnswers;
     if (rec.notes)          node._notes          = rec.notes;
+    if (Array.isArray(rec.drawing)) node._drawing = rec.drawing;
     if (rec.scrollTop != null) node._scrollTop   = rec.scrollTop;
   });
   if (changed) updateAllStatuses();
@@ -238,6 +240,7 @@ function clearNodeProgressFields(node) {
   delete node._sessionAnswers;
   delete node._bonusAnswers;
   delete node._notes;
+  delete node._drawing;
   delete node._scrollTop;
 }
 

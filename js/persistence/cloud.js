@@ -145,6 +145,10 @@ window.cloud = {
     await set(ref(db, `users/${uid}/library`), libraryObj);
   },
 
+  async setLibraryEntry(uid, id, entry) {
+    await set(ref(db, `users/${uid}/library/${id}`), entry);
+  },
+
   /* Whole-progress reads/writes — same {signature: {label: record}} shape
      as the localStorage 'tree-progress' blob (see PROGRESS_KEY in
      progress.js), just living under this user's own uid instead of in

@@ -26,6 +26,12 @@
 const LIBRARY_KEY = 'tree-library';
 
 let libraryCache  = {};      // in-memory mirror of whichever source is active
+let libraryReady = false;
+let libraryCloudWrites = Promise.resolve();
+function queueLibraryCloudWrite(write) {
+  libraryCloudWrites = libraryCloudWrites.catch(() => {}).then(write);
+  return libraryCloudWrites;
+}
 let librarySource = 'local'; // 'local' | 'cloud'
 
 function readLocalLibrary() {
@@ -64,14 +70,17 @@ function libraryProgressFor(entryData) {
    Called at load (guest view, before Firebase resolves a persisted session)
    and by handleCloudAuthChange (account.js) on every sign-in/out. */
 async function refreshLibraryFromSource() {
+  libraryReady = false;
   if (state.accountUser) {
     librarySource = 'cloud';
     try {
       libraryCache = await window.cloud.getLibrary(state.accountUser.uid);
+      await retryTreeExitSaves(state.accountUser.uid);
     } catch (e) {
       console.error('Could not load cloud library:', e);
       showToast("Couldn't load your saved trees from your account.");
       libraryCache = {};
+      return;
     }
     // A fresh account with an empty cloud library but trees saved locally
     // before signing in gets those copied up rather than orphaned.
@@ -84,13 +93,26 @@ async function refreshLibraryFromSource() {
     librarySource = 'local';
     libraryCache = readLocalLibrary();
   }
+  libraryReady = true;
   if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
 }
 
 // Resolves to whether the write succeeded; failures are reported to the person.
 async function persistLibrary() {
   if (librarySource === 'cloud' && state.accountUser) {
-    try { await window.cloud.setLibrary(state.accountUser.uid, libraryCache); return true; }
+    const uid = state.accountUser.uid;
+    const snapshot = JSON.parse(JSON.stringify(libraryCache));
+    const queuedBefore = readTreeExitQueue(uid);
+    try {
+      await queueLibraryCloudWrite(() => window.cloud.setLibrary(uid, snapshot));
+      // Explicit saves/deletes supersede older exit backups, but not newer ones.
+      const queue = readTreeExitQueue(uid);
+      for (const id of Object.keys(queuedBefore)) {
+        if (JSON.stringify(queue[id]) === JSON.stringify(queuedBefore[id])) delete queue[id];
+      }
+      writeTreeExitQueue(uid, queue);
+      return true;
+    }
     catch (e) {
       console.error('Cloud save failed:', e);
       showToast("Couldn't save to your account — check your connection and try again.");
@@ -99,6 +121,80 @@ async function persistLibrary() {
   }
   return writeLocalLibrary(libraryCache);
 }
+
+/* Tree autosave is intentionally pagehide-only: focus/visibility changes do
+   not save the tree. Compare structure/content, excluding learner progress. */
+function treeContentKey(data) {
+  if (!data) return '';
+  const nodes = (data.nodes || []).map(n => ({
+    id: String(n.id), label: n.label, explanation: n.explanation || '',
+    optional: !!n.optional, content: n.content || '',
+    requires: [...(n.requires || [])].map(String).sort(),
+  })).sort((a, b) => a.id.localeCompare(b.id));
+  return JSON.stringify({ topic: data.topic || '', language: data.language || '', nodes });
+}
+
+// A per-account outbox survives interrupted network writes on page exit.
+// Only the changed entry is sent, avoiding overwriting other saved trees.
+function treeExitQueueKey(uid) { return 'tree-library-exit-' + uid; }
+function readTreeExitQueue(uid) {
+  try { return JSON.parse(localStorage.getItem(treeExitQueueKey(uid)) || '{}'); }
+  catch { return {}; }
+}
+function writeTreeExitQueue(uid, queue) {
+  try {
+    if (Object.keys(queue).length) localStorage.setItem(treeExitQueueKey(uid), JSON.stringify(queue));
+    else localStorage.removeItem(treeExitQueueKey(uid));
+    return true;
+  } catch { return false; }
+}
+async function sendTreeExitSave(uid, id, entry) {
+  try {
+    await queueLibraryCloudWrite(() => window.cloud.setLibraryEntry(uid, id, entry));
+    const queue = readTreeExitQueue(uid);
+    // A newer queued edit must survive completion of an earlier request.
+    if (JSON.stringify(queue[id]) === JSON.stringify(entry)) {
+      delete queue[id];
+      writeTreeExitQueue(uid, queue);
+    }
+    return true;
+  } catch { return false; } // Retain the outbox for the next page load.
+}
+async function retryTreeExitSaves(uid) {
+  const queue = readTreeExitQueue(uid);
+  for (const [id, entry] of Object.entries(queue)) {
+    libraryCache[id] = entry;
+    await sendTreeExitSave(uid, id, entry);
+  }
+}
+function autosaveTreeOnPageExit() {
+  if (!libraryReady) return;
+  const snapshot = buildTreeJSON(true);
+  if (!snapshot) return;
+  const previous = state.libraryId && libraryCache[state.libraryId];
+  if (previous && treeContentKey(previous.data) === treeContentKey(snapshot)) return;
+  const id = previous ? state.libraryId : genLibraryId();
+  const entry = { name: previous ? previous.name : (state.topic || 'Untitled tree'), savedAt: Date.now(), data: snapshot };
+  if (librarySource === 'cloud' && state.accountUser) {
+    const uid = state.accountUser.uid;
+    const queue = readTreeExitQueue(uid);
+    queue[id] = entry;
+    if (!writeTreeExitQueue(uid, queue)) {
+      showToast("Couldn't keep a backup of your tree. Save it manually before closing.");
+      return;
+    }
+    libraryCache[id] = entry;
+    state.libraryId = id;
+    void sendTreeExitSave(uid, id, entry);
+  } else {
+    const next = { ...libraryCache, [id]: entry };
+    if (writeLocalLibrary(next)) {
+      libraryCache = next;
+      state.libraryId = id;
+    }
+  }
+}
+window.addEventListener('pagehide', autosaveTreeOnPageExit);
 
 /* ── save ──
    If the tree is already linked to an entry, overwrite it in place ("I edited

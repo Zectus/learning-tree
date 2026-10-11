@@ -290,6 +290,7 @@ function deleteNodeTxt(id) {
   delete node._bonusAnswers;
   delete node._scrollTop;
   delete node._notes;
+  delete node._drawing;
   if (node.done) { node.done = false; cascadeUncomplete(id); }
   if (viewer.nodeId === id) { closeViewer(); viewer.nodeId = null; }
   updateAllStatuses();

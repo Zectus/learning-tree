@@ -481,3 +481,211 @@ test('dark mode toggles on the root element', () => {
   app.ev('setDarkMode(false, false)');
   assert.ok(!app.document.documentElement.classList.contains('dark'));
 });
+
+test('notes drawings support pointer input, per-topic restore, undo, clear and progress reset', () => {
+  const app = loadApp();
+  loadTree(app, 'mini-tree.json');
+  const alpha = nodeIdByLabel(app, 'Alpha');
+  const beta = nodeIdByLabel(app, 'Beta');
+  app.ev(`viewer.nodeId = ${JSON.stringify(alpha)}; loadNotesForCurrentNode()`);
+  app.document.getElementById('sv-notes-draw-tab').click();
+  assert.equal(app.document.getElementById('sv-notes-ta').hidden, true);
+  const pad = app.document.getElementById('sv-drawing-pad');
+  pad.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 200 });
+  let captured = false;
+  pad.setPointerCapture = () => { captured = true; };
+  pad.hasPointerCapture = () => captured;
+  pad.releasePointerCapture = () => { captured = false; };
+  const pointer = (type, x, y) => {
+    const event = new app.window.MouseEvent(type, { clientX: x, clientY: y, button: 0, bubbles: true });
+    Object.defineProperty(event, 'pointerId', { value: 1 });
+    pad.dispatchEvent(event);
+  };
+  pointer('pointerdown', 20, 40);
+  pointer('pointermove', 100, 120);
+  pointer('pointerup', 100, 120);
+  assert.equal(pad.querySelector('polyline').getAttribute('points'), '20,40 100,120');
+  assert.equal(app.ev('progressCache[treeSignature()].Alpha.drawing[0].points.length'), 2);
+  app.ev(`viewer.nodeId = ${JSON.stringify(beta)}; loadNotesForCurrentNode()`);
+  assert.equal(pad.querySelectorAll('polyline').length, 0);
+  app.ev(`delete state.nodes.get(${JSON.stringify(alpha)})._drawing; autoRestoreProgress(); viewer.nodeId = ${JSON.stringify(alpha)}; loadNotesForCurrentNode()`);
+  assert.equal(pad.querySelectorAll('polyline').length, 1);
+  // Colors are fixed; the default ink keeps following the active theme.
+  app.document.querySelector('[data-drawing-tool="red"]').click();
+  pointer('pointerdown', 10, 10);
+  pointer('pointerup', 10, 10);
+  assert.equal(pad.querySelectorAll('polyline')[1].getAttribute('stroke'), '#ef4444');
+  app.document.querySelector('[data-drawing-tool="blue"]').click();
+  pointer('pointerdown', 50, 50);
+  pointer('pointerup', 50, 50);
+  app.ev('setDarkMode(true, false)');
+  assert.equal(pad.querySelectorAll('polyline')[0].getAttribute('stroke'), 'currentColor');
+  assert.equal(pad.querySelectorAll('polyline')[2].getAttribute('stroke'), '#38bdf8');
+  app.document.querySelector('[data-drawing-tool="eraser"]').click();
+  pointer('pointerdown', 50, 50);
+  pointer('pointermove', 60, 60);
+  pointer('pointerup', 60, 60);
+  assert.equal(pad.querySelectorAll('mask').length, 1);
+  assert.equal(pad.querySelector('mask polyline').getAttribute('points'), '50,50 60,60');
+  assert.equal(pad.querySelector('mask polyline').getAttribute('stroke-width'), '40');
+  assert.equal(app.ev('progressCache[treeSignature()].Alpha.drawing.at(-1).color'), 'eraser');
+  app.document.getElementById('sv-drawing-undo').click();
+  assert.equal(pad.querySelectorAll('mask').length, 0);
+  app.document.getElementById('sv-drawing-undo').click();
+  app.document.getElementById('sv-drawing-undo').click();
+  app.document.querySelector('[data-drawing-tool="default"]').click();
+  // Panel resizing and scrolling change the visible area, not stored coordinates.
+  pad.getBoundingClientRect = () => ({ left: -100, top: -200, width: 1600, height: 2400 });
+  assert.equal(app.ev('JSON.stringify(drawingPoint({ clientX: 20, clientY: 40 }))'), '[120,240]');
+  assert.equal(pad.querySelector('polyline').getAttribute('points'), '20,40 100,120');
+  pad.getBoundingClientRect = () => ({ left: 0, top: 0, width: 1600, height: 2400 });
+  const style = app.document.createElement('style');
+  style.textContent = require('node:fs').readFileSync(require('node:path').join(__dirname, '../css/viewer.css'), 'utf8');
+  app.document.head.appendChild(style);
+  assert.equal(app.window.getComputedStyle(pad).width, '1600px');
+  const swatchStyle = app.window.getComputedStyle(app.document.querySelector('.drawing-swatch'));
+  assert.equal(swatchStyle.width, swatchStyle.height);
+  assert.equal(swatchStyle.flexBasis, '1rem');
+  assert.equal(app.window.getComputedStyle(app.document.getElementById('sv-drawing-scroll')).overflow, 'auto');
+  pointer('pointerdown', 80, 80);
+  pointer('pointercancel', 80, 80);
+  assert.equal(pad.querySelectorAll('polyline').length, 2);
+  app.document.getElementById('sv-drawing-undo').click();
+  assert.equal(pad.querySelectorAll('polyline').length, 1);
+  app.document.getElementById('sv-drawing-clear').click();
+  assert.equal(pad.querySelectorAll('polyline').length, 0);
+  assert.equal(app.ev('progressCache[treeSignature()].Alpha.drawing'), undefined);
+  pointer('pointerdown', 30, 30);
+  pointer('pointerup', 30, 30);
+  app.ev(`state.nodes.get(${JSON.stringify(alpha)})._drawing = [[[15, 25], [35, 45]]]; loadNotesForCurrentNode()`);
+  assert.equal(pad.querySelector('polyline').getAttribute('points'), '15,25 35,45');
+  app.ev(`clearNodeProgressFields(state.nodes.get(${JSON.stringify(alpha)})); autoSaveProgress(); loadNotesForCurrentNode()`);
+  assert.equal(pad.querySelectorAll('polyline').length, 0);
+  assert.equal(app.ev('progressCache[treeSignature()].Alpha.drawing'), undefined);
+  app.dom.window.close();
+});
+
+test('desktop notes drag independently and retain their offset when the viewer moves', () => {
+  const app = loadApp();
+  const win = app.document.getElementById('sv-window');
+  const panel = app.document.getElementById('sv-notes-panel');
+  win.style.left = '100px';
+  win.style.top = '100px';
+  win.getBoundingClientRect = () => ({ left: parseFloat(win.style.left), top: parseFloat(win.style.top), right: parseFloat(win.style.left) + 300, height: 400 });
+  panel.getBoundingClientRect = () => ({ left: parseFloat(panel.style.left), top: parseFloat(panel.style.top) });
+  panel.classList.add('open');
+  app.ev('syncNotesPanelPosition()');
+  function pointer(el, type, x, y, pointerType = 'mouse') {
+    el.setPointerCapture = () => {};
+    el.hasPointerCapture = () => false;
+    const e = new app.window.MouseEvent(type, { clientX: x, clientY: y, button: 0, bubbles: true });
+    Object.defineProperties(e, { pointerId: { value: 1 }, pointerType: { value: pointerType } });
+    el.dispatchEvent(e);
+  }
+  const header = app.document.getElementById('sv-notes-label');
+  pointer(header, 'pointerdown', 410, 100);
+  pointer(header, 'pointermove', 460, 130);
+  pointer(header, 'pointerup', 460, 130);
+  assert.equal(panel.style.left, '460px');
+  assert.equal(panel.style.top, '130px');
+  assert.equal(win.style.left, '100px');
+  assert.equal(win.style.top, '100px');
+  const viewerHeader = app.document.getElementById('sv-header');
+  pointer(viewerHeader, 'pointerdown', 100, 100);
+  pointer(viewerHeader, 'pointermove', 120, 140);
+  pointer(viewerHeader, 'pointerup', 120, 140);
+  assert.equal(panel.style.left, '480px');
+  assert.equal(panel.style.top, '170px');
+  app.ev('toggleNotesPanel(); toggleNotesPanel()');
+  assert.equal(panel.style.left, '480px');
+  assert.equal(panel.style.top, '170px');
+  // Clicking tabs, touch input, and the mobile layout must not move notes.
+  for (const [target, pointerType, width] of [
+    [app.document.getElementById('sv-notes-draw-tab'), 'mouse', 1280],
+    [header, 'touch', 1280], [header, 'mouse', 700],
+  ]) {
+    app.window.innerWidth = width;
+    pointer(target, 'pointerdown', 480, 170, pointerType);
+    pointer(header, 'pointermove', 580, 270, pointerType);
+    pointer(header, 'pointerup', 580, 270, pointerType);
+    assert.equal(panel.style.left, '480px');
+    assert.equal(panel.style.top, '170px');
+  }
+  for (const tool of ['default', 'red', 'blue']) {
+    const button = app.document.querySelector(`[data-drawing-tool="${tool}"]`);
+    assert.equal(button.textContent, '');
+    assert.ok(button.querySelector('.drawing-swatch'));
+    assert.ok(button.getAttribute('aria-label'));
+  }
+  assert.ok(app.document.querySelector('[data-drawing-tool="eraser"] svg'));
+  app.dom.window.close();
+});
+
+test('tree autosave runs on page exit, saves new trees and skips unchanged trees and focus loss', async () => {
+  const app = loadApp();
+  loadTree(app, 'mini-tree.json');
+  let writes = 0;
+  const storage = app.window.localStorage;
+  const original = app.window.Storage.prototype.setItem;
+  app.window.Storage.prototype.setItem = function(key, value) {
+    if (key === 'tree-library') writes++;
+    return original.call(this, key, value);
+  };
+  app.window.dispatchEvent(new app.window.Event('blur'));
+  Object.defineProperty(app.document, 'visibilityState', { value: 'hidden', configurable: true });
+  app.document.dispatchEvent(new app.window.Event('visibilitychange'));
+  assert.equal(writes, 0);
+  app.window.dispatchEvent(new app.window.Event('pagehide'));
+  assert.equal(writes, 1);
+  const id = app.ev('state.libraryId');
+  const saved = JSON.parse(storage.getItem('tree-library'));
+  assert.equal(saved[id].name, 'Mini');
+  app.window.dispatchEvent(new app.window.Event('pagehide'));
+  assert.equal(writes, 1);
+  app.ev('state.nodes.values().next().value.done = true; state.nodes.values().next().value._notes = "progress only"');
+  app.window.dispatchEvent(new app.window.Event('pagehide'));
+  assert.equal(writes, 1);
+  app.ev('state.nodes.values().next().value._sessionTxt = "new lesson"');
+  app.window.dispatchEvent(new app.window.Event('pagehide'));
+  assert.equal(writes, 2);
+  assert.equal(app.ev('Object.keys(libraryCache).length'), 1);
+  assert.equal(JSON.parse(storage.getItem('tree-library'))[id].data.nodes[0].content, 'new lesson');
+  app.window.prompt = () => 'Branch';
+  await app.ev('saveCurrentTreeAsNewCopy()');
+  const copyId = app.ev('state.libraryId');
+  app.ev('state.topic = "Changed branch"');
+  app.window.dispatchEvent(new app.window.Event('pagehide'));
+  const branched = JSON.parse(storage.getItem('tree-library'));
+  assert.equal(branched[id].data.topic, 'Mini');
+  assert.equal(branched[copyId].data.topic, 'Changed branch');
+  assert.equal(branched[copyId].name, 'Branch');
+  app.dom.window.close();
+});
+
+test('cloud tree exit saves retain interrupted writes and retry only the changed entry', async () => {
+  const app = loadApp();
+  loadTree(app, 'mini-tree.json');
+  const sent = [];
+  app.window.cloud = {
+    getLibrary: async () => ({}),
+    setLibraryEntry: async (uid, id, entry) => { sent.push({ uid, id, entry }); throw new Error('offline'); },
+  };
+  app.ev('state.accountUser = { uid: "tree-test-user" }; librarySource = "cloud"');
+  app.window.dispatchEvent(new app.window.Event('pagehide'));
+  await app.ev('libraryCloudWrites.catch(() => {})');
+  await tick();
+  const id = app.ev('state.libraryId');
+  assert.equal(sent.length, 1);
+  assert.ok(JSON.parse(app.window.localStorage.getItem('tree-library-exit-tree-test-user'))[id]);
+  app.window.dispatchEvent(new app.window.Event('pagehide'));
+  await tick();
+  assert.equal(sent.length, 1);
+  app.window.cloud.setLibraryEntry = async (uid, id, entry) => { sent.push({ uid, id, entry }); };
+  await app.ev('refreshLibraryFromSource()');
+  assert.equal(sent.length, 2);
+  assert.equal(app.window.localStorage.getItem('tree-library-exit-tree-test-user'), null);
+  assert.equal(app.ev(`libraryCache[${JSON.stringify(id)}].name`), 'Mini');
+  assert.equal(sent[1].uid, 'tree-test-user');
+  assert.equal(sent[1].id, id);
+  app.dom.window.close();
+});

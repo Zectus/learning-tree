@@ -356,17 +356,18 @@ onEscape(60, () => {
 });
 
 /* ── Per-node notes ──
-   A plain textarea on the right edge of the session window, saved per node
+   Text and sketches on the right edge of the session window, saved per node
    alongside its progress. Its left/top track the session window; its own
    size is independent and user-resizable. */
 let notesSaveTimer = null;
+const notesOffset = { x: 0, y: 0 };
 
 function syncNotesPanelPosition() {
   const panel = document.getElementById('sv-notes-panel');
   if (!panel.classList.contains('open')) return;
   const r = document.getElementById('sv-window').getBoundingClientRect();
-  panel.style.left = (r.right + 10) + 'px';
-  panel.style.top  = r.top + 'px';
+  panel.style.left = (r.right + 10 + notesOffset.x) + 'px';
+  panel.style.top  = (r.top + notesOffset.y) + 'px';
 }
 
 // Pads the textarea with blank lines so every visible row is a line a click can
@@ -381,6 +382,8 @@ function padNotes(text) {
 function loadNotesForCurrentNode() {
   const node = state.nodes.get(viewer.nodeId);
   document.getElementById('sv-notes-ta').value = padNotes(node?._notes || '');
+  drawingGesture = null;
+  renderNotesDrawing();
 }
 
 function toggleNotesPanel() {
@@ -413,6 +416,131 @@ document.getElementById('sv-notes-ta').addEventListener('keydown', e => {
   ta.selectionStart = ta.selectionEnd = start + 1;
   ta.dispatchEvent(new Event('input', { bubbles: true }));
 });
+
+/* Sketches use vector points so resizing never erases the drawing. */
+const drawingPad = document.getElementById('sv-drawing-pad');
+let drawingGesture = null;
+let drawingTool = 'default';
+const drawingColors = { default: 'currentColor', red: '#ef4444', blue: '#38bdf8' };
+for (const button of document.querySelectorAll('[data-drawing-tool]')) {
+  button.addEventListener('click', () => {
+    drawingTool = button.dataset.drawingTool;
+    drawingPad.classList.toggle('erasing', drawingTool === 'eraser');
+    for (const other of document.querySelectorAll('[data-drawing-tool]')) {
+      other.setAttribute('aria-pressed', String(other === button));
+    }
+  });
+}
+function setNotesMode(draw) {
+  document.getElementById('sv-notes-ta').hidden = draw;
+  document.getElementById('sv-notes-drawing').hidden = !draw;
+  document.getElementById('sv-notes-text-tab').setAttribute('aria-selected', String(!draw));
+  document.getElementById('sv-notes-draw-tab').setAttribute('aria-selected', String(draw));
+}
+document.getElementById('sv-notes-text-tab').addEventListener('click', () => setNotesMode(false));
+document.getElementById('sv-notes-draw-tab').addEventListener('click', () => setNotesMode(true));
+document.getElementById('sv-notes-tabs').addEventListener('keydown', e => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  e.preventDefault();
+  const draw = e.key === 'End' || (e.key !== 'Home' && e.target.id === 'sv-notes-text-tab');
+  setNotesMode(draw);
+  document.getElementById(draw ? 'sv-notes-draw-tab' : 'sv-notes-text-tab').focus();
+});
+function drawingElement(tag, attrs = {}) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [name, value] of Object.entries(attrs)) element.setAttribute(name, value);
+  return element;
+}
+function drawingStrokePath(stroke) {
+  // Older sketches are arrays of points; new sketches also remember their ink.
+  const points = Array.isArray(stroke) ? stroke : stroke.points;
+  if (!Array.isArray(points) || !points.length) return null;
+  const visible = points.length === 1 ? [points[0], [points[0][0] + .01, points[0][1]]] : points;
+  return drawingElement('polyline', {
+    points: visible.map(p => p.join(',')).join(' '), fill: 'none',
+    stroke: stroke.color === 'eraser' ? 'black' : (drawingColors[stroke.color] || 'currentColor'),
+    'stroke-width': stroke.color === 'eraser' ? 40 : 2.5,
+    'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  });
+}
+function renderNotesDrawing() {
+  drawingPad.replaceChildren();
+  const strokes = state.nodes.get(viewer.nodeId)?._drawing || [];
+  const defs = drawingElement('defs');
+  drawingPad.appendChild(defs);
+  let group = drawingElement('g');
+  drawingPad.appendChild(group);
+  strokes.forEach((stroke, index) => {
+    const path = drawingStrokePath(stroke);
+    if (!path) return;
+    if (stroke.color === 'eraser') {
+      // Mask earlier ink, leaving transparent paper and later strokes intact.
+      const id = 'notes-erase-' + index;
+      const mask = drawingElement('mask', { id, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: 1600, height: 2400, 'mask-type': 'luminance' });
+      mask.appendChild(drawingElement('rect', { width: 1600, height: 2400, fill: 'white' }));
+      mask.appendChild(path);
+      defs.appendChild(mask);
+      const erased = drawingElement('g', { mask: 'url(#' + id + ')' });
+      erased.appendChild(group);
+      group = drawingElement('g');
+      group.appendChild(erased);
+      drawingPad.appendChild(group);
+    } else group.appendChild(path);
+    if (drawingGesture?.stroke === stroke) drawingGesture.path = path;
+  });
+  document.getElementById('sv-drawing-undo').disabled = !strokes.length;
+  document.getElementById('sv-drawing-clear').disabled = !strokes.length;
+}
+function drawingPoint(e) {
+  const r = drawingPad.getBoundingClientRect();
+  if (!r.width || !r.height) return null;
+  // Fixed CSS-pixel coordinates: a larger panel exposes more paper, never scales ink.
+  return [Math.round(Math.max(0, Math.min(1600, e.clientX - r.left))),
+          Math.round(Math.max(0, Math.min(2400, e.clientY - r.top)))];
+}
+drawingPad.addEventListener('pointerdown', e => {
+  if (e.button !== 0 || drawingGesture) return;
+  const node = state.nodes.get(viewer.nodeId), point = drawingPoint(e);
+  if (!node || !point) return;
+  e.preventDefault();
+  const stroke = { points: [point], color: drawingTool };
+  (node._drawing ||= []).push(stroke);
+  drawingGesture = { pointerId: e.pointerId, stroke };
+  drawingPad.setPointerCapture(e.pointerId);
+  renderNotesDrawing();
+  autoSaveProgress();
+});
+drawingPad.addEventListener('pointermove', e => {
+  if (!drawingGesture || drawingGesture.pointerId !== e.pointerId) return;
+  const point = drawingPoint(e);
+  if (!point) return;
+  const last = drawingGesture.stroke.points.at(-1);
+  if (last[0] === point[0] && last[1] === point[1]) return;
+  drawingGesture.stroke.points.push(point);
+  const path = drawingGesture.path;
+  path.setAttribute('points', drawingGesture.stroke.points.map(p => p.join(',')).join(' '));
+  // The cache shares this stroke array; the save marked pending at pointerdown
+  // includes new points even if the page hides mid-stroke.
+});
+function finishNotesDrawing(e) {
+  if (!drawingGesture || drawingGesture.pointerId !== e.pointerId) return;
+  drawingGesture = null;
+  if (drawingPad.hasPointerCapture(e.pointerId)) drawingPad.releasePointerCapture(e.pointerId);
+  autoSaveProgress();
+}
+for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  drawingPad.addEventListener(event, finishNotesDrawing);
+}
+for (const action of ['undo', 'clear']) {
+  document.getElementById('sv-drawing-' + action).addEventListener('click', () => {
+    const node = state.nodes.get(viewer.nodeId);
+    if (!node || drawingGesture) return;
+    if (action === 'undo') node._drawing?.pop();
+    else delete node._drawing;
+    renderNotesDrawing();
+    autoSaveProgress();
+  });
+}
 
 /* ── Per-node scroll position ── remembered per node so switching sessions and back resumes where you were. */
 let scrollSaveTimer = null;
@@ -497,6 +625,25 @@ bindPointerDrag(document.getElementById('sv-resize'), {
     const win = document.getElementById('sv-window');
     win.style.width  = Math.max(380, svResize.startW + e.clientX - svResize.startX) + 'px';
     win.style.height = Math.max(280, svResize.startH + e.clientY - svResize.startY) + 'px';
+    syncNotesPanelPosition();
+  },
+});
+
+// Desktop notes dragging changes only the offset from the viewer. Subsequent
+// viewer movement carries that offset along rather than snapping back beside it.
+const notesDrag = { startX: 0, startY: 0, panelX: 0, panelY: 0 };
+bindPointerDrag(document.getElementById('sv-notes-label'), {
+  ignore: e => isMobileViewport() || (e.pointerType && e.pointerType !== 'mouse') || e.target.closest('button'),
+  start: e => {
+    const r = document.getElementById('sv-notes-panel').getBoundingClientRect();
+    Object.assign(notesDrag, { startX: e.clientX, startY: e.clientY, panelX: r.left, panelY: r.top });
+  },
+  move: e => {
+    const r = document.getElementById('sv-window').getBoundingClientRect();
+    const left = Math.max(0, Math.min(window.innerWidth - 80, notesDrag.panelX + e.clientX - notesDrag.startX));
+    const top = Math.max(0, Math.min(window.innerHeight - 40, notesDrag.panelY + e.clientY - notesDrag.startY));
+    notesOffset.x = left - (r.right + 10);
+    notesOffset.y = top - r.top;
     syncNotesPanelPosition();
   },
 });

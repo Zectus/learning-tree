@@ -290,3 +290,30 @@
 }
 #sv-recap[open] summary .recap-arrow { transform: rotate(90deg); }
 #sv-recap-body { padding: 0 1rem 0.5rem; }
+
+/* Text and sketches share the notes panel without crowding either field. */
+#sv-notes-label { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+#sv-notes-tabs { display: flex; gap: .25rem; }
+#sv-notes-tabs button, #sv-drawing-tools button {
+  font: inherit; color: var(--text); background: transparent;
+  border: 1px solid var(--border); border-radius: .3rem; padding: .3rem .5rem; cursor: pointer;
+}
+#sv-notes-tabs button[aria-selected="true"] { background: var(--invert-bg); color: var(--invert-text); }
+#sv-notes-ta { min-height: 0; }
+#sv-notes-ta[hidden], #sv-notes-drawing[hidden] { display: none; }
+#sv-notes-drawing { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+#sv-drawing-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; padding: .5rem; font-size: .7rem; color: var(--text-m); }
+#sv-drawing-tools > span { flex-basis: 100%; }
+#sv-drawing-tools button:disabled { opacity: .4; cursor: default; }
+#sv-drawing-scroll { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+#sv-drawing-pad { display: block; width: 1600px; height: 2400px; max-width: none; background: var(--surface); color: var(--text); touch-action: none; cursor: crosshair; }
+#sv-drawing-pad.erasing { cursor: cell; }
+#sv-drawing-tools button[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+#sv-drawing-tools button[data-drawing-tool="red"] { color: #ef4444; }
+#sv-drawing-tools button[data-drawing-tool="blue"] { color: #38bdf8; }
+
+#sv-drawing-tools button[data-drawing-tool] { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; padding: 0; }
+.drawing-swatch { display: block; width: 1rem; height: 1rem; flex: 0 0 1rem; border-radius: 50%; background: currentColor; }
+@media (min-width: 701px) and (pointer: fine) {
+  #sv-notes-label { cursor: move; user-select: none; touch-action: none; }
+}
