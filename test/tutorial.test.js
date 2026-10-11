@@ -320,13 +320,48 @@ test('mobile lesson instructions start expanded, and each new step restores a ma
   try {
     await jump(app,7);
     assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
-    assert.match(el(app,'tutorial-intro').textContent,/Tap Next to try our sample lesson/);
-    assert.equal(el(app,'tutorial-next').textContent,'Next →');
+    assert.match(el(app,'tutorial-intro').textContent,/Tap Try lesson/);
+    assert.equal(el(app,'tutorial-next').textContent,'Try lesson →');
     el(app,'tutorial-toggle').click();
     assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'false');
     await next(app);
     assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
     assert.equal(el(app,'tutorial-card').classList.contains('tutorial-compact'),false);
+    assert.deepEqual(app.errors,[]);
+  } finally {await dispose(app);}
+});
+
+test('unlock, My Trees, save, and reopening steps explain and perform the actual navigation', async () => {
+  const app = fresh({tutorialSeen:false,innerWidth:390});
+  try {
+    await jump(app,16);
+    assert.equal(app.ev('nodeStatus(3)'),'available');
+    assert.equal(el(app,'tutorial-next').textContent,'My Trees →');
+    assert.match(el(app,'tutorial-intro').textContent,/Tap 📚/);
+    assert.equal(el(app,'btn-my-trees').hasAttribute('inert'),false);
+    el(app,'btn-my-trees').click(); await tick();
+    assert.equal(el(app,'tutorial-section').value,'17');
+    assert.equal(el(app,'library-modal-backdrop').classList.contains('open'),true);
+    assert.equal(el(app,'tutorial-next').textContent,'Save sample →');
+    assert.match(el(app,'tutorial-intro').textContent,/name this sample Tutorial tree/);
+    await next(app);
+    assert.equal(el(app,'tutorial-section').value,'18');
+    assert.equal(app.document.querySelector('.lc-name').textContent,'Tutorial tree');
+    assert.equal(el(app,'tutorial-next').textContent,'Open tree →');
+    assert.equal(app.window.localStorage.getItem('tree-library'),null);
+    const rename = app.document.querySelector('.lc-rename');
+    assert.equal(rename.closest('[inert]'),null);
+    app.window.prompt = () => 'My renamed sample';
+    rename.click(); await tick();
+    assert.equal(app.document.querySelector('.lc-name').textContent,'My renamed sample');
+    app.document.querySelector('.lc-dup').click(); await tick();
+    assert.equal(app.document.querySelectorAll('.library-card').length,2);
+    assert.equal(app.window.localStorage.getItem('tree-library'),null);
+    await next(app);
+    assert.equal(el(app,'tutorial-section').value,'19');
+    assert.equal(el(app,'library-modal-backdrop').classList.contains('open'),false);
+    assert.equal(el(app,'tree-menu').classList.contains('open'),true);
+    assert.equal(app.ev('state.libraryId !== null'),true);
     assert.deepEqual(app.errors,[]);
   } finally {await dispose(app);}
 });
@@ -344,6 +379,23 @@ test('advancing through the tutorial keeps practice edits until the tour ends', 
     assert.equal(app.ev('state.nodes.get(2).label'),'My practice topic');
     el(app,'tutorial-skip').click();
     assert.equal(app.ev('state.nodes.size'),0);
+    assert.deepEqual(app.errors,[]);
+  } finally {await dispose(app);}
+});
+
+test('the saved-tree step keeps the copy just saved when the demo library already has entries', async () => {
+  const app = fresh({tutorialSeen:false});
+  try {
+    app.ev("libraryCache={older:{name:'Earlier example',savedAt:1,data:buildTreeJSON(true)}}");
+    await jump(app,17);
+    await next(app);
+    const savedId = app.ev('state.libraryId');
+    assert.notEqual(savedId,'older');
+    assert.equal(app.ev('libraryCache[state.libraryId].name'),'Tutorial tree');
+    assert.equal(app.document.querySelector('.library-card-open .lc-name').textContent,'Tutorial tree');
+    await next(app);
+    assert.equal(app.ev('state.libraryId'),savedId);
+    assert.equal(el(app,'library-modal-backdrop').classList.contains('open'),false);
     assert.deepEqual(app.errors,[]);
   } finally {await dispose(app);}
 });

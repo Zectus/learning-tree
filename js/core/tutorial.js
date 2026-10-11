@@ -36,22 +36,22 @@ Your answer is saved with this topic. Answering every regular question completes
     { name: 'Topic prompt', title: 'Start from a topic', text: 'Enter a topic and language, then copy the prompt into an AI chatbot.', phase: 'tree', target: '#tree-mode-topic-panel', allow: '#tree-topic-input, #tree-language-input, #btn-copy-tree-prompt, #tree-prompt-box' },
     { name: 'From a file', title: 'Start from a file', text: 'Choose From a file. Copy the prompt into an AI chatbot and attach your notes, paper, or other material.', phase: 'file', target: '#tree-mode-tab-file, #tree-mode-file-panel:not(.hidden), #tree-mode-topic-panel:not(.hidden)', allow: '#tree-mode-tab-file, #tree-mode-tab-topic, #btn-copy-tree-file-prompt, #tree-file-prompt-box, #tree-topic-input, #tree-language-input, #tree-prompt-box, #btn-copy-tree-prompt' },
     { name: 'Import the result', title: 'Upload your tree', text: 'Upload the .json file the chatbot gives you. Here, Next opens an example.', phase: 'tree', target: uploadTree, allow: uploadTree, advance: uploadTree, substitute: true },
-    { name: 'Tree and navigation', title: 'Explore your tree', text: 'Green is complete, blue is available, and faded is locked. Arrows show prerequisites. Drag to pan; scroll or pinch to zoom.', target: '#canvas', allow: '#canvas', map: true },
+    { name: 'Tree and navigation', title: 'Explore your tree', text: 'Green is complete, blue is available, and faded is locked. Arrows show prerequisites. Drag to pan; scroll or pinch to zoom.', target: '#canvas', allow: '#canvas', map: true, nextLabel: 'Choose a topic →' },
     { name: 'Choose a topic', title: 'Open a topic', text: 'Click a blue topic to learn. Complete its prerequisites to unlock the topics that follow.', target: nodeSelector, allow: nodeSelector, advance: nodeSelector, show: () => demoNode().click() },
-    { name: 'Lesson prompt', title: 'Get a lesson', text: 'Choose a language, copy this prompt into an AI chatbot, then upload its .txt response below. Next opens an example lesson.', phase: 'learn', target: '#modal-backdrop .modal-body', allow: '#node-language-input, #prompt-box, #btn-copy-prompt', show: () => openViewer(t(demoLesson), 2) },
+    { name: 'Lesson prompt', title: 'Get a lesson', text: 'Choose a language, copy this prompt into an AI chatbot, then upload its .txt response below. Try lesson opens an example without a file.', phase: 'learn', target: '#modal-backdrop .modal-body', allow: '#node-language-input, #prompt-box, #btn-copy-prompt', show: () => openViewer(t(demoLesson), 2), nextLabel: 'Try lesson →' },
     { name: 'Try a question', title: 'Answer a question', text: 'Choose an answer. Lessons can also include interactive tables, timelines, equations, and graphs.', phase: 'lesson', target: '#sv-body .q-card', allow: '#sv-body .q-opt', advance: '#sv-body .q-opt', show: () => $('sv-body').querySelector('.q-opt[data-letter="' + viewer.questions.get(1).correct + '"]').click() },
-    { name: 'Feedback and progress', title: 'Track your progress', text: 'Answer every regular question to complete a topic. A perfect score isn’t required; bonus practice is optional.', phase: 'answered', target: '#sv-score, #sv-progress-wrap', allow: '#sv-body' },
+    { name: 'Feedback and progress', title: 'Track your progress', text: 'Answer every regular question to complete a topic. A perfect score isn’t required; bonus practice is optional.', phase: 'answered', target: '#sv-score, #sv-progress-wrap', allow: '#sv-body', nextLabel: 'Notes →' },
     { name: 'Open notes', title: 'Keep your own notes', text: 'Click Notes to write reminders beside the lesson. Notes and lesson progress save automatically.', phase: 'answered', target: '#btn-toggle-notes', allow: '#btn-toggle-notes', advance: '#btn-toggle-notes', show: () => click('btn-toggle-notes') },
-    { name: 'Write a note', title: 'Write or draw a note', text: 'Write reminders, or choose Draw to sketch. Pick an ink color, erase, or undo strokes. Your notes save with this topic.', phase: 'notes', target: '#sv-notes-panel', allow: '#sv-notes-ta, #sv-notes-tabs, #sv-notes-drawing' },
+    { name: 'Write a note', title: 'Write or draw a note', text: 'Write reminders, or choose Draw to sketch. Pick an ink color, erase, or undo strokes. Your notes save with this topic. Edit tree returns to the tree to try editing.', phase: 'notes', target: '#sv-notes-panel', allow: '#sv-notes-ta, #sv-notes-tabs, #sv-notes-drawing', nextLabel: 'Edit tree →' },
     { name: 'Edit mode', title: 'Edit your tree', text: 'Choose Edit to change topics and their prerequisites.', menu: 'mode-menu', target: '#mode-menu', allow: '#mode-edit-item', advance: '#mode-edit-item', show: () => click('mode-edit-item') },
-    { name: 'Try editing', title: 'Change topics and links', text: 'Use + Node to add a topic. Edit its label or scope, or mark it optional. Link prereq connects topics; Delete TXT clears a lesson, and Delete removes a topic.', phase: 'edit', target: nodeSelector, allow: '#btn-add-node, #canvas', edit: true },
+    { name: 'Try editing', title: 'Change topics and links', text: 'Use + Node to add a topic. Edit its label or scope, or mark it optional. Link prereq connects topics; Delete TXT clears a lesson, and Delete removes a topic.', phase: 'edit', target: nodeSelector, allow: '#btn-add-node, #canvas', edit: true, nextLabel: 'Mark known →' },
     { name: 'Mark known mode', title: 'Skip what you know', text: 'Choose Mark known to complete topics you already understand.', menu: 'mode-menu', target: '#mode-menu', allow: '#mode-mark-known-item', advance: '#mode-mark-known-item', show: () => click('mode-mark-known-item') },
     { name: 'Mark a topic', title: 'Mark a topic complete', text: 'Click to complete this topic and unlock the next one. Click again to undo it and reset dependent topics.', phase: 'known', target: nodeSelector, allow: nodeSelector, advance: nodeSelector, show: () => demoNode().click() },
-    { name: 'See the unlock', title: 'Unlock the next topic', text: 'Green topics are complete; blue topics are ready to learn. Switch to Browse to open their lessons.', phase: 'unlocked', target: '#canvas', allow: '#canvas', map: true, show: () => openLibraryModal() },
-    { name: 'Save a tree', title: 'Save your tree', text: 'Click Save current tree to name your tree. Edits also save when you leave the page; progress and notes save automatically.', phase: 'library', target: '#btn-save-current-tree', allow: '#btn-save-current-tree', advance: '#btn-save-current-tree', show: () => saveCurrentTreeToLibrary() },
-    { name: 'Your saved trees', title: 'Manage saved trees', text: 'Open, rename, duplicate, or delete a tree here. Saving an opened tree updates it; Save as new copy creates another version.', phase: 'saved', target: '#library-grid .library-card', allow: '#library-grid .lc-open', advance: '#library-grid .lc-open' },
-    { name: 'Export', title: 'Export your tree', text: 'Structure only exports the topics and links. Structure + content also includes lessons. Progress and notes aren’t included.', menu: 'tree-menu', target: '#tree-menu', allow: '' },
-    { name: 'Account settings', title: 'Account settings', text: 'Switch the theme or interface language, reset progress, or sign in from Account. View tutorial appears here after finishing or skipping.', menu: 'account-menu', target: '#account-menu', allow: '#menu-dark-mode, #menu-language', theme: true },
+    { name: 'See the unlock', title: 'Unlock the next topic', text: 'Completing a topic unlocks the blue topic that follows it. Now open My Trees (📚) to save this tree.', phase: 'unlocked', target: '#world .node[data-id="3"], #btn-my-trees', allow: '#btn-my-trees', advance: '#btn-my-trees', show: () => click('btn-my-trees'), nextLabel: 'My Trees →' },
+    { name: 'Save a tree', title: 'Save your tree', text: 'This is My Trees, opened with 📚. Choose Save current tree. In this tour, it saves as Tutorial tree; for your own trees, you choose a name.', phase: 'library', target: '#library-modal-title, #btn-save-current-tree', allow: '#btn-save-current-tree', advance: '#btn-save-current-tree', show: () => saveCurrentTreeToLibrary(), nextLabel: 'Save sample →' },
+    { name: 'Your saved trees', title: 'Manage saved trees', text: 'Your sample is saved here. Open returns to the tree. Rename, Duplicate, and Delete manage saved copies. Open tree continues the tour on the canvas.', phase: 'saved', target: '#library-grid .library-card, #library-empty:not(.hidden)', allow: '#library-grid .lc-actions .btn', advance: '#library-grid .lc-open', show: () => { const id = state.libraryId || Object.keys(libraryCache)[0]; if (id) openLibraryEntry(id); }, nextLabel: 'Open tree →' },
+    { name: 'Export', title: 'Export your tree', text: 'Back on the tree, use Tree to export a file. Structure only includes topics and links; Structure + content includes lessons too. Account opens settings next.', menu: 'tree-menu', target: '#tree-menu', allow: '', nextLabel: 'Account →' },
+    { name: 'Account settings', title: 'Account settings', text: 'Switch the theme or interface language here. Account opens sign-in and sync. View tutorial appears here after finishing or skipping.', menu: 'account-menu', target: '#account-menu', allow: '#menu-dark-mode, #menu-language, #menu-account', advance: '#menu-account', show: () => click('menu-account'), theme: true, nextLabel: 'Sign in →' },
     { name: 'Account and sync', title: 'Sync across devices', text: 'Sign in or create an account to sync your saved trees across devices.', phase: 'account', target: '#account-modal-shell', allow: '' }
   ];
   let index = 0, saved = null, inert = [], busy = false, frame = null, advanceTimer = null, demoAnswer = null, editId = 2, runId = 0, hintExpanded = null;
@@ -63,14 +63,15 @@ Your answer is saved with this topic. Answering every regular question completes
     4: 'Upload the chatbot’s .json here to build your tree. Tap Next to load our sample tree.',
     5: 'Drag to explore; pinch to zoom. Green topics are complete, blue topics are ready, and faded topics need prerequisites.',
     6: 'Tap the blue topic to get a lesson. You can also tap Next to open it for you.',
-    7: 'Copy the prompt into an AI chatbot, then upload its .txt lesson here. Tap Next to try our sample lesson.',
+    7: 'Copy the prompt into an AI chatbot, then upload its .txt lesson here. Tap Try lesson to use our sample without a file.',
     8: 'Tap an answer to try the quiz. Your answers save as you go.',
     10: 'Tap Notes to write or draw something you want to remember.',
-    11: 'Try writing a note, or tap Draw to sketch. Notes stay with this topic.',
+    11: 'Try writing a note, or tap Draw to sketch. Edit tree closes the lesson and returns to the tree to try editing.',
     13: 'Tap a topic to edit its name, scope, or prerequisites. Use + to add a topic. Changes here only affect the sample.',
     15: 'Tap this topic to mark it complete. Tap it again to undo.',
-    17: 'Tap Save current tree to name your tree. Your real trees live in the 📚 menu.',
-    18: 'Saved trees can be reopened, renamed, or copied. Tap Next to continue.',
+    16: 'This topic is now unlocked. Tap 📚 (My Trees) to save your tree, or use My Trees below to open it for you.',
+    17: 'You’re in My Trees (📚). Tap Save current tree. We name this sample Tutorial tree; for your own trees, you choose a name.',
+    18: 'Your sample is saved here. Open brings you back to its tree. You can also rename, copy, or delete it. Tap Open tree to continue.',
     21: 'Sign in to sync your trees across devices. You can also use the app without an account. Tap Finish to start.'
   };
   const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'topic', 'libraryId'];
@@ -144,11 +145,20 @@ Your answer is saved with this topic. Answering every regular question completes
     if (phase === 'edit') { editId = 2; setMode('edit'); if (!isMobileViewport()) demoNode().classList.add('actions-open'); }
     if (phase === 'known') setMode('markKnown');
     if (phase === 'unlocked') { state.nodes.get(2).done = true; updateAllStatuses(); }
+    if (phase === 'unlocked') {
+      const node = state.nodes.get(3);
+      if (node) {
+        const scale = Math.min(1, (window.innerWidth - 40) / nodeW());
+        state.viewport = {scale, x: window.innerWidth / 2 - (node.x + nodeW() / 2) * scale,
+          y: Math.max(100, $('toolbar').getBoundingClientRect().bottom + 24) - node.y * scale};
+        applyTransform(false);
+      }
+    }
     if (['library', 'saved'].includes(phase)) {
       state.nodes.get(2)._sessionTxt = t(demoLesson);
       if (phase === 'saved') {
         if (!Object.keys(libraryCache).length) libraryCache['tutorial-example'] = { name: t('Tutorial tree'), savedAt: Date.now(), data: buildTreeJSON(true) };
-        state.libraryId = Object.keys(libraryCache)[0];
+        if (!state.libraryId || !libraryCache[state.libraryId]) state.libraryId = Object.keys(libraryCache)[0];
       }
       $('library-modal-backdrop').classList.add('open'); renderLibraryGrid();
     }
@@ -277,7 +287,7 @@ Your answer is saved with this topic. Answering every regular question completes
     uiText($('tutorial-skip'), isMobileViewport() ? 'Skip ✕' : 'Skip tutorial ✕');
     uiText($('tutorial-count'), `${i + 1} / ${steps.length}`);
     section.value = String(i); back.disabled = i === 0;
-    uiText(next, i === steps.length - 1 ? 'Finish ✓' : isMobileViewport() ? 'Next →' : steps[i].show || steps[i].advance ? 'Show me →' : 'Next →');
+    uiText(next, i === steps.length - 1 ? 'Finish ✓' : steps[i].nextLabel || (isMobileViewport() ? 'Next →' : steps[i].show || steps[i].advance ? 'Show me →' : 'Next →'));
     position(); enterStep(steps[i], resetSample); protectPage();
     const target = document.querySelector(steps[i].target);
     if (target?.closest('.modal-body, #sv-body')) target.scrollIntoView?.({ block: 'nearest' });
@@ -297,6 +307,7 @@ Your answer is saved with this topic. Answering every regular question completes
       viewer: { ...viewer }, library: libraryCache, edges: new Map(edgeEls),
       modalNode: _modalNodeId, positioned: svUserPositioned, scroll: $('sv-body').scrollTop,
       editorNode: mobileEditId,
+      editorPrerequisitesOpen: editorPrerequisites.open,
       dark: document.documentElement.classList.contains('dark'),
       uiLanguage, drawingTool, drawingGesture, notesOffset: { ...notesOffset },
       attrs: [...document.body.querySelectorAll('*'), document.body].map(el => ({ el,
@@ -333,6 +344,7 @@ Your answer is saved with this topic. Answering every regular question completes
     edgeEls.clear(); saved.edges.forEach((path, key) => edgeEls.set(key, path));
     _modalNodeId = saved.modalNode; svUserPositioned = saved.positioned;
     mobileEditId = saved.editorNode;
+    editorPrerequisites.open = saved.editorPrerequisitesOpen;
     saved.attrs.forEach(({ el, className, style, aria, value, text, hidden, selected, pressed, disabled, uiSource, uiAttrs }) => {
       for (const [attr, val] of [['class', className], ['style', style], ['aria-modal', aria], ['aria-selected', selected], ['aria-pressed', pressed], ['data-ui-text', uiSource], ['data-ui-attrs', uiAttrs]]) {
         if (val === null) el.removeAttribute(attr); else el.setAttribute(attr, val);

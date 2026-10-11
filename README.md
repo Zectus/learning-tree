@@ -53,7 +53,8 @@ available. Moving forward keeps your practice edits until the tour ends.
 
 On phones, choose **Edit** and tap a topic to open its editor. Change its name,
 scope, optional setting, and prerequisites in a panel that stays readable at any
-tree zoom. **+** adds a topic and opens its editor. Dragging or pinching can start
+tree zoom. The prerequisite dropdown shows existing links you can remove and
+valid topics you can add. **+** adds a topic and opens its editor. Dragging or pinching can start
 on a topic without opening it. Desktop editing stays inside the topic cards.
 
 The tour temporarily puts aside the current tree and lesson DOM, uses a demo

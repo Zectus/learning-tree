@@ -40,8 +40,13 @@ test('mobile prerequisites prevent cycles and keep both adjacency maps consisten
   try {
     app.ev('openNodeEditor(2)');
     const checkbox = id => app.document.querySelector('#node-editor-links input[data-node-id="'+id+'"]');
+    assert.equal(el(app,'node-editor-prerequisites').open,false);
+    el(app,'node-editor-links-summary').click();
+    assert.equal(el(app,'node-editor-prerequisites').open,true);
     assert.equal(checkbox(1).checked,true);
-    assert.equal(checkbox(3).disabled,true);
+    assert.equal(checkbox(2),null);
+    assert.equal(checkbox(3),null);
+    assert.equal(app.document.querySelector('#node-editor-links input:disabled'),null);
     checkbox(1).click();
     assert.equal(app.ev('hasEdge(1,2)'),false);
     assert.equal(app.ev('prereqsOf(2).length'),0);
@@ -50,7 +55,8 @@ test('mobile prerequisites prevent cycles and keep both adjacency maps consisten
     assert.equal(app.ev('hasEdge(1,2)'),true);
     assert.equal(app.ev('prereqsOf(2)[0]'),1);
     assert.equal(app.ev('dependentsOf(1)[0]'),2);
-    assert.equal(checkbox(3).disabled,true);
+    assert.equal(checkbox(3),null);
+    assert.equal(el(app,'node-editor-links-summary').textContent,'Prerequisites (1 selected)');
     app.ev("setMode('browse')");
     assert.equal(el(app,'node-editor-backdrop').classList.contains('open'),false);
   } finally {await dispose(app);}
@@ -76,6 +82,7 @@ test('mobile tour restores an open editor, original fields, and live prerequisit
   const app = mobileApp();
   try {
     app.ev('openNodeEditor(2)');
+    el(app,'node-editor-prerequisites').open=true;
     const originalChoice = app.document.querySelector('#node-editor-links input[data-node-id="1"]');
     el(app,'menu-tutorial').click();
     el(app,'tutorial-section').value='13';
@@ -87,6 +94,7 @@ test('mobile tour restores an open editor, original fields, and live prerequisit
     assert.equal(app.ev('mobileEditId'),2);
     assert.equal(el(app,'node-editor-name').value,'Next');
     assert.equal(el(app,'node-editor-backdrop').classList.contains('open'),true);
+    assert.equal(el(app,'node-editor-prerequisites').open,true);
     assert.equal(app.document.querySelector('#node-editor-links input[data-node-id="1"]'),originalChoice);
     originalChoice.click();
     assert.equal(app.ev('hasEdge(1,2)'),false);

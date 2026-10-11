@@ -5,31 +5,28 @@ const nodeEditor = document.getElementById('node-editor-backdrop');
 const editorName = document.getElementById('node-editor-name');
 const editorScope = document.getElementById('node-editor-scope');
 const editorOptional = document.getElementById('node-editor-optional');
+const editorPrerequisites = document.getElementById('node-editor-prerequisites');
 
 function renderNodeEditorLinks() {
   const node = state.nodes.get(mobileEditId);
   const list = document.getElementById('node-editor-links');
   list.replaceChildren();
   if (!node) return;
+  const selected = prereqsOf(node.id).length;
+  uiText(document.getElementById('node-editor-links-summary'), selected ? `Prerequisites (${selected} selected)` : 'Choose prerequisites');
   state.nodes.forEach(other => {
     if (other.id === node.id) return;
+    const checked = hasEdge(other.id, node.id);
+    // Existing links remain removable. New links must not introduce a cycle.
+    if (!checked && wouldCycle(other.id, node.id)) return;
     const label = document.createElement('label');
     label.className = 'node-editor-choice';
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.dataset.nodeId = other.id;
-    input.checked = hasEdge(other.id, node.id);
-    input.disabled = !input.checked && wouldCycle(other.id, node.id);
-    if (input.disabled) uiAttr(label, 'title', 'This topic depends on the one you are editing.');
+    input.checked = checked;
     const name = document.createElement('span');
     userText(name, other.label || t('Untitled topic'));
-    if (input.disabled) {
-      const reason = document.createElement('small');
-      reason.className = 'node-editor-help';
-      reason.style.display = 'block';
-      uiText(reason, 'Depends on this topic');
-      name.appendChild(reason);
-    }
     input.addEventListener('change', () => {
       if (input.checked && wouldCycle(other.id, node.id)) { input.checked = false; return; }
       if (input.checked) addEdge(other.id, node.id); else removeEdge(other.id, node.id);
@@ -41,7 +38,7 @@ function renderNodeEditorLinks() {
   if (!list.children.length) {
     const empty = document.createElement('p');
     empty.className = 'node-editor-help';
-    uiText(empty, 'Add another topic to choose a prerequisite.');
+    uiText(empty, 'No topics can be linked here yet.');
     list.appendChild(empty);
   }
 }
@@ -54,6 +51,7 @@ function openNodeEditor(id) {
   editorName.value = node.label;
   editorScope.value = node.explanation || '';
   editorOptional.checked = !!node.optional;
+  editorPrerequisites.open = false;
   document.getElementById('node-editor-delete-lesson').disabled = !node._sessionTxt;
   renderNodeEditorLinks();
   document.getElementById('node-editor-shell').setAttribute('aria-modal', String(!state.tutorialActive));
@@ -63,6 +61,7 @@ function openNodeEditor(id) {
 }
 function closeNodeEditor() {
   nodeEditor.classList.remove('open');
+  editorPrerequisites.open = false;
   mobileEditId = null;
   if (nodeEditor.contains(document.activeElement)) document.activeElement.blur();
 }
