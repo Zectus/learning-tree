@@ -45,6 +45,7 @@ function buildEl(node) {
     node.optional = !node.optional;
     uiText(optBtn, node.optional ? '★ Optional' : '☆ Optional');
     refreshTag(el, node);
+    updateTreeIcon();
   });
 
   const delTxtBtn = document.createElement('button');

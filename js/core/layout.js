@@ -144,6 +144,7 @@ function updateProgress() {
   const total = state.nodes.size;
   const done  = [...state.nodes.values()].filter(n => n.done).length;
   progBar.style.width = total ? (done / total * 100) + '%' : '0%';
+  updateTreeIcon();
 }
 
 /* ═══════════════════════════════════════════════════════════

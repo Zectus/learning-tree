@@ -31,6 +31,7 @@ function clearMap() {
   state.language = '';
   state.topic = '';
   state.libraryId = null; // a fresh load starts unlinked; openLibraryEntry() re-links it if that's where the load came from
+  updateTreeIcon();
 }
 
 // Unicode-aware, so a non-Latin topic still gets a usable filename/id
