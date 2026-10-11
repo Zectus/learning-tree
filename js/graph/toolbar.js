@@ -74,13 +74,16 @@ document.getElementById('btn-add-node').addEventListener('click', doAddNode);
 const MODE_UI = {
   browse:    { label: '👁 Browse ▾',      item: 'mode-browse-item' },
   edit:      { label: '✏️ Edit ▾',        item: 'mode-edit-item' },
-  markKnown: { label: '✓ Mark known ▾',  item: 'mode-mark-known-item' },
+  markKnown: { label: '✓ Known ▾',       item: 'mode-mark-known-item' },
 };
 
 function updateModeLabel() {
   const ui  = MODE_UI[state.mode];
   const btn = document.getElementById('btn-mode');
   uiText(btn, ui.label);
+  const modeName = document.getElementById(ui.item).querySelector('[data-ui-text]').dataset.uiText;
+  uiAttr(btn, 'aria-label', modeName);
+  uiAttr(btn, 'title', modeName);
   btn.classList.toggle('active', state.mode !== 'browse');
   document.querySelectorAll('#mode-menu .dropdown-item').forEach(el => el.classList.toggle('current', el.id === ui.item));
 }

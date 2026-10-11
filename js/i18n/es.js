@@ -1,6 +1,9 @@
 /* Spanish interface catalogue. Keys are the English source text. */
 const UI_ES = {
   "+ Node": "+ Nodo",
+  " Node": " Nodo",
+  " My Trees": " Mis árboles",
+  " Sign in ▾": " Iniciar sesión ▾",
   "Almost done — pick a username for your account.": "Ya casi está: elige un nombre de usuario para tu cuenta.",
   "Anything worth remembering about this topic…": "Algo que quieras recordar sobre este tema…",
   "At least 6 characters": "Al menos 6 caracteres",
@@ -78,6 +81,7 @@ const UI_ES = {
   "✏️ Edit ▾": "✏️ Editar ▾",
   "✓ Mark known": "✓ Marcar como conocido",
   "✓ Mark known ▾": "✓ Marcar como conocido ▾",
+  "✓ Known ▾": "✓ Conocido ▾",
   "⬇ Export — structure + content": "⬇ Exportar: estructura y contenido",
   "⬇ Export — structure only": "⬇ Exportar: solo estructura",
   "🌙 Dark mode": "🌙 Modo oscuro",

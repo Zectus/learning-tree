@@ -2,7 +2,7 @@
    mobile.css — every responsive/touch-specific override, kept together
    because these only make sense read as one "what changes on a phone"
    unit: the portrait-lock overlay, and the max-width:700px block covering
-   toolbar wrapping, node action-row sizing, iOS zoom prevention, and the
+   compact toolbar, node action-row sizing, iOS zoom prevention, and the
    session viewer / notes panel going fullscreen. The 700px breakpoint is
    mirrored by isMobileViewport() in scale.js — change both together.
    Loads last so its overrides win over every component file.
@@ -51,25 +51,29 @@
    below is layout/sizing only.
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 700px) {
-  /* Toolbar: wrap into centered rows instead of a horizontal-scroll strip —
-     buttons hidden past an edge are easy to miss on a phone, and a strip
-     forces every button down to a cramped size. Edit mode adding
-     #btn-add-node just adds a button to whichever row has room. */
+  /* Keep every action in one row, including + Node in edit mode. Secondary
+     controls use their icons; accessible names and desktop labels stay full.
+     Only the mode button can shrink, leaving dropdowns free to overflow. */
   #toolbar {
     top: max(14px, env(safe-area-inset-top));
     left: 50%;
     transform: translateX(-50%);
-    width: min(94vw, 420px);
-    flex-wrap: wrap;
+    width: min(calc(100% - 16px), 420px);
+    flex-wrap: nowrap;
     justify-content: center;
-    gap: 10px;
+    gap: 4px;
   }
   .tbtn {
     flex: 0 0 auto;
-    padding: 12px 18px;
+    padding: 10px 8px;
     font-size: 14.5px;
     min-height: 44px; /* standard minimum comfortable touch target */
   }
+  #toolbar > .dropdown-wrap { flex: 0 0 auto; }
+  #toolbar > .dropdown-wrap:first-child { flex: 1 1 auto; min-width: 0; }
+  #btn-mode { width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  #btn-add-node, #btn-my-trees, #btn-account-menu { width: 44px; min-width: 44px; padding-inline: 0; }
+  #toolbar .toolbar-label { display: none; }
 
   /* Node action buttons need a real tap target once they're only reachable via .node-more-btn instead of hover. */
   .btn { padding: 7px 11px; font-size: 12px; }

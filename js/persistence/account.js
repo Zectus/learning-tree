@@ -150,11 +150,18 @@ function showGoogleUsernamePanel(user) {
    #menu-account item inside stays static. */
 function updateAccountButton() {
   const btn = document.getElementById('btn-account-menu');
+  const label = btn.querySelector('.toolbar-label');
   if (state.accountUser) {
-    userText(btn, '👤 ' + (state.accountUser.username || state.accountUser.email) + ' ▾');
+    const name = state.accountUser.username || state.accountUser.email;
+    userText(label, ' ' + name + ' ▾');
+    const attrs = JSON.parse(btn.dataset.uiAttrs);
+    delete attrs['aria-label']; // Account identities must never be translated.
+    btn.dataset.uiAttrs = JSON.stringify(attrs);
+    btn.setAttribute('aria-label', '👤 ' + name + ' ▾');
     btn.classList.add('active');
   } else {
-    uiText(btn, '👤 Sign in ▾');
+    uiText(label, ' Sign in ▾');
+    uiAttr(btn, 'aria-label', '👤 Sign in ▾');
     btn.classList.remove('active');
   }
 }
