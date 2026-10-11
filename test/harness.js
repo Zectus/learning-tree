@@ -8,14 +8,18 @@ const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..');
 
-function loadApp({ innerWidth = 1280, screenOrientation, deviceOrientation, screenWidth = 0, screenHeight = 0, tutorialSeen = true, uiLanguage = 'en', storageUnavailable = false } = {}) {
+function loadApp({ innerWidth = 1280, screenOrientation, deviceOrientation, screenWidth = 0, screenHeight = 0, tutorialSeen = true, uiLanguage = 'en', browserLanguages, storageUnavailable = false } = {}) {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const dom = new JSDOM(html, { runScripts: 'outside-only', pretendToBeVisual: true, url: 'http://localhost/' });
   const { window } = dom;
   // Existing workflow tests represent returning visitors. Tutorial tests opt
   // into a fresh browser or unavailable storage before any app script runs.
   if (tutorialSeen) window.localStorage.setItem('tree-tutorial-seen', '1');
-  window.localStorage.setItem('tree-ui-language', uiLanguage);
+  if (uiLanguage !== null) window.localStorage.setItem('tree-ui-language', uiLanguage);
+  if (browserLanguages) Object.defineProperties(window.navigator, {
+    languages: { value: browserLanguages, configurable: true },
+    language: { value: browserLanguages[0] || '', configurable: true },
+  });
   if (storageUnavailable) {
     window.Storage.prototype.getItem = () => { throw new Error('Storage blocked'); };
     window.Storage.prototype.setItem = () => { throw new Error('Storage blocked'); };

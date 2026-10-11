@@ -5,6 +5,30 @@ const tick = () => new Promise(resolve=>setTimeout(resolve,0));
 const el = (app,id) => app.document.getElementById(id);
 function loadTree(app) { app.window.__tree=app.fixture('mini-tree.json'); app.ev('loadFromJSON(JSON.parse(__tree))'); }
 
+test('browser language sets the initial interface unless a saved choice overrides it',()=>{
+ for (const [browserLanguages, uiLanguage, expected, storageUnavailable] of [
+  [['es-MX','en-US'],null,'es',false],
+  [['en-GB','es'],null,'en',false],
+  [['fr-FR','es-ES'],null,'es',false],
+  [['de-DE'],null,'en',false],
+  [[],null,'en',false],
+  [['es-ES'],'en','en',false],
+  [['en-US'],'es','es',false],
+  [['es-ES'],null,'es',true],
+ ]) {
+  const app=loadApp({browserLanguages,uiLanguage,storageUnavailable});
+  try {
+   assert.equal(app.document.documentElement.lang,expected);
+   assert.equal(el(app,'btn-my-trees').textContent,expected==='es'?'📚 Mis árboles':'📚 My Trees');
+   if (!storageUnavailable && uiLanguage===null) {
+    assert.equal(app.window.localStorage.getItem('tree-ui-language'),null);
+    el(app,'menu-language').click();
+    assert.equal(app.window.localStorage.getItem('tree-ui-language'),expected==='es'?'en':'es');
+   }
+  } finally {app.window.close();}
+ }
+});
+
 test('saved language localizes the initial page and Account switches back without a reload',()=>{
  const app=loadApp({uiLanguage:'es'});
  try {

@@ -1,8 +1,14 @@
 /* Only explicitly marked interface strings are localized. User text is never
    searched or rewritten, even when it happens to match an interface label. */
 const UI_LANGUAGE_KEY = 'tree-ui-language';
-let uiLanguage = 'en';
-try { if (localStorage.getItem(UI_LANGUAGE_KEY) === 'es') uiLanguage = 'es'; } catch {}
+const browserUILanguage = (navigator.languages?.length ? navigator.languages : [navigator.language])
+  .map(language => String(language || '').toLowerCase().split('-')[0])
+  .find(language => ['en', 'es'].includes(language)) || 'en';
+let uiLanguage = browserUILanguage;
+try {
+  const savedLanguage = localStorage.getItem(UI_LANGUAGE_KEY);
+  if (['en', 'es'].includes(savedLanguage)) uiLanguage = savedLanguage;
+} catch {}
 const uiPatterns = Object.entries(UI_ES).filter(([key]) => /\{\w+\}/.test(key)).map(([key, value]) => {
   const names = [];
   const pattern = key.split(/(\{\w+\})/).map(part => {

@@ -23,6 +23,8 @@ Lesson files mark each question's correct option inline with `[ANSWER: X]`.
 
 ## Interface language
 
+On your first visit, the interface uses your browser's preferred supported language
+(English or Spanish), falling back to English. A saved language choice takes priority.
 Choose **Account → Español / English** to switch the entire interface without
 reloading. The choice is remembered in this browser. Menus, dialogs, tooltips,
 errors, lesson controls, drawing tools, tutorial examples, and built-in generation
