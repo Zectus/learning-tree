@@ -293,6 +293,28 @@ test('hint expansion preserves the normal dialog sizing and edited prompt fields
   } finally { await dispose(app); }
 });
 
+test('progress step starts expanded even when the viewer fills the available space', async () => {
+  const app = fresh({tutorialSeen:false});
+  try {
+    const box = (left, top, right, bottom) => ({left, top, right, bottom, width:right-left, height:bottom-top});
+    el(app,'sv-window').getBoundingClientRect = () => box(12, 12, 1268, 756);
+    el(app,'tutorial-card').getBoundingClientRect = () => box(0, 0, 350, 250);
+    const score = el(app,'sv-score'), progress = el(app,'sv-progress-wrap');
+    score.getClientRects = progress.getClientRects = () => [{}];
+    score.getBoundingClientRect = () => box(1000, 40, 1150, 70);
+    progress.getBoundingClientRect = () => box(32, 80, 1248, 96);
+    await jump(app, 9);
+    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
+    assert.equal(el(app,'tutorial-card').classList.contains('tutorial-compact'),false);
+    assert.equal(app.document.querySelectorAll('#tutorial-mask rect[id^="tutorial-hole"]').length,2);
+    el(app,'tutorial-toggle').click();
+    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'false');
+    el(app,'tutorial-toggle').click();
+    assert.equal(el(app,'tutorial-toggle').getAttribute('aria-expanded'),'true');
+    assert.deepEqual(app.errors,[]);
+  } finally { await dispose(app); }
+});
+
 test('file tab and prompt have separate spotlights that leave the topic tab shaded', async () => {
   const app = fresh({tutorialSeen:false});
   try {
