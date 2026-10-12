@@ -6,7 +6,7 @@
    progress.js (autoRestoreProgress), toast.js. library.js builds on
    buildTreeJSON and loadFromJSON below.
 
-   Format: { "topic": "...", "language": "Spanish", "nodes": [
+   Format: { "topic": "...", "language": "Spanish", "isSpanish": true, "nodes": [
      { "id":"a", "label":"...", "explanation":"...", "requires":["b","c"], "optional":true, "content":"..." } ] }
    - `content` is the node's generated lesson .txt; it is only written by the
      "Structure + content" export. On import it goes straight into
@@ -15,6 +15,8 @@
      fresh deterministic option shuffle, whenever a session is opened.
    - `language` is the tree-wide default; it prefills (never locks) each
      node's language field in the learn modal.
+   - `isSpanish` is an AI-determined boolean. Only literal true overrides
+     lesson prompt selection; missing or invalid values behave as false.
    - `topic` names the exported file and is quoted in each node's prompt.
 ═══════════════════════════════════════════════════════════ */
 function clearMap() {
@@ -30,6 +32,7 @@ function clearMap() {
   state.nodes.clear();
   state.nextId = 1;
   state.language = '';
+  state.isSpanish = false;
   state.topic = '';
   state.libraryId = null; // a fresh load starts unlinked; openLibraryEntry() re-links it if that's where the load came from
   updateTreeIcon();
@@ -72,6 +75,7 @@ function loadFromJSON(obj) {
 
   clearMap();
   state.language = typeof obj.language === 'string' ? obj.language.trim() : '';
+  state.isSpanish = obj.isSpanish === true;
   state.topic    = typeof obj.topic === 'string' ? obj.topic.trim() : '';
 
   const problems = { unknown: 0, self: 0, loop: 0, dupId: 0 };
@@ -141,6 +145,7 @@ function buildTreeJSON(includeContent) {
   const out = {};
   if (state.topic)    out.topic = state.topic;
   if (state.language) out.language = state.language;
+  out.isSpanish = state.isSpanish === true;
   out.nodes = nodes;
   return out;
 }

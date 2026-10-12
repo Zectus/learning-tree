@@ -15,6 +15,7 @@ const state = {
   mode:       'browse',   // 'browse' | 'edit' | 'markKnown' — mutually exclusive by construction
   linkSource: null,
   language:   '',   // tree-wide default language from a loaded tree; prefills each node's language field
+  isSpanish:  false, // AI-supplied tree flag; only literal true forces Spanish lesson prompts
   topic:      '',   // tree-wide subject name; used for the export filename and quoted in each node's prompt
   libraryId:  null, // "My Trees" entry the current tree was opened from (library.js); reset by clearMap(), re-linked by openLibraryEntry()
   accountUser: null, // { uid, email, username } when signed in (account.js), else null; set only by applyAccountUser()

@@ -31,6 +31,14 @@ errors, lesson controls, drawing tools, tutorial examples, and built-in generati
 prompts are available in both languages. Blank generation-language fields default
 to the interface language; an explicit language or one stored in a tree is preserved.
 
+Tree JSON also includes an AI-determined boolean `isSpanish`, independent of the
+user's `language` text. Tree-generation prompts ask the AI to set it to `true`
+only for exclusively Spanish output, including regional varieties, and `false`
+for other languages or mixed output. Only literal `true` forces the Spanish
+lesson prompt template even with an English interface; false or missing flags
+keep the usual interface-based template selection. The language field stays
+editable and is preserved. The flag survives import, exports, and library saves.
+
 Imported lesson text, tree names, node labels and explanations, account identities,
 notes, drawings, and editable field values stay as written. Switching the interface
 does not regenerate lessons or reset answers, progress, or the current tree.

@@ -89,6 +89,7 @@ ESQUEMA DE SALIDA
 {
   "topic": "${fromFile ? 'Nombre de la materia' : topic}",
   "language": "${fromFile ? 'Nombre del idioma' : language}",
+  "isSpanish": false,
   "nodes": [
     { "id": "slug", "label": "Nombre visible", "explanation": "Guía docente compacta: capacidad del estudiante, contenido central, conocimientos previos y límites", "requires": ["slug1","slug2"], "optional": false }
   ]
@@ -96,6 +97,7 @@ ESQUEMA DE SALIDA
 
 - topic: ${fromFile ? 'el tema específico que identificaste en los archivos, escrito como una persona lo nombraría naturalmente. El ejemplo del esquema es ilustrativo, no un valor que debas copiar.' : 'la materia exacta proporcionada arriba, sin cambiarla.'} Inclúyelo siempre: se usa para identificar el árbol y nombrar el archivo descargado.
 - language: ${fromFile ? 'el idioma que identificaste en los archivos y en el que escribirás todos los valores "label". El ejemplo es ilustrativo, no un valor que debas copiar.' : 'el idioma de todos los valores "label", exactamente como se indica arriba.'}
+- isSpanish: incluye siempre un booleano JSON, nunca una cadena. Determínalo tú según el idioma real de salida: true solo si es exclusivamente español (incluidas variedades regionales y otros nombres del idioma); false para cualquier otro idioma o una salida mixta/multilingüe. Interpreta el idioma por su significado, no por una coincidencia de texto. Conserva language exactamente como se solicitó. El false del esquema es ilustrativo: decide el valor correcto para este árbol. Solo true fuerza la plantilla española de generación de lecciones; false conserva la selección normal de plantillas.
 ${TREE_ES_FIELDS}
 
 ${TREE_ES_DESIGN}

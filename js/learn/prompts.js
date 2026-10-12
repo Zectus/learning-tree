@@ -45,9 +45,10 @@ function buildPrompt(id, language) {
   const explanationLine = node.explanation
     ? `This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): ${node.explanation} Use this brief to identify the intended learner ability, central idea, supporting content, and scope boundaries. If it is written as a topic list, organize those items into a learnable progression rather than equal-length treatments. Keep explicit exclusions, but still show a meaningful use of the idea at this level.`
     : '';
-  const lang = language || (uiLanguage === 'es' ? 'Español' : 'English');
+  const useSpanishPrompt = state.isSpanish === true || uiLanguage === 'es';
+  const lang = language || (useSpanishPrompt ? 'Español' : 'English');
   const sectionKeyword = lessonSectionKeyword(lang);
-  if (uiLanguage === 'es') {
+  if (useSpanishPrompt) {
     return renderNodePromptEs({ topic, nodeId, language: lang, sectionKeyword,
       treeTopicLine: state.topic ? `Este nodo pertenece a un árbol más amplio sobre ${state.topic}.` : '',
       explanationLine: node.explanation ? `Alcance de este nodo según las notas de diseño privadas del árbol: ${node.explanation} Usa esta guía para identificar la capacidad prevista, la idea central, el contenido de apoyo y los límites. Si es una lista de temas, organízalos como una progresión aprendible. Respeta las exclusiones explícitas y muestra un uso significativo de la idea a este nivel.` : '',

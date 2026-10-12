@@ -74,7 +74,7 @@ Your answer is saved with this topic. Answering every regular question completes
     18: 'Your sample is saved here. Open brings you back to its tree. You can also rename, copy, or delete it. Tap Open tree to continue.',
     21: 'Sign in to sync your trees across devices. You can also use the app without an account. Tap Finish to start.'
   };
-  const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'topic', 'libraryId'];
+  const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'isSpanish', 'topic', 'libraryId'];
   let seen = false;
   try { seen = localStorage.getItem(KEY) === '1'; } catch {}
   replay.hidden = !seen;
@@ -93,7 +93,7 @@ Your answer is saved with this topic. Answering every regular question completes
     [...document.body.children].forEach(visit);
   }
   function prepareSample() {
-    loadFromJSON({ ...demoTree, topic:t(demoTree.topic), language:uiLanguage==='es'?'Español':'English', nodes:demoTree.nodes.map(node=>({...node,label:t(node.label),explanation:node.explanation?t(node.explanation):undefined})) });
+    loadFromJSON({ ...demoTree, topic:t(demoTree.topic), language:uiLanguage==='es'?'Español':'English', isSpanish:uiLanguage==='es', nodes:demoTree.nodes.map(node=>({...node,label:t(node.label),explanation:node.explanation?t(node.explanation):undefined})) });
     if (isMobileViewport()) return; // Use the same readable, pannable tree view as the app.
     // Demo nodes use the real layout. Center them in the space above the card.
     const width = window.innerWidth, height = window.innerHeight - card.getBoundingClientRect().height - 110;

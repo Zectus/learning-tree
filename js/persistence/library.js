@@ -138,7 +138,7 @@ function treeContentKey(data) {
     optional: !!n.optional, content: n.content || '',
     requires: [...(n.requires || [])].map(String).sort(),
   })).sort((a, b) => a.id.localeCompare(b.id));
-  return JSON.stringify({ topic: data.topic || '', language: data.language || '', nodes });
+  return JSON.stringify({ topic: data.topic || '', language: data.language || '', isSpanish: data.isSpanish === true, nodes });
 }
 
 // A per-account outbox survives interrupted network writes on page exit.
