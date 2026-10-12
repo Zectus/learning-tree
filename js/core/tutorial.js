@@ -124,6 +124,7 @@ Your answer is saved with this topic. Answering every regular question completes
     if (phase === 'generation') {
       openGenerationModal();
       $('generation-output').value = JSON.stringify({ format: LESSON_RECORD_FORMAT, treeKey: generationTreeKey(buildTreeJSON(false)), id: 'next', content: t(demoLesson) });
+      refreshGenerationImportControls();
     }
     if (['lesson', 'answered', 'notes'].includes(phase)) {
       if (phase !== 'lesson') state.nodes.get(2)._sessionAnswers = { 1: demoAnswer || 'A' };
@@ -305,7 +306,7 @@ Your answer is saved with this topic. Answering every regular question completes
         className: el.getAttribute('class'), style: el.getAttribute('style'), aria: el.getAttribute('aria-modal'),
         hidden: el.hidden, open: el.open, selected: el.getAttribute('aria-selected'), pressed: el.getAttribute('aria-pressed'), disabled: el.disabled, uiSource: el.getAttribute('data-ui-text'), uiAttrs: el.getAttribute('data-ui-attrs'),
         value: 'value' in el && !['file', 'password'].includes(el.type) ? el.value : undefined,
-        text: ['btn-mode', 'menu-reset-progress', 'btn-save-current-tree', 'library-modal-meta', 'tree-modal-meta', 'prompt-box', 'btn-copy-prompt', 'btn-copy-tree-prompt', 'btn-copy-tree-file-prompt', 'sv-topic', 'sv-score', 'generation-status', 'generation-result', 'btn-copy-generation-message'].includes(el.id) ? el.textContent : undefined
+        text: ['btn-mode', 'menu-reset-progress', 'btn-save-current-tree', 'library-modal-meta', 'tree-modal-meta', 'prompt-box', 'btn-copy-prompt', 'btn-copy-tree-prompt', 'btn-copy-tree-file-prompt', 'sv-topic', 'sv-score', 'generation-status', 'generation-result', 'generation-import-source', 'btn-copy-generation-message'].includes(el.id) ? el.textContent : undefined
       }))
     };
     saved.world = stash(world); saved.svg = stash(svgWorld); saved.body = stash($('sv-body')); saved.checkpoints = stash($('sv-progress-checkpoints')); saved.libraryDOM = stash($('library-grid')); saved.drawingDOM = stash(drawingPad); saved.editorLinks = stash($('node-editor-links')); saved.generationIssues = stash($('generation-issues'));

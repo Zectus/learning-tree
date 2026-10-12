@@ -1,5 +1,10 @@
 /* Spanish interface catalogue. Keys are the English source text. */
 const UI_ES = {
+  "Upload and import checkpoints or a filled tree": "Subir e importar registros o un árbol con contenido",
+  "Selected files import automatically. The button below imports only text pasted into the box.": "Los archivos seleccionados se importan automáticamente. El botón de abajo solo importa el texto pegado en el cuadro.",
+  "Import pasted reply": "Importar respuesta pegada",
+  "Last import: Pasted reply": "Última importación: respuesta pegada",
+  "Last import: {source}": "Última importación: {source}",
   "✨ Generate tree lessons": "✨ Generar lecciones del árbol",
   "✨ Generate lessons for this tree": "✨ Generar lecciones para este árbol",
   "Send the whole tree once. Import completed lessons together, then resume wherever the AI stopped.": "Envía el árbol completo una vez. Importa juntas las lecciones terminadas y retoma donde se detuvo la IA.",

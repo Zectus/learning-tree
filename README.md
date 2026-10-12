@@ -34,7 +34,11 @@ one complete lesson per reply. Say **Continue** in the same chat to advance usin
 the same instructions. Increase the reply size when the AI has enough output
 capacity. Upload a `.jsonl`/`.ndjson` file or paste the entire response into the
 generation panel; code fences and surrounding prose are accepted. Multiple files
-can be selected together. A complete record is saved independently:
+can be selected together and import automatically. **Import pasted reply** is
+only for the text box; it is disabled when the box is empty. Results name the
+input they describe, and canceling a file picker or an empty action preserves
+the previous result. Loading another tree clears the previous tree's receipt.
+A complete record is saved independently:
 
 ```json
 {"format":"learning-tree-lesson/v1","treeKey":"<from the work file>","id":"<node id>","content":"=== SECTION 1: Title ===\n...finished lesson..."}

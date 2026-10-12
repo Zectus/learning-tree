@@ -117,6 +117,7 @@ function loadFromJSON(obj) {
   if (problems.loop)    notes.push(`${problems.loop} link${problems.loop > 1 ? 's' : ''} that would form a loop`);
   if (problems.dupId)   notes.push(`${problems.dupId} repeated id${problems.dupId > 1 ? 's' : ''}`);
   if (notes.length) showToast(`Loaded, but ignored: ${notes.join('; ')}.`);
+  document.dispatchEvent(new CustomEvent('tree-loaded'));
   return true;
 }
 

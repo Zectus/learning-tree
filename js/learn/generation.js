@@ -146,6 +146,7 @@ function buildGenerationPacket(language, replySize = '1') {
 // subsequent records. JSONL content encodes newlines, so one line is one commit.
 function readGenerationOutput(raw) {
   const records = [], issues = [];
+  if (!String(raw).trim()) return { records, issues }; // No input is not a rejected checkpoint.
   function collect(value) {
     if (Array.isArray(value)) { value.forEach(collect); return; }
     if (value?.format === LESSON_RECORD_FORMAT) { records.push(value); return; }
@@ -228,6 +229,21 @@ function refreshGenerationStatus() {
   uiText(document.getElementById('generation-status'), `${completed} / ${tree?.nodes.length || 0} lessons ready`);
   document.getElementById('btn-download-ai-work').disabled = !tree;
   document.getElementById('generation-start-message').value = generationStartMessage();
+  refreshGenerationImportControls();
+}
+
+let generationImportBusy = false;
+function refreshGenerationImportControls() {
+  document.getElementById('btn-import-generation').disabled = generationImportBusy
+    || !document.getElementById('generation-output').value.trim();
+  document.getElementById('generation-files').disabled = generationImportBusy;
+}
+
+function clearGenerationReceipt() {
+  uiText(document.getElementById('generation-result'), '');
+  uiText(document.getElementById('generation-import-source'), '');
+  document.getElementById('generation-issues').replaceChildren();
+  document.getElementById('generation-import-details').classList.add('hidden');
 }
 
 function openGenerationModal() {
@@ -236,16 +252,16 @@ function openGenerationModal() {
   const input = document.getElementById('generation-language');
   input.value = state.language || '';
   refreshGenerationStatus();
-  uiText(document.getElementById('generation-result'), '');
-  document.getElementById('generation-import-details').classList.add('hidden');
+  clearGenerationReceipt();
   document.getElementById('generation-modal-backdrop').classList.add('open');
 }
 function closeGenerationModal() {
   document.getElementById('generation-modal-backdrop').classList.remove('open');
 }
 
-function finishGenerationImport(result) {
+function finishGenerationImport(result, source = 'Pasted reply') {
   refreshGenerationStatus();
+  uiText(document.getElementById('generation-import-source'), `Last import: ${source}`);
   uiText(document.getElementById('generation-result'), `${result.imported} lessons imported; ${result.existing} already present; ${result.rejected} rejected.`);
   const list = document.getElementById('generation-issues');
   list.replaceChildren();
@@ -274,13 +290,19 @@ document.getElementById('btn-download-ai-work').addEventListener('click', () => 
 });
 document.getElementById('btn-export-generation-tree').addEventListener('click', () => exportToJSON(true));
 document.getElementById('btn-import-generation').addEventListener('click', () => {
-  finishGenerationImport(mergeGenerationOutput(document.getElementById('generation-output').value));
+  const raw = document.getElementById('generation-output').value;
+  if (generationImportBusy || !raw.trim()) return;
+  finishGenerationImport(mergeGenerationOutput(raw));
 });
+document.getElementById('generation-output').addEventListener('input', refreshGenerationImportControls);
 document.getElementById('generation-files').addEventListener('change', async e => {
   const files = [...e.target.files];
+  e.target.value = '';
+  if (!files.length || generationImportBusy) return;
   const expectedTree = buildTreeJSON(false);
   const expectedKey = expectedTree && generationTreeKey(expectedTree);
-  e.target.value = '';
+  generationImportBusy = true;
+  refreshGenerationImportControls();
   // Read independently, then merge in selection order so repeated imports and
   // parallel worker output have deterministic, first-complete-record behavior.
   const reads = await Promise.allSettled(files.map(file => new Promise((resolve, reject) => {
@@ -289,6 +311,8 @@ document.getElementById('generation-files').addEventListener('change', async e =
     reader.onerror = reject;
     reader.readAsText(file);
   })));
+  generationImportBusy = false;
+  refreshGenerationImportControls();
   const current = buildTreeJSON(false);
   if (!current || generationTreeKey(current) !== expectedKey) {
     showToast('The tree changed while files were loading. Select them again.'); return;
@@ -300,7 +324,7 @@ document.getElementById('generation-files').addEventListener('change', async e =
     for (const key of ['imported', 'existing', 'rejected']) total[key] += result[key];
     total.issues.push(...result.issues);
   });
-  finishGenerationImport(total);
+  finishGenerationImport(total, files.map(file => file.name).join(', '));
 });
 wireCopyButton('btn-copy-generation-message', 'generation-start-message');
 onEscape(110, () => {
@@ -308,3 +332,8 @@ onEscape(110, () => {
   closeGenerationModal(); return true;
 });
 document.addEventListener('ui-language-change', refreshGenerationStatus);
+document.addEventListener('tree-loaded', () => {
+  clearGenerationReceipt();
+  document.getElementById('generation-output').value = '';
+  refreshGenerationStatus();
+});

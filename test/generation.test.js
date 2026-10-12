@@ -5,6 +5,10 @@ const { loadApp } = require('./harness');
 const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 const lesson = '=== SECTION 1: A usable idea ===\n\nAn explanation with \\( x \\), a worked use, and a fresh question.\n\n[QUESTION 1]\n[ANSWER: B]\nChoose the matching case.\n\n(A) First\n(B) Second\n(C) Third\n(D) Fourth\n(E) Fifth\n[/QUESTION]\n';
 const el = (app, id) => app.document.getElementById(id);
+function paste(app, raw) {
+  el(app, 'generation-output').value = raw;
+  el(app, 'generation-output').dispatchEvent(new app.window.Event('input', { bubbles: true }));
+}
 function loadTree(app, fixture = 'mini-tree.json') {
   app.window.__tree = app.fixture(fixture);
   assert.equal(app.ev('loadFromJSON(JSON.parse(__tree))'), true);
@@ -203,7 +207,7 @@ test('generation panel downloads one packet, imports pasted output, checkpoints 
     assert.equal(filename, 'mini-ai-work.json');
     const text = await new Promise(resolve => { const reader = new app.window.FileReader(); reader.onload = e => resolve(e.target.result); reader.readAsText(downloaded); });
     assert.equal(JSON.parse(text).queue.length, 3);
-    el(app, 'generation-output').value = record(app, 'a') + '\n{"format":"cut off';
+    paste(app, record(app, 'a') + '\n{"format":"cut off');
     el(app, 'btn-import-generation').click();
     assert.equal(el(app, 'generation-status').textContent, '2 / 4 lessons ready');
     assert.match(el(app, 'generation-result').textContent, /1 lessons imported.*1 rejected/);
@@ -218,7 +222,7 @@ test('generation panel downloads one packet, imports pasted output, checkpoints 
     assert.match(el(app, 'generation-status').textContent, /2 \/ 4 lecciones disponibles/);
     assert.match(el(app, 'generation-start-message').value, /Lee el archivo/);
     // Error details retranslate as app-owned text, while ids and lesson content stay intact.
-    el(app, 'generation-output').value = record(app, 'unknown');
+    paste(app, record(app, 'unknown'));
     el(app, 'btn-import-generation').click();
     assert.match(el(app, 'generation-issues').textContent, /unknown: el registro señala un tema desconocido/);
     app.ev("setUILanguage('en')");
@@ -246,6 +250,68 @@ test('multiple worker files import together and a tree switch during reads canno
   } finally { app.window.close(); }
 });
 
+test('the real AI checkpoint reports 29 imports and empty paste or canceled uploads cannot replace that receipt', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app, 'quantum-tree.json'); await tick();
+    app.ev('openGenerationModal()');
+    const input = el(app, 'generation-files');
+    const file = new app.window.File([app.fixture('quantum-checkpoint.json')], 'quantum_mechanics-checkpoint.json');
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    input.dispatchEvent(new app.window.Event('change'));
+    assert.equal(input.disabled, true);
+    assert.equal(el(app, 'btn-import-generation').disabled, true);
+    for (let i = 0; i < 50 && !el(app, 'generation-result').textContent; i++) await tick();
+    const receipt = '29 lessons imported; 0 already present; 0 rejected.';
+    assert.equal(el(app, 'generation-result').textContent, receipt);
+    assert.equal(el(app, 'generation-status').textContent, '29 / 95 lessons ready');
+    assert.equal(el(app, 'generation-import-source').textContent, 'Last import: quantum_mechanics-checkpoint.json');
+    assert.equal(el(app, 'generation-issues').children.length, 0);
+    assert.equal(el(app, 'generation-import-details').classList.contains('hidden'), true);
+    assert.equal(app.ev('buildGenerationPacket().queue.length'), 66);
+    assert.equal(el(app, 'btn-import-generation').disabled, true);
+    // Exercise both the disabled button and the defensive handler guard.
+    el(app, 'btn-import-generation').click();
+    el(app, 'btn-import-generation').dispatchEvent(new app.window.Event('click'));
+    Object.defineProperty(input, 'files', { configurable: true, value: [] });
+    input.dispatchEvent(new app.window.Event('change')); await tick();
+    assert.equal(el(app, 'generation-result').textContent, receipt);
+    assert.equal(el(app, 'generation-issues').children.length, 0);
+    paste(app, ' \n\t');
+    assert.equal(el(app, 'btn-import-generation').disabled, true);
+    assert.equal(el(app, 'generation-result').textContent, receipt);
+    // Re-imports describe existing lessons accurately; they do not regenerate.
+    Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+    input.dispatchEvent(new app.window.Event('change'));
+    for (let i = 0; i < 50 && input.disabled; i++) await tick();
+    assert.equal(el(app, 'generation-result').textContent, '0 lessons imported; 29 already present; 0 rejected.');
+    assert.equal(app.ev('buildGenerationPacket().completed.length'), 29);
+    const stored = JSON.parse(app.window.localStorage.getItem('tree-library'));
+    assert.equal(Object.values(stored)[0].data.nodes.filter(n => n.content).length, 29);
+  } finally { app.window.close(); }
+});
+
+test('paste results are separate from file results and another tree cannot inherit old import errors', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app); await tick(); app.ev('openGenerationModal()');
+    assert.equal(el(app, 'btn-import-generation').disabled, true);
+    paste(app, record(app, 'unknown'));
+    assert.equal(el(app, 'btn-import-generation').disabled, false);
+    el(app, 'btn-import-generation').click();
+    assert.equal(el(app, 'generation-import-source').textContent, 'Last import: Pasted reply');
+    assert.match(el(app, 'generation-issues').textContent, /unknown topic/);
+    app.ev("setUILanguage('es')");
+    assert.equal(el(app, 'generation-import-source').textContent, 'Última importación: respuesta pegada');
+    app.ev("loadFromJSON({topic:'Other',nodes:[{id:'other',label:'Other'}]})");
+    assert.equal(el(app, 'generation-result').textContent, '');
+    assert.equal(el(app, 'generation-import-source').textContent, '');
+    assert.equal(el(app, 'generation-issues').children.length, 0);
+    assert.equal(el(app, 'generation-output').value, '');
+    assert.equal(el(app, 'btn-import-generation').disabled, true);
+  } finally { app.window.close(); }
+});
+
 test('Spanish batch rules reuse the Spanish template and lesson language remains independently editable', () => {
   const app = loadApp();
   try {
@@ -270,7 +336,7 @@ test('an imported checkpoint keeps a local cloud outbox backup when sync fails',
     loadTree(app); await tick();
     app.window.cloud = { setLibraryEntry: async () => { throw new Error('Offline'); } };
     app.ev("state.accountUser={uid:'checkpoint-user'}; librarySource='cloud'; openGenerationModal()");
-    el(app, 'generation-output').value = record(app, 'a');
+    paste(app, record(app, 'a'));
     el(app, 'btn-import-generation').click();
     await tick();
     const outbox = JSON.parse(app.window.localStorage.getItem('tree-library-exit-checkpoint-user'));
@@ -288,7 +354,7 @@ test('blocked browser storage reports the failed checkpoint while a usable expor
     el(app, 'tutorial-skip').click(); await tick();
     loadTree(app); await tick();
     app.ev('openGenerationModal()');
-    el(app, 'generation-output').value = record(app, 'a');
+    paste(app, record(app, 'a'));
     el(app, 'btn-import-generation').click();
     assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), lesson);
     assert.equal(app.ev('buildTreeJSON(true).nodes.find(n=>n.id === "a").content'), lesson);
@@ -302,7 +368,7 @@ test('tutorial sample imports never replace real checkpoint output or saved-tree
     loadTree(app); await tick();
     app.ev('openGenerationModal()');
     const raw = record(app, 'a') + '\n{"format":"unfinished';
-    el(app, 'generation-output').value = raw;
+    paste(app, raw);
     el(app, 'btn-import-generation').click();
     el(app, 'generation-import-details').open = true;
     const issues = el(app, 'generation-issues').firstChild;
