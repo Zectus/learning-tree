@@ -127,10 +127,10 @@ Solo cuando el mapa sea sólido, en tu razonamiento o en notas de trabajo, escri
 
 ${fromFile ? 'Ahora lee los archivos adjuntos y diseña un árbol con este formato exacto para lo que enseñan.' : `Ahora diseña un árbol con este formato exacto para: ${topic}`}`;
 }
-function renderNodePromptEs({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, language, sectionKeyword = 'SECTION' }) {
+function renderNodePromptEs({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, language, sectionKeyword = 'SECTION', deliveryInstruction }) {
   return `Vas a producir una lección de texto plano (.txt) para el tema: ${topic}
 
-Entrégala como archivo descargable llamado ${nodeId}.txt: así queda claro a qué nodo pertenece cuando el árbol tiene muchos. Realiza la planificación, redacción y comprobación en tu razonamiento; tu salida visible debe contener únicamente el archivo, sin introducción, resumen ni comentarios antes o después.
+${deliveryInstruction || `Entrégala como archivo descargable llamado ${nodeId}.txt: así queda claro a qué nodo pertenece cuando el árbol tiene muchos. Realiza la planificación, redacción y comprobación en tu razonamiento; tu salida visible debe contener únicamente el archivo, sin introducción, resumen ni comentarios antes o después.`}
 
 Escribe para un estudiante medio que encuentra el material de este nodo por primera vez y tiene los conocimientos descritos en CONTEXTO. La lección debe ayudarle a comprender la idea y usarla al nivel previsto. La corrección matemática y un formato legible son necesarios, pero también lo son la motivación, los ejemplos accesibles y una secuencia manejable. Planifica antes de redactar y deja que la longitud siga al objetivo de aprendizaje.
 

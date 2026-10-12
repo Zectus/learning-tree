@@ -56,10 +56,10 @@
       lines), never a named topic (see rule 1). The graph syntax is
       parsed by parseGraphBody in tools.js; the two must stay in sync.
 ═══════════════════════════════════════════════════════════ */
-function renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, sectionKeyword = 'SECTION' }) {
+function renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, sectionKeyword = 'SECTION', deliveryInstruction }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
 
-Deliver this as a downloadable file named ${nodeId}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.
+${deliveryInstruction || `Deliver this as a downloadable file named ${nodeId}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.`}
 
 Write for an average student encountering this node's material for the first time, with the background described in CONTEXT. The lesson should help them make sense of the idea and use it at the intended level. Mathematical correctness and readable markup are necessary, but so are motivation, accessible examples, and a manageable sequence. Plan the lesson before drafting; let its length follow the learning goal.
 

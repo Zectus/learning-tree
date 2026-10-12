@@ -38,7 +38,7 @@ Your answer is saved with this topic. Answering every regular question completes
     { name: 'Import the result', title: 'Upload your tree', text: 'Upload the .json file the chatbot gives you. Here, Next opens an example.', phase: 'tree', target: uploadTree, allow: uploadTree, advance: uploadTree, substitute: true },
     { name: 'Tree and navigation', title: 'Explore your tree', text: 'Green is complete, blue is available, and faded is locked. Arrows show prerequisites. Drag to pan; scroll or pinch to zoom.', target: '#canvas', allow: '#canvas', map: true, nextLabel: 'Choose a topic →' },
     { name: 'Choose a topic', title: 'Open a topic', text: 'Click a blue topic to learn. Complete its prerequisites to unlock the topics that follow.', target: nodeSelector, allow: nodeSelector, advance: nodeSelector, show: () => demoNode().click() },
-    { name: 'Lesson prompt', title: 'Get a lesson', text: 'Choose a language, copy this prompt into an AI chatbot, then upload its .txt response below. Try lesson opens an example without a file.', phase: 'learn', target: '#modal-backdrop .modal-body', allow: '#node-language-input, #prompt-box, #btn-copy-prompt', show: () => openViewer(t(demoLesson), 2), nextLabel: 'Try lesson →' },
+    { name: 'Generate lessons', title: 'Generate tree lessons', text: 'Attach one AI work file in a chatbot: the lesson rules appear once for the whole tree. Import completed lessons together, even after a cut-off reply. A fresh work file resumes missing lessons. Try lesson imports this prepared example.', phase: 'generation', target: '#generation-modal-backdrop .modal-body', allow: '#generation-language, #generation-reply-size, #generation-start-message, #btn-copy-generation-message, #generation-output, #btn-import-generation', advance: '#btn-import-generation', show: () => click('btn-import-generation'), nextLabel: 'Try lesson →' },
     { name: 'Try a question', title: 'Answer a question', text: 'Choose an answer. Lessons can also include interactive tables, timelines, equations, and graphs.', phase: 'lesson', target: '#sv-body .q-card', allow: '#sv-body .q-opt', advance: '#sv-body .q-opt', show: () => $('sv-body').querySelector('.q-opt[data-letter="' + viewer.questions.get(1).correct + '"]').click() },
     { name: 'Feedback and progress', title: 'Track your progress', text: 'Answer every regular question to complete a topic. A perfect score isn’t required; bonus practice is optional.', phase: 'answered', target: '#sv-score, #sv-progress-wrap', allow: '#sv-body', nextLabel: 'Notes →' },
     { name: 'Open notes', title: 'Keep your own notes', text: 'Click Notes to write reminders beside the lesson. Notes and lesson progress save automatically.', phase: 'answered', target: '#btn-toggle-notes', allow: '#btn-toggle-notes', advance: '#btn-toggle-notes', show: () => click('btn-toggle-notes') },
@@ -63,7 +63,7 @@ Your answer is saved with this topic. Answering every regular question completes
     4: 'Upload the chatbot’s .json here to build your tree. Tap Next to load our sample tree.',
     5: 'Drag to explore; pinch to zoom. Green topics are complete, blue topics are ready, and faded topics need prerequisites.',
     6: 'Tap the blue topic to get a lesson. You can also tap Next to open it for you.',
-    7: 'Copy the prompt into an AI chatbot, then upload its .txt lesson here. Tap Try lesson to use our sample without a file.',
+    7: 'Send one AI work file for the whole tree. Import finished lessons even if the reply cuts off, then resume missing ones. Tap Try lesson to import our prepared sample.',
     8: 'Tap an answer to try the quiz. Your answers save as you go.',
     10: 'Tap Notes to write or draw something you want to remember.',
     11: 'Try writing a note, or tap Draw to sketch. Edit tree closes the lesson and returns to the tree to try editing.',
@@ -121,7 +121,10 @@ Your answer is saved with this topic. Answering every regular question completes
       if (resetSample || !$('tree-topic-input').value) { $('tree-topic-input').value = t('Learning something new'); $('tree-language-input').value = ''; }
       openTreeModal(); if (phase === 'file') setTreeMode('file');
     }
-    if (phase === 'learn') openLearnModal(2);
+    if (phase === 'generation') {
+      openGenerationModal();
+      $('generation-output').value = JSON.stringify({ format: LESSON_RECORD_FORMAT, treeKey: generationTreeKey(buildTreeJSON(false)), id: 'next', content: t(demoLesson) });
+    }
     if (['lesson', 'answered', 'notes'].includes(phase)) {
       if (phase !== 'lesson') state.nodes.get(2)._sessionAnswers = { 1: demoAnswer || 'A' };
       openViewer(t(demoLesson), 2);
@@ -300,12 +303,12 @@ Your answer is saved with this topic. Answering every regular question completes
       uiLanguage, drawingTool, drawingGesture, notesOffset: { ...notesOffset },
       attrs: [...document.body.querySelectorAll('*'), document.body].map(el => ({ el,
         className: el.getAttribute('class'), style: el.getAttribute('style'), aria: el.getAttribute('aria-modal'),
-        hidden: el.hidden, selected: el.getAttribute('aria-selected'), pressed: el.getAttribute('aria-pressed'), disabled: el.disabled, uiSource: el.getAttribute('data-ui-text'), uiAttrs: el.getAttribute('data-ui-attrs'),
+        hidden: el.hidden, open: el.open, selected: el.getAttribute('aria-selected'), pressed: el.getAttribute('aria-pressed'), disabled: el.disabled, uiSource: el.getAttribute('data-ui-text'), uiAttrs: el.getAttribute('data-ui-attrs'),
         value: 'value' in el && !['file', 'password'].includes(el.type) ? el.value : undefined,
-        text: ['btn-mode', 'menu-reset-progress', 'btn-save-current-tree', 'library-modal-meta', 'tree-modal-meta', 'prompt-box', 'btn-copy-prompt', 'btn-copy-tree-prompt', 'btn-copy-tree-file-prompt', 'sv-topic', 'sv-score'].includes(el.id) ? el.textContent : undefined
+        text: ['btn-mode', 'menu-reset-progress', 'btn-save-current-tree', 'library-modal-meta', 'tree-modal-meta', 'prompt-box', 'btn-copy-prompt', 'btn-copy-tree-prompt', 'btn-copy-tree-file-prompt', 'sv-topic', 'sv-score', 'generation-status', 'generation-result', 'btn-copy-generation-message'].includes(el.id) ? el.textContent : undefined
       }))
     };
-    saved.world = stash(world); saved.svg = stash(svgWorld); saved.body = stash($('sv-body')); saved.checkpoints = stash($('sv-progress-checkpoints')); saved.libraryDOM = stash($('library-grid')); saved.drawingDOM = stash(drawingPad); saved.editorLinks = stash($('node-editor-links'));
+    saved.world = stash(world); saved.svg = stash(svgWorld); saved.body = stash($('sv-body')); saved.checkpoints = stash($('sv-progress-checkpoints')); saved.libraryDOM = stash($('library-grid')); saved.drawingDOM = stash(drawingPad); saved.editorLinks = stash($('node-editor-links')); saved.generationIssues = stash($('generation-issues'));
     drawingGesture = null; Object.assign(notesOffset, { x: 0, y: 0 });
     edgeEls.clear(); libraryCache = {};
     for (const key of ['nodes', 'prereqs', 'dependents']) state[key] = new Map();
@@ -327,17 +330,19 @@ Your answer is saved with this topic. Answering every regular question completes
     $('sv-body').replaceChildren(saved.body); $('sv-progress-checkpoints').replaceChildren(saved.checkpoints);
     $('library-grid').replaceChildren(saved.libraryDOM); drawingPad.replaceChildren(saved.drawingDOM);
     $('node-editor-links').replaceChildren(saved.editorLinks);
+    $('generation-issues').replaceChildren(saved.generationIssues);
     drawingTool = saved.drawingTool; drawingGesture = saved.drawingGesture; Object.assign(notesOffset, saved.notesOffset);
     Object.assign(state, saved.tree); Object.assign(viewer, saved.viewer); libraryCache = saved.library;
     edgeEls.clear(); saved.edges.forEach((path, key) => edgeEls.set(key, path));
     _modalNodeId = saved.modalNode; svUserPositioned = saved.positioned;
     mobileEditId = saved.editorNode;
     editorPrerequisites.open = saved.editorPrerequisitesOpen;
-    saved.attrs.forEach(({ el, className, style, aria, value, text, hidden, selected, pressed, disabled, uiSource, uiAttrs }) => {
+    saved.attrs.forEach(({ el, className, style, aria, value, text, hidden, open, selected, pressed, disabled, uiSource, uiAttrs }) => {
       for (const [attr, val] of [['class', className], ['style', style], ['aria-modal', aria], ['aria-selected', selected], ['aria-pressed', pressed], ['data-ui-text', uiSource], ['data-ui-attrs', uiAttrs]]) {
         if (val === null) el.removeAttribute(attr); else el.setAttribute(attr, val);
       }
       if (hidden !== undefined) el.hidden = hidden;
+      if (open !== undefined) el.open = open;
       if (disabled !== undefined) el.disabled = disabled;
       if (value !== undefined && el.type !== 'file') el.value = value;
       if (text !== undefined) el.textContent = text;

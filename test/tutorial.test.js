@@ -71,7 +71,7 @@ test('Next demonstrates the whole real workflow without requiring generation or 
     await next(app); await next(app); // sample import
     assert.equal(el(app, 'tree-modal-backdrop').classList.contains('open'), false);
     await next(app); await next(app);
-    assert.equal(el(app, 'modal-backdrop').classList.contains('open'), true);
+    assert.equal(el(app, 'generation-modal-backdrop').classList.contains('open'), true);
     await next(app);
     assert.equal(el(app, 'session-viewer').classList.contains('sv-open'), true);
     assert.equal(app.ev('viewer.total'), 1);
@@ -114,7 +114,7 @@ test('highlighted controls perform actual actions; upload uses the prepared samp
     await jump(app, 6);
     app.ev('state.nodes.get(2).el.click()'); await tick();
     assert.equal(stepIndex(app), 7);
-    assert.equal(el(app, 'modal-backdrop').classList.contains('open'), true);
+    assert.equal(el(app, 'generation-modal-backdrop').classList.contains('open'), true);
     await next(app);
     app.document.querySelector('#sv-body .q-opt').click(); await tick();
     assert.equal(stepIndex(app), 9);

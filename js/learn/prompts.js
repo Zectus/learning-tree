@@ -89,6 +89,7 @@ function openLearnModal(id) {
   if (!node) return;
 
   _modalNodeId = id;
+  document.getElementById('single-lesson-controls').open = state.tutorialActive;
   const languageInput = document.getElementById('node-language-input');
   // Prefill with the tree's language, but only over a blank field or a value we
   // put there ourselves — so a language typed by hand survives, while the
@@ -101,7 +102,7 @@ function openLearnModal(id) {
   const prompt = buildPrompt(id, languageInput.value.trim());
 
   document.getElementById('modal-title').textContent = node.label;
-  uiText(document.getElementById('modal-meta'), `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · copy prompt → paste into an AI chatbot → upload the .txt file`);
+  uiText(document.getElementById('modal-meta'), `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · generate tree lessons to get started`);
   document.getElementById('prompt-box').value = prompt;
   resetCopyButton('btn-copy-prompt');
   document.getElementById('modal-backdrop').classList.add('open');

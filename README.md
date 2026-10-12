@@ -16,10 +16,64 @@ python3 -m http.server 8000     # or any static server
 ## How it's used
 
 1. **Tree ▾ → New tree** gives you a prompt to paste into an AI chatbot (from a topic, or with a file attached). Upload the `.json` it produces.
-2. Click an available node: **the learn modal** gives you a prompt for that node's lesson. Upload the `.txt` it produces to open the session viewer and answer the questions.
+2. **Tree ▾ → Generate tree lessons** downloads one AI work file with the tree, shared lesson rules, and a prerequisite-ordered queue. Attach it in an AI chat with the short message shown in the panel. Import its lesson checkpoints together, even from an interrupted response. Download a fresh work file to resume only missing lessons.
 3. **📚 My Trees** saves whole trees (with their lessons) in this browser, or in your account when signed in.
 
 Lesson files mark each question's correct option inline with `[ANSWER: X]`.
+
+## Generating and resuming lessons
+
+The work file contains the full tree structure and the teaching prompt **once**.
+It omits existing lesson text, quiz answers, notes, and personal progress to keep
+the input smaller. The generation queue follows prerequisites, prioritizes
+required topics, and continues a ready learning path before unrelated roots.
+A lesson being generated does not mark its topic learned or unlock it.
+
+Free chats need no API, file tools, subscription, or subagents. The default is
+one complete lesson per reply. Say **Continue** in the same chat to advance using
+the same instructions. Increase the reply size when the AI has enough output
+capacity. Upload a `.jsonl`/`.ndjson` file or paste the entire response into the
+generation panel; code fences and surrounding prose are accepted. Multiple files
+can be selected together. A complete record is saved independently:
+
+```json
+{"format":"learning-tree-lesson/v1","treeKey":"<from the work file>","id":"<node id>","content":"=== SECTION 1: Title ===\n...finished lesson..."}
+```
+
+Each JSONL record occupies **one physical line**. A JSON serializer escapes the
+lesson's newlines, quotes, and LaTeX backslashes; the imported lesson keeps its
+original text. A cut-off or malformed line is ignored while complete records
+before and after it are recovered. No enclosing array or final closing marker
+is needed. The current unfinished lesson cannot be recovered, nor can content
+the AI has not yet published or saved. Start the next attempt from the last
+complete checkpoint rather than asking the AI to finish a broken JSON line.
+
+AIs with file tools are instructed to append/save and expose the journal after
+each lesson, and continue while able. They may also keep an atomically updated
+whole-tree JSON. On a resumed job, the work file omits earlier lesson text;
+merge the new records into the original tree and export from the app to retain
+all previous content. AIs with subagents can generate a small wave of independent
+branches; one coordinator validates and checkpoints each result immediately,
+and descendants wait for their prerequisites. The app accepts the same records
+from either workflow, including worker output received out of order.
+
+Imports merge only completed lesson text into the **currently loaded tree**;
+they preserve answers, notes, completion flags, viewport, and library identity.
+Existing valid lessons are kept, making repeated/overlapping imports safe. A
+tree identity rejects output for a different structure or edited scope. Lesson
+validation checks headings, closed blocks, unique question numbers, answer keys,
+and options; it does not assess subject accuracy or teaching quality. Intact
+structure + content JSON from the AI is also accepted when its structure matches.
+Use **Load JSON** to open a different tree instead.
+
+After an import, the app immediately checkpoints the updated tree to My Trees
+using its existing local save/cloud outbox. Storage failures are reported; use
+**Download tree with completed lessons** to keep an independent usable backup.
+For another AI or a fresh chat, download the work file again: finished lessons
+are listed as completed and only missing ones remain in the queue. The full
+content export still uses the existing tree JSON schema, so older trees and
+lessons remain compatible. Single-node prompt/TXT controls remain available
+under **Single lesson / legacy TXT** in the learn dialog.
 
 ## Interface language
 

@@ -8,7 +8,7 @@
    Loads last, after every modal's markup and script exists.
 ═══════════════════════════════════════════════════════════ */
 (function () {
-  const FOCUSABLE = 'button:not([disabled]), input:not([disabled]):not([type="file"]):not([type="hidden"]), textarea, a[href], [tabindex]:not([tabindex="-1"])';
+  const FOCUSABLE = 'button:not([disabled]), input:not([disabled]):not([type="file"]):not([type="hidden"]), select:not([disabled]), summary, textarea, a[href], [tabindex]:not([tabindex="-1"])';
   const backdrops = [...document.querySelectorAll('.modal-backdrop')];
   const viewerEl  = document.getElementById('session-viewer');
   const isOpen    = el => el.classList.contains('open') || el.classList.contains('sv-open');

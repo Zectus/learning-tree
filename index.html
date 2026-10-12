@@ -84,6 +84,7 @@ try {
     <button class="tbtn" id="btn-tree-menu"><span data-ui-text="Tree ▾">Tree ▾</span></button>
     <div class="dropdown-menu" id="tree-menu" role="menu">
       <button class="dropdown-item" id="menu-new-tree" role="menuitem"><span data-ui-text="🌱 New tree">🌱 New tree</span></button>
+      <button class="dropdown-item" id="menu-generate-lessons" role="menuitem"><span data-ui-text="✨ Generate tree lessons">✨ Generate tree lessons</span></button>
       <label class="dropdown-item" id="menu-load-json" role="menuitem"><span data-ui-text="📂 Load JSON">📂 Load JSON</span>
         <input type="file" id="file-input" accept=".json" style="display:none">
       </label>
@@ -176,6 +177,10 @@ try {
       <button id="modal-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs="{&quot;title&quot;: &quot;Close&quot;, &quot;aria-label&quot;: &quot;Close&quot;}">✕</button>
     </div>
     <div class="modal-body">
+      <button id="btn-generate-tree-lessons" class="btn" data-ui-text="✨ Generate lessons for this tree">✨ Generate lessons for this tree</button>
+      <p class="tree-mode-file-help" data-ui-text="Send the whole tree once. Import completed lessons together, then resume wherever the AI stopped.">Send the whole tree once. Import completed lessons together, then resume wherever the AI stopped.</p>
+      <details id="single-lesson-controls">
+      <summary class="field-label" data-ui-text="Single lesson / legacy TXT">Single lesson / legacy TXT</summary>
       <div class="field-row">
         <label class="field-label" for="node-language-input"><span data-ui-text="Language (optional)">Language (optional)</span></label>
         <input type="text" id="node-language-input" class="field-input" placeholder="Leave blank for English" data-ui-attrs="{&quot;placeholder&quot;: &quot;Leave blank for English&quot;}">
@@ -188,6 +193,70 @@ try {
         <span data-ui-text="📄 Upload .txt session to open viewer">📄 Upload .txt session to open viewer</span>
         <input type="file" id="session-file-input" accept=".txt" style="display:none">
       </label>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- Whole-tree generation: one shared work file, recoverable lesson checkpoints. -->
+<div id="generation-modal-backdrop" class="modal-backdrop">
+  <div class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="generation-title">
+    <div class="modal-header-bar">
+      <div>
+        <div id="generation-title" class="modal-title" data-ui-text="Generate tree lessons">Generate tree lessons</div>
+        <div id="generation-status" class="modal-meta" aria-live="polite"></div>
+      </div>
+      <button id="generation-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs='{"title":"Close","aria-label":"Close"}'>✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="generation-help" data-ui-text="Works with free AI chats. Completed lessons survive a cut-off reply; only the unfinished lesson needs another attempt.">Works with free AI chats. Completed lessons survive a cut-off reply; only the unfinished lesson needs another attempt.</p>
+      <div class="generation-fields">
+        <div>
+          <label for="generation-language" class="field-label" data-ui-text="Language (optional)">Language (optional)</label>
+          <input id="generation-language" class="field-input" placeholder="Use tree language" data-ui-attrs='{"placeholder":"Use tree language"}'>
+        </div>
+        <div>
+          <label for="generation-reply-size" class="field-label" data-ui-text="Lessons per chat reply">Lessons per chat reply</label>
+          <select id="generation-reply-size" class="field-input">
+            <option value="1" data-ui-text="1 — safest for limited usage">1 — safest for limited usage</option>
+            <option value="3" data-ui-text="Up to 3">Up to 3</option>
+            <option value="auto" data-ui-text="As many as fit">As many as fit</option>
+          </select>
+        </div>
+      </div>
+      <div class="generation-step">
+        <h3 data-ui-text="1. Download the AI work file">1. Download the AI work file</h3>
+        <p class="generation-help" data-ui-text="It contains the tree, the lesson rules once, and a queue of missing lessons. Existing lesson text and your personal progress are left out.">It contains the tree, the lesson rules once, and a queue of missing lessons. Existing lesson text and your personal progress are left out.</p>
+        <button id="btn-download-ai-work" class="btn" data-ui-text="Download AI work file">Download AI work file</button>
+      </div>
+      <div class="generation-step">
+        <h3 data-ui-text="2. Attach it in an AI chat and send this message">2. Attach it in an AI chat and send this message</h3>
+        <div class="prompt-wrap">
+          <textarea id="generation-start-message" class="prompt-ta generation-message" readonly spellcheck="false" aria-label="AI start message" data-ui-attrs='{"aria-label":"AI start message"}'></textarea>
+          <button id="btn-copy-generation-message" class="copy-btn" data-ui-text="Copy">Copy</button>
+        </div>
+        <p class="generation-help" data-ui-text="In the same chat, say Continue for the next lessons. AIs with file tools can keep working and checkpoint after every lesson; subagents can work on independent branches.">In the same chat, say Continue for the next lessons. AIs with file tools can keep working and checkpoint after every lesson; subagents can work on independent branches.</p>
+      </div>
+      <div class="generation-step">
+        <h3 data-ui-text="3. Import the AI output, even if it stopped midway">3. Import the AI output, even if it stopped midway</h3>
+        <label class="upload-dropzone">
+          <span data-ui-text="Upload lesson checkpoints or a filled tree">Upload lesson checkpoints or a filled tree</span>
+          <input id="generation-files" type="file" accept=".jsonl,.ndjson,.json,.txt" multiple style="display:none">
+        </label>
+        <label for="generation-output" class="field-label" data-ui-text="Or paste the whole reply, including any cut-off ending">Or paste the whole reply, including any cut-off ending</label>
+        <textarea id="generation-output" class="prompt-ta generation-output" spellcheck="false"></textarea>
+        <button id="btn-import-generation" class="btn" data-ui-text="Import completed lessons">Import completed lessons</button>
+        <p id="generation-result" class="generation-help" role="status"></p>
+        <details id="generation-import-details" class="hidden">
+          <summary data-ui-text="Import details">Import details</summary>
+          <ul id="generation-issues"></ul>
+        </details>
+      </div>
+      <div class="generation-step">
+        <h3 data-ui-text="Resume or keep a usable copy">Resume or keep a usable copy</h3>
+        <p class="generation-help" data-ui-text="Download a fresh AI work file for a new chat: it queues only missing lessons. Export structure + content to keep the whole tree with every lesson imported so far.">Download a fresh AI work file for a new chat: it queues only missing lessons. Export structure + content to keep the whole tree with every lesson imported so far.</p>
+        <button id="btn-export-generation-tree" class="btn" data-ui-text="Download tree with completed lessons">Download tree with completed lessons</button>
+      </div>
     </div>
   </div>
 </div>
@@ -407,6 +476,7 @@ try {
 <script src="js/persistence/library.js"></script>
 <script src="js/persistence/account.js"></script>
 <script src="js/learn/viewer.js"></script>
+<script src="js/learn/generation.js"></script>
 <script src="js/core/a11y.js"></script>
 <script src="js/core/tutorial.js"></script>
 <!-- Firebase wiring, as a module. Modules always run after every classic script
