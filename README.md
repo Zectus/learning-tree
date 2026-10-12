@@ -96,3 +96,30 @@ The suite loads `index.html` and every app script into jsdom in page order, so i
 ## Firebase
 
 `js/persistence/cloud.js` contains the project's client config. That config is not a secret; what protects the data is the database's security rules. They should restrict `users/$uid` to `auth.uid === $uid` and allow `usernames/$key` to be written only when it doesn't already exist (see the header of `cloud.js`).
+
+### Filled graph regions
+
+In a lesson's `[GRAPH]` block, `function2d` supports repeatable `fill` lines:
+
+```text
+[GRAPH]
+type: function2d
+xrange: 0, 2
+trace: x+1 | label: Upper curve
+trace: x^2 | label: Lower curve
+fill: x+1, x^2 | range: 0, 1 | label: Area between curves | color: #2d70b3 | opacity: 0.22
+[/GRAPH]
+```
+
+The first two expressions describe the boundaries; use `0` for the horizontal
+axis or constants for rectangles. `range` supplies the horizontal endpoints.
+Expressions and endpoints can use graph sliders. Color, label, and opacity
+(0–1, default 0.22) are optional. Regions appear behind curves and marks and
+participate in automatic vertical fitting. Add traces separately for outlines.
+Split regions at crossings or sign changes when separate labels/colors help
+explain signed accumulation. Filled paths are sampled illustrations; use finite,
+continuous boundaries on the chosen intervals.
+
+[examples/spanishcalc.json](examples/spanishcalc.json) is an importable Spanish
+calculus tree with shaded Riemann rectangles, signed integral contributions,
+and an accumulation strip controlled by a slider.

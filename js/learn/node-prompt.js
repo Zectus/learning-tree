@@ -189,6 +189,10 @@ point: 2, 2*s | label: P
 segment: 0, 0, 2, 2*s | dashed: true
 slider: s | range: -3, 3 | init: 1 | step: 0.1
 [/GRAPH]
+  function2d also supports filled regions, repeatable within a block:
+fill: upper_expression, lower_expression | range: start, end | label: caption | color: optional | opacity: 0.22
+  Both boundaries use x and calculator notation; write 0 for the horizontal axis, or constants for rectangle heights. The required range gives the horizontal endpoints. Boundaries and endpoints may use sliders and update as they move. label, color and opacity are optional; opacity is between 0 and 1. Fill is behind curves and marks. Draw the boundary traces separately when their outlines matter. Use fills for areas under or between curves, signed contributions, Riemann rectangles, and accumulation strips. Split at crossings or sign changes and use separate colors and labels when the distinction matters; shading itself is geometric and does not encode the sign of an integral. Sampling does not prove continuity or detect every discontinuity, so choose intervals where the boundaries are finite and continuous. Do not use fill with parametric2d, vectorfield2d or surface3d.
+
   Expressions are self-contained: there are no user-defined functions, so a quantity built from another curve is written out in full, in terms of x (or t) and the slider names.
 
   A graph is part of the exposition, so it follows the same rules as the prose around it. It may show the instances the text works through and the general shape of the objects involved; it must not plot the specific object a nearby question asks about, mark that question's answer, or otherwise do the reader's work for it. It should earn its place: take the graph away and the surrounding prose should lose something. Mark the points the prose actually computes with, draw the segments the prose names, and use a slider when the prose compares many members of one family. One graph per idea is plenty; don't plot the same object twice, and keep a plot to a handful of curves so it stays readable. The block sits on its own lines between paragraphs, like a table.

@@ -257,6 +257,10 @@ point: 1, a | label: punto móvil | color: red | offset: 10, -10
 segment: 0, 0, 1, a | color: blue | dashed: true
 [/GRAPH]
 
+  function2d también admite regiones rellenas; la línea puede repetirse:
+fill: expresión_superior, expresión_inferior | range: inicio, fin | label: descripción | color: opcional | opacity: 0.22
+  Las dos fronteras usan x y notación de calculadora. Usa 0 para el eje horizontal o constantes para las alturas de rectángulos. range es obligatorio y fija los extremos horizontales; las fronteras y los extremos pueden usar deslizadores y se actualizan al moverlos. label, color y opacity son opcionales; opacity va de 0 a 1. El relleno queda detrás de curvas y marcas. Añade trace para mostrar las fronteras cuando importe su contorno. Usa rellenos para áreas bajo curvas o entre ellas, contribuciones con signo, rectángulos de Riemann y franjas de acumulación. Divide en los cruces o cambios de signo y usa colores y etiquetas distintos cuando importe la diferencia: el relleno es geométrico y no determina el signo de una integral. El muestreo no demuestra continuidad ni detecta todas las discontinuidades; elige intervalos con fronteras finitas y continuas. fill no está disponible en parametric2d, vectorfield2d ni surface3d.
+
   Las expresiones son autónomas: no hay funciones definidas por el usuario. Si una cantidad se construye a partir de otra curva, escribe la expresión completa en x o t y los nombres de los deslizadores.
 
   El gráfico forma parte de la explicación y debe respetar las mismas reglas que la prosa. Puede mostrar los casos que desarrolla el texto y la forma general, pero no el objeto específico de una pregunta cercana, su respuesta ni el trabajo que corresponde al lector. Debe aportar algo: al retirarlo, el texto debería perder algo. Marca los puntos con los que se calcula, dibuja los segmentos que se nombran y usa un deslizador cuando se comparen muchos miembros de una familia. Basta un gráfico por idea; no dibujes dos veces lo mismo y limita las curvas para mantener la legibilidad. Coloca el bloque en líneas propias entre párrafos, como una tabla.
@@ -277,7 +281,7 @@ ${leadsToLine}
 
 IDIOMA
 
-Escribe todo el documento en ${language}: títulos, prosa, preguntas y opciones. El marcado estructural debe permanecer exactamente en su forma literal, en cualquier idioma: "=== SECTION N: " y el cierre "===", "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", las opciones "(A)" a "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]" y "[BONUS N]" / "[/BONUS]". Traduce los títulos y el contenido, nunca los marcadores. En los gráficos, conserva también las claves del analizador (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, label, color, z, u, v) y las expresiones matemáticas ASCII. Solo los valores legibles de title, xlabel, ylabel, zlabel y label van en ${language}.
+Escribe todo el documento en ${language}: títulos, prosa, preguntas y opciones. El marcado estructural debe permanecer exactamente en su forma literal, en cualquier idioma: "=== SECTION N: " y el cierre "===", "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", las opciones "(A)" a "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]" y "[BONUS N]" / "[/BONUS]". Traduce los títulos y el contenido, nunca los marcadores. En los gráficos, conserva también las claves del analizador (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, fill, range, opacity, point, segment, slider, label, color, z, u, v) y las expresiones matemáticas ASCII. Solo los valores legibles de title, xlabel, ylabel, zlabel y label van en ${language}.
 
 ESTRUCTURA DEL DOCUMENTO
 

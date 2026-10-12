@@ -133,16 +133,18 @@ function renderTimeline(items) {
    Types: function2d, parametric2d, surface3d, vectorfield2d.
    Keys:  type, title, xlabel, ylabel, zlabel, xrange, yrange, trange,
           aspect (optional: "equal"), z (surface3d), u / v (vectorfield2d),
-          trace / point / segment / slider (2D types only; see below).
+          trace / point / segment / slider (2D types only; see below),
+          fill (function2d only).
 
      trace:   <expression> | label: <text> | color: <optional>
               (parametric2d packs both components comma-separated)
+     fill:    <upper>, <lower> | range: <start>, <end> | label: <text> | color: <c> | opacity: 0.22
      point:   <x>, <y> | label: <text> | color: <c> | offset: <dx>, <dy>
      segment: <x1>, <y1>, <x2>, <y2> | label: <text> | color: <c> | dashed: true
      slider:  <name> | range: <min>, <max> | init: <v> | step: <s>
 
    Any coordinate or trace expression may use a slider's name as a variable;
-   moving the slider redraws the traces, points and segments that use it.
+   moving the slider redraws the traces, fills, points and segments that use it.
    (Vector fields are drawn once, at the sliders' initial values.)
 
    Libraries: 2D types are drawn with JSXGraph (Desmos-like axes, labelled
@@ -152,12 +154,12 @@ function renderTimeline(items) {
    where the host element is HTML; inside the JSXGraph board, a label that is
    one single \( ... \) span is typeset with KaTeX, any other label is shown
    as plain text with the delimiters stripped. */
-const GRAPH_LIST_KEYS = { trace: 'traces', point: 'points', segment: 'segments', slider: 'sliders' };
+const GRAPH_LIST_KEYS = { trace: 'traces', fill: 'fills', point: 'points', segment: 'segments', slider: 'sliders' };
 
 function parseGraphBody(raw) {
   const g = {
     type: 'function2d', title: '', xlabel: '', ylabel: '', zlabel: '', aspect: '',
-    traces: [], points: [], segments: [], sliders: [],
+    traces: [], fills: [], points: [], segments: [], sliders: [],
   };
   raw.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
     const m = line.match(/^(\w+):\s*(.*)$/);
@@ -279,7 +281,7 @@ const GRAPH_PALETTE = ['#2d70b3', '#c74440', '#388c46', '#6042a6', '#fa7e19', '#
 
 function renderGraph(g, id) {
   const title = g.title ? `<div class="sv-graph-title">${svEsc(g.title)}</div>` : '';
-  const legend = (g.traces.length > 1 && g.traces.some(t => t.label))
+  const legend = (g.traces.length > 1 && g.traces.some(t => t.label)) || (g.fills || []).some(f => f.label)
     ? `<div class="sv-graph-legend" id="sv-graph-legend-${id}" style="display:flex;flex-wrap:wrap;gap:4px 0;margin-top:6px;font-size:0.9em"></div>` : '';
   const controls = g.sliders.length ? `<div class="sv-graph-controls" id="sv-graph-controls-${id}"></div>` : '';
   return `<div class="sv-graph-wrap">${title}<div class="sv-graph-plot" id="sv-graph-${id}"></div>${legend}${controls}</div>`;
@@ -416,6 +418,31 @@ function mountSurface3d(g, el) {
   Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true });
 }
 
+// Close each finite run separately; never fill across an undefined sampled boundary.
+// This is a sampled illustration, not a detector of every discontinuity.
+function sampleGraphFill(fill, scope) {
+  const start = fill.start(scope), end = fill.end(scope);
+  const x = [], y = [];
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start === end) return { x, y };
+  let run = [];
+  const close = () => {
+    if (run.length > 1) {
+      const path = [...run.map(p => [p[0], p[1]]), ...run.slice().reverse().map(p => [p[0], p[2]]), [run[0][0], run[0][1]]];
+      path.forEach(p => { x.push(p[0]); y.push(p[1]); });
+      x.push(NaN); y.push(NaN);
+    }
+    run = [];
+  };
+  graphLinspace(Math.min(start, end), Math.max(start, end), GRAPH_SAMPLES_1D).forEach(v => {
+    const sc = Object.assign({}, scope, { x: v });
+    const upper = fill.upper(sc), lower = fill.lower(sc);
+    if (Number.isFinite(upper) && Number.isFinite(lower)) run.push([v, upper, lower]);
+    else close();
+  });
+  close();
+  return { x, y };
+}
+
 /* ── function2d / parametric2d / vectorfield2d (JSXGraph) ── */
 function mountBoard2d(g, el, id) {
   freeStaleBoards();
@@ -450,6 +477,15 @@ function mountBoard2d(g, el, id) {
     const [a, b, c, d] = parts.map(makeEval);
     return { s, a, b, c, d };
   });
+  const fills = (g.fills || []).map(f => {
+    if (g.type !== 'function2d') throw new Error('fill requires function2d');
+    const edges = splitTopLevelComma(f.expr);
+    const bounds = splitTopLevelComma(f.range || '');
+    if (edges.length !== 2 || bounds.length !== 2 || [...edges, ...bounds].some(s => !s))
+      throw new Error('fill needs two boundary expressions and range: start, end');
+    return { f, upper: makeEval(edges[0]), lower: makeEval(edges[1]),
+      start: makeEval(bounds[0]), end: makeEval(bounds[1]) };
+  });
 
   // Slider settings that make every trace look different: initial, plus each slider at its ends.
   const scopes = [base()];
@@ -465,6 +501,7 @@ function mountBoard2d(g, el, id) {
       curves.forEach(c => scopes.forEach(sc => xs.forEach(x => ys.push(c.f(Object.assign({}, sc, { x }))))));
       points.forEach(pt => scopes.forEach(sc => ys.push(pt.fy(sc))));
       segments.forEach(sg => scopes.forEach(sc => { ys.push(sg.b(sc), sg.d(sc)); }));
+      fills.forEach(fill => scopes.forEach(sc => ys.push(...sampleGraphFill(fill, sc).y)));
       yr = padRange(robustRange(ys));
     }
   } else if (g.type === 'parametric2d') {
@@ -517,6 +554,23 @@ function mountBoard2d(g, el, id) {
   } catch (e) { console.warn('Graph grid styling skipped:', e); }
 
   const legend = [];
+
+  // Closed sampled paths behind the axes and curves. Recompute on every slider update.
+  fills.forEach((fill, i) => {
+    const color = safeColor(fill.f.color, GRAPH_PALETTE[i % GRAPH_PALETTE.length]);
+    const rawOpacity = Number(fill.f.opacity);
+    const opacity = fill.f.opacity && Number.isFinite(rawOpacity) ? Math.max(0, Math.min(1, rawOpacity)) : 0.22;
+    const region = board.create('curve', [[], []], {
+      fillColor: color, fillOpacity: opacity, strokeWidth: 0,
+      highlight: false, fixed: true, layer: 1,
+    });
+    region.updateDataArray = function () {
+      const data = sampleGraphFill(fill, base());
+      this.dataX = data.x;
+      this.dataY = data.y;
+    };
+    if (fill.f.label) legend.push({ label: fill.f.label, color, fill: true, opacity });
+  });
 
   // Curves.
   curves.forEach((c, i) => {
@@ -599,7 +653,7 @@ function mountBoard2d(g, el, id) {
   if (leg && legend.length) {
     leg.innerHTML = legend.map(it =>
       `<span style="display:inline-flex;align-items:center;gap:6px;margin-right:16px">` +
-      `<span style="width:18px;height:3px;border-radius:2px;background:${it.color}"></span>` +
+      `<span style="width:18px;height:${it.fill ? 12 : 3}px;border-radius:2px;background:${it.color};opacity:${it.fill ? it.opacity : 1}"></span>` +
       `<span>${svEsc(it.label)}</span></span>`).join('');
     renderMath(leg);
   }
