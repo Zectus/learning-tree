@@ -68,7 +68,7 @@ fill: sqrt(x^2-0.25), 0 | range: -1, 1`);
   assert.throws(() => boardApp('type: parametric2d\nfill: x, 0 | range: 0, 1'), /function2d/);
 });
 
-test('the updated Spanish tree renders every new fill in the four revised lessons', () => {
+test('the updated Spanish tree renders every new fill in the five revised lessons', () => {
   const tree = JSON.parse(fs.readFileSync(path.join(ROOT, 'examples/spanishcalc.json'), 'utf8'));
   const ids = [];
   for (const node of tree.nodes) {
@@ -80,7 +80,11 @@ test('the updated Spanish tree renders every new fill in the four revised lesson
       const regions = objects.filter(o => o.type === 'curve' && o.attrs.fillColor);
       assert.ok(regions.length > 0);
       regions.forEach(region => assert.ok(area(region) > 0, node.id));
+      if (node.id === 'sigma_notation') {
+        const areas = regions.map(area);
+        [2, 6, 4].forEach((expected, i) => assert.ok(Math.abs(areas[i] - expected) < 1e-8));
+      }
     }
   }
-  assert.deepEqual(ids, ['riemann_sums', 'definite_integral', 'integral_properties', 'ftc_accumulation']);
+  assert.deepEqual(ids, ['sigma_notation', 'riemann_sums', 'definite_integral', 'integral_properties', 'ftc_accumulation']);
 });

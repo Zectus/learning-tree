@@ -125,7 +125,7 @@ Solo cuando el mapa sea sólido, en tu razonamiento o en notas de trabajo, escri
 
 ${fromFile ? 'Ahora lee los archivos adjuntos y diseña un árbol con este formato exacto para lo que enseñan.' : `Ahora diseña un árbol con este formato exacto para: ${topic}`}`;
 }
-function renderNodePromptEs({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, language }) {
+function renderNodePromptEs({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, language, sectionKeyword = 'SECTION' }) {
   return `Vas a producir una lección de texto plano (.txt) para el tema: ${topic}
 
 Entrégala como archivo descargable llamado ${nodeId}.txt: así queda claro a qué nodo pertenece cuando el árbol tiene muchos. Realiza la planificación, redacción y comprobación en tu razonamiento; tu salida visible debe contener únicamente el archivo, sin introducción, resumen ni comentarios antes o después.
@@ -156,9 +156,9 @@ Es un archivo .txt de texto plano. Reglas:
 - Usa párrafos normales y los marcadores de sección, pregunta, tabla, línea de tiempo y gráfico descritos abajo.
 
 Encabezados de sección:
-=== SECTION N: TÍTULO ===
+=== ${sectionKeyword} N: TÍTULO ===
 
-La primera línea del documento debe ser "=== SECTION 1: TÍTULO ===". No pongas nada antes: ni título general, oración introductoria ni párrafo de encuadre. El analizador solo lee desde ese marcador y descarta lo anterior.
+La primera línea del documento debe ser "=== ${sectionKeyword} 1: TÍTULO ===". No pongas nada antes: ni título general, oración introductoria ni párrafo de encuadre. Empieza la lección en ese marcador para que su estructura sea clara.
 
 Formato exacto de las preguntas:
 
@@ -281,7 +281,7 @@ ${leadsToLine}
 
 IDIOMA
 
-Escribe todo el documento en ${language}: títulos, prosa, preguntas y opciones. El marcado estructural debe permanecer exactamente en su forma literal, en cualquier idioma: "=== SECTION N: " y el cierre "===", "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", las opciones "(A)" a "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]" y "[BONUS N]" / "[/BONUS]". Traduce los títulos y el contenido, nunca los marcadores. En los gráficos, conserva también las claves del analizador (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, fill, range, opacity, point, segment, slider, label, color, z, u, v) y las expresiones matemáticas ASCII. Solo los valores legibles de title, xlabel, ylabel, zlabel y label van en ${language}.
+Escribe todo el documento en ${language}: títulos, prosa, preguntas y opciones. El marcado estructural debe permanecer exactamente en su forma literal, en cualquier idioma: "=== ${sectionKeyword} N: " y el cierre "===", "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", las opciones "(A)" a "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]" y "[BONUS N]" / "[/BONUS]". Traduce los títulos y el contenido, nunca los marcadores. En los gráficos, conserva también las claves del analizador (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, fill, range, opacity, point, segment, slider, label, color, z, u, v) y las expresiones matemáticas ASCII. Solo los valores legibles de title, xlabel, ylabel, zlabel y label van en ${language}.
 
 ESTRUCTURA DEL DOCUMENTO
 

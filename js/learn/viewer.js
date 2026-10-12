@@ -95,7 +95,7 @@ function parseTxtSession(raw) {
     });
   });
 
-  const parts = cleaned.split(/^===\s*SECTION\s+(\d+)[:.]\s*(.+?)\s*===/im);
+  const parts = cleaned.split(/^===\s*(?:SECTION|SECCI[OÓ]N)\s+(\d+)[:.]\s*(.+?)\s*===/im);
   // Text before the first section header would otherwise vanish; fold it into Section 1.
   const leading = (parts[0] || '').trim();
   const sections = [];
@@ -130,7 +130,7 @@ const parseBonusBody    = (n, raw) => parseChoiceBlock('B', n, raw);
 
 /* Makes an existing "Section N" mention in prose clickable (the lesson text
    refers back to earlier sections on its own; this only adds the jump). Works
-   on already-escaped text and matches only literal "Section" + number.
+   on already-escaped text and accepts English and Spanish references.
    It's a <span role="link">, not an <a href>: an anchor's default fragment
    navigation and focus-scroll fight #sv-window's fixed positioning and blew
    its layout out. The keydown handler near the bottom adds Enter/Space. */

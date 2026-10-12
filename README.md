@@ -121,5 +121,11 @@ explain signed accumulation. Filled paths are sampled illustrations; use finite,
 continuous boundaries on the chosen intervals.
 
 [examples/spanishcalc.json](examples/spanishcalc.json) is an importable Spanish
-calculus tree with shaded Riemann rectangles, signed integral contributions,
+calculus tree with shaded finite-sum and Riemann rectangles, signed integral contributions,
 and an accumulation strip controlled by a slider.
+
+Spanish lessons use `=== SECCIÓN N: Título ===` section headings. The parser also
+accepts `SECCION` and legacy `SECTION` headings, including mixed files. Prompt
+headings follow the requested lesson language, while the viewer's section and
+question labels follow the selected interface language. Question, answer, table,
+and graph block markers and graph field names keep their existing parser syntax.
