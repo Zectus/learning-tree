@@ -30,6 +30,8 @@ const UI_ES = {
   "{ready} / {total} lessons ready": "{ready} / {total} lecciones disponibles",
   "{imported} lessons imported; {existing} already present; {rejected} rejected.": "{imported} lecciones importadas; {existing} ya existentes; {rejected} rechazadas.",
   "Unrecognized checkpoint ignored.": "Se ignoró un registro desconocido.",
+  "Checkpoint identity does not match its nested tree.": "La identidad del registro no coincide con el árbol que contiene.",
+  "This work file has no lesson text to import. Ask the AI for completed lesson checkpoints.": "Este archivo de trabajo no contiene texto de lecciones para importar. Pide a la IA los registros de las lecciones terminadas.",
   "Incomplete or invalid checkpoint ignored.": "Se ignoró un registro incompleto o inválido.",
   "No complete lesson checkpoints found.": "No se encontraron registros completos de lecciones.",
   "Load a tree before importing lessons.": "Carga un árbol antes de importar lecciones.",

@@ -140,7 +140,8 @@ function buildGenerationPacket(language, replySize = '1') {
   };
 }
 
-// Accept a journal, a JSON array of records, or an intact filled tree. For
+// Accept a journal, a JSON array of records, or an intact filled tree (including
+// a work packet whose nested tree was filled by the AI). For
 // interrupted replies, parse lines independently so a bad line never consumes
 // subsequent records. JSONL content encodes newlines, so one line is one commit.
 function readGenerationOutput(raw) {
@@ -148,6 +149,18 @@ function readGenerationOutput(raw) {
   function collect(value) {
     if (Array.isArray(value)) { value.forEach(collect); return; }
     if (value?.format === LESSON_RECORD_FORMAT) { records.push(value); return; }
+    if (value?.format === WORK_PACKET_FORMAT && Array.isArray(value.tree?.nodes)) {
+      if (value.treeKey !== generationTreeKey(value.tree)) {
+        issues.push('Checkpoint identity does not match its nested tree.');
+        return;
+      }
+      if (!value.tree.nodes.some(n => typeof n?.content === 'string' && n.content.trim())) {
+        issues.push('This work file has no lesson text to import. Ask the AI for completed lesson checkpoints.');
+        return;
+      }
+      collect(value.tree);
+      return;
+    }
     if (value && Array.isArray(value.nodes)) {
       const key = generationTreeKey(value);
       value.nodes.filter(n => typeof n?.content === 'string').forEach(n => records.push({ format: LESSON_RECORD_FORMAT, treeKey: key, id: n.id, content: n.content }));

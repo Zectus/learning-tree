@@ -63,7 +63,10 @@ Existing valid lessons are kept, making repeated/overlapping imports safe. A
 tree identity rejects output for a different structure or edited scope. Lesson
 validation checks headings, closed blocks, unique question numbers, answer keys,
 and options; it does not assess subject accuracy or teaching quality. Intact
-structure + content JSON from the AI is also accepted when its structure matches.
+structure + content JSON from the AI is also accepted when its structure matches,
+including an AI work file with completed lesson text inside `tree.nodes`.
+The work file's `completed` and `queue` lists do not substitute for actual lesson
+text; its identity must match both the nested tree and the currently loaded tree.
 Use **Load JSON** to open a different tree instead.
 
 After an import, the app immediately checkpoints the updated tree to My Trees

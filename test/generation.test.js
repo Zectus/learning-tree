@@ -149,6 +149,42 @@ test('intact filled-tree JSON and record arrays merge lessons while preserving t
   } finally { app.window.close(); }
 });
 
+test('AI work-file checkpoints import nested lessons and resume from actual content', () => {
+  const app = loadApp();
+  try {
+    loadTree(app);
+    const work = packet(app);
+    work.tree.nodes.find(n => n.id === 'a').content = lesson;
+    work.completed = ['a', 'b', 'c']; // claimed completion alone must not import c
+    work.queue = ['d'];
+    const result = merge(app, JSON.stringify(work, null, 2));
+    assert.equal(result.imported, 1);
+    assert.equal(result.rejected, 0);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), lesson);
+    assert.equal(app.ev('state.nodes.get(3)._sessionTxt'), undefined);
+    assert.deepEqual(packet(app).queue, ['c', 'd']);
+    assert.equal(merge(app, JSON.stringify(work)).existing, 1);
+    app.ev("state.nodes.get(1).explanation='Edited scope'");
+    assert.match(merge(app, JSON.stringify(work)).issues[0], /different or edited tree/);
+  } finally { app.window.close(); }
+});
+
+test('wrapped checkpoints reject mismatched identities and explain work files without lesson text', () => {
+  const app = loadApp();
+  try {
+    loadTree(app);
+    const work = packet(app);
+    assert.match(merge(app, JSON.stringify(work)).issues[0], /no lesson text to import/);
+    work.tree.nodes.find(n => n.id === 'a').content = lesson;
+    work.treeKey = 'wrong-identity';
+    const result = merge(app, JSON.stringify(work));
+    assert.equal(result.imported, 0);
+    assert.equal(result.rejected, 1);
+    assert.match(result.issues[0], /identity does not match its nested tree/);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), undefined);
+  } finally { app.window.close(); }
+});
+
 test('generation panel downloads one packet, imports pasted output, checkpoints to My Trees, and closes with Escape', async () => {
   const app = loadApp();
   try {
