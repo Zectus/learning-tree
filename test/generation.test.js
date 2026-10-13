@@ -17,9 +17,10 @@ function packet(app) { return JSON.parse(app.ev('JSON.stringify(buildGenerationP
 function record(app, id, content = lesson, overrides = {}) {
   return JSON.stringify({ format: 'learning-tree-lesson/v1', treeKey: packet(app).treeKey, id, content, ...overrides });
 }
-function merge(app, raw) {
+function merge(app, raw, options = {}) {
   app.window.__output = raw;
-  return JSON.parse(app.ev('JSON.stringify(mergeGenerationOutput(__output))'));
+  app.window.__mergeOptions = options;
+  return JSON.parse(app.ev('JSON.stringify(mergeGenerationOutput(__output, __mergeOptions))'));
 }
 
 test('one work packet reuses teaching rules and queues missing lessons without personal data', () => {
@@ -374,6 +375,7 @@ test('tutorial sample imports never replace real checkpoint output or saved-tree
     const issues = el(app, 'generation-issues').firstChild;
     const result = el(app, 'generation-result').textContent;
     const library = app.window.localStorage.getItem('tree-library');
+    el(app, 'generation-replace-existing').checked = true;
     el(app, 'menu-tutorial').click();
     const { goToStep } = require('./tutorial-navigation');
     await goToStep(app, 7);
@@ -385,6 +387,7 @@ test('tutorial sample imports never replace real checkpoint output or saved-tree
     assert.equal(el(app, 'generation-result').textContent, result);
     assert.equal(el(app, 'generation-issues').firstChild, issues);
     assert.equal(el(app, 'generation-import-details').open, true);
+    assert.equal(el(app, 'generation-replace-existing').checked, true);
     assert.equal(el(app, 'generation-status').textContent, '2 / 4 lessons ready');
     assert.equal(app.window.localStorage.getItem('tree-library'), library);
   } finally { app.window.close(); }
@@ -410,5 +413,203 @@ test('the 95-node quantum tree produces a valid order and resumes after a small 
     assert.equal(resumed.queue[0], third);
     assert.equal(resumed.treeKey, work.treeKey);
     assert.equal(app.ev('buildTreeJSON(true).nodes.filter(n=>n.content).length'), 2);
+  } finally { app.window.close(); }
+});
+
+test('corrections are explicit, validated, idempotent, and retain answers only for unchanged choices', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app);
+    const second = lesson.match(/\[QUESTION 1\][\s\S]*?\[\/QUESTION\]/)[0].replace('QUESTION 1', 'QUESTION 2');
+    const bonus = second.replace('QUESTION 2', 'BONUS 1').replace('/QUESTION', '/BONUS');
+    const original = lesson + second + '\n' + bonus;
+    const corrected = original.replace('An explanation', 'A clearer explanation')
+      .replace('[QUESTION 2]\n[ANSWER: B]\nChoose the matching case.', '[QUESTION 2]\n[ANSWER: B]\nCompare a new case.')
+      .replace('[BONUS 1]\n[ANSWER: B]', '[BONUS 1]\n[ANSWER: C]');
+    merge(app, record(app, 'a', original));
+    app.ev(`state.nodes.get(1).done=true; state.nodes.get(1)._notes='keep notes'; state.nodes.get(1)._drawing=[{color:'red'}];
+      state.nodes.get(1)._sessionAnswers={1:'B',2:'A'}; state.nodes.get(1)._bonusAnswers={1:'B'};
+      state.nodes.get(1)._scrollTop=300; state.viewport.x=731; state.libraryId='saved'; openViewer(state.nodes.get(1)._sessionTxt,1);`);
+    const key = packet(app).treeKey;
+    assert.equal(merge(app, record(app, 'a', corrected)).existing, 1);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), original);
+    assert.equal(merge(app, record(app, 'a', corrected, { treeKey: 'wrong' }), { replaceExisting: true }).rejected, 1);
+    assert.equal(merge(app, record(app, 'a', corrected + '[GRAPH]'), { replaceExisting: true }).rejected, 1);
+    let backups = 0;
+    const result = merge(app, record(app, 'a', corrected), { replaceExisting: true, beforeReplace: () => backups++ });
+    assert.equal(result.updated, 1);
+    assert.equal(result.imported, 0);
+    assert.equal(backups, 1);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), corrected);
+    assert.equal(app.ev('JSON.stringify(state.nodes.get(1)._sessionAnswers)'), '{"1":"B"}');
+    assert.equal(app.ev('state.nodes.get(1)._bonusAnswers'), undefined);
+    assert.equal(app.ev('state.nodes.get(1)._scrollTop'), undefined);
+    assert.equal(app.ev('state.nodes.get(1)._notes'), 'keep notes');
+    assert.equal(app.ev('state.nodes.get(1)._drawing[0].color'), 'red');
+    assert.equal(app.ev('state.nodes.get(1).done'), true);
+    assert.equal(app.ev('state.viewport.x'), 731);
+    assert.equal(app.ev('state.libraryId'), 'saved');
+    assert.equal(app.ev('viewer.nodeId'), null);
+    assert.equal(packet(app).treeKey, key);
+    app.ev('continueViewer(1)');
+    assert.match(el(app, 'sv-body').textContent, /A clearer explanation/);
+    assert.equal(app.ev('viewer.answers.size'), 1);
+    assert.equal(app.ev('viewer.score'), 1);
+    assert.equal(app.ev('viewer.bonusAnswers.size'), 0);
+    assert.equal(merge(app, record(app, 'a', corrected), { replaceExisting: true, beforeReplace: () => backups++ }).existing, 1);
+    assert.equal(backups, 1);
+    const changedOption = corrected.replace('(B) Second', '(B) Different');
+    assert.equal(merge(app, record(app, 'a', changedOption), { replaceExisting: true }).updated, 1);
+    assert.equal(app.ev('state.nodes.get(1)._sessionAnswers'), undefined);
+    await tick();
+  } finally { app.window.close(); }
+});
+
+test('correction UI backs up originals, checkpoints updates and answer changes, and translates the receipt', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app); await tick();
+    merge(app, record(app, 'a'));
+    app.ev(`state.nodes.get(1)._sessionAnswers={1:'B'}; state.nodes.get(1)._notes='keep'; state.nodes.get(1).done=true;
+      autoSaveProgress(); __downloads=[]; downloadGenerationFile=(data,name)=>__downloads.push({data,name}); openGenerationModal();`);
+    const corrected = lesson.replace('Choose the matching case.', 'Choose a different case.');
+    el(app, 'generation-replace-existing').checked = true;
+    paste(app, record(app, 'a', corrected));
+    el(app, 'btn-import-generation').click();
+    assert.equal(el(app, 'generation-result').textContent, '0 lessons imported; 1 corrected; 0 already present; 0 rejected.');
+    assert.equal(el(app, 'generation-replace-existing').checked, false);
+    assert.equal(app.ev('__downloads.length'), 1);
+    const backup = JSON.parse(app.ev('JSON.stringify(__downloads[0])'));
+    assert.match(backup.name, /-before-corrections\.json$/);
+    assert.equal(backup.data.nodes.find(n => n.id === 'a').content, lesson);
+    const saved = JSON.parse(app.window.localStorage.getItem('tree-library'));
+    assert.equal(Object.values(saved)[0].data.nodes.find(n => n.id === 'a').content, corrected);
+    const progress = JSON.parse(app.window.localStorage.getItem('tree-progress'));
+    const nodeProgress = Object.values(progress)[0].Alpha;
+    assert.equal(nodeProgress.sessionAnswers, undefined);
+    assert.equal(nodeProgress.notes, 'keep');
+    assert.equal(nodeProgress.done, true);
+    app.ev("setUILanguage('es')");
+    assert.equal(el(app, 'generation-result').textContent, '0 lecciones importadas; 1 corregidas; 0 ya existentes; 0 rechazadas.');
+    assert.match(el(app, 'generation-corrections-help').textContent, /copia del árbol/);
+    el(app, 'generation-replace-existing').checked = true;
+    app.ev('openGenerationModal()');
+    assert.equal(el(app, 'generation-replace-existing').checked, false);
+  } finally { app.window.close(); }
+});
+
+test('correction file batches share one original backup and freeze the mode while reading', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app); await tick();
+    merge(app, record(app, 'a'));
+    app.ev('__downloads=[]; downloadGenerationFile=(data,name)=>__downloads.push({data,name}); openGenerationModal();');
+    const corrected = lesson.replace('An explanation', 'A correction');
+    const input = el(app, 'generation-files');
+    const files = [
+      new app.window.File([record(app, 'c')], 'new.jsonl'),
+      new app.window.File([record(app, 'a', corrected)], 'corrections.jsonl'),
+      new app.window.File([record(app, 'a', corrected)], 'duplicate.jsonl'),
+    ];
+    Object.defineProperty(input, 'files', { configurable: true, value: files });
+    el(app, 'generation-replace-existing').checked = true;
+    input.dispatchEvent(new app.window.Event('change'));
+    assert.equal(el(app, 'generation-replace-existing').disabled, true);
+    for (let i = 0; i < 50 && app.ev('generationImportBusy'); i++) await tick();
+    assert.equal(el(app, 'generation-result').textContent, '1 lessons imported; 1 corrected; 1 already present; 0 rejected.');
+    assert.equal(app.ev('__downloads.length'), 1);
+    assert.equal(app.ev("__downloads[0].data.nodes.find(n=>n.id==='a').content"), lesson);
+    assert.equal(app.ev("__downloads[0].data.nodes.find(n=>n.id==='c').content"), undefined);
+    assert.equal(el(app, 'generation-replace-existing').disabled, false);
+    assert.equal(el(app, 'generation-replace-existing').checked, false);
+  } finally { app.window.close(); }
+});
+
+test('backup failures and invalid or identical correction records never replace existing lessons', () => {
+  const app = loadApp();
+  try {
+    loadTree(app);
+    merge(app, record(app, 'a'));
+    const corrected = lesson.replace('An explanation', 'A correction');
+    const options = { replaceExisting: true, beforeReplace() { throw new Error('Download unavailable'); } };
+    const result = merge(app, record(app, 'a', corrected), options);
+    assert.equal(result.updated, 0);
+    assert.equal(result.rejected, 1);
+    assert.match(result.issues[0], /backup.*existing lesson was kept/);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), lesson);
+    assert.equal(merge(app, record(app, 'a'), options).existing, 1);
+    assert.equal(merge(app, record(app, 'a', corrected, { treeKey: 'wrong' }), options).rejected, 1);
+  } finally { app.window.close(); }
+});
+
+test('reopening another copy of the same tree while correction files load leaves that copy untouched', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app); await tick();
+    merge(app, record(app, 'a'));
+    app.ev('__downloads=[]; downloadGenerationFile=(data,name)=>__downloads.push({data,name}); openGenerationModal();');
+    const key = packet(app).treeKey;
+    const corrected = lesson.replace('An explanation', 'A correction');
+    const input = el(app, 'generation-files');
+    Object.defineProperty(input, 'files', { configurable: true, value: [new app.window.File([record(app, 'a', corrected)], 'corrections.jsonl')] });
+    el(app, 'generation-replace-existing').checked = true;
+    input.dispatchEvent(new app.window.Event('change'));
+    app.ev('loadFromJSON(buildTreeJSON(true))');
+    assert.equal(packet(app).treeKey, key);
+    for (let i = 0; i < 50 && app.ev('generationImportBusy'); i++) await tick();
+    assert.equal(app.ev('generationImportBusy'), false);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), lesson);
+    assert.equal(app.ev('__downloads.length'), 0);
+    assert.match(app.toasts().join(' '), /tree changed while files were loading/);
+  } finally { app.window.close(); }
+});
+
+test('a correction backup includes edits made while files load and keeps the originally selected mode', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app); await tick();
+    merge(app, record(app, 'a'));
+    app.ev('__downloads=[]; downloadGenerationFile=(data,name)=>__downloads.push({data,name}); openGenerationModal();');
+    const corrected = lesson.replace('An explanation', 'A correction');
+    const edited = lesson.replace('An explanation', 'An edit during reading');
+    const input = el(app, 'generation-files');
+    Object.defineProperty(input, 'files', { configurable: true, value: [new app.window.File([record(app, 'a', corrected)], 'corrections.jsonl')] });
+    el(app, 'generation-replace-existing').checked = true;
+    input.dispatchEvent(new app.window.Event('change'));
+    app.window.__edited = edited;
+    app.ev('state.nodes.get(1)._sessionTxt=__edited; closeGenerationModal(); openGenerationModal();');
+    assert.equal(el(app, 'generation-replace-existing').checked, true);
+    assert.equal(el(app, 'generation-replace-existing').disabled, true);
+    for (let i = 0; i < 50 && app.ev('generationImportBusy'); i++) await tick();
+    assert.equal(app.ev('generationImportBusy'), false);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), corrected);
+    assert.equal(app.ev('__downloads.length'), 1);
+    assert.equal(app.ev("__downloads[0].data.nodes.find(n=>n.id==='a').content"), edited);
+    assert.match(el(app, 'generation-result').textContent, /1 corrected/);
+  } finally { app.window.close(); }
+});
+
+test('the seven reviewed quantum records import new lessons and explicitly update the three already in the earlier checkpoint', () => {
+  const app = loadApp();
+  try {
+    loadTree(app, 'quantum-tree.json');
+    assert.equal(merge(app, app.fixture('quantum-checkpoint.json')).imported, 29);
+    const corrections = app.fixture('quantum-corrections.jsonl');
+    const initial = merge(app, corrections);
+    assert.equal(initial.imported, 4);
+    assert.equal(initial.existing, 3);
+    assert.equal(initial.rejected, 0);
+    const result = merge(app, corrections, { replaceExisting: true });
+    assert.equal(result.updated, 3);
+    assert.equal(result.existing, 4);
+    assert.equal(result.rejected, 0);
+    const tree = JSON.parse(app.ev('JSON.stringify(buildTreeJSON(true))'));
+    for (const line of corrections.trim().split('\n')) {
+      const row = JSON.parse(line);
+      assert.equal(tree.nodes.find(n => n.id === row.id).content, row.content);
+    }
+    assert.equal(packet(app).completed.length, 33);
+    assert.equal(packet(app).queue.length, 62);
+    assert.equal(merge(app, corrections, { replaceExisting: true }).existing, 7);
   } finally { app.window.close(); }
 });

@@ -306,6 +306,7 @@ Your answer is saved with this topic. Answering every regular question completes
         className: el.getAttribute('class'), style: el.getAttribute('style'), aria: el.getAttribute('aria-modal'),
         hidden: el.hidden, open: el.open, selected: el.getAttribute('aria-selected'), pressed: el.getAttribute('aria-pressed'), disabled: el.disabled, uiSource: el.getAttribute('data-ui-text'), uiAttrs: el.getAttribute('data-ui-attrs'),
         value: 'value' in el && !['file', 'password'].includes(el.type) ? el.value : undefined,
+        checked: 'checked' in el ? el.checked : undefined,
         text: ['btn-mode', 'menu-reset-progress', 'btn-save-current-tree', 'library-modal-meta', 'tree-modal-meta', 'prompt-box', 'btn-copy-prompt', 'btn-copy-tree-prompt', 'btn-copy-tree-file-prompt', 'sv-topic', 'sv-score', 'generation-status', 'generation-result', 'generation-import-source', 'btn-copy-generation-message'].includes(el.id) ? el.textContent : undefined
       }))
     };
@@ -338,7 +339,7 @@ Your answer is saved with this topic. Answering every regular question completes
     _modalNodeId = saved.modalNode; svUserPositioned = saved.positioned;
     mobileEditId = saved.editorNode;
     editorPrerequisites.open = saved.editorPrerequisitesOpen;
-    saved.attrs.forEach(({ el, className, style, aria, value, text, hidden, open, selected, pressed, disabled, uiSource, uiAttrs }) => {
+    saved.attrs.forEach(({ el, className, style, aria, value, checked, text, hidden, open, selected, pressed, disabled, uiSource, uiAttrs }) => {
       for (const [attr, val] of [['class', className], ['style', style], ['aria-modal', aria], ['aria-selected', selected], ['aria-pressed', pressed], ['data-ui-text', uiSource], ['data-ui-attrs', uiAttrs]]) {
         if (val === null) el.removeAttribute(attr); else el.setAttribute(attr, val);
       }
@@ -346,6 +347,7 @@ Your answer is saved with this topic. Answering every regular question completes
       if (open !== undefined) el.open = open;
       if (disabled !== undefined) el.disabled = disabled;
       if (value !== undefined && el.type !== 'file') el.value = value;
+      if (checked !== undefined) el.checked = checked;
       if (text !== undefined) el.textContent = text;
     });
     state.tutorialActive = false;

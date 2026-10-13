@@ -73,6 +73,44 @@ The work file's `completed` and `queue` lists do not substitute for actual lesso
 text; its identity must match both the nested tree and the currently loaded tree.
 Use **Load JSON** to open a different tree instead.
 
+For reviewed lesson corrections, enable **Replace existing lessons with
+corrections** before uploading files or importing a pasted reply. This accepts
+the same JSONL records or filled checkpoint as normal generation. Only valid
+lessons belonging to the current tree can replace content. Identical records
+are skipped. Before the first replacement, the app downloads one full tree
+backup with the original lesson texts; a batch of files shares that backup.
+Files apply in selection order, so put the latest corrections last. The option
+resets after importing or opening another tree. Notes, drawings, completion,
+and library identity stay. Saved quiz and bonus answers stay only where the
+numbered question, options, and answer key are unchanged; changed questions
+start unanswered, and the corrected viewer rebuilds when reopened. Switching
+trees while files load cancels the import, even if the new tree has the same
+structure. The backup includes edits made during loading and precedes all
+records in the batch.
+
+A review summary describes the teaching problems and their fixes; it is not
+lesson content. A revised node prompt informs the shared app templates, so both
+single-node prompts and fresh whole-tree work files use the same guidance.
+A corrections-only JSONL applies selected revised lessons. A filled checkpoint
+contains the current lessons inside `tree.nodes`; importing it merges content
+into the loaded tree. Its instructions and claimed queue do not override the
+app's fresh work file or the lessons actually present.
+
+The shared English and Spanish lesson rules ask the author to distinguish
+prior knowledge, definitions, supplied inputs, and new consequences; develop
+the choice, reason, operation, and intermediate step behind each central
+result; explain unfamiliar operations and plotting conventions at first use;
+and leave meaningful reasoning for later questions. Bonus questions may combine
+established tools without introducing untaught premises. These rules guide
+authorship; the importer checks file structure, not teaching quality.
+
+The English prompt also distinguishes actual operations from reported data,
+individual outcomes from distributional or finite-data claims, and answer
+equivalence from a requested coordinate representation. Approximation checks
+account for changes to their own comparison scales and the relevant range or
+history. Its graph instructions document conditional expressions for defined
+piecewise or continuous values and the choice between scalar plots and paths.
+
 After an import, the app immediately checkpoints the updated tree to My Trees
 using its existing local save/cloud outbox. Storage failures are reported; use
 **Download tree with completed lessons** to keep an independent usable backup.

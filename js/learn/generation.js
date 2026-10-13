@@ -183,10 +183,38 @@ function readGenerationOutput(raw) {
   return { records, issues };
 }
 
-function mergeGenerationOutput(raw) {
+// Answer letters belong to a particular question and option ordering. Keep
+// answers only when the numbered question still has the same meaning and key.
+function retainUnchangedLessonAnswers(node, content) {
+  const before = parseTxtSession(node._sessionTxt || '');
+  const after = parseTxtSession(content);
+  function signature(choice) {
+    if (!choice?.valid) return null;
+    const options = Object.entries(choice.options).map(([letter, text]) => [choice.origOf[letter], text]);
+    options.sort(([a], [b]) => a.localeCompare(b));
+    return JSON.stringify([choice.text, options, choice.correctOrig]);
+  }
+  for (const [field, collection] of [['_sessionAnswers', 'questions'], ['_bonusAnswers', 'bonuses']]) {
+    if (!node[field]) continue;
+    const kept = {};
+    for (const [number, answer] of Object.entries(node[field])) {
+      const oldChoice = before[collection].get(Number(number));
+      const newChoice = after[collection].get(Number(number));
+      const oldSignature = signature(oldChoice);
+      if (oldSignature && oldSignature === signature(newChoice)) kept[number] = answer;
+    }
+    if (Object.keys(kept).length) node[field] = kept;
+    else delete node[field];
+  }
+  delete node._scrollTop;
+  // Reopening this node must rebuild the cached viewer with the new lesson.
+  if (viewer.nodeId === node.id) { closeViewer(); viewer.nodeId = null; }
+}
+
+function mergeGenerationOutput(raw, { replaceExisting = false, beforeReplace } = {}) {
   const { records, issues } = readGenerationOutput(raw);
   const tree = buildTreeJSON(false);
-  const result = { imported: 0, existing: 0, rejected: issues.length, issues };
+  const result = { imported: 0, updated: 0, existing: 0, rejected: issues.length, issues };
   if (!tree) { result.rejected++; result.issues.push('Load a tree before importing lessons.'); return result; }
   const key = generationTreeKey(tree);
   const live = [...state.nodes.values()];
@@ -202,7 +230,22 @@ function mergeGenerationOutput(raw) {
       result.issues.push(`${String(record.id || '?')}: ${error}`);
       continue;
     }
-    if (lessonIsComplete(node._sessionTxt)) { result.existing++; continue; }
+    if (node._sessionTxt === record.content) { result.existing++; continue; }
+    if (lessonIsComplete(node._sessionTxt)) {
+      if (!replaceExisting) { result.existing++; continue; }
+      // Back up before changing content or any answers, never for rejected or
+      // identical records. File batches share this callback for one backup.
+      try { if (beforeReplace) beforeReplace(); }
+      catch {
+        result.rejected++;
+        result.issues.push(`${record.id}: Couldn't download a backup. The existing lesson was kept.`);
+        continue;
+      }
+      retainUnchangedLessonAnswers(node, record.content);
+      node._sessionTxt = record.content;
+      result.updated++;
+      continue;
+    }
     // Merge content only: no reload, no layout reset, no changes to progress.
     node._sessionTxt = record.content;
     result.imported++;
@@ -215,6 +258,16 @@ function downloadGenerationFile(value, filename) {
   const a = document.createElement('a');
   a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
+}
+
+function generationImportOptions(replaceExisting = document.getElementById('generation-replace-existing').checked) {
+  const backup = replaceExisting ? buildTreeJSON(true) : null;
+  let backedUp = false;
+  return { replaceExisting, beforeReplace() {
+    if (backedUp || state.tutorialActive) return;
+    downloadGenerationFile(backup, `${slugify(state.topic || 'tree')}-before-corrections.json`);
+    backedUp = true;
+  } };
 }
 
 function generationStartMessage() {
@@ -237,6 +290,7 @@ function refreshGenerationImportControls() {
   document.getElementById('btn-import-generation').disabled = generationImportBusy
     || !document.getElementById('generation-output').value.trim();
   document.getElementById('generation-files').disabled = generationImportBusy;
+  document.getElementById('generation-replace-existing').disabled = generationImportBusy;
 }
 
 function clearGenerationReceipt() {
@@ -251,6 +305,7 @@ function openGenerationModal() {
   closeModal();
   const input = document.getElementById('generation-language');
   input.value = state.language || '';
+  if (!generationImportBusy) document.getElementById('generation-replace-existing').checked = false;
   refreshGenerationStatus();
   clearGenerationReceipt();
   document.getElementById('generation-modal-backdrop').classList.add('open');
@@ -262,17 +317,21 @@ function closeGenerationModal() {
 function finishGenerationImport(result, source = 'Pasted reply') {
   refreshGenerationStatus();
   uiText(document.getElementById('generation-import-source'), `Last import: ${source}`);
-  uiText(document.getElementById('generation-result'), `${result.imported} lessons imported; ${result.existing} already present; ${result.rejected} rejected.`);
+  uiText(document.getElementById('generation-result'), result.updated
+    ? `${result.imported} lessons imported; ${result.updated} corrected; ${result.existing} already present; ${result.rejected} rejected.`
+    : `${result.imported} lessons imported; ${result.existing} already present; ${result.rejected} rejected.`);
+  document.getElementById('generation-replace-existing').checked = false;
   const list = document.getElementById('generation-issues');
   list.replaceChildren();
   for (const issue of result.issues) {
     const li = document.createElement('li'); uiText(li, issue); list.appendChild(li);
   }
   document.getElementById('generation-import-details').classList.toggle('hidden', !result.issues.length);
-  if (result.imported && !state.tutorialActive) {
+  if ((result.imported || result.updated) && !state.tutorialActive) {
     // Checkpoint immediately using the existing local/cloud outbox path. It
     // retains a local backup before a cloud write and reports storage failures.
     autosaveTreeOnPageExit();
+    if (result.updated) { autoSaveProgress(); void persistProgressNow(); }
     if (!libraryReady) showToast('Lessons are in this tree. Download a copy while saved trees are still loading.');
   }
 }
@@ -292,7 +351,7 @@ document.getElementById('btn-export-generation-tree').addEventListener('click', 
 document.getElementById('btn-import-generation').addEventListener('click', () => {
   const raw = document.getElementById('generation-output').value;
   if (generationImportBusy || !raw.trim()) return;
-  finishGenerationImport(mergeGenerationOutput(raw));
+  finishGenerationImport(mergeGenerationOutput(raw, generationImportOptions()));
 });
 document.getElementById('generation-output').addEventListener('input', refreshGenerationImportControls);
 document.getElementById('generation-files').addEventListener('change', async e => {
@@ -301,6 +360,8 @@ document.getElementById('generation-files').addEventListener('change', async e =
   if (!files.length || generationImportBusy) return;
   const expectedTree = buildTreeJSON(false);
   const expectedKey = expectedTree && generationTreeKey(expectedTree);
+  const expectedNodes = [...state.nodes.values()];
+  const replaceExisting = document.getElementById('generation-replace-existing').checked;
   generationImportBusy = true;
   refreshGenerationImportControls();
   // Read independently, then merge in selection order so repeated imports and
@@ -314,14 +375,19 @@ document.getElementById('generation-files').addEventListener('change', async e =
   generationImportBusy = false;
   refreshGenerationImportControls();
   const current = buildTreeJSON(false);
-  if (!current || generationTreeKey(current) !== expectedKey) {
+  if (!current || generationTreeKey(current) !== expectedKey
+    || expectedNodes.some(node => state.nodes.get(node.id) !== node)) {
     showToast('The tree changed while files were loading. Select them again.'); return;
   }
-  const total = { imported: 0, existing: 0, rejected: 0, issues: [] };
+  // Capture the original content after reading, before any batch record merges.
+  // This includes lesson edits made while files loaded and preserves the mode
+  // selected when the upload began, even if the panel has since been reopened.
+  const options = generationImportOptions(replaceExisting);
+  const total = { imported: 0, updated: 0, existing: 0, rejected: 0, issues: [] };
   reads.forEach((read, i) => {
     if (read.status === 'rejected') { total.issues.push(`Couldn't read "${files[i].name}".`); total.rejected++; return; }
-    const result = mergeGenerationOutput(read.value);
-    for (const key of ['imported', 'existing', 'rejected']) total[key] += result[key];
+    const result = mergeGenerationOutput(read.value, options);
+    for (const key of ['imported', 'updated', 'existing', 'rejected']) total[key] += result[key];
     total.issues.push(...result.issues);
   });
   finishGenerationImport(total, files.map(file => file.name).join(', '));
@@ -335,5 +401,6 @@ document.addEventListener('ui-language-change', refreshGenerationStatus);
 document.addEventListener('tree-loaded', () => {
   clearGenerationReceipt();
   document.getElementById('generation-output').value = '';
+  document.getElementById('generation-replace-existing').checked = false;
   refreshGenerationStatus();
 });
