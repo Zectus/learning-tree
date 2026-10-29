@@ -1,0 +1,12 @@
+import {readFile,mkdir,writeFile,copyFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+const root=process.argv[2]||process.cwd();
+const format=await readFile(resolve(root,'generation-format.js'),'utf8');
+const page=await readFile(resolve(root,'page.html'),'utf8');
+const worker=await readFile(resolve(root,'worker.js'),'utf8');
+await mkdir(resolve(root,'dist/server'),{recursive:true});await mkdir(resolve(root,'dist/.openai'),{recursive:true});
+await writeFile(resolve(root,'dist/server/index.js'),format+'\nconst PAGE='+JSON.stringify(page)+';\n'+worker);
+await copyFile(resolve(root,'.openai/hosting.json'),resolve(root,'dist/.openai/hosting.json'));
+const module=await import('data:text/javascript;base64,'+Buffer.from(await readFile(resolve(root,'dist/server/index.js'))).toString('base64'));
+if(typeof module.default?.fetch!=='function')throw Error('Worker entrypoint is invalid');
+console.log('Built and validated online lesson bridge.');

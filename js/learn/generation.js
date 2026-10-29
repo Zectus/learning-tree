@@ -437,6 +437,7 @@ function openGenerationModal() {
   refreshGenerationStatus();
   clearGenerationReceipt();
   document.getElementById('generation-modal-backdrop').classList.add('open');
+  document.dispatchEvent(new Event('generation-opened'));
 }
 function closeGenerationModal() {
   document.getElementById('generation-modal-backdrop').classList.remove('open');

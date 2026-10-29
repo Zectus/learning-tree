@@ -21,17 +21,19 @@ function showAssistantError(error) {
   el.classList.toggle('hidden', !error);
 }
 function updateGenerationMethod() {
-  const automatic = assistantEl('generation-method').value === 'automatic';
+  const method = assistantEl('generation-method').value;
+  const automatic = method === 'automatic', online = method === 'online';
+  assistantEl('assistant-online-panel').classList.toggle('hidden', !online);
   assistantEl('assistant-generation-panel').classList.toggle('hidden', !automatic);
-  assistantEl('generation-file-help').classList.toggle('hidden', automatic);
-  document.querySelectorAll('.generation-file-step').forEach(el => el.classList.toggle('hidden', automatic));
+  assistantEl('generation-file-help').classList.toggle('hidden', automatic || online);
+  document.querySelectorAll('.generation-file-step').forEach(el => el.classList.toggle('hidden', method !== 'files'));
   if (automatic && !assistantState.status && !assistantState.checking) void refreshAssistantConnection();
   refreshAssistantControls();
 }
 function refreshAssistantControls() {
   const { available, status, busy } = assistantState;
   const automatic = assistantEl('generation-method').value === 'automatic';
-  assistantEl('generation-reply-field').classList.toggle('hidden', automatic || (currentGenerationPacket()?.queue.length || 0) <= 1);
+  assistantEl('generation-reply-field').classList.toggle('hidden', assistantEl('generation-method').value !== 'files' || (currentGenerationPacket()?.queue.length || 0) <= 1);
   assistantEl('assistant-local-setup').classList.toggle('hidden', available);
   assistantEl('assistant-connected-controls').classList.toggle('hidden', !available);
   if (!available) {
@@ -130,16 +132,16 @@ async function startAssistantGeneration() {
   } catch (error) { showAssistantError(error); }
   finally { assistantState.busy = false; refreshAssistantControls(); }
 }
-function collectAssistantRecords(data) {
+function collectAssistantRecords(data, source = 'Local companion') {
   if (state.tutorialActive || !data.records?.length) return false;
   const tree = buildTreeJSON(false);
   if (!tree || generationTreeKey(tree) !== data.treeKey) return false;
   const result = mergeGenerationOutput(data.records.map(record => JSON.stringify(record)).join('\n'));
   if (result.rejected) showAssistantError(new Error(result.issues.join(' ')));
   if (result.imported) {
-    finishGenerationImport(result, 'Local companion');
+    finishGenerationImport(result, source);
     updateAllStatuses();
-    showToast(`${result.imported} lessons added from the local companion.`, 3500);
+    showToast(source === 'ChatGPT' ? `${result.imported} lessons added from ChatGPT.` : `${result.imported} lessons added from the local companion.`, 3500);
   }
   if (assistantState.handoff?.opener && !assistantState.handoff.opener.closed) {
     const { opener, origin, nonce } = assistantState.handoff;

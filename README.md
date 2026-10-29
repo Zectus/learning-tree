@@ -21,28 +21,25 @@ python3 -m http.server 8000     # or any static server
 
 Lesson files mark each question's correct option inline with `[ANSWER: X]`.
 
-## Automatic generation with your subscription
+## Generate lessons with your ChatGPT subscription
 
-An optional local companion can fill the selected nodes without copying prompts
-or moving lesson files. It uses the documented ChatGPT OSS plan-usage sign-in or
-your official Claude Code subscription session. It has no paid model-API fallback.
+Choose **ChatGPT online · no installation** in the generation screen. Select
+nodes, continue to the online page, and prepare the batch. In ChatGPT, choose the
+Learning Tree plugin and ask it to generate your queued lessons. It reads each
+teaching prompt and saves finished lessons back automatically. No terminal setup,
+API key, prompt copying, or lesson-file transfers are required.
 
-```sh
-npm ci --prefix companion
-npm run companion
-# Open http://127.0.0.1:8765
-```
+The online bridge is hosted at https://learning-tree-lessons.zectusone.chatgpt.site
+and initially private to its owner. It stores jobs and lessons, not provider
+credentials, and makes no model API requests. Generation happens in the user's
+subscription conversation, which still needs to be started in ChatGPT. The model
+and any write confirmations remain under ChatGPT's controls.
 
-Choose **Automatic · use my subscription** in the lesson generation screen.
-The hosted app can hand its tree and selection to the local app; completed
-lessons return to the original tab automatically. Jobs checkpoint each lesson,
-run independently of the browser tab, and support pause/resume and recovery.
-The computer and companion process must remain running.
+[Simple user instructions](docs/assistant-setup.md) ·
+[Online bridge source and design](online/README.md)
 
-See [setup instructions, provider limitations, and remaining user steps](docs/assistant-setup.md).
-This is a local-only worker, not a public multi-user backend. The existing file
-workflow remains available. Companion tests use simulated providers and do not
-consume a subscription: `npm run test:companion`.
+The previous local companion is an optional advanced method.
+[Local setup](docs/companion-setup.md).
 
 ## Generating and resuming lessons
 

@@ -78,7 +78,7 @@ export async function createCompanion({ directory, port = 8765, providers, stora
   app.post('/companion/api/jobs/:id/start', async (req, res) => res.json(await jobs.start(req.params.id)));
   app.post('/companion/api/jobs/:id/pause', async (req, res) => res.json(await jobs.pause(req.params.id)));
   app.delete('/companion/api/jobs/:id', async (req, res) => { await jobs.remove(req.params.id); res.json({ ok: true }); });
-  app.get('/companion/setup', (_req, res) => res.type('text/plain').sendFile(join(ROOT, 'docs/assistant-setup.md')));
+  app.get('/companion/setup', (_req, res) => res.type('text/plain').sendFile(join(ROOT, 'docs/companion-setup.md')));
   app.get('/', (_req, res) => res.sendFile(join(ROOT, 'index.html')));
   // Explicit static allowlist: never expose .git, credentials, local jobs,
   // dependencies, source server files, or arbitrary user-selected paths.

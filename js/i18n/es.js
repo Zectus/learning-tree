@@ -1,5 +1,15 @@
 /* Spanish interface catalogue. Keys are the English source text. */
 const UI_ES = {
+  "ChatGPT online · no installation": "ChatGPT en línea · sin instalar nada",
+  "Local app (advanced)": "Aplicación local (avanzado)",
+  "Generate in ChatGPT": "Generar en ChatGPT",
+  "Use your ChatGPT subscription. No installation or lesson files needed.": "Usa tu suscripción de ChatGPT. Sin instalaciones ni archivos de lecciones.",
+  "Continue with ChatGPT online": "Continuar con ChatGPT en línea",
+  "Your selection opens in your online Learning Tree account. Start the run in ChatGPT; finished lessons come back to this tree automatically.": "Tu selección se abre en tu cuenta de Learning Tree en línea. Inicia la generación en ChatGPT; las lecciones terminadas vuelven automáticamente a este árbol.",
+  "Continue in the online window. Finished lessons will return to this tree.": "Continúa en la ventana en línea. Las lecciones terminadas volverán a este árbol.",
+  "Your lessons are saved online. Reopen the original tree to receive them.": "Tus lecciones están guardadas en línea. Vuelve a abrir el árbol original para recibirlas.",
+  "Lessons received from ChatGPT and saved to this tree.": "Lecciones recibidas de ChatGPT y guardadas en este árbol.",
+  "{n} lessons added from ChatGPT.": "Se han añadido {n} lecciones desde ChatGPT.",
   "Delete job": "Eliminar trabajo",
   "Delete this saved job and its recovery copy? Lessons already imported into trees stay.": "¿Quieres eliminar este trabajo guardado y su copia de recuperación? Las lecciones ya importadas en los árboles se conservan.",
   "ChatGPT sign-in account": "Cuenta para iniciar sesión en ChatGPT",
