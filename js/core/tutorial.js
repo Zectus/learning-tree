@@ -77,7 +77,7 @@ Your answer is saved with this topic. Answering every regular question completes
   const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'isSpanish', 'topic', 'libraryId'];
   let seen = false;
   try { seen = localStorage.getItem(KEY) === '1'; } catch {}
-  replay.hidden = !seen;
+  replay.hidden = !seen && !/^[\w-]{16,80}$/.test(new URLSearchParams(location.search).get('lt_handoff') || '');
 
   const stash = el => { const fragment = document.createDocumentFragment(); while (el.firstChild) fragment.appendChild(el.firstChild); return fragment; };
   function clearInert() { inert.forEach(el => el.removeAttribute('inert')); inert = []; }
@@ -437,5 +437,7 @@ Your answer is saved with this topic. Answering every regular question completes
   next.addEventListener('click', showNext);
   back.addEventListener('click', () => { if (!busy && index > 0) go(index - 1); });
   replay.addEventListener('click', openTutorial);
-  if (!seen) openTutorial();
+  // A user deliberately bringing a tree from the hosted app should first see
+  // the handoff confirmation. The tutorial remains available from the menu.
+  if (!seen && !/^[\w-]{16,80}$/.test(new URLSearchParams(location.search).get('lt_handoff') || '')) openTutorial();
 })();

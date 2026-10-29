@@ -120,6 +120,7 @@ function buildEl(node) {
   el.addEventListener('mouseenter', () => highlightEdges(node.id));
   el.addEventListener('mouseleave', clearEdgeHighlight);
   el.addEventListener('click', e => {
+    if (state.generationPicking) { toggleGenerationNode(node.id); return; }
     if (e.target.closest('.node-actions')) return;
     if (state.mode === 'edit') {
       if (state.linkSource !== null) finishLink(node.id);
@@ -145,8 +146,24 @@ function buildEl(node) {
   });
 
   node.el = el;
+  refreshNodeLessonIndicator(node);
   refreshTag(el, node);
   world.appendChild(el);
+}
+
+// Keep lesson availability separate from prerequisite/completion status.
+function refreshNodeLessonIndicator(node) {
+  const badge = node.el?.querySelector('.node-badge');
+  if (!badge) return;
+  badge.querySelector('.node-lesson-indicator')?.remove();
+  if (!node._sessionTxt?.trim()) return;
+  const indicator = document.createElement('span');
+  indicator.className = 'node-lesson-indicator';
+  indicator.textContent = '▤';
+  indicator.setAttribute('role', 'img');
+  uiAttr(indicator, 'title', 'Lesson available');
+  uiAttr(indicator, 'aria-label', 'Lesson available');
+  badge.appendChild(indicator);
 }
 
 function refreshTag(el, node) {

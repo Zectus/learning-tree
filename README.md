@@ -21,13 +21,48 @@ python3 -m http.server 8000     # or any static server
 
 Lesson files mark each question's correct option inline with `[ANSWER: X]`.
 
+## Automatic generation with your subscription
+
+An optional local companion can fill the selected nodes without copying prompts
+or moving lesson files. It uses the documented ChatGPT OSS plan-usage sign-in or
+your official Claude Code subscription session. It has no paid model-API fallback.
+
+```sh
+npm ci --prefix companion
+npm run companion
+# Open http://127.0.0.1:8765
+```
+
+Choose **Automatic · use my subscription** in the lesson generation screen.
+The hosted app can hand its tree and selection to the local app; completed
+lessons return to the original tab automatically. Jobs checkpoint each lesson,
+run independently of the browser tab, and support pause/resume and recovery.
+The computer and companion process must remain running.
+
+See [setup instructions, provider limitations, and remaining user steps](docs/assistant-setup.md).
+This is a local-only worker, not a public multi-user backend. The existing file
+workflow remains available. Companion tests use simulated providers and do not
+consume a subscription: `npm run test:companion`.
+
 ## Generating and resuming lessons
 
 The work file contains the full tree structure and the teaching prompt **once**.
 It omits existing lesson text, quiz answers, notes, and personal progress to keep
-the input smaller. The generation queue follows prerequisites, prioritizes
-required topics, and continues a ready learning path before unrelated roots.
-A lesson being generated does not mark its topic learned or unlock it.
+the input smaller. Choose how many missing lessons to generate. Automatic selection fills required
+topics first, moving left to right by prerequisite level and preferring topics
+with more distinct downstream dependents within a level. Optional topics enter
+only when the count exceeds the missing required topics. Manual selection uses
+**Select nodes on map**: tap nodes (including locked topics) to select the exact
+batch, then confirm. Existing lessons are dimmed and cannot be selected. The
+preview lists the selected lessons in prerequisite order. Selection does not
+change learning progress, and a new tree resets the batch settings.
+
+Only the selected nodes enter the work file's queue; the rest of the tree stays
+as context. Single-node jobs use the concrete node prompt and a short JSONL
+delivery instruction, with no continuation or subagent guidance. Multi-node
+jobs keep checkpoint instructions and mention subagents only when independent
+selected branches can run in parallel. Numerical reply limits are capped to the
+batch size. A lesson being generated does not mark its topic learned or unlock it.
 
 Free chats need no API, file tools, subscription, or subagents. The default is
 one complete lesson per reply. Say **Continue** in the same chat to advance using

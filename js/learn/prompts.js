@@ -20,7 +20,7 @@ function lessonSectionKeyword(language) {
   return /^(?:es(?:$|[-_])|espanol\b|spanish\b|castellano\b)/.test(normalized) ? 'SECCIÓN' : 'SECTION';
 }
 
-function buildPrompt(id, language) {
+function buildPrompt(id, language, deliveryInstruction) {
   const node   = state.nodes.get(id);
   const topic  = node.label;
   const nodeId = node.slug || slugify(node.label);
@@ -49,7 +49,7 @@ function buildPrompt(id, language) {
   const lang = language || (useSpanishPrompt ? 'Español' : 'English');
   const sectionKeyword = lessonSectionKeyword(lang);
   if (useSpanishPrompt) {
-    return renderNodePromptEs({ topic, nodeId, language: lang, sectionKeyword,
+    return renderNodePromptEs({ topic, nodeId, language: lang, sectionKeyword, deliveryInstruction,
       treeTopicLine: state.topic ? `Este nodo pertenece a un árbol más amplio sobre ${state.topic}.` : '',
       explanationLine: node.explanation ? `Alcance de este nodo según las notas de diseño privadas del árbol: ${node.explanation} Usa esta guía para identificar la capacidad prevista, la idea central, el contenido de apoyo y los límites. Si es una lista de temas, organízalos como una progresión aprendible. Respeta las exclusiones explícitas y muestra un uso significativo de la idea a este nivel.` : '',
       prereqLine: prereqNodes.length ? `El estudiante ya ha estudiado todos los elementos siguientes. Cada línea contiene su nombre y alcance exacto, para saber qué se ha establecido y cuáles son sus límites:\n${prereqDetailList}\nTrata todo lo descrito como ya enseñado y disponible sin volver a derivarlo ni explicarlo. Remítete a ello de forma natural, como «recuerda que…» o «antes vimos…», no como una línea de un programa de estudios. Si un alcance anterior no cubre algo necesario aquí, esa laguna es material nuevo para este nodo.` : 'Este es el primer tema de la secuencia: no hay temas anteriores a los que remitirse.',
@@ -58,7 +58,7 @@ function buildPrompt(id, language) {
   }
   const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== ${sectionKeyword} N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", the option markers "(A)" through "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]", and "[BONUS N]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does. This extends inside [GRAPH] blocks specifically: the field names themselves (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, fill, range, opacity, point, segment, slider, label, color, z, u, v) are parser keywords and must stay in English exactly as written in the spec, and every math expression (a trace's formula, z, u, v) must stay in plain ASCII math syntax regardless of document language, since a separate library evaluates them as expressions, not as text. Only the actual values after title:, xlabel:, ylabel:, zlabel:, and label: move to ${lang} — everything else in a [GRAPH] block does not.\n`;
 
-  return renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, sectionKeyword });
+  return renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, sectionKeyword, deliveryInstruction });
 }
 
 /* ═══════════════════════════════════════════════════════════

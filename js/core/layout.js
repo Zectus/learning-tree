@@ -126,6 +126,7 @@ function updateAllStatuses() {
     node.el.classList.add(`status-${s}`);
     const badge = node.el.querySelector('.node-badge');
     if (badge) uiText(badge, s === 'done' ? '✓ Complete' : s === 'available' ? '● Available' : '○ Locked');
+    refreshNodeLessonIndicator(node);
 
     // Outside edit mode a node is one button; in edit mode it holds its own controls.
     if (editing) {
@@ -138,6 +139,7 @@ function updateAllStatuses() {
   });
   updateEdgeStyles();
   updateProgress();
+  if (state.generationPicking) refreshGenerationPicking();
 }
 
 function updateProgress() {

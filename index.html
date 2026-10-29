@@ -209,13 +209,20 @@ try {
       <button id="generation-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs='{"title":"Close","aria-label":"Close"}'>✕</button>
     </div>
     <div class="modal-body">
-      <p class="generation-help" data-ui-text="Works with free AI chats. Completed lessons survive a cut-off reply; only the unfinished lesson needs another attempt.">Works with free AI chats. Completed lessons survive a cut-off reply; only the unfinished lesson needs another attempt.</p>
+      <p id="generation-file-help" class="generation-help" data-ui-text="Works with free AI chats. Completed lessons survive a cut-off reply; only the unfinished lesson needs another attempt.">Works with free AI chats. Completed lessons survive a cut-off reply; only the unfinished lesson needs another attempt.</p>
+      <div>
+        <label for="generation-method" class="field-label" data-ui-text="Generation method">Generation method</label>
+        <select id="generation-method" class="field-input">
+          <option value="files" data-ui-text="Prompt and files">Prompt and files</option>
+          <option value="automatic" data-ui-text="Automatic · use my subscription">Automatic · use my subscription</option>
+        </select>
+      </div>
       <div class="generation-fields">
         <div>
           <label for="generation-language" class="field-label" data-ui-text="Language (optional)">Language (optional)</label>
           <input id="generation-language" class="field-input" placeholder="Use tree language" data-ui-attrs='{"placeholder":"Use tree language"}'>
         </div>
-        <div>
+        <div id="generation-reply-field">
           <label for="generation-reply-size" class="field-label" data-ui-text="Lessons per chat reply">Lessons per chat reply</label>
           <select id="generation-reply-size" class="field-input">
             <option value="1" data-ui-text="1 — safest for limited usage">1 — safest for limited usage</option>
@@ -225,19 +232,93 @@ try {
         </div>
       </div>
       <div class="generation-step">
+        <h3 data-ui-text="Choose lessons">Choose lessons</h3>
+        <div class="generation-fields">
+          <div>
+            <label for="generation-count" class="field-label" data-ui-text="Number of nodes">Number of nodes</label>
+            <input id="generation-count" class="field-input" type="number" min="1" step="1" aria-describedby="generation-selection-status">
+          </div>
+          <div>
+            <label for="generation-selection-mode" class="field-label" data-ui-text="Node selection">Node selection</label>
+            <select id="generation-selection-mode" class="field-input">
+              <option value="auto" data-ui-text="Choose automatically">Choose automatically</option>
+              <option value="manual" data-ui-text="Choose on the tree map">Choose on the tree map</option>
+            </select>
+          </div>
+        </div>
+        <p id="generation-selection-help" class="generation-help" data-ui-text="Required topics first, left to right by level, then by how many downstream topics they support. Optional topics are included only when the count exceeds the remaining required topics.">Required topics first, left to right by level, then by how many downstream topics they support. Optional topics are included only when the count exceeds the remaining required topics.</p>
+        <button id="btn-pick-generation-nodes" class="btn hidden" data-ui-text="Select nodes on map">Select nodes on map</button>
+        <p id="generation-selection-status" class="generation-help" role="status"></p>
+        <details>
+          <summary data-ui-text="Preview selected lessons">Preview selected lessons</summary>
+          <ol id="generation-selection-preview"></ol>
+        </details>
+      </div>
+      <div id="assistant-generation-panel" class="generation-step hidden">
+        <h3 data-ui-text="Generate with your subscription">Generate with your subscription</h3>
+        <p class="generation-help" data-ui-text="The local companion generates lessons in the background and saves each one into your tree. Keep it running; the browser tab can be closed and reopened.">The local companion generates lessons in the background and saves each one into your tree. Keep it running; the browser tab can be closed and reopened.</p>
+        <p id="assistant-status" class="generation-help" role="status"></p>
+        <div id="assistant-local-setup">
+          <p class="generation-help" data-ui-text="Start the companion on your computer, then open the local app. Your current tree and selection can travel with it.">Start the companion on your computer, then open the local app. Your current tree and selection can travel with it.</p>
+          <pre class="assistant-command">npm ci --prefix companion
+npm run companion</pre>
+          <label for="assistant-local-address" class="field-label" data-ui-text="Local app address">Local app address</label>
+          <input id="assistant-local-address" class="field-input" value="http://127.0.0.1:8765" type="url" spellcheck="false">
+          <button id="btn-assistant-open-local" class="btn" data-ui-text="Open local app with this tree">Open local app with this tree</button>
+          <a class="generation-help" href="https://github.com/Zectus/learning-tree/blob/main/docs/assistant-setup.md" target="_blank" rel="noopener" data-ui-text="Setup instructions">Setup instructions</a>
+        </div>
+        <div id="assistant-connected-controls" class="hidden">
+          <div class="generation-fields">
+            <div>
+              <label for="assistant-provider" class="field-label" data-ui-text="Assistant">Assistant</label>
+              <select id="assistant-provider" class="field-input"><option value="chatgpt">ChatGPT</option><option value="claude">Claude Code</option></select>
+            </div>
+            <div>
+              <label for="assistant-model" class="field-label" data-ui-text="Model">Model</label>
+              <select id="assistant-model" class="field-input"></select>
+            </div>
+            <div>
+              <label for="assistant-effort" class="field-label" data-ui-text="Reasoning effort">Reasoning effort</label>
+              <select id="assistant-effort" class="field-input">
+                <option value="default" data-ui-text="Provider default">Provider default</option>
+                <option value="high" data-ui-text="High">High</option>
+                <option value="medium" data-ui-text="Medium">Medium</option>
+                <option value="low" data-ui-text="Low">Low</option>
+              </select>
+            </div>
+          </div>
+          <div id="assistant-account-field">
+            <label for="assistant-chatgpt-account" class="field-label" data-ui-text="ChatGPT sign-in account">ChatGPT sign-in account</label>
+            <select id="assistant-chatgpt-account" class="field-input"></select>
+          </div>
+          <div class="assistant-buttons">
+            <button id="btn-assistant-connect" class="btn" data-ui-text="Continue with ChatGPT">Continue with ChatGPT</button>
+            <button id="btn-assistant-disconnect" class="btn" data-ui-text="Disconnect ChatGPT">Disconnect ChatGPT</button>
+            <button id="btn-assistant-refresh" class="btn" data-ui-text="Refresh connection">Refresh connection</button>
+          </div>
+          <p id="assistant-account" class="generation-help"></p>
+          <p id="assistant-claude-help" class="generation-help hidden" data-ui-text="Install Claude Code and run claude auth login in a terminal. Choose your Claude subscription. This app will not use Console/API billing.">Install Claude Code and run claude auth login in a terminal. Choose your Claude subscription. This app will not use Console/API billing.</p>
+          <button id="btn-assistant-start" class="btn" data-ui-text="Generate selected lessons">Generate selected lessons</button>
+          <p class="generation-help" data-ui-text="Subscription usage limits still apply. Disable paid extra usage in your provider account if you want a strict subscription-only cap.">Subscription usage limits still apply. Disable paid extra usage in your provider account if you want a strict subscription-only cap.</p>
+          <div class="assistant-job-header"><h4 data-ui-text="Generation jobs">Generation jobs</h4><button id="btn-assistant-jobs-refresh" class="btn" data-ui-text="Refresh jobs">Refresh jobs</button></div>
+          <div id="assistant-jobs" aria-live="polite"></div>
+        </div>
+        <p id="assistant-error" class="generation-help hidden" role="alert"></p>
+      </div>
+      <div class="generation-step generation-file-step">
         <h3 data-ui-text="1. Download the AI work file">1. Download the AI work file</h3>
-        <p class="generation-help" data-ui-text="It contains the tree, the lesson rules once, and a queue of missing lessons. Existing lesson text and your personal progress are left out.">It contains the tree, the lesson rules once, and a queue of missing lessons. Existing lesson text and your personal progress are left out.</p>
+        <p class="generation-help" data-ui-text="It contains tree context, the lesson rules, and only your selected missing lessons in the generation queue. Existing lesson text and personal progress are left out.">It contains tree context, the lesson rules, and only your selected missing lessons in the generation queue. Existing lesson text and personal progress are left out.</p>
         <button id="btn-download-ai-work" class="btn" data-ui-text="Download AI work file">Download AI work file</button>
       </div>
-      <div class="generation-step">
+      <div class="generation-step generation-file-step">
         <h3 data-ui-text="2. Attach it in an AI chat and send this message">2. Attach it in an AI chat and send this message</h3>
         <div class="prompt-wrap">
           <textarea id="generation-start-message" class="prompt-ta generation-message" readonly spellcheck="false" aria-label="AI start message" data-ui-attrs='{"aria-label":"AI start message"}'></textarea>
           <button id="btn-copy-generation-message" class="copy-btn" data-ui-text="Copy">Copy</button>
         </div>
-        <p class="generation-help" data-ui-text="In the same chat, say Continue for the next lessons. AIs with file tools can keep working and checkpoint after every lesson; subagents can work on independent branches.">In the same chat, say Continue for the next lessons. AIs with file tools can keep working and checkpoint after every lesson; subagents can work on independent branches.</p>
+        <p id="generation-chat-help" class="generation-help" data-ui-text="In the same chat, say Continue for the next lessons. AIs with file tools can keep working and checkpoint after every lesson; subagents can work on independent branches.">In the same chat, say Continue for the next lessons. AIs with file tools can keep working and checkpoint after every lesson; subagents can work on independent branches.</p>
       </div>
-      <div class="generation-step">
+      <div class="generation-step generation-file-step">
         <h3 data-ui-text="3. Import the AI output, even if it stopped midway">3. Import the AI output, even if it stopped midway</h3>
         <label class="generation-help">
           <input id="generation-replace-existing" type="checkbox" aria-describedby="generation-corrections-help">
@@ -261,7 +342,7 @@ try {
       </div>
       <div class="generation-step">
         <h3 data-ui-text="Resume or keep a usable copy">Resume or keep a usable copy</h3>
-        <p class="generation-help" data-ui-text="Download a fresh AI work file for a new chat: it queues only missing lessons. Export structure + content to keep the whole tree with every lesson imported so far.">Download a fresh AI work file for a new chat: it queues only missing lessons. Export structure + content to keep the whole tree with every lesson imported so far.</p>
+        <p class="generation-help generation-file-step" data-ui-text="Download a fresh AI work file for a new chat: it queues only missing lessons. Export structure + content to keep the whole tree with every lesson imported so far.">Download a fresh AI work file for a new chat: it queues only missing lessons. Export structure + content to keep the whole tree with every lesson imported so far.</p>
         <button id="btn-export-generation-tree" class="btn" data-ui-text="Download tree with completed lessons">Download tree with completed lessons</button>
       </div>
     </div>
@@ -457,6 +538,23 @@ try {
   </div>
 </div>
 
+<div id="generation-pick-bar" class="hidden" role="region" aria-label="Choose lesson nodes" data-ui-attrs='{"aria-label":"Choose lesson nodes"}'>
+  <div>
+    <strong data-ui-text="Select nodes on map">Select nodes on map</strong>
+    <p data-ui-text="Tap nodes to select or deselect. Pan and zoom as usual. Existing lessons are dimmed.">Tap nodes to select or deselect. Pan and zoom as usual. Existing lessons are dimmed.</p>
+    <p id="generation-pick-status" role="status"></p>
+  </div>
+  <button id="btn-cancel-generation-pick" class="btn" data-ui-text="Cancel">Cancel</button>
+  <button id="btn-confirm-generation-pick" class="btn" data-ui-text="Use selection">Use selection</button>
+</div>
+
+<div id="assistant-handoff" class="hidden" role="region" aria-label="Receive tree" data-ui-attrs='{"aria-label":"Receive tree"}'>
+  <p id="assistant-handoff-description"></p>
+  <p data-ui-text="Lessons travel with the tree. Quiz progress and notes stay in the original tab.">Lessons travel with the tree. Quiz progress and notes stay in the original tab.</p>
+  <button id="btn-assistant-accept-tree" class="btn" data-ui-text="Use this tree">Use this tree</button>
+  <button id="btn-assistant-decline-tree" class="btn" data-ui-text="Cancel">Cancel</button>
+</div>
+
 <!-- App scripts. Order matters (each file's header lists what it depends on):
      autoscroll depends on nothing; state.js comes before everything that reads
      state; escape/toast before anything that registers Escape handlers or
@@ -483,7 +581,9 @@ try {
 <script src="js/persistence/library.js"></script>
 <script src="js/persistence/account.js"></script>
 <script src="js/learn/viewer.js"></script>
+<script src="js/learn/generation-format.js"></script>
 <script src="js/learn/generation.js"></script>
+<script src="js/learn/assistant.js"></script>
 <script src="js/core/a11y.js"></script>
 <script src="js/core/tutorial.js"></script>
 <!-- Firebase wiring, as a module. Modules always run after every classic script

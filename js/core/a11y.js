@@ -19,6 +19,7 @@
   const topModal = () => backdrops.find(isOpen) || (isOpen(viewerEl) ? viewerEl : null);
 
   const observer = new MutationObserver(records => {
+    if (!window.document) return; // A queued callback may outlive a closed page.
     // The UI tour owns focus across its coachmark and highlighted real controls.
     if (state.tutorialActive) { returnFocus.clear(); return; }
     for (const { target: el } of records) {

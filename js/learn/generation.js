@@ -4,78 +4,54 @@
 const LESSON_RECORD_FORMAT = 'learning-tree-lesson/v1';
 const WORK_PACKET_FORMAT = 'learning-tree-work/v1';
 
-// Identity excludes content, node order, and personal progress. Editing a scope,
-// label, language, or prerequisite makes old output ineligible for this tree.
-function generationTreeKey(tree) {
-  const canonical = JSON.stringify({
-    topic: tree.topic || '', language: tree.language || '', isSpanish: tree.isSpanish === true,
-    nodes: tree.nodes.map(n => ({
-      id: String(n.id), label: n.label, explanation: n.explanation || '',
-      optional: !!n.optional, requires: [...new Set(n.requires || [])].map(String).sort(),
-    })).sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
-  });
-  // Two deterministic 32-bit hashes detect accidental mismatches, not authenticity.
-  let a = 2166136261, b = 5381;
-  for (let i = 0; i < canonical.length; i++) {
-    a = Math.imul(a ^ canonical.charCodeAt(i), 16777619);
-    b = Math.imul(b, 33) ^ canonical.charCodeAt(i);
-  }
-  return 'lt1-' + (a >>> 0).toString(16).padStart(8, '0') + (b >>> 0).toString(16).padStart(8, '0');
-}
-
-function lessonIsComplete(content) {
-  if (typeof content !== 'string' || !/^===\s*(?:SECTION|SECCI[OÓ]N)\s+1[:.]\s*.+?\s*===/i.test(content.trim())) return false;
-  // Unclosed blocks and mismatched nesting are common signs of interrupted output.
-  const stack = [], ids = new Set();
-  const markers = content.matchAll(/\[(\/?)(QUESTION|BONUS|TABLE|TIMELINE|GRAPH)(?:\s+(\d+))?\]/gi);
-  for (const [, closing, rawTag, number] of markers) {
-    const tag = rawTag.toUpperCase();
-    if (closing) { if (stack.pop() !== tag) return false; }
-    else {
-      if (tag === 'QUESTION' || tag === 'BONUS') {
-        if (!number || Number(number) < 1 || ids.has(tag + ':' + Number(number))) return false;
-        ids.add(tag + ':' + Number(number));
-      }
-      stack.push(tag);
-    }
-  }
-  if (stack.length) return false;
-  const parsed = parseTxtSession(content);
-  if (!parsed.sections.length || !parsed.questions.size) return false;
-  const choices = [...parsed.questions.values(), ...parsed.bonuses.values()];
-  if (!choices.every(q => q.valid && q.text && Object.keys(q.options).length >= 2 && Object.values(q.options).every(Boolean))) return false;
-  // The viewer tolerates malformed questions in legacy files; a new checkpoint
-  // must have one answer and no repeated option labels in every choice block.
-  for (const [, body] of content.matchAll(/\[(?:QUESTION|BONUS)\s+\d+\]([\s\S]*?)\[\/(?:QUESTION|BONUS)\]/gi)) {
-    if ([...body.matchAll(/\[ANSWER:\s*[A-E]\]/gi)].length !== 1) return false;
-    const letters = [...body.matchAll(/^\(([A-E])\)\s+/gim)].map(m => m[1].toUpperCase());
-    if (new Set(letters).size !== letters.length) return false;
-  }
-  return true;
-}
-
-// Stable topological order. Prefer required topics and continue a ready path
-// after its prerequisites rather than generating every foundation first.
-function orderGenerationNodes(tree) {
+// Rank levels left-to-right, then by the number of distinct downstream topics.
+// The same graph order also guarantees prerequisites precede their descendants.
+function generationGraph(tree) {
   const byId = new Map(tree.nodes.map(n => [n.id, n]));
-  const remaining = new Set(byId.keys()), emitted = new Set(), order = [];
-  const positions = new Map(tree.nodes.map((n, i) => [n.id, i]));
-  while (remaining.size) {
-    const ready = [...remaining].filter(id => (byId.get(id).requires || []).every(p => emitted.has(p)));
-    if (!ready.length) throw new Error('The tree needs valid prerequisites before lessons can be generated.');
-    ready.sort((a, b) => Number(!!byId.get(a).optional) - Number(!!byId.get(b).optional)
-      || (byId.get(b).requires || []).length - (byId.get(a).requires || []).length
-      || positions.get(a) - positions.get(b));
-    const id = ready[0];
-    order.push(id); emitted.add(id); remaining.delete(id);
+  const depth = new Map(), downstream = new Map(), visiting = new Set();
+  function level(id) {
+    if (depth.has(id)) return depth.get(id);
+    if (!byId.has(id) || visiting.has(id)) throw new Error('The tree needs valid prerequisites before lessons can be generated.');
+    visiting.add(id);
+    const parents = byId.get(id).requires || [];
+    const value = parents.length ? 1 + Math.max(...parents.map(level)) : 0;
+    visiting.delete(id); depth.set(id, value); return value;
   }
-  return order;
+  tree.nodes.forEach(n => { level(n.id); downstream.set(n.id, new Set()); });
+  const positions = new Map(tree.nodes.map((n, i) => [n.id, i]));
+  const order = [...byId.keys()].sort((a, b) => depth.get(b) - depth.get(a));
+  for (const id of order) for (const parent of byId.get(id).requires || []) {
+    downstream.get(parent).add(id);
+    downstream.get(id).forEach(child => downstream.get(parent).add(child));
+  }
+  order.sort((a, b) => depth.get(a) - depth.get(b)
+    || downstream.get(b).size - downstream.get(a).size || positions.get(a) - positions.get(b));
+  return { order, downstream };
 }
 
-function renderGenerationInstructions({ language, sectionKeyword, replySize, spanish }) {
+function orderGenerationNodes(tree) { return generationGraph(tree).order; }
+
+const generationSelection = { mode: 'auto', count: null, selected: new Set(), draft: new Set() };
+
+function generationQueue(tree, completed, options = generationSelection) {
+  const { order } = generationGraph(tree), done = new Set(completed);
+  const missing = order.filter(id => !done.has(id));
+  const count = options.count == null ? missing.length : Math.max(0, Math.min(missing.length, Math.floor(Number(options.count) || 0)));
+  if (options.mode === 'manual') {
+    const selected = new Set(options.selected || []);
+    return missing.filter(id => selected.has(id)).slice(0, count);
+  }
+  const byId = new Map(tree.nodes.map(n => [n.id, n]));
+  // Only spend slots on optional lessons after all missing required lessons fit.
+  const priority = [...missing.filter(id => !byId.get(id).optional), ...missing.filter(id => byId.get(id).optional)];
+  const chosen = new Set(priority.slice(0, count));
+  return missing.filter(id => chosen.has(id));
+}
+
+function renderGenerationInstructions({ language, sectionKeyword, replySize, spanish, queue, completed, tree }) {
   const protocol = spanish ? `GENERA LECCIONES CON PUNTOS DE GUARDADO
 
-Este archivo contiene un árbol completo y las reglas docentes compartidas una sola vez. tree.nodes contiene el contexto de cada nodo; queue es el orden recomendado y completed contiene lecciones ya disponibles. Genera solo los nodos de queue. Nunca cambies ids, etiquetas, alcances, requisitos ni idioma del árbol. No incluyas progreso personal.
+Este archivo contiene un árbol completo y las reglas docentes compartidas una sola vez. tree.nodes contiene el contexto de cada nodo; queue contiene solo las lecciones seleccionadas en orden de requisitos y completed contiene lecciones ya disponibles. Genera solo los nodos de queue; los demás son contexto, no tareas adicionales. Nunca cambies ids, etiquetas, alcances, requisitos ni idioma del árbol. No incluyas progreso personal.
 
 Para cada nodo, usa su label como tema y explanation como objetivo y límite. Los requires identifican lecciones anteriores: usa sus etiquetas y alcances exactos como conocimientos ya enseñados. No supongas conocimientos de hermanos independientes. Los nodos que lo requieren son temas posteriores: no los enseñes ni menciones por nombre. No copies las reglas para cada nodo.
 
@@ -86,12 +62,12 @@ SIN HERRAMIENTAS DE ARCHIVOS: publica cada registro terminado inmediatamente en 
 
 CON HERRAMIENTAS DE ARCHIVOS: crea un archivo .jsonl descargable y muéstralo desde el primer registro terminado. Añade y guarda cada registro completo por separado antes de seguir; usa escritura atómica o append de una línea terminada y flush si está disponible. No guardes todo únicamente al final. Sigue por queue mientras puedas; el máximo por respuesta del chat no limita este trabajo. Conserva los puntos de guardado anteriores si falla otra lección. Si hay límite conocido, reserva margen para publicar el último punto guardado. Puedes generar además un árbol JSON utilizable insertando cada content en su nodo de tree y guardándolo atómicamente después de cada lección; conserva la estructura y nunca sustituyas el diario por una reescritura gigante. Los registros JSONL son el respaldo ante un corte.
 
-SI DISPONES DE SUBAGENTES: aprovecha una oleada pequeña de nodos independientes cuyos requisitos ya estén en completed o guardados por el coordinador. Comparte las reglas una vez con cada trabajador y solo el contexto relevante del nodo. Un único coordinador valida y guarda cada resultado en cuanto llegue. No hagas que todos reescriban el árbol ni escriban al mismo archivo. No empieces descendientes antes de guardar sus requisitos. Mantén el orden lógico de aprendizaje y prioriza una ruta utilizable. Sin subagentes, trabaja secuencialmente con el mismo formato.
+SI DISPONES DE SUBAGENTES: aprovecha una oleada pequeña de nodos independientes de queue. Los requisitos fuera de queue son contexto y no necesitan generarse. Comparte las reglas una vez con cada trabajador y solo el contexto relevante del nodo. Un único coordinador valida y guarda cada resultado en cuanto llegue. No hagas que todos reescriban el árbol ni escriban al mismo archivo. No empieces descendientes antes de guardar sus requisitos que también estén en queue. Mantén el orden lógico de aprendizaje y prioriza una ruta utilizable. Sin subagentes, trabaja secuencialmente con el mismo formato.
 
 REGLAS COMPARTIDAS PARA EL TEXTO DECODIFICADO DE CADA content
 Las restricciones de texto plano de abajo se aplican al contenido de la lección, no al envoltorio JSONL. El tema y CONTEXTO cambian por nodo; todas las demás reglas siguen iguales.` : `GENERATE LESSONS WITH DURABLE CHECKPOINTS
 
-This file contains the whole tree and the shared teaching rules once. tree.nodes provides each node's context; queue is the recommended order, and completed lists lessons already available. Generate only queue nodes. Never change the tree's ids, labels, scopes, prerequisites, or language. Do not include personal learning progress.
+This file contains the whole tree and the shared teaching rules once. tree.nodes provides each node's context; queue lists only the selected lessons in prerequisite order, and completed lists lessons already available. Generate only queue nodes; all other nodes are context, not additional work. Never change the tree's ids, labels, scopes, prerequisites, or language. Do not include personal learning progress.
 
 For each node, use label as its topic and explanation as its learning goal and boundary. Its requires point to earlier lessons: use those nodes' exact labels and scopes as already-taught background. Do not assume independent sibling topics. Nodes requiring this one are future material: do not teach them or mention their names. Do not repeat the design rules for each node.
 
@@ -102,10 +78,36 @@ WITHOUT FILE TOOLS: publish each finished record immediately in the chat. You ma
 
 WITH FILE TOOLS: create a downloadable .jsonl journal and expose it after the first complete record. Append and save each complete record before continuing; use atomic writes or a complete-line append and flush when available. Do not save only at the end. Continue through queue while able; the chat reply maximum does not limit tool-based work. Preserve earlier checkpoints if a later lesson fails. For a known usage limit, reserve room to expose the last saved checkpoint. You may additionally produce a usable tree JSON by inserting each content into its tree node and saving atomically after each lesson; preserve structure, and never replace the journal with one giant rewrite. JSONL records are the interruption fallback.
 
-IF SUBAGENTS ARE AVAILABLE: use a small wave of independent nodes whose prerequisites are already in completed or committed by the coordinator. Share the teaching rules once per worker and only the relevant node context. A single coordinator validates and commits each result as soon as it arrives. Do not have every worker rewrite the whole tree or write to one shared file. Do not start descendants until their prerequisites are committed. Preserve logical learning order and prioritize a usable path. Without subagents, work sequentially using the identical format.
+IF SUBAGENTS ARE AVAILABLE: use a small wave of independent queue nodes. Prerequisites outside queue are background context and need no generation. Share the teaching rules once per worker and only the relevant node context. A single coordinator validates and commits each result as soon as it arrives. Do not have every worker rewrite the whole tree or write to one shared file. Do not start descendants until any prerequisites also in queue are committed. Preserve logical learning order and prioritize a usable path. Without subagents, work sequentially using the identical format.
 
 SHARED RULES FOR EACH DECODED content
 The plain-text restrictions below apply to lesson content, not its JSONL envelope. The topic and CONTEXT vary by node; every other teaching rule stays the same.`;
+  const single = queue.length === 1;
+  const graph = generationGraph(tree);
+  const parallel = queue.some((id, i) => queue.slice(i + 1).some(other =>
+    !graph.downstream.get(id).has(other) && !graph.downstream.get(other).has(id)));
+  let tailoredProtocol = protocol;
+  if (!parallel) tailoredProtocol = tailoredProtocol.replace(/(?:IF SUBAGENTS ARE AVAILABLE:|SI DISPONES DE SUBAGENTES:)[\s\S]*?(?=\n\n)/, '');
+  if (single) {
+    tailoredProtocol = spanish
+      ? `GENERA UNA LECCIÓN
+
+Genera únicamente el nodo de queue. El resto de tree.nodes aporta contexto, no tareas. Conserva la estructura del árbol.
+
+Devuelve un único registro JSON con format="${LESSON_RECORD_FORMAT}", treeKey="${generationTreeKey(tree)}", id="${queue[0]}" y content=el texto completo de la lección. Usa un serializador JSON para escapar saltos de línea, comillas y barras inversas sin alterar LaTeX. Con herramientas de archivos, entrega un .jsonl descargable; si no, publica el registro completo en una sola línea dentro de un bloque jsonl. Revisa y termina la lección antes de entregarla. Las reglas de texto plano siguientes se aplican a content.`
+      : `GENERATE ONE LESSON
+
+Generate only the node in queue. The rest of tree.nodes is context, not additional work. Preserve the tree structure.
+
+Return one JSON record with format="${LESSON_RECORD_FORMAT}", treeKey="${generationTreeKey(tree)}", id="${queue[0]}" and content=the entire finished lesson. Use a JSON serializer to escape newlines, quotes, and backslashes without altering LaTeX. With file tools, deliver a downloadable .jsonl file; otherwise publish the complete record on one physical line inside a jsonl code fence. Review and finish the lesson before delivering it. The plain-text rules below apply to content.`;
+    const liveIndex = tree.nodes.findIndex(n => n.id === queue[0]);
+    const liveId = [...state.nodes.keys()][liveIndex];
+    // Use the actual per-node context rather than placeholders for a one-node job.
+    const lessonPrompt = buildPrompt(liveId, language, spanish
+      ? 'Entrega el texto como content del registro JSON descrito arriba.'
+      : 'Deliver the lesson as content of the JSON record specified above.');
+    return tailoredProtocol + '\n\n' + lessonPrompt;
+  }
   const values = {
     topic: spanish ? 'label del nodo actual' : 'the current node’s label', nodeId: 'CURRENT_NODE_ID',
     sectionKeyword, language,
@@ -121,22 +123,22 @@ The plain-text restrictions below apply to lesson content, not its JSONL envelop
   const resumeNote = spanish
     ? 'COPIAS AL RETOMAR: si completed no está vacío, el archivo de trabajo omite deliberadamente el texto de esas lecciones. Un JSON construido solo desde este archivo no contiene todas las lecciones anteriores. Conserva el diario de nuevos registros para fusionarlo en el árbol original; exporta la copia completa desde la app después de importar.'
     : 'RESUME BACKUPS: when completed is nonempty, this work file deliberately omits those lessons’ text. A JSON built only from this packet does not contain all earlier lessons. Keep the journal of new records to merge into the original tree; export the complete backup from the app after importing.';
-  return protocol + '\n\n' + resumeNote + '\n\n' + (spanish ? renderNodePromptEs(values) : renderNodePrompt(values));
+  return tailoredProtocol + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + (spanish ? renderNodePromptEs(values) : renderNodePrompt(values));
 }
 
-function buildGenerationPacket(language, replySize = '1') {
+function buildGenerationPacket(language, replySize = '1', options = generationSelection) {
   const tree = buildTreeJSON(false);
   if (!tree) return null;
   const spanish = state.isSpanish === true || uiLanguage === 'es';
   const lessonLanguage = language || state.language || (spanish ? 'Español' : 'English');
-  const allOrder = orderGenerationNodes(tree);
   const liveNodes = [...state.nodes.values()];
   const completed = tree.nodes.filter((_, i) => lessonIsComplete(liveNodes[i]._sessionTxt)).map(n => n.id);
-  const ready = new Set(completed);
+  const queue = generationQueue(tree, completed, options);
+  if (replySize !== 'auto') replySize = String(Math.min(Number(replySize) || 1, Math.max(1, queue.length)));
   return {
     format: WORK_PACKET_FORMAT, treeKey: generationTreeKey(tree),
-    instructions: renderGenerationInstructions({ language: lessonLanguage, sectionKeyword: lessonSectionKeyword(lessonLanguage), replySize, spanish }),
-    lessonLanguage, tree, completed, queue: allOrder.filter(id => !ready.has(id)),
+    instructions: renderGenerationInstructions({ language: lessonLanguage, sectionKeyword: lessonSectionKeyword(lessonLanguage), replySize, spanish, queue, completed, tree }),
+    lessonLanguage, tree, completed, queue,
   };
 }
 
@@ -243,11 +245,13 @@ function mergeGenerationOutput(raw, { replaceExisting = false, beforeReplace } =
       }
       retainUnchangedLessonAnswers(node, record.content);
       node._sessionTxt = record.content;
+      refreshNodeLessonIndicator(node);
       result.updated++;
       continue;
     }
     // Merge content only: no reload, no layout reset, no changes to progress.
     node._sessionTxt = record.content;
+    refreshNodeLessonIndicator(node);
     result.imported++;
   }
   return result;
@@ -270,18 +274,142 @@ function generationImportOptions(replaceExisting = document.getElementById('gene
   } };
 }
 
-function generationStartMessage() {
-  return uiLanguage === 'es'
-    ? 'Lee el archivo AI work adjunto y sigue sus instructions. Genera queue y guarda inmediatamente cada lección terminada. Usa subagentes si están disponibles. Sin herramientas de archivos, publica registros JSONL completos en el chat y retoma cuando diga «Continúa». No esperes al final para entregar las lecciones.'
+function generationStartMessage(packet = buildGenerationPacket()) {
+  if (!packet?.queue.length) return '';
+  if (packet.queue.length === 1) return uiLanguage === 'es'
+    ? 'Lee el archivo AI work adjunto y genera solo la lección indicada en queue. Entrega el registro JSONL completo siguiendo sus instrucciones.'
+    : 'Read the attached AI work file and generate only the lesson listed in queue. Return the complete JSONL record following its instructions.';
+  const message = uiLanguage === 'es'
+    ? 'Lee el archivo AI work adjunto y sigue sus instrucciones. Genera queue y guarda inmediatamente cada lección terminada. Usa subagentes si están disponibles. Sin herramientas de archivos, publica registros JSONL completos en el chat y retoma cuando diga «Continúa». No esperes al final para entregar las lecciones.'
     : 'Read the attached AI work file and follow its instructions. Generate its queue and checkpoint each completed lesson immediately. Use subagents if available. Without file tools, emit complete JSONL records in chat and resume when I say Continue. Do not hold finished lessons until the end.';
+  return /IF SUBAGENTS ARE AVAILABLE|SI DISPONES DE SUBAGENTES/.test(packet.instructions) ? message
+    : message.replace(' Use subagents if available.', '').replace(' Usa subagentes si están disponibles.', '');
 }
+
+function currentGenerationPacket() {
+  return buildGenerationPacket(document.getElementById('generation-language').value.trim(), document.getElementById('generation-reply-size').value);
+}
+
+function refreshGenerationSelection() {
+  const missing = [...state.nodes.values()].filter(n => !lessonIsComplete(n._sessionTxt)).length;
+  const input = document.getElementById('generation-count');
+  input.max = missing;
+  input.disabled = !missing;
+  if (generationSelection.count !== null) generationSelection.count = Math.min(missing, generationSelection.count);
+  input.value = generationSelection.count ?? missing;
+  const packet = currentGenerationPacket();
+  const manual = generationSelection.mode === 'manual';
+  const queue = packet?.queue || [];
+  const target = Number(input.value);
+  document.getElementById('btn-pick-generation-nodes').classList.toggle('hidden', !manual);
+  document.getElementById('btn-pick-generation-nodes').disabled = !missing;
+  document.getElementById('generation-selection-help').classList.toggle('hidden', manual);
+  document.getElementById('generation-reply-field').classList.toggle('hidden', queue.length <= 1);
+  document.getElementById('btn-download-ai-work').disabled = !queue.length || (manual && queue.length !== target);
+  uiText(document.getElementById('generation-selection-status'), `${queue.length} / ${target} nodes selected`);
+  const preview = document.getElementById('generation-selection-preview');
+  preview.replaceChildren();
+  for (const id of queue) {
+    const li = document.createElement('li');
+    li.textContent = packet.tree.nodes.find(n => n.id === id).label;
+    preview.appendChild(li);
+  }
+  document.getElementById('generation-start-message').value = generationStartMessage(packet);
+  uiText(document.getElementById('generation-chat-help'), queue.length <= 1
+    ? 'Return the finished lesson as one JSONL record, then import it below.'
+    : 'In the same chat, say Continue for the next selected lessons. Save or publish each finished lesson before starting another.');
+  document.dispatchEvent(new Event('generation-selection-change'));
+}
+
+function beginGenerationPicking() {
+  generationSelection.draft = new Set(currentGenerationPacket()?.queue || []);
+  state.generationPicking = true;
+  generationSelection.previousMode = state.mode;
+  setMode('browse');
+  closeViewer();
+  closeGenerationModal();
+  closeAllDropdowns();
+  document.body.classList.add('generation-picking');
+  document.getElementById('toolbar').inert = true;
+  document.getElementById('generation-pick-bar').classList.remove('hidden');
+  refreshGenerationPicking();
+  requestAnimationFrame(() => document.getElementById('btn-cancel-generation-pick').focus());
+}
+
+function refreshGenerationPicking() {
+  const tree = buildTreeJSON(false);
+  const live = [...state.nodes.values()];
+  const limit = Number(document.getElementById('generation-count').value);
+  tree.nodes.forEach((n, i) => {
+    const node = live[i], hasLesson = lessonIsComplete(node._sessionTxt);
+    const selected = generationSelection.draft.has(n.id);
+    node.el.classList.toggle('generation-selected', selected);
+    node.el.classList.toggle('generation-has-lesson', hasLesson);
+    node.el.setAttribute('aria-pressed', String(selected));
+    node.el.setAttribute('aria-disabled', String(hasLesson));
+  });
+  uiText(document.getElementById('generation-pick-status'), `${generationSelection.draft.size} / ${limit} nodes selected`);
+  document.getElementById('btn-confirm-generation-pick').disabled = generationSelection.draft.size !== limit || !limit;
+}
+
+function toggleGenerationNode(id) {
+  const node = state.nodes.get(id);
+  if (!node || lessonIsComplete(node._sessionTxt)) return;
+  const tree = buildTreeJSON(false);
+  const slug = tree.nodes[[...state.nodes.keys()].indexOf(id)].id;
+  if (generationSelection.draft.has(slug)) generationSelection.draft.delete(slug);
+  else {
+    if (generationSelection.draft.size >= Number(document.getElementById('generation-count').value)) {
+      showToast('Selection is full. Deselect a node to choose another.'); return;
+    }
+    generationSelection.draft.add(slug);
+  }
+  refreshGenerationPicking();
+}
+
+function finishGenerationPicking(save, reopen = true) {
+  if (!state.generationPicking) return;
+  if (save) generationSelection.selected = new Set(generationSelection.draft);
+  state.generationPicking = false;
+  document.body.classList.remove('generation-picking');
+  document.getElementById('toolbar').inert = false;
+  document.getElementById('generation-pick-bar').classList.add('hidden');
+  state.nodes.forEach(node => {
+    node.el?.classList.remove('generation-selected', 'generation-has-lesson');
+    node.el?.removeAttribute('aria-pressed');
+  });
+  setMode(generationSelection.previousMode || 'browse');
+  if (reopen) {
+    refreshGenerationStatus();
+    document.getElementById('generation-modal-backdrop').classList.add('open');
+  }
+}
+
+document.getElementById('generation-count').addEventListener('input', e => {
+  const max = Number(e.target.max);
+  generationSelection.count = Math.max(max ? 1 : 0, Math.min(max, Math.floor(Number(e.target.value) || 1)));
+  refreshGenerationSelection();
+});
+document.getElementById('generation-selection-mode').addEventListener('change', e => {
+  generationSelection.mode = e.target.value;
+  refreshGenerationSelection();
+});
+for (const id of ['generation-language', 'generation-reply-size']) {
+  document.getElementById(id).addEventListener('input', refreshGenerationSelection);
+}
+document.getElementById('btn-pick-generation-nodes').addEventListener('click', beginGenerationPicking);
+document.getElementById('btn-confirm-generation-pick').addEventListener('click', () => finishGenerationPicking(true));
+document.getElementById('btn-cancel-generation-pick').addEventListener('click', () => finishGenerationPicking(false));
+onEscape(120, () => {
+  if (!state.generationPicking) return false;
+  finishGenerationPicking(false); return true;
+});
 
 function refreshGenerationStatus() {
   const tree = buildTreeJSON(false);
   const completed = [...state.nodes.values()].filter(n => lessonIsComplete(n._sessionTxt)).length;
   uiText(document.getElementById('generation-status'), `${completed} / ${tree?.nodes.length || 0} lessons ready`);
-  document.getElementById('btn-download-ai-work').disabled = !tree;
-  document.getElementById('generation-start-message').value = generationStartMessage();
+  refreshGenerationSelection();
   refreshGenerationImportControls();
 }
 
@@ -301,7 +429,7 @@ function clearGenerationReceipt() {
 }
 
 function openGenerationModal() {
-  if (!state.nodes.size) { showToast('Load a tree before generating lessons.'); return; }
+  if (!state.nodes.size && !state.assistantAvailable) { showToast('Load a tree before generating lessons.'); return; }
   closeModal();
   const input = document.getElementById('generation-language');
   input.value = state.language || '';
@@ -343,8 +471,9 @@ document.getElementById('generation-modal-backdrop').addEventListener('click', e
   if (e.target.id === 'generation-modal-backdrop') closeGenerationModal();
 });
 document.getElementById('btn-download-ai-work').addEventListener('click', () => {
-  const packet = buildGenerationPacket(document.getElementById('generation-language').value.trim(), document.getElementById('generation-reply-size').value);
-  if (!packet) { showToast('Load a tree before generating lessons.'); return; }
+  const packet = currentGenerationPacket();
+  if (!packet?.queue.length) return;
+  if (generationSelection.mode === 'manual' && packet.queue.length !== Number(document.getElementById('generation-count').value)) return;
   downloadGenerationFile(packet, `${slugify(state.topic || 'tree')}-ai-work.json`);
 });
 document.getElementById('btn-export-generation-tree').addEventListener('click', () => exportToJSON(true));
@@ -399,6 +528,11 @@ onEscape(110, () => {
 });
 document.addEventListener('ui-language-change', refreshGenerationStatus);
 document.addEventListener('tree-loaded', () => {
+  if (state.generationPicking) finishGenerationPicking(false, false);
+  generationSelection.count = null;
+  generationSelection.mode = 'auto';
+  generationSelection.selected.clear();
+  document.getElementById('generation-selection-mode').value = 'auto';
   clearGenerationReceipt();
   document.getElementById('generation-output').value = '';
   document.getElementById('generation-replace-existing').checked = false;

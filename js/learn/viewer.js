@@ -270,7 +270,10 @@ function openViewer(txtContent, nodeId) {
   const skipped = parsed.questions.size - scoreable.length;
   if (skipped) showToast(`${skipped} question${skipped > 1 ? 's' : ''} in this lesson ${skipped > 1 ? 'have' : 'has'} no valid answer key and won't be scored.`);
 
-  if (node) node._sessionTxt = txtContent;
+  if (node) {
+    node._sessionTxt = txtContent;
+    refreshNodeLessonIndicator(node);
+  }
   Object.assign(viewer, {
     nodeId, answers: new Map(), score: 0, total: scoreable.length, bonusAnswers: new Map(), checkpoints: [],
     // Kept for this render so click handlers (which only see a number and an on-screen letter) can look up origOf/correct.

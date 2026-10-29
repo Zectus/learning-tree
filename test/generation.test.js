@@ -41,7 +41,7 @@ test('one work packet reuses teaching rules and queues missing lessons without p
     assert.ok(!JSON.stringify(work).includes('PRIVATE'));
     assert.match(work.instructions, /WITHOUT FILE TOOLS/);
     assert.match(work.instructions, /WITH FILE TOOLS/);
-    assert.match(work.instructions, /IF SUBAGENTS ARE AVAILABLE/);
+    assert.doesNotMatch(work.instructions, /IF SUBAGENTS ARE AVAILABLE/); // This fixture is one chain.
     assert.match(work.instructions, /maximum per reply is 1/);
     assert.match(work.instructions, /Do not create an individual \.txt file/);
     assert.doesNotMatch(work.instructions, /Deliver this as a downloadable file named/);
@@ -611,5 +611,125 @@ test('the seven reviewed quantum records import new lessons and explicitly updat
     assert.equal(packet(app).completed.length, 33);
     assert.equal(packet(app).queue.length, 62);
     assert.equal(merge(app, corrections, { replaceExisting: true }).existing, 7);
+  } finally { app.window.close(); }
+});
+
+test('automatic batches rank required nodes by level then downstream reach, adding optional nodes only when slots remain', () => {
+  const app = loadApp();
+  try {
+    app.window.__tree = JSON.stringify({ nodes: [
+      { id: 'small', label: 'Small root' },
+      { id: 'big', label: 'Big root' },
+      { id: 'optional', label: 'Optional root', optional: true },
+      { id: 'leaf', label: 'Leaf', requires: ['small'] },
+      { id: 'hub', label: 'Hub', requires: ['big'] },
+      { id: 'end1', label: 'End 1', requires: ['hub'] },
+      { id: 'end2', label: 'End 2', requires: ['hub', 'small'] },
+    ] });
+    app.ev('loadFromJSON(JSON.parse(__tree))');
+    const batch = count => JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('', 'auto', {count:${count}}))`));
+    assert.deepEqual(batch(1).queue, ['big']);
+    assert.deepEqual(batch(2).queue, ['big', 'small']);
+    assert.deepEqual(batch(4).queue, ['big', 'small', 'hub', 'leaf']);
+    assert.ok(!batch(6).queue.includes('optional'));
+    assert.equal(batch(7).queue.length, 7);
+    assert.ok(batch(7).queue.includes('optional'));
+    const all = batch(7), positions = new Map(all.queue.map((id, i) => [id, i]));
+    for (const node of all.tree.nodes) for (const parent of node.requires || []) assert.ok(positions.get(parent) < positions.get(node.id));
+    merge(app, record(app, 'big'));
+    assert.deepEqual(batch(1).queue, ['small']);
+    assert.equal(batch(1).treeKey, all.treeKey);
+  } finally { app.window.close(); }
+});
+
+test('single-node packets use concrete context and omit batch orchestration in both languages', () => {
+  const app = loadApp();
+  try {
+    loadTree(app);
+    const single = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('English', 'auto', {count:1, mode:'manual', selected:['c']}))`));
+    assert.deepEqual(single.queue, ['c']);
+    assert.match(single.instructions, /topic: Gamma/);
+    assert.match(single.instructions, /- Beta/);
+    assert.doesNotMatch(single.instructions, /subagents|Continue|CURRENT_NODE_ID|RESUME BACKUPS|Deliver this as a downloadable file named/i);
+    app.window.__packet = single;
+    assert.doesNotMatch(app.ev('generationStartMessage(__packet)'), /subagents|Continue/i);
+    app.ev("setUILanguage('es')");
+    const spanish = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('Español', '3', {count:1}))`));
+    assert.match(spanish.instructions, /GENERA UNA LECCIÓN/);
+    assert.match(spanish.instructions, /tema: Alpha/);
+    assert.doesNotMatch(spanish.instructions, /subagentes|Ante «Continúa»|CURRENT_NODE_ID|archivo descargable llamado/i);
+    const multi = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('English', '3', {count:2}))`));
+    assert.doesNotMatch(multi.instructions, /SUBAGENTES/); // A single chain cannot run in parallel.
+  } finally { app.window.close(); }
+});
+
+test('independent batches retain subagent guidance and cap numeric reply size to the selected count', () => {
+  const app = loadApp();
+  try {
+    app.window.__tree = JSON.stringify({ nodes: [{ id:'x', label:'X' }, { id:'y', label:'Y' }, { id:'z', label:'Z', requires:['x'] }] });
+    app.ev('loadFromJSON(JSON.parse(__tree))');
+    const work = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('', '3', {count:2}))`));
+    assert.deepEqual(work.queue, ['x', 'y']);
+    assert.match(work.instructions, /IF SUBAGENTS ARE AVAILABLE/);
+    assert.match(work.instructions, /maximum per reply is 2/);
+    assert.doesNotMatch(work.instructions, /RESUME BACKUPS/);
+  } finally { app.window.close(); }
+});
+
+test('map picking selects locked nodes with keyboard support, preserves progress, and cancels safely', () => {
+  const app = loadApp();
+  try {
+    loadTree(app);
+    app.ev("setMode('edit'); openGenerationModal()");
+    const input = el(app, 'generation-count'); input.value = '1'; input.dispatchEvent(new app.window.Event('input'));
+    const mode = el(app, 'generation-selection-mode'); mode.value = 'manual'; mode.dispatchEvent(new app.window.Event('change'));
+    assert.equal(el(app, 'btn-download-ai-work').disabled, true);
+    const before = app.ev('JSON.stringify(buildTreeJSON(true))');
+    assert.equal(app.window.getComputedStyle(el(app, 'generation-pick-bar')).display, 'none');
+    el(app, 'btn-pick-generation-nodes').click();
+    assert.equal(app.ev('state.generationPicking'), true);
+    assert.equal(el(app, 'generation-modal-backdrop').classList.contains('open'), false);
+    // Already-filled node is disabled, even with spare capacity.
+    app.ev('state.nodes.get(2).el.click()');
+    assert.equal(el(app, 'btn-confirm-generation-pick').disabled, true);
+    // Gamma is locked, but it can still be generated.
+    const gamma = app.ev('state.nodes.get(3).el');
+    app.press('Enter', gamma);
+    assert.equal(gamma.getAttribute('aria-pressed'), 'true');
+    assert.equal(gamma.getAttribute('aria-disabled'), 'false');
+    assert.equal(el(app, 'btn-confirm-generation-pick').disabled, false);
+    app.ev('state.nodes.get(1).el.click()'); // Full: do not silently replace Gamma.
+    assert.equal(app.ev('generationSelection.draft.size'), 1);
+    el(app, 'btn-confirm-generation-pick').click();
+    assert.deepEqual(packet(app).queue, ['c']);
+    assert.equal(app.ev('state.mode'), 'edit');
+    assert.equal(app.window.getComputedStyle(el(app, 'generation-pick-bar')).display, 'none');
+    assert.equal(app.ev('JSON.stringify(buildTreeJSON(true))'), before);
+    assert.equal(el(app, 'btn-download-ai-work').disabled, false);
+    assert.doesNotMatch(el(app, 'generation-start-message').value, /subagents|Continue/i);
+    el(app, 'btn-pick-generation-nodes').click();
+    gamma.click(); app.ev('state.nodes.get(1).el.click()');
+    app.press('Escape');
+    assert.deepEqual(packet(app).queue, ['c']);
+    assert.equal(app.document.querySelector('.generation-selected'), null);
+    loadTree(app, 'quantum-tree.json');
+    assert.equal(app.ev('generationSelection.count'), null);
+    assert.equal(app.ev('generationSelection.mode'), 'auto');
+    assert.equal(packet(app).queue.length, 95);
+  } finally { app.window.close(); }
+});
+
+test('generation count is clamped after imports and downloads stop when no lessons are missing', () => {
+  const app = loadApp();
+  try {
+    loadTree(app); app.ev('openGenerationModal()');
+    const input = el(app, 'generation-count'); input.value = '900'; input.dispatchEvent(new app.window.Event('input'));
+    assert.equal(input.value, '3');
+    paste(app, ['a', 'c', 'd'].map(id => record(app, id)).join('\n'));
+    el(app, 'btn-import-generation').click();
+    assert.equal(input.value, '0');
+    assert.equal(input.disabled, true);
+    assert.equal(el(app, 'btn-download-ai-work').disabled, true);
+    assert.equal(el(app, 'generation-start-message').value, '');
   } finally { app.window.close(); }
 });
