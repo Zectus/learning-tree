@@ -650,14 +650,15 @@ test('single-node packets use English instructions and concrete context in both 
     assert.deepEqual(single.queue, ['c']);
     assert.match(single.instructions, /topic: Gamma/);
     assert.match(single.instructions, /- Beta/);
-    assert.doesNotMatch(single.instructions, /subagents|Continue|CURRENT_NODE_ID|RESUME BACKUPS|Deliver this as a downloadable file named/i);
+    // Teaching prose can say "continue"; single-node work must omit batch continuation commands.
+    assert.doesNotMatch(single.instructions, /subagents|When told Continue|Continue through queue|CURRENT_NODE_ID|RESUME BACKUPS|Deliver this as a downloadable file named/i);
     app.window.__packet = single;
     assert.doesNotMatch(app.ev('generationStartMessage(__packet)'), /subagents|Continue/i);
     app.ev("setUILanguage('es')");
     const spanish = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('Español', '3', {count:1}))`));
     assert.match(spanish.instructions, /GENERATE ONE LESSON/);
     assert.match(spanish.instructions, /topic: Alpha/);
-    assert.doesNotMatch(spanish.instructions, /subagents|Continue|CURRENT_NODE_ID|Deliver this as a downloadable file named/i);
+    assert.doesNotMatch(spanish.instructions, /subagents|When told Continue|Continue through queue|CURRENT_NODE_ID|Deliver this as a downloadable file named/i);
     const multi = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('English', '3', {count:2}))`));
     assert.doesNotMatch(multi.instructions, /SUBAGENTS/); // A single chain cannot run in parallel.
   } finally { app.window.close(); }

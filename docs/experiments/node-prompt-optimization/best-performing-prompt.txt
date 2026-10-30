@@ -1,0 +1,242 @@
+You are producing a plain-text learning document (.txt) for the topic: {{NODE_TOPIC}}
+
+Deliver this as a downloadable file named {{NODE_ID}}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.
+
+Write for an average student encountering this node's material for the first time, with the background described in CONTEXT. The lesson should help them make sense of the idea and use it at the intended level. Mathematical correctness and readable markup are necessary, but so are motivation, accessible examples, and a manageable sequence. Plan the lesson before drafting; let its length follow the learning goal.
+
+HOW MANY QUESTIONS, AND HOW EACH ONE IS MARKED
+
+The number of main questions should be however many it actually takes to verify that every main idea in this document has landed — and landed as something the reader can use, not just something they can recognize or recite. For a topic where the ideas are mathematical, that means confirming the reader can actually apply the mathematics, not just state the definition or theorem back; for a topic without computation, the equivalent bar still applies in whatever form real use takes there — correctly applying a principle to a new case, telling apart two things that are easy to confuse, recognizing which situation calls for which idea — rather than settling for "can restate it." Don't add questions to build up volume, for variety, or as extra practice — that's what the bonus section further down is for. A document with few main ideas, each confirmed by one solid question, is complete as it is; one with many interlocking ideas needs as many questions as those ideas actually require, no more.
+
+Every main question marks its own correct option inline, with an [ANSWER: X] line inside its [QUESTION N]...[/QUESTION] block — see OUTPUT FORMAT below. This tag is never shown to the reader; it's read only by the app that scores the reader's answer. Design each question's setup and its wrong options with real care — don't let whichever answer happens to fall out of a quick derivation dictate lazy distractors (see DISTRACTORS under QUESTION CONSTRUCTION RULES below) — but there is no target letter to hit. Work out the question's correct answer as a normal part of designing that question, mark it with [ANSWER: X], and move on. The app shuffles each question's options into random order and relabels them before anyone ever sees them, so don't try to steer which letter the correct answer lands on, and don't worry about the distribution of correct letters across the document — none of that is this document's concern, and time spent on it is time not spent on making the question itself sharp.
+
+PLAN FIRST
+
+- Read CONTEXT as a learning goal and scope boundary. Identify the ability the reader should gain and distinguish central content from supporting cases. An older scope note may be only a topic list: organize it into a coherent progression instead of treating every item as equally important. Cover required content economically without expanding into excluded methods.
+- Identify what the reader already knows from prerequisites or explicitly calibrated background. For each central new statement, decide whether it is a definition, a supplied fact or rule, or a consequence to be developed here. Do not invent proofs of definitions or supplied inputs. Do not silently treat the result this node is meant to develop as prior knowledge. Check supporting shortcuts against that background too: if one needs an unfamiliar theorem, explain the needed step or choose a more accessible route.
+- Choose a meaningful question and an accessible case that can carry its explanation. Identify the actual obstacle the new idea resolves, such as choosing a useful representation, determining an unknown quantity, or relating two descriptions. Keep the example's background within CONTEXT.
+- Plan the route from the problem to each central result: what choice is made, why that choice helps, what operation is performed, and what intermediate relation connects it to the conclusion. Make these bridges visible in the lesson. A correct final formula followed by a substitution check is not a derivation of how to obtain that formula.
+- Audit first-use notation, including operations and conventions, not only named variables. Check superscripts such as transpose and adjoint, component and state labels, differential measures, ordered products, and graph aliases or scaled axes. Explain a new operation before relying on it; give a brief concrete example when its action would otherwise remain unclear, ideally within the lesson's main worked case. Remove unnecessary shorthand instead of defining more shorthand to explain it. Familiar prerequisite notation needs no repeated tutorial.
+- Choose the amount of justification the goal needs. Show the step carrying the new idea; compress routine algebra the reader already knows. Supplied facts and rules may be accepted explicitly when scope calls for that, but the new consequences drawn from them still need their connecting argument. Do not expand into sibling or future lessons to justify a local step.
+- For a procedure or predictive model, distinguish what is actually done, what information is reported or retained, and what licenses the next prediction. For a sequence, identify the state or information passed to each stage, any selection already made, and the assumed intervening changes. For statistical claims, decide whether the statement concerns an individual event, a distribution over repeated preparations, or an estimate from finite data. Plan these distinctions only where the learning goal needs them.
+- Plan accessible questions and fresh transfer at the intended level. Identify the work left to the reader in each question and independently work out its answer and distractors. A late question should not merely ask for the slope, coefficient, sign, or conclusion just stated; where appropriate, ask the reader to compare cases, diagnose an incorrect use, or combine established steps in a new setup.
+- For visual objects, plan graphs where they first help understanding. Explain how the quantities in the prose map to plotted coordinates and parameters. Choose ranges and marks that show the relevant feature honestly within the supported graph format. Do not add a graph to purely symbolic work merely to fill a quota.
+
+
+
+OUTPUT FORMAT (follow exactly — a parser will read this file)
+
+This is a plain .txt file. Rules:
+- No markdown: no **, no ##, no backticks, no bullet points using *, no _italics_ — including using ** to fake bold for a vector symbol (e.g. **S**); that's KaTeX's job (\mathbf{}), not markdown's, see the Math rule below
+- No HTML, no code blocks, no widgets, and no interactive elements of any kind — the one exception is the slider line a graph block can carry (see Graphs below), which is part of the graph format, not HTML
+- Prose only — use plain paragraphs and the section/question/table/timeline/graph markers below
+
+Section headers:
+=== SECTION N: TITLE ===
+
+The very first line of the document must be "=== SECTION 1: TITLE ===" — nothing precedes it. No title line, no opening sentence, no framing paragraph sits above the first section header; start the lesson at that marker so its structure is clear.
+
+Questions must use this format exactly:
+
+[QUESTION N]
+[ANSWER: X]
+Question text here, with \( LaTeX \) as needed.
+
+(A) first option
+(B) second option
+(C) third option
+(D) fourth option
+(E) fifth option
+[/QUESTION]
+
+Replace X with whichever letter is actually correct, as (A)-(E) are written above. This works exactly like the [ANSWER: X] tag in the [BONUS] format further down — hidden from the reader, read only by the app, and not something to think about when deciding where to place the correct option among (A)-(E); place it wherever it naturally falls as you write the options, in any order you like. Keep each question's particular solution and option evaluation out of the visible lesson, including later passages. Teach the general ideas and demonstrate them on other cases before asking the question; do not work through that question's own setup or reveal its distinguishing conclusion. Check that no passage or graph supplies the specific answer without the intended learner work. The answer tag is the only place that explicitly identifies the correct option.
+
+Four tools are available. Math, tables and timelines are for material that has something to typeset, compare, or put in order: don't force KaTeX onto a topic without math, or a table or timeline onto material with no tabular or chronological structure. Graphs are different: they are the default, not an extra. Whenever a section's central object has a shape — a function, a curve, a surface, a field, a relationship between two quantities, a configuration of points and lines in a plane — draw it, at the point where that section first works with it, so the reader sees the object while the prose is analyzing it. Prose alone asks the reader to hold in their head a picture that a graph hands over for free. Refer back to an existing graph when it already serves the next learning step. For purely symbolic or non-visual material, do not force a graph. If the supported format cannot represent a relevant distinction faithfully, use a different accurate illustration or explain its limitation; never distort the object to satisfy this expectation. A document on a topic with geometry in it that comes out with no graph at all has a gap, and the final review below checks for it.
+
+- Math: inline with \( ... \), display with \[ ... \]. Skip entirely for a topic with nothing to typeset. This applies uniformly — there is no such thing as a mathematical symbol too minor or too casual to wrap. A single variable name, a subscript, a dot or cross product, a vector mentioned in passing mid-sentence: if it's math, it goes in \( \), with exactly the same treatment as a formula on its own display line. Don't let a symbol's position — sitting inside a flowing sentence versus standing alone — decide whether it gets KaTeX; a parser reading this file can't tell "casual mention" from "official equation," and treating them differently is what produces a document that's formatted one way in its displayed equations and drifts into bare ASCII (r_u, F · n) the moment the same math shows up in prose. Bold or vector notation is no exception to the no-markdown rule either — never fake it with ** (e.g. **S** for a bold vector); use the real KaTeX command (\mathbf{}) inside \( \) instead.
+- Tables, for anything genuinely tabular — a comparison across several things along the same dimensions, a small reference of values, anything a reader would otherwise have to hold in their head across several sentences:
+[TABLE]
+Header A | Header B | Header C
+Row 1 col A | Row 1 col B | Row 1 col C
+Row 2 col A | Row 2 col B | Row 2 col C
+[/TABLE]
+  First line is the header row; every line is cells separated by " | " — always with a single space on each side, exactly as in the example above. That spacing is what a column divider actually looks like; a bare "|" with no space around it (an absolute value bar, a norm, a set-builder pipe, sitting inside a cell's own math) is read as content, not a divider, so you don't need to avoid literal pipes in table-cell math. Still, prefer \lvert ... \rvert over bare | ... | for absolute value inside a table cell — it typesets with better spacing — and never use \| for a single absolute-value bar; that's a different symbol (‖, a norm). Keep cells short — this renders as a real table, not a wall of prose crammed into cells.
+- Timelines, for a genuine chronology or ordered progression — a sequence of dated events, stages, or steps where the ordering itself is part of what's being taught:
+[TIMELINE]
+Marker 1 | What happened or what this stage is
+Marker 2 | What happened or what this stage is
+[/TIMELINE]
+  The marker is usually a date or year but can be any short label — a stage name, "Step 1," an era — whatever the sequence is actually ordered by. One line per point on the timeline, marker and description separated by " | " (spaced, same convention as TABLE above, for the same reason — it's what tells a real divider apart from a bare pipe that happens to sit inside the marker or description's own math).
+- Graphs, for a function, curve, surface, field, or set of points and lines that is worth seeing rather than just describing — see the paragraph above for when a graph is expected, and the notes after the four types for how to make one earn its place. There are four types:
+
+  function2d — one or more y = f(x) curves on the same axes:
+[GRAPH]
+type: function2d
+title: what this graph shows
+xlabel: x
+ylabel: y
+xrange: -5, 5
+trace: x^2 - 3*x | label: f(x)
+trace: 2*x - 3 | label: f'(x)
+[/GRAPH]
+
+  parametric2d — one or more curves traced out by (x(t), y(t)):
+[GRAPH]
+type: parametric2d
+title: what this graph shows
+xlabel: x
+ylabel: y
+trange: 0, 6.283
+trace: cos(t), sin(t) | label: unit circle
+[/GRAPH]
+
+  surface3d — a single surface z = f(x, y):
+[GRAPH]
+type: surface3d
+title: what this graph shows
+xlabel: x
+ylabel: y
+zlabel: z
+xrange: -3, 3
+yrange: -3, 3
+z: x^2 - y^2
+[/GRAPH]
+
+  vectorfield2d — a single vector field, given by its two components as functions of x and y:
+[GRAPH]
+type: vectorfield2d
+title: what this graph shows
+xlabel: x
+ylabel: y
+xrange: -3, 3
+yrange: -3, 3
+u: -y
+v: x
+[/GRAPH]
+
+  function2d, parametric2d and vectorfield2d graphs can also carry marked points, drawn segments, and sliders: extra lines in the same block, all optional, repeatable, and not available for surface3d. Optional too is "aspect: equal" (function2d), which gives both axes the same unit length — use it whenever the true shape or an angle matters; parametric2d and vectorfield2d already do this on their own.
+
+point: x, y | label: caption | color: optional | offset: dx, dy
+segment: x1, y1, x2, y2 | label: caption | color: optional | dashed: true
+slider: name | range: min, max | init: value | step: size
+
+  A point marks one specific location the prose works with (a given data point, an intercept, a place of interest). A segment connects two locations (a distance, a change along each axis, a side of a figure, a stretch between two points). Their coordinates are plain expressions in the same calculator notation as the traces. A slider adds a draggable control under the plot, and any trace, point, or segment expression that uses the slider's name as a variable is redrawn as it moves (a vector field is drawn once, at the slider's starting value). Use a slider when what the section is about is how something changes as a parameter varies: the reader dragging it and watching the picture respond is something prose can only describe. A complete example, for the syntax only:
+[GRAPH]
+type: function2d
+title: what this graph shows
+xlabel: x
+ylabel: y
+xrange: -4, 4
+trace: s*x | label: family member
+point: 2, 2*s | label: P
+segment: 0, 0, 2, 2*s | dashed: true
+slider: s | range: -3, 3 | init: 1 | step: 0.1
+[/GRAPH]
+  function2d also supports filled regions, repeatable within a block:
+fill: upper_expression, lower_expression | range: start, end | label: caption | color: optional | opacity: 0.22
+  Both boundaries use x and calculator notation; write 0 for the horizontal axis, or constants for rectangle heights. The required range gives the horizontal endpoints. Boundaries and endpoints may use sliders and update as they move. label, color and opacity are optional; opacity is between 0 and 1. Fill is behind curves and marks. Draw the boundary traces separately when their outlines matter. Use fills for areas under or between curves, signed contributions, Riemann rectangles, and accumulation strips. Split at crossings or sign changes and use separate colors and labels when the distinction matters; shading itself is geometric and does not encode the sign of an integral. Sampling does not prove continuity or detect every discontinuity, so choose intervals where the boundaries are finite and continuous. Do not use fill with parametric2d, vectorfield2d or surface3d.
+
+  Expressions are self-contained: there are no user-defined functions, so a quantity built from another curve is written out in full, in terms of x (or t) and the slider names. Conditional expressions use condition ? value_if_true : value_if_false; for example, x == 0 ? 1 : sin(x)/x specifies an explicitly defined continuous extension at zero. Use a conditional only for values established by the text or its model; do not assign an arbitrary value to a genuinely undefined point.
+
+  For scalar profiles or relationships whose axes measure different quantities, use function2d with independently fitted axes unless equal axis-unit lengths serve the interpretation. Use parametric2d when the object is a path or planar configuration whose geometric shape matters; its equal axis-unit lengths can flatten a scalar profile across a wide horizontal range.
+
+  A graph is part of the exposition, so it follows the same rules as the prose around it. It may show the instances the text works through and the general shape of the objects involved; it must not plot the specific object a nearby question asks about, mark that question's answer, or otherwise do the reader's work for it. It should earn its place: take the graph away and the surrounding prose should lose something. Mark the points the prose actually computes with, draw the segments the prose names, and use a slider when the prose compares many members of one family. One graph per idea is plenty; don't plot the same object twice, and keep a plot to a handful of curves so it stays readable. The block sits on its own lines between paragraphs, like a table.
+
+  Every field on its own "key: value" line. title/xlabel/ylabel/zlabel are always optional but should usually be filled in. The range requirements depend on the type: function2d needs xrange (yrange is optional — left out, the vertical window is fitted to the curves, so give it only when a specific window matters), parametric2d needs trange (xrange and yrange are optional there too), and surface3d and vectorfield2d need both xrange and yrange. Pick bounds that actually show what the graph is for, the way a chosen numeric example elsewhere in this document is chosen to land on its point, not a generic default. function2d and parametric2d can repeat the trace line for more than one curve on the same axes; surface3d and vectorfield2d take exactly one z (or one u and one v) — nothing to repeat there. label and color on a trace line are both optional. A parametric2d trace line packs both components into one line, comma-separated: trace: cos(t), sin(t) | label: .... The fields of a line are separated by " | " with a space on each side, exactly as in a table row.
+
+  Every expression (trace, z, u, v, and the coordinates of a point or segment) is evaluated as a plain math expression by a separate library, not typeset by KaTeX — write x^2, sin(x), sqrt(x^2 + y^2), atan2(y, x), abs(x) in ordinary calculator-style notation (abs(x), not |x| — bars aren't valid syntax here), never inside \( \) and never with LaTeX commands like \sin or \frac{}{}. Captions are the opposite, with one wrinkle. The title and the label on a trace go through the normal KaTeX pass like anything else in this document, so \( \) works there exactly as it would in a sentence. The xlabel, the ylabel, and the label on a point or a segment are drawn inside the plot itself, where a label must be either one single \( ... \) span (the whole label is math) or plain text with no math in it; never mix prose and a math span in one of those, and keep them short. The zlabel is plain text. Keep the two apart — an expression written in LaTeX syntax won't evaluate, and a label written in plain-expression syntax just won't typeset.
+
+LANGUAGE
+Write the entire document in {{OUTPUT_LANGUAGE}} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", the option markers "(A)" through "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]", and "[BONUS N]" / "[/BONUS]". Only the human-readable content moves to {{OUTPUT_LANGUAGE}} — none of that markup does. This extends inside [GRAPH] blocks specifically: the field names themselves (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, fill, range, opacity, point, segment, slider, label, color, z, u, v) are parser keywords and must stay in English exactly as written in the spec, and every math expression (a trace's formula, z, u, v) must stay in plain ASCII math syntax regardless of document language, since a separate library evaluates them as expressions, not as text. Only the actual values after title:, xlabel:, ylabel:, zlabel:, and label: move to {{OUTPUT_LANGUAGE}} — everything else in a [GRAPH] block does not.
+
+
+CONTEXT
+This node belongs to a larger tree on {{TREE_TOPIC}}.
+This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): {{NODE_SCOPE}} Use this brief to identify the intended learner ability, central idea, supporting content, and scope boundaries. If it is written as a topic list, organize those items into a learnable progression rather than equal-length treatments. Keep explicit exclusions, but still show a meaningful use of the idea at this level.
+The reader has already been through, earlier in this sequence, every one of the following — each line is that document's own label plus the exact scope it covered, so you know precisely what's already been established (and its boundaries) rather than guessing from the name alone:
+- {{PREREQUISITE_LABEL}} — {{PREREQUISITE_SCOPE}}
+Treat everything described above as already fully taught and available to build on without re-deriving or re-explaining it — refer back to it the way one lesson naturally refers to an earlier one ("recall that...", "as seen when X was introduced...", "earlier, we found...") rather than the word "prerequisite," which reads like a syllabus line rather than something anyone would actually say. Where a listed scope stops short of something you need here, that gap is genuinely new material for this node to cover, not something to assume was already handled.
+Material the reader hasn't seen yet will build on this one afterward: {{LATER_TOPICS}}. Don't teach toward it or mention it by name here.
+
+
+DOCUMENT STRUCTURE
+
+Organize sections around coherent learning steps in the subject. An example, a definition, and a worked use may belong together when they develop the same idea; a new difficulty may need a separate section. There is no section quota. Merge repetitive treatments and give the central idea more attention than peripheral cases.
+
+Begin with a concrete question or situation that makes the idea worth understanding. A brief statement of purpose is welcome when it helps the reader know what question is being answered. Avoid announcements of the document's outline and repeated motivational preambles.
+
+Build meaning through an accessible case, then introduce the general statement and its notation. When the result is to be derived, let the calculation or argument produce it before displaying it as a finished rule. A brief statement of the target is fine; do not replace its development with announcing it and checking one example. Explain each new symbol's role and how to read the whole expression. Explain what unfamiliar operations do and how conventions affect the expression's meaning. Define suppressed labels and graph aliases when their meaning matters. A display, conventional-looking superscript, or suggestive name is not an explanation. Use established prerequisite notation economically. Translate abstract phrases into concrete comparisons, choices, or numerical requirements before relying on them. Metaphors should help without implying properties the concept does not have. Use a contrasting case when it resolves a likely misconception.
+
+Show how the reader uses the idea at this node's level: interpreting information, making a prediction, distinguishing cases, or carrying out a method. A conceptual node still needs worked use even when calculation techniques are excluded. Keep the example's purpose visible and its background requirements modest.
+
+When a method represents a physical or information-changing operation, distinguish the operation from the data it reports. State what is done, what information is retained or discarded, and the model that licenses the resulting state or subsequent prediction. Equal reported statistics do not by themselves establish equal procedures or updates; concealing a finer record need not be equivalent to carrying out a coarser operation. In a multi-stage calculation, show what enters each stage after any conditioning or selection and state the intervening changes assumed by the model. Clarify the worked setup without accumulating peripheral caveats.
+
+When interpreting a probability or statistic, identify whether it concerns an individual event, a distribution over repeated preparations, or an estimate from finite data. Different distributions need not allow certain identification from one event. A spread is not automatically a maximum deviation, an instrument's resolution, or the uncertainty of an estimated average. Do not infer certainty, a bound, or an inverse identification unless the established model supports it. Explain only the distinctions relevant to this lesson, using its existing tools rather than importing a new statistical theory.
+
+Match justification to the learning goal. Separate what is defined or supplied from what is being inferred. A definition needs meaning and a reason it serves the problem, rather than a manufactured proof. A physical prescription or a mathematical fact explicitly supplied by the scope may be stated as an input. A central consequence of those inputs needs a visible connecting argument. Accept permitted inputs explicitly, then show how they lead to the new result. If a useful choice must be found, begin with what is unknown and work out that choice instead of announcing it and only verifying it. Do not import unfamiliar background or re-prove prerequisite theorems.
+
+Show the operation where understanding depends on it. Explain why a useful choice is made, display the intermediate step that does the work, and interpret what it produces. When a construction represents an observable outcome, demonstrate that prediction. Distinguish an approximation from an exact result or limit at the point where that distinction matters. Phrases such as "matching gives," "one finds," "it follows," or "as can be checked" warrant inspection: if they hide the step this node teaches, write that step; if they compress routine established work, keep them concise. A named identity or general guarantee is not justified merely by a few numerical examples. State assumptions when they are used, without burying the central idea in caveats or formalism.
+
+When justifying an approximation, check whether the change being modeled also changes the scales used in its validity estimate. Identify the quantity being controlled and the range or history over which it must remain controlled. A small starting ratio or a small endpoint result alone does not establish validity throughout that range. Explain the relevant check with the tools available at this node's level.
+
+Let the reader complete one understandable use of the central idea before adding several qualifications, representations, or cases. Introduce notation and cautions where they first do useful work. State a limitation clearly once; return to it only when the next task needs a new distinction. If the opening carries too many new elements, distribute them across the progression rather than shortening the reasoning that makes the idea understandable.
+
+Introduce supporting contrasts after the central idea is secure. Do not give a catalog of exceptions more space than understanding and using the ordinary case. Keep excluded techniques and later formalism outside the lesson, while preserving motivation and accurate interpretation.
+
+A visual must agree with the mathematical or factual object described. Do not depict a missing point by deleting a visible interval or imply that finite sampling captures all behavior. Use only supported graph features. If the format cannot faithfully mark a distinction, explain the representation's limitation and choose a different illustration rather than inventing syntax or claiming the picture shows something it does not.
+
+Place main questions at natural pauses after their required explanation or worked instruction. Let the reader try one manageable use before accumulating several independent difficulties; do not interrupt a necessary argument or ask for an untaught result. Keep questions embedded in the reading sequence, not grouped in an exercises section, and number [QUESTION N] blocks consecutively. Keep the particular solution and option evaluation out of all visible prose and graphs. General teaching on other cases is necessary preparation, not answer leakage; a thinly renamed copy that supplies the distinguishing conclusion still leaks. After a question, continue to new content without explaining or defending that question's answer. Read the question-construction rules before drafting the first question.
+
+After the last main question, add bonus practice questions using this separate format — genuine extra practice, not a preview of anything not yet covered. However many genuinely earn a place is up to you; there's no target count here either, could be a couple, could be quite a few. This is a good place to reach for something genuinely interesting if one comes to mind: a surprising special case, a configuration that makes the structure of the topic click in a new way, a harder problem that's satisfying to push through — using only the tools and derivations this document just built. Don't force it, though; a few solid harder versions of the main material, applied to a less standard case or a sharper edge case the main questions didn't reach, are just as good a use of a bonus slot. A bonus question may also pull in a non-obvious connection to something already established here or seen earlier in the sequence. What a bonus question must never do is require knowledge the reader hasn't been given — even though the context below tells you what later topic this one feeds into, do not write a question whose answer depends on understanding that later topic; the reader hasn't seen it yet. Do not require a new theorem, technique, convention, or physical premise just because it feels like a natural next step. Fresh reasoning and combinations of already established operations are welcome: the learner need not have seen that exact calculation or conclusion modeled, or the question would only repeat it. Trace the solution back to tools already taught here or in the prerequisites, and distinguish those tools from the new work the question intentionally leaves to the learner. Gesturing at a real-world structure or application this machinery is used for elsewhere is fine as flavor in the setup, but the question itself must be fully answerable from tools and premises established here or in the prerequisites.
+
+[BONUS 1]
+[ANSWER: X]
+Question text here.
+
+(A) option
+(B) option
+(C) option
+(D) option
+(E) option
+[/BONUS]
+
+Replace X with the correct letter, same as for main questions above. The answer tag is hidden from the reader and used only for feedback. Same question construction rules apply as for the main questions.
+
+
+QUESTION CONSTRUCTION RULES (guidelines, not a bureaucratic checklist — use judgment, and read this in full before drafting your first question)
+
+A question is only doing its job if answering it takes something the reader doesn't already have in hand: a new instance to work through, a real decision to make, or a step of reasoning nobody has spelled out for them yet. Simplicity is never the problem — a well-crafted simple question beats a convoluted one every time, and for a simple topic a straightforward question is usually the right call. Restating is the problem: if a question can be answered from memory of the sentence sitting directly above it, it isn't testing anything. What follows are the specific, recognizable shapes that failure takes in practice. Check every drafted question against all of them before moving on.
+
+FRESH WORK AT THE RIGHT LEVEL. A question must leave meaningful work for the reader rather than repeat a specific answer already supplied. Early checks may use a familiar structure with new values when the task is to learn how to read notation or carry out a first application. Later checks should require a fresh interpretation, a choice between cases, a correction of a mistaken claim, or transfer to a different setup. Do not demand a new kind of object for every question: that can introduce difficulty unrelated to the goal. Across the lesson, include both accessible checks and genuine transfer. Keep all questions answerable with established knowledge. Check the remaining reasoning, not just whether the numbers or wording are new: a changed coefficient in a supplied template is still a narrow calculation, while deciding which terms survive in two different cases can test the mechanism. Judge freshness under the equivalence relevant to the intended ability: another coordinate description or irrelevant convention may describe the same worked case. Reexpressing a case can still earn its place when that conversion is the ability being tested. Keep a straightforward initial application when it earns its place; do not make every question difficult or replace already effective transfer questions just for variety.
+HANDED-OVER REASONING. Withhold the inference the question is meant to test. A short intermediate step that follows from the given setup should normally be left to the reader, rather than supplied as if it were data. Keep genuine givens such as measured values or a specified model. An early check may name a tool or supply a reference when recalling it is not the intended ability, provided interpreting or applying it still leaves meaningful work. Later transfer should leave the relevant choice to the reader when selecting the tool is part of the goal. Do not supply the question-specific relationship or conclusion that resolves that choice. Judge the work that remains, not whether an opener contains a particular phrase.
+
+TEST THE INTENDED ABILITY. Judge a question by the learning goal, not by the number of calculations or decision points. A simple substitution or identification may be appropriate for an initial check if it tests a newly learned interpretation. It is insufficient as the only evidence of conceptual understanding. Include questions where the options distinguish explanations, representations, assumptions, or cases, so success requires more than recognizing the wording of the preceding paragraph.
+BYPASSABLE CONCEPT. For complex or subtle topics, aim for questions where understanding the material is genuinely required: a conceptual trap, a case where the obvious mechanical approach fails, a need to identify which principle applies before proceeding at all. For simpler topics, straightforward questions are fine and often better — don't manufacture complexity where none exists. Either way, check this concretely before finalizing a question built around a specific technique or identity: is there a different, more direct path to the same answer that skips the technique entirely — computing the raw result by hand instead of applying what the section just built, say — and is that bypass at least as easy? If so, the question isn't testing the thing it's attached to, however relevant it looks on the page. Reshape the setup so the technique is genuinely the fastest or only reasonable route, or don't ask it.
+
+CONCISENESS. State what's given and what's being asked, then stop. Re-explaining context the reader already has, narrating the setup instead of presenting it, and announcing which tool to reach for before the reader's had a chance to reach for it themselves are all padding, not clarity — cut them. This applies to answer options too: once the stem has already fixed an ordering, a variable name, or a piece of notation, repeating it in front of every single option adds nothing — give the value alone and let the stem carry what it represents.
+
+DISTRACTORS. Should be clearly wrong on reflection; for mathematical questions, avoid options that are equivalent in value even if written differently, and never duplicate an option outright. Compare options under the equivalence relevant to the task, not only literal equality of expressions. Different coordinates, irrelevant conventions, or equivalent physical descriptions can make two options represent the same case. Match that equivalence to what is asked: different coordinate columns remain different answers when the requested object is the column itself. When a question's real content is that some quantity turns out to be independent of a variable that looks like it should matter — the same for every case, every index, every choice of an otherwise-free parameter — that independence claim is exactly what a distractor should test: include at least one option representing what the value would be if it did depend on that variable, not just numeric variants clustered around the right magnitude. Otherwise the question can be answered by guessing "it's probably the boring constant one" without ever engaging with why it's constant.
+
+GETTING THE TARGET RIGHT. Some questions hinge on a distinction that's easy to get backwards by accident — which of two similar things is which, which direction a relationship or cause runs, what happened before what, which side an effect lands on, what gets added versus subtracted. When a question's correct answer depends on a choice like this, work it out deliberately and double-check it before finalizing — this is the single most common way a question quietly drifts toward the wrong answer without anyone noticing while drafting. And if a question's content is naturally tied to material that only exists in one particular section, confirm before committing to that placement that some natural, non-contrived choice of values or configuration there can actually produce a clean, defensible answer; if it can't, look for freedom you haven't used yet — a relative sign or magnitude, a direction, which object plays which role, which specific case you reach for — before forcing a strained setup.
+
+FINAL REVIEW — before treating the document as finished, reread it once, straight through, in the order a reader will actually meet it. Everything above is written to be applied while drafting each piece — a section, a question, a table — and checking a piece against a rule while writing it will not catch a problem that only exists in how two pieces relate to each other across a distance. That's what this pass is for: read it the way a first-time reader would, start to end, and watch for failures that are invisible piece-by-piece but obvious once the whole thing is visible at once.
+
+- Forward references: does any question, or any tool block, depend on a formula, definition, or result that doesn't actually appear until later in the document? A question may only use what a reader would have already seen by that exact point in the reading order — not what's coming a section, or even a paragraph, later. This is easy to miss while drafting a question right after writing the paragraph that motivates it, since the formula it needs feels close by even when it hasn't been derived yet.
+- Does the opening give the central idea a meaningful purpose? Are brief explanations of purpose useful rather than repeated announcements? Can a first-time reader follow the progression without already knowing the conclusion?
+- For each central new result, can a first-time reader follow the bridge from the stated inputs without already knowing the result? Point to the actual choice, reason, operation, intermediate relation, and conclusion where needed. If only the final statement and a check are present, repair the development. If it is a definition or an explicitly supplied fact or rule, check its meaning and use rather than demanding a fictional proof.
+- Read every first occurrence of an unfamiliar symbol or convention, including superscripts, hidden indices, differentials, operation order, and plot parameters. Is its role or action explained before it does work? Does each scaled graph quantity correspond to a quantity in the prose, with any needed factor and units accounted for? Do not introduce new unexplained shorthand inside an explanation of another symbol.
+- Does the central statement have a clear meaning, explained notation, an accessible example, and worked use? Is its justification appropriate to the scope, without unsupported claims or premature formalism? Preserve concise, already effective reasoning rather than lengthening every paragraph.
+- For modeled procedures, are the actual operation, retained data, and resulting prediction distinguished? Does each stage receive the state or information produced by the preceding selection and assumed intervening changes, rather than an inferred update based only on a reported label?
+- Are statistical claims interpreted at the right level: individual events, repeated-preparation distributions, or finite-data estimates? Does the lesson infer certainty, bounds, or unique identification only when the established model warrants them?
+- Do questions leave real work at the intended level, progressing from accessible checks to fresh interpretation or transfer? Are any questions merely repeating an answer already given, or introducing unfamiliar machinery to manufacture difficulty?
+- Are questions fresh and options distinct under the equivalence relevant to their task? Do not confuse an unchanged object in another description with transfer, or merge coordinate answers when the coordinates themselves are requested.
+- Does each stem leave the inference being tested to the reader? Early support may aid recall, but it must not supply the application or choice the question asks the reader to make.
+- No passage or graph works through a question's particular setup, evaluates its options, or reveals its distinguishing conclusion. General instruction on other cases must still prepare the reasoning.
+- Every bonus solution uses only tools and premises established in the lesson or its prerequisites. Fresh combinations and intermediate reasoning are allowed; an unstated new theorem, operation, or assumption is not.
+- Every main and bonus question has exactly one [ANSWER: X] tag naming a letter that is actually one of that question's own listed options — a missing, mistyped, or dangling tag means that question silently fails to score.
+- Does each central visual object have a useful supported graph where first needed, or a clearly explained representation limitation? Reuse an existing graph when it serves the next step; do not repeat it merely because a new section starts.
+- Do wording and visuals avoid misleading implications? Do plots faithfully represent the described domain and features, with limitations acknowledged when the supported format cannot show a distinction?
+- Every graph block: expressions in plain calculator notation (no LaTeX, no bars for absolute value, ^ for powers); every slider name used in an expression is defined by a slider line; ranges that actually show the feature the prose is about; no graph plots or marks the specific object a nearby question asks about; xlabel, ylabel, point and segment labels are each one math span or plain text, never a mix; fields separated by " | " with spaces.
+- No literal "|" sitting inside a table cell outside \lvert \rvert.
+
+If the read-through turns up any of these, fix it before finalizing. Having applied a rule correctly while drafting a piece is not the same guarantee as the finished document actually being right — the read-through is what confirms it, not an assumption that following the rules along the way was enough.
