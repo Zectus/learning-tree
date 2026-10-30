@@ -48,24 +48,8 @@ function generationQueue(tree, completed, options = generationSelection) {
   return missing.filter(id => chosen.has(id));
 }
 
-function renderGenerationInstructions({ language, sectionKeyword, replySize, spanish, queue, completed, tree }) {
-  const protocol = spanish ? `GENERA LECCIONES CON PUNTOS DE GUARDADO
-
-Este archivo contiene un árbol completo y las reglas docentes compartidas una sola vez. tree.nodes contiene el contexto de cada nodo; queue contiene solo las lecciones seleccionadas en orden de requisitos y completed contiene lecciones ya disponibles. Genera solo los nodos de queue; los demás son contexto, no tareas adicionales. Nunca cambies ids, etiquetas, alcances, requisitos ni idioma del árbol. No incluyas progreso personal.
-
-Para cada nodo, usa su label como tema y explanation como objetivo y límite. Los requires identifican lecciones anteriores: usa sus etiquetas y alcances exactos como conocimientos ya enseñados. No supongas conocimientos de hermanos independientes. Los nodos que lo requieren son temas posteriores: no los enseñes ni menciones por nombre. No copies las reglas para cada nodo.
-
-GUARDA CADA LECCIÓN ANTES DE EMPEZAR LA SIGUIENTE
-Devuelve un registro JSON independiente por línea (JSONL), sin una lista envolvente, cabecera obligatoria ni cierre global. Cada registro usa exactamente format="${LESSON_RECORD_FORMAT}", treeKey=el valor treeKey de este archivo, id=el id del nodo y content=el texto completo de la lección. Usa un serializador JSON si tienes herramientas; escapa los saltos de línea como \\n, las comillas como \\" y cada barra inversa del texto como \\\\. El contenido decodificado debe conservar LaTeX y todos los marcadores. No incluyas borradores ni registros con contenido incompleto. Revisa la lección, publica o guarda su registro y solo entonces empieza otra. No repitas registros ya terminados en este chat ni los de completed.
-
-SIN HERRAMIENTAS DE ARCHIVOS: publica cada registro terminado inmediatamente en el chat. Puedes usar un bloque de código jsonl por registro; dentro, cada registro ocupa una sola línea física. El máximo por respuesta es ${replySize === 'auto' ? 'lo que quepa con margen' : replySize}. Usa menos si es necesario para terminar bien. No reduzcas la calidad ni el alcance para meter más lecciones. Ante «Continúa», sigue con el próximo nodo pendiente usando estas mismas reglas, sin volver a pedir el prompt. Si te cortan, los registros completos anteriores siguen siendo importables; solo el registro incompleto se pierde. No se puede recuperar texto que nunca hayas publicado o guardado.
-
-CON HERRAMIENTAS DE ARCHIVOS: crea un archivo .jsonl descargable y muéstralo desde el primer registro terminado. Añade y guarda cada registro completo por separado antes de seguir; usa escritura atómica o append de una línea terminada y flush si está disponible. No guardes todo únicamente al final. Sigue por queue mientras puedas; el máximo por respuesta del chat no limita este trabajo. Conserva los puntos de guardado anteriores si falla otra lección. Si hay límite conocido, reserva margen para publicar el último punto guardado. Puedes generar además un árbol JSON utilizable insertando cada content en su nodo de tree y guardándolo atómicamente después de cada lección; conserva la estructura y nunca sustituyas el diario por una reescritura gigante. Los registros JSONL son el respaldo ante un corte.
-
-SI DISPONES DE SUBAGENTES: aprovecha una oleada pequeña de nodos independientes de queue. Los requisitos fuera de queue son contexto y no necesitan generarse. Comparte las reglas una vez con cada trabajador y solo el contexto relevante del nodo. Un único coordinador valida y guarda cada resultado en cuanto llegue. No hagas que todos reescriban el árbol ni escriban al mismo archivo. No empieces descendientes antes de guardar sus requisitos que también estén en queue. Mantén el orden lógico de aprendizaje y prioriza una ruta utilizable. Sin subagentes, trabaja secuencialmente con el mismo formato.
-
-REGLAS COMPARTIDAS PARA EL TEXTO DECODIFICADO DE CADA content
-Las restricciones de texto plano de abajo se aplican al contenido de la lección, no al envoltorio JSONL. El tema y CONTEXTO cambian por nodo; todas las demás reglas siguen iguales.` : `GENERATE LESSONS WITH DURABLE CHECKPOINTS
+function renderGenerationInstructions({ language, replySize, queue, completed, tree }) {
+  const protocol = `GENERATE LESSONS WITH DURABLE CHECKPOINTS
 
 This file contains the whole tree and the shared teaching rules once. tree.nodes provides each node's context; queue lists only the selected lessons in prerequisite order, and completed lists lessons already available. Generate only queue nodes; all other nodes are context, not additional work. Never change the tree's ids, labels, scopes, prerequisites, or language. Do not include personal learning progress.
 
@@ -87,15 +71,9 @@ The plain-text restrictions below apply to lesson content, not its JSONL envelop
   const parallel = queue.some((id, i) => queue.slice(i + 1).some(other =>
     !graph.downstream.get(id).has(other) && !graph.downstream.get(other).has(id)));
   let tailoredProtocol = protocol;
-  if (!parallel) tailoredProtocol = tailoredProtocol.replace(/(?:IF SUBAGENTS ARE AVAILABLE:|SI DISPONES DE SUBAGENTES:)[\s\S]*?(?=\n\n)/, '');
+  if (!parallel) tailoredProtocol = tailoredProtocol.replace(/IF SUBAGENTS ARE AVAILABLE:[\s\S]*?(?=\n\n)/, '');
   if (single) {
-    tailoredProtocol = spanish
-      ? `GENERA UNA LECCIÓN
-
-Genera únicamente el nodo de queue. El resto de tree.nodes aporta contexto, no tareas. Conserva la estructura del árbol.
-
-Devuelve un único registro JSON con format="${LESSON_RECORD_FORMAT}", treeKey="${generationTreeKey(tree)}", id="${queue[0]}" y content=el texto completo de la lección. Usa un serializador JSON para escapar saltos de línea, comillas y barras inversas sin alterar LaTeX. Con herramientas de archivos, entrega un .jsonl descargable; si no, publica el registro completo en una sola línea dentro de un bloque jsonl. Revisa y termina la lección antes de entregarla. Las reglas de texto plano siguientes se aplican a content.`
-      : `GENERATE ONE LESSON
+    tailoredProtocol = `GENERATE ONE LESSON
 
 Generate only the node in queue. The rest of tree.nodes is context, not additional work. Preserve the tree structure.
 
@@ -103,41 +81,33 @@ Return one JSON record with format="${LESSON_RECORD_FORMAT}", treeKey="${generat
     const liveIndex = tree.nodes.findIndex(n => n.id === queue[0]);
     const liveId = [...state.nodes.keys()][liveIndex];
     // Use the actual per-node context rather than placeholders for a one-node job.
-    const lessonPrompt = buildPrompt(liveId, language, spanish
-      ? 'Entrega el texto como content del registro JSON descrito arriba.'
-      : 'Deliver the lesson as content of the JSON record specified above.');
+    const lessonPrompt = buildPrompt(liveId, language, 'Deliver the lesson as content of the JSON record specified above.');
     return tailoredProtocol + '\n\n' + lessonPrompt;
   }
   const values = {
-    topic: spanish ? 'label del nodo actual' : 'the current node’s label', nodeId: 'CURRENT_NODE_ID',
-    sectionKeyword, language,
-    deliveryInstruction: spanish
-      ? 'Escribe el texto de esta lección como content de un único registro terminado, siguiendo el protocolo de guardado de arriba. No crees un archivo .txt individual.'
-      : 'Write this lesson text as content in one completed record under the checkpoint protocol above. Do not create an individual .txt file.',
-    treeTopicLine: spanish ? 'El tema global es tree.topic.' : 'The larger subject is tree.topic.',
-    explanationLine: spanish ? 'El objetivo y los límites son la explanation del nodo actual.' : 'The learning goal and boundaries are the current node’s explanation.',
-    prereqLine: spanish ? 'Usa los labels y explanations de todos los requires del nodo actual como conocimientos ya enseñados. Si no hay requires, es un tema inicial; respeta los conocimientos de entrada descritos en explanation.' : 'Use the labels and explanations of all the current node’s requires as already-taught background. With no requires, this is an entry topic; respect any calibrated starting knowledge stated in explanation.',
-    leadsToLine: spanish ? 'No adelantes material de los nodos posteriores que requieren este.' : 'Do not introduce material belonging to later nodes that require this one.',
-    languageClause: `\nLANGUAGE\nWrite every lesson in ${language}. Use === ${sectionKeyword} N: TITLE === section headings. Keep QUESTION, ANSWER, BONUS, TABLE, TIMELINE, GRAPH and graph field names in their literal parser syntax.\n`,
+    topic: 'the current node’s label', nodeId: 'CURRENT_NODE_ID',
+    deliveryInstruction: 'Write this lesson text as content in one completed record under the checkpoint protocol above. Do not create an individual .txt file.',
+    treeTopicLine: 'The larger subject is tree.topic.',
+    explanationLine: 'The learning goal and boundaries are the current node’s explanation.',
+    prereqLine: 'Use the labels and explanations of all the current node’s requires as already-taught background. With no requires, this is an entry topic; respect any calibrated starting knowledge stated in explanation.',
+    leadsToLine: 'Do not introduce material belonging to later nodes that require this one.',
+    languageClause: `\nLANGUAGE\nWrite every lesson in ${language}. Use === SECTION N: TITLE === section headings. Keep QUESTION, ANSWER, BONUS, TABLE, TIMELINE, GRAPH and graph field names in their literal parser syntax.\n`,
   };
-  const resumeNote = spanish
-    ? 'COPIAS AL RETOMAR: si completed no está vacío, el archivo de trabajo omite deliberadamente el texto de esas lecciones. Un JSON construido solo desde este archivo no contiene todas las lecciones anteriores. Conserva el diario de nuevos registros para fusionarlo en el árbol original; exporta la copia completa desde la app después de importar.'
-    : 'RESUME BACKUPS: when completed is nonempty, this work file deliberately omits those lessons’ text. A JSON built only from this packet does not contain all earlier lessons. Keep the journal of new records to merge into the original tree; export the complete backup from the app after importing.';
-  return tailoredProtocol + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + (spanish ? renderNodePromptEs(values) : renderNodePrompt(values));
+  const resumeNote = 'RESUME BACKUPS: when completed is nonempty, this work file deliberately omits those lessons’ text. A JSON built only from this packet does not contain all earlier lessons. Keep the journal of new records to merge into the original tree; export the complete backup from the app after importing.';
+  return tailoredProtocol + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + renderNodePrompt(values);
 }
 
 function buildGenerationPacket(language, replySize = '1', options = generationSelection) {
   const tree = buildTreeJSON(false);
   if (!tree) return null;
-  const spanish = state.isSpanish === true || uiLanguage === 'es';
-  const lessonLanguage = language || state.language || (spanish ? 'Español' : 'English');
+  const lessonLanguage = language || state.language || (uiLanguage === 'es' ? 'Español' : 'English');
   const liveNodes = [...state.nodes.values()];
   const completed = tree.nodes.filter((_, i) => lessonIsComplete(liveNodes[i]._sessionTxt)).map(n => n.id);
   const queue = generationQueue(tree, completed, options);
   if (replySize !== 'auto') replySize = String(Math.min(Number(replySize) || 1, Math.max(1, queue.length)));
   return {
     format: WORK_PACKET_FORMAT, treeKey: generationTreeKey(tree),
-    instructions: renderGenerationInstructions({ language: lessonLanguage, sectionKeyword: lessonSectionKeyword(lessonLanguage), replySize, spanish, queue, completed, tree }),
+    instructions: renderGenerationInstructions({ language: lessonLanguage, replySize, queue, completed, tree }),
     lessonLanguage, tree, completed, queue,
   };
 }
@@ -276,14 +246,10 @@ function generationImportOptions(replaceExisting = document.getElementById('gene
 
 function generationStartMessage(packet = buildGenerationPacket()) {
   if (!packet?.queue.length) return '';
-  if (packet.queue.length === 1) return uiLanguage === 'es'
-    ? 'Lee el archivo AI work adjunto y genera solo la lección indicada en queue. Entrega el registro JSONL completo siguiendo sus instrucciones.'
-    : 'Read the attached AI work file and generate only the lesson listed in queue. Return the complete JSONL record following its instructions.';
-  const message = uiLanguage === 'es'
-    ? 'Lee el archivo AI work adjunto y sigue sus instrucciones. Genera queue y guarda inmediatamente cada lección terminada. Usa subagentes si están disponibles. Sin herramientas de archivos, publica registros JSONL completos en el chat y retoma cuando diga «Continúa». No esperes al final para entregar las lecciones.'
-    : 'Read the attached AI work file and follow its instructions. Generate its queue and checkpoint each completed lesson immediately. Use subagents if available. Without file tools, emit complete JSONL records in chat and resume when I say Continue. Do not hold finished lessons until the end.';
-  return /IF SUBAGENTS ARE AVAILABLE|SI DISPONES DE SUBAGENTES/.test(packet.instructions) ? message
-    : message.replace(' Use subagents if available.', '').replace(' Usa subagentes si están disponibles.', '');
+  if (packet.queue.length === 1) return 'Read the attached AI work file and generate only the lesson listed in queue. Return the complete JSONL record following its instructions.';
+  const message = 'Read the attached AI work file and follow its instructions. Generate its queue and checkpoint each completed lesson immediately. Use subagents if available. Without file tools, emit complete JSONL records in chat and resume when I say Continue. Do not hold finished lessons until the end.';
+  return /IF SUBAGENTS ARE AVAILABLE/.test(packet.instructions) ? message
+    : message.replace(' Use subagents if available.', '');
 }
 
 function currentGenerationPacket() {

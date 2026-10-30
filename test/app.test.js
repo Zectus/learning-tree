@@ -287,7 +287,7 @@ test('tree prompts: language example is templated, and the file-only rule is sco
   const file  = app.ev('renderTreePromptFromFile()');
   assert.ok(topic.includes('"language": "English"'));
   assert.ok(!topic.includes('"language": "Spanish"') && !file.includes('"language": "Spanish"'));
-  assert.ok(topic.includes('"isSpanish": false') && file.includes('"isSpanish": false'));
+  assert.ok(!topic.includes('isSpanish') && !file.includes('isSpanish'));
   for (const p of [topic, file]) {
     assert.ok(p.includes('once the tree is built, your final message should contain nothing but the file itself'));
     assert.ok(!p.includes('your visible output should contain nothing but the file itself'));

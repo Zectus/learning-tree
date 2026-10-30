@@ -128,7 +128,7 @@ contains the current lessons inside `tree.nodes`; importing it merges content
 into the loaded tree. Its instructions and claimed queue do not override the
 app's fresh work file or the lessons actually present.
 
-The shared English and Spanish lesson rules ask the author to distinguish
+The shared lesson rules ask the author to distinguish
 prior knowledge, definitions, supplied inputs, and new consequences; develop
 the choice, reason, operation, and intermediate step behind each central
 result; explain unfamiliar operations and plotting conventions at first use;
@@ -158,17 +158,10 @@ On your first visit, the interface uses your browser's preferred supported langu
 (English or Spanish), falling back to English. A saved language choice takes priority.
 Choose **Account → Español / English** to switch the entire interface without
 reloading. The choice is remembered in this browser. Menus, dialogs, tooltips,
-errors, lesson controls, drawing tools, tutorial examples, and built-in generation
-prompts are available in both languages. Blank generation-language fields default
-to the interface language; an explicit language or one stored in a tree is preserved.
-
-Tree JSON also includes an AI-determined boolean `isSpanish`, independent of the
-user's `language` text. Tree-generation prompts ask the AI to set it to `true`
-only for exclusively Spanish output, including regional varieties, and `false`
-for other languages or mixed output. Only literal `true` forces the Spanish
-lesson prompt template even with an English interface; false or missing flags
-keep the usual interface-based template selection. The language field stays
-editable and is preserved. The flag survives import, exports, and library saves.
+errors, lesson controls, drawing tools, and tutorial examples are available in both
+languages. Generation instructions always use the shared English templates; the
+requested output language controls the generated tree or lesson content. Blank
+generation-language fields default to the interface language; an explicit language or one stored in a tree is preserved.
 
 Imported lesson text, tree names, node labels and explanations, account identities,
 notes, drawings, and editable field values stay as written. Switching the interface
@@ -263,8 +256,7 @@ continuous boundaries on the chosen intervals.
 calculus tree with shaded finite-sum and Riemann rectangles, signed integral contributions,
 and an accumulation strip controlled by a slider.
 
-Spanish lessons use `=== SECCIÓN N: Título ===` section headings. The parser also
-accepts `SECCION` and legacy `SECTION` headings, including mixed files. Prompt
-headings follow the requested lesson language, while the viewer's section and
-question labels follow the selected interface language. Question, answer, table,
-and graph block markers and graph field names keep their existing parser syntax.
+New lesson prompts use `=== SECTION N: Title ===` markers in every output language.
+The parser also accepts existing `SECCIÓN` and `SECCION` headings, including mixed
+files. The viewer's section and question labels follow the selected interface language.
+Question, answer, table, and graph block markers and graph field names keep their existing parser syntax.

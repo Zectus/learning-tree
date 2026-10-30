@@ -15,11 +15,6 @@
    and the app shuffles options at parse time (shuffleOptions in tools.js),
    so nothing here computes an answer key.
 ═══════════════════════════════════════════════════════════ */
-function lessonSectionKeyword(language) {
-  const normalized = String(language).trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  return /^(?:es(?:$|[-_])|espanol\b|spanish\b|castellano\b)/.test(normalized) ? 'SECCIÓN' : 'SECTION';
-}
-
 function buildPrompt(id, language, deliveryInstruction) {
   const node   = state.nodes.get(id);
   const topic  = node.label;
@@ -45,20 +40,10 @@ function buildPrompt(id, language, deliveryInstruction) {
   const explanationLine = node.explanation
     ? `This node's scope, from the tree's own design notes (not shown to the reader, but binding on what you write): ${node.explanation} Use this brief to identify the intended learner ability, central idea, supporting content, and scope boundaries. If it is written as a topic list, organize those items into a learnable progression rather than equal-length treatments. Keep explicit exclusions, but still show a meaningful use of the idea at this level.`
     : '';
-  const useSpanishPrompt = state.isSpanish === true || uiLanguage === 'es';
-  const lang = language || (useSpanishPrompt ? 'Español' : 'English');
-  const sectionKeyword = lessonSectionKeyword(lang);
-  if (useSpanishPrompt) {
-    return renderNodePromptEs({ topic, nodeId, language: lang, sectionKeyword, deliveryInstruction,
-      treeTopicLine: state.topic ? `Este nodo pertenece a un árbol más amplio sobre ${state.topic}.` : '',
-      explanationLine: node.explanation ? `Alcance de este nodo según las notas de diseño privadas del árbol: ${node.explanation} Usa esta guía para identificar la capacidad prevista, la idea central, el contenido de apoyo y los límites. Si es una lista de temas, organízalos como una progresión aprendible. Respeta las exclusiones explícitas y muestra un uso significativo de la idea a este nivel.` : '',
-      prereqLine: prereqNodes.length ? `El estudiante ya ha estudiado todos los elementos siguientes. Cada línea contiene su nombre y alcance exacto, para saber qué se ha establecido y cuáles son sus límites:\n${prereqDetailList}\nTrata todo lo descrito como ya enseñado y disponible sin volver a derivarlo ni explicarlo. Remítete a ello de forma natural, como «recuerda que…» o «antes vimos…», no como una línea de un programa de estudios. Si un alcance anterior no cubre algo necesario aquí, esa laguna es material nuevo para este nodo.` : 'Este es el primer tema de la secuencia: no hay temas anteriores a los que remitirse.',
-      leadsToLine: dependents.length ? `Los temas posteriores se apoyarán en este: ${dependents.join(', ')}. No los enseñes ni los menciones por su nombre aquí.` : ''
-    });
-  }
-  const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== ${sectionKeyword} N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", the option markers "(A)" through "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]", and "[BONUS N]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does. This extends inside [GRAPH] blocks specifically: the field names themselves (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, fill, range, opacity, point, segment, slider, label, color, z, u, v) are parser keywords and must stay in English exactly as written in the spec, and every math expression (a trace's formula, z, u, v) must stay in plain ASCII math syntax regardless of document language, since a separate library evaluates them as expressions, not as text. Only the actual values after title:, xlabel:, ylabel:, zlabel:, and label: move to ${lang} — everything else in a [GRAPH] block does not.\n`;
+  const lang = language || (uiLanguage === 'es' ? 'Español' : 'English');
+  const languageClause = `\nLANGUAGE\nWrite the entire document in ${lang} — every section title, all prose, every question, and every answer option. The structural markup a parser reads must stay exactly as specified above, in this literal form, regardless of language: "=== SECTION N: " and the closing "===" wrapping each section title (translate the title itself, not the wrapper), "[QUESTION N]" / "[/QUESTION]", "[ANSWER: X]", the option markers "(A)" through "(E)", "[TABLE]" / "[/TABLE]", "[TIMELINE]" / "[/TIMELINE]", "[GRAPH]" / "[/GRAPH]", and "[BONUS N]" / "[/BONUS]". Only the human-readable content moves to ${lang} — none of that markup does. This extends inside [GRAPH] blocks specifically: the field names themselves (type, title, xlabel, ylabel, zlabel, xrange, yrange, trange, trace, fill, range, opacity, point, segment, slider, label, color, z, u, v) are parser keywords and must stay in English exactly as written in the spec, and every math expression (a trace's formula, z, u, v) must stay in plain ASCII math syntax regardless of document language, since a separate library evaluates them as expressions, not as text. Only the actual values after title:, xlabel:, ylabel:, zlabel:, and label: move to ${lang} — everything else in a [GRAPH] block does not.\n`;
 
-  return renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, sectionKeyword, deliveryInstruction });
+  return renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, deliveryInstruction });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -67,8 +52,7 @@ function buildPrompt(id, language, deliveryInstruction) {
 ═══════════════════════════════════════════════════════════ */
 function buildTreePrompt(topic, language) {
   const fileSlug = slugify(topic);
-  if (uiLanguage === 'es') return renderTreePromptEs({topic, fileSlug, language: language || 'Español'});
-  const lang = language || 'English';
+  const lang = language || (uiLanguage === 'es' ? 'Español' : 'English');
   const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
   return renderTreePrompt({ topic, fileSlug, language: lang, languageClause });
 }
@@ -77,7 +61,7 @@ function buildTreePrompt(topic, language) {
 // the attached file(s). Kept as a function so this file stays the one place
 // between the modal and the templates.
 function buildTreePromptFromFile() {
-  return uiLanguage === 'es' ? renderTreePromptEs({}, true) : renderTreePromptFromFile();
+  return renderTreePromptFromFile();
 }
 
 /* ── learn modal ── */

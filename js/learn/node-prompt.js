@@ -56,7 +56,7 @@
       lines), never a named topic (see rule 1). The graph syntax is
       parsed by parseGraphBody in tools.js; the two must stay in sync.
 ═══════════════════════════════════════════════════════════ */
-function renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, sectionKeyword = 'SECTION', deliveryInstruction }) {
+function renderNodePrompt({ topic, nodeId, prereqLine, leadsToLine, treeTopicLine, explanationLine, languageClause, deliveryInstruction }) {
   return `You are producing a plain-text learning document (.txt) for the topic: ${topic}
 
 ${deliveryInstruction || `Deliver this as a downloadable file named ${nodeId}.txt — that keeps it unambiguous which node in the tree this document belongs to when there are many. Do all planning, drafting, and double-checking in your thinking; your visible output should contain nothing but the file itself — no preamble, no summary, no commentary before or after it.`}
@@ -91,9 +91,9 @@ This is a plain .txt file. Rules:
 - Prose only — use plain paragraphs and the section/question/table/timeline/graph markers below
 
 Section headers:
-=== ${sectionKeyword} N: TITLE ===
+=== SECTION N: TITLE ===
 
-The very first line of the document must be "=== ${sectionKeyword} 1: TITLE ===" — nothing precedes it. No title line, no opening sentence, no framing paragraph sits above the first section header; start the lesson at that marker so its structure is clear.
+The very first line of the document must be "=== SECTION 1: TITLE ===" — nothing precedes it. No title line, no opening sentence, no framing paragraph sits above the first section header; start the lesson at that marker so its structure is clear.
 
 Questions must use this format exactly:
 

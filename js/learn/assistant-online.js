@@ -14,9 +14,7 @@ function onlineLessonPayload() {
   return { tree: packet.tree, snapshot: buildTreeJSON(true), treeKey: packet.treeKey, queue: packet.queue,
     prompts: packet.queue.map(id => {
       const index = packet.tree.nodes.findIndex(n => n.id === id);
-      const delivery = state.isSpanish === true || uiLanguage === 'es'
-        ? 'Entrega la lección completa con la herramienta save_lesson. No crees archivos ni registros JSONL. No uses otras herramientas ni servicios externos.'
-        : 'Save the complete plain-text lesson with the save_lesson tool. Do not create files or JSONL records. No other tools or external services are needed.';
+      const delivery = 'Save the complete plain-text lesson with the save_lesson tool. Do not create files or JSONL records. No other tools or external services are needed.';
       return { id, prompt: buildPrompt(live[index], packet.lessonLanguage, delivery) };
     }) };
 }

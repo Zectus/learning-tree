@@ -221,7 +221,7 @@ test('generation panel downloads one packet, imports pasted output, checkpoints 
     app.ev("setUILanguage('es')");
     el(app, 'menu-generate-lessons').click();
     assert.match(el(app, 'generation-status').textContent, /2 \/ 4 lecciones disponibles/);
-    assert.match(el(app, 'generation-start-message').value, /Lee el archivo/);
+    assert.match(el(app, 'generation-start-message').value, /Read the attached AI work file/);
     // Error details retranslate as app-owned text, while ids and lesson content stay intact.
     paste(app, record(app, 'unknown'));
     el(app, 'btn-import-generation').click();
@@ -313,19 +313,19 @@ test('paste results are separate from file results and another tree cannot inher
   } finally { app.window.close(); }
 });
 
-test('Spanish batch rules reuse the Spanish template and lesson language remains independently editable', () => {
+test('batch rules always use English instructions and preserve the requested lesson language', () => {
   const app = loadApp();
   try {
     loadTree(app);
-    app.ev('state.isSpanish=true');
+    app.ev("setUILanguage('es')");
     let work = packet(app);
-    assert.match(work.instructions, /GENERA LECCIONES/);
-    assert.match(work.instructions, /Vas a producir una lección/);
+    assert.match(work.instructions, /GENERATE LESSONS/);
+    assert.match(work.instructions, /You are producing a plain-text/);
     assert.match(work.instructions, /=== SECTION N:/);
-    assert.doesNotMatch(work.instructions, /Entrégala como archivo descargable llamado/);
+    assert.doesNotMatch(work.instructions, /Deliver this as a downloadable file named/);
     work = JSON.parse(app.ev("JSON.stringify(buildGenerationPacket('Español de Perú','3'))"));
-    assert.match(work.instructions, /=== SECCIÓN N:/);
-    assert.match(work.instructions, /máximo por respuesta es 3/);
+    assert.match(work.instructions, /=== SECTION N:/);
+    assert.match(work.instructions, /maximum per reply is 3/);
     assert.equal(work.lessonLanguage, 'Español de Perú');
     assert.equal(work.tree.language, 'English');
   } finally { app.window.close(); }
@@ -642,7 +642,7 @@ test('automatic batches rank required nodes by level then downstream reach, addi
   } finally { app.window.close(); }
 });
 
-test('single-node packets use concrete context and omit batch orchestration in both languages', () => {
+test('single-node packets use English instructions and concrete context in both interfaces', () => {
   const app = loadApp();
   try {
     loadTree(app);
@@ -655,11 +655,11 @@ test('single-node packets use concrete context and omit batch orchestration in b
     assert.doesNotMatch(app.ev('generationStartMessage(__packet)'), /subagents|Continue/i);
     app.ev("setUILanguage('es')");
     const spanish = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('Español', '3', {count:1}))`));
-    assert.match(spanish.instructions, /GENERA UNA LECCIÓN/);
-    assert.match(spanish.instructions, /tema: Alpha/);
-    assert.doesNotMatch(spanish.instructions, /subagentes|Ante «Continúa»|CURRENT_NODE_ID|archivo descargable llamado/i);
+    assert.match(spanish.instructions, /GENERATE ONE LESSON/);
+    assert.match(spanish.instructions, /topic: Alpha/);
+    assert.doesNotMatch(spanish.instructions, /subagents|Continue|CURRENT_NODE_ID|Deliver this as a downloadable file named/i);
     const multi = JSON.parse(app.ev(`JSON.stringify(buildGenerationPacket('English', '3', {count:2}))`));
-    assert.doesNotMatch(multi.instructions, /SUBAGENTES/); // A single chain cannot run in parallel.
+    assert.doesNotMatch(multi.instructions, /SUBAGENTS/); // A single chain cannot run in parallel.
   } finally { app.window.close(); }
 });
 

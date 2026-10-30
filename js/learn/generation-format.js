@@ -3,7 +3,7 @@
 // label, language, or prerequisite makes old output ineligible for this tree.
 function generationTreeKey(tree) {
   const canonical = JSON.stringify({
-    topic: tree.topic || '', language: tree.language || '', isSpanish: tree.isSpanish === true,
+    topic: tree.topic || '', language: tree.language || '',
     nodes: tree.nodes.map(n => ({
       id: String(n.id), label: n.label, explanation: n.explanation || '',
       optional: !!n.optional, requires: [...new Set(n.requires || [])].map(String).sort(),

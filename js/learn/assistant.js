@@ -110,9 +110,7 @@ function assistantJobPayload() {
   const live = [...state.nodes.keys()];
   const prompts = packet.queue.map(id => {
     const index = packet.tree.nodes.findIndex(n => n.id === id);
-    const delivery = uiLanguage === 'es' || state.isSpanish === true
-      ? 'Devuelve únicamente el texto completo de la lección. La aplicación lo guardará automáticamente; no crees archivos ni registros JSON y no uses herramientas.'
-      : 'Return only the complete plain-text lesson. The application saves it automatically; do not create files or JSON records, and do not use tools.';
+    const delivery = 'Return only the complete plain-text lesson. The application saves it automatically; do not create files or JSON records, and do not use tools.';
     return { id, prompt: buildPrompt(live[index], packet.lessonLanguage, delivery) };
   });
   const signature = JSON.stringify([packet.treeKey, packet.queue, assistantEl('assistant-provider').value, assistantEl('assistant-model').value, assistantEl('assistant-effort').value, packet.lessonLanguage]);

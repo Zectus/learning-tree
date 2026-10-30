@@ -81,27 +81,27 @@ test('switching preserves user names, lessons, notes, sketches, answer state, an
  } finally {app.window.close();}
 });
 
-test('Spanish prompts preserve literal parser/schema keys and all interpolated user content',()=>{
+test('English generation instructions preserve requested language and user content on the Spanish interface',()=>{
  const app=loadApp({uiLanguage:'es'});
  try {
   loadTree(app);
   app.ev(`state.topic='My original tree'; state.nodes.get(2).label='My Trees'; state.nodes.get(2).explanation='Do not translate this scope'; openLearnModal(2)`);
   let prompt=el(app,'prompt-box').value;
-  assert.match(prompt,/Vas a producir una lección/);
+  assert.match(prompt,/You are producing a plain-text/);
   assert.match(prompt,/My Trees/); assert.match(prompt,/Do not translate this scope/);
   assert.match(prompt,/My original tree/); assert.match(prompt,/\[ANSWER: X\]/);
   assert.match(prompt,/=== SECTION N:/); assert.match(prompt,/type: function2d/);
-  assert.match(prompt,/type: surface3d/); assert.match(prompt,/en English/);
-  assert.match(app.ev("buildPrompt(2,'')"),/en Español/);
+  assert.match(prompt,/type: surface3d/); assert.match(prompt,/in English/);
+  assert.match(app.ev("buildPrompt(2,'')"),/in Español/);
   app.ev("openTreeModal()");
   el(app,'tree-topic-input').value='My original topic';
   el(app,'tree-language-input').value='French';
   el(app,'tree-topic-input').dispatchEvent(new app.window.Event('input'));
   prompt=el(app,'tree-prompt-box').value;
-  assert.match(prompt,/Vas a diseñar/); assert.match(prompt,/My original topic/);
+  assert.match(prompt,/You are designing/); assert.match(prompt,/My original topic/);
   assert.match(prompt,/"nodes"/); assert.match(prompt,/"language": "French"/);
   app.ev("setTreeMode('file')");
-  assert.match(el(app,'tree-file-prompt-box').value,/archivos adjuntos/);
+  assert.match(el(app,'tree-file-prompt-box').value,/attached file/);
   app.ev("setUILanguage('en')");
   assert.match(el(app,'tree-prompt-box').value,/You are designing/);
   assert.equal(el(app,'tree-language-input').value,'French');
@@ -172,7 +172,7 @@ test('changing language during a replay also translates a restored prompt window
   app.ev("setUILanguage('es')");
   el(app,'tutorial-skip').click();
   assert.equal(el(app,'modal-backdrop').classList.contains('open'),true);
-  assert.match(el(app,'prompt-box').value,/Vas a producir/);
+  assert.match(el(app,'prompt-box').value,/You are producing/);
   assert.equal(el(app,'node-language-input').value,'English');
  } finally {app.window.close();}
 });

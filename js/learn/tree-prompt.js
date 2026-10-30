@@ -99,7 +99,6 @@ OUTPUT SCHEMA
 {
   "topic": "${topic}",
   "language": "${language}",
-  "isSpanish": false,
   "nodes": [
     { "id": "slug", "label": "Display Name", "explanation": "A compact teaching brief: learner ability, central content, assumed background, and boundaries", "requires": ["slug1","slug2"], "optional": false }
   ]
@@ -107,7 +106,6 @@ OUTPUT SCHEMA
 
 - topic: the exact subject this tree was designed for, exactly as given above. Always include this — it's used to label the tree and name its downloaded file.
 - language: the language every node's "label" is written in, exactly as given to you above.
-- isSpanish: always include a JSON boolean, not a string. Determine it yourself from the actual selected output language: true only when that language is exclusively Spanish (including regional varieties or alternative names); false for any other language or mixed/multilingual output. Interpret the language semantically rather than matching a spelling or looking for the word Spanish. Preserve the language field exactly as requested. The false in the schema is illustrative; assess the correct value for this tree. Only true forces the Spanish lesson-generation prompt template; false leaves the normal prompt selection unchanged.
 ${TREE_FIELD_NOTES}
 
 ${TREE_DESIGN_PRINCIPLES}
@@ -163,7 +161,6 @@ OUTPUT SCHEMA
 {
   "topic": "Subject Name",
   "language": "Language Name",
-  "isSpanish": false,
   "nodes": [
     { "id": "slug", "label": "Display Name", "explanation": "A compact teaching brief: learner ability, central content, assumed background, and boundaries", "requires": ["slug1","slug2"], "optional": false }
   ]
@@ -171,7 +168,6 @@ OUTPUT SCHEMA
 
 - topic: the specific topic you identified from the attached file(s) (see THE TOPIC above), written the way a person would naturally refer to it. Always include this — it's used to label the tree and name its downloaded file. The example above is illustrative, not a value to copy.
 - language: the language you identified the file(s) to be written in (see THE LANGUAGE above), and the language every node's "label" is written in. The example above is illustrative, not a value to copy.
-- isSpanish: always include a JSON boolean, not a string. Determine it yourself from the actual selected output language: true only when that language is exclusively Spanish (including regional varieties or alternative names); false for any other language or mixed/multilingual output. Interpret the language semantically rather than matching a spelling or looking for the word Spanish. Preserve the language field exactly as requested. The false in the schema is illustrative; assess the correct value for this tree. Only true forces the Spanish lesson-generation prompt template; false leaves the normal prompt selection unchanged.
 ${TREE_FIELD_NOTES}
 
 ${TREE_DESIGN_PRINCIPLES}

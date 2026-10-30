@@ -37,7 +37,7 @@ Segundo tramo.
   } finally { app.window.close(); }
 });
 
-test('prompt headings follow the requested lesson language independently of interface language', () => {
+test('English prompt markers stay fixed while requested output language stays editable', () => {
   for (const uiLanguage of ['en', 'es']) {
     const app = loadApp({ uiLanguage });
     try {
@@ -46,9 +46,10 @@ test('prompt headings follow the requested lesson language independently of inte
       for (const language of ['Español', 'español', 'Spanish', 'Spanish (Peru)', 'es-PE', 'Castellano']) {
         app.window.requestedLanguage = language;
         const prompt = app.ev('buildPrompt(2, requestedLanguage)');
-        assert.match(prompt, /=== SECCIÓN N:/);
-        assert.match(prompt, /=== SECCIÓN 1:/);
-        assert.doesNotMatch(prompt, /=== SECTION/);
+        assert.match(prompt, /=== SECTION N:/);
+        assert.match(prompt, /=== SECTION 1:/);
+        assert.doesNotMatch(prompt, /=== SECCIÓN/);
+        assert.ok(prompt.includes('Write the entire document in ' + language));
         assert.match(prompt, /\[QUESTION N\]/);
         assert.match(prompt, /fill:.*range:/);
       }
@@ -58,7 +59,7 @@ test('prompt headings follow the requested lesson language independently of inte
         assert.match(prompt, /=== SECTION N:/);
         assert.doesNotMatch(prompt, /=== SECCIÓN/);
       }
-      assert.match(app.ev("buildPrompt(2, '')"), uiLanguage === 'es' ? /=== SECCIÓN N:/ : /=== SECTION N:/);
+      assert.match(app.ev("buildPrompt(2, '')"), /=== SECTION N:/);
     } finally { app.window.close(); }
   }
 });
