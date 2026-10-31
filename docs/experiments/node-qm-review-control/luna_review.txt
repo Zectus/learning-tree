@@ -1,0 +1,232 @@
+=== SECTION 1: A state for the part you can measure ===
+
+Two qubits are prepared together, but you can measure only the first one. Must you carry the full two-qubit state through every calculation, even when you never ask about the second qubit?
+
+Call the accessible system \(A\) and the other system \(B\). The label \(B\) may stand for a finite environment; nothing requires it to be a measuring device. Write \(\lvert ab\rangle=\lvert a\rangle_A\otimes\lvert b\rangle_B\), with the accessible system first. Consider
+\[
+\lvert\Psi\rangle=\frac{\sqrt3}{2}\lvert00\rangle+\frac12\lvert11\rangle.
+\]
+If you measure \(A\) in its computational basis, the probabilities are \(3/4\) and \(1/4\). A diagonal density matrix with those entries reproduces these probabilities. But matching one measurement is not enough: could that same matrix predict every measurement on \(A\)?
+
+Take any normalized local state \(\lvert u\rangle=u_0\lvert0\rangle+u_1\lvert1\rangle\). For the outcome corresponding to \(\lvert u\rangle\), the two alternatives on \(B\) have amplitudes \(\sqrt3\,u_0^*/2\) and \(u_1^*/2\). They are orthogonal alternatives, so their probabilities add:
+\[
+p(u)=\frac34\lvert u_0\rvert^2+\frac14\lvert u_1\rvert^2
+=\langle u\rvert\begin{pmatrix}3/4&0\\0&1/4\end{pmatrix}\lvert u\rangle.
+\]
+Thus the matrix
+\[
+\rho_A=\frac34\lvert0\rangle\langle0\rvert+\frac14\lvert1\rangle\langle1\rvert
+\]
+works for every such local outcome, including superposition-basis outcomes. We call it the reduced density operator of \(A\). Its purpose is to retain exactly what is needed for local measurement probabilities while no longer describing joint correlations.
+
+Reduction here is a calculation, not a measurement performed on \(B\). No outcome on \(B\) was selected, and the joint state remains \(\lvert\Psi\rangle\). The probabilities describe outcomes over repeated preparations; the reduced matrix does not assign a definite outcome to an individual run.
+
+=== SECTION 2: How tracing out a system works ===
+
+We need a construction that also handles mixed joint states and local coherences. Choose orthonormal bases \(\{\lvert a\rangle\}\) for \(A\) and \(\{\lvert b\rangle\}\) for \(B\). Define the joint matrix entries by
+\[
+\rho_{ab,a'b'}=\langle a b\rvert\rho_{AB}\lvert a'b'\rangle.
+\]
+The row is labeled by the pair \(a,b\), and the column by \(a',b'\). The primes distinguish separate row and column labels; they do not denote derivatives. All sums below run over the full finite bases.
+
+A projector \(P\) representing a measurement outcome on \(A\) acts on the joint space as \(P\otimes I_B\), where \(I_B\) is the identity on \(B\). It tests the outcome on \(A\) without restricting \(B\). Expanding the joint trace in the product basis gives
+\[
+\begin{aligned}
+p(P)&=\operatorname{Tr}_{AB}[\rho_{AB}(P\otimes I_B)]\\
+&=\sum_{a,b,a'}\rho_{ab,a'b}\langle a'\rvert P\lvert a\rangle\\
+&=\sum_{a,a'}\left(\sum_b\rho_{ab,a'b}\right)P_{a'a}.
+\end{aligned}
+\]
+Here \(P_{a'a}=\langle a'\rvert P\lvert a\rangle\). The identity on \(B\) forces the same environment index on both sides, leaving a sum over that index. Comparing the last line with the ordinary matrix formula for \(\operatorname{Tr}_A(\rho_A P)\) tells us which local entries to keep:
+\[
+(\rho_A)_{aa'}=\sum_b\rho_{ab,a'b}.
+\]
+This operation is the partial trace over \(B\), written \(\rho_A=\operatorname{Tr}_B\rho_{AB}\). It sums out the environment index while leaving the two accessible-system indices intact. Unlike the full trace, its output is an operator, not a number.
+
+An equivalent expression is
+\[
+\operatorname{Tr}_B\rho_{AB}=\sum_b (I_A\otimes\langle b\rvert)\rho_{AB}(I_A\otimes\lvert b\rangle).
+\]
+Each term sandwiches only the environment part between a bra and a ket. For example,
+\[
+\operatorname{Tr}_B(\lvert a\rangle\langle a'\rvert\otimes\lvert b\rangle\langle b'\rvert)
+=\langle b'\vert b\rangle\lvert a\rangle\langle a'\rvert.
+\]
+Orthogonal environment labels make that term vanish. Equal environment labels leave the local operator. Local off-diagonal terms need not vanish: their survival depends on the environment labels, not on whether the local labels differ.
+
+For a pure joint state \(\lvert\psi\rangle=\sum_{a,b}c_{ab}\lvert ab\rangle\), expanding \(\lvert\psi\rangle\langle\psi\rvert\) gives the useful form
+\[
+(\rho_A)_{aa'}=\sum_b c_{ab}c_{a'b}^*.
+\]
+The star denotes complex conjugation. Multiply amplitudes with the same environment label, conjugating the amplitude carrying the column label, and then add.
+
+For example, let
+\[
+\lvert\chi\rangle=\frac{\lvert00\rangle+\lvert10\rangle+\lvert11\rangle}{\sqrt3}.
+\]
+Its nonzero amplitudes are \(c_{00}=c_{10}=c_{11}=1/\sqrt3\). The entries are
+\[
+(\rho_A)_{00}=\frac13+0,\qquad
+(\rho_A)_{11}=\frac13+\frac13,\qquad
+(\rho_A)_{01}=\frac13+0.
+\]
+Hermiticity supplies the other off-diagonal entry, yielding
+\[
+\rho_A=\frac13\begin{pmatrix}1&1\\1&2\end{pmatrix}.
+\]
+The coherence between \(\lvert00\rangle\) and \(\lvert10\rangle\) survives because both carry environment label zero.
+
+For a joint matrix in the ordered basis \((\lvert00\rangle,\lvert01\rangle,\lvert10\rangle,\lvert11\rangle)\), the same calculation reads
+\[
+\rho_A=\begin{pmatrix}
+\rho_{00,00}+\rho_{01,01}&\rho_{00,10}+\rho_{01,11}\\
+\rho_{10,00}+\rho_{11,01}&\rho_{10,10}+\rho_{11,11}
+\end{pmatrix}.
+\]
+To retain \(B\) instead, reverse the roles: \((\rho_B)_{bb'}=\sum_a\rho_{ab,ab'}\). Always identify which label is being summed before manipulating a matrix.
+
+[QUESTION 1]
+[ANSWER: C]
+For \(\lvert\psi\rangle=(\lvert00\rangle+i\lvert01\rangle+\lvert11\rangle)/\sqrt3\), what is \(\rho_A\) in the ordered basis \((\lvert0\rangle,\lvert1\rangle)\)?
+
+(A) \(\frac13\begin{pmatrix}2&-i\\i&1\end{pmatrix}\)
+(B) \(\frac13\begin{pmatrix}2&0\\0&1\end{pmatrix}\)
+(C) \(\frac13\begin{pmatrix}2&i\\-i&1\end{pmatrix}\)
+(D) \(\frac13\begin{pmatrix}1&i\\-i&2\end{pmatrix}\)
+(E) \(\frac13\begin{pmatrix}2&1+i\\1-i&1\end{pmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Why all local predictions are preserved ===
+
+The index calculation did more than provide a recipe. Because \(P\) was arbitrary, it established
+\[
+\operatorname{Tr}_A(\rho_A P)=\operatorname{Tr}_{AB}[\rho_{AB}(P\otimes I_B)]
+\]
+for every local projector. Each outcome of a local projective measurement is represented by such a projector, so this identity preserves every outcome probability for these measurements. Projectors onto higher-dimensional outcome subspaces are included: their entries enter the same calculation. Replacing \(P\) with a local observable also gives the corresponding expectation-value identity.
+
+For the worked state \(\lvert\chi\rangle\), consider \(\lvert+\rangle=(\lvert0\rangle+\lvert1\rangle)/\sqrt2\). The reduced matrix predicts
+\[
+p(+)=\langle+\rvert\rho_A\lvert+\rangle
+=\frac16(1+1+1+2)=\frac56.
+\]
+The joint calculation gives amplitudes \(2/\sqrt6\) for \(\lvert+\rangle_A\lvert0\rangle_B\) and \(1/\sqrt6\) for \(\lvert+\rangle_A\lvert1\rangle_B\). Their squared magnitudes sum to \(4/6+1/6=5/6\). The reduced matrix retains the local interference needed for this prediction, even though it does not retain the environment.
+
+The construction also gives a legitimate density operator. Its trace is
+\[
+\operatorname{Tr}_A\rho_A=\sum_{a,b}\rho_{ab,ab}=1.
+\]
+For any local vector \(\lvert v\rangle\),
+\[
+\langle v\rvert\rho_A\lvert v\rangle
+=\sum_b\langle v,b\rvert\rho_{AB}\lvert v,b\rangle\geq0,
+\]
+where \(\lvert v,b\rangle=\lvert v\rangle\otimes\lvert b\rangle\). Each term is nonnegative because the joint density operator is positive. Hermiticity follows from conjugating the entry formula. Thus positivity, Hermiticity, and unit trace are preserved.
+
+[QUESTION 2]
+[ANSWER: D]
+A joint preparation has reduced operator \(\rho_A=\begin{pmatrix}1/2&-i/4\\i/4&1/2\end{pmatrix}\). What probability does it assign to the local outcome \(\lvert y+\rangle=(\lvert0\rangle+i\lvert1\rangle)/\sqrt2\), regardless of which joint preparation produced this reduced operator?
+
+(A) \(1/4\)
+(B) \(1/2\)
+(C) It depends on unreported correlations with the environment.
+(D) \(3/4\)
+(E) \(1\)
+[/QUESTION]
+
+=== SECTION 4: The discarded basis is a calculation choice ===
+
+Tracing out \(B\) involves a basis sum, but no environment basis has been physically measured. To see why the basis cannot change the result, let \(\{\lvert\beta\rangle\}\) be another orthonormal basis and write
+\[
+\lvert\beta\rangle=\sum_b U_{b\beta}\lvert b\rangle.
+\]
+The coefficients form a unitary matrix \(U\); orthonormal completeness means \(\sum_\beta U_{b\beta}^*U_{c\beta}=\delta_{bc}\), where \(\delta_{bc}\) is one when the labels agree and zero otherwise. Expanding the new basis sandwiches gives
+\[
+\begin{aligned}
+&\sum_\beta(I_A\otimes\langle\beta\rvert)\rho_{AB}(I_A\otimes\lvert\beta\rangle)\\
+&=\sum_{b,c}\left(\sum_\beta U_{b\beta}^*U_{c\beta}\right)
+(I_A\otimes\langle b\rvert)\rho_{AB}(I_A\otimes\lvert c\rangle)\\
+&=\sum_b(I_A\otimes\langle b\rvert)\rho_{AB}(I_A\otimes\lvert b\rangle)=\rho_A.
+\end{aligned}
+\]
+The intermediate coefficient sum removes all cross terms. The matrix entries of \(\rho_A\) still refer to the chosen basis on \(A\); it is the basis on the discarded system that has disappeared.
+
+There is a concrete way to see this cancellation for \(\lvert\chi\rangle\). Group its terms by environment label:
+\[
+\lvert\chi\rangle=\lvert v_0\rangle\otimes\lvert0\rangle+\lvert v_1\rangle\otimes\lvert1\rangle,
+\qquad
+\lvert v_0\rangle=\frac{\lvert0\rangle+\lvert1\rangle}{\sqrt3},\quad
+\lvert v_1\rangle=\frac{\lvert1\rangle}{\sqrt3}.
+\]
+These local vectors need not be normalized. In the environment basis \(\lvert\pm\rangle=(\lvert0\rangle\pm\lvert1\rangle)/\sqrt2\), the corresponding local vectors are \(\lvert w_\pm\rangle=(\lvert v_0\rangle\pm\lvert v_1\rangle)/\sqrt2\). Summing their outer products cancels the mixed terms:
+\[
+\lvert w_+\rangle\langle w_+\rvert+\lvert w_-\rangle\langle w_-\rvert
+=\lvert v_0\rangle\langle v_0\rvert+\lvert v_1\rangle\langle v_1\rvert.
+\]
+Individual contributions depend on the basis; their complete sum does not. Keeping just one contribution would be a different task and would require normalization if used as a conditional state.
+
+[QUESTION 3]
+[ANSWER: B]
+A calculation in an environment basis produces local vectors \(\lvert v_0\rangle\) and \(\lvert v_1\rangle\), with \(\rho_A=\lvert v_0\rangle\langle v_0\rvert+\lvert v_1\rangle\langle v_1\rvert\). A second calculation uses \(\lvert\beta_\pm\rangle=(\lvert0\rangle\pm e^{i\theta}\lvert1\rangle)/\sqrt2\). Which prescription gives the reduced operator in the same local basis?
+
+(A) Use \(\lvert v_0+e^{-i\theta}v_1\rangle\langle v_0+e^{-i\theta}v_1\rvert\) alone.
+(B) Sum the outer products of \((\lvert v_0\rangle+e^{-i\theta}\lvert v_1\rangle)/\sqrt2\) and \((\lvert v_0\rangle-e^{-i\theta}\lvert v_1\rangle)/\sqrt2\); the result is independent of \(\theta\).
+(C) Add \(\cos\theta(\lvert v_0\rangle\langle v_1\rvert+\lvert v_1\rangle\langle v_0\rvert)\) to \(\rho_A\).
+(D) Normalize each of those two new local vectors separately, then sum their projectors without weights.
+(E) Replace \(\rho_A\) by its diagonal part because the environment basis changed.
+[/QUESTION]
+
+=== SECTION 5: Mixed locally, pure jointly ===
+
+Recall that a normalized pure-state projector has purity one. For the opening entangled state, the joint operator obeys
+\[
+\rho_{AB}^2=\lvert\Psi\rangle\langle\Psi\vert\Psi\rangle\langle\Psi\rvert=\rho_{AB},
+\qquad \operatorname{Tr}_{AB}(\rho_{AB}^2)=1.
+\]
+Its reduced operator instead has
+\[
+\operatorname{Tr}_A(\rho_A^2)=\left(\frac34\right)^2+\left(\frac14\right)^2=\frac58<1.
+\]
+So the subsystem is mixed even though the joint system is pure. A single local state vector cannot supply its full local probability distribution. The missing information concerns correlations with the other system, not an actual random collapse that the partial trace secretly performed.
+
+Contrast a product preparation \(\rho_{AB}=\sigma_A\otimes\tau_B\). The entry formula gives
+\[
+(\rho_A)_{aa'}=(\sigma_A)_{aa'}\sum_b(\tau_B)_{bb}=(\sigma_A)_{aa'},
+\]
+because \(\operatorname{Tr}\tau_B=1\). A pure product state's local operator remains pure. For a general mixed joint state, however, local mixedness alone does not establish entanglement: ordinary mixtures can also have mixed reductions.
+
+A reduced operator licenses every local prediction at the state being described. It does not generally license replacing the joint state by a product or by a mixture with the same local marginals when predicting a joint measurement. Nor does merely writing down a reduction specify an intervening physical operation or a selected measurement outcome.
+
+[QUESTION 4]
+[ANSWER: A]
+The joint state is \(\lvert\Omega\rangle=(\lvert01\rangle-\lvert10\rangle)/\sqrt2\). A student replaces it, after tracing out \(B\) on paper, with the joint mixture \(\mu=(\lvert01\rangle\langle01\rvert+\lvert10\rangle\langle10\rvert)/2\). Which comparison correctly diagnoses this replacement? Here \(\lvert+\rangle=(\lvert0\rangle+\lvert1\rangle)/\sqrt2\).
+
+(A) Both give local purity \(1/2\), but the probability of the joint outcome \(\lvert++\rangle\) is zero for the original state and \(1/4\) for \(\mu\).
+(B) Both give local purity one, and every joint probability is preserved.
+(C) Both give local purity \(1/2\), and every joint probability is preserved.
+(D) The original state gives local purity one, whereas \(\mu\) gives local purity \(1/2\).
+(E) Both give local purity \(1/2\), but the probability of \(\lvert++\rangle\) is \(1/4\) for the original state and zero for \(\mu\).
+[/QUESTION]
+
+=== SECTION 6: Bonus practice ===
+
+[BONUS 1]
+[ANSWER: E]
+System \(B\) has three orthonormal states \(\lvert0\rangle,\lvert1\rangle,\lvert2\rangle\). For \(\lvert\psi\rangle=(\lvert00\rangle+\lvert11\rangle+\lvert02\rangle+\lvert12\rangle)/2\), what is the pair consisting of \(\rho_A\) and its purity?
+
+(A) \(I_A/2,\quad 1/2\)
+(B) \(\begin{pmatrix}1/2&1/2\\1/2&1/2\end{pmatrix},\quad1\)
+(C) \(\begin{pmatrix}3/4&0\\0&1/4\end{pmatrix},\quad5/8\)
+(D) \(\begin{pmatrix}1/2&-1/4\\-1/4&1/2\end{pmatrix},\quad5/8\)
+(E) \(\begin{pmatrix}1/2&1/4\\1/4&1/2\end{pmatrix},\quad5/8\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+For normalized \(\lvert a\rangle\) and \(\lvert b\rangle\), let \(\rho_{AB}=p\lvert0\rangle\langle0\rvert\otimes\lvert a\rangle\langle a\rvert+(1-p)\lvert1\rangle\langle1\rvert\otimes\lvert b\rangle\langle b\rvert\), where \(0<p<1\). Which is the probability of obtaining \(\lvert+\rangle\) on \(A\), with no measurement on \(B\)?
+
+(A) \(\frac12+\sqrt{p(1-p)}\operatorname{Re}\langle b\vert a\rangle\)
+(B) \(p\)
+(C) \(1/2\)
+(D) \(\lvert\langle b\vert a\rangle\rvert^2/2\)
+(E) \(p^2+(1-p)^2\)
+[/BONUS]
