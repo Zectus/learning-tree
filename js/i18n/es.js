@@ -1,5 +1,8 @@
 /* Spanish interface catalogue. Keys are the English source text. */
 const UI_ES = {
+  "Lesson effort": "Esfuerzo por lección",
+  "Extra High": "Extra alto",
+  "Higher effort can improve difficult lessons, but takes longer and uses more of your allowance.": "Un mayor esfuerzo puede mejorar las lecciones difíciles, pero tarda más y consume más de tu límite de uso.",
   "ChatGPT online · no installation": "ChatGPT en línea · sin instalar nada",
   "Local app (advanced)": "Aplicación local (avanzado)",
   "Generate in ChatGPT": "Generar en ChatGPT",

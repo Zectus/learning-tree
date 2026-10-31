@@ -3,6 +3,12 @@
    Depends on io.js, prompts.js, library.js, and viewer.js. No AI API is needed. */
 const LESSON_RECORD_FORMAT = 'learning-tree-lesson/v1';
 const WORK_PACKET_FORMAT = 'learning-tree-work/v1';
+const GENERATION_EFFORTS = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+  { value: 'xhigh', label: 'Extra High' },
+];
 
 // Rank levels left-to-right, then by the number of distinct downstream topics.
 // The same graph order also guarantees prerequisites precede their descendants.
@@ -48,7 +54,7 @@ function generationQueue(tree, completed, options = generationSelection) {
   return missing.filter(id => chosen.has(id));
 }
 
-function renderGenerationInstructions({ language, replySize, queue, completed, tree }) {
+function renderGenerationInstructions({ language, replySize, queue, completed, tree, effort }) {
   const protocol = `GENERATE LESSONS WITH DURABLE CHECKPOINTS
 
 This file contains the whole tree and the shared teaching rules once. tree.nodes provides each node's context; queue lists only the selected lessons in prerequisite order, and completed lists lessons already available. Generate only queue nodes; all other nodes are context, not additional work. Never change the tree's ids, labels, scopes, prerequisites, or language. Do not include personal learning progress.
@@ -70,6 +76,7 @@ The plain-text restrictions below apply to lesson content, not its JSONL envelop
   const graph = generationGraph(tree);
   const parallel = queue.some((id, i) => queue.slice(i + 1).some(other =>
     !graph.downstream.get(id).has(other) && !graph.downstream.get(other).has(id)));
+  const effortInstruction = `REASONING EFFORT\nUse ${effort.label} reasoning effort for lesson generation. Set reasoning_effort="${effort.value}" when configuring the generation model.${parallel ? ` When launching lesson-writing subagents, explicitly set reasoning_effort="${effort.value}" for every worker; do not leave it inherited or at the provider default.` : ''} Do not silently substitute a different effort level.`;
   let tailoredProtocol = protocol;
   if (!parallel) tailoredProtocol = tailoredProtocol.replace(/IF SUBAGENTS ARE AVAILABLE:[\s\S]*?(?=\n\n)/, '');
   if (single) {
@@ -82,7 +89,7 @@ Return one JSON record with format="${LESSON_RECORD_FORMAT}", treeKey="${generat
     const liveId = [...state.nodes.keys()][liveIndex];
     // Use the actual per-node context rather than placeholders for a one-node job.
     const lessonPrompt = buildPrompt(liveId, language, 'Deliver the lesson as content of the JSON record specified above.');
-    return tailoredProtocol + '\n\n' + lessonPrompt;
+    return tailoredProtocol + '\n\n' + effortInstruction + '\n\n' + lessonPrompt;
   }
   const values = {
     topic: 'the current node’s label', nodeId: 'CURRENT_NODE_ID',
@@ -94,7 +101,7 @@ Return one JSON record with format="${LESSON_RECORD_FORMAT}", treeKey="${generat
     languageClause: `\nLANGUAGE\nWrite every lesson in ${language}. Use === SECTION N: TITLE === section headings. Keep QUESTION, ANSWER, BONUS, TABLE, TIMELINE, GRAPH and graph field names in their literal parser syntax.\n`,
   };
   const resumeNote = 'RESUME BACKUPS: when completed is nonempty, this work file deliberately omits those lessons’ text. A JSON built only from this packet does not contain all earlier lessons. Keep the journal of new records to merge into the original tree; export the complete backup from the app after importing.';
-  return tailoredProtocol + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + renderNodePrompt(values);
+  return tailoredProtocol + '\n\n' + effortInstruction + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + renderNodePrompt(values);
 }
 
 function buildGenerationPacket(language, replySize = '1', options = generationSelection) {
@@ -107,7 +114,8 @@ function buildGenerationPacket(language, replySize = '1', options = generationSe
   if (replySize !== 'auto') replySize = String(Math.min(Number(replySize) || 1, Math.max(1, queue.length)));
   return {
     format: WORK_PACKET_FORMAT, treeKey: generationTreeKey(tree),
-    instructions: renderGenerationInstructions({ language: lessonLanguage, replySize, queue, completed, tree }),
+    instructions: renderGenerationInstructions({ language: lessonLanguage, replySize, queue, completed, tree,
+      effort: GENERATION_EFFORTS[Number(document.getElementById('generation-effort').value)] }),
     lessonLanguage, tree, completed, queue,
   };
 }
@@ -257,6 +265,9 @@ function currentGenerationPacket() {
 }
 
 function refreshGenerationSelection() {
+  const effort = GENERATION_EFFORTS[Number(document.getElementById('generation-effort').value)];
+  uiText(document.getElementById('generation-effort-value'), effort.label);
+  document.getElementById('generation-effort').setAttribute('aria-valuetext', t(effort.label));
   const missing = [...state.nodes.values()].filter(n => !lessonIsComplete(n._sessionTxt)).length;
   const input = document.getElementById('generation-count');
   input.max = missing;
@@ -360,7 +371,7 @@ document.getElementById('generation-selection-mode').addEventListener('change', 
   generationSelection.mode = e.target.value;
   refreshGenerationSelection();
 });
-for (const id of ['generation-language', 'generation-reply-size']) {
+for (const id of ['generation-language', 'generation-reply-size', 'generation-effort']) {
   document.getElementById(id).addEventListener('input', refreshGenerationSelection);
 }
 document.getElementById('btn-pick-generation-nodes').addEventListener('click', beginGenerationPicking);

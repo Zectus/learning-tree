@@ -734,3 +734,27 @@ test('generation count is clamped after imports and downloads stop when no lesso
     assert.equal(el(app, 'generation-start-message').value, '');
   } finally { app.window.close(); }
 });
+
+test('effort slider updates work-file instructions for workers and single lessons', () => {
+  const app = loadApp();
+  try {
+    app.window.__tree = JSON.stringify({ nodes: [{id:'x',label:'X'}, {id:'y',label:'Y'}] });
+    app.ev('loadFromJSON(JSON.parse(__tree)); openGenerationModal()');
+    const slider = el(app, 'generation-effort');
+    assert.equal(slider.value, '0');
+    for (const [index, value] of ['low','medium','high','xhigh'].entries()) {
+      slider.value = String(index);
+      slider.dispatchEvent(new app.window.Event('input'));
+      const work = packet(app);
+      assert.match(work.instructions, /every worker;/);
+      assert.ok(work.instructions.includes(`explicitly set reasoning_effort="${value}"`));
+      assert.equal(slider.getAttribute('aria-valuetext'), el(app, 'generation-effort-value').textContent);
+    }
+    assert.equal(el(app, 'generation-effort-value').textContent, 'Extra High');
+    const single = app.ev(`buildGenerationPacket('English', '1', {count:1}).instructions`);
+    assert.match(single, /reasoning_effort="xhigh"/);
+    assert.doesNotMatch(single, /subagents/i);
+    app.ev('closeGenerationModal(); openGenerationModal()');
+    assert.equal(slider.value, '3');
+  } finally { app.window.close(); }
+});
