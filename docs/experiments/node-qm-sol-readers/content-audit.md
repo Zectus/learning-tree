@@ -1,0 +1,16 @@
+# Factual audit of the four Sol evaluations
+
+No lesson, prompt, question, answer, graph or review text was changed or generated in this follow-up. All four lesson hashes match node-qm-effort-pilot. That study's mathematical and parser checks are reused through exact byte identity. There are thirteen underlying questions and twenty-six key occurrences; the previously checked keys remain Low C,D,B,A,E,C and Extra High A,D,C,D,C,D,A. The previous content audit and exact math records are included in the archive. No application tests were rerun for this read-only grading task.
+
+Root read all four new reports completely and compared their claims with the original lessons and saved diffs. No consequential mathematical error or passage-attribution error was verified. All reported scores equal their five-criterion arithmetic means. No score, ranking, report or lesson was edited in response to this audit.
+
+- Reader 1 accurately identifies the Low additions (tensor-bra action and amplitude products), the Extra High complex worked matrix and rank-two projector, and the Extra High review's relocation. Its preference for the later placement is grounded in the actual change.
+- Reader 2 makes the same accurate distinctions in a different order. It recognizes the Low phase-dependent basis-change question as stronger mechanism practice than Extra High's subtraction-based contribution question, while preferring Extra High's worked support. Its lower feedback scores reflect absent worked question rationales, not mistaken use of the hidden answer tag as learner-visible feedback.
+- Reader 3 correctly distinguishes relocated from added content. It explicitly recognizes Low's real-amplitude example, symbolic phase-basis exercise and mixed-joint bonus as compensating strengths. Its preference for the reviewed Extra High sequence is a teaching judgment.
+- Reader 4 accurately identifies Extra High original's earlier tensor-map treatment and prefers it to the reviewed version's later introduction. This reverses the other three reviewers' preference without misdescribing the movement. It recognizes the unchanged mathematical content and correctly attributes the Low explanatory additions.
+
+The general trace-probability derivations, numerical values 5/6 and 7/10, purity 3/4, phase signs and joint-state comparisons cited in the reports agree with the prior exact checks. The reviewers consistently treat finite projective measurements as the established reader framework. No new scope defect was found.
+
+All four want more explanatory feedback after independent exercises. This is a shared design limitation in their judgment, and not a newly discovered mathematical error. The supplied app brief says answer tags are hidden; the reports do not mistakenly present the tags as written solution feedback. App interaction and human learning outcomes were not measured.
+
+The absence of verified attribution mistakes in these four Sol reports contrasts with the documented mistakes in the preceding Luna panel. It is a finding about these reports, not proof that Sol graders always track variants correctly or that their teaching judgments are a human-learning ground truth. All reports are preserved without reruns, filtering or rescoring.
