@@ -1,0 +1,132 @@
+=== SECTION 1: Acercarse a un punto que falta ===
+
+Una fórmula puede dejar de tener sentido en un punto y, aun así, dar valores muy previsibles cerca de él. Consideremos
+\[
+f(x)=\frac{x^2-4}{x-2},\qquad x\ne 2.
+\]
+¿Qué ocurre con sus resultados cuando elegimos entradas cada vez más próximas a \(2\)? En el propio \(2\), la fórmula exigiría dividir entre cero, así que \(f(2)\) no está definido. Para investigar lo que pasa cerca, no necesitamos usar esa entrada.
+
+[TABLE]
+\(x\) | \(f(x)\)
+\(1{,}9\) | \(3{,}9\)
+\(1{,}99\) | \(3{,}99\)
+\(1{,}999\) | \(3{,}999\)
+\(2{,}001\) | \(4{,}001\)
+\(2{,}01\) | \(4{,}01\)
+\(2{,}1\) | \(4{,}1\)
+[/TABLE]
+
+Las entradas menores y mayores que \(2\) sugieren la misma altura de destino: \(4\). En una gráfica, cada punto tiene coordenadas \((x,f(x))\): la entrada se lee horizontalmente y el resultado, verticalmente.
+
+[GRAPH]
+type: function2d
+title: Una recta con el punto \((2,4)\) excluido
+xlabel: \(x\)
+ylabel: \(f(x)\)
+xrange: 1.5, 2.5
+yrange: 3.4, 4.6
+trace: (x^2-4)/(x-2) | label: \(f(x)\), definida para \(x\ne2\)
+point: 1.9, 3.9 | label: \((1{,}9;3{,}9)\)
+point: 2.1, 4.1 | label: \((2{,}1;4{,}1)\)
+[/GRAPH]
+
+La gráfica matemática tiene un hueco exactamente en \((2,4)\). Este formato no permite dibujar un círculo abierto para señalarlo; el trazo puede parecer continuo en pantalla. No falta un pequeño tramo: falta únicamente ese punto, y la fórmula del gráfico conserva esa exclusión.
+
+La tabla orienta, pero un puñado de valores no demuestra qué sucede con todas las entradas cercanas. Aquí podemos explicar el patrón mediante álgebra. Para \(x\ne2\),
+\[
+f(x)=\frac{(x-2)(x+2)}{x-2}=x+2.
+\]
+La cancelación es válida porque \(x-2\) no es cero. Así sabemos cómo se comporta la función en cualquier entrada permitida, no solo en las filas elegidas. La diferencia entre el resultado y \(4\) es
+\[
+f(x)-4=x-2.
+\]
+Por tanto, el resultado está tan cerca de \(4\) como la entrada lo está de \(2\). Si la entrada dista menos de una milésima de \(2\), el resultado dista menos de una milésima de \(4\). No hay una precisión final prefijada: por pequeña que sea la distancia positiva que pidamos entre el resultado y \(4\), basta tomar una entrada cuya distancia a \(2\) sea menor que esa misma cantidad, sin usar nunca \(2\).
+
+Esta es la idea de límite: describir el valor al que se acercan los resultados cuando las entradas se acercan a un punto, sin exigir que lo alcancen.
+
+[QUESTION 1]
+[ANSWER: D]
+Para \(p(x)=\dfrac{x^2-9}{x-3}\), con \(x\ne3\), ¿qué afirmación describe lo que ocurre cuando \(x\) se acerca a \(3\)?
+
+(A) Los resultados se acercan a \(0\), porque el numerador se acerca a cero.
+(B) No puede haber un valor de destino porque \(p(3)\) no está definido.
+(C) Los resultados se acercan a \(3\), igual que las entradas.
+(D) Los resultados se acercan a \(6\), aunque \(p(3)\) no está definido.
+(E) Los resultados crecen sin medida porque el denominador se acerca a cero.
+[/QUESTION]
+
+=== SECTION 2: Qué afirma la notación de límite ===
+
+Escribimos el comportamiento del primer ejemplo así:
+\[
+\lim_{x\to2}f(x)=4.
+\]
+Se lee «el límite de \(f(x)\), cuando \(x\) tiende a \(2\), es \(4\)». En general,
+\[
+\lim_{x\to a}f(x)=L.
+\]
+Aquí \(a\) es la entrada a la que nos acercamos y \(L\) es el valor de destino de los resultados. La flecha \(x\to a\) indica acercamiento de las entradas; no ordena sustituir \(x\) por \(a\).
+
+Informalmente, la igualdad afirma que podemos conseguir resultados tan próximos a \(L\) como queramos tomando entradas permitidas suficientemente próximas a \(a\), distintas de \(a\). Importa el comportamiento de todas esas entradas suficientemente cercanas, no solo una lista escogida. No basta con que los resultados estén «más o menos cerca» con una precisión fija.
+
+En el primer ejemplo, \(f(1{,}99)=3{,}99\) es una igualdad exacta para una entrada concreta. Usar \(3{,}99\) como estimación de \(4\) es una aproximación, con una diferencia de \(0{,}01\). En cambio, el límite \(4\) expresa un comportamiento al acercarnos cada vez más; no es simplemente el último número de la tabla.
+
+Tampoco hay que acercarse a \(L\) siempre aumentando, siempre disminuyendo o sin llegar a tomarlo. Una función constante de valor \(5\) tiene resultados exactamente iguales a \(5\) durante todo el acercamiento: eso también cumple la idea de estar tan cerca como queramos.
+
+[QUESTION 2]
+[ANSWER: B]
+Se sabe que \(\lim_{t\to8}h(t)=12\). Un estudiante afirma: «Como \(7{,}999\) está muy cerca de \(8\), necesariamente \(h(7{,}999)=12\)». ¿Qué evaluación es correcta?
+
+(A) Es correcto: una entrada con tres decimales ya alcanza el límite.
+(B) No se puede asegurar esa igualdad; el límite describe cercanía de los resultados, sin fijar el valor exacto en esa entrada.
+(C) Es incorrecto porque el límite obliga a que \(h(7{,}999)=8\).
+(D) Es correcto siempre que \(h(8)\) esté definido.
+(E) Es incorrecto porque una función nunca puede tomar exactamente el valor de su límite.
+[/QUESTION]
+
+=== SECTION 3: El valor en el punto es otra pregunta ===
+
+Volvamos al hueco del primer gráfico. Podemos definir una nueva función \(g\) conservando todos los valores de \(f\) para \(x\ne2\) y asignando \(g(2)=9\). Esto añade el punto \((2,9)\), sin rellenar el hueco \((2,4)\).
+
+Para cualquier entrada distinta de \(2\), seguimos teniendo \(g(x)=x+2\). Por ello, durante el acercamiento los resultados siguen acercándose a \(4\). La nueva asignación solo responde qué ocurre exactamente en \(2\):
+\[
+g(2)=9,\qquad \lim_{x\to2}g(x)=4.
+\]
+No se contradicen: las expresiones responden preguntas diferentes. Si hubiéramos asignado el valor \(4\) en el punto, el valor y el límite habrían coincidido. Si no asignamos nada, como en \(f\), el límite sigue describiendo el comportamiento cercano.
+
+Para interpretar un caso, separa las dos tareas: averigua qué resultados corresponden a entradas cercanas pero distintas del punto, y consulta aparte si hay un valor asignado en el punto. La tabla sirve para explorar el primer comportamiento; una regla válida en las cercanías permite respaldar la conclusión más allá de las filas calculadas.
+
+[QUESTION 3]
+[ANSWER: C]
+Una función \(q\) cumple \(q(x)=2x+1\) para \(x\ne-1\), y \(q(-1)=7\). Se cambia únicamente el valor \(q(-1)\) por \(0\). ¿Qué ocurre con su límite cuando \(x\to-1\)?
+
+(A) Cambia de \(7\) a \(0\).
+(B) Pasa a ser \(0\), porque ahora ese es el valor asignado.
+(C) Sigue siendo \(-1\), porque los resultados en las entradas distintas de \(-1\) no cambiaron.
+(D) Deja de tener un valor de destino porque se modificó la función.
+(E) Sigue siendo \(7\), porque el primer valor asignado determina el límite.
+[/QUESTION]
+
+=== SECTION 4: Práctica adicional ===
+
+[BONUS 1]
+[ANSWER: E]
+Una tabla de entradas próximas a \(5\), pero distintas de \(5\), contiene diez resultados iguales a \(2\). No se conoce ninguna fórmula ni otra información. ¿Qué conclusión está justificada?
+
+(A) El límite es exactamente \(2\), porque diez coincidencias lo demuestran.
+(B) El valor de la función en \(5\) es \(2\).
+(C) El límite no existe, porque no se calculó la función en \(5\).
+(D) La función vale \(2\) para toda entrada próxima a \(5\).
+(E) Los datos sugieren \(2\) como candidato, pero no establecen el comportamiento para todas las entradas suficientemente cercanas.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Para \(x\ne4\), dos funciones cumplen \(u(x)=\dfrac{x^2-16}{x-4}\) y \(v(x)=8\). Además, \(u(4)=0\) y \(v(4)=10\). ¿Qué comparación es correcta cuando \(x\to4\)?
+
+(A) Ambas tienen límite \(8\), aunque sus valores en \(4\) son distintos.
+(B) Sus límites son \(0\) y \(10\), respectivamente.
+(C) Solo \(v\) tiene límite, porque \(u\) contiene un denominador que se anula.
+(D) Solo \(u\) tiene límite, porque los resultados de \(v\) no cambian.
+(E) Tienen el mismo límite únicamente si se igualan sus valores en \(4\).
+[/BONUS]

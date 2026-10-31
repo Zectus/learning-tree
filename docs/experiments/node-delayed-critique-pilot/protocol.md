@@ -1,0 +1,5 @@
+# Two-message pilot
+
+One new GPT 6.1 Sol low author receives the unchanged current rendered limit_intuition prompt, with only an operational read/save wrapper. First message mentions neither a draft nor a later critique, revision or evaluation. Wait for the author to finish and deliver; freeze its bytes and hash. Then send a separate followup_task message to the same author asking it to spawn one fresh independent gpt-6-luna critic, verify feedback, and deliver v2. The author must not be told about that second step before finishing its first turn. Preserve all texts, critique, actual spawn arguments and revision notes.
+
+Then compare v1 and v2 with four fresh blind gpt-6-luna graders, two in each order, using the unchanged engaged-human-reader brief and five-criterion rubric. No previous grades, identities or process notes go to the graders. One output pair is not a causal estimate of advance-knowledge effects; do not compare absolute scores across experiments as a common scale. No production prompt changes.
