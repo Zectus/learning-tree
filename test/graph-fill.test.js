@@ -14,6 +14,7 @@ function boardApp(raw) {
       objects.push(object);
       return object;
     },
+    on() {},
     suspendUpdate() {},
     unsuspendUpdate() { this.update(); },
     update() { objects.forEach(o => o.updateDataArray?.()); },

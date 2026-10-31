@@ -277,7 +277,7 @@ const GRAPH_SAMPLES_FIT   = 150; // samples used only to pick an automatic y ran
 const GRAPH_SAMPLES_GRID  = 40;  // surface3d, per axis
 const GRAPH_SAMPLES_FIELD = 15;  // vectorfield2d arrows, per axis
 const GRAPH_HEIGHT_2D     = 340; // px, used when the stylesheet gives the plot box no height
-const GRAPH_PALETTE = ['#2d70b3', '#c74440', '#388c46', '#6042a6', '#fa7e19', '#00a0b0'];
+const GRAPH_PALETTE = Array.from({ length: 6 }, (_, i) => `var(--graph-${i + 1})`);
 
 function renderGraph(g, id) {
   const title = g.title ? `<div class="sv-graph-title">${svEsc(g.title)}</div>` : '';
@@ -314,6 +314,16 @@ function fitAspect(xr, yr, wPx, hPx) {
   return [[xlo, xhi], [ylo, yhi]];
 }
 
+/* Use the same 1–2–5 spacing rule on both axes, measured in screen pixels.
+   Equal-scale plots then have square grid cells, including after a resize. */
+function graphTickStep(pixelsPerUnit, minPixels) {
+  const raw = minPixels / pixelsPerUnit;
+  if (!(raw > 0) || !Number.isFinite(raw)) return 1;
+  const power = Math.pow(10, Math.floor(Math.log10(raw)));
+  const fraction = raw / power;
+  return (fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10) * power;
+}
+
 /* ── JSXGraph helpers ── */
 function safeColor(c, fallback) {
   return (typeof c === 'string' && /^(#[0-9a-fA-F]{3,8}|[a-zA-Z]{3,20})$/.test(c)) ? c : fallback;
@@ -332,7 +342,9 @@ function captionSpec(str) {
 }
 let graphFontPx = 16; // set per board from the surrounding page's own text size
 function labelAttrs(spec, color, extra) {
-  return Object.assign({ strokeColor: color, fontSize: graphFontPx, useKatex: spec.katex, display: 'html' }, extra || {});
+  return Object.assign({ strokeColor: color, highlightStrokeColor: color, highlightStrokeOpacity: 1,
+    highlight: false, fixed: true, fontSize: graphFontPx, useKatex: spec.katex, display: 'html',
+    cssClass: 'sv-graph-label', highlightCssClass: 'sv-graph-label' }, extra || {});
 }
 /* JSXGraph draws its text (tick numbers, axis names, point and segment labels)
    in its own font and size. Read the page's font where the plot sits, before
@@ -391,7 +403,7 @@ async function mountGraph(g, id) {
   if (!el.isConnected) return; // the viewer moved on to another lesson while the libraries loaded
 
   try {
-    if (g.type === 'surface3d') mountSurface3d(g, el);
+    if (g.type === 'surface3d') await mountSurface3d(g, el);
     else mountBoard2d(g, el, id);
   } catch (e) {
     console.error('Graph render error:', e);
@@ -400,6 +412,33 @@ async function mountGraph(g, id) {
 }
 
 /* ── surface3d (Plotly) ── */
+function surfaceThemeLayout(el) {
+  const cs = getComputedStyle(el);
+  const theme = name => cs.getPropertyValue(name).trim();
+  const axis = {
+    color: theme('--text'), gridcolor: theme('--border-h'), zerolinecolor: theme('--text-m'),
+    backgroundcolor: theme('--surface'), showbackground: true,
+  };
+  return {
+    paper_bgcolor: theme('--surface'),
+    font: { color: theme('--text'), family: cs.fontFamily, size: parseFloat(cs.fontSize) || 16 },
+    scene: { bgcolor: theme('--surface'), xaxis: { ...axis }, yaxis: { ...axis }, zaxis: { ...axis } },
+    hoverlabel: { bgcolor: theme('--surface'), bordercolor: theme('--border-h'), font: { color: theme('--text') } },
+  };
+}
+
+function refreshGraphThemes() {
+  if (typeof Plotly === 'undefined') return;
+  document.querySelectorAll('.sv-graph-plot.js-plotly-plot').forEach(el => {
+    const { scene, ...layout } = surfaceThemeLayout(el);
+    // Patch colors only, preserving the camera, ranges and axis captions.
+    Plotly.relayout(el, { ...layout, 'scene.bgcolor': scene.bgcolor,
+      ...Object.fromEntries(['xaxis', 'yaxis', 'zaxis'].flatMap(name =>
+        Object.entries(scene[name]).map(([key, value]) => [`scene.${name}.${key}`, value]))),
+    });
+  });
+}
+
 function mountSurface3d(g, el) {
   const [xlo, xhi] = g.xrange || GRAPH_DEFAULT_RANGE;
   const [ylo, yhi] = g.yrange || GRAPH_DEFAULT_RANGE;
@@ -408,14 +447,13 @@ function mountSurface3d(g, el) {
   const f  = makeEval(g.z);
   // Plotly's surface convention: z[iy][ix] is the value at (xs[ix], ys[iy]).
   const zGrid = ys.map(y => xs.map(x => { const v = f({ x, y }); return Number.isNaN(v) ? null : v; }));
-  const layout = {
-    margin: { t: 10, r: 10, b: 40, l: 50 },
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    showlegend: false,
-    scene: { xaxis: { title: g.xlabel || '' }, yaxis: { title: g.ylabel || '' }, zaxis: { title: g.zlabel || '' } },
-  };
+  const layout = surfaceThemeLayout(el);
+  layout.margin = { t: 10, r: 10, b: 40, l: 50 };
+  layout.showlegend = false;
+  layout.scene.camera = { eye: { x: 1.6, y: 1.6, z: 1.6 } };
+  ['x', 'y', 'z'].forEach(axis => { layout.scene[`${axis}axis`].title = { text: g[`${axis}label`] || '' }; });
   const traces = [{ x: xs, y: ys, z: zGrid, type: 'surface', showscale: false }];
-  Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true });
+  return Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true });
 }
 
 // Close each finite run separately; never fill across an undefined sampled boundary.
@@ -446,7 +484,9 @@ function sampleGraphFill(fill, scope) {
 /* ── function2d / parametric2d / vectorfield2d (JSXGraph) ── */
 function mountBoard2d(g, el, id) {
   freeStaleBoards();
-  const textColor = getComputedStyle(el).color || '#333';
+  // Keep SVG strokes and HTML labels tied to the theme, including while a
+  // lesson stays open. A computed color would freeze the theme at mount time.
+  const textColor = 'var(--text)';
   matchPageFont(el);
   if (el.clientHeight < 120) el.style.height = GRAPH_HEIGHT_2D + 'px';
   const wPx = el.clientWidth || 600, hPx = el.clientHeight || GRAPH_HEIGHT_2D;
@@ -518,38 +558,61 @@ function mountBoard2d(g, el, id) {
     xr = padRange(g.xrange || GRAPH_DEFAULT_RANGE, 0.04);
     yr = padRange(g.yrange || GRAPH_DEFAULT_RANGE, 0.04);
   }
-  if (g.type !== 'function2d' || /^equal$/i.test(g.aspect)) [xr, yr] = fitAspect(xr, yr, wPx, hPx);
+  const equalAspect = g.type !== 'function2d' || /^equal$/i.test(g.aspect);
+  if (equalAspect) [xr, yr] = fitAspect(xr, yr, wPx, hPx);
 
   const xCap = captionSpec(g.xlabel), yCap = captionSpec(g.ylabel);
-  const axisTicks = { strokeColor: textColor, strokeOpacity: 0.5, label: { strokeColor: textColor, fontSize: graphFontPx } };
-  const board = JXG.JSXGraph.initBoard(el.id, {
+  const tickFontPx = graphFontPx * 0.875;
+  const tickGap = Math.max(64, tickFontPx * 4);
+  let board;
+  const tickStep = axis => graphTickStep(board ? (axis === 'x' ? board.unitX : board.unitY)
+    : (axis === 'x' ? wPx / (xr[1] - xr[0]) : hPx / (yr[1] - yr[0])), tickGap);
+  const axisTicks = axis => ({
+    insertTicks: false, ticksDistance: tickStep(axis),
+    minorTicks: 0, majorHeight: 0, minorHeight: 0,
+    drawLabels: true, drawZero: axis === 'x', highlight: false,
+    label: {
+      strokeColor: textColor, fontSize: tickFontPx, display: 'html',
+      highlight: false, highlightStrokeColor: textColor, highlightStrokeOpacity: 1,
+      cssClass: 'sv-graph-tick', highlightCssClass: 'sv-graph-tick',
+      offset: axis === 'x' ? [0, -8] : [-8, 0],
+    },
+  });
+  board = JXG.JSXGraph.initBoard(el.id, {
     boundingbox: [xr[0], yr[1], xr[1], yr[0]],
+    keepAspectRatio: equalAspect,
     axis: true, grid: false,
     showCopyright: false, showNavigation: false, showInfobox: false,
     pan: { enabled: false }, zoom: { enabled: false },
     defaultAxes: {
       x: {
-        strokeColor: textColor, strokeWidth: 1.5, highlight: false,
+        strokeColor: textColor, strokeWidth: 1.5, highlight: false, lastArrow: false,
         name: xCap.text, withLabel: !!xCap.text,
-        label: labelAttrs(xCap, textColor, { position: 'rt', offset: [-8, 14] }),
-        ticks: axisTicks,
+        label: labelAttrs(xCap, textColor, { position: 'rt', offset: [-12, 14], anchorX: 'right', anchorY: 'bottom' }),
+        ticks: axisTicks('x'),
       },
       y: {
-        strokeColor: textColor, strokeWidth: 1.5, highlight: false,
+        strokeColor: textColor, strokeWidth: 1.5, highlight: false, lastArrow: false,
         name: yCap.text, withLabel: !!yCap.text,
-        label: labelAttrs(yCap, textColor, { position: 'rt', offset: [12, -10] }),
-        ticks: axisTicks,
+        label: labelAttrs(yCap, textColor, { position: 'rt', offset: [12, -12], anchorX: 'left', anchorY: 'top' }),
+        ticks: axisTicks('y'),
       },
     },
   });
   liveBoards.push(board);
+  board.on('boundingbox', () => {
+    board.suspendUpdate();
+    ['x', 'y'].forEach(axis => board.defaultAxes[axis].ticks[0].setAttribute({ ticksDistance: tickStep(axis) }));
+    board.unsuspendUpdate();
+  });
   board.suspendUpdate();
 
   try {
     board.create('grid', [], {
-      strokeColor: textColor, strokeOpacity: 0.14, highlight: false,
-      major: { strokeColor: textColor, strokeOpacity: 0.2 },
-      minor: { strokeColor: textColor, strokeOpacity: 0.08 },
+      majorStep: 'auto', minorElements: 4,
+      strokeColor: textColor, strokeWidth: 1, highlight: false,
+      major: { face: 'line', strokeOpacity: 0.22, drawZero: false },
+      minor: { face: 'line', strokeOpacity: 0.08, drawZero: false },
     });
   } catch (e) { console.warn('Graph grid styling skipped:', e); }
 
@@ -577,14 +640,14 @@ function mountBoard2d(g, el, id) {
     const color = safeColor(c.tr.color, GRAPH_PALETTE[i % GRAPH_PALETTE.length]);
     if (g.type === 'function2d') {
       board.create('functiongraph', [x => c.f(Object.assign(base(), { x }))],
-        { strokeColor: color, strokeWidth: 2.5, highlight: false });
+        { strokeColor: color, strokeWidth: 3, highlight: false });
     } else {
       const [lo, hi] = g.trange || [0, 2 * Math.PI];
       board.create('curve', [
         t => c.fx(Object.assign(base(), { t })),
         t => c.fy(Object.assign(base(), { t })),
         lo, hi,
-      ], { strokeColor: color, strokeWidth: 2.5, highlight: false, numberPoints: GRAPH_SAMPLES_1D });
+      ], { strokeColor: color, strokeWidth: 3, highlight: false, numberPoints: GRAPH_SAMPLES_1D });
     }
     if (c.tr.label) legend.push({ label: c.tr.label, color });
   });
@@ -661,18 +724,27 @@ function mountBoard2d(g, el, id) {
   // Sliders (HTML range inputs under the plot; touch-friendly and independent of board coordinates).
   const ctl = document.getElementById(`sv-graph-controls-${id}`);
   if (ctl && sliders.length) {
-    ctl.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-top:10px';
     const fmt = v => String(Math.round(v * 1e4) / 1e4);
     sliders.forEach(s => {
       const row = document.createElement('label');
-      row.style.cssText = 'display:flex;align-items:center;gap:12px';
+      row.className = 'sv-graph-slider';
       const name = document.createElement('span');
-      name.style.cssText = 'min-width:6em;font-variant-numeric:tabular-nums';
+      name.className = 'sv-graph-slider-label';
+      const symbol = document.createElement('span');
+      symbol.textContent = `${s.name} =`;
+      const value = document.createElement('span');
+      value.className = 'sv-graph-slider-value';
+      name.append(symbol, value);
       const input = document.createElement('input');
       input.type = 'range';
+      input.className = 'sv-graph-slider-input';
+      input.setAttribute('aria-label', s.name);
       input.min = s.lo; input.max = s.hi; input.step = s.step; input.value = s.value;
-      input.style.flex = '1';
-      const show = () => { name.textContent = `${s.name} = ${fmt(s.value)}`; };
+      const show = () => {
+        value.textContent = fmt(s.value);
+        const progress = s.hi > s.lo ? 100 * (s.value - s.lo) / (s.hi - s.lo) : 0;
+        input.style.setProperty('--slider-fill', `${Math.max(0, Math.min(100, progress))}%`);
+      };
       input.addEventListener('input', () => {
         s.value = parseFloat(input.value);
         show();

@@ -240,8 +240,58 @@
    loading and the checkpoint positions computed before that stay right. */
 .sv-graph-wrap { margin: 1.75rem 0; }
 .sv-graph-title { font-size: 0.8125rem; font-weight: 600; color: var(--text-m); margin-bottom: 0.5rem; }
-.sv-graph-plot { height: 28rem; }
+.sv-graph-plot { height: 28rem; position: relative; overflow: hidden; background: var(--surface); }
+/* These scoped rules also win over JSXGraph's lazily loaded default text styles. */
+.sv-graph-plot .sv-graph-tick,
+.sv-graph-plot .sv-graph-label {
+  font-family: var(--font) !important;
+  white-space: nowrap;
+  line-height: 1.2;
+  text-shadow: 0 0 3px var(--surface), 0 0 3px var(--surface), 0 0 3px var(--surface);
+}
 .sv-graph-loading::after { content: 'Loading graph…'; font-size: 0.8125rem; color: var(--text-m); }
+.sv-graph-controls { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.875rem; }
+.sv-graph-slider {
+  display: flex; align-items: center; gap: 0.875rem;
+  padding: 0.25rem 0.875rem;
+  border: 1px solid var(--border); border-radius: 0.5rem;
+  background: var(--bg); cursor: pointer;
+  transition: border-color .12s;
+}
+.sv-graph-slider:hover, .sv-graph-slider:focus-within { border-color: var(--border-h); }
+.sv-graph-slider-label {
+  display: inline-flex; align-items: baseline; gap: 0.375rem;
+  min-width: 7.5em; flex-shrink: 0; white-space: nowrap;
+  font-size: 0.8125rem; color: var(--text-m); font-variant-numeric: tabular-nums;
+}
+.sv-graph-slider-value { color: var(--text); font-weight: 500; }
+.sv-graph-slider-input {
+  appearance: none; -webkit-appearance: none;
+  flex: 1; min-width: 0; width: 100%; height: 2.5rem;
+  background: transparent; cursor: pointer;
+}
+.sv-graph-slider-input:focus-visible { outline: 2px solid var(--avail-bdr); outline-offset: 2px; border-radius: 0.25rem; }
+.sv-graph-slider-input::-webkit-slider-runnable-track {
+  height: 0.25rem; border-radius: 99px;
+  background: linear-gradient(to right, var(--accent) var(--slider-fill, 0%), var(--border) var(--slider-fill, 0%));
+}
+.sv-graph-slider-input::-webkit-slider-thumb {
+  appearance: none; -webkit-appearance: none;
+  width: 0.875rem; height: 0.875rem; margin-top: -0.3125rem;
+  border: 1.5px solid var(--accent); border-radius: 50%; background: var(--surface);
+  box-shadow: 0 1px 3px rgba(0,0,0,.12);
+  transition: background .12s, box-shadow .12s;
+}
+.sv-graph-slider-input:active::-webkit-slider-thumb { background: var(--accent); box-shadow: 0 0 0 0.1875rem var(--btn-soft-bg-hover); }
+.sv-graph-slider-input::-moz-range-track { height: 0.25rem; border-radius: 99px; background: var(--border); }
+.sv-graph-slider-input::-moz-range-progress { height: 0.25rem; border-radius: 99px; background: var(--accent); }
+.sv-graph-slider-input::-moz-range-thumb {
+  width: 0.875rem; height: 0.875rem; box-sizing: border-box;
+  border: 1.5px solid var(--accent); border-radius: 50%; background: var(--surface);
+  box-shadow: 0 1px 3px rgba(0,0,0,.12);
+  transition: background .12s, box-shadow .12s;
+}
+.sv-graph-slider-input:active::-moz-range-thumb { background: var(--accent); box-shadow: 0 0 0 0.1875rem var(--btn-soft-bg-hover); }
 
 /* question cards */
 .q-card {

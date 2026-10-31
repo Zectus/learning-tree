@@ -124,6 +124,7 @@ const DARK_MODE_KEY = 'tree-dark-mode';
 const menuDarkMode = document.getElementById('menu-dark-mode');
 function setDarkMode(on, persist = true) {
   document.documentElement.classList.toggle('dark', on);
+  if (typeof refreshGraphThemes === 'function') refreshGraphThemes();
   uiText(menuDarkMode, on ? '☀️ Light mode' : '🌙 Dark mode');
   if (persist) { try { localStorage.setItem(DARK_MODE_KEY, on ? '1' : '0'); } catch {} }
 }
