@@ -174,10 +174,20 @@ window.handleCloudAuthChange = async function (user) {
     applyAccountUser(null);
     return;
   }
+  // Firebase has already restored the session. Start syncing immediately;
+  // the display username is a separate database read and may be slow/offline.
+  const accountUser = { uid: user.uid, email: user.email, username: null };
+  applyAccountUser(accountUser);
   let username = null;
   try { username = await window.cloud.getUsername(user.uid); } catch {}
   if (gen !== authGeneration) return; // a newer auth event superseded this one
-  applyAccountUser({ uid: user.uid, email: user.email, username });
+  // The same object is retained by the tutorial's deferred auth event too.
+  accountUser.username = username;
+  if (state.accountUser === accountUser && username) {
+    updateAccountButton();
+    showSignedInPanel(accountUser);
+    if (document.getElementById('library-modal-backdrop').classList.contains('open')) renderLibraryGrid();
+  }
 };
 
 function isValidUsername(name) {
