@@ -78,3 +78,7 @@ The treatment adds an external critique and a Sol revision, and knowing a critiq
 The defensible decision is to **keep the current production prompt**: this pilot found no advantage for the added workflow. A later paired draft-versus-revision test would answer whether this feedback improves a fixed starting lesson; it was not added to the present small experiment.
 
 The [complete records](experiment-records.zip) contain exact prompts/wrappers, both reused lessons, new immutable drafts, critic reports and spawn records, final lessons, revision notes/diffs, frozen assignments, neutral packets, raw grades, hashes and validators. [protocol.md](protocol.md) records the design frozen before generation. No fallback or production behavior was introduced.
+
+## Paired follow-up
+
+The subsequently completed [saved-draft-versus-own-revision comparison](../node-draft-revision-pilot/README.md) reuses the exact drafts and final texts from this pilot. Four fresh blind graders, balanced within author pairs, preferred revision 4–0: 9.445 versus 9.550 (+0.105). One grader wrongly credited a shared equation to revision alone; its raw scores remain flagged and preserved. This modest paired improvement is compatible with the workflow losing against the independently generated references above. The original study and scores are unchanged.
