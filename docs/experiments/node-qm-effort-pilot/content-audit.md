@@ -1,0 +1,22 @@
+# Content and evaluation audit
+
+Root read the complete new Extra High original, the full revision diff, review and revision notes, and all eight grader reports. The two Low files retain the preceding study's audit and exact hashes. This audit checks factual claims; it is not a blind teaching-quality grade.
+
+All four outputs pass the app's actual parser and question checks. There are no graph blocks. Exact SymPy checks in math-audit.py validate the new complex worked reduction, local y-plus probability 5/6, and all numerical answer keys. The new main keys are A, D, C, D, C; bonus keys D, A. Question 2's rank-two outcome has probability 7/10. Question 4's pure joint state has reduced purity 3/4. Question 5's preparations have equal local reductions diag(1/5,4/5) and disjoint joint computational-basis supports. Bonus 1 correctly retains B with off-diagonal entry -i/3. Bonus 2 follows from the established basis-independence result by using the orthonormal basis V_B dagger |j>; a local unitary on the discarded system leaves the reduction unchanged.
+
+All seven Extra High question blocks are unchanged by self-review. All equations and examples are preserved: the revision relocates the partial-inner-product and tensor-term block from Section 3 to Section 4, adds a purpose phrase and changes “reverse map” to “map in the other direction.” No math repair was needed. The entry-rule derivation is sufficient for the Section 3 questions before the moved operator treatment. The Low pair has six underlying questions with unchanged keys C,D,B,A,E,C. Across both effort levels there are thirteen underlying questions and twenty-six key occurrences. No substantive mathematical or physical error was found.
+
+## Grader attribution errors
+
+These errors remain in the raw reports and scores; there were no selective reruns, exclusions or rescoring.
+
+- Reader 1 credits Extra High review D with adding the tensor-bra action and suggests original C lacks that explanation. Both contain it; the review moves it to Section 4. It also understates the Low pair's concrete basis-change illustration, which already includes general and example cancellation.
+- Reader 2 calls the two Low lessons identical. Low review A includes the tensor-bra action and explicit amplitude-product expansion absent in original D. Its tie is preserved.
+- Reader 3's decisive justification for Low review D cites the high-effort tau_AB mixture, joint projector probabilities 1 and 5/8, and Question 5. Those belong to the Extra High lessons; Low instead uses a singlet-versus-mixture Question 4. Its description of repeated sandwich explanations also exaggerates duplication. This substantially weakens the rationale for that ranking.
+- Reader 4 credits Low original B with the tensor-bra action that only Low review C adds. It also claims Extra High original D lacks the general completeness proof found in Extra High review A. That proof is unchanged between the two high-effort files.
+- Reader 5 credits Low original D with the high-effort full-matrix/local-y-plus example and tau_AB joint-projector comparison. Those are not in D. Its accurate recognition of Low review C's two actual additions does not fix this conflation.
+- Reader 6 correctly identifies Low review's additions, but mislocates the Extra High review's moved block in Section 3; it is in Section 4. The preference for the original's earlier presentation is a legitimate sequencing preference, even though the stated location is wrong.
+- Reader 7 treats each effort pair as materially equivalent. That can justify ties, but it does not analyze the two Low additions and overstates repetition across Sections 3 and 4 in the Extra High pair.
+- Reader 8 mostly recognizes the two effort families and the high-effort relocation. It compresses some question descriptions across families; no new consequential mathematical error was verified. Its one-decimal 9.3 scores are valid rounding: exact criteria means are 9.32 for each Extra High version and 9.28 for each Low version. Its all-way preference tie is preserved.
+
+All other reported means are exact criterion averages. The report uses exact recomputed criterion means, while preferences follow original JSON tie groups. Correctness scores are the same across conditions within every panel. The small overall gaps should be interpreted alongside substantial attribution mistakes and the absence of independent author replication.

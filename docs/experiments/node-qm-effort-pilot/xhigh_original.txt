@@ -1,0 +1,384 @@
+=== SECTION 1: Predicting measurements on just one qubit ===
+
+Two qubits, labeled \(A\) and \(B\), are prepared in the entangled state
+\[
+\lvert\Psi\rangle=\frac{\sqrt3}{2}\lvert0,0\rangle+\frac12\lvert1,1\rangle.
+\]
+Here \(\lvert i,j\rangle\) means \(\lvert i\rangle_A\otimes\lvert j\rangle_B\). You can measure \(A\), but \(B\) is inaccessible. Can you assign a density operator to \(A\) that predicts every measurement you could make on it?
+
+In the computational basis, the probabilities for \(A\) are \(3/4\) for zero and \(1/4\) for one. Those probabilities alone would not determine a general density matrix: its off-diagonal entries can affect measurements in other bases. We need a description that handles those measurements too.
+
+Consider an outcome corresponding to a normalized qubit state
+\[
+\lvert u\rangle=u_0\lvert0\rangle+u_1\lvert1\rangle,
+\qquad |u_0|^2+|u_1|^2=1.
+\]
+The two joint amplitudes with this outcome on \(A\) are
+\[
+\langle u,0\vert\Psi\rangle=\frac{\sqrt3}{2}u_0^*,
+\qquad
+\langle u,1\vert\Psi\rangle=\frac12u_1^*.
+\]
+As in our earlier calculations of local probabilities, sum the probabilities over an orthonormal basis of the unobserved qubit:
+\[
+p(u)=|\langle u,0\vert\Psi\rangle|^2+|\langle u,1\vert\Psi\rangle|^2
+=\frac34|u_0|^2+\frac14|u_1|^2.
+\]
+We add probabilities here, rather than amplitudes, because the two terms have orthogonal states of \(B\). This calculation does not require performing a measurement on \(B\) or selecting an outcome from it.
+
+Recall that a density operator predicts this same outcome probability as \(\langle u\vert\rho\vert u\rangle\). The expression just obtained therefore has the form
+\[
+p(u)=\langle u\vert\rho_A\vert u\rangle,
+\qquad
+\rho_A=\begin{pmatrix}3/4&0\\0&1/4\end{pmatrix}.
+\]
+For example, it gives probability \(1/2\) for \(\lvert u\rangle=(\lvert0\rangle+\lvert1\rangle)/\sqrt2\), as well as the computational-basis probabilities.
+
+Such a local state is called a reduced density operator. Its probabilities describe the distribution of outcomes across repeated identical preparations. We have changed which predictions the description supplies; no physical change to the joint preparation has been specified. The useful next step is a rule for obtaining this local operator from any finite joint density operator, including a mixed one.
+
+=== SECTION 2: Deriving the partial trace from local probabilities ===
+
+Let \(\rho_{AB}\) be the joint density operator. Choose orthonormal bases \(\{\lvert i\rangle_A\}\) and \(\{\lvert j\rangle_B\}\), with dimensions \(d_A\) and \(d_B\). The indices \(i,k\) run from \(0\) to \(d_A-1\), and \(j,l\) run from \(0\) to \(d_B-1\). Write the joint matrix entries as
+\[
+(\rho_{AB})_{ij,kl}=\langle i,j\vert\rho_{AB}\vert k,l\rangle.
+\]
+Each row and column thus carries two labels: one for each subsystem.
+
+Suppose a measurement outcome on \(A\) is represented by a projector \(P\). On the joint system, the event is represented by \(P\otimes I_B\), where \(I_B\) is the identity on \(B\). The identity imposes no restriction on \(B\). The density-operator probability rule gives
+\[
+p(P)=\operatorname{tr}_{AB}\!\left[\rho_{AB}(P\otimes I_B)\right].
+\]
+The subscript \(AB\) here means the ordinary scalar trace over the whole product basis.
+
+To find which entries a local density matrix needs, expand this trace. Let \(P_{ki}=\langle k\vert P\vert i\rangle\). The matrix element of the joint event is
+\[
+\langle k,l\vert P\otimes I_B\vert i,j\rangle=P_{ki}\delta_{lj},
+\]
+where \(\delta_{lj}\) is one when \(l=j\) and zero otherwise. Inserting the product basis between the two operators gives
+\[
+\begin{aligned}
+p(P)
+&=\sum_{i,j,k,l}(\rho_{AB})_{ij,kl}P_{ki}\delta_{lj}\\
+&=\sum_{i,k}\left[\sum_j(\rho_{AB})_{ij,kj}\right]P_{ki}.
+\end{aligned}
+\]
+The identity on \(B\) has forced its row and column indices to agree, and the trace sums that common index.
+
+For an unknown matrix \(R\) acting only on \(A\), the corresponding local expression would be
+\[
+\operatorname{tr}_A(RP)=\sum_{i,k}R_{ik}P_{ki}.
+\]
+Comparing these expressions tells us what to put in each entry of \(R\). Define
+\[
+\boxed{\rho_A=\operatorname{tr}_B\rho_{AB},\qquad
+(\rho_A)_{ik}=\sum_{j=0}^{d_B-1}(\rho_{AB})_{ij,kj}.}
+\]
+This operation is the partial trace over \(B\). It discards the \(B\) indices while retaining both \(A\) indices, leaving a \(d_A\)-by-\(d_A\) matrix. A full trace would also sum matching \(A\) indices and leave a scalar.
+
+The derivation establishes the local-probability identity
+\[
+\boxed{\operatorname{tr}_A(\rho_A P)
+=\operatorname{tr}_{AB}\!\left[\rho_{AB}(P\otimes I_B)\right].}
+\]
+Nothing in the argument selected a particular projector or measurement basis. It therefore reproduces every outcome probability for every projective measurement on \(A\), including outcomes whose projectors have rank greater than one. Replacing \(P\) by a local observable in the same calculation also reproduces its expectation value.
+
+The result is a valid density operator. Hermiticity follows by conjugating its entries and interchanging \(i\) and \(k\). For any vector \(\lvert a\rangle\) on \(A\), positivity follows from
+\[
+\langle a\vert\rho_A\vert a\rangle
+=\sum_j\langle a,j\vert\rho_{AB}\vert a,j\rangle\geq0.
+\]
+Finally,
+\[
+\operatorname{tr}_A\rho_A
+=\sum_{i,j}(\rho_{AB})_{ij,ij}
+=\operatorname{tr}_{AB}\rho_{AB}=1.
+\]
+There is no division by the dimension of \(B\). We sum over unobserved alternatives; the normalization is already correct.
+
+=== SECTION 3: Computing the reduced matrix and using it ===
+
+It helps to see how the operation handles individual terms. The map \(I_A\otimes\langle j\rvert_B\) takes an inner product with the \(B\) factor while leaving the \(A\) factor in place. For example,
+\[
+(I_A\otimes\langle0\rvert_B)\lvert1,0\rangle=\lvert1\rangle_A,
+\qquad
+(I_A\otimes\langle0\rvert_B)\lvert1,1\rangle=0.
+\]
+The reverse map \(I_A\otimes\lvert j\rangle_B\) attaches \(\lvert j\rangle_B\) to a vector on \(A\). Using these maps, the component definition becomes
+\[
+\operatorname{tr}_B\rho_{AB}
+=\sum_j(I_A\otimes\langle j\rvert_B)\rho_{AB}(I_A\otimes\lvert j\rangle_B).
+\]
+On a tensor product of outer products, it gives the particularly useful rule
+\[
+\operatorname{tr}_B\!\left(\lvert i\rangle\langle k\rvert\otimes\lvert j\rangle\langle l\rvert\right)
+=\langle l\vert j\rangle\lvert i\rangle\langle k\rvert
+=\delta_{lj}\lvert i\rangle\langle k\rvert.
+\]
+Thus \(\lvert0,0\rangle\langle1,1\rvert\) contributes zero, but \(\lvert0,0\rangle\langle1,0\rvert\) contributes \(\lvert0\rangle\langle1\rvert\). Off-diagonal entries on the retained system can survive. The partial trace is linear, so apply this rule term by term and add the results.
+
+For a pure joint state \(\lvert\chi\rangle=\sum_{i,j}c_{ij}\lvert i,j\rangle\), its density matrix has entries \(c_{ij}c_{kl}^*\). Consequently,
+\[
+(\rho_A)_{ik}=\sum_j c_{ij}c_{kj}^*.
+\]
+The same discarded label appears in both coefficients. You do not first sum the amplitudes over that label.
+
+Consider the normalized state
+\[
+\lvert\chi\rangle=\frac{\lvert0,0\rangle+i\lvert1,0\rangle+\lvert1,1\rangle}{\sqrt3}.
+\]
+In the ordered basis \((\lvert0,0\rangle,\lvert0,1\rangle,\lvert1,0\rangle,\lvert1,1\rangle)\), its joint density matrix is
+\[
+\rho_{AB}=\frac13
+\begin{pmatrix}
+1&0&-i&1\\
+0&0&0&0\\
+i&0&1&i\\
+1&0&-i&1
+\end{pmatrix}.
+\]
+For each retained row and column, sum the entries with the same \(B\) label:
+\[
+\begin{aligned}
+(\rho_A)_{00}&=(\rho_{AB})_{00,00}+(\rho_{AB})_{01,01}=\frac13+0,\\
+(\rho_A)_{01}&=(\rho_{AB})_{00,10}+(\rho_{AB})_{01,11}=-\frac{i}{3}+0,\\
+(\rho_A)_{11}&=(\rho_{AB})_{10,10}+(\rho_{AB})_{11,11}=\frac13+\frac13.
+\end{aligned}
+\]
+The remaining entry is the complex conjugate of \((\rho_A)_{01}\), giving
+\[
+\rho_A=\frac13\begin{pmatrix}1&-i\\i&2\end{pmatrix}.
+\]
+With this product-basis ordering, one can equivalently divide the joint matrix into four blocks of size two by two and take the ordinary trace of each block. Those four numbers become the four entries of the reduced matrix.
+
+[QUESTION 1]
+[ANSWER: A]
+The orthonormal basis of \(B\) is \(\{\lvert0\rangle,\lvert1\rangle,\lvert2\rangle\}\). For
+\[
+\lvert\omega\rangle=\frac{\lvert0,0\rangle+\lvert0,2\rangle+\lvert1,1\rangle+\lvert1,2\rangle}{2},
+\]
+what is \(\rho_A\) in the ordered basis \((\lvert0\rangle,\lvert1\rangle)\)?
+
+(A) \(\frac14\begin{pmatrix}2&1\\1&2\end{pmatrix}\)
+(B) \(\frac14\begin{pmatrix}2&0\\0&2\end{pmatrix}\)
+(C) \(\frac14\begin{pmatrix}2&2\\2&2\end{pmatrix}\)
+(D) \(\frac14\begin{pmatrix}3&1\\1&1\end{pmatrix}\)
+(E) \(\frac14\begin{pmatrix}2&-1\\-1&2\end{pmatrix}\)
+[/QUESTION]
+
+To keep \(B\) and discard \(A\), exchange their roles. In components,
+\[
+(\rho_B)_{jl}=\sum_i(\rho_{AB})_{ij,il}.
+\]
+The subscript on a partial trace names the factor being discarded, not the factor that remains.
+
+Return to the worked state \(\lvert\chi\rangle\). Let a local outcome on \(A\) be
+\[
+\lvert y_+\rangle=\frac{\lvert0\rangle+i\lvert1\rangle}{\sqrt2}.
+\]
+Using its reduced matrix gives
+\[
+p(y_+)=\frac1{\sqrt2}(1,-i)
+\left[\frac13\begin{pmatrix}1&-i\\i&2\end{pmatrix}\right]
+\frac1{\sqrt2}\begin{pmatrix}1\\i\end{pmatrix}
+=\frac56.
+\]
+The joint-state calculation agrees:
+\[
+p(y_+)=|\langle y_+,0\vert\chi\rangle|^2+|\langle y_+,1\vert\chi\rangle|^2
+=\frac23+\frac16=\frac56.
+\]
+This is a prediction for an outcome on \(A\), with no conditioning on \(B\). Once the reduction is available, there is no need to redo the joint calculation for each local measurement.
+
+[QUESTION 2]
+[ANSWER: D]
+A finite joint state has the reduced operator
+\[
+\rho_A=\frac1{10}\begin{pmatrix}3&1&0\\1&5&0\\0&0&2\end{pmatrix}
+\]
+in the ordered basis \((\lvert0\rangle,\lvert1\rangle,\lvert2\rangle)\). A measurement outcome on \(A\) has projector
+\[
+P=\lvert v\rangle\langle v\rvert+\lvert2\rangle\langle2\rvert,
+\qquad \lvert v\rangle=\frac{\lvert0\rangle+\lvert1\rangle}{\sqrt2}.
+\]
+What is \(\operatorname{tr}_{AB}[\rho_{AB}(P\otimes I_B)]\)?
+
+(A) \(1\)
+(B) \(1/2\)
+(C) \(3/5\)
+(D) \(7/10\)
+(E) \(3/10\)
+[/QUESTION]
+
+=== SECTION 4: Why the discarded basis cannot change the answer ===
+
+The calculation used a basis on \(B\), but the reduced operator cannot depend on this arbitrary choice. We are keeping the basis on \(A\) fixed, so the claim is that the entries of its reduced matrix remain the same. Changing the calculation basis on \(B\) is not a physical operation on the joint state.
+
+Let \(\{\lvert b_\alpha\rangle\}\) be any other orthonormal basis of \(B\). Completeness means
+\[
+\sum_\alpha\lvert b_\alpha\rangle\langle b_\alpha\rvert=I_B:
+\]
+expanding any vector in this basis and summing its components returns the original vector. For a discarded outer product \(\lvert j\rangle\langle l\rvert\), summing its diagonal elements in the new basis gives
+\[
+\begin{aligned}
+\sum_\alpha\langle b_\alpha\vert j\rangle\langle l\vert b_\alpha\rangle
+&=\langle l\rvert\left(\sum_\alpha\lvert b_\alpha\rangle\langle b_\alpha\rvert\right)\lvert j\rangle\\
+&=\langle l\vert j\rangle=\delta_{lj}.
+\end{aligned}
+\]
+This is exactly the factor obtained in the original basis. Every joint operator is a linear combination of terms \(\lvert i\rangle\langle k\rvert\otimes\lvert j\rangle\langle l\rvert\). Since each term has the same partial trace in either basis, so does every \(\rho_{AB}\).
+
+We can see the cancellation explicitly for the opening state \(\lvert\Psi\rangle\). Use the discarded basis
+\[
+\lvert\pm\rangle_B=\frac{\lvert0\rangle_B\pm\lvert1\rangle_B}{\sqrt2}.
+\]
+Taking the partial inner products produces vectors on \(A\):
+\[
+\lvert v_\pm\rangle=(I_A\otimes\langle\pm\rvert_B)\lvert\Psi\rangle
+=\frac{\sqrt3\lvert0\rangle\pm\lvert1\rangle}{2\sqrt2}.
+\]
+These vectors need not have norm one. The partial-trace terms are their outer products, with their original weights intact:
+\[
+\begin{aligned}
+\rho_A
+&=\lvert v_+\rangle\langle v_+\rvert+\lvert v_-\rangle\langle v_-\rvert\\
+&=\frac18\begin{pmatrix}3&\sqrt3\\\sqrt3&1\end{pmatrix}
++\frac18\begin{pmatrix}3&-\sqrt3\\-\sqrt3&1\end{pmatrix}\\
+&=\begin{pmatrix}3/4&0\\0&1/4\end{pmatrix}.
+\end{aligned}
+\]
+The individual terms depend on the chosen basis, but their sum does not. Normalizing each term before adding would generally change its weight and would no longer implement the partial trace.
+
+[QUESTION 3]
+[ANSWER: C]
+For a joint state of two qubits, a calculation in one basis of \(B\) gives
+\[
+\rho_A=\frac16\begin{pmatrix}4&1\\1&2\end{pmatrix}.
+\]
+In another orthonormal basis \(\{\lvert b_0\rangle,\lvert b_1\rangle\}\), the term
+\[
+(I_A\otimes\langle b_0\rvert)\rho_{AB}(I_A\otimes\lvert b_0\rangle)
+=\frac16\begin{pmatrix}1&1\\1&1\end{pmatrix}.
+\]
+What is the corresponding term for \(\lvert b_1\rangle\), before any normalization?
+
+(A) \(\frac14\begin{pmatrix}3&0\\0&1\end{pmatrix}\)
+(B) \(\frac16\begin{pmatrix}4&1\\1&2\end{pmatrix}\)
+(C) \(\frac16\begin{pmatrix}3&0\\0&1\end{pmatrix}\)
+(D) \(\frac16\begin{pmatrix}3&1\\1&1\end{pmatrix}\)
+(E) \(\frac16\begin{pmatrix}1&0\\0&3\end{pmatrix}\)
+[/QUESTION]
+
+=== SECTION 5: A mixed subsystem inside a pure joint state ===
+
+For the opening preparation,
+\[
+\lvert\Psi\rangle=\frac{\sqrt3}{2}\lvert0,0\rangle+\frac12\lvert1,1\rangle,
+\]
+the joint operator \(\rho_{AB}=\lvert\Psi\rangle\langle\Psi\rvert\) is pure. Indeed, normalization gives \(\rho_{AB}^2=\rho_{AB}\), so
+\[
+\operatorname{tr}_{AB}(\rho_{AB}^2)=1.
+\]
+Its reduced operator has purity
+\[
+\operatorname{tr}_A(\rho_A^2)
+=\left(\frac34\right)^2+\left(\frac14\right)^2
+=\frac58<1.
+\]
+Recall that purity less than one means the density operator is mixed. There is no single ket on \(A\) that reproduces all these local probabilities, even though a single ket describes the joint preparation exactly.
+
+For local measurements, this reduced operator is equivalent to preparing \(\lvert0\rangle\) with probability \(3/4\) and \(\lvert1\rangle\) with probability \(1/4\). That equivalence concerns predictions on \(A\). It does not assert that the actual joint source randomly prepared one of the product states \(\lvert0,0\rangle\) and \(\lvert1,1\rangle\).
+
+Inaccessibility of another system does not by itself force a mixed reduced state. For a normalized product preparation \(\lvert\phi\rangle_A\otimes\lvert\eta\rangle_B\), the tensor-term rule gives
+\[
+\operatorname{tr}_B\!\left(\lvert\phi\rangle\langle\phi\rvert\otimes\lvert\eta\rangle\langle\eta\rvert\right)
+=\lvert\phi\rangle\langle\phi\rvert\,\langle\eta\vert\eta\rangle
+=\lvert\phi\rangle\langle\phi\rvert.
+\]
+Here the local state remains pure. Correlations in the joint preparation, rather than merely the existence of \(B\), are what matter in the entangled example.
+
+[QUESTION 4]
+[ANSWER: D]
+The joint state is
+\[
+\lvert\xi\rangle=\frac{\lvert0\rangle_A\lvert0\rangle_B+\lvert1\rangle_A\lvert+\rangle_B}{\sqrt2},
+\qquad \lvert+\rangle_B=\frac{\lvert0\rangle_B+\lvert1\rangle_B}{\sqrt2}.
+\]
+For \(\rho_{AB}=\lvert\xi\rangle\langle\xi\rvert\), which pair is
+\(\bigl(\operatorname{tr}_{AB}(\rho_{AB}^2),\operatorname{tr}_A(\rho_A^2)\bigr)\)?
+
+(A) \((1,1)\)
+(B) \((1,1/2)\)
+(C) \((3/4,3/4)\)
+(D) \((1,3/4)\)
+(E) \((1,1/4)\)
+[/QUESTION]
+
+The information omitted by reduction still exists in the joint state. To make this distinction concrete, compare the opening state's density operator with the actual statistical mixture
+\[
+\tau_{AB}=\frac34\lvert0,0\rangle\langle0,0\rvert+\frac14\lvert1,1\rangle\langle1,1\rvert.
+\]
+They have the same reduced operator on \(A\), but
+\[
+\rho_{AB}=\tau_{AB}+\frac{\sqrt3}{4}
+\left(\lvert0,0\rangle\langle1,1\rvert+\lvert1,1\rangle\langle0,0\rvert\right).
+\]
+The last two terms contribute zero to the partial trace because their \(B\) labels are orthogonal. Calculating that trace does not delete the terms from \(\rho_{AB}\).
+
+A possible joint measurement has an outcome with projector \(Q=\lvert\Psi\rangle\langle\Psi\rvert\). Its probabilities in the two preparations are
+\[
+\operatorname{tr}_{AB}(\rho_{AB}Q)=1,
+\qquad
+\operatorname{tr}_{AB}(\tau_{AB}Q)
+=\frac34\frac34+\frac14\frac14=\frac58.
+\]
+Replacing the joint state by the mixture would therefore change physical predictions. Taking a partial trace makes no such replacement and is not a physical collapse. It supplies all local probabilities while omitting information needed for joint predictions; those predictions still require the original joint state.
+
+[QUESTION 5]
+[ANSWER: C]
+A source prepares one of the states
+\[
+\lvert\eta_1\rangle=\frac{\lvert0,0\rangle+2\lvert1,1\rangle}{\sqrt5},
+\qquad
+\lvert\eta_2\rangle=\frac{\lvert0,1\rangle+2\lvert1,0\rangle}{\sqrt5}.
+\]
+Which statement correctly compares measurements on these preparations?
+
+(A) A computational-basis measurement on \(A\) alone distinguishes them with certainty.
+(B) Their computational-basis distributions on \(A\) agree, but another measurement basis on \(A\) gives different distributions.
+(C) Every measurement on \(A\) alone has the same distribution for both; measuring both qubits in the computational basis distinguishes the preparations with certainty.
+(D) Every measurement on \(A\) alone has the same distribution for both, and the joint computational-basis distributions are also identical.
+(E) Their distributions on \(A\) agree only if \(B\) is actually measured and its outcome discarded.
+[/QUESTION]
+
+=== SECTION 6: Bonus practice ===
+
+[BONUS 1]
+[ANSWER: D]
+For
+\[
+\lvert\Gamma\rangle=\frac{\lvert0,0\rangle+i\lvert0,1\rangle+\lvert1,1\rangle}{\sqrt3},
+\]
+what is \(\rho_B\) in the ordered basis \((\lvert0\rangle,\lvert1\rangle)\)?
+
+(A) \(\frac13\begin{pmatrix}2&i\\-i&1\end{pmatrix}\)
+(B) \(\frac13\begin{pmatrix}1&i\\-i&2\end{pmatrix}\)
+(C) \(\frac13\begin{pmatrix}1&0\\0&2\end{pmatrix}\)
+(D) \(\frac13\begin{pmatrix}1&-i\\i&2\end{pmatrix}\)
+(E) \(\frac13\begin{pmatrix}2&-i\\i&1\end{pmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+For two qubits in an arbitrary joint state \(\rho_{AB}\), a unitary \(V_B\) is applied to \(B\), with no measurement or selection. Thus
+\[
+\rho'_{AB}=(I_A\otimes V_B)\rho_{AB}(I_A\otimes V_B^\dagger),
+\qquad \rho'_A=\operatorname{tr}_B\rho'_{AB}.
+\]
+Which statement is guaranteed for every \(\rho_{AB}\) and \(V_B\)?
+
+(A) \(\rho'_A=\rho_A\).
+(B) \(\rho'_A=V_B\rho_A V_B^\dagger\), treating the matrices in their computational bases.
+(C) \(\rho'_A=I_A/2\).
+(D) \(\rho'_A\) is obtained by deleting the off-diagonal entries of \(\rho_A\) in the computational basis.
+(E) \(\rho'_A=\rho_A\) only if the initial joint state is a product state.
+[/BONUS]

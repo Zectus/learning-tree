@@ -1,0 +1,5 @@
+# Reasoning effort and self-review, QM partial trace
+
+Reuse exact low original and low self-review from node-qm-review-control. Generate exactly one new gpt-6.1-sol xhigh original using the byte-identical rendered prompt and original save wrapper with only paths changed, no mention of review. After delivery freeze original. A fresh gpt-6.1-sol xhigh agent then uses the same self-review wrapper as the prior low reviewer, changing paths only, with identical original prompt and reader context plus its own completed xhigh lesson. No external critic. This matches the previous fresh-agent review process.
+
+Eight fresh blind gpt-6-luna judges, no effort override, four cyclic orders and their reversals: each version twice in each position and every pair in both relative orders four times. Same engaged-human-reader rubric, now four labels. Preserve all scores and factual audit errors; no selective reruns. One original and one revision per effort, so do not generalize a stochastic sample to a model effect. No production changes.
