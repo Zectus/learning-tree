@@ -46,6 +46,10 @@ test('online UI uses a browser button, exact node prompts, and verifies window/o
  app.window.__tree=app.fixture('mini-tree.json');app.ev('loadFromJSON(JSON.parse(__tree));generationSelection.count=1;');
  const packet=JSON.parse(app.ev('JSON.stringify(onlineLessonPayload())'));assert.equal(packet.queue.length,1);assert.match(packet.prompts[0].prompt,/save_lesson/);assert.doesNotMatch(packet.prompts[0].prompt,/checkpoint protocol|downloadable file named|subagents/i);
  const method=app.document.getElementById('generation-method');method.value='online';app.ev('updateGenerationMethod()');
+ const slider=app.document.getElementById('generation-effort');
+ assert.equal(app.window.getComputedStyle(slider.parentElement.parentElement).display === 'none',false);
+ slider.value='3';slider.dispatchEvent(new app.window.Event('input'));
+ assert.match(app.ev('onlineLessonPayload().prompts[0].prompt'),/Use Extra High reasoning effort/);
  assert.equal(app.document.getElementById('assistant-online-panel').classList.contains('hidden'),false);
  assert.equal(app.document.getElementById('assistant-generation-panel').classList.contains('hidden'),true);
  const key=app.ev('generationTreeKey(buildTreeJSON(false))');app.ev(`onlineLessons.transfer={page:window,origin:'https://online.test',nonce:'expected',payload:{treeKey:${JSON.stringify(key)}}};`);

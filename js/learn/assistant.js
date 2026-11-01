@@ -113,11 +113,11 @@ function assistantJobPayload() {
     const delivery = 'Return only the complete plain-text lesson. The application saves it automatically; do not create files or JSON records, and do not use tools.';
     return { id, prompt: buildPrompt(live[index], packet.lessonLanguage, delivery) };
   });
-  const signature = JSON.stringify([packet.treeKey, packet.queue, assistantEl('assistant-provider').value, assistantEl('assistant-model').value, assistantEl('assistant-effort').value, packet.lessonLanguage]);
+  const signature = JSON.stringify([packet.treeKey, packet.queue, assistantEl('assistant-provider').value, assistantEl('assistant-model').value, selectedGenerationEffort().value, packet.lessonLanguage]);
   if (assistantState.request?.signature !== signature) assistantState.request = { signature, id: crypto.randomUUID() };
   return { tree: packet.tree, snapshot: buildTreeJSON(true), treeKey: packet.treeKey, queue: packet.queue, prompts,
     provider: assistantEl('assistant-provider').value, model: assistantEl('assistant-model').value,
-    effort: assistantEl('assistant-effort').value, requestId: assistantState.request.id };
+    effort: selectedGenerationEffort().value, requestId: assistantState.request.id };
 }
 async function startAssistantGeneration() {
   if (assistantState.busy || assistantEl('btn-assistant-start').disabled || state.tutorialActive) return;

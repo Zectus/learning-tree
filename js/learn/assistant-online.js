@@ -15,7 +15,8 @@ function onlineLessonPayload() {
     prompts: packet.queue.map(id => {
       const index = packet.tree.nodes.findIndex(n => n.id === id);
       const delivery = 'Save the complete plain-text lesson with the save_lesson tool. Do not create files or JSONL records. No other tools or external services are needed.';
-      return { id, prompt: buildPrompt(live[index], packet.lessonLanguage, delivery) };
+      const effort = selectedGenerationEffort();
+      return { id, prompt: `REASONING EFFORT\nUse ${effort.label} reasoning effort for this lesson.\n\n` + buildPrompt(live[index], packet.lessonLanguage, delivery) };
     }) };
 }
 function openOnlineLessons() {

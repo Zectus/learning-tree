@@ -54,6 +54,10 @@ function generationQueue(tree, completed, options = generationSelection) {
   return missing.filter(id => chosen.has(id));
 }
 
+function selectedGenerationEffort() {
+  return GENERATION_EFFORTS[Number(document.getElementById('generation-effort').value)];
+}
+
 function renderGenerationInstructions({ language, replySize, queue, completed, tree, effort }) {
   const protocol = `GENERATE LESSONS WITH DURABLE CHECKPOINTS
 
@@ -115,7 +119,7 @@ function buildGenerationPacket(language, replySize = '1', options = generationSe
   return {
     format: WORK_PACKET_FORMAT, treeKey: generationTreeKey(tree),
     instructions: renderGenerationInstructions({ language: lessonLanguage, replySize, queue, completed, tree,
-      effort: GENERATION_EFFORTS[Number(document.getElementById('generation-effort').value)] }),
+      effort: selectedGenerationEffort() }),
     lessonLanguage, tree, completed, queue,
   };
 }
@@ -265,7 +269,7 @@ function currentGenerationPacket() {
 }
 
 function refreshGenerationSelection() {
-  const effort = GENERATION_EFFORTS[Number(document.getElementById('generation-effort').value)];
+  const effort = selectedGenerationEffort();
   uiText(document.getElementById('generation-effort-value'), effort.label);
   document.getElementById('generation-effort').setAttribute('aria-valuetext', t(effort.label));
   const missing = [...state.nodes.values()].filter(n => !lessonIsComplete(n._sessionTxt)).length;

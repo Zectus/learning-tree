@@ -29,6 +29,9 @@ test('automatic requests use the exact selected nodes and actual prompts without
   assert.match(payload.prompts[0].prompt,/Write the entire document in Español/);assert.match(payload.prompts[0].prompt,/application saves it automatically/);assert.doesNotMatch(payload.prompts[0].prompt,/subagents|checkpoint protocol|Deliver this as a downloadable file named/i);
   assert.ok(!JSON.stringify(payload).includes('PRIVATE NOTES'));assert.equal(payload.tree.nodes[0].done,undefined);assert.equal(payload.tree.nodes[1].content,undefined);assert.ok(payload.snapshot.nodes[1].content);
   assert.equal(JSON.parse(app.ev('JSON.stringify(assistantJobPayload())')).requestId,payload.requestId);
+  element(app,'generation-effort').value='3';
+  const higher=JSON.parse(app.ev('JSON.stringify(assistantJobPayload())'));
+  assert.equal(higher.effort,'xhigh');assert.notEqual(higher.requestId,payload.requestId);
  }finally{app.window.close()}
 });
 
