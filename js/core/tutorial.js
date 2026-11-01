@@ -74,7 +74,7 @@ Your answer is saved with this topic. Answering every regular question completes
     18: 'Your sample is saved here. Open brings you back to its tree. You can also rename, copy, or delete it. Tap Open tree to continue.',
     21: 'Sign in to sync your trees across devices. You can also use the app without an account. Tap Finish to start.'
   };
-  const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'topic', 'libraryId'];
+  const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'topic', 'libraryId', 'collectionId'];
   let seen = false;
   try { seen = localStorage.getItem(KEY) === '1'; } catch {}
   replay.hidden = !seen && !/^[\w-]{16,80}$/.test(new URLSearchParams(location.search).get('lt_handoff') || '');

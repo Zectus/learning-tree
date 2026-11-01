@@ -54,7 +54,8 @@ function buildTreePrompt(topic, language) {
   const fileSlug = slugify(topic);
   const lang = language || (uiLanguage === 'es' ? 'Español' : 'English');
   const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
-  return renderTreePrompt({ topic, fileSlug, language: lang, languageClause });
+  const scope = typeof mathCollectionPrompt === 'function' ? mathCollectionPrompt(topic) : '';
+  return renderTreePrompt({ topic, fileSlug, language: lang, languageClause }) + scope;
 }
 
 // No inputs: topic, starting point and language are all derived by the AI chatbot from
@@ -112,6 +113,9 @@ document.getElementById('modal-backdrop').addEventListener('click', e => {
 function updateTreePromptPreview() {
   const topic = document.getElementById('tree-topic-input').value.trim();
   const language = document.getElementById('tree-language-input').value.trim();
+  if (typeof mathBuilderSelection !== 'undefined' && mathBuilderSelection) {
+    document.getElementById('tree-collection-scope').classList.toggle('hidden', !mathCollectionPrompt(topic));
+  }
   document.getElementById('tree-prompt-box').value = topic
     ? buildTreePrompt(topic, language)
     : t('Fill in a topic above to generate the prompt.');
@@ -136,6 +140,7 @@ document.getElementById('tree-mode-tab-topic').addEventListener('click', () => s
 document.getElementById('tree-mode-tab-file').addEventListener('click', () => setTreeMode('file'));
 
 function openTreeModal() {
+  if (typeof resetMathTreeBuilder === 'function') resetMathTreeBuilder();
   setTreeMode('topic');
   updateTreePromptPreview();
   document.getElementById('tree-modal-backdrop').classList.add('open');
@@ -144,6 +149,7 @@ function openTreeModal() {
 
 function closeTreeModal() {
   document.getElementById('tree-modal-backdrop').classList.remove('open');
+  if (typeof resetMathTreeBuilder === 'function') resetMathTreeBuilder();
 }
 
 document.getElementById('menu-new-tree').addEventListener('click', openTreeModal);

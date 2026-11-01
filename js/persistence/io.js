@@ -32,6 +32,7 @@ function clearMap() {
   state.language = '';
   state.topic = '';
   state.libraryId = null; // a fresh load starts unlinked; openLibraryEntry() re-links it if that's where the load came from
+  state.collectionId = null;
   updateTreeIcon();
 }
 
@@ -70,7 +71,9 @@ function loadFromJSON(obj) {
   const rawNodes = obj.nodes.filter(n => n && typeof n === 'object');
   if (!rawNodes.length) { showToast('That tree has no nodes.'); return false; }
 
+  const collectionId = typeof resolveMathCollectionImport === 'function' ? resolveMathCollectionImport(obj) : null;
   clearMap();
+  state.collectionId = collectionId;
   state.language = typeof obj.language === 'string' ? obj.language.trim() : '';
   state.topic    = typeof obj.topic === 'string' ? obj.topic.trim() : '';
 
@@ -142,6 +145,7 @@ function buildTreeJSON(includeContent) {
   const out = {};
   if (state.topic)    out.topic = state.topic;
   if (state.language) out.language = state.language;
+  if (state.collectionId) out.collectionId = state.collectionId;
   out.nodes = nodes;
   return out;
 }

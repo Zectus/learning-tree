@@ -17,6 +17,7 @@ const state = {
   language:   '',   // tree-wide default language from a loaded tree; prefills each node's language field
   topic:      '',   // tree-wide subject name; used for the export filename and quoted in each node's prompt
   libraryId:  null, // "My Trees" entry the current tree was opened from (library.js); reset by clearMap(), re-linked by openLibraryEntry()
+  collectionId: null, // optional mathematics collection scope; organizational, not a lesson prerequisite
   accountUser: null, // { uid, email, username } when signed in (account.js), else null; set only by applyAccountUser()
 };
 

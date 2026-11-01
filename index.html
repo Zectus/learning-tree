@@ -31,6 +31,7 @@ try {
 <link rel="stylesheet" href="css/toolbar.css">
 <link rel="stylesheet" href="css/modals.css">
 <link rel="stylesheet" href="css/library.css">
+<link rel="stylesheet" href="css/explorer.css">
 <link rel="stylesheet" href="css/account.css">
 <link rel="stylesheet" href="css/viewer.css">
 <link rel="stylesheet" href="css/toast.css">
@@ -90,6 +91,7 @@ try {
     <button class="tbtn" id="btn-tree-menu"><span data-ui-text="Tree ▾">Tree ▾</span></button>
     <div class="dropdown-menu" id="tree-menu" role="menu">
       <button class="dropdown-item" id="menu-new-tree" role="menuitem"><span data-ui-text="🌱 New tree">🌱 New tree</span></button>
+      <button class="dropdown-item" id="menu-explore-trees" role="menuitem"><span data-ui-text="Explore trees">Explore trees</span><span class="dropdown-item-sub" data-ui-text="Browse the mathematics collection">Browse the mathematics collection</span></button>
       <button class="dropdown-item" id="menu-generate-lessons" role="menuitem"><span data-ui-text="✨ Generate tree lessons">✨ Generate tree lessons</span></button>
       <label class="dropdown-item" id="menu-load-json" role="menuitem"><span data-ui-text="📂 Load JSON">📂 Load JSON</span>
         <input type="file" id="file-input" accept=".json" style="display:none">
@@ -388,6 +390,11 @@ npm run companion</pre>
       </div>
 
       <div id="tree-mode-topic-panel">
+        <div id="tree-collection-scope" class="collection-scope hidden">
+          <button id="tree-back-to-atlas" class="btn" data-ui-text="← Back to collection">← Back to collection</button>
+          <p class="field-label" data-ui-text="Collection scope">Collection scope</p>
+          <p id="tree-collection-description"></p>
+        </div>
         <div class="field-row">
           <label class="field-label" for="tree-topic-input"><span data-ui-text="Topic">Topic</span></label>
           <input type="text" id="tree-topic-input" class="field-input" placeholder="E.g. Vector Calculus" data-ui-attrs="{&quot;placeholder&quot;: &quot;E.g. Vector Calculus&quot;}">
@@ -512,8 +519,64 @@ npm run companion</pre>
         <button class="tbtn hidden" id="btn-save-current-tree"><span data-ui-text="💾 Save current tree">💾 Save current tree</span></button>
         <button class="tbtn hidden" id="btn-save-current-tree-copy"><span data-ui-text="💾 Save as new copy">💾 Save as new copy</span></button>
       </div>
+      <div class="library-collection">
+        <div><strong data-ui-text="Mathematics collection">Mathematics collection</strong><p data-ui-text="Find your next tree, from counting to graduate mathematics.">Find your next tree, from counting to graduate mathematics.</p></div>
+        <button id="btn-explore-trees" class="btn" data-ui-text="Explore trees">Explore trees</button>
+      </div>
       <div id="library-empty" class="hidden"><span data-ui-text="No saved trees yet — build one and save it here.">No saved trees yet — build one and save it here.</span></div>
       <div id="library-grid" class="library-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- The collection is a hierarchy of tree scopes, separate from lesson nodes. -->
+<div id="explorer-backdrop" class="modal-backdrop">
+  <div id="explorer-shell" class="modal-shell" role="dialog" aria-modal="true" aria-labelledby="explorer-title">
+    <div class="modal-header-bar explorer-header">
+      <div>
+        <div class="explorer-eyebrow" data-ui-text="Mathematics collection">Mathematics collection</div>
+        <h2 id="explorer-title" data-ui-text="Explore trees">Explore trees</h2>
+        <p class="modal-meta" data-ui-text="Find a subject. Look closer. Make it yours.">Find a subject. Look closer. Make it yours.</p>
+      </div>
+      <button id="explorer-library" class="btn" data-ui-text="My Trees">My Trees</button>
+      <button id="explorer-close" class="modal-close-btn" aria-label="Close" data-ui-attrs='{"aria-label":"Close"}'>✕</button>
+    </div>
+    <div class="explorer-tools">
+      <div class="explorer-search-wrap">
+        <label class="sr-only" for="explorer-search" data-ui-text="Search mathematics">Search mathematics</label>
+        <input id="explorer-search" class="field-input" type="search" placeholder="Search a subject or idea…" autocomplete="off" aria-controls="explorer-results" data-ui-attrs='{"placeholder":"Search a subject or idea…"}'>
+        <div id="explorer-results" hidden></div>
+      </div>
+      <label class="sr-only" for="explorer-stage" data-ui-text="Educational stage">Educational stage</label>
+      <select id="explorer-stage" class="field-input">
+        <option value="" data-ui-text="All stages">All stages</option>
+        <option value="elementary" data-ui-text="Elementary">Elementary</option>
+        <option value="secondary" data-ui-text="Secondary">Secondary</option>
+        <option value="university" data-ui-text="University">University</option>
+        <option value="advanced" data-ui-text="Upper undergraduate">Upper undergraduate</option>
+        <option value="graduate" data-ui-text="Graduate">Graduate</option>
+      </select>
+      <div class="explorer-view-switch" role="group" aria-label="Collection view" data-ui-attrs='{"aria-label":"Collection view"}'>
+        <button id="explorer-map-tab" class="btn" aria-pressed="true" data-ui-text="Map">Map</button>
+        <button id="explorer-outline-tab" class="btn" aria-pressed="false" data-ui-text="Outline">Outline</button>
+      </div>
+    </div>
+    <nav id="explorer-breadcrumbs" aria-label="Subject path" data-ui-attrs='{"aria-label":"Subject path"}'></nav>
+    <div class="explorer-workspace">
+      <div class="explorer-map-pane">
+        <div id="explorer-map-wrap">
+          <svg id="explorer-map" role="group" aria-label="Mathematics subject map" data-ui-attrs='{"aria-label":"Mathematics subject map"}'></svg>
+          <div class="explorer-map-controls">
+            <button id="explorer-up" class="btn" aria-label="Up one level" data-ui-attrs='{"aria-label":"Up one level"}'>↑</button>
+            <button id="explorer-zoom-out" class="btn" aria-label="Zoom out" data-ui-attrs='{"aria-label":"Zoom out"}'>−</button>
+            <button id="explorer-zoom-in" class="btn" aria-label="Zoom in" data-ui-attrs='{"aria-label":"Zoom in"}'>+</button>
+            <button id="explorer-fit" class="btn" data-ui-text="Fit">Fit</button>
+          </div>
+        </div>
+        <div id="explorer-outline" hidden></div>
+        <div class="explorer-map-footer"><span data-ui-text="Select to explore · Scroll or pinch to zoom · Drag to move">Select to explore · Scroll or pinch to zoom · Drag to move</span><span id="explorer-count" role="status"></span></div>
+      </div>
+      <aside id="explorer-detail" aria-label="Selected subject" data-ui-attrs='{"aria-label":"Selected subject"}'></aside>
     </div>
   </div>
 </div>
@@ -587,6 +650,7 @@ npm run companion</pre>
 <script src="js/learn/node-prompt.js"></script>
 <script src="js/learn/tree-prompt.js"></script>
 <script src="js/core/state.js"></script>
+<script src="js/collection/math.js"></script>
 <script src="js/core/favicon.js"></script>
 <script src="js/core/escape.js"></script>
 <script src="js/core/toast.js"></script>
@@ -600,6 +664,7 @@ npm run companion</pre>
 <script src="js/learn/prompts.js"></script>
 <script src="js/learn/tools.js"></script>
 <script src="js/persistence/library.js"></script>
+<script src="js/collection/explorer.js"></script>
 <script src="js/persistence/account.js"></script>
 <script src="js/learn/viewer.js"></script>
 <script src="js/learn/generation-format.js"></script>

@@ -19,6 +19,23 @@ python3 -m http.server 8000     # or any static server
 2. **Tree ▾ → Generate tree lessons** downloads one AI work file with the tree, shared lesson rules, and a prerequisite-ordered queue. Attach it in an AI chat with the short message shown in the panel. Import its lesson checkpoints together, even from an interrupted response. Download a fresh work file to resume only missing lessons.
 3. **📚 My Trees** saves whole trees (with their lessons) in this browser, or in your account when signed in.
 
+**My Trees → Explore trees** opens the mathematics collection. The same explorer
+is available from **Tree → Explore trees**, centered on the current collection
+tree when possible. Browse the nested subject map, zoom and pan, follow the
+breadcrumbs, search names and scope descriptions, or use the keyboard-friendly
+outline. Stage filters highlight the appropriate learning blocks without moving
+their map locations. Individual subjects can be linked with `#explore=<subject-id>`.
+
+The collection contains 140 focused tree scopes from elementary through graduate
+mathematics. **Add to my trees** saves a scope draft using the existing local or
+account library; it does not replace the tree currently open. **Build tree** opens
+the existing AI tree designer with the exact subject scope and collection identity
+included in its prompt. Upload the resulting structure there to update the saved
+draft. Structures can then use the normal lesson-generation workflow. Collection
+entries define boundaries, not prewritten nodes or lessons. Once built, **Open
+tree** opens the saved structure directly. The collection interface follows the
+English/Spanish setting; the catalog's mathematical names and scopes are English.
+
 Lesson files mark each question's correct option inline with `[ANSWER: X]`.
 
 ## Generate lessons with your ChatGPT subscription

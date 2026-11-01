@@ -100,6 +100,7 @@ async function refreshLibraryFromSource() {
   }
   if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
   libraryReady = true;
+  document.dispatchEvent(new CustomEvent('library-updated'));
   if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
 }
 
@@ -138,7 +139,7 @@ function treeContentKey(data) {
     optional: !!n.optional, content: n.content || '',
     requires: [...(n.requires || [])].map(String).sort(),
   })).sort((a, b) => a.id.localeCompare(b.id));
-  return JSON.stringify({ topic: data.topic || '', language: data.language || '', nodes });
+  return JSON.stringify({ topic: data.topic || '', language: data.language || '', collectionId: data.collectionId || '', nodes });
 }
 
 // A per-account outbox survives interrupted network writes on page exit.
@@ -251,6 +252,11 @@ async function saveCurrentTreeAsNewCopy() {
 function openLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
+  if (!entry.data.nodes?.length && typeof mathItems !== 'undefined' && mathItems.get(entry.data.collectionId)?.scope) {
+    closeLibraryModal();
+    openMathTreeBuilder(entry.data.collectionId, id);
+    return;
+  }
   if (!loadFromJSON(entry.data)) return; // clearMap() inside resets state.libraryId to null…
   state.libraryId = id;                  // …so re-link it: this load really is that entry
   closeLibraryModal();
@@ -321,6 +327,7 @@ function renderLibraryGrid() {
   ids.forEach(id => {
     const entry = libraryCache[id];
     const total = entry.data.nodes?.length || 0;
+    const collectionDraft = !total && entry.data.collectionId;
     const { done } = libraryProgressFor(entry.data);
     const pct = total ? Math.round((done / total) * 100) : 0;
     const isOpen = state.libraryId === id;
@@ -329,11 +336,11 @@ function renderLibraryGrid() {
     card.className = 'library-card' + (isOpen ? ' library-card-open' : '');
     card.innerHTML = `
       <div class="lc-name">${svEsc(entry.name)}</div>
-      <div class="lc-meta">${uiHTML(total === 1 ? '{n} node' : '{n} nodes', {n:total})}${entry.data.language ? ' · ' + svEsc(entry.data.language) : ''}</div>
-      <div class="lc-progress-track"><div class="lc-progress-bar" style="width:${pct}%"></div></div>
-      <div class="lc-meta">${uiHTML('{done}/{total} complete · saved {time}', {done,total,time:formatSavedAt(entry.savedAt)})}${isOpen ? uiHTML(' · currently open') : ''}</div>
+      <div class="lc-meta">${collectionDraft ? uiHTML('Collection scope · ready to build') : uiHTML(total === 1 ? '{n} node' : '{n} nodes', {n:total})}${entry.data.language ? ' · ' + svEsc(entry.data.language) : ''}</div>
+      ${collectionDraft ? '' : `<div class="lc-progress-track"><div class="lc-progress-bar" style="width:${pct}%"></div></div>`}
+      <div class="lc-meta">${collectionDraft ? uiHTML('Saved {time}',{time:formatSavedAt(entry.savedAt)}) : uiHTML('{done}/{total} complete · saved {time}', {done,total,time:formatSavedAt(entry.savedAt)})}${isOpen ? uiHTML(' · currently open') : ''}</div>
       <div class="lc-actions">
-        <button class="btn lc-open">${uiHTML('Open')}</button>
+        <button class="btn lc-open">${uiHTML(collectionDraft ? 'Build tree' : 'Open')}</button>
         <button class="btn lc-rename">${uiHTML('Rename')}</button>
         <button class="btn lc-dup">${uiHTML('Duplicate')}</button>
         <button class="btn danger lc-del">${uiHTML('Delete')}</button>
