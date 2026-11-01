@@ -16,9 +16,9 @@ const TREE_FINAL_MESSAGE_RULE = `the calibration questions described below come 
 
 const TREE_LESSON_HANDOFF = `WHAT THE LATER LESSON WRITER WILL KNOW
 
-The lesson writer receives the node's label and explanation, the labels and explanations of its direct prerequisites, the tree topic, and the names of immediately following nodes. It does not automatically receive this conversation, the calibration answers, the source attachments, or every earlier lesson. Treat the explanation as a teaching brief that must survive that handoff.
+The lesson writer receives the node's label and explanation, the labels and explanations of its direct prerequisites, the tree topic, and the names of immediately following nodes. It does not automatically receive this conversation, a separate starting-knowledge record, the source attachments, or every earlier lesson. Treat the explanation as a teaching brief that must survive that handoff.
 
-Distinguish what this node actually teaches from what it assumes, supplies as an input, or leaves for later. Later lessons use prerequisite scopes as evidence of what has been established. A concept mentioned for motivation or explicitly excluded has not thereby been taught. State essential calibrated background where it is needed, including at roots; do not rely on a separate conversation to carry it. When using an earlier result whose scope is not visible in the direct prerequisite briefs, identify the established result and its relevant conditions in the current brief without making the learner repeat its lesson.`;
+Distinguish what this node actually teaches from what it assumes, supplies as an input, or leaves for later. Later lessons use prerequisite scopes as evidence of what has been established. A concept mentioned for motivation or explicitly excluded has not thereby been taught. State essential starting background where it is needed, including at roots; do not rely on a separate conversation to carry it. When using an earlier result whose scope is not visible in the direct prerequisite briefs, identify the established result and its relevant conditions in the current brief without making the learner repeat its lesson.`;
 
 const TREE_CALIBRATION_METHOD = `Ask concrete checkpoint questions to locate what the learner can actually do. Prefer a small interpretation, distinction, or task they can attempt over asking whether they are comfortable with a named topic. Course names and reports of having seen a technique are clues, not evidence that its needed operations are available. Make the task understandable without knowing the answer, and allow the person to say they do not know.
 
@@ -30,7 +30,7 @@ Stop when you can identify a defensible starting point for each needed branch an
 
 const TREE_DESIGN_PRINCIPLES = `PLAN BACKWARD FROM USABLE ABILITIES
 
-Identify what the learner should be able to interpret, explain, distinguish, predict, or do at the destination. Work backward from those abilities to what must be learned, stopping at the background established by calibration. A list of concepts, laws, or techniques can help check coverage, but it is not itself a node plan. Build candidate nodes around meaningful gains in ability and the work needed to reach them.
+Identify what the learner should be able to interpret, explain, distinguish, predict, or do at the destination. Work backward from those abilities to what must be learned, stopping at the background established for this tree. A list of concepts, laws, or techniques can help check coverage, but it is not itself a node plan. Build candidate nodes around meaningful gains in ability and the work needed to reach them.
 
 For each candidate, ask what the learner can do afterward that they could not do with its prerequisites alone. A new name is not necessarily a new learning goal; a familiar name can hide a substantial new difficulty. Make the intended level clear. Interpreting a statement, applying a supplied rule, developing that rule, and justifying its range of validity can require different routes. Choose the treatment the destination needs rather than silently requiring all of them or treating them as interchangeable.
 
@@ -46,7 +46,7 @@ Where a goal involves a procedure or model, identify what is done, what informat
 
 SIZE NODES BY THE WORK OF LEARNING
 
-A node is one coherent, usable learning outcome. It may need several connected steps, new operations, or representations. New machinery alone is not a reason to split: it can be exactly what the lesson needs to develop its central ability. Conversely, several closely related facts can still impose too much learning load. Judge the whole route at the calibrated level, including explanation and practice, rather than counting topics or compressing reasoning until it fits.
+A node is one coherent, usable learning outcome. It may need several connected steps, new operations, or representations. New machinery alone is not a reason to split: it can be exactly what the lesson needs to develop its central ability. Conversely, several closely related facts can still impose too much learning load. Judge the whole route at the stated starting level, including explanation and practice, rather than counting topics or compressing reasoning until it fits.
 
 Let the learner reach one understandable use before accumulating qualifications, alternate representations, and exceptional cases. Introduce notation and cautions where they first do useful work. First try a better progression or remove peripheral material when a candidate feels crowded. Split when it contains independently valuable outcomes, or when its essential route still cannot be understood and used in one sitting from the stated background. Each resulting node must have a usable outcome; avoid isolated notation lessons, detached proof fragments, or a long staircase whose learner cannot do anything until the end.
 
@@ -60,7 +60,7 @@ The learner may draw a new conclusion or combine established steps without first
 
 REQUIRE WHAT THE FULL GOAL NEEDS
 
-A prerequisite is an ability needed before this lesson begins. Read the actual prerequisite brief, not just its label: a lesson that introduced an idea informally has not necessarily established its formal machinery. Every essential input must be calibrated background, available from the prerequisite path, explicitly supplied when appropriate, or developed in this node. If a missing input needs substantial teaching of its own, provide a real prerequisite rather than concealing it in an assumption.
+A prerequisite is an ability needed before this lesson begins. Read the actual prerequisite brief, not just its label: a lesson that introduced an idea informally has not necessarily established its formal machinery. Every essential input must be established starting background, available from the prerequisite path, explicitly supplied when appropriate, or developed in this node. If a missing input needs substantial teaching of its own, provide a real prerequisite rather than concealing it in an assumption.
 
 For each proposed dependency, ask: without this prerequisite, could the learner still reach the node's full intended ability using the remaining background and the teaching planned here? Retain it when its absence would leave a necessary gap. The fact that some smaller part of the node would remain teachable is not a reason to remove it. Drop a dependency that is merely related, customary in a syllabus, or needed only by an unnecessarily advanced example.
 
@@ -70,7 +70,7 @@ If one prerequisite is already guaranteed by a path through another, its edge ne
 
 LET THE SUBJECT DETERMINE THE SHAPE
 
-Independent foundations can be separate roots and join only when a later ability needs them together. A root has no earlier node in this tree, but may still assume background established by calibration; write that background in its brief. Branches can differ in length and treatment, stop at different places, or fan back out after a synthesis. Do not impose a single root, a single final node, equal branch lengths, or a repeated sequence of stages.
+Independent foundations can be separate roots and join only when a later ability needs them together. A root has no earlier node in this tree, but may still assume background established for this tree; write that background in its brief. Branches can differ in length and treatment, stop at different places, or fan back out after a synthesis. Do not impose a single root, a single final node, equal branch lengths, or a repeated sequence of stages.
 
 NAME THE ABILITY'S ACTUAL SUBJECT
 
@@ -78,7 +78,7 @@ Use a recognizable name for the concept, result, method, or interpretive task ta
 
 const TREE_FIELD_NOTES = `- id: a unique, stable, lowercase ASCII snake_case slug. Internal wiring only; it is not the title the learner sees.
 - label: the human-readable subject of this lesson. Use the naming guidance above.
-- explanation: always include a self-contained teaching brief in compact connected sentences. State the ability gained, the central material actually taught, and the important boundary with neighboring nodes. Distinguish assumed background, any explicitly supplied inputs, and the result or reasoning to be developed. Identify the essential bridge or unfamiliar operation when omitting it would invite a leap, plus a meaningful use the lesson must make possible. Include a motivating case, representation, condition, or misconception when it materially affects teachability; not every brief needs every item. Carry necessary calibrated background and source details into this field. Describe scope and teaching obligations, not a rigid section outline, a complete lesson, or a catalog of related facts. Make required positive content clear as well as exclusions.
+- explanation: always include a self-contained teaching brief in compact connected sentences. State the ability gained, the central material actually taught, and the important boundary with neighboring nodes. Distinguish assumed background, any explicitly supplied inputs, and the result or reasoning to be developed. Identify the essential bridge or unfamiliar operation when omitting it would invite a leap, plus a meaningful use the lesson must make possible. Include a motivating case, representation, condition, or misconception when it materially affects teachability; not every brief needs every item. Carry necessary starting background and source details into this field. Describe scope and teaching obligations, not a rigid section outline, a complete lesson, or a catalog of related facts. Make required positive content clear as well as exclusions.
 - requires: the ids of direct prerequisite nodes. All listed nodes must be completed; these are AND requirements, never alternative routes. Omit the key for a root. Use only ids present in this file, with no self-references or cycles.
 - optional: true marks enrichment outside the required path to the destination. It is a label, not an exemption from locking: any node requiring an optional node still needs it completed. If the core destination depends on a node, that node is required and must not be tagged optional. Omit this key for required nodes.
 - done: do not set this; the new tree has no learner progress. Do not add lesson content or new schema fields.
@@ -92,12 +92,12 @@ const TREE_NODES_SCHEMA = `[
 
 const TREE_PLAN_AND_REVIEW = `BUILD AND REVIEW BEFORE SERIALIZING
 
-Do the planning privately after calibration. Establish the destination abilities, trace their needed knowledge back to the starting background, and sketch candidate learning routes before committing to ids or edges. Revise the boundaries and dependencies together: splitting, merging, or changing a worked case can change what must come first. Write the briefs once those choices are coherent.
+Do the planning privately once the starting background is established. Establish the destination abilities, trace their needed knowledge back to the starting background, and sketch candidate learning routes before committing to ids or edges. Revise the boundaries and dependencies together: splitting, merging, or changing a worked case can change what must come first. Write the briefs once those choices are coherent.
 
 Then walk the proposed tree in a valid learning order as a first-time learner, checking the actual briefs:
 
 - Can each lesson begin with the knowledge available at that point, develop its promised result without a hidden leap, and support a meaningful independent use? Look for operations, conventions, conditions, and source details that were silently assumed.
-- Does each prerequisite scope actually supply the ability the dependent needs? Are indirect knowledge requirements clear to the later writer? Have any root assumptions drifted beyond calibration? Check for circular teaching, even when the ids themselves form no cycle.
+- Does each prerequisite scope actually supply the ability the dependent needs? Are indirect knowledge requirements clear to the later writer? Have any root assumptions drifted beyond the established starting background? Check for circular teaching, even when the ids themselves form no cycle.
 - Is each node manageable after allowing for its real explanation and practice? Have you preserved the central reasoning, staged the first use before peripheral complications, and avoided both overloaded chapters and fragments with no usable outcome?
 - Do the terminal abilities together fulfill the intended destination? Is anything required missing, or merely familiar neighboring material included without a purpose? Can the core destination be reached without optional enrichment?
 - Could a lesson writer with only the stated handoff context tell what is prior knowledge, what may be supplied, what must be developed, and what stays outside this node? Repair an ambiguous brief now rather than relying on the later writer to infer your plan.
@@ -105,22 +105,22 @@ Then walk the proposed tree in a valid learning order as a first-time learner, c
 Finally validate the file itself: strict JSON, unique nonempty ids, nonempty labels and explanations, existing prerequisite ids, no repeated or self dependencies, and an acyclic graph. Put prerequisites before dependents in the nodes list for readability. Omit requires on roots and progress fields everywhere. Escape quotes, line breaks, and backslashes correctly inside JSON strings, including any source notation. Check topic and language against the flow's instructions. Use a JSON serializer or parser to check the file when tools are available. Deliver the downloadable file only after these checks pass.`;
 
 /* ── from a topic ── */
-function renderTreePrompt({ topic, fileSlug, language, languageClause }) {
+function renderTreePrompt({ topic, fileSlug, language, languageClause, collectionContext = '' }) {
   return `You are designing a prerequisite tree for the subject: ${topic}
 
-Deliver this as a downloadable file named ${fileSlug}-tree.json — not as JSON pasted into the chat as text. Do all planning and double-checking in your thinking; ${TREE_FINAL_MESSAGE_RULE}
+Deliver this as a downloadable file named ${fileSlug}-tree.json — not as JSON pasted into the chat as text. Do all planning and double-checking in your thinking; ${collectionContext ? "your final message should contain nothing but the downloadable file itself, with no preamble or commentary. Begin designing immediately; do not ask calibration questions." : TREE_FINAL_MESSAGE_RULE}
 
 ${TREE_NODE_FRAMING}${languageClause}
 
 ${TREE_LESSON_HANDOFF}
 
-CALIBRATE THE STARTING KNOWLEDGE AND DESTINATION
+${collectionContext || `CALIBRATE THE STARTING KNOWLEDGE AND DESTINATION
 
 Before building the tree, locate the learner's starting knowledge through questions relevant to ${topic}. Do not infer fluency from a broad self-description. If the subject leaves the intended destination or depth materially ambiguous, clarify it during this calibration. Preserve the requested subject: do not silently substitute a small nearby topic or expand it into an unbounded survey of its whole field.
 
 ${TREE_CALIBRATION_METHOD}
 
-The finished tree should cover the agreed subject at the intended level from that starting point. Its terminal abilities may include independent applications or directions; they need not funnel into one final capstone. Each required branch must contribute to that coverage, and any enrichment must stay outside the core path.
+The finished tree should cover the agreed subject at the intended level from that starting point. Its terminal abilities may include independent applications or directions; they need not funnel into one final capstone. Each required branch must contribute to that coverage, and any enrichment must stay outside the core path.`}
 
 ${TREE_DESIGN_PRINCIPLES}
 
@@ -138,7 +138,7 @@ ${TREE_FIELD_NOTES}
 
 ${TREE_PLAN_AND_REVIEW}
 
-Begin with calibration and wait for the person's answers. Once the starting knowledge and destination are clear, design, check, and deliver the tree in this conversation.`;
+${collectionContext ? 'Use the collection-defined starting point and destination to design, check, and deliver the tree now. No questions or learner calibration are needed.' : "Begin with calibration and wait for the person's answers. Once the starting knowledge and destination are clear, design, check, and deliver the tree in this conversation."}`;
 }
 
 /* ── from a file ── */

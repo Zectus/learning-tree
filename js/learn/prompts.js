@@ -55,7 +55,7 @@ function buildTreePrompt(topic, language) {
   const lang = language || (uiLanguage === 'es' ? 'Español' : 'English');
   const languageClause = `\n\nLANGUAGE\nWrite every node's "label" value in ${lang}. Keep "id" slugs in plain lowercase ASCII snake_case regardless of language — they're internal wiring only, never shown to anyone, so there's nothing to gain by translating or transliterating them. Also set the top-level "language" field in your output to "${lang}" verbatim (see OUTPUT SCHEMA).`;
   const scope = typeof mathCollectionPrompt === 'function' ? mathCollectionPrompt(topic) : '';
-  return renderTreePrompt({ topic, fileSlug, language: lang, languageClause }) + scope;
+  return renderTreePrompt({ topic, fileSlug, language: lang, languageClause, collectionContext: scope });
 }
 
 // No inputs: topic, starting point and language are all derived by the AI chatbot from
