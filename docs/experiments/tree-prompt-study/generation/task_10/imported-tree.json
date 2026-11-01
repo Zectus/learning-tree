@@ -1,0 +1,74 @@
+{
+  "topic": "Reliable retries in a small HTTP client: timeouts, retryable failures, idempotency, backoff, deadlines, and cancellation",
+  "language": "English",
+  "nodes": [
+    {
+      "id": "attempt_outcomes",
+      "label": "HTTP attempt outcomes and execution uncertainty",
+      "explanation": "Assume the learner can write a loop around an awaited JavaScript promise, catch rejections, use functions and objects, and recognize HTTP methods, status codes, and bodies. They already know that a fulfilled response can have an error status. Develop the distinction between one transport attempt and the logical operation the caller wants performed. Use timelines showing dispatch, a server effect, and delivery or loss of the response to separate what happened remotely from what the client observed. A transport rejection, timeout, or error response does not by itself prove that no effect occurred; trustworthy evidence of failure before dispatch is different. Introduce timeout and cancellation here only as local stopping events, leaving their mechanisms for later. The learner should interpret a fresh lost-response or late-response trace and explain why a payment may have happened even though the client has no successful response. Retry decisions and replay safety are developed separately."
+    },
+    {
+      "id": "replay_safety",
+      "label": "Idempotency and safe replay",
+      "explanation": "Build on the distinction between an observed attempt failure and unknown remote execution. Develop idempotency as a property of repeated intended effects, rather than identical response codes: reading a value, replacing a value, deleting a named resource, incrementing a counter, and creating a payment provide contrasting cases. HTTP method conventions are useful evidence, but the endpoint's actual contract determines replay safety. Supply a documented server deduplication contract as an input and teach its client obligations: choose one idempotency key per logical operation, reuse that key and the same payload across attempts, and keep retries within the contract's scope and retention window. An unsupported key header supplies no protection. The learner should decide whether a proposed replay is safe and justify stopping with an uncertain outcome when a non-idempotent operation may already have executed and has no adequate deduplication guarantee. Trustworthy evidence that an attempt was never dispatched can permit another try even for such an operation. Server implementation and guarantees of exactly-once completion are outside this lesson.",
+      "requires": [
+        "attempt_outcomes"
+      ]
+    },
+    {
+      "id": "retry_eligibility",
+      "label": "Choosing which failures to retry",
+      "explanation": "Develop a decision procedure that distinguishes success, terminal failure, and permission for another attempt. Supply an endpoint-specific success predicate and a small documented failure policy; teach how to apply and question that policy using fulfilled error responses and rejected transport promises. Selected 429, 502, 503, or 504 responses and connection failures can be transient candidates, while authentication, invalid input, and configuration failures ordinarily require a change rather than repetition. These are conditional examples, not universal status-code rules. Apply the established replay test separately: idempotent effects or a documented deduplication contract with a stable key and unchanged payload permit replay under that contract; an otherwise unsafe operation needs trustworthy evidence that it was not dispatched. A timeout is only a retry candidate, since execution may be unknown. Treat explicitly tagged caller cancellation and total-deadline expiration as terminal inputs; their production is taught on the timing branch. Teach a finite maxAttempts budget that includes the first attempt. The learner should classify unfamiliar outcome records and explain why transience, replay safety, and attempts remaining must all agree, retaining the final response or error when stopping.",
+      "requires": [
+        "replay_safety"
+      ]
+    },
+    {
+      "id": "capped_backoff",
+      "label": "Capped exponential backoff with full jitter",
+      "explanation": "Assume the calibrated ability to use basic arithmetic, powers, loops, and JavaScript-flavored pseudocode; no probability or backoff background is assumed. Take permission to retry as an input, rather than deciding which failures qualify. Develop why many clients repeating immediately, or waiting identical fixed intervals, can keep sending together. Number failed attempts from n = 1 after the first send, derive the waiting envelope w = min(cap, base * 2^(n - 1)), and explain positive base and cap settings. Supply rng() as an independent uniform draw from zero inclusive to one exclusive and develop full jitter as delay = rng() * w, explaining what uniform selection means locally. The first attempt has no retry delay. Use a timeline and supplied random draws to calculate waits, distinguish the capped envelope from the actual sampled wait, and explain why individual jittered waits need not increase. The learner should choose and justify a schedule for a new failure sequence and diagnose synchronized or incorrectly capped schedules. Timing budgets and interrupting a wait are left to the timing branch."
+    },
+    {
+      "id": "caller_cancellation",
+      "label": "Caller cancellation of requests and waits",
+      "explanation": "Build on the established fact that stopping locally does not undo a remote effect; assume no familiarity with cancellation APIs. Supply and explain a runtime-neutral controller with abort(reason), its one-shot signal with aborted and reason fields, and a subscription operation returning an unsubscribe function. Also supply sendOnce(request, signal) and sleep(milliseconds, signal): each performs one action, accepts an already-aborted signal, and settles promptly when cancellation is observed. The transport performs no hidden retries; aborting it does not guarantee remote rollback. Develop how a caller passes a signal through helpers to cancel either an active request or a pending wait, how to check for cancellation before starting subsequent work, and how to preserve the cancellation reason instead of treating it as an ordinary retryable rejection. Explain that an already completed result remains completed and later cancellation prevents further work. Any subscriptions the client installs must be removed when their scope ends. The learner should adapt a short asynchronous sequence to stop during either action and explain a trace where an HTTP error catch accidentally swallows cancellation. Timeout timers and total deadlines are not yet introduced.",
+      "requires": [
+        "attempt_outcomes"
+      ]
+    },
+    {
+      "id": "attempt_timeouts",
+      "label": "A cancellable per-attempt timeout",
+      "explanation": "Use the established abort-aware single-attempt transport, caller signals, and one-shot cancellation reasons to build a helper that bounds one attempt. Supply setTimer(milliseconds, callback) and clearTimer(handle), and explain try/finally as cleanup that runs when the helper settles. Develop a fresh child controller for each attempt, propagation of an already-present or later caller cancellation to that child, and a timer that aborts it with a distinct AttemptTimeout reason. Caller cancellation remains terminal; an attempt timeout describes only this attempt and may later be considered for retry. Explain response-versus-timer races through a single-completion rule and cleanup of both the timer and caller subscription, so a late callback cannot change an accepted response or affect a subsequent attempt. A bare race against a timer can abandon an active request; the supplied transport's prompt abort settlement is part of the helper's contract. The learner should construct and trace a caller-cancellable timed attempt, including a slow request, a prompt response, and an already-cancelled caller. A timeout still leaves remote execution uncertain. The helper does not decide retries or bound the whole logical operation.",
+      "requires": [
+        "caller_cancellation"
+      ]
+    },
+    {
+      "id": "total_deadline",
+      "label": "A total deadline across attempts and backoff",
+      "explanation": "Combine caller-cancellable timed attempts with the established capped, jittered retry waits. The attempt helper uses fresh child controllers, preserves abort reasons, and cleans up its timer and subscriptions; these properties remain required. Supply now() as elapsed milliseconds from a monotonic clock, distinct from a calendar clock. Develop one absolute deadline D = now() + totalBudget when the logical operation begins and recompute remaining = D - now() before subsequent work. Use a trace to show why resetting a timeout for every attempt leaves total request and sleep time unbounded. Derive an attempt's effective limit as the smaller of its configured timeout and remaining time, preserving whether the limiting event is an attempt timeout or the total deadline. Create an operation stop signal that preserves caller cancellation or DeadlineExceeded and interrupts both requests and sleep. A chosen backoff that consumes the remaining budget must end at the deadline without another dispatch; do not shorten it merely to squeeze in a retry. Recheck time after awaits because timer callbacks can run late, and clean up the operation timer and caller subscription on completion. The learner should predict a mixed request-and-wait timeline and enforce its budget without claiming a hard real-time or remote-execution guarantee.",
+      "requires": [
+        "attempt_timeouts",
+        "capped_backoff"
+      ]
+    },
+    {
+      "id": "retry_client",
+      "label": "Combining the policies in a small HTTP client",
+      "explanation": "Develop one readable JavaScript-flavored retry loop from the established eligibility procedure and deadline-aware, cancellable timing helpers. Use a small immutable in-memory request body and a supplied one-attempt transport; no runtime-library expertise or streaming-body handling is required. Retain the request and any supported idempotency key unchanged for the logical operation, count attempts actually started, retain the last response or error, and create the absolute deadline once. Derive the control flow from these states: check stop conditions before dispatch, make one caller-cancellable timed attempt, accept success or classify failure, require both replay safety and transient-failure permission within maxAttempts, then draw the indexed capped-jitter wait and await it with the operation signal before checking again. The first attempt is immediate. Distinguish an attempt timeout that may permit retry from terminal caller cancellation or total-deadline expiration; a non-idempotent ambiguous outcome without adequate deduplication must stop. Explain single final completion when response and stopping events race, and close timers and subscriptions on every exit. Use finite, valid configuration values and expose terminal responses or errors with their last relevant outcome and execution uncertainty. The learner should implement and explain a coherent client for an unfamiliar endpoint contract, including why each retained state and ordering check is necessary.",
+      "requires": [
+        "retry_eligibility",
+        "total_deadline"
+      ]
+    },
+    {
+      "id": "policy_diagnosis",
+      "label": "Diagnosing retry policies with event traces",
+      "explanation": "Use the completed client's contracts: replay requires safe semantics or a stable key and payload under documented deduplication; attempt count is bounded; jitter comes from a capped envelope; one deadline covers requests and waits; cancellation stops both actions and prevents further dispatch. Supply a simple trace notation and a deterministic harness with a controllable clock, scripted transport outcomes, supplied random draws, and basic assertions, explaining their use without assuming a testing framework. Develop how to choose an event ordering that exposes a suspected policy flaw rather than merely run a happy-path example. Include effects applied before lost responses, cancellation during backoff, time spent across several attempts, and late timer events as cases for tracing retained state and the resulting externally visible behavior. Distinguish facts available to the client from remote events revealed only by the supplied test scenario. The learner should construct a fresh counterexample to flawed retry pseudocode, identify the violated contract, repair the relevant decision or cleanup, and justify the repair with a contrasting trace. Passing a few traces does not establish safety for every event order; server implementation and production observability are outside this diagnostic task.",
+      "requires": [
+        "retry_client"
+      ]
+    }
+  ]
+}

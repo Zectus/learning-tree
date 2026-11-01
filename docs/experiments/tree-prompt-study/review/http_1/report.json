@@ -1,0 +1,295 @@
+{
+  "trees": [
+    {
+      "label": "K",
+      "scores": {
+        "correctness_and_destination": 5,
+        "prerequisite_sufficiency": 5,
+        "teachable_scope_and_progression": 5,
+        "lesson_handoff": 5
+      },
+      "assessment": "A complete, technically sound path for this learner. It separates recovery likelihood from replay safety, supplies unfamiliar cancellation and timer APIs, and assembles policy, active-attempt bounds, and interruptible scheduling into one client. The smaller helper lessons each produce a usable outcome; their number is not itself a problem. Required Retry-After coverage is additional useful client behavior, rather than a requirement of the destination.",
+      "strengths": [
+        {
+          "node_ids": [
+            "bounded_retry_policy"
+          ],
+          "evidence": "\"combining a potentially recoverable failure, a safe replay contract, and a remaining attempt allowance\"; \"maxAttempts as including the initial attempt\"",
+          "assessment": "Establishes the three separate retry gates and stable, replayable request data before the timing mechanisms are integrated."
+        },
+        {
+          "node_ids": [
+            "deadline_bounded_attempts",
+            "deadline_bounded_delays",
+            "retry_state_machine"
+          ],
+          "evidence": "\"check the monotonic deadline before starting and after awaiting\"; \"terminate on deadline expiration rather than starting the next attempt early\"; \"at most one locally active send\"",
+          "assessment": "Both active requests and intervening waits receive explicit budget enforcement. The assembly lesson directly receives all three substantive helper contracts."
+        }
+      ],
+      "findings": [
+        {
+          "severity": "minor",
+          "kind": "optional_handoff_polish",
+          "node_ids": [
+            "bounded_retry_policy",
+            "http_idempotency",
+            "idempotency_keys"
+          ],
+          "evidence": "bounded_retry_policy requires only retryable_failures and idempotency_keys and calls its safety input \"a safe replay contract\"; idempotency_keys is specifically about \"one non-idempotent logical operation\".",
+          "finding": "The learner has already learned semantic idempotency, so this is not missing learner knowledge. However, the policy writer receives a key-focused direct prerequisite. Explicitly carrying the unkeyed, semantically idempotent route into this brief would make it harder to accidentally teach that every retry requires a key.",
+          "repair": "Add \"semantic idempotency or a valid idempotency-key contract\" to bounded_retry_policy. Alternatively, add http_idempotency as a direct prerequisite for this handoff."
+        }
+      ],
+      "edge_assessment": {
+        "required_missing_edges": [],
+        "unnecessary_edges": [],
+        "optional_edges": [
+          {
+            "from": "http_idempotency",
+            "to": "bounded_retry_policy",
+            "reason": "A redundant learner prerequisite that could improve the lesson writer handoff; a short scope clarification is sufficient instead."
+          }
+        ]
+      }
+    },
+    {
+      "label": "M",
+      "scores": {
+        "correctness_and_destination": 5,
+        "prerequisite_sufficiency": 5,
+        "teachable_scope_and_progression": 5,
+        "lesson_handoff": 5
+      },
+      "assessment": "A complete and teachable route with sound contracts. Supplying cancellable send and sleep operations is legitimate for this runtime-neutral destination; implementing their internals is not an unstated prerequisite. Each combined lesson has a coherent practical outcome, and the final assembly brief repeats the essential timing and safety invariants rather than relying solely on distant ancestors.",
+      "strengths": [
+        {
+          "node_ids": [
+            "replay_safety",
+            "retry_eligibility"
+          ],
+          "evidence": "\"An unsupported key header supplies no protection\"; \"an otherwise unsafe operation needs trustworthy evidence that it was not dispatched\"; \"transience, replay safety, and attempts remaining must all agree\"",
+          "assessment": "Correctly handles both ambiguous execution and the narrower case with reliable evidence that dispatch never happened. Failure examples are explicitly endpoint-dependent."
+        },
+        {
+          "node_ids": [
+            "caller_cancellation",
+            "total_deadline",
+            "retry_client",
+            "policy_diagnosis"
+          ],
+          "evidence": "\"sendOnce(request, signal) and sleep(milliseconds, signal)\"; \"Recheck time after awaits because timer callbacks can run late\"; \"construct a fresh counterexample to flawed retry pseudocode\"",
+          "assessment": "Supplies the new APIs, maintains one deadline across requests and waits, and requires independent diagnostic application rather than recognition of rehearsed examples."
+        }
+      ],
+      "findings": [
+        {
+          "severity": "minor",
+          "kind": "optional_contract_polish",
+          "node_ids": [
+            "caller_cancellation",
+            "attempt_timeouts",
+            "retry_client"
+          ],
+          "evidence": "caller_cancellation supplies \"sendOnce(request, signal)\" that \"settles promptly when cancellation is observed\"; retry_client specifies an \"immutable in-memory request body\", but these briefs do not explicitly locate send completion relative to reading the response body.",
+          "finding": "The supplied abstraction is sufficient to teach the requested client. Its completion boundary could nevertheless be clearer: a later implementation could resolve on response headers and inadvertently leave subsequent response-body work outside the advertised request budget. This is contract polish, not a missing prerequisite or a demand for streaming support.",
+          "repair": "Specify that sendOnce resolves with a fully buffered response under the same cancellation and timeout scope, or explicitly define a narrower result contract if that is intended."
+        }
+      ],
+      "edge_assessment": {
+        "required_missing_edges": [],
+        "unnecessary_edges": [],
+        "optional_edges": []
+      }
+    },
+    {
+      "label": "R",
+      "scores": {
+        "correctness_and_destination": 5,
+        "prerequisite_sufficiency": 5,
+        "teachable_scope_and_progression": 5,
+        "lesson_handoff": 5
+      },
+      "assessment": "Ready for the requested destination. The supplied transport, key, error-category, clock, and result contracts make both the individual lessons and their integration reconstructible. It establishes useful classification and replay decisions early, then develops bounded active attempts and waits before requiring a complete client and fresh diagnoses. No material repair is identified.",
+      "strengths": [
+        {
+          "node_ids": [
+            "retry_candidates_and_attempt_limits",
+            "idempotency_keys_and_replayable_requests"
+          ],
+          "evidence": "\"structured transport-error categories\"; \"same operation key and identical request payload identify one operation\"; \"freezes an already encoded string body\"",
+          "assessment": "The client never has to infer transport categories from unspecified runtime strings or assume that a header alone establishes safe payment replay. The complete local replay obligations are supplied."
+        },
+        {
+          "node_ids": [
+            "per_attempt_timeouts",
+            "total_deadlines_and_remaining_budget"
+          ],
+          "evidence": "\"check the cutoff before accepting a response because timer callbacks may run late\"; \"Wait for the cancelled transport to settle before another local attempt can begin\"; \"define total-deadline precedence when time cutoffs coincide\"",
+          "assessment": "Explicitly handles late timers, complete response-body timing, local attempt overlap, and the distinction between an attempt timeout and a terminal operation stop."
+        },
+        {
+          "node_ids": [
+            "reliable_retrying_http_client",
+            "diagnosing_and_testing_retry_policies"
+          ],
+          "evidence": "\"return a final HTTP response, including an unretried error status\"; \"throw distinct caller-cancellation or deadline errors\"; \"making a targeted repair in a previously unseen policy\"",
+          "assessment": "The final lesson defines externally understandable outcomes and the diagnostic lesson requires transfer to a new flawed policy."
+        }
+      ],
+      "findings": [],
+      "edge_assessment": {
+        "required_missing_edges": [],
+        "unnecessary_edges": [],
+        "optional_edges": []
+      }
+    },
+    {
+      "label": "T",
+      "scores": {
+        "correctness_and_destination": 4,
+        "prerequisite_sufficiency": 5,
+        "teachable_scope_and_progression": 5,
+        "lesson_handoff": 4
+      },
+      "assessment": "A good path with limited repairs. Its conceptual prerequisites are sufficient and its early-stop policy when no retry fits is valid. The main gaps are at active-attempt deadline enforcement and the final lesson writer handoff, rather than in the learner knowledge graph. Optional Retry-After coverage is appropriately presented as an extension.",
+      "strengths": [
+        {
+          "node_ids": [
+            "retry_eligibility",
+            "deadline_aware_backoff"
+          ],
+          "evidence": "\"could another attempt help, and is replay safe?\"; \"Distinguish that policy stop from a deadline that has actually expired\"",
+          "assessment": "Keeps eligibility distinct from scheduling and correctly avoids misreporting an early no-room-for-retry decision as an already expired deadline."
+        },
+        {
+          "node_ids": [
+            "abortable_waits",
+            "attempt_timeouts"
+          ],
+          "evidence": "\"Supply any unfamiliar timer or promise-construction API\"; \"Relay caller cancellation to a child controller\"; \"clear the timer and relay in finally\"",
+          "assessment": "Teaches the unfamiliar operations locally and avoids both uncancellable backoff and a timeout that merely abandons an ongoing send."
+        }
+      ],
+      "findings": [
+        {
+          "severity": "minor",
+          "kind": "destination_repair",
+          "node_ids": [
+            "request_deadlines",
+            "deadline_aware_backoff",
+            "retry_state_machine"
+          ],
+          "evidence": "request_deadlines says \"limit each new attempt to the smaller of its configured timeout and the remaining budget\"; deadline_aware_backoff requires a recheck \"when the wait ends\"; retry_state_machine requires checking \"cancellation and remaining time before sending\".",
+          "finding": "The positive scopes specify a check after backoff but leave the corresponding check after an active send implicit. A timer-backed attempt can return a response after the absolute operation deadline when its timer callback is delayed. For example, with D=100 ms, a response observed at 110 ms and a deadline callback processed at 120 ms must not be accepted merely because success reached the continuation first. This is an acceptance-boundary issue, not a demand for hard real-time timer delivery.",
+          "repair": "Require a monotonic deadline check after every awaited send and before accepting its result. Preserve caller-stop reasons and distinguish expiration of D from an ordinary attempt timeout. Add a delayed-timer response trace to deterministic_retry_tests."
+        },
+        {
+          "severity": "minor",
+          "kind": "handoff_repair",
+          "node_ids": [
+            "retry_state_machine",
+            "deadline_aware_backoff",
+            "request_deadlines",
+            "attempt_timeouts"
+          ],
+          "evidence": "retry_state_machine has only retry_eligibility and deadline_aware_backoff as direct prerequisites and says \"The prerequisites provide the retry gate and timed scheduling\". deadline_aware_backoff describes a \"sampled delay, the absolute deadline, and a cancellable wait\" and explicitly leaves other controller decisions separate.",
+          "finding": "The learner has the required ancestor knowledge, so no learner prerequisite is missing. The final writer, however, receives neither the active-attempt wrapper brief nor its effective timeout rule. The final scope does not itself restate calling that wrapper, forwarding cancellation to its child, or limiting it by remaining time. With only the supplied direct briefs, the writer could reconstruct the retry gate and waiting path while making a raw signal-aware send on the active path.",
+          "repair": "Restate the timed-send helper contract in retry_state_machine: use a fresh child scope, cap it by min(perAttemptTimeout, remaining), preserve caller/attempt/deadline causes, and clean up before continuing. Alternatively, add direct edges attempt_timeouts -> retry_state_machine and request_deadlines -> retry_state_machine so those exact scopes reach its writer."
+        }
+      ],
+      "edge_assessment": {
+        "required_missing_learner_edges": [],
+        "unnecessary_edges": [],
+        "handoff_edges_if_not_repaired_in_scope": [
+          {
+            "from": "attempt_timeouts",
+            "to": "retry_state_machine",
+            "reason": "Provides the active timed-send child controller, cause preservation, and cleanup contract to the assembly writer."
+          },
+          {
+            "from": "request_deadlines",
+            "to": "retry_state_machine",
+            "reason": "Provides the effective per-attempt timeout derived from the fixed logical-operation deadline. This is a handoff remedy, not a claim that the learner has skipped the ancestor lesson."
+          }
+        ]
+      }
+    }
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "labels": [
+        "K",
+        "M",
+        "R"
+      ]
+    },
+    {
+      "rank": 2,
+      "labels": [
+        "T"
+      ]
+    }
+  ],
+  "comparison": [
+    "All four teach the full requested conceptual set and end in a coherent client plus diagnosis. None assumes cancellation-library mastery, requires server implementation, or uses a retryable status as sufficient permission to repeat a payment.",
+    "The meaningful separation is T versus the leading group. K deadline_bounded_attempts explicitly checks time after awaiting; M total_deadline requires rechecking after awaits; R total_deadlines_and_remaining_budget requires checking before accepting results. T only explicitly requires post-wait and pre-send checks. This leaves a small but concrete deadline acceptance gap.",
+    "For final assembly, K directly supplies policy, active-attempt, and delay briefs. M total_deadline and retry_client carry their essential helper contracts in their own scopes. R total_deadlines_and_remaining_budget and reliable_retrying_http_client do the same. T supplies the retry gate and wait scheduler directly, while the active timeout rule remains in ancestor scopes.",
+    "R is particularly explicit about response-body completion and per-attempt cutoff checks; K has especially clear separation of active-attempt and delay budgeting; M legitimately reduces mechanism construction by supplying cancellable send and sleep. These differences do not establish a material destination-level ordering within the leading group. Node count and prose length were not used as quality proxies.",
+    "Retry-After is not required by the destination. Its absence from M and R, its required presence in K, and its optional presence in T are not correctness failures. T stopping early when no delay fits and K/M/R waiting until the deadline are both valid policies when reported accurately."
+  ],
+  "independent_checks": {
+    "source_specific_claims": "packet.json has source=null. There is no source attachment or externally attributed case to verify. No other file, reviewer, model, or external source was consulted.",
+    "method": "Checked the technical assertions against explicit counterexamples, the stated contracts, and numerical calculations; parsed the supplied graph to check references and cycles. These are independent reasoning checks, not live-network or implementation tests.",
+    "checks": [
+      {
+        "claim": "A timeout or lost response does not prove that an operation failed to execute.",
+        "result": "Verified by two compatible histories: the request never arrives, or payment commits and its response is lost. Client timeout observations can be identical. All four preserve this distinction."
+      },
+      {
+        "claim": "Idempotency concerns intended repeated effects, not identical responses or the absence of all side effects.",
+        "result": "Verified with a resource deletion: the first DELETE may remove the resource and return success, while a repeat returns not-found without changing the final intended effect. All four use this correctly and condition method conventions on the service contract."
+      },
+      {
+        "claim": "An arbitrary idempotency-key header cannot guarantee safe payment replay.",
+        "result": "Verified: without a server contract, two POSTs with the same header can create two payments. A supplied deduplication contract makes key stability, payload consistency, scope, and retention relevant. All four teach these constraints."
+      },
+      {
+        "claim": "Capped exponential backoff and full jitter use the correct first-retry index and range.",
+        "result": "For base=100 and cap=800, k=0..5 yields ceilings 100,200,400,800,800,800. With u=0.25, delays are 25,50,100,200,200,200. M uses n-1 with n=1 after the initial failure, which is equivalent. All four formulas or described sampling rules are correct; jitter does not guarantee collision-free retries or increasing individual waits."
+      },
+      {
+        "claim": "A total deadline must cover requests and waits and cannot be renewed per attempt.",
+        "result": "Verified using D=start+budget and remaining=D-now. Every elapsed interval reduces the same remaining budget. With D=100 and a response observed at 110, remaining=-10 even if the timer callback has not run; this substantiates the T repair."
+      },
+      {
+        "claim": "Cancelling an awaited operation requires cooperation and cannot establish remote rollback.",
+        "result": "Verified: racing a request against a rejecting timer changes which promise the client observes but does not itself stop the request. The supplied signal-aware transports permit local cancellation. Even prompt local settlement cannot undo a server effect. All four distinguish these facts."
+      },
+      {
+        "claim": "Retry-After minimums can be combined with local jitter using either sum or maximum.",
+        "result": "For a server minimum of 1000 and local jitter of 200, K waits 1200 and T waits 1000. Both respect the minimum; adding local jitter retains more dispersion when the server minimum dominates. Neither rule may override the total budget or justify an otherwise unsafe retry. Both trees supply parsing rather than requiring uncalibrated date-parser expertise."
+      },
+      {
+        "claim": "Listed transport and HTTP errors are retry candidates rather than universally retryable failures.",
+        "result": "All four condition examples on an endpoint policy or documented allowlist and separately apply replay safety. Treating certificate/configuration failures as normally terminal and selected temporary errors as candidates is appropriate. Omitting some possible retry status is not a coverage failure for a deliberately narrow small-client policy."
+      },
+      {
+        "claim": "The prerequisite graphs contain valid references and no cycles.",
+        "result": "Parsed all four trees: every requires target exists and all four graphs are acyclic. No semantic cycle or necessary excluded-topic dependency was found. Graph shape alone did not affect scores."
+      }
+    ]
+  },
+  "confidence": {
+    "level": "moderate-high",
+    "value": 0.8,
+    "explanation": "Strong confidence that all four are viable and that no major repair or blocker is warranted. Moderate confidence in placing T below the tied group, because its general deadline language might lead a careful writer to add the missing active-result check locally. There is insufficient evidence for a strict ordering of K, M, and R."
+  },
+  "counterevidence": [
+    "A permitted handoff artifact or explicit scope statement showing that T final assembly receives the active-attempt helper contract would remove the handoff distinction. Learner access to ancestor knowledge alone would not resolve the stated writer-context restriction.",
+    "An explicit requirement in T to check the absolute deadline after every active send settles would remove its deadline distinction and could justify a four-way tie.",
+    "Concrete lesson drafts showing that K loses the semantic-idempotency route, that M ends its budget at headers while requiring later body work, or that a combined lesson cannot reach its stated one-sitting outcome could lower those trees. Their current scopes do not establish such failures.",
+    "Actual generated lessons or learner trials could distinguish the tied group on usable helper contracts and independent application; prose length, graph shape, and node count alone would not overturn the ranking."
+  ]
+}

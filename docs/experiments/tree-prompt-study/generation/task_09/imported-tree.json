@@ -1,0 +1,118 @@
+{
+  "topic": "Reliable retries in a small HTTP client: timeouts, retryable failures, idempotency, backoff, deadlines, and cancellation",
+  "language": "English",
+  "nodes": [
+    {
+      "id": "uncertain_outcomes",
+      "label": "Ambiguous Request Outcomes",
+      "explanation": "The learner can explain why a timeout or broken connection may leave the server's result unknown. Compare timelines in which a request never arrives, executes but loses its response, or finishes after the client stops waiting; define a client timeout as a limit on waiting. Practice separating evidence about the client's observation from evidence about execution. Assume the calibrated knowledge of requests, responses, and rejected promises. Leave timeout implementation and the conditions for safe repetition to other nodes."
+    },
+    {
+      "id": "http_idempotency",
+      "label": "Idempotency of HTTP Operations",
+      "explanation": "The learner can distinguish an operation whose repeated execution has the same intended effect as one execution from an operation that creates additional effects. Use setting a resource to a specified value, deleting a resource, and creating a payment to interpret idempotency. Explain the intended semantics of GET, PUT, and DELETE and why POST carries no general idempotency guarantee; the service's actual contract still matters. Different response codes or bodies do not by themselves disprove idempotency. Assume only the calibrated familiarity with HTTP methods and bodies; leave uncertainty about execution and keyed deduplication to their own lessons."
+    },
+    {
+      "id": "idempotency_keys",
+      "label": "Idempotency Keys for Retried Operations",
+      "explanation": "The learner can prepare a non-idempotent operation for safe retry when the service explicitly supports an idempotency-key contract. Starting with a payment whose response was lost, generate one key per logical operation and reuse that key and the same parameters for every attempt; a new payment needs a new key. Explain the client's obligations concerning key scope, retention limits, and conflicting payloads, without implementing server storage. The prerequisites supply ambiguous outcomes and idempotency. An arbitrary header supplies no guarantee, and a key does not establish unrestricted exactly-once execution.",
+      "requires": [
+        "uncertain_outcomes",
+        "http_idempotency"
+      ]
+    },
+    {
+      "id": "failure_classification",
+      "label": "Transient Failure Classification",
+      "explanation": "The learner can implement a small, explicit classifier that identifies plausible retry candidates from an HTTP response or a rejected transport operation. Use a documented allowlist, with examples such as 429, 502, 503, 504, and selected temporary connection failures, and explain why ordinary validation errors and programming exceptions should terminate. Timeout can be a transient observation, while a caller's instruction to stop must not be treated as another retry candidate. Assume the calibrated distinction between promise fulfillment and HTTP success; supply the meaning of each example status. This classifier says whether another attempt might help, not whether repeating the operation is safe."
+    },
+    {
+      "id": "retry_eligibility",
+      "label": "The Retry Eligibility Predicate",
+      "explanation": "The learner can combine two independent questions into a correct retry gate: could another attempt help, and is replay safe? Apply the failure classifier together with the operation's idempotency or a valid key contract. Reject an unprotected payment retry after an ambiguous failure, even when that failure is transient; do not infer that nothing was sent from a generic rejected promise. Require the client to retain a reproducible in-memory request body and the same operation parameters across attempts. The prerequisites supply failure classification and replay semantics. Leave attempt limits, pacing, and time budgets to the retry controller.",
+      "requires": [
+        "failure_classification",
+        "idempotency_keys"
+      ]
+    },
+    {
+      "id": "capped_backoff",
+      "label": "Capped Exponential Backoff",
+      "explanation": "The learner can calculate and implement a bounded sequence of retry delay ceilings using b(k) = min(cap, base * 2^k), with k = 0 for the first retry after the initial attempt. Work through a short failure sequence to distinguish retry number from attempt number and show why increasing pauses reduce repeated pressure on a struggling service. Validate positive finite configuration and keep growth bounded in an implementation. Assume the calibrated arithmetic, powers, and loops. This lesson establishes the deterministic schedule; randomization and the overall stopping policy come later."
+    },
+    {
+      "id": "full_jitter",
+      "label": "Full Jitter for Retry Delays",
+      "explanation": "The learner can turn each exponential-backoff ceiling into a random delay sampled uniformly between zero and that ceiling. Use clients failing at the same instant to explain why identical deterministic schedules produce repeated bursts, then practice computing possible waits with a supplied random-draw helper. Distinguish the ceiling from a mandatory minimum wait and explain why each retry draws again. The prerequisite supplies capped exponential backoff; no probability course or runtime-specific random API is assumed. Leave deadlines and server-specified waiting times to later lessons.",
+      "requires": [
+        "capped_backoff"
+      ]
+    },
+    {
+      "id": "cancellation_signals",
+      "label": "Cooperative Cancellation Signals",
+      "explanation": "The learner can pass a caller's cancellation signal into an operation and distinguish requesting cancellation from merely abandoning an awaited promise. Supply and explain a small controller-and-signal interface: abort, aborted, reason, and a subscription that returns an unsubscribe function. Practice handling an already-cancelled signal and releasing a subscription after completion, using a transport that explicitly supports signals. Assume the calibrated promise and function knowledge; no cancellation-library experience is required. Cancellation stops local work cooperatively and cannot undo a server operation. Leave timeout timers and cancellable sleeps to separate methods."
+    },
+    {
+      "id": "abortable_waits",
+      "label": "Cancellable Timer Waits",
+      "explanation": "The learner can implement or use a sleep(delay, signal) operation that stops promptly when the caller cancels during backoff. Start with the user cancelling a request during a long pause. Explain the timer-to-promise adapter, the initial cancellation check, and settling the wait once while clearing the timer and removing the listener on every exit path. Supply any unfamiliar timer or promise-construction API in readable pseudocode. The prerequisite supplies signal behavior. Keep this method about waiting; it neither sends a request nor decides the retry delay.",
+      "requires": [
+        "cancellation_signals"
+      ]
+    },
+    {
+      "id": "attempt_timeouts",
+      "label": "Per-Attempt Timeout Cancellation",
+      "explanation": "The learner can bound one HTTP attempt with a fresh cancellation scope that responds to both its own timeout and the caller's cancellation. Supply a timer API and a signal-aware transport that resolves after reading the response body. Relay caller cancellation to a child controller, abort that child when the timer expires, preserve whether timeout or caller cancellation caused the stop, and clear the timer and relay in finally. Show why racing a rejecting timer against a request without cancelling the transport leaves work running. The prerequisite supplies cancellation signals. This is a bound for one attempt, not the complete sequence of retries.",
+      "requires": [
+        "cancellation_signals"
+      ]
+    },
+    {
+      "id": "request_deadlines",
+      "label": "End-to-End Request Deadlines",
+      "explanation": "The learner can calculate one total time budget shared by all attempts and intervening waits. Contrast three attempts with individual timeouts against a caller who allows only one fixed amount of elapsed time. With a supplied monotonic clock, set deadline = start + budget, recompute remaining = deadline - now, and limit each new attempt to the smaller of its configured timeout and the remaining budget. The prerequisite supplies per-attempt timeout behavior. Include backoff and local processing in elapsed time; do not reset the deadline after a failure. Leave the mechanics of interrupting and scheduling waits to the next method.",
+      "requires": [
+        "attempt_timeouts"
+      ]
+    },
+    {
+      "id": "deadline_aware_backoff",
+      "label": "Deadline-Aware Retry Scheduling",
+      "explanation": "The learner can schedule a jittered retry without exceeding the request's remaining budget or ignoring cancellation. Combine a sampled delay, the absolute deadline, and a cancellable wait; recheck time and cancellation when the wait ends before allowing a new attempt. If the scheduled retry cannot start before the deadline, stop and report that no retry fits the budget rather than silently truncating the intended wait. Distinguish that policy stop from a deadline that has actually expired. The three prerequisites supply the budget, delay selection, and interruptible waiting needed by this method. Failure eligibility and the attempt-count limit remain the controller's decisions.",
+      "requires": [
+        "request_deadlines",
+        "full_jitter",
+        "abortable_waits"
+      ]
+    },
+    {
+      "id": "retry_state_machine",
+      "label": "A Bounded HTTP Retry State Machine",
+      "explanation": "The learner can write and trace one understandable JavaScript-flavored retry controller using the earlier helpers. Retain one request specification and key, count the initial send toward a finite maximum-attempt limit, check cancellation and remaining time before sending, and route an eligible failure through the deadline-aware scheduler. Make success, a nonretryable outcome, exhausted attempts, inability to fit another retry, actual deadline expiry, and caller cancellation explicit terminal outcomes. Preserve the last failure and stopping reason, and release each attempt's timers and listeners before continuing. Limit this client to reproducible in-memory bodies with a signal-aware transport. The prerequisites provide the retry gate and timed scheduling; use their invariants to diagnose a flawed loop that retries cancellation or restarts its total budget.",
+      "requires": [
+        "retry_eligibility",
+        "deadline_aware_backoff"
+      ]
+    },
+    {
+      "id": "deterministic_retry_tests",
+      "label": "Deterministic Tests for Retry Policies",
+      "explanation": "The learner can test the retry controller through reproducible event sequences instead of real network failures and wall-clock sleeps. Supply and explain a scripted signal-aware transport, controllable clock and timers, and fixed random draws. Practice checking the number and timing of sends, unchanged idempotency keys, terminal reasons, and cleanup using cases such as an unsafe payment, cancellation during a wait, a timed-out attempt, and an exhausted total budget. The prerequisite supplies the complete controller and its observable invariants; no testing framework is assumed. Keep assertions about client behavior, without claiming to prove server deduplication or introducing production observability infrastructure.",
+      "requires": [
+        "retry_state_machine"
+      ]
+    },
+    {
+      "id": "retry_after",
+      "label": "Respecting Retry-After Response Headers",
+      "explanation": "The learner can extend an otherwise eligible retry to respect a server's requested minimum wait. Explain Retry-After delay-seconds and HTTP-date forms with supplied parsing and wall-clock helpers, convert a usable value to a nonnegative duration, and wait at least the larger of that duration and the locally sampled backoff. A local backoff cap must not shorten a valid server minimum; stop if that wait cannot fit the total deadline. Specify a fallback for missing or malformed headers. The prerequisites supply eligibility and deadline-aware jittered scheduling. This is an optional client-side extension, with no server implementation required.",
+      "requires": [
+        "retry_eligibility",
+        "deadline_aware_backoff"
+      ],
+      "optional": true
+    }
+  ]
+}
