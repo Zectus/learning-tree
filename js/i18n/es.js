@@ -539,3 +539,10 @@ Object.assign(UI_ES, {
   'From counting to graduate mathematics':'Desde contar hasta matemáticas de posgrado',
   'Choose a collection to explore its learning trees.':'Elige una colección para explorar sus árboles de aprendizaje.'
 });
+
+Object.assign(UI_ES, {
+  'Recommended preparation':'Preparación recomendada',
+  'Suggestions, not requirements. You can start any tree.':'Son sugerencias, no requisitos. Puedes empezar cualquier árbol.',
+  'No preparation trees recommended. Start here.':'No se recomiendan árboles previos. Empieza aquí.',
+  'A focused learning block, roughly 4–6 weeks at this level.':'Un bloque de aprendizaje concreto, de unas 4–6 semanas a este nivel.'
+});

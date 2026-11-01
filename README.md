@@ -26,6 +26,12 @@ breadcrumbs, search names and scope descriptions, or use the keyboard-friendly
 outline. Stage filters highlight the appropriate learning blocks without moving
 their map locations. Individual subjects can be linked with `#explore=<subject-id>`.
 
+Each tree's **Recommended preparation** links to suggested background trees,
+including subjects in other branches. These curated suggestions never lock trees
+or require completion. Starting trees explicitly need no recommended preparation.
+The designer's scope prompt includes the suggestions and their boundaries,
+separately from the collection's existing guidance on entry knowledge.
+
 The collection contains 140 focused tree scopes from elementary through graduate
 mathematics. **Add to my trees** saves a scope draft using the existing local or
 account library; it does not replace the tree currently open. **Build tree** opens

@@ -196,3 +196,73 @@ test('My Trees exposes a header action leading through collections before the ma
     assert.ok(el(app,'library-modal-backdrop').classList.contains('open'));
   } finally {app.dom.window.close();}
 });
+
+test('all collection scopes have explicit preparation links to valid trees without cycles', () => {
+  const app=loadApp();
+  try {
+    const trees=JSON.parse(app.ev('JSON.stringify([...mathItems.values()].filter(n=>!n.children).map(n=>({id:n.id,links:n.recommendedPreparation})))'));
+    const index=new Map(trees.map(tree=>[tree.id,tree]));
+    const visited=new Set(),path=new Set();
+    function visit(tree) {
+      assert.equal(path.has(tree.id),false,'Preparation cycle at '+tree.id);
+      if (visited.has(tree.id)) return;
+      assert.ok(Array.isArray(tree.links));
+      assert.equal(new Set(tree.links).size,tree.links.length);
+      path.add(tree.id);
+      for (const id of tree.links) {
+        assert.notEqual(id,tree.id);
+        assert.ok(index.has(id),'Unknown preparation tree '+id);
+        visit(index.get(id));
+      }
+      path.delete(tree.id); visited.add(tree.id);
+    }
+    trees.forEach(visit);
+    assert.deepEqual(index.get('math_counting_and_quantity').links,[]);
+    assert.deepEqual(index.get('math_shapes_and_spatial_relationships').links,[]);
+  } finally {app.dom.window.close();}
+});
+
+test('preparation links navigate across subjects and stages without requiring completion', async () => {
+  const app=loadApp();
+  try {
+    app.ev("loadFromJSON({topic:'Current',nodes:[{id:'a',label:'Keep this'}]}); mathAtlas.stage='graduate'; openMathAtlas({target:'math_banach_spaces_and_bounded_operators'})");
+    const before=app.ev('JSON.stringify(buildTreeJSON(true))');
+    assert.match(el(app,'explorer-detail').textContent,/Suggestions, not requirements/);
+    el(app,'explorer-detail').querySelector('.explorer-preparation [data-math-id="math_metric_spaces"]').click();
+    assert.equal(el(app,'explorer-detail-title').textContent,'Metric Spaces');
+    assert.equal(app.ev('mathAtlas.stage'),'');
+    assert.equal(el(app,'explorer-stage').value,'');
+    assert.equal(el(app,'explorer-tree-action').disabled,false);
+    const id=await app.ev("addMathTreeToLibrary('math_metric_spaces')");
+    assert.ok(id);
+    assert.equal(app.ev('Object.keys(libraryCache).length'),1);
+    assert.equal(app.ev('JSON.stringify(buildTreeJSON(true))'),before);
+  } finally {app.dom.window.close();}
+});
+
+test('tree design includes optional preparation scopes without assuming mastery or adding hard dependencies', async () => {
+  const app=loadApp();
+  try {
+    const id=await app.ev(`addMathTreeToLibrary('${integration}')`);
+    app.window.__id=id;
+    app.ev('openLibraryEntry(__id)');
+    const prompt=el(app,'tree-prompt-box').value;
+    assert.match(prompt,/RECOMMENDED PREPARATION \(OPTIONAL\)/);
+    assert.match(prompt,/Definite Integrals and Antiderivatives — Accumulation/);
+    assert.match(prompt,/Do not assume the learner has completed them/);
+    assert.match(prompt,/Do not add these collection links as mandatory learning-node dependencies/);
+    assert.equal(app.ev('libraryCache[__id].data.nodes.length'),0);
+  } finally {app.dom.window.close();}
+});
+
+test('starting trees describe the absence of preparation and localize recommendation labels', () => {
+  const app=loadApp();
+  try {
+    app.ev("openMathAtlas({target:'math_counting_and_quantity'})");
+    assert.match(el(app,'explorer-detail').textContent,/No preparation trees recommended. Start here./);
+    assert.equal(el(app,'explorer-detail').querySelectorAll('.explorer-preparation [data-math-id]').length,0);
+    app.ev("setUILanguage('es',false)");
+    assert.equal(el(app,'explorer-preparation-title').textContent,'Preparación recomendada');
+    assert.match(el(app,'explorer-detail').textContent,/Puedes empezar cualquier árbol/);
+  } finally {app.dom.window.close();}
+});

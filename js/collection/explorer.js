@@ -147,6 +147,7 @@ function updateMathLink() {
 function focusMathItem(id, moveFocus = false) {
   const node = mathItems.get(id);
   if (!node) return;
+  if (!node.children && !mathMatchesStage(node)) { mathAtlas.stage=''; mathEl('explorer-stage').value=''; }
   mathAtlas.selectedId = node.children ? null : id;
   mathAtlas.focusId = node.children ? id : node.parent.id;
   mathEl('explorer-results').hidden = true;
@@ -176,7 +177,15 @@ function renderMathDetail() {
     <span class="explorer-stage-badge">${branch ? uiHTML('{n} learning trees',{n:node.count}) : uiHTML(MATH_STAGES[node.stage])}</span>
     <p class="explorer-description">${branch ? uiHTML('This region encompasses all the learning trees beneath it. Choose a smaller region to look closer.') : svEsc(node.scope)}</p>
     ${branch ? `<ul class="explorer-children">${node.children.map(child => `<li><button data-math-id="${child.id}"><span>${svEsc(child.name)}</span><span>${child.children ? child.count+' →' : '↗'}</span></button></li>`).join('')}</ul>` : `
-    <p class="explorer-note">${uiHTML('A focused learning block, roughly 4–6 weeks at this level. Prerequisites are learned in other trees.')}</p>
+    <p class="explorer-note">${uiHTML('A focused learning block, roughly 4–6 weeks at this level.')}</p>
+    <section class="explorer-preparation" aria-labelledby="explorer-preparation-title">
+      <h4 id="explorer-preparation-title">${uiHTML('Recommended preparation')}</h4>
+      <p class="explorer-note">${uiHTML('Suggestions, not requirements. You can start any tree.')}</p>
+      ${node.recommendedPreparation.length ? `<ul class="explorer-children">${node.recommendedPreparation.map(id => {
+        const tree=mathItems.get(id);
+        return `<li><button data-math-id="${id}"><span>${svEsc(tree.name)}<small>${svEsc(tree.path.slice(1,-1).join(' › '))}</small></span><span aria-hidden="true">→</span></button></li>`;
+      }).join('')}</ul>` : `<p class="explorer-note">${uiHTML('No preparation trees recommended. Start here.')}</p>`}
+    </section>
     <div class="explorer-detail-actions">
       ${entry ? `<span class="explorer-saved-label">${uiHTML('✓ In My Trees')}</span>` : ''}
       <button id="explorer-tree-action" class="btn explorer-primary" ${mathAtlas.busy ? 'disabled' : ''}>${uiHTML(mathAtlas.busy ? 'Saving…' : !entry ? 'Add to my trees' : built ? 'Open tree' : 'Build tree')}</button>
@@ -260,7 +269,7 @@ function openMathTreeBuilder(id, libraryId, returnTo = 'library') {
 function mathCollectionPrompt(topic) {
   const node = mathItems.get(mathBuilderSelection?.id);
   if (!node || node.name !== topic) return '';
-  return `\n\nMATHEMATICS COLLECTION SCOPE\nSubject path: ${node.path.join(' > ')}\nIntended stage: ${MATH_STAGES[node.stage]}\nScope: ${node.scope}\n\nDesign only this focused learning block, roughly 4–6 weeks at the stated level, rather than its parent subject. The collection fixes the destination and starting level. Assume the standard entry knowledge for this bounded subject at the stated stage has been learned in other trees. Work out the specific prerequisite abilities from this scope and level, and state them explicitly in the relevant root teaching briefs so later lesson writers receive them. Keep prerequisite subjects outside this tree; explain small local conventions where needed without expanding the destination. The surrounding subject hierarchy is organizational, not a prerequisite chain.\nKeep the top-level topic exactly ${JSON.stringify(node.name)} and include the top-level field "collectionId": ${JSON.stringify(node.id)} in the output JSON so it returns to this saved collection tree.\n`;
+  return `\n\nMATHEMATICS COLLECTION SCOPE\nSubject path: ${node.path.join(' > ')}\nIntended stage: ${MATH_STAGES[node.stage]}\nScope: ${node.scope}\n\nRECOMMENDED PREPARATION (OPTIONAL)\n${node.recommendedPreparation.length ? node.recommendedPreparation.map(id => { const tree=mathItems.get(id); return '- '+tree.name+' — '+tree.scope; }).join('\n') : 'No preparation trees recommended; this is a starting tree.'}\nThese are suggestions, not requirements or evidence of completing specific collection trees. Do not assume the learner has completed them. Use the suggested scopes to clarify likely background at the collection-defined entry level, following the main prompt’s entry-knowledge guidance. Do not add these collection links as mandatory learning-node dependencies or require completing entire preparation trees.\n\nDesign only this focused learning block, roughly 4–6 weeks at the stated level, rather than its parent subject. The collection fixes the destination and starting level. Assume the standard entry knowledge for this bounded subject at the stated stage has been learned in other trees. Work out the specific prerequisite abilities from this scope and level, and state them explicitly in the relevant root teaching briefs so later lesson writers receive them. Keep prerequisite subjects outside this tree; explain small local conventions where needed without expanding the destination. The surrounding subject hierarchy is organizational, not a prerequisite chain.\nKeep the top-level topic exactly ${JSON.stringify(node.name)} and include the top-level field "collectionId": ${JSON.stringify(node.id)} in the output JSON so it returns to this saved collection tree.\n`;
 }
 function resolveMathCollectionImport(obj) {
   const candidate = mathItems.get(mathBuilderSelection?.id);
