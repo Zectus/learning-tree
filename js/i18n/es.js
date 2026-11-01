@@ -532,3 +532,10 @@ Object.assign(UI_ES, {
   'Collection scope · ready to build': 'Alcance de la colección · listo para crear',
   'Saved {time}': 'Guardado {time}'
 });
+
+Object.assign(UI_ES, {
+  'Collections':'Colecciones',
+  'Mathematics':'Matemáticas',
+  'From counting to graduate mathematics':'Desde contar hasta matemáticas de posgrado',
+  'Choose a collection to explore its learning trees.':'Elige una colección para explorar sus árboles de aprendizaje.'
+});

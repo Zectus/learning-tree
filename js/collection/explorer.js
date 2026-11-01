@@ -57,7 +57,13 @@ function mathMapSize() {
   return {width:rect.width || 900, height:rect.height || 600};
 }
 function fitMathCamera(node) {
-  const b = node.bounds, ratio = mathAtlas.width / mathAtlas.height;
+  let b = node.bounds;
+  if (node.parent && node.children) {
+    const children=node.children.map(child=>child.bounds);
+    const x=Math.min(...children.map(c=>c.x)), y=Math.min(...children.map(c=>c.y));
+    b={x,y,w:Math.max(...children.map(c=>c.x+c.w))-x,h:Math.max(...children.map(c=>c.y+c.h))-y};
+  }
+  const ratio = mathAtlas.width / mathAtlas.height;
   const w = Math.max(b.w*1.12, b.h*1.12*ratio);
   mathAtlas.camera = {x:b.x+b.w/2-w/2, y:b.y+b.h/2-w/ratio/2, w, h:w/ratio};
   renderMathMap();
@@ -77,30 +83,42 @@ function mathLabelLines(name, maxChars, maxLines) {
 function renderMathMap() {
   if (!mathAtlas.camera) return;
   const svg = mathEl('explorer-map'), camera = mathAtlas.camera;
-  const size = mathMapSize(), scale = size.width / camera.w, font = 13/scale;
+  const size = mathMapSize(), scale = size.width / camera.w;
+  let focus = mathItems.get(mathAtlas.focusId);
+  while (focus.parent && camera.w > Math.max(focus.bounds.w,focus.bounds.h*mathAtlas.width/mathAtlas.height)*1.55) focus=focus.parent;
   svg.setAttribute('viewBox', `${camera.x} ${camera.y} ${camera.w} ${camera.h}`);
   const pieces = [];
   for (const node of mathItems.values()) {
-    if (!node.parent) continue;
+    // Reveal the neighborhood being explored, keeping ancestor frames out of it.
+    if (node.depth <= focus.depth || node.path.slice(0,focus.path.length).join('/') !== focus.path.join('/')) continue;
+    const immediate = node.parent === focus;
+    if (!immediate && (node.parent.bounds.w*scale < 420 || node.parent.bounds.h*scale < 300)) continue;
     const b = node.bounds, sw = b.w*scale, sh = b.h*scale;
-    if (sw < 34 || sh < 24 || b.x > camera.x+camera.w || b.y > camera.y+camera.h || b.x+b.w < camera.x || b.y+b.h < camera.y) continue;
-    // Ancestor headers should not float across the camera when deeply zoomed.
-    const ancestor = mathItems.get(mathAtlas.focusId).path.length > node.path.length && mathItems.get(mathAtlas.focusId).path.slice(0,node.path.length).join('/') === node.path.join('/');
-    if (ancestor) continue;
+    if (sw < 65 || sh < 50 || b.x > camera.x+camera.w || b.y > camera.y+camera.h || b.x+b.w < camera.x || b.y+b.h < camera.y) continue;
     const selected = node.id === mathAtlas.selectedId;
-    const matching = mathMatchesStage(node);
-    const opacity = node.children ? .15 + Math.min(node.depth,3)*.02 : .29;
-    pieces.push(`<g data-math-id="${node.id}" role="button" tabindex="${node.parent.id === mathAtlas.focusId || selected ? '0' : '-1'}" aria-label="${svEsc(node.name + ', ' + (node.children ? t('{n} learning trees',{n:node.count}) : t(MATH_STAGES[node.stage])))}" class="${selected ? 'math-selected' : ''} ${matching ? '' : 'explorer-dim'}"><title>${svEsc(node.name)}</title><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="${Math.min(6/scale,b.w*.02,b.h*.02)}" style="fill:${MATH_COLORS[node.family]};fill-opacity:${opacity}"/>`);
-    const labelH = node.children ? node.headerHeight*scale : sh;
-    const nearFocus = node.depth <= mathItems.get(mathAtlas.focusId).depth+1;
-    if (sw > 70 && labelH > 24 && (nearFocus || (sw > 240 && sh > 150))) {
-      const pad = 8/scale, maxChars = Math.max(6,Math.floor((sw-16)/7));
-      const lines = mathLabelLines(node.name, maxChars, node.children ? Math.min(3,Math.floor((labelH-8)/16)) : Math.min(4,Math.floor((sh-16)/16)));
-      pieces.push(`<text x="${b.x+pad}" y="${b.y+pad+font}" font-size="${font}" font-weight="${node.children ? 600 : 500}">`);
-      lines.forEach((line,i) => pieces.push(`<tspan x="${b.x+pad}" dy="${i ? font*1.25 : 0}">${svEsc(line)}</tspan>`));
-      pieces.push('</text>');
+    const inset = 5/scale, x=b.x+inset, y=b.y+inset, w=b.w-inset*2, h=b.h-inset*2;
+    const clip = 'clip_'+node.id;
+    const childVisible = node.children?.some(child => child.bounds.w*scale >=65 && child.bounds.h*scale >=50) && sw>=420 && sh>=300;
+    pieces.push(`<g data-math-id="${node.id}" role="button" tabindex="${immediate || selected ? '0' : '-1'}" aria-label="${svEsc(node.name + ', ' + (node.children ? t('{n} learning trees',{n:node.count}) : t(MATH_STAGES[node.stage])))}" class="math-region-card ${selected ? 'math-selected' : ''} ${mathMatchesStage(node) ? '' : 'explorer-dim'}"><title>${svEsc(node.name)}</title><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${10/scale}"/><defs><clipPath id="${clip}"><rect x="${x+10/scale}" y="${y+8/scale}" width="${Math.max(1,w-20/scale)}" height="${Math.max(1,h-16/scale)}"/></clipPath></defs><g clip-path="url(#${clip})">`);
+    const pad = Math.min(24,sw*.09)/scale;
+    const fontPx = sw>250 && sh>180 ? 21 : 14;
+    const font=fontPx/scale, maxChars=Math.max(6,Math.floor((sw-pad*scale*2-10)/(fontPx*.55)));
+    const lines=mathLabelLines(node.name,maxChars,childVisible ? 2 : Math.max(1,Math.min(3,Math.floor(sh/36))));
+    const labelY=childVisible ? y+pad+font : y+Math.max(pad*scale+fontPx,sh*.28)/scale;
+    pieces.push(`<text x="${x+pad}" y="${labelY}" font-size="${font}" font-weight="600">`);
+    lines.forEach((line,i)=>pieces.push(`<tspan x="${x+pad}" dy="${i ? font*1.3 : 0}">${svEsc(line)}</tspan>`));
+    pieces.push('</text>');
+    if (!childVisible && sw>150 && sh>135) {
+      const small=12/scale, subY=labelY+lines.length*font*1.3+10/scale;
+      pieces.push(`<text class="math-map-meta" x="${x+pad}" y="${subY}" font-size="${small}" style="fill:var(--text-m)">${svEsc(node.children ? t('{n} learning trees',{n:node.count})+'  ↗' : t(MATH_STAGES[node.stage]))}</text>`);
+      if (!node.children && sw>180 && sh>180) {
+        const scopeLines=mathLabelLines(node.scope,Math.floor((sw-pad*scale*2-10)/7.2),4);
+        pieces.push(`<text x="${x+pad}" y="${subY+35/scale}" font-size="${14/scale}" style="fill:var(--text-m)">`);
+        scopeLines.forEach((line,i)=>pieces.push(`<tspan x="${x+pad}" dy="${i ? 22/scale : 0}">${svEsc(line)}</tspan>`));
+        pieces.push('</text>');
+      }
     }
-    pieces.push('</g>');
+    pieces.push(`</g><path d="M${x+pad} ${y+16/scale} h${22/scale}" stroke="${MATH_COLORS[node.family]}" stroke-width="3" vector-effect="non-scaling-stroke" pointer-events="none"/></g>`);
   }
   svg.innerHTML = pieces.join('');
 }
@@ -266,14 +284,27 @@ document.addEventListener('tree-loaded', () => {
   });
 });
 function resizeMathAtlas() {
-  if (!mathIsOpen() || mathAtlas.view !== 'map') return;
+  if (!mathIsOpen() || mathAtlas.view !== 'map' || mathEl('explorer-shell').classList.contains('explorer-picking')) return;
   const size = mathMapSize(), height = mathAtlas.width*size.height/size.width;
   if (Math.abs(height-mathAtlas.height) < 1) return;
   mathAtlas.height = height;
   layoutMathRegions(MATH_COLLECTION,0,0,mathAtlas.width,height);
   fitMathCamera(mathItems.get(mathAtlas.selectedId || mathAtlas.focusId));
 }
+function showMathCollections() {
+  mathEl('explorer-shell').classList.add('explorer-picking');
+  mathEl('explorer-collection-picker').hidden=false;
+  mathEl('explorer-collections').hidden=true;
+  uiText(mathEl('explorer-shell').querySelector('.explorer-eyebrow'),'Collections');
+  const url=new URL(location.href); url.hash='explore=collections'; history.replaceState(history.state,'',url);
+  mathEl('explorer-open-math').focus();
+}
+function openTreeExplorer() { openMathAtlas(); showMathCollections(); }
 function openMathAtlas({target, returnTo} = {}) {
+  mathEl('explorer-shell').classList.remove('explorer-picking');
+  mathEl('explorer-collection-picker').hidden=true;
+  mathEl('explorer-collections').hidden=false;
+  uiText(mathEl('explorer-shell').querySelector('.explorer-eyebrow'),'Mathematics collection');
   if (!mathIsOpen()) {
     mathAtlas.returnTo = returnTo || (mathEl('library-modal-backdrop').classList.contains('open') ? 'library' : null);
     mathAtlas.returnHash = location.hash;
@@ -297,8 +328,10 @@ function closeMathAtlas(restore = true) {
   history.replaceState(history.state,'',url);
   if (restore && mathAtlas.returnTo === 'library') void openLibraryModal();
 }
-mathEl('btn-explore-trees').addEventListener('click', () => openMathAtlas());
-mathEl('menu-explore-trees').addEventListener('click', () => openMathAtlas({target:state.collectionId || [...mathItems.values()].find(n => !n.children && n.name === state.topic)?.id}));
+mathEl('btn-explore-trees').addEventListener('click', openTreeExplorer);
+mathEl('explorer-open-math').addEventListener('click', () => openMathAtlas());
+mathEl('explorer-collections').addEventListener('click', showMathCollections);
+mathEl('menu-explore-trees').addEventListener('click', openTreeExplorer);
 mathEl('explorer-close').addEventListener('click', () => closeMathAtlas());
 mathEl('explorer-library').addEventListener('click', () => { closeMathAtlas(false); void openLibraryModal(); });
 mathEl('explorer-backdrop').addEventListener('click', e => { if (e.target === mathEl('explorer-backdrop')) closeMathAtlas(); });
@@ -336,6 +369,7 @@ mathEl('tree-back-to-atlas').addEventListener('click', () => {
 });
 onEscape(110, () => {
   if (!mathIsOpen()) return false;
+  if (mathEl('explorer-shell').classList.contains('explorer-picking')) { closeMathAtlas(); return true; }
   if (!mathEl('explorer-results').hidden) { mathEl('explorer-search').focus(); mathEl('explorer-results').hidden=true; }
   else closeMathAtlas();
   return true;
@@ -396,3 +430,5 @@ if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resizeMathAtlas).o
 })();
 const mathLinkedId=new URLSearchParams(location.hash.slice(1)).get('explore');
 if (mathItems.has(mathLinkedId)) { openMathAtlas({target:mathLinkedId}); mathAtlas.returnHash=''; }
+
+if (mathLinkedId === 'collections') { openTreeExplorer(); mathAtlas.returnHash=''; }

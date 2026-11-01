@@ -19,9 +19,9 @@ python3 -m http.server 8000     # or any static server
 2. **Tree ▾ → Generate tree lessons** downloads one AI work file with the tree, shared lesson rules, and a prerequisite-ordered queue. Attach it in an AI chat with the short message shown in the panel. Import its lesson checkpoints together, even from an interrupted response. Download a fresh work file to resume only missing lessons.
 3. **📚 My Trees** saves whole trees (with their lessons) in this browser, or in your account when signed in.
 
-**My Trees → Explore trees** opens the mathematics collection. The same explorer
-is available from **Tree → Explore trees**, centered on the current collection
-tree when possible. Browse the nested subject map, zoom and pan, follow the
+**My Trees → Explore trees** opens a collection picker; select **Mathematics**
+to open its subject map. The same picker is available from **Tree → Explore trees**.
+The Collections button inside the map returns to the picker. Browse the nested subject map, zoom and pan, follow the
 breadcrumbs, search names and scope descriptions, or use the keyboard-friendly
 outline. Stage filters highlight the appropriate learning blocks without moving
 their map locations. Individual subjects can be linked with `#explore=<subject-id>`.

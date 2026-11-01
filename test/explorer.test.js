@@ -171,3 +171,24 @@ test('collection chrome switches language without changing collection scope cont
     assert.match(el(app,'explorer-detail').textContent,/partial fractions/);
   } finally {app.dom.window.close();}
 });
+
+
+test('My Trees exposes a header action leading through collections before the mathematics map', async () => {
+  const app=loadApp();
+  try {
+    await app.ev('openLibraryModal()');
+    assert.ok(el(app,'btn-explore-trees').closest('.modal-header-bar'));
+    assert.equal(app.document.querySelector('.library-collection'),null);
+    el(app,'btn-explore-trees').click();
+    assert.equal(el(app,'explorer-collection-picker').hidden,false);
+    assert.ok(el(app,'explorer-shell').classList.contains('explorer-picking'));
+    el(app,'explorer-open-math').click();
+    assert.equal(el(app,'explorer-collection-picker').hidden,true);
+    assert.equal(el(app,'explorer-shell').classList.contains('explorer-picking'),false);
+    el(app,'explorer-collections').click();
+    assert.equal(el(app,'explorer-collection-picker').hidden,false);
+    app.press('Escape');
+    await tick();
+    assert.ok(el(app,'library-modal-backdrop').classList.contains('open'));
+  } finally {app.dom.window.close();}
+});
