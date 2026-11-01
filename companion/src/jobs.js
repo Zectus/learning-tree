@@ -1,13 +1,18 @@
 import { randomUUID, createHash } from 'node:crypto';
 import format from '../../js/learn/generation-format.js';
+import review from '../../js/learn/lesson-review.js';
 const { generationTreeKey, lessonIsComplete } = format;
+const { LESSON_REVIEW_SYSTEM, lessonAuditPrompt, lessonRepairPrompt, lessonVerificationPrompt, parseLessonAudit, parseLessonRepair, parseLessonVerification } = review;
+const contentHash = content => createHash('sha256').update(content).digest('hex');
 const clone = value => JSON.parse(JSON.stringify(value));
+const questionIds = content => [...content.matchAll(/\[(QUESTION|BONUS)\s+(\d+)\]/gi)]
+  .map(([, kind, number]) => kind.toUpperCase() + ':' + Number(number)).sort();
 export class Jobs {
   constructor({ storage, providers, now = () => Date.now() }) { Object.assign(this, { storage, providers, now }); this.jobs = new Map(); this.active = null; }
   async init() {
     const saved = await this.storage.read('jobs.json', []);
     for (const job of saved) {
-      if (job.status === 'running') { job.status = 'paused'; job.error = 'The companion stopped. Resume to continue from the last saved lesson.'; job.currentNode = null; }
+      if (job.status === 'running') { job.status = 'paused'; job.error = 'The companion stopped. Resume to continue from the last saved lesson.'; job.currentNode = null; job.currentPhase = null; }
       this.jobs.set(job.id, job);
     }
     await this.persist();
@@ -17,7 +22,7 @@ export class Jobs {
     const done = new Set(job.records.map(r => r.id));
     return { id: job.id, treeKey: job.treeKey, topic: job.tree.topic || 'Untitled tree', provider: job.provider, accountLabel: job.accountLabel || '', model: job.model, effort: job.effort,
       createdAt: job.createdAt, updatedAt: job.updatedAt, status: job.status, error: job.error || '',
-      total: job.queue.length, completed: done.size, currentNode: job.currentNode || null, characters: job.characters || 0,
+      total: job.queue.length, completed: done.size, currentNode: job.currentNode || null, currentPhase: job.currentPhase || null, characters: job.characters || 0,
       nodes: job.queue.map(id => ({ id, label: job.tree.nodes.find(n => n.id === id).label, completed: done.has(id) })) };
   }
   get(id) { const job = this.jobs.get(id); if (!job) throw new Error('Generation job not found.'); return job; }
@@ -66,6 +71,13 @@ export class Jobs {
         const current = await this.providers[job.provider].status();
         if (!current.connected || (current.accountKey || current.email) !== job.account) throw new Error('Reconnect the subscription account used to create this job before resuming it.');
       }
+      // A user-initiated Resume may start a new bounded acceptance cycle.
+      // Preserve the rejected cycle and reuse its original draft, not a rewrite.
+      if (job.pending?.blocked) {
+        job.reviewHistory ||= [];
+        job.reviewHistory.push({ ...clone(job.pending), outcome: 'blocked' });
+        job.pending = { id: job.pending.id, draft: job.pending.draft };
+      }
       const controller = new AbortController();
       job.status = 'running'; job.error = ''; job.updatedAt = this.now();
       this.active = { id, controller };
@@ -81,18 +93,22 @@ export class Jobs {
         if (job.records.some(r => r.id === id)) continue;
         controller.signal.throwIfAborted();
         job.currentNode = id; job.characters = 0;
-        const contentRaw = await this.providers[job.provider].generate({ prompt: job.prompts.find(p => p.id === id).prompt,
-          model: job.model, effort: job.effort, account: job.account, signal: AbortSignal.any([controller.signal, AbortSignal.timeout(30 * 60 * 1000)]),
-          onProgress: count => { job.characters = count; } });
-        controller.signal.throwIfAborted();
-        // Tolerate a single accidental text fence, never incomplete prose/JSON.
-        const content = String(contentRaw).trim().replace(/^```(?:txt|text)?\s*\n([\s\S]*?)\n```\s*$/, '$1').trim();
-        if (content.length > 2_000_000 || !lessonIsComplete(content)) throw new Error('The model returned a lesson with incomplete or invalid question markup. Resume to retry this node.');
+        const content = await this.acceptLesson(job, id, controller);
         await this.storage.exclusive(async () => {
           controller.signal.throwIfAborted();
           const record = { format: 'learning-tree-lesson/v1', treeKey: job.treeKey, id, content };
+          const pending = job.pending;
+          const history = {
+            id, outcome: 'accepted', draftHash: contentHash(pending.draft), contentHash: contentHash(content),
+            report: pending.report, verification: pending.verification || null,
+            decisions: pending.repair ? { acceptedIssueIds: pending.repair.acceptedIssueIds, rejectedIssues: pending.repair.rejectedIssues } : null,
+          };
+          if (content !== pending.draft) history.originalContent = pending.draft;
+          job.reviewHistory ||= [];
+          job.reviewHistory.push(history); job.pending = null;
           job.records.push(record); job.updatedAt = this.now();
-          try { await this.persist(); } catch (error) { job.records.pop(); throw error; }
+          try { await this.persist(); }
+          catch (error) { job.records.pop(); job.reviewHistory.pop(); job.pending = pending; throw error; }
         });
       }
       job.status = 'complete'; job.error = '';
@@ -100,10 +116,78 @@ export class Jobs {
       job.status = controller.signal.aborted ? 'paused' : 'failed';
       job.error = controller.signal.aborted ? '' : error.message;
     } finally {
-      job.currentNode = null; job.characters = 0; job.updatedAt = this.now();
+      job.currentNode = null; job.currentPhase = null; job.characters = 0; job.updatedAt = this.now();
       try { await this.storage.exclusive(() => this.persist()); }
       finally { if (this.active?.id === job.id) this.active = null; }
     }
+  }
+  async reviewCheckpoint(job, controller, pending, phase) {
+    await this.storage.exclusive(async () => {
+      controller.signal.throwIfAborted();
+      const previous = job.pending, previousPhase = job.currentPhase;
+      job.pending = pending; job.currentPhase = phase; job.characters = 0; job.updatedAt = this.now();
+      try { await this.persist(); }
+      catch (error) { job.pending = previous; job.currentPhase = previousPhase; throw error; }
+    });
+  }
+  async reviewCall(job, controller, prompt, reviewing = true) {
+    const result = await this.providers[job.provider].generate({
+      prompt, model: job.model, effort: job.effort, account: job.account,
+      ...(reviewing ? { instructions: LESSON_REVIEW_SYSTEM } : {}),
+      signal: AbortSignal.any([controller.signal, AbortSignal.timeout(30 * 60 * 1000)]),
+      onProgress: count => { job.characters = count; },
+    });
+    controller.signal.throwIfAborted();
+    return result;
+  }
+  async blockReview(job, controller, message) {
+    await this.reviewCheckpoint(job, controller, { ...job.pending, blocked: true, blockedReason: message }, job.currentPhase);
+    throw new Error('This lesson needs attention before it can be saved. Its draft and detailed review are retained privately; earlier accepted lessons are saved. Resume explicitly to retry acceptance using the retained draft.');
+  }
+  async acceptLesson(job, id, controller) {
+    const teachingPrompt = job.prompts.find(p => p.id === id).prompt;
+    if (job.pending && job.pending.id !== id) throw new Error('A different lesson has a pending acceptance review.');
+    if (!job.pending) {
+      job.currentPhase = 'writing';
+      const raw = await this.reviewCall(job, controller, teachingPrompt, false);
+      const draft = String(raw).trim().replace(/^```(?:txt|text)?\s*\n([\s\S]*?)\n```\s*$/, '$1').trim();
+      if (!draft || draft.length > 2_000_000) throw new Error('The model returned an empty or oversized lesson. Resume to retry this node.');
+      await this.reviewCheckpoint(job, controller, { id, draft }, 'reviewing');
+    }
+    if (!job.pending.report) {
+      await this.reviewCheckpoint(job, controller, job.pending, 'reviewing');
+      const draft = job.pending.draft;
+      // Structural failures go straight to the one repair; final verification
+      // still audits meaning and assessment before anything is committed.
+      const report = lessonIsComplete(draft)
+        ? parseLessonAudit(await this.reviewCall(job, controller, lessonAuditPrompt(teachingPrompt, draft)), draft)
+        : { issues: [{ id: 'structure', type: 'format', quote: draft.slice(0, 160), reason: 'The structural validator rejected the lesson. It requires SECTION 1, closed blocks, unique question numbers, nonempty options and exactly one valid answer tag per question.', correction: 'Restore complete valid structure while preserving the full teaching and practice.' }], uncertain: [] };
+      await this.reviewCheckpoint(job, controller, { ...job.pending, report }, 'reviewing');
+    }
+    const { report, draft } = job.pending;
+    if (report.uncertain.length) return this.blockReview(job, controller, 'Acceptance remains uncertain: ' + report.uncertain.join(' '));
+    if (!report.issues.length) {
+      if (!lessonIsComplete(draft)) return this.blockReview(job, controller, 'The review approved an invalid lesson structure.');
+      return draft;
+    }
+    if (!job.pending.repair) {
+      await this.reviewCheckpoint(job, controller, job.pending, 'repairing');
+      const repair = parseLessonRepair(await this.reviewCall(job, controller, lessonRepairPrompt(teachingPrompt, draft, report)), report);
+      await this.reviewCheckpoint(job, controller, { ...job.pending, repair }, 'repairing');
+    }
+    const { repair } = job.pending;
+    if (repair.unresolved.length) return this.blockReview(job, controller, 'The repair left an unresolved issue: ' + repair.unresolved.join(' '));
+    if (!lessonIsComplete(repair.content)) return this.blockReview(job, controller, 'The repaired lesson has incomplete or invalid question markup.');
+    if (lessonIsComplete(draft) && JSON.stringify(questionIds(draft)) !== JSON.stringify(questionIds(repair.content))) {
+      return this.blockReview(job, controller, 'The repair removed, added or renumbered assessment items in a structurally valid draft.');
+    }
+    if (!job.pending.verification) {
+      await this.reviewCheckpoint(job, controller, job.pending, 'verifying');
+      const verification = parseLessonVerification(await this.reviewCall(job, controller, lessonVerificationPrompt(teachingPrompt, draft, report, repair)));
+      await this.reviewCheckpoint(job, controller, { ...job.pending, verification }, 'verifying');
+    }
+    if (!job.pending.verification.approved) return this.blockReview(job, controller, 'Repair verification failed: ' + job.pending.verification.reason + ' ' + job.pending.verification.remaining.join(' '));
+    return repair.content;
   }
   async pause(id) {
     const job = this.get(id);

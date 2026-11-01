@@ -189,7 +189,7 @@ function renderAssistantJobs() {
     userText(card.querySelector('.assistant-job-title'), `${job.topic} · ${job.provider === 'chatgpt' ? 'ChatGPT' : 'Claude'} · ${job.model}${job.accountLabel ? ' · ' + job.accountLabel : ''}`);
     uiText(card.querySelector('.assistant-job-progress'), `${job.completed} / ${job.total} lessons saved`);
     const current = job.nodes.find(n => n.id === job.currentNode);
-    userText(card.querySelector('.assistant-job-state'), t({ running: 'Generating', paused: 'Paused', failed: 'Needs attention', complete: 'Complete' }[job.status] || job.status) + (current ? ' · ' + current.label : ''));
+    userText(card.querySelector('.assistant-job-state'), t(job.status === 'running' ? ({ reviewing: 'Reviewing lesson', repairing: 'Repairing lesson', verifying: 'Checking repair' }[job.currentPhase] || 'Generating') : ({ paused: 'Paused', failed: 'Needs attention', complete: 'Complete' }[job.status] || job.status)) + (current ? ' · ' + current.label : ''));
     uiText(card.querySelector('.assistant-job-error'), job.error || (job.treeKey !== key ? 'This job belongs to another tree. Open its tree to collect the lessons.' : ''));
     card.querySelector('[data-action="resume"]').disabled = job.status === 'running' || job.status === 'complete' || assistantState.jobs.some(j => j.status === 'running');
     card.querySelector('[data-action="pause"]').disabled = job.status !== 'running';

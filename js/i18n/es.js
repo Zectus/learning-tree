@@ -546,3 +546,11 @@ Object.assign(UI_ES, {
   'No preparation trees recommended. Start here.':'No se recomiendan árboles previos. Empieza aquí.',
   'A focused learning block, roughly 4–6 weeks at this level.':'Un bloque de aprendizaje concreto, de unas 4–6 semanas a este nivel.'
 });
+
+// Per-lesson acceptance phases.
+Object.assign(UI_ES, {
+  "Reviewing lesson": "Revisando lección",
+  "Repairing lesson": "Corrigiendo lección",
+  "Checking repair": "Verificando corrección",
+  "Lessons are reviewed before saving. Repairs can take additional time and usage.": "Las lecciones se revisan antes de guardarlas. Las correcciones pueden requerir más tiempo y uso."
+});

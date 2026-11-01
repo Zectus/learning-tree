@@ -50,13 +50,13 @@ export class Claude {
     } catch (error) { return { installed: !error.message.startsWith('Install'), connected: false, email: '', message: error.message }; }
   }
   async models() { return [{ id: 'opus', name: 'Claude Opus' }, { id: 'sonnet', name: 'Claude Sonnet' }]; }
-  async generate({ prompt, model, effort, signal, onProgress, account }) {
+  async generate({ prompt, model, effort, signal, onProgress, account, instructions = 'Write a complete lesson following the supplied teaching prompt. Return only its plain-text content. No files, tools, or external actions are needed.' }) {
     const status = await this.status();
     if (!status.connected) throw new Error(status.message);
     if (account && status.email !== account) throw new Error('Reconnect the subscription account used to create this job before resuming it.');
     if (!['opus', 'sonnet'].includes(model)) throw new Error('Choose a supported Claude model.');
     const args = ['-p', '--output-format', 'json', '--model', model,
-      '--system-prompt', 'Write a complete lesson following the supplied teaching prompt. Return only its plain-text content. No files, tools, or external actions are needed.',
+      '--system-prompt', instructions,
       '--tools', '', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}',
       '--setting-sources', '', '--settings', '{"disableAllHooks":true,"forceLoginMethod":"claudeai"}',
       '--no-session-persistence', '--max-turns', '1'];

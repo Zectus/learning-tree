@@ -72,7 +72,7 @@ WITHOUT FILE TOOLS: publish each finished record immediately in the chat. You ma
 
 WITH FILE TOOLS: create a downloadable .jsonl journal and expose it after the first complete record. Append and save each complete record before continuing; use atomic writes or a complete-line append and flush when available. Do not save only at the end. Continue through queue while able; the chat reply maximum does not limit tool-based work. Preserve earlier checkpoints if a later lesson fails. For a known usage limit, reserve room to expose the last saved checkpoint. You may additionally produce a usable tree JSON by inserting each content into its tree node and saving atomically after each lesson; preserve structure, and never replace the journal with one giant rewrite. JSONL records are the interruption fallback.
 
-IF SUBAGENTS ARE AVAILABLE: use a small wave of independent queue nodes. Prerequisites outside queue are background context and need no generation. Share the teaching rules once per worker and only the relevant node context. A single coordinator validates and commits each result as soon as it arrives. Do not have every worker rewrite the whole tree or write to one shared file. Do not start descendants until any prerequisites also in queue are committed. Preserve logical learning order and prioritize a usable path. Without subagents, work sequentially using the identical format.
+IF SUBAGENTS ARE AVAILABLE: use a small wave of independent queue nodes. Prerequisites outside queue are background context and need no generation. Share the teaching rules once per worker and only the relevant node context. A single coordinator applies LESSON ACCEPTANCE BEFORE DELIVERY OR SAVE to each returned draft and commits it as soon as it passes. Do not have every worker rewrite the whole tree or write to one shared file. Do not start descendants until any prerequisites also in queue are committed. Preserve logical learning order and prioritize a usable path. Without subagents, work sequentially using the identical format.
 
 SHARED RULES FOR EACH DECODED content
 The plain-text restrictions below apply to lesson content, not its JSONL envelope. The topic and CONTEXT vary by node; every other teaching rule stays the same.`;
@@ -105,7 +105,7 @@ Return one JSON record with format="${LESSON_RECORD_FORMAT}", treeKey="${generat
     languageClause: `\nLANGUAGE\nWrite every lesson in ${language}. Use === SECTION N: TITLE === section headings. Keep QUESTION, ANSWER, BONUS, TABLE, TIMELINE, GRAPH and graph field names in their literal parser syntax.\n`,
   };
   const resumeNote = 'RESUME BACKUPS: when completed is nonempty, this work file deliberately omits those lessons’ text. A JSON built only from this packet does not contain all earlier lessons. Keep the journal of new records to merge into the original tree; export the complete backup from the app after importing.';
-  return tailoredProtocol + '\n\n' + effortInstruction + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + renderNodePrompt(values);
+  return tailoredProtocol + '\n\n' + effortInstruction + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + renderNodePrompt(values) + '\n\n' + LESSON_ACCEPTANCE_RULES;
 }
 
 function buildGenerationPacket(language, replySize = '1', options = generationSelection) {

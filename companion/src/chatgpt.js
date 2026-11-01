@@ -146,8 +146,8 @@ export class ChatGPT {
     const body = await response.json();
     return (body.models || []).filter(m => m.visibility === 'list' && typeof m.slug === 'string').map(m => ({ id: m.slug, name: m.display_name || m.slug }));
   }
-  async generate({ prompt, model, effort, signal, onProgress, account }) {
-    const body = { model, instructions: 'Write a complete lesson following the supplied teaching prompt. Return only its plain-text content. No files, tools, or external actions are needed.', input: [{ role: 'user', content: prompt }], store: false, stream: true };
+  async generate({ prompt, model, effort, signal, onProgress, account, instructions = 'Write a complete lesson following the supplied teaching prompt. Return only its plain-text content. No files, tools, or external actions are needed.' }) {
+    const body = { model, instructions, input: [{ role: 'user', content: prompt }], store: false, stream: true };
     if (effort && effort !== 'default') body.reasoning = { effort };
     const response = await this.fetch(`${OPENAI_RESOURCE}/responses`, { method: 'POST',
       headers: { Authorization: `Bearer ${await this.accessToken(account)}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal });
