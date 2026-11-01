@@ -61,9 +61,8 @@ test('adding a scope persists once, leaves the active tree intact, and reopens a
     assert.equal(el(app,'tree-topic-input').value,'Integration Techniques');
     assert.match(el(app,'tree-prompt-box').value,/MATHEMATICS COLLECTION SCOPE/);
     assert.match(el(app,'tree-prompt-box').value,/partial fractions/);
-    assert.match(el(app,'tree-prompt-box').value,/Do not ask calibration questions or wait for learner answers/);
     assert.match(el(app,'tree-prompt-box').value,/state them explicitly in the relevant root teaching briefs/);
-    assert.doesNotMatch(el(app,'tree-prompt-box').value,/CALIBRATE THE STARTING|Ask concrete checkpoint|Begin with calibration|Keep the calibration/);
+    assert.doesNotMatch(el(app,'tree-prompt-box').value,/calibrat|wait for learner answers/i);
     assert.match(el(app,'tree-prompt-box').value,/"collectionId": "math_integration_techniques"/);
     assert.equal(app.ev('JSON.stringify(buildTreeJSON(true))'),before);
     app.ev('closeTreeModal(); openTreeModal()');

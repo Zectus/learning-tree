@@ -108,7 +108,7 @@ Finally validate the file itself: strict JSON, unique nonempty ids, nonempty lab
 function renderTreePrompt({ topic, fileSlug, language, languageClause, collectionContext = '' }) {
   return `You are designing a prerequisite tree for the subject: ${topic}
 
-Deliver this as a downloadable file named ${fileSlug}-tree.json — not as JSON pasted into the chat as text. Do all planning and double-checking in your thinking; ${collectionContext ? "your final message should contain nothing but the downloadable file itself, with no preamble or commentary. Begin designing immediately; do not ask calibration questions." : TREE_FINAL_MESSAGE_RULE}
+Deliver this as a downloadable file named ${fileSlug}-tree.json — not as JSON pasted into the chat as text. Do all planning and double-checking in your thinking; ${collectionContext ? "your final message should contain nothing but the downloadable file itself, with no preamble or commentary." : TREE_FINAL_MESSAGE_RULE}
 
 ${TREE_NODE_FRAMING}${languageClause}
 
@@ -138,7 +138,7 @@ ${TREE_FIELD_NOTES}
 
 ${TREE_PLAN_AND_REVIEW}
 
-${collectionContext ? 'Use the collection-defined starting point and destination to design, check, and deliver the tree now. No questions or learner calibration are needed.' : "Begin with calibration and wait for the person's answers. Once the starting knowledge and destination are clear, design, check, and deliver the tree in this conversation."}`;
+${collectionContext ? 'Use the collection-defined starting point and destination to design, check, and deliver the tree.' : "Begin with calibration and wait for the person's answers. Once the starting knowledge and destination are clear, design, check, and deliver the tree in this conversation."}`;
 }
 
 /* ── from a file ── */
