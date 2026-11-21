@@ -90,8 +90,8 @@ This is a plain .txt file. Rules:
 - No HTML, no code blocks, no widgets, and no interactive elements of any kind — the one exception is the slider line a graph block can carry (see Graphs below), which is part of the graph format, not HTML
 - Prose only — use plain paragraphs and the section/question/table/timeline/graph markers below
 
-Section headers:
-=== SECTION N: TITLE ===
+Section headers (write the title in normal sentence case, not ALL CAPS):
+=== SECTION N: Section title ===
 
 The very first line of the document must be "=== SECTION 1: TITLE ===" — nothing precedes it. No title line, no opening sentence, no framing paragraph sits above the first section header; start the lesson at that marker so its structure is clear.
 

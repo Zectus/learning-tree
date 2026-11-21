@@ -144,8 +144,17 @@ function renderProse(text) {
   // must be rendered here. Keep block markup outside paragraph elements.
   return text.split(/\[TABLE\]([\s\S]*?)\[\/TABLE\]/gi).map((part, i) => {
     if (i % 2) return renderTable(parseTableBody(part));
-    return part.split(/\n{2,}/).map(c => c.trim()).filter(Boolean)
-      .map(c => `<p>${linkifySectionRefs(svEsc(c)).replace(/\n/g, '<br>')}</p>`).join('');
+    return part.split(/\n{2,}/).map(c => c.trim()).filter(Boolean).map(c => {
+      // Standalone display equation: render in its own tight wrapper instead of
+      // nesting .katex-display inside <p>, which would double vertical margins.
+      if (/^\\\[[\s\S]*?\\\]$/.test(c)) {
+        return `<div class="sv-math-display">${svEsc(c)}</div>`;
+      }
+      // Remove bare single newlines immediately around inline \[...\] blocks so
+      // they don't turn into extra <br> blank lines above/below display math.
+      const normalized = c.replace(/\n+(?=\\\[)/g, '').replace(/(\\\])\n+/g, '$1');
+      return `<p>${linkifySectionRefs(svEsc(normalized)).replace(/\n/g, '<br>')}</p>`;
+    }).join('');
   }).join('');
 }
 

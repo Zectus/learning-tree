@@ -178,9 +178,14 @@
   padding-bottom: 0.6875rem; border-bottom: 1px solid var(--border);
   margin-bottom: 1.625rem;
 }
-.sv-prose p { margin: 0 0 1.05em; }
+.sv-prose p { margin: 0 0 0.95em; }
 .sv-prose p:last-child { margin-bottom: 0; }
-.katex-display { margin: 1.4em 0 !important; overflow-x: auto; overflow-y: visible; }
+.sv-math-display { margin: 0.65em 0; }
+.sv-math-display:first-child { margin-top: 0; }
+.sv-math-display:last-child { margin-bottom: 0; }
+.sv-math-display .katex-display { margin: 0 !important; }
+.katex { text-transform: none; }
+.katex-display { margin: 0.7em 0 !important; overflow-x: auto; overflow-y: visible; }
 
 /* Section cross-references (linkifySectionRefs in viewer.js): plain text that
    happens to be clickable, so a dotted underline that only turns link-blue on hover. */
@@ -212,7 +217,7 @@
 }
 .sv-table th {
   font-weight: 600; color: var(--text-m);
-  font-size: 0.75rem; text-transform: uppercase; letter-spacing: .03em;
+  font-size: 0.8125rem;
   border-bottom: 2px solid var(--border);
 }
 .sv-table tbody tr:last-child td { border-bottom: none; }
@@ -235,26 +240,52 @@
 .sv-tl-marker { font-weight: 600; font-size: 0.84375rem; color: var(--avail-bdr); margin-bottom: 0.125rem; }
 .sv-tl-text { font-size: 0.90625rem; line-height: 1.55; color: var(--text); }
 
-/* [GRAPH]...[/GRAPH] — the plot has a fixed height (Plotly's own default is
-   450px) so the lesson's layout doesn't jump when the graph libraries finish
-   loading and the checkpoint positions computed before that stay right. */
-.sv-graph-wrap { margin: 1.75rem 0; }
-.sv-graph-title { font-size: 0.8125rem; font-weight: 600; color: var(--text-m); margin-bottom: 0.5rem; }
-.sv-graph-plot { height: 28rem; position: relative; overflow: hidden; background: var(--surface); }
+/* [GRAPH]...[/GRAPH] — unified card matching the slider's aesthetic. Fixed plot
+   height prevents layout jumps while graph libraries load so checkpoint positions stay right. */
+.sv-graph-wrap {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--bg);
+  overflow: hidden;
+}
+.sv-graph-title {
+  font-size: 0.8125rem; font-weight: 600; color: var(--text-m);
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.sv-graph-plot { height: 27rem; position: relative; overflow: hidden; background: var(--bg); }
 /* These scoped rules also win over JSXGraph's lazily loaded default text styles. */
 .sv-graph-plot .sv-graph-tick,
 .sv-graph-plot .sv-graph-label {
   font-family: var(--font) !important;
   white-space: nowrap;
   line-height: 1.2;
-  text-shadow: 0 0 3px var(--surface), 0 0 3px var(--surface), 0 0 3px var(--surface);
+  text-shadow: 0 0 4px var(--bg), 0 0 4px var(--bg), 0 0 4px var(--bg);
+}
+.sv-graph-plot .sv-graph-tick { font-variant-numeric: tabular-nums; }
+.sv-graph-loading {
+  display: flex; align-items: center; justify-content: center;
 }
 .sv-graph-loading::after { content: 'Loading graph…'; font-size: 0.8125rem; color: var(--text-m); }
-.sv-graph-controls { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.875rem; }
+.sv-graph-legend {
+  display: flex; flex-wrap: wrap; gap: 0.375rem 1rem;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.8125rem; color: var(--text-m);
+}
+.sv-graph-controls {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  padding: 0.375rem 0.625rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
 .sv-graph-slider {
   display: flex; align-items: center; gap: 0.875rem;
-  padding: 0.25rem 0.875rem;
-  border: 1px solid var(--border); border-radius: 0.5rem;
+  padding: 0.1875rem 0.75rem;
+  border: 1px solid transparent; border-radius: 0.4375rem;
   background: var(--bg); cursor: pointer;
   transition: border-color .12s;
 }
