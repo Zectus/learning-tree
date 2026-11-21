@@ -71,8 +71,22 @@ let _languagePrefill = ''; // what we last put in the language field ourselves
 let _pendingSingleLesson = '';
 let _pendingSingleErrors = [];
 
-function stripLessonFence(raw) {
-  return String(raw || '').trim().replace(/^```(?:txt|text)?\s*\n([\s\S]*?)\n```\s*$/, '$1').trim();
+function extractLessonText(raw) {
+  let text = String(raw || '').replace(/^\uFEFF/, '').trim();
+  // Unwrap a single outer code fence (e.g. ```txt ... ```) if the AI used one.
+  const fenced = text.match(/^```[^\r\n]*\r?\n([\s\S]*?)\r?\n```\s*$/);
+  if (fenced) text = fenced[1].trim();
+  // If the AI added a short intro before Section 1 (or wrapped it in a code block
+  // after an intro), jump directly to the lesson start.
+  if (!/^===\s*(?:SECTION|SECCI[OÓ]N)\s+1[:.]/i.test(text)) {
+    const innerFence = text.match(/```[^\r\n]*\r?\n(===\s*(?:SECTION|SECCI[OÓ]N)\s+1[:.][\s\S]*?)\r?\n```/i);
+    if (innerFence) text = innerFence[1].trim();
+    else {
+      const start = text.match(/^===\s*(?:SECTION|SECCI[OÓ]N)\s+1[:.]/im);
+      if (start) text = text.slice(start.index).trim();
+    }
+  }
+  return text;
 }
 function clearSingleLessonFeedback() {
   _pendingSingleLesson = '';
@@ -88,20 +102,25 @@ function refreshSingleLessonControls() {
   if (input && btn) btn.disabled = !input.value.trim();
 }
 function buildSingleLessonFixPrompt(errors) {
-  return `The lesson you returned has structural markup issues that prevent it from loading cleanly:\n${errors.map(e => `- ${e}`).join('\n')}\n\nPlease fix these issues and return the complete corrected plain-text lesson (no markdown fences), keeping all teaching content, questions, and language intact.`;
+  return `The lesson you returned has structural markup issues that prevent it from loading cleanly:\n${errors.map(e => `- ${e}`).join('\n')}\n\nPlease fix these issues and return the complete corrected plain-text lesson (no preamble or commentary), keeping all teaching content, questions, and language intact.`;
 }
 function openSingleLessonText(raw) {
-  if (_modalNodeId === null) return;
-  const cleaned = stripLessonFence(raw);
-  if (!cleaned) return;
+  if (_modalNodeId === null) return false;
+  const cleaned = extractLessonText(raw);
+  if (!cleaned) return false;
   const check = typeof validateLessonStructure === 'function' ? validateLessonStructure(cleaned) : { valid: true, errors: [] };
   if (check.valid) {
     clearSingleLessonFeedback();
     openViewer(cleaned, _modalNodeId);
-    return;
+    return true;
   }
   _pendingSingleLesson = cleaned;
   _pendingSingleErrors = check.errors;
+  const pasteBox = document.getElementById('single-lesson-input');
+  if (pasteBox && pasteBox.value !== cleaned) {
+    pasteBox.value = cleaned;
+    refreshSingleLessonControls();
+  }
   const list = document.getElementById('single-lesson-errors');
   list.replaceChildren();
   for (const err of check.errors) {
@@ -110,6 +129,31 @@ function openSingleLessonText(raw) {
     list.appendChild(li);
   }
   document.getElementById('single-lesson-feedback').classList.remove('hidden');
+  return false;
+}
+async function pasteSingleLessonFromClipboard() {
+  if (_modalNodeId === null) return;
+  const revealManual = () => {
+    const manual = document.getElementById('single-lesson-manual');
+    if (manual) manual.open = true;
+    document.getElementById('single-lesson-input')?.focus();
+  };
+  if (!navigator.clipboard?.readText) {
+    revealManual();
+    showToast("Couldn't read clipboard automatically — paste the lesson below.");
+    return;
+  }
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!String(text || '').trim()) {
+      showToast("Your clipboard is empty. Copy the AI's finished lesson first.");
+      return;
+    }
+    openSingleLessonText(text);
+  } catch {
+    revealManual();
+    showToast("Couldn't read clipboard automatically — paste the lesson below.");
+  }
 }
 
 function openLearnModal(id) {
@@ -117,6 +161,10 @@ function openLearnModal(id) {
   if (!node) return;
 
   _modalNodeId = id;
+  const promptDetails = document.getElementById('single-prompt-details');
+  if (promptDetails) promptDetails.open = false;
+  const manualDetails = document.getElementById('single-lesson-manual');
+  if (manualDetails) manualDetails.open = false;
   const pasteBox = document.getElementById('single-lesson-input');
   if (pasteBox) pasteBox.value = '';
   clearSingleLessonFeedback();
@@ -133,7 +181,7 @@ function openLearnModal(id) {
   const prompt = buildPrompt(id, languageInput.value.trim());
 
   document.getElementById('modal-title').textContent = node.label;
-  uiText(document.getElementById('modal-meta'), `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · copy prompt, paste into AI, then paste or upload the lesson`);
+  uiText(document.getElementById('modal-meta'), `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · copy prompt, paste into AI, then bring the lesson back`);
   document.getElementById('prompt-box').value = prompt;
   resetCopyButton('btn-copy-prompt');
   document.getElementById('modal-backdrop').classList.add('open');
@@ -145,6 +193,9 @@ document.getElementById('node-language-input').addEventListener('input', () => {
   resetCopyButton('btn-copy-prompt');
 });
 
+document.getElementById('btn-paste-single-lesson').addEventListener('click', () => {
+  void pasteSingleLessonFromClipboard();
+});
 document.getElementById('single-lesson-input').addEventListener('input', () => {
   clearSingleLessonFeedback();
   refreshSingleLessonControls();
@@ -265,7 +316,9 @@ function resetCopyButton(btnId) {
   clearTimeout(_copyTimers.get(btnId));
   _copyTimers.delete(btnId);
   const btn = document.getElementById(btnId);
-  uiText(btn, 'Copy');
+  const label = btn.dataset.copyLabel || 'Copy';
+  const target = btn.querySelector('[data-ui-text]') || btn;
+  uiText(target, label);
   btn.classList.remove('copied');
 }
 function wireCopyButton(btnId, taId) {
@@ -274,14 +327,19 @@ function wireCopyButton(btnId, taId) {
     const onCopied = () => {
       clearTimeout(_copyTimers.get(btnId));
       const btn = document.getElementById(btnId);
-      uiText(btn, 'Copied ✓');
+      const target = btn.querySelector('[data-ui-text]') || btn;
+      uiText(target, 'Copied ✓');
       btn.classList.add('copied');
       _copyTimers.set(btnId, setTimeout(() => resetCopyButton(btnId), 2000));
     };
     const fallbackCopy = () => {
+      const details = ta.closest('details');
+      const wasClosed = details && !details.open;
+      if (wasClosed) details.open = true;
       ta.focus(); ta.select();
       let ok = false;
       try { ok = document.execCommand('copy'); } catch {}
+      if (wasClosed) details.open = false;
       if (ok) onCopied();
       else showToast("Couldn't copy automatically — select the prompt text and copy it by hand.");
     };

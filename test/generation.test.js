@@ -791,16 +791,30 @@ test('validateLessonStructure reports concrete graph, table, and question syntax
   assert.equal(validateLessonStructure(goodGraphAndTable).valid, true);
 });
 
-test('single-node modal supports direct paste, fence stripping, inline diagnostics, and open-anyway fallback', async () => {
+test('single-node modal hides prompt/manual paste by default and supports one-click clipboard import with diagnostics', async () => {
   const app = loadApp();
   try {
     loadTree(app); await tick();
     app.ev('openLearnModal(1)');
+    const promptDetails = el(app, 'single-prompt-details');
+    const manualDetails = el(app, 'single-lesson-manual');
+    const pasteBtn = el(app, 'btn-paste-single-lesson');
     const input = el(app, 'single-lesson-input');
     const openBtn = el(app, 'btn-open-single-lesson');
     const feedback = el(app, 'single-lesson-feedback');
+    assert.equal(promptDetails.open, false);
+    assert.equal(manualDetails.open, false);
     assert.equal(openBtn.disabled, true);
     assert.equal(feedback.classList.contains('hidden'), true);
+
+    // Clipboard read failure reveals the manual paste fallback cleanly.
+    Object.defineProperty(app.window.navigator, 'clipboard', {
+      configurable: true,
+      value: { readText: async () => { throw new Error('Denied'); } },
+    });
+    pasteBtn.click(); await tick();
+    assert.equal(manualDetails.open, true);
+    assert.match(app.toasts().join(' '), /paste the lesson below/);
 
     // Invalid paste surfaces concrete diagnostics and offers fix prompt + open anyway.
     input.value = '=== SECTION 1: Draft ===\n[QUESTION 1]\nMissing answer\n(A) Yes\n(B) No\n[/QUESTION]';
@@ -812,11 +826,13 @@ test('single-node modal supports direct paste, fence stripping, inline diagnosti
     assert.equal(el(app, 'session-viewer').classList.contains('sv-open'), false);
     assert.match(app.ev('buildSingleLessonFixPrompt(_pendingSingleErrors)'), /\[ANSWER: A-E\]/);
 
-    // Valid paste wrapped in markdown code fences strips fences and opens the viewer directly.
-    input.value = '```txt\n' + lesson + '\n```';
-    input.dispatchEvent(new app.window.Event('input'));
+    // One-click clipboard button extracts lesson past chat preamble/fences and opens viewer directly.
+    Object.defineProperty(app.window.navigator, 'clipboard', {
+      configurable: true,
+      value: { readText: async () => 'Sure! Here is your lesson:\n\n```txt\n' + lesson + '\n```' },
+    });
+    pasteBtn.click(); await tick();
     assert.equal(feedback.classList.contains('hidden'), true);
-    openBtn.click();
     assert.equal(el(app, 'session-viewer').classList.contains('sv-open'), true);
     assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), lesson.trim());
     await tick();

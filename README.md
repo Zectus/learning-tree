@@ -16,7 +16,7 @@ python3 -m http.server 8000     # or any static server
 ## How it's used
 
 1. **Tree ▾ → New tree** gives you a prompt to paste into an AI chatbot (from a topic, or with a file attached). Upload the `.json` it produces.
-2. **Click any available topic** to copy its lesson prompt into an AI chat, then paste the finished lesson directly into the modal (or upload a `.txt` file). Structural errors are flagged inline with a one-click fix prompt.
+2. **Click any available topic** → **Copy prompt** → paste into any AI chat. When the AI finishes, copy its reply and click **Paste lesson from clipboard** (or upload a `.txt` file). Structural errors are flagged inline with a one-click fix prompt.
 3. **Optional batching — Tree ▾ → Generate tree lessons** (or **Generate multiple lessons…** in a topic modal) downloads one AI work file with the tree, shared lesson rules, and a prerequisite-ordered queue. Attach it in an AI chat, then import its lesson checkpoints together, even from an interrupted response.
 4. **📚 My Trees** saves whole trees (with their lessons) in this browser, or in your account when signed in.
 

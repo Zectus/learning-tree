@@ -682,7 +682,9 @@ document.getElementById('session-file-input').addEventListener('change', e => {
   const file = e.target.files?.[0];
   if (file) {
     const reader = new FileReader();
-    reader.onload  = ev => openViewer(ev.target.result, _modalNodeId);
+    reader.onload  = ev => typeof openSingleLessonText === 'function'
+      ? openSingleLessonText(ev.target.result)
+      : openViewer(ev.target.result, _modalNodeId);
     reader.onerror = () => showToast(`Couldn't read "${file.name}".`);
     reader.readAsText(file);
   }
