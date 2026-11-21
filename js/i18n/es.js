@@ -148,7 +148,6 @@ const UI_ES = {
   "Don't have an account? ": "¿No tienes una cuenta? ",
   "Already have an account? ": "¿Ya tienes una cuenta? ",
   "Draw": "Dibujar",
-  "Draw with a mouse, finger, or pen": "Dibuja con el ratón, el dedo o un lápiz",
   "Drawing for this topic": "Dibujo de este tema",
   "Email": "Correo electrónico",
   "Eraser": "Borrador",
