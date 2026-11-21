@@ -1,6 +1,6 @@
 # Lesson acceptance and targeted repair
 
-Implementation status: implemented, not tested. The user explicitly deferred testing. No unit suites, generation experiments, provider calls, or deployment validation were run for this change.
+Implementation status: implemented and covered by the main and companion unit test suites (including bounded audit, repair, verification, blocking/resume, and single-pass `review: false`). Live provider calls and empirical model-quality comparisons remain separate.
 
 Each finished lesson is subject to an acceptance procedure before its durable completion record is saved. The shared procedure lives in `js/learn/lesson-review.js` and is attached to per-node prompts and the multi-node work packet. It leaves the teaching template, tree schema and finished lesson record format intact.
 

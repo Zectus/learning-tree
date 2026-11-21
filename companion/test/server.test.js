@@ -6,7 +6,7 @@ import { fixture, input, lesson, finish } from './helpers.js';
 
 async function serverFixture() {
   const f = await fixture();
-  const engines = { chatgpt: { status:async()=>({connected:true,email:'local-reader',accountKey:'account-1'}), models:async()=>[{id:'test-model',name:'Test Model'}], generate:async()=>lesson }, claude: {status:async()=>({connected:false,message:'Install Claude Code'})} };
+  const engines = { chatgpt: { status:async()=>({connected:true,email:'local-reader',accountKey:'account-1'}), models:async()=>[{id:'test-model',name:'Test Model'}], generate:async({instructions})=>instructions?JSON.stringify({issues:[],uncertain:[]}):lesson }, claude: {status:async()=>({connected:false,message:'Install Claude Code'})} };
   const companion = await createCompanion({directory:f.directory,port:0,providers:engines});
   const {server,origin} = await companion.listen();
   return { ...f, companion, origin, async cleanup(){ await companion.jobs.shutdown(); server.closeAllConnections(); await new Promise(resolve=>server.close(resolve)); await f.cleanup(); } };

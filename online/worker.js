@@ -66,7 +66,9 @@ async function toolCall(env,uid,name,args={}) {
   }
   if(name==='get_lesson_prompt')return {jobId:job.id,nodeId:node.id,prompt:job.prompts.find(p=>p.id===node.id).prompt};
   if(name!=='save_lesson')throw error('Unknown tool.');
-  if(typeof args.content!=='string'||args.content.length>2000000||!lessonIsComplete(args.content))throw error('The lesson is incomplete or has invalid question markup. Include SECTION 1, closed blocks, unique question numbers, at least two nonempty choices, and one valid [ANSWER: X] per question. Revise the full lesson and save again.');
+  if(typeof args.content!=='string'||args.content.length>2000000)throw error('Lesson content is missing or exceeds the size limit.');
+  const check=validateLessonStructure(args.content);
+  if(!check.valid)throw error('The lesson failed structural validation: '+check.errors.join(' ')+' Revise the full lesson and save again.');
   if(saved){if(saved.content!==args.content)throw error('A different lesson is already saved for this topic. Existing lessons are kept.');return {saved:true,alreadySaved:true,nodeId:node.id};}
   const record={format:'learning-tree-lesson/v1',treeKey:job.treeKey,id:node.id,content:args.content};
   const result=await env.BUCKET.put(savedKey,JSON.stringify(record),{onlyIf:{etagDoesNotMatch:'*'}});

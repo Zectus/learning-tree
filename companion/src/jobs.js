@@ -1,7 +1,7 @@
 import { randomUUID, createHash } from 'node:crypto';
 import format from '../../js/learn/generation-format.js';
 import review from '../../js/learn/lesson-review.js';
-const { generationTreeKey, lessonIsComplete } = format;
+const { generationTreeKey, lessonIsComplete, validateLessonStructure } = format;
 const { LESSON_REVIEW_SYSTEM, lessonAuditPrompt, lessonRepairPrompt, lessonVerificationPrompt, parseLessonAudit, parseLessonRepair, parseLessonVerification } = review;
 const contentHash = content => createHash('sha256').update(content).digest('hex');
 const clone = value => JSON.parse(JSON.stringify(value));
@@ -20,7 +20,7 @@ export class Jobs {
   persist() { return this.storage.write('jobs.json', [...this.jobs.values()]); }
   summary(job) {
     const done = new Set(job.records.map(r => r.id));
-    return { id: job.id, treeKey: job.treeKey, topic: job.tree.topic || 'Untitled tree', provider: job.provider, accountLabel: job.accountLabel || '', model: job.model, effort: job.effort,
+    return { id: job.id, treeKey: job.treeKey, topic: job.tree.topic || 'Untitled tree', provider: job.provider, accountLabel: job.accountLabel || '', model: job.model, effort: job.effort, review: job.review !== false,
       createdAt: job.createdAt, updatedAt: job.updatedAt, status: job.status, error: job.error || '',
       total: job.queue.length, completed: done.size, currentNode: job.currentNode || null, currentPhase: job.currentPhase || null, characters: job.characters || 0,
       nodes: job.queue.map(id => ({ id, label: job.tree.nodes.find(n => n.id === id).label, completed: done.has(id) })) };
@@ -28,7 +28,8 @@ export class Jobs {
   get(id) { const job = this.jobs.get(id); if (!job) throw new Error('Generation job not found.'); return job; }
   list() { return [...this.jobs.values()].sort((a, b) => b.createdAt - a.createdAt).map(j => this.summary(j)); }
   async create(input) {
-    const { tree, treeKey, queue, prompts, provider, model, effort = 'default', requestId, snapshot, account, accountLabel } = input || {};
+    const { tree, treeKey, queue, prompts, provider, model, effort = 'default', review = true, requestId, snapshot, account, accountLabel } = input || {};
+    if (typeof review !== 'boolean') throw new Error('Invalid review setting.');
     if (!tree || !Array.isArray(tree.nodes) || !tree.nodes.length || tree.nodes.length > 2000) throw new Error('A valid tree is required.');
     const ids = tree.nodes.map(n => n.id);
     if (ids.some(id => typeof id !== 'string' || !id || id.length > 200) || new Set(ids).size !== ids.length) throw new Error('Tree node IDs must be unique strings.');
@@ -48,14 +49,14 @@ export class Jobs {
       if (queue.includes(parent) && queue.indexOf(parent) > queue.indexOf(id)) throw new Error('Selected prerequisites must come before descendants.');
     }
     return this.storage.exclusive(async () => {
-      const fingerprint = createHash('sha256').update(JSON.stringify({treeKey,queue,prompts,provider,model,effort,account})).digest('hex');
+      const fingerprint = createHash('sha256').update(JSON.stringify({treeKey,queue,prompts,provider,model,effort,review,account})).digest('hex');
       const existing = [...this.jobs.values()].find(j => j.requestId === requestId);
       if (existing) {
         if (existing.fingerprint !== fingerprint) throw new Error('This request ID belongs to a different batch.');
         return this.summary(existing);
       }
       if (this.jobs.size >= 100) throw new Error('Delete an old job before creating another.');
-      const job = { id: randomUUID(), requestId, fingerprint, account: account || null, accountLabel: accountLabel || '', tree: clone(tree), snapshot: clone(snapshot || tree), treeKey, queue: [...queue], prompts: clone(prompts), provider, model, effort,
+      const job = { id: randomUUID(), requestId, fingerprint, account: account || null, accountLabel: accountLabel || '', tree: clone(tree), snapshot: clone(snapshot || tree), treeKey, queue: [...queue], prompts: clone(prompts), provider, model, effort, review,
         createdAt: this.now(), updatedAt: this.now(), status: 'paused', error: '', currentNode: null, records: [] };
       this.jobs.set(job.id, job);
       try { await this.persist(); } catch (error) { this.jobs.delete(job.id); throw error; }
@@ -152,22 +153,30 @@ export class Jobs {
       const raw = await this.reviewCall(job, controller, teachingPrompt, false);
       const draft = String(raw).trim().replace(/^```(?:txt|text)?\s*\n([\s\S]*?)\n```\s*$/, '$1').trim();
       if (!draft || draft.length > 2_000_000) throw new Error('The model returned an empty or oversized lesson. Resume to retry this node.');
+      if (job.review === false) {
+        const structure = validateLessonStructure(draft);
+        if (!structure.valid) throw new Error('The model returned a lesson with incomplete or invalid markup: ' + structure.errors.join(' '));
+        await this.reviewCheckpoint(job, controller, { id, draft, report: { issues: [], uncertain: [], skipped: true } }, 'writing');
+        return draft;
+      }
       await this.reviewCheckpoint(job, controller, { id, draft }, 'reviewing');
     }
     if (!job.pending.report) {
       await this.reviewCheckpoint(job, controller, job.pending, 'reviewing');
       const draft = job.pending.draft;
+      const structure = validateLessonStructure(draft);
       // Structural failures go straight to the one repair; final verification
       // still audits meaning and assessment before anything is committed.
-      const report = lessonIsComplete(draft)
+      const report = structure.valid
         ? parseLessonAudit(await this.reviewCall(job, controller, lessonAuditPrompt(teachingPrompt, draft)), draft)
-        : { issues: [{ id: 'structure', type: 'format', quote: draft.slice(0, 160), reason: 'The structural validator rejected the lesson. It requires SECTION 1, closed blocks, unique question numbers, nonempty options and exactly one valid answer tag per question.', correction: 'Restore complete valid structure while preserving the full teaching and practice.' }], uncertain: [] };
+        : { issues: [{ id: 'structure', type: 'format', quote: draft.slice(0, 160), reason: 'Structural validation failed: ' + structure.errors.join(' '), correction: 'Restore complete valid structure while preserving the full teaching and practice.' }], uncertain: [] };
       await this.reviewCheckpoint(job, controller, { ...job.pending, report }, 'reviewing');
     }
     const { report, draft } = job.pending;
     if (report.uncertain.length) return this.blockReview(job, controller, 'Acceptance remains uncertain: ' + report.uncertain.join(' '));
     if (!report.issues.length) {
-      if (!lessonIsComplete(draft)) return this.blockReview(job, controller, 'The review approved an invalid lesson structure.');
+      const structure = validateLessonStructure(draft);
+      if (!structure.valid) return this.blockReview(job, controller, 'The review approved an invalid lesson structure: ' + structure.errors.join(' '));
       return draft;
     }
     if (!job.pending.repair) {
@@ -177,7 +186,8 @@ export class Jobs {
     }
     const { repair } = job.pending;
     if (repair.unresolved.length) return this.blockReview(job, controller, 'The repair left an unresolved issue: ' + repair.unresolved.join(' '));
-    if (!lessonIsComplete(repair.content)) return this.blockReview(job, controller, 'The repaired lesson has incomplete or invalid question markup.');
+    const repairedStructure = validateLessonStructure(repair.content);
+    if (!repairedStructure.valid) return this.blockReview(job, controller, 'The repaired lesson has invalid structure: ' + repairedStructure.errors.join(' '));
     if (lessonIsComplete(draft) && JSON.stringify(questionIds(draft)) !== JSON.stringify(questionIds(repair.content))) {
       return this.blockReview(job, controller, 'The repair removed, added or renumbered assessment items in a structurally valid draft.');
     }
