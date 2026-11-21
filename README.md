@@ -44,26 +44,6 @@ English/Spanish setting; the catalog's mathematical names and scopes are English
 
 Lesson files mark each question's correct option inline with `[ANSWER: X]`.
 
-## Generate lessons with your ChatGPT subscription
-
-Choose **ChatGPT online · no installation** in the generation screen. Select
-nodes, continue to the online page, and prepare the batch. In ChatGPT, choose the
-Learning Tree plugin and ask it to generate your queued lessons. It reads each
-teaching prompt and saves finished lessons back automatically. No terminal setup,
-API key, prompt copying, or lesson-file transfers are required.
-
-The online bridge is hosted at https://learning-tree-lessons.zectusone.chatgpt.site
-and initially private to its owner. It stores jobs and lessons, not provider
-credentials, and makes no model API requests. Generation happens in the user's
-subscription conversation, which still needs to be started in ChatGPT. The model
-and any write confirmations remain under ChatGPT's controls.
-
-[Simple user instructions](docs/assistant-setup.md) ·
-[Online bridge source and design](online/README.md)
-
-The previous local companion is an optional advanced method.
-[Local setup](docs/companion-setup.md).
-
 ## Generating and resuming lessons
 
 The work file contains the full tree structure and the teaching prompt **once**.

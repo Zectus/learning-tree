@@ -18,9 +18,8 @@ function generationTreeKey(tree) {
   return 'lt1-' + (a >>> 0).toString(16).padStart(8, '0') + (b >>> 0).toString(16).padStart(8, '0');
 }
 
-// A shared structural validator used by browser imports, online saves, and the
-// local companion. Validates recoverable lesson syntax and block shapes, not
-// subject accuracy or pedagogy.
+// Shared structural validator used by browser imports and single-lesson paste.
+// Validates recoverable lesson syntax and block shapes, not subject accuracy.
 const VALID_GRAPH_TYPES = new Set(['function2d', 'parametric2d', 'surface3d', 'vectorfield2d']);
 
 function validateLessonStructure(content) {
