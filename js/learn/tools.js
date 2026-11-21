@@ -415,16 +415,34 @@ async function mountGraph(g, id) {
 function surfaceThemeLayout(el) {
   const cs = getComputedStyle(el);
   const theme = name => cs.getPropertyValue(name).trim();
+  const dark = document.documentElement.classList.contains('dark');
   const axis = {
-    color: theme('--text-m'), gridcolor: theme('--border'), zerolinecolor: theme('--line-h'),
-    backgroundcolor: theme('--bg'), showbackground: true,
+    color: theme('--text-m'),
+    gridcolor: dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.09)',
+    zerolinecolor: theme('--line-h'),
+    showbackground: false,
+    showspikes: false,
+    nticks: 5,
+    tickfont: { size: 11, color: theme('--text-m') },
+    titlefont: { size: 12, color: theme('--text') },
   };
   return {
     paper_bgcolor: theme('--bg'),
-    font: { color: theme('--text'), family: cs.fontFamily, size: parseFloat(cs.fontSize) || 16 },
-    scene: { bgcolor: theme('--bg'), xaxis: { ...axis }, yaxis: { ...axis }, zaxis: { ...axis } },
-    hoverlabel: { bgcolor: theme('--surface'), bordercolor: theme('--border-h'), font: { color: theme('--text') } },
+    font: { color: theme('--text'), family: cs.fontFamily, size: 12 },
+    scene: {
+      bgcolor: theme('--bg'),
+      aspectmode: 'cube',
+      xaxis: { ...axis }, yaxis: { ...axis }, zaxis: { ...axis },
+    },
+    hoverlabel: { bgcolor: theme('--surface'), bordercolor: theme('--border-h'), font: { color: theme('--text'), size: 12 } },
   };
+}
+
+function surfaceColorscale() {
+  const dark = document.documentElement.classList.contains('dark');
+  return dark
+    ? [[0, '#2b4c7e'], [0.35, '#4682c8'], [0.68, '#5bc4d0'], [1, '#e8b86d']]
+    : [[0, '#1e4e8c'], [0.38, '#2d70b3'], [0.72, '#3ba7b5'], [1, '#d98a3c']];
 }
 
 function refreshGraphThemes() {
@@ -436,6 +454,7 @@ function refreshGraphThemes() {
       ...Object.fromEntries(['xaxis', 'yaxis', 'zaxis'].flatMap(name =>
         Object.entries(scene[name]).map(([key, value]) => [`scene.${name}.${key}`, value]))),
     });
+    Plotly.restyle(el, { colorscale: [surfaceColorscale()] });
   });
 }
 
@@ -448,11 +467,16 @@ function mountSurface3d(g, el) {
   // Plotly's surface convention: z[iy][ix] is the value at (xs[ix], ys[iy]).
   const zGrid = ys.map(y => xs.map(x => { const v = f({ x, y }); return Number.isNaN(v) ? null : v; }));
   const layout = surfaceThemeLayout(el);
-  layout.margin = { t: 10, r: 10, b: 40, l: 50 };
+  layout.margin = { t: 4, r: 4, b: 4, l: 4 };
   layout.showlegend = false;
-  layout.scene.camera = { eye: { x: 1.6, y: 1.6, z: 1.6 } };
+  layout.scene.camera = { eye: { x: 1.45, y: 1.45, z: 1.15 } };
   ['x', 'y', 'z'].forEach(axis => { layout.scene[`${axis}axis`].title = { text: g[`${axis}label`] || '' }; });
-  const traces = [{ x: xs, y: ys, z: zGrid, type: 'surface', showscale: false }];
+  const traces = [{
+    x: xs, y: ys, z: zGrid, type: 'surface', showscale: false,
+    colorscale: surfaceColorscale(),
+    lighting: { ambient: 0.65, diffuse: 0.65, specular: 0.2, roughness: 0.6, fresnel: 0.15 },
+    contours: { z: { show: true, usecolormap: false, color: 'rgba(255,255,255,0.16)', width: 1, highlight: false } },
+  }];
   return Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true });
 }
 
@@ -609,12 +633,13 @@ function mountBoard2d(g, el, id) {
   });
   board.suspendUpdate();
 
-  // Place a single origin "0" tucked neatly into the third quadrant so the y-axis never slices through it.
+  // Place a single origin "0" tucked neatly into the third quadrant using dynamic
+  // pixel offsets (JSXGraph ignores `offset` on standalone text elements).
   if (xr[0] < 0 && xr[1] > 0 && yr[0] < 0 && yr[1] > 0) {
-    board.create('text', [0, 0, '0'], {
+    board.create('text', [() => -8 / board.unitX, () => -8 / board.unitY, '0'], {
       strokeColor: mutedColor, highlightStrokeColor: mutedColor, highlightStrokeOpacity: 1,
       fontSize: tickFontPx, display: 'html', fixed: true, highlight: false,
-      anchorX: 'right', anchorY: 'top', offset: [-8, -8],
+      anchorX: 'right', anchorY: 'top',
       cssClass: 'sv-graph-tick', highlightCssClass: 'sv-graph-tick',
     });
   }
@@ -623,7 +648,7 @@ function mountBoard2d(g, el, id) {
     board.create('grid', [], {
       majorStep: 'auto', minorElements: 0,
       strokeColor: 'var(--border-h)', strokeWidth: 1, highlight: false,
-      major: { face: 'line', strokeOpacity: 0.24, drawZero: false },
+      major: { face: 'line', strokeOpacity: 0.28, drawZero: false },
     });
   } catch (e) { console.warn('Graph grid styling skipped:', e); }
 
@@ -663,12 +688,15 @@ function mountBoard2d(g, el, id) {
     if (c.tr.label) legend.push({ label: c.tr.label, color });
   });
 
-  // Vector field: arrows centred on a grid of sample points, length proportional to magnitude.
+  // Vector field: arrows centred on a uniform square grid across the visible viewport.
   if (g.type === 'vectorfield2d') {
-    const [x0, x1] = g.xrange || GRAPH_DEFAULT_RANGE, [y0, y1] = g.yrange || GRAPH_DEFAULT_RANGE;
-    const n = GRAPH_SAMPLES_FIELD;
-    const xs = graphLinspace(x0, x1, n), ys = graphLinspace(y0, y1, n);
-    const cellX = (x1 - x0) / (n - 1), cellY = (y1 - y0) / (n - 1);
+    const [vx0, vx1] = xr, [vy0, vy1] = yr;
+    const spanY = vy1 - vy0, spanX = vx1 - vx0;
+    const ny = Math.min(GRAPH_SAMPLES_FIELD, 11);
+    const cell = spanY / ny;
+    const nx = Math.max(3, Math.min(24, Math.round(spanX / cell)));
+    const xs = graphLinspace(vx0 + cell * 0.5, vx1 - cell * 0.5, nx);
+    const ys = graphLinspace(vy0 + cell * 0.5, vy1 - cell * 0.5, ny);
     const sample = [];
     let maxMag = 1e-9;
     xs.forEach(x => ys.forEach(y => {
@@ -679,13 +707,16 @@ function mountBoard2d(g, el, id) {
       maxMag = Math.max(maxMag, Math.hypot(u, v));
     }));
     const color = safeColor(g.traces[0] && g.traces[0].color, GRAPH_PALETTE[0]);
-    const k = 0.85 / maxMag; // longest arrow spans 85% of a cell
+    const k = (0.76 * cell) / maxMag; // longest arrow spans 76% of a cell
     sample.forEach(s => {
-      const dx = s.u * k * cellX, dy = s.v * k * cellY;
-      if (Math.hypot(dx / cellX, dy / cellY) < 0.04) return; // effectively zero: skip the stub
+      const dx = s.u * k, dy = s.v * k;
+      if (Math.hypot(dx, dy) < cell * 0.05) return; // effectively zero: skip the stub
+      const magRatio = Math.hypot(s.u, s.v) / maxMag;
       board.create('segment', [[s.x - dx / 2, s.y - dy / 2], [s.x + dx / 2, s.y + dy / 2]], {
-        strokeColor: color, strokeWidth: 1.6, fixed: true, highlight: false,
-        lastArrow: { type: 2, size: 5 },
+        strokeColor: color, strokeWidth: 1.75,
+        strokeOpacity: 0.45 + 0.5 * magRatio,
+        lineCap: 'round', fixed: true, highlight: false,
+        lastArrow: { type: 2, size: 4 },
         point1: { visible: false, fixed: true, withLabel: false },
         point2: { visible: false, fixed: true, withLabel: false },
       });
@@ -730,10 +761,10 @@ function mountBoard2d(g, el, id) {
   // Legend (HTML, so labels can use \( \) like the rest of the page).
   const leg = document.getElementById(`sv-graph-legend-${id}`);
   if (leg && legend.length) {
-    leg.innerHTML = legend.map(it =>
-      `<span style="display:inline-flex;align-items:center;gap:6px">` +
-      `<span style="width:16px;height:${it.fill ? 10 : 2.5}px;border-radius:99px;background:${it.color};opacity:${it.fill ? it.opacity : 1}"></span>` +
-      `<span>${svEsc(it.label)}</span></span>`).join('');
+    leg.innerHTML = legend.map(it => it.fill
+      ? `<span class="sv-graph-legend-item"><span class="sv-graph-swatch-fill" style="background:${it.color};border-color:${it.color};opacity:${Math.min(1, it.opacity + 0.2)}"></span><span>${svEsc(it.label)}</span></span>`
+      : `<span class="sv-graph-legend-item"><span class="sv-graph-swatch-line" style="background:${it.color}"></span><span>${svEsc(it.label)}</span></span>`
+    ).join('');
     renderMath(leg);
   }
 
