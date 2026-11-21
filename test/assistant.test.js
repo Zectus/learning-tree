@@ -31,7 +31,10 @@ test('automatic requests use the exact selected nodes and actual prompts without
   assert.equal(JSON.parse(app.ev('JSON.stringify(assistantJobPayload())')).requestId,payload.requestId);
   element(app,'generation-effort').value='3';
   const higher=JSON.parse(app.ev('JSON.stringify(assistantJobPayload())'));
-  assert.equal(higher.effort,'xhigh');assert.notEqual(higher.requestId,payload.requestId);
+  assert.equal(higher.effort,'xhigh');assert.equal(higher.review,true);assert.notEqual(higher.requestId,payload.requestId);
+  element(app,'assistant-review-toggle').checked=false;
+  const noReview=JSON.parse(app.ev('JSON.stringify(assistantJobPayload())'));
+  assert.equal(noReview.review,false);assert.notEqual(noReview.requestId,higher.requestId);
  }finally{app.window.close()}
 });
 

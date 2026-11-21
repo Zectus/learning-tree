@@ -547,10 +547,18 @@ Object.assign(UI_ES, {
   'A focused learning block, roughly 4–6 weeks at this level.':'Un bloque de aprendizaje concreto, de unas 4–6 semanas a este nivel.'
 });
 
-// Per-lesson acceptance phases.
+// Per-lesson acceptance phases and single-node paste controls.
 Object.assign(UI_ES, {
   "Reviewing lesson": "Revisando lección",
   "Repairing lesson": "Corrigiendo lección",
   "Checking repair": "Verificando corrección",
-  "Lessons are reviewed before saving. Repairs can take additional time and usage.": "Las lecciones se revisan antes de guardarlas. Las correcciones pueden requerir más tiempo y uso."
+  "Lessons are reviewed before saving. Repairs can take additional time and usage.": "Las lecciones se revisan antes de guardarlas. Las correcciones pueden requerir más tiempo y uso.",
+  "Review each lesson before saving (uses extra allowance)": "Revisar cada lección antes de guardarla (consume más cuota)",
+  "Or paste the lesson text here…": "O pega aquí el texto de la lección…",
+  "Paste lesson text": "Pegar texto de la lección",
+  "Open lesson": "Abrir lección",
+  "This lesson has formatting issues:": "Esta lección tiene problemas de formato:",
+  "Copy fix prompt": "Copiar prompt de corrección",
+  "Open anyway": "Abrir de todos modos",
+  "{id}: Lesson is incomplete or has invalid question markup. ({reason})": "{id}: la lección está incompleta o tiene formato inválido. ({reason})"
 });

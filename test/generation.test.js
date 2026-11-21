@@ -758,3 +758,66 @@ test('effort slider updates work-file instructions for workers and single lesson
     assert.equal(slider.value, '3');
   } finally { app.window.close(); }
 });
+
+test('validateLessonStructure reports concrete graph, table, and question syntax errors', () => {
+  const { validateLessonStructure, lessonIsComplete } = require('../js/learn/generation-format');
+  assert.equal(validateLessonStructure(lesson).valid, true);
+  assert.equal(lessonIsComplete(lesson), true);
+
+  const badGraphType = lesson + '\n[GRAPH]\ntype: piechart\ntrace: x^2\n[/GRAPH]';
+  const r1 = validateLessonStructure(badGraphType);
+  assert.equal(r1.valid, false);
+  assert.match(r1.errors[0], /unsupported type "piechart"/);
+
+  const latexGraph = lesson + '\n[GRAPH]\ntype: function2d\nxrange: -2, 2\nyrange: -1, 4\ntrace: \\frac{x}{2}\n[/GRAPH]';
+  const r2 = validateLessonStructure(latexGraph);
+  assert.equal(r2.valid, false);
+  assert.match(r2.errors[0], /plain ASCII math, not LaTeX/);
+
+  const badRange = lesson + '\n[GRAPH]\ntype: function2d\nxrange: 5, -5\ntrace: x^2\n[/GRAPH]';
+  const r3 = validateLessonStructure(badRange);
+  assert.equal(r3.valid, false);
+  assert.match(r3.errors[0], /invalid xrange/);
+
+  const badTable = lesson + '\n[TABLE]\nA | B\n1 | 2 | 3\n[/TABLE]';
+  const r4 = validateLessonStructure(badTable);
+  assert.equal(r4.valid, false);
+  assert.match(r4.errors[0], /inconsistent column counts/);
+
+  const goodGraphAndTable = lesson
+    + '\n[GRAPH]\ntype: function2d\nxrange: -2, 2\nyrange: -1, 4\ntrace: x^2 | label: \\( x^2 \\)\n[/GRAPH]'
+    + '\n[TABLE]\nInput | Output\n1 | 1\n2 | 4\n[/TABLE]';
+  assert.equal(validateLessonStructure(goodGraphAndTable).valid, true);
+});
+
+test('single-node modal supports direct paste, fence stripping, inline diagnostics, and open-anyway fallback', async () => {
+  const app = loadApp();
+  try {
+    loadTree(app); await tick();
+    app.ev('openLearnModal(1)');
+    const input = el(app, 'single-lesson-input');
+    const openBtn = el(app, 'btn-open-single-lesson');
+    const feedback = el(app, 'single-lesson-feedback');
+    assert.equal(openBtn.disabled, true);
+    assert.equal(feedback.classList.contains('hidden'), true);
+
+    // Invalid paste surfaces concrete diagnostics and offers fix prompt + open anyway.
+    input.value = '=== SECTION 1: Draft ===\n[QUESTION 1]\nMissing answer\n(A) Yes\n(B) No\n[/QUESTION]';
+    input.dispatchEvent(new app.window.Event('input'));
+    assert.equal(openBtn.disabled, false);
+    openBtn.click();
+    assert.equal(feedback.classList.contains('hidden'), false);
+    assert.match(el(app, 'single-lesson-errors').textContent, /\[ANSWER: A-E\]/);
+    assert.equal(el(app, 'session-viewer').classList.contains('sv-open'), false);
+    assert.match(app.ev('buildSingleLessonFixPrompt(_pendingSingleErrors)'), /\[ANSWER: A-E\]/);
+
+    // Valid paste wrapped in markdown code fences strips fences and opens the viewer directly.
+    input.value = '```txt\n' + lesson + '\n```';
+    input.dispatchEvent(new app.window.Event('input'));
+    assert.equal(feedback.classList.contains('hidden'), true);
+    openBtn.click();
+    assert.equal(el(app, 'session-viewer').classList.contains('sv-open'), true);
+    assert.equal(app.ev('state.nodes.get(1)._sessionTxt'), lesson.trim());
+    await tick();
+  } finally { app.window.close(); }
+});

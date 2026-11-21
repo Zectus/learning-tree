@@ -208,7 +208,12 @@ function mergeGenerationOutput(raw, { replaceExisting = false, beforeReplace } =
     let error;
     if (record.treeKey !== key) error = 'Checkpoint belongs to a different or edited tree.';
     else if (!node) error = 'Checkpoint names an unknown topic.';
-    else if (!lessonIsComplete(record.content)) error = 'Lesson is incomplete or has invalid question markup.';
+    else {
+      const check = validateLessonStructure(record.content);
+      if (!check.valid) error = check.errors[0]
+        ? `Lesson is incomplete or has invalid question markup. (${check.errors[0]})`
+        : 'Lesson is incomplete or has invalid question markup.';
+    }
     if (error) {
       result.rejected++;
       result.issues.push(`${String(record.id || '?')}: ${error}`);

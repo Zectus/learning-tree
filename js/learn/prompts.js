@@ -68,6 +68,49 @@ function buildTreePromptFromFile() {
 /* ── learn modal ── */
 let _modalNodeId = null;
 let _languagePrefill = ''; // what we last put in the language field ourselves
+let _pendingSingleLesson = '';
+let _pendingSingleErrors = [];
+
+function stripLessonFence(raw) {
+  return String(raw || '').trim().replace(/^```(?:txt|text)?\s*\n([\s\S]*?)\n```\s*$/, '$1').trim();
+}
+function clearSingleLessonFeedback() {
+  _pendingSingleLesson = '';
+  _pendingSingleErrors = [];
+  const box = document.getElementById('single-lesson-feedback');
+  if (box) box.classList.add('hidden');
+  const list = document.getElementById('single-lesson-errors');
+  if (list) list.replaceChildren();
+}
+function refreshSingleLessonControls() {
+  const input = document.getElementById('single-lesson-input');
+  const btn = document.getElementById('btn-open-single-lesson');
+  if (input && btn) btn.disabled = !input.value.trim();
+}
+function buildSingleLessonFixPrompt(errors) {
+  return `The lesson you returned has structural markup issues that prevent it from loading cleanly:\n${errors.map(e => `- ${e}`).join('\n')}\n\nPlease fix these issues and return the complete corrected plain-text lesson (no markdown fences), keeping all teaching content, questions, and language intact.`;
+}
+function openSingleLessonText(raw) {
+  if (_modalNodeId === null) return;
+  const cleaned = stripLessonFence(raw);
+  if (!cleaned) return;
+  const check = typeof validateLessonStructure === 'function' ? validateLessonStructure(cleaned) : { valid: true, errors: [] };
+  if (check.valid) {
+    clearSingleLessonFeedback();
+    openViewer(cleaned, _modalNodeId);
+    return;
+  }
+  _pendingSingleLesson = cleaned;
+  _pendingSingleErrors = check.errors;
+  const list = document.getElementById('single-lesson-errors');
+  list.replaceChildren();
+  for (const err of check.errors) {
+    const li = document.createElement('li');
+    li.textContent = err;
+    list.appendChild(li);
+  }
+  document.getElementById('single-lesson-feedback').classList.remove('hidden');
+}
 
 function openLearnModal(id) {
   const node = state.nodes.get(id);
@@ -75,6 +118,10 @@ function openLearnModal(id) {
 
   _modalNodeId = id;
   document.getElementById('single-lesson-controls').open = state.tutorialActive;
+  const pasteBox = document.getElementById('single-lesson-input');
+  if (pasteBox) pasteBox.value = '';
+  clearSingleLessonFeedback();
+  refreshSingleLessonControls();
   const languageInput = document.getElementById('node-language-input');
   // Prefill with the tree's language, but only over a blank field or a value we
   // put there ourselves — so a language typed by hand survives, while the
@@ -99,8 +146,43 @@ document.getElementById('node-language-input').addEventListener('input', () => {
   resetCopyButton('btn-copy-prompt');
 });
 
+document.getElementById('single-lesson-input').addEventListener('input', () => {
+  clearSingleLessonFeedback();
+  refreshSingleLessonControls();
+});
+document.getElementById('btn-open-single-lesson').addEventListener('click', () => {
+  openSingleLessonText(document.getElementById('single-lesson-input').value);
+});
+document.getElementById('btn-open-single-anyway').addEventListener('click', () => {
+  if (_modalNodeId === null || !_pendingSingleLesson) return;
+  const text = _pendingSingleLesson;
+  clearSingleLessonFeedback();
+  openViewer(text, _modalNodeId);
+});
+document.getElementById('btn-copy-single-fix').addEventListener('click', () => {
+  if (!_pendingSingleErrors.length) return;
+  const fixPrompt = buildSingleLessonFixPrompt(_pendingSingleErrors);
+  const btn = document.getElementById('btn-copy-single-fix');
+  const markCopied = () => {
+    clearTimeout(_copyTimers.get('btn-copy-single-fix'));
+    uiText(btn, 'Copied ✓');
+    btn.classList.add('copied');
+    _copyTimers.set('btn-copy-single-fix', setTimeout(() => {
+      uiText(btn, 'Copy fix prompt');
+      btn.classList.remove('copied');
+      _copyTimers.delete('btn-copy-single-fix');
+    }, 2000));
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(fixPrompt).then(markCopied).catch(() => showToast("Couldn't copy automatically — select the prompt text and copy it by hand."));
+  } else {
+    showToast("Couldn't copy automatically — select the prompt text and copy it by hand.");
+  }
+});
+
 function closeModal() {
   document.getElementById('modal-backdrop').classList.remove('open');
+  clearSingleLessonFeedback();
   _modalNodeId = null;
 }
 
@@ -179,7 +261,10 @@ onEscape(100, () => {
 });
 
 /* ── copy buttons (shared by both modals) ── */
+const _copyTimers = new Map();
 function resetCopyButton(btnId) {
+  clearTimeout(_copyTimers.get(btnId));
+  _copyTimers.delete(btnId);
   const btn = document.getElementById(btnId);
   uiText(btn, 'Copy');
   btn.classList.remove('copied');
@@ -188,10 +273,11 @@ function wireCopyButton(btnId, taId) {
   document.getElementById(btnId).addEventListener('click', () => {
     const ta = document.getElementById(taId);
     const onCopied = () => {
+      clearTimeout(_copyTimers.get(btnId));
       const btn = document.getElementById(btnId);
       uiText(btn, 'Copied ✓');
       btn.classList.add('copied');
-      setTimeout(() => resetCopyButton(btnId), 2000);
+      _copyTimers.set(btnId, setTimeout(() => resetCopyButton(btnId), 2000));
     };
     const fallbackCopy = () => {
       ta.focus(); ta.select();
