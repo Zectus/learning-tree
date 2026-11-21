@@ -77,7 +77,7 @@ Your answer is saved with this topic. Answering every regular question completes
   const treeKeys = ['nodes', 'edges', 'prereqs', 'dependents', 'nextId', 'viewport', 'drag', 'mode', 'linkSource', 'language', 'topic', 'libraryId', 'collectionId'];
   let seen = false;
   try { seen = localStorage.getItem(KEY) === '1'; } catch {}
-  replay.hidden = !seen && !/^[\w-]{16,80}$/.test(new URLSearchParams(location.search).get('lt_handoff') || '');
+  replay.hidden = !seen;
 
   const stash = el => { const fragment = document.createDocumentFragment(); while (el.firstChild) fragment.appendChild(el.firstChild); return fragment; };
   function clearInert() { inert.forEach(el => el.removeAttribute('inert')); inert = []; }

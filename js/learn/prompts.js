@@ -117,7 +117,6 @@ function openLearnModal(id) {
   if (!node) return;
 
   _modalNodeId = id;
-  document.getElementById('single-lesson-controls').open = state.tutorialActive;
   const pasteBox = document.getElementById('single-lesson-input');
   if (pasteBox) pasteBox.value = '';
   clearSingleLessonFeedback();
@@ -134,7 +133,7 @@ function openLearnModal(id) {
   const prompt = buildPrompt(id, languageInput.value.trim());
 
   document.getElementById('modal-title').textContent = node.label;
-  uiText(document.getElementById('modal-meta'), `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · generate tree lessons to get started`);
+  uiText(document.getElementById('modal-meta'), `${prereqsOf(id).length} prerequisite${prereqsOf(id).length !== 1 ? 's' : ''} · copy prompt, paste into AI, then paste or upload the lesson`);
   document.getElementById('prompt-box').value = prompt;
   resetCopyButton('btn-copy-prompt');
   document.getElementById('modal-backdrop').classList.add('open');

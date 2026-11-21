@@ -477,9 +477,14 @@ Object.assign(UI_ES, {
 
 // Single-node paste controls and structural diagnostics.
 Object.assign(UI_ES, {
-  "Or paste the lesson text here…": "O pega aquí el texto de la lección…",
+  "Paste the finished lesson text here…": "Pega aquí el texto de la lección terminada…",
   "Paste lesson text": "Pegar texto de la lección",
   "Open lesson": "Abrir lección",
+  "📄 Or upload a .txt lesson file": "📄 O sube un archivo de lección .txt",
+  "Want to generate several topics at once?": "¿Quieres generar varios temas a la vez?",
+  "Generate multiple lessons…": "Generar varias lecciones…",
+  "{n} prerequisite · copy prompt, paste into AI, then paste or upload the lesson": "{n} requisito previo · copia el prompt, pégalo en una IA y pega o sube la lección",
+  "{n} prerequisites · copy prompt, paste into AI, then paste or upload the lesson": "{n} requisitos previos · copia el prompt, pégalo en una IA y pega o sube la lección",
   "This lesson has formatting issues:": "Esta lección tiene problemas de formato:",
   "Copy fix prompt": "Copiar prompt de corrección",
   "Open anyway": "Abrir de todos modos",

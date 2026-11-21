@@ -195,7 +195,8 @@ test('generation panel downloads one packet, imports pasted output, checkpoints 
   try {
     loadTree(app); await tick();
     app.ev('openLearnModal(1)');
-    assert.equal(el(app, 'single-lesson-controls').open, false);
+    assert.equal(el(app, 'single-lesson-controls').tagName, 'DIV');
+    assert.equal(el(app, 'prompt-box').value.length > 0, true);
     el(app, 'btn-generate-tree-lessons').click();
     assert.equal(el(app, 'modal-backdrop').classList.contains('open'), false);
     assert.equal(el(app, 'generation-modal-backdrop').classList.contains('open'), true);
