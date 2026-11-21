@@ -565,14 +565,14 @@ function mountBoard2d(g, el, id) {
   const axisColor = 'var(--line-h)';
   const mutedColor = 'var(--text-m)';
   const tickFontPx = Math.round(graphFontPx * 0.78);
-  const tickGap = Math.max(68, tickFontPx * 4.5);
+  const tickGap = Math.max(72, tickFontPx * 4.8);
   let board;
   const tickStep = axis => graphTickStep(board ? (axis === 'x' ? board.unitX : board.unitY)
     : (axis === 'x' ? wPx / (xr[1] - xr[0]) : hPx / (yr[1] - yr[0])), tickGap);
   const axisTicks = axis => ({
     insertTicks: false, ticksDistance: tickStep(axis),
     minorTicks: 0, majorHeight: 0, minorHeight: 0,
-    drawLabels: true, drawZero: axis === 'x', highlight: false,
+    drawLabels: true, drawZero: false, highlight: false,
     label: {
       strokeColor: mutedColor, fontSize: tickFontPx, display: 'html',
       highlight: false, highlightStrokeColor: mutedColor, highlightStrokeOpacity: 1,
@@ -588,15 +588,15 @@ function mountBoard2d(g, el, id) {
     pan: { enabled: false }, zoom: { enabled: false },
     defaultAxes: {
       x: {
-        strokeColor: axisColor, strokeWidth: 1.25, highlight: false, lastArrow: { type: 2, size: 5 },
+        strokeColor: axisColor, strokeWidth: 1.25, strokeOpacity: 0.75, highlight: false, lastArrow: false,
         name: xCap.text, withLabel: !!xCap.text,
-        label: labelAttrs(xCap, mutedColor, { position: 'rt', offset: [-14, 14], anchorX: 'right', anchorY: 'bottom' }),
+        label: labelAttrs(xCap, mutedColor, { position: 'rt', offset: [-12, 12], anchorX: 'right', anchorY: 'bottom' }),
         ticks: axisTicks('x'),
       },
       y: {
-        strokeColor: axisColor, strokeWidth: 1.25, highlight: false, lastArrow: { type: 2, size: 5 },
+        strokeColor: axisColor, strokeWidth: 1.25, strokeOpacity: 0.75, highlight: false, lastArrow: false,
         name: yCap.text, withLabel: !!yCap.text,
-        label: labelAttrs(yCap, mutedColor, { position: 'rt', offset: [12, -14], anchorX: 'left', anchorY: 'top' }),
+        label: labelAttrs(yCap, mutedColor, { position: 'rt', offset: [10, -8], anchorX: 'left', anchorY: 'top' }),
         ticks: axisTicks('y'),
       },
     },
@@ -609,12 +609,21 @@ function mountBoard2d(g, el, id) {
   });
   board.suspendUpdate();
 
+  // Place a single origin "0" tucked neatly into the third quadrant so the y-axis never slices through it.
+  if (xr[0] < 0 && xr[1] > 0 && yr[0] < 0 && yr[1] > 0) {
+    board.create('text', [0, 0, '0'], {
+      strokeColor: mutedColor, highlightStrokeColor: mutedColor, highlightStrokeOpacity: 1,
+      fontSize: tickFontPx, display: 'html', fixed: true, highlight: false,
+      anchorX: 'right', anchorY: 'top', offset: [-8, -8],
+      cssClass: 'sv-graph-tick', highlightCssClass: 'sv-graph-tick',
+    });
+  }
+
   try {
     board.create('grid', [], {
-      majorStep: 'auto', minorElements: 1,
+      majorStep: 'auto', minorElements: 0,
       strokeColor: 'var(--border-h)', strokeWidth: 1, highlight: false,
-      major: { face: 'line', strokeOpacity: 0.32, drawZero: false },
-      minor: { face: 'line', strokeOpacity: 0.1, drawZero: false },
+      major: { face: 'line', strokeOpacity: 0.24, drawZero: false },
     });
   } catch (e) { console.warn('Graph grid styling skipped:', e); }
 
@@ -637,19 +646,19 @@ function mountBoard2d(g, el, id) {
     if (fill.f.label) legend.push({ label: fill.f.label, color, fill: true, opacity });
   });
 
-  // Curves.
+  // Curves — confident weight so the main mathematical object leads the visual hierarchy.
   curves.forEach((c, i) => {
     const color = safeColor(c.tr.color, GRAPH_PALETTE[i % GRAPH_PALETTE.length]);
     if (g.type === 'function2d') {
       board.create('functiongraph', [x => c.f(Object.assign(base(), { x }))],
-        { strokeColor: color, strokeWidth: 2.5, lineCap: 'round', highlight: false });
+        { strokeColor: color, strokeWidth: 3.25, lineCap: 'round', highlight: false });
     } else {
       const [lo, hi] = g.trange || [0, 2 * Math.PI];
       board.create('curve', [
         t => c.fx(Object.assign(base(), { t })),
         t => c.fy(Object.assign(base(), { t })),
         lo, hi,
-      ], { strokeColor: color, strokeWidth: 2.5, lineCap: 'round', highlight: false, numberPoints: GRAPH_SAMPLES_1D });
+      ], { strokeColor: color, strokeWidth: 3.25, lineCap: 'round', highlight: false, numberPoints: GRAPH_SAMPLES_1D });
     }
     if (c.tr.label) legend.push({ label: c.tr.label, color });
   });
@@ -685,14 +694,19 @@ function mountBoard2d(g, el, id) {
 
   // Segments, then points on top.
   segments.forEach(sg => {
+    const hasCustomColor = !!sg.s.color;
     const color = safeColor(sg.s.color, textColor);
+    const dashed = /^(true|1|yes)$/i.test(sg.s.dashed || '');
     const cap = captionSpec(sg.s.label);
     board.create('segment', [
       [() => sg.a(base()), () => sg.b(base())],
       [() => sg.c(base()), () => sg.d(base())],
     ], {
-      strokeColor: color, strokeWidth: 1.75, lineCap: 'round', highlight: false, fixed: true,
-      dash: /^(true|1|yes)$/i.test(sg.s.dashed || '') ? 2 : 0,
+      strokeColor: color,
+      strokeWidth: dashed ? 1.65 : 2,
+      strokeOpacity: hasCustomColor ? 0.92 : (dashed ? 0.55 : 0.8),
+      lineCap: 'round', highlight: false, fixed: true,
+      dash: dashed ? 2 : 0,
       name: cap.text, withLabel: !!cap.text,
       label: labelAttrs(cap, textColor),
       point1: { visible: false, fixed: true, withLabel: false },
@@ -704,7 +718,7 @@ function mountBoard2d(g, el, id) {
     const cap = captionSpec(pt.p.label);
     const [dx, dy] = parseNumList(pt.p.offset, 2, [10, 10]);
     board.create('point', [() => pt.fx(base()), () => pt.fy(base())], {
-      size: 4, face: 'o', fillColor: color, strokeColor: 'var(--bg)', strokeWidth: 2,
+      size: 4.75, face: 'o', fillColor: color, strokeColor: 'var(--bg)', strokeWidth: 2,
       fixed: true, highlight: false, showInfobox: false,
       name: cap.text, withLabel: !!cap.text,
       label: labelAttrs(cap, textColor, { offset: [dx, dy] }),
