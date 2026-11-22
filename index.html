@@ -339,7 +339,7 @@ try {
     <div class="modal-header-bar">
       <div>
         <div class="modal-title" id="tree-modal-title"><span data-ui-text="Design a new tree">Design a new tree</span></div>
-        <div class="modal-meta" id="tree-modal-meta"><span data-ui-text="Fill in the fields → copy the prompt → paste into an AI chatbot → upload the .json it gives you">Fill in the fields → copy the prompt → paste into an AI chatbot → upload the .json it gives you</span></div>
+        <div class="modal-meta" id="tree-modal-meta"><span data-ui-text="Enter a topic → copy the prompt into an AI chat → bring the .json back">Enter a topic → copy the prompt into an AI chat → bring the .json back</span></div>
       </div>
       <button id="tree-modal-close" class="modal-close-btn" title="Close" aria-label="Close" data-ui-attrs="{&quot;title&quot;: &quot;Close&quot;, &quot;aria-label&quot;: &quot;Close&quot;}">✕</button>
     </div>
@@ -349,38 +349,64 @@ try {
         <button class="tree-mode-tab" id="tree-mode-tab-file" data-mode="file"><span data-ui-text="From a file">From a file</span></button>
       </div>
 
-      <div id="tree-mode-topic-panel">
+      <div id="tree-mode-topic-panel" class="single-step">
         <div id="tree-collection-scope" class="collection-scope hidden">
           <button id="tree-back-to-atlas" class="btn" data-ui-text="← Back to collection">← Back to collection</button>
           <p class="field-label" data-ui-text="Collection scope">Collection scope</p>
           <p id="tree-collection-description"></p>
         </div>
-        <div class="field-row">
-          <label class="field-label" for="tree-topic-input"><span data-ui-text="Topic">Topic</span></label>
-          <input type="text" id="tree-topic-input" class="field-input" placeholder="E.g. Vector Calculus" data-ui-attrs="{&quot;placeholder&quot;: &quot;E.g. Vector Calculus&quot;}">
+        <div class="tree-fields-row">
+          <div>
+            <label class="field-label" for="tree-topic-input"><span data-ui-text="Topic">Topic</span></label>
+            <input type="text" id="tree-topic-input" class="field-input" placeholder="E.g. Vector Calculus" data-ui-attrs="{&quot;placeholder&quot;: &quot;E.g. Vector Calculus&quot;}">
+          </div>
+          <div>
+            <label class="field-label" for="tree-language-input"><span data-ui-text="Language (optional)">Language (optional)</span></label>
+            <input type="text" id="tree-language-input" class="field-input" placeholder="Leave blank for English" data-ui-attrs="{&quot;placeholder&quot;: &quot;Leave blank for English&quot;}">
+          </div>
         </div>
-        <div class="field-row">
-          <label class="field-label" for="tree-language-input"><span data-ui-text="Language (optional)">Language (optional)</span></label>
-          <input type="text" id="tree-language-input" class="field-input" placeholder="Leave blank for English" data-ui-attrs="{&quot;placeholder&quot;: &quot;Leave blank for English&quot;}">
-        </div>
-        <div class="prompt-wrap">
+        <span class="field-label single-step-title" data-ui-text="1. Copy the prompt into an AI chat">1. Copy the prompt into an AI chat</span>
+        <button id="btn-copy-tree-prompt" class="btn single-action-btn" data-copy-label="Copy prompt" disabled><span data-ui-text="Copy prompt">Copy prompt</span></button>
+        <details id="tree-prompt-details" class="single-disclosure">
+          <summary data-ui-text="View prompt">View prompt</summary>
           <textarea id="tree-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt" data-ui-attrs="{&quot;aria-label&quot;: &quot;Tree design prompt&quot;}"></textarea>
-          <button id="btn-copy-tree-prompt" class="copy-btn"><span data-ui-text="Copy">Copy</span></button>
-        </div>
+        </details>
       </div>
 
-      <div id="tree-mode-file-panel" class="hidden">
+      <div id="tree-mode-file-panel" class="single-step hidden">
         <p class="tree-mode-file-help"><span data-ui-text="For a paper, a textbook excerpt, lecture notes, a photo of a problem you&#x27;re stuck on — anything you want to fully understand but feel like you&#x27;re missing a lot of what leads up to it. Copy this prompt, paste it into a new conversation with an AI chatbot, and attach the file(s) there alongside it. Nothing to fill in here — The chatbot reads the file(s) itself to work out the topic and the language, then asks you a few quick questions to confirm where the tree should actually start before building it.">For a paper, a textbook excerpt, lecture notes, a photo of a problem you&#x27;re stuck on — anything you want to fully understand but feel like you&#x27;re missing a lot of what leads up to it. Copy this prompt, paste it into a new conversation with an AI chatbot, and attach the file(s) there alongside it. Nothing to fill in here — The chatbot reads the file(s) itself to work out the topic and the language, then asks you a few quick questions to confirm where the tree should actually start before building it.</span></p>
-        <div class="prompt-wrap">
+        <span class="field-label single-step-title" data-ui-text="1. Copy the prompt into an AI chat">1. Copy the prompt into an AI chat</span>
+        <button id="btn-copy-tree-file-prompt" class="btn single-action-btn" data-copy-label="Copy prompt"><span data-ui-text="Copy prompt">Copy prompt</span></button>
+        <details id="tree-file-prompt-details" class="single-disclosure">
+          <summary data-ui-text="View prompt">View prompt</summary>
           <textarea id="tree-file-prompt-box" class="prompt-ta" readonly spellcheck="false" aria-label="Tree design prompt (from a file)" data-ui-attrs="{&quot;aria-label&quot;: &quot;Tree design prompt (from a file)&quot;}"></textarea>
-          <button id="btn-copy-tree-file-prompt" class="copy-btn"><span data-ui-text="Copy">Copy</span></button>
-        </div>
+        </details>
       </div>
 
-      <label class="upload-dropzone">
-        <span data-ui-text="📄 Upload the resulting tree .json">📄 Upload the resulting tree .json</span>
-        <input type="file" id="tree-json-input" accept=".json" style="display:none">
-      </label>
+      <div class="single-step tree-import-step">
+        <span class="field-label single-step-title" data-ui-text="2. Bring the finished tree back">2. Bring the finished tree back</span>
+        <div class="single-import-row">
+          <button id="btn-paste-tree-json" class="btn single-import-btn" data-ui-text="📋 Paste from clipboard">📋 Paste from clipboard</button>
+          <label class="btn single-import-btn single-upload-btn upload-dropzone">
+            <span data-ui-text="📄 Upload .json file">📄 Upload .json file</span>
+            <input type="file" id="tree-json-input" accept=".json" style="display:none">
+          </label>
+        </div>
+        <div id="tree-import-feedback" class="single-lesson-feedback hidden" role="alert">
+          <p class="single-lesson-feedback-title" data-ui-text="This tree JSON couldn't be loaded:">This tree JSON couldn't be loaded:</p>
+          <ul id="tree-import-errors"></ul>
+          <div class="single-lesson-feedback-actions">
+            <button id="btn-copy-tree-fix" class="btn" data-ui-text="Copy fix prompt">Copy fix prompt</button>
+          </div>
+        </div>
+        <details id="tree-json-manual" class="single-disclosure">
+          <summary data-ui-text="Paste manually">Paste manually</summary>
+          <textarea id="tree-json-paste" class="prompt-ta single-lesson-output" spellcheck="false" placeholder="Paste the finished tree JSON here…" aria-label="Paste tree JSON" data-ui-attrs="{&quot;placeholder&quot;: &quot;Paste the finished tree JSON here…&quot;, &quot;aria-label&quot;: &quot;Paste tree JSON&quot;}"></textarea>
+          <div class="single-lesson-actions">
+            <button id="btn-load-pasted-tree" class="btn" data-ui-text="Load tree" disabled>Load tree</button>
+          </div>
+        </details>
+      </div>
     </div>
   </div>
 </div>

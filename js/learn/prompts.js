@@ -242,6 +242,113 @@ document.getElementById('modal-backdrop').addEventListener('click', e => {
 });
 
 /* ── create-tree modal ── */
+let _pendingTreeError = '';
+
+function extractTreeJSON(raw) {
+  let text = String(raw || '').replace(/^\uFEFF/, '').trim();
+  if (!text) return { ok: false, error: t('No JSON text provided.') };
+  const fenced = text.match(/^```[^\r\n]*\r?\n([\s\S]*?)\r?\n```\s*$/);
+  if (fenced) text = fenced[1].trim();
+  try { return { ok: true, obj: JSON.parse(text) }; } catch {}
+  const innerFence = text.match(/```(?:json)?[^\r\n]*\r?\n([\s\S]*?)\r?\n```/i);
+  if (innerFence) {
+    try { return { ok: true, obj: JSON.parse(innerFence[1].trim()) }; } catch {}
+  }
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    try { return { ok: true, obj: JSON.parse(text.slice(firstBrace, lastBrace + 1)) }; } catch (err) {
+      return { ok: false, error: err?.message || t('Invalid JSON syntax.') };
+    }
+  }
+  return { ok: false, error: t('Expected a JSON object with a "nodes" list.') };
+}
+
+function clearTreeImportFeedback() {
+  _pendingTreeError = '';
+  const box = document.getElementById('tree-import-feedback');
+  if (box) box.classList.add('hidden');
+  const list = document.getElementById('tree-import-errors');
+  if (list) list.replaceChildren();
+}
+
+function showTreeImportFeedback(message, rawText) {
+  _pendingTreeError = message;
+  const pasteBox = document.getElementById('tree-json-paste');
+  if (pasteBox && typeof rawText === 'string' && pasteBox.value !== rawText) {
+    pasteBox.value = rawText;
+    refreshTreePasteControls();
+  }
+  const list = document.getElementById('tree-import-errors');
+  if (list) {
+    list.replaceChildren();
+    const li = document.createElement('li');
+    li.textContent = message;
+    list.appendChild(li);
+  }
+  document.getElementById('tree-import-feedback')?.classList.remove('hidden');
+}
+
+function refreshTreePasteControls() {
+  const input = document.getElementById('tree-json-paste');
+  const btn = document.getElementById('btn-load-pasted-tree');
+  if (input && btn) btn.disabled = !input.value.trim();
+}
+
+function buildTreeFixPrompt(error) {
+  return `The tree JSON you returned could not be loaded:\n- ${error}\n\nPlease fix this and return the complete corrected tree as a valid downloadable .json file (strict JSON object with "topic", "language", and a non-empty "nodes" list), with no preamble or commentary.`;
+}
+
+function loadTreeObjectFromModal(obj) {
+  if (!obj || !Array.isArray(obj.nodes)) {
+    showTreeImportFeedback(t('That file isn\'t a tree — expected a JSON object with a "nodes" list.'));
+    return false;
+  }
+  const rawNodes = obj.nodes.filter(n => n && typeof n === 'object');
+  if (!rawNodes.length) {
+    showTreeImportFeedback(t('That tree has no nodes.'));
+    return false;
+  }
+  if (!loadFromJSON(obj)) return false;
+  if (!state.topic) state.topic = document.getElementById('tree-topic-input').value.trim();
+  clearTreeImportFeedback();
+  closeTreeModal();
+  return true;
+}
+
+function importTreeJSONText(raw) {
+  const parsed = extractTreeJSON(raw);
+  if (!parsed.ok) {
+    showTreeImportFeedback(parsed.error, String(raw || '').trim());
+    return false;
+  }
+  return loadTreeObjectFromModal(parsed.obj);
+}
+
+async function pasteTreeJSONFromClipboard() {
+  const revealManual = () => {
+    const manual = document.getElementById('tree-json-manual');
+    if (manual) manual.open = true;
+    document.getElementById('tree-json-paste')?.focus();
+  };
+  if (!navigator.clipboard?.readText) {
+    revealManual();
+    showToast("Couldn't read clipboard automatically — paste the JSON below.");
+    return;
+  }
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!String(text || '').trim()) {
+      showToast("Your clipboard is empty. Copy the AI's finished tree JSON first.");
+      return;
+    }
+    importTreeJSONText(text);
+  } catch {
+    revealManual();
+    showToast("Couldn't read clipboard automatically — paste the JSON below.");
+  }
+}
+
 function updateTreePromptPreview() {
   const topic = document.getElementById('tree-topic-input').value.trim();
   const language = document.getElementById('tree-language-input').value.trim();
@@ -251,11 +358,14 @@ function updateTreePromptPreview() {
   document.getElementById('tree-prompt-box').value = topic
     ? buildTreePrompt(topic, language)
     : t('Fill in a topic above to generate the prompt.');
+  const copyBtn = document.getElementById('btn-copy-tree-prompt');
+  if (copyBtn) copyBtn.disabled = !topic;
+  resetCopyButton('btn-copy-tree-prompt');
 }
 
 const TREE_MODAL_META = {
-  topic: 'Fill in the fields → copy the prompt → paste into an AI chatbot → answer its few quick calibration questions → upload the .json it gives you',
-  file:  'Copy the prompt → paste into an AI chatbot, attaching the file(s) you want to understand → answer its few quick calibration questions → upload the .json it gives you',
+  topic: 'Enter a topic → copy the prompt into an AI chat → bring the .json back',
+  file:  'Copy the prompt into an AI chat with your file(s) → bring the .json back',
 };
 
 function setTreeMode(mode) {
@@ -273,6 +383,17 @@ document.getElementById('tree-mode-tab-file').addEventListener('click', () => se
 
 function openTreeModal() {
   if (typeof resetMathTreeBuilder === 'function') resetMathTreeBuilder();
+  const topicDetails = document.getElementById('tree-prompt-details');
+  if (topicDetails) topicDetails.open = false;
+  const fileDetails = document.getElementById('tree-file-prompt-details');
+  if (fileDetails) fileDetails.open = false;
+  const manualDetails = document.getElementById('tree-json-manual');
+  if (manualDetails) manualDetails.open = false;
+  const pasteBox = document.getElementById('tree-json-paste');
+  if (pasteBox) pasteBox.value = '';
+  clearTreeImportFeedback();
+  refreshTreePasteControls();
+  resetCopyButton('btn-copy-tree-file-prompt');
   setTreeMode('topic');
   updateTreePromptPreview();
   document.getElementById('tree-modal-backdrop').classList.add('open');
@@ -281,6 +402,7 @@ function openTreeModal() {
 
 function closeTreeModal() {
   document.getElementById('tree-modal-backdrop').classList.remove('open');
+  clearTreeImportFeedback();
   if (typeof resetMathTreeBuilder === 'function') resetMathTreeBuilder();
 }
 
@@ -292,13 +414,42 @@ document.getElementById('tree-modal-backdrop').addEventListener('click', e => {
 document.getElementById('tree-topic-input').addEventListener('input', updateTreePromptPreview);
 document.getElementById('tree-language-input').addEventListener('input', updateTreePromptPreview);
 
+document.getElementById('btn-paste-tree-json').addEventListener('click', () => {
+  void pasteTreeJSONFromClipboard();
+});
+document.getElementById('tree-json-paste').addEventListener('input', () => {
+  clearTreeImportFeedback();
+  refreshTreePasteControls();
+});
+document.getElementById('btn-load-pasted-tree').addEventListener('click', () => {
+  importTreeJSONText(document.getElementById('tree-json-paste').value);
+});
+document.getElementById('btn-copy-tree-fix').addEventListener('click', () => {
+  if (!_pendingTreeError) return;
+  const fixPrompt = buildTreeFixPrompt(_pendingTreeError);
+  const btn = document.getElementById('btn-copy-tree-fix');
+  const markCopied = () => {
+    clearTimeout(_copyTimers.get('btn-copy-tree-fix'));
+    uiText(btn, 'Copied ✓');
+    btn.classList.add('copied');
+    _copyTimers.set('btn-copy-tree-fix', setTimeout(() => {
+      uiText(btn, 'Copy fix prompt');
+      btn.classList.remove('copied');
+      _copyTimers.delete('btn-copy-tree-fix');
+    }, 2000));
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(fixPrompt).then(markCopied).catch(() => showToast("Couldn't copy automatically — select the prompt text and copy it by hand."));
+  } else {
+    showToast("Couldn't copy automatically — select the prompt text and copy it by hand.");
+  }
+});
+
 document.getElementById('tree-json-input').addEventListener('change', e => {
   const file = e.target.files?.[0];
   if (file) {
     readJSONFile(file, obj => {
-      if (!loadFromJSON(obj)) return; // the modal stays open so they can try another file
-      if (!state.topic) state.topic = document.getElementById('tree-topic-input').value.trim();
-      closeTreeModal();
+      loadTreeObjectFromModal(obj);
     });
   }
   e.target.value = '';

@@ -690,3 +690,42 @@ test('cloud tree exit saves retain interrupted writes and retry only the changed
   assert.equal(sent[1].id, id);
   app.dom.window.close();
 });
+
+test('design a new tree modal hides prompts by default and supports clipboard and manual JSON import with error feedback', async () => {
+  const app = loadApp();
+  try {
+    app.ev('openTreeModal()');
+    const doc = app.document;
+    assert.equal(doc.getElementById('tree-prompt-details').open, false);
+    assert.equal(doc.getElementById('tree-json-manual').open, false);
+    assert.equal(doc.getElementById('btn-copy-tree-prompt').disabled, true);
+
+    const topicInput = doc.getElementById('tree-topic-input');
+    topicInput.value = 'Graph Theory';
+    topicInput.dispatchEvent(new app.window.Event('input'));
+    assert.equal(doc.getElementById('btn-copy-tree-prompt').disabled, false);
+
+    // Invalid pasted JSON shows inline error feedback and leaves modal open
+    const pasteBox = doc.getElementById('tree-json-paste');
+    pasteBox.value = '{not valid json';
+    pasteBox.dispatchEvent(new app.window.Event('input'));
+    assert.equal(doc.getElementById('btn-load-pasted-tree').disabled, false);
+    doc.getElementById('btn-load-pasted-tree').click();
+    assert.equal(doc.getElementById('tree-import-feedback').classList.contains('hidden'), false);
+    assert.equal(doc.getElementById('tree-modal-backdrop').classList.contains('open'), true);
+
+    // Clipboard import unwraps fenced JSON, loads the tree, and closes the modal
+    const fenced = 'Here is your tree:\n```json\n{"topic":"Graph Theory","nodes":[{"id":"v","label":"Vertices"},{"id":"e","label":"Edges","requires":["v"]}]}\n```';
+    Object.defineProperty(app.window.navigator, 'clipboard', {
+      configurable: true,
+      value: { readText: async () => fenced }
+    });
+    doc.getElementById('btn-paste-tree-json').click();
+    await tick();
+    assert.equal(doc.getElementById('tree-modal-backdrop').classList.contains('open'), false);
+    assert.equal(app.ev('state.topic'), 'Graph Theory');
+    assert.equal(app.ev('state.nodes.size'), 2);
+  } finally {
+    app.dom.window.close();
+  }
+});

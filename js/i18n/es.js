@@ -522,5 +522,18 @@ Object.assign(UI_ES, {
   "This lesson has formatting issues:": "Esta lección tiene problemas de formato:",
   "Copy fix prompt": "Copiar prompt de corrección",
   "Open anyway": "Abrir de todos modos",
-  "{id}: Lesson is incomplete or has invalid question markup. ({reason})": "{id}: la lección está incompleta o tiene formato inválido. ({reason})"
+  "{id}: Lesson is incomplete or has invalid question markup. ({reason})": "{id}: la lección está incompleta o tiene formato inválido. ({reason})",
+  "Enter a topic → copy the prompt into an AI chat → bring the .json back": "Escribe un tema → copia el prompt en un chat de IA → trae el .json de vuelta",
+  "Copy the prompt into an AI chat with your file(s) → bring the .json back": "Copia el prompt en un chat de IA con tus archivos → trae el .json de vuelta",
+  "2. Bring the finished tree back": "2. Trae el árbol terminado",
+  "📄 Upload .json file": "📄 Subir archivo .json",
+  "This tree JSON couldn't be loaded:": "No se pudo cargar este JSON de árbol:",
+  "Paste the finished tree JSON here…": "Pega aquí el JSON del árbol terminado…",
+  "Paste tree JSON": "Pegar JSON del árbol",
+  "Load tree": "Cargar árbol",
+  "No JSON text provided.": "No se proporcionó texto JSON.",
+  "Invalid JSON syntax.": "Sintaxis JSON inválida.",
+  "Expected a JSON object with a \"nodes\" list.": "Se esperaba un objeto JSON con una lista \"nodes\".",
+  "Couldn't read clipboard automatically — paste the JSON below.": "No se pudo leer el portapapeles automáticamente: pega el JSON abajo.",
+  "Your clipboard is empty. Copy the AI's finished tree JSON first.": "El portapapeles está vacío. Copia primero el JSON del árbol terminado de la IA."
 });
