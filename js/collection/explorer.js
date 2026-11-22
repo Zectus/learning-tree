@@ -6,7 +6,7 @@ const mathItems = new Map();
 const MATH_STAGES = { elementary:'Elementary', secondary:'Secondary', university:'University', advanced:'Upper undergraduate', graduate:'Graduate' };
 const MATH_BANDS = { elementary:'Foundations', secondary:'Intermediate', university:'Core', advanced:'Advanced', graduate:'Research' };
 const MATH_STAGE_BASE = { elementary:1, secondary:3, university:5, advanced:7, graduate:9 };
-const MATH_BAR_HEIGHTS = [3, 4, 5, 6, 7, 8, 9.5, 11, 12.5, 14];
+const MATH_BAR_HEIGHTS = [0.22, 0.28, 0.34, 0.4, 0.47, 0.54, 0.62, 0.71, 0.8, 0.9];
 const MATH_COLORS = ['#73aa91','#c09bcb','#d2ad78','#83a8d0','#b6ae72','#bc9687','#83b7bb','#c894a2','#9b9bce','#a0b48b'];
 
 function indexMathCollection(node, parent = null, family = 0, branch = null) {
@@ -63,12 +63,12 @@ for (const leaf of MATH_COLLECTION.leaves) {
 })();
 
 function renderDifficultyBars(level, { compact = false } = {}) {
-  const scale = compact ? 0.85 : 1;
+  const scale = compact ? 0.86 : 1;
   const bars = MATH_BAR_HEIGHTS.map((h, i) => {
     const on = i < level;
     const alpha = (0.54 + (i / 9) * 0.42).toFixed(2);
-    const px = +(h * scale).toFixed(1);
-    return `<i${on ? ` class="on" style="height:${px}px;--bar-a:${alpha}"` : ` style="height:${px}px"`}></i>`;
+    const rem = +(h * scale).toFixed(3);
+    return `<i${on ? ` class="on" style="height:${rem}rem;--bar-a:${alpha}"` : ` style="height:${rem}rem"`}></i>`;
   }).join('');
   return `<span class="explorer-bars${compact ? ' explorer-bars-sm' : ''}" aria-hidden="true">${bars}</span>`;
 }
@@ -149,21 +149,49 @@ function layoutDagColumns(nodes, parentsOf) {
   const cols = Array.from({ length: numCols }, () => []);
   ids.forEach(id => cols[colOf.get(id)].push(id));
 
-  // Build reduced adjacency for barycenter ordering
+  // Build reduced adjacency & weakly-connected components so unrelated sub-branches never interleave
   const inAdj = new Map(ids.map(id => [id, []]));
   const outAdj = new Map(ids.map(id => [id, []]));
+  const undir = new Map(ids.map(id => [id, []]));
   for (const [u, v] of edges) {
     outAdj.get(u).push(v);
     inAdj.get(v).push(u);
+    undir.get(u).push(v);
+    undir.get(v).push(u);
   }
 
-  // Forward + backward barycenter sweeps to reduce crossings while preserving curriculum order
+  const compOf = new Map();
+  const comps = [];
+  for (const id of ids) {
+    if (compOf.has(id)) continue;
+    const group = [];
+    const q = [id];
+    compOf.set(id, comps.length);
+    while (q.length) {
+      const cur = q.pop();
+      group.push(cur);
+      for (const nb of undir.get(cur)) {
+        if (!compOf.has(nb)) { compOf.set(nb, comps.length); q.push(nb); }
+      }
+    }
+    const minDiff = Math.min(...group.map(x => mathItems.get(x)?.difficulty || 1));
+    const minOrder = Math.min(...group.map(x => orderIndex.get(x)));
+    comps.push({ group, minDiff, minOrder });
+  }
+  comps.sort((a, b) => a.minDiff - b.minDiff || a.minOrder - b.minOrder);
+  const compRank = new Map();
+  comps.forEach((comp, idx) => comp.group.forEach(id => compRank.set(id, idx)));
+
+  // Forward + backward barycenter sweeps within each component band
   const rowIndex = new Map();
   const refreshRows = () => cols.forEach(col => col.forEach((id, r) => rowIndex.set(id, r)));
+  cols.forEach(col => col.sort((a, b) => compRank.get(a) - compRank.get(b) || orderIndex.get(a) - orderIndex.get(b)));
   refreshRows();
 
   const sortByNeighbors = (col, adjMap) => {
     col.sort((a, b) => {
+      const ca = compRank.get(a), cb = compRank.get(b);
+      if (ca !== cb) return ca - cb;
       const na = adjMap.get(a), nb = adjMap.get(b);
       const ba = na.length ? na.reduce((s, p) => s + rowIndex.get(p), 0) / na.length : Infinity;
       const bb = nb.length ? nb.reduce((s, p) => s + rowIndex.get(p), 0) / nb.length : Infinity;
@@ -178,6 +206,8 @@ function layoutDagColumns(nodes, parentsOf) {
 
   return { cols, edges, colOf };
 }
+
+const mathScale = () => (typeof UI_SCALE === 'number' && UI_SCALE > 0 ? UI_SCALE : 1);
 
 function edgeDefsMarkup() {
   return `<defs>
@@ -194,9 +224,10 @@ function edgeDefsMarkup() {
 }
 
 function bezierPath(x1, y1, x2, y2, skipCols = 1) {
-  const dx = Math.max(28, (x2 - x1) * 0.44);
-  if (skipCols > 1 && Math.abs(y1 - y2) < 12) {
-    const lift = 28;
+  const s = mathScale();
+  const dx = Math.max(28 * s, (x2 - x1) * 0.44);
+  if (skipCols > 1 && Math.abs(y1 - y2) < 14 * s) {
+    const lift = 30 * s;
     return `M${x1},${y1} C${x1 + dx},${y1 - lift} ${x2 - dx},${y2 - lift} ${x2},${y2}`;
   }
   return `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`;
@@ -312,7 +343,10 @@ function renderBranchTree(branch) {
   const leaves = branch.leaves;
   const { cols, edges, colOf } = layoutDagColumns(leaves, id => mathItems.get(id).recommendedPreparation);
 
-  const CARD_W = 192, CARD_H = 70, COL_GAP = 64, ROW_GAP = 16, PAD_X = 28, PAD_Y = 24;
+  const s = mathScale();
+  const CARD_W = Math.round(216 * s), CARD_H = Math.round(82 * s);
+  const COL_GAP = Math.round(64 * s), ROW_GAP = Math.round(16 * s);
+  const PAD_X = Math.round(28 * s), PAD_Y = Math.round(24 * s);
   const maxRows = Math.max(1, ...cols.map(c => c.length));
   const contentH = maxRows * CARD_H + (maxRows - 1) * ROW_GAP;
   const totalW = PAD_X * 2 + cols.length * CARD_W + Math.max(0, cols.length - 1) * COL_GAP;
@@ -362,7 +396,10 @@ function renderNeighborhood(node) {
       return aSame - bSame || a.family - b.family;
     });
 
-  const COL_W = 224, CENTER_W = 244, CARD_H = 78, COL_GAP = 84, ROW_GAP = 14, PAD_X = 32, PAD_Y = 22, HEADER_H = 30;
+  const s = mathScale();
+  const COL_W = Math.round(252 * s), CENTER_W = Math.round(268 * s), CARD_H = Math.round(88 * s);
+  const COL_GAP = Math.round(82 * s), ROW_GAP = Math.round(14 * s);
+  const PAD_X = Math.round(32 * s), PAD_Y = Math.round(22 * s), HEADER_H = Math.round(32 * s);
   const leftCount = Math.max(1, preps.length);
   const rightCount = Math.max(1, unlocks.length);
   const maxRows = Math.max(1, leftCount, rightCount);
@@ -375,7 +412,7 @@ function renderNeighborhood(node) {
   const rightX = centerX + CENTER_W + COL_GAP;
   const bodyTop = PAD_Y + HEADER_H;
 
-  const centerY = bodyTop + Math.min(Math.round((contentH - CARD_H) / 2), 130);
+  const centerY = bodyTop + Math.min(Math.round((contentH - CARD_H) / 2), Math.round(130 * s));
   const placeColumn = (items, x) => {
     const colH = items.length * CARD_H + Math.max(0, items.length - 1) * ROW_GAP;
     const idealY = Math.round(centerY + CARD_H / 2 - colH / 2);
@@ -464,7 +501,10 @@ function renderFullPath(node) {
   const leaves = MATH_COLLECTION.leaves.filter(l => visited.has(l.id));
   const { cols, edges, colOf } = layoutDagColumns(leaves, id => mathItems.get(id).recommendedPreparation);
 
-  const CARD_W = 204, CARD_H = 74, COL_GAP = 68, ROW_GAP = 16, PAD_X = 28, PAD_Y = 24;
+  const s = mathScale();
+  const CARD_W = Math.round(224 * s), CARD_H = Math.round(84 * s);
+  const COL_GAP = Math.round(68 * s), ROW_GAP = Math.round(16 * s);
+  const PAD_X = Math.round(28 * s), PAD_Y = Math.round(24 * s);
   const maxRows = Math.max(1, ...cols.map(c => c.length));
   const contentH = maxRows * CARD_H + (maxRows - 1) * ROW_GAP;
   const totalW = PAD_X * 2 + cols.length * CARD_W + Math.max(0, cols.length - 1) * COL_GAP;
