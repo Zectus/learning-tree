@@ -20,7 +20,7 @@ Let \\( V \\) be a vector space over \\( \\mathbb{K} \\). A norm satisfies three
 (3) Triangle inequality: \\( \\|x + y\\| \\le \\|x\\| + \\|y\\| \\).
 [/CALLOUT]
 
-Notice that in axiom [REF: norm.1 | (1)] the zero appears in two roles. Two consequences of axiom [REF: norm.2 | (2)] follow immediately, and the whole [REF: norm | norm definition] determines geometry. Also see [REF: proof_box | the short proof] and Section 2.
+Notice that in [REF: norm.1 | axiom (1)] the zero appears in two roles. Two consequences of [REF: norm.2 | (2)] follow immediately, and the whole [REF: norm | norm definition] determines geometry. Also see [REF: proof_box | the short proof] and Section 2.
 
 [CALLOUT]
 id: caution_zero
