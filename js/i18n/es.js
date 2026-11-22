@@ -535,5 +535,7 @@ Object.assign(UI_ES, {
   "Invalid JSON syntax.": "Sintaxis JSON inválida.",
   "Expected a JSON object with a \"nodes\" list.": "Se esperaba un objeto JSON con una lista \"nodes\".",
   "Couldn't read clipboard automatically — paste the JSON below.": "No se pudo leer el portapapeles automáticamente: pega el JSON abajo.",
-  "Your clipboard is empty. Copy the AI's finished tree JSON first.": "El portapapeles está vacío. Copia primero el JSON del árbol terminado de la IA."
+  "Your clipboard is empty. Copy the AI's finished tree JSON first.": "El portapapeles está vacío. Copia primero el JSON del árbol terminado de la IA.",
+  "Jump to source": "Ir al origen",
+  "Details": "Detalles"
 });

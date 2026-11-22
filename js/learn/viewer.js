@@ -139,21 +139,127 @@ function linkifySectionRefs(escapedHtml) {
     (whole, num) => `<span class="sv-sec-ref" data-sec="${num}" role="link" tabindex="0">${whole}</span>`);
 }
 
-function renderProse(text) {
+/* Inline prose formatter: preserves KaTeX display-math spacing, escapes HTML,
+   turns [REF: target | text] into peekable reference triggers, and linkifies
+   "Section N" mentions outside [REF] tags so spans never nest. */
+const SV_REF_TAG_RE = /\[REF:\s*([a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)?)(?:\s*\|\s*([^\]]+?))?\s*\]/gi;
+function formatInlineProse(raw) {
+  const normalized = raw.replace(/\n+(?=\\\[)/g, '').replace(/(\\\])\n+/g, '$1');
+  let out = '', last = 0;
+  for (const m of normalized.matchAll(SV_REF_TAG_RE)) {
+    if (m.index > last) out += linkifySectionRefs(svEsc(normalized.slice(last, m.index)));
+    const target = m[1].toLowerCase();
+    const visible = (m[2] || m[1]).trim();
+    out += `<span class="sv-ref" data-ref="${svEsc(target)}" role="button" tabindex="0" aria-expanded="false">${svEsc(visible)}</span>`;
+    last = m.index + m[0].length;
+  }
+  if (last < normalized.length) out += linkifySectionRefs(svEsc(normalized.slice(last)));
+  return out.replace(/\n/g, '<br>');
+}
+
+function matchListItemLine(line) {
+  let m = line.match(/^\((\d{1,3})\)\s+(.+)$/);
+  if (m) return { kind: 'paren', num: m[1], marker: `(${m[1]})`, text: m[2] };
+  m = line.match(/^(\d{1,3})\.\s+(.+)$/);
+  if (m) return { kind: 'dot', num: m[1], marker: `${m[1]}.`, text: m[2] };
+  m = line.match(/^-\s+(.+)$/);
+  if (m) return { kind: 'dash', num: null, marker: '•', text: m[1] };
+  return null;
+}
+
+/* Splits a non-table prose segment into paragraphs, standalone display-math
+   blocks, and structured lists (both tight lists and loose lists with a blank
+   line between consecutive items). Single stray lines stay plain paragraphs
+   unless they are a numbered "(1)" inside an anchored callout. */
+function parseProseBlocks(text, anchorPrefix = '') {
+  const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n');
+  const blocks = [];
+  let para = [];
+  const flushPara = () => {
+    const joined = para.join('\n').trim();
+    para = [];
+    if (!joined) return;
+    if (/^\\\[[\s\S]*?\\\]$/.test(joined)) blocks.push({ type: 'math', text: joined });
+    else blocks.push({ type: 'p', text: joined });
+  };
+
+  let i = 0;
+  while (i < lines.length) {
+    const rawLine = lines[i];
+    const trimmed = rawLine.trim();
+    if (!trimmed) { flushPara(); i++; continue; }
+    if (/^\\\[[\s\S]*?\\\]$/.test(trimmed)) {
+      flushPara();
+      blocks.push({ type: 'math', text: trimmed });
+      i++;
+      continue;
+    }
+    const firstItem = matchListItemLine(trimmed);
+    if (firstItem) {
+      flushPara();
+      const listKind = firstItem.kind;
+      const items = [{ num: firstItem.num, marker: firstItem.marker, lines: [firstItem.text], rawLines: [trimmed] }];
+      i++;
+      while (i < lines.length) {
+        if (!lines[i].trim()) {
+          // Look ahead across blank lines: merge a loose list if the next non-blank
+          // line continues the same list kind.
+          let j = i;
+          while (j < lines.length && !lines[j].trim()) j++;
+          const nextItem = j < lines.length ? matchListItemLine(lines[j].trim()) : null;
+          if (nextItem && nextItem.kind === listKind) {
+            items.push({ num: nextItem.num, marker: nextItem.marker, lines: [nextItem.text], rawLines: [lines[j].trim()] });
+            i = j + 1;
+            continue;
+          }
+          break;
+        }
+        const curTrim = lines[i].trim();
+        if (/^\\\[[\s\S]*?\\\]$/.test(curTrim)) break;
+        const nextItem = matchListItemLine(curTrim);
+        if (nextItem && nextItem.kind === listKind) {
+          items.push({ num: nextItem.num, marker: nextItem.marker, lines: [nextItem.text], rawLines: [curTrim] });
+          i++;
+        } else if (nextItem) {
+          break;
+        } else {
+          items[items.length - 1].lines.push(curTrim);
+          items[items.length - 1].rawLines.push(curTrim);
+          i++;
+        }
+      }
+      const isRealList = items.length >= 2 || (anchorPrefix && listKind === 'paren' && items[0].num === '1');
+      if (isRealList) {
+        blocks.push({ type: 'list', kind: listKind, items: items.map(it => ({ num: it.num, marker: it.marker, text: it.lines.join('\n') })) });
+      } else {
+        blocks.push({ type: 'p', text: items[0].rawLines.join('\n') });
+      }
+      continue;
+    }
+    para.push(trimmed);
+    i++;
+  }
+  flushPara();
+  return blocks;
+}
+
+function renderProse(text, { anchorPrefix = '' } = {}) {
   // Choice bodies are extracted before session-level tools, so their tables
   // must be rendered here. Keep block markup outside paragraph elements.
-  return text.split(/\[TABLE\]([\s\S]*?)\[\/TABLE\]/gi).map((part, i) => {
+  return String(text || '').split(/\[TABLE\]([\s\S]*?)\[\/TABLE\]/gi).map((part, i) => {
     if (i % 2) return renderTable(parseTableBody(part));
-    return part.split(/\n{2,}/).map(c => c.trim()).filter(Boolean).map(c => {
-      // Standalone display equation: render in its own tight wrapper instead of
-      // nesting .katex-display inside <p>, which would double vertical margins.
-      if (/^\\\[[\s\S]*?\\\]$/.test(c)) {
-        return `<div class="sv-math-display">${svEsc(c)}</div>`;
+    return parseProseBlocks(part, anchorPrefix).map(b => {
+      if (b.type === 'math') return `<div class="sv-math-display">${svEsc(b.text)}</div>`;
+      if (b.type === 'list') {
+        const tag = b.kind === 'dash' ? 'ul' : 'ol';
+        const cls = b.kind === 'dash' ? 'sv-list sv-list-bullet' : 'sv-list sv-list-num';
+        const lis = b.items.map(it => {
+          const anchor = (anchorPrefix && it.num) ? ` data-anchor="${svEsc(`${anchorPrefix}.${it.num}`)}"` : '';
+          return `<li class="sv-list-item"${anchor}><span class="sv-list-marker" aria-hidden="true">${svEsc(it.marker)}</span><span class="sv-list-text">${formatInlineProse(it.text)}</span></li>`;
+        }).join('');
+        return `<${tag} class="${cls}">${lis}</${tag}>`;
       }
-      // Remove bare single newlines immediately around inline \[...\] blocks so
-      // they don't turn into extra <br> blank lines above/below display math.
-      const normalized = c.replace(/\n+(?=\\\[)/g, '').replace(/(\\\])\n+/g, '$1');
-      return `<p>${linkifySectionRefs(svEsc(normalized)).replace(/\n/g, '<br>')}</p>`;
+      return `<p>${formatInlineProse(b.text)}</p>`;
     }).join('');
   }).join('');
 }
@@ -291,9 +397,19 @@ function openViewer(txtContent, nodeId) {
   svUserPositioned = false; // this open re-centres the window, so auto-centering on resize applies again
   if (node?.label) userText(document.getElementById('sv-topic'), node.label); else uiText(document.getElementById('sv-topic'), 'Session');
 
+  closeRefPopover();
   const body = document.getElementById('sv-body');
   body.innerHTML = renderSession(parsed) + buildBonusSection(parsed.bonuses);
   renderMath(body);
+  // Any [REF] whose target doesn't exist in this lesson degrades to plain text
+  // rather than showing a dead clickable trigger.
+  const anchors = new Set([...body.querySelectorAll('[data-anchor]')].map(el => el.dataset.anchor));
+  body.querySelectorAll('.sv-ref[data-ref]').forEach(el => {
+    if (!anchors.has(el.dataset.ref)) el.replaceWith(...el.childNodes);
+  });
+  body.querySelectorAll('details.sv-callout').forEach(det => {
+    det.addEventListener('toggle', () => { computeCheckpoints(); updateSessionProgress(); });
+  });
 
   body.querySelectorAll('.q-opt[data-qn]').forEach(btn => btn.addEventListener('click', () => handleOptionClick(btn)));
   body.querySelectorAll('.q-opt[data-bn]').forEach(btn => btn.addEventListener('click', () => handleBonusClick(btn)));
@@ -358,11 +474,13 @@ function continueViewer(nodeId) {
 
 function closeViewer() {
   // viewer state is kept: answers and scroll position live on in the DOM
+  closeRefPopover();
   document.getElementById('session-viewer').classList.remove('sv-open');
 }
 
 onEscape(60, () => {
   if (!document.getElementById('session-viewer').classList.contains('sv-open')) return false;
+  if (closeRefPopover({ restoreFocus: true })) return true;
   closeViewer();
   return true;
 });
@@ -565,26 +683,193 @@ document.getElementById('sv-body').addEventListener('scroll', e => {
   scrollSaveTimer = setTimeout(autoSaveProgress, 500);
 });
 
-/* "Section N" link clicks, delegated on #sv-body because its innerHTML is
-   replaced on every open. Deliberately not scrollIntoView(): in this nested
-   fixed-position structure the browser picked the wrong scroll container and
-   distorted #sv-window. Setting only #sv-body's own scroll offset avoids that. */
-function scrollToSectionRef(link) {
+/* Safe scroll within #sv-body only. Deliberately not scrollIntoView(): in this
+   nested fixed-position structure the browser picked the wrong scroll container
+   and distorted #sv-window. Shared by "Section N" links and [REF] jump buttons. */
+function scrollViewerTo(target, offset = 0) {
   const body = document.getElementById('sv-body');
-  const target = document.getElementById(`sv-section-${link.dataset.sec}`);
   if (!body || !target) return;
-  const targetTop = target.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
-  body.scrollTo({ top: targetTop, behavior: 'smooth' });
+  const targetTop = Math.max(0, target.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop - offset);
+  if (typeof body.scrollTo === 'function') body.scrollTo({ top: targetTop, behavior: 'smooth' });
+  else body.scrollTop = targetTop;
 }
+
+function scrollToSectionRef(link) {
+  scrollViewerTo(document.getElementById(`sv-section-${link.dataset.sec}`));
+}
+
+/* ── Inline [REF] peek popover + jump-to-source ──
+   Clicking a .sv-ref opens a compact floating card anchored above (or below)
+   the trigger showing the referenced callout or numbered item with its already-
+   rendered KaTeX. The jump button scrolls #sv-body to the original statement
+   and flashes a brief highlight ring. */
+let activeRefTrigger = null;
+let refHighlightTimer = null;
+
+function findRefAnchor(refId) {
+  const body = document.getElementById('sv-body');
+  if (!body || !refId) return null;
+  for (const el of body.querySelectorAll('[data-anchor]')) {
+    if (el.closest('#sv-ref-popover')) continue;
+    if (el.dataset.anchor === refId) return el;
+  }
+  return null;
+}
+
+function closeRefPopover({ restoreFocus = false } = {}) {
+  const pop = document.getElementById('sv-ref-popover');
+  const prev = activeRefTrigger;
+  if (prev) prev.setAttribute('aria-expanded', 'false');
+  activeRefTrigger = null;
+  if (!pop) return false;
+  pop.remove();
+  if (restoreFocus && prev && prev.isConnected) prev.focus();
+  return true;
+}
+
+function cloneSanitizedForPopover(node) {
+  const clone = node.cloneNode(true);
+  const strip = el => {
+    el.removeAttribute('id');
+    el.removeAttribute('data-anchor');
+    el.classList.remove('sv-ref-highlight');
+  };
+  if (clone.nodeType === 1) {
+    strip(clone);
+    clone.querySelectorAll('[id], [data-anchor], .sv-ref-highlight').forEach(strip);
+    clone.querySelectorAll('.sv-ref').forEach(r => r.replaceWith(...r.childNodes));
+  }
+  return clone;
+}
+
+function flashRefTarget(target) {
+  clearTimeout(refHighlightTimer);
+  document.querySelectorAll('#sv-body .sv-ref-highlight').forEach(el => el.classList.remove('sv-ref-highlight'));
+  target.classList.add('sv-ref-highlight');
+  refHighlightTimer = setTimeout(() => target.classList.remove('sv-ref-highlight'), 1800);
+}
+
+function jumpToRefTarget(target) {
+  if (!target || !target.isConnected) return;
+  closeRefPopover();
+  const details = target.closest('details.sv-callout');
+  if (details && !details.open) {
+    details.open = true;
+    computeCheckpoints();
+    updateSessionProgress();
+  }
+  scrollViewerTo(target, 28);
+  flashRefTarget(target);
+}
+
+function positionRefPopover(pop, trigger) {
+  const body = document.getElementById('sv-body');
+  if (!body) return;
+  const bodyRect = body.getBoundingClientRect();
+  const refRect = trigger.getBoundingClientRect();
+  const pad = 12;
+  const gap = 10;
+  const popW = pop.offsetWidth || 320;
+  const popH = pop.offsetHeight || 120;
+  const availW = body.clientWidth || bodyRect.width || 600;
+  const refCenterX = refRect.left - bodyRect.left + refRect.width / 2;
+  const left = Math.max(pad, Math.min(availW - popW - pad, refCenterX - popW / 2));
+  const spaceAbove = refRect.top - bodyRect.top;
+  const placeBelow = spaceAbove < popH + gap + 8;
+  const refTopInBody = refRect.top - bodyRect.top + body.scrollTop;
+  const refBottomInBody = refRect.bottom - bodyRect.top + body.scrollTop;
+  const top = placeBelow ? refBottomInBody + gap : Math.max(8, refTopInBody - popH - gap);
+  const arrowX = Math.max(16, Math.min(popW - 16, refCenterX - left));
+
+  pop.classList.toggle('sv-ref-popover-below', placeBelow);
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+  pop.style.setProperty('--arrow-x', arrowX + 'px');
+}
+
+function openRefPopover(trigger) {
+  const refId = trigger?.dataset?.ref;
+  if (!refId) return;
+  if (activeRefTrigger === trigger) { closeRefPopover(); return; }
+  const target = findRefAnchor(refId);
+  if (!target) return;
+  closeRefPopover();
+
+  const body = document.getElementById('sv-body');
+  const pop = document.createElement('div');
+  pop.id = 'sv-ref-popover';
+  pop.className = 'sv-ref-popover';
+  pop.setAttribute('role', 'dialog');
+  pop.dataset.ref = refId;
+
+  const callout = target.closest('.sv-callout');
+  const heading = callout?.querySelector('.sv-callout-heading');
+  if (heading && heading.childNodes.length) {
+    const headEl = document.createElement('div');
+    headEl.className = 'sv-ref-pop-head';
+    headEl.appendChild(cloneSanitizedForPopover(heading));
+    pop.appendChild(headEl);
+  }
+
+  const contentEl = document.createElement('div');
+  contentEl.className = 'sv-ref-pop-body';
+  if (target.classList.contains('sv-list-item')) {
+    const row = document.createElement('div');
+    row.className = 'sv-ref-pop-item';
+    for (const child of target.childNodes) row.appendChild(cloneSanitizedForPopover(child));
+    contentEl.appendChild(row);
+  } else {
+    const calloutBody = target.querySelector('.sv-callout-body');
+    if (calloutBody) {
+      for (const child of calloutBody.childNodes) contentEl.appendChild(cloneSanitizedForPopover(child));
+    }
+  }
+  pop.appendChild(contentEl);
+
+  const foot = document.createElement('div');
+  foot.className = 'sv-ref-pop-foot';
+  const jumpBtn = document.createElement('button');
+  jumpBtn.type = 'button';
+  jumpBtn.className = 'sv-ref-pop-jump';
+  uiAttr(jumpBtn, 'title', 'Jump to source');
+  uiAttr(jumpBtn, 'aria-label', 'Jump to source');
+  jumpBtn.innerHTML = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9.5 8 5l4.5 4.5"/><path d="M5.25 12.25 8 9.5l2.75 2.75"/></svg>';
+  jumpBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    jumpToRefTarget(target);
+  });
+  foot.appendChild(jumpBtn);
+  pop.appendChild(foot);
+
+  body.appendChild(pop);
+  activeRefTrigger = trigger;
+  trigger.setAttribute('aria-expanded', 'true');
+  positionRefPopover(pop, trigger);
+}
+
 document.getElementById('sv-body').addEventListener('click', e => {
+  const ref = e.target.closest('.sv-ref');
+  if (ref && !ref.closest('#sv-ref-popover')) { openRefPopover(ref); return; }
   const link = e.target.closest('.sv-sec-ref');
-  if (link) scrollToSectionRef(link);
+  if (link) { closeRefPopover(); scrollToSectionRef(link); return; }
+  if (!e.target.closest('#sv-ref-popover')) closeRefPopover();
+});
+document.getElementById('session-viewer').addEventListener('click', e => {
+  if (!activeRefTrigger) return;
+  if (!e.target.closest('#sv-ref-popover') && !e.target.closest('.sv-ref')) closeRefPopover();
 });
 document.getElementById('sv-body').addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
+  const ref = e.target.closest?.('.sv-ref');
+  if (ref && !ref.closest('#sv-ref-popover')) {
+    e.preventDefault();
+    openRefPopover(ref);
+    return;
+  }
   const link = e.target.closest?.('.sv-sec-ref');
   if (!link) return;
   e.preventDefault(); // Space would otherwise also scroll #sv-body
+  closeRefPopover();
   scrollToSectionRef(link);
 });
 

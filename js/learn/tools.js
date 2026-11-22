@@ -804,6 +804,58 @@ function mountBoard2d(g, el, id) {
   }
 }
 
+/* ── CALLOUT ──
+   Structured textbook card for formal statements, rules, axioms, remarks,
+   pitfalls, and collapsible proofs/derivations. Leading "key: value" lines
+   (id, label, title, tone, collapsed) are parsed only until the first blank
+   line or non-header line, so colons in the body are never misread. */
+const CALLOUT_HEADER_RE = /^(id|label|title|tone|collapsed):\s*(.*)$/i;
+const VALID_CALLOUT_TONES = new Set(['key', 'note', 'caution']);
+
+function parseCalloutBody(raw) {
+  const lines = String(raw || '').replace(/\r\n?/g, '\n').split('\n');
+  let i = 0;
+  while (i < lines.length && !lines[i].trim()) i++;
+  const meta = { id: '', label: '', title: '', tone: 'key', collapsed: false };
+  while (i < lines.length) {
+    const trimmed = lines[i].trim();
+    if (!trimmed) { i++; break; }
+    const m = trimmed.match(CALLOUT_HEADER_RE);
+    if (!m) break;
+    const key = m[1].toLowerCase(), val = m[2].trim();
+    if (key === 'id' && /^[a-z0-9_-]+$/i.test(val)) meta.id = val.toLowerCase();
+    else if (key === 'label') meta.label = val;
+    else if (key === 'title') meta.title = val;
+    else if (key === 'tone' && VALID_CALLOUT_TONES.has(val.toLowerCase())) meta.tone = val.toLowerCase();
+    else if (key === 'collapsed') meta.collapsed = /^(true|1|yes)$/i.test(val);
+    i++;
+  }
+  const body = lines.slice(i).join('\n').trim();
+  return { ...meta, body };
+}
+
+function renderCallout(c) {
+  const anchorAttr = c.id ? ` data-anchor="${svEsc(c.id)}"` : '';
+  const labelHtml = c.label ? `<span class="sv-callout-label">${svEsc(c.label)}</span>` : '';
+  const titleHtml = c.title ? `<span class="sv-callout-title">${svEsc(c.title)}</span>` : '';
+  const bodyHtml = typeof renderProse === 'function'
+    ? renderProse(c.body, { anchorPrefix: c.id })
+    : `<p>${svEsc(c.body)}</p>`;
+  if (c.collapsed) {
+    const heading = (labelHtml || titleHtml)
+      ? `${labelHtml}${titleHtml}`
+      : `<span class="sv-callout-label">${typeof uiHTML === 'function' ? uiHTML('Details') : 'Details'}</span>`;
+    return `<details class="sv-callout sv-callout-${c.tone} sv-callout-collapsible"${anchorAttr}>
+      <summary class="sv-callout-head"><span class="sv-callout-arrow" aria-hidden="true">▶</span><span class="sv-callout-heading">${heading}</span></summary>
+      <div class="sv-callout-body">${bodyHtml}</div>
+    </details>`;
+  }
+  const headHtml = (labelHtml || titleHtml)
+    ? `<div class="sv-callout-head"><span class="sv-callout-heading">${labelHtml}${titleHtml}</span></div>`
+    : '';
+  return `<aside class="sv-callout sv-callout-${c.tone}"${anchorAttr}>${headHtml}<div class="sv-callout-body">${bodyHtml}</div></aside>`;
+}
+
 /* ── Registry ──
    tag: the bracket tag in the .txt; code: the letter in the placeholder token
    that stands in for the block during section splitting; key: the Map key on
@@ -811,5 +863,6 @@ function mountBoard2d(g, el, id) {
 const BLOCK_TOOLS = [
   { tag: 'TABLE',    code: 'T', key: 'tables',    parse: parseTableBody,    render: renderTable },
   { tag: 'TIMELINE', code: 'L', key: 'timelines', parse: parseTimelineBody, render: renderTimeline },
+  { tag: 'CALLOUT',  code: 'C', key: 'callouts',  parse: parseCalloutBody,  render: renderCallout },
   { tag: 'GRAPH',    code: 'G', key: 'graphs',    parse: parseGraphBody,    render: renderGraph, mount: mountGraph },
 ];

@@ -102,7 +102,7 @@ Return one JSON record with format="${LESSON_RECORD_FORMAT}", treeKey="${generat
     explanationLine: 'The learning goal and boundaries are the current node’s explanation.',
     prereqLine: 'Use the labels and explanations of all the current node’s requires as already-taught background. With no requires, this is an entry topic; respect any calibrated starting knowledge stated in explanation.',
     leadsToLine: 'Do not introduce material belonging to later nodes that require this one.',
-    languageClause: `\nLANGUAGE\nWrite every lesson in ${language}. Use === SECTION N: TITLE === section headings. Keep QUESTION, ANSWER, BONUS, TABLE, TIMELINE, GRAPH and graph field names in their literal parser syntax.\n`,
+    languageClause: `\nLANGUAGE\nWrite every lesson in ${language}. Use === SECTION N: TITLE === section headings. Keep QUESTION, ANSWER, BONUS, TABLE, TIMELINE, CALLOUT, REF, GRAPH, callout field names/values (id, label, title, tone, collapsed, key, note, caution, true, false), and graph field names in their literal parser syntax.\n`,
   };
   const resumeNote = 'RESUME BACKUPS: when completed is nonempty, this work file deliberately omits those lessons’ text. A JSON built only from this packet does not contain all earlier lessons. Keep the journal of new records to merge into the original tree; export the complete backup from the app after importing.';
   return tailoredProtocol + '\n\n' + effortInstruction + (completed.length ? '\n\n' + resumeNote : '') + '\n\n' + renderNodePrompt(values);
