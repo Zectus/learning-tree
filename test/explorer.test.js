@@ -5,21 +5,59 @@ const el = (app,id) => app.document.getElementById(id);
 const tick = () => new Promise(resolve => setTimeout(resolve,0));
 const integration = 'math_integration_techniques';
 
-test('the complete math hierarchy has unique IDs, bounded scopes, and navigable regions', () => {
+test('the complete math hierarchy has unique IDs, bounded scopes, monotonic 1-10 difficulty, and navigable branch sub-trees', () => {
   const app=loadApp();
   try {
     assert.equal(app.ev('MATH_COLLECTION.count'),140);
-    assert.equal(app.ev('[...mathItems.values()].filter(n=>!n.children).every(n=>!!n.scope && !!MATH_STAGES[n.stage])'),true);
+    assert.equal(app.ev('[...mathItems.values()].filter(n=>!n.children).every(n=>!!n.scope && !!MATH_STAGES[n.stage] && n.difficulty>=1 && n.difficulty<=10)'),true);
+    assert.equal(app.ev('MATH_COLLECTION.leaves.every(l=>l.recommendedPreparation.every(p=>mathItems.get(p).difficulty<=l.difficulty))'),true);
     assert.equal(app.ev('mathItems.size'),app.ev('(function count(n){return 1+(n.children||[]).reduce((s,c)=>s+count(c),0)})(MATH_COLLECTION)'));
     app.ev('openMathAtlas()');
-    el(app,'explorer-detail').querySelector('[data-math-id="math_calculus_and_analysis"]').click();
+    assert.equal(el(app,'explorer-rail').querySelectorAll('.explorer-branch-btn').length,10);
+    el(app,'explorer-rail').querySelector('[data-math-id="math_calculus_and_analysis"]').click();
     assert.equal(el(app,'explorer-detail-title').textContent,'Calculus and Analysis');
-    assert.ok(el(app,'explorer-map').querySelector('[data-math-id="math_calculus"]'));
-    el(app,'explorer-outline-tab').click();
-    assert.equal(el(app,'explorer-map-wrap').hidden,true);
-    el(app,'explorer-outline').querySelector('[data-math-id="math_calculus"]').click();
-    assert.equal(el(app,'explorer-detail-title').textContent,'Calculus');
-    assert.match(el(app,'explorer-breadcrumbs').textContent,/Mathematics.*Calculus and Analysis.*Calculus/);
+    assert.equal(el(app,'explorer-nodes').querySelectorAll('.explorer-node').length,28);
+    assert.equal(el(app,'explorer-nodes').querySelector(`[data-math-id="${integration}"]`).querySelectorAll('.explorer-bars i.on').length,5);
+    assert.ok(el(app,'explorer-edges').querySelectorAll('.explorer-edge').length > 20);
+    el(app,'explorer-nodes').querySelector(`[data-math-id="${integration}"]`).click();
+    assert.equal(el(app,'explorer-detail-title').textContent,'Integration Techniques');
+    assert.equal(app.ev('mathAtlas.mode'),'neighbors');
+    el(app,'explorer-back-branch').click();
+    assert.equal(app.ev('mathAtlas.selectedId'),null);
+    assert.equal(el(app,'explorer-detail-title').textContent,'Calculus and Analysis');
+  } finally {app.dom.window.close();}
+});
+
+test('local neighborhood shows solid same-branch and dashed cross-branch prerequisites and unlocks, plus full path', () => {
+  const app=loadApp();
+  try {
+    app.ev("openMathAtlas({target:'math_complex_numbers'})");
+    assert.equal(app.ev('mathAtlas.mode'),'neighbors');
+    assert.ok(el(app,'explorer-nodes').querySelector('.explorer-node-selected[data-math-id="math_complex_numbers"]'));
+    // Trigonometric Functions is a cross-branch prep (Geometry and Topology -> Algebra and Functions), so it must be dashed
+    const extPrep=el(app,'explorer-nodes').querySelector('.explorer-preparation [data-math-id="math_trigonometric_functions"]');
+    assert.ok(extPrep);
+    assert.ok(extPrep.classList.contains('explorer-node-external'));
+    assert.ok(el(app,'explorer-edges').querySelector('.explorer-edge-external[data-from="math_trigonometric_functions"][data-to="math_complex_numbers"]'));
+    // Determinants and Eigenstructure is a same-branch unlock (Algebra and Functions), so it must be solid
+    const sameUnlock=el(app,'explorer-nodes').querySelector('.explorer-unlocks [data-math-id="math_determinants_and_eigenstructure"]');
+    assert.ok(sameUnlock);
+    assert.equal(sameUnlock.classList.contains('explorer-node-external'),false);
+    // Complex Differentiation is a cross-branch unlock (Calculus and Analysis), so it must be dashed
+    const extUnlock=el(app,'explorer-nodes').querySelector('.explorer-unlocks [data-math-id="math_complex_differentiation"]');
+    assert.ok(extUnlock);
+    assert.ok(extUnlock.classList.contains('explorer-node-external'));
+    // Toggle Full path to inspect transitive ancestors with cross-branch ancestors dashed
+    el(app,'explorer-mode-path').click();
+    assert.equal(app.ev('mathAtlas.mode'),'path');
+    assert.ok(el(app,'explorer-nodes').querySelectorAll('.explorer-node').length > 5);
+    assert.ok(el(app,'explorer-nodes').querySelector('.explorer-node-external[data-math-id="math_trigonometric_functions"]'));
+    // Clicking a cross-branch node walks there and updates the active branch in the rail
+    el(app,'explorer-mode-neighbors').click();
+    el(app,'explorer-nodes').querySelector('[data-math-id="math_trigonometric_functions"]').click();
+    assert.equal(app.ev('mathAtlas.selectedId'),'math_trigonometric_functions');
+    assert.equal(app.ev('mathAtlas.branchId'),'math_geometry_and_topology');
+    assert.equal(el(app,'explorer-rail').querySelector('[data-math-id="math_geometry_and_topology"]').getAttribute('aria-current'),'true');
   } finally {app.dom.window.close();}
 });
 
@@ -94,6 +132,20 @@ test('a generated structure replaces its scope draft and preserves collection id
   } finally {app.dom.window.close();}
 });
 
+test('clicking Build tree on an unsaved scope saves it and opens the tree designer in one click', async () => {
+  const app=loadApp();
+  try {
+    app.ev(`openMathAtlas({target:'${integration}'})`);
+    assert.equal(el(app,'explorer-tree-action').textContent,'Build tree');
+    assert.equal(el(app,'explorer-tree-save').textContent,'Add to my trees');
+    el(app,'explorer-tree-action').click();
+    await tick();
+    assert.equal(el(app,'explorer-backdrop').classList.contains('open'),false);
+    assert.equal(el(app,'tree-topic-input').value,'Integration Techniques');
+    assert.equal(app.ev('Object.keys(libraryCache).length'),1);
+  } finally {app.dom.window.close();}
+});
+
 test('unrelated imports never inherit a selected collection draft', async () => {
   const app=loadApp();
   try {
@@ -147,20 +199,20 @@ test('the tutorial restores the active collection identity', () => {
   } finally {app.dom.window.close();}
 });
 
-test('returning to My Trees and reopening preserves atlas selection and camera', async () => {
+test('returning to My Trees and reopening preserves atlas selection and mode', async () => {
   const app=loadApp();
   try {
     await app.ev('openLibraryModal()');
     el(app,'btn-explore-trees').click();
-    app.ev(`focusMathItem('${integration}'); zoomMathCamera(1.5)`);
-    const camera=app.ev('JSON.stringify(mathAtlas.camera)');
+    app.ev(`focusMathItem('${integration}')`);
+    el(app,'explorer-mode-path').click();
     app.press('Escape');
     await tick();
     assert.ok(el(app,'library-modal-backdrop').classList.contains('open'));
     assert.equal(app.window.location.hash,'');
     el(app,'btn-explore-trees').click();
     assert.equal(app.ev('mathAtlas.selectedId'),integration);
-    assert.equal(app.ev('JSON.stringify(mathAtlas.camera)'),camera);
+    assert.equal(app.ev('mathAtlas.mode'),'path');
   } finally {app.dom.window.close();}
 });
 
@@ -169,28 +221,29 @@ test('collection chrome switches language without changing collection scope cont
   try {
     app.ev(`openMathAtlas({target:'${integration}'}); setUILanguage('es',false)`);
     assert.equal(el(app,'explorer-title').textContent,'Explorar árboles');
-    assert.equal(el(app,'explorer-tree-action').textContent,'Añadir a mis árboles');
-    assert.match(el(app,'explorer-detail').textContent,/Universidad/);
+    assert.equal(el(app,'explorer-tree-action').textContent,'Crear el árbol');
+    assert.equal(el(app,'explorer-tree-save').textContent,'Añadir a mis árboles');
+    assert.match(el(app,'explorer-detail').textContent,/5\/10 · Base universitaria/);
     assert.equal(el(app,'explorer-detail-title').textContent,'Integration Techniques');
     assert.match(el(app,'explorer-detail').textContent,/partial fractions/);
   } finally {app.dom.window.close();}
 });
 
-
-test('My Trees exposes a header action leading through collections before the mathematics map', async () => {
+test('My Trees opens Mathematics directly by default, with Collections still reachable from the header', async () => {
   const app=loadApp();
   try {
     await app.ev('openLibraryModal()');
     assert.ok(el(app,'btn-explore-trees').closest('.modal-header-bar'));
     assert.equal(app.document.querySelector('.library-collection'),null);
     el(app,'btn-explore-trees').click();
-    assert.equal(el(app,'explorer-collection-picker').hidden,false);
-    assert.ok(el(app,'explorer-shell').classList.contains('explorer-picking'));
-    el(app,'explorer-open-math').click();
     assert.equal(el(app,'explorer-collection-picker').hidden,true);
     assert.equal(el(app,'explorer-shell').classList.contains('explorer-picking'),false);
     el(app,'explorer-collections').click();
     assert.equal(el(app,'explorer-collection-picker').hidden,false);
+    assert.ok(el(app,'explorer-shell').classList.contains('explorer-picking'));
+    el(app,'explorer-open-math').click();
+    assert.equal(el(app,'explorer-collection-picker').hidden,true);
+    el(app,'explorer-collections').click();
     app.press('Escape');
     await tick();
     assert.ok(el(app,'library-modal-backdrop').classList.contains('open'));
@@ -228,7 +281,7 @@ test('preparation links navigate across subjects and stages without requiring co
     app.ev("loadFromJSON({topic:'Current',nodes:[{id:'a',label:'Keep this'}]}); mathAtlas.stage='graduate'; openMathAtlas({target:'math_banach_spaces_and_bounded_operators'})");
     const before=app.ev('JSON.stringify(buildTreeJSON(true))');
     assert.match(el(app,'explorer-detail').textContent,/Suggestions, not requirements/);
-    el(app,'explorer-detail').querySelector('.explorer-preparation [data-math-id="math_metric_spaces"]').click();
+    el(app,'explorer-nodes').querySelector('.explorer-preparation [data-math-id="math_metric_spaces"]').click();
     assert.equal(el(app,'explorer-detail-title').textContent,'Metric Spaces');
     assert.equal(app.ev('mathAtlas.stage'),'');
     assert.equal(el(app,'explorer-stage').value,'');
@@ -260,9 +313,9 @@ test('starting trees describe the absence of preparation and localize recommenda
   try {
     app.ev("openMathAtlas({target:'math_counting_and_quantity'})");
     assert.match(el(app,'explorer-detail').textContent,/No preparation trees recommended. Start here./);
-    assert.equal(el(app,'explorer-detail').querySelectorAll('.explorer-preparation [data-math-id]').length,0);
+    assert.equal(el(app,'explorer-nodes').querySelectorAll('.explorer-preparation [data-math-id]').length,0);
     app.ev("setUILanguage('es',false)");
     assert.equal(el(app,'explorer-preparation-title').textContent,'Preparación recomendada');
-    assert.match(el(app,'explorer-detail').textContent,/Puedes empezar cualquier árbol/);
+    assert.match(el(app,'explorer-detail').textContent,/No se recomiendan árboles previos/);
   } finally {app.dom.window.close();}
 });

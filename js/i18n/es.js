@@ -471,7 +471,32 @@ Object.assign(UI_ES, {
   'Recommended preparation':'Preparación recomendada',
   'Suggestions, not requirements. You can start any tree.':'Son sugerencias, no requisitos. Puedes empezar cualquier árbol.',
   'No preparation trees recommended. Start here.':'No se recomiendan árboles previos. Empieza aquí.',
-  'A focused learning block, roughly 4–6 weeks at this level.':'Un bloque de aprendizaje concreto, de unas 4–6 semanas a este nivel.'
+  'A focused learning block, roughly 4–6 weeks at this level.':'Un bloque de aprendizaje concreto, de unas 4–6 semanas a este nivel.',
+  'Mathematics branches':'Ramas de las matemáticas',
+  'Learning tree graph':'Grafo de árboles de aprendizaje',
+  'Click any tree to see its prerequisites and what it unlocks':'Haz clic en cualquier árbol para ver su preparación y qué desbloquea',
+  'Same branch':'Misma rama',
+  'Other branch':'Otra rama',
+  'Graph view':'Vista del grafo',
+  'Neighbors':'Vecinos',
+  'Full path':'Ruta completa',
+  'Selected tree':'Árbol seleccionado',
+  'Leads into':'Conduce a',
+  'Destination in this collection':'Destino final en esta colección',
+  'Open tree':'Abrir árbol',
+  '{n} cross-branch links':'{n} enlaces con otras ramas',
+  'Difficulty level':'Nivel de dificultad',
+  'All levels':'Todos los niveles',
+  '1–2 · Foundations':'1–2 · Fundamentos',
+  '3–4 · Intermediate':'3–4 · Intermedio',
+  '5–6 · Core':'5–6 · Base universitaria',
+  '7–8 · Advanced':'7–8 · Avanzado',
+  '9–10 · Research':'9–10 · Investigación',
+  'Intermediate':'Intermedio',
+  'Core':'Base universitaria',
+  'Advanced':'Avanzado',
+  'Research':'Investigación',
+  'Level {n}/10 · {band}':'Nivel {n}/10 · {band}'
 });
 
 // Single-node clipboard/paste controls and structural diagnostics.
