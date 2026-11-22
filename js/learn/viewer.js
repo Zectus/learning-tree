@@ -802,44 +802,50 @@ function openRefPopover(trigger) {
   pop.setAttribute('role', 'dialog');
   pop.dataset.ref = refId;
 
-  const callout = target.closest('.sv-callout');
-  const heading = callout?.querySelector('.sv-callout-heading');
-  if (heading && heading.childNodes.length) {
-    const headEl = document.createElement('div');
-    headEl.className = 'sv-ref-pop-head';
-    headEl.appendChild(cloneSanitizedForPopover(heading));
-    pop.appendChild(headEl);
-  }
-
-  const contentEl = document.createElement('div');
-  contentEl.className = 'sv-ref-pop-body';
-  if (target.classList.contains('sv-list-item')) {
-    const row = document.createElement('div');
-    row.className = 'sv-ref-pop-item';
-    for (const child of target.childNodes) row.appendChild(cloneSanitizedForPopover(child));
-    contentEl.appendChild(row);
-  } else {
-    const calloutBody = target.querySelector('.sv-callout-body');
-    if (calloutBody) {
-      for (const child of calloutBody.childNodes) contentEl.appendChild(cloneSanitizedForPopover(child));
-    }
-  }
-  pop.appendChild(contentEl);
-
-  const foot = document.createElement('div');
-  foot.className = 'sv-ref-pop-foot';
   const jumpBtn = document.createElement('button');
   jumpBtn.type = 'button';
   jumpBtn.className = 'sv-ref-pop-jump';
   uiAttr(jumpBtn, 'title', 'Jump to source');
   uiAttr(jumpBtn, 'aria-label', 'Jump to source');
-  jumpBtn.innerHTML = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9.5 8 5l4.5 4.5"/><path d="M5.25 12.25 8 9.5l2.75 2.75"/></svg>';
+  jumpBtn.innerHTML = '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9.5 8 5l4.5 4.5"/><path d="M5.25 12.25 8 9.5l2.75 2.75"/></svg>';
   jumpBtn.addEventListener('click', e => {
     e.stopPropagation();
     jumpToRefTarget(target);
   });
-  foot.appendChild(jumpBtn);
-  pop.appendChild(foot);
+
+  const callout = target.closest('.sv-callout');
+  const heading = callout?.querySelector('.sv-callout-heading');
+  const hasHeader = !!(heading && heading.childNodes.length);
+  if (hasHeader) {
+    const headEl = document.createElement('div');
+    headEl.className = 'sv-ref-pop-head';
+    headEl.appendChild(cloneSanitizedForPopover(heading));
+    headEl.appendChild(jumpBtn);
+    pop.appendChild(headEl);
+  } else {
+    pop.classList.add('sv-ref-popover-headless');
+  }
+
+  const contentEl = document.createElement('div');
+  contentEl.className = 'sv-ref-pop-body';
+  const innerWrap = hasHeader ? contentEl : document.createElement('div');
+  if (!hasHeader) innerWrap.className = 'sv-ref-pop-content';
+  if (target.classList.contains('sv-list-item')) {
+    const row = document.createElement('div');
+    row.className = 'sv-ref-pop-item';
+    for (const child of target.childNodes) row.appendChild(cloneSanitizedForPopover(child));
+    innerWrap.appendChild(row);
+  } else {
+    const calloutBody = target.querySelector('.sv-callout-body');
+    if (calloutBody) {
+      for (const child of calloutBody.childNodes) innerWrap.appendChild(cloneSanitizedForPopover(child));
+    }
+  }
+  if (!hasHeader) {
+    contentEl.appendChild(innerWrap);
+    contentEl.appendChild(jumpBtn);
+  }
+  pop.appendChild(contentEl);
 
   body.appendChild(pop);
   activeRefTrigger = trigger;

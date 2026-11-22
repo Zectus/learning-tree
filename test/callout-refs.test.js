@@ -20,7 +20,7 @@ Let \\( V \\) be a vector space over \\( \\mathbb{K} \\). A norm satisfies three
 (3) Triangle inequality: \\( \\|x + y\\| \\le \\|x\\| + \\|y\\| \\).
 [/CALLOUT]
 
-Notice that in [REF: norm.1 | axiom (1)] the zero appears in two roles. Two consequences of [REF: norm.2 | (2)] follow immediately, and the whole [REF: norm | norm definition] determines geometry. Also see [REF: proof_box | the short proof] and Section 2.
+Notice that in axiom [REF: norm.1 | (1)] the zero appears in two roles. Two consequences of axiom [REF: norm.2 | (2)] follow immediately, and the whole [REF: norm | norm definition] determines geometry. Also see [REF: proof_box | the short proof] and Section 2.
 
 [CALLOUT]
 id: caution_zero
@@ -106,6 +106,9 @@ test('callouts, lists, and [REF] peek-and-jump popovers render and behave cleanl
     assert.equal(pop.querySelector('[data-anchor]'), null);
     const jumpBtn = pop.querySelector('.sv-ref-pop-jump');
     assert.equal(jumpBtn.getAttribute('aria-label'), 'Jump to source');
+    // Jump button sits in the header row (no separate empty footer row).
+    assert.equal(pop.querySelector('.sv-ref-pop-foot'), null);
+    assert.equal(jumpBtn.closest('.sv-ref-pop-head'), pop.querySelector('.sv-ref-pop-head'));
 
     // Escape closes the popover first without closing the viewer window.
     app.press('Escape');
