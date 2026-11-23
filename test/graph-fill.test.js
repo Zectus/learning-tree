@@ -89,3 +89,26 @@ test('the updated Spanish tree renders every new fill in the five revised lesson
   }
   assert.deepEqual(ids, ['sigma_notation', 'riemann_sums', 'definite_integral', 'integral_properties', 'ftc_accumulation']);
 });
+
+test('2D graph label de-overlapper nudges colliding point and segment labels without moving clean ones', () => {
+  const app = loadApp();
+  try {
+    const bounds = { l: 4, t: 4, r: 400, b: 300 };
+    const axisLabel = { l: 110, t: 10, r: 132, b: 30 };
+    const dot = { l: 93, t: 23, r: 107, b: 37 };
+    const basePt = { l: 110, t: 12, r: 158, b: 32, w: 48, h: 20 };
+    const ptCandidates = [
+      { l: basePt.l, t: basePt.t },
+      { l: 110, t: 40 },
+      { l: 42, t: 2 },
+    ];
+    app.window.__args = { basePt, ptCandidates, axisLabel, dot, bounds };
+    const chosen = JSON.parse(app.ev('JSON.stringify(pickLabelPlacement(__args.basePt, __args.ptCandidates, [__args.axisLabel], [__args.dot], [], __args.bounds))'));
+    // Must dodge the y-axis label at (110, 10) and pick the clean candidate below-right at (110, 40).
+    assert.deepEqual(chosen, { l: 110, t: 40 });
+
+    // When there is no collision, the default placement stays completely unchanged.
+    const clean = JSON.parse(app.ev('JSON.stringify(pickLabelPlacement(__args.basePt, __args.ptCandidates, [], [], [], __args.bounds))'));
+    assert.deepEqual(clean, { l: basePt.l, t: basePt.t });
+  } finally { app.window.close(); }
+});

@@ -505,6 +505,136 @@ function sampleGraphFill(fill, scope) {
   return { x, y };
 }
 
+/* ── 2D graph label de-overlapping ──
+   JSXGraph places point and segment labels at fixed offsets, so a point near
+   an axis label (e.g. (0, 1) next to ylabel) or a segment midpoint sharing
+   coords with a labeled point can collide. After each render/update, measure
+   actual rendered DOM rects and only nudge labels whose default spot overlaps
+   another label, a plotted dot, a tick, or the plot edge. */
+function rectOverlapArea(a, b, pad = 2) {
+  const x = Math.min(a.r + pad, b.r + pad) - Math.max(a.l - pad, b.l - pad);
+  const y = Math.min(a.b + pad, b.b + pad) - Math.max(a.t - pad, b.t - pad);
+  return x > 0 && y > 0 ? x * y : 0;
+}
+
+function pickLabelPlacement(base, candidates, hardBoxes, dotBoxes, softBoxes, bounds) {
+  let best = candidates[0], bestScore = Infinity;
+  for (let i = 0; i < candidates.length; i++) {
+    const c = candidates[i];
+    const box = { l: c.l, t: c.t, r: c.l + base.w, b: c.t + base.h };
+    let score = 0;
+    for (const h of hardBoxes) {
+      const ov = rectOverlapArea(box, h, 3);
+      if (ov > 0) score += 10000 + ov;
+    }
+    for (const d of dotBoxes) {
+      const ov = rectOverlapArea(box, d, 2);
+      if (ov > 0) score += 2500 + ov;
+    }
+    const clipX = Math.max(0, bounds.l - box.l) + Math.max(0, box.r - bounds.r);
+    const clipY = Math.max(0, bounds.t - box.t) + Math.max(0, box.b - bounds.b);
+    if (clipX > 0 || clipY > 0) score += 5000 + (clipX + clipY) * 20;
+    for (const s of softBoxes) {
+      const ov = rectOverlapArea(box, s, 2);
+      if (ov > 0) score += 450 + ov;
+    }
+    score += 0.25 * Math.hypot(c.l - base.l, c.t - base.t) + i * 0.01;
+    if (score < bestScore) { bestScore = score; best = c; }
+    if (score === 0) break;
+  }
+  return best;
+}
+
+function resolveGraphLabelOverlaps(board, el, pointObjs, segmentObjs) {
+  if (!el || !el.isConnected) return;
+  const elRect = el.getBoundingClientRect();
+  if (!elRect.width || !elRect.height) return;
+  const boxOf = node => {
+    const r = node.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    return { l: r.left - elRect.left, t: r.top - elRect.top, r: r.right - elRect.left, b: r.bottom - elRect.top, w: r.width, h: r.height };
+  };
+  const allMovable = [
+    ...pointObjs.map(o => o?.label?.rendNode),
+    ...segmentObjs.map(o => o?.label?.rendNode),
+  ].filter(Boolean);
+  if (!allMovable.length) return;
+  allMovable.forEach(n => { n.style.transform = ''; });
+
+  const bounds = { l: 4, t: 4, r: elRect.width - 4, b: elRect.height - 4 };
+  const hardBoxes = [];
+  for (const axis of ['x', 'y']) {
+    const node = board.defaultAxes?.[axis]?.label?.rendNode;
+    const b = node && boxOf(node);
+    if (b) hardBoxes.push(b);
+  }
+  const dotBoxes = [];
+  for (const o of pointObjs) {
+    const sc = o?.coords?.scrCoords;
+    if (sc && Number.isFinite(sc[1]) && Number.isFinite(sc[2])) {
+      dotBoxes.push({ l: sc[1] - 7, t: sc[2] - 7, r: sc[1] + 7, b: sc[2] + 7 });
+    }
+  }
+  const softBoxes = [];
+  el.querySelectorAll('.sv-graph-tick').forEach(node => {
+    const b = boxOf(node);
+    if (b) softBoxes.push(b);
+  });
+
+  // Points get first pick, then segments dodge point labels and dots.
+  for (const ptObj of pointObjs) {
+    const node = ptObj?.label?.rendNode;
+    const base = node && boxOf(node);
+    const sc = ptObj?.coords?.scrCoords;
+    if (!base || !sc || !Number.isFinite(sc[1]) || !Number.isFinite(sc[2])) continue;
+    const px = sc[1], py = sc[2], w = base.w, h = base.h;
+    const candidates = [{ l: base.l, t: base.t }];
+    for (const g of [10, 18]) {
+      candidates.push(
+        { l: px + g,         t: py - g - h },
+        { l: px + g,         t: py - h / 2 },
+        { l: px + g,         t: py + g },
+        { l: px - g - w,     t: py - g - h },
+        { l: px - g - w,     t: py - h / 2 },
+        { l: px - g - w,     t: py + g },
+        { l: px - w / 2,     t: py - g - h },
+        { l: px - w / 2,     t: py + g },
+      );
+    }
+    const chosen = pickLabelPlacement(base, candidates, hardBoxes, dotBoxes, softBoxes, bounds);
+    const tx = Math.round(chosen.l - base.l), ty = Math.round(chosen.t - base.t);
+    if (tx || ty) node.style.transform = `translate(${tx}px, ${ty}px)`;
+    hardBoxes.push({ l: chosen.l, t: chosen.t, r: chosen.l + w, b: chosen.t + h });
+  }
+
+  for (const segObj of segmentObjs) {
+    const node = segObj?.label?.rendNode;
+    const base = node && boxOf(node);
+    const s1 = segObj?.point1?.coords?.scrCoords, s2 = segObj?.point2?.coords?.scrCoords;
+    if (!base || !s1 || !s2) continue;
+    const w = base.w, h = base.h;
+    const candidates = [{ l: base.l, t: base.t }];
+    const dx = s2[1] - s1[1], dy = s2[2] - s1[2], len = Math.hypot(dx, dy);
+    if (len > 8) {
+      const nx = -dy / len, ny = dx / len;
+      const support = (Math.abs(nx) * w + Math.abs(ny) * h) / 2;
+      for (const t of [0.5, 0.32, 0.68, 0.22, 0.78]) {
+        const ax = s1[1] + dx * t, ay = s1[2] + dy * t;
+        for (const side of [1, -1]) {
+          for (const g of [9, 16]) {
+            const dist = support + g;
+            candidates.push({ l: ax + nx * side * dist - w / 2, t: ay + ny * side * dist - h / 2 });
+          }
+        }
+      }
+    }
+    const chosen = pickLabelPlacement(base, candidates, hardBoxes, dotBoxes, softBoxes, bounds);
+    const tx = Math.round(chosen.l - base.l), ty = Math.round(chosen.t - base.t);
+    if (tx || ty) node.style.transform = `translate(${tx}px, ${ty}px)`;
+    hardBoxes.push({ l: chosen.l, t: chosen.t, r: chosen.l + w, b: chosen.t + h });
+  }
+}
+
 /* ── function2d / parametric2d / vectorfield2d (JSXGraph) ── */
 function mountBoard2d(g, el, id) {
   freeStaleBoards();
@@ -724,12 +854,13 @@ function mountBoard2d(g, el, id) {
   }
 
   // Segments, then points on top.
-  segments.forEach(sg => {
+  const segmentObjs = segments.map(sg => {
     const hasCustomColor = !!sg.s.color;
     const color = safeColor(sg.s.color, textColor);
     const dashed = /^(true|1|yes)$/i.test(sg.s.dashed || '');
     const cap = captionSpec(sg.s.label);
-    board.create('segment', [
+    const segOffset = sg.s.offset ? { offset: parseNumList(sg.s.offset, 2, [0, 10]) } : {};
+    return board.create('segment', [
       [() => sg.a(base()), () => sg.b(base())],
       [() => sg.c(base()), () => sg.d(base())],
     ], {
@@ -739,16 +870,16 @@ function mountBoard2d(g, el, id) {
       lineCap: 'round', highlight: false, fixed: true,
       dash: dashed ? 2 : 0,
       name: cap.text, withLabel: !!cap.text,
-      label: labelAttrs(cap, textColor),
+      label: labelAttrs(cap, textColor, segOffset),
       point1: { visible: false, fixed: true, withLabel: false },
       point2: { visible: false, fixed: true, withLabel: false },
     });
   });
-  points.forEach(pt => {
+  const pointObjs = points.map(pt => {
     const color = safeColor(pt.p.color, GRAPH_PALETTE[1]);
     const cap = captionSpec(pt.p.label);
     const [dx, dy] = parseNumList(pt.p.offset, 2, [10, 10]);
-    board.create('point', [() => pt.fx(base()), () => pt.fy(base())], {
+    return board.create('point', [() => pt.fx(base()), () => pt.fy(base())], {
       size: 4.75, face: 'o', fillColor: color, strokeColor: 'var(--bg)', strokeWidth: 2,
       fixed: true, highlight: false, showInfobox: false,
       name: cap.text, withLabel: !!cap.text,
@@ -757,6 +888,10 @@ function mountBoard2d(g, el, id) {
   });
 
   board.unsuspendUpdate();
+  const tidyLabels = () => resolveGraphLabelOverlaps(board, el, pointObjs, segmentObjs);
+  tidyLabels();
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(tidyLabels);
+  board.on('boundingbox', tidyLabels);
 
   // Legend (HTML, so labels can use \( \) like the rest of the page).
   const leg = document.getElementById(`sv-graph-legend-${id}`);
@@ -796,6 +931,7 @@ function mountBoard2d(g, el, id) {
         s.value = parseFloat(input.value);
         show();
         board.update();
+        tidyLabels();
       });
       show();
       row.append(name, input);
