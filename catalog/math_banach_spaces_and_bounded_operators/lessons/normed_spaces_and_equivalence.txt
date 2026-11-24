@@ -1,0 +1,619 @@
+=== SECTION 1: From Euclidean length to general norms ===
+
+In \(\mathbb{R}^n\) and \(\mathbb{C}^n\), Euclidean length does two jobs at once: it measures the size of a single vector, and applying it to a difference \(x - y\) measures the distance between two vectors. That link between algebraic operations and distance is what lets us talk about convergent sequences, open and closed sets, and continuous linear maps. Yet in analysis we regularly work with vector spaces whose elements are not finite lists of coordinates—continuous functions on an interval \([a, b]\), or infinite sequences—and even on \(\mathbb{R}^2\) there are multiple useful ways to measure size, such as summing coordinate magnitudes or taking the largest coordinate. What minimal algebraic rules must a notion of vector size obey so that it behaves cleanly with addition and scalar multiplication and yields a well-behaved distance?
+
+Throughout this lesson, let \(\mathbb{K}\) denote the scalar field, where either \(\mathbb{K} = \mathbb{R}\) or \(\mathbb{K} = \mathbb{C}\). For a scalar \(\lambda \in \mathbb{K}\), we write \(|\lambda|\) for its ordinary absolute value when \(\mathbb{K} = \mathbb{R}\) and its complex modulus \(\sqrt{(\operatorname{Re} \lambda)^2 + (\operatorname{Im} \lambda)^2}\) when \(\mathbb{K} = \mathbb{C}\).
+
+[CALLOUT]
+id: norm-axioms
+label: Definition
+title: Norm and normed vector space
+tone: key
+
+Let \(V\) be a vector space over \(\mathbb{K}\). A norm on \(V\) is a function \(\|\cdot\| : V \to [0, \infty)\) satisfying three axioms for all \(x, y \in V\) and all \(\lambda \in \mathbb{K}\):
+
+(1) Positive definiteness: \(\|x\| \ge 0\), and \(\|x\| = 0\) if and only if \(x = 0\).
+(2) Absolute homogeneity: \(\|\lambda x\| = |\lambda|\,\|x\|\).
+(3) Triangle inequality: \(\|x + y\| \le \|x\| + \|y\|\).
+
+A pair \((V, \|\cdot\|)\) is called a normed vector space (or simply a normed space).
+[/CALLOUT]
+
+Notice that in [REF: norm-axioms.1 | axiom (1)] the symbol \(0\) appears in two roles: \(0 \in \mathbb{R}\) on the left-hand side of \(\|x\| = 0\), and the zero vector \(0 \in V\) on the right-hand side of \(x = 0\). Two immediate consequences of [REF: norm-axioms.2 | axiom (2)] are worth noting right away: setting \(\lambda = 0\) gives \(\|0\| = |0|\,\|x\| = 0\), and setting \(\lambda = -1\) gives \(\|-x\| = |-1|\,\|x\| = \|x\|\). Over \(\mathbb{C}\), [REF: norm-axioms.2 | axiom (2)] requires scaling by \(|\lambda|\) for every complex scalar \(\lambda \in \mathbb{C}\), including unit-modulus rotations such as \(\lambda = i\) or \(\lambda = e^{i\theta}\): rotating a vector by a phase factor must leave its norm unchanged.
+
+To see what each axiom actually enforces, it helps to watch what breaks when one axiom is missing. On \(\mathbb{R}^2\), consider first \(p(x_1, x_2) = |x_1|\). It satisfies nonnegativity, absolute homogeneity, and the triangle inequality, yet \(p(0, 1) = 0\) even though \((0, 1) \ne (0, 0)\). Such a function fails positive definiteness: it cannot distinguish \((0, 1)\) from the zero vector, so it cannot separate distinct points by nonzero distance.
+
+Now consider a second candidate on \(\mathbb{R}^2\), defined by
+\[
+q(x_1, x_2) = \bigl(\sqrt{|x_1|} + \sqrt{|x_2|}\bigr)^2.
+\]
+Check the first two axioms: \(q(x_1, x_2) \ge 0\), with \(q(x_1, x_2) = 0\) if and only if \(\sqrt{|x_1|} = \sqrt{|x_2|} = 0\), i.e., \(x_1 = x_2 = 0\). For any \(\lambda \in \mathbb{R}\),
+\[
+q(\lambda x_1, \lambda x_2) = \bigl(\sqrt{|\lambda|}\sqrt{|x_1|} + \sqrt{|\lambda|}\sqrt{|x_2|}\bigr)^2 = |\lambda|\,q(x_1, x_2),
+\]
+so \(q\) satisfies both positive definiteness and absolute homogeneity. Yet test \(q\) on \(x = (1, 0)\) and \(y = (0, 1)\): we get \(q(x) = 1\) and \(q(y) = 1\), whereas \(x + y = (1, 1)\) gives \(q(1, 1) = (1 + 1)^2 = 4 > 1 + 1\). Thus \(q\) violates the triangle inequality.
+
+There is a direct geometric reason for that failure. If \(\|\cdot\|\) satisfies [REF: norm-axioms.2 | homogeneity] and [REF: norm-axioms.3 | the triangle inequality], and if \(\|x\| \le 1\) and \(\|y\| \le 1\), then for every \(s \in [0, 1]\) we must have
+\[
+\|(1 - s)x + s y\| \le (1 - s)\|x\| + s\|y\| \le (1 - s) + s = 1.
+\]
+In other words, the closed unit ball \(\{x \in V : \|x\| \le 1\}\) of any genuine norm must be convex: whenever two points lie inside it, the entire line segment joining them stays inside it. For \(q\), the points \((1, 0)\) and \((0, 1)\) both lie on the unit curve \(q(x_1, x_2) = 1\), but their midpoint \((1/2, 1/2)\) has \(q(1/2, 1/2) = (1/\sqrt{2} + 1/\sqrt{2})^2 = 2 > 1\), poking outside the inward-curving boundary.
+
+[GRAPH]
+type: parametric2d
+title: Unit curve \(q(x_1, x_2) = 1\) and a chord leaving the unit set
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 6.2832
+xrange: -1.25, 1.25
+yrange: -1.25, 1.25
+trace: cos(t) * abs(cos(t))^3, sin(t) * abs(sin(t))^3 | label: \(q(x_1, x_2) = 1\)
+segment: 1, 0, 0, 1 | label: chord | dashed: true
+point: 1, 0 | label: \((1, 0)\)
+point: 0, 1 | label: \((0, 1)\)
+point: 0.5, 0.5 | label: \((1/2, 1/2)\)
+[/GRAPH]
+
+When all three axioms hold, [REF: norm-axioms.3 | the triangle inequality] also controls how much the norms of two vectors can differ in terms of the norm of their difference.
+
+[CALLOUT]
+id: reverse-triangle
+label: Inequality
+title: Reverse triangle inequality
+tone: key
+
+For all \(x, y \in V\),
+\[
+\bigl|\|x\| - \|y\|\bigr| \le \|x - y\|.
+\]
+[/CALLOUT]
+
+To derive it, rewrite \(x = (x - y) + y\) and apply [REF: norm-axioms.3 | the triangle inequality] to obtain \(\|x\| \le \|x - y\| + \|y\|\), which rearranges to
+\[
+\|x\| - \|y\| \le \|x - y\|.
+\]
+Swapping the roles of \(x\) and \(y\) gives \(\|y\| - \|x\| \le \|y - x\|\). Because \(\|y - x\| = \|-(x - y)\| = \|x - y\|\) by [REF: norm-axioms.2 | homogeneity] with \(\lambda = -1\), we have both \(\|x\| - \|y\| \le \|x - y\|\) and \(-(\|x\| - \|y\|) \le \|x - y\|\). Combining these two inequalities yields \(\bigl|\|x\| - \|y\|\bigr| \le \|x - y\|\).
+
+[QUESTION 1]
+[ANSWER: C]
+Which of the following functions \(N : \mathbb{C}^2 \to [0, \infty)\) defines a norm on the complex vector space \(\mathbb{C}^2\)?
+
+(A) \(N(z_1, z_2) = |z_1 + i z_2|\)
+(B) \(N(z_1, z_2) = |\operatorname{Re}(z_1)| + |\operatorname{Im}(z_1)| + |z_2|\)
+(C) \(N(z_1, z_2) = |z_1 + z_2| + |z_1 - z_2|\)
+(D) \(N(z_1, z_2) = |z_1|^2 + |z_2|^2\)
+(E) \(N(z_1, z_2) = \max(|z_1|, |z_2|) - \frac{1}{2}\min(|z_1|, |z_2|)\)
+[/QUESTION]
+
+=== SECTION 2: Core concrete normed spaces ===
+
+Before developing the metric and topological structure shared by all normed spaces, we build a concrete toolkit of spaces and norms that we will analyze and compare throughout the rest of the lesson.
+
+First, on the coordinate space \(\mathbb{K}^n\) with vectors \(x = (x_1, \dots, x_n)\), three norms appear constantly:
+\[
+\|x\|_1 = \sum_{j=1}^n |x_j|, \qquad \|x\|_2 = \left(\sum_{j=1}^n |x_j|^2\right)^{1/2}, \qquad \|x\|_\infty = \max_{1 \le j \le n} |x_j|.
+\]
+Here \(\|\cdot\|_1\) is the taxicab (or \(\ell^1\)) norm, \(\|\cdot\|_2\) is the Euclidean (or \(\ell^2\)) norm, and \(\|\cdot\|_\infty\) is the maximum (or \(\ell^\infty\)) norm. Positive definiteness and absolute homogeneity are immediate for all three because \(|x_j| \ge 0\), \(|\lambda x_j| = |\lambda|\,|x_j|\), and a sum or maximum of nonnegative terms vanishes precisely when every term is \(0\). For \(\|\cdot\|_1\), the triangle inequality follows by summing \(|x_j + y_j| \le |x_j| + |y_j|\) over \(j = 1, \dots, n\). For \(\|\cdot\|_\infty\), each coordinate satisfies \(|x_j + y_j| \le |x_j| + |y_j| \le \|x\|_\infty + \|y\|_\infty\), so taking the maximum over \(j\) yields \(\|x + y\|_\infty \le \|x\|_\infty + \|y\|_\infty\).
+
+For \(\|\cdot\|_2\), squaring turns the triangle inequality into an application of the standard Cauchy-Schwarz inequality on \(\mathbb{K}^n\), which states that \(\bigl|\sum_{j=1}^n x_j \overline{y_j}\bigr| \le \|x\|_2 \|y\|_2\) (with \(\overline{y_j}\) denoting the complex conjugate of \(y_j\), simply \(y_j\) when \(\mathbb{K} = \mathbb{R}\)). Expanding \(|x_j + y_j|^2 = (x_j + y_j)(\overline{x_j} + \overline{y_j}) = |x_j|^2 + 2\operatorname{Re}(x_j \overline{y_j}) + |y_j|^2\) and summing over \(j\) gives
+\[
+\|x + y\|_2^2 = \|x\|_2^2 + 2\operatorname{Re}\left(\sum_{j=1}^n x_j \overline{y_j}\right) + \|y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2\|y\|_2 + \|y\|_2^2 = (\|x\|_2 + \|y\|_2)^2.
+\]
+Taking nonnegative square roots yields \(\|x + y\|_2 \le \|x\|_2 + \|y\|_2\).
+
+In \(\mathbb{R}^2\), the unit spheres \(\{x \in \mathbb{R}^2 : \|x\|_p = 1\}\) for \(p = 1, 2, \infty\) form three nested convex shapes: a diamond for \(\|\cdot\|_1\), the standard circle for \(\|\cdot\|_2\), and a square for \(\|\cdot\|_\infty\). All three touch at the coordinate intercepts such as \((1, 0)\), whereas along the diagonal at \((1, 1)\) they separate: \(\|(1, 1)\|_\infty = 1\), \(\|(1, 1)\|_2 = \sqrt{2}\), and \(\|(1, 1)\|_1 = 2\).
+
+[GRAPH]
+type: parametric2d
+title: Unit spheres \(\|x\|_1 = 1\), \(\|x\|_2 = 1\), and \(\|x\|_\infty = 1\) in \(\mathbb{R}^2\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 6.2832
+xrange: -1.35, 1.35
+yrange: -1.35, 1.35
+trace: cos(t) * abs(cos(t)), sin(t) * abs(sin(t)) | label: \(\|x\|_1 = 1\)
+trace: cos(t), sin(t) | label: \(\|x\|_2 = 1\)
+trace: cos(t) / (abs(cos(t)) >= abs(sin(t)) ? abs(cos(t)) : abs(sin(t))), sin(t) / (abs(cos(t)) >= abs(sin(t)) ? abs(cos(t)) : abs(sin(t))) | label: \(\|x\|_\infty = 1\)
+point: 1, 0 | label: \((1, 0)\)
+point: 1, 1 | label: \((1, 1)\)
+[/GRAPH]
+
+Second, let \(a < b\) in \(\mathbb{R}\) and let \(C([a, b])\) denote the vector space of all continuous \(\mathbb{K}\)-valued functions on the compact interval \([a, b]\), with pointwise addition \((f + g)(t) = f(t) + g(t)\) and scalar multiplication \((\lambda f)(t) = \lambda f(t)\). Two natural norms measure the size of \(f \in C([a, b])\) in very different ways:
+\[
+\|f\|_\infty = \sup_{t \in [a, b]} |f(t)| = \max_{t \in [a, b]} |f(t)|, \qquad \|f\|_1 = \int_a^b |f(t)|\,dt.
+\]
+The supremum norm (also called the uniform norm) \(\|f\|_\infty\) is always finite and attained as a maximum because \(t \mapsto |f(t)|\) is continuous on the compact interval \([a, b]\). Positive definiteness holds because \(\max_{t \in [a, b]} |f(t)| = 0\) forces \(f(t) = 0\) for every \(t \in [a, b]\), homogeneity pulls \(|\lambda|\) outside the maximum, and the triangle inequality follows from \(|f(t) + g(t)| \le |f(t)| + |g(t)| \le \|f\|_\infty + \|g\|_\infty\) for all \(t \in [a, b]\).
+
+The integral norm \(\|f\|_1\) measures the total unsigned area between the graph of \(f\) and the horizontal axis. Nonnegativity, homogeneity, and the triangle inequality follow directly from linearity and monotonicity of the Riemann integral together with \(|f(t) + g(t)| \le |f(t)| + |g(t)|\). Positive definiteness, however, uses continuity in an essential way. Suppose \(f \in C([a, b])\) is not the zero function; then there is some \(t_0 \in [a, b]\) with \(|f(t_0)| = m > 0\). By continuity of \(|f|\) at \(t_0\), there exists a subinterval \(I \subseteq [a, b]\) of positive length \(\delta > 0\) containing \(t_0\) such that \(|f(t)| \ge m/2\) for every \(t \in I\). Since \(|f| \ge 0\) everywhere on \([a, b]\),
+\[
+\int_a^b |f(t)|\,dt \ge \int_I |f(t)|\,dt \ge \frac{m}{2}\,\delta > 0.
+\]
+Contrapositively, \(\|f\|_1 = 0\) forces \(f(t) = 0\) for all \(t \in [a, b]\). Without continuity this fails immediately: a function equal to \(1\) at a single point and \(0\) everywhere else is nonzero, yet its integral is \(0\).
+
+To see the difference between \(\|f\|_\infty\) and \(\|f\|_1\) concretely, take \(f(t) = 1 - 4t^2\) on \([0, 1]\). Because \(f\) decreases from \(f(0) = 1\) through \(f(1/2) = 0\) to \(f(1) = -3\), its largest magnitude occurs where \(f\) is negative: \(\|f\|_\infty = |f(1)| = 3\). Meanwhile, computing \(\|f\|_1\) requires splitting the integral at the sign change \(t = 1/2\):
+\[
+\|f\|_1 = \int_0^{1/2} (1 - 4t^2)\,dt + \int_{1/2}^1 (4t^2 - 1)\,dt = \frac{1}{3} + \frac{2}{3} = 1.
+\]
+Notice that the ordinary signed integral is \(\int_0^1 (1 - 4t^2)\,dt = -1/3\), whereas \(\|f\|_1\) adds the areas of both regions with positive sign.
+
+[GRAPH]
+type: function2d
+title: Peak height \(\|f\|_\infty = 3\) versus unsigned area \(\|f\|_1 = 1\) for \(f(t) = 1 - 4t^2\)
+xlabel: \(t\)
+ylabel: \(f(t)\)
+xrange: 0, 1
+yrange: -3.5, 1.5
+fill: 1 - 4*x^2, 0 | range: 0, 0.5 | label: positive region | color: #3b82f6 | opacity: 0.25
+fill: 0, 1 - 4*x^2 | range: 0.5, 1 | label: negative region | color: #ef4444 | opacity: 0.25
+trace: 1 - 4*x^2 | label: \(f(t) = 1 - 4t^2\)
+trace: 0 | label: horizontal axis
+segment: 1, 0, 1, -3 | label: \(\|f\|_\infty = 3\) | dashed: true
+point: 0.5, 0 | label: \((1/2, 0)\)
+point: 1, -3 | label: \((1, -3)\)
+[/GRAPH]
+
+Third, we introduce two core sequence spaces over \(\mathbb{K}\), with entrywise addition and scalar multiplication. The space of bounded sequences is
+\[
+\ell^\infty = \left\{x = (x_k)_{k=1}^\infty \text{ in } \mathbb{K} : \sup_{k \ge 1} |x_k| < \infty\right\}, \qquad \|x\|_\infty = \sup_{k \ge 1} |x_k|.
+\]
+To check that \(\ell^\infty\) is closed under addition and satisfies the triangle inequality simultaneously, observe that for any \(x, y \in \ell^\infty\) and every index \(k \ge 1\), \(|x_k + y_k| \le |x_k| + |y_k| \le \|x\|_\infty + \|y\|_\infty\); taking the supremum over \(k\) gives \(\|x + y\|_\infty \le \|x\|_\infty + \|y\|_\infty < \infty\). Positive definiteness and homogeneity follow term by term. Notice why \(\sup\) cannot be replaced by \(\max\) here: the bounded sequence \(x_k = 1 - 1/k\) has \(\|x\|_\infty = 1\), even though \(|x_k| < 1\) for every \(k \ge 1\).
+
+Inside \(\ell^\infty\) sits the linear subspace \(c_{00}\) of finitely supported sequences:
+\[
+c_{00} = \left\{x = (x_k)_{k=1}^\infty \text{ in } \mathbb{K} : \text{there exists } N \ge 1 \text{ such that } x_k = 0 \text{ for all } k > N\right\}.
+\]
+In other words, a sequence belongs to \(c_{00}\) precisely when only finitely many of its entries are nonzero. Because the sum or scalar multiple of two sequences that vanish past \(N_1\) and \(N_2\) still vanishes past \(\max(N_1, N_2)\), \(c_{00}\) is indeed a linear subspace of \(\ell^\infty\). Moreover, since every \(x \in c_{00}\) has only finitely many nonzero coordinates, not only does \(\|\cdot\|_\infty\) restrict to a norm on \(c_{00}\), we can also equip \(c_{00}\) with the norms
+\[
+\|x\|_1 = \sum_{k=1}^\infty |x_k|, \qquad \|x\|_2 = \left(\sum_{k=1}^\infty |x_k|^2\right)^{1/2}
+\]
+without any series-convergence questions: every sum reduces to a finite sum over the nonzero entries, so [REF: norm-axioms | the norm axioms] follow directly from the \(\mathbb{K}^n\) verifications above.
+
+[TABLE]
+Space | Elements | Standard norms | Key structural note
+\(\mathbb{K}^n\) | \(n\)-tuples \((x_1, \dots, x_n)\) | \(\lVert x \rVert_1\), \(\lVert x \rVert_2\), \(\lVert x \rVert_\infty\) | \(\lVert \cdot \rVert_2\) triangle inequality uses Cauchy-Schwarz
+\(C([a, b])\) | Continuous functions on \([a, b]\) | \(\lVert f \rVert_\infty = \max \lvert f \rvert\), \(\lVert f \rVert_1 = \int_a^b \lvert f(t) \rvert\,dt\) | Compactness gives \(\max\); continuity gives \(\lVert f \rVert_1 = 0 \implies f = 0\)
+\(\ell^\infty\) | Bounded sequences \((x_k)_{k=1}^\infty\) | \(\lVert x \rVert_\infty = \sup_{k \ge 1} \lvert x_k \rvert\) | Supremum need not be attained
+\(c_{00}\) | Finitely supported sequences | \(\lVert \cdot \rVert_\infty\), \(\lVert \cdot \rVert_1\), \(\lVert \cdot \rVert_2\) | Linear subspace of \(\ell^\infty\); all coordinate sums are finite
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+On the real vector space \(C([0, 1])\), which of the following expressions defines a norm?
+
+(A) \(N_1(f) = \left|\int_0^1 f(t)\,dt\right|\)
+(B) \(N_2(f) = \int_0^1 t\,|f(t)|\,dt\)
+(C) \(N_3(f) = \int_0^{1/2} |f(t)|\,dt\)
+(D) \(N_4(f) = \int_0^1 |f(t)|^2\,dt\)
+(E) \(N_5(f) = \max_{t \in [0, 1]} f(t)\)
+[/QUESTION]
+
+=== SECTION 3: The induced metric, ball geometry, and subspace closures ===
+
+Every norm \(\|\cdot\|\) on a vector space \(V\) induces a metric \(d : V \times V \to [0, \infty)\) defined by
+\[
+d(x, y) = \|x - y\|.
+\]
+The metric axioms follow immediately from [REF: norm-axioms | the norm axioms]: \(d(x, y) \ge 0\) and \(d(x, y) = 0 \iff \|x - y\| = 0 \iff x - y = 0 \iff x = y\); symmetry holds because \(d(y, x) = \|y - x\| = \|-(x - y)\| = \|x - y\| = d(x, y)\); and for any \(x, y, z \in V\),
+\[
+d(x, z) = \|(x - y) + (y - z)\| \le \|x - y\| + \|y - z\| = d(x, y) + d(y, z).
+\]
+Because \((V, d)\) is a metric space, all standard metric concepts automatically apply to \((V, \|\cdot\|)\): open and closed sets, closures, density, continuity, and convergence. In particular, a sequence \((x_n)\) in \(V\) converges to \(x \in V\) (written \(x_n \to x\)) if and only if \(\|x_n - x\| \to 0\) as \(n \to \infty\). For example, in \((C([a, b]), \|\cdot\|_\infty)\), convergence \(f_n \to f\) means \(\max_{t \in [a, b]} |f_n(t) - f(t)| \to 0\), which is uniform convergence on \([a, b]\); in \((C([a, b]), \|\cdot\|_1)\), it means \(\int_a^b |f_n(t) - f(t)|\,dt \to 0\).
+
+A norm-induced metric has two rigid algebraic symmetries that an arbitrary metric on \(V\) need not possess.
+
+[CALLOUT]
+id: induced-metric-symmetries
+label: Properties
+title: Symmetries of a norm-induced metric
+tone: key
+
+For the induced metric \(d(x, y) = \|x - y\|\), all \(x, y, z \in V\), and all \(\lambda \in \mathbb{K}\):
+
+(1) Translation invariance: \(d(x + z, y + z) = \|(x + z) - (y + z)\| = \|x - y\| = d(x, y)\).
+(2) Homogeneity: \(d(\lambda x, \lambda y) = \|\lambda x - \lambda y\| = \|\lambda(x - y)\| = |\lambda|\,\|x - y\| = |\lambda|\,d(x, y)\).
+[/CALLOUT]
+
+To appreciate how restrictive these two properties are, consider the discrete metric on \(\mathbb{R}\), where \(d_{\mathrm{disc}}(x, y) = 1\) for \(x \ne y\) and \(0\) for \(x = y\). It is translation-invariant, yet \(d_{\mathrm{disc}}(2, 0) = 1 \ne 2\,d_{\mathrm{disc}}(1, 0)\), so it fails [REF: induced-metric-symmetries.2 | homogeneity] and cannot come from any norm on \(\mathbb{R}\).
+
+[REF: induced-metric-symmetries.1 | Translation invariance] and [REF: induced-metric-symmetries.2 | homogeneity] give open balls in a normed space an extraordinarily simple geometry. Write
+\[
+B(x_0, r) = \{x \in V : \|x - x_0\| < r\}
+\]
+for the open ball of center \(x_0 \in V\) and radius \(r > 0\). Then for any \(x \in V\),
+\[
+x \in B(x_0, r) \iff \|x - x_0\| < r \iff \left\|\frac{1}{r}(x - x_0)\right\| < 1 \iff \frac{1}{r}(x - x_0) \in B(0, 1),
+\]
+which holds if and only if \(x = x_0 + r u\) for some \(u \in B(0, 1)\). Writing \(x_0 + r B(0, 1) = \{x_0 + r u : u \in B(0, 1)\}\), we have established the ball scaling-and-translation identity:
+
+[CALLOUT]
+id: ball-scaling
+label: Identity
+title: Scaling and translation of open balls
+tone: key
+
+For every center \(x_0 \in V\) and every radius \(r > 0\),
+\[
+B(x_0, r) = x_0 + r B(0, 1).
+\]
+Every open ball in a normed space is a translated and rescaled copy of the single open unit ball \(B(0, 1)\) centered at the origin.
+[/CALLOUT]
+
+That single geometric fact will be our primary bridge when comparing two norms in the next section.
+
+Next, we verify that the norm and the two vector space operations are all continuous with respect to the induced metric. Because convergence characterizes continuity in metric spaces, we can test each operation on convergent sequences.
+
+First, the norm function \(x \mapsto \|x\|\) from \((V, \|\cdot\|)\) to \(\mathbb{R}\) is continuous—in fact, uniformly continuous. By [REF: reverse-triangle | the reverse triangle inequality], \(\bigl|\|x\| - \|y\|\bigr| \le \|x - y\|\), so whenever \(x_n \to x\) in \(V\) we immediately get \(\|x_n\| \to \|x\|\) in \(\mathbb{R}\).
+
+Second, vector addition \((x, y) \mapsto x + y\) is continuous: if \(x_n \to x\) and \(y_n \to y\) in \(V\), then
+\[
+\|(x_n + y_n) - (x + y)\| = \|(x_n - x) + (y_n - y)\| \le \|x_n - x\| + \|y_n - y\| \to 0.
+\]
+Hence \(x_n + y_n \to x + y\).
+
+Third, scalar multiplication \((\lambda, x) \mapsto \lambda x\) is continuous: suppose \(\lambda_n \to \lambda\) in \(\mathbb{K}\) and \(x_n \to x\) in \(V\). Because both the scalar and the vector vary with \(n\), we separate their variations by adding and subtracting the intermediate term \(\lambda_n x\):
+\[
+\|\lambda_n x_n - \lambda x\| = \|\lambda_n(x_n - x) + (\lambda_n - \lambda)x\| \le |\lambda_n|\,\|x_n - x\| + |\lambda_n - \lambda|\,\|x\|.
+\]
+Since \((\lambda_n)\) is a convergent sequence in \(\mathbb{K}\), it is bounded: there exists a constant \(M > 0\) such that \(|\lambda_n| \le M\) for all \(n\). Therefore
+\[
+\|\lambda_n x_n - \lambda x\| \le M\|x_n - x\| + |\lambda_n - \lambda|\,\|x\| \to M \cdot 0 + 0 \cdot \|x\| = 0,
+\]
+proving \(\lambda_n x_n \to \lambda x\).
+
+Continuity of addition and scalar multiplication yields an immediate structural theorem about subspaces.
+
+[CALLOUT]
+id: subspace-closure
+label: Theorem
+title: Closure of a subspace
+tone: key
+
+If \(M\) is a linear subspace of a normed space \((V, \|\cdot\|)\), then its closure \(\overline{M}\) is also a linear subspace of \(V\) (hence a closed subspace).
+[/CALLOUT]
+
+[CALLOUT]
+label: Proof
+tone: note
+
+First, \(0 \in M \subseteq \overline{M}\), so \(\overline{M}\) is nonempty. Now let \(x, y \in \overline{M}\) and \(\alpha, \beta \in \mathbb{K}\). By the sequential characterization of closure in a metric space, there exist sequences \((x_n)\) and \((y_n)\) in \(M\) such that \(x_n \to x\) and \(y_n \to y\). Since \(M\) is a linear subspace, the linear combination \(\alpha x_n + \beta y_n\) belongs to \(M\) for every \(n\). By continuity of scalar multiplication and vector addition,
+\[
+\alpha x_n + \beta y_n \to \alpha x + \beta y \quad \text{as } n \to \infty.
+\]
+Because \(\alpha x + \beta y\) is the limit of a sequence in \(M\), it belongs to \(\overline{M}\). Thus \(\overline{M}\) is closed under linear combinations, proving that \(\overline{M}\) is a subspace of \(V\).
+[/CALLOUT]
+
+To see both a closed subspace and a non-closed subspace in action, examine two concrete examples from Section 2. First, in \((C([0, 1]), \|\cdot\|_1)\), let \(Z = \{f \in C([0, 1]) : \int_0^1 f(t)\,dt = 0\}\). If \((f_n)\) is a sequence in \(Z\) with \(\|f_n - f\|_1 \to 0\), then
+\[
+\left|\int_0^1 f(t)\,dt\right| = \left|\int_0^1 \bigl(f(t) - f_n(t)\bigr)\,dt\right| \le \int_0^1 |f(t) - f_n(t)|\,dt = \|f - f_n\|_1 \to 0,
+\]
+so \(\int_0^1 f(t)\,dt = 0\) and \(f \in Z\). Thus \(Z\) is already closed in \((C([0, 1]), \|\cdot\|_1)\).
+
+By contrast, consider the subspace \(c_{00}\) inside \((\ell^\infty, \|\cdot\|_\infty)\). We can determine its closure \(\overline{c_{00}}\) explicitly: it is the set
+\[
+c_0 = \left\{x = (x_k)_{k=1}^\infty \in \ell^\infty : \lim_{k \to \infty} x_k = 0\right\}
+\]
+of all sequences converging to \(0\). To prove \(c_0 \subseteq \overline{c_{00}}\), take any \(x \in c_0\) and form its \(N\)-th truncation \(x^{(N)} = (x_1, \dots, x_N, 0, 0, \dots) \in c_{00}\). Then
+\[
+\|x - x^{(N)}\|_\infty = \sup_{k > N} |x_k|.
+\]
+Because \(x_k \to 0\), for every \(\varepsilon > 0\) there is \(N_0\) such that \(|x_k| < \varepsilon/2\) for all \(k > N_0\), hence \(\|x - x^{(N)}\|_\infty \le \varepsilon/2 < \varepsilon\) for all \(N \ge N_0\). Thus \(x^{(N)} \to x\) in \(\|\cdot\|_\infty\), so \(x \in \overline{c_{00}}\). Conversely, suppose \(x \in \overline{c_{00}}\) and let \(\varepsilon > 0\). Pick \(y \in c_{00}\) with \(\|x - y\|_\infty < \varepsilon\). Since \(y \in c_{00}\), there exists \(K\) such that \(y_k = 0\) for all \(k > K\). Then for every \(k > K\),
+\[
+|x_k| = |x_k - y_k| \le \|x - y\|_\infty < \varepsilon,
+\]
+showing \(\lim_{k \to \infty} x_k = 0\), i.e., \(x \in c_0\). Hence \(\overline{c_{00}} = c_0\). Notice that \(c_{00} \subsetneq c_0 \subsetneq \ell^\infty\): the sequence \((1, 1/2, 1/3, \dots)\) lies in \(c_0 \setminus c_{00}\) (so \(c_{00}\) is not closed), while the constant sequence \((1, 1, 1, \dots)\) lies in \(\ell^\infty \setminus c_0\) (at distance \(1\) from every element of \(c_{00}\)). And as [REF: subspace-closure | our theorem] guaranteed, the closure \(c_0\) is a closed subspace of \(\ell^\infty\).
+
+[QUESTION 3]
+[ANSWER: D]
+Let \(M\) be a linear subspace of a nonzero normed space \((V, \|\cdot\|)\). Suppose \(M\) contains an open ball \(B(x_0, r)\) for some \(x_0 \in V\) and \(r > 0\). Which of the following statements is true?
+
+(A) \(M\) must be dense in \(V\), and there exist nonzero normed spaces where such a subspace \(M\) is still strictly smaller than \(V\).
+(B) \(M\) must be closed in \(V\), and there exist nonzero normed spaces where such a subspace \(M\) is still strictly smaller than \(V\).
+(C) \(M\) must contain \(B(0, r)\), and there exist nonzero normed spaces where such a subspace \(M\) contains no vector of norm \(2r\).
+(D) \(M\) must equal the whole space \(V\).
+(E) \(M\) must equal \(V\) when \(V\) is finite-dimensional, but in an infinite-dimensional normed space a proper subspace can contain an open ball.
+[/QUESTION]
+
+=== SECTION 4: Equivalent norms and their topological characterization ===
+
+We have already seen that the same vector space can carry more than one norm—such as \(\|\cdot\|_1\), \(\|\cdot\|_2\), and \(\|\cdot\|_\infty\) on \(\mathbb{K}^n\), or \(\|\cdot\|_\infty\) and \(\|\cdot\|_1\) on \(C([a, b])\). Different norms assign different numerical lengths to the same vector, so when do two norms on \(V\) still agree on every topological question—producing the same open sets, the same closed sets, the same closures, and the same convergent sequences?
+
+[CALLOUT]
+id: norm-equivalence-def
+label: Definition
+title: Domination and equivalence of norms
+tone: key
+
+Let \(\|\cdot\|_a\) and \(\|\cdot\|_b\) be two norms on the same vector space \(V\). We say that \(\|\cdot\|_a\) dominates \(\|\cdot\|_b\) (or is stronger than \(\|\cdot\|_b\)) if there exists a constant \(C > 0\) such that
+\[
+\|x\|_b \le C\|x\|_a \quad \text{for all } x \in V.
+\]
+We say that \(\|\cdot\|_a\) and \(\|\cdot\|_b\) are equivalent norms if each dominates the other; that is, if there exist constants \(c > 0\) and \(C > 0\) such that
+\[
+c\|x\|_a \le \|x\|_b \le C\|x\|_a \quad \text{for all } x \in V.
+\]
+[/CALLOUT]
+
+Norm equivalence is genuinely an equivalence relation on the collection of all norms on \(V\): every norm is equivalent to itself (take \(c = C = 1\)); if \(c\|x\|_a \le \|x\|_b \le C\|x\|_a\), dividing through yields \(\frac{1}{C}\|x\|_b \le \|x\|_a \le \frac{1}{c}\|x\|_b\) (symmetry); and if in addition \(c'\|x\|_b \le \|x\|_d \le C'\|x\|_b\), multiplying gives \(c'c\|x\|_a \le \|x\|_d \le C'C\|x\|_a\) (transitivity).
+
+To connect [REF: norm-equivalence-def | this algebraic inequality] to topology, let \(B_a(x_0, r) = \{x \in V : \|x - x_0\|_a < r\}\) and \(B_b(x_0, r) = \{x \in V : \|x - x_0\|_b < r\}\) denote the open balls of the two norms. Think geometrically about what \(\|x\|_b \le C\|x\|_a\) says about the unit balls at the origin: if \(\|x\|_a < 1/C\), then \(\|x\|_b \le C\|x\|_a < 1\), so the rescaled ball \(B_a(0, 1/C)\) sits completely inside \(B_b(0, 1)\). Conversely, by [REF: ball-scaling | the ball scaling-and-translation identity], if a ball of one norm nests inside a ball of the other at the origin, the same nesting holds after translating to any center \(x_0\) and scaling to any radius.
+
+In \(\mathbb{R}^2\), you can watch this nesting directly for \(\|\cdot\|_1\) and \(\|\cdot\|_2\). Dragging the radius \(r\) of the \(\|\cdot\|_1\)-ball shows that at \(r = 1\) the diamond fits inside the Euclidean unit circle, while expanding \(r\) past \(\sqrt{2} \approx 1.414\) makes the diamond enclose the Euclidean unit circle completely.
+
+[GRAPH]
+type: parametric2d
+title: Nesting scaled \(\|\cdot\|_1\) balls around the \(\|\cdot\|_2\) unit ball
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 6.2832
+xrange: -2.2, 2.2
+yrange: -2.2, 2.2
+trace: cos(t), sin(t) | label: \(\|x\|_2 = 1\)
+trace: r * cos(t) * abs(cos(t)), r * sin(t) * abs(sin(t)) | label: \(\|x\|_1 = r\)
+slider: r | range: 0.5, 2 | init: 1 | step: 0.05
+[/GRAPH]
+
+This ball-nesting mechanism gives the complete characterization of norm equivalence.
+
+[CALLOUT]
+id: equiv-characterization
+label: Theorem
+title: Characterization of equivalent norms
+tone: key
+
+Let \(\|\cdot\|_a\) and \(\|\cdot\|_b\) be two norms on a vector space \(V\). The following three statements are equivalent:
+
+(1) \(\|\cdot\|_a\) and \(\|\cdot\|_b\) are equivalent: there exist constants \(c, C > 0\) such that \(c\|x\|_a \le \|x\|_b \le C\|x\|_a\) for all \(x \in V\).
+(2) \(\|\cdot\|_a\) and \(\|\cdot\|_b\) induce the same open sets in \(V\).
+(3) \(\|\cdot\|_a\) and \(\|\cdot\|_b\) have the same convergent sequences with the same limits: for every sequence \((x_n)\) in \(V\) and every \(x \in V\), \(\|x_n - x\|_a \to 0\) if and only if \(\|x_n - x\|_b \to 0\).
+[/CALLOUT]
+
+[CALLOUT]
+label: Proof
+tone: note
+collapsed: true
+
+We first prove the geometric equivalence \((1) \iff (2)\) via [REF: ball-scaling | scaling and translation of balls], and then prove \((1) \iff (3)\).
+
+For \((1) \implies (2)\), assume \(c\|x\|_a \le \|x\|_b \le C\|x\|_a\) for all \(x \in V\). Take any center \(x_0 \in V\) and any radius \(r > 0\). If \(x \in B_a(x_0, r/C)\), then \(\|x - x_0\|_b \le C\|x - x_0\|_a < C(r/C) = r\), so \(x \in B_b(x_0, r)\). Thus
+\[
+B_a(x_0, r/C) \subseteq B_b(x_0, r).
+\]
+Consequently, if a subset \(U \subseteq V\) is open in \(\|\cdot\|_b\), then every \(x_0 \in U\) has some \(B_b(x_0, r) \subseteq U\), hence \(B_a(x_0, r/C) \subseteq U\), so \(U\) is also open in \(\|\cdot\|_a\). By the same calculation using \(\|x - x_0\|_a \le \frac{1}{c}\|x - x_0\|_b\), we have \(B_b(x_0, cr) \subseteq B_a(x_0, r)\), so every \(\|\cdot\|_a\)-open set is also \(\|\cdot\|_b\)-open.
+
+For \((2) \implies (1)\), suppose \(\|\cdot\|_a\) and \(\|\cdot\|_b\) induce the same open sets. The open unit ball \(B_b(0, 1)\) is open in \(\|\cdot\|_b\), hence also open in \(\|\cdot\|_a\), and it contains \(0\). Therefore there exists a radius \(r > 0\) such that
+\[
+B_a(0, r) \subseteq B_b(0, 1).
+\]
+Now let \(x \in V\) be any nonzero vector. To bring \(x\) inside \(B_a(0, r)\), we rescale it by the positive scalar \(\lambda = \frac{r}{2\|x\|_a}\). Then \(\|\lambda x\|_a = \frac{r}{2} < r\), so \(\lambda x \in B_a(0, r) \subseteq B_b(0, 1)\), which implies \(\|\lambda x\|_b < 1\). Applying [REF: norm-axioms.2 | homogeneity] of \(\|\cdot\|_b\) gives
+\[
+\frac{r}{2\|x\|_a}\,\|x\|_b < 1 \implies \|x\|_b < \frac{2}{r}\,\|x\|_a.
+\]
+(Note that scaling instead by \(\frac{\alpha r}{\|x\|_a}\) for any \(\alpha \in (0, 1)\) and letting \(\alpha \to 1^-\) sharpens the bound to \(\|x\|_b \le \frac{1}{r}\|x\|_a\).) Since the inequality also holds trivially at \(x = 0\), we have \(\|x\|_b \le C\|x\|_a\) for all \(x \in V\) with \(C = 2/r\) (or \(1/r\)). Reversing the roles of \(\|\cdot\|_a\) and \(\|\cdot\|_b\) produces \(s > 0\) with \(B_b(0, s) \subseteq B_a(0, 1)\), hence \(\|x\|_a \le \frac{2}{s}\|x\|_b\), i.e., \(c\|x\|_a \le \|x\|_b\) with \(c = s/2\) (or \(s\)). Thus \(\|\cdot\|_a\) and \(\|\cdot\|_b\) are equivalent.
+
+For \((1) \implies (3)\), assume \(c\|x\|_a \le \|x\|_b \le C\|x\|_a\). For any sequence \((x_n)\) and any \(x \in V\),
+\[
+c\|x_n - x\|_a \le \|x_n - x\|_b \le C\|x_n - x\|_a.
+\]
+By the squeeze principle for real sequences, \(\|x_n - x\|_a \to 0\) if and only if \(\|x_n - x\|_b \to 0\).
+
+Finally, we prove \((3) \implies (1)\) by contrapositive. Suppose there is no constant \(C > 0\) such that \(\|x\|_b \le C\|x\|_a\) for all \(x \in V\). Then for every integer \(k \ge 1\), we can choose a vector \(y_k \in V\) such that
+\[
+\|y_k\|_b > k\|y_k\|_a \ge 0.
+\]
+In particular, \(\|y_k\|_b > 0\) strictly, so we may normalize \(y_k\) in the \(\|\cdot\|_b\)-norm by setting
+\[
+x_k = \frac{y_k}{\|y_k\|_b}.
+\]
+By [REF: norm-axioms.2 | homogeneity], \(\|x_k\|_b = 1\) for every \(k \ge 1\), whereas
+\[
+\|x_k\|_a = \frac{\|y_k\|_a}{\|y_k\|_b} < \frac{1}{k} \to 0 \quad \text{as } k \to \infty.
+\]
+Thus \(x_k \to 0\) in \(\|\cdot\|_a\), yet \(x_k\) does not converge to \(0\) in \(\|\cdot\|_b\) because \(\|x_k - 0\|_b = 1\) for all \(k\). Symmetrically, if no \(c > 0\) satisfies \(c\|x\|_a \le \|x\|_b\) for all \(x \in V\), there exists a sequence converging to \(0\) in \(\|\cdot\|_b\) but not in \(\|\cdot\|_a\). In either case, [REF: equiv-characterization.3 | statement (3)] fails. This completes the proof.
+[/CALLOUT]
+
+Look closely at the proof just completed: every step actually works one side at a time! That gives a one-sided comparison principle that is crucial to keep oriented properly.
+
+[CALLOUT]
+id: one-sided-comparison
+label: Principle
+title: One-sided norm comparison
+tone: key
+
+For any two norms \(\|\cdot\|_a\) and \(\|\cdot\|_b\) on a vector space \(V\), the following four statements are equivalent:
+
+(1) There exists \(C > 0\) such that \(\|x\|_b \le C\|x\|_a\) for all \(x \in V\).
+(2) There exists \(r > 0\) such that \(B_a(0, r) \subseteq B_b(0, 1)\).
+(3) Every \(\|\cdot\|_b\)-open set is \(\|\cdot\|_a\)-open (equivalently, every \(\|\cdot\|_b\)-closed set is \(\|\cdot\|_a\)-closed).
+(4) Every sequence converging in \(\|\cdot\|_a\) converges to the same limit in \(\|\cdot\|_b\).
+[/CALLOUT]
+
+[CALLOUT]
+label: Caution
+title: Do not invert the direction of norm comparison
+tone: caution
+
+Pay careful attention to the direction of [REF: one-sided-comparison | (1)–(4)], because it is easy to invert by accident. A larger (stronger) norm \(\|\cdot\|_a\) makes it harder for a vector to have small norm, so its balls \(B_a(0, r)\) are smaller. Smaller balls fit more easily inside sets, producing more open sets (so \(\|\cdot\|_b\)-open implies \(\|\cdot\|_a\)-open, as in [REF: one-sided-comparison.3 | (3)]) and making it harder for a sequence to converge (so \(\|\cdot\|_a\)-convergence implies \(\|\cdot\|_b\)-convergence, as in [REF: one-sided-comparison.4 | (4)]). Conversely, to refute [REF: one-sided-comparison.1 | the inequality] \(\|x\|_b \le C\|x\|_a\), it suffices to exhibit a sequence of nonzero vectors \((y_k)\) whose ratio \(\|y_k\|_b / \|y_k\|_a\) grows without bound—or equivalently, a sequence \((x_k)\) with \(\|x_k\|_a \to 0\) while \(\|x_k\|_b\) stays bounded away from \(0\).
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(\|\cdot\|_a\) and \(\|\cdot\|_b\) be two norms on a vector space \(V\). Suppose the open unit ball \(B_a(0, 1)\) is contained in \(B_b(0, 3)\), whereas no open ball \(B_b(0, s)\) with \(s > 0\) is contained in \(B_a(0, 1)\). Which statement must hold?
+
+(A) Every sequence converging in \(\|\cdot\|_a\) also converges in \(\|\cdot\|_b\), and there exists a sequence converging to \(0\) in \(\|\cdot\|_b\) that does not converge to \(0\) in \(\|\cdot\|_a\).
+(B) Every sequence converging in \(\|\cdot\|_b\) also converges in \(\|\cdot\|_a\), and there exists a sequence converging to \(0\) in \(\|\cdot\|_a\) that does not converge to \(0\) in \(\|\cdot\|_b\).
+(C) Every \(\|\cdot\|_a\)-open set is \(\|\cdot\|_b\)-open, and there exists a \(\|\cdot\|_b\)-open set that is not \(\|\cdot\|_a\)-open.
+(D) \(\|x\|_a \le 3\|x\|_b\) for all \(x \in V\), and every \(\|\cdot\|_b\)-closed set is \(\|\cdot\|_a\)-closed.
+(E) Every sequence converging in \(\|\cdot\|_a\) also converges in \(\|\cdot\|_b\), and the two norms induce the same open sets in \(V\).
+[/QUESTION]
+
+=== SECTION 5: Equivalent norms on coordinate spaces versus inequivalent norms ===
+
+We now put [REF: equiv-characterization | our equivalence theorem] to work on the concrete spaces from Section 2, contrasting the finite-dimensional coordinate space \(\mathbb{K}^n\) with the infinite-dimensional spaces \(C([a, b])\) and \(c_{00}\).
+
+First, consider \(\mathbb{K}^n\) with the three norms \(\|\cdot\|_1\), \(\|\cdot\|_2\), and \(\|\cdot\|_\infty\).
+
+[CALLOUT]
+id: kn-norm-bounds
+label: Proposition
+title: Sharp norm inequalities on coordinate spaces
+tone: key
+
+For every \(x = (x_1, \dots, x_n) \in \mathbb{K}^n\),
+\[
+\|x\|_\infty \le \|x\|_2 \le \|x\|_1 \le n\|x\|_\infty,
+\]
+together with the tighter pair-by-pair bounds
+\[
+\|x\|_2 \le \sqrt{n}\,\|x\|_\infty \qquad \text{and} \qquad \|x\|_1 \le \sqrt{n}\,\|x\|_2.
+\]
+[/CALLOUT]
+
+Let us derive each inequality cleanly. Choose an index \(m \in \{1, \dots, n\}\) attaining \(\|x\|_\infty = |x_m|\). Since every term \(|x_j|^2\) is nonnegative,
+\[
+\|x\|_\infty^2 = |x_m|^2 \le \sum_{j=1}^n |x_j|^2 = \|x\|_2^2,
+\]
+and taking square roots yields \(\|x\|_\infty \le \|x\|_2\). Next, expanding \(\|x\|_1^2 = \bigl(\sum_{j=1}^n |x_j|\bigr)^2\) gives the diagonal terms \(\sum_{j=1}^n |x_j|^2\) plus nonnegative cross terms \(\sum_{i \ne j} |x_i|\,|x_j| \ge 0\), so \(\|x\|_2^2 \le \|x\|_1^2\) and hence \(\|x\|_2 \le \|x\|_1\). For the upper bounds in terms of \(\|x\|_\infty\), each coordinate satisfies \(|x_j| \le \|x\|_\infty\), so summing over \(j = 1, \dots, n\) gives
+\[
+\|x\|_1 = \sum_{j=1}^n |x_j| \le n\|x\|_\infty \qquad \text{and} \qquad \|x\|_2 = \left(\sum_{j=1}^n |x_j|^2\right)^{1/2} \le \bigl(n\|x\|_\infty^2\bigr)^{1/2} = \sqrt{n}\,\|x\|_\infty.
+\]
+Finally, to relate \(\|\cdot\|_1\) directly to \(\|\cdot\|_2\), apply the Cauchy-Schwarz inequality to the two vectors \((|x_1|, \dots, |x_n|)\) and \((1, \dots, 1)\):
+\[
+\|x\|_1 = \sum_{j=1}^n |x_j| \cdot 1 \le \left(\sum_{j=1}^n |x_j|^2\right)^{1/2} \left(\sum_{j=1}^n 1^2\right)^{1/2} = \sqrt{n}\,\|x\|_2.
+\]
+Every constant in these inequalities is sharp—none can be improved. At the first standard basis vector \(e_1 = (1, 0, \dots, 0)\), we have \(\|e_1\|_\infty = \|e_1\|_2 = \|e_1\|_1 = 1\), attaining equality in \(\|x\|_\infty \le \|x\|_2 \le \|x\|_1\). At the all-ones vector \(u = (1, 1, \dots, 1)\), we have \(\|u\|_\infty = 1\), \(\|u\|_2 = \sqrt{n}\), and \(\|u\|_1 = n\), attaining equality in \(\|x\|_2 \le \sqrt{n}\,\|x\|_\infty\), \(\|x\|_1 \le \sqrt{n}\,\|x\|_2\), and \(\|x\|_1 \le n\|x\|_\infty\). (In \(\mathbb{R}^2\), these are exactly the two marked points \((1, 0)\) and \((1, 1)\) from the unit-sphere graph in Section 2.)
+
+Consequently, \(\|\cdot\|_1\), \(\|\cdot\|_2\), and \(\|\cdot\|_\infty\) are mutually equivalent on \(\mathbb{K}^n\). By [REF: equiv-characterization | the equivalence theorem], they induce the exact same open sets and convergent sequences on \(\mathbb{K}^n\). In particular, since \(\|x^{(k)} - x\|_\infty = \max_{1 \le j \le n} |x_j^{(k)} - x_j| \to 0\) if and only if \(x_j^{(k)} \to x_j\) for each coordinate \(j = 1, \dots, n\), convergence in any of these three norms on \(\mathbb{K}^n\) is simply coordinatewise convergence.
+
+[QUESTION 5]
+[ANSWER: B]
+On \(\mathbb{R}^2\), consider the Euclidean norm \(\|x\|_2 = \sqrt{x_1^2 + x_2^2}\) and the weighted norm \(\|x\|_w = 2|x_1| + 3|x_2|\). What are the largest constant \(c > 0\) and the smallest constant \(C > 0\) such that \(c\|x\|_2 \le \|x\|_w \le C\|x\|_2\) for all \(x \in \mathbb{R}^2\)?
+
+(A) \(c = 2\) and \(C = 5\)
+(B) \(c = 2\) and \(C = \sqrt{13}\)
+(C) \(c = 2\) and \(C = 3\sqrt{2}\)
+(D) \(c = \sqrt{5}\) and \(C = \sqrt{13}\)
+(E) \(c = 3\) and \(C = 5\)
+[/QUESTION]
+
+Notice a crucial feature of [REF: kn-norm-bounds | the sharp constants we just derived] on \(\mathbb{K}^n\): the ratios \(\|u\|_1 / \|u\|_\infty = n\) and \(\|u\|_1 / \|u\|_2 = \sqrt{n}\) depend on the dimension \(n\) and grow without bound as \(n \to \infty\). That growth warns us what can happen once a vector space has infinitely many independent directions.
+
+Consider first \(C([0, 1])\) equipped with \(\|\cdot\|_\infty\) and \(\|\cdot\|_1\). One direction of comparison holds cleanly on any compact interval \([a, b]\): for every \(f \in C([a, b])\),
+\[
+\|f\|_1 = \int_a^b |f(t)|\,dt \le \int_a^b \|f\|_\infty\,dt = (b - a)\|f\|_\infty.
+\]
+On \([0, 1]\), this reads \(\|f\|_1 \le \|f\|_\infty\). By [REF: one-sided-comparison | our one-sided comparison principle], uniform convergence (\(\|\cdot\|_\infty\)) always implies \(\|\cdot\|_1\)-convergence, and every \(\|\cdot\|_1\)-closed set is \(\|\cdot\|_\infty\)-closed.
+
+What about the reverse inequality? Could there exist a constant \(C > 0\) such that \(\|f\|_\infty \le C\|f\|_1\) for all \(f \in C([0, 1])\)? To test this, we look for a sequence of continuous functions whose peak height stays at \(1\) while the area under the graph shrinks to \(0\). A clean algebraic family is the sequence of power functions \(f_k(t) = t^k\) on \([0, 1]\) for \(k = 1, 2, 3, \dots\). For every \(k \ge 1\), \(f_k\) is nonnegative and increasing on \([0, 1]\), so
+\[
+\|f_k\|_\infty = \max_{t \in [0, 1]} t^k = f_k(1) = 1, \qquad \|f_k\|_1 = \int_0^1 t^k\,dt = \frac{1}{k + 1}.
+\]
+The ratio \(\|f_k\|_\infty / \|f_k\|_1 = k + 1\) grows without bound as \(k \to \infty\). Equivalently, \(\|f_k - 0\|_1 = \frac{1}{k + 1} \to 0\), so \(f_k \to 0\) in \(\|\cdot\|_1\), yet \(\|f_k - 0\|_\infty = 1\) for all \(k\), so \(f_k\) does not converge to \(0\) in \(\|\cdot\|_\infty\). Dragging \(k\) upward in the plot below shows the peak remaining pinned at \((1, 1)\) while the shaded area collapses toward \(0\).
+
+[GRAPH]
+type: function2d
+title: Power functions \(f_k(t) = t^k\) on \([0, 1]\): fixed peak, shrinking area
+xlabel: \(t\)
+ylabel: \(f_k(t)\)
+xrange: 0, 1
+yrange: -0.1, 1.2
+fill: x^k, 0 | range: 0, 1 | label: area under graph | color: #3b82f6 | opacity: 0.25
+trace: x^k | label: \(f_k(t) = t^k\)
+point: 1, 1 | label: \((1, 1)\)
+segment: 1, 0, 1, 1 | label: \(\|f_k\|_\infty = 1\) | dashed: true
+slider: k | range: 1, 20 | init: 2 | step: 1
+[/GRAPH]
+
+Therefore \(\|\cdot\|_\infty\) and \(\|\cdot\|_1\) are not equivalent on \(C([0, 1])\). The same geometric failure works anywhere in \([a, b]\) using narrow continuous spikes: for instance, the continuous tent function \(g_k(t) = \max\bigl(0,\, 1 - 2k|t - 1/2|\bigr)\) on \([0, 1]\) peaks at height \(\|g_k\|_\infty = g_k(1/2) = 1\), while its graph forms a triangle of base width \(1/k\) and height \(1\), giving \(\|g_k\|_1 = \frac{1}{2k} \to 0\). Because a spike can be centered around any point \(t_0 \in [a, b]\) with arbitrarily narrow base, the integral norm \(\|\cdot\|_1\) cannot control the value of a continuous function at any individual point.
+
+The exact same phenomenon breaks equivalence on the sequence space \(c_{00}\). Compare \(\|\cdot\|_\infty\) and \(\|\cdot\|_1\) on \(c_{00}\). Every sequence \(x \in c_{00}\) satisfies \(\|x\|_\infty \le \|x\|_1\), because each single entry \(|x_j|\) is at most the sum \(\sum_{k=1}^\infty |x_k|\). However, in the reverse direction we can now let the number of nonzero entries grow without any fixed ceiling \(n\). For each integer \(m \ge 1\), define
+\[
+u^{(m)} = (\underbrace{1, 1, \dots, 1}_{m \text{ entries}}, 0, 0, \dots) \in c_{00}.
+\]
+Then \(\|u^{(m)}\|_\infty = 1\) whereas \(\|u^{(m)}\|_1 = m\), so \(\|u^{(m)}\|_1 / \|u^{(m)}\|_\infty = m \to \infty\). Equivalently, the rescaled sequence \(x^{(m)} = \frac{1}{m} u^{(m)}\) satisfies \(\|x^{(m)}\|_\infty = \frac{1}{m} \to 0\) while \(\|x^{(m)}\|_1 = 1\) for all \(m\). Thus \(\|\cdot\|_\infty\) and \(\|\cdot\|_1\) are not equivalent on \(c_{00}\).
+
+[CALLOUT]
+label: Caution
+title: Infinite dimension does not force inequivalence
+tone: caution
+
+Keep one important caution in mind: the existence of inequivalent norms on \(C([0, 1])\) and \(c_{00}\) does not mean that every pair of norms on an infinite-dimensional space is inequivalent. Two norms on an infinite-dimensional space are still [REF: norm-equivalence-def | equivalent] whenever you can prove explicit positive constants \(c\) and \(C\) with \(c\|x\|_a \le \|x\|_b \le C\|x\|_a\) for all \(x\). Conversely, to refute equivalence, you construct a concrete sequence \((y_k)\) whose norm ratio \(\|y_k\|_b / \|y_k\|_a\) (or \(\|y_k\|_a / \|y_k\|_b\)) diverges to \(\infty\).
+[/CALLOUT]
+
+[TABLE]
+Space | Norm pair | Always valid bound | Equivalent? | Reason or witness
+\(\mathbb{K}^n\) | \(\lVert \cdot \rVert_\infty\), \(\lVert \cdot \rVert_2\) | \(\lVert x \rVert_\infty \le \lVert x \rVert_2 \le \sqrt{n}\,\lVert x \rVert_\infty\) | Yes | Sharp at \(e_1\) and \((1, \dots, 1)\)
+\(\mathbb{K}^n\) | \(\lVert \cdot \rVert_2\), \(\lVert \cdot \rVert_1\) | \(\lVert x \rVert_2 \le \lVert x \rVert_1 \le \sqrt{n}\,\lVert x \rVert_2\) | Yes | Cauchy-Schwarz; sharp at \(e_1\) and \((1, \dots, 1)\)
+\(C([0, 1])\) | \(\lVert \cdot \rVert_1\), \(\lVert \cdot \rVert_\infty\) | \(\lVert f \rVert_1 \le \lVert f \rVert_\infty\) | No | \(f_k(t) = t^k\) gives \(\lVert f_k \rVert_\infty / \lVert f_k \rVert_1 = k + 1 \to \infty\)
+\(c_{00}\) | \(\lVert \cdot \rVert_\infty\), \(\lVert \cdot \rVert_1\) | \(\lVert x \rVert_\infty \le \lVert x \rVert_1\) | No | \(u^{(m)} = (1, \dots, 1, 0, \dots)\) gives \(\lVert u^{(m)} \rVert_1 / \lVert u^{(m)} \rVert_\infty = m \to \infty\)
+[/TABLE]
+
+[QUESTION 6]
+[ANSWER: E]
+On which of the following vector spaces are the two given norms equivalent?
+
+(A) On \(C([0, 1])\): \(\|f\|_a = \int_0^1 |f(t)|\,dt\) and \(\|f\|_b = \int_0^1 t\,|f(t)|\,dt\)
+(B) On \(c_{00}\): \(\|x\|_a = \sum_{k=1}^\infty |x_k|\) and \(\|x\|_b = \left(\sum_{k=1}^\infty |x_k|^2\right)^{1/2}\)
+(C) On \(c_{00}\): \(\|x\|_a = \sup_{k \ge 1} |x_k|\) and \(\|x\|_b = \sup_{k \ge 1} k\,|x_k|\)
+(D) On \(C([0, 1])\): \(\|f\|_a = \max_{t \in [0, 1]} |f(t)|\) and \(\|f\|_b = \int_0^1 |f(t)|\,dt + |f(0)|\)
+(E) On \(C([0, 1])\): \(\|f\|_a = \int_0^1 |f(t)|\,dt\) and \(\|f\|_b = \int_0^1 (1 + t^2)\,|f(t)|\,dt\)
+[/QUESTION]
+
+Because [REF: equiv-characterization.2 | equivalent norms induce the same open sets] and closures, changing between equivalent norms never changes whether a given subspace is closed or dense. Changing between inequivalent norms, by contrast, can alter the topological behavior of the very same subspace dramatically.
+
+[QUESTION 7]
+[ANSWER: C]
+Consider the linear subspace \(M = \{f \in C([0, 1]) : f(0) = 0\}\) of \(C([0, 1])\). Which statement correctly describes the closure of \(M\) in \(C([0, 1])\) under \(\|\cdot\|_\infty\) and under \(\|\cdot\|_1\)?
+
+(A) \(M\) is closed under both \(\|\cdot\|_\infty\) and \(\|\cdot\|_1\).
+(B) \(M\) is closed under \(\|\cdot\|_1\), while its closure under \(\|\cdot\|_\infty\) is all of \(C([0, 1])\).
+(C) \(M\) is closed under \(\|\cdot\|_\infty\), while its closure under \(\|\cdot\|_1\) is all of \(C([0, 1])\).
+(D) Its closure is all of \(C([0, 1])\) under both \(\|\cdot\|_\infty\) and \(\|\cdot\|_1\).
+(E) \(M\) is closed under \(\|\cdot\|_\infty\), while its closure under \(\|\cdot\|_1\) is \(\{f \in C([0, 1]) : \int_0^1 f(t)\,dt = 0\}\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Which of the following metrics on \(\mathbb{R}^2\) is induced by a norm on \(\mathbb{R}^2\)?
+
+(A) \(d(x, y) = \frac{\|x - y\|_2}{1 + \|x - y\|_2}\)
+(B) \(d(x, y) = \sqrt{\|x - y\|_1}\)
+(C) \(d(x, y) = \|x - y\|_2 + \bigl|\|x\|_2 - \|y\|_2\bigr|\)
+(D) \(d(x, y) = \max\bigl(|x_1 - y_1|,\, 2|x_2 - y_2|\bigr)\)
+(E) \(d(x, y) = \min\bigl(1,\, \|x - y\|_\infty\bigr)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Let \(C^1([0, 1])\) be the real vector space of continuously differentiable functions on \([0, 1]\), equipped with the three norms \(\|f\|_\infty = \max_{t \in [0, 1]} |f(t)|\), \(\|f\|_{C^1} = \|f\|_\infty + \|f'\|_\infty\), and \(\|f\|_* = |f(0)| + \|f'\|_\infty\). Which statement is true?
+
+(A) \(\|\cdot\|_{C^1}\) and \(\|\cdot\|_*\) are equivalent, while \(\|\cdot\|_\infty\) is equivalent to neither of them.
+(B) All three norms are mutually inequivalent.
+(C) \(\|\cdot\|_\infty\) and \(\|\cdot\|_{C^1}\) are equivalent, while \(\|\cdot\|_*\) is equivalent to neither of them.
+(D) \(\|\cdot\|_\infty\) and \(\|\cdot\|_*\) are equivalent, while \(\|\cdot\|_{C^1}\) is equivalent to neither of them.
+(E) All three norms are mutually equivalent.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+On \(c_{00}\), fix a real parameter \(\alpha > 0\), and for each integer \(m \ge 1\) let \(x^{(m)}\) be the sequence whose first \(m\) entries equal \(m^{-\alpha}\) and whose remaining entries are \(0\). For exactly which values of \(\alpha\) does \(x^{(m)}\) converge to \(0\) in \(\|\cdot\|_2\) while failing to converge to \(0\) in \(\|\cdot\|_1\)?
+
+(A) \(0 < \alpha \le \frac{1}{2}\)
+(B) \(\frac{1}{2} \le \alpha < 1\)
+(C) \(\frac{1}{2} < \alpha < 1\)
+(D) \(\frac{1}{2} < \alpha \le 1\)
+(E) \(\alpha > 1\)
+[/BONUS]
+
+[BONUS 4]
+[ANSWER: C]
+What is the smallest constant \(K > 0\) such that in every normed space \((V, \|\cdot\|)\) and for all nonzero vectors \(x, y \in V\),
+\[
+\left\|\frac{x}{\|x\|} - \frac{y}{\|y\|}\right\| \le K\,\frac{\|x - y\|}{\max(\|x\|, \|y\|)}?
+\]
+
+(A) \(1\)
+(B) \(\sqrt{2}\)
+(C) \(2\)
+(D) \(4\)
+(E) No finite constant \(K\) works across all normed spaces.
+[/BONUS]

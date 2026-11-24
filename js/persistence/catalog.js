@@ -82,10 +82,9 @@ function fetchBuiltinTree(id) {
   }
   return catalogTreeCache.get(cacheKey).then(raw => {
     const subjectName = typeof mathItems !== 'undefined' ? mathItems.get(id)?.name : null;
-    const isSharedPlaceholder = meta.dir === 'placeholder';
     return {
       ...raw,
-      topic: (isSharedPlaceholder && subjectName) ? subjectName : (raw.topic || subjectName || ''),
+      topic: raw.topic || subjectName || '',
       collectionId: id,
     };
   });
