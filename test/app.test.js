@@ -772,3 +772,43 @@ test('loading a tree skips hidden generation validation until the generation mod
     app.dom.window.close();
   }
 });
+
+test('horizontal scroll hints mark only overflowing display equations and track scroll position', () => {
+  const app = loadApp();
+  try {
+    const body = app.document.getElementById('sv-body');
+    const fits = app.document.createElement('span');
+    fits.className = 'katex-display';
+    Object.defineProperties(fits, { clientWidth: { value: 400 }, scrollWidth: { value: 400 } });
+
+    const wide = app.document.createElement('span');
+    wide.className = 'katex-display';
+    let scrollLeft = 0;
+    Object.defineProperties(wide, {
+      clientWidth: { value: 400 },
+      scrollWidth: { value: 650 },
+      scrollLeft: { get: () => scrollLeft, set: v => { scrollLeft = v; } },
+    });
+    body.append(fits, wide);
+
+    app.ev("syncHorizontalScrollHints(document.getElementById('sv-body'))");
+    assert.equal(fits.classList.contains('sv-scroll-x'), false);
+    assert.equal(fits.classList.contains('sv-scroll-x-right'), false);
+
+    assert.equal(wide.classList.contains('sv-scroll-x'), true);
+    assert.equal(wide.classList.contains('sv-scroll-x-left'), false);
+    assert.equal(wide.classList.contains('sv-scroll-x-right'), true);
+
+    scrollLeft = 100;
+    wide.dispatchEvent(new app.window.Event('scroll'));
+    assert.equal(wide.classList.contains('sv-scroll-x-left'), true);
+    assert.equal(wide.classList.contains('sv-scroll-x-right'), true);
+
+    scrollLeft = 250;
+    wide.dispatchEvent(new app.window.Event('scroll'));
+    assert.equal(wide.classList.contains('sv-scroll-x-left'), true);
+    assert.equal(wide.classList.contains('sv-scroll-x-right'), false);
+  } finally {
+    app.dom.window.close();
+  }
+});

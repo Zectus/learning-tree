@@ -408,7 +408,11 @@ function openViewer(txtContent, nodeId) {
     if (!anchors.has(el.dataset.ref)) el.replaceWith(...el.childNodes);
   });
   body.querySelectorAll('details.sv-callout').forEach(det => {
-    det.addEventListener('toggle', () => { computeCheckpoints(); updateSessionProgress(); });
+    det.addEventListener('toggle', () => {
+      syncHorizontalScrollHints(det);
+      computeCheckpoints();
+      updateSessionProgress();
+    });
   });
 
   body.querySelectorAll('.q-opt[data-qn]').forEach(btn => btn.addEventListener('click', () => handleOptionClick(btn)));
@@ -448,6 +452,8 @@ function openViewer(txtContent, nodeId) {
 
   computeCheckpoints();
   updateSessionProgress();
+  syncHorizontalScrollHints(body);
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => syncHorizontalScrollHints(body));
   // Graphs load their libraries asynchronously; re-measure once they've settled.
   Promise.allSettled(mounts).then(() => {
     if (viewer.nodeId === nodeId) { computeCheckpoints(); updateSessionProgress(); }
@@ -851,6 +857,7 @@ function openRefPopover(trigger) {
   activeRefTrigger = trigger;
   trigger.setAttribute('aria-expanded', 'true');
   positionRefPopover(pop, trigger);
+  syncHorizontalScrollHints(pop);
 }
 
 document.getElementById('sv-body').addEventListener('click', e => {
@@ -991,3 +998,9 @@ document.getElementById('session-file-input').addEventListener('change', e => {
   e.target.value = '';
 });
 document.getElementById('btn-close-viewer').addEventListener('click', closeViewer);
+if (typeof ResizeObserver !== 'undefined') {
+  const svBodyEl = document.getElementById('sv-body');
+  new ResizeObserver(() => {
+    if (document.getElementById('session-viewer').classList.contains('sv-open')) syncHorizontalScrollHints(svBodyEl);
+  }).observe(svBodyEl);
+}

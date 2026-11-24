@@ -97,14 +97,38 @@ function runKatex(el) {
   });
 }
 
+function updateHorizontalScrollState(el) {
+  const maxScroll = el.scrollWidth - el.clientWidth;
+  const overflows = el.clientWidth > 0 && maxScroll > 2;
+  el.classList.toggle('sv-scroll-x', overflows);
+  el.classList.toggle('sv-scroll-x-left', overflows && el.scrollLeft > 2);
+  el.classList.toggle('sv-scroll-x-right', overflows && el.scrollLeft < maxScroll - 2);
+}
+
+function syncHorizontalScrollHints(root) {
+  if (!root) return;
+  root.querySelectorAll('.katex-display, .sv-table-wrap').forEach(el => {
+    if (!el.dataset.svScrollXBound) {
+      el.dataset.svScrollXBound = '1';
+      el.addEventListener('scroll', () => updateHorizontalScrollState(el), { passive: true });
+    }
+    updateHorizontalScrollState(el);
+  });
+}
+
 function renderMath(el) {
   if (!el) return;
-  if (window.renderMathInElement) { runKatex(el); return; }
+  if (window.renderMathInElement) {
+    runKatex(el);
+    syncHorizontalScrollHints(el);
+    return;
+  }
   const text = el.textContent || '';
   if (!text.includes('\\(') && !text.includes('\\[')) return;
   loadKatex().then(() => {
     if (!el.isConnected) return;
     runKatex(el);
+    syncHorizontalScrollHints(el);
     if (el.id === 'sv-body' && typeof computeCheckpoints === 'function' && typeof updateSessionProgress === 'function') {
       computeCheckpoints();
       updateSessionProgress();
