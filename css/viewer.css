@@ -197,13 +197,28 @@
   overflow-y: hidden;
 }
 
-/* Reveal a quiet, theme-native horizontal scrollbar and soft edge fade ONLY
-   when a display equation or table actually overflows horizontally. */
+/* Reveal a subtle edge fade immediately when a display equation or table
+   overflows horizontally, and show a thin scrollbar thumb only on hover/focus
+   without shifting surrounding text. */
 #session-viewer .katex-display.sv-scroll-x,
 #session-viewer .sv-table-wrap.sv-scroll-x {
   scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+#session-viewer .katex-display.sv-scroll-x {
+  margin-bottom: calc(0.45em - 5px) !important;
+}
+#session-viewer .sv-math-display .katex-display.sv-scroll-x {
+  margin-bottom: -5px !important;
+}
+#session-viewer .sv-table-wrap.sv-scroll-x {
+  margin-bottom: calc(1.625rem - 5px);
+}
+#session-viewer .katex-display.sv-scroll-x:hover,
+#session-viewer .katex-display.sv-scroll-x:focus-within,
+#session-viewer .sv-table-wrap.sv-scroll-x:hover,
+#session-viewer .sv-table-wrap.sv-scroll-x:focus-within {
   scrollbar-color: var(--border-h) transparent;
-  padding-bottom: 0.45em;
 }
 #session-viewer .katex-display.sv-scroll-x::-webkit-scrollbar,
 #session-viewer .sv-table-wrap.sv-scroll-x::-webkit-scrollbar {
@@ -216,8 +231,14 @@
 }
 #session-viewer .katex-display.sv-scroll-x::-webkit-scrollbar-thumb,
 #session-viewer .sv-table-wrap.sv-scroll-x::-webkit-scrollbar-thumb {
-  background: var(--border-h);
+  background: transparent;
   border-radius: 999px;
+}
+#session-viewer .katex-display.sv-scroll-x:hover::-webkit-scrollbar-thumb,
+#session-viewer .katex-display.sv-scroll-x:focus-within::-webkit-scrollbar-thumb,
+#session-viewer .sv-table-wrap.sv-scroll-x:hover::-webkit-scrollbar-thumb,
+#session-viewer .sv-table-wrap.sv-scroll-x:focus-within::-webkit-scrollbar-thumb {
+  background: var(--border-h);
 }
 #session-viewer .katex-display.sv-scroll-x::-webkit-scrollbar-thumb:hover,
 #session-viewer .sv-table-wrap.sv-scroll-x::-webkit-scrollbar-thumb:hover {

@@ -116,11 +116,23 @@ function syncHorizontalScrollHints(root) {
   });
 }
 
+function scheduleHorizontalScrollHints(el) {
+  syncHorizontalScrollHints(el);
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(() => { if (el.isConnected) syncHorizontalScrollHints(el); });
+  }
+  // KaTeX WOFF2 fonts start loading only after auto-render inserts .katex spans,
+  // which can widen equations past clientWidth a frame later.
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => { if (el.isConnected) syncHorizontalScrollHints(el); }).catch(() => {});
+  }
+}
+
 function renderMath(el) {
   if (!el) return;
   if (window.renderMathInElement) {
     runKatex(el);
-    syncHorizontalScrollHints(el);
+    scheduleHorizontalScrollHints(el);
     return;
   }
   const text = el.textContent || '';
@@ -128,7 +140,7 @@ function renderMath(el) {
   loadKatex().then(() => {
     if (!el.isConnected) return;
     runKatex(el);
-    syncHorizontalScrollHints(el);
+    scheduleHorizontalScrollHints(el);
     if (el.id === 'sv-body' && typeof computeCheckpoints === 'function' && typeof updateSessionProgress === 'function') {
       computeCheckpoints();
       updateSessionProgress();

@@ -473,6 +473,7 @@ function continueViewer(nodeId) {
     document.getElementById('session-viewer').classList.add('sv-open');
     updateSessionProgress();
     syncNotesPanelPosition();
+    scheduleHorizontalScrollHints(document.getElementById('sv-body'));
   } else {
     openViewer(node._sessionTxt, nodeId);
   }
@@ -998,9 +999,12 @@ document.getElementById('session-file-input').addEventListener('change', e => {
   e.target.value = '';
 });
 document.getElementById('btn-close-viewer').addEventListener('click', closeViewer);
+const svBodyScrollSync = () => {
+  if (document.getElementById('session-viewer').classList.contains('sv-open')) {
+    syncHorizontalScrollHints(document.getElementById('sv-body'));
+  }
+};
 if (typeof ResizeObserver !== 'undefined') {
-  const svBodyEl = document.getElementById('sv-body');
-  new ResizeObserver(() => {
-    if (document.getElementById('session-viewer').classList.contains('sv-open')) syncHorizontalScrollHints(svBodyEl);
-  }).observe(svBodyEl);
+  new ResizeObserver(svBodyScrollSync).observe(document.getElementById('sv-body'));
 }
+document.fonts?.addEventListener?.('loadingdone', svBodyScrollSync);
