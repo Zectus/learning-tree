@@ -197,14 +197,33 @@ async function retryTreeExitSaves(uid) {
     await sendTreeExitSave(uid, id, entry);
   }
 }
+function buildLibraryEntryPayload(name, savedAt = Date.now()) {
+  if (typeof isUnmodifiedBuiltinTree === 'function' && isUnmodifiedBuiltinTree()) {
+    return {
+      name,
+      savedAt,
+      builtinId: state.builtinId,
+      data: { topic: state.topic || name, collectionId: state.collectionId || state.builtinId },
+    };
+  }
+  const snapshot = buildTreeJSON(true);
+  if (!snapshot) return null;
+  return { name, savedAt, data: snapshot };
+}
+
 function autosaveTreeOnPageExit() {
   if (state.tutorialActive || !libraryReady) return;
-  const snapshot = buildTreeJSON(true);
-  if (!snapshot) return;
+  if (!state.nodes.size) return;
   const previous = state.libraryId && libraryCache[state.libraryId];
-  if (previous && treeContentKey(previous.data) === treeContentKey(snapshot)) return;
+  const unmodifiedBuiltin = typeof isUnmodifiedBuiltinTree === 'function' && isUnmodifiedBuiltinTree();
+  if (unmodifiedBuiltin) {
+    // Pointer already saved for this built-in tree: nothing changed, zero bytes to write.
+    if (previous && previous.builtinId === state.builtinId && !previous.data?.nodes?.length) return;
+  }
+  const entry = buildLibraryEntryPayload(previous ? previous.name : (state.topic || t('Untitled tree')));
+  if (!entry) return;
+  if (!unmodifiedBuiltin && previous && !previous.builtinId && treeContentKey(previous.data) === treeContentKey(entry.data)) return;
   const id = previous ? state.libraryId : genLibraryId();
-  const entry = { name: previous ? previous.name : (state.topic || t('Untitled tree')), savedAt: Date.now(), data: snapshot };
   if (librarySource === 'cloud' && state.accountUser) {
     const uid = state.accountUser.uid;
     const queue = readTreeExitQueue(uid);
@@ -232,24 +251,31 @@ window.addEventListener('pagehide', autosaveTreeOnPageExit);
    save, so ask for a name. A failed write is rolled back so the grid never
    shows something that isn't actually stored. */
 async function saveCurrentTreeToLibrary() {
-  const snapshot = buildTreeJSON(true);
-  if (!snapshot) { showToast('Add a topic before saving the tree.', 3000); return; }
+  if (!state.nodes.size) { showToast('Add a topic before saving the tree.', 3000); return; }
 
   if (state.libraryId && libraryCache[state.libraryId]) {
     const entry = libraryCache[state.libraryId];
-    const before = { data: entry.data, savedAt: entry.savedAt };
-    entry.data = snapshot;
-    entry.savedAt = Date.now();
-    if (!(await persistLibrary())) Object.assign(entry, before);
-    else showToast(`Saved changes to "${entry.name}".`, 3000);
+    const next = buildLibraryEntryPayload(entry.name);
+    if (!next) return;
+    const before = { data: entry.data, savedAt: entry.savedAt, builtinId: entry.builtinId };
+    entry.data = next.data;
+    entry.savedAt = next.savedAt;
+    if (next.builtinId) entry.builtinId = next.builtinId; else delete entry.builtinId;
+    if (!(await persistLibrary())) {
+      entry.data = before.data;
+      entry.savedAt = before.savedAt;
+      if (before.builtinId) entry.builtinId = before.builtinId; else delete entry.builtinId;
+    } else showToast(`Saved changes to "${entry.name}".`, 3000);
     renderLibraryGrid();
     return;
   }
 
   const name = state.tutorialActive ? t('Tutorial tree') : (window.prompt(t('Name this tree:'), state.topic || t('Untitled tree')) || '').trim();
   if (!name) return;
+  const entry = buildLibraryEntryPayload(name);
+  if (!entry) return;
   const id = genLibraryId();
-  libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
+  libraryCache[id] = entry;
   if (await persistLibrary()) state.libraryId = id;
   else delete libraryCache[id];
   renderLibraryGrid();
@@ -258,12 +284,13 @@ async function saveCurrentTreeToLibrary() {
 /* "Save as new copy" — only offered once the tree is linked to an entry:
    branch off the saved version without overwriting it. */
 async function saveCurrentTreeAsNewCopy() {
-  const snapshot = buildTreeJSON(true);
-  if (!snapshot) { showToast('Add a topic before saving the tree.', 3000); return; }
+  if (!state.nodes.size) { showToast('Add a topic before saving the tree.', 3000); return; }
   const name = (window.prompt(t('Name this copy:'), (state.topic || t('Untitled tree')) + t(' copy')) || '').trim();
   if (!name) return;
+  const entry = buildLibraryEntryPayload(name);
+  if (!entry) return;
   const id = genLibraryId();
-  libraryCache[id] = { name, savedAt: Date.now(), data: snapshot };
+  libraryCache[id] = entry;
   if (await persistLibrary()) state.libraryId = id;
   else delete libraryCache[id];
   renderLibraryGrid();
@@ -273,6 +300,11 @@ async function saveCurrentTreeAsNewCopy() {
 function openLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
+  if (entry.builtinId && !entry.data?.nodes?.length && typeof openBuiltinTree === 'function') {
+    closeLibraryModal();
+    void openBuiltinTree(entry.builtinId, id);
+    return;
+  }
   if (!entry.data.nodes?.length && typeof mathItems !== 'undefined' && mathItems.get(entry.data.collectionId)?.scope) {
     closeLibraryModal();
     openMathTreeBuilder(entry.data.collectionId, id);
@@ -298,7 +330,9 @@ async function duplicateLibraryEntry(id) {
   const entry = libraryCache[id];
   if (!entry) return;
   const newId = genLibraryId();
-  libraryCache[newId] = { name: entry.name + t(' copy'), savedAt: Date.now(), data: entry.data };
+  const copy = { name: entry.name + t(' copy'), savedAt: Date.now(), data: entry.data };
+  if (entry.builtinId) copy.builtinId = entry.builtinId;
+  libraryCache[newId] = copy;
   if (!(await persistLibrary())) delete libraryCache[newId];
   renderLibraryGrid();
 }
@@ -345,11 +379,21 @@ function renderLibraryGrid() {
   empty.classList.toggle('hidden', ids.length !== 0);
   grid.innerHTML = '';
 
+  let needsCatalogIndex = false;
   ids.forEach(id => {
     const entry = libraryCache[id];
-    const total = entry.data.nodes?.length || 0;
-    const collectionDraft = !total && entry.data.collectionId;
-    const { done } = libraryProgressFor(entry.data);
+    const builtinPointer = !!(entry.builtinId && !entry.data?.nodes?.length);
+    const builtinMeta = builtinPointer && typeof getCatalogEntry === 'function' ? getCatalogEntry(entry.builtinId) : null;
+    if (builtinPointer && !builtinMeta && typeof loadCatalogIndex === 'function') needsCatalogIndex = true;
+    const total = builtinPointer ? (builtinMeta?.nodeCount || 0) : (entry.data?.nodes?.length || 0);
+    const collectionDraft = !builtinPointer && !total && entry.data?.collectionId;
+    let done = 0;
+    if (builtinPointer) {
+      const rec = builtinMeta?.signature ? progressCache[builtinMeta.signature] : null;
+      if (rec) done = Object.values(rec).filter(r => r?.done).length;
+    } else {
+      done = libraryProgressFor(entry.data).done;
+    }
     const pct = total ? Math.round((done / total) * 100) : 0;
     const isOpen = state.libraryId === id;
 
@@ -357,7 +401,7 @@ function renderLibraryGrid() {
     card.className = 'library-card' + (isOpen ? ' library-card-open' : '');
     card.innerHTML = `
       <div class="lc-name">${svEsc(entry.name)}</div>
-      <div class="lc-meta">${collectionDraft ? uiHTML('Collection scope · ready to build') : uiHTML(total === 1 ? '{n} node' : '{n} nodes', {n:total})}${entry.data.language ? ' · ' + svEsc(entry.data.language) : ''}</div>
+      <div class="lc-meta">${collectionDraft ? uiHTML('Collection scope · ready to build') : uiHTML(total === 1 ? '{n} node' : '{n} nodes', {n:total})}${entry.data?.language ? ' · ' + svEsc(entry.data.language) : ''}</div>
       ${collectionDraft ? '' : `<div class="lc-progress-track"><div class="lc-progress-bar" style="width:${pct}%"></div></div>`}
       <div class="lc-meta">${collectionDraft ? uiHTML('Saved {time}',{time:formatSavedAt(entry.savedAt)}) : uiHTML('{done}/{total} complete · saved {time}', {done,total,time:formatSavedAt(entry.savedAt)})}${isOpen ? uiHTML(' · currently open') : ''}</div>
       <div class="lc-actions">
@@ -373,6 +417,7 @@ function renderLibraryGrid() {
     card.querySelector('.lc-del').addEventListener('click', () => deleteLibraryEntry(id));
     grid.appendChild(card);
   });
+  if (needsCatalogIndex) void loadCatalogIndex();
 }
 
 /* ── modal open/close ── */
@@ -415,3 +460,6 @@ window.addEventListener('storage', e => {
 });
 
 document.addEventListener('ui-language-change', renderLibraryGrid);
+document.addEventListener('catalog-loaded', () => {
+  if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
+});

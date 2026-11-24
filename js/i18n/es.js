@@ -537,5 +537,8 @@ Object.assign(UI_ES, {
   "Couldn't read clipboard automatically — paste the JSON below.": "No se pudo leer el portapapeles automáticamente: pega el JSON abajo.",
   "Your clipboard is empty. Copy the AI's finished tree JSON first.": "El portapapeles está vacío. Copia primero el JSON del árbol terminado de la IA.",
   "Jump to source": "Ir al origen",
-  "Details": "Detalles"
+  "Details": "Detalles",
+  "Couldn't find this built-in tree.": "No se pudo encontrar este árbol integrado.",
+  "Couldn't load this tree — check your connection and try again.": "No se pudo cargar este árbol: comprueba tu conexión e inténtalo de nuevo.",
+  "Couldn't load this lesson — check your connection and try again.": "No se pudo cargar esta lección: comprueba tu conexión e inténtalo de nuevo."
 });

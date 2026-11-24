@@ -117,7 +117,13 @@ function buildEl(node, parent = world) {
     if (e.key === 'Tab')    { e.preventDefault(); doAddNode(); }
   });
 
-  el.addEventListener('mouseenter', () => highlightEdges(node.id));
+  el.addEventListener('mouseenter', () => {
+    highlightEdges(node.id);
+    if (node._builtinLesson && !node._sessionTxt && typeof prefetchBuiltinNodeLesson === 'function') prefetchBuiltinNodeLesson(node);
+  });
+  el.addEventListener('focus', () => {
+    if (node._builtinLesson && !node._sessionTxt && typeof prefetchBuiltinNodeLesson === 'function') prefetchBuiltinNodeLesson(node);
+  });
   el.addEventListener('mouseleave', clearEdgeHighlight);
   el.addEventListener('click', e => {
     if (state.generationPicking) { toggleGenerationNode(node.id); return; }
@@ -135,6 +141,7 @@ function buildEl(node, parent = world) {
       }
     } else if (nodeStatus(node.id) !== 'locked') {
       if (node._sessionTxt) continueViewer(node.id);
+      else if (node._builtinLesson && typeof openBuiltinNodeLesson === 'function') void openBuiltinNodeLesson(node);
       else openLearnModal(node.id);
     }
   });
@@ -156,7 +163,7 @@ function refreshNodeLessonIndicator(node) {
   const badge = node.el?.querySelector('.node-badge');
   if (!badge) return;
   badge.querySelector('.node-lesson-indicator')?.remove();
-  if (!node._sessionTxt?.trim()) return;
+  if (!node._sessionTxt?.trim() && !node._builtinLesson) return;
   const indicator = document.createElement('span');
   indicator.className = 'node-lesson-indicator';
   indicator.textContent = '▤';
@@ -311,11 +318,12 @@ function deleteNode(id) {
 function deleteNodeTxt(id) {
   const node = state.nodes.get(id);
   if (!node) return;
-  if (!node._sessionTxt) {
+  if (!node._sessionTxt && !node._builtinLesson) {
     showToast('This topic has no TXT to delete.', 3000);
     return;
   }
   delete node._sessionTxt;
+  delete node._builtinLesson;
   delete node._sessionAnswers;
   delete node._bonusAnswers;
   delete node._scrollTop;

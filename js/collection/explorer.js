@@ -559,8 +559,10 @@ function renderMathDetail() {
 
   const node = mathItems.get(mathAtlas.selectedId);
   const entry = mathEntry(node.id);
-  const built = entry?.[1].data.nodes?.length > 0;
-  const primaryLabel = mathAtlas.busy ? 'Saving…' : built ? 'Open tree' : 'Build tree';
+  const builtin = typeof getCatalogEntry === 'function' ? getCatalogEntry(node.id) : null;
+  const built = entry?.[1].data?.nodes?.length > 0;
+  const hasBuiltin = !!builtin;
+  const primaryLabel = mathAtlas.busy ? 'Saving…' : (built || hasBuiltin) ? 'Open tree' : 'Build tree';
 
   detail.innerHTML = `<div class="explorer-detail-main">
       <div class="explorer-detail-head">
@@ -582,6 +584,16 @@ function renderMathDetail() {
   mathEl('explorer-tree-action')?.addEventListener('click', async () => {
     if (mathAtlas.busy) return;
     let current = mathEntry(node.id);
+    if (current?.[1].data?.nodes?.length) {
+      closeMathAtlas(false);
+      openLibraryEntry(current[0]);
+      return;
+    }
+    if (hasBuiltin && typeof openBuiltinTree === 'function') {
+      closeMathAtlas(false);
+      await openBuiltinTree(node.id, current?.[0] || null);
+      return;
+    }
     if (!current) {
       const libraryId = await addMathTreeToLibrary(node.id);
       if (!libraryId) return;
@@ -590,8 +602,7 @@ function renderMathDetail() {
     }
     const returnTo = mathAtlas.returnTo;
     closeMathAtlas(false);
-    if (current[1].data.nodes?.length) openLibraryEntry(current[0]);
-    else openMathTreeBuilder(node.id, current[0], returnTo);
+    openMathTreeBuilder(node.id, current[0], returnTo);
   });
 
   mathEl('explorer-tree-save')?.addEventListener('click', async () => {
@@ -700,7 +711,10 @@ async function addMathTreeToLibrary(id) {
     const existing = mathEntry(id);
     if (existing) return existing[0];
     const cache = libraryCache, owner = mathOwner(), libraryId = genLibraryId();
-    cache[libraryId] = { name: node.name, savedAt: Date.now(), data: { topic: node.name, collectionId: id, nodes: [] } };
+    const hasBuiltin = typeof getCatalogEntry === 'function' && !!getCatalogEntry(id);
+    cache[libraryId] = hasBuiltin
+      ? { name: node.name, savedAt: Date.now(), builtinId: id, data: { topic: node.name, collectionId: id } }
+      : { name: node.name, savedAt: Date.now(), data: { topic: node.name, collectionId: id, nodes: [] } };
     const saved = await persistLibrary();
     if (!saved) { delete cache[libraryId]; return null; }
     if (cache !== libraryCache || owner !== mathOwner()) return null;
@@ -774,6 +788,7 @@ function showMathCollections() {
 function openTreeExplorer() { openMathAtlas(); }
 
 function openMathAtlas({ target, returnTo } = {}) {
+  if (typeof loadCatalogIndex === 'function') void loadCatalogIndex();
   mathEl('explorer-shell').classList.remove('explorer-picking');
   mathEl('explorer-collection-picker').hidden = true;
   mathEl('explorer-collections').hidden = false;
@@ -911,6 +926,7 @@ onEscape(110, () => {
 });
 document.addEventListener('ui-language-change', () => { if (mathIsOpen()) { renderMathExplorer(); searchMathCollection(); } });
 document.addEventListener('library-updated', () => { if (mathIsOpen()) renderMathExplorer(); });
+document.addEventListener('catalog-loaded', () => { if (mathIsOpen()) renderMathExplorer(); });
 
 const mathLinkedId = new URLSearchParams(location.hash.slice(1)).get('explore');
 if (mathItems.has(mathLinkedId)) { openMathAtlas({ target: mathLinkedId }); mathAtlas.returnHash = ''; }
