@@ -181,12 +181,21 @@
 }
 .sv-prose p { margin: 0 0 0.95em; }
 .sv-prose p:last-child { margin-bottom: 0; }
-.sv-math-display { margin: 0.65em 0; }
+.sv-math-display { margin: 0.4em 0; }
 .sv-math-display:first-child { margin-top: 0; }
 .sv-math-display:last-child { margin-bottom: 0; }
 .sv-math-display .katex-display { margin: 0 !important; }
 .katex { text-transform: none; }
-.katex-display { margin: 0.7em 0 !important; overflow-x: auto; overflow-y: visible; }
+/* Setting overflow-x: auto with overflow-y: visible forces overflow-y to compute
+   to auto, turning tall KaTeX display blocks into tiny vertical scroll traps
+   that hijack scrolling from #sv-body. Keep overflow-y hidden with padding for
+   tall symbols (integrals, fractions, scripts). */
+.katex-display {
+  margin: 0.45em 0 !important;
+  padding: 0.25em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
 
 /* Section cross-references (linkifySectionRefs in viewer.js) and inline [REF]
    peek triggers: plain text that happens to be clickable, staying strictly
@@ -452,7 +461,7 @@ details.sv-callout[open] > summary .sv-callout-arrow { transform: rotate(90deg);
 }
 
 /* [TABLE]...[/TABLE] */
-.sv-table-wrap { margin: 1.625rem 0; overflow-x: auto; }
+.sv-table-wrap { margin: 1.625rem 0; overflow-x: auto; overflow-y: hidden; }
 .sv-table { width: 100%; border-collapse: collapse; font-size: 0.90625rem; }
 .sv-table th, .sv-table td {
   padding: 0.5625rem 0.875rem; text-align: left;

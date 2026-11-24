@@ -30,8 +30,8 @@ function findScrollTarget(el) {
   let node = el;
   while (node && node !== document.documentElement) {
     const cs   = getComputedStyle(node);
-    const canY = /(auto|scroll)/.test(cs.overflowY) && node.scrollHeight > node.clientHeight;
-    const canX = /(auto|scroll)/.test(cs.overflowX) && node.scrollWidth  > node.clientWidth;
+    const canY = /(auto|scroll)/.test(cs.overflowY) && node.scrollHeight > node.clientHeight + 1;
+    const canX = /(auto|scroll)/.test(cs.overflowX) && node.scrollWidth  > node.clientWidth + 1;
     if (canY || canX) return { el: node, canX, canY };
     node = node.parentElement;
   }
