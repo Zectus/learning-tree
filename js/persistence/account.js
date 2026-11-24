@@ -32,9 +32,19 @@
    account's cloud copy.
 ═══════════════════════════════════════════════════════════ */
 
+const CLOUD_SESSION_KEY = 'tree-cloud-session';
 let accountMode = 'signin';
 let authGeneration = 0;
 let pendingGoogleUser = null; // set while the "choose a username" step is showing
+
+function rememberCloudSession(signedIn) {
+  try { localStorage.setItem(CLOUD_SESSION_KEY, signedIn ? '1' : '0'); } catch {}
+}
+function preloadCloud() {
+  if (!window.cloud && typeof window.ensureCloudLoaded === 'function') {
+    window.ensureCloudLoaded().catch(() => {});
+  }
+}
 
 function setAccountMode(mode) {
   accountMode = mode;
@@ -71,18 +81,26 @@ function applyAccountUser(user) {
     state.tutorialPendingAuth = { user };
     return;
   }
+  const prevUid = state.accountUser?.uid || null;
+  const nextUid = user?.uid || null;
+  const sameUser = prevUid === nextUid;
   // Progress writes only go out when the tab hides or closes (see progress.js),
   // so switching accounts mid-session would strand whatever is pending under
   // the outgoing one. flushProgress() reads state.accountUser synchronously, so
   // calling it before the reassignment below sends the write to the outgoing
   // source. (An explicit sign-out flushes earlier still — see submitSignOut —
   // because by the time this runs for a sign-out, auth is already revoked.)
-  if (typeof flushProgress === 'function') flushProgress();
+  if (!sameUser && typeof flushProgress === 'function') flushProgress();
   state.accountUser = user;
   updateAccountButton();
   if (user) showSignedInPanel(user); else showSignedOutPanel();
-  if (typeof refreshLibraryFromSource === 'function') refreshLibraryFromSource();
-  if (typeof refreshProgressFromSource === 'function') refreshProgressFromSource();
+  const expectedSource = user ? 'cloud' : 'local';
+  if (typeof refreshLibraryFromSource === 'function' && (!sameUser || typeof librarySource === 'undefined' || librarySource !== expectedSource)) {
+    refreshLibraryFromSource();
+  }
+  if (typeof refreshProgressFromSource === 'function' && (!sameUser || typeof progressSource === 'undefined' || progressSource !== expectedSource)) {
+    refreshProgressFromSource();
+  }
 }
 
 /* Opens the modal. If we're signed in but have no username yet — a slow lookup
@@ -90,6 +108,7 @@ function applyAccountUser(user) {
    finished — look it up again, and if there still isn't one, let them claim
    one right here instead of leaving the account permanently username-less. */
 function openAccountModal() {
+  preloadCloud();
   document.getElementById('account-modal-backdrop').classList.add('open');
   if (state.accountUser && !state.accountUser.username && window.cloud) {
     window.cloud.getUsername(state.accountUser.uid).then(username => {
@@ -170,6 +189,7 @@ function updateAccountButton() {
    changes, including once after page load with any persisted session. */
 window.handleCloudAuthChange = async function (user) {
   const gen = ++authGeneration;
+  rememberCloudSession(!!user);
   if (!user) {
     applyAccountUser(null);
     return;
@@ -222,11 +242,13 @@ async function submitAccountForm() {
     showAccountError('Usernames are 3–20 characters: letters, numbers, underscores, or hyphens.');
     return;
   }
-  if (!window.cloud) { showAccountError('Still connecting — try again in a moment.'); return; }
-
   const btn = document.getElementById('account-submit-btn');
   btn.disabled = true;
   try {
+    if (!window.cloud && typeof window.ensureCloudLoaded === 'function') {
+      try { await window.ensureCloudLoaded(); } catch {}
+    }
+    if (!window.cloud) { showAccountError('Still connecting — try again in a moment.'); return; }
     if (accountMode === 'signup') {
       const cred = await window.cloud.signUp(email, password);
       let claimed = false;
@@ -264,10 +286,13 @@ async function submitAccountForm() {
    account, and the only tell is whether a username already exists for that uid. */
 async function submitGoogleSignIn() {
   clearAccountError();
-  if (!window.cloud) { showAccountError('Still connecting — try again in a moment.'); return; }
   const btn = document.getElementById('account-google-btn');
   btn.disabled = true;
   try {
+    if (!window.cloud && typeof window.ensureCloudLoaded === 'function') {
+      try { await window.ensureCloudLoaded(); } catch {}
+    }
+    if (!window.cloud) { showAccountError('Still connecting — try again in a moment.'); return; }
     const user = await window.cloud.signInWithGoogle();
     const username = await window.cloud.getUsername(user.uid);
     if (username) {
@@ -321,6 +346,7 @@ async function submitSignOut() {
   closeAccountModal();
 }
 
+document.getElementById('btn-account-menu').addEventListener('click', preloadCloud);
 document.getElementById('menu-account').addEventListener('click', openAccountModal);
 document.getElementById('account-modal-close').addEventListener('click', closeAccountModal);
 document.getElementById('account-modal-backdrop').addEventListener('click', e => {

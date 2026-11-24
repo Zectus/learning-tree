@@ -39,8 +39,23 @@ function orderGenerationNodes(tree) { return generationGraph(tree).order; }
 
 const generationSelection = { mode: 'auto', count: null, selected: new Set(), draft: new Set() };
 
-function generationQueue(tree, completed, options = generationSelection) {
-  const { order } = generationGraph(tree), done = new Set(completed);
+function nodeHasCompleteLesson(node) {
+  const txt = node?._sessionTxt;
+  if (typeof txt !== 'string' || !txt.trim()) return false;
+  if (node._lessonCompleteFor === txt) return node._lessonComplete;
+  const ok = lessonIsComplete(txt);
+  node._lessonCompleteFor = txt;
+  node._lessonComplete = ok;
+  return ok;
+}
+
+function queueHasParallelBranches(graph, queue) {
+  return queue.length > 1 && queue.some((id, i) => queue.slice(i + 1).some(other =>
+    !graph.downstream.get(id).has(other) && !graph.downstream.get(other).has(id)));
+}
+
+function generationQueue(tree, completed, options = generationSelection, graph = generationGraph(tree)) {
+  const { order } = graph, done = new Set(completed);
   const missing = order.filter(id => !done.has(id));
   const count = options.count == null ? missing.length : Math.max(0, Math.min(missing.length, Math.floor(Number(options.count) || 0)));
   if (options.mode === 'manual') {
@@ -78,8 +93,7 @@ SHARED RULES FOR EACH DECODED content
 The plain-text restrictions below apply to lesson content, not its JSONL envelope. The topic and CONTEXT vary by node; every other teaching rule stays the same.`;
   const single = queue.length === 1;
   const graph = generationGraph(tree);
-  const parallel = queue.some((id, i) => queue.slice(i + 1).some(other =>
-    !graph.downstream.get(id).has(other) && !graph.downstream.get(other).has(id)));
+  const parallel = queueHasParallelBranches(graph, queue);
   const effortInstruction = `REASONING EFFORT\nUse ${effort.label} reasoning effort for lesson generation. Set reasoning_effort="${effort.value}" when configuring the generation model.${parallel ? ` When launching lesson-writing subagents, explicitly set reasoning_effort="${effort.value}" for every worker; do not leave it inherited or at the provider default.` : ''} Do not silently substitute a different effort level.`;
   let tailoredProtocol = protocol;
   if (!parallel) tailoredProtocol = tailoredProtocol.replace(/IF SUBAGENTS ARE AVAILABLE:[\s\S]*?(?=\n\n)/, '');
@@ -113,7 +127,7 @@ function buildGenerationPacket(language, replySize = '1', options = generationSe
   if (!tree) return null;
   const lessonLanguage = language || state.language || (uiLanguage === 'es' ? 'Español' : 'English');
   const liveNodes = [...state.nodes.values()];
-  const completed = tree.nodes.filter((_, i) => lessonIsComplete(liveNodes[i]._sessionTxt)).map(n => n.id);
+  const completed = tree.nodes.filter((_, i) => nodeHasCompleteLesson(liveNodes[i])).map(n => n.id);
   const queue = generationQueue(tree, completed, options);
   if (replySize !== 'auto') replySize = String(Math.min(Number(replySize) || 1, Math.max(1, queue.length)));
   return {
@@ -220,7 +234,7 @@ function mergeGenerationOutput(raw, { replaceExisting = false, beforeReplace } =
       continue;
     }
     if (node._sessionTxt === record.content) { result.existing++; continue; }
-    if (lessonIsComplete(node._sessionTxt)) {
+    if (nodeHasCompleteLesson(node)) {
       if (!replaceExisting) { result.existing++; continue; }
       // Back up before changing content or any answers, never for rejected or
       // identical records. File batches share this callback for one backup.
@@ -265,27 +279,40 @@ function generationStartMessage(packet = buildGenerationPacket()) {
   if (!packet?.queue.length) return '';
   if (packet.queue.length === 1) return 'Read the attached AI work file and generate only the lesson listed in queue. Return the complete JSONL record following its instructions.';
   const message = 'Read the attached AI work file and follow its instructions. Generate its queue and checkpoint each completed lesson immediately. Use subagents if available. Without file tools, emit complete JSONL records in chat and resume when I say Continue. Do not hold finished lessons until the end.';
-  return /IF SUBAGENTS ARE AVAILABLE/.test(packet.instructions) ? message
-    : message.replace(' Use subagents if available.', '');
+  const parallel = typeof packet.parallel === 'boolean' ? packet.parallel : /IF SUBAGENTS ARE AVAILABLE/.test(packet.instructions);
+  return parallel ? message : message.replace(' Use subagents if available.', '');
 }
 
 function currentGenerationPacket() {
   return buildGenerationPacket(document.getElementById('generation-language').value.trim(), document.getElementById('generation-reply-size').value);
 }
 
-function refreshGenerationSelection() {
+function computeGenerationQueueState(tree = buildTreeJSON(false)) {
+  if (!tree) return null;
+  const liveNodes = [...state.nodes.values()];
+  const completed = tree.nodes.filter((_, i) => nodeHasCompleteLesson(liveNodes[i])).map(n => n.id);
+  const graph = generationGraph(tree);
+  const queue = generationQueue(tree, completed, generationSelection, graph);
+  return { tree, completed, queue, parallel: queueHasParallelBranches(graph, queue) };
+}
+
+function refreshGenerationSelection(passedTree) {
+  const tree = passedTree && Array.isArray(passedTree.nodes) ? passedTree : buildTreeJSON(false);
   const effort = selectedGenerationEffort();
   uiText(document.getElementById('generation-effort-value'), effort.label);
   document.getElementById('generation-effort').setAttribute('aria-valuetext', t(effort.label));
-  const missing = [...state.nodes.values()].filter(n => !lessonIsComplete(n._sessionTxt)).length;
+  const liveNodes = [...state.nodes.values()];
+  const completedIds = tree ? tree.nodes.filter((_, i) => nodeHasCompleteLesson(liveNodes[i])).map(n => n.id) : [];
+  const missing = tree ? tree.nodes.length - completedIds.length : 0;
   const input = document.getElementById('generation-count');
   input.max = missing;
   input.disabled = !missing;
   if (generationSelection.count !== null) generationSelection.count = Math.min(missing, generationSelection.count);
   input.value = generationSelection.count ?? missing;
-  const packet = currentGenerationPacket();
+  const graph = tree ? generationGraph(tree) : null;
+  const queue = tree ? generationQueue(tree, completedIds, generationSelection, graph) : [];
+  const parallel = graph ? queueHasParallelBranches(graph, queue) : false;
   const manual = generationSelection.mode === 'manual';
-  const queue = packet?.queue || [];
   const target = Number(input.value);
   document.getElementById('btn-pick-generation-nodes').classList.toggle('hidden', !manual);
   document.getElementById('btn-pick-generation-nodes').disabled = !missing;
@@ -295,12 +322,17 @@ function refreshGenerationSelection() {
   uiText(document.getElementById('generation-selection-status'), `${queue.length} / ${target} nodes selected`);
   const preview = document.getElementById('generation-selection-preview');
   preview.replaceChildren();
-  for (const id of queue) {
-    const li = document.createElement('li');
-    li.textContent = packet.tree.nodes.find(n => n.id === id).label;
-    preview.appendChild(li);
+  if (tree && queue.length) {
+    const labelsById = new Map(tree.nodes.map(n => [n.id, n.label]));
+    const frag = document.createDocumentFragment();
+    for (const id of queue) {
+      const li = document.createElement('li');
+      li.textContent = labelsById.get(id);
+      frag.appendChild(li);
+    }
+    preview.appendChild(frag);
   }
-  document.getElementById('generation-start-message').value = generationStartMessage(packet);
+  document.getElementById('generation-start-message').value = generationStartMessage({ queue, parallel });
   uiText(document.getElementById('generation-chat-help'), queue.length <= 1
     ? 'Return the finished lesson as one JSONL record, then import it below.'
     : 'In the same chat, say Continue for the next selected lessons. Save or publish each finished lesson before starting another.');
@@ -308,7 +340,7 @@ function refreshGenerationSelection() {
 }
 
 function beginGenerationPicking() {
-  generationSelection.draft = new Set(currentGenerationPacket()?.queue || []);
+  generationSelection.draft = new Set(computeGenerationQueueState()?.queue || []);
   state.generationPicking = true;
   generationSelection.previousMode = state.mode;
   setMode('browse');
@@ -327,7 +359,7 @@ function refreshGenerationPicking() {
   const live = [...state.nodes.values()];
   const limit = Number(document.getElementById('generation-count').value);
   tree.nodes.forEach((n, i) => {
-    const node = live[i], hasLesson = lessonIsComplete(node._sessionTxt);
+    const node = live[i], hasLesson = nodeHasCompleteLesson(node);
     const selected = generationSelection.draft.has(n.id);
     node.el.classList.toggle('generation-selected', selected);
     node.el.classList.toggle('generation-has-lesson', hasLesson);
@@ -340,7 +372,7 @@ function refreshGenerationPicking() {
 
 function toggleGenerationNode(id) {
   const node = state.nodes.get(id);
-  if (!node || lessonIsComplete(node._sessionTxt)) return;
+  if (!node || nodeHasCompleteLesson(node)) return;
   const tree = buildTreeJSON(false);
   const slug = tree.nodes[[...state.nodes.keys()].indexOf(id)].id;
   if (generationSelection.draft.has(slug)) generationSelection.draft.delete(slug);
@@ -381,7 +413,7 @@ document.getElementById('generation-selection-mode').addEventListener('change', 
   refreshGenerationSelection();
 });
 for (const id of ['generation-language', 'generation-reply-size', 'generation-effort']) {
-  document.getElementById(id).addEventListener('input', refreshGenerationSelection);
+  document.getElementById(id).addEventListener('input', () => refreshGenerationSelection());
 }
 document.getElementById('btn-pick-generation-nodes').addEventListener('click', beginGenerationPicking);
 document.getElementById('btn-confirm-generation-pick').addEventListener('click', () => finishGenerationPicking(true));
@@ -393,9 +425,9 @@ onEscape(120, () => {
 
 function refreshGenerationStatus() {
   const tree = buildTreeJSON(false);
-  const completed = [...state.nodes.values()].filter(n => lessonIsComplete(n._sessionTxt)).length;
+  const completed = [...state.nodes.values()].filter(nodeHasCompleteLesson).length;
   uiText(document.getElementById('generation-status'), `${completed} / ${tree?.nodes.length || 0} lessons ready`);
-  refreshGenerationSelection();
+  refreshGenerationSelection(tree);
   refreshGenerationImportControls();
 }
 
@@ -513,7 +545,9 @@ onEscape(110, () => {
   if (!document.getElementById('generation-modal-backdrop').classList.contains('open')) return false;
   closeGenerationModal(); return true;
 });
-document.addEventListener('ui-language-change', refreshGenerationStatus);
+document.addEventListener('ui-language-change', () => {
+  if (document.getElementById('generation-modal-backdrop').classList.contains('open')) refreshGenerationStatus();
+});
 document.addEventListener('tree-loaded', () => {
   if (state.generationPicking) finishGenerationPicking(false, false);
   generationSelection.count = null;
@@ -523,5 +557,5 @@ document.addEventListener('tree-loaded', () => {
   clearGenerationReceipt();
   document.getElementById('generation-output').value = '';
   document.getElementById('generation-replace-existing').checked = false;
-  refreshGenerationStatus();
+  if (document.getElementById('generation-modal-backdrop').classList.contains('open')) refreshGenerationStatus();
 });

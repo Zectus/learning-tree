@@ -49,9 +49,9 @@ function loadApp({ innerWidth = 1280, screenOrientation, deviceOrientation, scre
   // math.js's browser bundle is the same file tools.js loads from the CDN. It runs inside the
   // page's own realm; importing Node's copy instead would trip math.js's cross-realm type checks.
   new vm.Script(fs.readFileSync(path.join(ROOT, 'node_modules/mathjs/lib/browser/math.js'), 'utf8'), { filename: 'mathjs' }).runInContext(ctx);
-  // classic <script src="…"> tags, in order; the type="module" cloud.js tag has
-  // a different shape and is skipped on purpose.
-  const srcs = [...html.matchAll(/<script\s+src="([^"]+)"/g)].map(m => m[1]).filter(s => !/^https?:/.test(s));
+  // classic <script src="…"> (or <script defer src="…">) tags, in order; the
+  // type="module" cloud loader has a different shape and is skipped on purpose.
+  const srcs = [...html.matchAll(/<script\s+(?:defer\s+)?src="([^"]+)"/g)].map(m => m[1]).filter(s => !/^https?:/.test(s));
   for (const src of srcs) {
     const file = path.join(ROOT, src);
     // node-prompt.js is only used when a lesson prompt is built; stub it if absent from a partial checkout.

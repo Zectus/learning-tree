@@ -80,6 +80,7 @@ function loadFromJSON(obj) {
   const problems = { unknown: 0, self: 0, loop: 0, dupId: 0 };
   const idMap = new Map(); // string id → numeric id (first occurrence wins)
   const created = [];
+  const frag = document.createDocumentFragment();
 
   rawNodes.forEach(n => {
     const numId = state.nextId++;
@@ -89,9 +90,10 @@ function loadFromJSON(obj) {
     const node = { id:numId, slug:key, label, explanation:typeof n.explanation === 'string' ? n.explanation.trim() : '', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
     if (typeof n.content === 'string' && n.content.trim()) node._sessionTxt = n.content;
     state.nodes.set(numId, node);
-    buildEl(node);
+    buildEl(node, frag);
     created.push({ n, numId });
   });
+  world.appendChild(frag);
 
   created.forEach(({ n, numId }) => {
     (Array.isArray(n.requires) ? n.requires : []).forEach(r => {
@@ -104,11 +106,11 @@ function loadFromJSON(obj) {
     });
   });
 
+  pruneRedundantEdges();
+  autoRestoreProgress(true);
   layout();
   updateAllStatuses();
   resetViewportForTreeLoad();
-  removeRedundantEdges();
-  autoRestoreProgress();
 
   const notes = [];
   if (problems.unknown) notes.push(`${problems.unknown} prerequisite${problems.unknown > 1 ? 's' : ''} pointing at a topic that doesn't exist`);

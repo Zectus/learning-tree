@@ -9,19 +9,24 @@ try {
   const savedLanguage = localStorage.getItem(UI_LANGUAGE_KEY);
   if (['en', 'es'].includes(savedLanguage)) uiLanguage = savedLanguage;
 } catch {}
-const uiPatterns = Object.entries(UI_ES).filter(([key]) => /\{\w+\}/.test(key)).map(([key, value]) => {
-  const names = [];
-  const pattern = key.split(/(\{\w+\})/).map(part => {
-    if (/^\{\w+\}$/.test(part)) { names.push(part.slice(1, -1)); return '([\\s\\S]*?)'; }
-    return part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }).join('');
-  return { regex: new RegExp('^' + pattern + '$'), names, value };
-});
+let uiPatterns = null;
+function getUIPatterns() {
+  if (uiPatterns) return uiPatterns;
+  uiPatterns = Object.entries(UI_ES).filter(([key]) => /\{\w+\}/.test(key)).map(([key, value]) => {
+    const names = [];
+    const pattern = key.split(/(\{\w+\})/).map(part => {
+      if (/^\{\w+\}$/.test(part)) { names.push(part.slice(1, -1)); return '([\\s\\S]*?)'; }
+      return part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }).join('');
+    return { regex: new RegExp('^' + pattern + '$'), names, value };
+  });
+  return uiPatterns;
+}
 function t(source, values = {}) {
   const raw = String(source).replace(/\{(\w+)\}/g, (all, name) => Object.hasOwn(values, name) ? String(values[name]) : all);
   if (uiLanguage === 'en') return raw;
   if (Object.hasOwn(UI_ES, raw)) return UI_ES[raw];
-  for (const { regex, names, value } of uiPatterns) {
+  for (const { regex, names, value } of getUIPatterns()) {
     const match = raw.match(regex);
     if (!match) continue;
     return value.replace(/\{(\w+)\}/g, (_, name) => {
@@ -71,4 +76,6 @@ function setUILanguage(language, persist = true) {
   document.dispatchEvent(new CustomEvent('ui-language-change'));
 }
 document.getElementById('menu-language').addEventListener('click', () => setUILanguage(uiLanguage === 'en' ? 'es' : 'en'));
-refreshInterfaceLanguage();
+// Static index.html markup is already authored in English; only rewrite the DOM
+// on load when the resolved interface language is not English.
+if (uiLanguage !== 'en') refreshInterfaceLanguage();

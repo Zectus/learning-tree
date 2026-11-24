@@ -106,10 +106,12 @@ async function refreshProgressFromSource() {
     }
     // A fresh account with no cloud progress but local progress from before
     // signing in gets the local copy uploaded rather than orphaned.
-    const local = readLocalProgress();
-    if (Object.keys(progressCache).length === 0 && Object.keys(local).length > 0) {
-      progressCache = local;
-      await persistProgressNow();
+    if (Object.keys(progressCache).length === 0) {
+      const local = readLocalProgress();
+      if (Object.keys(local).length > 0) {
+        progressCache = local;
+        await persistProgressNow();
+      }
     }
   } else {
     progressSource = 'local';
@@ -198,7 +200,7 @@ function autoSaveProgress() {
 }
 
 /* Restores each node's record (done flag, answers, notes, scroll) from progressCache. */
-function autoRestoreProgress() {
+function autoRestoreProgress(skipStatusUpdate = false) {
   if (state.tutorialActive) return;
   const saved = progressCache[treeSignature()];
   if (!saved) return;
@@ -213,7 +215,7 @@ function autoRestoreProgress() {
     if (Array.isArray(rec.drawing)) node._drawing = rec.drawing;
     if (rec.scrollTop != null) node._scrollTop   = rec.scrollTop;
   });
-  if (changed) updateAllStatuses();
+  if (changed && !skipStatusUpdate) updateAllStatuses();
 }
 
 /* ── reset progress ──

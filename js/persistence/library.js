@@ -24,9 +24,12 @@
    signed in — window.cloud (cloud.js, a module that runs after this file).
 ═══════════════════════════════════════════════════════════ */
 const LIBRARY_KEY = 'tree-library';
+const LIBRARY_REFRESH_TTL_MS = 15000;
 
 let libraryCache  = {};      // in-memory mirror of whichever source is active
 let libraryReady = false;
+let libraryLastFetchedAt = 0;
+let libraryCloudInFlight = null;
 let libraryCloudWrites = Promise.resolve();
 function queueLibraryCloudWrite(write) {
   libraryCloudWrites = libraryCloudWrites.catch(() => {}).then(write);
@@ -71,30 +74,48 @@ function libraryProgressFor(entryData) {
    and by handleCloudAuthChange (account.js) on every sign-in/out. */
 async function refreshLibraryFromSource() {
   if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
-  libraryReady = false;
   if (state.accountUser) {
+    const uid = state.accountUser.uid;
+    if (libraryCloudInFlight && libraryCloudInFlight.uid === uid) return libraryCloudInFlight.promise;
     librarySource = 'cloud';
-    try {
-      const data = await window.cloud.getLibrary(state.accountUser.uid);
+    const promise = (async () => {
+      libraryReady = false;
+      try {
+        const data = await window.cloud.getLibrary(uid);
+        if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
+        libraryCache = data;
+        await retryTreeExitSaves(uid);
+        if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
+      } catch (e) {
+        if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
+        console.error('Could not load cloud library:', e);
+        showToast("Couldn't load your saved trees from your account.");
+        libraryCache = {};
+        return;
+      }
+      // A fresh account with an empty cloud library but trees saved locally
+      // before signing in gets those copied up rather than orphaned.
+      if (Object.keys(libraryCache).length === 0) {
+        const local = readLocalLibrary();
+        if (Object.keys(local).length > 0) {
+          libraryCache = local;
+          await persistLibrary();
+        }
+      }
       if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
-      libraryCache = data;
-      await retryTreeExitSaves(state.accountUser.uid);
-      if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
-    } catch (e) {
-      if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
-      console.error('Could not load cloud library:', e);
-      showToast("Couldn't load your saved trees from your account.");
-      libraryCache = {};
-      return;
+      libraryLastFetchedAt = Date.now();
+      libraryReady = true;
+      document.dispatchEvent(new CustomEvent('library-updated'));
+      if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
+    })();
+    libraryCloudInFlight = { uid, promise };
+    try { await promise; } finally {
+      if (libraryCloudInFlight?.promise === promise) libraryCloudInFlight = null;
     }
-    // A fresh account with an empty cloud library but trees saved locally
-    // before signing in gets those copied up rather than orphaned.
-    const local = readLocalLibrary();
-    if (Object.keys(libraryCache).length === 0 && Object.keys(local).length > 0) {
-      libraryCache = local;
-      await persistLibrary();
-    }
+    return;
   } else {
+    libraryReady = false;
+    libraryLastFetchedAt = 0;
     librarySource = 'local';
     libraryCache = readLocalLibrary();
   }
@@ -357,6 +378,14 @@ function renderLibraryGrid() {
 /* ── modal open/close ── */
 async function openLibraryModal() {
   document.getElementById('library-modal-backdrop').classList.add('open');
+  if (state.tutorialActive) { renderLibraryGrid(); return; }
+  if (libraryReady) {
+    renderLibraryGrid();
+    if (state.accountUser && Date.now() - libraryLastFetchedAt > LIBRARY_REFRESH_TTL_MS) {
+      void refreshLibraryFromSource();
+    }
+    return;
+  }
   await refreshLibraryFromSource();
   renderLibraryGrid();
 }
@@ -380,5 +409,9 @@ onEscape(100, () => {
 
 // Guest view is available immediately; refreshed again when Firebase reports a signed-in session.
 refreshLibraryFromSource();
+
+window.addEventListener('storage', e => {
+  if (e.key === LIBRARY_KEY && !state.accountUser && !state.tutorialActive) void refreshLibraryFromSource();
+});
 
 document.addEventListener('ui-language-change', renderLibraryGrid);

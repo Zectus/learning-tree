@@ -13,9 +13,9 @@
    viewer.js loops over BLOCK_TOOLS instead of hard-coding a branch per
    type; adding a tool means adding one entry there.
 
-   External libraries: KaTeX (+ auto-render) is loaded by index.html.
-   JSXGraph (2D graphs), Plotly (3D surfaces) and math.js are only needed
-   for [GRAPH] blocks, so they are loaded on first use (loadGraphLibs below).
+   External libraries: KaTeX (+ auto-render), JSXGraph (2D graphs), Plotly
+   (3D surfaces) and math.js are only needed inside opened lessons, so they
+   are all loaded on first use (loadKatex / loadGraphLibs below).
 ═══════════════════════════════════════════════════════════ */
 
 function svEsc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -69,10 +69,25 @@ function shuffleOptions(rawOptions, correctLetter, seedKey) {
 }
 
 /* ── KaTeX ──
-   The one entry point for typesetting after HTML is in the DOM (auto-render
-   walks real text nodes, so it can't run before insertion). */
-function renderMath(el) {
-  if (!window.renderMathInElement) return;
+   Loaded lazily on the first lesson or graph that actually contains math
+   delimiters, so initial page load never blocks on the KaTeX CDN. */
+const KATEX_CSS            = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css';
+const KATEX_JS             = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js';
+const KATEX_AUTO_RENDER_JS = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js';
+let katexLoadPromise = null;
+
+function loadKatex() {
+  if (window.renderMathInElement) return Promise.resolve();
+  if (!katexLoadPromise) {
+    katexLoadPromise = Promise.all([loadStyleOnce(KATEX_CSS), loadScriptOnce(KATEX_JS)])
+      .then(() => loadScriptOnce(KATEX_AUTO_RENDER_JS))
+      .catch(err => { katexLoadPromise = null; throw err; });
+  }
+  return katexLoadPromise;
+}
+
+function runKatex(el) {
+  if (!window.renderMathInElement || !el?.isConnected) return;
   renderMathInElement(el, {
     delimiters: [
       { left: '\\(', right: '\\)', display: false },
@@ -80,6 +95,21 @@ function renderMath(el) {
     ],
     throwOnError: false,
   });
+}
+
+function renderMath(el) {
+  if (!el) return;
+  if (window.renderMathInElement) { runKatex(el); return; }
+  const text = el.textContent || '';
+  if (!text.includes('\\(') && !text.includes('\\[')) return;
+  loadKatex().then(() => {
+    if (!el.isConnected) return;
+    runKatex(el);
+    if (el.id === 'sv-body' && typeof computeCheckpoints === 'function' && typeof updateSessionProgress === 'function') {
+      computeCheckpoints();
+      updateSessionProgress();
+    }
+  }).catch(() => {});
 }
 
 /* Collapses newlines inside \[...\] and \(...\) spans to one space before any
@@ -386,6 +416,12 @@ function freeStaleBoards() {
   }
 }
 
+function graphNeedsKatex(g) {
+  if (g.type === 'surface3d') return false;
+  const labels = [g.xlabel, g.ylabel, ...(g.points || []).map(p => p.label), ...(g.segments || []).map(s => s.label)];
+  return labels.some(s => typeof s === 'string' && s.includes('\\('));
+}
+
 /* Runs after renderGraph()'s markup is in a visible page: both libraries must
    measure a real, laid-out element. Async because they load on first use. */
 async function mountGraph(g, id) {
@@ -393,7 +429,9 @@ async function mountGraph(g, id) {
   if (!el) return;
   el.classList.add('sv-graph-loading');
   try {
-    await loadGraphLibs(g.type);
+    const loads = [loadGraphLibs(g.type)];
+    if (!window.katex && graphNeedsKatex(g)) loads.push(loadKatex().catch(() => {}));
+    await Promise.all(loads);
   } catch {
     el.classList.remove('sv-graph-loading');
     uiText(el, "This graph couldn't be loaded — check your connection and reopen the lesson.");

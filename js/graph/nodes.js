@@ -7,7 +7,7 @@
 /* ═══════════════════════════════════════════════════════════
    NODE DOM
 ═══════════════════════════════════════════════════════════ */
-function buildEl(node) {
+function buildEl(node, parent = world) {
   const editing = state.mode === 'edit';
   const el = document.createElement('div');
   el.className = 'node status-locked';
@@ -148,7 +148,7 @@ function buildEl(node) {
   node.el = el;
   refreshNodeLessonIndicator(node);
   refreshTag(el, node);
-  world.appendChild(el);
+  parent.appendChild(el);
 }
 
 // Keep lesson availability separate from prerequisite/completion status.
@@ -254,7 +254,7 @@ function wouldCycle(from, to) {
    An edge A→C is redundant if C is already reachable from A through
    another path (e.g. A→B→C); removing it loses no information.
 ═══════════════════════════════════════════════════════════ */
-function removeRedundantEdges() {
+function pruneRedundantEdges() {
   const redundant = [];
   forEachEdge((from, to) => {
     // Search from `from`'s *other* neighbours; reaching `to` means the direct edge is implied.
@@ -266,8 +266,13 @@ function removeRedundantEdges() {
       state.dependents.get(cur)?.forEach(nb => { if (!seen.has(nb)) { seen.add(nb); queue.push(nb); } });
     }
   });
-  if (!redundant.length) return;
+  if (!redundant.length) return false;
   redundant.forEach(([f, t]) => removeEdge(f, t));
+  return true;
+}
+
+function removeRedundantEdges() {
+  if (!pruneRedundantEdges()) return;
   layout();
   updateAllStatuses();
 }

@@ -729,3 +729,46 @@ test('design a new tree modal hides prompts by default and supports clipboard an
     app.dom.window.close();
   }
 });
+
+test('lazy KaTeX loading skips non-math lessons and loads only when math delimiters appear', () => {
+  const app = loadApp();
+  try {
+    const katexTags = () => [...app.document.head.querySelectorAll('link[href*="katex"], script[src*="katex"]')];
+    assert.equal(katexTags().length, 0);
+
+    const plain = app.document.createElement('div');
+    plain.textContent = 'Plain prose with no math delimiters.';
+    app.document.body.appendChild(plain);
+    app.window.__el = plain;
+    app.ev('renderMath(__el)');
+    assert.equal(katexTags().length, 0);
+
+    const withMath = app.document.createElement('div');
+    withMath.textContent = 'Inline math \\( x^2 + 1 \\).';
+    app.document.body.appendChild(withMath);
+    app.window.__el = withMath;
+    app.ev('renderMath(__el)');
+    assert.equal(katexTags().length, 2); // katex.min.css + katex.min.js; auto-render loads after katex.min.js
+  } finally {
+    app.dom.window.close();
+  }
+});
+
+test('loading a tree skips hidden generation validation until the generation modal opens', () => {
+  const app = loadApp();
+  try {
+    app.ev(`
+      window.__valCount = 0;
+      const _origValidate = validateLessonStructure;
+      validateLessonStructure = function (c) { window.__valCount++; return _origValidate(c); };
+    `);
+    loadTree(app, 'mini-tree.json');
+    assert.equal(app.window.__valCount, 0);
+    app.ev('openGenerationModal()');
+    assert.equal(app.document.getElementById('generation-status').textContent, '1 / 4 lessons ready');
+    // Cached per node: validating the 1 populated node happens once, not 3x.
+    assert.equal(app.window.__valCount, 1);
+  } finally {
+    app.dom.window.close();
+  }
+});

@@ -7,19 +7,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title data-ui-text="Progress Tree">Progress Tree</title>
 <link id="site-icon" rel="icon" type="image/svg+xml" href="assets/tree-icon.svg">
-<!-- Fetch session-restore code while the rest of the page is loading. The
-     module still executes after the classic scripts at the end of the body. -->
-<link rel="modulepreload" href="js/persistence/cloud.js">
-<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js">
-<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js">
-<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js">
 <!-- Sets the dark class before first paint (no light flash): an explicit saved
-     choice wins, otherwise follow the OS. toolbar.js handles toggling. -->
+     choice wins, otherwise follow the OS. toolbar.js handles toggling. Also
+     warms Firebase connections early only when this browser has a known
+     signed-in session, avoiding third-party requests for signed-out guests. -->
 <script>
 try {
   var d = localStorage.getItem('tree-dark-mode');
   if (d === null) d = window.matchMedia('(prefers-color-scheme: dark)').matches ? '1' : '0';
   document.documentElement.classList.toggle('dark', d === '1');
+  if (localStorage.getItem('tree-cloud-session') === '1') {
+    ['https://www.gstatic.com', 'https://learning-tree-6db88-default-rtdb.firebaseio.com'].forEach(function (href) {
+      var l = document.createElement('link');
+      l.rel = 'preconnect';
+      l.href = href;
+      l.crossOrigin = '';
+      document.head.appendChild(l);
+    });
+  }
 } catch (e) {}
 </script>
 <!-- Sets --ui-scale before any stylesheet applies — see scale.js. -->
@@ -29,19 +34,24 @@ try {
 <link rel="stylesheet" href="css/canvas.css">
 <link rel="stylesheet" href="css/nodes.css">
 <link rel="stylesheet" href="css/toolbar.css">
-<link rel="stylesheet" href="css/modals.css">
-<link rel="stylesheet" href="css/library.css">
-<link rel="stylesheet" href="css/explorer.css">
-<link rel="stylesheet" href="css/account.css">
-<link rel="stylesheet" href="css/viewer.css">
-<link rel="stylesheet" href="css/toast.css">
+<link rel="stylesheet" href="css/modals.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="css/library.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="css/explorer.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="css/account.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="css/viewer.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="css/toast.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="css/tutorial.css">
-<link rel="stylesheet" href="css/mobile.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-<!-- Plotly and math.js (for [GRAPH] blocks) are not listed here: they're large,
-     so tools.js loads them the first time a lesson with a graph is opened. -->
+<link rel="stylesheet" href="css/mobile.css" media="(max-width: 700px), (pointer: coarse)">
+<noscript>
+  <link rel="stylesheet" href="css/modals.css">
+  <link rel="stylesheet" href="css/library.css">
+  <link rel="stylesheet" href="css/explorer.css">
+  <link rel="stylesheet" href="css/account.css">
+  <link rel="stylesheet" href="css/viewer.css">
+  <link rel="stylesheet" href="css/toast.css">
+</noscript>
+<!-- KaTeX, JSXGraph, Plotly and math.js are not listed here: tools.js loads
+     them on first use when a lesson with math or graphs is opened. -->
 </head>
 <body>
 <div id="rotate-overlay">
@@ -111,7 +121,7 @@ try {
     <button class="tbtn" id="btn-account-menu" aria-label="👤 Sign in ▾" title="Sign in to sync your trees across devices" data-ui-attrs="{&quot;aria-label&quot;: &quot;👤 Sign in ▾&quot;, &quot;title&quot;: &quot;Sign in to sync your trees across devices&quot;}"><span aria-hidden="true">👤</span><span class="toolbar-label" data-ui-text=" Sign in ▾"> Sign in ▾</span></button>
     <div class="dropdown-menu" id="account-menu" role="menu">
       <button class="dropdown-item" id="menu-account" role="menuitem"><span data-ui-text="👤 Account">👤 Account</span></button>
-      <button class="dropdown-item" id="menu-language" role="menuitem">🌐 Español</button>
+      <button class="dropdown-item" id="menu-language" role="menuitem" aria-label="Switch interface to Spanish">🌐 Español</button>
       <button class="dropdown-item" id="menu-tutorial" role="menuitem" hidden><span data-ui-text="◇ View tutorial">◇ View tutorial</span></button>
       <button class="dropdown-item" id="menu-reset-progress" role="menuitem" title="Hold shift (or long-press on touch) to reset every tree's progress instead" data-ui-attrs="{&quot;title&quot;: &quot;Hold shift (or long-press on touch) to reset every tree&#x27;s progress instead&quot;}"><span data-ui-text="↺ Reset tree progress">↺ Reset tree progress</span></button>
       <button class="dropdown-item" id="menu-dark-mode" role="menuitem"><span data-ui-text="🌙 Dark mode">🌙 Dark mode</span></button>
@@ -618,38 +628,72 @@ try {
 <!-- App scripts. Order matters (each file's header lists what it depends on):
      autoscroll depends on nothing; state.js comes before everything that reads
      state; escape/toast before anything that registers Escape handlers or
-     shows messages; a11y.js once every modal exists, before tutorial startup. -->
-<script src="js/lib/autoscroll.js"></script>
-<script src="js/i18n/es.js"></script>
-<script src="js/i18n/interface.js"></script>
-<script src="js/learn/node-prompt.js"></script>
-<script src="js/learn/tree-prompt.js"></script>
-<script src="js/core/state.js"></script>
-<script src="js/collection/math.js"></script>
-<script src="js/collection/math-recommendations.js"></script>
-<script src="js/core/favicon.js"></script>
-<script src="js/core/escape.js"></script>
-<script src="js/core/toast.js"></script>
-<script src="js/core/layout.js"></script>
-<script src="js/graph/nodes.js"></script>
-<script src="js/graph/node-editor.js"></script>
-<script src="js/graph/viewport.js"></script>
-<script src="js/graph/toolbar.js"></script>
-<script src="js/persistence/progress.js"></script>
-<script src="js/persistence/io.js"></script>
-<script src="js/learn/prompts.js"></script>
-<script src="js/learn/tools.js"></script>
-<script src="js/persistence/library.js"></script>
-<script src="js/collection/explorer.js"></script>
-<script src="js/persistence/account.js"></script>
-<script src="js/learn/viewer.js"></script>
-<script src="js/learn/generation-format.js"></script>
-<script src="js/learn/generation.js"></script>
-<script src="js/core/a11y.js"></script>
-<script src="js/core/tutorial.js"></script>
-<!-- Firebase wiring, as a module. Modules always run after every classic script
-     regardless of tag position, so this placement is documentation. NOTE: module
-     scripts don't load from file:// — serve the folder over http (see README). -->
-<script type="module" src="js/persistence/cloud.js"></script>
+     shows messages; a11y.js once every modal exists, before tutorial startup.
+     All classic app scripts use defer so HTML parsing and first paint aren't
+     blocked, while preserving exact execution order before module scripts. -->
+<script defer src="js/lib/autoscroll.js"></script>
+<script defer src="js/i18n/es.js"></script>
+<script defer src="js/i18n/interface.js"></script>
+<script defer src="js/learn/node-prompt.js"></script>
+<script defer src="js/learn/tree-prompt.js"></script>
+<script defer src="js/core/state.js"></script>
+<script defer src="js/collection/math.js"></script>
+<script defer src="js/collection/math-recommendations.js"></script>
+<script defer src="js/core/favicon.js"></script>
+<script defer src="js/core/escape.js"></script>
+<script defer src="js/core/toast.js"></script>
+<script defer src="js/core/layout.js"></script>
+<script defer src="js/graph/nodes.js"></script>
+<script defer src="js/graph/node-editor.js"></script>
+<script defer src="js/graph/viewport.js"></script>
+<script defer src="js/graph/toolbar.js"></script>
+<script defer src="js/persistence/progress.js"></script>
+<script defer src="js/persistence/io.js"></script>
+<script defer src="js/learn/prompts.js"></script>
+<script defer src="js/learn/tools.js"></script>
+<script defer src="js/persistence/library.js"></script>
+<script defer src="js/collection/explorer.js"></script>
+<script defer src="js/persistence/account.js"></script>
+<script defer src="js/learn/viewer.js"></script>
+<script defer src="js/learn/generation-format.js"></script>
+<script defer src="js/learn/generation.js"></script>
+<script defer src="js/core/a11y.js"></script>
+<script defer src="js/core/tutorial.js"></script>
+<!-- Firebase wiring, loaded lazily for guests and immediately when a persisted
+     session may exist. Module scripts run after every deferred classic script.
+     NOTE: module scripts don't load from file:// — serve over http (see README). -->
+<script type="module">
+  let cloudLoad = null;
+  window.ensureCloudLoaded = () => {
+    if (window.cloud) return Promise.resolve();
+    if (!cloudLoad) {
+      cloudLoad = import('./js/persistence/cloud.js').catch(err => {
+        cloudLoad = null;
+        throw err;
+      });
+    }
+    return cloudLoad;
+  };
+  let sessionHint = null;
+  try { sessionHint = localStorage.getItem('tree-cloud-session'); } catch {}
+  if (sessionHint === '1') {
+    window.ensureCloudLoaded().catch(() => {});
+  } else if (sessionHint === null) {
+    // First visit after the hint was introduced: only load Firebase on startup
+    // if an existing Firebase Auth IndexedDB store is present (or if this
+    // browser cannot inspect IndexedDB names, so existing sign-ins stay intact).
+    if (typeof indexedDB !== 'undefined' && typeof indexedDB.databases === 'function') {
+      indexedDB.databases().then(dbs => {
+        if (dbs.some(db => db.name === 'firebaseLocalStorageDb')) {
+          window.ensureCloudLoaded().catch(() => {});
+        } else {
+          try { localStorage.setItem('tree-cloud-session', '0'); } catch {}
+        }
+      }).catch(() => { window.ensureCloudLoaded().catch(() => {}); });
+    } else {
+      window.ensureCloudLoaded().catch(() => {});
+    }
+  }
+</script>
 </body>
 </html>

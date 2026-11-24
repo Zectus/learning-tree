@@ -56,12 +56,15 @@ function layout() {
   [...byDepth.keys()].sort((a, b) => a - b).forEach(depth => {
     const col = byDepth.get(depth);
     // Prerequisites sit in earlier columns, so their _cy is already set.
-    const avgPrereqY = id => {
-      const ps = prereqsOf(id);
-      if (!ps.length) return id; // roots: stable order by id
-      return ps.reduce((s, pid) => s + (state.nodes.get(pid)?._cy ?? 0), 0) / ps.length;
-    };
-    col.sort((a, b) => avgPrereqY(a) - avgPrereqY(b));
+    const avgY = new Map();
+    for (const id of col) {
+      const ps = state.prereqs.get(id);
+      if (!ps || !ps.size) { avgY.set(id, id); continue; } // roots: stable order by id
+      let sum = 0;
+      ps.forEach(pid => { sum += state.nodes.get(pid)?._cy ?? 0; });
+      avgY.set(id, sum / ps.size);
+    }
+    col.sort((a, b) => avgY.get(a) - avgY.get(b));
 
     col.forEach((id, i) => {
       const node = state.nodes.get(id);
@@ -179,6 +182,7 @@ function renderEdges() {
     if (!state.edges.has(key)) { path.remove(); edgeEls.delete(key); }
   });
 
+  let frag = null;
   forEachEdge((fid, tid, key) => {
     const from = state.nodes.get(fid), to = state.nodes.get(tid);
     if (!from || !to) return;
@@ -188,7 +192,8 @@ function renderEdges() {
       path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.classList.add('connector');
       path.dataset.edge = key;
-      svgWorld.appendChild(path);
+      if (!frag) frag = document.createDocumentFragment();
+      frag.appendChild(path);
       edgeEls.set(key, path);
     }
 
@@ -198,6 +203,7 @@ function renderEdges() {
     path.setAttribute('d', `M${sx},${sy} C${mx},${sy} ${mx},${ty} ${tx},${ty}`);
     path.setAttribute('stroke-width', 1.8);
   });
+  if (frag) svgWorld.appendChild(frag);
   updateEdgeStyles();
 }
 
