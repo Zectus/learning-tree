@@ -34,7 +34,7 @@ test('built-in catalog loads lazily: 0 fetches on startup, tree.json on open, le
     // Clicking Open tree fetches only tree.json (no lessons yet) and stamps subject topic + lesson indicators
     app.document.getElementById('explorer-tree-action').click();
     await tick();
-    assert.deepEqual(fetched, ['catalog/index.json', 'catalog/_placeholder/tree.json']);
+    assert.deepEqual(fetched, ['catalog/index.json', 'catalog/placeholder/tree.json']);
     assert.equal(app.ev('state.topic'), 'Integration Techniques');
     assert.equal(app.ev('state.builtinId'), 'math_integration_techniques');
     assert.equal(app.ev('state.nodes.size'), 3);
@@ -45,8 +45,8 @@ test('built-in catalog loads lazily: 0 fetches on startup, tree.json on open, le
     await tick();
     assert.deepEqual(fetched, [
       'catalog/index.json',
-      'catalog/_placeholder/tree.json',
-      'catalog/_placeholder/lessons/placeholder_1.txt',
+      'catalog/placeholder/tree.json',
+      'catalog/placeholder/lessons/placeholder_1.txt',
     ]);
     assert.ok(app.document.getElementById('session-viewer').classList.contains('sv-open'));
 
