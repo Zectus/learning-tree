@@ -1,0 +1,76 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "username": {
+          ".validate": "newData.isString() && newData.val().matches(/^[a-zA-Z0-9_-]{3,20}$/)"
+        },
+        "library": {
+          "$treeId": {
+            ".validate": "newData.hasChildren(['name', 'savedAt', 'data']) && newData.child('name').isString() && newData.child('name').val().length <= 200 && newData.child('savedAt').isNumber()",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length <= 200"
+            },
+            "savedAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "builtinId": {
+              ".validate": "newData.isString() && newData.val().length <= 120"
+            },
+            "data": {
+              ".validate": "newData.hasChildren()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "progress": {
+          "$treeSig": {
+            "$nodeKey": {
+              ".validate": "newData.hasChildren()",
+              "done": {
+                ".validate": "newData.isBoolean()"
+              },
+              "sessionAnswers": {
+                ".validate": "newData.hasChildren()"
+              },
+              "bonusAnswers": {
+                ".validate": "newData.hasChildren()"
+              },
+              "notes": {
+                ".validate": "newData.isString() && newData.val().length <= 100000"
+              },
+              "drawing": {
+                ".validate": "newData.hasChildren()"
+              },
+              "scrollTop": {
+                ".validate": "newData.isNumber()"
+              },
+              "updatedAt": {
+                ".validate": "newData.isNumber()"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "usernames": {
+      "$key": {
+        ".read": "auth != null",
+        ".write": "auth != null && !data.exists() && newData.val() === auth.uid",
+        ".validate": "$key.matches(/^[a-z0-9_-]{3,20}$/) && newData.isString()"
+      }
+    }
+  }
+}

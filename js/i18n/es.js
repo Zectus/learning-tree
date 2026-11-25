@@ -540,5 +540,8 @@ Object.assign(UI_ES, {
   "Details": "Detalles",
   "Couldn't find this built-in tree.": "No se pudo encontrar este árbol integrado.",
   "Couldn't load this tree — check your connection and try again.": "No se pudo cargar este árbol: comprueba tu conexión e inténtalo de nuevo.",
-  "Couldn't load this lesson — check your connection and try again.": "No se pudo cargar esta lección: comprueba tu conexión e inténtalo de nuevo."
+  "Couldn't load this lesson — check your connection and try again.": "No se pudo cargar esta lección: comprueba tu conexión e inténtalo de nuevo.",
+  "Couldn't reach your saved trees — check your connection and try again.": "No se pudo conectar con tus árboles guardados: comprueba tu conexión e inténtalo de nuevo.",
+  "Couldn't load your saved trees — check your connection and reopen My Trees.": "No se pudieron cargar tus árboles guardados: comprueba tu conexión y vuelve a abrir Mis árboles.",
+  "Couldn't load your progress from your account — changes won't sync until it reconnects.": "No se pudo cargar tu progreso de la cuenta: los cambios no se sincronizarán hasta que vuelva la conexión."
 });

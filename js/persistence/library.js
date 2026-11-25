@@ -28,6 +28,7 @@ const LIBRARY_REFRESH_TTL_MS = 15000;
 
 let libraryCache  = {};      // in-memory mirror of whichever source is active
 let libraryReady = false;
+let libraryLoadFailed = false;
 let libraryLastFetchedAt = 0;
 let libraryCloudInFlight = null;
 let libraryCloudWrites = Promise.resolve();
@@ -80,31 +81,37 @@ async function refreshLibraryFromSource() {
     librarySource = 'cloud';
     const promise = (async () => {
       libraryReady = false;
+      libraryLoadFailed = false;
       try {
         const data = await window.cloud.getLibrary(uid);
         if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
-        libraryCache = data;
+        libraryCache = data && typeof data === 'object' ? data : {};
         await retryTreeExitSaves(uid);
         if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
       } catch (e) {
         if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
         console.error('Could not load cloud library:', e);
         showToast("Couldn't load your saved trees from your account.");
+        libraryLoadFailed = true;
         libraryCache = {};
+        document.dispatchEvent(new CustomEvent('library-updated'));
+        if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
         return;
       }
       // A fresh account with an empty cloud library but trees saved locally
-      // before signing in gets those copied up rather than orphaned.
+      // before signing in gets those merged up via per-entry writes rather
+      // than a whole-blob overwrite.
       if (Object.keys(libraryCache).length === 0) {
         const local = readLocalLibrary();
         if (Object.keys(local).length > 0) {
-          libraryCache = local;
-          await persistLibrary();
+          const seeded = await seedCloudLibrary(uid, local);
+          if (seeded) libraryCache = local;
         }
       }
       if (state.tutorialActive) { state.tutorialRefreshLibrary = true; return; }
       libraryLastFetchedAt = Date.now();
       libraryReady = true;
+      libraryLoadFailed = false;
       document.dispatchEvent(new CustomEvent('library-updated'));
       if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
     })();
@@ -115,6 +122,7 @@ async function refreshLibraryFromSource() {
     return;
   } else {
     libraryReady = false;
+    libraryLoadFailed = false;
     libraryLastFetchedAt = 0;
     librarySource = 'local';
     libraryCache = readLocalLibrary();
@@ -125,10 +133,97 @@ async function refreshLibraryFromSource() {
   if (document.getElementById('library-modal-backdrop')?.classList.contains('open')) renderLibraryGrid();
 }
 
-// Resolves to whether the write succeeded; failures are reported to the person.
+async function seedCloudLibrary(uid, localEntries) {
+  const snapshot = JSON.parse(JSON.stringify(localEntries));
+  try {
+    await queueLibraryCloudWrite(async () => {
+      if (typeof window.cloud.updateLibraryEntries === 'function') {
+        await window.cloud.updateLibraryEntries(uid, snapshot);
+      } else if (typeof window.cloud.setLibraryEntry === 'function') {
+        for (const [id, entry] of Object.entries(snapshot)) {
+          await window.cloud.setLibraryEntry(uid, id, entry);
+        }
+      } else if (typeof window.cloud.setLibrary === 'function') {
+        await window.cloud.setLibrary(uid, snapshot);
+      }
+    });
+    return true;
+  } catch (e) {
+    console.error('Could not seed cloud library:', e);
+    showToast("Couldn't save to your account — check your connection and try again.");
+    return false;
+  }
+}
+
+function isLibraryReadyForWrite() {
+  return state.tutorialActive || librarySource !== 'cloud' || !state.accountUser || libraryReady;
+}
+
+async function ensureLibraryReadyForWrite() {
+  if (isLibraryReadyForWrite()) return true;
+  await refreshLibraryFromSource();
+  if (libraryReady) return true;
+  showToast("Couldn't reach your saved trees — check your connection and try again.");
+  return false;
+}
+
+// Writes or deletes a single library entry (entry === null deletes). Resolves to
+// whether the write succeeded; failures are reported to the person.
+async function persistLibraryEntry(id, entry) {
+  if (state.tutorialActive) return true; // demo saves stay in the temporary cache
+  if (librarySource === 'cloud' && state.accountUser) {
+    if (!libraryReady) {
+      showToast("Couldn't reach your saved trees — check your connection and try again.");
+      return false;
+    }
+    const uid = state.accountUser.uid;
+    const snapshot = entry === null ? null : JSON.parse(JSON.stringify(entry));
+    const queuedBefore = readTreeExitQueue(uid);
+    try {
+      await queueLibraryCloudWrite(async () => {
+        if (snapshot === null) {
+          if (typeof window.cloud.removeLibraryEntry === 'function') {
+            await window.cloud.removeLibraryEntry(uid, id);
+          } else if (typeof window.cloud.setLibraryEntry === 'function') {
+            await window.cloud.setLibraryEntry(uid, id, null);
+          } else {
+            await window.cloud.setLibrary(uid, JSON.parse(JSON.stringify(libraryCache)));
+          }
+        } else {
+          if (typeof window.cloud.setLibraryEntry === 'function') {
+            await window.cloud.setLibraryEntry(uid, id, snapshot);
+          } else {
+            await window.cloud.setLibrary(uid, JSON.parse(JSON.stringify(libraryCache)));
+          }
+        }
+      });
+      // Explicit saves/deletes supersede older exit backups for this entry, but not newer ones.
+      if (Object.hasOwn(queuedBefore, id)) {
+        const queue = readTreeExitQueue(uid);
+        if (JSON.stringify(queue[id]) === JSON.stringify(queuedBefore[id])) {
+          delete queue[id];
+          writeTreeExitQueue(uid, queue);
+        }
+      }
+      return true;
+    } catch (e) {
+      console.error('Cloud save failed:', e);
+      showToast("Couldn't save to your account — check your connection and try again.");
+      return false;
+    }
+  }
+  return writeLocalLibrary(libraryCache);
+}
+
+// Resolves to whether the write succeeded; guarded so an unready cloud cache can
+// never overwrite the account library.
 async function persistLibrary() {
   if (state.tutorialActive) return true; // demo saves stay in the temporary cache
   if (librarySource === 'cloud' && state.accountUser) {
+    if (!libraryReady) {
+      showToast("Couldn't reach your saved trees — check your connection and try again.");
+      return false;
+    }
     const uid = state.accountUser.uid;
     const snapshot = JSON.parse(JSON.stringify(libraryCache));
     const queuedBefore = readTreeExitQueue(uid);
@@ -245,6 +340,13 @@ function autosaveTreeOnPageExit() {
 }
 window.addEventListener('pagehide', autosaveTreeOnPageExit);
 
+// Preserves unsaved edits to the active tree before another tree replaces the
+// canvas (My Trees → Open, Load JSON, catalog open, or tree designer import).
+// Uses the same structural diff as pagehide autosave so unmodified trees do zero work.
+function preserveCurrentTreeBeforeReplace() {
+  autosaveTreeOnPageExit();
+}
+
 /* ── save ──
    If the tree is already linked to an entry, overwrite it in place ("I edited
    a tree I opened from here, save my changes back"); otherwise it's a first
@@ -252,16 +354,18 @@ window.addEventListener('pagehide', autosaveTreeOnPageExit);
    shows something that isn't actually stored. */
 async function saveCurrentTreeToLibrary() {
   if (!state.nodes.size) { showToast('Add a topic before saving the tree.', 3000); return; }
+  if (!isLibraryReadyForWrite() && !(await ensureLibraryReadyForWrite())) return;
 
   if (state.libraryId && libraryCache[state.libraryId]) {
-    const entry = libraryCache[state.libraryId];
+    const id = state.libraryId;
+    const entry = libraryCache[id];
     const next = buildLibraryEntryPayload(entry.name);
     if (!next) return;
     const before = { data: entry.data, savedAt: entry.savedAt, builtinId: entry.builtinId };
     entry.data = next.data;
     entry.savedAt = next.savedAt;
     if (next.builtinId) entry.builtinId = next.builtinId; else delete entry.builtinId;
-    if (!(await persistLibrary())) {
+    if (!(await persistLibraryEntry(id, entry))) {
       entry.data = before.data;
       entry.savedAt = before.savedAt;
       if (before.builtinId) entry.builtinId = before.builtinId; else delete entry.builtinId;
@@ -276,7 +380,7 @@ async function saveCurrentTreeToLibrary() {
   if (!entry) return;
   const id = genLibraryId();
   libraryCache[id] = entry;
-  if (await persistLibrary()) state.libraryId = id;
+  if (await persistLibraryEntry(id, entry)) state.libraryId = id;
   else delete libraryCache[id];
   renderLibraryGrid();
 }
@@ -285,13 +389,14 @@ async function saveCurrentTreeToLibrary() {
    branch off the saved version without overwriting it. */
 async function saveCurrentTreeAsNewCopy() {
   if (!state.nodes.size) { showToast('Add a topic before saving the tree.', 3000); return; }
+  if (!isLibraryReadyForWrite() && !(await ensureLibraryReadyForWrite())) return;
   const name = (window.prompt(t('Name this copy:'), (state.topic || t('Untitled tree')) + t(' copy')) || '').trim();
   if (!name) return;
   const entry = buildLibraryEntryPayload(name);
   if (!entry) return;
   const id = genLibraryId();
   libraryCache[id] = entry;
-  if (await persistLibrary()) state.libraryId = id;
+  if (await persistLibraryEntry(id, entry)) state.libraryId = id;
   else delete libraryCache[id];
   renderLibraryGrid();
 }
@@ -310,39 +415,43 @@ function openLibraryEntry(id) {
     openMathTreeBuilder(entry.data.collectionId, id);
     return;
   }
+  if (state.libraryId !== id) preserveCurrentTreeBeforeReplace();
   if (!loadFromJSON(entry.data)) return; // clearMap() inside resets state.libraryId to null…
   state.libraryId = id;                  // …so re-link it: this load really is that entry
   closeLibraryModal();
 }
 
 async function renameLibraryEntry(id) {
+  if (!isLibraryReadyForWrite() && !(await ensureLibraryReadyForWrite())) return;
   const entry = libraryCache[id];
   if (!entry) return;
   const name = (window.prompt(t('Rename tree:'), entry.name) || '').trim();
   if (!name) return;
   const before = entry.name;
   entry.name = name;
-  if (!(await persistLibrary())) entry.name = before;
+  if (!(await persistLibraryEntry(id, entry))) entry.name = before;
   renderLibraryGrid();
 }
 
 async function duplicateLibraryEntry(id) {
+  if (!isLibraryReadyForWrite() && !(await ensureLibraryReadyForWrite())) return;
   const entry = libraryCache[id];
   if (!entry) return;
   const newId = genLibraryId();
   const copy = { name: entry.name + t(' copy'), savedAt: Date.now(), data: entry.data };
   if (entry.builtinId) copy.builtinId = entry.builtinId;
   libraryCache[newId] = copy;
-  if (!(await persistLibrary())) delete libraryCache[newId];
+  if (!(await persistLibraryEntry(newId, copy))) delete libraryCache[newId];
   renderLibraryGrid();
 }
 
 async function deleteLibraryEntry(id) {
+  if (!isLibraryReadyForWrite() && !(await ensureLibraryReadyForWrite())) return;
   const entry = libraryCache[id];
   if (!entry) return;
   if (!window.confirm(t(`Delete "${entry.name}"? This can't be undone.`))) return;
   delete libraryCache[id];
-  if (!(await persistLibrary())) libraryCache[id] = entry;
+  if (!(await persistLibraryEntry(id, null))) libraryCache[id] = entry;
   else if (state.libraryId === id) state.libraryId = null;
   renderLibraryGrid();
 }
@@ -365,7 +474,9 @@ function renderLibraryGrid() {
   const ids   = Object.keys(libraryCache).sort((a, b) => (libraryCache[b].savedAt || 0) - (libraryCache[a].savedAt || 0));
 
   uiText(document.getElementById('library-modal-meta'), state.accountUser
-    ? `Synced to ${state.accountUser.username || state.accountUser.email}`
+    ? (libraryLoadFailed
+        ? "Couldn't load your saved trees — check your connection and reopen My Trees."
+        : `Synced to ${state.accountUser.username || state.accountUser.email}`)
     : 'Saved locally in this browser — sign in to sync across devices');
 
   const hasCurrentTree = state.nodes.size > 0;

@@ -309,6 +309,7 @@ function loadTreeObjectFromModal(obj) {
     showTreeImportFeedback(t('That tree has no nodes.'));
     return false;
   }
+  if (typeof preserveCurrentTreeBeforeReplace === 'function') preserveCurrentTreeBeforeReplace();
   if (!loadFromJSON(obj)) return false;
   if (!state.topic) state.topic = document.getElementById('tree-topic-input').value.trim();
   clearTreeImportFeedback();

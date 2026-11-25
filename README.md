@@ -209,12 +209,15 @@ cannot be remembered across reloads.
 ```
 index.html            page shell, modals, and the script load order
 css/                  one stylesheet per area; theme.css holds every colour/variable
+catalog/              built-in static learning trees and lazily loaded lessons
+js/collection/        mathematics collection data, recommendations, and explorer modal
 js/core/              scale, state, layout, escape-key stack, toasts, modal focus handling
 js/graph/             nodes, viewport (pan/zoom), toolbar
+js/i18n/              interface localization (English/Spanish)
 js/learn/             prompt templates + builders, lesson viewer, content-block tools (tables/timelines/graphs)
-js/persistence/       tree JSON import/export, progress, saved-tree library, account, Firebase (cloud.js)
+js/persistence/       tree JSON import/export, progress, saved-tree library, account, catalog, Firebase (cloud.js)
 js/lib/               autoscroll (middle-click)
-scripts/              one-off maintenance scripts
+database.rules.json   Firebase Realtime Database security and validation rules (deploy with firebase.json)
 test/                 node:test suite (runs the real index.html + scripts in jsdom)
 ```
 
@@ -231,7 +234,7 @@ The suite loads `index.html` and every app script into jsdom in page order, so i
 
 ## Firebase
 
-`js/persistence/cloud.js` contains the project's client config. That config is not a secret; what protects the data is the database's security rules. They should restrict `users/$uid` to `auth.uid === $uid` and allow `usernames/$key` to be written only when it doesn't already exist (see the header of `cloud.js`).
+`js/persistence/cloud.js` contains the project's client config. That config is not a secret; what protects the data is the database's security rules in [`database.rules.json`](database.rules.json) (configured in `firebase.json`). They restrict `users/$uid` to `auth.uid === $uid`, validate entry shapes, and allow `usernames/$key` to be written only when it doesn't already exist without exposing root `/usernames` enumeration.
 
 ### Filled graph regions
 

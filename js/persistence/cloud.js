@@ -10,9 +10,15 @@
      cloud.deleteCurrentUser()          → used to roll back a signup whose
                                            chosen username turned out taken
      cloud.getLibrary(uid)              → whole "My Trees" blob for this user
-     cloud.setLibrary(uid, obj)         → overwrite it
+     cloud.setLibrary(uid, obj)         → overwrite it (legacy fallback)
+     cloud.setLibraryEntry(uid, id, e)  → write one library entry
+     cloud.removeLibraryEntry(uid, id)  → delete one library entry
+     cloud.updateLibraryEntries(uid, p) → merge multiple library entries
      cloud.getProgress(uid)             → whole per-node progress blob for this user
-     cloud.setProgress(uid, obj)        → overwrite it
+     cloud.setProgress(uid, obj)        → overwrite it (reset-all / legacy fallback)
+     cloud.setProgressForTree(uid, s, o)→ write one tree's progress
+     cloud.removeProgressForTree(uid, s)→ delete one tree's progress
+     cloud.updateProgressTrees(uid, p)  → merge dirty tree progress entries
    and calls window.handleCloudAuthChange(user) — defined in
    account.js — on every auth-state change, including once right
    after load with whatever session Firebase already had
@@ -76,6 +82,8 @@ import {
   ref,
   set,
   get,
+  remove,
+  update,
   runTransaction,
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 
@@ -148,8 +156,14 @@ window.cloud = {
   async setLibraryEntry(uid, id, entry) {
     await set(ref(db, `users/${uid}/library/${id}`), entry);
   },
+  async removeLibraryEntry(uid, id) {
+    await remove(ref(db, `users/${uid}/library/${id}`));
+  },
+  async updateLibraryEntries(uid, entries) {
+    await update(ref(db, `users/${uid}/library`), entries);
+  },
 
-  /* Whole-progress reads/writes — same {signature: {label: record}} shape
+  /* Progress reads/writes — same {signature: {label: record}} shape
      as the localStorage 'tree-progress' blob (see PROGRESS_KEY in
      progress.js), just living under this user's own uid instead of in
      this one browser. Keys are pre-sanitized by progress.js before ever
@@ -161,6 +175,15 @@ window.cloud = {
   },
   async setProgress(uid, progressObj) {
     await set(ref(db, `users/${uid}/progress`), progressObj);
+  },
+  async setProgressForTree(uid, encodedSig, treeProgress) {
+    await set(ref(db, `users/${uid}/progress/${encodedSig}`), treeProgress);
+  },
+  async removeProgressForTree(uid, encodedSig) {
+    await remove(ref(db, `users/${uid}/progress/${encodedSig}`));
+  },
+  async updateProgressTrees(uid, patch) {
+    await update(ref(db, `users/${uid}/progress`), patch);
   },
 };
 

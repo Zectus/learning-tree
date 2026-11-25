@@ -9,7 +9,12 @@
 
 ## 2. Optional / Future Polish
 - Consider whether `js/learn/node-prompt.js` (~46.5 KB) can be tightened without degrading lesson or graph quality.
-- Delete the local `local-scratch-backup` branch once confirmed unneeded (never push it).
+- Confirm whether local `master` and `local-scratch-backup` branches (both currently carry 5 unmerged commits) are still needed before deleting them (never push them).
+- Deferred from `opus-5.5-review.md` (require live browser / schema migration testing):
+  - Add a `<meta http-equiv="Content-Security-Policy">` after verifying Google Sign-In popup, Firebase RTDB WebSocket/long-poll, Plotly 3D, JSXGraph, and KaTeX in a live browser (CDN SRI + pinned JSXGraph are already in place).
+  - Evaluate IndexedDB for the guest local library (weighing `pagehide` synchronous autosave reliability and cross-tab `storage` events).
+  - Migrate progress identity from root-label signature + node labels to stable `treeId` UUIDs and node slugs with backward-compatible migration for existing Firebase/localStorage records and `catalog/index.json`.
+  - Add Firebase RTDB emulator rules tests if Firebase CLI/emulator tooling is added to CI (rules are now versioned in `database.rules.json` and structurally verified by `test/audit-fixes.test.js`).
 
 ## Established UI & Design Conventions
 - **Palette:** Neutral, theme-native styling in both light and dark modes (`--invert-bg`/`--invert-text` for primary actions; avoid loud solid blue button fills).

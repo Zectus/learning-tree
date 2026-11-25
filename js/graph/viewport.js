@@ -6,8 +6,9 @@
    (isMobileViewport), and nodes.js (cancelLink).
 ═══════════════════════════════════════════════════════════ */
 
-let currentTransform = '', transformTimer = null;
+let currentTransform = '', transformTimer = null, panRafId = 0;
 function applyTransform(animated) {
+  if (panRafId) { cancelAnimationFrame(panRafId); panRafId = 0; }
   const { x, y, scale } = state.viewport;
   currentTransform = `translate(${x}px,${y}px) scale(${scale})`;
   clearTimeout(transformTimer);
@@ -23,15 +24,24 @@ function applyTransform(animated) {
   }
 }
 
+function schedulePanTransform() {
+  if (panRafId) return;
+  panRafId = requestAnimationFrame(() => {
+    panRafId = 0;
+    applyTransform(false);
+  });
+}
+
 /* Zoom to `newScale` keeping the point (mx,my) fixed on screen. `base` is the
    viewport the zoom is measured from (the current one for the wheel; the one
    captured at gesture start for a pinch). */
-function zoomAbout(mx, my, base, newScale) {
+function zoomAbout(mx, my, base, newScale, deferFrame = false) {
   const ns = Math.min(10, Math.max(0.01, newScale));
   state.viewport.x = mx - (mx - base.x) * (ns / base.scale);
   state.viewport.y = my - (my - base.y) * (ns / base.scale);
   state.viewport.scale = ns;
-  applyTransform(false);
+  if (deferFrame) schedulePanTransform();
+  else applyTransform(false);
 }
 
 /* Centering and fitting are one load-time operation behind a single entry
@@ -135,7 +145,7 @@ canvas.addEventListener('pointermove', e => {
   if (!state.drag.active) return;
   state.viewport.x = state.drag.ox + (e.clientX - state.drag.startX);
   state.viewport.y = state.drag.oy + (e.clientY - state.drag.startY);
-  applyTransform(false);
+  schedulePanTransform();
 });
 canvas.addEventListener('pointerup', endPan);
 canvas.addEventListener('pointercancel', endPan);
@@ -189,7 +199,7 @@ canvas.addEventListener('touchmove', e => {
     cancelLink(); touchState.moved = true; suppressTouchClickUntil = Date.now() + 500;
     state.viewport.x = touchState.ox + (t.clientX - touchState.x);
     state.viewport.y = touchState.oy + (t.clientY - touchState.y);
-    applyTransform(false);
+    schedulePanTransform();
   } else if (touchState.mode === 'pinch' && e.touches.length === 2) {
     touchState.moved = true; suppressTouchClickUntil = Date.now() + 500;
     const [a, b] = e.touches;
@@ -197,7 +207,8 @@ canvas.addEventListener('touchmove', e => {
     zoomAbout(
       touchState.midX - rect.left, touchState.midY - rect.top,
       { x: touchState.vx, y: touchState.vy, scale: touchState.scale },
-      touchState.scale * (pinchDist(a, b) / touchState.dist)
+      touchState.scale * (pinchDist(a, b) / touchState.dist),
+      true
     );
   }
 }, { passive:true });

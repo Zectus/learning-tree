@@ -87,7 +87,7 @@ function loadFromJSON(obj) {
 
   rawNodes.forEach(n => {
     const numId = state.nextId++;
-    const label = n.label ?? '';
+    const label = String(n.label ?? '');
     const key   = String(n.id ?? slugify(label));
     if (idMap.has(key)) problems.dupId++; else idMap.set(key, numId);
     const node = { id:numId, slug:key, label, explanation:typeof n.explanation === 'string' ? n.explanation.trim() : '', optional:!!n.optional, done:!!n.done, depth:0, x:0, y:0, el:null };
@@ -165,12 +165,17 @@ function exportToJSON(includeContent) {
   a.href = url;
   a.download = includeContent ? `${base}-with-content.json` : `${base}.json`;
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 document.getElementById('file-input').addEventListener('change', e => {
   const file = e.target.files?.[0];
-  if (file) readJSONFile(file, loadFromJSON);
+  if (file) readJSONFile(file, obj => {
+    if (obj && Array.isArray(obj.nodes) && obj.nodes.some(n => n && typeof n === 'object') && typeof preserveCurrentTreeBeforeReplace === 'function') {
+      preserveCurrentTreeBeforeReplace();
+    }
+    loadFromJSON(obj);
+  });
   e.target.value = '';
 });
 document.getElementById('menu-export-structure').addEventListener('click', () => exportToJSON(false));

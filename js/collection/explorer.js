@@ -715,7 +715,7 @@ async function addMathTreeToLibrary(id) {
     cache[libraryId] = hasBuiltin
       ? { name: node.name, savedAt: Date.now(), builtinId: id, data: { topic: node.name, collectionId: id } }
       : { name: node.name, savedAt: Date.now(), data: { topic: node.name, collectionId: id, nodes: [] } };
-    const saved = await persistLibrary();
+    const saved = await persistLibraryEntry(libraryId, cache[libraryId]);
     if (!saved) { delete cache[libraryId]; return null; }
     if (cache !== libraryCache || owner !== mathOwner()) return null;
     showToast(t('Added "{name}" to My Trees.', { name: node.name }));
@@ -766,7 +766,7 @@ document.addEventListener('tree-loaded', () => {
   const before = { data: entry.data, savedAt: entry.savedAt }, snapshot = buildTreeJSON(true);
   entry.data = snapshot;
   entry.savedAt = Date.now();
-  void persistLibrary().then(ok => {
+  void persistLibraryEntry(selection.libraryId, entry).then(ok => {
     if (!ok && libraryCache[selection.libraryId] === entry && entry.data === snapshot) Object.assign(entry, before);
     renderLibraryGrid();
   });

@@ -37,6 +37,10 @@ const PROGRESS_KEY = 'tree-progress';
 
 let progressCache  = {};      // in-memory mirror of whichever source is active
 let progressSource = 'local'; // 'local' | 'cloud'
+let progressReady = false;
+let progressLoadFailed = false;
+const dirtyProgressTrees = new Set();
+let resetAllProgressPending = false;
 
 function readLocalProgress() {
   try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); } catch { return {}; }
@@ -54,16 +58,19 @@ function writeLocalProgress(obj) {
    needs its own pass. */
 function toFirebaseKey(k)   { return encodeURIComponent(String(k)).replace(/\./g, '%2E'); }
 function fromFirebaseKey(k) { try { return decodeURIComponent(k); } catch { return k; } }
+function encodeTreeProgressForCloud(treeRec) {
+  const perNode = {};
+  for (const label of Object.keys(treeRec || {})) {
+    // Records can hold `undefined` fields; JSON.stringify drops them for
+    // localStorage, but Firebase's set()/update() rejects them, so round-trip here.
+    perNode[toFirebaseKey(label)] = JSON.parse(JSON.stringify(treeRec[label]));
+  }
+  return perNode;
+}
 function encodeProgressForCloud(cache) {
   const out = {};
   for (const sig of Object.keys(cache)) {
-    const perNode = {};
-    for (const label of Object.keys(cache[sig] || {})) {
-      // Records can hold `undefined` fields; JSON.stringify drops them for
-      // localStorage, but Firebase's set() rejects them, so round-trip here.
-      perNode[toFirebaseKey(label)] = JSON.parse(JSON.stringify(cache[sig][label]));
-    }
-    out[toFirebaseKey(sig)] = perNode;
+    out[toFirebaseKey(sig)] = encodeTreeProgressForCloud(cache[sig]);
   }
   return out;
 }
@@ -83,7 +90,7 @@ function decodeProgressFromCloud(obj) {
    tree that once used the same label. */
 function treeSignature() {
   const roots = [];
-  state.nodes.forEach((n, id) => { if (prereqsOf(id).length === 0) roots.push(n.label.trim().toLowerCase()); });
+  state.nodes.forEach((n, id) => { if (prereqsOf(id).length === 0) roots.push(String(n.label ?? '').trim().toLowerCase()); });
   return roots.sort().join('|') || '(empty)';
 }
 
@@ -95,26 +102,41 @@ async function refreshProgressFromSource() {
   if (state.tutorialActive) return;
   if (state.accountUser) {
     progressSource = 'cloud';
+    progressReady = false;
+    progressLoadFailed = false;
+    dirtyProgressTrees.clear();
+    resetAllProgressPending = false;
     try {
       const data = await window.cloud.getProgress(state.accountUser.uid);
       if (state.tutorialActive) { state.tutorialRefreshProgress = true; return; }
       progressCache = decodeProgressFromCloud(data);
+      progressReady = true;
     } catch (e) {
       if (state.tutorialActive) { state.tutorialRefreshProgress = true; return; }
       console.error('Could not load cloud progress:', e);
+      progressLoadFailed = true;
+      progressReady = false;
       progressCache = {};
+      showToast("Couldn't load your progress from your account — changes won't sync until it reconnects.");
+      return;
     }
-    // A fresh account with no cloud progress but local progress from before
-    // signing in gets the local copy uploaded rather than orphaned.
+    // A fresh account with no cloud progress (confirmed by a successful load)
+    // gets local guest progress merged up per tree rather than orphaned.
     if (Object.keys(progressCache).length === 0) {
       const local = readLocalProgress();
-      if (Object.keys(local).length > 0) {
+      const localSigs = Object.keys(local);
+      if (localSigs.length > 0) {
         progressCache = local;
+        localSigs.forEach(sig => dirtyProgressTrees.add(sig));
         await persistProgressNow();
       }
     }
   } else {
     progressSource = 'local';
+    progressReady = true;
+    progressLoadFailed = false;
+    dirtyProgressTrees.clear();
+    resetAllProgressPending = false;
     progressCache = readLocalProgress();
   }
 
@@ -137,8 +159,44 @@ async function refreshProgressFromSource() {
 
 async function writeProgressToCloud() {
   if (!state.accountUser) return false;
+  if (!progressReady) return false; // never overwrite cloud after a failed/incomplete load
+  const uid = state.accountUser.uid;
   try {
-    await window.cloud.setProgress(state.accountUser.uid, encodeProgressForCloud(progressCache));
+    if (resetAllProgressPending) {
+      await window.cloud.setProgress(uid, {});
+      resetAllProgressPending = false;
+      return true;
+    }
+    if (dirtyProgressTrees.size > 0) {
+      const sigs = [...dirtyProgressTrees];
+      const patch = {};
+      const sentSnapshots = new Map();
+      for (const sig of sigs) {
+        const hasTree = Object.hasOwn(progressCache, sig);
+        sentSnapshots.set(sig, JSON.stringify(hasTree ? progressCache[sig] : null));
+        patch[toFirebaseKey(sig)] = hasTree ? encodeTreeProgressForCloud(progressCache[sig]) : null;
+      }
+      if (typeof window.cloud.updateProgressTrees === 'function') {
+        await window.cloud.updateProgressTrees(uid, patch);
+      } else if (typeof window.cloud.setProgressForTree === 'function') {
+        for (const sig of sigs) {
+          const encSig = toFirebaseKey(sig);
+          if (patch[encSig] === null && typeof window.cloud.removeProgressForTree === 'function') {
+            await window.cloud.removeProgressForTree(uid, encSig);
+          } else {
+            await window.cloud.setProgressForTree(uid, encSig, patch[encSig]);
+          }
+        }
+      } else {
+        await window.cloud.setProgress(uid, encodeProgressForCloud(progressCache));
+      }
+      for (const sig of sigs) {
+        const current = JSON.stringify(Object.hasOwn(progressCache, sig) ? progressCache[sig] : null);
+        if (current === sentSnapshots.get(sig)) dirtyProgressTrees.delete(sig);
+      }
+      return true;
+    }
+    await window.cloud.setProgress(uid, encodeProgressForCloud(progressCache));
     return true;
   } catch (e) {
     console.error('Cloud progress save failed:', e);
@@ -195,7 +253,10 @@ function autoSaveProgress() {
       scrollTop:      node._scrollTop,
     };
   });
-  progressCache[treeSignature()] = perNode;
+  const sig = treeSignature();
+  progressCache[sig] = perNode;
+  dirtyProgressTrees.add(sig);
+  resetAllProgressPending = false;
   persistProgress();
 }
 
@@ -259,8 +320,19 @@ btnResetProgress.addEventListener('click', async e => {
   uiText(btnResetProgress, RESET_LABEL_TREE);
   if (resetAll && !window.confirm(t(`Reset progress on every tree${state.accountUser ? ', including the copy synced to your account' : ''}? This can't be undone.`))) return;
 
-  if (resetAll) progressCache = {};
-  else delete progressCache[treeSignature()];
+  if (progressSource === 'cloud' && state.accountUser && !progressReady) {
+    showToast("Couldn't load your progress from your account — changes won't sync until it reconnects.");
+    return;
+  }
+  if (resetAll) {
+    progressCache = {};
+    dirtyProgressTrees.clear();
+    resetAllProgressPending = true;
+  } else {
+    const sig = treeSignature();
+    delete progressCache[sig];
+    dirtyProgressTrees.add(sig);
+  }
   state.nodes.forEach(clearNodeProgressFields);
   await persistProgressNow();
   closeViewer();

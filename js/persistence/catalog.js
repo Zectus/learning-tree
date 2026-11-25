@@ -152,6 +152,7 @@ async function openBuiltinTree(id, libraryId = null) {
     showToast("Couldn't load this tree — check your connection and try again.");
     return false;
   }
+  if (typeof preserveCurrentTreeBeforeReplace === 'function') preserveCurrentTreeBeforeReplace();
   if (!loadFromJSON(treeData)) return false;
   const lessonSet = new Set(Array.isArray(meta.lessons) ? meta.lessons : []);
   state.builtinId = id;

@@ -262,7 +262,7 @@ function downloadGenerationFile(value, filename) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
   const a = document.createElement('a');
   a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function generationImportOptions(replaceExisting = document.getElementById('generation-replace-existing').checked) {

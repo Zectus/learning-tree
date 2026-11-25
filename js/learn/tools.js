@@ -18,7 +18,9 @@
    are all loaded on first use (loadKatex / loadGraphLibs below).
 ═══════════════════════════════════════════════════════════ */
 
-function svEsc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function svEsc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
 
 /* ── Deterministic option shuffling ──
    The model marks the correct option with [ANSWER: X] wherever it happened
@@ -72,15 +74,21 @@ function shuffleOptions(rawOptions, correctLetter, seedKey) {
    Loaded lazily on the first lesson or graph that actually contains math
    delimiters, so initial page load never blocks on the KaTeX CDN. */
 const KATEX_CSS            = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css';
+const KATEX_CSS_SRI        = 'sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+';
 const KATEX_JS             = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js';
+const KATEX_JS_SRI         = 'sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg';
 const KATEX_AUTO_RENDER_JS = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js';
+const KATEX_AUTO_RENDER_SRI = 'sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk';
 let katexLoadPromise = null;
 
 function loadKatex() {
   if (window.renderMathInElement) return Promise.resolve();
   if (!katexLoadPromise) {
-    katexLoadPromise = Promise.all([loadStyleOnce(KATEX_CSS), loadScriptOnce(KATEX_JS)])
-      .then(() => loadScriptOnce(KATEX_AUTO_RENDER_JS))
+    katexLoadPromise = Promise.all([
+      loadStyleOnce(KATEX_CSS, KATEX_CSS_SRI),
+      loadScriptOnce(KATEX_JS, KATEX_JS_SRI),
+    ])
+      .then(() => loadScriptOnce(KATEX_AUTO_RENDER_JS, KATEX_AUTO_RENDER_SRI))
       .catch(err => { katexLoadPromise = null; throw err; });
   }
   return katexLoadPromise;
@@ -269,17 +277,25 @@ function graphLinspace(lo, hi, n) {
 }
 
 /* ── graph libraries: loaded on first use ── */
-const PLOTLY_URL     = 'https://cdn.plot.ly/plotly-3.6.0.min.js';
-const MATHJS_URL     = 'https://cdn.jsdelivr.net/npm/mathjs@15.2.0';
-const JSXGRAPH_URL   = 'https://cdn.jsdelivr.net/npm/jsxgraph@1/distrib/jsxgraphcore.js';
-const JSXGRAPH_CSS   = 'https://cdn.jsdelivr.net/npm/jsxgraph@1/distrib/jsxgraph.css';
+const PLOTLY_URL       = 'https://cdn.plot.ly/plotly-3.6.0.min.js';
+const PLOTLY_SRI       = 'sha384-VJGrWzhaqeZH5V40n11N6iTMH+MBDakZZjfPZAPtqS/BCEnF102uwlswiJq07HmW';
+const MATHJS_URL       = 'https://cdn.jsdelivr.net/npm/mathjs@15.2.0';
+const MATHJS_SRI       = 'sha384-CxR1K3HZUkOaVgBmRwqkpngEKdsI4pZVJqItEffLpTGqVE6C/4X9MYaLZcoZH7Nx';
+const JSXGRAPH_URL     = 'https://cdn.jsdelivr.net/npm/jsxgraph@1.14.3/distrib/jsxgraphcore.js';
+const JSXGRAPH_SRI     = 'sha384-/gRtLXAXiYXfed0Ajep7yLSyD64K0WQYnhZ2nAVPArQLm7X6VRHGWvhOSHgcUMBL';
+const JSXGRAPH_CSS     = 'https://cdn.jsdelivr.net/npm/jsxgraph@1.14.3/distrib/jsxgraph.css';
+const JSXGRAPH_CSS_SRI = 'sha384-0WPp7YfQ2XP27W7nFBnVxJGg4M2CAA8ABwo8dLnqmjkWt5kMhTuzcWfc8LxW27wW';
 const scriptLoads = new Map();
-function loadScriptOnce(src) {
+function loadScriptOnce(src, integrity) {
   if (!scriptLoads.has(src)) {
     scriptLoads.set(src, new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = src;
       s.charset = 'utf-8';
+      if (integrity) {
+        s.integrity = integrity;
+        s.crossOrigin = 'anonymous';
+      }
       s.onload = resolve;
       s.onerror = () => { scriptLoads.delete(src); reject(new Error(`Failed to load ${src}`)); }; // allow a retry
       document.head.appendChild(s);
@@ -287,12 +303,16 @@ function loadScriptOnce(src) {
   }
   return scriptLoads.get(src);
 }
-function loadStyleOnce(href) {
+function loadStyleOnce(href, integrity) {
   if (scriptLoads.has(href)) return scriptLoads.get(href);
   const p = new Promise((resolve, reject) => {
     const l = document.createElement('link');
     l.rel = 'stylesheet';
     l.href = href;
+    if (integrity) {
+      l.integrity = integrity;
+      l.crossOrigin = 'anonymous';
+    }
     l.onload = resolve;
     l.onerror = () => { scriptLoads.delete(href); reject(new Error(`Failed to load ${href}`)); };
     document.head.appendChild(l);
@@ -301,8 +321,12 @@ function loadStyleOnce(href) {
   return p;
 }
 function loadGraphLibs(type) {
-  if (type === 'surface3d') return Promise.all([loadScriptOnce(PLOTLY_URL), loadScriptOnce(MATHJS_URL)]);
-  return Promise.all([loadScriptOnce(JSXGRAPH_URL), loadStyleOnce(JSXGRAPH_CSS), loadScriptOnce(MATHJS_URL)]);
+  if (type === 'surface3d') return Promise.all([loadScriptOnce(PLOTLY_URL, PLOTLY_SRI), loadScriptOnce(MATHJS_URL, MATHJS_SRI)]);
+  return Promise.all([
+    loadScriptOnce(JSXGRAPH_URL, JSXGRAPH_SRI),
+    loadStyleOnce(JSXGRAPH_CSS, JSXGRAPH_CSS_SRI),
+    loadScriptOnce(MATHJS_URL, MATHJS_SRI),
+  ]);
 }
 
 /* Graph expressions come from lesson files, and trees are shareable files, so
