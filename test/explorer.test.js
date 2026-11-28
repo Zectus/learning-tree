@@ -319,3 +319,119 @@ test('starting trees describe the absence of preparation and localize recommenda
     assert.match(el(app,'explorer-detail').textContent,/No se recomiendan árboles previos/);
   } finally {app.dom.window.close();}
 });
+
+test('selected mini-collection for PUCP 1st semester renders induced DAG, preserves context on node clicks, and is reachable from rail, picker, and search', () => {
+  const app=loadApp();
+  try {
+    // Every mini-collection entry maps cleanly to valid unique leaf trees
+    assert.equal(app.ev("mathMiniCollections.get('pucp_eng_sem1').count"),15);
+    assert.equal(app.ev("mathMiniCollections.get('pucp_eng_sem1').leafSet.size"),15);
+
+    // Rail displays the mini-collection above the 10 branches
+    app.ev('openMathAtlas()');
+    const railBtn=el(app,'explorer-rail').querySelector('.explorer-mini-btn[data-mini-id="pucp_eng_sem1"]');
+    assert.ok(railBtn);
+    railBtn.click();
+    assert.equal(app.ev('mathAtlas.miniId'),'pucp_eng_sem1');
+    assert.equal(railBtn.getAttribute('aria-current'),'false'); // rail was re-rendered
+    assert.equal(el(app,'explorer-rail').querySelector('.explorer-mini-btn[data-mini-id="pucp_eng_sem1"]').getAttribute('aria-current'),'true');
+    assert.equal(el(app,'explorer-detail-title').textContent,'PUCP Engineering · 1st Semester');
+    assert.equal(el(app,'explorer-nodes').querySelectorAll('.explorer-node').length,15);
+    assert.equal(el(app,'explorer-count').textContent,'15 learning trees');
+    assert.match(app.window.location.hash,/explore=pucp_eng_sem1/);
+
+    // Induced prerequisite DAG connects Linear Systems -> Determinants (bridging Vector Spaces) and Trig -> Complex Numbers
+    assert.ok(el(app,'explorer-edges').querySelector('.explorer-edge[data-from="math_linear_systems_and_matrix_computation"][data-to="math_determinants_and_eigenstructure"]'));
+    assert.ok(el(app,'explorer-edges').querySelector('.explorer-edge[data-from="math_trigonometric_functions"][data-to="math_complex_numbers"]'));
+
+    // Clicking a tree inside the mini-collection keeps the mini-collection context and back button
+    el(app,'explorer-nodes').querySelector('[data-math-id="math_complex_numbers"]').click();
+    assert.equal(app.ev('mathAtlas.miniId'),'pucp_eng_sem1');
+    assert.equal(app.ev('mathAtlas.selectedId'),'math_complex_numbers');
+    assert.equal(el(app,'explorer-back-branch').dataset.miniId,'pucp_eng_sem1');
+    assert.match(el(app,'explorer-back-branch').textContent,/PUCP Engineering · 1st Semester/);
+
+    // Navigating to a neighbor outside the mini-collection exits mini-collection context into its home branch
+    el(app,'explorer-nodes').querySelector('.explorer-unlocks [data-math-id="math_complex_differentiation"]').click();
+    assert.equal(app.ev('mathAtlas.miniId'),null);
+    assert.equal(app.ev('mathAtlas.branchId'),'math_calculus_and_analysis');
+    assert.equal(el(app,'explorer-back-branch').dataset.mathId,'math_calculus_and_analysis');
+
+    // Collections picker lists Mathematics + PUCP mini-collection card and opens it on click
+    el(app,'explorer-collections').click();
+    const miniCard=el(app,'explorer-mini-picker-grid').querySelector('[data-mini-id="pucp_eng_sem1"]');
+    assert.ok(miniCard);
+    assert.equal(el(app,'explorer-math-card-count').textContent,'143 learning trees');
+    miniCard.click();
+    assert.equal(el(app,'explorer-collection-picker').hidden,true);
+    assert.equal(app.ev('mathAtlas.miniId'),'pucp_eng_sem1');
+
+    // Search finds the mini-collection by keyword ("pucp") and opens it on Enter
+    el(app,'explorer-rail').querySelector('[data-math-id="math_numbers_and_arithmetic"]').click();
+    assert.equal(app.ev('mathAtlas.miniId'),null);
+    el(app,'explorer-search').value='pucp';
+    el(app,'explorer-search').dispatchEvent(new app.window.Event('input'));
+    assert.ok(el(app,'explorer-results').querySelector('[data-mini-id="pucp_eng_sem1"]'));
+    app.press('Enter',el(app,'explorer-search'));
+    assert.equal(app.ev('mathAtlas.miniId'),'pucp_eng_sem1');
+
+    // Spanish localization translates mini-collection chrome and descriptions cleanly
+    app.ev("setUILanguage('es',false)");
+    assert.equal(el(app,'explorer-detail-title').textContent,'Ingeniería PUCP · 1.er ciclo');
+    assert.equal(el(app,'explorer-mini-add-all').textContent,'Añadir todos a Mis árboles');
+    assert.equal(el(app,'explorer-count').textContent,'15 árboles de aprendizaje');
+  } finally {app.dom.window.close();}
+});
+
+test('adding a selected mini-collection to My Trees saves all missing trees as built-in pointers once and rolls back on failure', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const { ROOT } = require('./harness');
+  const app=loadApp();
+  try {
+    const indexJson = fs.readFileSync(path.join(ROOT, 'catalog', 'index.json'), 'utf8');
+    app.window.fetch = async url => {
+      if (String(url).startsWith('catalog/index.json')) {
+        return { ok: true, status: 200, text: async () => indexJson, json: async () => JSON.parse(indexJson) };
+      }
+      return { ok: false, status: 404, text: async () => '', json: async () => ({}) };
+    };
+
+    app.ev("openMathAtlas({target:'pucp_eng_sem1'})");
+    await tick();
+    // Pre-add one tree to confirm partial add only adds the remaining 14
+    await app.ev("addMathTreeToLibrary('math_complex_numbers')");
+    assert.equal(app.ev('Object.keys(libraryCache).length'),1);
+    assert.equal(el(app,'explorer-mini-add-all').textContent,'Add remaining (14) to My Trees');
+
+    // Rollback on storage failure leaves the existing single entry untouched
+    app.ev('const __origWrite = writeLocalLibrary; writeLocalLibrary = () => false');
+    const failed = await app.ev("addMiniCollectionToLibrary('pucp_eng_sem1')");
+    assert.equal(failed.length,0);
+    assert.equal(app.ev('Object.keys(libraryCache).length'),1);
+
+    // Restore storage and click Add remaining (14) to My Trees
+    app.ev('writeLocalLibrary = __origWrite');
+    el(app,'explorer-mini-add-all').click();
+    await tick();
+    await tick();
+    assert.equal(app.ev('Object.keys(libraryCache).length'),15);
+    const stored = JSON.parse(app.window.localStorage.getItem('tree-library'));
+    assert.equal(Object.keys(stored).length,15);
+    assert.equal(Object.values(stored).every(e => !!e.builtinId && e.data.nodes === undefined),true);
+    assert.equal(el(app,'explorer-mini-add-all'),null);
+    assert.match(el(app,'explorer-detail').textContent,/✓ All in My Trees/);
+    assert.ok(app.toasts().some(m => m.includes('Added 14 trees from "PUCP Engineering · 1st Semester" to My Trees.')));
+
+    // Cloud bulk save uses updateLibraryEntries with only the newly added entries
+    let cloudPayload = null;
+    app.window.cloud = {
+      updateLibraryEntries: async (uid, entries) => { cloudPayload = { uid, entries }; }
+    };
+    app.ev("state.accountUser={uid:'pucp_u1'}; librarySource='cloud'; libraryReady=true; libraryCache={}");
+    const cloudAdded = await app.ev("addMiniCollectionToLibrary('pucp_eng_sem1')");
+    assert.equal(cloudAdded.length,15);
+    assert.equal(cloudPayload.uid,'pucp_u1');
+    assert.equal(Object.keys(cloudPayload.entries).length,15);
+  } finally {app.dom.window.close();}
+});

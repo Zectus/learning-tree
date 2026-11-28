@@ -62,6 +62,19 @@ for (const leaf of MATH_COLLECTION.leaves) {
   }
 })();
 
+const mathMiniCollections = new Map();
+if (typeof MATH_MINI_COLLECTIONS !== 'undefined' && Array.isArray(MATH_MINI_COLLECTIONS)) {
+  for (const def of MATH_MINI_COLLECTIONS) {
+    const leaves = (def.treeIds || []).map(id => mathItems.get(id)).filter(n => n && !n.children);
+    mathMiniCollections.set(def.id, {
+      ...def,
+      leaves,
+      leafSet: new Set(leaves.map(l => l.id)),
+      count: leaves.length
+    });
+  }
+}
+
 function renderDifficultyBars(level, { compact = false } = {}) {
   const scale = compact ? 0.86 : 1;
   const bars = MATH_BAR_HEIGHTS.map((h, i) => {
@@ -77,11 +90,20 @@ function difficultyLabel(leaf) {
   return t('Level {n}/10 · {band}', { n: leaf.difficulty, band: t(MATH_BANDS[leaf.stage]) });
 }
 
+function builtinLessonCountFor(id) {
+  const meta = typeof getCatalogEntry === 'function' ? getCatalogEntry(id) : null;
+  if (!meta) return null;
+  const loc = typeof catalogLocaleFor === 'function' ? catalogLocaleFor(meta) : 'en';
+  const raw = loc !== 'en' ? meta.locales?.[loc]?.lessons : meta.lessons;
+  return Array.isArray(raw) ? raw.length : 0;
+}
+
 const mathAtlas = {
   branchId: MATH_COLLECTION.children[0].id,
+  miniId: null,
   selectedId: null,
   subFocusId: null,
-  mode: 'branch', // 'branch' | 'neighbors' | 'path'
+  mode: 'branch', // 'branch' | 'mini' | 'neighbors' | 'path'
   stage: '',
   returnTo: null,
   returnHash: '',
@@ -100,6 +122,9 @@ function mathMatchesStage(node) {
 function mathCurrentBranch() {
   const b = mathItems.get(mathAtlas.branchId);
   return (b && b.depth === 1) ? b : MATH_COLLECTION.children[0];
+}
+function mathCurrentMini() {
+  return mathAtlas.miniId ? (mathMiniCollections.get(mathAtlas.miniId) || null) : null;
 }
 
 // ── DAG helpers ──────────────────────────────────────────────
@@ -241,8 +266,25 @@ function externalLinkCount(leaf) {
   return count;
 }
 
-function renderNodeCard(leaf, { x, y, w, h, selected = false, external = false, dim = false, subFocus = false, showExtBadge = false }) {
+function inducedParentsOf(subsetIds) {
+  const idSet = new Set(subsetIds);
+  const ancCache = new Map();
+  function subsetAncestors(id) {
+    if (ancCache.has(id)) return ancCache.get(id);
+    const result = new Set();
+    ancCache.set(id, result);
+    for (const p of (mathItems.get(id)?.recommendedPreparation || [])) {
+      if (idSet.has(p)) result.add(p);
+      else for (const a of subsetAncestors(p)) result.add(a);
+    }
+    return result;
+  }
+  return id => [...subsetAncestors(id)];
+}
+
+function renderNodeCard(leaf, { x, y, w, h, selected = false, external = false, showBranchTag = false, dim = false, subFocus = false, showExtBadge = false }) {
   const saved = !!mathEntry(leaf.id);
+  const hasBuiltin = typeof getCatalogEntry === 'function' && !!getCatalogEntry(leaf.id);
   const extCount = showExtBadge ? externalLinkCount(leaf) : 0;
   const color = MATH_COLORS[leaf.family];
   const classes = ['explorer-node'];
@@ -252,16 +294,18 @@ function renderNodeCard(leaf, { x, y, w, h, selected = false, external = false, 
   if (subFocus) classes.push('explorer-subfocus');
 
   const diffTitle = difficultyLabel(leaf);
-  const metaLeft = external
+  const branchTag = external || showBranchTag;
+  const metaLeft = branchTag
     ? `<span class="explorer-node-branch-tag"><span class="explorer-branch-dot" style="background:${color}"></span>${svEsc(leaf.branch.name)}</span>`
     : `<span class="explorer-diff" title="${svEsc(diffTitle)}">${renderDifficultyBars(leaf.difficulty)}<span class="explorer-diff-num">${leaf.difficulty}</span></span>`;
 
   const badges = [];
-  if (external) badges.push(`<span class="explorer-diff" title="${svEsc(diffTitle)}">${renderDifficultyBars(leaf.difficulty, { compact: true })}</span>`);
+  if (branchTag) badges.push(`<span class="explorer-diff" title="${svEsc(diffTitle)}">${renderDifficultyBars(leaf.difficulty, { compact: true })}</span>`);
+  if (hasBuiltin && !saved) badges.push(`<span class="explorer-node-ready" title="${svEsc(t('Built-in tree ready to open'))}"></span>`);
   if (saved) badges.push(`<span class="explorer-node-saved" title="${svEsc(t('✓ In My Trees'))}">✓</span>`);
   if (extCount > 0) badges.push(`<span class="explorer-node-ext-badge" title="${svEsc(t('{n} cross-branch links', { n: extCount }))}">+${extCount}</span>`);
 
-  const ariaLabel = external
+  const ariaLabel = branchTag
     ? `${leaf.name}, ${leaf.branch.name}, ${diffTitle}`
     : `${leaf.name}, ${diffTitle}`;
 
@@ -278,25 +322,91 @@ function renderNodeCard(leaf, { x, y, w, h, selected = false, external = false, 
 }
 
 // ── Renderers ────────────────────────────────────────────────
-function renderBranchRail() {
-  const activeBranchId = mathCurrentBranch().id;
-  mathEl('explorer-rail').innerHTML = MATH_COLLECTION.children.map(branch => {
-    const matching = branch.leaves.filter(mathMatchesStage).length;
-    const active = branch.id === activeBranchId;
-    const dim = mathAtlas.stage && matching === 0;
-    const color = MATH_COLORS[branch.family];
-    return `<button class="explorer-branch-btn${dim ? ' explorer-dim' : ''}" data-math-id="${branch.id}" aria-current="${active ? 'true' : 'false'}">
-      <span class="explorer-branch-dot" style="background:${color}" aria-hidden="true"></span>
-      <span class="explorer-branch-name">${svEsc(branch.name)}</span>
-      <span class="explorer-branch-count">${mathAtlas.stage ? matching : branch.count}</span>
+function renderCollectionPicker() {
+  const mathCountEl = mathEl('explorer-math-card-count');
+  if (mathCountEl) uiText(mathCountEl, `${MATH_COLLECTION.count} learning trees`);
+  const section = mathEl('explorer-mini-picker-section');
+  const grid = mathEl('explorer-mini-picker-grid');
+  if (!section || !grid) return;
+  const minis = [...mathMiniCollections.values()];
+  section.hidden = minis.length === 0;
+  grid.innerHTML = minis.map(mini => {
+    const readyCount = typeof getCatalogEntry === 'function'
+      ? mini.leaves.filter(l => !!getCatalogEntry(l.id)).length
+      : 0;
+    const art = (mini.art || ['◈', '∑', '∠', 'ℝ']).map(sym => `<span>${svEsc(sym)}</span>`).join('');
+    return `<button class="collection-picker-card" data-mini-id="${mini.id}">
+      <span class="collection-card-art collection-card-art-mini" aria-hidden="true">${art}</span>
+      <span class="collection-card-body">
+        <strong>${uiHTML(mini.name)}</strong>
+        <span>${uiHTML(mini.tagline)}</span>
+        <span class="collection-card-footer">
+          <span class="collection-card-meta">
+            <span>${uiHTML('{n} learning trees', { n: mini.count })}</span>
+            ${readyCount > 0 ? `<span class="collection-card-ready">· ${uiHTML('{n} ready to open', { n: readyCount })}</span>` : ''}
+          </span>
+          <span aria-hidden="true">↗</span>
+        </span>
+      </span>
     </button>`;
   }).join('');
 }
 
+function renderBranchRail() {
+  const activeMini = mathCurrentMini();
+  const activeBranchId = activeMini ? null : mathCurrentBranch().id;
+  const parts = [];
+  const minis = [...mathMiniCollections.values()];
+  if (minis.length) {
+    parts.push(`<div class="explorer-rail-heading">${uiHTML('Selected collections')}</div>`);
+    for (const mini of minis) {
+      const matching = mini.leaves.filter(mathMatchesStage).length;
+      const active = activeMini?.id === mini.id;
+      const dim = mathAtlas.stage && matching === 0;
+      parts.push(`<button class="explorer-mini-btn${dim ? ' explorer-dim' : ''}" data-mini-id="${mini.id}" aria-current="${active ? 'true' : 'false'}">
+        <span class="explorer-mini-icon" aria-hidden="true">◈</span>
+        <span class="explorer-branch-name">${uiHTML(mini.name)}</span>
+        <span class="explorer-branch-count">${mathAtlas.stage ? matching : mini.count}</span>
+      </button>`);
+    }
+    parts.push('<div class="explorer-rail-divider" role="separator"></div>');
+    parts.push(`<div class="explorer-rail-heading">${uiHTML('Branches')}</div>`);
+  }
+  for (const branch of MATH_COLLECTION.children) {
+    const matching = branch.leaves.filter(mathMatchesStage).length;
+    const active = branch.id === activeBranchId;
+    const dim = mathAtlas.stage && matching === 0;
+    const color = MATH_COLORS[branch.family];
+    parts.push(`<button class="explorer-branch-btn${dim ? ' explorer-dim' : ''}" data-math-id="${branch.id}" aria-current="${active ? 'true' : 'false'}">
+      <span class="explorer-branch-dot" style="background:${color}" aria-hidden="true"></span>
+      <span class="explorer-branch-name">${svEsc(branch.name)}</span>
+      <span class="explorer-branch-count">${mathAtlas.stage ? matching : branch.count}</span>
+    </button>`);
+  }
+  mathEl('explorer-rail').innerHTML = parts.join('');
+}
+
 function renderGraphBar() {
   const bar = mathEl('explorer-graph-bar');
+  const mini = mathCurrentMini();
   const branch = mathCurrentBranch();
   if (!mathAtlas.selectedId) {
+    if (mini) {
+      const matching = mini.leaves.filter(mathMatchesStage).length;
+      const savedCount = mini.leaves.filter(l => !!mathEntry(l.id)).length;
+      const readyCount = typeof getCatalogEntry === 'function'
+        ? mini.leaves.filter(l => !!getCatalogEntry(l.id)).length
+        : 0;
+      const pills = [];
+      if (readyCount > 0) pills.push(`<span class="explorer-bar-pill explorer-bar-pill-ready">${uiHTML('{n} ready to open', { n: readyCount })}</span>`);
+      if (savedCount > 0) pills.push(`<span class="explorer-bar-pill">${uiHTML('{saved}/{total} in My Trees', { saved: savedCount, total: mini.count })}</span>`);
+      bar.innerHTML = `<div class="explorer-bar-left">
+        <span class="explorer-mini-icon" aria-hidden="true">◈</span>
+        <span class="explorer-bar-title">${uiHTML(mini.name)}</span>
+        <span class="explorer-bar-hint">${uiHTML('{n} learning trees', { n: mathAtlas.stage ? matching : mini.count })} · ${uiHTML('Click any tree to see its prerequisites and what it unlocks')}</span>
+      </div>${pills.length ? `<div class="explorer-bar-right">${pills.join('')}</div>` : ''}`;
+      return;
+    }
     const matching = branch.leaves.filter(mathMatchesStage).length;
     bar.innerHTML = `<div class="explorer-bar-left">
       <span class="explorer-branch-dot" style="background:${MATH_COLORS[branch.family]}" aria-hidden="true"></span>
@@ -309,8 +419,11 @@ function renderGraphBar() {
   const node = mathItems.get(mathAtlas.selectedId);
   const home = node.branch || branch;
   const isNeighbors = mathAtlas.mode !== 'path';
+  const backBtn = mini && mini.leafSet.has(node.id)
+    ? `<button id="explorer-back-branch" class="btn explorer-back-btn" data-mini-id="${mini.id}">← ${uiHTML(mini.name)}</button>`
+    : `<button id="explorer-back-branch" class="btn explorer-back-btn" data-math-id="${home.id}">← ${svEsc(home.name)}</button>`;
   bar.innerHTML = `<div class="explorer-bar-left">
-      <button id="explorer-back-branch" class="btn explorer-back-btn" data-math-id="${home.id}">← ${svEsc(home.name)}</button>
+      ${backBtn}
     </div>
     <div class="explorer-bar-right">
       <span class="explorer-legend" aria-hidden="true">
@@ -337,6 +450,50 @@ function renderGraphBar() {
     const canvas = mathEl('explorer-canvas');
     if (canvas) { canvas.scrollLeft = canvas.scrollWidth; canvas.scrollTop = 0; }
   });
+}
+
+function renderMiniCollectionTree(mini) {
+  const leaves = mini.leaves;
+  const { cols, edges, colOf } = layoutDagColumns(leaves, inducedParentsOf(leaves.map(l => l.id)));
+
+  const s = mathScale();
+  const CARD_W = Math.round(236 * s), CARD_H = Math.round(86 * s);
+  const COL_GAP = Math.round(64 * s), ROW_GAP = Math.round(16 * s);
+  const PAD_X = Math.round(28 * s), PAD_Y = Math.round(24 * s);
+  const maxRows = Math.max(1, ...cols.map(c => c.length));
+  const contentH = maxRows * CARD_H + (maxRows - 1) * ROW_GAP;
+  const totalW = PAD_X * 2 + cols.length * CARD_W + Math.max(0, cols.length - 1) * COL_GAP;
+  const totalH = PAD_Y * 2 + contentH;
+
+  const pos = new Map();
+  cols.forEach((col, c) => {
+    const colH = col.length * CARD_H + Math.max(0, col.length - 1) * ROW_GAP;
+    const startY = PAD_Y + Math.round((contentH - colH) / 2);
+    const x = PAD_X + c * (CARD_W + COL_GAP);
+    col.forEach((id, r) => pos.set(id, { x, y: startY + r * (CARD_H + ROW_GAP), w: CARD_W, h: CARD_H }));
+  });
+
+  const graph = mathEl('explorer-graph');
+  graph.style.width = totalW + 'px';
+  graph.style.height = totalH + 'px';
+
+  const svg = mathEl('explorer-edges');
+  svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
+  svg.innerHTML = edgeDefsMarkup() + edges.map(([u, v]) => {
+    const a = pos.get(u), b = pos.get(v);
+    const d = bezierPath(a.x + a.w, a.y + a.h / 2, b.x - 2, b.y + b.h / 2, colOf.get(v) - colOf.get(u));
+    return `<path class="explorer-edge" data-from="${u}" data-to="${v}" d="${d}" marker-end="url(#explorer-arrow-solid)"/>`;
+  }).join('');
+
+  mathEl('explorer-nodes').innerHTML = leaves.map(leaf => {
+    const p = pos.get(leaf.id);
+    return renderNodeCard(leaf, {
+      ...p,
+      dim: !mathMatchesStage(leaf),
+      showBranchTag: true,
+      showExtBadge: true
+    });
+  }).join('');
 }
 
 function renderBranchTree(branch) {
@@ -544,6 +701,41 @@ function renderFullPath(node) {
 function renderMathDetail() {
   const detail = mathEl('explorer-detail');
   if (!mathAtlas.selectedId) {
+    const mini = mathCurrentMini();
+    if (mini) {
+      const matching = mini.leaves.filter(mathMatchesStage).length;
+      const savedCount = mini.leaves.filter(l => !!mathEntry(l.id)).length;
+      const remaining = mini.count - savedCount;
+      const readyCount = typeof getCatalogEntry === 'function'
+        ? mini.leaves.filter(l => !!getCatalogEntry(l.id)).length
+        : 0;
+      const addLabel = mathAtlas.busy
+        ? uiHTML('Saving…')
+        : savedCount === 0
+          ? uiHTML('Add all to My Trees')
+          : uiHTML('Add remaining ({n}) to My Trees', { n: remaining });
+      detail.innerHTML = `<div class="explorer-detail-main">
+        <div class="explorer-detail-head">
+          <span class="explorer-mini-icon" aria-hidden="true">◈</span>
+          <h3 id="explorer-detail-title" tabindex="-1">${uiHTML(mini.name)}</h3>
+          <span class="explorer-stage-badge">${uiHTML('{n} learning trees', { n: mathAtlas.stage ? matching : mini.count })}</span>
+          ${readyCount > 0 ? `<span class="explorer-ready-badge">${uiHTML('{n} ready to open', { n: readyCount })}</span>` : ''}
+          ${remaining === 0 ? `<span class="explorer-saved-label">${uiHTML('✓ All in My Trees')}</span>` : (savedCount > 0 ? `<span class="explorer-saved-label">${uiHTML('{saved}/{total} in My Trees', { saved: savedCount, total: mini.count })}</span>` : '')}
+        </div>
+        <p class="explorer-description">${uiHTML(mini.description)}</p>
+        <p class="explorer-note">${uiHTML('Suggestions, not requirements. You can start any tree.')}</p>
+      </div>
+      ${remaining > 0 ? `<div class="explorer-detail-actions">
+        <button id="explorer-mini-add-all" class="btn explorer-primary" ${mathAtlas.busy ? 'disabled' : ''}>${addLabel}</button>
+      </div>` : ''}`;
+
+      mathEl('explorer-mini-add-all')?.addEventListener('click', async () => {
+        if (mathAtlas.busy) return;
+        await addMiniCollectionToLibrary(mini.id);
+      });
+      return;
+    }
+
     const branch = mathCurrentBranch();
     const matching = branch.leaves.filter(mathMatchesStage).length;
     detail.innerHTML = `<div class="explorer-detail-main">
@@ -562,12 +754,17 @@ function renderMathDetail() {
   const builtin = typeof getCatalogEntry === 'function' ? getCatalogEntry(node.id) : null;
   const built = entry?.[1].data?.nodes?.length > 0;
   const hasBuiltin = !!builtin;
+  const lessonCount = hasBuiltin ? builtinLessonCountFor(node.id) : null;
+  const readyBadge = hasBuiltin
+    ? `<span class="explorer-ready-badge">${lessonCount > 1 ? uiHTML('{n} lessons ready', { n: lessonCount }) : lessonCount === 1 ? uiHTML('1 lesson ready') : uiHTML('Ready to open')}</span>`
+    : '';
   const primaryLabel = mathAtlas.busy ? 'Saving…' : (built || hasBuiltin) ? 'Open tree' : 'Build tree';
 
   detail.innerHTML = `<div class="explorer-detail-main">
       <div class="explorer-detail-head">
         <h3 id="explorer-detail-title" tabindex="-1">${svEsc(node.name)}</h3>
         <span class="explorer-stage-badge" title="${svEsc(difficultyLabel(node))}">${renderDifficultyBars(node.difficulty, { compact: true })}<span>${node.difficulty}/10 · ${uiHTML(MATH_BANDS[node.stage])}</span></span>
+        ${readyBadge}
         ${entry ? `<span class="explorer-saved-label">${uiHTML('✓ In My Trees')}</span>` : ''}
       </div>
       <p class="explorer-detail-path">${svEsc(node.path.slice(0, -1).join(' › '))}</p>
@@ -612,10 +809,15 @@ function renderMathDetail() {
 }
 
 function renderMathExplorer() {
+  const mini = mathCurrentMini();
+  if (!mathEl('explorer-shell').classList.contains('explorer-picking')) {
+    uiText(mathEl('explorer-shell').querySelector('.explorer-eyebrow'), mini ? 'Selected collection' : 'Mathematics');
+  }
   renderBranchRail();
   renderGraphBar();
   if (!mathAtlas.selectedId) {
-    renderBranchTree(mathCurrentBranch());
+    if (mini) renderMiniCollectionTree(mini);
+    else renderBranchTree(mathCurrentBranch());
   } else {
     const node = mathItems.get(mathAtlas.selectedId);
     if (mathAtlas.mode === 'path') renderFullPath(node);
@@ -623,28 +825,56 @@ function renderMathExplorer() {
   }
   renderMathDetail();
 
-  const count = MATH_COLLECTION.leaves.filter(mathMatchesStage).length;
-  uiText(mathEl('explorer-count'), t('{n} learning trees', { n: count }));
+  const scopeLeaves = mini ? mini.leaves : MATH_COLLECTION.leaves;
+  const count = scopeLeaves.filter(mathMatchesStage).length;
+  uiText(mathEl('explorer-count'), `${count} learning trees`);
 }
 
 // ── Navigation & Link Sync ───────────────────────────────────
 function updateMathLink() {
   if (!mathIsOpen()) return;
   const url = new URL(location.href);
-  url.hash = 'explore=' + (mathAtlas.selectedId || mathAtlas.branchId);
+  url.hash = 'explore=' + (mathAtlas.selectedId || mathAtlas.miniId || mathAtlas.branchId);
   history.replaceState(history.state, '', url);
 }
 
+function focusMathMiniCollection(id, moveFocus = false) {
+  const mini = mathMiniCollections.get(id);
+  if (!mini) return;
+  mathEl('explorer-results').hidden = true;
+  mathEl('explorer-shell').classList.remove('explorer-picking');
+  mathEl('explorer-collection-picker').hidden = true;
+  mathEl('explorer-collections').hidden = false;
+
+  mathAtlas.miniId = mini.id;
+  mathAtlas.selectedId = null;
+  mathAtlas.subFocusId = null;
+  mathAtlas.mode = 'mini';
+
+  renderMathExplorer();
+  updateMathLink();
+
+  const canvas = mathEl('explorer-canvas');
+  if (canvas) { canvas.scrollLeft = 0; canvas.scrollTop = 0; }
+  if (moveFocus) mathEl('explorer-detail-title')?.focus();
+}
+
 function focusMathItem(id, moveFocus = false) {
+  if (mathMiniCollections.has(id)) {
+    focusMathMiniCollection(id, moveFocus);
+    return;
+  }
   const node = mathItems.get(id);
   if (!node) return;
   mathEl('explorer-results').hidden = true;
 
   if (node.depth === 0) {
+    mathAtlas.miniId = null;
     mathAtlas.selectedId = null;
     mathAtlas.subFocusId = null;
     mathAtlas.mode = 'branch';
   } else if (node.children) {
+    mathAtlas.miniId = null;
     mathAtlas.branchId = node.branch.id;
     mathAtlas.selectedId = null;
     mathAtlas.subFocusId = node.depth > 1 ? node.id : null;
@@ -654,10 +884,12 @@ function focusMathItem(id, moveFocus = false) {
       mathAtlas.stage = '';
       mathEl('explorer-stage').value = '';
     }
+    const activeMini = mathCurrentMini();
+    if (!activeMini || !activeMini.leafSet.has(node.id)) mathAtlas.miniId = null;
     mathAtlas.branchId = node.branch.id;
     mathAtlas.selectedId = node.id;
     mathAtlas.subFocusId = null;
-    if (mathAtlas.mode === 'branch') mathAtlas.mode = 'neighbors';
+    if (mathAtlas.mode === 'branch' || mathAtlas.mode === 'mini') mathAtlas.mode = 'neighbors';
   }
 
   renderMathExplorer();
@@ -683,6 +915,14 @@ function searchMathCollection() {
   const results = mathEl('explorer-results');
   if (!query) { results.hidden = true; return; }
   const words = query.split(/\s+/);
+  const foundMinis = [...mathMiniCollections.values()].filter(mini => {
+    const text = mathNormalize([
+      mini.name, t(mini.name), mini.tagline, t(mini.tagline),
+      mini.description, t(mini.description), ...(mini.keywords || [])
+    ].join(' '));
+    const stageOk = !mathAtlas.stage || mini.leaves.some(mathMatchesStage);
+    return stageOk && words.every(word => text.includes(word));
+  });
   const found = [...mathItems.values()].filter(node => {
     if (node.depth === 0) return false;
     const text = mathNormalize(node.path.join(' ') + ' ' + (node.scope || ''));
@@ -693,8 +933,14 @@ function searchMathCollection() {
     Number(!!a.children) - Number(!!b.children) ||
     a.depth - b.depth
   );
-  results.innerHTML = found.length
-    ? found.map(node => `<button class="explorer-result" data-math-id="${node.id}"><strong>${svEsc(node.name)}</strong><span>${svEsc(node.path.slice(0, -1).join(' › '))}</span><span class="explorer-result-meta">${node.children ? uiHTML('{n} learning trees', { n: node.count }) : `${renderDifficultyBars(node.difficulty, { compact: true })}<span>${node.difficulty}/10 · ${uiHTML(MATH_BANDS[node.stage])}</span>`}</span></button>`).join('')
+  const miniMarkup = foundMinis.map(mini =>
+    `<button class="explorer-result" data-mini-id="${mini.id}"><strong>◈ ${uiHTML(mini.name)}</strong><span>${uiHTML('Selected collection')}</span><span class="explorer-result-meta">${uiHTML('{n} learning trees', { n: mini.count })}</span></button>`
+  ).join('');
+  const itemMarkup = found.map(node =>
+    `<button class="explorer-result" data-math-id="${node.id}"><strong>${svEsc(node.name)}</strong><span>${svEsc(node.path.slice(0, -1).join(' › '))}</span><span class="explorer-result-meta">${node.children ? uiHTML('{n} learning trees', { n: node.count }) : `${renderDifficultyBars(node.difficulty, { compact: true })}<span>${node.difficulty}/10 · ${uiHTML(MATH_BANDS[node.stage])}</span>`}</span></button>`
+  ).join('');
+  results.innerHTML = (foundMinis.length || found.length)
+    ? miniMarkup + itemMarkup
     : `<p class="explorer-no-results" role="status">${uiHTML('No matching subjects. Try another word or stage.')}</p>`;
   results.hidden = false;
 }
@@ -721,6 +967,70 @@ async function addMathTreeToLibrary(id) {
     showToast(t('Added "{name}" to My Trees.', { name: node.name }));
     renderLibraryGrid();
     return libraryId;
+  } finally {
+    mathAtlas.busy = false;
+    if (mathIsOpen()) renderMathExplorer();
+  }
+}
+
+async function addMiniCollectionToLibrary(miniId) {
+  const mini = mathMiniCollections.get(miniId);
+  if (!mini || mathAtlas.busy) return [];
+  mathAtlas.busy = true;
+  renderMathDetail();
+  try {
+    if (typeof loadCatalogIndex === 'function') await loadCatalogIndex();
+    if (!libraryReady) await refreshLibraryFromSource();
+    if (!libraryReady) return [];
+    const cache = libraryCache, owner = mathOwner();
+    const missing = mini.leaves.filter(leaf => !mathEntry(leaf.id));
+    if (!missing.length) {
+      showToast(t('All trees from "{name}" are already in My Trees.', { name: t(mini.name) }));
+      return [];
+    }
+    const now = Date.now();
+    const added = {};
+    const addedIds = [];
+    missing.forEach((leaf, i) => {
+      const libraryId = genLibraryId();
+      const hasBuiltin = typeof getCatalogEntry === 'function' && !!getCatalogEntry(leaf.id);
+      const entry = hasBuiltin
+        ? { name: leaf.name, savedAt: now + i, builtinId: leaf.id, data: { topic: leaf.name, collectionId: leaf.id } }
+        : { name: leaf.name, savedAt: now + i, data: { topic: leaf.name, collectionId: leaf.id, nodes: [] } };
+      cache[libraryId] = entry;
+      added[libraryId] = entry;
+      addedIds.push(libraryId);
+    });
+    let ok = false;
+    if (librarySource === 'cloud' && state.accountUser) {
+      if (typeof window.cloud?.updateLibraryEntries === 'function') {
+        try {
+          const uid = state.accountUser.uid;
+          const payload = JSON.parse(JSON.stringify(added));
+          await queueLibraryCloudWrite(() => window.cloud.updateLibraryEntries(uid, payload));
+          ok = true;
+        } catch (e) {
+          console.error('Cloud bulk save failed:', e);
+          showToast("Couldn't save to your account — check your connection and try again.");
+          ok = false;
+        }
+      } else {
+        ok = await persistLibrary();
+      }
+    } else {
+      ok = writeLocalLibrary(cache);
+    }
+    if (!ok) {
+      for (const id of addedIds) delete cache[id];
+      return [];
+    }
+    if (cache !== libraryCache || owner !== mathOwner()) return [];
+    showToast(t(addedIds.length === 1
+      ? 'Added 1 tree from "{name}" to My Trees.'
+      : 'Added {n} trees from "{name}" to My Trees.',
+      { n: addedIds.length, name: t(mini.name) }));
+    renderLibraryGrid();
+    return addedIds;
   } finally {
     mathAtlas.busy = false;
     if (mathIsOpen()) renderMathExplorer();
@@ -774,6 +1084,8 @@ document.addEventListener('tree-loaded', () => {
 
 // ── Modal Lifecycle ──────────────────────────────────────────
 function showMathCollections() {
+  if (typeof loadCatalogIndex === 'function') void loadCatalogIndex();
+  renderCollectionPicker();
   mathEl('explorer-shell').classList.add('explorer-picking');
   mathEl('explorer-collection-picker').hidden = false;
   mathEl('explorer-collections').hidden = true;
@@ -784,7 +1096,7 @@ function showMathCollections() {
   mathEl('explorer-open-math').focus();
 }
 
-// Mathematics is currently the only collection, so open it directly.
+// Open the mathematics explorer directly (curated mini-collections live in the rail and Collections picker).
 function openTreeExplorer() { openMathAtlas(); }
 
 function openMathAtlas({ target, returnTo } = {}) {
@@ -792,14 +1104,15 @@ function openMathAtlas({ target, returnTo } = {}) {
   mathEl('explorer-shell').classList.remove('explorer-picking');
   mathEl('explorer-collection-picker').hidden = true;
   mathEl('explorer-collections').hidden = false;
-  uiText(mathEl('explorer-shell').querySelector('.explorer-eyebrow'), 'Mathematics');
   if (!mathIsOpen()) {
     mathAtlas.returnTo = returnTo || (mathEl('library-modal-backdrop').classList.contains('open') ? 'library' : null);
     mathAtlas.returnHash = location.hash;
   }
   closeLibraryModal();
   mathEl('explorer-backdrop').classList.add('open');
-  if (target && mathItems.has(target)) {
+  if (target && mathMiniCollections.has(target)) {
+    focusMathMiniCollection(target);
+  } else if (target && mathItems.has(target)) {
     focusMathItem(target);
   } else {
     renderMathExplorer();
@@ -885,13 +1198,22 @@ function setGraphHover(id) {
 
 // ── Event Wiring ─────────────────────────────────────────────
 mathEl('btn-explore-trees').addEventListener('click', openTreeExplorer);
-mathEl('explorer-open-math').addEventListener('click', () => openMathAtlas());
+mathEl('explorer-open-math').addEventListener('click', () => {
+  mathAtlas.miniId = null;
+  if (mathAtlas.mode === 'mini') mathAtlas.mode = 'branch';
+  openMathAtlas();
+});
 mathEl('explorer-collections').addEventListener('click', showMathCollections);
 mathEl('menu-explore-trees').addEventListener('click', openTreeExplorer);
 mathEl('explorer-close').addEventListener('click', () => closeMathAtlas());
 mathEl('explorer-library').addEventListener('click', () => { closeMathAtlas(false); void openLibraryModal(); });
 mathEl('explorer-backdrop').addEventListener('click', e => { if (e.target === mathEl('explorer-backdrop')) closeMathAtlas(); });
 mathEl('explorer-shell').addEventListener('click', e => {
+  const miniTarget = e.target.closest('[data-mini-id]');
+  if (miniTarget) {
+    focusMathMiniCollection(miniTarget.dataset.miniId, !!miniTarget.closest('#explorer-results'));
+    return;
+  }
   const target = e.target.closest('[data-math-id]');
   if (target) focusMathItem(target.dataset.mathId, !!target.closest('#explorer-results'));
 });
@@ -909,7 +1231,9 @@ mathEl('explorer-shell').addEventListener('keydown', e => {
   } else if (e.key === 'ArrowUp' && e.target.closest('#explorer-results')) {
     e.preventDefault(); const i = results.indexOf(e.target); (i > 0 ? results[i - 1] : mathEl('explorer-search')).focus();
   } else if (e.key === 'Enter' && e.target.id === 'explorer-search' && !mathEl('explorer-results').hidden && results[0]) {
-    e.preventDefault(); focusMathItem(results[0].dataset.mathId, true);
+    e.preventDefault();
+    if (results[0].dataset.miniId) focusMathMiniCollection(results[0].dataset.miniId, true);
+    else focusMathItem(results[0].dataset.mathId, true);
   }
 });
 mathEl('tree-back-to-atlas').addEventListener('click', () => {
@@ -924,10 +1248,21 @@ onEscape(110, () => {
   else closeMathAtlas();
   return true;
 });
-document.addEventListener('ui-language-change', () => { if (mathIsOpen()) { renderMathExplorer(); searchMathCollection(); } });
+document.addEventListener('ui-language-change', () => {
+  if (mathIsOpen()) {
+    renderMathExplorer();
+    if (mathEl('explorer-shell').classList.contains('explorer-picking')) renderCollectionPicker();
+    searchMathCollection();
+  }
+});
 document.addEventListener('library-updated', () => { if (mathIsOpen()) renderMathExplorer(); });
-document.addEventListener('catalog-loaded', () => { if (mathIsOpen()) renderMathExplorer(); });
+document.addEventListener('catalog-loaded', () => {
+  if (mathIsOpen()) {
+    renderMathExplorer();
+    if (mathEl('explorer-shell').classList.contains('explorer-picking')) renderCollectionPicker();
+  }
+});
 
 const mathLinkedId = new URLSearchParams(location.hash.slice(1)).get('explore');
-if (mathItems.has(mathLinkedId)) { openMathAtlas({ target: mathLinkedId }); mathAtlas.returnHash = ''; }
+if (mathItems.has(mathLinkedId) || mathMiniCollections.has(mathLinkedId)) { openMathAtlas({ target: mathLinkedId }); mathAtlas.returnHash = ''; }
 if (mathLinkedId === 'collections') { openMathAtlas(); showMathCollections(); mathAtlas.returnHash = ''; }

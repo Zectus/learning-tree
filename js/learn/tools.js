@@ -364,7 +364,7 @@ function makeEval(expr) {
 const GRAPH_DEFAULT_RANGE = [-10, 10];
 const GRAPH_SAMPLES_1D    = 300; // function2d / parametric2d curve resolution
 const GRAPH_SAMPLES_FIT   = 150; // samples used only to pick an automatic y range
-const GRAPH_SAMPLES_GRID  = 40;  // surface3d, per axis
+const GRAPH_SAMPLES_GRID  = 72;  // surface3d, per axis
 const GRAPH_SAMPLES_FIELD = 15;  // vectorfield2d arrows, per axis
 const GRAPH_HEIGHT_2D     = 340; // px, used when the stylesheet gives the plot box no height
 const GRAPH_PALETTE = Array.from({ length: 6 }, (_, i) => `var(--graph-${i + 1})`);
@@ -422,13 +422,54 @@ function parseNumList(str, n, fallback) {
   const a = String(str || '').split(',').map(s => parseFloat(s));
   return (a.length >= n && a.slice(0, n).every(Number.isFinite)) ? a.slice(0, n) : fallback;
 }
+/* Converts lightweight LaTeX math strings into clean Unicode plain text for
+   non-HTML targets (such as Plotly's WebGL 3D axis titles) where KaTeX cannot
+   run. Leaves plain text unchanged. */
+const LATEX_SYMBOLS = {
+  alpha:'α', beta:'β', gamma:'γ', delta:'δ', epsilon:'ε', varepsilon:'ε',
+  zeta:'ζ', eta:'η', theta:'θ', vartheta:'θ', iota:'ι', kappa:'κ',
+  lambda:'λ', mu:'μ', nu:'ν', xi:'ξ', pi:'π', varpi:'π', rho:'ρ', varrho:'ρ',
+  sigma:'σ', varsigma:'ς', tau:'τ', upsilon:'υ', phi:'φ', varphi:'φ',
+  chi:'χ', psi:'ψ', omega:'ω',
+  Gamma:'Γ', Delta:'Δ', Theta:'Θ', Lambda:'Λ', Xi:'Ξ', Pi:'Π',
+  Sigma:'Σ', Upsilon:'Υ', Phi:'Φ', Psi:'Ψ', Omega:'Ω',
+  times:'×', cdot:'·', pm:'±', mp:'∓', div:'÷',
+  le:'≤', leq:'≤', ge:'≥', geq:'≥', ne:'≠', neq:'≠', approx:'≈', equiv:'≡',
+  infty:'∞', partial:'∂', nabla:'∇', degree:'°', circ:'°',
+  langle:'⟨', rangle:'⟩', lvert:'|', rvert:'|', lVert:'‖', rVert:'‖',
+  to:'→', rightarrow:'→', leftarrow:'←', Rightarrow:'⇒', Leftarrow:'⇐',
+  in:'∈', notin:'∉', subset:'⊂', subseteq:'⊆', cup:'∪', cap:'∩', varnothing:'∅', emptyset:'∅',
+};
+const MATH_SUPERSCRIPTS = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','-':'⁻','=':'⁼','(':'⁽',')':'⁾','n':'ⁿ','i':'ⁱ' };
+const MATH_SUBSCRIPTS = { '0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉','+':'₊','-':'₋','=':'₌','(':'₍',')':'₎','a':'ₐ','e':'ₑ','h':'ₕ','i':'ᵢ','j':'ⱼ','k':'ₖ','l':'ₗ','m':'ₘ','n':'ₙ','o':'ₒ','p':'ₚ','r':'ᵣ','s':'ₛ','t':'ₜ','u':'ᵤ','v':'ᵥ','x':'ₓ' };
+const BLACKBOARD_BOLD = { R:'ℝ', C:'ℂ', Z:'ℤ', N:'ℕ', Q:'ℚ' };
+
+function plainMathText(str) {
+  let s = String(str ?? '').trim();
+  if (!s) return '';
+  s = s.replace(/\\\(|\\\)|\\\[|\\\]|\$\$/g, '').replace(/(^|[^\\])\$/g, '$1');
+  s = s.replace(/\\mathbb\{([A-Z])\}/g, (_, ch) => BLACKBOARD_BOLD[ch] || ch);
+  s = s.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2');
+  s = s.replace(/\\sqrt\{([^{}]+)\}/g, (_, inner) => inner.length === 1 ? `√${inner}` : `√(${inner})`);
+  for (let i = 0; i < 3; i++) {
+    s = s.replace(/\\(?:text|textrm|textbf|textit|mathrm|mathbf|mathit|mathsf|mathcal|boldsymbol|operatorname|vec|hat|bar|tilde|overline)\{([^{}]*)\}/g, '$1');
+  }
+  s = s.replace(/\\(?:left|right)\b/g, '');
+  s = s.replace(/\\(?:quad|qquad|,|;|:|!| )/g, ' ');
+  s = s.replace(/\\([A-Za-z]+)/g, (_, cmd) => Object.hasOwn(LATEX_SYMBOLS, cmd) ? LATEX_SYMBOLS[cmd] : cmd);
+  const mapChars = (txt, table) => [...txt].every(ch => Object.hasOwn(table, ch)) ? [...txt].map(ch => table[ch]).join('') : null;
+  s = s.replace(/\^\{([^{}]+)\}|\^([0-9a-zA-Z+\-])/g, (all, g1, g2) => mapChars(g1 ?? g2, MATH_SUPERSCRIPTS) ?? all);
+  s = s.replace(/_\{([^{}]+)\}|_([0-9a-zA-Z+\-])/g, (all, g1, g2) => mapChars(g1 ?? g2, MATH_SUBSCRIPTS) ?? all);
+  return s.replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+}
+
 /* A caption that is exactly one \( ... \) span is typeset by KaTeX inside the
-   board; anything else is shown as plain text with the delimiters removed. */
+   board; anything else is shown as plain text with LaTeX converted cleanly. */
 function captionSpec(str) {
   const s = (str || '').trim();
   const whole = s.match(/^\\\(([\s\S]*)\\\)$/);
   if (whole && !whole[1].includes('\\)') && window.katex) return { text: whole[1].trim(), katex: true };
-  return { text: s.replace(/\\\(|\\\)/g, '').trim(), katex: false };
+  return { text: plainMathText(s), katex: false };
 }
 let graphFontPx = 16; // set per board from the surrounding page's own text size
 function labelAttrs(spec, color, extra) {
@@ -514,6 +555,9 @@ function surfaceThemeLayout(el) {
   const cs = getComputedStyle(el);
   const theme = name => cs.getPropertyValue(name).trim();
   const dark = document.documentElement.classList.contains('dark');
+  const basePx = parseFloat(cs.fontSize) || 16;
+  const tickSize = Math.round(basePx * 0.72);
+  const titleSize = Math.round(basePx * 0.84);
   const axis = {
     color: theme('--text-m'),
     gridcolor: dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.09)',
@@ -521,18 +565,19 @@ function surfaceThemeLayout(el) {
     showbackground: false,
     showspikes: false,
     nticks: 5,
-    tickfont: { size: 11, color: theme('--text-m') },
-    titlefont: { size: 12, color: theme('--text') },
+    tickfont: { size: tickSize, color: theme('--text-m') },
+    title: { font: { size: titleSize, color: theme('--text') } },
   };
   return {
     paper_bgcolor: theme('--bg'),
-    font: { color: theme('--text'), family: cs.fontFamily, size: 12 },
+    font: { color: theme('--text'), family: cs.fontFamily, size: titleSize },
     scene: {
       bgcolor: theme('--bg'),
-      aspectmode: 'cube',
-      xaxis: { ...axis }, yaxis: { ...axis }, zaxis: { ...axis },
+      xaxis: { ...axis, title: { font: { ...axis.title.font } } },
+      yaxis: { ...axis, title: { font: { ...axis.title.font } } },
+      zaxis: { ...axis, title: { font: { ...axis.title.font } } },
     },
-    hoverlabel: { bgcolor: theme('--surface'), bordercolor: theme('--border-h'), font: { color: theme('--text'), size: 12 } },
+    hoverlabel: { bgcolor: theme('--surface'), bordercolor: theme('--border-h'), font: { color: theme('--text'), size: tickSize } },
   };
 }
 
@@ -547,30 +592,134 @@ function refreshGraphThemes() {
   if (typeof Plotly === 'undefined') return;
   document.querySelectorAll('.sv-graph-plot.js-plotly-plot').forEach(el => {
     const { scene, ...layout } = surfaceThemeLayout(el);
-    // Patch colors only, preserving the camera, ranges and axis captions.
-    Plotly.relayout(el, { ...layout, 'scene.bgcolor': scene.bgcolor,
-      ...Object.fromEntries(['xaxis', 'yaxis', 'zaxis'].flatMap(name =>
-        Object.entries(scene[name]).map(([key, value]) => [`scene.${name}.${key}`, value]))),
-    });
+    // Patch colors and fonts only, preserving camera, ranges, aspectratio and axis title text.
+    const axisPatches = ['xaxis', 'yaxis', 'zaxis'].flatMap(name =>
+      Object.entries(scene[name]).map(([key, value]) =>
+        key === 'title' ? [`scene.${name}.title.font`, value.font] : [`scene.${name}.${key}`, value]
+      )
+    );
+    Plotly.relayout(el, { ...layout, 'scene.bgcolor': scene.bgcolor, ...Object.fromEntries(axisPatches) });
     Plotly.restyle(el, { colorscale: [surfaceColorscale()] });
   });
+}
+
+/* Samples z = f(x, y) on an n×n grid. When the surface has a partial domain
+   (some cells evaluate to NaN/null, e.g. a hemisphere or disk), null cells
+   bordering valid interior cells are snapped onto the exact domain boundary
+   via binary search so curved rims close smoothly instead of jagged spikes. */
+function sampleSurface3dGrid(f, xlo, xhi, ylo, yhi, n = GRAPH_SAMPLES_GRID) {
+  const xs = graphLinspace(xlo, xhi, n);
+  const ys = graphLinspace(ylo, yhi, n);
+  // Plotly's surface convention: z[iy][ix] is the value at (xs[ix], ys[iy]).
+  const zRaw = ys.map(y => xs.map(x => {
+    const v = f({ x, y });
+    return Number.isFinite(v) ? v : null;
+  }));
+
+  let hasNull = false, zMin = Infinity, zMax = -Infinity;
+  for (let iy = 0; iy < n; iy++) {
+    for (let ix = 0; ix < n; ix++) {
+      const v = zRaw[iy][ix];
+      if (v === null) hasNull = true;
+      else { if (v < zMin) zMin = v; if (v > zMax) zMax = v; }
+    }
+  }
+  if (!Number.isFinite(zMin)) return { x: xs, y: ys, z: zRaw, zMin: -1, zMax: 1 };
+  if (!hasNull) return { x: xs, y: ys, z: zRaw, zMin, zMax };
+
+  const zSpan = Math.max(1e-6, zMax - zMin);
+  const zLoBound = zMin - 0.5 * zSpan;
+  const zHiBound = zMax + 0.5 * zSpan;
+  const X = ys.map(() => xs.slice());
+  const Y = ys.map(y => Array(n).fill(y));
+  const Z = zRaw.map(row => row.slice());
+  const dirs4 = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+  const dirsDiag = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+
+  for (let iy = 0; iy < n; iy++) {
+    for (let ix = 0; ix < n; ix++) {
+      if (zRaw[iy][ix] !== null) continue;
+      let sx = 0, sy = 0, cnt = 0;
+      for (const [dx, dy] of dirs4) {
+        const nx = ix + dx, ny = iy + dy;
+        if (nx >= 0 && nx < n && ny >= 0 && ny < n && zRaw[ny][nx] !== null) {
+          sx += xs[nx]; sy += ys[ny]; cnt++;
+        }
+      }
+      if (!cnt) {
+        for (const [dx, dy] of dirsDiag) {
+          const nx = ix + dx, ny = iy + dy;
+          if (nx >= 0 && nx < n && ny >= 0 && ny < n && zRaw[ny][nx] !== null) {
+            sx += xs[nx]; sy += ys[ny]; cnt++;
+          }
+        }
+      }
+      if (!cnt) continue;
+
+      let ax = sx / cnt, ay = sy / cnt;
+      let av = f({ x: ax, y: ay });
+      if (!Number.isFinite(av)) {
+        outer: for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            if (!dx && !dy) continue;
+            const nx = ix + dx, ny = iy + dy;
+            if (nx >= 0 && nx < n && ny >= 0 && ny < n && zRaw[ny][nx] !== null) {
+              ax = xs[nx]; ay = ys[ny]; av = zRaw[ny][nx];
+              break outer;
+            }
+          }
+        }
+      }
+      const bx = xs[ix], by = ys[iy];
+      let lo = 0, hi = 1, bestX = ax, bestY = ay, bestZ = av;
+      for (let step = 0; step < 12; step++) {
+        const mid = (lo + hi) * 0.5;
+        const mx = ax + (bx - ax) * mid;
+        const my = ay + (by - ay) * mid;
+        const mv = f({ x: mx, y: my });
+        if (Number.isFinite(mv) && mv >= zLoBound && mv <= zHiBound) {
+          lo = mid; bestX = mx; bestY = my; bestZ = mv;
+        } else {
+          hi = mid;
+        }
+      }
+      X[iy][ix] = bestX;
+      Y[iy][ix] = bestY;
+      Z[iy][ix] = bestZ;
+      if (bestZ < zMin) zMin = bestZ;
+      if (bestZ > zMax) zMax = bestZ;
+    }
+  }
+  return { x: X, y: Y, z: Z, zMin, zMax };
 }
 
 function mountSurface3d(g, el) {
   const [xlo, xhi] = g.xrange || GRAPH_DEFAULT_RANGE;
   const [ylo, yhi] = g.yrange || GRAPH_DEFAULT_RANGE;
-  const xs = graphLinspace(xlo, xhi, GRAPH_SAMPLES_GRID);
-  const ys = graphLinspace(ylo, yhi, GRAPH_SAMPLES_GRID);
   const f  = makeEval(g.z);
-  // Plotly's surface convention: z[iy][ix] is the value at (xs[ix], ys[iy]).
-  const zGrid = ys.map(y => xs.map(x => { const v = f({ x, y }); return Number.isNaN(v) ? null : v; }));
+  const { x, y, z, zMin, zMax } = sampleSurface3dGrid(f, xlo, xhi, ylo, yhi, GRAPH_SAMPLES_GRID);
   const layout = surfaceThemeLayout(el);
   layout.margin = { t: 4, r: 4, b: 4, l: 4 };
   layout.showlegend = false;
-  layout.scene.camera = { eye: { x: 1.45, y: 1.45, z: 1.15 } };
-  ['x', 'y', 'z'].forEach(axis => { layout.scene[`${axis}axis`].title = { text: g[`${axis}label`] || '' }; });
+  layout.scene.camera = { eye: { x: 1.28, y: 1.28, z: 0.92 } };
+
+  const dx = Math.max(1e-6, Math.abs(xhi - xlo));
+  const dy = Math.max(1e-6, Math.abs(yhi - ylo));
+  const dz = Math.max(1e-6, zMax - zMin);
+  if (/^equal$/i.test(g.aspect || '')) {
+    layout.scene.aspectmode = 'data';
+  } else {
+    const m = Math.max(dx, dy, dz);
+    const clamp = r => Math.max(0.35, Math.min(1, r));
+    layout.scene.aspectmode = 'manual';
+    layout.scene.aspectratio = { x: clamp(dx / m), y: clamp(dy / m), z: clamp(dz / m) };
+  }
+
+  ['x', 'y', 'z'].forEach(axis => {
+    layout.scene[`${axis}axis`].title.text = plainMathText(g[`${axis}label`]);
+  });
   const traces = [{
-    x: xs, y: ys, z: zGrid, type: 'surface', showscale: false,
+    x, y, z, type: 'surface', showscale: false,
     colorscale: surfaceColorscale(),
     lighting: { ambient: 0.65, diffuse: 0.65, specular: 0.2, roughness: 0.6, fresnel: 0.15 },
     contours: { z: { show: true, usecolormap: false, color: 'rgba(255,255,255,0.16)', width: 1, highlight: false } },

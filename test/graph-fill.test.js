@@ -112,3 +112,66 @@ test('2D graph label de-overlapper nudges colliding point and segment labels wit
     assert.deepEqual(clean, { l: basePt.l, t: basePt.t });
   } finally { app.window.close(); }
 });
+
+test('surface3d strips LaTeX delimiters to Unicode axis titles, preserves theme fonts, snaps partial-domain rims, and uses proportional aspect ratios', () => {
+  const app = loadApp();
+  try {
+    // plainMathText handles delimiters, Greek letters, scripts, fractions, roots, and blackboard bold
+    assert.equal(app.ev("plainMathText('\\\\(x\\\\)')"), 'x');
+    assert.equal(app.ev("plainMathText('\\\\(y\\\\)')"), 'y');
+    assert.equal(app.ev("plainMathText('\\\\(\\\\theta\\\\) (rad)')"), 'θ (rad)');
+    assert.equal(app.ev("plainMathText('\\\\(x^2 + y_1\\\\)')"), 'x² + y₁');
+    assert.equal(app.ev("plainMathText('\\\\(\\\\mathbb{R}^3\\\\)')"), 'ℝ³');
+
+    const calls = [];
+    app.window.Plotly = {
+      newPlot(el, traces, layout) {
+        calls.push({ traces, layout });
+        el.classList.add('js-plotly-plot');
+        return Promise.resolve();
+      },
+      relayout(el, patch) { calls.push({ relayout: patch }); },
+      restyle() {},
+    };
+    app.window.raw3d = `type: surface3d
+title: Upper hemisphere \\(z = \\sqrt{4 - x^2 - y^2}\\)
+xlabel: \\(x\\)
+ylabel: \\(y\\)
+zlabel: \\(z\\)
+xrange: -2.2, 2.2
+yrange: -2.2, 2.2
+z: x^2 + y^2 <= 4 ? sqrt(4 - x^2 - y^2) : 0/0`;
+    app.ev('var g3 = parseGraphBody(raw3d)');
+    app.document.body.insertAdjacentHTML('beforeend', app.ev('renderGraph(g3, "s3d")'));
+    app.ev('mountSurface3d(g3, document.getElementById("sv-graph-s3d"))');
+
+    const { traces, layout } = calls[0];
+    // Axis titles must be clean plain text without raw \( \) delimiters and with Plotly 3 title.font
+    assert.equal(layout.scene.xaxis.title.text, 'x');
+    assert.equal(layout.scene.yaxis.title.text, 'y');
+    assert.equal(layout.scene.zaxis.title.text, 'z');
+    assert.equal(layout.scene.xaxis.titlefont, undefined);
+    assert.ok(layout.scene.xaxis.title.font.size > 0);
+
+    // Partial-domain hemisphere rim snaps smoothly down near z = 0 with 2D x/y coordinate grids
+    const tr = traces[0];
+    assert.ok(Array.isArray(tr.x[0]), 'partial-domain surface uses 2D coordinate matrices');
+    const flatZ = tr.z.flat().filter(v => v !== null);
+    const minZ = Math.min(...flatZ);
+    const maxZ = Math.max(...flatZ);
+    assert.ok(minZ < 0.05, `expected snapped rim near z=0, got ${minZ}`);
+    assert.ok(maxZ > 1.98 && maxZ <= 2.0001);
+
+    // Proportional aspect ratio reflects the 2:4.4 hemisphere height instead of stretching into a cube
+    assert.equal(layout.scene.aspectmode, 'manual');
+    assert.equal(layout.scene.aspectratio.x, 1);
+    assert.equal(layout.scene.aspectratio.y, 1);
+    assert.ok(layout.scene.aspectratio.z > 0.42 && layout.scene.aspectratio.z < 0.50);
+
+    // Theme refresh patches title.font without clobbering axis title.text
+    app.ev('refreshGraphThemes()');
+    const relayout = calls.find(c => c.relayout)?.relayout;
+    assert.ok(relayout['scene.xaxis.title.font']);
+    assert.equal(relayout['scene.xaxis.title'], undefined);
+  } finally { app.window.close(); }
+});

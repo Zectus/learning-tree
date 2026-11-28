@@ -496,7 +496,27 @@ Object.assign(UI_ES, {
   'Core':'Base universitaria',
   'Advanced':'Avanzado',
   'Research':'Investigación',
-  'Level {n}/10 · {band}':'Nivel {n}/10 · {band}'
+  'Level {n}/10 · {band}':'Nivel {n}/10 · {band}',
+  'Full collections':'Colecciones completas',
+  'Selected mini-collections':'Mini colecciones seleccionadas',
+  'Selected collection':'Colección seleccionada',
+  'Selected collections':'Selecciones',
+  'Branches':'Ramas',
+  'PUCP Engineering · 1st Semester':'Ingeniería PUCP · 1.er ciclo',
+  'First-semester engineering mathematics curriculum with bilingual lessons':'Malla de matemáticas del primer ciclo de ingeniería en la PUCP con lecciones bilingües',
+  '15 mathematics trees matching the first-semester engineering curriculum at PUCP (Estudios Generales Ciencias), covering logic and sets, real numbers and functions, trigonometry, analytic geometry in 2D and 3D, vectors, complex numbers, matrices, determinants, and descriptive statistics.':'15 árboles de matemáticas alineados con el primer ciclo de ingeniería en la PUCP (Estudios Generales Ciencias): lógica y conjuntos, números reales y funciones, trigonometría, geometría analítica en 2D y 3D, vectores, números complejos, matrices, determinantes y estadística descriptiva.',
+  'Add all to My Trees':'Añadir todos a Mis árboles',
+  'Add remaining ({n}) to My Trees':'Añadir los {n} restantes a Mis árboles',
+  '✓ All in My Trees':'✓ Todos en Mis árboles',
+  '{saved}/{total} in My Trees':'{saved}/{total} en Mis árboles',
+  '{n} ready to open':'{n} listos para abrir',
+  '{n} lessons ready':'{n} lecciones listas',
+  '1 lesson ready':'1 lección lista',
+  'Ready to open':'Listo para abrir',
+  'Built-in tree ready to open':'Árbol integrado listo para abrir',
+  'Added 1 tree from "{name}" to My Trees.':'Se añadió 1 árbol de «{name}» a Mis árboles.',
+  'Added {n} trees from "{name}" to My Trees.':'Se añadieron {n} árboles de «{name}» a Mis árboles.',
+  'All trees from "{name}" are already in My Trees.':'Todos los árboles de «{name}» ya están en Mis árboles.'
 });
 
 // Single-node clipboard/paste controls and structural diagnostics.
