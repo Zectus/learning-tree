@@ -1,0 +1,279 @@
+=== SECTION 1: Intercepts, sign intervals, and monotonicity ===
+
+Knowing a function's domain and range tells you where the graph lives horizontally and vertically, but it says nothing about the shape of the graph inside that box. Does the curve climb or fall? Where does it cross the axes, where is it above zero, and where does it peak? To describe a function cleanly without drawing it every time, mathematicians use a standard qualitative vocabulary.
+
+First come the intercepts and sign intervals:
+- The \(y\)-intercept is the point \((0, f(0))\), provided \(0 \in \operatorname{Dom}(f)\). Because a function assigns at most one output to \(x = 0\), a function can have at most one \(y\)-intercept.
+- The \(x\)-intercepts (also called zeros or roots) are the points \((r, 0)\) where \(f(r) = 0\). A function may have none, one, several, or infinitely many \(x\)-intercepts.
+- A function is positive on the \(x\)-intervals where \(f(x) > 0\) (graph strictly above the \(x\)-axis) and negative on the \(x\)-intervals where \(f(x) < 0\) (graph strictly below the \(x\)-axis).
+
+Next comes monotonicity—whether outputs rise, fall, or stay flat as we read the graph from left to right.
+
+[CALLOUT]
+id: monotonicity-def
+label: Definition
+title: Increasing, decreasing, and constant on an interval
+tone: key
+
+Let \(I\) be an interval contained in the domain of a function \(f\).
+
+(1) \(f\) is strictly increasing on \(I\) if for every \(x_1, x_2 \in I\) with \(x_1 < x_2\), we have \(f(x_1) < f(x_2)\).
+(2) \(f\) is strictly decreasing on \(I\) if for every \(x_1, x_2 \in I\) with \(x_1 < x_2\), we have \(f(x_1) > f(x_2)\).
+(3) \(f\) is constant on \(I\) if for every \(x_1, x_2 \in I\), we have \(f(x_1) = f(x_2)\).
+[/CALLOUT]
+
+Notice how [REF: monotonicity-def | this definition] works: we always move in the positive \(x\)-direction (\(x_1 < x_2\), left to right) and ask what happens to the output \(f(x)\).
+
+[CALLOUT]
+id: x-intervals-pitfall
+label: Common pitfall
+title: Report \(x\)-intervals, not \(y\)-values
+tone: caution
+
+Intervals of increase, decrease, constancy, and sign are always intervals of input values \(x\), never intervals of output values \(y\). By standard precalculus convention, monotonicity intervals are reported as open intervals \((a, b)\) so turning points where rising switches to falling do not have to be assigned simultaneously to both sides.
+[/CALLOUT]
+
+Examine the cubic function \(f(x) = x^3 - 3x\) in the graph below. Its \(y\)-intercept is \((0, 0)\). Factoring \(x^3 - 3x = x(x^2 - 3)\) shows three \(x\)-intercepts: \((-\sqrt{3}, 0)\), \((0, 0)\), and \((\sqrt{3}, 0)\). The graph rises until it reaches a peak at \((-1, 2)\), falls to a valley at \((1, -2)\), and then rises forever.
+
+[GRAPH]
+type: function2d
+title: Intercepts, turning points, and monotonicity of \(f(x) = x^3 - 3x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.4, 2.4
+yrange: -4, 4
+trace: x^3 - 3*x | label: \(f(x) = x^3 - 3x\)
+trace: 0 | label: \(y = 0\)
+point: -1.7321, 0 | label: \((-\sqrt{3}, 0)\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1.7321, 0 | label: \((\sqrt{3}, 0)\)
+point: -1, 2 | label: \((-1, 2)\)
+point: 1, -2 | label: \((1, -2)\)
+[/GRAPH]
+
+Reading the graph from left to right and following [REF: x-intervals-pitfall | the \(x\)-interval rule]:
+- \(f\) is positive (\(f(x) > 0\)) on \((-\sqrt{3}, 0) \cup (\sqrt{3}, \infty)\) and negative (\(f(x) < 0\)) on \((-\infty, -\sqrt{3}) \cup (0, \sqrt{3})\).
+- \(f\) is strictly increasing on \((-\infty, -1)\) and on \((1, \infty)\).
+- \(f\) is strictly decreasing on \((-1, 1)\).
+
+Be careful about one subtle point with unions: even though \(f\) is increasing on \((-\infty, -1)\) and on \((1, \infty)\), we list those two intervals separately ("on \((-\infty, -1)\) and \((1, \infty)\)") rather than writing "increasing on \((-\infty, -1) \cup (1, \infty)\)." Why? Take \(x_1 = -1.2\) (in the left interval) and \(x_2 = 1.2\) (in the right interval). Then \(x_1 < x_2\), yet \(f(-1.2) = 1.872 > -1.872 = f(1.2)\), violating [REF: monotonicity-def.1 | strict increase] across the gap.
+
+[QUESTION 1]
+[ANSWER: C]
+A continuous function \(h\) on \((-\infty, \infty)\) falls steadily from left to right until it reaches a valley at \((-2, -5)\), rises steadily from \((-2, -5)\) to a peak at \((3, 4)\), and then falls steadily for \(x > 3\). On which open interval is \(h\) strictly increasing?
+
+(A) \((-5, 4)\)
+(B) \((-\infty, -2)\) and \((3, \infty)\)
+(C) \((-2, 3)\)
+(D) \((-5, -2)\)
+(E) \((3, 4)\)
+[/QUESTION]
+
+=== SECTION 2: Local and global extrema, and boundedness ===
+
+At the turning point \((-1, 2)\) of \(f(x) = x^3 - 3x\) above, the value \(2\) is higher than all nearby outputs of \(f\), yet it is not the highest output overall because \(f(3) = 18 > 2\). This distinction between "highest nearby" and "highest everywhere" separates local extrema from global extrema.
+
+[CALLOUT]
+id: extrema-bounded
+label: Definition
+title: Local extrema, global extrema, and boundedness
+tone: key
+
+Let \(f\) be a function with domain \(D\) and let \(c \in D\).
+
+(1) \(f(c)\) is a local (relative) maximum if there is some open interval around \(c\) on which \(f(x) \le f(c)\) for all \(x\) in that interval (intersected with \(D\)). It is a local (relative) minimum if \(f(x) \ge f(c)\) on some open interval around \(c\).
+(2) \(f(c)\) is the global (absolute) maximum if \(f(x) \le f(c)\) for every \(x \in D\). It is the global (absolute) minimum if \(f(x) \ge f(c)\) for every \(x \in D\).
+(3) \(f\) is bounded above if there is a real number \(M\) such that \(f(x) \le M\) for all \(x \in D\); bounded below if there is a real number \(m\) such that \(f(x) \ge m\) for all \(x \in D\); and bounded if it is both bounded above and bounded below.
+[/CALLOUT]
+
+Keep the wording of [REF: extrema-bounded | extrema] precise: the extremum itself is the output value \(f(c)\), while \(c\) is the input location where it occurs. Saying "the local maximum is \(2\), occurring at \(x = -1\)" avoids any confusion between \(x\) and \(y\).
+
+Also notice the difference between being bounded above and having a global maximum. Every function with a global maximum is bounded above (take \(M\) to be that maximum). The converse is not always true: the function \(r(x) = 1 - \frac{1}{x^2 + 1}\) satisfies \(0 \le r(x) < 1\) for all real \(x\), so it is bounded above by \(M = 1\) (and bounded below by \(m = 0\)), yet \(r(x)\) never actually equals \(1\), so it has no global maximum!
+
+Contrast this with the quartic function \(g(x) = x^4 - 4x^2 + 1\), plotted below. Its outputs dip to two equal valleys at \(x = -\sqrt{2}\) and \(x = \sqrt{2}\), where \(g(\pm\sqrt{2}) = 4 - 8 + 1 = -3\), and rise to a central peak at \((0, 1)\). Because \(x^4 - 4x^2 + 1 = (x^2 - 2)^2 - 3 \ge -3\) for every real \(x\), the value \(-3\) is both a local minimum and the global minimum (attained twice, at \(x = \pm\sqrt{2}\)). The value \(1\) at \(x = 0\) is a local maximum, but not a global maximum because \(g(x)\) grows without bound as \(|x|\) gets large. Hence \(g\) is bounded below (for instance, by \(-3\)), not bounded above, and therefore not bounded.
+
+[GRAPH]
+type: function2d
+title: Local maximum \((0, 1)\) and global minima \((\pm\sqrt{2}, -3)\) of \(g(x) = x^4 - 4x^2 + 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.4, 2.4
+yrange: -4, 5
+trace: x^4 - 4*x^2 + 1 | label: \(g(x) = x^4 - 4x^2 + 1\)
+trace: -3 | label: \(y = -3\)
+point: 0, 1 | label: \((0, 1)\)
+point: -1.4142, -3 | label: \((-\sqrt{2}, -3)\)
+point: 1.4142, -3 | label: \((\sqrt{2}, -3)\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: E]
+Consider the function \(p(x) = \frac{4}{x^2 + 1}\) defined on \((-\infty, \infty)\). Which statement is true about \(p\)?
+
+(A) \(p\) has a global maximum of \(4\) and a global minimum of \(0\).
+(B) \(p\) is unbounded above because \(x^2 + 1\) can grow arbitrarily large.
+(C) \(p\) has no global maximum, but has a global minimum of \(0\) at \(x = 0\).
+(D) \(p\) is bounded above by \(4\), but is not bounded below.
+(E) \(p\) is bounded, has a global maximum of \(4\) at \(x = 0\), and has no global minimum.
+[/QUESTION]
+
+=== SECTION 3: Average rate of change and secant lines ===
+
+Saying a function is increasing on \([1, 4]\) tells you its outputs went up, but not how fast. If a car's position changes from \(20\text{ km}\) at \(t = 1\text{ h}\) to \(230\text{ km}\) at \(t = 4\text{ h}\), its average speed over those \(3\) hours is \(\frac{230 - 20}{4 - 1} = 70\text{ km/h}\). In general, we measure how fast a function changes on average over an interval \([a, b]\) by dividing the net change in output by the net change in input.
+
+[CALLOUT]
+id: aroc-def
+label: Definition
+title: Average rate of change
+tone: key
+
+For a function \(f\) and two distinct inputs \(a\) and \(b\) in its domain, the average rate of change of \(f\) on \([a, b]\) is
+\[
+\frac{\Delta y}{\Delta x} = \frac{f(b) - f(a)}{b - a}.
+\]
+Geometrically, this ratio is the slope of the secant line passing through the two points \((a, f(a))\) and \((b, f(b))\) on the graph of \(f\).
+[/CALLOUT]
+
+Notice how [REF: aroc-def | the average rate of change] connects directly to the difference quotient \(\frac{f(x + h) - f(x)}{h}\): setting \(a = x\) and \(b = x + h\) turns \(b - a\) into \(h\).
+
+Let us compute and compare average rates of change for the parabola \(f(x) = x^2 - 2x + 3\) on three intervals starting at \(a = 1\) (where \(f(1) = 2\)):
+- On \([1, 2]\): \(f(2) = 3\), so the average rate of change is \(\frac{3 - 2}{2 - 1} = 1\).
+- On \([1, 4]\): \(f(4) = 11\), so the average rate of change is \(\frac{11 - 2}{4 - 1} = \frac{9}{3} = 3\).
+- On \([-1, 1]\): \(f(-1) = 6\), so the average rate of change is \(\frac{2 - 6}{1 - (-1)} = \frac{-4}{2} = -2\).
+
+Unlike a linear function \(L(x) = mx + c\)—whose average rate of change is the constant \(m\) on every interval—a curved graph has different secant slopes on different intervals. Drag the slider \(b\) in the graph below to move the second point \((b, f(b))\) along \(f(x) = x^2 - 2x + 3\) and watch the secant line tilt from negative slope to positive slope.
+
+[GRAPH]
+type: function2d
+title: Secant line on \(f(x) = x^2 - 2x + 3\) from \(a = 1\) to \(b\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1.5, 4.5
+yrange: 0, 12
+trace: x^2 - 2*x + 3 | label: \(f(x) = x^2 - 2x + 3\)
+trace: 2 + (b - 1)*(x - 1) | label: secant line
+point: 1, 2 | label: \((1, 2)\)
+point: b, b^2 - 2*b + 3 | label: \((b, f(b))\)
+segment: 1, 2, b, 2 | dashed: true
+segment: b, 2, b, b^2 - 2*b + 3 | dashed: true
+slider: b | range: -1, 4 | init: 3 | step: 0.5
+[/GRAPH]
+
+Keep in mind what an average rate of change does and does not tell you: it depends only on the two endpoints \(a\) and \(b\), not on the path between them. For \(f(x) = x^2 - 2x + 3\) on \([0, 2]\), we have \(f(0) = 3\) and \(f(2) = 3\), so the average rate of change is \(\frac{3 - 3}{2 - 0} = 0\) even though the function drops to \(2\) at \(x = 1\) and climbs back up. A zero average rate of change means the net change is zero, not that the function stayed constant.
+
+[QUESTION 3]
+[ANSWER: B]
+For \(f(x) = \frac{12}{x + 1}\), what is the average rate of change of \(f\) on the interval \([1, 5]\)?
+
+(A) \(-4\)
+(B) \(-1\)
+(C) \(1\)
+(D) \(-\frac{4}{5}\)
+(E) \(-2\)
+[/QUESTION]
+
+=== SECTION 4: Even, odd, and neither: algebraic and graphical symmetry ===
+
+Many important functions display clean balance across the coordinate axes. Look back at \(g(x) = x^4 - 4x^2 + 1\) from Section 2: folding its graph along the \(y\)-axis matches the left half onto the right half point for point, because opposite inputs \(x\) and \(-x\) always give identical outputs. Now look back at \(f(x) = x^3 - 3x\) from Section 1: opposite inputs \(x\) and \(-x\) give opposite outputs—for example, \(f(-1) = 2\) and \(f(1) = -2\)—so rotating its graph by \(180^\circ\) around the origin \((0, 0)\) lands the graph back on itself.
+
+[CALLOUT]
+id: even-odd-def
+label: Definition
+title: Even and odd functions
+tone: key
+
+Let \(f\) be a function whose domain \(D\) is symmetric about \(0\) (meaning that whenever \(x \in D\), we also have \(-x \in D\)).
+
+(1) \(f\) is even if \(f(-x) = f(x)\) for every \(x \in D\). Equivalently, its graph is symmetric across the \(y\)-axis: \((x, y)\) lies on the graph if and only if \((-x, y)\) does.
+(2) \(f\) is odd if \(f(-x) = -f(x)\) for every \(x \in D\). Equivalently, its graph has \(180^\circ\) rotational symmetry about the origin: \((x, y)\) lies on the graph if and only if \((-x, -y)\) does.
+[/CALLOUT]
+
+Notice the hidden prerequisite right at the top of [REF: even-odd-def | the definition]: the domain must be symmetric about \(0\). If \(x = 2\) is in the domain while \(x = -2\) is not, then the equation \(f(-x) = \pm f(x)\) cannot even be tested at \(x = 2\). For example, \(f(x) = x^2\) restricted to \([-1, 3]\) is neither even nor odd even though the formula \(x^2\) looks even, because \(3\) is in the domain while \(-3\) is not.
+
+[GRAPH]
+type: function2d
+title: Even symmetry of \(x^2 - 1\) across the \(y\)-axis versus odd symmetry of \(x^3 - x\) about the origin
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.2, 2.2
+yrange: -4, 4
+trace: x^2 - 1 | label: \(x^2 - 1\) (even)
+trace: x^3 - x | label: \(x^3 - x\) (odd)
+point: 1.5, 1.25 | label: \((1.5, 1.25)\)
+point: -1.5, 1.25 | label: \((-1.5, 1.25)\)
+segment: -1.5, 1.25, 1.5, 1.25 | dashed: true
+point: 1.5, 1.875 | label: \((1.5, 1.875)\)
+point: -1.5, -1.875 | label: \((-1.5, -1.875)\)
+segment: -1.5, -1.875, 1.5, 1.875 | dashed: true
+[/GRAPH]
+
+To classify an algebraic formula as even, odd, or neither, follow a strict two-step test:
+1. Check whether the domain is symmetric about \(0\). If not, stop: the function is neither.
+2. Compute \(f(-x)\), simplify completely, and compare it against both \(f(x)\) and \(-f(x)\).
+
+Let us test three formulas:
+- \(h_1(x) = \frac{x^3 - 5x}{x^2 + 4}\): Domain is \((-\infty, \infty)\) (symmetric). Computing \(h_1(-x)\):
+\[
+h_1(-x) = \frac{(-x)^3 - 5(-x)}{(-x)^2 + 4} = \frac{-x^3 + 5x}{x^2 + 4} = -\frac{x^3 - 5x}{x^2 + 4} = -h_1(x).
+\]
+Thus \(h_1\) is odd.
+- \(h_2(x) = |x| - 3x^2 + 7\): Domain is \((-\infty, \infty)\) (symmetric). Since \(|-x| = |x|\) and \((-x)^2 = x^2\),
+\[
+h_2(-x) = |-x| - 3(-x)^2 + 7 = |x| - 3x^2 + 7 = h_2(x).
+\]
+Thus \(h_2\) is even.
+- \(h_3(x) = x^3 + x^2\): Domain is \((-\infty, \infty)\). Computing \(h_3(-x) = -x^3 + x^2\). Compare this with \(h_3(x) = x^3 + x^2\) and \(-h_3(x) = -x^3 - x^2\). Testing \(x = 1\) confirms \(h_3(1) = 2\) while \(h_3(-1) = 0\), which is neither \(2\) nor \(-2\). Thus \(h_3\) is neither even nor odd.
+
+Most functions are neither even nor odd—parity is a special symmetry, not an either-or partition of all functions! Note one useful corollary for odd functions: if \(f\) is odd and \(0 \in \operatorname{Dom}(f)\), then setting \(x = 0\) in \(f(-x) = -f(x)\) gives \(f(0) = -f(0)\), so \(2f(0) = 0\) and therefore \(f(0) = 0\). Every odd function defined at \(0\) must pass through the origin. (An odd function not defined at \(0\), such as \(1/x\), simply skips \(x = 0\).)
+
+[TABLE]
+Property | Even function | Odd function | Neither
+Algebraic test | \(f(-x) = f(x)\) | \(f(-x) = -f(x)\) | Fails both identities
+Graph symmetry | Reflection across \(y\)-axis | \(180^\circ\) rotation about \((0, 0)\) | Neither symmetry
+Value at \(x = 0\) (if defined) | Any real number | Must be \(f(0) = 0\) | Any real number
+Prototype examples | \(x^2\), \(\lvert x \rvert\), constant \(c\) | \(x\), \(x^3\), \(1/x\) | \(x + 1\), \(x^2 + x\), \(\sqrt{x}\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: D]
+Classify the function \(k(x) = \frac{x|x|}{x^4 + 1}\) on its natural domain.
+
+(A) Even, because \(|x|\) and \(x^4\) both absorb negative signs.
+(B) Neither, because \(|x|\) is not a polynomial power of \(x\).
+(C) Neither, because its domain is not symmetric about \(0\).
+(D) Odd, because \(k(-x) = -k(x)\) for every real \(x\).
+(E) Both even and odd, because \(k(0) = 0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Suppose \(f\) is an odd function defined on \((-\infty, \infty)\) that is strictly increasing on \((0, 4)\) and has a local maximum of \(7\) at \(x = 4\). Which statement must be true?
+
+(A) \(f\) is strictly increasing on \((-4, 0)\) and has a local minimum of \(-7\) at \(x = -4\).
+(B) \(f\) is strictly decreasing on \((-4, 0)\) and has a local minimum of \(-7\) at \(x = -4\).
+(C) \(f\) is strictly increasing on \((-4, 0)\) and has a local maximum of \(7\) at \(x = -4\).
+(D) \(f\) is strictly decreasing on \((-4, 0)\) and has a local maximum of \(-7\) at \(x = -4\).
+(E) \(f\) is strictly decreasing on \((-4, 0)\) and has a local minimum of \(7\) at \(x = -4\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(f(x) = x^2 - 6x + 5\). For what value of \(b > 1\) is the average rate of change of \(f\) on \([1, b]\) equal to \(0\)?
+
+(A) \(b = 3\)
+(B) \(b = 4\)
+(C) \(b = 5\)
+(D) \(b = 6\)
+(E) No such \(b > 1\) exists because \(f\) is not constant.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Which function is both even and odd on the domain \((-\infty, \infty)\)?
+
+(A) \(f(x) = x\)
+(B) \(f(x) = 0\)
+(C) \(f(x) = |x|\)
+(D) \(f(x) = 1\)
+(E) No function can be both even and odd.
+[/BONUS]

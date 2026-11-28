@@ -1,0 +1,279 @@
+=== SECTION 1: Deducción de la identidad de diferencia de cosenos en el círculo unitario ===
+
+Ya conoces los valores trigonométricos exactos en los múltiplos de \(\frac{\pi}{6}\) (\(30^\circ\)) y \(\frac{\pi}{4}\) (\(45^\circ\)). ¿Qué hay de un ángulo como \(15^\circ = 45^\circ - 30^\circ\) o \(\frac{5\pi}{12} = \frac{\pi}{4} + \frac{\pi}{6}\)? Una conjetura tentadora consiste en distribuir el coseno o el seno sobre la resta: \(\cos(45^\circ - 30^\circ) \stackrel{?}{=} \cos 45^\circ - \cos 30^\circ\). Pon a prueba esa suposición de inmediato: \(\cos 45^\circ - \cos 30^\circ = \frac{\sqrt{2} - \sqrt{3}}{2} < 0\), mientras que \(15^\circ\) se encuentra en el Cuadrante I, donde el coseno es estrictamente positivo (de hecho, cercano a \(1\)). Más sencillo aún, para \(\alpha = \frac{\pi}{2}\) y \(\beta = \frac{\pi}{2}\),
+\[
+\cos\!\left(\frac{\pi}{2} - \frac{\pi}{2}\right) = \cos 0 = 1, \qquad \text{mientras que} \qquad \cos\!\left(\frac{\pi}{2}\right) - \cos\!\left(\frac{\pi}{2}\right) = 0.
+\]
+Las funciones trigonométricas no son lineales, por lo que \(\cos(\alpha - \beta) \neq \cos\alpha - \cos\beta\) y \(\sin(\alpha + \beta) \neq \sin\alpha + \sin\beta\).
+
+Para hallar la fórmula verdadera de \(\cos(\alpha - \beta)\), ubica dos ángulos \(\alpha\) y \(\beta\) sobre el círculo unitario \(x^2 + y^2 = 1\). Ambos determinan dos puntos sobre la circunferencia:
+\[
+P = (\cos\alpha, \sin\alpha), \qquad Q = (\cos\beta, \sin\beta).
+\]
+El ángulo central entre los rayos dirigidos hacia \(P\) y \(Q\) mide \(|\alpha - \beta|\). Ahora rota toda la figura en sentido horario un ángulo de \(\beta\) radianes alrededor del origen. La rotación preserva distancias y ángulos:
+- \(Q\) rota hacia \(A = (1, 0)\),
+- \(P\) rota hacia \(R = (\cos(\alpha - \beta), \sin(\alpha - \beta))\).
+
+Como una rotación rígida mantiene invariantes las longitudes de las cuerdas, la cuerda \(PQ\) tiene exactamente la misma longitud que la cuerda \(RA\), de modo que \(d(P, Q)^2 = d(R, A)^2\).
+
+[GRAPH]
+type: parametric2d
+title: Cuerdas congruentes \(PQ\) y \(RA\) en el círculo unitario (ilustrado para \(\alpha = 2.0\), \(\beta = 0.7\), \(\alpha - \beta = 1.3\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -1.35, 1.35
+yrange: -1.35, 1.35
+trace: cos(t), sin(t) | label: círculo unitario
+segment: cos(2.0), sin(2.0), cos(0.7), sin(0.7) | label: \(PQ\)
+segment: cos(1.3), sin(1.3), 1, 0 | label: \(RA\) | dashed: true
+point: cos(2.0), sin(2.0) | label: \(P\)
+point: cos(0.7), sin(0.7) | label: \(Q\)
+point: cos(1.3), sin(1.3) | label: \(R\)
+point: 1, 0 | label: \(A\)
+[/GRAPH]
+
+Calcula ahora ambas longitudes de cuerda al cuadrado mediante la fórmula de la distancia. Para \(PQ\):
+\[
+d(P, Q)^2 = (\cos\alpha - \cos\beta)^2 + (\sin\alpha - \sin\beta)^2.
+\]
+Desarrolla ambos cuadrados y agrupa \(\cos^2 + \sin^2 = 1\) para cada ángulo:
+\[
+d(P, Q)^2 = (\cos^2\alpha + \sin^2\alpha) + (\cos^2\beta + \sin^2\beta) - 2\cos\alpha\cos\beta - 2\sin\alpha\sin\beta = 2 - 2\cos\alpha\cos\beta - 2\sin\alpha\sin\beta.
+\]
+Para \(RA\):
+\[
+d(R, A)^2 = (\cos(\alpha - \beta) - 1)^2 + (\sin(\alpha - \beta) - 0)^2 = \cos^2(\alpha - \beta) + \sin^2(\alpha - \beta) - 2\cos(\alpha - \beta) + 1 = 2 - 2\cos(\alpha - \beta).
+\]
+Iguala \(d(P, Q)^2 = d(R, A)^2\):
+\[
+2 - 2\cos(\alpha - \beta) = 2 - 2\cos\alpha\cos\beta - 2\sin\alpha\sin\beta.
+\]
+Resta \(2\) en ambos lados y divide entre \(-2\) para obtener la identidad maestra:
+\[
+\cos(\alpha - \beta) = \cos\alpha\cos\beta + \sin\alpha\sin\beta.
+\]
+Observa que nuestro argumento de las cuerdas funciona para TODOS los números reales \(\alpha\) y \(\beta\), sin importar el cuadrante ni el signo. Toda otra identidad de suma y diferencia en trigonometría se deduce algebraicamente de esta única ecuación geométrica.
+
+=== SECTION 2: Deducción de la familia completa para coseno, seno y tangente ===
+
+Con \(\cos(\alpha - \beta)\) demostrada, deducimos limpiamente las cinco fórmulas restantes utilizando únicamente identidades par/impar, de cofunción y de cociente.
+
+1. Coseno de una suma: Reemplaza \(\beta\) por \(-\beta\) en \(\cos(\alpha - \beta)\):
+\[
+\cos(\alpha + \beta) = \cos(\alpha - (-\beta)) = \cos\alpha\cos(-\beta) + \sin\alpha\sin(-\beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta,
+\]
+porque el coseno es par (\(\cos(-\beta) = \cos\beta\)) y el seno es impar (\(\sin(-\beta) = -\sin\beta\)).
+
+2. Seno de una suma y de una diferencia: Usa el puente de cofunción \(\sin\theta = \cos\!\left(\frac{\pi}{2} - \theta\right)\) con \(\theta = \alpha + \beta\), agrupando el ángulo como \(\left(\frac{\pi}{2} - \alpha\right) - \beta\):
+\[
+\sin(\alpha + \beta) = \cos\!\left(\left(\frac{\pi}{2} - \alpha\right) - \beta\right) = \cos\!\left(\frac{\pi}{2} - \alpha\right)\cos\beta + \sin\!\left(\frac{\pi}{2} - \alpha\right)\sin\beta = \sin\alpha\cos\beta + \cos\alpha\sin\beta.
+\]
+Reemplazar \(\beta\) por \(-\beta\) da de inmediato
+\[
+\sin(\alpha - \beta) = \sin\alpha\cos\beta - \cos\alpha\sin\beta.
+\]
+
+3. Tangente de una suma y de una diferencia: Siempre que \(\cos\alpha \neq 0\), \(\cos\beta \neq 0\) y \(\cos(\alpha + \beta) \neq 0\), divide \(\sin(\alpha + \beta)\) entre \(\cos(\alpha + \beta)\):
+\[
+\tan(\alpha + \beta) = \frac{\sin\alpha\cos\beta + \cos\alpha\sin\beta}{\cos\alpha\cos\beta - \sin\alpha\sin\beta}.
+\]
+Para expresar el lado derecho íntegramente en tangentes, divide cada término del numerador y del denominador entre \(\cos\alpha\cos\beta\):
+\[
+\tan(\alpha + \beta) = \frac{\frac{\sin\alpha\cos\beta}{\cos\alpha\cos\beta} + \frac{\cos\alpha\sin\beta}{\cos\alpha\cos\beta}}{\frac{\cos\alpha\cos\beta}{\cos\alpha\cos\beta} - \frac{\sin\alpha\sin\beta}{\cos\alpha\cos\beta}} = \frac{\tan\alpha + \tan\beta}{1 - \tan\alpha\tan\beta}.
+\]
+Reemplazar \(\beta\) por \(-\beta\) y usar \(\tan(-\beta) = -\tan\beta\) produce
+\[
+\tan(\alpha - \beta) = \frac{\tan\alpha - \tan\beta}{1 + \tan\alpha\tan\beta}.
+\]
+
+[CALLOUT]
+id: sum-diff-identities
+label: Teorema
+title: Identidades de suma y diferencia
+tone: key
+
+Para todos los ángulos reales \(\alpha, \beta\) (con denominadores no nulos en la tangente para (3)):
+
+(1) Coseno: \(\cos(\alpha \pm \beta) = \cos\alpha\cos\beta \mp \sin\alpha\sin\beta\) (signo central opuesto).
+(2) Seno: \(\sin(\alpha \pm \beta) = \sin\alpha\cos\beta \pm \cos\alpha\sin\beta\) (mismo signo central).
+(3) Tangente: \(\tan(\alpha \pm \beta) = \dfrac{\tan\alpha \pm \tan\beta}{1 \mp \tan\alpha\tan\beta}\) (el numerador conserva el signo; el denominador lo invierte).
+[/CALLOUT]
+
+Observa el patrón de signos: el coseno empareja funciones iguales (\(\cos\cos\) y \(\sin\sin\)) e invierte el signo; el seno mezcla funciones (\(\sin\cos\) y \(\cos\sin\)) y conserva el signo.
+
+[QUESTION 1]
+[ANSWER: B]
+¿Qué expresión trigonométrica única es igual a \(\cos\!\left(\dfrac{7\pi}{12}\right)\cos\!\left(\dfrac{\pi}{4}\right) + \sin\!\left(\dfrac{7\pi}{12}\right)\sin\!\left(\dfrac{\pi}{4}\right)\), y cuál es su valor numérico exacto?
+
+(A) \(\cos\!\left(\frac{5\pi}{6}\right) = -\frac{\sqrt{3}}{2}\)
+(B) \(\cos\!\left(\frac{\pi}{3}\right) = \frac{1}{2}\)
+(C) \(\sin\!\left(\frac{5\pi}{6}\right) = \frac{1}{2}\)
+(D) \(\sin\!\left(\frac{\pi}{3}\right) = \frac{\sqrt{3}}{2}\)
+(E) \(\cos\!\left(\frac{\pi}{3}\right) = -\frac{1}{2}\)
+[/QUESTION]
+
+=== SECTION 3: Valores exactos en ángulos no estándar y contracción de expresiones ===
+
+Un beneficio inmediato de [REF: sum-diff-identities | las identidades de suma y diferencia] consiste en calcular valores trigonométricos exactos en todo múltiplo de \(15^\circ\) (\(\frac{\pi}{12}\)) escribiendo el ángulo como suma o diferencia de dos ángulos notables cuyos valores ya conoces (\(\frac{\pi}{6}, \frac{\pi}{4}, \frac{\pi}{3}\), o \(30^\circ, 45^\circ, 60^\circ\)).
+
+Ejemplo 1: Halla el valor exacto de \(\cos(15^\circ)\).
+Escribe \(15^\circ = 45^\circ - 30^\circ\) y aplica [REF: sum-diff-identities.1 | la identidad de diferencia para el coseno]:
+\[
+\cos(15^\circ) = \cos(45^\circ - 30^\circ) = \cos 45^\circ \cos 30^\circ + \sin 45^\circ \sin 30^\circ = \frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2}\cdot\frac{1}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}.
+\]
+Observa una verificación rápida de coherencia: \(\frac{\sqrt{6} + \sqrt{2}}{4} \approx \frac{2.449 + 1.414}{4} \approx 0.966\), muy cerca de \(1\), como corresponde a un ángulo pequeño de \(15^\circ\).
+
+Ejemplo 2: Halla los valores exactos de \(\sin\!\left(\frac{5\pi}{12}\right)\) y \(\tan\!\left(\frac{5\pi}{12}\right)\).
+Observa que \(\frac{5\pi}{12} = \frac{3\pi}{12} + \frac{2\pi}{12} = \frac{\pi}{4} + \frac{\pi}{6}\) (que equivale a \(75^\circ\)). Al aplicar [REF: sum-diff-identities.2 | la identidad de suma para el seno]:
+\[
+\sin\!\left(\frac{5\pi}{12}\right) = \sin\!\left(\frac{\pi}{4} + \frac{\pi}{6}\right) = \sin\!\left(\frac{\pi}{4}\right)\cos\!\left(\frac{\pi}{6}\right) + \cos\!\left(\frac{\pi}{4}\right)\sin\!\left(\frac{\pi}{6}\right) = \frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2}\cdot\frac{1}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}.
+\]
+(¡Es igual a \(\cos(15^\circ)\) porque \(75^\circ\) y \(15^\circ\) son ángulos complementarios!)
+Ahora aplica [REF: sum-diff-identities.3 | la identidad de suma para la tangente], usando \(\tan(\frac{\pi}{4}) = 1\) y \(\tan(\frac{\pi}{6}) = \frac{1}{\sqrt{3}}\):
+\[
+\tan\!\left(\frac{5\pi}{12}\right) = \frac{1 + \frac{1}{\sqrt{3}}}{1 - 1 \cdot \frac{1}{\sqrt{3}}} = \frac{\sqrt{3} + 1}{\sqrt{3} - 1}.
+\]
+Racionaliza el denominador multiplicando numerador y denominador por \(\sqrt{3} + 1\):
+\[
+\tan\!\left(\frac{5\pi}{12}\right) = \frac{(\sqrt{3} + 1)^2}{3 - 1} = \frac{3 + 2\sqrt{3} + 1}{2} = 2 + \sqrt{3}.
+\]
+
+Leer [REF: sum-diff-identities | las identidades de suma y diferencia] de DERECHA a IZQUIERDA es igual de valioso: contrae expresiones desarrolladas de vuelta a una sola función trigonométrica. Por ejemplo,
+\[
+\frac{\tan(80^\circ) - \tan(20^\circ)}{1 + \tan(80^\circ)\tan(20^\circ)} = \tan(80^\circ - 20^\circ) = \tan(60^\circ) = \sqrt{3},
+\]
+y simbólicamente,
+\[
+\sin(3x)\cos(x) - \cos(3x)\sin(x) = \sin(3x - x) = \sin(2x).
+\]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál es el valor exacto de \(\sin\!\left(\dfrac{\pi}{12}\right)\)?
+
+(A) \(\frac{\sqrt{6} + \sqrt{2}}{4}\)
+(B) \(\frac{\sqrt{3} - 1}{2}\)
+(C) \(\frac{\sqrt{2} - \sqrt{6}}{4}\)
+(D) \(\frac{\sqrt{6} - \sqrt{2}}{4}\)
+(E) \(\frac{\sqrt{6} - \sqrt{2}}{2}\)
+[/QUESTION]
+
+=== SECTION 4: Evaluación de ángulos compuestos a partir de información de cuadrante ===
+
+Con frecuencia NO conoces los ángulos \(\alpha\) y \(\beta\) en sí mismos: solo te dan una razón trigonométrica para \(\alpha\), otra para \(\beta\) y en qué cuadrante se halla cada ángulo. Aun así, las identidades de suma y diferencia entregan valores exactos para \(\sin(\alpha \pm \beta)\), \(\cos(\alpha \pm \beta)\) y \(\tan(\alpha \pm \beta)\) sin necesidad de hallar \(\alpha\) ni \(\beta\).
+
+Ejemplo resuelto: Supón que \(\sin\alpha = \frac{3}{5}\) con \(\alpha\) en el Cuadrante II, y \(\cos\beta = -\frac{5}{13}\) con \(\beta\) en el Cuadrante III. Halla los valores exactos de \(\sin(\alpha + \beta)\), \(\cos(\alpha + \beta)\) y \(\tan(\alpha + \beta)\).
+
+Paso 1: Halla el seno y el coseno faltantes de cada ángulo usando \(\sin^2\theta + \cos^2\theta = 1\) y los signos por cuadrante.
+- Para \(\alpha\) en el Cuadrante II (\(\cos\alpha < 0\)):
+\[
+\cos\alpha = -\sqrt{1 - \left(\frac{3}{5}\right)^2} = -\sqrt{\frac{16}{25}} = -\frac{4}{5}.
+\]
+- Para \(\beta\) en el Cuadrante III (\(\sin\beta < 0\)):
+\[
+\sin\beta = -\sqrt{1 - \left(-\frac{5}{13}\right)^2} = -\sqrt{\frac{144}{169}} = -\frac{12}{13}.
+\]
+
+Paso 2: Sustituye los cuatro valores directamente en [REF: sum-diff-identities | las fórmulas de suma]:
+\[
+\sin(\alpha + \beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta = \left(\frac{3}{5}\right)\left(-\frac{5}{13}\right) + \left(-\frac{4}{5}\right)\left(-\frac{12}{13}\right) = \frac{-15 + 48}{65} = \frac{33}{65},
+\]
+\[
+\cos(\alpha + \beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta = \left(-\frac{4}{5}\right)\left(-\frac{5}{13}\right) - \left(\frac{3}{5}\right)\left(-\frac{12}{13}\right) = \frac{20 + 36}{65} = \frac{56}{65}.
+\]
+Paso 3: Divide para obtener la tangente (y realiza una rápida verificación pitagórica: \(33^2 + 56^2 = 1089 + 3136 = 4225 = 65^2\), lo que confirma que la aritmética es exacta):
+\[
+\tan(\alpha + \beta) = \frac{\sin(\alpha + \beta)}{\cos(\alpha + \beta)} = \frac{33}{56}.
+\]
+Como tanto \(\sin(\alpha + \beta) > 0\) como \(\cos(\alpha + \beta) > 0\), el ángulo \(\alpha + \beta\) termina en el Cuadrante I.
+
+[QUESTION 3]
+[ANSWER: A]
+Supón que \(\cos\alpha = -\dfrac{8}{17}\) con \(\alpha\) en el Cuadrante II, y \(\sin\beta = -\dfrac{4}{5}\) con \(\beta\) en el Cuadrante IV. ¿Cuál es el valor exacto de \(\cos(\alpha - \beta)\)?
+
+(A) \(-\frac{84}{85}\)
+(B) \(\frac{36}{85}\)
+(C) \(-\frac{36}{85}\)
+(D) \(\frac{84}{85}\)
+(E) \(-\frac{13}{85}\)
+[/QUESTION]
+
+=== SECTION 5: Fórmulas de reducción y verificación de identidades de ángulos compuestos ===
+
+Toda fórmula de desplazamiento o reflexión en el círculo unitario —llamada fórmula de reducción— es un caso particular de una línea de [REF: sum-diff-identities | las identidades de suma y diferencia]. En lugar de memorizar docenas de reglas de desplazamiento, desarróllalas en el momento:
+
+- Identidad del suplemento para el seno:
+\[
+\sin(\pi - x) = \sin\pi\cos x - \cos\pi\sin x = (0)\cos x - (-1)\sin x = \sin x.
+\]
+- Desplazamiento de un cuarto de vuelta para el coseno:
+\[
+\cos\!\left(x + \frac{\pi}{2}\right) = \cos x\cos\!\left(\frac{\pi}{2}\right) - \sin x\sin\!\left(\frac{\pi}{2}\right) = \cos x(0) - \sin x(1) = -\sin x.
+\]
+- Desplazamiento de período \(\pi\) para la tangente:
+\[
+\tan(x + \pi) = \frac{\tan x + \tan\pi}{1 - \tan x \tan\pi} = \frac{\tan x + 0}{1 - 0} = \tan x.
+\]
+- Desplazamiento de un octavo de vuelta para la tangente (donde \(\tan x \neq 1\)):
+\[
+\tan\!\left(x + \frac{\pi}{4}\right) = \frac{\tan x + \tan(\pi/4)}{1 - \tan x \tan(\pi/4)} = \frac{\tan x + 1}{1 - \tan x} = \frac{1 + \tan x}{1 - \tan x}.
+\]
+
+Vigila una trampa de dominio al aplicar [REF: sum-diff-identities.3 | la fórmula de suma/diferencia para la tangente]: NO puedes desarrollar \(\tan\!\left(x + \frac{\pi}{2}\right)\) directamente con \(\frac{\tan x + \tan(\pi/2)}{1 - \tan x \tan(\pi/2)}\) porque \(\tan(\frac{\pi}{2})\) no está definida. En cambio, reescribe primero en términos de seno y coseno:
+\[
+\tan\!\left(x + \frac{\pi}{2}\right) = \frac{\sin\!\left(x + \frac{\pi}{2}\right)}{\cos\!\left(x + \frac{\pi}{2}\right)} = \frac{\cos x}{-\sin x} = -\cot x \qquad (\sin x \neq 0).
+\]
+
+[TABLE]
+Expresión de reducción | Desarrollo de suma/diferencia | Forma simplificada
+\(\sin(\pi - x)\) | \(\sin\pi\cos x - \cos\pi\sin x\) | \(\sin x\)
+\(\cos(\pi - x)\) | \(\cos\pi\cos x + \sin\pi\sin x\) | \(-\cos x\)
+\(\cos\!\left(x + \frac{\pi}{2}\right)\) | \(\cos x(0) - \sin x(1)\) | \(-\sin x\)
+\(\sin\!\left(x + \frac{\pi}{2}\right)\) | \(\sin x(0) + \cos x(1)\) | \(\cos x\)
+\(\tan\!\left(x - \frac{\pi}{4}\right)\) | \(\frac{\tan x - 1}{1 + \tan x}\) | \(\frac{\tan x - 1}{1 + \tan x}\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: E]
+¿Qué expresión simplificada es idénticamente igual a \(\sin\!\left(x + \dfrac{\pi}{6}\right) + \sin\!\left(x - \dfrac{\pi}{6}\right)\) para todo \(x\) real?
+
+(A) \(\sin x\)
+(B) \(\cos x\)
+(C) \(\sqrt{3}\cos x\)
+(D) \(2\sin x\)
+(E) \(\sqrt{3}\sin x\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Simplifica \(\dfrac{\sin(\alpha + \beta)}{\cos\alpha\cos\beta}\) en su dominio común a una expresión que use únicamente \(\tan\alpha\) y \(\tan\beta\).
+
+(A) \(\tan\alpha\tan\beta\)
+(B) \(\tan\alpha - \tan\beta\)
+(C) \(\tan\alpha + \tan\beta\)
+(D) \(\frac{\tan\alpha + \tan\beta}{1 - \tan\alpha\tan\beta}\)
+(E) \(1 - \tan\alpha\tan\beta\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Calcula el valor exacto de \(\tan\!\left(\dfrac{11\pi}{12}\right)\) utilizando una suma o diferencia de ángulos notables.
+
+(A) \(2 - \sqrt{3}\)
+(B) \(\sqrt{3} - 2\)
+(C) \(-2 - \sqrt{3}\)
+(D) \(2 + \sqrt{3}\)
+(E) \(1 - \sqrt{3}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Supón que \(\tan\alpha = 2\) y \(\tan\beta = 3\), con ambos ángulos \(\alpha\) y \(\beta\) en el Cuadrante I (\(0 < \alpha, \beta < \frac{\pi}{2}\)). ¿Cuál es el valor exacto de \(\alpha + \beta\)?
+
+(A) \(\frac{\pi}{4}\)
+(B) \(-\frac{\pi}{4}\)
+(C) \(\frac{5\pi}{4}\)
+(D) \(\frac{3\pi}{4}\)
+(E) \(\frac{2\pi}{3}\)
+[/BONUS]

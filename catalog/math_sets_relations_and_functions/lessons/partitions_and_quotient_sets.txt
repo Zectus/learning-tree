@@ -1,0 +1,239 @@
+=== SECTION 1: Partitions and quotient sets ===
+
+In the previous lesson we proved that the equivalence classes of an equivalence relation \(\sim\) on a set \(A\) are nonempty, never partially overlap, and cover all of \(A\) (since every \(a \in A\) lies in \([a]\)). In other words, an equivalence relation slices \(A\) cleanly into disjoint nonempty pieces. Conversely, if you start with ANY way of slicing \(A\) into disjoint nonempty pieces, declaring two elements "equivalent" whenever they land in the same piece should produce an equivalence relation! This lesson turns that intuition into a precise, global bijection between two fundamental mathematical objects: equivalence relations on \(A\) and partitions of \(A\).
+
+To avoid confusing a partition with the power set \(\mathcal{P}(A)\), we denote a partition by \(\Pi\) (a set of subsets of \(A\), so \(\Pi \subseteq \mathcal{P}(A)\)).
+
+[CALLOUT]
+id: partition-def
+label: Definition
+title: Partition of a set
+tone: key
+
+A partition of a set \(A\) is a collection \(\Pi\) of subsets of \(A\) (whose elements are called the blocks or parts of \(\Pi\)) satisfying three conditions:
+
+(1) Nonemptiness: every block \(B \in \Pi\) is nonempty (\(B \ne \emptyset\)).
+(2) Pairwise disjointness: for all \(B, C \in \Pi\), if \(B \ne C\), then \(B \cap C = \emptyset\) (equivalently, \(B \cap C \ne \emptyset \implies B = C\)).
+(3) Covering: the union of all blocks equals \(A\), i.e., \(\bigcup_{B \in \Pi} B = A\).
+[/CALLOUT]
+
+Let us check all three conditions on concrete candidates for \(A = \{1, 2, 3, 4\}\):
+- \(\Pi_1 = \{\{1, 3\}, \{2\}, \{4\}\}\): every block is nonempty, distinct blocks share no elements, and \(\{1, 3\} \cup \{2\} \cup \{4\} = \{1, 2, 3, 4\}\). So \(\Pi_1\) IS a partition of \(A\).
+- \(\mathcal{C}_2 = \{\{1, 2\}, \{2, 3\}, \{4\}\}\): NOT a partition, because \(\{1, 2\} \ne \{2, 3\}\) yet \(\{1, 2\} \cap \{2, 3\} = \{2\} \ne \emptyset\) (violates [REF: partition-def.2 | pairwise disjointness]).
+- \(\mathcal{C}_3 = \{\{1, 2\}, \{3, 4\}, \emptyset\}\): NOT a partition, because \(\emptyset\) is a member of \(\mathcal{C}_3\) (violates [REF: partition-def.1 | nonemptiness]).
+- \(\mathcal{C}_4 = \{\{1, 2\}, \{3\}\}\): NOT a partition, because \(4\) is missing from the union (violates [REF: partition-def.3 | covering]).
+
+What about the extreme edge case \(A = \emptyset\)? Check [REF: partition-def | the definition of partition] for \(\Pi = \emptyset\) (the empty collection of zero blocks):
+- (1) Nonemptiness: vacuously true (there is no \(B \in \emptyset\)).
+- (2) Pairwise disjointness: vacuously true.
+- (3) Covering: \(\bigcup_{B \in \emptyset} B = \emptyset = A\)!
+Thus \(\Pi = \emptyset\) is the unique partition of \(\emptyset\), whereas \(\{\emptyset\}\) is NOT a partition of \(\emptyset\) because it contains an empty block.
+
+Notice also that for any nonempty set \(A\), two trivial partitions always exist: the coarsest (indiscrete) partition \(\{A\}\) with a single block, and the finest (discrete) partition \(\{\{a\} : a \in A\}\) into singletons.
+
+Partitions can also have infinitely many (even uncountably many) blocks! For example, in \(\mathbb{R}^2\), let \(C_r = \{(x, y) \in \mathbb{R}^2 : x^2 + y^2 = r^2\}\) for each \(r \in [0, \infty)\). Each \(C_r\) is nonempty (it contains \((r, 0)\)), distinct radii \(r_1 \ne r_2\) yield disjoint circles \(C_{r_1} \cap C_{r_2} = \emptyset\) (because a point \((x, y)\) has a unique value of \(\sqrt{x^2 + y^2}\)), and every \((x, y) \in \mathbb{R}^2\) lies on \(C_r\) for \(r = \sqrt{x^2 + y^2}\). Thus \(\{C_r : r \ge 0\}\) partitions the entire plane \(\mathbb{R}^2\) into the origin \(C_0 = \{(0, 0)\}\) together with all concentric circles centered at the origin!
+
+[GRAPH]
+type: parametric2d
+title: Partition of \(\mathbb{R}^2\) into concentric circles \(C_r = \{(x, y) : x^2 + y^2 = r^2\}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.4, 3.4
+yrange: -3.4, 3.4
+trace: cos(t), sin(t) | label: \(C_1\) (\(r = 1\)) | color: #2563eb
+trace: 2*cos(t), 2*sin(t) | label: \(C_2\) (\(r = 2\)) | color: #16a34a
+trace: 3*cos(t), 3*sin(t) | label: \(C_3\) (\(r = 3\)) | color: #d97706
+point: 0, 0 | label: \(C_0\) | color: #ef4444
+[/GRAPH]
+
+When we collect all equivalence classes of an equivalence relation \(\sim\) on \(A\) into a single set, we give that collection its own name.
+
+[CALLOUT]
+id: quotient-set-def
+label: Definition
+title: Quotient set
+tone: key
+
+Let \(\sim\) be an equivalence relation on a set \(A\). The quotient set of \(A\) modulo \(\sim\), denoted \(A/{\sim}\), is the set of all equivalence classes of \(\sim\):
+\[
+A/{\sim} = \{[a] : a \in A\} \subseteq \mathcal{P}(A).
+\]
+[/CALLOUT]
+
+Remember that because sets ignore duplicates, even if \(A\) is infinite, \(A/{\sim}\) can be finite! For congruence modulo \(n\) on \(\mathbb{Z}\), the quotient set \(\mathbb{Z}/{\equiv_n}\) (written \(\mathbb{Z}/n\mathbb{Z}\)) has exactly \(n\) elements: \(\{[0], [1], \dots, [n - 1]\}\). Every element of \(A/{\sim}\) is a SUBSET of \(A\), not an element of \(A\).
+
+[QUESTION 1]
+[ANSWER: C]
+Which of the following collections is a valid partition of the set of integers \(\mathbb{Z}\)?
+
+(A) \(\{\{x \in \mathbb{Z} : x \ge 0\},\; \{x \in \mathbb{Z} : x \le 0\}\}\)
+(B) \(\{\{2k : k \in \mathbb{Z}\},\; \{3k : k \in \mathbb{Z}\},\; \{x \in \mathbb{Z} : 2 \nmid x \land 3 \nmid x\}\}\)
+(C) \(\{\{x \in \mathbb{Z} : |x| = n\} : n \in \mathbb{N}\}\)
+(D) \(\{\{x \in \mathbb{Z} : x < n\} : n \in \mathbb{Z}\}\)
+(E) \(\{\{x \in \mathbb{Z} : x^2 = n\} : n \in \mathbb{N}\}\)
+[/QUESTION]
+
+=== SECTION 2: The Fundamental Theorem of Equivalence Relations ===
+
+We now have two constructions on a fixed set \(A\):
+- Forward construction (\(\sim \;\mapsto\; A/{\sim}\)): starting from an equivalence relation \(\sim\) on \(A\), form its quotient set \(A/{\sim} = \{[a] : a \in A\}\).
+- Backward construction (\(\Pi \;\mapsto\; {\sim_\Pi}\)): starting from a partition \(\Pi\) of \(A\), define a relation \(\sim_\Pi\) on \(A\) by
+\[
+x \sim_\Pi y \iff \exists B \in \Pi,\; (x \in B \land y \in B),
+\]
+i.e., \(x\) and \(y\) belong to the same block of \(\Pi\).
+
+The Fundamental Theorem asserts not only that each construction lands in the right place, but that applying one after the other brings you right back to where you started!
+
+[CALLOUT]
+id: fundamental-thm-equiv
+label: Theorem
+title: Fundamental Theorem of Equivalence Relations
+tone: key
+
+Let \(A\) be any set.
+
+(1) If \(\sim\) is an equivalence relation on \(A\), then the quotient set \(A/{\sim}\) is a partition of \(A\).
+(2) If \(\Pi\) is a partition of \(A\), then the relation \(\sim_\Pi\) defined by \(x \sim_\Pi y \iff \exists B \in \Pi,\; (x \in B \land y \in B)\) is an equivalence relation on \(A\).
+(3) The two constructions are exact mutual inverses:
+- Starting with any equivalence relation \(\sim\) on \(A\), forming \(\Pi = A/{\sim}\), and then forming \(\sim_\Pi\) recovers the original relation: \({\sim_{A/{\sim}}} = {\sim}\).
+- Starting with any partition \(\Pi\) of \(A\), forming \(\sim_\Pi\), and then taking its quotient set recovers the original partition: \(A/{\sim_\Pi} = \Pi\).
+[/CALLOUT]
+
+Let us prove every single part cleanly—watching how every hypothesis in [REF: partition-def | the definition of partition] is used!
+
+[CALLOUT]
+id: fundamental-thm-proof
+label: Proof
+title: Proof of [REF: fundamental-thm-equiv | the Fundamental Theorem]
+tone: note
+
+Proof of (1): Let \(\sim\) be an equivalence relation on \(A\) and set \(\Pi = A/{\sim} = \{[a] : a \in A\}\). We check the three partition axioms in [REF: partition-def | the definition of partition]:
+- Nonemptiness: for every \(a \in A\), \(a \in [a]\) by the Fundamental Lemma of Equivalence Classes, so \([a] \ne \emptyset\).
+- Pairwise disjointness: for any \([a], [b] \in A/{\sim}\), the Fundamental Lemma gives either \([a] = [b]\) or \([a] \cap [b] = \emptyset\). Thus if \([a] \ne [b]\), then \([a] \cap [b] = \emptyset\).
+- Covering: every block \([a]\) is a subset of \(A\), so \(\bigcup_{a \in A} [a] \subseteq A\). Conversely, for any \(x \in A\), we have \(x \in [x] \subseteq \bigcup_{a \in A} [a]\), so \(A \subseteq \bigcup_{a \in A} [a]\). Hence \(\bigcup_{[a] \in A/{\sim}} [a] = A\).
+
+Proof of (2): Let \(\Pi\) be a partition of \(A\). We check that \(\sim_\Pi\) is reflexive, symmetric, and transitive:
+- Reflexive: let \(x \in A\). Since \(\bigcup_{B \in \Pi} B = A\), there exists \(B \in \Pi\) with \(x \in B\). Then \(x \in B \land x \in B\), so \(x \sim_\Pi x\).
+- Symmetric: if \(x \sim_\Pi y\), there exists \(B \in \Pi\) with \(x \in B\) and \(y \in B\), hence \(y \in B\) and \(x \in B\), so \(y \sim_\Pi x\).
+- Transitive: suppose \(x \sim_\Pi y\) and \(y \sim_\Pi z\). Then there exist blocks \(B, C \in \Pi\) such that \(x, y \in B\) and \(y, z \in C\). Now \(y \in B \cap C\), so \(B \cap C \ne \emptyset\). By [REF: partition-def.2 | pairwise disjointness of \(\Pi\)], this forces \(B = C\)! Therefore \(x, z \in B\), which means \(x \sim_\Pi z\).
+
+Proof of (3):
+- First, let \(\sim\) be an equivalence relation and set \(\Pi = A/{\sim}\). For any \(x, y \in A\):
+  - If \(x \sim y\), then \(x, y \in [y] \in \Pi\), so \(x \sim_\Pi y\).
+  - Conversely, if \(x \sim_\Pi y\), then there is some class \([a] \in A/{\sim}\) containing both \(x\) and \(y\). Thus \(x \sim a\) and \(y \sim a\); by symmetry and transitivity, \(x \sim y\).
+  Hence \((x, y) \in {\sim_\Pi} \iff (x, y) \in {\sim}\), so \({\sim_{A/{\sim}}} = {\sim}\).
+- Second, let \(\Pi\) be a partition of \(A\). We show \(A/{\sim_\Pi} = \Pi\) by double inclusion:
+  - Let \([x]_{\sim_\Pi} \in A/{\sim_\Pi}\). Since \(\Pi\) covers \(A\), there is a unique block \(B \in \Pi\) with \(x \in B\) (unique by pairwise disjointness). For any \(y \in A\), \(y \sim_\Pi x\) holds if and only if \(y\) and \(x\) lie in a common block of \(\Pi\)—which, because \(B\) is the only block containing \(x\), holds if and only if \(y \in B\). Therefore \([x]_{\sim_\Pi} = B \in \Pi\). Thus \(A/{\sim_\Pi} \subseteq \Pi\).
+  - Conversely, let \(B \in \Pi\). By [REF: partition-def.1 | nonemptiness of blocks], there exists an element \(x \in B\)! By the exact argument just given, \([x]_{\sim_\Pi} = B\), so \(B \in A/{\sim_\Pi}\). Thus \(\Pi \subseteq A/{\sim_\Pi}\).
+  Hence \(A/{\sim_\Pi} = \Pi\).
+[/CALLOUT]
+
+Pause and look at the very last step of the proof of (3): where did we use [REF: partition-def.1 | nonemptiness of blocks]? Right there! If a collection \(\Pi\) were allowed to contain \(\emptyset\) as a block, then \(\sim_\Pi\) would never know whether \(\emptyset\) was present or not, and \(A/{\sim_\Pi}\) would lose \(\emptyset\)—breaking the one-to-one correspondence between partitions and equivalence relations! Every single axiom in [REF: partition-def | the definition of partition] is indispensable.
+
+[QUESTION 2]
+[ANSWER: A]
+Let \(A = \{1, 2, 3, 4\}\) and let \(\Pi = \{\{1, 4\}, \{2, 3\}\}\). How many ordered pairs belong to the induced equivalence relation \(\sim_\Pi \subseteq A \times A\)?
+
+(A) \(8\)
+(B) \(4\)
+(C) \(6\)
+(D) \(10\)
+(E) \(16\)
+[/QUESTION]
+
+=== SECTION 3: Using the correspondence — invariants, fibers, and designing relations ===
+
+[REF: fundamental-thm-equiv | The Fundamental Theorem] is not just an abstract theorem; it is a practical problem-solving bridge. Whenever a problem asks you to design, count, or analyze equivalence relations, you can switch freely between the "relation viewpoint" (checking reflexivity, symmetry, transitivity) and the "partition viewpoint" (chopping \(A\) into disjoint nonempty blocks).
+
+Application 1 (Decomposing a domain by an invariant): Suppose every element \(a \in A\) carries a well-defined tag or value \(v(a)\) (such as the remainder of an integer modulo \(n\), the distance \(\sqrt{x^2 + y^2}\) of a point in \(\mathbb{R}^2\) from the origin, or the number of elements in a finite subset \(S \subseteq \{1, 2, 3, 4\}\)). Defining
+\[
+a \sim b \iff v(a) = v(b)
+\]
+automatically produces an equivalence relation—reflexivity, symmetry, and transitivity follow immediately from the corresponding properties of equality \(=\)! Its equivalence classes are the nonempty level sets (also called fibers)
+\[
+F_c = \{a \in A : v(a) = c\}
+\]
+as \(c\) ranges over the values actually attained by \(v\). Notice the subtle point: ONLY values \(c\) that are actually attained produce blocks in the partition, because an unattained value \(c\) gives \(F_c = \emptyset\), which cannot be a block of a partition!
+
+For example, take \(A = \mathbb{R}\) and the tag \(v(x) = x^2\). For \(c > 0\), the fiber is the two-element set \(\{-\sqrt{c}, \sqrt{c}\}\); for \(c = 0\), the fiber is \(\{0\}\); for \(c < 0\), the set \(\{x \in \mathbb{R} : x^2 = c\} = \emptyset\) is excluded. So the quotient set \(\mathbb{R}/{\sim}\) consists of \(\{0\}\) together with all opposite pairs \(\{-r, r\}\) for \(r > 0\).
+
+Application 2 (Counting equivalence relations on small finite sets): Suppose someone asks: "How many distinct equivalence relations exist on the \(3\)-element set \(A = \{1, 2, 3\}\)?" Checking all \(2^9 = 512\) subsets of \(A \times A\) for reflexivity, symmetry, and transitivity would be miserable! Instead, by [REF: fundamental-thm-equiv | the Fundamental Theorem], counting equivalence relations on \(\{1, 2, 3\}\) is IDENTICAL to counting partitions of \(\{1, 2, 3\}\):
+- \(1\) block of size \(3\): \(\{\{1, 2, 3\}\}\) (\(1\) partition).
+- \(2\) blocks of sizes \(2\) and \(1\): \(\{\{1, 2\}, \{3\}\}\), \(\{\{1, 3\}, \{2\}\}\), \(\{\{2, 3\}, \{1\}\}\) (\(3\) partitions).
+- \(3\) blocks of size \(1\): \(\{\{1\}, \{2\}, \{3\}\}\) (\(1\) partition).
+Total: \(1 + 3 + 1 = 5\) equivalence relations on \(\{1, 2, 3\}\), found in ten seconds!
+
+Application 3 (Refinement of partitions vs. inclusion of relations): Suppose \(\sim_1\) and \(\sim_2\) are two equivalence relations on \(A\) with corresponding partitions \(\Pi_1 = A/{\sim_1}\) and \(\Pi_2 = A/{\sim_2}\). What does the inclusion \({\sim_1} \subseteq {\sim_2}\) (meaning \(x \sim_1 y \implies x \sim_2 y\)) look like in terms of the partitions \(\Pi_1\) and \(\Pi_2\)?
+
+Let us work it out! Take any block \([a]_{\sim_1} \in \Pi_1\). If \(x \in [a]_{\sim_1}\), then \(x \sim_1 a\), so by \({\sim_1} \subseteq {\sim_2}\) we get \(x \sim_2 a\), meaning \(x \in [a]_{\sim_2}\). Thus EVERY block of \(\Pi_1\) is contained inside a single block of \(\Pi_2\)! Equivalently, each block of \(\Pi_2\) is a disjoint union of one or more blocks of \(\Pi_1\). We say that \(\Pi_1\) refines \(\Pi_2\) (is finer than \(\Pi_2\)), and \(\Pi_2\) is coarser than \(\Pi_1\).
+
+For instance, on \(\mathbb{Z}\), congruence modulo \(6\) implies congruence modulo \(3\) (\({\equiv_6} \subseteq {\equiv_3}\)): every mod-\(6\) class sits inside a mod-\(3\) class, and each mod-\(3\) class splits cleanly into two mod-\(6\) classes, such as \([1]_3 = [1]_6 \cup [4]_6\). Notice the helpful mental check: a SMALLER relation (fewer related pairs) creates MORE, SMALLER blocks (a finer partition); a LARGER relation (more related pairs) merges blocks together into FEWER, LARGER blocks (a coarser partition).
+
+[TABLE]
+Relation viewpoint on \(A\) | Partition viewpoint on \(A\)
+Equality relation \(\Delta_A\) (smallest equivalence relation) | Discrete partition \(\{\{a\} : a \in A\}\) (finest partition)
+Universal relation \(A \times A\) (largest equivalence relation) | Indiscrete partition \(\{A\}\) (coarsest partition, for \(A \ne \emptyset\))
+\({\sim_1} \subseteq {\sim_2}\) | Every block of \(\Pi_1\) is a subset of some block of \(\Pi_2\) (\(\Pi_1\) refines \(\Pi_2\))
+Equivalence relation \(\sim_1 \cap \sim_2\) | Common refinement \(\{B \cap C : B \in \Pi_1,\, C \in \Pi_2,\, B \cap C \ne \emptyset\}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+Let \(A = \{1, 2, 3, 4\}\). How many distinct equivalence relations on \(A\) have the property that \(1 \sim 2\) and \(3 \not\sim 4\)?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(4\)
+(D) \(5\)
+(E) \(7\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Let \(\sim_1\) and \(\sim_2\) be equivalence relations on \(\mathbb{Z}\) defined by \(a \sim_1 b \iff 12 \mid (a - b)\) and \(a \sim_2 b \iff 4 \mid (a - b)\). Which statement accurately compares their quotient sets \(\Pi_1 = \mathbb{Z}/{\sim_1}\) and \(\Pi_2 = \mathbb{Z}/{\sim_2}\)?
+
+(A) \({\sim_2} \subseteq {\sim_1}\), and each block of \(\Pi_1\) is the union of \(3\) blocks of \(\Pi_2\).
+(B) \({\sim_1} \subseteq {\sim_2}\), and each block of \(\Pi_2\) is the union of \(3\) blocks of \(\Pi_1\).
+(C) \({\sim_1} \subseteq {\sim_2}\), and \(\Pi_1 \subseteq \Pi_2\).
+(D) Neither relation is a subset of the other, because \(12\) and \(4\) have different remainders.
+(E) \({\sim_1} \cap {\sim_2} = {\sim_2}\), so \(\Pi_1\) and \(\Pi_2\) have the same number of blocks.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(A = \{1, 2, 3, 4\}\). How many distinct equivalence relations exist on \(A\) in total?
+
+(A) \(5\)
+(B) \(12\)
+(C) \(14\)
+(D) \(16\)
+(E) \(15\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(\Pi_1\) and \(\Pi_2\) be partitions of a set \(A\), with corresponding equivalence relations \(\sim_1\) and \(\sim_2\). Suppose we form the collection
+\[
+\mathcal{C} = \{B \cap C : B \in \Pi_1,\; C \in \Pi_2\}.
+\]
+Under what condition is \(\mathcal{C}\) itself a partition of \(A\)?
+
+(A) Always, for any two partitions \(\Pi_1\) and \(\Pi_2\) of \(A\)
+(B) Only when \(\Pi_1 = \Pi_2\)
+(C) If and only if \(B \cap C \ne \emptyset\) for every \(B \in \Pi_1\) and every \(C \in \Pi_2\)
+(D) If and only if \(\Pi_1\) refines \(\Pi_2\) or \(\Pi_2\) refines \(\Pi_1\)
+(E) Never, unless \(A\) has only one element
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Let \(\sim_1\) and \(\sim_2\) be equivalence relations on a set \(A\). Which of the following statements is equivalent to \({\sim_1} \subseteq {\sim_2}\)?
+
+(A) For every \(a \in A\), \([a]_{\sim_1} \subseteq [a]_{\sim_2}\)
+(B) \(A/{\sim_1} \subseteq A/{\sim_2}\)
+(C) \(A/{\sim_2} \subseteq A/{\sim_1}\)
+(D) For every \(a \in A\), \([a]_{\sim_2} \subseteq [a]_{\sim_1}\)
+(E) Every block of \(A/{\sim_1}\) equals some block of \(A/{\sim_2}\)
+[/BONUS]

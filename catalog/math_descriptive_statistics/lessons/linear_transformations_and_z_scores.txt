@@ -1,0 +1,218 @@
+=== SECTION 1: How linear transformations act on center and spread ===
+
+Suppose a meteorologist has already computed the five-number summary, mean, variance, and standard deviation of \(n = 365\) daily high temperatures in degrees Celsius, and an editor asks for the exact same report in degrees Fahrenheit using \(y_i = 1.8 x_i + 32\). Does the meteorologist have to convert all \(365\) raw measurements and recompute every statistic from scratch? No—because every descriptive summary of location and spread obeys an exact, simple algebraic law under any linear transformation \(y_i = a x_i + b\).
+
+Let us derive those laws directly from the definitions, for any constants \(a, b \in \mathbb{R}\) with \(a \ne 0\).
+
+First, check the arithmetic mean using summation linearity:
+\[
+\bar{y} = \frac{1}{n} \sum_{i=1}^n (a x_i + b) = a \left(\frac{1}{n} \sum_{i=1}^n x_i\right) + \frac{1}{n}(n b) = a \bar{x} + b.
+\]
+Next, subtract \(\bar{y} = a\bar{x} + b\) from each \(y_i = a x_i + b\) to see what happens to every deviation:
+\[
+y_i - \bar{y} = (a x_i + b) - (a \bar{x} + b) = a (x_i - \bar{x}).
+\]
+The additive shift \(b\) vanishes completely from every deviation! Shifting every point on a number line by \(+b\) slides the whole cloud rigidly without changing any distance between points. Now plug \(y_i - \bar{y} = a(x_i - \bar{x})\) directly into variance, standard deviation, and \(\text{MAD}\):
+- Sample variance:
+\[
+s_y^2 = \frac{1}{n - 1} \sum_{i=1}^n \bigl(a(x_i - \bar{x})\bigr)^2 = a^2 \cdot \frac{1}{n - 1} \sum_{i=1}^n (x_i - \bar{x})^2 = a^2 s_x^2.
+\]
+- Sample standard deviation (taking the nonnegative square root \(\sqrt{a^2} = |a|\)):
+\[
+s_y = \sqrt{a^2 s_x^2} = |a| s_x.
+\]
+- Mean absolute deviation:
+\[
+\text{MAD}_y = \frac{1}{n} \sum_{i=1}^n |a(x_i - \bar{x})| = |a| \cdot \frac{1}{n} \sum_{i=1}^n |x_i - \bar{x}| = |a| \, \text{MAD}_x.
+\]
+Watch the absolute value bars \(|a|\)! Because spread measures (SD, MAD, IQR, range) are ALWAYS nonnegative, multiplying data by a negative slope \(a < 0\) flips the distribution like a mirror image while scaling its width by \(|a| = -a > 0\).
+
+What about order statistics, medians, and quartiles?
+- When \(a > 0\), \(y_i = a x_i + b\) is strictly increasing, so it preserves the exact sorted order: \(y_{(k)} = a x_{(k)} + b\). Every quantile transforms just like the mean: \(q_p(y) = a q_p(x) + b\), and \(\text{IQR}_y = Q_{3,y} - Q_{1,y} = a(Q_{3,x} - Q_{1,x}) = |a|\,\text{IQR}_x\).
+- When \(a < 0\), \(y_i = a x_i + b\) is strictly decreasing, so it REVERSES the sorted order: the largest \(x\) becomes the smallest \(y\) and vice versa! Therefore, \(Q_{1,y} = a Q_{3,x} + b\), \(Q_{3,y} = a Q_{1,x} + b\), and in general \(q_p(y) = a q_{1-p}(x) + b\). The median stays at the middle (\(M_y = a M_x + b\) because \(1 - 0.5 = 0.5\)), and the interquartile range still scales positively:
+\[
+\text{IQR}_y = Q_{3,y} - Q_{1,y} = (a Q_{1,x} + b) - (a Q_{3,x} + b) = (-a)(Q_{3,x} - Q_{1,x}) = |a| \, \text{IQR}_x.
+\]
+
+[CALLOUT]
+id: linear-transform-rules
+label: Theorem
+title: Summary rules under linear rescaling \(y_i = a x_i + b\) (\(a \ne 0\))
+tone: key
+
+Let \(y_i = a x_i + b\) for \(i = 1, \dots, n\).
+
+(1) Center (mean and median): \(\bar{y} = a \bar{x} + b\) and \(M_y = a M_x + b\).
+(2) Quantiles: if \(a > 0\), \(q_p(y) = a q_p(x) + b\) (so \(Q_{1,y} = a Q_{1,x} + b\) and \(Q_{3,y} = a Q_{3,x} + b\)). If \(a < 0\), rank order reverses: \(q_p(y) = a q_{1-p}(x) + b\) (so \(Q_{1,y} = a Q_{3,x} + b\) and \(Q_{3,y} = a Q_{1,x} + b\)).
+(3) Spread in original units (shift-invariant): \(s_y = |a| s_x\), \(\sigma_y = |a| \sigma_x\), \(\text{MAD}_y = |a| \text{MAD}_x\), \(\text{IQR}_y = |a| \text{IQR}_x\), and \(\text{Range}_y = |a| \text{Range}_x\).
+(4) Variance (shift-invariant): \(s_y^2 = a^2 s_x^2\) and \(\sigma_y^2 = a^2 \sigma_x^2\).
+[/CALLOUT]
+
+Apply [REF: linear-transform-rules | these rules] to two contrasting examples instantly:
+- Positive scaling (Celsius to Fahrenheit, \(y = 1.8 x + 32\)): If daily Celsius highs have \(\bar{x} = 20^\circ\text{C}\), \(Q_{1,x} = 15^\circ\text{C}\), \(Q_{3,x} = 25^\circ\text{C}\) (\(\text{IQR}_x = 10^\circ\text{C}\)), \(s_x = 5^\circ\text{C}\), and \(s_x^2 = 25\,(^\circ\text{C})^2\), then without touching the raw temperatures we get \(\bar{y} = 1.8(20) + 32 = 68^\circ\text{F}\), \(Q_{1,y} = 59^\circ\text{F}\), \(Q_{3,y} = 77^\circ\text{F}\), \(\text{IQR}_y = 1.8(10) = 18^\circ\text{F}\), \(s_y = 1.8(5) = 9^\circ\text{F}\), and \(s_y^2 = (1.8)^2 (25) = 81\,(^\circ\text{F})^2\).
+- Negative scaling (exam penalty deductions): Suppose a student's score is \(y = 100 - 2x\), where \(x\) is the number of errors made (\(a = -2, b = 100\)). If the class errors have \(Q_{1,x} = 8\), \(M_x = 14\), \(Q_{3,x} = 22\) (\(\text{IQR}_x = 14\)) and \(s_x = 6\), then final scores have \(M_y = 100 - 2(14) = 72\), \(Q_{1,y} = 100 - 2(22) = 56\) (coming from \(Q_{3,x}\)!), \(Q_{3,y} = 100 - 2(8) = 84\) (coming from \(Q_{1,x}\)!), \(\text{IQR}_y = |-2|(14) = 28\), and \(s_y = |-2|(6) = 12\).
+
+[QUESTION 1]
+[ANSWER: C]
+Item prices \(x_i\) (in dollars) at an online store have mean \(\bar{x} = 40\), sample standard deviation \(s_x = 5\), and interquartile range \(\text{IQR}_x = 6\). During a sale, every item receives a \(20\%\) discount followed by a flat \(\$4\) shipping fee, giving final prices \(y_i = 0.8 x_i + 4\). What are the new mean \(\bar{y}\), sample variance \(s_y^2\), and interquartile range \(\text{IQR}_y\)?
+
+(A) \(\bar{y} = 36\), \(s_y^2 = 20\), \(\text{IQR}_y = 4.8\)
+(B) \(\bar{y} = 36\), \(s_y^2 = 16\), \(\text{IQR}_y = 8.8\)
+(C) \(\bar{y} = 36\), \(s_y^2 = 16\), \(\text{IQR}_y = 4.8\)
+(D) \(\bar{y} = 32\), \(s_y^2 = 16\), \(\text{IQR}_y = 4.8\)
+(E) \(\bar{y} = 36\), \(s_y^2 = 20\), \(\text{IQR}_y = 8.8\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+In a timed puzzle competition, the number of penalty seconds \(x\) across participants has quartiles \(Q_{1,x} = 5\), \(Q_{2,x} = 9\), \(Q_{3,x} = 15\), and sample standard deviation \(s_x = 4\). Final points are assigned by \(y = 50 - 3x\). What are the first quartile \(Q_{1,y}\) and the sample standard deviation \(s_y\) of the final points?
+
+(A) \(Q_{1,y} = 35\), \(s_y = 12\)
+(B) \(Q_{1,y} = 5\), \(s_y = -12\)
+(C) \(Q_{1,y} = 35\), \(s_y = -12\)
+(D) \(Q_{1,y} = 5\), \(s_y = 12\)
+(E) \(Q_{1,y} = 23\), \(s_y = 12\)
+[/QUESTION]
+
+=== SECTION 2: Standardization and \(z\)-scores ===
+
+One special linear transformation appears throughout all of statistics: subtracting the mean and dividing by the standard deviation so that every variable is placed on a common, unit-free ruler measured in standard deviations above or below its own mean.
+
+[CALLOUT]
+id: z-score-def
+label: Definition
+title: Standardization and \(z\)-scores
+tone: key
+
+For a quantitative sample \(x_1, \dots, x_n\) with sample mean \(\bar{x}\) and strictly positive standard deviation \(s > 0\), the standardized value (\(z\)-score) of observation \(x_i\) is
+\[
+z_i = \frac{x_i - \bar{x}}{s}.
+\]
+(For a population with mean \(\mu\) and standard deviation \(\sigma > 0\), \(z_i = (x_i - \mu) / \sigma\).)
+
+Because \(z_i = \left(\frac{1}{s}\right) x_i + \left(-\frac{\bar{x}}{s}\right)\) is a positive linear transformation with \(a = 1/s > 0\) and \(b = -\bar{x}/s\), every standardized dataset satisfies
+\[
+\bar{z} = 0 \qquad \text{and} \qquad s_z = 1
+\]
+regardless of the original measurement units!
+[/CALLOUT]
+
+Check the two-line proof of \(\bar{z} = 0\) and \(s_z = 1\) directly from [REF: linear-transform-rules | the linear transformation theorem] with \(a = 1/s > 0\) and \(b = -\bar{x}/s\):
+\[
+\bar{z} = a \bar{x} + b = \frac{1}{s}\bar{x} - \frac{\bar{x}}{s} = 0, \qquad s_z = |a| s = \frac{1}{s} \cdot s = 1.
+\]
+Notice also how the units cancel: if \(x_i\) is measured in kilograms, both \((x_i - \bar{x})\) and \(s\) are in kilograms, so \(z_i\) is purely dimensionless. A \(z\)-score of \(z_i = +1.5\) means observation \(x_i\) sits \(1.5\) standard deviations ABOVE the mean; \(z_i = -0.8\) means it sits \(0.8\) standard deviations BELOW the mean; and \(z_i = 0\) means it equals the mean exactly.
+
+Standardization lets us compare relative standing across completely different scales. Suppose a student scores \(82\) on Exam A (\(\bar{x}_A = 70, s_A = 8\)) and \(64\) on Exam B (\(\bar{x}_B = 50, s_B = 7\)). Raw scores look higher on Exam A (\(82 > 64\)), yet computing \(z\)-scores reverses the verdict:
+\[
+z_A = \frac{82 - 70}{8} = +1.50, \qquad z_B = \frac{64 - 50}{7} = +2.00.
+\]
+Relative to classmates, the score of \(64\) on Exam B stands farther above the class average (\(2.0\) standard deviations versus \(1.5\) standard deviations).
+
+[QUESTION 3]
+[ANSWER: B]
+A patient takes two unrelated diagnostic blood tests. On Test 1, the healthy reference group has mean \(120\text{ mg/dL}\) and standard deviation \(15\text{ mg/dL}\), and the patient reads \(144\text{ mg/dL}\). On Test 2, the healthy reference group has mean \(4.5\text{ mmol/L}\) and standard deviation \(0.4\text{ mmol/L}\), and the patient reads \(5.2\text{ mmol/L}\). Relative to each test's reference group, which reading is farther above the mean in standard deviation units?
+
+(A) Test 1 (\(z = +1.60\) versus \(z = +1.40\) for Test 2)
+(B) Test 2 (\(z = +1.75\) versus \(z = +1.60\) for Test 1)
+(C) Test 1, because \(144 - 120 = 24\) is much larger than \(5.2 - 4.5 = 0.7\)
+(D) Both readings have the exact same standardized standing (\(z = +1.60\))
+(E) Test 2 (\(z = +2.00\) versus \(z = +1.60\) for Test 1)
+[/QUESTION]
+
+=== SECTION 3: Shape invariance and \(z\)-score outlier diagnostics ===
+
+One of the most stubborn misconceptions in introductory statistics is the belief that "standardizing a dataset turns it into a symmetric, bell-shaped normal distribution." That claim is FALSE!
+
+[CALLOUT]
+id: shape-preservation
+label: Common pitfall
+title: Standardization does NOT change distribution shape
+tone: caution
+
+Because \(z_i = (x_i - \bar{x}) / s\) is a positive linear rescaling (\(a = 1/s > 0\)), it shifts the origin and stretches or shrinks the horizontal axis uniformly. It NEVER alters the shape of a distribution: a right-skewed dataset stays equally right-skewed after standardization, a bimodal dataset stays equally bimodal, and a uniform dataset stays uniform. Only the center (now \(0\)) and standard deviation (now \(1\)) change.
+[/CALLOUT]
+
+Look at the interactive graph below. The curve represents a strongly right-skewed distribution (such as waiting times or household incomes). Drag the scale slider \(a\) and shift slider \(b\) to transform \(x \mapsto a x + b\). Notice that shifting \(b\) translates the entire curve rigidly, and stretching \(a\) widens or narrows it horizontally (adjusting height by \(1/a\) to keep total area equal to \(1\)), yet the long right tail NEVER disappears and NEVER becomes symmetric!
+
+[GRAPH]
+type: function2d
+title: Linear rescaling \(y = a x + b\) shifts and stretches a right-skewed distribution without removing skewness
+xlabel: Value
+ylabel: Density
+xrange: -4, 14
+yrange: 0, 0.8
+trace: x > 0 ? 0.5 * x * exp(-x) : 0 | label: Original right-skewed \(x\) | color: #94a3b8
+trace: (x - b) / a > 0 ? (0.5 / a) * ((x - b) / a) * exp(-(x - b) / a) : 0 | label: Rescaled \(y = a x + b\) | color: #3b82f6
+point: 2, 0 | label: \(\mu_x\) | color: #94a3b8
+point: 2*a + b, 0 | label: \(\mu_y\) | color: #3b82f6
+slider: a | range: 0.5, 2.5 | init: 1.5 | step: 0.25
+slider: b | range: -3, 4 | init: 1 | step: 0.5
+[/GRAPH]
+
+This shape-invariance fact immediately clarifies how \(z\)-scores behave as outlier detectors compared with Tukey's IQR fences. On roughly symmetric, bell-shaped data, rules of thumb such as \(|z_i| > 2\) (unusual) or \(|z_i| > 3\) (strongly unusual) align nicely with IQR fences. On strongly skewed data or small datasets with a single huge outlier, however, \(z\)-score heuristics suffer from two weaknesses:
+1. Masking by non-resistance: Because both \(\bar{x}\) and \(s\) are non-resistant, a single massive outlier pulls \(\bar{x}\) toward itself and inflates \(s\), shrinking its own \(z\)-score! In fact, in a dataset of size \(n\), it is algebraically impossible for ANY observation's sample \(z\)-score to exceed \((n - 1) / \sqrt{n}\); for \(n = 9\), even an observation equal to \(1{,}000{,}000\) next to eight zeros can reach at most \(z = 8 / 3 \approx 2.67\), NEVER triggering \(|z| > 3\)!
+2. Asymmetric tails: In a heavily right-skewed distribution, many valid observations in the long right tail have \(z > 2\) or \(z > 3\), while even the smallest possible value near \(0\) might only reach \(z \approx -0.8\).
+
+For comparing relative standing on roughly symmetric distributions, \(z\)-scores are sharp and convenient; for flagging outliers on skewed or small samples, resistant Tukey IQR fences are far more reliable.
+
+[TABLE]
+Criterion | Formula | Resistant to outliers? | Best setting
+\(z\)-score rule | \(\lvert (x_i - \bar{x}) / s \rvert > 2\) or \(3\) | No (\(\bar{x}\) and \(s\) both inflate) | Roughly symmetric, moderate-to-large \(n\)
+Tukey IQR fences | Outside \([Q_1 - 1.5\,\text{IQR},\; Q_3 + 1.5\,\text{IQR}]\) | Yes (based on quartiles) | Skewed data, small samples, exploratory screening
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+A dataset of \(n = 500\) annual household incomes is strongly right-skewed and bimodal. Every observation is converted to its \(z\)-score \(z_i = (x_i - \bar{x}) / s\). Which statement accurately describes the standardized dataset?
+
+(A) It has mean \(0\) and standard deviation \(1\), and it remains just as right-skewed and bimodal as the original income dataset.
+(B) It becomes symmetric and bell-shaped with mean \(0\) and standard deviation \(1\).
+(C) It retains its original mean and standard deviation, but its skewness is reduced to \(0\).
+(D) It has mean \(0\) and standard deviation \(1\), and its two modes merge into one mode at \(z = 0\).
+(E) It cannot be standardized unless the data are first transformed to be symmetric.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+A lab records \(n = 8\) chemical concentrations: seven readings cluster tightly around \(10.0\text{ ppm}\), and one contaminated reading is \(500\text{ ppm}\). An analyst flags outliers ONLY if \(|z_i| > 3\), and concludes there are no outliers because the contaminated reading's \(z\)-score is about \(+2.47\). Why did the \(|z| > 3\) rule fail to flag such an extreme point?
+
+(A) Because \(z\)-scores cannot be computed when all observations are positive.
+(B) Because \(500\text{ ppm}\) is within \(3\) interquartile ranges of the median.
+(C) Because subtracting the mean always divides the largest observation in half.
+(D) Because \(|z| > 3\) only flags negative outliers on the left tail.
+(E) Because the extreme point itself inflated both \(\bar{x}\) and \(s\)—and in a sample of size \(n = 8\), no single observation can ever reach \(|z| > 3\)—masking its own extremeness.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+In a dataset of test scores with mean \(\bar{x} = 76\) and sample standard deviation \(s = 8\), a student's standardized score is \(z = -1.25\). What was the student's raw score \(x\)?
+
+(A) \(64\)
+(B) \(68\)
+(C) \(66\)
+(D) \(86\)
+(E) \(74.75\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suppose every observation in a dataset \(x_1, \dots, x_n\) (with \(s_x > 0\)) is transformed by a linear function \(y_i = a x_i + b\) with a NEGATIVE slope \(a < 0\). How is the standardized score \(z_{y,i} = (y_i - \bar{y}) / s_y\) related to the original standardized score \(z_{x,i} = (x_i - \bar{x}) / s_x\)?
+
+(A) \(z_{y,i} = z_{x,i}\)
+(B) \(z_{y,i} = a z_{x,i}\)
+(C) \(z_{y,i} = |a| z_{x,i} + b\)
+(D) \(z_{y,i} = -z_{x,i}\)
+(E) \(z_{y,i} = -a z_{x,i}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+An instrument outputs raw values \(x_i\) with median \(M_x = 24\) and sample standard deviation \(s_x = 5\). After applying a rank-preserving linear calibration \(y_i = a x_i + b\) (so \(a > 0\)), the calibrated values have median \(M_y = 60\) and sample variance \(s_y^2 = 225\). What are the calibration constants \(a\) and \(b\)?
+
+(A) \(a = 9\), \(b = -156\)
+(B) \(a = 3\), \(b = -12\)
+(C) \(a = 3\), \(b = +12\)
+(D) \(a = 45\), \(b = -1020\)
+(E) \(a = 2.5\), \(b = 0\)
+[/BONUS]

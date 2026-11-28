@@ -1,0 +1,211 @@
+=== SECTION 1: The Argand plane and geometric operations ===
+
+Because every complex number \(z = x + yi\) is uniquely determined by an ordered pair of real numbers \((x, y)\), we can picture \(\mathbb{C}\) as a two-dimensional plane rather than a one-dimensional number line. This geometric model is called the Argand plane (or complex plane). The horizontal axis is the real axis, recording \(x = \operatorname{Re}(z)\), and the vertical axis is the imaginary axis, recording \(y = \operatorname{Im}(z)\).
+
+Each complex number \(z = x + yi\) plays two complementary geometric roles in the Argand plane:
+- As a point with Cartesian coordinates \((x, y)\).
+- As a position vector drawn from the origin \((0, 0)\) to \((x, y)\), with horizontal component \(x\) and vertical component \(y\).
+
+Under this identification, every algebraic operation we have learned so far acquires an immediate geometric meaning:
+- Addition \(z_1 + z_2\): adding components \((x_1 + x_2, y_1 + y_2)\) is vector addition, following the parallelogram rule—\(0\), \(z_1\), \(z_1 + z_2\), and \(z_2\) form the vertices of a parallelogram.
+- Subtraction \(z_1 - z_2\): the vector from the point \(z_2\) to the point \(z_1\) has components \((x_1 - x_2, y_1 - y_2)\), which equals the position vector of \(z_1 - z_2\).
+- Negation \(-z = -x - yi\): reflects \((x, y)\) through the origin to \((-x, -y)\), which is a \(180^\circ\) rotation about the origin.
+- Conjugation \(\overline{z} = x - yi\): keeps the horizontal coordinate \(x\) unchanged and flips the vertical coordinate \(y\) to \(-y\), reflecting \(z\) across the real axis.
+- Modulus \(|z| = \sqrt{x^2 + y^2}\): by the Pythagorean theorem, \(|z|\) is the Euclidean distance from the origin \(0\) to the point \(z\) (equivalently, the length of the position vector of \(z\)).
+- Distance \(|z_1 - z_2|\): applying the modulus to the difference \(z_1 - z_2 = (x_1 - x_2) + (y_1 - y_2)i\) gives
+\[
+|z_1 - z_2| = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2},
+\]
+the exact Euclidean distance between the points \(z_1\) and \(z_2\).
+
+[CALLOUT]
+id: argand-dictionary
+label: Reference
+title: Algebraic-to-geometric dictionary in the Argand plane
+tone: key
+
+For \(z = x + yi\), \(z_1 = x_1 + y_1 i\), and \(z_2 = x_2 + y_2 i\):
+
+(1) \(z\) corresponds to the point \((x, y)\) and the vector from \((0, 0)\) to \((x, y)\).
+(2) \(z_1 + z_2\) is the fourth vertex of the parallelogram spanned by \(0\), \(z_1\), and \(z_2\).
+(3) \(-z\) is the \(180^\circ\) rotation of \(z\) about the origin; \(\overline{z}\) is the reflection of \(z\) across the real axis.
+(4) \(|z|\) is the distance from \(0\) to \(z\), and \(|z_1 - z_2|\) is the distance between \(z_1\) and \(z_2\).
+[/CALLOUT]
+
+Let us visualize these operations together using \(z_1 = 3 + i\) and \(z_2 = 1 + 2i\). Their sum is \(z_1 + z_2 = 4 + 3i\), completing the parallelogram with sides from \(0\) to \(z_1\) and \(z_2\); the conjugate \(\overline{z_1} = 3 - i\) sits directly below \(z_1\) across the real axis; and \(-z_1 = -3 - i\) sits directly opposite \(z_1\) through the origin.
+
+[GRAPH]
+type: parametric2d
+title: Argand plane operations for \(z_1 = 3 + i\) and \(z_2 = 1 + 2i\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: -4, 5
+xrange: -4, 5
+yrange: -2.5, 4
+trace: t, 0 | label: real axis
+trace: 0, t | label: imaginary axis
+segment: 0, 0, 3, 1 | label: \(z_1\) | color: #2563eb
+segment: 0, 0, 1, 2 | label: \(z_2\) | color: #16a34a
+segment: 3, 1, 4, 3 | dashed: true | color: #16a34a
+segment: 1, 2, 4, 3 | dashed: true | color: #2563eb
+segment: 0, 0, 4, 3 | label: \(z_1 + z_2\) | color: #9333ea
+segment: 0, 0, 3, -1 | label: \(\overline{z_1}\) | color: #ea580c | dashed: true
+segment: 0, 0, -3, -1 | label: \(-z_1\) | color: #dc2626 | dashed: true
+point: 3, 1 | label: \(3 + i\)
+point: 1, 2 | label: \(1 + 2i\)
+point: 4, 3 | label: \(4 + 3i\)
+point: 3, -1 | label: \(3 - i\)
+point: -3, -1 | label: \(-3 - i\)
+[/GRAPH]
+
+Notice how the distance between \(z_1 = 3 + i\) and \(z_2 = 1 + 2i\) is simply \(|z_1 - z_2| = |(3 - 1) + (1 - 2)i| = |2 - i| = \sqrt{5}\), which is the length of the other diagonal of the parallelogram joining \((1, 2)\) and \((3, 1)\).
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(z_1 = -2 + 5i\) and \(z_2 = 4 - 3i\). What is the distance in the Argand plane between \(\overline{z_1}\) and \(z_2\)?
+
+(A) \(2\sqrt{10}\)
+(B) \(10\)
+(C) \(2\sqrt{17}\)
+(D) \(2\sqrt{2}\)
+(E) \(8\)
+[/QUESTION]
+
+=== SECTION 2: The triangle inequality and reverse triangle inequality ===
+
+In the parallelogram formed by \(0\), \(z_1\), \(z_1 + z_2\), and \(z_2\), the points \(0\), \(z_1\), and \(z_1 + z_2\) form a triangle whose three side lengths are \(|z_1|\), \(|z_2|\) (the segment from \(z_1\) to \(z_1 + z_2\)), and \(|z_1 + z_2|\). Because the straight-line path from \(0\) to \(z_1 + z_2\) cannot be longer than the two-step path through \(z_1\), geometry immediately suggests that \(|z_1 + z_2| \le |z_1| + |z_2|\).
+
+An algebraic proof not only confirms this inequality rigorously for every \(z_1, z_2 \in \mathbb{C}\), it also reveals the exact condition for equality. First note that for any \(u = a + bi \in \mathbb{C}\), we have \(\operatorname{Re}(u) = a \le \sqrt{a^2 + b^2} = |u|\), with equality \(\operatorname{Re}(u) = |u|\) if and only if \(b = 0\) and \(a \ge 0\) (meaning \(u\) is a nonnegative real number). Now expand \(|z_1 + z_2|^2\) using \(|w|^2 = w\overline{w}\):
+\[
+|z_1 + z_2|^2 = (z_1 + z_2)(\overline{z_1} + \overline{z_2}) = |z_1|^2 + z_1\overline{z_2} + \overline{z_1}z_2 + |z_2|^2.
+\]
+Since \(\overline{z_1}z_2 = \overline{z_1\overline{z_2}}\), the middle sum equals \(2\operatorname{Re}(z_1\overline{z_2})\). Applying \(\operatorname{Re}(z_1\overline{z_2}) \le |z_1\overline{z_2}| = |z_1|\,|z_2|\) yields
+\[
+|z_1 + z_2|^2 = |z_1|^2 + 2\operatorname{Re}(z_1\overline{z_2}) + |z_2|^2 \le |z_1|^2 + 2|z_1|\,|z_2| + |z_2|^2 = (|z_1| + |z_2|)^2.
+\]
+Taking nonnegative square roots gives \(|z_1 + z_2| \le |z_1| + |z_2|\). Moreover, equality holds if and only if \(z_1\overline{z_2}\) is a nonnegative real number. If \(z_2 = 0\), this holds trivially; if \(z_2 \ne 0\), writing \(z_1\overline{z_2} = k \ge 0\) and multiplying by \(z_2/|z_2|^2\) gives \(z_1 = \frac{k}{|z_2|^2}z_2\), meaning \(z_1\) and \(z_2\) point in the exact same direction from the origin (or one of them is \(0\)).
+
+From the triangle inequality we immediately deduce a lower bound on the modulus of a difference (or sum). Writing \(z_1 = (z_1 - z_2) + z_2\) gives \(|z_1| \le |z_1 - z_2| + |z_2|\), so \(|z_1| - |z_2| \le |z_1 - z_2|\). Swapping \(z_1\) and \(z_2\) and using \(|z_2 - z_1| = |z_1 - z_2|\) gives \(|z_2| - |z_1| \le |z_1 - z_2|\). Together, these two inequalities say \(\bigl||z_1| - |z_2|\bigr| \le |z_1 - z_2|\). Replacing \(z_2\) with \(-z_2\) also gives \(\bigl||z_1| - |z_2|\bigr| \le |z_1 + z_2|\).
+
+[CALLOUT]
+id: triangle-inequalities
+label: Theorem
+title: Triangle inequality and reverse triangle inequality
+tone: key
+
+For all \(z_1, z_2 \in \mathbb{C}\):
+
+(1) Triangle inequality: \(|z_1 + z_2| \le |z_1| + |z_2|\), with equality if and only if \(z_1 = 0\), \(z_2 = 0\), or \(z_1 = c z_2\) for some real \(c > 0\) (collinear on the same ray from the origin).
+(2) Reverse triangle inequality: \(\bigl||z_1| - |z_2|\bigr| \le |z_1 - z_2|\) and \(\bigl||z_1| - |z_2|\bigr| \le |z_1 + z_2|\).
+[/CALLOUT]
+
+These bounds let us find exact maximum and minimum moduli without calculus. Suppose \(z \in \mathbb{C}\) satisfies \(|z| = 4\), and we want to bound \(|z + (6 + 8i)|\). Here \(w = 6 + 8i\) has \(|w| = \sqrt{36 + 64} = 10\). By [REF: triangle-inequalities.1 | the triangle inequality] and [REF: triangle-inequalities.2 | the reverse triangle inequality],
+\[
+\bigl|10 - 4\bigr| \le |z + w| \le 10 + 4 \implies 6 \le |z + (6 + 8i)| \le 14.
+\]
+Geometrically, \(z\) travels around the circle of radius \(4\) centered at \(0\), and \(|z + w| = |z - (-w)|\) is the distance from \(z\) to \(-6 - 8i\) (at distance \(10\) from \(0\)). Both extreme values are actually attained along the line through \(0\) and \(w\): the maximum \(14\) occurs when \(z\) points in the same direction as \(w\) (namely \(z = \frac{4}{10}(6 + 8i) = \frac{12}{5} + \frac{16}{5}i\)), and the minimum \(6\) occurs when \(z\) points in the opposite direction (namely \(z = -\frac{12}{5} - \frac{16}{5}i\)).
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose \(z \in \mathbb{C}\) satisfies \(|z - (3 - 4i)| = 2\). What are the minimum and maximum possible values of \(|z|\)?
+
+(A) Minimum \(3\), maximum \(7\)
+(B) Minimum \(1\), maximum \(9\)
+(C) Minimum \(5\), maximum \(7\)
+(D) Minimum \(3\), maximum \(5\)
+(E) Minimum \(0\), maximum \(7\)
+[/QUESTION]
+
+=== SECTION 3: Basic complex loci in the Argand plane ===
+
+A locus is the set of all points \(z \in \mathbb{C}\) satisfying a given equation or inequality. Because [REF: argand-dictionary.4 | \(|z - z_0|\) is Euclidean distance], many geometric curves and regions have remarkably short complex descriptions.
+
+First, consider circles, disks, and annuli. For a fixed center \(z_0 = x_0 + y_0 i\) and radius \(r > 0\):
+- The equation \(|z - z_0| = r\) says "the distance from \(z\) to \(z_0\) equals \(r\)," which is the circle centered at \(z_0\) with radius \(r\). Squaring the distance formula verifies the Cartesian equation \((x - x_0)^2 + (y - y_0)^2 = r^2\).
+- The strict inequality \(|z - z_0| < r\) is the open disk (interior of the circle, excluding the boundary), while \(|z - z_0| \le r\) is the closed disk (interior plus boundary).
+- A double inequality \(r_1 < |z - z_0| < r_2\) (with \(0 < r_1 < r_2\)) defines an open annulus—the ring between two concentric circles centered at \(z_0\) of radii \(r_1\) and \(r_2\).
+
+Second, consider the equation \(|z - a| = |z - b|\) for two distinct fixed points \(a, b \in \mathbb{C}\). Reading it geometrically, it says "\(z\) is equidistant from \(a\) and \(b\)." In Euclidean geometry, the set of all points equidistant from two distinct points is the perpendicular bisector of the line segment joining \(a\) and \(b\). Let us verify this algebraically for \(a = -2\) and \(b = 2i\). Writing \(z = x + yi\) and squaring \(|z - (-2)| = |z - 2i|\) gives
+\[
+(x + 2)^2 + y^2 = x^2 + (y - 2)^2 \implies x^2 + 4x + 4 + y^2 = x^2 + y^2 - 4y + 4.
+\]
+The quadratic terms \(x^2\) and \(y^2\) cancel on both sides, leaving \(4x = -4y\), or \(y = -x\). Sure enough, the midpoint of \((-2, 0)\) and \((0, 2)\) is \((-1, 1)\) (which lies on \(y = -x\)), and the segment has slope \(1\), perpendicular to slope \(-1\). Similarly, the inequality \(|z - a| < |z - b|\) describes the open half-plane on the side of the perpendicular bisector closer to \(a\).
+
+Third, constraints on real and imaginary parts yield lines and half-planes immediately:
+- \(\operatorname{Re}(z) = c\) is the vertical line \(x = c\), and \(\operatorname{Re}(z) > c\) is the open right half-plane to its right.
+- \(\operatorname{Im}(z) = c\) is the horizontal line \(y = c\), and \(\operatorname{Im}(z) \ge c\) is the closed upper half-plane on and above \(y = c\).
+
+[TABLE]
+Complex constraint | Geometric locus in the Argand plane | Cartesian equation or inequality
+\(\lvert z - z_0 \rvert = r\) (\(r > 0\)) | Circle with center \(z_0 = x_0 + y_0 i\), radius \(r\) | \((x - x_0)^2 + (y - y_0)^2 = r^2\)
+\(\lvert z - z_0 \rvert < r\) (or \(\le r\)) | Open (or closed) disk centered at \(z_0\) | \((x - x_0)^2 + (y - y_0)^2 < r^2\) (or \(\le r^2\))
+\(r_1 \le \lvert z - z_0 \rvert \le r_2\) | Closed annulus between radii \(r_1\) and \(r_2\) | \(r_1^2 \le (x - x_0)^2 + (y - y_0)^2 \le r_2^2\)
+\(\lvert z - a \rvert = \lvert z - b \rvert\) (\(a \ne b\)) | Perpendicular bisector of segment \(ab\) | Linear equation in \(x, y\) after squaring
+\(\operatorname{Re}(z) = c\), \(\operatorname{Im}(z) \ge c\) | Vertical line \(x = c\); closed upper half-plane | \(x = c\); \(y \ge c\)
+[/TABLE]
+
+The plot below shows two of these loci together: the circle \(|z - (2 + i)| = 2\) centered at \(2 + i\) with radius \(2\), and the perpendicular bisector \(|z + 2| = |z - 2i|\) (the line \(y = -x\)) passing midway between \(-2\) and \(2i\).
+
+[GRAPH]
+type: parametric2d
+title: Circle \(|z - (2 + i)| = 2\) and perpendicular bisector \(|z + 2| = |z - 2i|\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -3.5, 4.8
+yrange: -3, 3.8
+trace: 2 + 2*cos(t), 1 + 2*sin(t) | label: \(|z - (2 + i)| = 2\) | color: #2563eb
+trace: t - 3.1416, -(t - 3.1416) | label: \(|z + 2| = |z - 2i|\) | color: #dc2626
+segment: -2, 0, 0, 2 | dashed: true | color: #64748b
+segment: 2, 1, 4, 1 | label: \(r = 2\) | dashed: true | color: #2563eb
+point: 2, 1 | label: \(2 + i\)
+point: -2, 0 | label: \(-2\)
+point: 0, 2 | label: \(2i\)
+point: -1, 1 | label: \(-1 + i\)
+[/GRAPH]
+
+Before recognizing a locus, remember to check whether \(z\) has a multiplier in front of it. For example, in \(|2z - 4 + 6i| = 10\), factor out \(2\) using the multiplicative modulus law: \(|2(z - 2 + 3i)| = 2|z - (2 - 3i)| = 10\), so \(|z - (2 - 3i)| = 5\). Dividing by \(2\) reveals the true center \(2 - 3i\) and true radius \(5\)—not center \(4 - 6i\) and radius \(10\). The same factoring works when the coefficient of \(z\) is complex, such as \(i\) or \(1 + i\).
+
+[QUESTION 3]
+[ANSWER: A]
+Which geometric figure in the Argand plane is described by \(|z - 2i| = |z + 4|\)?
+
+(A) The line \(y = -2x - 3\), which is the perpendicular bisector of the segment from \(-4\) to \(2i\)
+(B) The line \(y = 2x + 3\), which is the perpendicular bisector of the segment from \(4\) to \(2i\)
+(C) The circle centered at \(-2 + i\) with radius \(\sqrt{5}\)
+(D) The line \(y = \frac{1}{2}x + 2\) passing through \(-4\) and \(2i\)
+(E) The line \(y = -2x + 3\), which is the perpendicular bisector of the segment from \(-4\) to \(-2i\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+What geometric locus in the Argand plane is described by \(|iz + 2 - i| = 3\)?
+
+(A) The circle with center \(1 + 2i\) and radius \(3\)
+(B) The circle with center \(-2 + i\) and radius \(3\)
+(C) The circle with center \(2 - i\) and radius \(3\)
+(D) The circle with center \(-1 - 2i\) and radius \(3\)
+(E) The circle with center \(1 - 2i\) and radius \(3\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+For which nonzero complex numbers \(z\) does equality hold in \(|z + (3 - 4i)| = |z| + 5\)?
+
+(A) All \(z = c(3 - 4i)\) with real \(c > 0\)
+(B) All \(z = c(3 - 4i)\) with real \(c \ne 0\)
+(C) All \(z = c(3 + 4i)\) with real \(c > 0\)
+(D) Only \(z = 3 - 4i\)
+(E) All \(z\) on the circle \(|z| = 5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+What geometric figure in the Argand plane is described by the equation \(|z - 3| = 2|z|\)?
+
+(A) The circle with center \(-1\) and radius \(2\)
+(B) The circle with center \(1\) and radius \(2\)
+(C) The circle with center \(-1\) and radius \(4\)
+(D) The vertical line \(\operatorname{Re}(z) = 1\)
+(E) The circle with center \(3\) and radius \(2\)
+[/BONUS]

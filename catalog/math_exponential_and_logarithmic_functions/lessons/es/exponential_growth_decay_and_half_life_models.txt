@@ -1,0 +1,250 @@
+=== SECTION 1: Tres formas equivalentes del cambio exponencial sin restricciones ===
+
+Supongamos que una colonia bacteriana comienza con \(100\) células y crece un \(25\%\) cada hora. Un biólogo podría describir la misma colonia diciendo que se duplica cada \(3.11\text{ horas}\), mientras que un físico podría escribir \(A(t) = 100 e^{0.2231 t}\). Las tres descripciones representan exactamente la misma curva, escrita en tres parametrizaciones distintas del cambio exponencial sin restricciones.
+
+Recuerda de la lección anterior que toda base positiva \(b\) puede reescribirse en base \(e\) mediante la identidad de conversión \(b^t = e^{t \ln b}\). Aplicar ese único puente a una función exponencial \(A(t) = A_0 b^t\) (con \(A_0 > 0\) y \(b > 0, b \ne 1\)) conecta directamente las tres formas estándar de modelado:
+
+1. Forma de tasa discreta: \(A(t) = A_0 (1 + r)^t\), donde \(r > -1\) (\(r \ne 0\)) es el cambio fraccionario por unidad de tiempo (\(r > 0\) para crecimiento, \(-1 < r < 0\) para decrecimiento). Escribir \((1 + r)^t = e^{t \ln(1 + r)}\) la empareja de inmediato con la forma de tasa continua \(A(t) = A_0 e^{kt}\) con
+\[
+k = \ln(1 + r) \qquad \Longleftrightarrow \qquad 1 + r = e^k \quad (r = e^k - 1).
+\]
+
+2. Forma de tiempo de duplicación (crecimiento, \(k > 0\)): El tiempo de duplicación \(T_d > 0\) es el tiempo transcurrido necesario para que la cantidad alcance \(2A_0\). Imponer \(A(T_d) = 2A_0\) en \(A(t) = A_0 e^{kt}\) da
+\[
+A_0 e^{k T_d} = 2 A_0 \implies e^{k T_d} = 2 \implies k T_d = \ln 2 \implies T_d = \frac{\ln 2}{k}.
+\]
+Observa que \(A_0\) se canceló en el primer paso. Ya sea que la colonia comience con \(100\) células o con \(10\,000\) células, tarda exactamente el mismo tiempo \(T_d\) en duplicarse. Sustituir \(k = \frac{\ln 2}{T_d}\) de vuelta en \(A_0 e^{kt}\) produce \(A_0 e^{(t/T_d)\ln 2} = A_0 \cdot 2^{t / T_d}\).
+
+3. Forma de vida media (decrecimiento, \(k < 0\)): La vida media \(T_{1/2} > 0\) es el tiempo transcurrido necesario para que la cantidad caiga a \(\frac{1}{2} A_0\). Imponer \(A(T_{1/2}) = \frac{1}{2} A_0\) en \(A(t) = A_0 e^{kt}\) vuelve a cancelar \(A_0\):
+\[
+A_0 e^{k T_{1/2}} = \frac{1}{2} A_0 \implies e^{k T_{1/2}} = \frac{1}{2} \implies k T_{1/2} = \ln\!\left(\frac{1}{2}\right) = -\ln 2 \implies T_{1/2} = -\frac{\ln 2}{k} = \frac{\ln 2}{|k|}.
+\]
+(Observa el signo menos: como \(k < 0\) durante el decrecimiento, \(-\frac{\ln 2}{k}\) es positivo.) Equivalentemente, \(A(t) = A_0 \left(\frac{1}{2}\right)^{t / T_{1/2}}\), y puesto que \(\ln 2 \approx 0.6931\), ambas fórmulas escalan directamente con \(\ln 2\).
+
+[CALLOUT]
+id: exp-model-forms
+label: Referencia
+title: Formas equivalentes del crecimiento y decrecimiento exponencial
+tone: key
+
+Para un proceso exponencial sin restricciones con valor inicial \(A_0 > 0\) en \(t = 0\):
+
+(1) Conversión entre tasa discreta y tasa continua:
+\[
+A(t) = A_0 (1 + r)^t = A_0 e^{kt}, \qquad k = \ln(1 + r), \qquad r = e^k - 1.
+\]
+(2) Tiempo de duplicación (crecimiento, \(k > 0\)):
+\[
+A(t) = A_0 \cdot 2^{t / T_d}, \qquad T_d = \frac{\ln 2}{k}, \qquad k = \frac{\ln 2}{T_d}.
+\]
+(3) Vida media (decrecimiento, \(k < 0\)):
+\[
+A(t) = A_0 \left(\frac{1}{2}\right)^{t / T_{1/2}}, \qquad T_{1/2} = -\frac{\ln 2}{k}, \qquad k = -\frac{\ln 2}{T_{1/2}}.
+\]
+(4) Independencia de la cantidad inicial: Tanto \(T_d\) como \(T_{1/2}\) dependen únicamente de la tasa \(k\), nunca de \(A_0\). Todo paso de tiempo igual \(\Delta t\) multiplica \(A(t)\) por el mismo factor \(e^{k \Delta t}\) sin importar cuán grande o pequeña sea \(A(t)\) en ese momento.
+[/CALLOUT]
+
+[TABLE]
+Forma del modelo | Ecuación | Condición de crecimiento | Condición de decrecimiento | Tasa continua \(k\)
+Tasa discreta | \(A_0 (1 + r)^t\) | \(r > 0\) | \(-1 < r < 0\) | \(\ln(1 + r)\)
+Tasa continua | \(A_0 e^{kt}\) | \(k > 0\) | \(k < 0\) | \(k\)
+Duplicación / vida media | \(A_0 \cdot 2^{t/T_d}\) o \(A_0 (1/2)^{t/T_{1/2}}\) | \(T_d > 0\) | \(T_{1/2} > 0\) | \(\frac{\ln 2}{T_d}\) o \(-\frac{\ln 2}{T_{1/2}}\)
+[/TABLE]
+
+Usa el deslizador siguiente para variar la tasa continua \(k\) en \(A(t) = 100 e^{kt}\) desde decrecimiento (\(k < 0\)), pasando por el estado estacionario (\(k = 0\)), hasta crecimiento (\(k > 0\)). Observa dónde cruza la curva las rectas horizontales \(2 A_0 = 200\) (que marca \(T_d\) cuando \(k > 0\)) y \(A_0 / 2 = 50\) (que marca \(T_{1/2}\) cuando \(k < 0\)).
+
+[GRAPH]
+type: function2d
+title: Familia exponencial continua \(A(t) = 100 e^{kt}\) según tasas de crecimiento y decrecimiento
+xlabel: \(t\)
+ylabel: \(A(t)\)
+xrange: 0, 10
+yrange: 0, 450
+trace: 100 * exp(k * x) | label: \(A(t) = 100 e^{kt}\)
+trace: 200 | label: \(2A_0 = 200\)
+trace: 50 | label: \(A_0/2 = 50\)
+point: 0, 100 | label: \((0, 100)\)
+slider: k | range: -0.5, 0.35 | init: 0.15 | step: 0.05
+[/GRAPH]
+
+Ejemplo resuelto (Conversión de una especificación de decaimiento): Una muestra radiactiva pierde el \(15\%\) de su masa cada \(2\text{ días}\). Halla su constante continua de decaimiento \(k\) (en \(\text{día}^{-1}\)) y su vida media exacta \(T_{1/2}\) en días.
+
+Perder el \(15\%\) cada \(2\text{ días}\) significa que permanece el \(85\% = 0.85\) tras cada intervalo de \(2\text{ días}\), de modo que \(A(t) = A_0 (0.85)^{t/2}\). Igualar \(e^{2k} = 0.85\) da
+\[
+k = \frac{\ln(0.85)}{2} \approx -0.08126\text{ día}^{-1}.
+\]
+Aplicar [REF: exp-model-forms.3 | la fórmula de la vida media] da
+\[
+T_{1/2} = -\frac{\ln 2}{k} = -\frac{2\ln 2}{\ln(0.85)} = \frac{2\ln 2}{\ln(20/17)} \approx 8.53\text{ días}.
+\]
+Comprobación: tras \(8.53\text{ días}\), \((0.85)^{8.53/2} \approx 0.50\).
+
+[QUESTION 1]
+[ANSWER: C]
+Dos muestras del mismo isótopo radiactivo comienzan con masas iniciales \(A_0 = 40\text{ mg}\) y \(B_0 = 320\text{ mg}\). Ambas decaen según \(M(t) = M_0 e^{-0.05 t}\), donde \(t\) se mide en horas. ¿Cómo se comparan sus vidas medias \(T_A\) y \(T_B\)?
+
+(A) \(T_B = 8 T_A\), porque la muestra B comienza con \(8\) veces la masa de la muestra A
+(B) \(T_B = 3 T_A\), porque \(320 / 40 = 2^3\)
+(C) \(T_A = T_B = 20\ln 2\text{ horas}\), independientemente de la masa inicial
+(D) \(T_B = T_A + 20\ln 8\text{ horas}\)
+(E) \(T_A = 8 T_B\), porque la muestra más grande decae \(8\) veces más rápido
+[/QUESTION]
+
+=== SECTION 2: Calibración de modelos a partir de datos y comparación de convenciones ===
+
+En la práctica, rara vez recibes \(k\) directamente; recibes dos mediciones \((t_1, A_1)\) y \((t_2, A_2)\), a menudo ninguna en \(t = 0\). Dividir las dos ecuaciones \(A_2 = A_0 e^{k t_2}\) y \(A_1 = A_0 e^{k t_1}\) elimina la incógnita \(A_0\) en un solo paso:
+\[
+\frac{A_2}{A_1} = \frac{A_0 e^{k t_2}}{A_0 e^{k t_1}} = e^{k(t_2 - t_1)} \implies k = \frac{\ln(A_2 / A_1)}{t_2 - t_1}.
+\]
+Una vez conocido \(k\), sustituye cualquiera de las dos mediciones en \(A(t) = A_0 e^{kt}\) para despejar \(A_0 = A_1 e^{-k t_1}\).
+
+[CALLOUT]
+id: calibration-rule
+label: Flujo de trabajo
+title: Calibración con dos puntos y comparación de convenciones de tasa
+tone: note
+
+(1) Calibración a partir de dos mediciones \((t_1, A_1)\) y \((t_2, A_2)\) con \(A_1, A_2 > 0\) y \(t_1 \ne t_2\):
+\[
+k = \frac{\ln(A_2 / A_1)}{t_2 - t_1}, \qquad A_0 = A_1 e^{-k t_1}.
+\]
+(2) Comparación de modelos entre convenciones: Nunca compares directamente los valores numéricos brutos de una tasa discreta \(r\), una tasa continua \(k\) y un tiempo de duplicación \(T_d\). Convierte cada modelo a una misma métrica común —de forma más limpia, la tasa continua \(k\) (usando \(k = \ln(1 + r)\) o \(k = \frac{\ln 2}{T_d}\) )— y compara los valores de \(k\).
+[/CALLOUT]
+
+Ejemplo resuelto 1 (Calibración a partir de dos tiempos distintos de cero): Un cultivo de levadura contiene \(300\) células en \(t = 2\text{ horas}\) y \(1200\) células en \(t = 5\text{ horas}\). Halla la tasa continua de crecimiento \(k\), el tiempo de duplicación \(T_d\) y el conteo inicial de células \(A_0\).
+
+Usando [REF: calibration-rule.1 | la fórmula de calibración con dos puntos],
+\[
+k = \frac{\ln(1200 / 300)}{5 - 2} = \frac{\ln 4}{3} = \frac{2\ln 2}{3} \approx 0.4621\text{ h}^{-1}.
+\]
+Entonces el tiempo de duplicación es
+\[
+T_d = \frac{\ln 2}{k} = \frac{\ln 2}{(2\ln 2)/3} = 1.5\text{ horas}.
+\]
+Esto tiene sentido intuitivo inmediato: cuadruplicarse (dos duplicaciones) en un lapso de \(3\text{ horas}\) significa una duplicación cada \(1.5\text{ horas}\). Para recuperar \(A_0\), sustituye \((2, 300)\) en \(A(t) = A_0 \cdot 2^{t / 1.5}\):
+\[
+300 = A_0 \cdot 2^{2 / 1.5} = A_0 \cdot 2^{4/3} \implies A_0 = 300 \cdot 2^{-4/3} = 75 \cdot 2^{2/3} \approx 119\text{ células}.
+\]
+
+Ejemplo resuelto 2 (Comparación de convenciones de tasa): La cuenta X rinde un \(6.5\%\) anual con capitalización anual, mientras que la cuenta Y crece de forma continua a \(k_Y = 0.064\text{ año}^{-1}\). ¿Qué cuenta crece más rápido?
+
+Convierte la cuenta X a su tasa continua mediante [REF: exp-model-forms.1 | el puente de tasa discreta a continua]:
+\[
+k_X = \ln(1.065) \approx 0.06297\text{ año}^{-1}.
+\]
+Como \(k_Y = 0.064 > 0.06297 \approx k_X\), la cuenta Y crece más rápido. Equivalentemente, la tasa anual efectiva de la cuenta Y es \(r_Y = e^{0.064} - 1 \approx 6.609\% > 6.5\%\). Aunque \(6.5\%\) parece mayor que \(6.4\%\) a primera vista, la capitalización continua supera con creces la brecha de \(0.1\) puntos porcentuales.
+
+[QUESTION 2]
+[ANSWER: A]
+Un compuesto recién sintetizado pierde el \(20\%\) de su masa restante cada \(4\text{ horas}\). ¿Qué expresión da su vida media exacta \(T_{1/2}\) en horas?
+
+(A) \(\dfrac{4\ln 2}{\ln(5/4)}\)
+(B) \(\dfrac{4\ln 2}{\ln 5}\)
+(C) \(\dfrac{\ln(5/4)}{4\ln 2}\)
+(D) \(20\ln 2\)
+(E) \(10\)
+[/QUESTION]
+
+=== SECTION 3: Despeje del tiempo transcurrido en modelos aplicados ===
+
+Una vez calibrado un modelo, la pregunta inversa más habitual pide el tiempo transcurrido \(t\) necesario para alcanzar una cantidad objetivo o un umbral. Aísla primero el factor exponencial y luego aplica \(\ln\) a ambos lados.
+
+Aplicación 1 (Datación por radiocarbono): El tejido orgánico vivo mantiene una fracción constante de carbono-14 radiactivo (\(^{14}\text{C}\)), el cual decae con vida media \(T_{1/2} = 5730\text{ años}\) una vez que el organismo muere. Supongamos que una viga de madera de un yacimiento arqueológico conserva el \(35\%\) de su \(^{14}\text{C}\) original. ¿Qué antigüedad tiene la viga?
+
+Usando la forma de vida media \(A(t) = A_0 \left(\frac{1}{2}\right)^{t / 5730}\), iguala \(A(t) = 0.35 A_0\):
+\[
+0.35 A_0 = A_0 \left(\frac{1}{2}\right)^{t / 5730} \implies 0.35 = \left(\frac{1}{2}\right)^{t / 5730}.
+\]
+Aplica \(\ln\) a ambos lados:
+\[
+\ln(0.35) = \frac{t}{5730}\ln\!\left(\frac{1}{2}\right) = -\frac{t\ln 2}{5730} \implies t = 5730 \cdot \frac{-\ln(0.35)}{\ln 2} \approx 8679\text{ años}.
+\]
+La gráfica siguiente muestra esta curva de decaimiento del carbono-14 con el tiempo medido en miles de años, marcando tanto la primera vida media en \(5.73\) miles de años como la medición del \(35\%\) de la viga en \(8.68\) miles de años.
+
+[GRAPH]
+type: function2d
+title: Curva de decaimiento del carbono-14 \(P(t) = 100 \cdot (1/2)^{t / 5.73}\) (tiempo en miles de años)
+xlabel: Tiempo t (miles de años)
+ylabel: C-14 restante (%)
+xrange: 0, 20
+yrange: 0, 105
+trace: 100 * 2^(-x / 5.73) | label: \(P(t) = 100 \cdot (1/2)^{t/5.73}\)
+point: 5.73, 50 | label: \((5.73, 50)\)
+point: 8.679, 35 | label: \((8.68, 35)\)
+segment: 0, 35, 8.679, 35 | dashed: true
+segment: 8.679, 0, 8.679, 35 | dashed: true
+[/GRAPH]
+
+Aplicación 2 (Tiempo hasta una meta financiera): Una inversión de \(\$5000\) crece de forma continua al \(6\%\) anual, de modo que \(A(t) = 5000 e^{0.06 t}\). ¿Cuánto tarda en triplicarse hasta \(\$15\,000\)?
+
+Divide primero entre \(5000\) para obtener \(e^{0.06 t} = 3\). Tomar \(\ln\) da
+\[
+0.06 t = \ln 3 \implies t = \frac{\ln 3}{0.06} \approx 18.31\text{ años}.
+\]
+
+Aplicación 3 (Eliminación de un fármaco por debajo de un umbral): Un paciente recibe una dosis de \(240\text{ mg}\) de un medicamento cuya vida media en el torrente sanguíneo es de \(6\text{ horas}\). ¿Cuándo cae la cantidad por debajo de \(15\text{ mg}\)?
+
+Resuelve la ecuación frontera \(240 \left(\frac{1}{2}\right)^{t/6} = 15\):
+\[
+\left(\frac{1}{2}\right)^{t/6} = \frac{15}{240} = \frac{1}{16} = \left(\frac{1}{2}\right)^4 \implies \frac{t}{6} = 4 \implies t = 24\text{ horas}.
+\]
+Como la cantidad decrece estrictamente, el nivel permanece por debajo de \(15\text{ mg}\) para todo \(t > 24\text{ horas}\).
+
+[CALLOUT]
+id: time-solve-pitfall
+label: Error frecuente
+title: Fracción restante frente a fracción decaída
+tone: caution
+
+(1) Las fórmulas de decaimiento exponencial siguen la CANTIDAD RESTANTE \(A(t)\), no la cantidad perdida. Si un problema indica que «el \(75\%\) ha decaído», la fracción restante es \(100\% - 75\% = 25\% = \frac{1}{4}\), por lo que debes fijar \(A(t) / A_0 = 0.25\) (nunca \(0.75\)).
+(2) El decaimiento es multiplicativo, no lineal: perder el \(50\%\) en una vida media no significa perder el \(100\%\) en dos vidas medias. Después de \(n\) vidas medias, todavía queda \(\left(\frac{1}{2}\right)^n\) de la cantidad original.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: C]
+Un trazador médico tiene una vida media de \(8\text{ horas}\). ¿Cuántas horas tarda en decaer el \(87.5\%\) de la dosis inicial?
+
+(A) \(14\text{ horas}\)
+(B) \(16\text{ horas}\)
+(C) \(24\text{ horas}\)
+(D) \(8 \cdot \dfrac{\ln(0.875)}{\ln(0.5)}\text{ horas}\)
+(E) \(32\text{ horas}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Se definen tres modelos de crecimiento sin restricciones para \(t \ge 0\) (en años):
+- El modelo P crece de forma continua a una tasa \(k_P = 0.08\text{ año}^{-1}\), de modo que \(P(t) = P_0 e^{0.08 t}\).
+- El modelo Q crece un \(8\%\) anual de forma discreta, de modo que \(Q(t) = Q_0 (1.08)^t\).
+- El modelo R se duplica cada \(8\text{ años}\), de modo que \(R(t) = R_0 \cdot 2^{t/8}\).
+
+Ordena los tres modelos de la tasa de crecimiento exponencial MÁS LENTA a la MÁS RÁPIDA.
+
+(A) Q el más lento, luego P, luego R el más rápido
+(B) P el más lento, luego Q, luego R el más rápido
+(C) R el más lento, luego Q, luego P el más rápido
+(D) Q y P empatan como los más lentos, con R como el más rápido
+(E) R el más lento, luego P, luego Q el más rápido
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Una población bacteriana crece exponencialmente según \(P(t) = P_0 e^{kt}\). En \(t = 3\text{ horas}\) la población es \(200\), y en \(t = 7\text{ horas}\) es \(1800\). ¿En qué instante \(t\) (en horas) alcanzará la población los \(5400\) individuos?
+
+(A) \(8\)
+(B) \(9\)
+(C) \(11\)
+(D) \(13\)
+(E) \(19\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+La colonia A comienza en \(t = 0\) con \(500\) células y se duplica cada \(3\text{ horas}\). La colonia B comienza en \(t = 0\) con \(2000\) células y se duplica cada \(6\text{ horas}\). ¿Después de cuántas horas \(t > 0\) contendrán ambas colonias exactamente el mismo número de células?
+
+(A) \(4\text{ horas}\)
+(B) \(6\text{ horas}\)
+(C) \(9\text{ horas}\)
+(D) \(12\text{ horas}\)
+(E) \(18\text{ horas}\)
+[/BONUS]

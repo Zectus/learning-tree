@@ -1,0 +1,250 @@
+=== SECTION 1: Vertical and horizontal scalings ===
+
+Rigid transformations slide and mirror a graph without changing its shape. What if we multiply the output or the input by a nonzero constant? That stretches or compresses the graph along one axis, producing a non-rigid scaling.
+
+First, place a nonzero multiplier \(a\) OUTSIDE the function: \(y = a \cdot f(x)\). For every input \(x\), the height \(y\) is multiplied directly by \(a\):
+- If \(|a| > 1\), points move farther from the \(x\)-axis (vertical stretch by a factor of \(|a|\)).
+- If \(0 < |a| < 1\), points move closer to the \(x\)-axis (vertical compression by a factor of \(|a|\)).
+- If \(a < 0\), the vertical scaling is accompanied by a reflection across the \(x\)-axis.
+- Notice that \(x\)-intercepts \((r, 0)\) stay anchored because \(a \cdot 0 = 0\).
+
+Second, place a nonzero multiplier \(b\) INSIDE the parentheses: \(y = f(bx)\). Just as horizontal shifts behaved opposite to the visible sign, horizontal scaling behaves reciprocally to the visible factor! Apply the input-matching bridge: to feed the original input \(x\) into \(f\) and get the same output \(y\), the new coordinate \(x'\) must satisfy
+\[
+b x' = x \implies x' = \frac{x}{b}.
+\]
+Therefore:
+- If \(|b| > 1\) (say \(b = 2\)), then \(x' = x/2\): every point moves HALF as far from the \(y\)-axis, causing a horizontal COMPRESSION by a factor of \(\frac{1}{|b|}\).
+- If \(0 < |b| < 1\) (say \(b = \frac{1}{3}\)), then \(x' = 3x\): every point moves THREE times as far from the \(y\)-axis, causing a horizontal STRETCH by a factor of \(\frac{1}{|b|}\).
+- If \(b < 0\), the horizontal scaling is accompanied by a reflection across the \(y\)-axis.
+- The \(y\)-intercept \((0, f(0))\) stays anchored because \(0/b = 0\).
+
+[CALLOUT]
+id: scaling-rules
+label: Rule
+title: Vertical and horizontal scalings
+tone: key
+
+Starting from \(y = f(x)\) with a typical point \((x, y)\):
+
+(1) Vertical scaling \(y = a \cdot f(x)\) (\(a \ne 0\)): maps \((x, y) \mapsto (x, a y)\). Stretches vertically if \(|a| > 1\); compresses vertically if \(0 < |a| < 1\); reflects across the \(x\)-axis if \(a < 0\).
+(2) Horizontal scaling \(y = f(bx)\) (\(b \ne 0\)): maps \((x, y) \mapsto (x/b, y)\). Compresses horizontally by \(1/|b|\) if \(|b| > 1\); stretches horizontally by \(1/|b|\) if \(0 < |b| < 1\); reflects across the \(y\)-axis if \(b < 0\).
+[/CALLOUT]
+
+Drag the sliders \(a\) and \(b\) in the graph below on \(f(x) = x^3 - 3x\) to contrast vertical scaling \(a f(x)\) (which pulls the turning points vertically while keeping the \(x\)-intercepts fixed at \(\pm\sqrt{3}\)) with horizontal scaling \(f(bx)\) (which pulls the turning points and \(x\)-intercepts horizontally while keeping the turning-point heights fixed at \(\pm 2\)).
+
+[GRAPH]
+type: function2d
+title: Vertical scaling \(a f(x)\) versus horizontal scaling \(f(bx)\) on \(f(x) = x^3 - 3x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 3.5
+yrange: -5, 5
+trace: x^3 - 3*x | label: \(f(x) = x^3 - 3x\)
+trace: a*(x^3 - 3*x) | label: \(a f(x)\)
+trace: (b*x)^3 - 3*(b*x) | label: \(f(bx)\)
+point: 1, -2*a | label: \((1, a f(1))\)
+point: 1/b, -2 | label: \((1/b, f(1))\)
+slider: a | range: 0.5, 2 | init: 1.5 | step: 0.25
+slider: b | range: 0.5, 2 | init: 2 | step: 0.25
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+The graph of \(y = f(x)\) has domain \([-6, 4]\), range \([-2, 8]\), and passes through \((2, 6)\). What are the domain, range, and corresponding image point of \(y = \frac{1}{2} f(2x)\)?
+
+(A) Domain \([-12, 8]\), range \([-1, 4]\), point \((4, 3)\)
+(B) Domain \([-3, 2]\), range \([-1, 4]\), point \((1, 3)\)
+(C) Domain \([-3, 2]\), range \([-4, 16]\), point \((1, 12)\)
+(D) Domain \([-12, 8]\), range \([-4, 16]\), point \((4, 12)\)
+(E) Domain \([-3, 2]\), range \([-1, 4]\), point \((4, 3)\)
+[/QUESTION]
+
+=== SECTION 2: Combining scalings, reflections, and shifts—and the factoring bridge ===
+
+Now put all transformations together into the general affine transformation of any function \(f\):
+\[
+y = a \cdot f\bigl(b(x - h)\bigr) + k \qquad (a \ne 0,\; b \ne 0).
+\]
+Notice the crucial factored form inside the parentheses: \(b(x - h)\), NOT \(bx - c\)! Why is factoring \(b\) out of \(bx - c\) indispensable?
+
+Suppose you want to graph \(g(x) = f(2x - 6)\). A very common mistake is to say "compress horizontally by \(1/2\) and shift right by \(6\)." Test that claim using the input-matching bridge! We want the argument of \(f\) to equal \(x\):
+\[
+2x' - 6 = x \implies 2x' = x + 6 \implies x' = \frac{x}{2} + 3.
+\]
+Look at the shift term: it is \(+3\), NOT \(+6\)! Rewriting the inside in factored form reveals why immediately:
+\[
+f(2x - 6) = f\bigl(2(x - 3)\bigr).
+\]
+Once \(b = 2\) is factored out, you read the true horizontal shift \(h = 3\) directly: compress horizontally by \(1/2\), THEN shift right by \(3\). (Equivalently, if you choose to shift BEFORE scaling, you must shift right by \(6\) FIRST—taking \(x \mapsto x + 6\)—and THEN compress by \(1/2\)—taking \(x + 6 \mapsto \frac{x + 6}{2} = \frac{x}{2} + 3\).)
+
+The same order sensitivity occurs vertically: in \(y = a \cdot f(x) + k\), scaling/reflecting by \(a\) happens FIRST and shifting vertically by \(k\) happens SECOND, taking \(y \mapsto ay \mapsto ay + k\). Doing the vertical shift first would give \(a(y + k) = ay + ak \ne ay + k\).
+
+[CALLOUT]
+id: combined-transform-bridge
+label: Theorem
+title: Combined affine transformation and exact point-mapping rule
+tone: key
+
+Given \(y = a \cdot f(bx - c) + k\) with \(a \ne 0\) and \(b \ne 0\), first factor \(b\) out of the argument to write
+\[
+y = a \cdot f\bigl(b(x - h)\bigr) + k, \qquad \text{where } h = \frac{c}{b}.
+\]
+(1) Every point \((x, y)\) on \(y = f(x)\) maps to the exact point
+\[
+(x, y) \mapsto \left(\frac{x}{b} + h,\; ay + k\right).
+\]
+(2) Standard geometric sequence (scale/reflect before shift on each axis):
+   - Horizontally: scale by \(1/|b|\) (and reflect across the \(y\)-axis if \(b < 0\)), then shift horizontally by \(h\).
+   - Vertically: scale by \(|a|\) (and reflect across the \(x\)-axis if \(a < 0\)), then shift vertically by \(k\).
+   (Horizontal operations and vertical operations are completely independent, so you may perform the horizontal group before or after the vertical group.)
+[/CALLOUT]
+
+Let us apply [REF: combined-transform-bridge | this framework] to sketch
+\[
+g(x) = -2\sqrt{6 - 3x} + 1.
+\]
+Step 1 (Factor inside the radical):
+\[
+6 - 3x = -3(x - 2), \quad \text{so} \quad g(x) = -2\sqrt{-3(x - 2)} + 1.
+\]
+Here the parent is \(f(x) = \sqrt{x}\), with \(a = -2\), \(b = -3\), \(h = 2\), and \(k = 1\).
+
+Step 2 (Apply the point-mapping rule \((x, y) \mapsto \left(\frac{x}{-3} + 2,\; -2y + 1\right)\)):
+- Parent anchor \((0, 0) \mapsto (2, 1)\). Check: \(g(2) = -2\sqrt{0} + 1 = 1\).
+- Parent anchor \((1, 1) \mapsto \left(\frac{5}{3}, -1\right)\). Check: \(g(5/3) = -2\sqrt{6 - 5} + 1 = -1\).
+- Parent anchor \((4, 2) \mapsto \left(\frac{2}{3}, -3\right)\). Check: \(g(2/3) = -2\sqrt{6 - 2} + 1 = -3\).
+- Parent anchor \((9, 3) \mapsto (-1, -5)\). Check: \(g(-1) = -2\sqrt{9} + 1 = -5\).
+
+Step 3 (Track domain and range):
+- Parent domain \(x \ge 0\) maps under \(x' = -x/3 + 2\) to \(x' \le 2\), so \(\operatorname{Dom}(g) = (-\infty, 2]\).
+- Parent range \(y \ge 0\) maps under \(y' = -2y + 1\) to \(y' \le 1\), so \(\operatorname{Range}(g) = (-\infty, 1]\).
+
+[GRAPH]
+type: function2d
+title: Parent \(\sqrt{x}\) transformed to \(g(x) = -2\sqrt{-3(x - 2)} + 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2, 5
+yrange: -6, 3
+trace: x >= 0 ? sqrt(x) : (0/0) | label: \(f(x) = \sqrt{x}\)
+trace: x <= 2 ? (-2*sqrt(6 - 3*x) + 1) : (0/0) | label: \(g(x) = -2\sqrt{6 - 3x} + 1\)
+point: 0, 0 | label: \((0, 0)\)
+point: 4, 2 | label: \((4, 2)\)
+point: 2, 1 | label: \((2, 1)\)
+point: -1, -5 | label: \((-1, -5)\)
+[/GRAPH]
+
+Notice how fast and error-proof [REF: combined-transform-bridge.1 | the point-mapping rule] is: even if you prefer sketching geometrically step by step, testing two points with \((x/b + h, ay + k)\) immediately catches any shift-before-scale mistake.
+
+[QUESTION 2]
+[ANSWER: D]
+To obtain the graph of \(y = f(3x + 12)\) from the graph of \(y = f(x)\), which sequence of horizontal transformations is valid?
+
+(A) Compress horizontally by a factor of \(1/3\), then shift left \(12\) units.
+(B) Stretch horizontally by a factor of \(3\), then shift left \(4\) units.
+(C) Shift left \(4\) units, then compress horizontally by a factor of \(1/3\).
+(D) Compress horizontally by a factor of \(1/3\), then shift left \(4\) units.
+(E) Compress horizontally by a factor of \(1/3\), then shift right \(4\) units.
+[/QUESTION]
+
+=== SECTION 3: When vertical and horizontal scalings coincide—and when they do not ===
+
+Look at the two formulas \(y = (2x)^2\) and \(y = 4x^2\). Algebraically they are identical! On the parent function \(f(x) = x^2\), a horizontal compression by a factor of \(1/2\) produces the exact same parabola as a vertical stretch by a factor of \(4\). Similarly:
+- On \(f(x) = \sqrt{x}\): \(\sqrt{4x} = 2\sqrt{x}\) (horizontal compression by \(1/4\) equals vertical stretch by \(2\)).
+- On \(f(x) = |x|\): \(|3x| = 3|x|\) (horizontal compression by \(1/3\) equals vertical stretch by \(3\)).
+- On \(f(x) = \frac{1}{x}\): \(\frac{1}{2x} = \frac{1}{2} \cdot \frac{1}{x}\) (horizontal compression by \(1/2\) equals vertical compression by \(1/2\)).
+
+Because this algebraic coincidence occurs on every pure power, root, absolute-value, and reciprocal parent, it is tempting to think that horizontal and vertical scalings are always interchangeable. That is FALSE for general functions!
+
+Compare \(f(2x)\) and \(a \cdot f(x)\) on a bounded or multi-feature function—for instance, \(f(x) = \frac{1}{x^2 + 1}\) (whose peak height is \(1\) and whose domain is \((-\infty, \infty)\)) or an unlabeled polyline with corners at \((-2, 0)\), \((0, 2)\), and \((2, 0)\):
+- Vertical scaling \(2f(x)\) doubles the peak height to \(4\) while keeping the \(x\)-intercepts fixed at \(-2\) and \(2\).
+- Horizontal scaling \(f(2x)\) leaves the peak height fixed at \(2\) while pulling the \(x\)-intercepts inward to \(-1\) and \(1\).
+
+No vertical stretch \(a \cdot f(x)\) can ever move an \(x\)-intercept, and no horizontal stretch \(f(bx)\) can ever change the global maximum height of a bounded curve! The table below makes this distinction clear.
+
+[TABLE]
+Function family | Effect of \(f(bx)\) (\(b > 0\)) | Equivalent to some \(a f(x)\)? | Reason
+\(x^2\) | \((bx)^2 = b^2 x^2\) | Yes, \(a = b^2\) | Homogeneous power law
+\(\sqrt{x}\) | \(\sqrt{bx} = \sqrt{b}\,\sqrt{x}\) | Yes, \(a = \sqrt{b}\) | Homogeneous root law
+\(x^2 - 1\) | \(b^2 x^2 - 1\) | No (unless \(b = 1\)) | \(a(x^2 - 1) = a x^2 - a\) moves the vertex \((0, -1)\)
+General unlabeled \(f\) | Scales \(x\)-coordinates by \(1/b\) | No | Vertical scaling fixes \(x\)-intercepts; horizontal scaling fixes peak heights
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Let \(f(x) = x^2 - 4\). Which statement accurately compares \(g(x) = f(2x)\) and \(h(x) = 4f(x)\)?
+
+(A) \(g\) has \(x\)-intercepts at \(x = \pm 1\) and vertex \((0, -4)\), whereas \(h\) has \(x\)-intercepts at \(x = \pm 2\) and vertex \((0, -16)\).
+(B) \(g\) and \(h\) are the exact same function because \((2x)^2 = 4x^2\).
+(C) \(g\) has \(x\)-intercepts at \(x = \pm 4\) and vertex \((0, -4)\), whereas \(h\) has \(x\)-intercepts at \(x = \pm 2\) and vertex \((0, -16)\).
+(D) \(g\) and \(h\) have the same vertex \((0, -4)\), but different \(x\)-intercepts.
+(E) \(g\) and \(h\) have the same \(x\)-intercepts at \(x = \pm 2\), but different vertices.
+[/QUESTION]
+
+=== SECTION 4: Reconstructing formulas and tracking asymptotes ===
+
+When reconstructing a transformed formula from a graph, anchor features tell you the parameters systematically:
+1. Identify the parent family from the overall shape (V-shape, parabola, S-curve, half-parabola, hyperbola).
+2. Read the shift \((h, k)\) from the key landmark: vertex of a parabola or V-shape, starting point of a square root, inflection center of a cubic, or intersection of the vertical and horizontal asymptotes of a reciprocal curve.
+3. Plug one additional clearly marked point \((x_1, y_1)\) on the graph into the template \(y = a \cdot f(x - h) + k\) to solve for the scaling parameter \(a\).
+
+For example, suppose a graph has the shape of a reciprocal curve \(1/x\) with vertical asymptote \(x = 3\), horizontal asymptote \(y = -1\), and passes through \((5, 2)\).
+- The asymptotes immediately fix \(h = 3\) and \(k = -1\), giving the template
+\[
+g(x) = \frac{a}{x - 3} - 1.
+\]
+- Substituting the point \((5, 2)\):
+\[
+2 = \frac{a}{5 - 3} - 1 \implies 3 = \frac{a}{2} \implies a = 6.
+\]
+Thus \(g(x) = \frac{6}{x - 3} - 1\). Its domain is \((-\infty, 3) \cup (3, \infty)\) and its range is \((-\infty, -1) \cup (-1, \infty)\).
+
+What if a rational expression is written with a coefficient on \(x\) in the denominator, such as \(p(x) = \frac{3}{2x - 8} + 5\)? Factor \(2\) from the denominator:
+\[
+p(x) = \frac{3}{2(x - 4)} + 5 = \frac{3/2}{x - 4} + 5.
+\]
+Now you read instantly: vertical asymptote \(x = 4\), horizontal asymptote \(y = 5\), and vertical scale factor \(a = 3/2\) (or equivalently horizontal compression by \(1/2\) and vertical stretch by \(3\)).
+
+[QUESTION 4]
+[ANSWER: C]
+An unlabeled graph \(y = f(x)\) has domain \([-2, 6]\) and range \([-4, 2]\). What are the domain and range of \(y = -3 f(2x - 4) + 5\)?
+
+(A) Domain \([-3, 1]\), range \([-1, 17]\)
+(B) Domain \([-1, 3]\), range \([-7, 11]\)
+(C) Domain \([1, 5]\), range \([-1, 17]\)
+(D) Domain \([1, 5]\), range \([-17, 1]\)
+(E) Domain \([3, 7]\), range \([-1, 17]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(y = f(x)\) passes through the point \((6, -2)\). Which point must lie on the graph of \(y = 4 f(3 - 2x) - 1\)?
+
+(A) \((-\frac{3}{2}, -7)\)
+(B) \((\frac{9}{2}, -9)\)
+(C) \((-9, -9)\)
+(D) \((\frac{3}{2}, -9)\)
+(E) \((-\frac{3}{2}, -9)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A parabola opens downward, has vertex \((-1, 7)\), and passes through \((1, -5)\). Which equation describes this parabola?
+
+(A) \(y = -6(x + 1)^2 + 7\)
+(B) \(y = -3(x + 1)^2 + 7\)
+(C) \(y = -3(x - 1)^2 + 7\)
+(D) \(y = 3(x + 1)^2 + 7\)
+(E) \(y = -\frac{3}{2}(x + 1)^2 + 7\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Suppose you start with \(y = f(x)\), FIRST shift the graph right \(4\) units, and THEN compress the resulting graph horizontally by a factor of \(1/2\). Which formula describes the final graph?
+
+(A) \(y = f(2x - 4)\)
+(B) \(y = f(2x - 8)\)
+(C) \(y = f(2x - 2)\)
+(D) \(y = f\left(\frac{1}{2}x - 4\right)\)
+(E) \(y = f\left(\frac{1}{2}x - 2\right)\)
+[/BONUS]

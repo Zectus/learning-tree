@@ -1,0 +1,324 @@
+=== SECTION 1: The material conditional and vacuous truth ===
+
+Most mathematical theorems are not bare assertions of fact; they take a conditional shape: "if \(x\) satisfies one property, then \(x\) satisfies another." For example, "if an integer \(n\) is divisible by \(6\), then \(n\) is even." We already know how to combine statements with \(\neg\), \(\wedge\), and \(\vee\) and how to compare formulas via truth-table equivalence \(\equiv\). Now we introduce the connective that expresses "if ... then ...".
+
+[CALLOUT]
+id: def-conditional
+label: Definition
+title: Material conditional
+tone: key
+
+Let \(P\) and \(Q\) be statements. The conditional statement \(P \Rightarrow Q\) (read "if \(P\), then \(Q\)" or "\(P\) implies \(Q\)") is false in the single case where \(P\) is true and \(Q\) is false, and true in all other cases. Here \(P\) is the hypothesis (or antecedent) and \(Q\) is the conclusion (or consequent).
+[/CALLOUT]
+
+[TABLE]
+\(P\) | \(Q\) | \(P \Rightarrow Q\)
+\(T\) | \(T\) | \(T\)
+\(T\) | \(F\) | \(F\)
+\(F\) | \(T\) | \(T\)
+\(F\) | \(F\) | \(T\)
+[/TABLE]
+
+The first two rows of this table match everyday intuition immediately: if the hypothesis \(P\) holds and the conclusion \(Q\) follows, the implication succeeds (\(T\)); if \(P\) holds yet \(Q\) fails, the implication is broken (\(F\)). The last two rows, however—where \(P\) is \(F\) and \(P \Rightarrow Q\) is declared \(T\) regardless of \(Q\)—trip up almost everyone at first. This phenomenon is called vacuous truth.
+
+Why must \(P \Rightarrow Q\) be true whenever \(P\) is false? Think of \(P \Rightarrow Q\) as a promise rather than a causal claim. Suppose an instructor promises: "If you score at least \(90\%\) on the final exam, then you will receive an A in the course." Under what circumstances has the instructor broken the promise? Only if you score at least \(90\%\) (\(P\) is \(T\)) and do not receive an A (\(Q\) is \(F\)). If you score \(82\%\) (\(P\) is \(F\)), the promise was never violated—whether you still earn an A (\(Q\) is \(T\)) or earn a B (\(Q\) is \(F\)).
+
+The mathematical reason is even more decisive. Consider the statement "if \(n\) is divisible by \(6\), then \(n\) is even." We want this implication to hold for every integer \(n\). Test it on \(n = 4\) (where "\(4\) is divisible by \(6\)" is \(F\) and "\(4\) is even" is \(T\)) and on \(n = 5\) (where both hypothesis and conclusion are \(F\)). Neither \(n = 4\) nor \(n = 5\) refutes the claim! A conditional fails only when its hypothesis is met and its conclusion breaks.
+
+[CALLOUT]
+id: caution-causal
+label: Caution
+title: Logical implication is not causation
+tone: caution
+
+In propositional logic, \(P \Rightarrow Q\) depends only on the truth values of \(P\) and \(Q\), never on whether \(P\) causes \(Q\) or relates to \(Q\) in subject matter. Thus "if \(2 + 2 = 5\), then \(100\) is prime" has truth value \(T\) simply because its hypothesis "\(2 + 2 = 5\)" is false.
+[/CALLOUT]
+
+Mathematical prose expresses the exact same connective \(P \Rightarrow Q\) in many equivalent English phrasings. Mastering these translations prevents reversed implications—especially with "only if" and "necessary versus sufficient."
+
+[TABLE]
+English phrasing | Symbolic form | Role of \(P\) and \(Q\)
+If \(P\), then \(Q\) | \(P \Rightarrow Q\) | \(P\) is sufficient for \(Q\)
+\(Q\) if \(P\) | \(P \Rightarrow Q\) | \(P\) is sufficient for \(Q\)
+\(Q\) provided that \(P\) (or whenever \(P\)) | \(P \Rightarrow Q\) | \(P\) is sufficient for \(Q\)
+\(P\) only if \(Q\) | \(P \Rightarrow Q\) | \(Q\) is necessary for \(P\)
+\(P\) is a sufficient condition for \(Q\) | \(P \Rightarrow Q\) | Knowing \(P\) suffices to guarantee \(Q\)
+\(Q\) is a necessary condition for \(P\) | \(P \Rightarrow Q\) | \(Q\) must hold for \(P\) to be possible
+\(Q\) unless \(\neg P\) (equivalently, \(P\) unless \(Q\) is \(\neg Q \Rightarrow P\)) | \(P \Rightarrow Q\) | Whenever \(\neg P\) fails (i.e., \(P\) holds), \(Q\) must hold
+[/TABLE]
+
+Let us examine "only if" and "unless" carefully, because they are the two most commonly misread phrasings.
+
+First, why does "\(P\) only if \(Q\)" translate to \(P \Rightarrow Q\) rather than \(Q \Rightarrow P\)? Test it on a familiar arithmetic fact: "A natural number \(n\) is divisible by \(4\) only if \(n\) is even." Here \(P\) is "\(n\) is divisible by \(4\)" and \(Q\) is "\(n\) is even." Saying "\(P\) only if \(Q\)" means \(P\) cannot happen without \(Q\)—that is, if \(Q\) fails, \(P\) fails, or equivalently, whenever \(P\) holds, \(Q\) must hold (\(P \Rightarrow Q\)). Notice that \(Q \Rightarrow P\) ("if \(n\) is even, then \(n\) is divisible by \(4\)") is false for \(n = 6\). So "only if" points forward to the necessary condition \(Q\), whereas plain "if" introduces the sufficient condition \(P\).
+
+Second, why does "\(A\) unless \(B\)" translate to \(\neg B \Rightarrow A\) (which, as we will prove in the next section, is equivalent to \(A \vee B\))? Read "the matrix fails to invert unless its determinant is nonzero": if the condition after "unless" does not hold (the determinant is zero, \(\neg B\)), then the main clause must hold (\(A\)).
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(P\) be the statement "\(n\) is a multiple of \(10\)" and let \(Q\) be the statement "\(n\) is a multiple of \(5\)" (for a fixed integer \(n\)). Which of the following English sentences expresses \(P \Rightarrow Q\)?
+
+(A) Being a multiple of \(5\) is a sufficient condition for \(n\) to be a multiple of \(10\).
+(B) \(n\) is a multiple of \(10\) if \(n\) is a multiple of \(5\).
+(C) \(n\) is a multiple of \(10\) only if \(n\) is a multiple of \(5\).
+(D) Being a multiple of \(10\) is a necessary condition for \(n\) to be a multiple of \(5\).
+(E) \(n\) is a multiple of \(10\) unless \(n\) is a multiple of \(5\).
+[/QUESTION]
+
+=== SECTION 2: Converse, inverse, contrapositive, and disjunction form ===
+
+From a single conditional \(P \Rightarrow Q\), three closely related conditionals can be formed by swapping \(P\) and \(Q\), negating them, or doing both. Keeping track of which ones are logically equivalent to \(P \Rightarrow Q\)—and which ones are not—is essential for all later reasoning.
+
+[CALLOUT]
+id: def-related-conditionals
+label: Definition
+title: Converse, inverse, and contrapositive
+tone: key
+
+Given a conditional statement \(P \Rightarrow Q\):
+
+(1) Its converse is \(Q \Rightarrow P\).
+(2) Its inverse is \(\neg P \Rightarrow \neg Q\).
+(3) Its contrapositive is \(\neg Q \Rightarrow \neg P\).
+[/CALLOUT]
+
+Let us build a single truth table comparing \(P \Rightarrow Q\) with all three relatives and with the disjunction \(\neg P \vee Q\).
+
+[TABLE]
+\(P\) | \(Q\) | \(\neg P\) | \(\neg Q\) | \(P \Rightarrow Q\) | \(\neg Q \Rightarrow \neg P\) | \(\neg P \vee Q\) | \(Q \Rightarrow P\) | \(\neg P \Rightarrow \neg Q\)
+\(T\) | \(T\) | \(F\) | \(F\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\)
+\(T\) | \(F\) | \(F\) | \(T\) | \(F\) | \(F\) | \(F\) | \(T\) | \(T\)
+\(F\) | \(T\) | \(T\) | \(F\) | \(T\) | \(T\) | \(T\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\)
+[/TABLE]
+
+Read the columns side by side. Columns 5, 6, and 7 are identical (\(T, F, T, T\)), and columns 8 and 9 are identical (\(T, T, F, T\)), while the two groups differ in rows 2 and 3. This establishes two fundamental equivalence families:
+
+[CALLOUT]
+id: thm-conditional-equivalences
+label: Theorem
+title: Contrapositive and disjunction equivalences
+tone: key
+
+For all statements \(P\) and \(Q\):
+
+(1) \(P \Rightarrow Q \equiv \neg Q \Rightarrow \neg P\) (a conditional is logically equivalent to its contrapositive).
+(2) \(P \Rightarrow Q \equiv \neg P \vee Q\) (implication elimination).
+(3) \(Q \Rightarrow P \equiv \neg P \Rightarrow \neg Q\) (the converse and inverse are equivalent to each other), while in general \(P \Rightarrow Q \not\equiv Q \Rightarrow P\).
+[/CALLOUT]
+
+Check this against a concrete arithmetic statement for a fixed real number \(x\): "If \(x > 3\), then \(x^2 > 9\)."
+- Original (\(P \Rightarrow Q\)): If \(x > 3\), then \(x^2 > 9\). (True for every \(x \in \mathbb{R}\).)
+- Contrapositive (\(\neg Q \Rightarrow \neg P\)): If \(x^2 \le 9\), then \(x \le 3\). (Also true for every \(x \in \mathbb{R}\).)
+- Converse (\(Q \Rightarrow P\)): If \(x^2 > 9\), then \(x > 3\). (False when \(x = -5\), since \((-5)^2 = 25 > 9\) yet \(-5 \le 3\).)
+- Inverse (\(\neg P \Rightarrow \neg Q\)): If \(x \le 3\), then \(x^2 \le 9\). (Also false for the exact same witness \(x = -5\).)
+
+Notice also why [REF: thm-conditional-equivalences.2 | implication elimination] (\(P \Rightarrow Q \equiv \neg P \vee Q\)) is so useful: it translates every conditional into the basic connectives \(\neg\) and \(\vee\), letting us apply De Morgan's laws and distributivity immediately. For example, "if \(P\) and \(Q\), then \(R\)" becomes \(\neg(P \wedge Q) \vee R\), and "if \(P\), then \(Q\) or \(R\)" becomes \(\neg P \vee Q \vee R\). And remember "\(A\) unless \(B\)" from Section 1: since it means \(\neg B \Rightarrow A\), implication elimination gives \(\neg(\neg B) \vee A \equiv B \vee A \equiv A \vee B\).
+
+[QUESTION 2]
+[ANSWER: D]
+Consider the statement \(S\): "If \(x \ge 2\) and \(y \ge 2\), then \(xy \ge 4\)." Which of the following is the contrapositive of \(S\)?
+
+(A) If \(xy \ge 4\), then \(x \ge 2\) and \(y \ge 2\).
+(B) If \(x < 2\) or \(y < 2\), then \(xy < 4\).
+(C) If \(xy < 4\), then \(x < 2\) and \(y < 2\).
+(D) If \(xy < 4\), then \(x < 2\) or \(y < 2\).
+(E) If \(x < 2\) and \(y < 2\), then \(xy < 4\).
+[/QUESTION]
+
+=== SECTION 3: Negating a conditional and the biconditional ===
+
+One of the single most persistent traps in mathematics is negating an "if ... then ..." statement. Asked to negate "if it rains, then the field is wet," many beginners instinctively write another conditional, such as "if it rains, then the field is not wet" or "if it does not rain, then the field is not wet." Both are wrong.
+
+We can derive the exact negation directly from [REF: thm-conditional-equivalences.2 | implication elimination] together with De Morgan's law and double negation:
+\[
+\neg(P \Rightarrow Q) \equiv \neg(\neg P \vee Q) \equiv \neg(\neg P) \wedge \neg Q \equiv P \wedge \neg Q.
+\]
+Look at what this says in plain terms—and match it against the truth table of [REF: def-conditional | the conditional]: \(P \Rightarrow Q\) is false in exactly one row, namely when \(P\) is true and \(Q\) is false. Therefore \(\neg(P \Rightarrow Q)\) is true in that exact row and no other, which is precisely \(P \wedge \neg Q\).
+
+[CALLOUT]
+id: thm-negation-conditional
+label: Theorem
+title: Negation of a conditional
+tone: key
+
+For all statements \(P\) and \(Q\),
+\[
+\neg(P \Rightarrow Q) \equiv P \wedge \neg Q.
+\]
+The negation of a conditional is a conjunction, never another conditional.
+[/CALLOUT]
+
+Test why "\(P \Rightarrow \neg Q\)" fails as a negation of \(P \Rightarrow Q\). When \(P\) is false, \(P \Rightarrow Q\) is vacuously true, and \(P \Rightarrow \neg Q\) is ALSO vacuously true! Two statements that are both true in the same row cannot be negations of each other. By contrast, when \(P\) is false, \(P \wedge \neg Q\) is false, matching \(\neg(P \Rightarrow Q)\) in every row.
+
+For a concrete example, take a fixed integer \(n\) and the statement "if \(n\) is prime, then \(n\) is odd." Its negation is "\(n\) is prime and \(n\) is even" (which is true when \(n = 2\))—not "if \(n\) is prime, then \(n\) is even."
+
+Often in mathematics both a conditional \(P \Rightarrow Q\) and its converse \(Q \Rightarrow P\) hold together. That two-way implication is captured by the biconditional.
+
+[CALLOUT]
+id: def-biconditional
+label: Definition
+title: Biconditional
+tone: key
+
+Let \(P\) and \(Q\) be statements. The biconditional \(P \Leftrightarrow Q\) (read "\(P\) if and only if \(Q\)", often abbreviated "\(P\) iff \(Q\)") is true precisely when \(P\) and \(Q\) have the same truth value (both \(T\) or both \(F\)), and false when they have opposite truth values. Equivalently,
+\[
+P \Leftrightarrow Q \equiv (P \Rightarrow Q) \wedge (Q \Rightarrow P).
+\]
+[/CALLOUT]
+
+[TABLE]
+\(P\) | \(Q\) | \(P \Rightarrow Q\) | \(Q \Rightarrow P\) | \((P \Rightarrow Q) \wedge (Q \Rightarrow P)\) | \(P \Leftrightarrow Q\)
+\(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\)
+\(T\) | \(F\) | \(F\) | \(T\) | \(F\) | \(F\)
+\(F\) | \(T\) | \(T\) | \(F\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(T\) | \(T\) | \(T\) | \(T\)
+[/TABLE]
+
+In English, \(P \Leftrightarrow Q\) is also expressed as "\(P\) is a necessary and sufficient condition for \(Q\)." Notice why: "\(P\) is sufficient for \(Q\)" gives \(P \Rightarrow Q\), and "\(P\) is necessary for \(Q\)" gives \(Q \Rightarrow P\), so together they yield \((P \Rightarrow Q) \wedge (Q \Rightarrow P) \equiv P \Leftrightarrow Q\).
+
+Do not confuse the connective \(\Leftrightarrow\) with the meta-symbol \(\equiv\):
+- \(P \Leftrightarrow Q\) is a compound statement inside logic; it can be true in some rows and false in others.
+- \(A \equiv B\) is a claim about two formulas \(A\) and \(B\) asserting that they match in every row of the truth table—which happens precisely when the single formula \(A \Leftrightarrow B\) evaluates to \(T\) in every row.
+
+What is the negation of \(P \Leftrightarrow Q\)? Since \(P \Leftrightarrow Q\) is true when \(P\) and \(Q\) share the same truth value, \(\neg(P \Leftrightarrow Q)\) is true precisely when \(P\) and \(Q\) have opposite truth values:
+\[
+\neg(P \Leftrightarrow Q) \equiv (P \wedge \neg Q) \vee (\neg P \wedge Q) \equiv P \Leftrightarrow \neg Q.
+\]
+We can also verify the first equivalence algebraically using [REF: thm-negation-conditional | negation of a conditional] and De Morgan's law:
+\[
+\neg\bigl((P \Rightarrow Q) \wedge (Q \Rightarrow P)\bigr) \equiv \neg(P \Rightarrow Q) \vee \neg(Q \Rightarrow P) \equiv (P \wedge \neg Q) \vee (Q \wedge \neg P).
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+For a fixed integer \(n\), consider the statement: "If \(n\) is divisible by \(2\) and \(n\) is divisible by \(3\), then \(n\) is divisible by \(12\)." Which of the following is logically equivalent to its negation?
+
+(A) If \(n\) is divisible by \(2\) and \(n\) is divisible by \(3\), then \(n\) is not divisible by \(12\).
+(B) \(n\) is divisible by \(2\), \(n\) is divisible by \(3\), and \(n\) is not divisible by \(12\).
+(C) \(n\) is not divisible by \(2\), or \(n\) is not divisible by \(3\), or \(n\) is divisible by \(12\).
+(D) If \(n\) is not divisible by \(12\), then \(n\) is not divisible by \(2\) or \(n\) is not divisible by \(3\).
+(E) \(n\) is not divisible by \(2\) and \(n\) is not divisible by \(3\), and \(n\) is divisible by \(12\).
+[/QUESTION]
+
+=== SECTION 4: Tautologies, contradictions, and algebraic simplification ===
+
+Some compound statements have a truth value that never changes, no matter what truth values their variables take.
+
+[CALLOUT]
+id: def-tautology
+label: Definition
+title: Tautology, contradiction, and contingency
+tone: key
+
+(1) A tautology (often denoted \(\mathbf{T}\)) is a compound statement whose truth table column is \(T\) in every row.
+(2) A contradiction (often denoted \(\mathbf{F}\)) is a compound statement whose truth table column is \(F\) in every row.
+(3) A contingency is a compound statement that is \(T\) in at least one row and \(F\) in at least one row.
+[/CALLOUT]
+
+The simplest tautology is the law of excluded middle, \(P \vee \neg P\): whether \(P\) is \(T\) or \(F\), one of \(P\) or \(\neg P\) is \(T\). The simplest contradiction is \(P \wedge \neg P\): no statement can be simultaneously true and false. With these constants \(\mathbf{T}\) and \(\mathbf{F}\), we gain a compact family of simplification laws alongside our earlier equivalence laws.
+
+[CALLOUT]
+id: laws-tautology-algebra
+label: Theorem
+title: Identity, domination, negation, and absorption laws
+tone: key
+
+For all statements \(P\) and \(Q\):
+
+(1) Negation laws: \(P \vee \neg P \equiv \mathbf{T}\) and \(P \wedge \neg P \equiv \mathbf{F}\).
+(2) Identity laws: \(P \wedge \mathbf{T} \equiv P\) and \(P \vee \mathbf{F} \equiv P\).
+(3) Domination laws: \(P \vee \mathbf{T} \equiv \mathbf{T}\) and \(P \wedge \mathbf{F} \equiv \mathbf{F}\).
+(4) Absorption laws: \(P \vee (P \wedge Q) \equiv P\) and \(P \wedge (P \vee Q) \equiv P\).
+[/CALLOUT]
+
+Every law in [REF: laws-tautology-algebra | this theorem] is easy to check mentally. For example, why does \(P \vee (P \wedge Q) \equiv P\) hold? Using identity and distributivity:
+\[
+P \vee (P \wedge Q) \equiv (P \wedge \mathbf{T}) \vee (P \wedge Q) \equiv P \wedge (\mathbf{T} \vee Q) \equiv P \wedge \mathbf{T} \equiv P.
+\]
+
+Because replacing any subformula by a logically equivalent subformula leaves the truth value in every row unchanged, we can simplify complex compound statements and verify tautologies purely by algebraic substitution—without drawing an \(8\)-row or \(16\)-row truth table.
+
+Let us work through two examples to see the method in action.
+
+First, simplify the compound statement \((P \Rightarrow Q) \wedge (P \Rightarrow R)\). Begin by eliminating both implications via [REF: thm-conditional-equivalences.2 | implication elimination], then factor out \(\neg P\) using distributivity:
+\[
+\begin{aligned}
+(P \Rightarrow Q) \wedge (P \Rightarrow R)
+&\equiv (\neg P \vee Q) \wedge (\neg P \vee R) \\
+&\equiv \neg P \vee (Q \wedge R) \\
+&\equiv P \Rightarrow (Q \wedge R).
+\end{aligned}
+\]
+That clean identity matches intuition: showing that \(P\) implies \(Q\) and \(P\) implies \(R\) is equivalent to showing that \(P\) implies \(Q \wedge R\).
+
+Second, determine whether \(\bigl((P \Rightarrow Q) \wedge P\bigr) \Rightarrow Q\) is a tautology, a contradiction, or a contingency. Eliminate the conditionals from the inside out and distribute:
+\[
+\begin{aligned}
+\bigl((P \Rightarrow Q) \wedge P\bigr) \Rightarrow Q
+&\equiv \neg\bigl((\neg P \vee Q) \wedge P\bigr) \vee Q \\
+&\equiv \neg\bigl((\neg P \wedge P) \vee (Q \wedge P)\bigr) \vee Q \\
+&\equiv \neg\bigl(\mathbf{F} \vee (Q \wedge P)\bigr) \vee Q \\
+&\equiv \neg(Q \wedge P) \vee Q \\
+&\equiv (\neg Q \vee \neg P) \vee Q \\
+&\equiv (Q \vee \neg Q) \vee \neg P \\
+&\equiv \mathbf{T} \vee \neg P \\
+&\equiv \mathbf{T}.
+\end{aligned}
+\]
+The formula reduces to \(\mathbf{T}\), proving that it is a tautology. (Look carefully at the structure of that tautology: if \(P \Rightarrow Q\) holds and \(P\) holds, then \(Q\) holds—a pattern that will play a central role in deductive reasoning.)
+
+Be cautious with nested conditionals: unlike \(\wedge\) and \(\vee\), the conditional \(\Rightarrow\) is NOT associative! Compare
+\[
+(P \Rightarrow Q) \Rightarrow R \qquad \text{and} \qquad P \Rightarrow (Q \Rightarrow R).
+\]
+Test the single row \(P = F\), \(Q = F\), \(R = F\):
+- \((P \Rightarrow Q) \Rightarrow R\) becomes \((F \Rightarrow F) \Rightarrow F\), which is \(T \Rightarrow F = F\).
+- \(P \Rightarrow (Q \Rightarrow R)\) becomes \(F \Rightarrow (F \Rightarrow F)\), which is \(F \Rightarrow T = T\).
+Thus \((P \Rightarrow Q) \Rightarrow R \not\equiv P \Rightarrow (Q \Rightarrow R)\), so parentheses around nested conditionals are mandatory. Meanwhile, \(P \Rightarrow (Q \Rightarrow R)\) simplifies nicely by implication elimination:
+\[
+P \Rightarrow (Q \Rightarrow R) \equiv \neg P \vee (\neg Q \vee R) \equiv (\neg P \vee \neg Q) \vee R \equiv \neg(P \wedge Q) \vee R \equiv (P \wedge Q) \Rightarrow R.
+\]
+
+[QUESTION 4]
+[ANSWER: E]
+Using equivalence laws, which of the following is logically equivalent to \((P \Rightarrow R) \wedge (Q \Rightarrow R)\)?
+
+(A) \((P \wedge Q) \Rightarrow R\)
+(B) \(R \Rightarrow (P \vee Q)\)
+(C) \(R \Rightarrow (P \wedge Q)\)
+(D) \((\neg P \wedge \neg Q) \Rightarrow R\)
+(E) \((P \vee Q) \Rightarrow R\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Which of the following formulas is a tautology?
+
+(A) \((P \Rightarrow Q) \vee (Q \Rightarrow P)\)
+(B) \((P \Rightarrow Q) \Rightarrow (Q \Rightarrow P)\)
+(C) \((P \Rightarrow Q) \Leftrightarrow (\neg P \Rightarrow \neg Q)\)
+(D) \((P \vee Q) \Rightarrow (P \wedge Q)\)
+(E) \(\bigl(P \wedge (P \Rightarrow Q)\bigr) \Leftrightarrow Q\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suppose \(P \Rightarrow (Q \vee R)\) is false. What must the truth values of \(P\), \(Q\), and \(R\) be?
+
+(A) \(P = T\), \(Q = T\), \(R = F\)
+(B) \(P = F\), \(Q = F\), \(R = F\)
+(C) \(P = T\), \(Q = F\), \(R = T\)
+(D) \(P = T\), \(Q = F\), \(R = F\)
+(E) \(P = F\), \(Q = T\), \(R = F\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Which of the following is logically equivalent to \(\neg\bigl(P \Rightarrow (Q \Rightarrow R)\bigr)\)?
+
+(A) \(P \wedge \neg Q \wedge \neg R\)
+(B) \((P \wedge \neg Q) \vee (P \wedge \neg R)\)
+(C) \(P \wedge Q \wedge \neg R\)
+(D) \(\neg P \vee (\neg Q \wedge R)\)
+(E) \(P \Rightarrow (Q \wedge \neg R)\)
+[/BONUS]

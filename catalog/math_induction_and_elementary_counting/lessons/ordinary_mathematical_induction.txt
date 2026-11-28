@@ -1,0 +1,328 @@
+=== SECTION 1: From finitely many checks to the Principle of Mathematical Induction ===
+
+Suppose you add the first few positive odd integers and notice a pattern:
+\[
+1 = 1^2, \qquad 1 + 3 = 4 = 2^2, \qquad 1 + 3 + 5 = 9 = 3^2, \qquad 1 + 3 + 5 + 7 = 16 = 4^2.
+\]
+Checking four cases—or four million cases—cannot prove that \(\sum_{j=1}^n (2j - 1) = n^2\) holds for every positive integer \(n\). Consider the polynomial \(f(n) = n^2 + n + 41\): it produces a prime number for every integer \(n\) from \(0\) through \(39\) (\(41, 43, 47, 53, \dots, 1601\)), yet at \(n = 40\) it gives \(40^2 + 40 + 41 = 41^2\), which is composite. To establish a universally quantified claim \(\forall n \ge n_0,\, P(n)\) over an infinite set of integers, we need a finite mechanism that covers every integer from \(n_0\) onward without leaving a single gap.
+
+The mechanism is mathematical induction. Think of an infinite line of dominoes numbered \(n_0, n_0 + 1, n_0 + 2, \dots\). Two conditions guarantee that every domino falls: first, someone pushes over the starting domino \(n_0\); second, the dominoes are spaced so that whenever any domino \(k \ge n_0\) falls, it knocks over the very next domino \(k + 1\). Neither condition alone suffices. Without pushing domino \(n_0\), none of them need fall; without the spacing guarantee, the chain can stop partway down the line.
+
+[CALLOUT]
+id: pmi-principle
+label: Principle
+title: Principle of Mathematical Induction (ordinary / weak induction)
+tone: key
+
+Let \(n_0 \in \mathbb{Z}\) be a fixed starting integer, and let \(P(n)\) be a statement (predicate) defined for every integer \(n \ge n_0\). Suppose that:
+
+(1) Base case: \(P(n_0)\) is true.
+(2) Inductive step: For every integer \(k \ge n_0\), if \(P(k)\) is true, then \(P(k + 1)\) is true.
+
+Then \(P(n)\) is true for every integer \(n \ge n_0\).
+[/CALLOUT]
+
+When \(n_0 = 0\) or \(n_0 = 1\), [REF: pmi-principle | the Principle of Mathematical Induction] proves statements for all natural numbers \(\mathbb{N} = \{0, 1, 2, \dots\}\) or all positive integers \(\mathbb{Z}^+ = \{1, 2, 3, \dots\}\). Shifting the starting value to an arbitrary integer \(n_0\) requires no new principle: we are simply indexing our dominoes starting at \(n_0\) instead of \(1\).
+
+Before writing any induction proof, separate its four explicit components:
+1. Predicate: State clearly what \(P(n)\) asserts. Note that \(P(n)\) is a truth-valued proposition (an equation, inequality, or divisibility statement), never a bare numerical expression. Writing "\(P(n) = n^2\)" is a category error; writing "\(P(n)\) is the statement \(\sum_{j=1}^n (2j - 1) = n^2\)" is precise.
+2. Base case: Verify \(P(n_0)\) directly by evaluating both sides or checking the claim at \(n = n_0\).
+3. Inductive hypothesis: Fix an arbitrary integer \(k \ge n_0\) and assume \(P(k)\) holds for this single, fixed \(k\).
+4. Inductive step: Using the assumption \(P(k)\) together with valid algebra or logic, deduce \(P(k + 1)\).
+
+A common first-time worry is that assuming \(P(k)\) looks circular—"aren't we assuming what we want to prove?" Look closely at the quantifiers. We are trying to prove the universally quantified statement \(\forall n \ge n_0,\, P(n)\). In [REF: pmi-principle.2 | the inductive step], we do not assume \(\forall n \ge n_0,\, P(n)\); we assume \(P(k)\) for one arbitrary fixed integer \(k \ge n_0\) in order to prove the conditional implication \(P(k) \implies P(k + 1)\). Proving an implication \(A \implies B\) by temporarily assuming \(A\) and deducing \(B\) is ordinary direct proof, not circular reasoning. What turns that implication into a proof for all \(n \ge n_0\) is combining it with [REF: pmi-principle.1 | the base case] \(P(n_0)\): \(P(n_0)\) gives \(P(n_0 + 1)\), which gives \(P(n_0 + 2)\), and so on without end.
+
+Let us execute this structure cleanly on the odd-sum conjecture.
+
+Claim: For every integer \(n \ge 1\), \(\sum_{j=1}^n (2j - 1) = n^2\).
+
+Proof: For each integer \(n \ge 1\), let \(P(n)\) be the statement \(\sum_{j=1}^n (2j - 1) = n^2\).
+
+Base case (\(n = 1\)): The left-hand side is \(\sum_{j=1}^1 (2j - 1) = 2(1) - 1 = 1\), and the right-hand side is \(1^2 = 1\). Thus \(P(1)\) holds.
+
+Inductive step: Fix an arbitrary integer \(k \ge 1\) and assume \(P(k)\), namely that
+\[
+\sum_{j=1}^k (2j - 1) = k^2.
+\]
+We want to prove \(P(k + 1)\), which states that \(\sum_{j=1}^{k+1} (2j - 1) = (k + 1)^2\). Starting from the left-hand side of \(P(k + 1)\), split off the final \((k + 1)\)-st term so the inductive hypothesis can enter:
+\[
+\sum_{j=1}^{k+1} (2j - 1) = \left(\sum_{j=1}^k (2j - 1)\right) + \bigl(2(k + 1) - 1\bigr) = k^2 + (2k + 1) = (k + 1)^2.
+\]
+Hence \(P(k + 1)\) holds. By [REF: pmi-principle | the Principle of Mathematical Induction], \(P(n)\) is true for all integers \(n \ge 1\).
+
+Notice the direction of the algebra: we started from one side of \(P(k + 1)\) and transformed it into the other side, rather than writing down the unproved equation \(P(k + 1)\) and manipulating both sides until we reached \(0 = 0\). Starting from one side keeps the logical direction airtight.
+
+[QUESTION 1]
+[ANSWER: D]
+A student writes: "Induction seems circular to me: to prove \(P(n)\) for all \(n \ge 1\), the inductive step assumes \(P(k)\) is true." Which response accurately explains why the inductive step is logically valid rather than circular?
+
+(A) The inductive step actually assumes \(P(k)\) is false and derives a contradiction, so it never assumes the conclusion.
+(B) The inductive step assumes \(P(n)\) holds for all \(n \ge 1\), which is valid once the base case \(P(1)\) has been verified.
+(C) The inductive step only verifies \(P(k + 1)\) for finitely many values of \(k\), and the base case covers the rest.
+(D) The inductive step does not assume \(\forall n \ge 1,\, P(n)\); it assumes \(P(k)\) for one arbitrary fixed \(k \ge 1\) only to establish the conditional implication \(P(k) \implies P(k + 1)\).
+(E) The inductive step proves \(P(k + 1) \implies P(k)\), which reverses the implication and therefore avoids circularity.
+[/QUESTION]
+
+=== SECTION 2: Proving summation identities by induction ===
+
+Summation identities are the most transparent arena for practicing the bridge between \(P(k)\) and \(P(k + 1)\), because splitting off the last term of a sum immediately exposes the \(k\)-term sum:
+\[
+\sum_{j=n_0}^{k+1} a_j = \left(\sum_{j=n_0}^k a_j\right) + a_{k+1}.
+\]
+The real work in the inductive step is algebraic simplification—often factoring out a common expression instead of blindly expanding everything.
+
+Consider first the sum of the first \(n\) squares:
+\[
+\sum_{j=1}^n j^2 = \frac{n(n + 1)(2n + 1)}{6} \qquad \text{for all } n \ge 1.
+\]
+Let \(P(n)\) denote this equality.
+
+Base case (\(n = 1\)): Left-hand side is \(1^2 = 1\); right-hand side is \(\frac{1 \cdot 2 \cdot 3}{6} = 1\). So \(P(1)\) holds.
+
+Inductive step: Fix an integer \(k \ge 1\) and assume \(P(k)\): \(\sum_{j=1}^k j^2 = \frac{k(k + 1)(2k + 1)}{6}\). For \(n = k + 1\), we target \(\frac{(k + 1)(k + 2)(2k + 3)}{6}\). Split off the \((k + 1)\)-st term and apply \(P(k)\):
+\[
+\sum_{j=1}^{k+1} j^2 = \sum_{j=1}^k j^2 + (k + 1)^2 = \frac{k(k + 1)(2k + 1)}{6} + (k + 1)^2.
+\]
+Rather than expanding cubics, factor out \(\frac{k + 1}{6}\) immediately:
+\[
+\sum_{j=1}^{k+1} j^2 = \frac{k + 1}{6}\bigl(k(2k + 1) + 6(k + 1)\bigr) = \frac{k + 1}{6}(2k^2 + 7k + 6) = \frac{(k + 1)(k + 2)(2k + 3)}{6}.
+\]
+Because \(2(k + 1) + 1 = 2k + 3\), this matches the right-hand side of \(P(k + 1)\). By [REF: pmi-principle | mathematical induction], \(P(n)\) holds for all \(n \ge 1\).
+
+Next consider a shifted starting value \(n_0 = 0\) and an extra parameter \(r\): the finite geometric sum.
+
+[CALLOUT]
+id: geometric-sum
+label: Theorem
+title: Finite geometric sum formula
+tone: key
+
+For every real number \(r \ne 1\) and every integer \(n \ge 0\),
+\[
+\sum_{j=0}^n r^j = \frac{r^{n+1} - 1}{r - 1}.
+\]
+[/CALLOUT]
+
+Notice what variable the induction runs on. Here \(r \ne 1\) is an arbitrary fixed real number (held constant throughout the proof), while \(n \ge 0\) is the integer induction index. Let \(P(n)\) be the statement \(\sum_{j=0}^n r^j = \frac{r^{n+1} - 1}{r - 1}\).
+
+Base case (\(n = 0\)): The sum has a single term \(r^0 = 1\) (using the standard convention \(0^0 = 1\) in polynomial and power sums, so the formula works at \(r = 0\) as well: \(\frac{0^1 - 1}{0 - 1} = 1\)). The right-hand side is \(\frac{r^1 - 1}{r - 1} = 1\), which is well-defined because \(r \ne 1\). Thus \(P(0)\) holds.
+
+Inductive step: Fix an integer \(k \ge 0\) and assume \(P(k)\). Then
+\[
+\sum_{j=0}^{k+1} r^j = \left(\sum_{j=0}^k r^j\right) + r^{k+1} = \frac{r^{k+1} - 1}{r - 1} + r^{k+1}.
+\]
+Put both terms over the common denominator \(r - 1\):
+\[
+\frac{r^{k+1} - 1 + r^{k+1}(r - 1)}{r - 1} = \frac{r^{k+1} - 1 + r^{k+2} - r^{k+1}}{r - 1} = \frac{r^{k+2} - 1}{r - 1}.
+\]
+Since \((k + 1) + 1 = k + 2\), this is \(P(k + 1)\). By [REF: pmi-principle | induction], [REF: geometric-sum | the geometric sum formula] holds for all integers \(n \ge 0\).
+
+[QUESTION 2]
+[ANSWER: B]
+Suppose you are proving by induction on \(n \ge 1\) that
+\[
+\sum_{j=1}^n \frac{1}{(2j - 1)(2j + 1)} = \frac{n}{2n + 1}.
+\]
+In the inductive step, after assuming the identity for a fixed \(k \ge 1\), you add the \((k + 1)\)-st term to \(\frac{k}{2k + 1}\) and write the result as a single fraction with denominator \((2k + 1)(2k + 3)\). What is its numerator before canceling common factors, and which factor cancels to produce the target \(\frac{k + 1}{2k + 3}\)?
+
+(A) Numerator \(2k^2 + 3k + 2\); factor \((2k + 3)\) cancels.
+(B) Numerator \(2k^2 + 3k + 1\); factor \((2k + 1)\) cancels.
+(C) Numerator \(2k^2 + k + 1\); factor \((2k + 1)\) cancels.
+(D) Numerator \(2k^2 + 4k + 1\); factor \((k + 1)\) cancels.
+(E) Numerator \(2k^2 + 5k + 3\); factor \((2k + 3)\) cancels.
+[/QUESTION]
+
+=== SECTION 3: Divisibility and inequalities by induction ===
+
+Mathematical induction is not a special tool for summation formulas; it proves any family of statements indexed by integers \(n \ge n_0\). Two other major domains—divisibility and inequalities—show why the heart of an inductive step is always the same: rewrite the \((k + 1)\)-expression so that the \(k\)-expression appears explicitly inside it.
+
+First, recall the definition of divisibility: for integers \(d\) and \(m\) with \(d \ne 0\), we write \(d \mid m\) ("\(d\) divides \(m\)") to mean there exists an integer \(q\) such that \(m = dq\).
+
+Claim (Divisibility): For every integer \(n \ge 1\), \(3 \mid (4^n - 1)\).
+
+Let \(P(n)\) be the statement "\(3 \mid (4^n - 1)\)."
+
+Base case (\(n = 1\)): \(4^1 - 1 = 3 = 3 \cdot 1\), so \(3 \mid (4^1 - 1)\) and \(P(1)\) holds.
+
+Inductive step: Fix \(k \ge 1\) and assume \(P(k)\): there exists an integer \(q\) such that \(4^k - 1 = 3q\), or equivalently \(4^k = 3q + 1\). We must show \(4^{k+1} - 1\) is a multiple of \(3\). Express \(4^{k+1} - 1\) in terms of \(4^k - 1\) (or substitute \(4^k = 3q + 1\)):
+\[
+4^{k+1} - 1 = 4 \cdot 4^k - 1 = 4(4^k - 1) + 4 - 1 = 4(3q) + 3 = 3(4q + 1).
+\]
+Since \(q \in \mathbb{Z}\), the quantity \(4q + 1\) is an integer, so \(3 \mid (4^{k+1} - 1)\). Thus \(P(k + 1)\) holds, and by [REF: pmi-principle | induction], \(3 \mid (4^n - 1)\) for every \(n \ge 1\).
+
+Look at the algebraic move \(4 \cdot 4^k - 1 = 4(4^k - 1) + 3\): we pulled out a factor of \(4\) from \(4^{k+1}\), forced the exact inductive expression \(4^k - 1\) to appear, and then compensated by adding back \(4 - 1 = 3\), which happened to be divisible by \(3\). That "isolate the \(k\)-expression and inspect the remainder" tactic drives almost every divisibility induction.
+
+Second, consider inequalities. Here the base case often starts at a shifted value \(n_0 > 1\), and the inductive step typically uses transitivity of \(<\) or \(\le\): we apply the inductive hypothesis to get an intermediate bound, then prove a separate auxiliary inequality showing that intermediate bound is strong enough to reach the \((k + 1)\)-target.
+
+Consider comparing the exponential \(2^n\) against the quadratic \(n^2\). At \(n = 1\), \(2 > 1\); at \(n = 2\), \(4 = 4\); at \(n = 3\), \(8 < 9\); at \(n = 4\), \(16 = 16\); at \(n = 5\), \(32 > 25\). Plotting the continuous extensions \(y = 2^x\) and \(y = x^2\) makes the crossing clear: \(x^2\) overtakes \(2^x\) between \(x = 2\) and \(x = 4\), then \(2^x\) pulls permanently ahead past \(x = 4\).
+
+[GRAPH]
+type: function2d
+title: Comparing \(2^x\) and \(x^2\) near the crossing at \(x = 4\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2
+yrange: 0, 48
+trace: 2^x | label: \(y = 2^x\)
+trace: x^2 | label: \(y = x^2\)
+point: 2, 4 | label: \((2, 4)\)
+point: 4, 16 | label: \((4, 16)\)
+point: 5, 32 | label: \((5, 32)\)
+point: 5, 25 | label: \((5, 25)\)
+segment: 5, 25, 5, 32 | dashed: true
+[/GRAPH]
+
+Claim (Shifted-base inequality): For every integer \(n \ge 5\), \(2^n > n^2\).
+
+Let \(P(n)\) be the statement \(2^n > n^2\).
+
+Base case (\(n = 5\)): \(2^5 = 32 > 25 = 5^2\), so \(P(5)\) holds.
+
+Inductive step: Fix an integer \(k \ge 5\) and assume \(P(k)\), meaning \(2^k > k^2\). To bound \(2^{k+1}\), multiply both sides of the inductive hypothesis by \(2\):
+\[
+2^{k+1} = 2 \cdot 2^k > 2k^2.
+\]
+Our target is \((k + 1)^2 = k^2 + 2k + 1\), so we need to check whether \(2k^2 \ge k^2 + 2k + 1\) for all \(k \ge 5\). Subtracting the right-hand side from the left-hand side gives
+\[
+2k^2 - (k^2 + 2k + 1) = k^2 - 2k - 1 = (k - 1)^2 - 2.
+\]
+Because \(k \ge 5\), we have \(k - 1 \ge 4\), so \((k - 1)^2 - 2 \ge 16 - 2 = 14 > 0\). Therefore \(2k^2 > (k + 1)^2\), and chaining the two inequalities gives
+\[
+2^{k+1} > 2k^2 > (k + 1)^2.
+\]
+Thus \(P(k + 1)\) holds. By [REF: pmi-principle | mathematical induction] with \(n_0 = 5\), \(2^n > n^2\) for every integer \(n \ge 5\).
+
+Notice a subtle point: the auxiliary inequality \((k - 1)^2 - 2 > 0\) actually holds for all integers \(k \ge 3\), yet the theorem itself only starts at \(n_0 = 5\) because \(P(3)\) and \(P(4)\) are false. In inequality proofs, the domain where the inductive step works and the domain where the base case first succeeds do not have to start at the same integer; you must start at a value \(n_0\) where both hold.
+
+Another landmark inequality shows how side hypotheses on a real parameter enter the inductive step.
+
+[CALLOUT]
+id: bernoulli-ineq
+label: Theorem
+title: Bernoulli's inequality
+tone: key
+
+For every real number \(x > -1\) and every integer \(n \ge 0\),
+\[
+(1 + x)^n \ge 1 + nx.
+\]
+[/CALLOUT]
+
+Fix an arbitrary real number \(x > -1\), and let \(P(n)\) be the statement \((1 + x)^n \ge 1 + nx\) for integers \(n \ge 0\).
+
+Base case (\(n = 0\)): \((1 + x)^0 = 1\) and \(1 + 0 \cdot x = 1\), so \(1 \ge 1\) and \(P(0)\) holds.
+
+Inductive step: Fix \(k \ge 0\) and assume \((1 + x)^k \ge 1 + kx\). Because \(x > -1\), we know \(1 + x > 0\). Multiplying an inequality by a strictly positive quantity preserves its direction, so
+\[
+(1 + x)^{k+1} = (1 + x)(1 + x)^k \ge (1 + x)(1 + kx) = 1 + (k + 1)x + kx^2.
+\]
+Since \(k \ge 0\) and \(x^2 \ge 0\), we have \(kx^2 \ge 0\). Dropping a nonnegative term can only make the right-hand side smaller or equal:
+\[
+1 + (k + 1)x + kx^2 \ge 1 + (k + 1)x.
+\]
+Combining the two steps yields \((1 + x)^{k+1} \ge 1 + (k + 1)x\), which is \(P(k + 1)\). By [REF: pmi-principle | induction], [REF: bernoulli-ineq | Bernoulli's inequality] holds for all \(n \ge 0\).
+
+Watch where the hypothesis \(x > -1\) did its work: without \(1 + x > 0\) (in fact \(1 + x \ge 0\) also works, so the theorem extends to \(x \ge -1\)), multiplying both sides by \(1 + x\) would reverse the inequality sign.
+
+[QUESTION 3]
+[ANSWER: C]
+Consider the claim \(n! > 3^n\) for integers \(n \ge n_0\), where \(n! = 1 \cdot 2 \cdots n\). Let \(m_{\text{step}}\) be the smallest positive integer such that the standard inductive step \((k + 1)! = (k + 1)k! > (k + 1)3^k \ge 3 \cdot 3^k = 3^{k+1}\) is valid for all \(k \ge m_{\text{step}}\), and let \(n_0\) be the smallest positive integer for which \(n! > 3^n\) actually holds for all \(n \ge n_0\). What are \(m_{\text{step}}\) and \(n_0\)?
+
+(A) \(m_{\text{step}} = 3\) and \(n_0 = 6\)
+(B) \(m_{\text{step}} = 2\) and \(n_0 = 6\)
+(C) \(m_{\text{step}} = 2\) and \(n_0 = 7\)
+(D) \(m_{\text{step}} = 3\) and \(n_0 = 7\)
+(E) \(m_{\text{step}} = 6\) and \(n_0 = 7\)
+[/QUESTION]
+
+=== SECTION 4: Diagnosing broken induction proofs ===
+
+Knowing how to construct a valid induction proof is only half the skill; the other half is spotting when an argument that looks like induction has a fatal crack. Nearly every broken ordinary-induction proof fails in one of three ways.
+
+[CALLOUT]
+id: induction-pitfalls
+label: Common Pitfalls
+title: How ordinary induction proofs fail
+tone: caution
+
+(1) Missing or false base case: The inductive step \(P(k) \implies P(k + 1)\) can be completely valid even when \(P(n)\) is false for every single \(n\).
+(2) Hidden domain gap in the inductive step: The argument claims to prove \(P(k) \implies P(k + 1)\) for all \(k \ge n_0\), but silently uses an assumption that fails at some small \(k\) (often \(k = n_0\)).
+(3) Circularity or irreversible algebra: Assuming \(P(n)\) for all \(n\), or starting from the desired equation \(P(k + 1)\) and applying non-reversible operations (such as squaring or multiplying by \(0\)) to reach a true statement.
+[/CALLOUT]
+
+To see [REF: induction-pitfalls.1 | the missing base case failure], try proving the absurd claim "\(2n + 1\) is even for every integer \(n \ge 1\)." The inductive step works without a hitch: if \(2k + 1\) is even, then \(2(k + 1) + 1 = (2k + 1) + 2\) is a sum of two even integers, hence even! Similarly, the false summation identity \(\sum_{j=1}^n 2j = n^2 + n + 5\) passes the inductive step identically, because adding \(2(k + 1)\) to \(k^2 + k + 5\) yields \((k + 1)^2 + (k + 1) + 5\). Both fail solely because the base case \(n = 1\) is false. A valid inductive step proves only a conditional chain; without a true starting domino, every statement in the chain can be false.
+
+The subtler failure is [REF: induction-pitfalls.2 | a hidden domain gap], immortalized by the "all horses are the same color" fallacy.
+
+Fallacious Claim: For every integer \(n \ge 1\), in any set of \(n\) horses, all \(n\) horses have the same color.
+
+Fallacious Proof: Let \(P(n)\) be the statement that every set of \(n\) horses consists of horses of a single color.
+Base case (\(n = 1\)): In a set containing \(1\) horse, there is only one color present, so \(P(1)\) is undeniably true!
+Inductive step: Fix \(k \ge 1\) and assume \(P(k)\). Take any set \(H = \{h_1, h_2, \dots, h_{k+1}\}\) of \(k + 1\) horses. Remove the last horse to get \(H_1 = \{h_1, \dots, h_k\}\), a set of \(k\) horses; by \(P(k)\), all horses in \(H_1\) have the same color. Remove the first horse to get \(H_2 = \{h_2, \dots, h_{k+1}\}\), also a set of \(k\) horses; by \(P(k)\), all horses in \(H_2\) have the same color. Because \(H_1\) and \(H_2\) overlap, their common horse forces both sets to share the same color, so all \(k + 1\) horses in \(H\) have the same color.
+
+Where did the proof break? Check the intersection \(H_1 \cap H_2 = \{h_2, \dots, h_k\}\). That intersection is nonempty precisely when \(k \ge 2\). At \(k = 1\), we have \(H = \{h_1, h_2\}\), so \(H_1 = \{h_1\}\) and \(H_2 = \{h_2\}\), whose intersection \(H_1 \cap H_2 = \emptyset\) contains zero horses! Both \(H_1\) and \(H_2\) are monochromatic, yet nothing forces \(h_1\) and \(h_2\) to match. The inductive step genuinely proves \(P(k) \implies P(k + 1)\) for every \(k \ge 2\), and the base case proves \(P(1)\), leaving a single broken link from \(k = 1\) to \(k = 2\). One missing domino stops the entire cascade.
+
+[TABLE]
+Failure mode | What holds | What actually breaks | Diagnostic check
+Omitted/false base case | \(P(k) \implies P(k + 1)\) for all \(k \ge n_0\) | \(P(n_0)\) is false | Plug \(n = n_0\) directly into \(P(n)\)
+Hidden domain gap | \(P(n_0)\) and \(P(k) \implies P(k + 1)\) for \(k \ge m > n_0\) | Implication fails at some \(k\) with \(n_0 \le k < m\) | Test the inductive step explicitly at \(k = n_0\) and \(k = n_0 + 1\)
+Wrong algebra direction | \(P(k + 1) \implies\) true statement | Reverse implication is not established | Start from one side of \(P(k + 1)\) and derive the other
+[/TABLE]
+
+Whenever you check an induction proof—your own or someone else's—explicitly test the inductive step at the smallest value \(k = n_0\) (and \(k = n_0 + 1\) if any inequality or set overlap is involved). That single habit catches almost every hidden domain gap.
+
+[QUESTION 4]
+[ANSWER: A]
+A student attempts to prove the claim "\(2^n \ge n^2\) for every integer \(n \ge 1\)" as follows:
+Base cases: For \(n = 1\), \(2^1 = 2 \ge 1 = 1^2\), and for \(n = 2\), \(2^2 = 4 \ge 4 = 2^2\).
+Inductive step: Assume \(2^k \ge k^2\) for a fixed integer \(k \ge 1\). Then
+\[
+2^{k+1} = 2 \cdot 2^k \ge 2k^2 = k^2 + k^2 \ge k^2 + 2k + 1 = (k + 1)^2,
+\]
+so \(2^{k+1} \ge (k + 1)^2\). By induction, \(2^n \ge n^2\) for all \(n \ge 1\).
+
+Which statement gives the exact diagnosis of the flaw in this proof?
+
+(A) The step \(k^2 \ge 2k + 1\) fails at \(k = 1\) and \(k = 2\) (it holds only for integers \(k \ge 3\)), so the inductive step breaks at \(k = 2 \to 3\), where the claim is indeed false (\(2^3 = 8 < 9 = 3^2\)).
+(B) The proof is circular because it assumes \(2^k \ge k^2\) in the inductive step before the theorem has been proved.
+(C) Multiplying the inequality \(2^k \ge k^2\) by \(2\) is invalid unless \(k \ge 2\).
+(D) The base case \(n = 1\) is false because \(2^1\) is strictly greater than \(1^2\) rather than equal to \(1^2\).
+(E) The step \(2 \cdot 2^k \ge 2k^2\) fails at \(k = 3\), while the step \(k^2 \ge 2k + 1\) holds for all \(k \ge 2\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+To prove by ordinary induction that \(9 \mid (4^n + 15n - 1)\) for every integer \(n \ge 1\), we assume \(4^k + 15k - 1 = 9q\) for some integer \(q\) and rewrite the \((k + 1)\)-expression in the form
+\[
+4^{k+1} + 15(k + 1) - 1 = 4(4^k + 15k - 1) + R(k).
+\]
+What is \(R(k)\), and why does it finish the inductive step?
+
+(A) \(R(k) = 45k - 18 = 9(5k - 2)\), which is a multiple of \(9\) for every integer \(k\).
+(B) \(R(k) = -45k + 12\), which is divisible by \(9\) only when \(k\) is even.
+(C) \(R(k) = -15k + 18 = 3(-5k + 6)\), which forces \(9 \mid (4^k + 15k - 1)\).
+(D) \(R(k) = -45k + 14\), so the coefficient \(4\) must be replaced by \(1\) before factoring out \(9\).
+(E) \(R(k) = -45k + 18 = 9(2 - 5k)\), which is a multiple of \(9\) for every integer \(k\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose you want to prove that \(\sum_{j=1}^n \frac{1}{j^2} < 2\) for every integer \(n \ge 1\). If you take \(P(n)\) to be \(\sum_{j=1}^n \frac{1}{j^2} < 2\) directly, the inductive step stalls because knowing a sum is strictly less than \(2\) gives only \(\sum_{j=1}^{k+1} \frac{1}{j^2} < 2 + \frac{1}{(k + 1)^2}\), which is larger than \(2\). Instead, you prove the stronger statement \(Q(n)\): \(\sum_{j=1}^n \frac{1}{j^2} \le 2 - \frac{1}{n}\) for all \(n \ge 1\). Which algebraic step completes the inductive step for \(Q(n)\)?
+
+(A) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} \le 2 - \frac{1}{k} + \frac{1}{k^2} = 2 - \frac{1}{k + 1}\)
+(B) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} < 2 - \frac{1}{k} + \frac{1}{k(k + 1)} = 2 - \frac{1}{k + 1}\)
+(C) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} \le 2 - \frac{1}{k + 1} + \frac{1}{k(k + 1)} = 2 - \frac{1}{k}\)
+(D) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} = 2 - \frac{k^2 + k + 1}{k(k + 1)^2} < 2 - \frac{1}{k}\)
+(E) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} < 2 - \frac{1}{k + 1} - \frac{1}{k(k + 1)} < 2 - \frac{1}{k + 1}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+[REF: bernoulli-ineq | Bernoulli's inequality] states that \((1 + x)^n \ge 1 + nx\) for all integers \(n \ge 0\) whenever \(x > -1\). Why can the hypothesis \(x > -1\) not be dropped completely, even for integers \(n \ge 2\)?
+
+(A) For every \(x < -1\) and every \(n \ge 2\), both \((1 + x)^n\) and \(1 + nx\) are negative, so the inequality always reverses.
+(B) At \(n = 2\), the inequality \((1 + x)^2 \ge 1 + 2x\) already fails whenever \(x < -1\).
+(C) At \(x = -4\) and \(n = 3\), we have \((1 + x)^3 = -27 < -11 = 1 + 3x\); in the inductive step, multiplying by \(1 + x < 0\) reverses the inequality sign.
+(D) The base case \(n = 0\) fails whenever \(x < -1\), because \((1 + x)^0\) is negative for \(x < -1\).
+(E) Dropping \(x > -1\) makes the extra term \(kx^2\) in the expansion \((1 + x)(1 + kx) = 1 + (k + 1)x + kx^2\) negative.
+[/BONUS]

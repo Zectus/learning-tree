@@ -1,0 +1,190 @@
+=== SECTION 1: Existencia pura frente a testigos constructivos ===
+
+En nuestra lección anterior sobre demostraciones de existencia, demostramos \(\exists x \in D,\, P(x)\) produciendo un testigo concreto \(x_0 \in D\) y verificando \(P(x_0)\) directamente. Esa es una demostración CONSTRUCTIVA de existencia: al final de la demostración, usted puede señalar un objeto específico y entregárselo al lector.
+
+Sorprendentemente, la matemática clásica también admite demostraciones de existencia NO CONSTRUCTIVAS (o puras): argumentos lógicamente herméticos que establecen \(\exists x \in D,\, P(x)\) ¡SIN precisar jamás cuál objeto concreto es el testigo!
+
+El primer patrón clásico emplea la demostración por casos impulsada por la ley del tercero excluido: para cualquier proposición \(Q\), la disyunción \(Q \vee \neg Q\) es una tautología (o bien \(Q\) es verdadera o bien \(Q\) es falsa). Suponga que podemos exhibir un testigo candidato \(w_1\) que funciona siempre que \(Q\) es verdadera, Y otro testigo candidato \(w_2\) que funciona siempre que \(Q\) es falsa. Entonces en TODOS los casos existe un testigo válido —de modo que \(\exists x,\, P(x)\) queda innegablemente demostrado, aunque NO TENGAMOS IDEA de si \(Q\) es verdadera o falsa—.
+
+Veamos este mecanismo en una de las joyas más célebres de la matemática elemental.
+
+[CALLOUT]
+id: proof-irrat-power-rat
+label: Demostración
+title: Teorema: Existen números irracionales \(a, b \in \mathbb{R} \setminus \mathbb{Q}\) tales que \(a^b\) es racional
+tone: note
+
+Demostración: Considere el número real \(c = (\sqrt{2})^{\sqrt{2}}\). Por la ley del tercero excluido, o bien \(c\) es racional o bien \(c\) es irracional. Examinemos ambos casos:
+
+- Caso 1: \(c = (\sqrt{2})^{\sqrt{2}}\) es racional. Tome \(a = \sqrt{2}\) y \(b = \sqrt{2}\). Ya demostramos que \(\sqrt{2}\) es irracional, por lo que \(a, b \notin \mathbb{Q}\), mientras que \(a^b = (\sqrt{2})^{\sqrt{2}} = c \in \mathbb{Q}\). Así, existe el par deseado \((a, b)\).
+- Caso 2: \(c = (\sqrt{2})^{\sqrt{2}}\) es irracional. Tome \(a = c = (\sqrt{2})^{\sqrt{2}}\) y \(b = \sqrt{2}\). Entonces tanto \(a\) como \(b\) son irracionales (por la suposición del caso y la irracionalidad de \(\sqrt{2}\)), mientras que por las leyes de los exponentes,
+\[
+a^b = \bigl((\sqrt{2})^{\sqrt{2}}\bigr)^{\sqrt{2}} = (\sqrt{2})^{\sqrt{2}\cdot\sqrt{2}} = (\sqrt{2})^2 = 2,
+\]
+¡que es racional! Así, nuevamente existe el par deseado \((a, b)\).
+
+Como el Caso 1 y el Caso 2 son exhaustivos, existen números irracionales \(a\) y \(b\) con \(a^b \in \mathbb{Q}\).
+[/CALLOUT]
+
+Deténgase y aprecie lo que acaba de lograr [REF: proof-irrat-power-rat | esa demostración]. Nunca determina si \((\sqrt{2})^{\sqrt{2}}\) es racional o irracional. (Como nota histórica ajena a nuestra demostración, el teorema de Gelfond–Schneider de la teoría profunda de números del siglo XX demostró finalmente que \((\sqrt{2})^{\sqrt{2}}\) es en realidad irracional, de modo que el Caso 2 es el que verdaderamente ocurre; ¡sin embargo, nuestra demostración elemental no necesita NADA de esa maquinaria!) Note también que la demostración reduce el testigo a un grupo de DOS ELEMENTOS: al menos uno de los dos pares \((\sqrt{2}, \sqrt{2})\) o \(((\sqrt{2})^{\sqrt{2}}, \sqrt{2})\) funciona, y el análisis clásico por casos garantiza que eso basta para \(\exists a, b\).
+
+[QUESTION 1]
+[ANSWER: C]
+En la demostración por tercero excluido de que existen números irracionales \(a, b\) con \(a^b \in \mathbb{Q}\), ¿por qué sigue siendo completamente válida la demostración aunque nunca decida si \((\sqrt{2})^{\sqrt{2}}\) es racional o irracional?
+
+(A) Porque la demostración prueba que TANTO \((\sqrt{2}, \sqrt{2})\) como \(((\sqrt{2})^{\sqrt{2}}, \sqrt{2})\) hacen que \(a^b\) sea racional.
+(B) Porque todo número real de la forma \(x^x\) con \(x\) irracional es automáticamente racional.
+(C) Porque "\(c \in \mathbb{Q}\) o \(c \notin \mathbb{Q}\)" es exhaustivo, y cada caso aporta un par irracional verificado \((a, b)\) con \(a^b \in \mathbb{Q}\), de modo que la afirmación existencial se cumple sin importar cuál caso sea verdadero.
+(D) Porque en el Caso 2 la demostración supone que \((\sqrt{2})^{\sqrt{2}}\) es racional y deduce una contradicción.
+(E) Porque los enunciados existenciales \(\exists a, b,\, P(a, b)\) solo requieren mostrar que \(P(a, b)\) es plausible en al menos un caso.
+[/QUESTION]
+
+=== SECTION 2: Existencia indirecta por contradicción — primos de la forma \(4k + 3\) ===
+
+Una segunda vía principal hacia la existencia no constructiva emplea la demostración por contradicción: para demostrar \(\exists x \in D,\, P(x)\), suponga \(\forall x \in D,\, \neg P(x)\) y deduzca una contradicción. Cuando esto tiene éxito, sabemos que algún \(x \in D\) que satisface \(P(x)\) DEBE existir, aunque la demostración no nos entregue ninguna receta para calcular \(x\) directamente.
+
+Podemos verlo en acción refinando el teorema de Euclides sobre los primos. Todo entero impar deja resto \(1\) o \(3\) al dividirlo entre \(4\), por lo que todo primo mayor que \(2\) tiene o bien la forma \(4k + 1\) (como \(5, 13, 17, 29\)) o bien la forma \(4k + 3\) (como \(3, 7, 11, 19, 23\)). ¿Existen infinitos primos de la forma \(4k + 3\)?
+
+Para responderlo, aportamos explícitamente un hecho aritmético estándar: todo entero \(N > 1\) puede factorizarse como producto de uno o más números primos (no necesariamente distintos). Ahora inspeccione cómo se comportan los restos módulo \(4\) cuando multiplicamos dos enteros impares:
+
+[TABLE]
+Primer factor | Segundo factor | Producto | Resto módulo \(4\)
+\(4a + 1\) | \(4b + 1\) | \(4(4ab + a + b) + 1\) | \(1\)
+\(4a + 1\) | \(4b + 3\) | \(4(4ab + 3a + b) + 3\) | \(3\)
+\(4a + 3\) | \(4b + 3\) | \(4(4ab + 3a + 3b + 2) + 1\) | \(1\)
+[/TABLE]
+
+Observe la primera fila de la tabla: ¡la clase de los enteros de la forma \(4k + 1\) es CERRADA bajo la multiplicación! Multiplicar dos números de la forma \(4k + 1\) produce un número de la forma \(4k + 1\); multiplicar por un tercer factor de la forma \(4k + 1\) mantiene el producto en la forma \(4k + 1\), y así sucesivamente para cualquier producto finito. Por lo tanto, si un entero impar \(N > 1\) tiene resto \(3\) módulo \(4\), es IMPOSIBLE que todos sus factores primos tengan la forma \(4k + 1\); ¡al menos un factor primo de \(N\) DEBE tener la forma \(4k + 3\)!
+
+Esa observación impulsa la siguiente demostración no constructiva por contradicción.
+
+[CALLOUT]
+id: proof-primes-4k3
+label: Demostración
+title: Teorema: Existen infinitos primos de la forma \(4k + 3\)
+tone: note
+
+Demostración: Supongamos por contradicción que existen solo una cantidad finita de primos de la forma \(4k + 3\). Enumerémoslos todos como \(p_1, p_2, \dots, p_r\) (note que \(r \ge 1\), ya que \(3 = 4(0) + 3\) es un primo de esa forma).
+
+Considere el entero
+\[
+N = 4(p_1 p_2 \cdots p_r) - 1.
+\]
+Como \(p_1 \ge 3\), tenemos \(N \ge 4(3) - 1 = 11 > 1\). Escribir
+\[
+N = 4(p_1 p_2 \cdots p_r - 1) + 3
+\]
+muestra que \(N\) es impar y deja resto \(3\) al dividirlo entre \(4\).
+
+Por nuestro hecho aportado de factorización prima, escriba \(N = q_1 q_2 \cdots q_m\) como producto de primos. Como \(N\) es impar, ninguno de los primos \(q_j\) es igual a \(2\); por tanto, cada \(q_j\) tiene la forma \(4a + 1\) o la forma \(4a + 3\).
+
+Si TODO factor primo \(q_j\) tuviera la forma \(4a + 1\), entonces por la cerradura de la clase \(4a + 1\) bajo la multiplicación, su producto \(N\) también tendría la forma \(4c + 1\), contradiciendo el hecho de que \(N\) deja resto \(3\) módulo \(4\). Por lo tanto, existe al menos un divisor primo \(q\) de \(N\) de la forma \(4k + 3\).
+
+Como se supuso que \(p_1, p_2, \dots, p_r\) era la lista completa de todos los primos de la forma \(4k + 3\), debemos tener \(q = p_j\) para algún \(j \in \{1, \dots, r\}\). Entonces \(q \mid 4(p_1 p_2 \cdots p_r)\) y \(q \mid N\), de modo que
+\[
+q \mid \bigl(4(p_1 p_2 \cdots p_r) - N\bigr) \implies q \mid 1,
+\]
+contradiciendo \(q \ge 2\). Por lo tanto, existen infinitos primos de la forma \(4k + 3\).
+[/CALLOUT]
+
+¿Por qué [REF: proof-primes-4k3 | esta demostración] usó \(N = 4(p_1 \cdots p_r) - 1\) en lugar de \(4(p_1 \cdots p_r) + 3\)? Compruebe qué ocurre si \(3\) está en la lista (digamos \(p_1 = 3\)): entonces \(3\) YA divide a \(4(3 p_2 \cdots p_r) + 3 = 3(4 p_2 \cdots p_r + 1)\) —espere, ¡eso NO daría \(q \mid 1\)!—. Al restar \(1\) en lugar de sumar \(3\), se garantiza que \(N = 4(p_1 \cdots p_r) - 1\) es coprimo con CADA \(p_j\) de la lista (incluido \(3\)), dejando al mismo tiempo resto \(3\) módulo \(4\).
+
+Ahora ponga a prueba los límites del método: ¿podemos copiar [REF: proof-primes-4k3 | exactamente la misma demostración] con \(M = 4(p_1 \cdots p_r) + 1\) para demostrar que hay infinitos primos de la forma \(4k + 1\)? Mire de nuevo la tercera fila de nuestra tabla de multiplicación:
+\[
+(4a + 3)(4b + 3) = 4(4ab + 3a + 3b + 2) + 1.
+\]
+¡Dos primos de la forma \(4k + 3\) se multiplican para dar resto \(1\) módulo \(4\)! Por ejemplo, \(M = 4(5) + 1 = 21 = 3 \cdot 7\) tiene resto \(1\) módulo \(4\), ¡y sin embargo TODOS sus factores primos (\(3\) y \(7\)) tienen la forma \(4k + 3\)! Como la clase \(4k + 3\) NO es cerrada bajo la multiplicación, saber que \(M \equiv 1 \pmod 4\) NO obliga a que \(M\) tenga un factor primo de la forma \(4k + 1\). (SÍ existen infinitos primos de la forma \(4k + 1\), pero demostrarlo requiere una construcción diferente como \((2 p_1 \cdots p_r)^2 + 1\) y hechos más profundos sobre cuadrados módulo un primo.)
+
+[QUESTION 2]
+[ANSWER: B]
+En la demostración de que existen infinitos primos de la forma \(4k + 3\), suponga que alguien reemplaza \(N = 4(p_1 p_2 \cdots p_r) - 1\) por \(N' = 4(p_1 p_2 \cdots p_r) + 3\) manteniendo \(p_1 = 3\) en la lista \(p_1, \dots, p_r\). ¿Qué falla en el paso final de divisibilidad?
+
+(A) \(N'\) deja de dejar resto \(3\) al dividirlo entre \(4\).
+(B) Como \(p_1 = 3\) divide tanto a \(4(p_1 \cdots p_r)\) como a \(3\), el primo \(q = 3\) SÍ puede dividir a \(N'\), dando \(q \mid 3\) en lugar de \(q \mid 1\), de modo que no se alcanza ninguna contradicción.
+(C) \(N'\) se vuelve par, por lo que \(2\) divide a \(N'\).
+(D) \(N'\) puede tener todos sus factores primos de la forma \(4a + 1\).
+(E) \(N'\) es menor que \(1\), por lo que no tiene factorización prima.
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+¿Por qué la imitación intentada de la demostración del caso \(4k + 3\) usando \(M = 4(p_1 \cdots p_r) + 1\) NO LOGRA demostrar que existen infinitos primos de la forma \(4k + 1\)?
+
+(A) Porque \(M = 4(p_1 \cdots p_r) + 1\) siempre es divisible entre \(p_1\).
+(B) Porque hay solo una cantidad finita de primos de la forma \(4k + 1\).
+(C) Porque \(M\) puede ser par cuando \(r\) es par.
+(D) Porque un producto de una cantidad par de primos de la forma \(4k + 3\) también deja resto \(1\) módulo \(4\), de modo que \(M\) no tiene por qué tener NINGÚN factor primo de la forma \(4k + 1\).
+(E) Porque \(M\) mismo es siempre compuesto.
+[/QUESTION]
+
+=== SECTION 3: Validez clásica y lo que aporta la construcción ===
+
+Quienes leen demostraciones no constructivas por primera vez a veces sienten incomodidad: "Espere: si no puede decirme QUÉ par \((a, b)\) funciona, ¿demostró realmente que existe uno?"
+
+En la matemática estándar (clásica), ¡la respuesta es un SÍ rotundo! La lógica clásica acepta tanto la ley del tercero excluido (\(Q \vee \neg Q\)) como la eliminación de la doble negación (\(\neg\neg S \equiv S\)). Bajo esos principios, demostrar que \(\neg(\exists x,\, P(x))\) conduce a una contradicción ES lógicamente equivalente a demostrar \(\exists x,\, P(x)\), y demostrar \(\exists x,\, P(x)\) tanto bajo \(Q\) como bajo \(\neg Q\) establece \(\exists x,\, P(x)\) incondicionalmente.
+
+¿Cuál es, entonces, la diferencia genuina entre las demostraciones de existencia constructivas y las no constructivas? No es la validez: es el CONTENIDO INFORMATIVO.
+
+[TABLE]
+Estilo de demostración | Mecanismo lógico | ¿Establece \(\exists x,\, P(x)\) en lógica clásica? | Información adicional entregada
+Testigo constructivo | Exhibir un único \(x_0 \in D\) y verificar \(P(x_0)\) | Sí | Objeto exacto \(x_0\) (o una receta explícita para calcularlo)
+Casos por tercero excluido | Mostrar \(Q \Rightarrow \exists x\, P(x)\) y \(\neg Q \Rightarrow \exists x\, P(x)\) | Sí | Suele acotar el testigo a un pequeño grupo de candidatos sin elegir cuál de ellos
+Existencia indirecta (contradicción) | Suponer \(\forall x,\, \neg P(x)\) y deducir \(R \wedge \neg R\) | Sí | Prueba la no vacuidad; puede no dar ninguna fórmula directa para un testigo (aunque a veces da una cota finita de búsqueda)
+[/TABLE]
+
+[CALLOUT]
+id: classical-validity-note
+label: Nota
+title: Validez frente a constructividad
+tone: note
+
+(1) Una demostración no constructiva es exactamente igual de rigurosa y válida en la matemática clásica que una demostración constructiva.
+(2) Siempre que una demostración constructiva sea razonablemente breve, los matemáticos suelen preferirla porque entrega un objeto concreto, un algoritmo o una cota cuantitativa además de la verdad.
+(3) Recíprocamente, las demostraciones no constructivas establecen a menudo teoremas profundos en unas pocas líneas elementales donde una demostración constructiva exigiría una maquinaria muchísimo más pesada (tal como [REF: proof-irrat-power-rat | la demostración de \((\sqrt{2})^{\sqrt{2}}\)] evita el teorema de Gelfond–Schneider).
+[/CALLOUT]
+
+¡Note que una demostración no constructiva puede seguir aportando estructura parcial útil! En [REF: proof-primes-4k3 | la demostración de los primos \(4k + 3\)], dada CUALQUIER lista finita \(p_1, \dots, p_r\) de primos \(4k + 3\), la demostración no le entrega una fórmula cerrada para el siguiente primo, pero SÍ garantiza que existe un nuevo primo de la forma \(4k + 3\) en algún lugar entre los factores primos de \(N = 4(p_1 \cdots p_r) - 1\) —así que de hecho da una cota superior \(q \le 4(p_1 \cdots p_r) - 1\)—. De modo similar, [REF: proof-irrat-power-rat | la demostración de \((\sqrt{2})^{\sqrt{2}}\)] garantiza un testigo entre apenas dos pares explícitos.
+
+[QUESTION 4]
+[ANSWER: A]
+Suponga que alguien demuestra el siguiente enunciado: "Entre cualesquiera \(4\) enteros \(n_1, n_2, n_3, n_4 \in \mathbb{Z}\), existen dos índices distintos \(i \ne j\) tales que \(3 \mid (n_i - n_j)\)" argumentando así: "Supongamos por contradicción que no hay dos que tengan el mismo resto al dividirlos entre \(3\); entonces los \(4\) enteros deben tener \(4\) restos distintos en \(\{0, 1, 2\}\), lo cual es imposible ya que ese conjunto tiene solo \(3\) elementos." ¿Qué enunciado describe mejor esta demostración?
+
+(A) Es una demostración válida no constructiva de existencia por contradicción: garantiza que existe un par \((n_i, n_j)\) sin especificar qué par funciona hasta que se suministren enteros concretos.
+(B) Es lógicamente inválida porque nunca identifica los índices exactos \(i\) y \(j\).
+(C) Es una demostración constructiva porque enumera explícitamente los restos \(\{0, 1, 2\}\).
+(D) Es lógicamente inválida porque \(n_i - n_j\) podría ser negativo.
+(E) Usa la ley del tercero excluido en lugar de demostración por contradicción.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Qué elección de entero \(N\) permite una adaptación directa de la demostración de los primos \(4k + 3\) para demostrar que existen infinitos primos de la forma \(6k + 5\), suponiendo que \(p_1, p_2, \dots, p_r\) es una lista finita completa de tales primos?
+
+(A) \(N = 6(p_1 p_2 \cdots p_r) + 1\), porque todo primo mayor que \(3\) es \(6a + 1\) o \(6a + 5\).
+(B) \(N = 6(p_1 p_2 \cdots p_r) + 5\), porque \(N\) deja resto \(5\) módulo \(6\) y no puede ser divisible entre \(5\).
+(C) \(N = 6(p_1 p_2 \cdots p_r) - 1\), porque \(N\) es coprimo con \(2, 3\) y cada \(p_j\), deja resto \(5\) módulo \(6\), y la clase \(6a + 1\) es cerrada bajo la multiplicación.
+(D) \(N = 6(p_1 p_2 \cdots p_r) + 3\), porque \(N\) es impar y mayor que \(1\).
+(E) No existe tal adaptación porque \(6\) es divisible tanto entre \(2\) como entre \(3\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suponga que ya sabemos que \(\sqrt{3}\) y \(\sqrt{2}\) son ambos irracionales. Considere el número real \(c = (\sqrt{3})^{\sqrt{2}}\). ¿Sigue demostrando el argumento del tercero excluido de la Sección 1 que existen números irracionales \(a, b\) con \(a^b \in \mathbb{Q}\) usando este \(c\)?
+
+(A) No, porque \(\sqrt{3}\) y \(\sqrt{2}\) son números diferentes, de modo que el Caso 1 falla.
+(B) No, porque \((\sqrt{3})^2 = 3\) es impar en lugar de par.
+(C) No, porque elevar \(c\) a la potencia \(\sqrt{3}\) da \((\sqrt{3})^{\sqrt{6}}\), que aún podría ser irracional.
+(D) Sí, porque se demuestra fácilmente que \(c = (\sqrt{3})^{\sqrt{2}}\) es racional elevando al cuadrado.
+(E) Sí: si \(c \in \mathbb{Q}\), tome \(a = \sqrt{3}\) y \(b = \sqrt{2}\); si \(c \notin \mathbb{Q}\), tome \(a = c\) y \(b = \sqrt{2}\), lo que da \(a^b = ((\sqrt{3})^{\sqrt{2}})^{\sqrt{2}} = (\sqrt{3})^2 = 3 \in \mathbb{Q}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Un estudiante afirma haber demostrado \(\exists x \in \mathbb{R},\, P(x)\) escribiendo: "Por la ley del tercero excluido, o bien se cumple \(Q\) o bien se cumple \(\neg Q\). Si se cumple \(Q\), entonces \(x = 5\) satisface \(P(5)\). Si se cumple \(\neg Q\), entonces \(P(5)\) podría ser falso, así que supongamos por contradicción que \(P(x)\) falla para todo \(x\); espere, eso no da ninguna contradicción a menos que también supongamos \(Q\)." ¿Por qué falla este intento de demostración no constructiva?
+
+(A) Porque las demostraciones no constructivas no tienen permitido combinar análisis por casos con contradicción.
+(B) Porque en el caso \(\neg Q\), suponer \(Q\) introduce de contrabando una suposición prohibida en esa rama, dejando la rama \(\neg Q\) sin demostrar.
+(C) Porque \(x = 5\) es un número específico, lo que convierte el argumento en una demostración por ejemplos inválida.
+(D) Porque \(Q \vee \neg Q\) solo se aplica cuando \(Q\) es una ecuación sobre enteros.
+(E) Porque una demostración por tercero excluido debe producir EXACTAMENTE EL MISMO testigo \(x\) en ambos casos.
+[/BONUS]

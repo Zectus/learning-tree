@@ -1,0 +1,246 @@
+=== SECTION 1: Ubicación estratégica sin perder generalidad ===
+
+Suponga que desea demostrar un teorema general de la geometría euclidiana —por ejemplo, que las diagonales de todo paralelogramo se bisecan mutuamente, o que las medianas de todo triángulo concurren en un mismo punto—. Comprobar un triángulo concreto como \((0, 0), (6, 0), (2, 4)\) solo verifica ese único ejemplo; nunca demuestra la afirmación para todos los triángulos. Por otro lado, asignar seis letras completamente arbitrarias \((x_1, y_1), (x_2, y_2), (x_3, y_3)\) a un triángulo siempre es válido, pero suele generar un álgebra más pesada de lo necesario.
+
+La demostración por coordenadas tiende un puente entre ambos extremos al situar estratégicamente una figura general sobre los ejes coordenados. Como trasladar o rotar una figura rígida en el plano no altera ninguna de sus longitudes, puntos medios ni ángulos, siempre podemos colocar un vértice en el origen \((0, 0)\) y un lado a lo largo del semieje \(x\) positivo. Todo grado de libertad restante debe permanecer como una variable simbólica sin restricciones, limitada únicamente por las hipótesis del teorema. Más aún, siempre que una demostración utilice puntos medios, escalar las coordenadas simbólicas por \(2\) —por ejemplo, escribir \((2a, 0)\) y \((2b, 2c)\)— no produce ninguna pérdida de generalidad (todo número real puede escribirse como el doble de otro número real) y a la vez elimina fracciones de todas las fórmulas de punto medio.
+
+[CALLOUT]
+id: lossless-placement
+label: Estrategia
+title: Reglas para una ubicación por coordenadas sin pérdida de generalidad
+tone: key
+
+(1) Ancle convenientemente: coloque un vértice (o centro) en \((0, 0)\) y un lado (o eje de simetría) a lo largo del eje \(x\).
+(2) Conserve la generalidad: use variables simbólicas distintas para todas las coordenadas libres restantes, imponiendo solo las relaciones exactas que exige la definición de la figura.
+(3) Simplifique fracciones con limpieza: multiplique las variables libres por \(2\) (como \(2a, 2b, 2c\)) cuando aparezcan puntos medios en la demostración.
+[/CALLOUT]
+
+[CALLOUT]
+id: accidental-specialization
+label: Error frecuente
+title: Particularizar la figura por accidente
+tone: caution
+
+Nunca sustituya una longitud general por números específicos (como \((4, 0)\)), y nunca ate dos coordenadas independientes entre sí a menos que la hipótesis lo exija. Por ejemplo, situar un triángulo general en \((0, 0), (a, 0), (0, c)\) impone en secreto un triángulo rectángulo; situarlo en \((0, 0), (2a, 0), (a, c)\) impone en secreto un triángulo isósceles; y situar un paralelogramo general en \((0, 0), (a, 0), (a, c), (0, c)\) impone en secreto un rectángulo.
+[/CALLOUT]
+
+Arrastre el deslizador de desplazamiento horizontal \(b\) en el paralelogramo de abajo para ver por qué \(b\) debe seguir siendo un parámetro libre: solo el caso puntual \(b = 0\) es un rectángulo, mientras que los valores no nulos de \(b\) capturan paralelogramos genuinamente inclinados.
+
+[GRAPH]
+type: parametric2d
+title: Paralelogramo general \(O(0,0), A(a,0), B(a+b,c), C(b,c)\) con \(a = 4, c = 2.5\) y cizallamiento libre \(b\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -3, 8
+yrange: -0.6, 3.4
+trace: 4*t, 0 | label: paralelogramo \(OABC\)
+trace: 4 + b*t, 2.5*t
+trace: b + 4*t, 2.5
+trace: b*t, 2.5*t
+segment: 0, 0, 4 + b, 2.5 | dashed: true
+segment: 4, 0, b, 2.5 | dashed: true
+point: 0, 0 | label: \(O(0, 0)\)
+point: 4, 0 | label: \(A(a, 0)\)
+point: 4 + b, 2.5 | label: \(B(a+b, c)\)
+point: b, 2.5 | label: \(C(b, c)\)
+slider: b | range: -2.5, 3 | init: 1.5 | step: 0.25
+[/GRAPH]
+
+La siguiente tabla reúne ubicaciones sin pérdida de generalidad para las figuras más utilizadas en demostraciones planas por coordenadas.
+
+[TABLE]
+Figura | Ubicación por coordenadas sin pérdida de generalidad | Condiciones sobre los parámetros
+Triángulo general | \((0, 0),\; (2a, 0),\; (2b, 2c)\) | \(a > 0,\; c \neq 0,\; b \in \mathbb{R}\)
+Triángulo rectángulo | \((0, 0),\; (2a, 0),\; (0, 2b)\) | \(a > 0,\; b > 0\)
+Triángulo isósceles | \((-a, 0),\; (a, 0),\; (0, c)\) | \(a > 0,\; c > 0\)
+Paralelogramo | \((0, 0),\; (a, 0),\; (a + b, c),\; (b, c)\) | \(a > 0,\; c \neq 0,\; b \in \mathbb{R}\)
+Rectángulo | \((0, 0),\; (a, 0),\; (a, c),\; (0, c)\) | \(a > 0,\; c > 0\)
+Rombo | \((0, 0),\; (a, 0),\; (a + b, c),\; (b, c)\) | \(a > 0,\; c \neq 0,\; b^2 + c^2 = a^2\)
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Qué asignación de coordenadas representa un paralelogramo arbitrario \(OABC\) sin perder generalidad y sin agregar propiedades adicionales en secreto?
+
+(A) \(O(0, 0),\; A(a, 0),\; B(a, c),\; C(0, c)\) con \(a > 0,\; c > 0\)
+(B) \(O(0, 0),\; A(6, 0),\; B(8, 4),\; C(2, 4)\)
+(C) \(O(0, 0),\; A(a, 0),\; B(a + b, c),\; C(b, c)\) con \(a > 0,\; c > 0,\; b \in \mathbb{R}\)
+(D) \(O(0, 0),\; A(a, 0),\; B(a + b, c),\; C(b, d)\) con \(a, c, d > 0,\; b \in \mathbb{R}\)
+(E) \(O(0, 0),\; A(a, 0),\; B(2a, a),\; C(a, a)\) con \(a > 0\)
+[/QUESTION]
+
+=== SECTION 2: Demostraciones de la base media, del paralelogramo y del rombo ===
+
+Con [REF: lossless-placement | las ubicaciones por coordenadas sin pérdida de generalidad] a nuestra disposición, podemos demostrar tres teoremas fundamentales de la geometría plana mediante identidades algebraicas exactas.
+
+Primero, considere el teorema de la base media del triángulo: el segmento que une los puntos medios de dos lados de cualquier triángulo es paralelo al tercer lado y tiene la mitad de su longitud. Ubique un triángulo arbitrario en \(O(0, 0)\), \(A(2a, 0)\) y \(B(2b, 2c)\) con \(a > 0\) y \(c \neq 0\). Calcule los puntos medios \(M\) de \(OB\) y \(N\) de \(AB\):
+\[
+M = \left(\frac{0 + 2b}{2}, \frac{0 + 2c}{2}\right) = (b, c), \qquad N = \left(\frac{2a + 2b}{2}, \frac{0 + 2c}{2}\right) = (a + b, c).
+\]
+Note cómo escalar por \(2\) mantuvo ambos puntos medios completamente libres de fracciones. Ahora verifique ambas afirmaciones:
+- Paralelismo: la pendiente de \(MN\) es \(\frac{c - c}{(a + b) - b} = \frac{0}{a} = 0\) (válido pues \(a > 0\)), y la pendiente de \(OA\) es \(\frac{0 - 0}{2a - 0} = 0\). Como ambos segmentos son horizontales, \(MN \parallel OA\).
+- Mitad de longitud: por la fórmula de la distancia,
+\[
+MN = \sqrt{\bigl((a + b) - b\bigr)^2 + (c - c)^2} = \sqrt{a^2} = a,
+\]
+mientras que \(OA = 2a\) (usando \(a > 0\)). Por ende \(MN = \frac{1}{2} OA\), lo que completa la demostración.
+
+Segundo, demuestre que las diagonales de todo paralelogramo se bisecan mutuamente. Sitúe un paralelogramo arbitrario en \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\) y \(C(b, c)\) con \(a > 0\) y \(c \neq 0\). Confirme primero que los lados opuestos son en efecto paralelos: \(OA\) y \(CB\) son ambos horizontales (pendiente \(0\)), mientras que \(OC\) y \(AB\) tienen ambos cambio horizontal \(b\) y cambio vertical \(c\) (así que ambos son verticales si \(b = 0\), o comparten pendiente \(c/b\) si \(b \neq 0\)). Calcule ahora los puntos medios de las diagonales \(OB\) y \(AC\):
+\[
+M_{OB} = \left(\frac{0 + (a + b)}{2}, \frac{0 + c}{2}\right) = \left(\frac{a + b}{2}, \frac{c}{2}\right), \qquad M_{AC} = \left(\frac{a + b}{2}, \frac{0 + c}{2}\right) = \left(\frac{a + b}{2}, \frac{c}{2}\right).
+\]
+Como \(M_{OB} = M_{AC}\), las dos diagonales se intersecan en su punto medio común y, por consiguiente, se bisecan entre sí.
+
+Tercero, demuestre que las diagonales de todo rombo son perpendiculares. Comience con exactamente el mismo paralelogramo general \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\), \(C(b, c)\) (\(a > 0, c \neq 0\)), e imponga la condición definitoria de un rombo: los lados adyacentes tienen igual longitud, \(OC = OA\). Al elevar al cuadrado se obtiene
+\[
+b^2 + c^2 = a^2.
+\]
+Antes de calcular las pendientes de las diagonales \(OB\) y \(AC\), verifique que ninguna diagonal sea vertical. Como \(c \neq 0\), tenemos \(b^2 = a^2 - c^2 < a^2\), así que \(\lvert b \rvert < a\). Por tanto, tanto \(a + b > 0\) como \(b - a < 0\) son estrictamente distintos de cero. Ambas pendientes están bien definidas:
+\[
+m_{OB} = \frac{c - 0}{(a + b) - 0} = \frac{c}{a + b}, \qquad m_{AC} = \frac{c - 0}{b - a} = \frac{c}{b - a}.
+\]
+Al multiplicarlas y sustituir \(b^2 - a^2 = -c^2\) a partir de la condición del rombo \(b^2 + c^2 = a^2\) resulta
+\[
+m_{OB} \cdot m_{AC} = \frac{c^2}{(b + a)(b - a)} = \frac{c^2}{b^2 - a^2} = \frac{c^2}{-c^2} = -1.
+\]
+Así, \(OB \perp AC\) para todo rombo.
+
+[QUESTION 2]
+[ANSWER: A]
+En una demostración por coordenadas, un paralelogramo arbitrario se coloca en \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\) y \(C(b, c)\) con \(a > 0\) y \(c > 0\). Imponer la condición de que las dos diagonales tengan igual longitud (\(OB = AC\)) se simplifica a qué ecuación algebraica y qué teorema geométrico demuestra?
+
+(A) \(4ab = 0\), lo que obliga a \(b = 0\) y demuestra que todo paralelogramo con diagonales congruentes es un rectángulo
+(B) \(b^2 + c^2 = a^2\), lo que demuestra que todo paralelogramo con diagonales congruentes es un rombo
+(C) \(a^2 + c^2 = b^2\), lo que demuestra que \(OA \perp OB\)
+(D) \(2a^2 = 2b^2\), lo que obliga a \(a = b\) y demuestra que el paralelogramo es un cuadrado
+(E) \(c = 0\), lo que muestra que ningún paralelogramo no degenerado tiene diagonales congruentes
+[/QUESTION]
+
+=== SECTION 3: Concurrencia de las medianas de un triángulo ===
+
+Todo triángulo tiene tres medianas, cada una uniendo un vértice con el punto medio del lado opuesto. Dos rectas no paralelas siempre se intersecan, de modo que la sorpresa es que la tercera mediana pase exactamente por el mismo punto.
+
+A veces una demostración por coordenadas resulta en realidad más limpia sin anclar un vértice en el origen, porque la simetría completa entre los tres vértices hace el trabajo por nosotros. Sea \(\triangle ABC\) un triángulo con vértices completamente arbitrarios \(A(x_1, y_1)\), \(B(x_2, y_2)\) y \(C(x_3, y_3)\). Sea \(M_A\) el punto medio del lado \(BC\):
+\[
+M_A = \left(\frac{x_2 + x_3}{2},\; \frac{y_2 + y_3}{2}\right).
+\]
+En lugar de hallar las ecuaciones de dos medianas y preocuparse por casos de rectas verticales, aplique directamente la fórmula de división interna a la mediana \(A M_A\). Halle el punto \(G_A\) que divide el segmento dirigido de \(A\) a \(M_A\) en la razón \(A G_A : G_A M_A = 2 : 1\) (es decir, \(m = 2\) y \(n = 1\)):
+\[
+x_{G_A} = \frac{1 \cdot x_1 + 2 \cdot \frac{x_2 + x_3}{2}}{2 + 1} = \frac{x_1 + x_2 + x_3}{3},
+\]
+\[
+y_{G_A} = \frac{1 \cdot y_1 + 2 \cdot \frac{y_2 + y_3}{2}}{2 + 1} = \frac{y_1 + y_2 + y_3}{3}.
+\]
+Observe ahora las coordenadas de \(G_A\): son completamente simétricas respecto a los tres vértices \(A\), \(B\) y \(C\). Repetir exactamente la misma división \(2 : 1\) desde \(B\) hasta el punto medio \(M_B\) de \(AC\) produce el punto idéntico \(G_B = G_A\), y repetirla desde \(C\) hasta el punto medio \(M_C\) de \(AB\) produce \(G_C = G_A\). Como este único punto \(G\) pertenece a las tres medianas, las tres medianas concurren en \(G\), y \(G\) divide cada mediana en la razón \(2 : 1\) desde el vértice hasta el punto medio.
+
+[CALLOUT]
+id: centroid-proof
+label: Teorema
+title: Concurrencia de las medianas y fórmula del baricentro
+tone: key
+
+En cualquier triángulo con vértices \(A(x_1, y_1)\), \(B(x_2, y_2)\) y \(C(x_3, y_3)\), las tres medianas se intersecan en un único punto (el baricentro)
+\[
+G = \left(\frac{x_1 + x_2 + x_3}{3},\; \frac{y_1 + y_2 + y_3}{3}\right),
+\]
+el cual divide internamente cada mediana en la razón \(2 : 1\) desde el vértice hasta el punto medio opuesto.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: D]
+En \(\triangle PQR\), el baricentro es \(G(2, 1)\) y el punto medio del lado \(QR\) es \(M(5, -2)\). ¿Cuáles son las coordenadas del vértice \(P\)?
+
+(A) \((-1, 4)\)
+(B) \(\left(\frac{1}{2}, \frac{5}{2}\right)\)
+(C) \((16, -1)\)
+(D) \((-4, 7)\)
+(E) \((-4, -1)\)
+[/QUESTION]
+
+=== SECTION 4: El teorema de Tales para una semicircunferencia ===
+
+El teorema de Tales afirma que todo ángulo inscrito en una semicircunferencia es un ángulo recto: si \(AB\) es un diámetro de una circunferencia y \(P\) es cualquier otro punto de la circunferencia, entonces \(\angle APB = 90^\circ\).
+
+Elija una ubicación que haga la condición de la circunferencia lo más sencilla posible: coloque el centro de la circunferencia en el origen \(O(0, 0)\) y sea \(r > 0\) su radio. Alinee el diámetro a lo largo del eje \(x\) para que sus extremos sean \(A(-r, 0)\) y \(B(r, 0)\). Un punto \(P(x, y)\) pertenece a esta circunferencia si y solo si su distancia al origen es \(r\), es decir,
+\[
+x^2 + y^2 = r^2.
+\]
+Como \(P\) es distinto de \(A(-r, 0)\) y \(B(r, 0)\), necesariamente \(y \neq 0\), lo que obliga a que \(x^2 = r^2 - y^2 < r^2\) y, por tanto, \(x \neq -r\) y \(x \neq r\). En consecuencia, ni la cuerda \(PA\) ni la cuerda \(PB\) es vertical, de modo que ambas pendientes están bien definidas:
+\[
+m_{PA} = \frac{y - 0}{x - (-r)} = \frac{y}{x + r}, \qquad m_{PB} = \frac{y - 0}{x - r} = \frac{y}{x - r}.
+\]
+Multiplique las dos pendientes y aplique la relación de la circunferencia \(x^2 - r^2 = -y^2\):
+\[
+m_{PA} \cdot m_{PB} = \frac{y^2}{(x + r)(x - r)} = \frac{y^2}{x^2 - r^2} = \frac{y^2}{-y^2} = -1,
+\]
+donde cancelar \(y^2\) está justificado porque \(y \neq 0\). Por el criterio de perpendicularidad de pendientes, \(PA \perp PB\), de modo que \(\angle APB = 90^\circ\).
+
+[CALLOUT]
+id: thales-proof
+label: Teorema
+title: Teorema de Tales mediante coordenadas
+tone: key
+
+Si \(A(-r, 0)\) y \(B(r, 0)\) son los extremos de un diámetro de la circunferencia \(x^2 + y^2 = r^2\) (\(r > 0\)), y \(P(x, y)\) es cualquier punto sobre la circunferencia con \(y \neq 0\), entonces
+\[
+m_{PA} \cdot m_{PB} = \frac{y^2}{x^2 - r^2} = \frac{y^2}{-y^2} = -1,
+\]
+de modo que \(\angle APB = 90^\circ\).
+[/CALLOUT]
+
+Arrastre el deslizador de ángulo \(a\) abajo para mover \(P\) a lo largo de la semicircunferencia de radio \(r = 3\) y observar cómo el ángulo recto en \(P\) persiste en toda posición entre \(A\) y \(B\).
+
+[GRAPH]
+type: parametric2d
+title: Teorema de Tales en la semicircunferencia \(x^2 + y^2 = 9\) con punto móvil \(P\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -3.6, 3.6
+yrange: -0.6, 3.6
+trace: 3*cos(t), 3*sin(t) | label: semicircunferencia \(r = 3\)
+segment: -3, 0, 3, 0 | label: \(AB\)
+segment: -3, 0, 3*cos(a), 3*sin(a)
+segment: 3, 0, 3*cos(a), 3*sin(a)
+point: -3, 0 | label: \(A(-r, 0)\)
+point: 3, 0 | label: \(B(r, 0)\)
+point: 0, 0 | label: \(O\)
+point: 3*cos(a), 3*sin(a) | label: \(P(x, y)\)
+slider: a | range: 0.2, 2.94 | init: 1.05 | step: 0.05
+[/GRAPH]
+
+Observe cuánto se asemeja el álgebra en [REF: thales-proof | el teorema de Tales] a nuestra demostración de las diagonales del rombo: en ambas demostraciones, una restricción geométrica exacta (\(b^2 + c^2 = a^2\) o \(x^2 + y^2 = r^2\)) convierte una diferencia de cuadrados en el denominador en el opuesto exacto del numerador, produciendo un producto de pendientes igual a \(-1\) de manera universal para todos los valores del parámetro.
+
+[QUESTION 4]
+[ANSWER: B]
+Para demostrar que el punto medio de la hipotenusa de todo triángulo rectángulo equidista de sus tres vértices, un estudiante coloca un triángulo rectángulo arbitrario en \(O(0, 0)\), \(A(2a, 0)\) y \(B(0, 2b)\) con \(a > 0\) y \(b > 0\), y denota por \(M\) el punto medio de la hipotenusa \(AB\). ¿Qué cálculo completa la demostración?
+
+(A) Mostrar que \(M = (a, b)\) y verificar que \(m_{OM} \cdot m_{AB} = -1\)
+(B) Mostrar que \(M = (a, b)\) y verificar que \(MO = MA = MB = \sqrt{a^2 + b^2}\)
+(C) Mostrar que \(M = (a, b)\) y verificar que \(MA = MB = \sqrt{a^2 + b^2}\)
+(D) Mostrar que \(M = (2a, 2b)\) y verificar que \(MO^2 = OA^2 + OB^2\)
+(E) Fijar \(a = b\) para que \(M = (a, a)\) y verificar que \(MO = a\sqrt{2}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Sea \(ABCD\) un cuadrilátero arbitrario con vértices \(A(x_1, y_1)\), \(B(x_2, y_2)\), \(C(x_3, y_3)\) y \(D(x_4, y_4)\), y sean \(P, Q, R, S\) los puntos medios de los lados \(AB, BC, CD, DA\) en orden. ¿Qué identidad algebraica demuestra que \(PQRS\) es siempre un paralelogramo sin requerir separación de casos por pendientes?
+
+(A) \(PQ = RS\) desarrollando ambas fórmulas de distancia
+(B) \(P + Q = R + S\) coordenada a coordenada
+(C) \(M_{PQ} = M_{RS}\)
+(D) \(PR^2 = QS^2\)
+(E) \(M_{PR} = M_{QS} = \left(\frac{x_1 + x_2 + x_3 + x_4}{4},\; \frac{y_1 + y_2 + y_3 + y_4}{4}\right)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Para un paralelogramo general \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\) y \(C(b, c)\) (\(a > 0, c \neq 0\)), ¿cuál es la suma de los cuadrados de las longitudes de sus diagonales, \(OB^2 + AC^2\), en términos de las longitudes de sus lados \(OA\) y \(OC\)?
+
+(A) \(2(OA^2 + OC^2)\)
+(B) \(OA^2 + OC^2\)
+(C) \(4(OA^2 + OC^2)\)
+(D) \((OA + OC)^2\)
+(E) \(2(OA^2 - OC^2)\)
+[/BONUS]

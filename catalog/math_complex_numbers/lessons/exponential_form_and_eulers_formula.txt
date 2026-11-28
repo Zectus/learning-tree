@@ -1,0 +1,216 @@
+=== SECTION 1: From polar multiplication to Euler's formula ===
+
+In the polar form of complex numbers, the unit-circle factor \(\operatorname{cis}\theta = \cos\theta + i\sin\theta\) behaves in a strikingly familiar way. For all real angles \(\theta, \theta_1, \theta_2\) measured in radians, we already established three algebraic identities:
+\[
+\operatorname{cis}(\theta_1)\,\operatorname{cis}(\theta_2) = \operatorname{cis}(\theta_1 + \theta_2), \qquad \operatorname{cis}(0) = 1, \qquad \operatorname{cis}(-\theta) = \frac{1}{\operatorname{cis}(\theta)}.
+\]
+Compare those three rules to the laws of an ordinary exponential function \(b^t\): \(b^{t_1} b^{t_2} = b^{t_1 + t_2}\), \(b^0 = 1\), and \(b^{-t} = 1/b^t\). The match is exact—multiplication turns into addition of inputs, \(0\) maps to \(1\), and negating the input produces the reciprocal.
+
+In calculus, comparing power series or solving the differential equation \(f'(\theta) = i f(\theta)\) with \(f(0) = 1\) confirms that this exponential behavior is not merely an analogy: \(\cos\theta + i\sin\theta\) is literally the base-\(e\) exponential evaluated at the pure imaginary exponent \(i\theta\). Because those proofs rely on calculus tools outside our scope here, we accept Euler's formula as a supplied foundational identity and build its full algebraic and trigonometric power.
+
+[CALLOUT]
+id: eulers-formula
+label: Formula (supplied)
+title: Euler's formula and Euler's identity
+tone: key
+
+For every real angle \(\theta\) measured in radians:
+
+(1) Euler's formula:
+\[
+e^{i\theta} = \cos\theta + i\sin\theta.
+\]
+(2) Unit modulus: \(|e^{i\theta}| = \sqrt{\cos^2\theta + \sin^2\theta} = 1\), so \(e^{i\theta}\) traces the unit circle centered at \(0\) in the Argand plane.
+(3) Periodicity: \(e^{i(\theta + 2\pi k)} = e^{i\theta}\) for every integer \(k \in \mathbb{Z}\); more generally, \(e^{i\alpha} = e^{i\beta}\) if and only if \(\alpha - \beta = 2\pi k\) for some \(k \in \mathbb{Z}\).
+(4) Euler's identity: setting \(\theta = \pi\) gives \(e^{i\pi} = \cos\pi + i\sin\pi = -1\), or equivalently \(e^{i\pi} + 1 = 0\).
+[/CALLOUT]
+
+Always verify that \(\theta\) is in RADIANS when using [REF: eulers-formula.1 | Euler's formula]: writing \(e^{i\pi/2} = i\) is exact, whereas substituting degrees into \(e^{i\theta}\) breaks the base-\(e\) relationship.
+
+Because every nonzero complex number has polar form \(z = r(\cos\theta + i\sin\theta)\) with \(r = |z| > 0\) and \(\theta \in \arg(z)\), [REF: eulers-formula.1 | Euler's formula] compresses it into exponential form:
+\[
+z = r e^{i\theta}.
+\]
+Every polar operation now obeys ordinary exponent laws automatically:
+- Product: \((r_1 e^{i\theta_1})(r_2 e^{i\theta_2}) = r_1 r_2 e^{i(\theta_1 + \theta_2)}\).
+- Quotient: \(\frac{r_1 e^{i\theta_1}}{r_2 e^{i\theta_2}} = \frac{r_1}{r_2} e^{i(\theta_1 - \theta_2)}\).
+- Reciprocal: \(z^{-1} = r^{-1} e^{-i\theta}\).
+- Conjugate: because \(\cos(-\theta) = \cos\theta\) and \(\sin(-\theta) = -\sin\theta\), we have \(\overline{e^{i\theta}} = \cos\theta - i\sin\theta = e^{-i\theta}\), and hence \(\overline{r e^{i\theta}} = r e^{-i\theta}\).
+
+[TABLE]
+Standard form | Polar form | Exponential form | Key note
+\(1\) | \(1\operatorname{cis}(0)\) | \(e^{0}\) | Positive real axis
+\(i\) | \(1\operatorname{cis}(\pi/2)\) | \(e^{i\pi/2}\) | Quarter-turn rotation
+\(-1\) | \(1\operatorname{cis}(\pi)\) | \(e^{i\pi}\) | Euler's identity \(e^{i\pi} + 1 = 0\)
+\(-i\) | \(1\operatorname{cis}(-\pi/2)\) | \(e^{-i\pi/2}\) | Also equals \(e^{i3\pi/2}\)
+\(-1 + i\) | \(\sqrt{2}\operatorname{cis}(3\pi/4)\) | \(\sqrt{2}\,e^{i3\pi/4}\) | Quadrant II principal argument
+[/TABLE]
+
+Let us see how cleanly exponential form handles a multi-step calculation. To write \(w = \frac{(1 + i\sqrt{3})(2i)}{-1 + i}\) in exponential and rectangular forms, convert each piece first: \(1 + i\sqrt{3} = 2e^{i\pi/3}\), \(2i = 2e^{i\pi/2}\), and \(-1 + i = \sqrt{2}\,e^{i3\pi/4}\). Then
+\[
+w = \frac{(2e^{i\pi/3})(2e^{i\pi/2})}{\sqrt{2}\,e^{i3\pi/4}} = \frac{4}{\sqrt{2}}\,e^{i(\frac{\pi}{3} + \frac{\pi}{2} - \frac{3\pi}{4})} = 2\sqrt{2}\,e^{i\pi/12}.
+\]
+Note also how [REF: eulers-formula.3 | \(2\pi\)-periodicity] solves exponential angle equations: to find all \(\theta \in [0, 2\pi)\) satisfying \(e^{2i\theta} = -1 = e^{i\pi}\), set \(2\theta = \pi + 2\pi k\), giving \(\theta = \frac{\pi}{2} + \pi k\), which produces \(\theta = \frac{\pi}{2}\) (\(k = 0\)) and \(\theta = \frac{3\pi}{2}\) (\(k = 1\)). Forgetting the \(+2\pi k\) term would miss the second solution completely.
+
+In this lesson, the exponent \(i\theta\) is always pure imaginary (real \(\theta\)). Defining general complex exponentials \(e^{x + iy}\) as functions and defining complex logarithms belong to Complex Analysis.
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(z_1 = 4e^{i\frac{5\pi}{6}}\) and \(z_2 = 2e^{-i\frac{\pi}{3}}\). Express \(\frac{z_1}{\overline{z_2}}\) in standard rectangular form.
+
+(A) \(2i\)
+(B) \(-2i\)
+(C) \(-\sqrt{3} - i\)
+(D) \(1 + i\sqrt{3}\)
+(E) \(\sqrt{3} + i\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Which real values of \(\theta \in [0, 2\pi)\) satisfy \(e^{3i\theta} = -i\)?
+
+(A) \(\frac{\pi}{2}\), \(\frac{7\pi}{6}\), and \(\frac{11\pi}{6}\)
+(B) \(\frac{\pi}{2}\) only
+(C) \(\frac{\pi}{6}\), \(\frac{5\pi}{6}\), and \(\frac{3\pi}{2}\)
+(D) \(\frac{\pi}{2}\) and \(\frac{3\pi}{2}\)
+(E) \(\frac{\pi}{3}\), \(\pi\), and \(\frac{5\pi}{3}\)
+[/QUESTION]
+
+=== SECTION 2: Euler's formulas for cosine and sine ===
+
+Euler's formula turns complex exponentials into trigonometric functions, and we can just as easily run the bridge in reverse to express \(\cos\theta\) and \(\sin\theta\) purely in terms of \(e^{i\theta}\) and \(e^{-i\theta}\). Write [REF: eulers-formula.1 | Euler's formula] for \(\theta\) and for \(-\theta\):
+\[
+e^{i\theta} = \cos\theta + i\sin\theta, \qquad e^{-i\theta} = \cos\theta - i\sin\theta.
+\]
+Adding the two equations cancels \(i\sin\theta\) and gives \(e^{i\theta} + e^{-i\theta} = 2\cos\theta\). Subtracting the second from the first cancels \(\cos\theta\) and gives \(e^{i\theta} - e^{-i\theta} = 2i\sin\theta\). Dividing by \(2\) and by \(2i\) yields Euler's trigonometric formulas.
+
+[CALLOUT]
+id: euler-trig-formulas
+label: Identities
+title: Euler's formulas for \(\cos\theta\) and \(\sin\theta\)
+tone: key
+
+For every real \(\theta\):
+
+(1) \(\cos\theta = \dfrac{e^{i\theta} + e^{-i\theta}}{2}\).
+(2) \(\sin\theta = \dfrac{e^{i\theta} - e^{-i\theta}}{2i}\).
+[/CALLOUT]
+
+Geometrically, these two formulas say something transparent on the unit circle: \(e^{i\theta}\) and \(e^{-i\theta} = \overline{e^{i\theta}}\) are reflections of each other across the real axis, so their midpoint \(\frac{e^{i\theta} + e^{-i\theta}}{2}\) lies on the real axis at \(\cos\theta\), while the vertical chord connecting them has signed height \(2\sin\theta\) (corresponding to \(e^{i\theta} - e^{-i\theta} = 2i\sin\theta\)). Drag the slider below to watch the midpoint and vertical chord track \(\cos\theta\) and \(2\sin\theta\) around the unit circle.
+
+[GRAPH]
+type: parametric2d
+title: Unit circle geometry of \(e^{i\theta}\), \(e^{-i\theta}\), and Euler's formulas for \(\cos\theta\) and \(\sin\theta\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.45, 1.45
+yrange: -1.45, 1.45
+trace: cos(t), sin(t) | label: \(|z| = 1\) | color: #2563eb
+segment: 0, 0, cos(a), sin(a) | color: #dc2626
+segment: 0, 0, cos(a), -sin(a) | color: #ea580c | dashed: true
+segment: cos(a), -sin(a), cos(a), sin(a) | label: \(2i\sin\theta\) | color: #9333ea
+segment: 0, 0, cos(a), 0 | label: \(\cos\theta\) | color: #16a34a
+point: cos(a), sin(a) | label: \(e^{i\theta}\)
+point: cos(a), -sin(a) | label: \(e^{-i\theta}\)
+point: cos(a), 0 | label: \(\cos\theta\)
+point: 1, 0 | label: \(1\)
+point: -1, 0 | label: \(-1\)
+point: 0, 1 | label: \(i\)
+point: 0, -1 | label: \(-i\)
+slider: a | range: -3.1416, 3.1416 | init: 1.0472 | step: 0.05
+[/GRAPH]
+
+Notice how effortlessly [REF: euler-trig-formulas | Euler's trigonometric formulas] prove trigonometric identities using nothing more than ordinary algebra! For example, to derive the double-angle identity for \(\cos^2\theta\), simply square \(\cos\theta = \frac{e^{i\theta} + e^{-i\theta}}{2}\):
+\[
+\cos^2\theta = \frac{(e^{i\theta} + e^{-i\theta})^2}{4} = \frac{e^{2i\theta} + 2 + e^{-2i\theta}}{4} = \frac{1}{2} + \frac{1}{2}\cdot\frac{e^{2i\theta} + e^{-2i\theta}}{2} = \frac{1 + \cos(2\theta)}{2}.
+\]
+Similarly, multiplying \(\sin\theta\) and \(\cos\theta\) gives
+\[
+2\sin\theta\cos\theta = 2\left(\frac{e^{i\theta} - e^{-i\theta}}{2i}\right)\left(\frac{e^{i\theta} + e^{-i\theta}}{2}\right) = \frac{e^{2i\theta} - e^{-2i\theta}}{2i} = \sin(2\theta).
+\]
+
+[QUESTION 3]
+[ANSWER: A]
+For any real \(\theta\) with \(\cos\theta \ne 0\), what does \(\dfrac{e^{2i\theta} - e^{-2i\theta}}{e^{i\theta} + e^{-i\theta}}\) simplify to?
+
+(A) \(2i\sin\theta\)
+(B) \(2\sin\theta\)
+(C) \(2\cos\theta\)
+(D) \(i\tan\theta\)
+(E) \(-2i\sin\theta\)
+[/QUESTION]
+
+=== SECTION 3: The half-angle factoring trick ===
+
+Exponential form makes products and quotients trivial, but what about a SUM or DIFFERENCE of two unit-modulus complex numbers, such as \(1 + e^{i\theta}\), \(1 - e^{i\theta}\), or \(e^{i\alpha} + e^{i\beta}\)? Trying to convert back to rectangular form and take \(\sqrt{(1 + \cos\theta)^2 + \sin^2\theta}\) works, but there is a far cleaner and more general technique that stays entirely inside exponential algebra: factor out the halfway exponent!
+
+Look at \(1 + e^{i\theta} = e^{i\cdot 0} + e^{i\theta}\). The midpoint of the two exponents \(0\) and \(i\theta\) is \(i\theta/2\). Factoring \(e^{i\theta/2}\) out of BOTH terms makes the remaining exponents exact negatives of each other:
+\[
+1 + e^{i\theta} = e^{i\theta/2}\left(e^{-i\theta/2} + e^{i\theta/2}\right).
+\]
+By [REF: euler-trig-formulas.1 | Euler's cosine formula], the parenthesized sum is literally \(2\cos(\theta/2)\)! Thus
+\[
+1 + e^{i\theta} = 2\cos\!\left(\frac{\theta}{2}\right) e^{i\theta/2}.
+\]
+Doing the exact same factoring on \(1 - e^{i\theta}\) produces \(e^{-i\theta/2} - e^{i\theta/2} = -(e^{i\theta/2} - e^{-i\theta/2}) = -2i\sin(\theta/2)\) by [REF: euler-trig-formulas.2 | Euler's sine formula]:
+\[
+1 - e^{i\theta} = e^{i\theta/2}\left(e^{-i\theta/2} - e^{i\theta/2}\right) = -2i\sin\!\left(\frac{\theta}{2}\right) e^{i\theta/2}.
+\]
+And for any two angles \(\alpha\) and \(\beta\), factoring out the average exponent \(e^{i(\alpha + \beta)/2}\) gives
+\[
+e^{i\alpha} + e^{i\beta} = e^{i(\alpha + \beta)/2}\left(e^{i(\alpha - \beta)/2} + e^{-i(\alpha - \beta)/2}\right) = 2\cos\!\left(\frac{\alpha - \beta}{2}\right) e^{i(\alpha + \beta)/2}.
+\]
+
+[CALLOUT]
+id: half-angle-factoring
+label: Technique
+title: Half-angle factoring for sums and differences of unit exponentials
+tone: key
+
+For every real \(\theta\):
+
+(1) \(1 + e^{i\theta} = 2\cos\!\left(\frac{\theta}{2}\right) e^{i\theta/2}\).
+(2) \(1 - e^{i\theta} = -2i\sin\!\left(\frac{\theta}{2}\right) e^{i\theta/2} = 2\sin\!\left(\frac{\theta}{2}\right) e^{i(\theta - \pi)/2}\) (using \(-i = e^{-i\pi/2}\)).
+[/CALLOUT]
+
+There is one essential sign check whenever you use [REF: half-angle-factoring | half-angle factoring] to read off the modulus \(r\) and argument \(\phi\) of \(z = r e^{i\phi}\): the modulus \(r\) MUST be nonnegative!
+- For example, take \(z = 1 + e^{i\frac{2\pi}{3}}\). Here \(\frac{\theta}{2} = \frac{\pi}{3}\), so \(\cos\!\left(\frac{\pi}{3}\right) = \frac{1}{2} > 0\), giving \(z = 2\left(\frac{1}{2}\right)e^{i\pi/3} = e^{i\pi/3}\) directly (modulus \(1\), argument \(\frac{\pi}{3}\)).
+- Now contrast \(z = 1 + e^{i\frac{5\pi}{3}}\). Here \(\frac{\theta}{2} = \frac{5\pi}{6}\), so \(\cos\!\left(\frac{5\pi}{6}\right) = -\frac{\sqrt{3}}{2} < 0\)! Writing \(z = -\sqrt{3}\,e^{i5\pi/6}\) is algebraically true, but \(-\sqrt{3}\) is NOT the modulus because it is negative. Absorb the minus sign as \(-1 = e^{-i\pi}\):
+\[
+z = \sqrt{3}\,e^{-i\pi} e^{i5\pi/6} = \sqrt{3}\,e^{-i\pi/6}.
+\]
+Now the modulus is \(r = \sqrt{3} > 0\) and the principal argument is \(-\frac{\pi}{6} \in (-\pi, \pi]\). Checking in rectangular form: \(1 + e^{i5\pi/3} = 1 + \left(\frac{1}{2} - i\frac{\sqrt{3}}{2}\right) = \frac{3}{2} - i\frac{\sqrt{3}}{2} = \sqrt{3}\left(\frac{\sqrt{3}}{2} - \frac{1}{2}i\right) = \sqrt{3}\,e^{-i\pi/6}\).
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(\theta \in (0, \pi)\). Express \(z = 1 - e^{i\theta}\) in exponential form \(r e^{i\phi}\) with \(r > 0\) and \(\phi \in (-\pi, \pi]\).
+
+(A) \(2\sin\!\left(\frac{\theta}{2}\right) e^{i(\theta - \pi)/2}\)
+(B) \(2\sin\!\left(\frac{\theta}{2}\right) e^{i(\theta + \pi)/2}\)
+(C) \(2\cos\!\left(\frac{\theta}{2}\right) e^{i\theta/2}\)
+(D) \(-2\sin\!\left(\frac{\theta}{2}\right) e^{i\theta/2}\)
+(E) \(2\sin\!\left(\frac{\theta}{2}\right) e^{i\theta/2}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+What are the modulus \(r > 0\) and principal argument \(\phi \in (-\pi, \pi]\) of \(w = 1 + e^{i\frac{4\pi}{3}}\)?
+
+(A) \(r = 1\) and \(\phi = -\frac{\pi}{3}\)
+(B) \(r = 1\) and \(\phi = \frac{2\pi}{3}\)
+(C) \(r = -1\) and \(\phi = \frac{2\pi}{3}\)
+(D) \(r = \sqrt{3}\) and \(\phi = -\frac{\pi}{6}\)
+(E) \(r = 1\) and \(\phi = \frac{\pi}{3}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+For any real \(\theta\) that is not an odd multiple of \(\pi\), simplify \(\dfrac{1 - e^{i\theta}}{1 + e^{i\theta}}\).
+
+(A) \(-i\tan\!\left(\frac{\theta}{2}\right)\)
+(B) \(i\tan\!\left(\frac{\theta}{2}\right)\)
+(C) \(-\tan\!\left(\frac{\theta}{2}\right)\)
+(D) \(-i\cot\!\left(\frac{\theta}{2}\right)\)
+(E) \(i\tan(\theta)\)
+[/BONUS]

@@ -1,0 +1,273 @@
+=== SECTION 1: Definición del producto escalar en 3D y sus reglas algebraicas ===
+
+La suma componente a componente y la multiplicación por un escalar nos permiten combinar desplazamientos y medir longitudes en \(\mathbb{R}^3\), pero ninguna de esas operaciones nos dice el ángulo entre dos vectores en el espacio. Si dos cables tensores parten de un punto de anclaje en las direcciones \(\mathbf{u} = \langle 2, -1, 3 \rangle\) y \(\mathbf{v} = \langle 1, 5, 1 \rangle\), ¿cómo determinamos si forman un ángulo recto, agudo u obtuso sin construir una maqueta a escala?
+
+La herramienta que conecta la aritmética por componentes con los ángulos espaciales es un producto de valor escalar llamado producto escalar (o producto punto).
+
+[CALLOUT]
+id: dot-def
+label: Definición
+title: El producto escalar en 3D
+tone: key
+
+Para cualesquiera dos vectores \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\) y \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) en \(\mathbb{R}^3\), su producto escalar es el número real
+\[
+\mathbf{u} \cdot \mathbf{v} = u_1 v_1 + u_2 v_2 + u_3 v_3.
+\]
+[/CALLOUT]
+
+Preste mucha atención al tipo del resultado: \(\mathbf{u} \cdot \mathbf{v}\) es un escalar (un único número real), nunca un vector. Para \(\mathbf{u} = \langle 2, -1, 3 \rangle\) y \(\mathbf{v} = \langle 1, 5, 1 \rangle\),
+\[
+\mathbf{u} \cdot \mathbf{v} = (2)(1) + (-1)(5) + (3)(1) = 2 - 5 + 3 = 0.
+\]
+Veremos en un momento que este valor \(0\) significa que los dos cables se encuentran formando un ángulo exacto de \(90^\circ\).
+
+Directamente a partir de [REF: dot-def | la definición por componentes], el producto escalar obedece cuatro leyes algebraicas limpias para todos \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\) y todo escalar \(c \in \mathbb{R}\):
+
+[CALLOUT]
+id: dot-laws
+label: Teorema
+title: Propiedades algebraicas del producto escalar
+tone: key
+
+(1) Simetría (conmutatividad): \(\mathbf{u} \cdot \mathbf{v} = \mathbf{v} \cdot \mathbf{u}\).
+(2) Distributividad respecto de la suma: \(\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}\).
+(3) Homogeneidad escalar: \((c\mathbf{u}) \cdot \mathbf{v} = c(\mathbf{u} \cdot \mathbf{v}) = \mathbf{u} \cdot (c\mathbf{v})\).
+(4) Identidad del cuadrado de la norma: \(\mathbf{v} \cdot \mathbf{v} = v_1^2 + v_2^2 + v_3^2 = \|\mathbf{v}\|^2\), con \(\mathbf{v} \cdot \mathbf{v} = 0\) si y solo si \(\mathbf{v} = \mathbf{0}\).
+[/CALLOUT]
+
+Note cómo [REF: dot-laws.2 | la distributividad] y [REF: dot-laws.3 | la homogeneidad] juntas hacen que el producto escalar sea bilineal (lineal en cada argumento cuando el otro se mantiene fijo). Por ejemplo, desarrollar \(\|\mathbf{u} - \mathbf{v}\|^2\) usando [REF: dot-laws | estas propiedades algebraicas] reproduce el desarrollo ordinario del cuadrado de un binomio:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = (\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = \mathbf{u} \cdot \mathbf{u} - \mathbf{u} \cdot \mathbf{v} - \mathbf{v} \cdot \mathbf{u} + \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 - 2(\mathbf{u} \cdot \mathbf{v}) + \|\mathbf{v}\|^2.
+\]
+Esa sola identidad algebraica es el puente exacto hacia los ángulos en \(\mathbb{R}^3\).
+
+=== SECTION 2: Ángulos, ortogonalidad y Cauchy-Schwarz ===
+
+Coloque dos vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\) cola con cola en el origen, y sea \(\theta \in [0, \pi]\) el ángulo entre ellos dentro del plano que generan. Las puntas de \(\mathbf{u}\) y \(\mathbf{v}\) quedan unidas por el vector diferencia \(\mathbf{u} - \mathbf{v}\), formando un triángulo con lados de longitudes \(\|\mathbf{u}\|\), \(\|\mathbf{v}\|\) y \(\|\mathbf{u} - \mathbf{v}\|\), donde \(\theta\) es el ángulo interior opuesto al lado de longitud \(\|\mathbf{u} - \mathbf{v}\|\).
+
+[GRAPH]
+type: parametric2d
+title: Triángulo formado por \(\mathbf{u}\), \(\mathbf{v}\) y \(\mathbf{u} - \mathbf{v}\) en el plano que generan
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 4.5
+yrange: -0.5, 3.6
+trace: 4*t, 0 | label: \(\mathbf{v}\)
+trace: 1.5*t, 2.6*t | label: \(\mathbf{u}\)
+trace: 4 - 2.5*t, 2.6*t | label: \(\mathbf{u} - \mathbf{v}\)
+trace: 0.7*cos(1.047*t), 0.7*sin(1.047*t) | label: ángulo \(\theta\)
+point: 0, 0 | label: \(O\)
+point: 4, 0 | label: \(\mathbf{v}\)
+point: 1.5, 2.6 | label: \(\mathbf{u}\)
+[/GRAPH]
+
+Al aplicar la ley de los cosenos a este triángulo se obtiene
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2\|\mathbf{u}\|\|\mathbf{v}\|\cos\theta.
+\]
+Ahora compare esta ecuación geométrica lado a lado con el desarrollo algebraico de la Sección 1:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2(\mathbf{u} \cdot \mathbf{v}).
+\]
+Cancelar \(\|\mathbf{u}\|^2 + \|\mathbf{v}\|^2\) en ambas expresiones y dividir por \(-2\) produce el teorema geométrico del producto escalar. (La misma fórmula vale automáticamente en los casos degenerados \(\theta = 0\) y \(\theta = \pi\), donde \(\mathbf{u} = \pm c\mathbf{v}\).)
+
+[CALLOUT]
+id: dot-angle
+label: Teorema
+title: Producto escalar geométrico, Cauchy-Schwarz y ortogonalidad
+tone: key
+
+Sean \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^3\) vectores no nulos con ángulo \(\theta \in [0, \pi]\) entre ellos.
+
+(1) Fórmula geométrica: \(\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta\), de modo que \(\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\).
+(2) Desigualdad de Cauchy-Schwarz: para todos \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^3\), \(|\mathbf{u} \cdot \mathbf{v}| \le \|\mathbf{u}\|\,\|\mathbf{v}\|\), dándose la igualdad si y solo si un vector es múltiplo escalar del otro.
+(3) Clasificación del ángulo (para \(\mathbf{u}, \mathbf{v}\) no nulos): \(\mathbf{u} \cdot \mathbf{v} > 0 \iff 0 \le \theta < \frac{\pi}{2}\) (agudo o paralelo); \(\mathbf{u} \cdot \mathbf{v} = 0 \iff \theta = \frac{\pi}{2}\) (ortogonal); \(\mathbf{u} \cdot \mathbf{v} < 0 \iff \frac{\pi}{2} < \theta \le \pi\) (obtuso o antiparalelo).
+[/CALLOUT]
+
+¿Por qué se deduce de inmediato [REF: dot-angle.2 | la desigualdad de Cauchy-Schwarz]? Porque \(|\cos\theta| \le 1\) para todo ángulo real \(\theta\); al tomar valores absolutos en [REF: dot-angle.1 | la fórmula geométrica] se obtiene \(|\mathbf{u} \cdot \mathbf{v}| = \|\mathbf{u}\|\|\mathbf{v}\||\cos\theta| \le \|\mathbf{u}\|\|\mathbf{v}\|\), con igualdad precisamente cuando \(|\cos\theta| = 1\) (es decir, \(\theta = 0\) o \(\theta = \pi\), vectores paralelos) o cuando uno de los vectores es \(\mathbf{0}\).
+
+Tenga presente una convención: por definición, dos vectores \(\mathbf{u}\) y \(\mathbf{v}\) se llaman ortogonales (se escribe \(\mathbf{u} \perp \mathbf{v}\)) siempre que \(\mathbf{u} \cdot \mathbf{v} = 0\), lo que hace que el vector nulo \(\mathbf{0}\) sea ortogonal a todo vector. Para vectores no nulos, «ortogonal» y «perpendicular» significan exactamente lo mismo: \(\theta = \pi/2\).
+
+Calculemos un ángulo exacto: tome \(\mathbf{p} = \langle 2, 1, -2 \rangle\) y \(\mathbf{q} = \langle 1, 0, -1 \rangle\). Tenemos
+\[
+\mathbf{p} \cdot \mathbf{q} = 2(1) + 1(0) + (-2)(-1) = 4, \qquad \|\mathbf{p}\| = \sqrt{4 + 1 + 4} = 3, \qquad \|\mathbf{q}\| = \sqrt{1 + 0 + 1} = \sqrt{2}.
+\]
+Por lo tanto, \(\cos\theta = \frac{4}{3\sqrt{2}} = \frac{2\sqrt{2}}{3} > 0\), de modo que \(\theta = \arccos\bigl(\frac{2\sqrt{2}}{3}\bigr) \approx 19.5^\circ\) es agudo.
+
+[QUESTION 1]
+[ANSWER: A]
+Sean \(\mathbf{u} = \langle 3, -2, 4 \rangle\) y \(\mathbf{v} = \langle 2, 1, c \rangle\). ¿Para qué valores de la constante real \(c\) es estrictamente obtuso el ángulo \(\theta\) entre \(\mathbf{u}\) y \(\mathbf{v}\) (\(\frac{\pi}{2} < \theta < \pi\))?
+
+(A) \(c < -1\)
+(B) \(c > -1\)
+(C) \(c = -1\)
+(D) \(c < 1\)
+(E) \(c < -2\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál es el ángulo exacto \(\theta \in [0, \pi]\) entre los vectores \(\mathbf{a} = \langle 1, 1, 0 \rangle\) y \(\mathbf{b} = \langle 0, -1, 1 \rangle\)?
+
+(A) \(\frac{\pi}{3}\)
+(B) \(\frac{\pi}{2}\)
+(C) \(\frac{3\pi}{4}\)
+(D) \(\frac{2\pi}{3}\)
+(E) \(\frac{5\pi}{6}\)
+[/QUESTION]
+
+=== SECTION 3: Ángulos directores y cosenos directores ===
+
+En \(\mathbb{R}^2\), un único ángulo \(\theta\) medido desde el semieje \(x\) positivo fija la dirección de un vector. En \(\mathbb{R}^3\), un ángulo ya no basta: todo un cono de direcciones forma el mismo ángulo con el eje \(x\). En su lugar, especificamos la orientación espacial de un vector no nulo mediante los tres ángulos que forma con los semiejes coordenados positivos.
+
+[CALLOUT]
+id: dir-cosines
+label: Definición
+title: Ángulos directores y cosenos directores
+tone: key
+
+Sea \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle \in \mathbb{R}^3\) un vector no nulo. Sus ángulos directores son los tres ángulos \(\alpha, \beta, \gamma \in [0, \pi]\) que \(\mathbf{v}\) forma con los vectores de la base canónica \(\mathbf{i}\), \(\mathbf{j}\) y \(\mathbf{k}\), respectivamente. Al aplicar [REF: dot-angle.1 | la fórmula del ángulo] resultan sus cosenos directores:
+\[
+\cos\alpha = \frac{\mathbf{v} \cdot \mathbf{i}}{\|\mathbf{v}\|\,\|\mathbf{i}\|} = \frac{v_1}{\|\mathbf{v}\|}, \qquad \cos\beta = \frac{\mathbf{v} \cdot \mathbf{j}}{\|\mathbf{v}\|\,\|\mathbf{j}\|} = \frac{v_2}{\|\mathbf{v}\|}, \qquad \cos\gamma = \frac{\mathbf{v} \cdot \mathbf{k}}{\|\mathbf{v}\|\,\|\mathbf{k}\|} = \frac{v_3}{\|\mathbf{v}\|}.
+\]
+Estos tres números satisfacen la identidad fundamental
+\[
+\cos^2\alpha + \cos^2\beta + \cos^2\gamma = 1,
+\]
+y se ensamblan directamente en el vector director unitario:
+\[
+\frac{\mathbf{v}}{\|\mathbf{v}\|} = \langle \cos\alpha,\; \cos\beta,\; \cos\gamma \rangle.
+\]
+[/CALLOUT]
+
+¿Por qué se cumple siempre \(\cos^2\alpha + \cos^2\beta + \cos^2\gamma = 1\)? Basta elevar al cuadrado y sumar las tres fórmulas:
+\[
+\cos^2\alpha + \cos^2\beta + \cos^2\gamma = \frac{v_1^2 + v_2^2 + v_3^2}{\|\mathbf{v}\|^2} = \frac{\|\mathbf{v}\|^2}{\|\mathbf{v}\|^2} = 1.
+\]
+Esta identidad revela dos hechos prácticos a la vez:
+1. No puede elegir \(\alpha\), \(\beta\) y \(\gamma\) independientemente. Por ejemplo, ningún vector puede formar un ángulo de \(30^\circ\) tanto con el eje \(x\) como con el eje \(y\), porque \(\cos^2 30^\circ + \cos^2 30^\circ = \frac{3}{4} + \frac{3}{4} = \frac{3}{2} > 1\), lo que dejaría \(\cos^2\gamma = -\frac{1}{2} < 0\), algo imposible.
+2. Dados dos ángulos directores y el signo de la tercera componente, [REF: dir-cosines | la identidad de los cosenos directores] fija de manera única el tercer ángulo director: si \(v_3 > 0\), tome la raíz cuadrada positiva \(\cos\gamma > 0\) (de modo que \(\gamma \in [0, \pi/2)\)); si \(v_3 < 0\), tome la raíz cuadrada negativa \(\cos\gamma < 0\) (de modo que \(\gamma \in (\pi/2, \pi]\)).
+
+Para un ejemplo concreto, tome \(\mathbf{v} = \langle 2, -1, 2 \rangle\). Su magnitud es \(\|\mathbf{v}\| = \sqrt{4 + 1 + 4} = 3\), así que su vector unitario es \(\langle 2/3, -1/3, 2/3 \rangle\). Leer directamente las tres componentes arroja \(\cos\alpha = 2/3\), \(\cos\beta = -1/3\) y \(\cos\gamma = 2/3\), con \((2/3)^2 + (-1/3)^2 + (2/3)^2 = 9/9 = 1\).
+
+[QUESTION 3]
+[ANSWER: B]
+Un vector no nulo \(\mathbf{v} \in \mathbb{R}^3\) forma ángulos directores \(\alpha = \frac{\pi}{3}\) con el semieje \(x\) positivo y \(\beta = \frac{2\pi}{3}\) con el semieje \(y\) positivo. Si la componente \(z\) de \(\mathbf{v}\) es negativa, ¿cuál es su ángulo director \(\gamma\) con el semieje \(z\) positivo?
+
+(A) \(\frac{\pi}{4}\)
+(B) \(\frac{3\pi}{4}\)
+(C) \(\frac{2\pi}{3}\)
+(D) \(\frac{\pi}{2}\)
+(E) No existe tal vector porque \(\alpha + \beta = \pi\)
+[/QUESTION]
+
+=== SECTION 4: Proyección escalar, proyección vectorial, descomposición ortogonal y trabajo ===
+
+A menudo queremos descomponer un vector espacial \(\mathbf{u}\) (como una fuerza o un desplazamiento) en dos partes respecto de una dirección de referencia no nula elegida \(\mathbf{v}\): la parte que apunta a lo largo de la recta de \(\mathbf{v}\) y la parte perpendicular a \(\mathbf{v}\).
+
+Coloque \(\mathbf{u}\) y \(\mathbf{v}\) cola con cola y trace una perpendicular desde la punta de \(\mathbf{u}\) sobre la recta que contiene a \(\mathbf{v}\). La longitud con signo de la sombra resultante a lo largo de \(\mathbf{v}\) es \(\|\mathbf{u}\|\cos\theta\): positiva cuando \(\theta\) es agudo (la sombra apunta en el mismo sentido que \(\mathbf{v}\)), cero cuando \(\theta = \pi/2\) y negativa cuando \(\theta\) es obtuso (la sombra apunta en sentido opuesto a \(\mathbf{v}\)). Al sustituir \(\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}\) se cancela \(\|\mathbf{u}\|\) por completo:
+\[
+\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \|\mathbf{u}\|\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}.
+\]
+Este número con signo es la proyección escalar (o componente escalar) de \(\mathbf{u}\) sobre \(\mathbf{v}\). Para convertir esa sombra con signo en un vector que apunte a lo largo de la recta de \(\mathbf{v}\), multiplíquela por el vector unitario \(\frac{\mathbf{v}}{\|\mathbf{v}\|}\):
+\[
+\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}\right)\frac{\mathbf{v}}{\|\mathbf{v}\|} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|^2}\mathbf{v} = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}.
+\]
+Note que el denominador es \(\|\mathbf{v}\|^2 = \mathbf{v} \cdot \mathbf{v}\), no \(\|\mathbf{v}\|\): un factor \(\|\mathbf{v}\|\) calcula la longitud con signo de la sombra y el segundo factor normaliza \(\mathbf{v}\) en un vector unitario. Olvidar el cuadrado es el error más común en los cálculos de proyección.
+
+Por último, defina el vector restante \(\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\). Compruebe su producto escalar con \(\mathbf{v}\):
+\[
+\mathbf{u}_\perp \cdot \mathbf{v} = \left(\mathbf{u} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\right) \cdot \mathbf{v} = \mathbf{u} \cdot \mathbf{v} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}(\mathbf{v} \cdot \mathbf{v}) = 0.
+\]
+Así, queda garantizado que \(\mathbf{u}_\perp\) es ortogonal a \(\mathbf{v}\), descomponiendo \(\mathbf{u}\) de manera única en sus componentes paralela y perpendicular.
+
+[CALLOUT]
+id: proj-decomp
+label: Fórmulas
+title: Proyecciones, descomposición ortogonal y trabajo en 3D
+tone: key
+
+Sean \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^3\) con \(\mathbf{v} \ne \mathbf{0}\).
+
+(1) Proyección escalar de \(\mathbf{u}\) sobre \(\mathbf{v}\): \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}\).
+(2) Proyección vectorial de \(\mathbf{u}\) sobre \(\mathbf{v}\): \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\).
+(3) Descomposición ortogonal: \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\), donde \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) es paralelo a \(\mathbf{v}\) y \(\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) satisface \(\mathbf{u}_\perp \cdot \mathbf{v} = 0\).
+(4) Trabajo mecánico realizado por una fuerza constante \(\mathbf{F}\) a lo largo de un desplazamiento rectilíneo \(\mathbf{d}\): \(W = (\operatorname{comp}_{\mathbf{d}} \mathbf{F})\,\|\mathbf{d}\| = \mathbf{F} \cdot \mathbf{d}\).
+[/CALLOUT]
+
+Observe cómo [REF: proj-decomp.4 | el trabajo] surge directamente de la proyección escalar: únicamente la componente de la fuerza en la dirección del movimiento realiza trabajo, y multiplicar \(\operatorname{comp}_{\mathbf{d}} \mathbf{F} = (\mathbf{F} \cdot \mathbf{d})/\|\mathbf{d}\|\) por la distancia recorrida \(\|\mathbf{d}\|\) se simplifica a \(\mathbf{F} \cdot \mathbf{d}\). Vigile también el orden de los subíndices: \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) proyecta \(\mathbf{u}\) sobre la dirección \(\mathbf{v}\) (el subíndice es siempre la dirección destino).
+
+Arrastre el deslizador del ángulo \(a\) siguiente (en radianes) para observar cómo \(\mathbf{u} = \langle 3\cos a, 3\sin a \rangle\) se descompone en \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) a lo largo de \(\mathbf{v} = \langle 4, 0 \rangle\) y \(\mathbf{u}_\perp\) perpendicular a \(\mathbf{v}\). Note que cuando \(a > \pi/2 \approx 1.57\), la proyección pasa al lado negativo de la recta de \(\mathbf{v}\), coincidiendo con el signo negativo de \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\).
+
+[GRAPH]
+type: parametric2d
+title: Descomposición ortogonal \(\mathbf{u} = \operatorname{proj}_{\mathbf{v}} \mathbf{u} + \mathbf{u}_\perp\) al variar el ángulo \(a\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -3.5, 4.5
+yrange: -1, 3.8
+trace: 4*t, 0 | label: \(\mathbf{v} = \langle 4, 0 \rangle\)
+trace: 3*cos(a)*t, 3*sin(a)*t | label: \(\mathbf{u}\)
+segment: 0, 0, 3*cos(a), 0 | label: \(\operatorname{proj}_{\mathbf{v}}\mathbf{u}\)
+segment: 3*cos(a), 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{u}_\perp\) | dashed: true
+point: 3*cos(a), 3*sin(a) | label: \(\mathbf{u}\)
+point: 3*cos(a), 0 | label: pie
+slider: a | range: 0.2, 2.9 | init: 1.0 | step: 0.1
+[/GRAPH]
+
+Desarrolle una descomposición completa en 3D: descomponga \(\mathbf{a} = \langle 4, -2, 6 \rangle\) a lo largo de \(\mathbf{b} = \langle 2, 1, -2 \rangle\). Primero calcule \(\mathbf{a} \cdot \mathbf{b} = 8 - 2 - 12 = -6\) y \(\mathbf{b} \cdot \mathbf{b} = 4 + 1 + 4 = 9\). Entonces
+\[
+\mathbf{a}_\parallel = \operatorname{proj}_{\mathbf{b}} \mathbf{a} = \frac{-6}{9}\langle 2, 1, -2 \rangle = \left\langle -\frac{4}{3},\; -\frac{2}{3},\; \frac{4}{3} \right\rangle,
+\]
+y la parte perpendicular es
+\[
+\mathbf{a}_\perp = \mathbf{a} - \mathbf{a}_\parallel = \left\langle \frac{16}{3},\; -\frac{4}{3},\; \frac{14}{3} \right\rangle.
+\]
+Como rápida comprobación, calcule \(\mathbf{a}_\perp \cdot \mathbf{b} = \frac{32}{3} - \frac{4}{3} - \frac{28}{3} = 0\), confirmando la ortogonalidad.
+
+[QUESTION 4]
+[ANSWER: C]
+Descomponga \(\mathbf{u} = \langle 3, 1, 7 \rangle\) como \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\), donde \(\mathbf{u}_\parallel\) es paralelo a \(\mathbf{v} = \langle 1, 2, -2 \rangle\) y \(\mathbf{u}_\perp\) es ortogonal a \(\mathbf{v}\). ¿Cuál es \(\mathbf{u}_\perp\)?
+
+(A) \(\langle -1, -2, 2 \rangle\)
+(B) \(\langle 2, -1, 9 \rangle\)
+(C) \(\langle 4, 3, 5 \rangle\)
+(D) \(\langle 6, 7, 1 \rangle\)
+(E) \(\langle -3, -6, 6 \rangle\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suponga que \(\mathbf{a}, \mathbf{b} \in \mathbb{R}^3\) satisfacen \(\|\mathbf{a}\| = 4\), \(\|\mathbf{b}\| = 3\) y el ángulo entre \(\mathbf{a}\) y \(\mathbf{b}\) es \(\frac{2\pi}{3}\). ¿Cuánto vale \(\|2\mathbf{a} + \mathbf{b}\|\)?
+
+(A) \(5\)
+(B) \(\sqrt{73}\)
+(C) \(7\)
+(D) \(\sqrt{97}\)
+(E) \(11\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Una fuerza constante \(\mathbf{F} = \langle 6, -4, 3 \rangle\) (en newtons) mueve una partícula en línea recta desde \(A(1, 2, -1)\) hasta \(B(4, 0, 5)\) (coordenadas en metros). ¿Cuánto trabajo \(W\) (en julios) realiza \(\mathbf{F}\)?
+
+(A) \(12\)
+(B) \(28\)
+(C) \(34\)
+(D) \(44\)
+(E) \(52\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Sean \(\mathbf{u}\) y \(\mathbf{v}\) vectores no nulos en \(\mathbb{R}^3\). ¿Bajo qué condición queda garantizado que \(\mathbf{u} + \mathbf{v}\) y \(\mathbf{u} - \mathbf{v}\) son ortogonales?
+
+(A) \(\|\mathbf{u}\| = \|\mathbf{v}\|\)
+(B) \(\mathbf{u} \perp \mathbf{v}\)
+(C) \(\mathbf{u} \parallel \mathbf{v}\)
+(D) \(\mathbf{u} \cdot \mathbf{v} = 1\)
+(E) \(\|\mathbf{u} + \mathbf{v}\| = \|\mathbf{u} - \mathbf{v}\|\)
+[/BONUS]

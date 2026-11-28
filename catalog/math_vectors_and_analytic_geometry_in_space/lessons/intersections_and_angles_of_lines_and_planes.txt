@@ -1,0 +1,257 @@
+=== SECTION 1: Intersections of a line and a plane ===
+
+Now that we can write equations for both lines and planes in \(\mathbb{R}^3\), the natural next step is to analyze how they meet—and at what angles. Consider a straight line \(L\) given parametrically by
+\[
+\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}, \qquad x = x_0 + v_1 t,\quad y = y_0 + v_2 t,\quad z = z_0 + v_3 t
+\]
+and a plane \(\Pi\) given by \(ax + by + cz = d\) with nonzero normal vector \(\mathbf{n} = \langle a, b, c \rangle\).
+
+How do we find every point that lies on BOTH \(L\) and \(\Pi\)? Substitute the parametric coordinates of \(L\) directly into the scalar equation of \(\Pi\):
+\[
+a(x_0 + v_1 t) + b(y_0 + v_2 t) + c(z_0 + v_3 t) = d.
+\]
+Grouping the terms containing \(t\) and the constant terms exposes the exact vector geometry hiding inside the algebra:
+\[
+(a v_1 + b v_2 + c v_3)\,t + (a x_0 + b y_0 + c z_0) = d \iff (\mathbf{v} \cdot \mathbf{n})\,t = d - \mathbf{r}_0 \cdot \mathbf{n}.
+\]
+Because this is a single linear equation in the scalar unknown \(t\), its coefficient \(\mathbf{v} \cdot \mathbf{n}\) splits all possible line–plane configurations into three mutually exclusive outcomes.
+
+[CALLOUT]
+id: line-plane-int
+label: Classification
+title: Three relative positions of a line and a plane in \(\mathbb{R}^3\)
+tone: key
+
+Given a line \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) and a plane \(\Pi: \mathbf{n} \cdot \mathbf{r} = d\), substituting \(\mathbf{r}(t)\) into \(\Pi\) yields \((\mathbf{v} \cdot \mathbf{n})t = d - \mathbf{r}_0 \cdot \mathbf{n}\):
+
+(1) Unique intersection point: if \(\mathbf{v} \cdot \mathbf{n} \ne 0\), the line is not parallel to \(\Pi\), and it pierces \(\Pi\) at the unique parameter value
+\[
+t^* = \frac{d - \mathbf{r}_0 \cdot \mathbf{n}}{\mathbf{v} \cdot \mathbf{n}},
+\]
+giving the intersection point \(\mathbf{r}(t^*)\).
+(2) Parallel and disjoint: if \(\mathbf{v} \cdot \mathbf{n} = 0\) and \(\mathbf{r}_0 \cdot \mathbf{n} \ne d\), the equation reduces to a contradiction \(0 = c\) (with \(c \ne 0\)). The line runs parallel to \(\Pi\) without ever touching it.
+(3) Line contained in the plane: if \(\mathbf{v} \cdot \mathbf{n} = 0\) and \(\mathbf{r}_0 \cdot \mathbf{n} = d\), the equation reduces to the identity \(0 = 0\). Every point of \(L\) lies inside \(\Pi\).
+[/CALLOUT]
+
+Notice how cleanly the algebra mirrors geometry: \(\mathbf{v} \cdot \mathbf{n} = 0\) says that the line's direction \(\mathbf{v}\) is orthogonal to the plane's normal \(\mathbf{n}\), which means \(L\) is parallel to \(\Pi\). Once \(L\) is parallel to \(\Pi\), testing the single base point \(P_0\) decides whether the entire line sits inside \(\Pi\) or floats outside it.
+
+For a worked example, test the line \(L: x = 1 + t,\; y = 2 - 2t,\; z = 3 + t\) against the plane \(\Pi: 3x + y - z = 2\). Substituting gives
+\[
+3(1 + t) + (2 - 2t) - (3 + t) = 2 \implies (3 + 2 - 3) + (3 - 2 - 1)t = 2 \implies 2 + 0t = 2.
+\]
+The variable \(t\) disappears and leaves the identity \(2 = 2\) (equivalently \(0 = 0\)). Here \(\mathbf{v} \cdot \mathbf{n} = 3 - 2 - 1 = 0\) and the base point \((1, 2, 3)\) satisfies \(3(1) + 2 - 3 = 2\), so the entire line \(L\) lies inside \(\Pi\). Had the right-hand side of \(\Pi\) been \(5\) instead of \(2\), we would have reached \(2 = 5\), showing \(L\) is parallel and disjoint.
+
+[QUESTION 1]
+[ANSWER: C]
+Find the intersection of the line \(L: x = 2 + t,\; y = -1 + 3t,\; z = 4 - 2t\) and the plane \(\Pi: 2x - y + 3z = 3\).
+
+(A) No intersection; \(L\) is parallel to and disjoint from \(\Pi\)
+(B) The entire line \(L\) is contained in \(\Pi\)
+(C) The unique point \((4, 5, 0)\)
+(D) The unique point \((0, -7, 8)\)
+(E) The unique point \((3, 2, 2)\)
+[/QUESTION]
+
+=== SECTION 2: Intersections of two planes ===
+
+Now take two planes in \(\mathbb{R}^3\):
+\[
+\Pi_1:\; a_1 x + b_1 y + c_1 z = d_1, \qquad \Pi_2:\; a_2 x + b_2 y + c_2 z = d_2,
+\]
+with normal vectors \(\mathbf{n}_1 = \langle a_1, b_1, c_1 \rangle\) and \(\mathbf{n}_2 = \langle a_2, b_2, c_2 \rangle\). From the previous lesson, if \(\mathbf{n}_1\) and \(\mathbf{n}_2\) are proportional (\(\mathbf{n}_1 \times \mathbf{n}_2 = \mathbf{0}\)), the two planes are either coincident or parallel and distinct.
+
+What if \(\mathbf{n}_1\) and \(\mathbf{n}_2\) are NOT parallel (\(\mathbf{n}_1 \times \mathbf{n}_2 \ne \mathbf{0}\))? Then \(\Pi_1\) and \(\Pi_2\) MUST intersect along a straight line \(L\). Why can we find a direction vector \(\mathbf{d}\) for \(L\) immediately? Because \(L\) lies simultaneously inside \(\Pi_1\) and inside \(\Pi_2\), its direction \(\mathbf{d}\) must be orthogonal to \(\mathbf{n}_1\) AND orthogonal to \(\mathbf{n}_2\). The cross product produces a nonzero vector perpendicular to both:
+\[
+\mathbf{d} = \mathbf{n}_1 \times \mathbf{n}_2.
+\]
+To finish specifying \(L\), we only need ONE point \(P_0\) lying on both planes. How do you find \(P_0\) reliably? Set one coordinate equal to \(0\) and solve the resulting \(2 \times 2\) linear system for the other two coordinates—making sure to pick a coordinate whose corresponding component in \(\mathbf{d} = \langle d_1, d_2, d_3 \rangle\) is NONZERO. Why? If \(d_3 \ne 0\), the line rises or falls in \(z\), so it is guaranteed to pierce the plane \(z = 0\) at a unique point; if \(d_3 = 0\), the line runs horizontally and might never hit \(z = 0\) (in which case set \(x = 0\) or \(y = 0\) instead).
+
+[CALLOUT]
+id: plane-plane-int
+label: Methods
+title: Finding the line of intersection of two non-parallel planes
+tone: key
+
+Given two planes \(\Pi_1: \mathbf{n}_1 \cdot \mathbf{r} = d_1\) and \(\Pi_2: \mathbf{n}_2 \cdot \mathbf{r} = d_2\) with \(\mathbf{n}_1 \times \mathbf{n}_2 \ne \mathbf{0}\), their intersection is a line \(L\) obtainable by either of two equivalent routes:
+
+(1) Geometric cross-product method:
+- Compute the direction vector \(\mathbf{d} = \mathbf{n}_1 \times \mathbf{n}_2\).
+- Choose a coordinate whose component in \(\mathbf{d}\) is nonzero (for instance \(z\) if \(d_3 \ne 0\)), set that coordinate to \(0\) in both plane equations, and solve the \(2 \times 2\) system to obtain a common point \(P_0\).
+- Write \(L\) as \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\).
+(2) Algebraic elimination method: treat one variable as the free parameter (for example \(z = t\)) and eliminate one of the remaining variables from the two linear equations to express \(x\) and \(y\) directly in terms of \(t\).
+[/CALLOUT]
+
+Let us compare both routes from [REF: plane-plane-int | the plane-intersection methods] on \(\Pi_1: x - y + 2z = 4\) and \(\Pi_2: 2x + y - z = 5\).
+- Geometric method: \(\mathbf{n}_1 = \langle 1, -1, 2 \rangle\) and \(\mathbf{n}_2 = \langle 2, 1, -1 \rangle\), so
+\[
+\mathbf{d} = \mathbf{n}_1 \times \mathbf{n}_2 = \langle (-1)(-1) - 2(1),\; 2(2) - 1(-1),\; 1(1) - (-1)(2) \rangle = \langle -1, 5, 3 \rangle.
+\]
+Since the \(z\)-component \(3\) is nonzero, set \(z = 0\):
+\[
+x - y = 4, \qquad 2x + y = 5.
+\]
+Adding the two equations gives \(3x = 9 \implies x = 3\), and then \(y = -1\). So \(P_0(3, -1, 0)\) lies on both planes, giving
+\[
+x = 3 - t, \qquad y = -1 + 5t, \qquad z = 3t.
+\]
+- Algebraic elimination: adding the two original equations eliminates \(y\) at once: \(3x + z = 9 \implies z = 9 - 3x\). Setting \(x = s\) gives \(z = 9 - 3s\), and substituting into \(\Pi_1\) gives \(y = x + 2z - 4 = s + 18 - 6s - 4 = 14 - 5s\). Notice that the direction vector \(\langle 1, -5, -3 \rangle = -\mathbf{d}\) is the exact same direction, and at \(s = 3\) the point is \((3, -1, 0)\)—the exact same geometric line!
+
+[QUESTION 2]
+[ANSWER: B]
+Find a vector equation for the line of intersection of the planes \(\Pi_1: x + 2y - z = 3\) and \(\Pi_2: 2x - y + z = 1\).
+
+(A) \(\mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 1, 3, -5 \rangle\)
+(B) \(\mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 1, -3, -5 \rangle\)
+(C) \(\mathbf{r}(t) = \langle 1, -1, 0 \rangle + t\langle 1, -3, -5 \rangle\)
+(D) \(\mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 3, 1, 0 \rangle\)
+(E) \(\mathbf{r}(t) = \langle 0, 1, -1 \rangle + t\langle -1, -3, 5 \rangle\)
+[/QUESTION]
+
+=== SECTION 3: Angles between two planes and between a line and a plane ===
+
+Two intersecting planes divide space into four wedges, forming two supplementary angles \(\theta\) and \(\pi - \theta\). By convention, the dihedral angle between two intersecting planes is defined as the ACUTE (or right) angle \(\theta \in [0, \pi/2]\) between them.
+
+Look straight down the line of intersection of \(\Pi_1\) and \(\Pi_2\). In this cross-sectional slice, the two planes appear as two straight lines crossing at angle \(\theta\), and their normals \(\mathbf{n}_1\) and \(\mathbf{n}_2\) sit at \(90^\circ\) to those two lines. Rotating both lines by \(90^\circ\) leaves the angle between them unchanged! Depending on which direction each normal was chosen to point, the angle between \(\mathbf{n}_1\) and \(\mathbf{n}_2\) is either \(\theta\) or \(\pi - \theta\). Taking the absolute value of the dot product selects the acute angle \(\theta \in [0, \pi/2]\) automatically:
+\[
+\cos\theta = \frac{|\mathbf{n}_1 \cdot \mathbf{n}_2|}{\|\mathbf{n}_1\|\,\|\mathbf{n}_2\|}.
+\]
+In particular, two planes are perpendicular (orthogonal) if and only if \(\mathbf{n}_1 \cdot \mathbf{n}_2 = 0\).
+
+Drag the angle slider \(a\) in the cross-section below to verify that rotating plane \(\Pi_2\) by angle \(a\) rotates its normal \(\mathbf{n}_2\) by the exact same angle \(a\) away from \(\mathbf{n}_1\).
+
+[GRAPH]
+type: parametric2d
+title: Cross-section along the intersection line: dihedral angle \(a\) equals the angle between \(\mathbf{n}_1\) and \(\mathbf{n}_2\)
+xlabel: plane 1 direction
+ylabel: normal 1 direction
+trange: -2.4, 2.4
+xrange: -2.6, 2.6
+yrange: -2.2, 2.6
+trace: t, 0 | label: plane \(\Pi_1\)
+trace: t*cos(a), t*sin(a) | label: plane \(\Pi_2\)
+segment: 0, 0, 0, 2 | label: \(\mathbf{n}_1\)
+segment: 0, 0, -2*sin(a), 2*cos(a) | label: \(\mathbf{n}_2\)
+point: 0, 0 | label: \(L\)
+slider: a | range: 0.15, 1.45 | init: 0.65 | step: 0.05
+[/GRAPH]
+
+Now turn to the angle \(\phi \in [0, \pi/2]\) between a line \(L\) (direction vector \(\mathbf{v}\)) and a plane \(\Pi\) (normal vector \(\mathbf{n}\)). Here sits one of the most famous traps in 3D analytic geometry!
+
+By definition, the angle \(\phi\) between a line and a plane is the acute angle between the line and its orthogonal projection onto the plane. When you apply the dot-product angle formula directly to \(\mathbf{v}\) and \(\mathbf{n}\), you do NOT compute \(\phi\)—you compute the acute angle \(\alpha\) between the line and the NORMAL vector \(\mathbf{n}\). Because \(\mathbf{n}\) stands perpendicular to the plane, \(\alpha\) and \(\phi\) are complementary angles:
+\[
+\phi + \alpha = \frac{\pi}{2} \implies \sin\phi = \cos\alpha = \frac{|\mathbf{v} \cdot \mathbf{n}|}{\|\mathbf{v}\|\,\|\mathbf{n}\|}.
+\]
+Look at the side view below and drag the line-tilt slider \(p\) (representing \(\phi\)). When the line lies flat in the plane (\(p = 0\)), \(\mathbf{v}\) is orthogonal to \(\mathbf{n}\) (\(\mathbf{v} \cdot \mathbf{n} = 0\)), giving \(\sin 0 = 0\). When the line stands straight up along \(\mathbf{n}\) (\(p = \pi/2\)), \(\mathbf{v}\) is parallel to \(\mathbf{n}\), giving \(\sin(\pi/2) = 1\).
+
+[GRAPH]
+type: parametric2d
+title: Line–plane angle \(\phi\) versus the complementary angle \(\alpha = \frac{\pi}{2} - \phi\) with \(\mathbf{n}\)
+xlabel: plane direction
+ylabel: normal direction
+trange: -2.2, 2.2
+xrange: -2.4, 2.4
+yrange: -0.6, 2.4
+trace: t, 0 | label: plane \(\Pi\)
+trace: t*cos(p), t*sin(p) | label: line \(L\)
+segment: 0, 0, 0, 2 | label: \(\mathbf{n}\) | dashed: true
+segment: 0, 0, 2*cos(p), 2*sin(p) | label: \(\mathbf{v}\)
+segment: 2*cos(p), 0, 2*cos(p), 2*sin(p) | dashed: true
+point: 0, 0 | label: \(P\)
+slider: p | range: 0.1, 1.45 | init: 0.55 | step: 0.05
+[/GRAPH]
+
+[CALLOUT]
+id: angle-formulas
+label: Formulas
+title: Dihedral angle and line–plane angle
+tone: key
+
+(1) Acute dihedral angle \(\theta \in [0, \pi/2]\) between two intersecting planes with normals \(\mathbf{n}_1\) and \(\mathbf{n}_2\):
+\[
+\cos\theta = \frac{|\mathbf{n}_1 \cdot \mathbf{n}_2|}{\|\mathbf{n}_1\|\,\|\mathbf{n}_2\|}.
+\]
+(2) Angle \(\phi \in [0, \pi/2]\) between a line with direction \(\mathbf{v}\) and a plane with normal \(\mathbf{n}\):
+\[
+\sin\phi = \frac{|\mathbf{v} \cdot \mathbf{n}|}{\|\mathbf{v}\|\,\|\mathbf{n}\|}.
+\]
+[/CALLOUT]
+
+[CALLOUT]
+id: angle-trap
+label: Common pitfall
+title: Cosine for plane–plane, sine for line–plane
+tone: caution
+
+The formula \(\arccos\!\bigl(\frac{|\mathbf{v} \cdot \mathbf{n}|}{\|\mathbf{v}\|\,\|\mathbf{n}\|}\bigr)\) returns the angle \(\alpha\) between the line and the NORMAL vector, NOT the angle \(\phi\) between the line and the PLANE. Always use \(\arcsin\) (or subtract \(\alpha\) from \(\frac{\pi}{2}\)) for a line–plane angle. As a quick sanity check: if \(\mathbf{v} \cdot \mathbf{n} = 0\), the line is parallel to the plane, so the line–plane angle must be \(0\) (matching \(\sin 0 = 0\), whereas \(\cos 0 = 1\) would falsely give \(\frac{\pi}{2}\)).
+[/CALLOUT]
+
+[TABLE]
+Pair of objects | Defining vectors | Angle formula (acute) | Parallel condition | Perpendicular condition
+Two lines \(L_1, L_2\) | \(\mathbf{v}_1,\; \mathbf{v}_2\) | \(\cos\theta = \frac{\lvert\mathbf{v}_1 \cdot \mathbf{v}_2\rvert}{\|\mathbf{v}_1\|\,\|\mathbf{v}_2\|}\) | \(\mathbf{v}_1 \times \mathbf{v}_2 = \mathbf{0}\) | \(\mathbf{v}_1 \cdot \mathbf{v}_2 = 0\)
+Two planes \(\Pi_1, \Pi_2\) | \(\mathbf{n}_1,\; \mathbf{n}_2\) | \(\cos\theta = \frac{\lvert\mathbf{n}_1 \cdot \mathbf{n}_2\rvert}{\|\mathbf{n}_1\|\,\|\mathbf{n}_2\|}\) | \(\mathbf{n}_1 \times \mathbf{n}_2 = \mathbf{0}\) | \(\mathbf{n}_1 \cdot \mathbf{n}_2 = 0\)
+Line \(L\) and plane \(\Pi\) | \(\mathbf{v},\; \mathbf{n}\) | \(\sin\phi = \frac{\lvert\mathbf{v} \cdot \mathbf{n}\rvert}{\|\mathbf{v}\|\,\|\mathbf{n}\|}\) | \(\mathbf{v} \cdot \mathbf{n} = 0\) | \(\mathbf{v} \times \mathbf{n} = \mathbf{0}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+What is the acute angle \(\phi\) between the line \(L: \mathbf{r}(t) = \langle 3, 0, -2 \rangle + t\langle 1, 1, 0 \rangle\) and the plane \(\Pi: x + z = 5\)?
+
+(A) \(\frac{\pi}{6}\)
+(B) \(\frac{\pi}{3}\)
+(C) \(\frac{\pi}{4}\)
+(D) \(\frac{\pi}{2}\)
+(E) \(0\)
+[/QUESTION]
+
+=== SECTION 4: Constructing planes with angular constraints ===
+
+The orthogonality condition \(\mathbf{n}_1 \cdot \mathbf{n}_2 = 0\) lets us build planes that satisfy angular requirements alongside point or line constraints.
+
+Suppose you want the equation of a plane \(\Pi\) that contains a given line \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) (or two given points \(A\) and \(B\), giving \(\mathbf{v} = \overrightarrow{AB}\)) AND is perpendicular to a second plane \(\Pi_2\) with normal \(\mathbf{n}_2\). Translate both geometric requirements into orthogonality conditions on the unknown normal \(\mathbf{n}\) of \(\Pi\):
+1. Because \(\Pi\) contains \(L\), its normal \(\mathbf{n}\) must be perpendicular to \(\mathbf{v}\): \(\mathbf{n} \cdot \mathbf{v} = 0\).
+2. Because \(\Pi \perp \Pi_2\), its normal \(\mathbf{n}\) must be perpendicular to \(\mathbf{n}_2\): \(\mathbf{n} \cdot \mathbf{n}_2 = 0\).
+
+A nonzero vector orthogonal to both \(\mathbf{v}\) and \(\mathbf{n}_2\) is immediately given by their cross product:
+\[
+\mathbf{n} = \mathbf{v} \times \mathbf{n}_2.
+\]
+(Note the single geometric exception: if \(\mathbf{v}\) is already parallel to \(\mathbf{n}_2\), then \(L\) itself stands perpendicular to \(\Pi_2\), so EVERY plane containing \(L\) is automatically perpendicular to \(\Pi_2\) and \(\mathbf{v} \times \mathbf{n}_2 = \mathbf{0}\) correctly flags non-uniqueness.)
+
+For example, find the plane containing the line \(L: \mathbf{r}(t) = \langle 0, 1, 2 \rangle + t\langle 1, -1, 2 \rangle\) and perpendicular to \(\Pi_2: x + 2y + z = 6\). Here \(\mathbf{v} = \langle 1, -1, 2 \rangle\) and \(\mathbf{n}_2 = \langle 1, 2, 1 \rangle\), so
+\[
+\mathbf{n} = \mathbf{v} \times \mathbf{n}_2 = \langle (-1)(1) - 2(2),\; 2(1) - 1(1),\; 1(2) - (-1)(1) \rangle = \langle -5, 1, 3 \rangle.
+\]
+Using the point \(P_0(0, 1, 2)\) on \(L\) gives \(-5(x - 0) + 1(y - 1) + 3(z - 2) = 0\), or \(5x - y - 3z = -7\). Check both requirements: \(\mathbf{n} \cdot \mathbf{v} = -5 - 1 + 6 = 0\) and \(\mathbf{n} \cdot \mathbf{n}_2 = -5 + 2 + 3 = 0\).
+
+[QUESTION 4]
+[ANSWER: D]
+Find the linear Cartesian equation of the plane that passes through \(A(1, 0, -1)\) and \(B(2, 2, 1)\) and is perpendicular to the plane \(2x - y + z = 7\).
+
+(A) \(4x - 3y - 5z = 9\)
+(B) \(4x + 3y - 5z = -1\)
+(C) \(2x - y + z = 1\)
+(D) \(4x + 3y - 5z = 9\)
+(E) \(x + 2y + 2z = -1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+For which pair of real constants \((a, d)\) does the line \(L: x = 1 + 2t,\; y = 3 - t,\; z = -2 + 4t\) lie completely inside the plane \(ax + 2y + z = d\)?
+
+(A) \(a = -1,\; d = -3\)
+(B) \(a = 1,\; d = 5\)
+(C) \(a = -1,\; d = 3\)
+(D) \(a = -2,\; d = 2\)
+(E) No such pair \((a, d)\) exists
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+What is the acute dihedral angle between the planes \(\Pi_1: x + 2y - z = 4\) and \(\Pi_2: -2x - y - z = 7\)?
+
+(A) \(\frac{2\pi}{3}\)
+(B) \(\frac{\pi}{3}\)
+(C) \(\frac{\pi}{6}\)
+(D) \(\frac{\pi}{4}\)
+(E) \(\frac{\pi}{2}\)
+[/BONUS]

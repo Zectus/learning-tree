@@ -1,0 +1,212 @@
+=== SECTION 1: Bases propias y los cuatro criterios de diagonalizabilidad ===
+
+Las matrices diagonales son los operadores más sencillos de toda el álgebra lineal: para multiplicar una matriz diagonal \(D = \operatorname{diag}(\lambda_1, \dots, \lambda_n)\) por un vector, se escala cada coordenada de manera independiente; para elevar \(D\) a la potencia \(k\)-ésima, simplemente se eleva cada entrada diagonal a la potencia \(k\)-ésima, \(D^k = \operatorname{diag}(\lambda_1^k, \dots, \lambda_n^k)\). ¿Cuándo puede hacerse diagonal un operador lineal general \(T : V \to V\) (o matriz \(A \in M_n(F)\)) cambiando a una base más inteligente?
+
+Suponga que \(\mathcal{B} = \{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) es una base de \(V\) formada enteramente por vectores propios de \(T\) —llamada base propia de \(T\)— con \(T(\mathbf{v}_j) = \lambda_j \mathbf{v}_j\) para \(j = 1, \dots, n\). Entonces la columna \(j\) de la matriz \([T]_{\mathcal{B}}\) tiene \(\lambda_j\) en la fila \(j\) y \(0\) en el resto, ¡así que \([T]_{\mathcal{B}} = D = \operatorname{diag}(\lambda_1, \dots, \lambda_n)\) es diagonal! Recíprocamente, si \([T]_{\mathcal{B}} = \operatorname{diag}(\lambda_1, \dots, \lambda_n)\) es diagonal en alguna base \(\mathcal{B} = \{\mathbf{v}_1, \dots, \mathbf{v}_n\}\), entonces \(T(\mathbf{v}_j) = \lambda_j \mathbf{v}_j\) para todo \(j\), por lo que \(\mathcal{B}\) es una base propia.
+
+Traduciendo a matrices \(A \in M_n(F)\), sea \(P = \begin{bmatrix} \mathbf{v}_1 & \mathbf{v}_2 & \cdots & \mathbf{v}_n \end{bmatrix}\) la matriz cuyas columnas son \(\mathbf{v}_1, \dots, \mathbf{v}_n \in F^n\). Calcular \(AP\) y \(PD\) columna a columna da
+\[
+AP = \begin{bmatrix} A\mathbf{v}_1 & A\mathbf{v}_2 & \cdots & A\mathbf{v}_n \end{bmatrix}, \qquad PD = \begin{bmatrix} \lambda_1 \mathbf{v}_1 & \lambda_2 \mathbf{v}_2 & \cdots & \lambda_n \mathbf{v}_n \end{bmatrix}.
+\]
+Así, \(AP = PD\) se cumple si y solo si \(A\mathbf{v}_j = \lambda_j \mathbf{v}_j\) para todo \(j = 1, \dots, n\), y \(P\) es invertible si y solo si sus columnas \(\{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) forman una base de \(F^n\). Multiplicar \(AP = PD\) por la derecha por \(P^{-1}\) da \(A = P D P^{-1}\) (equivalentemente, \(P^{-1} A P = D\)).
+
+Combinar esto con nuestro teorema de suma directa para espacios propios y la desigualdad fundamental \(1 \le m_g(\lambda) \le m_a(\lambda)\) da la caracterización completa de la diagonalizabilidad.
+
+[CALLOUT]
+id: diag-criteria
+label: Teorema
+title: Cuatro criterios equivalentes de diagonalizabilidad
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre un espacio vectorial \(V\) de dimensión \(n\) sobre \(F = \mathbb{R}\) o \(\mathbb{C}\) (o sea \(A \in M_n(F)\)), y sean \(\lambda_1, \dots, \lambda_r \in F\) todos los valores propios DISTINTOS de \(T\) en \(F\). Los cuatro enunciados siguientes son equivalentes:
+
+(1) \(V\) admite una base formada por vectores propios de \(T\) (una base propia).
+(2) \(A = P D P^{-1}\) para alguna matriz invertible \(P \in M_n(F)\) y alguna matriz diagonal \(D \in M_n(F)\).
+(3) \(\sum_{i=1}^r m_g(\lambda_i) = n\), es decir, \(V = E_{\lambda_1} \oplus E_{\lambda_2} \oplus \dots \oplus E_{\lambda_r}\).
+(4) El polinomio característico \(p_T(\lambda)\) se escinde completamente en factores lineales sobre \(F\), Y \(m_g(\lambda_i) = m_a(\lambda_i)\) para todo valor propio \(\lambda_i\).
+[/CALLOUT]
+
+Verifiquemos la equivalencia clave entre [REF: diag-criteria.3 | el criterio (3)] y [REF: diag-criteria.4 | el criterio (4)], pues esa es la prueba que usted aplicará en la práctica. Sean \(\lambda_1, \dots, \lambda_r\) las raíces distintas de \(p_T(\lambda)\) en \(F\). Como \(p_T(\lambda)\) tiene grado \(n\), la suma de las multiplicidades algebraicas de sus raíces en \(F\) satisface
+\[
+\sum_{i=1}^r m_a(\lambda_i) \le n,
+\]
+con igualdad SI Y SOLO SI \(p_T(\lambda)\) se escinde completamente en factores lineales sobre \(F\) (sin factores cuadráticos irreducibles ni de grado superior sobrantes en \(F\)). Mientras tanto, la desigualdad de multiplicidades da \(m_g(\lambda_i) \le m_a(\lambda_i)\) para todo \(i\), de modo que
+\[
+\sum_{i=1}^r m_g(\lambda_i) \le \sum_{i=1}^r m_a(\lambda_i) \le n.
+\]
+Para que el lado izquierdo \(\sum_{i=1}^r m_g(\lambda_i)\) alcance \(n\), AMBAS desigualdades deben ser igualdades: primero, \(\sum_{i=1}^r m_a(\lambda_i) = n\) (por lo que \(p_T\) se escinde completamente sobre \(F\)), y segundo, \(m_g(\lambda_i) = m_a(\lambda_i)\) para TODO \(i\) (ningún valor propio es defectivo). Por último, dado que \(E_{\lambda_1} + \dots + E_{\lambda_r} = E_{\lambda_1} \oplus \dots \oplus E_{\lambda_r}\) es SIEMPRE una suma directa, concatenar bases de los distintos espacios propios produce un conjunto linealmente independiente de \(\sum m_g(\lambda_i)\) vectores propios, que forma una base de \(V\) si y solo si esa suma es igual a \(n\).
+
+Un corolario inmediato y muy utilizado: si \(A \in M_n(F)\) tiene \(n\) valores propios DISTINTOS en \(F\), entonces cada valor propio tiene \(m_a(\lambda_i) = 1\), lo que obliga a \(1 \le m_g(\lambda_i) \le 1 \implies m_g(\lambda_i) = 1\), de modo que \(\sum_{i=1}^n m_g(\lambda_i) = n\) ¡y \(A\) es automáticamente diagonalizable! Cuide de NO invertir ese enunciado: tener \(n\) valores propios distintos es SUFICIENTE para la diagonalizabilidad, NO NECESARIO. La matriz identidad \(I_n\) tiene UN SOLO valor propio \(\lambda = 1\) (con \(m_a(1) = m_g(1) = n\)), ¡y ya es diagonal!
+
+Note también que [REF: diag-criteria.4 | el criterio (4)] separa limpiamente los DOS modos completamente distintos en que un operador puede dejar de ser diagonalizable sobre \(F\):
+- Raíces faltantes en el cuerpo: \(p_A(\lambda)\) no se escinde sobre \(F\). Por ejemplo, la rotación de \(90^\circ\) \(R_{\pi/2} = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}\) tiene \(p(\lambda) = \lambda^2 + 1\), que carece de raíces reales. No es diagonalizable sobre \(\mathbb{R}\), PERO se vuelve diagonalizable sobre \(\mathbb{C}\) (donde tiene dos raíces distintas \(\pm i\)).
+- Multiplicidad defectiva: incluso después de que \(p_A(\lambda)\) se escinda en factores lineales, algún valor propio satisface \(m_g(\lambda) < m_a(\lambda)\). Por ejemplo, el cizallamiento \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) tiene \(p_S(\lambda) = (\lambda - 1)^2\) con \(m_a(1) = 2\) pero \(m_g(1) = 1\). Ampliar el cuerpo de \(\mathbb{R}\) a \(\mathbb{C}\) NO ayuda: \(S\) es no diagonalizable TANTO sobre \(\mathbb{R}\) como sobre \(\mathbb{C}\).
+
+[QUESTION 1]
+[ANSWER: C]
+Considere las tres matrices reales
+\[
+A_1 = \begin{bmatrix} 0 & -2 \\ 2 & 0 \end{bmatrix}, \qquad A_2 = \begin{bmatrix} 3 & 1 \\ 0 & 3 \end{bmatrix}, \qquad A_3 = \begin{bmatrix} 3 & 0 \\ 0 & 3 \end{bmatrix}.
+\]
+¿Qué enunciado describe correctamente su diagonalizabilidad sobre \(\mathbb{R}\) y sobre \(\mathbb{C}\)?
+
+(A) \(A_1\) es diagonalizable sobre \(\mathbb{R}\), \(A_2\) es diagonalizable solo sobre \(\mathbb{C}\), y \(A_3\) es diagonalizable tanto sobre \(\mathbb{R}\) como sobre \(\mathbb{C}\).
+(B) Ninguna de \(A_1, A_2, A_3\) es diagonalizable sobre \(\mathbb{R}\), porque ninguna tiene dos valores propios reales distintos.
+(C) \(A_1\) es diagonalizable sobre \(\mathbb{C}\) pero no sobre \(\mathbb{R}\); \(A_2\) no es diagonalizable ni sobre \(\mathbb{R}\) ni sobre \(\mathbb{C}\); \(A_3\) es diagonalizable tanto sobre \(\mathbb{R}\) como sobre \(\mathbb{C}\).
+(D) Tanto \(A_1\) como \(A_2\) son diagonalizables sobre \(\mathbb{C}\) pero no sobre \(\mathbb{R}\), mientras que \(A_3\) es diagonalizable sobre ambos.
+(E) \(A_1\) no es diagonalizable sobre \(\mathbb{C}\), mientras que \(A_2\) y \(A_3\) son ambas diagonalizables sobre \(\mathbb{R}\).
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+¿Para qué valor(es) real(es) de \(c\) es diagonalizable sobre \(\mathbb{R}\) la matriz
+\[
+A(c) = \begin{bmatrix} 2 & c & 1 \\ 0 & 2 & 0 \\ 0 & 0 & 5 \end{bmatrix}?
+\]
+
+(A) Solo \(c = 0\)
+(B) Todos los \(c \in \mathbb{R}\)
+(C) Ningún valor de \(c \in \mathbb{R}\) (debido a la entrada \(1\) arriba a la derecha)
+(D) Solo \(c = -1\)
+(E) Todos los \(c \neq 0\)
+[/QUESTION]
+
+=== SECTION 2: Construcción precisa de \(P\) y \(D\) ===
+
+Cuando [REF: diag-criteria | la prueba de diagonalizabilidad] tiene éxito, construir \(P\) y \(D\) sigue una receta directa de tres pasos:
+1. Calcule \(p_A(\lambda) = \det(\lambda I_n - A)\) y halle todos los valores propios distintos \(\lambda_1, \dots, \lambda_r \in F\).
+2. Para cada \(\lambda_i\), resuelva \((A - \lambda_i I_n)\mathbf{v} = \mathbf{0}\) para hallar una base de \(E_{\lambda_i}\). Verifique que el número total de vectores básicos sea igual a \(n\).
+3. Coloque esos \(n\) vectores propios como columnas de \(P = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_n \end{bmatrix}\), y coloque sus valores propios correspondientes a lo largo de la diagonal de \(D = \operatorname{diag}(\mu_1, \dots, \mu_n)\) exactamente en el MISMO ORDEN.
+
+Dos observaciones prácticas ahorran muchos dolores de cabeza con signos e índices:
+- Correspondencia de orden de columnas: la columna \(j\) de \(P\) DEBE ser un vector propio para la \(j\)-ésima entrada diagonal \(D_{jj}\). Si intercambia dos columnas de \(P\), debe intercambiar las dos entradas diagonales correspondientes de \(D\).
+- No unicidad de \(P\): cualquier múltiplo escalar no nulo de una columna de \(P\) sigue siendo un vector propio, cualquier base de un espacio propio multidimensional \(E_\lambda\) funciona, y cualquier permutación de las columnas de \(P\) (emparejada en \(D\)) produce otra diagonalización válida \(A = P D P^{-1}\).
+
+Diagonalicemos \(A = \begin{bmatrix} 1 & 1/2 \\ 1/2 & 1 \end{bmatrix}\):
+- Polinomio característico: \(p_A(\lambda) = (\lambda - 1)^2 - \frac{1}{4} = \lambda^2 - 2\lambda + \frac{3}{4} = \left(\lambda - \frac{3}{2}\right)\left(\lambda - \frac{1}{2}\right)\), dando los valores propios distintos \(\lambda_1 = \frac{3}{2}\) y \(\lambda_2 = \frac{1}{2}\).
+- Vectores propios: resolver \((A - \frac{3}{2}I)\mathbf{v} = \mathbf{0}\) da \(-\frac{1}{2}x_1 + \frac{1}{2}x_2 = 0\), así que \(\mathbf{v}_1 = (1, 1)^T\). Resolver \((A - \frac{1}{2}I)\mathbf{v} = \mathbf{0}\) da \(\frac{1}{2}x_1 + \frac{1}{2}x_2 = 0\), así que \(\mathbf{v}_2 = (1, -1)^T\).
+- Ensamblar \(P\) y \(D\) emparejados:
+\[
+P = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \qquad D = \begin{bmatrix} 3/2 & 0 \\ 0 & 1/2 \end{bmatrix}, \qquad P^{-1} = \frac{1}{2}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}.
+\]
+Comprobación rápida: \(P D P^{-1} = \frac{1}{2}\begin{bmatrix} 3/2 & 1/2 \\ 3/2 & -1/2 \end{bmatrix}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} = \begin{bmatrix} 1 & 1/2 \\ 1/2 & 1 \end{bmatrix} = A\).
+
+=== SECTION 3: Potencias de matrices y sistemas dinámicos lineales discretos ===
+
+¿Por qué nos tomamos la molestia de factorizar \(A = P D P^{-1}\)? Observe qué ocurre cuando calculamos \(A^k\):
+\[
+A^k = (P D P^{-1})(P D P^{-1})\cdots(P D P^{-1}) = P D (P^{-1}P) D (P^{-1}P) \cdots D P^{-1} = P D^k P^{-1}.
+\]
+¡Todos los factores interiores \(P^{-1}P = I_n\) colapsan! Calcular \(A^{100}\) ahora no lleva más trabajo que calcular \(\lambda_1^{100}, \dots, \lambda_n^{100}\) y multiplicar tres matrices.
+
+Esto proporciona una solución inmediata en forma cerrada para cualquier sistema dinámico lineal discreto
+\[
+\mathbf{x}_{k+1} = A \mathbf{x}_k \qquad (k = 0, 1, 2, \dots)
+\]
+con estado inicial dado \(\mathbf{x}_0 \in F^n\). La aplicación repetida da \(\mathbf{x}_k = A^k \mathbf{x}_0\). En lugar de calcular \(P^{-1}\) a ciegas, expanda el vector inicial \(\mathbf{x}_0\) directamente en la base propia \(\{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) (lo que equivale a resolver \(P\mathbf{c} = \mathbf{x}_0\)):
+\[
+\mathbf{x}_0 = c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_n \mathbf{v}_n.
+\]
+Aplicar \(A^k\) término a término usando \(A^k \mathbf{v}_j = \lambda_j^k \mathbf{v}_j\) produce el estado exacto en cada paso \(k\):
+\[
+\mathbf{x}_k = c_1 \lambda_1^k \mathbf{v}_1 + c_2 \lambda_2^k \mathbf{v}_2 + \dots + c_n \lambda_n^k \mathbf{v}_n.
+\]
+¡Aún mejor, esta fórmula vuelve transparente el comportamiento a largo plazo! Suponga que un valor propio \(\lambda_1\) es estrictamente dominante en magnitud, es decir, \(|\lambda_1| > |\lambda_j|\) para todo \(j \ge 2\), y \(c_1 \neq 0\). Factorizar \(\lambda_1^k\) da
+\[
+\mathbf{x}_k = \lambda_1^k \left( c_1 \mathbf{v}_1 + c_2 \left(\frac{\lambda_2}{\lambda_1}\right)^k \mathbf{v}_2 + \dots + c_n \left(\frac{\lambda_n}{\lambda_1}\right)^k \mathbf{v}_n \right).
+\]
+Como \(|\lambda_j / \lambda_1| < 1\), todo cociente \((\lambda_j / \lambda_1)^k \to 0\) cuando \(k \to \infty\). Así, para \(k\) grande, \(\mathbf{x}_k \approx c_1 \lambda_1^k \mathbf{v}_1\): la trayectoria se curva exponencialmente hacia la recta propia dominante \(\operatorname{span}\{\mathbf{v}_1\}\), creciendo sin cota si \(|\lambda_1| > 1\), estabilizándose en un estado estacionario no nulo si \(\lambda_1 = 1\), o decayendo a \(\mathbf{0}\) si \(|\lambda_1| < 1\) (y alternando de signo a lo largo de la recta si \(\lambda_1 < 0\)).
+
+Observemos esto en nuestra matriz \(A = \begin{bmatrix} 1 & 1/2 \\ 1/2 & 1 \end{bmatrix}\) con \(\lambda_1 = 1.5\), \(\mathbf{v}_1 = (1, 1)^T\), \(\lambda_2 = 0.5\), \(\mathbf{v}_2 = (1, -1)^T\), y estado inicial \(\mathbf{x}_0 = 0.5\mathbf{v}_1 + 2\mathbf{v}_2 = (2.5, -1.5)^T\). Entonces \(\mathbf{x}_k = 0.5(1.5)^k(1, 1)^T + 2(0.5)^k(1, -1)^T\). Aunque \(\mathbf{x}_0\) parte del cuarto cuadrante lejos de la recta diagonal \(y = x\), la componente \((0.5)^k\) se reduce a la mitad en cada paso mientras que la componente \((1.5)^k\) crece un \(50\%\), atrayendo estrechamente los iterados \(\mathbf{x}_0, \mathbf{x}_1, \mathbf{x}_2, \mathbf{x}_3, \mathbf{x}_4\) hacia la recta propia dominante \(E_{1.5}\).
+
+[GRAPH]
+type: parametric2d
+title: Trayectoria \(\mathbf{x}_k = 0.5(1.5)^k \mathbf{v}_1 + 2(0.5)^k \mathbf{v}_2\) curvándose hacia la recta propia dominante \(E_{1.5}\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 4
+xrange: -0.5, 3.3
+yrange: -2.0, 3.0
+trace: 0.5 * 1.5^t + 2 * 0.5^t, 0.5 * 1.5^t - 2 * 0.5^t | label: trayectoria \(\mathbf{x}(t)\)
+segment: -0.5, -0.5, 3.0, 3.0 | label: \(E_{1.5}\) | dashed: true
+segment: 0, 0, 2.0, -2.0 | label: \(E_{0.5}\) | dashed: true
+point: 2.5, -1.5 | label: \(\mathbf{x}_0\)
+point: 1.75, -0.25 | label: \(\mathbf{x}_1\)
+point: 1.625, 0.625 | label: \(\mathbf{x}_2\)
+point: 1.9375, 1.4375 | label: \(\mathbf{x}_3\)
+point: 2.65625, 2.40625 | label: \(\mathbf{x}_4\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: B]
+Suponga que \(A = P D P^{-1}\) donde
+\[
+P = \begin{bmatrix} 1 & 2 \\ 1 & 3 \end{bmatrix}, \qquad D = \begin{bmatrix} 2 & 0 \\ 0 & -1 \end{bmatrix}.
+\]
+¿Qué es \(A^4 \mathbf{v}\) para \(\mathbf{v} = \begin{bmatrix} 5 \\ 7 \end{bmatrix}\)?
+
+(A) \(\begin{bmatrix} 18 \\ 20 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 20 \\ 22 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 12 \\ 10 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 34 \\ 50 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 80 \\ 112 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Sea
+\[
+A = \begin{bmatrix} 4 & -3 \\ 2 & -1 \end{bmatrix}.
+\]
+Diagonalizando \(A\), halle la \((1, 1)\)-entrada de \(A^k\) para todo entero \(k \ge 0\).
+
+(A) \(2^{k+1} - 1\)
+(B) \(2^k + 3\)
+(C) \(3 \cdot 2^k - 3\)
+(D) \(3 \cdot 2^k - 2\)
+(E) \(4^k - 3^k\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Considere el sistema dinámico discreto \(\mathbf{x}_{k+1} = A\mathbf{x}_k\) en \(\mathbb{R}^2\), donde \(A\) tiene valores propios \(\lambda_1 = 0.8\) con vector propio \(\mathbf{v}_1 = (1, 2)^T\) y \(\lambda_2 = -1.2\) con vector propio \(\mathbf{v}_2 = (1, -1)^T\). Si \(\mathbf{x}_0 = 3\mathbf{v}_1 - 0.5\mathbf{v}_2\), ¿qué descripción captura mejor el comportamiento a largo plazo de \(\mathbf{x}_k\) cuando \(k \to \infty\)?
+
+(A) \(\mathbf{x}_k\) converge al vector cero \(\mathbf{0}\).
+(B) \(\mathbf{x}_k\) crece sin cota en una dirección fija a lo largo de \(\operatorname{span}\{(1, 2)^T\}\).
+(C) \(\mathbf{x}_k\) se aproxima a un vector de equilibrio no nulo sobre \(\operatorname{span}\{(1, -1)^T\}\).
+(D) \(\mathbf{x}_k\) crece sin cota en una dirección fija a lo largo de \(\operatorname{span}\{(1, -1)^T\}\) sin cambiar de signo.
+(E) \(\mathbf{x}_k\) crece sin cota en magnitud mientras alterna su dirección en cada paso a lo largo de \(\operatorname{span}\{(1, -1)^T\}\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suponga que \(A \in M_5(\mathbb{R})\) es idempotente (\(A^2 = A\)) y satisface \(\operatorname{rank}(A) = 3\). Descomponiendo cualquier \(\mathbf{x} \in \mathbb{R}^5\) como \(\mathbf{x} = A\mathbf{x} + (\mathbf{x} - A\mathbf{x})\), determine \(\operatorname{tr}(A)\).
+
+(A) \(2\)
+(B) \(5\)
+(C) \(3\)
+(D) \(0\)
+(E) No puede determinarse sin conocer las entradas de \(A\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suponga que \(A \in M_n(\mathbb{C})\) es A LA VEZ diagonalizable sobre \(\mathbb{C}\) Y nilpotente (\(A^m = 0\) para algún entero positivo \(m\)). ¿A qué debe ser igual \(A\)?
+
+(A) La matriz nula \(0\)
+(B) Cualquier matriz estrictamente triangular superior
+(C) Cualquier matriz con \(\det(A) = 0\)
+(D) La matriz identidad \(I_n\)
+(E) Cualquier matriz diagonal con al menos un cero en la diagonal
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Una sucesión \((F_k)_{k \ge 0}\) satisface \(F_{k+2} = F_{k+1} + 2 F_k\) con \(F_0 = 0\) y \(F_1 = 3\). Escribiendo \(\begin{bmatrix} F_{k+1} \\ F_k \end{bmatrix} = \begin{bmatrix} 1 & 2 \\ 1 & 0 \end{bmatrix}^k \begin{bmatrix} 3 \\ 0 \end{bmatrix}\) y diagonalizando la matriz de transición, ¿cuál es la fórmula en forma cerrada para \(F_k\)?
+
+(A) \(3 \cdot 2^k - 3\)
+(B) \(2^{k+1} - 2(-1)^k\)
+(C) \(2^k + (-1)^k\)
+(D) \(2^k - (-1)^k\)
+(E) \(3 \cdot 2^{k-1} - 3(-1)^k\)
+[/BONUS]

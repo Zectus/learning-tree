@@ -1,0 +1,259 @@
+=== SECTION 1: Equinumerosity, finite sets, and Hilbert's Hotel ===
+
+How can you tell whether two baskets hold the same number of pebbles if you do not know how to count—or if the baskets hold infinitely many pebbles? Pair each pebble in the first basket with a unique pebble in the second basket, with none left over on either side! That exact pairing is a BIJECTION. Georg Cantor turned this simple idea into the foundation of cardinality theory, allowing us to compare the sizes of infinite sets with complete rigor.
+
+[CALLOUT]
+id: equinumerosity-def
+label: Definition
+title: Equinumerosity (same cardinality)
+tone: key
+
+Two sets \(A\) and \(B\) are equinumerous (or have the same cardinality), written \(|A| = |B|\) or \(A \sim B\), if there exists at least one bijection \(f : A \to B\).
+[/CALLOUT]
+
+Immediately, our composition and inverse theorems from the previous lesson show that equinumerosity behaves like an equivalence relation on sets:
+- Reflexivity: \(|A| = |A|\) for every set \(A\), witnessed by the identity bijection \(\operatorname{id}_A : A \to A\).
+- Symmetry: if \(|A| = |B|\), witnessed by a bijection \(f : A \to B\), then \(f^{-1} : B \to A\) is a bijection, so \(|B| = |A|\).
+- Transitivity: if \(|A| = |B|\) and \(|B| = |C|\), witnessed by bijections \(f : A \to B\) and \(g : B \to C\), then \(g \circ f : A \to C\) is a bijection, so \(|A| = |C|\).
+
+(We avoid saying "\(\sim\) is an equivalence relation on the set of all sets" because, as we will see in the next lesson, there is no set of all sets; on any fixed collection of sets, however, equinumerosity is a genuine equivalence relation!)
+
+Using equinumerosity, we can define finite and infinite sets sharply. Throughout this lesson, we keep our convention \(\mathbb{N} = \{0, 1, 2, 3, \dots\}\) and \(\mathbb{Z}^+ = \{1, 2, 3, \dots\}\).
+
+[CALLOUT]
+id: finite-infinite-def
+label: Definition
+title: Finite and infinite sets
+tone: key
+
+For each \(n \in \mathbb{Z}^+\), write \([n] = \{1, 2, \dots, n\}\).
+
+(1) A set \(A\) is finite if either \(A = \emptyset\) (in which case we write \(|A| = 0\)) or there exists \(n \in \mathbb{Z}^+\) such that \(|A| = |[n]|\) (in which case we write \(|A| = n\)).
+(2) A set \(A\) is infinite if it is not finite.
+[/CALLOUT]
+
+We accept two foundational facts about finite sets (established by elementary induction in discrete mathematics): first, the size \(n\) of a nonempty finite set is unique (if \(|[m]| = |[n]|\) then \(m = n\)); second, by the Pigeonhole Principle, NO finite set can be equinumerous with a proper subset of itself (if \(A\) is finite and \(S \subsetneq A\), then \(|S| < |A|\), so no bijection \(A \to S\) exists).
+
+With INFINITE sets, that intuition shatters completely! Picture Hilbert's Hotel, a hotel with infinitely many rooms numbered \(0, 1, 2, 3, \dots\), all currently occupied.
+- A new guest arrives. Can we accommodate them without kicking anyone out? Yes: move the guest in room \(n\) to room \(n + 1\), leaving room \(0\) free! Mathematically, the shift map \(f : \mathbb{N} \to \mathbb{Z}^+\) defined by \(f(n) = n + 1\) is a bijection from \(\mathbb{N}\) onto its PROPER subset \(\mathbb{Z}^+ = \mathbb{N} \setminus \{0\}\). Hence \(|\mathbb{N}| = |\mathbb{Z}^+|\)!
+- Now a bus with INFINITELY many new guests arrives! Move the guest in room \(n\) to room \(2n\), freeing all odd-numbered rooms \(1, 3, 5, \dots\)! Mathematically, \(g : \mathbb{N} \to 2\mathbb{N}\) defined by \(g(n) = 2n\) is a bijection from \(\mathbb{N}\) onto the proper subset \(2\mathbb{N} = \{0, 2, 4, 6, \dots\}\). Hence \(|\mathbb{N}| = |2\mathbb{N}|\)!
+
+Being equinumerous with a proper subset is NOT a paradox—it is the hallmark of infinite sets!
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(E = \{2k : k \in \mathbb{Z}\}\) be the set of all even integers, and let \(S = \{n \in \mathbb{Z} : n \ge 5\}\). Which function is a BIJECTION proving \(|S| = |\mathbb{N}|\) (where \(\mathbb{N} = \{0, 1, 2, \dots\}\)), and which function is a BIJECTION proving \(|E| = |\mathbb{Z}|\)?
+
+(A) \(f : S \to \mathbb{N}\) by \(f(n) = n + 5\), and \(g : \mathbb{Z} \to E\) by \(g(k) = 2k\)
+(B) \(f : S \to \mathbb{N}\) by \(f(n) = n - 5\), and \(g : \mathbb{Z} \to E\) by \(g(k) = k^2\)
+(C) \(f : S \to \mathbb{N}\) by \(f(n) = n - 5\), and \(g : \mathbb{Z} \to E\) by \(g(k) = 2k\)
+(D) \(f : S \to \mathbb{N}\) by \(f(n) = n - 4\), and \(g : \mathbb{Z} \to E\) by \(g(k) = 2k\)
+(E) \(f : S \to \mathbb{N}\) by \(f(n) = n - 5\), and \(g : \mathbb{Z} \to E\) by \(g(k) = 2k + 1\)
+[/QUESTION]
+
+=== SECTION 2: Countably infinite and countable sets ===
+
+The smallest infinite size—the size of \(\mathbb{N}\)—captures every infinite set whose elements can be placed in a single numbered list \(a_0, a_1, a_2, \dots\).
+
+[CALLOUT]
+id: countable-def
+label: Definition
+title: Countably infinite and countable sets
+tone: key
+
+(1) A set \(A\) is countably infinite (or denumerable) if \(|A| = |\mathbb{N}|\) (equivalently, \(|A| = |\mathbb{Z}^+|\), since \(n \mapsto n + 1\) is a bijection \(\mathbb{N} \to \mathbb{Z}^+\)).
+(2) A set \(A\) is countable if \(A\) is either FINITE or COUNTABLY INFINITE.
+(3) A set \(A\) is uncountable if it is not countable.
+[/CALLOUT]
+
+Notice that we already proved \(|\mathbb{Z}| = |\mathbb{N}|\) in our previous lesson on bijections! Recall the explicit zigzag bijection \(f : \mathbb{N} \to \mathbb{Z}\):
+\[
+f(n) = \begin{cases} n/2 & \text{if } n \text{ is even}, \\ -(n + 1)/2 & \text{if } n \text{ is odd}, \end{cases}
+\]
+which lists \(\mathbb{Z}\) as \(0, -1, 1, -2, 2, -3, 3, \dots\) without repeating or omitting any integer. Thus \(\mathbb{Z}\) is countably infinite!
+
+Constructing an explicit bijection from \(\mathbb{N}\) to \(A\) can sometimes be tedious—especially when an obvious listing repeats elements or skips indices. The next theorem gives us two vastly easier criteria for proving countability: ANY injection INTO \(\mathbb{N}\), or ANY surjection FROM \(\mathbb{N}\), is already enough!
+
+[CALLOUT]
+id: countable-char
+label: Theorem
+title: Subsets of \(\mathbb{N}\) and characterizations of countable sets
+tone: key
+
+(1) Every subset \(S \subseteq \mathbb{N}\) is countable.
+(2) For any nonempty set \(A\), the following three conditions are equivalent:
+   (a) \(A\) is countable.
+   (b) There exists an injection \(f : A \to \mathbb{N}\).
+   (c) There exists a surjection \(g : \mathbb{N} \to A\).
+[/CALLOUT]
+
+Let us prove (1) and (2) cleanly!
+
+Proof of (1): Let \(S \subseteq \mathbb{N}\). If \(S\) is finite, then \(S\) is countable by definition. Suppose instead that \(S\) is infinite. Because \((\mathbb{N}, \le)\) is well-ordered, every nonempty subset of \(\mathbb{N}\) has a least element! Define \(h : \mathbb{N} \to S\) inductively:
+- Let \(h(0)\) be the least element of \(S\).
+- Having defined \(h(0), \dots, h(k)\), the remaining set \(S \setminus \{h(0), \dots, h(k)\}\) is still nonempty (because \(S\) is infinite!), so let \(h(k + 1)\) be its least element.
+Then \(h(0) < h(1) < h(2) < \cdots\) is strictly increasing, so \(h\) is injective. Why is \(h\) surjective onto \(S\)? Observe by induction that \(h(k) \ge k\) for every \(k \in \mathbb{N}\) (since \(h(0) \ge 0\) and \(h(k+1) \ge h(k) + 1\)). Now take any \(s \in S\). Because \(h(s + 1) \ge s + 1 > s\), the element \(s\) cannot still remain in \(S \setminus \{h(0), \dots, h(s)\}\) (otherwise it would have been chosen as a smaller least element before \(h(s+1)\)!). Hence \(s \in \{h(0), \dots, h(s)\}\), so \(s = h(k)\) for some \(k \le s\). Therefore \(h : \mathbb{N} \to S\) is a bijection, proving \(S\) is countably infinite!
+
+Proof of (2):
+- \((a) \implies (b)\): If \(A\) is countably infinite, any bijection \(A \to \mathbb{N}\) is an injection. If \(A\) is finite with \(|A| = n \ge 1\), composing a bijection \(A \to \{1, \dots, n\}\) with the inclusion \(\{1, \dots, n\} \hookrightarrow \mathbb{N}\) yields an injection \(A \to \mathbb{N}\).
+- \((b) \implies (c)\): Suppose \(f : A \to \mathbb{N}\) is injective. Because \(A \ne \emptyset\), our theorem on one-sided inverses guarantees that \(f\) has a left inverse \(g : \mathbb{N} \to A\) satisfying \(g \circ f = \operatorname{id}_A\) (explicitly: fix \(a_0 \in A\), send \(f(a) \mapsto a\), and send every \(n \notin \operatorname{im}(f)\) to \(a_0\)). Since \(g \circ f = \operatorname{id}_A\) is surjective, \(g : \mathbb{N} \to A\) is surjective!
+- \((c) \implies (a)\): Suppose \(g : \mathbb{N} \to A\) is surjective. For each \(a \in A\), the preimage fiber \(g^{-1}(\{a\})\) is a nonempty subset of \(\mathbb{N}\). Because \((\mathbb{N}, \le)\) is well-ordered, we can define \(f : A \to \mathbb{N}\) explicitly (WITHOUT even needing an abstract choice principle!) by setting
+\[
+f(a) = \min g^{-1}(\{a\}) = \text{the smallest } n \in \mathbb{N} \text{ such that } g(n) = a.
+\]
+Then \(g(f(a)) = a\) for all \(a \in A\), so \(f\) is injective (in fact a right inverse of \(g\))! Therefore \(f\) maps \(A\) bijectively onto the subset \(S = \operatorname{im}(f) \subseteq \mathbb{N}\). By part (1), \(S\) is countable, hence \(A\) is countable!
+
+Notice how useful this theorem is: if you want to prove a set \(A\) is countable, you NEVER need to worry about skipping gaps (if you build an injection \(A \to \mathbb{N}\)) OR about repeating elements (if you build a surjection \(\mathbb{N} \to A\))! And as an immediate corollary: every subset \(B \subseteq A\) of a countable set \(A\) is countable (compose \(B \hookrightarrow A\) with an injection \(A \to \mathbb{N}\)).
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose \(A\) is a nonempty set and \(g : \mathbb{N} \to A\) is a surjection. In the proof of [REF: countable-char | the countability theorem], why does defining \(f(a) = \min g^{-1}(\{a\})\) produce an injection \(f : A \to \mathbb{N}\)?
+
+(A) Because \(g^{-1}(\{a\})\) is a nonempty subset of the well-ordered set \(\mathbb{N}\), and distinct elements \(a_1 \ne a_2\) have disjoint fibers \(g^{-1}(\{a_1\}) \cap g^{-1}(\{a_2\}) = \emptyset\), so their minima cannot coincide
+(B) Because every surjection \(g : \mathbb{N} \to A\) is automatically bijective
+(C) Because \(g\) is strictly increasing on \(\mathbb{N}\)
+(D) Because \(A\) is assumed to be well-ordered
+(E) Because \(g^{-1}(\{a\})\) is always finite for every \(a \in A\)
+[/QUESTION]
+
+=== SECTION 3: Countability of \(\mathbb{N} \times \mathbb{N}\) and \(\mathbb{Q}\) ===
+
+At first glance, the grid \(\mathbb{N} \times \mathbb{N}\) looks vastly larger than \(\mathbb{N}\): it contains infinitely many rows, each of which is itself a full copy of \(\mathbb{N}\)! And the rational numbers \(\mathbb{Q}\) are dense on the real line—between any two rationals lie infinitely many more! Yet BOTH \(\mathbb{N} \times \mathbb{N}\) and \(\mathbb{Q}\) are countably infinite!
+
+Let us prove \(\mathbb{N} \times \mathbb{N}\) is countably infinite by TWO complementary methods—one giving an explicit bijection, and one using [REF: countable-char.2 | our injection criterion] in two lines.
+
+Method 1: Cantor's diagonal pairing bijection.
+Walk through the grid \(\mathbb{N} \times \mathbb{N}\) along finite anti-diagonals of constant sum \(s = m + n\):
+- \(s = 0\): \((0, 0)\)
+- \(s = 1\): \((1, 0), (0, 1)\)
+- \(s = 2\): \((2, 0), (1, 1), (0, 2)\)
+- \(s = 3\): \((3, 0), (2, 1), (1, 2), (0, 3)\), and so on.
+
+Diagonal \(k\) (where \(m + n = k\)) contains exactly \(k + 1\) pairs. Before diagonal \(s = m + n\) begins, diagonals \(0, 1, \dots, s - 1\) have used \(1 + 2 + \dots + s = \frac{s(s + 1)}{2}\) numbers. Along diagonal \(s\), the pair \((m, n)\) sits at offset \(n\) (starting from \(n = 0\) at \((s, 0)\)). This yields the Cantor pairing function \(\pi : \mathbb{N} \times \mathbb{N} \to \mathbb{N}\):
+\[
+\pi(m, n) = \frac{(m + n)(m + n + 1)}{2} + n.
+\]
+
+[TABLE]
+\(m \backslash n\) | \(n = 0\) | \(n = 1\) | \(n = 2\) | \(n = 3\)
+\(m = 0\) | \(0\) | \(2\) | \(5\) | \(9\)
+\(m = 1\) | \(1\) | \(4\) | \(8\) | \(13\)
+\(m = 2\) | \(3\) | \(7\) | \(12\) | \(18\)
+\(m = 3\) | \(6\) | \(11\) | \(17\) | \(24\)
+[/TABLE]
+
+Why is \(\pi\) a bijection? Given any \(N \in \mathbb{N}\), the triangular numbers \(T_s = \frac{s(s + 1)}{2}\) satisfy \(0 = T_0 < T_1 < T_2 < \cdots\) with \(T_{s + 1} - T_s = s + 1\), so every \(N \in \mathbb{N}\) lies in a UNIQUE interval \(T_s \le N < T_{s + 1}\). That uniquely determines the diagonal \(s = m + n\), then uniquely determines \(n = N - T_s \in \{0, 1, \dots, s\}\), and finally uniquely determines \(m = s - n \in \{0, 1, \dots, s\}\). Existence and uniqueness of \((m, n)\) for every \(N \in \mathbb{N}\) proves \(\pi\) is a bijection!
+
+Method 2: Prime-power injection (quickest countability proof!).
+Define \(\phi : \mathbb{N} \times \mathbb{N} \to \mathbb{N}\) by
+\[
+\phi(m, n) = 2^m 3^n.
+\]
+By unique prime factorization of positive integers, \(2^{m_1} 3^{n_1} = 2^{m_2} 3^{n_2}\) forces \(m_1 = m_2\) and \(n_1 = n_2\), so \(\phi\) is injective! By [REF: countable-char.2 | the injection criterion], \(\mathbb{N} \times \mathbb{N}\) is countable (and infinite because \(m \mapsto (m, 0)\) embeds \(\mathbb{N}\) into \(\mathbb{N} \times \mathbb{N}\)), hence countably infinite!
+
+Now watch how effortlessly countability of \(\mathbb{Q}\) falls out!
+
+[CALLOUT]
+id: rationals-countable
+label: Theorem
+title: Countability of \(\mathbb{N} \times \mathbb{N}\) and \(\mathbb{Q}\)
+tone: key
+
+(1) Both \(\mathbb{N} \times \mathbb{N}\) and \(\mathbb{Z} \times \mathbb{Z}^+\) are countably infinite.
+(2) The set of rational numbers \(\mathbb{Q}\) is countably infinite.
+[/CALLOUT]
+
+Proof: We already proved \(|\mathbb{N} \times \mathbb{N}| = |\mathbb{N}|\). Since there exist bijections \(\alpha : \mathbb{N} \to \mathbb{Z}\) and \(\beta : \mathbb{N} \to \mathbb{Z}^+\), the componentwise map \((m, n) \mapsto (\alpha(m), \beta(n))\) is a bijection \(\mathbb{N} \times \mathbb{N} \to \mathbb{Z} \times \mathbb{Z}^+\). Composing with \(\pi^{-1} : \mathbb{N} \to \mathbb{N} \times \mathbb{N}\) gives a bijection \(\psi : \mathbb{N} \to \mathbb{Z} \times \mathbb{Z}^+\).
+
+Now define the fraction map \(q : \mathbb{Z} \times \mathbb{Z}^+ \to \mathbb{Q}\) by \(q(a, b) = \frac{a}{b}\). Every rational number can be written as \(a/b\) with \(a \in \mathbb{Z}\) and \(b \in \mathbb{Z}^+\), so \(q\) is SURJECTIVE (we do NOT need to worry that \(1/2 = 2/4 = 3/6\) repeats!). Composing \(q \circ \psi : \mathbb{N} \to \mathbb{Q}\) gives a surjection from \(\mathbb{N}\) onto \(\mathbb{Q}\). By [REF: countable-char.2 | our surjection criterion], \(\mathbb{Q}\) is countable—and since \(\mathbb{N} \subseteq \mathbb{Q}\), \(\mathbb{Q}\) is infinite, hence countably infinite!
+
+[QUESTION 3]
+[ANSWER: B]
+Using Cantor's pairing bijection \(\pi(m, n) = \frac{(m + n)(m + n + 1)}{2} + n\) on \(\mathbb{N} \times \mathbb{N}\), which pair \((m, n)\) satisfies \(\pi(m, n) = 23\)?
+
+(A) \((5, 2)\)
+(B) \((4, 2)\)
+(C) \((3, 3)\)
+(D) \((2, 4)\)
+(E) \((5, 1)\)
+[/QUESTION]
+
+=== SECTION 4: Countable unions and structured countable sets ===
+
+Now we can scale up from two factors to arbitrary finite products and countable unions of countable sets!
+
+[CALLOUT]
+id: countable-closure
+label: Theorem
+title: Closure of countability under finite products and countable unions
+tone: key
+
+(1) Finite products: if \(A_1, A_2, \dots, A_k\) are countable sets, then the Cartesian product \(A_1 \times A_2 \times \dots \times A_k\) is countable.
+(2) Countable unions: if \(I\) is a countable index set and \(A_i\) is countable for every \(i \in I\), then the union \(\bigcup_{i \in I} A_i\) is countable.
+[/CALLOUT]
+
+Proof of (1): Start with \(k = 2\). If either \(A_1\) or \(A_2\) is empty, then \(A_1 \times A_2 = \emptyset\) is countable. Otherwise, by [REF: countable-char.2 | the injection criterion], there exist injections \(f_1 : A_1 \to \mathbb{N}\) and \(f_2 : A_2 \to \mathbb{N}\). Then \((a_1, a_2) \mapsto \pi(f_1(a_1), f_2(a_2))\) (or \(2^{f_1(a_1)} 3^{f_2(a_2)}\)) is an injection \(A_1 \times A_2 \to \mathbb{N}\), proving \(A_1 \times A_2\) is countable! Inducting on \(k\) via \(A_1 \times \dots \times A_{k+1} \sim (A_1 \times \dots \times A_k) \times A_{k+1}\) proves (1) for every finite \(k \ge 1\).
+
+Proof of (2): Let \(U = \bigcup_{i \in I} A_i\). If \(U = \emptyset\), then \(U\) is countable. Otherwise, discard any empty sets \(A_i\) without changing the union, leaving a nonempty countable index set \(J \subseteq I\) where every \(A_j\) is nonempty and countable.
+- Since \(J\) is nonempty and countable, there exists a surjection \(\sigma : \mathbb{N} \to J\).
+- For each \(j \in J\), since \(A_j\) is nonempty and countable, there exists at least one surjection \(g_j : \mathbb{N} \to A_j\). Choosing one such enumeration \(g_j\) simultaneously for every \(j \in J\) (note: for an arbitrary abstract family of sets without given formulas, this simultaneous choice invokes a weak choice principle called Countable Choice!) lets us define
+\[
+G : \mathbb{N} \times \mathbb{N} \to \bigcup_{j \in J} A_j, \qquad G(m, n) = g_{\sigma(m)}(n).
+\]
+Is \(G\) surjective? Take any \(x \in \bigcup_{j \in J} A_j\). Then \(x \in A_j\) for some \(j \in J\). Since \(\sigma\) is surjective, \(j = \sigma(m)\) for some \(m \in \mathbb{N}\); since \(g_j\) is surjective, \(x = g_j(n) = g_{\sigma(m)}(n) = G(m, n)\) for some \(n \in \mathbb{N}\). Composing \(G\) with the bijection \(\pi^{-1} : \mathbb{N} \to \mathbb{N} \times \mathbb{N}\) yields a surjection \(G \circ \pi^{-1} : \mathbb{N} \to U\). By [REF: countable-char.2 | our surjection criterion], \(U\) is countable!
+
+Watch [REF: countable-closure | this closure theorem] demolish three rich families of mathematical objects in seconds:
+
+1. Finite binary strings \(\{0, 1\}^* = \bigcup_{n=0}^{\infty} \{0, 1\}^n\): for each fixed length \(n \in \mathbb{N}\), the set \(\{0, 1\}^n\) of binary strings of length \(n\) is finite (having \(2^n\) elements), hence countable. Therefore the union over all \(n \in \mathbb{N}\) is a countable union of countable sets, so \(\{0, 1\}^*\) is countably infinite!
+
+2. Polynomials with rational coefficients \(\mathbb{Q}[x]\): every polynomial \(p(x) = c_0 + c_1 x + \dots + c_d x^d\) of degree at most \(d\) is uniquely determined by its coefficient tuple \((c_0, c_1, \dots, c_d) \in \mathbb{Q}^{d+1}\). For each \(d \in \mathbb{N}\), \(\mathbb{Q}^{d+1}\) is a finite product of countable sets, hence countable by [REF: countable-closure.1 | part (1)]. Since \(\mathbb{Q}[x]\) is the union of the sets of polynomials of degree at most \(d\) over all \(d \in \mathbb{N}\), [REF: countable-closure.2 | part (2)] proves \(\mathbb{Q}[x]\) is countably infinite!
+
+3. All FINITE subsets of \(\mathbb{N}\), denoted \(\mathcal{P}_{\mathrm{fin}}(\mathbb{N})\): let \(\mathcal{F}_k\) be the collection of subsets of \(\mathbb{N}\) of size \(k\). For \(k = 0\), \(\mathcal{F}_0 = \{\emptyset\}\) is finite. For \(k \ge 1\), listing the elements of \(S \in \mathcal{F}_k\) in increasing order gives an injection \(\mathcal{F}_k \to \mathbb{N}^k\), so \(\mathcal{F}_k\) is countable. Hence \(\mathcal{P}_{\mathrm{fin}}(\mathbb{N}) = \bigcup_{k=0}^{\infty} \mathcal{F}_k\) is countably infinite! (In the next lesson, we will discover the dramatic shock that the FULL power set \(\mathcal{P}(\mathbb{N})\)—including infinite subsets—is NOT countable!)
+
+[QUESTION 4]
+[ANSWER: B]
+Let \(\mathcal{C}\) be the collection of all circles in the coordinate plane \(\mathbb{R}^2\) whose center \((a, b)\) has rational coordinates (\(a, b \in \mathbb{Q}\)) and whose radius \(r\) is a positive rational number (\(r \in \mathbb{Q}^+\)). Which statement about \(\mathcal{C}\) is true?
+
+(A) \(\mathcal{C}\) is finite because the plane has only two dimensions
+(B) \(\mathcal{C}\) is countably infinite, because each circle in \(\mathcal{C}\) is uniquely specified by a triple \((a, b, r) \in \mathbb{Q} \times \mathbb{Q} \times \mathbb{Q}^+\)
+(C) \(\mathcal{C}\) is uncountable, because every circle contains infinitely many points of \(\mathbb{R}^2\)
+(D) \(\mathcal{C}\) is uncountable, because \(\mathbb{Q}\) is dense in \(\mathbb{R}\)
+(E) \(\mathcal{C}\) is countable only if the radii are restricted to integers
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suppose \(A\) is a countably infinite set and \(B\) is a finite set (not necessarily disjoint from \(A\)). Which statement about \(A \cup B\) and \(A \setminus B\) is ALWAYS true?
+
+(A) \(A \cup B\) is countably infinite, while \(A \setminus B\) can be finite
+(B) \(A \cup B\) can be uncountable, while \(A \setminus B\) is always countably infinite
+(C) \(A \cup B\) and \(A \setminus B\) are equal in cardinality only when \(A \cap B = \emptyset\)
+(D) Both \(A \cup B\) and \(A \setminus B\) are ALWAYS countably infinite
+(E) \(A \setminus B\) is strictly smaller in cardinality than \(A\) whenever \(B \cap A \ne \emptyset\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Consider the Hilbert's Hotel shift map \(f : [0, 1] \to (0, 1)\) defined using the sequence \(s_0 = 0,\; s_1 = 1,\; s_k = \frac{1}{k}\) for \(k \ge 2\):
+\[
+f(x) = \begin{cases} \dfrac{1}{2} & \text{if } x = 0, \\ \dfrac{1}{3} & \text{if } x = 1, \\ \dfrac{1}{k + 2} & \text{if } x = \dfrac{1}{k} \text{ for some integer } k \ge 2, \\ x & \text{otherwise.} \end{cases}
+\]
+Which statement about \(f\) is true?
+
+(A) \(f\) is a bijection from \([0, 1]\) onto \((0, 1)\), proving \(|[0, 1]| = |(0, 1)|\)
+(B) \(f\) is injective, but misses \(1/2\) and \(1/3\) in \((0, 1)\)
+(C) \(f\) is surjective, but not injective because \(f(0) = f(1/2)\)
+(D) \(f\) is not well-defined because \(1/2\) falls into two different branches
+(E) \(f\) maps \([0, 1]\) onto \([0, 1) \setminus \{1/2\}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Let \(S\) be the set of all functions \(f : \{0, 1\} \to \mathbb{N}\), and let \(T\) be the set of all eventually-zero sequences of natural numbers (functions \(g : \mathbb{N} \to \mathbb{N}\) such that there exists \(N \in \mathbb{N}\) with \(g(n) = 0\) for all \(n \ge N\)). Which statement accurately classifies \(S\) and \(T\)?
+
+(A) \(S\) is finite, and \(T\) is countably infinite
+(B) \(S\) is countably infinite, and \(T\) is uncountable
+(C) Both \(S\) and \(T\) are countably infinite
+(D) \(S\) is uncountable, and \(T\) is countably infinite
+(E) Both \(S\) and \(T\) are finite
+[/BONUS]

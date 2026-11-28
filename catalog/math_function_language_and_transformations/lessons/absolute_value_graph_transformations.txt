@@ -1,0 +1,249 @@
+=== SECTION 1: Outer absolute value: \(y = |f(x)|\) ===
+
+The affine transformations \(a \cdot f(b(x - h)) + k\) shift, reflect, and scale a graph smoothly without introducing new corners or erasing parts of the curve. Placing an absolute value around a function—either on the outside as \(y = |f(x)|\) or on the inside as \(y = f(|x|)\)—behaves completely differently: it folds or mirrors parts of the graph nonlinearly. Fortunately, the piecewise definition of absolute value tells us exactly what each operation does, with zero guesswork.
+
+Start with the outer absolute value \(y = |f(x)|\). Applying the definition of absolute value to the output \(f(x)\) gives the exact piecewise bridge:
+\[
+|f(x)| = \begin{cases}
+f(x), & \text{where } f(x) \ge 0, \\
+-f(x), & \text{where } f(x) < 0.
+\end{cases}
+\]
+Read those two branches geometrically:
+- Wherever the graph of \(y = f(x)\) lies on or above the \(x\)-axis (\(f(x) \ge 0\)), leave it completely untouched.
+- Wherever the graph of \(y = f(x)\) dips strictly below the \(x\)-axis (\(f(x) < 0\)), replace \(y\) by \(-y\), reflecting that negative piece upward across the \(x\)-axis.
+
+[CALLOUT]
+id: outer-abs
+label: Rule
+title: Outer absolute-value transformation \(y = |f(x)|\)
+tone: key
+
+To obtain the graph of \(y = |f(x)|\) from the graph of \(y = f(x)\):
+
+(1) Keep all points with \(f(x) \ge 0\) unchanged.
+(2) Reflect all points with \(f(x) < 0\) upward across the \(x\)-axis: \((x, y) \mapsto (x, -y)\).
+(3) Domain is unchanged: \(\operatorname{Dom}(|f|) = \operatorname{Dom}(f)\). All outputs become nonnegative (\(\operatorname{Range}(|f|) \subseteq [0, \infty)\)).
+(4) At every \(x\)-intercept where \(y = f(x)\) crosses the \(x\)-axis at a nonzero angle, the upward fold creates a sharp corner pointing down to the \(x\)-axis.
+[/CALLOUT]
+
+Watch [REF: outer-abs | this folding rule] act on the shifted parabola \(f(x) = x^2 - 4\), which dips below the \(x\)-axis on \((-2, 2)\) down to its vertex \((0, -4)\). Under \(y = |x^2 - 4|\), the outer arms on \((-\infty, -2]\) and \([2, \infty)\) stay unchanged, while the negative trough between \(-2\) and \(2\) flips upward into a hill peaking at \((0, 4)\), creating two sharp corners at \((-2, 0)\) and \((2, 0)\).
+
+[GRAPH]
+type: function2d
+title: Folding negative outputs upward: \(f(x) = x^2 - 4\) versus \(|f(x)| = |x^2 - 4|\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.2, 3.2
+yrange: -4.8, 5.5
+trace: x^2 - 4 | label: \(f(x) = x^2 - 4\)
+trace: abs(x^2 - 4) | label: \(|f(x)| = |x^2 - 4|\)
+point: -2, 0 | label: \((-2, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+point: 0, -4 | label: \((0, -4)\)
+point: 0, 4 | label: \((0, 4)\)
+[/GRAPH]
+
+Now apply [REF: outer-abs | the same rule] to a transformed reciprocal function with asymptotes:
+\[
+g(x) = \left|\frac{1}{x - 1} - 2\right|.
+\]
+Start with the inside function \(h(x) = \frac{1}{x - 1} - 2\), which has vertical asymptote \(x = 1\), horizontal asymptote \(y = -2\), and \(x\)-intercept at \(x = \frac{3}{2}\) (where \(\frac{1}{x - 1} = 2\)).
+- For \(1 < x \le \frac{3}{2}\), \(h(x) \ge 0\), so that piece stays unchanged.
+- For \(x < 1\) and for \(x > \frac{3}{2}\), \(h(x) < 0\), so both of those pieces reflect upward across the \(x\)-axis! In particular, the horizontal asymptote \(y = -2\) reflects upward to \(y = 2\), while the vertical asymptote stays at \(x = 1\).
+- The domain stays \((-\infty, 1) \cup (1, \infty)\), and because \(h(x)\) reaches \(0\) at \(x = \frac{3}{2}\) and grows unboundedly near \(x = 1\), the range of \(g(x) = |h(x)|\) is \([0, \infty)\). (Notice that \(y = 2\) IS attained in the range on the right-hand positive piece, at \(x = \frac{5}{4}\) where \(h(5/4) = 4 - 2 = 2\)!)
+
+[GRAPH]
+type: function2d
+title: Outer absolute value on a reciprocal curve: \(g(x) = |1/(x - 1) - 2|\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 4.5
+yrange: -4, 6
+trace: abs(x - 1) > 0.14 ? (1/(x - 1) - 2) : (0/0) | label: \(h(x) = 1/(x - 1) - 2\)
+trace: abs(x - 1) > 0.14 ? abs(1/(x - 1) - 2) : (0/0) | label: \(g(x) = |h(x)|\)
+trace: 2 | label: new HA \(y = 2\)
+segment: 1, -4, 1, 6 | label: \(x = 1\) | dashed: true
+point: 1.5, 0 | label: \((3/2, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+An unlabeled function \(y = f(x)\) has domain \([-4, 5]\) and range \([-6, 2]\). What are the domain and range of \(y = |f(x)|\)?
+
+(A) Domain \([0, 5]\), range \([0, 6]\)
+(B) Domain \([-4, 5]\), range \([0, 6]\)
+(C) Domain \([-4, 5]\), range \([2, 6]\)
+(D) Domain \([-4, 5]\), range \([0, 2]\)
+(E) Domain \([-5, 5]\), range \([0, 6]\)
+[/QUESTION]
+
+=== SECTION 2: Inner absolute value: \(y = f(|x|)\) ===
+
+Now put the absolute-value bars INSIDE the parentheses to form \(y = f(|x|)\). Again, rewrite it directly using the piecewise definition of \(|x|\):
+\[
+f(|x|) = \begin{cases}
+f(x), & x \ge 0, \\
+f(-x), & x < 0.
+\end{cases}
+\]
+Watch what happens to the original left side of \(y = f(x)\) (where \(x < 0\)): it NEVER gets used! When you plug a negative number like \(x = -3\) into \(f(|x|)\), the absolute value strips off the minus sign first, evaluating \(f(3)\) instead of \(f(-3)\).
+
+[CALLOUT]
+id: inner-abs
+label: Rule
+title: Inner absolute-value transformation \(y = f(|x|)\)
+tone: key
+
+To obtain the graph of \(y = f(|x|)\) from the graph of \(y = f(x)\):
+
+(1) Discard the entire portion of the graph to the left of the \(y\)-axis (\(x < 0\)).
+(2) Keep the right-hand portion (\(x \ge 0\)) unchanged.
+(3) Reflect that right-hand portion across the \(y\)-axis onto the left side (\(x < 0\)).
+(4) The resulting function \(g(x) = f(|x|)\) is ALWAYS even, because \(g(-x) = f(|-x|) = f(|x|) = g(x)\), and its domain is symmetric about \(0\): \(x \in \operatorname{Dom}(g) \iff |x| \in \operatorname{Dom}(f)\).
+[/CALLOUT]
+
+Look at the dramatic difference between [REF: outer-abs | \(|f(x)|\)] and [REF: inner-abs | \(f(|x|)\)] on the shifted parabola \(f(x) = (x - 1)^2 - 4\), which has vertex \((1, -4)\) and \(y\)-intercept \((0, -3)\):
+- To graph \(y = f(|x|) = (|x| - 1)^2 - 4\), discard \(x < 0\) (which throws away the \(x\)-intercept at \((-1, 0)\)), keep the \(x \ge 0\) branch (passing through \((0, -3)\), vertex \((1, -4)\), and \((3, 0)\)), and mirror that right branch across the \(y\)-axis! The result is a W-shaped even curve with TWO global minima at \((-1, -4)\) and \((1, -4)\), a sharp local-maximum corner at \((0, -3)\), and \(x\)-intercepts at \((-3, 0)\) and \((3, 0)\).
+
+[GRAPH]
+type: function2d
+title: Discarding \(x < 0\) and mirroring \(x \ge 0\): \(f(x) = (x - 1)^2 - 4\) versus \(f(|x|) = (|x| - 1)^2 - 4\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 3.5
+yrange: -4.8, 5
+trace: (x - 1)^2 - 4 | label: \(f(x) = (x - 1)^2 - 4\)
+trace: (abs(x) - 1)^2 - 4 | label: \(f(|x|) = (|x| - 1)^2 - 4\)
+point: 0, -3 | label: \((0, -3)\)
+point: 1, -4 | label: \((1, -4)\)
+point: -1, -4 | label: \((-1, -4)\)
+point: 3, 0 | label: \((3, 0)\)
+point: -3, 0 | label: \((-3, 0)\)
+[/GRAPH]
+
+Notice how [REF: inner-abs.4 | the domain rule] can either shrink OR expand the domain of \(f\):
+- If \(f(x) = \sqrt{x - 2}\) has domain \([2, \infty)\), then \(f(|x|) = \sqrt{|x| - 2}\) requires \(|x| \ge 2\), giving domain \((-\infty, -2] \cup [2, \infty)\)—mirroring the right branch creates a brand-new left branch!
+- If \(f\) is defined only on \([-5, 2]\), then \(f(|x|)\) discards \([-5, 0)\), keeps \([0, 2]\), and mirrors it to \([-2, 2]\).
+
+[QUESTION 2]
+[ANSWER: D]
+Suppose \(f\) has domain \([-4, 3]\) and satisfies \(f(-4) = 9\), \(f(0) = 1\), \(f(2) = -3\), and \(f(3) = 2\), with no other extrema. What are the domain and the value of \(g(-2)\) for \(g(x) = f(|x|)\)?
+
+(A) Domain \([-4, 4]\) and \(g(-2) = -3\)
+(B) Domain \([-3, 3]\) and \(g(-2) = 3\)
+(C) Domain \([0, 3]\) and \(g(-2)\) is undefined
+(D) Domain \([-3, 3]\) and \(g(-2) = -3\)
+(E) Domain \([-4, 3]\) and \(g(-2) = -3\)
+[/QUESTION]
+
+=== SECTION 3: Combining both operations: \(|f(|x|)|\) and order with shifts ===
+
+What happens when we apply BOTH absolute values to form \(y = |f(|x|)|\)? Start from the inside out:
+1. First form \(g(x) = f(|x|)\) using [REF: inner-abs | the inner rule]: keep \(x \ge 0\) and mirror it across the \(y\)-axis.
+2. Then form \(|g(x)| = |f(|x|)|\) using [REF: outer-abs | the outer rule]: fold every negative portion of \(g\) upward across the \(x\)-axis.
+
+Wait: does the order between outer and inner absolute value matter? Check! For any \(x\):
+- Inner first, then outer: \(|f(|x|)|\).
+- Outer first (define \(h(x) = |f(x)|\)), then inner: \(h(|x|) = |f(|x|)|\).
+They produce the exact same expression! Outer and inner absolute values commute because one acts purely on outputs while the other acts purely on inputs.
+
+However, absolute values do NOT commute with shifts or reflections on the same axis! Compare two deceptively similar expressions built from \(f(x) = x^2\):
+- \(p(x) = |x^2 - 2|\): first shift \(x^2\) down \(2\) (dropping the vertex to \((0, -2)\)), THEN take the outer absolute value (folding the negative trough upward to a peak at \((0, 2)\)). Its range is \([0, \infty)\).
+- \(q(x) = |x^2| - 2 = x^2 - 2\): first take the outer absolute value (which leaves \(x^2 \ge 0\) unchanged), THEN shift down \(2\). Its range is \([-2, \infty)\).
+
+Even on a function that already takes negative values, such as \(f(x) = x - 1\), shifting before versus after \(|\cdot|\) produces completely different curves:
+- \(|f(x) - 2| = |x - 3|\): vertex at \((3, 0)\), range \([0, \infty)\).
+- \(|f(x)| - 2 = |x - 1| - 2\): vertex at \((1, -2)\), range \([-2, \infty)\).
+
+[GRAPH]
+type: function2d
+title: Order matters: \(|f(x) - 2|\) versus \(|f(x)| - 2\) for \(f(x) = x - 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2, 6
+yrange: -3, 5
+trace: abs((x - 1) - 2) | label: \(|f(x) - 2| = |x - 3|\)
+trace: abs(x - 1) - 2 | label: \(|f(x)| - 2 = |x - 1| - 2\)
+point: 3, 0 | label: \((3, 0)\)
+point: 1, -2 | label: \((1, -2)\)
+[/GRAPH]
+
+Likewise horizontally, compare \(f(|x| - 1)\) with \(f(|x - 1|)\):
+- In \(f(|x - 1|)\), the reflection symmetry axis moves from \(x = 0\) to \(x = 1\) (discard \(x < 1\), mirror \(x \ge 1\) across the vertical line \(x = 1\)).
+- In \(f(|x| - 1)\), first shift \(f\) right \(1\) to form \(h(x) = f(x - 1)\), and then apply the inner absolute value \(h(|x|)\), which mirrors across \(x = 0\)!
+
+The table below contrasts all four core absolute-value operations on a general function \(f\).
+
+[TABLE]
+Expression | Geometric action | Guaranteed symmetry | Effect on range
+\(\lvert f(x) \rvert\) | Reflect \(f(x) < 0\) pieces upward across \(x\)-axis | None in general | Subset of \([0, \infty)\)
+\(f(\lvert x \rvert)\) | Discard \(x < 0\); mirror \(x \ge 0\) across \(y\)-axis | Always even | Range of \(f\) restricted to \(x \ge 0\)
+\(\lvert f(\lvert x \rvert) \rvert\) | Mirror \(x \ge 0\) across \(y\)-axis, then fold negatives upward | Always even | Nonnegative magnitudes of \(f\) on \(x \ge 0\)
+\(\lvert f(x) \rvert + k\) | Fold negatives upward first, then shift vertically by \(k\) | None in general | Subset of \([k, \infty)\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+Let \(f(x) = x^3 - 1\). Which statement accurately describes the graph of \(y = |f(|x|)| = ||x|^3 - 1|\)?
+
+(A) It has \(x\)-intercepts at \(x = 1\) only and is neither even nor odd.
+(B) It has \(x\)-intercepts at \(x = \pm 1\), a local minimum of \(-1\) at \(x = 0\), and range \([-1, \infty)\).
+(C) It is even, has sharp corners at \((-1, 0)\) and \((1, 0)\), a local maximum of \(1\) at \(x = 0\), and range \([0, \infty)\).
+(D) It is odd, passes through \((0, 0)\), and has range \([0, \infty)\).
+(E) It is identical to \(y = |x^3 - 1|\) because cubing preserves symmetry.
+[/QUESTION]
+
+=== SECTION 4: Analyzing abstract graphs under absolute-value operations ===
+
+When \(y = f(x)\) is given only as a sketch or by key feature points, apply [REF: outer-abs | the outer rule] and [REF: inner-abs | the inner rule] point by point, paying special attention to intercepts and extrema:
+- For \(|f(x)|\): every \(x\)-intercept of \(f\) becomes a global minimum of \(0\); any negative local minimum \((c, -m)\) with \(m > 0\) flips up into a local maximum \((c, m)\).
+- For \(f(|x|)\): every point \((a, b)\) of \(f\) with \(a > 0\) generates a twin point \((-a, b)\); points of \(f\) with \(a < 0\) disappear completely; the \(y\)-intercept \((0, f(0))\) stays fixed (often becoming a sharp corner if the curve arrives at \(x = 0\) with a nonzero slope).
+
+Consider an unlabeled function \(f\) whose graph is the straight line segment from \((-2, 4)\) through \((0, 2)\) and \((2, 0)\) down to \((4, -2)\), i.e., \(f(x) = 2 - x\) on \([-2, 4]\):
+- \(|f(x)|\) keeps \((-2, 4)\) to \((2, 0)\) and reflects \((2, 0)\) to \((4, -2)\) upward to \((4, 2)\), forming a V with vertex \((2, 0)\), domain \([-2, 4]\), and range \([0, 4]\).
+- \(f(|x|)\) discards \([-2, 0)\), keeps \((0, 2)\) to \((4, -2)\), and mirrors it across the \(y\)-axis to \((-4, -2)\), forming a symmetric tent with peak \((0, 2)\), domain \([-4, 4]\), and range \([-2, 2]\).
+
+[QUESTION 4]
+[ANSWER: E]
+Suppose \(y = f(x)\) is defined on \((-\infty, \infty)\), has its ONLY \(x\)-intercept at \((3, 0)\), satisfies \(f(x) < 0\) for \(x < 3\) and \(f(x) > 0\) for \(x > 3\), and has \(y\)-intercept \((0, -2)\). How many \(x\)-intercepts does \(g(x) = f(|x|)\) have, and what is \(g(0)\)?
+
+(A) One \(x\)-intercept at \((3, 0)\), and \(g(0) = -2\).
+(B) Two \(x\)-intercepts at \((-3, 0)\) and \((3, 0)\), and \(g(0) = 2\).
+(C) No \(x\)-intercepts, and \(g(0) = -2\).
+(D) One \(x\)-intercept at \((-3, 0)\), and \(g(0) = 2\).
+(E) Two \(x\)-intercepts at \((-3, 0)\) and \((3, 0)\), and \(g(0) = -2\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+What is the range of \(h(x) = 5 - |x^2 - 9|\) on \((-\infty, \infty)\)?
+
+(A) \((-\infty, 5]\)
+(B) \([-4, 5]\)
+(C) \([0, 5]\)
+(D) \([-9, 5]\)
+(E) \((-\infty, 14]\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Let \(f(x) = \dfrac{1}{x + 2}\). What is the domain of \(g(x) = f(|x|)\)?
+
+(A) \((-\infty, -2) \cup (-2, 2) \cup (2, \infty)\)
+(B) \((-\infty, -2) \cup (-2, \infty)\)
+(C) \([0, \infty)\)
+(D) \((-\infty, \infty)\)
+(E) \((-\infty, 0) \cup (0, \infty)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+For a function \(f\) defined on \((-\infty, \infty)\), suppose that \(|f(x)| = f(|x|)\) holds for every real number \(x\). Which condition MUST \(f\) satisfy?
+
+(A) \(f\) must be strictly increasing on \((-\infty, \infty)\).
+(B) \(f\) must be even and satisfy \(f(x) \ge 0\) for every real number \(x\).
+(C) \(f\) must be odd and satisfy \(f(0) = 0\).
+(D) \(f\) must be a constant function.
+(E) \(f\) must satisfy \(f(x) = x^2\) or \(f(x) = |x|\).
+[/BONUS]

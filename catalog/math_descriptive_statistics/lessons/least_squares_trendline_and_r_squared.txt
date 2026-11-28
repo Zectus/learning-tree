@@ -1,0 +1,257 @@
+=== SECTION 1: Fitting a descriptive line by least squares ===
+
+Pearson's correlation \(r\) tells us how tightly a scatterplot hugs a straight line, but it does not give us the equation of that line or let us predict a response \(y\) from an explanatory value \(x\). Given \(n \ge 2\) paired observations \((x_1, y_1), \dots, (x_n, y_n)\) (with \(s_x > 0\)), we seek a descriptive linear trendline
+\[
+\hat{y} = b_0 + b_1 x,
+\]
+where \(b_0\) is the vertical intercept, \(b_1\) is the slope, and \(\hat{y}_i = b_0 + b_1 x_i\) denotes the fitted (predicted) value at \(x_i\). For each observation, the vertical discrepancy between the observed response and the line is the residual
+\[
+e_i = y_i - \hat{y}_i = y_i - (b_0 + b_1 x_i).
+\]
+Notice the sign convention: \(e_i > 0\) when the observed point sits ABOVE the line, and \(e_i < 0\) when it sits BELOW the line.
+
+How should we choose \(b_0\) and \(b_1\) so the line fits the point cloud best? Simply minimizing \(\sum e_i\) fails because huge positive and negative residuals cancel out. Instead, the ordinary least-squares (OLS) criterion chooses \((b_0, b_1)\) to minimize the sum of squared vertical residuals (sum of squared errors):
+\[
+\text{SSE}(b_0, b_1) = \sum_{i=1}^n e_i^2 = \sum_{i=1}^n (y_i - b_0 - b_1 x_i)^2.
+\]
+We can find the unique minimizing pair \((b_0, b_1)\) completely algebraically—without calculus—by completing the square twice! First rewrite each residual by adding and subtracting \(\bar{y}\) and \(b_1 \bar{x}\), and set \(c = \bar{y} - b_0 - b_1 \bar{x}\):
+\[
+y_i - b_0 - b_1 x_i = \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big] + c.
+\]
+Square both sides and sum over \(i = 1, \dots, n\). Because \(\sum_{i=1}^n (y_i - \bar{y}) = 0\) and \(\sum_{i=1}^n (x_i - \bar{x}) = 0\), the cross-term \(2 c \sum_{i=1}^n \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big]\) vanishes identically, leaving
+\[
+\text{SSE}(b_0, b_1) = \sum_{i=1}^n \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big]^2 + n c^2.
+\]
+Look at the two nonnegative terms:
+1. For ANY slope \(b_1\), the term \(n c^2 \ge 0\) is minimized uniquely when \(c = 0\), which forces
+\[
+b_0 = \bar{y} - b_1 \bar{x}.
+\]
+2. With \(c = 0\), introduce the shorthand \(S_{xx} = \sum_{i=1}^n (x_i - \bar{x})^2 > 0\), \(S_{yy} = \sum_{i=1}^n (y_i - \bar{y})^2\), and \(S_{xy} = \sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})\). Expanding the remaining sum and completing the square in \(b_1\) yields
+\[
+S_{yy} - 2 b_1 S_{xy} + b_1^2 S_{xx} = S_{xx}\left(b_1 - \frac{S_{xy}}{S_{xx}}\right)^2 + \left(S_{yy} - \frac{S_{xy}^2}{S_{xx}}\right).
+\]
+Because \(S_{xx} > 0\), the squared term is \(\ge 0\) and vanishes uniquely at \(b_1 = S_{xy} / S_{xx}\). Dividing numerator and denominator by \(n - 1\) and recalling \(s_{xy} = r s_x s_y\) produces the OLS formulas (the exact same solution obtained from the calculus normal equations \(\sum e_i = 0\) and \(\sum x_i e_i = 0\)).
+
+[CALLOUT]
+id: ols-formulas
+label: Theorem
+title: Descriptive ordinary least-squares (OLS) trendline
+tone: key
+
+For \(n \ge 2\) paired observations \((x_1, y_1), \dots, (x_n, y_n)\) with \(s_x > 0\), the unique line \(\hat{y} = b_0 + b_1 x\) minimizing \(\text{SSE} = \sum_{i=1}^n (y_i - b_0 - b_1 x_i)^2\) has slope and intercept:
+
+(1) Slope:
+\[
+b_1 = \frac{S_{xy}}{S_{xx}} = \frac{s_{xy}}{s_x^2} = r\,\frac{s_y}{s_x}.
+\]
+(2) Intercept:
+\[
+b_0 = \bar{y} - b_1 \bar{x}.
+\]
+(3) Centroid and residual orthogonality: the fitted line ALWAYS passes through \((\bar{x}, \bar{y})\), and its residuals \(e_i = y_i - \hat{y}_i\) satisfy both \(\sum_{i=1}^n e_i = 0\) and \(\sum_{i=1}^n x_i e_i = 0\) (and hence \(\sum_{i=1}^n \hat{y}_i e_i = 0\)).
+[/CALLOUT]
+
+Let us verify [REF: ols-formulas.3 | the two residual identities] directly from \(b_0 = \bar{y} - b_1 \bar{x}\) and \(b_1 = S_{xy} / S_{xx}\):
+- \(\sum_{i=1}^n e_i = \sum_{i=1}^n \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big] = 0 - b_1(0) = 0\).
+- \(\sum_{i=1}^n (x_i - \bar{x}) e_i = \sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y}) - b_1 \sum_{i=1}^n (x_i - \bar{x})^2 = S_{xy} - \frac{S_{xy}}{S_{xx}} S_{xx} = 0\).
+Adding \(\bar{x} \sum_{i=1}^n e_i = 0\) immediately gives \(\sum_{i=1}^n x_i e_i = 0\) as well.
+
+Work through a complete numerical example with \(n = 5\) pairs of weekly ad spend \(x\) and revenue \(y\) (in thousands of dollars): \((1, 9), (2, 11), (3, 12), (4, 17), (5, 21)\). Here \(\bar{x} = 3\) and \(\bar{y} = 70 / 5 = 14\), with \(S_{xx} = (-2)^2 + (-1)^2 + 0^2 + 1^2 + 2^2 = 10\) and \(S_{xy} = (-2)(-5) + (-1)(-3) + 0(-2) + 1(3) + 2(7) = 30\). Therefore
+\[
+b_1 = \frac{30}{10} = 3, \qquad b_0 = 14 - 3(3) = 5, \qquad \hat{y} = 5 + 3 x.
+\]
+
+[TABLE]
+\(x_i\) | \(y_i\) | \(\hat{y}_i = 5 + 3x_i\) | Residual \(e_i = y_i - \hat{y}_i\) | \(e_i^2\)
+1 | 9 | 8 | +1 | 1
+2 | 11 | 11 | 0 | 0
+3 | 12 | 14 | -2 | 4
+4 | 17 | 17 | 0 | 0
+5 | 21 | 20 | +1 | 1
+[/TABLE]
+
+Check both constraints: \(\sum e_i = 1 + 0 - 2 + 0 + 1 = 0\), and \(\sum x_i e_i = 1(1) + 2(0) + 3(-2) + 4(0) + 5(1) = 0\), with minimum \(\text{SSE} = 1 + 0 + 4 + 0 + 1 = 6\). In the interactive plot below, the line pivots through the centroid \((3, 14)\); drag the trial slope slider \(m\) away from the OLS optimum \(b_1 = 3\) to watch the vertical residual segments stretch.
+
+[GRAPH]
+type: function2d
+title: Least-squares line pivoted at \((3, 14)\) with vertical residuals (optimum \(m = 3\))
+xlabel: Ad spend ($1000s)
+ylabel: Weekly revenue ($1000s)
+xrange: 0.5, 5.5
+yrange: 4, 25
+trace: 14 + m * (x - 3) | label: Trial line \(\hat{y} = 14 + m(x - 3)\) | color: #3b82f6
+point: 1, 9 | label: (1, 9) | color: #1e293b
+point: 2, 11 | label: (2, 11) | color: #1e293b
+point: 3, 12 | label: (3, 12) | color: #1e293b
+point: 4, 17 | label: (4, 17) | color: #1e293b
+point: 5, 21 | label: (5, 21) | color: #1e293b
+point: 3, 14 | label: Centroid | color: #ef4444
+segment: 1, 9, 1, 14 + m * (1 - 3) | dashed: true | color: #ef4444
+segment: 2, 11, 2, 14 + m * (2 - 3) | dashed: true | color: #ef4444
+segment: 3, 12, 3, 14 + m * (3 - 3) | dashed: true | color: #ef4444
+segment: 4, 17, 4, 14 + m * (4 - 3) | dashed: true | color: #ef4444
+segment: 5, 21, 5, 14 + m * (5 - 3) | dashed: true | color: #ef4444
+slider: m | range: 0, 5 | init: 3 | step: 0.2
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Across \(n = 40\) apartments, floor area \(x\) (in \(\text{m}^2\)) has \(\bar{x} = 70\) and \(s_x = 15\); monthly rent \(y\) (in dollars) has \(\bar{y} = 1800\) and \(s_y = 300\); and Pearson correlation is \(r = 0.80\). What is the descriptive OLS trendline \(\hat{y} = b_0 + b_1 x\), and what is the residual \(e\) for an apartment of \(80\text{ m}^2\) renting for \(\$1900\)?
+
+(A) \(\hat{y} = 680 + 16 x\) and \(e = +60\)
+(B) \(\hat{y} = 680 + 16 x\) and \(e = -60\)
+(C) \(\hat{y} = 1520 + 4 x\) and \(e = +60\)
+(D) \(\hat{y} = 680 + 16 x\) and \(e = -100\)
+(E) \(\hat{y} = 400 + 20 x\) and \(e = -100\)
+[/QUESTION]
+
+=== SECTION 2: Standardized form, regression toward the mean, and non-invertibility ===
+
+Substitute \(b_0 = \bar{y} - b_1 \bar{x}\) and \(b_1 = r(s_y / s_x)\) into \(\hat{y} = b_0 + b_1 x\), subtract \(\bar{y}\), and divide both sides by \(s_y\) (when \(s_y > 0\)):
+\[
+\frac{\hat{y} - \bar{y}}{s_y} = r \left(\frac{x - \bar{x}}{s_x}\right), \qquad \text{or simply} \qquad z_{\hat{y}} = r\, z_x.
+\]
+This remarkably compact standardized equation explains two phenomena that frequently surprise newcomers.
+
+First, regression toward the mean: whenever \(|r| < 1\), multiplying \(z_x\) by \(r\) shrinks the magnitude toward zero! If \(r = 0.50\) between parents' heights \(x\) and adult children's heights \(y\), a parent who is \(z_x = +2.0\) standard deviations taller than average has a predicted child height only \(z_{\hat{y}} = 0.50(2.0) = +1.0\) standard deviation above average—closer to the mean in standardized units. This is a purely mathematical property of imperfect linear correlation (\(|r| < 1\)), not a biological force pushing heights toward homogeneity.
+
+Second, switching the roles of \(x\) and \(y\) produces a DIFFERENT line! Regressing \(y\) on \(x\) minimizes VERTICAL squared residuals and gives \(z_{\hat{y}} = r\, z_x\) (slope \(r\) in standardized coordinates). Regressing \(x\) on \(y\) minimizes HORIZONTAL squared residuals and gives \(z_{\hat{x}} = r\, z_y\), which rearranges to \(z_y = (1 / r)\, z_{\hat{x}}\) (slope \(1 / r\) in standardized coordinates). Because \(r \ne 1 / r\) whenever \(0 < |r| < 1\), you must NEVER algebraically solve \(\hat{y} = b_0 + b_1 x\) backward for \(x\) to predict \(x\) from \(y\)—always refit \(x\) on \(y\) using \(b_{x|y} = r (s_x / s_y)\).
+
+[QUESTION 2]
+[ANSWER: D]
+In a course, midterm scores \(x\) have \(\bar{x} = 75, s_x = 10\), final exam scores \(y\) have \(\bar{y} = 80, s_y = 8\), and \(r = 0.60\). A student earns \(x = 95\) on the midterm. What is their OLS predicted final score \(\hat{y}\), and why is algebraically inverting \(\hat{y} = b_0 + b_1 x\) the wrong way to predict a student's midterm score from their final score?
+
+(A) \(\hat{y} = 96.0\); inverting fails because \(s_x \ne s_y\).
+(B) \(\hat{y} = 89.6\); inverting actually gives the exact same line whenever \(r > 0\).
+(C) \(\hat{y} = 92.0\); inverting fails because it ignores \(\bar{x}\).
+(D) \(\hat{y} = 89.6\); inverting minimizes vertical \(y\)-errors rather than horizontal \(x\)-errors, producing standardized slope \(1 / r = 5 / 3\) instead of \(r = 0.60\) and predicting away from the mean rather than toward it.
+(E) \(\hat{y} = 84.8\); inverting reverses the sign of \(r\).
+[/QUESTION]
+
+=== SECTION 3: Variance decomposition, \(R^2\), residual plots, and extrapolation ===
+
+How well does the OLS line capture the overall variability in \(y\)? Split every observation's total deviation from \(\bar{y}\) into two pieces—the part captured by the fitted line plus the leftover residual:
+\[
+y_i - \bar{y} = (\hat{y}_i - \bar{y}) + (y_i - \hat{y}_i) = (\hat{y}_i - \bar{y}) + e_i.
+\]
+Square both sides and sum over \(i = 1, \dots, n\):
+\[
+\underbrace{\sum_{i=1}^n (y_i - \bar{y})^2}_{\text{SST}} = \underbrace{\sum_{i=1}^n (\hat{y}_i - \bar{y})^2}_{\text{SSR}} + \underbrace{\sum_{i=1}^n e_i^2}_{\text{SSE}} + 2\sum_{i=1}^n (\hat{y}_i - \bar{y}) e_i.
+\]
+Now inspect the cross-term: because \(\hat{y}_i - \bar{y} = b_1 (x_i - \bar{x})\), we have \(\sum_{i=1}^n (\hat{y}_i - \bar{y}) e_i = b_1 \sum_{i=1}^n (x_i - \bar{x}) e_i = 0\) by [REF: ols-formulas.3 | residual orthogonality]! The cross-term vanishes completely, yielding the exact sum-of-squares decomposition \(\text{SST} = \text{SSR} + \text{SSE}\).
+
+Moreover, from our completing-the-square minimum in Section 1, the minimized error sum of squares is
+\[
+\text{SSE} = S_{yy} - \frac{S_{xy}^2}{S_{xx}} = S_{yy}\left(1 - \frac{S_{xy}^2}{S_{xx} S_{yy}}\right) = \text{SST}\,(1 - r^2).
+\]
+Therefore \(\text{SSR} = \text{SST} - \text{SSE} = r^2\,\text{SST}\).
+
+[CALLOUT]
+id: r-squared-decomp
+label: Identity
+title: Sum-of-squares decomposition and coefficient of determination \(R^2\)
+tone: key
+
+For descriptive simple linear regression (with \(S_{yy} = \text{SST} > 0\)):
+
+(1) Total variation splits orthogonally into explained variation plus residual variation:
+\[
+\text{SST} = \text{SSR} + \text{SSE},
+\]
+where \(\text{SST} = \sum (y_i - \bar{y})^2\), \(\text{SSR} = \sum (\hat{y}_i - \bar{y})^2\), and \(\text{SSE} = \sum (y_i - \hat{y}_i)^2\).
+(2) The coefficient of determination \(R^2\) is the fraction of total \(y\)-variation accounted for by the linear trendline, and in simple linear regression it equals the square of Pearson's correlation:
+\[
+R^2 = \frac{\text{SSR}}{\text{SST}} = 1 - \frac{\text{SSE}}{\text{SST}} = r^2 \in [0, 1].
+\]
+[/CALLOUT]
+
+Check [REF: r-squared-decomp | this identity] on our Section 1 revenue example: \(\text{SST} = \sum (y_i - 14)^2 = 25 + 9 + 4 + 9 + 49 = 96\), \(\text{SSR} = \sum (\hat{y}_i - 14)^2 = 36 + 9 + 0 + 9 + 36 = 90\), and \(\text{SSE} = 6\). Indeed \(90 + 6 = 96\), and \(R^2 = 90 / 96 = 15 / 16 = 0.9375\) (\(93.75\%\) of the variation in weekly revenue is captured by the linear trendline), with \(r = +\sqrt{15/16} \approx +0.9682\). Remember that because \(R^2 = r^2\) erases the sign, you must check the sign of \(b_1\) to recover the sign of \(r\)!
+
+Even a high \(R^2\) (like \(0.92\)) does NOT prove a straight line is the right summary! Always plot the residuals \(e_i\) against \(x_i\) (or \(\hat{y}_i\)) around the horizontal line \(e = 0\). Magnifying the vertical errors exposes four critical pathologies immediately:
+- Patternless horizontal band around \(0\): supports a linear descriptive trend with roughly uniform spread.
+- Systematic curvature (U-shape or downward arch): signals a curved nonlinear trend—fitting a straight line misses the real form (and points toward re-expression in the next lesson).
+- Funnel or fan shape (residuals widening or narrowing across \(x\)): signals non-constant vertical spread.
+- Outliers, high-leverage points, and influential points: a vertical outlier has a large \(|e_i|\) near the middle of \(x\) (inflating \(\text{SSE}\) without much power to tilt the slope); a high-leverage point has an extreme \(x_i\) far from \(\bar{x}\); an influential point substantially shifts \(b_1\) or \(b_0\) when removed (typically combining high leverage with a departure from the rest of the line).
+
+The residual plot below shows what happens when a straight line is fitted to a smoothly curved quadratic trend: even though the raw scatterplot might show a high \(R^2\), the residual plot reveals an unmistakable U-shaped curve across \(e = 0\).
+
+[GRAPH]
+type: function2d
+title: Residual plot exposing systematic curvature when a line is fit to curved data
+xlabel: Explanatory variable x
+ylabel: Residual e
+xrange: 0.5, 5.5
+yrange: -2.0, 2.2
+trace: 0 | label: Zero residual line \(e = 0\) | color: #94a3b8
+trace: 0.6 * (x - 3)^2 - 1.2 | label: Curved residual pattern | color: #ef4444
+point: 1, 1.2 | label: e1 | color: #1d4ed8
+point: 2, -0.6 | label: e2 | color: #1d4ed8
+point: 3, -1.2 | label: e3 | color: #1d4ed8
+point: 4, -0.6 | label: e4 | color: #1d4ed8
+point: 5, 1.2 | label: e5 | color: #1d4ed8
+segment: 1, 0, 1, 1.2 | dashed: true | color: #1d4ed8
+segment: 2, 0, 2, -0.6 | dashed: true | color: #1d4ed8
+segment: 3, 0, 3, -1.2 | dashed: true | color: #1d4ed8
+segment: 4, 0, 4, -0.6 | dashed: true | color: #1d4ed8
+segment: 5, 0, 5, 1.2 | dashed: true | color: #1d4ed8
+[/GRAPH]
+
+Finally, respect two clear boundaries of descriptive OLS:
+1. Never extrapolate blindly: the trendline summarizes linear behavior ONLY across the observed \(x\)-range; outside that range, physical or economic curves often bend sharply, making extrapolated \(\hat{y}\) values unreliable or impossible.
+2. Descriptive versus inferential scope: everything here describes the observed dataset alone. Treating \((b_0, b_1)\) as random estimates of population parameters, building confidence intervals for slopes, and running hypothesis tests belong strictly to Statistical Inference.
+
+[QUESTION 3]
+[ANSWER: C]
+A descriptive OLS trendline fitted to \(n = 30\) vehicles relates highway fuel economy \(y\) (in mpg) to vehicle weight \(x\) (in pounds). The fitted slope is negative (\(b_1 < 0\)), total sum of squares is \(\text{SST} = 800\), and residual sum of squares is \(\text{SSE} = 288\). What are \(R^2\) and Pearson's \(r\)?
+
+(A) \(R^2 = 0.36\) and \(r = -0.60\)
+(B) \(R^2 = 0.64\) and \(r = +0.80\)
+(C) \(R^2 = 0.64\) and \(r = -0.80\)
+(D) \(R^2 = 0.80\) and \(r = -0.80\)
+(E) \(R^2 = 0.64\) and \(r = -0.64\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+An engineer fits a descriptive OLS line relating battery cycle life \(y\) to ambient temperature \(x\) over observed data spanning \(x \in [15^\circ\text{C}, 45^\circ\text{C}]\). The fit achieves \(R^2 = 0.91\), but the residual plot exhibits a pronounced downward-opening arch (negative residuals near \(15^\circ\text{C}\) and \(45^\circ\text{C}\), positive residuals near \(30^\circ\text{C}\)). The engineer announces: "Because \(R^2 = 0.91\) is high, the relationship is linear, and we can safely plug in \(x = 85^\circ\text{C}\) to predict battery life." Which critique identifies BOTH flaws?
+
+(A) High \(R^2\) does not establish linearity when the residual plot shows systematic curvature, and predicting at \(85^\circ\text{C}\) is unsafe extrapolation far outside the observed range \([15^\circ\text{C}, 45^\circ\text{C}]\).
+(B) \(R^2 = 0.91\) is invalid because residuals must all be positive for a linear fit.
+(C) Only the extrapolation to \(85^\circ\text{C}\) is flawed; an arch in the residual plot is normal whenever \(R^2 > 0.90\).
+(D) Only the linearity claim is flawed; once a curve is fitted, extrapolation to \(85^\circ\text{C}\) is automatically reliable.
+(E) The OLS line should have been fit without an intercept so that \(\sum e_i > 0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+An OLS trendline \(\hat{y} = b_0 + b_1 x\) is fitted to \(n = 4\) observations located at \(x_1 = 1, x_2 = 2, x_3 = 4, x_4 = 5\). The first two residuals are \(e_1 = +2\) and \(e_2 = -3\). Using the exact OLS residual orthogonality conditions, what MUST \(e_3\) and \(e_4\) equal?
+
+(A) \(e_3 = +2\) and \(e_4 = -1\)
+(B) \(e_3 = 0\) and \(e_4 = +1\)
+(C) \(e_3 = -1\) and \(e_4 = +2\)
+(D) \(e_3 = +3\) and \(e_4 = -2\)
+(E) \(e_3 = +1\) and \(e_4 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+On a single dataset with \(s_x > 0\) and \(s_y > 0\), the OLS regression of \(y\) on \(x\) has slope \(b_{y|x} = +1.6\), and the OLS regression of \(x\) on \(y\) has slope \(b_{x|y} = +0.4\). What is Pearson's correlation coefficient \(r\) for this dataset?
+
+(A) \(+0.64\)
+(B) \(+0.80\)
+(C) \(+1.00\)
+(D) \(-0.80\)
+(E) Cannot be determined without knowing \(s_x\) and \(s_y\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+A point cloud spans \(x \in [0, 10]\) with centroid \((\bar{x}, \bar{y}) = (5, 7)\) and OLS trendline \(\hat{y} = 2 + x\). Compare adding ONE extra point in two separate scenarios: Point P at \((5, 22)\) (directly above \(\bar{x} = 5\) with vertical residual \(+15\)) versus Point Q at \((25, 2)\) (far outside the observed \(x\)-range and far below the line). How do P and Q differ in their effect on the OLS slope \(b_1\)?
+
+(A) Both P and Q leave the slope \(b_1\) completely unchanged.
+(B) Point P tilts the slope sharply upward while Point Q leaves the slope unchanged.
+(C) Both P and Q rotate the slope sharply upward.
+(D) Point P sits at \(x = \bar{x}\) and has zero horizontal leverage, so it leaves the slope \(b_1 = 1\) unchanged (shifting only the intercept upward and increasing \(\text{SSE}\)), whereas Point Q combines extreme horizontal leverage with a large negative residual and strongly tilts the slope \(b_1\) downward.
+(E) Point Q increases \(R^2\) to \(1\) while Point P lowers \(R^2\) to \(0\).
+[/BONUS]

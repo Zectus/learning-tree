@@ -1,0 +1,240 @@
+=== SECTION 1: Tablas de contingencia bidimensionales y proporciones conjuntas, marginales y condicionales ===
+
+Cuando cada unidad de observación en un conjunto de datos registra dos variables categóricas —como el modo de transporte de un viajero y si llegó a tiempo, o el protocolo de tratamiento de un paciente y su desenlace de recuperación—, las medias y las desviaciones estándar no se aplican. En su lugar, organizamos todos los conteos en una tabla de contingencia bidimensional (también llamada tabulación cruzada o tabla de doble entrada) con \(r\) filas para las categorías de una variable y \(c\) columnas para las categorías de la otra.
+
+Supongamos que una plataforma de cursos en línea hace seguimiento a \(n = 400\) estudiantes inscritos según dos variables categóricas: Modalidad de estudio (Autoguiado frente a Cohorte) y Estado de finalización (Completó frente a Abandonó). Los conteos brutos forman una tabla de contingencia \(2 \times 2\) con totales de fila y totales de columna escritos en los márgenes:
+
+[TABLE]
+Modalidad de estudio | Completó | Abandonó | Total de fila
+Autoguiado | 120 | 180 | 300
+Cohorte | 70 | 30 | 100
+Total de columna | 190 | 210 | 400
+[/TABLE]
+
+Los conteos brutos por sí solos pueden inducir a error cuando los tamaños de grupo difieren: \(120\) estudiantes en Autoguiado completaron el curso frente a \(70\) en Cohorte, pero Autoguiado tuvo tres veces más inscritos (\(300\) frente a \(100\)). Convertir conteos en proporciones exige decidir QUÉ total va en el denominador. Tres familias distintas de proporciones responden tres preguntas muy diferentes.
+
+[CALLOUT]
+id: contingency-proportions
+label: Definición
+title: Frecuencias relativas conjuntas, marginales y condicionales
+tone: key
+
+En una tabla de contingencia \(r \times c\) de \(n\) observaciones, sea \(n_{ij}\) el conteo en la fila \(i\) y columna \(j\), \(R_i = \sum_{j=1}^c n_{ij}\) el total de la fila \(i\), y \(C_j = \sum_{i=1}^r n_{ij}\) el total de la columna \(j\) (de modo que \(\sum_i R_i = \sum_j C_j = n\)).
+
+(1) Frecuencia relativa conjunta: \(p_{ij} = \dfrac{n_{ij}}{n}\) es la proporción de TODO el conjunto de datos que cae simultáneamente en la fila \(i\) y la columna \(j\). Todas las \(r c\) proporciones conjuntas suman \(1\).
+(2) Distribuciones marginales: las proporciones marginales de fila \(p_{i\bullet} = \dfrac{R_i}{n}\) resumen únicamente la variable de las filas (sumando \(1\) entre filas), y las proporciones marginales de columna \(p_{\bullet j} = \dfrac{C_j}{n}\) resumen únicamente la variable de las columnas (sumando \(1\) entre columnas).
+(3) Distribuciones condicionales: condicionar en la fila \(i\) divide cada celda de la fila \(i\) entre su total de fila \(R_i\), dando la proporción condicional empírica \(P(\text{Col } j \mid \text{Fila } i) = \dfrac{n_{ij}}{R_i}\) (cada fila suma \(1\)). Condicionar en la columna \(j\) divide cada celda de la columna \(j\) entre su total de columna \(C_j\), dando \(P(\text{Fila } i \mid \text{Col } j) = \dfrac{n_{ij}}{C_j}\) (cada columna suma \(1\)).
+[/CALLOUT]
+
+¡Nunca confunda \(P(A \mid B)\) con \(P(B \mid A)\)! En nuestra tabla de cursos, examine con cuidado la única celda «Cohorte y Completó» (\(n_{21} = 70\)):
+- Proporción conjunta: \(70 / 400 = 0.175\) (el \(17.5\%\) de TODOS los estudiantes fueron alumnos de Cohorte que completaron).
+- Proporción condicionada por fila \(P(\text{Completó} \mid \text{Cohorte}) = 70 / 100 = 0.70\) (el \(70\%\) de los estudiantes de Cohorte completaron el curso).
+- Proporción condicionada por columna \(P(\text{Cohorte} \mid \text{Completó}) = 70 / 190 \approx 0.368\) (el \(36.8\%\) de todos los que completaron provenían de la modalidad Cohorte).
+
+Observe cómo cambiar el evento condicionante cambia el denominador de \(100\) a \(190\) e invierte el porcentaje de \(70\%\) a \(36.8\%\). Identifique SIEMPRE primero al grupo condicionante («de los estudiantes de Cohorte...» frente a «de quienes completaron...») y coloque el total de ESE grupo en el denominador.
+
+[QUESTION 1]
+[ANSWER: D]
+Una agencia de transporte registra \(n = 200\) viajes matutinos según modo y puntualidad de llegada: en Tren hubo \(96\) viajes puntuales y \(24\) tarde (total \(120\)); en Autobús hubo \(54\) viajes puntuales y \(26\) tarde (total \(80\)), lo que da \(150\) viajes puntuales y \(50\) tarde en total. ¿Cuáles son las proporciones condicionales \(P(\text{Autobús} \mid \text{Tarde})\) y \(P(\text{Tarde} \mid \text{Autobús})\), respectivamente?
+
+(A) \(0.325\) y \(0.520\)
+(B) \(0.130\) y \(0.325\)
+(C) \(0.520\) y \(0.130\)
+(D) \(0.520\) y \(0.325\)
+(E) \(0.400\) y \(0.250\)
+[/QUESTION]
+
+=== SECTION 2: Visualización de la asociación categórica, independencia y resúmenes 2x2 ===
+
+Para comprobar si dos variables categóricas están asociadas en nuestro conjunto de datos, compare las distribuciones condicionales entre los grupos de la variable explicativa. En la tabla de cursos anterior, calcular la distribución de finalización condicionada por fila para cada Modalidad de estudio da:
+- Autoguiado (\(R_1 = 300\)): \(120 / 300 = 40\%\) Completó, \(180 / 300 = 60\%\) Abandonó.
+- Cohorte (\(R_2 = 100\)): \(70 / 100 = 70\%\) Completó, \(30 / 100 = 30\%\) Abandonó.
+
+Un gráfico de barras apiladas al \(100\%\) (o un gráfico de barras agrupadas con porcentajes condicionales) muestra directamente estas distribuciones condicionales: cada grupo condicionante recibe una barra completa de altura \(100\%\), dividida en sus porcentajes de resultado. Si ambas barras tienen particiones idénticas, las variables no están asociadas; cuando las particiones difieren visiblemente —\(40\%\) frente a \(70\%\) de finalización—, existe una clara asociación descriptiva.
+
+[GRAPH]
+type: function2d
+title: Gráfico de barras apiladas al 100% del estado de finalización condicionado a la modalidad de estudio
+xlabel: Modalidad de estudio (1 = Autoguiado, 2 = Cohorte)
+ylabel: Porcentaje condicional
+xrange: 0.3, 2.7
+yrange: 0, 112
+trace: 100 | label: Línea de referencia del 100% | color: #94a3b8
+fill: 40, 0 | range: 0.72, 1.28 | label: Completó | color: #3b82f6 | opacity: 0.65
+fill: 100, 40 | range: 0.72, 1.28 | label: Abandonó | color: #ef4444 | opacity: 0.45
+fill: 70, 0 | range: 1.72, 2.28 | color: #3b82f6 | opacity: 0.65
+fill: 100, 70 | range: 1.72, 2.28 | color: #ef4444 | opacity: 0.45
+point: 1.0, 20 | label: 40% | color: #1d4ed8
+point: 1.0, 70 | label: 60% | color: #b91c1c
+point: 2.0, 35 | label: 70% | color: #1d4ed8
+point: 2.0, 85 | label: 30% | color: #b91c1c
+[/GRAPH]
+
+Esta comparación define con precisión la independencia descriptiva y la asociación descriptiva.
+
+[CALLOUT]
+id: descriptive-independence
+label: Definición
+title: Independencia descriptiva frente a asociación
+tone: key
+
+Dos variables categóricas en una tabla de contingencia son descriptivamente independientes si la distribución condicional de una variable es IDÉNTICA en todas las categorías de la otra variable:
+\[
+\frac{n_{ij}}{R_i} = \frac{C_j}{n} \quad \text{para toda fila } i \text{ y columna } j.
+\]
+Equivalentemente, toda frecuencia relativa conjunta iguala al producto de sus proporciones marginales de fila y columna, \(p_{ij} = p_{i\bullet}\, p_{\bullet j}\), y todo conteo de celda coincide con \(n_{ij} = R_i C_j / n\). Siempre que las distribuciones condicionales difieran entre grupos, las dos variables exhiben asociación descriptiva en el conjunto de datos observado.
+[/CALLOUT]
+
+Note una frontera clave de alcance: en estadística descriptiva, [REF: descriptive-independence | la independencia descriptiva] comprueba si los porcentajes condicionales de la tabla observada coinciden exactamente. Las muestras finitas reales rara vez coinciden hasta el último decimal incluso cuando dos variables no están relacionadas en una población mayor; los axiomas formales de probabilidad y las pruebas de hipótesis ji-cuadrado para decidir si una asociación observada supera el ruido aleatorio del muestreo pertenecen a Probabilidad e Inferencia Estadística.
+
+Cuando ambas variables son binarias (una tabla \(2 \times 2\)), dos resúmenes numéricos estándar cuantifican la intensidad y dirección de una asociación descriptiva entre el Grupo 1 (con proporción de resultado \(p_1\)) y el Grupo 2 (con proporción de resultado \(p_2 > 0\)):
+- Diferencia de proporciones (también llamada diferencia de riesgos):
+\[
+\Delta p = p_1 - p_2.
+\]
+Mide la brecha absoluta en puntos porcentuales. Para nuestras modalidades de curso, \(\Delta p = 0.70 - 0.40 = +0.30\) (la finalización en Cohorte es \(30\) puntos porcentuales mayor que en Autoguiado).
+- Riesgo relativo descriptivo (razón de proporciones):
+\[
+\text{RR} = \frac{p_1}{p_2}.
+\]
+Mide la razón multiplicativa de tasas. Para nuestras modalidades de curso, \(\text{RR} = 0.70 / 0.40 = 1.75\) (los estudiantes de Cohorte completaron a una tasa \(1.75\) veces mayor que los de Autoguiado). Bajo [REF: descriptive-independence | independencia descriptiva], \(p_1 = p_2\), por lo que \(\Delta p = 0\) y \(\text{RR} = 1\).
+
+Reporte SIEMPRE tanto \(\Delta p\) como \(\text{RR}\) (o las dos proporciones base \(p_1\) y \(p_2\)) en conjunto. Decir «el riesgo se duplicó» (\(\text{RR} = 2.0\)) suena dramático ya sea que una tasa suba de \(0.1\%\) a \(0.2\%\) (\(\Delta p = 0.001\)) o de \(25\%\) a \(50\%\) (\(\Delta p = 0.25\)), pero el impacto práctico difiere por un factor de \(250\).
+
+[QUESTION 2]
+[ANSWER: B]
+Una encuesta a \(n = 300\) lectores los clasifica por grupo de edad (\(120\) menores de 30 años; \(180\) de 30 años o más) y formato de libro preferido (Impreso, Audio, Libro electrónico). Entre los \(120\) lectores menores de 30 años, \(36\) prefieren Impreso, \(24\) prefieren Audio y \(60\) prefieren Libro electrónico. Si el grupo de edad y el formato preferido son descriptivamente independientes en esta tabla, ¿cuántos lectores de 30 años o más deben preferir Impreso?
+
+(A) \(36\)
+(B) \(54\)
+(C) \(60\)
+(D) \(90\)
+(E) \(45\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+En una auditoría observacional de \(n = 500\) turnos de almacén, los turnos Nocturnos registraron \(27\) incidentes de seguridad de \(150\) turnos, mientras que los turnos Diurnos registraron \(21\) incidentes de \(350\) turnos. ¿Cuáles son la diferencia de proporciones (Nocturno menos Diurno) y el riesgo relativo descriptivo (Nocturno relativo a Diurno), respectivamente?
+
+(A) \(0.12\) y \(1.29\)
+(B) \(0.06\) y \(3.00\)
+(C) \(0.12\) y \(2.00\)
+(D) \(0.24\) y \(3.00\)
+(E) \(0.12\) y \(3.00\)
+[/QUESTION]
+
+=== SECTION 3: Variables de confusión y la paradoja de Simpson ===
+
+Supongamos que un hospital compara dos protocolos quirúrgicos —Protocolo A y Protocolo B— en \(n = 1{,}000\) pacientes (\(500\) tratados con cada protocolo) y publica la siguiente tabla combinada \(2 \times 2\):
+
+[TABLE]
+Tabla combinada (todos los pacientes) | Se recuperó | No se recuperó | Total | Tasa de recuperación
+Protocolo A | 330 | 170 | 500 | 66.0%
+Protocolo B | 390 | 110 | 500 | 78.0%
+[/TABLE]
+
+A primera vista, el Protocolo B parece muy superior: \(78\%\) de recuperación frente a \(66\%\), una ventaja de \(12\) puntos porcentuales. Ahora supongamos que un clínico estratifica exactamente a los mismos \(1{,}000\) pacientes según la gravedad inicial del caso (Leve frente a Grave), dividiendo la única tabla en dos subtablas estratificadas:
+
+[TABLE]
+Estrato y Protocolo | Se recuperó | No se recuperó | Total | Tasa de recuperación
+Leve: Protocolo A | 90 | 10 | 100 | 90.0%
+Leve: Protocolo B | 340 | 60 | 400 | 85.0%
+Grave: Protocolo A | 240 | 160 | 400 | 60.0%
+Grave: Protocolo B | 50 | 50 | 100 | 50.0%
+[/TABLE]
+
+Compruebe primero los totales: para el Protocolo A, \(90 + 240 = 330\) recuperados de \(100 + 400 = 500\) (\(66.0\%\)); para el Protocolo B, \(340 + 50 = 390\) recuperados de \(400 + 100 = 500\) (\(78.0\%\)). ¡No se agregó, eliminó ni contó mal ni un solo paciente! Sin embargo, mire la comparación dentro de CADA estrato:
+- Entre los pacientes Leves, GANA el Protocolo A: \(90.0\% > 85.0\%\).
+- Entre los pacientes Graves, VUELVE A GANAR el Protocolo A: \(60.0\% > 50.0\%\).
+- ¡Pero en la tabla combinada, el Protocolo B parece ganar: \(78.0\% > 66.0\%\)!
+
+¿Cómo puede un protocolo rendir MEJOR en casos Leves Y MEJOR en casos Graves, y aun así lucir PEOR en conjunto? La matemática es simplemente un promedio ponderado de tasas por subgrupo. Sea \(w\) la fracción de los pacientes de un protocolo que son Graves (de modo que \(1 - w\) son Leves):
+\[
+\text{Tasa combinada}_A = (1 - w_A)(90\%) + w_A(60\%) = 90\% - 30\%\,w_A,
+\]
+\[
+\text{Tasa combinada}_B = (1 - w_B)(85\%) + w_B(50\%) = 85\% - 35\%\,w_B.
+\]
+Como los médicos asignaron \(w_A = 400/500 = 80\%\) de los pacientes del Protocolo A desde el grupo Grave de alto riesgo (dando \(90\% - 30\%(0.80) = 66\%\)), mientras asignaron solo \(w_B = 100/500 = 20\%\) de los pacientes del Protocolo B desde el grupo Grave (dando \(85\% - 35\%(0.20) = 78\%\)), ¡las tasas combinadas comparan la carga de casos mayormente Grave de A contra la carga mayormente Leve de B!
+
+El gráfico siguiente traza ambas rectas de recuperación combinada como funciones de la proporción de casos Graves \(w\). La recta del Protocolo A se sitúa estrictamente POR ENCIMA de la recta del Protocolo B en todo valor de \(w \in [0, 1]\), pero evaluar A en \(w = 0.80\) y B en \(w = 0.20\) sitúa el punto combinado de B verticalmente más alto que el de A.
+
+[GRAPH]
+type: function2d
+title: Cómo los pesos desequilibrados entre subgrupos crean la paradoja de Simpson
+xlabel: Proporción de casos graves
+ylabel: Tasa combinada de recuperación (%)
+xrange: 0, 1
+yrange: 45, 95
+trace: 90 - 30*x | label: Protocolo A: \(90 - 30w\) | color: #3b82f6
+trace: 85 - 35*x | label: Protocolo B: \(85 - 35w\) | color: #ef4444
+point: 0.80, 66 | label: A combinado (66%) | color: #1d4ed8
+point: 0.20, 78 | label: B combinado (78%) | color: #b91c1c
+segment: 0.80, 66, 0.20, 78 | dashed: true | color: #64748b
+[/GRAPH]
+
+[CALLOUT]
+id: simpsons-paradox
+label: Principio
+title: Paradoja de Simpson y confusión
+tone: caution
+
+La paradoja de Simpson ocurre cuando la dirección de una asociación entre dos variables categóricas se invierte (o desaparece) tras agregar los datos a través de los estratos de una tercera variable. Dos condiciones juntas producen la inversión:
+
+(1) La tercera variable (una variable oculta o de confusión) está fuertemente asociada con el desenlace (aquí, los pacientes Leves se recuperan a tasas mucho más altas que los Graves).
+(2) Los pesos de los subgrupos están fuertemente desequilibrados entre los dos grupos comparados (aquí, el Protocolo A recibió \(80\%\) de casos Graves mientras el Protocolo B recibió solo \(20\%\) de casos Graves).
+
+Revise siempre posibles variables de confusión mediante tablas estratificadas antes de extraer conclusiones de una tabla de contingencia combinada.
+[/CALLOUT]
+
+¿Qué tabla —la combinada o la estratificada— debe guiar a un clínico que elige un protocolo para un paciente nuevo? Como la gravedad del caso se conoce antes del tratamiento y determina tanto el patrón de asignación del hospital como las probabilidades de recuperación, la tabla estratificada ofrece la comparación honesta: sea el caso de un nuevo paciente Leve o Grave, el Protocolo A tiene la mayor tasa de recuperación observada.
+
+[QUESTION 4]
+[ANSWER: C]
+Una universidad audita las admisiones en dos departamentos para el Grupo de Postulantes X y el Grupo de Postulantes Y:
+- En el Departamento 1, el Grupo X tuvo \(40/50\) (\(80\%\)) admitidos y el Grupo Y tuvo \(140/200\) (\(70\%\)) admitidos.
+- En el Departamento 2, el Grupo X tuvo \(60/200\) (\(30\%\)) admitidos y el Grupo Y tuvo \(10/50\) (\(20\%\)) admitidos.
+Cuando ambos departamentos se combinan, el Grupo X tiene \(100/250\) (\(40\%\)) admitidos mientras el Grupo Y tiene \(150/250\) (\(60\%\)) admitidos. ¿Qué conclusión está respaldada por estas tablas?
+
+(A) Debe haber un error aritmético en los conteos, porque un grupo no puede tener una tasa mayor en cada departamento y una tasa combinada menor.
+(B) El Grupo Y fue admitido a una tasa más alta en ambos departamentos, lo que explica su mayor tasa combinada.
+(C) El Grupo X tiene una tasa de admisión más alta dentro de cada departamento, y su menor tasa combinada es una inversión de la paradoja de Simpson causada por que el Grupo X postuló desproporcionadamente al Departamento 2, mucho más selectivo.
+(D) La elección de departamento y el resultado de admisión son descriptivamente independientes.
+(E) Tomar el promedio no ponderado de \(80\%\) y \(30\%\) da la verdadera tasa de admisión combinada del Grupo X de \(55\%\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Una tabla de contingencia \(2 \times 2\) tiene en la Fila 1 los conteos \((12,\; 18)\) y en la Fila 2 los conteos \((20,\; x)\). ¿Qué valor de \(x\) hace que la variable de fila y la variable de columna sean descriptivamente independientes?
+
+(A) \(30\)
+(B) \(26\)
+(C) \(15\)
+(D) \(40\)
+(E) \(18\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Se evalúan dos campañas preventivas distintas en tablas observacionales \(2 \times 2\):
+- La Campaña 1 compara una tasa de eventos de \(0.002\) frente a \(0.004\) en el grupo de comparación.
+- La Campaña 2 compara una tasa de eventos de \(0.200\) frente a \(0.400\) en el grupo de comparación.
+¿Por qué es potencialmente engañoso reportar únicamente el riesgo relativo descriptivo (\(\text{RR} = 0.50\) para ambas campañas)?
+
+(A) Porque el riesgo relativo está indefinido cuando las proporciones son menores que \(0.01\).
+(B) Porque la Campaña 1 tiene una diferencia de proporciones mayor que la Campaña 2.
+(C) Porque el riesgo relativo es igual a \(0.50\) solo cuando las variables son descriptivamente independientes.
+(D) Porque riesgos relativos idénticos ocultan diferencias absolutas de proporciones enormemente distintas (\(-0.002\) frente a \(-0.200\), una diferencia de \(100\) veces en eventos prevenidos por unidad), por lo que el riesgo relativo debe acompañarse de tasas base o diferencias de proporciones.
+(E) Porque el riesgo relativo invierte su signo cuando se intercambian filas y columnas.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+En un estudio estratificado, el Método A supera al Método B en ambos estratos: en el Estrato 1, A tiene éxito el \(80\%\) de las veces frente al \(70\%\) de B; en el Estrato 2, A tiene éxito el \(40\%\) de las veces frente al \(30\%\) de B. Suponga que el \(90\%\) de los casos del Método B provienen del Estrato 1 (y \(10\%\) del Estrato 2). ¿Qué fracción \(w\) de los casos del Método A debe provenir del Estrato 2 para que la tasa combinada de éxito del Método A caiga ESTRICTAMENTE POR DEBAJO de la tasa combinada de éxito del Método B?
+
+(A) \(w > 0.25\)
+(B) \(w > 0.35\)
+(C) \(w > 0.50\)
+(D) \(w > 0.15\)
+(E) \(w > 0.65\)
+[/BONUS]

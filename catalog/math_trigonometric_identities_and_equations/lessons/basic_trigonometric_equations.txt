@@ -1,0 +1,194 @@
+=== SECTION 1: Existence criteria and why one inverse value is never enough ===
+
+To solve a trigonometric equation such as \(\sin x = c\), \(\cos x = c\), or \(\tan x = c\), we seek ALL real angles \(x\) (or all angles in a specified interval such as \([0, 2\pi)\)) that make the equation true.
+
+Before doing any calculation, check whether ANY solution exists at all! Because \(\sin x\) and \(\cos x\) always lie in \([-1, 1]\), while \(\csc x\) and \(\sec x\) always satisfy \(|\csc x| \ge 1\) and \(|\sec x| \ge 1\):
+- \(\sin x = c\) and \(\cos x = c\) have solutions if and only if \(|c| \le 1\) (i.e., \(-1 \le c \le 1\)). For example, \(\cos x = 1.4\) and \(\sin x = -2\) immediately have NO real solutions (solution set \(\emptyset\)).
+- \(\csc x = c\) and \(\sec x = c\) have solutions if and only if \(|c| \ge 1\). Always convert them immediately to \(\sin x = \frac{1}{c}\) or \(\cos x = \frac{1}{c}\). For instance, \(\sec x = 0.5\) has no real solutions because \(\cos x = 2\) is impossible.
+- \(\tan x = c\) and \(\cot x = c\) have solutions for EVERY real number \(c \in \mathbb{R}\). For \(\cot x = c\), rewrite as \(\tan x = \frac{1}{c}\) when \(c \neq 0\); when \(c = 0\), remember directly that \(\cot x = 0 \iff \cos x = 0\), which occurs at \(x = \frac{\pi}{2} + k\pi\) (\(k \in \mathbb{Z}\)).
+
+When a solution DOES exist, inverse trigonometric functions give you a crucial starting point—one principal angle \(\theta_0\)—but they NEVER give you the full solution set by themselves! Look at \(\sin x = 0.4\) on the unit circle. A calculator returns \(\theta_0 = \arcsin(0.4) \approx 0.4115\) radians in Quadrant I. Yet the horizontal line \(y = 0.4\) cuts the unit circle at TWO points: one at \(\theta_0\) in Quadrant I and a symmetric point across the \(y\)-axis at \(\pi - \theta_0 \approx 2.7301\) radians in Quadrant II! And adding any integer multiple of \(2\pi\) lands on those exact same two unit-circle points infinitely many times.
+
+[GRAPH]
+type: parametric2d
+title: Unit-circle solutions to \(\sin x = 0.4\) at \(\theta_0 = \arcsin(0.4)\) and \(\pi - \theta_0\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -1.35, 1.35
+yrange: -1.35, 1.35
+trace: cos(t), sin(t) | label: unit circle
+segment: -1.25, 0.4, 1.25, 0.4 | label: \(y = 0.4\) | dashed: true
+segment: 0, 0, cos(asin(0.4)), 0.4
+segment: 0, 0, -cos(asin(0.4)), 0.4
+point: cos(asin(0.4)), 0.4 | label: \(\theta_0\)
+point: -cos(asin(0.4)), 0.4 | label: \(\pi - \theta_0\)
+[/GRAPH]
+
+Reporting only \(\theta_0 = \arcsin(c)\) or \(\theta_0 = \arccos(c)\) misses HALF of all solutions on every period. Learning the exact symmetry partner for each function eliminates that error permanently.
+
+=== SECTION 2: General solution families for sine, cosine, and tangent ===
+
+Each of the three primary functions has its own unit-circle symmetry and fundamental period, producing a clean blueprint that turns one principal angle \(\theta_0\) into every solution on \(\mathbb{R}\) (and every solution in \([0, 2\pi)\)).
+
+1. Sine equation \(\sin x = c\) (\(|c| \le 1\)):
+Let \(\theta_0 = \arcsin(c) \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\). Because \(\sin(\pi - \theta) = \sin\theta\), the two unit-circle angles sharing the same \(y\)-coordinate \(c\) are \(\theta_0\) and \(\pi - \theta_0\). Adding integer multiples of the period \(2\pi\) gives every real solution:
+\[
+x = \theta_0 + 2\pi k \qquad \text{or} \qquad x = (\pi - \theta_0) + 2\pi k \qquad (k \in \mathbb{Z}).
+\]
+(Note: at the extremes \(c = 1\) or \(c = -1\), \(\theta_0\) and \(\pi - \theta_0\) coincide modulo \(2\pi\), collapsing to a single family \(\frac{\pi}{2} + 2\pi k\) or \(-\frac{\pi}{2} + 2\pi k\).)
+Watch negative \(c\) when listing solutions in \([0, 2\pi)\): if \(c = -\frac{1}{2}\), then \(\theta_0 = -\frac{\pi}{6} \notin [0, 2\pi)\). Add \(2\pi\) to shift it into \([0, 2\pi)\): \(\theta_0 + 2\pi = \frac{11\pi}{6}\), while the partner \(\pi - \left(-\frac{\pi}{6}\right) = \frac{7\pi}{6}\) is already in \([0, 2\pi)\). So on \([0, 2\pi)\), \(\sin x = -\frac{1}{2}\) has the two solutions \(\frac{7\pi}{6}\) and \(\frac{11\pi}{6}\).
+
+2. Cosine equation \(\cos x = c\) (\(|c| \le 1\)):
+Let \(\theta_0 = \arccos(c) \in [0, \pi]\). Because cosine is even (\(\cos(-\theta) = \cos\theta\)), the two unit-circle angles sharing the same \(x\)-coordinate \(c\) are \(\theta_0\) and \(-\theta_0\) (equivalently \(2\pi - \theta_0\) inside \([0, 2\pi)\)). Thus the general solution on \(\mathbb{R}\) is
+\[
+x = \theta_0 + 2\pi k \qquad \text{or} \qquad x = -\theta_0 + 2\pi k \qquad (k \in \mathbb{Z}),
+\]
+often written compactly as \(x = \pm\theta_0 + 2\pi k\). On \([0, 2\pi)\), the two solutions (for \(|c| < 1\)) are \(\theta_0\) and \(2\pi - \theta_0\). (At \(c = 1\) the single solution in \([0, 2\pi)\) is \(0\); at \(c = -1\) it is \(\pi\).)
+
+3. Tangent equation \(\tan x = c\) (\(c \in \mathbb{R}\)):
+Let \(\theta_0 = \arctan(c) \in \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\). Because \(\tan x\) has period \(\pi\)—its values repeat every HALF-turn across the origin—ALL real solutions sit in ONE single family:
+\[
+x = \theta_0 + \pi k \qquad (k \in \mathbb{Z}).
+\]
+On \([0, 2\pi)\), this yields two solutions separated by \(\pi\): if \(c \ge 0\), they are \(\theta_0\) and \(\theta_0 + \pi\); if \(c < 0\), \(\theta_0\) is negative, so shifting by \(\pi\) and \(2\pi\) gives \(\theta_0 + \pi\) (Quadrant II) and \(\theta_0 + 2\pi\) (Quadrant IV).
+
+[CALLOUT]
+id: general-solutions
+label: Theorem
+title: Complete solution families for basic trigonometric equations (\(k \in \mathbb{Z}\))
+tone: key
+
+(1) \(\sin x = c\) (\(|c| \le 1\)), \(\theta_0 = \arcsin c\): \(x = \theta_0 + 2\pi k\) or \(x = (\pi - \theta_0) + 2\pi k\).
+(2) \(\cos x = c\) (\(|c| \le 1\)), \(\theta_0 = \arccos c\): \(x = \theta_0 + 2\pi k\) or \(x = -\theta_0 + 2\pi k\) (equivalently \(2\pi - \theta_0 + 2\pi k\)).
+(3) \(\tan x = c\) (\(c \in \mathbb{R}\)), \(\theta_0 = \arctan c\): \(x = \theta_0 + \pi k\).
+[/CALLOUT]
+
+Look at the wave picture for \(\cos x = -\frac{\sqrt{3}}{2}\) across \([-2\pi, 2\pi]\): the horizontal line \(y = -\frac{\sqrt{3}}{2}\) crosses \(y = \cos x\) twice in EVERY period of length \(2\pi\). Here \(\theta_0 = \arccos\!\left(-\frac{\sqrt{3}}{2}\right) = \frac{5\pi}{6}\), so the general solutions are \(x = \pm\frac{5\pi}{6} + 2\pi k\). On \([0, 2\pi)\), that gives \(x = \frac{5\pi}{6}\) and \(x = 2\pi - \frac{5\pi}{6} = \frac{7\pi}{6}\); on \([-2\pi, 0)\), shifting left by \(2\pi\) gives \(-\frac{7\pi}{6}\) and \(-\frac{5\pi}{6}\).
+
+[GRAPH]
+type: function2d
+title: Solutions of \(\cos x = -\sqrt{3}/2\) on \([-2\pi, 2\pi]\): two families \(\pm 5\pi/6 + 2\pi k\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -6.2832, 6.2832
+yrange: -1.3, 1.3
+trace: cos(x) | label: \(y = \cos x\)
+trace: -sqrt(3)/2 | label: \(y = -\sqrt{3}/2\)
+point: -3.6652, -0.8660 | label: \(-7\pi/6\)
+point: -2.6180, -0.8660 | label: \(-5\pi/6\)
+point: 2.6180, -0.8660 | label: \(5\pi/6\)
+point: 3.6652, -0.8660 | label: \(7\pi/6\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: D]
+Find all solutions to \(\sin x = -\dfrac{\sqrt{3}}{2}\) in the interval \([0, 2\pi)\).
+
+(A) \(-\frac{\pi}{3}\) only
+(B) \(\frac{\pi}{3}, \frac{2\pi}{3}\)
+(C) \(\frac{4\pi}{3}\) only
+(D) \(\frac{4\pi}{3}, \frac{5\pi}{3}\)
+(E) \(\frac{7\pi}{6}, \frac{11\pi}{6}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+Which expression gives the COMPLETE set of real solutions to \(\tan x = -\sqrt{3}\) (\(k \in \mathbb{Z}\))?
+
+(A) \(x = -\frac{\pi}{3} + 2\pi k\)
+(B) \(x = \frac{2\pi}{3} + \pi k\)
+(C) \(x = \pm\frac{\pi}{3} + 2\pi k\)
+(D) \(x = \frac{5\pi}{6} + \pi k\)
+(E) \(x = -\frac{\pi}{3} + 2\pi k\) or \(x = \frac{4\pi}{3} + 2\pi k\)
+[/QUESTION]
+
+=== SECTION 3: Reciprocal equations and non-special inverse-trig solutions ===
+
+Many basic equations require one quick isolation step or reciprocal conversion before applying [REF: general-solutions | the general-solution formulas].
+
+Example 1 (Reciprocal function): Solve \(\sec x + \sqrt{2} = 0\) on \(\mathbb{R}\) and on \([0, 2\pi)\).
+Isolate \(\sec x\): \(\sec x = -\sqrt{2}\). Since \(|-\sqrt{2}| \ge 1\), solutions exist. Take reciprocals:
+\[
+\cos x = -\frac{1}{\sqrt{2}} = -\frac{\sqrt{2}}{2}.
+\]
+The principal angle is \(\theta_0 = \arccos\!\left(-\frac{\sqrt{2}}{2}\right) = \frac{3\pi}{4}\). By [REF: general-solutions.2 | the cosine general solution],
+\[
+x = \frac{3\pi}{4} + 2\pi k \qquad \text{or} \qquad x = -\frac{3\pi}{4} + 2\pi k \qquad (k \in \mathbb{Z}).
+\]
+On \([0, 2\pi)\), the two solutions are \(x = \frac{3\pi}{4}\) and \(x = 2\pi - \frac{3\pi}{4} = \frac{5\pi}{4}\).
+
+Example 2 (Non-special exact and numeric solutions): Solve \(5\sin x - 2 = 0\) on \(\mathbb{R}\) and on \([0, 2\pi)\).
+Isolate \(\sin x\): \(\sin x = \frac{2}{5} = 0.4\). Since \(|0.4| \le 1\), solutions exist, even though \(0.4\) is not a special unit-circle ratio. Leave the principal angle in exact inverse-trig form: \(\theta_0 = \arcsin(0.4)\). By [REF: general-solutions.1 | the sine general solution], the exact solutions on \(\mathbb{R}\) are
+\[
+x = \arcsin(0.4) + 2\pi k \qquad \text{or} \qquad x = \pi - \arcsin(0.4) + 2\pi k \qquad (k \in \mathbb{Z}).
+\]
+On \([0, 2\pi)\), the exact solutions are \(x = \arcsin(0.4) \approx 0.4115\) and \(x = \pi - \arcsin(0.4) \approx 2.7301\).
+
+Example 3 (Negative non-special sine value on \([0, 2\pi)\)): Solve \(\sin x = -0.3\) on \([0, 2\pi)\).
+Here \(\theta_0 = \arcsin(-0.3) \approx -0.3047\) is negative, so it lies outside \([0, 2\pi)\). Apply the two families and pick the integer \(k\) that lands in \([0, 2\pi)\):
+- From \(\pi - \theta_0\): \(\pi - \arcsin(-0.3) = \pi + \arcsin(0.3) \approx 3.4463 \in [0, 2\pi)\) (Quadrant III).
+- From \(\theta_0 + 2\pi\): \(2\pi + \arcsin(-0.3) = 2\pi - \arcsin(0.3) \approx 5.9785 \in [0, 2\pi)\) (Quadrant IV).
+Notice how writing \(\arcsin(-0.3) = -\arcsin(0.3)\) makes both exact expressions completely transparent!
+
+[TABLE]
+Equation | Existence condition | Exact solutions in \([0, 2\pi)\) (for \(0 < c < 1\) or \(c > 0\)) | Exact solutions in \([0, 2\pi)\) for \(-c\) (negative RHS)
+\(\sin x = c\) | \(\lvert c \rvert \le 1\) | \(\arcsin c,\; \pi - \arcsin c\) | \(\pi + \arcsin c,\; 2\pi - \arcsin c\)
+\(\cos x = c\) | \(\lvert c \rvert \le 1\) | \(\arccos c,\; 2\pi - \arccos c\) | \(\arccos(-c),\; 2\pi - \arccos(-c)\)
+\(\tan x = c\) | All \(c \in \mathbb{R}\) | \(\arctan c,\; \pi + \arctan c\) | \(\pi - \arctan c,\; 2\pi - \arctan c\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: E]
+Which statement correctly describes the solution set of \(3\csc x + 2 = 0\) over the real numbers?
+
+(A) \(x = \arcsin\!\left(-\frac{2}{3}\right) + 2\pi k\) and \(x = \pi - \arcsin\!\left(-\frac{2}{3}\right) + 2\pi k\) (\(k \in \mathbb{Z}\))
+(B) \(x = \arcsin\!\left(-\frac{3}{2}\right) + 2\pi k\) (\(k \in \mathbb{Z}\))
+(C) \(x = -\frac{\pi}{6} + 2\pi k\) and \(x = \frac{7\pi}{6} + 2\pi k\) (\(k \in \mathbb{Z}\))
+(D) \(x = \pi + \arcsin\!\left(\frac{2}{3}\right) + 2\pi k\) (\(k \in \mathbb{Z}\))
+(E) There are no real solutions because \(|\csc x| \ge 1\) for all \(x\) in its domain, whereas \(\csc x = -\frac{2}{3}\) violates that bound.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Which pair gives ALL exact solutions to \(\cos x = -0.6\) in the interval \([0, 2\pi)\)?
+
+(A) \(\arccos(-0.6)\) and \(2\pi - \arccos(-0.6)\)
+(B) \(\arccos(-0.6)\) and \(\pi - \arccos(-0.6)\)
+(C) \(-\arccos(0.6)\) and \(\arccos(0.6)\)
+(D) \(\arccos(-0.6)\) and \(\pi + \arccos(-0.6)\)
+(E) \(\arccos(0.6)\) and \(2\pi - \arccos(0.6)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Find all exact solutions to \(\tan x = -3\) in the interval \([0, 2\pi)\).
+
+(A) \(-\arctan(3)\) and \(\pi - \arctan(3)\)
+(B) \(\arctan(3)\) and \(\pi + \arctan(3)\)
+(C) \(\pi - \arctan(3)\) and \(2\pi - \arctan(3)\)
+(D) \(\pi + \arctan(3)\) and \(2\pi - \arctan(3)\)
+(E) \(\frac{\pi}{2} - \arctan(3)\) and \(\frac{3\pi}{2} - \arctan(3)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Solve \(\cot x = 0\) for all real numbers \(x\) (\(k \in \mathbb{Z}\)).
+
+(A) \(x = \pi k\)
+(B) \(x = \frac{\pi}{2} + \pi k\)
+(C) \(x = \frac{\pi}{2} + 2\pi k\)
+(D) \(x = \frac{\pi}{4} + \pi k\)
+(E) No real solutions because \(\tan x = \frac{1}{0}\) is undefined
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+How many distinct real solutions does \(\sin x = 0.7\) have in the interval \([-3\pi, 3\pi]\)?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(4\)
+(D) \(6\)
+(E) \(8\)
+[/BONUS]

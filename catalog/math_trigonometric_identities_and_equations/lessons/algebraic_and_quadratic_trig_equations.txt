@@ -1,0 +1,126 @@
+=== SECTION 1: Factoring common trigonometric factors (and why you never divide by them) ===
+
+Most trigonometric equations do not arrive already isolated as \(\sin x = c\) or \(\cos x = c\). Instead, they look like algebraic equations whose building blocks are trigonometric functions—for example,
+\[
+\sin x \cos x = \sin x, \qquad 2\cos^2 x - \cos x - 1 = 0, \qquad \text{or} \qquad 2\sin^2 x + 3\cos x = 3.
+\]
+The goal in every case is the same: reduce the equation algebraically into one or more basic equations \(f(x) = c\), without losing valid solutions and without smuggling in fake ones.
+
+Look first at \(\sin x \cos x = \sin x\) on \([0, 2\pi)\). What goes catastrophically wrong if you divide both sides by \(\sin x\)?
+Dividing by \(\sin x\) leaves \(\cos x = 1\), giving ONLY \(x = 0\). Yet plug \(x = \pi\) back into the original equation: \(\sin\pi \cos\pi = 0 = \sin\pi\)! You silently destroyed the valid solution \(x = \pi\) (and every odd multiple of \(\pi\) on \(\mathbb{R}\)) because dividing by \(\sin x\) is illegal whenever \(\sin x = 0\).
+
+[CALLOUT]
+id: zero-product-rule
+label: Common Pitfall
+title: Never divide both sides of an equation by a variable trigonometric factor
+tone: caution
+
+Dividing an equation by \(\sin x\), \(\cos x\), or any expression that can equal \(0\) silently discards every solution where that factor vanishes. Instead, move ALL terms to one side so the right-hand side is \(0\), factor out the common factor, and apply the Zero-Product Property:
+\[
+A(x)B(x) = 0 \iff A(x) = 0 \text{ or } B(x) = 0.
+\]
+[/CALLOUT]
+
+Solve \(\sin x \cos x = \sin x\) properly on \([0, 2\pi)\):
+\[
+\sin x \cos x - \sin x = 0 \implies \sin x(\cos x - 1) = 0.
+\]
+Set each factor equal to \(0\):
+- \(\sin x = 0 \implies x = 0, \pi\).
+- \(\cos x - 1 = 0 \implies \cos x = 1 \implies x = 0\).
+Uniting both branches without duplication gives the complete solution set on \([0, 2\pi)\): \(\{0, \pi\}\). On \(\mathbb{R}\), the full solution set is simply \(x = \pi k\) (\(k \in \mathbb{Z}\)).
+
+Factoring by grouping follows the same discipline. For example, solve \(2\sin x \cos x - \sqrt{3}\sin x + 2\cos x - \sqrt{3} = 0\) on \([0, 2\pi)\):
+\[
+\sin x(2\cos x - \sqrt{3}) + 1(2\cos x - \sqrt{3}) = 0 \implies (\sin x + 1)(2\cos x - \sqrt{3}) = 0.
+\]
+- \(\sin x = -1 \implies x = \frac{3\pi}{2}\).
+- \(\cos x = \frac{\sqrt{3}}{2} \implies x = \frac{\pi}{6}, \frac{11\pi}{6}\).
+Complete solution set on \([0, 2\pi)\): \(\left\{\frac{\pi}{6}, \frac{3\pi}{2}, \frac{11\pi}{6}\right\}\).
+
+[QUESTION 1]
+[ANSWER: B]
+Find ALL solutions of \(\tan x \sin^2 x = \tan x\) in the interval \([0, 2\pi)\).
+
+(A) \(\frac{\pi}{2}, \frac{3\pi}{2}\)
+(B) \(0, \pi\)
+(C) \(0, \frac{\pi}{2}, \pi, \frac{3\pi}{2}\)
+(D) \(\frac{\pi}{4}, \frac{5\pi}{4}\)
+(E) No real solutions
+[/QUESTION]
+
+=== SECTION 2: Quadratic-type trigonometric equations ===
+
+An equation of the form \(a[f(x)]^2 + b\,f(x) + c = 0\) is quadratic in the single function \(u = f(x)\). Substitute \(u = f(x)\), solve the quadratic equation for \(u\) by factoring or the quadratic formula, substitute \(f(x)\) back in, and check domain bounds (especially \(|u| \le 1\) for \(\sin x\) and \(\cos x\)).
+
+Example 1 (Factorable quadratic): Solve \(2\cos^2 x - \cos x - 1 = 0\) on \([0, 2\pi)\).
+Set \(u = \cos x\): \(2u^2 - u - 1 = 0\) factors as \((2u + 1)(u - 1) = 0\), giving \(u = -\frac{1}{2}\) or \(u = 1\).
+- \(\cos x = -\frac{1}{2} \implies x = \frac{2\pi}{3}, \frac{4\pi}{3}\).
+- \(\cos x = 1 \implies x = 0\).
+Complete solution set on \([0, 2\pi)\): \(\left\{0, \frac{2\pi}{3}, \frac{4\pi}{3}\right\}\).
+
+Example 2 (Discarding out-of-range roots and using the quadratic formula): Solve \(2\sin^2 x - 3\sin x - 2 = 0\) on \([0, 2\pi)\).
+With \(u = \sin x\): \((2u + 1)(u - 2) = 0 \implies u = -\frac{1}{2}\) or \(u = 2\).
+- The root \(\sin x = 2\) has NO real solutions because \(2 > 1\) lies outside \([-1, 1]\), so discard it immediately!
+- The valid root \(\sin x = -\frac{1}{2}\) gives \(x = \frac{7\pi}{6}, \frac{11\pi}{6}\).
+
+What if the quadratic does NOT factor cleanly over the integers—say \(\cos^2 x + 2\cos x - 1 = 0\) on \([0, 2\pi)\)? Apply the quadratic formula to \(u^2 + 2u - 1 = 0\):
+\[
+u = \frac{-2 \pm \sqrt{4 - 4(1)(-1)}}{2} = \frac{-2 \pm \sqrt{8}}{2} = -1 \pm \sqrt{2}.
+\]
+Check both roots against \([-1, 1]\):
+- \(u_1 = -1 - \sqrt{2} \approx -2.414 < -1\): impossible for \(\cos x\) (discard).
+- \(u_2 = \sqrt{2} - 1 \approx 0.414 \in [-1, 1]\): valid!
+Therefore the exact solutions on \([0, 2\pi)\) are \(x = \arccos(\sqrt{2} - 1) \approx 1.1437\) and \(x = 2\pi - \arccos(\sqrt{2} - 1) \approx 5.1395\).
+
+[QUESTION 2]
+[ANSWER: D]
+Find ALL solutions of \(2\sin^2 x + 5\sin x - 3 = 0\) in the interval \([0, 2\pi)\).
+
+(A) \(\frac{\pi}{6}, \frac{5\pi}{6}, \arcsin(-3)\)
+(B) \(\frac{7\pi}{6}, \frac{11\pi}{6}\)
+(C) \(\frac{\pi}{3}, \frac{2\pi}{3}\)
+(D) \(\frac{\pi}{6}, \frac{5\pi}{6}\)
+(E) No real solutions
+[/QUESTION]
+
+=== SECTION 3: Converting mixed functions via Pythagorean and reciprocal identities ===
+
+Often a quadratic-type equation mixes TWO different functions, such as \(\sin^2 x\) and \(\cos x\), or \(\sec^2 x\) and \(\tan x\). Look at the LINEAR (first-power) term—it tells you which function to convert into! You can swap a squared function cleanly via a Pythagorean identity without introducing any square roots:
+- \(\sin^2 x \to 1 - \cos^2 x\),
+- \(\cos^2 x \to 1 - \sin^2 x\),
+- \(\sec^2 x \to 1 + \tan^2 x\),
+- \(\csc^2 x \to 1 + \cot^2 x\).
+
+Example 1: Solve \(2\sin^2 x + 3\cos x = 3\) on \([0, 2\pi)\).
+Because \(\cos x\) appears to the first power, replace \(\sin^2 x\) with \(1 - \cos^2 x\):
+\[
+2(1 - \cos^2 x) + 3\cos x = 3 \implies 2 - 2\cos^2 x + 3\cos x - 3 = 0 \implies 2\cos^2 x - 3\cos x + 1 = 0.
+\]
+Factor as \((2\cos x - 1)(\cos x - 1) = 0\), giving \(\cos x = \frac{1}{2}\) or \(\cos x = 1\).
+On \([0, 2\pi)\), this yields \(x = 0, \frac{\pi}{3}, \frac{5\pi}{3}\).
+
+Example 2: Solve \(\sec^2 x - 2\tan x = 4\) on \([0, 2\pi)\).
+Note the domain restriction immediately: \(\cos x \neq 0\) (so \(x \neq \frac{\pi}{2}, \frac{3\pi}{2}\)). Replace \(\sec^2 x\) with \(1 + \tan^2 x\):
+\[
+(1 + \tan^2 x) - 2\tan x - 4 = 0 \implies \tan^2 x - 2\tan x - 3 = 0 \implies (\tan x - 3)(\tan x + 1) = 0.
+\]
+- \(\tan x = -1 \implies x = \frac{3\pi}{4}, \frac{7\pi}{4}\).
+- \(\tan x = 3 \implies x = \arctan(3), \pi + \arctan(3)\).
+All four angles satisfy \(\cos x \neq 0\), so all four are valid solutions.
+
+Watch reciprocal equations too! Suppose you solve \(\sin x - 2\csc x = 1\) on \([0, 2\pi)\). First note the domain restriction \(\sin x \neq 0\). Rewrite \(\csc x = \frac{1}{\sin x}\) and multiply through by \(\sin x\) (valid precisely because \(\sin x \neq 0\) is already excluded by the original equation!):
+\[
+\sin^2 x - 2 = \sin x \implies \sin^2 x - \sin x - 2 = 0 \implies (\sin x - 2)(\sin x + 1) = 0.
+\]
+Discard \(\sin x = 2\); \(\sin x = -1\) gives \(x = \frac{3\pi}{2}\), which satisfies \(\sin x \neq 0\).
+
+[QUESTION 3]
+[ANSWER: C]
+Find ALL solutions of \(2\cos^2 x + \sin x - 1 = 0\) in the interval \([0, 2\pi)\).
+
+(A) \(\frac{\pi}{6}, \frac{5\pi}{6}, \frac{3\pi}{2}\)
+(B) \(\frac{7\pi}{6}, \frac{11\pi}{6}, \frac{3\pi}{2}\)
+(C) \(\frac{\pi}{2}, \frac{7\pi}{6}, \frac{11\pi}{6}\)
+(D) \(\frac{\pi}{6}, \frac{5\pi}{6}, \frac{\pi}{2}\)
+[/QUESTION]

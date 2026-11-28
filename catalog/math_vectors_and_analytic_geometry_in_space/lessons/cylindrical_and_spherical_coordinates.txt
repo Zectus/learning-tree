@@ -1,0 +1,221 @@
+=== SECTION 1: Cylindrical coordinates and rotational symmetry around an axis ===
+
+Cartesian coordinates \((x, y, z)\) excel at describing boxes and tilted planes, yet they become clumsy the moment a surface wraps around an axis or radiates symmetrically from a central point. A circular cylinder \(x^2 + y^2 = 9\) or a circular paraboloid \(z = x^2 + y^2\) depends only on the horizontal distance from the \(z\)-axis, not on \(x\) and \(y\) separately.
+
+Cylindrical coordinates \((r, \theta, z)\) exploit axial symmetry by keeping the vertical height \(z\) untouched and replacing \((x, y)\) in the horizontal plane with standard polar coordinates \((r, \theta)\):
+- \(r \ge 0\) is the perpendicular distance from the point \(P\) to the \(z\)-axis (equivalently, the radial distance of its \(xy\)-projection \((x, y, 0)\) from the origin).
+- \(\theta\) is the azimuthal angle in the \(xy\)-plane measured counterclockwise from the positive \(x\)-axis (commonly chosen in \([0, 2\pi)\) or \((-\pi, \pi]\)).
+- \(z \in \mathbb{R}\) is the exact same signed height as in Cartesian coordinates.
+
+[CALLOUT]
+id: cyl-coords
+label: Definition
+title: Cylindrical coordinate conversions
+tone: key
+
+For a point \(P\) with Cartesian coordinates \((x, y, z)\) and cylindrical coordinates \((r, \theta, z)\) (\(r \ge 0\)):
+
+(1) Cylindrical to Cartesian:
+\[
+x = r\cos\theta, \qquad y = r\sin\theta, \qquad z = z.
+\]
+(2) Cartesian to cylindrical:
+\[
+r = \sqrt{x^2 + y^2}, \qquad \tan\theta = \frac{y}{x} \quad (x \ne 0), \qquad z = z,
+\]
+where the quadrant of \((x, y)\) determines \(\theta\) uniquely (when \(x = 0\), \(\theta = \pi/2\) for \(y > 0\) and \(\theta = 3\pi/2\) for \(y < 0\)).
+[/CALLOUT]
+
+Never rely blindly on \(\theta = \arctan(y/x)\) when using [REF: cyl-coords.2 | the Cartesian-to-cylindrical conversion]! Because \(\arctan\) returns values only in \((-\pi/2, \pi/2)\) (Quadrants I and IV), any point with \(x < 0\) (Quadrants II or III) requires adding \(\pi\) to \(\arctan(y/x)\). For example, take \((x, y, z) = (-2, -2, 5)\). Here \(r = \sqrt{4 + 4} = 2\sqrt{2}\) and \(y/x = 1\), whose raw arctangent is \(\pi/4\); because both \(x\) and \(y\) are negative (Quadrant III), \(\theta = \pi/4 + \pi = 5\pi/4\), giving \((2\sqrt{2},\; 5\pi/4,\; 5)\).
+
+Holding one cylindrical coordinate constant produces three basic coordinate surfaces:
+- \(r = a\) (\(a > 0\)): a right circular cylinder of radius \(a\) centered on the \(z\)-axis.
+- \(\theta = c\): a vertical half-plane hinged along the \(z\)-axis, extending outward in direction \(\theta = c\) (since \(r \ge 0\)).
+- \(z = k\): a horizontal plane at height \(k\).
+
+Many quadric surfaces with circular cross-sections collapse into remarkably simple cylindrical equations. For instance, the circular paraboloid \(z = x^2 + y^2\) plotted below becomes simply \(z = r^2\)—independent of \(\theta\), which visually expresses its complete rotational symmetry around the \(z\)-axis. Likewise, the double circular cone \(z^2 = x^2 + y^2\) simplifies to \(z = \pm r\), and the one-sheet hyperboloid \(x^2 + y^2 - z^2 = 1\) becomes \(r^2 - z^2 = 1\).
+
+[GRAPH]
+type: surface3d
+title: Circular paraboloid \(z = x^2 + y^2\), written as \(z = r^2\) in cylindrical coordinates
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -2, 2
+yrange: -2, 2
+z: x^2 + y^2
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Convert the Cartesian point \((-3, 3\sqrt{3}, -2)\) into cylindrical coordinates \((r, \theta, z)\) with \(r \ge 0\) and \(0 \le \theta < 2\pi\).
+
+(A) \(\left(6,\; \frac{5\pi}{3},\; -2\right)\)
+(B) \(\left(6,\; \frac{2\pi}{3},\; -2\right)\)
+(C) \(\left(6,\; \frac{\pi}{3},\; -2\right)\)
+(D) \(\left(6,\; \frac{5\pi}{6},\; -2\right)\)
+(E) \(\left(2\sqrt{10},\; \frac{2\pi}{3},\; -2\right)\)
+[/QUESTION]
+
+=== SECTION 2: Spherical coordinates in the mathematics convention ===
+
+When a problem radiates symmetrically from a single point—such as a sphere centered at the origin or a cone with its apex at the origin—spherical coordinates \((\rho, \theta, \phi)\) match the geometry even more tightly than cylindrical coordinates. In the standard mathematics convention:
+- \(\rho \ge 0\) is the straight-line distance from the origin \(O(0, 0, 0)\) to the point \(P\).
+- \(\theta\) is the exact same azimuthal angle in the \(xy\)-plane as in cylindrical coordinates (\(0 \le \theta < 2\pi\)).
+- \(\phi \in [0, \pi]\) is the polar angle (colatitude) measured downward from the positive \(z\)-axis to the position vector \(\overrightarrow{OP}\). Thus \(\phi = 0\) points straight up the positive \(z\)-axis, \(\phi = \pi/2\) sweeps out the entire \(xy\)-plane (the equator), and \(\phi = \pi\) points straight down the negative \(z\)-axis.
+
+How do we derive the conversion between \((\rho, \theta, \phi)\) and \((x, y, z)\)? Slice \(\mathbb{R}^3\) with the vertical half-plane \(\theta = \text{const}\) containing \(P\) and the \(z\)-axis. Inside this half-plane, the horizontal axis measures the cylindrical radius \(r \ge 0\) and the vertical axis measures \(z\). The hypotenuse from the origin to \(P\) has length \(\rho\) and makes angle \(\phi\) with the positive \(z\)-axis, forming a right triangle whose legs are
+\[
+z = \rho\cos\phi, \qquad r = \rho\sin\phi.
+\]
+Notice that \(r = \rho\sin\phi \ge 0\) automatically because \(\rho \ge 0\) and \(\sin\phi \ge 0\) on the full domain \(0 \le \phi \le \pi\). Drag the polar angle slider \(f\) below from \(0\) (north pole) through \(\pi/2 \approx 1.57\) (equator) to \(\pi\) (south pole) to watch \(z = \rho\cos f\) pass from \(+\rho\) through \(0\) to \(-\rho\) while \(r = \rho\sin f\) stays nonnegative throughout.
+
+[GRAPH]
+type: parametric2d
+title: Meridian half-plane (\(\theta = \text{const}\)): \(r = \rho\sin f\) and \(z = \rho\cos f\) for \(\rho = 3\)
+xlabel: \(r\)
+ylabel: \(z\)
+trange: 0, 3.1416
+xrange: -0.6, 3.8
+yrange: -3.5, 3.5
+trace: 3*sin(t), 3*cos(t) | label: meridian arc \(\rho = 3\)
+segment: 0, 0, 3*sin(f), 3*cos(f) | label: \(\rho\)
+segment: 0, 3*cos(f), 3*sin(f), 3*cos(f) | label: \(r\) | dashed: true
+segment: 3*sin(f), 0, 3*sin(f), 3*cos(f) | label: \(z\) | dashed: true
+point: 0, 0 | label: \(O\)
+point: 3*sin(f), 3*cos(f) | label: \(P\)
+slider: f | range: 0.08, 3.06 | init: 0.9 | step: 0.08
+[/GRAPH]
+
+Substituting \(r = \rho\sin\phi\) into [REF: cyl-coords.1 | the cylindrical formulas] \(x = r\cos\theta\) and \(y = r\sin\theta\) yields the complete spherical-to-Cartesian bridge.
+
+[CALLOUT]
+id: sph-coords
+label: Definition
+title: Spherical coordinate conversions (mathematics convention)
+tone: key
+
+For a point \(P\) with Cartesian coordinates \((x, y, z)\) and spherical coordinates \((\rho, \theta, \phi)\) (\(\rho \ge 0\), \(0 \le \phi \le \pi\)):
+
+(1) Spherical to Cartesian:
+\[
+x = \rho\sin\phi\cos\theta, \qquad y = \rho\sin\phi\sin\theta, \qquad z = \rho\cos\phi.
+\]
+(2) Cartesian to spherical:
+\[
+\rho = \sqrt{x^2 + y^2 + z^2}, \qquad \cos\phi = \frac{z}{\rho} \quad (\rho > 0), \qquad \tan\theta = \frac{y}{x} \quad (x \ne 0),
+\]
+where \(\phi = \arccos(z/\rho) \in [0, \pi]\) has NO quadrant ambiguity, while \(\theta\) must be placed in the quadrant of \((x, y)\).
+(3) Cylindrical–spherical link: \(r = \rho\sin\phi\), \(z = \rho\cos\phi\), \(\rho = \sqrt{r^2 + z^2}\), with \(\theta\) unchanged.
+[/CALLOUT]
+
+[CALLOUT]
+id: physics-conv
+label: Common pitfall
+title: Mathematics convention vs. physics convention
+tone: caution
+
+Many physics and engineering textbooks swap the symbols \(\theta\) and \(\phi\), writing \((r, \theta, \phi)\) where \(\theta \in [0, \pi]\) is the polar angle from the \(z\)-axis and \(\phi \in [0, 2\pi)\) is the azimuthal angle in the \(xy\)-plane. In mathematics (and throughout this lesson), \(\theta\) ALWAYS stays the same azimuthal angle used in polar and cylindrical coordinates, and \(\phi\) is the polar angle measured from the positive \(z\)-axis. Check which symbol multiplies \(\cos\) in \(z\) whenever you switch between textbooks!
+[/CALLOUT]
+
+Let us convert one point in each direction:
+- Spherical \((2, \pi/4, 2\pi/3)\) to Cartesian: \(\sin(2\pi/3) = \frac{\sqrt{3}}{2}\) and \(\cos(2\pi/3) = -\frac{1}{2}\), while \(\cos(\pi/4) = \sin(\pi/4) = \frac{\sqrt{2}}{2}\). Thus
+\[
+x = 2\cdot\frac{\sqrt{3}}{2}\cdot\frac{\sqrt{2}}{2} = \frac{\sqrt{6}}{2}, \qquad y = \frac{\sqrt{6}}{2}, \qquad z = 2\left(-\frac{1}{2}\right) = -1.
+\]
+- Cartesian \((1, -\sqrt{3}, 2\sqrt{3})\) to spherical:
+\[
+\rho = \sqrt{1 + 3 + 12} = 4, \qquad \cos\phi = \frac{2\sqrt{3}}{4} = \frac{\sqrt{3}}{2} \implies \phi = \frac{\pi}{6}.
+\]
+For \(\theta\), \(\tan\theta = -\sqrt{3}\) with \(x = 1 > 0\) and \(y = -\sqrt{3} < 0\) (Quadrant IV), so \(\theta = \frac{5\pi}{3}\). The spherical coordinates are \((4,\; 5\pi/3,\; \pi/6)\).
+
+[QUESTION 2]
+[ANSWER: C]
+Find the Cartesian coordinates \((x, y, z)\) of the point whose spherical coordinates (in the mathematics convention \((\rho, \theta, \phi)\)) are \(\left(4,\; \frac{5\pi}{6},\; \frac{\pi}{3}\right)\).
+
+(A) \((-\sqrt{3},\; 1,\; 2\sqrt{3})\)
+(B) \((1,\; \sqrt{3},\; -2\sqrt{3})\)
+(C) \((-3,\; \sqrt{3},\; 2)\)
+(D) \((3,\; -\sqrt{3},\; 2)\)
+(E) \((-2\sqrt{3},\; 2,\; 2)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Convert the Cartesian point \((0, -2, -2\sqrt{3})\) into spherical coordinates \((\rho, \theta, \phi)\) with \(\rho \ge 0\), \(0 \le \theta < 2\pi\), and \(0 \le \phi \le \pi\).
+
+(A) \(\left(4,\; \frac{3\pi}{2},\; \frac{5\pi}{6}\right)\)
+(B) \(\left(4,\; \frac{3\pi}{2},\; \frac{\pi}{6}\right)\)
+(C) \(\left(4,\; \frac{3\pi}{2},\; \frac{2\pi}{3}\right)\)
+(D) \(\left(4,\; \frac{\pi}{2},\; \frac{5\pi}{6}\right)\)
+(E) \(\left(2,\; \frac{3\pi}{2},\; \frac{5\pi}{6}\right)\)
+[/QUESTION]
+
+=== SECTION 3: Coordinate surfaces and translating surface equations ===
+
+Just as fixing \(x\), \(y\), or \(z\) generates the three families of planes in Cartesian coordinates, holding a single spherical coordinate constant generates three fundamental surfaces:
+- \(\rho = R\) (\(R > 0\)): the sphere of radius \(R\) centered at the origin (\(x^2 + y^2 + z^2 = R^2\)).
+- \(\theta = c\): the exact same vertical half-plane hinged along the \(z\)-axis as in cylindrical coordinates.
+- \(\phi = \phi_0\): a single-napped half-cone with apex at the origin opening upward around the positive \(z\)-axis when \(0 < \phi_0 < \pi/2\), opening downward around the negative \(z\)-axis when \(\pi/2 < \phi_0 < \pi\), and flattening into the \(xy\)-plane \(z = 0\) when \(\phi_0 = \pi/2\).
+
+The surface below is the upper half-cone \(z = \sqrt{x^2 + y^2}\). In cylindrical coordinates it is \(z = r\), and in spherical coordinates substituting \(z = \rho\cos\phi\) and \(r = \rho\sin\phi\) gives \(\rho\cos\phi = \rho\sin\phi \implies \tan\phi = 1\) (with \(z \ge 0\)), reducing the entire surface to the single constant-angle equation \(\phi = \frac{\pi}{4}\).
+
+[GRAPH]
+type: surface3d
+title: Upper half-cone \(z = \sqrt{x^2 + y^2}\), written as \(\phi = \frac{\pi}{4}\) in spherical coordinates
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -2, 2
+yrange: -2, 2
+z: sqrt(x^2 + y^2)
+[/GRAPH]
+
+To translate a general surface equation between Cartesian, cylindrical, and spherical forms, substitute the identities from [REF: cyl-coords | cylindrical conversions] and [REF: sph-coords | spherical conversions]—and look for algebraic shortcuts such as multiplying both sides by \(\rho\) when \(\rho\) appears on one side and \(\cos\phi\) or \(\sin\phi\cos\theta\) appears on the other! For example:
+- Horizontal plane \(z = c\): cylindrical \(z = c\); spherical \(\rho\cos\phi = c\), or \(\rho = c\sec\phi\).
+- Circular cylinder \(x^2 + y^2 = a^2\): cylindrical \(r = a\); spherical \(\rho\sin\phi = a\) (since \(r = \rho\sin\phi\)).
+- Circular paraboloid \(z = x^2 + y^2\): cylindrical \(z = r^2\); spherical \(\rho\cos\phi = \rho^2\sin^2\phi\), which simplifies (keeping \(\rho = 0\) included) to \(\rho = \cot\phi\csc\phi\).
+- Shifted sphere \(x^2 + y^2 + (z - a)^2 = a^2\) (radius \(a > 0\), tangent to the \(xy\)-plane at the origin): expanding gives \(x^2 + y^2 + z^2 = 2az\), which converts cleanly to \(\rho^2 = 2a\rho\cos\phi\), or simply \(\rho = 2a\cos\phi\).
+
+[TABLE]
+Surface | Cartesian equation | Cylindrical equation | Spherical equation
+Sphere centered at origin | \(x^2 + y^2 + z^2 = R^2\) | \(r^2 + z^2 = R^2\) | \(\rho = R\)
+Circular cylinder (\(z\)-axis) | \(x^2 + y^2 = a^2\) | \(r = a\) | \(\rho\sin\phi = a\)
+Upper half-cone | \(z = \sqrt{x^2 + y^2}\) | \(z = r\) | \(\phi = \frac{\pi}{4}\)
+Horizontal plane | \(z = c\) | \(z = c\) | \(\rho\cos\phi = c\)
+Circular paraboloid | \(z = x^2 + y^2\) | \(z = r^2\) | \(\rho\cos\phi = \rho^2\sin^2\phi\)
+Vertical half-plane | \(y = x\tan c\) (half) | \(\theta = c\) | \(\theta = c\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: D]
+Which surface in \(\mathbb{R}^3\) is represented by the spherical equation \(\rho = 6\cos\phi\)?
+
+(A) A sphere of radius \(6\) centered at the origin \((0, 0, 0)\)
+(B) The horizontal plane \(z = 6\)
+(C) A circular cylinder of radius \(6\) centered along the \(z\)-axis
+(D) A sphere of radius \(3\) centered at \((0, 0, 3)\)
+(E) A sphere of radius \(6\) centered at \((0, 0, 3)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Which spherical coordinate equation describes the lower half-cone \(z = -\sqrt{3(x^2 + y^2)}\) (with apex at the origin)?
+
+(A) \(\phi = \frac{\pi}{6}\)
+(B) \(\phi = \frac{2\pi}{3}\)
+(C) \(\phi = \frac{\pi}{3}\)
+(D) \(\theta = \frac{5\pi}{6}\)
+(E) \(\phi = \frac{5\pi}{6}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Identify the surface in \(\mathbb{R}^3\) given by the spherical equation \(\rho = 2\sin\phi\cos\theta\).
+
+(A) A circular cylinder of radius \(2\) centered along the \(x\)-axis
+(B) A sphere of radius \(1\) centered at \((1, 0, 0)\)
+(C) A sphere of radius \(2\) centered at \((1, 0, 0)\)
+(D) The vertical plane \(x = 2\)
+(E) A sphere of radius \(1\) centered at \((0, 1, 0)\)
+[/BONUS]

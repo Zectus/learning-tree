@@ -1,0 +1,307 @@
+=== SECTION 1: What makes a sentence a mathematical statement ===
+
+Mathematics is built from claims that can be judged true or false, yet not every expression written on a blackboard makes such a claim. Consider these four items:
+
+1. \(7^2 - 1 = 48\).
+2. \(x^2 - 1 = 48\).
+3. \(3n + 5\).
+4. Solve \(x^2 - 1 = 48\) for \(x \in \mathbb{R}\).
+
+Only the first item has a definite truth value (it is true). The second looks like an equation, but until someone assigns a specific value to the variable \(x\), it is neither true nor false: it becomes true for \(x = 7\) and \(x = -7\), and false for \(x = 0\). The third is merely a numerical expression—it evaluates to a number rather than to true or false. The fourth is an instruction, not a claim about what holds.
+
+To reason reliably, we first draw a clean line between sentences that carry a truth value and everything else. Throughout this lesson we work informally with the familiar number systems: the natural numbers \(\mathbb{N} = \{1, 2, 3, \dots\}\), the integers \(\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}\), the rational numbers \(\mathbb{Q}\), and the real numbers \(\mathbb{R}\).
+
+[CALLOUT]
+id: def-statement
+label: Definition
+title: Mathematical statement (proposition)
+tone: key
+
+A mathematical statement (or proposition) is a declarative sentence that is either true (\(T\)) or false (\(F\)), and not both.
+[/CALLOUT]
+
+Notice what [REF: def-statement | this definition] does and does not require. A proposition does not need to be true: the sentence "\(17\) is divisible by \(3\)" is a perfectly valid statement whose truth value is \(F\). Nor do we have to know which truth value a sentence has right now. For instance, the famous Goldbach conjecture—"every even integer greater than \(2\) is the sum of two prime numbers"—is a mathematical statement even though no proof or counterexample is currently known: either every such even integer splits that way, or at least one does not.
+
+By contrast, four common mathematical writings fail [REF: def-statement | the definition of a statement]:
+
+- Algebraic expressions, such as \(\frac{2a + 1}{a^2 + 1}\) or \(\sqrt{2} + \pi\), denote values rather than truth-apt claims.
+- Commands and questions, such as "Factor \(x^2 - 9\)" or "Is \(91\) prime?", do not assert that anything is true or false.
+- Definitions, such as "Call an integer \(n\) even when \(n = 2k\) for some integer \(k\)", introduce terminology by stipulation rather than making a testable factual claim.
+- Open sentences containing unassigned (free) variables, such as "\(x > 5\)" or "\(m + n = 10\)", have truth values that depend on the values substituted for their variables. Once specific values are plugged in (e.g., \(x = 3\), giving "\(3 > 5\)"), an open sentence becomes a statement.
+
+[TABLE]
+Writing | Category | Statement? | Reason
+\(\sqrt{2}\) is a rational number | Declarative claim | Yes (false) | Has a definite truth value (\(F\))
+\(2^{100} + 1\) is prime | Declarative claim | Yes (truth value fixed) | Either true or false, even without computing it
+\(x^2 + 1 = 0\) (with \(x\) unspecified) | Open sentence | No | Truth depends on what value \(x\) takes
+\(4n^2 - 1\) | Algebraic expression | No | Evaluates to a number, not \(T\) or \(F\)
+Compute the sum of the first ten primes | Command | No | Imperative instruction, not a claim
+[/TABLE]
+
+[CALLOUT]
+id: caution-open-sentence
+label: Caution
+title: Variables in equations versus statements about numbers
+tone: caution
+
+An equation like \(x^2 - 4 = 0\) with no value or restriction attached to \(x\) is an open sentence, not a proposition. Wait until the variable is bound to a specific value (or quantified, which we will formalize in a later lesson) before assigning a truth value \(T\) or \(F\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+Which of the following is a mathematical statement (proposition)?
+
+(A) \(3x + 2 = 11\), where \(x\) is an unspecified real number
+(B) \((n + 1)^2 - n^2 - 2n\)
+(C) Find all integers \(k\) such that \(k^2 < 20\).
+(D) The equation \(x^2 + 4 = 0\) has a real solution.
+(E) Is \(2^{31} - 1\) a prime number?
+[/QUESTION]
+
+=== SECTION 2: Negation, conjunction, and inclusive disjunction ===
+
+Simple statements are rarely enough on their own. In algebra and geometry we constantly combine claims: a point must satisfy two inequalities at once, a quadratic product vanishes when at least one factor is zero, or a number fails to meet a condition. Propositional logic uses letters such as \(P\), \(Q\), and \(R\) as placeholders for arbitrary statements, and builds compound statements from them using logical connectives.
+
+The truth value of a compound statement built from these connectives depends solely on the truth values of its component statements, never on their subject matter. We therefore define each connective completely by a truth table listing every possible combination of truth values for its inputs.
+
+[CALLOUT]
+id: def-basic-connectives
+label: Definition
+title: Negation, conjunction, and disjunction
+tone: key
+
+Let \(P\) and \(Q\) be statements.
+
+(1) Negation, written \(\neg P\) (read "not \(P\)"), is true when \(P\) is false and false when \(P\) is true.
+(2) Conjunction, written \(P \wedge Q\) (read "\(P\) and \(Q\)"), is true precisely when both \(P\) and \(Q\) are true.
+(3) Disjunction, written \(P \vee Q\) (read "\(P\) or \(Q\)"), is true whenever at least one of \(P\) or \(Q\) is true, and false only when both \(P\) and \(Q\) are false.
+[/CALLOUT]
+
+[TABLE]
+\(P\) | \(Q\) | \(\neg P\) | \(P \wedge Q\) | \(P \vee Q\)
+\(T\) | \(T\) | \(F\) | \(T\) | \(T\)
+\(T\) | \(F\) | \(F\) | \(F\) | \(T\)
+\(F\) | \(T\) | \(T\) | \(F\) | \(T\)
+\(F\) | \(F\) | \(T\) | \(F\) | \(F\)
+[/TABLE]
+
+Pay close attention to the first row of \(P \vee Q\): when \(P\) is \(T\) and \(Q\) is \(T\), \(P \vee Q\) is \(T\). In everyday English, "or" is often exclusive—a menu offering "soup or salad" usually means one or the other, not both. In mathematics, however, "or" is always inclusive unless explicitly stated otherwise. Think of the zero-product property in algebra: if \(ab = 0\), we conclude "\(a = 0\) or \(b = 0\)." That conclusion must remain true in the case \(a = 0\) and \(b = 0\) simultaneously. Similarly, the inequality \(x \le 5\) means "\(x < 5\) or \(x = 5\)," and a claim like "\(12\) is divisible by \(2\) or \(12\) is divisible by \(3\)" is true even though \(12\) is divisible by both.
+
+When you genuinely need the exclusive "or" ("either \(P\) or \(Q\), but not both"), you can build it directly from the three basic connectives:
+\[
+(P \vee Q) \wedge \neg(P \wedge Q).
+\]
+Check this formula against the four rows of the table above: when both \(P\) and \(Q\) are \(T\), \(P \vee Q\) is \(T\) but \(\neg(P \wedge Q)\) is \(F\), so the conjunction is \(F\); when exactly one is \(T\), both parts are \(T\); when both are \(F\), \(P \vee Q\) is \(F\).
+
+Watch how everyday English hides conjunctions and negations inside compact phrasing:
+
+- The compound inequality \(2 < x \le 7\) (for a given number \(x\)) is a conjunction: \((2 < x) \wedge (x \le 7)\).
+- Words like "but," "yet," "although," and "however" carry the same logical force as "and." Thus "\(2\) is prime, but \(2\) is even" is simply \(P \wedge Q\) where \(P\) is "\(2\) is prime" and \(Q\) is "\(2\) is even."
+- "Neither \(P\) nor \(Q\)" asserts that both \(P\) and \(Q\) fail: \((\neg P) \wedge (\neg Q)\).
+
+Just as arithmetic expressions like \(2 + 3 \cdot 4\) rely on parentheses and precedence conventions to avoid ambiguity, compound logical formulas must be parenthesized cleanly. Compare the two formulas
+\[
+(\neg P) \wedge Q \qquad \text{and} \qquad \neg(P \wedge Q).
+\]
+When \(P\) is \(F\) and \(Q\) is \(F\), \((\neg P) \wedge Q\) evaluates to \(T \wedge F = F\), whereas \(\neg(P \wedge Q)\) evaluates to \(\neg(F \wedge F) = \neg F = T\). They are completely different statements.
+
+Even worse, mixing \(\wedge\) and \(\vee\) without parentheses creates genuine ambiguity. Look at
+\[
+(P \wedge Q) \vee R \qquad \text{versus} \qquad P \wedge (Q \vee R).
+\]
+Suppose \(P\) is \(F\), \(Q\) is \(T\), and \(R\) is \(T\). Then \((P \wedge Q) \vee R = (F \wedge T) \vee T = F \vee T = T\), while \(P \wedge (Q \vee R) = F \wedge (T \vee T) = F \wedge T = F\). Because \(\wedge\) and \(\vee\) have equal precedence, writing \(P \wedge Q \vee R\) without parentheses is ambiguous and should never be done.
+
+[CALLOUT]
+id: rule-precedence
+label: Convention
+title: Connective precedence and parenthesization
+tone: note
+
+(1) Negation \(\neg\) binds tightest: \(\neg P \wedge Q\) always means \((\neg P) \wedge Q\), and \(\neg P \vee Q\) always means \((\neg P) \vee Q\). To negate a compound formula, enclose it in parentheses: \(\neg(P \wedge Q)\).
+(2) Conjunction \(\wedge\) and disjunction \(\vee\) have no relative precedence over each other: always use parentheses when mixing \(\wedge\) and \(\vee\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: B]
+Suppose \(P\) is false, \(Q\) is true, and \(R\) is false. What are the truth values of the two statements \(\neg P \wedge (Q \vee R)\) and \(\neg(P \wedge Q) \wedge R\), in that order?
+
+(A) \(T\), \(T\)
+(B) \(T\), \(F\)
+(C) \(F\), \(T\)
+(D) \(F\), \(F\)
+(E) The first is ambiguous without extra parentheses, and the second is \(F\).
+[/QUESTION]
+
+=== SECTION 3: Truth tables and logical equivalence ===
+
+When a compound statement contains \(n\) distinct propositional variables, each variable can take either of \(2\) values (\(T\) or \(F\)), so a full truth table has \(2^n\) rows: \(2\) rows for one variable, \(4\) rows for two variables, and \(8\) rows for three variables. To build a truth table systematically without dropping rows, alternate the last variable every row, the second-to-last every \(2\) rows, the next every \(4\) rows, and so on. Then add intermediate columns from the innermost parentheses outward until you reach the full formula.
+
+Let us construct the truth table for \((P \vee Q) \wedge \neg(P \wedge Q)\) alongside \((P \wedge \neg Q) \vee (\neg P \wedge Q)\), which is another natural way to write "either \(P\) holds without \(Q\), or \(Q\) holds without \(P\)."
+
+[TABLE]
+\(P\) | \(Q\) | \(P \vee Q\) | \(P \wedge Q\) | \(\neg(P \wedge Q)\) | \((P \vee Q) \wedge \neg(P \wedge Q)\) | \(P \wedge \neg Q\) | \(\neg P \wedge Q\) | \((P \wedge \neg Q) \vee (\neg P \wedge Q)\)
+\(T\) | \(T\) | \(T\) | \(T\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\)
+\(T\) | \(F\) | \(T\) | \(F\) | \(T\) | \(T\) | \(T\) | \(F\) | \(T\)
+\(F\) | \(T\) | \(T\) | \(F\) | \(T\) | \(T\) | \(F\) | \(T\) | \(T\)
+\(F\) | \(F\) | \(F\) | \(F\) | \(T\) | \(F\) | \(F\) | \(F\) | \(F\)
+[/TABLE]
+
+Compare the sixth column and the ninth column row by row: they read \(F, T, T, F\) in both columns. No matter what truth values \(P\) and \(Q\) happen to have, the two compound formulas always agree. That exact match is what logical equivalence captures.
+
+[CALLOUT]
+id: def-equivalence
+label: Definition
+title: Logical equivalence
+tone: key
+
+Two compound statements \(A\) and \(B\) built from the same propositional variables are logically equivalent, written \(A \equiv B\), if they have the exact same truth value in every row of their combined truth table.
+[/CALLOUT]
+
+Notice an important asymmetry between proving equivalence and disproving equivalence. To establish \(A \equiv B\) using a truth table, you must verify that \(A\) and \(B\) match in every single row—all \(2^n\) of them. To refute \(A \equiv B\) (written \(A \not\equiv B\)), you need only exhibit a single row where one formula evaluates to \(T\) and the other evaluates to \(F\). For instance, in Section 2 we already proved \((P \wedge Q) \vee R \not\equiv P \wedge (Q \vee R)\) simply by checking the single row \(P = F\), \(Q = T\), \(R = T\).
+
+Also distinguish logical equivalence (\(\equiv\)) from merely having the same truth value for one particular pair of true or false facts. The statements "\(2 + 2 = 4\)" and "\(7\) is prime" are both true, so they happen to share the truth value \(T\). Logical equivalence is about formula structure: it asserts that replacing \(P\) and \(Q\) by any statements whatsoever still leaves \(A\) and \(B\) with identical truth values.
+
+Let us test a three-variable claim: is \(P \vee (Q \wedge R)\) logically equivalent to \((P \vee Q) \wedge (P \vee R)\)? Because there are \(3\) variables, the truth table has \(2^3 = 8\) rows.
+
+[TABLE]
+\(P\) | \(Q\) | \(R\) | \(Q \wedge R\) | \(P \vee (Q \wedge R)\) | \(P \vee Q\) | \(P \vee R\) | \((P \vee Q) \wedge (P \vee R)\)
+\(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\)
+\(T\) | \(T\) | \(F\) | \(F\) | \(T\) | \(T\) | \(T\) | \(T\)
+\(T\) | \(F\) | \(T\) | \(F\) | \(T\) | \(T\) | \(T\) | \(T\)
+\(T\) | \(F\) | \(F\) | \(F\) | \(T\) | \(T\) | \(T\) | \(T\)
+\(F\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\)
+\(F\) | \(T\) | \(F\) | \(F\) | \(F\) | \(T\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(T\) | \(F\) | \(F\) | \(F\) | \(T\) | \(F\)
+\(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\)
+[/TABLE]
+
+Every single one of the \(8\) rows matches: columns 5 and 8 both read \(T, T, T, T, T, F, F, F\). Therefore
+\[
+P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R).
+\]
+Notice something striking here: in ordinary arithmetic, multiplication distributes over addition (\(a \cdot (b + c) = a \cdot b + a \cdot c\)), whereas addition does not distribute over multiplication (\(a + (b \cdot c) \ne (a + b) \cdot (a + c)\) in general). In propositional logic, however, \(\vee\) distributes over \(\wedge\), and \(\wedge\) also distributes over \(\vee\).
+
+[QUESTION 3]
+[ANSWER: C]
+Which of the following pairs of propositional formulas are NOT logically equivalent?
+
+(A) \(P \vee (P \wedge Q)\) and \(P\)
+(B) \(\neg(\neg P \vee Q)\) and \(P \wedge \neg Q\)
+(C) \(\neg(P \wedge Q)\) and \(\neg P \wedge \neg Q\)
+(D) \((P \wedge Q) \vee (P \wedge \neg Q)\) and \(P\)
+(E) \(\neg(P \vee \neg Q)\) and \(\neg P \wedge Q\)
+[/QUESTION]
+
+=== SECTION 4: De Morgan's laws and the algebra of basic connectives ===
+
+Checking an \(8\)-row or \(16\)-row truth table every time we want to negate or rewrite a mathematical sentence would quickly become tedious. Fortunately, a small set of fundamental equivalences—all verified once and for all by truth tables—lets us transform and negate compound statements cleanly.
+
+The two most frequently used negation rules govern how \(\neg\) moves inside a conjunction or a disjunction. Suppose a candidate must meet two requirements to pass a qualification: "\(x > 0\) and \(x\) is an integer." How does someone fail to meet that combined requirement? They do not have to fail both requirements; failing even one of them is enough. Thus the negation of "\(P\) and \(Q\)" is "(not \(P\)) or (not \(Q\))."
+
+Conversely, suppose a reward is given if "\(x > 10\) or \(x\) is even." How can that condition fail? Only if neither part holds—that is, \(x \le 10\) and \(x\) is not even. Thus the negation of "\(P\) or \(Q\)" is "(not \(P\)) and (not \(Q\))."
+
+Let us verify both equivalences simultaneously with a truth table.
+
+[TABLE]
+\(P\) | \(Q\) | \(\neg P\) | \(\neg Q\) | \(\neg(P \wedge Q)\) | \(\neg P \vee \neg Q\) | \(\neg(P \vee Q)\) | \(\neg P \wedge \neg Q\)
+\(T\) | \(T\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\)
+\(T\) | \(F\) | \(F\) | \(T\) | \(T\) | \(T\) | \(F\) | \(F\)
+\(F\) | \(T\) | \(T\) | \(F\) | \(T\) | \(T\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\) | \(T\)
+[/TABLE]
+
+Columns 5 and 6 match in every row, and columns 7 and 8 match in every row. These are De Morgan's laws, and together with the core algebraic laws of \(\neg\), \(\wedge\), and \(\vee\), they form our foundational equivalence toolkit.
+
+[CALLOUT]
+id: laws-propositional
+label: Theorem
+title: Fundamental equivalence laws for \(\neg\), \(\wedge\), and \(\vee\)
+tone: key
+
+For all statements \(P\), \(Q\), and \(R\):
+
+(1) Double negation: \(\neg(\neg P) \equiv P\).
+(2) Idempotence: \(P \wedge P \equiv P\) and \(P \vee P \equiv P\).
+(3) Commutativity: \(P \wedge Q \equiv Q \wedge P\) and \(P \vee Q \equiv Q \vee P\).
+(4) Associativity: \((P \wedge Q) \wedge R \equiv P \wedge (Q \wedge R)\) and \((P \vee Q) \vee R \equiv P \vee (Q \vee R)\).
+(5) Distributivity: \(P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)\) and \(P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)\).
+(6) De Morgan's laws: \(\neg(P \wedge Q) \equiv \neg P \vee \neg Q\) and \(\neg(P \vee Q) \equiv \neg P \wedge \neg Q\).
+[/CALLOUT]
+
+Notice what [REF: laws-propositional.4 | associativity] buys us: when a chain uses only \(\wedge\) (such as \(P \wedge Q \wedge R\)) or only \(\vee\) (such as \(P \vee Q \vee R\)), parentheses may be omitted because every grouping gives an equivalent formula. Parentheses remain mandatory only when mixing \(\wedge\) and \(\vee\), or when clarifying the scope of \(\neg\).
+
+Let us put [REF: laws-propositional | these laws] to work on two realistic mathematical tasks.
+
+First, consider a fixed real number \(x\) and the statement "\(2 < x \le 7\)." We write this in symbols as \((2 < x) \wedge (x \le 7)\). What is its negation? Applying [REF: laws-propositional.6 | De Morgan's law for conjunction] flips \(\wedge\) to \(\vee\) and negates each inequality:
+\[
+\neg\bigl((2 < x) \wedge (x \le 7)\bigr) \equiv \neg(2 < x) \vee \neg(x \le 7) \equiv (x \le 2) \vee (x > 7).
+\]
+Notice two details beginners frequently miss: first, the connective changes from "and" to "or" (no real number can simultaneously satisfy \(x \le 2\) and \(x > 7\)!); second, the strictness of each inequality flips (\(\neg(2 < x)\) is \(x \le 2\), not \(x < 2\), because \(x = 2\) also fails \(2 < x\)).
+
+Second, suppose we want to negate the nested statement
+\[
+P \vee (\neg Q \wedge R)
+\]
+and push all negations inward until they sit directly on single variables. Apply [REF: laws-propositional.6 | De Morgan's laws] step by step from the outside in, then clean up with [REF: laws-propositional.1 | double negation]:
+\[
+\begin{aligned}
+\neg\bigl(P \vee (\neg Q \wedge R)\bigr)
+&\equiv \neg P \wedge \neg(\neg Q \wedge R) \\
+&\equiv \neg P \wedge \bigl(\neg(\neg Q) \vee \neg R\bigr) \\
+&\equiv \neg P \wedge (Q \vee \neg R).
+\end{aligned}
+\]
+We obtained the clean positive form \(\neg P \wedge (Q \vee \neg R)\) in three algebraic steps without ever constructing an \(8\)-row truth table.
+
+[CALLOUT]
+id: caution-demorgan-english
+label: Caution
+title: Do not distribute \(\neg\) while keeping the same connective
+tone: caution
+
+The negation of "\(a\) is even and \(b\) is odd" is NOT "\(a\) is odd and \(b\) is even." By [REF: laws-propositional.6 | De Morgan's law], negating a conjunction produces a disjunction: "\(a\) is odd or \(b\) is even." Whenever \(\neg\) crosses a parenthesis, \(\wedge\) switches to \(\vee\) and \(\vee\) switches to \(\wedge\).
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(a\) and \(b\) be fixed real numbers, and consider the statement: "\(a \ge 0\) and either \(b < 3\) or \(b > 8\)." Which of the following is logically equivalent to the negation of this statement?
+
+(A) \(a < 0\) or \(3 \le b \le 8\)
+(B) \(a < 0\) and \(3 \le b \le 8\)
+(C) \(a \le 0\) or \(3 < b < 8\)
+(D) \(a < 0\) or (\(b \ge 3\) or \(b \le 8\))
+(E) \(a \ge 0\) and \(3 \le b \le 8\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(P\) is true, \(Q\) is false, \(R\) is true, and \(S\) is false. Which of the following compound statements evaluates to false?
+
+(A) \((P \wedge \neg Q) \vee (R \wedge S)\)
+(B) \(\neg(P \wedge Q) \wedge (R \vee S)\)
+(C) \(\neg(Q \vee S) \wedge (P \vee R)\)
+(D) \((P \vee S) \wedge \neg(Q \wedge R)\)
+(E) \(\neg(P \vee Q) \vee (R \wedge S)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+A student claims that \(\neg\bigl((P \wedge Q) \vee (\neg P \wedge R)\bigr)\) is logically equivalent to \((\neg P \vee \neg Q) \wedge (P \vee \neg R)\). Which of the following accurately assesses the student's claim?
+
+(A) It is false; the row \(P = T, Q = F, R = T\) makes the two formulas disagree.
+(B) It is false; the outer \(\wedge\) in the student's answer should be \(\vee\).
+(C) It is true; applying De Morgan's laws twice and double negation transforms the first formula into the second.
+(D) It is false; \(\neg(\neg P \wedge R)\) simplifies to \(P \wedge \neg R\), not \(P \vee \neg R\).
+(E) It is true only when \(P\) and \(Q\) have opposite truth values.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Consider the formula \(A = (P \vee Q) \wedge (P \vee \neg Q) \wedge (\neg P \vee Q)\). Across the \(4\) rows of the truth table for \(P\) and \(Q\), how many rows make \(A\) true, and what simpler formula is \(A\) logically equivalent to?
+
+(A) \(2\) rows; equivalent to \(P\)
+(B) \(2\) rows; equivalent to \(Q\)
+(C) \(3\) rows; equivalent to \(P \vee Q\)
+(D) \(1\) row; equivalent to \(P \wedge Q\)
+(E) \(0\) rows; always false
+[/BONUS]

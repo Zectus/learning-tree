@@ -1,0 +1,344 @@
+=== SECTION 1: Forma escalonada por filas y forma escalonada reducida por filas ===
+
+Saber que las operaciones elementales por fila preservan el conjunto solución de un sistema lineal plantea una pregunta práctica inmediata: dada una matriz aumentada \(m \times n\) arbitraria, ¿hacia qué forma objetivo debemos dirigirla para que la consistencia y absolutamente todas las soluciones puedan leerse sin conjeturas? Si eliminamos variables en un orden aleatorio, podemos deshacer fácilmente nuestro propio avance reintroduciendo incógnitas ya eliminadas. Para evitar dar vueltas en círculos, apuntamos a un patrón escalonado llamado forma escalonada.
+
+Primero definimos un término básico: la entrada principal de una fila no nula es su entrada no nula situada más a la izquierda. Una fila cuyas entradas son todas cero no tiene entrada principal y se denomina fila nula.
+
+[CALLOUT]
+id: echelon-defs
+label: Definición
+title: Forma escalonada por filas (REF) y forma escalonada reducida por filas (RREF)
+tone: key
+
+Una matriz rectangular está en forma escalonada por filas (REF) si cumple tres condiciones:
+
+(1) Todas las filas nulas (si las hay) se encuentran en la parte inferior de la matriz, debajo de todas las filas no nulas.
+(2) Cada entrada principal de una fila no nula se ubica en una columna estrictamente a la derecha de la entrada principal de la fila inmediatamente superior.
+(3) Toda entrada situada en una columna debajo de una entrada principal es cero.
+
+Una matriz está en forma escalonada reducida por filas (RREF) si está en REF y cumple dos condiciones adicionales:
+
+(4) Toda entrada principal es igual a \(1\).
+(5) Cada \(1\) principal es la única entrada no nula de su columna (de modo que todas las entradas tanto arriba como abajo de él son cero).
+[/CALLOUT]
+
+Observe la forma de escalera impuesta por [REF: echelon-defs.1 | la condición (1)]–[REF: echelon-defs.3 | la condición (3)]: al descender de fila en fila, las entradas principales avanzan estrictamente hacia la derecha, dejando un triángulo de ceros debajo de la escalera. Compare dos matrices del mismo tamaño:
+\[
+U = \begin{bmatrix} 2 & -4 & 6 & 2 \\ 0 & 0 & 3 & -9 \\ 0 & 0 & 0 & 0 \end{bmatrix}, \qquad
+R = \begin{bmatrix} 1 & -2 & 0 & 10 \\ 0 & 0 & 1 & -3 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Tanto \(U\) como \(R\) están en REF: la fila nula está abajo, las entradas principales se ubican en las columnas \(1\) y \(3\) (avanzando estrictamente a la derecha) y todo debajo de cada entrada principal es \(0\). Sin embargo, \(U\) no está en RREF porque sus entradas principales son \(2\) y \(3\) (no \(1\)) y la columna \(3\) contiene una entrada no nula \(6\) arriba de su entrada principal. Aplicar \(R_2 \leftarrow \frac{1}{3} R_2\), \(R_1 \leftarrow \frac{1}{2} R_1\) y \(R_1 \leftarrow R_1 - 3 R_2\) convierte \(U\) en \(R\), que satisface las cinco condiciones de la RREF. Note también que la columna \(2\) de \(R\) contiene \(-2\) —¡eso está completamente permitido porque la columna \(2\) no tiene entrada principal!—. La condición (5) exige ceros arriba y abajo únicamente de los \(1\) principales, no en las columnas sin entrada principal.
+
+Un hecho estructural crucial separa a la REF de la RREF: una matriz puede ser equivalente por filas a muchas matrices distintas en REF (escalar una fila por cualquier constante no nula, o sumar un múltiplo de una fila inferior a una fila superior, preserva la REF), pero su RREF es completamente única.
+
+[CALLOUT]
+id: rref-uniqueness
+label: Teorema
+title: Unicidad de la forma escalonada reducida por filas
+tone: key
+
+Toda matriz \(M\) es equivalente por filas a una y solo una matriz en forma escalonada reducida por filas, denotada \(\operatorname{RREF}(M)\).
+
+Como \(\operatorname{RREF}(M)\) es única, las ubicaciones de sus \(1\) principales son propiedades intrínsecas de \(M\). Una posición pivote de \(M\) es una ubicación \((i, j)\) que contiene un \(1\) principal en \(\operatorname{RREF}(M)\), y una columna pivote de \(M\) es toda columna que contiene una posición pivote.
+[/CALLOUT]
+
+Conceptualmente, ¿por qué debería ser única \(\operatorname{RREF}(M)\)? Piense en la matriz aumentada de un sistema consistente: las ecuaciones de \(\operatorname{RREF}\) expresan cada variable de columna pivote puramente como una fórmula lineal en las variables restantes (sin que ninguna variable pivote aparezca en otra ecuación). Si dos matrices distintas en RREF fueran equivalentes por filas, tendrían el mismo conjunto solución; sin embargo, elegir valores arbitrarios para las variables no pivote fuerza de manera única el valor de cada variable pivote, lo que fija cada coeficiente en su sitio. Una vez que desarrollemos la invariancia de la dependencia entre columnas más adelante en el curso, convertiremos este argumento conceptual en una demostración algebraica completa válida para todas las matrices a la vez.
+
+Un beneficio práctico inmediato de la unicidad es que incluso una REF de \(M\) ya revela todas las posiciones pivote y columnas pivote: escalar filas no nulas y anular entradas arriba de las entradas principales nunca desplaza una entrada principal a otra fila o columna.
+
+[QUESTION 1]
+[ANSWER: A]
+¿Cuál de las siguientes matrices está en forma escalonada reducida por filas (RREF)?
+
+(A) \(\begin{bmatrix} 1 & 2 & 0 & 4 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 3 & 0 \\ 0 & 1 & -2 & 0 \\ 0 & 0 & 0 & 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 2 \\ 0 & 0 & 0 \\ 0 & 1 & -1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 & 1 & 0 & 3 \\ 1 & 0 & 0 & -2 \\ 0 & 0 & 1 & 5 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Eliminación hacia adelante y eliminación de Gauss-Jordan ===
+
+¿Cómo reducimos realmente cualquier matriz a REF o RREF sin deshacer nunca nuestro propio trabajo? El procedimiento consta de dos fases limpias: una fase hacia adelante (eliminación gaussiana) que avanza de arriba hacia abajo y de izquierda a derecha para producir REF, seguida opcionalmente de una fase hacia atrás (eliminación de Gauss-Jordan) que avanza de abajo hacia arriba y de derecha a izquierda para producir RREF.
+
+[CALLOUT]
+id: row-reduction-algo
+label: Algoritmo
+title: Eliminación gaussiana y de Gauss-Jordan
+tone: key
+
+Fase hacia adelante (produce REF):
+(1) Comience en la columna situada más a la izquierda que contenga al menos una entrada no nula. Esta es una columna pivote, y su posición superior es una posición pivote.
+(2) Seleccione una entrada no nula en esta columna pivote (en la fila pivote actual o debajo de ella) y, si es necesario, intercambie filas para que esa entrada no nula quede en la posición pivote.
+(3) Use operaciones de reemplazo de fila (\(R_k \leftarrow R_k - c R_i\)) para crear ceros en toda posición estrictamente debajo del pivote.
+(4) Cubra la fila que contiene al pivote y todas las filas por encima de ella. Repita los pasos (1)–(3) sobre la submatriz restante hasta que no queden filas no nulas.
+
+Fase hacia atrás (lleva la REF a RREF):
+(5) Comenzando por el pivote situado más a la derecha y avanzando hacia arriba y hacia la izquierda, escale cada fila pivote para que su entrada principal sea \(1\), y luego use operaciones de reemplazo de fila para crear ceros en toda posición estrictamente arriba de ese pivote.
+[/CALLOUT]
+
+Note por qué la fase hacia atrás trabaja de derecha a izquierda (del pivote inferior al superior): anular por encima de un pivote inferior solo suma múltiplos de una fila cuyas entradas a la izquierda de ese pivote son todas cero, por lo que NUNCA puede alterar los ceros ya creados hacia la izquierda.
+
+Sigamos todo el algoritmo sobre un sistema lineal concreto \(3 \times 3\):
+\[
+\begin{aligned}
+x_1 - 2x_2 + x_3 &= 0, \\
+2x_1 - 3x_2 + 5x_3 &= 7, \\
+-x_1 + 4x_2 + 2x_3 &= 9.
+\end{aligned}
+\]
+Forme la matriz aumentada:
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+2 & -3 & 5 & 7 \\
+-1 & 4 & 2 & 9
+\end{array}\right].
+\]
+Fase hacia adelante, columna \(1\): la entrada superior izquierda ya es \(1\) (un pivote cómodo). Anule debajo de ella usando \(R_2 \leftarrow R_2 - 2 R_1\) y \(R_3 \leftarrow R_3 + R_1\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+0 & 1 & 3 & 7 \\
+0 & 2 & 3 & 9
+\end{array}\right].
+\]
+Fase hacia adelante, submatriz a partir de la fila \(2\): la columna \(2\) tiene pivote no nulo \(1\) en la fila \(2\). Anule debajo de él con \(R_3 \leftarrow R_3 - 2 R_2\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+0 & 1 & 3 & 7 \\
+0 & 0 & -3 & -5
+\end{array}\right].
+\]
+En esta etapa la matriz ya está en REF. Si solo queremos la solución, podemos detenernos aquí y usar sustitución hacia atrás: la fila \(3\) da \(-3x_3 = -5 \implies x_3 = 5/3\); la fila \(2\) da \(x_2 = 7 - 3(5/3) = 2\); la fila \(1\) da \(x_1 = 2(2) - 5/3 = 7/3\).
+
+De manera alternativa, continuemos con la fase hacia atrás (eliminación de Gauss-Jordan) para llegar a RREF. Comience con el pivote inferior derecho \(-3\) en la fila \(3\): escale \(R_3 \leftarrow -\frac{1}{3} R_3\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+0 & 1 & 3 & 7 \\
+0 & 0 & 1 & 5/3
+\end{array}\right].
+\]
+Anule la columna \(3\) arriba de la fila \(3\) usando \(R_2 \leftarrow R_2 - 3 R_3\) y \(R_1 \leftarrow R_1 - R_3\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 0 & -5/3 \\
+0 & 1 & 0 & 2 \\
+0 & 0 & 1 & 5/3
+\end{array}\right].
+\]
+Finalmente, anule la columna \(2\) arriba de la fila \(2\) usando \(R_1 \leftarrow R_1 + 2 R_2\):
+\[
+\left[\begin{array}{ccc|c}
+1 & 0 & 0 & 7/3 \\
+0 & 1 & 0 & 2 \\
+0 & 0 & 1 & 5/3
+\end{array}\right].
+\]
+Ahora la solución única \((7/3, 2, 5/3)\) queda directamente a la vista en la columna del lado derecho.
+
+Geométricamente, ¿qué les está haciendo la eliminación de Gauss-Jordan a las rectas de un sistema \(2 \times 2\)? Tome \(x_1 + 2x_2 = 5\) y \(2x_1 - x_2 = 0\), que se cortan en \((1, 2)\). La eliminación hacia adelante reemplaza la segunda ecuación por \(-5x_2 = -10\), es decir, la recta horizontal \(x_2 = 2\) que pasa por \((1, 2)\). Luego la eliminación hacia atrás reemplaza la primera ecuación por \(x_1 = 1\), la recta vertical que pasa por \((1, 2)\). Cada operación por fila pivota las rectas alrededor del punto fijo de intersección hasta alinearlas directamente con los ejes coordenados.
+
+[GRAPH]
+type: function2d
+title: La eliminación de Gauss-Jordan rota dos rectas alrededor de \((1, 2)\) hasta rectas en RREF alineadas con los ejes
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+xrange: -1, 4
+yrange: -1, 4
+aspect: equal
+trace: (5 - x) / 2 | label: \(x_1 + 2x_2 = 5\) | color: #2563eb
+trace: 2*x | label: \(2x_1 - x_2 = 0\) | color: #059669
+trace: 2 | label: Fila 2 de la RREF: \(x_2 = 2\) | color: #dc2626
+segment: 1, -1, 1, 4 | label: \(x_1 = 1\) | color: #d97706 | dashed: true
+point: 1, 2 | label: \((1, 2)\)
+[/GRAPH]
+
+=== SECTION 3: Criterio de consistencia, variables básicas y variables libres ===
+
+Una vez que una matriz aumentada \([A \mid \mathbf{b}]\) se ha reducido a REF (o RREF), dos preguntas se vuelven completamente transparentes: ¿existe alguna solución? y, de ser así, ¿cómo describimos todas ellas?
+
+Suponga que una forma escalonada contiene una fila de la forma
+\[
+\begin{bmatrix} 0 & 0 & \cdots & 0 & \mid & c \end{bmatrix} \qquad \text{con } c \neq 0.
+\]
+Traducida de vuelta a una ecuación, esta fila afirma
+\[
+0 x_1 + 0 x_2 + \dots + 0 x_n = c,
+\]
+lo cual se simplifica a \(0 = c\) —una contradicción pues \(c \neq 0\)—. Ninguna asignación de números a \(x_1, \dots, x_n\) puede hacer verdadera \(0 = c\), de modo que el sistema es inconsistente. Note qué significa tal fila en términos de pivotes: ¡su entrada principal \(c\) se ubica en la columna más a la derecha (aumentada)! Recíprocamente, si la columna más a la derecha NO es una columna pivote, entonces no existe ninguna fila de la forma \(0 = c\) (\(c \neq 0\)); como veremos enseguida, toda variable restante puede asignarse libremente y cada variable pivote despejarse de forma única en términos de ellas, por lo que siempre existe al menos una solución.
+
+[CALLOUT]
+id: consistency-criterion
+label: Teorema
+title: Consistencia en forma escalonada y clasificación de variables
+tone: key
+
+Reduzca la matriz aumentada \([A \mid \mathbf{b}]\) de un sistema lineal en \(x_1, \dots, x_n\) a cualquier forma escalonada por filas (o RREF):
+
+(1) Prueba de consistencia: El sistema lineal es consistente si y solo si la columna más a la derecha (aumentada) NO es una columna pivote —equivalentemente, ninguna fila escalonada tiene la forma \(\begin{bmatrix} 0 & \cdots & 0 & \mid & c \end{bmatrix}\) con \(c \neq 0\)—.
+(2) Variables básicas y libres: Cuando el sistema es consistente, toda incógnita \(x_j\) correspondiente a una columna pivote de \(A\) se denomina variable básica, y toda incógnita \(x_k\) correspondiente a una columna no pivote de \(A\) se denomina variable libre.
+(3) Prueba de unicidad: Un sistema consistente tiene solución única si y solo si no tiene variables libres (toda columna de variables es una columna pivote), y tiene infinitas soluciones si y solo si posee al menos una variable libre.
+[/CALLOUT]
+
+¿Por qué todo sistema consistente con al menos una variable libre tiene infinitas soluciones? Reduzca \([A \mid \mathbf{b}]\) por completo hasta RREF. Como cada variable básica tiene un \(1\) principal con ceros en todo el resto de su columna, cada variable básica aparece en exactamente UNA ecuación no nula, con coeficiente \(1\), acompañada únicamente de variables libres y una constante. Pasar los términos de variables libres al lado derecho expresa explícitamente cada variable básica como una fórmula en las variables libres. Asignar CUALESQUIERA números reales a las variables libres determina entonces una solución válida, y elegir infinitos valores distintos para aunque sea una sola variable libre produce infinitas soluciones distintas.
+
+Desarrollemos un ejemplo completo \(3 \times 4\) con variables libres y verifiquemos la respuesta por sustitución. Considere
+\[
+\begin{aligned}
+x_1 + 2x_2 - x_3 + 3x_4 &= 4, \\
+2x_1 + 4x_2 - x_3 + 7x_4 &= 10, \\
+-x_1 - 2x_2 + 2x_3 - 2x_4 &= -2.
+\end{aligned}
+\]
+Forme la matriz aumentada y aplique [REF: row-reduction-algo | la eliminación de Gauss-Jordan]:
+\[
+\left[\begin{array}{cccc|c}
+1 & 2 & -1 & 3 & 4 \\
+2 & 4 & -1 & 7 & 10 \\
+-1 & -2 & 2 & -2 & -2
+\end{array}\right]
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\left[\begin{array}{cccc|c}
+1 & 2 & -1 & 3 & 4 \\
+0 & 0 & 1 & 1 & 2 \\
+0 & 0 & 1 & 1 & 2
+\end{array}\right].
+\]
+Observe que la columna \(2\) tiene ceros debajo de la fila \(1\), por lo que saltamos la columna \(2\) y ubicamos el segundo pivote en la columna \(3\). Anular debajo con \(R_3 \leftarrow R_3 - R_2\) da REF:
+\[
+\left[\begin{array}{cccc|c}
+1 & 2 & -1 & 3 & 4 \\
+0 & 0 & 1 & 1 & 2 \\
+0 & 0 & 0 & 0 & 0
+\end{array}\right].
+\]
+Primero revise [REF: consistency-criterion.1 | la consistencia]: la fila \(3\) es toda ceros (dice \(0 = 0\), lo cual siempre es cierto —¡no confunda una fila de puros ceros con una fila inconsistente!—). La columna más a la derecha no es columna pivote, así que el sistema es consistente.
+
+Ahora termine la fase hacia atrás con \(R_1 \leftarrow R_1 + R_2\) para llegar a RREF:
+\[
+\left[\begin{array}{cccc|c}
+1 & 2 & 0 & 4 & 6 \\
+0 & 0 & 1 & 1 & 2 \\
+0 & 0 & 0 & 0 & 0
+\end{array}\right].
+\]
+Las columnas pivote son las columnas \(1\) y \(3\), de modo que \(x_1\) y \(x_3\) son variables básicas, mientras que \(x_2\) y \(x_4\) son variables libres. Escribir las filas no nulas da
+\[
+\begin{aligned}
+x_1 + 2x_2 + 4x_4 &= 6, \\
+x_3 + x_4 &= 2.
+\end{aligned}
+\]
+Despejar cada variable básica en términos de los parámetros libres \(x_2\) y \(x_4\) (¡recordando invertir el signo de cada término que pasa al otro lado del signo igual!) produce la solución general:
+\[
+\begin{aligned}
+x_1 &= 6 - 2x_2 - 4x_4, \\
+x_2 &\text{ es libre}, \\
+x_3 &= 2 - x_4, \\
+x_4 &\text{ es libre}.
+\end{aligned}
+\]
+Verifique siempre sustituyendo las expresiones generales (o un par de elecciones no triviales de las variables libres, como \(x_2 = 1, x_4 = -1\) que da \((8, 1, 3, -1)\)) de vuelta en las ecuaciones ORIGINALES:
+- Ecuación 1: \(8 + 2(1) - 3 + 3(-1) = 8 + 2 - 3 - 3 = 4\).
+- Ecuación 2: \(2(8) + 4(1) - 3 + 7(-1) = 16 + 4 - 3 - 7 = 10\).
+- Ecuación 3: \(-8 - 2(1) + 2(3) - 2(-1) = -8 - 2 + 6 + 2 = -2\).
+De hecho, sustituir las expresiones simbólicas en la Ecuación 2 da \(2(6 - 2x_2 - 4x_4) + 4x_2 - (2 - x_4) + 7x_4 = 12 - 2 + (-4 + 4)x_2 + (-8 + 1 + 7)x_4 = 10\) idénticamente para todo \(x_2, x_4 \in \mathbb{R}\).
+
+[TABLE]
+Rasgo en forma escalonada | Significado para el sistema
+Fila \(\begin{bmatrix} 0 & \cdots & 0 & \mid & c \end{bmatrix}\) con \(c \neq 0\) | Inconsistente (sin solución)
+Fila \(\begin{bmatrix} 0 & \cdots & 0 & \mid & 0 \end{bmatrix}\) | Ecuación redundante \(0 = 0\); NO indica por sí sola inconsistencia ni infinitas soluciones
+Pivote en toda columna de variable, ninguno en la columna aumentada | Consistente con solución única
+Sin pivote en la columna aumentada, al menos una columna de variable no pivote | Consistente con infinitas soluciones (un parámetro libre por cada columna de variable no pivote)
+[/TABLE]
+
+Preste atención a la advertencia sutil de la segunda fila de la tabla: una fila nula \(\begin{bmatrix} 0 & \cdots & 0 & \mid & 0 \end{bmatrix}\) NO significa automáticamente que haya infinitas soluciones. Un sistema \(3 \times 2\) como \(x_1 = 1,\; x_2 = 2,\; x_1 + x_2 = 3\) se reduce a \(\left[\begin{array}{cc|c} 1 & 0 & 1 \\ 0 & 1 & 2 \\ 0 & 0 & 0 \end{array}\right]\), que tiene una fila nula pero tiene solución ÚNICA porque cada columna de variable posee un pivote. Las variables libres se cuentan por columnas de variables no pivote, no por filas nulas.
+
+[QUESTION 2]
+[ANSWER: C]
+¿Para qué valor(es) real(es) de \(k\) es consistente el sistema lineal con matriz aumentada
+\[
+\left[\begin{array}{ccc|c}
+1 & -1 & 2 & 3 \\
+2 & -2 & 5 & 7 \\
+1 & -1 & 3 & k
+\end{array}\right]
+\]?
+
+(A) \(k = 0\) solamente
+(B) \(k = 3\) solamente
+(C) \(k = 4\) solamente
+(D) Todos los números reales \(k \neq 4\)
+(E) Todos los números reales \(k\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+La RREF de la matriz aumentada de un sistema lineal en las incógnitas \(x_1, x_2, x_3, x_4\) es
+\[
+\left[\begin{array}{cccc|c}
+1 & -3 & 0 & 2 & 5 \\
+0 & 0 & 1 & -4 & -1 \\
+0 & 0 & 0 & 0 & 0
+\end{array}\right].
+\]
+¿Qué afirmación describe correctamente el conjunto solución completo?
+
+(A) \(x_1 = 5 + 3x_2 - 2x_4\) y \(x_3 = -1 + 4x_4\), con \(x_2, x_4\) libres
+(B) \(x_1 = 5 - 3x_2 + 2x_4\) y \(x_3 = -1 - 4x_4\), con \(x_2, x_4\) libres
+(C) \(x_1 = 5 + 3x_2 - 2x_4\) y \(x_3 = -1 + 4x_4\), con \(x_2 = 0\) y \(x_4\) libre
+(D) El sistema es inconsistente porque la fila inferior consiste enteramente en ceros
+(E) \(x_1 = 5\) y \(x_3 = -1\), con \(x_2, x_4\) libres
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Resuelva el siguiente sistema lineal mediante eliminación gaussiana o de Gauss-Jordan:
+\[
+\begin{aligned}
+x_1 + 2x_2 - x_3 &= -1, \\
+2x_1 + 5x_2 + x_3 &= 0, \\
+-x_1 - x_2 + 5x_3 &= 4.
+\end{aligned}
+\]
+¿Cuál es la solución única \((x_1, x_2, x_3)\)?
+
+(A) \((1, -1, 0)\)
+(B) \((2, -1, 1)\)
+(C) \((2, 1, 1)\)
+(D) \((-2, 1, 1)\)
+(E) \((0, -1, -1)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Un sistema lineal consistente de \(4\) ecuaciones en \(5\) incógnitas tiene una matriz aumentada cuya forma escalonada por filas contiene exactamente \(3\) posiciones pivote. ¿Cuántas variables libres tiene el sistema?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Considere el sistema lineal con parámetros reales \(a\) y \(b\):
+\[
+\begin{aligned}
+x_1 + x_2 + x_3 &= 2, \\
+2x_1 + 3x_2 + 2x_3 &= 5, \\
+x_1 + 2x_2 + a x_3 &= b.
+\end{aligned}
+\]
+¿Para qué valores de \(a\) y \(b\) tiene este sistema infinitas soluciones?
+
+(A) \(a \neq 1\) y \(b = 3\)
+(B) \(a = 1\) y \(b \neq 3\)
+(C) \(a = 1\) y cualquier número real \(b\)
+(D) \(a = 1\) y \(b = 3\)
+(E) \(a = 0\) y \(b = 2\)
+[/BONUS]

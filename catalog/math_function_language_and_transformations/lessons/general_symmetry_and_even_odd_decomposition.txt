@@ -1,0 +1,255 @@
+=== SECTION 1: Reflection symmetry across an arbitrary vertical line \(x = a\) ===
+
+Earlier, we tested whether a function is EVEN (\(f(-x) = f(x)\), symmetric across the \(y\)-axis \(x = 0\)) or ODD (\(f(-x) = -f(x)\), symmetric by a \(180^\circ\) turn about the origin \((0, 0)\)). Most functions in practice are shifted away from the origin: for instance, \(f(x) = x^2 - 6x + 11 = (x - 3)^2 + 2\) is clearly symmetric across the vertical line \(x = 3\), even though it is NOT an even function! How do we express and prove symmetry across ANY vertical line \(x = a\) algebraically?
+
+Take any offset \(t \in \mathbb{R}\). Moving \(t\) units to the right of \(x = a\) lands at \(a + t\); moving \(t\) units to the left of \(x = a\) lands at \(a - t\). The graph of \(y = f(x)\) mirrors itself across the vertical line \(x = a\) precisely when those two equidistant inputs always produce the same height:
+\[
+f(a + t) = f(a - t)
+\]
+for every \(t\) such that \(a + t\) (and therefore \(a - t\)) lies in \(\operatorname{Dom}(f)\).
+
+We can also write this in terms of a single variable \(x\). Let \(x = a + t\); then \(t = x - a\), so the mirror input is
+\[
+a - t = a - (x - a) = 2a - x.
+\]
+Notice the midpoint check: \(\dfrac{x + (2a - x)}{2} = a\), confirming that \(x\) and \(2a - x\) always sit equally far on opposite sides of \(x = a\).
+
+[CALLOUT]
+id: line-symmetry
+label: Characterization
+title: Vertical line symmetry across \(x = a\)
+tone: key
+
+The graph of \(y = f(x)\) is symmetric across the vertical line \(x = a\) if and only if:
+(1) \(\operatorname{Dom}(f)\) is symmetric about \(a\) (whenever \(x \in \operatorname{Dom}(f)\), we also have \(2a - x \in \operatorname{Dom}(f)\)); and
+(2) \(f(a + t) = f(a - t)\) for all valid offsets \(t\)—equivalently,
+\[
+f(2a - x) = f(x) \qquad \text{for all } x \in \operatorname{Dom}(f).
+\]
+Notice that setting \(a = 0\) recovers the standard even-function test \(f(-x) = f(x)\).
+[/CALLOUT]
+
+Example 1: Verify that \(f(x) = x^2 - 6x + 11\) is symmetric across \(x = 3\).
+Here \(a = 3\), so \(2a - x = 6 - x\). Evaluate \(f(6 - x)\) directly:
+\[
+f(6 - x) = (6 - x)^2 - 6(6 - x) + 11 = (36 - 12x + x^2) - 36 + 6x + 11 = x^2 - 6x + 11 = f(x).
+\]
+Equivalently, with offsets from \(3\): \(f(3 + t) = ((3 + t) - 3)^2 + 2 = t^2 + 2\), and \(f(3 - t) = ((3 - t) - 3)^2 + 2 = (-t)^2 + 2 = t^2 + 2\).
+
+The graph below illustrates this reflection on \(f(x) = (x - 3)^2 + 2\): the paired points \((1, 6)\) and \((5, 6)\) correspond to \(t = 2\) (or \(x = 5\) and \(2(3) - 5 = 1\)), sitting at equal heights on opposite sides of the dashed axis \(x = 3\).
+
+[GRAPH]
+type: function2d
+title: Reflection symmetry of \(f(x) = (x - 3)^2 + 2\) across the vertical line \(x = 3\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.5, 6.5
+yrange: 0, 12
+trace: (x - 3)^2 + 2 | label: \(y = (x - 3)^2 + 2\)
+segment: 3, 0, 3, 12 | label: \(x = 3\) | dashed: true
+segment: 1, 6, 5, 6 | dashed: true
+point: 3, 2 | label: \((3, 2)\)
+point: 1, 6 | label: \((1, 6)\)
+point: 5, 6 | label: \((5, 6)\)
+[/GRAPH]
+
+Watch out for a common sign trap when reading an axis from a functional equation: if you are told \(f(10 - x) = f(x)\), the axis of symmetry is NOT \(x = 10\)! Since \(2a = 10\), the axis is the MIDPOINT \(a = \dfrac{10}{2} = 5\). More generally, whenever \(f(c - x) = f(x)\), the axis is \(x = \dfrac{c}{2}\).
+
+[QUESTION 1]
+[ANSWER: C]
+Which functional equation expresses that the graph of a function \(f\) defined on \(\mathbb{R}\) is symmetric across the vertical line \(x = -4\)?
+
+(A) \(f(-4 - x) = f(x)\)
+(B) \(f(8 - x) = f(x)\)
+(C) \(f(-8 - x) = f(x)\)
+(D) \(f(x - 4) = f(x + 4)\)
+(E) \(f(-8 - x) = -f(x)\)
+[/QUESTION]
+
+=== SECTION 2: Point symmetry (\(180^\circ\) rotation) about an arbitrary point \((a, b)\) ===
+
+Now generalize odd symmetry from the origin \((0, 0)\) to ANY center \((a, b)\). When you rotate a point \((x, y)\) by \(180^\circ\) around the center \((a, b)\), the center \((a, b)\) is the exact midpoint between \((x, y)\) and its rotated image \((x', y')\):
+\[
+\frac{x + x'}{2} = a \quad \text{and} \quad \frac{y + y'}{2} = b \implies (x', y') = (2a - x,\, 2b - y).
+\]
+For the graph of \(y = f(x)\) to land back on itself under this \(180^\circ\) rotation, whenever \((x, f(x))\) lies on the graph, the rotated point \((2a - x, 2b - f(x))\) must ALSO lie on the graph—meaning \(f(2a - x) = 2b - f(x)\), or more symmetrically:
+\[
+f(2a - x) + f(x) = 2b.
+\]
+In equidistant-offset form (\(x = a + t\)), this says \(f(a + t) + f(a - t) = 2b\), which means the average of the two outputs \(f(a + t)\) and \(f(a - t)\) is always \(b\).
+
+[CALLOUT]
+id: point-symmetry
+label: Characterization
+title: \(180^\circ\) rotational (point) symmetry about \((a, b)\)
+tone: key
+
+The graph of \(y = f(x)\) has \(180^\circ\) rotational symmetry about the point \((a, b)\) if and only if:
+(1) \(\operatorname{Dom}(f)\) is symmetric about \(a\); and
+(2) \(f(a + t) + f(a - t) = 2b\) for all valid offsets \(t\)—equivalently,
+\[
+f(2a - x) + f(x) = 2b \qquad \text{for all } x \in \operatorname{Dom}(f).
+\]
+Setting \((a, b) = (0, 0)\) recovers the standard odd-function test \(f(-x) + f(x) = 0\), i.e. \(f(-x) = -f(x)\). Note that \((a, b)\) does NOT have to belong to the graph itself (for example, it can sit at the intersection of asymptotes).
+[/CALLOUT]
+
+Example 2 (shifted hyperbola): Verify that \(h(x) = \dfrac{1}{x - 2} + 3\) is symmetric about \((2, 3)\).
+First check the domain: \(\operatorname{Dom}(h) = \mathbb{R} \setminus \{2\}\), which is symmetric about \(a = 2\) (if \(x \ne 2\), then \(4 - x \ne 2\)). Now compute \(h(2a - x) + h(x) = h(4 - x) + h(x)\):
+\[
+h(4 - x) + h(x) = \left(\frac{1}{(4 - x) - 2} + 3\right) + \left(\frac{1}{x - 2} + 3\right) = \left(\frac{1}{2 - x} + 3\right) + \left(\frac{1}{x - 2} + 3\right) = 6 = 2(3).
+\]
+Because \(\dfrac{1}{2 - x} = -\dfrac{1}{x - 2}\), the fractional pieces cancel identically! Look at the graph below: \((2, 3)\) is not on the curve, yet rotating \((3, 4)\) by \(180^\circ\) around \((2, 3)\) lands exactly on \((1, 2)\), with \((2, 3)\) as the midpoint of the dashed chord joining them.
+
+[GRAPH]
+type: function2d
+title: Point symmetry of \(h(x) = \frac{1}{x - 2} + 3\) about \((2, 3)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1, 5
+yrange: -1, 7
+aspect: equal
+trace: x < 1.85 ? (1/(x - 2) + 3) : (0/0) | label: \(h(x),\; x < 2\)
+trace: x > 2.15 ? (1/(x - 2) + 3) : (0/0) | label: \(h(x),\; x > 2\)
+segment: 1, 2, 3, 4 | dashed: true
+point: 2, 3 | label: \((2, 3)\)
+point: 1, 2 | label: \((1, 2)\)
+point: 3, 4 | label: \((3, 4)\)
+[/GRAPH]
+
+Example 3 (shifted cubic): Test \(p(x) = (x + 1)^3 - 2(x + 1) + 4\) for point symmetry about \((-1, 4)\).
+Set \(x = -1 + t\):
+\[
+p(-1 + t) = t^3 - 2t + 4, \qquad p(-1 - t) = (-t)^3 - 2(-t) + 4 = -t^3 + 2t + 4.
+\]
+Adding gives \(p(-1 + t) + p(-1 - t) = 8 = 2(4)\) for all \(t \in \mathbb{R}\), proving \(180^\circ\) symmetry about \((-1, 4)\).
+
+Compare the four symmetry tests in one glance:
+
+[TABLE]
+Symmetry type | Geometric anchor | Domain condition | Functional equation
+Even | \(y\)-axis (\(x = 0\)) | Symmetric about \(0\) | \(f(-x) = f(x)\)
+Odd | Origin \((0, 0)\) | Symmetric about \(0\) | \(f(-x) + f(x) = 0\)
+Vertical line | Line \(x = a\) | Symmetric about \(a\) | \(f(2a - x) = f(x)\)
+Point (\(180^\circ\)) | Center \((a, b)\) | Symmetric about \(a\) | \(f(2a - x) + f(x) = 2b\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+Suppose a function \(f\) defined on \(\mathbb{R}\) satisfies \(f(6 - x) + f(x) = -10\) for every \(x \in \mathbb{R}\). About what point is the graph of \(y = f(x)\) symmetric under a \(180^\circ\) rotation?
+
+(A) \((6, -10)\)
+(B) \((3, -5)\)
+(C) \((3, 5)\)
+(D) \((-3, -5)\)
+(E) \((6, -5)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+About which point is the graph of \(g(x) = \dfrac{2x - 1}{x - 3}\) symmetric under a \(180^\circ\) rotation?
+
+(A) \((3, -1)\)
+(B) \((-3, 2)\)
+(C) \((2, 3)\)
+(D) \((3, 2)\)
+(E) \((3, 5)\)
+[/QUESTION]
+
+=== SECTION 3: The unique even-odd decomposition theorem ===
+
+Most functions are neither even nor odd. Yet if a function \(f\) has a domain symmetric about \(0\) (meaning \(x \in \operatorname{Dom}(f) \iff -x \in \operatorname{Dom}(f)\)), something remarkable happens: \(f\) can ALWAYS be split into the sum of ONE even function and ONE odd function—and in ONLY ONE way!
+
+Before writing down any formula, let us DERIVE what those two pieces MUST be. Suppose such a decomposition exists:
+\[
+f(x) = f_{\text{even}}(x) + f_{\text{odd}}(x),
+\]
+where \(f_{\text{even}}(-x) = f_{\text{even}}(x)\) and \(f_{\text{odd}}(-x) = -f_{\text{odd}}(x)\) for all \(x \in \operatorname{Dom}(f)\).
+
+Because \(\operatorname{Dom}(f)\) is symmetric about \(0\), we are allowed to substitute \(-x\) into this equation:
+\[
+f(-x) = f_{\text{even}}(-x) + f_{\text{odd}}(-x) = f_{\text{even}}(x) - f_{\text{odd}}(x).
+\]
+Now we have a two-by-two linear system in the two unknowns \(f_{\text{even}}(x)\) and \(f_{\text{odd}}(x)\):
+- Adding the equations for \(f(x)\) and \(f(-x)\) cancels \(f_{\text{odd}}(x)\):
+\[
+f(x) + f(-x) = 2 f_{\text{even}}(x) \implies f_{\text{even}}(x) = \frac{f(x) + f(-x)}{2}.
+\]
+- Subtracting \(f(-x)\) from \(f(x)\) cancels \(f_{\text{even}}(x)\):
+\[
+f(x) - f(-x) = 2 f_{\text{odd}}(x) \implies f_{\text{odd}}(x) = \frac{f(x) - f(-x)}{2}.
+\]
+
+That derivation already proves UNIQUENESS: no other pair of even and odd functions could ever sum to \(f\). Now confirm EXISTENCE by checking all three requirements directly on those two formulas:
+1. Evenness of \(f_{\text{even}}\): \(f_{\text{even}}(-x) = \dfrac{f(-x) + f(x)}{2} = f_{\text{even}}(x)\).
+2. Oddness of \(f_{\text{odd}}\): \(f_{\text{odd}}(-x) = \dfrac{f(-x) - f(x)}{2} = -\dfrac{f(x) - f(-x)}{2} = -f_{\text{odd}}(x)\).
+3. Sum: \(f_{\text{even}}(x) + f_{\text{odd}}(x) = \dfrac{f(x) + f(-x)}{2} + \dfrac{f(x) - f(-x)}{2} = \dfrac{2f(x)}{2} = f(x)\).
+
+[CALLOUT]
+id: even-odd-decomp
+label: Theorem
+title: Unique even-odd decomposition
+tone: key
+
+Every function \(f\) whose domain \(D\) is symmetric about \(0\) can be written uniquely as \(f(x) = f_{\text{even}}(x) + f_{\text{odd}}(x)\) on \(D\), where:
+(1) The even part is \(f_{\text{even}}(x) = \dfrac{f(x) + f(-x)}{2}\).
+(2) The odd part is \(f_{\text{odd}}(x) = \dfrac{f(x) - f(-x)}{2}\).
+[/CALLOUT]
+
+Why is the symmetric-domain requirement essential? Consider \(q(x) = \dfrac{1}{x - 2}\). Its natural domain \(\mathbb{R} \setminus \{2\}\) is NOT symmetric about \(0\): \(x = -2\) lies in the domain, so \(q(-2) = -\frac{1}{4}\) exists, yet \(q(-(-2)) = q(2)\) is undefined! To decompose \(q\), you must work on the symmetric domain \(\mathbb{R} \setminus \{-2, 2\}\).
+
+Example 4 (polynomials): For \(p(x) = 2x^3 - 5x^2 + 4x + 7\), applying [REF: even-odd-decomp | the decomposition formulas] simply collects even powers into \(p_{\text{even}}(x) = -5x^2 + 7\) and odd powers into \(p_{\text{odd}}(x) = 2x^3 + 4x\).
+
+Example 5 (a non-polynomial rational function): Decompose \(f(x) = \dfrac{1}{x^2 + x + 1}\) on \(\mathbb{R}\) (note that \(x^2 + x + 1 = (x + \frac{1}{2})^2 + \frac{3}{4} > 0\) everywhere, so \(\operatorname{Dom}(f) = \mathbb{R}\) is symmetric about \(0\)).
+First compute \(f(-x) = \dfrac{1}{x^2 - x + 1}\). Now form the common denominator \((x^2 + x + 1)(x^2 - x + 1) = (x^2 + 1)^2 - x^2 = x^4 + x^2 + 1\):
+\[
+f_{\text{even}}(x) = \frac{1}{2}\left(\frac{1}{x^2 + x + 1} + \frac{1}{x^2 - x + 1}\right) = \frac{1}{2}\cdot\frac{(x^2 - x + 1) + (x^2 + x + 1)}{x^4 + x^2 + 1} = \frac{x^2 + 1}{x^4 + x^2 + 1},
+\]
+\[
+f_{\text{odd}}(x) = \frac{1}{2}\left(\frac{1}{x^2 + x + 1} - \frac{1}{x^2 - x + 1}\right) = \frac{1}{2}\cdot\frac{(x^2 - x + 1) - (x^2 + x + 1)}{x^4 + x^2 + 1} = \frac{-x}{x^4 + x^2 + 1}.
+\]
+Notice how cleanly the graph below visualizes this decomposition: the lopsided peak of \(f(x)\) is built literally point-by-point by adding the mirror-symmetric bump \(f_{\text{even}}(x)\) and the origin-symmetric wave \(f_{\text{odd}}(x)\).
+
+[GRAPH]
+type: function2d
+title: Even-odd decomposition of \(f(x) = \frac{1}{x^2 + x + 1}\) into \(f_{\text{even}}(x)\) and \(f_{\text{odd}}(x)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 3.5
+yrange: -0.7, 1.5
+trace: 1/(x^2 + x + 1) | label: \(f(x) = \frac{1}{x^2 + x + 1}\)
+trace: (x^2 + 1)/(x^4 + x^2 + 1) | label: \(f_{\text{even}}(x) = \frac{x^2 + 1}{x^4 + x^2 + 1}\)
+trace: -x/(x^4 + x^2 + 1) | label: \(f_{\text{odd}}(x) = \frac{-x}{x^4 + x^2 + 1}\)
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: A]
+Consider \(f(x) = \dfrac{x}{x + 2}\) on the symmetric domain \(\mathbb{R} \setminus \{-2, 2\}\). What is the odd part \(f_{\text{odd}}(x)\) in its unique even-odd decomposition?
+
+(A) \(\dfrac{-2x}{x^2 - 4}\)
+(B) \(\dfrac{x^2}{x^2 - 4}\)
+(C) \(\dfrac{-4x}{x^2 - 4}\)
+(D) \(\dfrac{2x}{x^2 - 4}\)
+(E) \(\dfrac{x}{x + 2}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose a function \(f\) defined on all of \(\mathbb{R}\) is symmetric across the vertical line \(x = 1\) AND also symmetric across the vertical line \(x = 4\). Which identity MUST hold for every \(x \in \mathbb{R}\)?
+
+(A) \(f(x + 3) = f(x)\)
+(B) \(f(x + 6) = -f(x)\)
+(C) \(f(x)\) must be constant on \(\mathbb{R}\)
+(D) \(f(x + 5) = f(x)\)
+(E) \(f(x + 6) = f(x)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Suppose \(f\) is defined on \([-5, 5]\) with \(f(3) = 11\) and \(f(-3) = -5\). What are the values of \(f_{\text{even}}(-3)\) and \(f_{\text{odd}}(-3)\)?
+
+(A) \(f_{\text{even}}(-3) = 3\) and \(f_{\text{odd}}(-3) = 8\)
+(B) \(f_{\text{even}}(-3) = -3\) and \(f_{\text{odd}}(-3) = -8\)
+(C) \(f_{\text{even}}(-3) = 3\) and \(f_{\text{odd}}(-3) = -8\)
+(D) \(f_{\text{even}}(-3) = 8\) and \(f_{\text{odd}}(-3) = -3\)
+(E) \(f_{\text{even}}(-3) = -8\) and \(f_{\text{odd}}(-3) = 3\)
+[/BONUS]

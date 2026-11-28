@@ -1,0 +1,126 @@
+{
+  "topic": "Determinants and Eigenstructure",
+  "language": "English",
+  "collectionId": "math_determinants_and_eigenstructure",
+  "nodes": [
+    {
+      "id": "determinants_and_row_reduction",
+      "label": "Determinants via Alternating Multilinearity and Row Operations",
+      "explanation": "Assumes university background in matrix algebra, elementary matrices, row reduction to echelon form, and invertibility equivalences for n×n matrices over a field F = ℝ or ℂ. Defines the determinant det : M_n(F) → F through its three characterizing properties on rows: linearity in each row separately (multilinearity), vanishing whenever two rows are equal (alternating property, proving equivalence to sign reversal under a row swap), and normalization det(I_n) = 1. Derives the exact effect of all three elementary row operations (row replacement leaves det unchanged, scaling a row by c multiplies det by c, swapping two rows multiplies det by −1) and deduces det(EA) = det(E) det(A) for every elementary matrix E, det(U) = ∏ u_{ii} for any upper- or lower-triangular matrix, and explicit 2×2 and 3×3 formulas. Proves uniqueness of the determinant function from the three axioms via reduction to echelon form (explicitly noting that existence in general dimension n is verified via recursive cofactor expansion in a subsequent lesson). Trains computing determinants of n×n matrices efficiently via Gaussian elimination while carefully tracking sign flips and factored scalars. Leaves multiplicativity, transpose invariance, and cofactor formulas to the next lessons."
+    },
+    {
+      "id": "determinant_properties_and_multiplicativity",
+      "label": "Multiplicativity, Invertibility, Transpose, and Similarity Invariance",
+      "explanation": "Builds on the row-reduction characterization of determinants (assuming linear operators, matrix representations [T]_B, and change-of-basis similarity P^{-1} A P from Vector Spaces and Linear Maps) to establish the central algebraic theorems of determinants. Proves that an n×n matrix A is invertible iff det(A) ≠ 0 (extending the Invertible Matrix Theorem) and proves the multiplicativity theorem det(AB) = det(A) det(B) cleanly by factoring invertible A into elementary matrices and verifying directly that singular A forces singular AB so both sides vanish. Deduces det(A^{-1}) = 1/det(A), det(A^k) = (det A)^k, and det(cA) = c^n det(A), explicitly guarding against the classic algebraic errors det(cA) = c det(A) and det(A + B) = det(A) + det(B). Proves det(A^T) = det(A) via elementary matrices (verifying det(E^T) = det(E) for each elementary type), which immediately transfers all row-operation and multilinearity rules to columns. Proves similarity invariance det(P^{-1} A P) = det(A) and uses it to define the basis-independent determinant det(T) of a linear operator T : V → V on any finite-dimensional vector space. Also proves the block-triangular determinant formula det([[A, B], [0, D]]) = det(A) det(D). Enables the learner to manipulate determinant identities rigorously and evaluate determinants of structured or similar operators.",
+      "requires": [
+        "determinants_and_row_reduction"
+      ]
+    },
+    {
+      "id": "cofactor_expansion_and_cramers_rule",
+      "label": "Cofactor Expansion, the Classical Adjugate, and Cramer's Rule",
+      "explanation": "Builds on determinant multiplicativity and transpose invariance to develop recursive expansion, symbolic inversion, and explicit linear-system formulas. Defines (i, j)-minors M_{ij} and cofactors C_{ij} = (−1)^{i+j} M_{ij}, proves Laplace's cofactor expansion along any row or column (using multilinearity on standard basis rows and transpose invariance, and verifying recursively that the expansion satisfies the three determinant axioms—completing the existence proof of det for all n ≥ 1). Defines the classical adjugate adj(A) as the transpose of the cofactor matrix, proves the fundamental identity A adj(A) = adj(A) A = det(A) I_n by showing off-diagonal dot products correspond to determinants with repeated rows, and deduces A^{-1} = (1/det A) adj(A) whenever det(A) ≠ 0. Proves Cramer's Rule x_j = det(A_j(b))/det(A) cleanly via multiplicativity on A · I_j(x) = A_j(b) (where I_j(x) replaces column j of I_n by x). Contrasts the theoretical and symbolic utility of cofactor expansion, adjugates, and Cramer's Rule (e.g., parameter-dependent matrices or sparse rows) against their factorial O(n!) numerical cost compared to O(n³) row reduction. Enables the learner to combine row operations with strategic cofactor expansion and derive symbolic inverse or solution entries.",
+      "requires": [
+        "determinant_properties_and_multiplicativity"
+      ]
+    },
+    {
+      "id": "geometric_determinants_and_volume",
+      "label": "Determinants as Signed Volume and Orientation",
+      "explanation": "Optional enrichment building on determinant multiplicativity and row operations to connect the algebraic determinant over ℝ to geometry. Establishes |det(A)| as the area of the parallelogram spanned by the columns of a 2×2 real matrix and the volume of the parallelepiped spanned by the columns of a 3×3 matrix, then extends to n-dimensional parallelotopes by interpreting each elementary operation geometrically (row/column replacement shears without changing base or height, scaling scales volume by |c|, and swapping reverses handedness/orientation). Proves the volume-scaling principle Vol(T(S)) = |det(A)| Vol(S) for parallelotopes and elementary regions under T(x) = Ax, and interprets the sign of det(A) as orientation-preserving (det > 0, e.g., rotations) versus orientation-reversing (det < 0, e.g., reflections) versus dimension-collapsing (det = 0). Enables the learner to predict geometric distortion and orientation behavior of real linear maps directly from their determinants, leaving Jacobian change-of-variables integration to multivariable calculus.",
+      "requires": [
+        "determinant_properties_and_multiplicativity"
+      ],
+      "optional": true
+    },
+    {
+      "id": "eigenvalues_eigenvectors_and_eigenspaces",
+      "label": "Eigenvalues, Eigenvectors, Eigenspaces, and Invariant Lines",
+      "explanation": "Assumes university background in finite-dimensional vector spaces over F = ℝ or ℂ, subspaces, linear independence, bases, dimension, linear operators T : V → V, matrix representations, and solving homogeneous linear systems. Defines an eigenvalue λ ∈ F and eigenvector v ∈ V \\ {0} of T (or an n×n matrix A) by Tv = λv, emphasizing the critical distinction that v = 0 is never an eigenvector whereas λ = 0 is a valid eigenvalue iff T is singular (ker T ≠ {0}). Defines the eigenspace E_λ = ker(T − λI), verifies it is a nontrivial T-invariant subspace, and develops geometric intuition for eigenstructure before introducing determinants—analyzing projections, reflections, scalings, shears, and 2D rotations (showing that a 90° rotation in ℝ² has no real eigenvalues yet acquires ±i over ℂ). Proves the foundational independence theorem: eigenvectors corresponding to pairwise distinct eigenvalues λ_1, …, λ_k are linearly independent (by induction on k, applying T − λ_k I to eliminate one term), and extends this to show that the sum E_{λ_1} + … + E_{λ_k} is a direct sum (so an operator on an n-dimensional space has at most n distinct eigenvalues). Enables the learner to verify candidate eigenvalues, compute eigenspace bases for a given λ, identify eigenstructure geometrically, and prove independence of distinct-eigenvalue eigenvectors. Leaves finding unknown eigenvalues systematically via det(λI − A) to the next lesson."
+    },
+    {
+      "id": "characteristic_polynomial_and_multiplicities",
+      "label": "Characteristic Polynomials, Trace, and Algebraic vs. Geometric Multiplicity",
+      "explanation": "Synthesizes determinant invertibility, similarity invariance, and block-triangular determinants with eigenvalues and eigenspaces (assuming polynomial factoring and roots over ℝ and ℂ). Defines the characteristic polynomial p_A(λ) = det(λI − A) (explicitly noting the alternate convention det(A − λI) = (−1)^n p_A(λ) and keeping conventions consistent), proves λ ∈ F is an eigenvalue of A iff p_A(λ) = 0, and proves similarity invariance p_{P^{-1}AP}(λ) = p_A(λ) so p_T(λ) is well-defined for any operator T : V → V. Extracts the leading, degree-(n − 1), and constant coefficients to connect p_A(λ) with tr(A) and det(A) (noting exact trace-sum and determinant-product identities when p_A splits over ℂ), and reads eigenvalues immediately from triangular and block-triangular matrices. Defines algebraic multiplicity m_a(λ) (multiplicity of λ as a root of p_T) and geometric multiplicity m_g(λ) = dim E_λ, and proves the central inequality 1 ≤ m_g(λ) ≤ m_a(λ) by extending a basis of E_λ to a basis of V so the matrix of T becomes block upper-triangular [[λ I_k, B], [0, C]], showing (x − λ)^k divides p_T(x). Enables the learner to compute characteristic polynomials, extract eigenvalues and both multiplicities, and detect defective eigenvalues where m_g(λ) < m_a(λ).",
+      "requires": [
+        "determinant_properties_and_multiplicativity",
+        "eigenvalues_eigenvectors_and_eigenspaces"
+      ]
+    },
+    {
+      "id": "diagonalization_and_eigenbases",
+      "label": "Diagonalizability, Eigenbases, and Matrix Powers",
+      "explanation": "Builds on characteristic polynomials, algebraic/geometric multiplicities, and direct sums of eigenspaces to characterize and perform diagonalization. Proves the equivalence of the four fundamental criteria for an operator T on an n-dimensional space V over F (or an n×n matrix A): (1) T has a basis of eigenvectors (an eigenbasis); (2) A = PDP^{-1} for some invertible P and diagonal D; (3) ∑ m_g(λ_i) = n; and (4) p_T(λ) splits completely into linear factors over F AND m_g(λ) = m_a(λ) for every eigenvalue λ. Deducts the sufficient (but non-necessary) test that n distinct eigenvalues guarantee diagonalizability, trains exact construction of P and D (stressing column-order matching between eigenvectors in P and eigenvalues in D, and noting non-uniqueness of P), and contrasts diagonalizable matrices with two distinct failure modes: missing field roots (real rotations over ℝ) and defective multiplicities (shear matrices [[1, 1], [0, 1]]). Applies diagonalization to compute arbitrary powers A^k = P D^k P^{-1}, solve discrete linear dynamical systems x_{k+1} = A x_k in closed form, and analyze long-term dominant-eigenvalue growth or decay. Enables the learner to test diagonalizability over ℝ or ℂ, diagonalize matrices cleanly, and exploit eigenbases for matrix powers. Leaves complex-eigenvalue real blocks and non-diagonalizable canonical forms to subsequent lessons.",
+      "requires": [
+        "characteristic_polynomial_and_multiplicities"
+      ]
+    },
+    {
+      "id": "complex_eigenvalues_and_real_rotation_scaling",
+      "label": "Complex Eigenvalues of Real Matrices and Real Rotation-Scaling Blocks",
+      "explanation": "Builds on diagonalization (assuming complex numbers, conjugation, modulus, and polar form r e^{iθ}) to bridge complex eigenstructure with real geometric behavior for matrices A ∈ M_n(ℝ). Explains how a real matrix with nonreal roots of p_A(λ) can be diagonalizable over ℂ while failing to be diagonalizable over ℝ, and proves conjugate-pair symmetry: Av = λv iff A v̄ = λ̄ v̄, so nonreal eigenvalues and their eigenvectors occur in conjugate pairs with identical algebraic and geometric multiplicities. Develops the real 2×2 canonical rotation-scaling block: for a conjugate pair λ = a ± bi (b ≠ 0) with complex eigenvector v = u + iw (u, w ∈ ℝⁿ), proves {u, w} is linearly independent over ℝ and spans a 2-dimensional A-invariant real subspace on which A takes the matrix [[a, b], [−b, a]] = r [[cos θ, sin θ], [−sin θ, cos θ]] (with r = |λ|, explicitly reconciling column ordering {u, w} vs. {w, u} and angle sign). Extends this to transform real matrices that are diagonalizable over ℂ into real block-diagonal form A = P C P^{-1} (1×1 real blocks and 2×2 rotation-scaling blocks), predicting spiraling, circular, and oscillatory trajectories of x_{k+1} = A x_k directly from r and θ. Enables the learner to convert complex eigenpairs into real canonical blocks and interpret their geometry.",
+      "requires": [
+        "diagonalization_and_eigenbases"
+      ]
+    },
+    {
+      "id": "invariant_subspaces_and_triangularization",
+      "label": "Invariant Subspaces and Upper Triangularization over ℂ",
+      "explanation": "Builds on characteristic polynomials and multiplicities (using the Fundamental Theorem of Algebra over ℂ as supplied polynomial background) to analyze linear operators even when they are not diagonalizable. Formalizes T-invariant subspaces (T(W) ⊆ W), proving that extending a basis of an invariant subspace W to V puts T into block upper-triangular form [[A, B], [0, C]] (where A = [T|_W] and p_T(x) = p_A(x) p_C(x)), and that a direct sum of invariant subspaces V = W_1 ⊕ … ⊕ W_k yields a block-diagonal matrix. Proves the Algebraic Upper-Triangularization Theorem purely without inner products: every operator T on a finite-dimensional space V whose characteristic polynomial splits into linear factors over F (in particular, every complex operator) admits a basis in which [T]_B is upper triangular with its eigenvalues (counted with algebraic multiplicity) along the diagonal—carrying out the induction on dim V by extracting one eigenvector v_1, extending to a basis so the first column is λ_1 e_1, and triangularizing the (n − 1)×(n − 1) lower-right block. Immediately deduces two universal theorems valid for ALL (including defective) matrices over ℂ: the eigenvalues of any polynomial f(A) are f(λ_1), …, f(λ_n) with multiplicities, and tr(A) = ∑ λ_i and det(A) = ∏ λ_i hold universally. Explicitly leaves unitary Schur triangularization to Inner Product Spaces.",
+      "requires": [
+        "characteristic_polynomial_and_multiplicities"
+      ]
+    },
+    {
+      "id": "cayley_hamilton_and_minimal_polynomial",
+      "label": "The Cayley-Hamilton Theorem and the Minimal Polynomial",
+      "explanation": "Synthesizes diagonalization and upper triangularization (assuming polynomial division and divisibility in F[x]) to analyze polynomial relations satisfied by matrices and operators. Proves the Cayley-Hamilton Theorem—every square matrix A satisfies its own characteristic equation p_A(A) = 0—rigorously via upper triangularization U = P^{-1} A P over ℂ (showing that (U − λ_1 I)…(U − λ_n I) kills each basis vector e_1, …, e_n in turn, while explicitly exposing the classic fallacious pseudo-proof of substituting λ = A directly into det(λI − A)). Applies Cayley-Hamilton to express higher powers A^k (k ≥ n) and A^{-1} (when det A ≠ 0) as polynomials of degree < n in A. Defines annihilating polynomials and the unique monic minimal polynomial m_A(x) of smallest positive degree with m_A(A) = 0, proves via the division algorithm that m_A(x) divides every annihilating polynomial (in particular m_A | p_A), proves similarity invariance of m_A, and proves that m_A(x) and p_A(x) have the exact same roots in F (using m_A(A)v = m_A(λ)v = 0). Proves the sharp minimal-polynomial diagonalizability criterion: A is diagonalizable over F iff m_A(x) splits into DISTINCT linear factors over F (constructing the eigenbasis decomposition cleanly via Lagrange interpolation polynomials in A). Enables the learner to compute minimal polynomials, test diagonalizability via m_A, and reduce matrix polynomials.",
+      "requires": [
+        "diagonalization_and_eigenbases",
+        "invariant_subspaces_and_triangularization"
+      ]
+    },
+    {
+      "id": "simultaneous_diagonalization_and_commuting_matrices",
+      "label": "Commuting Operators and Simultaneous Diagonalization",
+      "explanation": "Optional enrichment building on the minimal-polynomial diagonalizability criterion to characterize when two or more diagonalizable operators share a common eigenbasis. Proves that if S and T commute (ST = TS), then every eigenspace E_λ(T) of T is S-invariant, and uses the minimal polynomial to prove the crucial hereditary lemma: the restriction of any diagonalizable operator S to an S-invariant subspace W remains diagonalizable (since m_{S|_W} divides m_S and therefore still splits into distinct linear factors). Combines these bridges to prove that two diagonalizable operators S, T on a finite-dimensional vector space over F are simultaneously diagonalizable (P^{-1} S P and P^{-1} T P both diagonal for the same invertible P) iff they commute (ST = TS), extending by induction to any finite pairwise-commuting family of diagonalizable operators. Exhibits concrete counterexamples showing both hypotheses are required (non-commuting diagonalizable matrices cannot be simultaneously diagonalized; commuting defective matrices such as I and a shear block cannot be diagonalized at all). Enables the learner to test simultaneous diagonalizability and construct a joint eigenbasis by diagonalizing S within each eigenspace of T.",
+      "requires": [
+        "cayley_hamilton_and_minimal_polynomial"
+      ],
+      "optional": true
+    },
+    {
+      "id": "rational_canonical_form_intro",
+      "label": "Cyclic Subspaces, Companion Matrices, and Elementary Rational Canonical Form",
+      "explanation": "Optional enrichment building on Cayley-Hamilton and minimal polynomials to introduce field-independent canonical form when p_A(x) does not split over F (such as over ℚ or ℝ). Defines the T-cyclic subspace Z(v; T) = span{v, Tv, …, T^{d−1} v} generated by a vector v (where d is the degree of the v-annihilator polynomial f_v(x)), proves that the matrix of T|_{Z(v; T)} in the cyclic basis is the companion matrix C(f_v), and verifies that both the characteristic and minimal polynomials of C(f) equal f(x). Proves that an operator is cyclic (similar to a single companion matrix) iff its minimal polynomial equals its characteristic polynomial (nonderogatory operators). Introduces the invariant-factor Rational Canonical Form C(f_1) ⊕ … ⊕ C(f_s) with monic divisibility chain f_1 | f_2 | … | f_s = m_T and ∏ f_i = p_T, computing exact rational canonical forms for 2×2, 3×3, and simple 4×4 matrices over ℚ and ℝ to decide similarity without extending the base field. Explicitly leaves the general existence and uniqueness proof via finitely generated modules over the PID F[x] to Abstract Algebra / Module Theory.",
+      "requires": [
+        "cayley_hamilton_and_minimal_polynomial"
+      ],
+      "optional": true
+    },
+    {
+      "id": "generalized_eigenspaces_and_primary_decomposition",
+      "label": "Generalized Eigenspaces and Primary Decomposition",
+      "explanation": "Builds on Cayley-Hamilton and minimal polynomials (assuming polynomial gcd and Bézout's identity for coprime polynomials in F[x]) to decompose any operator whose characteristic polynomial splits into linear factors when ordinary eigenspaces fail to span V. Defines generalized eigenvectors of rank k ((T − λI)^k v = 0 with (T − λI)^{k−1} v ≠ 0) and generalized eigenspaces K_λ = ⋃_{k≥1} ker((T − λI)^k), proving that the ascending kernel chain {0} ⊂ ker(T − λI) ⊂ ker((T − λI)²) ⊂ … stabilizes at some index r ≤ n (equal to the multiplicity of λ in m_T(x)), so K_λ = ker((T − λI)^r) = ker((T − λI)^n) is T-invariant and (T − λI)|_{K_λ} is nilpotent. Proves the Primary Decomposition Theorem: if m_T(x) = ∏_{i=1}^s (x − λ_i)^{r_i} over F, then V = K_{λ_1} ⊕ … ⊕ K_{λ_s}, using Bézout's identity on the coprime factors q_i(x) = m_T(x)/(x − λ_i)^{r_i} to build explicit polynomial projections onto each K_{λ_i}. Deduces that dim K_{λ_i} = m_a(λ_i) (comparing characteristic polynomials on each block) and reduces the complete structure of T to understanding nilpotent operators N_i = (T − λ_i I)|_{K_{λ_i}} on each generalized eigenspace. Enables the learner to compute generalized eigenspaces, find stabilization indices, and decompose V into T-invariant primary blocks.",
+      "requires": [
+        "cayley_hamilton_and_minimal_polynomial"
+      ]
+    },
+    {
+      "id": "nilpotent_operators_and_jordan_chains",
+      "label": "Nilpotent Operators, Cycles, and Jordan Chains",
+      "explanation": "Builds on generalized eigenspaces and primary decomposition to completely classify nilpotent operators N : W → W (N^r = 0, N^{r−1} ≠ 0) via canonical bases. Defines a Jordan chain (cycle) {N^{k−1} v, …, Nv, v} of length k generated by a top vector v with N^k v = 0 ≠ N^{k−1} v, proves that the vectors in a chain are linearly independent and span an N-invariant subspace on which N acts as a single k×k nilpotent Jordan block J_k(0) (1s on the superdiagonal, 0s elsewhere). Develops the constructive top-down basis algorithm through the kernel flag {0} ⊂ ker N ⊂ ker N² ⊂ … ⊂ ker N^r = W: selecting a basis of a complement to ker N^{r−1} in ker N^r, applying N repeatedly to push chains downward, and extending linearly independently to complements of ker N^{j−1} inside ker N^j at each step (proving preservation of linear independence across layers). Extracts the exact block-counting invariants (dot diagram / Ferrers tableau): the number of Jordan blocks of size ≥ k equals nullity(N^k) − nullity(N^{k−1}), so the exact number of blocks of size k is 2 nullity(N^k) − nullity(N^{k−1}) − nullity(N^{k+1}), proving uniqueness of the multiset of chain lengths. Enables the learner to determine block partitions of nilpotent matrices from kernel dimensions and construct explicit Jordan-chain bases.",
+      "requires": [
+        "generalized_eigenspaces_and_primary_decomposition"
+      ]
+    },
+    {
+      "id": "jordan_canonical_form_and_applications",
+      "label": "Jordan Canonical Form, Similarity Classification, and Matrix Powers",
+      "explanation": "Synthesizes the nilpotent Jordan-chain classification with primary decomposition (from its direct prerequisite chain) to establish and apply the Jordan Canonical Form Theorem. Combines the canonical chain bases on each generalized eigenspace K_{λ_i} (where T|_{K_{λ_i}} = λ_i I + N_i) to prove that every linear operator whose characteristic polynomial splits over F (in particular, every complex matrix A ∈ M_n(ℂ)) is similar to a block-diagonal Jordan matrix J = P^{-1} A P composed of Jordan blocks J_k(λ) = λ I_k + J_k(0), unique up to permutation of the blocks. Translates Jordan block geometry directly into algebraic invariants: for each eigenvalue λ, the sum of block sizes is m_a(λ), the number of blocks is m_g(λ), the largest block size is the multiplicity of (x − λ) in m_A(x), and A is diagonalizable iff all blocks have size 1. Trains full hand computation of both J and a Jordan basis P for 2×2, 3×3, and 4×4 matrices, classifies similarity of complex matrices by comparing Jordan structures (illustrating at n = 4 why identical characteristic AND minimal polynomials still do not force similarity, e.g., J_2(λ) ⊕ J_2(λ) vs. J_2(λ) ⊕ J_1(λ) ⊕ J_1(λ)), and computes exact high powers J_k(λ)^m via the terminating binomial expansion of (λI + N)^m (noting that the same block formula underpins matrix exponentials in differential equations). Enables the learner to compute Jordan forms and transition matrices, decide matrix similarity conclusively, and compute powers of defective matrices.",
+      "requires": [
+        "nilpotent_operators_and_jordan_chains"
+      ]
+    }
+  ]
+}

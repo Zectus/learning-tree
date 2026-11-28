@@ -1,0 +1,215 @@
+=== SECTION 1: Why Side-Side-Angle (SSA) can produce zero, one, or two triangles ===
+
+In the previous lesson, AAS and ASA data always locked down a single unique triangle. Now suppose instead you are given two side lengths \(a\) and \(b\) together with the angle \(A\) opposite side \(a\)—the Side-Side-Angle (SSA) configuration.
+
+Picture constructing \(\triangle ABC\) physically. Draw ray \(AC\) along the horizontal ground, turn counterclockwise by angle \(A\) at vertex \(A\), and mark vertex \(C\) at distance \(b\) along the slanted ray. Vertex \(C\) is now fixed at height
+\[
+h = b\sin A
+\]
+above the horizontal ground line. Finally, attach a rod of length \(a\) on a hinge at \(C\) and swing it down like a compass to try to touch the horizontal ray starting from \(A\)!
+
+What happens as the rod of length \(a\) swings depends entirely on how \(a\) compares to the vertical altitude \(h = b\sin A\) and to the adjacent side \(b\). Drag the slider \(a\) below (with \(A = 35^\circ\), \(b = 5\), so altitude \(h = 5\sin 35^\circ \approx 2.87\)) to watch the swinging circle of radius \(a\) centered at \(C\) miss the ground, kiss it once, cut it at two distinct points \(B_1\) and \(B_2\), or cut the positive ray only once!
+
+[GRAPH]
+type: parametric2d
+title: Swinging side \(a\) from vertex \(C\) (with \(A = 35^\circ, b = 5, h \approx 2.87\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -1.5, 9.5
+yrange: -1.5, 5.2
+trace: 4.0958 + a*cos(t), 2.8679 + a*sin(t) | label: circle of radius \(a\) centered at \(C\) | color: #2563eb
+segment: 0, 0, 9.2, 0 | label: base ray | color: #0f172a
+segment: 0, 0, 4.0958, 2.8679 | label: \(b\) | color: #dc2626
+segment: 4.0958, 0, 4.0958, 2.8679 | label: \(h\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.25, -0.25
+point: 4.0958, 2.8679 | label: \(C\) | offset: 0, 0.3
+slider: a | range: 1.5, 6.5 | init: 3.6 | step: 0.1
+[/GRAPH]
+
+Watch the four geometric outcomes when \(A\) is acute (\(0^\circ < A < 90^\circ\)):
+- If \(a < h\): the swinging rod is too short to reach the horizontal ray at all -> \(0\) triangles.
+- If \(a = h\): the rod reaches straight down perpendicularly to the ground -> \(1\) right triangle (\(B = 90^\circ\)).
+- If \(h < a < b\): the circle crosses the positive ray at TWO distinct points on either side of the foot of the altitude! The farther intersection gives an acute angle \(B_1\), and the nearer intersection gives an obtuse angle \(B_2 = 180^\circ - B_1\) -> \(2\) distinct triangles.
+- If \(a \ge b\): the circle reaches past vertex \(A\) on the left, so only ONE intersection lands on the positive ray in front of \(A\) -> \(1\) triangle.
+
+Now consider what happens when \(A\) is right or obtuse (\(A \ge 90^\circ\)). Because the largest angle in a triangle must sit opposite the longest side, side \(a\) MUST be strictly longer than side \(b\):
+- If \(a \le b\): \(0\) triangles.
+- If \(a > b\): the circle crosses the positive ray at exactly one point -> \(1\) triangle.
+
+[TABLE]
+Angle \(A\) | Side comparison | Number of triangles | Geometric reason
+Acute (\(A < 90^\circ\)) | \(a < b\sin A\) | \(0\) | Opposite side \(a\) is shorter than altitude \(h\)
+Acute (\(A < 90^\circ\)) | \(a = b\sin A\) | \(1\) (right) | Opposite side \(a\) meets base perpendicularly (\(B = 90^\circ\))
+Acute (\(A < 90^\circ\)) | \(b\sin A < a < b\) | \(2\) | Swinging side cuts positive ray twice (acute \(B_1\), obtuse \(B_2\))
+Acute (\(A < 90^\circ\)) | \(a \ge b\) | \(1\) | Left intersection lies behind vertex \(A\)
+Right or obtuse (\(A \ge 90^\circ\)) | \(a \le b\) | \(0\) | Largest angle \(A\) cannot face a side \(\le b\)
+Right or obtuse (\(A \ge 90^\circ\)) | \(a > b\) | \(1\) | Unique intersection on positive ray
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+Given SSA data \(A = 30^\circ\), \(b = 12\), and \(a = 9\), how many distinct triangles can be formed?
+
+(A) \(0\) triangles, because \(a < b\)
+(B) \(1\) right triangle, because \(a = b\sin A\)
+(C) \(2\) distinct triangles, because \(b\sin A = 6 < 9 < 12\)
+(D) \(1\) obtuse triangle, because \(a > b\sin A\)
+(E) \(2\) distinct triangles, because \(b\cos A < a < b\)
+[/QUESTION]
+
+=== SECTION 2: The algebraic-geometric workflow for solving SSA ===
+
+Even better than memorizing six separate table cases is letting the Law of Sines and the supplementary-angle identity \(\sin(180^\circ - B) = \sin B\) do the classification for you automatically!
+
+Applying the Law of Sines to \((A, a)\) and \(b\) yields
+\[
+\sin B = \frac{b\sin A}{a}.
+\]
+Notice that this single fraction is literally \(\frac{h}{a}\)! Look at what its value tells you immediately:
+- If \(\sin B > 1\): impossible (since \(\sin B \le 1\) on the unit circle), which means \(h > a\) -> \(0\) triangles.
+- If \(\sin B = 1\): \(B = 90^\circ\) uniquely (check \(A < 90^\circ\)) -> \(1\) right triangle.
+- If \(0 < \sin B < 1\): your calculator's numerical lookup \(\sin^{-1}\!\left(\frac{b\sin A}{a}\right)\) returns ONLY the acute candidate \(B_1 \in (0^\circ, 90^\circ)\). Because \(\sin(180^\circ - B_1) = \sin B_1\), there is ALWAYS a second obtuse candidate \(B_2 = 180^\circ - B_1\).
+
+Which of \(B_1\) and \(B_2\) actually form valid triangles? Test BOTH against the triangle angle sum \(180^\circ\)!
+- Candidate 1 is valid whenever \(A + B_1 < 180^\circ\). (Notice when \(A \ge 90^\circ\) and \(a \le b\), we get \(\sin B \ge \sin A\), which forces \(B_1 \ge 180^\circ - A\), so \(A + B_1 \ge 180^\circ\) and Candidate 1 is automatically rejected too!)
+- Candidate 2 is valid whenever \(A + B_2 < 180^\circ\).
+
+[CALLOUT]
+id: ssa-workflow
+label: Procedure
+title: Complete SSA solving workflow
+tone: key
+
+(1) Compute \(\sin B = \dfrac{b\sin A}{a}\). If \(\sin B > 1\), stop immediately: \(0\) triangles.
+(2) If \(\sin B = 1\), check \(A < 90^\circ\); if so, \(B = 90^\circ\) gives \(1\) right triangle.
+(3) If \(0 < \sin B < 1\), find the acute angle \(B_1 = \sin^{-1}\!\left(\dfrac{b\sin A}{a}\right)\) and its obtuse supplement \(B_2 = 180^\circ - B_1\).
+(4) Test angle sum for BOTH candidates:
+- If \(A + B_1 < 180^\circ\), solve Triangle 1: \(C_1 = 180^\circ - A - B_1\), \(c_1 = \dfrac{a\sin C_1}{\sin A}\).
+- If \(A + B_2 < 180^\circ\), solve Triangle 2: \(C_2 = 180^\circ - A - B_2\), \(c_2 = \dfrac{a\sin C_2}{\sin A}\).
+[/CALLOUT]
+
+[CALLOUT]
+id: ssa-calculator-pitfall
+label: Common pitfall
+title: Never stop after the calculator returns \(B_1\)
+tone: caution
+
+The calculator key \(\sin^{-1}(p)\) for \(0 < p < 1\) ALWAYS outputs an acute angle in \((0^\circ, 90^\circ)\). It will never warn you that an obtuse supplement \(B_2 = 180^\circ - B_1\) also produces a valid triangle. Checking \(A + B_2 < 180^\circ\) is mandatory in every SSA problem.
+[/CALLOUT]
+
+=== SECTION 3: Solving a complete two-triangle SSA example ===
+
+Let us work completely through a two-triangle SSA case using [REF: ssa-workflow | our four-step SSA workflow]: solve \(\triangle ABC\) given \(A = 35^\circ\), \(b = 10\), and \(a = 7\).
+
+Step 1: Compute \(\sin B\):
+\[
+\sin B = \frac{b\sin A}{a} = \frac{10\sin 35^\circ}{7} \approx \frac{10(0.5736)}{7} \approx 0.8194.
+\]
+Since \(0 < 0.8194 < 1\), there are two angle candidates.
+
+Step 2: Find \(B_1\) and \(B_2\):
+\[
+B_1 = \sin^{-1}(0.8194) \approx 55.0^\circ, \qquad B_2 = 180^\circ - 55.0^\circ = 125.0^\circ.
+\]
+
+Step 3: Check angle sums for both candidates:
+- Triangle 1: \(A + B_1 \approx 35^\circ + 55.0^\circ = 90.0^\circ < 180^\circ\) -> valid!
+- Triangle 2: \(A + B_2 \approx 35^\circ + 125.0^\circ = 160.0^\circ < 180^\circ\) -> ALSO valid!
+
+Step 4: Finish solving both triangles using the original exact pair \((A, a) = (35^\circ, 7)\):
+- Triangle 1: \(C_1 = 180^\circ - 35^\circ - 55.0^\circ = 90.0^\circ\) (very close to \(90^\circ\); more precisely \(B_1 \approx 55.02^\circ\) and \(C_1 \approx 89.98^\circ\)), giving
+\[
+c_1 = \frac{7\sin 89.98^\circ}{\sin 35^\circ} \approx 12.20.
+\]
+- Triangle 2: \(C_2 = 180^\circ - 35^\circ - 124.98^\circ = 20.02^\circ\), giving
+\[
+c_2 = \frac{7\sin 20.02^\circ}{\sin 35^\circ} \approx 4.18.
+\]
+
+Notice how the two triangles look geometrically below: they share vertex \(A\), vertex \(C\), side \(b = 10\), and side length \(a = 7\), yet form two completely different triangles \(\triangle AB_1C\) and \(\triangle AB_2C\) with isosceles triangle \(\triangle CB_2B_1\) sitting between them (which explains why \(\angle CB_2B_1 = B_1\) and the interior angle \(\angle AB_2C = 180^\circ - B_1 = B_2\)!).
+
+[GRAPH]
+type: parametric2d
+title: Two valid triangles \(\triangle AB_1C\) and \(\triangle AB_2C\) for \(A = 35^\circ, b = 10, a = 7\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 0.6109
+xrange: -0.8, 13.0
+yrange: -0.8, 6.6
+trace: 1.6*cos(t), 1.6*sin(t) | label: \(A = 35^\circ\) | color: #059669
+segment: 0, 0, 12.20, 0 | label: \(c_1\) | color: #0f172a
+segment: 0, 0, 8.19, 5.74 | label: \(b = 10\) | color: #0f172a
+segment: 8.19, 5.74, 12.20, 0 | label: \(a = 7\) | color: #2563eb
+segment: 8.19, 5.74, 4.18, 0 | label: \(a = 7\) | color: #dc2626 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.3, -0.35
+point: 8.19, 5.74 | label: \(C\) | offset: 0, 0.35
+point: 4.18, 0 | label: \(B_2\) | offset: 0, -0.4
+point: 12.20, 0 | label: \(B_1\) | offset: 0.25, -0.4
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+In an SSA problem, \(A = 30^\circ\), \(b = 10\), and \(a = 5\sqrt{2}\). Find both possible exact values of angle \(B\) and the corresponding exact values of angle \(C\).
+
+(A) Only one triangle: \(B = 45^\circ\), \(C = 105^\circ\)
+(B) Two triangles: \((B_1 = 45^\circ, C_1 = 105^\circ)\) and \((B_2 = 135^\circ, C_2 = 15^\circ)\)
+(C) Two triangles: \((B_1 = 45^\circ, C_1 = 105^\circ)\) and \((B_2 = 120^\circ, C_2 = 30^\circ)\)
+(D) Two triangles: \((B_1 = 60^\circ, C_1 = 90^\circ)\) and \((B_2 = 120^\circ, C_2 = 30^\circ)\)
+(E) No valid triangle exists
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+Suppose you are given \(A = 110^\circ\), \(b = 15\), and \(a = 12\). Which conclusion is correct?
+
+(A) Two triangles exist because \(a < b\)
+(B) One triangle exists because \(\sin B = \frac{15\sin 110^\circ}{12} < 1\)
+(C) One right triangle exists because \(A > 90^\circ\)
+(D) Two triangles exist because \(110^\circ + B_1 < 180^\circ\)
+(E) Zero triangles exist because obtuse angle \(A\) cannot be opposite a side \(a \le b\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+In an SSA setup with \(A = 45^\circ\) and \(b = 8\sqrt{2}\), for which interval of positive side lengths \(a\) do EXACTLY TWO distinct triangles exist?
+
+(A) \(8 < a < 8\sqrt{2}\)
+(B) \(0 < a < 8\)
+(C) \(a > 8\sqrt{2}\)
+(D) \(4\sqrt{2} < a < 8\sqrt{2}\)
+(E) \(8 \le a \le 8\sqrt{2}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+In an SSA setup, \(A = 30^\circ\), \(b = 8\sqrt{3}\), and \(a = 8\). Find all valid triangles, including the exact length of side \(c\) in each valid triangle.
+
+(A) Only one triangle: \(B = 60^\circ\), \(C = 90^\circ\), \(c = 16\)
+(B) Two triangles: \((B_1 = 60^\circ, C_1 = 90^\circ, c_1 = 16)\) and \((B_2 = 120^\circ, C_2 = 30^\circ, c_2 = 16)\)
+(C) Two triangles: \((B_1 = 30^\circ, C_1 = 120^\circ, c_1 = 8\sqrt{3})\) and \((B_2 = 150^\circ, C_2 = 0^\circ)\)
+(D) Two triangles: \((B_1 = 60^\circ, C_1 = 90^\circ, c_1 = 16)\) and \((B_2 = 120^\circ, C_2 = 30^\circ, c_2 = 8)\)
+(E) No valid triangle exists
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+In a two-triangle SSA configuration with acute angle \(A\), adjacent side \(b\), and opposite side \(a\) (where \(b\sin A < a < b\)), the two possible third-side lengths are \(c_1\) (in the acute-\(B_1\) triangle) and \(c_2\) (in the obtuse-\(B_2\) triangle). What is the exact sum \(c_1 + c_2\) in terms of \(b\) and \(A\)?
+
+(A) \(2a\cos A\)
+(B) \(2b\sin A\)
+(C) \(2b\cos A\)
+(D) \(b\cos A\)
+(E) \(a + b\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+A student solves an SSA problem with \(A = 120^\circ\), \(b = 6\), and \(a = 10\). Using a calculator, the student computes \(\sin B = \frac{6\sin 120^\circ}{10} \approx 0.5196\), gets \(B_1 \approx 31.3^\circ\), writes \(B_2 = 180^\circ - 31.3^\circ = 148.7^\circ\), and claims there are two valid triangles. What is the student's error?
+
+(A) The formula should be \(\sin B = \frac{10\sin 120^\circ}{6}\)
+(B) The student did not check the angle sum for \(B_2\): \(A + B_2 = 120^\circ + 148.7^\circ = 268.7^\circ > 180^\circ\), so only the single triangle with \(B_1 \approx 31.3^\circ\) is valid
+(C) When \(A = 120^\circ\), \(\sin 120^\circ\) is negative, so zero triangles exist
+(D) Because \(a > b\), zero triangles exist
+(E) \(B_2\) should be \(90^\circ - 31.3^\circ = 58.7^\circ\), not \(180^\circ - 31.3^\circ\)
+[/BONUS]

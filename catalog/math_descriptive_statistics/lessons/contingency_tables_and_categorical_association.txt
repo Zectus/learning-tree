@@ -1,0 +1,240 @@
+=== SECTION 1: Two-way contingency tables, joint, marginal, and conditional proportions ===
+
+When every observational unit in a dataset carries two categorical variables—such as a commuter's transit mode and whether they arrived on time, or a patient's treatment protocol and recovery outcome—means and standard deviations do not apply. Instead, we organize all counts into a two-way contingency table (also called a cross-tabulation) with \(r\) rows for the categories of one variable and \(c\) columns for the categories of the other.
+
+Suppose an online course platform tracks \(n = 400\) enrolled learners across two categorical variables: Study Track (Self-paced versus Cohort) and Completion Status (Completed versus Dropped). The raw counts form a \(2 \times 2\) contingency table with row totals and column totals written along the margins:
+
+[TABLE]
+Study Track | Completed | Dropped | Row total
+Self-paced | 120 | 180 | 300
+Cohort | 70 | 30 | 100
+Column total | 190 | 210 | 400
+[/TABLE]
+
+Raw counts alone can mislead when group sizes differ: \(120\) Self-paced learners completed the course versus \(70\) Cohort learners, yet Self-paced had three times as many enrollees (\(300\) versus \(100\)). Turning counts into proportions requires deciding WHICH total belongs in the denominator. Three distinct families of proportions answer three very different questions.
+
+[CALLOUT]
+id: contingency-proportions
+label: Definition
+title: Joint, marginal, and conditional relative frequencies
+tone: key
+
+In an \(r \times c\) contingency table of \(n\) observations, let \(n_{ij}\) be the count in row \(i\) and column \(j\), \(R_i = \sum_{j=1}^c n_{ij}\) the \(i\)-th row total, and \(C_j = \sum_{i=1}^r n_{ij}\) the \(j\)-th column total (so \(\sum_i R_i = \sum_j C_j = n\)).
+
+(1) Joint relative frequency: \(p_{ij} = \dfrac{n_{ij}}{n}\) is the proportion of the ENTIRE dataset falling in both row \(i\) and column \(j\). All \(r c\) joint proportions sum to \(1\).
+(2) Marginal distributions: the row marginal proportions \(p_{i\bullet} = \dfrac{R_i}{n}\) summarize the row variable alone (summing to \(1\) across rows), and the column marginal proportions \(p_{\bullet j} = \dfrac{C_j}{n}\) summarize the column variable alone (summing to \(1\) across columns).
+(3) Conditional distributions: conditioning on row \(i\) divides each cell in row \(i\) by its row total \(R_i\), giving the empirical conditional proportion \(P(\text{Col } j \mid \text{Row } i) = \dfrac{n_{ij}}{R_i}\) (each row sums to \(1\)). Conditioning on column \(j\) divides each cell in column \(j\) by its column total \(C_j\), giving \(P(\text{Row } i \mid \text{Col } j) = \dfrac{n_{ij}}{C_j}\) (each column sums to \(1\)).
+[/CALLOUT]
+
+Never confuse \(P(A \mid B)\) with \(P(B \mid A)\)! In our course table, look closely at the single cell "Cohort and Completed" (\(n_{21} = 70\)):
+- Joint proportion: \(70 / 400 = 0.175\) (\(17.5\%\) of ALL learners were Cohort completers).
+- Row-conditioned proportion \(P(\text{Completed} \mid \text{Cohort}) = 70 / 100 = 0.70\) (\(70\%\) of Cohort learners completed the course).
+- Column-conditioned proportion \(P(\text{Cohort} \mid \text{Completed}) = 70 / 190 \approx 0.368\) (\(36.8\%\) of all completers came from the Cohort track).
+
+Notice how changing the conditioning event changes the denominator from \(100\) to \(190\) and flips the percentage from \(70\%\) to \(36.8\%\). Always identify the conditioning group ("of the Cohort learners..." versus "of the completers...") FIRST, and place THAT group's total in the denominator.
+
+[QUESTION 1]
+[ANSWER: D]
+A transit agency records \(n = 200\) morning trips by mode and arrival status: Train had \(96\) on-time and \(24\) late trips (total \(120\)); Bus had \(54\) on-time and \(26\) late trips (total \(80\)), giving \(150\) on-time and \(50\) late trips overall. What are the conditional proportions \(P(\text{Bus} \mid \text{Late})\) and \(P(\text{Late} \mid \text{Bus})\), respectively?
+
+(A) \(0.325\) and \(0.520\)
+(B) \(0.130\) and \(0.325\)
+(C) \(0.520\) and \(0.130\)
+(D) \(0.520\) and \(0.325\)
+(E) \(0.400\) and \(0.250\)
+[/QUESTION]
+
+=== SECTION 2: Visualizing categorical association, independence, and 2x2 summaries ===
+
+To see whether two categorical variables are associated in our dataset, compare the conditional distributions across the groups of the explanatory variable. In the course table above, computing the row-conditioned completion distribution for each Study Track gives:
+- Self-paced (\(R_1 = 300\)): \(120 / 300 = 40\%\) Completed, \(180 / 300 = 60\%\) Dropped.
+- Cohort (\(R_2 = 100\)): \(70 / 100 = 70\%\) Completed, \(30 / 100 = 30\%\) Dropped.
+
+A \(100\%\) stacked bar chart (or a side-by-side bar chart of conditional percentages) displays these conditional distributions directly: every conditioning group gets a full bar of height \(100\%\), partitioned into its outcome percentages. If the two bars have identical splits, the variables are unassociated; when the splits differ visibly—\(40\%\) versus \(70\%\) completed—there is a clear descriptive association.
+
+[GRAPH]
+type: function2d
+title: 100% stacked bar chart of completion status conditioned on study track
+xlabel: Study track (1 = Self-paced, 2 = Cohort)
+ylabel: Conditional percentage
+xrange: 0.3, 2.7
+yrange: 0, 112
+trace: 100 | label: 100% reference line | color: #94a3b8
+fill: 40, 0 | range: 0.72, 1.28 | label: Completed | color: #3b82f6 | opacity: 0.65
+fill: 100, 40 | range: 0.72, 1.28 | label: Dropped | color: #ef4444 | opacity: 0.45
+fill: 70, 0 | range: 1.72, 2.28 | color: #3b82f6 | opacity: 0.65
+fill: 100, 70 | range: 1.72, 2.28 | color: #ef4444 | opacity: 0.45
+point: 1.0, 20 | label: 40% | color: #1d4ed8
+point: 1.0, 70 | label: 60% | color: #b91c1c
+point: 2.0, 35 | label: 70% | color: #1d4ed8
+point: 2.0, 85 | label: 30% | color: #b91c1c
+[/GRAPH]
+
+This comparison defines descriptive independence and association precisely.
+
+[CALLOUT]
+id: descriptive-independence
+label: Definition
+title: Descriptive independence versus association
+tone: key
+
+Two categorical variables in a contingency table are descriptively independent if the conditional distribution of one variable is IDENTICAL across every category of the other variable:
+\[
+\frac{n_{ij}}{R_i} = \frac{C_j}{n} \quad \text{for every row } i \text{ and column } j.
+\]
+Equivalently, every joint relative frequency equals the product of its row and column marginal proportions, \(p_{ij} = p_{i\bullet}\, p_{\bullet j}\), and every cell count matches \(n_{ij} = R_i C_j / n\). Whenever conditional distributions differ across groups, the two variables exhibit descriptive association in the observed dataset.
+[/CALLOUT]
+
+Notice a key scope boundary: in descriptive statistics, [REF: descriptive-independence | descriptive independence] checks whether the observed table's conditional percentages match exactly. Real finite samples rarely match to the last decimal even when two variables are unrelated in a larger population; formal probability axioms and chi-square hypothesis tests for deciding whether an observed association exceeds random sampling noise belong to Probability and Statistical Inference.
+
+When both variables are binary (a \(2 \times 2\) table), two standard numerical summaries quantify the strength and direction of a descriptive association between Group 1 (with outcome proportion \(p_1\)) and Group 2 (with outcome proportion \(p_2 > 0\)):
+- Proportion difference (also called risk difference):
+\[
+\Delta p = p_1 - p_2.
+\]
+It measures the absolute gap in percentage points. For our course tracks, \(\Delta p = 0.70 - 0.40 = +0.30\) (Cohort completion is \(30\) percentage points higher than Self-paced).
+- Descriptive relative risk (ratio of proportions):
+\[
+\text{RR} = \frac{p_1}{p_2}.
+\]
+It measures the multiplicative ratio of rates. For our course tracks, \(\text{RR} = 0.70 / 0.40 = 1.75\) (Cohort learners completed at \(1.75\) times the rate of Self-paced learners). Under [REF: descriptive-independence | descriptive independence], \(p_1 = p_2\), so \(\Delta p = 0\) and \(\text{RR} = 1\).
+
+Always report BOTH \(\Delta p\) and \(\text{RR}\) (or the two baseline proportions \(p_1\) and \(p_2\)) together. Saying "risk doubled" (\(\text{RR} = 2.0\)) sounds dramatic whether a rate rises from \(0.1\%\) to \(0.2\%\) (\(\Delta p = 0.001\)) or from \(25\%\) to \(50\%\) (\(\Delta p = 0.25\)), yet the practical impact differs by a factor of \(250\).
+
+[QUESTION 2]
+[ANSWER: B]
+A survey of \(n = 300\) readers classifies them by age group (\(120\) Under 30; \(180\) Aged 30 and over) and preferred book format (Print, Audio, E-book). Among the \(120\) readers Under 30, \(36\) prefer Print, \(24\) prefer Audio, and \(60\) prefer E-book. If age group and preferred format are descriptively independent in this table, how many readers Aged 30 and over must prefer Print?
+
+(A) \(36\)
+(B) \(54\)
+(C) \(60\)
+(D) \(90\)
+(E) \(45\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+In an observational audit of \(n = 500\) warehouse shifts, Night shifts recorded \(27\) safety incidents out of \(150\) shifts, whereas Day shifts recorded \(21\) incidents out of \(350\) shifts. What are the proportion difference (Night minus Day) and the descriptive relative risk (Night relative to Day), respectively?
+
+(A) \(0.12\) and \(1.29\)
+(B) \(0.06\) and \(3.00\)
+(C) \(0.12\) and \(2.00\)
+(D) \(0.24\) and \(3.00\)
+(E) \(0.12\) and \(3.00\)
+[/QUESTION]
+
+=== SECTION 3: Confounding variables and Simpson's paradox ===
+
+Suppose a hospital compares two surgical protocols—Protocol A and Protocol B—across \(n = 1{,}000\) patients (\(500\) treated with each protocol) and publishes the following pooled \(2 \times 2\) table:
+
+[TABLE]
+Pooled table (all patients) | Recovered | Did not recover | Total | Recovery rate
+Protocol A | 330 | 170 | 500 | 66.0%
+Protocol B | 390 | 110 | 500 | 78.0%
+[/TABLE]
+
+At first glance, Protocol B looks far superior: \(78\%\) recovery versus \(66\%\), a \(12\)-percentage-point lead. Now suppose a clinician stratifies the exact same \(1{,}000\) patients by initial case severity (Mild versus Severe), splitting the single table into two stratified sub-tables:
+
+[TABLE]
+Stratum and Protocol | Recovered | Did not recover | Total | Recovery rate
+Mild: Protocol A | 90 | 10 | 100 | 90.0%
+Mild: Protocol B | 340 | 60 | 400 | 85.0%
+Severe: Protocol A | 240 | 160 | 400 | 60.0%
+Severe: Protocol B | 50 | 50 | 100 | 50.0%
+[/TABLE]
+
+Check the totals first: for Protocol A, \(90 + 240 = 330\) recovered out of \(100 + 400 = 500\) (\(66.0\%\)); for Protocol B, \(340 + 50 = 390\) recovered out of \(400 + 100 = 500\) (\(78.0\%\)). Not a single patient was added, dropped, or miscounted! Yet look at the comparison inside EVERY stratum:
+- Among Mild patients, Protocol A WINS: \(90.0\% > 85.0\%\).
+- Among Severe patients, Protocol A WINS AGAIN: \(60.0\% > 50.0\%\).
+- Yet in the pooled table, Protocol B appears to win: \(78.0\% > 66.0\%\)!
+
+How can a protocol perform BETTER on Mild cases AND BETTER on Severe cases, yet look WORSE overall? The mathematics is simply a weighted average of subgroup rates! Letting \(w\) denote the fraction of a protocol's patients who are Severe (so \(1 - w\) are Mild):
+\[
+\text{Pooled rate}_A = (1 - w_A)(90\%) + w_A(60\%) = 90\% - 30\%\,w_A,
+\]
+\[
+\text{Pooled rate}_B = (1 - w_B)(85\%) + w_B(50\%) = 85\% - 35\%\,w_B.
+\]
+Because doctors assigned \(w_A = 400/500 = 80\%\) of Protocol A's patients from the high-risk Severe group (giving \(90\% - 30\%(0.80) = 66\%\)), while assigning only \(w_B = 100/500 = 20\%\) of Protocol B's patients from the Severe group (giving \(85\% - 35\%(0.20) = 78\%\)), the pooled rates compare A's mostly Severe caseload against B's mostly Mild caseload!
+
+The graph below plots both pooled recovery lines as functions of the Severe-case share \(w\). Protocol A's line sits strictly ABOVE Protocol B's line at every single value of \(w \in [0, 1]\), yet evaluating A at \(w = 0.80\) and B at \(w = 0.20\) places B's pooled point higher vertically than A's.
+
+[GRAPH]
+type: function2d
+title: How imbalanced subgroup weights create Simpson's paradox
+xlabel: Severe-case share
+ylabel: Pooled recovery rate (%)
+xrange: 0, 1
+yrange: 45, 95
+trace: 90 - 30*x | label: Protocol A: \(90 - 30w\) | color: #3b82f6
+trace: 85 - 35*x | label: Protocol B: \(85 - 35w\) | color: #ef4444
+point: 0.80, 66 | label: Pooled A (66%) | color: #1d4ed8
+point: 0.20, 78 | label: Pooled B (78%) | color: #b91c1c
+segment: 0.80, 66, 0.20, 78 | dashed: true | color: #64748b
+[/GRAPH]
+
+[CALLOUT]
+id: simpsons-paradox
+label: Principle
+title: Simpson's paradox and confounding
+tone: caution
+
+Simpson's paradox occurs when the direction of an association between two categorical variables reverses (or disappears) after aggregating data across strata of a third variable. Two conditions together produce the reversal:
+
+(1) The third variable (a lurking or confounding variable) is strongly associated with the outcome (here, Mild patients recover at far higher rates than Severe patients).
+(2) The subgroup weights are heavily imbalanced across the two groups being compared (here, Protocol A received \(80\%\) Severe cases while Protocol B received only \(20\%\) Severe cases).
+
+Always check plausible confounding variables via stratified tables before drawing conclusions from a pooled contingency table.
+[/CALLOUT]
+
+Which table—pooled or stratified—should guide a clinician choosing a protocol for a new patient? Because case severity is known before treatment and drives both the hospital's assignment pattern and recovery odds, the stratified table gives the honest comparison: whether a new patient's case is Mild or Severe, Protocol A has the higher observed recovery rate.
+
+[QUESTION 4]
+[ANSWER: C]
+A university audits admissions across two departments for Applicant Group X and Applicant Group Y:
+- In Department 1, Group X had \(40/50\) (\(80\%\)) admitted and Group Y had \(140/200\) (\(70\%\)) admitted.
+- In Department 2, Group X had \(60/200\) (\(30\%\)) admitted and Group Y had \(10/50\) (\(20\%\)) admitted.
+When both departments are combined, Group X has \(100/250\) (\(40\%\)) admitted while Group Y has \(150/250\) (\(60\%\)) admitted. Which conclusion is supported by these tables?
+
+(A) There must be an arithmetic error in the counts, because a group cannot have a higher rate in every department and a lower combined rate.
+(B) Group Y was admitted at a higher rate in both departments, which explains its higher pooled rate.
+(C) Group X has a higher admission rate within every department, and its lower pooled rate is a Simpson's paradox reversal caused by Group X applying disproportionately to the much more selective Department 2.
+(D) Department choice and admission outcome are descriptively independent.
+(E) Taking the unweighted average of \(80\%\) and \(30\%\) gives Group X's true pooled admission rate of \(55\%\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+A \(2 \times 2\) contingency table has Row 1 counts \((12,\; 18)\) and Row 2 counts \((20,\; x)\). What value of \(x\) makes the row variable and column variable descriptively independent?
+
+(A) \(30\)
+(B) \(26\)
+(C) \(15\)
+(D) \(40\)
+(E) \(18\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Two separate preventive campaigns are evaluated in observational \(2 \times 2\) tables:
+- Campaign 1 compares an event rate of \(0.002\) against \(0.004\) in the comparison group.
+- Campaign 2 compares an event rate of \(0.200\) against \(0.400\) in the comparison group.
+Why is reporting only the descriptive relative risk (\(\text{RR} = 0.50\) for both campaigns) potentially misleading?
+
+(A) Because relative risk is undefined when proportions are below \(0.01\).
+(B) Because Campaign 1 has a larger proportion difference than Campaign 2.
+(C) Because relative risk equals \(0.50\) only when variables are descriptively independent.
+(D) Because identical relative risks hide vastly different absolute proportion differences (\(-0.002\) versus \(-0.200\), a \(100\)-fold difference in events prevented per unit), so relative risk should be paired with baseline rates or proportion differences.
+(E) Because relative risk reverses sign when rows and columns are swapped.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+In a stratified study, Method A beats Method B in both strata: in Stratum 1, A succeeds \(80\%\) of the time versus \(70\%\) for B; in Stratum 2, A succeeds \(40\%\) of the time versus \(30\%\) for B. Suppose \(90\%\) of Method B's cases come from Stratum 1 (and \(10\%\) from Stratum 2). What fraction \(w\) of Method A's cases must come from Stratum 2 for Method A's pooled success rate to fall STRICTLY BELOW Method B's pooled success rate?
+
+(A) \(w > 0.25\)
+(B) \(w > 0.35\)
+(C) \(w > 0.50\)
+(D) \(w > 0.15\)
+(E) \(w > 0.65\)
+[/BONUS]

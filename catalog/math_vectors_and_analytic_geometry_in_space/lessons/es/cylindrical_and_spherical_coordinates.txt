@@ -1,0 +1,221 @@
+=== SECTION 1: Coordenadas cilíndricas y simetría rotacional en torno a un eje ===
+
+Las coordenadas cartesianas \((x, y, z)\) sobresalen al describir cajas y planos inclinados, pero se vuelven engorrosas en cuanto una superficie envuelve un eje o irradia simétricamente desde un punto central. Un cilindro circular \(x^2 + y^2 = 9\) o un paraboloide circular \(z = x^2 + y^2\) dependen únicamente de la distancia horizontal al eje \(z\), no de \(x\) e \(y\) por separado.
+
+Las coordenadas cilíndricas \((r, \theta, z)\) aprovechan la simetría axial manteniendo intacta la altura vertical \(z\) y sustituyendo \((x, y)\) en el plano horizontal por las coordenadas polares estándar \((r, \theta)\):
+- \(r \ge 0\) es la distancia perpendicular desde el punto \(P\) hasta el eje \(z\) (equivalentemente, la distancia radial de su proyección \(xy\), \((x, y, 0)\), al origen).
+- \(\theta\) es el ángulo acimutal en el plano \(xy\) medido en sentido antihorario desde el semieje \(x\) positivo (elegido habitualmente en \([0, 2\pi)\) o \((-\pi, \pi]\)).
+- \(z \in \mathbb{R}\) es exactamente la misma altura con signo que en coordenadas cartesianas.
+
+[CALLOUT]
+id: cyl-coords
+label: Definición
+title: Conversiones en coordenadas cilíndricas
+tone: key
+
+Para un punto \(P\) con coordenadas cartesianas \((x, y, z)\) y coordenadas cilíndricas \((r, \theta, z)\) (\(r \ge 0\)):
+
+(1) Cilíndricas a cartesianas:
+\[
+x = r\cos\theta, \qquad y = r\sin\theta, \qquad z = z.
+\]
+(2) Cartesianas a cilíndricas:
+\[
+r = \sqrt{x^2 + y^2}, \qquad \tan\theta = \frac{y}{x} \quad (x \ne 0), \qquad z = z,
+\]
+donde el cuadrante de \((x, y)\) determina \(\theta\) de manera única (cuando \(x = 0\), \(\theta = \pi/2\) para \(y > 0\) y \(\theta = 3\pi/2\) para \(y < 0\)).
+[/CALLOUT]
+
+Nunca confíe ciegamente en \(\theta = \arctan(y/x)\) al usar [REF: cyl-coords.2 | la conversión de cartesianas a cilíndricas]. Como \(\arctan\) devuelve valores únicamente en \((-\pi/2, \pi/2)\) (Cuadrantes I y IV), todo punto con \(x < 0\) (Cuadrantes II o III) requiere sumar \(\pi\) a \(\arctan(y/x)\). Por ejemplo, tome \((x, y, z) = (-2, -2, 5)\). Aquí \(r = \sqrt{4 + 4} = 2\sqrt{2}\) y \(y/x = 1\), cuyo arcotangente directo es \(\pi/4\); como tanto \(x\) como \(y\) son negativos (Cuadrante III), \(\theta = \pi/4 + \pi = 5\pi/4\), obteniendo \((2\sqrt{2},\; 5\pi/4,\; 5)\).
+
+Mantener constante una coordenada cilíndrica produce tres superficies coordenadas básicas:
+- \(r = a\) (\(a > 0\)): un cilindro circular recto de radio \(a\) centrado en el eje \(z\).
+- \(\theta = c\): un semiplano vertical articulado a lo largo del eje \(z\), que se extiende hacia afuera en la dirección \(\theta = c\) (ya que \(r \ge 0\)).
+- \(z = k\): un plano horizontal a altura \(k\).
+
+Muchas superficies cuádricas de sección circular colapsan en ecuaciones cilíndricas notablemente simples. Por ejemplo, el paraboloide circular \(z = x^2 + y^2\) trazado a continuación pasa a ser simplemente \(z = r^2\) —independiente de \(\theta\), lo que expresa visualmente su simetría rotacional completa alrededor del eje \(z\)—. Asimismo, el cono circular doble \(z^2 = x^2 + y^2\) se simplifica a \(z = \pm r\), y el hiperboloide de una hoja \(x^2 + y^2 - z^2 = 1\) se convierte en \(r^2 - z^2 = 1\).
+
+[GRAPH]
+type: surface3d
+title: Paraboloide circular \(z = x^2 + y^2\), escrito como \(z = r^2\) en coordenadas cilíndricas
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -2, 2
+yrange: -2, 2
+z: x^2 + y^2
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Convierta el punto cartesiano \((-3, 3\sqrt{3}, -2)\) a coordenadas cilíndricas \((r, \theta, z)\) con \(r \ge 0\) y \(0 \le \theta < 2\pi\).
+
+(A) \(\left(6,\; \frac{5\pi}{3},\; -2\right)\)
+(B) \(\left(6,\; \frac{2\pi}{3},\; -2\right)\)
+(C) \(\left(6,\; \frac{\pi}{3},\; -2\right)\)
+(D) \(\left(6,\; \frac{5\pi}{6},\; -2\right)\)
+(E) \(\left(2\sqrt{10},\; \frac{2\pi}{3},\; -2\right)\)
+[/QUESTION]
+
+=== SECTION 2: Coordenadas esféricas en la convención matemática ===
+
+Cuando un problema irradia simétricamente desde un único punto —como una esfera centrada en el origen o un cono con vértice en el origen—, las coordenadas esféricas \((\rho, \theta, \phi)\) se ajustan a la geometría aún más estrechamente que las cilíndricas. En la convención matemática estándar:
+- \(\rho \ge 0\) es la distancia en línea recta desde el origen \(O(0, 0, 0)\) hasta el punto \(P\).
+- \(\theta\) es exactamente el mismo ángulo acimutal en el plano \(xy\) que en coordenadas cilíndricas (\(0 \le \theta < 2\pi\)).
+- \(\phi \in [0, \pi]\) es el ángulo polar (colatitud) medido hacia abajo desde el semieje \(z\) positivo hasta el vector de posición \(\overrightarrow{OP}\). Así, \(\phi = 0\) apunta directamente hacia arriba por el semieje \(z\) positivo, \(\phi = \pi/2\) barre todo el plano \(xy\) (el ecuador) y \(\phi = \pi\) apunta directamente hacia abajo por el semieje \(z\) negativo.
+
+¿Cómo deducimos la conversión entre \((\rho, \theta, \phi)\) y \((x, y, z)\)? Corte \(\mathbb{R}^3\) con el semiplano vertical \(\theta = \text{const}\) que contiene a \(P\) y al eje \(z\). Dentro de este semiplano, el eje horizontal mide el radio cilíndrico \(r \ge 0\) y el eje vertical mide \(z\). La hipotenusa desde el origen hasta \(P\) tiene longitud \(\rho\) y forma un ángulo \(\phi\) con el semieje \(z\) positivo, formando un triángulo rectángulo cuyos catetos son
+\[
+z = \rho\cos\phi, \qquad r = \rho\sin\phi.
+\]
+Note que \(r = \rho\sin\phi \ge 0\) automáticamente porque \(\rho \ge 0\) y \(\sin\phi \ge 0\) en todo el dominio \(0 \le \phi \le \pi\). Arrastre el deslizador del ángulo polar \(f\) siguiente desde \(0\) (polo norte), pasando por \(\pi/2 \approx 1.57\) (ecuador), hasta \(\pi\) (polo sur) para observar cómo \(z = \rho\cos f\) pasa de \(+\rho\) por \(0\) hasta \(-\rho\) mientras \(r = \rho\sin f\) permanece no negativo en todo el recorrido.
+
+[GRAPH]
+type: parametric2d
+title: Semiplano meridiano (\(\theta = \text{const}\)): \(r = \rho\sin f\) y \(z = \rho\cos f\) para \(\rho = 3\)
+xlabel: \(r\)
+ylabel: \(z\)
+trange: 0, 3.1416
+xrange: -0.6, 3.8
+yrange: -3.5, 3.5
+trace: 3*sin(t), 3*cos(t) | label: arco meridiano \(\rho = 3\)
+segment: 0, 0, 3*sin(f), 3*cos(f) | label: \(\rho\)
+segment: 0, 3*cos(f), 3*sin(f), 3*cos(f) | label: \(r\) | dashed: true
+segment: 3*sin(f), 0, 3*sin(f), 3*cos(f) | label: \(z\) | dashed: true
+point: 0, 0 | label: \(O\)
+point: 3*sin(f), 3*cos(f) | label: \(P\)
+slider: f | range: 0.08, 3.06 | init: 0.9 | step: 0.08
+[/GRAPH]
+
+Sustituir \(r = \rho\sin\phi\) en [REF: cyl-coords.1 | las fórmulas cilíndricas] \(x = r\cos\theta\) e \(y = r\sin\theta\) entrega el puente completo de esféricas a cartesianas.
+
+[CALLOUT]
+id: sph-coords
+label: Definición
+title: Conversiones en coordenadas esféricas (convención matemática)
+tone: key
+
+Para un punto \(P\) con coordenadas cartesianas \((x, y, z)\) y coordenadas esféricas \((\rho, \theta, \phi)\) (\(\rho \ge 0\), \(0 \le \phi \le \pi\)):
+
+(1) Esféricas a cartesianas:
+\[
+x = \rho\sin\phi\cos\theta, \qquad y = \rho\sin\phi\sin\theta, \qquad z = \rho\cos\phi.
+\]
+(2) Cartesianas a esféricas:
+\[
+\rho = \sqrt{x^2 + y^2 + z^2}, \qquad \cos\phi = \frac{z}{\rho} \quad (\rho > 0), \qquad \tan\theta = \frac{y}{x} \quad (x \ne 0),
+\]
+donde \(\phi = \arccos(z/\rho) \in [0, \pi]\) NO presenta ambigüedad de cuadrante, mientras que \(\theta\) debe ubicarse en el cuadrante de \((x, y)\).
+(3) Vínculo cilíndricas-esféricas: \(r = \rho\sin\phi\), \(z = \rho\cos\phi\), \(\rho = \sqrt{r^2 + z^2}\), con \(\theta\) sin cambios.
+[/CALLOUT]
+
+[CALLOUT]
+id: physics-conv
+label: Error frecuente
+title: Convención matemática frente a convención física
+tone: caution
+
+Muchos textos de física e ingeniería intercambian los símbolos \(\theta\) y \(\phi\), escribiendo \((r, \theta, \phi)\) donde \(\theta \in [0, \pi]\) es el ángulo polar desde el eje \(z\) y \(\phi \in [0, 2\pi)\) es el ángulo acimutal en el plano \(xy\). En matemáticas (y a lo largo de toda esta lección), \(\theta\) SIEMPRE mantiene el mismo papel de ángulo acimutal usado en coordenadas polares y cilíndricas, y \(\phi\) es el ángulo polar medido desde el semieje \(z\) positivo. Compruebe siempre qué símbolo multiplica a \(\cos\) en \(z\) cuando cambie de libro de texto.
+[/CALLOUT]
+
+Convirtamos un punto en cada sentido:
+- Esféricas \((2, \pi/4, 2\pi/3)\) a cartesianas: \(\sin(2\pi/3) = \frac{\sqrt{3}}{2}\) y \(\cos(2\pi/3) = -\frac{1}{2}\), mientras que \(\cos(\pi/4) = \sin(\pi/4) = \frac{\sqrt{2}}{2}\). Así,
+\[
+x = 2\cdot\frac{\sqrt{3}}{2}\cdot\frac{\sqrt{2}}{2} = \frac{\sqrt{6}}{2}, \qquad y = \frac{\sqrt{6}}{2}, \qquad z = 2\left(-\frac{1}{2}\right) = -1.
+\]
+- Cartesianas \((1, -\sqrt{3}, 2\sqrt{3})\) a esféricas:
+\[
+\rho = \sqrt{1 + 3 + 12} = 4, \qquad \cos\phi = \frac{2\sqrt{3}}{4} = \frac{\sqrt{3}}{2} \implies \phi = \frac{\pi}{6}.
+\]
+Para \(\theta\), \(\tan\theta = -\sqrt{3}\) con \(x = 1 > 0\) e \(y = -\sqrt{3} < 0\) (Cuadrante IV), por lo que \(\theta = \frac{5\pi}{3}\). Las coordenadas esféricas son \((4,\; 5\pi/3,\; \pi/6)\).
+
+[QUESTION 2]
+[ANSWER: C]
+Halle las coordenadas cartesianas \((x, y, z)\) del punto cuyas coordenadas esféricas (en la convención matemática \((\rho, \theta, \phi)\)) son \(\left(4,\; \frac{5\pi}{6},\; \frac{\pi}{3}\right)\).
+
+(A) \((-\sqrt{3},\; 1,\; 2\sqrt{3})\)
+(B) \((1,\; \sqrt{3},\; -2\sqrt{3})\)
+(C) \((-3,\; \sqrt{3},\; 2)\)
+(D) \((3,\; -\sqrt{3},\; 2)\)
+(E) \((-2\sqrt{3},\; 2,\; 2)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Convierta el punto cartesiano \((0, -2, -2\sqrt{3})\) a coordenadas esféricas \((\rho, \theta, \phi)\) con \(\rho \ge 0\), \(0 \le \theta < 2\pi\) y \(0 \le \phi \le \pi\).
+
+(A) \(\left(4,\; \frac{3\pi}{2},\; \frac{5\pi}{6}\right)\)
+(B) \(\left(4,\; \frac{3\pi}{2},\; \frac{\pi}{6}\right)\)
+(C) \(\left(4,\; \frac{3\pi}{2},\; \frac{2\pi}{3}\right)\)
+(D) \(\left(4,\; \frac{\pi}{2},\; \frac{5\pi}{6}\right)\)
+(E) \(\left(2,\; \frac{3\pi}{2},\; \frac{5\pi}{6}\right)\)
+[/QUESTION]
+
+=== SECTION 3: Superficies coordenadas y traducción de ecuaciones de superficies ===
+
+Así como fijar \(x\), \(y\) o \(z\) genera las tres familias de planos en coordenadas cartesianas, mantener constante una sola coordenada esférica genera tres superficies fundamentales:
+- \(\rho = R\) (\(R > 0\)): la esfera de radio \(R\) centrada en el origen (\(x^2 + y^2 + z^2 = R^2\)).
+- \(\theta = c\): exactamente el mismo semiplano vertical articulado a lo largo del eje \(z\) que en coordenadas cilíndricas.
+- \(\phi = \phi_0\): un semicono (cono de un solo manto) con vértice en el origen que se abre hacia arriba alrededor del semieje \(z\) positivo cuando \(0 < \phi_0 < \pi/2\), se abre hacia abajo alrededor del semieje \(z\) negativo cuando \(\pi/2 < \phi_0 < \pi\) y se aplana en el plano \(xy\) \(z = 0\) cuando \(\phi_0 = \pi/2\).
+
+La superficie siguiente es el semicono superior \(z = \sqrt{x^2 + y^2}\). En coordenadas cilíndricas es \(z = r\), y en coordenadas esféricas sustituir \(z = \rho\cos\phi\) y \(r = \rho\sin\phi\) da \(\rho\cos\phi = \rho\sin\phi \implies \tan\phi = 1\) (con \(z \ge 0\)), reduciendo toda la superficie a la única ecuación de ángulo constante \(\phi = \frac{\pi}{4}\).
+
+[GRAPH]
+type: surface3d
+title: Semicono superior \(z = \sqrt{x^2 + y^2}\), escrito como \(\phi = \frac{\pi}{4}\) en coordenadas esféricas
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -2, 2
+yrange: -2, 2
+z: sqrt(x^2 + y^2)
+[/GRAPH]
+
+Para traducir una ecuación de superficie general entre las formas cartesiana, cilíndrica y esférica, sustituya las identidades de [REF: cyl-coords | las conversiones cilíndricas] y [REF: sph-coords | las conversiones esféricas], y busque atajos algebraicos como multiplicar ambos lados por \(\rho\) cuando \(\rho\) aparece en un lado y \(\cos\phi\) o \(\sin\phi\cos\theta\) aparece en el otro. Por ejemplo:
+- Plano horizontal \(z = c\): cilíndrica \(z = c\); esférica \(\rho\cos\phi = c\), o bien \(\rho = c\sec\phi\).
+- Cilindro circular \(x^2 + y^2 = a^2\): cilíndrica \(r = a\); esférica \(\rho\sin\phi = a\) (ya que \(r = \rho\sin\phi\)).
+- Paraboloide circular \(z = x^2 + y^2\): cilíndrica \(z = r^2\); esférica \(\rho\cos\phi = \rho^2\sin^2\phi\), que se simplifica (manteniendo incluido \(\rho = 0\)) a \(\rho = \cot\phi\csc\phi\).
+- Esfera trasladada \(x^2 + y^2 + (z - a)^2 = a^2\) (radio \(a > 0\), tangente al plano \(xy\) en el origen): al desarrollar resulta \(x^2 + y^2 + z^2 = 2az\), que se convierte limpiamente en \(\rho^2 = 2a\rho\cos\phi\), o simplemente \(\rho = 2a\cos\phi\).
+
+[TABLE]
+Superficie | Ecuación cartesiana | Ecuación cilíndrica | Ecuación esférica
+Esfera centrada en el origen | \(x^2 + y^2 + z^2 = R^2\) | \(r^2 + z^2 = R^2\) | \(\rho = R\)
+Cilindro circular (eje \(z\)) | \(x^2 + y^2 = a^2\) | \(r = a\) | \(\rho\sin\phi = a\)
+Semicono superior | \(z = \sqrt{x^2 + y^2}\) | \(z = r\) | \(\phi = \frac{\pi}{4}\)
+Plano horizontal | \(z = c\) | \(z = c\) | \(\rho\cos\phi = c\)
+Paraboloide circular | \(z = x^2 + y^2\) | \(z = r^2\) | \(\rho\cos\phi = \rho^2\sin^2\phi\)
+Semiplano vertical | \(y = x\tan c\) (mitad) | \(\theta = c\) | \(\theta = c\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: D]
+¿Qué superficie en \(\mathbb{R}^3\) está representada por la ecuación esférica \(\rho = 6\cos\phi\)?
+
+(A) Una esfera de radio \(6\) centrada en el origen \((0, 0, 0)\)
+(B) El plano horizontal \(z = 6\)
+(C) Un cilindro circular de radio \(6\) centrado a lo largo del eje \(z\)
+(D) Una esfera de radio \(3\) centrada en \((0, 0, 3)\)
+(E) Una esfera de radio \(6\) centrada en \((0, 0, 3)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Qué ecuación en coordenadas esféricas describe el semicono inferior \(z = -\sqrt{3(x^2 + y^2)}\) (con vértice en el origen)?
+
+(A) \(\phi = \frac{\pi}{6}\)
+(B) \(\phi = \frac{2\pi}{3}\)
+(C) \(\phi = \frac{\pi}{3}\)
+(D) \(\theta = \frac{5\pi}{6}\)
+(E) \(\phi = \frac{5\pi}{6}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Identifique la superficie en \(\mathbb{R}^3\) dada por la ecuación esférica \(\rho = 2\sin\phi\cos\theta\).
+
+(A) Un cilindro circular de radio \(2\) centrado a lo largo del eje \(x\)
+(B) Una esfera de radio \(1\) centrada en \((1, 0, 0)\)
+(C) Una esfera de radio \(2\) centrada en \((1, 0, 0)\)
+(D) El plano vertical \(x = 2\)
+(E) Una esfera de radio \(1\) centrada en \((0, 1, 0)\)
+[/BONUS]

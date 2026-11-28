@@ -1,0 +1,194 @@
+=== SECTION 1: Trasladar a un lado y por qué falla multiplicar en cruz ===
+
+Supongamos que queremos resolver la desigualdad racional
+\[
+\frac{x + 3}{x - 1} \ge 2.
+\]
+Si esto fuera una ecuación \(\frac{x + 3}{x - 1} = 2\), multiplicar ambos lados por \(x - 1\) (advirtiendo \(x \ne 1\)) daría \(x + 3 = 2(x - 1)\), conduciendo de inmediato a \(x = 5\). En una desigualdad, sin embargo, multiplicar por \(x - 1\) es ILEGAL sin separar en casos de signo: cuando \(x > 1\), \(x - 1 > 0\) preserva \(\ge\), mientras que cuando \(x < 1\), \(x - 1 < 0\) INVIERTE \(\ge\) a \(\le\). Peor aún, una multiplicación en cruz ingenua produce \(x + 3 \ge 2x - 2 \implies x \le 5\), lo que afirma falsamente que \(x = 0\) es solución a pesar de que \(\frac{0 + 3}{0 - 1} = -3 \not\ge 2\).
+
+En lugar de multiplicar en cruz, reutilizamos exactamente la misma estrategia de comparación con cero de las desigualdades polinómicas: traslade todos los términos a un mismo lado y combine sobre un único denominador común para obtener
+\[
+\frac{P(x)}{Q(x)} \lesseqqgtr 0.
+\]
+Ejecute esto en \(\frac{x + 3}{x - 1} \ge 2\):
+\[
+\frac{x + 3}{x - 1} - 2 \ge 0 \implies \frac{(x + 3) - 2(x - 1)}{x - 1} \ge 0 \implies \frac{5 - x}{x - 1} \ge 0.
+\]
+¿Por qué es tan eficaz comparar un único cociente con \(0\)? Por la regla del signo del cociente de las propiedades de orden de los números reales, para todo \(x\) donde \(Q(x) \ne 0\), el cociente \(\frac{P(x)}{Q(x)}\) tiene EXACTAMENTE EL MISMO signo que el producto \(P(x)\,Q(x)\). Así, una función racional \(\frac{P(x)}{Q(x)}\) solo puede cambiar de signo en:
+- Ceros del numerador (raíces reales de \(P(x) = 0\)), donde el cociente vale \(0\) (siempre que \(Q(x) \ne 0\)), y
+- Ceros del denominador (raíces reales de \(Q(x) = 0\)), donde el cociente no está definido y normalmente presenta una asíntota vertical.
+
+Ambos tipos de ceros pertenecen al diagrama de signos como puntos críticos, aunque obedecen a una asimetría absoluta e irrenunciable al formar el conjunto solución final.
+
+[CALLOUT]
+id: rational-endpoint-asymmetry
+label: Regla
+title: Ceros del numerador frente a ceros del denominador
+tone: key
+
+Al resolver una desigualdad racional reducida \(\frac{P(x)}{Q(x)} \lesseqqgtr 0\) (donde \(P(x)\) y \(Q(x)\) son polinomios):
+
+(1) Ceros del denominador (\(Q(r) = 0\)): SIEMPRE EXCLUIDOS del conjunto solución (paréntesis abierto), incluso para \(\le\) y \(\ge\), porque la división por \(0\) no está definida.
+(2) Ceros del numerador (\(P(r) = 0\) con \(Q(r) \ne 0\)): INCLUIDOS (corchete o punto aislado) para \(\le\) y \(\ge\), y EXCLUIDOS para \(<\) y \(>\).
+[/CALLOUT]
+
+Terminemos \(\frac{5 - x}{x - 1} \ge 0\) usando [REF: rational-endpoint-asymmetry | esta regla]. Los puntos críticos son \(x = 1\) (cero del denominador, excluido) y \(x = 5\) (cero del numerador, incluido). Reescriba \(\frac{5 - x}{x - 1} = -\frac{x - 5}{x - 1}\):
+- Para \(x > 5\): numerador \(5 - x < 0\), denominador \(x - 1 > 0\), cociente \(-\).
+- Para \(1 < x < 5\): numerador \(5 - x > 0\), denominador \(x - 1 > 0\), cociente \(+\).
+- Para \(x < 1\): numerador \(5 - x > 0\), denominador \(x - 1 < 0\), cociente \(-\).
+
+Por lo tanto, el conjunto solución es \((1, 5]\) —abierto en \(1\), cerrado en \(5\)—. La gráfica inferior muestra ambas ramas de \(y = \frac{x + 3}{x - 1}\) junto con la recta horizontal \(y = 2\) y la asíntota vertical \(x = 1\), evidenciando por qué la curva se sitúa en \(2\) o por encima estrictamente a la derecha de \(1\) hasta \(5\), y permanece estrictamente por debajo de \(2\) en todo lugar a la izquierda de \(1\).
+
+[GRAPH]
+type: function2d
+title: Comparación de \(y = \frac{x + 3}{x - 1}\) con \(y = 2\) a través de la asíntota \(x = 1\) y el cruce \(x = 5\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 8
+yrange: -4, 8
+fill: (x + 3)/(x - 1), 2 | range: 1.75, 5 | label: región solución | color: #3b82f6 | opacity: 0.22
+trace: x < 0.95 ? (x + 3)/(x - 1) : 0/0 | label: \(y = \frac{x + 3}{x - 1}\) (izquierda) | color: #2563eb
+trace: x > 1.05 ? (x + 3)/(x - 1) : 0/0 | label: \(y = \frac{x + 3}{x - 1}\) (derecha) | color: #2563eb
+trace: 2 | label: \(y = 2\) | color: #f59e0b
+segment: 1, -4, 1, 8 | label: \(x = 1\) | dashed: true
+point: 5, 2 | label: \((5, 2)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál es el conjunto solución de la desigualdad racional \(\frac{2x - 5}{x + 1} \le 1\)?
+
+(A) \([-1, 6]\)
+(B) \((-1, 6]\)
+(C) \((-\infty, 6]\)
+(D) \((-\infty, -1) \cup [6, \infty)\)
+(E) \((-1, 6)\)
+[/QUESTION]
+
+=== SECTION 2: Multiplicidades en diagramas de signos racionales ===
+
+Dado que \(\frac{1}{(x - r)^k}\) tiene exactamente el mismo signo que \((x - r)^k\) para todo \(x \ne r\), las reglas de cambio de signo según multiplicidad par e impar de las desigualdades polinómicas se trasladan al pie de la letra TANTO a los factores del numerador como a los del denominador:
+- Al cruzar un punto crítico \(r\) cuyo factor \((x - r)^k\) (en el numerador o en el denominador) tiene multiplicidad IMPAR \(k\), el cociente \(\frac{P(x)}{Q(x)}\) CAMBIA DE SIGNO.
+- Al cruzar un punto crítico \(r\) cuyo factor \((x - r)^k\) tiene multiplicidad PAR \(k\), el cociente CONSERVA EL MISMO SIGNO a ambos lados de \(r\).
+- Un factor cuadrático irreducible (\(\Delta < 0\)) en el numerador o en el denominador nunca se anula y simplemente aporta el signo constante de su coeficiente principal.
+
+Construyamos un diagrama de signos completo para
+\[
+\frac{(x + 1)(x - 4)^2}{(x - 2)^3 (x + 3)^2} \le 0.
+\]
+Enumeremos los cuatro puntos críticos en orden, indicando la función de cada uno (N = numerador, D = denominador) y su multiplicidad:
+- \(x = -3\): D, par (multiplicidad \(2\)) — siempre excluido.
+- \(x = -1\): N, impar (multiplicidad \(1\)) — incluido debido a \(\le\).
+- \(x = 2\): D, impar (multiplicidad \(3\)) — siempre excluido.
+- \(x = 4\): N, par (multiplicidad \(2\)) — incluido debido a \(\le\).
+
+Cada factor tiene coeficiente principal \(+1\), por lo que para \(x > 4\) el cociente es \(+\). Propaguemos los signos de derecha a izquierda al cruzar cada punto crítico:
+
+[TABLE]
+Región o punto | \((-\infty, -3)\) | \(-3\) | \((-3, -1)\) | \(-1\) | \((-1, 2)\) | \(2\) | \((2, 4)\) | \(4\) | \((4, \infty)\)
+Función / multiplicidad | — | D (par) | — | N (impar) | — | D (impar) | — | N (par) | —
+Signo / estado | \(+\) | indef. | \(+\) | \(0\) | \(-\) | indef. | \(+\) | \(0\) | \(+\)
+[/TABLE]
+
+Leamos el conjunto solución para \(\le 0\) directamente de la última fila: el intervalo negativo es \((-1, 2)\); el cero del numerador \(-1\) cierra su extremo izquierdo a \([-1, 2)\); el cero del denominador \(2\) permanece abierto; y el cero del numerador \(4\) es un punto aislado donde el cociente vale \(0 \le 0\), por lo que \(\{4\}\) debe incluirse. Así, el conjunto solución es
+\[
+[-1, 2) \cup \{4\}.
+\]
+Observe lo que habría ocurrido si hubiéramos pedido \(\ge 0\) en su lugar: los intervalos positivos son \((-\infty, -3)\), \((-3, -1)\), \((2, 4)\) y \((4, \infty)\). En el cero del numerador \(4\), los dos intervalos adyacentes \((2, 4)\) y \((4, \infty)\) SE FUSIONAN a través de \(4\) en \((2, \infty)\). En el cero del denominador \(-3\), en cambio, los dos intervalos adyacentes \((-\infty, -3)\) y \((-3, -1]\) NO PUEDEN fusionarse porque \(-3\) no está definido, quedando \((-\infty, -3) \cup (-3, -1] \cup (2, \infty)\).
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál es el conjunto solución de \(\frac{(x - 3)^2 (x + 2)}{(x - 1)(x + 4)^2} \ge 0\)?
+
+(A) \((-\infty, -2] \cup (1, \infty)\)
+(B) \((-\infty, -4) \cup (-4, -2] \cup (1, 3) \cup (3, \infty)\)
+(C) \([-2, 1) \cup \{3\}\)
+(D) \((-\infty, -4) \cup (-4, -2] \cup (1, \infty)\)
+(E) \((-\infty, -4] \cup [-2, 1) \cup [3, \infty)\)
+[/QUESTION]
+
+=== SECTION 3: Factores comunes y desigualdades con varias fracciones ===
+
+Dos situaciones estructurales exigen disciplina adicional: cancelar factores comunes entre numerador y denominador, y combinar dos o más términos racionales.
+
+En primer lugar, considere una desigualdad racional donde numerador y denominador comparten un factor común:
+\[
+\frac{x^2 - 1}{x^2 - 4x + 3} \le 0.
+\]
+Factorice completamente ambos polinomios:
+\[
+\frac{(x - 1)(x + 1)}{(x - 1)(x - 3)} \le 0.
+\]
+ANTES de cancelar \((x - 1)\), registre la restricción completa de dominio de la expresión ORIGINAL: el denominador se anula TANTO en \(x = 1\) como en \(x = 3\), de modo que \(x \ne 1\) y \(x \ne 3\). Solo para \(x \ne 1\) el cociente original es igual a \(\frac{x + 1}{x - 3}\). Resolver \(\frac{x + 1}{x - 3} \le 0\) da \([-1, 3)\). Ahora interseque con la exclusión de dominio registrada \(x \ne 1\): como \(1\) se encuentra dentro de \([-1, 3)\), debemos eliminarlo. El verdadero conjunto solución es
+\[
+[-1, 1) \cup (1, 3).
+\]
+
+[CALLOUT]
+id: cancel-domain-trap
+label: Precaución
+title: Nunca cancele un factor común sin conservar su exclusión de dominio
+tone: caution
+
+Si \((x - a)\) divide tanto a \(P(x)\) como a \(Q(x)\), la expresión racional original NO ESTÁ DEFINIDA en \(x = a\). Siempre que cancele \((x - a)\), escriba explícitamente la restricción \(x \ne a\) junto a la desigualdad simplificada y excluya \(a\) del conjunto solución final.
+[/CALLOUT]
+
+¿Qué ocurre si el factor común tiene distinta multiplicidad en numerador y denominador, como en \(\frac{(x - 1)^2(x + 2)}{(x - 1)(x - 3)} \le 0\)? De nuevo, registre \(x \ne 1\) y \(x \ne 3\) primero. Después de cancelar una copia de \((x - 1)\), la desigualdad reducida es \(\frac{(x - 1)(x + 2)}{x - 3} \le 0\) con \(x \ne 1\). La desigualdad reducida por sí sola incluiría \(x = 1\) como cero del numerador, pero la restricción de dominio original \(x \ne 1\) prevalece e impone un paréntesis abierto en \(1\).
+
+En segundo lugar, considere una desigualdad con expresiones racionales en ambos lados, como
+\[
+\frac{2}{x - 1} \le \frac{1}{x + 2}.
+\]
+Resista toda tentación de multiplicar en cruz. Reste el lado derecho del izquierdo y combine sobre el mínimo común denominador \((x - 1)(x + 2)\):
+\[
+\frac{2}{x - 1} - \frac{1}{x + 2} \le 0 \implies \frac{2(x + 2) - (x - 1)}{(x - 1)(x + 2)} \le 0 \implies \frac{x + 5}{(x - 1)(x + 2)} \le 0.
+\]
+Los puntos críticos son \(-5\) (numerador, impar, incluido), \(-2\) (denominador, impar, excluido) y \(1\) (denominador, impar, excluido). Todos los factores tienen coeficiente principal positivo, de modo que el signo alterna de derecha a izquierda como \(+\) en \((1, \infty)\), \(-\) en \((-2, 1)\), \(+\) en \((-5, -2)\) y \(-\) en \((-\infty, -5)\). Así, el conjunto solución es
+\[
+(-\infty, -5] \cup (-2, 1).
+\]
+Observe con qué limpieza el diagrama de signos captura AMBAS piezas —incluido el intervalo \((-2, 1)\) donde los dos denominadores \((x - 1)\) y \((x + 2)\) tienen signos opuestos, algo que la multiplicación en cruz ingenua desordena por completo.
+
+[QUESTION 3]
+[ANSWER: A]
+¿Cuál es el conjunto solución de \(\frac{x^2 - 4}{x^2 - 5x + 6} \le 0\)?
+
+(A) \([-2, 2) \cup (2, 3)\)
+(B) \([-2, 3)\)
+(C) \((-2, 2) \cup (2, 3)\)
+(D) \([-2, 2] \cup (2, 3]\)
+(E) \((-\infty, -2] \cup (3, \infty)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(\frac{1}{x - 2} > \frac{2}{x + 1}\)?
+
+(A) \((-\infty, 5)\)
+(B) \((-1, 2) \cup (5, \infty)\)
+(C) \((-\infty, -1) \cup (2, 5)\)
+(D) \((-\infty, -1) \cup (2, 5]\)
+(E) \((2, 5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Cuál es el conjunto solución de \(\frac{x}{x^2 - 1} \ge \frac{1}{x + 1}\)?
+
+(A) \((-\infty, -1] \cup [1, \infty)\)
+(B) \((-1, 1)\)
+(C) \((1, \infty)\)
+(D) \(\emptyset\)
+(E) \((-\infty, -1) \cup (1, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(\frac{(x - 1)^2(x^2 + 3x + 5)}{x^2 - 4x + 4} \le 0\)?
+
+(A) \(\emptyset\)
+(B) \(\{1\}\)
+(C) \(\{1, 2\}\)
+(D) \((-\infty, 1] \cup (2, \infty)\)
+(E) \((-\infty, 2) \cup (2, \infty)\)
+[/BONUS]

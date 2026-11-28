@@ -1,0 +1,228 @@
+=== SECTION 1: Magnitud de un vector y sus propiedades fundamentales ===
+
+La forma en componentes nos permite sumar y escalar vectores con aritmética, pero queda una pregunta geométrica básica: dado \(\mathbf{v} = \langle v_x, v_y \rangle\), ¿qué longitud tiene la flecha? Una vez que sepamos medir la longitud directamente a partir de las componentes, podremos también separar la longitud para aislar la dirección pura y comprobar algebraicamente cuándo dos vectores yacen sobre rectas paralelas.
+
+Dibuja un vector no nulo \(\mathbf{v} = \langle v_x, v_y \rangle\) en posición estándar desde \(O(0, 0)\) hasta \((v_x, v_y)\). El cateto horizontal de \((0, 0)\) a \((v_x, 0)\) tiene longitud \(|v_x|\), el cateto vertical de \((v_x, 0)\) a \((v_x, v_y)\) tiene longitud \(|v_y|\) y ambos catetos forman un ángulo recto. Por el teorema de Pitágoras, el cuadrado de la longitud de la hipotenusa es \(|v_x|^2 + |v_y|^2 = v_x^2 + v_y^2\). Tomando la raíz cuadrada no negativa se obtiene la magnitud euclidiana (también llamada norma o longitud) de \(\mathbf{v}\), denotada \(\|\mathbf{v}\|\):
+\[
+\|\mathbf{v}\| = \sqrt{v_x^2 + v_y^2}.
+\]
+Observa que si \(\mathbf{v} = \overrightarrow{PQ} = \langle x_Q - x_P, y_Q - y_P \rangle\), entonces \(\|\overrightarrow{PQ}\| = \sqrt{(x_Q - x_P)^2 + (y_Q - y_P)^2}\) recupera la distancia euclidiana habitual entre los puntos \(P\) y \(Q\).
+
+Por ejemplo, \(\mathbf{v} = \langle 3, 4 \rangle\) forma un triángulo rectángulo de catetos \(3\) y \(4\), lo que da \(\|\mathbf{v}\| = \sqrt{3^2 + 4^2} = \sqrt{25} = 5\). Incluso cuando una componente es negativa, elevar al cuadrado vuelve no negativo cada término dentro de la raíz: para \(\mathbf{w} = \langle -2, 5 \rangle\), \(\|\mathbf{w}\| = \sqrt{(-2)^2 + 5^2} = \sqrt{29}\).
+
+¿Cómo se comporta la magnitud respecto al cero, la multiplicación por un escalar y la suma vectorial? Comprobemos cada propiedad directamente desde la definición.
+1. No negatividad y positividad definida: como \(v_x^2 \ge 0\) y \(v_y^2 \ge 0\), siempre se cumple \(\|\mathbf{v}\| \ge 0\). Además, \(\sqrt{v_x^2 + v_y^2} = 0\) vale si y solo si \(v_x^2 + v_y^2 = 0\), lo cual obliga a \(v_x = 0\) y \(v_y = 0\), es decir, \(\mathbf{v} = \mathbf{0}\).
+2. Escalamiento: para cualquier escalar real \(k\) y cualquier vector \(\mathbf{v} = \langle v_x, v_y \rangle\), calcula directamente:
+\[
+\|k\mathbf{v}\| = \sqrt{(k v_x)^2 + (k v_y)^2} = \sqrt{k^2(v_x^2 + v_y^2)} = \sqrt{k^2}\sqrt{v_x^2 + v_y^2} = |k|\,\|\mathbf{v}\|.
+\]
+Cuida ese paso \(\sqrt{k^2} = |k|\): ¡no es \(k\) cuando \(k < 0\)!
+3. Desigualdad triangular: dibuja \(\mathbf{u}\) y \(\mathbf{v}\) cabeza con cola. Junto con \(\mathbf{u} + \mathbf{v}\), forman un triángulo cuyas longitudes de lados son \(\|\mathbf{u}\|\), \(\|\mathbf{v}\|\) y \(\|\mathbf{u} + \mathbf{v}\|\). Como la línea recta es el camino más corto entre dos puntos, el tercer lado nunca puede superar la suma de los otros dos:
+\[
+\|\mathbf{u} + \mathbf{v}\| \le \|\mathbf{u}\| + \|\mathbf{v}\|.
+\]
+¿Cuándo se cumple la igualdad \(\|\mathbf{u} + \mathbf{v}\| = \|\mathbf{u}\| + \|\mathbf{v}\|\)? Únicamente cuando el triángulo colapsa por completo sin doblez ni retroceso —es decir, cuando uno de \(\mathbf{u}, \mathbf{v}\) es \(\mathbf{0}\), o cuando ambos apuntan exactamente en el mismo sentido (\(\mathbf{v} = c\mathbf{u}\) para algún \(c > 0\))—. Si apuntan en sentidos opuestos, se cancelan parcialmente y \(\|\mathbf{u} + \mathbf{v}\| = \bigl|\|\mathbf{u}\| - \|\mathbf{v}\|\bigr| < \|\mathbf{u}\| + \|\mathbf{v}\|\).
+
+[CALLOUT]
+id: norm-props
+label: Propiedades
+title: Propiedades fundamentales de la magnitud euclidiana en \(\mathbb{R}^2\)
+tone: key
+
+Para todos los vectores \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) y todo escalar real \(k\):
+
+(1) Positividad definida: \(\|\mathbf{v}\| \ge 0\), con \(\|\mathbf{v}\| = 0\) si y solo si \(\mathbf{v} = \mathbf{0}\).
+(2) Homogeneidad absoluta (escalamiento): \(\|k\mathbf{v}\| = |k|\,\|\mathbf{v}\|\).
+(3) Desigualdad triangular: \(\|\mathbf{u} + \mathbf{v}\| \le \|\mathbf{u}\| + \|\mathbf{v}\|\), con igualdad si y solo si un vector es \(\mathbf{0}\) o ambos apuntan en el mismo sentido.
+[/CALLOUT]
+
+[CALLOUT]
+id: abs-scaling
+label: Error frecuente
+title: No omitas el valor absoluto en \(\|k\mathbf{v}\| = |k|\,\|\mathbf{v}\|\)
+tone: caution
+
+La longitud nunca es negativa. Si \(\|\mathbf{v}\| = 5\) y \(k = -3\), entonces \(\|-3\mathbf{v}\| = |-3|\cdot 5 = 15\), no \(-15\). El signo menos invierte la dirección; la magnitud sigue multiplicándose por \(3\).
+[/CALLOUT]
+
+El diagrama siguiente muestra tanto la construcción mediante triángulo rectángulo de \(\|\mathbf{u}\|\) como la desigualdad triangular geométrica para \(\mathbf{u} = \langle 4, 1 \rangle\) y \(\mathbf{v} = \langle 1, 3 \rangle\). Aquí \(\|\mathbf{u}\| = \sqrt{17} \approx 4.12\) y \(\|\mathbf{v}\| = \sqrt{10} \approx 3.16\), de modo que \(\|\mathbf{u}\| + \|\mathbf{v}\| \approx 7.29\), mientras que la flecha directa \(\mathbf{u} + \mathbf{v} = \langle 5, 4 \rangle\) tiene una longitud estrictamente menor de \(\sqrt{41} \approx 6.40\).
+
+[GRAPH]
+type: parametric2d
+title: Desigualdad triangular: longitud directa \(\|\mathbf{u} + \mathbf{v}\| = \sqrt{41}\) frente a suma \(\sqrt{17} + \sqrt{10}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 6
+yrange: -0.5, 5
+trace: 4*t, 1*t | label: \(\mathbf{u} = \langle 4, 1 \rangle\) | color: #2563eb
+trace: 4 + 1*t, 1 + 3*t | label: \(\mathbf{v} = \langle 1, 3 \rangle\) | color: #d97706
+trace: 5*t, 4*t | label: \(\mathbf{u} + \mathbf{v} = \langle 5, 4 \rangle\) | color: #16a34a
+segment: 0, 0, 4, 0 | dashed: true
+segment: 4, 0, 4, 1 | dashed: true
+point: 0, 0 | label: \(O\)
+point: 4, 1 | label: \((4, 1)\)
+point: 5, 4 | label: \((5, 4)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Sea \(\mathbf{u} = \langle 5, -12 \rangle\). Supón que un vector \(\mathbf{w} = k\mathbf{u}\) tiene magnitud \(39\) y apunta en sentido opuesto a \(\mathbf{u}\). ¿Cuáles son \(k\) y \(\mathbf{w}\)?
+
+(A) \(k = 3\) y \(\mathbf{w} = \langle 15, -36 \rangle\)
+(B) \(k = -3\) y \(\mathbf{w} = \langle -15, 36 \rangle\)
+(C) \(k = -3\) y \(\mathbf{w} = \langle 15, 36 \rangle\)
+(D) \(k = -\frac{1}{3}\) y \(\mathbf{w} = \langle -\frac{5}{3}, 4 \rangle\)
+(E) \(k = -39\) y \(\mathbf{w} = \langle -195, 468 \rangle\)
+[/QUESTION]
+
+=== SECTION 2: Vectores unitarios y normalización ===
+
+En muchos problemas queremos separar la dirección de un vector de su tamaño —por ejemplo, para construir una fuerza o velocidad de una magnitud prescrita \(L\) que apunte a lo largo de una recta dada—. La manera más limpia de representar una dirección pura es mediante un vector cuya longitud sea \(1\).
+
+Un vector unitario es cualquier vector \(\hat{\mathbf{u}}\) que satisface \(\|\hat{\mathbf{u}}\| = 1\). (El acento circunflejo en \(\hat{\mathbf{u}}\) indica longitud \(1\).) Ya conoces dos vectores unitarios: los vectores de la base estándar \(\mathbf{i} = \langle 1, 0 \rangle\) y \(\mathbf{j} = \langle 0, 1 \rangle\). De hecho, cualquier punto de la circunferencia de radio \(1\) centrada en el origen —la circunferencia unitaria— corresponde a un vector unitario en posición estándar.
+
+Dado cualquier vector no nulo \(\mathbf{v}\), ¿cómo lo encogemos o estiramos hasta longitud \(1\) sin cambiar su dirección? Necesitamos un escalar positivo \(c > 0\) tal que \(\|c\mathbf{v}\| = 1\). Por [REF: norm-props.2 | la identidad de escalamiento], \(\|c\mathbf{v}\| = c\|\mathbf{v}\| = 1\), lo que obliga de manera única a que \(c = \frac{1}{\|\mathbf{v}\|}\). Multiplicar \(\mathbf{v}\) por \(\frac{1}{\|\mathbf{v}\|}\) se denomina normalizar \(\mathbf{v}\).
+
+[CALLOUT]
+id: normalization
+label: Método
+title: Normalización y escalamiento a una longitud objetivo
+tone: key
+
+Sea \(\mathbf{v} \in \mathbb{R}^2\) cualquier vector no nulo (\(\mathbf{v} \ne \mathbf{0}\)).
+
+(1) El único vector unitario en el mismo sentido que \(\mathbf{v}\) es
+\[
+\hat{\mathbf{u}} = \frac{\mathbf{v}}{\|\mathbf{v}\|} = \left\langle \frac{v_x}{\|\mathbf{v}\|},\; \frac{v_y}{\|\mathbf{v}\|} \right\rangle.
+\]
+(2) Para cualquier longitud objetivo prescrita \(L > 0\), el vector de longitud \(L\) en el mismo sentido que \(\mathbf{v}\) es \(L\hat{\mathbf{u}} = L\frac{\mathbf{v}}{\|\mathbf{v}\|}\), y el vector de longitud \(L\) en sentido opuesto es \(-L\hat{\mathbf{u}} = -L\frac{\mathbf{v}}{\|\mathbf{v}\|}\).
+[/CALLOUT]
+
+¿Por qué [REF: normalization | la normalización] exige \(\mathbf{v} \ne \mathbf{0}\)? Porque \(\|\mathbf{0}\| = 0\), dividir por \(\|\mathbf{0}\|\) no está definido, lo cual coincide con la geometría, ya que \(\mathbf{0}\) no tiene ninguna dirección que conservar.
+
+Resolvamos un ejemplo concreto. Para hallar el vector de longitud \(7\) que apunta en el mismo sentido que \(\mathbf{v} = \langle 3, 4 \rangle\):
+1. Calcula \(\|\mathbf{v}\| = \sqrt{3^2 + 4^2} = 5\).
+2. Normaliza para obtener el vector unitario \(\hat{\mathbf{u}} = \frac{1}{5}\langle 3, 4 \rangle = \langle \frac{3}{5}, \frac{4}{5} \rangle\). (Comprobación: \((\frac{3}{5})^2 + (\frac{4}{5})^2 = \frac{9 + 16}{25} = 1\).)
+3. Escala por \(7\): \(7\hat{\mathbf{u}} = \langle \frac{21}{5}, \frac{28}{5} \rangle\).
+
+Explora este proceso en la gráfica siguiente. El vector unitario \(\hat{\mathbf{u}} = \langle 0.6, 0.8 \rangle\) reposa justo sobre la circunferencia unitaria discontinua a lo largo del rayo de \(\mathbf{v} = \langle 3, 4 \rangle\), y arrastrar el deslizador \(L\) construye \(L\hat{\mathbf{u}}\) de cualquier longitud \(|L|\) ya sea en el mismo sentido (\(L > 0\)) o en sentido opuesto (\(L < 0\)).
+
+[GRAPH]
+type: parametric2d
+title: Normalización de \(\mathbf{v} = \langle 3, 4 \rangle\) a \(\hat{\mathbf{u}}\) en la circunferencia unitaria y escalamiento a \(L\hat{\mathbf{u}}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -4.5, 4.5
+yrange: -4.5, 4.5
+trace: cos(t), sin(t) | label: circunferencia unitaria | color: #94a3b8
+segment: 0, 0, 3, 4 | label: \(\mathbf{v}\) | color: #2563eb
+segment: 0, 0, 0.6, 0.8 | label: \(\hat{\mathbf{u}}\) | color: #16a34a
+segment: 0, 0, 0.6*L, 0.8*L | label: \(L\hat{\mathbf{u}}\) | color: #dc2626 | dashed: true
+point: 3, 4 | label: \((3, 4)\)
+point: 0.6, 0.8 | label: \(\hat{\mathbf{u}}\)
+point: 0.6*L, 0.8*L | label: \(L\hat{\mathbf{u}}\)
+slider: L | range: -4, 4 | init: -2.5 | step: 0.5
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+¿Qué vector tiene magnitud \(15\) y apunta en sentido opuesto a \(\mathbf{v} = \langle -4, 2 \rangle\)?
+
+(A) \(\langle -6\sqrt{5},\; 3\sqrt{5} \rangle\)
+(B) \(\langle 6\sqrt{5},\; -3\sqrt{5} \rangle\)
+(C) \(\langle 3\sqrt{5},\; -6\sqrt{5} \rangle\)
+(D) \(\langle 60,\; -30 \rangle\)
+(E) \(\langle 3,\; -\frac{3}{2} \rangle\)
+[/QUESTION]
+
+=== SECTION 3: Paralelismo algebraico y colinealidad ===
+
+En la primera lección vimos que dos vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\) son paralelos si y solo si \(\mathbf{u} = k\mathbf{v}\) para algún escalar \(k \ne 0\). En forma en componentes, esa condición se escribe
+\[
+u_x = k v_x \qquad \text{y} \qquad u_y = k v_y.
+\]
+Cuando tanto \(v_x\) como \(v_y\) son distintos de cero, eliminar \(k\) da \(\frac{u_x}{v_x} = \frac{u_y}{v_y}\), lo que al multiplicar en cruz produce
+\[
+u_x v_y - u_y v_x = 0.
+\]
+Lo que hace a la diferencia cruzada \(u_x v_y - u_y v_x = 0\) mucho mejor que comparar cocientes es que no tiene denominadores —por lo que conviene comprobar si sigue funcionando limpiamente cuando alguna componente vale \(0\)—.
+
+Supón que \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\) son no nulos y que \(u_x v_y - u_y v_x = 0\).
+- Caso 1: \(v_x \ne 0\). Fija \(k = \frac{u_x}{v_x}\). Entonces \(k v_x = u_x\), y a partir de \(u_x v_y = u_y v_x\) obtenemos \(k v_y = \frac{u_x v_y}{v_x} = \frac{u_y v_x}{v_x} = u_y\). Así que \(\mathbf{u} = k\mathbf{v}\). (Como \(\mathbf{u} \ne \mathbf{0}\), \(k\) no puede ser \(0\).)
+- Caso 2: \(v_x = 0\). Puesto que \(\mathbf{v} \ne \mathbf{0}\), debe cumplirse \(v_y \ne 0\). Entonces \(u_x v_y - u_y(0) = 0\) obliga a \(u_x v_y = 0\) y, por tanto, \(u_x = 0\). Fijando \(k = \frac{u_y}{v_y}\) se obtiene \(k v_x = 0 = u_x\) y \(k v_y = u_y\), de modo que otra vez \(\mathbf{u} = k\mathbf{v}\).
+
+Recíprocamente, si \(\mathbf{u} = k\mathbf{v}\), entonces \(u_x v_y - u_y v_x = (k v_x)v_y - (k v_y)v_x = 0\) sin excepciones. Así, la prueba de la diferencia cruzada es válida para todo par de vectores no nulos en \(\mathbb{R}^2\), incluidos los verticales y los horizontales.
+
+[CALLOUT]
+id: alg-parallel
+label: Teorema
+title: Prueba algebraica de paralelismo y colinealidad
+tone: key
+
+(1) Dos vectores no nulos \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\) son paralelos si y solo si
+\[
+u_x v_y - u_y v_x = 0.
+\]
+(2) Tres puntos \(A, B, C\) en \(\mathbb{R}^2\) son colineales (yacen sobre una misma recta) si y solo si los vectores de desplazamiento \(\overrightarrow{AB}\) y \(\overrightarrow{AC}\) son paralelos (o al menos uno de ellos es \(\mathbf{0}\)), lo cual ocurre si y solo si la diferencia cruzada de \(\overrightarrow{AB}\) y \(\overrightarrow{AC}\) vale \(0\).
+[/CALLOUT]
+
+¿Por qué funciona [REF: alg-parallel.2 | la prueba de colinealidad]? Ambos vectores \(\overrightarrow{AB}\) y \(\overrightarrow{AC}\) comparten el origen común \(A\). Dos flechas trazadas desde el mismo punto \(A\) yacen sobre rectas paralelas si y solo si yacen sobre exactamente la misma recta que pasa por \(A\), lo que significa que \(A, B\) y \(C\) son colineales.
+
+[TABLE]
+Método de prueba | Fórmula para \(\mathbf{u} = \langle u_x, u_y \rangle, \mathbf{v} = \langle v_x, v_y \rangle\) | ¿Admite componentes nulas? | ¿Distingue mismo sentido vs sentido opuesto?
+Múltiplo escalar | \(\mathbf{u} = k\mathbf{v}\) | Sí | Sí (signo de \(k\))
+Cociente de componentes | \(\frac{u_x}{v_x} = \frac{u_y}{v_y}\) | No (división por \(0\) si \(v_x = 0\) o \(v_y = 0\)) | Sí (signo del cociente)
+Diferencia cruzada | \(u_x v_y - u_y v_x = 0\) | Sí (sin divisiones) | No (revisar el signo de componentes no nulas correspondientes)
+[/TABLE]
+
+Apliquemos [REF: alg-parallel.2 | la prueba de colinealidad] para comprobar si \(P(-1, 2)\), \(Q(2, 4)\) y \(R(8, 8)\) yacen sobre una misma recta. Formamos los dos desplazamientos desde \(P\):
+\[
+\overrightarrow{PQ} = \langle 2 - (-1), 4 - 2 \rangle = \langle 3, 2 \rangle, \qquad \overrightarrow{PR} = \langle 8 - (-1), 8 - 2 \rangle = \langle 9, 6 \rangle.
+\]
+Su diferencia cruzada es \(3(6) - 2(9) = 18 - 18 = 0\), así que \(P, Q, R\) son colineales (en efecto, \(\overrightarrow{PR} = 3\overrightarrow{PQ}\)). Si \(R\) fuera en cambio \((8, 7)\), entonces \(\overrightarrow{PR} = \langle 9, 5 \rangle\) y la diferencia cruzada sería \(3(5) - 2(9) = -3 \ne 0\), demostrando de inmediato que los tres puntos forman un triángulo no degenerado.
+
+[QUESTION 3]
+[ANSWER: A]
+¿Para qué valor real de \(c\) son colineales los tres puntos \(A(1, -2)\), \(B(4, 3)\) y \(C(-5, c)\)?
+
+(A) \(-12\)
+(B) \(-8\)
+(C) \(8\)
+(D) \(-14\)
+(E) \(12\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Sean \(\mathbf{u}\) y \(\mathbf{v}\) vectores no nulos en \(\mathbb{R}^2\) con \(\|\mathbf{u}\| = 4\) y \(\|\mathbf{v}\| = 7\). ¿Bajo qué condición se cumple \(\|\mathbf{u} + \mathbf{v}\| = 11\)?
+
+(A) Siempre que \(u_x v_y - u_y v_x = 0\)
+(B) Únicamente cuando \(\mathbf{u} = k\mathbf{v}\) para algún escalar \(k > 0\)
+(C) Únicamente cuando \(\mathbf{u} = k\mathbf{v}\) para algún escalar \(k < 0\)
+(D) Siempre que \(u_x\) y \(v_x\) tengan el mismo signo
+(E) Para todo par de vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\) con estas magnitudes
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Para qué valor real de \(t\) apuntan en sentidos opuestos los vectores \(\mathbf{u} = \langle t + 1, 2 \rangle\) y \(\mathbf{v} = \langle 3, t \rangle\)?
+
+(A) \(t = 2\)
+(B) \(t = -1\)
+(C) \(t = -3\)
+(D) \(t = 3\)
+(E) No existe tal número real \(t\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Supón que \(\mathbf{a}\) y \(\mathbf{b}\) son dos vectores unitarios en \(\mathbb{R}^2\) tales que \(\|\mathbf{a} + \mathbf{b}\| = 2\). ¿Qué debe cumplirse acerca de \(\mathbf{a}\) y \(\mathbf{b}\)?
+
+(A) \(\mathbf{a} = \mathbf{b}\)
+(B) \(\mathbf{a} = -\mathbf{b}\)
+(C) \(\mathbf{a}\) y \(\mathbf{b}\) deben ser \(\mathbf{i}\) y \(\mathbf{j}\) en algún orden
+(D) O bien \(\mathbf{a} = \mathbf{b}\) o bien \(\mathbf{a} = -\mathbf{b}\)
+(E) \(\|\mathbf{a} - \mathbf{b}\| = 2\)
+[/BONUS]

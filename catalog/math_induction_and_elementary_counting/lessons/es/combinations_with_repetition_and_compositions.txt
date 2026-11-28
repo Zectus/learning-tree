@@ -1,0 +1,210 @@
+=== SECTION 1: Selecciones no ordenadas con repetición y la biyección de estrellas y barras ===
+
+Supón que una pastelería vende \(n = 4\) variedades de pasteles —manzana, arándano, cereza y dátil—, con abundancia de cada clase disponible, y quieres armar una caja de \(k = 6\) pasteles. Solo importa el surtido final en la caja (no el orden en que se colocan los pasteles), y eres libre de elegir varios pasteles de la misma variedad o ninguno de una variedad dada. ¿Cuántas cajas distintas son posibles?
+
+Como el orden no importa, una caja queda completamente determinada por los cuatro enteros no negativos \((x_1, x_2, x_3, x_4)\) que registran cuántos pasteles de manzana, arándano, cereza y dátil elegiste, sujetos a la única ecuación
+\[
+x_1 + x_2 + x_3 + x_4 = 6, \qquad x_1, x_2, x_3, x_4 \ge 0.
+\]
+Más en general, una selección no ordenada de \(k\) elementos elegidos entre \(n\) tipos distintos con repetición permitida se denomina un multiconjunto de \(k\) elementos (o combinación con repetición) de \(n\) tipos. Tales selecciones están en correspondencia exacta uno a uno con las soluciones enteras no negativas \((x_1, x_2, \dots, x_n)\) de
+\[
+x_1 + x_2 + \cdots + x_n = k.
+\]
+
+¿Por qué no podemos simplemente tomar el conteo ordenado con repetición \(n^k\) y dividir entre \(k!\)? ¡Porque distintos multiconjuntos tienen distintos números de ordenaciones diferentes! Por ejemplo, elegir seis pasteles de manzana corresponde a una sola secuencia ordenada, mientras que elegir dos de manzana, dos de arándano, uno de cereza y uno de dátil corresponde a \(\frac{6!}{2!\,2!\,1!\,1!} = 180\) secuencias ordenadas. Como la multiplicidad varía de un multiconjunto a otro, la Regla de la División no puede aplicarse directamente.
+
+En su lugar, construimos una biyección explícita con un objeto que ya sabemos contar: cadenas binarias de longitud y peso fijos. Representa los \(k\) elementos elegidos como \(k\) estrellas idénticas (\(\star\)), y separa los \(n\) tipos en \(n\) casillas a lo largo de una línea usando \(n - 1\) barras verticales idénticas (\(\vert\)). Para nuestro ejemplo de la pastelería (\(n = 4\) variedades, \(k = 6\) pasteles), usamos \(6\) estrellas y \(4 - 1 = 3\) barras:
+- \((2, 1, 3, 0)\) se codifica como \(\star\star \vert \star \vert \star\star\star \vert\) (una cuarta casilla vacía aparece después de la última barra).
+- \((0, 4, 0, 2)\) se codifica como \(\vert \star\star\star\star \vert \vert \star\star\) (barras iniciales o adyacentes registran casillas con \(0\) estrellas).
+- \((6, 0, 0, 0)\) se codifica como \(\star\star\star\star\star\star \vert \vert \vert\).
+
+Lee también esta aplicación en sentido inverso: dada CUALQUIER cadena formada por \(k\) estrellas y \(n - 1\) barras, sea \(x_1\) el número de estrellas antes de la primera barra, \(x_2\) el número de estrellas entre la primera y la segunda barra, y así sucesivamente hasta \(x_n\), el número de estrellas después de la \((n - 1)\)-ésima barra. Cada \(x_i\) es un entero no negativo, y como las \(k\) estrellas caen exactamente en una de las \(n\) regiones creadas por las \(n - 1\) barras, \(x_1 + x_2 + \cdots + x_n = k\). Dos cadenas distintas difieren en la posición de al menos una barra y, por tanto, producen tuplas \((x_1, \dots, x_n)\) diferentes.
+
+Así, las soluciones enteras no negativas de \(x_1 + \cdots + x_n = k\) están en biyección con las cadenas de longitud \(k + n - 1\) que contienen \(k\) estrellas y \(n - 1\) barras. Elegir cuáles \(n - 1\) de las \(k + n - 1\) posiciones albergan barras (o equivalentemente, cuáles \(k\) posiciones albergan estrellas) produce la fórmula de Estrellas y Barras.
+
+[CALLOUT]
+id: stars-and-bars
+label: Teorema
+title: Estrellas y barras (combinaciones con repetición)
+tone: key
+
+Para todo entero positivo \(n\) y todo entero no negativo \(k\), las tres cantidades siguientes son iguales:
+
+(1) El número de multiconjuntos de \(k\) elementos elegidos de \(n\) tipos distintos (selecciones no ordenadas de tamaño \(k\) con repetición permitida).
+(2) El número de soluciones enteras no negativas \((x_1, x_2, \dots, x_n)\) de \(x_1 + x_2 + \cdots + x_n = k\) (también llamadas composiciones débiles de \(k\) en \(n\) partes).
+(3) El coeficiente binomial
+\[
+\binom{k + n - 1}{n - 1} = \binom{k + n - 1}{k}.
+\]
+[/CALLOUT]
+
+Al aplicar [REF: stars-and-bars | Estrellas y barras] a nuestro problema de la pastelería (\(n = 4\) tipos, \(k = 6\) pasteles), hay
+\[
+\binom{6 + 4 - 1}{4 - 1} = \binom{9}{3} = \frac{9 \cdot 8 \cdot 7}{3 \cdot 2 \cdot 1} = 84
+\]
+cajas distintas de pasteles. Observa el desliz más frecuente de principiantes: usar \(n\) barras en lugar de \(n - 1\). Recuerda que \(n - 1\) separadores ya dividen una línea en \(n\) regiones (igual que \(1\) corte parte un palo en \(2\) trozos).
+
+[QUESTION 1]
+[ANSWER: C]
+Una pastelería ofrece \(5\) sabores de macarons, con suministro ilimitado de cada sabor. ¿Cuántas cajas distintas de \(8\) macarons pueden armarse si solo importa el número de macarons de cada sabor?
+
+(A) \(35\)
+(B) \(330\)
+(C) \(495\)
+(D) \(792\)
+(E) \(1287\)
+[/QUESTION]
+
+=== SECTION 2: Composiciones positivas, cotas inferiores y sumas con desigualdad ===
+
+¿Qué sucede si la pastelería exige incluir al menos un pastel de cada variedad? Eso convierte la condición \(x_i \ge 0\) en \(x_i \ge 1\). Una \(n\)-tupla ordenada de enteros POSITIVOS \((x_1, x_2, \dots, x_n)\) que satisface \(x_1 + x_2 + \cdots + x_n = k\) se denomina una composición fuerte (o simplemente una composición) de \(k\) en \(n\) partes. Claramente necesitamos \(k \ge n \ge 1\) para que exista alguna solución.
+
+Hay dos maneras esclarecedoras de contar composiciones fuertes, y ambas dan exactamente la misma fórmula:
+
+1. Colocación directa en huecos: Dispón las \(k\) estrellas en fila, dejando \(k - 1\) huecos interiores entre estrellas consecutivas. Para garantizar que cada casilla contenga al menos una estrella, ninguna barra puede situarse en los extremos de la fila y ninguna pareja de barras puede situarse en el mismo hueco. Por consiguiente, una composición fuerte corresponde biyectivamente a elegir \(n - 1\) huecos distintos entre los \(k - 1\) huecos interiores disponibles, lo que da \(\binom{k - 1}{n - 1}\).
+
+2. Desplazamiento de variables: Preasigna \(1\) estrella a cada una de las \(n\) casillas, dejando \(k - n\) estrellas para repartir libremente. Algebraicamente, define \(y_i = x_i - 1\) para cada \(i = 1, \dots, n\). Entonces \(x_i \ge 1\) se cumple si y solo si \(y_i \ge 0\), y la ecuación \(x_1 + \cdots + x_n = k\) se convierte en
+\[
+(y_1 + 1) + (y_2 + 1) + \cdots + (y_n + 1) = k \iff y_1 + y_2 + \cdots + y_n = k - n.
+\]
+Por [REF: stars-and-bars | Estrellas y barras] con total \(k - n\) y \(n\) variables, el número de soluciones es
+\[
+\binom{(k - n) + n - 1}{n - 1} = \binom{k - 1}{n - 1}.
+\]
+
+La belleza del método de desplazamiento de variables es que maneja cotas inferiores individuales ARBITRARIAS \(x_i \ge a_i\) (para cualesquiera enteros dados \(a_1, \dots, a_n\), ¡ya sean positivos, cero o incluso negativos!). Pon \(y_i = x_i - a_i\). Entonces \(x_i \ge a_i\) equivale a \(y_i \ge 0\), y sustituir \(x_i = y_i + a_i\) convierte \(x_1 + \cdots + x_n = k\) en
+\[
+y_1 + y_2 + \cdots + y_n = k - (a_1 + a_2 + \cdots + a_n).
+\]
+Siempre que el total restante \(k' = k - \sum_{i=1}^n a_i\) sea no negativo, las soluciones se cuentan mediante \(\binom{k' + n - 1}{n - 1}\) (y si \(k' < 0\), hay \(0\) soluciones).
+
+Una segunda transformación maneja sumas con DESIGUALDAD de la forma
+\[
+x_1 + x_2 + \cdots + x_n \le k, \qquad x_i \ge 0.
+\]
+En lugar de sumar \(\binom{j + n - 1}{n - 1}\) por separado para \(j = 0, 1, \dots, k\), introduce una variable de holgura no negativa adicional \(x_{n + 1} = k - (x_1 + \cdots + x_n)\). Decir \(x_1 + \cdots + x_n \le k\) con \(x_i \ge 0\) equivale por completo a decir
+\[
+x_1 + x_2 + \cdots + x_n + x_{n + 1} = k, \qquad x_1, \dots, x_{n + 1} \ge 0,
+\]
+porque \(x_{n + 1}\) absorbe de manera única cualquier parte de \(k\) que quede sin usar. Ahora tenemos \(n + 1\) variables no negativas que suman \(k\), así que [REF: stars-and-bars | Estrellas y barras] arroja inmediatamente
+\[
+\binom{k + (n + 1) - 1}{(n + 1) - 1} = \binom{k + n}{n} = \binom{k + n}{k}.
+\]
+Observa que sumar los conteos para \(j = 0, 1, \dots, k\) recupera la identidad del palo de hockey \(\sum_{j=0}^k \binom{j + n - 1}{n - 1} = \binom{k + n}{n}\) —¡la variable de holgura demuestra esa suma en una única biyección!
+
+[CALLOUT]
+id: constraint-transforms
+label: Herramientas
+title: Transformaciones estándar de restricciones para ecuaciones enteras
+tone: key
+
+(1) Composiciones fuertes (\(x_1 + \cdots + x_n = k\) con \(x_i \ge 1\)): \(\binom{k - 1}{n - 1}\) para \(k \ge n \ge 1\).
+(2) Cotas inferiores generales (\(x_i \ge a_i\)): desplaza \(y_i = x_i - a_i \ge 0\) para reducir a \(y_1 + \cdots + y_n = k - \sum_{i=1}^n a_i\), dando \(\binom{k - \sum a_i + n - 1}{n - 1}\) cuando \(k \ge \sum a_i\).
+(3) Sumas con desigualdad (\(x_1 + \cdots + x_n \le k\) con \(x_i \ge 0\)): añade una variable de holgura no negativa \(x_{n + 1} \ge 0\) para formar \(x_1 + \cdots + x_n + x_{n + 1} = k\), dando \(\binom{k + n}{n}\).
+[/CALLOUT]
+
+Ambas transformaciones se componen sin tropiezos. Por ejemplo, para contar soluciones enteras de \(x_1 + x_2 + x_3 \le 12\) con \(x_1 \ge 2\), \(x_2 \ge 0\) y \(x_3 \ge 3\), aplica primero [REF: constraint-transforms.2 | el desplazamiento de cotas inferiores] \(y_1 = x_1 - 2\), \(y_2 = x_2\), \(y_3 = x_3 - 3\). Esto reduce el problema a \(y_1 + y_2 + y_3 \le 12 - 2 - 3 = 7\) con \(y_1, y_2, y_3 \ge 0\). A continuación aplica [REF: constraint-transforms.3 | la variable de holgura] \(y_4 \ge 0\) para obtener \(y_1 + y_2 + y_3 + y_4 = 7\), que tiene \(\binom{7 + 4 - 1}{4 - 1} = \binom{10}{3} = 120\) soluciones.
+
+[CALLOUT]
+id: upper-bound-limit
+label: Error frecuente
+title: Por qué las cotas superiores \(x_i \le b_i\) no pueden resolverse solo con desplazamientos
+tone: caution
+
+Supón que un problema pide soluciones enteras no negativas de \(x_1 + x_2 + x_3 = 12\) sujetas a cotas superiores como \(x_1 \le 4\), \(x_2 \le 5\) y \(x_3 \le 6\). Intentar desplazar mediante \(z_i = b_i - x_i \ge 0\) NO elimina la dificultad: la condición original \(x_i \ge 0\) se convierte en \(z_i \le b_i\), así que simplemente has cambiado una cota superior por otra.
+
+Cuando solo UNA variable lleva una cota superior \(x_1 \le b_1\), puedes aplicar la Regla del Complemento: toma todas las soluciones sin restricción y resta las soluciones infractoras con \(x_1 \ge b_1 + 1\) (¡que SÍ es una cota inferior!). Cuando DOS O MÁS variables llevan cotas superiores simultáneas, restar cada infracción por separado cuenta dos veces las soluciones que violan dos cotas a la vez —resolver esos solapamientos es uno de los usos emblemáticos del Principio de Inclusión-Exclusión en una lección posterior.
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: B]
+¿Cuántas soluciones enteras \((x_1, x_2, x_3, x_4)\) satisfacen
+\[
+x_1 + x_2 + x_3 + x_4 = 15
+\]
+con \(x_1 \ge 2\), \(x_2 \ge 1\), \(x_3 \ge 0\) y \(x_4 \ge 3\)?
+
+(A) \(84\)
+(B) \(220\)
+(C) \(56\)
+(D) \(715\)
+(E) \(816\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+¿Cuántas soluciones enteras \((x_1, x_2, x_3)\) satisfacen la desigualdad \(x_1 + x_2 + x_3 \le 7\) con \(x_1 \ge 1\), \(x_2 \ge 2\) y \(x_3 \ge 0\)?
+
+(A) \(15\)
+(B) \(21\)
+(C) \(70\)
+(D) \(35\)
+(E) \(120\)
+[/QUESTION]
+
+=== SECTION 3: Síntesis de los cuatro regímenes elementales de selección ===
+
+Con Estrellas y Barras en su lugar, hemos completado las cuatro fórmulas elementales de conteo para seleccionar \(k\) elementos entre \(n\) tipos distintos. Todo problema básico de selección está gobernado por dos preguntas binarias independientes:
+1. ¿Importa el ORDEN de selección?
+2. ¿Se permite la REPETICIÓN de tipos?
+
+[TABLE]
+¿Importa el orden? | ¿Se permite repetición? | Fórmula (\(k\) de \(n\)) | Interpretación canónica
+Sí (ordenado) | No (prohibida) | \(P(n, k) = \frac{n!}{(n - k)!}\) | \(k\)-permutaciones; funciones inyectivas
+Sí (ordenado) | Sí (permitida) | \(n^k\) | Cadenas de longitud \(k\) sobre un alfabeto de \(n\) letras
+No (no ordenado) | No (prohibida) | \(\binom{n}{k} = \frac{n!}{k!\,(n - k)!}\) | Subconjuntos de \(k\) elementos
+No (no ordenado) | Sí (permitida) | \(\binom{k + n - 1}{k} = \binom{k + n - 1}{n - 1}\) | \(k\)-multiconjuntos; composiciones débiles en \(n\) partes
+[/TABLE]
+
+Dos hábitos previenen casi todo error de modelación en estos cuatro regímenes:
+
+Primero, identifica CUÁL número es \(n\) (el número de tipos o casillas disponibles) y CUÁL número es \(k\) (el número de elementos seleccionados o estrellas distribuidas) antes de sustituir en cualquier fórmula. Observa que en las dos celdas donde se permite repetición, \(k\) puede superar a \(n\): puedes comprar sin problema \(k = 12\) pasteles de \(n = 4\) tipos (\(\binom{12 + 4 - 1}{3} = \binom{15}{3} = 455\)), o lanzar un dado de \(6\) caras \(10\) veces (\(6^{10}\) secuencias). Intercambiar \(n\) y \(k\) produce una respuesta completamente errónea (por ejemplo, \(\binom{15}{11} = \binom{15}{4} = 1365 \neq 455\)).
+
+Segundo, verifica si enunciados aparentemente idénticos imponen orden en secreto u ocultan repetición. Repartir \(k\) monedas IDÉNTICAS entre \(n\) niños DISTINTOS (permitiendo manos vacías) es una selección no ordenada con repetición: cada moneda elige la casilla de un niño e intercambiar dos monedas idénticas no cambia nada, dando \(\binom{k + n - 1}{n - 1}\). En contraste, repartir \(k\) libros DISTINTOS entre \(n\) niños DISTINTOS da \(n^k\), porque cada libro etiquetado elige independientemente a uno de los \(n\) niños.
+
+[QUESTION 4]
+[ANSWER: A]
+Un laboratorio debe recoger \(4\) lecturas de sensores de \(6\) tipos distintos de sensores bajo dos protocolos. El Protocolo I registra una secuencia ordenada de \(4\) lecturas en la que el mismo tipo de sensor puede consultarse repetidamente. El Protocolo II registra un lote no ordenado de \(4\) lecturas en el que el mismo tipo de sensor puede aparecer repetidamente. ¿Qué par ordenado da los conteos exactos para el Protocolo I y el Protocolo II?
+
+(A) \((1296, 126)\)
+(B) \((360, 15)\)
+(C) \((4096, 84)\)
+(D) \((1296, 210)\)
+(E) \((360, 126)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+¿Cuántas sucesiones enteras no decrecientes \((d_1, d_2, d_3, d_4, d_5)\) satisfacen
+\[
+1 \le d_1 \le d_2 \le d_3 \le d_4 \le d_5 \le 8?
+\]
+
+(A) \(56\)
+(B) \(495\)
+(C) \(1287\)
+(D) \(792\)
+(E) \(32768\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Cuántas soluciones enteras no negativas \((x_1, x_2, x_3)\) satisfacen \(x_1 + x_2 + x_3 = 10\) sujetas a la única cota superior \(x_1 \le 4\)?
+
+(A) \(21\)
+(B) \(45\)
+(C) \(38\)
+(D) \(51\)
+(E) \(66\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+¿Cuántos monomios distintos de la forma \(w^{e_1} x^{e_2} y^{e_3} z^{e_4}\) tienen grado total \(e_1 + e_2 + e_3 + e_4 = 6\) y contienen a cada una de las cuatro variables \(w, x, y, z\) con exponente al menos \(1\)?
+
+(A) \(5\)
+(B) \(15\)
+(C) \(20\)
+(D) \(84\)
+(E) \(10\)
+[/BONUS]

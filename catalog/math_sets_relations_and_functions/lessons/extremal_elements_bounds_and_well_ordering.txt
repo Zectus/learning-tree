@@ -1,0 +1,246 @@
+=== SECTION 1: Minimal, maximal, least, and greatest elements ===
+
+In a total order like \((\mathbb{R}, \le)\), being "at the bottom" means only one thing: being smaller than or equal to every other element. Once a poset contains incomparable elements, however, "at the bottom" splits into TWO sharply distinct concepts: having nothing strictly below you, versus sitting below EVERY element of the poset. Confusing these two notions is the single most common error in order theory.
+
+[CALLOUT]
+id: extremal-elements-def
+label: Definition
+title: Minimal, maximal, least, and greatest elements
+tone: key
+
+Let \((P, \preceq)\) be a partially ordered set and let \(a \in P\).
+
+(1) Minimal element: \(a\) is minimal in \(P\) if there is NO element \(x \in P\) with \(x \prec a\) (equivalently, \(\forall x \in P,\; (x \preceq a \implies x = a)\)).
+(2) Least (minimum) element: \(a\) is the least element of \(P\) if \(a \preceq x\) for EVERY \(x \in P\).
+(3) Maximal element: \(a\) is maximal in \(P\) if there is NO element \(x \in P\) with \(a \prec x\) (equivalently, \(\forall x \in P,\; (a \preceq x \implies x = a)\)).
+(4) Greatest (maximum) element: \(a\) is the greatest element of \(P\) if \(x \preceq a\) for EVERY \(x \in P\).
+[/CALLOUT]
+
+Notice the contrast in the Hasse diagram of a finite poset:
+- A MINIMAL element is any vertex with NO downward edges leaving it. There can be several minimal elements!
+- A LEAST element is a single bottom vertex from which EVERY vertex in the entire poset is reachable by an upward path (or equals it).
+
+Let us see all four behaviors on concrete posets:
+1. \(P_1 = \{2, 3, 4, 6, 12\}\) ordered by divisibility (taking \(D_{12}\) and deleting \(1\)):
+   - Minimal elements: BOTH \(2\) and \(3\), since no element of \(P_1\) strictly divides \(2\) or \(3\).
+   - Least element: NONE, because \(2 \nmid 3\) and \(3 \nmid 2\).
+   - Greatest element (and unique maximal element): \(12\), since every element of \(P_1\) divides \(12\).
+2. \(P_2 = \{2, 3, 4, 6\}\) ordered by divisibility:
+   - Minimal elements: \(2\) and \(3\) (no least element).
+   - Maximal elements: \(4\) and \(6\) (no greatest element).
+3. \((\mathbb{Z}, \le)\): NO minimal element, NO least element, NO maximal element, NO greatest element!
+4. \(((0, 1), \le)\): even though bounded between \(0\) and \(1\), this open interval has NO minimal, NO least, NO maximal, and NO greatest element inside \((0, 1)\).
+
+How do least and minimal elements relate logically? Two short theorems settle the exact relationship—and a surprise counterexample guards against a seductive false converse!
+
+[CALLOUT]
+id: extremal-uniqueness
+label: Theorem
+title: Uniqueness of least/greatest elements and relation to minimality
+tone: key
+
+Let \((P, \preceq)\) be a partially ordered set.
+
+(1) If \(P\) has a least element, it is unique. (Dually, if \(P\) has a greatest element, it is unique.)
+(2) If \(a\) is the least element of \(P\), then \(a\) is the UNIQUE minimal element of \(P\). (Dually, any greatest element is the unique maximal element.)
+[/CALLOUT]
+
+Proof of (1): Suppose both \(a\) and \(b\) are least elements of \(P\). Because \(a\) is least and \(b \in P\), we have \(a \preceq b\). Because \(b\) is least and \(a \in P\), we have \(b \preceq a\). By antisymmetry of \(\preceq\), \(a = b\).
+
+Proof of (2): Suppose \(a\) is the least element of \(P\). First, is \(a\) minimal? Let \(x \in P\) satisfy \(x \preceq a\). Since \(a\) is least, \(a \preceq x\); by antisymmetry, \(x = a\), so \(a\) is minimal. Second, could there be another minimal element \(m \in P\)? Since \(a\) is least, \(a \preceq m\). By [REF: extremal-elements-def.1 | minimality of \(m\)], \(a \preceq m\) forces \(a = m\). Hence \(a\) is the unique minimal element!
+
+[CALLOUT]
+id: unique-minimal-trap
+label: Common pitfall
+title: A unique minimal element need NOT be a least element!
+tone: caution
+
+On a FINITE poset, having a unique minimal element DOES force it to be the least element (if \(x \in P\) were not above the unique minimal element \(m\), descending through strictly smaller elements in a finite set would eventually hit a second minimal element).
+
+On an INFINITE poset, however, this fails! Take \(P = \mathbb{Z} \cup \{*\}\), where integers carry their usual order \(\le\) and the extra element \(*\) is incomparable with every integer (so \(* \preceq *\) only). Then:
+- No integer is minimal (every \(n \in \mathbb{Z}\) has \(n - 1 < n\)).
+- The element \(*\) has nothing strictly below it, so \(*\) is the UNIQUE minimal element of \(P\).
+- Yet \(*\) is NOT a least element of \(P\), because \(* \not\preceq 0\)!
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+Consider the poset \(P = \mathcal{P}(\{1, 2, 3\}) \setminus \{\emptyset, \{1, 2, 3\}\}\) (all proper nonempty subsets of \(\{1, 2, 3\}\)), ordered by subset inclusion \(\subseteq\). Which statement accurately describes its extremal elements?
+
+(A) It has \(1\) minimal element and \(1\) maximal element, both of which are least and greatest.
+(B) It has \(3\) minimal elements, \(1\) maximal element, and no least element.
+(C) It has no minimal elements and no maximal elements.
+(D) It has \(3\) minimal elements, \(3\) maximal elements, no least element, and no greatest element.
+(E) It has \(3\) minimal elements and \(3\) maximal elements, and its least element is \(\emptyset\).
+[/QUESTION]
+
+=== SECTION 2: Upper bounds, lower bounds, suprema, and infima ===
+
+Now shift attention from the whole poset \(P\) to a SUBSET \(S \subseteq P\). Even when \(S\) itself has no greatest or least element, elements of the ambient poset \(P\) may sit above or below all of \(S\).
+
+[CALLOUT]
+id: bounds-sup-inf-def
+label: Definition
+title: Upper/lower bounds, supremum (join), and infimum (meet)
+tone: key
+
+Let \((P, \preceq)\) be a poset and let \(S \subseteq P\).
+
+(1) An element \(u \in P\) is an upper bound of \(S\) if \(s \preceq u\) for all \(s \in S\).
+(2) An element \(\ell \in P\) is a lower bound of \(S\) if \(\ell \preceq s\) for all \(s \in S\).
+(3) An element \(u_0 \in P\) is the least upper bound (or supremum, or join) of \(S\), written \(u_0 = \sup S\), if \(u_0\) is the least element of the set of all upper bounds of \(S\)—explicitly:
+- \(u_0\) is an upper bound of \(S\) (\(\forall s \in S,\; s \preceq u_0\)), AND
+- for every upper bound \(u \in P\) of \(S\), \(u_0 \preceq u\).
+(4) An element \(\ell_0 \in P\) is the greatest lower bound (or infimum, or meet) of \(S\), written \(\ell_0 = \inf S\), if \(\ell_0\) is the greatest element of the set of all lower bounds of \(S\)—explicitly:
+- \(\ell_0\) is a lower bound of \(S\) (\(\forall s \in S,\; \ell_0 \preceq s\)), AND
+- for every lower bound \(\ell \in P\) of \(S\), \(\ell \preceq \ell_0\).
+[/CALLOUT]
+
+Notice immediately: because \(\sup S\) is defined as the LEAST element of the poset \(U(S)\) of upper bounds of \(S\) (and \(\inf S\) is the GREATEST element of the poset \(L(S)\) of lower bounds of \(S\)), [REF: extremal-uniqueness.1 | uniqueness of least and greatest elements] proves at once that whenever \(\sup S\) exists, it is UNIQUE, and whenever \(\inf S\) exists, it is UNIQUE! Note also that \(\sup S\) and \(\inf S\) are required to lie in the ambient poset \(P\), NOT necessarily inside \(S\). (When \(\sup S \in S\), it is the greatest element of \(S\); when \(\inf S \in S\), it is the least element of \(S\).)
+
+Let us translate \(\sup\) and \(\inf\) into familiar operations across four major posets—this is where order theory unifies ideas from sets, number theory, and real analysis!
+
+1. Power-set poset \((\mathcal{P}(X), \subseteq)\): Let \(\mathcal{F} \subseteq \mathcal{P}(X)\) be any collection of subsets of \(X\).
+   - A subset \(U \subseteq X\) is an upper bound of \(\mathcal{F}\) iff \(A \subseteq U\) for every \(A \in \mathcal{F}\), which holds iff \(\bigcup_{A \in \mathcal{F}} A \subseteq U\)! Therefore
+\[
+\sup \mathcal{F} = \bigcup_{A \in \mathcal{F}} A.
+\]
+   - Dually, \(L \subseteq X\) is a lower bound of \(\mathcal{F}\) iff \(L \subseteq A\) for every \(A \in \mathcal{F}\), which holds iff \(L \subseteq \bigcap_{A \in \mathcal{F}} A\) (interpreted as \(X\) when \(\mathcal{F} = \emptyset\))! Therefore
+\[
+\inf \mathcal{F} = \bigcap_{A \in \mathcal{F}} A.
+\]
+2. Divisibility poset \((\mathbb{Z}^+, \mid)\): Let \(S = \{a, b\} \subseteq \mathbb{Z}^+\).
+   - An upper bound \(u \in \mathbb{Z}^+\) satisfies \(a \mid u\) and \(b \mid u\)—meaning \(u\) is a common multiple of \(a\) and \(b\). By elementary number theory, every common multiple of \(a\) and \(b\) is a multiple of \(\operatorname{lcm}(a, b)\), so \(\operatorname{lcm}(a, b) \mid u\) for every upper bound \(u\). Hence
+\[
+\sup\{a, b\} = \operatorname{lcm}(a, b).
+\]
+   - Dually, a lower bound \(\ell \in \mathbb{Z}^+\) is a common divisor of \(a\) and \(b\), and every common divisor divides \(\gcd(a, b)\). Hence
+\[
+\inf\{a, b\} = \gcd(a, b).
+\]
+   For example, in \((\mathbb{Z}^+, \mid)\), \(\sup\{12, 18\} = 36\) and \(\inf\{12, 18\} = 6\). Watch out if we shrink the ambient poset! In the finite subposet \(P = \{1, 2, 3, 4, 6, 12, 18\}\) under divisibility, the subset \(S = \{4, 6\}\) has upper bound \(12\) (and \(12\) only), so \(\sup\{4, 6\} = 12\); whereas in \(Q = \{1, 2, 3, 4, 6, 12, 18, 24, 36\}\) with \(12\) REMOVED, the upper bounds of \(\{4, 6\}\) are \(24\) and \(36\)—neither divides the other, so \(\{4, 6\}\) has TWO minimal upper bounds and NO supremum!
+3. Rational numbers \((\mathbb{Q}, \le)\) versus real numbers \((\mathbb{R}, \le)\): Consider the bounded nonempty set
+\[
+S = \{q \in \mathbb{Q} : q > 0 \text{ and } q^2 < 2\}.
+\]
+   - Inside \((\mathbb{R}, \le)\), the upper bounds of \(S\) are \([\sqrt{2}, \infty)\), so \(\sup_{\mathbb{R}} S = \sqrt{2}\) exists (even though \(\sqrt{2} \notin S\)).
+   - Inside \((\mathbb{Q}, \le)\), the upper bounds of \(S\) are \(\{u \in \mathbb{Q} : u > \sqrt{2}\}\) (since \(\sqrt{2}\) is irrational, no rational satisfies \(u^2 = 2\)). Given ANY rational upper bound \(u > \sqrt{2}\), we can find a strictly smaller rational \(u'\) with \(\sqrt{2} < u' < u\), so the set of rational upper bounds has NO least element! Thus \(\sup_{\mathbb{Q}} S\) DOES NOT EXIST in \((\mathbb{Q}, \le)\).
+
+[TABLE]
+Poset \((P, \preceq)\) | Subset \(S \subseteq P\) | \(\sup S\) (if it exists) | \(\inf S\) (if it exists)
+\((\mathcal{P}(X), \subseteq)\) | Any family \(\mathcal{F} \subseteq \mathcal{P}(X)\) | \(\bigcup_{A \in \mathcal{F}} A\) | \(\bigcap_{A \in \mathcal{F}} A\)
+\((\mathbb{Z}^+, \mid)\) | Pair \(\{a, b\}\) | \(\operatorname{lcm}(a, b)\) | \(\gcd(a, b)\)
+\((\mathbb{R}, \le)\) | \((0, 1)\) | \(1\) | \(0\)
+\((\mathbb{Q}, \le)\) | \(\{q \in \mathbb{Q} : q > 0 \land q^2 < 2\}\) | Does not exist | \(0\)
+\((P, \preceq)\) with least \(0_P\) and greatest \(1_P\) | Empty subset \(S = \emptyset\) | \(0_P\) (least element of \(P\)) | \(1_P\) (greatest element of \(P\))
+[/TABLE]
+
+Wait—pause and check that last row of the table! For \(S = \emptyset\), EVERY \(u \in P\) is vacuously an upper bound of \(\emptyset\) (since \(\forall s \in \emptyset,\, s \preceq u\) is vacuously true). So the set of upper bounds of \(\emptyset\) is ALL of \(P\), whose least element—if \(P\) has one—is the least element of \(P\)! Thus \(\sup \emptyset\) is the least element of \(P\), and dually \(\inf \emptyset\) is the greatest element of \(P\).
+
+[QUESTION 2]
+[ANSWER: C]
+Let \(P = \{2, 3, 4, 6, 8, 12, 24\}\) be ordered by divisibility \(\mid\), and let \(S = \{4, 6\} \subseteq P\). Which statement about bounds of \(S\) in \(P\) is TRUE?
+
+(A) \(S\) has no lower bounds in \(P\), and \(\sup S = 12\).
+(B) \(\inf S = 2\) and \(\sup S = 24\).
+(C) \(\inf S = 2\) and \(\sup S = 12\).
+(D) \(\inf S = 1\) and \(\sup S = 12\).
+(E) \(S\) has two upper bounds \(12\) and \(24\), so \(\sup S\) does not exist.
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+In the poset \(P = \{1, 2, 3, 6, 12, 18, 36\} \setminus \{6\}\) (that is, \(P = \{1, 2, 3, 12, 18, 36\}\)) ordered by divisibility \(\mid\), consider the subset \(S = \{2, 3\}\). What can be said about \(\sup S\) in \(P\)?
+
+(A) \(\sup S\) does not exist in \(P\), because the upper bounds of \(S\) in \(P\) are \(12, 18, 36\), which has two minimal elements \(12\) and \(18\).
+(B) \(\sup S = 6\), because \(\operatorname{lcm}(2, 3) = 6\).
+(C) \(\sup S = 36\), because \(36\) is divisible by both \(12\) and \(18\).
+(D) \(\sup S = 12\), because \(12\) is the numerically smallest upper bound of \(S\) in \(P\).
+(E) \(S\) has no upper bounds in \(P\).
+[/QUESTION]
+
+=== SECTION 3: Well-ordered sets ===
+
+Among total orders, \((\mathbb{N}, \le)\) possesses a remarkably strong property—the Well-Ordering Principle—that fails in \((\mathbb{Z}, \le)\), \((\mathbb{Q}^+, \le)\), and \(([0, 1], \le)\). Extending that property to arbitrary posets defines well-ordered sets.
+
+[CALLOUT]
+id: well-ordered-def
+label: Definition
+title: Well-ordered set
+tone: key
+
+A poset \((W, \preceq)\) is called well-ordered (and \(\preceq\) is called a well-ordering of \(W\)) if:
+
+(1) \(\preceq\) is a total order on \(W\), AND
+(2) every nonempty subset \(S \subseteq W\) has a least element in \(S\) (there exists \(m \in S\) such that \(m \preceq s\) for all \(s \in S\)).
+[/CALLOUT]
+
+Wait: condition (1) is actually implied by condition (2)! Why? Given any \(x, y \in W\), the two-element set \(\{x, y\}\) is nonempty, so by condition (2) it has a least element—either \(x\) (giving \(x \preceq y\)) or \(y\) (giving \(y \preceq x\)). Thus \(x\) and \(y\) are automatically comparable! Still, stating totality explicitly keeps the picture clear.
+
+Notice the crucial words "in \(S\)" in [REF: well-ordered-def.2 | condition (2)]: having a lower bound or an infimum outside \(S\) is NOT enough—the least element must belong to \(S\) itself! Let us test five major total orders:
+
+1. \((\mathbb{N}, \le)\): WELL-ORDERED. This is the standard Well-Ordering Principle of the natural numbers. Notice also that EVERY finite total order is automatically well-ordered.
+2. \((\mathbb{Z}, \le)\): NOT well-ordered. The nonempty subset \(S = \mathbb{Z}\) itself (or \(S = \{-1, -2, -3, \dots\}\)) has no least element.
+3. \((\mathbb{Q}^+, \le)\) (positive rationals): NOT well-ordered. Even though every positive rational is bounded below by \(0\), the subset \(S = \mathbb{Q}^+\) itself has no least element: for any \(q \in \mathbb{Q}^+\), \(q/2 \in \mathbb{Q}^+\) is strictly smaller!
+4. \(([0, 1], \le)\): NOT well-ordered! Although the whole interval \([0, 1]\) has a least element \(0\), the definition requires EVERY nonempty subset \(S \subseteq [0, 1]\) to have a least element. Take the open subinterval \(S = (0, 1) \subseteq [0, 1]\) (or \(S = \{1/n : n \in \mathbb{Z}^+\}\)): \(S\) is nonempty and has \(\inf S = 0\), yet \(0 \notin S\), so \(S\) has NO least element!
+5. Lexicographic order \((\mathbb{N} \times \mathbb{N}, \preceq_{\text{lex}})\): WELL-ORDERED! Let us prove this carefully—it is a beautiful model of how well-ordering proofs work!
+
+[CALLOUT]
+id: lex-n-well-ordered
+label: Proof
+title: \((\mathbb{N} \times \mathbb{N}, \preceq_{\text{lex}})\) is well-ordered
+tone: note
+
+We already know from the previous lesson that because \((\mathbb{N}, \le)\) is a total order, \(\preceq_{\text{lex}}\) is a total order on \(\mathbb{N} \times \mathbb{N}\). Let \(S \subseteq \mathbb{N} \times \mathbb{N}\) be an arbitrary nonempty subset. We construct its least element in two stages:
+
+(1) Project onto the first coordinate: let \(A = \{m \in \mathbb{N} : \exists n \in \mathbb{N},\; (m, n) \in S\}\). Because \(S \ne \emptyset\), \(A\) is a nonempty subset of \(\mathbb{N}\). Since \((\mathbb{N}, \le)\) is well-ordered, \(A\) has a least element \(m_0 \in A\).
+(2) Slice at \(m_0\): let \(B = \{n \in \mathbb{N} : (m_0, n) \in S\}\). Because \(m_0 \in A\), there exists at least one \(n\) with \((m_0, n) \in S\), so \(B\) is a nonempty subset of \(\mathbb{N}\). Again by well-ordering of \(\mathbb{N}\), \(B\) has a least element \(n_0 \in B\).
+
+Now \((m_0, n_0) \in S\) by construction of \(B\). Take any \((m, n) \in S\). Then \(m \in A\), so \(m_0 \le m\). If \(m_0 < m\), then \((m_0, n_0) \prec_{\text{lex}} (m, n)\) immediately. If \(m_0 = m\), then \(n \in B\), so \(n_0 \le n\), giving \((m_0, n_0) \preceq_{\text{lex}} (m, n)\). Therefore \((m_0, n_0)\) is the least element of \(S\)!
+[/CALLOUT]
+
+Notice one striking feature of \((\mathbb{N} \times \mathbb{N}, \preceq_{\text{lex}})\): an element like \((1, 0)\) has INFINITELY MANY elements strictly below it—namely \((0, 0), (0, 1), (0, 2), \dots\)—yet every nonempty subset STILL has a least element! What well-ordering forbids is NOT having infinitely many predecessors, but having an infinite STRICTLY DESCENDING chain \(w_1 \succ w_2 \succ w_3 \succ \dots\): if such a descending chain existed, the nonempty subset \(\{w_1, w_2, w_3, \dots\}\) would have no least element! For example, in \(\mathbb{N} \times \mathbb{N}\) with the lexicographic order, descending from \((1, 0)\) to \((0, 100)\) drops the first coordinate from \(1\) to \(0\), and from there you can descend at most \(100\) more steps before hitting \((0, 0)\)—every descending chain must terminate in finitely many steps!
+
+[QUESTION 4]
+[ANSWER: B]
+Which of the following subsets of \(\mathbb{R}\), equipped with the usual order \(\le\), is WELL-ORDERED?
+
+(A) \(\{1/n : n \in \mathbb{Z}^+\}\)
+(B) \(\{1 - 1/n : n \in \mathbb{Z}^+\} \cup \{1\}\)
+(C) \(\{m/2^k : m \in \mathbb{Z}^+,\; k \in \mathbb{N}\}\)
+(D) \(\mathbb{Q} \cap [0, 1]\)
+(E) \(\{n \in \mathbb{Z} : n \le 100\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose a subset \(S\) of a poset \((P, \preceq)\) has a greatest element \(g \in S\). Which statement about \(\sup S\) is ALWAYS true?
+
+(A) \(\sup S\) exists only if \(P\) is a total order.
+(B) \(\sup S\) may exist and be strictly larger than \(g\).
+(C) \(\sup S\) might not exist if \(g\) is not maximal in \(P\).
+(D) \(\sup S\) exists only if \(S\) is finite.
+(E) \(\sup S\) necessarily exists and equals \(g\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Consider the set \(W = \mathbb{Z}\) with a non-standard order \(\preceq\) defined by ordering all nonnegative integers first and then all negative integers in decreasing magnitude? Wait—make the rule explicit: define \(\preceq\) on \(\mathbb{Z}\) by putting \(0 \prec 1 \prec -1 \prec 2 \prec -2 \prec 3 \prec -3 \prec \dots\) (formally, \(a \prec b\) iff \(|a| < |b|\), or \(|a| = |b|\) with \(a > 0 > b\)). Is \((\mathbb{Z}, \preceq)\) well-ordered?
+
+(A) Yes; every nonempty subset \(S \subseteq \mathbb{Z}\) has a smallest value of \(|x|\), and among the at most two elements of \(S\) with that minimum absolute value, the positive one (if present) is the least element.
+(B) No; because \(\mathbb{Z}\) contains infinitely many negative integers, \(S = \{-1, -2, -3, \dots\}\) has no least element.
+(C) No; because \(1\) and \(-1\) have the same absolute value, the order is not antisymmetric.
+(D) No; because \(0\) has no immediate predecessor, the order is not total.
+(E) Yes, but only if we delete \(0\) from \(\mathbb{Z}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Let \((P, \preceq)\) be a poset and let \(A \subseteq B \subseteq P\) be two subsets such that both \(\sup A\) and \(\sup B\) exist in \(P\). Which relationship MUST hold?
+
+(A) \(\sup B \preceq \sup A\)
+(B) \(\sup A = \sup B\)
+(C) \(\sup A\) and \(\sup B\) may be incomparable
+(D) \(\sup A \preceq \sup B\)
+(E) \(\sup A \prec \sup B\) whenever \(A \subsetneq B\)
+[/BONUS]

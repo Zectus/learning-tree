@@ -1,0 +1,270 @@
+=== SECTION 1: Posición estándar, vectores de posición y componentes ===
+
+Las flechas geométricas facilitan visualizar la suma y el escalamiento, pero dibujar triángulos con una regla es lento y aproximado. Si quieres sumar cinco desplazamientos con precisión exacta o despejar un vector incógnita en una ecuación, necesitas una manera de convertir flechas en números. El plano coordenado cartesiano proporciona ese puente.
+
+Como un vector libre conserva su identidad bajo traslación paralela, podemos deslizar cualquier vector plano \(\mathbf{v}\) sin rotarlo ni estirarlo hasta que su origen repose en el origen de coordenadas \(O(0, 0)\). Cuando el origen de un vector está en \(O(0, 0)\), decimos que está en posición estándar. Su extremo cae entonces en un único punto \((v_x, v_y)\) del plano coordenado. Esos dos números con signo —el paso horizontal \(v_x\) y el paso vertical \(v_y\)— determinan por completo la longitud y la dirección del vector.
+
+[CALLOUT]
+id: comp-form
+label: Definición
+title: Vector de posición y forma en componentes
+tone: key
+
+Sea \(\mathbf{v}\) un vector en el plano cartesiano. Cuando \(\mathbf{v}\) se traslada a posición estándar con su origen en \(O(0, 0)\) y su extremo en el punto \(P(v_x, v_y)\), el segmento dirigido \(\overrightarrow{OP}\) es el vector de posición de \(P\), y la forma en componentes de \(\mathbf{v}\) es
+\[
+\mathbf{v} = \langle v_x, v_y \rangle.
+\]
+Aquí \(v_x\) es la componente \(x\) (cambio horizontal del origen al extremo) y \(v_y\) es la componente \(y\) (cambio vertical del origen al extremo). Los paréntesis angulares \(\langle v_x, v_y \rangle\) distinguen un vector de las coordenadas \((v_x, v_y)\) de un punto.
+[/CALLOUT]
+
+Dos vectores \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\) son iguales si y solo si coinciden tanto sus pasos horizontales como sus pasos verticales:
+\[
+\langle u_x, u_y \rangle = \langle v_x, v_y \rangle \iff u_x = v_x \text{ y } u_y = v_y.
+\]
+En particular, el vector nulo tiene cambio cero en ambas direcciones: \(\mathbf{0} = \langle 0, 0 \rangle\).
+
+¿Qué ocurre si un vector no viene dado en posición estándar, sino como un segmento dirigido \(\overrightarrow{PQ}\) desde un punto inicial arbitrario \(P(x_P, y_P)\) hasta un punto terminal \(Q(x_Q, y_Q)\)? Para llevar su origen de \(P(x_P, y_P)\) a \(O(0, 0)\), trasladamos todo el segmento restando \(x_P\) a cada coordenada \(x\) y \(y_P\) a cada coordenada \(y\). Esa traslación paralela lleva la cola \(P\) a \((x_P - x_P, y_P - y_P) = (0, 0)\), y lleva la punta \(Q\) a \((x_Q - x_P, y_Q - y_P)\).
+
+[CALLOUT]
+id: displacement-formula
+label: Fórmula
+title: Forma en componentes a partir de los puntos inicial y terminal
+tone: key
+
+Para cualesquiera dos puntos \(P(x_P, y_P)\) y \(Q(x_Q, y_Q)\) del plano cartesiano, la forma en componentes del segmento dirigido \(\overrightarrow{PQ}\) es
+\[
+\overrightarrow{PQ} = \langle x_Q - x_P,\; y_Q - y_P \rangle.
+\]
+[/CALLOUT]
+
+Observa por qué [REF: displacement-formula | la fórmula de desplazamiento] garantiza algebraicamente la invariancia bajo traslación. Si desplazas ambos extremos \(P\) y \(Q\) las mismas cantidades horizontal y vertical \((h, k)\) a los nuevos puntos \(P'(x_P + h, y_P + k)\) y \(Q'(x_Q + h, y_Q + k)\), entonces
+\[
+\overrightarrow{P'Q'} = \langle (x_Q + h) - (x_P + h),\; (y_Q + k) - (y_P + k) \rangle = \langle x_Q - x_P,\; y_Q - y_P \rangle = \overrightarrow{PQ}.
+\]
+El desplazamiento \((h, k)\) se cancela por completo. Por ejemplo, la flecha de \(P(2, 1)\) a \(Q(6, 4)\) tiene componentes \(\overrightarrow{PQ} = \langle 6 - 2, 4 - 1 \rangle = \langle 4, 3 \rangle\), idénticas a la flecha en posición estándar desde \(O(0, 0)\) hasta \((4, 3)\), como se muestra a continuación.
+
+[GRAPH]
+type: parametric2d
+title: Traslación de \(\overrightarrow{PQ}\) de \(P(2, 1)\) a \(Q(6, 4)\) a la posición estándar \(\langle 4, 3 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 7
+yrange: -0.5, 5
+trace: 2 + 4*t, 1 + 3*t | label: \(\overrightarrow{PQ}\) | color: #2563eb
+trace: 4*t, 3*t | label: \(\mathbf{v} = \langle 4, 3 \rangle\) | color: #dc2626
+segment: 2, 1, 6, 1 | label: \(\Delta x = 4\) | dashed: true
+segment: 6, 1, 6, 4 | label: \(\Delta y = 3\) | dashed: true
+segment: 0, 0, 4, 0 | dashed: true
+segment: 4, 0, 4, 3 | dashed: true
+point: 0, 0 | label: \(O(0, 0)\)
+point: 4, 3 | label: \((4, 3)\)
+point: 2, 1 | label: \(P(2, 1)\)
+point: 6, 4 | label: \(Q(6, 4)\)
+[/GRAPH]
+
+[CALLOUT]
+id: term-minus-init
+label: Error frecuente
+title: Resta siempre el punto inicial del punto terminal
+tone: caution
+
+Las componentes de \(\overrightarrow{PQ}\) son punto terminal menos punto inicial: \(\langle x_Q - x_P, y_Q - y_P \rangle\). Restar en orden inverso \(\langle x_P - x_Q, y_P - y_Q \rangle\) produce el vector opuesto \(\overrightarrow{QP} = -\overrightarrow{PQ}\). Una verificación rápida ayuda: si \(Q\) está a la derecha de \(P\), la componente \(x\) de \(\overrightarrow{PQ}\) debe ser positiva.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+Un vector \(\mathbf{v}\) está representado por el segmento dirigido \(\overrightarrow{PQ}\) con \(P(-3, 5)\) y \(Q(2, -1)\). Si el mismo vector \(\mathbf{v}\) se dibuja con su origen en \(R(4, -2)\), ¿cuáles son las coordenadas de su extremo \(S\)?
+
+(A) \((-1, 4)\)
+(B) \((5, -6)\)
+(C) \((3, 2)\)
+(D) \((9, -8)\)
+(E) \((-5, 6)\)
+[/QUESTION]
+
+=== SECTION 2: Operaciones componente a componente y la base estándar ===
+
+Ahora traducimos la suma geométrica, la resta y la multiplicación por un escalar a reglas exactas sobre componentes. En lugar de adivinar las fórmulas, leámoslas directamente de los triángulos rectángulos formados junto a los ejes coordenados.
+
+Toma dos vectores \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\). Dibuja \(\mathbf{u}\) en posición estándar desde \(O(0, 0)\) hasta \(A(u_x, u_y)\), y adosa una copia trasladada de \(\mathbf{v}\) con su origen en \(A\). Para llegar desde \(A\) hasta el extremo \(B\) de \(\mathbf{v}\), nos movemos horizontalmente \(v_x\) y verticalmente \(v_y\). Partiendo de \(O(0, 0)\), el desplazamiento horizontal neto hasta \(B\) es \(u_x + v_x\), y el desplazamiento vertical neto es \(u_y + v_y\). Así que \(B\) tiene coordenadas \((u_x + v_x, u_y + v_y)\), lo que significa que
+\[
+\mathbf{u} + \mathbf{v} = \langle u_x + v_x,\; u_y + v_y \rangle.
+\]
+
+La gráfica siguiente ilustra este puente mediante triángulos rectángulos para \(\mathbf{u} = \langle 3, 1 \rangle\) y \(\mathbf{v} = \langle 2, 3 \rangle\). Recorrer \(\mathbf{u}\) y luego \(\mathbf{v}\) da pasos horizontales \(3\) y \(2\) (total \(5\)) y pasos verticales \(1\) y \(3\) (total \(4\)), cayendo en \((5, 4)\).
+
+[GRAPH]
+type: parametric2d
+title: Puente geométrico a la suma por componentes: \(\langle 3, 1 \rangle + \langle 2, 3 \rangle = \langle 5, 4 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 6
+yrange: -0.5, 5
+trace: 3*t, 1*t | label: \(\mathbf{u} = \langle 3, 1 \rangle\) | color: #2563eb
+trace: 3 + 2*t, 1 + 3*t | label: \(\mathbf{v} = \langle 2, 3 \rangle\) | color: #d97706
+trace: 5*t, 4*t | label: \(\mathbf{u} + \mathbf{v} = \langle 5, 4 \rangle\) | color: #16a34a
+segment: 0, 0, 3, 0 | label: \(3\) | dashed: true
+segment: 3, 0, 3, 1 | label: \(1\) | dashed: true
+segment: 3, 1, 5, 1 | label: \(2\) | dashed: true
+segment: 5, 1, 5, 4 | label: \(3\) | dashed: true
+point: 0, 0 | label: \(O\)
+point: 3, 1 | label: \((3, 1)\)
+point: 5, 4 | label: \((5, 4)\)
+[/GRAPH]
+
+¿Qué sucede con la multiplicación por un escalar \(k\mathbf{v}\)? Coloca \(\mathbf{v} = \langle v_x, v_y \rangle\) en posición estándar con extremo en \((v_x, v_y)\) y traza un segmento vertical hasta el eje \(x\) para formar un triángulo rectángulo cuyos catetos miden \(|v_x|\) y \(|v_y|\). Cuando \(k > 0\), escalar la hipotenusa \(\mathbf{v}\) por \(k\) produce un triángulo rectángulo semejante cuyos catetos se escalan ambos por \(k\) conservando sus signos, así que el extremo cae en \((k v_x, k v_y)\). Cuando \(k < 0\), la flecha se invierte a través del origen hacia el cuadrante opuesto, escalando ambos catetos por \(|k|\) e invirtiendo ambos signos —lo que una vez más es \((k v_x, k v_y)\)—. Y cuando \(k = 0\), tanto \(0\mathbf{v}\) como \(\langle 0 \cdot v_x, 0 \cdot v_y \rangle\) valen \(\langle 0, 0 \rangle\).
+
+Tomar \(k = -1\) da inmediatamente el vector opuesto \(-\mathbf{v} = \langle -v_x, -v_y \rangle\), y combinarlo con la suma produce la resta:
+\[
+\mathbf{u} - \mathbf{v} = \mathbf{u} + (-1)\mathbf{v} = \langle u_x - v_x,\; u_y - v_y \rangle.
+\]
+
+[CALLOUT]
+id: comp-ops
+label: Regla
+title: Operaciones vectoriales componente a componente
+tone: key
+
+Para cualesquiera vectores \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\) y cualquier escalar real \(k\):
+
+(1) Suma: \(\mathbf{u} + \mathbf{v} = \langle u_x + v_x,\; u_y + v_y \rangle\).
+(2) Resta: \(\mathbf{u} - \mathbf{v} = \langle u_x - v_x,\; u_y - v_y \rangle\).
+(3) Multiplicación por escalar: \(k\mathbf{v} = \langle k v_x,\; k v_y \rangle\).
+[/CALLOUT]
+
+Observa una consecuencia especialmente limpia de [REF: comp-ops | estas reglas de componentes]: todo vector \(\langle v_x, v_y \rangle\) se separa en una parte puramente horizontal más una parte puramente vertical,
+\[
+\langle v_x, v_y \rangle = \langle v_x, 0 \rangle + \langle 0, v_y \rangle = v_x \langle 1, 0 \rangle + v_y \langle 0, 1 \rangle.
+\]
+Como los dos vectores coordenados de paso unitario \(\langle 1, 0 \rangle\) y \(\langle 0, 1 \rangle\) aparecen constantemente en matemática, física e ingeniería, reciben nombres propios.
+
+[CALLOUT]
+id: std-basis
+label: Definición
+title: Vectores unitarios de la base estándar \(\mathbf{i}\) y \(\mathbf{j}\)
+tone: key
+
+Los vectores unitarios de la base estándar en el plano coordenado son
+\[
+\mathbf{i} = \langle 1, 0 \rangle \qquad \text{y} \qquad \mathbf{j} = \langle 0, 1 \rangle.
+\]
+Todo vector plano \(\mathbf{v} = \langle v_x, v_y \rangle\) puede escribirse de manera única como la combinación lineal
+\[
+\mathbf{v} = v_x \mathbf{i} + v_y \mathbf{j}.
+\]
+[/CALLOUT]
+
+Las dos notaciones \(\langle v_x, v_y \rangle\) y \(v_x \mathbf{i} + v_y \mathbf{j}\) contienen exactamente la misma información; alternar entre ellas equivale solo a cambiar la presentación. Cuando una componente es cero, ese término suele omitirse en la forma con \(\mathbf{i}, \mathbf{j}\) (por ejemplo, \(\langle 0, -4 \rangle = -4\mathbf{j}\)).
+
+[TABLE]
+Descripción geométrica | Representación con extremos | Forma en componentes | Forma en la base estándar
+\(4\) unidades a la derecha, \(3\) hacia arriba | \(\overrightarrow{PQ}\) de \(P(2, 1)\) a \(Q(6, 4)\) | \(\langle 4, 3 \rangle\) | \(4\mathbf{i} + 3\mathbf{j}\)
+\(5\) unidades a la izquierda, \(2\) hacia abajo | \(\overrightarrow{AB}\) de \(A(1, 0)\) a \(B(-4, -2)\) | \(\langle -5, -2 \rangle\) | \(-5\mathbf{i} - 2\mathbf{j}\)
+\(7\) unidades verticalmente hacia abajo | \(\overrightarrow{CD}\) de \(C(3, 5)\) a \(D(3, -2)\) | \(\langle 0, -7 \rangle\) | \(-7\mathbf{j}\)
+Desplazamiento nulo | \(\overrightarrow{AA}\) para cualquier punto \(A\) | \(\langle 0, 0 \rangle\) | \(\mathbf{0}\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: A]
+Sean \(\mathbf{u} = 3\mathbf{i} - 2\mathbf{j}\) y \(\mathbf{v} = -\mathbf{i} + 5\mathbf{j}\). ¿Cuánto vale \(2\mathbf{u} - 3\mathbf{v}\) en forma en componentes?
+
+(A) \(\langle 9, -19 \rangle\)
+(B) \(\langle 3, -19 \rangle\)
+(C) \(\langle 9, 11 \rangle\)
+(D) \(\langle 3, 11 \rangle\)
+(E) \(\langle -9, 19 \rangle\)
+[/QUESTION]
+
+=== SECTION 3: Leyes algebraicas y resolución de ecuaciones vectoriales lineales ===
+
+Una vez que las operaciones vectoriales actúan componente a componente, toda ley familiar de la aritmética de los números reales se traslada automáticamente a los vectores. Por ejemplo, para comprobar algebraicamente la ley distributiva \(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\), calcula ambos miembros en componentes:
+\[
+c(\mathbf{u} + \mathbf{v}) = c\langle u_x + v_x, u_y + v_y \rangle = \langle c(u_x + v_x), c(u_y + v_y) \rangle = \langle c u_x + c v_x, c u_y + c v_y \rangle = c\mathbf{u} + c\mathbf{v}.
+\]
+La misma verificación componente a componente establece el conjunto completo de leyes del álgebra vectorial.
+
+[CALLOUT]
+id: vec-laws
+label: Teorema
+title: Propiedades algebraicas de la aritmética vectorial en 2D
+tone: key
+
+Para todos los vectores \(\mathbf{u}, \mathbf{v}, \mathbf{w}\) del plano y todos los escalares reales \(c, d\):
+
+(1) Conmutatividad: \(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\).
+(2) Asociatividad de la suma: \((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})\).
+(3) Elemento neutro aditivo: \(\mathbf{u} + \mathbf{0} = \mathbf{u}\).
+(4) Inverso aditivo: \(\mathbf{u} + (-\mathbf{u}) = \mathbf{0}\).
+(5) Distributividad respecto de la suma vectorial: \(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\).
+(6) Distributividad respecto de la suma escalar: \((c + d)\mathbf{u} = c\mathbf{u} + d\mathbf{u}\).
+(7) Asociatividad de la multiplicación escalar: \(c(d\mathbf{u}) = (cd)\mathbf{u}\).
+(8) Identidad escalar: \(1\mathbf{u} = \mathbf{u}\).
+[/CALLOUT]
+
+¿Por qué resultan tan útiles de inmediato [REF: vec-laws | estas ocho leyes]? Porque te permiten manipular ecuaciones vectoriales con exactamente los mismos pasos algebraicos que usas en ecuaciones lineales de una variable —agrupar términos vectoriales semejantes, sumar o restar un vector en ambos miembros y multiplicar ambos miembros por un recíproco no nulo— antes siquiera de sustituir números.
+
+Considera resolver \(2\mathbf{u} + 3\mathbf{x} = \mathbf{v}\) para un vector incógnita \(\mathbf{x}\), dados \(\mathbf{u} = \langle 1, -2 \rangle\) y \(\mathbf{v} = \langle 8, 5 \rangle\). Primero despeja \(\mathbf{x}\) simbólicamente usando [REF: vec-laws | las leyes algebraicas]:
+\[
+3\mathbf{x} = \mathbf{v} - 2\mathbf{u} \implies \mathbf{x} = \frac{1}{3}(\mathbf{v} - 2\mathbf{u}).
+\]
+Ahora sustituye las componentes una sola vez:
+\[
+\mathbf{v} - 2\mathbf{u} = \langle 8, 5 \rangle - \langle 2, -4 \rangle = \langle 6, 9 \rangle, \qquad \mathbf{x} = \frac{1}{3}\langle 6, 9 \rangle = \langle 2, 3 \rangle.
+\]
+Podemos comprobar directamente: \(2\langle 1, -2 \rangle + 3\langle 2, 3 \rangle = \langle 2, -4 \rangle + \langle 6, 9 \rangle = \langle 8, 5 \rangle = \mathbf{v}\). Nota lo limpio que es resolver primero de forma simbólica en comparación con plantear desde el inicio dos ecuaciones escalares separadas para \(x_1\) y \(x_2\).
+
+La aritmética de componentes también vuelve inmediatos los problemas de geometría analítica. Supón que \(P(1, 2)\), \(Q(4, 5)\) y \(R(6, 1)\) son tres vértices de un paralelogramo \(PQRS\) enumerados en orden alrededor del contorno, y queremos hallar el cuarto vértice \(S(x_S, y_S)\). En el paralelogramo \(PQRS\), los lados opuestos satisfacen \(\overrightarrow{PS} = \overrightarrow{QR}\). Al calcular \(\overrightarrow{QR} = \langle 6 - 4, 1 - 5 \rangle = \langle 2, -4 \rangle\), obtenemos
+\[
+\langle x_S - 1,\; y_S - 2 \rangle = \langle 2, -4 \rangle \implies x_S = 3,\quad y_S = -2.
+\]
+Equivalentemente, viendo las coordenadas mediante vectores de posición, \(\overrightarrow{OS} = \overrightarrow{OP} + \overrightarrow{QR} = \langle 1, 2 \rangle + \langle 2, -4 \rangle = \langle 3, -2 \rangle\), así que \(S = (3, -2)\).
+
+[QUESTION 3]
+[ANSWER: E]
+Sean \(\mathbf{a} = \langle 5, -4 \rangle\) y \(\mathbf{b} = \langle -1, 5 \rangle\). ¿Qué vector \(\mathbf{x}\) satisface la ecuación \(4\mathbf{x} - \mathbf{a} = \mathbf{x} + 2\mathbf{b}\)?
+
+(A) \(\langle 3, 6 \rangle\)
+(B) \(\langle 1, -2 \rangle\)
+(C) \(\langle \frac{3}{5}, \frac{6}{5} \rangle\)
+(D) \(\langle -1, 2 \rangle\)
+(E) \(\langle 1, 2 \rangle\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Tres vértices de un paralelogramo \(ABCD\) (enumerados en orden alrededor de su contorno) son \(A(1, -2)\), \(B(5, 1)\) y \(C(3, 6)\). ¿Cuáles son las coordenadas del cuarto vértice \(D\)?
+
+(A) \((7, 9)\)
+(B) \((-1, 3)\)
+(C) \((-2, 5)\)
+(D) \((3, -7)\)
+(E) \((1, -3)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Dos vectores \(\mathbf{u}\) y \(\mathbf{v}\) satisfacen el sistema
+\[
+\mathbf{u} + 2\mathbf{v} = \langle 7, 1 \rangle, \qquad 2\mathbf{u} - \mathbf{v} = \langle 4, 12 \rangle.
+\]
+¿Cuánto vale \(\mathbf{u} - \mathbf{v}\)?
+
+(A) \(\langle 5, 3 \rangle\)
+(B) \(\langle 1, 3 \rangle\)
+(C) \(\langle 1, 7 \rangle\)
+(D) \(\langle -1, 7 \rangle\)
+(E) \(\langle 3, 5 \rangle\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Dados los tres puntos no colineales \(A(-2, 1)\), \(B(4, 3)\) y \(C(2, 7)\) sin especificar ningún orden fijo de vértices, existen tres puntos distintos \(D_1\), \(D_2\) y \(D_3\) en el plano tales que cada uno puede servir como cuarto vértice de un paralelogramo junto con \(A\), \(B\) y \(C\). ¿Cuál es la suma de sus vectores de posición \(\overrightarrow{OD_1} + \overrightarrow{OD_2} + \overrightarrow{OD_3}\)?
+
+(A) \(\langle 0, 0 \rangle\)
+(B) \(\langle 8, 22 \rangle\)
+(C) \(\langle 4, 5 \rangle\)
+(D) \(\langle 4, 11 \rangle\)
+(E) \(\langle 12, 11 \rangle\)
+[/BONUS]

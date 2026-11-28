@@ -1,0 +1,322 @@
+=== SECTION 1: Linear equations and systems over the reals ===
+
+Many problems in science, engineering, and data analysis ask for several unknown numbers that must satisfy a collection of simultaneous constraints. When every constraint combines the unknowns only by scaling and adding—never multiplying unknowns together, raising them to powers, or feeding them into nonlinear functions—the collection is a system of linear equations. Although the rules for solving two equations in two unknowns are familiar from high school, real applications routinely involve dozens or thousands of equations and unknowns. To handle arbitrary sizes systematically without losing track of solutions, we need a precise language for linear systems, a compact matrix representation, and a small set of algebraic moves guaranteed never to create or destroy solutions.
+
+[CALLOUT]
+id: linear-system-def
+label: Definition
+title: Linear equation and linear system
+tone: key
+
+A linear equation in the \(n\) unknowns \(x_1, x_2, \dots, x_n\) over \(\mathbb{R}\) is an equation that can be written in the form
+\[
+a_1 x_1 + a_2 x_2 + \dots + a_n x_n = b,
+\]
+where the coefficients \(a_1, a_2, \dots, a_n\) and the constant term \(b\) are fixed real numbers.
+
+A system of \(m\) linear equations in \(n\) unknowns (an \(m \times n\) linear system) is a finite list of \(m\) linear equations in the same unknowns:
+\[
+\begin{aligned}
+a_{11} x_1 + a_{12} x_2 + \dots + a_{1n} x_n &= b_1, \\
+a_{21} x_1 + a_{22} x_2 + \dots + a_{2n} x_n &= b_2, \\
+&\;\;\vdots \\
+a_{m1} x_1 + a_{m2} x_2 + \dots + a_{mn} x_n &= b_m.
+\end{aligned}
+\]
+A solution of the system is an ordered \(n\)-tuple \((s_1, s_2, \dots, s_n)\) of real numbers that makes every equation true when \(x_1 = s_1, \dots, x_n = s_n\) are substituted simultaneously. The collection of all solutions is called the solution set of the system.
+[/CALLOUT]
+
+Pay attention to the double-subscript convention \(a_{ij}\): the first index \(i\) names the equation (row) from \(1\) to \(m\), and the second index \(j\) names the unknown (column) from \(1\) to \(n\). For instance, \(a_{23}\) is the coefficient of \(x_3\) in the second equation. Throughout this course we work primarily over the real numbers \(\mathbb{R}\), though every algebraic step in this lesson—adding equations, scaling by nonzero constants, and rewriting systems as matrices—works identically over the complex numbers \(\mathbb{C}\) whenever complex coefficients appear.
+
+What makes an equation linear is how the unknowns enter, not how complicated the constants look. In \(x_1, x_2, x_3\), the equation
+\[
+\sqrt{5}\,x_1 - \frac{2}{7}x_2 + \cos(2)\,x_3 = \pi
+\]
+is completely linear because \(\sqrt{5}\), \(-2/7\), \(\cos(2)\), and \(\pi\) are fixed numbers multiplying the first power of each unknown. By contrast, each of the following fails to be linear:
+- \(x_1 x_2 + x_3 = 4\) multiplies two unknowns together.
+- \(x_1^2 - 3x_2 = 1\) raises an unknown to the second power.
+- \(2x_1 + \sqrt{x_2} = 5\) applies a square root to an unknown.
+- \(x_1 + \sin(x_2) = 0\) places an unknown inside a trigonometric function.
+
+[QUESTION 1]
+[ANSWER: B]
+Which of the following equations is linear in the unknowns \(x_1, x_2, x_3\)?
+
+(A) \(x_1 + 2 x_2 x_3 = 5\)
+(B) \(\sqrt{2}\,x_1 - \pi x_2 + \frac{1}{3} x_3 = \sin(1)\)
+(C) \(3 x_1 - x_2^2 + 4 x_3 = 0\)
+(D) \(x_1 + \frac{2}{x_2} - x_3 = 1\)
+(E) \(2 x_1 + \sin(x_2) - x_3 = 4\)
+[/QUESTION]
+
+=== SECTION 2: Consistency and geometric meaning in \(\mathbb{R}^2\) and \(\mathbb{R}^3\) ===
+
+When we solve a linear system, how many solutions can it have? For a single equation in two unknowns \(a_1 x_1 + a_2 x_2 = b\) (with \(a_1, a_2\) not both zero), the solution set is a straight line in the \(x_1 x_2\)-plane \(\mathbb{R}^2\). A system of two equations in two unknowns asks for all points \((x_1, x_2)\) lying on both lines at once. Two lines in a plane can sit in only three ways:
+
+1. They cross at a single point, giving a unique solution. For example, \(x_1 + x_2 = 3\) and \(2x_1 - x_2 = 0\) meet exclusively at \((1, 2)\).
+2. They are distinct parallel lines, never meeting, giving no solution at all. For example, \(x_1 - 2x_2 = 2\) and \(x_1 - 2x_2 = -4\) have the same slope \(1/2\) but different intercepts.
+3. They coincide as the exact same line, giving infinitely many solutions. For example, \(x_1 - 2x_2 = 2\) and \(-3x_1 + 6x_2 = -6\) describe the same line, so every point \((2 + 2t, t)\) with \(t \in \mathbb{R}\) is a solution.
+
+Notice that two straight lines in \(\mathbb{R}^2\) can never meet at exactly two points or exactly three points: if two distinct points lie on both lines, the entire line through those two points must lie on both.
+
+[GRAPH]
+type: function2d
+title: Consistent unique solution versus inconsistent parallel lines in \(\mathbb{R}^2\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+xrange: -3, 5
+yrange: -3, 5
+aspect: equal
+trace: 3 - x | label: \(x_1 + x_2 = 3\) | color: #2563eb
+trace: 2*x | label: \(2x_1 - x_2 = 0\) | color: #059669
+trace: 0.5*x - 1 | label: \(x_1 - 2x_2 = 2\) | color: #dc2626
+trace: 0.5*x + 2 | label: \(x_1 - 2x_2 = -4\) | color: #f97316
+point: 1, 2 | label: \((1, 2)\)
+[/GRAPH]
+
+In \(\mathbb{R}^3\), each linear equation \(a_1 x_1 + a_2 x_2 + a_3 x_3 = b\) (with not all coefficients zero) defines a flat plane. A system of three equations in three unknowns seeks the common intersection of three planes. Although planes in space have more geometric arrangements than lines in the plane, the possible counts of solutions remain the exact same three:
+- No solution: for instance, two planes may be parallel and distinct, or the three planes may meet pairwise in three parallel lines forming an open triangular prism.
+- Exactly one solution: the three planes intersect in a single corner point, such as the three coordinate planes \(x_1 = 0\), \(x_2 = 0\), \(x_3 = 0\) meeting at \((0, 0, 0)\).
+- Infinitely many solutions: the three planes may share a common line of intersection (like pages of an open book), or all three equations may describe the very same plane.
+
+Remarkably, this three-way split holds for every \(m \times n\) linear system over \(\mathbb{R}\) (and over \(\mathbb{C}\)), regardless of size. We will prove this algebraic structure in full generality once we study homogeneous systems; for now we record the fundamental vocabulary that classifies every linear system.
+
+[CALLOUT]
+id: consistency-def
+label: Definition
+title: Consistent and inconsistent systems
+tone: key
+
+A linear system is called consistent if its solution set is nonempty—that is, it has either a unique solution or infinitely many solutions.
+
+A linear system is called inconsistent if its solution set is empty—that is, no \(n\)-tuple \((s_1, \dots, s_n)\) satisfies all of its equations simultaneously.
+[/CALLOUT]
+
+[TABLE]
+Outcome | Classification | Geometric example in \(\mathbb{R}^2\) | Geometric example in \(\mathbb{R}^3\)
+No solution | Inconsistent | Two distinct parallel lines | Parallel planes, or a triangular prism of three planes
+Exactly one solution | Consistent (unique) | Two non-parallel lines crossing at one point | Three planes meeting at a single point
+Infinitely many solutions | Consistent (non-unique) | Two coincident lines | Three planes sharing a line, or all identical
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+For which value of the real constant \(k\) is the linear system
+\[
+\begin{aligned}
+3x_1 - 6x_2 &= 9, \\
+-x_1 + 2x_2 &= k
+\end{aligned}
+\]
+consistent?
+
+(A) \(k = 3\)
+(B) \(k = -3\)
+(C) \(k = 0\)
+(D) \(k = -9\)
+(E) Every real number \(k \neq -3\)
+[/QUESTION]
+
+=== SECTION 3: Coefficient matrices and augmented matrices ===
+
+Writing the variable names \(x_1, x_2, \dots, x_n\), plus signs, and equals signs over and over during algebra is tedious and invites copying errors. Notice that once we agree on a fixed ordering of the unknowns—\(x_1\) first, \(x_2\) second, up to \(x_n\) last—every piece of information in an \(m \times n\) linear system lives in the rectangular grid of coefficients \(a_{ij}\) and right-hand constants \(b_i\).
+
+[CALLOUT]
+id: augmented-matrix-def
+label: Definition
+title: Coefficient matrix and augmented matrix
+tone: key
+
+For the \(m \times n\) linear system in [REF: linear-system-def | the linear system definition], the coefficient matrix is the \(m \times n\) rectangular array
+\[
+A = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix},
+\]
+and the augmented matrix is the \(m \times (n + 1)\) array obtained by appending the column \(\mathbf{b}\) of right-hand constants:
+\[
+\left[\begin{array}{cccc|c}
+a_{11} & a_{12} & \cdots & a_{1n} & b_1 \\
+a_{21} & a_{22} & \cdots & a_{2n} & b_2 \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn} & b_m
+\end{array}\right],
+\]
+abbreviated \([A \mid \mathbf{b}]\).
+[/CALLOUT]
+
+The vertical bar inside \([A \mid \mathbf{b}]\) is purely a visual reminder of where the equals signs sit; it separates the \(n\) columns belonging to \(x_1, \dots, x_n\) from the final column of right-hand constants. Whenever a variable is absent from an equation, we must enter \(0\) in its column so the remaining coefficients do not shift left into the wrong variable's slot.
+
+For example, consider the \(3 \times 3\) system
+\[
+\begin{aligned}
+2x_1 - x_2 + 4x_3 &= 7, \\
+3x_2 - x_3 &= -2, \\
+-x_1 + 5x_3 &= 0.
+\end{aligned}
+\]
+Aligning all three unknowns explicitly gives \(0 x_1\) in equation \(2\) and \(0 x_2\) in equation \(3\), producing the coefficient matrix \(A\) and augmented matrix \([A \mid \mathbf{b}]\):
+\[
+A = \begin{bmatrix} 2 & -1 & 4 \\ 0 & 3 & -1 \\ -1 & 0 & 5 \end{bmatrix}, \qquad
+[A \mid \mathbf{b}] = \left[\begin{array}{ccc|c} 2 & -1 & 4 & 7 \\ 0 & 3 & -1 & -2 \\ -1 & 0 & 5 & 0 \end{array}\right].
+\]
+Reading in reverse works just as directly: each row \(\begin{bmatrix} c_1 & c_2 & c_3 & \mid & d \end{bmatrix}\) translates back into the equation \(c_1 x_1 + c_2 x_2 + c_3 x_3 = d\). Before writing down an augmented matrix, always move every term containing an unknown to the left-hand side and every pure constant to the right-hand side. For instance, \(x_1 = 4x_2 - 3\) must be rewritten as \(x_1 - 4x_2 = -3\) before entering the row \(\begin{bmatrix} 1 & -4 & \mid & -3 \end{bmatrix}\).
+
+=== SECTION 4: Elementary row operations and the equivalence theorem ===
+
+In high school, you solved a \(2 \times 2\) system by rearranging equations, multiplying an equation by a nonzero number, or adding a multiple of one equation to another to eliminate a variable. In the augmented matrix \([A \mid \mathbf{b}]\), each equation is simply a row, so those exact equation manipulations become operations directly on rows.
+
+[CALLOUT]
+id: ero-def
+label: Definition
+title: Elementary row operations
+tone: key
+
+Let \(R_1, R_2, \dots, R_m\) denote the rows of a matrix. The three elementary row operations are:
+
+(1) Row swap (interchange): exchange two distinct rows \(R_i\) and \(R_j\), written \(R_i \leftrightarrow R_j\).
+(2) Row scaling: multiply every entry of a row \(R_i\) by a nonzero scalar \(c \neq 0\), written \(R_i \leftarrow c R_i\).
+(3) Row replacement: add a scalar multiple \(c R_j\) of one row \(R_j\) to a different row \(R_i\) (\(i \neq j\)), leaving \(R_j\) unchanged, written \(R_i \leftarrow R_i + c R_j\).
+
+Two matrices \(M\) and \(N\) are called row-equivalent, written \(M \sim N\), if \(N\) can be obtained from \(M\) by a finite sequence of elementary row operations.
+[/CALLOUT]
+
+Let us watch these operations simplify a \(2 \times 2\) system while keeping track of every row. Start with
+\[
+\begin{aligned}
+2x_1 + 4x_2 &= 10, \\
+3x_1 - x_2 &= 1,
+\end{aligned}
+\qquad
+\left[\begin{array}{cc|c} 2 & 4 & 10 \\ 3 & -1 & 1 \end{array}\right].
+\]
+First apply [REF: ero-def.2 | row scaling] \(R_1 \leftarrow \frac{1}{2} R_1\) to make the top-left entry \(1\):
+\[
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 3 & -1 & 1 \end{array}\right].
+\]
+Next apply [REF: ero-def.3 | row replacement] \(R_2 \leftarrow R_2 - 3 R_1\) to eliminate \(x_1\) from the second row (notice \(R_1\) itself is untouched):
+\[
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 0 & -7 & -14 \end{array}\right].
+\]
+Now scale \(R_2 \leftarrow -\frac{1}{7} R_2\) to isolate \(x_2\):
+\[
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 0 & 1 & 2 \end{array}\right].
+\]
+Finally, apply \(R_1 \leftarrow R_1 - 2 R_2\) to eliminate \(x_2\) from the first row:
+\[
+\left[\begin{array}{cc|c} 1 & 0 & 1 \\ 0 & 1 & 2 \end{array}\right].
+\]
+Translating the final matrix back into equations reads \(x_1 = 1\) and \(x_2 = 2\). Substituting \((1, 2)\) into the original equations confirms \(2(1) + 4(2) = 10\) and \(3(1) - 2 = 1\).
+
+Why are we certain that \((1, 2)\) is the only solution of the original system—that no hidden solution was lost or spurious solution created along the way? The guarantee rests on a single structural property: every elementary row operation is completely reversible by another elementary row operation.
+
+[TABLE]
+Forward operation | Inverse operation | Check that applying both restores the rows
+\(R_i \leftrightarrow R_j\) | \(R_i \leftrightarrow R_j\) | Swapping the same two rows twice puts both back
+\(R_i \leftarrow c R_i\) (\(c \neq 0\)) | \(R_i \leftarrow \frac{1}{c} R_i\) | \(\frac{1}{c}(c R_i) = R_i\) (requires \(c \neq 0\))
+\(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) | \(R_i \leftarrow R_i - c R_j\) | \((R_i + c R_j) - c R_j = R_i\) because \(R_j\) did not change
+[/TABLE]
+
+Notice why both restrictions in [REF: ero-def | the definition] are indispensable for reversibility. In row scaling, if \(c = 0\), then \(1/c\) does not exist: multiplying a row by \(0\) wipes out its coefficients permanently so no row operation can ever recover it. In row replacement, requiring \(i \neq j\) ensures \(R_j\) remains intact after the step; if you replaced \(R_i\) by \(R_i + c R_i = (1 + c)R_i\) with \(c = -1\), that would secretly be multiplying \(R_i\) by \(0\)!
+
+[CALLOUT]
+id: equivalence-theorem
+label: Theorem
+title: Solution-set invariance under row equivalence
+tone: key
+
+If the augmented matrices \([A \mid \mathbf{b}]\) and \([C \mid \mathbf{d}]\) of two linear systems are row-equivalent, then the two systems have the exact same solution set.
+[/CALLOUT]
+
+To prove [REF: equivalence-theorem | this theorem], it suffices to prove it for a single elementary row operation, because a finite sequence of operations that each preserve the solution set preserves it overall.
+
+Let \(S_{\text{old}}\) be the solution set of a system before one elementary row operation, and let \(S_{\text{new}}\) be the solution set after that operation.
+
+First, we show \(S_{\text{old}} \subseteq S_{\text{new}}\) (no solutions are lost). Take any \(\mathbf{x} = (s_1, \dots, s_n) \in S_{\text{old}}\), meaning \(\mathbf{x}\) satisfies every equation of the old system:
+- Under a row swap \(R_i \leftrightarrow R_j\), the new system contains the exact same equations in a different order, so \(\mathbf{x}\) still satisfies all of them.
+- Under a row scaling \(R_i \leftarrow c R_i\), every equation other than the \(i\)-th is unchanged, and multiplying both sides of a true equality \(a_{i1} s_1 + \dots + a_{in} s_n = b_i\) by \(c\) yields a true equality \(c(a_{i1} s_1 + \dots + a_{in} s_n) = c b_i\).
+- Under a row replacement \(R_i \leftarrow R_i + c R_j\), every equation other than the \(i\)-th is unchanged. Because both the \(i\)-th and \(j\)-th old equations hold at \(\mathbf{x}\), multiplying the \(j\)-th equality by \(c\) and adding it to the \(i\)-th equality produces a true equality, so \(\mathbf{x}\) satisfies the new \(i\)-th equation as well.
+
+In all three cases, \(\mathbf{x} \in S_{\text{new}}\). Therefore \(S_{\text{old}} \subseteq S_{\text{new}}\).
+
+Second, we show \(S_{\text{new}} \subseteq S_{\text{old}}\) (no extraneous solutions are introduced). As verified in the table above, the old augmented matrix can be obtained from the new augmented matrix by applying the corresponding inverse elementary row operation. Applying the exact same forward argument we just proved to that inverse step shows that every solution of the new system must satisfy the old system; hence \(S_{\text{new}} \subseteq S_{\text{old}}\).
+
+Since \(S_{\text{old}} \subseteq S_{\text{new}}\) and \(S_{\text{new}} \subseteq S_{\text{old}}\), we conclude \(S_{\text{old}} = S_{\text{new}}\).
+
+Notice how reversibility works for a multi-step sequence, too: if a matrix \(M\) is transformed into \(N\) by operations \(O_1\), then \(O_2\), then \(O_3\), undoing the chain back to \(M\) requires applying the inverse operations in reverse order—first undo \(O_3\), then undo \(O_2\), and finally undo \(O_1\)—just like taking off shoes before socks.
+
+[CALLOUT]
+id: invalid-ops-caution
+label: Common pitfall
+title: Operations that break equivalence
+tone: caution
+
+(1) Multiplying a row by \(0\) (\(R_i \leftarrow 0 \cdot R_i\)) is NOT an elementary row operation. It turns the \(i\)-th equation into \(0 = 0\), deleting a genuine constraint and potentially enlarging the solution set. For example, replacing the second equation of \(x_1 + x_2 = 2,\; x_1 - x_2 = 0\) with \(0 = 0\) expands the unique solution \((1, 1)\) to the entire line \(x_1 + x_2 = 2\).
+(2) Adding a nonzero constant \(k\) to every entry of a row is NOT an elementary row operation. It alters the equation by adding \(k(x_1 + \dots + x_n)\) to the left-hand side and \(k\) to the right-hand side, which generally destroys genuine solutions and creates false ones.
+(3) Combining two rows into one without keeping either original row (for example, writing \(R_1 \leftarrow R_1 + R_2\) and simultaneously \(R_2 \leftarrow R_1 + R_2\)) discards information and is not reversible.
+[/CALLOUT]
+
+Systematic algorithms for choosing which row operations to apply in what order—leading to Row Echelon Form and Reduced Row Echelon Form—are developed in the next lesson. Before moving on, check that you can track row operations in reverse and diagnose operations that violate equivalence.
+
+[QUESTION 3]
+[ANSWER: D]
+An augmented matrix \(M\) is transformed into a matrix \(N\) by applying the following three elementary row operations in order:
+1. \(R_2 \leftarrow R_2 - 3 R_1\)
+2. \(R_1 \leftrightarrow R_2\)
+3. \(R_2 \leftarrow \frac{1}{2} R_2\)
+
+Which sequence of elementary row operations transforms \(N\) back into \(M\)?
+
+(A) \(R_2 \leftarrow R_2 + 3 R_1\), then \(R_1 \leftrightarrow R_2\), then \(R_2 \leftarrow 2 R_2\)
+(B) \(R_2 \leftarrow 2 R_2\), then \(R_1 \leftrightarrow R_2\), then \(R_2 \leftarrow R_2 - 3 R_1\)
+(C) \(R_2 \leftarrow 2 R_2\), then \(R_1 \leftrightarrow R_2\), then \(R_1 \leftarrow R_1 + 3 R_2\)
+(D) \(R_2 \leftarrow 2 R_2\), then \(R_1 \leftrightarrow R_2\), then \(R_2 \leftarrow R_2 + 3 R_1\)
+(E) \(R_2 \leftarrow \frac{1}{2} R_2\), then \(R_1 \leftrightarrow R_2\), then \(R_2 \leftarrow R_2 + 3 R_1\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Suppose a consistent \(3 \times 3\) linear system has solution set \(S\), and none of its three equations is redundant. Which single operation performed on its augmented matrix is guaranteed to produce a new system whose solution set properly contains \(S\) (every solution in \(S\) still works, and at least one new solution is introduced)?
+
+(A) Replacing \(R_2\) with \(R_2 - 5 R_1\)
+(B) Swapping \(R_1\) and \(R_3\)
+(C) Replacing \(R_1\) with \(0 \cdot R_1\)
+(D) Replacing \(R_3\) with \(-\frac{1}{4} R_3\)
+(E) Adding \(2\) to every entry of \(R_1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+A \(3 \times 3\) linear system has first two equations
+\[
+\begin{aligned}
+x_1 + x_2 + x_3 &= 2, \\
+2x_1 - x_2 + x_3 &= 1.
+\end{aligned}
+\]
+Which choice for the third equation makes the system inconsistent?
+
+(A) \(3x_1 + 2x_3 = 3\)
+(B) \(x_1 - 2x_2 = -1\)
+(C) \(3x_1 + 2x_3 = 5\)
+(D) \(x_3 = 0\)
+(E) \(x_1 + 2x_2 + x_3 = 4\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Starting from the augmented matrix \(M\) of a \(2 \times 2\) linear system, applying \(R_2 \leftarrow R_2 + 2 R_1\) followed by \(R_2 \leftarrow -R_2\) produces
+\[
+\left[\begin{array}{cc|c} 1 & -2 & 3 \\ 0 & 5 & -10 \end{array}\right].
+\]
+What was the second equation of the original system represented by \(M\)?
+
+(A) \(-2x_1 - x_2 = 4\)
+(B) \(2x_1 + 9x_2 = -16\)
+(C) \(-2x_1 + 9x_2 = -16\)
+(D) \(2x_1 - x_2 = 4\)
+(E) \(-2x_1 - 5x_2 = 10\)
+[/BONUS]

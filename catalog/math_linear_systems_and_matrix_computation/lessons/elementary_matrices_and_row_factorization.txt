@@ -1,0 +1,241 @@
+=== SECTION 1: Elementary matrices and the left-multiplication bridge ===
+
+Up to now, Gaussian elimination and matrix multiplication have lived in separate rooms: row operations felt like procedural steps performed by hand on an array, whereas matrix multiplication was an algebraic operation obeying associativity and distributivity. Unifying these two worlds—expressing EVERY elementary row operation on a matrix \(A\) as multiplication on the left by a specific matrix \(E\)—turns elimination into algebra and unlocks matrix inversion, \(LU\) factorization, and the structural theory of matrix spaces.
+
+[CALLOUT]
+id: elem-matrix-def
+label: Definition
+title: Elementary matrix
+tone: key
+
+An \(m \times m\) matrix \(E\) is called an elementary matrix if it is obtained from the \(m \times m\) identity matrix \(I_m\) by performing a SINGLE elementary row operation.
+[/CALLOUT]
+
+There are three families of \(m \times m\) elementary matrices, matching the three elementary row operations. For \(m = 3\), here is one concrete specimen of each type:
+- Row swap \(R_1 \leftrightarrow R_3\) applied to \(I_3\):
+\[
+E_{\text{swap}} = \begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}.
+\]
+- Row scaling \(R_2 \leftarrow 5 R_2\) applied to \(I_3\):
+\[
+E_{\text{scale}} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 5 & 0 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+- Row replacement \(R_3 \leftarrow R_3 - 2 R_1\) applied to \(I_3\):
+\[
+E_{\text{rep}} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -2 & 0 & 1 \end{bmatrix}.
+\]
+Notice that performing TWO distinct elementary row operations on \(I_3\)—for instance, changing two off-diagonal entries to get \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -4 & 0 & 1 \end{bmatrix}\)—produces a product of two elementary matrices, NOT a single elementary matrix.
+
+Now comes the bridge theorem that turns row reduction into matrix algebra.
+
+[CALLOUT]
+id: left-mult-bridge
+label: Theorem
+title: Elementary row operations equal left-multiplication
+tone: key
+
+Let \(E\) be the \(m \times m\) elementary matrix obtained by performing a single elementary row operation on \(I_m\). Then for EVERY \(m \times n\) matrix \(A\), the product \(EA\) is the exact matrix obtained by performing that SAME elementary row operation on \(A\).
+[/CALLOUT]
+
+The proof uses the row-combination viewpoint of matrix multiplication directly and cleanly! Recall that for any product \(EA\), row \(k\) of \(EA\) is the linear combination of the rows \(\mathbf{r}_1, \dots, \mathbf{r}_m\) of \(A\) whose weights are the entries of row \(k\) of \(E\):
+\[
+\text{row } k \text{ of } (EA) = e_{k1} \mathbf{r}_1 + e_{k2} \mathbf{r}_2 + \dots + e_{km} \mathbf{r}_m.
+\]
+Check each of the three row operations:
+1. Row swap \(R_i \leftrightarrow R_j\): row \(i\) of \(E\) has \(1\) in position \(j\) and \(0\) elsewhere, so row \(i\) of \(EA\) is \(1 \cdot \mathbf{r}_j = \mathbf{r}_j\); row \(j\) of \(E\) has \(1\) in position \(i\), so row \(j\) of \(EA\) is \(\mathbf{r}_i\); every other row \(k\) has \(1\) in position \(k\) and stays \(\mathbf{r}_k\). Thus \(EA\) swaps rows \(i\) and \(j\) of \(A\).
+2. Row scaling \(R_i \leftarrow c R_i\) (\(c \neq 0\)): row \(i\) of \(E\) has \(c\) in position \(i\) and \(0\) elsewhere, so row \(i\) of \(EA\) is \(c \mathbf{r}_i\), while every other row \(k \neq i\) stays \(\mathbf{r}_k\).
+3. Row replacement \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)): row \(i\) of \(E\) has \(1\) in position \(i\), \(c\) in position \(j\), and \(0\) elsewhere, so row \(i\) of \(EA\) is \(\mathbf{r}_i + c \mathbf{r}_j\), while every other row \(k \neq i\) stays \(\mathbf{r}_k\).
+
+In all three cases, left-multiplying \(A\) by \(E\) executes the exact row operation!
+
+Let us verify on a \(3 \times 2\) matrix \(A = \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 3 & 5 \end{bmatrix}\) using \(E_{\text{rep}}\) for \(R_3 \leftarrow R_3 - 2 R_1\):
+\[
+E_{\text{rep}} A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -2 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 3 & 5 \end{bmatrix}
+= \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 3 - 2(1) & 5 - 2(4) \end{bmatrix}
+= \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 1 & -3 \end{bmatrix}.
+\]
+What happens if we multiply \(A\) on the RIGHT by an \(n \times n\) elementary matrix \(E\) instead? By the column-combination viewpoint, column \(k\) of \(AE\) is a linear combination of the columns of \(A\) weighted by column \(k\) of \(E\). Thus right-multiplying by an elementary matrix performs an elementary COLUMN operation on \(A\)! Be careful with row replacement on the right: if \(E\) has \(c\) in position \((i, j)\) (\(i \neq j\)), then \(EA\) performs \(R_i \leftarrow R_i + c R_j\), whereas \(AE\) reads column \(j\) of \(E\) (which has \(1\) in slot \(j\) and \(c\) in slot \(i\)) and therefore performs \(C_j \leftarrow C_j + c C_i\)—the two indices swap roles!
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(A\) be a \(3 \times 5\) matrix and let
+\[
+E = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -4 & 1 \end{bmatrix}.
+\]
+What effect does left-multiplying \(A\) by \(E\) (forming \(EA\)) have on \(A\)?
+
+(A) Replaces row \(2\) of \(A\) with \(R_2 - 4 R_3\)
+(B) Replaces column \(2\) of \(A\) with \(C_2 - 4 C_3\)
+(C) Replaces row \(3\) of \(A\) with \(R_3 - 4 R_2\)
+(D) Scales row \(3\) of \(A\) by \(-4\)
+(E) Replaces row \(3\) of \(A\) with \(R_3 + 4 R_2\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Which of the following \(3 \times 3\) matrices is NOT an elementary matrix?
+
+(A) \(\begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & -3 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 5 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 3 & 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & -2 \\ 0 & 0 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Inverses of elementary matrices ===
+
+Because every elementary row operation is reversible by another elementary row operation, every elementary matrix \(E\) has an explicit companion elementary matrix \(E^{-1}\) that undoes its action—meaning \(E^{-1} E = I_m\) and \(E E^{-1} = I_m\).
+
+[CALLOUT]
+id: elem-inverse
+label: Theorem
+title: Every elementary matrix has an elementary inverse
+tone: key
+
+Every \(m \times m\) elementary matrix \(E\) has a unique elementary inverse \(E^{-1}\) satisfying \(E^{-1} E = E E^{-1} = I_m\), constructed by applying the inverse row operation to \(I_m\):
+
+(1) If \(E\) swaps rows \(i\) and \(j\), then \(E^{-1} = E\) (swapping the same two rows twice restores \(I_m\)).
+(2) If \(E\) scales row \(i\) by \(c \neq 0\), then \(E^{-1}\) scales row \(i\) by \(1/c\).
+(3) If \(E\) replaces \(R_i\) with \(R_i + c R_j\) (\(i \neq j\)), then \(E^{-1}\) replaces \(R_i\) with \(R_i - c R_j\) (simply negate the off-diagonal entry \(c\)).
+[/CALLOUT]
+
+Why does \(E^{-1} E = I_m\) hold in all three cases? By [REF: left-mult-bridge | the left-multiplication theorem], \(E^{-1} E\) is the result of applying the inverse row operation to \(E\), which undoes the operation that turned \(I_m\) into \(E\), returning \(I_m\). Likewise, \(E E^{-1}\) applies the forward operation to \(E^{-1}\), undoing the inverse operation and returning \(I_m\). Let us also check directly by multiplying \(2 \times 2\) row-replacement matrices:
+\[
+\begin{bmatrix} 1 & 0 \\ c & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ -c & 1 \end{bmatrix}
+= \begin{bmatrix} 1 & 0 \\ c - c & 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}, \qquad
+\begin{bmatrix} 1 & 0 \\ -c & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ c & 1 \end{bmatrix}
+= \begin{bmatrix} 1 & 0 \\ -c + c & 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}.
+\]
+
+Geometrically, for \(m = 2\) this reversibility is visible on the unit square. The elementary shear matrix \(E = \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}\) (representing \(R_2 \leftarrow R_2 + 2 R_1\)) maps \((1, 0) \mapsto (1, 2)\) and \((0, 1) \mapsto (0, 1)\), tilting the unit square vertically into a parallelogram. Its inverse \(E^{-1} = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}\) shears vertically in the opposite direction by \(-2\), snapping every vertex right back onto the original unit square.
+
+[GRAPH]
+type: parametric2d
+title: Elementary shear \(E\) tilts the unit square; \(E^{-1}\) restores it exactly
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.5, 2
+yrange: -0.5, 3.5
+trace: t, 0 | label: original unit square | color: #2563eb
+trace: 1, t | color: #2563eb
+trace: 1 - t, 1 | color: #2563eb
+trace: 0, 1 - t | color: #2563eb
+trace: t, 2*t | label: image under \(E\) | color: #059669
+trace: 1, 2 + t | color: #059669
+trace: 1 - t, 3 - 2*t | color: #059669
+trace: 0, 1 - t | color: #059669
+point: 1, 0 | label: \((1, 0)\) | color: #2563eb
+point: 1, 2 | label: \(E(1, 0)\) | color: #059669
+point: 1, 3 | label: \(E(1, 1)\) | color: #059669
+[/GRAPH]
+
+[TABLE]
+Row operation | Example \(E\) (\(3 \times 3\)) | Inverse \(E^{-1}\)
+\(R_1 \leftrightarrow R_3\) | \(\begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}\) | \(\begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}\)
+\(R_2 \leftarrow 5 R_2\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 5 & 0 \\ 0 & 0 & 1 \end{bmatrix}\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1/5 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+\(R_3 \leftarrow R_3 - 2 R_1\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -2 & 0 & 1 \end{bmatrix}\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix}\)
+[/TABLE]
+
+=== SECTION 3: Sequences of row operations as matrix factorization ===
+
+Now trace what happens when we perform a SEQUENCE of \(k\) elementary row operations on an \(m \times n\) matrix \(A\), with corresponding elementary matrices \(E_1, E_2, \dots, E_k\).
+
+1. After step \(1\), \(A\) becomes \(E_1 A\).
+2. After step \(2\), we left-multiply \(E_1 A\) by \(E_2\), obtaining \(E_2 (E_1 A) = (E_2 E_1) A\).
+3. After all \(k\) steps, we arrive at a row-equivalent matrix \(B\) given by
+\[
+B = E_k \cdots E_2 E_1 A = PA, \qquad \text{where } P = E_k \cdots E_2 E_1.
+\]
+Look carefully at the order of the factors in \(P\): the FIRST operation \(E_1\) sits on the FAR RIGHT, closest to \(A\), and the LAST operation \(E_k\) sits on the FAR LEFT! Furthermore, because \(P = P I_m = E_k \cdots E_2 E_1 I_m\), you do NOT even need to multiply \(k\) matrices by hand to find \(P\): simply apply the exact same \(k\) row operations in the exact same order to \(I_m\), and the result is \(P\)!
+
+We can also reverse the chain algebraically to express \(A\) back in terms of \(B\). Starting from \(E_k \cdots E_2 E_1 A = B\), peel off the elementary matrices one at a time from the left by multiplying on the left by \(E_k^{-1}\), then \(E_{k-1}^{-1}\), down to \(E_1^{-1}\):
+\[
+A = E_1^{-1} E_2^{-1} \cdots E_k^{-1} B.
+\]
+Notice the reverse order again: to undo \(E_k \cdots E_1\), the inverse product is \(P^{-1} = E_1^{-1} E_2^{-1} \cdots E_k^{-1}\). Check directly by associativity:
+\[
+(E_1^{-1} \cdots E_{k-1}^{-1} E_k^{-1})(E_k E_{k-1} \cdots E_1) = E_1^{-1} \cdots E_{k-1}^{-1} I_m E_{k-1} \cdots E_1 = \dots = I_m.
+\]
+
+[CALLOUT]
+id: row-equiv-factor
+label: Theorem
+title: Algebraic characterization of row equivalence
+tone: key
+
+Two \(m \times n\) matrices \(A\) and \(B\) are row-equivalent if and only if there exists a matrix \(P = E_k \cdots E_1\), a product of \(m \times m\) elementary matrices, such that
+\[
+B = PA.
+\]
+In particular, if a sequence of row operations \(E_1, \dots, E_k\) reduces \(A\) to an echelon form \(R\), then \(E_k \cdots E_1 A = R\) and \(A = E_1^{-1} \cdots E_k^{-1} R\).
+[/CALLOUT]
+
+Let us work through a complete example. Take \(A = \begin{bmatrix} 2 & 4 \\ 1 & 5 \end{bmatrix}\) and reduce it to upper-triangular echelon form \(U\):
+1. Swap \(R_1 \leftrightarrow R_2\) (\(E_1 = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\)): \(\begin{bmatrix} 1 & 5 \\ 2 & 4 \end{bmatrix}\).
+2. Replace \(R_2 \leftarrow R_2 - 2 R_1\) (\(E_2 = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}\)): \(U = \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix}\).
+
+Then \(E_2 E_1 A = U\), where the cumulative transformation matrix is
+\[
+P = E_2 E_1 = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix} \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 1 \\ 1 & -2 \end{bmatrix}.
+\]
+Checking \(PA = \begin{bmatrix} 0 & 1 \\ 1 & -2 \end{bmatrix} \begin{bmatrix} 2 & 4 \\ 1 & 5 \end{bmatrix} = \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix} = U\) confirms the forward relation. Reversing gives the factorization
+\[
+A = E_1^{-1} E_2^{-1} U = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix}.
+\]
+Multiplying the first two matrices gives \(\begin{bmatrix} 2 & 1 \\ 1 & 0 \end{bmatrix}\), and \(\begin{bmatrix} 2 & 1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix} = \begin{bmatrix} 2 & 4 \\ 1 & 5 \end{bmatrix} = A\).
+
+This factorization engine \(E_k \cdots E_1 A = R\) is the exact foundation for Gauss-Jordan matrix inversion, \(LU\) and \(PA = LU\) factorizations, and proving invariance properties of matrix spaces in the lessons that follow.
+
+[QUESTION 3]
+[ANSWER: B]
+A \(2 \times 3\) matrix \(A\) is reduced to a matrix \(R\) by performing the following three elementary row operations in order:
+1. \(R_2 \leftarrow R_2 - 2 R_1\)
+2. \(R_1 \leftrightarrow R_2\)
+3. \(R_1 \leftarrow 3 R_1\)
+
+What is the single \(2 \times 2\) matrix \(P\) such that \(PA = R\)?
+
+(A) \(\begin{bmatrix} 0 & 1 \\ 3 & -2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} -6 & 3 \\ 1 & 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -2 & 1 \\ 3 & 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 6 & 3 \\ 1 & 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 3 & 0 \\ -2 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose \(E_2 E_1 A = R\) for a \(2 \times 4\) matrix \(A\), where \(E_1\) corresponds to \(R_2 \leftarrow R_2 + 3 R_1\) and \(E_2\) corresponds to \(R_2 \leftarrow \frac{1}{2} R_2\). Which matrix \(Q\) satisfies \(A = Q R\)?
+
+(A) \(\begin{bmatrix} 1 & 0 \\ -3 & 2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 \\ -6 & 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 \\ 3 & 2 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 \\ -3/2 & 1/2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 \\ 3/2 & 1/2 \end{bmatrix}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Let \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) be a \(4 \times 3\) matrix, and let
+\[
+E = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 5 & 1 \end{bmatrix}.
+\]
+What effect does right-multiplying \(A\) by \(E\) (forming \(AE\)) have on the columns of \(A\)?
+
+(A) Replaces column \(3\) with \(\mathbf{a}_3 + 5 \mathbf{a}_2\)
+(B) Replaces column \(3\) with \(\mathbf{a}_3 - 5 \mathbf{a}_2\)
+(C) Replaces column \(2\) with \(\mathbf{a}_2 - 5 \mathbf{a}_3\)
+(D) Replaces column \(2\) with \(\mathbf{a}_2 + 5 \mathbf{a}_3\)
+(E) Multiplies column \(2\) by \(5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Which product of elementary matrices equals \(A = \begin{bmatrix} 1 & 3 \\ 2 & 8 \end{bmatrix}\)?
+
+(A) \(\begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 1/2 \end{bmatrix} \begin{bmatrix} 1 & -3 \\ 0 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 1/2 \end{bmatrix} \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}\)
+[/BONUS]

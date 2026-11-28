@@ -1,0 +1,259 @@
+=== SECTION 1: Defining the inverse function and avoiding the reciprocal trap ===
+
+If a function \(f\) converts Celsius temperature \(x\) to Fahrenheit via \(f(x) = \frac{9}{5}x + 32\), we naturally want the reverse rule that converts Fahrenheit back to Celsius: \(g(y) = \frac{5}{9}(y - 32)\). Feed any temperature through \(f\) and then through \(g\), and you get your original temperature back: \(g(f(x)) = x\). Feed any Fahrenheit reading through \(g\) and then through \(f\), and you get the original reading back: \(f(g(y)) = y\).
+
+As we saw with injectivity, a function \(f\) can be reversed unambiguously into a function if and only if \(f\) is one-to-one—every output \(y \in \operatorname{Range}(f)\) comes from a single unique input \(x \in \operatorname{Dom}(f)\). That reversing function is the inverse function of \(f\), denoted \(f^{-1}\).
+
+[CALLOUT]
+id: inverse-def
+label: Definition
+title: Inverse function and cancellation identities
+tone: key
+
+Let \(f\) be a one-to-one function with domain \(D\) and range \(R\). Its inverse function \(f^{-1}\) has domain \(R\) and range \(D\), and is defined by the equivalence
+\[
+f^{-1}(y) = x \iff f(x) = y \qquad (x \in D,\; y \in R).
+\]
+Equivalently, \(f^{-1}\) is the unique function on \(R\) satisfying BOTH cancellation identities:
+
+(1) \(f^{-1}(f(x)) = x\) for every \(x \in \operatorname{Dom}(f)\).
+(2) \(f(f^{-1}(y)) = y\) for every \(y \in \operatorname{Dom}(f^{-1}) = \operatorname{Range}(f)\).
+
+In particular, domain and range swap completely:
+\[
+\operatorname{Dom}(f^{-1}) = \operatorname{Range}(f) \qquad \text{and} \qquad \operatorname{Range}(f^{-1}) = \operatorname{Dom}(f).
+\]
+[/CALLOUT]
+
+Before doing a single calculation, pause on the most notorious notation trap in all of precalculus.
+
+[CALLOUT]
+id: not-reciprocal
+label: Common pitfall
+title: \(f^{-1}(x)\) is NOT the reciprocal \(\dfrac{1}{f(x)}\)
+tone: caution
+
+In function notation, the superscript \(-1\) on the function name \(f^{-1}\) denotes the inverse function under composition, NEVER the multiplicative reciprocal \(\frac{1}{f(x)}\). When you want the reciprocal of the output value \(f(x)\), write \(\bigl(f(x)\bigr)^{-1}\) or \(\frac{1}{f(x)}\).
+[/CALLOUT]
+
+Test [REF: not-reciprocal | that distinction] on \(f(x) = 2x + 3\):
+- Its reciprocal is \(\frac{1}{f(x)} = \frac{1}{2x + 3}\).
+- Its inverse function is \(f^{-1}(x) = \frac{x - 3}{2}\), because \(f(f^{-1}(x)) = 2\left(\frac{x - 3}{2}\right) + 3 = x\).
+At \(x = 5\), \(f^{-1}(5) = 1\) (since \(f(1) = 5\)), whereas \(\frac{1}{f(5)} = \frac{1}{13}\)!
+
+Without any algebraic formula at all, [REF: inverse-def | the equivalence \(f^{-1}(b) = a \iff f(a) = b\)] lets you evaluate \(f^{-1}\) directly from a table or graph. Consider the one-to-one table below:
+
+[TABLE]
+\(x\) | \(-2\) | \(0\) | \(1\) | \(4\) | \(7\)
+\(f(x)\) | \(5\) | \(2\) | \(-1\) | \(3\) | \(8\)
+[/TABLE]
+
+To find \(f^{-1}(3)\), do NOT look for \(x = 3\) in the top row! Look for the output \(3\) in the bottom row \(f(x)\), and read its matching input above it: since \(f(4) = 3\), we have \(f^{-1}(3) = 4\). Similarly, \(f^{-1}(-1) = 1\) and \(f^{-1}(5) = -2\).
+
+[QUESTION 1]
+[ANSWER: D]
+Suppose \(f\) is a one-to-one function such that \(f(-3) = 7\), \(f(2) = -3\), and \(f(7) = 10\). What is the value of \(f^{-1}(-3) + \dfrac{1}{f(-3)}\)?
+
+(A) \(7 + \frac{1}{7}\)
+(B) \(-3 + \frac{1}{7}\)
+(C) \(2 - \frac{1}{3}\)
+(D) \(2 + \frac{1}{7}\)
+(E) \(7 + \frac{1}{10}\)
+[/QUESTION]
+
+=== SECTION 2: Reflection geometry across the line \(y = x\) ===
+
+Look at what [REF: inverse-def | the equivalence \(f^{-1}(b) = a \iff f(a) = b\)] says about points on graphs:
+\[
+(a, b) \text{ lies on the graph of } f \iff (b, a) \text{ lies on the graph of } f^{-1}.
+\]
+What geometric transformation swaps the coordinates \((a, b) \mapsto (b, a)\)? Connect \((a, b)\) and \((b, a)\) by a line segment:
+1. Its midpoint is \(\left(\frac{a + b}{2}, \frac{a + b}{2}\right)\), which sits directly on the diagonal line \(y = x\).
+2. When \(a \ne b\), the slope of the segment joining \((a, b)\) and \((b, a)\) is \(\frac{a - b}{b - a} = -1\), which is perpendicular to the slope \(+1\) of the line \(y = x\).
+
+Therefore, the diagonal line \(y = x\) is the perpendicular bisector of the segment from \((a, b)\) to \((b, a)\)!
+
+[CALLOUT]
+id: reflection-yx
+label: Geometric property
+title: Symmetry across the diagonal \(y = x\)
+tone: key
+
+The graph of \(y = f^{-1}(x)\) is the exact mirror reflection of the graph of \(y = f(x)\) across the diagonal line \(y = x\).
+[/CALLOUT]
+
+Explore [REF: reflection-yx | this mirror geometry] in the equal-aspect graph below for \(f(x) = x^3 + 1\) and its inverse \(f^{-1}(x) = \sqrt[3]{x - 1}\). Notice how the anchor points \((-1, 0)\), \((0, 1)\), and \((1, 2)\) on \(f\) mirror across \(y = x\) to \((0, -1)\), \((1, 0)\), and \((2, 1)\) on \(f^{-1}\), and how the two curves cross right on \(y = x\) (near \(x \approx -1.325\), where \(f(x) = x\)).
+
+[GRAPH]
+type: function2d
+title: Reflection of \(f(x) = x^3 + 1\) and \(f^{-1}(x) = \sqrt[3]{x - 1}\) across \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 4
+yrange: -3.5, 4
+aspect: equal
+trace: x^3 + 1 | label: \(f(x) = x^3 + 1\)
+trace: cbrt(x - 1) | label: \(f^{-1}(x) = \sqrt[3]{x - 1}\)
+trace: x | label: \(y = x\)
+point: 0, 1 | label: \((0, 1)\)
+point: 1, 0 | label: \((1, 0)\)
+segment: 0, 1, 1, 0 | dashed: true
+point: 1, 2 | label: \((1, 2)\)
+point: 2, 1 | label: \((2, 1)\)
+segment: 1, 2, 2, 1 | dashed: true
+[/GRAPH]
+
+Swapping \(x\) and \(y\) also explains how features transform from \(f\) to \(f^{-1}\):
+- Every \(x\)-intercept \((r, 0)\) of \(f\) becomes a \(y\)-intercept \((0, r)\) of \(f^{-1}\), and vice versa.
+- Every vertical asymptote \(x = c\) of \(f\) reflects across \(y = x\) into a horizontal asymptote \(y = c\) of \(f^{-1}\), and every horizontal asymptote \(y = L\) of \(f\) becomes a vertical asymptote \(x = L\) of \(f^{-1}\)!
+
+[QUESTION 2]
+[ANSWER: C]
+The graph of a one-to-one function \(f\) has \(x\)-intercept \((-2, 0)\), \(y\)-intercept \((0, 5)\), vertical asymptote \(x = 4\), and horizontal asymptote \(y = -1\). Which features must belong to the graph of \(y = f^{-1}(x)\)?
+
+(A) \(x\)-intercept \((5, 0)\), \(y\)-intercept \((0, -2)\), vertical asymptote \(x = 4\), horizontal asymptote \(y = -1\)
+(B) \(x\)-intercept \((-2, 0)\), \(y\)-intercept \((0, 5)\), vertical asymptote \(x = -1\), horizontal asymptote \(y = 4\)
+(C) \(x\)-intercept \((5, 0)\), \(y\)-intercept \((0, -2)\), vertical asymptote \(x = -1\), horizontal asymptote \(y = 4\)
+(D) \(x\)-intercept \((-5, 0)\), \(y\)-intercept \((0, 2)\), vertical asymptote \(x = 1\), horizontal asymptote \(y = -4\)
+(E) \(x\)-intercept \((0, 5)\), \(y\)-intercept \((-2, 0)\), vertical asymptote \(x = -1\), horizontal asymptote \(y = 4\)
+[/QUESTION]
+
+=== SECTION 3: Computing algebraic inverses across core families ===
+
+To find the formula for \(f^{-1}(x)\) algebraically from a one-to-one rule \(y = f(x)\):
+1. Record \(\operatorname{Dom}(f)\) and \(\operatorname{Range}(f)\) first—because \(\operatorname{Dom}(f^{-1}) = \operatorname{Range}(f)\) will tell you any required domain restriction on the final formula!
+2. Solve the equation \(y = f(x)\) for \(x\) in terms of \(y\).
+3. Swap the labels \(x\) and \(y\) so the inverse function is written in standard input variable \(x\) as \(y = f^{-1}(x)\), and attach \(\operatorname{Dom}(f^{-1}) = \operatorname{Range}(f)\).
+
+Let us carry out this procedure on three essential families.
+
+Example 1 (Odd power / odd root). Find the inverse of \(f(x) = 2(x - 3)^3 + 5\).
+Here \(\operatorname{Dom}(f) = (-\infty, \infty)\) and \(\operatorname{Range}(f) = (-\infty, \infty)\). Set \(y = 2(x - 3)^3 + 5\) and peel off operations from the outside in:
+\[
+y - 5 = 2(x - 3)^3 \implies \frac{y - 5}{2} = (x - 3)^3 \implies x - 3 = \sqrt[3]{\frac{y - 5}{2}} \implies x = 3 + \sqrt[3]{\frac{y - 5}{2}}.
+\]
+Swapping \(x\) and \(y\) gives
+\[
+f^{-1}(x) = 3 + \sqrt[3]{\frac{x - 5}{2}}, \qquad \operatorname{Dom}(f^{-1}) = (-\infty, \infty).
+\]
+
+Example 2 (Shifted square root—carrying the domain restriction!). Find the inverse of \(g(x) = \sqrt{x + 2} - 3\).
+Step 1: \(\operatorname{Dom}(g) = [-2, \infty)\). Since \(\sqrt{x + 2} \ge 0\), we have \(\operatorname{Range}(g) = [-3, \infty)\).
+Step 2: Set \(y = \sqrt{x + 2} - 3\), isolate the radical, and square:
+\[
+y + 3 = \sqrt{x + 2} \implies (y + 3)^2 = x + 2 \implies x = (y + 3)^2 - 2.
+\]
+Step 3: Swap \(x\) and \(y\) AND carry the domain restriction \(\operatorname{Dom}(g^{-1}) = \operatorname{Range}(g) = [-3, \infty)\):
+\[
+g^{-1}(x) = (x + 3)^2 - 2 \quad \text{for } x \ge -3.
+\]
+Why is the restriction \(x \ge -3\) mandatory? Without it, \((x + 3)^2 - 2\) is a full parabola that is not even one-to-one and outputs values at \(x = -5\) even though \(-5\) is NOT in \(\operatorname{Range}(g)\)! Check: \(g(g^{-1}(-5)) = g(2) = \sqrt{4} - 3 = -1 \ne -5\), violating [REF: inverse-def.2 | cancellation identity (2)]!
+
+[GRAPH]
+type: function2d
+title: Shifted square root \(g(x) = \sqrt{x + 2} - 3\) and its domain-restricted inverse \((x + 3)^2 - 2\) (\(x \ge -3\))
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 5
+yrange: -3.5, 5
+aspect: equal
+trace: x >= -2 ? (sqrt(x + 2) - 3) : (0/0) | label: \(g(x) = \sqrt{x + 2} - 3\)
+trace: x >= -3 ? ((x + 3)^2 - 2) : (0/0) | label: \(g^{-1}(x) = (x + 3)^2 - 2,\; x \ge -3\)
+trace: x | label: \(y = x\)
+point: -2, -3 | label: \((-2, -3)\)
+point: -3, -2 | label: \((-3, -2)\)
+segment: -2, -3, -3, -2 | dashed: true
+[/GRAPH]
+
+Example 3 (Linear fractional rational function). Find the inverse, domain, and range of
+\[
+h(x) = \frac{2x + 1}{x - 3}.
+\]
+Here \(\operatorname{Dom}(h) = (-\infty, 3) \cup (3, \infty)\). Set \(y = \frac{2x + 1}{x - 3}\) and collect all \(x\)-terms on one side:
+\[
+y(x - 3) = 2x + 1 \implies xy - 3y = 2x + 1 \implies xy - 2x = 3y + 1 \implies x(y - 2) = 3y + 1.
+\]
+Dividing by \(y - 2\) (valid for \(y \ne 2\)) gives \(x = \frac{3y + 1}{y - 2}\). Swapping \(x\) and \(y\):
+\[
+h^{-1}(x) = \frac{3x + 1}{x - 2}.
+\]
+Look at the bonus payoff! We did not even need to guess \(\operatorname{Range}(h)\) beforehand: the natural domain of \(h^{-1}\) is \(x \ne 2\), which immediately reveals \(\operatorname{Range}(h) = \operatorname{Dom}(h^{-1}) = (-\infty, 2) \cup (2, \infty)\), and \(\operatorname{Range}(h^{-1}) = \operatorname{Dom}(h) = (-\infty, 3) \cup (3, \infty)\)!
+
+[QUESTION 3]
+[ANSWER: B]
+What is the inverse function \(f^{-1}(x)\) (with its exact domain) of
+\[
+f(x) = \frac{3x - 5}{x + 2}?
+\]
+
+(A) \(f^{-1}(x) = \dfrac{2x + 5}{3 - x}\), domain \(x \ne -2\)
+(B) \(f^{-1}(x) = \dfrac{2x + 5}{3 - x}\), domain \(x \ne 3\)
+(C) \(f^{-1}(x) = \dfrac{x + 2}{3x - 5}\), domain \(x \ne \frac{5}{3}\)
+(D) \(f^{-1}(x) = \dfrac{2x - 5}{3 - x}\), domain \(x \ne 3\)
+(E) \(f^{-1}(x) = \dfrac{3x + 5}{x - 2}\), domain \(x \ne 2\)
+[/QUESTION]
+
+=== SECTION 4: Verifying inverse pairs by checking both compositions ===
+
+How do you verify with certainty that two given functions \(f\) and \(g\) are inverses of each other? You must check BOTH cancellation identities in [REF: inverse-def | the definition]:
+1. \(g(f(x)) = x\) for all \(x \in \operatorname{Dom}(f)\), AND
+2. \(f(g(x)) = x\) for all \(x \in \operatorname{Dom}(g)\).
+
+Why is checking ONLY ONE composition not enough? Consider \(f(x) = x^2\) on \((-\infty, \infty)\) and \(g(x) = \sqrt{x}\) on \([0, \infty)\).
+- Check \(f(g(x))\): for every \(x \in [0, \infty)\), \(f(g(x)) = (\sqrt{x})^2 = x\)! That first composition passes completely!
+- Yet check \(g(f(x))\): for \(x \in (-\infty, \infty)\), \(g(f(x)) = \sqrt{x^2} = |x|\), which fails at \(x = -3\) because \(g(f(-3)) = 3 \ne -3\)!
+
+Checking both compositions catches mismatched domains and missing sign restrictions instantly. Let us verify \(h(x) = \frac{2x + 1}{x - 3}\) (\(x \ne 3\)) and \(h^{-1}(x) = \frac{3x + 1}{x - 2}\) (\(x \ne 2\)) from Section 3:
+- For any \(x \ne 3\):
+\[
+h^{-1}(h(x)) = \frac{3\left(\frac{2x + 1}{x - 3}\right) + 1}{\left(\frac{2x + 1}{x - 3}\right) - 2} = \frac{3(2x + 1) + (x - 3)}{(2x + 1) - 2(x - 3)} = \frac{7x}{7} = x.
+\]
+- For any \(x \ne 2\):
+\[
+h(h^{-1}(x)) = \frac{2\left(\frac{3x + 1}{x - 2}\right) + 1}{\left(\frac{3x + 1}{x - 2}\right) - 3} = \frac{2(3x + 1) + (x - 2)}{(3x + 1) - 3(x - 2)} = \frac{7x}{7} = x.
+\]
+Both compositions simplify to \(x\) on the full domain of the inner function, confirming that \(h\) and \(h^{-1}\) are exact inverses.
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(f(x) = 4 - \sqrt{x - 1}\) on its natural domain \([1, \infty)\). Which function \(g\) is the true inverse \(f^{-1}\)?
+
+(A) \(g(x) = (4 - x)^2 + 1\) with domain \((-\infty, 4]\)
+(B) \(g(x) = (4 - x)^2 + 1\) with domain \([4, \infty)\)
+(C) \(g(x) = (4 - x)^2 + 1\) with domain \((-\infty, \infty)\)
+(D) \(g(x) = (x + 4)^2 + 1\) with domain \([1, \infty)\)
+(E) \(g(x) = (4 - x)^2 - 1\) with domain \((-\infty, 4]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(f\) is a one-to-one function whose domain is \([2, \infty)\) and whose range is \((-\infty, 5]\). If \(f\) is strictly decreasing on \([2, \infty)\), which statement is true about \(f^{-1}\)?
+
+(A) \(f^{-1}\) has domain \([2, \infty)\), range \((-\infty, 5]\), and is strictly increasing.
+(B) \(f^{-1}\) has domain \((-\infty, 5]\), range \([2, \infty)\), and is strictly increasing.
+(C) \(f^{-1}\) has domain \((-\infty, 5]\), range \([2, \infty)\), and has a global maximum of \(2\).
+(D) \(f^{-1}\) has domain \([5, \infty)\), range \((-\infty, 2]\), and is strictly decreasing.
+(E) \(f^{-1}\) has domain \((-\infty, 5]\), range \([2, \infty)\), and is strictly decreasing.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(f(x) = \dfrac{ax + 4}{x - 5}\) where \(a\) is a real constant with \(5a + 4 \ne 0\). What is the range of \(f\)?
+
+(A) \((-\infty, 5) \cup (5, \infty)\)
+(B) \((-\infty, -4) \cup (-4, \infty)\)
+(C) \((-\infty, a) \cup (a, \infty)\)
+(D) \((-\infty, -a) \cup (-a, \infty)\)
+(E) \((-\infty, \infty)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+If \(f\) is an odd, one-to-one function on \((-\infty, \infty)\), what symmetry must \(f^{-1}\) possess?
+
+(A) \(f^{-1}\) must be even.
+(B) \(f^{-1}\) must be odd.
+(C) \(f^{-1}\) can be neither even nor odd unless \(f(x) = x\).
+(D) \(f^{-1}\) must satisfy \(f^{-1}(x) = -f(x)\).
+(E) \(f^{-1}\) must be strictly increasing on \((-\infty, \infty)\).
+[/BONUS]

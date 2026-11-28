@@ -1,0 +1,205 @@
+=== SECTION 1: Turning circular and repeating motion into a sinusoidal model ===
+
+Many real-world quantities rise and fall smoothly on a regular schedule: the height of a passenger on a Ferris wheel, the depth of water in a tidal harbor, the hours of daylight across a year, or the displacement of an idealized mass bouncing on a spring. Whenever a quantity repeats smoothly between a fixed maximum \(M\) and a fixed minimum \(m\) over a constant cycle time \(T\), we can model it with a sinusoidal function of time \(t\):
+\[
+y(t) = A\cos\!\bigl(B(t - C)\bigr) + D \qquad \text{or} \qquad y(t) = A\sin\!\bigl(B(t - C)\bigr) + D.
+\]
+
+A Ferris wheel makes the physical meaning of every parameter concrete. Suppose a wheel has radius \(r\text{ m}\), its lowest point sits \(2\text{ m}\) above the ground, and it rotates counterclockwise at a constant rate completing one full turn every \(T = 30\text{ s}\). A passenger boards at the very bottom at time \(t = 0\).
+
+Track the height \(h(t)\) (in meters) above the ground:
+- Minimum height: \(m = 2\text{ m}\) (at the bottom).
+- Center height (midline): \(D = r + 2\text{ m}\) (height of the wheel's axle).
+- Maximum height: \(M = 2r + 2\text{ m}\) (at the top).
+- Amplitude: \(\lvert A \rvert = r\text{ m}\) (the wheel's radius, measuring the maximum vertical excursion above or below the axle).
+- Angular frequency \(B\): one full turn takes \(T = 30\text{ s}\), so \(B = \frac{2\pi}{30} = \frac{\pi}{15}\text{ rad/s}\).
+
+Because the passenger starts at the MINIMUM height at \(t = 0\), choosing a reflected cosine (\(-\cos\)) makes the phase shift \(C = 0\) automatically:
+\[
+h(t) = -r\cos\!\left(\frac{\pi}{15} t\right) + (r + 2).
+\]
+Check \(t = 0\): \(h(0) = -r(1) + r + 2 = 2\text{ m}\). Check half a rotation later at \(t = 15\text{ s}\): \(h(15) = -r(-1) + r + 2 = 2r + 2\text{ m}\).
+
+Drag the wheel-radius slider \(r\) below and watch how changing the radius changes both the amplitude and the axle height \(D = r + 2\), while keeping the boarding height at \(2\text{ m}\) and the period at \(30\text{ s}\).
+
+[GRAPH]
+type: function2d
+title: Ferris wheel height \(h(t) = -r\cos(\pi t/15) + (r + 2)\) as wheel radius \(r\) varies
+xlabel: time (s)
+ylabel: height (m)
+xrange: 0, 60
+yrange: 0, 48
+trace: -r*cos(pi*x/15) + r + 2 | label: \(h(t)\) | color: #2563eb
+segment: 0, r + 2, 60, r + 2 | label: axle height | color: #dc2626 | dashed: true
+point: 0, 2 | label: boarding | color: #059669
+point: 15, 2*r + 2 | label: top | color: #2563eb
+slider: r | range: 8, 20 | init: 14 | step: 1
+[/GRAPH]
+
+[CALLOUT]
+id: modeling-workflow
+label: Procedure
+title: Four-step workflow for building a sinusoidal model
+tone: key
+
+(1) Vertical geometry: compute the midline \(D = \dfrac{M + m}{2}\) and amplitude \(\lvert A \rvert = \dfrac{M - m}{2}\) directly from the maximum \(M\) and minimum \(m\) (both carry the same physical units as the output).
+(2) Period and \(B\): identify the full cycle length \(T\) (if given adjacent peak and trough times, double that half-cycle spacing), then compute \(B = \dfrac{2\pi}{T}\) (units: radians per unit of input).
+(3) Smart template choice at \(t = 0\): pick the curve that eliminates phase shift whenever possible:
+- Starts at maximum: \(+A\cos(Bt) + D\)
+- Starts at minimum: \(-A\cos(Bt) + D\)
+- Starts at midline rising: \(+A\sin(Bt) + D\)
+- Starts at midline falling: \(-A\sin(Bt) + D\)
+(4) Phase shift when needed: if no landmark sits at \(t = 0\), pick the clearest known maximum, minimum, or midline crossing at \(t = C\) and replace \(Bt\) with \(B(t - C)\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+A Ferris wheel has a diameter of \(30\text{ m}\), with its lowest point \(3\text{ m}\) above the ground. The wheel turns at a steady rate of one full revolution every \(40\text{ s}\). If a rider boards at the lowest point at \(t = 0\), which function gives the rider's height \(h(t)\) (in meters) above the ground \(t\) seconds later?
+
+(A) \(h(t) = -30\cos\!\left(\dfrac{\pi}{20} t\right) + 18\)
+(B) \(h(t) = 15\cos\!\left(\dfrac{\pi}{20} t\right) + 18\)
+(C) \(h(t) = -15\cos\!\left(\dfrac{\pi}{20} t\right) + 18\)
+(D) \(h(t) = -15\cos\!\left(\dfrac{\pi}{40} t\right) + 18\)
+(E) \(h(t) = -15\sin\!\left(\dfrac{\pi}{20} t\right) + 18\)
+[/QUESTION]
+
+=== SECTION 2: Extracting models from extrema tables and phase-shifted data ===
+
+In field measurements—such as tide charts or seasonal temperature records—a peak or trough rarely occurs right at \(t = 0\). Instead, you are typically given the times and values of an adjacent high point and low point.
+
+Suppose a harbor tide chart reports high tide of \(4.6\text{ m}\) at \(3\text{:}00\text{ a.m.}\) (\(t = 3\text{ h}\)) and the immediately following low tide of \(1.0\text{ m}\) at \(9\text{:}00\text{ a.m.}\) (\(t = 9\text{ h}\)), with water depth \(h(t)\) modeled sinusoidally. Apply [REF: modeling-workflow | our four-step workflow]:
+1. Midline and amplitude:
+\[
+D = \frac{4.6 + 1.0}{2} = 2.8\text{ m}, \qquad \lvert A \rvert = \frac{4.6 - 1.0}{2} = 1.8\text{ m}.
+\]
+2. Period: the interval from high tide at \(t = 3\) to the next low tide at \(t = 9\) is \(9 - 3 = 6\text{ h}\), which is HALF a cycle. Therefore the full period is \(T = 2(6) = 12\text{ h}\), giving
+\[
+B = \frac{2\pi}{12} = \frac{\pi}{6}\text{ rad/h}.
+\]
+3. Template and phase shift: since a maximum occurs at \(t = 3\), positive cosine shifted right by \(3\) hours matches immediately:
+\[
+h(t) = 1.8\cos\!\left(\frac{\pi}{6}(t - 3)\right) + 2.8.
+\]
+We could equally well anchor a negative cosine at the low tide \(t = 9\), writing \(h(t) = -1.8\cos\!\left(\frac{\pi}{6}(t - 9)\right) + 2.8\), or anchor a positive sine at \(t = 0\) (one quarter-period, \(3\text{ h}\), before the peak!), obtaining the even cleaner formula \(h(t) = 1.8\sin\!\left(\frac{\pi}{6} t\right) + 2.8\). Checking \(t = 3\) gives \(1.8\sin(\frac{\pi}{2}) + 2.8 = 4.6\text{ m}\), and checking \(t = 9\) gives \(1.8\sin(\frac{3\pi}{2}) + 2.8 = 1.0\text{ m}\).
+
+[GRAPH]
+type: function2d
+title: Harbor water depth \(h(t) = 1.8\cos(\frac{\pi}{6}(t - 3)) + 2.8\) across 24 hours
+xlabel: time (hours)
+ylabel: depth (m)
+xrange: 0, 24
+yrange: 0, 5.4
+trace: 1.8*cos(pi*(x - 3)/6) + 2.8 | label: \(h(t)\) | color: #2563eb
+segment: 0, 2.8, 24, 2.8 | label: mean depth | color: #dc2626 | dashed: true
+point: 3, 4.6 | label: high (3, 4.6) | color: #059669
+point: 9, 1.0 | label: low (9, 1.0) | color: #dc2626
+point: 15, 4.6 | label: high (15, 4.6) | color: #059669
+point: 21, 1.0 | label: low (21, 1.0) | color: #dc2626
+[/GRAPH]
+
+[CALLOUT]
+id: half-cycle-pitfall
+label: Common pitfall
+title: Peak-to-trough time is HALF a period, not a full period
+tone: caution
+
+The time from a maximum to the immediately following minimum is \(\frac{T}{2}\). Setting \(T\) equal to that gap doubles \(B\) and makes the model oscillate twice as fast as the data. Always double the peak-to-trough spacing before computing \(B = \frac{2\pi}{T}\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: A]
+A coastal tide gauge records a low tide of \(1.2\text{ m}\) at \(t = 2\text{ h}\) and the next high tide of \(5.2\text{ m}\) at \(t = 8\text{ h}\). Under a sinusoidal tide model, what are the amplitude, midline depth, and full period \(T\)?
+
+(A) Amplitude \(2.0\text{ m}\), midline \(3.2\text{ m}\), period \(12\text{ h}\)
+(B) Amplitude \(2.0\text{ m}\), midline \(3.2\text{ m}\), period \(6\text{ h}\)
+(C) Amplitude \(4.0\text{ m}\), midline \(3.2\text{ m}\), period \(12\text{ h}\)
+(D) Amplitude \(2.0\text{ m}\), midline \(2.0\text{ m}\), period \(12\text{ h}\)
+(E) Amplitude \(3.2\text{ m}\), midline \(2.0\text{ m}\), period \(6\text{ h}\)
+[/QUESTION]
+
+=== SECTION 3: Evaluating models, quarter-period landmarks, and interpreting units ===
+
+Once a sinusoidal model is built, we interrogate it in three ways at this level:
+
+1. Direct evaluation at a specified time \(t\): substitute \(t\) into the formula and evaluate the sine or cosine in radians! Never switch to degrees when \(B = \frac{2\pi}{T}\) was built in radians. For our harbor model \(h(t) = 1.8\cos\!\left(\frac{\pi}{6}(t - 3)\right) + 2.8\), what is the depth at \(5\text{:}00\text{ a.m.}\) (\(t = 5\))?
+\[
+h(5) = 1.8\cos\!\left(\frac{\pi}{6}(5 - 3)\right) + 2.8 = 1.8\cos\!\left(\frac{\pi}{3}\right) + 2.8 = 1.8(0.5) + 2.8 = 3.7\text{ m}.
+\]
+2. Reading times of maxima, minima, and midline crossings via quarter-period symmetry: every adjacent pair of landmarks (max to midline, midline to min, min to midline, midline to max) is separated by exactly \(\frac{T}{4}\). In our \(12\)-hour tide model, \(\frac{T}{4} = 3\text{ h}\), so starting from the high tide at \(t = 3\text{ h}\):
+
+[TABLE]
+Time \(t\) (hours) | \(0\) | \(3\) | \(6\) | \(9\) | \(12\) | \(15\)
+State | Midline rising | High tide | Midline falling | Low tide | Midline rising | High tide
+Depth \(h(t)\) | \(2.8\text{ m}\) | \(4.6\text{ m}\) | \(2.8\text{ m}\) | \(1.0\text{ m}\) | \(2.8\text{ m}\) | \(4.6\text{ m}\)
+[/TABLE]
+
+3. Interpreting parameters physically with units:
+- \(D\) is the average (equilibrium) value over one full cycle, in output units.
+- \(\lvert A \rvert\) is the maximum deviation from the average, in output units; the total peak-to-trough swing is \(2\lvert A \rvert\).
+- \(T = \frac{2\pi}{\lvert B \rvert}\) is the duration of one complete repetition, in input units; its reciprocal \(f = \frac{1}{T} = \frac{\lvert B \rvert}{2\pi}\) is the frequency (cycles per unit time).
+- \(C\) is the time of the chosen reference landmark (such as the date of longest daylight), in input units.
+
+What if you need to find the exact times when a sinusoid equals an arbitrary intermediate target height \(k\)—say when our harbor tide equals \(3.25\text{ m}\)—that is neither a maximum, a minimum, nor the midline? Solving \(A\cos\!\bigl(B(t - C)\bigr) + D = k\) for general intermediate values \(k\) requires inverse trigonometric equations and general solution families, which are developed systematically in Trigonometric Identities and Equations. Here we focus on direct evaluation and landmark timing via quarter-period symmetry.
+
+[QUESTION 3]
+[ANSWER: E]
+An idealized weight bouncing vertically on a spring has height above the floor (in centimeters) modeled by
+\[
+y(t) = 6\sin\!\left(\frac{\pi}{4} t\right) + 10,
+\]
+where \(t \ge 0\) is measured in seconds. What is the height at \(t = 10\text{ s}\), and at what earliest positive time \(t\) does the weight reach its lowest point?
+
+(A) \(y(10) = 10\text{ cm}\); lowest point at \(t = 4\text{ s}\)
+(B) \(y(10) = 4\text{ cm}\); lowest point at \(t = 6\text{ s}\)
+(C) \(y(10) = 16\text{ cm}\); lowest point at \(t = 2\text{ s}\)
+(D) \(y(10) = 16\text{ cm}\); lowest point at \(t = 4\text{ s}\)
+(E) \(y(10) = 16\text{ cm}\); lowest point at \(t = 6\text{ s}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+At a northern city, the number of hours of daylight on day \(d\) of the year is modeled by
+\[
+L(d) = 3.5\cos\!\left(\frac{2\pi}{365}(d - 172)\right) + 12.2.
+\]
+Which statement correctly interprets the parameters of this model?
+
+(A) The difference between the longest day and the shortest day of the year is \(3.5\text{ hours}\)
+(B) Daylight peaks at \(15.7\text{ hours}\) on day \(172\), averages \(12.2\text{ hours}\) over the year, and differs by \(7.0\text{ hours}\) between the longest and shortest days
+(C) The shortest day of the year occurs on day \(172\) and lasts \(8.7\text{ hours}\)
+(D) Daylight repeats every \(172\text{ days}\) with a maximum of \(12.2\text{ hours}\)
+(E) The model reaches its midline of \(12.2\text{ hours}\) on day \(172\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+A pendulum's horizontal displacement \(x(t)\) (in centimeters, positive to the right) oscillates sinusoidally about \(x = 0\). At \(t = 0\text{ s}\), the bob passes through \(x = 0\) moving to the left, and it reaches its leftmost extreme of \(-12\text{ cm}\) at \(t = 0.5\text{ s}\). Which zero-phase-shift model describes \(x(t)\), and what is the exact displacement at \(t = 1.25\text{ s}\)?
+
+(A) \(x(t) = -12\sin(\pi t)\), with \(x(1.25) = -6\sqrt{2}\text{ cm}\)
+(B) \(x(t) = 12\sin(\pi t)\), with \(x(1.25) = -6\sqrt{2}\text{ cm}\)
+(C) \(x(t) = -12\sin(2\pi t)\), with \(x(1.25) = -12\text{ cm}\)
+(D) \(x(t) = -12\sin(\pi t)\), with \(x(1.25) = 6\sqrt{2}\text{ cm}\)
+(E) \(x(t) = -12\cos(\pi t)\), with \(x(1.25) = 6\sqrt{2}\text{ cm}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+A Ferris wheel of radius \(20\text{ m}\) has its center \(24\text{ m}\) above the ground and completes one counterclockwise revolution every \(60\text{ s}\). A passenger starts at \(t = 0\) at the 3-o'clock position (level with the center and moving upward). What is the passenger's exact height at \(t = 25\text{ s}\), and at what time during the first revolution does the passenger first reach the lowest point?
+
+(A) \(34\text{ m}\) at \(t = 25\text{ s}\); lowest point at \(t = 45\text{ s}\)
+(B) \(24 + 10\sqrt{3}\text{ m}\) at \(t = 25\text{ s}\); lowest point at \(t = 45\text{ s}\)
+(C) \(14\text{ m}\) at \(t = 25\text{ s}\); lowest point at \(t = 30\text{ s}\)
+(D) \(34\text{ m}\) at \(t = 25\text{ s}\); lowest point at \(t = 30\text{ s}\)
+(E) \(14\text{ m}\) at \(t = 25\text{ s}\); lowest point at \(t = 45\text{ s}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+The outdoor temperature \(T(t)\) (in \(^\circ\text{C}\)) over a \(24\)-hour day is modeled sinusoidally with a daily low of \(12^\circ\text{C}\) at \(4\text{:}00\text{ a.m.}\) (\(t = 4\)) and a daily high of \(28^\circ\text{C}\) at \(4\text{:}00\text{ p.m.}\) (\(t = 16\)). Which sine equation matches this temperature model?
+
+(A) \(T(t) = 8\sin\!\left(\dfrac{\pi}{12}(t - 4)\right) + 20\)
+(B) \(T(t) = 8\sin\!\left(\dfrac{\pi}{12}(t - 16)\right) + 20\)
+(C) \(T(t) = 8\sin\!\left(\dfrac{\pi}{12}(t - 10)\right) + 20\)
+(D) \(T(t) = -8\sin\!\left(\dfrac{\pi}{12}(t - 10)\right) + 20\)
+(E) \(T(t) = 16\sin\!\left(\dfrac{\pi}{12}(t - 10)\right) + 20\)
+[/BONUS]

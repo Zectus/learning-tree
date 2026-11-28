@@ -1,0 +1,224 @@
+=== SECTION 1: El producto mixto y su fórmula por determinante ===
+
+Con el producto escalar y el producto vectorial ya en nuestras manos, podemos combinar tres vectores espaciales \(\mathbf{u}\), \(\mathbf{v}\) y \(\mathbf{w}\) en un único escalar:
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}).
+\]
+Esta combinación se llama producto mixto (o triple producto escalar) de \(\mathbf{u}\), \(\mathbf{v}\) y \(\mathbf{w}\). Observe primero por qué los paréntesis alrededor de \(\mathbf{v} \times \mathbf{w}\) son estructuralmente forzosos: \(\mathbf{v} \times \mathbf{w}\) es un vector, de modo que hacer su producto escalar con \(\mathbf{u}\) tiene pleno sentido y produce un número real. Por el contrario, \((\mathbf{u} \cdot \mathbf{v}) \times \mathbf{w}\) carece por completo de significado: \(\mathbf{u} \cdot \mathbf{v}\) es un escalar, y el producto vectorial está definido únicamente entre dos vectores.
+
+¿Cómo calculamos \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) directamente a partir de las componentes \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\), \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) y \(\mathbf{w} = \langle w_1, w_2, w_3 \rangle\)? Recuerde que \(\mathbf{v} \times \mathbf{w}\) se forma desarrollando un determinante \(3 \times 3\) con \(\mathbf{i}, \mathbf{j}, \mathbf{k}\) en la fila superior:
+\[
+\mathbf{v} \times \mathbf{w} = (v_2 w_3 - v_3 w_2)\mathbf{i} - (v_1 w_3 - v_3 w_1)\mathbf{j} + (v_1 w_2 - v_2 w_1)\mathbf{k}.
+\]
+Hacer el producto escalar de este vector con \(\mathbf{u} = u_1\mathbf{i} + u_2\mathbf{j} + u_3\mathbf{k}\) simplemente reemplaza \(\mathbf{i}, \mathbf{j}, \mathbf{k}\) por \(u_1, u_2, u_3\):
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = u_1(v_2 w_3 - v_3 w_2) - u_2(v_1 w_3 - v_3 w_1) + u_3(v_1 w_2 - v_2 w_1).
+\]
+Esa suma es precisamente el determinante \(3 \times 3\) cuyas tres filas son \(\mathbf{u}\), \(\mathbf{v}\) y \(\mathbf{w}\).
+
+[CALLOUT]
+id: stp-det
+label: Teorema
+title: Fórmula del determinante y simetrías de permutación del producto mixto
+tone: key
+
+Para cualesquiera tres vectores \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\), \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) y \(\mathbf{w} = \langle w_1, w_2, w_3 \rangle\) en \(\mathbb{R}^3\):
+
+(1) Fórmula del determinante:
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = \begin{vmatrix} u_1 & u_2 & u_3 \\ v_1 & v_2 & v_3 \\ w_1 & w_2 & w_3 \end{vmatrix}.
+\]
+(2) Invariancia cíclica: rotar cíclicamente los tres vectores preserva el valor:
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = \mathbf{v} \cdot (\mathbf{w} \times \mathbf{u}) = \mathbf{w} \cdot (\mathbf{u} \times \mathbf{v}).
+\]
+(3) Regla de cambio de signo por intercambio: intercambiar dos cualesquiera de los tres vectores cambia el signo del producto mixto; por ejemplo, \(\mathbf{v} \cdot (\mathbf{u} \times \mathbf{w}) = -\,\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\).
+(4) Intercambio punto-cruz: \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = (\mathbf{u} \times \mathbf{v}) \cdot \mathbf{w}\).
+[/CALLOUT]
+
+Verifique algebraicamente [REF: stp-det.2 | la invariancia cíclica]: desarrollar \(\mathbf{v} \cdot (\mathbf{w} \times \mathbf{u})\) produce exactamente los mismos seis productos triples (tres positivos y tres negativos) que \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\), simplemente agrupados por \(v_1, v_2, v_3\) en lugar de \(u_1, u_2, u_3\). Entretanto, [REF: stp-det.3 | intercambiar dos vectores cualesquiera] se deduce de la anticonmutatividad del producto vectorial junto con la invariancia cíclica: intercambiar \(\mathbf{v}\) y \(\mathbf{w}\) transforma directamente \(\mathbf{v} \times \mathbf{w}\) en \(-(\mathbf{w} \times \mathbf{v})\), e intercambiar \(\mathbf{u}\) y \(\mathbf{v}\) equivale a rotar cíclicamente \((\mathbf{v}, \mathbf{u}, \mathbf{w})\) a \((\mathbf{w}, \mathbf{v}, \mathbf{u})\) e intercambiar las dos últimas posiciones. Por último, [REF: stp-det.4 | el intercambio punto-cruz] se sigue de inmediato al rotar \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = \mathbf{w} \cdot (\mathbf{u} \times \mathbf{v})\) y usar la conmutatividad del producto escalar.
+
+Observe una consecuencia inmediata: si dos cualesquiera de los tres vectores son iguales (o paralelos), intercambiarlos debe dejar el determinante inalterado y a la vez invertir su signo, lo que obliga a que \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\).
+
+[QUESTION 1]
+[ANSWER: B]
+Sean \(\mathbf{u} = \langle 2, 1, -1 \rangle\), \(\mathbf{v} = \langle 1, 3, 2 \rangle\) y \(\mathbf{w} = \langle 4, 0, -3 \rangle\). ¿Cuáles son los valores de \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) y \(\mathbf{v} \cdot (\mathbf{u} \times \mathbf{w})\), en ese orden?
+
+(A) \(5\) y \(5\)
+(B) \(5\) y \(-5\)
+(C) \(-5\) y \(5\)
+(D) \(-17\) y \(17\)
+(E) \(35\) y \(-35\)
+[/QUESTION]
+
+=== SECTION 2: Volúmenes de paralelepípedos y tetraedros ===
+
+¿Qué mide geométricamente el número \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\)? Ancle tres vectores no coplanares \(\mathbf{u}\), \(\mathbf{v}\) y \(\mathbf{w}\) en un vértice común \(A\). Forman las tres aristas adyacentes de una caja tridimensional inclinada llamada paralelepípedo.
+
+Tome el paralelogramo generado por \(\mathbf{v}\) y \(\mathbf{w}\) como base de la caja. De la lección anterior, el área de esta base es
+\[
+A_{\text{base}} = \|\mathbf{v} \times \mathbf{w}\|,
+\]
+y el vector \(\mathbf{v} \times \mathbf{w}\) se alza perpendicularmente al plano de la base. ¿Cuál es la altura perpendicular \(h\) del paralelepípedo sobre esta base? Es la magnitud de la proyección escalar de la arista inclinada \(\mathbf{u}\) sobre la dirección normal \(\mathbf{v} \times \mathbf{w}\):
+\[
+h = \left|\operatorname{comp}_{\mathbf{v} \times \mathbf{w}} \mathbf{u}\right| = \frac{|\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|}{\|\mathbf{v} \times \mathbf{w}\|}.
+\]
+Al multiplicar el área de la base por la altura perpendicular se cancela \(\|\mathbf{v} \times \mathbf{w}\|\) por completo:
+\[
+V_{\text{caja}} = A_{\text{base}} \cdot h = \|\mathbf{v} \times \mathbf{w}\| \cdot \frac{|\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|}{\|\mathbf{v} \times \mathbf{w}\|} = |\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|.
+\]
+
+El diagrama en vista lateral siguiente muestra un plano que contiene a la normal \(\mathbf{v} \times \mathbf{w}\) y a la tercera arista \(\mathbf{u}\) (inclinada un ángulo \(\phi\) respecto de la normal). Arrastre el deslizador de inclinación \(p\) para ver cómo \(h = \|\mathbf{u}\||\cos p|\) se encoge cuando \(\mathbf{u}\) se inclina hacia el plano de la base y se anula por completo cuando \(p = \pi/2 \approx 1.57\), donde \(\mathbf{u}\) yace tendido en el plano de \(\mathbf{v}\) y \(\mathbf{w}\).
+
+[GRAPH]
+type: parametric2d
+title: Vista lateral de la altura del paralelepípedo \(h = \|\mathbf{u}\|\lvert\cos p\rvert\) a lo largo de la normal \(\mathbf{v} \times \mathbf{w}\)
+xlabel: dirección del plano base
+ylabel: dirección normal
+trange: 0, 1
+xrange: -0.5, 5.5
+yrange: -0.5, 3.8
+trace: 3*t, 0 | label: arista base
+trace: 3*sin(p)*t, 3*cos(p)*t | label: arista inclinada \(\mathbf{u}\)
+segment: 0, 0, 0, 3.2 | label: \(\mathbf{v} \times \mathbf{w}\) | dashed: true
+segment: 3*sin(p), 0, 3*sin(p), 3*cos(p) | label: \(h\)
+segment: 3, 0, 3 + 3*sin(p), 3*cos(p) | dashed: true
+segment: 3*sin(p), 3*cos(p), 3 + 3*sin(p), 3*cos(p) | dashed: true
+point: 0, 0 | label: \(A\)
+point: 3*sin(p), 3*cos(p) | label: extremo de u
+slider: p | range: 0.05, 1.52 | init: 0.55 | step: 0.05
+[/GRAPH]
+
+¿Qué ocurre con el volumen de un tetraedro (una pirámide triangular) con cuatro vértices \(A, B, C, D \in \mathbb{R}^3\)? Ancle tres vectores de arista en un mismo vértice compartido, digamos \(\mathbf{u} = \overrightarrow{AB}\), \(\mathbf{v} = \overrightarrow{AC}\) y \(\mathbf{w} = \overrightarrow{AD}\). En comparación con el paralelepípedo generado por \(\mathbf{u}, \mathbf{v}, \mathbf{w}\):
+- La base triangular \(\triangle ACD\) tiene exactamente \(\frac{1}{2}\) del área del paralelogramo base generado por \(\overrightarrow{AC}\) y \(\overrightarrow{AD}\).
+- Toda pirámide tiene volumen \(\frac{1}{3} \times (\text{área de la base}) \times (\text{altura perpendicular})\) (la misma altura perpendicular \(h\) que el paralelepípedo).
+
+Al combinar ambos factores se obtiene \(\frac{1}{3} \cdot \frac{1}{2} = \frac{1}{6}\) del volumen del paralelepípedo.
+
+[CALLOUT]
+id: volume-formulas
+label: Fórmulas
+title: Volúmenes del paralelepípedo y del tetraedro
+tone: key
+
+(1) El volumen del paralelepípedo generado por los vectores de aristas adyacentes \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\) es
+\[
+V_{\text{caja}} = |\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|.
+\]
+(2) El volumen del tetraedro con vértices \(A, B, C, D \in \mathbb{R}^3\) es
+\[
+V_{\text{tet}} = \frac{1}{6}\left|\overrightarrow{AB} \cdot \bigl(\overrightarrow{AC} \times \overrightarrow{AD}\bigr)\right|.
+\]
+[/CALLOUT]
+
+Note un detalle geométrico crucial al usar [REF: volume-formulas.2 | la fórmula del tetraedro]: los tres vectores deben partir del MISMO vértice (aquí \(A\)). Usar coordenadas brutas de puntos en lugar de diferencias de aristas \(\overrightarrow{AB}, \overrightarrow{AC}, \overrightarrow{AD}\) calcula el volumen de un tetraedro distinto anclado en el origen \(O(0, 0, 0)\).
+
+=== SECTION 3: Orientación de ternas en 3D y coplanariedad algebraica ===
+
+En [REF: volume-formulas.1 | la fórmula del volumen], tomar el valor absoluto descarta el signo de \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\). ¿Qué información geométrica aporta ese signo antes de tomar su valor absoluto?
+
+Escriba \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = (\mathbf{u} \times \mathbf{v}) \cdot \mathbf{w}\) mediante [REF: stp-det.4 | el intercambio punto-cruz]. Por la regla de la mano derecha, \(\mathbf{u} \times \mathbf{v}\) apunta en la dirección de su pulgar derecho cuando los dedos se curvan de \(\mathbf{u}\) a \(\mathbf{v}\). Por lo tanto:
+- \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) > 0 \iff (\mathbf{u} \times \mathbf{v}) \cdot \mathbf{w} > 0\): el ángulo entre \(\mathbf{w}\) y \(\mathbf{u} \times \mathbf{v}\) es agudo, lo que significa que \(\mathbf{w}\) queda del lado derecho del plano de \(\mathbf{u}\) y \(\mathbf{v}\). Llamamos dextrógira a la terna ordenada \((\mathbf{u}, \mathbf{v}, \mathbf{w})\) (igual que \((\mathbf{i}, \mathbf{j}, \mathbf{k})\), donde \(\mathbf{i} \cdot (\mathbf{j} \times \mathbf{k}) = +1\)).
+- \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) < 0\): \(\mathbf{w}\) apunta hacia el lado opuesto del plano de \(\mathbf{u}\) y \(\mathbf{v}\), de modo que la terna ordenada \((\mathbf{u}, \mathbf{v}, \mathbf{w})\) es levógira (como \((\mathbf{j}, \mathbf{i}, \mathbf{k})\), donde \(\mathbf{j} \cdot (\mathbf{i} \times \mathbf{k}) = -1\)).
+- \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\): el paralelepípedo tiene volumen nulo, lo cual ocurre si y solo si los tres vectores se aplastan en un único plano.
+
+[CALLOUT]
+id: coplanar-test
+label: Teorema
+title: Criterio de orientación y coplanariedad
+tone: key
+
+Para tres vectores \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\):
+
+(1) Orientación: la terna ordenada \((\mathbf{u}, \mathbf{v}, \mathbf{w})\) es dextrógira si \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) > 0\) y levógira si \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) < 0\).
+(2) Vectores coplanares: \(\mathbf{u}\), \(\mathbf{v}\) y \(\mathbf{w}\) yacen en un plano común que pasa por el origen (son coplanares) si y solo si \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\).
+(3) Puntos coplanares: cuatro puntos \(A, B, C, D \in \mathbb{R}^3\) yacen en un único plano si y solo si
+\[
+\overrightarrow{AB} \cdot \bigl(\overrightarrow{AC} \times \overrightarrow{AD}\bigr) = 0.
+\]
+[/CALLOUT]
+
+¿Por qué funciona [REF: coplanar-test.2 | el criterio de coplanariedad] en ambos sentidos? Si \(\mathbf{v}\) y \(\mathbf{w}\) ya son paralelos, entonces \(\mathbf{v} \times \mathbf{w} = \mathbf{0}\), de modo que \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\), y en efecto cualquier recta que contenga a \(\mathbf{v}\) y \(\mathbf{w}\) junto con \(\mathbf{u}\) cabe dentro de un plano. Si \(\mathbf{v}\) y \(\mathbf{w}\) no son paralelos, entonces \(\mathbf{v} \times \mathbf{w} \ne \mathbf{0}\) es perpendicular al único plano que generan; por ende, \(\mathbf{u}\) yace en ese plano si y solo si \(\mathbf{u}\) es ortogonal a \(\mathbf{v} \times \mathbf{w}\), es decir, \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\).
+
+[TABLE]
+Valor de \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) | Volumen del paralelepípedo | Configuración geométrica de \((\mathbf{u}, \mathbf{v}, \mathbf{w})\)
+Positivo (\(> 0\)) | \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) | No coplanares, terna 3D dextrógira
+Negativo (\(< 0\)) | \(-\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) | No coplanares, terna 3D levógira
+Cero (\(= 0\)) | \(0\) | Coplanares (los tres yacen en un plano común)
+[/TABLE]
+
+Probemos cuatro puntos concretos: \(P(1, 0, -1)\), \(Q(2, 2, 1)\), \(R(0, 1, 2)\) y \(S(3, 3, 0)\). Forme tres aristas desde \(P\):
+\[
+\overrightarrow{PQ} = \langle 1, 2, 2 \rangle, \qquad \overrightarrow{PR} = \langle -1, 1, 3 \rangle, \qquad \overrightarrow{PS} = \langle 2, 3, 1 \rangle.
+\]
+Calcule el determinante:
+\[
+\begin{vmatrix} 1 & 2 & 2 \\ -1 & 1 & 3 \\ 2 & 3 & 1 \end{vmatrix} = 1(1 - 9) - 2(-1 - 6) + 2(-3 - 2) = -8 + 14 - 10 = -4 \ne 0.
+\]
+Como el producto mixto es \(-4 \ne 0\), los cuatro puntos NO son coplanares: forman un tetraedro genuino de volumen \(\frac{1}{6}|-4| = \frac{2}{3}\), y la terna ordenada de aristas \((\overrightarrow{PQ}, \overrightarrow{PR}, \overrightarrow{PS})\) es levógira.
+
+[QUESTION 2]
+[ANSWER: A]
+Suponga que tres vectores \(\mathbf{a}, \mathbf{b}, \mathbf{c} \in \mathbb{R}^3\) satisfacen \(\mathbf{a} \cdot (\mathbf{b} \times \mathbf{c}) = -12\). ¿Cuál es el valor de \(\mathbf{c} \cdot (\mathbf{a} \times \mathbf{b})\), y es dextrógira o levógira la terna ordenada \((\mathbf{a}, \mathbf{b}, \mathbf{c})\)?
+
+(A) \(-12\); levógira
+(B) \(12\); levógira
+(C) \(-12\); dextrógira
+(D) \(12\); dextrógira
+(E) \(0\); coplanar
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+¿Cuál es el volumen exacto del tetraedro en \(\mathbb{R}^3\) con vértices \(A(1, 0, 1)\), \(B(3, 1, 2)\), \(C(2, 4, 1)\) y \(D(1, 2, 5)\)?
+
+(A) \(30\)
+(B) \(15\)
+(C) \(10\)
+(D) \(5\)
+(E) \(6\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+¿Para qué valor de la constante real \(k\) los cuatro puntos \(A(1, 2, 0)\), \(B(2, 1, 3)\), \(C(0, 4, 1)\) y \(D(3, k, 2)\) yacen en un mismo plano?
+
+(A) \(k = -1\)
+(B) \(k = 1\)
+(C) \(k = -3\)
+(D) \(k = 5\)
+(E) \(k = 2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suponga que tres vectores \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\) generan un paralelepípedo de volumen \(7\). ¿Cuál es el volumen del paralelepípedo generado por \(\mathbf{u} + 3\mathbf{v} - 2\mathbf{w}\), \(2\mathbf{v}\) y \(\mathbf{w}\)?
+
+(A) \(7\)
+(B) \(21\)
+(C) \(14\)
+(D) \(42\)
+(E) \(28\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Un paralelepípedo tiene aristas adyacentes \(\mathbf{v} = \langle 1, 2, 0 \rangle\), \(\mathbf{w} = \langle 0, 2, 1 \rangle\) y \(\mathbf{u} = \langle 4, 2, 3 \rangle\). ¿Cuál es su altura perpendicular medida sobre la cara base generada por \(\mathbf{v}\) y \(\mathbf{w}\)?
+
+(A) \(3\)
+(B) \(4\)
+(C) \(6\)
+(D) \(12\)
+(E) \(\frac{12}{\sqrt{5}}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+¿Cuál de las siguientes expresiones está matemáticamente bien definida como vector o escalar en \(\mathbb{R}^3\) para vectores arbitrarios \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\)?
+
+(A) \((\mathbf{u} \cdot \mathbf{v}) \times \mathbf{w}\)
+(B) \(\mathbf{u} \cdot (\mathbf{v} \cdot \mathbf{w})\)
+(C) \((\mathbf{u} \times \mathbf{v}) + (\mathbf{v} \cdot \mathbf{w})\)
+(D) \(\mathbf{u} \times (\mathbf{v} \cdot \mathbf{w})\)
+(E) \((\mathbf{u} \cdot \mathbf{v})\mathbf{w} + (\mathbf{v} \times \mathbf{w})\)
+[/BONUS]

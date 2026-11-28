@@ -1,0 +1,210 @@
+=== SECTION 1: Área de paralelogramos y volumen de paralelepípedos ===
+
+Hasta ahora hemos tratado \(\det(A)\) puramente como una máquina algebraica: una función multilineal alternante de las filas (o columnas) normalizada por \(\det(I_n) = 1\). Sin embargo, sobre los números reales \(\mathbb{R}\), esa máquina algebraica mide algo directamente visible en el espacio euclidiano: cómo una transformación lineal \(T(\mathbf{x}) = A\mathbf{x}\) escala áreas y volúmenes, y si preserva o invierte la orientación espacial.
+
+Comience en \(\mathbb{R}^2\) con una matriz \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 \end{bmatrix} = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\) cuyas columnas son \(\mathbf{a}_1 = (a, c)^T\) y \(\mathbf{a}_2 = (b, d)^T\). Bajo \(T(\mathbf{x}) = A\mathbf{x}\), los vectores de la base estándar \(\mathbf{e}_1 = (1, 0)^T\) y \(\mathbf{e}_2 = (0, 1)^T\) se envían a \(\mathbf{a}_1\) y \(\mathbf{a}_2\), de modo que el cuadrado unitario \([0, 1]^2 = \{s\mathbf{e}_1 + t\mathbf{e}_2 : 0 \le s, t \le 1\}\) se transforma en el paralelogramo
+\[
+P(\mathbf{a}_1, \mathbf{a}_2) = \{s\mathbf{a}_1 + t\mathbf{a}_2 : 0 \le s, t \le 1\}
+\]
+generado por \(\mathbf{a}_1\) y \(\mathbf{a}_2\). Sea \(\theta\) el ángulo desde \(\mathbf{a}_1\) hasta \(\mathbf{a}_2\). Exprese ambas columnas en forma polar: \(\mathbf{a}_1 = r_1(\cos\alpha, \sin\alpha)^T\) y \(\mathbf{a}_2 = r_2(\cos(\alpha + \theta), \sin(\alpha + \theta))^T\), donde \(r_1 = \|\mathbf{a}_1\|\) y \(r_2 = \|\mathbf{a}_2\|\). Al calcular el determinante directamente se obtiene
+\[
+\det(A) = r_1 r_2 \bigl(\cos\alpha \sin(\alpha + \theta) - \sin\alpha \cos(\alpha + \theta)\bigr) = r_1 r_2 \sin\theta.
+\]
+Observe las dos partes de \(r_1 r_2 \sin\theta\):
+- Su magnitud \(|\det(A)| = r_1 r_2 |\sin\theta|\) es la base (\(r_1\)) por la altura perpendicular (\(r_2 |\sin\theta|\)): ¡el área euclidiana exacta de \(P(\mathbf{a}_1, \mathbf{a}_2)\)!
+- Su signo es el signo de \(\sin\theta\): positivo cuando el ángulo antihorario de \(\mathbf{a}_1\) a \(\mathbf{a}_2\) pertenece a \((0, \pi)\) (el mismo ordenamiento antihorario que \((\mathbf{e}_1, \mathbf{e}_2)\)), negativo cuando el ángulo pertenece a \((\pi, 2\pi)\) (ordenamiento horario) y cero cuando \(\mathbf{a}_1\) y \(\mathbf{a}_2\) son colineales.
+
+Por ejemplo, tome \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\). Sus columnas \(\mathbf{a}_1 = (2, 1)^T\) y \(\mathbf{a}_2 = (1, 2)^T\) generan un paralelogramo de área \(|\det(A)| = |2 \cdot 2 - 1 \cdot 1| = 3\), y como \(\det(A) = +3 > 0\), moverse de \(\mathbf{a}_1\) hacia \(\mathbf{a}_2\) va en sentido antihorario, igual que moverse de \(\mathbf{e}_1\) hacia \(\mathbf{e}_2\).
+
+[GRAPH]
+type: parametric2d
+title: La imagen del cuadrado unitario bajo \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\) tiene área \(\lvert\det(A)\rvert = 3\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.4, 3.5
+yrange: -0.4, 3.5
+trace: t, 0 | label: cuadrado unitario
+trace: 1, t
+trace: 1 - t, 1
+trace: 0, 1 - t
+trace: 2*t, t | label: \(\mathbf{a}_1 = (2, 1)\)
+trace: t, 2*t | label: \(\mathbf{a}_2 = (1, 2)\)
+segment: 2, 1, 3, 3 | dashed: true
+segment: 1, 2, 3, 3 | dashed: true
+point: 2, 1 | label: \((2, 1)\)
+point: 1, 2 | label: \((1, 2)\)
+point: 3, 3 | label: \((3, 3)\)
+[/GRAPH]
+
+En \(\mathbb{R}^3\), las columnas \(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3\) de \(A \in M_3(\mathbb{R})\) generan un paralelepípedo
+\[
+P(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3) = \{s_1 \mathbf{a}_1 + s_2 \mathbf{a}_2 + s_3 \mathbf{a}_3 : 0 \le s_i \le 1\}.
+\]
+Recuerde de la geometría vectorial que el producto mixto \(\mathbf{a}_1 \cdot (\mathbf{a}_2 \times \mathbf{a}_3)\) es igual a \(\det\begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) (expandir por la primera columna recupera exactamente las componentes de \(\mathbf{a}_2 \times \mathbf{a}_3\)). Su magnitud \(|\mathbf{a}_1 \cdot (\mathbf{a}_2 \times \mathbf{a}_3)| = \|\mathbf{a}_2 \times \mathbf{a}_3\| \cdot (\text{altura de }\mathbf{a}_1\text{ perpendicular a la base})\) es el volumen \(3\)-dimensional exacto del paralelepípedo, mientras que su signo indica si \((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\) sigue la regla de la mano derecha (\(\det(A) > 0\)) o de la mano izquierda (\(\det(A) < 0\)).
+
+[QUESTION 1]
+[ANSWER: C]
+Un paralelogramo en \(\mathbb{R}^2\) tiene vértices en \((1, 2)\), \((4, 3)\), \((2, 6)\) y \((5, 7)\). ¿Cuál es su área?
+
+(A) \(9\)
+(B) \(13\)
+(C) \(11\)
+(D) \(10\)
+(E) \(14\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+¿Cuál es el volumen del paralelepípedo en \(\mathbb{R}^3\) generado por los tres vectores columna \(\mathbf{v}_1 = (1, 0, 2)^T\), \(\mathbf{v}_2 = (0, 3, -1)^T\) y \(\mathbf{v}_3 = (2, 1, 1)^T\)?
+
+(A) \(8\)
+(B) \(-8\)
+(C) \(16\)
+(D) \(4\)
+(E) \(12\)
+[/QUESTION]
+
+=== SECTION 2: Paralelotopos en \(\mathbb{R}^n\) y geometría elemental ===
+
+¿Sigue midiendo \(|\det(A)|\) el volumen \(n\)-dimensional para una matriz real arbitraria \(n \times n\) \(A = \begin{bmatrix} \mathbf{a}_1 & \cdots & \mathbf{a}_n \end{bmatrix}\)? Sea \(P(\mathbf{a}_1, \dots, \mathbf{a}_n) = \{\sum_{j=1}^n s_j \mathbf{a}_j : 0 \le s_j \le 1\}\) el paralelotopo \(n\)-dimensional generado por las columnas de \(A\), y sea \(\operatorname{Vol}(P)\) su volumen \(n\)-dimensional. Podemos verificar que \(\operatorname{Vol}(P(\mathbf{a}_1, \dots, \mathbf{a}_n)) = |\det(A)|\) interpretando geométricamente cada una de las tres operaciones elementales de columna (o, de manera equivalente, multiplicar \(A\) por la derecha por una matriz elemental \(E\), o por la izquierda por \(E\) en el espacio ambiente \(\mathbb{R}^n\)).
+
+Considere cómo actúa una matriz elemental \(E\) sobre CUALQUIER paralelotopo \(P \subset \mathbb{R}^n\) cuando aplicamos la aplicación lineal \(\mathbf{x} \mapsto E\mathbf{x}\):
+
+[TABLE]
+Matriz elemental \(E\) | Acción geométrica sobre \(\mathbb{R}^n\) | Factor de volumen sobre regiones | \(\lvert\det(E)\rvert\) | Efecto sobre la orientación
+Escalar la fila \(i\) por \(c \neq 0\) | Estira la coordenada \(x_i\) por \(\lvert c \rvert\) (y refleja si \(c < 0\)) | Multiplica el volumen por \(\lvert c \rvert\) | \(\lvert c \rvert\) | Preserva si \(c > 0\), invierte si \(c < 0\)
+Intercambiar las filas \(i\) y \(j\) | Refleja respecto al hiperplano \(x_i = x_j\) | Multiplica el volumen por \(1\) | \(1\) | Invierte (\(\det E = -1\))
+Reemplazo de fila \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) | Cizallamiento paralelo al eje \(i\) por \(c x_j\) | Multiplica el volumen por \(1\) (principio de Cavalieri: las secciones transversales paralelas se trasladan sin cambiar el área) | \(1\) | Preserva (\(\det E = +1\))
+[/TABLE]
+
+En todos y cada uno de los casos, ¡aplicar una transformación elemental \(E\) multiplica el volumen \(n\)-dimensional por \(|\det(E)|\)! Tome ahora CUALQUIER matriz \(A \in M_n(\mathbb{R})\):
+- Si \(A\) es invertible, factorice \(A = E_1 E_2 \cdots E_k\) en matrices elementales. Partiendo del \(n\)-cubo unitario \(Q = [0, 1]^n\) (que tiene \(\operatorname{Vol}(Q) = 1\)), aplicar \(E_k\), luego \(E_{k-1}\), ..., hasta \(E_1\) transforma \(Q\) en el paralelotopo \(A(Q) = P(\mathbf{a}_1, \dots, \mathbf{a}_n)\) y multiplica el volumen en cada paso por \(|\det(E_m)|\). Por multiplicatividad del determinante,
+\[
+\operatorname{Vol}(A(Q)) = |\det(E_1)| \cdots |\det(E_k)| \cdot \operatorname{Vol}(Q) = |\det(E_1 \cdots E_k)| \cdot 1 = |\det(A)|.
+\]
+- Si \(A\) es singular, la imagen \(A(Q)\) yace dentro del espacio columna \(\operatorname{Col}(A)\), que es un subespacio propio de dimensión estrictamente menor que \(n\); una lámina plana de dimensión inferior dentro de \(\mathbb{R}^n\) tiene volumen \(n\)-dimensional \(0 = |\det(A)|\).
+
+Como toda región elemental \(S \subset \mathbb{R}^n\) (como una caja, una bola o un polígono) puede aproximarse arbitrariamente bien desde el interior y el exterior mediante mallas finitas de pequeños cubos alineados con los ejes —y cada pequeño cubo \(Q_j\) de volumen \(\operatorname{Vol}(Q_j)\) se transforma bajo \(T(\mathbf{x}) = A\mathbf{x}\) en un paralelotopo trasladado de volumen \(|\det(A)| \operatorname{Vol}(Q_j)\)—, sumar sobre todos los cubos produce el principio universal de escalamiento de volumen para transformaciones lineales.
+
+[CALLOUT]
+id: volume-scaling
+label: Teorema
+title: Escalamiento de volumen bajo aplicaciones lineales
+tone: key
+
+Sea \(A \in M_n(\mathbb{R})\) y defina \(T : \mathbb{R}^n \to \mathbb{R}^n\) mediante \(T(\mathbf{x}) = A\mathbf{x}\).
+
+(1) El paralelotopo \(n\)-dimensional generado por las columnas de \(A\) tiene volumen \(|\det(A)|\).
+(2) Para cualquier paralelotopo o región acotada elemental \(S \subset \mathbb{R}^n\) con volumen \(\operatorname{Vol}(S)\),
+\[
+\operatorname{Vol}(T(S)) = |\det(A)|\,\operatorname{Vol}(S).
+\]
+[/CALLOUT]
+
+Note cómo [REF: volume-scaling.2 | el escalamiento de volumen] también explica geométricamente la multiplicatividad: aplicar \(B\) primero escala todos los volúmenes por \(|\det(B)|\), y luego aplicar \(A\) escala los volúmenes resultantes por \(|\det(A)|\), por lo que la composición \(AB\) debe escalar los volúmenes por \(|\det(A)|\,|\det(B)| = |\det(AB)|\). (En cálculo multivariable, este mismo principio de escalamiento lineal local reaparece cuando el determinante de la matriz jacobiana rige el cambio de variables en integrales múltiples.)
+
+[QUESTION 3]
+[ANSWER: D]
+Una región sólida \(S \subset \mathbb{R}^3\) tiene volumen \(5\). Defina \(T : \mathbb{R}^3 \to \mathbb{R}^3\) como la composición de tres pasos aplicados a \(\mathbf{x} = (x, y, z)^T\): primero reflejar respecto al plano \(xy\), luego escalar cada coordenada por \(2\) y finalmente aplicar el cizallamiento \((x, y, z) \mapsto (x + 3z, y, z)\). ¿Cuál es \(\operatorname{Vol}(T(S))\), y cómo afecta \(T\) a la orientación?
+
+(A) Volumen \(10\), invierte la orientación
+(B) Volumen \(40\), preserva la orientación
+(C) Volumen \(120\), invierte la orientación
+(D) Volumen \(40\), invierte la orientación
+(E) Volumen \(10\), preserva la orientación
+[/QUESTION]
+
+=== SECTION 3: Orientación y paso por la singularidad ===
+
+El signo de \(\det(A)\) captura una propiedad topológica que la magnitud por sí sola pasa por alto: la orientación espacial (lateralidad). Una base ordenada \((\mathbf{v}_1, \dots, \mathbf{v}_n)\) de \(\mathbb{R}^n\) se denomina positivamente orientada si la matriz \(A = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_n \end{bmatrix}\) satisface \(\det(A) > 0\), y negativamente orientada si \(\det(A) < 0\).
+
+[CALLOUT]
+id: orientation-classification
+label: Clasificación
+title: Significado geométrico del signo de \(\det(A)\)
+tone: key
+
+Para \(A \in M_n(\mathbb{R})\) que define \(T(\mathbf{x}) = A\mathbf{x}\):
+
+(1) \(\det(A) > 0\): \(T\) preserva la orientación (envía toda base positivamente orientada a una base positivamente orientada). Ejemplos: rotaciones, cizallamientos puros, escalamientos positivos \(cI_n\) (\(c > 0\)) y composiciones de un número PAR de reflexiones.
+(2) \(\det(A) < 0\): \(T\) invierte la orientación (cambia la lateralidad, convirtiendo un marco derecho en uno izquierdo). Ejemplos: reflexiones individuales respecto a un hiperplano, intercambios de coordenadas y composiciones de un número IMPAR de reflexiones.
+(3) \(\det(A) = 0\): \(T\) colapsa la dimensión (singular), aplastando \(\mathbb{R}^n\) sobre un subespacio de dimensión inferior con volumen \(n\)-dimensional nulo.
+[/CALLOUT]
+
+Preste mucha atención a la paridad de la dimensión al aplicar \(-I_n\) (inversión central \(\mathbf{x} \mapsto -\mathbf{x}\)): como \(\det(-I_n) = (-1)^n\), la inversión central en \(\mathbb{R}^2\) es una rotación de \(180^\circ\) y PRESERVA la orientación (\(\det(-I_2) = +1\)), ¡mientras que la inversión central en \(\mathbb{R}^3\) convierte una mano derecha en una mano izquierda e INVIERTE la orientación (\(\det(-I_3) = -1\))!
+
+Existe una notable consecuencia geométrica de la continuidad del determinante: NUNCA se puede deformar continuamente una transformación que preserva la orientación en una transformación que la invierte sin aplastar el volumen hasta cero en algún instante intermedio. Observe la familia continua
+\[
+A(s) = \begin{bmatrix} 1 & 0 \\ 0 & s \end{bmatrix}
+\]
+conforme el deslizador \(s\) se mueve desde \(s = 1\) (la identidad, \(\det = 1\)) hasta \(s = -1\) (reflexión respecto al eje \(x_1\), \(\det = -1\)). Para pasar de \(s = 1\) a \(s = -1\), la imagen del cuadrado unitario DEBE aplastarse en un segmento de recta horizontal en \(s = 0\) (\(\det(A(0)) = 0\)) antes de volver a expandirse invertida con orientación opuesta.
+
+[GRAPH]
+type: parametric2d
+title: Deformación continua \(A(s) = \operatorname{diag}(1, s)\) de \(\det > 0\) pasando por el colapso (\(\det = 0\)) hasta \(\det < 0\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.5, 1.8
+yrange: -1.6, 1.6
+trace: t, 0 | label: \(\mathbf{a}_1 = (1, 0)\)
+trace: 0, s*t | label: \(\mathbf{a}_2(s) = (0, s)\)
+segment: 1, 0, 1, s | dashed: true
+segment: 0, s, 1, s | dashed: true
+point: 1, 0 | label: \((1, 0)\)
+point: 0, s | label: \((0, s)\)
+slider: s | range: -1.4, 1.4 | init: 1 | step: 0.1
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: B]
+¿Cuál de las siguientes transformaciones lineales \(T : \mathbb{R}^3 \to \mathbb{R}^3\) invierte la orientación?
+
+(A) Rotación de \(60^\circ\) alrededor del eje \(z\)
+(B) Escalamiento uniforme \(T(\mathbf{x}) = -2\mathbf{x}\)
+(C) Reflexión respecto al plano \(xy\) seguida de reflexión respecto al plano \(yz\)
+(D) El cizallamiento \(T(x, y, z) = (x + 5y,\; y - 2z,\; z)\)
+(E) Permutación cíclica de coordenadas \(T(x, y, z) = (y, z, x)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Sea \(D = \{(x, y) \in \mathbb{R}^2 : x^2 + y^2 \le 1\}\) el disco unitario cerrado (de área \(\pi\)), y sea \(T(\mathbf{x}) = A\mathbf{x}\) donde
+\[
+A = \begin{bmatrix} 3 & 1 \\ 1 & 2 \end{bmatrix}.
+\]
+¿Cuál es el área de la región elíptica inclinada \(T(D)\)?
+
+(A) \(6\pi\)
+(B) \(7\pi\)
+(C) \(4\pi\)
+(D) \(25\pi\)
+(E) \(5\pi\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Sea \(A \in M_2(\mathbb{R})\) una matriz cuyos dos vectores columna \(\mathbf{a}_1, \mathbf{a}_2\) tienen longitudes euclidianas \(\|\mathbf{a}_1\| = 4\) y \(\|\mathbf{a}_2\| = 5\). ¿Cuál es el máximo valor posible de \(|\det(A)|\), y cuándo se alcanza?
+
+(A) \(9\), alcanzado cuando \(\mathbf{a}_1\) y \(\mathbf{a}_2\) apuntan en la misma dirección
+(B) \(10\), alcanzado cuando el ángulo entre \(\mathbf{a}_1\) y \(\mathbf{a}_2\) es \(30^\circ\)
+(C) \(20\), alcanzado cuando \(\mathbf{a}_1\) y \(\mathbf{a}_2\) son perpendiculares
+(D) \(20\), alcanzado siempre que \(\det(A) > 0\) sin importar el ángulo
+(E) No hay máximo finito, porque el cizallamiento puede hacer crecer el paralelogramo indefinidamente
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Considere la familia continua de matrices
+\[
+A(t) = (1 - t)\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} + t\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} \qquad (0 \le t \le 1),
+\]
+que conecta la identidad \(I_2\) (en \(t = 0\)) con la reflexión respecto a la recta \(y = x\) (en \(t = 1\)). ¿Para qué valor de \(t \in [0, 1]\) colapsa \(A(t)\) el plano sobre una recta?
+
+(A) \(t = \dfrac{1}{4}\)
+(B) \(t = \dfrac{1}{2}\)
+(C) \(t = \dfrac{1}{\sqrt{2}}\)
+(D) \(t = \dfrac{2}{3}\)
+(E) \(A(t)\) es invertible para todo \(t \in [0, 1]\)
+[/BONUS]

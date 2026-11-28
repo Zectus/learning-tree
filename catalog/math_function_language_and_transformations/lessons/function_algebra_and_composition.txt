@@ -1,0 +1,262 @@
+=== SECTION 1: Pointwise algebraic combinations and their domains ===
+
+Suppose a small workshop produces \(x\) wooden tables per week. Its weekly revenue is modeled by \(R(x) = 180x - 2x^2\) and its weekly cost by \(C(x) = 400 + 60x\). To study weekly profit, we form a new function \(P(x) = R(x) - C(x)\) by subtracting the two outputs at each input \(x\). Just as real numbers can be added, subtracted, multiplied, and divided, functions can be combined pointwise to build new functions.
+
+[CALLOUT]
+id: alg-comb-def
+label: Definition
+title: Algebraic combinations of functions
+tone: key
+
+Let \(f\) and \(g\) be functions with domains \(\operatorname{Dom}(f)\) and \(\operatorname{Dom}(g)\). Their sum, difference, product, and quotient are defined pointwise by:
+
+(1) \((f + g)(x) = f(x) + g(x)\), with domain \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g)\).
+(2) \((f - g)(x) = f(x) - g(x)\), with domain \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g)\).
+(3) \((fg)(x) = f(x) \cdot g(x)\), with domain \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g)\).
+(4) \(\left(\dfrac{f}{g}\right)(x) = \dfrac{f(x)}{g(x)}\), with domain \(\{x \in \operatorname{Dom}(f) \cap \operatorname{Dom}(g) : g(x) \ne 0\}\).
+[/CALLOUT]
+
+Here the intersection symbol \(\cap\) means "in BOTH sets": to compute \(f(x) + g(x)\), the input \(x\) must be legal for \(f\) AND legal for \(g\) at the same time. For the quotient \(f/g\), [REF: alg-comb-def.4 | rule (4)] imposes one extra restriction: we must also exclude every \(x\) where \(g(x) = 0\).
+
+Let us work through a concrete example with restricted domains. Take
+\[
+f(x) = \sqrt{x + 2} \qquad \text{and} \qquad g(x) = \sqrt{5 - x}.
+\]
+Individually, \(\operatorname{Dom}(f) = [-2, \infty)\) and \(\operatorname{Dom}(g) = (-\infty, 5]\). Their overlap is the closed interval
+\[
+\operatorname{Dom}(f) \cap \operatorname{Dom}(g) = [-2, 5].
+\]
+Therefore:
+- \((f + g)(x) = \sqrt{x + 2} + \sqrt{5 - x}\) has domain \([-2, 5]\).
+- \((fg)(x) = \sqrt{x + 2}\sqrt{5 - x} = \sqrt{(x + 2)(5 - x)}\) also has domain \([-2, 5]\).
+- \(\left(\frac{f}{g}\right)(x) = \frac{\sqrt{x + 2}}{\sqrt{5 - x}}\) requires \(x \in [-2, 5]\) AND \(g(x) = \sqrt{5 - x} \ne 0\), which excludes \(x = 5\), leaving domain \([-2, 5)\).
+- \(\left(\frac{g}{f}\right)(x) = \frac{\sqrt{5 - x}}{\sqrt{x + 2}}\) excludes \(x = -2\) instead, leaving domain \((-2, 5]\).
+
+Geometrically, \((f + g)(x)\) simply adds the vertical heights of the two graphs at each \(x\) in their shared domain. In the graph below, notice how \((f + g)(x)\) exists only on the overlap \([-2, 5]\), where its height at \(x = 1\) equals \(f(1) + g(1) = \sqrt{3} + 2 \approx 3.73\).
+
+[GRAPH]
+type: function2d
+title: Pointwise sum \((f + g)(x) = \sqrt{x + 2} + \sqrt{5 - x}\) on \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g) = [-2, 5]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 6
+yrange: 0, 5
+trace: x >= -2 ? sqrt(x + 2) : (0/0) | label: \(f(x) = \sqrt{x + 2}\)
+trace: x <= 5 ? sqrt(5 - x) : (0/0) | label: \(g(x) = \sqrt{5 - x}\)
+trace: (x >= -2 and x <= 5) ? (sqrt(x + 2) + sqrt(5 - x)) : (0/0) | label: \((f + g)(x)\)
+point: 1, 1.7321 | label: \((1, f(1))\)
+point: 1, 2 | label: \((1, g(1))\)
+point: 1, 3.7321 | label: \((1, (f + g)(1))\)
+segment: 1, 0, 1, 3.7321 | dashed: true
+[/GRAPH]
+
+Watch out for a subtle simplification trap in products and quotients. Suppose \(u(x) = \sqrt{x}\) and \(v(x) = \sqrt{x}\). Their domain intersection is \([0, \infty)\), so \((uv)(x) = \sqrt{x}\cdot\sqrt{x} = x\) has domain \([0, \infty)\), NOT \((-\infty, \infty)\)—even though the simplified formula looks like \(x\), you still cannot feed \(x = -4\) into \(u\) and \(v\)!
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(f(x) = \sqrt{x - 1}\) and \(g(x) = x^2 - 9\). What is the domain of \(\left(\dfrac{f}{g}\right)(x)\)?
+
+(A) \([1, \infty)\)
+(B) \((1, 3) \cup (3, \infty)\)
+(C) \([1, 3) \cup (3, \infty)\)
+(D) \((-\infty, -3) \cup (-3, 3) \cup (3, \infty)\)
+(E) \([1, 9) \cup (9, \infty)\)
+[/QUESTION]
+
+=== SECTION 2: Function composition across formulas, tables, and graphs ===
+
+Arithmetic combinations feed the same input \(x\) into \(f\) and \(g\) side by side. A completely different way to combine two functions is to chain them in series: feed \(x\) into an inner function \(g\), take its output \(g(x)\), and feed that result into an outer function \(f\). For example, if \(g(t)\) converts Celsius temperature \(t\) to Fahrenheit and \(f(F)\) computes a heating controller's power setting from a Fahrenheit reading, then chaining them produces \(f(g(t))\), the power setting directly from Celsius.
+
+[CALLOUT]
+id: comp-def
+label: Definition
+title: Function composition
+tone: key
+
+Given two functions \(f\) and \(g\), the composite function \(f \circ g\) (read "\(f\) composed with \(g\)" or "\(f\) of \(g\)") is defined by
+\[
+(f \circ g)(x) = f(g(x)).
+\]
+The inner function \(g\) acts first on \(x\), and the outer function \(f\) acts second on \(g(x)\).
+[/CALLOUT]
+
+Notice the right-to-left reading order in [REF: comp-def | composition]: in \((f \circ g)(x) = f(g(x))\), the function closest to \(x\) acts first. Do not confuse the small open circle \(\circ\) with multiplication \(\cdot\): \((fg)(x)\) multiplies \(f(x)\) by \(g(x)\), whereas \((f \circ g)(x)\) nests \(g(x)\) inside \(f\).
+
+Let us evaluate compositions across three different representations:
+
+1. From algebraic formulas: Let \(f(x) = 2x + 1\) and \(g(x) = x^2 - 3\).
+   - \((f \circ g)(x) = f(g(x)) = f(x^2 - 3) = 2(x^2 - 3) + 1 = 2x^2 - 5\).
+   - \((g \circ f)(x) = g(f(x)) = g(2x + 1) = (2x + 1)^2 - 3 = 4x^2 + 4x - 2\).
+
+   Look at those two outputs: \(2x^2 - 5 \ne 4x^2 + 4x - 2\). In general, function composition is NOT commutative:
+   \[
+   f \circ g \ne g \circ f.
+   \]
+   Order matters, just as putting on socks then shoes is very different from putting on shoes then socks.
+
+   By contrast, composition IS associative: for any three functions \(f\), \(g\), and \(h\) (where the compositions are defined),
+   \[
+   \bigl((f \circ g) \circ h\bigr)(x) = (f \circ g)(h(x)) = f\bigl(g(h(x))\bigr) = \bigl(f \circ (g \circ h)\bigr)(x).
+   \]
+   Both groupings apply \(h\) first, then \(g\), then \(f\), so we can write \(f \circ g \circ h\) unambiguously.
+
+2. From a value table: Suppose \(f\) and \(g\) are specified only by the table below.
+
+[TABLE]
+\(x\) | \(1\) | \(2\) | \(3\) | \(4\) | \(5\)
+\(f(x)\) | \(4\) | \(5\) | \(2\) | \(1\) | \(3\)
+\(g(x)\) | \(3\) | \(1\) | \(4\) | \(2\) | \(2\)
+[/TABLE]
+
+   - To find \((f \circ g)(1)\): first read \(g(1) = 3\), then look up \(f(3) = 2\). So \((f \circ g)(1) = 2\).
+   - To find \((g \circ f)(1)\): first read \(f(1) = 4\), then look up \(g(4) = 2\).
+   - To find \((g \circ g)(1)\): first read \(g(1) = 3\), then look up \(g(3) = 4\).
+
+3. From graphs: To evaluate \((f \circ g)(a)\) from the graphs of \(f\) and \(g\), start at \(x = a\), move vertically to the graph of \(g\) to read its height \(b = g(a)\), then move to \(x = b\) on the horizontal axis and read the height \(f(b)\) on the graph of \(f\).
+
+[QUESTION 2]
+[ANSWER: B]
+Using the table of values for \(f\) and \(g\) in Section 2 above, what is the value of \((f \circ g)(2) - (g \circ f)(3)\)?
+
+(A) \(1\)
+(B) \(3\)
+(C) \(4\)
+(D) \(2\)
+(E) \(-1\)
+[/QUESTION]
+
+=== SECTION 3: Exact domains of composite functions ===
+
+Finding the domain of \(f \circ g\) is the most important—and most commonly missed—skill in function composition. For \(f(g(x))\) to produce a real number, two hurdles must BOTH be cleared in sequence:
+1. First, \(x\) must be a valid input to the inner function \(g\): \(x \in \operatorname{Dom}(g)\).
+2. Second, the intermediate output \(g(x)\) must be a valid input to the outer function \(f\): \(g(x) \in \operatorname{Dom}(f)\).
+
+[CALLOUT]
+id: comp-domain
+label: Rule
+title: Domain of a composite function
+tone: key
+
+The domain of \(f \circ g\) is
+\[
+\operatorname{Dom}(f \circ g) = \{x \in \operatorname{Dom}(g) : g(x) \in \operatorname{Dom}(f)\}.
+\]
+Always determine \(\operatorname{Dom}(f \circ g)\) BEFORE simplifying the algebraic formula for \(f(g(x))\).
+[/CALLOUT]
+
+Why does [REF: comp-domain | the rule] insist on checking the domain BEFORE simplifying? Watch two classic traps:
+
+Trap 1: Let \(f(x) = x^2\) and \(g(x) = \sqrt{x}\).
+If you naively simplify first, you get \((f \circ g)(x) = (\sqrt{x})^2 = x\) and might falsely declare the domain to be \((-\infty, \infty)\). Yet \(x = -4\) cannot even enter \(g(x) = \sqrt{x}\)! Applying [REF: comp-domain | the exact domain rule]:
+- Step 1: \(x \in \operatorname{Dom}(g) = [0, \infty)\).
+- Step 2: \(g(x) = \sqrt{x} \in \operatorname{Dom}(f) = (-\infty, \infty)\) (no further restriction).
+Hence \(\operatorname{Dom}(f \circ g) = [0, \infty)\), so \((f \circ g)(x) = x\) ONLY for \(x \ge 0\).
+
+Trap 2: Let \(f(x) = \frac{1}{x}\) and \(g(x) = \frac{1}{x}\).
+Simplifying gives \((f \circ g)(x) = \frac{1}{1/x} = x\). Yet \(x = 0\) is excluded from \(\operatorname{Dom}(g)\), so \(\operatorname{Dom}(f \circ g) = (-\infty, 0) \cup (0, \infty)\).
+
+Now let us work a full two-hurdle example where BOTH steps impose genuine restrictions. Let
+\[
+f(x) = \frac{1}{x - 2} \qquad \text{and} \qquad g(x) = \frac{3}{x + 1}.
+\]
+First find each individual domain: \(\operatorname{Dom}(f) = \{x : x \ne 2\}\) and \(\operatorname{Dom}(g) = \{x : x \ne -1\}\).
+Now apply [REF: comp-domain | the composite domain rule]:
+- Hurdle 1 (\(x \in \operatorname{Dom}(g)\)): \(x \ne -1\).
+- Hurdle 2 (\(g(x) \in \operatorname{Dom}(f)\)): we require \(g(x) \ne 2\), so solve \(\frac{3}{x + 1} = 2\):
+\[
+3 = 2(x + 1) \implies 3 = 2x + 2 \implies x = \frac{1}{2}.
+\]
+Thus we must exclude BOTH \(x = -1\) and \(x = \frac{1}{2}\), giving
+\[
+\operatorname{Dom}(f \circ g) = (-\infty, -1) \cup \left(-1, \frac{1}{2}\right) \cup \left(\frac{1}{2}, \infty\right).
+\]
+Now simplify the formula (for \(x\) in that domain):
+\[
+(f \circ g)(x) = \frac{1}{\frac{3}{x + 1} - 2} = \frac{x + 1}{3 - 2(x + 1)} = \frac{x + 1}{1 - 2x}.
+\]
+Look at what simplification hid! In the simplified fraction \(\frac{x + 1}{1 - 2x}\), the exclusion \(x \ne \frac{1}{2}\) is still visible in the denominator \(1 - 2x\), but the exclusion \(x \ne -1\) disappeared completely! Checking the domain before simplifying is the only reliable way to keep \(x = -1\) out.
+
+[GRAPH]
+type: function2d
+title: Graph of \((f \circ g)(x) = (x + 1)/(1 - 2x)\) with asymptote \(x = 1/2\) and hidden hole at \(x = -1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -6, 6
+trace: abs(x - 0.5) > 0.12 ? (x + 1)/(1 - 2*x) : (0/0) | label: \((f \circ g)(x)\)
+segment: 0.5, -6, 0.5, 6 | label: \(x = 1/2\) | dashed: true
+point: -1, 0 | label: open (-1, 0)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: E]
+Let \(f(x) = \sqrt{x - 4}\) and \(g(x) = x^2\). What is the exact domain of \(f \circ g\)?
+
+(A) \([4, \infty)\)
+(B) \([2, \infty)\)
+(C) \((-\infty, \infty)\)
+(D) \((-2, 2)\)
+(E) \((-\infty, -2] \cup [2, \infty)\)
+[/QUESTION]
+
+=== SECTION 4: Decomposing nested functions into layers ===
+
+In algebra and later in calculus, you often need to run composition in reverse: take a complicated formula \(H(x)\) and express it as a composition \(H(x) = (f \circ g)(x) = f(g(x))\) of simpler functions \(f\) and \(g\) (neither of which is the trivial identity function \(I(x) = x\)).
+
+The guiding question is simple: if you substituted a number for \(x\) on a calculator, what expression would you compute FIRST (inner function \(g\)), and what operation would you perform LAST on that result (outer function \(f\))?
+
+Work through two examples:
+1. \(H(x) = (3x - 1)^3 + 2\).
+   - Natural split: compute \(g(x) = 3x - 1\) first, then cube and add \(2\) with \(f(u) = u^3 + 2\). Check: \(f(g(x)) = (3x - 1)^3 + 2\).
+   - Alternative split: compute \(g_2(x) = (3x - 1)^3\) first, then add \(2\) with \(f_2(u) = u + 2\). Check: \(f_2(g_2(x)) = (3x - 1)^3 + 2\).
+
+2. \(K(x) = \dfrac{1}{\sqrt{2x + 5}}\).
+   - Two-layer split A: \(g(x) = 2x + 5\) and \(f(u) = \frac{1}{\sqrt{u}}\).
+   - Two-layer split B: \(g(x) = \sqrt{2x + 5}\) and \(f(u) = \frac{1}{u}\).
+   - Three-layer split: \(h(x) = 2x + 5\), \(g(u) = \sqrt{u}\), and \(f(v) = \frac{1}{v}\), giving \(K = f \circ g \circ h\).
+
+As these examples show, function decomposition is generally NOT unique: there are several valid ways to peel off layers, and you choose whichever peel best matches the problem at hand.
+
+[QUESTION 4]
+[ANSWER: A]
+Which pair of functions \(f\) and \(g\) satisfies \((f \circ g)(x) = \dfrac{5}{(x^2 + 3)^2} - 1\)?
+
+(A) \(f(x) = \dfrac{5}{x^2} - 1\) and \(g(x) = x^2 + 3\)
+(B) \(f(x) = x^2 + 3\) and \(g(x) = \dfrac{5}{x^2} - 1\)
+(C) \(f(x) = \dfrac{5}{x} - 1\) and \(g(x) = x^2 + 3\)
+(D) \(f(x) = \dfrac{5}{(x + 3)^2} - 1\) and \(g(x) = x^2 + 3\)
+(E) \(f(x) = \dfrac{5}{x^2 - 1}\) and \(g(x) = x^2 + 3\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Let \(f(x) = \dfrac{1}{x - 3}\) and \(g(x) = \dfrac{2}{x}\). What is the exact domain of \(f \circ g\)?
+
+(A) \((-\infty, 3) \cup (3, \infty)\)
+(B) \((-\infty, 0) \cup (0, \infty)\)
+(C) \(\left(-\infty, \frac{2}{3}\right) \cup \left(\frac{2}{3}, \infty\right)\)
+(D) \((-\infty, 0) \cup \left(0, \frac{2}{3}\right) \cup \left(\frac{2}{3}, \infty\right)\)
+(E) \((-\infty, 0) \cup (0, 3) \cup (3, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(f(x) = 3x - 2\) and \(g(x) = 2x + c\), where \(c\) is a constant. For what value of \(c\) do \(f\) and \(g\) commute, meaning \((f \circ g)(x) = (g \circ f)(x)\) for all real \(x\)?
+
+(A) \(c = 0\)
+(B) \(c = -2\)
+(C) \(c = -1\)
+(D) \(c = 1\)
+(E) No constant \(c\) makes \(f \circ g = g \circ f\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Let \(f(x) = \sqrt{4 - x}\) and \(g(x) = \sqrt{x + 1}\). What is the exact domain of \(f \circ g\)?
+
+(A) \([-1, 4]\)
+(B) \([-1, 15]\)
+(C) \([0, 15]\)
+(D) \([-1, 16]\)
+(E) \((-\infty, 15]\)
+[/BONUS]

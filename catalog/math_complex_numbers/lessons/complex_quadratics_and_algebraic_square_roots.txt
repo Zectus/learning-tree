@@ -1,0 +1,221 @@
+=== SECTION 1: Real-coefficient quadratics with negative discriminant ===
+
+In real algebra, completing the square on a quadratic equation \(az^2 + bz + c = 0\) (with \(a, b, c \in \mathbb{R}\) and \(a \ne 0\)) turns it into
+\[
+\left(z + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2}.
+\]
+When the discriminant \(\Delta = b^2 - 4ac\) is negative, real algebra stops and declares that there are no solutions. In \(\mathbb{C}\), however, the negative real number \(\Delta = -(4ac - b^2)\) has two pure imaginary square roots, \(\pm i\sqrt{4ac - b^2}\). Taking square roots of both sides and solving for \(z\) immediately gives two distinct non-real roots:
+\[
+z = \frac{-b \pm i\sqrt{4ac - b^2}}{2a} = -\frac{b}{2a} \pm \frac{\sqrt{4ac - b^2}}{2a}\,i.
+\]
+Look at the structure of those two roots: they have the exact same real part \(p = -\frac{b}{2a}\) and opposite imaginary parts \(\pm q = \pm \frac{\sqrt{4ac - b^2}}{2a}\). That is, they form a complex conjugate pair \(p + qi\) and \(p - qi\).
+
+[CALLOUT]
+id: real-quad-roots
+label: Result
+title: Real quadratics with negative discriminant and Vieta's relations
+tone: key
+
+Let \(az^2 + bz + c = 0\) with \(a, b, c \in \mathbb{R}\), \(a \ne 0\), and \(\Delta = b^2 - 4ac < 0\).
+
+(1) The equation has two non-real roots forming a conjugate pair:
+\[
+z_1 = p + qi, \qquad z_2 = p - qi, \qquad \text{where } p = -\frac{b}{2a} \text{ and } q = \frac{\sqrt{4ac - b^2}}{2a}.
+\]
+(2) The polynomial factors completely over \(\mathbb{C}\) as \(az^2 + bz + c = a(z - z_1)(z - z_2)\).
+(3) Vieta's relations hold unchanged: \(z_1 + z_2 = -\frac{b}{a}\) and \(z_1 z_2 = \frac{c}{a}\).
+[/CALLOUT]
+
+Let us verify [REF: real-quad-roots.3 | Vieta's relations] directly from \(z_1 = p + qi\) and \(z_2 = p - qi\):
+\[
+z_1 + z_2 = 2p = -\frac{b}{a}, \qquad z_1 z_2 = p^2 + q^2 = \frac{b^2}{4a^2} + \frac{4ac - b^2}{4a^2} = \frac{4ac}{4a^2} = \frac{c}{a}.
+\]
+Conversely, whenever we expand \(a(z - z_1)(z - z_2) = az^2 - a(z_1 + z_2)z + a z_1 z_2\), matching coefficients shows that Vieta's relations hold for EVERY quadratic over \(\mathbb{C}\), even when \(a, b, c\) are themselves non-real complex numbers.
+
+For a worked example, solve \(2z^2 - 4z + 5 = 0\). Here \(a = 2\), \(b = -4\), \(c = 5\), so \(\Delta = (-4)^2 - 4(2)(5) = 16 - 40 = -24 < 0\). Therefore
+\[
+z = \frac{4 \pm i\sqrt{24}}{4} = \frac{4 \pm 2i\sqrt{6}}{4} = 1 \pm \frac{\sqrt{6}}{2}\,i.
+\]
+Checking Vieta's relations: the sum of the roots is \(2 = -(-4)/2\), and the product is \(1^2 + \left(\frac{\sqrt{6}}{2}\right)^2 = 1 + \frac{3}{2} = \frac{5}{2} = c/a\).
+
+[QUESTION 1]
+[ANSWER: A]
+A quadratic polynomial \(z^2 + bz + c\) with real coefficients \(b, c \in \mathbb{R}\) has \(z_1 = 3 - 2i\) as one of its roots. What is the value of \(b + c\)?
+
+(A) \(7\)
+(B) \(19\)
+(C) \(-1\)
+(D) \(11\)
+(E) \(-19\)
+[/QUESTION]
+
+=== SECTION 2: Algebraic square roots of a complex number ===
+
+What if the quadratic equation has complex coefficients—for instance, \(z^2 - (2 + i)z + (1 + 3i) = 0\)? Completing the square still works without change, because complex arithmetic obeys the same distributive and associative laws as real arithmetic:
+\[
+\left(z + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2}.
+\]
+The new obstacle is clear: the discriminant \(\Delta = b^2 - 4ac\) is now typically a non-real complex number \(\alpha + \beta i\) (with \(\beta \ne 0\)). To finish solving the quadratic, we need a reliable algebraic method to find all complex numbers \(w = x + yi\) (with \(x, y \in \mathbb{R}\)) satisfying
+\[
+w^2 = (x + yi)^2 = \alpha + \beta i.
+\]
+
+Let us derive the method directly from what is unknown. Expanding the left-hand side gives
+\[
+(x^2 - y^2) + 2xy\,i = \alpha + \beta i.
+\]
+Equating real and imaginary parts produces two real equations in \(x\) and \(y\):
+\[
+x^2 - y^2 = \alpha, \qquad 2xy = \beta.
+\]
+One could substitute \(y = \beta/(2x)\) into the first equation to obtain a quartic equation in \(x\), but there is a far cleaner bridge using the multiplicative modulus law \(|w^2| = |w|^2\):
+\[
+x^2 + y^2 = |x + yi|^2 = |(x + yi)^2| = |\alpha + \beta i| = \sqrt{\alpha^2 + \beta^2}.
+\]
+This single observation turns the problem into two linear equations for \(x^2\) and \(y^2\):
+\[
+x^2 + y^2 = \sqrt{\alpha^2 + \beta^2}, \qquad x^2 - y^2 = \alpha.
+\]
+Adding the two equations eliminates \(y^2\) and gives \(2x^2 = \sqrt{\alpha^2 + \beta^2} + \alpha\); subtracting eliminates \(x^2\) and gives \(2y^2 = \sqrt{\alpha^2 + \beta^2} - \alpha\). Because \(\sqrt{\alpha^2 + \beta^2} \ge |\alpha|\), both right-hand sides are nonnegative, so we obtain unique nonnegative values for \(|x|\) and \(|y|\).
+
+There is one crucial final step. Knowing \(|x|\) and \(|y|\) alone suggests four sign combinations \((\pm |x|, \pm |y|)\), yet squaring a complex number can only have two solutions, namely \(w\) and \(-w\). Where did the extra two combinations come from? From squaring when we used the modulus equation, which discarded the sign of \(\beta\). Returning to \(2xy = \beta\) resolves the ambiguity completely:
+- If \(\beta > 0\), then \(xy > 0\), so \(x\) and \(y\) must have the same sign: \(w = \pm(|x| + |y|i)\).
+- If \(\beta < 0\), then \(xy < 0\), so \(x\) and \(y\) must have opposite signs: \(w = \pm(|x| - |y|i)\).
+
+[CALLOUT]
+id: alg-sqrt-method
+label: Method
+title: Algebraic square roots of \(\alpha + \beta i\) (\(\beta \ne 0\))
+tone: key
+
+To find all \(w = x + yi\) (\(x, y \in \mathbb{R}\)) satisfying \(w^2 = \alpha + \beta i\) with \(\beta \ne 0\):
+
+(1) Compute the modulus \(R = \sqrt{\alpha^2 + \beta^2}\).
+(2) Solve \(x^2 = \frac{R + \alpha}{2}\) and \(y^2 = \frac{R - \alpha}{2}\) for the nonnegative magnitudes \(|x|\) and \(|y|\).
+(3) Match signs using \(2xy = \beta\): if \(\beta > 0\), take \(w = \pm(|x| + |y|i)\); if \(\beta < 0\), take \(w = \pm(|x| - |y|i)\).
+[/CALLOUT]
+
+Let us run [REF: alg-sqrt-method | this three-step method] on \(w^2 = 5 + 12i\). Here \(\alpha = 5\) and \(\beta = 12 > 0\).
+- Step 1: \(R = \sqrt{5^2 + 12^2} = \sqrt{169} = 13\).
+- Step 2: \(x^2 = \frac{13 + 5}{2} = 9 \implies |x| = 3\), and \(y^2 = \frac{13 - 5}{2} = 4 \implies |y| = 2\).
+- Step 3: Because \(\beta = 12 > 0\), \(x\) and \(y\) have the same sign, so \(w = \pm(3 + 2i)\), that is, \(3 + 2i\) and \(-3 - 2i\).
+Checking: \((3 + 2i)^2 = 9 + 12i - 4 = 5 + 12i\), and \((-3 - 2i)^2 = 5 + 12i\).
+
+What if \(\alpha + \beta i\) is pure imaginary, such as \(w^2 = 2i\)? Here \(\alpha = 0\) and \(\beta = 2 > 0\), so \(R = 2\), \(x^2 = 1\), \(y^2 = 1\), and matching the positive sign of \(\beta\) gives \(w = \pm(1 + i)\). Check: \((1 + i)^2 = 1 + 2i - 1 = 2i\). And if \(\beta = 0\), we are back in the real case: \(\alpha > 0\) gives \(\pm\sqrt{\alpha}\), \(\alpha < 0\) gives \(\pm i\sqrt{|\alpha|}\), and \(\alpha = 0\) gives the single root \(w = 0\).
+
+[CALLOUT]
+id: sqrt-notation-caution
+label: Common pitfall
+title: Avoid careless radical notation for non-real numbers
+tone: caution
+
+For a non-real complex number \(\alpha + \beta i\), neither of its two square roots \(w\) and \(-w\) is "positive" because \(\mathbb{C}\) is not ordered. Always refer to the two square roots \(\pm w\) explicitly (or name one root \(w\) and write \(\pm w\)), rather than assuming a single unambiguous value for \(\sqrt{\alpha + \beta i}\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: A]
+What are the two complex square roots of \(-7 - 24i\)?
+
+(A) \(3 - 4i\) and \(-3 + 4i\)
+(B) \(3 + 4i\) and \(-3 - 4i\)
+(C) \(4 - 3i\) and \(-4 + 3i\)
+(D) \(3 - 4i\) and \(3 + 4i\)
+(E) \(4 + 3i\) and \(-4 - 3i\)
+[/QUESTION]
+
+=== SECTION 3: Solving general quadratic equations over \(\mathbb{C}\) ===
+
+We can now solve ANY quadratic equation \(az^2 + bz + c = 0\) with arbitrary complex coefficients \(a, b, c \in \mathbb{C}\) (\(a \ne 0\)). Completing the square yields the exact same quadratic formula as before:
+\[
+z = \frac{-b \pm w}{2a},
+\]
+where \(\pm w\) are the two complex square roots of the discriminant \(\Delta = b^2 - 4ac\) computed via [REF: alg-sqrt-method | the algebraic square-root method], and the final division by \(2a\) is carried out using complex division when \(a\) is non-real.
+
+There is one crucial structural contrast between real-coefficient quadratics and complex-coefficient quadratics: when \(a, b, c\) are NOT all real, the two roots \(z_1\) and \(z_2\) do NOT have to be complex conjugates of each other! Indeed, given any two complex numbers \(z_1, z_2 \in \mathbb{C}\) whatsoever, the monic quadratic \((z - z_1)(z - z_2) = z^2 - (z_1 + z_2)z + z_1 z_2 = 0\) has \(z_1\) and \(z_2\) as its roots.
+
+Let us work through a full example with non-real coefficients: solve
+\[
+z^2 - (1 + 5i)z + (-6 + 2i) = 0.
+\]
+Compute the discriminant \(\Delta = b^2 - 4ac\):
+\[
+\Delta = (1 + 5i)^2 - 4(-6 + 2i) = (1 + 10i - 25) + 24 - 8i = 2i.
+\]
+In Section 2 we already found the two square roots of \(2i\): they are \(w = \pm(1 + i)\). Applying the quadratic formula with \(a = 1\) and \(b = -(1 + 5i)\) gives
+\[
+z = \frac{(1 + 5i) \pm (1 + i)}{2}.
+\]
+Taking the plus sign gives \(z_1 = \frac{2 + 6i}{2} = 1 + 3i\); taking the minus sign gives \(z_2 = \frac{4i}{2} = 2i\). Notice that \(z_1 = 1 + 3i\) and \(z_2 = 2i\) are not conjugates, yet Vieta's relations still hold: \(z_1 + z_2 = 1 + 5i = -b/a\), and \(z_1 z_2 = (1 + 3i)(2i) = -6 + 2i = c/a\). Thus the complete factorization over \(\mathbb{C}\) is
+\[
+z^2 - (1 + 5i)z + (-6 + 2i) = \bigl(z - (1 + 3i)\bigr)(z - 2i).
+\]
+
+Now let us work an example where the leading coefficient \(a\) is non-real, so complex division enters the final step. Solve
+\[
+(1 - i)z^2 - 2z + (1 + i) = 0.
+\]
+Here \(a = 1 - i\), \(b = -2\), \(c = 1 + i\). The discriminant is
+\[
+\Delta = (-2)^2 - 4(1 - i)(1 + i) = 4 - 4(1 + 1) = -4.
+\]
+The square roots of \(-4\) are \(\pm 2i\). Hence
+\[
+z = \frac{2 \pm 2i}{2(1 - i)} = \frac{1 \pm i}{1 - i}.
+\]
+With the minus sign, \(z_1 = \frac{1 - i}{1 - i} = 1\). With the plus sign, multiply numerator and denominator by \(1 + i\):
+\[
+z_2 = \frac{(1 + i)(1 + i)}{(1 - i)(1 + i)} = \frac{2i}{2} = i.
+\]
+Checking Vieta's relations: \(z_1 + z_2 = 1 + i\), while \(-\frac{b}{a} = \frac{2}{1 - i} = \frac{2(1 + i)}{2} = 1 + i\); and \(z_1 z_2 = i\), while \(\frac{c}{a} = \frac{1 + i}{1 - i} = i\). Both match, giving the factorization \((1 - i)z^2 - 2z + (1 + i) = (1 - i)(z - 1)(z - i)\).
+
+[TABLE]
+Coefficient type of \(az^2 + bz + c = 0\) | Discriminant \(\Delta = b^2 - 4ac\) | Root structure over \(\mathbb{C}\)
+Real \(a, b, c\) with \(\Delta > 0\) | Positive real | Two distinct real roots
+Real \(a, b, c\) with \(\Delta = 0\) | Zero | One repeated real root
+Real \(a, b, c\) with \(\Delta < 0\) | Negative real | One non-real conjugate pair \(p \pm qi\)
+Non-real coefficients | Any \(\Delta \in \mathbb{C}\) | Two complex roots (repeated if \(\Delta = 0\)), generally not conjugates
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+What are the two roots of \(z^2 - (3 + i)z + (4 + 3i) = 0\)?
+
+(A) \(2 - i\) and \(1 + 2i\)
+(B) \(2 + i\) and \(1 - 2i\)
+(C) \(2 - i\) and \(2 + i\)
+(D) \(1 + 2i\) and \(-1 + 2i\)
+(E) \(3 - i\) and \(i\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Find both roots of \(iz^2 + (2 - 3i)z - 6 = 0\).
+
+(A) \(3\) and \(2i\)
+(B) \(-3\) and \(-2i\)
+(C) \(3\) and \(-2i\)
+(D) \(3i\) and \(2\)
+(E) \(3i\) and \(-2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Find all four complex solutions of the equation \(z^4 + 4 = 0\).
+
+(A) \(1 + i\), \(1 - i\), \(-1 + i\), and \(-1 - i\)
+(B) \(\sqrt{2}\), \(-\sqrt{2}\), \(i\sqrt{2}\), and \(-i\sqrt{2}\)
+(C) \(2\), \(-2\), \(2i\), and \(-2i\)
+(D) \(1 + i\) and \(-1 - i\) only
+(E) \(\sqrt{2} + i\sqrt{2}\), \(\sqrt{2} - i\sqrt{2}\), \(-\sqrt{2} + i\sqrt{2}\), and \(-\sqrt{2} - i\sqrt{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+For which real value(s) of \(k\) does the quadratic equation \(z^2 - (3 + ki)z + (2 + 6i) = 0\) have at least one real root?
+
+(A) \(k = 3\) and \(k = 6\)
+(B) \(k = 3\) only
+(C) \(k = 6\) only
+(D) \(k = -3\) and \(k = -6\)
+(E) No real value of \(k\)
+[/BONUS]

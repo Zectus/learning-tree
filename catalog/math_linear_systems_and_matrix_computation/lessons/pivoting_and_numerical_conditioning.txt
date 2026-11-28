@@ -1,0 +1,257 @@
+=== SECTION 1: How exact algebra fails in finite precision ===
+
+In exact arithmetic, Gaussian elimination only requires a row swap when a pivot is literally \(0\). On a real computer—which stores every number to a fixed number of significant digits (such as \(7\) decimal digits in single precision or about \(16\) in double precision)—a TINY nonzero pivot can be far more dangerous than a zero pivot! A zero pivot halts the algorithm loudly; a tiny pivot silently destroys every digit of the answer.
+
+Watch this catastrophe happen in \(3\)-significant-digit rounding arithmetic on a completely ordinary, well-behaved \(2 \times 2\) system:
+\[
+\begin{bmatrix} 0.0001 & 1 \\ 1 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}.
+\]
+First find the EXACT solution for comparison. Subtracting \(10000\) times row \(1\) from row \(2\) yields \(-9999 x_2 = -9998\), so
+\[
+x_2 = \frac{9998}{9999} \approx 0.999900, \qquad
+x_1 = \frac{1 - x_2}{0.0001} = \frac{10000}{9999} \approx 1.000100.
+\]
+Rounded to \(3\) significant digits, the true answer is \((x_1, x_2) = (1.00, 1.00)\).
+
+Now run Gaussian elimination WITHOUT pivoting, rounding the result of EVERY arithmetic operation to \(3\) significant digits (standard floating-point model):
+1. Multiplier: \(l_{21} = 1 / 0.0001 = 10000 = 1.00 \times 10^4\).
+2. Update entry \((2, 2)\): \(1 - 10000(1) = -9999 \xrightarrow{\text{3 sig figs}} -1.00 \times 10^4\).
+3. Update right-hand side \(b_2\): \(2 - 10000(1) = -9998 \xrightarrow{\text{3 sig figs}} -1.00 \times 10^4\).
+The reduced system in \(3\)-digit arithmetic is
+\[
+\begin{bmatrix} 0.0001 & 1.00 \\ 0 & -1.00 \times 10^4 \end{bmatrix} \begin{bmatrix} \hat{x}_1 \\ \hat{x}_2 \end{bmatrix} = \begin{bmatrix} 1.00 \\ -1.00 \times 10^4 \end{bmatrix}.
+\]
+4. Back-substitute:
+- From row \(2\): \(\hat{x}_2 = (-1.00 \times 10^4) / (-1.00 \times 10^4) = 1.00\).
+- From row \(1\): \(0.0001 \hat{x}_1 + 1.00(1.00) = 1.00 \implies 0.0001 \hat{x}_1 = 0.00 \implies \hat{x}_1 = 0.00\)!
+
+Look at that disaster: \(\hat{x}_1 = 0.00\) instead of \(1.00\)—a \(100\%\) error! Notice the exact mechanism that wiped out the answer: dividing by the tiny pivot \(0.0001\) created a massive multiplier \(l_{21} = 10^4\). When \(1 - 10^4\) and \(2 - 10^4\) were rounded to \(3\) digits, the numbers \(1\) and \(2\) from the second equation were completely swamped and erased, leaving row \(2\) carrying zero information about the original \(x_1 + x_2 = 2\)!
+
+Now solve the EXACT same system in the EXACT same \(3\)-significant-digit arithmetic, except swap rows \(1\) and \(2\) first so the larger entry \(1\) becomes the pivot:
+\[
+\begin{bmatrix} 1 & 1 \\ 0.0001 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 2 \\ 1 \end{bmatrix}.
+\]
+1. Multiplier: \(l_{21} = 0.0001 / 1 = 0.0001\) (tiny!).
+2. Update entry \((2, 2)\): \(1 - 0.0001(1) = 0.9999 \xrightarrow{\text{3 sig figs}} 1.00\).
+3. Update \(b_2\): \(1 - 0.0001(2) = 0.9998 \xrightarrow{\text{3 sig figs}} 1.00\).
+4. Back-substitute: \(\hat{x}_2 = 1.00 / 1.00 = 1.00\), and \(\hat{x}_1 = 2.00 - 1.00 = 1.00\)!
+
+Every single significant digit is now exact! Simply swapping rows before eliminating prevented the huge multiplier and saved the computation.
+
+[QUESTION 1]
+[ANSWER: C]
+Consider the system
+\[
+\begin{bmatrix} 0.0002 & 1 \\ 1 & 2 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 1 \\ 4 \end{bmatrix},
+\]
+whose exact solution rounded to \(3\) significant digits is \((2.00, 1.00)\). Using \(3\)-significant-digit rounding arithmetic after every operation, what computed pairs \((\hat{x}_1, \hat{x}_2)\) are produced WITHOUT pivoting versus WITH a row swap \(R_1 \leftrightarrow R_2\)?
+
+(A) Without pivoting: \((2.00, 1.00)\); with swap: \((2.00, 1.00)\)
+(B) Without pivoting: \((0.00, 2.00)\); with swap: \((2.00, 1.00)\)
+(C) Without pivoting: \((0.00, 1.00)\); with swap: \((2.00, 1.00)\)
+(D) Without pivoting: \((1.00, 0.00)\); with swap: \((1.00, 2.00)\)
+(E) Without pivoting: \((0.00, 0.00)\); with swap: \((2.00, 1.00)\)
+[/QUESTION]
+
+=== SECTION 2: Partial pivoting and scaled partial pivoting in \(PA = LU\) ===
+
+In the \(PA = LU\) lesson, we swapped rows only when a pivot was \(0\). To prevent large multipliers from destroying digits in finite precision, standard numerical solvers ALWAYS pivot—even when the current diagonal entry is nonzero!
+
+[CALLOUT]
+id: partial-pivoting-def
+label: Method
+title: Partial pivoting and scaled partial pivoting
+tone: key
+
+At elimination step \(k\) (clearing column \(k\) below row \(k\)):
+
+(1) Partial pivoting: scan entries \(a_{ik}\) in column \(k\) for \(i = k, k+1, \dots, m\) and choose a pivot row \(p \ge k\) maximizing the absolute value \(\lvert a_{ik} \rvert\). Swap row \(k\) and row \(p\) (updating \(U\), \(P\), and the already-recorded entries in columns \(1, \dots, k - 1\) of \(L\)). Because \(\lvert a_{ik} \rvert \le \lvert a_{pk} \rvert\) for all \(i > k\), every multiplier satisfies
+\[
+\lvert l_{ik} \rvert = \frac{\lvert a_{ik} \rvert}{\lvert a_{pk} \rvert} \le 1.
+\]
+
+(2) Scaled partial pivoting: first compute each row's scale factor \(s_i = \max_{1 \le j \le n} \lvert a_{ij} \rvert\) (the largest magnitude in row \(i\) of the original matrix \(A\)). At step \(k\), choose the row \(p \ge k\) maximizing the relative ratio \(\lvert a_{ik} \rvert / s_i\) (comparing each candidate pivot against the size of its own row), and swap rows \(k\) and \(p\) (along with their scale factors \(s_k\) and \(s_p\)).
+[/CALLOUT]
+
+Let us execute \(PA = LU\) with [REF: partial-pivoting-def.1 | partial pivoting] on a concrete \(3 \times 3\) matrix:
+\[
+A = \begin{bmatrix} 1 & 2 & 1 \\ -4 & 1 & 2 \\ 2 & -3 & 5 \end{bmatrix}.
+\]
+Start with \(P = I_3\) and unit lower-triangular \(L\) with blank subdiagonal entries.
+- Step 1 (column \(1\)): compare magnitudes \(\lvert 1 \rvert = 1\), \(\lvert -4 \rvert = 4\), \(\lvert 2 \rvert = 2\). The largest is \(4\) in row \(2\), so swap \(R_1 \leftrightarrow R_2\) in both the working matrix and \(P\):
+\[
+\begin{bmatrix} -4 & 1 & 2 \\ 1 & 2 & 1 \\ 2 & -3 & 5 \end{bmatrix}, \qquad
+P^{(1)} = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+Multipliers: \(l_{21} = 1 / (-4) = -0.25\) and \(l_{31} = 2 / (-4) = -0.5\) (both have magnitude \(\le 1\)!). Apply \(R_2 \leftarrow R_2 + 0.25 R_1\) and \(R_3 \leftarrow R_3 + 0.5 R_1\):
+\[
+U^{(1)} = \begin{bmatrix} -4 & 1 & 2 \\ 0 & 2.25 & 1.5 \\ 0 & -2.5 & 6 \end{bmatrix}, \qquad
+\text{col 1 of } L: \begin{bmatrix} 1 & 0 & 0 \\ -0.25 & 1 & 0 \\ -0.5 & * & 1 \end{bmatrix}.
+\]
+- Step 2 (column \(2\), rows \(2\)–\(3\)): compare magnitudes \(\lvert 2.25 \rvert = 2.25\) and \(\lvert -2.5 \rvert = 2.5\). The largest is \(2.5\) in row \(3\), so swap \(R_2 \leftrightarrow R_3\) in \(U^{(1)}\), in \(P^{(1)}\), AND in column \(1\) of \(L\) (swapping \(-0.25\) and \(-0.5\) while leaving the diagonal \(1\)'s untouched!):
+\[
+\begin{bmatrix} -4 & 1 & 2 \\ 0 & -2.5 & 6 \\ 0 & 2.25 & 1.5 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{bmatrix}, \qquad
+\text{col 1 of } L: \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ -0.25 & * & 1 \end{bmatrix}.
+\]
+Now compute \(l_{32} = 2.25 / (-2.5) = -0.9\) (again \(\lvert l_{32} \rvert \le 1\)!) and apply \(R_3 \leftarrow R_3 + 0.9 R_2\):
+\[
+U = \begin{bmatrix} -4 & 1 & 2 \\ 0 & -2.5 & 6 \\ 0 & 0 & 6.9 \end{bmatrix}, \qquad
+L = \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ -0.25 & -0.9 & 1 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{bmatrix}.
+\]
+Verify \(LU = PA\): row \(1\) of \(LU\) is \(\begin{bmatrix} -4 & 1 & 2 \end{bmatrix} = R_2(A)\); row \(2\) is \((-0.5)\begin{bmatrix} -4 & 1 & 2 \end{bmatrix} + \begin{bmatrix} 0 & -2.5 & 6 \end{bmatrix} = \begin{bmatrix} 2 & -3 & 5 \end{bmatrix} = R_3(A)\); row \(3\) is \((-0.25)\begin{bmatrix} -4 & 1 & 2 \end{bmatrix} + (-0.9)\begin{bmatrix} 0 & -2.5 & 6 \end{bmatrix} + \begin{bmatrix} 0 & 0 & 6.9 \end{bmatrix} = \begin{bmatrix} 1 & 2 & 1 \end{bmatrix} = R_1(A)\). Exact!
+
+Why does [REF: partial-pivoting-def.2 | scaled partial pivoting] exist if plain partial pivoting already guarantees \(\lvert l_{ik} \rvert \le 1\)? Because row scaling can FOOL plain partial pivoting! Take our Section 1 system and simply multiply equation \(1\) by \(10^5\) (changing units, say from meters to \(10^{-5}\) meters):
+\[
+\begin{bmatrix} 10 & 10^5 \\ 1 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 10^5 \\ 2 \end{bmatrix}.
+\]
+Plain partial pivoting compares \(\lvert 10 \rvert = 10\) against \(\lvert 1 \rvert = 1\), decides \(10 > 1\), does NOT swap, uses multiplier \(l_{21} = 0.1 \le 1\)—and STILL suffers the exact same catastrophe in \(3\)-digit arithmetic: \(u_{22} = \operatorname{fl}(1 - 0.1 \cdot 10^5) = -1.00 \times 10^4\), \(\tilde{b}_2 = \operatorname{fl}(2 - 0.1 \cdot 10^5) = -1.00 \times 10^4\), yielding \(\hat{x}_2 = 1.00\) and \(\hat{x}_1 = 0.00\)! Even though \(\lvert l_{21} \rvert = 0.1\) looked small, the entry \(10\) was STILL tiny relative to \(10^5\) in its own row!
+
+Now apply scaled partial pivoting:
+- Row scales: \(s_1 = \max(10, 10^5) = 10^5\), \(s_2 = \max(1, 1) = 1\).
+- Relative ratios in column \(1\):
+\[
+\text{Row 1: } \frac{\lvert 10 \rvert}{10^5} = 10^{-4}, \qquad
+\text{Row 2: } \frac{\lvert 1 \rvert}{1} = 1.
+\]
+Because \(1 > 10^{-4}\), scaled partial pivoting immediately sees that row \(1\)'s entry is tiny on its own row's scale, swaps \(R_1 \leftrightarrow R_2\), and recovers \((\hat{x}_1, \hat{x}_2) = (1.00, 1.00)\) accurately!
+
+[QUESTION 2]
+[ANSWER: D]
+Apply Gaussian elimination with plain partial pivoting to
+\[
+A = \begin{bmatrix} 2 & 2 & 5 \\ -1 & 3 & 3 \\ -4 & 4 & 8 \end{bmatrix}
+\]
+to produce \(PA = LU\) (with unit lower-triangular \(L\)). What are the permutation matrix \(P\) and lower-triangular factor \(L\)?
+
+(A) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ 0.25 & 1 & 0 \\ -0.5 & 2 & 1 \end{bmatrix}\)
+(B) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ 0.25 & 1 & 0 \\ -0.5 & 0.5 & 1 \end{bmatrix}\)
+(C) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ 0.5 & 1 & 0 \\ -0.25 & -0.5 & 1 \end{bmatrix}\)
+(D) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ 0.25 & 0.5 & 1 \end{bmatrix}\)
+(E) \(P = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ 0.25 & 0.5 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+At the first elimination step (column \(1\)) of
+\[
+A = \begin{bmatrix} 5 & 5000 & 10 \\ 3 & 6 & 1 \\ -2 & 1 & 0 \end{bmatrix},
+\]
+which row is chosen as the pivot row by plain partial pivoting, and which row is chosen by scaled partial pivoting?
+
+(A) Plain partial pivoting: Row \(1\); scaled partial pivoting: Row \(2\)
+(B) Plain partial pivoting: Row \(1\); scaled partial pivoting: Row \(3\)
+(C) Plain partial pivoting: Row \(3\); scaled partial pivoting: Row \(1\)
+(D) Plain partial pivoting: Row \(1\); scaled partial pivoting: Row \(1\)
+(E) Plain partial pivoting: Row \(2\); scaled partial pivoting: Row \(3\)
+[/QUESTION]
+
+=== SECTION 3: Ill-conditioned systems and the small-residual trap ===
+
+In Section 1, the system \(\begin{bmatrix} 0.0001 & 1 \\ 1 & 1 \end{bmatrix} \mathbf{x} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}\) was completely WELL-CONDITIONED: its two equations represent nearly perpendicular lines (slopes \(-0.0001\) and \(-1\)), so tiny changes in the input data produce tiny changes in the exact solution. The failure without pivoting was algorithmic instability—a bad elimination order, completely cured by pivoting.
+
+Now contrast that with an intrinsically ILL-CONDITIONED system, where the problem itself is hypersensitive to tiny changes in \(A\) or \(\mathbf{b}\), EVEN IN EXACT ARITHMETIC! Consider the \(2 \times 2\) system
+\[
+\begin{bmatrix} 1 & 1 \\ 1 & 1.05 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 2 \\ 2.05 \end{bmatrix}.
+\]
+The two lines \(x_1 + x_2 = 2\) (slope \(-1\)) and \(x_1 + 1.05 x_2 = 2.05\) (slope \(-1/1.05 \approx -0.952\)) are nearly parallel! At \(d = 0\), the exact intersection is \((x_1, x_2) = (1, 1)\).
+
+Now perturb the second right-hand-side entry by a tiny amount \(d\): \(\mathbf{b}(d) = \begin{bmatrix} 2 \\ 2.05 + d \end{bmatrix}\). Subtracting equation \(1\) from equation \(2\) gives \(0.05 x_2 = 0.05 + d\), so the EXACT solution of the perturbed system is
+\[
+x_2 = 1 + 20 d, \qquad x_1 = 1 - 20 d.
+\]
+Every tiny perturbation \(d\) is amplified by a factor of \(20\)! Setting \(d = 0.05\) changes \(b_2\) by less than \(2.5\%\) (from \(2.05\) to \(2.10\)), yet shifts the exact intersection from \((1, 1)\) all the way to \((0, 2)\)—a \(100\%\) change in both coordinates! And if \(1.05\) were \(1.001\), the amplification factor would jump from \(20\) to \(1000\)!
+
+Drag the slider \(d\) below: watch how the second line barely appears to move, while the intersection shoots wildly along the first line.
+
+[GRAPH]
+type: function2d
+title: Near-parallel lines amplify a tiny shift \(d\) in \(b_2\) by \(20\times\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+xrange: -1, 3
+yrange: -1, 3
+aspect: equal
+trace: 2 - x | label: \(x_1 + x_2 = 2\) | color: #2563eb
+trace: (2.05 + d - x) / 1.05 | label: \(x_1 + 1.05 x_2 = 2.05 + d\) | color: #dc2626
+point: 1, 1 | label: \((1, 1)\) | color: #059669
+point: 1 - 20*d, 1 + 20*d | label: perturbed | color: #dc2626
+segment: 1, 1, 1 - 20*d, 1 + 20*d | color: #6b7280 | dashed: true
+slider: d | range: -0.05, 0.05 | init: 0.04 | step: 0.01
+[/GRAPH]
+
+No pivoting strategy can erase intrinsic ill-conditioning: pivoting prevents the algorithm from injecting unnecessary extra error, but once input measurements or rounding introduce even a tiny perturbation into \(A\) or \(\mathbf{b}\), the EXACT solution of the perturbed problem has already moved drastically. (Formal quantitative measurement of this sensitivity via matrix-norm condition numbers \(\kappa(A)\) and singular values is developed in later numerical linear algebra and inner-product modules.)
+
+Ill-conditioning also produces one of the most dangerous traps in practical computation: trusting the residual blindly!
+
+[CALLOUT]
+id: small-residual-trap
+label: Common pitfall
+title: A tiny residual does NOT guarantee an accurate solution
+tone: caution
+
+Given a candidate solution \(\hat{\mathbf{x}}\) to \(A\mathbf{x} = \mathbf{b}\), its residual vector is \(\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}}\) and its true error is \(\mathbf{e} = \mathbf{x} - \hat{\mathbf{x}}\). They are linked by
+\[
+\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}} = A\mathbf{x} - A\hat{\mathbf{x}} = A\mathbf{e}.
+\]
+When \(A\) is ill-conditioned (close to a singular matrix), there exist large nonzero vectors \(\mathbf{e}\) that \(A\) nearly annihilates, making \(A\mathbf{e}\) tiny even when \(\mathbf{e}\) is huge! Therefore a small residual \(\mathbf{r}\) proves only that \(\hat{\mathbf{x}}\) solves a nearby problem \(A\hat{\mathbf{x}} = \mathbf{b} - \mathbf{r}\)—NOT that \(\hat{\mathbf{x}}\) is close to the true solution \(\mathbf{x}\).
+[/CALLOUT]
+
+See [REF: small-residual-trap | this trap] in action on our exact \(2 \times 2\) system \(A = \begin{bmatrix} 1 & 1 \\ 1 & 1.05 \end{bmatrix}\), \(\mathbf{b} = \begin{bmatrix} 2 \\ 2.05 \end{bmatrix}\) (true solution \(\mathbf{x} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\)). Suppose someone hands you the terribly inaccurate approximation \(\hat{\mathbf{x}} = \begin{bmatrix} 0 \\ 2 \end{bmatrix}\) (with huge error \(\mathbf{e} = \mathbf{x} - \hat{\mathbf{x}} = \begin{bmatrix} 1 \\ -1 \end{bmatrix}\), \(100\%\) off in every component!). Compute its residual:
+\[
+\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}}
+= \begin{bmatrix} 2 \\ 2.05 \end{bmatrix} - \begin{bmatrix} 1 & 1 \\ 1 & 1.05 \end{bmatrix} \begin{bmatrix} 0 \\ 2 \end{bmatrix}
+= \begin{bmatrix} 2 \\ 2.05 \end{bmatrix} - \begin{bmatrix} 2 \\ 2.10 \end{bmatrix}
+= \begin{bmatrix} 0 \\ -0.05 \end{bmatrix}!
+\]
+The residual is \(20\) times smaller than the true error because \(\mathbf{e} = \begin{bmatrix} 1 \\ -1 \end{bmatrix}\) lies right in the null space of the nearby singular matrix \(\begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}\)! Plugging \(\hat{\mathbf{x}}\) back into \(A\mathbf{x} = \mathbf{b}\) and seeing a tiny discrepancy can lull an unwary solver into trusting a completely wrong answer.
+
+[TABLE]
+Failure mode | Root cause | Diagnostic clue | Remedy
+Algorithmic instability (poor pivot order) | Tiny pivot creates huge multipliers, swamping digits during elimination | Well-conditioned matrix, yet unpivoted elimination loses accuracy while pivoted elimination succeeds | Use partial pivoting (or scaled partial pivoting when row scales vary wildly)
+Intrinsic ill-conditioning | Matrix \(A\) is close to singular (nearly parallel equations / nearly dependent columns) | Tiny perturbations in \(A\) or \(\mathbf{b}\) move the exact solution wildly; small residual hides huge error | Higher precision, problem reformulation, or regularization (pivoting alone cannot remove sensitivity)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Consider the system
+\[
+A\mathbf{x} = \mathbf{b}, \qquad
+A = \begin{bmatrix} 1 & 2 \\ 1 & 2.01 \end{bmatrix}, \qquad
+\mathbf{b} = \begin{bmatrix} 3 \\ 3.01 \end{bmatrix},
+\]
+whose exact solution is \(\mathbf{x} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\). A student tests the candidate \(\hat{\mathbf{x}} = \begin{bmatrix} 3 \\ 0 \end{bmatrix}\) by computing the residual \(\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}}\). What is \(\mathbf{r}\), and what conclusion follows?
+
+(A) \(\mathbf{r} = \begin{bmatrix} 0 \\ 0.01 \end{bmatrix}\); even though \(\mathbf{r}\) is tiny, the true error \(\mathbf{x} - \hat{\mathbf{x}} = \begin{bmatrix} -2 \\ 1 \end{bmatrix}\) is huge, illustrating why a small residual does not guarantee an accurate solution for an ill-conditioned matrix
+(B) \(\mathbf{r} = \begin{bmatrix} 0 \\ 0.01 \end{bmatrix}\); because every entry of \(\mathbf{r}\) has magnitude at most \(0.01\), \(\hat{\mathbf{x}}\) must be within \(0.01\) of the true solution
+(C) \(\mathbf{r} = \begin{bmatrix} 0 \\ -0.01 \end{bmatrix}\); because \(\mathbf{r} \neq \mathbf{0}\), the matrix \(A\) must be singular
+(D) \(\mathbf{r} = \begin{bmatrix} -2 \\ 1 \end{bmatrix}\); the residual always equals the true error \(\mathbf{x} - \hat{\mathbf{x}}\)
+(E) \(\mathbf{r} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}\); the system has infinitely many solutions
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Consider the exact system
+\[
+\begin{bmatrix} 1 & 1 \\ 1 & 1.01 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 2 \\ 2.01 \end{bmatrix},
+\]
+whose exact solution is \(\mathbf{x} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\). If the \((2, 2)\) entry of the coefficient matrix is perturbed by just \(-0.005\) (changing \(1.01\) to \(1.005\), a change of less than \(0.5\%\)) while \(\mathbf{b}\) stays unchanged, what is the exact solution of the perturbed system?
+
+(A) \(\begin{bmatrix} 1.005 \\ 0.995 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0.995 \\ 1.005 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 2 \\ 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 \\ 2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0.5 \\ 1.5 \end{bmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose an invertible \(n \times n\) matrix \(A\) is factored as \(PA = LU\) using partial pivoting in finite-precision arithmetic and then used to solve \(A\mathbf{x} = \mathbf{b}\). Which statement is TRUE?
+
+(A) Partial pivoting guarantees \(\lvert l_{ij} \rvert \le 1\) for all entries of \(L\) and eliminates sensitivity to input perturbations even when \(A\) is ill-conditioned
+(B) Partial pivoting guarantees \(\lvert l_{ij} \rvert \le 1\) for all entries of \(L\), preventing large elimination multipliers, yet if \(A\) is intrinsically ill-conditioned, tiny rounding or input perturbations can still produce large errors in the computed solution
+(C) Partial pivoting guarantees that every diagonal pivot entry of \(U\) satisfies \(\lvert u_{ii} \rvert \ge 1\)
+(D) Partial pivoting guarantees that whenever the residual \(\mathbf{b} - A\hat{\mathbf{x}}\) is small, the solution error \(\mathbf{x} - \hat{\mathbf{x}}\) must also be small
+(E) Partial pivoting is only needed when a literal \(0\) appears in a pivot position; any nonzero pivot yields identical floating-point accuracy
+[/BONUS]

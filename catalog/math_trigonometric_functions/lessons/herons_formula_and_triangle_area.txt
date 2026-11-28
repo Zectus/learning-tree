@@ -1,0 +1,207 @@
+=== SECTION 1: Finding triangle area directly from three side lengths ===
+
+Suppose a land surveyor measures the three boundary fences of a triangular field—say \(a = 13\text{ m}\), \(b = 14\text{ m}\), and \(c = 15\text{ m}\)—without measuring a single angle. You ALREADY know one way to compute its area: use the Law of Cosines to find \(\cos C\), recover an approximate angle \(C\), and plug into the SAS area formula \(K = \frac{1}{2}ab\sin C\). Yet going through an approximate angle seems strangely indirect when the area depends purely on the three side lengths \(a, b, c\)!
+
+Can we eliminate angle \(C\) algebraically once and for all to obtain a direct, exact formula for \(K\) purely in terms of \(a, b, c\)? Yes—and the derivation uses nothing beyond \(K = \frac{1}{2}ab\sin C\), the Pythagorean identity \(\sin^2 C = 1 - \cos^2 C\), the Law of Cosines, and difference-of-squares factoring!
+
+Start with the SAS area formula and square both sides so \(\sin^2 C\) appears:
+\[
+K^2 = \frac{1}{4}a^2b^2\sin^2 C = \frac{1}{4}a^2b^2(1 - \cos^2 C) = \frac{1}{4}a^2b^2(1 + \cos C)(1 - \cos C).
+\]
+Now substitute the Law of Cosines \(\cos C = \frac{a^2 + b^2 - c^2}{2ab}\) into each factor separately. Look how both numerators collapse into perfect squares minus squares:
+\[
+1 + \cos C = 1 + \frac{a^2 + b^2 - c^2}{2ab} = \frac{a^2 + 2ab + b^2 - c^2}{2ab} = \frac{(a + b)^2 - c^2}{2ab} = \frac{(a + b + c)(a + b - c)}{2ab},
+\]
+\[
+1 - \cos C = 1 - \frac{a^2 + b^2 - c^2}{2ab} = \frac{2ab - a^2 - b^2 + c^2}{2ab} = \frac{c^2 - (a - b)^2}{2ab} = \frac{(c - a + b)(c + a - b)}{2ab}.
+\]
+Multiply those two fractions back into the expression for \(K^2\). Notice that \((2ab)(2ab) = 4a^2b^2\) cancels the outside \(a^2b^2\) completely, leaving \(\frac{1}{4} \cdot \frac{1}{4} = \frac{1}{16}\):
+\[
+K^2 = \frac{1}{16}(a + b + c)(b + c - a)(a + c - b)(a + b - c).
+\]
+That formula is already symmetric in \(a, b, c\), and one final substitution makes it astonishingly clean. Define the semiperimeter \(s\) (half the perimeter):
+\[
+s = \frac{a + b + c}{2} \iff a + b + c = 2s.
+\]
+Subtracting \(2a\), \(2b\), and \(2c\) in turn from \(a + b + c = 2s\) rewrites the remaining three factors:
+\[
+b + c - a = 2s - 2a = 2(s - a), \qquad a + c - b = 2(s - b), \qquad a + b - c = 2(s - c).
+\]
+Substituting all four factors into \(K^2\), the four factors of \(2\) multiply to \(2^4 = 16\) and cancel \(\frac{1}{16}\) completely:
+\[
+K^2 = \frac{1}{16} \cdot 2s \cdot 2(s - a) \cdot 2(s - b) \cdot 2(s - c) = s(s - a)(s - b)(s - c).
+\]
+Taking the positive square root produces Heron's formula.
+
+[CALLOUT]
+id: herons-formula
+label: Theorem
+title: Heron's Formula for Triangle Area
+tone: key
+
+For any triangle with side lengths \(a, b, c\) and semiperimeter \(s = \dfrac{a + b + c}{2}\), the exact area \(K\) is
+\[
+K = \sqrt{s(s - a)(s - b)(s - c)}.
+\]
+[/CALLOUT]
+
+=== SECTION 2: Applying Heron's formula and the triangle inequality ===
+
+Test [REF: herons-formula | Heron's formula] on our opening field with sides \(a = 13\text{ m}\), \(b = 14\text{ m}\), and \(c = 15\text{ m}\).
+
+1. Compute the semiperimeter: \(s = \frac{13 + 14 + 15}{2} = \frac{42}{2} = 21\text{ m}\).
+2. Compute the three differences:
+\[
+s - a = 21 - 13 = 8, \qquad s - b = 21 - 14 = 7, \qquad s - c = 21 - 15 = 6.
+\]
+(Quick arithmetic check: \((s - a) + (s - b) + (s - c)\) must ALWAYS equal \(s\)! Here \(8 + 7 + 6 = 21 = s\).)
+3. Factor BEFORE multiplying so the square root simplifies effortlessly:
+\[
+K = \sqrt{21 \cdot 8 \cdot 7 \cdot 6} = \sqrt{(3 \cdot 7) \cdot (2^3) \cdot 7 \cdot (2 \cdot 3)} = \sqrt{2^4 \cdot 3^2 \cdot 7^2} = 2^2 \cdot 3 \cdot 7 = 84\text{ m}^2.
+\]
+Notice the exact geometry of this classic triangle below: placed on base \(b = 14\), vertex \(B\) lands at \((5, 12)\) with height \(12\) (splitting the base into \(5\) and \(9\), forming \(5\)-\(12\)-\(13\) and \(9\)-\(12\)-\(15\) right triangles!), confirming \(\frac{1}{2}(14)(12) = 84\text{ m}^2\).
+
+[GRAPH]
+type: parametric2d
+title: The \(13\)-\(14\)-\(15\) triangle with semiperimeter \(s = 21\) and exact area \(K = 84\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1.176
+xrange: -1.0, 15.2
+yrange: -1.2, 13.5
+trace: 2.0*cos(t), 2.0*sin(t) | label: \(\angle A\) | color: #2563eb
+segment: 0, 0, 14, 0 | label: \(b = 14\) | color: #0f172a
+segment: 0, 0, 5, 12 | label: \(a = 13\) | color: #2563eb
+segment: 14, 0, 5, 12 | label: \(c = 15\) | color: #dc2626
+segment: 5, 0, 5, 12 | label: \(h = 12\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.5, -0.5
+point: 5, 12 | label: \(B\) | offset: 0, 0.5
+point: 14, 0 | label: \(C\) | offset: 0.5, -0.5
+[/GRAPH]
+
+Look closely at the three difference factors \(s - a = \frac{b + c - a}{2}\), \(s - b = \frac{a + c - b}{2}\), and \(s - c = \frac{a + b - c}{2}\). The triangle inequality says \(b + c > a\), \(a + c > b\), and \(a + b > c\)—which means ALL THREE factors \(s - a\), \(s - b\), and \(s - c\) are strictly positive if and only if \(a, b, c\) form a valid non-degenerate triangle!
+- If the two shorter sides equal the longest side (say \(3, 4, 7\)), then \(s = 7\) and \(s - 7 = 0\), yielding \(K = 0\) (a flattened line segment of zero area).
+- If the two shorter sides sum to LESS than the longest side (say \(3, 4, 9\)), then \(s = 8\) and \(s - 9 = -1 < 0\), while the other three factors are positive, making the product inside the square root NEGATIVE—an immediate algebraic alarm that no triangle exists!
+
+[CALLOUT]
+id: heron-tip
+label: Practical tip
+title: Simplify radicals by factoring before multiplying
+tone: note
+
+In Heron's formula, multiplying four large numbers together first (such as \(21 \cdot 8 \cdot 7 \cdot 6 = 7056\)) makes spotting perfect squares much harder. Keep \(s\), \(s - a\), \(s - b\), and \(s - c\) separated, prime-factor each one, and pull pairs out of the square root immediately. Also check \((s - a) + (s - b) + (s - c) = s\) to catch arithmetic slips before taking the root.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+What is the exact area of a triangle with side lengths \(a = 7\), \(b = 8\), and \(c = 9\)?
+
+(A) \(24\sqrt{5}\)
+(B) \(12\sqrt{6}\)
+(C) \(12\sqrt{5}\)
+(D) \(6\sqrt{5}\)
+(E) \(18\sqrt{2}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+In the algebraic derivation of Heron's formula starting from \(K^2 = \frac{1}{4}a^2b^2(1 - \cos^2 C)\), what key step eliminates \(\cos C\) and turns the expression into a product of four linear factors in \(a, b, c\)?
+
+(A) Factoring \(1 - \cos^2 C = (1 + \cos C)(1 - \cos C)\), substituting \(\cos C = \dfrac{a^2 + b^2 - c^2}{2ab}\) into each factor, and factoring each numerator as a difference of squares
+(B) Replacing \(\cos^2 C\) directly with \(\dfrac{c^2}{a^2 + b^2}\) from the Pythagorean theorem
+(C) Setting \(C = 90^\circ\) so that \(\cos C = 0\) and scaling the result by the semiperimeter \(s\)
+(D) Substituting \(\sin C = \dfrac{a + b + c}{2ab}\) from the Law of Sines
+(E) Applying the Law of Sines twice to write \(ab = s^2\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+A student attempts to compute the area of a figure with side lengths \(a = 4\), \(b = 5\), and \(c = 11\) using Heron's formula. What happens inside the square root, and what does it mean geometrically?
+
+(A) All four factors are positive, giving an exact area of \(10\sqrt{3}\)
+(B) One factor equals \(0\), giving area \(0\) because the sides form a right triangle
+(C) Two factors are negative, so their product is positive and gives a valid area
+(D) The semiperimeter \(s = 20\) produces an area of \(40\sqrt{15}\)
+(E) The factor \(s - c = 10 - 11 = -1\) is negative while the other three factors are positive, producing a negative radicand because \(4 + 5 < 11\) violates the triangle inequality
+[/QUESTION]
+
+=== SECTION 3: Measuring irregular polygonal land parcels ===
+
+Surveyors frequently measure the area of an irregular four-sided or five-sided lot using only a tape measure (no angle instruments needed!): measure all outer boundary sides plus enough interior diagonals to partition the polygon into triangles, then apply [REF: herons-formula | Heron's formula] to each triangle and sum the areas.
+
+Consider the four-sided parcel \(ABCD\) shown below, with outer sides \(AB = 13\text{ m}\), \(AD = 20\text{ m}\), \(BC = 10\text{ m}\), \(CD = 17\text{ m}\), and measured diagonal \(BD = 21\text{ m}\).
+
+[GRAPH]
+type: parametric2d
+title: Land parcel \(ABCD\) partitioned by diagonal \(BD = 21\text{ m}\) into two SSS triangles
+xlabel: x (m)
+ylabel: y (m)
+trange: 0, 1.176
+xrange: -1.5, 22.5
+yrange: -9.5, 13.5
+trace: 2.5*cos(t), 2.5*sin(t) | label: \(\angle ABD\) | color: #2563eb
+segment: 0, 0, 21, 0 | label: \(21\) | color: #dc2626 | dashed: true
+segment: 0, 0, 5, 12 | label: \(13\) | color: #2563eb
+segment: 5, 12, 21, 0 | label: \(20\) | color: #2563eb
+segment: 0, 0, 6, -8 | label: \(10\) | color: #059669
+segment: 6, -8, 21, 0 | label: \(17\) | color: #059669
+point: 0, 0 | label: \(B\) | offset: -0.7, -0.4
+point: 21, 0 | label: \(D\) | offset: 0.7, -0.4
+point: 5, 12 | label: \(A\) | offset: 0, 0.7
+point: 6, -8 | label: \(C\) | offset: 0, -0.8
+[/GRAPH]
+
+Compute each triangle's area separately using [REF: heron-tip | our factoring strategy]:
+- Upper triangle \(\triangle ABD\) (\(13, 20, 21\)): \(s_1 = \frac{13 + 20 + 21}{2} = 27\). Differences: \(14, 7, 6\) (check: \(14 + 7 + 6 = 27\)).
+\[
+K_1 = \sqrt{27 \cdot 14 \cdot 7 \cdot 6} = \sqrt{(3^3) \cdot (2 \cdot 7) \cdot 7 \cdot (2 \cdot 3)} = \sqrt{2^2 \cdot 3^4 \cdot 7^2} = 2 \cdot 9 \cdot 7 = 126\text{ m}^2.
+\]
+- Lower triangle \(\triangle BCD\) (\(10, 17, 21\)): \(s_2 = \frac{10 + 17 + 21}{2} = 24\). Differences: \(14, 7, 3\) (check: \(14 + 7 + 3 = 24\)).
+\[
+K_2 = \sqrt{24 \cdot 14 \cdot 7 \cdot 3} = \sqrt{(2^3 \cdot 3) \cdot (2 \cdot 7) \cdot 7 \cdot 3} = \sqrt{2^4 \cdot 3^2 \cdot 7^2} = 4 \cdot 3 \cdot 7 = 84\text{ m}^2.
+\]
+- Total parcel area: \(K = 126 + 84 = 210\text{ m}^2\), obtained cleanly without measuring a single angle!
+
+[QUESTION 4]
+[ANSWER: B]
+A four-sided land parcel \(PQRS\) is split by diagonal \(PR = 20\text{ m}\) into two triangles: \(\triangle PQR\) has sides \(11\text{ m}\), \(13\text{ m}\), and \(20\text{ m}\), and \(\triangle PRS\) has sides \(7\text{ m}\), \(15\text{ m}\), and \(20\text{ m}\). What is the exact total area of the parcel \(PQRS\)?
+
+(A) \(96\text{ m}^2\)
+(B) \(108\text{ m}^2\)
+(C) \(114\text{ m}^2\)
+(D) \(216\text{ m}^2\)
+(E) \(104\text{ m}^2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+A triangle has side lengths \(a = 9\), \(b = 10\), and \(c = 17\). Using Heron's formula together with \(K = \frac{1}{2}ch_c\), what is the exact length of the altitude \(h_c\) drawn perpendicular to the longest side \(c = 17\)?
+
+(A) \(\dfrac{36}{17}\)
+(B) \(\dfrac{72}{9}\)
+(C) \(\dfrac{18}{17}\)
+(D) \(\dfrac{72}{17}\)
+(E) \(\dfrac{144}{17}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+In triangle \(\triangle ABC\) with side lengths \(a = 4\), \(b = 13\), and \(c = 15\), what are the exact area \(K\) and the exact value of \(\sin C\) (where \(C\) is the angle opposite side \(c = 15\))?
+
+(A) \(K = 24\) and \(\sin C = \dfrac{12}{13}\)
+(B) \(K = 24\) and \(\sin C = \dfrac{5}{13}\)
+(C) \(K = 48\) and \(\sin C = \dfrac{12}{13}\)
+(D) \(K = 24\) and \(\sin C = \dfrac{8}{15}\)
+(E) \(K = 26\) and \(\sin C = \dfrac{12}{13}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+A triangle has two side lengths \(a = 5\) and \(b = 6\) and an exact area of \(K = 12\). Which two positive values of the third side \(c\) produce a valid triangle with area \(12\)?
+
+(A) \(c = 5\) only (no second triangle exists)
+(B) \(c = 5\) and \(c = 10\)
+(C) \(c = 5\) and \(c = \sqrt{97}\)
+(D) \(c = 4\) and \(c = \sqrt{97}\)
+(E) \(c = \sqrt{25}\) and \(c = \sqrt{61}\)
+[/BONUS]

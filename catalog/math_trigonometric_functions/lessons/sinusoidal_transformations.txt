@@ -1,0 +1,238 @@
+=== SECTION 1: Stretching, reflecting, and shifting a basic wave ===
+
+The basic functions \(y = \sin x\) and \(y = \cos x\) always oscillate between \(-1\) and \(1\) with period \(2\pi\). Real waves—whether sound pressure, alternating voltage, or height above the ground—rarely match those exact numbers. To describe a wave of any height, vertical center, horizontal spacing, or starting position, we apply the standard function transformations to sine and cosine:
+\[
+y = A\sin\!\bigl(B(x - C)\bigr) + D \qquad \text{and} \qquad y = A\cos\!\bigl(B(x - C)\bigr) + D,
+\]
+where \(A \ne 0\) and \(B \ne 0\) are real constants.
+
+Begin with the two vertical transformations, controlled by \(A\) and \(D\), keeping \(B = 1\) and \(C = 0\). Multiplying \(\sin x\) by \(A\) scales every \(y\)-value by \(\lvert A \rvert\) and reflects the wave across the \(x\)-axis whenever \(A < 0\). Adding \(D\) then lifts (if \(D > 0\)) or lowers (if \(D < 0\)) the entire wave by \(\lvert D \rvert\) units.
+
+Because \(-1 \le \sin x \le 1\), multiplying by \(A\) and adding \(D\) maps the output interval \([-1, 1]\) onto \([D - \lvert A \rvert, D + \lvert A \rvert]\). The horizontal line \(y = D\) running halfway between the peaks and troughs is the midline, and the positive distance \(\lvert A \rvert\) from the midline to a peak (or to a trough) is the amplitude. Notice that amplitude is always positive: even when \(A = -3\), the amplitude is \(\lvert -3 \rvert = 3\), while the minus sign tells us the wave is vertically reflected across its midline.
+
+Drag the sliders \(A\) and \(D\) below to watch how \(y = A\sin x + D\) stretches, flips when \(A\) crosses zero, and rides up and down with its dashed midline \(y = D\).
+
+[GRAPH]
+type: function2d
+title: Vertical scaling, reflection, and midline shift in \(y = A\sin x + D\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -6.2832, 6.2832
+yrange: -5.5, 5.5
+trace: sin(x) | label: \(y = \sin x\) (reference) | color: #94a3b8
+trace: A*sin(x) + D | label: \(y = A\sin x + D\) | color: #2563eb
+segment: -6.2832, D, 6.2832, D | label: midline | color: #dc2626 | dashed: true
+point: 1.5708, A + D | label: \((\pi/2, A+D)\) | color: #2563eb
+slider: A | range: -3, 3 | init: 2 | step: 0.25
+slider: D | range: -2.5, 2.5 | init: 1 | step: 0.25
+[/GRAPH]
+
+For example, take \(y = -3\cos x + 2\). Here \(A = -3\) and \(D = 2\), so the midline is \(y = 2\), the amplitude is \(\lvert -3 \rvert = 3\), and the range is \([2 - 3, 2 + 3] = [-1, 5]\). Whereas \(y = \cos x\) begins at a maximum at \(x = 0\), the negative sign on \(A\) reflects it across the midline so that \(y = -3\cos x + 2\) begins at its minimum \(y = -3(1) + 2 = -1\) at \(x = 0\).
+
+[QUESTION 1]
+[ANSWER: D]
+Consider the function \(y = -4\cos x + 3\). What are its amplitude, midline, range, and behavior at \(x = 0\)?
+
+(A) Amplitude \(-4\), midline \(y = 3\), range \([-1, 7]\), local minimum at \(x = 0\)
+(B) Amplitude \(4\), midline \(y = 3\), range \([-4, 4]\), local minimum at \(x = 0\)
+(C) Amplitude \(4\), midline \(y = 3\), range \([-1, 7]\), local maximum at \(x = 0\)
+(D) Amplitude \(4\), midline \(y = 3\), range \([-1, 7]\), local minimum at \(x = 0\)
+(E) Amplitude \(3\), midline \(y = -4\), range \([-7, -1]\), local maximum at \(x = 0\)
+[/QUESTION]
+
+=== SECTION 2: Period, phase shift, and the factoring bridge ===
+
+Next examine the two horizontal transformations inside the argument: \(B\) and \(C\) in \(y = \cos\!\bigl(B(x - C)\bigr)\).
+
+One basic cycle of sine or cosine runs as its input travels from \(0\) to \(2\pi\). In \(y = \cos(Bx)\) (with \(B > 0\)), the cycle finishes when \(Bx = 2\pi\), that is, at \(x = \frac{2\pi}{B}\). A larger \(B\) compresses the wave horizontally so more cycles fit in the same interval; a smaller positive \(B\) stretches the wave horizontally. Accounting for either sign of \(B\), the fundamental period is
+\[
+T = \frac{2\pi}{\lvert B \rvert}.
+\]
+Replacing \(x\) by \(x - C\) then shifts the entire wave horizontally by \(C\): to the RIGHT by \(C\) units when \(C > 0\), and to the LEFT by \(\lvert C \rvert\) units when \(C < 0\). This horizontal displacement \(C\) is called the phase shift.
+
+Drag \(B\) and \(C\) in the plot below to see how \(B\) changes the distance \(T = 2\pi/B\) between consecutive peaks while \(C\) slides the starting peak \((C, 1)\) left and right.
+
+[GRAPH]
+type: function2d
+title: Horizontal scaling \(B\) and phase shift \(C\) in \(y = \cos(B(x - C))\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.1416, 6.2832
+yrange: -1.45, 1.45
+trace: cos(x) | label: \(y = \cos x\) (reference) | color: #94a3b8
+trace: cos(B*(x - C)) | label: \(y = \cos(B(x - C))\) | color: #dc2626
+point: C, 1 | label: \((C, 1)\) | color: #dc2626
+point: C + 6.283185/B, 1 | label: \((C + T, 1)\) | color: #059669
+slider: B | range: 0.5, 3 | init: 2 | step: 0.25
+slider: C | range: -2, 2 | init: 0.75 | step: 0.25
+[/GRAPH]
+
+In practice, sinusoidal formulas are often written in expanded form \(y = A\sin(Bx - \phi) + D\) rather than factored form \(y = A\sin\!\bigl(B(x - C)\bigr) + D\). To read the true horizontal shift, you must factor \(B\) out of the entire argument first:
+\[
+Bx - \phi = B\!\left(x - \frac{\phi}{B}\right) \implies C = \frac{\phi}{B}.
+\]
+Why is \(\phi\) itself NOT the phase shift when \(B \ne 1\)? Because the wave's starting landmark occurs where the inside expression equals zero: setting \(Bx - \phi = 0\) gives \(x = \frac{\phi}{B}\), not \(x = \phi\).
+
+[CALLOUT]
+id: sinusoid-parameters
+label: Summary
+title: Parameters of \(y = A\sin(B(x - C)) + D\) and \(y = A\cos(B(x - C)) + D\)
+tone: key
+
+(1) Amplitude: \(\lvert A \rvert\). If \(A < 0\), the wave is reflected vertically across its midline.
+(2) Midline and range: midline \(y = D\), range \([D - \lvert A \rvert, D + \lvert A \rvert]\).
+(3) Period: \(T = \dfrac{2\pi}{\lvert B \rvert}\) (for \(B \ne 0\)).
+(4) Phase shift: always factor \(Bx - \phi = B\!\left(x - \dfrac{\phi}{B}\right)\) first; the phase shift is \(C = \dfrac{\phi}{B}\) (right if \(C > 0\), left if \(C < 0\)).
+[/CALLOUT]
+
+[CALLOUT]
+id: negative-b-rule
+label: Technique
+title: Handling a negative coefficient \(B < 0\) before reading the phase shift
+tone: note
+
+When the coefficient of \(x\) inside sine or cosine is negative, pull the minus sign outside the function using even/odd symmetry BEFORE reading \(A\) and \(C\):
+- For cosine (even): \(\cos(-u) = \cos u\), so the outside sign stays unchanged.
+- For sine (odd): \(\sin(-u) = -\sin u\), so the minus sign moves outside and flips the sign of \(A\).
+
+For instance, in \(y = 2\cos\!\left(-3x + \pi\right) - 1\), rewrite the inside as \(-\left(3x - \pi\right) = -3\!\left(x - \frac{\pi}{3}\right)\). Since cosine is even,
+\[
+y = 2\cos\!\left(-3\!\left(x - \frac{\pi}{3}\right)\right) - 1 = 2\cos\!\left(3\!\left(x - \frac{\pi}{3}\right)\right) - 1,
+\]
+revealing immediately that \(A = 2\), \(B = 3\), period \(T = \frac{2\pi}{3}\), and phase shift \(C = \frac{\pi}{3}\) to the right.
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: B]
+What are the fundamental period and phase shift of \(y = 3\sin\!\left(4x + \dfrac{2\pi}{3}\right) - 2\)?
+
+(A) Period \(\dfrac{\pi}{2}\), shifted \(\dfrac{2\pi}{3}\) units to the left
+(B) Period \(\dfrac{\pi}{2}\), shifted \(\dfrac{\pi}{6}\) units to the left
+(C) Period \(\dfrac{\pi}{2}\), shifted \(\dfrac{\pi}{6}\) units to the right
+(D) Period \(8\pi\), shifted \(\dfrac{\pi}{6}\) units to the left
+(E) Period \(\dfrac{\pi}{4}\), shifted \(\dfrac{2\pi}{3}\) units to the right
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+Rewrite \(y = 5\sin\!\left(-2x + \dfrac{\pi}{3}\right) + 1\) in standard form \(y = A\sin\!\bigl(B(x - C)\bigr) + D\) with \(B > 0\). Which expression is equivalent for all real \(x\)?
+
+(A) \(y = 5\sin\!\left(2\!\left(x - \dfrac{\pi}{6}\right)\right) + 1\)
+(B) \(y = -5\sin\!\left(2\!\left(x + \dfrac{\pi}{6}\right)\right) + 1\)
+(C) \(y = -5\sin\!\left(2\!\left(x - \dfrac{\pi}{3}\right)\right) + 1\)
+(D) \(y = 5\sin\!\left(2\!\left(x + \dfrac{\pi}{6}\right)\right) + 1\)
+(E) \(y = -5\sin\!\left(2\!\left(x - \dfrac{\pi}{6}\right)\right) + 1\)
+[/QUESTION]
+
+=== SECTION 3: Sketching with the transformed five-key-point method ===
+
+Once a sinusoid is written in factored form \(y = A\sin\!\bigl(B(x - C)\bigr) + D\) or \(y = A\cos\!\bigl(B(x - C)\bigr) + D\) with \(B > 0\), one complete period occupies the interval \([C, C + T]\), where \(T = \frac{2\pi}{B}\). Dividing that interval into four equal quarter-period steps of length \(\frac{T}{4}\) gives the five \(x\)-coordinates where the wave visits its midline, maxima, and minima:
+\[
+x_0 = C, \quad x_1 = C + \frac{T}{4}, \quad x_2 = C + \frac{T}{2}, \quad x_3 = C + \frac{3T}{4}, \quad x_4 = C + T.
+\]
+At those five inputs, the expression \(B(x - C)\) equals \(0, \frac{\pi}{2}, \pi, \frac{3\pi}{2}, 2\pi\), so the outputs follow one of four exact patterns depending on whether we have sine or cosine and whether \(A > 0\) or \(A < 0\):
+
+[TABLE]
+Form (with \(B > 0\)) | \(x_0 = C\) | \(x_1 = C + \frac{T}{4}\) | \(x_2 = C + \frac{T}{2}\) | \(x_3 = C + \frac{3T}{4}\) | \(x_4 = C + T\)
+\(\sin\), \(A > 0\) | \(D\) (mid) | \(D + A\) (max) | \(D\) (mid) | \(D - A\) (min) | \(D\) (mid)
+\(\sin\), \(A < 0\) | \(D\) (mid) | \(D + A\) (min) | \(D\) (mid) | \(D - A\) (max) | \(D\) (mid)
+\(\cos\), \(A > 0\) | \(D + A\) (max) | \(D\) (mid) | \(D - A\) (min) | \(D\) (mid) | \(D + A\) (max)
+\(\cos\), \(A < 0\) | \(D + A\) (min) | \(D\) (mid) | \(D - A\) (max) | \(D\) (mid) | \(D + A\) (min)
+[/TABLE]
+
+Let us work through a complete example: sketch one full cycle of
+\[
+y = -2\sin\!\left(3x - \frac{\pi}{2}\right) + 1.
+\]
+1. Factor the argument using [REF: sinusoid-parameters.4 | the phase-shift rule]: \(3x - \frac{\pi}{2} = 3\!\left(x - \frac{\pi}{6}\right)\), so \(y = -2\sin\!\left(3\!\left(x - \frac{\pi}{6}\right)\right) + 1\).
+2. Read the parameters: amplitude \(\lvert -2 \rvert = 2\) (vertically reflected since \(A = -2 < 0\)), midline \(y = 1\), range \([-1, 3]\), period \(T = \frac{2\pi}{3}\), and phase shift \(C = \frac{\pi}{6}\) to the right.
+3. Compute the quarter-period step: \(\frac{T}{4} = \frac{2\pi/3}{4} = \frac{\pi}{6}\). Starting at \(x_0 = \frac{\pi}{6}\) and adding \(\frac{\pi}{6}\) repeatedly gives the five \(x\)-values:
+\[
+\frac{\pi}{6}, \quad \frac{2\pi}{6} = \frac{\pi}{3}, \quad \frac{3\pi}{6} = \frac{\pi}{2}, \quad \frac{4\pi}{6} = \frac{2\pi}{3}, \quad \frac{5\pi}{6}.
+\]
+4. Because this is a reflected sine wave (\(A = -2 < 0\)), the five outputs follow mid, min, mid, max, mid: \(1, -1, 1, 3, 1\). Plotting those five points and drawing a smooth rounded wave through them produces the cycle shown below.
+
+[GRAPH]
+type: function2d
+title: One full cycle of \(y = -2\sin(3x - \pi/2) + 1\) with its five key points
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 3.1416
+yrange: -1.6, 3.6
+trace: -2*sin(3*x - pi/2) + 1 | label: \(y = -2\sin(3x - \pi/2) + 1\) | color: #2563eb
+segment: 0, 1, 3.1416, 1 | label: \(y = 1\) | color: #dc2626 | dashed: true
+point: pi/6, 1 | label: \((\pi/6, 1)\) | color: #0f172a
+point: pi/3, -1 | label: \((\pi/3, -1)\) | color: #0f172a
+point: pi/2, 1 | label: \((\pi/2, 1)\) | color: #0f172a
+point: 2*pi/3, 3 | label: \((2\pi/3, 3)\) | color: #0f172a
+point: 5*pi/6, 1 | label: \((5\pi/6, 1)\) | color: #0f172a
+[/GRAPH]
+
+=== SECTION 4: Writing an equation from a sinusoidal graph ===
+
+Going in reverse—reading an equation from a given wave—uses the exact same geometry in the opposite order. From the maximum value \(M\) and minimum value \(m\) of the wave, two formulas immediately lock in the vertical parameters:
+\[
+D = \frac{M + m}{2}, \qquad \lvert A \rvert = \frac{M - m}{2}.
+\]
+To find \(B\), measure the horizontal distance \(T\) of one complete cycle (from one peak to the next peak, or twice the horizontal distance from a peak to an adjacent trough) and set \(B = \frac{2\pi}{T}\).
+
+Finally, choose a clean starting point \(x = C\) to determine the function type and sign of \(A\):
+- Pick a maximum \((C, M)\) to write a positive cosine: \(y = \lvert A \rvert \cos\!\bigl(B(x - C)\bigr) + D\).
+- Pick a minimum \((C, m)\) to write a negative cosine: \(y = -\lvert A \rvert \cos\!\bigl(B(x - C)\bigr) + D\).
+- Pick a rising midline crossing \((C, D)\) to write a positive sine: \(y = \lvert A \rvert \sin\!\bigl(B(x - C)\bigr) + D\).
+- Pick a falling midline crossing \((C, D)\) to write a negative sine: \(y = -\lvert A \rvert \sin\!\bigl(B(x - C)\bigr) + D\).
+
+Because a periodic wave has infinitely many peaks, troughs, and midline crossings, there is never only ONE correct formula for a sinusoidal graph! For example, suppose a wave has maximum \(6\) at \(x = \frac{\pi}{4}\) and its next minimum \(-2\) at \(x = \frac{3\pi}{4}\). Then \(D = \frac{6 + (-2)}{2} = 2\), \(\lvert A \rvert = \frac{6 - (-2)}{2} = 4\), the half-period is \(\frac{3\pi}{4} - \frac{\pi}{4} = \frac{\pi}{2}\), so \(T = \pi\) and \(B = \frac{2\pi}{\pi} = 2\). Anchoring at the peak \(x = \frac{\pi}{4}\) yields \(y = 4\cos\!\left(2\!\left(x - \frac{\pi}{4}\right)\right) + 2\); anchoring one quarter-period earlier at the rising midline crossing \(x = 0\) yields the simpler equivalent formula \(y = 4\sin(2x) + 2\).
+
+[CALLOUT]
+id: multiple-formulas-note
+label: Key insight
+title: Equivalent formulas for the same sinusoid
+tone: note
+
+Every sinusoid can be written using either sine or cosine, and with either \(A > 0\) or \(A < 0\), by shifting \(C\) to a different landmark on the wave. Whenever you check whether two formulas describe the same graph, verify that they share the same midline \(D\), amplitude \(\lvert A \rvert\), and period \(T\), and then test both formulas at one extremum and one quarter-period neighbor.
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: C]
+A sinusoidal curve has a local maximum at \(\left(\dfrac{\pi}{8}, 7\right)\) and an immediately adjacent local minimum at \(\left(\dfrac{5\pi}{8}, -1\right)\). Which equation describes this curve?
+
+(A) \(y = 4\cos\!\left(4x - \dfrac{\pi}{2}\right) + 3\)
+(B) \(y = 8\cos\!\left(2x - \dfrac{\pi}{4}\right) + 3\)
+(C) \(y = 4\cos\!\left(2x - \dfrac{\pi}{4}\right) + 3\)
+(D) \(y = 4\cos\!\left(2x - \dfrac{\pi}{8}\right) + 3\)
+(E) \(y = -4\cos\!\left(2x - \dfrac{\pi}{4}\right) + 3\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Which sine function produces the exact same graph as \(y = 3\cos\!\left(\dfrac{\pi}{2}x - \dfrac{\pi}{4}\right) + 2\) for all real \(x\)?
+
+(A) \(y = 3\sin\!\left(\dfrac{\pi}{2}\!\left(x + \dfrac{1}{2}\right)\right) + 2\)
+(B) \(y = 3\sin\!\left(\dfrac{\pi}{2}\!\left(x - \dfrac{1}{2}\right)\right) + 2\)
+(C) \(y = 3\sin\!\left(\dfrac{\pi}{2}\!\left(x - \dfrac{3}{2}\right)\right) + 2\)
+(D) \(y = -3\sin\!\left(\dfrac{\pi}{2}\!\left(x + \dfrac{1}{2}\right)\right) + 2\)
+(E) \(y = 3\sin\!\left(\dfrac{\pi}{2}x + \dfrac{\pi}{2}\right) + 2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Consider the sinusoid \(y = -2\cos\!\left(\dfrac{\pi}{3}(x - 1)\right) + 5\). What are the first two values of \(x > 1\) at which the function attains its maximum value?
+
+(A) \(x = 1\) and \(x = 7\)
+(B) \(x = 2.5\) and \(x = 8.5\)
+(C) \(x = 4\) and \(x = 7\)
+(D) \(x = 4\) and \(x = 10\)
+(E) \(x = 7\) and \(x = 13\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+A sinusoidal function has range \([-5, 11]\) and fundamental period \(8\). At \(x = 2\), the graph crosses its midline \(y = 3\) while moving downward (decreasing). Which equation represents this function?
+
+(A) \(y = 8\sin\!\left(\dfrac{\pi}{4}(x - 2)\right) + 3\)
+(B) \(y = -8\sin\!\left(\dfrac{\pi}{4}(x - 2)\right) + 3\)
+(C) \(y = -8\sin\!\left(\dfrac{\pi}{8}(x - 2)\right) + 3\)
+(D) \(y = -8\cos\!\left(\dfrac{\pi}{4}(x - 2)\right) + 3\)
+(E) \(y = -16\sin\!\left(\dfrac{\pi}{4}(x - 2)\right) + 3\)
+[/BONUS]

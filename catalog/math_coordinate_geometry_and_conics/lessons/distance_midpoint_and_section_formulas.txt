@@ -1,0 +1,325 @@
+=== SECTION 1: Measuring distance in the coordinate plane ===
+
+Suppose two landmarks on a flat map lie at coordinates \(A(1, 2)\) and \(B(7, 10)\). Moving strictly east along the grid takes \(7 - 1 = 6\) units, and moving strictly north takes \(10 - 2 = 8\) units. Those two axis-aligned displacements are easy to read straight off the coordinates, but how long is the straight-line segment connecting \(A\) directly to \(B\)?
+
+The key geometric move is to turn the diagonal segment \(AB\) into the hypotenuse of a right triangle whose legs run parallel to the coordinate axes. Place a corner point \(C(7, 2)\) sharing the \(x\)-coordinate of \(B\) and the \(y\)-coordinate of \(A\). Because \(A\) and \(C\) have the same \(y\)-coordinate, segment \(AC\) is horizontal with length \(\lvert 7 - 1 \rvert = 6\). Because \(C\) and \(B\) have the same \(x\)-coordinate, segment \(CB\) is vertical with length \(\lvert 10 - 2 \rvert = 8\). Horizontal and vertical lines meet at a right angle, so \(\triangle ACB\) has a right angle at \(C\). Applying the Pythagorean theorem gives
+\[
+AB = \sqrt{AC^2 + CB^2} = \sqrt{6^2 + 8^2} = \sqrt{36 + 64} = 10.
+\]
+
+[GRAPH]
+type: parametric2d
+title: Right-triangle construction for the distance between \(A(1, 2)\) and \(B(7, 10)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 9
+yrange: 0, 11.5
+trace: 1 + 6*t, 2 + 8*t | label: segment \(AB\)
+segment: 1, 2, 7, 2 | label: \(\Delta x = 6\) | dashed: true
+segment: 7, 2, 7, 10 | label: \(\Delta y = 8\) | dashed: true
+point: 1, 2 | label: \(A(1, 2)\)
+point: 7, 10 | label: \(B(7, 10)\)
+point: 7, 2 | label: \(C(7, 2)\)
+[/GRAPH]
+
+Now repeat the exact same construction for any two points \(P_1(x_1, y_1)\) and \(P_2(x_2, y_2)\) in the plane. Introduce the corner point \(R(x_2, y_1)\). The horizontal leg \(P_1 R\) has length \(\lvert x_2 - x_1 \rvert\), and the vertical leg \(R P_2\) has length \(\lvert y_2 - y_1 \rvert\). By the Pythagorean theorem, the squared distance is
+\[
+d(P_1, P_2)^2 = \lvert x_2 - x_1 \rvert^2 + \lvert y_2 - y_1 \rvert^2 = (x_2 - x_1)^2 + (y_2 - y_1)^2,
+\]
+because squaring any real number erases its sign. Taking the nonnegative square root yields the general distance formula. Notice that it also works cleanly in the degenerate cases when the triangle collapses: if \(y_1 = y_2\) (horizontal segment), it reduces to \(\sqrt{(x_2 - x_1)^2} = \lvert x_2 - x_1 \rvert\), and if \(x_1 = x_2\) (vertical segment), it reduces to \(\lvert y_2 - y_1 \rvert\).
+
+[CALLOUT]
+id: distance-formula
+label: Formula
+title: Euclidean distance in the plane
+tone: key
+
+For any two points \(P_1(x_1, y_1)\) and \(P_2(x_2, y_2)\) in the coordinate plane, the distance \(d(P_1, P_2)\) between them is
+\[
+d(P_1, P_2) = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}.
+\]
+Because \((x_1 - x_2)^2 = (x_2 - x_1)^2\) and \((y_1 - y_2)^2 = (y_2 - y_1)^2\), the order of the two points does not change the result: \(d(P_1, P_2) = d(P_2, P_1)\).
+[/CALLOUT]
+
+Distance calculations immediately let us classify geometric configurations by comparing side lengths. For a triangle \(\triangle DEF\), computing the three squared side lengths \(DE^2\), \(EF^2\), and \(DF^2\) avoids carrying square roots unnecessarily:
+- By side lengths: scalene if all three are distinct, isosceles if at least two are equal, and equilateral if all three are equal.
+- By angles (Pythagorean converse): if \(c^2\) is the largest squared side length and \(a^2, b^2\) are the other two, the triangle is right precisely when \(a^2 + b^2 = c^2\) (with the right angle opposite the longest side).
+
+For example, consider \(D(-2, 1)\), \(E(2, 4)\), and \(F(5, 0)\). Using [REF: distance-formula | the distance formula] in squared form:
+\[
+DE^2 = (2 - (-2))^2 + (4 - 1)^2 = 16 + 9 = 25,
+\]
+\[
+EF^2 = (5 - 2)^2 + (0 - 4)^2 = 9 + 16 = 25,
+\]
+\[
+DF^2 = (5 - (-2))^2 + (0 - 1)^2 = 49 + 1 = 50.
+\]
+Since \(DE = EF = 5\) and \(DE^2 + EF^2 = 25 + 25 = 50 = DF^2\), \(\triangle DEF\) is a right isosceles triangle with its right angle at \(E\).
+
+Distances also test collinearity. By the triangle inequality, three points \(U\), \(V\), \(W\) lie on the same straight line if and only if the two shorter pairwise distances add up to the longest one. For instance, take \(U(-1, 3)\), \(V(2, 5)\), and \(W(8, 9)\):
+\[
+UV = \sqrt{3^2 + 2^2} = \sqrt{13}, \qquad VW = \sqrt{6^2 + 4^2} = \sqrt{52} = 2\sqrt{13},
+\]
+\[
+UW = \sqrt{9^2 + 6^2} = \sqrt{117} = 3\sqrt{13}.
+\]
+Because \(UV + VW = \sqrt{13} + 2\sqrt{13} = 3\sqrt{13} = UW\), the three points are collinear with \(V\) lying strictly between \(U\) and \(W\).
+
+[QUESTION 1]
+[ANSWER: B]
+Consider the triangle with vertices \(P(0, -1)\), \(Q(4, 1)\), and \(R(1, 7)\). Which classification accurately describes \(\triangle PQR\)?
+
+(A) Right isosceles triangle with right angle at \(Q\)
+(B) Right scalene triangle with right angle at \(Q\)
+(C) Right scalene triangle with right angle at \(P\)
+(D) Non-right isosceles triangle
+(E) Non-right scalene triangle
+[/QUESTION]
+
+=== SECTION 2: Midpoints and classifying quadrilaterals ===
+
+Suppose we want the exact midpoint \(M(x_M, y_M)\) of the segment joining \(P_1(x_1, y_1)\) and \(P_2(x_2, y_2)\), meaning \(M\) lies on segment \(P_1 P_2\) with \(P_1 M = M P_2\). Drop horizontal and vertical segments to form two right triangles: one with hypotenuse \(P_1 M\) and legs parallel to the axes, and a second with hypotenuse \(M P_2\) and legs parallel to the axes. Because \(P_1\), \(M\), and \(P_2\) are collinear, the corresponding acute angles of these two right triangles are equal; since their hypotenuses \(P_1 M\) and \(M P_2\) also have equal length, the two right triangles are congruent.
+
+Congruence forces their signed horizontal displacements and signed vertical displacements to match:
+\[
+x_M - x_1 = x_2 - x_M \implies 2x_M = x_1 + x_2 \implies x_M = \frac{x_1 + x_2}{2},
+\]
+and identically,
+\[
+y_M - y_1 = y_2 - y_M \implies 2y_M = y_1 + y_2 \implies y_M = \frac{y_1 + y_2}{2}.
+\]
+Each coordinate of the midpoint is simply the arithmetic mean of the corresponding coordinates of the endpoints.
+
+[CALLOUT]
+id: midpoint-formula
+label: Formula
+title: Midpoint of a line segment
+tone: key
+
+The midpoint \(M\) of the segment with endpoints \(P_1(x_1, y_1)\) and \(P_2(x_2, y_2)\) is
+\[
+M = \left(\frac{x_1 + x_2}{2},\; \frac{y_1 + y_2}{2}\right).
+\]
+[/CALLOUT]
+
+The midpoint formula works in reverse as well: given one endpoint and the midpoint, we solve two linear equations for the missing endpoint. Suppose segment \(AB\) has endpoint \(A(-3, 5)\) and midpoint \(M(2, -1)\). Writing \(B = (x_B, y_B)\), [REF: midpoint-formula | the midpoint formula] gives
+\[
+\frac{-3 + x_B}{2} = 2 \implies -3 + x_B = 4 \implies x_B = 7,
+\]
+\[
+\frac{5 + y_B}{2} = -1 \implies 5 + y_B = -2 \implies y_B = -7.
+\]
+Thus \(B = (7, -7)\). A quick sanity check confirms the step from \(A\) to \(M\) is \((+5, -6)\), and repeating \((+5, -6)\) from \(M(2, -1)\) lands directly on \((7, -7)\).
+
+Combining [REF: distance-formula | distances] and [REF: midpoint-formula | midpoints] gives a clean coordinate toolkit for classifying any quadrilateral \(ABCD\) (with vertices listed in order around the boundary, so its diagonals are \(AC\) and \(BD\)).
+
+[TABLE]
+Quadrilateral type | Coordinate criterion using midpoints and distances
+Parallelogram | Diagonals \(AC\) and \(BD\) have the same midpoint (equivalently, \(AB = CD\) and \(BC = DA\) for a convex quadrilateral)
+Rectangle | Parallelogram with equal diagonal lengths, \(AC = BD\)
+Rhombus | All four side lengths are equal, \(AB = BC = CD = DA\)
+Square | Both a rhombus and a rectangle: all four sides equal and \(AC = BD\)
+[/TABLE]
+
+For instance, test the quadrilateral with consecutive vertices \(A(1, 1)\), \(B(5, 3)\), \(C(3, 7)\), and \(D(-1, 5)\). First check the diagonal midpoints:
+\[
+M_{AC} = \left(\frac{1 + 3}{2}, \frac{1 + 7}{2}\right) = (2, 4), \qquad M_{BD} = \left(\frac{5 + (-1)}{2}, \frac{3 + 5}{2}\right) = (2, 4).
+\]
+Because the diagonals bisect each other, \(ABCD\) is a parallelogram. Next compare side lengths:
+\[
+AB^2 = 4^2 + 2^2 = 20, \qquad BC^2 = (-2)^2 + 4^2 = 20, \qquad CD^2 = (-4)^2 + (-2)^2 = 20, \qquad DA^2 = 2^2 + (-4)^2 = 20.
+\]
+All four sides equal \(\sqrt{20}\), so \(ABCD\) is a rhombus. Finally check the diagonal lengths:
+\[
+AC^2 = (3 - 1)^2 + (7 - 1)^2 = 4 + 36 = 40, \qquad BD^2 = (-1 - 5)^2 + (5 - 3)^2 = 36 + 4 = 40.
+\]
+Since \(AC = BD = \sqrt{40}\), \(ABCD\) is also a rectangle, and therefore a square.
+
+[QUESTION 2]
+[ANSWER: D]
+The points \(A(-2, 3)\), \(B(4, 1)\), and \(C(6, 5)\) are three consecutive vertices of a parallelogram \(ABCD\). What are the coordinates of vertex \(D\), and what is the most specific classification of \(ABCD\)?
+
+(A) \(D(12, 3)\), and \(ABCD\) is a non-rectangular, non-rhombic parallelogram
+(B) \(D(0, 7)\), and \(ABCD\) is a rectangle
+(C) \(D(0, 7)\), and \(ABCD\) is a rhombus
+(D) \(D(0, 7)\), and \(ABCD\) is a non-rectangular, non-rhombic parallelogram
+(E) \(D(-4, -1)\), and \(ABCD\) is a rectangle
+[/QUESTION]
+
+=== SECTION 3: Directed segment division and the section formula ===
+
+The midpoint splits a segment into two equal halves, a \(1 : 1\) ratio. More generally, suppose we move along the directed segment from \(P_1(x_1, y_1)\) to \(P_2(x_2, y_2)\) and want the internal point \(P(x, y)\) that divides \(P_1 P_2\) in the ratio \(m : n\) (with \(m > 0\) and \(n > 0\)), meaning
+\[
+\frac{P_1 P}{P P_2} = \frac{m}{n}.
+\]
+The phrase "from \(P_1\) to \(P_2\) in the ratio \(m : n\)" assigns the part of relative length \(m\) to \(P_1 P\) (next to \(P_1\)) and the part of relative length \(n\) to \(P P_2\) (next to \(P_2\)).
+
+To find \(x\) and \(y\), construct the same two axis-aligned right triangles as in the midpoint derivation: one with hypotenuse \(P_1 P\) and one with hypotenuse \(P P_2\). Because \(P_1\), \(P\), and \(P_2\) are collinear, these two right triangles have equal corresponding angles and are therefore similar, with scale factor \(m : n\). Matching their signed horizontal legs gives
+\[
+\frac{x - x_1}{x_2 - x} = \frac{m}{n}.
+\]
+Cross-multiplying and collecting the \(x\)-terms produces
+\[
+n(x - x_1) = m(x_2 - x) \implies n x - n x_1 = m x_2 - m x \implies (m + n)x = n x_1 + m x_2,
+\]
+and dividing by \(m + n\) yields
+\[
+x = \frac{n x_1 + m x_2}{m + n}.
+\]
+The identical similarity on the vertical legs gives \(y = \frac{n y_1 + m y_2}{m + n}\).
+
+[CALLOUT]
+id: section-formula
+label: Formula
+title: Internal section formula
+tone: key
+
+The point \(P(x, y)\) dividing the directed segment from \(P_1(x_1, y_1)\) to \(P_2(x_2, y_2)\) internally in the ratio \(P_1 P : P P_2 = m : n\) (with \(m, n > 0\)) is
+\[
+P = \left(\frac{n x_1 + m x_2}{m + n},\; \frac{n y_1 + m y_2}{m + n}\right).
+\]
+Equivalently, writing \(r = \frac{m}{m + n} \in (0, 1)\) for the fraction of the journey completed from \(P_1\) toward \(P_2\),
+\[
+P = \bigl(x_1 + r(x_2 - x_1),\; y_1 + r(y_2 - y_1)\bigr).
+\]
+[/CALLOUT]
+
+Notice how setting \(m = n = 1\) recovers [REF: midpoint-formula | the midpoint formula] immediately. The fractional form \(x_1 + \frac{m}{m+n}(x_2 - x_1) = (1 - r)x_1 + r x_2\) also makes the weighting completely intuitive: if \(m\) is larger than \(n\), then \(P\) has traveled more than halfway from \(P_1\) to \(P_2\), so \(P\) lies closer to \(P_2\) and must weight \(P_2\) more heavily than \(P_1\).
+
+[CALLOUT]
+id: section-order-trap
+label: Common pitfall
+title: Pairing the ratio weights with the wrong endpoints
+tone: caution
+
+A frequent error is writing \(\frac{m x_1 + n x_2}{m + n}\) instead of \(\frac{n x_1 + m x_2}{m + n}\). Remember the cross-pairing: \(m\) (the part touching \(P_1\)) multiplies the opposite endpoint \(P_2\), and \(n\) (the part touching \(P_2\)) multiplies \(P_1\). Always check visually which endpoint \(P\) should lie closer to before finalizing your answer.
+[/CALLOUT]
+
+Drag the slider \(r = \frac{m}{m+n}\) below to see how \(P\) moves from \(P_1(-2, 1)\) toward \(P_2(6, 5)\) while the horizontal and vertical legs scale by the exact same fraction \(r\).
+
+[GRAPH]
+type: parametric2d
+title: Directed segment division \(P = (1 - r)P_1 + r P_2\) with slider \(r = m/(m+n)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -3, 7
+yrange: 0, 6
+trace: -2 + 8*t, 1 + 4*t | label: segment \(P_1 P_2\)
+segment: -2, 1, -2 + 8*r, 1 | dashed: true
+segment: -2 + 8*r, 1, -2 + 8*r, 1 + 4*r | dashed: true
+segment: -2 + 8*r, 1 + 4*r, 6, 1 + 4*r | dashed: true
+segment: 6, 1 + 4*r, 6, 5 | dashed: true
+point: -2, 1 | label: \(P_1(-2, 1)\)
+point: 6, 5 | label: \(P_2(6, 5)\)
+point: -2 + 8*r, 1 + 4*r | label: \(P\)
+slider: r | range: 0.05, 0.95 | init: 0.25 | step: 0.05
+[/GRAPH]
+
+Let us apply [REF: section-formula | the section formula] to a concrete example. Find the point \(P\) dividing the directed segment from \(A(-4, 2)\) to \(B(6, 7)\) internally in the ratio \(AP : PB = 2 : 3\). Here \(m = 2\) and \(n = 3\), so \(P\) lies closer to \(A\) (two-fifths of the way from \(A\) to \(B\)):
+\[
+x = \frac{3(-4) + 2(6)}{2 + 3} = \frac{-12 + 12}{5} = 0, \qquad y = \frac{3(2) + 2(7)}{2 + 3} = \frac{6 + 14}{5} = 4.
+\]
+So \(P = (0, 4)\). Checking with [REF: distance-formula | the distance formula]: \(AP = \sqrt{4^2 + 2^2} = 2\sqrt{5}\) and \(PB = \sqrt{6^2 + 3^2} = 3\sqrt{5}\), confirming \(AP : PB = 2 : 3\).
+
+Just as with midpoints, the section formula also recovers an unknown endpoint when the dividing point and ratio are given. For instance, if \(Q(3, 1)\) divides the segment from \(A(1, -3)\) to \(B(x_B, y_B)\) in the ratio \(AQ : QB = 1 : 2\), then \(m = 1\) and \(n = 2\), giving
+\[
+3 = \frac{2(1) + 1 \cdot x_B}{3} \implies x_B = 7, \qquad 1 = \frac{2(-3) + 1 \cdot y_B}{3} \implies y_B = 9,
+\]
+so \(B = (7, 9)\).
+
+[QUESTION 3]
+[ANSWER: C]
+The point \(P(5, -1)\) divides the directed segment from \(A(-1, 8)\) to \(B\) internally in the ratio \(AP : PB = 3 : 2\). What are the coordinates of \(B\)?
+
+(A) \((14, -\frac{29}{2})\)
+(B) \((11, -10)\)
+(C) \((9, -7)\)
+(D) \((7, -4)\)
+(E) \((3, 2)\)
+[/QUESTION]
+
+=== SECTION 4: Translating equidistant loci into equations ===
+
+So far we have analyzed fixed points and segments. Coordinate geometry becomes far more powerful when we describe an entire geometric set of points—called a locus—by an algebraic equation that its coordinates \((x, y)\) must satisfy.
+
+Consider the classic equidistant condition: what is the set of all points \(P(x, y)\) that are equally distant from \(A(1, 2)\) and \(B(5, 4)\)? Translate the geometric condition \(PA = PB\) directly using [REF: distance-formula | the distance formula]:
+\[
+\sqrt{(x - 1)^2 + (y - 2)^2} = \sqrt{(x - 5)^2 + (y - 4)^2}.
+\]
+Because both sides represent nonnegative distances, squaring both sides produces an equivalent equation with no extraneous solutions:
+\[
+(x - 1)^2 + (y - 2)^2 = (x - 5)^2 + (y - 4)^2.
+\]
+Expand both sides:
+\[
+x^2 - 2x + 1 + y^2 - 4y + 4 = x^2 - 10x + 25 + y^2 - 8y + 16.
+\]
+Notice the crucial cancellation: \(x^2\) and \(y^2\) appear with the exact same coefficient \(1\) on both sides, so they cancel completely, leaving a linear relation:
+\[
+8x + 4y = 36 \implies 2x + y = 9, \quad \text{or} \quad y = 9 - 2x.
+\]
+Check the midpoint of \(AB\), which is \(M(3, 3)\): \(2(3) + 3 = 9\), so \(M\) lies on this line. Pick another point on the line, say \(P(2, 5)\): \(PA = \sqrt{(2 - 1)^2 + (5 - 2)^2} = \sqrt{10}\) and \(PB = \sqrt{(2 - 5)^2 + (5 - 4)^2} = \sqrt{10}\). Geometrically, the equidistant locus of two distinct points is the perpendicular bisector of segment \(AB\).
+
+[GRAPH]
+type: function2d
+aspect: equal
+title: Equidistant locus \(2x + y = 9\) of \(A(1, 2)\) and \(B(5, 4)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1, 7
+yrange: -1, 7
+trace: 9 - 2*x | label: \(2x + y = 9\)
+segment: 1, 2, 5, 4 | label: \(AB\)
+segment: 1, 2, 2, 5 | dashed: true
+segment: 5, 4, 2, 5 | dashed: true
+point: 1, 2 | label: \(A(1, 2)\)
+point: 5, 4 | label: \(B(5, 4)\)
+point: 3, 3 | label: \(M(3, 3)\)
+point: 2, 5 | label: \(P(2, 5)\)
+[/GRAPH]
+
+Compare this with an unequal-distance locus to see why the \(x^2\) and \(y^2\) cancellation was special. Suppose instead we seek all points \(P(x, y)\) whose distance from \(A(0, 0)\) is twice their distance from \(B(3, 0)\), so \(PA = 2 PB\). Squaring gives \(PA^2 = 4 PB^2\):
+\[
+x^2 + y^2 = 4\bigl((x - 3)^2 + y^2\bigr) = 4x^2 - 24x + 36 + 4y^2.
+\]
+Collecting terms leaves
+\[
+3x^2 + 3y^2 - 24x + 36 = 0 \implies x^2 + y^2 - 8x + 12 = 0.
+\]
+Here the squared terms do not cancel—because the distance ratio is \(2 : 1\) rather than \(1 : 1\), the locus is not a straight line (it is in fact a circle, which we will study in a later lesson). In both cases, translating the geometric distance condition into an equation in \(x\) and \(y\) turns geometry into algebra cleanly and reversibly.
+
+[QUESTION 4]
+[ANSWER: A]
+Which equation describes the set of all points \(P(x, y)\) equidistant from \(A(-2, 5)\) and \(B(4, -1)\)?
+
+(A) \(x - y + 1 = 0\)
+(B) \(x + y - 3 = 0\)
+(C) \(x - y - 1 = 0\)
+(D) \(x + y + 1 = 0\)
+(E) \(x - 2y + 3 = 0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+The points \(A(1, 2)\), \(B(4, k)\), and \(C(10, 14)\) are collinear with \(B\) lying between \(A\) and \(C\). What are the value of \(k\) and the ratio \(AB : BC\)?
+
+(A) \(k = 8\) and \(AB : BC = 1 : 2\)
+(B) \(k = 6\) and \(AB : BC = 2 : 1\)
+(C) \(k = 10\) and \(AB : BC = 2 : 1\)
+(D) \(k = 6\) and \(AB : BC = 1 : 2\)
+(E) \(k = 5\) and \(AB : BC = 1 : 3\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A point \(P\) on the \(x\)-axis is equidistant from \(A(-1, 4)\) and \(B(5, 2)\). What are the coordinates of \(P\) and the common distance \(PA\)?
+
+(A) \(P(2, 0)\) and \(PA = 5\)
+(B) \(P(1, 0)\) and \(PA = 2\sqrt{5}\)
+(C) \(P(1, 0)\) and \(PA = \sqrt{20} + 1\)
+(D) \(P(-1, 0)\) and \(PA = 4\)
+(E) \(P(3, 0)\) and \(PA = 4\sqrt{2}\)
+[/BONUS]

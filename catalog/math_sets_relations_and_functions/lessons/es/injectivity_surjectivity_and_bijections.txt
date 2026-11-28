@@ -1,0 +1,266 @@
+=== SECTION 1: Inyectividad (funciones uno a uno) ===
+
+En la lección anterior vimos dos formas distintas en que una función \(f : A \to B\) puede dejar de comportarse como un emparejamiento exacto entre \(A\) y \(B\): dos entradas diferentes pueden colisionar en la misma salida, o algunos elementos del codominio \(B\) pueden quedar completamente sin alcanzar. Eliminar las colisiones da la INYECTIVIDAD; eliminar los objetivos sin alcanzar da la SOBREYECTIVIDAD; eliminar ambos da una BIYECCIÓN.
+
+[CALLOUT]
+id: injective-def
+label: Definición
+title: Función inyectiva (uno a uno)
+tone: key
+
+Una función \(f : A \to B\) es inyectiva (o uno a uno) si entradas distintas siempre producen salidas distintas:
+\[
+\forall x_1, x_2 \in A,\quad (x_1 \ne x_2 \implies f(x_1) \ne f(x_2)).
+\]
+Equivalentemente, tomando la contrarrecíproca:
+\[
+\forall x_1, x_2 \in A,\quad (f(x_1) = f(x_2) \implies x_1 = x_2).
+\]
+Equivalentemente, en términos de preimágenes (fibras): para todo \(y \in B\), la preimagen \(f^{-1}(\{y\})\) contiene A LO SUMO UN elemento.
+[/CALLOUT]
+
+Obsérvese cómo la forma contrarrecíproca de la [REF: injective-def | definición] convierte la demostración de inyectividad en una receta algebraica, mientras que la forma directa da una receta concreta de refutación:
+- Para DEMOSTRAR que \(f : A \to B\) es inyectiva: tómense \(x_1, x_2 \in A\) arbitrarios, supóngase \(f(x_1) = f(x_2)\) y dedúzcase \(x_1 = x_2\).
+- Para REFUTAR la inyectividad: exhíbanse DOS elementos específicos \(x_1, x_2 \in A\) con \(x_1 \ne x_2\) tales que \(f(x_1) = f(x_2)\).
+
+Apliquemos ambas plantillas en tres tipos distintos de dominios:
+
+1. Función racional: sea \(f : \mathbb{R} \setminus \{3\} \to \mathbb{R}\) dada por \(f(x) = \frac{2x + 1}{x - 3}\).
+   Supongamos que \(x_1, x_2 \in \mathbb{R} \setminus \{3\}\) satisfacen \(f(x_1) = f(x_2)\). Entonces
+   \[
+   \frac{2x_1 + 1}{x_1 - 3} = \frac{2x_2 + 1}{x_2 - 3}.
+   \]
+   Como \(x_1 \ne 3\) y \(x_2 \ne 3\), multiplicar en cruz da \((2x_1 + 1)(x_2 - 3) = (2x_2 + 1)(x_1 - 3)\), que se desarrolla como
+   \[
+   2x_1 x_2 - 6x_1 + x_2 - 3 = 2x_1 x_2 - 6x_2 + x_1 - 3.
+   \]
+   Cancelando \(2x_1 x_2 - 3\) en ambos lados queda \(-6x_1 + x_2 = -6x_2 + x_1\), de donde \(7x_2 = 7x_1\), luego \(x_1 = x_2\). Por tanto, \(f\) es inyectiva.
+
+2. Función de tuplas: sea \(g : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z} \times \mathbb{Z}\) definida por \(g(m, n) = (m + n, m - n)\).
+   Supongamos \(g(m_1, n_1) = g(m_2, n_2)\). Por igualdad de pares ordenados, ambas coordenadas coinciden:
+   \[
+   m_1 + n_1 = m_2 + n_2 \qquad \text{y} \qquad m_1 - n_1 = m_2 - n_2.
+   \]
+   Sumando ambas ecuaciones se obtiene \(2m_1 = 2m_2\), luego \(m_1 = m_2\); restándolas se obtiene \(2n_1 = 2n_2\), luego \(n_1 = n_2\). Por consiguiente \((m_1, n_1) = (m_2, n_2)\), demostrando que \(g\) es inyectiva.
+
+3. Refutación por contraejemplo: sea \(h : \mathbb{R} \to \mathbb{R}\) dada por \(h(x) = x^2 - 4x\). Nótese que \(h(x) = x(x - 4)\), por lo que \(h(0) = 0 = h(4)\) mientras \(0 \ne 4\). Así pues, \(h\) NO es inyectiva sobre \(\mathbb{R}\). Sin embargo, si restringimos el dominio a \([2, \infty)\), entonces \(h|_{[2, \infty)}(x) = (x - 2)^2 - 4\) SÍ es inyectiva, porque \((x_1 - 2)^2 = (x_2 - 2)^2\) con \(x_1, x_2 \ge 2\) fuerza \(x_1 - 2 = x_2 - 2 \ge 0\), de modo que \(x_1 = x_2\).
+
+Para funciones reales \(f : \mathbb{R} \to \mathbb{R}\), la prueba de la fibra de la [REF: injective-def | definición] es la PRUEBA DE LA RECTA HORIZONTAL: \(f\) es inyectiva si y solo si toda recta horizontal \(y = c\) corta al grafo de \(f\) en A LO SUMO UN punto. Arrastre el deslizador \(c\) más abajo para comparar \(f(x) = x^3/4 + x/2\) (estrictamente creciente, de modo que toda recta horizontal la corta exactamente una vez —¡tanto inyectiva como sobreyectiva!) frente a \(g(x) = x^2 - 1\) (para \(c > -1\), la recta corta dos veces, violando la inyectividad; para \(c < -1\), la recta no corta en absoluto, violando la sobreyectividad).
+
+[GRAPH]
+type: function2d
+title: Prueba de la recta horizontal en \(y = c\): \(f(x) = \frac{1}{4}x^3 + \frac{1}{2}x\) (inyectiva y sobreyectiva) frente a \(g(x) = x^2 - 1\) (ninguna de las dos)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -3, 4
+trace: 0.25*x^3 + 0.5*x | label: \(f(x) = \frac{1}{4}x^3 + \frac{1}{2}x\) | color: #2563eb
+trace: x^2 - 1 | label: \(g(x) = x^2 - 1\) | color: #dc2626
+trace: c | label: \(y = c\) | color: #64748b
+slider: c | range: -2.5, 3.5 | init: 1 | step: 0.25
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál de las siguientes funciones es INYECTIVA?
+
+(A) \(f_1 : \mathbb{Z} \to \mathbb{Z}\) definida por \(f_1(n) = n^2 + n\)
+(B) \(f_2 : \mathbb{Z}^+ \to \mathbb{Z}\) definida por \(f_2(n) = n^2 + n\)
+(C) \(f_3 : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}\) definida por \(f_3(m, n) = 2m + 3n\)
+(D) \(f_4 : \mathbb{R} \to \mathbb{R}\) definida por \(f_4(x) = x^3 - x\)
+(E) \(f_5 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) definida por \(f_5([a]) = [2a]\)
+[/QUESTION]
+
+=== SECTION 2: Sobreyectividad (funciones sobre) y la comprobación en dos pasos ===
+
+Mientras la inyectividad impide colisiones entre entradas, la sobreyectividad garantiza que NINGÚN elemento del codominio declarado \(B\) quede sin alcanzar.
+
+[CALLOUT]
+id: surjective-def
+label: Definición
+title: Función sobreyectiva (sobre)
+tone: key
+
+Una función \(f : A \to B\) es sobreyectiva (o sobre) si todo elemento del codominio \(B\) es imagen de al menos un elemento de \(A\):
+\[
+\forall y \in B,\quad \exists x \in A,\quad f(x) = y.
+\]
+Equivalentemente:
+(1) \(\operatorname{im}(f) = B\).
+(2) Para todo \(y \in B\), la preimagen \(f^{-1}(\{y\})\) contiene AL MENOS UN elemento (es no vacía).
+[/CALLOUT]
+
+Al demostrar sobreyectividad es donde los estudiantes omiten con mayor frecuencia un paso oculto. Dado un \(y \in B\) arbitrario, despejar algebraicamente una expresión candidata \(x\) en \(f(x) = y\) NO basta por sí solo. Deben comprobarse DOS cosas:
+1. Pertenencia al dominio: el candidato \(x\) construido a partir de \(y\) pertenece efectivamente al dominio \(A\).
+2. Verificación: sustituir ese \(x\) en \(f\) arroja genuinamente \(f(x) = y\).
+
+Obsérvese cómo comprobar la pertenencia al dominio separa de inmediato dos funciones con EXACTAMENTE LA MISMA fórmula:
+- Sea \(f : \mathbb{Q} \to \mathbb{Q}\) dada por \(f(q) = 2q + 1\). Dado un \(y \in \mathbb{Q}\) arbitrario, resuélvase \(2q + 1 = y\) para obtener el candidato \(q = \frac{y - 1}{2}\). Comprobación (1): como \(y \in \mathbb{Q}\), se tiene \(\frac{y - 1}{2} \in \mathbb{Q}\). Comprobación (2): \(f\bigl(\frac{y - 1}{2}\bigr) = 2\bigl(\frac{y - 1}{2}\bigr) + 1 = y\). Por tanto, \(f\) SÍ es sobreyectiva.
+- Sea ahora \(g : \mathbb{Z} \to \mathbb{Z}\) dada por \(g(n) = 2n + 1\). Exactamente la misma álgebra da \(n = \frac{y - 1}{2}\). ¡La comprobación (1) FALLA siempre que \(y\) es par! Para \(y = 0 \in \mathbb{Z}\), \(2n + 1 = 0\) NO tiene solución entera \(n \in \mathbb{Z}\) (pues \(2n + 1\) es siempre impar). Por tanto, \(g\) NO es sobreyectiva.
+
+Comprobemos ahora la función de tuplas de la Sección 1: \(g : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z} \times \mathbb{Z}\) dada por \(g(m, n) = (m + n, m - n)\). Ya demostramos que \(g\) es inyectiva; ¿es sobreyectiva? Tómese un objetivo arbitrario \((u, v) \in \mathbb{Z} \times \mathbb{Z}\). Resolver \(m + n = u\) y \(m - n = v\) arroja \(m = \frac{u + v}{2}\) y \(n = \frac{u - v}{2}\). Comprobación de pertenencia al dominio: ¿son enteros \(m\) y \(n\)? Tómese \((u, v) = (1, 0) \in \mathbb{Z} \times \mathbb{Z}\): la única solución real es \((m, n) = (1/2, 1/2) \notin \mathbb{Z} \times \mathbb{Z}\). En efecto, para cualesquiera enteros \(m, n\), la suma \(m + n\) y la diferencia \(m - n\) siempre tienen la MISMA paridad, por lo que \((1, 0)\) nunca se alcanza. En consecuencia, \(g\) es inyectiva sobre \(\mathbb{Z} \times \mathbb{Z}\) pero NO sobreyectiva. (Si en cambio sustituimos \(\mathbb{Z} \times \mathbb{Z}\) por \(\mathbb{R} \times \mathbb{R}\), la misma fórmula SÍ es sobreyectiva porque \((u + v)/2\) y \((u - v)/2\) siempre pertenecen a \(\mathbb{R}\).)
+
+Obsérvese también la aritmética modular en \(\mathbb{Z}/6\mathbb{Z} = \{[0], [1], [2], [3], [4], [5]\}\):
+- La aplicación \(h_1 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) dada por \(h_1([a]) = [2a]\) tiene imagen \(\{[0], [2], [4]\}\), dejando fuera a \([1], [3], [5]\), de modo que \(h_1\) no es ni inyectiva ni sobreyectiva.
+- En cambio, \(h_2 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) dada por \(h_2([a]) = [5a]\) SÍ es sobreyectiva (e inyectiva): dado cualquier \([y] \in \mathbb{Z}/6\mathbb{Z}\), elíjase \([x] = [5y] \in \mathbb{Z}/6\mathbb{Z}\) y obsérvese que \(h_2([5y]) = [25y] = [y]\) porque \(25 \equiv 1 \pmod 6\).
+
+Como la inyectividad depende del DOMINIO y la sobreyectividad depende del CODOMINIO, cambiar el dominio o el codominio —sin tocar la fórmula en absoluto— permite obtener las cuatro combinaciones posibles:
+
+[TABLE]
+Función (misma fórmula \(x \mapsto x^2\)) | Dominio \(A\) | Codominio \(B\) | ¿Inyectiva? | ¿Sobreyectiva?
+\(f_1 : \mathbb{R} \to \mathbb{R}\) | \(\mathbb{R}\) | \(\mathbb{R}\) | No (\(f_1(-1) = f_1(1)\)) | No (\(-1 \notin \operatorname{im}(f_1)\))
+\(f_2 : [0, \infty) \to \mathbb{R}\) | \([0, \infty)\) | \(\mathbb{R}\) | Sí | No (\(-1 \notin \operatorname{im}(f_2)\))
+\(f_3 : \mathbb{R} \to [0, \infty)\) | \(\mathbb{R}\) | \([0, \infty)\) | No (\(f_3(-1) = f_3(1)\)) | Sí (\(\sqrt{y} \in \mathbb{R}\))
+\(f_4 : [0, \infty) \to [0, \infty)\) | \([0, \infty)\) | \([0, \infty)\) | Sí | Sí (biyectiva)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: D]
+Considérese la función \(f : \mathbb{R} \setminus \{2\} \to \mathbb{R} \setminus \{3\}\) definida por \(f(x) = \frac{3x + 1}{x - 2}\). ¿Qué afirmación describe con precisión si \(f\) es sobreyectiva y por qué?
+
+(A) \(f\) NO es sobreyectiva, porque \(x = 2\) está excluido del dominio
+(B) \(f\) NO es sobreyectiva, porque \(f(x) = 0\) no tiene solución en \(\mathbb{R} \setminus \{2\}\)
+(C) \(f\) NO es sobreyectiva, porque al resolver \(f(x) = y\) se obtiene \(x = \frac{2y + 1}{y - 3}\), que vale \(2\) cuando \(y = -1/2\)
+(D) \(f\) SÍ es sobreyectiva, porque para todo \(y \in \mathbb{R} \setminus \{3\}\), \(x = \frac{2y + 1}{y - 3}\) pertenece a \(\mathbb{R} \setminus \{2\}\) y satisface \(f(x) = y\)
+(E) \(f\) es sobreyectiva sobre todo \(\mathbb{R}\), incluido \(y = 3\)
+[/QUESTION]
+
+=== SECTION 3: Biyecciones — correspondencias biunívocas exactas ===
+
+Cuando una función es A LA VEZ inyectiva y sobreyectiva, cada salida en el codominio es alcanzada por una y SOLO una entrada en el dominio.
+
+[CALLOUT]
+id: bijection-def
+label: Definición
+title: Función biyectiva (biyección)
+tone: key
+
+Una función \(f : A \to B\) es biyectiva (una biyección o correspondencia biunívoca) si es TANTO inyectiva COMO sobreyectiva. Equivalentemente:
+\[
+\forall y \in B,\quad \exists! x \in A,\quad f(x) = y.
+\]
+Equivalentemente, para todo \(y \in B\), la fibra \(f^{-1}(\{y\})\) es un singulete (tiene cardinalidad exactamente \(1\)).
+[/CALLOUT]
+
+Obsérvese cómo la [REF: bijection-def | condición de biyección] refleja la definición de función en sentido inverso: una función empareja cada \(a \in A\) con un único \(b \in B\), y una biyección TAMBIÉN empareja cada \(b \in B\) con un único \(a \in A\).
+
+Verifiquemos dos biyecciones no evidentes que en nada se parecen a fórmulas lineales:
+
+1. Una biyección a trozos \(f : \mathbb{N} \to \mathbb{Z}\) (donde \(\mathbb{N} = \{0, 1, 2, \dots\}\)):
+   \[
+   f(n) = \begin{cases} n/2 & \text{si } n \text{ es par}, \\ -(n + 1)/2 & \text{si } n \text{ es impar}. \end{cases}
+   \]
+   Listemos los primeros valores: \(f(0) = 0\), \(f(1) = -1\), \(f(2) = 1\), \(f(3) = -2\), \(f(4) = 2\), \(f(5) = -3, \dots\).
+   - Buena definición: si \(n\) es par, \(n/2 \in \mathbb{Z}\); si \(n\) es impar, \(n + 1\) es par, luego \(-(n + 1)/2 \in \mathbb{Z}\).
+   - Inyectividad: nótese que las entradas pares van a \(\{0, 1, 2, \dots\}\) (enteros no negativos), mientras que las entradas impares van a \(\{-1, -2, -3, \dots\}\) (enteros estrictamente negativos). Como estos dos conjuntos de llegada son disjuntos, \(f(n_1) = f(n_2)\) fuerza a que \(n_1\) y \(n_2\) tengan la MISMA paridad. Si ambos son pares, \(n_1/2 = n_2/2 \implies n_1 = n_2\); si ambos son impares, \(-(n_1 + 1)/2 = -(n_2 + 1)/2 \implies n_1 = n_2\).
+   - Sobreyectividad: sea \(k \in \mathbb{Z}\) arbitrario. Si \(k \ge 0\), tómese \(n = 2k \in \mathbb{N}\) (par), dando \(f(2k) = k\). Si \(k < 0\), tómese \(n = -2k - 1\); como \(k \le -1\), se tiene \(-2k - 1 \ge 1\), de modo que \(n \in \mathbb{N}\) es impar y \(f(-2k - 1) = -(-2k - 1 + 1)/2 = k\).
+   Por tanto, \(f\) es una biyección de \(\mathbb{N}\) sobre \(\mathbb{Z}\).
+
+2. Una biyección con valores en conjuntos sobre un conjunto potencia: fíjese un universo \(U\) y defínase \(C : \mathcal{P}(U) \to \mathcal{P}(U)\) mediante \(C(S) = S^c = U \setminus S\).
+   - Inyectividad: si \(S_1^c = S_2^c\), tomando complementos en ambos lados se obtiene \(S_1 = (S_1^c)^c = (S_2^c)^c = S_2\).
+   - Sobreyectividad: para cualquier \(T \in \mathcal{P}(U)\), elíjase \(S = T^c \in \mathcal{P}(U)\); entonces \(C(S) = (T^c)^c = T\).
+   Así, la complementación es una biyección \(\mathcal{P}(U) \to \mathcal{P}(U)\).
+
+[QUESTION 3]
+[ANSWER: A]
+Defínase \(f : \mathbb{Z} \to \mathbb{Z}\) mediante
+\[
+f(n) = \begin{cases} n + 2 & \text{si } n \text{ es par}, \\ n - 2 & \text{si } n \text{ es impar}. \end{cases}
+\]
+¿Qué afirmación sobre \(f\) es verdadera?
+
+(A) \(f\) es biyectiva
+(B) \(f\) es inyectiva, pero no sobreyectiva
+(C) \(f\) es sobreyectiva, pero no inyectiva
+(D) \(f\) no es ni inyectiva ni sobreyectiva
+(E) \(f\) no está bien definida sobre \(\mathbb{Z}\)
+[/QUESTION]
+
+=== SECTION 4: Caracterizaciones de la inyectividad y sobreyectividad mediante imágenes de conjuntos ===
+
+En la lección anterior demostramos tres inclusiones en un sentido que se cumplen para TODA función \(f : A \to B\):
+- \(S \subseteq f^{-1}(f(S))\) para todo \(S \subseteq A\),
+- \(f(S_1 \cap S_2) \subseteq f(S_1) \cap f(S_2)\) para cualesquiera \(S_1, S_2 \subseteq A\),
+- \(f(f^{-1}(T)) \subseteq T\) para todo \(T \subseteq B\).
+
+También observamos informalmente que la inclusión estricta en las dos primeras provenía de entradas que colisionaban, y la inclusión estricta en la tercera provenía de salidas no alcanzadas. Ahora podemos demostrar que convertir esas inclusiones en igualdades universales caracteriza EXACTAMENTE la inyectividad y la sobreyectividad.
+
+[CALLOUT]
+id: image-char-inj-surj
+label: Teorema
+title: Caracterizaciones de la inyectividad y sobreyectividad mediante imágenes de conjuntos
+tone: key
+
+Sea \(f : A \to B\) cualquier función.
+
+(1) Las tres afirmaciones siguientes son equivalentes:
+   (a) \(f\) es inyectiva.
+   (b) \(f^{-1}(f(S)) = S\) para TODO subconjunto \(S \subseteq A\).
+   (c) \(f(S_1 \cap S_2) = f(S_1) \cap f(S_2)\) para TODOS los subconjuntos \(S_1, S_2 \subseteq A\).
+
+(2) Las dos afirmaciones siguientes son equivalentes:
+   (a) \(f\) es sobreyectiva.
+   (b) \(f(f^{-1}(T)) = T\) para TODO subconjunto \(T \subseteq B\).
+[/CALLOUT]
+
+Demostremos la parte (1) en un ciclo limpio \((a) \implies (b) \implies (c) \implies (a)\):
+
+- \((a) \implies (b)\): Supongamos que \(f\) es inyectiva, y sea \(S \subseteq A\). Ya sabemos que \(S \subseteq f^{-1}(f(S))\) se cumple para toda función. Para la inclusión inversa \(f^{-1}(f(S)) \subseteq S\), sea \(x \in f^{-1}(f(S))\). Entonces \(f(x) \in f(S)\), por lo que por definición de imagen directa existe \(s \in S\) tal que \(f(x) = f(s)\). Como \(f\) es inyectiva, \(f(x) = f(s)\) fuerza \(x = s \in S\). Así, \(f^{-1}(f(S)) = S\).
+
+- \((b) \implies (c)\): Supongamos que \(f^{-1}(f(S)) = S\) para todo \(S \subseteq A\), y sean \(S_1, S_2 \subseteq A\). Ya sabemos que \(f(S_1 \cap S_2) \subseteq f(S_1) \cap f(S_2)\). Para la inclusión inversa, sea \(y \in f(S_1) \cap f(S_2)\). Entonces existen \(x_1 \in S_1\) y \(x_2 \in S_2\) con \(f(x_1) = y = f(x_2)\). Como \(f(x_1) = f(x_2) \in f(S_2)\), tenemos \(x_1 \in f^{-1}(f(S_2))\). Aplicando la hipótesis (b) a \(S = S_2\) resulta \(f^{-1}(f(S_2)) = S_2\), luego \(x_1 \in S_2\). Ahora \(x_1 \in S_1 \cap S_2\) e \(y = f(x_1) \in f(S_1 \cap S_2)\). Así, \(f(S_1 \cap S_2) = f(S_1) \cap f(S_2)\).
+
+- \((c) \implies (a)\): Supongamos que \(f(S_1 \cap S_2) = f(S_1) \cap f(S_2)\) para cualesquiera \(S_1, S_2 \subseteq A\). Para demostrar que \(f\) es inyectiva, sean \(x_1, x_2 \in A\) tales que \(f(x_1) = f(x_2)\). Aplíquese (c) a los singuletes \(S_1 = \{x_1\}\) y \(S_2 = \{x_2\}\):
+\[
+f(\{x_1\} \cap \{x_2\}) = f(\{x_1\}) \cap f(\{x_2\}) = \{f(x_1)\} \cap \{f(x_2)\} = \{f(x_1)\} \ne \emptyset.
+\]
+Como la imagen del conjunto vacío es vacía, \(\{x_1\} \cap \{x_2\}\) DEBE ser no vacío, ¡lo que fuerza \(x_1 = x_2\)! Así pues, \(f\) es inyectiva.
+
+Demostremos ahora la parte (2) en dos direcciones breves:
+- \((a) \implies (b)\): Supongamos que \(f\) es sobreyectiva, de modo que \(\operatorname{im}(f) = B\). Por la identidad exacta de ida y vuelta de la lección anterior \(f(f^{-1}(T)) = T \cap \operatorname{im}(f)\), obtenemos \(f(f^{-1}(T)) = T \cap B = T\) para todo \(T \subseteq B\).
+- \((b) \implies (a)\): Supongamos que \(f(f^{-1}(T)) = T\) para todo \(T \subseteq B\). Aplíquese esto a \(T = B\) (o a cualquier singulete \(T = \{y\}\)): como \(f^{-1}(B) = A\), obtenemos inmediatamente \(\operatorname{im}(f) = f(A) = f(f^{-1}(B)) = B\), luego \(f\) es sobreyectiva.
+
+Préstese atención al cuantificador UNIVERSAL «para TODO subconjunto» en el [REF: image-char-inj-surj | teorema]: cumplir \(f^{-1}(f(S)) = S\) para UN subconjunto particular \(S\) NO implica que \(f\) sea inyectiva (por ejemplo, \(f(x) = x^2\) cumple \(f^{-1}(f(\{0\})) = \{0\}\) y \(f^{-1}(f([-1, 1])) = [-1, 1]\), y sin embargo \(f\) no es inyectiva). De igual modo, cumplir \(f(f^{-1}(T)) = T\) para un \(T \subseteq \operatorname{im}(f)\) NO vuelve sobreyectiva a \(f\). Solo valer para TODOS los subconjuntos (¡o para todos los singuletes!) fuerza la inyectividad o la sobreyectividad.
+
+[QUESTION 4]
+[ANSWER: E]
+Sea \(f : A \to B\) una función. Supongamos que se sabe que \(f(A \setminus S) = B \setminus f(S)\) se cumple para TODO subconjunto \(S \subseteq A\). ¿Qué puede concluirse acerca de \(f\)?
+
+(A) \(f\) debe ser inyectiva, pero no necesariamente sobreyectiva
+(B) \(f\) debe ser sobreyectiva, pero no necesariamente inyectiva
+(C) \(f\) puede no ser ni inyectiva ni sobreyectiva si \(A\) es infinito
+(D) \(f\) es constante siempre que \(A\) tenga al menos dos elementos
+(E) \(f\) debe ser biyectiva (tanto inyectiva como sobreyectiva)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Fíjese un conjunto no vacío \(U\) y un subconjunto fijo \(K \subseteq U\). Defínase \(\Phi_K : \mathcal{P}(U) \to \mathcal{P}(U)\) mediante \(\Phi_K(S) = S \Delta K\) (diferencia simétrica con \(K\)), y defínase \(\Psi_K : \mathcal{P}(U) \to \mathcal{P}(U)\) mediante \(\Psi_K(S) = S \cup K\). ¿Para qué subconjuntos \(K \subseteq U\) es biyectiva \(\Phi_K\), y para qué subconjuntos \(K \subseteq U\) es biyectiva \(\Psi_K\)?
+
+(A) \(\Phi_K\) es biyectiva únicamente cuando \(K = \emptyset\); \(\Psi_K\) es biyectiva para todo \(K \subseteq U\)
+(B) Tanto \(\Phi_K\) como \(\Psi_K\) son biyectivas para todo \(K \subseteq U\)
+(C) \(\Phi_K\) es biyectiva para TODO \(K \subseteq U\); \(\Psi_K\) es biyectiva ÚNICAMENTE cuando \(K = \emptyset\)
+(D) \(\Phi_K\) es biyectiva únicamente cuando \(K = U\); \(\Psi_K\) es biyectiva únicamente cuando \(K = \emptyset\)
+(E) \(\Phi_K\) es biyectiva para todo \(K \subseteq U\); \(\Psi_K\) es biyectiva únicamente cuando \(K = U\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Dada cualquier función \(f : A \to B\), defínase la aplicación de preimagen inducida \(f^* : \mathcal{P}(B) \to \mathcal{P}(A)\) mediante \(f^*(T) = f^{-1}(T)\) para cada \(T \subseteq B\). ¿Qué condición sobre \(f\) es equivalente a que \(f^*\) sea INYECTIVA?
+
+(A) \(f\) es inyectiva
+(B) \(f\) es sobreyectiva
+(C) \(f\) es biyectiva
+(D) \(A\) es no vacío
+(E) \(f^*\) es siempre inyectiva para toda función \(f\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Sea \(f : \mathbb{Z} \to \mathbb{Z}\) definida por \(f(n) = 3n + 1\) para \(n \in \mathbb{Z}\). Supongamos que cambiamos ÚNICAMENTE el dominio o el codominio de \(f\) (manteniendo la fórmula \(n \mapsto 3n + 1\)). ¿Qué elección convierte a \(f\) en una BIYECCIÓN?
+
+(A) Dominio \(\mathbb{Z}\), codominio \(\{3k : k \in \mathbb{Z}\}\)
+(B) Dominio \(\{3k + 1 : k \in \mathbb{Z}\}\), codominio \(\mathbb{Z}\)
+(C) Dominio \(\mathbb{N}\), codominio \(\{3k + 1 : k \in \mathbb{Z}\}\)
+(D) Dominio \(\mathbb{Z}\), codominio \(\{3k + 1 : k \in \mathbb{Z}\}\)
+(E) Dominio \(\mathbb{Z}\), codominio \(\{k \in \mathbb{Z} : k \not\equiv 0 \pmod{3}\}\)
+[/BONUS]

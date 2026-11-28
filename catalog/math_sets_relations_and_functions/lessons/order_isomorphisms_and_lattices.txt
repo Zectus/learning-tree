@@ -1,0 +1,265 @@
+=== SECTION 1: Order-preserving maps, order embeddings, and order isomorphisms ===
+
+For plain sets with no extra structure, two sets are "structurally identical" whenever there is a bijection between them. Once we equip sets with partial orders \((P, \preceq_P)\) and \((Q, \preceq_Q)\), however, a bare bijection ignores the ordering completely! To compare ordered structures faithfully, we need functions that interact cleanly with \(\preceq_P\) and \(\preceq_Q\). Three nested levels of order compatibility do the work.
+
+[CALLOUT]
+id: order-maps-def
+label: Definition
+title: Order-preserving map, order embedding, and order isomorphism
+tone: key
+
+Let \((P, \preceq_P)\) and \((Q, \preceq_Q)\) be partially ordered sets, and let \(f : P \to Q\) be a function.
+
+(1) Order-preserving (monotone): for all \(x, y \in P\),
+\[
+x \preceq_P y \implies f(x) \preceq_Q f(y).
+\]
+(2) Order embedding (order-preserving AND order-reflecting): for all \(x, y \in P\),
+\[
+x \preceq_P y \iff f(x) \preceq_Q f(y).
+\]
+(3) Order isomorphism: \(f\) is a BIJECTIVE order embedding. Equivalently, \(f\) is a bijection such that BOTH \(f : P \to Q\) and \(f^{-1} : Q \to P\) are order-preserving.
+[/CALLOUT]
+
+Check two immediate consequences of [REF: order-maps-def | this definition]:
+- Every order embedding \(f : P \to Q\) is AUTOMATICALLY INJECTIVE! Proof: suppose \(f(x) = f(y)\). By reflexivity of \(\preceq_Q\), we have BOTH \(f(x) \preceq_Q f(y)\) and \(f(y) \preceq_Q f(x)\). Because \(f\) is an order embedding (reverse implication!), this yields BOTH \(x \preceq_P y\) and \(y \preceq_P x\). By antisymmetry of \(\preceq_P\), \(x = y\)!
+- An order embedding \(f : P \to Q\) need NOT be surjective (for instance, \(n \mapsto 2n\) is an order embedding of \((\mathbb{Z}, \le)\) into \((\mathbb{Z}, \le)\)); it makes \(P\) order-isomorphic to the subposet \(\operatorname{im}(f) \subseteq Q\).
+
+Now confront the single most important pitfall in comparing posets!
+
+[CALLOUT]
+id: bijective-monotone-trap
+label: Common pitfall
+title: A bijective order-preserving map need NOT be an order isomorphism!
+tone: caution
+
+For general posets, a bijection \(f : P \to Q\) that is order-preserving (\(x \preceq_P y \implies f(x) \preceq_Q f(y)\)) can FAIL to be an order isomorphism—because \(f\) is allowed to ADD new order comparisons that did not exist in \(P\)!
+
+Concrete finite counterexample: let \(P = \{a, b\}\) carry the discrete antichain order (where ONLY \(a \preceq_P a\) and \(b \preceq_P b\) hold, so \(a\) and \(b\) are incomparable), and let \(Q = \{1, 2\}\) carry the usual chain order \(1 \le 2\). Define \(f : P \to Q\) by \(f(a) = 1\) and \(f(b) = 2\).
+- \(f\) is clearly bijective.
+- \(f\) is order-preserving: the only pairs with \(x \preceq_P y\) are \((a, a)\) and \((b, b)\), and indeed \(f(a) \le f(a)\) and \(f(b) \le f(b)\).
+- Yet \(f\) is NOT an order isomorphism: \(f(a) = 1 \le 2 = f(b)\) in \(Q\), while \(a \npreceq_P b\) in \(P\)! Equivalently, \(f^{-1} : Q \to P\) fails to be order-preserving because \(1 \le 2\) while \(f^{-1}(1) = a \npreceq_P b = f^{-1}(2)\).
+[/CALLOUT]
+
+What if the domain \((P, \preceq_P)\) is a TOTAL (linear) order? Then that trap VANISHES!
+
+Theorem (Total-Order Upgrade): If \((P, \preceq_P)\) is a TOTAL order, then EVERY bijective order-preserving map \(f : P \to Q\) is automatically an order isomorphism!
+
+Proof: We already know \(f\) is bijective and satisfies \(x \preceq_P y \implies f(x) \preceq_Q f(y)\). To prove the reverse implication, suppose \(f(x) \preceq_Q f(y)\) for some \(x, y \in P\). Because \(P\) is totally ordered, either \(x \preceq_P y\) or \(y \prec_P x\) (meaning \(y \preceq_P x\) and \(y \ne x\)). Suppose for contradiction that \(y \prec_P x\). Because \(f\) is order-preserving, \(y \preceq_P x\) implies \(f(y) \preceq_Q f(x)\). Together with \(f(x) \preceq_Q f(y)\), antisymmetry of \(\preceq_Q\) forces \(f(x) = f(y)\). Since \(f\) is injective, \(x = y\), contradicting \(y \ne x\)! Therefore \(x \preceq_P y\), proving \(f\) is an order isomorphism! (Notice that a bijective order-preserving map from a total order \(P\) also forces \(Q\) to be totally ordered!)
+
+[QUESTION 1]
+[ANSWER: D]
+Let \(P = \{1, 2, 3, 6\}\) ordered by divisibility (\(a \mid b\)), and let \(Q = \{1, 2, 3, 4\}\) ordered by the usual \(\le\) on integers. Define \(f : P \to Q\) by \(f(1) = 1,\; f(2) = 2,\; f(3) = 3,\; f(6) = 4\). Which statement accurately classifies \(f\)?
+
+(A) \(f\) is an order isomorphism from \((P, \mid)\) to \((Q, \le)\)
+(B) \(f\) is NOT order-preserving
+(C) \(f\) is an order embedding, but not surjective
+(D) \(f\) is a bijective order-preserving map, but NOT an order isomorphism
+(E) \(f^{-1}\) is order-preserving, but \(f\) is not
+[/QUESTION]
+
+=== SECTION 2: Order-isomorphism invariants and classifying posets ===
+
+When two posets \((P, \preceq_P)\) and \((Q, \preceq_Q)\) are order-isomorphic (written \(P \cong Q\)), they have the EXACT SAME order structure—their Hasse diagrams are identical up to relabeling vertices! Let us list the structural properties preserved by every order isomorphism, because any mismatch in these invariants proves \(P \not\cong Q\) immediately.
+
+[CALLOUT]
+id: iso-invariants
+label: Theorem
+title: Structural invariants preserved by order isomorphisms
+tone: key
+
+Let \(f : (P, \preceq_P) \to (Q, \preceq_Q)\) be an order isomorphism. Then:
+
+(1) Strict order and covers: \(x \prec_P y \iff f(x) \prec_Q f(y)\), and \(y\) covers \(x\) in \(P\) iff \(f(y)\) covers \(f(x)\) in \(Q\).
+(2) Extremal elements: \(a\) is minimal (resp. maximal, least, greatest) in \(P\) if and only if \(f(a)\) is minimal (resp. maximal, least, greatest) in \(Q\).
+(3) Chains and antichains: \(C \subseteq P\) is a chain (resp. antichain) in \(P\) if and only if \(f(C)\) is a chain (resp. antichain) in \(Q\).
+(4) Bounds, suprema, and infima: for any \(S \subseteq P\) and \(u \in P\), \(u\) is an upper bound (resp. lower bound, supremum, infimum) of \(S\) in \(P\) if and only if \(f(u)\) is an upper bound (resp. lower bound, supremum, infimum) of \(f(S)\) in \(Q\).
+[/CALLOUT]
+
+Let us verify part (4) for suprema—notice how clean the proof is using [REF: order-maps-def.2 | the biconditional \(x \preceq_P y \iff f(x) \preceq_Q f(y)\)]! Suppose \(u = \sup_P S\).
+- First, is \(f(u)\) an upper bound of \(f(S)\) in \(Q\)? Take any \(f(s) \in f(S)\) (with \(s \in S\)). Since \(s \preceq_P u\), order-preservation gives \(f(s) \preceq_Q f(u)\).
+- Second, is \(f(u)\) the LEAST upper bound of \(f(S)\)? Let \(v \in Q\) be ANY upper bound of \(f(S)\). Because \(f\) is surjective, write \(v = f(w)\) for a unique \(w \in P\). For every \(s \in S\), we have \(f(s) \preceq_Q f(w)\), which by order-reflection implies \(s \preceq_P w\). Thus \(w\) is an upper bound of \(S\) in \(P\)! Since \(u = \sup_P S\), we get \(u \preceq_P w\), and applying \(f\) yields \(f(u) \preceq_Q f(w) = v\)!
+Hence \(f(\sup_P S) = \sup_Q f(S)\) (and dually \(f(\inf_P S) = \inf_Q f(S)\))!
+
+Now let us use both explicit isomorphisms and [REF: iso-invariants | these invariants] to classify concrete finite and infinite posets!
+
+1. Divisor poset \((D_{30}, \mid)\) versus power set \((\mathcal{P}(\{2, 3, 5\}), \subseteq)\):
+   Here \(D_{30} = \{1, 2, 3, 5, 6, 10, 15, 30\}\) consists of all positive divisors of \(30 = 2 \cdot 3 \cdot 5\) (a product of three distinct primes). Define \(f : \mathcal{P}(\{2, 3, 5\}) \to D_{30}\) by
+   \[
+   f(S) = \prod_{p \in S} p \qquad (\text{with the empty product } f(\emptyset) = 1).
+   \]
+   By unique prime factorization, \(f\) is bijective, and \(S_1 \subseteq S_2 \iff \bigl(\prod_{p \in S_1} p\bigr) \mid \bigl(\prod_{p \in S_2} p\bigr) \iff f(S_1) \mid f(S_2)\)! Thus \((\mathcal{P}(\{2, 3, 5\}), \subseteq) \cong (D_{30}, \mid)\)—both have the 3-dimensional cube Hasse diagram!
+
+2. What about \((D_{12}, \mid)\) with \(D_{12} = \{1, 2, 3, 4, 6, 12\}\)?
+   Every divisor of \(12 = 2^2 \cdot 3^1\) has the unique form \(2^a 3^b\) with \(a \in \{0, 1, 2\}\) and \(b \in \{0, 1\}\), and \(2^{a_1} 3^{b_1} \mid 2^{a_2} 3^{b_2} \iff (a_1 \le a_2 \land b_1 \le b_2)\). Thus \((D_{12}, \mid) \cong (\{0, 1, 2\} \times \{0, 1\}, \le_{\mathrm{prod}})\)! By contrast, \(D_{12}\) is NOT isomorphic to the 6-element chain \(\{1, 2, 3, 4, 5, 6\}\) (under \(\le\)), because \(D_{12}\) has incomparable elements \(2\) and \(3\) (antichain of size \(2\)), whereas a chain has no antichain of size \(2\).
+
+3. Infinite total orders with the SAME cardinality can still fail to be order-isomorphic! Compare \((\mathbb{N}, \le)\), \((\mathbb{Z}, \le)\), and \((\mathbb{Q}, \le)\): all three are countably infinite, yet NO TWO are order-isomorphic!
+   - \((\mathbb{N}, \le) \not\cong (\mathbb{Z}, \le)\) because \((\mathbb{N}, \le)\) has a least element \(0\), while \((\mathbb{Z}, \le)\) has NO least element.
+   - \((\mathbb{Z}, \le) \not\cong (\mathbb{Q}, \le)\) because in \((\mathbb{Z}, \le)\) every element \(n\) is covered by \(n + 1\) (there is no integer strictly between \(n\) and \(n + 1\)), whereas in \((\mathbb{Q}, \le)\) NO element covers any other element (between any \(p < q\) lies \(\frac{p + q}{2}\))!
+
+[TABLE]
+Poset | Cardinality | Least / greatest? | Max antichain size | Order-isomorphic to
+\((D_6, \mid)\) | \(4\) | \(1\) / \(6\) | \(2\) (\(\{2, 3\}\)) | \((\mathcal{P}(\{a, b\}), \subseteq)\)
+\((D_8, \mid)\) | \(4\) | \(1\) / \(8\) | \(1\) (total order) | \((\{0, 1, 2, 3\}, \le)\)
+\((D_{30}, \mid)\) | \(8\) | \(1\) / \(30\) | \(3\) (\(\{2, 3, 5\}\)) | \((\mathcal{P}(\{a, b, c\}), \subseteq)\)
+\((\mathbb{N}, \le)\) | \(\aleph_0\) | \(0\) / none | \(1\) | \((\mathbb{Z}^+, \le)\) via \(n \mapsto n + 1\)
+\((\mathbb{Z}, \le)\) | \(\aleph_0\) | none / none | \(1\) | \((2\mathbb{Z}, \le)\) via \(n \mapsto 2n\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: C]
+Which pair of posets IS order-isomorphic?
+
+(A) \((D_8, \mid)\) and \((D_{10}, \mid)\)
+(B) \((\mathbb{N}, \le)\) and \((\mathbb{Z}, \le)\)
+(C) \((D_{18}, \mid)\) and \((D_{12}, \mid)\)
+(D) \((D_{24}, \mid)\) and \((D_{30}, \mid)\)
+(E) \((\mathbb{Z}, \le)\) and \((\mathbb{Q}, \le)\)
+[/QUESTION]
+
+=== SECTION 3: Lattices — joins and meets everywhere ===
+
+In our earlier lesson on suprema and infima, we saw that in some posets (like \((\mathbb{Q}, \le)\) or deleted divisor posets), subsets may fail to have a least upper bound or greatest lower bound. A particularly important class of posets—central to logic, algebra, and computer science—guarantees that EVERY PAIR of elements has both a supremum and an infimum.
+
+[CALLOUT]
+id: lattice-def
+label: Definition
+title: Lattice, join, and meet
+tone: key
+
+A partially ordered set \((L, \preceq)\) is a lattice if for EVERY pair of elements \(a, b \in L\), the two-element subset \(\{a, b\}\) has BOTH:
+
+(1) A least upper bound (supremum), called the join of \(a\) and \(b\) and denoted \(a \lor b = \sup\{a, b\}\).
+(2) A greatest lower bound (infimum), called the meet of \(a\) and \(b\) and denoted \(a \land b = \inf\{a, b\}\).
+[/CALLOUT]
+
+Because suprema and infima are unique whenever they exist, \(\lor\) and \(\land\) are well-defined binary operations \(L \times L \to L\) on any lattice! Check our three canonical families of lattices:
+
+1. Every total order \((T, \le)\) is a lattice: for any \(a, b \in T\), they are comparable, so
+\[
+a \lor b = \max(a, b) \qquad \text{and} \qquad a \land b = \min(a, b).
+\]
+Notice that \((\mathbb{Q}, \le)\) IS a lattice even though infinite bounded subsets of \(\mathbb{Q}\) can lack suprema—the lattice condition requires suprema and infima ONLY for PAIRS \(\{a, b\}\) (and hence, by induction, for all nonempty FINITE subsets)!
+
+2. Every power set \((\mathcal{P}(X), \subseteq)\) is a lattice: for any \(A, B \subseteq X\),
+\[
+A \lor B = A \cup B \qquad \text{and} \qquad A \land B = A \cap B.
+\]
+
+3. Positive integers under divisibility \((\mathbb{Z}^+, \mid)\) is a lattice: for any \(a, b \in \mathbb{Z}^+\),
+\[
+a \lor b = \operatorname{lcm}(a, b) \qquad \text{and} \qquad a \land b = \gcd(a, b).
+\]
+Likewise, for any positive integer \(N\), the divisor poset \((D_N, \mid)\) is a finite lattice, because if \(a \mid N\) and \(b \mid N\), then BOTH \(\gcd(a, b) \mid N\) and \(\operatorname{lcm}(a, b) \mid N\)!
+
+Now look at TWO different ways a finite poset can FAIL to be a lattice:
+
+- Failure 1 (missing upper or lower bound): take \(P_1 = \{2, 3, 4, 6\}\) ordered by divisibility. Here \(2\) and \(3\) have NO common lower bound in \(P_1\) (since \(1 \notin P_1\)), so \(2 \land 3\) does not exist; and \(4\) and \(6\) have NO common upper bound in \(P_1\) (since \(12 \notin P_1\)), so \(4 \lor 6\) does not exist.
+
+- Failure 2 (multiple minimal upper bounds—the bowtie trap!): take the 6-element poset \(B_6 = \{0, a_1, a_2, b_1, b_2, 1\}\) where \(0\) is least, \(1\) is greatest, \(a_1, a_2\) are incomparable, \(b_1, b_2\) are incomparable, and BOTH \(a_1, a_2\) sit strictly below BOTH \(b_1, b_2\):
+  \[
+  0 \prec a_1, a_2 \prec b_1, b_2 \prec 1.
+  \]
+  Notice \(B_6\) HAS a least element \(0\) and a greatest element \(1\), so EVERY pair has both common upper bounds and common lower bounds! Yet \(B_6\) is NOT a lattice! Check \(\{a_1, a_2\}\): its set of upper bounds is \(\{b_1, b_2, 1\}\). Both \(b_1\) and \(b_2\) are minimal upper bounds of \(\{a_1, a_2\}\), and they are INCOMPARABLE—neither \(b_1 \preceq b_2\) nor \(b_2 \preceq b_1\) holds! Therefore \(\sup\{a_1, a_2\}\) DOES NOT EXIST! (Dually, \(\{b_1, b_2\}\) has two maximal lower bounds \(a_1, a_2\) and NO infimum!)
+
+[QUESTION 3]
+[ANSWER: B]
+Which of the following posets is a LATTICE?
+
+(A) \(P_1 = \{1, 2, 3, 4, 6\}\) ordered by divisibility
+(B) \(P_2 = \{1, 2, 3, 6, 12\}\) ordered by divisibility
+(C) \(P_3 = \mathcal{P}(\{1, 2, 3\}) \setminus \{\emptyset\}\) ordered by \(\subseteq\)
+(D) \(P_4 = \{1, 2, 3, 12, 18, 36\}\) ordered by divisibility
+(E) \(P_5 = \{2, 3, 6, 12\}\) ordered by divisibility
+[/QUESTION]
+
+=== SECTION 4: Algebraic laws of lattices and preservation under isomorphisms ===
+
+In every lattice \((L, \preceq)\), the join \(\lor\) and meet \(\land\) automatically obey clean algebraic laws—remember how union/intersection on \(\mathcal{P}(X)\) and \(\operatorname{lcm}\)/\(\gcd\) on \(\mathbb{Z}^+\) obey the exact same identities!
+
+[CALLOUT]
+id: lattice-laws
+label: Theorem
+title: Fundamental algebraic laws of a lattice
+tone: key
+
+Let \((L, \preceq)\) be any lattice, and let \(a, b, c \in L\). Then:
+
+(1) Order recovery: \(a \preceq b \iff a \lor b = b \iff a \land b = a\).
+(2) Idempotence: \(a \lor a = a\) and \(a \land a = a\).
+(3) Commutativity: \(a \lor b = b \lor a\) and \(a \land b = b \land a\).
+(4) Associativity: \((a \lor b) \lor c = a \lor (b \lor c)\) and \((a \land b) \land c = a \land (b \land c)\).
+(5) Absorption: \(a \lor (a \land b) = a\) and \(a \land (a \lor b) = a\).
+[/CALLOUT]
+
+Let us prove [REF: lattice-laws.1 | order recovery] and [REF: lattice-laws.5 | absorption] straight from the definition of \(\sup\) and \(\inf\):
+- Order recovery (\(a \preceq b \iff a \lor b = b\)):
+  - If \(a \preceq b\), then \(b\) is an upper bound of \(\{a, b\}\) (since \(a \preceq b\) and \(b \preceq b\)), and any upper bound \(u\) of \(\{a, b\}\) satisfies \(b \preceq u\); thus \(b = \sup\{a, b\} = a \lor b\).
+  - Conversely, if \(a \lor b = b\), then because \(a \preceq a \lor b\), we get \(a \preceq b\)!
+  The proof of \(a \preceq b \iff a \land b = a\) is completely dual.
+- Absorption (\(a \lor (a \land b) = a\)): by definition of meet, \(a \land b \preceq a\). Applying [REF: lattice-laws.1 | order recovery] to \((a \land b) \preceq a\) immediately gives \((a \land b) \lor a = a\), i.e., \(a \lor (a \land b) = a\)!
+- Associativity holds because both \((a \lor b) \lor c\) and \(a \lor (b \lor c)\) equal the unique least upper bound \(\sup\{a, b, c\}\) of the three-element set \(\{a, b, c\}\)!
+
+Finally, how do order isomorphisms interact with joins and meets? Directly from [REF: iso-invariants.4 | preservation of suprema and infima], if \(f : L_1 \to L_2\) is an order isomorphism between two lattices, then for ALL \(a, b \in L_1\):
+\[
+f(a \lor b) = f(\sup\{a, b\}) = \sup\{f(a), f(b)\} = f(a) \lor f(b),
+\]
+\[
+f(a \land b) = f(\inf\{a, b\}) = \inf\{f(a), f(b)\} = f(a) \land f(b).
+\]
+Contrast this with a MERELY order-preserving map \(g : L_1 \to L_2\): since \(a \preceq a \lor b\) and \(b \preceq a \lor b\), monotonicity gives \(g(a) \preceq g(a \lor b)\) and \(g(b) \preceq g(a \lor b)\), so \(g(a \lor b)\) is an upper bound of \(\{g(a), g(b)\}\), giving only the ONE-SIDED inequality
+\[
+g(a) \lor g(b) \preceq g(a \lor b) \qquad \text{and dually} \qquad g(a \land b) \preceq g(a) \land g(b),
+\]
+which can be strict! (Take the bijective order-preserving map \(g : \mathcal{P}(\{x, y\}) \to \{0, 1, 2, 3\}\) defined by \(g(\emptyset) = 0,\; g(\{x\}) = 1,\; g(\{y\}) = 2,\; g(\{x, y\}) = 3\): in \(\mathcal{P}(\{x, y\})\), \(\{x\} \lor \{y\} = \{x, y\}\), so \(g(\{x\} \lor \{y\}) = 3\), whereas \(g(\{x\}) \lor g(\{y\}) = \max(1, 2) = 2 < 3\)!) Thus an order isomorphism preserves joins and meets EXACTLY, turning an order-theoretic isomorphism into an algebraic lattice isomorphism!
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(L_1\) and \(L_2\) be lattices, and let \(f : L_1 \to L_2\) be a bijection satisfying \(f(a \lor b) = f(a) \lor f(b)\) for ALL \(a, b \in L_1\). Using [REF: lattice-laws.1 | order recovery], what can you conclude about \(f\)?
+
+(A) \(f\) MUST be an order isomorphism from \(L_1\) to \(L_2\) (and therefore also preserves meets \(f(a \land b) = f(a) \land f(b)\))
+(B) \(f\) is order-preserving, but need not be an order isomorphism unless we also assume \(f(a \land b) = f(a) \land f(b)\)
+(C) \(f\) need not even be order-preserving
+(D) \(f\) is an order isomorphism only when \(L_1\) and \(L_2\) are total orders
+(E) \(f\) reverses the order (\(a \preceq b \iff f(b) \preceq f(a)\))
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Let \((L, \preceq)\) be a FINITE nonempty lattice. What can you ALWAYS conclude about extremal elements in \(L\)?
+
+(A) \(L\) must be a total order
+(B) \(L\) has a least element, but need not have a greatest element
+(C) \(L\) can have multiple minimal elements as long as every pair has a meet
+(D) \(L\) MUST have BOTH a unique least element and a unique greatest element
+(E) \(L\) has a least and greatest element only if \(|L|\) is a power of \(2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+For any poset \((P, \preceq)\), its dual poset \(P^{\mathrm{op}} = (P, \succeq)\) reverses all order comparisons (\(x \preceq^{\mathrm{op}} y \iff y \preceq x\)). Which poset \(P\) is order-isomorphic to its own dual \(P^{\mathrm{op}}\)?
+
+(A) \((\mathbb{N}, \le)\)
+(B) \(([0, 1), \le)\)
+(C) \((\mathbb{Z}, \le)\) (and also \((\mathcal{P}(X), \subseteq)\) for every set \(X\))
+(D) \((\mathbb{Z}^+, \mid)\)
+(E) \((\mathbb{N} \times \mathbb{N}, \le_{\mathrm{lex}})\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Up to order isomorphism, there are exactly \(5\) distinct posets on \(3\) elements:
+1. The \(3\)-element chain (\(a \prec b \prec c\)).
+2. The \(3\)-element antichain (\(a, b, c\) pairwise incomparable).
+3. The V-poset (\(a \prec b\) and \(a \prec c\), with \(b, c\) incomparable).
+4. The inverted-V poset (\(a \prec c\) and \(b \prec c\), with \(a, b\) incomparable).
+5. The \(2\)-element chain plus an isolated element (\(a \prec b\), with \(c\) incomparable to both).
+
+How many of these \(5\) isomorphism classes are LATTICES?
+
+(A) All \(5\)
+(B) \(4\)
+(C) \(3\)
+(D) \(2\)
+(E) Only \(1\) (the \(3\)-element chain)
+[/BONUS]

@@ -1,0 +1,285 @@
+=== SECTION 1: Especificaciones recursivas de sucesiones y verificación de formas cerradas ===
+
+Existen dos maneras fundamentalmente distintas de especificar una sucesión \((a_n)_{n \ge 0}\). Una fórmula cerrada calcula \(a_n\) directamente a partir del índice \(n\) en un solo paso, como \(a_n = 2^n + 3^n\). Una definición recursiva, en cambio, especifica uno o más valores iniciales (base) junto con una regla de recurrencia que construye cada término posterior a partir de términos anteriores, como
+\[
+a_0 = 2, \qquad a_1 = 5, \qquad a_n = 5a_{n-1} - 6a_{n-2} \quad (n \ge 2).
+\]
+Calcular los primeros términos a partir de la recurrencia da \(a_2 = 5(5) - 6(2) = 13\), \(a_3 = 5(13) - 6(5) = 35\) y \(a_4 = 5(35) - 6(13) = 97\). Compáralos con \(2^n + 3^n\): \(1 + 1 = 2\), \(2 + 3 = 5\), \(4 + 9 = 13\), \(8 + 27 = 35\), \(16 + 81 = 97\).
+
+En esta lección no desarrollamos métodos algebraicos generales de resolución (como ecuaciones características o funciones generatrices); en cambio, la inducción fuerte ofrece una manera limpia y completamente rigurosa de verificar cualquier forma cerrada o identidad dada para una sucesión definida recursivamente.
+
+Verifiquemos \(a_n = 2^n + 3^n\) para todo \(n \ge 0\). Como la recurrencia para \(a_{k+1}\) usa tanto \(a_k\) como \(a_{k-1}\) (desfase \(2\)), verificamos dos casos base:
+- \(n = 0\): \(a_0 = 2 = 2^0 + 3^0\),
+- \(n = 1\): \(a_1 = 5 = 2^1 + 3^1\).
+Ahora fija un entero \(k \ge 1\) y supone \(a_j = 2^j + 3^j\) para todo entero \(0 \le j \le k\). Como \(k \ge 1\), tanto \(k\) como \(k - 1\) satisfacen \(0 \le j \le k\), por lo que la hipótesis inductiva fuerte aplica a ambos términos de la recurrencia:
+\[
+a_{k+1} = 5a_k - 6a_{k-1} = 5(2^k + 3^k) - 6(2^{k-1} + 3^{k-1}).
+\]
+Agrupa por separado las potencias de \(2\) y las potencias de \(3\):
+\[
+a_{k+1} = (5 \cdot 2 - 6)2^{k-1} + (5 \cdot 3 - 6)3^{k-1} = 4 \cdot 2^{k-1} + 9 \cdot 3^{k-1} = 2^{k+1} + 3^{k+1}.
+\]
+Por inducción fuerte, \(a_n = 2^n + 3^n\) vale para todo entero \(n \ge 0\).
+
+Observa por qué ambos casos base son indispensables. ¡Cualquier fórmula de la forma \(c_1 2^n + c_2 3^n\) satisface idénticamente la recurrencia \(a_{k+1} = 5a_k - 6a_{k-1}\)! Verificar únicamente \(n = 0\) no distinguiría \(2^n + 3^n\) de \(2 \cdot 2^n + 0 \cdot 3^n\) (que también vale \(2\) en \(n = 0\), pero da \(4 \ne 5\) en \(n = 1\)). Se necesitan ambos casos base para fijar la sucesión única.
+
+La inducción fuerte también verifica identidades que vinculan dos sucesiones definidas recursivamente. Recuerda la sucesión de Fibonacci \(F_0 = 0\), \(F_1 = 1\), \(F_n = F_{n-1} + F_{n-2}\) (\(n \ge 2\)), y define la sucesión compañera de Lucas mediante exactamente la misma recurrencia con semillas distintas:
+\[
+L_0 = 2, \qquad L_1 = 1, \qquad L_n = L_{n-1} + L_{n-2} \quad (n \ge 2).
+\]
+Sus primeros términos son \(2, 1, 3, 4, 7, 11, 18, \dots\). Compara \(L_n\) con \(F_{n-1} + F_{n+1}\):
+- \(n = 1\): \(L_1 = 1\) y \(F_0 + F_2 = 0 + 1 = 1\),
+- \(n = 2\): \(L_2 = 3\) y \(F_1 + F_3 = 1 + 2 = 3\),
+- \(n = 3\): \(L_3 = 4\) y \(F_2 + F_4 = 1 + 3 = 4\).
+
+Para demostrar \(L_n = F_{n-1} + F_{n+1}\) para todo entero \(n \ge 1\), ya verificamos los dos casos base \(n = 1\) y \(n = 2\). Fija \(k \ge 2\) y supone \(L_j = F_{j-1} + F_{j+1}\) para todo \(1 \le j \le k\). Usando la recurrencia de Lucas, la hipótesis inductiva fuerte en \(j = k\) y \(j = k - 1\), y finalmente la recurrencia de Fibonacci dos veces:
+\[
+L_{k+1} = L_k + L_{k-1} = (F_{k-1} + F_{k+1}) + (F_{k-2} + F_k) = (F_{k-1} + F_{k-2}) + (F_{k+1} + F_k) = F_k + F_{k+2}.
+\]
+Por inducción fuerte, \(L_n = F_{n-1} + F_{n+1}\) vale para todo \(n \ge 1\).
+
+[QUESTION 1]
+[ANSWER: B]
+Una sucesión \((b_n)_{n \ge 0}\) se define recursivamente por \(b_0 = 3\), \(b_1 = 4\) y \(b_n = 3b_{n-1} - 2b_{n-2}\) para todo \(n \ge 2\). ¿Qué fórmula cerrada satisface tanto la recurrencia como las condiciones iniciales para todo \(n \ge 0\)?
+
+(A) \(b_n = 1 + 2^{n+1}\)
+(B) \(b_n = 2 + 2^n\)
+(C) \(b_n = 3 \cdot 2^n\)
+(D) \(b_n = 3 + n\)
+(E) \(b_n = 4 \cdot 2^n - 1\)
+[/QUESTION]
+
+=== SECTION 2: Conjuntos discretos definidos recursivamente ===
+
+La recursión no se limita a sucesiones numéricas; construye colecciones enteras de objetos discretos —puntos reticulares, cadenas, árboles y expresiones formales— a partir de unas pocas semillas iniciales y reglas explícitas de ensamblaje.
+
+[CALLOUT]
+id: recursive-set-def
+label: Definición
+title: Anatomía de un conjunto definido recursivamente
+tone: key
+
+Una definición recursiva (o inductiva) de un conjunto \(S\) consta de tres cláusulas:
+
+(1) Cláusula base (semillas): Enumera objetos iniciales específicos declarados como pertenecientes a \(S\).
+(2) Cláusula recursiva (constructores): Proporciona reglas que producen nuevos elementos de \(S\) a partir de elementos que ya se sabe que pertenecen a \(S\).
+(3) Cláusula extremal (de clausura): Declara que ningún objeto pertenece a \(S\) a menos que pueda obtenerse a partir de los objetos base mediante un número finito de aplicaciones de las reglas constructoras.
+[/CALLOUT]
+
+¿Por qué importa [REF: recursive-set-def.3 | la cláusula extremal]? Supón que solo enunciamos que \((0, 0) \in S\) y que si \((x, y) \in S\) entonces \((x + 2, y + 3) \in S\). Sin la cláusula extremal, toda la cuadrícula entera \(\mathbb{Z}^2\) satisface ambas reglas —de modo que nunca podríamos demostrar que \((1, 0) \notin S\). La cláusula extremal garantiza que \(S\) es el menor conjunto que contiene a las semillas y es cerrado bajo los constructores: todo elemento de \(S\) tiene una historia finita de construcción a partir de las semillas.
+
+He aquí cuatro familias fundamentales de conjuntos definidos recursivamente.
+
+1. Un subconjunto \(S \subseteq \mathbb{Z}^2\):
+   - Base: \((0, 0) \in S\).
+   - Constructores: Si \((x, y) \in S\), entonces \((x + 2, y + 3) \in S\) y \((x + 3, y + 2) \in S\).
+   - Cláusula extremal: Solo pertenecen a \(S\) los puntos generados en un número finito de pasos.
+   Por ejemplo, \((0, 0) \to (2, 3) \to (5, 5) \in S\), y \((0, 0) \to (3, 2) \to (6, 4) \in S\). Observa un patrón: en cada paso, la suma de coordenadas \(x + y\) aumenta en \(5\), así que \(5 \mid (x + y)\) para todo \((x, y) \in S\).
+
+2. Cadenas de paréntesis balanceados \(B\): Denota por \(\varepsilon\) la cadena vacía (longitud \(0\)), y escribe \(uv\) para la concatenación de las cadenas \(u\) y \(v\).
+   - Base: \(\varepsilon \in B\).
+   - Constructores: Si \(u \in B\), entonces \((u) \in B\); si \(u, v \in B\), entonces \(uv \in B\).
+   - Cláusula extremal: Nada más está en \(B\).
+   Por ejemplo, a partir de \(\varepsilon\) construimos \(()\), luego \((())\) y \(()()\), y luego \((())()\). Observa que dos historias de construcción distintas pueden producir la misma cadena (por ejemplo, \(()\varepsilon = ()\)), lo cual es completamente legítimo al definir un conjunto —aunque al definir una función recursivamente sobre \(S\), la ambigüedad debe revisarse con cuidado, como veremos en la Sección 4.
+
+3. Árboles binarios completos \(\mathcal{T}\): Un árbol binario completo es un árbol con raíz en el que cada nodo tiene \(0\) hijos (una hoja) o exactamente \(2\) hijos ordenados, un hijo izquierdo y un hijo derecho (un nodo interno).
+   - Base: Un único vértice aislado \(\bullet\) (un árbol con una hoja y ningún nodo interno) pertenece a \(\mathcal{T}\).
+   - Constructor: Si \(T_1, T_2 \in \mathcal{T}\), entonces \(\operatorname{node}(T_1, T_2) \in \mathcal{T}\), formado al adjuntar una nueva raíz cuyo subárbol izquierdo es \(T_1\) y cuyo subárbol derecho es \(T_2\).
+   - Cláusula extremal: Nada más está en \(\mathcal{T}\).
+
+4. Árboles de expresiones aritméticas \(\mathcal{E}\) (sobre las variables \(x, y, z\) y operadores binarios \(+, \times\)):
+   - Base: Cada variable individual \(x, y, z\) es un árbol de expresión en \(\mathcal{E}\) (una hoja).
+   - Constructores: Si \(E_1, E_2 \in \mathcal{E}\), entonces \((E_1 + E_2) \in \mathcal{E}\) y \((E_1 \times E_2) \in \mathcal{E}\).
+   - Cláusula extremal: Nada más está en \(\mathcal{E}\).
+
+[QUESTION 2]
+[ANSWER: C]
+Sea \(S \subseteq \mathbb{Z}^2\) definido recursivamente por:
+- Base: \((1, 2) \in S\).
+- Constructores: Si \((x, y) \in S\), entonces \((x + 3, y + 1) \in S\) y \((x - 1, y + 2) \in S\).
+- Cláusula extremal: Nada más pertenece a \(S\).
+
+¿Cuál de los siguientes puntos definitivamente NO puede pertenecer a \(S\)?
+
+(A) \((4, 3)\)
+(B) \((0, 4)\)
+(C) \((5, 4)\)
+(D) \((3, 5)\)
+(E) \((6, 6)\)
+[/QUESTION]
+
+=== SECTION 3: La inducción estructural y su validez ===
+
+Para demostrar que una propiedad \(P(x)\) se cumple para todo elemento \(x\) de un conjunto definido recursivamente \(S\), no tenemos que forzar un índice entero artificial sobre \(S\) cada vez. En su lugar, hacemos inducción directamente sobre las reglas de construcción de \(S\).
+
+[CALLOUT]
+id: structural-induction
+label: Principio
+title: Principio de Inducción Estructural
+tone: key
+
+Sea \(S\) un conjunto definido recursivamente que satisface [REF: recursive-set-def | las cláusulas base, constructora y extremal], y sea \(P(x)\) un predicado definido para elementos \(x \in S\). Supongamos que:
+
+(1) Casos base: \(P(b)\) se cumple para todo objeto base (semilla) \(b\) de \(S\).
+(2) Pasos inductivos (constructores): Para cada regla constructora \(c\) de \(S\), siempre que \(P(x_1), \dots, P(x_r)\) se cumplan para entradas \(x_1, \dots, x_r \in S\), la propiedad \(P\bigl(c(x_1, \dots, x_r)\bigr)\) también se cumple.
+
+Entonces \(P(x)\) se cumple para todo \(x \in S\).
+[/CALLOUT]
+
+¿Por qué está garantizada la validez de [REF: structural-induction | la inducción estructural]? ¡Porque se reduce directamente a la inducción fuerte sobre los números naturales!
+
+[CALLOUT]
+id: structural-soundness
+label: Demostración
+title: Validez de la inducción estructural mediante inducción fuerte
+tone: note
+
+Define la profundidad de construcción \(d(x) \in \mathbb{N}\) de cada \(x \in S\) como el menor número de aplicaciones de constructores necesarias para generar \(x\) a partir de las semillas:
+- Los objetos base tienen profundidad \(0\).
+- Si \(x = c(x_1, \dots, x_r)\) se construye a partir de \(x_1, \dots, x_r \in S\), entonces \(d(x) \le 1 + \max\bigl(d(x_1), \dots, d(x_r)\bigr)\); recíprocamente, todo \(x \in S\) con \(d(x) = n \ge 1\) debe ser de la forma \(c(x_1, \dots, x_r)\) para algún constructor \(c\) y entradas \(x_i \in S\) tales que \(d(x_i) \le n - 1\).
+
+Por [REF: recursive-set-def.3 | la cláusula extremal], todo \(x \in S\) tiene una profundidad finita \(d(x) \in \mathbb{N}\). Sea \(R(n)\) el enunciado «\(P(x)\) se cumple para todo \(x \in S\) con \(d(x) = n\)».
+- Caso base (\(n = 0\)): Los elementos de profundidad \(0\) son las semillas, así que \(R(0)\) vale por [REF: structural-induction.1 | los casos base].
+- Paso inductivo fuerte: Fija \(k \ge 0\) y supone que \(R(j)\) vale para todo \(0 \le j \le k\). Toma cualquier \(x \in S\) con \(d(x) = k + 1\). Por minimalidad de la profundidad, \(x = c(x_1, \dots, x_r)\) donde cada \(x_i \in S\) cumple \(d(x_i) \le k\). Por la hipótesis inductiva fuerte, \(P(x_1), \dots, P(x_r)\) se cumplen todos. Por [REF: structural-induction.2 | el paso constructor] para \(c\), \(P(x)\) se cumple. Así, \(R(k + 1)\) se cumple.
+
+Por inducción fuerte, \(R(n)\) vale para todo \(n \in \mathbb{N}\), de modo que \(P(x)\) se cumple para todo \(x \in S\).
+[/CALLOUT]
+
+Apliquemos [REF: structural-induction | la inducción estructural] a dos invariantes discretos fundamentales.
+
+Demostración resuelta 1 (Árboles binarios completos): Define recursivamente sobre \(\mathcal{T}\) el número de hojas \(L(T)\) y el número de nodos internos \(I(T)\):
+- Base: \(L(\bullet) = 1\) e \(I(\bullet) = 0\).
+- Constructor: Para \(T = \operatorname{node}(T_1, T_2)\), define \(L(T) = L(T_1) + L(T_2)\) e \(I(T) = I(T_1) + I(T_2) + 1\) (sumando \(1\) por la nueva raíz).
+
+Afirmación: Para todo árbol binario completo \(T \in \mathcal{T}\), \(L(T) = I(T) + 1\).
+
+Demostración por inducción estructural:
+- Caso base (\(T = \bullet\)): \(L(\bullet) = 1\) e \(I(\bullet) + 1 = 0 + 1 = 1\), así que \(L(\bullet) = I(\bullet) + 1\).
+- Paso constructor: Sea \(T = \operatorname{node}(T_1, T_2)\), y supone las hipótesis inductivas estructurales \(L(T_1) = I(T_1) + 1\) y \(L(T_2) = I(T_2) + 1\). Entonces
+\[
+L(T) = L(T_1) + L(T_2) = \bigl(I(T_1) + 1\bigr) + \bigl(I(T_2) + 1\bigr) = \bigl(I(T_1) + I(T_2) + 1\bigr) + 1 = I(T) + 1.
+\]
+Por [REF: structural-induction | inducción estructural], \(L(T) = I(T) + 1\) para todo \(T \in \mathcal{T}\).
+
+Como cada vértice de un árbol binario completo es una hoja o un nodo interno, esto implica de inmediato que el número total de vértices \(V(T) = L(T) + I(T) = 2I(T) + 1\) siempre es impar.
+
+Demostración resuelta 2 (Cadenas de paréntesis balanceados): Para cualquier cadena \(w\) sobre el alfabeto \(\{\texttt{(}, \texttt{)}\}\), sea \(\#_L(w)\) el número de paréntesis izquierdos y \(\#_R(w)\) el número de paréntesis derechos en \(w\). Observa que respecto a la concatenación, \(\#_L(uv) = \#_L(u) + \#_L(v)\) y \(\#_R(uv) = \#_R(u) + \#_R(v)\).
+
+Afirmación: Para toda cadena \(w \in B\), (a) \(\#_L(w) = \#_R(w)\), y (b) todo prefijo \(p\) de \(w\) satisface \(\#_L(p) \ge \#_R(p)\).
+
+Demostración por inducción estructural:
+- Caso base (\(w = \varepsilon\)): \(\#_L(\varepsilon) = 0 = \#_R(\varepsilon)\), y el único prefijo es \(\varepsilon\), que satisface \(0 \ge 0\).
+- Constructor 1 (\(w = (u)\) con \(u \in B\)): Supón que \(u\) satisface (a) y (b). Para (a), \(\#_L(w) = \#_L(u) + 1 = \#_R(u) + 1 = \#_R(w)\). Para (b), cualquier prefijo \(p\) de \((u)\) es \(\varepsilon\) (dando \(0 \ge 0\)), o \((p'\) para algún prefijo \(p'\) de \(u\) (dando \(\#_L(p) = 1 + \#_L(p') \ge 1 + \#_R(p') > \#_R(p)\)), o la cadena completa \((u)\) misma (que satisface \(\#_L(w) = \#_R(w)\)).
+- Constructor 2 (\(w = uv\) con \(u, v \in B\)): Supón que \(u\) y \(v\) satisfacen (a) y (b). Para (a),
+\[
+\#_L(uv) = \#_L(u) + \#_L(v) = \#_R(u) + \#_R(v) = \#_R(uv).
+\]
+Para (b), cualquier prefijo \(p\) de \(uv\) es un prefijo de \(u\) (cubierto por (b) para \(u\)) o de la forma \(u q\) donde \(q\) es un prefijo de \(v\). En el segundo caso, usando (a) para \(u\) y (b) para \(v\),
+\[
+\#_L(uq) = \#_L(u) + \#_L(q) = \#_R(u) + \#_L(q) \ge \#_R(u) + \#_R(q) = \#_R(uq).
+\]
+Por [REF: structural-induction | inducción estructural], toda cadena en \(B\) satisface tanto (a) como (b).
+
+Observa lo ocurrido en el Constructor 2: ¡demostrar la propiedad (b) para \(uq\) de hecho USÓ la propiedad (a) para \(u\)! Por eso demostrar (a) y (b) juntas en un único invariante combinado funciona con tanta limpieza.
+
+[QUESTION 3]
+[ANSWER: D]
+Define recursivamente la altura \(h(T)\) de un árbol binario completo \(T \in \mathcal{T}\) mediante \(h(\bullet) = 0\) y \(h\bigl(\operatorname{node}(T_1, T_2)\bigr) = 1 + \max\bigl(h(T_1), h(T_2)\bigr)\). Quieres demostrar por inducción estructural que \(L(T) \le 2^{h(T)}\) para todo \(T \in \mathcal{T}\). Después de verificar \(L(\bullet) = 1 \le 2^0 = 1\) y suponer \(L(T_1) \le 2^{h(T_1)}\) y \(L(T_2) \le 2^{h(T_2)}\), ¿qué cadena completa correctamente el paso constructor para \(T = \operatorname{node}(T_1, T_2)\)?
+
+(A) \(L(T) = L(T_1) L(T_2) \le 2^{h(T_1)} \cdot 2^{h(T_2)} = 2^{h(T_1) + h(T_2)} \le 2^{h(T)}\)
+(B) \(L(T) = L(T_1) + L(T_2) \le 2^{h(T_1)} + 2^{h(T_2)} = 2^{h(T_1) + h(T_2)} = 2^{h(T)}\)
+(C) \(L(T) = L(T_1) + L(T_2) + 1 \le 2^{h(T_1)} + 2^{h(T_2)} + 1 \le 2^{1 + \max(h(T_1), h(T_2))} = 2^{h(T)}\)
+(D) \(L(T) = L(T_1) + L(T_2) \le 2^{h(T_1)} + 2^{h(T_2)} \le 2^{\max(h(T_1), h(T_2))} + 2^{\max(h(T_1), h(T_2))} = 2^{1 + \max(h(T_1), h(T_2))} = 2^{h(T)}\)
+(E) \(L(T) = L(T_1) + L(T_2) \le 2^{\min(h(T_1), h(T_2))} + 2^{\min(h(T_1), h(T_2))} = 2^{h(T)}\)
+[/QUESTION]
+
+=== SECTION 4: Definiciones recursivas sin ambigüedad y errores frecuentes ===
+
+Definir un conjunto recursivamente es indulgente: tener dos maneras de construir el mismo elemento no perjudica la pertenencia. En cambio, definir una FUNCIÓN recursivamente sobre un conjunto exige mayor cuidado: si un elemento \(w\) puede construirse de dos maneras distintas, una función recursiva \(f(w)\) solo está bien definida si ambas historias de construcción asignan a \(w\) exactamente el mismo valor.
+
+[CALLOUT]
+id: recursion-pitfalls
+label: Errores frecuentes
+title: Errores en definiciones recursivas e inducción estructural
+tone: caution
+
+(1) Recursión funcional ambigua: En las cadenas balanceadas \(B\) de la Sección 2, intentar definir una función mediante \(f(\varepsilon) = 1\), \(f((u)) = f(u) + 1\) y \(f(uv) = f(u) + f(v)\) ¡está mal definido! Como \(\varepsilon = \varepsilon \varepsilon\), la tercera regla obliga a \(f(\varepsilon) = f(\varepsilon) + f(\varepsilon)\), dando \(1 = 2\). En contraste, los árboles binarios completos \(\mathcal{T}\) tienen análisis sintáctico único: todo árbol que no es una hoja tiene un único subárbol izquierdo \(T_1\) y un único subárbol derecho \(T_2\), por lo que definiciones recursivas como \(L(T)\), \(I(T)\) y \(h(T)\) resultan automáticamente sin ambigüedad.
+(2) Omitir un caso constructor: Si un conjunto tiene dos constructores (o múltiples semillas), absolutamente cada semilla y cada constructor deben verificarse en la inducción estructural.
+(3) Cambiar los constructores cambia los invariantes: Añadir un nuevo constructor puede invalidar un invariante previo salvo que la nueva regla también lo preserve.
+[/CALLOUT]
+
+Para ver [REF: recursion-pitfalls.3 | cómo los constructores controlan los invariantes], vuelve a nuestros árboles de expresiones aritméticas \(\mathcal{E}\) construidos con hojas de variables \(x, y, z\) y los constructores binarios \((E_1 + E_2)\) y \((E_1 \times E_2)\). Como cada árbol de expresión es estructuralmente un árbol binario completo cuyas hojas son operandos y cuyos nodos internos son operadores binarios, exactamente la misma inducción estructural de la Sección 3 demuestra:
+\[
+\text{número de apariciones de operandos} = (\text{número de operadores binarios}) + 1.
+\]
+Ahora supón que ampliamos \(\mathcal{E}\) añadiendo un constructor unario de negación: si \(E \in \mathcal{E}\), entonces \((-E) \in \mathcal{E}\). ¿Sobrevive el invariante «operandos = operadores + 1»? No: si \(E = x\) tiene \(1\) operando y \(0\) operadores, entonces \((-x)\) sigue teniendo \(1\) operando, ¡pero ahora tiene \(1\) operador! El constructor unario añade \(1\) operador mientras añade \(0\) operandos, rompiendo la ecuación. Lo que SÍ sobrevive es el invariante refinado:
+\[
+\text{número de apariciones de operandos} = (\text{número de operadores binarios}) + 1,
+\]
+¡porque el constructor unario no cambia ni el número de operandos ni el número de operadores binarios!
+
+[TABLE]
+Familia de objetos | Semillas | Constructores | Invariante estructural clave
+Subconjunto de \(\mathbb{Z}^2\) | Puntos iniciales \((x_0, y_0)\) | Desplazamientos vectoriales \((x + a, y + b)\) | Congruencia lineal preservada por todos los desplazamientos
+Árboles binarios completos \(\mathcal{T}\) | Hoja única \(\bullet\) | \(\operatorname{node}(T_1, T_2)\) | \(L(T) = I(T) + 1\) y \(L(T) \le 2^{h(T)}\)
+Cadenas balanceadas \(B\) | Cadena vacía \(\varepsilon\) | \((u)\) y \(uv\) | \(\#_L(w) = \#_R(w)\); todo prefijo cumple \(\#_L \ge \#_R\)
+Árboles aritméticos \(\mathcal{E}\) | Hojas de variables/constantes | Binarios \((E_1 + E_2)\), \((E_1 \times E_2)\) | Operandos \(= \text{operadores binarios} + 1\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Supón que ampliamos la familia de árboles binarios completos \(\mathcal{T}\) a una familia \(\mathcal{T}_3\) de árboles donde cada nodo interno tiene \(2\) hijos o \(3\) hijos:
+- Base: Una única hoja \(\bullet \in \mathcal{T}_3\).
+- Constructor 1 (nodo interno binario): Si \(T_1, T_2 \in \mathcal{T}_3\), entonces \(\operatorname{bin}(T_1, T_2) \in \mathcal{T}_3\).
+- Constructor 2 (nodo interno ternario): Si \(T_1, T_2, T_3 \in \mathcal{T}_3\), entonces \(\operatorname{ter}(T_1, T_2, T_3) \in \mathcal{T}_3\).
+
+Sea \(L(T)\) el número de hojas, \(I_2(T)\) el número de nodos internos binarios e \(I_3(T)\) el número de nodos internos ternarios en \(T \in \mathcal{T}_3\). ¿Qué invariante vale para TODO árbol \(T \in \mathcal{T}_3\)?
+
+(A) \(L(T) = I_2(T) + 2I_3(T) + 1\)
+(B) \(L(T) = I_2(T) + 3I_3(T) + 1\)
+(C) \(L(T) = 2I_2(T) + 3I_3(T) + 1\)
+(D) \(L(T) = I_2(T) + I_3(T) + 1\)
+(E) \(L(T) = I_2(T) + 2I_3(T)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Para cualquier árbol binario completo \(T \in \mathcal{T}\), denota por \(d_T(v)\) la profundidad de una hoja \(v\) (su número de aristas desde la raíz, de modo que para \(T = \bullet\) la única hoja tiene profundidad \(0\)). Define la suma ponderada
+\[
+W(T) = \sum_{v \text{ hoja de } T} 2^{-d_T(v)}.
+\]
+¿Cuál es el valor de \(W(T)\) para un árbol binario completo arbitrario \(T \in \mathcal{T}\) y por qué la inducción estructural lo establece?
+
+(A) \(W(T) = 2^{-h(T)} L(T)\), porque todas las hojas están a profundidad \(h(T)\).
+(B) \(W(T) = 1 / L(T)\), porque cada nueva raíz reparte el peso por igual entre todas las hojas.
+(C) \(W(T) = 1\) para todo \(T \in \mathcal{T}\), porque \(W(\bullet) = 2^0 = 1\) y adjuntar \(T_1, T_2\) bajo una nueva raíz aumenta en \(1\) la profundidad de cada hoja, dando \(W\bigl(\operatorname{node}(T_1, T_2)\bigr) = \frac{1}{2}W(T_1) + \frac{1}{2}W(T_2) = 1\).
+(D) \(W(T) = L(T) - I(T) + 1 = 2\), porque cada constructor duplica los pesos de las hojas.
+(E) \(W(T)\) depende de la forma de \(T\) y toma valores distintos para árboles balanceados y sesgados con el mismo número de hojas.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Un conjunto \(M\) de cadenas binarias sobre \(\{0, 1\}\) se define recursivamente por:
+- Base: \(\varepsilon \in M\).
+- Constructores: Si \(w \in M\), entonces \(0w11 \in M\) y \(1w01 \in M\) y \(11w0 \in M\).
+- Cláusula extremal: Nada más pertenece a \(M\).
+
+Para una cadena \(w \in M\), sea \(z(w)\) el número de \(0\) en \(w\) y \(o(w)\) el número de \(1\) en \(w\). ¿Qué par de condiciones se cumple para TODA cadena \(w \in M\)?
+
+(A) \(o(w) = 2z(w)\) y \(w\) no puede comenzar con \(1\)
+(B) \(o(w) = z(w) + 2\) y \(|w|\) es par
+(C) \(o(w) \ge 2z(w)\) y \(z(w)\) es par
+(D) \(o(w) = 3z(w)\) y \(|w|\) es divisible por \(4\)
+(E) \(o(w) = 2z(w)\) y la longitud \(|w|\) es divisible por \(3\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Recuerda los números de Fibonacci \(F_0 = 0, F_1 = 1, F_n = F_{n-1} + F_{n-2}\) y los números de Lucas \(L_0 = 2, L_1 = 1, L_n = L_{n-1} + L_{n-2}\). Antes demostramos \(L_n = F_{n-1} + F_{n+1}\) para todo \(n \ge 1\). Ahora considera la identidad \(F_1 + F_3 + F_5 + \dots + F_{2n-1} = F_{2n}\) para todos los enteros \(n \ge 1\). ¿Qué paso completa una demostración por inducción ordinaria de \(k\) a \(k + 1\)?
+
+(A) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k} + F_{2k+1} = F_{2k+2}\)
+(B) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k} + F_{2k-1} = F_{2k+1}\)
+(C) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k+1} + F_{2k} = F_{2k+2} - 1\)
+(D) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k} + F_{2k+2} = L_{2k+1}\)
+(E) La inducción ordinaria no puede demostrar esta identidad porque requiere tanto \(F_{2k}\) como \(F_{2k-2}\) en el paso inductivo.
+[/BONUS]

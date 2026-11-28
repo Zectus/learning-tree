@@ -1,0 +1,215 @@
+=== SECTION 1: Por qué Lado-Lado-Ángulo (LLA) puede producir cero, uno o dos triángulos ===
+
+En la lección anterior, los datos AAL y ALA siempre fijaban un único triángulo. Suponga ahora que le dan dos longitudes de lados \(a\) y \(b\) junto con el ángulo \(A\) opuesto al lado \(a\): la configuración Lado-Lado-Ángulo (LLA).
+
+Imagine construir físicamente \(\triangle ABC\). Trace la semirrecta \(AC\) a lo largo del suelo horizontal, gire en sentido antihorario un ángulo \(A\) en el vértice \(A\) y marque el vértice \(C\) a distancia \(b\) sobre la semirrecta inclinada. El vértice \(C\) queda ahora fijo a una altura
+\[
+h = b\sin A
+\]
+sobre la recta horizontal del suelo. ¡Finalmente, sujete una varilla de longitud \(a\) con una bisagra en \(C\) y hágala oscilar como un compás intentando tocar la semirrecta horizontal que parte de \(A\)!
+
+Lo que sucede mientras oscila la varilla de longitud \(a\) depende por completo de cómo se compara \(a\) con la altura vertical \(h = b\sin A\) y con el lado adyacente \(b\). Arrastre el deslizador \(a\) abajo (con \(A = 35^\circ\), \(b = 5\), por lo que la altura es \(h = 5\sin 35^\circ \approx 2.87\)) para observar cómo la circunferencia oscilante de radio \(a\) centrada en \(C\) no alcanza el suelo, lo roza una sola vez, lo corta en dos puntos distintos \(B_1\) y \(B_2\), o corta la semirrecta positiva una sola vez.
+
+[GRAPH]
+type: parametric2d
+title: Oscilación del lado \(a\) desde el vértice \(C\) (con \(A = 35^\circ, b = 5, h \approx 2.87\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -1.5, 9.5
+yrange: -1.5, 5.2
+trace: 4.0958 + a*cos(t), 2.8679 + a*sin(t) | label: circunferencia de radio \(a\) centrada en \(C\) | color: #2563eb
+segment: 0, 0, 9.2, 0 | label: semirrecta base | color: #0f172a
+segment: 0, 0, 4.0958, 2.8679 | label: \(b\) | color: #dc2626
+segment: 4.0958, 0, 4.0958, 2.8679 | label: \(h\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.25, -0.25
+point: 4.0958, 2.8679 | label: \(C\) | offset: 0, 0.3
+slider: a | range: 1.5, 6.5 | init: 3.6 | step: 0.1
+[/GRAPH]
+
+Observe los cuatro desenlaces geométricos cuando \(A\) es agudo (\(0^\circ < A < 90^\circ\)):
+- Si \(a < h\): la varilla oscilante es demasiado corta para alcanzar la semirrecta horizontal -> \(0\) triángulos.
+- Si \(a = h\): la varilla desciende perpendicularmente hasta tocar el suelo -> \(1\) triángulo rectángulo (\(B = 90^\circ\)).
+- Si \(h < a < b\): ¡la circunferencia corta la semirrecta positiva en DOS puntos distintos a ambos lados del pie de la altura! La intersección más lejana da un ángulo agudo \(B_1\), y la más cercana da un ángulo obtuso \(B_2 = 180^\circ - B_1\) -> \(2\) triángulos distintos.
+- Si \(a \ge b\): la circunferencia alcanza más allá del vértice \(A\) hacia la izquierda, de modo que solo UNA intersección cae sobre la semirrecta positiva delante de \(A\) -> \(1\) triángulo.
+
+Considere ahora lo que ocurre cuando \(A\) es recto u obtuso (\(A \ge 90^\circ\)). Dado que el mayor ángulo de un triángulo debe oponerse al lado más largo, el lado \(a\) DEBE ser estrictamente mayor que el lado \(b\):
+- Si \(a \le b\): \(0\) triángulos.
+- Si \(a > b\): la circunferencia corta la semirrecta positiva en exactamente un punto -> \(1\) triángulo.
+
+[TABLE]
+Ángulo \(A\) | Comparación de lados | Número de triángulos | Razón geométrica
+Agudo (\(A < 90^\circ\)) | \(a < b\sin A\) | \(0\) | El lado opuesto \(a\) es menor que la altura \(h\)
+Agudo (\(A < 90^\circ\)) | \(a = b\sin A\) | \(1\) (rectángulo) | El lado opuesto \(a\) toca la base perpendicularmente (\(B = 90^\circ\))
+Agudo (\(A < 90^\circ\)) | \(b\sin A < a < b\) | \(2\) | El lado oscilante corta la semirrecta positiva dos veces (\(B_1\) agudo, \(B_2\) obtuso)
+Agudo (\(A < 90^\circ\)) | \(a \ge b\) | \(1\) | La intersección izquierda queda detrás del vértice \(A\)
+Recto u obtuso (\(A \ge 90^\circ\)) | \(a \le b\) | \(0\) | El mayor ángulo \(A\) no puede oponerse a un lado \(\le b\)
+Recto u obtuso (\(A \ge 90^\circ\)) | \(a > b\) | \(1\) | Intersección única sobre la semirrecta positiva
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+Dados los datos LLA \(A = 30^\circ\), \(b = 12\) y \(a = 9\), ¿cuántos triángulos distintos pueden formarse?
+
+(A) \(0\) triángulos, porque \(a < b\)
+(B) \(1\) triángulo rectángulo, porque \(a = b\sin A\)
+(C) \(2\) triángulos distintos, porque \(b\sin A = 6 < 9 < 12\)
+(D) \(1\) triángulo obtusángulo, porque \(a > b\sin A\)
+(E) \(2\) triángulos distintos, porque \(b\cos A < a < b\)
+[/QUESTION]
+
+=== SECTION 2: El flujo algebraico-geométrico para resolver casos LLA ===
+
+¡Mejor aún que memorizar seis casos separados de una tabla es dejar que la ley de los senos y la identidad de ángulos suplementarios \(\sin(180^\circ - B) = \sin B\) hagan la clasificación por usted automáticamente!
+
+Al aplicar la ley de los senos a \((A, a)\) y \(b\) se obtiene
+\[
+\sin B = \frac{b\sin A}{a}.
+\]
+¡Observe que esta única fracción es literalmente \(\frac{h}{a}\)! Vea lo que su valor le indica de inmediato:
+- Si \(\sin B > 1\): imposible (puesto que \(\sin B \le 1\) en la circunferencia unitaria), lo cual significa \(h > a\) -> \(0\) triángulos.
+- Si \(\sin B = 1\): \(B = 90^\circ\) de forma única (compruebe \(A < 90^\circ\)) -> \(1\) triángulo rectángulo.
+- Si \(0 < \sin B < 1\): la búsqueda numérica \(\sin^{-1}\!\left(\frac{b\sin A}{a}\right)\) de su calculadora devuelve ÚNICAMENTE el candidato agudo \(B_1 \in (0^\circ, 90^\circ)\). Como \(\sin(180^\circ - B_1) = \sin B_1\), SIEMPRE existe un segundo candidato obtuso \(B_2 = 180^\circ - B_1\).
+
+¿Cuáles de \(B_1\) y \(B_2\) forman realmente triángulos válidos? ¡Verifique AMBOS frente a la suma angular del triángulo \(180^\circ\)!
+- El candidato 1 es válido siempre que \(A + B_1 < 180^\circ\). (¡Advierta que cuando \(A \ge 90^\circ\) y \(a \le b\), obtenemos \(\sin B \ge \sin A\), lo que obliga a \(B_1 \ge 180^\circ - A\), de modo que \(A + B_1 \ge 180^\circ\) y el candidato 1 también queda rechazado automáticamente!)
+- El candidato 2 es válido siempre que \(A + B_2 < 180^\circ\).
+
+[CALLOUT]
+id: ssa-workflow
+label: Procedimiento
+title: Flujo completo de resolución para LLA
+tone: key
+
+(1) Calcule \(\sin B = \dfrac{b\sin A}{a}\). Si \(\sin B > 1\), deténgase de inmediato: \(0\) triángulos.
+(2) Si \(\sin B = 1\), compruebe \(A < 90^\circ\); de ser así, \(B = 90^\circ\) da \(1\) triángulo rectángulo.
+(3) Si \(0 < \sin B < 1\), halle el ángulo agudo \(B_1 = \sin^{-1}\!\left(\dfrac{b\sin A}{a}\right)\) y su suplemento obtuso \(B_2 = 180^\circ - B_1\).
+(4) Compruebe la suma angular para AMBOS candidatos:
+- Si \(A + B_1 < 180^\circ\), resuelva el Triángulo 1: \(C_1 = 180^\circ - A - B_1\), \(c_1 = \dfrac{a\sin C_1}{\sin A}\).
+- Si \(A + B_2 < 180^\circ\), resuelva el Triángulo 2: \(C_2 = 180^\circ - A - B_2\), \(c_2 = \dfrac{a\sin C_2}{\sin A}\).
+[/CALLOUT]
+
+[CALLOUT]
+id: ssa-calculator-pitfall
+label: Error frecuente
+title: Nunca se detenga después de que la calculadora devuelva \(B_1\)
+tone: caution
+
+La tecla \(\sin^{-1}(p)\) de la calculadora para \(0 < p < 1\) SIEMPRE entrega un ángulo agudo en \((0^\circ, 90^\circ)\). Nunca le advertirá que un suplemento obtuso \(B_2 = 180^\circ - B_1\) también produce un triángulo válido. Comprobar \(A + B_2 < 180^\circ\) es obligatorio en todo problema LLA.
+[/CALLOUT]
+
+=== SECTION 3: Resolución completa de un ejemplo LLA con dos triángulos ===
+
+Resolvamos por completo un caso LLA de dos triángulos usando [REF: ssa-workflow | nuestro flujo de resolución LLA en cuatro pasos]: resuelva \(\triangle ABC\) dados \(A = 35^\circ\), \(b = 10\) y \(a = 7\).
+
+Paso 1: Calcule \(\sin B\):
+\[
+\sin B = \frac{b\sin A}{a} = \frac{10\sin 35^\circ}{7} \approx \frac{10(0.5736)}{7} \approx 0.8194.
+\]
+Como \(0 < 0.8194 < 1\), existen dos candidatos para el ángulo.
+
+Paso 2: Halle \(B_1\) y \(B_2\):
+\[
+B_1 = \sin^{-1}(0.8194) \approx 55.0^\circ, \qquad B_2 = 180^\circ - 55.0^\circ = 125.0^\circ.
+\]
+
+Paso 3: Verifique las sumas angulares para ambos candidatos:
+- Triángulo 1: \(A + B_1 \approx 35^\circ + 55.0^\circ = 90.0^\circ < 180^\circ\) -> ¡válido!
+- Triángulo 2: \(A + B_2 \approx 35^\circ + 125.0^\circ = 160.0^\circ < 180^\circ\) -> ¡TAMBIÉN válido!
+
+Paso 4: Termine de resolver ambos triángulos usando el par exacto original \((A, a) = (35^\circ, 7)\):
+- Triángulo 1: \(C_1 = 180^\circ - 35^\circ - 55.0^\circ = 90.0^\circ\) (muy cercano a \(90^\circ\); con mayor precisión \(B_1 \approx 55.02^\circ\) y \(C_1 \approx 89.98^\circ\)), lo que da
+\[
+c_1 = \frac{7\sin 89.98^\circ}{\sin 35^\circ} \approx 12.20.
+\]
+- Triángulo 2: \(C_2 = 180^\circ - 35^\circ - 124.98^\circ = 20.02^\circ\), lo que da
+\[
+c_2 = \frac{7\sin 20.02^\circ}{\sin 35^\circ} \approx 4.18.
+\]
+
+Observe cómo lucen geométricamente los dos triángulos abajo: comparten el vértice \(A\), el vértice \(C\), el lado \(b = 10\) y la longitud de lado \(a = 7\), ¡y sin embargo forman dos triángulos completamente distintos \(\triangle AB_1C\) y \(\triangle AB_2C\) con el triángulo isósceles \(\triangle CB_2B_1\) situado entre ambos (lo cual explica por qué \(\angle CB_2B_1 = B_1\) y el ángulo interior \(\angle AB_2C = 180^\circ - B_1 = B_2\))!
+
+[GRAPH]
+type: parametric2d
+title: Dos triángulos válidos \(\triangle AB_1C\) y \(\triangle AB_2C\) para \(A = 35^\circ, b = 10, a = 7\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 0.6109
+xrange: -0.8, 13.0
+yrange: -0.8, 6.6
+trace: 1.6*cos(t), 1.6*sin(t) | label: \(A = 35^\circ\) | color: #059669
+segment: 0, 0, 12.20, 0 | label: \(c_1\) | color: #0f172a
+segment: 0, 0, 8.19, 5.74 | label: \(b = 10\) | color: #0f172a
+segment: 8.19, 5.74, 12.20, 0 | label: \(a = 7\) | color: #2563eb
+segment: 8.19, 5.74, 4.18, 0 | label: \(a = 7\) | color: #dc2626 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.3, -0.35
+point: 8.19, 5.74 | label: \(C\) | offset: 0, 0.35
+point: 4.18, 0 | label: \(B_2\) | offset: 0, -0.4
+point: 12.20, 0 | label: \(B_1\) | offset: 0.25, -0.4
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+En un problema LLA, \(A = 30^\circ\), \(b = 10\) y \(a = 5\sqrt{2}\). Halle ambos valores exactos posibles del ángulo \(B\) y los valores exactos correspondientes del ángulo \(C\).
+
+(A) Solo un triángulo: \(B = 45^\circ\), \(C = 105^\circ\)
+(B) Dos triángulos: \((B_1 = 45^\circ, C_1 = 105^\circ)\) y \((B_2 = 135^\circ, C_2 = 15^\circ)\)
+(C) Dos triángulos: \((B_1 = 45^\circ, C_1 = 105^\circ)\) y \((B_2 = 120^\circ, C_2 = 30^\circ)\)
+(D) Dos triángulos: \((B_1 = 60^\circ, C_1 = 90^\circ)\) y \((B_2 = 120^\circ, C_2 = 30^\circ)\)
+(E) No existe ningún triángulo válido
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+Suponga que se dan \(A = 110^\circ\), \(b = 15\) y \(a = 12\). ¿Qué conclusión es correcta?
+
+(A) Existen dos triángulos porque \(a < b\)
+(B) Existe un triángulo porque \(\sin B = \frac{15\sin 110^\circ}{12} < 1\)
+(C) Existe un triángulo rectángulo porque \(A > 90^\circ\)
+(D) Existen dos triángulos porque \(110^\circ + B_1 < 180^\circ\)
+(E) Existen cero triángulos porque el ángulo obtuso \(A\) no puede oponerse a un lado \(a \le b\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+En una configuración LLA con \(A = 45^\circ\) y \(b = 8\sqrt{2}\), ¿para qué intervalo de longitudes positivas del lado \(a\) existen EXACTAMENTE DOS triángulos distintos?
+
+(A) \(8 < a < 8\sqrt{2}\)
+(B) \(0 < a < 8\)
+(C) \(a > 8\sqrt{2}\)
+(D) \(4\sqrt{2} < a < 8\sqrt{2}\)
+(E) \(8 \le a \le 8\sqrt{2}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+En una configuración LLA, \(A = 30^\circ\), \(b = 8\sqrt{3}\) y \(a = 8\). Halle todos los triángulos válidos, incluida la longitud exacta del lado \(c\) en cada triángulo válido.
+
+(A) Solo un triángulo: \(B = 60^\circ\), \(C = 90^\circ\), \(c = 16\)
+(B) Dos triángulos: \((B_1 = 60^\circ, C_1 = 90^\circ, c_1 = 16)\) y \((B_2 = 120^\circ, C_2 = 30^\circ, c_2 = 16)\)
+(C) Dos triángulos: \((B_1 = 30^\circ, C_1 = 120^\circ, c_1 = 8\sqrt{3})\) y \((B_2 = 150^\circ, C_2 = 0^\circ)\)
+(D) Dos triángulos: \((B_1 = 60^\circ, C_1 = 90^\circ, c_1 = 16)\) y \((B_2 = 120^\circ, C_2 = 30^\circ, c_2 = 8)\)
+(E) No existe ningún triángulo válido
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+En una configuración LLA de dos triángulos con ángulo agudo \(A\), lado adyacente \(b\) y lado opuesto \(a\) (donde \(b\sin A < a < b\)), las dos posibles longitudes del tercer lado son \(c_1\) (en el triángulo con \(B_1\) agudo) y \(c_2\) (en el triángulo con \(B_2\) obtuso). ¿Cuál es la suma exacta \(c_1 + c_2\) en términos de \(b\) y \(A\)?
+
+(A) \(2a\cos A\)
+(B) \(2b\sin A\)
+(C) \(2b\cos A\)
+(D) \(b\cos A\)
+(E) \(a + b\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Un estudiante resuelve un problema LLA con \(A = 120^\circ\), \(b = 6\) y \(a = 10\). Usando una calculadora, calcula \(\sin B = \frac{6\sin 120^\circ}{10} \approx 0.5196\), obtiene \(B_1 \approx 31.3^\circ\), escribe \(B_2 = 180^\circ - 31.3^\circ = 148.7^\circ\) y afirma que existen dos triángulos válidos. ¿Cuál es el error del estudiante?
+
+(A) La fórmula debería ser \(\sin B = \frac{10\sin 120^\circ}{6}\)
+(B) El estudiante no comprobó la suma angular para \(B_2\): \(A + B_2 = 120^\circ + 148.7^\circ = 268.7^\circ > 180^\circ\), de modo que solo es válido el único triángulo con \(B_1 \approx 31.3^\circ\)
+(C) Cuando \(A = 120^\circ\), \(\sin 120^\circ\) es negativo, por lo que existen cero triángulos
+(D) Como \(a > b\), existen cero triángulos
+(E) \(B_2\) debería ser \(90^\circ - 31.3^\circ = 58.7^\circ\), no \(180^\circ - 31.3^\circ\)
+[/BONUS]

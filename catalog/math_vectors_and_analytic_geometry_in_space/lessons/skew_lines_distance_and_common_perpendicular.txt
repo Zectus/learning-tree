@@ -1,0 +1,235 @@
+=== SECTION 1: Embedding skew lines in parallel planes ===
+
+Two skew lines \(L_1\) and \(L_2\) in \(\mathbb{R}^3\) are neither parallel nor intersecting—they pass by each other at different depths, like two non-parallel airplane flight corridors at different altitudes. How can we find the exact minimum clearance \(d(L_1, L_2)\) between them?
+
+Write the two lines in vector form:
+\[
+L_1:\; \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1, \qquad L_2:\; \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2,
+\]
+where \(P_1\) (position \(\mathbf{p}_1\)) lies on \(L_1\), \(P_2\) (position \(\mathbf{p}_2\)) lies on \(L_2\), and the direction vectors are non-parallel, so their cross product
+\[
+\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}.
+\]
+Here is the decisive geometric insight: because \(\mathbf{n}\) is perpendicular to BOTH \(\mathbf{d}_1\) and \(\mathbf{d}_2\), there exists a unique plane \(\Pi_1\) passing through \(P_1\) with normal \(\mathbf{n}\) (which contains all of \(L_1\)), and a unique parallel plane \(\Pi_2\) passing through \(P_2\) with the EXACT same normal \(\mathbf{n}\) (which contains all of \(L_2\)). Every point of \(L_1\) sits inside \(\Pi_1\), and every point of \(L_2\) sits inside \(\Pi_2\), so the shortest distance between \(L_1\) and \(L_2\) CANNOT be smaller than the perpendicular separation \(d(\Pi_1, \Pi_2)\) between the two parallel planes—and as we will confirm in Section 2, there is a unique pair of points \(Q_1 \in L_1\) and \(Q_2 \in L_2\) whose connecting segment runs strictly along \(\mathbf{n}\), achieving that exact minimum!
+
+Therefore, \(d(L_1, L_2)\) equals the distance from \(P_2 \in \Pi_2\) to \(\Pi_1\), which is the magnitude of the scalar projection of the bridge vector \(\overrightarrow{P_1 P_2} = \mathbf{p}_2 - \mathbf{p}_1\) onto the common normal \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\):
+\[
+d(L_1, L_2) = \left|\operatorname{comp}_{\mathbf{n}} \overrightarrow{P_1 P_2}\right| = \frac{\left|\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\right|}{\|\mathbf{d}_1 \times \mathbf{d}_2\|}.
+\]
+Notice the second geometric interpretation hiding in this fraction: the numerator \(\left|\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\right|\) is the volume of the parallelepiped spanned by \(\overrightarrow{P_1 P_2}\), \(\mathbf{d}_1\), and \(\mathbf{d}_2\), while the denominator \(\|\mathbf{d}_1 \times \mathbf{d}_2\|\) is the area of its base spanned by \(\mathbf{d}_1\) and \(\mathbf{d}_2\). Dividing volume by base area recovers the perpendicular height between the two parallel planes!
+
+[CALLOUT]
+id: skew-dist
+label: Theorem
+title: Shortest distance between two non-parallel lines in \(\mathbb{R}^3\)
+tone: key
+
+Let \(L_1: \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1\) and \(L_2: \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2\) be two lines with \(\mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}\).
+
+(1) Shortest distance formula:
+\[
+d(L_1, L_2) = \frac{\left|\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\right|}{\|\mathbf{d}_1 \times \mathbf{d}_2\|}.
+\]
+(2) Coplanarity and intersection check: \(d(L_1, L_2) = 0\) if and only if \(\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2) = 0\), which occurs precisely when \(L_1\) and \(L_2\) lie in a common plane and intersect at a point.
+[/CALLOUT]
+
+Look at the side-view diagram below, viewed edge-on along the two parallel planes \(\Pi_1\) and \(\Pi_2\). Drag the slider \(a\) to shift the arbitrary base point \(P_2\) along \(\Pi_2\): although the slanted bridge \(\overrightarrow{P_1 P_2}\) grows longer or shorter, its component along \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\) remains locked at the true separation \(d(L_1, L_2)\).
+
+[GRAPH]
+type: parametric2d
+title: Side view of parallel embedding planes \(\Pi_1 \supset L_1\) and \(\Pi_2 \supset L_2\)
+xlabel: plane direction
+ylabel: normal direction
+trange: -3.5, 4.5
+xrange: -3.8, 4.8
+yrange: -0.8, 3.2
+trace: t, 0 | label: plane \(\Pi_1\) containing \(L_1\)
+trace: t, 2 | label: plane \(\Pi_2\) containing \(L_2\)
+segment: -1.5, 0, a, 2 | label: \(\overrightarrow{P_1 P_2}\)
+segment: 0.5, 0, 0.5, 2 | label: \(d\)
+point: -1.5, 0 | label: \(P_1\)
+point: a, 2 | label: \(P_2\)
+point: 0.5, 0 | label: \(Q_1\)
+point: 0.5, 2 | label: \(Q_2\)
+slider: a | range: -3, 4 | init: 2.5 | step: 0.25
+[/GRAPH]
+
+[CALLOUT]
+id: skew-parallel-warn
+label: Common pitfall
+title: Never apply the skew-line formula to parallel lines
+tone: caution
+
+If \(L_1\) and \(L_2\) are parallel, then \(\mathbf{d}_1 \times \mathbf{d}_2 = \mathbf{0}\), so [REF: skew-dist.1 | the skew-line distance formula] collapses to \(\frac{0}{0}\)—even when the lines are far apart! Always verify \(\mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}\) first. When \(\mathbf{d}_1 \times \mathbf{d}_2 = \mathbf{0}\), compute the distance between the parallel lines as the point-to-line distance from any point \(P_2 \in L_2\) to \(L_1\):
+\[
+d(L_1, L_2) = \frac{\left\|\overrightarrow{P_1 P_2} \times \mathbf{d}_1\right\|}{\|\mathbf{d}_1\|}.
+\]
+[/CALLOUT]
+
+Let us run a concrete example: compute the shortest distance between \(L_1: \mathbf{r}_1(t) = \langle 0, 1, 2 \rangle + t\langle 1, 2, -1 \rangle\) and \(L_2: \mathbf{r}_2(s) = \langle 2, 0, 1 \rangle + s\langle 2, 1, 1 \rangle\).
+- First compute the common normal:
+\[
+\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2 = \langle 2(1) - (-1)(1),\; (-1)(2) - 1(1),\; 1(1) - 2(2) \rangle = \langle 3, -3, -3 \rangle.
+\]
+Its length is \(\|\mathbf{n}\| = \sqrt{9 + 9 + 9} = 3\sqrt{3}\). (Notice we may factor out \(3\) and work with \(\hat{\mathbf{n}} = \langle 1, -1, -1 \rangle\) of length \(\sqrt{3}\) in both numerator and denominator, since any positive scalar multiple cancels in \(\frac{|\overrightarrow{P_1 P_2} \cdot \mathbf{n}|}{\|\mathbf{n}\|}\).)
+- Form the bridge vector \(\overrightarrow{P_1 P_2} = \langle 2 - 0,\; 0 - 1,\; 1 - 2 \rangle = \langle 2, -1, -1 \rangle\).
+- Dot with \(\langle 1, -1, -1 \rangle\): \(2(1) + (-1)(-1) + (-1)(-1) = 4\).
+- Thus \(d(L_1, L_2) = \frac{|4|}{\sqrt{3}} = \frac{4\sqrt{3}}{3}\).
+
+[QUESTION 1]
+[ANSWER: C]
+What is the exact shortest distance between the skew lines
+\[
+L_1:\; \mathbf{r}_1(t) = \langle 1, 0, 2 \rangle + t\langle 1, -1, 1 \rangle \qquad \text{and} \qquad L_2:\; \mathbf{r}_2(s) = \langle 0, 2, 1 \rangle + s\langle 2, 1, -1 \rangle?
+\]
+
+(A) \(3\)
+(B) \(\sqrt{6}\)
+(C) \(\frac{\sqrt{2}}{2}\)
+(D) \(\frac{1}{3\sqrt{2}}\)
+(E) \(0\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Suppose two lines \(L_1: \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1\) and \(L_2: \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2\) in \(\mathbb{R}^3\) satisfy \(\mathbf{d}_1 \times \mathbf{d}_2 = \mathbf{0}\) while \(\overrightarrow{P_1 P_2} \times \mathbf{d}_1 \ne \mathbf{0}\). What is the geometric relationship between \(L_1\) and \(L_2\), and how should \(d(L_1, L_2)\) be computed?
+
+(A) They are intersecting lines, so \(d(L_1, L_2) = 0\)
+(B) They are skew lines, and \(d(L_1, L_2) = \frac{\lvert\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\rvert}{\|\mathbf{d}_1 \times \mathbf{d}_2\|}\)
+(C) They are coincident lines, so \(d(L_1, L_2) = 0\)
+(D) They are parallel and distinct lines, and \(d(L_1, L_2) = \frac{\|\overrightarrow{P_1 P_2} \times \mathbf{d}_1\|}{\|\mathbf{d}_1\|}\)
+(E) They are parallel and distinct lines, and \(d(L_1, L_2) = \|\overrightarrow{P_1 P_2}\|\)
+[/QUESTION]
+
+=== SECTION 2: Finding the closest points and the common perpendicular ===
+
+Knowing that two skew pipes clear each other by \(2\) meters is useful, yet engineers often need more: WHERE on \(L_1\) and WHERE on \(L_2\) does that closest approach occur, and what line segment connects them?
+
+Look straight down along the common normal \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\) onto the plane \(\Pi_1\). Because \(\mathbf{d}_1\) and \(\mathbf{d}_2\) are non-parallel, the shadow of \(L_2\) in \(\Pi_1\) is not parallel to \(L_1\), so the two shadows cross at ONE unique point. Directly above that crossing sits \(Q_2 = \mathbf{r}_2(s^*) \in L_2\), and directly below it sits \(Q_1 = \mathbf{r}_1(t^*) \in L_1\). The segment \(Q_1 Q_2\) is the unique common perpendicular of \(L_1\) and \(L_2\): it meets \(L_1\) at a right angle and meets \(L_2\) at a right angle.
+
+Drag the slider \(u\) in the top-down projection below (looking along \(\mathbf{n}\)) to slide a point along \(L_1\): its horizontal gap to \(L_2\) closes to zero at the unique crossing where \(Q_1\) sits directly beneath \(Q_2\).
+
+[GRAPH]
+type: parametric2d
+title: Top-down view along \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\): unique crossing locates \(Q_1\) directly under \(Q_2\)
+xlabel: \(x'\)
+ylabel: \(y'\)
+trange: -1.5, 3
+xrange: -2, 4.5
+yrange: -1.5, 3.8
+trace: t, 0.5*t + 0.5 | label: shadow of \(L_1\)
+trace: 3 - t, t | label: shadow of \(L_2\)
+segment: u, 0.5*u + 0.5, 1.6667, 1.3333 | dashed: true
+point: 1.6667, 1.3333 | label: \(Q_1, Q_2\)
+point: u, 0.5*u + 0.5 | label: \(\mathbf{r}_1(u)\)
+slider: u | range: -1, 3 | init: 0 | step: 0.2
+[/GRAPH]
+
+How do we solve algebraically for the exact parameters \((t^*, s^*)\) of \(Q_1\) and \(Q_2\)? Form the general connecting vector from \(L_1\) to \(L_2\):
+\[
+\mathbf{w}(t, s) = \mathbf{r}_2(s) - \mathbf{r}_1(t) = \overrightarrow{P_1 P_2} + s\mathbf{d}_2 - t\mathbf{d}_1.
+\]
+The vector \(\mathbf{w}(t^*, s^*)\) is perpendicular to BOTH \(L_1\) and \(L_2\) if and only if its dot product with each direction vector vanishes simultaneously:
+\[
+\mathbf{w}(t, s) \cdot \mathbf{d}_1 = 0, \qquad \mathbf{w}(t, s) \cdot \mathbf{d}_2 = 0.
+\]
+Expanding these two dot products yields a \(2 \times 2\) linear system in the two scalar unknowns \(t\) and \(s\):
+\[
+(\mathbf{d}_1 \cdot \mathbf{d}_1)\,t - (\mathbf{d}_1 \cdot \mathbf{d}_2)\,s = \overrightarrow{P_1 P_2} \cdot \mathbf{d}_1,
+\]
+\[
+(\mathbf{d}_1 \cdot \mathbf{d}_2)\,t - (\mathbf{d}_2 \cdot \mathbf{d}_2)\,s = \overrightarrow{P_1 P_2} \cdot \mathbf{d}_2.
+\]
+Why is this \(2 \times 2\) system GUARANTEED to have a unique solution whenever \(L_1\) and \(L_2\) are non-parallel? Compute its coefficient determinant:
+\[
+-(\mathbf{d}_1 \cdot \mathbf{d}_1)(\mathbf{d}_2 \cdot \mathbf{d}_2) + (\mathbf{d}_1 \cdot \mathbf{d}_2)^2 = -\bigl(\|\mathbf{d}_1\|^2 \|\mathbf{d}_2\|^2 - (\mathbf{d}_1 \cdot \mathbf{d}_2)^2\bigr) = -\|\mathbf{d}_1 \times \mathbf{d}_2\|^2,
+\]
+where the last equality is Lagrange's identity! Because \(\mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}\), this determinant is strictly nonzero, proving that the closest points \(Q_1\) and \(Q_2\) exist and are unique!
+
+[CALLOUT]
+id: common-perp
+label: Method
+title: Finding the closest points and common perpendicular of two skew lines
+tone: key
+
+Given skew lines \(L_1: \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1\) and \(L_2: \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2\):
+
+(1) Form \(\mathbf{w}(t, s) = \mathbf{r}_2(s) - \mathbf{r}_1(t)\) and solve the \(2 \times 2\) orthogonality system
+\[
+\mathbf{w}(t, s) \cdot \mathbf{d}_1 = 0, \qquad \mathbf{w}(t, s) \cdot \mathbf{d}_2 = 0
+\]
+for the unique parameter pair \((t^*, s^*)\).
+(2) Evaluate the closest points \(Q_1 = \mathbf{r}_1(t^*) \in L_1\) and \(Q_2 = \mathbf{r}_2(s^*) \in L_2\).
+(3) Common perpendicular segment and line: \(\mathbf{r}(u) = \mathbf{r}_1(t^*) + u\bigl(\mathbf{r}_2(s^*) - \mathbf{r}_1(t^*)\bigr)\), with \(0 \le u \le 1\) for the segment from \(Q_1\) to \(Q_2\) and \(u \in \mathbb{R}\) for the infinite common perpendicular line.
+(4) Built-in verification: check that \(\overrightarrow{Q_1 Q_2}\) is a scalar multiple of \(\mathbf{d}_1 \times \mathbf{d}_2\) and that \(\|\overrightarrow{Q_1 Q_2}\|\) matches [REF: skew-dist.1 | the triple-product distance formula].
+[/CALLOUT]
+
+Let us apply [REF: common-perp | the common-perpendicular method] to \(L_1: \mathbf{r}_1(t) = \langle 1, 0, -1 \rangle + t\langle 1, 1, 0 \rangle\) and \(L_2: \mathbf{r}_2(s) = \langle 0, 2, 1 \rangle + s\langle 0, 1, 2 \rangle\).
+- First write the connecting vector:
+\[
+\mathbf{w}(t, s) = \mathbf{r}_2(s) - \mathbf{r}_1(t) = \langle -1 - t,\; 2 + s - t,\; 2 + 2s \rangle.
+\]
+- Impose both orthogonality equations:
+\[
+\mathbf{w} \cdot \langle 1, 1, 0 \rangle = (-1 - t) + (2 + s - t) = 1 + s - 2t = 0 \implies s = 2t - 1,
+\]
+\[
+\mathbf{w} \cdot \langle 0, 1, 2 \rangle = (2 + s - t) + 2(2 + 2s) = 6 + 5s - t = 0.
+\]
+- Substitute \(s = 2t - 1\) into the second equation:
+\[
+6 + 5(2t - 1) - t = 1 + 9t = 0 \implies t^* = -\frac{1}{9}, \qquad s^* = -\frac{11}{9}.
+\]
+- Evaluate \(Q_1\) and \(Q_2\):
+\[
+Q_1 = \mathbf{r}_1\!\left(-\frac{1}{9}\right) = \left(\frac{8}{9},\; -\frac{1}{9},\; -1\right), \qquad Q_2 = \mathbf{r}_2\!\left(-\frac{11}{9}\right) = \left(0,\; \frac{7}{9},\; -\frac{13}{9}\right).
+\]
+- Independent verification: \(\overrightarrow{Q_1 Q_2} = \left\langle -\frac{8}{9},\; \frac{8}{9},\; -\frac{4}{9} \right\rangle = -\frac{4}{9}\langle 2, -2, 1 \rangle\). Notice \(\mathbf{d}_1 \times \mathbf{d}_2 = \langle 2, -2, 1 \rangle\) has length \(3\), so \(\|\overrightarrow{Q_1 Q_2}\| = \frac{4}{9}\cdot 3 = \frac{4}{3}\). Checking via [REF: skew-dist.1 | the triple-product formula] gives \(\overrightarrow{P_1 P_2} = \langle -1, 2, 2 \rangle\), \(\overrightarrow{P_1 P_2} \cdot \langle 2, -2, 1 \rangle = -2 - 4 + 2 = -4\), and \(d = \frac{|-4|}{3} = \frac{4}{3}\)—an exact match!
+
+[QUESTION 3]
+[ANSWER: B]
+Consider the skew lines \(L_1: \mathbf{r}_1(t) = \langle 1, 0, 0 \rangle + t\langle 1, 1, 0 \rangle\) and \(L_2: \mathbf{r}_2(s) = \langle 1, 1, 4 \rangle + s\langle 0, 1, 1 \rangle\). What are the unique closest points \(Q_1 \in L_1\) and \(Q_2 \in L_2\)?
+
+(A) \(Q_1(1, 0, 0)\) and \(Q_2(1, 1, 4)\)
+(B) \(Q_1(0, -1, 0)\) and \(Q_2(1, -2, 1)\)
+(C) \(Q_1(2, 1, 0)\) and \(Q_2(1, 0, 3)\)
+(D) \(Q_1(0, -1, 0)\) and \(Q_2(1, 2, 5)\)
+(E) \(Q_1(1, 0, 0)\) and \(Q_2(1, -2, 1)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+For which real value(s) of \(k\) is the shortest distance between
+\[
+L_1:\; \mathbf{r}_1(t) = t\langle 1, 1, 0 \rangle \qquad \text{and} \qquad L_2:\; \mathbf{r}_2(s) = \langle 1, 0, k \rangle + s\langle 0, 1, 1 \rangle
+\]
+equal to \(\sqrt{3}\)?
+
+(A) \(k = 2\) or \(k = -4\)
+(B) \(k = 2\) only
+(C) \(k = 2\) or \(k = -2\)
+(D) \(k = 4\) or \(k = -2\)
+(E) \(k = -1\) only
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Find a parametric equation for the common perpendicular segment (for \(0 \le u \le 1\)) connecting the closest point on \(L_1: \mathbf{r}_1(t) = \langle 0, 2, 0 \rangle + t\langle 1, 0, 1 \rangle\) to the closest point on \(L_2: \mathbf{r}_2(s) = \langle -1, 2, 5 \rangle + s\langle 0, 1, -1 \rangle\).
+
+(A) \(\mathbf{r}(u) = \langle 0, 2, 0 \rangle + u\langle -1, 0, 5 \rangle\)
+(B) \(\mathbf{r}(u) = \langle 1, 2, 1 \rangle + u\langle -1, 1, 1 \rangle\)
+(C) \(\mathbf{r}(u) = \langle 2, 2, 2 \rangle + u\langle -2, 2, 2 \rangle\)
+(D) \(\mathbf{r}(u) = \langle 1, 2, 1 \rangle + u\langle -2, 2, 2 \rangle\)
+(E) \(\mathbf{r}(u) = \langle -1, 2, 5 \rangle + u\langle 2, -2, -2 \rangle\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+A unit cube in \(\mathbb{R}^3\) has opposite corners at \(O(0, 0, 0)\) and \(C(1, 1, 1)\). What is the exact shortest distance between the line along the body diagonal \(OC\) and the line along the top-face diagonal joining \(A(1, 0, 1)\) and \(B(0, 1, 1)\)?
+
+(A) \(\frac{1}{2}\)
+(B) \(\frac{\sqrt{3}}{3}\)
+(C) \(\frac{\sqrt{6}}{6}\)
+(D) \(\frac{\sqrt{2}}{2}\)
+(E) \(\frac{\sqrt{6}}{3}\)
+[/BONUS]

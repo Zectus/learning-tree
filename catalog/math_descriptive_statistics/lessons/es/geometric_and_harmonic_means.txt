@@ -1,0 +1,234 @@
+=== SECTION 1: Crecimiento multiplicativo y la media geométrica ===
+
+Supongamos que usted invierte \(\$1{,}000\) en un fondo que gana \(+50\%\) en el Año 1 y pierde \(-50\%\) en el Año 2. Si alguien calcula la media aritmética de ambos rendimientos porcentuales, \((+50\% + (-50\%)) / 2 = 0\%\), podría esperar quedar en punto de equilibrio con \(\$1{,}000\). Compruebe lo que ocurre realmente con su dinero: tras el Año 1 tiene \(\$1{,}000 \times 1.50 = \$1{,}500\), y tras el Año 2 tiene \(\$1{,}500 \times 0.50 = \$750\): ¡una pérdida neta del \(25\%\)!
+
+¿Por qué falló tan gravemente la media aritmética? Porque los rendimientos sucesivos no se suman: sus factores de crecimiento se MULTIPLICAN. Multiplicar por \(1.50\) y luego por \(0.50\) arroja un factor acumulado de dos años de \(1.50 \times 0.50 = 0.75\). Para preguntar qué factor constante de crecimiento anual \(G\) produciría exactamente el mismo resultado en dos años, resolvemos \(G^2 = 1.50 \times 0.50 = 0.75\), lo que da \(G = \sqrt{0.75} \approx 0.8660\), correspondiente a un rendimiento anual constante equivalente de \(0.8660 - 1 = -13.40\%\) por año. Ese promedio de factor igualitario es la media geométrica.
+
+[CALLOUT]
+id: geometric-mean
+label: Definición
+title: Media geométrica
+tone: key
+
+Para \(n\) valores estrictamente positivos en escala de razón \(x_1, x_2, \dots, x_n > 0\), la media geométrica es la raíz \(n\)-ésima de su producto:
+\[
+G = \left(\prod_{i=1}^n x_i\right)^{1/n} = (x_1 x_2 \cdots x_n)^{1/n}.
+\]
+Tomar logaritmos naturales convierte el producto en una suma:
+\[
+\ln G = \frac{1}{n} \sum_{i=1}^n \ln x_i, \qquad \text{por lo que} \qquad G = \exp\left(\frac{1}{n} \sum_{i=1}^n \ln x_i\right).
+\]
+[/CALLOUT]
+
+Observe con atención la forma logarítmica en [REF: geometric-mean | la definición]: \(\ln G\) es simplemente la media aritmética ordinaria de los valores transformados logarítmicamente \(\ln x_i\). Esto simplifica el cálculo cuando \(n\) es grande (evitando desbordamientos numéricos al multiplicar muchos factores) y aclara la regla estricta de dominio: todo \(x_i\) DEBE ser estrictamente positivo (\(x_i > 0\)). Para rendimientos porcentuales \(r_1, \dots, r_n\) (con cada \(r_t > -1\), es decir, por encima de \(-100\%\)), NUNCA tome la media geométrica directamente sobre las tasas brutas \(r_t\) (que pueden ser negativas o cero). En su lugar, forme siempre los factores de crecimiento estrictamente positivos \(x_t = 1 + r_t\), calcule su media geométrica \(G = \bigl(\prod_{t=1}^n (1 + r_t)\bigr)^{1/n}\), y luego reste \(1\) para obtener la tasa de crecimiento promedio compuesta \(\bar{r}_g = G - 1\).
+
+Compruébelo en una secuencia de ingresos de tres años con tasas de crecimiento de \(+20\%\), \(+50\%\) y \(-10\%\): los factores de crecimiento son \(1.20\), \(1.50\) y \(0.90\), cuyo producto es \(1.20 \times 1.50 \times 0.90 = 1.62\). El factor medio geométrico es \(G = (1.62)^{1/3} \approx 1.1745\), por lo que la verdadera tasa de crecimiento anual compuesta es \(+17.45\%\) por año (comparada con el promedio aritmético sobreestimado \((20\% + 50\% - 10\%)/3 = +20.0\%\)).
+
+[QUESTION 1]
+[ANSWER: B]
+Una cartera de acciones sube \(+60\%\) en el Año 1 y baja \(-10\%\) en el Año 2. ¿Qué tasa porcentual de crecimiento anual constante produce exactamente el mismo cambio acumulado en dos años?
+
+(A) \(+25\%\)
+(B) \(+20\%\)
+(C) \(+22\%\)
+(D) \(+44\%\)
+(E) \(+18\%\)
+[/QUESTION]
+
+=== SECTION 2: Promedio de tasas y la media armónica ===
+
+Considere ahora una segunda situación cotidiana donde la media aritmética da la respuesta incorrecta: promediar tasas (razones de la forma \(\text{numerador} / \text{denominador}\), como kilómetros por hora o dólares por acción).
+
+Supongamos que una camioneta de reparto recorre \(60\text{ km}\) desde una bodega hasta una tienda a \(60\text{ km/h}\), y luego regresa los mismos \(60\text{ km}\) por vías congestionadas a \(30\text{ km/h}\). ¿Cuál es la velocidad promedio de la camioneta en todo el viaje de ida y vuelta de \(120\text{ km}\)? ¡La media aritmética \((60 + 30)/2 = 45\text{ km/h}\) es INCORRECTA! Calcule directamente la distancia total dividida entre el tiempo total:
+- Tramo de ida: \(60\text{ km}\) a \(60\text{ km/h}\) toma \(60 / 60 = 1\text{ hora}\).
+- Tramo de regreso: \(60\text{ km}\) a \(30\text{ km/h}\) toma \(60 / 30 = 2\text{ horas}\).
+- La distancia total es \(60 + 60 = 120\text{ km}\) en un tiempo total de \(1 + 2 = 3\text{ horas}\), de modo que la velocidad promedio verdadera es \(120 / 3 = 40\text{ km/h}\).
+
+¿Por qué la velocidad promedio verdadera es \(40\text{ km/h}\) en lugar de \(45\text{ km/h}\)? Porque la velocidad promedio es una media ponderada por tiempo de las velocidades de ambos tramos, y la camioneta pasó el DOBLE de tiempo viajando a la velocidad menor (\(2\) horas a \(30\text{ km/h}\) frente a \(1\) hora a \(60\text{ km/h}\)):
+\[
+\bar{v} = \frac{1(60) + 2(30)}{1 + 2} = 40\text{ km/h}.
+\]
+En general, cuando \(n\) tramos cubren cada uno la MISMA distancia fija \(D\) a velocidades positivas \(v_1, \dots, v_n\), el tiempo en el tramo \(i\) es \(D / v_i\), de manera que la distancia total dividida entre el tiempo total cancela \(D\) por completo:
+\[
+\bar{v} = \frac{n D}{\sum_{i=1}^n (D / v_i)} = \frac{n}{\sum_{i=1}^n \frac{1}{v_i}}.
+\]
+Esa fórmula es la media armónica.
+
+[CALLOUT]
+id: harmonic-mean
+label: Definición
+title: Media armónica
+tone: key
+
+Para \(n\) valores estrictamente positivos \(x_1, x_2, \dots, x_n > 0\), la media armónica es el recíproco de la media aritmética de sus recíprocos:
+\[
+H = \frac{n}{\sum_{i=1}^n \frac{1}{x_i}}.
+\]
+Para \(n = 2\) valores positivos \(a\) y \(b\), esto se simplifica a
+\[
+H = \frac{2}{\frac{1}{a} + \frac{1}{b}} = \frac{2ab}{a + b}.
+\]
+[/CALLOUT]
+
+Saber cuándo usar la media aritmética frente a [REF: harmonic-mean | la media armónica] para una tasa \(r = \text{numerador} / \text{denominador}\) se reduce a una verificación decisiva: ¿qué cantidad se mantiene igual entre las \(n\) observaciones?
+
+[CALLOUT]
+id: rate-selection-rule
+label: Regla
+title: Promedio de tasas con denominador fijo frente a numerador fijo
+tone: key
+
+Sea cada observación una tasa positiva \(r_i = U_i / V_i\) (por ejemplo, \(\text{km} / \text{hora}\), o \(\text{dólares} / \text{acción}\)):
+
+(1) Denominador fijo (\(V_1 = V_2 = \dots = V_n = V\)): la tasa global es \(\dfrac{\sum U_i}{\sum V_i} = \dfrac{\sum V r_i}{n V} = \dfrac{1}{n}\sum r_i\), la media aritmética. Ejemplo: conducir durante \(1\) hora a \(60\text{ km/h}\) y \(1\) hora a \(30\text{ km/h}\) promedia \(45\text{ km/h}\).
+(2) Numerador fijo (\(U_1 = U_2 = \dots = U_n = U\)): la tasa global es \(\dfrac{\sum U_i}{\sum V_i} = \dfrac{n U}{\sum (U / r_i)} = \dfrac{n}{\sum (1/r_i)}\), la media armónica. Ejemplo: conducir \(60\text{ km}\) a \(60\text{ km/h}\) y \(60\text{ km}\) a \(30\text{ km/h}\) promedia \(40\text{ km/h}\).
+(3) Ninguno fijo: calcule \(\dfrac{\sum U_i}{\sum V_i}\) directamente —equivalentemente, una media aritmética ponderada por los denominadores \(V_i\) (o una media armónica ponderada por los numeradores \(U_i\))—.
+[/CALLOUT]
+
+Aplique [REF: rate-selection-rule | esta regla] al promedio de costo en dólares en finanzas. Supongamos que un inversionista gasta una suma fija de \(\$600\) cada mes comprando acciones de una empresa: en el Mes 1 el precio es \(\$20/\text{acción}\) (comprando \(30\) acciones), y en el Mes 2 el precio es \(\$30/\text{acción}\) (comprando \(20\) acciones). Como la tasa de precio es \(\text{dólares} / \text{acción}\) y el NUMERADOR (dólares gastados, \(\$600\)) se mantiene fijo, el precio promedio pagado por acción es la media armónica:
+\[
+H = \frac{2(20)(30)}{20 + 30} = \frac{1200}{50} = \$24/\text{acción},
+\]
+coincidiendo con \(\$1{,}200 / 50\text{ acciones} = \$24/\text{acción}\). Si en cambio el inversionista hubiera comprado una cantidad fija de \(25\) acciones cada mes (fijando el DENOMINADOR, acciones), el precio promedio habría sido la media aritmética \((\$20 + \$30)/2 = \$25/\text{acción}\). Note que gastar cantidades iguales en dólares compra automáticamente más acciones cuando el precio es bajo, empujando el precio promedio efectivo por debajo de la media aritmética.
+
+[QUESTION 2]
+[ANSWER: D]
+Un dron de reconocimiento vuela \(10\text{ km}\) hacia el norte con viento en contra a \(20\text{ km/h}\), y luego vuela de inmediato los mismos \(10\text{ km}\) hacia el sur con viento a favor a \(60\text{ km/h}\). ¿Cuál es la velocidad promedio del dron en todo el viaje de ida y vuelta de \(20\text{ km}\)?
+
+(A) \(40\text{ km/h}\)
+(B) \(35\text{ km/h}\)
+(C) \(34.6\text{ km/h}\)
+(D) \(30\text{ km/h}\)
+(E) \(25\text{ km/h}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Dos conductores compran gasolina en dos días distintos cuando los precios son \(\$3.00/\text{gal}\) y \(\$6.00/\text{gal}\). El Conductor X compra exactamente \(10\) galones cada día; el Conductor Y gasta exactamente \(\$30\) cada día. ¿Qué enunciado da con precisión el precio promedio por galón pagado por cada conductor?
+
+(A) El Conductor X paga la media aritmética \(\$4.50/\text{gal}\); el Conductor Y paga la media armónica \(\$4.00/\text{gal}\).
+(B) El Conductor X paga la media armónica \(\$4.00/\text{gal}\); el Conductor Y paga la media aritmética \(\$4.50/\text{gal}\).
+(C) Ambos conductores pagan la media aritmética \(\$4.50/\text{gal}\) porque los precios son idénticos en ambos días.
+(D) El Conductor X paga \(\$4.50/\text{gal}\); el Conductor Y paga la media geométrica \(\sqrt{18} \approx \$4.24/\text{gal}\).
+(E) Ambos conductores pagan la media armónica \(\$4.00/\text{gal}\) porque el precio por galón es una tasa.
+[/QUESTION]
+
+=== SECTION 3: La desigualdad MA-MG-MH y por qué la volatilidad frena el crecimiento ===
+
+En todos los ejemplos anteriores, las tres medias cayeron exactamente en el mismo orden: \(H < G < A\). Ese ordenamiento no es casualidad; es una desigualdad fundamental de los números positivos.
+
+[CALLOUT]
+id: am-gm-hm
+label: Teorema
+title: La desigualdad MA-MG-MH
+tone: key
+
+Para cualesquiera \(n\) números reales estrictamente positivos \(x_1, x_2, \dots, x_n > 0\), sean \(A = \frac{1}{n}\sum x_i\), \(G = (\prod x_i)^{1/n}\) y \(H = n / \sum (1/x_i)\). Entonces
+\[
+H \le G \le A,
+\]
+con igualdad \(H = G = A\) si y solo si todas las observaciones son iguales (\(x_1 = x_2 = \dots = x_n\)).
+[/CALLOUT]
+
+Para \(n = 2\) números positivos \(a, b > 0\), podemos demostrar [REF: am-gm-hm | toda la cadena] en cuatro líneas algebraicas. Primero, como el cuadrado de cualquier número real es no negativo,
+\[
+(\sqrt{a} - \sqrt{b})^2 \ge 0 \implies a - 2\sqrt{ab} + b \ge 0 \implies \frac{a + b}{2} \ge \sqrt{ab},
+\]
+lo cual demuestra \(G \le A\), con igualdad si y solo si \(\sqrt{a} - \sqrt{b} = 0\), es decir, \(a = b\). Segundo, aplique exactamente esa desigualdad a los recíprocos positivos \(1/a\) y \(1/b\):
+\[
+\frac{\frac{1}{a} + \frac{1}{b}}{2} \ge \sqrt{\frac{1}{a} \cdot \frac{1}{b}} = \frac{1}{\sqrt{ab}}.
+\]
+Como ambos lados son estrictamente positivos, tomar recíprocos invierte la desigualdad:
+\[
+\frac{2}{\frac{1}{a} + \frac{1}{b}} \le \sqrt{ab},
+\]
+lo cual demuestra \(H \le G\), de nuevo con igualdad si y solo si \(1/a = 1/b\), es decir, \(a = b\). Observe una identidad adicional para \(n = 2\): multiplicar \(A = (a+b)/2\) por \(H = 2ab/(a+b)\) da \(A \cdot H = ab = G^2\), de modo que para dos valores positivos la media geométrica es siempre \(\sqrt{A H}\).
+
+La desigualdad general para \(n\) variables \(H \le G \le A\) se cumple por el mismo principio subyacente: \(A\) da igual peso a valores grandes, \(G\) comprime los extremos multiplicativos mediante logaritmos y \(H\) da el mayor peso a los valores pequeños mediante recíprocos. Compruébelo en \(n = 4\) valores \(1, 2, 4, 8\):
+- \(A = (1 + 2 + 4 + 8)/4 = 15/4 = 3.75\)
+- \(G = (1 \cdot 2 \cdot 4 \cdot 8)^{1/4} = 64^{1/4} = 2\sqrt{2} \approx 2.828\)
+- \(H = 4 / (1 + 1/2 + 1/4 + 1/8) = 4 / (15/8) = 32/15 \approx 2.133\)
+
+En efecto, \(2.133 < 2.828 < 3.75\). El gráfico siguiente fija \(x_1 = 1\) y traza \(A(x)\), \(G(x)\) y \(H(x)\) como funciones del segundo valor \(x = x_2 > 0\). Arrastre el deslizador \(b\) para ver cómo las tres curvas se tocan en \(x = 1\) (donde ambos valores son iguales) y se separan más cuanto más desiguales se vuelven \(x_1\) y \(x_2\).
+
+[GRAPH]
+type: function2d
+title: Comparación de \(A(x) = (1+x)/2\), \(G(x) = \sqrt{x}\) y \(H(x) = 2x/(1+x)\) para el par \((1, x)\)
+xlabel: \(x\)
+ylabel: Valor medio
+xrange: 0.1, 6
+yrange: 0, 3.6
+trace: (1 + x) / 2 | label: Media aritmética \(A\) | color: #ef4444
+trace: sqrt(x) | label: Media geométrica \(G\) | color: #3b82f6
+trace: 2*x / (1 + x) | label: Media armónica \(H\) | color: #10b981
+point: 1, 1 | label: \((1, 1)\)
+point: b, (1 + b) / 2 | label: \(A\) | color: #ef4444
+point: b, sqrt(b) | label: \(G\) | color: #3b82f6
+point: b, 2*b / (1 + b) | label: \(H\) | color: #10b981
+segment: b, 2*b / (1 + b), b, (1 + b) / 2 | dashed: true
+slider: b | range: 0.2, 6 | init: 4 | step: 0.2
+[/GRAPH]
+
+Esta desigualdad explica directamente el lastre de volatilidad en finanzas y biología poblacional: siempre que los factores de crecimiento anual \(1 + r_t\) fluctúan de un año a otro en vez de permanecer constantes, \(G < A\) estrictamente. Por lo tanto, la media aritmética de los rendimientos porcentuales anuales SIEMPRE sobreestima la verdadera tasa de crecimiento anual compuesta \(\bar{r}_g = G - 1\), y cuanto mayores son las oscilaciones de un año a otro, mayor se vuelve la brecha \(A - G\).
+
+[TABLE]
+Media | Fórmula (para \(x_i > 0\)) | Cuándo usarla | Ordenamiento
+Aritmética (\(A\)) | \(\frac{1}{n}\sum x_i\) | Totales aditivos; tasas con denominadores iguales | Mayor (\(A \ge G \ge H\))
+Geométrica (\(G\)) | \(\left(\prod x_i\right)^{1/n}\) | Factores de crecimiento multiplicativos, razones, números índice | Intermedia (\(A \ge G \ge H\))
+Armónica (\(H\)) | \(n / \sum (1/x_i)\) | Tasas con numeradores iguales (distancia igual, gasto igual) | Menor (\(A \ge G \ge H\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: C]
+Dos números estrictamente positivos \(a\) y \(b\) tienen media aritmética \(A = 12.5\) y media armónica \(H = 8\). ¿Cuál es su media geométrica \(G\)?
+
+(A) \(10.25\)
+(B) \(12.0\)
+(C) \(10.0\)
+(D) \(9.5\)
+(E) No puede determinarse sin conocer \(a\) y \(b\) individualmente.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Un folleto de inversión anuncia que un fondo volátil logró un rendimiento anual promedio aritmético de \(+8\%\) durante cinco años, con rendimientos anuales que variaron ampliamente desde \(-30\%\) hasta \(+45\%\). Sin ver la secuencia anual exacta, ¿qué puede concluir con certeza sobre la verdadera tasa de crecimiento anual compuesta \(\bar{r}_g\) del fondo durante esos cinco años?
+
+(A) \(\bar{r}_g\) debe ser igual a \(+8\%\) porque el crecimiento compuesto y el promedio aritmético de los rendimientos coinciden en cualquier ventana multianual.
+(B) \(\bar{r}_g\) debe ser estrictamente mayor que \(+8\%\) porque la capitalización amplifica los rendimientos positivos.
+(C) \(\bar{r}_g\) podría ser mayor o menor que \(+8\%\) según el orden de los cinco años.
+(D) \(\bar{r}_g\) es igual a la media armónica de los cinco rendimientos anuales.
+(E) \(\bar{r}_g\) debe ser estrictamente menor que \(+8\%\) porque los factores positivos de crecimiento \(1 + r_t\) no son todos iguales, de modo que \(G < A\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Durante tres años consecutivos, los ingresos anuales de una empresa emergente cambian en \(+25\%\), \(-20\%\) y \(0\%\). Compare la media aritmética de los tres cambios porcentuales anuales con la verdadera tasa de crecimiento anual compuesta \(\bar{r}_g\).
+
+(A) La media aritmética es \(+1.67\%\) y \(\bar{r}_g\) es \(+1.67\%\).
+(B) La media aritmética es \(+1.67\%\), mientras que \(\bar{r}_g\) es \(0\%\).
+(C) La media aritmética es \(0\%\), mientras que \(\bar{r}_g\) es \(+1.67\%\).
+(D) La media aritmética es \(+1.67\%\), mientras que \(\bar{r}_g\) es \(-1.67\%\).
+(E) La media aritmética es \(+5.0\%\), mientras que \(\bar{r}_g\) es \(0\%\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Un ciclista recorre \(30\text{ km}\) cuesta arriba a \(30\text{ km/h}\) y luego \(60\text{ km}\) en terreno llano a \(60\text{ km/h}\). ¿Cuál es la velocidad promedio exacta del ciclista en todo el recorrido de \(90\text{ km}\), y por qué falla aquí la media armónica no ponderada de \(30\) y \(60\)?
+
+(A) \(40\text{ km/h}\); la media armónica no ponderada es exacta siempre que se promedian velocidades.
+(B) \(50\text{ km/h}\); las distancias están ponderadas \(1:2\), por lo que se aplica la media aritmética ponderada de las velocidades.
+(C) \(42.4\text{ km/h}\); se requiere la media geométrica para distancias desiguales.
+(D) \(45\text{ km/h}\); los dos tramos tienen distancias desiguales (\(30\text{ km}\) frente a \(60\text{ km}\)) y tiempos de viaje iguales (\(1\text{ h}\) cada uno), por lo que la velocidad global es la distancia total dividida entre el tiempo total.
+(E) \(45\text{ km/h}\); la media armónica no ponderada siempre subestima la velocidad en exactamente \(5\text{ km/h}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suponga que un conjunto de datos de \(n\) valores estrictamente positivos \(x_1, \dots, x_n\) tiene media geométrica \(G\). Si cada observación se eleva al cuadrado para formar un nuevo conjunto de datos \(y_i = x_i^2\), ¿cuál es la media geométrica de \(y_1, \dots, y_n\)?
+
+(A) \(2G\)
+(B) \(G^n\)
+(C) \(G^2\)
+(D) \(\sqrt{G}\)
+(E) No puede determinarse a partir de \(G\) únicamente sin conocer los \(x_i\) individuales.
+[/BONUS]

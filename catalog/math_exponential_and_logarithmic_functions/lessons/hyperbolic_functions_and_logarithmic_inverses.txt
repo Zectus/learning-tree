@@ -1,0 +1,279 @@
+=== SECTION 1: Defining hyperbolic functions from \(e^x\) and \(e^{-x}\) ===
+
+Any function \(f(x)\) defined on \(\mathbb{R}\) can be decomposed uniquely into an even part \(\frac{f(x) + f(-x)}{2}\) and an odd part \(\frac{f(x) - f(-x)}{2}\). Applying this decomposition to the natural exponential \(f(x) = e^x\) produces two remarkably useful combinations called the hyperbolic cosine (\(\cosh x\)) and the hyperbolic sine (\(\sinh x\)), along with their quotient the hyperbolic tangent (\(\tanh x\)):
+\[
+\cosh x = \frac{e^x + e^{-x}}{2}, \qquad \sinh x = \frac{e^x - e^{-x}}{2}, \qquad \tanh x = \frac{\sinh x}{\cosh x} = \frac{e^x - e^{-x}}{e^x + e^{-x}}.
+\]
+(Notice immediately that \(\cosh x + \sinh x = e^x\) and \(\cosh x - \sinh x = e^{-x}\).) We also define the hyperbolic secant \(\operatorname{sech} x = \dfrac{1}{\cosh x}\).
+
+Every basic symmetry, domain, range, and asymptote of these three functions follows purely from the properties of \(e^x\) and \(e^{-x}\):
+
+1. Symmetries: Replacing \(x\) with \(-x\) swaps \(e^x\) and \(e^{-x}\), so
+\[
+\cosh(-x) = \frac{e^{-x} + e^x}{2} = \cosh x \quad (\text{even}), \qquad \sinh(-x) = \frac{e^{-x} - e^x}{2} = -\sinh x \quad (\text{odd}),
+\]
+and therefore \(\tanh(-x) = \frac{-\sinh x}{\cosh x} = -\tanh x\) (odd).
+
+2. Range and minimum of \(\cosh x\): Because \(e^x > 0\) and \(e^{-x} > 0\), \(\cosh x\) is always positive. In fact, subtracting \(1\) reveals a perfect square:
+\[
+\cosh x - 1 = \frac{e^x - 2 + e^{-x}}{2} = \frac{\left(e^{x/2} - e^{-x/2}\right)^2}{2} \ge 0.
+\]
+Equality holds if and only if \(e^{x/2} = e^{-x/2}\), i.e., \(x = 0\). Thus \(\cosh x \ge 1\) for all \(x \in \mathbb{R}\), with global minimum \((0, 1)\) and range \([1, \infty)\). Because \(\cosh x\) is even, it decreases on \((-\infty, 0]\) and increases on \([0, \infty)\)—so it is NOT one-to-one on \(\mathbb{R}\).
+
+3. Monotonicity and range of \(\sinh x\): As \(x\) increases, \(e^x\) strictly increases and \(-e^{-x}\) also strictly increases (since \(e^{-x}\) decreases). Therefore \(\sinh x = \frac{1}{2}(e^x - e^{-x})\) is strictly increasing on all of \(\mathbb{R}\), passes through \((0, 0)\), and has range \((-\infty, \infty)\).
+
+4. Asymptotes and range of \(\tanh x\): Multiplying numerator and denominator of \(\tanh x\) by \(e^x\) yields
+\[
+\tanh x = \frac{e^{2x} - 1}{e^{2x} + 1} = 1 - \frac{2}{e^{2x} + 1}.
+\]
+Because \(e^{2x} + 1\) increases strictly from \(1\) (as \(x \to -\infty\)) to \(+\infty\) (as \(x \to +\infty\)), \(\frac{2}{e^{2x} + 1}\) decreases strictly from \(2\) toward \(0\). Hence \(\tanh x\) increases strictly from \(-1\) to \(+1\) with range \((-1, 1)\) and horizontal asymptotes \(y = 1\) (as \(x \to \infty\)) and \(y = -1\) (as \(x \to -\infty\)).
+
+[CALLOUT]
+id: hyp-defs
+label: Definition
+title: Core hyperbolic functions and their graph features
+tone: key
+
+(1) \(\cosh x = \dfrac{e^x + e^{-x}}{2}\): even, domain \(\mathbb{R}\), range \([1, \infty)\), global minimum at \((0, 1)\).
+(2) \(\sinh x = \dfrac{e^x - e^{-x}}{2}\): odd, domain \(\mathbb{R}\), range \((-\infty, \infty)\), strictly increasing, passes through \((0, 0)\).
+(3) \(\tanh x = \dfrac{\sinh x}{\cosh x} = \dfrac{e^x - e^{-x}}{e^x + e^{-x}}\): odd, domain \(\mathbb{R}\), range \((-1, 1)\), strictly increasing, horizontal asymptotes \(y = \pm 1\).
+[/CALLOUT]
+
+[TABLE]
+Function | Definition | Symmetry | Domain | Range | Value at \(x = 0\)
+\(\cosh x\) | \((e^x + e^{-x}) / 2\) | Even | \((-\infty, \infty)\) | \([1, \infty)\) | \(1\)
+\(\sinh x\) | \((e^x - e^{-x}) / 2\) | Odd | \((-\infty, \infty)\) | \((-\infty, \infty)\) | \(0\)
+\(\tanh x\) | \((e^x - e^{-x}) / (e^x + e^{-x})\) | Odd | \((-\infty, \infty)\) | \((-1, 1)\) | \(0\)
+[/TABLE]
+
+[GRAPH]
+type: function2d
+title: Graphs of \(\cosh x\), \(\sinh x\), and \(\tanh x\) with asymptotes \(y = \pm 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -4, 5
+trace: cosh(x) | label: \(y = \cosh x\)
+trace: sinh(x) | label: \(y = \sinh x\)
+trace: tanh(x) | label: \(y = \tanh x\)
+trace: 1 | label: \(y = 1\)
+trace: -1 | label: \(y = -1\)
+point: 0, 1 | label: \((0, 1)\)
+point: 0, 0 | label: \((0, 0)\)
+[/GRAPH]
+
+Worked example (Exact evaluation at logarithmic inputs): Compute \(\cosh(\ln 3)\), \(\sinh(\ln 3)\), and \(\tanh(\ln 3)\).
+
+Since \(e^{\ln 3} = 3\) and \(e^{-\ln 3} = \frac{1}{3}\),
+\[
+\cosh(\ln 3) = \frac{3 + \frac{1}{3}}{2} = \frac{5}{3}, \qquad \sinh(\ln 3) = \frac{3 - \frac{1}{3}}{2} = \frac{4}{3}, \qquad \tanh(\ln 3) = \frac{4/3}{5/3} = \frac{4}{5}.
+\]
+Notice that \(\left(\frac{5}{3}\right)^2 - \left(\frac{4}{3}\right)^2 = \frac{25 - 16}{9} = 1\)—a first glimpse of the fundamental hyperbolic identity!
+
+[QUESTION 1]
+[ANSWER: B]
+What is the exact value of \(\sinh(\ln 4)\)?
+
+(A) \(\dfrac{17}{8}\)
+(B) \(\dfrac{15}{8}\)
+(C) \(\dfrac{15}{4}\)
+(D) \(\dfrac{15}{17}\)
+(E) \(\dfrac{3}{2}\)
+[/QUESTION]
+
+=== SECTION 2: Hyperbolic identities and the unit hyperbola ===
+
+Why are \(\cosh\) and \(\sinh\) called "hyperbolic" functions? Factor \(\cosh^2 x - \sinh^2 x\) as a difference of squares and substitute \(\cosh x + \sinh x = e^x\) and \(\cosh x - \sinh x = e^{-x}\):
+\[
+\cosh^2 x - \sinh^2 x = (\cosh x + \sinh x)(\cosh x - \sinh x) = e^x \cdot e^{-x} = e^0 = 1!
+\]
+Just as \((\cos t, \sin t)\) satisfies \(X^2 + Y^2 = 1\) and traces the unit circle, the point \((X, Y) = (\cosh t, \sinh t)\) satisfies \(X^2 - Y^2 = 1\) (with \(X \ge 1\)) and traces the entire right branch of the unit hyperbola!
+
+[GRAPH]
+type: parametric2d
+title: Parametric curve \((X, Y) = (\cosh t, \sinh t)\) traces the right branch of \(X^2 - Y^2 = 1\)
+xlabel: \(X\)
+ylabel: \(Y\)
+trange: -1.6, 1.6
+xrange: -0.5, 3
+yrange: -2.5, 2.5
+trace: cosh(t), sinh(t) | label: \((\cosh t, \sinh t)\)
+point: 1, 0 | label: \((1, 0)\)
+point: 5/3, 4/3 | label: \((5/3, 4/3)\)
+segment: 0, 0, 5/3, 4/3 | dashed: true
+[/GRAPH]
+
+Dividing \(\cosh^2 x - \sinh^2 x = 1\) by \(\cosh^2 x\) (safe for ALL \(x \in \mathbb{R}\) because \(\cosh x \ge 1 > 0\) never vanishes!) produces the tangent-secant identity:
+\[
+1 - \tanh^2 x = \operatorname{sech}^2 x.
+\]
+
+The addition identities follow directly from the exponent law \(e^{x + y} = e^x e^y\). Expanding the right-hand side of \(\sinh x \cosh y + \cosh x \sinh y\):
+\[
+\frac{(e^x - e^{-x})(e^y + e^{-y}) + (e^x + e^{-x})(e^y - e^{-y})}{4} = \frac{(e^{x+y} + e^{x-y} - e^{-x+y} - e^{-x-y}) + (e^{x+y} - e^{x-y} + e^{-x+y} - e^{-x-y})}{4} = \frac{2 e^{x+y} - 2 e^{-(x+y)}}{4} = \sinh(x + y).
+\]
+By the exact same algebra,
+\[
+\cosh(x + y) = \cosh x \cosh y + \sinh x \sinh y.
+\]
+Watch the sign carefully: \(\cosh(x + y)\) has a PLUS sign (unlike circular \(\cos(x + y) = \cos x \cos y - \sin x \sin y\)). Setting \(y = x\) yields the double-argument identities:
+\[
+\sinh(2x) = 2\sinh x \cosh x, \qquad \cosh(2x) = \cosh^2 x + \sinh^2 x = 2\cosh^2 x - 1 = 1 + 2\sinh^2 x.
+\]
+
+[CALLOUT]
+id: hyp-identities
+label: Reference
+title: Fundamental hyperbolic identities
+tone: key
+
+For all \(x, y \in \mathbb{R}\):
+
+(1) Fundamental identity: \(\cosh^2 x - \sinh^2 x = 1\).
+(2) Tangent-secant identity: \(1 - \tanh^2 x = \operatorname{sech}^2 x\).
+(3) Addition formulas:
+\[
+\sinh(x \pm y) = \sinh x \cosh y \pm \cosh x \sinh y, \qquad \cosh(x \pm y) = \cosh x \cosh y \pm \sinh x \sinh y.
+\]
+(4) Double-argument formulas:
+\[
+\sinh(2x) = 2\sinh x \cosh x, \qquad \cosh(2x) = \cosh^2 x + \sinh^2 x = 2\cosh^2 x - 1 = 1 + 2\sinh^2 x.
+\]
+[/CALLOUT]
+
+Worked example: Given \(\sinh x = \frac{3}{4}\), find exact values of \(\cosh x\), \(\tanh x\), and \(\cosh(2x)\).
+
+By [REF: hyp-identities.1 | the fundamental identity], \(\cosh^2 x = 1 + \sinh^2 x = 1 + \frac{9}{16} = \frac{25}{16}\). Unlike circular trigonometry, there is NO sign ambiguity here because \(\cosh x \ge 1 > 0\) ALWAYS, so \(\cosh x = +\frac{5}{4}\). Therefore \(\tanh x = \frac{3/4}{5/4} = \frac{3}{5}\) and, by [REF: hyp-identities.4 | the double-argument formula],
+\[
+\cosh(2x) = 1 + 2\sinh^2 x = 1 + 2\left(\frac{9}{16}\right) = \frac{17}{8}.
+\]
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose \(\sinh x = -\dfrac{5}{12}\). What is the exact value of \(\sinh(2x)\)?
+
+(A) \(-\dfrac{65}{72}\)
+(B) \(\dfrac{65}{72}\)
+(C) \(-\dfrac{5}{6}\)
+(D) \(\dfrac{119}{144}\)
+(E) \(-\dfrac{65}{36}\)
+[/QUESTION]
+
+=== SECTION 3: Logarithmic formulas for inverse hyperbolic functions ===
+
+Because \(\sinh y\), \(\cosh y\), and \(\tanh y\) are rational expressions in \(e^y\), inverting them does NOT require inventing new transcendental functions—every inverse hyperbolic function reduces to an explicit natural logarithm by solving an exponential equation in \(u = e^y > 0\)!
+
+1. Inverse hyperbolic sine (\(\operatorname{arsinh} x\), domain \(\mathbb{R}\), range \(\mathbb{R}\)):
+Since \(\sinh y\) is strictly increasing onto \(\mathbb{R}\), every real \(x\) corresponds to a unique \(y = \operatorname{arsinh} x\) satisfying \(\sinh y = x\):
+\[
+\frac{e^y - e^{-y}}{2} = x \implies e^y - 2x - e^{-y} = 0.
+\]
+Multiply both sides by \(e^y > 0\) and substitute \(u = e^y > 0\):
+\[
+u^2 - 2x u - 1 = 0 \implies u = \frac{2x \pm \sqrt{4x^2 + 4}}{2} = x \pm \sqrt{x^2 + 1}.
+\]
+Because \(\sqrt{x^2 + 1} > |x| \ge x\), the minus root \(x - \sqrt{x^2 + 1}\) is strictly negative and therefore impossible for \(u = e^y > 0\). Retaining the unique positive root gives \(e^y = x + \sqrt{x^2 + 1}\), and taking \(\ln\) yields
+\[
+\operatorname{arsinh} x = \ln\!\left(x + \sqrt{x^2 + 1}\right) \qquad (x \in \mathbb{R}).
+\]
+
+2. Inverse hyperbolic cosine (\(\operatorname{arcosh} x\), domain \([1, \infty)\), range \([0, \infty)\)):
+Because \(\cosh y\) is even and attains every value \(x > 1\) twice (at \(+y\) and \(-y\)), we restrict \(\cosh y\) to the non-negative branch \(y \ge 0\) (so \(u = e^y \ge 1\)). Solving \(\cosh y = x\) for \(x \ge 1\):
+\[
+\frac{e^y + e^{-y}}{2} = x \implies u^2 - 2x u + 1 = 0 \implies u = x \pm \sqrt{x^2 - 1}.
+\]
+Here BOTH roots are positive (in fact \((x + \sqrt{x^2 - 1})(x - \sqrt{x^2 - 1}) = 1\), so they are reciprocals of one another, corresponding to \(+y\) and \(-y\)). Enforcing the principal branch \(y \ge 0 \iff u = e^y \ge 1\) uniquely selects the plus sign:
+\[
+\operatorname{arcosh} x = \ln\!\left(x + \sqrt{x^2 - 1}\right) \qquad (x \ge 1).
+\]
+
+3. Inverse hyperbolic tangent (\(\operatorname{artanh} x\), domain \((-1, 1)\), range \(\mathbb{R}\)):
+Since \(\tanh y\) is strictly increasing onto \((-1, 1)\), solve \(\tanh y = x\) for \(|x| < 1\):
+\[
+\frac{e^{2y} - 1}{e^{2y} + 1} = x \implies e^{2y} - 1 = x e^{2y} + x \implies e^{2y}(1 - x) = 1 + x \implies e^{2y} = \frac{1 + x}{1 - x}.
+\]
+Because \(-1 < x < 1\), both \(1 + x > 0\) and \(1 - x > 0\), so taking \(\ln\) and dividing by \(2\) gives
+\[
+\operatorname{artanh} x = \frac{1}{2}\ln\!\left(\frac{1 + x}{1 - x}\right) \qquad (-1 < x < 1).
+\]
+
+[CALLOUT]
+id: inv-hyp-formulas
+label: Theorem
+title: Explicit logarithmic formulas for inverse hyperbolic functions
+tone: key
+
+(1) \(\operatorname{arsinh} x = \ln\!\left(x + \sqrt{x^2 + 1}\right)\), domain \((-\infty, \infty)\), range \((-\infty, \infty)\).
+(2) \(\operatorname{arcosh} x = \ln\!\left(x + \sqrt{x^2 - 1}\right)\), domain \([1, \infty)\), range \([0, \infty)\).
+(3) \(\operatorname{artanh} x = \dfrac{1}{2}\ln\!\left(\dfrac{1 + x}{1 - x}\right)\), domain \((-1, 1)\), range \((-\infty, \infty)\).
+[/CALLOUT]
+
+The graph below plots \(\operatorname{arsinh} x\) across \(\mathbb{R}\), \(\operatorname{arcosh} x\) starting at \((1, 0)\) for \(x \ge 1\), and \(\operatorname{artanh} x\) bounded between its vertical asymptotes \(x = \pm 1\).
+
+[GRAPH]
+type: function2d
+title: Inverse hyperbolic functions \(\operatorname{arsinh} x\), \(\operatorname{arcosh} x\), and \(\operatorname{artanh} x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 4
+yrange: -2.5, 2.5
+trace: log(x + sqrt(x^2 + 1)) | label: \(y = \operatorname{arsinh} x\)
+trace: x >= 1 ? log(x + sqrt(x^2 - 1)) : 0/0 | label: \(y = \operatorname{arcosh} x\)
+trace: abs(x) < 1 ? 0.5 * log((1 + x) / (1 - x)) : 0/0 | label: \(y = \operatorname{artanh} x\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1, 0 | label: \((1, 0)\)
+segment: -1, -2.5, -1, 2.5 | dashed: true
+segment: 1, -2.5, 1, 2.5 | dashed: true
+[/GRAPH]
+
+Worked example (Solving a hyperbolic equation for ALL real roots): Find all real solutions of \(\cosh x = 3\).
+
+Because \(\cosh x\) is even, \(\cosh x = 3\) has TWO real solutions: \(x = +\operatorname{arcosh}(3)\) and \(x = -\operatorname{arcosh}(3)\). Using [REF: inv-hyp-formulas.2 | the logarithmic formula for \(\operatorname{arcosh}\)],
+\[
+x = \pm\ln\!\left(3 + \sqrt{3^2 - 1}\right) = \pm\ln\!\left(3 + 2\sqrt{2}\right) \approx \pm 1.7627.
+\]
+(Note that \(-\ln(3 + 2\sqrt{2}) = \ln\!\left(\frac{1}{3 + 2\sqrt{2}}\right) = \ln(3 - 2\sqrt{2})\), the reciprocal quadratic root!)
+
+[QUESTION 3]
+[ANSWER: B]
+Find ALL real solutions \(x\) of the equation \(5\cosh x = 13\).
+
+(A) \(x = \ln 5\) only
+(B) \(x = \pm\ln 5\)
+(C) \(x = \pm\ln 13\)
+(D) \(x = \ln\!\left(\dfrac{13}{5}\right)\) only
+(E) No real solutions
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+What is the exact value of \(\operatorname{artanh}\!\left(\dfrac{3}{5}\right)\)?
+
+(A) \(\ln 2\)
+(B) \(\ln 4\)
+(C) \(\dfrac{1}{2}\ln\!\left(\dfrac{3}{5}\right)\)
+(D) \(-\ln 2\)
+(E) Undefined, because \(\dfrac{3}{5} < 1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Find ALL real solutions \(x\) of the equation \(2\cosh x - \sinh x = 2\).
+
+(A) \(x = 0\) only
+(B) \(x = 0\) and \(x = \ln 3\)
+(C) \(x = \pm\ln 3\)
+(D) \(x = 0\) and \(x = -\ln 3\)
+(E) \(x = \ln 2\) and \(x = \ln 3\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+What is the exact value of \(\operatorname{arsinh}\!\left(\dfrac{3}{4}\right) + \operatorname{arcosh}\!\left(\dfrac{5}{4}\right)\)?
+
+(A) \(\ln 2\)
+(B) \(\ln 4\)
+(C) \(\ln\!\left(\dfrac{5}{3}\right)\)
+(D) \(0\)
+(E) \(\ln\!\left(\dfrac{15}{16}\right)\)
+[/BONUS]

@@ -1,0 +1,222 @@
+=== SECTION 1: Mechanical work as a dot product ===
+
+Suppose you pull a heavy sled \(12\text{ m}\) along a flat snowy trail using a rope tilted \(60^\circ\) above the ground. You pull with \(50\text{ N}\) of tension, yet not all of that \(50\text{ N}\) moves the sled forward: part of your pull lifts upward against the ground while only the horizontal shadow of \(\mathbf{F}\) along the trail actually drives the displacement \(\mathbf{d}\). In physics, mechanical work quantifies how effectively a constant force \(\mathbf{F}\) pushes an object along a straight displacement \(\mathbf{d}\).
+
+Only the signed scalar projection of \(\mathbf{F}\) onto the displacement \(\mathbf{d}\)—that is, \(\operatorname{comp}_{\mathbf{d}}\mathbf{F} = \|\mathbf{F}\|\cos\theta\), where \(\theta \in [0^\circ, 180^\circ]\) is the angle between \(\mathbf{F}\) and \(\mathbf{d}\)—contributes along the path. Multiplying that effective force component by the distance traveled \(\|\mathbf{d}\|\) gives the work \(W\):
+\[
+W = (\operatorname{comp}_{\mathbf{d}}\mathbf{F})\,\|\mathbf{d}\| = (\|\mathbf{F}\|\cos\theta)\|\mathbf{d}\| = \|\mathbf{F}\|\,\|\mathbf{d}\|\cos\theta = \mathbf{F} \cdot \mathbf{d}.
+\]
+Recognizing that product as the dot product \(\mathbf{F} \cdot \mathbf{d}\) immediately hands us two equivalent ways to compute work:
+- From magnitudes and included angle: \(W = \|\mathbf{F}\|\,\|\mathbf{d}\|\cos\theta\).
+- From Cartesian components: if \(\mathbf{F} = \langle F_x, F_y \rangle\) and \(\mathbf{d} = \langle d_x, d_y \rangle\), then \(W = F_x d_x + F_y d_y\)—no angle calculation required!
+
+Notice two critical properties of \(W = \mathbf{F} \cdot \mathbf{d}\). First, work is a SCALAR (a signed real number, measured in newton-meters or joules, \(1\text{ J} = 1\text{ N}\cdot\text{m}\)), NOT a vector. Second, the sign of \(W\) carries direct physical meaning, inherited from the sign of \(\cos\theta\):
+- Positive work (\(W > 0\), \(0^\circ \le \theta < 90^\circ\)): \(\mathbf{F}\) has a forward component aiding the motion.
+- Zero work (\(W = 0\), \(\theta = 90^\circ\), or \(\mathbf{F} = \mathbf{0}\), or \(\mathbf{d} = \mathbf{0}\)): \(\mathbf{F}\) acts perpendicular to the displacement (for example, the upward normal force on a flat floor, or carrying a heavy box horizontally at constant height), or the object does not move at all.
+- Negative work (\(W < 0\), \(90^\circ < \theta \le 180^\circ\)): \(\mathbf{F}\) has a backward component opposing the motion (for example, kinetic friction, braking, or gravity during an upward lift).
+
+[CALLOUT]
+id: work-def
+label: Definition
+title: Work done by a constant planar force
+tone: key
+
+When a constant force \(\mathbf{F} \in \mathbb{R}^2\) acts on an object undergoing a straight-line displacement \(\mathbf{d} \in \mathbb{R}^2\), the work done by \(\mathbf{F}\) is the scalar
+\[
+W = \mathbf{F} \cdot \mathbf{d} = (\operatorname{comp}_{\mathbf{d}}\mathbf{F})\,\|\mathbf{d}\| = \|\mathbf{F}\|\,\|\mathbf{d}\|\cos\theta = F_x d_x + F_y d_y.
+\]
+In SI units, force in newtons (\(\text{N}\)) and displacement in meters (\(\text{m}\)) yield work in joules (\(\text{J}\)).
+[/CALLOUT]
+
+Let us try both formulas on concrete cases.
+- Angle-magnitude case (our sled): \(\|\mathbf{F}\| = 50\text{ N}\), \(\|\mathbf{d}\| = 12\text{ m}\), \(\theta = 60^\circ\). Then \(\operatorname{comp}_{\mathbf{d}}\mathbf{F} = 50\cos 60^\circ = 25\text{ N}\), and
+\[
+W = (25\text{ N})(12\text{ m}) = 300\text{ J}.
+\]
+The upward component \(50\sin 60^\circ = 25\sqrt{3}\text{ N}\) is perpendicular to \(\mathbf{d}\) and does \(0\text{ J}\) of work.
+- Component case: a constant force \(\mathbf{F} = \langle 15, -4 \rangle\text{ N}\) pushes a cart from \(A(1, 2)\) to \(B(9, 8)\) (coordinates in meters). First form the displacement vector \(\mathbf{d} = \overrightarrow{AB} = \langle 9 - 1, 8 - 2 \rangle = \langle 8, 6 \rangle\text{ m}\). Then [REF: work-def | the work formula] gives
+\[
+W = \langle 15, -4 \rangle \cdot \langle 8, 6 \rangle = 15(8) + (-4)(6) = 120 - 24 = 96\text{ J}.
+\]
+
+Drag slider \(a\) (the angle \(\theta\) in radians from \(0\) to \(\pi\)) in the plot below to rotate a \(3\text{ N}\) force \(\mathbf{F}\) relative to a fixed rightward displacement \(\mathbf{d} = \langle 4, 0 \rangle\text{ m}\). Watch the green effective working projection \(\mathbf{F}_\parallel = \operatorname{proj}_{\mathbf{d}}\mathbf{F}\) shrink to zero at \(a = \frac{\pi}{2} \approx 1.57\) (zero work) and then reverse direction past \(\frac{\pi}{2}\) (negative work), while the dashed orange perpendicular part \(\mathbf{F}_\perp\) contributes nothing to \(W\).
+
+[GRAPH]
+type: parametric2d
+title: Force \(\mathbf{F}\) (length \(3\text{ N}\)) at angle \(a\) to displacement \(\mathbf{d} = \langle 4, 0 \rangle\text{ m}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -3.5, 4.6
+yrange: -0.8, 3.6
+trace: 3*cos(t), 3*sin(t) | label: arc of \(\mathbf{F}\) | color: #cbd5e1
+segment: 0, 0, 4, 0 | label: \(\mathbf{d}\) | color: #2563eb
+segment: 0, 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{F}\) | color: #dc2626
+segment: 0, 0, 3*cos(a), 0 | label: \(\mathbf{F}_\parallel\) | color: #16a34a
+segment: 3*cos(a), 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{F}_\perp\) | color: #d97706 | dashed: true
+point: 4, 0 | label: \(\mathbf{d}\)
+point: 3*cos(a), 3*sin(a) | label: \(\mathbf{F}\)
+slider: a | range: 0, 3.1416 | init: 1.0472 | step: 0.1571
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: A]
+A constant force \(\mathbf{F} = \langle 10, -25 \rangle\text{ N}\) acts on a parcel as it moves in a straight line from \(A(2, -1)\) to \(B(6, 5)\) (coordinates in meters). How much work \(W\) does \(\mathbf{F}\) do on the parcel?
+
+(A) \(-110\text{ J}\)
+(B) \(110\text{ J}\)
+(C) \(-65\text{ J}\)
+(D) \(-60\text{ J}\)
+(E) \(190\text{ J}\)
+[/QUESTION]
+
+=== SECTION 2: Net work by distributivity of the dot product ===
+
+In realistic settings, several constant forces \(\mathbf{F}_1, \mathbf{F}_2, \dots, \mathbf{F}_k\) act simultaneously while an object moves through the same straight displacement \(\mathbf{d}\). How does the work done by the resultant force \(\mathbf{F}_{\mathrm{net}} = \sum_{i=1}^{k} \mathbf{F}_i\) compare with the works \(W_i = \mathbf{F}_i \cdot \mathbf{d}\) done by each individual force?
+
+Because the dot product distributes over vector addition, the answer is a one-line identity:
+\[
+W_{\mathrm{net}} = \mathbf{F}_{\mathrm{net}} \cdot \mathbf{d} = \left(\sum_{i=1}^{k} \mathbf{F}_i\right) \cdot \mathbf{d} = \sum_{i=1}^{k} (\mathbf{F}_i \cdot \mathbf{d}) = \sum_{i=1}^{k} W_i.
+\]
+You may choose whichever calculation is cleaner: either sum the force vectors first and take one dot product, or compute each individual scalar work (immediately dropping any force perpendicular to \(\mathbf{d}\)) and add the scalars!
+
+[CALLOUT]
+id: net-work-law
+label: Theorem
+title: Additivity of work for concurrent constant forces
+tone: key
+
+If constant forces \(\mathbf{F}_1, \dots, \mathbf{F}_k\) act across the same straight displacement \(\mathbf{d}\), the work done by their resultant \(\mathbf{F}_{\mathrm{net}} = \sum_{i=1}^{k} \mathbf{F}_i\) equals the algebraic sum of the individual works:
+\[
+W_{\mathrm{net}} = \mathbf{F}_{\mathrm{net}} \cdot \mathbf{d} = \sum_{i=1}^{k} (\mathbf{F}_i \cdot \mathbf{d}) = \sum_{i=1}^{k} W_i.
+\]
+In particular, if the forces are in equilibrium (\(\mathbf{F}_{\mathrm{net}} = \mathbf{0}\)) while the object moves at constant velocity across \(\mathbf{d}\), then \(W_{\mathrm{net}} = 0\)—the positive and negative individual works cancel out exactly.
+[/CALLOUT]
+
+Let us verify [REF: net-work-law | additivity of work] on a crate dragged \(5\text{ m}\) to the right (\(\mathbf{d} = \langle 5, 0 \rangle\text{ m}\)) under four constant forces: a diagonal pull \(\mathbf{P} = \langle 40, 30 \rangle\text{ N}\), gravity \(\mathbf{G} = \langle 0, -80 \rangle\text{ N}\), upward floor normal \(\mathbf{N} = \langle 0, 50 \rangle\text{ N}\), and horizontal friction \(\mathbf{f} = \langle -25, 0 \rangle\text{ N}\).
+- Individual works:
+  - \(W_P = \langle 40, 30 \rangle \cdot \langle 5, 0 \rangle = 200\text{ J}\),
+  - \(W_G = 0\text{ J}\) and \(W_N = 0\text{ J}\) (both perpendicular to \(\mathbf{d}\)),
+  - \(W_f = \langle -25, 0 \rangle \cdot \langle 5, 0 \rangle = -125\text{ J}\).
+  Adding them yields \(W_{\mathrm{net}} = 200 + 0 + 0 - 125 = 75\text{ J}\).
+- Resultant route: \(\mathbf{F}_{\mathrm{net}} = \langle 40 + 0 + 0 - 25,\; 30 - 80 + 50 + 0 \rangle = \langle 15, 0 \rangle\text{ N}\), so \(\mathbf{F}_{\mathrm{net}} \cdot \mathbf{d} = 15(5) + 0 = 75\text{ J}\). Both routes agree to the joule.
+
+[QUESTION 2]
+[ANSWER: C]
+A \(50\text{ N}\) box is pulled \(8\text{ m}\) horizontally to the right (\(\mathbf{d} = \langle 8, 0 \rangle\text{ m}\)) by a cable exerting a constant tension of \(30\text{ N}\) angled \(60^\circ\) above the rightward horizontal, while a constant horizontal friction force of \(10\text{ N}\) opposes the motion. Gravity (\(\langle 0, -50 \rangle\text{ N}\)) and the upward normal force from the floor also act on the box. What is the net work \(W_{\mathrm{net}}\) done on the box by all four forces combined?
+
+(A) \(160\text{ J}\)
+(B) \(200\text{ J}\)
+(C) \(40\text{ J}\)
+(D) \((120\sqrt{3} - 80)\text{ J}\)
+(E) \(-360\text{ J}\)
+[/QUESTION]
+
+=== SECTION 3: Tilted-axis force decomposition via orthogonal projection ===
+
+In our static equilibrium lesson, decomposing gravity on an inclined plane meant finding the ramp's tilt angle \(\alpha\), drawing a rotated coordinate frame, and using \(\sin\alpha\) and \(\cos\alpha\). What if the ramp or track is specified instead by a direction vector \(\mathbf{v}\) (for instance, a ramp rising \(3\text{ m}\) over a horizontal run of \(4\text{ m}\), so \(\mathbf{v} = \langle 4, 3 \rangle\)), and an arbitrary force \(\mathbf{F}\) (gravity, or even an angled push) acts on the object?
+
+Orthogonal projection handles ANY tilted direction directly in ordinary \((x, y)\) coordinates—no inverse tangent, no rotated axes, and no risk of swapping sine and cosine! Given any nonzero direction vector \(\mathbf{v}\) along the ramp and any planar force \(\mathbf{F}\):
+\[
+\mathbf{F} = \mathbf{F}_\parallel + \mathbf{F}_\perp,
+\]
+where:
+- \(\mathbf{F}_\parallel = \operatorname{proj}_{\mathbf{v}}\mathbf{F} = \left(\frac{\mathbf{F} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v}\) is the vector component of \(\mathbf{F}\) PARALLEL to the ramp (with signed scalar component \(\operatorname{comp}_{\mathbf{v}}\mathbf{F} = \frac{\mathbf{F} \cdot \mathbf{v}}{\|\mathbf{v}\|}\)).
+- \(\mathbf{F}_\perp = \mathbf{F} - \mathbf{F}_\parallel\) is the vector component of \(\mathbf{F}\) PERPENDICULAR (normal) to the ramp.
+
+Furthermore, if the object undergoes a straight displacement \(\mathbf{d}\) along the ramp (so \(\mathbf{d}\) is a scalar multiple of \(\mathbf{v}\)), then \(\mathbf{F}_\perp \perp \mathbf{d}\) gives \(\mathbf{F}_\perp \cdot \mathbf{d} = 0\), and [REF: net-work-law | distributivity] confirms
+\[
+W = \mathbf{F} \cdot \mathbf{d} = (\mathbf{F}_\parallel + \mathbf{F}_\perp) \cdot \mathbf{d} = \mathbf{F}_\parallel \cdot \mathbf{d}.
+\]
+Only \(\mathbf{F}_\parallel\) does work along the ramp, while \(\mathbf{F}_\perp\) determines how hard the force presses into (or lifts off) the ramp surface!
+
+[CALLOUT]
+id: proj-ramp-decomp
+label: Method
+title: Projection-based force decomposition along a tilted direction \(\mathbf{v}\)
+tone: key
+
+To split any planar force \(\mathbf{F}\) relative to a track or ramp pointing along a nonzero vector \(\mathbf{v}\):
+
+(1) Parallel component along the ramp: \(\mathbf{F}_\parallel = \operatorname{proj}_{\mathbf{v}}\mathbf{F} = \left(\frac{\mathbf{F} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v}\), with signed magnitude \(\operatorname{comp}_{\mathbf{v}}\mathbf{F} = \frac{\mathbf{F} \cdot \mathbf{v}}{\|\mathbf{v}\|}\).
+(2) Normal component perpendicular to the ramp: \(\mathbf{F}_\perp = \mathbf{F} - \mathbf{F}_\parallel\), satisfying \(\mathbf{F}_\perp \cdot \mathbf{v} = 0\) and \(\|\mathbf{F}\|^2 = \|\mathbf{F}_\parallel\|^2 + \|\mathbf{F}_\perp\|^2\).
+(3) Equilibrium link on a smooth ramp under gravity \(\mathbf{G}\): a parallel holding rope must exert \(\mathbf{T} = -\mathbf{G}_\parallel\), and the ramp exerts normal force \(\mathbf{N} = -\mathbf{G}_\perp\).
+[/CALLOUT]
+
+Work this out on a concrete ramp pointing along \(\mathbf{v} = \langle 4, 3 \rangle\) (so \(\mathbf{v} \cdot \mathbf{v} = 25\) and \(\|\mathbf{v}\| = 5\)) supporting a \(100\text{ N}\) crate, whose weight vector is \(\mathbf{G} = \langle 0, -100 \rangle\text{ N}\).
+- Dot product: \(\mathbf{G} \cdot \mathbf{v} = 0(4) + (-100)(3) = -300\).
+- Signed component along \(\mathbf{v}\): \(\operatorname{comp}_{\mathbf{v}}\mathbf{G} = \frac{-300}{5} = -60\text{ N}\) (exact—the minus sign tells us gravity pulls \(60\text{ N}\) DOWN the ramp, opposite to \(\mathbf{v}\)).
+- Parallel vector component:
+\[
+\mathbf{G}_\parallel = \frac{-300}{25}\langle 4, 3 \rangle = -12\langle 4, 3 \rangle = \langle -48, -36 \rangle\text{ N}, \qquad \|\mathbf{G}_\parallel\| = 60\text{ N}.
+\]
+- Perpendicular vector component:
+\[
+\mathbf{G}_\perp = \mathbf{G} - \mathbf{G}_\parallel = \langle 0, -100 \rangle - \langle -48, -36 \rangle = \langle 48, -64 \rangle\text{ N}, \qquad \|\mathbf{G}_\perp\| = \sqrt{48^2 + (-64)^2} = 80\text{ N}.
+\]
+Check both identities: \(\mathbf{G}_\perp \cdot \mathbf{v} = 48(4) - 64(3) = 192 - 192 = 0\), and \(60^2 + 80^2 = 100^2\). By [REF: proj-ramp-decomp.3 | the equilibrium link], holding the crate still on this smooth ramp requires \(\mathbf{T} = -\mathbf{G}_\parallel = \langle 48, 36 \rangle\text{ N}\) (magnitude \(60\text{ N}\)), and the ramp pushes outward with normal force \(\mathbf{N} = -\mathbf{G}_\perp = \langle -48, 64 \rangle\text{ N}\) (magnitude \(80\text{ N}\))—all computed with exact integers and zero trigonometry!
+
+Now suppose the crate is hauled \(10\text{ m}\) UP the ramp. Its displacement is \(\mathbf{d} = 10\hat{\mathbf{v}} = 10\left(\frac{\langle 4, 3 \rangle}{5}\right) = \langle 8, 6 \rangle\text{ m}\). The work done by gravity during this climb is
+\[
+W_G = \mathbf{G} \cdot \mathbf{d} = \langle 0, -100 \rangle \cdot \langle 8, 6 \rangle = -600\text{ J},
+\]
+which agrees with \((\operatorname{comp}_{\mathbf{v}}\mathbf{G})\,\|\mathbf{d}\| = (-60\text{ N})(10\text{ m}) = -600\text{ J}\) and shows directly why gravity's work depends only on the vertical rise of \(6\text{ m}\) (\(-100\text{ N} \times 6\text{ m} = -600\text{ J}\)).
+
+[GRAPH]
+type: parametric2d
+title: Exact projection decomposition of \(\mathbf{G} = \langle 0, -100 \rangle\text{ N}\) along ramp \(\mathbf{v} = \langle 4, 3 \rangle\)
+xlabel: \(F_x\)
+ylabel: \(F_y\)
+trange: -15, 15
+xrange: -65, 65
+yrange: -110, 48
+trace: 4*t, 3*t | label: ramp direction \(\mathbf{v}\) | color: #94a3b8
+segment: 0, 0, 0, -100 | label: \(\mathbf{G}\) | color: #dc2626
+segment: 0, 0, -48, -36 | label: \(\mathbf{G}_\parallel\) | color: #2563eb
+segment: 0, 0, 48, -64 | label: \(\mathbf{G}_\perp\) | color: #16a34a
+segment: -48, -36, 0, -100 | color: #16a34a | dashed: true
+segment: 48, -64, 0, -100 | color: #2563eb | dashed: true
+point: 0, -100 | label: \(\mathbf{G}\)
+point: -48, -36 | label: \(\mathbf{G}_\parallel\)
+point: 48, -64 | label: \(\mathbf{G}_\perp\)
+[/GRAPH]
+
+[TABLE]
+Quantity | Formula along ramp direction \(\mathbf{v}\) | Physical role
+Effective force along ramp | \(\mathbf{F}_\parallel = \frac{\mathbf{F} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\) | Accelerates or resists motion along the ramp; does all the work
+Normal force component | \(\mathbf{F}_\perp = \mathbf{F} - \mathbf{F}_\parallel\) | Presses into or lifts off the ramp; does \(0\text{ J}\) of work along the ramp
+Work over displacement \(\mathbf{d} \parallel \mathbf{v}\) | \(W = \mathbf{F} \cdot \mathbf{d} = \mathbf{F}_\parallel \cdot \mathbf{d}\) | Signed energy transferred by \(\mathbf{F}\) during the slide
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+A ramp rises along the direction vector \(\mathbf{v} = \langle 12, 5 \rangle\). A \(169\text{ N}\) crate rests on the ramp, so its weight vector is \(\mathbf{G} = \langle 0, -169 \rangle\text{ N}\). Using orthogonal projection onto \(\mathbf{v}\), what is the parallel component \(\mathbf{G}_\parallel\) of the weight along the ramp, and what is the magnitude \(\|\mathbf{G}_\perp\|\) of the component perpendicular to the ramp?
+
+(A) \(\mathbf{G}_\parallel = \langle -60, -25 \rangle\text{ N}\) and \(\|\mathbf{G}_\perp\| = 156\text{ N}\)
+(B) \(\mathbf{G}_\parallel = \langle 60, 25 \rangle\text{ N}\) and \(\|\mathbf{G}_\perp\| = 156\text{ N}\)
+(C) \(\mathbf{G}_\parallel = \langle -60, -25 \rangle\text{ N}\) and \(\|\mathbf{G}_\perp\| = 104\text{ N}\)
+(D) \(\mathbf{G}_\parallel = \langle -144, -60 \rangle\text{ N}\) and \(\|\mathbf{G}_\perp\| = 65\text{ N}\)
+(E) \(\mathbf{G}_\parallel = \langle -60, -25 \rangle\text{ N}\) and \(\|\mathbf{G}_\perp\| = 144\text{ N}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+A constant force \(\mathbf{F} = \langle 8, -3 \rangle\text{ N}\) acts on a particle that travels in two straight-line segments: first from \(A(0, 0)\) to an intermediate point \(B(k, 2k)\), and then from \(B(k, 2k)\) to \(C(5, 4)\) (coordinates in meters), where \(k\) is an unknown real number. What is the total work \(W_{AB} + W_{BC}\) done by \(\mathbf{F}\) over the two-leg path?
+
+(A) \(28\text{ J}\), independent of \(k\)
+(B) \((28 + 2k)\text{ J}\)
+(C) \((28 + 4k)\text{ J}\)
+(D) \(52\text{ J}\), independent of \(k\)
+(E) It cannot be determined without knowing the value of \(k\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A sled is pulled \(10\text{ m}\) straight up a ramp pointing along \(\mathbf{v} = \langle 3, 4 \rangle\) by a constant force \(\mathbf{P} = \langle 25, 10 \rangle\text{ N}\). How much work does \(\mathbf{P}\) do over this \(10\text{ m}\) displacement, and how does \(\mathbf{P}_\perp\) act relative to the ramp surface?
+
+(A) \(230\text{ J}\), and \(\mathbf{P}_\perp\) lifts the sled away from the ramp
+(B) \(230\text{ J}\), and \(\mathbf{P}_\perp\) presses the sled into the ramp
+(C) \(115\text{ J}\), and \(\mathbf{P}_\perp\) presses the sled into the ramp
+(D) \(230\text{ J}\), and \(\mathbf{P}_\perp = \mathbf{0}\)
+(E) \(50\sqrt{29}\text{ J}\), and \(\mathbf{P}_\perp\) lifts the sled away from the ramp
+[/BONUS]

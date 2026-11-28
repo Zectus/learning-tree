@@ -1,0 +1,249 @@
+=== SECTION 1: Bases propias compartidas, conmutatividad e invariancia de espacios propios ===
+
+Dos operadores lineales \(S, T : V \to V\) pueden ser diagonalizables cada uno por separado, es decir, \(S\) tiene una base propia \(\mathcal{B}_1\) y \(T\) tiene una base propia \(\mathcal{B}_2\). Sin embargo, cambiar a \(\mathcal{B}_1\) suele desordenar \(T\) convirtiéndolo en una matriz no diagonal, y cambiar a \(\mathcal{B}_2\) desordena \(S\). ¿Cuándo podemos encontrar UNA ÚNICA base de \(V\) que diagonalice tanto a \(S\) como a \(T\) al mismo tiempo?
+
+[CALLOUT]
+id: sim-diag-def
+label: Definición
+title: Diagonalizabilidad simultánea
+tone: key
+
+Dos operadores lineales \(S, T : V \to V\) sobre un espacio \(n\)-dimensional sobre \(F\) son simultáneamente diagonalizables sobre \(F\) si existe una única base \(\mathcal{B} = \{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) de \(V\) tal que todo \(\mathbf{v}_j\) es un vector propio TANTO de \(S\) como de \(T\) (una base propia conjunta).
+
+En términos matriciales, \(A, B \in M_n(F)\) son simultáneamente diagonalizables sobre \(F\) si existe una única matriz invertible \(P \in M_n(F)\) tal que TANTO \(P^{-1} A P\) como \(P^{-1} B P\) son diagonales.
+[/CALLOUT]
+
+Una condición necesaria salta a la vista de inmediato. Si \(A = P D_1 P^{-1}\) y \(B = P D_2 P^{-1}\) para matrices diagonales \(D_1\) y \(D_2\), entonces como las matrices diagonales SIEMPRE conmutan (\(D_1 D_2 = D_2 D_1\)), obtenemos
+\[
+AB = (P D_1 P^{-1})(P D_2 P^{-1}) = P D_1 D_2 P^{-1} = P D_2 D_1 P^{-1} = (P D_2 P^{-1})(P D_1 P^{-1}) = BA.
+\]
+Por lo tanto, la diagonalizabilidad simultánea OBLIGA a que \(S\) y \(T\) conmuten: \(ST = TS\).
+
+Sorprendentemente, la conmutatividad crea un vínculo estructural inmediato entre los espacios propios de \(T\) y la acción de \(S\).
+
+[CALLOUT]
+id: commute-invariance
+label: Lema
+title: Los operadores que conmutan preservan mutuamente sus espacios propios
+tone: key
+
+Si \(S, T : V \to V\) conmutan (\(ST = TS\)), entonces para todo valor propio \(\lambda\) de \(T\), el espacio propio \(E_\lambda(T)\) es \(S\)-invariante:
+\[
+S\bigl(E_\lambda(T)\bigr) \subseteq E_\lambda(T).
+\]
+[/CALLOUT]
+
+La demostración de [REF: commute-invariance | este lema de invariancia] ocupa una sola línea. Elija cualquier \(\mathbf{v} \in E_\lambda(T)\), de modo que \(T\mathbf{v} = \lambda\mathbf{v}\). Aplique \(T\) al vector \(S\mathbf{v}\) y use \(TS = ST\):
+\[
+T(S\mathbf{v}) = S(T\mathbf{v}) = S(\lambda\mathbf{v}) = \lambda(S\mathbf{v}).
+\]
+Esa ecuación afirma que \(S\mathbf{v} \in E_\lambda(T)\), ya sea \(S\mathbf{v}\) no nulo o igual a \(\mathbf{0}\).
+
+Observe geométricamente qué falla cuando dos matrices diagonalizables NO conmutan. Tome \(T = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}\) y \(S = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}\). Ambas son diagonalizables sobre \(\mathbb{R}\), pero \(ST = \begin{bmatrix} 2 & 1 \\ 2 & 1 \end{bmatrix} \neq \begin{bmatrix} 2 & 2 \\ 1 & 1 \end{bmatrix} = TS\). El espacio propio \(E_2(T)\) es el eje horizontal \(\operatorname{span}\{\mathbf{e}_1\}\), mientras que \(S\mathbf{e}_1 = (1, 1)^T\) salta FUERA del eje horizontal hacia la recta diagonal \(y = x\). Como \(S\) no mantiene \(E_2(T)\) invariante, \(S\) y \(T\) no pueden compartir una base propia.
+
+[GRAPH]
+type: parametric2d
+title: Fallo de la \(S\)-invariancia de \(E_2(T)\) cuando \(ST \neq TS\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.4, 2.4
+yrange: -0.4, 2.0
+trace: 2*t, 0 | label: \(E_2(T)\) a lo largo del eje \(x_1\)
+trace: 1.5*t, 1.5*t | label: \(E_2(S)\) a lo largo de \(y = x\)
+segment: 0, 0, 1, 1 | label: \(S\mathbf{e}_1\) | dashed: true
+point: 1, 0 | label: \(\mathbf{e}_1\)
+point: 1, 1 | label: \(S\mathbf{e}_1\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Suponga que \(S, T : \mathbb{R}^3 \to \mathbb{R}^3\) conmutan (\(ST = TS\)), y que \(T\) tiene un valor propio \(\lambda = 4\) cuyo espacio propio \(E_4(T) = \operatorname{span}\{\mathbf{v}\}\) es \(1\)-dimensional. ¿Qué enunciado DEBE ser verdadero?
+
+(A) \(S\mathbf{v} = 4\mathbf{v}\).
+(B) \(S\mathbf{v} = \mathbf{0}\).
+(C) \(\mathbf{v}\) es un vector propio de \(S\) (para algún valor propio real \(\mu\), posiblemente \(\mu = 0\)).
+(D) \(S\) debe ser un múltiplo escalar de \(T\).
+(E) \(S\) no puede tener a \(4\) como valor propio.
+[/QUESTION]
+
+=== SECTION 2: El lema hereditario y el teorema de diagonalización simultánea ===
+
+Suponga ahora que TANTO \(S\) como \(T\) son diagonalizables sobre \(F\) y conmutan (\(ST = TS\)). Como \(T\) es diagonalizable, \(V\) se descompone como suma directa de sus espacios propios:
+\[
+V = E_{\lambda_1}(T) \oplus E_{\lambda_2}(T) \oplus \dots \oplus E_{\lambda_r}(T).
+\]
+Por [REF: commute-invariance | la invariancia de los espacios propios], cada sumando \(E_{\lambda_i}(T)\) es \(S\)-invariante, de modo que la restricción \(S|_{E_{\lambda_i}(T)} : E_{\lambda_i}(T) \to E_{\lambda_i}(T)\) es un operador lineal bien definido. Si logramos hallar una base propia de \(S|_{E_{\lambda_i}(T)}\) dentro de CADA \(E_{\lambda_i}(T)\), entonces concatenar esas bases da una base de \(V\) cuyos vectores son vectores propios de \(S\), y ya pertenecen a \(E_{\lambda_i}(T)\), ¡así que también son vectores propios de \(T\)!
+
+Falta un ÚNICO puente: sabiendo que \(S\) es diagonalizable en todo el espacio \(V\), ¿debe su restricción \(S|_W\) a un subespacio \(S\)-invariante \(W \subseteq V\) ser TAMBIÉN diagonalizable? Sin el polinomio mínimo, demostrar esto directamente a partir de vectores propios resulta sorprendentemente incómodo (¡un vector propio de \(S\) en \(V\) podría no pertenecer a \(W\)!). ¡Con el criterio del polinomio mínimo de la lección anterior, la demostración toma tres líneas!
+
+[CALLOUT]
+id: hereditary-diag
+label: Lema
+title: Restricción de un operador diagonalizable
+tone: key
+
+Sea \(S : V \to V\) diagonalizable sobre \(F\), y sea \(W \subseteq V\) cualquier subespacio \(S\)-invariante no nulo. Entonces la restricción \(S|_W : W \to W\) también es diagonalizable sobre \(F\).
+[/CALLOUT]
+
+Demostración de [REF: hereditary-diag | el lema hereditario]: Como \(S\) es diagonalizable sobre \(F\), su polinomio mínimo \(m_S(x)\) se escinde en factores lineales DISTINTOS sobre \(F\). Para todo \(\mathbf{w} \in W\), \(S|_W(\mathbf{w}) = S(\mathbf{w})\), y por inducción \((S|_W)^k(\mathbf{w}) = S^k(\mathbf{w})\) para todo \(k \ge 0\). En consecuencia,
+\[
+m_S(S|_W)(\mathbf{w}) = m_S(S)(\mathbf{w}) = \mathbf{0} \qquad \text{para todo } \mathbf{w} \in W,
+\]
+lo que significa \(m_S(S|_W) = 0\). Por la propiedad de divisibilidad de los polinomios mínimos, \(m_{S|_W}(x)\) divide a \(m_S(x)\). ¡Todo divisor de un polinomio que se escinde en factores lineales distintos sobre \(F\) DEBE ÉL MISMO escindirse en factores lineales distintos sobre \(F\)! Por el criterio del polinomio mínimo, \(S|_W\) es diagonalizable sobre \(F\).
+
+Combinar [REF: commute-invariance | la invariancia de espacios propios] con [REF: hereditary-diag | el lema hereditario] completa la demostración del teorema principal.
+
+[CALLOUT]
+id: sim-diag-thm
+label: Teorema
+title: Teorema de Diagonalización Simultánea
+tone: key
+
+Sean \(S, T : V \to V\) dos operadores lineales diagonalizables sobre un espacio vectorial de dimensión finita \(V\) sobre \(F\). Entonces \(S\) y \(T\) son simultáneamente diagonalizables sobre \(F\) si y solo si conmutan (\(ST = TS\)).
+
+Más generalmente, una familia finita \(\{T_1, T_2, \dots, T_m\}\) de operadores diagonalizables sobre \(V\) es simultáneamente diagonalizable sobre \(F\) si y solo si los operadores conmutan dos a dos (\(T_i T_j = T_j T_i\) para todo \(i, j\)).
+[/CALLOUT]
+
+La extensión a una familia finita que conmuta dos a dos \(\{T_1, \dots, T_m\}\) sigue inmediatamente por inducción sobre \(m\):
+- Caso base \(m = 1\): \(T_1\) es diagonalizable por hipótesis.
+- Paso inductivo: descomponga \(V = E_{\lambda_1}(T_1) \oplus \dots \oplus E_{\lambda_r}(T_1)\). Como todo \(T_j\) (\(j \ge 2\)) conmuta con \(T_1\), cada subespacio \(W_i = E_{\lambda_i}(T_1)\) es invariante bajo TODOS los operadores \(T_2, \dots, T_m\). Por [REF: hereditary-diag | el lema hereditario], las \(m - 1\) restricciones \(T_2|_{W_i}, \dots, T_m|_{W_i}\) siguen siendo diagonalizables sobre \(W_i\), y siguen conmutando dos a dos. Por la hipótesis de inducción, cada \(W_i\) admite una base propia conjunta para \(T_2|_{W_i}, \dots, T_m|_{W_i}\), cuyos vectores son automáticamente vectores propios de \(T_1\) (con valor propio \(\lambda_i\)). ¡Concatenar estas bases para \(i = 1, \dots, r\) da una base propia conjunta de \(V\) para toda la familia!
+
+Cuide de NO omitir ninguna de las dos hipótesis de [REF: sim-diag-thm | el Teorema de Diagonalización Simultánea].
+
+[CALLOUT]
+id: sim-diag-caution
+label: Error frecuente
+title: Ambas hipótesis —conmutatividad Y diagonalizabilidad individual— son esenciales
+tone: caution
+
+(1) Conmutar por sí solo NO implica diagonalizabilidad simultánea: \(I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}\) y el cizallamiento \(B = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) satisfacen \(I_2 B = B I_2\), pero \(B\) es defectiva y no puede diagonalizarse en NINGUNA base.
+(2) La diagonalizabilidad individual por sí sola NO implica diagonalizabilidad simultánea: \(A = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}\) y \(B = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\) son ambas diagonalizables sobre \(\mathbb{R}\), pero \(AB = \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \neq \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} = BA\), por lo que no comparten ninguna base propia.
+(3) La dependencia del cuerpo sigue importando: dos rotaciones reales que conmutan como \(R_{\pi/2} = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}\) y \(2 R_{\pi/2}\) son simultáneamente diagonalizables sobre \(\mathbb{C}\), pero NO sobre \(\mathbb{R}\), porque ninguna de las dos es diagonalizable sobre \(\mathbb{R}\).
+[/CALLOUT]
+
+[TABLE]
+¿Ambas diagonalizables sobre \(F\)? | ¿Conmutan (\(AB = BA\))? | ¿Simultáneamente diagonalizables sobre \(F\)? | Par representativo (\(F = \mathbb{R}\))
+Sí | Sí | Siempre SÍ | \(\operatorname{diag}(1, 1, 4)\) y \(\operatorname{diag}(2, 5, -1)\)
+Sí | No | Siempre NO | \(\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}\) y \(\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\)
+No | Sí | Siempre NO | \(I_2\) y \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\)
+No | No | Siempre NO | \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) y \(\begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix}\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Qué par de matrices reales \((A, B)\) es simultáneamente diagonalizable SOBRE \(\mathbb{R}\)?
+
+(A) \(A = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}, \quad B = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\)
+(B) \(A = \begin{bmatrix} 2 & 0 \\ 0 & 2 \end{bmatrix}, \quad B = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\)
+(C) \(A = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}, \quad B = \begin{bmatrix} 0 & -2 \\ 2 & 0 \end{bmatrix}\)
+(D) \(A = \begin{bmatrix} 1 & 2 \\ 2 & 1 \end{bmatrix}, \quad B = \begin{bmatrix} 3 & -1 \\ -1 & 3 \end{bmatrix}\)
+(E) \(A = \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix}, \quad B = \begin{bmatrix} 2 & 0 \\ 1 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+Suponga que \(S : V \to V\) es diagonalizable sobre \(F\) y \(W \subseteq V\) es un subespacio \(S\)-invariante no nulo. ¿Qué argumento demuestra correctamente que la restricción \(S|_W : W \to W\) es diagonalizable sobre \(F\)?
+
+(A) Todo vector propio de \(S\) en \(V\) pertenece automáticamente a \(W\), de modo que una base propia de \(S\) se restringe a una base propia de \(S|_W\).
+(B) Como \(m_S(S|_W) = 0\), el polinomio mínimo \(m_{S|_W}(x)\) divide a \(m_S(x)\) y, por lo tanto, sigue escindiéndose en factores lineales distintos sobre \(F\).
+(C) Como \(p_{S|_W}(x)\) divide a \(p_S(x)\), \(S|_W\) debe tener \(\dim(W)\) valores propios distintos.
+(D) Como \(S\) es diagonalizable, todo subespacio \(W \subseteq V\) es \(S\)-invariante y tiene una base de vectores propios de \(S\).
+(E) Como \(S\) es invertible, \(S|_W\) es invertible y por ende diagonalizable.
+[/QUESTION]
+
+=== SECTION 3: Construcción práctica de una base propia conjunta ===
+
+La demostración de [REF: sim-diag-thm | el Teorema de Diagonalización Simultánea] es completamente constructiva: nos entrega una receta directa de tres pasos para calcular una matriz invertible \(P\) que diagonaliza simultáneamente dos matrices diagonalizables que conmutan \(A, B \in M_n(F)\):
+
+1. Diagonalice primero \(A\): halle sus valores propios distintos \(\lambda_1, \dots, \lambda_r\) y una base \(\mathcal{U}_i\) de cada espacio propio \(E_{\lambda_i}(A)\). (Consejo: ¡comience con la matriz que tenga MÁS valores propios distintos, porque todo espacio propio \(1\)-dimensional YA consta de vectores propios conjuntos y requiere cero trabajo adicional!)
+2. Restrinja \(B\) a cada espacio propio multidimensional \(E_{\lambda_i}(A)\): si \(\mathcal{U}_i = \{\mathbf{u}_1, \dots, \mathbf{u}_d\}\) con \(d > 1\), calcule \(B\mathbf{u}_1, \dots, B\mathbf{u}_d\) y exprese cada uno como combinación lineal de \(\mathbf{u}_1, \dots, \mathbf{u}_d\) (¡garantizadamente posible porque \(E_{\lambda_i}(A)\) es \(B\)-invariante!). Colocar estas columnas de coordenadas una al lado de otra da la matriz de restricción \(d \times d\) \(M_i = [B|_{E_{\lambda_i}(A)}]_{\mathcal{U}_i}\).
+3. Diagonalice cada \(M_i\): halle una base propia \(\{\mathbf{c}^{(1)}, \dots, \mathbf{c}^{(d)}\}\) de \(M_i\) en \(F^d\), levante cada vector de coordenadas de vuelta a \(F^n\) mediante \(\mathbf{v}^{(k)} = c_1^{(k)}\mathbf{u}_1 + \dots + c_d^{(k)}\mathbf{u}_d\), y reúna todos los vectores propios conjuntos resultantes como las columnas de \(P\).
+
+Ejecutemos este procedimiento en el par
+\[
+A = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 3 & 1 \\ 0 & 1 & 3 \end{bmatrix}, \qquad B = \begin{bmatrix} 4 & 1 & -1 \\ 2 & 3 & -1 \\ -2 & -1 & 3 \end{bmatrix}.
+\]
+Compruebe primero la conmutatividad: la multiplicación directa confirma
+\[
+AB = BA = \begin{bmatrix} 8 & 2 & -2 \\ 4 & 8 & 0 \\ -4 & 0 & 8 \end{bmatrix}.
+\]
+- Paso 1 (espacios propios de \(A\)): \(p_A(\lambda) = (\lambda - 2)\bigl((\lambda - 3)^2 - 1\bigr) = (\lambda - 2)^2(\lambda - 4)\).
+  - Resolver \((A - 2I_3)\mathbf{x} = \mathbf{0}\) da \(x_2 + x_3 = 0\), de modo que \(E_2(A)\) es \(2\)-dimensional con base \(\mathbf{u}_1 = (1, 0, 0)^T\) y \(\mathbf{u}_2 = (0, 1, -1)^T\).
+  - Resolver \((A - 4I_3)\mathbf{x} = \mathbf{0}\) da \(x_1 = 0\) y \(x_2 = x_3\), de modo que \(E_4(A)\) es \(1\)-dimensional con base \(\mathbf{u}_3 = (0, 1, 1)^T\).
+  - Compruebe \(B\mathbf{u}_3 = (0, 2, 2)^T = 2\mathbf{u}_3\): como estaba garantizado para un espacio propio \(1\)-dimensional, \(\mathbf{v}_3 = \mathbf{u}_3 = (0, 1, 1)^T\) YA es un vector propio conjunto (valor propio \(4\) para \(A\), \(2\) para \(B\)).
+- Paso 2 (restringir \(B\) a \(E_2(A)\)): calcule la acción de \(B\) sobre \(\mathbf{u}_1\) y \(\mathbf{u}_2\) y escriba los resultados en la base \(\{\mathbf{u}_1, \mathbf{u}_2\}\):
+\[
+B\mathbf{u}_1 = \begin{bmatrix} 4 \\ 2 \\ -2 \end{bmatrix} = 4\mathbf{u}_1 + 2\mathbf{u}_2, \qquad B\mathbf{u}_2 = \begin{bmatrix} 2 \\ 4 \\ -4 \end{bmatrix} = 2\mathbf{u}_1 + 4\mathbf{u}_2.
+\]
+Por lo tanto, la matriz de restricción \(2 \times 2\) es \(M = \begin{bmatrix} 4 & 2 \\ 2 & 4 \end{bmatrix}\).
+- Paso 3 (diagonalizar \(M\) y levantar de vuelta): \(p_M(\mu) = (\mu - 4)^2 - 4 = (\mu - 6)(\mu - 2)\), dando valores propios \(\mu_1 = 6\) con vector propio en coordenadas \((1, 1)^T\) y \(\mu_2 = 2\) con vector propio en coordenadas \((1, -1)^T\). Levantar de vuelta a \(\mathbb{R}^3\) produce
+\[
+\mathbf{v}_1 = \mathbf{u}_1 + \mathbf{u}_2 = \begin{bmatrix} 1 \\ 1 \\ -1 \end{bmatrix}, \qquad \mathbf{v}_2 = \mathbf{u}_1 - \mathbf{u}_2 = \begin{bmatrix} 1 \\ -1 \\ 1 \end{bmatrix}.
+\]
+Verificación rápida: \(B\mathbf{v}_1 = (6, 6, -6)^T = 6\mathbf{v}_1\) y \(B\mathbf{v}_2 = (2, -2, 2)^T = 2\mathbf{v}_2\), mientras que ambos yacen en \(E_2(A)\) de modo que \(A\mathbf{v}_1 = 2\mathbf{v}_1\) y \(A\mathbf{v}_2 = 2\mathbf{v}_2\). Ensamblar \(P = \begin{bmatrix} 1 & 1 & 0 \\ 1 & -1 & 1 \\ -1 & 1 & 1 \end{bmatrix}\) arroja
+\[
+P^{-1} A P = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 4 \end{bmatrix}, \qquad P^{-1} B P = \begin{bmatrix} 6 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{bmatrix}.
+\]
+
+[QUESTION 4]
+[ANSWER: A]
+Considere las matrices diagonalizables que conmutan
+\[
+A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 4 \end{bmatrix}, \qquad B = \begin{bmatrix} 2 & 3 & 0 \\ 3 & 2 & 0 \\ 0 & 0 & -1 \end{bmatrix}.
+\]
+¿Qué vector \(\mathbf{v} \in \mathbb{R}^3\) es un vector propio conjunto que satisface TANTO \(A\mathbf{v} = \mathbf{v}\) como \(B\mathbf{v} = -\mathbf{v}\)?
+
+(A) \((1, -1, 0)^T\)
+(B) \((0, 0, 1)^T\)
+(C) \((1, 1, 0)^T\)
+(D) \((1, -1, 1)^T\)
+(E) \((1, 0, 0)^T\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+¿Para qué valor(es) real(es) de \(c\) son simultáneamente diagonalizables sobre \(\mathbb{R}\) las dos matrices
+\[
+A = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 5 \end{bmatrix}, \qquad B(c) = \begin{bmatrix} 1 & 1 & c \\ 1 & 1 & 0 \\ 0 & 0 & 3 \end{bmatrix}?
+\]
+
+(A) Todos los \(c \in \mathbb{R}\)
+(B) Ningún valor de \(c \in \mathbb{R}\)
+(C) Solo \(c = 1\)
+(D) Solo \(c = -1\)
+(E) Solo \(c = 0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suponga que \(A, B \in M_2(\mathbb{C})\) son matrices diagonalizables que conmutan, donde \(A\) tiene valores propios \(1\) y \(4\), y \(B\) tiene valores propios \(2\) y \(5\). ¿Cuáles son TODOS los valores posibles de \(\operatorname{tr}(AB)\)?
+
+(A) Solo \(22\)
+(B) Solo \(13\)
+(C) \(13\) o \(22\)
+(D) Cualquier número complejo entre \(13\) y \(22\)
+(E) Solo \(35\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suponga que \(T \in M_3(\mathbb{R})\) tiene tres valores propios reales DISTINTOS \(\lambda_1, \lambda_2, \lambda_3\), y que \(S \in M_3(\mathbb{R})\) satisface \(ST = TS\) (SIN suposición previa de que \(S\) sea diagonalizable). ¿Qué conclusión DEBE cumplirse?
+
+(A) \(S\) aún podría ser defectiva si \(S\) tiene un valor propio repetido.
+(B) \(S\) es automáticamente diagonalizable sobre \(\mathbb{R}\), y toda base propia de \(T\) es también una base propia de \(S\).
+(C) \(S\) es diagonalizable sobre \(\mathbb{C}\), pero no tiene por qué ser diagonalizable sobre \(\mathbb{R}\).
+(D) \(S\) también debe tener tres valores propios reales distintos.
+(E) \(S\) debe ser un múltiplo escalar de \(I_3\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suponga que \(S, T \in M_n(\mathbb{C})\) conmutan (\(ST = TS\)) y satisfacen \(S^2 = S\) y \(T^2 = I_n\). ¿Cuál es el MÁXIMO grado posible del polinomio mínimo \(m_{S+T}(x)\)?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(n\) (sin cota superior fija independiente de \(n\))
+(D) \(4\)
+(E) \(6\)
+[/BONUS]

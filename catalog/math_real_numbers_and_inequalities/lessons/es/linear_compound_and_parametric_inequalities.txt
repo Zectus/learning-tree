@@ -1,0 +1,261 @@
+=== SECTION 1: Resolución de desigualdades lineales simples ===
+
+En lecciones anteriores establecimos las propiedades algebraicas de orden de \(\mathbb{R}\) y el lenguaje de la notación de intervalos. Ahora combinamos ambas herramientas para resolver desigualdades en una incógnita \(x\), comenzando con desigualdades lineales de la forma \(ax + b < cx + d\) (o con \(\le\), \(>\), \(\ge\)). Cada paso debe preservar exactamente el conjunto solución, es decir, la nueva desigualdad debe cumplirse precisamente para los mismos números reales \(x\) que la original.
+
+Dos operaciones preservan siempre el conjunto solución de una desigualdad:
+1. Sumar o restar la misma expresión en ambos lados (preservación aditiva).
+2. Multiplicar o dividir ambos lados por una constante distinta de cero —conservando el sentido de la desigualdad cuando la constante es positiva e invirtiéndolo cuando la constante es negativa—.
+
+Aplicar estos movimientos a cualquier desigualdad lineal agrupa todos los términos en \(x\) de un lado y todas las constantes del otro, reduciéndola a la forma canónica
+\[
+Ax < B \qquad (\text{o } \le,\; >,\; \ge).
+\]
+Cuando \(A > 0\), dividir entre \(A\) da \(x < B/A\), o \((-\infty, B/A)\). Cuando \(A < 0\), dividir entre \(A\) invierte el sentido a \(x > B/A\), o \((B/A, \infty)\). ¿Y si \(A = 0\)? Entonces \(x\) desaparece por completo, dejando un enunciado numérico \(0 < B\): si ese enunciado numérico es verdadero, todo \(x \in \mathbb{R}\) es solución (conjunto solución \((-\infty, \infty)\)); si es falso, ningún número real funciona (conjunto solución \(\emptyset\)).
+
+Desarrollemos un ejemplo numérico con fracciones:
+\[
+\frac{3x - 1}{2} - 2x \le \frac{5 - x}{3}.
+\]
+Para eliminar denominadores con limpieza, multiplique ambos lados por su mínimo común múltiplo positivo, \(6 > 0\) (de modo que el sentido de la desigualdad permanece sin cambios):
+\[
+3(3x - 1) - 12x \le 2(5 - x) \implies 9x - 3 - 12x \le 10 - 2x \implies -3x - 3 \le 10 - 2x.
+\]
+Sume \(2x\) y \(3\) a ambos lados:
+\[
+-x \le 13.
+\]
+Multiplique por \(-1 < 0\), invirtiendo el signo de la desigualdad:
+\[
+x \ge -13.
+\]
+En notación de intervalos, el conjunto solución es \([-13, \infty)\).
+
+Geométricamente, resolver \(ax + b \le cx + d\) pregunta por todos los valores de \(x\) donde la recta \(y = ax + b\) se encuentra sobre o por debajo de la recta \(y = cx + d\). Graficar ambos lados de nuestro ejemplo —\(L(x) = \frac{3x - 1}{2} - 2x = -\frac{1}{2}x - \frac{1}{2}\) y \(R(x) = \frac{5 - x}{3}\)— muestra las dos rectas cruzándose en \(x = -13\), con \(L(x)\) debajo de \(R(x)\) a lo largo de toda la semirrecta sombreada \(x \ge -13\).
+
+[GRAPH]
+type: function2d
+title: Comparación de \(L(x) = -\frac{1}{2}x - \frac{1}{2}\) y \(R(x) = \frac{5 - x}{3}\) a través de su cruce en \(x = -13\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -18, -5
+yrange: 1, 9
+fill: (5 - x)/3, -0.5*x - 0.5 | range: -13, -5 | label: \(L(x) \le R(x)\) | color: #3b82f6 | opacity: 0.22
+trace: -0.5*x - 0.5 | label: \(L(x) = -\frac{1}{2}x - \frac{1}{2}\)
+trace: (5 - x)/3 | label: \(R(x) = \frac{5 - x}{3}\)
+point: -13, 6 | label: \((-13, 6)\)
+segment: -13, 1, -13, 6 | dashed: true
+[/GRAPH]
+
+Antes de pasar a las desigualdades compuestas, observe un breve ejemplo degenerado: \(4(x - 1) > 2(2x + 3)\). Al desarrollar se obtiene \(4x - 4 > 4x + 6\), y restar \(4x\) deja \(-4 > 6\), lo cual es falso para todo \(x\) real; por lo tanto el conjunto solución es \(\emptyset\). Si la desigualdad hubiera sido \(4(x - 1) < 2(2x + 3)\), restar \(4x\) habría dejado \(-4 < 6\), lo cual siempre es verdadero, dando \((-\infty, \infty)\).
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál es el conjunto solución de la desigualdad lineal \(\frac{2 - 3x}{4} \ge \frac{x + 5}{2} - 1\)?
+
+(A) \(\left[-\frac{4}{5}, \infty\right)\)
+(B) \(\left(-\infty, -\frac{4}{5}\right]\)
+(C) \(\left(-\infty, \frac{4}{5}\right]\)
+(D) \(\left(-\infty, -\frac{12}{5}\right]\)
+(E) \(\left[-\frac{12}{5}, \infty\right)\)
+[/QUESTION]
+
+=== SECTION 2: Desigualdades dobles encadenadas y sistemas compuestos ===
+
+Una desigualdad compuesta enlaza dos o más desigualdades usando «y» (intersección) u «o» (unión). La forma conjuntiva más compacta es la desigualdad doble encadenada
+\[
+f(x) < g(x) \le h(x),
+\]
+que es una abreviatura de la conjunción «\(f(x) < g(x)\) Y \(g(x) \le h(x)\)».
+
+Existen dos situaciones marcadamente distintas al resolver una desigualdad encadenada.
+
+Caso A: La variable \(x\) aparece ÚNICAMENTE en la expresión central, como en \(-5 < 3 - 2x \le 9\). Aquí, aplicar el mismo paso válido a las tres partes simultáneamente equivale a aplicarlo a ambas desigualdades constituyentes a la vez. Reste \(3\) a las tres partes:
+\[
+-8 < -2x \le 6.
+\]
+Ahora divida las tres partes entre \(-2 < 0\), invirtiendo AMBOS signos de desigualdad:
+\[
+4 > x \ge -3.
+\]
+Reescriba de menor a mayor para traducir limpiamente a notación de intervalos: \(-3 \le x < 4\), dando \([-3, 4)\).
+
+Caso B: La variable \(x\) aparece FUERA de la expresión central, como en \(2x - 1 < 4x + 3 \le 3x + 7\). La manipulación simultánea ya no puede aislar \(x\) en el centro, e intentar tomar un «atajo» comparando solo las dos expresiones exteriores \(2x - 1 < 3x + 7\) elimina por completo el requisito central e introduce soluciones falsas. En su lugar, separe siempre la cadena en sus dos desigualdades adyacentes, resuelva cada una e intersecte sus conjuntos solución.
+
+[CALLOUT]
+id: chained-split
+label: Regla
+title: Separación de desigualdades encadenadas
+tone: key
+
+Una desigualdad encadenada \(f(x) < g(x) \le h(x)\) siempre es equivalente a la conjunción
+\[
+f(x) < g(x) \quad \text{Y} \quad g(x) \le h(x).
+\]
+Su conjunto solución es \(S_1 \cap S_2\), donde \(S_1\) resuelve \(f(x) < g(x)\) y \(S_2\) resuelve \(g(x) \le h(x)\). Utilice manipulación simultánea de tres partes únicamente cuando \(x\) aparezca de forma exclusiva en la expresión central.
+[/CALLOUT]
+
+Apliquemos [REF: chained-split | la regla de separación] a \(2x - 1 < 4x + 3 \le 3x + 7\):
+1. Desigualdad izquierda: \(2x - 1 < 4x + 3 \implies -4 < 2x \implies x > -2\), así que \(S_1 = (-2, \infty)\).
+2. Desigualdad derecha: \(4x + 3 \le 3x + 7 \implies x \le 4\), así que \(S_2 = (-\infty, 4]\).
+3. Intersección: \(S_1 \cap S_2 = (-2, \infty) \cap (-\infty, 4] = (-2, 4]\).
+
+Note por qué no necesitamos una tercera comprobación \(f(x) < h(x)\): siempre que se cumplan tanto \(f(x) < g(x)\) como \(g(x) \le h(x)\), la transitividad garantiza automáticamente \(f(x) < h(x)\). Geométricamente, el conjunto solución \((-2, 4]\) es la banda horizontal exacta donde la recta central \(y = 4x + 3\) se sitúa estrictamente por encima de \(y = 2x - 1\) y sobre o por debajo de \(y = 3x + 7\).
+
+[GRAPH]
+type: function2d
+title: Recta central \(y = 4x + 3\) encajonada entre \(y = 2x - 1\) y \(y = 3x + 7\) en \((-2, 4]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 6
+yrange: -10, 26
+fill: 3*x + 7, 2*x - 1 | range: -2, 4 | label: banda válida | color: #10b981 | opacity: 0.18
+trace: 2*x - 1 | label: \(y = 2x - 1\)
+trace: 4*x + 3 | label: \(y = 4x + 3\)
+trace: 3*x + 7 | label: \(y = 3x + 7\)
+point: -2, -5 | label: \((-2, -5)\)
+point: 4, 19 | label: \((4, 19)\)
+[/GRAPH]
+
+Para desigualdades compuestas disyuntivas («o»), resuelva cada desigualdad lineal por separado y tome la UNIÓN de sus conjuntos solución. Por ejemplo, resuelva
+\[
+3x + 1 \le 2x - 2 \qquad \text{o} \qquad 5 - 2x < 1.
+\]
+La primera rama da \(x \le -3\), es decir, \((-\infty, -3]\). La segunda rama da \(-2x < -4 \implies x > 2\), es decir, \((2, \infty)\). Como el conectivo es «o», el conjunto solución es su unión \((-\infty, -3] \cup (2, \infty)\). Si el conectivo hubiera sido «y», la intersección \((-\infty, -3] \cap (2, \infty)\) habría sido \(\emptyset\). Compruebe siempre si una unión con «o» se traslapa y se simplifica —por ejemplo, \((-\infty, 5) \cup (1, \infty)\) se simplifica por completo a \((-\infty, \infty)\)—.
+
+[QUESTION 2]
+[ANSWER: C]
+¿Cuál es el conjunto solución de la desigualdad encadenada \(x - 4 < 3x + 2 \le 2x + 5\)?
+
+(A) \((-9, 3]\)
+(B) \([-3, 3)\)
+(C) \((-3, 3]\)
+(D) \((-\infty, -3) \cup [3, \infty)\)
+(E) \((3, 9)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+¿Cuál es el conjunto solución de la desigualdad compuesta
+\[
+4x - 1 < 2x + 5 \qquad \text{o} \qquad 5 - x \le 2x - 7\,?
+\]
+
+(A) \(\emptyset\)
+(B) \((3, 4]\)
+(C) \((-\infty, 3] \cup (4, \infty)\)
+(D) \((-\infty, \infty)\)
+(E) \((-\infty, 3) \cup [4, \infty)\)
+[/QUESTION]
+
+=== SECTION 3: Desigualdades lineales paramétricas y separación exhaustiva de casos ===
+
+Con frecuencia una desigualdad involucra no solo la incógnita \(x\) que estamos despejando, sino también un parámetro real no especificado —como \(a\), \(k\) o \(m\)— que representa una constante fija pero desconocida. Considere la desigualdad lineal paramétrica
+\[
+(m - 2)x \le m^2 - 4,
+\]
+donde \(m \in \mathbb{R}\) es un parámetro y queremos todas las soluciones reales \(x\) para cada valor posible de \(m\).
+
+El atajo tentador consiste en factorizar \(m^2 - 4 = (m - 2)(m + 2)\) y dividir de inmediato ambos lados entre \(m - 2\) para escribir \(x \le m + 2\). Ese paso comete DOS errores simultáneos:
+1. Si \(m = 2\), entonces \(m - 2 = 0\), por lo que la división entre \(m - 2\) no está definida.
+2. Si \(m < 2\), entonces \(m - 2 < 0\), por lo que dividir entre \(m - 2\) debe INVERTIR el signo de la desigualdad a \(x \ge m + 2\).
+
+Debido a que el signo y la anulación del coeficiente de \(x\) controlan el siguiente paso legítimo, toda desigualdad lineal paramétrica requiere una separación exhaustiva en tres casos una vez escrita en la forma \(A(m)\,x \lesseqqgtr B(m)\).
+
+[CALLOUT]
+id: param-linear-cases
+label: Método
+title: Separación exhaustiva en tres casos para \(A(m)\,x \le B(m)\)
+tone: key
+
+Después de aislar los términos en \(x\) de un lado para obtener \(A(m)\,x \le B(m)\) (y de manera análoga para \(<\), \(>\), \(\ge\)), divida en los tres regímenes exhaustivos del coeficiente \(A(m)\):
+
+(1) Coeficiente positivo (\(A(m) > 0\)): divida entre \(A(m)\) conservando el sentido de la desigualdad, obteniendo \(x \le \frac{B(m)}{A(m)}\).
+(2) Coeficiente cero (\(A(m) = 0\)): sustituya directamente para obtener \(0 \le B(m)\); el conjunto solución es \(\mathbb{R}\) si este enunciado numérico se cumple, y \(\emptyset\) si falla.
+(3) Coeficiente negativo (\(A(m) < 0\)): divida entre \(A(m)\) invirtiendo el sentido de la desigualdad, obteniendo \(x \ge \frac{B(m)}{A(m)}\).
+[/CALLOUT]
+
+Ejecutemos [REF: param-linear-cases | la separación en tres casos] en \((m - 2)x \le m^2 - 4 = (m - 2)(m + 2)\):
+- Caso 1 (\(m > 2\)): aquí \(m - 2 > 0\). Dividir preserva el signo: \(x \le m + 2\), así que el conjunto solución es \((-\infty, m + 2]\).
+- Caso 2 (\(m = 2\)): sustituir \(m = 2\) produce \(0 \cdot x \le 0\), lo cual es VERDADERO para todo \(x \in \mathbb{R}\). Por lo tanto, el conjunto solución es \((-\infty, \infty)\).
+- Caso 3 (\(m < 2\)): aquí \(m - 2 < 0\). Dividir invierte el signo: \(x \ge m + 2\), así que el conjunto solución es \([m + 2, \infty)\).
+
+Observe cuán sensible es el Caso 2 al carácter estricto. Si la desigualdad original hubiera sido ESTRICTA, \((m - 2)x < m^2 - 4\), entonces en \(m = 2\) obtendríamos \(0 \cdot x < 0\), lo cual es FALSO para todo \(x \in \mathbb{R}\), cambiando el conjunto solución del Caso 2 de \(\mathbb{R}\) a \(\emptyset\).
+
+Arrastre el deslizador del parámetro \(m\) en la gráfica siguiente para \(f(x) = (m - 2)x - (m^2 - 4)\) y vea por qué el conjunto solución \(f(x) \le 0\) se invierte al cruzar \(m = 2\): cuando \(m > 2\) la recta tiene pendiente positiva y permanece en o por debajo de \(0\) a la izquierda de \(x = m + 2\); cuando \(m = 2\) la recta colapsa horizontalmente sobre el eje \(y = 0\); cuando \(m < 2\) la recta tiene pendiente negativa y permanece en o por debajo de \(0\) a la derecha de \(x = m + 2\).
+
+[GRAPH]
+type: function2d
+title: Familia \(y = (m - 2)x - (m^2 - 4)\) conforme \(m\) varía a través de \(m = 2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 8
+yrange: -12, 12
+trace: (m - 2)*x - (m^2 - 4) | label: \(y = (m - 2)x - (m^2 - 4)\)
+trace: 0 | label: \(y = 0\)
+point: m + 2, 0 | label: \(x = m + 2\)
+slider: m | range: -1, 5 | init: 3 | step: 0.5
+[/GRAPH]
+
+Hagamos un ejemplo paramétrico más donde el coeficiente se anula en dos valores: resuelva
+\[
+(k^2 - 1)x > k + 1.
+\]
+Factorice el coeficiente como \((k - 1)(k + 1)x > k + 1\). El coeficiente \(k^2 - 1\) es positivo cuando \(k < -1\) o \(k > 1\), negativo cuando \(-1 < k < 1\), y cero cuando \(k = 1\) o \(k = -1\). ¡Note que debemos verificar AMBOS valores donde se anula por separado!
+
+[TABLE]
+Régimen del parámetro | Signo de \(k^2 - 1\) | Desigualdad reducida | Conjunto solución en \(x\)
+\(k < -1\) o \(k > 1\) | Positivo | \(x > \frac{k + 1}{(k - 1)(k + 1)} = \frac{1}{k - 1}\) | \(\left(\frac{1}{k - 1}, \infty\right)\)
+\(-1 < k < 1\) | Negativo | \(x < \frac{1}{k - 1}\) | \(\left(-\infty, \frac{1}{k - 1}\right)\)
+\(k = 1\) | Cero | \(0 \cdot x > 2\) (falso) | \(\emptyset\)
+\(k = -1\) | Cero | \(0 \cdot x > 0\) (falso) | \(\emptyset\)
+[/TABLE]
+
+Observe por qué comprobar \(k = 1\) y \(k = -1\) por separado es esencial: si la desigualdad hubiera sido \((k^2 - 1)x \ge k + 1\), entonces \(k = 1\) daría \(0 \ge 2\) (\(\emptyset\)), mientras que \(k = -1\) daría \(0 \ge 0\) (\(\mathbb{R}\)) —dos respuestas opuestas en las dos raíces del coeficiente—.
+
+[QUESTION 4]
+[ANSWER: A]
+Sea \(a \in \mathbb{R}\) un parámetro. ¿Qué enunciado da el conjunto solución completo en \(x\) de la desigualdad \((a - 1)x \le 2a - 2\) para todos los valores reales de \(a\)?
+
+(A) \((-\infty, 2]\) si \(a > 1\); \(\mathbb{R}\) si \(a = 1\); \([2, \infty)\) si \(a < 1\)
+(B) \((-\infty, 2]\) si \(a > 1\); \(\emptyset\) si \(a = 1\); \([2, \infty)\) si \(a < 1\)
+(C) \([2, \infty)\) si \(a > 1\); \(\mathbb{R}\) si \(a = 1\); \((-\infty, 2]\) si \(a < 1\)
+(D) \((-\infty, 2]\) para todo \(a \ne 1\); \(\mathbb{R}\) si \(a = 1\)
+(E) \((-\infty, 2)\) si \(a > 1\); \(\{2\}\) si \(a = 1\); \((2, \infty)\) si \(a < 1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+¿Para qué valor o valores reales del parámetro \(k\) la desigualdad \((k - 4)x + 7 \le 2x + 1\) NO tiene soluciones reales (conjunto solución \(\emptyset\))?
+
+(A) Ningún valor real de \(k\)
+(B) Todos los \(k < 6\)
+(C) Solo \(k = 4\)
+(D) Solo \(k = 6\)
+(E) \(k = 6\) y \(k = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Para qué valores reales del parámetro \(p\) el sistema compuesto
+\[
+2x - 1 > 3 \qquad \text{y} \qquad x - p \le 2
+\]
+tiene al menos una solución real \(x\)?
+
+(A) \(p \in [0, \infty)\)
+(B) \(p \in (0, \infty)\)
+(C) \(p \in (-2, \infty)\)
+(D) \(p \in [2, \infty)\)
+(E) \(p \in (-\infty, 0)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suponga que \(a < 0\). ¿Cuál es el conjunto solución en \(x\) de la desigualdad encadenada \(1 < ax + 1 \le 5\)?
+
+(A) \(\left(0, \frac{4}{a}\right]\)
+(B) \(\left(\frac{4}{a}, 0\right]\)
+(C) \(\left[\frac{4}{a}, 0\right)\)
+(D) \(\left(-\infty, \frac{4}{a}\right] \cup (0, \infty)\)
+(E) \(\left[-\frac{4}{a}, 0\right)\)
+[/BONUS]

@@ -1,0 +1,209 @@
+=== SECTION 1: Polar form and the principal argument ===
+
+Rectangular coordinates \(z = x + yi\) make complex addition and subtraction effortless, because you simply add horizontal and vertical components. Multiplication in rectangular form, however, mixes \(x\) and \(y\) together as \((x_1 x_2 - y_1 y_2) + (x_1 y_2 + y_1 x_2)i\), hiding its true geometric meaning. What happens if instead of horizontal and vertical coordinates we describe a nonzero complex number by its distance from the origin and the angle its position vector makes with the positive real axis?
+
+Let \(z = x + yi \ne 0\) lie in the Argand plane. Its distance from the origin is its modulus \(r = |z| = \sqrt{x^2 + y^2} > 0\). Let \(\theta\) be an angle (measured in radians, counterclockwise from the positive real axis) to the ray from \(0\) through \(z\). By unit-circle trigonometry,
+\[
+x = r\cos\theta, \qquad y = r\sin\theta.
+\]
+Substituting these into \(z = x + yi\) gives the polar (or trigonometric) form of \(z\):
+\[
+z = r(\cos\theta + i\sin\theta).
+\]
+Because \(\cos\theta + i\sin\theta\) appears constantly, mathematicians often abbreviate it as \(\operatorname{cis}\theta\) (standing for "cosine plus \(i\) sine"), writing \(z = r\operatorname{cis}\theta\).
+
+Unlike the modulus \(r\), the angle \(\theta\) is NOT unique: adding any integer multiple of a full turn \(2\pi\) lands on the exact same ray, since \(\cos(\theta + 2\pi k) = \cos\theta\) and \(\sin(\theta + 2\pi k) = \sin\theta\) for every \(k \in \mathbb{Z}\). To keep the multi-valued angle separate from a single standard choice, we introduce two distinct symbols: lowercase \(\arg(z)\) for all valid angles, and capitalized \(\operatorname{Arg}(z)\) for the unique choice inside the half-open interval \((-\pi, \pi]\).
+
+[CALLOUT]
+id: polar-def
+label: Definition
+title: Polar form, argument, and principal argument
+tone: key
+
+Let \(z = x + yi \ne 0\) with \(r = |z| = \sqrt{x^2 + y^2} > 0\).
+
+(1) Polar form: \(z = r(\cos\theta + i\sin\theta) = r\operatorname{cis}\theta\), where \(x = r\cos\theta\) and \(y = r\sin\theta\).
+(2) Argument: \(\arg(z) = \{\theta + 2\pi k : k \in \mathbb{Z}\}\) is the set of all angles satisfying \(x = r\cos\theta\) and \(y = r\sin\theta\).
+(3) Principal argument: \(\operatorname{Arg}(z)\) is the unique value in \(\arg(z)\) lying in the interval \((-\pi, \pi]\).
+(4) Zero excluded: \(\arg(0)\) and \(\operatorname{Arg}(0)\) are undefined, because \(0\) has no direction from the origin.
+[/CALLOUT]
+
+Use the slider below to rotate a point \(z = 2(\cos\theta + i\sin\theta)\) around the circle of radius \(r = 2\) as \(\theta = \operatorname{Arg}(z)\) varies across \((-\pi, \pi]\). Watch how the horizontal projection \(x = 2\cos\theta\) and vertical projection \(y = 2\sin\theta\) change signs across the four quadrants.
+
+[GRAPH]
+type: parametric2d
+title: Polar representation \(z = 2(\cos\theta + i\sin\theta)\) on the circle of radius \(r = 2\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -2.8, 2.8
+yrange: -2.8, 2.8
+trace: 2*cos(t), 2*sin(t) | label: \(|z| = 2\) | color: #2563eb
+segment: 0, 0, 2*cos(a), 2*sin(a) | label: \(r = 2\) | color: #dc2626
+segment: 0, 0, 2*cos(a), 0 | label: \(x\) | dashed: true | color: #16a34a
+segment: 2*cos(a), 0, 2*cos(a), 2*sin(a) | label: \(y\) | dashed: true | color: #9333ea
+point: 2*cos(a), 2*sin(a) | label: \(z\)
+slider: a | range: -3.1416, 3.1416 | init: 2.0944 | step: 0.05
+[/GRAPH]
+
+=== SECTION 2: Converting accurately in all four quadrants ===
+
+Converting from polar form \(r(\cos\theta + i\sin\theta)\) to rectangular form is immediate: simply evaluate \(x = r\cos\theta\) and \(y = r\sin\theta\). For instance, \(4\operatorname{cis}\left(-\frac{\pi}{3}\right) = 4\left(\frac{1}{2} - i\frac{\sqrt{3}}{2}\right) = 2 - 2\sqrt{3}\,i\).
+
+Converting in the opposite direction—from \(z = x + yi \ne 0\) to \(r\) and \(\operatorname{Arg}(z)\)—has one classic trap. Since \(\tan\theta = y/x\) when \(x \ne 0\), it is tempting to write \(\operatorname{Arg}(z) = \arctan(y/x)\). That formula fails for EVERY complex number in Quadrants II and III! The reason is that \(\arctan(y/x)\) only outputs angles in \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\) (Quadrants I and IV). For example, \(1 + i\) and \(-1 - i\) both have \(y/x = 1\), so \(\arctan(y/x) = \frac{\pi}{4}\) for both—yet \(-1 - i\) sits in Quadrant III, opposite to \(1 + i\), with principal argument \(-\frac{3\pi}{4}\).
+
+[CALLOUT]
+id: quadrant-arg-rule
+label: Rule
+title: Finding \(\operatorname{Arg}(x + yi)\) by quadrant check
+tone: caution
+
+Never take raw \(\arctan(y/x)\) as \(\operatorname{Arg}(x + yi)\) without checking the signs of BOTH \(x\) and \(y\). Always locate the quadrant (or coordinate axis) first, then place the angle inside \((-\pi, \pi]\).
+[/CALLOUT]
+
+[TABLE]
+Location of \(z = x + yi \ne 0\) | Sign of \(x, y\) | Principal argument \(\operatorname{Arg}(z) \in (-\pi, \pi]\)
+Positive real axis | \(x > 0, y = 0\) | \(0\)
+Quadrant I | \(x > 0, y > 0\) | \(\arctan(y/x)\)
+Positive imaginary axis | \(x = 0, y > 0\) | \(\pi/2\)
+Quadrant II | \(x < 0, y > 0\) | \(\arctan(y/x) + \pi\)
+Negative real axis | \(x < 0, y = 0\) | \(\pi\) (not \(-\pi\))
+Quadrant III | \(x < 0, y < 0\) | \(\arctan(y/x) - \pi\)
+Negative imaginary axis | \(x = 0, y < 0\) | \(-\pi/2\)
+Quadrant IV | \(x > 0, y < 0\) | \(\arctan(y/x)\)
+[/TABLE]
+
+Let us practice across all four quadrants and on the axes:
+- Quadrant II: \(z = -1 + i\sqrt{3}\). Here \(r = \sqrt{1 + 3} = 2\). The reference angle is \(\arctan(\sqrt{3}/1) = \frac{\pi}{3}\), and since \(z\) lies in Quadrant II, \(\operatorname{Arg}(z) = \pi - \frac{\pi}{3} = \frac{2\pi}{3}\). Thus \(z = 2\operatorname{cis}\left(\frac{2\pi}{3}\right)\).
+- Quadrant IV: \(z = 3 - 3i\). Here \(r = \sqrt{9 + 9} = 3\sqrt{2}\). Since \(x > 0\) and \(y < 0\), \(\operatorname{Arg}(z) = \arctan(-1) = -\frac{\pi}{4}\). Thus \(z = 3\sqrt{2}\operatorname{cis}\left(-\frac{\pi}{4}\right)\).
+- Negative real axis: \(z = -5\). Here \(r = 5\), and \(\operatorname{Arg}(-5) = \pi\) (note that \(-\pi\) is excluded from \((-\pi, \pi]\)), so \(-5 = 5\operatorname{cis}(\pi)\).
+- Negative imaginary axis: \(z = -7i\). Here \(r = 7\) and \(\operatorname{Arg}(-7i) = -\frac{\pi}{2}\), so \(-7i = 7\operatorname{cis}\left(-\frac{\pi}{2}\right)\).
+
+[QUESTION 1]
+[ANSWER: A]
+Write \(z = -\sqrt{3} - i\) in polar form \(r(\cos\theta + i\sin\theta)\) using the principal argument \(\theta = \operatorname{Arg}(z) \in (-\pi, \pi]\).
+
+(A) \(2\left(\cos\left(-\frac{5\pi}{6}\right) + i\sin\left(-\frac{5\pi}{6}\right)\right)\)
+(B) \(2\left(\cos\left(\frac{\pi}{6}\right) + i\sin\left(\frac{\pi}{6}\right)\right)\)
+(C) \(2\left(\cos\left(\frac{7\pi}{6}\right) + i\sin\left(\frac{7\pi}{6}\right)\right)\)
+(D) \(2\left(\cos\left(-\frac{2\pi}{3}\right) + i\sin\left(-\frac{2\pi}{3}\right)\right)\)
+(E) \(2\left(\cos\left(\frac{5\pi}{6}\right) + i\sin\left(\frac{5\pi}{6}\right)\right)\)
+[/QUESTION]
+
+=== SECTION 3: Polar multiplication, division, and geometric rotation-scaling ===
+
+Now comes the payoff for switching to polar coordinates. Let \(z_1 = r_1(\cos\theta_1 + i\sin\theta_1)\) and \(z_2 = r_2(\cos\theta_2 + i\sin\theta_2)\) be two nonzero complex numbers. Multiply them directly using the distributive law:
+\[
+z_1 z_2 = r_1 r_2 \bigl((\cos\theta_1 \cos\theta_2 - \sin\theta_1 \sin\theta_2) + i(\sin\theta_1 \cos\theta_2 + \cos\theta_1 \sin\theta_2)\bigr).
+\]
+Recognize the two expressions in parentheses: they are the exact angle-addition identities for cosine and sine, \(\cos(\theta_1 + \theta_2) = \cos\theta_1\cos\theta_2 - \sin\theta_1\sin\theta_2\) and \(\sin(\theta_1 + \theta_2) = \sin\theta_1\cos\theta_2 + \cos\theta_1\sin\theta_2\)! Therefore
+\[
+z_1 z_2 = r_1 r_2 \bigl(\cos(\theta_1 + \theta_2) + i\sin(\theta_1 + \theta_2)\bigr) = r_1 r_2 \operatorname{cis}(\theta_1 + \theta_2).
+\]
+For division, multiply numerator and denominator of \(\frac{z_1}{z_2}\) by \(\cos\theta_2 - i\sin\theta_2\). The denominator becomes \(\cos^2\theta_2 + \sin^2\theta_2 = 1\), and expanding the numerator invokes the angle-subtraction identities:
+\[
+\frac{z_1}{z_2} = \frac{r_1}{r_2}\bigl((\cos\theta_1\cos\theta_2 + \sin\theta_1\sin\theta_2) + i(\sin\theta_1\cos\theta_2 - \cos\theta_1\sin\theta_2)\bigr) = \frac{r_1}{r_2}\operatorname{cis}(\theta_1 - \theta_2).
+\]
+
+[CALLOUT]
+id: polar-mult-div
+label: Theorem
+title: Polar product and quotient formulas
+tone: key
+
+Let \(z_1 = r_1\operatorname{cis}\theta_1\) and \(z_2 = r_2\operatorname{cis}\theta_2\) with \(r_1, r_2 > 0\).
+
+(1) Product: \(z_1 z_2 = r_1 r_2 \operatorname{cis}(\theta_1 + \theta_2)\). Moduli multiply; arguments add.
+(2) Quotient: \(\frac{z_1}{z_2} = \frac{r_1}{r_2}\operatorname{cis}(\theta_1 - \theta_2)\). Moduli divide; arguments subtract.
+(3) Conjugate and reciprocal: \(\overline{z_1} = r_1\operatorname{cis}(-\theta_1)\) and \(z_1^{-1} = \frac{1}{r_1}\operatorname{cis}(-\theta_1)\).
+[/CALLOUT]
+
+Read [REF: polar-mult-div.1 | the polar product formula] geometrically: multiplying a complex number \(z_1\) by \(z_2 = r_2\operatorname{cis}\theta_2\) takes the vector \(z_1\), scales its length by \(r_2 = |z_2|\), and rotates it counterclockwise about the origin by the angle \(\theta_2 = \arg(z_2)\)! (If \(\theta_2 < 0\), the rotation is clockwise by \(|\theta_2|\).)
+
+This single insight explains why \(i^2 = -1\) geometrically: since \(i = 1\operatorname{cis}\left(\frac{\pi}{2}\right)\), multiplying ANY complex number by \(i\) rotates it counterclockwise by \(90^\circ\) (\(\frac{\pi}{2}\) radians) without changing its length! Doing that twice—multiplying by \(i^2\)—rotates by \(180^\circ\), which is multiplication by \(-1\).
+
+Look at a concrete rotation-and-scaling example in the Argand plane: take \(z_1 = \sqrt{3} + i = 2\operatorname{cis}\left(\frac{\pi}{6}\right)\) and \(z_2 = \frac{3}{4} + \frac{3\sqrt{3}}{4}i = 1.5\operatorname{cis}\left(\frac{\pi}{3}\right)\). Multiplying \(z_1\) by \(z_2\) scales its radius from \(2\) to \(2 \times 1.5 = 3\) and rotates its angle from \(\frac{\pi}{6}\) by \(+\frac{\pi}{3}\) to \(\frac{\pi}{2}\), landing directly on \(z_1 z_2 = 3\operatorname{cis}\left(\frac{\pi}{2}\right) = 3i\).
+
+[GRAPH]
+type: parametric2d
+title: Geometric multiplication: \(z_1 = 2\operatorname{cis}(\pi/6)\) multiplied by \(z_2 = 1.5\operatorname{cis}(\pi/3)\) yields \(z_1 z_2 = 3i\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -3.5, 3.5
+yrange: -1.5, 3.6
+trace: 2*cos(t), 2*sin(t) | label: \(|z| = 2\) | color: #94a3b8
+trace: 3*cos(t), 3*sin(t) | label: \(|z| = 3\) | color: #9333ea
+segment: 0, 0, sqrt(3), 1 | label: \(z_1\) | color: #2563eb
+segment: 0, 0, 0.75, 0.75*sqrt(3) | label: \(z_2\) | color: #16a34a
+segment: 0, 0, 0, 3 | label: \(z_1 z_2\) | color: #dc2626
+point: sqrt(3), 1 | label: \(z_1\)
+point: 0.75, 0.75*sqrt(3) | label: \(z_2\)
+point: 0, 3 | label: \(3i\)
+[/GRAPH]
+
+There is one subtle warning about principal arguments when multiplying or dividing. Although \(\theta_1 + \theta_2\) is ALWAYS a valid argument in \(\arg(z_1 z_2)\), it may fall outside the principal interval \((-\pi, \pi]\). For instance, let \(z_1 = z_2 = -1 + i\), so \(\operatorname{Arg}(z_1) = \operatorname{Arg}(z_2) = \frac{3\pi}{4}\). Their sum is \(\frac{3\pi}{4} + \frac{3\pi}{4} = \frac{3\pi}{2} > \pi\). Since \(z_1 z_2 = (-1 + i)^2 = -2i\), its principal argument is \(\operatorname{Arg}(z_1 z_2) = -\frac{\pi}{2} = \frac{3\pi}{2} - 2\pi\).
+
+[CALLOUT]
+id: principal-arg-wrap
+label: Common pitfall
+title: Principal arguments can wrap by \(\pm 2\pi\)
+tone: caution
+
+In general, \(\operatorname{Arg}(z_1 z_2) \ne \operatorname{Arg}(z_1) + \operatorname{Arg}(z_2)\). Instead, \(\operatorname{Arg}(z_1 z_2) = \operatorname{Arg}(z_1) + \operatorname{Arg}(z_2) + 2\pi k\), where \(k \in \{-1, 0, 1\}\) is chosen so the result lies in \((-\pi, \pi]\). The same adjustment applies to \(\operatorname{Arg}(z_1 / z_2) = \operatorname{Arg}(z_1) - \operatorname{Arg}(z_2) + 2\pi k\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: A]
+Let \(z_1 = 6\operatorname{cis}\left(\frac{5\pi}{12}\right)\) and \(z_2 = 2\operatorname{cis}\left(-\frac{\pi}{4}\right)\). Express \(\frac{z_1}{z_2}\) in standard rectangular form.
+
+(A) \(-\frac{3}{2} + \frac{3\sqrt{3}}{2}\,i\)
+(B) \(\frac{3\sqrt{3}}{2} + \frac{3}{2}\,i\)
+(C) \(\frac{3}{2} + \frac{3\sqrt{3}}{2}\,i\)
+(D) \(-\frac{3\sqrt{3}}{2} + \frac{3}{2}\,i\)
+(E) \(-\frac{3}{2} - \frac{3\sqrt{3}}{2}\,i\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+In the Argand plane, a complex number \(z\) is rotated counterclockwise by \(\frac{\pi}{3}\) radians about the origin and then stretched away from the origin by a factor of \(4\). By which complex number in standard form must \(z\) be multiplied to produce this transformation?
+
+(A) \(2 + 2\sqrt{3}\,i\)
+(B) \(2\sqrt{3} + 2i\)
+(C) \(2 - 2\sqrt{3}\,i\)
+(D) \(4 + \frac{\pi}{3}\,i\)
+(E) \(-2 + 2\sqrt{3}\,i\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose two nonzero complex numbers satisfy \(\operatorname{Arg}(z_1) = -\frac{2\pi}{3}\) and \(\operatorname{Arg}(z_2) = -\frac{5\pi}{6}\). What is \(\operatorname{Arg}(z_1 z_2)\)?
+
+(A) \(\frac{\pi}{2}\)
+(B) \(-\frac{3\pi}{2}\)
+(C) \(-\frac{\pi}{2}\)
+(D) \(\frac{3\pi}{2}\)
+(E) \(\frac{\pi}{6}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Let \(z_1 = 1 + i\) and \(z_2 = \sqrt{3} + i\). By comparing the rectangular and polar forms of the product \(z_1 z_2\), find the exact value of \(\cos\left(\frac{5\pi}{12}\right)\).
+
+(A) \(\frac{\sqrt{6} - \sqrt{2}}{4}\)
+(B) \(\frac{\sqrt{6} + \sqrt{2}}{4}\)
+(C) \(\frac{\sqrt{3} - 1}{2}\)
+(D) \(\frac{\sqrt{2} - \sqrt{6}}{4}\)
+(E) \(\frac{\sqrt{3} + 1}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose \(z \ne 0\) satisfies \(\operatorname{Arg}(z) = \theta\) with \(-\frac{\pi}{2} < \theta \le \frac{\pi}{2}\). What is \(\operatorname{Arg}\!\left(\frac{i}{\overline{z}}\right)\)?
+
+(A) \(\theta + \frac{\pi}{2}\)
+(B) \(\frac{\pi}{2} - \theta\)
+(C) \(-\theta - \frac{\pi}{2}\)
+(D) \(\theta - \frac{\pi}{2}\)
+(E) \(\pi - \theta\)
+[/BONUS]

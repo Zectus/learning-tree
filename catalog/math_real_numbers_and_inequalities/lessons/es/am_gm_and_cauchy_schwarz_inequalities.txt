@@ -1,0 +1,244 @@
+=== SECTION 1: La desigualdad MA-MG en dos variables y extremos exactos ===
+
+Todo en esta lección brota de un único hecho elemental sobre los números reales: el cuadrado de cualquier número real es no negativo (\(u^2 \ge 0\)), y es igual a \(0\) si y solo si \(u = 0\).
+
+Supongamos que \(a\) y \(b\) son dos números reales no negativos (\(a, b \ge 0\)). Entonces \(\sqrt{a}\) y \(\sqrt{b}\) son ambos reales, por lo que el cuadrado de su diferencia no puede ser negativo:
+\[
+(\sqrt{a} - \sqrt{b})^2 \ge 0.
+\]
+Desarrolle el lado izquierdo:
+\[
+a - 2\sqrt{ab} + b \ge 0 \iff a + b \ge 2\sqrt{ab} \iff \frac{a + b}{2} \ge \sqrt{ab}.
+\]
+El lado izquierdo \(\dfrac{a + b}{2}\) es la MEDIA ARITMÉTICA (MA) de \(a\) y \(b\), y el lado derecho \(\sqrt{ab}\) es su MEDIA GEOMÉTRICA (MG). Como \((\sqrt{a} - \sqrt{b})^2 = 0\) si y solo si \(\sqrt{a} = \sqrt{b}\), la igualdad se cumple si y solo si \(a = b\).
+
+[CALLOUT]
+id: am-gm-two
+label: Teorema
+title: Desigualdad MA-MG en dos variables
+tone: key
+
+Para todos los números reales no negativos \(a, b \ge 0\):
+(1) \(\dfrac{a + b}{2} \ge \sqrt{ab}\) (equivalentemente, \(a + b \ge 2\sqrt{ab}\)).
+(2) La igualdad se cumple si y solo si \(a = b\).
+[/CALLOUT]
+
+¿Por qué es tan potente [REF: am-gm-two | MA-MG]? Siempre que una suma contenga dos términos positivos cuyo PRODUCTO sea constante (independiente de \(x\)), MA-MG acota de inmediato la suma inferiormente, hallando un mínimo exacto sin cálculo diferencial.
+
+Ejemplo 1: Halle el valor mínimo de \(f(x) = x + \dfrac{4}{x}\) para \(x > 0\).
+Como \(x > 0\), tanto \(x\) como \(\dfrac{4}{x}\) son positivos. Al aplicar [REF: am-gm-two.1 | MA-MG]:
+\[
+x + \frac{4}{x} \ge 2\sqrt{x \cdot \frac{4}{x}} = 2\sqrt{4} = 4.
+\]
+¡Todavía NO hemos terminado! Probar \(f(x) \ge 4\) solo demuestra que \(4\) es una cota inferior; para demostrar que \(4\) es el MÍNIMO VERDADERO, debemos verificar que algún \(x > 0\) admisible alcanza la igualdad. Por [REF: am-gm-two.2 | la condición de igualdad], la igualdad se cumple cuando
+\[
+x = \frac{4}{x} \iff x^2 = 4 \iff x = 2 \quad (\text{puesto que } x > 0).
+\]
+En efecto, \(f(2) = 2 + 2 = 4\). Por lo tanto, el valor mínimo de \(f(x)\) en \((0, \infty)\) es \(4\), alcanzado únicamente en \(x = 2\).
+
+[GRAPH]
+type: function2d
+title: Curva \(y = x + \frac{4}{x}\) en \((0, 8)\) tocando su cota inferior MA-MG \(y = 4\) en \((2, 4)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.4, 8
+yrange: 0, 12
+trace: x + 4/x | label: \(y = x + \frac{4}{x}\)
+trace: 4 | label: \(y = 4\)
+point: 2, 4 | label: \((2, 4)\)
+[/GRAPH]
+
+¡Nunca omita la comprobación de alcanzabilidad! Observe qué ocurre si restringimos una función similar a un dominio que EXCLUYE el punto de igualdad. Considere \(g(x) = x + \dfrac{2}{x}\) para \(x \ge 2\). MA-MG da la desigualdad verdadera
+\[
+x + \frac{2}{x} \ge 2\sqrt{2} \approx 2.828,
+\]
+con igualdad en \(x = \sqrt{2} \approx 1.414\). Como \(\sqrt{2}\) NO pertenece al dominio permitido \(x \ge 2\), \(2\sqrt{2}\) es ÚNICAMENTE una cota inferior holgada, no el mínimo. En \(x \ge 2\), \(g(x)\) es estrictamente creciente, y su mínimo real es \(g(2) = 3\).
+
+[CALLOUT]
+id: attainability-rule
+label: Error frecuente
+title: Una cota inferior no es automáticamente un mínimo
+tone: caution
+
+Demostrar \(f(x) \ge M\) en un dominio \(D\) establece que \(M\) es el MÍNIMO de \(f\) en \(D\) si y solo si existe al menos un punto \(x_0 \in D\) donde \(f(x_0) = M\) (es decir, la condición de igualdad de la desigualdad es efectivamente alcanzable dentro de \(D\)).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+¿Cuál es el valor mínimo de \(f(x) = 3x + \dfrac{12}{x}\) para \(x > 0\), y en qué valor de \(x\) se alcanza?
+
+(A) Mínimo \(6\), alcanzado en \(x = 1\)
+(B) Mínimo \(12\), alcanzado en \(x = 4\)
+(C) Mínimo \(15\), alcanzado en \(x = 1\)
+(D) Mínimo \(12\), alcanzado en \(x = 2\)
+(E) Mínimo \(6\sqrt{2}\), alcanzado en \(x = 2\)
+[/QUESTION]
+
+=== SECTION 2: Extensión de MA-MG a cuatro y tres variables ===
+
+¿Podemos extender MA-MG más allá de dos variables usando únicamente lo que ya sabemos? Observe un célebre truco: duplicar hacia adelante hasta cuatro variables y luego retroceder un paso hasta tres.
+
+Paso 1 (Cuatro variables por emparejamiento): Sean \(a, b, c, d \ge 0\). Aplique [REF: am-gm-two | MA-MG en dos variables] primero a los pares \((a, b)\) y \((c, d)\), y luego una vez más a las dos medias geométricas resultantes \(\sqrt{ab}\) y \(\sqrt{cd}\):
+\[
+\frac{a + b + c + d}{4} = \frac{\frac{a + b}{2} + \frac{c + d}{2}}{2} \ge \frac{\sqrt{ab} + \sqrt{cd}}{2} \ge \sqrt{\sqrt{ab}\cdot\sqrt{cd}} = \sqrt[4]{abcd}.
+\]
+La igualdad se cumple en todos los pasos si y solo si \(a = b\), \(c = d\) y \(\sqrt{ab} = \sqrt{cd}\), lo cual se simplifica a \(a = b = c = d\).
+
+Paso 2 (Tres variables por inducción hacia atrás): Sean ahora \(a, b, c \ge 0\). Si \(a = b = c = 0\), ambos lados de \(\dfrac{a + b + c}{3} \ge \sqrt[3]{abc}\) valen \(0\). En caso contrario, la media aritmética \(A = \dfrac{a + b + c}{3}\) es estrictamente positiva. Introduzca \(a, b, c\) junto con una cuarta copia \(d = A\) en la desigualdad de cuatro variables. Observe cómo el lado izquierdo permanece igual a \(A\):
+\[
+\frac{a + b + c + A}{4} = \frac{3A + A}{4} = A.
+\]
+Por lo tanto, MA-MG en cuatro variables da
+\[
+A \ge \sqrt[4]{abcA}.
+\]
+Eleve ambos lados no negativos a la cuarta potencia:
+\[
+A^4 \ge abcA.
+\]
+Como \(A > 0\), divida ambos lados entre \(A\) para obtener \(A^3 \ge abc\), y tome la raíz cúbica:
+\[
+\frac{a + b + c}{3} \ge \sqrt[3]{abc}.
+\]
+La igualdad se cumple si y solo si \(a = b = c = A\), es decir, \(a = b = c\).
+
+[CALLOUT]
+id: am-gm-three-identity
+label: Demostración alternativa
+title: Demostración por identidad algebraica de MA-MG en tres variables
+tone: note
+collapsed: true
+
+Sean \(x = \sqrt[3]{a}\), \(y = \sqrt[3]{b}\) y \(z = \sqrt[3]{c}\) (todos \(\ge 0\)). Un desarrollo directo verifica la identidad simétrica
+\[
+x^3 + y^3 + z^3 - 3xyz = \frac{1}{2}(x + y + z)\bigl[(x - y)^2 + (y - z)^2 + (z - x)^2\bigr].
+\]
+Cada factor de la derecha es no negativo, por lo que \(x^3 + y^3 + z^3 \ge 3xyz\), que equivale a \(a + b + c \ge 3\sqrt[3]{abc}\). La igualdad se cumple si y solo si o bien \(x + y + z = 0\) (forzando \(x = y = z = 0\)) o bien los tres cuadrados se anulan (forzando \(x = y = z\)), así que en todo caso \(a = b = c\).
+[/CALLOUT]
+
+Observe cómo MA-MG en tres variables nos permite minimizar expresiones donde un único término debe DIVIDIRSE en dos partes iguales para que la variable se cancele. Por ejemplo, para minimizar \(x + \dfrac{1}{x^2}\) para \(x > 0\), el producto \(x \cdot \dfrac{1}{x^2} = \dfrac{1}{x}\) NO cancela \(x\). Divida \(x = \dfrac{x}{2} + \dfrac{x}{2}\) en tres términos positivos cuyo producto SÍ es constante:
+\[
+\frac{x}{2} + \frac{x}{2} + \frac{1}{x^2} \ge 3\sqrt[3]{\frac{x}{2} \cdot \frac{x}{2} \cdot \frac{1}{x^2}} = 3\sqrt[3]{\frac{1}{4}} = \frac{3}{\sqrt[3]{4}},
+\]
+con igualdad cuando \(\dfrac{x}{2} = \dfrac{1}{x^2} \iff x^3 = 2 \iff x = \sqrt[3]{2}\).
+
+[QUESTION 2]
+[ANSWER: B]
+Para \(x > 0\), ¿cuál es el valor mínimo de \(f(x) = x^2 + \dfrac{16}{x}\), y en qué valor de \(x\) se alcanza?
+
+(A) Mínimo \(8\), alcanzado en \(x = 2\)
+(B) Mínimo \(12\), alcanzado en \(x = 2\)
+(C) Mínimo \(12\), alcanzado en \(x = 4\)
+(D) Mínimo \(16\), alcanzado en \(x = 1\)
+(E) Mínimo \(6\sqrt[3]{4}\), alcanzado en \(x = 2\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+Para minimizar \(h(x) = \dfrac{x^2 + 10}{\sqrt{x^2 + 9}}\) sobre \(x \in \mathbb{R}\), un estudiante reescribe \(h(x) = \sqrt{x^2 + 9} + \dfrac{1}{\sqrt{x^2 + 9}}\), aplica MA-MG para escribir \(h(x) \ge 2\sqrt{1} = 2\), y concluye que el valor mínimo de \(h(x)\) es \(2\). ¿Qué valoración es correcta?
+
+(A) La conclusión es correcta; el mínimo \(2\) se alcanza en \(x = 0\).
+(B) La desigualdad \(h(x) \ge 2\) es falsa porque \(x\) puede ser negativo.
+(C) La conclusión es correcta; el mínimo \(2\) se alcanza en \(x = \pm 3\).
+(D) La reescritura \(h(x) = \sqrt{x^2 + 9} + \dfrac{1}{\sqrt{x^2 + 9}}\) es algebraicamente inválida.
+(E) La desigualdad \(h(x) \ge 2\) es verdadera, pero \(2\) no es el mínimo porque la igualdad requiere \(\sqrt{x^2 + 9} = 1\), lo cual no tiene solución real.
+[/QUESTION]
+
+=== SECTION 3: La desigualdad de Cauchy-Schwarz mediante una cuadrática no negativa ===
+
+Suponga que se le dan dos listas de \(n\) números reales, \(a_1, a_2, \dots, a_n\) y \(b_1, b_2, \dots, b_n\) (¡que pueden ser positivos, negativos o cero!). ¿Qué tan grande puede ser la suma emparejada \(a_1 b_1 + a_2 b_2 + \dots + a_n b_n\) comparada con las sumas de cuadrados \(a_1^2 + \dots + a_n^2\) y \(b_1^2 + \dots + b_n^2\)?
+
+Para deducir la cota exacta a partir del signo definido cuadrático, construya una función de una variable real \(t\) sumando cuadrados:
+\[
+P(t) = \sum_{i=1}^{n} (a_i t - b_i)^2 = (a_1 t - b_1)^2 + (a_2 t - b_2)^2 + \dots + (a_n t - b_n)^2.
+\]
+Como cada término es el cuadrado de un número real, ¡\(P(t) \ge 0\) para TODO \(t \in \mathbb{R}\)!
+
+Ahora desarrolle cada cuadrado y agrupe potencias de \(t\):
+\[
+P(t) = \left(\sum_{i=1}^{n} a_i^2\right) t^2 - 2\left(\sum_{i=1}^{n} a_i b_i\right) t + \left(\sum_{i=1}^{n} b_i^2\right) = A t^2 - 2B t + C,
+\]
+donde \(A = \sum_{i=1}^{n} a_i^2\), \(B = \sum_{i=1}^{n} a_i b_i\) y \(C = \sum_{i=1}^{n} b_i^2\).
+
+- Caso degenerado (\(A = 0\)): Todo \(a_i = 0\), así que \(B = 0\), y \(B^2 \le AC\) se cumple trivialmente como \(0 \le 0\).
+- Caso principal (\(A > 0\)): Ahora \(P(t) = A t^2 - 2B t + C\) es una cuadrática genuina que abre hacia arriba y NUNCA se vuelve negativa en \(\mathbb{R}\). Por el criterio de signo definido cuadrático, una cuadrática que abre hacia arriba satisface \(P(t) \ge 0\) para todo \(t \in \mathbb{R}\) si y solo si su discriminante es no positivo:
+\[
+\Delta = (-2B)^2 - 4AC \le 0 \iff 4(B^2 - AC) \le 0 \iff B^2 \le AC.
+\]
+¿Cuándo se cumple la igualdad \(B^2 = AC\)? Exactamente cuando \(\Delta = 0\), lo que significa que \(P(t)\) tiene una raíz real \(t = \lambda \in \mathbb{R}\). Como \(P(\lambda) = \sum_{i=1}^{n} (a_i \lambda - b_i)^2 = 0\) es una suma de cuadrados, cada término debe anularse individualmente: \(b_i = \lambda a_i\) para todo \(i = 1, \dots, n\).
+
+[CALLOUT]
+id: cauchy-schwarz
+label: Teorema
+title: La desigualdad de Cauchy-Schwarz para sumas finitas
+tone: key
+
+Para todos los números reales \(a_1, \dots, a_n\) y \(b_1, \dots, b_n\):
+(1) \(\left(\displaystyle\sum_{i=1}^{n} a_i b_i\right)^2 \le \left(\displaystyle\sum_{i=1}^{n} a_i^2\right)\left(\displaystyle\sum_{i=1}^{n} b_i^2\right)\).
+(2) La igualdad se cumple si y solo si las dos tuplas son proporcionales: o bien todos los \(a_i = 0\), o bien existe \(\lambda \in \mathbb{R}\) tal que \(b_i = \lambda a_i\) para todo \(i = 1, \dots, n\).
+[/CALLOUT]
+
+La gráfica inferior ilustra esta demostración cuadrática con dos ejemplos de dos términos. Para \((a_1, a_2) = (1, 2)\) y \((b_1, b_2) = (2, 1)\) (NO proporcionales), \(P(t) = (t - 2)^2 + (2t - 1)^2 = 5t^2 - 8t + 5\) se mantiene estrictamente por encima del eje \(t\) (\(\Delta < 0\), dando la desigualdad estricta \(4^2 < 5 \cdot 5\)). Para el par proporcional \((a_1, a_2) = (1, 2)\) y \((b_1, b_2) = (2, 4)\), \(Q(t) = (t - 2)^2 + (2t - 4)^2 = 5(t - 2)^2\) toca el eje \(t\) en \(t = 2\) (\(\Delta = 0\), dando la igualdad exacta \(10^2 = 5 \cdot 20\)).
+
+[GRAPH]
+type: function2d
+title: \(P(t) > 0\) no proporcional frente a \(Q(t)\) proporcional tocando el eje \(t\) en \(t = 2\)
+xlabel: \(t\)
+ylabel: \(y\)
+xrange: -0.4, 3.4
+yrange: -1, 14
+trace: (x - 2)^2 + (2*x - 1)^2 | label: \(P(t) = (t - 2)^2 + (2t - 1)^2\)
+trace: (x - 2)^2 + (2*x - 4)^2 | label: \(Q(t) = (t - 2)^2 + (2t - 4)^2\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+Veamos ahora cómo [REF: cauchy-schwarz | Cauchy-Schwarz] resuelve problemas de optimización con restricciones en segundos.
+
+Ejemplo 2: Halle los valores máximo y mínimo de \(a + 2b\) sujeto a \(a^2 + b^2 = 1\).
+Empareje \(a + 2b = 1 \cdot a + 2 \cdot b\) en [REF: cauchy-schwarz.1 | Cauchy-Schwarz] con \((1, 2)\) y \((a, b)\):
+\[
+(1 \cdot a + 2 \cdot b)^2 \le (1^2 + 2^2)(a^2 + b^2) = 5 \cdot 1 = 5.
+\]
+Al tomar raíces cuadradas se obtiene \(-\sqrt{5} \le a + 2b \le \sqrt{5}\). Compruebe la alcanzabilidad mediante [REF: cauchy-schwarz.2 | la proporcionalidad]: tome \((a, b) = (\lambda, 2\lambda)\). Sustituir en \(a^2 + b^2 = 1\) da \(5\lambda^2 = 1 \iff \lambda = \pm \dfrac{1}{\sqrt{5}}\).
+- En \(\left(\dfrac{1}{\sqrt{5}}, \dfrac{2}{\sqrt{5}}\right)\), \(a + 2b = \sqrt{5}\) (el máximo exacto).
+- En \(\left(-\dfrac{1}{\sqrt{5}}, -\dfrac{2}{\sqrt{5}}\right)\), \(a + 2b = -\sqrt{5}\) (el mínimo exacto).
+
+Ejemplo 3 (emparejamiento con raíces cuadradas): Demuestre que \((x + y)\!\left(\dfrac{1}{x} + \dfrac{1}{y}\right) \ge 4\) para todo \(x, y > 0\).
+Elija \(a_1 = \sqrt{x}\), \(a_2 = \sqrt{y}\) y \(b_1 = \dfrac{1}{\sqrt{x}}\), \(b_2 = \dfrac{1}{\sqrt{y}}\). Entonces \(a_1 b_1 + a_2 b_2 = 1 + 1 = 2\), y [REF: cauchy-schwarz.1 | Cauchy-Schwarz] da
+\[
+(x + y)\!\left(\frac{1}{x} + \frac{1}{y}\right) \ge (1 + 1)^2 = 4,
+\]
+con igualdad si y solo si \(\dfrac{1/\sqrt{x}}{\sqrt{x}} = \dfrac{1/\sqrt{y}}{\sqrt{y}} \iff \dfrac{1}{x} = \dfrac{1}{y} \iff x = y\).
+
+[QUESTION 4]
+[ANSWER: C]
+Suponga que los números reales \(x\) e \(y\) satisfacen \(x^2 + y^2 = 25\). ¿Cuál es el valor máximo posible de \(3x - 4y\), y en qué punto \((x, y)\) se alcanza?
+
+(A) Máximo \(5\), alcanzado en \((3, -4)\)
+(B) Máximo \(25\), alcanzado en \((3, 4)\)
+(C) Máximo \(25\), alcanzado en \((3, -4)\)
+(D) Máximo \(25\), alcanzado en \((-3, 4)\)
+(E) Máximo \(35\), alcanzado en \((5, -5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Si \(a, b, c\) son números reales positivos que satisfacen \(a + b + c = 12\), ¿cuál es el valor mínimo posible de \(\dfrac{1}{a} + \dfrac{4}{b} + \dfrac{9}{c}\)?
+
+(A) \(3\)
+(B) \(\dfrac{7}{6}\)
+(C) \(\dfrac{9}{4}\)
+(D) \(4\)
+(E) \(6\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Para \(x > 1\), ¿cuál es el valor mínimo de \(f(x) = x + \dfrac{9}{x - 1}\), y en qué valor de \(x\) se alcanza?
+
+(A) Mínimo \(6\), alcanzado en \(x = 4\)
+(B) Mínimo \(6\), alcanzado en \(x = 3\)
+(C) Mínimo \(7\), alcanzado en \(x = 3\)
+(D) Mínimo \(7\), alcanzado en \(x = 4\)
+(E) Mínimo \(8\), alcanzado en \(x = 4\)
+[/BONUS]

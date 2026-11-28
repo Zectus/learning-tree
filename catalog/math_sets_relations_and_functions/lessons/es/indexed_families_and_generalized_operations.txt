@@ -1,0 +1,255 @@
+=== SECTION 1: Familias indexadas, uniones e intersecciones arbitrarias ===
+
+El álgebra elemental de conjuntos combina dos conjuntos \(A\) y \(B\) —o, por repetición, cualquier número finito \(A_1, A_2, \dots, A_k\). En análisis, topología y probabilidad, sin embargo, tomamos rutinariamente la unión o la intersección de infinitos conjuntos a la vez: por ejemplo, intervalos que se contraen \((-1/n, 1/n)\) para cada entero positivo \(n\), o una colección de intervalos indexada por todo número real \(t > 0\). Para tratar colecciones finitas, infinitas numerables y no numerables en un único marco unificado, indexamos los conjuntos mediante un conjunto de índices arbitrario \(I\).
+
+Una familia indexada de conjuntos es una colección \(\{A_i\}_{i \in I}\) (también escrita \((A_i)_{i \in I}\)) que asigna a cada índice \(i \in I\) un conjunto \(A_i\). Obsérvese que se permite que índices distintos designen el mismo conjunto: por ejemplo, con \(I = \mathbb{Z}\), la familia \(A_n = \{n^2\}\) tiene \(A_{-2} = A_2 = \{4\}\). Lo que importa es que cada \(i \in I\) especifique un conjunto \(A_i\).
+
+¿Cómo generalizamos la unión y la intersección de dos conjuntos a una familia indexada arbitraria? Para dos conjuntos, \(x \in A_1 \cup A_2\) significa que \(x\) pertenece AL MENOS A UNO de los dos conjuntos, mientras que \(x \in A_1 \cap A_2\) significa que \(x\) pertenece a TODOS ellos (ambos conjuntos). Sustituir «al menos uno» por un cuantificador existencial (\(\exists\)) y «todos» por un cuantificador universal (\(\forall\)) proporciona la definición general.
+
+[CALLOUT]
+id: arbitrary-union-inter
+label: Definición
+title: Unión arbitraria e intersección arbitraria
+tone: key
+
+Sea \(\{A_i\}_{i \in I}\) una familia indexada de subconjuntos de un universo ambiente fijo \(U\).
+
+(1) La unión de la familia es
+\[
+\bigcup_{i \in I} A_i = \{x \in U : \exists i \in I,\, x \in A_i\}.
+\]
+(2) La intersección de la familia es
+\[
+\bigcap_{i \in I} A_i = \{x \in U : \forall i \in I,\, x \in A_i\}.
+\]
+[/CALLOUT]
+
+Cuando el conjunto de índices es \(I = \{1, 2, \dots, n\}\), solemos escribir \(\bigcup_{i=1}^n A_i\) y \(\bigcap_{i=1}^n A_i\); cuando \(I = \mathbb{Z}^+ = \{1, 2, 3, \dots\}\), escribimos \(\bigcup_{n=1}^\infty A_n\) y \(\bigcap_{n=1}^\infty A_n\). ¡No se confunda el símbolo \(\infty\) con un elemento del conjunto de índices! No existe ningún conjunto «\(A_\infty\)» en la familia: la notación \(\bigcup_{n=1}^\infty A_n\) significa simplemente \(\bigcup_{n \in \mathbb{Z}^+} A_n\), de modo que \(x \in \bigcup_{n=1}^\infty A_n\) significa que existe un entero positivo finito \(n \ge 1\) tal que \(x \in A_n\).
+
+La traducción directa a cuantificadores nos indica de inmediato cómo demostrar o refutar la pertenencia a una unión o intersección arbitraria:
+- Para demostrar \(x \in \bigcup_{i \in I} A_i\): exhíbase UN índice específico \(i_0 \in I\) para el cual \(x \in A_{i_0}\).
+- Para demostrar \(x \notin \bigcup_{i \in I} A_i\): muéstrese que para TODO \(i \in I\), \(x \notin A_i\).
+- Para demostrar \(x \in \bigcap_{i \in I} A_i\): tómese \(i \in I\) arbitrario y muéstrese \(x \in A_i\).
+- Para demostrar \(x \notin \bigcap_{i \in I} A_i\): exhíbase UN índice específico \(i_0 \in I\) para el cual \(x \notin A_{i_0}\).
+
+Ahora bien, ¿qué ocurre en el caso límite en que el propio conjunto de índices es vacío, \(I = \emptyset\)? No hace falta adivinar; las definiciones mediante cuantificadores de [REF: arbitrary-union-inter | la definición anterior] determinan la respuesta automáticamente.
+
+[CALLOUT]
+id: empty-index-set
+label: Convención
+title: Operaciones sobre un conjunto de índices vacío \(I = \emptyset\)
+tone: caution
+
+Sea \(\{A_i\}_{i \in I}\) una familia de subconjuntos de un universo ambiente fijo \(U\). Cuando \(I = \emptyset\):
+
+(1) Unión vacía: \(\bigcup_{i \in \emptyset} A_i = \{x \in U : \exists i \in \emptyset,\, x \in A_i\} = \emptyset\), porque no existe ningún índice \(i \in \emptyset\) que atestigüe la pertenencia.
+(2) Intersección vacía (dentro de \(U\)): \(\bigcap_{i \in \emptyset} A_i = \{x \in U : \forall i \in \emptyset,\, x \in A_i\} = U\), porque para todo \(x \in U\) el enunciado universal \(\forall i,\,(i \in \emptyset \implies x \in A_i)\) es verdadero por vacuidad.
+[/CALLOUT]
+
+¿Por qué \(\bigcap_{i \in \emptyset} A_i = U\) es sensato y no paradójico? Piénsese en ir reduciendo un conjunto intersectándolo con cada vez más restricciones: partiendo de todo \(U\), cada conjunto adicional \(A_i\) con el que se intersecta solo puede restringir aún más los elementos. Cuando se imponen CERO restricciones (\(I = \emptyset\)), no se elimina ningún elemento de \(U\), ¡por lo que permanece todo elemento de \(U\)! Así como sumar cero números da el neutro aditivo \(0\) y multiplicar cero números da el neutro multiplicativo \(1\), tomar la unión de cero conjuntos da el neutro de la unión \(\emptyset\), y tomar la intersección de cero subconjuntos de \(U\) da el neutro de la intersección \(U\). Obsérvese que esto también explica por qué se requiere un universo ambiente \(U\) para que la intersección vacía esté bien definida: sin especificar \(U\), no existe un «conjunto universal de todo».
+
+[QUESTION 1]
+[ANSWER: C]
+Para cada \(i \in I = \{2, 3, 4, \dots\}\), defínase \(A_i = \{n \in \mathbb{Z}^+ : n \text{ es múltiplo de } i\}\). ¿Cuál de los siguientes conjuntos es igual a \(\bigcup_{i \in I} A_i\)?
+
+(A) \(\emptyset\)
+(B) \(\{1\}\)
+(C) \(\mathbb{Z}^+ \setminus \{1\}\)
+(D) El conjunto de todos los números primos
+(E) \(\mathbb{Z}^+\)
+[/QUESTION]
+
+=== SECTION 2: Familias infinitas de intervalos reales y comportamiento en la frontera ===
+
+Las uniones finitas de intervalos abiertos son abiertas, y las intersecciones finitas de intervalos abiertos son abiertas. Las operaciones infinitas rompen esa comodidad: una intersección infinita de intervalos abiertos puede colapsar en un único punto cerrado (o en \(\emptyset\)), y una unión infinita de intervalos cerrados puede formar un intervalo abierto. Observar cómo se comportan los puntos frontera bajo uniones e intersecciones infinitas es una de las habilidades más importantes en matemática.
+
+Calculemos con rigor tres familias infinitas canónicas de intervalos reales por doble inclusión, utilizando la propiedad arquimediana de \(\mathbb{R}\) (para todo número real \(x > 0\), existe \(n \in \mathbb{Z}^+\) tal que \(1/n < x\), o equivalentemente \(n > 1/x\)).
+
+Ejemplo 1: Considérese \(I_n = (-1/n, 1/n)\) para \(n \in \mathbb{Z}^+\). Afirmamos que
+\[
+\bigcap_{n=1}^\infty \left(-\frac{1}{n}, \frac{1}{n}\right) = \{0\}.
+\]
+- Inclusión \(\{0\} \subseteq \bigcap_{n=1}^\infty (-1/n, 1/n)\): Para todo \(n \in \mathbb{Z}^+\), tenemos \(-1/n < 0 < 1/n\), por lo que \(0 \in (-1/n, 1/n)\). Luego \(0\) pertenece a la intersección.
+- Inclusión \(\bigcap_{n=1}^\infty (-1/n, 1/n) \subseteq \{0\}\): Demostramos la contrarrecíproca: si \(x \in \mathbb{R}\) y \(x \ne 0\), entonces \(x \notin \bigcap_{n=1}^\infty (-1/n, 1/n)\). Como \(x \ne 0\), se tiene \(|x| > 0\). Escójase un entero positivo \(n_0\) tal que \(n_0 > 1/|x|\) (por ejemplo, cualquier entero estrictamente mayor que \(1/|x|\)). Entonces \(1/n_0 < |x|\), de modo que \(x \notin (-1/n_0, 1/n_0)\). Como encontramos un índice \(n_0 \in \mathbb{Z}^+\) cuyo intervalo excluye a \(x\), concluimos que \(x \notin \bigcap_{n=1}^\infty (-1/n, 1/n)\).
+
+Obsérvese cómo sobrevive un único punto \(\{0\}\) aun cuando todo intervalo \((-1/n, 1/n)\) es abierto y su longitud tiende a cero. Ahora desplacemos el extremo izquierdo de \(-1/n\) a \(0\).
+
+Ejemplo 2: Considérese \(J_n = (0, 1/n)\) para \(n \in \mathbb{Z}^+\). Afirmamos que
+\[
+\bigcap_{n=1}^\infty \left(0, \frac{1}{n}\right) = \emptyset.
+\]
+Demostración: Puesto que \(\emptyset\) es subconjunto de todo conjunto, solo necesitamos mostrar que ningún número real \(x\) pertenece a \(\bigcap_{n=1}^\infty (0, 1/n)\). Tómese cualquier \(x \in \mathbb{R}\).
+- Caso 1: \(x \le 0\). Entonces \(x \notin (0, 1) = J_1\), luego \(x\) no está en la intersección.
+- Caso 2: \(x > 0\). Escójase \(n_0 \in \mathbb{Z}^+\) con \(n_0 > 1/x\), de modo que \(1/n_0 < x\). Entonces \(x \notin (0, 1/n_0) = J_{n_0}\), luego \(x\) no está en la intersección.
+En ambos casos \(x \notin \bigcap_{n=1}^\infty (0, 1/n)\). Así la intersección es \(\emptyset\), aun cuando cada intervalo \(J_n\) es no vacío y está encajado (\(J_1 \supseteq J_2 \supseteq J_3 \supseteq \dots\)).
+
+Ejemplo 3: Considérense los intervalos cerrados crecientes \(K_n = [1/n, 1 - 1/n]\) para \(n \in \mathbb{Z}^+\) con \(n \ge 2\) (para \(n = 1\), \([1, 0]\) es vacío, lo cual no altera la unión). Afirmamos que
+\[
+\bigcup_{n=2}^\infty \left[\frac{1}{n}, 1 - \frac{1}{n}\right] = (0, 1).
+\]
+- Inclusión \(\bigcup_{n=2}^\infty [1/n, 1 - 1/n] \subseteq (0, 1)\): Sea \(x \in \bigcup_{n=2}^\infty [1/n, 1 - 1/n]\). Entonces existe algún \(n \ge 2\) tal que \(1/n \le x \le 1 - 1/n\). Como \(0 < 1/n\) y \(1 - 1/n < 1\), tenemos \(0 < x < 1\), de modo que \(x \in (0, 1)\).
+- Inclusión \((0, 1) \subseteq \bigcup_{n=2}^\infty [1/n, 1 - 1/n]\): Sea \(x \in (0, 1)\). Entonces TANTO \(x > 0\) COMO \(1 - x > 0\). Sea \(d = \min(x, 1 - x) > 0\), que es la distancia de \(x\) al extremo más cercano de \((0, 1)\). Escójase un entero \(n_0 \ge 2\) tal que \(1/n_0 < d\). Entonces \(1/n_0 < x\) y \(1/n_0 < 1 - x\) (lo que al reordenar da \(x < 1 - 1/n_0\)). Por consiguiente \(x \in [1/n_0, 1 - 1/n_0]\), luego \(x \in \bigcup_{n=2}^\infty [1/n, 1 - 1/n]\).
+
+En la gráfica siguiente, arrastre el deslizador \(n\) para observar cómo el intervalo cerrado \([1/n, 1 - 1/n]\) crece dentro del objetivo abierto \((0, 1)\) y, simultáneamente, cómo el intervalo abierto \((-1/n, 1/n)\) se comprime hacia \(0\). Debido a que una gráfica finita no puede distinguir visualmente un extremo abierto de uno cerrado sin convenciones adicionales, los marcadores verticales muestran las posiciones de la frontera mientras que las definiciones anteriores especifican qué extremos quedan incluidos.
+
+[GRAPH]
+type: function2d
+title: Expansión de \([1/n, 1 - 1/n]\) (arriba) y contracción de \((-1/n, 1/n)\) (abajo) al crecer \(n\)
+xlabel: \(x\)
+ylabel: nivel
+xrange: -1.2, 1.2
+yrange: -0.2, 2.5
+trace: 0 | color: #94a3b8
+segment: 0, 2, 1, 2 | label: \((0, 1)\) | color: #94a3b8 | dashed: true
+segment: 1/n, 1.6, 1 - 1/n, 1.6 | label: \([1/n, 1-1/n]\) | color: #2563eb
+point: 1/n, 1.6 | color: #2563eb
+point: 1 - 1/n, 1.6 | color: #2563eb
+segment: -1/n, 0.7, 1/n, 0.7 | label: \((-1/n, 1/n)\) | color: #ef4444
+point: 0, 0.7 | label: \(0\) | color: #16a34a
+slider: n | range: 2, 20 | init: 3 | step: 1
+[/GRAPH]
+
+Nótese el contraste en los extremos del Ejemplo 3: \(0\) nunca entra en \([1/n, 1 - 1/n]\) para NINGÚN \(n\) finito, porque \(0 < 1/n\) para todo \(n \ge 2\). Para ingresar en una unión infinita, un elemento debe aparecer en alguna etapa FINITA \(n_0\); el mero hecho de ser aproximado en el límite no incorpora un elemento a la unión.
+
+[QUESTION 2]
+[ANSWER: B]
+Para cada entero positivo \(n \in \mathbb{Z}^+\), sean \(A_n = [-1/n, 2 + 1/n)\) y \(B_n = (1/n, 3 - 1/n]\). ¿Qué conjuntos son \(\bigcap_{n=1}^\infty A_n\) y \(\bigcup_{n=1}^\infty B_n\), respectivamente?
+
+(A) \((0, 2)\) y \([0, 3]\)
+(B) \([0, 2]\) y \((0, 3)\)
+(C) \([0, 2)\) y \((0, 3]\)
+(D) \((0, 2]\) y \([0, 3)\)
+(E) \(\emptyset\) y \((0, 3)\)
+[/QUESTION]
+
+=== SECTION 3: Leyes de De Morgan generalizadas y distributividad ===
+
+Ahora elevamos las identidades booleanas fundamentales de pares de conjuntos a familias arbitrarias indexadas \(\{A_i\}_{i \in I}\). Las demostraciones emplean exactamente la misma estrategia de seguimiento de elementos de antes, impulsada por dos reglas fundamentales de la lógica de primer orden:
+- Negación del cuantificador: \(\lnot(\exists i \in I,\, P(i)) \iff \forall i \in I,\, \lnot P(i)\), y \(\lnot(\forall i \in I,\, P(i)) \iff \exists i \in I,\, \lnot P(i)\).
+- Extracción de un enunciado sin cuantificador fuera de un cuantificador: cuando \(Q\) no depende de \(i\),
+\[
+Q \land (\exists i \in I,\, P(i)) \iff \exists i \in I,\, (Q \land P(i)), \qquad Q \lor (\forall i \in I,\, P(i)) \iff \forall i \in I,\, (Q \lor P(i)).
+\]
+Esperemos: verifiquemos si esas dos leyes de distribución de cuantificadores siguen valiendo cuando \(I = \emptyset\).
+- Para \(Q \land (\exists i \in \emptyset,\, P(i))\): ambos lados son falsos sin importar \(Q\), así que coinciden.
+- Para \(Q \lor (\forall i \in \emptyset,\, P(i))\): ambos lados son verdaderos sin importar \(Q\), así que coinciden.
+(¿Y qué hay de \(Q \land (\forall i \in I,\, P(i)) \iff \forall i \in I,\, (Q \land P(i))\)? Cuando \(I = \emptyset\), el lado izquierdo es \(Q \land \text{verdadero} = Q\), mientras que el lado derecho es verdadero por vacuidad. Eso explica por qué las identidades siguientes —donde \(\cap\) distribuye sobre \(\bigcup\) y \(\cup\) distribuye sobre \(\bigcap\)— valen para TODO conjunto de índices \(I\), incluido \(I = \emptyset\).)
+
+[CALLOUT]
+id: generalized-laws
+label: Teorema
+title: Leyes de De Morgan generalizadas y distributividad
+tone: key
+
+Sea \(\{A_i\}_{i \in I}\) una familia indexada de subconjuntos de un universo ambiente \(U\), y sea \(B \subseteq U\).
+
+(1) Leyes de De Morgan generalizadas:
+\[
+\left(\bigcup_{i \in I} A_i\right)^c = \bigcap_{i \in I} A_i^c, \qquad \left(\bigcap_{i \in I} A_i\right)^c = \bigcup_{i \in I} A_i^c.
+\]
+(2) Distributividad generalizada:
+\[
+B \cap \left(\bigcup_{i \in I} A_i\right) = \bigcup_{i \in I} (B \cap A_i), \qquad B \cup \left(\bigcap_{i \in I} A_i\right) = \bigcap_{i \in I} (B \cup A_i).
+\]
+[/CALLOUT]
+
+Escribamos la demostración completa por seguimiento de elementos de la primera ley de De Morgan en [REF: generalized-laws.1 | las leyes de De Morgan generalizadas]. Tómese un elemento arbitrario \(x \in U\):
+\[
+\begin{aligned}
+x \in \left(\bigcup_{i \in I} A_i\right)^c &\iff x \notin \bigcup_{i \in I} A_i && \text{(definición de complemento)} \\
+&\iff \lnot\bigl(\exists i \in I,\, x \in A_i\bigr) && \text{(definición de unión arbitraria)} \\
+&\iff \forall i \in I,\, x \notin A_i && \text{(negación del cuantificador)} \\
+&\iff \forall i \in I,\, x \in A_i^c && \text{(definición de complemento)} \\
+&\iff x \in \bigcap_{i \in I} A_i^c && \text{(definición de intersección arbitraria).}
+\end{aligned}
+\]
+Como esta cadena de equivalencias vale para todo \(x \in U\), obtenemos \(\bigl(\bigcup_{i \in I} A_i\bigr)^c = \bigcap_{i \in I} A_i^c\). Obsérvese que la demostración no supuso que \(I\) fuera finito, numerable ni siquiera no vacío. Comprobemos \(I = \emptyset\) como prueba de coherencia: usando [REF: empty-index-set | las convenciones sobre el índice vacío], el miembro izquierdo es \(\emptyset^c = U\) y el miembro derecho es \(\bigcap_{i \in \emptyset} A_i^c = U\). ¡Concuerdan!
+
+La segunda ley de De Morgan se sigue exactamente por la misma negación de cuantificador (reemplazando \(\exists\) por \(\forall\)), o aún más rápido aplicando la primera ley a la familia complementada \(\{A_i^c\}_{i \in I}\) y tomando complementos en ambos lados.
+
+Ahora demostremos la segunda ley distributiva de [REF: generalized-laws.2 | distributividad generalizada], \(B \cup \bigl(\bigcap_{i \in I} A_i\bigr) = \bigcap_{i \in I} (B \cup A_i)\), por doble inclusión para practicar el manejo explícito de cuantificadores universales.
+- Inclusión directa \(\subseteq\): Sea \(x \in B \cup \bigl(\bigcap_{i \in I} A_i\bigr)\). Entonces \(x \in B\) o \(x \in \bigcap_{i \in I} A_i\). Para mostrar \(x \in \bigcap_{i \in I} (B \cup A_i)\), sea \(i \in I\) arbitrario. Si \(x \in B\), entonces \(x \in B \cup A_i\). Si \(x \in \bigcap_{i \in I} A_i\), entonces en particular \(x \in A_i\), de modo que de nuevo \(x \in B \cup A_i\). Como \(i \in I\) era arbitrario, \(x \in \bigcap_{i \in I} (B \cup A_i)\).
+- Inclusión inversa \(\supseteq\): Sea \(x \in \bigcap_{i \in I} (B \cup A_i)\). Queremos demostrar \(x \in B\) o \(x \in \bigcap_{i \in I} A_i\). Si \(x \in B\), hemos terminado de inmediato. De lo contrario, supóngase \(x \notin B\). Sea \(i \in I\) arbitrario. Puesto que \(x \in \bigcap_{j \in I} (B \cup A_j)\), tenemos \(x \in B \cup A_i\). Como \(x \notin B\), esto fuerza \(x \in A_i\). Al ser \(i \in I\) arbitrario, \(x \in \bigcap_{i \in I} A_i\), y por ende \(x \in B \cup \bigl(\bigcap_{i \in I} A_i\bigr)\).
+
+Obsérvese con atención la demostración de la inclusión inversa anterior: dividir en «\(x \in B\) o \(x \notin B\)» es la manera limpia y canónica de demostrar una disyunción \(P \lor Q\) (suponiendo \(\lnot P\) y deduciendo \(Q\)).
+
+[QUESTION 3]
+[ANSWER: D]
+Sea \(\{A_i\}_{i \in I}\) una familia indexada de subconjuntos de un universo \(U\), y sea \(B \subseteq U\). ¿Qué expresión es SIEMPRE igual a \(B \setminus \left(\bigcap_{i \in I} A_i\right)\)?
+
+(A) \(\bigcap_{i \in I} (B \setminus A_i)\)
+(B) \(\left(\bigcup_{i \in I} A_i\right) \setminus B\)
+(C) \(B \cap \left(\bigcap_{i \in I} A_i^c\right)\)
+(D) \(\bigcup_{i \in I} (B \setminus A_i)\)
+(E) \(\left(\bigcup_{i \in I} B\right) \setminus \left(\bigcup_{i \in I} A_i\right)\)
+[/QUESTION]
+
+=== SECTION 4: Conjuntos de índices no numerables, monotonía y conjuntos de índices anidados ===
+
+Los conjuntos de índices no tienen por qué ser subconjuntos de \(\mathbb{N}\): \(I\) puede ser un intervalo de números reales, un conjunto de pares o cualquier conjunto en absoluto. Trabajar con un conjunto de índices no numerable emplea exactamente las mismas reglas de cuantificadores.
+
+Considérese la familia no numerable indexada por \(I = (0, 1) \subseteq \mathbb{R}\), donde para cada \(t \in (0, 1)\) definimos el intervalo cerrado
+\[
+C_t = [t, 2 - t].
+\]
+¿Cuáles son \(\bigcup_{t \in (0, 1)} C_t\) y \(\bigcap_{t \in (0, 1)} C_t\)?
+- Para la unión: a medida que \(t\) se acerca a \(0\) por la derecha, el extremo izquierdo \(t\) se aproxima arbitrariamente a \(0\) (sin llegar nunca a \(0\)) y el extremo derecho \(2 - t\) se aproxima arbitrariamente a \(2\) (sin llegar nunca a \(2\)). Por ello conjeturamos \(\bigcup_{t \in (0, 1)} [t, 2 - t] = (0, 2)\). Verifiquemos ambas inclusiones:
+  - Si \(x \in [t, 2 - t]\) para algún \(t \in (0, 1)\), entonces \(0 < t \le x \le 2 - t < 2\), luego \(x \in (0, 2)\).
+  - Recíprocamente, sea \(x \in (0, 2)\). Necesitamos exhibir UN índice \(t_0 \in (0, 1)\) tal que \(t_0 \le x \le 2 - t_0\), es decir, \(t_0 \le x\) y \(t_0 \le 2 - x\). Escójase \(t_0 = \frac{1}{2}\min(x, 2 - x)\). Como \(x > 0\) y \(2 - x > 0\), tenemos \(t_0 > 0\); como \(\min(x, 2 - x) \le 1\) (los dos números \(x\) y \(2 - x\) promedian \(1\), de modo que el menor es a lo sumo \(1\)), tenemos \(t_0 \le 1/2 < 1\). Así \(t_0 \in (0, 1)\), y \(t_0 < \min(x, 2 - x)\) garantiza \(t_0 \le x \le 2 - t_0\). Por tanto \(x \in C_{t_0}\).
+- Para la intersección: a medida que \(t\) se acerca a \(1\) por la izquierda, \(t\) se aproxima arbitrariamente a \(1\) desde la izquierda y \(2 - t\) se aproxima a \(1\) desde la derecha. Todo intervalo \([t, 2 - t]\) con \(t \in (0, 1)\) contiene a \(1\) (puesto que \(t < 1 < 2 - t\)). ¿Pertenece algún otro número real \(x \ne 1\) a todo \(C_t\)? Si \(x < 1\), tómese \(t_0 \in (0, 1)\) con \(x < t_0 < 1\) (por ejemplo, \(t_0 = \frac{1 + \max(x, 0)}{2}\)); entonces \(x \notin [t_0, 2 - t_0]\). Si \(x > 1\), entonces \(2 - x < 1\), de modo que tomar \(t_0 \in (0, 1)\) con \(2 - x < t_0 < 1\) produce \(2 - t_0 < x\), de donde \(x \notin [t_0, 2 - t_0]\). Por consiguiente \(\bigcap_{t \in (0, 1)} [t, 2 - t] = \{1\}\).
+
+Otro principio estructural útil nos indica cómo afecta un cambio en el conjunto de índices a las uniones y las intersecciones. Supóngase que \(J \subseteq I\) son dos conjuntos de índices para una familia \(\{A_i\}_{i \in I}\) de subconjuntos de \(U\).
+- Las uniones crecen con el conjunto de índices: \(\bigcup_{j \in J} A_j \subseteq \bigcup_{i \in I} A_i\). En efecto, si \(x \in A_j\) para algún \(j \in J\), entonces ese mismo \(j\) pertenece a \(I\), por lo que \(x \in \bigcup_{i \in I} A_i\).
+- Las intersecciones decrecen con el conjunto de índices: \(\bigcap_{i \in I} A_i \subseteq \bigcap_{j \in J} A_j\). En efecto, si \(x \in A_i\) para todo \(i \in I\), entonces en particular \(x \in A_j\) para todo \(j \in J\).
+
+¡Cuídese de no invertir el sentido de esa segunda inclusión! Añadir más conjuntos a una intersección impone más condiciones sobre \(x\), haciendo que la intersección resultante sea más pequeña (o igual), nunca más grande.
+
+Por último, téngase cuidado al intercambiar el orden de una unión y una intersección sobre dos conjuntos de índices \(I\) y \(J\): para una familia doblemente indexada \(\{A_{i, j}\}_{i \in I, j \in J}\),
+\[
+\bigcup_{i \in I} \bigcap_{j \in J} A_{i, j} \subseteq \bigcap_{j \in J} \bigcup_{i \in I} A_{i, j}
+\]
+se cumple siempre —reflejando la implicación lógica \((\exists i\, \forall j\, P(i, j)) \implies (\forall j\, \exists i\, P(i, j))\)—, pero la igualdad suele fallar. Piénsese en una cuadrícula de conjuntos \(2 \times 2\) con \(I = \{1, 2\}\) y \(J = \{1, 2\}\): tómese \(A_{1, 1} = \{0\}\), \(A_{1, 2} = \emptyset\), \(A_{2, 1} = \emptyset\) y \(A_{2, 2} = \{0\}\). Cada columna \(j\) contiene a \(0\) en ALGUNA fila \(i\), por lo que \(\bigcap_{j \in J} \bigcup_{i \in I} A_{i, j} = \{0\}\); sin embargo, NINGUNA fila \(i\) por sí sola contiene a \(0\) en TODAS las columnas \(j\), por lo que \(\bigcup_{i \in I} \bigcap_{j \in J} A_{i, j} = \emptyset\).
+
+[QUESTION 4]
+[ANSWER: A]
+Para cada número real \(t \in I = [1, \infty)\), defínase \(D_t = (-t, 1/t]\). ¿Qué conjuntos son \(\bigcup_{t \in I} D_t\) y \(\bigcap_{t \in I} D_t\), respectivamente?
+
+(A) \((-\infty, 1]\) y \((-1, 0]\)
+(B) \((-\infty, 1)\) y \([-1, 0]\)
+(C) \((-\infty, 1]\) y \((-1, 0)\)
+(D) \((-\infty, 0]\) y \((-1, 1]\)
+(E) \(\mathbb{R}\) y \(\{0\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Sean \(\{A_i\}_{i \in I}\) y \(\{B_i\}_{i \in I}\) dos familias de conjuntos indexadas por el mismo conjunto no vacío \(I\). ¿Cuál de las siguientes inclusiones NO está garantizada en general?
+
+(A) \(\bigcup_{i \in I} (A_i \cap B_i) \subseteq \left(\bigcup_{i \in I} A_i\right) \cap \left(\bigcup_{i \in I} B_i\right)\)
+(B) \(\bigcap_{i \in I} (A_i \cap B_i) = \left(\bigcap_{i \in I} A_i\right) \cap \left(\bigcap_{i \in I} B_i\right)\)
+(C) \(\bigcup_{i \in I} (A_i \cup B_i) = \left(\bigcup_{i \in I} A_i\right) \cup \left(\bigcup_{i \in I} B_i\right)\)
+(D) \(\left(\bigcap_{i \in I} A_i\right) \cup \left(\bigcap_{i \in I} B_i\right) \subseteq \bigcap_{i \in I} (A_i \cup B_i)\)
+(E) \(\left(\bigcup_{i \in I} A_i\right) \cap \left(\bigcup_{i \in I} B_i\right) \subseteq \bigcup_{i \in I} (A_i \cap B_i)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Para cada \(n \in \mathbb{Z}^+\), sea \(E_n = \left\{x \in \mathbb{R} : x^2 < 1 + \frac{1}{n}\right\}\). ¿Qué conjunto es \(\bigcap_{n=1}^\infty E_n\)?
+
+(A) \((-1, 1)\)
+(B) \(\emptyset\)
+(C) \([-1, 1]\)
+(D) \(\{0\}\)
+(E) \([0, 1]\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Sea \(\{A_i\}_{i \in I}\) una familia de subconjuntos de un universo \(U\), y supóngase \(J \subseteq I\) con \(J \ne \emptyset\). ¿Cuál enunciado es SIEMPRE verdadero?
+
+(A) \(\bigcap_{j \in J} A_j \subseteq \bigcap_{i \in I} A_i\)
+(B) \(\left(\bigcup_{i \in I} A_i\right)^c \subseteq \left(\bigcup_{j \in J} A_j\right)^c\)
+(C) \(\bigcup_{i \in I} A_i \subseteq \bigcup_{j \in J} A_j\)
+(D) \(\left(\bigcap_{j \in J} A_j\right)^c \supseteq \left(\bigcap_{i \in I} A_i\right)^c\)
+(E) \(\bigcap_{i \in I} A_i = \bigcap_{j \in J} A_j\) siempre que \(I \setminus J\) sea finito
+[/BONUS]

@@ -1,0 +1,253 @@
+=== SECTION 1: Comparación de cardinalidades mediante inyecciones ===
+
+En las dos lecciones anteriores comparamos conjuntos únicamente por igualdad de cardinalidad (\(|A| = |B|\) mediante una biyección) y demostramos que \(\mathcal{P}(A)\) nunca es equipotente a \(A\). Para convertir la cardinalidad en un conjunto completo de herramientas de comparación —que diga cuándo un conjunto es «a lo sumo tan grande como» o «estrictamente menor que» otro—, sustituimos las biyecciones por INYECCIONES.
+
+[CALLOUT]
+id: cardinal-ineq-def
+label: Definición
+title: Desigualdad de cardinalidades (\(\le\) y \(<\))
+tone: key
+
+Sean \(A\) y \(B\) conjuntos.
+
+(1) Desigualdad débil: \(|A| \le |B|\) si existe una INYECCIÓN \(f : A \to B\).
+(2) Desigualdad estricta: \(|A| < |B|\) si \(|A| \le |B|\) Y \(|A| \ne |B|\) (es decir, existe una inyección \(A \to B\), pero NINGUNA biyección \(A \to B\)).
+[/CALLOUT]
+
+Comprobemos de inmediato las propiedades básicas de orden de \(\le\) sobre cardinalidades:
+- Reflexividad: \(|A| \le |A|\) para todo conjunto \(A\), atestiguada por la aplicación identidad inyectiva \(\operatorname{id}_A : A \to A\).
+- Transitividad: si \(|A| \le |B|\) y \(|B| \le |C|\), atestiguadas por inyecciones \(f : A \to B\) y \(g : B \to C\), entonces la compuesta \(g \circ f : A \to C\) es una inyección, luego \(|A| \le |C|\).
+- Monotonía respecto a subconjuntos: si \(A \subseteq B\), entonces la aplicación de inclusión \(\iota : A \hookrightarrow B\) es inyectiva, luego \(|A| \le |B|\).
+- Reenunciado del Teorema de Cantor: para TODO conjunto \(A\), \(a \mapsto \{a\}\) es una inyección \(A \to \mathcal{P}(A)\), dando \(|A| \le |\mathcal{P}(A)|\), mientras que el Teorema de Cantor prohíbe toda biyección \(A \to \mathcal{P}(A)\); por tanto \(|A| < |\mathcal{P}(A)|\).
+
+¿Podemos también caracterizar \(|A| \le |B|\) usando SOBREYECIONES en sentido contrario? Para \(A\) no vacío, SÍ —por nuestro teorema sobre inversas unilaterales:
+- Supongamos \(A \ne \emptyset\) y \(|A| \le |B|\), atestiguado por una inyección \(f : A \to B\). Como \(A \ne \emptyset\), \(f\) posee una inversa por la izquierda \(r : B \to A\) que satisface \(r \circ f = \operatorname{id}_A\); por consiguiente, \(r : B \to A\) es SOBREYECTIVA. (Obsérvese que esta dirección no usa ningún principio de elección.)
+- Recíprocamente, supongamos que existe una sobreyección \(q : B \to A\). Por nuestro teorema sobre inversas por la derecha (que invoca el Axioma de Elección para conjuntos infinitos arbitrarios carentes de estructura para escoger una preimagen por cada fibra \(q^{-1}(\{a\})\)), \(q\) posee una inversa por la derecha \(s : A \to B\) que satisface \(q \circ s = \operatorname{id}_A\); por consiguiente, \(s : A \to B\) es INYECTIVA, demostrando \(|A| \le |B|\).
+
+Obsérvese por qué \(A \ne \emptyset\) es esencial en esa equivalencia: cuando \(A = \emptyset\) y \(B \ne \emptyset\), se tiene \(|\emptyset| \le |B|\) (mediante la inyección vacía \(\emptyset \to B\)), pero NO existe ninguna sobreyección \(B \to \emptyset\) porque no existe ninguna función \(B \to \emptyset\).
+
+[QUESTION 1]
+[ANSWER: C]
+Sean \(A\) y \(B\) conjuntos no vacíos. ¿Qué afirmación es equivalente a \(|A| \le |B|\) (asumiendo el Axioma de Elección cuando sea necesario para conjuntos arbitrarios)?
+
+(A) Existe una sobreyección \(f : A \to B\)
+(B) Toda función \(f : A \to B\) es inyectiva
+(C) Existe una sobreyección \(q : B \to A\)
+(D) \(A\) es subconjunto de \(B\)
+(E) No existe ninguna inyección de \(B\) en \(A\)
+[/QUESTION]
+
+=== SECTION 2: El Teorema de Cantor–Schröder–Bernstein ===
+
+Acabamos de comprobar que \(\le\) sobre cardinalidades es reflexiva y transitiva. ¿Qué hay de la ANTISIMETRÍA? Es decir: si \(|A| \le |B|\) Y \(|B| \le |A|\) (lo que significa que existe una inyección \(f : A \to B\) Y una inyección \(g : B \to A\)), ¿DEBE existir una BIYECCIÓN \(h : A \to B\)?
+
+Para conjuntos finitos, esto es evidente por la desigualdad ordinaria de enteros (\(m \le n\) y \(n \le m\) implica \(m = n\)). Sin embargo, para conjuntos INFINITOS, \(f\) y \(g\) podrían omitir cada una infinitos elementos de sus codominios y entrelazarse de formas complicadas —no hay ninguna razón obvia por la que puedan empalmarse en una única biyección. Y sin embargo SIEMPRE se puede, y asombrosamente la construcción no requiere en absoluto el Axioma de Elección.
+
+[CALLOUT]
+id: csb-theorem
+label: Teorema
+title: Teorema de Cantor–Schröder–Bernstein (CSB)
+tone: key
+
+Sean \(A\) y \(B\) conjuntos. Si existen una inyección \(f : A \to B\) y una inyección \(g : B \to A\), entonces existe una biyección \(h : A \to B\).
+
+En notación de cardinalidades: si \(|A| \le |B|\) y \(|B| \le |A|\), entonces \(|A| = |B|\).
+[/CALLOUT]
+
+¿Cómo CONSTRUIMOS realmente la biyección \(h : A \to B\) a partir de \(f : A \to B\) y \(g : B \to A\)? Observe de cerca el obstáculo y deje que el obstáculo dicte la construcción exacta.
+
+Disponemos de dos reglas candidatas para enviar un elemento \(x \in A\) hacia \(B\):
+- Empujar hacia delante usando \(f(x) \in B\) (siempre definida para todo \(x \in A\)), O
+- Retroceder usando \(g^{-1}(x) \in B\) (definida ÚNICAMENTE cuando \(x \in g(B)\), y definida de forma única allí porque \(g\) es inyectiva).
+
+Considérese cualquier elemento «huérfano» \(x \in A_0 = A \setminus g(B)\). Como \(x \notin g(B)\), \(g^{-1}(x)\) NO EXISTE —no tenemos ELECCIÓN: todo \(x \in A_0\) DEBE enviarse a \(f(x)\).
+Obsérvese ahora el efecto dominó: una vez que \(x \in A_0\) reclama \(f(x) \in B\), el elemento \(g(f(x)) \in A\) YA NO PUEDE usar \(g^{-1}\) (porque \(g^{-1}(g(f(x))) = f(x)\) YA está tomado por \(x\)). Así que \(g(f(x))\) TAMBIÉN está obligado a usar \(f\).
+Eso fuerza a \((g \circ f)(g(f(x))) = (g \circ f)^2(x)\) a usar \(f\) también, ¡y así sucesivamente para siempre!
+
+Esto motiva reunir TODOS los elementos de \(A\) obligados a usar \(f\) en una única unión numerable. Defínase iterativamente:
+\[
+C_0 = A \setminus g(B), \qquad C_{n+1} = (g \circ f)(C_n) = (g \circ f)^{n+1}(A \setminus g(B)) \quad (n \in \mathbb{N}),
+\]
+y póngase
+\[
+C = \bigcup_{n=0}^{\infty} C_n = \bigcup_{n=0}^{\infty} (g \circ f)^n\bigl(A \setminus g(B)\bigr) \subseteq A.
+\]
+(Aquí \((g \circ f)^0 = \operatorname{id}_A\), de modo que \((g \circ f)^0(S) = S\).)
+
+Antes de definir \(h\), compruebe una identidad nítida sobre \(C\) usando nuestra ley de la unión para imágenes directas:
+\[
+(g \circ f)(C) = (g \circ f)\!\left(\bigcup_{n=0}^{\infty} C_n\right) = \bigcup_{n=0}^{\infty} (g \circ f)(C_n) = \bigcup_{n=0}^{\infty} C_{n+1} = \bigcup_{k=1}^{\infty} C_k.
+\]
+Por consiguiente,
+\[
+C = C_0 \cup \bigcup_{k=1}^{\infty} C_k = (A \setminus g(B)) \cup (g \circ f)(C).
+\]
+Ahora defínase \(h : A \to B\) a trozos:
+\[
+h(x) = \begin{cases} f(x) & \text{si } x \in C, \\ g^{-1}(x) & \text{si } x \in A \setminus C. \end{cases}
+\]
+
+Verifiquemos CADA requisito —buena definición, inyectividad y sobreyectividad— sin ningún argumento impreciso:
+
+1. Buena definición: Si \(x \in A \setminus C\), entonces en particular \(x \notin C_0 = A \setminus g(B)\), luego \(x \in g(B)\). Como \(g : B \to A\) es inyectiva, existe un ÚNICO \(y \in B\) tal que \(g(y) = x\), denotado \(g^{-1}(x)\). Puesto que \(C\) y \(A \setminus C\) particionan \(A\), \(h : A \to B\) está completamente bien definida.
+
+2. Inyectividad: Supongamos que \(x_1, x_2 \in A\) cumplen \(h(x_1) = h(x_2)\).
+   - Caso 1: \(x_1, x_2 \in C\). Entonces \(f(x_1) = f(x_2)\), luego \(x_1 = x_2\) porque \(f\) es inyectiva.
+   - Caso 2: \(x_1, x_2 \in A \setminus C\). Entonces \(g^{-1}(x_1) = g^{-1}(x_2)\); aplicando \(g\) a ambos lados se obtiene \(x_1 = g(g^{-1}(x_1)) = g(g^{-1}(x_2)) = x_2\).
+   - Caso 3 (¡comprobación entre ramas!): ¿Podrían \(x_1 \in C\) y \(x_2 \in A \setminus C\) cumplir \(h(x_1) = h(x_2)\)? Eso significaría \(f(x_1) = g^{-1}(x_2)\). Aplíquese \(g\) a ambos lados:
+   \[
+   x_2 = g\bigl(g^{-1}(x_2)\bigr) = g\bigl(f(x_1)\bigr) = (g \circ f)(x_1) \in (g \circ f)(C) \subseteq C.
+   \]
+   ¡Contradicción, porque \(x_2 \in A \setminus C\)! De modo que las colisiones entre ramas son imposibles, y \(h\) es INYECTIVA.
+
+3. Sobreyectividad: Sea \(y \in B\) arbitrario. Solo hay dos posibilidades:
+   - Caso 1: \(y \in f(C)\). Entonces \(y = f(x)\) para algún \(x \in C\), luego \(h(x) = f(x) = y\).
+   - Caso 2: \(y \notin f(C)\). Considérese el elemento \(x = g(y) \in A\). ¿Puede \(x\) pertenecer a \(C\)? Recuérdese \(C = (A \setminus g(B)) \cup (g \circ f)(C)\). Como \(x = g(y) \in g(B)\), sabemos que \(x \notin A \setminus g(B)\). Si \(x \in (g \circ f)(C)\), entonces \(g(y) = g(f(c))\) para algún \(c \in C\); como \(g\) es inyectiva, esto fuerza \(y = f(c) \in f(C)\), contradiciendo \(y \notin f(C)\). ¡Por tanto \(x = g(y)\) DEBE pertenecer a \(A \setminus C\)! Evaluando \(h\) en \(x \in A \setminus C\) resulta
+   \[
+   h(x) = g^{-1}(x) = g^{-1}\bigl(g(y)\bigr) = y.
+   \]
+   Así, TODO \(y \in B\) es alcanzado, demostrando que \(h\) es SOBREYECTIVA —y por ende una BIYECCIÓN.
+
+Obsérvese cuán limpiamente funciona esa demostración: SIN diagramas vagos de cadenas infinitas, SIN análisis por casos de ciclos frente a cadenas doblemente infinitas, y SIN Axioma de Elección.
+
+[QUESTION 2]
+[ANSWER: B]
+En la demostración por unión iterada del [REF: csb-theorem | Teorema de Cantor–Schröder–Bernstein] con \(C = \bigcup_{n=0}^{\infty} (g \circ f)^n(A \setminus g(B))\) y \(h(x) = f(x)\) en \(C\), \(h(x) = g^{-1}(x)\) en \(A \setminus C\): ¿por qué es IMPOSIBLE que un elemento \(x_1 \in C\) y un elemento \(x_2 \in A \setminus C\) colisionen bajo \(h\) (es decir, cumplan \(h(x_1) = h(x_2)\))?
+
+(A) Porque se supone que \(f\) y \(g\) son sobreyectivas
+(B) Porque \(f(x_1) = g^{-1}(x_2)\) implica \(x_2 = g(f(x_1)) \in (g \circ f)(C) \subseteq C\), contradiciendo \(x_2 \in A \setminus C\)
+(C) Porque \(C\) es siempre vacío salvo que \(A = B\)
+(D) Porque \(g(f(C))\) es disjunto de \(C\)
+(E) Porque \(A \setminus g(B)\) es siempre finito
+[/QUESTION]
+
+=== SECTION 3: Equipotencia sin esfuerzo — intervalos, \(\mathbb{R}\), \(\{0, 1\}^{\mathbb{N}}\) y \(\mathcal{P}(\mathbb{N})\) ===
+
+El verdadero poder del [REF: csb-theorem | teorema de Cantor–Schröder–Bernstein] aparece en el instante en que comparamos conjuntos infinitos cuyas biyecciones explícitas son incómodas de escribir. En lugar de diseñar una biyección delicada, simplemente escribimos DOS inyecciones fáciles —una en cada sentido.
+
+Aplicación 1: Los intervalos abiertos, cerrados y semiabiertos tienen todos la MISMA cardinalidad:
+\[
+|(0, 1)| = |[0, 1]| = |[0, 1)| = |(0, 1]| = |\mathbb{R}|.
+\]
+Demostración para \(|(0, 1)| = |[0, 1]|\):
+- Inyección \(f : (0, 1) \to [0, 1]\): la aplicación de inclusión \(f(x) = x\) (trivialmente inyectiva).
+- Inyección \(g : [0, 1] \to (0, 1)\): la contracción lineal \(g(x) = \frac{1}{4} + \frac{1}{2}x\), que aplica \([0, 1]\) inyectivamente sobre \([\frac{1}{4}, \frac{3}{4}] \subseteq (0, 1)\).
+Por CSB, \(|(0, 1)| = |[0, 1]|\) en DOS líneas (sin necesidad de cirugía en los extremos al estilo del Hotel de Hilbert). Y como \((0, 1) \subseteq [0, 1) \subseteq [0, 1]\) y \((0, 1) \subseteq (0, 1] \subseteq [0, 1]\), intercalar con inclusiones da \(|(0, 1)| \le |[0, 1)| \le |[0, 1]| = |(0, 1)|\), de modo que CSB fuerza inmediatamente \(|[0, 1)| = |(0, 1]| = |(0, 1)| = |\mathbb{R}|\).
+
+[GRAPH]
+type: function2d
+title: Dos inyecciones opuestas para CSB: inclusión \(f(x) = x\) en \((0, 1)\) y contracción \(g(x) = \frac{1}{4} + \frac{1}{2}x\) de \([0, 1]\) en \((0, 1)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 1
+yrange: 0, 1
+aspect: equal
+trace: x | label: \(f(x) = x\) | color: #2563eb
+trace: 0.25 + 0.5*x | label: \(g(x) = 0.25 + 0.5x\) | color: #16a34a
+point: 0, 0.25 | label: \((0, 0.25)\) | color: #16a34a | offset: 28, -4
+point: 1, 0.75 | label: \((1, 0.75)\) | color: #16a34a | offset: -28, 8
+segment: 0, 0.25, 0, 0.75 | color: #16a34a
+[/GRAPH]
+
+Aplicación 2: Los números reales tienen EXACTAMENTE LA MISMA cardinalidad que las sucesiones binarias infinitas y que \(\mathcal{P}(\mathbb{N})\):
+\[
+|\mathbb{R}| = |(0, 1)| = |\{0, 1\}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{N})|.
+\]
+En la lección anterior demostramos que TANTO \((0, 1)\) COMO \(\{0, 1\}^{\mathbb{N}}\) son no numerables —¿podría uno ser estrictamente mayor que el otro? CSB lo resuelve limpiamente:
+- Inyección \(f : (0, 1) \to \{0, 1\}^{\mathbb{N}}\): escríbase cada \(x \in (0, 1)\) en su expansión binaria (base 2) \(x = \sum_{k=1}^{\infty} b_k 2^{-k} = 0.b_1 b_2 b_3 \dots_2\) (resolviendo la falta de unicidad eligiendo siempre la representación que NO termina en \(1\) periódicos, por ejemplo \(1/2 = 0.1000\dots_2\)). Defínase \(f(x) = (b_1, b_2, b_3, \dots) \in \{0, 1\}^{\mathbb{N}}\). Si \(f(x) = f(y)\), entonces \(x\) e \(y\) tienen exactamente la misma expansión binaria, luego \(x = y\). Así pues, \(f\) es inyectiva.
+- Inyección \(g : \{0, 1\}^{\mathbb{N}} \to (0, 1)\): dada cualquier sucesión binaria \(a = (a_1, a_2, a_3, \dots) \in \{0, 1\}^{\mathbb{N}}\), defínase el número real en BASE 10 (decimal) \(g(a) = 0.d_1 d_2 d_3 \dots_{10}\) donde
+\[
+d_n = \begin{cases} 3 & \text{si } a_n = 0, \\ 7 & \text{si } a_n = 1. \end{cases}
+\]
+Como \(g(a)\) utiliza únicamente los dígitos \(3\) y \(7\), se tiene \(g(a) \in (0, 1)\) Y su expansión decimal es ÚNICA. Por tanto, si \(a \ne a'\) difieren en la coordenada \(n\), entonces \(g(a)\) y \(g(a')\) difieren en su \(n\)-ésimo dígito decimal y no pueden representar el mismo número real, luego \(g(a) \ne g(a')\). En consecuencia, \(g\) es inyectiva.
+- Por [REF: csb-theorem | CSB], \(|(0, 1)| = |\{0, 1\}^{\mathbb{N}}|\). Combinado con \(|\mathbb{R}| = |(0, 1)|\) y \(|\{0, 1\}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{N})|\), obtenemos
+\[
+|\mathbb{R}| = |(0, 1)| = |[0, 1]| = |\{0, 1\}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{N})|.
+\]
+Esta cardinalidad común se denomina cardinalidad del continuo, a menudo denotada por \(\mathfrak{c}\) (o \(2^{\aleph_0}\)), mientras que la cardinalidad de \(\mathbb{N}\) se denota por \(\aleph_0\).
+
+[QUESTION 3]
+[ANSWER: D]
+Queremos demostrar \(|\mathbb{R} \setminus \mathbb{Z}| = |\mathbb{R}|\) usando el [REF: csb-theorem | Teorema de Cantor–Schröder–Bernstein]. ¿Qué par de inyecciones lo consigue limpiamente?
+
+(A) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) por \(f(x) = x\), y \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) por \(g(x) = x + 1\)
+(B) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) por \(f(x) = \lfloor x \rfloor\), y \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) por \(g(x) = \frac{1}{2} + \frac{1}{\pi}\arctan(x)\)
+(C) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) por \(f(x) = x^2\), y \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) por \(g(x) = x + \frac{1}{2}\)
+(D) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) por \(f(x) = x\), y \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) por \(g(x) = \frac{1}{2} + \frac{1}{\pi}\arctan(x)\) (cuya imagen es \((0, 1) \subseteq \mathbb{R} \setminus \mathbb{Z}\))
+(E) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) por \(f(x) = x\), y \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) por \(g(x) = x + \frac{1}{2}\)
+[/QUESTION]
+
+=== SECTION 4: El plano iguala a la recta — \(|\mathbb{R} \times \mathbb{R}| = |\mathbb{R}|\) ===
+
+Uno de los descubrimientos más asombrosos de Cantor (acerca del cual escribió a Dedekind en 1877: «¡Lo veo, pero no lo creo!») es que un cuadrado bidimensional \([0, 1] \times [0, 1]\) —y todo el plano \(\mathbb{R} \times \mathbb{R}\)— tiene EXACTAMENTE LA MISMA cardinalidad que la recta unidimensional \(\mathbb{R}\).
+
+Demostremos \(|\mathbb{R} \times \mathbb{R}| = |\mathbb{R}|\) limpiamente mediante CSB e intercalado de dígitos. Como \(|\mathbb{R}| = |(0, 1)|\), tenemos \(|\mathbb{R} \times \mathbb{R}| = |(0, 1) \times (0, 1)|\) (mediante la biyección producto \((x, y) \mapsto (f^{-1}(x), f^{-1}(y))\)). Basta pues demostrar \(|(0, 1) \times (0, 1)| = |(0, 1)|\).
+
+- Primera inyección \(f : (0, 1) \to (0, 1) \times (0, 1)\): defínase \(f(x) = (x, 0.5)\). Evidentemente inyectiva.
+- Segunda inyección \(g : (0, 1) \times (0, 1) \to (0, 1)\): para cada número real \(x \in (0, 1)\), elíjase su ÚNICA expansión decimal \(x = 0.x_1 x_2 x_3 \dots\) que NO termina en \(9\) periódicos (de modo que infinitos dígitos de \(x\) son distintos de \(9\)). Dado \((x, y) \in (0, 1) \times (0, 1)\) con \(x = 0.x_1 x_2 x_3 \dots\) e \(y = 0.y_1 y_2 y_3 \dots\), INTERCÁLENSE sus dígitos en un único decimal:
+\[
+g(x, y) = 0.x_1 y_1 x_2 y_2 x_3 y_3 \dots.
+\]
+Por ejemplo, \(g(0.123000\dots,\; 0.456000\dots) = 0.142536000\dots\).
+
+Compruebe con cuidado que \(g\) cae dentro de \((0, 1)\) y es INYECTIVA (pese a la falta de unicidad decimal):
+1. ¿Pertenece \(g(x, y)\) a \((0, 1)\)? Como \(x \in (0, 1)\), al menos un dígito \(x_k\) es no nulo, luego \(g(x, y) > 0\). Como \(x\) tiene infinitos dígitos \(\ne 9\), el decimal intercalado \(g(x, y)\) también tiene infinitos dígitos \(\ne 9\), luego \(g(x, y) < 1\) Y \(g(x, y)\) NO termina en \(9\) periódicos.
+2. ¿Es \(g\) inyectiva? Supongamos \((x, y) \ne (x', y')\). Entonces \(x \ne x'\) o \(y \ne y'\), por lo que sus expansiones elegidas sin \(9\) periódicos difieren en algún dígito \(k\) (ya sea \(x_k \ne x'_k\) o \(y_k \ne y'_k\)). En consecuencia, las expansiones intercaladas de \(g(x, y)\) y \(g(x', y')\) difieren en la posición \(2k - 1\) o \(2k\). De manera crucial, NINGUNO de \(g(x, y)\) ni \(g(x', y')\) termina en \(9\) periódicos —¿podría uno terminar en \(0\) periódicos mientras el otro termina en \(9\) periódicos? NO, porque NINGUNO termina en \(9\) periódicos. Por tanto, dos cadenas decimales distintas sin \(9\) periódicos SIEMPRE representan dos números reales distintos, luego \(g(x, y) \ne g(x', y')\).
+
+(¿Por qué usamos CSB en vez de afirmar que \(g\) es una biyección? Porque \(g\) NO es sobreyectiva: el número \(0.59090909\dots \in (0, 1)\) se desintercalaría en \(x = 0.5000\dots\) e \(y = 0.9999\dots\), ¡que estaba prohibida como representación! CSB nos permite esquivar por completo ese problema de sobreyectividad.)
+
+Por [REF: csb-theorem | CSB], \(|(0, 1) \times (0, 1)| = |(0, 1)|\), y por lo tanto \(|\mathbb{R} \times \mathbb{R}| = |\mathbb{R}|\). Por inducción, \(|\mathbb{R}^n| = |\mathbb{R}|\) para toda dimensión finita \(n \in \mathbb{Z}^+\).
+
+Reunamos todo nuestro mapa de cardinalidades en una tabla de referencia, contrastando las igualdades de CSB frente a las desigualdades estrictas de Cantor:
+
+[TABLE]
+Nivel de cardinalidad | Notación | Conjuntos representativos de esta cardinalidad exacta
+Finito | \(0, 1, 2, \dots, n\) | \(\emptyset,\; \{1, \dots, n\},\; \mathcal{P}(\{1, \dots, k\})\) (tamaño \(2^k\))
+Infinito numerable | \(\aleph_0 = |\mathbb{N}|\) | \(\mathbb{N},\; \mathbb{Z},\; \mathbb{N} \times \mathbb{N},\; \mathbb{Q},\; \{0, 1\}^*,\; \mathbb{Q}[x],\; \mathcal{P}_{\mathrm{fin}}(\mathbb{N})\)
+Continuo | \(\mathfrak{c} = |\mathbb{R}| = |\mathcal{P}(\mathbb{N})|\) | \((0, 1),\; [0, 1],\; \mathbb{R},\; \mathbb{R} \setminus \mathbb{Q},\; \{0, 1\}^{\mathbb{N}},\; \mathcal{P}(\mathbb{N}),\; \mathbb{R} \times \mathbb{R},\; \mathbb{R}^n\)
+Estrictamente mayor que \(\mathfrak{c}\) | \(|\mathcal{P}(\mathbb{R})| > \mathfrak{c}\) | \(\mathcal{P}(\mathbb{R}),\; \{0, 1\}^{\mathbb{R}}\) (todas las funciones \(\mathbb{R} \to \{0, 1\}\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: E]
+¿Cuál de los siguientes conjuntos tiene una cardinalidad ESTRICTAMENTE MAYOR que \(|\mathbb{R}|\)?
+
+(A) \([0, 1] \times [0, 1]\)
+(B) \(\mathbb{R}^3\)
+(C) \(\mathcal{P}(\mathbb{Q})\)
+(D) \(\{0, 1\}^{\mathbb{N}}\)
+(E) El conjunto \(\{0, 1\}^{\mathbb{R}}\) de todas las funciones \(f : \mathbb{R} \to \{0, 1\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Sea \(\mathbb{N}^{\mathbb{N}}\) el conjunto de todas las funciones \(f : \mathbb{N} \to \mathbb{N}\). Usando el hecho de que toda función \(f : \mathbb{N} \to \mathbb{N}\) queda unívocamente determinada por su grafo \(\Gamma_f \subseteq \mathbb{N} \times \mathbb{N}\) (de modo que \(f \mapsto \Gamma_f\) inyecta \(\mathbb{N}^{\mathbb{N}}\) en \(\mathcal{P}(\mathbb{N} \times \mathbb{N})\)), ¿cuál es la cardinalidad exacta de \(\mathbb{N}^{\mathbb{N}}\)?
+
+(A) \(|\mathbb{N}^{\mathbb{N}}| = |\mathbb{N}|\) (infinito numerable)
+(B) \(|\mathbb{N}^{\mathbb{N}}| = |\mathbb{R}|\) (cardinalidad del continuo)
+(C) \(|\mathbb{N}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{R})|\) (estrictamente mayor que \(|\mathbb{R}|\))
+(D) \(|\mathbb{N}| < |\mathbb{N}^{\mathbb{N}}| < |\mathbb{R}|\)
+(E) \(|\mathbb{N}^{\mathbb{N}}| = |\mathcal{P}(\mathcal{P}(\mathbb{N}))|\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Aplíquese explícitamente la construcción de CSB por unión iterada a \(A = \mathbb{N}\), \(B = \mathbb{N}\), con inyecciones \(f : \mathbb{N} \to \mathbb{N}\) dada por \(f(n) = n + 2\) y \(g : \mathbb{N} \to \mathbb{N}\) dada por \(g(n) = n + 1\). ¿Cuál es el conjunto \(C = \bigcup_{k=0}^{\infty} (g \circ f)^k(A \setminus g(B))\), y cuánto vale \(h(4)\) para la biyección CSB resultante \(h : \mathbb{N} \to \mathbb{N}\)?
+
+(A) \(C = \{0, 3, 6, 9, \dots\} = \{3k : k \in \mathbb{N}\}\), y \(h(4) = 3\)
+(B) \(C = \{0, 3, 6, 9, \dots\} = \{3k : k \in \mathbb{N}\}\), y \(h(4) = 6\)
+(C) \(C = \{0, 2, 4, 6, \dots\} = 2\mathbb{N}\), y \(h(4) = 6\)
+(D) \(C = \{0, 1, 3, 4, 6, 7, \dots\}\), y \(h(4) = 6\)
+(E) \(C = \emptyset\), y \(h(4) = 3\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Sea \(S = \{0, 1, 2, 3, 4\}\) y supongamos que \(A\) es un conjunto infinito tal que \(|A| = |\mathbb{R}|\). ¿Cuál es la cardinalidad del conjunto de todas las funciones de \(S\) en \(A\) (denotado \(A^S\)), y cuál es la cardinalidad del conjunto de todas las funciones de \(A\) en \(S\) (denotado \(S^A\))?
+
+(A) \(|A^S| = |\mathbb{R}|\) y \(|S^A| = |\mathbb{R}|\)
+(B) \(|A^S| = |\mathcal{P}(\mathbb{R})|\) y \(|S^A| = |\mathbb{R}|\)
+(C) \(|A^S| = |\mathbb{R}|\) y \(|S^A| = |\mathcal{P}(\mathbb{R})|\)
+(D) \(|A^S| = |\mathbb{N}|\) y \(|S^A| = |\mathcal{P}(\mathbb{R})|\)
+(E) \(|A^S| = |\mathbb{R}|\) y \(|S^A| > |\mathcal{P}(\mathbb{R})|\)
+[/BONUS]

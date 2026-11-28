@@ -1,0 +1,261 @@
+=== SECTION 1: Floor, ceiling, and fractional part ===
+
+Everyday quantities such as full hours elapsed, shipping boxes required, or whole dollars below a price tag snap a continuous real number to a nearby integer. Mathematics captures these two rounding directions with the floor and ceiling functions, and keeps track of the leftover piece with the fractional part.
+
+[CALLOUT]
+id: floor-ceil-def
+label: Definition
+title: Floor, ceiling, and fractional part
+tone: key
+
+For every real number \(x \in \mathbb{R}\):
+(1) The floor (greatest integer) \(\lfloor x \rfloor\) is the greatest integer less than or equal to \(x\). It is characterized by
+\[
+\lfloor x \rfloor \in \mathbb{Z} \qquad \text{and} \qquad \lfloor x \rfloor \le x < \lfloor x \rfloor + 1.
+\]
+(2) The ceiling (least integer) \(\lceil x \rceil\) is the least integer greater than or equal to \(x\). It is characterized by
+\[
+\lceil x \rceil \in \mathbb{Z} \qquad \text{and} \qquad \lceil x \rceil - 1 < x \le \lceil x \rceil.
+\]
+(3) The fractional part \(\{x\}\) is defined by \(\{x\} = x - \lfloor x \rfloor\). Every real number \(x\) decomposes uniquely as \(x = n + f\), where \(n = \lfloor x \rfloor \in \mathbb{Z}\) and \(0 \le f = \{x\} < 1\).
+[/CALLOUT]
+
+Equivalently, for any integer \(n \in \mathbb{Z}\):
+\[
+\lfloor x \rfloor = n \iff n \le x < n + 1, \qquad \lceil x \rceil = n \iff n - 1 < x \le n.
+\]
+
+Be especially careful with NEGATIVE non-integers! "Floor" always moves LEFT (downward) on the number line, and "ceiling" always moves RIGHT (upward)—never "toward zero."
+
+[CALLOUT]
+id: negative-rounding-trap
+label: Common pitfall
+title: Rounding negative real numbers
+tone: caution
+
+For \(x = -2.3\), the neighboring integers are \(-3 < -2.3 < -2\), so:
+(1) \(\lfloor -2.3 \rfloor = -3\) (NOT \(-2\), since \(-2 > -2.3\)).
+(2) \(\lceil -2.3 \rceil = -2\) (NOT \(-3\)).
+(3) \(\{-2.3\} = -2.3 - (-3) = 0.7 \in [0, 1)\) (NEVER \(-0.3\); fractional part is always non-negative!).
+[/CALLOUT]
+
+The graph below displays the horizontal steps of \(y = \lfloor x \rfloor\) trapped cleanly inside the diagonal strip \(x - 1 < y \le x\). Each solid dot marks a closed left endpoint \((n, n)\); the right endpoint \((n + 1, n)\) of each step is open because \(\lfloor n + 1 \rfloor\) jumps up to \(n + 1\).
+
+[GRAPH]
+type: function2d
+title: Step graph of \(y = \lfloor x \rfloor\) bounded between \(y = x\) and \(y = x - 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -3.5, 3
+trace: x | label: \(y = x\)
+trace: x - 1 | label: \(y = x - 1\)
+segment: -3, -3, -2, -3 | color: #10b981
+segment: -2, -2, -1, -2 | color: #10b981
+segment: -1, -1, 0, -1 | color: #10b981
+segment: 0, 0, 1, 0 | color: #10b981
+segment: 1, 1, 2, 1 | color: #10b981
+segment: 2, 2, 3, 2 | color: #10b981
+point: -3, -3 | label: \((-3, -3)\) | color: #10b981
+point: -2, -2 | color: #10b981
+point: -1, -1 | color: #10b981
+point: 0, 0 | label: \((0, 0)\) | color: #10b981
+point: 1, 1 | color: #10b981
+point: 2, 2 | label: \((2, 2)\) | color: #10b981
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+What are the exact values of \(\lfloor -3.4 \rfloor\), \(\lceil -3.4 \rceil\), and \(\{-3.4\}\)?
+
+(A) \(\lfloor -3.4 \rfloor = -3\), \(\lceil -3.4 \rceil = -4\), \(\{-3.4\} = -0.4\)
+(B) \(\lfloor -3.4 \rfloor = -4\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = -0.4\)
+(C) \(\lfloor -3.4 \rfloor = -4\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = 0.6\)
+(D) \(\lfloor -3.4 \rfloor = -3\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = 0.4\)
+(E) \(\lfloor -3.4 \rfloor = -4\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = 0.4\)
+[/QUESTION]
+
+=== SECTION 2: Converting floor and ceiling inequalities into real intervals ===
+
+Because \(\lfloor x \rfloor\) and \(\lceil x \rceil\) can ONLY take integer values, converting an inequality such as \(\lfloor x \rfloor \le 3\) or \(\lfloor x \rfloor < 3.4\) into an interval for \(x\) requires two clean ideas:
+1. First, if the constant \(c\) is NOT an integer, snap the inequality to the exact set of integers that satisfy it!
+   - For example, \(\lfloor x \rfloor < 3.4\) asks which integers are less than \(3.4\). The largest such integer is \(3\), so \(\lfloor x \rfloor < 3.4 \iff \lfloor x \rfloor \le 3\).
+   - Compare that with \(\lfloor x \rfloor < 3\): the largest integer strictly less than \(3\) is \(2\), so \(\lfloor x \rfloor < 3 \iff \lfloor x \rfloor \le 2\).
+2. Second, once the bound is an integer \(k \in \mathbb{Z}\), translate the integer condition into an exact interval for \(x\):
+   - When is \(\lfloor x \rfloor \le 3\)? Whenever \(x\) belongs to one of the steps for \(n \le 3\)—all the way up to, but NOT including, \(4\)! Thus \(\lfloor x \rfloor \le 3 \iff x < 4\). (At \(x = 3.999\), \(\lfloor 3.999 \rfloor = 3 \le 3\); at \(x = 4\), \(\lfloor 4 \rfloor = 4\).)
+   - When is \(\lfloor x \rfloor < 3\)? Whenever \(\lfloor x \rfloor \le 2 \iff x < 3\).
+   - When is \(\lfloor x \rfloor \ge 3\)? Whenever \(x \ge 3\).
+   - When is \(\lfloor x \rfloor > 3\)? Whenever \(\lfloor x \rfloor \ge 4 \iff x \ge 4\).
+
+Notice the striking contrast: \(\lfloor x \rfloor < 3 \iff x < 3\), whereas \(\lfloor x \rfloor < 3.4 \iff \lfloor x \rfloor \le 3 \iff x < 4\)!
+
+[CALLOUT]
+id: floor-ceil-ineq
+label: Equivalence
+title: Integer-bound equivalences for floor and ceiling
+tone: key
+
+For every real number \(x\) and every integer \(k \in \mathbb{Z}\):
+(1) Floor rules:
+- \(\lfloor x \rfloor \ge k \iff x \ge k\)
+- \(\lfloor x \rfloor > k \iff x \ge k + 1\)
+- \(\lfloor x \rfloor \le k \iff x < k + 1\)
+- \(\lfloor x \rfloor < k \iff x < k\)
+(2) Ceiling rules:
+- \(\lceil x \rceil \le k \iff x \le k\)
+- \(\lceil x \rceil < k \iff x \le k - 1\)
+- \(\lceil x \rceil \ge k \iff x > k - 1\)
+- \(\lceil x \rceil > k \iff x > k\)
+If the given constant \(c\) is not an integer, first rewrite the integer inequality for \(\lfloor x \rfloor\) or \(\lceil x \rceil\) using an integer bound \(k\), and then apply (1) or (2).
+[/CALLOUT]
+
+Compare how strictness shifts endpoints differently for floor and ceiling:
+
+[TABLE]
+Condition (for \(k \in \mathbb{Z}\)) | Equivalent interval for \(x\) | Why the endpoint is open or closed
+\(\lfloor x \rfloor \le k\) | \((-\infty, k + 1)\) | \(x = k + 1\) already jumps to \(k + 1\)
+\(\lfloor x \rfloor \ge k\) | \([k, \infty)\) | \(x = k\) achieves \(\lfloor k \rfloor = k\)
+\(\lceil x \rceil \le k\) | \((-\infty, k]\) | \(x = k\) achieves \(\lceil k \rceil = k\)
+\(\lceil x \rceil \ge k\) | \((k - 1, \infty)\) | \(x = k - 1\) stays at \(k - 1\), while any \(x > k - 1\) jumps to \(k\)
+[/TABLE]
+
+Linear expressions inside a floor or ceiling work identically: replace \(x\) by the linear expression, apply [REF: floor-ceil-ineq | the integer-bound equivalence], and then solve the resulting linear inequality.
+
+Example 1: Solve \(\lfloor 2x - 1 \rfloor \ge 3\).
+By [REF: floor-ceil-ineq.1 | the floor rule], since \(3 \in \mathbb{Z}\),
+\[
+\lfloor 2x - 1 \rfloor \ge 3 \iff 2x - 1 \ge 3 \iff 2x \ge 4 \iff x \ge 2.
+\]
+Solution set: \([2, \infty)\).
+
+Example 2: Solve \(\lceil 3 - 2x \rceil < 4.5\).
+First snap \(4.5\) to the integer set: an integer is \(< 4.5\) if and only if it is \(\le 4\). So \(\lceil 3 - 2x \rceil \le 4\). By [REF: floor-ceil-ineq.2 | the ceiling rule],
+\[
+3 - 2x \le 4 \iff -2x \le 1 \iff x \ge -\frac{1}{2}.
+\]
+Solution set: \(\left[-\frac{1}{2}, \infty\right)\). Check \(x = -\frac{1}{2}\): \(\lceil 3 - (-1) \rceil = \lceil 4 \rceil = 4 < 4.5\) (true). Check \(x = -0.6\): \(\lceil 4.2 \rceil = 5 \not< 4.5\) (false).
+
+[QUESTION 2]
+[ANSWER: A]
+What is the solution set of \(-2.3 < \lfloor x \rfloor < 3.7\)?
+
+(A) \([-2, 4)\)
+(B) \((-2.3, 3.7)\)
+(C) \([-2, 3]\)
+(D) \((-2, 4)\)
+(E) \([-3, 4)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+What is the solution set of \(\lfloor 3x + 2 \rfloor \le -1\)?
+
+(A) \((-\infty, -1]\)
+(B) \(\left(-\infty, -\frac{2}{3}\right]\)
+(C) \(\left(-\infty, -\frac{1}{3}\right)\)
+(D) \(\left(-\infty, -\frac{2}{3}\right)\)
+(E) \(\left[-1, -\frac{2}{3}\right)\)
+[/QUESTION]
+
+=== SECTION 3: Equations and inequalities coupling \(x\) and \(\lfloor x \rfloor\) ===
+
+What if \(x\) appears BOTH inside and outside the floor brackets—such as \(\lfloor x \rfloor = 2x - 3\) or \(x + \lfloor x \rfloor < 5\)? Because \(\lfloor x \rfloor\) is an integer \(n\) and \(x = n + f\) with \(0 \le f < 1\), you have two clean algebraic bridges that convert the problem into integer bounds.
+
+Method 1 (for equations): Set \(n = \lfloor x \rfloor \in \mathbb{Z}\), solve for \(x\) in terms of \(n\), and enforce the defining double inequality \(n \le x < n + 1\) to find all admissible integers \(n\).
+
+Example 3: Solve \(\lfloor x \rfloor = 2x - 3\).
+Let \(n = \lfloor x \rfloor \in \mathbb{Z}\). Then \(2x - 3 = n\), so \(x = \dfrac{n + 3}{2}\). Substituting into \(n \le x < n + 1\):
+\[
+n \le \frac{n + 3}{2} < n + 1 \iff 2n \le n + 3 < 2n + 2.
+\]
+Split this double inequality:
+- Left side: \(2n \le n + 3 \iff n \le 3\).
+- Right side: \(n + 3 < 2n + 2 \iff 1 < n\).
+
+Since \(n\) must be an integer satisfying \(1 < n \le 3\), the ONLY possibilities are \(n = 2\) and \(n = 3\):
+- \(n = 2 \implies x = \dfrac{2 + 3}{2} = \dfrac{5}{2}\). Check: \(\lfloor 2.5 \rfloor = 2\) and \(2(2.5) - 3 = 2\).
+- \(n = 3 \implies x = \dfrac{3 + 3}{2} = 3\). Check: \(\lfloor 3 \rfloor = 3\) and \(2(3) - 3 = 3\).
+
+The solution set is \(\left\{\frac{5}{2}, 3\right\}\). The graph below confirms visually that the line \(y = 2x - 3\) intersects the step segments of \(y = \lfloor x \rfloor\) at exactly \((2.5, 2)\) and \((3, 3)\)—and passes straight through the open jump gap at \((2, 1)\) without hitting a step!
+
+[GRAPH]
+type: function2d
+title: Intersections of \(y = 2x - 3\) with the steps of \(y = \lfloor x \rfloor\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.5, 4.2
+yrange: -0.5, 4.2
+trace: 2*x - 3 | label: \(y = 2x - 3\)
+segment: 1, 1, 2, 1 | color: #10b981
+segment: 2, 2, 3, 2 | color: #10b981
+segment: 3, 3, 4, 3 | color: #10b981
+point: 2.5, 2 | label: \((2.5, 2)\)
+point: 3, 3 | label: \((3, 3)\)
+[/GRAPH]
+
+Method 2 (for coupled inequalities): Substitute \(x = n + f\) where \(n = \lfloor x \rfloor \in \mathbb{Z}\) and \(0 \le f < 1\), then inspect which integers \(n\) work for ALL \(f \in [0, 1)\), which single boundary integer \(n\) works for PART of \([0, 1)\), and which integers \(n\) never work.
+
+Example 4: Solve \(x + \lfloor x \rfloor < 5\).
+Write \(x = n + f\) with \(n \in \mathbb{Z}\) and \(0 \le f < 1\). The inequality becomes
+\[
+(n + f) + n < 5 \iff 2n + f < 5.
+\]
+Inspect \(n\) by size:
+- If \(n \le 2\): since \(f < 1\), we have \(2n + f < 2(2) + 1 = 5\), so EVERY \(f \in [0, 1)\) works! That includes all intervals \([n, n + 1)\) for \(n \le 2\), whose union is \((-\infty, 3)\).
+- If \(n \ge 3\): since \(f \ge 0\), we have \(2n + f \ge 6 \not< 5\), so NO \(f \in [0, 1)\) works.
+Hence the solution set is \((-\infty, 3)\).
+
+Now watch a case where the boundary integer \(n\) splits the fractional part \(f\)!
+Example 5: Solve \(2x + \lfloor x \rfloor < 4\).
+Substitute \(x = n + f\) (\(n \in \mathbb{Z}\), \(0 \le f < 1\)):
+\[
+2(n + f) + n < 4 \iff 3n + 2f < 4.
+\]
+- If \(n \le 0\): \(3n + 2f < 0 + 2 = 2 < 4\) (always holds, giving all \(x < 1\)).
+- If \(n = 1\): \(3 + 2f < 4 \iff 2f < 1 \iff 0 \le f < \frac{1}{2}\), which gives \(x = 1 + f \in \left[1, \frac{3}{2}\right)\).
+- If \(n \ge 2\): \(3n + 2f \ge 6 \not< 4\) (never holds).
+
+Uniting \((-\infty, 1)\) with \(\left[1, \frac{3}{2}\right)\) gives the exact solution set \(\left(-\infty, \frac{3}{2}\right)\).
+
+[CALLOUT]
+id: coupled-floor-strategy
+label: Workflow
+title: Solving coupled \(x\) and \(\lfloor x \rfloor\) problems
+tone: note
+
+(1) For an equation linking \(x\) and \(\lfloor x \rfloor\): set \(n = \lfloor x \rfloor \in \mathbb{Z}\), solve for \(x(n)\), enforce \(n \le x(n) < n + 1\) to isolate the integer candidates \(n\), and recover \(x\).
+(2) For an inequality linking \(x\) and \(\lfloor x \rfloor\): substitute \(x = n + f\) (\(n \in \mathbb{Z}\), \(0 \le f < 1\)), find which integers \(n\) succeed for all \(f\), which boundary integer constrains \(f\), and unite the resulting intervals.
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: B]
+What is the solution set of \(\lfloor x \rfloor = 3x - 4\)?
+
+(A) \(\left\{\frac{4}{3}, \frac{5}{3}\right\}\)
+(B) \(\left\{\frac{5}{3}, 2\right\}\)
+(C) \(\{2\}\)
+(D) \(\left\{\frac{5}{3}, 2, \frac{7}{3}\right\}\)
+(E) \(\left\{\frac{4}{3}, 2\right\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+What is the solution set of \(2x - \lfloor x \rfloor < 3\)?
+
+(A) \((-\infty, 2)\)
+(B) \((-\infty, 3)\)
+(C) \(\left(-\infty, \frac{3}{2}\right)\)
+(D) \(\left(-\infty, \frac{5}{2}\right]\)
+(E) \(\left(-\infty, \frac{5}{2}\right)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+What is the solution set of \(\lfloor x \rfloor + \lceil x \rceil = 7\)?
+
+(A) \([3, 4]\)
+(B) \([3, 4)\)
+(C) \((3, 4)\)
+(D) \(\{3.5\}\)
+(E) \(\emptyset\)
+[/BONUS]

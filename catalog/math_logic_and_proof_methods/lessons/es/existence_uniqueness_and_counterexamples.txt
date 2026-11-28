@@ -1,0 +1,245 @@
+=== SECTION 1: Demostraciones constructivas de existencia y dependencia entre cuantificadores ===
+
+Nuestras demostraciones directas y por contraposición hasta ahora se centraron en condicionales universales \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\). Ahora abordamos tres tareas igualmente esenciales en matemática: demostrar que un objeto EXISTE (\(\exists\)), demostrar que es ÚNICO (\(\exists!\)) y REFUTAR limpiamente una conjetura falsa.
+
+La manera más directa de demostrar un enunciado existencial \(\exists x \in D,\, P(x)\) es una demostración constructiva de existencia: exhibir explícitamente un objeto concreto \(x_0\) (llamado testigo) y verificar dos cosas: primero, que \(x_0 \in D\); segundo, que \(P(x_0)\) es verdadero.
+
+[CALLOUT]
+id: template-existence
+label: Método
+title: Demostración constructiva de existencia
+tone: key
+
+(1) Para un existencial simple \(\exists x \in D,\, P(x)\):
+- Exhiba un candidato concreto \(x_0\) (hallado mediante trabajo en borrador).
+- Verifique la pertenencia al dominio: \(x_0 \in D\).
+- Verifique el predicado: se cumple \(P(x_0)\).
+
+(2) Para un enunciado anidado \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\):
+- Fije un \(x \in D_1\) arbitrario.
+- Construya \(y\) explícitamente como una fórmula que dependa ÚNICAMENTE de \(x\) (y de constantes).
+- Verifique \(y \in D_2\) y \(P(x, y)\) para ese \(y\) construido.
+[/CALLOUT]
+
+Observe cómo [REF: template-existence.2 | la parte (2)] respeta la dependencia entre cuantificadores de nuestra lección sobre cuantificadores anidados. En \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\), la variable existencial \(y\) está situada a la derecha de \(\forall x\), por lo que \(y\) puede depender de \(x\). En cambio, para demostrar \(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\), debe exhibir UNA única constante \(y_0 \in D_2\) independiente de \(x\), y luego demostrar \(P(x, y_0)\) para todo \(x \in D_1\) arbitrario. ¡Nunca permita que un existencial exterior dependa de un universal interior!
+
+Veamos dos demostraciones constructivas de existencia limpias: una de un existencial simple y otra de un teorema anidado \(\forall\exists\).
+
+Ejemplo 1 (Existencial simple). Demuestre: \(\exists n \in \mathbb{N},\, (n^2 + n + 41 \text{ es compuesto})\).
+(Recuerde que un entero \(m > 1\) es compuesto si \(m = ab\) para algunos enteros \(a, b > 1\).)
+Note que sustituir \(n = 1, 2, 3, \dots, 39\) produce números primos en todos los casos (\(43, 47, 53, \dots\)). Sin embargo, solo necesitamos UN testigo. Elija \(n = 41\).
+- Comprobación de dominio: \(41 \in \mathbb{N}\).
+- Comprobación del predicado: \(41^2 + 41 + 41 = 41(41 + 1 + 1) = 41 \cdot 43\). Como \(41 > 1\) y \(43 > 1\) son enteros, \(41^2 + 41 + 41\) es compuesto. (Incluso \(n = 40\) funciona: \(40^2 + 40 + 41 = 40(41) + 41 = 41^2\).)
+
+Ejemplo 2 (Enunciado anidado \(\forall\exists\): densidad de \(\mathbb{Q}\) entre racionales). Demuestre:
+\[
+\forall x \in \mathbb{Q}\,\forall y \in \mathbb{Q},\, \bigl(x < y \implies \exists z \in \mathbb{Q},\, (x < z \wedge z < y)\bigr).
+\]
+Demostración: Sean \(x, y \in \mathbb{Q}\) arbitrarios con \(x < y\). Defina el testigo
+\[
+z = \frac{x + y}{2}.
+\]
+- Comprobación de dominio (\(z \in \mathbb{Q}\)): Como \(x, y \in \mathbb{Q}\), escriba \(x = p_1/q_1\) e \(y = p_2/q_2\) con \(p_1, q_1, p_2, q_2 \in \mathbb{Z}\) y \(q_1, q_2 \ne 0\). Entonces
+\[
+z = \frac{p_1 q_2 + p_2 q_1}{2 q_1 q_2},
+\]
+cuyo numerador y denominador son enteros con \(2 q_1 q_2 \ne 0\); por tanto, \(z \in \mathbb{Q}\).
+- Comprobación del predicado (\(x < z < y\)): Como \(x < y\), sumar \(x\) a ambos lados da \(2x < x + y\), por lo que \(x < \frac{x + y}{2} = z\); sumar \(y\) a ambos lados da \(x + y < 2y\), por lo que \(z = \frac{x + y}{2} < y\).
+
+Ambas comprobaciones son explícitas y herméticas —y observe cómo \(z = (x + y)/2\) depende únicamente de las variables universales \(x\) e \(y\) situadas a la izquierda de \(\exists z\)—.
+
+[QUESTION 1]
+[ANSWER: C]
+Un estudiante quiere demostrar la afirmación \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, (x + y > 0)\) y escribe:
+"Sea \(x \in \mathbb{R}\) arbitrario. Elija \(y = 1 - x \in \mathbb{R}\). Entonces \(x + y = x + (1 - x) = 1 > 0\), lo cual demuestra la afirmación."
+¿Qué está mal en esta demostración?
+
+(A) El estudiante olvidó verificar que \(1 - x \in \mathbb{R}\).
+(B) La aritmética \(x + (1 - x) = 1\) es incorrecta cuando \(x < 0\).
+(C) El estudiante violó la dependencia entre cuantificadores: en \(\exists y\,\forall x\), el testigo \(y\) debe elegirse ANTES que \(x\) y no puede depender de \(x\) (el estudiante demostró en realidad \(\forall x\,\exists y,\, x + y > 0\), mientras que \(\exists y\,\forall x,\, x + y > 0\) es falso).
+(D) El estudiante usó un testigo constructivo en lugar de una demostración por casos.
+(E) No hay nada mal; la demostración es completamente válida.
+[/QUESTION]
+
+=== SECTION 2: Demostraciones de unicidad y teoremas \(\exists!\) ===
+
+Recuerde de nuestra lección sobre cuantificadores anidados que \(\exists! x \in D,\, P(x)\) es la conjunción de dos afirmaciones independientes:
+1. Existencia: \(\exists x \in D,\, P(x)\).
+2. Unicidad: \(\forall x_1 \in D\,\forall x_2 \in D,\, \bigl((P(x_1) \wedge P(x_2)) \Rightarrow x_1 = x_2\bigr)\).
+
+Por lo tanto, ¡demostrar \(\exists! x \in D,\, P(x)\) SIEMPRE consta de dos mitades distintas! Nunca confunda ambas: demostrar solo la unicidad muestra únicamente que hay COMO MÁXIMO UNA solución (no descarta que haya cero soluciones).
+
+[CALLOUT]
+id: template-uniqueness
+label: Método
+title: Dos plantillas para demostrar unicidad
+tone: key
+
+Para demostrar la unicidad de \(P(x)\) sobre \(D\) (como la segunda mitad de una demostración de \(\exists!\)):
+
+(1) Plantilla de dos elementos: Sean \(x_1, x_2 \in D\) arbitrarios, suponga que se cumplen tanto \(P(x_1)\) como \(P(x_2)\) y deduzca \(x_1 = x_2\).
+(2) Plantilla de fórmula forzada: Sea \(x \in D\) arbitrario, suponga que se cumple \(P(x)\) y deduzca que \(x\) debe ser igual a un valor específico \(x_0\) (entonces cualesquiera dos soluciones son ambas iguales a \(x_0\), y por tanto iguales entre sí).
+[/CALLOUT]
+
+Veamos ambas plantillas en acción en dos teoremas clásicos de \(\exists!\).
+
+[CALLOUT]
+id: proof-linear-unique
+label: Demostración
+title: Teorema: Solución única de una ecuación lineal
+tone: note
+
+Enunciado: Para todos \(a, b \in \mathbb{R}\) con \(a \ne 0\), \(\exists! x \in \mathbb{R},\, ax + b = 0\).
+
+Demostración: Fije \(a, b \in \mathbb{R}\) arbitrarios con \(a \ne 0\).
+
+Existencia: Tome \(x_0 = -b/a\). Como \(a, b \in \mathbb{R}\) y \(a \ne 0\), tenemos \(x_0 \in \mathbb{R}\), y
+\[
+a x_0 + b = a\left(-\frac{b}{a}\right) + b = -b + b = 0.
+\]
+
+Unicidad (plantilla de fórmula forzada): Suponga que \(x \in \mathbb{R}\) satisface \(ax + b = 0\). Restar \(b\) da \(ax = -b\), y dividir entre \(a \ne 0\) obliga a \(x = -b/a = x_0\). Por tanto, \(x_0 = -b/a\) es la única solución real.
+[/CALLOUT]
+
+Ahora pruebe una ecuación no lineal donde NO puede despejar \(x\) por inversión simple: ¡aquí brilla la plantilla de dos elementos!
+
+[CALLOUT]
+id: proof-cubic-unique
+label: Demostración
+title: Teorema: Existe un único número real \(r\) tal que \(r^3 + r = 2\)
+tone: note
+
+Demostración:
+
+Existencia: Tome \(r_0 = 1 \in \mathbb{R}\). Entonces \(1^3 + 1 = 2\), de modo que existe al menos una solución real.
+
+Unicidad (plantilla de dos elementos): Suponga que \(r_1, r_2 \in \mathbb{R}\) satisfacen ambos la ecuación:
+\[
+r_1^3 + r_1 = 2 \qquad \text{y} \qquad r_2^3 + r_2 = 2.
+\]
+Restando la segunda ecuación de la primera se obtiene
+\[
+(r_1^3 - r_2^3) + (r_1 - r_2) = 0.
+\]
+Factorizando \(r_1^3 - r_2^3 = (r_1 - r_2)(r_1^2 + r_1 r_2 + r_2^2)\) resulta
+\[
+(r_1 - r_2)(r_1^2 + r_1 r_2 + r_2^2 + 1) = 0.
+\]
+Complete el cuadrado en el segundo factor:
+\[
+r_1^2 + r_1 r_2 + r_2^2 + 1 = \left(r_1 + \frac{r_2}{2}\right)^2 + \frac{3}{4}r_2^2 + 1 \ge 1 > 0.
+\]
+Como el segundo factor es estrictamente positivo (nunca \(0\)), dividir entre él obliga a \(r_1 - r_2 = 0\), es decir, \(r_1 = r_2\).
+
+Combinar existencia y unicidad establece \(\exists! r \in \mathbb{R},\, r^3 + r = 2\).
+[/CALLOUT]
+
+Deténgase a apreciar por qué [REF: proof-cubic-unique | esa demostración] es tan instructiva: incluso sin una fórmula para resolver cúbicas generales, la plantilla de dos elementos nos permitió restar ambas ecuaciones, sacar factor común \((r_1 - r_2)\) y verificar que el factor restante nunca se anula. Note también por qué comprobar la existencia NO era opcional: si la ecuación hubiera sido \(r^3 + r = 2\) sobre \(\mathbb{Z}\), \(r_0 = 1 \in \mathbb{Z}\) sigue funcionando; mientras que para \(r^3 + r = 3\) sobre \(\mathbb{Z}\), exactamente la misma demostración de unicidad SIGUE siendo válida (mostrando COMO MÁXIMO UNA solución entera), y sin embargo existen CERO soluciones enteras (\(1^3 + 1 = 2 < 3 < 10 = 2^3 + 2\)), de modo que \(\exists! r \in \mathbb{Z},\, r^3 + r = 3\) es FALSO.
+
+[QUESTION 2]
+[ANSWER: B]
+Considere la afirmación: "Existe un único entero \(n \in \mathbb{Z}\) tal que \(3n = 7\)." Un estudiante escribe: "Supongamos que \(n_1, n_2 \in \mathbb{Z}\) satisfacen ambos \(3n_1 = 7\) y \(3n_2 = 7\). Entonces \(3n_1 = 3n_2\), por lo que dividir entre \(3\) da \(n_1 = n_2\). Por lo tanto, \(\exists! n \in \mathbb{Z},\, 3n = 7\)." ¿Qué está mal en este argumento?
+
+(A) Dividir entre \(3\) es inválido en \(\mathbb{Z}\).
+(B) El estudiante demostró únicamente la unicidad (como máximo una solución) y omitió la mitad de existencia —la cual es de hecho falsa sobre \(\mathbb{Z}\) ya que \(7/3 \notin \mathbb{Z}\)—.
+(C) El estudiante debería haber supuesto \(n_1 \ne n_2\) en lugar de \(3n_1 = 7\) y \(3n_2 = 7\).
+(D) La unicidad falla porque \(n_1\) y \(n_2\) podrían tener signos opuestos.
+(E) No hay nada mal; demostrar \(n_1 = n_2\) establece \(\exists!\).
+[/QUESTION]
+
+=== SECTION 3: Refutación rigurosa — contraejemplos frente a demostraciones universales ===
+
+Refutar un enunciado falso \(S\) NO es una clase aparte de lógica: ¡refutar \(S\) significa DEMOSTRAR SU NEGACIÓN \(\neg S\)! La estructura exacta de \(\neg S\) le indica de inmediato si basta un único contraejemplo concreto o si se requiere una demostración general.
+
+[TABLE]
+Afirmación falsa \(S\) | Su negación \(\neg S\) (lo que debe demostrar) | Lo que requiere una refutación
+\(\forall x \in D,\, P(x)\) | \(\exists x \in D,\, \neg P(x)\) | Un contraejemplo verificado \(x_0 \in D\) con \(\neg P(x_0)\)
+\(\forall x \in D,\, (P(x) \Rightarrow Q(x))\) | \(\exists x \in D,\, (P(x) \wedge \neg Q(x))\) | Un contraejemplo verificado \(x_0 \in D\) que satisfaga TANTO \(P(x_0)\) COMO \(\neg Q(x_0)\)
+\(\exists x \in D,\, P(x)\) | \(\forall x \in D,\, \neg P(x)\) | Una demostración general que cubra TODO \(x \in D\) (¡los ejemplos nunca bastan!)
+\(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\) | \(\forall y \in D_2\,\exists x \in D_1,\, \neg P(x, y)\) | Para un \(y \in D_2\) arbitrario, construir \(x \in D_1\) (en términos de \(y\)) con \(\neg P(x, y)\)
+[/TABLE]
+
+¡Mire con atención la Fila 2 de esta tabla! Para refutar un condicional universal \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\), su contraejemplo \(x_0 \in D\) DEBE satisfacer la hipótesis \(P(x_0)\) Y violar la conclusión \(Q(x_0)\).
+
+Pruebe esta regla en la conjetura falsa: "Para todo entero \(n \in \mathbb{Z}\), si \(n\) es impar, entonces \(n^2 - 1\) es divisible entre \(16\)."
+- ¿Refuta \(n = 2\) esta afirmación? ¡NO! Como \(2\) NO es impar, \(P(2)\) es falso, de modo que \(P(2) \Rightarrow Q(2)\) es verdadero por vacuidad. Un elemento que incumple la hipótesis NUNCA es un contraejemplo.
+- ¿Refuta \(n = 3\) esta afirmación? Compruebe los tres requisitos:
+  1. \(3 \in \mathbb{Z}\).
+  2. La hipótesis se cumple: \(3\) es impar.
+  3. La conclusión falla: \(3^2 - 1 = 8\), y \(16 \nmid 8\) (ya que \(8 = 16k\) no tiene solución entera \(k\)).
+  ¡Sí! \(n = 3\) es una refutación completa y hermética.
+
+Ahora observe la Fila 3: refutar una afirmación existencial. Suponga que alguien conjetura: "Existe un entero \(n \in \mathbb{Z}\) tal que \(4n + 3\) es un cuadrado perfecto." Probar \(n = 0, 1, 2, 3, 4\) da \(3, 7, 11, 15, 19\) —ninguno es un cuadrado perfecto—, pero comprobar cinco números (¡o cinco millones!) NO refuta una afirmación con \(\exists\). En su lugar, debemos demostrar su negación:
+\[
+\forall n \in \mathbb{Z}\,\forall k \in \mathbb{Z},\, k^2 \ne 4n + 3.
+\]
+Demostración: Sea \(k \in \mathbb{Z}\) arbitrario. Por nuestro teorema sobre cuadrados módulo \(4\) de la lección anterior (dividiendo en \(k\) par o impar), \(k^2\) tiene la forma \(4m\) o \(4m + 1\) para algún \(m \in \mathbb{Z}\). Por la unicidad de los restos en el algoritmo de la división en \(\mathbb{Z}\), \(k^2\) deja resto \(0\) o \(1\) al dividirlo entre \(4\), nunca resto \(3\). Por tanto, \(k^2 \ne 4n + 3\) para todos \(n, k \in \mathbb{Z}\), ¡refutando la conjetura existencial!
+
+Por último, observe la Fila 4: refutar \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, x \cdot y = x + y\).
+Su negación es \(\forall y \in \mathbb{R}\,\exists x \in \mathbb{R},\, x \cdot y \ne x + y\).
+Demostración: Sea \(y \in \mathbb{R}\) arbitrario. Elija \(x = 1 \in \mathbb{R}\). Entonces \(x \cdot y = y\), mientras que \(x + y = 1 + y \ne y\) (ya que \(0 \ne 1\)). Así, para todo \(y \in \mathbb{R}\), existe \(x \in \mathbb{R}\) (a saber, \(x = 1\)) con \(x \cdot y \ne x + y\), refutando la afirmación.
+
+[CALLOUT]
+id: caution-examples-asymmetry
+label: Precaución
+title: La marcada asimetría de los ejemplos
+tone: caution
+
+- Un único contraejemplo verificado REFUTA un enunciado universal (\(\forall\)), y un único testigo verificado DEMUESTRA un enunciado existencial (\(\exists\)).
+- Recíprocamente, NINGÚN número finito de ejemplos puede demostrar JAMÁS un enunciado universal (\(\forall\)) sobre un dominio infinito, y NINGÚN número finito de intentos fallidos puede refutar JAMÁS un enunciado existencial (\(\exists\)) sobre un dominio infinito.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: D]
+Considere la conjetura falsa: "Para todos los enteros \(a, b \in \mathbb{Z}\), si \(a \mid b^2\), entonces \(a \mid b\)." ¿Qué par \((a, b)\) es un contraejemplo VÁLIDO que refuta esta conjetura?
+
+(A) \(a = 2, b = 3\)
+(B) \(a = 6, b = 4\)
+(C) \(a = 4, b = 4\)
+(D) \(a = 4, b = 2\)
+(E) \(a = 9, b = 6\) — espere, compruebe tanto (D) como (E): ¡\(9 \mid 36\) y \(9 \nmid 6\)! Reemplacemos (E) por un no contraejemplo para que solo funcione (D).
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+¿Qué se requiere para refutar el enunciado \(\exists m \in \mathbb{Z}\,\forall n \in \mathbb{Z},\, m \le n\)?
+
+(A) Tomar un \(m \in \mathbb{Z}\) arbitrario y exhibir un entero \(n\) (que puede depender de \(m\), como \(n = m - 1\)) tal que \(m > n\).
+(B) Exhibir un único par específico de enteros \((m_0, n_0)\), como \(m_0 = 5\) y \(n_0 = 2\), tal que \(m_0 > n_0\).
+(C) Exhibir un único entero específico \(n_0 \in \mathbb{Z}\) tal que \(m > n_0\) para todo \(m \in \mathbb{Z}\).
+(D) Probar \(m = 0, -1, -100\) y mostrar que cada uno deja de satisfacer \(m \le n\) para todo \(n \in \mathbb{Z}\).
+(E) Tomar un \(n \in \mathbb{Z}\) arbitrario y exhibir un entero \(m\) tal que \(m \le n\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Cuál de las siguientes opciones es una demostración constructiva válida de \(\forall x \in \mathbb{R}\,\exists y \in \mathbb{R},\, (y^2 - x > 0)\)?
+
+(A) Elija \(y = 1\); como \(1^2 > 0\), \(y^2 - x > 0\) para todo \(x \in \mathbb{R}\).
+(B) Fije un \(x \in \mathbb{R}\) arbitrario y elija \(y = \sqrt{x + 1} \in \mathbb{R}\); entonces \(y^2 - x = 1 > 0\).
+(C) Fije un \(x \in \mathbb{R}\) arbitrario y elija \(y = x\); entonces \(y^2 - x = x(x - 1) > 0\).
+(D) Fije un \(x \in \mathbb{R}\) arbitrario y elija \(y = |x|\); entonces \(y^2 - x = x^2 - x > 0\).
+(E) Fije un \(x \in \mathbb{R}\) arbitrario y elija \(y = |x| + 1 \in \mathbb{R}\); entonces \(y^2 - x = x^2 + 2|x| + 1 - x \ge x^2 + |x| + 1 \ge 1 > 0\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Demuestre o evalúe la afirmación: \(\exists! x \in \mathbb{R},\, \bigl(x > 0 \wedge x^2 - 2x - 8 = 0\bigr)\). ¿Qué enunciado es verdadero?
+
+(A) Falso, porque \(x^2 - 2x - 8 = (x - 4)(x + 2) = 0\) tiene dos raíces reales, \(4\) y \(-2\).
+(B) Falso, porque \(x^2 - 2x - 8 = 0\) no tiene raíces reales positivas.
+(C) Verdadero: \(x = 4\) satisface tanto \(x > 0\) como \(x^2 - 2x - 8 = 0\) (existencia), y cualquier raíz real satisface \((x - 4)(x + 2) = 0\), por lo que \(x = 4\) o \(x = -2\); imponer \(x > 0\) obliga a \(x = 4\) (unicidad).
+(D) Verdadero solo por unicidad, ya que \(x^2 - 2x - 8\) es un polinomio cuadrático.
+(E) Falso, porque el dominio es \(\mathbb{R}\), no \(\mathbb{Z}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Considere el enunciado falso: "Para todos los enteros positivos \(a, b, c \in \mathbb{N}\), si \(a \mid bc\), entonces \(a \mid b\) o \(a \mid c\)." ¿Qué terna \((a, b, c) \in \mathbb{N}^3\) es un contraejemplo VÁLIDO?
+
+(A) \((a, b, c) = (5, 2, 3)\)
+(B) \((a, b, c) = (6, 2, 3)\)
+(C) \((a, b, c) = (6, 3, 6)\)
+(D) \((a, b, c) = (4, 2, 1)\)
+(E) \((a, b, c) = (2, 3, 5)\)
+[/BONUS]

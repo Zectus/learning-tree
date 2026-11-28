@@ -1,0 +1,274 @@
+=== SECTION 1: Partición de un problema en casos exhaustivos ===
+
+A veces una sola fórmula algebraica no puede manejar todos los elementos del dominio a la vez. Intente demostrar directamente que para todo entero \(n \in \mathbb{Z}\), el producto \(n(n + 1)\) es par. ¡Comenzar con "Sea \(n \in \mathbb{Z}\) arbitrario" lo deja sin ninguna representación \(n = 2k\) o \(n = 2k + 1\) que sustituir! Sin embargo, todo entero \(n\) cae en uno de dos regímenes concretos —o bien \(n\) es par o bien \(n\) es impar—, y en CADA régimen un cálculo directo de una línea resuelve el problema.
+
+La licencia lógica detrás de esta maniobra es la regla proposicional de demostración por casos que establecimos antes: si \(C_1 \vee C_2 \vee \dots \vee C_m\) se cumple (los casos son mutuamente exhaustivos) y demostramos \(C_i \Rightarrow Q\) para cada \(i = 1, \dots, m\), entonces \(Q\) se deduce incondicionalmente.
+
+[CALLOUT]
+id: template-cases
+label: Método
+title: Demostración por casos exhaustivos
+tone: key
+
+Para demostrar una conclusión \(Q\) a partir de una hipótesis \(P\) por casos:
+
+(1) Identifique casos \(C_1, C_2, \dots, C_m\) y verifique que sean EXHAUSTIVOS: todo objeto que satisface \(P\) debe satisfacer al menos un \(C_i\) (es decir, \(P \Rightarrow (C_1 \vee C_2 \vee \dots \vee C_m)\)). Que los casos se solapen es inofensivo; omitir siquiera un único caso límite invalida la demostración.
+(2) Demuestre \(C_i \Rightarrow Q\) por separado para cada \(i = 1, \dots, m\).
+(3) Concluya que \(Q\) se cumple en todos los casos.
+[/CALLOUT]
+
+Note lo que enfatiza [REF: template-cases.1 | el paso (1)]: los casos no tienen por qué ser disjuntos (aunque los casos disjuntos son limpios), pero DEBEN ser exhaustivos.
+
+En aritmética entera, nuestra herramienta principal para generar particiones en casos garantizadas como exhaustivas es el algoritmo de la división en \(\mathbb{Z}\), que aceptamos explícitamente aquí como dato de entrada (sin demostrarlo).
+
+[CALLOUT]
+id: fact-division-algorithm
+label: Dato
+title: Algoritmo de la división en \(\mathbb{Z}\) (dato aportado)
+tone: key
+
+Para todo entero \(n \in \mathbb{Z}\) y todo entero positivo \(d \in \mathbb{N}\), existen únicos enteros \(q, r \in \mathbb{Z}\) tales que
+\[
+n = dq + r \qquad \text{y} \qquad 0 \le r < d.
+\]
+[/CALLOUT]
+
+Observe las particiones exhaustivas exactas que nos entrega [REF: fact-division-algorithm | el algoritmo de la división]:
+- Para \(d = 2\): todo entero \(n\) tiene \(r = 0\) (\(n = 2q\), par) o \(r = 1\) (\(n = 2q + 1\), impar).
+- Para \(d = 3\): todo entero \(n\) tiene la forma \(3q\), \(3q + 1\) o \(3q + 2\) para algún \(q \in \mathbb{Z}\).
+- Para \(d = 4\): todo entero \(n\) tiene la forma \(4q\), \(4q + 1\), \(4q + 2\) o \(4q + 3\) para algún \(q \in \mathbb{Z}\).
+
+Apliquemos [REF: template-cases | la demostración por casos] a dos teoremas clásicos sobre enteros.
+
+[CALLOUT]
+id: proof-consecutive-even
+label: Demostración
+title: Teorema: Para todo \(n \in \mathbb{Z}\), tanto \(n(n + 1)\) como \(n^2 - n\) son pares
+tone: note
+
+Demostración para \(n(n + 1)\): Sea \(n \in \mathbb{Z}\) arbitrario. Por [REF: fact-division-algorithm | el algoritmo de la división] con \(d = 2\), o bien \(n\) es par o bien \(n\) es impar.
+
+Caso 1: \(n\) es par. Entonces \(n = 2k\) para algún \(k \in \mathbb{Z}\), por lo que
+\[
+n(n + 1) = 2k(2k + 1) = 2\bigl(k(2k + 1)\bigr).
+\]
+Como \(k(2k + 1) \in \mathbb{Z}\), \(n(n + 1)\) es par.
+
+Caso 2: \(n\) es impar. Entonces \(n = 2k + 1\) para algún \(k \in \mathbb{Z}\), por lo que
+\[
+n(n + 1) = (2k + 1)(2k + 2) = 2\bigl((2k + 1)(k + 1)\bigr).
+\]
+Como \((2k + 1)(k + 1) \in \mathbb{Z}\), \(n(n + 1)\) es par.
+
+Puesto que ambos casos agotan \(\mathbb{Z}\), \(n(n + 1)\) es par para todo \(n \in \mathbb{Z}\). (Para \(n^2 - n = n(n - 1)\), funciona exactamente la misma partición por paridad, o simplemente aplique el resultado demostrado a \(m = n - 1 \in \mathbb{Z}\), ya que \(m(m + 1) = (n - 1)n = n^2 - n\).)
+[/CALLOUT]
+
+A continuación, pruebe una partición en casos módulo \(4\): ¿qué restos puede dejar un cuadrado perfecto \(n^2\) al dividirlo entre \(4\)?
+
+[CALLOUT]
+id: proof-square-mod4
+label: Demostración
+title: Teorema: Todo cuadrado perfecto tiene la forma \(4m\) o \(4m + 1\) para algún \(m \in \mathbb{Z}\)
+tone: note
+
+Demostración: Sea \(n \in \mathbb{Z}\) arbitrario. Por [REF: fact-division-algorithm | el algoritmo de la división] con \(d = 4\), \(n\) debe caer en uno de cuatro casos para algún \(q \in \mathbb{Z}\):
+
+(1) \(n = 4q\): entonces \(n^2 = 16q^2 = 4(4q^2)\), que tiene la forma \(4m\) con \(m = 4q^2 \in \mathbb{Z}\).
+(2) \(n = 4q + 1\): entonces \(n^2 = 16q^2 + 8q + 1 = 4(4q^2 + 2q) + 1\), que tiene la forma \(4m + 1\) con \(m = 4q^2 + 2q \in \mathbb{Z}\).
+(3) \(n = 4q + 2\): entonces \(n^2 = 16q^2 + 16q + 4 = 4(4q^2 + 4q + 1)\), que tiene la forma \(4m\) con \(m = 4q^2 + 4q + 1 \in \mathbb{Z}\).
+(4) \(n = 4q + 3\): entonces \(n^2 = 16q^2 + 24q + 9 = 4(4q^2 + 6q + 2) + 1\), que tiene la forma \(4m + 1\) con \(m = 4q^2 + 6q + 2 \in \mathbb{Z}\).
+
+En los cuatro casos exhaustivos, \(n^2\) tiene la forma \(4m\) o \(4m + 1\) para algún \(m \in \mathbb{Z}\).
+[/CALLOUT]
+
+(Observe una bonita economía en [REF: proof-square-mod4 | esa demostración]: ¡incluso podríamos haber dividido por \(d = 2\) en lugar de \(d = 4\)! Si \(n = 2k\), \(n^2 = 4k^2\); si \(n = 2k + 1\), \(n^2 = 4k^2 + 4k + 1 = 4(k^2 + k) + 1\). Elegir la partición más gruesa que aún resuelva el álgebra mantiene las demostraciones breves y limpias.)
+
+[QUESTION 1]
+[ANSWER: C]
+Para demostrar que para todo entero \(n \in \mathbb{Z}\), \(3 \mid (n^3 - n)\), aplicamos el algoritmo de la división con \(d = 3\) y analizamos los casos \(n = 3q\), \(n = 3q + 1\) y \(n = 3q + 2\). En el caso \(n = 3q + 2\), ¿qué expresión muestra correctamente \(n^3 - n\) como múltiplo de \(3\)?
+
+(A) \(n^3 - n = 3(9q^3 + 18q^2 + 12q + 2) + 2\)
+(B) \(n^3 - n = 3(9q^3 + 9q^2 + 3q + 2)\)
+(C) \(n^3 - n = 3(9q^3 + 18q^2 + 11q + 2)\)
+(D) \(n^3 - n = 3(9q^3 + 12q^2 + 11q + 2)\)
+(E) \(n^3 - n = 3(9q^3 + 18q^2 + 11q + 1)\)
+[/QUESTION]
+
+=== SECTION 2: Regímenes de signo, valores absolutos y auditorías de frontera ===
+
+Las particiones por casos son igualmente centrales en las desigualdades con números reales, especialmente siempre que aparecen valores absolutos. Recuerde la definición por tramos del valor absoluto para \(x \in \mathbb{R}\):
+\[
+|x| = \begin{cases} x & \text{si } x \ge 0, \\ -x & \text{si } x < 0. \end{cases}
+\]
+Como la fórmula de \(|x|\) cambia al cruzar \(x = 0\), un enunciado que involucra \(|x - a|\) divide naturalmente la recta real en el punto crítico \(x = a\), y un enunciado que involucra \(|x - a|\) y \(|x - b|\) con \(a < b\) divide \(\mathbb{R}\) en tres regímenes: \(x < a\), \(a \le x < b\) y \(x \ge b\).
+
+Para verlo visualmente, considere la función \(f(x) = |x + 2| + |x - 1|\). En \(x = -2\) y \(x = 1\) la pendiente cambia limpiamente a lo largo de los tres intervalos exhaustivos:
+- Para \(x < -2\): \(f(x) = -(x + 2) - (x - 1) = -2x - 1\).
+- Para \(-2 \le x < 1\): \(f(x) = (x + 2) - (x - 1) = 3\).
+- Para \(x \ge 1\): \(f(x) = (x + 2) + (x - 1) = 2x + 1\).
+
+[GRAPH]
+type: function2d
+title: Regímenes por tramos de \(f(x) = |x + 2| + |x - 1|\)
+xlabel: \(x\)
+ylabel: \(f(x)\)
+xrange: -5, 4
+yrange: 0, 10
+trace: abs(x + 2) + abs(x - 1) | label: \(f(x) = |x + 2| + |x - 1|\)
+segment: -2, 0, -2, 10 | label: \(x = -2\) | dashed: true
+segment: 1, 0, 1, 10 | label: \(x = 1\) | dashed: true
+point: -2, 3 | label: \((-2, 3)\)
+point: 1, 3 | label: \((1, 3)\)
+[/GRAPH]
+
+Observar esos tres tramos demuestra de inmediato que \(|x + 2| + |x - 1| \ge 3\) para TODO \(x \in \mathbb{R}\): en el Caso 1 (\(x < -2\)), \(-2x - 1 > 3\); en el Caso 2 (\(-2 \le x < 1\)), \(f(x) = 3 \ge 3\); en el Caso 3 (\(x \ge 1\)), \(2x + 1 \ge 3\).
+
+Antes de dar por definitiva CUALQUIER partición por casos en \(\mathbb{R}\), realice una auditoría de frontera. El error más común en las demostraciones por casos sobre números reales es olvidar los puntos frontera —especialmente el \(0\)—.
+
+[CALLOUT]
+id: caution-boundary-audit
+label: Precaución
+title: Audite los puntos frontera como el \(0\)
+tone: caution
+
+¡Dividir \(x \in \mathbb{R}\) en "\(x > 0\)" y "\(x < 0\)" deja \(x = 0\) sin cubrir! Esa omisión no es un detalle menor: muchas afirmaciones (como \(x^2 > 0\) o \(x/x = 1\)) se cumplen para \(x > 0\) y \(x < 0\) y sin embargo FALLAN en \(x = 0\). Verifique siempre que cada punto frontera (como \(x = 0\), \(x = a\) o \(x = y\)) pertenezca al menos a un caso —por ejemplo usando la tricotomía \(x < 0\), \(x = 0\), \(x > 0\), o la partición en dos casos \(x \ge 0\) y \(x < 0\)—.
+[/CALLOUT]
+
+Demostremos ahora una de las desigualdades más importantes de toda la matemática —la desigualdad triangular— dividiendo en regímenes de signo exhaustivos. Primero note dos propiedades inmediatas a partir de la definición de \(|t|\): para todo \(t \in \mathbb{R}\), tenemos \(|-t| = |t|\) y \(-|t| \le t \le |t|\).
+
+Ahora sean \(x, y \in \mathbb{R}\) arbitrarios y considere los cuatro casos exhaustivos de signo para \((x, y)\):
+- Caso 1 (\(x \ge 0\) e \(y \ge 0\)): Entonces \(x + y \ge 0\), por lo que \(|x + y| = x + y = |x| + |y|\).
+- Caso 2 (\(x < 0\) e \(y < 0\)): Entonces \(x + y < 0\), por lo que \(|x + y| = -(x + y) = (-x) + (-y) = |x| + |y|\).
+- Caso 3 (\(x \ge 0\) e \(y < 0\)): Aquí \(|x| = x\) y \(|y| = -y > 0\). Divida según el signo de \(x + y\):
+  - Subcaso 3a (\(x + y \ge 0\)): \(|x + y| = x + y < x + (-y) = |x| + |y|\) (ya que \(y < 0 < -y\)).
+  - Subcaso 3b (\(x + y < 0\)): \(|x + y| = -x - y \le x - y = |x| + |y|\) (ya que \(-x \le 0 \le x\)).
+- Caso 4 (\(x < 0\) e \(y \ge 0\)): Aquí \(|x| = -x > 0\) y \(|y| = y\).
+  - Subcaso 4a (\(x + y \ge 0\)): \(|x + y| = x + y < -x + y = |x| + |y|\).
+  - Subcaso 4b (\(x + y < 0\)): \(|x + y| = -x - y \le -x + y = |x| + |y|\).
+
+Los cuatro casos son exhaustivos (cubriendo el \(0\) limpiamente mediante \(\ge 0\) frente a \(< 0\)), y en todos los casos se cumple \(|x + y| \le |x| + |y|\).
+
+[QUESTION 2]
+[ANSWER: B]
+Un estudiante intenta demostrar una afirmación sobre todos los números reales \(x, y \in \mathbb{R}\) dividiendo en los tres casos:
+Caso 1: \(x > 0\) e \(y > 0\)
+Caso 2: \(x < 0\) e \(y < 0\)
+Caso 3: \(x \cdot y < 0\).
+¿Qué conjunto de pares \((x, y) \in \mathbb{R}^2\) ha quedado omitido en esta partición por casos?
+
+(A) Únicamente el punto \((0, 0)\)
+(B) Todos los pares \((x, y)\) donde \(x = 0\) o \(y = 0\)
+(C) Todos los pares \((x, y)\) donde \(x + y = 0\)
+(D) Todos los pares \((x, y)\) donde \(x = y\)
+(E) No se omite ningún par; los tres casos son exhaustivos.
+[/QUESTION]
+
+=== SECTION 3: Simetría disciplinada y "sin pérdida de generalidad" (SPDG) ===
+
+Vuelva la vista atrás a nuestra demostración en cuatro casos de la desigualdad triangular en la Sección 2. Note algo repetitivo:
+- El Caso 2 (\(x < 0, y < 0\)) era esencialmente el Caso 1 (\(x \ge 0, y \ge 0\)) con ambos signos invertidos.
+- ¡El Caso 4 (\(x < 0, y \ge 0\)) era literalmente el Caso 3 (\(x \ge 0, y < 0\)) con los papeles de \(x\) e \(y\) intercambiados!
+
+Cuando dos o más casos son idénticos salvo un reetiquetado o una transformación de simetría, los matemáticos evitan copiar y pegar el mismo álgebra escribiendo "sin pérdida de generalidad" (abreviado SPDG). Usado con rigor, SPDG hace las demostraciones muchísimo más limpias; usado con descuido, ¡elimina en silencio la mitad del teorema!
+
+[CALLOUT]
+id: rule-wlog
+label: Principio
+title: Uso disciplinado de "sin pérdida de generalidad" (SPDG)
+tone: key
+
+Una reducción por SPDG desde un conjunto más amplio de casos a un único caso representativo es válida ÚNICAMENTE cuando especifica una transformación de simetría explícita (como intercambiar dos variables \(a \leftrightarrow b\), o cambiar el signo \((x, y) \mapsto (-x, -y)\)) que:
+
+(1) Deja tanto las hipótesis COMO la conclusión objetivo sin cambios (invariantes), Y
+(2) Lleva cada caso omitido al caso representativo que usted demuestra realmente.
+[/CALLOUT]
+
+Rehagamos la demostración de la desigualdad triangular usando [REF: rule-wlog | un SPDG disciplinado] para ver cuánto gana en precisión.
+
+[CALLOUT]
+id: proof-triangle-wlog
+label: Demostración
+title: Teorema: Desigualdad triangular \(|x + y| \le |x| + |y|\) mediante simetría (SPDG)
+tone: note
+
+Demostración: Sean \(x, y \in \mathbb{R}\) arbitrarios. Deseamos demostrar \(|x + y| \le |x| + |y|\).
+
+Primero, observe que reemplazar \((x, y)\) por \((-x, -y)\) deja invariante la desigualdad deseada porque \(|(-x) + (-y)| = |-(x + y)| = |x + y|\) y \(|-x| + |-y| = |x| + |y|\). Asimismo, intercambiar \(x\) e \(y\) deja tanto \(|x + y|\) como \(|x| + |y|\) sin cambios por conmutatividad de la suma.
+
+Caso 1: \(x\) e \(y\) tienen el mismo signo (es decir, \(x \ge 0, y \ge 0\) o bien \(x \le 0, y \le 0\)). Por la simetría de cambio de signo \((x, y) \mapsto (-x, -y)\), podemos suponer sin pérdida de generalidad que \(x \ge 0\) e \(y \ge 0\). Entonces \(x + y \ge 0\), por lo que \(|x + y| = x + y = |x| + |y|\).
+
+Caso 2: \(x\) e \(y\) tienen signos opuestos (uno es \(\ge 0\) y el otro es \(< 0\)). Por la simetría de intercambio de variables \((x, y) \mapsto (y, x)\), podemos suponer sin pérdida de generalidad que \(x \ge 0\) e \(y < 0\). Además, aplicando tanto el cambio de signo como el intercambio —lo que envía \((x, y) \mapsto (-y, -x)\), manteniendo positiva la primera entrada y negativa la segunda mientras cambia el signo de \(x + y\)—, podemos suponer sin pérdida de generalidad que \(x + y \ge 0\). Entonces
+\[
+|x + y| = x + y < x + (-y) = |x| + |y|,
+\]
+puesto que \(y < 0 < -y\).
+
+Como los Casos 1 y 2 agotan todos los pares \((x, y) \in \mathbb{R}^2\), se cumple \(|x + y| \le |x| + |y|\) para todos \(x, y \in \mathbb{R}\).
+[/CALLOUT]
+
+¡Cada paso de SPDG en [REF: proof-triangle-wlog | esa demostración] indicó su aplicación de simetría exacta y verificó la invariancia de la desigualdad objetivo!
+
+He aquí un segundo SPDG válido en aritmética entera. Suponga que queremos demostrar: "Para todos los enteros \(a, b \in \mathbb{Z}\), si \(a + b\) es impar, entonces \(ab\) es par."
+- Si \(a\) y \(b\) tuvieran la misma paridad (ambos pares o ambos impares), entonces \(a + b\) sería par. Como \(a + b\) es impar, uno de \(a, b\) es par y el otro es impar.
+- Compruebe la simetría: ¡intercambiar \(a\) y \(b\) deja TANTO la hipótesis ("\(a + b\) es impar") COMO la conclusión ("\(ab\) es par") completamente sin cambios!
+- Por lo tanto, podemos suponer SPDG que \(a\) es par y \(b\) es impar: escribimos \(a = 2k\) para algún \(k \in \mathbb{Z}\), lo que da \(ab = (2k)b = 2(kb)\), que es par porque \(kb \in \mathbb{Z}\).
+
+Contraste esto ahora con DOS usos ILÍCITOS de SPDG donde la simetría FALLA:
+
+- SPDG ilícito 1 (Conclusión asimétrica): Afirmación: "Para todos \(a, b \in \mathbb{Z}\), si \(a + b\) es impar, entonces \(a^2 + 3b\) es impar." ¿Puede suponer SPDG que \(a\) es par y \(b\) es impar? ¡NO! La hipótesis "\(a + b\) es impar" es simétrica en \(a\) y \(b\), pero la conclusión "\(a^2 + 3b\) es impar" ¡NO lo es! Compruebe: si \(a = 2\) (par) y \(b = 1\) (impar), \(a^2 + 3b = 7\) (impar), y si \(a = 1\) (impar) y \(b = 2\) (par), \(a^2 + 3b = 7\)... espere: comprobemos \(a^2 + 2b\) en su lugar. Si \(a = 2, b = 1\), \(a^2 + 2b = 6\) (par), mientras que si \(a = 1, b = 2\), \(a^2 + 2b = 5\) (impar). Intercambiar \(a\) y \(b\) transforma la expresión \(a^2 + 2b\) en \(b^2 + 2a\), de modo que el SPDG es completamente inválido.
+- SPDG ilícito 2 (Hipótesis asimétrica): Afirmación: "Para todos \(x, y \in \mathbb{R}\), si \(x + 2y > 0\), entonces \(x^2 + y^2 > 0\)." ¿Puede suponer SPDG que \(x \ge y\)? ¡NO! Intercambiar \(x\) e \(y\) cambia la hipótesis \(x + 2y > 0\) por \(y + 2x > 0\), que es una condición DIFERENTE (por ejemplo, \(x = -1, y = 1\) satisface \(x + 2y = 1 > 0\), mientras que al intercambiar resulta \(y = -1, x = 1\) con \(1 + 2(-1) = -1 < 0\)).
+
+[QUESTION 3]
+[ANSWER: D]
+¿En cuál de los siguientes teoremas es VÁLIDA la suposición propuesta de "sin pérdida de generalidad" (SPDG)?
+
+(A) Teorema: "Para todos \(a, b \in \mathbb{R}\), si \(a \ne b\), entonces \(a^2 - b > b^2 - a\)." Paso propuesto: "SPDG supongamos \(a > b\)."
+(B) Teorema: "Para todos \(x, y \in \mathbb{R}\), si \(x + 3y = 10\), entonces \(x^2 + y^2 \ge 10\)." Paso propuesto: "SPDG supongamos \(x \ge y\)."
+(C) Teorema: "Para todo \(n \in \mathbb{Z}\), \(n^2 + n\) es par." Paso propuesto: "SPDG supongamos \(n \ge 0\)."
+(D) Teorema: "Para todos \(a, b \in \mathbb{R}\), si \(a \ne b\), entonces \(\frac{a + b}{2}\) está estrictamente entre \(a\) y \(b\)." Paso propuesto: "Intercambiando \(a\) y \(b\) si es necesario, SPDG supongamos \(a < b\)."
+(E) Teorema: "Para todo \(x \in \mathbb{R}\), \(|x - 3| \ge 0\)." Paso propuesto: "Reemplazando \(x\) por \(-x\), SPDG supongamos \(x \ge 0\)."
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Considere la afirmación: "Para todos los números reales \(x\) e \(y\), \(\max(x, y) = \frac{x + y + |x - y|}{2}\)." ¿Qué partición por casos y reducción por simetría produce una demostración completa y hermética?
+
+(A) Observe que tanto \(\max(x, y)\) como \(\frac{x + y + |x - y|}{2}\) son invariantes al intercambiar \(x\) e \(y\); por tanto SPDG supongamos \(x \ge y\), de modo que \(\max(x, y) = x\) y \(|x - y| = x - y\), obteniendo \(\frac{x + y + (x - y)}{2} = x\).
+(B) Observe que ambos lados son invariantes bajo \((x, y) \mapsto (-x, -y)\); por tanto SPDG supongamos \(x \ge 0\) e \(y \ge 0\).
+(C) Divida en \(x > y\) y \(x < y\); compruebe ambas fórmulas directamente y concluya para todos \(x, y \in \mathbb{R}\).
+(D) Suponga SPDG que \(x > 0\) e \(y = 0\), y verifique \(\max(x, 0) = \frac{x + |x|}{2} = x\).
+(E) Divida en \(x + y \ge 0\) y \(x + y < 0\), ya que \(x + y\) aparece en el numerador.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suponga que \(n \in \mathbb{Z}\) no es divisible entre \(3\). Usando [REF: fact-division-algorithm | el algoritmo de la división] con \(d = 3\), ¿qué resto debe dejar \(n^2\) al dividirlo entre \(3\)?
+
+(A) \(0\) en todos los casos
+(B) \(1\) o \(2\), dependiendo de si \(n = 3q + 1\) o \(n = 3q + 2\)
+(C) \(2\) en todos los casos
+(D) \(1\) si \(n > 0\), y \(2\) si \(n < 0\)
+(E) \(1\) en todos los casos
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Para demostrar que para todo \(x \in \mathbb{R}\), \(|x - 3| + |x + 1| \ge 4\), un estudiante divide \(\mathbb{R}\) en tres regímenes: \(x < -1\), \(-1 \le x < 3\) y \(x \ge 3\). En el régimen intermedio \(-1 \le x < 3\), ¿a qué se simplifica \(|x - 3| + |x + 1|\)?
+
+(A) \(2x - 2\)
+(B) \(-2x + 2\)
+(C) \(4\)
+(D) \(2\)
+(E) \(2x + 4\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Considere la afirmación: "Para cualesquiera tres enteros \(a, b, c \in \mathbb{Z}\), al menos dos de \(a, b, c\) tienen la misma paridad, y por tanto al menos uno de \(a - b\), \(b - c\) o \(c - a\) es par." ¿Podemos demostrar que \((a - b)(b - c)(c - a)\) es siempre par suponiendo SPDG que \(a\) y \(b\) tienen la misma paridad?
+
+(A) No, porque \(a, b, c\) podrían ser tres enteros distintos con tres paridades diferentes.
+(B) Sí: como solo hay dos paridades (par e impar) y tres enteros, algún par dentro de \(\{a, b, c\}\) debe compartir la misma paridad; permutar las etiquetas \(a, b, c\) altera \((a - b)(b - c)(c - a)\) a lo sumo por un factor \(\pm 1\), lo cual preserva la paridad, de modo que SPDG \(a\) y \(b\) tienen la misma paridad, haciendo par a \(a - b\).
+(C) No, porque permutar \(a, b, c\) puede cambiar el signo de \((a - b)(b - c)(c - a)\), lo que destruye la simetría.
+(D) Sí, únicamente si también suponemos SPDG que \(a \ge b \ge c\).
+(E) No, porque \((a - b)(b - c)(c - a)\) es impar siempre que \(a, b, c\) son todos impares.
+[/BONUS]

@@ -1,0 +1,221 @@
+=== SECTION 1: Direction angles and resolving vectors into components ===
+
+In real-world geometry and physics, vectors rarely arrive pre-packaged as coordinate pairs \(\langle v_x, v_y \rangle\). An air-traffic controller describes a wind as \(40\text{ km/h}\) blowing northeast; a mechanical drawing specifies a brace pulling with \(200\text{ N}\) at \(35^\circ\) above horizontal. Component arithmetic is still the cleanest way to add such vectors, so we need a reliable two-way bridge between magnitude–direction form and rectangular component form \(\langle v_x, v_y \rangle\).
+
+Place any nonzero vector \(\mathbf{v}\) in standard position with its tail at the origin \(O(0, 0)\). Its standard direction angle \(\theta\) is the angle measured counterclockwise from the positive \(x\)-axis to \(\mathbf{v}\), taken by convention in the interval \(0^\circ \le \theta < 360^\circ\) (or equivalently \(0 \le \theta < 2\pi\) in radians).
+
+Start with the special case of a unit vector \(\hat{\mathbf{u}}\) pointing at standard direction angle \(\theta\). Because \(\|\hat{\mathbf{u}}\| = 1\), its head lies on the unit circle \(x^2 + y^2 = 1\) at angle \(\theta\) from the positive \(x\)-axis. By the unit-circle definitions of cosine and sine, the coordinates of that point are \((\cos\theta, \sin\theta)\), which gives the unit direction vector
+\[
+\hat{\mathbf{u}} = \langle \cos\theta,\; \sin\theta \rangle.
+\]
+Check its length: \(\|\hat{\mathbf{u}}\| = \sqrt{\cos^2\theta + \sin^2\theta} = \sqrt{1} = 1\) for every angle \(\theta\).
+
+Now take any nonzero vector \(\mathbf{v}\) with magnitude \(\|\mathbf{v}\|\) and standard direction angle \(\theta\). Since \(\mathbf{v}\) has length \(\|\mathbf{v}\|\) in the same direction as the unit vector \(\hat{\mathbf{u}} = \langle \cos\theta, \sin\theta \rangle\), scaling \(\hat{\mathbf{u}}\) by \(\|\mathbf{v}\|\) gives \(\mathbf{v}\) immediately:
+\[
+\mathbf{v} = \|\mathbf{v}\|\,\hat{\mathbf{u}} = \|\mathbf{v}\|\langle \cos\theta,\; \sin\theta \rangle = \langle \|\mathbf{v}\|\cos\theta,\; \|\mathbf{v}\|\sin\theta \rangle.
+\]
+Splitting \(\mathbf{v}\) into its horizontal component \(v_x = \|\mathbf{v}\|\cos\theta\) and vertical component \(v_y = \|\mathbf{v}\|\sin\theta\) is called resolving \(\mathbf{v}\) into rectangular components. Because cosine and sine carry the proper plus and minus signs in all four quadrants automatically, this single formula works for every \(\theta \in [0^\circ, 360^\circ)\).
+
+[CALLOUT]
+id: polar-to-rect
+label: Formula
+title: Magnitude–direction form to component form (vector resolution)
+tone: key
+
+If a nonzero vector \(\mathbf{v}\) has magnitude \(\|\mathbf{v}\|\) and standard direction angle \(\theta \in [0^\circ, 360^\circ)\) measured counterclockwise from the positive \(x\)-axis, then:
+
+(1) The unit vector in the direction of \(\mathbf{v}\) is \(\hat{\mathbf{u}} = \langle \cos\theta, \sin\theta \rangle\).
+(2) The component form of \(\mathbf{v}\) is
+\[
+\mathbf{v} = \langle \|\mathbf{v}\|\cos\theta,\; \|\mathbf{v}\|\sin\theta \rangle = (\|\mathbf{v}\|\cos\theta)\mathbf{i} + (\|\mathbf{v}\|\sin\theta)\mathbf{j}.
+\]
+[/CALLOUT]
+
+Drag the slider \(a\) (representing \(\theta\) in radians) in the interactive plot below to watch a vector \(\mathbf{v}\) of fixed length \(3\) sweep through all four quadrants together with its unit vector \(\hat{\mathbf{u}}\) on the unit circle and its signed horizontal and vertical components \(3\cos a\) and \(3\sin a\).
+
+[GRAPH]
+type: parametric2d
+title: Resolving \(\mathbf{v}\) of length \(3\) at angle \(a\) (radians) into \(3\cos a\) and \(3\sin a\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.6, 3.6
+yrange: -3.6, 3.6
+trace: cos(t), sin(t) | label: unit circle | color: #94a3b8
+trace: 3*cos(t), 3*sin(t) | label: circle of radius \(3\) | color: #cbd5e1
+segment: 0, 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{v}\) | color: #2563eb
+segment: 0, 0, cos(a), sin(a) | label: \(\hat{\mathbf{u}}\) | color: #16a34a
+segment: 0, 0, 3*cos(a), 0 | label: \(v_x\) | color: #dc2626 | dashed: true
+segment: 3*cos(a), 0, 3*cos(a), 3*sin(a) | label: \(v_y\) | color: #d97706 | dashed: true
+point: 3*cos(a), 3*sin(a) | label: \(\mathbf{v}\)
+point: cos(a), sin(a) | label: \(\hat{\mathbf{u}}\)
+slider: a | range: 0, 6.2832 | init: 1.0472 | step: 0.1571
+[/GRAPH]
+
+For a quick numerical check, take a vector \(\mathbf{v}\) of magnitude \(10\) at standard direction angle \(\theta = 210^\circ\) (Quadrant III). Since \(\cos 210^\circ = -\frac{\sqrt{3}}{2}\) and \(\sin 210^\circ = -\frac{1}{2}\), [REF: polar-to-rect | component resolution] gives
+\[
+\mathbf{v} = \left\langle 10\left(-\frac{\sqrt{3}}{2}\right),\; 10\left(-\frac{1}{2}\right) \right\rangle = \langle -5\sqrt{3},\; -5 \rangle.
+\]
+Both components come out negative, matching Quadrant III.
+
+[QUESTION 1]
+[ANSWER: C]
+A vector \(\mathbf{v}\) has magnitude \(12\) and standard direction angle \(\theta = 150^\circ\). What is \(\mathbf{v}\) in component form?
+
+(A) \(\langle 6\sqrt{3},\; 6 \rangle\)
+(B) \(\langle -6,\; 6\sqrt{3} \rangle\)
+(C) \(\langle -6\sqrt{3},\; 6 \rangle\)
+(D) \(\langle -6\sqrt{3},\; -6 \rangle\)
+(E) \(\langle 6,\; -6\sqrt{3} \rangle\)
+[/QUESTION]
+
+=== SECTION 2: Converting components back to magnitude and direction angle ===
+
+Now reverse the problem: given a nonzero vector \(\mathbf{v} = \langle v_x, v_y \rangle\), how do we recover its magnitude \(\|\mathbf{v}\|\) and standard direction angle \(\theta \in [0^\circ, 360^\circ)\)?
+
+The magnitude is immediate: \(\|\mathbf{v}\| = \sqrt{v_x^2 + v_y^2}\). For the angle \(\theta\), dividing \(v_y = \|\mathbf{v}\|\sin\theta\) by \(v_x = \|\mathbf{v}\|\cos\theta\) (when \(v_x \ne 0\)) cancels \(\|\mathbf{v}\|\) and yields
+\[
+\tan\theta = \frac{v_y}{v_x}.
+\]
+Here is where countless errors happen if you reach blindly for \(\theta = \arctan\left(\frac{v_y}{v_x}\right)\). The inverse tangent function \(\arctan\) only ever outputs angles in the open interval \((-90^\circ, 90^\circ)\)—that is, Quadrants I and IV! Yet two vectors pointing in opposite directions have the exact same ratio \(\frac{v_y}{v_x}\). For example, \(\mathbf{u} = \langle 1, 1 \rangle\) (Quadrant I, \(\theta = 45^\circ\)) and \(\mathbf{w} = \langle -1, -1 \rangle\) (Quadrant III, \(\theta = 225^\circ\)) both satisfy \(\frac{v_y}{v_x} = 1\), so \(\arctan(1) = 45^\circ\) gives the wrong answer for \(\mathbf{w}\) by a full \(180^\circ\).
+
+To get the true direction angle \(\theta \in [0^\circ, 360^\circ)\) every time, you MUST inspect the signs of \(v_x\) and \(v_y\) to identify the quadrant (or axis) before finalizing \(\theta\).
+
+[CALLOUT]
+id: rect-to-polar
+label: Method
+title: Component form to magnitude and standard direction angle
+tone: key
+
+Given a nonzero vector \(\mathbf{v} = \langle v_x, v_y \rangle\):
+
+(1) Compute the magnitude \(\|\mathbf{v}\| = \sqrt{v_x^2 + v_y^2}\).
+(2) If \(v_x = 0\), read \(\theta\) directly from the vertical axis: \(\theta = 90^\circ\) if \(v_y > 0\), and \(\theta = 270^\circ\) if \(v_y < 0\).
+(3) If \(v_y = 0\), read \(\theta\) directly from the horizontal axis: \(\theta = 0^\circ\) if \(v_x > 0\), and \(\theta = 180^\circ\) if \(v_x < 0\).
+(4) Otherwise, compute \(\alpha = \arctan\left(\frac{v_y}{v_x}\right) \in (-90^\circ, 90^\circ)\) and adjust by quadrant:
+- Quadrant I (\(v_x > 0, v_y > 0\)): \(\theta = \alpha\).
+- Quadrant II (\(v_x < 0, v_y > 0\)) or Quadrant III (\(v_x < 0, v_y < 0\)): \(\theta = \alpha + 180^\circ\).
+- Quadrant IV (\(v_x > 0, v_y < 0\)): \(\theta = \alpha + 360^\circ\).
+[/CALLOUT]
+
+[CALLOUT]
+id: arctan-trap
+label: Common pitfall
+title: Never trust \(\arctan(v_y / v_x)\) without checking the quadrant
+tone: caution
+
+Whenever \(v_x < 0\) (Quadrants II and III), \(\arctan(v_y / v_x)\) points \(180^\circ\) away from the actual vector—you must add \(180^\circ\). Equivalently, you can compute the acute reference angle \(\theta_{\mathrm{ref}} = \arctan\left(\frac{|v_y|}{|v_x|}\right)\) and place it in the right quadrant (\(180^\circ - \theta_{\mathrm{ref}}\) in Q II, \(180^\circ + \theta_{\mathrm{ref}}\) in Q III, \(360^\circ - \theta_{\mathrm{ref}}\) in Q IV).
+[/CALLOUT]
+
+[TABLE]
+Location of \(\langle v_x, v_y \rangle\) | Signs of \(v_x, v_y\) | Angle \(\theta \in [0^\circ, 360^\circ)\) | Worked example
+Positive \(x\)-axis | \(v_x > 0, v_y = 0\) | \(0^\circ\) | \(\langle 5, 0 \rangle \to 0^\circ\)
+Quadrant I | \(v_x > 0, v_y > 0\) | \(\arctan(v_y/v_x)\) | \(\langle \sqrt{3}, 1 \rangle \to 30^\circ\)
+Positive \(y\)-axis | \(v_x = 0, v_y > 0\) | \(90^\circ\) | \(\langle 0, 4 \rangle \to 90^\circ\)
+Quadrant II | \(v_x < 0, v_y > 0\) | \(\arctan(v_y/v_x) + 180^\circ\) | \(\langle -1, 1 \rangle \to -45^\circ + 180^\circ = 135^\circ\)
+Negative \(x\)-axis | \(v_x < 0, v_y = 0\) | \(180^\circ\) | \(\langle -7, 0 \rangle \to 180^\circ\)
+Quadrant III | \(v_x < 0, v_y < 0\) | \(\arctan(v_y/v_x) + 180^\circ\) | \(\langle -\sqrt{3}, -1 \rangle \to 30^\circ + 180^\circ = 210^\circ\)
+Negative \(y\)-axis | \(v_x = 0, v_y < 0\) | \(270^\circ\) | \(\langle 0, -2 \rangle \to 270^\circ\)
+Quadrant IV | \(v_x > 0, v_y < 0\) | \(\arctan(v_y/v_x) + 360^\circ\) | \(\langle 1, -\sqrt{3} \rangle \to -60^\circ + 360^\circ = 300^\circ\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: D]
+What is the standard direction angle \(\theta \in [0^\circ, 360^\circ)\) of the vector \(\mathbf{v} = \langle -4,\; -4\sqrt{3} \rangle\)?
+
+(A) \(60^\circ\)
+(B) \(120^\circ\)
+(C) \(210^\circ\)
+(D) \(240^\circ\)
+(E) \(300^\circ\)
+[/QUESTION]
+
+=== SECTION 3: Compass bearings and adding angled vectors ===
+
+Navigation, aviation, and surveying use a different angle convention from standard mathematics. With East aligned along the positive \(x\)-axis and North along the positive \(y\)-axis, a compass bearing (or heading) is measured clockwise starting from due North:
+- Due North is \(000^\circ\) (standard angle \(\theta = 90^\circ\)).
+- Due East is \(090^\circ\) (standard angle \(\theta = 0^\circ\)).
+- Due South is \(180^\circ\) (standard angle \(\theta = 270^\circ\)).
+- Due West is \(270^\circ\) (standard angle \(\theta = 180^\circ\)).
+
+Bearings are also written in quadrant form such as \(\text{N } 30^\circ \text{ E}\) (start at North and turn \(30^\circ\) toward East, which is \(030^\circ\) clockwise from North and \(\theta = 60^\circ\) in standard position) or \(\text{S } 40^\circ \text{ W}\) (start at South and turn \(40^\circ\) toward West, which is \(220^\circ\) clockwise from North and \(\theta = 230^\circ\) in standard position).
+
+In general, if a vector has three-figure compass bearing \(\beta\) measured clockwise from North, its standard mathematical angle is
+\[
+\theta = 90^\circ - \beta \qquad (\text{adding } 360^\circ \text{ if negative to land in } [0^\circ, 360^\circ)).
+\]
+Using the cofunction identities \(\cos(90^\circ - \beta) = \sin\beta\) and \(\sin(90^\circ - \beta) = \cos\beta\), you can either convert \(\beta\) to \(\theta\) first and apply [REF: polar-to-rect | component resolution], or read directly that \(v_x = \|\mathbf{v}\|\sin\beta\) and \(v_y = \|\mathbf{v}\|\cos\beta\). Converting to a quick sketch with standard angle \(\theta\) is the safest way to avoid swapping sine and cosine.
+
+With both conversions secured, we can add any collection of angled vectors cleanly by a three-step workflow:
+1. Resolve each vector into rectangular components \((x, y)\) using [REF: polar-to-rect | vector resolution].
+2. Add all \(x\)-components together to get \(R_x\), and add all \(y\)-components together to get \(R_y\).
+3. If needed, convert the resultant \(\mathbf{R} = \langle R_x, R_y \rangle\) back to magnitude and direction using [REF: rect-to-polar | the inverse conversion].
+
+Let us work through a concrete example: add vector \(\mathbf{a}\) of magnitude \(4\) at standard angle \(30^\circ\) to vector \(\mathbf{b}\) of magnitude \(3\) at standard angle \(120^\circ\).
+Step 1: Resolve both vectors:
+\[
+\mathbf{a} = 4\langle \cos 30^\circ, \sin 30^\circ \rangle = \langle 2\sqrt{3},\; 2 \rangle \approx \langle 3.464,\; 2.000 \rangle,
+\]
+\[
+\mathbf{b} = 3\langle \cos 120^\circ, \sin 120^\circ \rangle = \left\langle -\frac{3}{2},\; \frac{3\sqrt{3}}{2} \right\rangle \approx \langle -1.500,\; 2.598 \rangle.
+\]
+Step 2: Sum components:
+\[
+\mathbf{R} = \mathbf{a} + \mathbf{b} = \left\langle 2\sqrt{3} - \frac{3}{2},\; 2 + \frac{3\sqrt{3}}{2} \right\rangle \approx \langle 1.964,\; 4.598 \rangle.
+\]
+Step 3: Recover magnitude and direction. Expanding the squares gives
+\[
+\|\mathbf{R}\|^2 = \left(2\sqrt{3} - \frac{3}{2}\right)^2 + \left(2 + \frac{3\sqrt{3}}{2}\right)^2 = \left(12 - 6\sqrt{3} + \frac{9}{4}\right) + \left(4 + 6\sqrt{3} + \frac{27}{4}\right) = 16 + 9 = 25,
+\]
+so \(\|\mathbf{R}\| = 5\). (Notice why: \(120^\circ - 30^\circ = 90^\circ\), so \(\mathbf{a}\) and \(\mathbf{b}\) form a \(3\text{–}4\text{–}5\) right triangle!) Since \(R_x > 0\) and \(R_y > 0\) (Quadrant I), \(\theta_R = \arctan\left(\frac{4.598}{1.964}\right) \approx 66.9^\circ\).
+
+[GRAPH]
+type: parametric2d
+title: Summing angled vectors \(\mathbf{a}\) (\(4\) at \(30^\circ\)) and \(\mathbf{b}\) (\(3\) at \(120^\circ\)) via component resolution
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 4.5
+yrange: -0.5, 5.2
+trace: 3.4641*t, 2*t | label: \(\mathbf{a}\) | color: #2563eb
+trace: 3.4641 - 1.5*t, 2 + 2.5981*t | label: \(\mathbf{b}\) | color: #d97706
+trace: 1.9641*t, 4.5981*t | label: \(\mathbf{R} = \mathbf{a} + \mathbf{b}\) | color: #16a34a
+segment: 0, 0, 1.9641, 0 | label: \(R_x\) | dashed: true
+segment: 1.9641, 0, 1.9641, 4.5981 | label: \(R_y\) | dashed: true
+point: 0, 0 | label: \(O\)
+point: 3.4641, 2 | label: \((3.46, 2)\)
+point: 1.9641, 4.5981 | label: \(\mathbf{R}\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: B]
+A drone flies \(10\text{ km}\) on a compass bearing of \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), and then flies \(12\text{ km}\) on a compass bearing of \(150^\circ\) (\(\text{S } 30^\circ \text{ E}\)). Taking East as the positive \(x\)-axis and North as the positive \(y\)-axis, what is the drone's net displacement vector in component form (in km)?
+
+(A) \(\langle -\sqrt{3},\; 11 \rangle\)
+(B) \(\langle 11,\; -\sqrt{3} \rangle\)
+(C) \(\langle 11,\; 11\sqrt{3} \rangle\)
+(D) \(\langle 11,\; \sqrt{3} \rangle\)
+(E) \(\langle -1,\; -\sqrt{3} \rangle\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+A nonzero vector \(\mathbf{v} = \langle a, b \rangle\) has standard direction angle \(\theta = 135^\circ\) and its components satisfy \(a + 2b = 5\). What is \(\|\mathbf{v}\|\)?
+
+(A) \(5\)
+(B) \(\frac{5\sqrt{2}}{3}\)
+(C) \(5\sqrt{2}\)
+(D) \(10\)
+(E) \(10\sqrt{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Vector \(\mathbf{u}\) has magnitude \(6\) and standard direction angle \(20^\circ\), and vector \(\mathbf{v}\) has magnitude \(6\) and standard direction angle \(140^\circ\). What are the magnitude and standard direction angle of \(\mathbf{u} + \mathbf{v}\)?
+
+(A) Magnitude \(6\), direction angle \(80^\circ\)
+(B) Magnitude \(6\sqrt{3}\), direction angle \(80^\circ\)
+(C) Magnitude \(12\), direction angle \(80^\circ\)
+(D) Magnitude \(6\), direction angle \(60^\circ\)
+(E) Magnitude \(6\sqrt{2}\), direction angle \(80^\circ\)
+[/BONUS]

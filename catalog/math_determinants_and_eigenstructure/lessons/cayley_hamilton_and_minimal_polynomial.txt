@@ -1,0 +1,306 @@
+=== SECTION 1: The Cayley-Hamilton Theorem and why the naive substitution fails ===
+
+Every \(n \times n\) matrix \(A \in M_n(F)\) belongs to an \(n^2\)-dimensional vector space, so its powers \(I_n, A, A^2, \dots, A^{n^2}\) must satisfy some nontrivial polynomial relation of degree at most \(n^2\). Yet diagonalizable matrices do far better: if \(A\) has eigenvalues \(\lambda_1, \dots, \lambda_n\), applying \((A - \lambda_1 I_n)\cdots(A - \lambda_n I_n)\) to any eigenvector \(\mathbf{v}_j\) hits the factor \((A - \lambda_j I_n)\mathbf{v}_j = \mathbf{0}\), so \(A\) satisfies its OWN characteristic equation \(p_A(A) = 0\) of degree only \(n\). Does this remarkable degree-\(n\) identity still hold for defective matrices that have no eigenbasis?
+
+Before proving that the answer is yes for EVERY square matrix, pause to inspect a famous one-line "proof" that circulates widely—and is completely invalid.
+
+[CALLOUT]
+id: ch-fallacy
+label: Common pitfall
+title: The fallacious direct-substitution pseudo-proof
+tone: caution
+
+It is tempting to write: "Since \(p_A(\lambda) = \det(\lambda I_n - A)\), substitute \(\lambda = A\) to get \(p_A(A) = \det(A I_n - A) = \det(0) = 0\)."
+
+This argument is completely invalid for two reasons:
+
+(1) Type mismatch: \(\det(\lambda I_n - A)\) is a SCALAR in \(F\) (or a scalar polynomial in the indeterminate \(\lambda\)), whereas \(p_A(A)\) is an \(n \times n\) MATRIX in \(M_n(F)\) obtained by expanding \(p_A(\lambda) = \lambda^n + c_{n-1}\lambda^{n-1} + \dots + c_1\lambda + c_0\) first and then computing \(A^n + c_{n-1}A^{n-1} + \dots + c_1 A + c_0 I_n\). Even the final "\(0\)" on the right-hand side of \(\det(0) = 0\) is the scalar \(0\), not the zero matrix \(0 \in M_n(F)\).
+(2) Illegal substitution inside \(\det\): the matrix \(\lambda I_n - A\) has scalar entries in \(F[\lambda]\); replacing the scalar \(\lambda\) by the matrix \(A\) inside \(\det(\cdot)\) is undefined, because the determinant is only a polynomial function of scalar entries, not of matrix blocks.
+[/CALLOUT]
+
+To prove the theorem honestly—for defective and non-defective matrices alike—we use upper triangularization over \(\mathbb{C}\) from the previous lesson. Note that if \(A \in M_n(\mathbb{R})\), we may view \(A\) inside \(M_n(\mathbb{C})\) without changing its characteristic polynomial \(p_A(\lambda)\) or the matrix \(p_A(A)\), so proving \(p_A(A) = 0\) over \(\mathbb{C}\) immediately covers all real matrices as well.
+
+[CALLOUT]
+id: cayley-hamilton
+label: Theorem
+title: Cayley-Hamilton Theorem
+tone: key
+
+Let \(A \in M_n(F)\) (with \(F = \mathbb{R}\) or \(\mathbb{C}\)) have characteristic polynomial
+\[
+p_A(\lambda) = \det(\lambda I_n - A) = \lambda^n + c_{n-1}\lambda^{n-1} + \dots + c_1\lambda + c_0.
+\]
+Then \(A\) satisfies its own characteristic equation:
+\[
+p_A(A) = A^n + c_{n-1}A^{n-1} + \dots + c_1 A + c_0 I_n = 0.
+\]
+Equivalently, every linear operator \(T : V \to V\) on a finite-dimensional space over \(F\) satisfies \(p_T(T) = 0\).
+[/CALLOUT]
+
+Let us prove [REF: cayley-hamilton | the Cayley-Hamilton Theorem] rigorously via upper triangularization. By the Algebraic Upper-Triangularization Theorem over \(\mathbb{C}\), there exists an invertible matrix \(P \in M_n(\mathbb{C})\) such that \(U = P^{-1} A P\) is upper triangular with the eigenvalues \(\lambda_1, \dots, \lambda_n \in \mathbb{C}\) of \(A\) (counted with algebraic multiplicity) along its main diagonal. Because \(p_A(\lambda) = p_U(\lambda) = (\lambda - \lambda_1)(\lambda - \lambda_2)\cdots(\lambda - \lambda_n)\) and matrix polynomials respect similarity (\(p_A(U) = P^{-1} p_A(A) P\)), we have \(p_A(A) = 0\) if and only if
+\[
+p_A(U) = (U - \lambda_1 I_n)(U - \lambda_2 I_n)\cdots(U - \lambda_n I_n) = 0.
+\]
+Notice that all factors \((U - \lambda_i I_n)\) are polynomials in the SAME matrix \(U\), so they commute with one another. To prove \(p_A(U) = 0\), it suffices to prove that \(p_A(U)\mathbf{e}_j = \mathbf{0}\) for every standard basis vector \(\mathbf{e}_1, \dots, \mathbf{e}_n\). We prove a sharper claim by induction on \(j = 1, \dots, n\):
+\[
+(U - \lambda_1 I_n)(U - \lambda_2 I_n)\cdots(U - \lambda_j I_n)\mathbf{e}_j = \mathbf{0}.
+\]
+- Base case \(j = 1\): because \(U\) is upper triangular with \((1, 1)\)-entry \(\lambda_1\), we have \(U\mathbf{e}_1 = \lambda_1\mathbf{e}_1\), so \((U - \lambda_1 I_n)\mathbf{e}_1 = \mathbf{0}\).
+- Inductive step: assume \((U - \lambda_1 I_n)\cdots(U - \lambda_{k} I_n)\mathbf{e}_k = \mathbf{0}\) holds for all \(k < j\). Because the factors commute, \((U - \lambda_1 I_n)\cdots(U - \lambda_{j-1} I_n)\) annihilates EVERY vector \(\mathbf{e}_1, \dots, \mathbf{e}_{j-1}\), and hence annihilates the entire subspace \(W_{j-1} = \operatorname{span}\{\mathbf{e}_1, \dots, \mathbf{e}_{j-1}\}\). Now look at column \(j\) of \(U\): since \(U\) is upper triangular with \((j, j)\)-entry \(\lambda_j\),
+\[
+U\mathbf{e}_j = u_{1j}\mathbf{e}_1 + \dots + u_{j-1, j}\mathbf{e}_{j-1} + \lambda_j \mathbf{e}_j,
+\]
+and subtracting \(\lambda_j \mathbf{e}_j\) cancels the \(\mathbf{e}_j\) term completely:
+\[
+(U - \lambda_j I_n)\mathbf{e}_j = u_{1j}\mathbf{e}_1 + \dots + u_{j-1, j}\mathbf{e}_{j-1} \in W_{j-1}.
+\]
+Applying \((U - \lambda_1 I_n)\cdots(U - \lambda_{j-1} I_n)\) to this vector in \(W_{j-1}\) immediately yields \(\mathbf{0}\)!
+
+Thus for every \(j = 1, \dots, n\), reordering the commuting factors gives
+\[
+p_A(U)\mathbf{e}_j = (U - \lambda_{j+1} I_n)\cdots(U - \lambda_n I_n)\,\bigl[(U - \lambda_1 I_n)\cdots(U - \lambda_j I_n)\mathbf{e}_j\bigr] = \mathbf{0}.
+\]
+Since \(p_A(U)\) kills every standard basis vector, \(p_A(U) = 0\), and therefore \(p_A(A) = P p_A(U) P^{-1} = 0\).
+
+[REF: cayley-hamilton | Cayley-Hamilton] gives an immediate algebraic payoff: it collapses ANY power \(A^k\) (for \(k \ge n\))—and also \(A^{-1}\) whenever \(\det(A) \neq 0\)—into a polynomial of degree at most \(n - 1\) in \(A\), WITHOUT diagonalizing \(A\)!
+
+Watch how this works on \(A = \begin{bmatrix} 3 & 2 \\ 1 & 4 \end{bmatrix}\). Its characteristic polynomial is
+\[
+p_A(\lambda) = (\lambda - 3)(\lambda - 4) - 2 = \lambda^2 - 7\lambda + 10.
+\]
+By [REF: cayley-hamilton | Cayley-Hamilton], \(A^2 - 7A + 10 I_2 = 0\), which gives TWO instant reductions:
+- Higher powers: rewrite \(A^2 = 7A - 10 I_2\). Multiplying by \(A\) gives
+\[
+A^3 = 7A^2 - 10A = 7(7A - 10 I_2) - 10A = 39A - 70 I_2.
+\]
+- Inverse (when \(c_0 = (-1)^n \det(A) \neq 0\)): isolate the constant term \(10 I_2 = 7A - A^2 = A(7I_2 - A)\) and divide by \(10\):
+\[
+A^{-1} = \frac{1}{10}(7I_2 - A) = \frac{1}{10}\begin{bmatrix} 4 & -2 \\ -1 & 3 \end{bmatrix}.
+\]
+More generally, to reduce a high-degree polynomial \(f(A)\) (such as \(A^k\) with \(k \ge n\)), divide \(f(x)\) by \(p_A(x)\) in \(F[x]\) using polynomial long division:
+\[
+f(x) = q(x)\,p_A(x) + r(x), \qquad \deg r < n.
+\]
+Evaluating at \(A\) kills the \(p_A(A)\) term, leaving \(f(A) = r(A)\)! For example, if \(B \in M_3(\mathbb{R})\) has \(p_B(x) = x^3 - 2x^2 - x + 2\), dividing \(x^4\) by \(p_B(x)\) yields \(x^4 = (x + 2)(x^3 - 2x^2 - x + 2) + (5x^2 - 4)\), so \(B^4 = 5B^2 - 4I_3\) holds automatically—without ever knowing the entries of \(B\).
+
+[QUESTION 1]
+[ANSWER: B]
+Suppose \(A \in M_3(\mathbb{R})\) has characteristic polynomial \(p_A(\lambda) = \lambda^3 - 4\lambda^2 + 2\lambda - 5\). Which polynomial in \(A\) equals \(A^{-1}\)?
+
+(A) \(\frac{1}{5}(A^2 + 4A - 2I_3)\)
+(B) \(\frac{1}{5}(A^2 - 4A + 2I_3)\)
+(C) \(-\frac{1}{5}(A^2 - 4A + 2I_3)\)
+(D) \(\frac{1}{5}(A^3 - 4A^2 + 2A)\)
+(E) \(A^{-1}\) cannot be expressed as a polynomial in \(A\) unless \(A\) is diagonalizable.
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Why does the one-line argument "set \(\lambda = A\) in \(p_A(\lambda) = \det(\lambda I_n - A)\) to obtain \(p_A(A) = \det(A I_n - A) = \det(0) = 0\)" fail as a proof of the Cayley-Hamilton Theorem?
+
+(A) Because \(p_A(\lambda)\) is only guaranteed to have roots over \(\mathbb{C}\), not over \(\mathbb{R}\).
+(B) Because \(\lambda I_n - A\) might be invertible when \(\lambda\) is replaced by a matrix.
+(C) Because \(p_A(A) = 0\) actually holds only when \(A\) is upper triangular.
+(D) Because \(\det(\lambda I_n - A)\) is a scalar function of a scalar indeterminate \(\lambda\), whereas \(p_A(A)\) is an \(n \times n\) matrix defined by substituting \(A\) into the expanded polynomial coefficients; inserting a matrix into \(\det(\cdot)\) is not a valid evaluation.
+(E) Because \(A I_n - A\) equals \(0\) only when \(A\) commutes with every \(n \times n\) matrix.
+[/QUESTION]
+
+=== SECTION 2: Annihilating polynomials and the minimal polynomial ===
+
+The Cayley-Hamilton Theorem guarantees that every matrix \(A \in M_n(F)\) is annihilated by SOME nonzero polynomial—namely \(p_A(x)\) of degree \(n\). Yet \(p_A(x)\) is often larger than necessary. For the \(3 \times 3\) identity matrix \(I_3\), \(p_{I_3}(x) = (x - 1)^3\) has degree \(3\), even though \(I_3\) already satisfies the degree-\(1\) equation \(I_3 - I_3 = 0\) (polynomial \(x - 1\)). What is the SMALLEST polynomial equation a matrix satisfies, and how does it relate to all other polynomials that kill \(A\)?
+
+[CALLOUT]
+id: min-poly-def
+label: Definition
+title: Annihilating polynomials and the minimal polynomial
+tone: key
+
+Let \(A \in M_n(F)\) (or let \(T : V \to V\) be a linear operator on a finite-dimensional space over \(F\)).
+
+(1) A polynomial \(f(x) \in F[x]\) is called an annihilating polynomial of \(A\) if \(f(A) = 0\).
+(2) The minimal polynomial of \(A\), denoted \(m_A(x)\), is the unique monic polynomial (leading coefficient \(1\)) of smallest positive degree in \(F[x]\) such that \(m_A(A) = 0\).
+[/CALLOUT]
+
+Why is \(m_A(x)\) guaranteed to exist, and why is it unique? Existence is immediate from [REF: cayley-hamilton | Cayley-Hamilton]: since \(p_A(A) = 0\) and \(\deg p_A = n \ge 1\), the set of positive degrees of nonzero annihilating polynomials is nonempty and therefore has a least element \(d \ge 1\). Dividing a degree-\(d\) annihilating polynomial by its leading coefficient produces a monic annihilating polynomial \(m_A(x)\) of degree \(d\).
+
+The division algorithm in \(F[x]\) now unlocks EVERY fundamental property of \(m_A(x)\) at once.
+
+[CALLOUT]
+id: min-poly-props
+label: Theorem
+title: Fundamental properties of the minimal polynomial
+tone: key
+
+Let \(A \in M_n(F)\) have characteristic polynomial \(p_A(x)\) and minimal polynomial \(m_A(x)\).
+
+(1) Divisibility and uniqueness: A polynomial \(f(x) \in F[x]\) satisfies \(f(A) = 0\) if and only if \(m_A(x)\) divides \(f(x)\) in \(F[x]\). In particular, \(m_A(x)\) is unique, and \(m_A(x) \mid p_A(x)\).
+(2) Similarity invariance: For every invertible \(P \in M_n(F)\), \(m_{P^{-1} A P}(x) = m_A(x)\). Thus \(m_T(x)\) is well-defined independently of the choice of basis for a linear operator \(T : V \to V\).
+(3) Identical roots (eigenvalues): A scalar \(\lambda \in F\) is a root of \(m_A(x)\) if and only if \(\lambda\) is an eigenvalue of \(A\) (equivalently, a root of \(p_A(x)\)).
+[/CALLOUT]
+
+Let us verify each of the three claims in [REF: min-poly-props | this theorem]:
+- Proof of [REF: min-poly-props.1 | divisibility]: If \(f(x) = q(x) m_A(x)\), then \(f(A) = q(A) m_A(A) = q(A)\cdot 0 = 0\). Conversely, suppose \(f(A) = 0\). Divide \(f(x)\) by \(m_A(x)\) in \(F[x]\):
+\[
+f(x) = q(x)\,m_A(x) + r(x), \qquad \text{where } r(x) = 0 \text{ or } \deg r < \deg m_A.
+\]
+Evaluate at \(A\): \(0 = f(A) = q(A)\,m_A(A) + r(A) = r(A)\). If \(r(x)\) were nonzero, it would be a nonzero annihilating polynomial of degree strictly smaller than \(\deg m_A\), contradicting minimality! Hence \(r(x) = 0\), so \(m_A(x) \mid f(x)\). Uniqueness follows immediately: if \(m_1\) and \(m_2\) are both monic annihilating polynomials of minimal degree, then \(m_1 \mid m_2\) and \(\deg m_1 = \deg m_2\), forcing \(m_1 = m_2\). Setting \(f = p_A\) gives \(m_A \mid p_A\).
+- Proof of [REF: min-poly-props.2 | similarity invariance]: For any polynomial \(f(x) \in F[x]\), \(f(P^{-1} A P) = P^{-1} f(A) P\), so \(f(P^{-1} A P) = 0\) if and only if \(f(A) = 0\). Because \(A\) and \(P^{-1} A P\) have the exact same set of annihilating polynomials, they have the exact same minimal polynomial.
+- Proof of [REF: min-poly-props.3 | identical roots]: If \(m_A(\lambda) = 0\), then since \(m_A \mid p_A\) we immediately get \(p_A(\lambda) = 0\), so \(\lambda\) is an eigenvalue of \(A\). Conversely, suppose \(\lambda \in F\) is an eigenvalue of \(A\) with eigenvector \(\mathbf{v} \neq \mathbf{0}\). For every polynomial \(f(x)\), \(A\mathbf{v} = \lambda\mathbf{v}\) implies \(f(A)\mathbf{v} = f(\lambda)\mathbf{v}\). Applying this to \(f = m_A\) gives
+\[
+\mathbf{0} = m_A(A)\mathbf{v} = m_A(\lambda)\mathbf{v}.
+\]
+Because \(\mathbf{v} \neq \mathbf{0}\), we must have \(m_A(\lambda) = 0\)! (The same argument over \(\mathbb{C}\) shows that EVERY complex root of \(p_A\) is a root of \(m_A\), so \(m_A\) and \(p_A\) share the exact same distinct irreducible factors over \(F\).)
+
+[REF: min-poly-props.1 | Divisibility into \(p_A\)] combined with [REF: min-poly-props.3 | identical roots] gives a clean algorithm for finding \(m_A(x)\) whenever \(p_A(x)\) factors into linear factors:
+\[
+p_A(x) = (x - \lambda_1)^{a_1}(x - \lambda_2)^{a_2}\cdots(x - \lambda_r)^{a_r} \implies m_A(x) = (x - \lambda_1)^{e_1}(x - \lambda_2)^{e_2}\cdots(x - \lambda_r)^{e_r}
+\]
+with \(1 \le e_i \le a_i\) for every \(i = 1, \dots, r\). Every distinct eigenvalue MUST appear with exponent at least \(1\), and no exponent can exceed its algebraic multiplicity! So you simply test the candidate divisors in increasing order of degree until you hit the zero matrix.
+
+Compare two \(3 \times 3\) matrices that share the EXACT same characteristic polynomial \(p(x) = (x - 3)^2(x + 1)\):
+\[
+A = \begin{bmatrix} 3 & 0 & 0 \\ 1 & 3 & 0 \\ 0 & 0 & -1 \end{bmatrix}, \qquad B = \begin{bmatrix} 3 & 0 & 0 \\ 0 & 3 & 0 \\ 1 & 0 & -1 \end{bmatrix}.
+\]
+For both matrices, the ONLY candidates for the minimal polynomial are \((x - 3)(x + 1)\) and \((x - 3)^2(x + 1)\). Test the smaller candidate first:
+\[
+(A - 3I_3)(A + I_3) = \begin{bmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & -4 \end{bmatrix}\begin{bmatrix} 4 & 0 & 0 \\ 1 & 4 & 0 \\ 0 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 0 & 0 \\ 4 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \neq 0,
+\]
+so \(m_A(x) = (x - 3)^2(x + 1)\). By contrast,
+\[
+(B - 3I_3)(B + I_3) = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 1 & 0 & -4 \end{bmatrix}\begin{bmatrix} 4 & 0 & 0 \\ 0 & 4 & 0 \\ 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} = 0,
+\]
+so \(m_B(x) = (x - 3)(x + 1)\)! Notice that \(B\) is diagonalizable (since \(m_g(3) = 2 = m_a(3)\)) while \(A\) is defective (\(m_g(3) = 1 < 2 = m_a(3)\)). The table below collects four representative \(3 \times 3\) examples—spot the pattern!
+
+[TABLE]
+Matrix \(M\) | \(p_M(x)\) | \(m_M(x)\) | Diagonalizable over \(\mathbb{R}\)?
+\(2I_3\) | \((x - 2)^3\) | \(x - 2\) | Yes
+\(B\) above | \((x - 3)^2(x + 1)\) | \((x - 3)(x + 1)\) | Yes
+\(A\) above | \((x - 3)^2(x + 1)\) | \((x - 3)^2(x + 1)\) | No (defective)
+\(\begin{bmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 2 \end{bmatrix}\) | \((x^2 + 1)(x - 2)\) | \((x^2 + 1)(x - 2)\) | No over \(\mathbb{R}\); yes over \(\mathbb{C}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+Compute the minimal polynomial \(m_A(x)\) of the matrix
+\[
+A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 1 & 1 \end{bmatrix}.
+\]
+
+(A) \(x - 1\)
+(B) \((x - 1)^2\)
+(C) \((x - 1)(x - 2)\)
+(D) \((x - 1)^2(x - 2)\)
+(E) \((x - 1)(x - 2)^2\)
+[/QUESTION]
+
+=== SECTION 3: The minimal-polynomial criterion for diagonalizability ===
+
+The table at the end of Section 2 hints at a sharp theorem: in every diagonalizable case, the minimal polynomial split into linear factors with NO REPEATED ROOTS, whereas in the defective case a factor appeared squared. That observation is not an accident—it is an exact equivalence!
+
+[CALLOUT]
+id: min-poly-diag
+label: Theorem
+title: Minimal-polynomial criterion for diagonalizability
+tone: key
+
+A linear operator \(T : V \to V\) on a finite-dimensional vector space \(V\) over \(F\) (or a matrix \(A \in M_n(F)\)) is diagonalizable over \(F\) if and only if its minimal polynomial \(m_T(x)\) splits completely into DISTINCT linear factors over \(F\):
+\[
+m_T(x) = (x - \lambda_1)(x - \lambda_2)\cdots(x - \lambda_r)
+\]
+for pairwise distinct scalars \(\lambda_1, \dots, \lambda_r \in F\).
+[/CALLOUT]
+
+Let us prove BOTH directions of [REF: min-poly-diag | the minimal-polynomial criterion].
+
+- Forward direction (\(\Rightarrow\)): Suppose \(T\) is diagonalizable over \(F\), with distinct eigenvalues \(\lambda_1, \dots, \lambda_r \in F\). Consider the square-free polynomial \(f(x) = (x - \lambda_1)(x - \lambda_2)\cdots(x - \lambda_r)\). For EVERY eigenvector \(\mathbf{v}\) of \(T\) with eigenvalue \(\lambda_k\), because the factors \((T - \lambda_i I)\) commute, we can move \((T - \lambda_k I)\) to the right:
+\[
+f(T)\mathbf{v} = \left(\prod_{i \neq k} (T - \lambda_i I)\right)(T - \lambda_k I)\mathbf{v} = \mathbf{0}.
+\]
+Because \(V\) has a basis of eigenvectors of \(T\) and \(f(T)\) annihilates every basis vector, \(f(T) = 0\). By [REF: min-poly-props.1 | divisibility], \(m_T(x)\) divides \(f(x)\). Conversely, by [REF: min-poly-props.3 | identical roots], every \(\lambda_i\) is a root of \(m_T(x)\), so \(f(x)\) divides \(m_T(x)\). Both are monic, so \(m_T(x) = (x - \lambda_1)\cdots(x - \lambda_r)\).
+
+- Converse direction (\(\Leftarrow\)): Suppose \(m_T(x) = (x - \lambda_1)(x - \lambda_2)\cdots(x - \lambda_r)\) with pairwise distinct \(\lambda_1, \dots, \lambda_r \in F\). (If \(r = 1\), then \(T = \lambda_1 I\) is already diagonal.) For \(r \ge 2\), how do we build a decomposition of EVERY vector \(\mathbf{v} \in V\) into a sum of eigenvectors? The tool is Lagrange interpolation! For each \(i = 1, \dots, r\), define the \(i\)-th Lagrange polynomial of degree \(r - 1\):
+\[
+L_i(x) = \prod_{j \neq i} \frac{x - \lambda_j}{\lambda_i - \lambda_j}.
+\]
+Notice two immediate properties of \(L_i(x)\):
+  1. At each eigenvalue \(\lambda_k\), \(L_i(\lambda_k) = 1\) if \(k = i\) and \(L_i(\lambda_k) = 0\) if \(k \neq i\). Therefore the polynomial \(g(x) = L_1(x) + L_2(x) + \dots + L_r(x) - 1\) has degree at most \(r - 1\), yet vanishes at the \(r\) DISTINCT points \(\lambda_1, \dots, \lambda_r\). A nonzero polynomial of degree at most \(r - 1\) can have at most \(r - 1\) roots, so \(g(x)\) MUST be the zero polynomial! That is,
+\[
+L_1(x) + L_2(x) + \dots + L_r(x) = 1.
+\]
+  2. Multiplying \(L_i(x)\) by \((x - \lambda_i)\) supplies the missing linear factor, giving
+\[
+(x - \lambda_i)\,L_i(x) = c_i\,m_T(x), \qquad \text{where } c_i = \prod_{j \neq i} \frac{1}{\lambda_i - \lambda_j}.
+\]
+Now evaluate BOTH polynomial identities at the operator \(T\)! First,
+\[
+L_1(T) + L_2(T) + \dots + L_r(T) = I,
+\]
+so every vector \(\mathbf{v} \in V\) decomposes as \(\mathbf{v} = L_1(T)\mathbf{v} + L_2(T)\mathbf{v} + \dots + L_r(T)\mathbf{v}\). Second, for each \(i = 1, \dots, r\),
+\[
+(T - \lambda_i I)\bigl(L_i(T)\mathbf{v}\bigr) = c_i\,m_T(T)\mathbf{v} = \mathbf{0},
+\]
+which proves that \(L_i(T)\mathbf{v} \in E_{\lambda_i}\) for EVERY \(\mathbf{v} \in V\)! Hence \(V = E_{\lambda_1} + E_{\lambda_2} + \dots + E_{\lambda_r} = E_{\lambda_1} \oplus \dots \oplus E_{\lambda_r}\), and therefore \(T\) has an eigenbasis and is diagonalizable over \(F\).
+
+Notice how effortless [REF: min-poly-diag | this criterion] makes testing diagonalizability from ANY polynomial identity! If you merely know that a matrix satisfies \(f(A) = 0\) for SOME polynomial \(f(x)\) that splits into distinct linear factors over \(F\), then \(m_A(x) \mid f(x)\) must ALSO split into distinct linear factors over \(F\), so \(A\) is AUTOMATICALLY diagonalizable over \(F\)—without computing a single determinant or eigenvector!
+- Every projection (\(A^2 = A\)) satisfies \(f(x) = x(x - 1)\), which has distinct roots \(0, 1 \in F\), so every projection is diagonalizable over \(F\).
+- Every involution (\(A^2 = I_n\)) satisfies \(f(x) = (x - 1)(x + 1)\), which has distinct roots \(1, -1 \in F\), so every involution is diagonalizable over \(\mathbb{R}\) and \(\mathbb{C}\).
+- A real matrix satisfying \(A^2 + I_n = 0\) has \(m_A(x) = x^2 + 1\): over \(\mathbb{C}\), \(x^2 + 1 = (x - i)(x + i)\) splits into distinct linear factors so \(A\) is diagonalizable over \(\mathbb{C}\); over \(\mathbb{R}\), \(x^2 + 1\) does not split, so \(A\) is NOT diagonalizable over \(\mathbb{R}\).
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose \(A \in M_n(\mathbb{R})\) satisfies \(A^3 = I_n\). Which statement MUST be true?
+
+(A) \(A\) is guaranteed to be diagonalizable over \(\mathbb{C}\), but need not be diagonalizable over \(\mathbb{R}\).
+(B) \(A\) is guaranteed to be diagonalizable over both \(\mathbb{R}\) and \(\mathbb{C}\).
+(C) \(A\) cannot be diagonalizable over \(\mathbb{R}\) unless \(A = I_n\).
+(D) \(A\) need not be diagonalizable even over \(\mathbb{C}\), because \(A\) could have repeated eigenvalues.
+(E) \(m_A(x)\) must equal \(x^3 - 1\).
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Suppose a matrix \(A \in M_4(\mathbb{C})\) satisfies the polynomial equation
+\[
+A^3 - 5A^2 + 8A - 4I_4 = 0.
+\]
+Which condition is BOTH necessary and sufficient for \(A\) to be diagonalizable over \(\mathbb{C}\)?
+
+(A) \(A\) is invertible.
+(B) \(A\) is automatically diagonalizable over \(\mathbb{C}\) with no extra condition, because \(x^3 - 5x^2 + 8x - 4\) splits over \(\mathbb{C}\).
+(C) \((A - 2I_4)^2 = 0\).
+(D) \(A\) has \(4\) distinct eigenvalues.
+(E) \(A^2 - 3A + 2I_4 = 0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suppose \(A \in M_n(\mathbb{R})\) satisfies \(A^2 - 3A + 2I_n = 0\). Express \(A^6\) as a linear combination \(aA + bI_n\).
+
+(A) \(31A - 30I_n\)
+(B) \(64A - 63I_n\)
+(C) \(63A - 64I_n\)
+(D) \(63A - 62I_n\)
+(E) \(32A - 31I_n\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose \(A \in M_4(\mathbb{C})\) has characteristic polynomial \(p_A(x) = (x - 3)^4\) and satisfies \((A - 3I_4)^2 = 0\). Which expression equals \((A - 2I_4)^{-1}\)?
+
+(A) \(A - 4I_4\)
+(B) \(4I_4 - A\)
+(C) \(2I_4 - A\)
+(D) \(A - 2I_4\)
+(E) \(I_4 + (A - 3I_4)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suppose \(A \in M_5(\mathbb{C})\) satisfies \(A^2 - 3A + 2I_5 = 0\) and has \(\operatorname{tr}(A) = 7\). What is \(\det(A)\)?
+
+(A) \(2\)
+(B) \(8\)
+(C) \(4\)
+(D) \(16\)
+(E) Cannot be determined without knowing the entries of \(A\).
+[/BONUS]

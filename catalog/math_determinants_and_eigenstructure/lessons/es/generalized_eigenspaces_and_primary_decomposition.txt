@@ -1,0 +1,301 @@
+=== SECTION 1: Vectores propios generalizados y la cadena estabilizadora de núcleos ===
+
+Cuando el polinomio característico \(p_T(x)\) de un operador \(T : V \to V\) se escinde completamente en factores lineales sobre \(F\), la diagonalización tiene éxito si y solo si los espacios propios ordinarios \(E_{\lambda_i} = \ker(T - \lambda_i I)\) generan todo \(V\). Siempre que un valor propio \(\lambda\) es defectivo (\(m_g(\lambda) < m_a(\lambda)\)), \(\ker(T - \lambda I)\) es simplemente demasiado pequeño: deja fuera vectores que son «casi» vectores propios.
+
+Observe lo que ocurre para el cizallamiento \(2 \times 2\) \(A = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\). Aquí \(p_A(x) = (x - 2)^2\), pero \((A - 2I_2)\mathbf{e}_1 = \mathbf{0}\) solo da un espacio propio \(1\)-dimensional \(E_2 = \operatorname{span}\{\mathbf{e}_1\}\). Mire el vector básico faltante \(\mathbf{e}_2\): aunque \((A - 2I_2)\mathbf{e}_2 = \mathbf{e}_1 \neq \mathbf{0}\), aplicar \((A - 2I_2)\) UNA VEZ MÁS lo anula: \((A - 2I_2)^2\mathbf{e}_2 = \mathbf{0}\). Elevar \((T - \lambda I)\) a potencias mayores captura las dimensiones faltantes.
+
+[CALLOUT]
+id: gen-eig-def
+label: Definición
+title: Vectores propios generalizados y espacios propios generalizados
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre un espacio de dimensión finita sobre \(F\), y sea \(\lambda \in F\) un valor propio de \(T\).
+
+(1) Un vector no nulo \(\mathbf{v} \in V\) es un vector propio generalizado de \(T\) para \(\lambda\) de rango (u orden) \(k \ge 1\) si
+\[
+(T - \lambda I)^k \mathbf{v} = \mathbf{0} \qquad \text{y} \qquad (T - \lambda I)^{k-1}\mathbf{v} \neq \mathbf{0}.
+\]
+(Así, un vector propio generalizado de rango \(1\) es simplemente un vector propio ordinario.)
+(2) El espacio propio generalizado de \(T\) correspondiente a \(\lambda\) es la unión de todos estos núcleos:
+\[
+K_\lambda = \bigcup_{k=1}^{\infty} \ker\bigl((T - \lambda I)^k\bigr).
+\]
+[/CALLOUT]
+
+A primera vista, \(K_\lambda\) parece una unión infinita de subespacios. Sin embargo, como \(\dim(V) = n\) es finita, la sucesión ascendente de núcleos NO PUEDE crecer indefinidamente —y aún mejor, en el instante en que dos núcleos consecutivos coinciden, ¡toda la cadena infinita se congela permanentemente!
+
+[CALLOUT]
+id: kernel-stabilization
+label: Lema
+title: Estabilización de la cadena ascendente de núcleos
+tone: key
+
+Sea \(S = T - \lambda I\) sobre un espacio vectorial \(n\)-dimensional \(V\).
+
+(1) Los núcleos forman una cadena ascendente de subespacios:
+\[
+\{\mathbf{0}\} \subseteq \ker(S) \subseteq \ker(S^2) \subseteq \ker(S^3) \subseteq \dots
+\]
+(2) Propiedad de congelación: si \(\ker(S^m) = \ker(S^{m+1})\) para algún entero \(m \ge 0\), entonces \(\ker(S^m) = \ker(S^{m+j})\) para TODO \(j \ge 1\).
+(3) Estabilización finita: existe un único entero mínimo \(r \le n\) (el índice de estabilización) tal que
+\[
+\{\mathbf{0}\} \subsetneq \ker(S) \subsetneq \ker(S^2) \subsetneq \dots \subsetneq \ker(S^r) = \ker(S^{r+1}) = \dots = K_\lambda.
+\]
+(4) En particular, \(K_\lambda = \ker((T - \lambda I)^r) = \ker((T - \lambda I)^n)\) es un subespacio \(T\)-invariante de \(V\), y la restricción \(N_\lambda = (T - \lambda I)|_{K_\lambda}\) es nilpotente (con \(N_\lambda^r = 0\)).
+[/CALLOUT]
+
+Verifiquemos los pasos clave de [REF: kernel-stabilization | el lema de estabilización]:
+- Inclusión (1): si \(S^k \mathbf{v} = \mathbf{0}\), entonces \(S^{k+1}\mathbf{v} = S(S^k\mathbf{v}) = S(\mathbf{0}) = \mathbf{0}\), de modo que \(\ker(S^k) \subseteq \ker(S^{k+1})\).
+- Propiedad de congelación (2): suponga \(\ker(S^m) = \ker(S^{m+1})\), y sea \(\mathbf{v} \in \ker(S^{m+2})\). Entonces \(S^{m+1}(S\mathbf{v}) = S^{m+2}\mathbf{v} = \mathbf{0}\), de modo que \(S\mathbf{v} \in \ker(S^{m+1}) = \ker(S^m)\). Eso significa que \(S^{m+1}\mathbf{v} = S^m(S\mathbf{v}) = \mathbf{0}\), luego \(\mathbf{v} \in \ker(S^{m+1}) = \ker(S^m)\). Por lo tanto \(\ker(S^{m+2}) = \ker(S^m)\), y la inducción sobre \(j\) congela la cadena para siempre.
+- Cota \(r \le n\) (3): toda inclusión estricta \(\ker(S^{k-1}) \subsetneq \ker(S^k)\) aumenta la dimensión en al menos \(1\). Como \(\dim(\ker(S^k)) \le \dim(V) = n\), el crecimiento estricto puede ocurrir a lo sumo \(n\) veces, de modo que la estabilización debe producirse en algún índice \(r \le n\).
+- Subespacio, \(T\)-invariancia y nilpotencia (4): como \(K_\lambda\) coincide con el único núcleo \(\ker(S^r)\), es un subespacio de \(V\). Como \(T\) conmuta con \(S^r = (T - \lambda I)^r\), todo \(\mathbf{v} \in K_\lambda\) satisface \(S^r(T\mathbf{v}) = T(S^r\mathbf{v}) = \mathbf{0}\), así que \(T\mathbf{v} \in K_\lambda\). Finalmente, por definición todo \(\mathbf{v} \in K_\lambda\) satisface \((T - \lambda I)^r\mathbf{v} = \mathbf{0}\), por lo que \(N_\lambda = (T - \lambda I)|_{K_\lambda}\) satisface \(N_\lambda^r = 0\) (y \(N_\lambda^{r-1} \neq 0\) ya que \(\ker(S^{r-1}) \subsetneq \ker(S^r)\)).
+
+Calcule esta cadena concretamente para
+\[
+A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 1 & 4 \end{bmatrix},
+\]
+cuyos valores propios son \(\lambda_1 = 1\) (\(m_a = 2\)) y \(\lambda_2 = 4\) (\(m_a = 1\)). Tome \(S = A - I_3\):
+\[
+S = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 1 & 3 \end{bmatrix}, \qquad S^2 = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 3 & 9 \end{bmatrix}, \qquad S^3 = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 9 & 27 \end{bmatrix} = 3S^2.
+\]
+Lea los núcleos:
+- \(\ker(S) = \operatorname{span}\{\mathbf{e}_1\}\) (dimensión \(1\)).
+- \(\ker(S^2) = \{(x_1, x_2, x_3)^T : 3x_2 + 9x_3 = 0\} = \operatorname{span}\{\mathbf{e}_1,\; (0, -3, 1)^T\}\) (dimensión \(2\)).
+- Como \(S^3 = 3S^2\), \(\ker(S^3) = \ker(S^2)\), ¡de modo que la cadena se estabiliza en \(r = 2\)!
+Note que \(\mathbf{v} = (0, -3, 1)^T\) satisface \(S\mathbf{v} = (-3, 0, 0)^T \neq \mathbf{0}\) y \(S^2\mathbf{v} = \mathbf{0}\), convirtiendo a \(\mathbf{v}\) en un vector propio generalizado para \(\lambda = 1\) de rango \(2\). ¡Y note que \(\dim(K_1) = 2 = m_a(1)\), mientras que \(\dim(E_1) = 1 < m_a(1)\)!
+
+[QUESTION 1]
+[ANSWER: C]
+Considere la matriz
+\[
+A = \begin{bmatrix} 2 & 0 & 1 \\ 0 & 2 & 0 \\ 0 & 1 & 2 \end{bmatrix}.
+\]
+¿Cuál es el índice de estabilización \(r\) de la cadena ascendente de núcleos \(\ker((A - 2I_3)^k)\), y cuál es el rango de \(\mathbf{v} = (0, 1, 0)^T\) como vector propio generalizado de \(A\) para \(\lambda = 2\)?
+
+(A) \(r = 1\) y \(\mathbf{v}\) tiene rango \(1\)
+(B) \(r = 2\) y \(\mathbf{v}\) tiene rango \(2\)
+(C) \(r = 3\) y \(\mathbf{v}\) tiene rango \(3\)
+(D) \(r = 3\) y \(\mathbf{v}\) tiene rango \(2\)
+(E) \(r = 2\) y \(\mathbf{v}\) no es un vector propio generalizado para \(\lambda = 2\)
+[/QUESTION]
+
+=== SECTION 2: El Teorema de Descomposición Primaria mediante la identidad de Bézout ===
+
+Para operadores diagonalizables, los polinomios de interpolación de Lagrange construyeron proyecciones \(L_i(T)\) que descompusieron \(V\) en la suma directa de espacios propios ordinarios \(E_{\lambda_1} \oplus \dots \oplus E_{\lambda_s}\). ¿Qué reemplaza a la interpolación de Lagrange cuando el polinomio mínimo \(m_T(x)\) tiene factores lineales REPETIDOS \((x - \lambda_i)^{r_i}\)? ¡La herramienta polinómica que desempeña exactamente el mismo papel es la identidad de Bézout para polinomios primos relativos en \(F[x]\)!
+
+[CALLOUT]
+id: primary-decomp
+label: Teorema
+title: Teorema de Descomposición Primaria
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre un espacio de dimensión finita sobre \(F\) cuyo polinomio mínimo se escinde en factores lineales sobre \(F\):
+\[
+m_T(x) = (x - \lambda_1)^{r_1}(x - \lambda_2)^{r_2}\cdots(x - \lambda_s)^{r_s},
+\]
+donde \(\lambda_1, \dots, \lambda_s \in F\) son distintos dos a dos y \(r_i \ge 1\). Entonces:
+
+(1) \(V\) se descompone como la suma directa de los espacios propios generalizados:
+\[
+V = K_{\lambda_1} \oplus K_{\lambda_2} \oplus \dots \oplus K_{\lambda_s}, \qquad \text{con } K_{\lambda_i} = \ker\bigl((T - \lambda_i I)^{r_i}\bigr).
+\]
+(2) Existen polinomios \(h_1(x), \dots, h_s(x) \in F[x]\) tales que los operadores \(E_i = h_i(T)\) son proyecciones sobre \(K_{\lambda_i}\) que satisfacen
+\[
+E_1 + E_2 + \dots + E_s = I, \qquad E_i^2 = E_i, \qquad E_i E_j = 0 \quad (i \neq j), \qquad \operatorname{im}(E_i) = K_{\lambda_i}.
+\]
+(3) Para todo \(i = 1, \dots, s\), el índice de estabilización de la cadena de núcleos \(\ker((T - \lambda_i I)^k)\) es EXACTAMENTE \(r_i\) (la multiplicidad de \(\lambda_i\) en \(m_T(x)\)).
+[/CALLOUT]
+
+Construyamos las proyecciones \(E_i\) y demostremos [REF: primary-decomp | el Teorema de Descomposición Primaria] paso a paso. (Si \(s = 1\), entonces \(m_T(x) = (x - \lambda_1)^{r_1}\) da \(V = \ker((T - \lambda_1 I)^{r_1}) = K_{\lambda_1}\) de inmediato, así que suponga \(s \ge 2\).)
+
+1. Forme los productos polinómicos complementarios: para cada \(i = 1, \dots, s\), omita el \(i\)-ésimo factor primario de \(m_T(x)\):
+\[
+q_i(x) = \frac{m_T(x)}{(x - \lambda_i)^{r_i}} = \prod_{j \neq i} (x - \lambda_j)^{r_j}.
+\]
+2. Verifique la coprimalidad: los polinomios \(q_1(x), \dots, q_s(x)\) tienen \(\gcd(q_1, \dots, q_s) = 1\). ¿Por qué? Cualquier factor irreducible común dividiría a \(q_1 \mid m_T\), por lo que tendría que ser \((x - \lambda_k)\) para algún \(k \in \{1, \dots, s\}\); ¡pero por construcción \((x - \lambda_k)\) NO divide a \(q_k(x)\)!
+3. Aplique la identidad de Bézout en \(F[x]\): como \(\gcd(q_1, \dots, q_s) = 1\), existen polinomios \(a_1(x), \dots, a_s(x) \in F[x]\) tales que
+\[
+a_1(x)\,q_1(x) + a_2(x)\,q_2(x) + \dots + a_s(x)\,q_s(x) = 1.
+\]
+Defina \(h_i(x) = a_i(x)\,q_i(x)\) y establezca \(E_i = h_i(T)\) para \(i = 1, \dots, s\).
+4. Evalúe en \(T\) para obtener las identidades de suma y proyección:
+   - Evaluar la identidad de Bézout en \(T\) da \(E_1 + E_2 + \dots + E_s = I\), por lo que todo \(\mathbf{v} \in V\) se descompone como \(\mathbf{v} = E_1\mathbf{v} + \dots + E_s\mathbf{v}\).
+   - Para cada \(i\), \((x - \lambda_i)^{r_i} h_i(x) = a_i(x) m_T(x)\), de modo que \((T - \lambda_i I)^{r_i}(E_i\mathbf{v}) = a_i(T) m_T(T)\mathbf{v} = \mathbf{0}\). Así, \(E_i\mathbf{v} \in W_i := \ker((T - \lambda_i I)^{r_i})\) para TODO \(\mathbf{v} \in V\), demostrando \(V = W_1 + \dots + W_s\).
+   - Para \(i \neq j\), \(q_i(x) q_j(x)\) contiene TODOS los factores \((x - \lambda_k)^{r_k}\) de \(m_T(x)\) (cada factor excepto \((x - \lambda_i)^{r_i}\) está en \(q_i\), y \((x - \lambda_i)^{r_i}\) está en \(q_j\)). Por tanto \(m_T(x) \mid h_i(x) h_j(x)\), ¡dando \(E_i E_j = 0\)! Multiplicar \(E_1 + \dots + E_s = I\) por \(E_i\) produce entonces \(E_i^2 = E_i\).
+5. Verifique la suma directa: suponga \(\mathbf{w}_1 + \dots + \mathbf{w}_s = \mathbf{0}\) con \(\mathbf{w}_j \in W_j = \ker((T - \lambda_j I)^{r_j})\). Para todo \(j \neq i\), \((x - \lambda_j)^{r_j}\) divide a \(q_i(x)\) y por ende divide a \(h_i(x)\), así que \(E_i \mathbf{w}_j = \mathbf{0}\). Mientras tanto, sobre \(W_i\), \(\mathbf{w}_i = (E_1 + \dots + E_s)\mathbf{w}_i = E_i\mathbf{w}_i\). ¡Aplicar \(E_i\) a \(\mathbf{w}_1 + \dots + \mathbf{w}_s = \mathbf{0}\) deja por tanto \(\mathbf{w}_i = \mathbf{0}\) para todo \(i\)! Así, \(V = W_1 \oplus \dots \oplus W_s\) e \(\operatorname{im}(E_i) = W_i\).
+6. Identifique \(W_i = K_{\lambda_i}\) y demuestre la estabilización exacta en \(r_i\):
+   - Primero, ¿por qué ningún vector fuera de \(W_i\) puede pertenecer a \(\ker((T - \lambda_i I)^k)\) para un \(k\) mayor? Tome cualquier \(j \neq i\). Como \((x - \lambda_i)\) y \((x - \lambda_j)^{r_j}\) son coprimos, la identidad de Bézout da \(u(x)(x - \lambda_i) + w(x)(x - \lambda_j)^{r_j} = 1\). Evaluar en \(W_j = \ker((T - \lambda_j I)^{r_j})\) anula el segundo término y deja \(u(T)(T - \lambda_i I)|_{W_j} = I|_{W_j}\), ¡demostrando que \((T - \lambda_i I)\) es INVERTIBLE sobre todo \(W_j\) con \(j \neq i\)! Por lo tanto, si \(\mathbf{v} = \mathbf{w}_1 + \dots + \mathbf{w}_s \in \ker((T - \lambda_i I)^k)\), aplicar \((T - \lambda_i I)^k\) componente a componente obliga a \((T - \lambda_i I)^k \mathbf{w}_j = \mathbf{0} \implies \mathbf{w}_j = \mathbf{0}\) para todo \(j \neq i\), de modo que \(\mathbf{v} = \mathbf{w}_i \in W_i\). ¡Así, \(K_{\lambda_i} = W_i = \ker((T - \lambda_i I)^{r_i})\)!
+   - Segundo, ¿por qué el índice de estabilización es IGUAL a \(r_i\) en lugar de estrictamente menor? Si \(\ker((T - \lambda_i I)^{r_i - 1}) = K_{\lambda_i}\), entonces \((T - \lambda_i I)^{r_i - 1} q_i(T)\) anularía a \(K_{\lambda_i}\) (mediante el primer factor) Y anularía a todo \(K_{\lambda_j}\) para \(j \neq i\) (mediante \(q_i(T)\)), ¡por lo que anularía a todo \(V\), contradiciendo la minimalidad de \(\deg m_T\)!
+
+Observe cuán concretamente produce la identidad de Bézout las proyecciones \(E_i\) para \(m_T(x) = (x - 1)^2(x - 3)\). Aquí \(q_1(x) = x - 3\) y \(q_2(x) = (x - 1)^2\). Reescriba \(x - 3 = (x - 1) - 2\), y multiplique por \((x - 1) + 2 = x + 1\):
+\[
+(x + 1)(x - 3) = \bigl((x - 1) + 2\bigr)\bigl((x - 1) - 2\bigr) = (x - 1)^2 - 4.
+\]
+Reordenar y dividir por \(4\) da la identidad de Bézout exacta
+\[
+\frac{1}{4}(x - 1)^2 - \frac{1}{4}(x + 1)(x - 3) = 1.
+\]
+¡Así, \(E_1 = -\frac{1}{4}(T + I)(T - 3I)\) proyecta todo vector sobre \(K_1 = \ker((T - I)^2)\) a lo largo de \(K_3\), mientras que \(E_2 = \frac{1}{4}(T - I)^2\) proyecta todo vector sobre \(K_3 = \ker(T - 3I)\) a lo largo de \(K_1\)!
+
+[QUESTION 2]
+[ANSWER: B]
+Suponga que \(T : V \to V\) tiene polinomio mínimo \(m_T(x) = (x - 2)^2(x + 1)\). ¿Qué polinomio en \(T\) es igual a la proyección primaria \(E_2\) sobre \(K_{-1} = \ker(T + I)\) a lo largo de \(K_2 = \ker((T - 2I)^2)\)?
+
+(A) \(\frac{1}{3}(T - 2I)\)
+(B) \(\frac{1}{9}(T - 2I)^2\)
+(C) \(-\frac{1}{9}(T - 5I)(T + I)\)
+(D) \(\frac{1}{9}(T + I)^2\)
+(E) \(\frac{1}{3}(T - 2I)^2\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Suponga que \(T : \mathbb{C}^6 \to \mathbb{C}^6\) tiene polinomio característico \(p_T(x) = (x - 1)^4(x + 3)^2\) y polinomio mínimo \(m_T(x) = (x - 1)^2(x + 3)^2\). ¿Qué enunciado sobre la cadena de núcleos para \(\lambda = 1\) DEBE ser verdadero?
+
+(A) \(\ker(T - I) = \ker((T - I)^2) = K_1\).
+(B) \(\ker((T - I)^2) \subsetneq \ker((T - I)^3) \subsetneq \ker((T - I)^4) = K_1\).
+(C) \(\ker((T - I)^2) = \mathbb{C}^6\).
+(D) \(\ker(T - I) \subsetneq \ker((T - I)^2) = \ker((T - I)^3) = \dots = K_1\).
+(E) \(K_1\) no puede determinarse sin saber si \(T\) es invertible.
+[/QUESTION]
+
+=== SECTION 3: Dimensión de \(K_{\lambda_i}\) y reducción a bloques nilpotentes ===
+
+Ya sabemos que \(V = K_{\lambda_1} \oplus \dots \oplus K_{\lambda_s}\) siempre que \(p_T(x)\) se escinde sobre \(F\). ¿Qué tamaño tiene cada espacio propio generalizado \(K_{\lambda_i}\)? A diferencia de los espacios propios ordinarios \(E_{\lambda_i}\) (cuya dimensión \(m_g(\lambda_i)\) puede quedar estrictamente por debajo de \(m_a(\lambda_i)\)), ¡los espacios propios generalizados SIEMPRE alcanzan exactamente la multiplicidad algebraica!
+
+[CALLOUT]
+id: dim-gen-eig
+label: Teorema
+title: Dimensión de los espacios propios generalizados y forma primaria por bloques
+tone: key
+
+Sea \(T : V \to V\) con polinomio característico \(p_T(x) = \prod_{i=1}^s (x - \lambda_i)^{m_a(\lambda_i)}\) sobre \(F\) (\(\lambda_1, \dots, \lambda_s\) distintos).
+
+(1) Para todo \(i = 1, \dots, s\),
+\[
+\dim(K_{\lambda_i}) = m_a(\lambda_i).
+\]
+(2) Concatenar bases \(\mathcal{B}_1, \dots, \mathcal{B}_s\) de \(K_{\lambda_1}, \dots, K_{\lambda_s}\) en una base \(\mathcal{B}\) de \(V\) pone a \([T]_{\mathcal{B}}\) en forma diagonal por bloques
+\[
+[T]_{\mathcal{B}} = \begin{bmatrix} \lambda_1 I_{d_1} + N_1 & 0 & \cdots & 0 \\ 0 & \lambda_2 I_{d_2} + N_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & \lambda_s I_{d_s} + N_s \end{bmatrix},
+\]
+donde \(d_i = m_a(\lambda_i)\) y cada \(N_i = [(T - \lambda_i I)|_{K_{\lambda_i}}]_{\mathcal{B}_i}\) es una matriz nilpotente \(d_i \times d_i\) con \(N_i^{r_i} = 0\) y \(N_i^{r_i - 1} \neq 0\).
+[/CALLOUT]
+
+Demostración de [REF: dim-gen-eig.1 | \(\dim(K_{\lambda_i}) = m_a(\lambda_i)\)]: Como \(V = K_{\lambda_1} \oplus \dots \oplus K_{\lambda_s}\) es una suma directa de subespacios \(T\)-invariantes, la fórmula del polinomio característico diagonal por bloques da
+\[
+p_T(x) = p_{T|_{K_{\lambda_1}}}(x)\,p_{T|_{K_{\lambda_2}}}(x)\cdots p_{T|_{K_{\lambda_s}}}(x).
+\]
+En cada \(K_{\lambda_i}\), el operador \(T|_{K_{\lambda_i}}\) satisface \((T|_{K_{\lambda_i}} - \lambda_i I)^{r_i} = 0\), de modo que su polinomio mínimo divide a \((x - \lambda_i)^{r_i}\). Como los polinomios característico y mínimo de \(T|_{K_{\lambda_i}}\) comparten exactamente las mismas raíces, ¡la ÚNICA raíz de \(p_{T|_{K_{\lambda_i}}}(x)\) es \(\lambda_i\)! Dado que \(p_{T|_{K_{\lambda_i}}}(x)\) es mónico de grado \(d_i = \dim(K_{\lambda_i})\), DEBE ser igual a
+\[
+p_{T|_{K_{\lambda_i}}}(x) = (x - \lambda_i)^{d_i}.
+\]
+Sustituir esto en el producto arroja
+\[
+\prod_{i=1}^s (x - \lambda_i)^{m_a(\lambda_i)} = p_T(x) = \prod_{i=1}^s (x - \lambda_i)^{d_i}.
+\]
+Por factorización única en \(F[x]\), los exponentes coinciden: ¡\(\dim(K_{\lambda_i}) = d_i = m_a(\lambda_i)\) para todo \(i = 1, \dots, s\)!
+
+[REF: dim-gen-eig.2 | La forma primaria por bloques] es el avance estructural central hacia la forma canónica de Jordan: desacopla por completo los valores propios distintos y reduce la comprensión de CUALQUIER operador cuyo polinomio característico se escinde a comprender un operador NILPOTENTE \(N_i = (T - \lambda_i I)|_{K_{\lambda_i}}\) en cada bloque primario.
+
+Realicemos una descomposición primaria completa en
+\[
+A = \begin{bmatrix} 2 & 1 & 0 & 0 \\ 0 & 2 & 1 & 0 \\ 0 & 0 & 2 & 1 \\ 0 & 0 & 0 & 3 \end{bmatrix}.
+\]
+Como \(A\) es triangular superior, \(p_A(x) = (x - 2)^3(x - 3)\), de modo que \(\dim(K_2) = 3\) y \(\dim(K_3) = 1\).
+- Calcular \(K_2\): forme \(S = A - 2I_4\) y sus potencias hasta que la nulidad alcance \(m_a(2) = 3\):
+\[
+S = \begin{bmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \qquad S^2 = \begin{bmatrix} 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \qquad S^3 = \begin{bmatrix} 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}.
+\]
+  Las nulidades crecen como \(1 \to 2 \to 3 = m_a(2)\), estabilizándose en \(r_1 = 3\) con \(K_2 = \ker(S^3) = \operatorname{span}\{\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3\}\).
+- Calcular \(K_3\): como \(m_a(3) = 1\), \(K_3 = E_3 = \ker(A - 3I_4)\). Resolver
+\[
+(A - 3I_4)\mathbf{x} = \begin{bmatrix} -1 & 1 & 0 & 0 \\ 0 & -1 & 1 & 0 \\ 0 & 0 & -1 & 1 \\ 0 & 0 & 0 & 0 \end{bmatrix}\mathbf{x} = \mathbf{0}
+\]
+  da \(x_1 = x_2 = x_3 = x_4\), por lo que \(K_3 = \operatorname{span}\{(1, 1, 1, 1)^T\}\).
+- Ensamblar la base primaria \(P = \begin{bmatrix} 1 & 0 & 0 & 1 \\ 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}\): la entrada de acoplamiento \(1\) en la posición \((3, 4)\) desaparece por completo, produciendo la forma primaria diagonal por bloques
+\[
+P^{-1} A P = \begin{bmatrix} 2 & 1 & 0 & 0 \\ 0 & 2 & 1 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 3 \end{bmatrix} = (2I_3 + N_1) \oplus [3],
+\]
+donde \(N_1 = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}\) satisface \(N_1^3 = 0\) y \(N_1^2 \neq 0\).
+
+[TABLE]
+Propiedad | Espacio propio ordinario \(E_\lambda\) | Espacio propio generalizado \(K_\lambda\)
+Definición | \(\ker(T - \lambda I)\) | \(\ker((T - \lambda I)^r)\) donde \(r\) es la multiplicidad de \(\lambda\) en \(m_T\)
+Dimensión | \(m_g(\lambda)\) (puede ser \(< m_a(\lambda)\)) | Siempre \(m_a(\lambda)\)
+¿\(T\)-invariante? | Sí | Sí
+¿La suma \(\bigoplus E_{\lambda_i}\) o \(\bigoplus K_{\lambda_i}\) iguala a \(V\)? | Solo cuando \(T\) es diagonalizable | Siempre (cuando \(p_T\) se escinde sobre \(F\))
+Acción de \(T\) restringida al subespacio | Múltiplo escalar \(\lambda I\) | \(\lambda I + N_\lambda\) con \(N_\lambda\) nilpotente (\(N_\lambda^r = 0\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Considere la matriz
+\[
+A = \begin{bmatrix} 3 & 1 & 0 \\ 0 & 3 & 2 \\ 0 & 0 & 5 \end{bmatrix}.
+\]
+¿Qué par da una base de \(K_3\) y una base de \(K_5\)?
+
+(A) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_2\}\) y \(K_5 = \operatorname{span}\{(1, 2, 2)^T\}\)
+(B) \(K_3 = \operatorname{span}\{\mathbf{e}_1\}\) y \(K_5 = \operatorname{span}\{\mathbf{e}_2,\; \mathbf{e}_3\}\)
+(C) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_2\}\) y \(K_5 = \operatorname{span}\{\mathbf{e}_3\}\)
+(D) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; (0, 2, 1)^T\}\) y \(K_5 = \operatorname{span}\{(1, 2, 2)^T\}\)
+(E) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_3\}\) y \(K_5 = \operatorname{span}\{(2, 1, 1)^T\}\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Suponga que \(T : V \to V\) se escinde sobre \(F\) con descomposición primaria \(V = K_{\lambda_1} \oplus K_{\lambda_2} \oplus \dots \oplus K_{\lambda_s}\) para valores propios distintos \(\lambda_1, \dots, \lambda_s\). ¿Qué enunciado describe con precisión las restricciones del operador desplazado \(S = T - \lambda_1 I\) a \(K_{\lambda_1}\) y a \(K_{\lambda_2}\)?
+
+(A) \(S|_{K_{\lambda_1}}\) es el operador nulo, y \(S|_{K_{\lambda_2}}\) es nilpotente.
+(B) \(S|_{K_{\lambda_1}}\) es nilpotente, y \(S|_{K_{\lambda_2}}\) es la multiplicación escalar por \(\lambda_2 - \lambda_1\).
+(C) Tanto \(S|_{K_{\lambda_1}}\) como \(S|_{K_{\lambda_2}}\) son invertibles.
+(D) \(S|_{K_{\lambda_1}}\) es diagonalizable, y \(S|_{K_{\lambda_2}}\) es singular.
+(E) \(S|_{K_{\lambda_1}}\) es nilpotente, y \(S|_{K_{\lambda_2}}\) es invertible.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Sea
+\[
+B = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 3 \\ 0 & 0 & 4 \end{bmatrix},
+\]
+de modo que \(\mathbb{R}^3 = K_1 \oplus K_4\). Escribiendo \(\mathbf{v} = (2, 5, 6)^T = \mathbf{v}_1 + \mathbf{v}_4\) con \(\mathbf{v}_1 \in K_1\) y \(\mathbf{v}_4 \in K_4\), ¿cuál es la componente \(\mathbf{v}_1\) en \(K_1\)?
+
+(A) \((2, 5, 0)^T\)
+(B) \((0, 1, 0)^T\)
+(C) \((0, -1, 0)^T\)
+(D) \((1, 2, 0)^T\)
+(E) \((-2, -1, 0)^T\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suponga que \(T : \mathbb{C}^7 \to \mathbb{C}^7\) tiene polinomio característico \(p_T(x) = (x - 1)^4(x + 2)^3\), y las dos primeras dimensiones de núcleos para cada valor propio son
+\[
+\dim \ker(T - I) = 2, \qquad \dim \ker\bigl((T - I)^2\bigr) = 4, \qquad \dim \ker(T + 2I) = 2, \qquad \dim \ker\bigl((T + 2I)^2\bigr) = 3.
+\]
+¿Cuál es el polinomio mínimo \(m_T(x)\)?
+
+(A) \((x - 1)(x + 2)\)
+(B) \((x - 1)^2(x + 2)^2\)
+(C) \((x - 1)^4(x + 2)^3\)
+(D) \((x - 1)^2(x + 2)^3\)
+(E) No puede determinarse sin calcular \(\dim \ker((T - I)^3)\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Sea \(T : V \to V\) con polinomio mínimo \(m_T(x) = \prod_{i=1}^s (x - \lambda_i)^{r_i}\) sobre \(F\), y sean \(E_i = h_i(T)\) las proyecciones primarias de Bézout sobre \(K_{\lambda_i}\). Defina los dos operadores
+\[
+D = \lambda_1 E_1 + \lambda_2 E_2 + \dots + \lambda_s E_s, \qquad N = T - D.
+\]
+¿Qué enunciado es SIEMPRE verdadero?
+
+(A) \(D\) es diagonalizable, \(N\) es nilpotente, \(DN = ND\), y tanto \(D\) como \(N\) son polinomios en \(T\).
+(B) \(D\) es diagonalizable y \(N\) es nilpotente, pero \(DN = ND\) se cumple solo cuando \(T\) es diagonalizable.
+(C) \(D\) es invertible y \(N = 0\) siempre que \(p_T(x)\) se escinde sobre \(F\).
+(D) \(D\) es diagonalizable y \(N\) es nilpotente, pero \(D\) y \(N\) no pueden en general expresarse como polinomios en \(T\).
+(E) \(N\) es diagonalizable mientras que \(D\) es nilpotente.
+[/BONUS]

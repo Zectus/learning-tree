@@ -1,0 +1,233 @@
+=== SECTION 1: Relaciones de equivalencia e invariantes ===
+
+Con frecuencia en matemática ignoramos deliberadamente los detalles irrelevantes y tratamos objetos distintos como «iguales» siempre que comparten una propiedad clave: un invariante. Dos enteros que dejan el mismo resto al dividirlos por \(5\) se comportan idénticamente en aritmética modular; dos fracciones \(2/4\) y \(3/6\) representan exactamente el mismo número racional; dos triángulos con ángulos iguales comparten la misma forma geométrica. ¿Qué propiedades estructurales debe cumplir una relación de «igualdad» o «equivalencia» para comportarse como la igualdad?
+
+La igualdad sobre cualquier conjunto \(A\) es reflexiva (\(a = a\)), simétrica (si \(a = b\), entonces \(b = a\)) y transitiva (si \(a = b\) y \(b = c\), entonces \(a = c\)). Exigir exactamente esas tres propiedades nos da la noción general de relación de equivalencia.
+
+[CALLOUT]
+id: equiv-rel-def
+label: Definición
+title: Relación de equivalencia
+tone: key
+
+Una relación binaria \(\sim\) sobre un conjunto \(A\) es una relación de equivalencia sobre \(A\) si cumple tres propiedades para cualesquiera \(a, b, c \in A\):
+
+(1) Reflexividad: \(a \sim a\).
+(2) Simetría: si \(a \sim b\), entonces \(b \sim a\).
+(3) Transitividad: si \(a \sim b\) y \(b \sim c\), entonces \(a \sim c\).
+[/CALLOUT]
+
+Verifiquemos tres relaciones de equivalencia canónicas en distintas áreas de la matemática, observando cómo cada una captura un invariante natural.
+
+Ejemplo 1 (Congruencia módulo \(n\) en \(\mathbb{Z}\)): Fíjese un entero positivo \(n \in \mathbb{Z}^+\). Definimos \(a \equiv b \pmod n\) como \(n \mid (a - b)\), es decir, existe \(k \in \mathbb{Z}\) tal que \(a - b = kn\).
+- Reflexiva: para todo \(a \in \mathbb{Z}\), \(a - a = 0 = 0 \cdot n\), luego \(n \mid (a - a)\).
+- Simétrica: si \(a - b = kn\) con \(k \in \mathbb{Z}\), entonces \(b - a = (-k)n\) con \(-k \in \mathbb{Z}\), luego \(n \mid (b - a)\).
+- Transitiva: si \(a - b = kn\) y \(b - c = mn\) con \(k, m \in \mathbb{Z}\), entonces \(a - c = (a - b) + (b - c) = (k + m)n\) con \(k + m \in \mathbb{Z}\), luego \(n \mid (a - c)\).
+Por el algoritmo de la división, \(a \equiv b \pmod n\) se cumple si y solo si \(a\) y \(b\) dejan el mismo resto en \(\{0, 1, \dots, n - 1\}\) al dividirlos por \(n\). Cuando \(n = 2\), esta es la relación de misma paridad («ambos pares o ambos impares»).
+
+Ejemplo 2 (Paralelismo geométrico y semejanza): En el conjunto de todas las rectas del plano euclídeo \(\mathbb{R}^2\), definimos \(\ell_1 \parallel \ell_2\) cuando \(\ell_1 = \ell_2\) o \(\ell_1 \cap \ell_2 = \emptyset\) (equivalentemente, \(\ell_1\) y \(\ell_2\) tienen la misma dirección). Incluir \(\ell_1 = \ell_2\) hace que el paralelismo sea reflexivo, y tener la misma dirección garantiza inmediatamente la simetría y la transitividad. (Si se definiera erróneamente el paralelismo como «\(\ell_1 \cap \ell_2 = \emptyset\)» sin permitir \(\ell_1 = \ell_2\), fallarían TANTO la reflexividad como la transitividad, ya que \(\ell_1 \parallel \ell_2\) y \(\ell_2 \parallel \ell_1\) no implicarían \(\ell_1 \parallel \ell_1\)). De manera análoga, la semejanza geométrica de triángulos en el plano es una relación de equivalencia.
+
+Ejemplo 3 (Construcción de los números racionales a partir de pares de enteros): Sea \(A = \mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\), pensando un par \((a, b)\) como la fracción formal \(a/b\). Definimos
+\[
+(a, b) \sim (c, d) \iff ad = bc.
+\]
+Comprobemos los tres axiomas con cuidado:
+- Reflexiva: para cualquier \((a, b) \in A\), \(ab = ba\), por lo que \((a, b) \sim (a, b)\).
+- Simétrica: si \((a, b) \sim (c, d)\), entonces \(ad = bc\), que se reescribe como \(cb = da\), luego \((c, d) \sim (a, b)\).
+- Transitiva: supongamos que \((a, b) \sim (c, d)\) y \((c, d) \sim (e, f)\), de modo que \(ad = bc\) y \(cf = de\). Queremos deducir \(af = be\). Obsérvese el puente algebraico: multiplicando \(ad = bc\) por \(f\) obtenemos \(adf = bcf\), y sustituyendo \(cf = de\) llegamos a \(adf = bde\), o equivalentemente
+\[
+d(af - be) = 0.
+\]
+Aquí llega el momento decisivo: como \((c, d) \in \mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\), ¡tenemos \(d \ne 0\)! Cancelar \(d \ne 0\) en \(\mathbb{Z}\) fuerza \(af - be = 0\), es decir, \(af = be\), por lo que \((a, b) \sim (e, f)\).
+
+Deténgase a apreciar por qué hubo que excluir los denominadores nulos de \(A\): si permitiéramos \(b = 0\) y definiéramos \((a, b) \sim (c, d) \iff ad = bc\) en todo \(\mathbb{Z} \times \mathbb{Z}\), entonces \((1, 2) \sim (0, 0)\) (pues \(1 \cdot 0 = 2 \cdot 0\)) y \((0, 0) \sim (1, 3)\) (pues \(0 \cdot 3 = 0 \cdot 1\)), pero \((1, 2) \not\sim (1, 3)\) (pues \(1 \cdot 3 \ne 2 \cdot 1\)). La transitividad se derrumba en el instante en que \((0, 0)\) entra en el dominio.
+
+[QUESTION 1]
+[ANSWER: D]
+¿Cuál de las siguientes relaciones binarias es una relación de equivalencia sobre el conjunto especificado?
+
+(A) En \(\mathbb{Z}\), \(a \sim b \iff a \mid b\)
+(B) En \(\mathbb{R}\), \(x \sim y \iff |x - y| \le 1\)
+(C) En \(\mathbb{Z}\), \(a \sim b \iff ab \ge 0\)
+(D) En \(\mathbb{R} \setminus \{0\}\), \(x \sim y \iff x/y \in \mathbb{Q}\)
+(E) En \(\mathbb{Z} \times \mathbb{Z}\), \((a, b) \sim (c, d) \iff a = c \lor b = d\)
+[/QUESTION]
+
+=== SECTION 2: Clases de equivalencia y el Lema Fundamental ===
+
+Dada una relación de equivalencia \(\sim\) sobre \(A\), agrupamos todos los elementos que son equivalentes a un elemento dado \(a \in A\).
+
+[CALLOUT]
+id: equiv-class-def
+label: Definición
+title: Clase de equivalencia
+tone: key
+
+Sea \(\sim\) una relación de equivalencia sobre un conjunto \(A\). Para cada \(a \in A\), la clase de equivalencia de \(a\), denotada por \([a]\) (o \([a]_\sim\) cuando se discute más de una relación), es el subconjunto de \(A\) formado por todos los elementos equivalentes a \(a\):
+\[
+[a] = \{x \in A : x \sim a\}.
+\]
+Todo elemento \(x \in [a]\) se denomina representante de la clase \([a]\).
+[/CALLOUT]
+
+Obsérvese que por [REF: equiv-rel-def.2 | simetría], \(x \sim a \iff a \sim x\), de modo que escribir \(\{x \in A : a \sim x\}\) define exactamente el mismo conjunto. Examinemos las clases de equivalencia de nuestros ejemplos anteriores:
+- Para la congruencia módulo \(3\) en \(\mathbb{Z}\):
+\[
+[0] = \{\dots, -6, -3, 0, 3, 6, \dots\}, \quad [1] = \{\dots, -5, -2, 1, 4, 7, \dots\}, \quad [2] = \{\dots, -4, -1, 2, 5, 8, \dots\}.
+\]
+¿Qué es \([4]\)? Como \(4 \equiv 1 \pmod 3\), \([4]\) es EXACTAMENTE el mismo conjunto que \([1]\): \([4] = [1] = [-2]\). Aunque \(1\) y \(4\) son enteros distintos, representan la misma clase de equivalencia.
+- Para la relación de fracciones \((a, b) \sim (c, d) \iff ad = bc\) en \(\mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\): la clase de equivalencia \([(1, 2)]\) es el conjunto \(\{(k, 2k) : k \in \mathbb{Z} \setminus \{0\}\} = \{\dots, (-2, -4), (-1, -2), (1, 2), (2, 4), (3, 6), \dots\}\). En matemática rigurosa, el número racional \(1/2\) SE DEFINE como esta clase de equivalencia \([(1, 2)]\).
+
+En ambos ejemplos, dos clases nunca se solapan parcialmente: o bien son completamente idénticas, o bien no comparten ningún elemento. Esto no es casualidad: vale para TODA relación de equivalencia sobre CUALQUIER conjunto.
+
+[CALLOUT]
+id: fundamental-lemma-classes
+label: Teorema
+title: Lema Fundamental de las Clases de Equivalencia
+tone: key
+
+Sea \(\sim\) una relación de equivalencia sobre un conjunto \(A\), y sean \(a, b \in A\).
+
+(1) \(a \in [a]\). (En particular, toda clase de equivalencia es no vacía.)
+(2) \(a \sim b \iff [a] = [b]\).
+(3) O bien \([a] = [b]\) o bien \([a] \cap [b] = \emptyset\).
+[/CALLOUT]
+
+Nótese cómo cada uno de los tres axiomas de [REF: equiv-rel-def | la definición de relación de equivalencia] desempeña un papel esencial en la demostración siguiente.
+
+[CALLOUT]
+id: fundamental-lemma-proof
+label: Demostración
+title: Demostración del [REF: fundamental-lemma-classes | Lema Fundamental]
+tone: note
+
+(1) Por [REF: equiv-rel-def.1 | reflexividad], \(a \sim a\), luego \(a \in [a]\) directamente por [REF: equiv-class-def | definición de clase de equivalencia].
+
+(2) Implicación directa (\(\implies\)): Supongamos \(a \sim b\). Demostramos \([a] = [b]\) por doble inclusión.
+- Para probar \([a] \subseteq [b]\): sea \(x \in [a]\). Entonces \(x \sim a\). Como \(x \sim a\) y \(a \sim b\), la [REF: equiv-rel-def.3 | transitividad] da \(x \sim b\), de modo que \(x \in [b]\).
+- Para probar \([b] \subseteq [a]\): como \(a \sim b\), la [REF: equiv-rel-def.2 | simetría] da \(b \sim a\). Ahora sea \(x \in [b]\), de modo que \(x \sim b\); por transitividad con \(b \sim a\), obtenemos \(x \sim a\), luego \(x \in [a]\).
+Por tanto, \([a] = [b]\).
+
+Implicación recíproca (\(\Longleftarrow\)): Supongamos \([a] = [b]\). Por la parte (1), \(a \in [a]\). Como \([a] = [b]\), tenemos \(a \in [b]\), lo cual por definición significa \(a \sim b\).
+
+(3) Demostramos el condicional equivalente: si \([a] \cap [b] \ne \emptyset\), entonces \([a] = [b]\). Supongamos \([a] \cap [b] \ne \emptyset\), de modo que existe algún \(c \in [a] \cap [b]\). Entonces \(c \in [a]\) y \(c \in [b]\), es decir, \(c \sim a\) y \(c \sim b\). Por simetría aplicada a \(c \sim a\), tenemos \(a \sim c\). Combinando \(a \sim c\) y \(c \sim b\) mediante transitividad obtenemos \(a \sim b\). Por la parte (2), se sigue inmediatamente que \([a] = [b]\).
+[/CALLOUT]
+
+Obsérvese con atención la parte (2) del [REF: fundamental-lemma-classes | Lema Fundamental]: nos brinda una regla potente para comprobar la igualdad de clases de equivalencia sin tener que hacer seguimiento de elementos cada vez. Para verificar si \([a] = [b]\), basta comprobar si \(a \sim b\). Igualmente importante: si \(x \in [a]\), entonces \(x \sim a\), luego \([x] = [a]\)—TODO miembro de una clase de equivalencia es un representante igualmente válido de esa clase.
+
+[QUESTION 2]
+[ANSWER: B]
+Se define una relación de equivalencia \(\sim\) sobre \(\mathbb{R}\) mediante \(x \sim y \iff x^2 - y^2 = x - y\). ¿Cuántos elementos pertenecen a la clase de equivalencia \([3]\)?
+
+(A) \(1\) (únicamente \(3\))
+(B) \(2\) (a saber, \(3\) y \(-2\))
+(C) \(2\) (a saber, \(3\) y \(-3\))
+(D) \(3\) (a saber, \(3\), \(-2\) y \(0\))
+(E) Infinitos
+[/QUESTION]
+
+=== SECTION 3: Buena definición sobre clases de equivalencia ===
+
+Supongamos que queremos definir una operación o regla sobre el conjunto de clases de equivalencia —por ejemplo, sumar o multiplicar clases de congruencia en \(\mathbb{Z}/n\mathbb{Z} = \{[0], [1], \dots, [n - 1]\}\) (el conjunto de clases de congruencia módulo \(n\)). Las fórmulas naturales que conviene intentar son
+\[
+[a] + [b] = [a + b], \qquad [a] \cdot [b] = [ab].
+\]
+Sin embargo, aquí hay una obligación lógica oculta: como una misma clase puede escribirse usando representantes DISTINTOS (por ejemplo, en \(\mathbb{Z}/6\mathbb{Z}\), \([1] = [7]\) y \([2] = [14]\)), cualquier fórmula expresada en términos de un representante elegido \(a\) podría dar accidentalmente resultados distintos según qué nombre escojamos para la clase.
+
+[CALLOUT]
+id: well-defined-rule
+label: Principio
+title: Comprobación de buena definición sobre clases de equivalencia
+tone: key
+
+Supongamos que una regla intenta asignar un resultado a cada clase de equivalencia \([a]\) (o par de clases \(([a], [b])\)) mediante una fórmula escrita en términos del representante \(a\) (o \(a, b\)).
+
+(1) Para demostrar que la regla está bien definida: supóngase \([a] = [a']\) (y \([b] = [b']\) para una operación binaria) —equivalentemente, \(a \sim a'\) (y \(b \sim b'\)) por el [REF: fundamental-lemma-classes.2 | Lema Fundamental]— y demuéstrese que la fórmula produce EXACTAMENTE el mismo resultado a partir de \(a'\) (y \(b'\)) que a partir de \(a\) (y \(b\)).
+(2) Para demostrar que la regla está mal definida (NO está bien definida): exhíbase un par concreto de representantes equivalentes \(a \sim a'\) (de modo que \([a] = [a']\)) para el cual la fórmula arroje dos resultados DISTINTOS.
+[/CALLOUT]
+
+Demostremos que la suma y el producto en \(\mathbb{Z}/n\mathbb{Z}\) SÍ están bien definidos.
+Supongamos \([a] = [a']\) y \([b] = [b']\) en \(\mathbb{Z}/n\mathbb{Z}\). Por el [REF: fundamental-lemma-classes.2 | Lema Fundamental], \(a \equiv a' \pmod n\) y \(b \equiv b' \pmod n\), de modo que existen enteros \(k, m \in \mathbb{Z}\) tales que
+\[
+a' = a + kn, \qquad b' = b + mn.
+\]
+- Para la suma:
+\[
+a' + b' = (a + kn) + (b + mn) = (a + b) + (k + m)n.
+\]
+Como \(k + m \in \mathbb{Z}\), tenemos \(n \mid ((a' + b') - (a + b))\), por lo que \(a' + b' \equiv a + b \pmod n\), lo cual por el [REF: fundamental-lemma-classes.2 | Lema Fundamental] significa \([a' + b'] = [a + b]\). Así pues, la suma de clases de congruencia está bien definida.
+- Para el producto:
+\[
+a'b' = (a + kn)(b + mn) = ab + (am + bk + kmn)n.
+\]
+Como \(am + bk + kmn \in \mathbb{Z}\), tenemos \(a'b' \equiv ab \pmod n\), luego \([a'b'] = [ab]\). Así pues, el producto de clases de congruencia está bien definido.
+
+Contrastemos esto con una regla MAL DEFINIDA. Supongamos que alguien intenta definir una regla de \(\mathbb{Z}/6\mathbb{Z}\) a \(\mathbb{Z}/4\mathbb{Z}\) enviando \([a]_6 \mapsto [a]_4\) (es decir, tomando el resto de \(a\) módulo \(4\)). Probemos con dos representantes de la misma clase en \(\mathbb{Z}/6\mathbb{Z}\): tomemos \(a = 1\) y \(a' = 7\). Como \(6 \mid (7 - 1)\), se tiene \([1]_6 = [7]_6\). Sin embargo, la regla propuesta envía \(a = 1\) a \([1]_4\) y envía \(a' = 7\) a \([7]_4 = [3]_4 \ne [1]_4\). A una única clase de entrada \([1]_6\) se le asignan dos salidas distintas, por lo que la regla NO está bien definida.
+
+En general, la regla \([a]_n \mapsto [a]_m\) de \(\mathbb{Z}/n\mathbb{Z}\) a \(\mathbb{Z}/m\mathbb{Z}\) está bien definida si y solo si \(m \mid n\).
+- Si \(m \mid n\) (escríbase \(n = qm\)) y \(a' = a + kn\), entonces \(a' = a + (kq)m\), de modo que \(a' \equiv a \pmod m\) y \([a']_m = [a]_m\).
+- Si \(m \nmid n\), tómese \(a = 0\) y \(a' = n\): entonces \([0]_n = [n]_n\), pero \([0]_m \ne [n]_m\) porque \(m \nmid n\).
+
+[TABLE]
+Regla propuesta sobre \(\mathbb{Z}/n\mathbb{Z}\) | ¿Bien definida? | Razón o contraejemplo
+\([a]_n + [b]_n = [a + b]_n\) | Sí (para todo \(n \ge 1\)) | \(a \equiv a', b \equiv b' \implies a + b \equiv a' + b' \pmod n\)
+\([a]_n \cdot [b]_n = [ab]_n\) | Sí (para todo \(n \ge 1\)) | \(a \equiv a', b \equiv b' \implies ab \equiv a'b' \pmod n\)
+\([a]_n \mapsto [a]_m\) | Solo cuando \(m \mid n\) | Si \(m \nmid n\), \([0]_n = [n]_n\) da \([0]_m \ne [n]_m\)
+\([a]_6 \mapsto a^2\) (en \(\mathbb{Z}\)) | No | \([1]_6 = [7]_6\), pero \(1^2 = 1 \ne 49 = 7^2\)
+\([a]_6 \mapsto [a^2]_3\) | Sí | Como \(3 \mid 6\), \(a' = a + 6k \implies (a')^2 = a^2 + 3(4ak + 12k^2) \equiv a^2 \pmod 3\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+¿Cuál de las siguientes reglas propuestas sobre \(\mathbb{Z}/12\mathbb{Z}\) está BIEN DEFINIDA?
+
+(A) \([a]_{12} \mapsto [a]_8\) en \(\mathbb{Z}/8\mathbb{Z}\)
+(B) \([a]_{12} \mapsto [a / 2]_6\) en \(\mathbb{Z}/6\mathbb{Z}\)
+(C) \([a]_{12} \mapsto [5a + 1]_4\) en \(\mathbb{Z}/4\mathbb{Z}\)
+(D) \([a]_{12} \mapsto [2^a]_{12}\) en \(\mathbb{Z}/12\mathbb{Z}\) (restringida a \(a \ge 0\))
+(E) \([a]_{12} \mapsto |a|\) en \(\mathbb{N}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+En \(A = \mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\) con la relación de equivalencia de fracciones \((a, b) \sim (c, d) \iff ad = bc\), ¿cuál de las siguientes reglas propuestas sobre clases de equivalencia está BIEN DEFINIDA?
+
+(A) \([(a, b)] \mapsto a + b\) en \(\mathbb{Z}\)
+(B) \([(a, b)] \mapsto [(a + 1, b + 1)]\)
+(C) \([(a, b)] \mapsto [(a, b^2)]\)
+(D) \([(a, b)] \mapsto a \bmod 2\) en \(\{0, 1\}\)
+(E) \([(a, b)] \mapsto [(a^2, b^2)]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Se define una relación \(\sim\) sobre \(\mathbb{Z}\) mediante \(a \sim b \iff 3a + 5b \equiv 0 \pmod 8\). ¿Es \(\sim\) una relación de equivalencia sobre \(\mathbb{Z}\), y de ser así, cuál es la clase de equivalencia \([1]\)?
+
+(A) Sí; \([1] = \{1 + 8k : k \in \mathbb{Z}\}\)
+(B) Sí; \([1] = \{1 + 4k : k \in \mathbb{Z}\}\)
+(C) Sí; \([1] = \{1 + 2k : k \in \mathbb{Z}\}\)
+(D) No; es reflexiva y transitiva, pero no simétrica
+(E) No; es simétrica y transitiva, pero no reflexiva
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Supongamos que \(\sim_1\) y \(\sim_2\) son dos relaciones de equivalencia sobre un conjunto \(A\). ¿Cuál de las siguientes afirmaciones es SIEMPRE verdadera?
+
+(A) \(\sim_1 \cup \sim_2\) es una relación de equivalencia sobre \(A\)
+(B) \((\sim_1 \setminus \sim_2) \cup \Delta_A\) es una relación de equivalencia sobre \(A\)
+(C) Toda clase de equivalencia de \(\sim_1 \cap \sim_2\) es igual a \([a]_{\sim_1} \cup [a]_{\sim_2}\)
+(D) \(\sim_1 \cap \sim_2\) es una relación de equivalencia sobre \(A\), y su clase de equivalencia de \(a\) es \([a]_{\sim_1} \cap [a]_{\sim_2}\)
+(E) \(\sim_1 \cap \sim_2\) es una relación de equivalencia únicamente cuando \(\sim_1 \subseteq \sim_2\) o \(\sim_2 \subseteq \sim_1\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Sobre \(\mathbb{Z}/10\mathbb{Z}\), un estudiante propone la operación unaria \([a]_{10} \mapsto [k a]_{15}\) hacia \(\mathbb{Z}/15\mathbb{Z}\), donde \(k \in \mathbb{Z}^+\) es una constante entera positiva fija. ¿Para qué enteros positivos \(k\) está bien definida esta regla?
+
+(A) Todos los \(k \in \mathbb{Z}^+\)
+(B) Exactamente los múltiplos de \(3\)
+(C) Exactamente los múltiplos de \(5\)
+(D) Exactamente los múltiplos de \(15\)
+(E) Ningún entero positivo \(k\) la hace bien definida
+[/BONUS]

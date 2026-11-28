@@ -1,0 +1,278 @@
+=== SECTION 1: Summation notation and the arithmetic mean ===
+
+Suppose five software engineers at a startup report their weekly debugging hours: \(4, 7, 9, 12, 18\). To summarize a dataset with a single representative "typical" number—its measure of center—we need concise notation for adding observations together and clear algebraic rules for manipulating sums.
+
+[CALLOUT]
+id: summation-linearity
+label: Definition
+title: Summation notation and linearity
+tone: key
+
+Given \(n\) numerical values \(x_1, x_2, \dots, x_n\), the sum of all \(n\) observations is written
+\[
+\sum_{i=1}^n x_i = x_1 + x_2 + \dots + x_n.
+\]
+Here \(i\) is the summation index running from \(1\) to \(n\). For any constants \(a, b, c \in \mathbb{R}\) and any paired values \(y_1, \dots, y_n\):
+
+(1) Constant sum: \(\sum_{i=1}^n c = n c\).
+(2) Scaling: \(\sum_{i=1}^n a x_i = a \sum_{i=1}^n x_i\).
+(3) Additivity: \(\sum_{i=1}^n (x_i + y_i) = \sum_{i=1}^n x_i + \sum_{i=1}^n y_i\).
+[/CALLOUT]
+
+Putting [REF: summation-linearity.2 | scaling] and [REF: summation-linearity.3 | additivity] together gives full linearity: \(\sum_{i=1}^n (a x_i + b y_i) = a \sum_{i=1}^n x_i + b \sum_{i=1}^n y_i\). Notice that the index \(i\) is a dummy counter—writing \(\sum_{j=1}^n x_j\) means the exact same sum.
+
+With summation notation in hand, we define the most widely used measure of center: the arithmetic mean.
+
+[CALLOUT]
+id: arithmetic-mean
+label: Definition
+title: Sample mean and population mean
+tone: key
+
+(1) For a sample of \(n\) quantitative observations \(x_1, \dots, x_n\), the sample arithmetic mean is
+\[
+\bar{x} = \frac{1}{n} \sum_{i=1}^n x_i.
+\]
+(2) For an entire finite population of \(N\) observations \(x_1, \dots, x_N\), the population arithmetic mean is
+\[
+\mu = \frac{1}{N} \sum_{i=1}^N x_i.
+\]
+[/CALLOUT]
+
+For our five debugging times \(4, 7, 9, 12, 18\), the sample mean is \(\bar{x} = (4 + 7 + 9 + 12 + 18) / 5 = 50 / 5 = 10\) hours. Notice an immediate algebraic rearrangement of [REF: arithmetic-mean.1 | the sample mean]: multiplying both sides by \(n\) yields \(\sum_{i=1}^n x_i = n \bar{x}\), meaning the mean is the equal-share value each observation would take if the total were redistributed evenly.
+
+What happens if we measure each observation's signed deviation from the mean, \(x_i - \bar{x}\), and add all \(n\) deviations together? Using [REF: summation-linearity | summation linearity] with the constant \(c = \bar{x}\):
+\[
+\sum_{i=1}^n (x_i - \bar{x}) = \sum_{i=1}^n x_i - \sum_{i=1}^n \bar{x} = n \bar{x} - n \bar{x} = 0.
+\]
+
+[CALLOUT]
+id: balance-point
+label: Identity
+title: The balance-point property of the arithmetic mean
+tone: key
+
+For every quantitative dataset \(x_1, \dots, x_n\), the signed deviations from the arithmetic mean sum to zero:
+\[
+\sum_{i=1}^n (x_i - \bar{x}) = 0.
+\]
+Physically, if equal weights are placed on a rigid number line at locations \(x_1, \dots, x_n\), the line balances horizontally precisely at the fulcrum \(\bar{x}\).
+[/CALLOUT]
+
+Check [REF: balance-point | this identity] on our debugging times with \(\bar{x} = 10\): the deviations are \(4 - 10 = -6\), \(7 - 10 = -3\), \(9 - 10 = -1\), \(12 - 10 = +2\), and \(18 - 10 = +8\), whose sum is \(-6 - 3 - 1 + 2 + 8 = 0\). Because the negative torque \((-10)\) exactly cancels the positive torque \((+10)\), moving any single observation farther out on the lever arm forces the balance point \(\bar{x}\) to shift toward it.
+
+[QUESTION 1]
+[ANSWER: B]
+A sample of \(n = 8\) laboratory measurements has sample mean \(\bar{x} = 15\). Seven of the eight signed deviations \((x_i - \bar{x})\) are \(-4, -2, -1, 0, +1, +2, +3\). What is the value of the eighth observation \(x_8\)?
+
+(A) \(14\)
+(B) \(16\)
+(C) \(15\)
+(D) \(17\)
+(E) \(1\)
+[/QUESTION]
+
+=== SECTION 2: Median, mode, and measurement scale ===
+
+The arithmetic mean requires adding and dividing values, which is only meaningful on interval and ratio scales. Even on ratio scales, the balance-point property can pull the mean far away from where most observations actually sit when a single value is huge. Two alternative measures of center rely on ordering or frequency instead of arithmetic sums.
+
+[CALLOUT]
+id: median-and-mode
+label: Definition
+title: Sample median, mode, and modal class
+tone: key
+
+Let \(x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}\) denote the observations sorted in non-decreasing order (the order statistics).
+
+(1) The sample median \(M\) (or \(\tilde{x}\)) is the middle value of the sorted dataset:
+\[
+M = \begin{cases} x_{((n+1)/2)} & \text{if } n \text{ is odd}, \\ \dfrac{x_{(n/2)} + x_{(n/2 + 1)}}{2} & \text{if } n \text{ is even}. \end{cases}
+\]
+(2) The mode is the value (or category) occurring with the highest frequency. A dataset may have one mode (unimodal), two modes (bimodal), more than two modes (multimodal), or no mode when all values occur equally often. For grouped quantitative data, the class with the highest frequency density is called the modal class.
+[/CALLOUT]
+
+Always sort the data before finding the median! For our \(n = 5\) debugging times \(4, 7, 9, 12, 18\) (already sorted), \((n + 1)/2 = 3\), so \(M = x_{(3)} = 9\) hours. If a sixth engineer reports \(22\) hours, \(n = 6\) is even, and the two middle positions are \(n/2 = 3\) and \(n/2 + 1 = 4\), giving \(M = (x_{(3)} + x_{(4)}) / 2 = (9 + 12)/2 = 10.5\) hours.
+
+Measurement scale dictates which of these three measures of center is mathematically legitimate:
+
+[TABLE]
+Measurement scale | Mode | Median | Arithmetic mean
+Nominal | Valid | Invalid (no intrinsic order) | Invalid (no numerical differences)
+Ordinal | Valid | Valid (middle rank) | Invalid without equal-spacing assumption
+Interval | Valid | Valid | Valid
+Ratio | Valid | Valid | Valid
+[/TABLE]
+
+For an ordinal variable with even \(n\), if the two middle observations fall in the same ordered category (say both are "Good"), the median is unambiguously "Good"; if they fall in adjacent categories (say "Fair" and "Good"), one reports that the median lies between "Fair" and "Good" rather than averaging numeric codes.
+
+=== SECTION 3: Weighted means, subgroup pooling, and grouped data ===
+
+In many real calculations, observations do not all carry equal importance. A course syllabus may weight homework \(20\%\), midterm \(30\%\), and final exam \(50\%\), or a company may need to combine average salaries reported separately for two departments of different sizes. Both situations use the weighted arithmetic mean.
+
+[CALLOUT]
+id: weighted-mean
+label: Definition
+title: Weighted arithmetic mean
+tone: key
+
+Given values \(x_1, \dots, x_k\) with nonnegative weights \(w_1, \dots, w_k\) satisfying \(\sum_{j=1}^k w_j > 0\), the weighted arithmetic mean is
+\[
+\bar{x}_w = \frac{\sum_{j=1}^k w_j x_j}{\sum_{j=1}^k w_j}.
+\]
+When all weights are equal (\(w_j = 1\)), \(\bar{x}_w\) reduces to the ordinary arithmetic mean.
+[/CALLOUT]
+
+One of the most frequent errors in applied statistics is taking an unweighted average of subgroup averages. Suppose Section A of a statistics course has \(n_A = 20\) students with mean score \(\bar{x}_A = 84\), and Section B has \(n_B = 60\) students with mean score \(\bar{x}_B = 72\). What is the combined mean across all \(80\) students? Averaging \((84 + 72)/2 = 78\) is WRONG because Section B contains three times as many students as Section A! Using \(\sum x_i = n \bar{x}\) on each subgroup separately, the total score of all \(80\) students is \(n_A \bar{x}_A + n_B \bar{x}_B\), so the exact combined mean is the weighted mean with subgroup sizes as weights:
+\[
+\bar{x}_{\text{combined}} = \frac{n_A \bar{x}_A + n_B \bar{x}_B}{n_A + n_B} = \frac{20(84) + 60(72)}{20 + 60} = \frac{1680 + 4320}{80} = \frac{6000}{80} = 75.
+\]
+Notice that \(75\) sits three-quarters of the way from \(84\) toward \(72\), reflecting that Section B makes up \(60/80 = 75\%\) of the students. The unweighted average of subgroup means matches the true overall mean only when all subgroup sizes are equal (or when all subgroup means happen to be identical).
+
+The exact same formula approximates the mean of a grouped frequency table when raw values are unavailable. Treating all \(f_j\) observations inside class \(j\) as if they sat at the class midpoint \(m_j\) yields the grouped mean approximation:
+\[
+\bar{x}_{\text{grouped}} \approx \frac{\sum_{j=1}^k f_j m_j}{\sum_{j=1}^k f_j} = \frac{1}{n} \sum_{j=1}^k f_j m_j = \sum_{j=1}^k p_j m_j.
+\]
+For example, consider a grouped commute-time table of \(n = 40\) workers:
+- \([0, 10)\) (\(m_1 = 5, f_1 = 4\)): \(f_1 m_1 = 20\)
+- \([10, 20)\) (\(m_2 = 15, f_2 = 10\)): \(f_2 m_2 = 150\)
+- \([20, 30)\) (\(m_3 = 25, f_3 = 14\)): \(f_3 m_3 = 350\)
+- \([30, 40)\) (\(m_4 = 35, f_4 = 8\)): \(f_4 m_4 = 280\)
+- \([40, 50)\) (\(m_5 = 45, f_5 = 4\)): \(f_5 m_5 = 180\)
+
+Summing gives \(\sum f_j m_j = 980\), so \(\bar{x}_{\text{grouped}} \approx 980 / 40 = 24.5\) minutes. Remember that this is an approximation: if values inside each bin cluster systematically above or below the midpoint, the exact raw mean will differ slightly from \(24.5\).
+
+[QUESTION 2]
+[ANSWER: C]
+Factory 1 produces \(n_1 = 30\) electric motors with an average weight of \(12.0\text{ kg}\), and Factory 2 produces \(n_2 = 10\) electric motors with an average weight of \(16.0\text{ kg}\). What is the exact average weight of all \(40\) motors combined?
+
+(A) \(14.0\text{ kg}\)
+(B) \(15.0\text{ kg}\)
+(C) \(13.0\text{ kg}\)
+(D) \(13.5\text{ kg}\)
+(E) \(12.5\text{ kg}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+A grouped frequency distribution of \(n = 20\) quiz scores has three classes: \([0, 20)\) with frequency \(6\), \([20, 40)\) with frequency \(10\), and \([40, 60)\) with frequency \(4\). Using class midpoints, what is the approximate mean quiz score?
+
+(A) \(28\)
+(B) \(30\)
+(C) \(26\)
+(D) \(32\)
+(E) \(24\)
+[/QUESTION]
+
+=== SECTION 4: Resistance to outliers, trimmed means, and Winsorized means ===
+
+Suppose \(n = 10\) server response times (in milliseconds) are sorted as
+\[
+18,\; 21,\; 22,\; 23,\; 24,\; 25,\; 26,\; 27,\; 29,\; 185.
+\]
+Nine of the ten requests finish between \(18\) and \(29\) ms, while a single network stall takes \(185\) ms. Compare how the arithmetic mean and the median react:
+- The arithmetic mean is \(\bar{x} = 400 / 10 = 40.0\) ms—larger than nine of the ten observations!
+- The median is \(M = (24 + 25)/2 = 24.5\) ms—sitting squarely in the middle of the typical requests.
+
+In general, a summary is called resistant (or robust) if replacing a small fraction of observations with arbitrarily extreme values cannot move the summary arbitrarily far. The arithmetic mean is NOT resistant: changing just the largest value \(x_{(n)}\) to \(x_{(n)} + \Delta\) shifts \(\bar{x}\) by \(\Delta / n\), which grows without bound as \(\Delta \to \infty\). The median is highly resistant: as long as fewer than half the observations are pushed past the center, the median barely moves or does not move at all.
+
+Between the arithmetic mean (which uses all \(n\) numerical values equally) and the median (which ignores the exact magnitudes of all non-middle observations) sit two structured compromises: the trimmed mean and the Winsorized mean.
+
+[CALLOUT]
+id: trimmed-winsorized
+label: Definition
+title: \(\alpha\)-trimmed mean and \(\alpha\)-Winsorized mean
+tone: key
+
+Let \(x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}\) be the sorted data, and choose a trimming proportion \(\alpha \in (0, 0.5)\) such that \(k = \alpha n\) is a positive integer (in practice, \(k = \lfloor \alpha n \rfloor\)).
+
+(1) The \(\alpha\)-trimmed mean removes the \(k\) smallest and \(k\) largest observations and takes the arithmetic mean of the remaining \(n - 2k\) middle values:
+\[
+\bar{x}_{\text{trim},\alpha} = \frac{1}{n - 2k} \sum_{i=k+1}^{n-k} x_{(i)}.
+\]
+(2) The \(\alpha\)-Winsorized mean keeps all \(n\) observations, but replaces the \(k\) smallest values with \(x_{(k+1)}\) and the \(k\) largest values with \(x_{(n-k)}\), then averages all \(n\) adjusted values:
+\[
+\bar{x}_{\text{win},\alpha} = \frac{1}{n}\left(k x_{(k+1)} + \sum_{i=k+1}^{n-k} x_{(i)} + k x_{(n-k)}\right).
+\]
+[/CALLOUT]
+
+Apply [REF: trimmed-winsorized | both definitions] with \(\alpha = 0.10\) (so \(k = 0.10 \times 10 = 1\) observation at each end) to our \(n = 10\) server response times \(18, 21, 22, 23, 24, 25, 26, 27, 29, 185\):
+- For the \(10\%\)-trimmed mean, drop \(18\) and \(185\). The remaining \(8\) values sum to \(21 + 22 + 23 + 24 + 25 + 26 + 27 + 29 = 197\), giving \(\bar{x}_{\text{trim}, 0.10} = 197 / 8 = 24.625\) ms.
+- For the \(10\%\)-Winsorized mean, clamp \(18\) up to \(x_{(2)} = 21\) and clamp \(185\) down to \(x_{(9)} = 29\), yielding the adjusted list \(21, 21, 22, 23, 24, 25, 26, 27, 29, 29\). Their sum is \(247\), giving \(\bar{x}_{\text{win}, 0.10} = 247 / 10 = 24.7\) ms.
+
+Both compromises neutralize the \(185\) ms stall completely—and notice that trimming and Winsorizing ALWAYS operate symmetrically on BOTH tails, never just dropping the single outlier you dislike, which would introduce one-sided bias.
+
+To see the contrast in sensitivity directly, consider a tiny \(5\)-point dataset \(\{10, 12, 14, 16, t\}\) where the fifth observation \(t \ge 16\) is dragged arbitrarily far to the right. As \(t\) increases, \(\bar{x}(t) = (52 + t)/5\) climbs linearly without bound at slope \(1/5\). Meanwhile, both the median and the \(20\%\)-trimmed mean (which drops \(10\) and \(t\)) stay completely flat at \(14\)! Drag the slider \(t\) in the graph below to watch this resistance gap open up.
+
+[GRAPH]
+type: function2d
+title: Sensitivity of mean versus median and \(20\%\)-trimmed mean as one value \(t\) increases in \(\{10, 12, 14, 16, t\}\)
+xlabel: \(t\)
+ylabel: Center value
+xrange: 16, 60
+yrange: 10, 25
+trace: (52 + x) / 5 | label: Arithmetic mean \(\bar{x}(t) = (52 + t)/5\) | color: #ef4444
+trace: 14 | label: Median and \(20\%\)-trimmed mean (constant \(14\)) | color: #3b82f6
+point: t, (52 + t) / 5 | label: Mean | color: #ef4444
+point: t, 14 | label: Median | color: #3b82f6
+segment: t, 14, t, (52 + t) / 5 | dashed: true
+slider: t | range: 16, 60 | init: 40 | step: 1
+[/GRAPH]
+
+When should you choose the arithmetic mean versus the median or a trimmed mean?
+- Choose the arithmetic mean when the data are roughly symmetric without severe outliers, or when the total sum itself is physically or financially central (such as total payroll divided by employees, or total energy consumed per day).
+- Choose the median or an \(\alpha\)-trimmed mean when the data are strongly skewed (such as household incomes or home prices) or contaminated by extreme measurements, and you want to describe a typical observation rather than an equal share of the total.
+
+[QUESTION 4]
+[ANSWER: D]
+Consider the sorted sample of \(n = 5\) repair costs (in dollars): \(5, 12, 15, 24, 94\). What are the \(20\%\)-trimmed mean (trimming \(k = 1\) value from each end) and the \(20\%\)-Winsorized mean (clamping \(k = 1\) value at each end), respectively?
+
+(A) \(30.0\) and \(17.0\)
+(B) \(17.4\) and \(17.0\)
+(C) \(15.0\) and \(17.4\)
+(D) \(17.0\) and \(17.4\)
+(E) \(17.0\) and \(30.0\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: B]
+A city housing agency wants to report the "typical" selling price of single-family homes sold this month. Most homes sold between \(\$280{,}000\) and \(\$410{,}000\), but three waterfront estates sold for over \(\$9{,}000{,}000\) each. Which measure of center best represents a typical home price, and why?
+
+(A) The arithmetic mean, because it satisfies the balance-point identity and uses every selling price equally.
+(B) The median (or a trimmed mean), because it resists the upward pull of the three multi-million-dollar estates that inflate the arithmetic mean above most actual sale prices.
+(C) The mode, because selling prices are measured on a nominal scale.
+(D) The unweighted average of the minimum and maximum selling prices, because it captures the full price range.
+(E) The arithmetic mean after deleting only the three estates from the right tail while leaving the left tail untouched.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+A dataset of \(n = 11\) observations has arithmetic mean \(\bar{x} = 20\). When a twelfth observation \(x_{12}\) is added, the new arithmetic mean becomes \(23\). What is \(x_{12}\)?
+
+(A) \(26\)
+(B) \(35\)
+(C) \(43\)
+(D) \(53\)
+(E) \(56\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+For a quantitative dataset of \(n = 25\) observations, it is known that \(\sum_{i=1}^{25} (x_i - 12) = 75\). What is the sample arithmetic mean \(\bar{x}\)?
+
+(A) \(3\)
+(B) \(9\)
+(C) \(15\)
+(D) \(18\)
+(E) Cannot be determined without knowing the individual \(x_i\) values.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+In a sorted dataset \(x_{(1)} \le x_{(2)} \le \dots \le x_{(10)}\) of \(n = 10\) distinct numbers, the largest observation \(x_{(10)}\) is increased by \(\Delta = 50\) while the other \(9\) observations remain unchanged. How do the arithmetic mean, the median, and the \(10\%\)-trimmed mean change?
+
+(A) The arithmetic mean increases by \(5\), while both the median and the \(10\%\)-trimmed mean change by \(0\).
+(B) The arithmetic mean increases by \(5\), the \(10\%\)-trimmed mean increases by \(5\), and the median changes by \(0\).
+(C) The arithmetic mean increases by \(50\), the \(10\%\)-trimmed mean increases by \(5\), and the median changes by \(0\).
+(D) All three measures increase by \(5\).
+(E) The arithmetic mean increases by \(5\), the median increases by \(5\), and the \(10\%\)-trimmed mean changes by \(0\).
+[/BONUS]

@@ -1,0 +1,240 @@
+=== SECTION 1: La relación de equivalencia núcleo y las fibras de una función ===
+
+Anteriormente en este árbol estudiamos dos estructuras importantes por separado: las relaciones de equivalencia (con sus conjuntos cociente y particiones) y las funciones (con inyectividad, sobreyectividad y biyecciones). En realidad, TODA función \(f : A \to B\) lleva implícita una relación de equivalencia dentro de su dominio —la relación de «colisionar en la misma salida»— y dividir \(A\) por esa relación descompone a \(f\) en tres piezas puras y canónicas.
+
+[CALLOUT]
+id: kernel-relation-def
+label: Definición
+title: Relación de equivalencia núcleo (fibras) de una función
+tone: key
+
+Sea \(f : A \to B\) cualquier función. La relación de equivalencia núcleo de \(f\) es la relación binaria \(\sim_f\) sobre \(A\) definida por
+\[
+x \sim_f y \iff f(x) = f(y) \qquad \text{para cualesquiera } x, y \in A.
+\]
+[/CALLOUT]
+
+¿Por qué es \(\sim_f\) SIEMPRE una relación de equivalencia sobre \(A\)? Cada propiedad proviene directamente de la igualdad en \(B\):
+- Reflexiva: para todo \(x \in A\), \(f(x) = f(x)\), luego \(x \sim_f x\).
+- Simétrica: si \(x \sim_f y\), entonces \(f(x) = f(y)\), luego \(f(y) = f(x)\), dando \(y \sim_f x\).
+- Transitiva: si \(x \sim_f y\) e \(y \sim_f z\), entonces \(f(x) = f(y) = f(z)\), dando \(x \sim_f z\).
+
+¿Cuáles son las clases de equivalencia de \(\sim_f\)? Para cualquier \(a \in A\), sea \(y = f(a) \in \operatorname{im}(f)\). Entonces
+\[
+[a]_{\sim_f} = \{x \in A : x \sim_f a\} = \{x \in A : f(x) = f(a)\} = f^{-1}\bigl(\{f(a)\}\bigr) = f^{-1}(\{y\}).
+\]
+En otras palabras, las clases de equivalencia de \(\sim_f\) son PRECISAMENTE las fibras NO VACÍAS \(f^{-1}(\{y\})\) para \(y \in \operatorname{im}(f)\). Por el Teorema Fundamental de las Relaciones de Equivalencia, estas fibras no vacías particionan el dominio \(A\) en subconjuntos disjuntos dos a dos cuya unión es \(A\), formando el conjunto cociente
+\[
+A/{\sim_f} = \bigl\{f^{-1}(\{y\}) : y \in \operatorname{im}(f)\bigr\}.
+\]
+
+Veamos dos ejemplos concretos:
+1. La aplicación de elevar al cuadrado \(f : \mathbb{R} \to \mathbb{R}\) dada por \(f(x) = x^2\): aquí \(x \sim_f y \iff x^2 = y^2 \iff y = \pm x\). Las clases de equivalencia son \(\{0\}\) (sobre \(0\)) y los pares de dos elementos \(\{-r, r\}\) para cada \(r > 0\) (sobre \(r^2\)).
+2. La aplicación resto \(f : \mathbb{Z} \to \mathbb{Z}\) que envía \(n\) a su resto en \(\{0, 1, 2, 3\}\) al dividir por \(4\): aquí \(m \sim_f n \iff m \equiv n \pmod 4\), de modo que el conjunto cociente \(\mathbb{Z}/{\sim_f}\) es literalmente \(\mathbb{Z}/4\mathbb{Z} = \{[0], [1], [2], [3]\}\).
+
+Obsérvese también un vínculo inmediato con la inyectividad: \(f\) es inyectiva si y solo si \(f(x) = f(y) \implies x = y\), lo que significa que \(\sim_f\) es la relación de igualdad \(=\) sobre \(A\) (toda clase de equivalencia \([a]_{\sim_f} = \{a\}\) es un singulete).
+
+[QUESTION 1]
+[ANSWER: C]
+Defínase \(f : \mathbb{R} \to \mathbb{R}\) mediante \(f(x) = |x - 3|\). ¿Cuál es la clase de equivalencia \([1]_{\sim_f}\) bajo la relación de equivalencia núcleo \(\sim_f\), y cuántos elementos tiene una clase típica \([a]_{\sim_f}\)?
+
+(A) \([1]_{\sim_f} = \{-1, 1\}\); toda clase tiene \(2\) elementos
+(B) \([1]_{\sim_f} = \{1, 2\}\); toda clase excepto \([0]_{\sim_f}\) tiene \(2\) elementos
+(C) \([1]_{\sim_f} = \{1, 5\}\); \([3]_{\sim_f} = \{3\}\) tiene \(1\) elemento, y toda otra clase tiene \(2\) elementos
+(D) \([1]_{\sim_f} = \{1, 5\}\); toda clase tiene \(2\) elementos
+(E) \([1]_{\sim_f} = \{x \in \mathbb{R} : |x - 3| \le 2\}\); toda clase es un intervalo cerrado
+[/QUESTION]
+
+=== SECTION 2: La aplicación cociente canónica y su propiedad universal ===
+
+Siempre que un conjunto \(A\) lleva CUALQUIER relación de equivalencia \(\sim\) (no necesariamente proveniente de antemano de una función), existe una aplicación natural que colapsa cada elemento en su clase de equivalencia:
+\[
+\pi : A \to A/{\sim}, \qquad \pi(a) = [a].
+\]
+Llamada proyección canónica (o aplicación cociente), \(\pi\) es SIEMPRE SOBREYECTIVA (toda clase \([a] \in A/{\sim}\) es alcanzada por \(a\)), y su propia relación de equivalencia núcleo es \(\sim\) misma: \(\pi(x) = \pi(y) \iff [x] = [y] \iff x \sim y\).
+
+Formulemos ahora una pregunta fundamental: dada otra función \(g : A \to C\), ¿cuándo podemos «hacer descender» \(g\) de \(A\) al conjunto cociente \(A/{\sim}\) —es decir, definir una función bien definida \(\bar{g} : A/{\sim} \to C\) mediante la fórmula \(\bar{g}([a]) = g(a)\) de modo que \(g = \bar{g} \circ \pi\)?
+
+¡Recuerde la buena definición sobre clases de equivalencia! Fijar \(\bar{g}([a]) = g(a)\) depende del representante elegido \(a\) A MENOS QUE entradas equivalentes reciban siempre la misma salida bajo \(g\): \(x \sim y \implies g(x) = g(y)\). ¡Esa única condición es TANTO necesaria como suficiente!
+
+[CALLOUT]
+id: universal-property-quotient
+label: Teorema
+title: Propiedad universal del conjunto cociente
+tone: key
+
+Sea \(\sim\) una relación de equivalencia sobre \(A\) con proyección canónica \(\pi : A \to A/{\sim}\), y sea \(g : A \to C\) cualquier función.
+
+(1) Existencia de una factorización: existe una función \(\bar{g} : A/{\sim} \to C\) tal que \(g = \bar{g} \circ \pi\) si y solo si \(g\) respeta a \(\sim\):
+\[
+\forall x, y \in A,\quad (x \sim y \implies g(x) = g(y)).
+\]
+(2) Unicidad: siempre que exista tal función \(\bar{g}\), es ÚNICA y viene dada por \(\bar{g}([a]) = g(a)\) para todo \(a \in A\).
+(3) Propiedades de \(\bar{g}\):
+   (a) \(\bar{g}\) es sobreyectiva si y solo si \(g\) es sobreyectiva (más en general, \(\operatorname{im}(\bar{g}) = \operatorname{im}(g)\)).
+   (b) \(\bar{g}\) es inyectiva si y solo si \(\forall x, y \in A,\; (g(x) = g(y) \iff x \sim y)\), es decir, \(\sim_g\) es igual a \(\sim\).
+[/CALLOUT]
+
+Demostración:
+- (1) (\(\implies\)): Supongamos \(g = \bar{g} \circ \pi\) para alguna función \(\bar{g} : A/{\sim} \to C\). Si \(x \sim y\), entonces \(\pi(x) = [x] = [y] = \pi(y)\), luego \(g(x) = \bar{g}(\pi(x)) = \bar{g}(\pi(y)) = g(y)\).
+- (1) (\(\Longleftarrow\)): Supongamos \(x \sim y \implies g(x) = g(y)\). Defínase \(\bar{g} : A/{\sim} \to C\) por \(\bar{g}([a]) = g(a)\). ¿Está bien definida \(\bar{g}\)? Si \([a] = [b]\), entonces \(a \sim b\), de modo que por hipótesis \(g(a) = g(b)\), demostrando la independencia del representante. Y para todo \(a \in A\), \((\bar{g} \circ \pi)(a) = \bar{g}([a]) = g(a)\), luego \(g = \bar{g} \circ \pi\).
+- (2) Unicidad: Supongamos que tanto \(\bar{g}_1\) como \(\bar{g}_2\) cumplen \(\bar{g}_1 \circ \pi = g = \bar{g}_2 \circ \pi\). Para CUALQUIER elemento \([a] \in A/{\sim}\), tenemos
+\[
+\bar{g}_1([a]) = \bar{g}_1(\pi(a)) = g(a) = \bar{g}_2(\pi(a)) = \bar{g}_2([a]).
+\]
+Por tanto \(\bar{g}_1 = \bar{g}_2\). (Nótese que esto es simplemente cancelación por la derecha de la sobreyección \(\pi\).)
+- (3)(a): Como \(\pi\) es sobreyectiva, \(\operatorname{im}(\bar{g}) = \bar{g}(A/{\sim}) = \bar{g}(\pi(A)) = g(A) = \operatorname{im}(g)\), luego \(\bar{g}\) es sobreyectiva si y solo si \(\operatorname{im}(g) = C\) si y solo si \(g\) es sobreyectiva.
+- (3)(b): \(\bar{g}\) es inyectiva si y solo si \(\forall a, b \in A,\; (\bar{g}([a]) = \bar{g}([b]) \implies [a] = [b])\), lo que se traduce directamente en \(\forall a, b \in A,\; (g(a) = g(b) \implies a \sim b)\). Combinado con la implicación directa ya supuesta \(a \sim b \implies g(a) = g(b)\), esto vale si y solo si \(g(a) = g(b) \iff a \sim b\).
+
+Vea cómo actúa la [REF: universal-property-quotient | propiedad universal] sobre \(\pi : \mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) (congruencia módulo \(6\)):
+- ¿Se factoriza \(g_1 : \mathbb{Z} \to \mathbb{Z}/3\mathbb{Z}\) definida por \(g_1(n) = [n]_3\) a través de \(\pi\)? Comprobación: si \(x \equiv y \pmod 6\), entonces \(6 \mid (x - y)\), luego \(3 \mid (x - y)\), por lo que \(g_1(x) = g_1(y)\). SÍ: existe una única \(\bar{g}_1 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/3\mathbb{Z}\) dada por \(\bar{g}_1([n]_6) = [n]_3\). Como \(g_1\) es sobreyectiva, \(\bar{g}_1\) es sobreyectiva; como \(0 \not\equiv 3 \pmod 6\) pero \(g_1(0) = g_1(3)\), \(\bar{g}_1\) NO es inyectiva.
+- ¿Se factoriza \(g_2 : \mathbb{Z} \to \mathbb{Z}/4\mathbb{Z}\) definida por \(g_2(n) = [n]_4\) a través de \(\pi\)? Comprobación: \(0 \equiv 6 \pmod 6\), pero \(g_2(0) = [0]_4 \ne [2]_4 = g_2(6)\). NO existe ninguna factorización.
+
+[QUESTION 2]
+[ANSWER: B]
+Sea \(\pi : \mathbb{Z} \to \mathbb{Z}/12\mathbb{Z}\) la proyección canónica módulo \(12\). ¿Para qué función \(g\) existe una función bien definida \(\bar{g} : \mathbb{Z}/12\mathbb{Z} \to C\) tal que \(g = \bar{g} \circ \pi\)?
+
+(A) \(g : \mathbb{Z} \to \mathbb{Z}/8\mathbb{Z}\) definida por \(g(n) = [n]_8\)
+(B) \(g : \mathbb{Z} \to \mathbb{Z}/4\mathbb{Z}\) definida por \(g(n) = [3n + 1]_4\)
+(C) \(g : \mathbb{Z} \to \mathbb{Z}\) definida por \(g(n) = n^2\)
+(D) \(g : \mathbb{Z} \to \mathbb{Z}/5\mathbb{Z}\) definida por \(g(n) = [n]_5\)
+(E) \(g : \mathbb{Z} \to \mathbb{Z}/9\mathbb{Z}\) definida por \(g(n) = [n]_9\)
+[/QUESTION]
+
+=== SECTION 3: El Teorema de Factorización Canónica ===
+
+Apliquemos ahora la [REF: universal-property-quotient | propiedad universal] directamente a una función \(f : A \to B\) y su PROPIA relación de equivalencia núcleo \(\sim_f\).
+
+Primero restrinjamos el codominio de \(f\) a su imagen, obteniendo la correstricción sobreyectiva \(f_0 : A \to \operatorname{im}(f)\) definida por \(f_0(a) = f(a)\), de modo que \(f = \iota \circ f_0\) donde \(\iota : \operatorname{im}(f) \hookrightarrow B\) es la aplicación de inclusión inyectiva. Apliquemos ahora la [REF: universal-property-quotient | propiedad universal] a \(f_0 : A \to \operatorname{im}(f)\) y \(\pi : A \to A/{\sim_f}\):
+- Por definición de \(\sim_f\), \(x \sim_f y \iff f(x) = f(y) \iff f_0(x) = f_0(y)\).
+- Por tanto \(f_0\) respeta a \(\sim_f\), dando una ÚNICA función \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\) con \(f_0 = \bar{f} \circ \pi\) (explícitamente \(\bar{f}([a]) = f(a)\)).
+- Por la [REF: universal-property-quotient.3 | parte (3)], \(\bar{f}\) es SOBREYECTIVA (porque \(f_0\) es sobreyectiva sobre \(\operatorname{im}(f)\)) E INYECTIVA (porque \(f_0(x) = f_0(y) \iff x \sim_f y\)). ¡Así que \(\bar{f}\) es una BIYECCIÓN!
+
+Combinar \(f = \iota \circ f_0\) y \(f_0 = \bar{f} \circ \pi\) entrega uno de los teoremas estructurales más esclarecedores de toda la matemática.
+
+[CALLOUT]
+id: canonical-factorization-thm
+label: Teorema
+title: Teorema de Factorización Canónica (Primer Teorema de Isomorfía en Teoría de Conjuntos)
+tone: key
+
+Toda función \(f : A \to B\) se factoriza como composición de tres aplicaciones canónicas:
+\[
+f = \iota \circ \bar{f} \circ \pi : \quad A \xrightarrow{\;\pi\;} A/{\sim_f} \xrightarrow{\;\bar{f}\;} \operatorname{im}(f) \xhookrightarrow{\;\iota\;} B,
+\]
+donde:
+
+(1) \(\pi : A \to A/{\sim_f}\), \(\pi(a) = [a]_{\sim_f}\), es la SOBREYECIÓN canónica que colapsa entradas que colisionan en sus fibras.
+(2) \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\), \(\bar{f}([a]_{\sim_f}) = f(a)\), es la única BIYECCIÓN inducida que identifica el conjunto cociente con la imagen de \(f\).
+(3) \(\iota : \operatorname{im}(f) \hookrightarrow B\), \(\iota(y) = y\), es la INYECCIÓN (inclusión) canónica que sumerge la imagen dentro del codominio \(B\).
+[/CALLOUT]
+
+Observe lo que nos dice conceptualmente el [REF: canonical-factorization-thm | Teorema de Factorización Canónica]: CUALQUIER función —por salvaje, no inyectiva y no sobreyectiva que sea— puede descomponerse limpiamente en tres etapas elementales:
+
+[TABLE]
+Etapa | Aplicación | Fórmula | Propiedad estructural | Papel conceptual
+Etapa 1 | \(\pi : A \to A/{\sim_f}\) | \(\pi(a) = [a]_{\sim_f}\) | Sobreyectiva | Pega entre sí todas las entradas que colisionan bajo \(f\)
+Etapa 2 | \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\) | \(\bar{f}([a]_{\sim_f}) = f(a)\) | Biyectiva | Reetiqueta cada fibra con su única salida compartida
+Etapa 3 | \(\iota : \operatorname{im}(f) \hookrightarrow B\) | \(\iota(y) = y\) | Inyectiva | Sumerge la imagen efectiva dentro del codominio completo \(B\)
+[/TABLE]
+
+Compruebe qué ocurre en los dos casos especiales:
+- Si \(f\) YA es inyectiva, entonces cada fibra \([a]_{\sim_f} = \{a\}\) es un singulete, de modo que \(\pi : A \to A/{\sim_f}\) es ella misma una biyección.
+- Si \(f\) YA es sobreyectiva, entonces \(\operatorname{im}(f) = B\), de modo que \(\iota : B \hookrightarrow B\) es simplemente \(\operatorname{id}_B\), y la factorización se acorta a \(f = \bar{f} \circ \pi\) con \(\bar{f} : A/{\sim_f} \xrightarrow{\sim} B\) biyectiva.
+
+[QUESTION 3]
+[ANSWER: A]
+Sea \(f : A \to B\) una función con factorización canónica \(f = \iota \circ \bar{f} \circ \pi\). ¿Qué afirmación es SIEMPRE verdadera?
+
+(A) \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\) es SIEMPRE biyectiva, independientemente de si \(f\) es inyectiva o sobreyectiva
+(B) \(\bar{f}\) es biyectiva únicamente cuando \(f\) es biyectiva
+(C) \(\pi : A \to A/{\sim_f}\) es inyectiva si y solo si \(f\) es sobreyectiva
+(D) \(\iota : \operatorname{im}(f) \hookrightarrow B\) es sobreyectiva si y solo si \(f\) es inyectiva
+(E) \(A/{\sim_f}\) tiene siempre la misma cardinalidad que \(B\)
+[/QUESTION]
+
+=== SECTION 4: Factorizaciones concretas y anticipo de los teoremas de isomorfía ===
+
+Veamos al [REF: canonical-factorization-thm | Teorema de Factorización Canónica] diseccionar tres funciones clásicas del álgebra y el análisis:
+
+1. La aplicación de elevar al cuadrado \(f : \mathbb{R} \to \mathbb{R}\), \(f(x) = x^2\):
+   - Relación núcleo: \(x \sim_f y \iff x^2 = y^2 \iff |x| = |y|\).
+   - Etapa 1 (\(\pi : \mathbb{R} \to \mathbb{R}/{\sim_f}\)): pliega la recta real por la mitad en \(0\), emparejando cada \(r > 0\) con \(-r\) en la fibra \(\{-r, r\}\), mientras deja solo a \(\{0\}\).
+   - Etapa 2 (\(\bar{f} : \mathbb{R}/{\sim_f} \to [0, \infty)\)): envía \(\{-r, r\} \mapsto r^2\) (biyección sobre \(\operatorname{im}(f) = [0, \infty)\)).
+   - Etapa 3 (\(\iota : [0, \infty) \hookrightarrow \mathbb{R}\)): incluye la semirrecta no negativa en todo \(\mathbb{R}\).
+
+[GRAPH]
+type: function2d
+title: Fibras de \(f(x) = x^2\): el par \(\{-1.5, 1.5\}\) colapsa en una única clase que se aplica en \(2.25 \in [0, \infty) \subsetneq \mathbb{R}\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.4, 2.4
+yrange: -1.0, 4.5
+trace: x^2 | label: \(f(x) = x^2\) | color: #2563eb
+segment: -1.5, 2.25, 1.5, 2.25 | label: \(y = 2.25\) | color: #dc2626 | dashed: true
+segment: -1.5, 0, -1.5, 2.25 | color: #dc2626 | dashed: true
+segment: 1.5, 0, 1.5, 2.25 | color: #dc2626 | dashed: true
+segment: 0, 0, 0, 4.4 | label: \(\operatorname{im}(f)\) | color: #16a34a
+point: -1.5, 0 | label: \(-1.5\) | color: #dc2626 | offset: -12, -16
+point: 1.5, 0 | label: \(1.5\) | color: #dc2626 | offset: 12, -16
+point: -1.5, 2.25 | color: #dc2626
+point: 1.5, 2.25 | color: #dc2626
+point: 0, 2.25 | label: \(2.25\) | color: #16a34a | offset: 22, 8
+[/GRAPH]
+
+2. La aplicación coseno \(f : \mathbb{R} \to \mathbb{R}\), \(f(x) = \cos(x)\):
+   - Relación núcleo: \(x \sim_f y \iff \cos(x) = \cos(y) \iff y = \pm x + 2\pi k\) para algún \(k \in \mathbb{Z}\).
+   - Etapa 1 (\(\pi\)): colapsa cada fibra infinita \(\{\pm \theta + 2\pi k : k \in \mathbb{Z}\}\) (para \(\theta \in [0, \pi]\)) en un único punto de \(\mathbb{R}/{\sim_f}\).
+   - Etapa 2 (\(\bar{f}\)): aplica \(\mathbb{R}/{\sim_f}\) biyectivamente sobre \(\operatorname{im}(\cos) = [-1, 1]\).
+   - Etapa 3 (\(\iota\)): sumerge \([-1, 1]\) en \(\mathbb{R}\).
+
+3. La aplicación resto modular \(f : \mathbb{Z} \to \mathbb{Z}\) que envía \(n\) a su resto en \(\{0, 1, 2, 3, 4\}\) al dividir por \(5\):
+   - Relación núcleo: congruencia módulo \(5\), luego \(\mathbb{Z}/{\sim_f} = \mathbb{Z}/5\mathbb{Z}\).
+   - Etapa 2: \(\bar{f} : \mathbb{Z}/5\mathbb{Z} \to \{0, 1, 2, 3, 4\}\) envía \([r]_5 \mapsto r\) biyectivamente.
+   - Etapa 3: \(\iota : \{0, 1, 2, 3, 4\} \hookrightarrow \mathbb{Z}\) sumerge los cinco restos en \(\mathbb{Z}\).
+
+¿Por qué recibe este teorema el apodo de Primer Teorema de Isomorfía en Teoría de Conjuntos? En álgebra abstracta (grupos, anillos, espacios vectoriales) y en topología, toda aplicación que preserva estructura \(f : A \to B\) sigue factorizándose como \(A \xrightarrow{\pi} A/{\sim_f} \xrightarrow{\bar{f}} \operatorname{im}(f) \xhookrightarrow{\iota} B\). ¡Exactamente la misma biyección conjuntista \(\bar{f}\) asciende automáticamente a un isomorfismo de grupos, isomorfismo de anillos, isomorfismo lineal u homeomorfismo (bajo la topología cociente)! Dominar esta factorización sobre conjuntos puros le entrega el esqueleto de todos los teoremas de isomorfía de la matemática superior.
+
+[QUESTION 4]
+[ANSWER: D]
+Considérese la función \(f : \mathbb{R}^2 \to \mathbb{R}\) definida por \(f(x, y) = x^2 + y^2\). En la factorización canónica \(f = \iota \circ \bar{f} \circ \pi\), ¿cuáles son las clases de equivalencia de \(\sim_f\) en \(\mathbb{R}^2\), y cuál es el codominio de la biyección inducida \(\bar{f}\)?
+
+(A) Rectas horizontales \(y = c\); el codominio de \(\bar{f}\) es \(\mathbb{R}\)
+(B) Semirrectas que parten del origen; el codominio de \(\bar{f}\) es \([0, \infty)\)
+(C) Circunferencias concéntricas centradas en \((0, 0)\) (incluido el único punto \(\{(0, 0)\}\)); el codominio de \(\bar{f}\) es \(\mathbb{R}\)
+(D) Circunferencias concéntricas centradas en \((0, 0)\) (incluido el único punto \(\{(0, 0)\}\)); el codominio de \(\bar{f}\) es \([0, \infty)\)
+(E) Puntos singuletes \(\{(x, y)\}\); el codominio de \(\bar{f}\) es \([0, \infty)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Supongamos que \(f : A \to B\) se factoriza de CUALQUIER otra manera como \(f = i' \circ p'\), donde \(p' : A \to Q'\) es SOBREYECTIVA e \(i' : Q' \to B\) es INYECTIVA. ¿Cómo se compara \(Q'\) con el conjunto cociente canónico \(A/{\sim_f}\)?
+
+(A) \(Q'\) puede tener cardinalidad estrictamente mayor que \(A/{\sim_f}\)
+(B) \(Q'\) puede tener cardinalidad estrictamente menor que \(A/{\sim_f}\)
+(C) \(Q'\) debe ser igual a \(A/{\sim_f}\) como conjunto (con exactamente los mismos elementos)
+(D) Existe una inyección \(A/{\sim_f} \to Q'\), pero no tiene por qué ser sobreyectiva
+(E) Existe una ÚNICA biyección \(\phi : A/{\sim_f} \to Q'\) que satisface \(\phi \circ \pi = p'\) e \(i' \circ \phi = \iota \circ \bar{f}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sean \(\sim_1\) y \(\sim_2\) dos relaciones de equivalencia sobre el mismo conjunto \(A\) tales que \(\sim_1\) es más fina que \(\sim_2\) (es decir, \(\forall x, y \in A,\; x \sim_1 y \implies x \sim_2 y\)). Sean \(\pi_1 : A \to A/{\sim_1}\) y \(\pi_2 : A \to A/{\sim_2}\) sus proyecciones canónicas. ¿Qué afirmación se sigue directamente de la [REF: universal-property-quotient | propiedad universal del conjunto cociente]?
+
+(A) Existe una única biyección \(\phi : A/{\sim_1} \to A/{\sim_2}\) con \(\phi \circ \pi_1 = \pi_2\)
+(B) Existe una única SOBREYECIÓN \(\phi : A/{\sim_1} \to A/{\sim_2}\) que cumple \(\phi([a]_{\sim_1}) = [a]_{\sim_2}\) (es decir, \(\phi \circ \pi_1 = \pi_2\))
+(C) Existe una única función \(\psi : A/{\sim_2} \to A/{\sim_1}\) que cumple \(\psi \circ \pi_2 = \pi_1\)
+(D) \(\pi_2\) debe ser inyectiva
+(E) Ninguna aplicación bien definida puede conectar \(A/{\sim_1}\) y \(A/{\sim_2}\) a menos que \(\sim_1 = \sim_2\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Sea \(A = \{1, 2, 3, \dots, 20\}\) y defínase \(f : A \to \mathbb{Z}\) por \(f(n) = \lfloor n / 6 \rfloor\). ¿Cuántos elementos contiene el conjunto cociente \(A/{\sim_f}\)?
+
+(A) \(3\)
+(B) \(5\)
+(C) \(4\)
+(D) \(6\)
+(E) \(20\)
+[/BONUS]

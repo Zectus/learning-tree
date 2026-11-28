@@ -1,0 +1,261 @@
+=== SECTION 1: Piso, techo y parte fraccionaria ===
+
+Cantidades cotidianas como las horas completas transcurridas, las cajas de envío necesarias o los dólares enteros por debajo de una etiqueta ajustan un número real continuo a un entero cercano. La matemática captura estas dos direcciones de redondeo mediante las funciones piso y techo, y registra la porción sobrante mediante la parte fraccionaria.
+
+[CALLOUT]
+id: floor-ceil-def
+label: Definición
+title: Piso, techo y parte fraccionaria
+tone: key
+
+Para todo número real \(x \in \mathbb{R}\):
+(1) El piso (mayor entero) \(\lfloor x \rfloor\) es el mayor entero menor o igual que \(x\). Se caracteriza por
+\[
+\lfloor x \rfloor \in \mathbb{Z} \qquad \text{y} \qquad \lfloor x \rfloor \le x < \lfloor x \rfloor + 1.
+\]
+(2) El techo (menor entero) \(\lceil x \rceil\) es el menor entero mayor o igual que \(x\). Se caracteriza por
+\[
+\lceil x \rceil \in \mathbb{Z} \qquad \text{y} \qquad \lceil x \rceil - 1 < x \le \lceil x \rceil.
+\]
+(3) La parte fraccionaria \(\{x\}\) se define como \(\{x\} = x - \lfloor x \rfloor\). Todo número real \(x\) se descompone de manera única como \(x = n + f\), donde \(n = \lfloor x \rfloor \in \mathbb{Z}\) y \(0 \le f = \{x\} < 1\).
+[/CALLOUT]
+
+Equivalentemente, para todo entero \(n \in \mathbb{Z}\):
+\[
+\lfloor x \rfloor = n \iff n \le x < n + 1, \qquad \lceil x \rceil = n \iff n - 1 < x \le n.
+\]
+
+Tenga especial cuidado con los números NEGATIVOS no enteros. «Piso» siempre se mueve a la IZQUIERDA (hacia abajo) en la recta numérica, y «techo» siempre se mueve a la DERECHA (hacia arriba); nunca «hacia cero».
+
+[CALLOUT]
+id: negative-rounding-trap
+label: Error frecuente
+title: Redondeo de números reales negativos
+tone: caution
+
+Para \(x = -2.3\), los enteros vecinos son \(-3 < -2.3 < -2\), por lo que:
+(1) \(\lfloor -2.3 \rfloor = -3\) (NO \(-2\), ya que \(-2 > -2.3\)).
+(2) \(\lceil -2.3 \rceil = -2\) (NO \(-3\)).
+(3) \(\{-2.3\} = -2.3 - (-3) = 0.7 \in [0, 1)\) (NUNCA \(-0.3\); ¡la parte fraccionaria es siempre no negativa!).
+[/CALLOUT]
+
+La gráfica inferior muestra los escalones horizontales de \(y = \lfloor x \rfloor\) encerrados limpiamente dentro de la banda diagonal \(x - 1 < y \le x\). Cada punto sólido marca un extremo izquierdo cerrado \((n, n)\); el extremo derecho \((n + 1, n)\) de cada escalón es abierto porque \(\lfloor n + 1 \rfloor\) salta hasta \(n + 1\).
+
+[GRAPH]
+type: function2d
+title: Gráfica escalonada de \(y = \lfloor x \rfloor\) acotada entre \(y = x\) y \(y = x - 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -3.5, 3
+trace: x | label: \(y = x\)
+trace: x - 1 | label: \(y = x - 1\)
+segment: -3, -3, -2, -3 | color: #10b981
+segment: -2, -2, -1, -2 | color: #10b981
+segment: -1, -1, 0, -1 | color: #10b981
+segment: 0, 0, 1, 0 | color: #10b981
+segment: 1, 1, 2, 1 | color: #10b981
+segment: 2, 2, 3, 2 | color: #10b981
+point: -3, -3 | label: \((-3, -3)\) | color: #10b981
+point: -2, -2 | color: #10b981
+point: -1, -1 | color: #10b981
+point: 0, 0 | label: \((0, 0)\) | color: #10b981
+point: 1, 1 | color: #10b981
+point: 2, 2 | label: \((2, 2)\) | color: #10b981
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuáles son los valores exactos de \(\lfloor -3.4 \rfloor\), \(\lceil -3.4 \rceil\) y \(\{-3.4\}\)?
+
+(A) \(\lfloor -3.4 \rfloor = -3\), \(\lceil -3.4 \rceil = -4\), \(\{-3.4\} = -0.4\)
+(B) \(\lfloor -3.4 \rfloor = -4\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = -0.4\)
+(C) \(\lfloor -3.4 \rfloor = -4\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = 0.6\)
+(D) \(\lfloor -3.4 \rfloor = -3\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = 0.4\)
+(E) \(\lfloor -3.4 \rfloor = -4\), \(\lceil -3.4 \rceil = -3\), \(\{-3.4\} = 0.4\)
+[/QUESTION]
+
+=== SECTION 2: Conversión de desigualdades con piso y techo en intervalos reales ===
+
+Como \(\lfloor x \rfloor\) y \(\lceil x \rceil\) ÚNICAMENTE pueden tomar valores enteros, convertir una desigualdad como \(\lfloor x \rfloor \le 3\) o \(\lfloor x \rfloor < 3.4\) en un intervalo para \(x\) requiere dos ideas limpias:
+1. Primero, si la constante \(c\) NO es un entero, ajuste la desigualdad al conjunto exacto de enteros que la satisfacen.
+   - Por ejemplo, \(\lfloor x \rfloor < 3.4\) pregunta qué enteros son menores que \(3.4\). El mayor de tales enteros es \(3\), por lo que \(\lfloor x \rfloor < 3.4 \iff \lfloor x \rfloor \le 3\).
+   - Compare esto con \(\lfloor x \rfloor < 3\): el mayor entero estrictamente menor que \(3\) es \(2\), así que \(\lfloor x \rfloor < 3 \iff \lfloor x \rfloor \le 2\).
+2. Segundo, una vez que la cota es un entero \(k \in \mathbb{Z}\), traduzca la condición entera a un intervalo exacto para \(x\):
+   - ¿Cuándo es \(\lfloor x \rfloor \le 3\)? Siempre que \(x\) pertenezca a alguno de los escalones para \(n \le 3\) —hasta llegar a \(4\), pero SIN incluirlo—. Así, \(\lfloor x \rfloor \le 3 \iff x < 4\). (En \(x = 3.999\), \(\lfloor 3.999 \rfloor = 3 \le 3\); en \(x = 4\), \(\lfloor 4 \rfloor = 4\).)
+   - ¿Cuándo es \(\lfloor x \rfloor < 3\)? Siempre que \(\lfloor x \rfloor \le 2 \iff x < 3\).
+   - ¿Cuándo es \(\lfloor x \rfloor \ge 3\)? Siempre que \(x \ge 3\).
+   - ¿Cuándo es \(\lfloor x \rfloor > 3\)? Siempre que \(\lfloor x \rfloor \ge 4 \iff x \ge 4\).
+
+Observe el marcado contraste: \(\lfloor x \rfloor < 3 \iff x < 3\), mientras que \(\lfloor x \rfloor < 3.4 \iff \lfloor x \rfloor \le 3 \iff x < 4\).
+
+[CALLOUT]
+id: floor-ceil-ineq
+label: Equivalencia
+title: Equivalencias con cotas enteras para piso y techo
+tone: key
+
+Para todo número real \(x\) y todo entero \(k \in \mathbb{Z}\):
+(1) Reglas del piso:
+- \(\lfloor x \rfloor \ge k \iff x \ge k\)
+- \(\lfloor x \rfloor > k \iff x \ge k + 1\)
+- \(\lfloor x \rfloor \le k \iff x < k + 1\)
+- \(\lfloor x \rfloor < k \iff x < k\)
+(2) Reglas del techo:
+- \(\lceil x \rceil \le k \iff x \le k\)
+- \(\lceil x \rceil < k \iff x \le k - 1\)
+- \(\lceil x \rceil \ge k \iff x > k - 1\)
+- \(\lceil x \rceil > k \iff x > k\)
+Si la constante dada \(c\) no es entera, reescriba primero la desigualdad entera para \(\lfloor x \rfloor\) o \(\lceil x \rceil\) usando una cota entera \(k\), y luego aplique (1) o (2).
+[/CALLOUT]
+
+Compare cómo el carácter estricto o no estricto desplaza los extremos de modo distinto para piso y techo:
+
+[TABLE]
+Condición (para \(k \in \mathbb{Z}\)) | Intervalo equivalente para \(x\) | Por qué el extremo es abierto o cerrado
+\(\lfloor x \rfloor \le k\) | \((-\infty, k + 1)\) | \(x = k + 1\) ya salta a \(k + 1\)
+\(\lfloor x \rfloor \ge k\) | \([k, \infty)\) | \(x = k\) alcanza \(\lfloor k \rfloor = k\)
+\(\lceil x \rceil \le k\) | \((-\infty, k]\) | \(x = k\) alcanza \(\lceil k \rceil = k\)
+\(\lceil x \rceil \ge k\) | \((k - 1, \infty)\) | \(x = k - 1\) permanece en \(k - 1\), mientras todo \(x > k - 1\) salta a \(k\)
+[/TABLE]
+
+Las expresiones lineales dentro de un piso o techo funcionan de manera idéntica: reemplace \(x\) por la expresión lineal, aplique [REF: floor-ceil-ineq | la equivalencia con cota entera] y luego resuelva la desigualdad lineal resultante.
+
+Ejemplo 1: Resuelva \(\lfloor 2x - 1 \rfloor \ge 3\).
+Por [REF: floor-ceil-ineq.1 | la regla del piso], como \(3 \in \mathbb{Z}\),
+\[
+\lfloor 2x - 1 \rfloor \ge 3 \iff 2x - 1 \ge 3 \iff 2x \ge 4 \iff x \ge 2.
+\]
+Conjunto solución: \([2, \infty)\).
+
+Ejemplo 2: Resuelva \(\lceil 3 - 2x \rceil < 4.5\).
+Primero ajuste \(4.5\) al conjunto entero: un entero es \(< 4.5\) si y solo si es \(\le 4\). Así que \(\lceil 3 - 2x \rceil \le 4\). Por [REF: floor-ceil-ineq.2 | la regla del techo],
+\[
+3 - 2x \le 4 \iff -2x \le 1 \iff x \ge -\frac{1}{2}.
+\]
+Conjunto solución: \(\left[-\frac{1}{2}, \infty\right)\). Compruebe \(x = -\frac{1}{2}\): \(\lceil 3 - (-1) \rceil = \lceil 4 \rceil = 4 < 4.5\) (verdadero). Compruebe \(x = -0.6\): \(\lceil 4.2 \rceil = 5 \not< 4.5\) (falso).
+
+[QUESTION 2]
+[ANSWER: A]
+¿Cuál es el conjunto solución de \(-2.3 < \lfloor x \rfloor < 3.7\)?
+
+(A) \([-2, 4)\)
+(B) \((-2.3, 3.7)\)
+(C) \([-2, 3]\)
+(D) \((-2, 4)\)
+(E) \([-3, 4)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+¿Cuál es el conjunto solución de \(\lfloor 3x + 2 \rfloor \le -1\)?
+
+(A) \((-\infty, -1]\)
+(B) \(\left(-\infty, -\frac{2}{3}\right]\)
+(C) \(\left(-\infty, -\frac{1}{3}\right)\)
+(D) \(\left(-\infty, -\frac{2}{3}\right)\)
+(E) \(\left[-1, -\frac{2}{3}\right)\)
+[/QUESTION]
+
+=== SECTION 3: Ecuaciones y desigualdades que acoplan \(x\) y \(\lfloor x \rfloor\) ===
+
+¿Qué ocurre si \(x\) aparece TANTO dentro como fuera de los corchetes de piso —como \(\lfloor x \rfloor = 2x - 3\) o \(x + \lfloor x \rfloor < 5\)? Como \(\lfloor x \rfloor\) es un entero \(n\) y \(x = n + f\) con \(0 \le f < 1\), dispone de dos puentes algebraicos limpios que convierten el problema en cotas enteras.
+
+Método 1 (para ecuaciones): Sea \(n = \lfloor x \rfloor \in \mathbb{Z}\), despeje \(x\) en términos de \(n\) e imponga la desigualdad doble caracterizadora \(n \le x < n + 1\) para hallar todos los enteros admisibles \(n\).
+
+Ejemplo 3: Resuelva \(\lfloor x \rfloor = 2x - 3\).
+Sea \(n = \lfloor x \rfloor \in \mathbb{Z}\). Entonces \(2x - 3 = n\), por lo que \(x = \dfrac{n + 3}{2}\). Al sustituir en \(n \le x < n + 1\):
+\[
+n \le \frac{n + 3}{2} < n + 1 \iff 2n \le n + 3 < 2n + 2.
+\]
+Separe esta desigualdad doble:
+- Lado izquierdo: \(2n \le n + 3 \iff n \le 3\).
+- Lado derecho: \(n + 3 < 2n + 2 \iff 1 < n\).
+
+Como \(n\) debe ser un entero que satisface \(1 < n \le 3\), las ÚNICAS posibilidades son \(n = 2\) y \(n = 3\):
+- \(n = 2 \implies x = \dfrac{2 + 3}{2} = \dfrac{5}{2}\). Comprobación: \(\lfloor 2.5 \rfloor = 2\) y \(2(2.5) - 3 = 2\).
+- \(n = 3 \implies x = \dfrac{3 + 3}{2} = 3\). Comprobación: \(\lfloor 3 \rfloor = 3\) y \(2(3) - 3 = 3\).
+
+El conjunto solución es \(\left\{\frac{5}{2}, 3\right\}\). La gráfica inferior confirma visualmente que la recta \(y = 2x - 3\) interseca los segmentos escalonados de \(y = \lfloor x \rfloor\) exactamente en \((2.5, 2)\) y \((3, 3)\) —¡y atraviesa directamente el salto abierto en \((2, 1)\) sin tocar ningún escalón!
+
+[GRAPH]
+type: function2d
+title: Intersecciones de \(y = 2x - 3\) con los escalones de \(y = \lfloor x \rfloor\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.5, 4.2
+yrange: -0.5, 4.2
+trace: 2*x - 3 | label: \(y = 2x - 3\)
+segment: 1, 1, 2, 1 | color: #10b981
+segment: 2, 2, 3, 2 | color: #10b981
+segment: 3, 3, 4, 3 | color: #10b981
+point: 2.5, 2 | label: \((2.5, 2)\)
+point: 3, 3 | label: \((3, 3)\)
+[/GRAPH]
+
+Método 2 (para desigualdades acopladas): Sustituya \(x = n + f\) donde \(n = \lfloor x \rfloor \in \mathbb{Z}\) y \(0 \le f < 1\), luego examine qué enteros \(n\) funcionan para TODO \(f \in [0, 1)\), qué único entero frontera \(n\) funciona para PARTE de \([0, 1)\), y qué enteros \(n\) nunca funcionan.
+
+Ejemplo 4: Resuelva \(x + \lfloor x \rfloor < 5\).
+Escriba \(x = n + f\) con \(n \in \mathbb{Z}\) y \(0 \le f < 1\). La desigualdad se vuelve
+\[
+(n + f) + n < 5 \iff 2n + f < 5.
+\]
+Inspeccione \(n\) según su tamaño:
+- Si \(n \le 2\): como \(f < 1\), tenemos \(2n + f < 2(2) + 1 = 5\), de modo que TODO \(f \in [0, 1)\) funciona. Esto incluye todos los intervalos \([n, n + 1)\) para \(n \le 2\), cuya unión es \((-\infty, 3)\).
+- Si \(n \ge 3\): como \(f \ge 0\), tenemos \(2n + f \ge 6 \not< 5\), por lo que NINGÚN \(f \in [0, 1)\) funciona.
+Por tanto, el conjunto solución es \((-\infty, 3)\).
+
+Ahora observe un caso donde el entero frontera \(n\) divide la parte fraccionaria \(f\).
+Ejemplo 5: Resuelva \(2x + \lfloor x \rfloor < 4\).
+Sustituya \(x = n + f\) (\(n \in \mathbb{Z}\), \(0 \le f < 1\)):
+\[
+2(n + f) + n < 4 \iff 3n + 2f < 4.
+\]
+- Si \(n \le 0\): \(3n + 2f < 0 + 2 = 2 < 4\) (se cumple siempre, dando todo \(x < 1\)).
+- Si \(n = 1\): \(3 + 2f < 4 \iff 2f < 1 \iff 0 \le f < \frac{1}{2}\), lo que da \(x = 1 + f \in \left[1, \frac{3}{2}\right)\).
+- Si \(n \ge 2\): \(3n + 2f \ge 6 \not< 4\) (no se cumple nunca).
+
+Unir \((-\infty, 1)\) con \(\left[1, \frac{3}{2}\right)\) da el conjunto solución exacto \(\left(-\infty, \frac{3}{2}\right)\).
+
+[CALLOUT]
+id: coupled-floor-strategy
+label: Procedimiento
+title: Resolución de problemas que acoplan \(x\) y \(\lfloor x \rfloor\)
+tone: note
+
+(1) Para una ecuación que vincula \(x\) y \(\lfloor x \rfloor\): fije \(n = \lfloor x \rfloor \in \mathbb{Z}\), despeje \(x(n)\), imponga \(n \le x(n) < n + 1\) para aislar los candidatos enteros \(n\), y recupere \(x\).
+(2) Para una desigualdad que vincula \(x\) y \(\lfloor x \rfloor\): sustituya \(x = n + f\) (\(n \in \mathbb{Z}\), \(0 \le f < 1\)), halle qué enteros \(n\) funcionan para todo \(f\), qué entero frontera restringe a \(f\), y una los intervalos resultantes.
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(\lfloor x \rfloor = 3x - 4\)?
+
+(A) \(\left\{\frac{4}{3}, \frac{5}{3}\right\}\)
+(B) \(\left\{\frac{5}{3}, 2\right\}\)
+(C) \(\{2\}\)
+(D) \(\left\{\frac{5}{3}, 2, \frac{7}{3}\right\}\)
+(E) \(\left\{\frac{4}{3}, 2\right\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Cuál es el conjunto solución de \(2x - \lfloor x \rfloor < 3\)?
+
+(A) \((-\infty, 2)\)
+(B) \((-\infty, 3)\)
+(C) \(\left(-\infty, \frac{3}{2}\right)\)
+(D) \(\left(-\infty, \frac{5}{2}\right]\)
+(E) \(\left(-\infty, \frac{5}{2}\right)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(\lfloor x \rfloor + \lceil x \rceil = 7\)?
+
+(A) \([3, 4]\)
+(B) \([3, 4)\)
+(C) \((3, 4)\)
+(D) \(\{3.5\}\)
+(E) \(\emptyset\)
+[/BONUS]

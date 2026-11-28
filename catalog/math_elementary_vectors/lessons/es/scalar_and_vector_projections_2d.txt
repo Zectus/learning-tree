@@ -1,0 +1,188 @@
+=== SECTION 1: Proyección escalar a lo largo de una dirección arbitraria ===
+
+Descomponer un vector \(\mathbf{u}\) a lo largo de los ejes horizontal y vertical nos dio \(u_x = \|\mathbf{u}\|\cos\theta\) y \(u_y = \|\mathbf{u}\|\sin\theta\). Ahora supón que la dirección natural de un problema NO es horizontal ni vertical —por ejemplo, una rampa inclinada, una carretera recta o un segundo vector \(\mathbf{v} \ne \mathbf{0}\)—. ¿Cuánto de \(\mathbf{u}\) apunta en la dirección de \(\mathbf{v}\), y cómo dividimos limpiamente \(\mathbf{u}\) en una parte paralela a \(\mathbf{v}\) y otra parte perpendicular a \(\mathbf{v}\)?
+
+Coloca \(\mathbf{u}\) y el vector de referencia no nulo \(\mathbf{v}\) cola con cola en el origen, con ángulo incluido \(\theta \in [0, \pi]\), y traza una perpendicular desde el extremo de \(\mathbf{u}\) sobre la recta infinita generada por \(\mathbf{v}\). Imagina iluminar perpendicularmente a \(90^\circ\) sobre la recta de \(\mathbf{v}\): \(\mathbf{u}\) proyecta una sombra a lo largo de esa recta.
+- Cuando \(0 \le \theta < 90^\circ\), la sombra apunta en el mismo sentido que \(\mathbf{v}\), y por trigonometría de triángulos rectángulos su longitud vale \(\|\mathbf{u}\|\cos\theta > 0\).
+- Cuando \(\theta = 90^\circ\), \(\mathbf{u}\) es perpendicular a \(\mathbf{v}\), de modo que la sombra colapsa en un punto de longitud \(0 = \|\mathbf{u}\|\cos 90^\circ\).
+- Cuando \(90^\circ < \theta \le 180^\circ\), la sombra apunta en el sentido OPUESTO a \(\mathbf{v}\), con longitud \(\|\mathbf{u}\|\cos(180^\circ - \theta) = -\|\mathbf{u}\|\cos\theta\), por lo que la coordenada con signo de la sombra a lo largo de \(\mathbf{v}\) es \(\|\mathbf{u}\|\cos\theta < 0\).
+
+En todos los casos, la proyección escalar con signo (también llamada componente de \(\mathbf{u}\) a lo largo de \(\mathbf{v}\)) es \(\|\mathbf{u}\|\cos\theta\). Para calcularla directamente desde las componentes sin hallar jamás \(\theta\), sustituye \(\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\) de la fórmula del producto punto:
+\[
+\|\mathbf{u}\|\cos\theta = \|\mathbf{u}\|\left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\right) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|} = \mathbf{u} \cdot \left(\frac{\mathbf{v}}{\|\mathbf{v}\|}\right) = \mathbf{u} \cdot \hat{\mathbf{v}},
+\]
+donde \(\hat{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}\|}\) es el vector unitario en la dirección de \(\mathbf{v}\). Observa que si \(\mathbf{u} = \mathbf{0}\), \(\frac{\mathbf{0} \cdot \mathbf{v}}{\|\mathbf{v}\|} = 0\), por lo que la fórmula funciona para todo \(\mathbf{u} \in \mathbb{R}^2\) siempre que \(\mathbf{v} \ne \mathbf{0}\).
+
+[CALLOUT]
+id: scalar-proj
+label: Definición
+title: Proyección escalar (componente de \(\mathbf{u}\) a lo largo de \(\mathbf{v}\))
+tone: key
+
+Para cualquier vector \(\mathbf{u} \in \mathbb{R}^2\) y cualquier vector no nulo \(\mathbf{v} \in \mathbb{R}^2\), la proyección escalar de \(\mathbf{u}\) sobre \(\mathbf{v}\) es el número real con signo
+\[
+\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|} = \mathbf{u} \cdot \hat{\mathbf{v}}.
+\]
+Su signo indica la orientación de la sombra: positivo si \(\mathbf{u}\) se inclina a favor de \(\mathbf{v}\) (ángulo agudo), cero si \(\mathbf{u} \perp \mathbf{v}\), y negativo si \(\mathbf{u}\) se inclina en contra de \(\mathbf{v}\) (ángulo obtuso).
+[/CALLOUT]
+
+Observa cómo [REF: scalar-proj | la proyección escalar] generaliza las coordenadas rectangulares habituales: tomar \(\mathbf{v} = \mathbf{i}\) da \(\operatorname{comp}_{\mathbf{i}} \mathbf{u} = \mathbf{u} \cdot \mathbf{i} = u_x\), y tomar \(\mathbf{v} = \mathbf{j}\) da \(\operatorname{comp}_{\mathbf{j}} \mathbf{u} = \mathbf{u} \cdot \mathbf{j} = u_y\).
+
+=== SECTION 2: Proyección vectorial y cómo evitar los dos errores clásicos ===
+
+La proyección escalar \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\) es solo un número con signo. Para construir el vector sombra propiamente dicho —la proyección vectorial de \(\mathbf{u}\) sobre \(\mathbf{v}\), escrita \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\)— multiplicamos ese escalar con signo por el vector unitario \(\hat{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}\|}\) que apunta a lo largo de \(\mathbf{v}\):
+\[
+\operatorname{proj}_{\mathbf{v}} \mathbf{u} = (\operatorname{comp}_{\mathbf{v}} \mathbf{u})\,\hat{\mathbf{v}} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}\right)\left(\frac{\mathbf{v}}{\|\mathbf{v}\|}\right) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|^2}\,\mathbf{v} = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\,\mathbf{v}.
+\]
+Nota lo limpia que es esa última forma: ni siquiera necesitas una raíz cuadrada para calcular \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\), porque \(\|\mathbf{v}\|^2 = \mathbf{v} \cdot \mathbf{v} = v_x^2 + v_y^2\).
+
+[CALLOUT]
+id: vector-proj
+label: Fórmula
+title: Proyección vectorial de \(\mathbf{u}\) sobre \(\mathbf{v}\)
+tone: key
+
+Para todo \(\mathbf{u} \in \mathbb{R}^2\) y todo \(\mathbf{v} \in \mathbb{R}^2\) no nulo, la proyección vectorial de \(\mathbf{u}\) sobre \(\mathbf{v}\) es
+\[
+\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|^2}\right)\mathbf{v}.
+\]
+El vector \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) siempre yace sobre la recta generada por \(\mathbf{v}\), y su longitud es \(|\operatorname{comp}_{\mathbf{v}} \mathbf{u}|\).
+[/CALLOUT]
+
+[CALLOUT]
+id: proj-pitfalls
+label: Error frecuente
+title: Dos errores que debes evitar en las proyecciones vectoriales
+tone: caution
+
+(1) Dividir por \(\|\mathbf{v}\|\) en lugar de \(\|\mathbf{v}\|^2 = \mathbf{v} \cdot \mathbf{v}\): geométricamente, duplicar \(\mathbf{v}\) a \(2\mathbf{v}\) no altera la recta de \(\mathbf{v}\), por lo que el vector sombra \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) DEBE permanecer inalterado. En \(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\), reemplazar \(\mathbf{v}\) por \(2\mathbf{v}\) multiplica el numerador por \(2 \cdot 2 = 4\) y el denominador por \(2 \cdot 2 = 4\), cancelándose por completo. Si por accidente escribes \(\|\mathbf{v}\|\) en el denominador, \(\mathbf{v}\) NO queda normalizado y se rompe la invariancia de escala.
+(2) Intercambiar \(\mathbf{u}\) y \(\mathbf{v}\): \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) es un múltiplo del vector del SUBÍNDICE \(\mathbf{v}\) (yace SOBRE la recta de \(\mathbf{v}\)), mientras que \(\operatorname{proj}_{\mathbf{u}} \mathbf{v}\) es un múltiplo de \(\mathbf{u}\) (yace SOBRE la recta de \(\mathbf{u}\)). En general, \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} \ne \operatorname{proj}_{\mathbf{u}} \mathbf{v}\).
+[/CALLOUT]
+
+Explora la geometría en la gráfica interactiva siguiente. El vector de referencia fijo es \(\mathbf{v} = \langle 4, 2 \rangle\) (recta gris que pasa por el origen), y arrastrar el deslizador \(a\) hace rotar \(\mathbf{u}\) de longitud \(3\) alrededor del origen. Observa cómo la sombra verde \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) se desliza a lo largo de la recta de \(\mathbf{v}\) —pasando al lado negativo cada vez que el ángulo entre \(\mathbf{u}\) y \(\mathbf{v}\) se vuelve obtuso—, mientras que el segmento naranja discontinuo desde \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) hasta el extremo de \(\mathbf{u}\) permanece siempre perpendicular a \(\mathbf{v}\).
+
+[GRAPH]
+type: parametric2d
+title: Proyección vectorial \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) sobre \(\mathbf{v} = \langle 4, 2 \rangle\) al rotar \(\mathbf{u}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.1, 1.3
+xrange: -4.2, 4.8
+yrange: -3.6, 3.6
+trace: 4*t, 2*t | label: \(\text{recta de } \mathbf{v}\) | color: #cbd5e1
+segment: 0, 0, 4, 2 | label: \(\mathbf{v}\) | color: #2563eb
+segment: 0, 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{u}\) | color: #dc2626
+segment: 0, 0, 2.4*cos(a) + 1.2*sin(a), 1.2*cos(a) + 0.6*sin(a) | label: \(\mathbf{u}_\parallel\) | color: #16a34a
+segment: 2.4*cos(a) + 1.2*sin(a), 1.2*cos(a) + 0.6*sin(a), 3*cos(a), 3*sin(a) | label: \(\mathbf{u}_\perp\) | color: #d97706 | dashed: true
+point: 4, 2 | label: \(\mathbf{v}\)
+point: 3*cos(a), 3*sin(a) | label: \(\mathbf{u}\)
+point: 2.4*cos(a) + 1.2*sin(a), 1.2*cos(a) + 0.6*sin(a) | label: \(F\)
+slider: a | range: 0, 6.2832 | init: 1.2 | step: 0.1571
+[/GRAPH]
+
+Hagamos un cálculo concreto para \(\mathbf{u} = \langle 2, 5 \rangle\) y \(\mathbf{v} = \langle 4, 2 \rangle\):
+- Producto punto: \(\mathbf{u} \cdot \mathbf{v} = (2)(4) + (5)(2) = 18\).
+- Denominadores: \(\mathbf{v} \cdot \mathbf{v} = 4^2 + 2^2 = 20\), así que \(\|\mathbf{v}\| = \sqrt{20} = 2\sqrt{5}\).
+- Proyección escalar: \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \frac{18}{2\sqrt{5}} = \frac{9}{\sqrt{5}} = \frac{9\sqrt{5}}{5}\).
+- Proyección vectorial: \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \frac{18}{20}\langle 4, 2 \rangle = \frac{9}{10}\langle 4, 2 \rangle = \left\langle \frac{18}{5}, \frac{9}{5} \right\rangle\).
+
+[QUESTION 1]
+[ANSWER: A]
+Sean \(\mathbf{u} = \langle -2, 1 \rangle\) y \(\mathbf{v} = \langle 3, -4 \rangle\). ¿Cuáles son \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\) y \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\)?
+
+(A) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) y \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left\langle -\frac{6}{5},\; \frac{8}{5} \right\rangle\)
+(B) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) y \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \langle -6,\; 8 \rangle\)
+(C) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) y \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \langle 4,\; -2 \rangle\)
+(D) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = 2\) y \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left\langle \frac{6}{5},\; -\frac{8}{5} \right\rangle\)
+(E) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) y \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left\langle \frac{6}{5},\; -\frac{8}{5} \right\rangle\)
+[/QUESTION]
+
+=== SECTION 3: Descomposición ortogonal y la comprobación pitagórica ===
+
+Observa de nuevo el segmento naranja discontinuo en la gráfica anterior: va desde el extremo de \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) hasta el extremo de \(\mathbf{u}\). Por resta cola con cola, ese vector es
+\[
+\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}.
+\]
+Sumar \(\mathbf{u}_\parallel\) y \(\mathbf{u}_\perp\) da \(\mathbf{u}_\parallel + \mathbf{u}_\perp = \operatorname{proj}_{\mathbf{v}} \mathbf{u} + (\mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}) = \mathbf{u}\) automáticamente. Demostremos ahora algebraicamente que \(\mathbf{u}_\perp\) es en verdad perpendicular a \(\mathbf{v}\) (y por tanto también a \(\mathbf{u}_\parallel\)):
+\[
+\mathbf{u}_\perp \cdot \mathbf{v} = \left(\mathbf{u} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\,\mathbf{v}\right) \cdot \mathbf{v} = \mathbf{u} \cdot \mathbf{v} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}(\mathbf{v} \cdot \mathbf{v}) = \mathbf{u} \cdot \mathbf{v} - \mathbf{u} \cdot \mathbf{v} = 0.
+\]
+Como \(\mathbf{u}_\parallel\) es un múltiplo escalar de \(\mathbf{v}\), obtenemos de inmediato \(\mathbf{u}_\parallel \cdot \mathbf{u}_\perp = 0\) igualmente.
+
+Esta descomposición \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\) también es única: si \(\mathbf{u} = \mathbf{a} + \mathbf{b}\) para CUALQUIER vector \(\mathbf{a} = c\mathbf{v}\) paralelo a \(\mathbf{v}\) y CUALQUIER vector \(\mathbf{b}\) ortogonal a \(\mathbf{v}\), hacer el producto punto de ambos miembros con \(\mathbf{v}\) anula \(\mathbf{b} \cdot \mathbf{v} = 0\) y deja \(\mathbf{u} \cdot \mathbf{v} = c(\mathbf{v} \cdot \mathbf{v})\), lo que obliga únicamente a \(c = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\) y por ende a \(\mathbf{a} = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) y \(\mathbf{b} = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\).
+
+Finalmente, como \(\mathbf{u}_\parallel \cdot \mathbf{u}_\perp = 0\), desarrollar \(\|\mathbf{u}\|^2 = (\mathbf{u}_\parallel + \mathbf{u}_\perp) \cdot (\mathbf{u}_\parallel + \mathbf{u}_\perp)\) elimina el término cruzado y arroja la identidad pitagórica
+\[
+\|\mathbf{u}\|^2 = \|\mathbf{u}_\parallel\|^2 + \|\mathbf{u}_\perp\|^2.
+\]
+Esto proporciona tanto una vía rápida para hallar \(\|\mathbf{u}_\perp\|\) a partir de \(\|\mathbf{u}\|\) y \(|\operatorname{comp}_{\mathbf{v}} \mathbf{u}|\) como una comprobación instantánea de todo cálculo de descomposición.
+
+[CALLOUT]
+id: orthog-decomp
+label: Teorema
+title: Descomposición ortogonal respecto de un vector no nulo \(\mathbf{v}\)
+tone: key
+
+Todo vector \(\mathbf{u} \in \mathbb{R}^2\) se descompone de manera única como \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\), donde:
+
+(1) \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v}\) es paralelo a \(\mathbf{v}\) (o \(\mathbf{0}\)).
+(2) \(\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) es ortogonal a \(\mathbf{v}\) (\(\mathbf{u}_\perp \cdot \mathbf{v} = 0\) y \(\mathbf{u}_\parallel \cdot \mathbf{u}_\perp = 0\)).
+(3) Relación pitagórica: \(\|\mathbf{u}\|^2 = \|\mathbf{u}_\parallel\|^2 + \|\mathbf{u}_\perp\|^2\).
+[/CALLOUT]
+
+Comprueba nuestro ejemplo anterior \(\mathbf{u} = \langle 2, 5 \rangle\), \(\mathbf{v} = \langle 4, 2 \rangle\), donde \(\mathbf{u}_\parallel = \langle \frac{18}{5}, \frac{9}{5} \rangle\):
+\[
+\mathbf{u}_\perp = \langle 2, 5 \rangle - \left\langle \frac{18}{5}, \frac{9}{5} \right\rangle = \left\langle -\frac{8}{5}, \frac{16}{5} \right\rangle.
+\]
+Verifica la ortogonalidad: \(\mathbf{u}_\perp \cdot \mathbf{v} = -\frac{32}{5} + \frac{32}{5} = 0\). Verifica Pitágoras: \(\|\mathbf{u}_\parallel\|^2 + \|\mathbf{u}_\perp\|^2 = \frac{324 + 81}{25} + \frac{64 + 256}{25} = \frac{405 + 320}{25} = \frac{725}{25} = 29 = 2^2 + 5^2 = \|\mathbf{u}\|^2\).
+
+[TABLE]
+Magnitud | Símbolo | Tipo | Fórmula | Papel geométrico
+Proyección escalar | \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\) | Escalar real | \(\frac{\mathbf{u} \cdot \mathbf{v}}{\lVert \mathbf{v} \rVert}\) | Longitud con signo de la sombra a lo largo de \(\mathbf{v}\)
+Proyección vectorial | \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) | Vector 2D | \(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\) | Vector sombra sobre la recta de \(\mathbf{v}\)
+Componente ortogonal | \(\mathbf{u}_\perp\) | Vector 2D | \(\mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) | Resto perpendicular desde la punta de la sombra hasta el extremo de \(\mathbf{u}\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+Descompón \(\mathbf{u} = \langle 8, 1 \rangle\) en \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\) respecto de \(\mathbf{v} = \langle 1, 2 \rangle\). ¿Cuál es la componente ortogonal \(\mathbf{u}_\perp\)?
+
+(A) \(\langle 2, 4 \rangle\)
+(B) \(\langle 6, -3 \rangle\)
+(C) \(\langle -6, 3 \rangle\)
+(D) \(\langle 6, 3 \rangle\)
+(E) \(\langle 4, -2 \rangle\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Supón que \(\mathbf{u}\) y \(\mathbf{v}\) son vectores no nulos en \(\mathbb{R}^2\) tales que \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = 6\) y \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \mathbf{p}\). Si reemplazamos \(\mathbf{v}\) por \(\mathbf{w} = -3\mathbf{v}\), ¿cuáles son \(\operatorname{comp}_{\mathbf{w}} \mathbf{u}\) y \(\operatorname{proj}_{\mathbf{w}} \mathbf{u}\)?
+
+(A) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -6\) y \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = \mathbf{p}\)
+(B) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -6\) y \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = -\mathbf{p}\)
+(C) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = 6\) y \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = \mathbf{p}\)
+(D) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -18\) y \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = -3\mathbf{p}\)
+(E) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -2\) y \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = -\frac{1}{3}\mathbf{p}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Supón que \(\mathbf{u}\) y \(\mathbf{v}\) son vectores no nulos en \(\mathbb{R}^2\) con \(\|\mathbf{u}\| = 13\) y \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -5\). ¿Cuánto vale \(\|\mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\|\)?
+
+(A) \(8\)
+(B) \(\sqrt{194}\)
+(C) \(-12\)
+(D) \(12\)
+(E) No puede determinarse sin conocer \(\|\mathbf{v}\|\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Para dos vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\) en \(\mathbb{R}^2\), supón que \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \mathbf{u}\). ¿Qué afirmación debe ser verdadera?
+
+(A) \(\mathbf{u}\) y \(\mathbf{v}\) deben apuntar exactamente en el mismo sentido
+(B) \(\mathbf{u} = \mathbf{v}\)
+(C) \(\mathbf{u}\) y \(\mathbf{v}\) son paralelos (ya sea en el mismo sentido o en sentidos opuestos)
+(D) \(\mathbf{u}\) y \(\mathbf{v}\) son ortogonales
+(E) \(\|\mathbf{v}\| = 1\)
+[/BONUS]

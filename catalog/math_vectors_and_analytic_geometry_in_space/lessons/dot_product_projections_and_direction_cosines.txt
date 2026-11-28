@@ -1,0 +1,273 @@
+=== SECTION 1: Defining the 3D dot product and its algebraic rules ===
+
+Componentwise addition and scalar multiplication let us combine displacements and measure lengths in \(\mathbb{R}^3\), yet neither operation tells us the angle between two spatial vectors. If two support cables leave an anchor point in directions \(\mathbf{u} = \langle 2, -1, 3 \rangle\) and \(\mathbf{v} = \langle 1, 5, 1 \rangle\), how do we determine whether they meet at a right angle, an acute angle, or an obtuse angle without building a physical scale model?
+
+The tool that bridges component arithmetic and spatial angles is a scalar-valued product called the dot product (or scalar product).
+
+[CALLOUT]
+id: dot-def
+label: Definition
+title: The 3D dot product
+tone: key
+
+For any two vectors \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\) and \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) in \(\mathbb{R}^3\), their dot product is the real number
+\[
+\mathbf{u} \cdot \mathbf{v} = u_1 v_1 + u_2 v_2 + u_3 v_3.
+\]
+[/CALLOUT]
+
+Pay close attention to the output type: \(\mathbf{u} \cdot \mathbf{v}\) is a scalar (a single real number), never a vector. For \(\mathbf{u} = \langle 2, -1, 3 \rangle\) and \(\mathbf{v} = \langle 1, 5, 1 \rangle\),
+\[
+\mathbf{u} \cdot \mathbf{v} = (2)(1) + (-1)(5) + (3)(1) = 2 - 5 + 3 = 0.
+\]
+We will see in a moment that this value of \(0\) means the two cables meet at an exact \(90^\circ\) angle.
+
+Directly from [REF: dot-def | the component definition], the dot product obeys four clean algebraic laws for all \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\) and all scalars \(c \in \mathbb{R}\):
+
+[CALLOUT]
+id: dot-laws
+label: Theorem
+title: Algebraic properties of the dot product
+tone: key
+
+(1) Symmetry (commutativity): \(\mathbf{u} \cdot \mathbf{v} = \mathbf{v} \cdot \mathbf{u}\).
+(2) Distributivity over addition: \(\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}\).
+(3) Scalar homogeneity: \((c\mathbf{u}) \cdot \mathbf{v} = c(\mathbf{u} \cdot \mathbf{v}) = \mathbf{u} \cdot (c\mathbf{v})\).
+(4) Length-squared identity: \(\mathbf{v} \cdot \mathbf{v} = v_1^2 + v_2^2 + v_3^2 = \|\mathbf{v}\|^2\), with \(\mathbf{v} \cdot \mathbf{v} = 0\) if and only if \(\mathbf{v} = \mathbf{0}\).
+[/CALLOUT]
+
+Notice how [REF: dot-laws.2 | distributivity] and [REF: dot-laws.3 | homogeneity] together make the dot product bilinear (linear in each slot when the other is held fixed). For example, expanding \(\|\mathbf{u} - \mathbf{v}\|^2\) using [REF: dot-laws | these algebraic properties] mirrors ordinary binomial expansion:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = (\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = \mathbf{u} \cdot \mathbf{u} - \mathbf{u} \cdot \mathbf{v} - \mathbf{v} \cdot \mathbf{u} + \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 - 2(\mathbf{u} \cdot \mathbf{v}) + \|\mathbf{v}\|^2.
+\]
+That single algebraic identity is the exact bridge to angles in \(\mathbb{R}^3\).
+
+=== SECTION 2: Angles, orthogonality, and Cauchy-Schwarz ===
+
+Place two nonzero vectors \(\mathbf{u}\) and \(\mathbf{v}\) tail to tail at the origin, and let \(\theta \in [0, \pi]\) be the angle between them inside the plane they span. The tips of \(\mathbf{u}\) and \(\mathbf{v}\) are connected by the difference vector \(\mathbf{u} - \mathbf{v}\), forming a triangle with side lengths \(\|\mathbf{u}\|\), \(\|\mathbf{v}\|\), and \(\|\mathbf{u} - \mathbf{v}\|\), where \(\theta\) is the interior angle opposite the side of length \(\|\mathbf{u} - \mathbf{v}\|\).
+
+[GRAPH]
+type: parametric2d
+title: Triangle formed by \(\mathbf{u}\), \(\mathbf{v}\), and \(\mathbf{u} - \mathbf{v}\) in the plane they span
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 4.5
+yrange: -0.5, 3.6
+trace: 4*t, 0 | label: \(\mathbf{v}\)
+trace: 1.5*t, 2.6*t | label: \(\mathbf{u}\)
+trace: 4 - 2.5*t, 2.6*t | label: \(\mathbf{u} - \mathbf{v}\)
+trace: 0.7*cos(1.047*t), 0.7*sin(1.047*t) | label: angle \(\theta\)
+point: 0, 0 | label: \(O\)
+point: 4, 0 | label: \(\mathbf{v}\)
+point: 1.5, 2.6 | label: \(\mathbf{u}\)
+[/GRAPH]
+
+Applying the Law of Cosines to this triangle yields
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2\|\mathbf{u}\|\|\mathbf{v}\|\cos\theta.
+\]
+Now compare this geometric equation side by side with the algebraic expansion from Section 1:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2(\mathbf{u} \cdot \mathbf{v}).
+\]
+Canceling \(\|\mathbf{u}\|^2 + \|\mathbf{v}\|^2\) from both expressions and dividing by \(-2\) produces the geometric dot-product theorem. (The same formula holds automatically in the degenerate cases \(\theta = 0\) and \(\theta = \pi\), where \(\mathbf{u} = \pm c\mathbf{v}\).)
+
+[CALLOUT]
+id: dot-angle
+label: Theorem
+title: Geometric dot product, Cauchy-Schwarz, and orthogonality
+tone: key
+
+Let \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^3\) be nonzero vectors with angle \(\theta \in [0, \pi]\) between them.
+
+(1) Geometric formula: \(\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta\), so \(\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\).
+(2) Cauchy-Schwarz inequality: for all \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^3\), \(|\mathbf{u} \cdot \mathbf{v}| \le \|\mathbf{u}\|\,\|\mathbf{v}\|\), with equality if and only if one vector is a scalar multiple of the other.
+(3) Angle classification (for nonzero \(\mathbf{u}, \mathbf{v}\)): \(\mathbf{u} \cdot \mathbf{v} > 0 \iff 0 \le \theta < \frac{\pi}{2}\) (acute or parallel); \(\mathbf{u} \cdot \mathbf{v} = 0 \iff \theta = \frac{\pi}{2}\) (orthogonal); \(\mathbf{u} \cdot \mathbf{v} < 0 \iff \frac{\pi}{2} < \theta \le \pi\) (obtuse or antiparallel).
+[/CALLOUT]
+
+Why does [REF: dot-angle.2 | the Cauchy-Schwarz inequality] follow immediately? Because \(|\cos\theta| \le 1\) for every real angle \(\theta\), taking absolute values in [REF: dot-angle.1 | the geometric formula] gives \(|\mathbf{u} \cdot \mathbf{v}| = \|\mathbf{u}\|\|\mathbf{v}\||\cos\theta| \le \|\mathbf{u}\|\|\mathbf{v}\|\), with equality precisely when \(|\cos\theta| = 1\) (i.e., \(\theta = 0\) or \(\theta = \pi\), meaning parallel vectors) or when one of the vectors is \(\mathbf{0}\).
+
+Note one convention: by definition, two vectors \(\mathbf{u}\) and \(\mathbf{v}\) are called orthogonal (written \(\mathbf{u} \perp \mathbf{v}\)) whenever \(\mathbf{u} \cdot \mathbf{v} = 0\), which makes the zero vector \(\mathbf{0}\) orthogonal to every vector. For nonzero vectors, "orthogonal" and "perpendicular" mean the exact same thing: \(\theta = \pi/2\).
+
+Let us compute an exact angle: take \(\mathbf{p} = \langle 2, 1, -2 \rangle\) and \(\mathbf{q} = \langle 1, 0, -1 \rangle\). We have
+\[
+\mathbf{p} \cdot \mathbf{q} = 2(1) + 1(0) + (-2)(-1) = 4, \qquad \|\mathbf{p}\| = \sqrt{4 + 1 + 4} = 3, \qquad \|\mathbf{q}\| = \sqrt{1 + 0 + 1} = \sqrt{2}.
+\]
+Hence \(\cos\theta = \frac{4}{3\sqrt{2}} = \frac{2\sqrt{2}}{3} > 0\), so \(\theta = \arccos\bigl(\frac{2\sqrt{2}}{3}\bigr) \approx 19.5^\circ\) is acute.
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(\mathbf{u} = \langle 3, -2, 4 \rangle\) and \(\mathbf{v} = \langle 2, 1, c \rangle\). For which values of the real constant \(c\) is the angle \(\theta\) between \(\mathbf{u}\) and \(\mathbf{v}\) strictly obtuse (\(\frac{\pi}{2} < \theta < \pi\))?
+
+(A) \(c < -1\)
+(B) \(c > -1\)
+(C) \(c = -1\)
+(D) \(c < 1\)
+(E) \(c < -2\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+What is the exact angle \(\theta \in [0, \pi]\) between the vectors \(\mathbf{a} = \langle 1, 1, 0 \rangle\) and \(\mathbf{b} = \langle 0, -1, 1 \rangle\)?
+
+(A) \(\frac{\pi}{3}\)
+(B) \(\frac{\pi}{2}\)
+(C) \(\frac{3\pi}{4}\)
+(D) \(\frac{2\pi}{3}\)
+(E) \(\frac{5\pi}{6}\)
+[/QUESTION]
+
+=== SECTION 3: Direction angles and direction cosines ===
+
+In \(\mathbb{R}^2\), a single angle \(\theta\) measured from the positive \(x\)-axis fixes the direction of a vector. In \(\mathbb{R}^3\), one angle is no longer enough—a cone of directions all make the same angle with the \(x\)-axis. Instead, we specify a nonzero vector's spatial orientation using the three angles it forms with the positive coordinate axes.
+
+[CALLOUT]
+id: dir-cosines
+label: Definition
+title: Direction angles and direction cosines
+tone: key
+
+Let \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle \in \mathbb{R}^3\) be a nonzero vector. Its direction angles are the three angles \(\alpha, \beta, \gamma \in [0, \pi]\) that \(\mathbf{v}\) makes with the standard basis vectors \(\mathbf{i}\), \(\mathbf{j}\), and \(\mathbf{k}\), respectively. Applying [REF: dot-angle.1 | the angle formula] gives its direction cosines:
+\[
+\cos\alpha = \frac{\mathbf{v} \cdot \mathbf{i}}{\|\mathbf{v}\|\,\|\mathbf{i}\|} = \frac{v_1}{\|\mathbf{v}\|}, \qquad \cos\beta = \frac{\mathbf{v} \cdot \mathbf{j}}{\|\mathbf{v}\|\,\|\mathbf{j}\|} = \frac{v_2}{\|\mathbf{v}\|}, \qquad \cos\gamma = \frac{\mathbf{v} \cdot \mathbf{k}}{\|\mathbf{v}\|\,\|\mathbf{k}\|} = \frac{v_3}{\|\mathbf{v}\|}.
+\]
+These three numbers satisfy the fundamental identity
+\[
+\cos^2\alpha + \cos^2\beta + \cos^2\gamma = 1,
+\]
+and assemble directly into the unit direction vector:
+\[
+\frac{\mathbf{v}}{\|\mathbf{v}\|} = \langle \cos\alpha,\; \cos\beta,\; \cos\gamma \rangle.
+\]
+[/CALLOUT]
+
+Why does \(\cos^2\alpha + \cos^2\beta + \cos^2\gamma = 1\) always hold? Simply square and sum the three formulas:
+\[
+\cos^2\alpha + \cos^2\beta + \cos^2\gamma = \frac{v_1^2 + v_2^2 + v_3^2}{\|\mathbf{v}\|^2} = \frac{\|\mathbf{v}\|^2}{\|\mathbf{v}\|^2} = 1.
+\]
+This identity reveals two practical facts at once:
+1. You cannot choose \(\alpha\), \(\beta\), and \(\gamma\) independently. For instance, no vector can make a \(30^\circ\) angle with both the \(x\)-axis and the \(y\)-axis, because \(\cos^2 30^\circ + \cos^2 30^\circ = \frac{3}{4} + \frac{3}{4} = \frac{3}{2} > 1\), leaving \(\cos^2\gamma = -\frac{1}{2} < 0\), which is impossible.
+2. Given two direction angles and the sign of the third component, [REF: dir-cosines | the direction-cosine identity] pins down the third direction angle uniquely: if \(v_3 > 0\), take the positive square root \(\cos\gamma > 0\) (so \(\gamma \in [0, \pi/2)\)); if \(v_3 < 0\), take the negative square root \(\cos\gamma < 0\) (so \(\gamma \in (\pi/2, \pi]\)).
+
+For a concrete example, take \(\mathbf{v} = \langle 2, -1, 2 \rangle\). Its magnitude is \(\|\mathbf{v}\| = \sqrt{4 + 1 + 4} = 3\), so its unit vector is \(\langle 2/3, -1/3, 2/3 \rangle\). Reading off the three components immediately yields \(\cos\alpha = 2/3\), \(\cos\beta = -1/3\), and \(\cos\gamma = 2/3\), with \((2/3)^2 + (-1/3)^2 + (2/3)^2 = 9/9 = 1\).
+
+[QUESTION 3]
+[ANSWER: B]
+A nonzero vector \(\mathbf{v} \in \mathbb{R}^3\) makes direction angles \(\alpha = \frac{\pi}{3}\) with the positive \(x\)-axis and \(\beta = \frac{2\pi}{3}\) with the positive \(y\)-axis. If the \(z\)-component of \(\mathbf{v}\) is negative, what is its direction angle \(\gamma\) with the positive \(z\)-axis?
+
+(A) \(\frac{\pi}{4}\)
+(B) \(\frac{3\pi}{4}\)
+(C) \(\frac{2\pi}{3}\)
+(D) \(\frac{\pi}{2}\)
+(E) No such vector exists because \(\alpha + \beta = \pi\)
+[/QUESTION]
+
+=== SECTION 4: Scalar projection, vector projection, orthogonal decomposition, and work ===
+
+Often we want to resolve a spatial vector \(\mathbf{u}\) (such as a force or displacement) into two pieces relative to a chosen nonzero reference direction \(\mathbf{v}\): the part pointing along the line of \(\mathbf{v}\), and the part perpendicular to \(\mathbf{v}\).
+
+Place \(\mathbf{u}\) and \(\mathbf{v}\) tail to tail, and drop a perpendicular from the tip of \(\mathbf{u}\) onto the line containing \(\mathbf{v}\). The signed length of the resulting shadow along \(\mathbf{v}\) is \(\|\mathbf{u}\|\cos\theta\): positive when \(\theta\) is acute (shadow points with \(\mathbf{v}\)), zero when \(\theta = \pi/2\), and negative when \(\theta\) is obtuse (shadow points opposite to \(\mathbf{v}\)). Substituting \(\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}\) cancels \(\|\mathbf{u}\|\) completely:
+\[
+\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \|\mathbf{u}\|\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}.
+\]
+This signed number is the scalar projection (or scalar component) of \(\mathbf{u}\) onto \(\mathbf{v}\). To turn that signed shadow into a vector pointing along the line of \(\mathbf{v}\), multiply it by the unit vector \(\frac{\mathbf{v}}{\|\mathbf{v}\|}\):
+\[
+\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}\right)\frac{\mathbf{v}}{\|\mathbf{v}\|} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|^2}\mathbf{v} = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}.
+\]
+Notice the denominator is \(\|\mathbf{v}\|^2 = \mathbf{v} \cdot \mathbf{v}\), not \(\|\mathbf{v}\|\): one factor of \(\|\mathbf{v}\|\) computes the signed shadow length, and the second factor normalizes \(\mathbf{v}\) into a unit vector! Forgetting the square is the single most common error in projection calculations.
+
+Finally, define the remaining vector \(\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\). Check its dot product with \(\mathbf{v}\):
+\[
+\mathbf{u}_\perp \cdot \mathbf{v} = \left(\mathbf{u} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\right) \cdot \mathbf{v} = \mathbf{u} \cdot \mathbf{v} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}(\mathbf{v} \cdot \mathbf{v}) = 0.
+\]
+Thus \(\mathbf{u}_\perp\) is guaranteed to be orthogonal to \(\mathbf{v}\), splitting \(\mathbf{u}\) uniquely into parallel and perpendicular components.
+
+[CALLOUT]
+id: proj-decomp
+label: Formulas
+title: Projections, orthogonal decomposition, and 3D work
+tone: key
+
+Let \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^3\) with \(\mathbf{v} \ne \mathbf{0}\).
+
+(1) Scalar projection of \(\mathbf{u}\) onto \(\mathbf{v}\): \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}\).
+(2) Vector projection of \(\mathbf{u}\) onto \(\mathbf{v}\): \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\).
+(3) Orthogonal decomposition: \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\), where \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) is parallel to \(\mathbf{v}\) and \(\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) satisfies \(\mathbf{u}_\perp \cdot \mathbf{v} = 0\).
+(4) Mechanical work done by a constant force \(\mathbf{F}\) along a straight displacement \(\mathbf{d}\): \(W = (\operatorname{comp}_{\mathbf{d}} \mathbf{F})\,\|\mathbf{d}\| = \mathbf{F} \cdot \mathbf{d}\).
+[/CALLOUT]
+
+Notice how [REF: proj-decomp.4 | work] arises directly from scalar projection: only the component of force along the motion does work, and multiplying \(\operatorname{comp}_{\mathbf{d}} \mathbf{F} = (\mathbf{F} \cdot \mathbf{d})/\|\mathbf{d}\|\) by the distance traveled \(\|\mathbf{d}\|\) collapses to \(\mathbf{F} \cdot \mathbf{d}\). Also watch the order of subscripts: \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) projects \(\mathbf{u}\) onto the direction \(\mathbf{v}\) (the subscript is always the target direction).
+
+Drag the angle slider \(a\) below (in radians) to watch \(\mathbf{u} = \langle 3\cos a, 3\sin a \rangle\) decompose into \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) along \(\mathbf{v} = \langle 4, 0 \rangle\) and \(\mathbf{u}_\perp\) perpendicular to \(\mathbf{v}\). Notice that when \(a > \pi/2 \approx 1.57\), the projection swings to the negative side of the line of \(\mathbf{v}\), matching the negative sign of \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\).
+
+[GRAPH]
+type: parametric2d
+title: Orthogonal decomposition \(\mathbf{u} = \operatorname{proj}_{\mathbf{v}} \mathbf{u} + \mathbf{u}_\perp\) as angle \(a\) varies
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -3.5, 4.5
+yrange: -1, 3.8
+trace: 4*t, 0 | label: \(\mathbf{v} = \langle 4, 0 \rangle\)
+trace: 3*cos(a)*t, 3*sin(a)*t | label: \(\mathbf{u}\)
+segment: 0, 0, 3*cos(a), 0 | label: \(\operatorname{proj}_{\mathbf{v}}\mathbf{u}\)
+segment: 3*cos(a), 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{u}_\perp\) | dashed: true
+point: 3*cos(a), 3*sin(a) | label: \(\mathbf{u}\)
+point: 3*cos(a), 0 | label: foot
+slider: a | range: 0.2, 2.9 | init: 1.0 | step: 0.1
+[/GRAPH]
+
+Work through a full 3D decomposition: resolve \(\mathbf{a} = \langle 4, -2, 6 \rangle\) along \(\mathbf{b} = \langle 2, 1, -2 \rangle\). First compute \(\mathbf{a} \cdot \mathbf{b} = 8 - 2 - 12 = -6\) and \(\mathbf{b} \cdot \mathbf{b} = 4 + 1 + 4 = 9\). Then
+\[
+\mathbf{a}_\parallel = \operatorname{proj}_{\mathbf{b}} \mathbf{a} = \frac{-6}{9}\langle 2, 1, -2 \rangle = \left\langle -\frac{4}{3},\; -\frac{2}{3},\; \frac{4}{3} \right\rangle,
+\]
+and the perpendicular part is
+\[
+\mathbf{a}_\perp = \mathbf{a} - \mathbf{a}_\parallel = \left\langle \frac{16}{3},\; -\frac{4}{3},\; \frac{14}{3} \right\rangle.
+\]
+As a quick sanity check, compute \(\mathbf{a}_\perp \cdot \mathbf{b} = \frac{32}{3} - \frac{4}{3} - \frac{28}{3} = 0\), confirming orthogonality.
+
+[QUESTION 4]
+[ANSWER: C]
+Decompose \(\mathbf{u} = \langle 3, 1, 7 \rangle\) as \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\), where \(\mathbf{u}_\parallel\) is parallel to \(\mathbf{v} = \langle 1, 2, -2 \rangle\) and \(\mathbf{u}_\perp\) is orthogonal to \(\mathbf{v}\). What is \(\mathbf{u}_\perp\)?
+
+(A) \(\langle -1, -2, 2 \rangle\)
+(B) \(\langle 2, -1, 9 \rangle\)
+(C) \(\langle 4, 3, 5 \rangle\)
+(D) \(\langle 6, 7, 1 \rangle\)
+(E) \(\langle -3, -6, 6 \rangle\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose \(\mathbf{a}, \mathbf{b} \in \mathbb{R}^3\) satisfy \(\|\mathbf{a}\| = 4\), \(\|\mathbf{b}\| = 3\), and the angle between \(\mathbf{a}\) and \(\mathbf{b}\) is \(\frac{2\pi}{3}\). What is \(\|2\mathbf{a} + \mathbf{b}\|\)?
+
+(A) \(5\)
+(B) \(\sqrt{73}\)
+(C) \(7\)
+(D) \(\sqrt{97}\)
+(E) \(11\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+A constant force \(\mathbf{F} = \langle 6, -4, 3 \rangle\) (in newtons) moves a particle in a straight line from \(A(1, 2, -1)\) to \(B(4, 0, 5)\) (coordinates in meters). How much work \(W\) (in joules) does \(\mathbf{F}\) perform?
+
+(A) \(12\)
+(B) \(28\)
+(C) \(34\)
+(D) \(44\)
+(E) \(52\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Let \(\mathbf{u}\) and \(\mathbf{v}\) be nonzero vectors in \(\mathbb{R}^3\). Under which condition are \(\mathbf{u} + \mathbf{v}\) and \(\mathbf{u} - \mathbf{v}\) guaranteed to be orthogonal?
+
+(A) \(\|\mathbf{u}\| = \|\mathbf{v}\|\)
+(B) \(\mathbf{u} \perp \mathbf{v}\)
+(C) \(\mathbf{u} \parallel \mathbf{v}\)
+(D) \(\mathbf{u} \cdot \mathbf{v} = 1\)
+(E) \(\|\mathbf{u} + \mathbf{v}\| = \|\mathbf{u} - \mathbf{v}\|\)
+[/BONUS]

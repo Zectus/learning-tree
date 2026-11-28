@@ -1,0 +1,243 @@
+=== SECTION 1: Defining all six functions from any terminal-ray point ===
+
+The unit circle defines \(\cos\theta\) and \(\sin\theta\) at distance \(1\) from the origin, but in practice a terminal ray is often given by an arbitrary nonzero point \(P(x, y)\)—for example, \(P(-3, 4)\)—whose distance from the origin is not \(1\). How do we define all six trigonometric functions directly from \(P(x, y)\) without first scaling to the unit circle?
+
+Let \(r = \sqrt{x^2 + y^2} > 0\) be the distance from the origin to \(P(x, y)\). Scaling the ray inward (or outward) by the positive factor \(1/r\) maps \(P(x, y)\) onto the unique point
+\[
+P_1 = \left(\frac{x}{r}, \frac{y}{r}\right)
+\]
+lying on the same terminal ray at distance \(\sqrt{(x/r)^2 + (y/r)^2} = \frac{\sqrt{x^2 + y^2}}{r} = 1\) from the origin—that is, right on the unit circle! Therefore \(\cos\theta = \frac{x}{r}\) and \(\sin\theta = \frac{y}{r}\). Moreover, if you pick any other point \(Q(kx, ky)\) with \(k > 0\) along the exact same terminal ray, its distance from the origin is \(kr\), and \(k\) cancels in every ratio of \(x\), \(y\), and \(r\). Thus all six ratios depend only on the angle \(\theta\), never on which point along the terminal ray you choose.
+
+[GRAPH]
+type: parametric2d
+title: Point \(P(-3, 4)\) on the circle \(r = 5\) scales to \(P_1(-3/5, 4/5)\) on the unit circle
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -5.6, 5.6
+yrange: -5.6, 5.6
+trace: cos(t), sin(t) | label: unit circle (\(r = 1\)) | color: #2563eb
+trace: 5*cos(t), 5*sin(t) | label: circle \(r = 5\) | color: #94a3b8
+segment: 0, 0, -3, 4 | label: terminal ray | color: #0f172a
+segment: -3, 0, -3, 4 | dashed: true
+segment: 0, 0, -3, 0 | dashed: true
+point: -3, 4 | label: \(P(-3, 4)\) | color: #dc2626 | offset: -0.9, 0.4
+point: -0.6, 0.8 | label: \(P_1\) | color: #2563eb | offset: -0.5, 0.3
+[/GRAPH]
+
+[CALLOUT]
+id: general-six
+label: Definition
+title: General-angle definitions of all six trigonometric functions
+tone: key
+
+Let \(\theta\) be an angle in standard position and let \(P(x, y) \ne (0, 0)\) be any point on its terminal ray, with \(r = \sqrt{x^2 + y^2} > 0\). Then:
+
+(1) \(\sin\theta = \dfrac{y}{r}\) and \(\csc\theta = \dfrac{r}{y}\) (provided \(y \ne 0\)).
+(2) \(\cos\theta = \dfrac{x}{r}\) and \(\sec\theta = \dfrac{r}{x}\) (provided \(x \ne 0\)).
+(3) \(\tan\theta = \dfrac{y}{x}\) (provided \(x \ne 0\)) and \(\cot\theta = \dfrac{x}{y}\) (provided \(y \ne 0\)).
+[/CALLOUT]
+
+Notice two immediate consequences of [REF: general-six | these definitions]. First, the reciprocal and quotient relations extend unchanged from acute angles to all general angles wherever the denominators are nonzero:
+\[
+\tan\theta = \frac{y/r}{x/r} = \frac{\sin\theta}{\cos\theta}, \qquad
+\cot\theta = \frac{x/r}{y/r} = \frac{\cos\theta}{\sin\theta}, \qquad
+\csc\theta = \frac{1}{\sin\theta}, \qquad
+\sec\theta = \frac{1}{\cos\theta}.
+\]
+Second, \(\tan\theta = \frac{y}{x} = \frac{y - 0}{x - 0}\) has a crisp geometric meaning: it is the slope of the terminal ray (whenever the ray is not vertical)! That is why \(\tan\theta > 0\) in Quadrants I and III (upward-sloping lines through the origin) and \(\tan\theta < 0\) in Quadrants II and IV (downward-sloping lines through the origin).
+
+Let us compute all six values for the angle \(\theta\) whose terminal ray passes through \(P(-3, 4)\). Here \(x = -3\), \(y = 4\), and \(r = \sqrt{(-3)^2 + 4^2} = 5\) (remember \(r\) is ALWAYS positive!):
+\[
+\sin\theta = \frac{4}{5}, \qquad \cos\theta = -\frac{3}{5}, \qquad \tan\theta = -\frac{4}{3},
+\]
+\[
+\csc\theta = \frac{5}{4}, \qquad \sec\theta = -\frac{5}{3}, \qquad \cot\theta = -\frac{3}{4}.
+\]
+
+[QUESTION 1]
+[ANSWER: B]
+The terminal ray of an angle \(\theta\) in standard position passes through the point \(P(-8, 15)\). What are the exact values of \(\sec\theta\) and \(\cot\theta\)?
+
+(A) \(\sec\theta = \dfrac{17}{15}\), \(\cot\theta = -\dfrac{15}{8}\)
+(B) \(\sec\theta = -\dfrac{17}{8}\), \(\cot\theta = -\dfrac{8}{15}\)
+(C) \(\sec\theta = -\dfrac{8}{17}\), \(\cot\theta = -\dfrac{8}{15}\)
+(D) \(\sec\theta = -\dfrac{17}{8}\), \(\cot\theta = -\dfrac{15}{8}\)
+(E) \(\sec\theta = \dfrac{17}{8}\), \(\cot\theta = \dfrac{8}{15}\)
+[/QUESTION]
+
+=== SECTION 2: Exact domains, quadrantal values, and quadrant signs ===
+
+Unlike \(\sin\theta = y/r\) and \(\cos\theta = x/r\)—whose denominator \(r = \sqrt{x^2 + y^2}\) is strictly positive for every angle—the other four trigonometric functions divide by \(x\) or \(y\) and therefore fail to exist whenever the terminal ray hits an axis where that coordinate vanishes.
+
+- \(\tan\theta = \dfrac{y}{x}\) and \(\sec\theta = \dfrac{r}{x}\) are undefined precisely when \(x = 0\) (the terminal ray lies along the \(y\)-axis), which occurs at odd multiples of \(\dfrac{\pi}{2}\):
+\[
+\theta = \frac{\pi}{2} + k\pi, \qquad k \in \mathbb{Z} \qquad (\text{i.e., } \dots, -\frac{3\pi}{2}, -\frac{\pi}{2}, \frac{\pi}{2}, \frac{3\pi}{2}, \dots).
+\]
+- \(\cot\theta = \dfrac{x}{y}\) and \(\csc\theta = \dfrac{r}{y}\) are undefined precisely when \(y = 0\) (the terminal ray lies along the \(x\)-axis), which occurs at integer multiples of \(\pi\):
+\[
+\theta = k\pi, \qquad k \in \mathbb{Z} \qquad (\text{i.e., } \dots, -2\pi, -\pi, 0, \pi, 2\pi, \dots).
+\]
+
+Pay special attention to \(\cot\theta\) at odd multiples of \(\frac{\pi}{2}\), such as \(\theta = \frac{\pi}{2}\) where \(P(0, 1)\) lies on the unit circle. Here \(\tan(\frac{\pi}{2}) = \frac{1}{0}\) is undefined, so you CANNOT compute \(\cot(\frac{\pi}{2})\) via \(1/\tan(\frac{\pi}{2})\). Instead, go straight back to [REF: general-six.3 | the definition \(\cot\theta = x/y\)]: \(\cot(\frac{\pi}{2}) = \frac{0}{1} = 0\). Similarly, at \(\theta = \pi\) with \(P(-1, 0)\), \(\tan\pi = \frac{0}{-1} = 0\) while \(\cot\pi = \frac{-1}{0}\) is undefined.
+
+[TABLE]
+Angle \(\theta\) | Point \((x, y)\) | \(\sin\theta\) | \(\cos\theta\) | \(\tan\theta\) | \(\csc\theta\) | \(\sec\theta\) | \(\cot\theta\)
+\(0\) | \((1, 0)\) | \(0\) | \(1\) | \(0\) | undefined | \(1\) | undefined
+\(\dfrac{\pi}{2}\) | \((0, 1)\) | \(1\) | \(0\) | undefined | \(1\) | undefined | \(0\)
+\(\pi\) | \((-1, 0)\) | \(0\) | \(-1\) | \(0\) | undefined | \(-1\) | undefined
+\(\dfrac{3\pi}{2}\) | \((0, -1)\) | \(-1\) | \(0\) | undefined | \(-1\) | undefined | \(0\)
+[/TABLE]
+
+Inside each quadrant, a reciprocal pair always shares the exact same sign: \(\sin\) and \(\csc\) have the sign of \(y\); \(\cos\) and \(\sec\) have the sign of \(x\); \(\tan\) and \(\cot\) have the sign of \(y/x\) (positive when \(x\) and \(y\) have the same sign, negative when they have opposite signs).
+
+[TABLE]
+Quadrant | Coordinates \((x, y)\) | Positive functions | Negative functions
+I | \((+, +)\) | All six | None
+II | \((-, +)\) | \(\sin, \csc\) | \(\cos, \sec, \tan, \cot\)
+III | \((-, -)\) | \(\tan, \cot\) | \(\sin, \csc, \cos, \sec\)
+IV | \((+, -)\) | \(\cos, \sec\) | \(\sin, \csc, \tan, \cot\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: C]
+At which of the following angles are BOTH \(\tan\theta\) and \(\sec\theta\) undefined while \(\cot\theta = 0\)?
+
+(A) \(\theta = 3\pi\)
+(B) \(\theta = 2\pi\)
+(C) \(\theta = -\dfrac{5\pi}{2}\)
+(D) \(\theta = -\dfrac{3\pi}{4}\)
+(E) No such angle exists, because \(\cot\theta = 1/\tan\theta\) is undefined whenever \(\tan\theta\) is undefined
+[/QUESTION]
+
+=== SECTION 3: The two-step reference-angle procedure ===
+
+To evaluate any of the six functions at an arbitrary non-quadrantal angle \(\theta\) (in degrees or radians), we reduce it to an acute angle in \((0, \frac{\pi}{2})\) using the reference angle \(\theta'\).
+
+[CALLOUT]
+id: reference-angle
+label: Definition
+title: Reference angle \(\theta'\)
+tone: key
+
+For any non-quadrantal angle \(\theta\) in standard position, its reference angle \(\theta'\) is the unique acute angle (\(0 < \theta' < \frac{\pi}{2}\), or \(0^\circ < \theta' < 90^\circ\)) formed between the terminal ray of \(\theta\) and the NEAREST half of the \(x\)-axis.
+[/CALLOUT]
+
+Why must \(\theta'\) be measured to the \(x\)-axis and NEVER to the \(y\)-axis? Because dropping a perpendicular from \(P(x, y)\) to the \(x\)-axis forms a right triangle whose legs are \(|y|\) (opposite \(\theta'\)) and \(|x|\) (adjacent to \(\theta'\)), with hypotenuse \(r\). Therefore every trigonometric function of \(\theta\) has the EXACT same magnitude as the same function of \(\theta'\):
+\[
+|\sin\theta| = \frac{|y|}{r} = \sin\theta', \qquad |\cos\theta| = \frac{|x|}{r} = \cos\theta', \qquad |\tan\theta| = \frac{|y|}{|x|} = \tan\theta',
+\]
+and identically for \(\csc, \sec, \cot\). Measuring to the \(y\)-axis instead would swap \(|x|\) and \(|y|\), exchanging each function with its cofunction!
+
+[CALLOUT]
+id: ref-axis-caution
+label: Common pitfall
+title: Always measure reference angles to the \(x\)-axis, never the \(y\)-axis
+tone: caution
+
+For a least nonnegative angle \(\theta \in (0, 2\pi)\): in QII use \(\theta' = \pi - \theta\); in QIII use \(\theta' = \theta - \pi\); in QIV use \(\theta' = 2\pi - \theta\). Never subtract \(90^\circ\) or \(\frac{\pi}{2}\) or \(270^\circ\) or \(\frac{3\pi}{2}\) to form a reference angle.
+[/CALLOUT]
+
+The graph below illustrates a Quadrant III angle \(\theta = \frac{5\pi}{4}\) together with its acute reference angle \(\theta' = \frac{5\pi}{4} - \pi = \frac{\pi}{4}\) tucked directly against the negative \(x\)-axis.
+
+[GRAPH]
+type: parametric2d
+title: Reference angle \(\theta' = \pi/4\) between the terminal ray of \(\theta = 5\pi/4\) and the negative \(x\)-axis
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 3.1416, 3.927
+xrange: -1.35, 1.35
+yrange: -1.35, 1.35
+trace: 0.4*cos(t), 0.4*sin(t) | label: \(\theta' = \pi/4\) | color: #dc2626
+trace: cos(8*(t - 3.1416)), sin(8*(t - 3.1416)) | label: unit circle | color: #94a3b8
+segment: 0, 0, -0.7071, -0.7071 | label: terminal ray | color: #2563eb
+segment: -0.7071, 0, -0.7071, -0.7071 | dashed: true
+segment: -1.1, 0, 0, 0 | color: #0f172a
+point: -0.7071, -0.7071 | label: \(P\) | color: #2563eb
+[/GRAPH]
+
+Evaluating any trigonometric function at a special angle now follows two fast steps:
+1. Find the quadrant of \(\theta\) (using a coterminal angle in \([0, 2\pi)\) if needed) and compute the reference angle \(\theta'\) to the \(x\)-axis.
+2. Evaluate the function at \(\theta'\), then attach the quadrant sign from the sign table.
+
+For example, to evaluate \(\sec\!\left(\frac{11\pi}{6}\right)\) and \(\cot(240^\circ)\):
+- \(\frac{11\pi}{6}\) is in QIV with \(\theta' = 2\pi - \frac{11\pi}{6} = \frac{\pi}{6}\). Since \(\sec > 0\) in QIV and \(\sec(\frac{\pi}{6}) = \frac{2\sqrt{3}}{3}\), we get \(\sec\!\left(\frac{11\pi}{6}\right) = \frac{2\sqrt{3}}{3}\).
+- \(240^\circ\) is in QIII with \(\theta' = 240^\circ - 180^\circ = 60^\circ\). Since \(\cot > 0\) in QIII and \(\cot 60^\circ = \frac{\sqrt{3}}{3}\), we get \(\cot(240^\circ) = \frac{\sqrt{3}}{3}\).
+
+[QUESTION 3]
+[ANSWER: A]
+What are the exact values of \(\csc\!\left(\dfrac{7\pi}{6}\right)\) and \(\tan\!\left(-\dfrac{2\pi}{3}\right)\), respectively?
+
+(A) \(-2\) and \(\sqrt{3}\)
+(B) \(-2\) and \(-\sqrt{3}\)
+(C) \(2\) and \(\sqrt{3}\)
+(D) \(-\dfrac{2\sqrt{3}}{3}\) and \(\dfrac{\sqrt{3}}{3}\)
+(E) \(-2\) and \(\dfrac{\sqrt{3}}{3}\)
+[/QUESTION]
+
+=== SECTION 4: Recovering all six values from one ratio and a quadrant condition ===
+
+In right-triangle trigonometry, one ratio fixed all five others because every ratio was positive. For a general angle \(\theta\), a single ratio such as \(\cos\theta = -\frac{2}{5}\) still leaves two possible quadrants (here QII or QIII, where \(x < 0\)). Supplying one extra sign condition—such as \(\sin\theta > 0\) or \(\tan\theta < 0\)—narrows \(\theta\) to a unique quadrant and locks in all five remaining exact values.
+
+The cleanest method uses a signed terminal-ray point \(P(x, y)\) directly from [REF: general-six | the general-angle definitions]:
+1. Determine the unique quadrant from the sign of the given function and the extra sign condition.
+2. Match the given fraction to \(x\), \(y\), and \(r\) with the correct quadrant signs (remembering \(r > 0\) always).
+3. Find the missing coordinate using \(x^2 + y^2 = r^2\) and choose the \(+\) or \(-\) root matching the quadrant.
+4. Read off all five remaining ratios directly from \(x\), \(y\), and \(r\).
+
+Let us work an example: suppose \(\sin\theta = \frac{3}{7}\) and \(\tan\theta < 0\).
+1. \(\sin\theta > 0\) means QI or QII; \(\tan\theta < 0\) means QII or QIV. Their overlap is Quadrant II, where \(x < 0\) and \(y > 0\).
+2. From \(\sin\theta = \frac{y}{r} = \frac{3}{7}\), set \(y = 3\) and \(r = 7\).
+3. Solve \(x^2 + 3^2 = 7^2 \implies x^2 = 40 \implies x = -\sqrt{40} = -2\sqrt{10}\) (negative because \(\theta\) is in QII).
+4. Read off the remaining exact values:
+\[
+\cos\theta = -\frac{2\sqrt{10}}{7}, \qquad \tan\theta = -\frac{3}{2\sqrt{10}} = -\frac{3\sqrt{10}}{20}, \qquad \csc\theta = \frac{7}{3},
+\]
+\[
+\sec\theta = -\frac{7}{2\sqrt{10}} = -\frac{7\sqrt{10}}{20}, \qquad \cot\theta = -\frac{2\sqrt{10}}{3}.
+\]
+You can also cross-check using \(\cos^2\theta + \sin^2\theta = 1\): \(\frac{40}{49} + \frac{9}{49} = 1\), confirming consistency. Here the reciprocal, quotient, and Pythagorean relations serve strictly as numerical value-recovery and consistency tools; proving general algebraic identities belongs to Trigonometric Identities and Equations.
+
+[QUESTION 4]
+[ANSWER: D]
+Suppose \(\tan\theta = -\dfrac{3}{4}\) and \(\sin\theta < 0\). What is the exact value of \(\sec\theta\)?
+
+(A) \(-\dfrac{5}{4}\)
+(B) \(-\dfrac{5}{3}\)
+(C) \(\dfrac{4}{5}\)
+(D) \(\dfrac{5}{4}\)
+(E) \(\dfrac{5}{3}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+A straight line through the origin has slope \(-\dfrac{5}{12}\). An angle \(\theta\) in standard position has its terminal ray lying along this line inside Quadrant II. What is the exact value of \(\sin\theta + \cos\theta\)?
+
+(A) \(\dfrac{7}{13}\)
+(B) \(\dfrac{17}{13}\)
+(C) \(-\dfrac{7}{13}\)
+(D) \(-\dfrac{17}{13}\)
+(E) \(-\dfrac{5}{12}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+To find \(\sec(120^\circ)\), a student notes that \(120^\circ\) lies \(30^\circ\) past the positive \(y\)-axis, sets \(\theta' = 30^\circ\), and concludes \(\sec(120^\circ) = -\sec(30^\circ) = -\dfrac{2\sqrt{3}}{3}\). What is wrong with this reasoning, and what is the true exact value of \(\sec(120^\circ)\)?
+
+(A) The reference angle is \(60^\circ\) (measured to the \(x\)-axis), and \(\sec\) is positive in Quadrant II, giving \(2\)
+(B) The reference angle is \(60^\circ\) (measured to the \(x\)-axis), and \(\sec\) is negative in Quadrant II, giving \(-2\)
+(C) The reference angle of \(30^\circ\) is correct, but \(\sec\) is positive in Quadrant II, giving \(\dfrac{2\sqrt{3}}{3}\)
+(D) The reference angle is \(30^\circ\), so \(\sec(120^\circ) = -\cos(30^\circ) = -\dfrac{\sqrt{3}}{2}\)
+(E) The value \(\sec(120^\circ)\) is undefined because \(120^\circ\) lies in Quadrant II
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Suppose \(\csc\theta = -\dfrac{7}{2}\) and \(\cos\theta > 0\). What is the exact value of \(\cot\theta\)?
+
+(A) \(-\dfrac{3\sqrt{5}}{2}\)
+(B) \(\dfrac{3\sqrt{5}}{2}\)
+(C) \(-\dfrac{2\sqrt{5}}{15}\)
+(D) \(-\dfrac{\sqrt{53}}{2}\)
+(E) \(-\dfrac{3\sqrt{5}}{7}\)
+[/BONUS]

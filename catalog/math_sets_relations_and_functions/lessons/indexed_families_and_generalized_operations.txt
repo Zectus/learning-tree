@@ -1,0 +1,255 @@
+=== SECTION 1: Indexed families and arbitrary unions and intersections ===
+
+Elementary set algebra combines two sets \(A\) and \(B\)—or by repetition, any finite number \(A_1, A_2, \dots, A_k\). In analysis, topology, and probability, however, we routinely take the union or intersection of infinitely many sets at once: for instance, shrinking intervals \((-1/n, 1/n)\) for every positive integer \(n\), or a collection of intervals indexed by every real number \(t > 0\). To handle finite, countably infinite, and uncountable collections in a single unified framework, we index the sets by an arbitrary index set \(I\).
+
+An indexed family of sets is a collection \(\{A_i\}_{i \in I}\) (also written \((A_i)_{i \in I}\)) that assigns to each index \(i \in I\) a set \(A_i\). Notice that different indices are allowed to name the same set: for example, with \(I = \mathbb{Z}\), the family \(A_n = \{n^2\}\) has \(A_{-2} = A_2 = \{4\}\). What matters is that each \(i \in I\) specifies a set \(A_i\).
+
+How do we generalize union and intersection from two sets to an arbitrary indexed family? For two sets, \(x \in A_1 \cup A_2\) means \(x\) belongs to AT LEAST ONE of the two sets, while \(x \in A_1 \cap A_2\) means \(x\) belongs to BOTH sets. Replacing "at least one" by an existential quantifier (\(\exists\)) and "all" by a universal quantifier (\(\forall\)) gives the general definition.
+
+[CALLOUT]
+id: arbitrary-union-inter
+label: Definition
+title: Arbitrary union and arbitrary intersection
+tone: key
+
+Let \(\{A_i\}_{i \in I}\) be an indexed family of subsets of a fixed ambient universe \(U\).
+
+(1) The union of the family is
+\[
+\bigcup_{i \in I} A_i = \{x \in U : \exists i \in I,\, x \in A_i\}.
+\]
+(2) The intersection of the family is
+\[
+\bigcap_{i \in I} A_i = \{x \in U : \forall i \in I,\, x \in A_i\}.
+\]
+[/CALLOUT]
+
+When the index set is \(I = \{1, 2, \dots, n\}\), we often write \(\bigcup_{i=1}^n A_i\) and \(\bigcap_{i=1}^n A_i\); when \(I = \mathbb{Z}^+ = \{1, 2, 3, \dots\}\), we write \(\bigcup_{n=1}^\infty A_n\) and \(\bigcap_{n=1}^\infty A_n\). Do not mistake the symbol \(\infty\) for an element of the index set! There is no set "\(A_\infty\)" in the family: the notation \(\bigcup_{n=1}^\infty A_n\) simply means \(\bigcup_{n \in \mathbb{Z}^+} A_n\), so \(x \in \bigcup_{n=1}^\infty A_n\) means there exists a finite positive integer \(n \ge 1\) such that \(x \in A_n\).
+
+The direct translation into quantifiers immediately tells us how to prove or refute membership in an arbitrary union or intersection:
+- To prove \(x \in \bigcup_{i \in I} A_i\): exhibit ONE specific index \(i_0 \in I\) for which \(x \in A_{i_0}\).
+- To prove \(x \notin \bigcup_{i \in I} A_i\): show that for EVERY \(i \in I\), \(x \notin A_i\).
+- To prove \(x \in \bigcap_{i \in I} A_i\): let \(i \in I\) be arbitrary and show \(x \in A_i\).
+- To prove \(x \notin \bigcap_{i \in I} A_i\): exhibit ONE specific index \(i_0 \in I\) for which \(x \notin A_{i_0}\).
+
+Wait—what happens in the edge case where the index set itself is empty, \(I = \emptyset\)? We do not need to guess; the quantifier definitions in [REF: arbitrary-union-inter | the definition above] determine the answer automatically!
+
+[CALLOUT]
+id: empty-index-set
+label: Convention
+title: Operations over an empty index set \(I = \emptyset\)
+tone: caution
+
+Let \(\{A_i\}_{i \in I}\) be a family of subsets of a fixed ambient universe \(U\). When \(I = \emptyset\):
+
+(1) Empty union: \(\bigcup_{i \in \emptyset} A_i = \{x \in U : \exists i \in \emptyset,\, x \in A_i\} = \emptyset\), because no index \(i \in \emptyset\) exists to witness membership.
+(2) Empty intersection (inside \(U\)): \(\bigcap_{i \in \emptyset} A_i = \{x \in U : \forall i \in \emptyset,\, x \in A_i\} = U\), because for every \(x \in U\) the universal statement \(\forall i,\,(i \in \emptyset \implies x \in A_i)\) is vacuously true.
+[/CALLOUT]
+
+Why is \(\bigcap_{i \in \emptyset} A_i = U\) sensible rather than paradoxical? Think about shrinking a set by intersecting with more and more constraints: starting from all of \(U\), every additional set \(A_i\) you intersect with can only restrict the elements further. When you impose ZERO constraints (\(I = \emptyset\)), no elements of \(U\) are eliminated, so every element of \(U\) remains! Just as adding zero numbers gives the additive identity \(0\) and multiplying zero numbers gives the multiplicative identity \(1\), taking the union of zero sets gives the union identity \(\emptyset\), and taking the intersection of zero subsets of \(U\) gives the intersection identity \(U\). Note that this also explains why an ambient universe \(U\) is required to make the empty intersection well-defined: without specifying \(U\), there is no "universal set of everything."
+
+[QUESTION 1]
+[ANSWER: C]
+For each \(i \in I = \{2, 3, 4, \dots\}\), define \(A_i = \{n \in \mathbb{Z}^+ : n \text{ is a multiple of } i\}\). Which of the following sets equals \(\bigcup_{i \in I} A_i\)?
+
+(A) \(\emptyset\)
+(B) \(\{1\}\)
+(C) \(\mathbb{Z}^+ \setminus \{1\}\)
+(D) The set of all prime numbers
+(E) \(\mathbb{Z}^+\)
+[/QUESTION]
+
+=== SECTION 2: Infinite families of real intervals and boundary behavior ===
+
+Finite unions of open intervals are open, and finite intersections of open intervals are open. Infinite operations shatter that comfort: an infinite intersection of open intervals can collapse to a single closed point (or to \(\emptyset\)), and an infinite union of closed intervals can form an open interval! Watching how boundary points behave under infinite unions and intersections is one of the most important skills in mathematics.
+
+Let us compute three canonical infinite families of real intervals rigorously by double inclusion, using the Archimedean property of \(\mathbb{R}\) (for every real number \(x > 0\), there exists \(n \in \mathbb{Z}^+\) such that \(1/n < x\), or equivalently \(n > 1/x\)).
+
+Example 1: Consider \(I_n = (-1/n, 1/n)\) for \(n \in \mathbb{Z}^+\). We claim
+\[
+\bigcap_{n=1}^\infty \left(-\frac{1}{n}, \frac{1}{n}\right) = \{0\}.
+\]
+- Inclusion \(\{0\} \subseteq \bigcap_{n=1}^\infty (-1/n, 1/n)\): For every \(n \in \mathbb{Z}^+\), we have \(-1/n < 0 < 1/n\), so \(0 \in (-1/n, 1/n)\). Hence \(0\) belongs to the intersection.
+- Inclusion \(\bigcap_{n=1}^\infty (-1/n, 1/n) \subseteq \{0\}\): We prove the contrapositive—if \(x \in \mathbb{R}\) and \(x \ne 0\), then \(x \notin \bigcap_{n=1}^\infty (-1/n, 1/n)\). Since \(x \ne 0\), we have \(|x| > 0\). Choose a positive integer \(n_0\) such that \(n_0 > 1/|x|\) (for instance, any integer strictly larger than \(1/|x|\)). Then \(1/n_0 < |x|\), so \(x \notin (-1/n_0, 1/n_0)\). Because we found one index \(n_0 \in \mathbb{Z}^+\) whose interval excludes \(x\), we conclude \(x \notin \bigcap_{n=1}^\infty (-1/n, 1/n)\).
+
+Notice how a single point \(\{0\}\) survives even though every interval \((-1/n, 1/n)\) is open and shrinks toward zero length! Now shift the left endpoint from \(-1/n\) to \(0\).
+
+Example 2: Consider \(J_n = (0, 1/n)\) for \(n \in \mathbb{Z}^+\). We claim
+\[
+\bigcap_{n=1}^\infty \left(0, \frac{1}{n}\right) = \emptyset.
+\]
+Proof: Since \(\emptyset\) is a subset of every set, we only need to show that no real number \(x\) belongs to \(\bigcap_{n=1}^\infty (0, 1/n)\). Take any \(x \in \mathbb{R}\).
+- Case 1: \(x \le 0\). Then \(x \notin (0, 1) = J_1\), so \(x\) is not in the intersection.
+- Case 2: \(x > 0\). Choose \(n_0 \in \mathbb{Z}^+\) with \(n_0 > 1/x\), so \(1/n_0 < x\). Then \(x \notin (0, 1/n_0) = J_{n_0}\), so \(x\) is not in the intersection.
+In both cases \(x \notin \bigcap_{n=1}^\infty (0, 1/n)\). Thus the intersection is \(\emptyset\)—even though every single interval \(J_n\) is nonempty and nested (\(J_1 \supseteq J_2 \supseteq J_3 \supseteq \dots\))!
+
+Example 3: Consider the expanding closed intervals \(K_n = [1/n, 1 - 1/n]\) for \(n \in \mathbb{Z}^+\) with \(n \ge 2\) (for \(n = 1\), \([1, 0]\) is empty, which does not change the union). We claim
+\[
+\bigcup_{n=2}^\infty \left[\frac{1}{n}, 1 - \frac{1}{n}\right] = (0, 1).
+\]
+- Inclusion \(\bigcup_{n=2}^\infty [1/n, 1 - 1/n] \subseteq (0, 1)\): Let \(x \in \bigcup_{n=2}^\infty [1/n, 1 - 1/n]\). Then there exists some \(n \ge 2\) such that \(1/n \le x \le 1 - 1/n\). Since \(0 < 1/n\) and \(1 - 1/n < 1\), we have \(0 < x < 1\), so \(x \in (0, 1)\).
+- Inclusion \((0, 1) \subseteq \bigcup_{n=2}^\infty [1/n, 1 - 1/n]\): Let \(x \in (0, 1)\). Then BOTH \(x > 0\) and \(1 - x > 0\). Let \(d = \min(x, 1 - x) > 0\), which is the distance from \(x\) to the nearer endpoint of \((0, 1)\). Choose an integer \(n_0 \ge 2\) such that \(1/n_0 < d\). Then \(1/n_0 < x\) and \(1/n_0 < 1 - x\) (which rearranges to \(x < 1 - 1/n_0\)). Hence \(x \in [1/n_0, 1 - 1/n_0]\), so \(x \in \bigcup_{n=2}^\infty [1/n, 1 - 1/n]\).
+
+In the graph below, drag the slider \(n\) to watch the closed interval \([1/n, 1 - 1/n]\) grow inside the open target \((0, 1)\) and simultaneously watch the shrinking open interval \((-1/n, 1/n)\) squeeze onto \(0\). Because a finite plot cannot distinguish an open endpoint from a closed endpoint visually without extra conventions, the vertical markers show the boundary locations while the definitions above specify which endpoints are included.
+
+[GRAPH]
+type: function2d
+title: Expanding \([1/n, 1 - 1/n]\) (upper) and shrinking \((-1/n, 1/n)\) (lower) as \(n\) increases
+xlabel: \(x\)
+ylabel: level
+xrange: -1.2, 1.2
+yrange: -0.2, 2.5
+trace: 0 | color: #94a3b8
+segment: 0, 2, 1, 2 | label: \((0, 1)\) | color: #94a3b8 | dashed: true
+segment: 1/n, 1.6, 1 - 1/n, 1.6 | label: \([1/n, 1-1/n]\) | color: #2563eb
+point: 1/n, 1.6 | color: #2563eb
+point: 1 - 1/n, 1.6 | color: #2563eb
+segment: -1/n, 0.7, 1/n, 0.7 | label: \((-1/n, 1/n)\) | color: #ef4444
+point: 0, 0.7 | label: \(0\) | color: #16a34a
+slider: n | range: 2, 20 | init: 3 | step: 1
+[/GRAPH]
+
+Notice the contrast at the endpoints of Example 3: \(0\) never enters \([1/n, 1 - 1/n]\) for ANY finite \(n\), because \(0 < 1/n\) for every \(n \ge 2\). To enter an infinite union, an element must appear at some FINITE stage \(n_0\); merely being approached in the limit does not put an element into the union.
+
+[QUESTION 2]
+[ANSWER: B]
+For each positive integer \(n \in \mathbb{Z}^+\), let \(A_n = [-1/n, 2 + 1/n)\) and \(B_n = (1/n, 3 - 1/n]\). What are \(\bigcap_{n=1}^\infty A_n\) and \(\bigcup_{n=1}^\infty B_n\), respectively?
+
+(A) \((0, 2)\) and \([0, 3]\)
+(B) \([0, 2]\) and \((0, 3)\)
+(C) \([0, 2)\) and \((0, 3]\)
+(D) \((0, 2]\) and \([0, 3)\)
+(E) \(\emptyset\) and \((0, 3)\)
+[/QUESTION]
+
+=== SECTION 3: Generalized De Morgan's laws and distributivity ===
+
+Now we lift the core Boolean set identities from pairs of sets to arbitrary indexed families \(\{A_i\}_{i \in I}\). The proofs use the exact same element-chasing strategy as before, powered by two fundamental rules of first-order logic:
+- Quantifier negation: \(\lnot(\exists i \in I,\, P(i)) \iff \forall i \in I,\, \lnot P(i)\), and \(\lnot(\forall i \in I,\, P(i)) \iff \exists i \in I,\, \lnot P(i)\).
+- Pulling a quantifier-free statement across a quantifier: when \(Q\) does not depend on \(i\),
+\[
+Q \land (\exists i \in I,\, P(i)) \iff \exists i \in I,\, (Q \land P(i)), \qquad Q \lor (\forall i \in I,\, P(i)) \iff \forall i \in I,\, (Q \lor P(i)).
+\]
+Wait—let us double-check whether those two quantifier-distribution laws still hold when \(I = \emptyset\)!
+- For \(Q \land (\exists i \in \emptyset,\, P(i))\): both sides are false regardless of \(Q\), so they match!
+- For \(Q \lor (\forall i \in \emptyset,\, P(i))\): both sides are true regardless of \(Q\), so they match!
+(What about \(Q \land (\forall i \in I,\, P(i)) \iff \forall i \in I,\, (Q \land P(i))\)? When \(I = \emptyset\), the left side is \(Q \land \text{true} = Q\), while the right side is vacuously true! That explains why the identities below—where \(\cap\) distributes over \(\bigcup\) and \(\cup\) distributes over \(\bigcap\)—hold for EVERY index set \(I\), including \(I = \emptyset\).)
+
+[CALLOUT]
+id: generalized-laws
+label: Theorem
+title: Generalized De Morgan's laws and distributivity
+tone: key
+
+Let \(\{A_i\}_{i \in I}\) be an indexed family of subsets of an ambient universe \(U\), and let \(B \subseteq U\).
+
+(1) Generalized De Morgan's laws:
+\[
+\left(\bigcup_{i \in I} A_i\right)^c = \bigcap_{i \in I} A_i^c, \qquad \left(\bigcap_{i \in I} A_i\right)^c = \bigcup_{i \in I} A_i^c.
+\]
+(2) Generalized distributivity:
+\[
+B \cap \left(\bigcup_{i \in I} A_i\right) = \bigcup_{i \in I} (B \cap A_i), \qquad B \cup \left(\bigcap_{i \in I} A_i\right) = \bigcap_{i \in I} (B \cup A_i).
+\]
+[/CALLOUT]
+
+Let us write out the complete element-chasing proof of the first De Morgan law in [REF: generalized-laws.1 | generalized De Morgan's laws]. Take an arbitrary element \(x \in U\):
+\[
+\begin{aligned}
+x \in \left(\bigcup_{i \in I} A_i\right)^c &\iff x \notin \bigcup_{i \in I} A_i && \text{(definition of complement)} \\
+&\iff \lnot\bigl(\exists i \in I,\, x \in A_i\bigr) && \text{(definition of arbitrary union)} \\
+&\iff \forall i \in I,\, x \notin A_i && \text{(quantifier negation)} \\
+&\iff \forall i \in I,\, x \in A_i^c && \text{(definition of complement)} \\
+&\iff x \in \bigcap_{i \in I} A_i^c && \text{(definition of arbitrary intersection).}
+\end{aligned}
+\]
+Because this chain of equivalences holds for every \(x \in U\), we obtain \(\bigl(\bigcup_{i \in I} A_i\bigr)^c = \bigcap_{i \in I} A_i^c\). Notice that the proof did not assume \(I\) was finite, countable, or even nonempty! Check \(I = \emptyset\) as a sanity test: using [REF: empty-index-set | the empty-index conventions], the left-hand side is \(\emptyset^c = U\) and the right-hand side is \(\bigcap_{i \in \emptyset} A_i^c = U\). They agree!
+
+The second De Morgan law follows by the exact same quantifier negation (replacing \(\exists\) by \(\forall\)), or even more quickly by applying the first law to the complemented family \(\{A_i^c\}_{i \in I}\) and taking complements of both sides.
+
+Now let us prove the second distributive law in [REF: generalized-laws.2 | generalized distributivity], \(B \cup \bigl(\bigcap_{i \in I} A_i\bigr) = \bigcap_{i \in I} (B \cup A_i)\), by double inclusion to practice handling universal quantifiers explicitly.
+- Forward inclusion \(\subseteq\): Let \(x \in B \cup \bigl(\bigcap_{i \in I} A_i\bigr)\). Then \(x \in B\) or \(x \in \bigcap_{i \in I} A_i\). To show \(x \in \bigcap_{i \in I} (B \cup A_i)\), let \(i \in I\) be arbitrary. If \(x \in B\), then \(x \in B \cup A_i\). If \(x \in \bigcap_{i \in I} A_i\), then in particular \(x \in A_i\), so again \(x \in B \cup A_i\). Since \(i \in I\) was arbitrary, \(x \in \bigcap_{i \in I} (B \cup A_i)\).
+- Reverse inclusion \(\supseteq\): Let \(x \in \bigcap_{i \in I} (B \cup A_i)\). We want to show \(x \in B\) or \(x \in \bigcap_{i \in I} A_i\). If \(x \in B\), we are immediately done. Otherwise, assume \(x \notin B\). Let \(i \in I\) be arbitrary. Because \(x \in \bigcap_{j \in I} (B \cup A_j)\), we have \(x \in B \cup A_i\). Since \(x \notin B\), this forces \(x \in A_i\). As \(i \in I\) was arbitrary, \(x \in \bigcap_{i \in I} A_i\), and hence \(x \in B \cup \bigl(\bigcap_{i \in I} A_i\bigr)\).
+
+Look closely at the reverse inclusion proof above: splitting on "\(x \in B\) or \(x \notin B\)" is the clean, canonical way to prove a disjunction \(P \lor Q\) (assuming \(\lnot P\) and deducing \(Q\)).
+
+[QUESTION 3]
+[ANSWER: D]
+Let \(\{A_i\}_{i \in I}\) be an indexed family of subsets of a universe \(U\), and let \(B \subseteq U\). Which expression is ALWAYS equal to \(B \setminus \left(\bigcap_{i \in I} A_i\right)\)?
+
+(A) \(\bigcap_{i \in I} (B \setminus A_i)\)
+(B) \(\left(\bigcup_{i \in I} A_i\right) \setminus B\)
+(C) \(B \cap \left(\bigcap_{i \in I} A_i^c\right)\)
+(D) \(\bigcup_{i \in I} (B \setminus A_i)\)
+(E) \(\left(\bigcup_{i \in I} B\right) \setminus \left(\bigcup_{i \in I} A_i\right)\)
+[/QUESTION]
+
+=== SECTION 4: Uncountable index sets, monotonicity, and nested index sets ===
+
+Index sets do not have to be subsets of \(\mathbb{N}\): \(I\) can be an interval of real numbers, a set of pairs, or any set whatsoever. Working with an uncountable index set uses the exact same quantifier rules.
+
+Consider the uncountable family indexed by \(I = (0, 1) \subseteq \mathbb{R}\), where for each \(t \in (0, 1)\) we define the closed interval
+\[
+C_t = [t, 2 - t].
+\]
+What are \(\bigcup_{t \in (0, 1)} C_t\) and \(\bigcap_{t \in (0, 1)} C_t\)?
+- For the union: as \(t\) approaches \(0\) from above, the left endpoint \(t\) gets arbitrarily close to \(0\) (never reaching \(0\)) and the right endpoint \(2 - t\) gets arbitrarily close to \(2\) (never reaching \(2\)). So we conjecture \(\bigcup_{t \in (0, 1)} [t, 2 - t] = (0, 2)\). Let us verify both inclusions:
+  - If \(x \in [t, 2 - t]\) for some \(t \in (0, 1)\), then \(0 < t \le x \le 2 - t < 2\), so \(x \in (0, 2)\).
+  - Conversely, let \(x \in (0, 2)\). We need to exhibit ONE index \(t_0 \in (0, 1)\) such that \(t_0 \le x \le 2 - t_0\), i.e., \(t_0 \le x\) and \(t_0 \le 2 - x\). Choose \(t_0 = \frac{1}{2}\min(x, 2 - x)\). Since \(x > 0\) and \(2 - x > 0\), we have \(t_0 > 0\); since \(\min(x, 2 - x) \le 1\) (the two numbers \(x\) and \(2 - x\) average to \(1\), so the smaller is at most \(1\)), we have \(t_0 \le 1/2 < 1\). Thus \(t_0 \in (0, 1)\), and \(t_0 < \min(x, 2 - x)\) ensures \(t_0 \le x \le 2 - t_0\). Hence \(x \in C_{t_0}\).
+- For the intersection: as \(t\) approaches \(1\) from below, \(t\) gets arbitrarily close to \(1\) from the left and \(2 - t\) approaches \(1\) from the right. Every interval \([t, 2 - t]\) with \(t \in (0, 1)\) contains \(1\) (since \(t < 1 < 2 - t\)). Does any other real number \(x \ne 1\) belong to every \(C_t\)? If \(x < 1\), pick \(t_0 \in (0, 1)\) with \(x < t_0 < 1\) (for instance, \(t_0 = \frac{1 + \max(x, 0)}{2}\)); then \(x \notin [t_0, 2 - t_0]\). If \(x > 1\), then \(2 - x < 1\), so picking \(t_0 \in (0, 1)\) with \(2 - x < t_0 < 1\) gives \(2 - t_0 < x\), whence \(x \notin [t_0, 2 - t_0]\). Therefore \(\bigcap_{t \in (0, 1)} [t, 2 - t] = \{1\}\).
+
+Another useful structural principle tells us how changing the index set affects unions and intersections. Suppose \(J \subseteq I\) are two index sets for a family \(\{A_i\}_{i \in I}\) of subsets of \(U\).
+- Unions grow with the index set: \(\bigcup_{j \in J} A_j \subseteq \bigcup_{i \in I} A_i\). Indeed, if \(x \in A_j\) for some \(j \in J\), then that same \(j\) belongs to \(I\), so \(x \in \bigcup_{i \in I} A_i\).
+- Intersections shrink with the index set: \(\bigcap_{i \in I} A_i \subseteq \bigcap_{j \in J} A_j\). Indeed, if \(x \in A_i\) for every \(i \in I\), then in particular \(x \in A_j\) for every \(j \in J\).
+
+Be careful not to reverse the direction of that second inclusion! Adding more sets to an intersection imposes more conditions on \(x\), making the resulting intersection smaller (or equal), never larger.
+
+Finally, beware of swapping the order of a union and an intersection over two index sets \(I\) and \(J\): for a doubly indexed family \(\{A_{i, j}\}_{i \in I, j \in J}\),
+\[
+\bigcup_{i \in I} \bigcap_{j \in J} A_{i, j} \subseteq \bigcap_{j \in J} \bigcup_{i \in I} A_{i, j}
+\]
+always holds—mirroring the logical implication \((\exists i\, \forall j\, P(i, j)) \implies (\forall j\, \exists i\, P(i, j))\)—but equality usually fails! Think of a \(2 \times 2\) grid of sets with \(I = \{1, 2\}\) and \(J = \{1, 2\}\): take \(A_{1, 1} = \{0\}\), \(A_{1, 2} = \emptyset\), \(A_{2, 1} = \emptyset\), and \(A_{2, 2} = \{0\}\). Every column \(j\) contains \(0\) in SOME row \(i\), so \(\bigcap_{j \in J} \bigcup_{i \in I} A_{i, j} = \{0\}\); yet NO single row \(i\) contains \(0\) in EVERY column \(j\), so \(\bigcup_{i \in I} \bigcap_{j \in J} A_{i, j} = \emptyset\).
+
+[QUESTION 4]
+[ANSWER: A]
+For each real number \(t \in I = [1, \infty)\), define \(D_t = (-t, 1/t]\). What are \(\bigcup_{t \in I} D_t\) and \(\bigcap_{t \in I} D_t\), respectively?
+
+(A) \((-\infty, 1]\) and \((-1, 0]\)
+(B) \((-\infty, 1)\) and \([-1, 0]\)
+(C) \((-\infty, 1]\) and \((-1, 0)\)
+(D) \((-\infty, 0]\) and \((-1, 1]\)
+(E) \(\mathbb{R}\) and \(\{0\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(\{A_i\}_{i \in I}\) and \(\{B_i\}_{i \in I}\) be two families of sets indexed by the same nonempty set \(I\). Which of the following inclusions is NOT guaranteed to hold in general?
+
+(A) \(\bigcup_{i \in I} (A_i \cap B_i) \subseteq \left(\bigcup_{i \in I} A_i\right) \cap \left(\bigcup_{i \in I} B_i\right)\)
+(B) \(\bigcap_{i \in I} (A_i \cap B_i) = \left(\bigcap_{i \in I} A_i\right) \cap \left(\bigcap_{i \in I} B_i\right)\)
+(C) \(\bigcup_{i \in I} (A_i \cup B_i) = \left(\bigcup_{i \in I} A_i\right) \cup \left(\bigcup_{i \in I} B_i\right)\)
+(D) \(\left(\bigcap_{i \in I} A_i\right) \cup \left(\bigcap_{i \in I} B_i\right) \subseteq \bigcap_{i \in I} (A_i \cup B_i)\)
+(E) \(\left(\bigcup_{i \in I} A_i\right) \cap \left(\bigcup_{i \in I} B_i\right) \subseteq \bigcup_{i \in I} (A_i \cap B_i)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+For each \(n \in \mathbb{Z}^+\), let \(E_n = \left\{x \in \mathbb{R} : x^2 < 1 + \frac{1}{n}\right\}\). What is \(\bigcap_{n=1}^\infty E_n\)?
+
+(A) \((-1, 1)\)
+(B) \(\emptyset\)
+(C) \([-1, 1]\)
+(D) \(\{0\}\)
+(E) \([0, 1]\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Let \(\{A_i\}_{i \in I}\) be a family of subsets of a universe \(U\), and suppose \(J \subseteq I\) with \(J \ne \emptyset\). Which statement is ALWAYS true?
+
+(A) \(\bigcap_{j \in J} A_j \subseteq \bigcap_{i \in I} A_i\)
+(B) \(\left(\bigcup_{i \in I} A_i\right)^c \subseteq \left(\bigcup_{j \in J} A_j\right)^c\)
+(C) \(\bigcup_{i \in I} A_i \subseteq \bigcup_{j \in J} A_j\)
+(D) \(\left(\bigcap_{j \in J} A_j\right)^c \supseteq \left(\bigcap_{i \in I} A_i\right)^c\)
+(E) \(\bigcap_{i \in I} A_i = \bigcap_{j \in J} A_j\) whenever \(I \setminus J\) is finite
+[/BONUS]

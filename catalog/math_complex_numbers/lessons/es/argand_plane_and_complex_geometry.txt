@@ -1,0 +1,211 @@
+=== SECTION 1: El plano de Argand y las operaciones geométricas ===
+
+Puesto que todo número complejo \(z = x + yi\) queda determinado de manera única por un par ordenado de números reales \((x, y)\), podemos imaginar \(\mathbb{C}\) como un plano bidimensional en lugar de una recta numérica unidimensional. Este modelo geométrico se denomina el plano de Argand (o plano complejo). El eje horizontal es el eje real, que registra \(x = \operatorname{Re}(z)\), y el eje vertical es el eje imaginario, que registra \(y = \operatorname{Im}(z)\).
+
+Cada número complejo \(z = x + yi\) desempeña dos papeles geométricos complementarios en el plano de Argand:
+- Como un punto con coordenadas cartesianas \((x, y)\).
+- Como un vector de posición trazado desde el origen \((0, 0)\) hasta \((x, y)\), con componente horizontal \(x\) y componente vertical \(y\).
+
+Bajo esta identificación, cada operación algebraica que hemos aprendido hasta ahora adquiere un significado geométrico inmediato:
+- Suma \(z_1 + z_2\): sumar las componentes \((x_1 + x_2, y_1 + y_2)\) es suma vectorial, siguiendo la regla del paralelogramo: \(0\), \(z_1\), \(z_1 + z_2\) y \(z_2\) forman los vértices de un paralelogramo.
+- Resta \(z_1 - z_2\): el vector que va del punto \(z_2\) al punto \(z_1\) tiene componentes \((x_1 - x_2, y_1 - y_2)\), que coinciden con el vector de posición de \(z_1 - z_2\).
+- Negación \(-z = -x - yi\): refleja \((x, y)\) a través del origen hasta \((-x, -y)\), lo que equivale a una rotación de \(180^\circ\) alrededor del origen.
+- Conjugación \(\overline{z} = x - yi\): mantiene inalterada la coordenada horizontal \(x\) e invierte la coordenada vertical \(y\) a \(-y\), reflejando \(z\) respecto al eje real.
+- Módulo \(|z| = \sqrt{x^2 + y^2}\): por el teorema de Pitágoras, \(|z|\) es la distancia euclidiana desde el origen \(0\) hasta el punto \(z\) (equivalentemente, la longitud del vector de posición de \(z\)).
+- Distancia \(|z_1 - z_2|\): aplicar el módulo a la diferencia \(z_1 - z_2 = (x_1 - x_2) + (y_1 - y_2)i\) da
+\[
+|z_1 - z_2| = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2},
+\]
+la distancia euclidiana exacta entre los puntos \(z_1\) y \(z_2\).
+
+[CALLOUT]
+id: argand-dictionary
+label: Referencia
+title: Diccionario algebraico-geométrico en el plano de Argand
+tone: key
+
+Para \(z = x + yi\), \(z_1 = x_1 + y_1 i\) y \(z_2 = x_2 + y_2 i\):
+
+(1) \(z\) corresponde al punto \((x, y)\) y al vector de \((0, 0)\) a \((x, y)\).
+(2) \(z_1 + z_2\) es el cuarto vértice del paralelogramo generado por \(0\), \(z_1\) y \(z_2\).
+(3) \(-z\) es la rotación de \(180^\circ\) de \(z\) alrededor del origen; \(\overline{z}\) es la reflexión de \(z\) respecto al eje real.
+(4) \(|z|\) es la distancia de \(0\) a \(z\), y \(|z_1 - z_2|\) es la distancia entre \(z_1\) y \(z_2\).
+[/CALLOUT]
+
+Visualicemos juntas estas operaciones utilizando \(z_1 = 3 + i\) y \(z_2 = 1 + 2i\). Su suma es \(z_1 + z_2 = 4 + 3i\), completando el paralelogramo con lados desde \(0\) hasta \(z_1\) y \(z_2\); el conjugado \(\overline{z_1} = 3 - i\) se ubica directamente debajo de \(z_1\) al otro lado del eje real; y \(-z_1 = -3 - i\) se ubica directamente opuesto a \(z_1\) a través del origen.
+
+[GRAPH]
+type: parametric2d
+title: Operaciones en el plano de Argand para \(z_1 = 3 + i\) y \(z_2 = 1 + 2i\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: -4, 5
+xrange: -4, 5
+yrange: -2.5, 4
+trace: t, 0 | label: eje real
+trace: 0, t | label: eje imaginario
+segment: 0, 0, 3, 1 | label: \(z_1\) | color: #2563eb
+segment: 0, 0, 1, 2 | label: \(z_2\) | color: #16a34a
+segment: 3, 1, 4, 3 | dashed: true | color: #16a34a
+segment: 1, 2, 4, 3 | dashed: true | color: #2563eb
+segment: 0, 0, 4, 3 | label: \(z_1 + z_2\) | color: #9333ea
+segment: 0, 0, 3, -1 | label: \(\overline{z_1}\) | color: #ea580c | dashed: true
+segment: 0, 0, -3, -1 | label: \(-z_1\) | color: #dc2626 | dashed: true
+point: 3, 1 | label: \(3 + i\)
+point: 1, 2 | label: \(1 + 2i\)
+point: 4, 3 | label: \(4 + 3i\)
+point: 3, -1 | label: \(3 - i\)
+point: -3, -1 | label: \(-3 - i\)
+[/GRAPH]
+
+Nota cómo la distancia entre \(z_1 = 3 + i\) y \(z_2 = 1 + 2i\) es simplemente \(|z_1 - z_2| = |(3 - 1) + (1 - 2)i| = |2 - i| = \sqrt{5}\), que es la longitud de la otra diagonal del paralelogramo que une \((1, 2)\) y \((3, 1)\).
+
+[QUESTION 1]
+[ANSWER: A]
+Sean \(z_1 = -2 + 5i\) y \(z_2 = 4 - 3i\). ¿Cuál es la distancia en el plano de Argand entre \(\overline{z_1}\) y \(z_2\)?
+
+(A) \(2\sqrt{10}\)
+(B) \(10\)
+(C) \(2\sqrt{17}\)
+(D) \(2\sqrt{2}\)
+(E) \(8\)
+[/QUESTION]
+
+=== SECTION 2: La desigualdad triangular y la desigualdad triangular inversa ===
+
+En el paralelogramo formado por \(0\), \(z_1\), \(z_1 + z_2\) y \(z_2\), los puntos \(0\), \(z_1\) y \(z_1 + z_2\) forman un triángulo cuyos tres lados miden \(|z_1|\), \(|z_2|\) (el segmento de \(z_1\) a \(z_1 + z_2\)) y \(|z_1 + z_2|\). Puesto que el camino recto de \(0\) a \(z_1 + z_2\) no puede ser más largo que el camino en dos tramos pasando por \(z_1\), la geometría sugiere de inmediato que \(|z_1 + z_2| \le |z_1| + |z_2|\).
+
+Una demostración algebraica no solo confirma rigurosamente esta desigualdad para todos \(z_1, z_2 \in \mathbb{C}\), sino que también revela la condición exacta de igualdad. Primero nota que, para todo \(u = a + bi \in \mathbb{C}\), se tiene \(\operatorname{Re}(u) = a \le \sqrt{a^2 + b^2} = |u|\), con igualdad \(\operatorname{Re}(u) = |u|\) si y solo si \(b = 0\) y \(a \ge 0\) (es decir, \(u\) es un número real no negativo). Ahora desarrolla \(|z_1 + z_2|^2\) usando \(|w|^2 = w\overline{w}\):
+\[
+|z_1 + z_2|^2 = (z_1 + z_2)(\overline{z_1} + \overline{z_2}) = |z_1|^2 + z_1\overline{z_2} + \overline{z_1}z_2 + |z_2|^2.
+\]
+Como \(\overline{z_1}z_2 = \overline{z_1\overline{z_2}}\), la suma central equivale a \(2\operatorname{Re}(z_1\overline{z_2})\). Al aplicar \(\operatorname{Re}(z_1\overline{z_2}) \le |z_1\overline{z_2}| = |z_1|\,|z_2|\) se obtiene
+\[
+|z_1 + z_2|^2 = |z_1|^2 + 2\operatorname{Re}(z_1\overline{z_2}) + |z_2|^2 \le |z_1|^2 + 2|z_1|\,|z_2| + |z_2|^2 = (|z_1| + |z_2|)^2.
+\]
+Tomando raíces cuadradas no negativas resulta \(|z_1 + z_2| \le |z_1| + |z_2|\). Además, la igualdad se cumple si y solo si \(z_1\overline{z_2}\) es un número real no negativo. Si \(z_2 = 0\), esto se cumple trivialmente; si \(z_2 \ne 0\), escribir \(z_1\overline{z_2} = k \ge 0\) y multiplicar por \(z_2/|z_2|^2\) da \(z_1 = \frac{k}{|z_2|^2}z_2\), lo que significa que \(z_1\) y \(z_2\) apuntan exactamente en la misma dirección desde el origen (o uno de ellos es \(0\)).
+
+De la desigualdad triangular deducimos de inmediato una cota inferior para el módulo de una diferencia (o suma). Escribir \(z_1 = (z_1 - z_2) + z_2\) da \(|z_1| \le |z_1 - z_2| + |z_2|\), así que \(|z_1| - |z_2| \le |z_1 - z_2|\). Intercambiar \(z_1\) y \(z_2\) y usar \(|z_2 - z_1| = |z_1 - z_2|\) da \(|z_2| - |z_1| \le |z_1 - z_2|\). Juntas, estas dos desigualdades expresan \(\bigl||z_1| - |z_2|\bigr| \le |z_1 - z_2|\). Sustituir \(z_2\) por \(-z_2\) también da \(\bigl||z_1| - |z_2|\bigr| \le |z_1 + z_2|\).
+
+[CALLOUT]
+id: triangle-inequalities
+label: Teorema
+title: Desigualdad triangular y desigualdad triangular inversa
+tone: key
+
+Para todos \(z_1, z_2 \in \mathbb{C}\):
+
+(1) Desigualdad triangular: \(|z_1 + z_2| \le |z_1| + |z_2|\), con igualdad si y solo si \(z_1 = 0\), \(z_2 = 0\), o \(z_1 = c z_2\) para algún \(c > 0\) real (colineales sobre la misma semirrecta desde el origen).
+(2) Desigualdad triangular inversa: \(\bigl||z_1| - |z_2|\bigr| \le |z_1 - z_2|\) y \(\bigl||z_1| - |z_2|\bigr| \le |z_1 + z_2|\).
+[/CALLOUT]
+
+Estas cotas nos permiten hallar módulos máximos y mínimos exactos sin cálculo diferencial. Supón que \(z \in \mathbb{C}\) satisface \(|z| = 4\) y queremos acotar \(|z + (6 + 8i)|\). Aquí \(w = 6 + 8i\) tiene \(|w| = \sqrt{36 + 64} = 10\). Por [REF: triangle-inequalities.1 | la desigualdad triangular] y [REF: triangle-inequalities.2 | la desigualdad triangular inversa],
+\[
+\bigl|10 - 4\bigr| \le |z + w| \le 10 + 4 \implies 6 \le |z + (6 + 8i)| \le 14.
+\]
+Geométricamente, \(z\) recorre la circunferencia de radio \(4\) centrada en \(0\), y \(|z + w| = |z - (-w)|\) es la distancia desde \(z\) hasta \(-6 - 8i\) (situado a distancia \(10\) de \(0\)). Ambos valores extremos se alcanzan efectivamente a lo largo de la recta que pasa por \(0\) y \(w\): el máximo \(14\) ocurre cuando \(z\) apunta en la misma dirección que \(w\) (a saber, \(z = \frac{4}{10}(6 + 8i) = \frac{12}{5} + \frac{16}{5}i\)), y el mínimo \(6\) ocurre cuando \(z\) apunta en la dirección opuesta (a saber, \(z = -\frac{12}{5} - \frac{16}{5}i\)).
+
+[QUESTION 2]
+[ANSWER: A]
+Supón que \(z \in \mathbb{C}\) satisface \(|z - (3 - 4i)| = 2\). ¿Cuáles son los valores mínimo y máximo posibles de \(|z|\)?
+
+(A) Mínimo \(3\), máximo \(7\)
+(B) Mínimo \(1\), máximo \(9\)
+(C) Mínimo \(5\), máximo \(7\)
+(D) Mínimo \(3\), máximo \(5\)
+(E) Mínimo \(0\), máximo \(7\)
+[/QUESTION]
+
+=== SECTION 3: Lugares geométricos complejos básicos en el plano de Argand ===
+
+Un lugar geométrico es el conjunto de todos los puntos \(z \in \mathbb{C}\) que satisfacen una ecuación o desigualdad dada. Puesto que [REF: argand-dictionary.4 | \(|z - z_0|\) es la distancia euclidiana], muchas curvas y regiones geométricas poseen descripciones complejas sorprendentemente breves.
+
+Primero, considera circunferencias, discos y coronas circulares. Para un centro fijo \(z_0 = x_0 + y_0 i\) y un radio \(r > 0\):
+- La ecuación \(|z - z_0| = r\) dice "la distancia de \(z\) a \(z_0\) es igual a \(r\)", lo cual corresponde a la circunferencia centrada en \(z_0\) de radio \(r\). Elevar al cuadrado la fórmula de la distancia verifica la ecuación cartesiana \((x - x_0)^2 + (y - y_0)^2 = r^2\).
+- La desigualdad estricta \(|z - z_0| < r\) es el disco abierto (interior de la circunferencia, excluyendo el borde), mientras que \(|z - z_0| \le r\) es el disco cerrado (interior más borde).
+- Una desigualdad doble \(r_1 < |z - z_0| < r_2\) (con \(0 < r_1 < r_2\)) define una corona circular abierta: el anillo comprendido entre dos circunferencias concéntricas centradas en \(z_0\) de radios \(r_1\) y \(r_2\).
+
+Segundo, considera la ecuación \(|z - a| = |z - b|\) para dos puntos fijos distintos \(a, b \in \mathbb{C}\). Leída geométricamente, dice "\(z\) equidista de \(a\) y \(b\)". En geometría euclidiana, el conjunto de todos los puntos equidistantes de dos puntos distintos es la mediatriz del segmento de recta que une \(a\) y \(b\). Verifiquemos esto algebraicamente para \(a = -2\) y \(b = 2i\). Escribiendo \(z = x + yi\) y elevando al cuadrado \(|z - (-2)| = |z - 2i|\) se obtiene
+\[
+(x + 2)^2 + y^2 = x^2 + (y - 2)^2 \implies x^2 + 4x + 4 + y^2 = x^2 + y^2 - 4y + 4.
+\]
+Los términos cuadráticos \(x^2\) e \(y^2\) se cancelan en ambos lados, dejando \(4x = -4y\), o \(y = -x\). En efecto, el punto medio de \((-2, 0)\) y \((0, 2)\) es \((-1, 1)\) (que yace en \(y = -x\)), y el segmento tiene pendiente \(1\), perpendicular a la pendiente \(-1\). De forma análoga, la desigualdad \(|z - a| < |z - b|\) describe el semiplano abierto del lado de la mediatriz más cercano a \(a\).
+
+Tercero, las restricciones sobre las partes real e imaginaria producen de inmediato rectas y semiplanos:
+- \(\operatorname{Re}(z) = c\) es la recta vertical \(x = c\), y \(\operatorname{Re}(z) > c\) es el semiplano abierto derecho situado a su derecha.
+- \(\operatorname{Im}(z) = c\) es la recta horizontal \(y = c\), y \(\operatorname{Im}(z) \ge c\) es el semiplano cerrado superior sobre y por encima de \(y = c\).
+
+[TABLE]
+Restricción compleja | Lugar geométrico en el plano de Argand | Ecuación o desigualdad cartesiana
+\(\lvert z - z_0 \rvert = r\) (\(r > 0\)) | Circunferencia de centro \(z_0 = x_0 + y_0 i\) y radio \(r\) | \((x - x_0)^2 + (y - y_0)^2 = r^2\)
+\(\lvert z - z_0 \rvert < r\) (o \(\le r\)) | Disco abierto (o cerrado) centrado en \(z_0\) | \((x - x_0)^2 + (y - y_0)^2 < r^2\) (o \(\le r^2\))
+\(r_1 \le \lvert z - z_0 \rvert \le r_2\) | Corona circular cerrada entre radios \(r_1\) y \(r_2\) | \(r_1^2 \le (x - x_0)^2 + (y - y_0)^2 \le r_2^2\)
+\(\lvert z - a \rvert = \lvert z - b \rvert\) (\(a \ne b\)) | Mediatriz del segmento \(ab\) | Ecuación lineal en \(x, y\) tras elevar al cuadrado
+\(\operatorname{Re}(z) = c\), \(\operatorname{Im}(z) \ge c\) | Recta vertical \(x = c\); semiplano cerrado superior | \(x = c\); \(y \ge c\)
+[/TABLE]
+
+La gráfica siguiente muestra juntos dos de estos lugares geométricos: la circunferencia \(|z - (2 + i)| = 2\) centrada en \(2 + i\) con radio \(2\), y la mediatriz \(|z + 2| = |z - 2i|\) (la recta \(y = -x\)) que pasa a mitad de camino entre \(-2\) y \(2i\).
+
+[GRAPH]
+type: parametric2d
+title: Circunferencia \(|z - (2 + i)| = 2\) y mediatriz \(|z + 2| = |z - 2i|\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -3.5, 4.8
+yrange: -3, 3.8
+trace: 2 + 2*cos(t), 1 + 2*sin(t) | label: \(|z - (2 + i)| = 2\) | color: #2563eb
+trace: t - 3.1416, -(t - 3.1416) | label: \(|z + 2| = |z - 2i|\) | color: #dc2626
+segment: -2, 0, 0, 2 | dashed: true | color: #64748b
+segment: 2, 1, 4, 1 | label: \(r = 2\) | dashed: true | color: #2563eb
+point: 2, 1 | label: \(2 + i\)
+point: -2, 0 | label: \(-2\)
+point: 0, 2 | label: \(2i\)
+point: -1, 1 | label: \(-1 + i\)
+[/GRAPH]
+
+Antes de identificar un lugar geométrico, recuerda verificar si \(z\) tiene un multiplicador delante. Por ejemplo, en \(|2z - 4 + 6i| = 10\), saca factor común \(2\) usando la ley multiplicativa del módulo: \(|2(z - 2 + 3i)| = 2|z - (2 - 3i)| = 10\), de modo que \(|z - (2 - 3i)| = 5\). Dividir entre \(2\) revela el verdadero centro \(2 - 3i\) y el verdadero radio \(5\), no centro \(4 - 6i\) y radio \(10\). La misma factorización funciona cuando el coeficiente de \(z\) es complejo, como \(i\) o \(1 + i\).
+
+[QUESTION 3]
+[ANSWER: A]
+¿Qué figura geométrica en el plano de Argand describe \(|z - 2i| = |z + 4|\)?
+
+(A) La recta \(y = -2x - 3\), que es la mediatriz del segmento que va de \(-4\) a \(2i\)
+(B) La recta \(y = 2x + 3\), que es la mediatriz del segmento que va de \(4\) a \(2i\)
+(C) La circunferencia centrada en \(-2 + i\) con radio \(\sqrt{5}\)
+(D) La recta \(y = \frac{1}{2}x + 2\) que pasa por \(-4\) y \(2i\)
+(E) La recta \(y = -2x + 3\), que es la mediatriz del segmento que va de \(-4\) a \(-2i\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+¿Qué lugar geométrico en el plano de Argand describe \(|iz + 2 - i| = 3\)?
+
+(A) La circunferencia de centro \(1 + 2i\) y radio \(3\)
+(B) La circunferencia de centro \(-2 + i\) y radio \(3\)
+(C) La circunferencia de centro \(2 - i\) y radio \(3\)
+(D) La circunferencia de centro \(-1 - 2i\) y radio \(3\)
+(E) La circunferencia de centro \(1 - 2i\) y radio \(3\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+¿Para qué números complejos no nulos \(z\) se cumple la igualdad en \(|z + (3 - 4i)| = |z| + 5\)?
+
+(A) Todos los \(z = c(3 - 4i)\) con \(c > 0\) real
+(B) Todos los \(z = c(3 - 4i)\) con \(c \ne 0\) real
+(C) Todos los \(z = c(3 + 4i)\) con \(c > 0\) real
+(D) Únicamente \(z = 3 - 4i\)
+(E) Todos los \(z\) sobre la circunferencia \(|z| = 5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+¿Qué figura geométrica en el plano de Argand describe la ecuación \(|z - 3| = 2|z|\)?
+
+(A) La circunferencia de centro \(-1\) y radio \(2\)
+(B) La circunferencia de centro \(1\) y radio \(2\)
+(C) La circunferencia de centro \(-1\) y radio \(4\)
+(D) La recta vertical \(\operatorname{Re}(z) = 1\)
+(E) La circunferencia de centro \(3\) y radio \(2\)
+[/BONUS]

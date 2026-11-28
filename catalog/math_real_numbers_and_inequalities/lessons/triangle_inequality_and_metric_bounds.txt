@@ -1,0 +1,233 @@
+=== SECTION 1: The triangle inequality and its exact equality condition ===
+
+Absolute value respects multiplication exactly: \(|ab| = |a|\,|b|\). Addition is subtler—when two numbers have opposite signs, adding them causes cancellation, making \(|a + b|\) strictly smaller than \(|a| + |b|\) (for example, \(|5 + (-3)| = 2 < 5 + 3 = 8\)). The triangle inequality captures this exact upper bound and turns out to be the single most important inequality for estimating sizes and errors throughout mathematics.
+
+[CALLOUT]
+id: triangle-ineq
+label: Theorem
+title: The triangle inequality and its equality condition
+tone: key
+
+For all real numbers \(a, b \in \mathbb{R}\):
+
+(1) \(|a + b| \le |a| + |b|\).
+(2) Equality \(|a + b| = |a| + |b|\) holds if and only if \(ab \ge 0\) (meaning \(a\) and \(b\) have the same sign, or at least one of them is \(0\)).
+[/CALLOUT]
+
+It is worth knowing TWO complementary proofs of [REF: triangle-ineq | the triangle inequality], because the first is the fastest way to verify the bound while the second exposes the exact equality condition immediately.
+
+Proof 1 (adding bounds): For every real number \(u\), we have \(-|u| \le u \le |u|\) (check: if \(u \ge 0\) this reads \(-u \le u \le u\), and if \(u < 0\) it reads \(u \le u \le -u\)). Write this for \(a\) and \(b\):
+\[
+-|a| \le a \le |a| \qquad \text{and} \qquad -|b| \le b \le |b|.
+\]
+Adding the two same-direction inequalities gives
+\[
+-(|a| + |b|) \le a + b \le |a| + |b|,
+\]
+which by our basic absolute value equivalence is identical to \(|a + b| \le |a| + |b|\).
+
+Proof 2 (squaring non-negative sides): Since both \(|a + b|\) and \(|a| + |b|\) are non-negative, comparing them is equivalent to comparing their squares. Compute the difference:
+\[
+(|a| + |b|)^2 - |a + b|^2 = \bigl(|a|^2 + 2|a|\,|b| + |b|^2\bigr) - (a + b)^2 = \bigl(a^2 + 2|ab| + b^2\bigr) - (a^2 + 2ab + b^2) = 2\bigl(|ab| - ab\bigr).
+\]
+Because \(ab \le |ab|\) for every real number \(ab\), we have \(2(|ab| - ab) \ge 0\), so \(|a + b|^2 \le (|a| + |b|)^2\) and hence \(|a + b| \le |a| + |b|\). Even better, the difference \(2(|ab| - ab)\) vanishes IF AND ONLY IF \(|ab| = ab\), which by the piecewise definition of absolute value holds if and only if \(ab \ge 0\)! That proves [REF: triangle-ineq.2 | the equality condition] in one line.
+
+Replacing \(b\) by \(-b\) gives the immediate difference version \(|a - b| \le |a| + |b|\), and applying [REF: triangle-ineq.1 | the inequality] repeatedly gives the multi-term version \(|a_1 + a_2 + \dots + a_n| \le |a_1| + |a_2| + \dots + |a_n|\).
+
+Watch how [REF: triangle-ineq.2 | the equality condition] solves distance-sum equations instantaneously WITHOUT region splitting!
+
+Example 1: Solve \(|x - 1| + |x - 5| = 4\).
+Rewrite \(|x - 5| = |5 - x|\) so that the two inside expressions sum to the constant \(4\):
+\[
+(x - 1) + (5 - x) = 4.
+\]
+By [REF: triangle-ineq.1 | the triangle inequality], for EVERY \(x \in \mathbb{R}\),
+\[
+|x - 1| + |5 - x| \ge |(x - 1) + (5 - x)| = |4| = 4.
+\]
+By [REF: triangle-ineq.2 | the equality condition], equality holds precisely when the two summands satisfy
+\[
+(x - 1)(5 - x) \ge 0 \iff (x - 1)(x - 5) \le 0 \iff x \in [1, 5].
+\]
+Geometrically, \(|x - 1| + |x - 5|\) is the sum of distances from \(x\) to \(1\) and to \(5\); that sum is minimized (and constant at \(4\)) everywhere on the segment \([1, 5]\) between the two points, and grows strictly larger outside \([1, 5]\).
+
+[GRAPH]
+type: function2d
+title: Flat valley of \(y = |x - 1| + |x - 5|\) attaining its minimum \(4\) across \([1, 5]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1.5, 7.5
+yrange: 0, 11
+trace: abs(x - 1) + abs(x - 5) | label: \(y = |x - 1| + |x - 5|\)
+trace: 4 | label: \(y = 4\) | color: #f59e0b
+segment: 1, 4, 5, 4 | label: equality on \([1, 5]\) | color: #10b981
+point: 1, 4 | label: \((1, 4)\)
+point: 5, 4 | label: \((5, 4)\)
+[/GRAPH]
+
+Example 2: Solve \(|x - 2| + |x + 3| = |2x + 1|\).
+Notice immediately that \((x - 2) + (x + 3) = 2x + 1\)! So the equation has the exact form \(|a| + |b| = |a + b|\) with \(a = x - 2\) and \(b = x + 3\). By [REF: triangle-ineq.2 | the equality condition], this holds if and only if
+\[
+(x - 2)(x + 3) \ge 0 \iff x \in (-\infty, -3] \cup [2, \infty).
+\]
+No three-region case split was needed at all!
+
+[QUESTION 1]
+[ANSWER: C]
+What is the solution set of \(|2x - 6| + |x + 1| = |3x - 5|\)?
+
+(A) \([-1, 3]\)
+(B) \((-1, 3)\)
+(C) \((-\infty, -1] \cup [3, \infty)\)
+(D) \(\left\{\frac{5}{3}\right\}\)
+(E) \([3, \infty)\)
+[/QUESTION]
+
+=== SECTION 2: The reverse triangle inequality ===
+
+The triangle inequality puts an UPPER bound on \(|a + b|\) (and on \(|a - b|\)). Just as often we need a LOWER bound on \(|a - b|\) or \(|a + b|\)—for instance, to guarantee that a perturbed number \(x\) stays safely away from \(0\) when \(x\) is close to a nonzero target \(a\). That is the exact job of the reverse triangle inequality.
+
+[CALLOUT]
+id: reverse-triangle
+label: Theorem
+title: The reverse triangle inequality
+tone: key
+
+For all real numbers \(a, b \in \mathbb{R}\):
+\[
+\bigl|\,|a| - |b|\,\bigr| \le |a - b|.
+\]
+In particular, dropping the outer bars yields both \(|a| - |b| \le |a - b|\) and \(|b| - |a| \le |a - b|\), as well as \(|a + b| \ge \bigl|\,|a| - |b|\,\bigr|\).
+[/CALLOUT]
+
+The derivation uses a classic "add and subtract" trick together with [REF: triangle-ineq.1 | the triangle inequality]. Start by writing \(a = (a - b) + b\). Applying [REF: triangle-ineq.1 | the triangle inequality] gives
+\[
+|a| = |(a - b) + b| \le |a - b| + |b|.
+\]
+Subtracting \(|b|\) from both sides yields
+\[
+|a| - |b| \le |a - b|.
+\]
+Now swap the roles of \(a\) and \(b\): \(|b| - |a| \le |b - a|\). Since \(|b - a| = |a - b|\), this reads \(-(|a| - |b|) \le |a - b|\). Combining \(-|a - b| \le |a| - |b| \le |a - b|\) produces
+\[
+\bigl|\,|a| - |b|\,\bigr| \le |a - b|.
+\]
+Replacing \(b\) with \(-b\) gives the companion form \(\bigl|\,|a| - |b|\,\bigr| \le |a + b|\).
+
+Look at what [REF: reverse-triangle | the reverse triangle inequality] tells us concretely: the magnitudes \(|a|\) and \(|b|\) cannot differ by MORE than the distance \(|a - b|\) between \(a\) and \(b\). For example, if \(x\) satisfies \(|x - 5| < 1\), then \(||x| - 5| \le |x - 5| < 1\), forcing \(4 < |x| < 6\)—and in particular guaranteeing the strict lower bound \(|x| > 4 > 0\)!
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose \(a\) and \(b\) are real numbers satisfying \(|a| = 7\) and \(|a - b| < 2\). What is the sharpest guaranteed range for \(|b|\)?
+
+(A) \(5 < |b| < 9\)
+(B) \(0 \le |b| < 9\)
+(C) \(5 \le |b| \le 9\)
+(D) \(7 < |b| < 9\)
+(E) \(2 < |b| < 7\)
+[/QUESTION]
+
+=== SECTION 3: Bounding perturbed algebraic expressions ===
+
+A central skill in analysis and applied mathematics is error propagation: suppose \(x\) approximates a known value \(a\) to within some tolerance \(\delta > 0\), written \(|x - a| < \delta\). How tightly can we bound the resulting error in a derived quantity such as \(mx\), \(x^2\), or \(\frac{1}{x}\) purely in terms of \(\delta\) and \(a\)—with NO leftover \(x\) in the final bound?
+
+Case 1: Linear expressions \(mx + c\). Factor out the slope \(m\):
+\[
+|(mx + c) - (ma + c)| = |m(x - a)| = |m|\,|x - a| < |m|\,\delta.
+\]
+Here the factor \(|m|\) is already a constant independent of \(x\).
+
+Case 2: Quadratic expressions \(x^2\). Factor the difference of squares:
+\[
+|x^2 - a^2| = |x - a|\,|x + a|.
+\]
+Now we hit a genuine obstacle: the second factor \(|x + a|\) still depends on \(x\)! If \(\delta\) could be arbitrarily huge, \(|x + a|\) could also be arbitrarily large. To replace \(|x + a|\) with a constant, we impose a preliminary cap on \(\delta\)—most commonly \(\delta \le 1\)—and rewrite \(x + a\) in terms of the known small piece \(x - a\):
+\[
+|x + a| = |(x - a) + 2a| \le |x - a| + 2|a| < 1 + 2|a|.
+\]
+Multiplying by \(|x - a| < \delta\) gives a clean constant-multiple bound valid whenever \(|x - a| < \delta \le 1\):
+\[
+|x^2 - a^2| < (1 + 2|a|)\,\delta.
+\]
+For example, near \(a = 2\) with \(|x - 2| < \delta \le 1\), we get \(|x + 2| < 1 + 4 = 5\), so \(|x^2 - 4| < 5\delta\). If we want \(|x^2 - 4| < 0.05\), choosing \(\delta = 0.01\) (which satisfies \(\delta \le 1\)) guarantees \(|x^2 - 4| < 5(0.01) = 0.05\)!
+
+Case 3: Reciprocal expressions \(\frac{1}{x}\) when \(a \ne 0\). Combine over a common denominator:
+\[
+\left|\frac{1}{x} - \frac{1}{a}\right| = \frac{|a - x|}{|a|\,|x|} = \frac{|x - a|}{|a|\,|x|}.
+\]
+Here \(|x|\) sits in the DENOMINATOR! To UPPER-bound the fraction, we need a strictly positive LOWER bound on \(|x|\) (keeping \(x\) bounded away from \(0\)). Impose the preliminary cap \(\delta \le \frac{|a|}{2}\) and apply [REF: reverse-triangle | the reverse triangle inequality]:
+\[
+|x| = |a - (a - x)| \ge |a| - |x - a| > |a| - \frac{|a|}{2} = \frac{|a|}{2} > 0.
+\]
+Because both \(|x|\) and \(\frac{|a|}{2}\) are strictly positive, taking reciprocals reverses the inequality to \(\frac{1}{|x|} < \frac{2}{|a|}\). Substituting back yields, for every \(|x - a| < \delta \le \frac{|a|}{2}\),
+\[
+\left|\frac{1}{x} - \frac{1}{a}\right| < \frac{2}{|a|^2}\,\delta.
+\]
+Notice how concrete this is when \(a = 2\): capping \(\delta \le \frac{2}{2} = 1\) guarantees \(|x| > 1\), so \(\left|\frac{1}{x} - \frac{1}{2}\right| < \frac{1}{2}\delta\) across the entire interval \((1, 3)\). The graph below plots the actual error \(y = \left|\frac{1}{x} - \frac{1}{2}\right|\) against the linear envelope \(y = \frac{1}{2}|x - 2|\) on \((1, 3)\), showing the envelope safely dominating the true error everywhere in the capped window.
+
+[GRAPH]
+type: function2d
+title: Reciprocal error \(y = \left|\frac{1}{x} - \frac{1}{2}\right|\) bounded by \(y = \frac{1}{2}|x - 2|\) on \((1, 3)\)
+xlabel: \(x\)
+ylabel: error
+xrange: 1.05, 3
+yrange: 0, 0.55
+trace: abs(1/x - 0.5) | label: \(\left|\frac{1}{x} - \frac{1}{2}\right|\)
+trace: 0.5*abs(x - 2) | label: \(\frac{1}{2}|x - 2|\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+[CALLOUT]
+id: error-bound-recipe
+label: Workflow
+title: Two-stage perturbation bounding
+tone: note
+
+To bound \(|f(x) - f(a)|\) in terms of \(|x - a| < \delta\):
+(1) Factor out \(|x - a|\) so \(|f(x) - f(a)| = |x - a|\cdot |g(x, a)|\).
+(2) Cap \(\delta\) first (for example \(\delta \le 1\) for polynomials, or \(\delta \le |a|/2\) when \(|x|\) is in a denominator) and use [REF: triangle-ineq | the triangle inequality] or [REF: reverse-triangle | the reverse triangle inequality] to bound \(|g(x, a)| \le M\) by a constant independent of \(x\), leaving \(|f(x) - f(a)| < M\delta\).
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: B]
+Suppose we want to guarantee \(|x^2 - 9| < 0.07\) whenever \(|x - 3| < \delta\), using the two-stage method: first cap \(\delta \le 1\) and apply the triangle inequality to \(|x + 3| = |(x - 3) + 6|\) to obtain \(|x + 3| < M\), and then choose \(\delta\) so that \(M\delta \le 0.07\). What constant \(M\) and largest resulting \(\delta\) does this method produce?
+
+(A) \(M = 6\), \(\delta = \frac{0.07}{6}\)
+(B) \(M = 7\), \(\delta = 0.01\)
+(C) \(M = 4\), \(\delta = 0.0175\)
+(D) \(M = 9\), \(\delta = \frac{0.07}{9}\)
+(E) \(M = 10\), \(\delta = 0.007\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Suppose \(|x - 4| < \delta\) with \(0 < \delta \le 2\). Applying the reverse triangle inequality to lower-bound \(|x|\), what strict lower bound on \(|x|\) and resulting upper bound on \(\left|\frac{1}{x} - \frac{1}{4}\right|\) are obtained?
+
+(A) \(|x| > 2\) and \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{2}\)
+(B) \(|x| > 4\) and \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{16}\)
+(C) \(|x| > 6\) and \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{24}\)
+(D) \(|x| > 2\) and \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{8}\)
+(E) \(|x| > 1\) and \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{4}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+What is the minimum value of \(f(x) = |x + 2| + |x - 1| + |x - 6|\) over all \(x \in \mathbb{R}\), and for which \(x\) is it attained?
+
+(A) Minimum \(6\), attained on \([-2, 6]\)
+(B) Minimum \(8\), attained on \([-2, 6]\)
+(C) Minimum \(9\), attained at \(x = 0\) only
+(D) Minimum \(7\), attained at \(x = 1\) only
+(E) Minimum \(8\), attained at \(x = 1\) only
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+For real numbers \(a\), \(b\), and \(c\), under what exact condition does the equality \(|a - c| = |a - b| + |b - c|\) hold?
+
+(A) \(a \le b \le c\) only
+(B) \(a + b + c \ge 0\)
+(C) Either \(a \le b \le c\) or \(c \le b \le a\) (that is, \(b\) lies between \(a\) and \(c\), inclusive)
+(D) \(b = \frac{a + c}{2}\) only
+(E) \(ac \ge 0\)
+[/BONUS]

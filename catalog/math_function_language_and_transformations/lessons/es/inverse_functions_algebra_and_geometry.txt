@@ -1,0 +1,259 @@
+=== SECTION 1: Definición de la función inversa y cómo evitar la trampa del recíproco ===
+
+Si una función \(f\) convierte una temperatura Celsius \(x\) en Fahrenheit mediante \(f(x) = \frac{9}{5}x + 32\), naturalmente queremos la regla inversa que convierta Fahrenheit de vuelta a Celsius: \(g(y) = \frac{5}{9}(y - 32)\). Introduce cualquier temperatura en \(f\) y luego en \(g\), y recuperas tu temperatura original: \(g(f(x)) = x\). Introduce cualquier lectura Fahrenheit en \(g\) y luego en \(f\), y recuperas la lectura original: \(f(g(y)) = y\).
+
+Como vimos con la inyectividad, una función \(f\) puede invertirse sin ambigüedad en otra función si y solo si \(f\) es uno a uno: cada salida \(y \in \operatorname{Rango}(f)\) proviene de una sola entrada única \(x \in \operatorname{Dom}(f)\). Esa función que revierte el proceso es la función inversa de \(f\), denotada \(f^{-1}\).
+
+[CALLOUT]
+id: inverse-def
+label: Definición
+title: Función inversa e identidades de cancelación
+tone: key
+
+Sea \(f\) una función uno a uno con dominio \(D\) y rango \(R\). Su función inversa \(f^{-1}\) tiene dominio \(R\) y rango \(D\), y se define mediante la equivalencia
+\[
+f^{-1}(y) = x \iff f(x) = y \qquad (x \in D,\; y \in R).
+\]
+Equivalentemente, \(f^{-1}\) es la única función en \(R\) que satisface AMBAS identidades de cancelación:
+
+(1) \(f^{-1}(f(x)) = x\) para todo \(x \in \operatorname{Dom}(f)\).
+(2) \(f(f^{-1}(y)) = y\) para todo \(y \in \operatorname{Dom}(f^{-1}) = \operatorname{Rango}(f)\).
+
+En particular, dominio y rango se intercambian por completo:
+\[
+\operatorname{Dom}(f^{-1}) = \operatorname{Rango}(f) \qquad \text{y} \qquad \operatorname{Rango}(f^{-1}) = \operatorname{Dom}(f).
+\]
+[/CALLOUT]
+
+Antes de hacer un solo cálculo, detente en la trampa notacional más famosa de todo el precálculo.
+
+[CALLOUT]
+id: not-reciprocal
+label: Error común
+title: \(f^{-1}(x)\) NO es el recíproco \(\dfrac{1}{f(x)}\)
+tone: caution
+
+En notación funcional, el superíndice \(-1\) sobre el nombre de la función \(f^{-1}\) denota la función inversa bajo composición, NUNCA el recíproco multiplicativo \(\frac{1}{f(x)}\). Cuando quieras el recíproco del valor de salida \(f(x)\), escribe \(\bigl(f(x)\bigr)^{-1}\) o \(\frac{1}{f(x)}\).
+[/CALLOUT]
+
+Comprueba [REF: not-reciprocal | esa distinción] en \(f(x) = 2x + 3\):
+- Su recíproco es \(\frac{1}{f(x)} = \frac{1}{2x + 3}\).
+- Su función inversa es \(f^{-1}(x) = \frac{x - 3}{2}\), porque \(f(f^{-1}(x)) = 2\left(\frac{x - 3}{2}\right) + 3 = x\).
+En \(x = 5\), \(f^{-1}(5) = 1\) (ya que \(f(1) = 5\)), mientras que \(\frac{1}{f(5)} = \frac{1}{13}\).
+
+Sin fórmula algebraica alguna, [REF: inverse-def | la equivalencia \(f^{-1}(b) = a \iff f(a) = b\)] te permite evaluar \(f^{-1}\) directamente a partir de una tabla o una gráfica. Considera la tabla uno a uno siguiente:
+
+[TABLE]
+\(x\) | \(-2\) | \(0\) | \(1\) | \(4\) | \(7\)
+\(f(x)\) | \(5\) | \(2\) | \(-1\) | \(3\) | \(8\)
+[/TABLE]
+
+Para hallar \(f^{-1}(3)\), ¡NO busques \(x = 3\) en la fila superior! Busca la salida \(3\) en la fila inferior \(f(x)\) y lee su entrada correspondiente arriba: como \(f(4) = 3\), tenemos \(f^{-1}(3) = 4\). De modo similar, \(f^{-1}(-1) = 1\) y \(f^{-1}(5) = -2\).
+
+[QUESTION 1]
+[ANSWER: D]
+Supón que \(f\) es una función uno a uno tal que \(f(-3) = 7\), \(f(2) = -3\) y \(f(7) = 10\). ¿Cuál es el valor de \(f^{-1}(-3) + \dfrac{1}{f(-3)}\)?
+
+(A) \(7 + \frac{1}{7}\)
+(B) \(-3 + \frac{1}{7}\)
+(C) \(2 - \frac{1}{3}\)
+(D) \(2 + \frac{1}{7}\)
+(E) \(7 + \frac{1}{10}\)
+[/QUESTION]
+
+=== SECTION 2: Geometría de reflexión respecto a la recta \(y = x\) ===
+
+Observa lo que dice [REF: inverse-def | la equivalencia \(f^{-1}(b) = a \iff f(a) = b\)] sobre los puntos de las gráficas:
+\[
+(a, b) \text{ pertenece a la gráfica de } f \iff (b, a) \text{ pertenece a la gráfica de } f^{-1}.
+\]
+¿Qué transformación geométrica intercambia las coordenadas \((a, b) \mapsto (b, a)\)? Une \((a, b)\) y \((b, a)\) mediante un segmento rectilíneo:
+1. Su punto medio es \(\left(\frac{a + b}{2}, \frac{a + b}{2}\right)\), que se encuentra directamente sobre la recta diagonal \(y = x\).
+2. Cuando \(a \ne b\), la pendiente del segmento que une \((a, b)\) y \((b, a)\) es \(\frac{a - b}{b - a} = -1\), que es perpendicular a la pendiente \(+1\) de la recta \(y = x\).
+
+¡Por lo tanto, la recta diagonal \(y = x\) es la mediatriz del segmento que va de \((a, b)\) a \((b, a)\)!
+
+[CALLOUT]
+id: reflection-yx
+label: Propiedad geométrica
+title: Simetría respecto a la diagonal \(y = x\)
+tone: key
+
+La gráfica de \(y = f^{-1}(x)\) es el reflejo especular exacto de la gráfica de \(y = f(x)\) respecto a la recta diagonal \(y = x\).
+[/CALLOUT]
+
+Explora [REF: reflection-yx | esta geometría especular] en la gráfica de razón de aspecto igual a continuación para \(f(x) = x^3 + 1\) y su inversa \(f^{-1}(x) = \sqrt[3]{x - 1}\). Observa cómo los puntos de referencia \((-1, 0)\), \((0, 1)\) y \((1, 2)\) en \(f\) se reflejan respecto a \(y = x\) hacia \((0, -1)\), \((1, 0)\) y \((2, 1)\) en \(f^{-1}\), y cómo ambas curvas se cruzan justo sobre \(y = x\) (cerca de \(x \approx -1.325\), donde \(f(x) = x\)).
+
+[GRAPH]
+type: function2d
+title: Reflexión de \(f(x) = x^3 + 1\) y \(f^{-1}(x) = \sqrt[3]{x - 1}\) respecto a \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 4
+yrange: -3.5, 4
+aspect: equal
+trace: x^3 + 1 | label: \(f(x) = x^3 + 1\)
+trace: cbrt(x - 1) | label: \(f^{-1}(x) = \sqrt[3]{x - 1}\)
+trace: x | label: \(y = x\)
+point: 0, 1 | label: \((0, 1)\)
+point: 1, 0 | label: \((1, 0)\)
+segment: 0, 1, 1, 0 | dashed: true
+point: 1, 2 | label: \((1, 2)\)
+point: 2, 1 | label: \((2, 1)\)
+segment: 1, 2, 2, 1 | dashed: true
+[/GRAPH]
+
+Intercambiar \(x\) e \(y\) también explica cómo se transforman los rasgos de \(f\) a \(f^{-1}\):
+- Cada intersección con el eje \(x\) \((r, 0)\) de \(f\) se convierte en una intersección con el eje \(y\) \((0, r)\) de \(f^{-1}\), y viceversa.
+- Cada asíntota vertical \(x = c\) de \(f\) se refleja respecto a \(y = x\) en una asíntota horizontal \(y = c\) de \(f^{-1}\), ¡y cada asíntota horizontal \(y = L\) de \(f\) se convierte en una asíntota vertical \(x = L\) de \(f^{-1}\)!
+
+[QUESTION 2]
+[ANSWER: C]
+La gráfica de una función uno a uno \(f\) tiene intersección con el eje \(x\) en \((-2, 0)\), intersección con el eje \(y\) en \((0, 5)\), asíntota vertical \(x = 4\) y asíntota horizontal \(y = -1\). ¿Qué rasgos deben pertenecer a la gráfica de \(y = f^{-1}(x)\)?
+
+(A) Intersección con el eje \(x\) \((5, 0)\), intersección con el eje \(y\) \((0, -2)\), asíntota vertical \(x = 4\), asíntota horizontal \(y = -1\)
+(B) Intersección con el eje \(x\) \((-2, 0)\), intersección con el eje \(y\) \((0, 5)\), asíntota vertical \(x = -1\), asíntota horizontal \(y = 4\)
+(C) Intersección con el eje \(x\) \((5, 0)\), intersección con el eje \(y\) \((0, -2)\), asíntota vertical \(x = -1\), asíntota horizontal \(y = 4\)
+(D) Intersección con el eje \(x\) \((-5, 0)\), intersección con el eje \(y\) \((0, 2)\), asíntota vertical \(x = 1\), asíntota horizontal \(y = -4\)
+(E) Intersección con el eje \(x\) \((0, 5)\), intersección con el eje \(y\) \((-2, 0)\), asíntota vertical \(x = -1\), asíntota horizontal \(y = 4\)
+[/QUESTION]
+
+=== SECTION 3: Cálculo de inversas algebraicas en familias fundamentales ===
+
+Para hallar algebraicamente la fórmula de \(f^{-1}(x)\) a partir de una regla uno a uno \(y = f(x)\):
+1. Registra primero \(\operatorname{Dom}(f)\) y \(\operatorname{Rango}(f)\), ¡porque \(\operatorname{Dom}(f^{-1}) = \operatorname{Rango}(f)\) te indicará cualquier restricción de dominio necesaria en la fórmula final!
+2. Despeja \(x\) en términos de \(y\) de la ecuación \(y = f(x)\).
+3. Intercambia las etiquetas \(x\) e \(y\) para que la función inversa quede escrita en la variable de entrada estándar \(x\) como \(y = f^{-1}(x)\), y adjunta \(\operatorname{Dom}(f^{-1}) = \operatorname{Rango}(f)\).
+
+Apliquemos este procedimiento a tres familias esenciales.
+
+Ejemplo 1 (Potencia impar / raíz impar). Halla la inversa de \(f(x) = 2(x - 3)^3 + 5\).
+Aquí \(\operatorname{Dom}(f) = (-\infty, \infty)\) y \(\operatorname{Rango}(f) = (-\infty, \infty)\). Plantea \(y = 2(x - 3)^3 + 5\) y deshace las operaciones de afuera hacia adentro:
+\[
+y - 5 = 2(x - 3)^3 \implies \frac{y - 5}{2} = (x - 3)^3 \implies x - 3 = \sqrt[3]{\frac{y - 5}{2}} \implies x = 3 + \sqrt[3]{\frac{y - 5}{2}}.
+\]
+Intercambiar \(x\) e \(y\) da
+\[
+f^{-1}(x) = 3 + \sqrt[3]{\frac{x - 5}{2}}, \qquad \operatorname{Dom}(f^{-1}) = (-\infty, \infty).
+\]
+
+Ejemplo 2 (Raíz cuadrada desplazada: ¡arrastrar la restricción de dominio!). Halla la inversa de \(g(x) = \sqrt{x + 2} - 3\).
+Paso 1: \(\operatorname{Dom}(g) = [-2, \infty)\). Como \(\sqrt{x + 2} \ge 0\), tenemos \(\operatorname{Rango}(g) = [-3, \infty)\).
+Paso 2: Plantea \(y = \sqrt{x + 2} - 3\), aísla el radical y eleva al cuadrado:
+\[
+y + 3 = \sqrt{x + 2} \implies (y + 3)^2 = x + 2 \implies x = (y + 3)^2 - 2.
+\]
+Paso 3: Intercambia \(x\) e \(y\) Y arrastra la restricción de dominio \(\operatorname{Dom}(g^{-1}) = \operatorname{Rango}(g) = [-3, \infty)\):
+\[
+g^{-1}(x) = (x + 3)^2 - 2 \quad \text{para } x \ge -3.
+\]
+¿Por qué es obligatoria la restricción \(x \ge -3\)? Sin ella, \((x + 3)^2 - 2\) es una parábola completa que ni siquiera es uno a uno y produce valores en \(x = -5\) aunque \(-5\) NO está en \(\operatorname{Rango}(g)\). Comprueba: \(g(g^{-1}(-5)) = g(2) = \sqrt{4} - 3 = -1 \ne -5\), ¡violando [REF: inverse-def.2 | la identidad de cancelación (2)]!
+
+[GRAPH]
+type: function2d
+title: Raíz cuadrada desplazada \(g(x) = \sqrt{x + 2} - 3\) y su inversa con dominio restringido \((x + 3)^2 - 2\) (\(x \ge -3\))
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 5
+yrange: -3.5, 5
+aspect: equal
+trace: x >= -2 ? (sqrt(x + 2) - 3) : (0/0) | label: \(g(x) = \sqrt{x + 2} - 3\)
+trace: x >= -3 ? ((x + 3)^2 - 2) : (0/0) | label: \(g^{-1}(x) = (x + 3)^2 - 2,\; x \ge -3\)
+trace: x | label: \(y = x\)
+point: -2, -3 | label: \((-2, -3)\)
+point: -3, -2 | label: \((-3, -2)\)
+segment: -2, -3, -3, -2 | dashed: true
+[/GRAPH]
+
+Ejemplo 3 (Función racional fraccionaria lineal). Halla la inversa, el dominio y el rango de
+\[
+h(x) = \frac{2x + 1}{x - 3}.
+\]
+Aquí \(\operatorname{Dom}(h) = (-\infty, 3) \cup (3, \infty)\). Plantea \(y = \frac{2x + 1}{x - 3}\) y agrupa todos los términos con \(x\) en un mismo miembro:
+\[
+y(x - 3) = 2x + 1 \implies xy - 3y = 2x + 1 \implies xy - 2x = 3y + 1 \implies x(y - 2) = 3y + 1.
+\]
+Dividir por \(y - 2\) (válido para \(y \ne 2\)) da \(x = \frac{3y + 1}{y - 2}\). Intercambiando \(x\) e \(y\):
+\[
+h^{-1}(x) = \frac{3x + 1}{x - 2}.
+\]
+¡Mira el beneficio adicional! Ni siquiera tuvimos que adivinar \(\operatorname{Rango}(h)\) de antemano: el dominio natural de \(h^{-1}\) es \(x \ne 2\), lo cual revela de inmediato que \(\operatorname{Rango}(h) = \operatorname{Dom}(h^{-1}) = (-\infty, 2) \cup (2, \infty)\), y \(\operatorname{Rango}(h^{-1}) = \operatorname{Dom}(h) = (-\infty, 3) \cup (3, \infty)\).
+
+[QUESTION 3]
+[ANSWER: B]
+¿Cuál es la función inversa \(f^{-1}(x)\) (con su dominio exacto) de
+\[
+f(x) = \frac{3x - 5}{x + 2}?
+\]
+
+(A) \(f^{-1}(x) = \dfrac{2x + 5}{3 - x}\), dominio \(x \ne -2\)
+(B) \(f^{-1}(x) = \dfrac{2x + 5}{3 - x}\), dominio \(x \ne 3\)
+(C) \(f^{-1}(x) = \dfrac{x + 2}{3x - 5}\), dominio \(x \ne \frac{5}{3}\)
+(D) \(f^{-1}(x) = \dfrac{2x - 5}{3 - x}\), dominio \(x \ne 3\)
+(E) \(f^{-1}(x) = \dfrac{3x + 5}{x - 2}\), dominio \(x \ne 2\)
+[/QUESTION]
+
+=== SECTION 4: Verificación de pares inversos mediante ambas composiciones ===
+
+¿Cómo verificas con certeza que dos funciones dadas \(f\) y \(g\) son inversas entre sí? Debes comprobar AMBAS identidades de cancelación de [REF: inverse-def | la definición]:
+1. \(g(f(x)) = x\) para todo \(x \in \operatorname{Dom}(f)\), Y
+2. \(f(g(x)) = x\) para todo \(x \in \operatorname{Dom}(g)\).
+
+¿Por qué no basta comprobar UNA SOLA composición? Considera \(f(x) = x^2\) en \((-\infty, \infty)\) y \(g(x) = \sqrt{x}\) en \([0, \infty)\).
+- Comprueba \(f(g(x))\): para todo \(x \in [0, \infty)\), \(f(g(x)) = (\sqrt{x})^2 = x\). ¡Esa primera composición pasa por completo!
+- Sin embargo, comprueba \(g(f(x))\): para \(x \in (-\infty, \infty)\), \(g(f(x)) = \sqrt{x^2} = |x|\), que falla en \(x = -3\) porque \(g(f(-3)) = 3 \ne -3\).
+
+Comprobar ambas composiciones detecta al instante dominios desajustados y restricciones de signo faltantes. Verifiquemos \(h(x) = \frac{2x + 1}{x - 3}\) (\(x \ne 3\)) y \(h^{-1}(x) = \frac{3x + 1}{x - 2}\) (\(x \ne 2\)) de la Sección 3:
+- Para cualquier \(x \ne 3\):
+\[
+h^{-1}(h(x)) = \frac{3\left(\frac{2x + 1}{x - 3}\right) + 1}{\left(\frac{2x + 1}{x - 3}\right) - 2} = \frac{3(2x + 1) + (x - 3)}{(2x + 1) - 2(x - 3)} = \frac{7x}{7} = x.
+\]
+- Para cualquier \(x \ne 2\):
+\[
+h(h^{-1}(x)) = \frac{2\left(\frac{3x + 1}{x - 2}\right) + 1}{\left(\frac{3x + 1}{x - 2}\right) - 3} = \frac{2(3x + 1) + (x - 2)}{(3x + 1) - 3(x - 2)} = \frac{7x}{7} = x.
+\]
+Ambas composiciones se simplifican a \(x\) en todo el dominio de la función interna, confirmando que \(h\) y \(h^{-1}\) son inversas exactas.
+
+[QUESTION 4]
+[ANSWER: A]
+Sea \(f(x) = 4 - \sqrt{x - 1}\) en su dominio natural \([1, \infty)\). ¿Qué función \(g\) es la verdadera inversa \(f^{-1}\)?
+
+(A) \(g(x) = (4 - x)^2 + 1\) con dominio \((-\infty, 4]\)
+(B) \(g(x) = (4 - x)^2 + 1\) con dominio \([4, \infty)\)
+(C) \(g(x) = (4 - x)^2 + 1\) con dominio \((-\infty, \infty)\)
+(D) \(g(x) = (x + 4)^2 + 1\) con dominio \([1, \infty)\)
+(E) \(g(x) = (4 - x)^2 - 1\) con dominio \((-\infty, 4]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Supón que \(f\) es una función uno a uno cuyo dominio es \([2, \infty)\) y cuyo rango es \((-\infty, 5]\). Si \(f\) es estrictamente decreciente en \([2, \infty)\), ¿qué afirmación es verdadera acerca de \(f^{-1}\)?
+
+(A) \(f^{-1}\) tiene dominio \([2, \infty)\), rango \((-\infty, 5]\) y es estrictamente creciente.
+(B) \(f^{-1}\) tiene dominio \((-\infty, 5]\), rango \([2, \infty)\) y es estrictamente creciente.
+(C) \(f^{-1}\) tiene dominio \((-\infty, 5]\), rango \([2, \infty)\) y tiene un máximo global de \(2\).
+(D) \(f^{-1}\) tiene dominio \([5, \infty)\), rango \((-\infty, 2]\) y es estrictamente decreciente.
+(E) \(f^{-1}\) tiene dominio \((-\infty, 5]\), rango \([2, \infty)\) y es estrictamente decreciente.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Sea \(f(x) = \dfrac{ax + 4}{x - 5}\) donde \(a\) es una constante real con \(5a + 4 \ne 0\). ¿Cuál es el rango de \(f\)?
+
+(A) \((-\infty, 5) \cup (5, \infty)\)
+(B) \((-\infty, -4) \cup (-4, \infty)\)
+(C) \((-\infty, a) \cup (a, \infty)\)
+(D) \((-\infty, -a) \cup (-a, \infty)\)
+(E) \((-\infty, \infty)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Si \(f\) es una función impar y uno a uno en \((-\infty, \infty)\), ¿qué simetría debe poseer \(f^{-1}\)?
+
+(A) \(f^{-1}\) debe ser par.
+(B) \(f^{-1}\) debe ser impar.
+(C) \(f^{-1}\) no puede ser ni par ni impar a menos que \(f(x) = x\).
+(D) \(f^{-1}\) debe satisfacer \(f^{-1}(x) = -f(x)\).
+(E) \(f^{-1}\) debe ser estrictamente creciente en \((-\infty, \infty)\).
+[/BONUS]

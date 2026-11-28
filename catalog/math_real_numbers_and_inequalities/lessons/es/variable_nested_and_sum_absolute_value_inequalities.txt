@@ -1,0 +1,204 @@
+=== SECTION 1: Lados derechos variables y la trampa de la cota negativa ===
+
+En la lección anterior sobre valor absoluto, cada desigualdad comparaba \(|A(x)|\) con una constante \(c\) o con otro valor absoluto \(|B(x)|\). Supongamos ahora que el lado derecho es una expresión arbitraria \(B(x)\) cuyo signo depende de \(x\), como
+\[
+|2x - 1| = x + 3, \qquad |2x - 1| < x + 3, \qquad \text{o} \qquad |2x - 1| > x + 3.
+\]
+¿Podemos seguir traduciéndolas limpiamente sin separar según el signo de \(A(x)\)? Sí, siempre que tratemos con precisión el signo de \(B(x)\), porque los tres casos (\(=, <, >\)) se comportan de manera MUY distinta cuando \(B(x) < 0\).
+
+1. Ecuación \(|A(x)| = B(x)\): Como \(|A(x)| \ge 0\), toda solución DEBE satisfacer \(B(x) \ge 0\). Una vez que \(B(x) \ge 0\), \(|A(x)| = B(x)\) se cumple si y solo si \(A(x) = B(x)\) o \(A(x) = -B(x)\). Olvidar \(B(x) \ge 0\) introduce raíces espurias.
+2. Cota superior \(|A(x)| < B(x)\): Observe la desigualdad encadenada \(-B(x) < A(x) < B(x)\). Note un detalle sutil: si se cumple \(-B(x) < A(x) < B(x)\), entonces por transitividad \(-B(x) < B(x)\), lo que implica \(2B(x) > 0\), es decir, \(B(x) > 0\) AUTOMÁTICAMENTE. Ni siquiera necesita una comprobación aparte \(B(x) > 0\): la desigualdad encadenada ya filtra todo \(x\) donde \(B(x) \le 0\). (De modo similar, \(-B(x) \le A(x) \le B(x)\) fuerza automáticamente \(B(x) \ge 0\).)
+3. Cota inferior \(|A(x)| > B(x)\): Aquí se esconde una de las trampas más célebres en desigualdades. Si alguien añade la condición «\(B(x) \ge 0\)» antes de escribir \(A(x) < -B(x)\) o \(A(x) > B(x)\), DESECHA TODAS LAS SOLUCIONES VÁLIDAS DONDE \(B(x) < 0\). Siempre que \(B(x) < 0\), la desigualdad \(|A(x)| > B(x)\) es AUTOMÁTICAMENTE VERDADERA (puesto que \(|A(x)| \ge 0 > B(x)\)). Mejor aún, compruebe qué produce la disyunción «\(A(x) < -B(x)\) O \(A(x) > B(x)\)» cuando \(B(x) < 0\): en ese caso \(B(x) < 0 < -B(x)\), de modo que todo número real \(A(x)\) es o bien menor que \(-B(x)\), o bien mayor que \(B(x)\) —¡la disyunción YA se cumple automáticamente siempre que \(B(x) < 0\)!
+
+[CALLOUT]
+id: var-bound-rules
+label: Teorema
+title: Equivalencias exactas con valor absoluto y cota variable
+tone: key
+
+Para cualesquiera expresiones reales \(A(x)\) y \(B(x)\):
+
+(1) \(|A(x)| = B(x) \iff B(x) \ge 0 \text{ y } \bigl(A(x) = B(x) \text{ o } A(x) = -B(x)\bigr)\).
+(2) \(|A(x)| < B(x) \iff -B(x) < A(x) < B(x)\) (fuerza automáticamente \(B(x) > 0\)).
+(3) \(|A(x)| \le B(x) \iff -B(x) \le A(x) \le B(x)\) (fuerza automáticamente \(B(x) \ge 0\)).
+(4) \(|A(x)| > B(x) \iff A(x) < -B(x) \text{ o } A(x) > B(x)\) (¡NO imponga \(B(x) \ge 0\)!).
+(5) \(|A(x)| \ge B(x) \iff A(x) \le -B(x) \text{ o } A(x) \ge B(x)\) (¡NO imponga \(B(x) \ge 0\)!).
+[/CALLOUT]
+
+Pongamos a prueba [REF: var-bound-rules.2 | la regla (2)] y [REF: var-bound-rules.4 | la regla (4)] con el mismo par de expresiones, \(A(x) = 2x - 1\) y \(B(x) = x - 2\).
+- Para \(|2x - 1| < x - 2\): escriba \(-(x - 2) < 2x - 1 < x - 2\). Separe la cadena:
+  - \(2 - x < 2x - 1 \implies 3 < 3x \implies x > 1\).
+  - \(2x - 1 < x - 2 \implies x < -1\).
+  Intersección: \((1, \infty) \cap (-\infty, -1) = \emptyset\).
+- Para \(|2x - 1| > x - 2\): aplique [REF: var-bound-rules.4 | la regla (4)] SIN restringir \(x - 2 \ge 0\):
+  - \(2x - 1 > x - 2 \implies x > -1\), O
+  - \(2x - 1 < -(x - 2) = 2 - x \implies 3x < 3 \implies x < 1\).
+  Unión: \((-1, \infty) \cup (-\infty, 1) = \mathbb{R}\).
+
+La gráfica inferior confirma visualmente ambas respuestas: la curva en V \(y = |2x - 1|\) permanece estrictamente POR ENCIMA de la recta \(y = x - 2\) para TODO \(x\) real, incluida toda la región \(x < 2\) donde \(y = x - 2\) desciende por debajo del eje horizontal.
+
+[GRAPH]
+type: function2d
+title: \(y = |2x - 1|\) se mantiene estrictamente por encima de \(y = x - 2\) en todas partes, incluso donde \(x - 2 < 0\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 5
+yrange: -5, 9
+fill: abs(2*x - 1), x - 2 | range: -3, 5 | label: \(|2x - 1| > x - 2\) | color: #10b981 | opacity: 0.16
+trace: abs(2*x - 1) | label: \(y = |2x - 1|\)
+trace: x - 2 | label: \(y = x - 2\)
+trace: 0 | label: \(y = 0\)
+point: 0.5, 0 | label: \((1/2, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(|x - 3| > 2x - 5\)?
+
+(A) \(\left[\frac{5}{2}, \frac{8}{3}\right)\)
+(B) \(\left(-\infty, \frac{8}{3}\right)\)
+(C) \((-\infty, 2)\)
+(D) \(\left(2, \frac{8}{3}\right)\)
+(E) \(\left(\frac{8}{3}, \infty\right)\)
+[/QUESTION]
+
+=== SECTION 2: Sumas y diferencias mediante partición por puntos críticos ===
+
+Cuando una desigualdad contiene una suma o diferencia de dos o más valores absolutos —como
+\[
+|x - 1| + |2x + 4| \le 9,
+\]
+ni elevar al cuadrado ni una única regla de equivalencia elimina limpiamente ambos pares de barras. En su lugar, particionamos la recta real usando los ceros de cada expresión contenida dentro de barras de valor absoluto.
+
+Aquí \(x - 1 = 0\) en \(x = 1\) y \(2x + 4 = 0\) en \(x = -2\). Estos dos puntos críticos dividen \(\mathbb{R}\) en tres intervalos: \((-\infty, -2)\), \([-2, 1)\) y \([1, \infty)\). En cada intervalo, cada expresión interior tiene un signo constante, de modo que todo valor absoluto se simplifica a una expresión lineal ordinaria.
+
+[TABLE]
+Región | Signo de \(2x + 4\) | Signo de \(x - 1\) | Lado izquierdo simplificado | Desigualdad en la región | Solución de rama \(\cap\) región
+\((-\infty, -2)\) | \(-\) | \(-\) | \(-(x - 1) - (2x + 4) = -3x - 3\) | \(-3x - 3 \le 9 \iff x \ge -4\) | \([-4, -2)\)
+\([-2, 1)\) | \(+\) | \(-\) | \(-(x - 1) + (2x + 4) = x + 5\) | \(x + 5 \le 9 \iff x \le 4\) | \([-2, 1)\)
+\([1, \infty)\) | \(+\) | \(+\) | \((x - 1) + (2x + 4) = 3x + 3\) | \(3x + 3 \le 9 \iff x \le 2\) | \([1, 2]\)
+[/TABLE]
+
+Finalmente, tome la UNIÓN de las tres soluciones de rama ya intersecadas:
+\[
+[-4, -2) \cup [-2, 1) \cup [1, 2] = [-4, 2].
+\]
+Observe la disciplina lógica en dos pasos: INTERSEQUE dentro de cada región (una fórmula de rama es válida ÚNICAMENTE dentro de su propia región), y UNA entre regiones (un número satisface la desigualdad original si funciona en la Región 1 O en la Región 2 O en la Región 3). Fíjese en la fila central de la tabla anterior: resolver \(x + 5 \le 9\) por sí solo dio \(x \le 4\), que se extiende más allá de \(x = 1\) —intersecar con \([-2, 1)\) evitó retener valores falsos como \(x = 3\) (donde \(|3 - 1| + |10| = 12 \not\le 9\)).
+
+Graficar \(y = |x - 1| + |2x + 4|\) frente a \(y = 9\) muestra por qué funciona geométricamente la partición por puntos críticos: la suma de valores absolutos lineales es una curva continua lineal a trozos cuya pendiente cambia ÚNICAMENTE en los puntos críticos \(x = -2\) y \(x = 1\).
+
+[GRAPH]
+type: function2d
+title: Gráfica lineal a trozos de \(y = |x - 1| + |2x + 4|\) por debajo de \(y = 9\) en \([-4, 2]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -5.5, 4
+yrange: 0, 14
+fill: 9, abs(x - 1) + abs(2*x + 4) | range: -4, 2 | label: solución \([-4, 2]\) | color: #3b82f6 | opacity: 0.22
+trace: abs(x - 1) + abs(2*x + 4) | label: \(y = |x - 1| + |2x + 4|\)
+trace: 9 | label: \(y = 9\)
+point: -2, 3 | label: \((-2, 3)\)
+point: 1, 6 | label: \((1, 6)\)
+point: -4, 9 | label: \((-4, 9)\)
+point: 2, 9 | label: \((2, 9)\)
+[/GRAPH]
+
+Las diferencias como \(|x + 2| - |x - 3| > 1\) siguen exactamente la misma tabla; solo tenga cuidado con los signos menos al distribuir en ramas negadas, y espere mesetas constantes en las regiones exteriores donde los términos en \(x\) se cancelan.
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál es el conjunto solución de \(|x + 2| - |x - 4| \ge 2\)?
+
+(A) \([2, 4]\)
+(B) \([-2, \infty)\)
+(C) \((-\infty, 2]\)
+(D) \([2, \infty)\)
+(E) \([4, \infty)\)
+[/QUESTION]
+
+=== SECTION 3: Valores absolutos anidados y formas cuadráticas en \(|x|\) ===
+
+Dos estructuras adicionales parecen intimidantes a primera vista, pero colapsan rápidamente al usar apertura de afuera hacia adentro o sustitución en vez de dividir por regiones a la fuerza.
+
+Estrategia A: Apertura de afuera hacia adentro (o sustitución \(u = |\text{interior}| \ge 0\)) para valores absolutos anidados como
+\[
+\bigl|\,|x - 2| - 3\,\bigr| \le 1.
+\]
+Trate \(u = |x - 2|\) como una única cantidad y abra primero el valor absoluto EXTERIOR:
+\[
+-1 \le u - 3 \le 1 \implies 2 \le u \le 4, \qquad \text{es decir,} \qquad 2 \le |x - 2| \le 4.
+\]
+Ahora resuelva la corona de distancia bilateral:
+- \(2 \le x - 2 \le 4 \implies 4 \le x \le 6\), es decir, \([4, 6]\).
+- \(-4 \le x - 2 \le -2 \implies -2 \le x \le 0\), es decir, \([-2, 0]\).
+Unir ambas franjas da \([-2, 0] \cup [4, 6]\).
+
+¿Qué ocurre si al abrir las barras exteriores se obtiene una cota inferior NEGATIVA sobre \(u = |\text{interior}|\) —por ejemplo, \(\bigl|\,|x + 1| - 2\,\bigr| < 5\)? Abrir da \(-5 < |x + 1| - 2 < 5 \implies -3 < |x + 1| < 7\). Como \(|x + 1| \ge 0 > -3\) se cumple SIEMPRE, la mitad izquierda se descarta automáticamente, dejando solo \(|x + 1| < 7 \implies (-8, 6)\). Tenga siempre presente \(u \ge 0\) antes de dividir en casos.
+
+Estrategia B: Desigualdades cuadráticas en \(|x|\) y de la forma \(|\text{cuadrática}|\).
+1. Siempre que una desigualdad contenga \(x^2\) y \(|x|\) (y ningún término en \(x\) sin barras), recuerde que \(x^2 = |x|^2\) y sustituya \(u = |x| \ge 0\). Considere
+\[
+x^2 - 3|x| - 4 \le 0.
+\]
+Al reescribirla como \(u^2 - 3u - 4 \le 0\) se factoriza en \((u - 4)(u + 1) \le 0\), lo que da \(-1 \le u \le 4\). Intersecar con \(u = |x| \ge 0\) produce \(0 \le |x| \le 4\), por lo que el conjunto solución es \([-4, 4]\). Si la desigualdad hubiera sido \(x^2 - 3|x| - 4 > 0\), obtendríamos \(u < -1\) (imposible ya que \(u \ge 0\)) O \(u > 4\), dando \(|x| > 4\), es decir, \((-\infty, -4) \cup (4, \infty)\).
+2. Para un valor absoluto alrededor de una cuadrática —como \(|x^2 - 2x| < 3\)— aplique directamente nuestra equivalencia básica y resuelva el par resultante de desigualdades cuadráticas. Aquí:
+\[
+-3 < x^2 - 2x < 3 \iff \bigl(x^2 - 2x + 3 > 0\bigr) \text{ Y } \bigl(x^2 - 2x - 3 < 0\bigr).
+\]
+Para la primera cuadrática, \(\Delta = (-2)^2 - 4(1)(3) = -8 < 0\) y \(a = 1 > 0\), de modo que \(x^2 - 2x + 3 > 0\) se cumple para TODO \(x \in \mathbb{R}\). Para la segunda cuadrática, \((x - 3)(x + 1) < 0\) da \((-1, 3)\). Intersecar \(\mathbb{R} \cap (-1, 3)\) produce \((-1, 3)\).
+
+[CALLOUT]
+id: abs-strategy-pick
+label: Estrategia
+title: Elegir el método más limpio para valores absolutos no estándar
+tone: note
+
+(1) Un único \(|A(x)|\) frente a \(B(x)\) variable: use [REF: var-bound-rules | las equivalencias directas con cota variable] (vigile la trampa \(B(x) < 0\) en \(|A| > B\)).
+(2) Suma o diferencia de varios términos \(|\cdot|\): particione \(\mathbb{R}\) en todos los ceros interiores, interseque dentro de cada región y una entre regiones.
+(3) \(|\cdot|\) anidado o cuadrática en \(|x|\): abra de afuera hacia adentro, o sustituya \(u = |\text{interior}| \ge 0\) y use \(x^2 = |x|^2\).
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(\bigl|\,|2x - 1| - 4\,\bigr| < 2\)?
+
+(A) \(\left(\frac{3}{2}, \frac{7}{2}\right)\)
+(B) \(\left(-\frac{5}{2}, \frac{7}{2}\right)\)
+(C) \(\left(-\frac{5}{2}, -\frac{1}{2}\right) \cup \left(\frac{3}{2}, \frac{7}{2}\right)\)
+(D) \(\left[-\frac{5}{2}, -\frac{1}{2}\right] \cup \left[\frac{3}{2}, \frac{7}{2}\right]\)
+(E) \(\left(-\infty, -\frac{5}{2}\right) \cup \left(\frac{7}{2}, \infty\right)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+¿Cuál es el conjunto solución de \(x^2 - 5|x| + 6 < 0\)?
+
+(A) \((-3, -2) \cup (2, 3)\)
+(B) \((2, 3)\)
+(C) \((-3, 3)\)
+(D) \((-\infty, -3) \cup (-2, 2) \cup (3, \infty)\)
+(E) \([-3, -2] \cup [2, 3]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Cuál es el conjunto solución de \(|x^2 - 4x + 3| > 3\)?
+
+(A) \((0, 4)\)
+(B) \((-\infty, 0] \cup [4, \infty)\)
+(C) \((-\infty, -1) \cup (5, \infty)\)
+(D) \(\mathbb{R}\)
+(E) \((-\infty, 0) \cup (4, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(|x - 1| + |x - 3| + |x - 6| \le 7\)?
+
+(A) \([1, 6]\)
+(B) \([1, 5]\)
+(C) \([0, 5]\)
+(D) \([2, 5]\)
+(E) \(\{3\}\)
+[/BONUS]

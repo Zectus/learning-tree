@@ -1,0 +1,233 @@
+=== SECTION 1: Two criteria for line-circle position ===
+
+When a straight line \(L: Ax + By + C = 0\) and a circle \((x - h)^2 + (y - k)^2 = r^2\) (center \(C(h, k)\), radius \(r > 0\)) lie in the same plane, exactly three geometric outcomes are possible: \(L\) can cut the circle at two distinct points (a secant line), touch it at a single point (a tangent line), or miss it completely (disjoint).
+
+We have two equivalent ways to distinguish these three cases:
+1. Geometric distance test: compute the perpendicular distance \(d = d(C, L) = \frac{\lvert A h + B k + C \rvert}{\sqrt{A^2 + B^2}}\) from the center to the line, and compare \(d\) directly to the radius \(r\). Let \(H\) be the foot of the perpendicular from \(C\) to \(L\). For any point \(P\) on \(L\) at distance \(s \ge 0\) from \(H\), the right triangle \(\triangle CHP\) gives \(CP^2 = d^2 + s^2\). Thus \(P\) lies on the circle if and only if \(s^2 = r^2 - d^2\), which has two solutions \(s = \pm \sqrt{r^2 - d^2}\) when \(d < r\), one solution \(s = 0\) (at \(P = H\)) when \(d = r\), and no real solution when \(d > r\).
+2. Algebraic discriminant test: solve the linear equation \(L\) for \(y\) (or \(x\) if \(L\) is vertical) and substitute into the circle equation. Because the circle is degree \(2\) and the line is degree \(1\), this yields a single-variable quadratic \(a u^2 + b u + c = 0\) whose discriminant \(\Delta = b^2 - 4ac\) counts its real intersection points: \(\Delta > 0\) gives two intersections (secant), \(\Delta = 0\) gives one repeated root (tangent), and \(\Delta < 0\) gives none (disjoint).
+
+[CALLOUT]
+id: line-circle-criteria
+label: Theorem
+title: Line-circle classification criteria
+tone: key
+
+For a line \(L\) and a circle of center \(C\) and radius \(r > 0\), let \(d = d(C, L)\) and let \(\Delta\) be the quadratic discriminant obtained by substituting \(L\) into the circle equation:
+(1) Secant (2 intersections): \(d < r \iff \Delta > 0\).
+(2) Tangent (1 point of contact): \(d = r \iff \Delta = 0\).
+(3) Disjoint (0 intersections): \(d > r \iff \Delta < 0\).
+[/CALLOUT]
+
+[TABLE]
+Method | Core step | Best used when
+Geometric distance \(d(C, L)\) vs. \(r\) | One linear evaluation \(\frac{\lvert Ah + Bk + C \rvert}{\sqrt{A^2 + B^2}}\) | Classifying position, finding chord lengths, or finding unknown tangent parameters
+Algebraic substitution and \(\Delta\) | Substitute line into circle and solve quadratic | Finding the exact coordinates of intersection points
+[/TABLE]
+
+For example, test the line \(2x - 3y + 5 = 0\) against the circle \((x - 1)^2 + (y + 2)^2 = 13\). Here \(C(1, -2)\) and \(r = \sqrt{13}\). Rather than substituting \(y = \frac{2x + 5}{3}\) and wrestling with fractions, apply [REF: line-circle-criteria | the distance test]:
+\[
+d(C, L) = \frac{\lvert 2(1) - 3(-2) + 5 \rvert}{\sqrt{2^2 + (-3)^2}} = \frac{\lvert 2 + 6 + 5 \rvert}{\sqrt{13}} = \frac{13}{\sqrt{13}} = \sqrt{13} = r.
+\]
+In one line we know the line is tangent to the circle!
+
+Drag the constant slider \(c\) below to translate the line \(3x + 4y = c\) across the circle \(x^2 + y^2 = 25\) (\(r = 5\)). Watch how the line is a secant for \(\lvert c \rvert < 25\) (\(d = \lvert c \rvert / 5 < 5\)), becomes tangent at \(c = \pm 25\) (\(d = 5\)), and separates for \(\lvert c \rvert > 25\) (\(d > 5\)).
+
+[GRAPH]
+type: parametric2d
+title: Line \(3x + 4y = c\) sweeping across \(x^2 + y^2 = 25\) (\(d = \lvert c \rvert / 5\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -8, 8
+yrange: -8, 8
+trace: 5*cos(t), 5*sin(t) | label: \(x^2 + y^2 = 25\)
+trace: (3*c)/25 + 4*(t - 3.1416), (4*c)/25 - 3*(t - 3.1416) | label: \(3x + 4y = c\)
+segment: 0, 0, (3*c)/25, (4*c)/25 | label: \(d\) | dashed: true
+point: 0, 0 | label: \(C(0, 0)\)
+point: (3*c)/25, (4*c)/25 | label: \(H\)
+slider: c | range: -35, 35 | init: 15 | step: 5
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: D]
+For which values of the real constant \(k\) is the line \(4x + 3y + k = 0\) tangent to the circle \((x - 2)^2 + (y + 1)^2 = 16\)?
+
+(A) \(k = 75\) or \(k = -85\)
+(B) \(k = 25\) or \(k = -15\)
+(C) \(k = -1\) or \(k = -9\)
+(D) \(k = 15\) or \(k = -25\)
+(E) \(k = 15\) only
+[/QUESTION]
+
+=== SECTION 2: Chord lengths via the perpendicular right triangle ===
+
+When a secant line \(L\) cuts a circle of center \(C\) and radius \(r\) at two points \(A\) and \(B\), we do not need the coordinates of \(A\) and \(B\) to find the length of chord \(AB\). Drop the perpendicular from \(C\) to \(L\), landing at foot \(H\) with length \(CH = d = d(C, L) < r\). Because \(CA = CB = r\), right triangles \(\triangle CHA\) and \(\triangle CHB\) are congruent (hypotenuse-leg), so \(H\) is the midpoint of chord \(AB\). By the Pythagorean theorem in \(\triangle CHA\), the half-chord length is \(HA = \sqrt{r^2 - d^2}\), and doubling gives the full chord length.
+
+[CALLOUT]
+id: chord-length
+label: Formula
+title: Length of a chord cut by a secant line
+tone: key
+
+If a line \(L\) passes at perpendicular distance \(d < r\) from the center of a circle of radius \(r\), the chord cut by \(L\) has length
+\[
+L_{\text{chord}} = 2\sqrt{r^2 - d^2}.
+\]
+[/CALLOUT]
+
+For example, find the length of the chord cut from \((x + 1)^2 + (y - 3)^2 = 25\) by the line \(3x - 4y + 5 = 0\). Here \(C(-1, 3)\) and \(r = 5\). Compute the center-to-line distance:
+\[
+d = \frac{\lvert 3(-1) - 4(3) + 5 \rvert}{\sqrt{3^2 + (-4)^2}} = \frac{\lvert -10 \rvert}{5} = 2.
+\]
+Since \(d = 2 < 5\), [REF: chord-length | the chord-length formula] gives
+\[
+L_{\text{chord}} = 2\sqrt{5^2 - 2^2} = 2\sqrt{21}.
+\]
+
+[QUESTION 2]
+[ANSWER: B]
+A line \(L\) passes through \((0, 1)\) with slope \(-\frac{3}{4}\) and cuts a chord of length \(8\) from the circle \((x - 4)^2 + (y - 3)^2 = r^2\). What is the radius \(r\) of the circle?
+
+(A) \(4\sqrt{5}\)
+(B) \(4\sqrt{2}\)
+(C) \(4\sqrt{3}\)
+(D) \(8\)
+(E) \(32\)
+[/QUESTION]
+
+=== SECTION 3: Tangent at a boundary point and tangents from an external point ===
+
+We frequently need the explicit equation of a tangent line in two distinct geometric settings.
+
+First, suppose \(P_0(x_0, y_0)\) is a known point ON the circle \((x - h)^2 + (y - k)^2 = r^2\). At the point of tangency \(P_0\), the tangent line is perpendicular to the radius \(C P_0\) (since \(P_0\) is the foot of the perpendicular from \(C\) to the tangent!). The displacement along radius \(C P_0\) is \((x_0 - h, y_0 - k)\), and the displacement along the tangent from \(P_0\) to any other point \(P(x, y)\) on the tangent is \((x - x_0, y - y_0)\). Using the general perpendicularity condition \(A_1 A_2 + B_1 B_2 = 0\)—which works identically even when the radius is horizontal or vertical—every point \((x, y)\) on the tangent satisfies
+\[
+(x_0 - h)(x - x_0) + (y_0 - k)(y - y_0) = 0.
+\]
+Now rewrite \(x - x_0 = (x - h) - (x_0 - h)\) and \(y - y_0 = (y - k) - (y_0 - k)\), and expand:
+\[
+(x_0 - h)(x - h) - (x_0 - h)^2 + (y_0 - k)(y - k) - (y_0 - k)^2 = 0.
+\]
+Because \(P_0(x_0, y_0)\) lies on the circle, \((x_0 - h)^2 + (y_0 - k)^2 = r^2\). Moving those two squared terms to the right yields a clean, symmetric formula.
+
+[CALLOUT]
+id: tangent-at-point
+label: Formula
+title: Tangent line at a point on a circle
+tone: key
+
+The tangent line to the circle \((x - h)^2 + (y - k)^2 = r^2\) at a point \(P_0(x_0, y_0)\) on the circle is
+\[
+(x_0 - h)(x - h) + (y_0 - k)(y - k) = r^2.
+\]
+Notice the structural pattern: one copy of \((x - h)\) in \((x - h)^2\) is replaced by \((x_0 - h)\), and one copy of \((y - k)\) in \((y - k)^2\) is replaced by \((y_0 - k)\).
+[/CALLOUT]
+
+Second, suppose \(Q(x_1, y_1)\) lies strictly OUTSIDE the circle (\(CQ > r\)). Geometrically, there are always exactly TWO distinct tangent lines from \(Q\) to the circle. To find them, write a non-vertical line through \(Q\) with unknown slope \(m\):
+\[
+y - y_1 = m(x - x_1) \iff m x - y + (y_1 - m x_1) = 0,
+\]
+and enforce [REF: line-circle-criteria.2 | the tangency condition] \(d(C, L) = r\):
+\[
+\frac{\lvert m h - k + y_1 - m x_1 \rvert}{\sqrt{m^2 + 1}} = r.
+\]
+Squaring both sides usually produces a quadratic equation in \(m\) with two real roots. However, there is a critical edge case you must watch for!
+
+[CALLOUT]
+id: vertical-tangent-check
+label: Common pitfall
+title: Watching for a vertical tangent from an external point
+tone: caution
+
+Writing the line through \(Q(x_1, y_1)\) as \(y - y_1 = m(x - x_1)\) assumes the tangent is non-vertical. If one of the two tangents from \(Q\) happens to be the vertical line \(x = x_1\), the \(m^2\) terms cancel after squaring, leaving a linear equation with only ONE slope \(m\). Always check directly whether \(\lvert x_1 - h \rvert = r\): if so, \(x = x_1\) is one of the two tangent lines!
+[/CALLOUT]
+
+Watch this happen on a concrete example: find both tangents from \(Q(5, 7)\) to the circle \((x - 2)^2 + (y - 1)^2 = 9\) (center \(C(2, 1)\), radius \(r = 3\)).
+First check the vertical line \(x = 5\): its distance from \(C(2, 1)\) is \(\lvert 5 - 2 \rvert = 3 = r\), so \(x = 5\) is immediately one of the two tangents (touching at \((5, 1)\)).
+Now set up a non-vertical line \(m x - y + (7 - 5m) = 0\) and set \(d(C, L) = 3\):
+\[
+\frac{\lvert 2m - 1 + 7 - 5m \rvert}{\sqrt{m^2 + 1}} = 3 \implies \lvert 6 - 3m \rvert = 3\sqrt{m^2 + 1} \implies \lvert 2 - m \rvert = \sqrt{m^2 + 1}.
+\]
+Squaring gives \(4 - 4m + m^2 = m^2 + 1\), where \(m^2\) cancels as predicted, leaving \(-4m = -3\) and \(m = \frac{3}{4}\). Substituting \(m = \frac{3}{4}\) yields \(y - 7 = \frac{3}{4}(x - 5)\), or \(3x - 4y + 13 = 0\). Together, the two tangents from \(Q(5, 7)\) are \(x = 5\) and \(3x - 4y + 13 = 0\).
+
+[GRAPH]
+type: parametric2d
+title: Both tangents from \(Q(5, 7)\) to \((x - 2)^2 + (y - 1)^2 = 9\), including vertical tangent \(x = 5\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -2, 7.5
+yrange: -3, 8
+trace: 2 + 3*cos(t), 1 + 3*sin(t) | label: \((x - 2)^2 + (y - 1)^2 = 9\)
+segment: 5, -2.5, 5, 7.5 | label: \(x = 5\)
+segment: -1.6667, 2, 5.6667, 7.5 | label: \(3x - 4y + 13 = 0\)
+point: 2, 1 | label: \(C(2, 1)\)
+point: 5, 7 | label: \(Q(5, 7)\)
+point: 5, 1 | label: \(T_1(5, 1)\)
+point: 0.2, 3.4 | label: \(T_2\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: E]
+What are the equations of both tangent lines to the circle \((x + 1)^2 + (y - 2)^2 = 4\) that pass through the external point \(Q(1, 6)\)?
+
+(A) \(3x - 4y + 21 = 0\) only
+(B) \(x = 1\) and \(4x - 3y + 14 = 0\)
+(C) \(y = 6\) and \(3x - 4y + 21 = 0\)
+(D) \(x = 1\) and \(3x + 4y - 27 = 0\)
+(E) \(x = 1\) and \(3x - 4y + 21 = 0\)
+[/QUESTION]
+
+=== SECTION 4: Intersecting two circles via the radical line ===
+
+Suppose we want to find all intersection points of two distinct, non-concentric circles. Write both circles in normalized general form (so that \(x^2 + y^2\) has coefficient \(1\) in each equation):
+\[
+x^2 + y^2 + D_1 x + E_1 y + F_1 = 0, \qquad x^2 + y^2 + D_2 x + E_2 y + F_2 = 0.
+\]
+Subtracting the second equation from the first eliminates both quadratic terms \(x^2\) and \(y^2\) simultaneously, leaving a single linear equation:
+\[
+(D_1 - D_2)x + (E_1 - E_2)y + (F_1 - F_2) = 0.
+\]
+Because the circles are not concentric, \((D_1, E_1) \neq (D_2, E_2)\), so this equation genuinely defines a straight line—called the radical line (or the line of the common chord when the circles meet at two points). Any point lying on both circles must satisfy this linear equation. Substituting it back into either circle reduces the two-circle intersection to a standard line-circle intersection! (If the circles do not intersect, the radical line still exists geometrically, but substituting it into the first circle yields \(\Delta < 0\) with no real roots.)
+
+For example, intersect \(x^2 + y^2 = 25\) and \((x - 5)^2 + (y - 5)^2 = 25\). Expand the second circle to \(x^2 + y^2 - 10x - 10y + 25 = 0\), and subtract it from \(x^2 + y^2 - 25 = 0\):
+\[
+10x + 10y - 50 = 0 \implies x + y = 5 \implies y = 5 - x.
+\]
+Substitute \(y = 5 - x\) into \(x^2 + y^2 = 25\):
+\[
+x^2 + (5 - x)^2 = 25 \implies 2x^2 - 10x = 0 \implies 2x(x - 5) = 0,
+\]
+giving \(x = 0\) (so \(y = 5\)) and \(x = 5\) (so \(y = 0\)). The two circles intersect at \((0, 5)\) and \((5, 0)\).
+
+[QUESTION 4]
+[ANSWER: A]
+What are the intersection points of the two circles \(x^2 + y^2 = 10\) and \(x^2 + y^2 - 4x - 4y + 6 = 0\)?
+
+(A) \((1, 3)\) and \((3, 1)\)
+(B) \((1, -3)\) and \((3, -1)\)
+(C) \((2, \sqrt{6})\) and \((2, -\sqrt{6})\)
+(D) \((0, 4)\) and \((4, 0)\)
+(E) The two circles do not intersect
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+What is the equation of the tangent line to the circle \(x^2 + y^2 - 6x + 4y - 12 = 0\) at the point \(P_0(6, 2)\) on the circle?
+
+(A) \(3x - 4y - 10 = 0\)
+(B) \(4x - 3y - 18 = 0\)
+(C) \(3x + 4y - 26 = 0\)
+(D) \(6x + 2y - 40 = 0\)
+(E) \(3x + 4y + 26 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+From the external point \(Q(8, 3)\), a tangent segment \(QT\) is drawn touching the circle \((x - 2)^2 + (y + 5)^2 = 36\) at point \(T\). What is the length of segment \(QT\)?
+
+(A) \(4\)
+(B) \(6\)
+(C) \(10\)
+(D) \(8\)
+(E) \(2\sqrt{34}\)
+[/BONUS]

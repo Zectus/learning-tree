@@ -1,0 +1,228 @@
+=== SECTION 1: Velocity vectors, bearings, and moving media ===
+
+When an airplane flies through wind or a boat crosses a flowing river, the direction the nose points is usually NOT the direction the craft actually travels over the ground. A pilot pointing due North through an eastward crosswind gets carried diagonally northeast; a swimmer aiming straight across a fast stream lands far downstream. Velocity vectors let us predict both the true path and the exact steering correction needed to stay on course.
+
+A constant 2D velocity \(\mathbf{v}\) is a vector whose magnitude \(\|\mathbf{v}\|\) is speed (e.g., in \(\text{km/h}\) or \(\text{m/s}\)) and whose direction is the direction of travel. In planar navigation, we align East with the positive \(x\)-axis and North with the positive \(y\)-axis, and convert any three-figure compass bearing \(\beta\) (measured clockwise from due North) into its standard mathematical angle \(\theta\) (measured counterclockwise from due East) via
+\[
+\theta = 90^\circ - \beta \qquad (\text{adding } 360^\circ \text{ if needed so } \theta \in [0^\circ, 360^\circ)).
+\]
+Now model a craft moving inside a moving medium (air or water). Over one unit of time, the craft displaces by \(\mathbf{v}_{\mathrm{craft}}\) relative to the surrounding fluid, while the fluid itself carries the craft along by \(\mathbf{v}_{\mathrm{medium}}\) relative to the Earth. By head-to-tail vector addition, the craft's actual velocity over the Earth is the sum:
+\[
+\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{craft}} + \mathbf{v}_{\mathrm{medium}}.
+\]
+
+[CALLOUT]
+id: vel-comp
+label: Principle
+title: Velocity composition in a moving medium
+tone: key
+
+When a craft moves with velocity \(\mathbf{v}_{\mathrm{craft}}\) relative to a medium (air or water) that itself moves with velocity \(\mathbf{v}_{\mathrm{medium}}\) relative to the ground, the craft's true velocity over the ground is
+\[
+\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{craft}} + \mathbf{v}_{\mathrm{medium}}.
+\]
+
+(1) Heading and airspeed (or water-speed) describe \(\mathbf{v}_{\mathrm{craft}}\)—the direction the craft's nose points and its speed through the fluid.
+(2) Ground track (or true course) and ground speed describe \(\mathbf{v}_{\mathrm{ground}}\)—the actual direction and speed over the Earth.
+[/CALLOUT]
+
+[CALLOUT]
+id: wind-direction-trap
+label: Common pitfall
+title: Distinguish where a wind blows TOWARD from where it blows FROM
+tone: caution
+
+Always check the wording of a wind or current direction. A wind blowing toward East (bearing \(090^\circ\)) has velocity vector \(\langle +w, 0 \rangle\). In weather reports, however, a "west wind" or a wind "from \(270^\circ\)" means air coming FROM the West and therefore blowing TOWARD the East (\(\langle +w, 0 \rangle\)), \(180^\circ\) opposite to its source bearing. Never insert a "from" bearing directly into \(\mathbf{v}_{\mathrm{medium}}\) without reversing it by \(180^\circ\) first.
+[/CALLOUT]
+
+Let us work a forward navigation example. A light aircraft heads due North (bearing \(000^\circ\), standard angle \(90^\circ\)) at an airspeed of \(200\text{ km/h}\) while a steady wind of \(50\text{ km/h}\) blows toward bearing \(120^\circ\) (\(\text{S } 60^\circ \text{ E}\)). Find the aircraft's ground speed and true ground track.
+1. Convert the wind bearing \(120^\circ\) to standard angle \(\theta_w = 90^\circ - 120^\circ = -30^\circ \equiv 330^\circ\).
+2. Write both velocities in East–North component form:
+\[
+\mathbf{v}_{\mathrm{air}} = \langle 0,\; 200 \rangle\text{ km/h},
+\]
+\[
+\mathbf{v}_{\mathrm{wind}} = 50\langle \cos 330^\circ,\; \sin 330^\circ \rangle = \langle 25\sqrt{3},\; -25 \rangle\text{ km/h} \approx \langle 43.30,\; -25 \rangle\text{ km/h}.
+\]
+3. Add using [REF: vel-comp | velocity composition]:
+\[
+\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{air}} + \mathbf{v}_{\mathrm{wind}} = \langle 25\sqrt{3},\; 175 \rangle\text{ km/h} \approx \langle 43.30,\; 175 \rangle\text{ km/h}.
+\]
+4. Recover ground speed and track:
+\[
+\|\mathbf{v}_{\mathrm{ground}}\| = \sqrt{(25\sqrt{3})^2 + 175^2} = \sqrt{1875 + 30625} = \sqrt{32500} = 50\sqrt{13} \approx 180.3\text{ km/h}.
+\]
+Since both components are positive (Quadrant I), the standard angle is \(\theta_g = \arctan\left(\frac{175}{25\sqrt{3}}\right) = \arctan\left(\frac{7}{\sqrt{3}}\right) \approx 76.1^\circ\), which corresponds to compass bearing \(\beta_g = 90^\circ - 76.1^\circ = 013.9^\circ\) (\(\text{N } 13.9^\circ \text{ E}\)). Even though the pilot points straight North, the aircraft drifts \(13.9^\circ\) East of North and slows to \(180.3\text{ km/h}\) over the ground.
+
+[GRAPH]
+type: parametric2d
+title: Forward velocity composition: \(\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{air}} + \mathbf{v}_{\mathrm{wind}}\) (in km/h)
+xlabel: East
+ylabel: North
+trange: 0, 1
+xrange: -60, 145
+yrange: -15, 215
+trace: 43.3013*t, 175*t | label: \(\mathbf{v}_{\mathrm{ground}}\) | color: #16a34a
+segment: 0, 0, 0, 200 | label: \(\mathbf{v}_{\mathrm{air}}\) | color: #2563eb
+segment: 0, 200, 43.3013, 175 | label: \(\mathbf{v}_{\mathrm{wind}}\) | color: #dc2626
+segment: 0, 0, 43.3013, 0 | color: #94a3b8 | dashed: true
+segment: 43.3013, 0, 43.3013, 175 | color: #94a3b8 | dashed: true
+point: 0, 200 | label: \((0, 200)\)
+point: 43.3013, 175 | label: \((43.3, 175)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+A glider flies with an airspeed of \(40\text{ km/h}\) on a compass bearing of \(090^\circ\) (due East) while a wind blows at \(20\text{ km/h}\) toward compass bearing \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)). Taking East as the positive \(x\)-axis and North as the positive \(y\)-axis, what is the glider's ground velocity vector \(\mathbf{v}_{\mathrm{ground}}\) (in \(\text{km/h}\))?
+
+(A) \(\langle 40 + 10\sqrt{3},\; 10 \rangle\)
+(B) \(\langle 50,\; 10\sqrt{3} \rangle\)
+(C) \(\langle 30,\; -10\sqrt{3} \rangle\)
+(D) \(\langle 10,\; 40 + 10\sqrt{3} \rangle\)
+(E) \(\langle 50,\; -10\sqrt{3} \rangle\)
+[/QUESTION]
+
+=== SECTION 2: Drift correction and the impossibility threshold ===
+
+In real navigation, the problem usually runs in reverse: you know the true ground track you WANT to follow (say straight across a river to a dock directly opposite, or directly toward a destination airport) and you know your craft's speed \(v_c = \|\mathbf{v}_{\mathrm{craft}}\|\) and the wind or current \(\mathbf{v}_{\mathrm{medium}}\). Which heading angle must you steer into the crosswind or current so that the sideways drift cancels out completely?
+
+Let us work through a river-crossing setup. A ferry with water-speed \(v_b = 10\text{ km/h}\) wants to travel straight due North across a river whose current flows due East at speed \(v_r = 6\text{ km/h}\) (\(\mathbf{v}_{\mathrm{river}} = \langle 6, 0 \rangle\)). To prevent being swept East, the captain must angle the bow WEST of North by an unknown crab angle \(\phi \in (0^\circ, 90^\circ)\) (compass bearing \(360^\circ - \phi\), standard angle \(90^\circ + \phi\)). In components:
+\[
+\mathbf{v}_{\mathrm{boat}} = \langle -v_b\sin\phi,\; v_b\cos\phi \rangle, \qquad \mathbf{v}_{\mathrm{ground}} = \langle v_r - v_b\sin\phi,\; v_b\cos\phi \rangle.
+\]
+Following a true due-North ground track means TWO conditions must hold:
+1. Zero sideways (East–West) velocity: \(v_r - v_b\sin\phi = 0 \implies \sin\phi = \frac{v_r}{v_b}\).
+2. Positive forward (North) progress: \(v_{\mathrm{ground}} = v_b\cos\phi > 0\).
+
+Plugging in \(v_r = 6\) and \(v_b = 10\) gives \(\sin\phi = \frac{6}{10} = 0.6\), so \(\phi = \arcsin(0.6) \approx 36.9^\circ\) West of North—a compass heading of \(360^\circ - 36.9^\circ = 323.1^\circ\) (\(\text{N } 36.9^\circ \text{ W}\)). Using \(\cos\phi = \sqrt{1 - \sin^2\phi} = 0.8\), the resulting northward ground speed is
+\[
+v_{\mathrm{ground}} = v_b\cos\phi = \sqrt{v_b^2 - v_r^2} = \sqrt{10^2 - 6^2} = 8\text{ km/h}.
+\]
+Notice that the vectors \(\mathbf{v}_{\mathrm{boat}}\), \(\mathbf{v}_{\mathrm{river}}\), and \(\mathbf{v}_{\mathrm{ground}}\) form a right triangle whose HYPOTENUSE is the craft's own speed \(v_b\), not the ground speed!
+
+Now look closely at \(\sin\phi = \frac{v_r}{v_b}\). Because \(\sin\phi\) can never exceed \(1\), what happens if the cross-current speed \(v_r\) equals or exceeds the boat's maximum speed \(v_b\)?
+- If \(v_r = v_b\), then \(\sin\phi = 1 \implies \phi = 90^\circ\): the boat must aim straight West just to hold its position against the current, giving \(v_{\mathrm{ground}} = 0\) (no northward progress).
+- If \(v_r > v_b\), then \(\frac{v_r}{v_b} > 1\), so \(\sin\phi = \frac{v_r}{v_b}\) has NO real solution at all: even pointing straight upstream, the current overpowers the boat and sweeps it East.
+
+The same logic works for ANY desired ground track—not just due North! Resolve the wind or current into two components: \(w_\perp\) perpendicular to the desired track (the crosswind) and \(w_\parallel\) along the desired track (positive for a tailwind, negative for a headwind). To cancel \(w_\perp\), the craft must dedicate a perpendicular component \(-w_\perp\), which is possible only if \(|w_\perp| \le v_c\). What remains of the craft's speed for forward motion along the track is \(\sqrt{v_c^2 - w_\perp^2}\), so the forward ground speed along the desired track is
+\[
+v_{\mathrm{ground}} = \sqrt{v_c^2 - w_\perp^2} + w_\parallel,
+\]
+and positive progress along the intended track requires BOTH \(|w_\perp| \le v_c\) AND \(\sqrt{v_c^2 - w_\perp^2} + w_\parallel > 0\).
+
+[CALLOUT]
+id: drift-correction
+label: Method
+title: Inverse drift correction (crabbing into a crosswind or current)
+tone: key
+
+To steer a craft of speed \(v_c\) along a prescribed ground track in a medium with cross-track component \(w_\perp\) and along-track component \(w_\parallel\):
+
+(1) Cancel the cross-track component by choosing the crab angle \(\phi\) (into the crosswind/current) satisfying \(\sin\phi = \frac{|w_\perp|}{v_c}\).
+(2) The resulting ground speed along the desired track is \(v_{\mathrm{ground}} = v_c\cos\phi + w_\parallel = \sqrt{v_c^2 - w_\perp^2} + w_\parallel\).
+(3) Feasibility test: no forward solution exists if \(|w_\perp| > v_c\) or if \(\sqrt{v_c^2 - w_\perp^2} + w_\parallel \le 0\).
+[/CALLOUT]
+
+Drag slider \(c\) (the eastward river current speed, from \(0\) to \(9.5\text{ km/h}\)) in the plot below for our \(10\text{ km/h}\) ferry crossing straight North. The gray semicircle shows all headings available at speed \(10\text{ km/h}\); watch how a faster current forces a sharper upstream angle \(\phi\) and shrinks the green northward ground velocity \(\sqrt{100 - c^2}\) toward zero!
+
+[GRAPH]
+type: parametric2d
+title: Drift correction for a \(10\text{ km/h}\) boat crossing due North against an eastward current \(c\)
+xlabel: East
+ylabel: North
+trange: 0, 3.1416
+xrange: -11, 11
+yrange: -1, 11.5
+trace: 10*cos(t), 10*sin(t) | label: water-speed circle \(10\text{ km/h}\) | color: #cbd5e1
+segment: 0, 0, -c, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{boat}}\) | color: #2563eb
+segment: -c, sqrt(100 - c^2), 0, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{river}}\) | color: #dc2626
+segment: 0, 0, 0, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{ground}}\) | color: #16a34a
+point: -c, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{boat}}\)
+point: 0, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{ground}}\)
+slider: c | range: 0, 9.5 | init: 6 | step: 0.5
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: C]
+A kayaker can paddle at \(5\text{ km/h}\) in still water and wants to travel on a true ground track straight due North (bearing \(000^\circ\)). The river flows due West at \(2.5\text{ km/h}\). What compass heading must the kayaker steer, and what will be the kayaker's northward ground speed?
+
+(A) Bearing \(330^\circ\) (\(\text{N } 30^\circ \text{ W}\)), ground speed \(\frac{5\sqrt{3}}{2}\text{ km/h}\)
+(B) Bearing \(060^\circ\) (\(\text{N } 60^\circ \text{ E}\)), ground speed \(\frac{5\sqrt{3}}{2}\text{ km/h}\)
+(C) Bearing \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), ground speed \(\frac{5\sqrt{3}}{2}\text{ km/h}\)
+(D) Bearing \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), ground speed \(\frac{5\sqrt{5}}{2}\text{ km/h}\)
+(E) Bearing \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), ground speed \(2.5\text{ km/h}\)
+[/QUESTION]
+
+=== SECTION 3: Relative velocity between two moving objects ===
+
+So far we combined a craft's velocity with the velocity of its medium. Now ask a closely related question: suppose two independent objects \(A\) and \(B\) move with constant ground velocities \(\mathbf{v}_A\) and \(\mathbf{v}_B\). How fast and in what direction does \(A\) appear to move as seen by an observer riding on \(B\)?
+
+Let \(\mathbf{r}_A(0)\) and \(\mathbf{r}_B(0)\) be their starting position vectors. After elapsed time \(t > 0\), their positions are \(\mathbf{r}_A(t) = \mathbf{r}_A(0) + t\mathbf{v}_A\) and \(\mathbf{r}_B(t) = \mathbf{r}_B(0) + t\mathbf{v}_B\). The displacement vector pointing FROM observer \(B\) TO target \(A\) is
+\[
+\mathbf{r}_A(t) - \mathbf{r}_B(t) = \bigl(\mathbf{r}_A(0) - \mathbf{r}_B(0)\bigr) + t(\mathbf{v}_A - \mathbf{v}_B).
+\]
+Thus, per unit time, \(A\)'s position relative to \(B\) changes by the vector \(\mathbf{v}_A - \mathbf{v}_B\). We call this the relative velocity of \(A\) with respect to \(B\), written \(\mathbf{v}_{A/B}\):
+\[
+\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B.
+\]
+
+[CALLOUT]
+id: rel-vel
+label: Formula
+title: Relative velocity of \(A\) with respect to \(B\)
+tone: key
+
+If objects \(A\) and \(B\) move with velocities \(\mathbf{v}_A\) and \(\mathbf{v}_B\) relative to a common reference frame (such as the ground), then the velocity of \(A\) as observed by \(B\) is
+\[
+\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B.
+\]
+Reversing observer and target reverses the vector: \(\mathbf{v}_{B/A} = \mathbf{v}_B - \mathbf{v}_A = -\mathbf{v}_{A/B}\). Notice also how [REF: vel-comp | velocity composition] is simply the rearrangement \(\mathbf{v}_{A/\text{ground}} = \mathbf{v}_{A/\text{medium}} + \mathbf{v}_{\text{medium}/\text{ground}}\)!
+[/CALLOUT]
+
+Always check the subtraction order with a quick mental test: subtract the OBSERVER's velocity. If you drive East at \(60\text{ km/h}\) (\(\mathbf{v}_B = \langle 60, 0 \rangle\)) and a faster car overtakes you heading East at \(80\text{ km/h}\) (\(\mathbf{v}_A = \langle 80, 0 \rangle\)), it moves ahead of you at \(\mathbf{v}_{A/B} = \langle 80, 0 \rangle - \langle 60, 0 \rangle = \langle +20, 0 \rangle\text{ km/h}\), while a roadside sign (\(\mathbf{v}_S = \mathbf{0}\)) rushes past you toward the West at \(\mathbf{0} - \langle 60, 0 \rangle = \langle -60, 0 \rangle\text{ km/h}\).
+
+For a two-dimensional worked example, suppose Ship \(A\) sails due North at \(12\text{ km/h}\) (\(\mathbf{v}_A = \langle 0, 12 \rangle\)) while Ship \(B\) sails due East at \(16\text{ km/h}\) (\(\mathbf{v}_B = \langle 16, 0 \rangle\)). By [REF: rel-vel | the relative velocity formula], the velocity of Ship \(A\) as observed from Ship \(B\) is
+\[
+\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B = \langle 0, 12 \rangle - \langle 16, 0 \rangle = \langle -16, 12 \rangle\text{ km/h}.
+\]
+Its relative speed is \(\|\mathbf{v}_{A/B}\| = \sqrt{(-16)^2 + 12^2} = \sqrt{400} = 20\text{ km/h}\). Because \(-16 < 0\) and \(12 > 0\) (Quadrant II), its standard angle is \(\theta = \arctan\left(-\frac{12}{16}\right) + 180^\circ \approx -36.9^\circ + 180^\circ = 143.1^\circ\), which corresponds to compass bearing \(306.9^\circ\) (\(\text{N } 53.1^\circ \text{ W}\)). Conversely, from Ship \(A\)'s bridge, Ship \(B\) appears to move at \(\mathbf{v}_{B/A} = \langle 16, -12 \rangle\text{ km/h}\)—the same speed \(20\text{ km/h}\) on the opposite bearing \(126.9^\circ\) (\(\text{S } 53.1^\circ \text{ E}\)).
+
+[TABLE]
+Navigation task | Governing equation | What you are solving for
+Forward velocity composition | \(\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{craft}} + \mathbf{v}_{\mathrm{medium}}\) | Ground speed and true track from heading and wind/current
+Inverse drift correction | Cancel \(w_\perp\): \(\sin\phi = \frac{\lvert w_\perp \rvert}{v_c}\) | Required heading angle \(\phi\) and resulting ground speed along track
+Relative velocity (\(A\) seen by \(B\)) | \(\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B\) | Apparent velocity and speed of \(A\) from observer \(B\)'s frame
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: E]
+Cyclist \(A\) rides due South at \(15\text{ km/h}\), while Cyclist \(B\) rides due West at \(20\text{ km/h}\). Taking East as the positive \(x\)-axis and North as the positive \(y\)-axis, what are the relative velocity \(\mathbf{v}_{A/B}\) (of Cyclist \(A\) as observed by Cyclist \(B\)) and their relative speed?
+
+(A) \(\langle -20, 15 \rangle\text{ km/h}\), relative speed \(25\text{ km/h}\)
+(B) \(\langle -20, -15 \rangle\text{ km/h}\), relative speed \(25\text{ km/h}\)
+(C) \(\langle 20, 15 \rangle\text{ km/h}\), relative speed \(25\text{ km/h}\)
+(D) \(\langle 20, -15 \rangle\text{ km/h}\), relative speed \(35\text{ km/h}\)
+(E) \(\langle 20, -15 \rangle\text{ km/h}\), relative speed \(25\text{ km/h}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+A small drone has a maximum airspeed of \(30\text{ km/h}\) and must fly on a true ground track due North (bearing \(000^\circ\)) with positive northward ground speed. Taking East as \(+x\) and North as \(+y\), under which of the following wind vectors \(\mathbf{w}\) (in \(\text{km/h}\)) is it IMPOSSIBLE for the drone to achieve this?
+
+(A) \(\mathbf{w} = \langle -24,\; 35 \rangle\)
+(B) \(\mathbf{w} = \langle 18,\; -20 \rangle\)
+(C) \(\mathbf{w} = \langle 0,\; -29 \rangle\)
+(D) \(\mathbf{w} = \langle 18,\; -25 \rangle\)
+(E) \(\mathbf{w} = \langle -29,\; 10 \rangle\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A courier drone with airspeed \(50\text{ km/h}\) flies \(120\text{ km}\) due North and immediately returns \(120\text{ km}\) due South back to base. How does its total round-trip time in a steady \(30\text{ km/h}\) eastward crosswind compare with its total round-trip time in still air?
+
+(A) It stays \(4.8\text{ h}\) because the crosswind blows sideways rather than against the flight path
+(B) It increases from \(4.8\text{ h}\) to \(6.0\text{ h}\)
+(C) It decreases from \(4.8\text{ h}\) to \(4.0\text{ h}\)
+(D) It increases from \(4.8\text{ h}\) to \(7.5\text{ h}\)
+(E) It increases from \(4.8\text{ h}\) to \(5.4\text{ h}\)
+[/BONUS]

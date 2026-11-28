@@ -1,0 +1,239 @@
+=== SECTION 1: La lógica de la reducción al absurdo ===
+
+Considere el enunciado: "No existe un número entero máximo." Intente demostrarlo directamente como un condicional \(P \Rightarrow Q\): no hay una hipótesis obvia \(P\) que desglosar, y no puede inspeccionar cada entero uno por uno para comprobar que ninguno de ellos es el máximo. De manera similar, intente demostrar que \(\sqrt{2}\) es irracional: la definición de "irracional" es puramente negativa (\(\sqrt{2} \notin \mathbb{Q}\)), de modo que no hay ninguna fórmula algebraica que construir para un número irracional arbitrario.
+
+Cuando un enunciado afirma que algo NO existe, NO tiene cierta forma, o se cumple universalmente sin un punto de apoyo condicional conveniente, podemos invertir el problema: suponer que el enunciado es FALSO y mostrar que esta suposición fuerza un choque imposible con una verdad conocida o con nuestras propias hipótesis. Este método es la demostración por contradicción (también llamada reducción al absurdo).
+
+¿Por qué es lógicamente válida? Recuerde de la lógica proposicional que una contradicción es una proposición compuesta de la forma \(R \wedge \neg R\), la cual es falsa bajo toda asignación de valores de verdad. Para cualquier enunciado \(S\), la implicación \((\neg S) \Rightarrow (R \wedge \neg R)\) puede ser verdadera ÚNICAMENTE si \(\neg S\) es falso, porque si \(\neg S\) fuera verdadero, una premisa verdadera implicaría una conclusión falsa. Por lo tanto, \(\neg S\) debe ser falso, lo que por doble negación significa que \(S\) es verdadero.
+
+¿Y qué ocurre si \(S\) es en sí mismo un enunciado condicional \(P \Rightarrow Q\)? Recuerde la ley de negación \(\neg(P \Rightarrow Q) \equiv P \wedge \neg Q\). Para demostrar \(P \Rightarrow Q\) por contradicción, usted NO supone \(\neg P \Rightarrow \neg Q\); supone TANTO \(P\) COMO \(\neg Q\), y deduce una contradicción \(R \wedge \neg R\).
+
+[CALLOUT]
+id: template-contradiction
+label: Método
+title: Demostración por contradicción
+tone: key
+
+(1) Para un enunciado general \(S\): anuncie la estrategia ("Supongamos por contradicción que \(\neg S\)"), simplifique \(\neg S\) con precisión usando las leyes de De Morgan y la negación de cuantificadores, deduzca una contradicción explícita \(R \wedge \neg R\) y concluya \(S\).
+(2) Para un condicional universal \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\): fije un \(x \in D\) arbitrario, suponga TANTO \(P(x)\) como \(\neg Q(x)\), deduzca una contradicción \(R \wedge \neg R\) y concluya \(P(x) \Rightarrow Q(x)\) para todo \(x \in D\).
+(3) Nombre siempre de manera explícita la contradicción exacta \(R \wedge \neg R\) antes de cerrar la demostración.
+[/CALLOUT]
+
+Observe cómo [REF: template-contradiction.1 | la plantilla general de contradicción] resuelve nuestra afirmación inicial en tres líneas. Para demostrar "No existe un entero máximo" — simbólicamente \(\neg(\exists M \in \mathbb{Z},\, \forall n \in \mathbb{Z},\, n \le M)\) — suponemos su negación: existe un entero \(M \in \mathbb{Z}\) tal que \(n \le M\) para todo \(n \in \mathbb{Z}\). Tomemos \(n = M + 1\). Como \(M \in \mathbb{Z}\), tenemos \(M + 1 \in \mathbb{Z}\), de modo que por hipótesis \(M + 1 \le M\), lo cual da \(1 \le 0\). Esto contradice el hecho verdadero \(1 > 0\). Por lo tanto, no existe un entero máximo.
+
+Ahora observe cómo funciona [REF: template-contradiction.2 | la plantilla de contradicción condicional] en un enunciado que combina números racionales e irracionales: "Para todo \(r \in \mathbb{Q}\) y todo \(x \in \mathbb{R}\), si \(x\) es irracional, entonces \(r + x\) es irracional."
+- Fije \(r \in \mathbb{Q}\) y \(x \in \mathbb{R}\) arbitrarios.
+- Suponga por contradicción que \(x\) es irracional Y que \(r + x\) es racional.
+- Dado que \(r + x \in \mathbb{Q}\) y \(r \in \mathbb{Q}\), y que \(\mathbb{Q}\) es cerrado bajo la resta (por lo que \((r + x) - r \in \mathbb{Q}\)), se deduce que \(x = (r + x) - r\) es racional.
+- Esto contradice nuestra suposición de que \(x\) es irracional (el choque explícito es "\(x \in \mathbb{Q}\) y \(x \notin \mathbb{Q}\)").
+- Por consiguiente, \(r + x\) debe ser irracional.
+
+[QUESTION 1]
+[ANSWER: C]
+Para demostrar por contradicción el enunciado "Para todo número real \(x > 0\), si \(x\) es irracional, entonces \(\sqrt{x}\) es irracional", ¿cuál debe ser la suposición inicial?
+
+(A) Suponer que existe \(x > 0\) tal que \(x\) es racional y \(\sqrt{x}\) es irracional.
+(B) Suponer que para todo \(x > 0\), si \(x\) es racional, entonces \(\sqrt{x}\) es racional.
+(C) Fijar un \(x > 0\) arbitrario y suponer que \(x\) es irracional y \(\sqrt{x}\) es racional.
+(D) Fijar un \(x > 0\) arbitrario y suponer que \(x\) es irracional o \(\sqrt{x}\) es racional.
+(E) Suponer que para todo \(x > 0\), \(x\) es irracional y \(\sqrt{x}\) es racional.
+[/QUESTION]
+
+=== SECTION 2: Irracionalidad de \(\sqrt{2}\) y demostraciones de no existencia ===
+
+Una de las demostraciones más célebres de toda la matemática establece que \(\sqrt{2}\) es irracional. ¿Por qué la contradicción resulta casi inevitable aquí? Porque los números racionales vienen provistos de una fórmula concreta — un cociente de enteros \(a/b\) — mientras que los números irracionales se definen únicamente por la ausencia de tal cociente. Suponer \(\sqrt{2} \in \mathbb{Q}\) nos entrega de inmediato ecuaciones entre enteros para manipular.
+
+Para mantener nuestra demostración completamente autocontenida sin importar la inducción ni toda la teoría de números, aportamos explícitamente un hecho aritmético estándar sobre fracciones: todo número racional \(q \in \mathbb{Q}\) puede escribirse en forma irreducible como \(q = \frac{a}{b}\) con \(a, b \in \mathbb{Z}\), \(b \ne 0\), donde \(a\) y \(b\) NO son ambos pares (de lo contrario, dividimos el numerador y el denominador repetidamente entre \(2\) hasta que al menos uno sea impar). También reutilizamos el lema demostrado en nuestra lección sobre contraposición: para todo entero \(n \in \mathbb{Z}\), si \(n^2\) es par, entonces \(n\) es par.
+
+[CALLOUT]
+id: proof-sqrt2-irrational
+label: Demostración
+title: Teorema: \(\sqrt{2}\) es irracional
+tone: note
+
+Demostración: Supongamos por contradicción que \(\sqrt{2}\) es racional. Por la representación en forma irreducible de los números racionales, existen enteros \(a, b \in \mathbb{Z}\) con \(b \ne 0\) tales que
+\[
+\sqrt{2} = \frac{a}{b},
+\]
+y \(a\) y \(b\) no son ambos pares.
+
+Elevando ambos lados al cuadrado y despejando el denominador se obtiene
+\[
+2 = \frac{a^2}{b^2} \implies a^2 = 2b^2.
+\]
+Como \(b^2 \in \mathbb{Z}\), la ecuación \(a^2 = 2b^2\) muestra que \(a^2\) es par. Por nuestro teorema anterior por contraposición, \(a\) debe ser par, de modo que existe un entero \(k \in \mathbb{Z}\) tal que \(a = 2k\).
+
+Sustituyendo \(a = 2k\) en \(a^2 = 2b^2\) se obtiene
+\[
+(2k)^2 = 2b^2 \implies 4k^2 = 2b^2 \implies b^2 = 2k^2.
+\]
+Como \(k^2 \in \mathbb{Z}\), \(b^2\) es par, lo cual nuevamente implica que \(b\) es par.
+
+Así, tanto \(a\) como \(b\) son pares. Esto contradice nuestra suposición de que \(a\) y \(b\) no son ambos pares. Por lo tanto, \(\sqrt{2}\) es irracional.
+[/CALLOUT]
+
+Observe con atención el motor exacto dentro de [REF: proof-sqrt2-irrational | la demostración de que \(\sqrt{2}\) es irracional]. El choque \(R \wedge \neg R\) es:
+- \(R\): \(a\) y \(b\) son ambos pares (deducido de \(a^2 = 2b^2\)),
+- \(\neg R\): \(a\) y \(b\) NO son ambos pares (asegurado al inicio al escribir la fracción en forma irreducible).
+Sin el paso de la forma irreducible, encontrar que \(a\) y \(b\) son pares no produciría NINGUNA contradicción en absoluto.
+
+La contradicción es igualmente incisiva para afirmaciones de no existencia con cuantificadores anidados. Considere el enunciado:
+"No existe un número racional positivo mínimo."
+Sea \(\mathbb{Q}^+ = \{q \in \mathbb{Q} : q > 0\}\) el conjunto de los números racionales positivos. En símbolos, el teorema afirma:
+\[
+\neg\bigl(\exists r \in \mathbb{Q}^+,\, \forall q \in \mathbb{Q}^+,\, r \le q\bigr).
+\]
+Observe con qué limpieza la negación prepara la demostración por contradicción.
+
+[CALLOUT]
+id: proof-no-smallest-rational
+label: Demostración
+title: Teorema: No existe un número racional positivo mínimo
+tone: note
+
+Demostración: Supongamos por contradicción que existe un número racional positivo mínimo; es decir, existe \(r \in \mathbb{Q}^+\) tal que \(r \le q\) para todo \(q \in \mathbb{Q}^+\).
+
+Definamos \(q_0 = \frac{r}{2}\). Como \(r\) es racional y \(2\) es un entero distinto de cero, \(q_0 = \frac{r}{2}\) es racional. Además, como \(r > 0\), dividir entre \(2 > 0\) da \(0 < \frac{r}{2} < r\). Así pues, \(q_0 \in \mathbb{Q}^+\), de modo que por nuestra suposición sobre \(r\) debemos tener \(r \le q_0 = \frac{r}{2}\).
+
+Sin embargo, acabamos de mostrar que \(\frac{r}{2} < r\), lo cual contradice \(r \le \frac{r}{2}\). Por lo tanto, no existe ningún número racional positivo mínimo.
+[/CALLOUT]
+
+Note un paso de verificación crucial dentro de [REF: proof-no-smallest-rational | esa demostración]: antes de aplicar la suposición universal \(\forall q \in \mathbb{Q}^+,\, r \le q\) a \(q_0 = \frac{r}{2}\), comprobamos explícitamente TANTO que \(q_0 \in \mathbb{Q}\) COMO que \(q_0 > 0\). Si hubiéramos intentado la misma jugada con los ENTEROS positivos \(\mathbb{Z}^+\), fijar \(q_0 = r/2\) fallaría en la pertenencia al dominio siempre que \(r\) fuera impar (para \(r = 1\), \(1/2 \notin \mathbb{Z}^+\)), razón por la cual \(\mathbb{Z}^+\) SÍ tiene un elemento mínimo mientras que \(\mathbb{Q}^+\) no.
+
+[QUESTION 2]
+[ANSWER: D]
+Suponga que imitamos la demostración de que \(\sqrt{2}\) es irracional para comprobar si \(\sqrt{4}\) es irracional: suponemos \(\sqrt{4} = \frac{a}{b}\) en forma irreducible (de modo que \(a\) y \(b\) no comparten ningún factor común mayor que \(1\)), elevamos al cuadrado para obtener \(a^2 = 4b^2\) y deducimos que \(a\) es par, digamos \(a = 2k\). ¿Por qué la supuesta contradicción NO logra demostrar que \(\sqrt{4}\) es irracional?
+
+(A) Porque \(\sqrt{4}\) no es un número real, de modo que elevar al cuadrado \(\sqrt{4} = \frac{a}{b}\) no es válido.
+(B) Porque \(a^2 = 4b^2\) no implica que \(a\) sea par.
+(C) Porque la representación en forma irreducible se aplica únicamente a fracciones con denominadores impares.
+(D) Al sustituir \(a = 2k\) se obtiene \(4k^2 = 4b^2\), lo que se simplifica a \(b^2 = k^2\), sin dejar ninguna razón para que \(b\) sea par (de hecho, \(a = 2, b = 1\) la satisface sin contradicción).
+(E) Porque \(4\) es compuesto, y la demostración por contradicción no puede aplicarse a \(\sqrt{n}\) para ningún entero compuesto \(n\).
+[/QUESTION]
+
+=== SECTION 3: La demostración de Euclides de la infinitud de los números primos ===
+
+Recuerde que un entero \(p > 1\) es primo si sus únicos divisores positivos son \(1\) y \(p\). Listar los primeros primos — \(2, 3, 5, 7, 11, 13, 17, 19, \dots\) — sugiere que nunca se agotan, aunque las brechas entre primos consecutivos puedan crecer arbitrariamente. ¿Cómo podemos demostrar que la lista de primos es infinita?
+
+Intentar escribir una única fórmula algebraica que genere directamente infinitos primos es notoriamente difícil. En su lugar, Euclides (alrededor del 300 a. e. c.) invirtió la afirmación mediante contradicción: suponer que hay solo una cantidad FINITA de primos, reunirlos TODOS en una lista finita \(p_1, p_2, \dots, p_k\) y construir un único entero \(N > 1\) que ninguno de esos primos pueda dividir.
+
+Para mantener nuestro argumento autocontenido sin necesitar inducción ni la factorización única completa, aportamos explícitamente un hecho básico de divisibilidad: todo entero \(N > 1\) tiene al menos un divisor primo. (Intuitivamente, el menor divisor de \(N\) mayor que \(1\) no puede factorizarse más, por lo que es primo.)
+
+[CALLOUT]
+id: proof-euclid-primes
+label: Demostración
+title: Teorema (Euclides): Existen infinitos números primos
+tone: note
+
+Demostración: Supongamos por contradicción que existen solo una cantidad finita de números primos. Enumerémoslos todos como \(p_1, p_2, \dots, p_k\) (note que \(k \ge 1\), pues \(2\) es primo).
+
+Formemos el entero
+\[
+N = p_1 p_2 \cdots p_k + 1.
+\]
+Como \(p_1 \ge 2\) y todo primo es positivo, tenemos \(N \ge 2 + 1 = 3 > 1\). Por el hecho de divisibilidad aportado, \(N\) tiene al menos un divisor primo \(q\).
+
+Puesto que se supone que \(p_1, p_2, \dots, p_k\) es la lista completa de TODOS los primos, \(q\) debe ser igual a \(p_j\) para algún índice \(j \in \{1, 2, \dots, k\}\). Por lo tanto, \(q\) divide al producto \(p_1 p_2 \cdots p_k\). Como \(q\) también divide a \(N = p_1 p_2 \cdots p_k + 1\), debe dividir a su diferencia:
+\[
+q \mid \bigl(N - p_1 p_2 \cdots p_k\bigr) \implies q \mid 1.
+\]
+Sin embargo, todo primo satisface \(q \ge 2\), de modo que \(q\) no puede dividir a \(1\) (el único divisor positivo de \(1\) es \(1\)). Esto produce la contradicción \(q \mid 1\) y \(q \nmid 1\). Por consiguiente, existen infinitos números primos.
+[/CALLOUT]
+
+Cuidado con la interpretación errónea más común de [REF: proof-euclid-primes | la demostración de Euclides]: con frecuencia los estudiantes afirman que \(N = p_1 p_2 \cdots p_k + 1\) DEBE SER PRIMO EN SÍ MISMO. ¡Eso es FALSO! Por ejemplo, multiplicar los primeros seis primos y sumar \(1\) produce
+\[
+2 \cdot 3 \cdot 5 \cdot 7 \cdot 11 \cdot 13 + 1 = 30031 = 59 \cdot 509,
+\]
+¡que es compuesto! La demostración de Euclides NO afirma que \(N\) sea primo; únicamente usa el hecho de que \(N > 1\) tiene ALGÚN divisor primo \(q\) y muestra que \(q\) no puede figurar entre \(p_1, \dots, p_k\). En el ejemplo anterior, los divisores primos \(59\) y \(509\) están en efecto ambos ausentes de \(\{2, 3, 5, 7, 11, 13\}\).
+
+[QUESTION 3]
+[ANSWER: B]
+En la demostración de Euclides de la infinitud de los primos, después de suponer que \(p_1, p_2, \dots, p_k\) son todos los primos y definir \(N = p_1 p_2 \cdots p_k + 1\), ¿qué enunciado describe con precisión el paso lógico que genera la contradicción?
+
+(A) Como \(N\) es mayor que cada \(p_j\), \(N\) mismo debe ser primo, lo que contradice la suposición de que \(p_k\) es el mayor primo.
+(B) Como \(N > 1\), \(N\) tiene algún divisor primo \(q\); suponer que \(q\) está en la lista obliga a que \(q \mid (p_1 \cdots p_k)\) y \(q \mid N\), y por tanto \(q \mid 1\), lo cual es imposible para un primo \(q \ge 2\).
+(C) Como \(N\) es impar, \(2\) no puede dividir a \(N\), lo que contradice el hecho de que \(2\) está en la lista de primos.
+(D) Como \(N\) no es divisible por \(p_1\), \(N\) no tiene ningún divisor primo, lo que contradice la suposición de que todo entero tiene un divisor primo.
+(E) Como \(p_1 p_2 \cdots p_k\) es par y \(N\) es impar, \(N\) debe ser igual a un primo negativo, lo que contradice \(q > 1\).
+[/QUESTION]
+
+=== SECTION 4: Higiene demostrativa: contraposición disfrazada y falsas contradicciones ===
+
+La demostración por contradicción es tan flexible que los principiantes suelen recurrir a ella en TODOS los teoremas. Ese hábito genera dos problemas: argumentos recargados ("contraposición disfrazada") y argumentos francamente inválidos ("falsas contradicciones").
+
+Primero, compare nuestros tres métodos centrales de demostración para un condicional \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\):
+
+[TABLE]
+Método | Suposiciones iniciales | Meta objetivo | Mejor aplicación
+Demostración directa | Suponer \(P(x)\) | Deducir \(Q(x)\) | \(P(x)\) da fórmulas algebraicas concretas que conducen directamente a \(Q(x)\)
+Contraposición | Suponer \(\neg Q(x)\) | Deducir \(\neg P(x)\) | \(Q(x)\) es negativo o disyuntivo, o \(P(x)\) envuelve a \(x\) dentro de una expresión compuesta
+Contradicción | Suponer \(P(x)\) y \(\neg Q(x)\) | Deducir cualquier \(R \wedge \neg R\) explícito | Tanto \(P(x)\) como \(\neg Q(x)\) deben interactuar para chocar, o el teorema no es un condicional
+[/TABLE]
+
+Ahora examine de cerca qué ocurre cuando alguien escribe una demostración por "contraposición disfrazada". Suponga que un estudiante quiere demostrar: "Para todo \(n \in \mathbb{Z}\), si \(n^2\) es par, entonces \(n\) es par", y escribe:
+"Supongamos por contradicción que \(n^2\) es par Y \(n\) es impar. Como \(n\) es impar, \(n = 2k + 1\), de modo que \(n^2 = 2(2k^2 + 2k) + 1\) es impar. Esto contradice nuestra suposición de que \(n^2\) es par. Por lo tanto, \(n\) es par."
+
+¿Es esto lógicamente válido? SÍ: alcanza genuinamente la contradicción "\(n^2\) es impar y \(n^2\) es par". Sin embargo, observe cómo se usó la hipótesis "\(n^2\) es par": permaneció completamente intacta en el estante mientras \(\neg Q\) ("\(n\) es impar") produjo directamente \(\neg P\) ("\(n^2\) es impar"). Esa demostración es simplemente una demostración por contraposición envuelta en maquinaria de contradicción innecesaria. Siempre que su demostración suponga \(P\) y \(\neg Q\), nunca utilice \(P\) durante el álgebra y solo baje \(P\) del estante en la última línea para hacerlo chocar con \(\neg P\), reescríbala directamente como una demostración por contraposición. Las verdaderas demostraciones por contradicción combinan genuinamente TANTO \(P\) COMO \(\neg Q\) (o niegan un enunciado no condicional) para colisionar sobre algún tercer hecho \(R\).
+
+Un error mucho más peligroso es una FALSA contradicción: deducir una contradicción no a partir de \(\neg S\), sino a partir de una suposición adicional no justificada introducida subrepticiamente junto con \(\neg S\).
+
+[CALLOUT]
+id: caution-contradiction-hygiene
+label: Precaución
+title: Tres controles de higiene para demostraciones por contradicción
+tone: caution
+
+(1) Verifique con cuidado la negación \(\neg S\): para \(P \Rightarrow Q\), \(\neg(P \Rightarrow Q)\) es \(P \wedge \neg Q\); para \(\forall x,\, P(x)\), es \(\exists x,\, \neg P(x)\); para \(\exists x,\, P(x)\), es \(\forall x,\, \neg P(x)\).
+(2) Audite toda suposición adicional: si usted supone \(\neg S\) Y una condición adicional no demostrada \(E\) (por ejemplo, suponer que un número racional \(x\) es entero, o suponer que dos testigos son iguales), entonces deducir \(R \wedge \neg R\) solo demuestra \(\neg(\neg S \wedge E)\), ¡NO \(S\)!
+(3) Evite la contraposición disfrazada: al demostrar \(P \Rightarrow Q\), si \(P\) no se usa nunca hasta que la línea final contradice \(\neg P\), elimine el envoltorio de contradicción y enúnciela limpiamente como una demostración por contraposición.
+[/CALLOUT]
+
+Observe un ejemplo concreto de [REF: caution-contradiction-hygiene.2 | introducir subrepticiamente una suposición adicional no justificada]. Suponga que alguien intenta "demostrar" el enunciado FALSO "No existe ningún número racional \(x\) con \(x^2 = \frac{9}{4}\)" de la siguiente manera:
+"Supongamos por contradicción que \(x \in \mathbb{Q}\) satisface \(x^2 = \frac{9}{4}\). Escribamos \(x\) como un entero \(x = k \in \mathbb{Z}\). Entonces \(4k^2 = 9\), de modo que el lado izquierdo es par mientras que el derecho es impar: ¡contradicción! Por lo tanto, no existe tal racional \(x\)."
+La contradicción \(4k^2 = 9\) es real, pero solo refutó la suposición adicional ilícita \(x \in \mathbb{Z}\); nunca refutó \(x \in \mathbb{Q}\) (de hecho, \(x = \frac{3}{2}\) satisface \(x^2 = \frac{9}{4}\)). Toda propiedad que atribuya a un objeto supuesto debe estar lógicamente forzada por \(\neg S\) o por un teorema válido (como la reducción a forma irreducible para fracciones).
+
+[QUESTION 4]
+[ANSWER: A]
+Considere el teorema: "Para todos \(a, b \in \mathbb{Z}\), si \(a + b\) es impar, entonces \(a\) es impar o \(b\) es impar." Un estudiante escribe:
+"Supongamos por contradicción que \(a + b\) es impar, mientras que \(a\) es par y \(b\) es par. Escribamos \(a = 2k\) y \(b = 2m\) con \(k, m \in \mathbb{Z}\). Entonces \(a + b = 2(k + m)\), que es par, lo cual contradice que \(a + b\) es impar."
+¿Qué evaluación de esta demostración es la más precisa?
+
+(A) Es lógicamente válida, pero es una demostración por contraposición disfrazada porque la hipótesis "\(a + b\) es impar" nunca se utiliza hasta que choca con la negación deducida "\(a + b\) es par".
+(B) Es lógicamente inválida porque olvidó escribir \(a\) y \(b\) en forma irreducible.
+(C) Es lógicamente inválida porque suponer "\(a\) es par y \(b\) es par" no es la negación de "\(a\) es impar o \(b\) es impar".
+(D) Es lógicamente inválida porque introdujo subrepticiamente una suposición adicional no justificada al elegir dos letras distintas \(k\) y \(m\).
+(E) Es una demostración por contradicción genuinamente esencial que no puede reescribirse como una demostración por contraposición.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suponga que queremos demostrar por contradicción que no existen enteros \(m, n \in \mathbb{Z}\) tales que \(6m + 15n = 2\). ¿Qué argumento entrega una contradicción válida?
+
+(A) Suponga \(m = 1\) y \(n = 0\); entonces \(6(1) + 15(0) = 6 \ne 2\), contradicción.
+(B) Suponga \(6m + 15n \ne 2\) para algunos \(m, n \in \mathbb{Z}\); tomando \(m = n = 0\) se obtiene \(0 \ne 2\), contradicción.
+(C) Suponga \(6m + 15n = 2\) con \(m, n \in \mathbb{Z}\) y suponga \(m = n\); entonces \(21m = 2\), que no tiene solución entera, contradicción.
+(D) Suponga \(6m + 15n = 2\) con \(m, n \in \mathbb{Z}\); dividiendo entre \(2\) se obtiene \(3m + \frac{15}{2}n = 1\), así que \(n\) no puede ser \(1\), contradicción.
+(E) Suponga que existen \(m, n \in \mathbb{Z}\) con \(6m + 15n = 2\). Factorizando el lado izquierdo se obtiene \(3(2m + 5n) = 2\), lo cual implica \(3 \mid 2\) (ya que \(2m + 5n \in \mathbb{Z}\)), contradiciendo \(3 \nmid 2\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Usando el hecho conocido de que \(\sqrt{2}\) es irracional, considere demostrar por contradicción que \(\sqrt{2} + \sqrt{3}\) es irracional. Si suponemos \(\sqrt{2} + \sqrt{3} = r\) para algún \(r \in \mathbb{Q}\), ¿qué único paso algebraico aísla limpiamente una contradicción con la irracionalidad de \(\sqrt{2}\) (o de \(\sqrt{3}\))?
+
+(A) Elevar ambos lados al cubo para obtener \(2\sqrt{2} + 3\sqrt{3} = r^3\), contradiciendo \(r^3 \in \mathbb{Q}\).
+(B) Notar que \(r > 0\), elevar ambos lados al cuadrado para obtener \(5 + 2\sqrt{6} = r^2\), o mejor aislar \(\sqrt{3} = r - \sqrt{2}\) y elevar al cuadrado para obtener \(3 = r^2 - 2r\sqrt{2} + 2\), de donde \(\sqrt{2} = \frac{r^2 - 1}{2r} \in \mathbb{Q}\), contradiciendo \(\sqrt{2} \notin \mathbb{Q}\).
+(C) Restar \(\sqrt{2}\) de ambos lados para obtener \(\sqrt{3} = r - \sqrt{2}\), lo que inmediatamente fuerza \(r = 0\) porque \(\sqrt{2} \ne \sqrt{3}\).
+(D) Escribir \(r = \frac{a}{b}\) en forma irreducible y concluir que \(a\) y \(b\) deben ser ambos divisibles entre \(6\).
+(E) Multiplicar ambos lados por \(\sqrt{2} - \sqrt{3}\) para obtener \(-1 = r(\sqrt{2} - \sqrt{3})\), lo cual ya contradice \(r > 0\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Considere el enunciado: "No existe ningún número real \(x \in \mathbb{R}\) tal que \(x^2 + 1 = 0\)." Ahora considere un enunciado diferente: "Para todo número real \(x > 0\), existe \(y \in \mathbb{R}\) tal que \(0 < y < x\)." Suponga que un estudiante intenta demostrar el SEGUNDO enunciado por contradicción. ¿Cuál es la negación exacta que debe suponer?
+
+(A) Para todo \(x > 0\) y todo \(y \in \mathbb{R}\), \(y \le 0\) o \(y \ge x\).
+(B) Existen \(x > 0\) y \(y \in \mathbb{R}\) tales que \(y \le 0\) o \(y \ge x\).
+(C) Existe \(x > 0\) tal que para todo \(y \in \mathbb{R}\), o bien \(y \le 0\) o bien \(y \ge x\).
+(D) Existe \(x \le 0\) tal que para todo \(y \in \mathbb{R}\), \(0 < y < x\).
+(E) Para todo \(x > 0\), existe \(y \in \mathbb{R}\) tal que \(y \le 0\) y \(y \ge x\).
+[/BONUS]

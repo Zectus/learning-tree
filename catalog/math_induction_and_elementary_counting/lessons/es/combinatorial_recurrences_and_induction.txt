@@ -1,0 +1,214 @@
+=== SECTION 1: Descomposición combinatoria — convertir problemas de conteo en recurrencias ===
+
+Cuando un problema de conteo crece con un parámetro de tamaño \(n\), las fórmulas cerradas directas suelen ser difíciles de detectar de inmediato —pero las configuraciones de tamaño \(n\) a menudo se descomponen limpiamente en copias menores exactamente del mismo problema. La estrategia es la descomposición combinatoria: particiona el conjunto \(S_n\) de todas las configuraciones válidas de tamaño \(n\) en casos disjuntos dos a dos según un rasgo frontera fijo —como el último símbolo de una cadena, la ficha más a la derecha de un tablero o el bloque que contiene al elemento mayor— y expresa cada caso en términos de conteos anteriores \(a_{n - 1}, a_{n - 2}, \dots\).
+
+Toda recurrencia combinatoria válida necesita DOS partes igualmente importantes:
+1. Una relación de recurrencia que exprese \(a_n\) en términos de términos anteriores para todo \(n \ge n_0\), justificada mediante una partición disjunta de \(S_n\).
+2. Suficientes condiciones iniciales exactas (valores base) para arrancar la recurrencia de forma única —si la recurrencia mira \(r\) pasos atrás (usando \(a_{n - 1}, \dots, a_{n - r}\)), debes determinar \(r\) valores iniciales consecutivos directamente a mano.
+
+Construyamos tres recurrencias clásicas aplicando esta disciplina de descomposición.
+
+Ejemplo 1 (Cadenas binarias que evitan \(11\)): Sea \(a_n\) el número de cadenas binarias de longitud \(n\) sobre \(\{0, 1\}\) que NO contienen dos \(1\) consecutivos.
+Para \(n \ge 3\), particiona toda cadena válida de longitud \(n\) según su ÚLTIMO bit:
+- Termina en \(0\): los \(n - 1\) bits precedentes pueden ser CUALQUIER cadena válida de longitud \(n - 1\) que evite \(11\) (pues añadir \(0\) nunca puede crear \(11\)). Esto aporta \(a_{n - 1}\) cadenas.
+- Termina en \(1\): como \(11\) está prohibido, el penúltimo bit DEBE ser \(0\), de modo que la cadena termina en \(01\). Los \(n - 2\) bits precedentes pueden ser CUALQUIER cadena válida de longitud \(n - 2\) que evite \(11\). Esto aporta \(a_{n - 2}\) cadenas.
+
+Como estos dos casos son disjuntos y exhaustivos, \(a_n = a_{n - 1} + a_{n - 2}\) para todo \(n \ge 3\). Comprueba directamente los dos valores iniciales: para \(n = 1\), las cadenas válidas son \(0, 1\), así que \(a_1 = 2\); para \(n = 2\), las cadenas válidas son \(00, 01, 10\), así que \(a_2 = 3\). (Por convención \(a_0 = 1\) para la cadena vacía, y en efecto \(a_2 = a_1 + a_0 = 2 + 1 = 3\).) Así, \(a_n\) sigue la recurrencia de Fibonacci desplazada dos índices: \(a_n = F_{n + 2}\) (donde \(F_1 = 1, F_2 = 1, F_3 = 2, F_4 = 3, \dots\)).
+
+Ejemplo 2 (Recubrimientos con dominós de una tira \(2 \times n\)): Sea \(t_n\) el número de maneras de cubrir por completo un rectángulo \(2 \times n\) usando dominós \(1 \times 2\) colocados vertical u horizontalmente. Observa la columna más a la derecha de la tira \(2 \times n\) (para \(n \ge 3\)):
+- Cubierta por un dominó vertical: quitarlo deja un recubrimiento arbitrario de la tira restante \(2 \times (n - 1)\) (\(t_{n - 1}\) maneras).
+- Cubierta por un dominó horizontal: un único dominó horizontal cubre solo una celda de la columna \(n\), forzando un segundo dominó horizontal justo a su lado para llenar el resto de las columnas \(n - 1\) y \(n\). Quitar ambos dominós horizontales apilados deja un recubrimiento arbitrario de la tira restante \(2 \times (n - 2)\) (\(t_{n - 2}\) maneras).
+
+Por tanto, \(t_n = t_{n - 1} + t_{n - 2}\) para \(n \ge 3\), con \(t_1 = 1\) (un dominó vertical) y \(t_2 = 2\) (dos dominós verticales o dos horizontales), lo que da \(t_n = F_{n + 1}\).
+
+Ejemplo 3 (Cadenas ternarias con restricciones de paridad): Sea \(e_n\) el número de cadenas de longitud \(n\) sobre \(\{0, 1, 2\}\) que contienen un número PAR de \(0\), y sea \(o_n\) el número de las que contienen un número IMPAR de \(0\). Condiciona en el último símbolo de una cadena de longitud \(n\) (\(n \ge 2\)):
+- Termina en \(1\) o \(2\): el prefijo de longitud \(n - 1\) ya debe tener un número par de \(0\) (\(2 e_{n - 1}\) cadenas).
+- Termina en \(0\): el prefijo de longitud \(n - 1\) debe tener un número IMPAR de \(0\) (\(o_{n - 1}\) cadenas).
+
+Así, \(e_n = 2 e_{n - 1} + o_{n - 1}\). Elimina ahora \(o_{n - 1}\) usando la relación de complemento \(e_{n - 1} + o_{n - 1} = 3^{n - 1}\) (¡toda cadena ternaria de longitud \(n - 1\) tiene un número par o un número impar de \(0\)!):
+\[
+e_n = 2 e_{n - 1} + (3^{n - 1} - e_{n - 1}) = e_{n - 1} + 3^{n - 1} \qquad (n \ge 2),
+\]
+con valor base \(e_1 = 2\) (las cadenas \(1\) y \(2\) tienen cero \(0\), lo cual es par; o \(e_0 = 1\)).
+
+Observa también cómo las composiciones fuertes de un entero positivo \(n\) en CUALQUIER número de partes positivas producen una recurrencia rastreando la última parte \(k \in \{1, \dots, n\}\): o bien la composición es la única parte \((n)\) misma (\(1\) manera), o su última parte es \(k \in \{1, \dots, n - 1\}\) precedida por una composición de \(n - k\) (\(c_{n - k}\) maneras), dando \(c_n = 1 + \sum_{j=1}^{n - 1} c_j\) con \(c_1 = 1\). Equivalentemente, comparar \(c_n\) y \(c_{n - 1}\) muestra que \(c_n = 2 c_{n - 1}\) (para \(n \ge 2\)), lo que produce de inmediato \(c_n = 2^{n - 1}\).
+
+[CALLOUT]
+id: decomp-checklist
+label: Método
+title: Lista de verificación para descomposición combinatoria
+tone: key
+
+Para deducir una recurrencia para el tamaño \(a_n = \lvert S_n \rvert\) de una familia de configuraciones:
+
+(1) Fija una pieza canónica (como el último símbolo, la ficha más a la derecha o el elemento \(n\)) para clasificar cada elemento de \(S_n\) en casos mutuamente excluyentes y exhaustivos.
+(2) Verifica una biyección entre cada caso y configuraciones válidas de tamaños menores (no cuentes dos veces configuraciones que pudieran construirse de dos maneras).
+(3) Comprueba el índice mínimo exacto \(n_0\) en el que existen todas las referencias de menor tamaño, y calcula directamente cada valor base requerido por debajo de \(n_0\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(b_n\) el número de cadenas de longitud \(n\) sobre el alfabeto \(\{0, 1, 2\}\) que NO contienen dos \(0\) consecutivos (de modo que \(00\) está prohibido, mientras que \(11\) y \(22\) sí se permiten). ¿Qué recurrencia y condiciones iniciales se cumplen para todo \(n \ge 3\)?
+
+(A) \(b_n = 2 b_{n - 1} + b_{n - 2}\), con \(b_1 = 3\) y \(b_2 = 8\)
+(B) \(b_n = 2 b_{n - 1} + 2 b_{n - 2}\), con \(b_1 = 3\) y \(b_2 = 9\)
+(C) \(b_n = 2 b_{n - 1} + 2 b_{n - 2}\), con \(b_1 = 3\) y \(b_2 = 8\)
+(D) \(b_n = 3 b_{n - 1} - b_{n - 2}\), con \(b_1 = 3\) y \(b_2 = 8\)
+(E) \(b_n = b_{n - 1} + 2 b_{n - 2}\), con \(b_1 = 2\) y \(b_2 = 6\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+¿De cuántas maneras puede cubrirse una tira \(2 \times 5\) usando dominós \(1 \times 2\) (colocados horizontal o verticalmente) Y losetas cuadradas \(2 \times 2\)?
+
+(A) \(8\)
+(B) \(16\)
+(C) \(19\)
+(D) \(21\)
+(E) \(43\)
+[/QUESTION]
+
+=== SECTION 2: Recurrencias de dos variables y de permutaciones — particiones de conjuntos y desarreglos ===
+
+La descomposición combinatoria funciona con igual limpieza en familias de dos parámetros y permutaciones con restricciones.
+
+Primero, define una partición de conjunto de \(\{1, 2, \dots, m\}\) en \(n\) bloques no vacíos sin etiquetar como una colección de \(n\) subconjuntos no vacíos disjuntos dos a dos cuya unión es \(\{1, 2, \dots, m\}\), donde no importa ni el orden de los bloques ni el orden de los elementos dentro de un bloque. Sea \(S(m, n)\) el número de tales particiones (conocidos como los números de Stirling de segunda especie). Claramente \(S(m, 1) = 1\) (todos los \(m\) elementos en un bloque), \(S(m, m) = 1\) (cada elemento en su propio bloque unitario) y \(S(m, n) = 0\) siempre que \(n > m\) o \(n \le 0\) (para \(m \ge 1\)).
+
+Para \(1 < n < m\), clasifica toda partición de \(\{1, 2, \dots, m\}\) en \(n\) bloques no vacíos según el papel del elemento único \(m\):
+- Caso 1 (\(m\) está solo en un bloque unitario \(\{m\}\)): los \(m - 1\) elementos restantes \(\{1, \dots, m - 1\}\) deben particionarse en los \(n - 1\) bloques no vacíos restantes. Hay \(S(m - 1, n - 1)\) particiones tales.
+- Caso 2 (\(m\) comparte su bloque con al menos un elemento menor): quitar \(m\) deja una partición válida de \(\{1, \dots, m - 1\}\) en \(n\) bloques no vacíos. Recíprocamente, partiendo de CUALQUIER partición de \(\{1, \dots, m - 1\}\) en \(n\) bloques no vacíos, hay \(n\) bloques distintos en los que podemos insertar \(m\) (¡aunque los bloques no tengan etiquetas externas, contienen subconjuntos distintos de \(\{1, \dots, m - 1\}\), de modo que insertar \(m\) en bloques diferentes produce \(n\) particiones distintas!). Por la Regla del Producto, este caso aporta \(n\,S(m - 1, n)\) particiones.
+
+Combinar los dos casos disjuntos arroja la recurrencia triangular para particiones de conjuntos:
+\[
+S(m, n) = S(m - 1, n - 1) + n\,S(m - 1, n) \qquad (1 \le n \le m).
+\]
+¡Observa cuánto se parece esto a la identidad de Pascal \(\binom{m}{n} = \binom{m - 1}{n - 1} + \binom{m - 1}{n}\), salvo por el multiplicador \(n\) en el segundo término! Para \(m\) pequeño:
+- Fila \(m = 1\): \(S(1, 1) = 1\).
+- Fila \(m = 2\): \(S(2, 1) = 1\), \(S(2, 2) = 1\).
+- Fila \(m = 3\): \(S(3, 1) = 1\), \(S(3, 2) = S(2, 1) + 2\,S(2, 2) = 1 + 2(1) = 3\), \(S(3, 3) = 1\).
+
+Segundo, considera los desarreglos: permutaciones \(\sigma\) de \(\{1, 2, \dots, n\}\) SIN puntos fijos (\(\sigma(i) \neq i\) para todo \(i\)). Sea \(D_n\) el número de desarreglos de \(\{1, \dots, n\}\). Directamente a mano, \(D_1 = 0\) (el único elemento \(1\) debe enviarse a \(1\)) y \(D_2 = 1\) (solo el intercambio \(1 \leftrightarrow 2\) no tiene puntos fijos).
+
+Para \(n \ge 3\), clasifica todo desarreglo \(\sigma\) según adónde va el elemento \(1\). Como \(\sigma(1) \neq 1\), hay \(n - 1\) opciones para \(k = \sigma(1) \in \{2, \dots, n\}\). Fijado \(k\), divide en dos casos disjuntos según si \(k\) vuelve a \(1\) o no:
+- Caso 1 (\(\sigma(k) = 1\)): los elementos \(1\) y \(k\) intercambian lugares en un \(2\)-ciclo, y los \(n - 2\) elementos restantes deben desarreglarse entre sí. Esto da \(D_{n - 2}\) desarreglos para este \(k\) fijo.
+- Caso 2 (\(\sigma(k) \neq 1\)): piensa que cada uno de los \(n - 1\) elementos restantes \(\{2, \dots, n\}\) necesita un destino distinto en \(\{1, 2, \dots, n\} \setminus \{k\}\). Todo elemento \(i \in \{2, \dots, n\} \setminus \{k\}\) tiene prohibido enviarse a \(i\), y el elemento \(k\) tiene prohibido enviarse a \(1\). Reetiquetar el destino \(1\) como «la casilla prohibida para \(k\)» pone el Caso 2 en biyección exacta con los desarreglos de los \(n - 1\) elementos \(\{2, \dots, n\}\), dando \(D_{n - 1}\) desarreglos para este \(k\) fijo.
+
+Como las \(n - 1\) elecciones de \(k = \sigma(1)\) producen exactamente el mismo conteo \(D_{n - 1} + D_{n - 2}\), la Regla del Producto da la recurrencia combinatoria de los desarreglos.
+
+[CALLOUT]
+id: classic-recurrences
+label: Referencia
+title: Recurrencias de particiones de conjuntos y de desarreglos
+tone: key
+
+(1) Particiones de conjuntos (números de Stirling de segunda especie):
+\[
+S(m, n) = S(m - 1, n - 1) + n\,S(m - 1, n) \qquad (1 < n < m),
+\]
+con \(S(m, 1) = S(m, m) = 1\).
+
+(2) Desarreglos (permutaciones sin puntos fijos):
+\[
+D_n = (n - 1)(D_{n - 1} + D_{n - 2}) \qquad (n \ge 3),
+\]
+con \(D_1 = 0\) y \(D_2 = 1\) (y \(D_0 = 1\) por convención).
+[/CALLOUT]
+
+Comprueba [REF: classic-recurrences.2 | la recurrencia de los desarreglos] en los primeros valores: \(D_3 = 2(1 + 0) = 2\), \(D_4 = 3(2 + 1) = 9\) y \(D_5 = 4(9 + 2) = 44\).
+
+[QUESTION 3]
+[ANSWER: C]
+Usando [REF: classic-recurrences.1 | la recurrencia de particiones de conjuntos] \(S(m, n) = S(m - 1, n - 1) + n\,S(m - 1, n)\) con \(S(m, 1) = S(m, m) = 1\), ¿cuál es el valor exacto de \(S(5, 3)\)?
+
+(A) \(10\)
+(B) \(19\)
+(C) \(25\)
+(D) \(31\)
+(E) \(41\)
+[/QUESTION]
+
+=== SECTION 3: Demostración de formas cerradas e identidades por inducción a partir de recurrencias ===
+
+Los métodos sistemáticos para RESOLVER recurrencias generales desde cero (como ecuaciones características y funciones generatrices) pertenecen a un módulo posterior de matemática discreta. Sin embargo, ahora mismo ya posees un motor completamente riguroso para VERIFICAR formas cerradas conjeturadas, cotas e identidades una vez establecida una recurrencia: la inducción matemática ordinaria y fuerte.
+
+Trabajemos tres demostraciones inductivas distintas impulsadas directamente por nuestras recurrencias.
+
+1. Forma cerrada para cadenas ternarias con número par de \(0\): En la Sección 1 hallamos \(e_1 = 2\) y \(e_n = e_{n - 1} + 3^{n - 1}\) para \(n \ge 2\). Calcular los primeros valores da \(e_1 = 2\), \(e_2 = 5\), \(e_3 = 14\), \(e_4 = 41\), lo que sugiere la forma cerrada \(e_n = \frac{3^n + 1}{2}\).
+- Caso base (\(n = 1\)): \(\frac{3^1 + 1}{2} = 2 = e_1\).
+- Paso inductivo: Supón \(e_k = \frac{3^k + 1}{2}\) para un \(k \ge 1\) fijo. Entonces, por la recurrencia,
+\[
+e_{k + 1} = e_k + 3^k = \frac{3^k + 1}{2} + 3^k = \frac{3^k + 1 + 2 \cdot 3^k}{2} = \frac{3 \cdot 3^k + 1}{2} = \frac{3^{k + 1} + 1}{2}.
+\]
+Por inducción ordinaria, \(e_n = \frac{3^n + 1}{2}\) para todo \(n \ge 1\).
+
+2. Identidad de Cassini para los números de Fibonacci: Recuerda \(F_1 = 1\), \(F_2 = 1\) y \(F_{n + 1} = F_n + F_{n - 1}\) para \(n \ge 2\). Demostramos por inducción ordinaria sobre \(n \ge 2\) que
+\[
+F_{n + 1} F_{n - 1} - F_n^2 = (-1)^n.
+\]
+- Caso base (\(n = 2\)): \(F_3 F_1 - F_2^2 = 2 \cdot 1 - 1^2 = 1 = (-1)^2\).
+- Paso inductivo: Fija \(k \ge 2\) y supón \(F_{k + 1} F_{k - 1} - F_k^2 = (-1)^k\). Para \(n = k + 1\), reescribe \(F_{k + 2} = F_{k + 1} + F_k\) y saca factor común \(F_{k + 1}\) del segundo término:
+\[
+F_{k + 2} F_k - F_{k + 1}^2 = (F_{k + 1} + F_k) F_k - F_{k + 1}^2 = F_k^2 + F_{k + 1}(F_k - F_{k + 1}).
+\]
+Como \(F_{k + 1} = F_k + F_{k - 1}\), tenemos \(F_k - F_{k + 1} = -F_{k - 1}\). Sustituir esto da
+\[
+F_{k + 2} F_k - F_{k + 1}^2 = F_k^2 - F_{k + 1} F_{k - 1} = -\left(F_{k + 1} F_{k - 1} - F_k^2\right) = -(-1)^k = (-1)^{k + 1}.
+\]
+Por inducción ordinaria, la identidad de Cassini vale para todo \(n \ge 2\).
+
+3. Una recurrencia de un paso para los desarreglos: A partir de la recurrencia de dos pasos \(D_n = (n - 1)(D_{n - 1} + D_{n - 2})\) (\(n \ge 3\)) con \(D_1 = 0, D_2 = 1\), demostramos por inducción ordinaria sobre \(n \ge 2\) que
+\[
+D_n = n D_{n - 1} + (-1)^n.
+\]
+- Caso base (\(n = 2\)): \(2 D_1 + (-1)^2 = 2(0) + 1 = 1 = D_2\).
+- Paso inductivo: Fija \(k \ge 2\) y supón \(D_k = k D_{k - 1} + (-1)^k\), que se reordena como \(k D_{k - 1} = D_k - (-1)^k\). Sustituir en la recurrencia de dos pasos para \(D_{k + 1}\) da
+\[
+D_{k + 1} = k(D_k + D_{k - 1}) = k D_k + k D_{k - 1} = k D_k + \left(D_k - (-1)^k\right) = (k + 1) D_k + (-1)^{k + 1}.
+\]
+Por inducción ordinaria, \(D_n = n D_{n - 1} + (-1)^n\) para todo \(n \ge 2\) (y también en \(n = 1\) cuando \(D_0 = 1\)).
+
+Observa una lección vital al usar inducción sobre una recurrencia de dos pasos \(c_n = \alpha c_{n - 1} + \beta c_{n - 2}\): para demostrar una forma cerrada directa para \(c_n\), necesitas inducción FUERTE con DOS casos base (\(n = 1\) y \(n = 2\)), porque el paso inductivo para \(c_{k + 1}\) retrocede TANTO a \(c_k\) COMO a \(c_{k - 1}\). Comprobar un solo caso base deja una brecha —¡formas cerradas distintas pueden compartir el mismo primer valor y sin embargo divergir en el segundo!
+
+[QUESTION 4]
+[ANSWER: B]
+Una sucesión se define recursivamente mediante \(u_0 = 1\) y \(u_n = 3 u_{n - 1} + 2\) para todo \(n \ge 1\). ¿Qué fórmula cerrada satisface TANTO el caso base \(u_0 = 1\) COMO el paso inductivo \(u_{k + 1} = 3 u_k + 2\) para todo entero \(k \ge 0\)?
+
+(A) \(u_n = 3^n + 2n\)
+(B) \(u_n = 2 \cdot 3^n - 1\)
+(C) \(u_n = 3^{n + 1} - 2\)
+(D) \(u_n = 2 \cdot 3^n + 1\)
+(E) \(u_n = 3^n + 2^{n + 1} - 2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Una escalera tiene \(n\) escalones, y en cada paso puedes subir \(1\), \(2\) o \(3\) escalones. Sea \(s_n\) el número de secuencias distintas de pasos para llegar a la cima de una escalera de \(n\) escalones (así que \(s_1 = 1\), \(s_2 = 2\) y \(s_3 = 4\)). ¿Cuántas maneras hay de subir una escalera de \(7\) escalones?
+
+(A) \(21\)
+(B) \(24\)
+(C) \(44\)
+(D) \(48\)
+(E) \(81\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+¿Cuántas maneras hay de particionar el conjunto de \(5\) elementos \(\{1, 2, 3, 4, 5\}\) en A LO SUMO \(3\) bloques no vacíos sin etiquetar (es decir, calculando \(S(5, 1) + S(5, 2) + S(5, 3)\))?
+
+(A) \(25\)
+(B) \(40\)
+(C) \(51\)
+(D) \(41\)
+(E) \(52\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Modifica la descomposición de desarreglos de la Sección 2 para contar permutaciones \(\sigma\) de \(\{1, 2, \dots, n\}\) (para \(n \ge 2\) par) que NO tienen puntos fijos Y satisfacen \(\sigma(\sigma(i)) = i\) para todo \(i\) (es decir, cada elemento está emparejado en un \(2\)-ciclo disjunto). Sea \(p_n\) el número de tales emparejamientos sin puntos fijos (con \(p_2 = 1\)). ¿Qué recurrencia vale para todo \(n \ge 4\) par?
+
+(A) \(p_n = (n - 1) p_{n - 1}\)
+(B) \(p_n = (n - 1) p_{n - 2}\)
+(C) \(p_n = (n - 1)(p_{n - 1} + p_{n - 2})\)
+(D) \(p_n = n \, p_{n - 2}\)
+(E) \(p_n = \binom{n}{2} p_{n - 2}\)
+[/BONUS]

@@ -1,0 +1,194 @@
+=== SECTION 1: De la asociación lineal a la monótona mediante transformación por rangos ===
+
+El coeficiente de correlación de Pearson \(r\) sobresale cuando dos variables cuantitativas siguen una tendencia en línea recta sin valores atípicos severos. Tres situaciones cotidianas rompen esos supuestos:
+- Datos ordinales: dos críticos clasifican cinco películas del \(1\) al \(5\), o los pacientes califican la intensidad del dolor en una escala ordenada donde las diferencias entre categorías no están igualmente espaciadas.
+- Relaciones monótonas no lineales: conforme \(x\) aumenta, \(y\) SIEMPRE aumenta (o SIEMPRE disminuye), pero a lo largo de una curva empinada como \(y = e^x\) o \(y = x^3\) en lugar de una línea recta, por lo que la \(r\) de Pearson cae notablemente por debajo de \(1\).
+- Datos cuantitativos asimétricos con valores atípicos extremos: un punto distante puede hacer oscilar la \(r\) de Pearson a lo largo de todo el intervalo de \(-1\) a \(+1\).
+
+Reemplazar los valores brutos por sus rangos resuelve los tres problemas de una vez. En lugar de preguntar si \((x_i, y_i)\) se ciñen a una línea recta, la correlación por rangos pregunta si valores mayores de \(x\) se emparejan sistemáticamente con valores mayores (o sistemáticamente menores) de \(y\): una asociación monótona.
+
+[CALLOUT]
+id: spearman-definition
+label: Definición
+title: Transformación por rangos, rangos medios y correlación de Spearman \(\rho_s\)
+tone: key
+
+Dadas \(n \ge 2\) observaciones pareadas \((x_1, y_1), \dots, (x_n, y_n)\) medidas al menos en una escala ordinal:
+
+(1) Ordene \(x_1, \dots, x_n\) de menor (\(1\)) a mayor (\(n\)) para obtener \(R(x_1), \dots, R(x_n)\), y ordene independientemente \(y_1, \dots, y_n\) de menor (\(1\)) a mayor (\(n\)) para obtener \(R(y_1), \dots, R(y_n)\).
+(2) Cada vez que \(t \ge 2\) observaciones comparten un valor idéntico (un empate), asigne a CADA observación empatada su rango medio: el promedio aritmético de las posiciones de rango que ocupan conjuntamente. Por ejemplo, si dos observaciones empatan en las posiciones \(2\) y \(3\), ambas reciben el rango \((2 + 3)/2 = 2.5\); si tres empatan en las posiciones \(4, 5, 6\), las tres reciben el rango \((4 + 5 + 6)/3 = 5\).
+(3) El coeficiente de correlación de rangos de Spearman \(\rho_s\) se define como el coeficiente de correlación de Pearson calculado sobre los pares de rangos \((R(x_i), R(y_i))\):
+\[
+\rho_s = r\big(R(x), R(y)\big) = \frac{\sum_{i=1}^n \big(R(x_i) - \bar{R}_x\big)\big(R(y_i) - \bar{R}_y\big)}{\sqrt{\sum_{i=1}^n \big(R(x_i) - \bar{R}_x\big)^2}\;\sqrt{\sum_{i=1}^n \big(R(y_i) - \bar{R}_y\big)^2}},
+\]
+siempre que no todos los valores de \(x\) sean idénticos y no todos los valores de \(y\) sean idénticos.
+[/CALLOUT]
+
+Como [REF: spearman-definition.3 | la \(\rho_s\) de Spearman] ES la correlación de Pearson sobre los vectores de rangos, hereda automáticamente las cotas centrales y la simetría de Pearson: \(-1 \le \rho_s \le +1\) y \(\rho_s(x, y) = \rho_s(y, x)\). Además, note qué ocurre cuando aplicamos CUALQUIER transformación estrictamente creciente \(g\) a \(x\) o \(h\) a \(y\) (como \(\sqrt{x}\), \(\ln x\), \(e^x\) o \(x^3\) en datos positivos): como \(x_i < x_j\) si y solo si \(g(x_i) < g(x_j)\), ¡cada rango permanece IDÉNTICO (\(R(g(x_i)) = R(x_i)\))! Así:
+- \(\rho_s\) es COMPLETAMENTE INVARIANTE bajo toda transformación estrictamente creciente de \(x\) o de \(y\) (no solamente transformaciones lineales).
+- Aplicar una transformación estrictamente DECRECIENTE a exactamente una variable invierte sus rangos (\(R \mapsto n + 1 - R\)), lo cual simplemente invierte el signo de \(\rho_s\).
+
+=== SECTION 2: Deducción de la fórmula abreviada sin empates (y por qué los empates la invalidan) ===
+
+Cuando NO hay empates en \(x\) ni en \(y\), tanto \(R(x_1), \dots, R(x_n)\) como \(R(y_1), \dots, R(y_n)\) son simplemente reordenamientos de los enteros \(1, 2, \dots, n\). Eso nos permite evaluar la media y la suma de desviaciones cuadráticas de forma cerrada de una vez por todas, usando dos identidades estándar de sumatoria:
+\[
+\sum_{k=1}^n k = \frac{n(n + 1)}{2}, \qquad \sum_{k=1}^n k^2 = \frac{n(n + 1)(2n + 1)}{6}.
+\]
+Primero, ambas listas de rangos comparten exactamente la misma media:
+\[
+\bar{R}_x = \bar{R}_y = \bar{R} = \frac{1}{n}\sum_{k=1}^n k = \frac{n + 1}{2}.
+\]
+Segundo, usando la fórmula abreviada de la varianza \(\sum (k - \bar{R})^2 = \sum k^2 - n \bar{R}^2\), ambas listas de rangos comparten exactamente la misma suma de desviaciones cuadráticas \(S_{RR}\):
+\[
+S_{RR} = \frac{n(n + 1)(2n + 1)}{6} - n\left(\frac{n + 1}{2}\right)^2 = \frac{n(n + 1)\big(2(2n + 1) - 3(n + 1)\big)}{12} = \frac{n(n + 1)(n - 1)}{12} = \frac{n(n^2 - 1)}{12}.
+\]
+Ahora defina la diferencia de rangos de cada par \(d_i = R(x_i) - R(y_i)\). Como \(\bar{R}_x = \bar{R}_y = \bar{R}\), podemos escribir \(d_i = (R(x_i) - \bar{R}) - (R(y_i) - \bar{R})\). Elevar al cuadrado y sumar sobre \(i = 1, \dots, n\) produce
+\[
+\sum_{i=1}^n d_i^2 = \sum_{i=1}^n (R(x_i) - \bar{R})^2 + \sum_{i=1}^n (R(y_i) - \bar{R})^2 - 2\sum_{i=1}^n (R(x_i) - \bar{R})(R(y_i) - \bar{R}) = 2 S_{RR} - 2 S_{R_x R_y}.
+\]
+Dado que \(\rho_s = S_{R_x R_y} / \sqrt{S_{RR}\cdot S_{RR}} = S_{R_x R_y} / S_{RR}\), dividir ambos lados entre \(2 S_{RR}\) da \(\frac{\sum d_i^2}{2 S_{RR}} = 1 - \rho_s\). Sustituir \(2 S_{RR} = \frac{n(n^2 - 1)}{6}\) produce la fórmula abreviada clásica sin empates.
+
+[CALLOUT]
+id: spearman-shortcut
+label: Identidad
+title: Fórmula abreviada de Spearman sin empates
+tone: key
+
+Cuando NO hay valores empatados en \(x\) ni en \(y\), haciendo \(d_i = R(x_i) - R(y_i)\), la correlación de rangos de Spearman se simplifica exactamente a
+\[
+\rho_s = 1 - \frac{6 \sum_{i=1}^n d_i^2}{n(n^2 - 1)}.
+\]
+Cuando hay CUALQUIER empate, esta fórmula abreviada PIERDE EXACTITUD y NO debe usarse; calcule la correlación de Pearson directamente sobre los rangos medios mediante [REF: spearman-definition.3 | la fórmula definitoria].
+[/CALLOUT]
+
+¿Por qué falla exactamente [REF: spearman-shortcut | la fórmula abreviada] cuando aparecen empates? Observe qué hace el promedio de rangos en un grupo empatado: reemplazar los rangos distintos \(2\) y \(3\) por su promedio \((2.5, 2.5)\) deja intacta la suma de rangos (\(2 + 3 = 2.5 + 2.5 = 5\), por lo que \(\bar{R} = (n + 1)/2\) sigue cumpliéndose), PERO REDUCE ESTRICTAMENTE la suma de los cuadrados de los rangos (\(2^2 + 3^2 = 13 > 2.5^2 + 2.5^2 = 12.5\)). En consecuencia, la suma de cuadrados de rangos \(S_{R_x R_x}\) (o \(S_{R_y R_y}\)) cae estrictamente por debajo de \(n(n^2 - 1)/12\), rompiendo la sustitución \(2 S_{RR} = n(n^2 - 1)/6\).
+
+Compruébelo directamente en un conjunto pequeño de \(n = 4\) datos con un empate en \(x\): \(x = (10, 10, 20, 30)\) e \(y = (5, 8, 6, 9)\).
+
+[TABLE]
+Observación \(i\) | \(x_i\) | \(y_i\) | \(R(x_i)\) | \(R(y_i)\) | \(R(x_i) - 2.5\) | \(R(y_i) - 2.5\) | \(d_i\)
+1 | 10 | 5 | 1.5 | 1 | -1.0 | -1.5 | +0.5
+2 | 10 | 8 | 1.5 | 3 | -1.0 | +0.5 | -1.5
+3 | 20 | 6 | 3 | 2 | +0.5 | -0.5 | +1.0
+4 | 30 | 9 | 4 | 4 | +1.5 | +1.5 | 0.0
+[/TABLE]
+
+Calcule la \(\rho_s\) exacta a partir de [REF: spearman-definition.3 | Pearson sobre los rangos medios]:
+- \(S_{R_x R_x} = (-1)^2 + (-1)^2 + 0.5^2 + 1.5^2 = 4.5\) (¡estrictamente menor que \(4(15)/12 = 5.0\) a causa del empate!).
+- \(S_{R_y R_y} = (-1.5)^2 + 0.5^2 + (-0.5)^2 + 1.5^2 = 5.0\).
+- \(S_{R_x R_y} = (-1)(-1.5) + (-1)(0.5) + (0.5)(-0.5) + (1.5)(1.5) = 1.5 - 0.5 - 0.25 + 2.25 = 3.0\).
+- Correlación exacta de Spearman: \(\rho_s = \dfrac{3.0}{\sqrt{4.5 \times 5.0}} = \dfrac{3.0}{\sqrt{22.5}} \approx +0.6325\).
+
+Entretanto, aplicar erróneamente la fórmula abreviada sin empates con \(\sum d_i^2 = 0.25 + 2.25 + 1.0 + 0 = 3.5\) arroja \(1 - \frac{6(3.5)}{4(15)} = 1 - 0.35 = +0.650\), lo cual es INCORRECTO —y el error empeora rápidamente conforme proliferan los empates.
+
+[QUESTION 1]
+[ANSWER: C]
+Cinco observaciones cuantitativas pareadas \((x_i, y_i)\) no presentan empates: \((14, 70), (22, 95), (10, 82), (18, 65), (26, 99)\). ¿Cuál es la correlación de rangos de Spearman \(\rho_s\)?
+
+(A) \(0.40\)
+(B) \(0.80\)
+(C) \(0.60\)
+(D) \(0.50\)
+(E) \(0.20\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Calcule la correlación de rangos de Spearman exacta \(\rho_s\) para el conjunto de datos con empates de \(n = 4\) pares: \(x = (5, 5, 12, 20)\) e \(y = (10, 30, 30, 40)\).
+
+(A) \(0.850\)
+(B) \(0.750\)
+(C) \(0.800\)
+(D) \(5/6 \approx 0.833\)
+(E) \(1.000\)
+[/QUESTION]
+
+=== SECTION 3: Contraste entre \(\rho_s\) de Spearman y \(r\) de Pearson ===
+
+Saber cuándo reportar \(\rho_s\) frente a \(r\) —y cuándo NINGUNA basta por sí sola— se reduce a tres patrones diagnósticos clásicos.
+
+1. Curvas no lineales estrictamente crecientes: considere los \(n = 5\) pares \((1, 1), (2, 2), (3, 4), (4, 8), (5, 64)\). Al crecer \(x\), \(y\) crece estrictamente en cada paso, de modo que \(R(x) = R(y) = (1, 2, 3, 4, 5)\) y \(\rho_s = +1.00\) exactamente. Sin embargo, como la curva se acelera bruscamente hacia arriba, los puntos se curvan lejos de cualquier línea recta, haciendo caer la \(r\) de Pearson hasta \(+0.771\).
+2. Resistencia a valores atípicos: tome cinco puntos que descienden sobre una línea recta exacta: \((1, 10), (2, 8), (3, 6), (4, 4), (5, 2)\) (donde \(r = \rho_s = -1\)), y contamine la muestra con un único valor atípico distante de alto apalancamiento \((21, 24)\). Calcular directamente sobre los \(6\) puntos da \(\bar{x} = 6\), \(\bar{y} = 9\), \(S_{xx} = 280\), \(S_{yy} = 310\) y \(S_{xy} = +250\), ¡de modo que la \(r\) de Pearson salta salvajemente de \(-1.00\) hasta \(+0.849\)! En marcado contraste, los rangos son \(R(x) = (1, 2, 3, 4, 5, 6)\) y \(R(y) = (5, 4, 3, 2, 1, 6)\), lo que da \(\sum d_i^2 = 16 + 4 + 0 + 4 + 16 + 0 = 40\) y \(\rho_s = 1 - \frac{240}{210} = -1/7 \approx -0.143\). Incluso si ese único valor atípico se arrastra hasta \((2100, 2400)\), su rango sigue siendo \(6\) en ambos ejes, por lo que \(\rho_s\) NO SE MUEVE de \(-0.143\), mientras la \(r\) de Pearson corre hacia \(+1.000\).
+3. Patrones no monótonos en forma de U: considere la parábola simétrica exacta \(\{(-2, 4), (-1, 1), (0, 0), (1, 1), (2, 4)\}\). Sus rangos son \(R(x) = (1, 2, 3, 4, 5)\) y \(R(y) = (4.5, 2.5, 1, 2.5, 4.5)\), lo que da \(\sum (R(x_i) - 3)(R(y_i) - 3) = (-2)(1.5) + (-1)(-0.5) + 0 + (1)(-0.5) + (2)(1.5) = 0\), ¡así que TANTO \(r = 0\) COMO \(\rho_s = 0\)! Ninguno de los dos coeficientes detecta la dependencia simétrica no monótona; trazar el diagrama de dispersión sigue siendo indispensable.
+
+El gráfico siguiente ilustra visualmente el primero de estos patrones: una curva exponencial empinada estrictamente creciente (donde \(\rho_s = 1\) aunque los puntos se desvían marcadamente de la cuerda recta discontinua) junto con una referencia rectilínea que muestra cómo la monotonía curva se aparta de la linealidad.
+
+[GRAPH]
+type: function2d
+title: Curva no lineal estrictamente creciente (\(\rho_s = 1\), \(r < 1\)) frente a cuerda recta
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.5, 5.5
+yrange: 0, 70
+trace: exp(0.8318 * (x - 1)) | label: Tendencia exponencial (\(\rho_s = +1.00\)) | color: #3b82f6
+segment: 1, 1, 5, 27.85 | label: Cuerda recta | dashed: true | color: #94a3b8
+point: 1, 1 | label: (1, 1) | color: #ef4444
+point: 2, 2 | label: (2, 2) | color: #ef4444
+point: 3, 4 | label: (3, 4) | color: #ef4444
+point: 4, 8 | label: (4, 8) | color: #ef4444
+point: 5, 64 | label: (5, 64) | color: #ef4444
+[/GRAPH]
+
+[TABLE]
+Propiedad | \(r\) de Pearson | \(\rho_s\) de Spearman
+Qué mide | Asociación lineal (en línea recta) | Asociación monótona (creciente o decreciente de forma constante)
+Escala mínima válida | De intervalo o de razón | Ordinal, de intervalo o de razón
+Invariancia | Transformaciones lineales positivas \(a x + b\) (\(a > 0\)) | Cualquier transformación estrictamente creciente \(g(x)\)
+Resistencia a atípicos | Baja (un solo atípico de apalancamiento puede invertir el signo) | Alta (los rangos acotan la influencia de todo atípico)
+¿Detecta forma de U simétrica? | No (\(r \approx 0\)) | No (\(\rho_s \approx 0\))
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Un conjunto de datos de pares estrictamente positivos \((x_i, y_i)\) tiene correlación de Pearson \(r = +0.78\) y correlación de rangos de Spearman \(\rho_s = +0.92\). Cada observación se transforma a \((u_i, v_i) = (\ln x_i,\; 1 / y_i)\). ¿Qué queda garantizado acerca de las correlaciones transformadas?
+
+(A) \(\rho_s(u, v) = -0.92\) exactamente, mientras que la \(r(u, v)\) de Pearson no puede determinarse solo a partir de \(r = +0.78\).
+(B) Tanto \(r(u, v) = -0.78\) como \(\rho_s(u, v) = -0.92\).
+(C) \(\rho_s(u, v) = +0.92\) porque ambas transformaciones son monótonas.
+(D) Tanto \(r(u, v)\) como \(\rho_s(u, v)\) permanecen iguales porque tomar logaritmos y recíprocos son funciones suaves.
+(E) Ni \(r(u, v)\) ni \(\rho_s(u, v)\) pueden determinarse sin los datos brutos.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+En un conjunto de datos de \(n = 25\) mediciones pareadas \((x_i, y_i)\), un analista calcula \(r = +0.74\) de Pearson y \(\rho_s = +1.00\) de Spearman. ¿Qué patrón en el diagrama de dispersión es totalmente compatible con ambos valores?
+
+(A) Los \(25\) puntos yacen exactamente sobre una línea recta con pendiente positiva.
+(B) Los puntos forman una parábola simétrica en forma de U.
+(C) Los puntos se dispersan al azar en una nube circular sin tendencia.
+(D) Los \(25\) puntos yacen sobre una línea horizontal \(y_i = 10\).
+(E) Cada observación se sitúa sobre una curva no lineal estrictamente creciente (como \(y = x^4\) para \(x > 0\)), de modo que el orden de rangos coincide perfectamente mientras los puntos se curvan alejándose de una línea recta.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Para un conjunto de datos de \(n = 6\) observaciones pareadas sin empates en \(x\) ni en \(y\), ¿cuál es el mayor valor matemáticamente posible de \(\sum_{i=1}^6 d_i^2\) (donde \(d_i = R(x_i) - R(y_i)\)) y cuándo se alcanza?
+
+(A) \(35\), cuando \(R(y_i) = R(x_i)\) para todo \(i\).
+(B) \(70\), cuando \(y\) está ordenada en el orden exactamente inverso al de \(x\) (\(R(y_i) = 7 - R(x_i)\)), dando \(\rho_s = -1\).
+(C) \(105\), cuando la mitad de los rangos coinciden y la mitad se invierten.
+(D) \(210\), cuando todos los valores de \(x\) están empatados.
+(E) \(60\), cuando \(\rho_s = 0\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Un estudiante calcula la correlación de rangos de Spearman para \(n = 5\) pares sin empates y escribe \(\sum_{i=1}^5 d_i^2 = 15\). Sin ver los datos originales, ¿por qué puede demostrar de inmediato que \(\sum_{i=1}^5 d_i^2 = 15\) contiene un error aritmético?
+
+(A) Porque \(\sum d_i^2\) nunca puede superar \(n = 5\).
+(B) Porque \(\sum d_i^2\) debe ser divisible entre \(6\) siempre que no haya empates.
+(C) Porque \(\sum d_i = \sum R(x_i) - \sum R(y_i) = 0\) es par y \(d_i^2\) tiene la misma paridad (par o impar) que \(d_i\), de modo que \(\sum d_i^2\) siempre debe ser un entero par.
+(D) Porque \(\sum d_i^2 = 15\) hace que \(\rho_s < -1\).
+(E) Porque \(d_i^2\) debe ser múltiplo de \(5\) cuando \(n = 5\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suponga que \(n = 5\) pares NO tienen empates en \(y\) (de modo que \(R(y) = (1, 2, 3, 4, 5)\)), mientras que TODAS las observaciones de \(x\) son idénticas (\(x = (7, 7, 7, 7, 7)\), por lo que todo rango medio es \(R(x_i) = 3\)). ¿Cuál es la verdadera correlación de Spearman \(\rho_s\), y qué valor engañoso produciría la fórmula abreviada inválida sin empates \(1 - \frac{6\sum d_i^2}{n(n^2 - 1)}\)?
+
+(A) La verdadera \(\rho_s = 0\); la fórmula abreviada da \(0\).
+(B) La verdadera \(\rho_s = 0\); la fórmula abreviada da \(+0.50\).
+(C) La verdadera \(\rho_s\) está indefinida; la fórmula abreviada da \(0\).
+(D) La verdadera \(\rho_s\) está indefinida (ya que \(s_{R_x} = 0\)); la fórmula abreviada da erróneamente \(+0.50\).
+(E) La verdadera \(\rho_s = +0.50\); la fórmula abreviada da \(+0.50\).
+[/BONUS]

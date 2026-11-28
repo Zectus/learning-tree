@@ -1,0 +1,210 @@
+=== SECTION 1: Unordered selections with repetition and the stars-and-bars bijection ===
+
+Suppose a bakery sells \(n = 4\) varieties of pastries—apple, blueberry, cherry, and date—with plenty of each kind on hand, and you want to assemble a box of \(k = 6\) pastries. Only the final assortment in the box matters (not the order in which the pastries are placed), and you are free to choose several pastries of the same variety or none of a given variety. How many distinct boxes are possible?
+
+Because order does not matter, a box is completely determined by the four nonnegative integers \((x_1, x_2, x_3, x_4)\) recording how many apple, blueberry, cherry, and date pastries you picked, subject to the single equation
+\[
+x_1 + x_2 + x_3 + x_4 = 6, \qquad x_1, x_2, x_3, x_4 \ge 0.
+\]
+More generally, an unordered selection of \(k\) items chosen from \(n\) distinct types with repetition allowed is called a \(k\)-element multiset (or combination with repetition) from \(n\) types. Such selections are in exact one-to-one correspondence with nonnegative integer solutions \((x_1, x_2, \dots, x_n)\) to
+\[
+x_1 + x_2 + \cdots + x_n = k.
+\]
+
+Why can we not simply take the ordered-with-repetition count \(n^k\) and divide by \(k!\)? Because different multisets have different numbers of distinct orderings! For example, choosing six apple pastries corresponds to only \(1\) ordered sequence, whereas choosing two apple, two blueberry, one cherry, and one date corresponds to \(\frac{6!}{2!\,2!\,1!\,1!} = 180\) ordered sequences. Since the multiplicity varies from multiset to multiset, the Division Rule cannot be applied directly.
+
+Instead, we build an explicit bijection to an object we already know how to count: binary strings of fixed length and weight. Represent the \(k\) chosen items as \(k\) identical stars (\(\star\)), and separate the \(n\) types into \(n\) bins along a line using \(n - 1\) identical vertical bars (\(\vert\)). For our bakery example (\(n = 4\) varieties, \(k = 6\) pastries), we use \(6\) stars and \(4 - 1 = 3\) bars:
+- \((2, 1, 3, 0)\) encodes as \(\star\star \vert \star \vert \star\star\star \vert\) (an empty fourth bin appears after the last bar).
+- \((0, 4, 0, 2)\) encodes as \(\vert \star\star\star\star \vert \vert \star\star\) (leading or adjacent bars record bins with \(0\) stars).
+- \((6, 0, 0, 0)\) encodes as \(\star\star\star\star\star\star \vert \vert \vert\).
+
+Read this mapping in reverse as well: given ANY string consisting of \(k\) stars and \(n - 1\) bars, let \(x_1\) be the number of stars before the first bar, \(x_2\) the number of stars between the first and second bars, and so on up to \(x_n\), the number of stars after the \((n - 1)\)-st bar. Every \(x_i\) is a nonnegative integer, and since all \(k\) stars fall into exactly one of the \(n\) regions created by the \(n - 1\) bars, \(x_1 + x_2 + \cdots + x_n = k\). Two distinct strings differ in the position of at least one bar and therefore produce different tuples \((x_1, \dots, x_n)\).
+
+Thus nonnegative integer solutions to \(x_1 + \cdots + x_n = k\) are in bijection with strings of length \(k + n - 1\) containing \(k\) stars and \(n - 1\) bars. Choosing which \(n - 1\) of the \(k + n - 1\) positions hold bars (or equivalently, which \(k\) positions hold stars) yields the Stars-and-Bars formula.
+
+[CALLOUT]
+id: stars-and-bars
+label: Theorem
+title: Stars and Bars (Combinations with Repetition)
+tone: key
+
+For positive integer \(n\) and nonnegative integer \(k\), the following three quantities are equal:
+
+(1) The number of \(k\)-element multisets chosen from \(n\) distinct types (unordered selections of size \(k\) with repetition allowed).
+(2) The number of nonnegative integer solutions \((x_1, x_2, \dots, x_n)\) to \(x_1 + x_2 + \cdots + x_n = k\) (also called weak compositions of \(k\) into \(n\) parts).
+(3) The binomial coefficient
+\[
+\binom{k + n - 1}{n - 1} = \binom{k + n - 1}{k}.
+\]
+[/CALLOUT]
+
+Applying [REF: stars-and-bars | Stars and Bars] to our bakery problem (\(n = 4\) types, \(k = 6\) pastries), there are
+\[
+\binom{6 + 4 - 1}{4 - 1} = \binom{9}{3} = \frac{9 \cdot 8 \cdot 7}{3 \cdot 2 \cdot 1} = 84
+\]
+distinct boxes of pastries. Notice the most frequent beginner slip: using \(n\) bars instead of \(n - 1\). Remember that \(n - 1\) dividers already slice a line into \(n\) regions (just as \(1\) cut splits a stick into \(2\) pieces).
+
+[QUESTION 1]
+[ANSWER: C]
+A bakery offers \(5\) flavors of macarons, with unlimited supply of each flavor. How many distinct boxes of \(8\) macarons can be assembled if only the number of macarons of each flavor matters?
+
+(A) \(35\)
+(B) \(330\)
+(C) \(495\)
+(D) \(792\)
+(E) \(1287\)
+[/QUESTION]
+
+=== SECTION 2: Positive compositions, lower bounds, and inequality sums ===
+
+What if the bakery requires you to include at least one pastry of every variety? That turns the condition \(x_i \ge 0\) into \(x_i \ge 1\). An ordered \(n\)-tuple of POSITIVE integers \((x_1, x_2, \dots, x_n)\) satisfying \(x_1 + x_2 + \cdots + x_n = k\) is called a strong composition (or simply a composition) of \(k\) into \(n\) parts. Clearly we need \(k \ge n \ge 1\) for any solution to exist.
+
+There are two illuminating ways to count strong compositions, and both give the exact same formula:
+
+1. Direct gap placement: Lay out the \(k\) stars in a row, leaving \(k - 1\) interior gaps between consecutive stars. To guarantee that every bin contains at least one star, no bar may sit at either end of the row and no two bars may sit in the same gap. Hence a strong composition corresponds bijectively to choosing \(n - 1\) distinct gaps out of the \(k - 1\) available interior gaps, giving \(\binom{k - 1}{n - 1}\).
+
+2. Variable shift: Pre-assign \(1\) star to each of the \(n\) bins, leaving \(k - n\) stars to distribute freely. Algebraically, define \(y_i = x_i - 1\) for each \(i = 1, \dots, n\). Then \(x_i \ge 1\) holds if and only if \(y_i \ge 0\), and the equation \(x_1 + \cdots + x_n = k\) becomes
+\[
+(y_1 + 1) + (y_2 + 1) + \cdots + (y_n + 1) = k \iff y_1 + y_2 + \cdots + y_n = k - n.
+\]
+By [REF: stars-and-bars | Stars and Bars] with total \(k - n\) and \(n\) variables, the number of solutions is
+\[
+\binom{(k - n) + n - 1}{n - 1} = \binom{k - 1}{n - 1}.
+\]
+
+The beauty of the variable-shift method is that it handles ARBITRARY individual lower bounds \(x_i \ge a_i\) (for any given integers \(a_1, \dots, a_n\), whether positive, zero, or even negative!). Set \(y_i = x_i - a_i\). Then \(x_i \ge a_i\) is equivalent to \(y_i \ge 0\), and substituting \(x_i = y_i + a_i\) converts \(x_1 + \cdots + x_n = k\) into
+\[
+y_1 + y_2 + \cdots + y_n = k - (a_1 + a_2 + \cdots + a_n).
+\]
+As long as the remaining total \(k' = k - \sum_{i=1}^n a_i\) is nonnegative, the solutions are counted by \(\binom{k' + n - 1}{n - 1}\) (and if \(k' < 0\), there are \(0\) solutions).
+
+A second transformation handles INEQUALITY sums of the form
+\[
+x_1 + x_2 + \cdots + x_n \le k, \qquad x_i \ge 0.
+\]
+Rather than summing \(\binom{j + n - 1}{n - 1}\) separately for \(j = 0, 1, \dots, k\), introduce one extra nonnegative slack variable \(x_{n + 1} = k - (x_1 + \cdots + x_n)\). Saying \(x_1 + \cdots + x_n \le k\) with \(x_i \ge 0\) is completely equivalent to saying
+\[
+x_1 + x_2 + \cdots + x_n + x_{n + 1} = k, \qquad x_1, \dots, x_{n + 1} \ge 0,
+\]
+because \(x_{n + 1}\) uniquely absorbs whatever portion of \(k\) goes unused. We now have \(n + 1\) nonnegative variables summing to \(k\), so [REF: stars-and-bars | Stars and Bars] immediately yields
+\[
+\binom{k + (n + 1) - 1}{(n + 1) - 1} = \binom{k + n}{n} = \binom{k + n}{k}.
+\]
+Notice that summing the counts for \(j = 0, 1, \dots, k\) recovers the Hockey-Stick Identity \(\sum_{j=0}^k \binom{j + n - 1}{n - 1} = \binom{k + n}{n}\)—the slack variable proves that sum in a single bijection!
+
+[CALLOUT]
+id: constraint-transforms
+label: Toolkit
+title: Standard constraint transformations for integer equations
+tone: key
+
+(1) Strong compositions (\(x_1 + \cdots + x_n = k\) with \(x_i \ge 1\)): \(\binom{k - 1}{n - 1}\) for \(k \ge n \ge 1\).
+(2) General lower bounds (\(x_i \ge a_i\)): shift \(y_i = x_i - a_i \ge 0\) to reduce to \(y_1 + \cdots + y_n = k - \sum_{i=1}^n a_i\), giving \(\binom{k - \sum a_i + n - 1}{n - 1}\) when \(k \ge \sum a_i\).
+(3) Inequality sums (\(x_1 + \cdots + x_n \le k\) with \(x_i \ge 0\)): add a nonnegative slack variable \(x_{n + 1} \ge 0\) to form \(x_1 + \cdots + x_n + x_{n + 1} = k\), giving \(\binom{k + n}{n}\).
+[/CALLOUT]
+
+Both transformations compose smoothly. For example, to count integer solutions to \(x_1 + x_2 + x_3 \le 12\) with \(x_1 \ge 2\), \(x_2 \ge 0\), and \(x_3 \ge 3\), first apply [REF: constraint-transforms.2 | the lower-bound shift] \(y_1 = x_1 - 2\), \(y_2 = x_2\), \(y_3 = x_3 - 3\). This reduces the problem to \(y_1 + y_2 + y_3 \le 12 - 2 - 3 = 7\) with \(y_1, y_2, y_3 \ge 0\). Next apply [REF: constraint-transforms.3 | the slack variable] \(y_4 \ge 0\) to obtain \(y_1 + y_2 + y_3 + y_4 = 7\), which has \(\binom{7 + 4 - 1}{4 - 1} = \binom{10}{3} = 120\) solutions.
+
+[CALLOUT]
+id: upper-bound-limit
+label: Common Pitfall
+title: Why upper bounds \(x_i \le b_i\) cannot be solved by shifting alone
+tone: caution
+
+Suppose a problem asks for nonnegative integer solutions to \(x_1 + x_2 + x_3 = 12\) subject to upper bounds such as \(x_1 \le 4\), \(x_2 \le 5\), and \(x_3 \le 6\). Trying to shift via \(z_i = b_i - x_i \ge 0\) does NOT eliminate the difficulty: the original condition \(x_i \ge 0\) becomes \(z_i \le b_i\), so you have merely traded one upper bound for another.
+
+When only ONE variable carries an upper bound \(x_1 \le b_1\), you can apply the Complement Rule: take all unrestricted solutions and subtract the violating solutions with \(x_1 \ge b_1 + 1\) (which IS a lower bound!). When TWO OR MORE variables carry simultaneous upper bounds, subtracting each violation separately double-counts solutions that break two bounds at once—resolving those overlaps is one of the flagship uses of the Principle of Inclusion–Exclusion in a later lesson.
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: B]
+How many integer solutions \((x_1, x_2, x_3, x_4)\) satisfy
+\[
+x_1 + x_2 + x_3 + x_4 = 15
+\]
+with \(x_1 \ge 2\), \(x_2 \ge 1\), \(x_3 \ge 0\), and \(x_4 \ge 3\)?
+
+(A) \(84\)
+(B) \(220\)
+(C) \(56\)
+(D) \(715\)
+(E) \(816\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+How many integer solutions \((x_1, x_2, x_3)\) satisfy the inequality \(x_1 + x_2 + x_3 \le 7\) with \(x_1 \ge 1\), \(x_2 \ge 2\), and \(x_3 \ge 0\)?
+
+(A) \(15\)
+(B) \(21\)
+(C) \(70\)
+(D) \(35\)
+(E) \(120\)
+[/QUESTION]
+
+=== SECTION 3: Synthesizing the four elementary selection regimes ===
+
+With Stars and Bars in place, we have completed all four elementary counting formulas for selecting \(k\) items from \(n\) distinct types. Every basic selection problem is governed by two independent binary questions:
+1. Does the ORDER of selection matter?
+2. Is REPETITION of types allowed?
+
+[TABLE]
+Order matters? | Repetition allowed? | Formula (\(k\) from \(n\)) | Canonical interpretation
+Yes (ordered) | No (forbidden) | \(P(n, k) = \frac{n!}{(n - k)!}\) | \(k\)-permutations; injective functions
+Yes (ordered) | Yes (allowed) | \(n^k\) | Length-\(k\) strings over an \(n\)-letter alphabet
+No (unordered) | No (forbidden) | \(\binom{n}{k} = \frac{n!}{k!\,(n - k)!}\) | \(k\)-element subsets
+No (unordered) | Yes (allowed) | \(\binom{k + n - 1}{k} = \binom{k + n - 1}{n - 1}\) | \(k\)-multisets; weak compositions into \(n\) parts
+[/TABLE]
+
+Two habits prevent almost every modeling mistake across these four regimes:
+
+First, identify WHICH number is \(n\) (the number of available types or bins) and WHICH number is \(k\) (the number of items selected or stars distributed) before plugging into any formula. Notice that in the two repetition-allowed cells, \(k\) is allowed to exceed \(n\): you can easily buy \(k = 12\) pastries from \(n = 4\) types (\(\binom{12 + 4 - 1}{3} = \binom{15}{3} = 455\)), or roll a \(6\)-sided die \(10\) times (\(6^{10}\) sequences). Swapping \(n\) and \(k\) produces a completely wrong answer (for example, \(\binom{15}{11} = \binom{15}{4} = 1365 \neq 455\)).
+
+Second, check whether identical-looking word problems secretly enforce order or conceal repetition. Distributing \(k\) IDENTICAL coins to \(n\) DISTINCT children (with empty hands allowed) is unordered selection with repetition: each coin selects one child's bin, and swapping two identical coins changes nothing, giving \(\binom{k + n - 1}{n - 1}\). By contrast, distributing \(k\) DISTINCT books to \(n\) DISTINCT children gives \(n^k\), because each labeled book independently chooses one of the \(n\) children.
+
+[QUESTION 4]
+[ANSWER: A]
+A laboratory must gather \(4\) sensor readings from \(6\) distinct sensor types under two protocols. Protocol I records an ordered sequence of \(4\) readings in which the same sensor type may be queried repeatedly. Protocol II records an unordered batch of \(4\) readings in which the same sensor type may appear repeatedly. Which ordered pair gives the exact counts for Protocol I and Protocol II?
+
+(A) \((1296, 126)\)
+(B) \((360, 15)\)
+(C) \((4096, 84)\)
+(D) \((1296, 210)\)
+(E) \((360, 126)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+How many nondecreasing integer sequences \((d_1, d_2, d_3, d_4, d_5)\) satisfy
+\[
+1 \le d_1 \le d_2 \le d_3 \le d_4 \le d_5 \le 8?
+\]
+
+(A) \(56\)
+(B) \(495\)
+(C) \(1287\)
+(D) \(792\)
+(E) \(32768\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+How many nonnegative integer solutions \((x_1, x_2, x_3)\) satisfy \(x_1 + x_2 + x_3 = 10\) subject to the single upper bound \(x_1 \le 4\)?
+
+(A) \(21\)
+(B) \(45\)
+(C) \(38\)
+(D) \(51\)
+(E) \(66\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+How many distinct monomials of the form \(w^{e_1} x^{e_2} y^{e_3} z^{e_4}\) have total degree \(e_1 + e_2 + e_3 + e_4 = 6\) and contain every one of the four variables \(w, x, y, z\) with exponent at least \(1\)?
+
+(A) \(5\)
+(B) \(15\)
+(C) \(20\)
+(D) \(84\)
+(E) \(10\)
+[/BONUS]

@@ -1,0 +1,228 @@
+=== SECTION 1: Vectores de velocidad, rumbos y medios en movimiento ===
+
+Cuando un avión vuela a través del viento o un bote cruza un río con corriente, la dirección a la que apunta la proa o el morro normalmente NO es la dirección en que el vehículo se desplaza realmente respecto al suelo. Un piloto que apunta exactamente al Norte bajo un viento cruzado hacia el Este es arrastrado en diagonal hacia el noreste; un nadador que apunta perpendicularmente a través de una corriente rápida desembarca muy río abajo. Los vectores de velocidad nos permiten predecir tanto la derrota real como la corrección exacta del rumbo necesaria para mantenerse en ruta.
+
+Una velocidad constante en 2D \(\mathbf{v}\) es un vector cuya magnitud \(\|\mathbf{v}\|\) es la rapidez (por ejemplo, en \(\text{km/h}\) o \(\text{m/s}\)) y cuya dirección es la dirección de desplazamiento. En navegación plana, alineamos el Este con el semieje \(+x\) y el Norte con el semieje \(+y\), y convertimos cualquier rumbo de brújula de tres cifras \(\beta\) (medido en sentido horario desde el Norte franco) en su ángulo matemático estándar \(\theta\) (medido en sentido antihorario desde el Este franco) mediante
+\[
+\theta = 90^\circ - \beta \qquad (\text{sumando } 360^\circ \text{ si hace falta para que } \theta \in [0^\circ, 360^\circ)).
+\]
+Modelamos ahora un vehículo que se mueve dentro de un medio en movimiento (aire o agua). En una unidad de tiempo, el vehículo se desplaza \(\mathbf{v}_{\mathrm{craft}}\) respecto al fluido circundante, mientras que el propio fluido arrastra al vehículo \(\mathbf{v}_{\mathrm{medium}}\) respecto a la Tierra. Por suma vectorial cabeza con cola, la velocidad real del vehículo respecto a la Tierra es la suma:
+\[
+\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{craft}} + \mathbf{v}_{\mathrm{medium}}.
+\]
+
+[CALLOUT]
+id: vel-comp
+label: Principio
+title: Composición de velocidades en un medio en movimiento
+tone: key
+
+Cuando un vehículo se mueve con velocidad \(\mathbf{v}_{\mathrm{craft}}\) respecto a un medio (aire o agua) que a su vez se mueve con velocidad \(\mathbf{v}_{\mathrm{medium}}\) respecto al suelo, la velocidad real del vehículo respecto al suelo es
+\[
+\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{craft}} + \mathbf{v}_{\mathrm{medium}}.
+\]
+
+(1) Rumbo de proa y rapidez respecto al aire (o respecto al agua) describen \(\mathbf{v}_{\mathrm{craft}}\): la dirección hacia la que apunta el vehículo y su rapidez a través del fluido.
+(2) Derrota respecto al suelo (o trayectoria real) y rapidez respecto al suelo describen \(\mathbf{v}_{\mathrm{ground}}\): la dirección y rapidez reales sobre la Tierra.
+[/CALLOUT]
+
+[CALLOUT]
+id: wind-direction-trap
+label: Error frecuente
+title: Distingue HACIA DÓNDE sopla un viento de DESDE DÓNDE sopla
+tone: caution
+
+Verifica siempre la redacción de la dirección de un viento o corriente. Un viento que sopla hacia el Este (rumbo \(090^\circ\)) tiene vector velocidad \(\langle +w, 0 \rangle\). Sin embargo, en meteorología, un «viento del oeste» o un viento «desde \(270^\circ\)» significa aire que viene DESDE el Oeste y por tanto sopla HACIA el Este (\(\langle +w, 0 \rangle\)), \(180^\circ\) opuesto a su rumbo de origen. Nunca introduzcas directamente un rumbo «desde» en \(\mathbf{v}_{\mathrm{medium}}\) sin invertirlo \(180^\circ\) primero.
+[/CALLOUT]
+
+Resolvamos un ejemplo directo de navegación. Una avioneta pone proa al Norte franco (rumbo \(000^\circ\), ángulo estándar \(90^\circ\)) a una rapidez respecto al aire de \(200\text{ km/h}\) mientras sopla un viento constante de \(50\text{ km/h}\) hacia el rumbo \(120^\circ\) (\(\text{S } 60^\circ \text{ E}\)). Halla la rapidez respecto al suelo y la derrota real de la avioneta.
+1. Convierte el rumbo del viento \(120^\circ\) al ángulo estándar \(\theta_w = 90^\circ - 120^\circ = -30^\circ \equiv 330^\circ\).
+2. Escribe ambas velocidades en forma de componentes Este–Norte:
+\[
+\mathbf{v}_{\mathrm{air}} = \langle 0,\; 200 \rangle\text{ km/h},
+\]
+\[
+\mathbf{v}_{\mathrm{wind}} = 50\langle \cos 330^\circ,\; \sin 330^\circ \rangle = \langle 25\sqrt{3},\; -25 \rangle\text{ km/h} \approx \langle 43.30,\; -25 \rangle\text{ km/h}.
+\]
+3. Suma usando [REF: vel-comp | la composición de velocidades]:
+\[
+\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{air}} + \mathbf{v}_{\mathrm{wind}} = \langle 25\sqrt{3},\; 175 \rangle\text{ km/h} \approx \langle 43.30,\; 175 \rangle\text{ km/h}.
+\]
+4. Recupera la rapidez y derrota respecto al suelo:
+\[
+\|\mathbf{v}_{\mathrm{ground}}\| = \sqrt{(25\sqrt{3})^2 + 175^2} = \sqrt{1875 + 30625} = \sqrt{32500} = 50\sqrt{13} \approx 180.3\text{ km/h}.
+\]
+Como ambas componentes son positivas (Cuadrante I), el ángulo estándar es \(\theta_g = \arctan\left(\frac{175}{25\sqrt{3}}\right) = \arctan\left(\frac{7}{\sqrt{3}}\right) \approx 76.1^\circ\), lo que corresponde al rumbo de brújula \(\beta_g = 90^\circ - 76.1^\circ = 013.9^\circ\) (\(\text{N } 13.9^\circ \text{ E}\)). Aunque el piloto apunta directo al Norte, la avioneta deriva \(13.9^\circ\) al Este del Norte y frena hasta \(180.3\text{ km/h}\) respecto al suelo.
+
+[GRAPH]
+type: parametric2d
+title: Composición directa de velocidades: \(\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{air}} + \mathbf{v}_{\mathrm{wind}}\) (en km/h)
+xlabel: Este
+ylabel: Norte
+trange: 0, 1
+xrange: -60, 145
+yrange: -15, 215
+trace: 43.3013*t, 175*t | label: \(\mathbf{v}_{\mathrm{ground}}\) | color: #16a34a
+segment: 0, 0, 0, 200 | label: \(\mathbf{v}_{\mathrm{air}}\) | color: #2563eb
+segment: 0, 200, 43.3013, 175 | label: \(\mathbf{v}_{\mathrm{wind}}\) | color: #dc2626
+segment: 0, 0, 43.3013, 0 | color: #94a3b8 | dashed: true
+segment: 43.3013, 0, 43.3013, 175 | color: #94a3b8 | dashed: true
+point: 0, 200 | label: \((0, 200)\)
+point: 43.3013, 175 | label: \((43.3, 175)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Un planeador vuela con una rapidez respecto al aire de \(40\text{ km/h}\) con rumbo de brújula \(090^\circ\) (Este franco) mientras un viento sopla a \(20\text{ km/h}\) hacia el rumbo de brújula \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)). Tomando el Este como el semieje \(+x\) y el Norte como el semieje \(+y\), ¿cuál es el vector velocidad respecto al suelo \(\mathbf{v}_{\mathrm{ground}}\) del planeador (en \(\text{km/h}\))?
+
+(A) \(\langle 40 + 10\sqrt{3},\; 10 \rangle\)
+(B) \(\langle 50,\; 10\sqrt{3} \rangle\)
+(C) \(\langle 30,\; -10\sqrt{3} \rangle\)
+(D) \(\langle 10,\; 40 + 10\sqrt{3} \rangle\)
+(E) \(\langle 50,\; -10\sqrt{3} \rangle\)
+[/QUESTION]
+
+=== SECTION 2: Corrección de deriva y el umbral de imposibilidad ===
+
+En la navegación real, el problema suele plantearse al revés: conoces la derrota respecto al suelo que QUIERES seguir (digamos, cruzar recto un río hasta un muelle situado directamente enfrente, o volar recto hacia un aeropuerto de destino) y conoces la rapidez de tu vehículo \(v_c = \|\mathbf{v}_{\mathrm{craft}}\|\) y el viento o corriente \(\mathbf{v}_{\mathrm{medium}}\). ¿Qué ángulo de rumbo debes tomar contra el viento cruzado o la corriente para cancelar por completo la deriva lateral?
+
+Analicemos un cruce de río. Un transbordador con rapidez respecto al agua \(v_b = 10\text{ km/h}\) quiere desplazarse exactamente hacia el Norte franco cruzando un río cuya corriente fluye hacia el Este franco a rapidez \(v_r = 6\text{ km/h}\) (\(\mathbf{v}_{\mathrm{river}} = \langle 6, 0 \rangle\)). Para evitar ser arrastrado hacia el Este, el capitán debe orientar la proa al OESTE del Norte un ángulo de corrección desconocido \(\phi \in (0^\circ, 90^\circ)\) (rumbo de brújula \(360^\circ - \phi\), ángulo estándar \(90^\circ + \phi\)). En componentes:
+\[
+\mathbf{v}_{\mathrm{boat}} = \langle -v_b\sin\phi,\; v_b\cos\phi \rangle, \qquad \mathbf{v}_{\mathrm{ground}} = \langle v_r - v_b\sin\phi,\; v_b\cos\phi \rangle.
+\]
+Seguir una derrota real exactamente hacia el Norte significa que deben cumplirse DOS condiciones:
+1. Velocidad lateral (Este–Oeste) nula: \(v_r - v_b\sin\phi = 0 \implies \sin\phi = \frac{v_r}{v_b}\).
+2. Avance positivo hacia adelante (Norte): \(v_{\mathrm{ground}} = v_b\cos\phi > 0\).
+
+Sustituir \(v_r = 6\) y \(v_b = 10\) da \(\sin\phi = \frac{6}{10} = 0.6\), así que \(\phi = \arcsin(0.6) \approx 36.9^\circ\) al Oeste del Norte: un rumbo de brújula de \(360^\circ - 36.9^\circ = 323.1^\circ\) (\(\text{N } 36.9^\circ \text{ O}\)). Usando \(\cos\phi = \sqrt{1 - \sin^2\phi} = 0.8\), la rapidez resultante hacia el Norte respecto al suelo es
+\[
+v_{\mathrm{ground}} = v_b\cos\phi = \sqrt{v_b^2 - v_r^2} = \sqrt{10^2 - 6^2} = 8\text{ km/h}.
+\]
+Observa que los vectores \(\mathbf{v}_{\mathrm{boat}}\), \(\mathbf{v}_{\mathrm{river}}\) y \(\mathbf{v}_{\mathrm{ground}}\) forman un triángulo rectángulo cuya HIPOTENUSA es la propia rapidez del vehículo \(v_b\), ¡no la rapidez respecto al suelo!
+
+Examina ahora con atención \(\sin\phi = \frac{v_r}{v_b}\). Como \(\sin\phi\) nunca puede superar \(1\), ¿qué sucede si la rapidez de la corriente transversal \(v_r\) iguala o supera la rapidez máxima del bote \(v_b\)?
+- Si \(v_r = v_b\), entonces \(\sin\phi = 1 \implies \phi = 90^\circ\): el bote debe apuntar recto hacia el Oeste solo para mantener su posición contra la corriente, dando \(v_{\mathrm{ground}} = 0\) (sin avance hacia el Norte).
+- Si \(v_r > v_b\), entonces \(\frac{v_r}{v_b} > 1\), de modo que \(\sin\phi = \frac{v_r}{v_b}\) NO tiene ninguna solución real: incluso apuntando directamente río arriba, la corriente vence al bote y lo arrastra hacia el Este.
+
+La misma lógica funciona para CUALQUIER derrota deseada respecto al suelo, no solo hacia el Norte. Descompón el viento o la corriente en dos componentes: \(w_\perp\) perpendicular a la derrota deseada (componente transversal) y \(w_\parallel\) a lo largo de la derrota deseada (positiva para viento de cola, negativa para viento de frente). Para cancelar \(w_\perp\), el vehículo debe dedicar una componente perpendicular \(-w_\perp\), lo cual es posible únicamente si \(|w_\perp| \le v_c\). Lo que queda de la rapidez del vehículo para avanzar a lo largo de la derrota es \(\sqrt{v_c^2 - w_\perp^2}\), así que la rapidez de avance sobre el suelo a lo largo de la derrota deseada es
+\[
+v_{\mathrm{ground}} = \sqrt{v_c^2 - w_\perp^2} + w_\parallel,
+\]
+y un avance positivo a lo largo de la trayectoria prevista requiere AMBAS condiciones: \(|w_\perp| \le v_c\) Y \(\sqrt{v_c^2 - w_\perp^2} + w_\parallel > 0\).
+
+[CALLOUT]
+id: drift-correction
+label: Método
+title: Corrección inversa de deriva (compensación de viento cruzado o corriente)
+tone: key
+
+Para guiar un vehículo de rapidez \(v_c\) a lo largo de una derrota prescrita en un medio con componente transversal \(w_\perp\) y componente longitudinal \(w_\parallel\):
+
+(1) Cancela la componente transversal eligiendo el ángulo de corrección \(\phi\) (contra el viento cruzado o la corriente) que satisface \(\sin\phi = \frac{|w_\perp|}{v_c}\).
+(2) La rapidez resultante respecto al suelo a lo largo de la trayectoria deseada es \(v_{\mathrm{ground}} = v_c\cos\phi + w_\parallel = \sqrt{v_c^2 - w_\perp^2} + w_\parallel\).
+(3) Prueba de factibilidad: no existe solución de avance si \(|w_\perp| > v_c\) o si \(\sqrt{v_c^2 - w_\perp^2} + w_\parallel \le 0\).
+[/CALLOUT]
+
+Arrastra el deslizador \(c\) (la rapidez de la corriente del río hacia el Este, de \(0\) a \(9.5\text{ km/h}\)) en la gráfica siguiente para nuestro transbordador de \(10\text{ km/h}\) que cruza recto hacia el Norte. El semicírculo gris muestra todos los rumbos disponibles a rapidez \(10\text{ km/h}\); observa cómo una corriente más rápida exige un ángulo río arriba más pronunciado \(\phi\) y reduce hacia cero la velocidad verde hacia el Norte \(\sqrt{100 - c^2}\).
+
+[GRAPH]
+type: parametric2d
+title: Corrección de deriva para un bote de \(10\text{ km/h}\) cruzando al Norte contra una corriente al Este \(c\)
+xlabel: Este
+ylabel: Norte
+trange: 0, 3.1416
+xrange: -11, 11
+yrange: -1, 11.5
+trace: 10*cos(t), 10*sin(t) | label: \(\text{círculo de rapidez en agua } 10\text{ km/h}\) | color: #cbd5e1
+segment: 0, 0, -c, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{boat}}\) | color: #2563eb
+segment: -c, sqrt(100 - c^2), 0, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{river}}\) | color: #dc2626
+segment: 0, 0, 0, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{ground}}\) | color: #16a34a
+point: -c, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{boat}}\)
+point: 0, sqrt(100 - c^2) | label: \(\mathbf{v}_{\mathrm{ground}}\)
+slider: c | range: 0, 9.5 | init: 6 | step: 0.5
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: C]
+Una persona en kayak puede remar a \(5\text{ km/h}\) en aguas tranquilas y quiere avanzar con una derrota real respecto al suelo directamente hacia el Norte franco (rumbo \(000^\circ\)). El río fluye hacia el Oeste franco a \(2.5\text{ km/h}\). ¿Qué rumbo de brújula debe mantener la persona en kayak y cuál será su rapidez hacia el Norte respecto al suelo?
+
+(A) Rumbo \(330^\circ\) (\(\text{N } 30^\circ \text{ O}\)), rapidez respecto al suelo \(\frac{5\sqrt{3}}{2}\text{ km/h}\)
+(B) Rumbo \(060^\circ\) (\(\text{N } 60^\circ \text{ E}\)), rapidez respecto al suelo \(\frac{5\sqrt{3}}{2}\text{ km/h}\)
+(C) Rumbo \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), rapidez respecto al suelo \(\frac{5\sqrt{3}}{2}\text{ km/h}\)
+(D) Rumbo \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), rapidez respecto al suelo \(\frac{5\sqrt{5}}{2}\text{ km/h}\)
+(E) Rumbo \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), rapidez respecto al suelo \(2.5\text{ km/h}\)
+[/QUESTION]
+
+=== SECTION 3: Velocidad relativa entre dos objetos en movimiento ===
+
+Hasta aquí combinamos la velocidad de un vehículo con la velocidad de su medio. Planteemos ahora una pregunta estrechamente relacionada: supongamos que dos objetos independientes \(A\) y \(B\) se mueven con velocidades constantes respecto al suelo \(\mathbf{v}_A\) y \(\mathbf{v}_B\). ¿Con qué rapidez y en qué dirección parece moverse \(A\) visto por un observador que viaja sobre \(B\)?
+
+Sean \(\mathbf{r}_A(0)\) y \(\mathbf{r}_B(0)\) sus vectores de posición iniciales. Después de un tiempo transcurrido \(t > 0\), sus posiciones son \(\mathbf{r}_A(t) = \mathbf{r}_A(0) + t\mathbf{v}_A\) y \(\mathbf{r}_B(t) = \mathbf{r}_B(0) + t\mathbf{v}_B\). El vector de desplazamiento que apunta DESDE el observador \(B\) HACIA el objetivo \(A\) es
+\[
+\mathbf{r}_A(t) - \mathbf{r}_B(t) = \bigl(\mathbf{r}_A(0) - \mathbf{r}_B(0)\bigr) + t(\mathbf{v}_A - \mathbf{v}_B).
+\]
+Por lo tanto, por unidad de tiempo, la posición de \(A\) respecto a \(B\) cambia según el vector \(\mathbf{v}_A - \mathbf{v}_B\). A esto lo llamamos la velocidad relativa de \(A\) respecto a \(B\), escrita \(\mathbf{v}_{A/B}\):
+\[
+\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B.
+\]
+
+[CALLOUT]
+id: rel-vel
+label: Fórmula
+title: Velocidad relativa de \(A\) respecto a \(B\)
+tone: key
+
+Si los objetos \(A\) y \(B\) se mueven con velocidades \(\mathbf{v}_A\) y \(\mathbf{v}_B\) respecto a un sistema de referencia común (como el suelo), entonces la velocidad de \(A\) observada por \(B\) es
+\[
+\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B.
+\]
+Intercambiar observador y objetivo invierte el vector: \(\mathbf{v}_{B/A} = \mathbf{v}_B - \mathbf{v}_A = -\mathbf{v}_{A/B}\). Observa también cómo [REF: vel-comp | la composición de velocidades] es simplemente la reordenación \(\mathbf{v}_{A/\text{suelo}} = \mathbf{v}_{A/\text{medio}} + \mathbf{v}_{\text{medio}/\text{suelo}}\).
+[/CALLOUT]
+
+Comprueba siempre el orden de la resta con una prueba mental rápida: resta la velocidad del OBSERVADOR. Si conduces hacia el Este a \(60\text{ km/h}\) (\(\mathbf{v}_B = \langle 60, 0 \rangle\)) y un automóvil más rápido te adelanta rumbo al Este a \(80\text{ km/h}\) (\(\mathbf{v}_A = \langle 80, 0 \rangle\)), avanza respecto a ti a \(\mathbf{v}_{A/B} = \langle 80, 0 \rangle - \langle 60, 0 \rangle = \langle +20, 0 \rangle\text{ km/h}\), mientras que una señal al borde de la carretera (\(\mathbf{v}_S = \mathbf{0}\)) pasa velozmente junto a ti hacia el Oeste a \(\mathbf{0} - \langle 60, 0 \rangle = \langle -60, 0 \rangle\text{ km/h}\).
+
+Para un ejemplo resuelto bidimensional, supongamos que el barco \(A\) navega hacia el Norte franco a \(12\text{ km/h}\) (\(\mathbf{v}_A = \langle 0, 12 \rangle\)) mientras que el barco \(B\) navega hacia el Este franco a \(16\text{ km/h}\) (\(\mathbf{v}_B = \langle 16, 0 \rangle\)). Por [REF: rel-vel | la fórmula de velocidad relativa], la velocidad del barco \(A\) observada desde el barco \(B\) es
+\[
+\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B = \langle 0, 12 \rangle - \langle 16, 0 \rangle = \langle -16, 12 \rangle\text{ km/h}.
+\]
+Su rapidez relativa es \(\|\mathbf{v}_{A/B}\| = \sqrt{(-16)^2 + 12^2} = \sqrt{400} = 20\text{ km/h}\). Como \(-16 < 0\) y \(12 > 0\) (Cuadrante II), su ángulo estándar es \(\theta = \arctan\left(-\frac{12}{16}\right) + 180^\circ \approx -36.9^\circ + 180^\circ = 143.1^\circ\), lo que corresponde al rumbo de brújula \(306.9^\circ\) (\(\text{N } 53.1^\circ \text{ O}\)). Recíprocamente, desde el puente del barco \(A\), el barco \(B\) parece moverse a \(\mathbf{v}_{B/A} = \langle 16, -12 \rangle\text{ km/h}\): la misma rapidez de \(20\text{ km/h}\) en el rumbo opuesto \(126.9^\circ\) (\(\text{S } 53.1^\circ \text{ E}\)).
+
+[TABLE]
+Problema de navegación | Ecuación rectora | Qué estás despejando
+Composición directa de velocidades | \(\mathbf{v}_{\mathrm{ground}} = \mathbf{v}_{\mathrm{craft}} + \mathbf{v}_{\mathrm{medium}}\) | Rapidez y derrota real respecto al suelo a partir del rumbo de proa y el viento/corriente
+Corrección inversa de deriva | Cancelar \(w_\perp\): \(\sin\phi = \frac{\lvert w_\perp \rvert}{v_c}\) | Ángulo de rumbo necesario \(\phi\) y rapidez resultante respecto al suelo en la derrota
+Velocidad relativa (\(A\) visto por \(B\)) | \(\mathbf{v}_{A/B} = \mathbf{v}_A - \mathbf{v}_B\) | Velocidad y rapidez aparentes de \(A\) desde el marco del observador \(B\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: E]
+El ciclista \(A\) avanza hacia el Sur franco a \(15\text{ km/h}\), mientras que el ciclista \(B\) avanza hacia el Oeste franco a \(20\text{ km/h}\). Tomando el Este como el semieje \(+x\) y el Norte como el semieje \(+y\), ¿cuáles son la velocidad relativa \(\mathbf{v}_{A/B}\) (del ciclista \(A\) observada por el ciclista \(B\)) y su rapidez relativa?
+
+(A) \(\langle -20, 15 \rangle\text{ km/h}\), rapidez relativa \(25\text{ km/h}\)
+(B) \(\langle -20, -15 \rangle\text{ km/h}\), rapidez relativa \(25\text{ km/h}\)
+(C) \(\langle 20, 15 \rangle\text{ km/h}\), rapidez relativa \(25\text{ km/h}\)
+(D) \(\langle 20, -15 \rangle\text{ km/h}\), rapidez relativa \(35\text{ km/h}\)
+(E) \(\langle 20, -15 \rangle\text{ km/h}\), rapidez relativa \(25\text{ km/h}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Un dron pequeño tiene una rapidez máxima respecto al aire de \(30\text{ km/h}\) y debe volar siguiendo una derrota real respecto al suelo hacia el Norte franco (rumbo \(000^\circ\)) con rapidez positiva hacia el Norte. Tomando el Este como \(+x\) y el Norte como \(+y\), ¿bajo cuál de los siguientes vectores de viento \(\mathbf{w}\) (en \(\text{km/h}\)) es IMPOSIBLE que el dron logre esto?
+
+(A) \(\mathbf{w} = \langle -24,\; 35 \rangle\)
+(B) \(\mathbf{w} = \langle 18,\; -20 \rangle\)
+(C) \(\mathbf{w} = \langle 0,\; -29 \rangle\)
+(D) \(\mathbf{w} = \langle 18,\; -25 \rangle\)
+(E) \(\mathbf{w} = \langle -29,\; 10 \rangle\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Un dron mensajero con rapidez respecto al aire de \(50\text{ km/h}\) vuela \(120\text{ km}\) hacia el Norte franco y regresa de inmediato \(120\text{ km}\) hacia el Sur franco hasta la base. ¿Cómo se compara su tiempo total de ida y vuelta en un viento cruzado constante de \(30\text{ km/h}\) hacia el Este con su tiempo total de ida y vuelta en aire en calma?
+
+(A) Permanece en \(4.8\text{ h}\) porque el viento cruzado sopla de lado y no en contra de la trayectoria de vuelo
+(B) Aumenta de \(4.8\text{ h}\) a \(6.0\text{ h}\)
+(C) Disminuye de \(4.8\text{ h}\) a \(4.0\text{ h}\)
+(D) Aumenta de \(4.8\text{ h}\) a \(7.5\text{ h}\)
+(E) Aumenta de \(4.8\text{ h}\) a \(5.4\text{ h}\)
+[/BONUS]

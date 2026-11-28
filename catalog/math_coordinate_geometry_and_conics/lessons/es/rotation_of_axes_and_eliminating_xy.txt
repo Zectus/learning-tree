@@ -1,0 +1,264 @@
+=== SECTION 1: Rotación de los ejes coordenados ===
+
+Toda cónica alineada con los ejes que hemos analizado hasta ahora carecía de un término cruzado en \(xy\). Considere ahora la sencilla ecuación \(xy = 4\), o más en general la ecuación completa de segundo grado
+\[
+Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0 \qquad (B \neq 0).
+\]
+¿Puede una traslación \(x = x' + h\), \(y = y' + k\) eliminar el término en \(xy\)? Al sustituir se obtiene \(B(x' + h)(y' + k) = Bx'y' + Bkx' + Bhy' + Bhk\): el coeficiente \(B\) de \(x'y'\) no cambia en absoluto. Geométricamente, un término en \(xy\) distinto de cero indica que los ejes de simetría de la cónica están inclinados respecto a los ejes \(x\) e \(y\). Para alinear los ejes coordenados con la cónica, debemos rotar el sistema de referencia.
+
+Mantenga el origen fijo en \((0, 0)\) y rote los semiejes positivos \(x\) e \(y\) en sentido antihorario un ángulo \(\theta\) para formar nuevos ejes perpendiculares \(x'\) e \(y'\):
+- Una unidad a lo largo del semieje \(x'\) positivo cae en el punto de la circunferencia unitaria \((\cos\theta, \sin\theta)\) del plano original.
+- Como el semieje \(y'\) positivo está situado \(90^\circ\) en sentido antihorario respecto al semieje \(x'\) positivo (en el ángulo \(\theta + \frac{\pi}{2}\)), una unidad a lo largo del semieje \(y'\) positivo cae en \((\cos(\theta + \frac{\pi}{2}), \sin(\theta + \frac{\pi}{2})) = (-\sin\theta, \cos\theta)\).
+
+Tome ahora cualquier punto \(P\) cuyas coordenadas en el sistema rotado son \((x', y')\). Partiendo del origen, llegamos a \(P\) avanzando \(x'\) unidades en la dirección \(x'\), \((\cos\theta, \sin\theta)\), y luego \(y'\) unidades en la dirección \(y'\), \((-\sin\theta, \cos\theta)\). Sumar los desplazamientos horizontal y vertical da directamente \(x\) e \(y\).
+
+[CALLOUT]
+id: rotation-equations
+label: Regla
+title: Rotación de ejes en un ángulo antihorario \(\theta\)
+tone: key
+
+Cuando los ejes \(x\) e \(y\) se rotan en sentido antihorario un ángulo \(\theta\) alrededor del origen para formar los ejes \(x'y'\), las coordenadas originales \((x, y)\) y las coordenadas rotadas \((x', y')\) se relacionan mediante
+\[
+x = x'\cos\theta - y'\sin\theta, \qquad y = x'\sin\theta + y'\cos\theta.
+\]
+Resolver este sistema lineal \(2 \times 2\) usando \(\cos^2\theta + \sin^2\theta = 1\) (equivalentemente, rotar en sentido inverso por \(-\theta\)) produce las ecuaciones inversas:
+\[
+x' = x\cos\theta + y\sin\theta, \qquad y' = -x\sin\theta + y\cos\theta.
+\]
+[/CALLOUT]
+
+Arrastre el deslizador del ángulo \(a\) (en radianes, representando \(\theta\)) abajo para rotar los ejes punteados \(x'\) e \(y'\) en sentido antihorario alrededor del origen. El punto \(P\) conserva coordenadas rotadas fijas \((x', y') = (2, 1)\), de modo que puede observar cómo avanzar \(2\) unidades a lo largo de \((\cos a, \sin a)\) y \(1\) unidad a lo largo de \((-\sin a, \cos a)\) sitúa a \(P\) en el plano \(xy\) original.
+
+[GRAPH]
+type: parametric2d
+title: Ejes rotados \(x'y'\) con ángulo \(\theta = a\) y el punto con \((x', y') = (2, 1)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.5, 3.5
+yrange: -3.5, 3.5
+trace: cos(t), sin(t) | label: circunferencia unitaria
+segment: -3*cos(a), -3*sin(a), 3*cos(a), 3*sin(a) | label: \(x'\) | dashed: true
+segment: 3*sin(a), -3*cos(a), -3*sin(a), 3*cos(a) | label: \(y'\) | dashed: true
+segment: 0, 0, 2*cos(a), 2*sin(a)
+segment: 2*cos(a), 2*sin(a), 2*cos(a) - sin(a), 2*sin(a) + cos(a)
+point: cos(a), sin(a) | label: \(u\)
+point: -sin(a), cos(a) | label: \(v\)
+point: 2*cos(a) - sin(a), 2*sin(a) + cos(a) | label: \(P\)
+slider: a | range: 0, 1.57 | init: 0.6 | step: 0.05
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: D]
+Los ejes coordenados se rotan en sentido antihorario un ángulo \(\theta = 60^\circ\). Un punto tiene coordenadas rotadas \((x', y') = (4, -2\sqrt{3})\). ¿Cuáles son sus coordenadas originales \((x, y)\)?
+
+(A) \((-1, 3\sqrt{3})\)
+(B) \((5, 3\sqrt{3})\)
+(C) \((-1, \sqrt{3})\)
+(D) \((5, \sqrt{3})\)
+(E) \((2\sqrt{3} - 1, 2 + \sqrt{3})\)
+[/QUESTION]
+
+=== SECTION 2: Eliminación del término xy y rotaciones con ángulos notables ===
+
+Para hallar qué ángulo \(\theta\) elimina el término en \(x'y'\) de \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) (\(B \neq 0\)), necesitamos dos identidades trigonométricas compactas que enlacen \(\theta\) y \(2\theta\).
+
+[CALLOUT]
+id: trig-bridges
+label: Referencia
+title: Identidades de ángulo doble y de ángulo medio agudo
+tone: note
+
+Para cualquier ángulo \(\theta\), las identidades de ángulo doble relacionan los productos y cuadrados de \(\sin\theta\) y \(\cos\theta\) con \(2\theta\):
+(1) \(\sin 2\theta = 2\sin\theta\cos\theta\).
+(2) \(\cos 2\theta = \cos^2\theta - \sin^2\theta = 2\cos^2\theta - 1 = 1 - 2\sin^2\theta\).
+
+Despejar \(\cos\theta\) y \(\sin\theta\) de las dos últimas formas cuando \(\theta \in \bigl(0, \frac{\pi}{2}\bigr)\) (de modo que tanto \(\cos\theta > 0\) como \(\sin\theta > 0\)) produce las fórmulas agudas de ángulo medio:
+(3) \(\cos\theta = \sqrt{\frac{1 + \cos 2\theta}{2}}, \qquad \sin\theta = \sqrt{\frac{1 - \cos 2\theta}{2}}\).
+[/CALLOUT]
+
+Sustituya ahora [REF: rotation-equations | las fórmulas directas de rotación] \(x = x'\cos\theta - y'\sin\theta\) e \(y = x'\sin\theta + y'\cos\theta\) en \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\):
+\[
+A(x'\cos\theta - y'\sin\theta)^2 + B(x'\cos\theta - y'\sin\theta)(x'\sin\theta + y'\cos\theta) + C(x'\sin\theta + y'\cos\theta)^2 + D(x'\cos\theta - y'\sin\theta) + E(x'\sin\theta + y'\cos\theta) + F = 0.
+\]
+Desarrollar y agrupar términos semejantes produce la ecuación transformada
+\[
+A'x'^2 + B'x'y' + C'y'^2 + D'x' + E'y' + F' = 0,
+\]
+con los nuevos coeficientes
+\[
+A' = A\cos^2\theta + B\sin\theta\cos\theta + C\sin^2\theta,
+\]
+\[
+B' = B(\cos^2\theta - \sin^2\theta) + (C - A)(2\sin\theta\cos\theta),
+\]
+\[
+C' = A\sin^2\theta - B\sin\theta\cos\theta + C\cos^2\theta,
+\]
+junto con \(D' = D\cos\theta + E\sin\theta\), \(E' = -D\sin\theta + E\cos\theta\) y \(F' = F\).
+
+Aplique [REF: trig-bridges.1 | el seno del ángulo doble] y [REF: trig-bridges.2 | el coseno del ángulo doble] en \(B'\):
+\[
+B' = B\cos 2\theta + (C - A)\sin 2\theta.
+\]
+Para eliminar el término cruzado, imponga \(B' = 0\):
+\[
+B\cos 2\theta = (A - C)\sin 2\theta.
+\]
+¿Puede ser \(\sin 2\theta = 0\)? No: si \(\sin 2\theta = 0\), entonces \(\cos 2\theta = \pm 1\), lo que forzaría \(B = 0\) en contradicción con \(B \neq 0\). Por lo tanto, podemos dividir con seguridad entre \(B\sin 2\theta\) para obtener la condición de eliminación.
+
+[CALLOUT]
+id: elimination-angle
+label: Teorema
+title: Ángulo que elimina el término en \(xy\)
+tone: key
+
+Dada \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) con \(B \neq 0\), el coeficiente del término cruzado rotado \(B'\) se anula si y solo si el ángulo de rotación \(\theta\) satisface
+\[
+\cot 2\theta = \frac{A - C}{B}.
+\]
+Elegir \(2\theta \in (0, \pi)\) fija de manera única un ángulo agudo de rotación antihoraria \(\theta \in \bigl(0, \frac{\pi}{2}\bigr)\). En particular, siempre que \(A = C\), tenemos \(\cot 2\theta = 0\), por lo que \(2\theta = \frac{\pi}{2}\) y \(\theta = \frac{\pi}{4}\) (\(45^\circ\)).
+[/CALLOUT]
+
+Ponga a prueba [REF: elimination-angle | esta condición] de inmediato en \(xy = 4\). Aquí \(A = 0\), \(B = 1\) y \(C = 0\), de modo que \(A = C\) da \(\theta = 45^\circ\), con \(\cos 45^\circ = \sin 45^\circ = \frac{\sqrt{2}}{2}\). Sustituir \(x = \frac{x' - y'}{\sqrt{2}}\) e \(y = \frac{x' + y'}{\sqrt{2}}\) convierte \(xy = 4\) en
+\[
+\left(\frac{x' - y'}{\sqrt{2}}\right)\left(\frac{x' + y'}{\sqrt{2}}\right) = 4 \implies \frac{x'^2 - y'^2}{2} = 4 \implies \frac{x'^2}{8} - \frac{y'^2}{8} = 1.
+\]
+En el sistema rotado, \(xy = 4\) es simplemente una hipérbola rectangular con \(a = b = 2\sqrt{2}\) que abre a lo largo del eje \(x'\) (la recta \(y = x\)). Sus vértices \((x', y') = (\pm 2\sqrt{2}, 0)\) se traducen de vuelta mediante \(x = \frac{x' - y'}{\sqrt{2}}, y = \frac{x' + y'}{\sqrt{2}}\) a \((2, 2)\) y \((-2, -2)\) en el plano original.
+
+[GRAPH]
+type: parametric2d
+title: Hipérbola \(xy = 4\) alineada con los ejes \(x'y'\) rotados \(45^\circ\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.5, 1.5
+xrange: -6, 6
+yrange: -6, 6
+trace: 2*cosh(t) - 2*sinh(t), 2*cosh(t) + 2*sinh(t) | label: \(xy = 4\) (primer cuadrante)
+trace: -2*cosh(t) - 2*sinh(t), -2*cosh(t) + 2*sinh(t) | label: \(xy = 4\) (tercer cuadrante)
+segment: -5.5, -5.5, 5.5, 5.5 | label: \(x'\) | dashed: true
+segment: -5.5, 5.5, 5.5, -5.5 | label: \(y'\) | dashed: true
+point: 2, 2 | label: \((2, 2)\)
+point: -2, -2 | label: \((-2, -2)\)
+[/GRAPH]
+
+Cuando \(\frac{A - C}{B}\) es igual a \(\pm \sqrt{3}\), \(\pm \frac{1}{\sqrt{3}}\) o \(0\), la rotación recae en uno de los ángulos notables \(15^\circ\), \(30^\circ\), \(45^\circ\), \(60^\circ\) o \(75^\circ\). Vigile con cuidado el signo de \(\cot 2\theta\). En \(7x^2 - 6\sqrt{3}xy + 13y^2 = 16\), tenemos \(A = 7\), \(B = -6\sqrt{3}\) y \(C = 13\), por lo que
+\[
+\cot 2\theta = \frac{7 - 13}{-6\sqrt{3}} = \frac{-6}{-6\sqrt{3}} = \frac{1}{\sqrt{3}}.
+\]
+Como \(\cot 2\theta > 0\) y \(2\theta \in (0^\circ, 180^\circ)\), \(2\theta\) yace en el cuadrante I: \(2\theta = 60^\circ\), de modo que \(\theta = 30^\circ\), con \(\cos 30^\circ = \frac{\sqrt{3}}{2}\) y \(\sin 30^\circ = \frac{1}{2}\). Calcular directamente los coeficientes rotados da
+\[
+A' = 7\left(\frac{3}{4}\right) - 6\sqrt{3}\left(\frac{\sqrt{3}}{4}\right) + 13\left(\frac{1}{4}\right) = \frac{21 - 18 + 13}{4} = 4,
+\]
+\[
+C' = 7\left(\frac{1}{4}\right) + 6\sqrt{3}\left(\frac{\sqrt{3}}{4}\right) + 13\left(\frac{3}{4}\right) = \frac{7 + 18 + 39}{4} = 16.
+\]
+Así pues, \(4x'^2 + 16y'^2 = 16\), o \(\frac{x'^2}{4} + \frac{y'^2}{1} = 1\): una elipse inclinada \(30^\circ\) con semieje mayor \(2\) a lo largo del eje \(x'\) y semieje menor \(1\) a lo largo del eje \(y'\).
+
+[QUESTION 2]
+[ANSWER: C]
+¿Qué ángulo agudo de rotación \(\theta \in (0^\circ, 90^\circ)\) elimina el término en \(xy\) de \(5x^2 + 2\sqrt{3}xy + 7y^2 = 32\), y cuál es la ecuación ordinaria resultante en \((x', y')\)?
+
+(A) \(\theta = 30^\circ\); \(\frac{x'^2}{4} + \frac{y'^2}{8} = 1\)
+(B) \(\theta = 60^\circ\); \(\frac{x'^2}{8} + \frac{y'^2}{4} = 1\)
+(C) \(\theta = 60^\circ\); \(\frac{x'^2}{4} + \frac{y'^2}{8} = 1\)
+(D) \(\theta = 30^\circ\); \(\frac{x'^2}{8} + \frac{y'^2}{4} = 1\)
+(E) \(\theta = 45^\circ\); \(\frac{x'^2}{4} + \frac{y'^2}{8} = 1\)
+[/QUESTION]
+
+=== SECTION 3: Rotaciones exactas con ángulos no notables mediante triángulos de referencia y ángulos medios ===
+
+La mayoría de las ecuaciones cuadráticas producen un valor racional de \(\cot 2\theta = \frac{A - C}{B}\) que no corresponde a un ángulo notable —como \(\frac{5}{12}\) o \(-\frac{3}{4}\)—. Nunca necesita una calculadora ni aproximaciones trigonométricas inversas. Como únicamente sustituimos \(\cos\theta\) y \(\sin\theta\) (jamás el ángulo \(\theta\) mismo), un triángulo de referencia con signo para \(2\theta\) combinado con [REF: trig-bridges.3 | las fórmulas agudas de ángulo medio] entrega valores radicales exactos en todo momento:
+(1) Calcule \(\cot 2\theta = \frac{A - C}{B}\) y redúzcalo a su mínima expresión.
+(2) Recuerde que \(2\theta \in (0, \pi)\), por lo que \(\sin 2\theta > 0\) SIEMPRE. En consecuencia, \(\cos 2\theta\) tiene EXACTAMENTE EL MISMO SIGNO que \(\cot 2\theta\): positivo cuando \(\cot 2\theta > 0\) (cuadrante I), y negativo cuando \(\cot 2\theta < 0\) (cuadrante II).
+(3) Forme un triángulo rectángulo con cateto adyacente \(\lvert p \rvert\), cateto opuesto \(\lvert q \rvert\) (donde \(\cot 2\theta = \frac{p}{q}\)) e hipotenusa \(r = \sqrt{p^2 + q^2}\). Entonces \(\cos 2\theta = \pm \frac{\lvert p \rvert}{r}\), conservando el signo de \(\cot 2\theta\).
+(4) Evalúe \(\cos\theta = \sqrt{\frac{1 + \cos 2\theta}{2}}\) y \(\sin\theta = \sqrt{\frac{1 - \cos 2\theta}{2}}\), ambos positivos pues \(\theta \in (0, \frac{\pi}{2})\).
+(5) Sustituya \(x = x'\cos\theta - y'\sin\theta\) e \(y = x'\sin\theta + y'\cos\theta\) en la ecuación, simplifique y bosqueje la cónica respecto al eje rotado \(x'\) (dirección \((\cos\theta, \sin\theta)\)) y al eje \(y'\) (dirección \((-\sin\theta, \cos\theta)\)).
+
+Desarrolle un ejemplo completo en el cuadrante II: \(4x^2 + 4xy + 7y^2 = 24\).
+Aquí \(A = 4\), \(B = 4\) y \(C = 7\), por lo que
+\[
+\cot 2\theta = \frac{4 - 7}{4} = -\frac{3}{4}.
+\]
+El triángulo de referencia tiene catetos \(3\) y \(4\) e hipotenusa \(5\). Como \(\cot 2\theta < 0\), el ángulo \(2\theta\) está en el cuadrante II, lo que da
+\[
+\cos 2\theta = -\frac{3}{5}.
+\]
+Al aplicar [REF: trig-bridges.3 | las fórmulas agudas de ángulo medio]:
+\[
+\cos\theta = \sqrt{\frac{1 + (-3/5)}{2}} = \sqrt{\frac{1}{5}} = \frac{1}{\sqrt{5}}, \qquad \sin\theta = \sqrt{\frac{1 - (-3/5)}{2}} = \sqrt{\frac{4}{5}} = \frac{2}{\sqrt{5}}.
+\]
+Ahora calcule \(A'\) y \(C'\) (sabiendo que \(B' = 0\) por construcción):
+\[
+A' = 4\left(\frac{1}{5}\right) + 4\left(\frac{2}{5}\right) + 7\left(\frac{4}{5}\right) = \frac{4 + 8 + 28}{5} = 8,
+\]
+\[
+C' = 4\left(\frac{4}{5}\right) - 4\left(\frac{2}{5}\right) + 7\left(\frac{1}{5}\right) = \frac{16 - 8 + 7}{5} = 3.
+\]
+La ecuación se simplifica a \(8x'^2 + 3y'^2 = 24\), es decir,
+\[
+\frac{x'^2}{3} + \frac{y'^2}{8} = 1.
+\]
+Para bosquejar esta elipse en el plano \(xy\) original, trace el semieje \(x'\) positivo por el origen en la dirección \((\cos\theta, \sin\theta) \parallel (1, 2)\) (pendiente \(2\)), trace el semieje \(y'\) positivo perpendicular en la dirección \((-2, 1)\) (pendiente \(-\frac{1}{2}\)), y grafique la elipse con semieje \(\sqrt{3}\) a lo largo de \(x'\) y semieje mayor \(2\sqrt{2}\) a lo largo de \(y'\).
+
+[GRAPH]
+type: parametric2d
+title: Elipse rotada \(4x^2 + 4xy + 7y^2 = 24\) (\(\frac{x'^2}{3} + \frac{y'^2}{8} = 1\) en el sistema \(x'y'\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.5, 3.5
+yrange: -3.5, 3.5
+trace: (sqrt(3)*cos(t) - 4*sqrt(2)*sin(t))/sqrt(5), (2*sqrt(3)*cos(t) + 2*sqrt(2)*sin(t))/sqrt(5) | label: \(4x^2 + 4xy + 7y^2 = 24\)
+segment: -1.5, -3, 1.5, 3 | label: \(x'\) | dashed: true
+segment: 3, -1.5, -3, 1.5 | label: \(y'\) | dashed: true
+point: -4*sqrt(2/5), 2*sqrt(2/5) | label: \(V_1\)
+point: 4*sqrt(2/5), -2*sqrt(2/5) | label: \(V_2\)
+[/GRAPH]
+
+Cuando también están presentes términos lineales \(Dx + Ey\), sustituya exactamente los mismos \(x = x'\cos\theta - y'\sin\theta\) e \(y = x'\sin\theta + y'\cos\theta\) en \(Dx + Ey\), produciendo \(D'x' + E'y'\), que luego puede simplificar completando el cuadrado si hace falta.
+
+[QUESTION 3]
+[ANSWER: A]
+Para eliminar el término en \(xy\) de \(8x^2 + 12xy + 3y^2 = 10\) mediante una rotación aguda \(\theta \in (0^\circ, 90^\circ)\), ¿cuáles son los valores exactos de \(\cos\theta\) y \(\sin\theta\)?
+
+(A) \(\cos\theta = \frac{3}{\sqrt{13}}\), \(\sin\theta = \frac{2}{\sqrt{13}}\)
+(B) \(\cos\theta = \frac{2}{\sqrt{13}}\), \(\sin\theta = \frac{3}{\sqrt{13}}\)
+(C) \(\cos\theta = \frac{5}{13}\), \(\sin\theta = \frac{12}{13}\)
+(D) \(\cos\theta = \frac{12}{13}\), \(\sin\theta = \frac{5}{13}\)
+(E) \(\cos\theta = \frac{3}{\sqrt{26}}\), \(\sin\theta = \frac{2}{\sqrt{26}}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+Rote los ejes coordenados en el ángulo agudo \(\theta \in (0^\circ, 90^\circ)\) que elimina el término en \(xy\) de \(9x^2 - 24xy + 16y^2 - 40x - 30y = 0\). ¿Cuál es la ecuación simplificada resultante en \((x', y')\)?
+
+(A) \(x'^2 = 2y'\)
+(B) \(y'^2 = -2x'\)
+(C) \(25y'^2 - 50y' = 0\)
+(D) \(25x'^2 - 50y' = 0\)
+(E) \(y'^2 = 2x'\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Elimine el término en \(xy\) de \(2x^2 + 4xy - y^2 = 12\) usando una rotación aguda \(\theta \in (0^\circ, 90^\circ)\). ¿Cuál es la ecuación ordinaria resultante en \((x', y')\)?
+
+(A) \(\frac{y'^2}{4} - \frac{x'^2}{6} = 1\)
+(B) \(\frac{x'^2}{4} - \frac{y'^2}{6} = 1\)
+(C) \(\frac{x'^2}{6} - \frac{y'^2}{4} = 1\)
+(D) \(\frac{x'^2}{4} + \frac{y'^2}{6} = 1\)
+(E) \(\frac{x'^2}{3} - \frac{y'^2}{2} = 1\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+En el plano \(xy\) original, ¿cuáles son las coordenadas de los dos vértices de la hipérbola rotada \(xy = -9\)?
+
+(A) \((3, 3)\) y \((-3, -3)\)
+(B) \((3\sqrt{2}, 0)\) y \((-3\sqrt{2}, 0)\)
+(C) \((-3, 3)\) y \((3, -3)\)
+(D) \((0, 3\sqrt{2})\) y \((0, -3\sqrt{2})\)
+(E) \((-9, 1)\) y \((9, -1)\)
+[/BONUS]

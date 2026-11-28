@@ -1,0 +1,299 @@
+=== SECTION 1: Los axiomas de orden de los números reales ===
+
+Cuando resolvemos una ecuación como \(2x = 6\), multiplicar ambos lados por un número distinto de cero siempre produce una ecuación equivalente. Las desigualdades no se comportan de manera tan permisiva: multiplicar \(2 < 5\) por \(-1\) convierte un enunciado verdadero en el enunciado falso \(-2 < -5\) a menos que el signo de la desigualdad se invierta a \(-2 > -5\). ¿Por qué la multiplicación por un número negativo invierte el orden mientras que la suma nunca lo hace, y qué transformaciones algebraicas son genuinamente seguras al trabajar con números reales desconocidos?
+
+Damos por sentadas las reglas aritméticas estándar (de cuerpo) de los números reales \(\mathbb{R}\) —adición, sustracción, multiplicación y división entre números reales distintos de cero— y formalizamos la relación \(<\) («es menor que») mediante cuatro propiedades de orden. Las relaciones compañeras \(>\), \(\le\) y \(\ge\) se definen directamente a partir de \(<\): \(a > b\) significa \(b < a\); \(a \le b\) significa \(a < b\) o \(a = b\); y \(a \ge b\) significa \(b \le a\).
+
+[CALLOUT]
+id: order-axioms
+label: Axiomas
+title: Propiedades algebraicas de orden de \(\mathbb{R}\)
+tone: key
+
+Para todos los números reales \(a, b, c \in \mathbb{R}\):
+
+(1) Tricotomía: Se cumple exactamente una de las tres afirmaciones \(a < b\), \(a = b\) o \(a > b\).
+(2) Transitividad: Si \(a < b\) y \(b < c\), entonces \(a < c\).
+(3) Preservación aditiva: Si \(a < b\), entonces \(a + c < b + c\).
+(4) Ley multiplicativa de los signos: Si \(a < b\) y \(c > 0\), entonces \(ac < bc\); si \(a < b\) y \(c < 0\), entonces \(ac > bc\).
+[/CALLOUT]
+
+Obsérvese cómo [REF: order-axioms.3 | la preservación aditiva] conecta el orden con la positividad: sumar \(-a\) a ambos lados de \(a < b\) da \(0 < b - a\), y recíprocamente sumar \(a\) a \(0 < b - a\) recupera \(a < b\). Así,
+\[
+a < b \iff b - a > 0.
+\]
+Esta equivalencia sencilla es el motor detrás de casi toda demostración de desigualdades. Para demostrar que una cantidad es menor que otra, podemos restarlas y determinar el signo de su diferencia.
+
+De [REF: order-axioms | los axiomas de orden] se siguen dos consecuencias inmediatas. Primero, la negación invierte el orden: tomar \(c = -1 < 0\) en [REF: order-axioms.4 | la ley multiplicativa de los signos] muestra que \(a < b \iff -a > -b\). En particular, \(a > 0 \iff -a < 0\). Segundo, se pueden sumar dos desigualdades que apuntan en el mismo sentido. Supongamos que \(a < b\) y \(c < d\). Por [REF: order-axioms.3 | la preservación aditiva], sumar \(c\) a la primera da \(a + c < b + c\), y sumar \(b\) a la segunda da \(b + c < b + d\). Al aplicar [REF: order-axioms.2 | la transitividad] enlazamos ambos pasos en
+\[
+a + c < b + d.
+\]
+El mismo argumento funciona para desigualdades no estrictas: si \(a \le b\) y \(c \le d\), entonces \(a + c \le b + d\), y si al menos una de las dos desigualdades es estricta, la suma es estricta.
+
+[CALLOUT]
+id: no-direct-subtraction
+label: Precaución
+title: Nunca restes desigualdades directamente
+tone: caution
+
+Saber que \(a < b\) y \(c < d\) no implica que \(a - c < b - d\). Por ejemplo, \(1 < 2\) y \(0 < 10\), pero \(1 - 0 = 1\) es mayor que \(2 - 10 = -8\). Para acotar una diferencia \(a - c\), primero niega la segunda desigualdad para invertir su sentido (\(-d < -c\)) y luego súmala a \(a < b\) para obtener \(a - d < b - c\).
+[/CALLOUT]
+
+Veamos esa regla de sustracción en acción en una verificación numérica concreta. Supongamos que \(3 < a < 7\) y \(1 < c < 4\). Negar \(1 < c < 4\) invierte ambos signos a \(-4 < -c < -1\). Al sumar esto a \(3 < a < 7\) obtenemos
+\[
+3 + (-4) < a - c < 7 + (-1), \qquad \text{de modo que} \qquad -1 < a - c < 6.
+\]
+Estas cotas son ajustadas: \(a - c\) se acerca a \(-1\) cuando \(a\) está cerca de \(3\) y \(c\) cerca de \(4\), y se acerca a \(6\) cuando \(a\) está cerca de \(7\) y \(c\) cerca de \(1\). Restar los extremos directamente habría producido el rango incorrecto \(2 < a - c < 3\), omitiendo valores como \(a - c = 5\) (con \(a = 6.5, c = 1.5\)).
+
+[QUESTION 1]
+[ANSWER: D]
+Suponga que \(a, b, c, d\) son números reales que satisfacen \(a < b\) y \(c < d\). ¿Qué desigualdad está garantizada para toda elección de \(a, b, c, d\)?
+
+(A) \(a - c < b - d\)
+(B) \(ac < bd\)
+(C) \(a^2 + c < b^2 + d\)
+(D) \(a - d < b - c\)
+(E) \(ac - b < bd - a\)
+[/QUESTION]
+
+=== SECTION 2: Reglas de los signos para productos, cocientes y cuadrados ===
+
+Muchas desigualdades algebraicas se reducen a preguntar cuándo un producto \(ab\) o un cociente \(a/b\) es positivo o negativo. Toda regla de signos para productos y cocientes es una consecuencia directa de [REF: order-axioms.1 | la tricotomía] y [REF: order-axioms.4 | la ley multiplicativa de los signos].
+
+Supongamos primero que \(a > 0\) y \(b > 0\). Multiplicar \(a > 0\) por \(b > 0\) preserva el sentido, dando \(ab > 0 \cdot b = 0\). Supongamos luego que \(a < 0\) y \(b < 0\). Multiplicar \(a < 0\) por \(b < 0\) invierte el sentido, dando \(ab > 0 \cdot b = 0\). Por último, si \(a\) y \(b\) tienen signos opuestos —digamos \(a > 0\) y \(b < 0\)— multiplicar \(a > 0\) por \(b < 0\) invierte el sentido, dando \(ab < 0\). Si cualquiera de los factores es \(0\), entonces \(ab = 0\). Por tricotomía, estos cuatro casos agotan todos los pares \((a, b) \in \mathbb{R}^2\), de modo que también valen las implicaciones recíprocas.
+
+¿Qué ocurre con un cociente \(a/b\) con \(b \ne 0\)? Obsérvese que \(b\) y \(1/b\) deben tener exactamente el mismo signo: su producto es \(b \cdot (1/b) = 1 > 0\), lo cual es imposible a menos que ambos sean positivos o ambos sean negativos. Escribir \(a/b = a \cdot (1/b)\) muestra de inmediato que \(a/b\) tiene exactamente el mismo signo que \(ab\).
+
+[CALLOUT]
+id: sign-rules
+label: Proposición
+title: Reglas de los signos para productos, cocientes y cuadrados
+tone: key
+
+Para todos los números reales \(a, b, x \in \mathbb{R}\):
+
+(1) Positividad del producto: \(ab > 0\) si y solo si o bien (\(a > 0\) y \(b > 0\)), o bien (\(a < 0\) y \(b < 0\)).
+(2) Negatividad del producto: \(ab < 0\) si y solo si \(a\) y \(b\) tienen signos opuestos.
+(3) Signo del cociente: Para \(b \ne 0\), \(a/b > 0 \iff ab > 0\), y \(a/b < 0 \iff ab < 0\).
+(4) No negatividad de los cuadrados: \(x^2 \ge 0\) para todo \(x \in \mathbb{R}\), con \(x^2 = 0\) si y solo si \(x = 0\).
+[/CALLOUT]
+
+Verifique [REF: sign-rules.4 | la no negatividad de los cuadrados] a partir de las reglas inmediatamente anteriores: por tricotomía, o bien \(x > 0\), \(x < 0\) o \(x = 0\). En los dos primeros casos \(x\) y \(x\) comparten el mismo signo, así que \(x^2 = x \cdot x > 0\) por [REF: sign-rules.1 | la positividad del producto]; en el tercer caso \(0^2 = 0\). Como consecuencia inmediata, \(1 = 1^2 > 0\), y una suma de cuadrados \(x^2 + y^2\) siempre es no negativa y vale \(0\) si y solo si \(x = 0\) e \(y = 0\).
+
+La no negatividad de los cuadrados es una de las herramientas más versátiles para demostrar desigualdades algebraicas. Supongamos que queremos demostrar que para todos los números reales \(a\) y \(b\),
+\[
+a^2 + b^2 \ge 2ab.
+\]
+Siguiendo la estrategia de la diferencia de la Sección 1, no partimos suponiendo que la desigualdad es verdadera; en cambio, examinamos la diferencia entre ambos lados:
+\[
+(a^2 + b^2) - 2ab = a^2 - 2ab + b^2 = (a - b)^2.
+\]
+Por [REF: sign-rules.4 | la no negatividad de los cuadrados], \((a - b)^2 \ge 0\) para todos \(a, b \in \mathbb{R}\), con igualdad si y solo si \(a - b = 0\), es decir, \(a = b\). Sumar \(2ab\) a ambos lados produce \(a^2 + b^2 \ge 2ab\).
+
+Observe cómo la misma idea de diferencia y cuadrado demuestra un enunciado ligeramente más rico: para todos los números reales \(a, b \in \mathbb{R}\),
+\[
+a^2 + ab + b^2 \ge 0,
+\]
+con igualdad únicamente cuando \(a = b = 0\). Completar el cuadrado en \(a\) escribe la expresión como una suma de dos cuadrados:
+\[
+a^2 + ab + b^2 = \left(a + \frac{b}{2}\right)^2 + \frac{3}{4}b^2.
+\]
+Cada término a la derecha es no negativo por [REF: sign-rules.4 | la no negatividad de los cuadrados], de modo que su suma es al menos \(0\). Más aún, la suma puede valer \(0\) solo si ambos cuadrados valen \(0\), lo que obliga a \(b = 0\) y por ende \(a = 0\). Usaremos exactamente esta identidad en la siguiente sección para resolver las desigualdades con potencias impares.
+
+[QUESTION 2]
+[ANSWER: B]
+Sean \(x\) e \(y\) números reales distintos de cero que satisfacen \(x^2 y < 0\) y \(x y^3 > 0\). ¿Qué afirmación debe ser verdadera?
+
+(A) \(x > 0\) e \(y < 0\)
+(B) \(x < 0\) e \(y < 0\)
+(C) \(x < 0\) e \(y > 0\)
+(D) \(x > 0\) e \(y > 0\)
+(E) \(y < 0\), mientras que el signo de \(x\) no puede determinarse
+[/QUESTION]
+
+=== SECTION 3: Recíprocos y monotonía de las potencias ===
+
+Dos operaciones que con frecuencia rompen la manipulación ingenua de desigualdades son tomar recíprocos y elevar ambos lados a una potencia. En ambos casos, los signos determinan si el orden se invierte, se mantiene igual o se descompone por completo.
+
+Considere primero los recíprocos de números reales \(a\) y \(b\) distintos de cero. Para comparar \(1/a\) y \(1/b\), calcule su diferencia sobre un denominador común:
+\[
+\frac{1}{b} - \frac{1}{a} = \frac{a - b}{ab}.
+\]
+Supongamos que \(a < b\), de modo que el numerador \(a - b\) es negativo. Por [REF: sign-rules.3 | la regla del signo del cociente], el signo de \((a - b)/(ab)\) depende por completo del signo de \(ab\):
+- Si \(a\) y \(b\) tienen el mismo signo (ya sea \(0 < a < b\) o \(a < b < 0\)), entonces \(ab > 0\). Por lo tanto \((a - b)/(ab) < 0\), lo que significa \(1/b < 1/a\): tomar recíprocos invierte la desigualdad.
+- Si \(a\) y \(b\) tienen signos opuestos (\(a < 0 < b\)), entonces \(ab < 0\). Por lo tanto \((a - b)/(ab) > 0\), lo que significa \(1/b > 1/a\), es decir, \(1/a < 1/b\): tomar recíprocos preserva la desigualdad (en efecto, \(1/a < 0 < 1/b\)).
+
+[CALLOUT]
+id: reciprocal-rules
+label: Teorema
+title: Reglas de comparación de recíprocos
+tone: key
+
+Sean \(a, b \in \mathbb{R}\) distintos de cero.
+
+(1) Inversión con el mismo signo: Si \(0 < a < b\), entonces \(0 < \frac{1}{b} < \frac{1}{a}\). Si \(a < b < 0\), entonces \(\frac{1}{b} < \frac{1}{a} < 0\).
+(2) Preservación con signos opuestos: Si \(a < 0 < b\), entonces \(\frac{1}{a} < 0 < \frac{1}{b}\).
+[/CALLOUT]
+
+¿Por qué es indispensable verificar los signos antes de tomar recíprocos? Si solo sabes que \(-2 < x < 3\) con \(x \ne 0\), no puedes tomar recíprocos cruzando el \(0\) en un solo paso: cuando \(x = 0.01\) obtenemos \(1/x = 100\), y cuando \(x = -0.01\) obtenemos \(1/x = -100\). En cambio, debes dividir en las dos regiones de signo definido \(-2 < x < 0\) (lo que da \(1/x < -1/2\)) y \(0 < x < 3\) (lo que da \(1/x > 1/3\)).
+
+Ahora considere las potencias: ¿cuándo \(a < b\) garantiza \(a^2 < b^2\) o \(a^3 < b^3\), y cuándo podemos retroceder?
+
+Para cuadrados, factorice la diferencia \(b^2 - a^2\):
+\[
+b^2 - a^2 = (b - a)(b + a).
+\]
+Si \(0 \le a < b\), entonces \(b - a > 0\) y \(b + a > 0\), de modo que \(b^2 - a^2 > 0\), dando \(a^2 < b^2\). Recíprocamente, si \(a \ge 0\), \(b \ge 0\) y \(a^2 < b^2\), entonces \(b + a > 0\) (no pueden ser ambos \(0\) puesto que \(a^2 < b^2\)), de modo que \((b - a)(b + a) > 0\) obliga a \(b - a > 0\), es decir, \(a < b\). Así, elevar al cuadrado preserva el orden (en ambas direcciones) sobre los números reales no negativos. Sobre números no positivos, sin embargo, \(a < b \le 0\) da \(b - a > 0\) y \(b + a < 0\), así que \(b^2 - a^2 < 0\), invirtiendo la desigualdad a \(a^2 > b^2\). Cuando \(a < 0 < b\), el signo de \(b + a\) puede ser positivo, cero o negativo según qué número esté más alejado de \(0\): por ejemplo, \(-1 < 2\) da \((-1)^2 < 2^2\), mientras que \(-3 < 2\) da \((-3)^2 > 2^2\).
+
+Para cubos, factorice la diferencia \(b^3 - a^3\):
+\[
+b^3 - a^3 = (b - a)(b^2 + ab + a^2).
+\]
+En la Sección 2 demostramos que \(b^2 + ab + a^2 = (b + a/2)^2 + \frac{3}{4}a^2 \ge 0\), con igualdad solo cuando \(a = b = 0\). Siempre que \(a \ne b\), el segundo factor \(b^2 + ab + a^2\) es estrictamente positivo sin importar los signos de \(a\) y \(b\). Por lo tanto, \(b^3 - a^3\) siempre tiene exactamente el mismo signo que \(b - a\): ¡elevar al cubo preserva el orden en todo \(\mathbb{R}\), en ambas direcciones!
+
+La gráfica siguiente muestra \(y = x^2\) e \(y = x^3\) en los mismos ejes. Moviéndose de izquierda a derecha, \(y = x^3\) asciende en todas partes (cada aumento en \(x\) aumenta \(x^3\)), mientras que \(y = x^2\) desciende para \(x < 0\) y asciende para \(x > 0\), lo que explica visualmente por qué elevar al cuadrado invierte el orden en la mitad izquierda de la recta real y lo preserva en la mitad derecha.
+
+[GRAPH]
+type: function2d
+title: Monotonía de \(y = x^3\) en todo \(\mathbb{R}\) frente a \(y = x^2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.1, 2.1
+yrange: -4.5, 4.5
+trace: x^2 | label: \(y = x^2\)
+trace: x^3 | label: \(y = x^3\)
+point: -1.5, 2.25 | label: \((-1.5, 2.25)\)
+point: 1, 1 | label: \((1, 1)\)
+segment: -1.5, 0, -1.5, 2.25 | dashed: true
+segment: 1, 0, 1, 1 | dashed: true
+[/GRAPH]
+
+[CALLOUT]
+id: power-monotonicity
+label: Teorema
+title: Monotonía de cuadrados y cubos
+tone: key
+
+Para todos los números reales \(a, b \in \mathbb{R}\):
+
+(1) Cuadrados no negativos: Si \(a \ge 0\) y \(b \ge 0\), entonces \(a < b \iff a^2 < b^2\).
+(2) Cuadrados no positivos: Si \(a \le 0\) y \(b \le 0\), entonces \(a < b \iff a^2 > b^2\).
+(3) Cubos en todas partes: Para todos \(a, b \in \mathbb{R}\), \(a < b \iff a^3 < b^3\).
+[/CALLOUT]
+
+Más en general, toda potencia entera positiva par \(x^{2n}\) se comporta como \(x^2\) (preserva el orden para \(x \ge 0\), lo invierte para \(x \le 0\)), y toda potencia entera positiva impar \(x^{2n+1}\) se comporta como \(x^3\) (preserva el orden en todo \(\mathbb{R}\)).
+
+[QUESTION 3]
+[ANSWER: A]
+Suponga que \(a\) y \(b\) son números reales distintos de cero que satisfacen tanto \(a < b\) como \(\frac{1}{a} < \frac{1}{b}\). ¿Qué condición debe cumplirse?
+
+(A) \(a < 0 < b\)
+(B) \(0 < a < b\)
+(C) \(a < b < 0\)
+(D) \(a^2 < b^2\)
+(E) \(a + b > 0\)
+[/QUESTION]
+
+=== SECTION 4: Cotas compuestas y auditoría de pasos algebraicos ===
+
+Combinar los axiomas de orden, las reglas de signos y las leyes de los recíprocos nos permite construir cotas ajustadas para expresiones compuestas como \(a - b\), \(ab\) y \(a/b\) a partir de cotas separadas para \(a\) y \(b\). La disciplina clave consiste en realizar únicamente operaciones con signo verificado, sin aplicar jamás una regla cuya hipótesis de signo no haya sido comprobada.
+
+Considere el problema de hallar cotas ajustadas para \(ab\) cuando \(2 < a < 5\) y \(-4 < b < -1\). Debido a que \(b\) es negativo, multiplicar las cotas directamente es peligroso a menos que rastreemos los signos de forma explícita. Convierta primero \(b\) en una variable positiva: multiplicar \(-4 < b < -1\) por \(-1\) invierte ambas desigualdades a
+\[
+1 < -b < 4.
+\]
+Ahora tanto \(a\) como \(-b\) son estrictamente positivos, de modo que podemos multiplicar con seguridad desigualdades positivas del mismo sentido:
+\[
+2 \cdot 1 < a(-b) < 5 \cdot 4 \implies 2 < -ab < 20.
+\]
+Multiplicar por \(-1\) una vez más invierte el sentido de vuelta:
+\[
+-20 < ab < -2.
+\]
+Verifiquemos por qué estas cotas no pueden ajustarse más. Tomar \(a\) arbitrariamente cerca de \(5\) y \(b\) arbitrariamente cerca de \(-4\) empuja a \(ab\) arbitrariamente cerca de \(-20\); tomar \(a\) cerca de \(2\) y \(b\) cerca de \(-1\) empuja a \(ab\) arbitrariamente cerca de \(-2\).
+
+¿Qué sucede si una variable puede cambiar de signo —digamos, \(-2 < a < 5\) y \(1 < b < 3\)? Divida \(a\) en tres casos de signo:
+- Cuando \(0 < a < 5\): \(0 < ab < 5 \cdot 3 = 15\).
+- Cuando \(a = 0\): \(ab = 0\).
+- Cuando \(-2 < a < 0\): \(0 < -a < 2\) y \(1 < b < 3\), de modo que \(0 < -ab < 6\), luego \(-6 < ab < 0\).
+Al combinar los tres casos se muestra que todo valor de \(ab\) satisface \(-6 < ab < 15\), y ambos extremos se aproximan cuando \((a, b)\) se acerca a \((-2, 3)\) y \((5, 3)\). Note el atajo general al acotar un producto \(ab\) sobre cotas separadas para \(a\) y \(b\): los valores extremos de \(ab\) siempre están controlados por los cuatro productos de esquina formados con los extremos de \(a\) y \(b\), porque fijar cualquiera de las variables vuelve a \(ab\) lineal (y por tanto monótona) en la otra.
+
+Para cocientes como \(a/b\), escriba \(a/b = a \cdot (1/b)\), acote \(1/b\) usando [REF: reciprocal-rules | las reglas de comparación de recíprocos] (dividiendo en \(0\) si \(b\) puede cambiar de signo) y luego acote el producto.
+
+Por último, exactamente las mismas comprobaciones de signo sirven como lista de auditoría cada vez que inspeccionas una derivación algebraica en busca de errores ocultos. La tabla siguiente resume los tres pasos inválidos más frecuentes en desigualdades y la comprobación exacta de signo que atrapa a cada uno.
+
+[TABLE]
+Paso inválido | Por qué falla | Contraejemplo concreto | Reemplazo seguro
+Multiplicar ambos lados por una expresión \(E\) de signo desconocido | Invierte el sentido cuando \(E < 0\) y colapsa el carácter estricto cuando \(E = 0\) | \(1 < 2\) multiplicado por \(x - 3\) en \(x = 1\) da \(-2 < -4\) (falso) | Dividir en \(E > 0\), \(E = 0\), \(E < 0\), o restar hacia un solo lado
+Tomar recíprocos cruzando el cero | Invierte dentro de cada signo pero preserva al cruzar \(0\) | \(-2 < x < 3\) no implica \(1/3 < 1/x < -1/2\) | Dividir en \(x < 0\) y \(x > 0\) antes de invertir
+Elevar ambos lados al cuadrado sin verificar signos | Invierte cuando ambos lados son negativos; impredecible cuando los signos difieren | \(-3 < 2\) es verdadero, pero \((-3)^2 < 2^2\) (\(9 < 4\)) es falso | Verificar que ambos lados sean \(\ge 0\), o dividir por signo
+[/TABLE]
+
+Auditemos un breve argumento usando esta lista de verificación. Supongamos que alguien afirma demostrar que \(x > 1\) siempre que \(\frac{x + 2}{x - 1} > 2\), escribiendo:
+Paso 1: Multiplicar ambos lados por \(x - 1\) para obtener \(x + 2 > 2(x - 1)\).
+Paso 2: Desarrollar para obtener \(x + 2 > 2x - 2\).
+Paso 3: Restar \(x\) y sumar \(2\) para obtener \(4 > x\), es decir, \(x < 4\).
+
+El Paso 1 ya es inválido porque el signo de \(x - 1\) es desconocido. Pruebe \(x = 0\): satisface \(x < 4\), pero \(\frac{0 + 2}{0 - 1} = -2\), que NO es mayor que \(2\). Cuando \(x < 1\), \(x - 1\) es negativo, de modo que multiplicar por \(x - 1\) invierte la desigualdad a \(x + 2 < 2(x - 1)\), lo que da \(x > 4\) —imposible junto con \(x < 1\)—. Solo cuando \(x > 1\) el Paso 1 conserva el sentido, produciendo \(1 < x < 4\). Detectar la falta de verificación de signo en el Paso 1 expone de inmediato por qué el argumento ingenuo importó todo \(x < 1\) como solución falsa.
+
+[QUESTION 4]
+[ANSWER: C]
+Suponga que los números reales \(a\) y \(b\) satisfacen \(2 < a < 5\) y \(-4 < b < -1\). ¿Qué desigualdad da las cotas garantizadas más ajustadas (estrechas) para \(\frac{a}{b}\)?
+
+(A) \(-2 < \frac{a}{b} < -\frac{5}{4}\)
+(B) \(-\frac{5}{4} < \frac{a}{b} < -\frac{1}{2}\)
+(C) \(-5 < \frac{a}{b} < -\frac{1}{2}\)
+(D) \(\frac{1}{2} < \frac{a}{b} < 5\)
+(E) \(-5 < \frac{a}{b} < -2\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: B]
+Un estudiante desea hallar todos los números reales \(x\) que satisfacen \(x - 3 < 2 - x\) y también afirma comprobar cuándo \((x - 3)^2 < (2 - x)^2\). Escribe el siguiente argumento para demostrar que \(x - 3 < 2 - x\) implica \((x - 3)^2 < (2 - x)^2\):
+
+Paso 1: Partir de \(x - 3 < 2 - x\).
+Paso 2: Elevar ambos lados al cuadrado para obtener \((x - 3)^2 < (2 - x)^2\).
+Paso 3: Desarrollar para obtener \(x^2 - 6x + 9 < 4 - 4x + x^2\).
+Paso 4: Restar \(x^2\) de ambos lados para obtener \(-6x + 9 < 4 - 4x\), de modo que \(5 < 2x\), es decir, \(x > \frac{5}{2}\).
+
+¿Qué crítica diagnostica con precisión el fallo en este argumento?
+
+(A) El Paso 1 es inválido porque \(x\) aparece en ambos lados de la desigualdad.
+(B) El Paso 2 es inválido porque \(x - 3\) puede ser negativo cuando \(x - 3 < 2 - x\); por ejemplo, \(x = 0\) satisface \(x - 3 < 2 - x\) pero no cumple \((x - 3)^2 < (2 - x)^2\).
+(C) El Paso 3 es inválido porque \((2 - x)^2 = 4 - 2x + x^2\), no \(4 - 4x + x^2\).
+(D) El Paso 4 es inválido porque restar \(x^2\) requiere conocer el signo de \(x\).
+(E) El Paso 4 es inválido porque dividir \(5 < 2x\) entre \(2\) invierte la desigualdad a \(x < \frac{5}{2}\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Sean \(x\) e \(y\) números reales distintos (\(x \ne y\)). ¿Para qué pares \((x, y)\) exactamente se cumple la desigualdad \(x^3 + y^3 > x^2 y + x y^2\)?
+
+(A) Solo cuando \(x > 0\) e \(y > 0\)
+(B) Solo cuando \(x > y > 0\)
+(C) Para todos los números reales distintos \(x\) e \(y\)
+(D) Solo cuando \(xy > 0\)
+(E) Precisamente cuando \(x + y > 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suponga que los números reales \(a\) y \(b\) satisfacen \(-3 < a < 2\) y \(-2 < b < 4\). ¿Cuáles son las cotas garantizadas más ajustadas para el producto \(ab\)?
+
+(A) \(-12 < ab < 8\)
+(B) \(-6 < ab < 8\)
+(C) \(-12 < ab < 6\)
+(D) \(6 < ab < 8\)
+(E) \(-8 < ab < 12\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suponga que \(a\), \(b\) y \(c\) son números reales positivos con \(a > b > 0\) y \(c > 0\). ¿Cómo se compara \(\frac{a + c}{b + c}\) con \(\frac{a}{b}\)?
+
+(A) \(\frac{a + c}{b + c} > \frac{a}{b}\) para todos esos \(a, b, c\)
+(B) \(\frac{a + c}{b + c} = \frac{a}{b}\) para todos esos \(a, b, c\)
+(C) \(\frac{a + c}{b + c} > \frac{a}{b}\) cuando \(c > 1\), y \(\frac{a + c}{b + c} < \frac{a}{b}\) cuando \(0 < c < 1\)
+(D) \(\frac{a + c}{b + c} < \frac{a}{b}\) para todos esos \(a, b, c\)
+(E) La comparación depende de si \(a - b > c\) o \(a - b < c\)
+[/BONUS]

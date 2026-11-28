@@ -1,0 +1,240 @@
+=== SECTION 1: Superficies cuádricas y el método de trazas ===
+
+Las esferas, los cilindros y las superficies de revolución nos brindan un primer vocabulario de formas curvas en \(\mathbb{R}^3\), pero muchos objetos tridimensionales básicos —una cúpula ovoide, un puerto de montaña en forma de silla o la cintura curva de una torre de refrigeración— no son esferas ni cilindros ni tienen necesariamente sección transversal circular. Lo que comparten es que cada uno queda definido por una ecuación polinómica de segundo grado en \(x\), \(y\) y \(z\):
+\[
+Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz + J = 0,
+\]
+donde al menos uno de los coeficientes cuadráticos \(A, \dots, F\) es no nulo. Una superficie tal se denomina superficie cuádrica, la contraparte tridimensional de las secciones cónicas (circunferencias, elipses, parábolas e hipérbolas) en \(\mathbb{R}^2\). En esta lección analizaremos todas las cuádricas alineadas con los ejes (aquellas sin términos mixtos \(xy\), \(xz\) ni \(yz\)).
+
+¿Cómo comprender la forma 3D de una ecuación desconocida \(F(x, y, z) = 0\) sin adivinar a ciegas? Córtela en rodajas como una tomografía computarizada médica. Intersecar la superficie con una familia de planos coordenados paralelos reduce un rompecabezas tridimensional a secciones cónicas bidimensionales familiares.
+
+[CALLOUT]
+id: method-of-traces
+label: Método
+title: El método de trazas
+tone: key
+
+Dada una superficie \(F(x, y, z) = 0\) en \(\mathbb{R}^3\), su traza en un plano es la curva (o conjunto de puntos) donde la superficie interseca dicho plano:
+
+(1) Trazas horizontales: fije \(z = k\) (constante) y examine la curva 2D resultante en \((x, y)\).
+(2) Trazas verticales: fije \(x = k\) para cortar paralelamente al plano \(yz\), y fije \(y = k\) para cortar paralelamente al plano \(xz\).
+(3) Restricciones de dominio y degeneraciones: determine qué valores de \(k\) producen una curva completa, cuáles producen un único punto o un par de rectas secantes y cuáles producen el conjunto vacío \(\varnothing\).
+[/CALLOUT]
+
+Verifique las intersecciones con los ejes (anulando dos variables) y las simetrías junto con las trazas: si una variable aparece únicamente elevada al cuadrado (por ejemplo \(x^2\)), sustituir \(x\) por \(-x\) deja la ecuación inalterada, por lo que la superficie es simétrica respecto del plano \(yz\).
+
+Observe cómo [REF: method-of-traces | el método de trazas] descifra dos superficies de fórmulas engañosamente similares:
+- Primero, considere \(z = \frac{x^2}{4} + y^2\).
+  - Trazas en \(x = k\): \(z = \frac{k^2}{4} + y^2\), parábolas que se abren hacia arriba en el plano \(yz\).
+  - Trazas en \(y = k\): \(z = \frac{x^2}{4} + k^2\), parábolas que se abren hacia arriba en el plano \(xz\).
+  - Trazas en \(z = k\): \(\frac{x^2}{4} + y^2 = k\). Dado que el lado izquierdo es una suma de cuadrados no negativos, esta traza es vacía para \(k < 0\), el único vértice \((0, 0, 0)\) para \(k = 0\) y una familia creciente de elipses para \(k > 0\).
+  Al reunir esos cortes se revela un paraboloide elíptico: un cuenco con secciones transversales horizontales elípticas que se abre hacia arriba a lo largo del eje \(z\).
+
+[GRAPH]
+type: surface3d
+title: Paraboloide elíptico \(z = \frac{x^2}{4} + y^2\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -3, 3
+yrange: -1.8, 1.8
+z: x^2/4 + y^2
+[/GRAPH]
+
+- Ahora invierta un solo signo para obtener \(z = \frac{x^2}{4} - \frac{y^2}{4}\).
+  - Trazas en \(y = k\): \(z = \frac{x^2}{4} - \frac{k^2}{4}\), parábolas que se abren hacia arriba paralelas al plano \(xz\).
+  - Trazas en \(x = k\): \(z = \frac{k^2}{4} - \frac{y^2}{4}\), parábolas que se abren hacia abajo paralelas al plano \(yz\).
+  - Trazas en \(z = k\): \(\frac{x^2}{4} - \frac{y^2}{4} = k\), hipérbolas que se abren a lo largo del eje \(x\) cuando \(k > 0\), hipérbolas que se abren a lo largo del eje \(y\) cuando \(k < 0\) y el par de rectas que se cruzan \(y = \pm x\) cuando \(k = 0\).
+  Como la superficie se curva hacia arriba en una dirección y hacia abajo en la dirección perpendicular, forma un paraboloide hiperbólico (una superficie en silla de montar).
+
+[GRAPH]
+type: surface3d
+title: Paraboloide hiperbólico (silla de montar) \(z = \frac{x^2}{4} - \frac{y^2}{4}\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -3, 3
+yrange: -3, 3
+z: x^2/4 - y^2/4
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Considere la superficie cuádrica \(y = 4x^2 - z^2\) en \(\mathbb{R}^3\). ¿Cuáles son las trazas en los planos \(x = k\), \(z = k\) y \(y = k\) (para \(k \ne 0\)), y qué tipo de superficie es?
+
+(A) Elipses para \(y = k\) y parábolas abiertas hacia arriba para \(x = k\) y \(z = k\); un paraboloide elíptico a lo largo del eje \(y\)
+(B) Hipérbolas para \(x = k\) y \(z = k\) y elipses para \(y = k\); un hiperboloide de una hoja a lo largo del eje \(y\)
+(C) Parábolas abiertas hacia abajo (en \(y\)) para \(x = k\), parábolas abiertas hacia arriba (en \(y\)) para \(z = k\) e hipérbolas para \(y = k\); un paraboloide hiperbólico a lo largo del eje \(y\)
+(D) Rectas para \(y = k\) e hipérbolas para \(x = k\); un cilindro hiperbólico a lo largo del eje \(y\)
+(E) Elipses para \(y = k\) y rectas para \(x = 0\); un cono elíptico a lo largo del eje \(y\)
+[/QUESTION]
+
+=== SECTION 2: Las seis superficies cuádricas estándar ===
+
+Toda superficie cuádrica no degenerada y alineada con los ejes, centrada en el origen, pertenece a una de seis familias estándar. El primer paso para reconocer cualquier cuádrica consiste simplemente en contar grados:
+- Dos variables al cuadrado y una variable lineal producen uno de los dos paraboloides (elíptico o hiperbólico, según si los dos términos cuadráticos tienen el mismo signo o signos opuestos al pasarlos al mismo lado).
+- Las tres variables al cuadrado producen una de las cuatro cuádricas centrales: un elipsoide, un cono elíptico, un hiperboloide de una hoja o un hiperboloide de dos hojas.
+
+[TABLE]
+Superficie cuádrica | Ecuación canónica (a lo largo del eje \(z\)) | Trazas horizontales \(z = k\) | Trazas verticales \(x = k, y = k\) | Firma clave
+Elipsoide | \(\frac{x^2}{a^2} + \frac{y^2}{b^2} + \frac{z^2}{c^2} = 1\) | Elipses para \(\lvert k \rvert < c\); vacías para \(\lvert k \rvert > c\) | Elipses (acotadas) | Las 3 al cuadrado, todas \(+\), lado derecho \(= 1\)
+Paraboloide elíptico | \(\frac{z}{c} = \frac{x^2}{a^2} + \frac{y^2}{b^2}\) | Elipses para \(k/c > 0\); vacías para \(k/c < 0\) | Parábolas en el mismo sentido | 2 al cuadrado (mismo signo), 1 lineal
+Paraboloide hiperbólico | \(\frac{z}{c} = \frac{x^2}{a^2} - \frac{y^2}{b^2}\) | Hipérbolas (\(k \ne 0\)); rectas cruzadas (\(k = 0\)) | Parábolas en sentidos opuestos | 2 al cuadrado (signos opuestos), 1 lineal
+Cono elíptico | \(\frac{z^2}{c^2} = \frac{x^2}{a^2} + \frac{y^2}{b^2}\) | Elipses (\(k \ne 0\)); un punto (\(k = 0\)) | Hipérbolas (\(k \ne 0\)); rectas (\(k = 0\)) | Las 3 al cuadrado, signos 2 vs. 1, lado derecho \(= 0\)
+Hiperboloide de una hoja | \(\frac{x^2}{a^2} + \frac{y^2}{b^2} - \frac{z^2}{c^2} = 1\) | Elipses para TODO \(k \in \mathbb{R}\) | Hipérbolas | Las 3 al cuadrado, un \(-\), lado derecho \(= +1\)
+Hiperboloide de dos hojas | \(-\frac{x^2}{a^2} - \frac{y^2}{b^2} + \frac{z^2}{c^2} = 1\) | Elipses para \(\lvert k \rvert > c\); vacías para \(\lvert k \rvert < c\) | Hipérbolas | Las 3 al cuadrado, dos \(-\), lado derecho \(= +1\)
+[/TABLE]
+
+Preste especial atención al trío visualmente confuso al final de la tabla: el cono elíptico, el hiperboloide de una hoja y el hiperboloide de dos hojas. Escribir los tres con el mismo lado izquierdo vuelve inconfundible la diferencia:
+\[
+\frac{x^2}{a^2} + \frac{y^2}{b^2} - \frac{z^2}{c^2} = C.
+\]
+- Cuando \(C = +1\): las trazas horizontales \(\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 + \frac{k^2}{c^2}\) son elipses no vacías para todo \(k \in \mathbb{R}\), estrechándose hasta una cintura mínima en \(k = 0\) y ensanchándose suavemente por encima y por debajo: un hiperboloide conexo de una hoja.
+- Cuando \(C = 0\): las trazas horizontales \(\frac{x^2}{a^2} + \frac{y^2}{b^2} = \frac{k^2}{c^2}\) se contraen hasta el único punto \((0, 0, 0)\) en \(k = 0\), formando el cono elíptico de dos mantos.
+- Cuando \(C = -1\): las trazas horizontales \(\frac{x^2}{a^2} + \frac{y^2}{b^2} = \frac{k^2}{c^2} - 1\) carecen de soluciones reales siempre que \(|k| < c\), excavando una brecha central vacía \(-c < z < c\) que divide la superficie en dos cuencos desconectados: un hiperboloide de dos hojas con vértices en \((0, 0, \pm c)\).
+
+Arrastre el deslizador de altura \(k\) siguiente para comparar simultáneamente las secciones transversales horizontales \(z = k\) de las versiones circulares \(x^2 + y^2 - z^2 = 1\) (una hoja), \(x^2 + y^2 - z^2 = 0\) (cono) y \(x^2 + y^2 - z^2 = -1\) (dos hojas). Observe que para \(|k| < 1\), la traza de dos hojas desaparece por completo mientras la cintura de una hoja permanece abierta.
+
+[GRAPH]
+type: parametric2d
+title: Trazas horizontales \(z = k\) del hiperboloide de una hoja, el cono y el hiperboloide de dos hojas
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3, 3
+yrange: -3, 3
+trace: sqrt(k^2 + 1)*cos(t), sqrt(k^2 + 1)*sin(t) | label: una hoja \(x^2 + y^2 = k^2 + 1\)
+trace: abs(k)*cos(t), abs(k)*sin(t) | label: cono \(x^2 + y^2 = k^2\)
+trace: (k^2 - 1 >= 0 ? sqrt(k^2 - 1) : 0)*cos(t), (k^2 - 1 >= 0 ? sqrt(k^2 - 1) : 0)*sin(t) | label: dos hojas (existe para \(\lvert k \rvert \ge 1\))
+slider: k | range: -2.2, 2.2 | init: 1.4 | step: 0.2
+[/GRAPH]
+
+Dado que un hiperboloide de dos hojas \(z^2 - x^2 - y^2 = 1\) se divide en una hoja superior \(z = +\sqrt{1 + x^2 + y^2}\) y una hoja inferior simétrica \(z = -\sqrt{1 + x^2 + y^2}\), una gráfica univaluada \(z = f(x, y)\) muestra una hoja a la vez. La gráfica siguiente presenta la hoja superior apoyada en el vértice \((0, 0, 1)\) por encima de la brecha vacía \(-1 < z < 1\).
+
+[GRAPH]
+type: surface3d
+title: Hoja superior \(z = \sqrt{1 + x^2 + y^2}\) del hiperboloide de dos hojas \(z^2 - x^2 - y^2 = 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -2.5, 2.5
+yrange: -2.5, 2.5
+z: sqrt(1 + x^2 + y^2)
+[/GRAPH]
+
+=== SECTION 3: Ejes permutados y trampas de patrón de signos ===
+
+Los problemas reales rara vez entregan una cuádrica ordenada pulcramente a lo largo del eje \(z\) y con \(+1\) ya en el lado derecho. ¿Cómo clasificar rápidamente cualquier cuádrica alineada con los ejes sin memorizar dieciocho plantillas distintas?
+
+[CALLOUT]
+id: quadric-axes
+label: Regla
+title: Identificación del eje distinguido y del patrón de signos
+tone: key
+
+(1) Primero normalice el término constante (si es no nulo) a \(+1\) en el lado derecho dividiendo toda la ecuación por dicha constante. Nunca cuente signos menos antes de que el lado derecho sea \(+1\) (o \(0\)).
+(2) Para un paraboloide (dos variables al cuadrado y una lineal): la variable lineal nombra el eje de la superficie. Para un paraboloide elíptico, su sentido de abertura es el signo que vuelve no negativo al lado lineal.
+(3) Para un cono o hiperboloide (las tres variables al cuadrado, signos mixtos): la variable con el signo diferente nombra el eje de simetría (el único término \(-\) para un hiperboloide de una hoja; el único término \(+\) para un hiperboloide de dos hojas; el término cuadrático aislado en un lado para un cono).
+[/CALLOUT]
+
+Vea por qué [REF: quadric-axes.1 | normalizar primero el término constante] es decisivo. Suponga que le dan
+\[
+x^2 + 4y^2 - 9z^2 = -36.
+\]
+A primera vista, el lado izquierdo muestra un solo signo menos, tentando a un lector descuidado a llamarlo hiperboloide de una hoja. Dividir cada término por \(-36\) para poner \(+1\) a la derecha invierte todos los signos:
+\[
+-\frac{x^2}{36} - \frac{y^2}{9} + \frac{z^2}{4} = 1.
+\]
+Ahora hay dos signos menos y un signo más (en \(z^2\)), lo que revela un hiperboloide de dos hojas que se abre a lo largo del eje \(z\), con brecha central vacía \(-2 < z < 2\) y vértices en \((0, 0, \pm 2)\).
+
+De modo análogo, observe \(x = -y^2 - 4z^2\). Solo \(x\) es lineal, de modo que el eje es el eje \(x\). Reescribirlo como \(-x = y^2 + 4z^2\) muestra que ambos términos cuadráticos llevan el mismo signo positivo, forzando \(-x \ge 0 \iff x \le 0\). Por consiguiente, se trata de un paraboloide elíptico con vértice \((0, 0, 0)\) que se abre en la dirección negativa del eje \(x\).
+
+[QUESTION 2]
+[ANSWER: B]
+Clasifique la superficie cuádrica \(4x^2 - y^2 + 9z^2 = -36\), identificando su eje de simetría y cualquier intervalo de trazas vacías.
+
+(A) Hiperboloide de una hoja a lo largo del eje \(y\), sin intervalo de cortes vacíos
+(B) Hiperboloide de dos hojas a lo largo del eje \(y\), con trazas vacías para \(-6 < y < 6\)
+(C) Hiperboloide de dos hojas a lo largo del eje \(y\), con trazas vacías para \(-36 < y < 36\)
+(D) Cono elíptico a lo largo del eje \(y\), con vértice en el origen
+(E) Hiperboloide de dos hojas a lo largo del eje \(z\), con trazas vacías para \(-2 < z < 2\)
+[/QUESTION]
+
+=== SECTION 4: Cuádricas trasladadas mediante completación de cuadrados ===
+
+Así como las esferas pueden trasladarse fuera del origen hacia \((x - h)^2 + (y - k)^2 + (z - l)^2 = r^2\), cualquier superficie cuádrica puede trasladarse a un nuevo centro o vértice \((h, k, l)\) añadiendo términos lineales en \(x\), \(y\) y \(z\). Completar el cuadrado en cada variable que aparece cuadráticamente recupera tanto la traslación como el verdadero término constante, ¡lo cual puede cambiar por completo la clasificación de la superficie!
+
+Desarrolle un ejemplo concreto: clasifique
+\[
+4x^2 + y^2 - 4z^2 - 8x + 6y + 16z - 7 = 0.
+\]
+Agrupe cada variable y factorice el coeficiente principal de cada término cuadrático:
+\[
+4(x^2 - 2x) + (y^2 + 6y) - 4(z^2 - 4z) = 7.
+\]
+Complete cada cuadrado con cuidado, multiplicando cada número añadido por el coeficiente factorizado fuera de su paréntesis antes de sumarlo al lado derecho:
+\[
+4(x^2 - 2x + 1) + (y^2 + 6y + 9) - 4(z^2 - 4z + 4) = 7 + 4(1) + 9 - 4(4) = 4.
+\]
+Divida ambos lados por \(4\):
+\[
+(x - 1)^2 + \frac{(y + 3)^2}{4} - (z - 2)^2 = 1.
+\]
+Ahora lea directamente la geometría: con \(+1\) a la derecha y un único signo menos en \((z - 2)^2\), es un hiperboloide de una hoja centrado en \((1, -3, 2)\), con eje de simetría paralelo al eje \(z\) (la recta vertical \(x = 1, y = -3\)).
+
+Advierta una enseñanza vital de la aritmética anterior: el término constante original \(-7\) pasó a \(+7\) en el lado derecho y luego la completación de cuadrados lo desplazó a \(4\). Si la constante original hubiera sido \(-3\) en lugar de \(-7\), el lado derecho tras completar cuadrados habría quedado en \(0\) (un cono elíptico), y si hubiera sido \(+1\), el lado derecho habría quedado en \(-4\) (¡un hiperboloide de dos hojas!). Nunca adivine entre cono, hiperboloide de una hoja e hiperboloide de dos hojas antes de completar todos los cuadrados.
+
+[QUESTION 3]
+[ANSWER: A]
+Complete el cuadrado para clasificar la superficie \(x^2 - 4x + 2y^2 + 4y - z^2 + 2z + 5 = 0\) y localizar su centro o vértice.
+
+(A) Cono elíptico con vértice \((2, -1, 1)\) y eje paralelo al eje \(z\)
+(B) Hiperboloide de una hoja centrado en \((2, -1, 1)\) con eje paralelo al eje \(z\)
+(C) Hiperboloide de dos hojas centrado en \((2, -1, 1)\) con eje paralelo al eje \(z\)
+(D) Cono elíptico con vértice \((-2, 1, -1)\) y eje paralelo al eje \(z\)
+(E) Paraboloide elíptico con vértice \((2, -1, 1)\) que se abre a lo largo del eje \(z\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Complete el cuadrado para clasificar la superficie \(4y^2 + z^2 - 8y + 4z + 4x = 0\). ¿Qué tipo de superficie es, dónde está su vértice y en qué sentido se abre?
+
+(A) Paraboloide elíptico con vértice \((2, 1, -2)\) que se abre en la dirección positiva del eje \(x\)
+(B) Paraboloide hiperbólico con punto silla \((2, 1, -2)\) a lo largo del eje \(x\)
+(C) Paraboloide elíptico con vértice \((-2, 1, -2)\) que se abre en la dirección negativa del eje \(x\)
+(D) Paraboloide elíptico con vértice \((2, 1, -2)\) que se abre en la dirección negativa del eje \(x\)
+(E) Cilindro elíptico con generatrices paralelas al eje \(x\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Considere la familia uniparamétrica de superficies cuádricas \(x^2 + 4y^2 - z^2 = c\) conforme la constante real \(c\) crece desde valores negativos, pasando por \(c = 0\), hasta valores positivos. ¿Qué sucesión de superficies aparece?
+
+(A) Hiperboloide de una hoja (\(c < 0\)), cono elíptico (\(c = 0\)), hiperboloide de dos hojas (\(c > 0\))
+(B) Hiperboloide de dos hojas (\(c < 0\)), cono elíptico (\(c = 0\)), hiperboloide de una hoja (\(c > 0\))
+(C) Conjunto vacío (\(c < 0\)), un solo punto (\(c = 0\)), elipsoide (\(c > 0\))
+(D) Paraboloide hiperbólico (\(c < 0\)), cono elíptico (\(c = 0\)), paraboloide elíptico (\(c > 0\))
+(E) Hiperboloide de dos hojas (\(c < 0\)), cilindro hiperbólico (\(c = 0\)), hiperboloide de una hoja (\(c > 0\))
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+El paraboloide circular \(z = x^2 + y^2\) interseca el plano \(z = 2x + 3\) en una curva en \(\mathbb{R}^3\). ¿Cuál es la proyección ortogonal de esta curva de intersección sobre el plano \(xy\)?
+
+(A) Una parábola con vértice \((1, 0)\)
+(B) Una circunferencia centrada en \((-1, 0)\) de radio \(2\)
+(C) Una circunferencia centrada en \((1, 0)\) de radio \(2\)
+(D) Una circunferencia centrada en \((1, 0)\) de radio \(4\)
+(E) Una elipse con semiejes \(2\) y \(3\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+¿Cuál de las siguientes superficies cuádricas es acotada (cabe por completo dentro de alguna esfera suficientemente grande centrada en el origen)?
+
+(A) \(x^2 + 2y^2 - 3z^2 = 6\)
+(B) \(x^2 + 2y^2 = 3z\)
+(C) \(x^2 + 2y^2 = 6\)
+(D) \(x^2 + 2y^2 - 3z^2 = -6\)
+(E) \(x^2 + 2y^2 + 3z^2 = 6\)
+[/BONUS]

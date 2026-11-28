@@ -1,0 +1,207 @@
+=== SECTION 1: Translation of axes and completing the square ===
+
+Circles, parabolas, ellipses, and hyperbolas with axes parallel to the coordinate axes all expand into the single quadratic form
+\[
+Ax^2 + Cy^2 + Dx + Ey + F = 0,
+\]
+where there is no \(xy\)-term and at least one of \(A\) or \(C\) is nonzero. Completing the square already converts each individual conic into standard form, but there is a cleaner geometric interpretation that unifies all four shapes and prepares directly for rotated conics: shifting the origin of the coordinate system to a new point \(O'(h, k)\).
+
+Suppose a new coordinate frame \((x', y')\) has axes parallel to the original \(x\)- and \(y\)-axes, with its new origin \(O'\) located at \((h, k)\) in the original plane. Any point \(P\) whose original coordinates are \((x, y)\) sits \(x - h\) units horizontally and \(y - k\) units vertically from \(O'\), so its new coordinates are \(x' = x - h\) and \(y' = y - k\).
+
+[CALLOUT]
+id: translation-equations
+label: Rule
+title: Translation of axes
+tone: key
+
+Shifting the coordinate origin from \((0, 0)\) to \(O'(h, k)\) without rotating the axes relates original coordinates \((x, y)\) and translated coordinates \((x', y')\) by
+\[
+x = x' + h, \qquad y = y' + k
+\]
+and inversely
+\[
+x' = x - h, \qquad y' = y - k.
+\]
+[/CALLOUT]
+
+Why does substituting [REF: translation-equations | the translation equations] simplify \(Ax^2 + Cy^2 + Dx + Ey + F = 0\)? Expand the substitution explicitly:
+\[
+A(x' + h)^2 + C(y' + k)^2 + D(x' + h) + E(y' + k) + F = 0,
+\]
+and collect powers of \(x'\) and \(y'\):
+\[
+Ax'^2 + Cy'^2 + (2Ah + D)x' + (2Ck + E)y' + F' = 0,
+\]
+where the new constant term is \(F' = Ah^2 + Ck^2 + Dh + Ek + F\). Notice two structural facts immediately:
+(1) Translation NEVER changes the quadratic coefficients \(A\) and \(C\).
+(2) The new linear coefficients are \(2Ah + D\) and \(2Ck + E\), which we can drive to zero by choosing \(h\) and \(k\) strategically!
+
+There are two cases depending on whether both quadratic terms are present:
+- When \(AC \neq 0\) (central conics: circles, ellipses, and hyperbolas), set \(2Ah + D = 0\) and \(2Ck + E = 0\), giving
+\[
+h = -\frac{D}{2A}, \qquad k = -\frac{E}{2C}.
+\]
+Both linear terms vanish simultaneously, leaving \(Ax'^2 + Cy'^2 + F' = 0\), centered at the new origin \(O'(h, k)\).
+- When \(AC = 0\) (parabolic family, say \(A \neq 0\) and \(C = 0\)), choose \(h = -\frac{D}{2A}\) to kill the \(x'\)-term. If \(E \neq 0\), the \(y'\)-term cannot be removed, so instead choose \(k\) to make the constant term \(F' = Ah^2 + Dh + Ek + F = 0\), placing the parabola's vertex at \(O'(h, k)\) with equation \(Ax'^2 + Ey' = 0\).
+
+Completing the square and translating axes are algebraically identical operations: completing the square finds \(h\) and \(k\) implicitly, while translation displays the shifted coordinate frame explicitly. For example, on \(4x^2 + 9y^2 - 24x + 36y + 36 = 0\), choosing \(h = -\frac{-24}{2(4)} = 3\) and \(k = -\frac{36}{2(9)} = -2\) gives
+\[
+F' = 4(3)^2 + 9(-2)^2 - 24(3) + 36(-2) + 36 = 36 + 36 - 72 - 72 + 36 = -36,
+\]
+so the translated equation is \(4x'^2 + 9y'^2 = 36\), or \(\frac{x'^2}{9} + \frac{y'^2}{4} = 1\) in the shifted \(x'y'\)-frame.
+
+[GRAPH]
+type: parametric2d
+title: Ellipse \(4x^2 + 9y^2 - 24x + 36y + 36 = 0\) centered on the translated \(x'y'\)-axes at \(O'(3, -2)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -2, 8
+yrange: -6, 3
+trace: 3 + 3*cos(t), -2 + 2*sin(t) | label: \(\frac{x'^2}{9} + \frac{y'^2}{4} = 1\)
+segment: -2, -2, 8, -2 | label: \(x'\) | dashed: true
+segment: 3, -6, 3, 3 | label: \(y'\) | dashed: true
+point: 0, 0 | label: \(O(0, 0)\)
+point: 3, -2 | label: \(O'(3, -2)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Under a translation of axes \(x = x' + h\), \(y = y' + k\), what new origin \((h, k)\) eliminates both linear terms from \(3x^2 - 5y^2 + 12x + 30y - 48 = 0\), and what is the resulting equation in \((x', y')\)?
+
+(A) \((h, k) = (2, -3)\); \(3x'^2 - 5y'^2 = 15\)
+(B) \((h, k) = (-2, 3)\); \(3x'^2 - 5y'^2 = 15\)
+(C) \((h, k) = (-2, 3)\); \(3x'^2 - 5y'^2 = 81\)
+(D) \((h, k) = (-2, -3)\); \(3x'^2 - 5y'^2 = 15\)
+(E) \((h, k) = (-2, 3)\); \(3x'^2 - 5y'^2 = -15\)
+[/QUESTION]
+
+=== SECTION 2: Coefficient classification and degenerate loci ===
+
+Because translation leaves \(A\) and \(C\) untouched, the signs and equality of \(A\) and \(C\) immediately sort every equation \(Ax^2 + Cy^2 + Dx + Ey + F = 0\) (with \(A, C\) not both zero) into one of four conic families before any algebra is performed.
+
+[TABLE]
+Coefficient condition | Nondegenerate conic | Possible degenerate loci
+\(A = C \neq 0\) | Circle | Single point or empty set
+\(AC > 0\) and \(A \neq C\) | Ellipse | Single point or empty set
+\(AC = 0\) (exactly one of \(A, C\) is \(0\)) | Parabola | Pair of parallel lines, single line, or empty set
+\(AC < 0\) | Hyperbola | Pair of intersecting lines
+[/TABLE]
+
+[CALLOUT]
+id: coeff-test-caveat
+label: Common pitfall
+title: Coefficients identify the family, never nondegeneracy
+tone: caution
+
+Checking \(A\) and \(C\) alone CANNOT tell whether \(Ax^2 + Cy^2 + Dx + Ey + F = 0\) is a genuine conic or a degenerate locus. You must always complete the square (translate axes) or factor the equation to inspect the resulting constant term or linear factors.
+[/CALLOUT]
+
+Each degenerate outcome arises cleanly once you reduce the equation:
+- Elliptic degeneracies (\(AC > 0\), assuming \(A, C > 0\)): translating gives \(Ax'^2 + Cy'^2 = -F'\). If \(-F' = 0\), only \((x', y') = (0, 0)\) solves the equation, so the locus is the single point \((h, k)\). If \(-F' < 0\), the left-hand side is nonnegative while the right-hand side is negative, so the locus is empty. For example, \(2x^2 + 3y^2 - 4x + 6y + 5 = 0\) becomes \(2(x - 1)^2 + 3(y + 1)^2 = 0\), which is solely the point \((1, -1)\).
+- Parabolic degeneracies (\(AC = 0\)): suppose \(A \neq 0\) and \(C = 0\). A genuine parabola requires \(E \neq 0\) so the unsquared variable \(y\) appears. Whenever \(E = 0\), the equation reduces to a single-variable quadratic \(Ax^2 + Dx + F = 0\), whose discriminant \(D^2 - 4AF\) decides among three degenerate outcomes:
+  (1) \(D^2 - 4AF > 0\): two distinct real roots \(x = r_1, r_2\), giving two parallel vertical lines (for example, \(x^2 - 6x + 5 = (x - 1)(x - 5) = 0\)).
+  (2) \(D^2 - 4AF = 0\): one repeated root, giving a single vertical line (for example, \(x^2 - 6x + 9 = (x - 3)^2 = 0\)).
+  (3) \(D^2 - 4AF < 0\): no real roots, giving the empty set (for example, \(x^2 - 6x + 10 = (x - 3)^2 + 1 = 0\)).
+- Hyperbolic degeneracy (\(AC < 0\)): translating gives \(Ax'^2 + Cy'^2 = -F'\). Because \(A\) and \(C\) already have opposite signs, any nonzero \(-F'\) produces a genuine hyperbola (horizontal or vertical), so ONLY \(-F' = 0\) is degenerate, factoring into a pair of intersecting lines. For example, \(x^2 - 4y^2 - 2x + 8y - 3 = 0\) becomes \((x - 1)^2 - 4(y - 1)^2 = 0\), which factors as \((x - 2y + 1)(x + 2y - 3) = 0\).
+
+[QUESTION 2]
+[ANSWER: A]
+Determine the exact geometric loci of the two equations (i) \(4x^2 + 9y^2 - 24x + 36y + 72 = 0\) and (ii) \(y^2 - 8y + 12 = 0\).
+
+(A) (i) A single point \((3, -2)\); (ii) a pair of parallel horizontal lines \(y = 2\) and \(y = 6\)
+(B) (i) An ellipse centered at \((3, -2)\); (ii) a parabola opening horizontally
+(C) (i) The empty set; (ii) a pair of parallel horizontal lines \(y = 2\) and \(y = 6\)
+(D) (i) A single point \((3, -2)\); (ii) a parabola with vertex \((0, 4)\)
+(E) (i) A single point \((-3, 2)\); (ii) two intersecting lines
+[/QUESTION]
+
+=== SECTION 3: Solving line-conic and conic-conic intersection systems ===
+
+Finding where a line meets a conic, or where two conics cross each other, turns a geometric intersection question into a nonlinear system of two equations in \((x, y)\).
+
+For a line-conic system, solve the linear equation for one variable and substitute into the conic equation. The result is at most a quadratic equation in one variable, so a line and a conic intersect in at most \(2\) real points:
+- Two distinct real roots: a secant line crossing the conic twice.
+- One repeated root (discriminant \(0\)): a tangent line, or a line parallel to a parabola's axis or a hyperbola's asymptote (which drops the degree to \(1\) and crosses once without being tangent).
+- No real roots: the line misses the conic completely.
+
+For example, to intersect the line \(y = x - 1\) with the ellipse \(x^2 + 2y^2 = 9\), substitute \(y = x - 1\):
+\[
+x^2 + 2(x - 1)^2 = 9 \implies 3x^2 - 4x - 7 = 0 \implies (3x - 7)(x + 1) = 0.
+\]
+Thus \(x = -1\) gives \((-1, -2)\), and \(x = \frac{7}{3}\) gives \(\bigl(\frac{7}{3}, \frac{4}{3}\bigr)\).
+
+For a conic-conic system, eliminating one variable (or eliminating \(x^2\) or \(y^2\) directly when both equations contain only squared terms) leads to a polynomial equation of degree up to \(4\), so two distinct conics can intersect in \(0, 1, 2, 3,\) or \(4\) real points. Always check every algebraic root back in the original equations so you do not keep extraneous roots or drop a \(\pm\) branch!
+
+Consider the circle \(x^2 + y^2 = 13\) and the hyperbola \(x^2 - y^2 = 5\). Adding the two equations immediately eliminates \(y^2\):
+\[
+2x^2 = 18 \implies x^2 = 9 \implies x = \pm 3.
+\]
+Substituting \(x^2 = 9\) back into \(x^2 + y^2 = 13\) gives \(y^2 = 4 \implies y = \pm 2\). Combining all sign choices yields four symmetric intersection points: \((3, 2)\), \((3, -2)\), \((-3, 2)\), and \((-3, -2)\).
+
+[GRAPH]
+type: parametric2d
+title: Four intersections of the circle \(x^2 + y^2 = 13\) and the hyperbola \(x^2 - y^2 = 5\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -3.1416, 3.1416
+xrange: -5.5, 5.5
+yrange: -5.5, 5.5
+trace: sqrt(13)*cos(t), sqrt(13)*sin(t) | label: \(x^2 + y^2 = 13\)
+trace: sqrt(5)*cosh(t/2), sqrt(5)*sinh(t/2) | label: \(x^2 - y^2 = 5\) (right)
+trace: -sqrt(5)*cosh(t/2), sqrt(5)*sinh(t/2) | label: \(x^2 - y^2 = 5\) (left)
+point: 3, 2 | label: \((3, 2)\)
+point: 3, -2 | label: \((3, -2)\)
+point: -3, 2 | label: \((-3, 2)\)
+point: -3, -2 | label: \((-3, -2)\)
+[/GRAPH]
+
+A conic-conic system can also produce \(3\) distinct intersection points when two curves are tangent at one point and cross cleanly at two others. For instance, substituting \(x^2 = y\) from the parabola \(y = x^2\) into the circle \(x^2 + (y - 2)^2 = 4\) gives
+\[
+y + (y - 2)^2 = 4 \implies y^2 - 3y = 0 \implies y = 0 \text{ or } y = 3.
+\]
+Here \(y = 0\) gives \(x^2 = 0\), a single shared vertex \((0, 0)\) where the parabola is tangent to the circle, while \(y = 3\) gives \(x = \pm \sqrt{3}\), producing two additional crossing points \((\sqrt{3}, 3)\) and \((-\sqrt{3}, 3)\)—three real intersections in total.
+
+[QUESTION 3]
+[ANSWER: C]
+How many distinct real intersection points do the ellipse \(\frac{x^2}{25} + \frac{y^2}{9} = 1\) and the parabola \(y = x^2 - 3\) share?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(0\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+Find all real intersection points of the ellipse \(x^2 + 4y^2 = 20\) and the hyperbola \(x^2 - y^2 = 5\).
+
+(A) \((2\sqrt{2}, \sqrt{3})\) and \((-2\sqrt{2}, -\sqrt{3})\) only
+(B) \((\pm \sqrt{3}, \pm 2\sqrt{2})\)
+(C) \((\pm 4, \pm 1)\)
+(D) \((\pm \sqrt{8}, 0)\) and \((0, \pm \sqrt{3})\)
+(E) \((\pm 2\sqrt{2}, \pm \sqrt{3})\) (four points)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+For what real value or values of the parameter \(m\) does the equation \(x^2 + my^2 - 4x + 6my + 8m + 4 = 0\) fail to represent a nondegenerate conic, and what is the resulting degenerate locus?
+
+(A) All \(m \le 0\), giving the empty set for \(m < 0\) and a line for \(m = 0\)
+(B) Only \(m = 0\), giving two parallel vertical lines
+(C) Only \(m = -1\), giving a pair of intersecting lines
+(D) Only \(m = 0\), giving the single vertical line \(x = 2\)
+(E) No real value of \(m\); it is a nondegenerate conic for every real \(m\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+For which real values of \(b\) is the line \(y = 2x + b\) tangent to the hyperbola \(3x^2 - y^2 = 27\)?
+
+(A) \(b = \pm \sqrt{3}\)
+(B) \(b = \pm 3\)
+(C) \(b = \pm 6\)
+(D) \(b = \pm 9\)
+(E) No real value of \(b\)
+[/BONUS]

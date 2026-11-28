@@ -1,0 +1,233 @@
+=== SECTION 1: Modelos exponenciales desplazados y la ley de enfriamiento de Newton ===
+
+El decaimiento exponencial sin restricciones \(A_0 e^{-kt}\) siempre tiende a \(0\); sin embargo, muchos procesos reales se estabilizan hacia un equilibrio DISTINTO DE CERO. Una taza de café a \(90^\circ\text{C}\) dejada en una habitación a \(22^\circ\text{C}\) no se enfría hasta \(0^\circ\text{C}\); se aproxima a la temperatura ambiente de la habitación, \(22^\circ\text{C}\). Del mismo modo, una bebida fría a \(4^\circ\text{C}\) en la misma habitación se calienta hacia arriba acercándose a \(22^\circ\text{C}\).
+
+Las transformaciones de gráficas exponenciales proporcionan de inmediato la estructura adecuada. Desplazar verticalmente una curva de decaimiento exponencial en un valor de equilibrio \(T_{\text{env}}\) traslada su asíntota horizontal de \(y = 0\) a \(y = T_{\text{env}}\). En lugar de que la temperatura bruta \(T(t)\) decaiga exponencialmente, lo que decae de manera exponencial hacia \(0\) es la DIFERENCIA DE TEMPERATURA \(D(t) = T(t) - T_{\text{env}}\):
+\[
+D(t) = D_0 e^{-kt} = (T_0 - T_{\text{env}}) e^{-kt} \qquad (k > 0).
+\]
+Sumar \(T_{\text{env}}\) a ambos lados produce la ley de enfriamiento (y calentamiento) de Newton:
+\[
+T(t) = T_{\text{env}} + (T_0 - T_{\text{env}}) e^{-kt}.
+\]
+Observa cómo el signo de la brecha inicial \((T_0 - T_{\text{env}})\) controla la forma:
+- Enfriamiento (\(T_0 > T_{\text{env}}\)): el coeficiente \(T_0 - T_{\text{env}}\) es positivo, de modo que \(T(t)\) decrece desde \(T_0\) hacia la asíntota horizontal \(y = T_{\text{env}}\) desde arriba.
+- Calentamiento o saturación acotada (\(T_0 < T_{\text{env}}\)): el coeficiente es negativo (una reflexión vertical del decaimiento), por lo que \(T(t)\) crece desde \(T_0\) hacia \(y = T_{\text{env}}\) desde abajo. En contextos de saturación (como la carga de un condensador o la adquisición acotada de una destreza hacia un techo \(L\)), la misma exponencial desplazada suele escribirse como
+\[
+y(t) = L - (L - y_0) e^{-kt} \qquad (k > 0,\; y_0 < L).
+\]
+
+[CALLOUT]
+id: shifted-exp-model
+label: Modelo
+title: Modelos exponenciales desplazados (enfriamiento de Newton y saturación acotada)
+tone: key
+
+Para un equilibrio constante \(T_{\text{env}}\) (o techo \(L\)), valor inicial \(T_0\) (o \(y_0\)) y constante de tasa \(k > 0\):
+
+(1) Ley de enfriamiento / calentamiento de Newton:
+\[
+T(t) = T_{\text{env}} + (T_0 - T_{\text{env}}) e^{-kt}.
+\]
+(2) Saturación acotada hacia un techo \(L\):
+\[
+y(t) = L - (L - y_0) e^{-kt}.
+\]
+(3) Asíntota horizontal y decaimiento de la brecha: Cuando \(t \to \infty\), \(e^{-kt} \to 0\), por lo que la curva se aproxima a la asíntota horizontal \(y = T_{\text{env}}\) (o \(y = L\)). En cada paso, la brecha \(T(t) - T_{\text{env}}\) obedece un decaimiento exponencial ordinario con constante \(k\).
+[/CALLOUT]
+
+Arrastra el deslizador de \(k\) a continuación para comparar una taza caliente que se enfría desde \(90^\circ\text{C}\) y una botella fría que se calienta desde \(4^\circ\text{C}\) dentro de la misma habitación a \(22^\circ\text{C}\). Valores mayores de \(k\) llevan ambas curvas hacia la asíntota compartida \(T = 22\) con mayor rapidez.
+
+[GRAPH]
+type: function2d
+title: Curvas de enfriamiento y calentamiento acercándose al equilibrio ambiente \(T_{\text{env}} = 22^\circ\text{C}\)
+xlabel: Tiempo t (minutos)
+ylabel: Temperatura T (C)
+xrange: 0, 40
+yrange: 0, 100
+trace: 22 + 68 * exp(-k * x) | label: \(\text{Enfriamiento } T(t) = 22 + 68 e^{-kt}\)
+trace: 22 - 18 * exp(-k * x) | label: \(\text{Calentamiento } T(t) = 22 - 18 e^{-kt}\)
+trace: 22 | label: \(\text{Ambiente } T_{\text{env}} = 22\)
+point: 0, 90 | label: \((0, 90)\)
+point: 0, 4 | label: \((0, 4)\)
+slider: k | range: 0.02, 0.20 | init: 0.08 | step: 0.02
+[/GRAPH]
+
+Ejemplo resuelto (Calibración de \(k\) y despeje del tiempo): Un café recién hecho comienza a \(92^\circ\text{C}\) en una habitación a \(20^\circ\text{C}\). Después de \(10\text{ minutos}\), su temperatura es \(56^\circ\text{C}\). ¿Cuántos minutos en total desde que se preparó tardará en llegar a \(38^\circ\text{C}\), y cuándo alcanzará \(30^\circ\text{C}\)?
+
+1. Resta \(T_{\text{env}} = 20\) para trabajar con la brecha decreciente \(D(t) = T(t) - 20\):
+\[
+D_0 = 92 - 20 = 72^\circ\text{C}, \qquad T(t) = 20 + 72 e^{-kt}.
+\]
+2. Calibra \(k\) usando \(T(10) = 56\) (de modo que \(D(10) = 56 - 20 = 36\)):
+\[
+72 e^{-10 k} = 36 \implies e^{-10 k} = \frac{1}{2} \implies k = \frac{\ln 2}{10} \approx 0.06931\text{ min}^{-1}.
+\]
+3. El objetivo \(T(t) = 38\) da una brecha \(D(t) = 38 - 20 = 18\):
+\[
+72 e^{-kt} = 18 \implies e^{-kt} = \frac{1}{4} \implies -kt = -\ln 4 = -2\ln 2 \implies t = \frac{2\ln 2}{(\ln 2)/10} = 20\text{ minutos}.
+\]
+4. El objetivo \(T(t) = 30\) da una brecha \(D(t) = 30 - 20 = 10\):
+\[
+72 e^{-kt} = 10 \implies e^{kt} = 7.2 \implies t = \frac{\ln(7.2)}{k} = 10 \cdot \frac{\ln(7.2)}{\ln 2} \approx 28.48\text{ minutos}.
+\]
+Observa por qué SIEMPRE debes restar \(T_{\text{env}}\) antes de tomar cocientes: \(T(t)\) en sí misma no es puramente exponencial; solo \(T(t) - T_{\text{env}}\) lo es.
+
+[QUESTION 1]
+[ANSWER: B]
+Una barra metálica calentada a \(125^\circ\text{C}\) se coloca en una habitación constante a \(25^\circ\text{C}\). Después de \(6\text{ minutos}\), su temperatura es \(75^\circ\text{C}\). Según la ley de enfriamiento de Newton, ¿cuántos minutos en total desde su colocación tardará la barra en enfriarse hasta \(50^\circ\text{C}\)?
+
+(A) \(9\text{ minutos}\)
+(B) \(12\text{ minutos}\)
+(C) \(15\text{ minutos}\)
+(D) \(18\text{ minutos}\)
+(E) \(6 \cdot \dfrac{\ln(50/125)}{\ln(75/125)}\text{ minutos}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+Un condensador se carga según \(V(t) = 12 - 9 e^{-0.4 t}\), donde \(V\) es el voltaje en voltios y \(t \ge 0\) es el tiempo en segundos. ¿Cuáles son su voltaje inicial \(V(0)\) y su voltaje límite cuando \(t \to \infty\)?
+
+(A) \(V(0) = 9\text{ V}\), límite \(12\text{ V}\)
+(B) \(V(0) = 3\text{ V}\), límite \(12\text{ V}\)
+(C) \(V(0) = 12\text{ V}\), límite \(9\text{ V}\)
+(D) \(V(0) = 3\text{ V}\), límite \(21\text{ V}\)
+(E) \(V(0) = 0\text{ V}\), límite \(12\text{ V}\)
+[/QUESTION]
+
+=== SECTION 2: El modelo de crecimiento logístico y su curva en forma de S ===
+
+La saturación exponencial desplazada se frena desde el mismo instante \(t = 0\). En contraste, muchas poblaciones, epidemias y adopciones tecnológicas comienzan con un crecimiento casi exponencial cuando la población es pequeña respecto a los recursos disponibles, y luego se curvan y se estabilizan a medida que aumenta la saturación. Este comportamiento en forma de S queda capturado por el modelo de crecimiento logístico, cuya fórmula explícita (deducida a partir de ecuaciones diferenciales en cálculo, y proporcionada aquí directamente) es
+\[
+P(t) = \frac{L}{1 + A e^{-kt}} \qquad (L > 0,\; A > 0,\; k > 0).
+\]
+
+Cada rasgo principal de esta curva en S se deduce directamente mediante álgebra exponencial:
+
+1. Capacidad de carga (asíntota horizontal superior): Cuando \(t \to \infty\), \(e^{-kt} \to 0\), de modo que el denominador \(1 + A e^{-kt} \to 1\) y \(P(t) \to L\). Como \(A e^{-kt} > 0\), \(P(t)\) permanece estrictamente por debajo de \(L\) para todo \(t\) finito. El techo \(L\) recibe el nombre de capacidad de carga. (Cuando \(t \to -\infty\), \(e^{-kt} \to \infty\) y \(P(t) \to 0\), lo que produce una asíntota horizontal inferior \(y = 0\).)
+
+2. Población inicial \(P_0 = P(0)\) y significado de \(A\): Hacer \(t = 0\) produce
+\[
+P_0 = \frac{L}{1 + A} \implies 1 + A = \frac{L}{P_0} \implies A = \frac{L - P_0}{P_0}.
+\]
+Así, \(A\) es la razón entre la capacidad inicialmente sin usar \((L - P_0)\) y la población inicial \(P_0\).
+
+3. Fase temprana casi exponencial: Cuando \(P_0\) es muy pequeña en comparación con \(L\), \(A\) es grande. Para valores pequeños de \(t\) donde \(A e^{-kt} \gg 1\), el «\(1+\)» del denominador es despreciable, de modo que \(P(t) \approx \frac{L}{A} e^{kt} \approx P_0 e^{kt}\): al principio, la curva resulta casi indistinguible de un crecimiento exponencial sin restricciones a tasa \(k\).
+
+4. Punto de mitad de capacidad (crecimiento más rápido): ¿Cuándo alcanza \(P(t)\) la mitad de la capacidad de carga, \(P = \frac{L}{2}\)? Iguala la fórmula a \(\frac{L}{2}\):
+\[
+\frac{L}{1 + A e^{-kt}} = \frac{L}{2} \iff 1 + A e^{-kt} = 2 \iff A e^{-kt} = 1 \iff e^{kt} = A \iff t = \frac{\ln A}{k}.
+\]
+Cuando \(P_0 < \frac{L}{2}\) (por lo que \(A > 1\)), este instante \(t = \frac{\ln A}{k} > 0\) marca la transición exacta en la que la curva pasa de acelerar hacia arriba a desacelerar hacia \(L\): el punto de crecimiento más rápido (cuya demostración exacta mediante razón de cambio utiliza derivadas en cálculo). Si \(P_0 \ge \frac{L}{2}\), entonces \(A \le 1\) y el crecimiento se desacelera desde \(t = 0\) en adelante.
+
+[CALLOUT]
+id: logistic-features
+label: Modelo
+title: Propiedades algebraicas clave del modelo logístico
+tone: key
+
+Para \(P(t) = \dfrac{L}{1 + A e^{-kt}}\) con \(L > 0, A > 0, k > 0\):
+
+(1) Asíntotas: Asíntota horizontal superior \(y = L\) (capacidad de carga, cuando \(t \to \infty\)) y asíntota horizontal inferior \(y = 0\) (cuando \(t \to -\infty\)).
+(2) Condición inicial: \(P(0) = \dfrac{L}{1 + A}\), equivalentemente \(A = \dfrac{L - P_0}{P_0}\).
+(3) Punto de mitad de capacidad: \(P(t) = \dfrac{L}{2}\) ocurre en \(t = \dfrac{\ln A}{k}\), donde la curva logística en S alcanza su mayor rapidez de crecimiento (cuando \(P_0 < L/2\)).
+[/CALLOUT]
+
+Mueve el deslizador \(k\) abajo para \(P(t) = \frac{1000}{1 + 19 e^{-kt}}\) (que parte de \(P_0 = 50\), con capacidad de carga \(L = 1000\)). Observa cómo aumentar \(k\) vuelve más empinada la curva en S y desliza hacia la izquierda el punto marcado de mitad de capacidad \(\left(\frac{\ln 19}{k}, 500\right)\) sin cambiar \(P_0\) ni \(L\).
+
+[GRAPH]
+type: function2d
+title: Curva logística en S \(P(t) = \frac{1000}{1 + 19 e^{-kt}}\) y su punto de mitad de capacidad
+xlabel: \(t\)
+ylabel: \(P(t)\)
+xrange: 0, 20
+yrange: 0, 1100
+trace: 1000 / (1 + 19 * exp(-k * x)) | label: \(P(t) = \frac{1000}{1 + 19 e^{-kt}}\)
+trace: 1000 | label: \(\text{Capacidad de carga } L = 1000\)
+trace: 500 | label: \(\text{Mitad de capacidad } L/2 = 500\)
+point: log(19) / k, 500 | label: \(((\ln 19)/k, 500)\)
+slider: k | range: 0.2, 0.9 | init: 0.5 | step: 0.05
+[/GRAPH]
+
+=== SECTION 3: Calibración de modelos logísticos y despeje del tiempo ===
+
+Para calibrar \(A\) y \(k\) cuando se conoce \(L\), o para resolver \(P(t) = P_{\text{obj}}\) respecto al tiempo transcurrido \(t\), aísla limpiamente el término exponencial \(A e^{-kt}\):
+\[
+P = \frac{L}{1 + A e^{-kt}} \iff 1 + A e^{-kt} = \frac{L}{P} \iff A e^{-kt} = \frac{L - P}{P} \iff e^{-kt} = \frac{L - P}{A P}.
+\]
+Observa la elegancia estructural: aunque \(P(t)\) en sí no es exponencial, la razón \(\frac{L - P(t)}{P(t)}\) (la capacidad sin usar por individuo actual) decae exponencialmente como \(A e^{-kt}\).
+
+Ejemplo resuelto (Calibración y predicción): Un lago tiene una capacidad de carga de \(L = 800\) truchas. Inicialmente se siembran \(P(0) = 100\) truchas y, tras \(2\text{ años}\), la población alcanza \(P(2) = 200\). Halla \(A\) y \(k\), determina cuándo alcanza la población la mitad de la capacidad (\(400\) truchas) y halla cuándo alcanza \(640\) truchas (\(80\%\) de la capacidad).
+
+1. Halla \(A\) a partir de [REF: logistic-features.2 | la condición inicial]:
+\[
+A = \frac{800 - 100}{100} = 7, \qquad \text{por lo que } P(t) = \frac{800}{1 + 7 e^{-kt}}.
+\]
+2. Calibra \(k\) usando \(P(2) = 200\):
+\[
+200 = \frac{800}{1 + 7 e^{-2k}} \implies 1 + 7 e^{-2k} = 4 \implies 7 e^{-2k} = 3 \implies e^{-2k} = \frac{3}{7}.
+\]
+Tomar \(\ln\) da \(-2k = \ln(3/7) = -\ln(7/3)\), de modo que
+\[
+k = \frac{1}{2}\ln\!\left(\frac{7}{3}\right) \approx 0.4236\text{ año}^{-1}.
+\]
+3. Tiempo para alcanzar la mitad de la capacidad \(P = 400\): Por [REF: logistic-features.3 | la fórmula de mitad de capacidad],
+\[
+t = \frac{\ln 7}{k} = \frac{2\ln 7}{\ln(7/3)} \approx 4.59\text{ años}.
+\]
+4. Tiempo para alcanzar \(P = 640\):
+\[
+\frac{800}{1 + 7 e^{-kt}} = 640 \implies 1 + 7 e^{-kt} = \frac{5}{4} \implies 7 e^{-kt} = \frac{1}{4} \implies e^{kt} = 28.
+\]
+Por lo tanto,
+\[
+t = \frac{\ln 28}{k} = \frac{2\ln 28}{\ln(7/3)} \approx 7.87\text{ años}.
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+Un anuncio universitario se difunde según el modelo logístico
+\[
+P(t) = \frac{2400}{1 + 15 e^{-0.3 t}},
+\]
+donde \(t \ge 0\) se mide en horas. ¿Cuál es el número inicial \(P(0)\) de personas que conocen el anuncio, y en qué instante \(t\) se difunde con mayor rapidez?
+
+(A) \(P(0) = 160\); máxima rapidez en \(t = \dfrac{\ln 15}{0.3}\text{ horas}\)
+(B) \(P(0) = 150\); máxima rapidez en \(t = \dfrac{\ln 15}{0.3}\text{ horas}\)
+(C) \(P(0) = 150\); máxima rapidez en \(t = \dfrac{\ln 16}{0.3}\text{ horas}\)
+(D) \(P(0) = 150\); máxima rapidez en \(t = \dfrac{\ln 2}{0.3}\text{ horas}\)
+(E) \(P(0) = 1200\); máxima rapidez en \(t = \dfrac{\ln 15}{0.3}\text{ horas}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Una reserva natural tiene una capacidad de carga de \(L = 500\). Inicialmente se introducen \(P(0) = 50\) animales y, después de \(4\text{ años}\), la población ha crecido hasta \(P(4) = 125\). Bajo el modelo logístico \(P(t) = \dfrac{L}{1 + A e^{-kt}}\), ¿después de cuántos años alcanzará la población la mitad de su capacidad (\(250\) animales)?
+
+(A) \(6\text{ años}\)
+(B) \(8\text{ años}\)
+(C) \(10\text{ años}\)
+(D) \(12\text{ años}\)
+(E) \(16\text{ años}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Para una curva logística \(P(t) = \dfrac{L}{1 + A e^{-kt}}\) con \(A > 1\), sea \(t^* = \dfrac{\ln A}{k}\) el instante de mitad de capacidad en el que \(P(t^*) = \dfrac{L}{2}\). Para cualquier desplazamiento temporal \(h > 0\), ¿cuál es el valor exacto de \(P(t^* - h) + P(t^* + h)\)?
+
+(A) \(L\), para todo \(h > 0\)
+(B) \(\dfrac{L}{2}\bigl(e^{kh} + e^{-kh}\bigr)\)
+(C) \(L\bigl(1 - e^{-kh}\bigr)\)
+(D) \(\dfrac{2L}{1 + A e^{-kh}}\)
+(E) \(\dfrac{L}{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Un objeto se enfría según la ley de enfriamiento de Newton \(T(t) = T_{\text{env}} + (T_0 - T_{\text{env}}) e^{-kt}\) dentro de una habitación de temperatura constante desconocida \(T_{\text{env}}\). Su temperatura es de \(80^\circ\text{C}\) en \(t = 0\), \(50^\circ\text{C}\) en \(t = 10\text{ minutos}\) y \(35^\circ\text{C}\) en \(t = 20\text{ minutos}\). ¿Cuál es la temperatura de la habitación \(T_{\text{env}}\)?
+
+(A) \(15^\circ\text{C}\)
+(B) \(18^\circ\text{C}\)
+(C) \(20^\circ\text{C}\)
+(D) \(22.5^\circ\text{C}\)
+(E) \(25^\circ\text{C}\)
+[/BONUS]

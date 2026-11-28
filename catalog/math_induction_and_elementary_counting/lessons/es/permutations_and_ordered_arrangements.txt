@@ -1,0 +1,211 @@
+=== SECTION 1: Factoriales, \(k\)-permutaciones y funciones inyectivas ===
+
+Cuando el orden importa y los objetos no pueden repetirse —ordenar finalistas en un podio, asignar tareas distintas a trabajadores distintos o colocar libros en un estante—, la Regla del Producto produce un producto descendente recurrente. La notación factorial empaqueta ese producto de manera compacta.
+
+Para todo entero positivo \(n\), define \(n\)-factorial mediante
+\[
+n! = n(n - 1)(n - 2) \cdots 2 \cdot 1.
+\]
+Así, \(1! = 1\), \(2! = 2\), \(3! = 6\), \(4! = 24\), \(5! = 120\) y \(n! = n \cdot (n - 1)!\) para \(n \ge 2\). Por la Regla del Producto, \(n!\) cuenta los arreglos lineales (permutaciones) de \(n\) objetos distintos: \(n\) opciones para la posición \(1\), \(n - 1\) para la posición \(2\), y así sucesivamente hasta \(1\) opción para la posición \(n\).
+
+¿Qué debe valer \(0!\)? Combinatoriamente, ¿cuántas maneras hay de ordenar \(0\) objetos en fila? Exactamente \(1\) manera: el único arreglo vacío (no hacer nada). Algebraicamente, fijar
+\[
+0! = 1
+\]
+también preserva la recurrencia \(n! = n \cdot (n - 1)!\) en \(n = 1\) (pues \(1! = 1 \cdot 0!\)) y hace que nuestra fórmula de \(k\)-permutaciones de abajo funcione con limpieza cuando \(k = 0\) o \(k = n\).
+
+Supón ahora que tenemos \(n\) objetos distintos y queremos formar una lista ordenada de longitud \(k\) sin repetición, donde \(0 \le k \le n\). Una selección ordenada así se llama una \(k\)-permutación de \(n\) objetos, y su conteo se denota \(P(n, k)\).
+
+[CALLOUT]
+id: k-perm
+label: Teorema
+title: Fórmula para \(k\)-permutaciones y aplicaciones inyectivas
+tone: key
+
+Para enteros \(0 \le k \le n\), el número de selecciones ordenadas de \(k\) objetos distintos elegidos entre \(n\) objetos distintos es
+\[
+P(n, k) = n(n - 1)(n - 2) \cdots (n - k + 1) = \frac{n!}{(n - k)!}.
+\]
+De manera equivalente, si \(|A| = k\) y \(|B| = n\), entonces \(P(n, k)\) es el número de funciones inyectivas (uno a uno) \(f : A \to B\). (Para \(k > n\), \(P(n, k) = 0\).)
+[/CALLOUT]
+
+La deducción es directa a partir de la Regla del Producto: la posición \(1\) tiene \(n\) opciones, la posición \(2\) tiene \(n - 1\) opciones, ..., y la posición \(k\) tiene \(n - (k - 1) = n - k + 1\) opciones. Multiplicar numerador y denominador por \((n - k)!\) condensa el producto en \(\frac{n!}{(n - k)!}\). Comprueba los casos frontera:
+- \(k = 0\): \(P(n, 0) = \frac{n!}{n!} = 1\) (la única lista vacía).
+- \(k = n\): \(P(n, n) = \frac{n!}{0!} = n!\) (todas las permutaciones completas de \(n\) objetos).
+- \(k > n\): por el Principio del Palomar, ninguna función de un conjunto de \(k\) elementos a un conjunto de \(n\) elementos puede ser inyectiva, de modo que \(P(n, k) = 0\).
+
+¿Por qué [REF: k-perm | \(P(n, k)\)] cuenta funciones inyectivas \(f : A \to B\)? Escribe \(A = \{a_1, \dots, a_k\}\). Especificar una función inyectiva \(f\) equivale biyectivamente a elegir una \(k\)-tupla ordenada \(\bigl(f(a_1), \dots, f(a_k)\bigr)\) de \(k\) elementos DISTINTOS de \(B\) —precisamente una \(k\)-permutación de \(B\). Compara esto con las \(n^k\) funciones totales \(A \to B\) de la lección anterior: suprimir la inyectividad permite repetición y transforma \(P(n, k)\) en \(n^k\).
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuántas funciones inyectivas \(f : \{1, 2, 3, 4\} \to \{1, 2, 3, 4, 5, 6\}\) satisfacen TANTO «\(f(1)\) es par» COMO «\(f(2)\) es impar»?
+
+(A) \(72\)
+(B) \(108\)
+(C) \(144\)
+(D) \(180\)
+(E) \(324\)
+[/QUESTION]
+
+=== SECTION 2: Permutaciones de multiconjuntos mediante la Regla de la División ===
+
+¿Qué ocurre cuando algunos de los \(n\) objetos que ordenamos son indistinguibles? Considera contar los anagramas distintos de la palabra de \(6\) letras BANANA, que consta de \(1\) B, \(3\) A y \(2\) N. Si las \(6\) letras fueran todas distintas, habría \(6! = 720\) arreglos, pero intercambiar dos A produce exactamente la misma palabra.
+
+La Regla de la División resuelve esto de inmediato. Coloca temporalmente subíndices distintos a las letras idénticas: \(\text{B}, \text{A}_1, \text{A}_2, \text{A}_3, \text{N}_1, \text{N}_2\). Ahora los \(6\) símbolos son todos distintos, lo que da \(6! = 720\) arreglos etiquetados. Toma cualquier anagrama sin etiquetar —digamos \(\text{A N A B N A}\)— y pregúntate cuántos arreglos etiquetados se reducen a él al borrar las etiquetas:
+- Las tres casillas de A pueden recibir \(\text{A}_1, \text{A}_2, \text{A}_3\) de \(3! = 6\) maneras.
+- De forma independiente, las dos casillas de N pueden recibir \(\text{N}_1, \text{N}_2\) de \(2! = 2\) maneras.
+- La única casilla de B tiene \(1! = 1\) manera.
+Por la Regla del Producto, ¡CADA anagrama sin etiquetar corresponde exactamente a \(k = 1! \cdot 3! \cdot 2! = 12\) arreglos etiquetados! Como esta multiplicidad \(k = 12\) es estrictamente uniforme en todo anagrama, la Regla de la División da
+\[
+\frac{6!}{1!\,3!\,2!} = \frac{720}{12} = 60 \text{ anagramas distintos de BANANA.}
+\]
+
+Exactamente la misma demostración por la Regla de la División se generaliza a cualquier número de tipos repetidos.
+
+[CALLOUT]
+id: multiset-perm
+label: Teorema
+title: Fórmula de permutaciones de multiconjuntos
+tone: key
+
+Supón que una colección de \(n\) objetos consta de \(r\) tipos distintos, con \(n_1\) objetos indistinguibles del tipo \(1\), \(n_2\) del tipo \(2\), ..., y \(n_r\) del tipo \(r\), de modo que \(n_1 + n_2 + \dots + n_r = n\). Entonces el número de arreglos lineales distintos de todos los \(n\) objetos es
+\[
+\frac{n!}{n_1!\, n_2!\, \cdots\, n_r!}.
+\]
+[/CALLOUT]
+
+Por ejemplo, la palabra de \(11\) letras MISSISSIPPI tiene \(1\) M, \(4\) I, \(4\) S y \(2\) P (\(1 + 4 + 4 + 2 = 11\)). Por [REF: multiset-perm | la fórmula de permutaciones de multiconjuntos], el número de anagramas distintos es
+\[
+\frac{11!}{1!\,4!\,4!\,2!} = \frac{39{,}916{,}800}{1 \cdot 24 \cdot 24 \cdot 2} = 34{,}650.
+\]
+Vigila una comprobación de cordura: los argumentos \(n_1, \dots, n_r\) del denominador deben sumar SIEMPRE \(n\) (incluidos los \(1!\) de elementos únicos, que valen \(1\) y no cambian la fracción).
+
+[QUESTION 2]
+[ANSWER: A]
+¿Cuántos arreglos distintos de \(6\) letras con las letras de PEPPER comienzan y terminan con la MISMA letra?
+
+(A) \(16\)
+(B) \(20\)
+(C) \(24\)
+(D) \(32\)
+(E) \(60\)
+[/QUESTION]
+
+=== SECTION 3: Permutaciones circulares y simetría de reflexión ===
+
+Hasta ahora hemos ordenado objetos a lo largo de una recta, donde hay una primera posición y una última posición bien definidas. Sienta ahora a \(n \ge 1\) personas distintas alrededor de una mesa redonda sin etiquetar, donde dos distribuciones se consideran idénticas si una puede rotarse hasta obtener la otra (solo importa el vecino en sentido horario de cada persona).
+
+Dos argumentos independientes producen exactamente el mismo conteo:
+1. Regla de la División: Ordena a las \(n\) personas en fila de \(n!\) maneras y luego cierra la fila formando un círculo. Toda distribución circular corresponde exactamente a \(n\) arreglos lineales —obtenidos al cortar el círculo por cualquiera de los \(n\) huecos entre personas adyacentes (equivalentemente, los \(n\) desplazamientos cíclicos). Como las \(n\) personas son distintas, los \(n\) desplazamientos de una distribución circular dada son listas lineales distintas. Por la Regla de la División, el número de distribuciones circulares es \(n! / n = (n - 1)!\).
+2. Anclaje: Como las rotaciones no importan, gira la mesa hasta que la persona \(1\) quede en el asiento de las \(12\) en punto. Una vez anclada la persona \(1\), no queda ninguna simetría rotacional, y los \(n - 1\) asientos restantes quedan completamente distinguidos por su distancia en sentido horario desde la persona \(1\). Ordenar a las otras \(n - 1\) personas en esos \(n - 1\) asientos da \((n - 1)!\) distribuciones.
+
+¿Qué ocurre si ensartamos \(n\) cuentas distintas en una pulsera o collar flexible que no solo puede rotarse, sino también voltearse boca abajo (reflejarse)? Invertir el orden cíclico de un arreglo circular empareja cada arreglo circular con su reflexión especular. ¿Puede un arreglo circular de \(n\) cuentas distintas coincidir con su propia reflexión?
+- Para \(n = 1\) o \(n = 2\): solo existe \((1 - 1)! = 1\) o \((2 - 1)! = 1\) arreglo circular, que YA es idéntico a su propia reflexión. Dividir entre \(2\) daría el número no entero inválido \(1/2\).
+- Para \(n \ge 3\): fija la cuenta \(1\) arriba. Su vecina en sentido horario \(b_{\text{hor}}\) y su vecina en sentido antihorario \(b_{\text{anti}}\) son dos cuentas DIFERENTES (porque \(n \ge 3\)). Voltear el collar las intercambia, de modo que la reflexión tiene una vecina horaria distinta para la cuenta \(1\) y es genuinamente un arreglo circular distinto. Así, para \(n \ge 3\), voltear empareja los \((n - 1)!\) arreglos circulares uniformemente de \(2\) a \(1\), dando \(\frac{(n - 1)!}{2}\) collares.
+
+[CALLOUT]
+id: circular-perm
+label: Teorema
+title: Permutaciones circulares y collares reversibles
+tone: key
+
+Para \(n\) objetos distintos:
+
+(1) Permutaciones circulares (distintas salvo rotación): \((n - 1)!\) para todo \(n \ge 1\).
+(2) Permutaciones de collar / pulsera (distintas salvo rotación Y reflexión): \(\frac{(n - 1)!}{2}\) para \(n \ge 3\) (y \(1\) para \(n = 1, 2\)).
+[/CALLOUT]
+
+Ten cuidado: [REF: circular-perm | ambas fórmulas] suponen que los \(n\) objetos son TODOS distintos. Si hay cuentas repetidas (por ejemplo, \(2\) cuentas rojas y \(2\) cuentas azules en un círculo), distintos patrones circulares pueden tener distintas simetrías rotacionales, por lo que la Regla de la División ingenua falla —igual que los palíndromos rompieron la división ingenua por inversión en la lección anterior.
+
+[QUESTION 3]
+[ANSWER: C]
+Seis personas distintas, incluidas Alicia y Beto, se sientan alrededor de una mesa redonda con \(6\) asientos igualmente espaciados. ¿Cuántas distribuciones circulares distintas (salvo rotación) colocan a Alicia y a Beto directamente uno frente al otro?
+
+(A) \(6\)
+(B) \(12\)
+(C) \(24\)
+(D) \(48\)
+(E) \(120\)
+[/QUESTION]
+
+=== SECTION 4: Restricciones de adyacencia — agrupamiento, huecos y complemento ===
+
+Los problemas reales de arreglos casi siempre imponen restricciones laterales: ciertos elementos deben quedar juntos, o ningún par de elementos de un grupo restringido puede quedar contiguo. Tres herramientas sistemáticas de modelación resuelven casi toda restricción de adyacencia sin sobreconteo.
+
+[CALLOUT]
+id: adjacency-toolkit
+label: Técnicas
+title: Tres herramientas para restricciones de adyacencia
+tone: key
+
+(1) Agrupamiento (superelementos): Cuando un grupo específico de \(g\) elementos debe aparecer de forma consecutiva, pégalos en un único superelemento, ordena el superelemento junto con los elementos restantes y multiplica por las \(g!\) ordenaciones internas del grupo.
+(2) Método de los huecos (inserción): Cuando NINGÚN PAR de elementos de un grupo de \(k\) elementos restringidos puede ser adyacente, ordena primero los \(m\) elementos sin restricción (creando \(m + 1\) huecos: antes, entre y después de ellos) y luego coloca los \(k\) elementos restringidos en \(k\) huecos distintos.
+(3) Conteo por complemento: Cuando un patrón prohibido es más simple que el patrón permitido (especialmente «no todos juntos» o «al menos dos adyacentes»), resta los arreglos prohibidos del total de arreglos.
+[/CALLOUT]
+
+Veamos las tres herramientas en acción sobre un estante con \(4\) libros distintos de Matemáticas y \(2\) libros distintos de Física (\(6\) libros en total).
+
+1. Los \(2\) libros de Física DEBEN quedar adyacentes: Usa [REF: adjacency-toolkit.1 | el agrupamiento]. Pega los dos libros de Física en un único bloque \(P\). Ahora ordenamos \(5\) objetos (los \(4\) libros de Matemáticas más el bloque \(P\)) de \(5! = 120\) maneras, y ordenamos los dos libros de Física dentro de \(P\) de \(2! = 2\) maneras. Total: \(5! \cdot 2! = 240\).
+
+2. Los \(2\) libros de Física NO DEBEN quedar adyacentes: ¡Dos métodos coinciden!
+   - Por [REF: adjacency-toolkit.3 | conteo por complemento]: Arreglos totales menos arreglos adyacentes \(= 6! - 5! \cdot 2! = 720 - 240 = 480\).
+   - Por [REF: adjacency-toolkit.2 | el método de los huecos]: Ordena primero los \(4\) libros de Matemáticas de \(4! = 24\) maneras, creando \(5\) huecos (\(\_ M \_ M \_ M \_ M \_\)). Coloca los \(2\) libros distintos de Física en \(2\) huecos distintos de \(P(5, 2) = 5 \cdot 4 = 20\) maneras. Total: \(24 \cdot 20 = 480\).
+
+Aumenta ahora el estante a \(4\) libros distintos de Matemáticas y \(3\) libros distintos de Física, y exige que NINGÚN PAR de libros de Física quede adyacente. Aquí es donde los principiantes se queman al usar mal el conteo por complemento: calcular \(7! - 5! \cdot 3!\) solo resta los arreglos en los que LOS TRES libros de Física forman un único bloque consecutivo. Falla por completo al no excluir arreglos donde dos libros de Física se tocan y el tercero queda aparte (como \(P_1 P_2 M_1 M_2 P_3 M_3 M_4\)).
+
+[REF: adjacency-toolkit.2 | El método de los huecos], en cambio, maneja «ningún par adyacente» con limpieza para CUALQUIER número \(k\) de elementos restringidos:
+- Ordena primero los \(4\) libros de Matemáticas: \(4! = 24\) maneras, creando \(5\) huecos.
+- Coloca los \(3\) libros distintos de Física en \(3\) de los \(5\) huecos (a lo sumo uno por hueco): \(P(5, 3) = 5 \cdot 4 \cdot 3 = 60\) maneras.
+Total: \(24 \cdot 60 = 1440\) arreglos.
+
+[TABLE]
+Restricción sobre \(k\) elementos especiales entre \(m\) otros | Herramienta recomendada | Fórmula (elementos distintos, lineal)
+Todos los \(k\) elementos especiales deben formar un bloque consecutivo | Agrupamiento | \((m + 1)!\, k!\)
+No todos los \(k\) elementos especiales juntos en un bloque | Complemento + Agrupamiento | \((m + k)! - (m + 1)!\, k!\)
+Ningún par de los \(k\) elementos especiales puede ser adyacente | Huecos / Inserción | \(m!\, P(m + 1, k)\) (válida para \(k \le m + 1\))
+Al menos dos de los \(k\) elementos especiales son adyacentes | Complemento + Huecos | \((m + k)! - m!\, P(m + 1, k)\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: D]
+Seis personas distintas \(A, B, C, D, E, F\) se forman en línea recta de modo que \(A\) y \(B\) queden juntos uno al lado del otro, mientras que \(C\) NO quede junto a \(A\) ni junto a \(B\). ¿Cuántas filas válidas son posibles?
+
+(A) \(72\)
+(B) \(96\)
+(C) \(120\)
+(D) \(144\)
+(E) \(240\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Seis cuentas de colores distintos (incluidas una cuenta roja y una cuenta azul) se ensartan en una pulsera reversible (las rotaciones y reflexiones producen la misma pulsera). ¿Cuántas pulseras distintas tienen las cuentas roja y azul adyacentes entre sí?
+
+(A) \(12\)
+(B) \(24\)
+(C) \(48\)
+(D) \(60\)
+(E) \(120\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Cuatro matrimonios (\(8\) personas distintas) se sientan alrededor de una mesa redonda sin etiquetar (distintas salvo rotación) de modo que cada persona se siente directamente al lado de su cónyuge. ¿Cuántas distribuciones circulares válidas existen?
+
+(A) \(24\)
+(B) \(48\)
+(C) \(96\)
+(D) \(384\)
+(E) \(768\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+¿Cuántos arreglos distintos de \(6\) letras con las letras de BANANA NO tienen NINGÚN PAR de letras A adyacentes entre sí?
+
+(A) \(12\)
+(B) \(18\)
+(C) \(24\)
+(D) \(36\)
+(E) \(72\)
+[/BONUS]

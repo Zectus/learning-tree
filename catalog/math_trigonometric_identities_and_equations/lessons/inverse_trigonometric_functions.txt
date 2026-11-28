@@ -1,0 +1,233 @@
+=== SECTION 1: Why trigonometric functions need domain restrictions ===
+
+Suppose you know that \(\sin \theta = \frac{1}{2}\) and you want to recover the angle \(\theta\). From the unit circle, \(\theta = \frac{\pi}{6}\) works, but so do \(\frac{5\pi}{6}\), \(\frac{13\pi}{6}\), \(-\frac{7\pi}{6}\), and infinitely many other angles. Because every trigonometric function is periodic, horizontal lines such as \(y = \frac{1}{2}\) cross the graph of \(y = \sin x\) infinitely many times. By the horizontal line test, \(\sin x\), \(\cos x\), and \(\tan x\) fail to be one-to-one on their full domains, so none of them has a global inverse function on \(\mathbb{R}\).
+
+To define an inverse function that outputs a single unambiguous angle for each valid ratio, we must restrict each trigonometric function to a carefully chosen interval on which:
+(1) the function takes every value in its full range, and
+(2) the function is strictly monotonic (strictly increasing or strictly decreasing), so it passes the horizontal line test and hits each output value exactly once.
+
+Because many different intervals satisfy those two conditions, mathematics fixes one standard interval—called the principal branch—for each function. Before inspecting those branches, clear up the single most dangerous notation trap in trigonometry.
+
+[CALLOUT]
+id: inverse-notation-warning
+label: Common Pitfall
+title: Inverse notation versus reciprocal notation
+tone: caution
+
+The superscript \(-1\) in \(\sin^{-1} x\), \(\cos^{-1} x\), and \(\tan^{-1} x\) denotes the inverse function, NEVER a negative exponent (reciprocal):
+\[
+\sin^{-1} x = \arcsin x \neq \frac{1}{\sin x} = (\sin x)^{-1} = \csc x.
+\]
+To write the reciprocal of \(\sin x\), use \(\frac{1}{\sin x}\), \((\sin x)^{-1}\), or \(\csc x\). Whenever ambiguity could creep in, the names \(\arcsin x\), \(\arccos x\), and \(\arctan x\) make the meaning unmistakable: "\(\arcsin x\)" literally means "the arc (angle in radians) in the principal range whose sine is \(x\)."
+[/CALLOUT]
+
+Notice the role of inputs and outputs: an ordinary trigonometric function takes an angle (in radians) and returns a dimensionless ratio, whereas an inverse trigonometric function takes a ratio and returns an angle in its principal range.
+
+=== SECTION 2: Arcsine and arccosine: restricted branches and reflections ===
+
+Start with \(y = \sin x\), whose full range is \([-1, 1]\). To include the first-quadrant angles \(\left[0, \frac{\pi}{2}\right]\) and capture negative sine values smoothly without jumping over any gap, we choose the interval \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\). On \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\), \(\sin x\) increases strictly from \(-1\) to \(1\), covering every ratio in \([-1, 1]\) exactly once.
+
+Reflecting this restricted curve across the diagonal line \(y = x\) swaps inputs and outputs, producing the inverse function \(y = \arcsin x\) (also written \(\sin^{-1} x\)). Because reflection across \(y = x\) exchanges domain and range:
+- The domain of \(\arcsin x\) is \([-1, 1]\).
+- The range of \(\arcsin x\) is \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\).
+- Because the restricted sine is strictly increasing and odd, \(\arcsin x\) is also strictly increasing and odd: \(\arcsin(-x) = -\arcsin x\).
+
+[GRAPH]
+type: parametric2d
+title: Restricted \(y = \sin x\) on \([-\pi/2, \pi/2]\) reflected across \(y = x\) to \(y = \arcsin x\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.5708, 1.5708
+xrange: -1.8, 1.8
+yrange: -1.8, 1.8
+trace: t, sin(t) | label: \(y = \sin x\) on \([-\pi/2, \pi/2]\)
+trace: sin(t), t | label: \(y = \arcsin x\)
+trace: t, t | label: \(y = x\)
+point: 1, 1.5708 | label: \((1, \pi/2)\)
+point: -1, -1.5708 | label: \((-1, -\pi/2)\)
+[/GRAPH]
+
+Now apply the same requirement to \(y = \cos x\). Why can we NOT reuse the interval \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\) for cosine? Because \(\cos x\) is even: on \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\), \(\cos x\) takes only nonnegative values in \([0, 1]\) and repeats every value except \(1\) (for instance, \(\cos\!\left(-\frac{\pi}{3}\right) = \cos\!\left(\frac{\pi}{3}\right) = \frac{1}{2}\)), failing both requirements. Instead, on \([0, \pi]\), \(\cos x\) decreases strictly from \(1\) down to \(-1\), hitting every value in \([-1, 1]\) once while still including all first-quadrant angles \(\left[0, \frac{\pi}{2}\right]\).
+
+Reflecting the branch of \(\cos x\) on \([0, \pi]\) across \(y = x\) gives \(y = \arccos x\) (also written \(\cos^{-1} x\)):
+- The domain of \(\arccos x\) is \([-1, 1]\).
+- The range of \(\arccos x\) is \([0, \pi]\).
+- Because the restricted cosine is strictly decreasing, \(\arccos x\) is strictly decreasing from \(\arccos(-1) = \pi\) down to \(\arccos(1) = 0\), passing through \(\arccos(0) = \frac{\pi}{2}\).
+- Notice that \(\arccos x\) is neither even nor odd! Instead, its graph is symmetric about the point \(\left(0, \frac{\pi}{2}\right)\), meaning \(\arccos(-x) = \pi - \arccos x\).
+
+[GRAPH]
+type: parametric2d
+title: Restricted \(y = \cos x\) on \([0, \pi]\) reflected across \(y = x\) to \(y = \arccos x\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -1.3, 3.4
+yrange: -1.3, 3.4
+trace: t, cos(t) | label: \(y = \cos x\) on \([0, \pi]\)
+trace: cos(t), t | label: \(y = \arccos x\)
+trace: t, t | label: \(y = x\)
+point: -1, 3.1416 | label: \((-1, \pi)\)
+point: 0, 1.5708 | label: \((0, \pi/2)\)
+point: 1, 0 | label: \((1, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Why is the principal domain restriction of \(\cos x\) chosen to be \([0, \pi]\) rather than \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\)?
+
+(A) Because \(\cos x\) is undefined at \(x = -\frac{\pi}{2}\) and \(x = \frac{\pi}{2}\).
+(B) Because \(\cos x\) is strictly increasing on \([0, \pi]\) and strictly decreasing on \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\).
+(C) Because on \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\), \(\cos x\) is neither one-to-one nor does it take any negative values, whereas on \([0, \pi]\) it decreases strictly across all of \([-1, 1]\).
+(D) Because \(\arccos x\) must be an odd function just like \(\arcsin x\).
+(E) Because \([0, \pi]\) is the shortest interval containing a vertical asymptote of \(\cos x\).
+[/QUESTION]
+
+=== SECTION 3: Arctangent and its horizontal asymptotes ===
+
+The graph of \(y = \tan x\) consists of infinitely many identical branches separated by vertical asymptotes at odd multiples of \(\frac{\pi}{2}\). The central branch sits on the open interval \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\), where \(\tan x\) increases strictly from \(-\infty\) to \(+\infty\) and covers all of \(\mathbb{R}\) exactly once. Note that the endpoints \(\pm\frac{\pi}{2}\) are excluded because \(\tan x\) is undefined there.
+
+Reflecting that central branch across \(y = x\) yields \(y = \arctan x\) (or \(\tan^{-1} x\)):
+- The domain of \(\arctan x\) is all real numbers \((-\infty, \infty)\).
+- The range of \(\arctan x\) is the open interval \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\).
+- The two vertical asymptotes \(x = -\frac{\pi}{2}\) and \(x = \frac{\pi}{2}\) of the restricted tangent branch reflect across \(y = x\) into two horizontal asymptotes of \(\arctan x\):
+\[
+\lim_{x \to \infty} \arctan x = \frac{\pi}{2}, \qquad \lim_{x \to -\infty} \arctan x = -\frac{\pi}{2}.
+\]
+- Because \(\tan x\) is strictly increasing and odd on \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\), \(\arctan x\) is strictly increasing and odd on \(\mathbb{R}\): \(\arctan(-x) = -\arctan x\).
+
+[GRAPH]
+type: function2d
+title: Graph of \(y = \arctan x\) with horizontal asymptotes \(y = \pm\pi/2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -6, 6
+yrange: -2.1, 2.1
+trace: atan(x) | label: \(y = \arctan x\)
+segment: -6, 1.5708, 6, 1.5708 | label: \(y = \pi/2\) | dashed: true
+segment: -6, -1.5708, 6, -1.5708 | label: \(y = -\pi/2\) | dashed: true
+point: -1, -0.7854 | label: \((-1, -\pi/4)\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1, 0.7854 | label: \((1, \pi/4)\)
+[/GRAPH]
+
+[CALLOUT]
+id: principal-ranges
+label: Reference
+title: Domains, principal ranges, and symmetry of the three primary inverse trig functions
+tone: key
+
+(1) \(y = \arcsin x \iff \sin y = x\) with \(x \in [-1, 1]\) and \(y \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\) (Quadrants I and IV; odd: \(\arcsin(-x) = -\arcsin x\)).
+(2) \(y = \arccos x \iff \cos y = x\) with \(x \in [-1, 1]\) and \(y \in [0, \pi]\) (Quadrants I and II; \(\arccos(-x) = \pi - \arccos x\)).
+(3) \(y = \arctan x \iff \tan y = x\) with \(x \in (-\infty, \infty)\) and \(y \in \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\) (Quadrants I and IV; odd: \(\arctan(-x) = -\arctan x\)).
+[/CALLOUT]
+
+Notice a crucial difference between \(\arcsin x\) and \(\arctan x\): the range of \(\arcsin x\) is closed (\(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\)), so \(\arcsin x\) actually reaches \(\pm\frac{\pi}{2}\) at \(x = \pm 1\). The range of \(\arctan x\) is open (\(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\)), so \(\arctan x\) approaches \(\pm\frac{\pi}{2}\) arbitrarily closely as \(x \to \pm\infty\) without ever attaining either endpoint.
+
+[QUESTION 2]
+[ANSWER: A]
+What is the domain of the function \(g(x) = \arccos(2x - 3) + \arctan(5x)\)?
+
+(A) \([1, 2]\)
+(B) \([-1, 1]\)
+(C) \((1, 2)\)
+(D) \(\left[\frac{1}{2}, \frac{5}{2}\right]\)
+(E) \((-\infty, \infty)\)
+[/QUESTION]
+
+=== SECTION 4: Exact principal values, negative inputs, and reciprocal inverses ===
+
+To evaluate an inverse trigonometric expression like \(\arcsin(c)\), \(\arccos(c)\), or \(\arctan(c)\) at a special ratio \(c\):
+1. Check that \(c\) lies in the function's domain (for \(\arcsin\) and \(\arccos\), you must have \(|c| \le 1\); otherwise the expression is undefined in \(\mathbb{R}\)).
+2. Find the acute reference angle \(\theta_{\text{ref}} \in \left[0, \frac{\pi}{2}\right]\) matching \(|c|\).
+3. Place the angle in the unique quadrant belonging to the function's principal range from [REF: principal-ranges | the principal-range summary].
+
+For positive inputs \(c > 0\), all three functions return the exact same Quadrant I reference angle: \(\arcsin\!\left(\frac{1}{2}\right) = \frac{\pi}{6}\), \(\arccos\!\left(\frac{\sqrt{2}}{2}\right) = \frac{\pi}{4}\), and \(\arctan(\sqrt{3}) = \frac{\pi}{3}\).
+
+Negative inputs are where students most often slip, because the principal ranges diverge sharply:
+- \(\arcsin\) and \(\arctan\) place negative inputs in Quadrant IV as negative angles in \(\left[-\frac{\pi}{2}, 0\right)\). For example:
+\[
+\arcsin\!\left(-\frac{1}{2}\right) = -\frac{\pi}{6}, \qquad \arctan(-1) = -\frac{\pi}{4}.
+\]
+Never write \(\frac{11\pi}{6}\) for \(\arcsin\!\left(-\frac{1}{2}\right)\): although \(\sin\!\left(\frac{11\pi}{6}\right) = -\frac{1}{2}\), the angle \(\frac{11\pi}{6}\) lies outside \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\).
+- \(\arccos\) places negative inputs in Quadrant II as obtuse angles in \(\left(\frac{\pi}{2}, \pi\right]\). For example:
+\[
+\arccos\!\left(-\frac{1}{2}\right) = \pi - \frac{\pi}{3} = \frac{2\pi}{3}, \qquad \arccos\!\left(-\frac{\sqrt{3}}{2}\right) = \pi - \frac{\pi}{6} = \frac{5\pi}{6}.
+\]
+Never write \(-\frac{\pi}{3}\) for \(\arccos\!\left(-\frac{1}{2}\right)\): first, \(-\frac{\pi}{3}\) is outside \([0, \pi]\); second, \(\cos\!\left(-\frac{\pi}{3}\right) = +\frac{1}{2}\), not \(-\frac{1}{2}\)!
+
+What about the three reciprocal inverse functions \(\operatorname{arccot} x\), \(\operatorname{arcsec} x\), and \(\operatorname{arccsc} x\)? Because \(\sec y = x \iff \cos y = \frac{1}{x}\) and \(\csc y = x \iff \sin y = \frac{1}{x}\), we evaluate \(\operatorname{arcsec} x\) and \(\operatorname{arccsc} x\) on \(|x| \ge 1\) by taking the reciprocal of the input and reusing \(\arccos\) and \(\arcsin\):
+\[
+\operatorname{arcsec} x = \arccos\!\left(\frac{1}{x}\right) \quad (|x| \ge 1), \qquad \operatorname{arccsc} x = \arcsin\!\left(\frac{1}{x}\right) \quad (|x| \ge 1).
+\]
+This standard convention gives \(\operatorname{arcsec} x\) the range \(\left[0, \frac{\pi}{2}\right) \cup \left(\frac{\pi}{2}, \pi\right]\) (matching \(\arccos\), minus \(\frac{\pi}{2}\) where cosine is \(0\)) and \(\operatorname{arccsc} x\) the range \(\left[-\frac{\pi}{2}, 0\right) \cup \left(0, \frac{\pi}{2}\right]\) (matching \(\arcsin\), minus \(0\)). For example, \(\operatorname{arcsec}(-2) = \arccos\!\left(-\frac{1}{2}\right) = \frac{2\pi}{3}\), and \(\operatorname{arccsc}(-\sqrt{2}) = \arcsin\!\left(-\frac{1}{\sqrt{2}}\right) = -\frac{\pi}{4}\). (Some calculus texts adopt an alternative convention for \(\operatorname{arcsec} x\) on \(x \le -1\) using \(\left[\pi, \frac{3\pi}{2}\right)\) to simplify derivative formulas, so always check which convention a textbook uses.)
+
+For \(\operatorname{arccot} x\), the standard continuous principal branch has domain \((-\infty, \infty)\) and range \((0, \pi)\), matching the continuous decreasing branch of \(\cot y\) on \((0, \pi)\). With this range,
+\[
+\operatorname{arccot} x = \frac{\pi}{2} - \arctan x \qquad \text{for all } x \in \mathbb{R}.
+\]
+Thus \(\operatorname{arccot}(1) = \frac{\pi}{4}\), \(\operatorname{arccot}(0) = \frac{\pi}{2}\), and \(\operatorname{arccot}(-\sqrt{3}) = \frac{\pi}{2} - \left(-\frac{\pi}{6}\right) = \frac{5\pi}{6}\) (in Quadrant II, where \(\cot\!\left(\frac{5\pi}{6}\right) = -\sqrt{3}\)). Notice why \(\operatorname{arccot}(x)\) is NOT simply \(\arctan\!\left(\frac{1}{x}\right)\) when \(x \le 0\): at \(x = 0\), \(\frac{1}{x}\) is undefined, and for \(x < 0\), \(\arctan\!\left(\frac{1}{x}\right)\) lands in Quadrant IV \(\left(-\frac{\pi}{2}, 0\right)\), which differs from the \((0, \pi)\) branch by \(\pi\).
+
+[TABLE]
+Function | Domain | Standard principal range | Quadrant for negative inputs
+\(\arcsin x\) | \([-1, 1]\) | \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\) | Quadrant IV: \(\left[-\frac{\pi}{2}, 0\right)\)
+\(\arccos x\) | \([-1, 1]\) | \([0, \pi]\) | Quadrant II: \(\left(\frac{\pi}{2}, \pi\right]\)
+\(\arctan x\) | \((-\infty, \infty)\) | \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\) | Quadrant IV: \(\left(-\frac{\pi}{2}, 0\right)\)
+\(\operatorname{arccot} x\) | \((-\infty, \infty)\) | \((0, \pi)\) | Quadrant II: \(\left(\frac{\pi}{2}, \pi\right)\)
+\(\operatorname{arcsec} x\) | \((-\infty, -1] \cup [1, \infty)\) | \(\left[0, \frac{\pi}{2}\right) \cup \left(\frac{\pi}{2}, \pi\right]\) | Quadrant II: \(\left(\frac{\pi}{2}, \pi\right]\)
+\(\operatorname{arccsc} x\) | \((-\infty, -1] \cup [1, \infty)\) | \(\left[-\frac{\pi}{2}, 0\right) \cup \left(0, \frac{\pi}{2}\right]\) | Quadrant IV: \(\left[-\frac{\pi}{2}, 0\right)\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+Compute the exact value of \(\arcsin\!\left(-\dfrac{\sqrt{3}}{2}\right) + \arccos\!\left(-\dfrac{\sqrt{2}}{2}\right) - \arctan\!\left(-\dfrac{\sqrt{3}}{3}\right)\).
+
+(A) \(\frac{5\pi}{4}\)
+(B) \(\frac{7\pi}{12}\)
+(C) \(-\frac{\pi}{12}\)
+(D) \(\frac{13\pi}{12}\)
+(E) \(\frac{\pi}{4}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Using the standard principal ranges in the table above, what is the exact value of \(\operatorname{arcsec}\!\left(-\dfrac{2}{\sqrt{3}}\right) + \operatorname{arccsc}(-2) + \operatorname{arccot}(-1)\)?
+
+(A) \(\frac{5\pi}{12}\)
+(B) \(\frac{11\pi}{12}\)
+(C) \(\frac{7\pi}{12}\)
+(D) \(\frac{17\pi}{12}\)
+(E) \(\frac{19\pi}{12}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Carefully distinguishing inverse notation from reciprocal notation, what is the exact value of \(\left(\cos\!\left(\frac{\pi}{3}\right)\right)^{-1} + \cos^{-1}\!\left(\frac{1}{2}\right)\)?
+
+(A) \(\frac{2\pi}{3}\)
+(B) \(4\)
+(C) \(2 + \frac{\pi}{3}\)
+(D) \(\frac{1}{2} + \frac{\pi}{3}\)
+(E) \(2 + \frac{\pi}{6}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+What is the range of the function \(h(x) = 3\arccos(x - 1) - \pi\) on its natural domain?
+
+(A) \([0, \pi]\)
+(B) \(\left[-\frac{5\pi}{2}, \frac{\pi}{2}\right]\)
+(C) \([0, 3\pi]\)
+(D) \([-2\pi, \pi]\)
+(E) \([-\pi, 2\pi]\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Which value of \(x\) satisfies \(\operatorname{arccot}(x) = \dfrac{2\pi}{3}\) under the standard principal range \((0, \pi)\)?
+
+(A) \(-\frac{\sqrt{3}}{3}\)
+(B) \(-\sqrt{3}\)
+(C) \(\frac{\sqrt{3}}{3}\)
+(D) \(\sqrt{3}\)
+(E) No real \(x\) satisfies this equation because \(\frac{2\pi}{3}\) lies outside the range of \(\operatorname{arccot}\).
+[/BONUS]

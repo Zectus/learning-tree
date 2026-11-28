@@ -1,0 +1,212 @@
+=== SECTION 1: Acotar la concentración sin conocer la forma de la distribución ===
+
+Supongamos que un gerente de logística le da solo dos números para un envío de \(N = 400\) paquetes: el peso medio es \(\mu = 50\text{ kg}\) y la desviación estándar es \(\sigma = 4\text{ kg}\). Usted no dispone de histograma, diagrama de caja ni índice de asimetría: los pesos podrían seguir forma de campana, ser fuertemente asimétricos o dividirse en dos conglomerados distantes. Aun con cero información sobre la forma, ¿pueden ubicarse el \(90\%\) de los paquetes a más de \(2\) desviaciones estándar de la media?
+
+No. Recuerde cómo se define la varianza: \(\sigma^2 = \frac{1}{N} \sum_{i=1}^N (x_i - \mu)^2\) es la distancia cuadrática promedio respecto a la media. Si demasiadas observaciones estuvieran lejos de \(\mu\), sus grandes desviaciones cuadráticas forzarían a la desviación cuadrática promedio a superar \(\sigma^2\), contradiciendo la desviación estándar dada. Convertir esa observación elemental en una desigualdad exacta produce la desigualdad de Chebyshev.
+
+Sea \(k > 1\) cualquier número real, y divida las \(N\) observaciones \(x_1, \dots, x_N\) (con \(\sigma > 0\)) en dos grupos: las que están a distancia al menos \(k\sigma\) de la media,
+\[
+S = \{i \in \{1, \dots, N\} : |x_i - \mu| \ge k\sigma\},
+\]
+y las que están estrictamente más cerca de \(k\sigma\) de la media. Sea \(m\) el conteo de observaciones en \(S\). Como toda desviación cuadrática \((x_i - \mu)^2\) es no negativa, descartar todas las observaciones fuera de \(S\) solo puede hacer que la suma total de cuadrados sea menor o igual:
+\[
+N \sigma^2 = \sum_{i=1}^N (x_i - \mu)^2 \ge \sum_{i \in S} (x_i - \mu)^2.
+\]
+Para toda observación \(i \in S\), se cumple \(|x_i - \mu| \ge k\sigma\), de modo que \((x_i - \mu)^2 \ge k^2 \sigma^2\). Sumar esta cota inferior sobre todas las \(m\) observaciones en \(S\) arroja
+\[
+N \sigma^2 \ge \sum_{i \in S} k^2 \sigma^2 = m k^2 \sigma^2.
+\]
+Dividir ambos lados entre la cantidad positiva \(N k^2 \sigma^2\) acota directamente la fracción exterior:
+\[
+\frac{m}{N} \le \frac{1}{k^2}.
+\]
+Como las \(N - m\) observaciones restantes satisfacen \(|x_i - \mu| < k\sigma\) (equivalentemente \(|z_i| < k\) en unidades estandarizadas), restar ambos lados de \(1\) establece la garantía central.
+
+[CALLOUT]
+id: chebyshev-inequality
+label: Teorema
+title: Desigualdad de Chebyshev para conjuntos de datos finitos
+tone: key
+
+Para TODO conjunto de datos cuantitativo finito \(x_1, \dots, x_N\) con media \(\mu\) y desviación estándar \(\sigma > 0\), y para todo número real \(k > 1\):
+
+(1) A lo sumo la fracción \(\dfrac{1}{k^2}\) de las observaciones se sitúa a distancia \(k\sigma\) o mayor de la media: \(\dfrac{\#\{i : |x_i - \mu| \ge k\sigma\}}{N} \le \dfrac{1}{k^2}\).
+(2) Equivalentemente, al menos la fracción \(1 - \dfrac{1}{k^2}\) de las observaciones se sitúa estrictamente dentro de \(k\) desviaciones estándar de la media:
+\[
+\frac{\#\{i : |x_i - \mu| < k\sigma\}}{N} \ge 1 - \frac{1}{k^2} \quad \text{(equivalentemente } |z_i| < k\text{)}.
+\]
+(3) Cuando la dispersión se mide con la desviación estándar muestral \(s = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (x_i - \bar{x})^2} > 0\), repetir exactamente los mismos pasos con \(\sum_{i=1}^n (x_i - \bar{x})^2 = (n - 1) s^2\) da \(\frac{m}{n} \le \frac{n-1}{n k^2} < \frac{1}{k^2}\), de modo que la cota inferior \(1 - \frac{1}{k^2}\) también se cumple de forma conservadora para \(s\) muestral (y es incluso ligeramente más ajustada: al menos \(1 - \frac{n-1}{n k^2}\) caen estrictamente dentro de \(ks\) de \(\bar{x}\)).
+[/CALLOUT]
+
+Note por qué [REF: chebyshev-inequality | la desigualdad de Chebyshev] se restringe a \(k > 1\): cuando \(k = 1\), \(1 - 1/1^2 = 0\), lo que simplemente dice que al menos el \(0\%\) de los datos cae dentro de \(1\sigma\) de la media —cierto, porque un conjunto puede colocar todos sus puntos en \(\mu \pm \sigma\) (por ejemplo, \(\{-1, +1\}\) tiene \(\mu = 0\), \(\sigma = 1\) y cero observaciones estrictamente dentro de \((-1, 1)\))—. Para \(k > 1\), en cambio, la cota se vuelve informativa de inmediato:
+- En \(k = 2\): al menos \(1 - 1/4 = 3/4 = 75\%\) cae estrictamente dentro de \((\mu - 2\sigma, \mu + 2\sigma)\), y a lo sumo \(25\%\) cae en \(2\sigma\) o más allá.
+- En \(k = 3\): al menos \(1 - 1/9 = 8/9 \approx 88.89\%\) cae estrictamente dentro de \((\mu - 3\sigma, \mu + 3\sigma)\), y a lo sumo \(11.11\%\) cae en \(3\sigma\) o más allá.
+- En \(k = 4\): al menos \(1 - 1/16 = 15/16 = 93.75\%\) cae estrictamente dentro de \((\mu - 4\sigma, \mu + 4\sigma)\), y a lo sumo \(6.25\%\) cae en \(4\sigma\) o más allá.
+
+Verifique además si la cota \(1 - 1/k^2\) es artificialmente holgada o realmente alcanzable. Considere el conjunto de \(N = 18\) observaciones con una observación en \(-3\), dieciséis observaciones en \(0\) y una observación en \(+3\). Su media es \(\mu = 0\) y su varianza es \(\sigma^2 = (9 + 0 + 9)/18 = 1\), de modo que \(\sigma = 1\). Para \(k = 3\), exactamente \(m = 2\) observaciones satisfacen \(|x_i - 0| \ge 3\), dando \(m/N = 2/18 = 1/9 = 1/k^2\), y exactamente \(16/18 = 8/9 = 1 - 1/k^2\) caen estrictamente dentro de \((-3, 3)\). Sin supuestos sobre la forma, ninguna cota inferior general más fuerte es matemáticamente posible.
+
+Cuídese de una trampa crucial de simetría en [REF: chebyshev-inequality.1 | el inciso (1)]: la cota superior \(1/k^2\) de Chebyshev cubre AMBAS colas combinadas (\(|x_i - \mu| \ge k\sigma\)), y como la distribución no tiene por qué ser simétrica, NO puede dividir \(1/k^2\) a la mitad para afirmar que a lo sumo \(1/(2k^2)\) cae en una cola particular. Un conjunto asimétrico puede situar casi todas sus observaciones exteriores de un solo lado de la media.
+
+Desarrollemos un cálculo concreto. Suponga que \(N = 250\) tiempos de espera de atención al cliente (forma desconocida) tienen \(\mu = 14\text{ min}\) y \(\sigma = 3\text{ min}\). ¿Cuál es el número mínimo de llamadas con tiempos de espera estrictamente entre \(8\text{ min}\) y \(20\text{ min}\)? Primero exprese la semiamplitud del intervalo en unidades de desviación estándar: tanto \(8\) como \(20\) se encuentran a \(6\text{ min}\) de \(\mu = 14\), de modo que \(k = 6 / 3 = 2\). Por [REF: chebyshev-inequality.2 | la cota central de Chebyshev], al menos \(1 - 1/2^2 = 0.75\) de las llamadas caen en \((8, 20)\), lo que representa al menos \(0.75 \times 250 = 187.5\) llamadas. Como un conteo de llamadas debe ser un número entero, al menos \(188\) llamadas duraron estrictamente entre \(8\) y \(20\) minutos, y a lo sumo \(250 - 188 = 62\) llamadas duraron \(8\) minutos o menos, o bien \(20\) minutos o más.
+
+[QUESTION 1]
+[ANSWER: C]
+Un almacén registra los pesos de \(N = 400\) tarimas salientes con \(\mu = 50\text{ kg}\) y \(\sigma = 4\text{ kg}\), pero no se sabe nada sobre la forma de la distribución de pesos. Como mínimo, ¿cuántas tarimas deben tener pesos estrictamente entre \(40\text{ kg}\) y \(60\text{ kg}\)?
+
+(A) \(300\)
+(B) \(356\)
+(C) \(336\)
+(D) \(380\)
+(E) \(64\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Un conjunto de datos de \(N = 450\) duraciones de entrega tiene \(\mu = 32\text{ min}\) y \(\sigma = 5\text{ min}\), con una distribución desconocida y posiblemente muy asimétrica. ¿Cuál es el número máximo posible de entregas cuya duración sea de \(17\text{ min}\) o menos, o de \(47\text{ min}\) o más?
+
+(A) \(50\)
+(B) \(25\)
+(C) \(112\)
+(D) \(400\)
+(E) \(2\)
+[/QUESTION]
+
+=== SECTION 2: La regla empírica para distribuciones en forma de campana ===
+
+La desigualdad de Chebyshev es inquebrantable porque funciona para TODO conjunto de datos finito, incluidos picos extraños y asimetrías extremas. Sin embargo, esa universalidad tiene un costo: en conjuntos ordenados, unimodales, simétricos y en forma de campana (como errores de medición, estaturas de adultos de un mismo sexo biológico o dimensiones de manufactura estrechamente controladas), la concentración real alrededor de la media es mucho mayor que la cota en el peor caso de Chebyshev. En esos casos específicos con forma de campana, la regla empírica (también llamada regla \(68\text{–}95\text{–}99.7\)) ofrece aproximaciones mucho más ajustadas.
+
+[CALLOUT]
+id: empirical-rule
+label: Aproximación
+title: La regla empírica (regla del 68–95–99.7)
+tone: key
+
+Cuando la distribución de un conjunto de datos es unimodal, aproximadamente simétrica y en forma de campana (siguiendo de cerca una curva normal), con media \(\bar{x}\) y desviación estándar \(s\) (o \(\mu\) y \(\sigma\)):
+
+(1) Aproximadamente el \(68\%\) de las observaciones cae dentro de \(1\) desviación estándar de la media: \((\bar{x} - s,\; \bar{x} + s)\).
+(2) Aproximadamente el \(95\%\) de las observaciones cae dentro de \(2\) desviaciones estándar de la media: \((\bar{x} - 2s,\; \bar{x} + 2s)\).
+(3) Aproximadamente el \(99.7\%\) de las observaciones cae dentro de \(3\) desviaciones estándar de la media: \((\bar{x} - 3s,\; \bar{x} + 3s)\).
+
+Como la forma de campana es simétrica respecto a la media, cada banda se divide en dos mitades iguales a la izquierda y a la derecha de \(\bar{x}\) (por ejemplo, alrededor de \(34\%\) en \((\bar{x}, \bar{x} + s)\), alrededor de \(13.5\%\) en \((\bar{x} + s, \bar{x} + 2s)\), alrededor de \(2.35\%\) en \((\bar{x} + 2s, \bar{x} + 3s)\) y alrededor de \(0.15\%\) más allá de \(\bar{x} + 3s\)).
+[/CALLOUT]
+
+Note la diferencia de estatus entre ambas herramientas. [REF: chebyshev-inequality | La desigualdad de Chebyshev] es una garantía matemática demostrada para todo conjunto finito de datos. [REF: empirical-rule | La regla empírica] es una aproximación empírica y del modelo normal cuyas integrales exactas de área corresponden a Probabilidad; NUNCA es un teorema universal, y sus porcentajes están autorizados ÚNICAMENTE tras verificar en un histograma, diagrama de puntos o diagnósticos de forma que los datos son genuinamente unimodales, simétricos y en forma de campana.
+
+El primer gráfico siguiente sombrea las regiones anidadas del \(68\%\), \(95\%\) y \(99.7\%\) bajo una curva en forma de campana estandarizada en unidades de puntuación \(z\). El segundo gráfico compara la cota inferior universal de Chebyshev \(1 - 1/k^2\) frente a los valores de referencia de la regla empírica conforme varía \(k\); arrastre el deslizador \(k\) para ver cuán amplia es la brecha entre la garantía en el peor caso y la expectativa en forma de campana.
+
+[GRAPH]
+type: function2d
+title: Regiones de la regla empírica en una distribución acampanada estandarizada (unidades \(z\))
+xlabel: \(z\)
+ylabel: Densidad
+xrange: -3.6, 3.6
+yrange: 0, 0.45
+trace: 0.3989 * exp(-0.5 * x^2) | label: Curva en forma de campana | color: #1e293b
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: -1, 1 | label: Central \(68\%\) (\(\pm 1\sigma\)) | color: #3b82f6 | opacity: 0.35
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: -2, -1 | label: Siguiente \(27\%\) (\(\pm 2\sigma\) total \(95\%\)) | color: #10b981 | opacity: 0.25
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: 1, 2 | color: #10b981 | opacity: 0.25
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: -3, -2 | label: Exterior \(4.7\%\) (\(\pm 3\sigma\) total \(99.7\%\)) | color: #f59e0b | opacity: 0.25
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: 2, 3 | color: #f59e0b | opacity: 0.25
+segment: 0, 0, 0, 0.3989 | dashed: true | color: #64748b
+[/GRAPH]
+
+[GRAPH]
+type: function2d
+title: Cota inferior universal de Chebyshev \(1 - 1/k^2\) frente a referencias de la regla empírica
+xlabel: \(k\)
+ylabel: Proporción dentro de k DE
+xrange: 1, 4.5
+yrange: 0, 1.05
+trace: 1 - 1 / (x^2) | label: Cota inferior de Chebyshev \(1 - 1/k^2\) | color: #ef4444
+point: 1, 0.68 | label: Empírica 68% | color: #3b82f6
+point: 2, 0.95 | label: Empírica 95% | color: #3b82f6
+point: 3, 0.997 | label: Empírica 99.7% | color: #3b82f6
+point: k, 1 - 1 / (k^2) | label: Piso de Chebyshev | color: #ef4444
+segment: k, 0, k, 1 - 1 / (k^2) | dashed: true | color: #ef4444
+slider: k | range: 1.1, 4.5 | init: 2.0 | step: 0.1
+[/GRAPH]
+
+Vea cómo la simetría vuelve flexible [REF: empirical-rule | la regla empírica] para intervalos asimétricos alrededor de \(\bar{x}\). Suponga que un conjunto en forma de campana de estaturas de hombres adultos tiene \(\bar{x} = 175\text{ cm}\) y \(s = 7\text{ cm}\), y queremos el porcentaje aproximado de hombres con estatura superior a \(189\text{ cm}\). Convertir a puntuación \(z\) da \(z = (189 - 175)/7 = +2\). Como cerca del \(95\%\) cae dentro de \(\pm 2s\), cerca del \(5\%\) cae fuera de \(\pm 2s\); dividir ese \(5\%\) por igual entre ambas colas simétricas deja alrededor de \(2.5\%\) por encima de \(189\text{ cm}\) (y \(2.5\%\) por debajo de \(161\text{ cm}\)). De manera análoga, el porcentaje entre \(161\text{ cm}\) (\(z = -2\)) y \(182\text{ cm}\) (\(z = +1\)) equivale a la mitad izquierda del \(95\%\) (\(47.5\%\)) más la mitad derecha del \(68\%\) (\(34\%\)), sumando aproximadamente \(81.5\%\).
+
+[QUESTION 3]
+[ANSWER: D]
+Se ha verificado mediante histograma y pruebas de asimetría que un gran conjunto de datos de manufactura sobre diámetros de varillas de acero mecanizadas es unimodal, simétrico y en forma de campana con \(\bar{x} = 10.00\text{ mm}\) y \(s = 0.20\text{ mm}\). Usando la regla empírica, ¿qué porcentaje aproximado de varillas tiene diámetros entre \(9.80\text{ mm}\) y \(10.40\text{ mm}\)?
+
+(A) \(68\%\)
+(B) \(95\%\)
+(C) \(84\%\)
+(D) \(81.5\%\)
+(E) \(13.5\%\)
+[/QUESTION]
+
+=== SECTION 3: Elección de la regla válida y diagnóstico de mal uso ===
+
+Comparar ambas herramientas lado a lado aclara exactamente cuándo aplica cada una.
+
+[TABLE]
+Criterio | Desigualdad de Chebyshev | Regla empírica
+Forma requerida de la distribución | Ninguna (todo conjunto finito con \(\sigma > 0\)) | Unimodal, aprox. simétrica, en forma de campana
+Dentro de \(\pm 1\) DE | Sin cota útil (\(\ge 0\%\)) | \(\approx 68\%\)
+Dentro de \(\pm 2\) DE | Al menos \(75\%\) | \(\approx 95\%\)
+Dentro de \(\pm 3\) DE | Al menos \(88.9\%\) | \(\approx 99.7\%\)
+¿Se puede dividir la cola exterior \(50/50\)? | No (se permite asimetría) | Sí (se requiere simetría)
+Naturaleza de la afirmación | Garantía matemática exacta en el peor caso | Referencia aproximada de curva normal
+[/TABLE]
+
+¿Dónde falla más gravemente la regla empírica en la práctica? Tres formas comunes sin campana exponen el peligro de inmediato:
+- Datos fuertemente asimétricos (como ingresos, montos de siniestros o duraciones de interrupción de servidores): aquí \(\bar{x} - 2s\) suele caer por debajo de cero incluso para mediciones estrictamente positivas, dejando ver de inmediato que el supuesto de campana simétrica está roto. Mientras tanto, mucho más del \(2.5\%\) —o mucho menos, según la forma de la cola— puede ubicarse por encima de \(\bar{x} + 2s\).
+- Datos bimodales o agrupados: suponga que la mitad de un conjunto se sitúa apretadamente alrededor de \(10\) y la otra mitad alrededor de \(30\). Entonces \(\bar{x} = 20\) y \(s \approx 10\), de modo que casi CERO observaciones caen cerca de la media dentro de \((12, 28)\), destrozando la afirmación del \(68\%\) dentro de \(\pm 1s\) de la regla empírica (¡mientras que las cotas de Chebyshev de \(\ge 0\%\) para \(k = 1\) y \(\ge 75\%\) para \(k = 2\) siguen siendo completamente verdaderas!).
+- Datos simétricos de colas pesadas: incluso cuando la asimetría es \(g_1 = 0\), cuartos momentos elevados (curtosis) concentran mucho más del \(0.3\%\) de las observaciones más allá de \(\pm 3s\), subestimando la frecuencia de eventos extremos si se confía ciegamente en la regla empírica.
+
+[CALLOUT]
+id: concentration-choice
+label: Error común
+title: Nunca aplique la regla empírica sin comprobar primero la forma
+tone: caution
+
+Antes de citar \(68\%\), \(95\%\) o \(99.7\%\) —o dividir a la mitad los porcentajes de cola por simetría—, confirme mediante un gráfico y diagnósticos de forma que el conjunto de datos es unimodal, aproximadamente simétrico y en forma de campana. Si la distribución es asimétrica, bimodal, de colas pesadas o de forma desconocida, utilice la desigualdad de Chebyshev para cotas garantizadas (o reporte directamente los cuantiles empíricos y el resumen de cinco números).
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: B]
+Un informe económico resume \(n = 600\) valores de patrimonio neto familiar que son fuertemente asimétricos a la derecha (\(g_1 = +4.1\)), con \(\bar{x} = \$120{,}000\) y \(s = \$90{,}000\). El informe afirma: «Por la regla empírica, aproximadamente el \(95\%\) de los hogares tiene un patrimonio neto entre \(-\$60{,}000\) y \(\$300{,}000\), con cerca de \(2.5\%\) por debajo de \(-\$60{,}000\) y \(2.5\%\) por encima de \(\$300{,}000\)». ¿Qué crítica es matemáticamente sólida?
+
+(A) Tanto la regla empírica como la desigualdad de Chebyshev son inválidas siempre que un conjunto de datos sea asimétrico.
+(B) Las afirmaciones del \(95\%\) y de \(2.5\%\) simétrico en cada cola de la regla empírica son inválidas porque la distribución es fuertemente asimétrica a la derecha y no acampanada; sin embargo, la desigualdad de Chebyshev sigue garantizando que al menos el \(75\%\) de los hogares cae estrictamente entre \(-\$60{,}000\) y \(\$300{,}000\).
+(C) La desigualdad de Chebyshev garantiza que a lo sumo el \(12.5\%\) de los hogares supera \(\$300{,}000\) al dividir a la mitad la cota exterior del \(25\%\).
+(D) La regla empírica es válida aquí porque \(n = 600\) es un tamaño muestral grande.
+(E) La regla empírica es válida siempre que el extremo inferior se trunque en \(\$0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suponga que un conjunto de datos finito de \(N = 80\) valores tiene media poblacional \(\mu = 50\) y desviación estándar poblacional \(\sigma = 10\). ¿Es posible que exactamente \(20\) de las \(80\) observaciones satisfagan \(|x_i - 50| \ge 20\), dejando solo \(60\) observaciones (\(75\%\)) estrictamente dentro de \((30, 70)\)?
+
+(A) No, porque al menos el \(95\%\) de las observaciones deben caer dentro de \(2\sigma\) de la media.
+(B) No, porque la demostración de la desigualdad de Chebyshev usa una desigualdad estricta, de modo que nunca puede darse la igualdad.
+(C) Únicamente si el conjunto de datos tiene valores negativos por debajo de \(0\).
+(D) Únicamente si \(N\) es infinito.
+(E) Sí: colocar \(10\) observaciones en \(30\), \(60\) observaciones en \(50\) y \(10\) observaciones en \(70\) da \(\mu = 50\), \(\sigma = 10\) y exactamente \(20\) observaciones a distancia \(20 = 2\sigma\) de la media.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+En una muestra de \(n = 16\) mediciones con media muestral \(\bar{x}\) y desviación estándar muestral \(s > 0\), recuerde que \(\sum_{i=1}^{16} (x_i - \bar{x})^2 = (n - 1) s^2 = 15 s^2\). Usando directamente la forma muestral de la cota de Chebyshev, ¿cuál es el mayor número entero de observaciones \(m\) que puede satisfacer \(|x_i - \bar{x}| \ge 2s\)?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(5\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Un ingeniero de calidad desea un intervalo simétrico alrededor de la media \(\mu = 100\text{ ms}\) (con \(\sigma = 6\text{ ms}\)) que garantice contener estrictamente al menos al \(96\%\) de las observaciones, sin importar la forma de la distribución. ¿Cuál es el intervalo más estrecho que garantiza la desigualdad de Chebyshev?
+
+(A) \((70,\; 130)\)
+(B) \((82,\; 118)\)
+(C) \((88,\; 112)\)
+(D) \((64,\; 136)\)
+(E) \((76,\; 124)\)
+[/BONUS]

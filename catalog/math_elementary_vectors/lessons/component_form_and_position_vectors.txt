@@ -1,0 +1,270 @@
+=== SECTION 1: Standard position, position vectors, and components ===
+
+Geometric arrows make addition and scaling easy to picture, yet drawing triangles with a ruler is slow and approximate. If you want to add five displacements to exact precision, or solve for an unknown vector in an equation, you need a way to turn arrows into numbers. The Cartesian coordinate plane supplies the bridge.
+
+Because a free vector keeps its identity under parallel translation, we can slide any planar vector \(\mathbf{v}\) without rotating or stretching it until its tail sits at the origin \(O(0, 0)\). When a vector's tail is at the origin, we say it is in standard position. Its head then lands at one unique point \((v_x, v_y)\) in the coordinate plane. Those two signed numbers—the horizontal step \(v_x\) and the vertical step \(v_y\)—completely determine the vector's length and direction.
+
+[CALLOUT]
+id: comp-form
+label: Definition
+title: Position vector and component form
+tone: key
+
+Let \(\mathbf{v}\) be a vector in the Cartesian plane. When \(\mathbf{v}\) is translated to standard position with tail at the origin \(O(0, 0)\) and head at the point \(P(v_x, v_y)\), the directed segment \(\overrightarrow{OP}\) is the position vector of \(P\), and the component form of \(\mathbf{v}\) is
+\[
+\mathbf{v} = \langle v_x, v_y \rangle.
+\]
+Here \(v_x\) is the \(x\)-component (horizontal change from tail to head) and \(v_y\) is the \(y\)-component (vertical change from tail to head). Angle brackets \(\langle v_x, v_y \rangle\) distinguish a vector from the coordinates \((v_x, v_y)\) of a point.
+[/CALLOUT]
+
+Two vectors \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\) are equal if and only if both their horizontal and vertical steps match:
+\[
+\langle u_x, u_y \rangle = \langle v_x, v_y \rangle \iff u_x = v_x \text{ and } u_y = v_y.
+\]
+In particular, the zero vector has zero change in both directions: \(\mathbf{0} = \langle 0, 0 \rangle\).
+
+What if a vector is given not in standard position, but as a directed segment \(\overrightarrow{PQ}\) from an arbitrary initial point \(P(x_P, y_P)\) to a terminal point \(Q(x_Q, y_Q)\)? To move its tail from \(P(x_P, y_P)\) to the origin \(O(0, 0)\), we translate the entire segment by subtracting \(x_P\) from every \(x\)-coordinate and \(y_P\) from every \(y\)-coordinate. That parallel translation moves the tail \(P\) to \((x_P - x_P, y_P - y_P) = (0, 0)\), and it moves the head \(Q\) to \((x_Q - x_P, y_Q - y_P)\).
+
+[CALLOUT]
+id: displacement-formula
+label: Formula
+title: Component form from initial and terminal points
+tone: key
+
+For any two points \(P(x_P, y_P)\) and \(Q(x_Q, y_Q)\) in the Cartesian plane, the component form of the directed segment \(\overrightarrow{PQ}\) is
+\[
+\overrightarrow{PQ} = \langle x_Q - x_P,\; y_Q - y_P \rangle.
+\]
+[/CALLOUT]
+
+Notice why [REF: displacement-formula | the displacement formula] guarantees translation invariance algebraically. If you shift both endpoints \(P\) and \(Q\) by the same horizontal and vertical amounts \((h, k)\) to new points \(P'(x_P + h, y_P + k)\) and \(Q'(x_Q + h, y_Q + k)\), then
+\[
+\overrightarrow{P'Q'} = \langle (x_Q + h) - (x_P + h),\; (y_Q + k) - (y_P + k) \rangle = \langle x_Q - x_P,\; y_Q - y_P \rangle = \overrightarrow{PQ}.
+\]
+The shift \((h, k)\) cancels out completely. For instance, the arrow from \(P(2, 1)\) to \(Q(6, 4)\) has components \(\overrightarrow{PQ} = \langle 6 - 2, 4 - 1 \rangle = \langle 4, 3 \rangle\), identical to the standard-position arrow from \(O(0, 0)\) to \((4, 3)\), as shown below.
+
+[GRAPH]
+type: parametric2d
+title: Translating \(\overrightarrow{PQ}\) from \(P(2, 1)\) to \(Q(6, 4)\) into standard position \(\langle 4, 3 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 7
+yrange: -0.5, 5
+trace: 2 + 4*t, 1 + 3*t | label: \(\overrightarrow{PQ}\) | color: #2563eb
+trace: 4*t, 3*t | label: \(\mathbf{v} = \langle 4, 3 \rangle\) | color: #dc2626
+segment: 2, 1, 6, 1 | label: \(\Delta x = 4\) | dashed: true
+segment: 6, 1, 6, 4 | label: \(\Delta y = 3\) | dashed: true
+segment: 0, 0, 4, 0 | dashed: true
+segment: 4, 0, 4, 3 | dashed: true
+point: 0, 0 | label: \(O(0, 0)\)
+point: 4, 3 | label: \((4, 3)\)
+point: 2, 1 | label: \(P(2, 1)\)
+point: 6, 4 | label: \(Q(6, 4)\)
+[/GRAPH]
+
+[CALLOUT]
+id: term-minus-init
+label: Common pitfall
+title: Always subtract initial from terminal
+tone: caution
+
+The components of \(\overrightarrow{PQ}\) are terminal minus initial: \(\langle x_Q - x_P, y_Q - y_P \rangle\). Subtracting in the reverse order \(\langle x_P - x_Q, y_P - y_Q \rangle\) produces the opposite vector \(\overrightarrow{QP} = -\overrightarrow{PQ}\). A quick sanity check helps: if \(Q\) is to the right of \(P\), the \(x\)-component of \(\overrightarrow{PQ}\) must be positive.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+A vector \(\mathbf{v}\) is represented by the directed segment \(\overrightarrow{PQ}\) with \(P(-3, 5)\) and \(Q(2, -1)\). If the same vector \(\mathbf{v}\) is drawn with its tail at \(R(4, -2)\), what are the coordinates of its head \(S\)?
+
+(A) \((-1, 4)\)
+(B) \((5, -6)\)
+(C) \((3, 2)\)
+(D) \((9, -8)\)
+(E) \((-5, 6)\)
+[/QUESTION]
+
+=== SECTION 2: Componentwise operations and the standard basis ===
+
+Now we translate geometric addition, subtraction, and scalar multiplication into exact rules on components. Rather than guessing the formulas, let us read them straight off the right triangles formed by the coordinate axes.
+
+Take two vectors \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\). Draw \(\mathbf{u}\) in standard position from \(O(0, 0)\) to \(A(u_x, u_y)\), and attach a translated copy of \(\mathbf{v}\) with its tail at \(A\). To reach the head \(B\) of \(\mathbf{v}\) from \(A\), we move horizontally by \(v_x\) and vertically by \(v_y\). Starting at \(O(0, 0)\), the net horizontal displacement to \(B\) is \(u_x + v_x\), and the net vertical displacement to \(B\) is \(u_y + v_y\). So \(B\) has coordinates \((u_x + v_x, u_y + v_y)\), which means
+\[
+\mathbf{u} + \mathbf{v} = \langle u_x + v_x,\; u_y + v_y \rangle.
+\]
+
+The plot below illustrates this right-triangle bridge for \(\mathbf{u} = \langle 3, 1 \rangle\) and \(\mathbf{v} = \langle 2, 3 \rangle\). Walking along \(\mathbf{u}\) then \(\mathbf{v}\) takes horizontal steps \(3\) and \(2\) (total \(5\)) and vertical steps \(1\) and \(3\) (total \(4\)), landing at \((5, 4)\).
+
+[GRAPH]
+type: parametric2d
+title: Geometric bridge to componentwise addition: \(\langle 3, 1 \rangle + \langle 2, 3 \rangle = \langle 5, 4 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 6
+yrange: -0.5, 5
+trace: 3*t, 1*t | label: \(\mathbf{u} = \langle 3, 1 \rangle\) | color: #2563eb
+trace: 3 + 2*t, 1 + 3*t | label: \(\mathbf{v} = \langle 2, 3 \rangle\) | color: #d97706
+trace: 5*t, 4*t | label: \(\mathbf{u} + \mathbf{v} = \langle 5, 4 \rangle\) | color: #16a34a
+segment: 0, 0, 3, 0 | label: \(3\) | dashed: true
+segment: 3, 0, 3, 1 | label: \(1\) | dashed: true
+segment: 3, 1, 5, 1 | label: \(2\) | dashed: true
+segment: 5, 1, 5, 4 | label: \(3\) | dashed: true
+point: 0, 0 | label: \(O\)
+point: 3, 1 | label: \((3, 1)\)
+point: 5, 4 | label: \((5, 4)\)
+[/GRAPH]
+
+What about scalar multiplication \(k\mathbf{v}\)? Place \(\mathbf{v} = \langle v_x, v_y \rangle\) in standard position with head at \((v_x, v_y)\) and drop a vertical segment to the \(x\)-axis to form a right triangle whose legs have lengths \(|v_x|\) and \(|v_y|\). When \(k > 0\), scaling the hypotenuse \(\mathbf{v}\) by \(k\) produces a similar right triangle whose legs are both scaled by \(k\) with the same signs, so the head lands at \((k v_x, k v_y)\). When \(k < 0\), the arrow reverses across the origin into the opposite quadrant, scaling both legs by \(|k|\) and flipping both signs—which is once again \((k v_x, k v_y)\)! And when \(k = 0\), both \(0\mathbf{v}\) and \(\langle 0 \cdot v_x, 0 \cdot v_y \rangle\) equal \(\langle 0, 0 \rangle\).
+
+Setting \(k = -1\) immediately gives the opposite vector \(-\mathbf{v} = \langle -v_x, -v_y \rangle\), and combining that with addition yields subtraction:
+\[
+\mathbf{u} - \mathbf{v} = \mathbf{u} + (-1)\mathbf{v} = \langle u_x - v_x,\; u_y - v_y \rangle.
+\]
+
+[CALLOUT]
+id: comp-ops
+label: Rule
+title: Componentwise vector operations
+tone: key
+
+For any vectors \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\) and any real scalar \(k\):
+
+(1) Addition: \(\mathbf{u} + \mathbf{v} = \langle u_x + v_x,\; u_y + v_y \rangle\).
+(2) Subtraction: \(\mathbf{u} - \mathbf{v} = \langle u_x - v_x,\; u_y - v_y \rangle\).
+(3) Scalar multiplication: \(k\mathbf{v} = \langle k v_x,\; k v_y \rangle\).
+[/CALLOUT]
+
+Notice one especially clean consequence of [REF: comp-ops | these component rules]: every vector \(\langle v_x, v_y \rangle\) splits into a purely horizontal piece plus a purely vertical piece,
+\[
+\langle v_x, v_y \rangle = \langle v_x, 0 \rangle + \langle 0, v_y \rangle = v_x \langle 1, 0 \rangle + v_y \langle 0, 1 \rangle.
+\]
+Because the two unit-step coordinate vectors \(\langle 1, 0 \rangle\) and \(\langle 0, 1 \rangle\) appear constantly across mathematics, physics, and engineering, they receive dedicated names.
+
+[CALLOUT]
+id: std-basis
+label: Definition
+title: Standard unit basis vectors \(\mathbf{i}\) and \(\mathbf{j}\)
+tone: key
+
+The standard unit basis vectors in the coordinate plane are
+\[
+\mathbf{i} = \langle 1, 0 \rangle \qquad \text{and} \qquad \mathbf{j} = \langle 0, 1 \rangle.
+\]
+Every planar vector \(\mathbf{v} = \langle v_x, v_y \rangle\) can be written uniquely as the linear combination
+\[
+\mathbf{v} = v_x \mathbf{i} + v_y \mathbf{j}.
+\]
+[/CALLOUT]
+
+The two notations \(\langle v_x, v_y \rangle\) and \(v_x \mathbf{i} + v_y \mathbf{j}\) carry the exact same information; switching between them is just changing the packaging. When a component is zero, that term is usually omitted in \(\mathbf{i}, \mathbf{j}\) form (for example, \(\langle 0, -4 \rangle = -4\mathbf{j}\)).
+
+[TABLE]
+Geometric description | Endpoint representation | Component form | Standard basis form
+\(4\) units right, \(3\) units up | \(\overrightarrow{PQ}\) from \(P(2, 1)\) to \(Q(6, 4)\) | \(\langle 4, 3 \rangle\) | \(4\mathbf{i} + 3\mathbf{j}\)
+\(5\) units left, \(2\) units down | \(\overrightarrow{AB}\) from \(A(1, 0)\) to \(B(-4, -2)\) | \(\langle -5, -2 \rangle\) | \(-5\mathbf{i} - 2\mathbf{j}\)
+\(7\) units vertically downward | \(\overrightarrow{CD}\) from \(C(3, 5)\) to \(D(3, -2)\) | \(\langle 0, -7 \rangle\) | \(-7\mathbf{j}\)
+Zero displacement | \(\overrightarrow{AA}\) for any point \(A\) | \(\langle 0, 0 \rangle\) | \(\mathbf{0}\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: A]
+Let \(\mathbf{u} = 3\mathbf{i} - 2\mathbf{j}\) and \(\mathbf{v} = -\mathbf{i} + 5\mathbf{j}\). What is \(2\mathbf{u} - 3\mathbf{v}\) in component form?
+
+(A) \(\langle 9, -19 \rangle\)
+(B) \(\langle 3, -19 \rangle\)
+(C) \(\langle 9, 11 \rangle\)
+(D) \(\langle 3, 11 \rangle\)
+(E) \(\langle -9, 19 \rangle\)
+[/QUESTION]
+
+=== SECTION 3: Algebraic laws and solving linear vector equations ===
+
+Once vector operations act component by component, every familiar law of real-number arithmetic automatically lifts to vectors. For example, to check the distributive law \(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\) algebraically, compute both sides in components:
+\[
+c(\mathbf{u} + \mathbf{v}) = c\langle u_x + v_x, u_y + v_y \rangle = \langle c(u_x + v_x), c(u_y + v_y) \rangle = \langle c u_x + c v_x, c u_y + c v_y \rangle = c\mathbf{u} + c\mathbf{v}.
+\]
+The same component-by-component verification establishes the full package of vector algebra laws.
+
+[CALLOUT]
+id: vec-laws
+label: Theorem
+title: Algebraic properties of 2D vector arithmetic
+tone: key
+
+For all vectors \(\mathbf{u}, \mathbf{v}, \mathbf{w}\) in the plane and all real scalars \(c, d\):
+
+(1) Commutativity: \(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\).
+(2) Associativity of addition: \((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})\).
+(3) Additive identity: \(\mathbf{u} + \mathbf{0} = \mathbf{u}\).
+(4) Additive inverse: \(\mathbf{u} + (-\mathbf{u}) = \mathbf{0}\).
+(5) Distributivity over vector addition: \(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\).
+(6) Distributivity over scalar addition: \((c + d)\mathbf{u} = c\mathbf{u} + d\mathbf{u}\).
+(7) Associativity of scalar multiplication: \(c(d\mathbf{u}) = (cd)\mathbf{u}\).
+(8) Scalar identity: \(1\mathbf{u} = \mathbf{u}\).
+[/CALLOUT]
+
+Why do [REF: vec-laws | these eight laws] pay off right away? Because they let you manipulate vector equations with the exact same algebraic moves you use for single-variable linear equations—collecting like vector terms, adding or subtracting a vector from both sides, and multiplying both sides by a nonzero reciprocal—before you ever plug in numbers.
+
+Consider solving \(2\mathbf{u} + 3\mathbf{x} = \mathbf{v}\) for an unknown vector \(\mathbf{x}\), given \(\mathbf{u} = \langle 1, -2 \rangle\) and \(\mathbf{v} = \langle 8, 5 \rangle\). First isolate \(\mathbf{x}\) symbolically using [REF: vec-laws | the algebraic laws]:
+\[
+3\mathbf{x} = \mathbf{v} - 2\mathbf{u} \implies \mathbf{x} = \frac{1}{3}(\mathbf{v} - 2\mathbf{u}).
+\]
+Now substitute the components once:
+\[
+\mathbf{v} - 2\mathbf{u} = \langle 8, 5 \rangle - \langle 2, -4 \rangle = \langle 6, 9 \rangle, \qquad \mathbf{x} = \frac{1}{3}\langle 6, 9 \rangle = \langle 2, 3 \rangle.
+\]
+We can check directly: \(2\langle 1, -2 \rangle + 3\langle 2, 3 \rangle = \langle 2, -4 \rangle + \langle 6, 9 \rangle = \langle 8, 5 \rangle = \mathbf{v}\). Notice how clean solving symbolically first is compared to setting up two separate scalar equations for \(x_1\) and \(x_2\) right from the start.
+
+Component arithmetic also makes coordinate geometry problems effortless. Suppose \(P(1, 2)\), \(Q(4, 5)\), and \(R(6, 1)\) are three vertices of a parallelogram \(PQRS\) listed in order around the boundary, and we want the fourth vertex \(S(x_S, y_S)\). In parallelogram \(PQRS\), opposite sides satisfy \(\overrightarrow{PS} = \overrightarrow{QR}\). Computing \(\overrightarrow{QR} = \langle 6 - 4, 1 - 5 \rangle = \langle 2, -4 \rangle\), we get
+\[
+\langle x_S - 1,\; y_S - 2 \rangle = \langle 2, -4 \rangle \implies x_S = 3,\quad y_S = -2.
+\]
+Equivalently, viewing coordinates through position vectors, \(\overrightarrow{OS} = \overrightarrow{OP} + \overrightarrow{QR} = \langle 1, 2 \rangle + \langle 2, -4 \rangle = \langle 3, -2 \rangle\), so \(S = (3, -2)\).
+
+[QUESTION 3]
+[ANSWER: E]
+Let \(\mathbf{a} = \langle 5, -4 \rangle\) and \(\mathbf{b} = \langle -1, 5 \rangle\). What vector \(\mathbf{x}\) satisfies the equation \(4\mathbf{x} - \mathbf{a} = \mathbf{x} + 2\mathbf{b}\)?
+
+(A) \(\langle 3, 6 \rangle\)
+(B) \(\langle 1, -2 \rangle\)
+(C) \(\langle \frac{3}{5}, \frac{6}{5} \rangle\)
+(D) \(\langle -1, 2 \rangle\)
+(E) \(\langle 1, 2 \rangle\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Three vertices of a parallelogram \(ABCD\) (listed in order around its boundary) are \(A(1, -2)\), \(B(5, 1)\), and \(C(3, 6)\). What are the coordinates of the fourth vertex \(D\)?
+
+(A) \((7, 9)\)
+(B) \((-1, 3)\)
+(C) \((-2, 5)\)
+(D) \((3, -7)\)
+(E) \((1, -3)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Two vectors \(\mathbf{u}\) and \(\mathbf{v}\) satisfy the system
+\[
+\mathbf{u} + 2\mathbf{v} = \langle 7, 1 \rangle, \qquad 2\mathbf{u} - \mathbf{v} = \langle 4, 12 \rangle.
+\]
+What is \(\mathbf{u} - \mathbf{v}\)?
+
+(A) \(\langle 5, 3 \rangle\)
+(B) \(\langle 1, 3 \rangle\)
+(C) \(\langle 1, 7 \rangle\)
+(D) \(\langle -1, 7 \rangle\)
+(E) \(\langle 3, 5 \rangle\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Given the three non-collinear points \(A(-2, 1)\), \(B(4, 3)\), and \(C(2, 7)\) with no fixed vertex ordering specified, there are three distinct points \(D_1\), \(D_2\), and \(D_3\) in the plane that can each serve as the fourth vertex of a parallelogram with \(A\), \(B\), and \(C\). What is the sum of their position vectors \(\overrightarrow{OD_1} + \overrightarrow{OD_2} + \overrightarrow{OD_3}\)?
+
+(A) \(\langle 0, 0 \rangle\)
+(B) \(\langle 8, 22 \rangle\)
+(C) \(\langle 4, 5 \rangle\)
+(D) \(\langle 4, 11 \rangle\)
+(E) \(\langle 12, 11 \rangle\)
+[/BONUS]

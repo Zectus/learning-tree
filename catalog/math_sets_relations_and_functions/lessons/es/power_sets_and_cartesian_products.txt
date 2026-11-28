@@ -1,0 +1,335 @@
+=== SECTION 1: Conjuntos potencia y niveles de pertenencia ===
+
+El álgebra elemental de conjuntos construye nuevos conjuntos cuyos elementos provienen del mismo universo ambiente que los conjuntos originales. Muchas construcciones matemáticas, sin embargo, exigen subir un nivel: reunir todos los subconjuntos de un conjunto en un único conjunto, o emparejar elementos de dos conjuntos en un orden definido. Estas dos construcciones —el conjunto potencia y el producto cartesiano— suministran la materia prima para relaciones, funciones, topologías y estructuras algebraicas.
+
+Comencemos con la pregunta: dado un conjunto \(A\), ¿qué obtenemos si reunimos todo subconjunto de \(A\) en una sola colección?
+
+[CALLOUT]
+id: power-set-def
+label: Definición
+title: Conjunto potencia
+tone: key
+
+Para cualquier conjunto \(A\), el conjunto potencia (o conjunto de partes) de \(A\), denotado \(\mathcal{P}(A)\), es el conjunto de todos los subconjuntos de \(A\):
+\[
+\mathcal{P}(A) = \{S : S \subseteq A\}.
+\]
+Equivalentemente, para cualquier conjunto \(S\),
+\[
+S \in \mathcal{P}(A) \iff S \subseteq A.
+\]
+[/CALLOUT]
+
+Escribamos \(\mathcal{P}(A)\) explícitamente para tres conjuntos muy pequeños para observar el cambio de nivel en acción:
+- Cuando \(A = \emptyset\), el único subconjunto de \(\emptyset\) es \(\emptyset\) mismo. Por lo tanto
+\[
+\mathcal{P}(\emptyset) = \{\emptyset\}.
+\]
+Obsérvese que \(\mathcal{P}(\emptyset) \ne \emptyset\): el conjunto potencia del conjunto vacío NO es vacío; contiene un elemento, a saber, \(\emptyset\).
+- Cuando \(A = \{a\}\), los subconjuntos de \(A\) son \(\emptyset\) y \(\{a\}\), por lo que
+\[
+\mathcal{P}(\{a\}) = \{\emptyset, \{a\}\}.
+\]
+- Cuando \(A = \{1, 2\}\), los subconjuntos de \(A\) son \(\emptyset\), \(\{1\}\), \(\{2\}\) y \(\{1, 2\}\), por lo que
+\[
+\mathcal{P}(\{1, 2\}) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\}.
+\]
+- ¿Qué ocurre con \(\mathcal{P}(\mathcal{P}(\emptyset))\)? Como \(\mathcal{P}(\emptyset) = \{\emptyset\}\) es un conjunto de un elemento cuyo único elemento es \(\emptyset\), sus subconjuntos son \(\emptyset\) y \(\{\emptyset\}\). Por consiguiente
+\[
+\mathcal{P}(\mathcal{P}(\emptyset)) = \{\emptyset, \{\emptyset\}\}.
+\]
+
+Trabajar con conjuntos potencia exige claridad total sobre la distinción de nivel entre \(\in\) y \(\subseteq\). Un elemento de \(A\) se sitúa un nivel por debajo de un subconjunto de \(A\), el cual a su vez se sitúa al mismo nivel que un elemento de \(\mathcal{P}(A)\). Específicamente, para cualquier objeto \(x\) y cualquier conjunto \(A\):
+\[
+x \in A \iff \{x\} \subseteq A \iff \{x\} \in \mathcal{P}(A).
+\]
+Obsérvese también que \(\emptyset \in \mathcal{P}(A)\) y \(A \in \mathcal{P}(A)\) valen para TODO conjunto \(A\), porque \(\emptyset \subseteq A\) y \(A \subseteq A\) se cumplen siempre.
+
+[CALLOUT]
+id: power-set-level-pitfall
+label: Error frecuente
+title: Los elementos de \(A\) no son automáticamente elementos de \(\mathcal{P}(A)\)
+tone: caution
+
+Si \(A = \{1, 2\}\), entonces \(1 \in A\) es verdadera, mientras que \(1 \in \mathcal{P}(A)\) es falsa: los elementos de \(\mathcal{P}(A)\) son subconjuntos de \(A\), no números. En cambio, \(\{1\} \in \mathcal{P}(A)\) y \(\{\{1\}\} \subseteq \mathcal{P}(A)\). De manera análoga, \(\emptyset \in \mathcal{P}(A)\) y \(\emptyset \subseteq \mathcal{P}(A)\) son ambas verdaderas, por dos razones distintas: \(\emptyset \in \mathcal{P}(A)\) vale porque \(\emptyset \subseteq A\), mientras que \(\emptyset \subseteq \mathcal{P}(A)\) vale porque \(\emptyset\) es subconjunto de todo conjunto.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(A = \{a, b\}\). ¿Cuál de las siguientes afirmaciones es FALSA?
+
+(A) \(\emptyset \in \mathcal{P}(A)\)
+(B) \(\{\emptyset\} \subseteq \mathcal{P}(A)\)
+(C) \(\{a\} \subseteq \mathcal{P}(A)\)
+(D) \(\{\{a\}, A\} \subseteq \mathcal{P}(A)\)
+(E) \(A \in \mathcal{P}(A)\)
+[/QUESTION]
+
+=== SECTION 2: Álgebra de conjuntos potencia ===
+
+¿Cómo interactúa la operación conjunto potencia con la inclusión, la intersección y la unión? Comprobemos cada una cuidadosamente por seguimiento de elementos, recordando que un elemento arbitrario de un conjunto potencia es a su vez un conjunto, por lo que habitualmente lo designamos con una letra mayúscula como \(S\) o \(X\).
+
+[CALLOUT]
+id: power-set-identities
+label: Teorema
+title: Conjuntos potencia con inclusión e intersección
+tone: key
+
+Para cualesquiera conjuntos \(A\) y \(B\):
+
+(1) \(A \subseteq B \iff \mathcal{P}(A) \subseteq \mathcal{P}(B)\).
+(2) \(\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)\).
+(3) \(\mathcal{P}(A) \cup \mathcal{P}(B) \subseteq \mathcal{P}(A \cup B)\), y esta inclusión puede ser estricta.
+[/CALLOUT]
+
+Demostremos el [REF: power-set-identities.1 | enunciado (1)] en ambas direcciones.
+- Dirección directa (\(\implies\)): Supóngase \(A \subseteq B\). Para demostrar \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\), sea \(S \in \mathcal{P}(A)\) arbitrario. Por la [REF: power-set-def | definición de conjunto potencia], \(S \subseteq A\). Como \(S \subseteq A\) y \(A \subseteq B\), todo elemento de \(S\) pertenece a \(A\) y por lo tanto a \(B\), luego \(S \subseteq B\). De ahí \(S \in \mathcal{P}(B)\). Así \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\).
+- Dirección recíproca (\(\Longleftarrow\)): Supóngase \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\). Queremos demostrar \(A \subseteq B\). En lugar de tomar \(x \in A\) directamente, búsquese un elemento astuto de \(\mathcal{P}(A)\) que capture todo \(A\) de una vez: como \(A \subseteq A\), tenemos \(A \in \mathcal{P}(A)\). Dado que \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\), se sigue de inmediato que \(A \in \mathcal{P}(B)\), lo que por la [REF: power-set-def | definición de conjunto potencia] significa \(A \subseteq B\). (Alternativamente, se puede tomar \(x \in A\), notar \(\{x\} \in \mathcal{P}(A) \subseteq \mathcal{P}(B)\), por lo que \(\{x\} \subseteq B\) y \(x \in B\).)
+
+A continuación demostremos el [REF: power-set-identities.2 | enunciado (2)], \(\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)\), mediante una cadena de equivalencias para un conjunto arbitrario \(S\):
+\[
+\begin{aligned}
+S \in \mathcal{P}(A \cap B) &\iff S \subseteq A \cap B \\
+&\iff (S \subseteq A) \land (S \subseteq B) \\
+&\iff S \in \mathcal{P}(A) \land S \in \mathcal{P}(B) \\
+&\iff S \in \mathcal{P}(A) \cap \mathcal{P}(B).
+\end{aligned}
+\]
+Detengámonos a verificar la equivalencia intermedia \(S \subseteq A \cap B \iff (S \subseteq A \land S \subseteq B)\): todo elemento de \(S\) pertenece tanto a \(A\) como a \(B\) si y solo si todo elemento de \(S\) pertenece a \(A\) y todo elemento de \(S\) pertenece a \(B\). Eso justifica limpiamente cada paso.
+
+Ahora bien, ¿por qué FALLA la igualdad análoga \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\)? Obsérvese primero que la inclusión en un sentido \(\mathcal{P}(A) \cup \mathcal{P}(B) \subseteq \mathcal{P}(A \cup B)\) sí se cumple: si \(S \in \mathcal{P}(A) \cup \mathcal{P}(B)\), entonces \(S \subseteq A\) o \(S \subseteq B\); en cualquier caso, como \(A \subseteq A \cup B\) y \(B \subseteq A \cup B\), se tiene \(S \subseteq A \cup B\), luego \(S \in \mathcal{P}(A \cup B)\).
+
+¿Qué falla en el sentido inverso? Un subconjunto \(S \subseteq A \cup B\) puede tomar ALGUNOS elementos de \(A\) (fuera de \(B\)) y ALGUNOS elementos de \(B\) (fuera de \(A\)), de modo que \(S\) no queda contenido ni en \(A\) ni en \(B\) por separado. Convirtamos esa idea en el contraejemplo más limpio posible: tómese
+\[
+A = \{1\}, \qquad B = \{2\}.
+\]
+Entonces \(A \cup B = \{1, 2\}\), por lo que
+\[
+\mathcal{P}(A \cup B) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\},
+\]
+mientras que
+\[
+\mathcal{P}(A) \cup \mathcal{P}(B) = \{\emptyset, \{1\}\} \cup \{\emptyset, \{2\}\} = \{\emptyset, \{1\}, \{2\}\}.
+\]
+El subconjunto mixto \(\{1, 2\}\) pertenece a \(\mathcal{P}(A \cup B)\) pero no a \(\mathcal{P}(A) \cup \mathcal{P}(B)\).
+
+De hecho, ¿cuándo SÍ se cumple la igualdad \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\)? Precisamente cuando \(A \subseteq B\) o \(B \subseteq A\). ¿Por qué? Si \(A \subseteq B\), entonces \(A \cup B = B\) y \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\), así que ambos lados son iguales a \(\mathcal{P}(B)\) (y simétricamente si \(B \subseteq A\)). Recíprocamente, si no se cumple ni \(A \subseteq B\) ni \(B \subseteq A\), existen \(a \in A \setminus B\) y \(b \in B \setminus A\); entonces el conjunto de dos elementos \(\{a, b\}\) pertenece a \(\mathcal{P}(A \cup B)\) pero ni a \(\mathcal{P}(A)\) ni a \(\mathcal{P}(B)\).
+
+[QUESTION 2]
+[ANSWER: B]
+Sean \(A\) y \(B\) conjuntos arbitrarios. ¿Cuál de los siguientes enunciados es SIEMPRE verdadero?
+
+(A) \(\mathcal{P}(A \setminus B) = \mathcal{P}(A) \setminus \mathcal{P}(B)\)
+(B) \(\mathcal{P}(A \setminus B) \subseteq (\mathcal{P}(A) \setminus \mathcal{P}(B)) \cup \{\emptyset\}\)
+(C) \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\)
+(D) Si \(A \cap B = \emptyset\), entonces \(\mathcal{P}(A) \cap \mathcal{P}(B) = \emptyset\)
+(E) \(\mathcal{P}(A) \setminus \mathcal{P}(B) \subseteq \mathcal{P}(A \setminus B)\)
+[/QUESTION]
+
+=== SECTION 3: Pares ordenados y productos cartesianos ===
+
+En un conjunto no ordenado \(\{a, b\}\), el orden es invisible: \(\{1, 2\} = \{2, 1\}\) y \(\{1, 1\} = \{1\}\). Sin embargo, en geometría de coordenadas el punto \((1, 2)\) no es \((2, 1)\); en una fracción o división, numerador y denominador no pueden intercambiarse; en un grafo o una relación, una flecha de \(a\) a \(b\) difiere de una flecha de \(b\) a \(a\). Necesitamos una construcción de emparejamiento que recuerde el orden y conserve entradas repetidas.
+
+[CALLOUT]
+id: ordered-pair-def
+label: Definición
+title: Par ordenado y producto cartesiano
+tone: key
+
+(1) Un par ordenado \((a, b)\) es un objeto formado a partir de una primera coordenada \(a\) y una segunda coordenada \(b\), caracterizado por la propiedad de igualdad:
+\[
+(a, b) = (c, d) \iff (a = c \land b = d).
+\]
+(2) Para cualesquiera conjuntos \(A\) y \(B\), el producto cartesiano de \(A\) y \(B\), denotado \(A \times B\), es el conjunto de todos los pares ordenados con primera coordenada en \(A\) y segunda coordenada en \(B\):
+\[
+A \times B = \{(a, b) : a \in A \land b \in B\}.
+\]
+(3) Más generalmente, para cualquier entero positivo \(n\) y conjuntos \(A_1, \dots, A_n\), una \(n\)-tupla ordenada \((a_1, \dots, a_n)\) satisface \((a_1, \dots, a_n) = (b_1, \dots, b_n) \iff (a_1 = b_1 \land \dots \land a_n = b_n)\), y el producto cartesiano \(n\)-ario es
+\[
+A_1 \times \dots \times A_n = \{(a_1, \dots, a_n) : a_i \in A_i \text{ para todo } i = 1, \dots, n\}.
+\]
+Cuando \(A_1 = \dots = A_n = A\), escribimos \(A^n\).
+[/CALLOUT]
+
+¿Por qué existe un par ordenado dentro de la teoría pura de conjuntos? Como breve observación motivadora (no necesitaremos esta codificación en las demostraciones), Kazimierz Kuratowski mostró en 1921 que puede codificarse \((a, b)\) puramente como el conjunto \(\{\{a\}, \{a, b\}\}\) y demostrarse solo a partir de la extensionalidad que \(\{\{a\}, \{a, b\}\} = \{\{c\}, \{c, d\}\} \iff (a = c \land b = d)\). En el trabajo matemático cotidiano utilizamos únicamente la propiedad caracterizadora de la [REF: ordered-pair-def.1 | definición de par ordenado], sin desenvolver nunca las llaves de Kuratowski.
+
+Examinemos dos ejemplos pequeños. Tómese \(A = \{1, 2\}\) y \(B = \{x, y, z\}\). Entonces
+\[
+A \times B = \{(1, x), (1, y), (1, z), (2, x), (2, y), (2, z)\},
+\]
+mientras que
+\[
+B \times A = \{(x, 1), (x, 2), (y, 1), (y, 2), (z, 1), (z, 2)\}.
+\]
+Claramente \(A \times B \ne B \times A\) en general: el producto cartesiano no es conmutativo. ¿Cuándo SÍ se cumple \(A \times B = B \times A\)? O bien \(A = B\), o bien al menos uno de \(A\) y \(B\) es vacío. Comprobemos con cuidado el caso límite del factor vacío.
+
+[CALLOUT]
+id: empty-product
+label: Proposición
+title: Producto cartesiano vacío
+tone: key
+
+Para cualesquiera conjuntos \(A\) y \(B\),
+\[
+A \times B = \emptyset \iff (A = \emptyset \lor B = \emptyset).
+\]
+[/CALLOUT]
+
+Demostración: Demostramos la contrarrecíproca de cada dirección, lo cual resulta más limpio: \(A \times B \ne \emptyset \iff (A \ne \emptyset \land B \ne \emptyset)\).
+- Si \(A \times B \ne \emptyset\), existe algún elemento \(p \in A \times B\). Por la [REF: ordered-pair-def.2 | definición de producto cartesiano], \(p = (a, b)\) con \(a \in A\) y \(b \in B\), luego \(A \ne \emptyset\) y \(B \ne \emptyset\).
+- Recíprocamente, si \(A \ne \emptyset\) y \(B \ne \emptyset\), podemos escoger \(a \in A\) y \(b \in B\); entonces \((a, b) \in A \times B\), de modo que \(A \times B \ne \emptyset\).
+
+Obsérvese una consecuencia sutil de los [REF: empty-product | productos vacíos]: supóngase \(A \times B \subseteq C \times D\). ¿Fuerza esto que \(A \subseteq C\) y \(B \subseteq D\)? SOLO si \(A \times B \ne \emptyset\) (es decir, tanto \(A\) como \(B\) son no vacíos). Si \(A = \{1, 2\}\), \(B = \emptyset\), \(C = \emptyset\) y \(D = \{3\}\), entonces \(A \times B = \emptyset \subseteq \emptyset = C \times D\) se cumple por vacuidad, aun cuando \(A \nsubseteq C\). Verifíquese siempre si hay factores vacíos antes de cancelar un producto cartesiano.
+
+En la recta real, los productos cartesianos de intervalos son literalmente rectángulos en \(\mathbb{R}^2 = \mathbb{R} \times \mathbb{R}\). Por ejemplo, \([1, 3] \times [1, 2]\) es el rectángulo cerrado \(\{(x, y) \in \mathbb{R}^2 : 1 \le x \le 3 \text{ y } 1 \le y \le 2\}\). Visualizar subconjuntos de \(\mathbb{R} \times \mathbb{R}\) como rectángulos vuelve inmediatamente transparentes las identidades —y los contraejemplos— del álgebra de productos.
+
+[QUESTION 3]
+[ANSWER: E]
+Supóngase que \(A, B, C, D\) son conjuntos tales que \(A \times B = C \times D\). ¿Cuál de las siguientes afirmaciones DEBE ser verdadera?
+
+(A) \(A = C\) y \(B = D\)
+(B) \(A \cup B = C \cup D\)
+(C) Si \(A \ne \emptyset\), entonces \(B = D\)
+(D) Si \(A = C\), entonces \(B = D\)
+(E) O bien \(A \times B = \emptyset\), o bien \(A = C\) y \(B = D\)
+[/QUESTION]
+
+=== SECTION 4: Identidades y contraejemplos del álgebra de productos ===
+
+¿Cómo interactúa el producto cartesiano con la unión, la intersección y la diferencia de conjuntos? Puesto que todo elemento de \(A \times B\) es un par ordenado \((x, y)\), las demostraciones por seguimiento de elementos sobre productos cartesianos comienzan siempre con «Sea \((x, y) \in \dots\)» en lugar de «Sea \(x \in \dots\)».
+
+[CALLOUT]
+id: product-identities
+label: Teorema
+title: Identidades fundamentales del producto cartesiano
+tone: key
+
+Para cualesquiera conjuntos \(A, B, C, D\):
+
+(1) Distributividad respecto a la unión: \(A \times (B \cup C) = (A \times B) \cup (A \times C)\).
+(2) Distributividad respecto a la intersección: \(A \times (B \cap C) = (A \times B) \cap (A \times C)\).
+(3) Distributividad respecto a la diferencia: \(A \times (B \setminus C) = (A \times B) \setminus (A \times C)\).
+(4) Intersección de productos: \((A \times B) \cap (C \times D) = (A \cap C) \times (B \cap D)\).
+[/CALLOUT]
+
+Demostremos la [REF: product-identities.1 | distributividad respecto a la unión] y la [REF: product-identities.4 | intersección de productos] por seguimiento de elementos. Todo elemento de ambos lados en el [REF: product-identities.1 | enunciado (1)] es un par ordenado \((x, y)\), y para cualquier par ordenado \((x, y)\):
+\[
+\begin{aligned}
+(x, y) \in A \times (B \cup C) &\iff x \in A \land y \in B \cup C \\
+&\iff x \in A \land (y \in B \lor y \in C) \\
+&\iff (x \in A \land y \in B) \lor (x \in A \land y \in C) \\
+&\iff (x, y) \in A \times B \lor (x, y) \in A \times C \\
+&\iff (x, y) \in (A \times B) \cup (A \times C).
+\end{aligned}
+\]
+Como la cadena de bicondicionales vale para todo par ordenado \((x, y)\) (y ninguno de los dos lados contiene objetos que no sean pares), los dos conjuntos son iguales.
+
+Para el [REF: product-identities.4 | enunciado (4)], tómese un par ordenado arbitrario \((x, y)\):
+\[
+\begin{aligned}
+(x, y) \in (A \times B) \cap (C \times D) &\iff (x, y) \in A \times B \land (x, y) \in C \times D \\
+&\iff (x \in A \land y \in B) \land (x \in C \land y \in D) \\
+&\iff (x \in A \land x \in C) \land (y \in B \land y \in D) \\
+&\iff x \in A \cap C \land y \in B \cap D \\
+&\iff (x, y) \in (A \cap C) \times (B \cap D).
+\end{aligned}
+\]
+La demostración funciona puramente reagrupando conjunciones. El significado geométrico en \(\mathbb{R}^2\) es igualmente claro: la superposición de dos rectángulos alineados con los ejes, \(A \times B\) y \(C \times D\), es de nuevo un rectángulo alineado con los ejes, cuya extensión horizontal es \(A \cap C\) y cuya extensión vertical es \(B \cap D\).
+
+¿Qué ocurre con la unión de dos productos? ¿Es \((A \times B) \cup (C \times D)\) igual a \((A \cup C) \times (B \cup D)\)? Piénsese geométricamente en dos rectángulos en \(\mathbb{R}^2\): sean
+\[
+A = [0, 1], \quad B = [0, 1], \qquad C = [2, 3], \quad D = [2, 3].
+\]
+Entonces \((A \times B) \cup (C \times D)\) consta de dos cuadrados unitarios separados: uno abajo a la izquierda y otro arriba a la derecha. Entretanto, \(A \cup C = [0, 1] \cup [2, 3]\) y \(B \cup D = [0, 1] \cup [2, 3]\), de modo que \((A \cup C) \times (B \cup D)\) tiene CUATRO cuadrados unitarios: añade los dos cuadrados fuera de la diagonal \(A \times D = [0, 1] \times [2, 3]\) y \(C \times B = [2, 3] \times [0, 1]\).
+
+[GRAPH]
+type: function2d
+title: \((A \times B) \cup (C \times D)\) frente a \((A \cup C) \times (B \cup D)\) en \(\mathbb{R}^2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.5, 3.5
+yrange: -0.5, 3.5
+aspect: equal
+fill: 1, 0 | range: 0, 1 | label: \(A \times B\) | color: #2563eb | opacity: 0.35
+fill: 3, 2 | range: 2, 3 | label: \(C \times D\) | color: #2563eb | opacity: 0.35
+fill: 3, 2 | range: 0, 1 | label: \(A \times D\) (adicional) | color: #ef4444 | opacity: 0.22
+fill: 1, 0 | range: 2, 3 | label: \(C \times B\) (adicional) | color: #ef4444 | opacity: 0.22
+trace: 0 | color: #94a3b8
+segment: 0, 0, 1, 0 | color: #2563eb
+segment: 1, 0, 1, 1 | color: #2563eb
+segment: 1, 1, 0, 1 | color: #2563eb
+segment: 0, 1, 0, 0 | color: #2563eb
+segment: 2, 2, 3, 2 | color: #2563eb
+segment: 3, 2, 3, 3 | color: #2563eb
+segment: 3, 3, 2, 3 | color: #2563eb
+segment: 2, 3, 2, 2 | color: #2563eb
+segment: 0, 2, 1, 2 | color: #ef4444 | dashed: true
+segment: 1, 2, 1, 3 | color: #ef4444 | dashed: true
+segment: 1, 3, 0, 3 | color: #ef4444 | dashed: true
+segment: 0, 3, 0, 2 | color: #ef4444 | dashed: true
+segment: 2, 0, 3, 0 | color: #ef4444 | dashed: true
+segment: 3, 0, 3, 1 | color: #ef4444 | dashed: true
+segment: 3, 1, 2, 1 | color: #ef4444 | dashed: true
+segment: 2, 1, 2, 0 | color: #ef4444 | dashed: true
+point: 0.5, 2.5 | label: \((1/2, 5/2)\)
+[/GRAPH]
+
+De hecho, aplicar dos veces la [REF: product-identities.1 | distributividad respecto a la unión] (por la derecha y por la izquierda) revela el desarrollo exacto:
+\[
+(A \cup C) \times (B \cup D) = (A \times B) \cup (A \times D) \cup (C \times B) \cup (C \times D).
+\]
+Esto muestra de inmediato por qué \((A \times B) \cup (C \times D) \subseteq (A \cup C) \times (B \cup D)\) se cumple siempre, y por qué la inclusión inversa falla siempre que haya un punto en \(A \times D\) o en \(C \times B\) que no pertenezca a \((A \times B) \cup (C \times D)\). Un contraejemplo finito diminuto es \(A = \{1\}\), \(B = \{1\}\), \(C = \{2\}\), \(D = \{2\}\): entonces \((A \times B) \cup (C \times D) = \{(1, 1), (2, 2)\}\), mientras que \((A \cup C) \times (B \cup D) = \{(1, 1), (1, 2), (2, 1), (2, 2)\}\).
+
+Obsérvese el paralelo estructural exacto entre conjuntos potencia y productos cartesianos: AMBAS operaciones distribuyen limpiamente sobre la intersección, y AMBAS fallan al distribuir sobre la unión (produciendo solo una inclusión en un sentido) porque la unión permite «términos cruzados» que mezclan partes de conjuntos distintos.
+
+[TABLE]
+Identidad candidata | Estado | Relación exacta o contraejemplo
+\(\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)\) | Siempre verdadera | Demostrada por \(S \subseteq A \cap B \iff S \subseteq A \land S \subseteq B\)
+\(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\) | Falsa en general | Solo vale \(\supseteq\); falla para \(A = \{1\}, B = \{2\}\) mediante \(\{1, 2\}\)
+\((A \times B) \cap (C \times D) = (A \cap C) \times (B \cap D)\) | Siempre verdadera | Demostrada reagrupando conjunciones por coordenadas
+\((A \times B) \cup (C \times D) = (A \cup C) \times (B \cup D)\) | Falsa en general | Solo vale \(\subseteq\); falla para \(A = B = \{1\}, C = D = \{2\}\) mediante \((1, 2)\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Sean \(A, B, C, D\) conjuntos arbitrarios. ¿Qué expresión es SIEMPRE igual a \((A \times B) \setminus (C \times D)\)?
+
+(A) \(((A \setminus C) \times B) \cup (A \times (B \setminus D))\)
+(B) \((A \setminus C) \times (B \setminus D)\)
+(C) \(((A \setminus C) \times B) \cap (A \times (B \setminus D))\)
+(D) \((A \cap C) \times (B \setminus D)\)
+(E) \((A \times (B \setminus D)) \setminus (C \times B)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Sean \(A\) y \(B\) conjuntos con \(A \ne \emptyset\) y \(B \ne \emptyset\). ¿Bajo qué condición necesaria y suficiente se cumple \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\)?
+
+(A) \(A \cap B = \emptyset\)
+(B) \(A = B\)
+(C) \(A \cap B \ne \emptyset\)
+(D) \(A \subseteq B\) o \(B \subseteq A\)
+(E) \(A\) y \(B\) son ambos finitos
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sean \(A = \{1, 2\}\), \(B = \{1, 2, 3\}\), \(C = \{2, 3\}\) y \(D = \{1, 3\}\). ¿Qué elemento pertenece a \((A \times B) \setminus (C \times D)\) pero NO a \((A \setminus C) \times (B \setminus D)\)?
+
+(A) \((1, 2)\)
+(B) \((2, 2)\)
+(C) \((2, 3)\)
+(D) \((3, 2)\)
+(E) \((2, 1)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Supóngase que \(A, B, C\) son conjuntos no vacíos. Si \((A \times B) \cup (B \times A) = C \times C\), ¿cuál de las siguientes afirmaciones DEBE ser verdadera?
+
+(A) \(A \cap B = \emptyset\)
+(B) \(A \subsetneq B\) o \(B \subsetneq A\)
+(C) \(A = B = C\)
+(D) \(A \cup B = C\), con \(A\) y \(B\) posiblemente distintos
+(E) No existen tales conjuntos no vacíos \(A, B, C\)
+[/BONUS]

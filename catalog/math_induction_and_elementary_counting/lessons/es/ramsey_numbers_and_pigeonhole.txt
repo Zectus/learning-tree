@@ -1,0 +1,217 @@
+=== SECTION 1: Orden dentro del caos — los números de Ramsey y el problema de la fiesta ===
+
+El Principio del Palomar nos dice que amontonar suficientes objetos en muy pocas cajas fuerza un agrupamiento dentro de una sola caja. La teoría de Ramsey lleva ese mismo espíritu a las relaciones entre PARES de objetos: si una red es lo bastante grande, sin importar cuán caóticamente colorees cada par de vértices de rojo o de azul, DEBE aparecer un agrupamiento monocromático garantizado.
+
+Para precisar esto, representa \(N\) puntos (vértices) con cada par no ordenado conectado por una arista —el grafo completo \(K_N\), que tiene \(\binom{N}{2}\) aristas— y colorea cada arista de ROJO o de AZUL. Un subconjunto de \(s\) vértices se llama un \(s\)-clique rojo (o \(K_s\) monocromático rojo) si TODAS las \(\binom{s}{2}\) aristas que unen pares dentro de ese subconjunto son rojas; un \(t\)-clique azul se define de modo idéntico con aristas azules.
+
+[CALLOUT]
+id: ramsey-def
+label: Definición
+title: Números de Ramsey bicolores \(R(s, t)\)
+tone: key
+
+Para enteros \(s, t \ge 2\), el número de Ramsey \(R(s, t)\) es el MENOR entero positivo \(N\) tal que TODA coloración rojo/azul de aristas de \(K_N\) contiene un \(s\)-clique rojo o un \(t\)-clique azul.
+[/CALLOUT]
+
+Detente a inspeccionar los cuantificadores dentro de [REF: ramsey-def | esta definición], porque demostrar una cota SUPERIOR frente a una cota INFERIOR exige movimientos lógicos opuestos:
+- Para demostrar \(R(s, t) \le N\), debes probar que TODA coloración rojo/azul de \(K_N\) produce un \(s\)-clique rojo o un \(t\)-clique azul.
+- Para demostrar \(R(s, t) > N\) (equivalentemente \(R(s, t) \ge N + 1\)), ¡basta con exhibir UNA coloración rojo/azul explícita de \(K_N\) que evite TANTO un \(s\)-clique rojo COMO un \(t\)-clique azul!
+
+Comprueba de inmediato los valores frontera triviales y la simetría:
+1. Simetría: Intercambiar las palabras «rojo» y «azul» muestra que \(R(s, t) = R(t, s)\).
+2. \(R(s, 2) = s\) (y simétricamente \(R(2, t) = t\)): En \(K_s\), o bien al menos una arista es azul (¡que por sí sola es un \(2\)-clique azul!), o NINGUNA arista es azul, en cuyo caso todas las \(\binom{s}{2}\) aristas son rojas (formando un \(s\)-clique rojo). Así, \(R(s, 2) \le s\). Recíprocamente, colorear de rojo TODAS las aristas de \(K_{s - 1}\) no crea ni un \(s\)-clique rojo (solo hay \(s - 1\) vértices) ni un \(2\)-clique azul, de modo que \(R(s, 2) > s - 1\). Por tanto, \(R(s, 2) = s\).
+
+Aborda ahora el primer número de Ramsey genuinamente no trivial —el clásico «problema de la fiesta»—: en una fiesta de \(6\) personas, donde cada par de personas son o bien amigos mutuos (arista roja) o desconocidos mutuos (arista azul), ¿debe haber SIEMPRE \(3\) amigos mutuos (un triángulo rojo, \(K_3\)) o \(3\) desconocidos mutuos (un triángulo azul)? Demostremos \(R(3, 3) = 6\) por completo.
+
+Cota superior (\(R(3, 3) \le 6\)): Toma CUALQUIER coloración rojo/azul de aristas de \(K_6\) y fija un vértice \(v\). Hay \(5\) aristas incidentes a \(v\), cada una coloreada de rojo o de azul. Por el Principio del Palomar generalizado, un color aparece en al menos \(\lceil 5 / 2 \rceil = 3\) de estas aristas. Sin pérdida de generalidad (intercambiando colores si hace falta), supón que \(v\) tiene \(3\) aristas rojas que van a los vértices \(u_1, u_2, u_3\). Inspecciona ahora las \(3\) aristas entre \(\{u_1, u_2, u_3\}\):
+- Si AL MENOS UNA arista entre \(u_1, u_2, u_3\) es roja —digamos que \(u_1 u_2\) es roja—, ¡entonces \(\{v, u_1, u_2\}\) forma un triángulo rojo!
+- En caso contrario, TODAS LAS TRES aristas \(u_1 u_2\), \(u_2 u_3\) y \(u_1 u_3\) son azules, ¡así que \(\{u_1, u_2, u_3\}\) mismo forma un triángulo azul!
+En toda coloración posible de \(K_6\), se fuerza un triángulo monocromático, demostrando \(R(3, 3) \le 6\).
+
+Cota inferior (\(R(3, 3) > 5\)): Dispón \(5\) vértices \(v_1, v_2, v_3, v_4, v_5\) alrededor de una circunferencia como un pentágono regular. Colorea de ROJO las \(5\) aristas del ciclo exterior y de AZUL las \(5\) diagonales de la estrella interior, como se muestra abajo.
+
+[GRAPH]
+type: parametric2d
+title: Una coloración rojo/azul de aristas de \(K_5\) sin triángulo monocromático
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.283
+xrange: -1.35, 1.35
+yrange: -1.35, 1.35
+trace: cos(t), sin(t) | label: circunferencia circunscrita | color: #94a3b8
+segment: 0, 1, 0.951, 0.309 | color: #dc2626
+segment: 0.951, 0.309, 0.588, -0.809 | color: #dc2626
+segment: 0.588, -0.809, -0.588, -0.809 | color: #dc2626
+segment: -0.588, -0.809, -0.951, 0.309 | color: #dc2626
+segment: -0.951, 0.309, 0, 1 | color: #dc2626
+segment: 0, 1, 0.588, -0.809 | color: #2563eb
+segment: 0.588, -0.809, -0.951, 0.309 | color: #2563eb
+segment: -0.951, 0.309, 0.951, 0.309 | color: #2563eb
+segment: 0.951, 0.309, -0.588, -0.809 | color: #2563eb
+segment: -0.588, -0.809, 0, 1 | color: #2563eb
+point: 0, 1 | label: \(v_1\) | offset: 0, 10
+point: 0.951, 0.309 | label: \(v_2\) | offset: 12, 4
+point: 0.588, -0.809 | label: \(v_3\) | offset: 10, -10
+point: -0.588, -0.809 | label: \(v_4\) | offset: -12, -10
+point: -0.951, 0.309 | label: \(v_5\) | offset: -14, 4
+[/GRAPH]
+
+En esta coloración de \(K_5\), las aristas rojas forman un único \(5\)-ciclo \(v_1 v_2 v_3 v_4 v_5 v_1\) (que no contiene ningún \(3\)-ciclo), y las aristas azules TAMBIÉN forman un único \(5\)-ciclo \(v_1 v_3 v_5 v_2 v_4 v_1\) (que tampoco contiene ningún \(3\)-ciclo). Así, \(K_5\) admite una \(2\)-coloración sin triángulos, demostrando \(R(3, 3) > 5\). Combinar \(R(3, 3) \le 6\) y \(R(3, 3) > 5\) establece \(R(3, 3) = 6\).
+
+[QUESTION 1]
+[ANSWER: A]
+Para demostrar rigurosamente que \(R(s, t) > N\) para enteros específicos \(s, t, N\), ¿cuál de los siguientes enunciados es lógicamente suficiente?
+
+(A) Exhibir UNA coloración rojo/azul de aristas de \(K_N\) que no contenga ni un \(s\)-clique rojo ni un \(t\)-clique azul.
+(B) Demostrar que TODA coloración rojo/azul de aristas de \(K_N\) no contiene ni un \(s\)-clique rojo ni un \(t\)-clique azul.
+(C) Exhibir UNA coloración rojo/azul de aristas de \(K_{N + 1}\) que contenga un \(s\)-clique rojo.
+(D) Mostrar que el número total de aristas \(\binom{N}{2}\) es estrictamente menor que \(\binom{s}{2} + \binom{t}{2}\).
+(E) Comprobar que cada vértice de \(K_N\) tiene menos de \(s + t\) aristas incidentes.
+[/QUESTION]
+
+=== SECTION 2: La recurrencia de Erdős–Szekeres y el refinamiento de paridad par-par ===
+
+¿Cómo sabemos siquiera que \(R(s, t)\) es FINITO para \(s, t \ge 2\) arbitrarios? En 1935, Paul Erdős y George Szekeres generalizaron exactamente el truco de partición de vecindad que acabamos de usar para \(R(3, 3)\) en una desigualdad recursiva que garantiza que \(R(s, t)\) existe y lo acota limpiamente por arriba.
+
+Toma \(s, t \ge 3\), y supón que \(R(s - 1, t)\) y \(R(s, t - 1)\) ya se saben finitos. Fija
+\[
+N = R(s - 1, t) + R(s, t - 1),
+\]
+y considera CUALQUIER coloración rojo/azul de aristas de \(K_N\). Elige un vértice \(v\). Tiene
+\[
+N - 1 = \bigl(R(s - 1, t) - 1\bigr) + \bigl(R(s, t - 1) - 1\bigr) + 1
+\]
+aristas incidentes, cada una coloreada de rojo o de azul. Por el Principio del Palomar, es IMPOSIBLE que \(v\) tenga a lo sumo \(R(s - 1, t) - 1\) aristas rojas Y a lo sumo \(R(s, t - 1) - 1\) aristas azules, porque esos máximos suman solo \(N - 2 < N - 1\). Por tanto, debe ocurrir uno de dos casos:
+- Caso 1: El vértice \(v\) tiene al menos \(R(s - 1, t)\) vecinos rojos. Sea \(A\) un conjunto de \(R(s - 1, t)\) vecinos rojos de \(v\). Por definición de \(R(s - 1, t)\), el subgrafo sobre \(A\) contiene un \(t\)-clique azul (¡listo!) o un \((s - 1)\)-clique rojo. Como todo vértice de \(A\) está unido a \(v\) por una arista roja, ¡añadir \(v\) a ese \((s - 1)\)-clique rojo crea un \(s\)-clique rojo!
+- Caso 2: El vértice \(v\) tiene al menos \(R(s, t - 1)\) vecinos azules. Sea \(B\) un conjunto de \(R(s, t - 1)\) vecinos azules de \(v\). Por definición de \(R(s, t - 1)\), \(B\) contiene un \(s\)-clique rojo (¡listo!) o un \((t - 1)\)-clique azul, que junto con \(v\) forma un \(t\)-clique azul.
+
+Así, TODA coloración rojo/azul de \(K_N\) contiene un \(s\)-clique rojo o un \(t\)-clique azul, demostrando \(R(s, t) \le R(s - 1, t) + R(s, t - 1)\).
+
+¿Podemos rebajar \(1\) a esta cota? Prueba fijar \(N = R(s - 1, t) + R(s, t - 1) - 1\). Ahora cada vértice \(v\) tiene \(N - 1 = (R(s - 1, t) - 1) + (R(s, t - 1) - 1)\) aristas incidentes, de modo que el Principio del Palomar SOLO falla si CADA VÉRTICE \(v\) en todo el grafo tiene EXACTAMENTE \(R(s - 1, t) - 1\) aristas rojas y EXACTAMENTE \(R(s, t - 1) - 1\) aristas azules.
+
+Observa ahora qué ocurre cuando TANTO \(R(s - 1, t)\) COMO \(R(s, t - 1)\) son PARES:
+- Primero, \(N = R(s - 1, t) + R(s, t - 1) - 1\) es IMPAR (par \(+\) par \(-\) \(1\)).
+- Segundo, el grado rojo requerido \(d = R(s - 1, t) - 1\) de cada vértice es ¡TAMBIÉN IMPAR!
+- Por tanto, sumar los grados rojos a lo largo de todos los \(N\) vértices da \(N \cdot d\), que es \(\text{IMPAR} \times \text{IMPAR} = \text{IMPAR}\).
+- Sin embargo, en CUALQUIER grafo, toda arista roja tiene dos extremos, de modo que sumar los grados rojos sobre todos los vértices cuenta cada arista roja DOS VECES —¡lo que significa que la suma de grados rojos DEBE ser PAR!
+
+¡Contradicción! Por consiguiente, no puede existir ninguna coloración evasiva sobre \(N = R(s - 1, t) + R(s, t - 1) - 1\) vértices cuando ambos números de Ramsey previos son pares.
+
+[CALLOUT]
+id: erdos-szekeres
+label: Teorema
+title: Desigualdad de Erdős–Szekeres y refinamiento de paridad par-par
+tone: key
+
+Para todos los enteros \(s, t \ge 3\):
+
+(1) Desigualdad de recurrencia general:
+\[
+R(s, t) \le R(s - 1, t) + R(s, t - 1).
+\]
+(2) Mejora estricta par-par: Si TANTO \(R(s - 1, t)\) COMO \(R(s, t - 1)\) son pares, entonces
+\[
+R(s, t) \le R(s - 1, t) + R(s, t - 1) - 1.
+\]
+[/CALLOUT]
+
+Aplica [REF: erdos-szekeres.2 | la mejora par-par] de inmediato a \(R(3, 4)\): sabemos que \(R(2, 4) = 4\) (par) y \(R(3, 3) = 6\) (par). Como ambos términos son pares,
+\[
+R(3, 4) \le 4 + 6 - 1 = 9!
+\]
+(De hecho, \(R(3, 4) = 9\) es exacto —verificarás una coloración explícita de cota inferior en \(K_8\) en el Bono 2.) Observa que la mejora estricta de \(-1\) SOLO aplica cuando TANTO \(R(s - 1, t)\) COMO \(R(s, t - 1)\) son pares; si alguno es impar, entonces o bien \(N\) es par o bien \(d = R(s - 1, t) - 1\) es par, de modo que \(N \cdot d\) es par y no surge ninguna contradicción de apretones de manos.
+
+[QUESTION 2]
+[ANSWER: B]
+Dados \(R(2, 5) = 5\) y \(R(3, 4) = 9\), ¿cuál es la cota superior más ajustada sobre \(R(3, 5)\) que se sigue directamente de [REF: erdos-szekeres | el teorema de Erdős–Szekeres]?
+
+(A) \(13\), porque \(5 + 9 - 1 = 13\) por la mejora estricta de paridad.
+(B) \(14\), porque \(5 + 9 = 14\), y la mejora estricta de paridad NO aplica pues \(5\) y \(9\) son impares.
+(C) \(12\), porque restar \(1\) por cada término impar da \(5 + 9 - 2 = 12\).
+(D) \(15\), por la cota superior binomial, que siempre es más ajustada que la recurrencia.
+(E) \(13\), porque \(13\) es impar así que no puede existir ningún grafo rojo \(4\)-regular de \(13\) vértices.
+[/QUESTION]
+
+=== SECTION 3: La cota superior binomial por inducción y cotas inferiores constructivas ===
+
+Vuelve a mirar [REF: erdos-szekeres.1 | la desigualdad de recurrencia] \(R(s, t) \le R(s - 1, t) + R(s, t - 1)\) junto con los valores frontera \(R(s, 2) = s\) y \(R(2, t) = t\). ¡Esa recurrencia refleja la identidad de Pascal \(\binom{m}{k} = \binom{m - 1}{k - 1} + \binom{m - 1}{k}\)! La inducción matemática ordinaria convierte esta coincidencia en una cota superior cerrada explícita para todo número de Ramsey.
+
+[CALLOUT]
+id: ramsey-binomial-bound
+label: Teorema
+title: Cota superior binomial sobre \(R(s, t)\)
+tone: key
+
+Para todos los enteros \(s, t \ge 2\), el número de Ramsey \(R(s, t)\) es finito y satisface
+\[
+R(s, t) \le \binom{s + t - 2}{s - 1}.
+\]
+[/CALLOUT]
+
+Demostración de [REF: ramsey-binomial-bound | la cota superior binomial] por inducción ordinaria sobre la suma \(m = s + t \ge 4\):
+- Caso base (\(m = 4\)): El único par con \(s, t \ge 2\) y \(s + t = 4\) es \((s, t) = (2, 2)\). Tenemos \(R(2, 2) = 2 = \binom{2 + 2 - 2}{2 - 1} = \binom{2}{1}\), de modo que la cota se cumple.
+- Paso inductivo: Fija \(m \ge 4\) y supón que \(R(a, b) \le \binom{a + b - 2}{a - 1}\) vale para TODOS los pares de enteros \(a, b \ge 2\) que satisfacen \(a + b = m\). Toma ahora cualesquiera \(s, t \ge 2\) con \(s + t = m + 1\).
+  - Si \(s = 2\), entonces \(R(2, t) = t = \binom{t}{1} = \binom{2 + t - 2}{2 - 1}\), de modo que la cota se cumple con igualdad.
+  - Si \(t = 2\), entonces \(R(s, 2) = s = \binom{s}{s - 1} = \binom{s + 2 - 2}{s - 1}\), de modo que la cota se cumple con igualdad.
+  - Si \(s \ge 3\) y \(t \ge 3\), entonces ambos pares \((s - 1, t)\) y \((s, t - 1)\) tienen entradas \(\ge 2\) y suman \((s - 1) + t = s + (t - 1) = m\). Aplicar [REF: erdos-szekeres.1 | la desigualdad de Erdős–Szekeres], la hipótesis inductiva y la identidad de Pascal arroja
+\[
+R(s, t) \le R(s - 1, t) + R(s, t - 1) \le \binom{s + t - 3}{s - 2} + \binom{s + t - 3}{s - 1} = \binom{s + t - 2}{s - 1}.
+\]
+Por el Principio de Inducción Matemática, \(R(s, t) \le \binom{s + t - 2}{s - 1}\) para todo \(s, t \ge 2\).
+
+Para los números de Ramsey diagonales \(R(s, s)\), esto da \(R(s, s) \le \binom{2s - 2}{s - 1} < 2^{2s - 2} = 4^{s - 1}\) (¡puesto que todo coeficiente binomial de la fila \(2s - 2\) está acotado por la suma de fila \(2^{2s - 2}\) del Teorema del Binomio!). Incluso para valores pequeños, calcular números de Ramsey exactos es famosamente difícil —\(R(3, 3) = 6\), \(R(3, 4) = 9\), \(R(4, 4) = 18\), mientras que de \(R(5, 5)\) aún solo se sabe que yace entre \(43\) y \(46\)! Ajustar cotas inferiores para \(s\) grande requiere métodos probabilísticos estudiados en combinatoria avanzada, mientras que coloraciones explícitas por bloques o circulares ya proporcionan cotas inferiores elementales nítidas.
+
+[QUESTION 3]
+[ANSWER: C]
+Dado \(R(3, 4) = R(4, 3) = 9\), ¿qué cota superior sobre \(R(4, 4)\) se sigue de [REF: erdos-szekeres | el teorema de Erdős–Szekeres] y qué cota superior se sigue de [REF: ramsey-binomial-bound | la cota superior binomial]?
+
+(A) \(17\) de la recurrencia; \(20\) de la cota binomial
+(B) \(18\) de la recurrencia; \(15\) de la cota binomial
+(C) \(18\) de la recurrencia; \(20\) de la cota binomial
+(D) \(17\) de la recurrencia; \(70\) de la cota binomial
+(E) \(18\) de la recurrencia; \(70\) de la cota binomial
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+Para enteros \(s, t \ge 2\), toma \((s - 1)(t - 1)\) vértices y particiónalos en \(t - 1\) bloques disjuntos, cada uno con \(s - 1\) vértices. Colorea de ROJO toda arista que une dos vértices en el MISMO bloque, y colorea de AZUL toda arista que une dos vértices en bloques DIFERENTES. ¿Qué cota inferior sobre \(R(s, t)\) demuestra esta coloración explícita?
+
+(A) \(R(s, t) \ge (s - 1)(t - 1)\)
+(B) \(R(s, t) \le (s - 1)(t - 1) + 1\)
+(C) \(R(s, t) \ge st + 1\)
+(D) \(R(s, t) \ge s + t - 1\)
+(E) \(R(s, t) \ge (s - 1)(t - 1) + 1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Supón que cada arista de \(K_N\) se colorea con uno de TRES colores —rojo, azul o verde—. Fija un vértice \(v\) y aplica el Principio del Palomar generalizado a las \(N - 1\) aristas incidentes a \(v\), junto con el valor bicolor conocido \(R(3, 3) = 6\), para garantizar un triángulo monocromático en \(K_N\). ¿Cuál es el MENOR entero \(N\) para el cual este argumento directo de vecindad tiene éxito?
+
+(A) \(15\)
+(B) \(16\)
+(C) \(17\)
+(D) \(18\)
+(E) \(19\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Coloca \(8\) vértices etiquetados \(0, 1, 2, 3, 4, 5, 6, 7\) igualmente espaciados alrededor de una circunferencia, de modo que la distancia circular entre \(i\) y \(j\) sea \(\min(\lvert i - j \rvert, 8 - \lvert i - j \rvert) \in \{1, 2, 3, 4\}\). Colorea una arista de ROJO si su distancia circular es \(1\) o \(4\), y de AZUL si su distancia circular es \(2\) o \(3\). ¿Cuáles son los tamaños del mayor clique rojo y del mayor clique azul en esta coloración de \(K_8\)?
+
+(A) El mayor clique rojo tiene tamaño \(2\); el mayor clique azul tiene tamaño \(2\).
+(B) El mayor clique rojo tiene tamaño \(2\); el mayor clique azul tiene tamaño \(3\).
+(C) El mayor clique rojo tiene tamaño \(3\); el mayor clique azul tiene tamaño \(3\).
+(D) El mayor clique rojo tiene tamaño \(2\); el mayor clique azul tiene tamaño \(4\).
+(E) El mayor clique rojo tiene tamaño \(3\); el mayor clique azul tiene tamaño \(4\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Dados \(R(2, 6) = 6\) y \(R(3, 5) = 14\), ¿cuál es la cota superior más ajustada sobre \(R(3, 6)\) que se sigue directamente de [REF: erdos-szekeres | el teorema de Erdős–Szekeres]?
+
+(A) \(18\)
+(B) \(20\)
+(C) \(21\)
+(D) \(19\)
+(E) \(28\)
+[/BONUS]

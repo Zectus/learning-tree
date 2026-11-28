@@ -1,0 +1,218 @@
+=== SECTION 1: Invariant subspaces and block-triangular matrices ===
+
+Diagonalization gives an ideal coordinate system whenever an operator has enough eigenvectors—yet defective matrices such as the shear \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) cannot be diagonalized even over \(\mathbb{C}\). How simple can we STILL make the matrix representation of an arbitrary linear operator \(T : V \to V\)? The key is to broaden our focus from \(1\)-dimensional invariant lines (eigenvectors) to general invariant subspaces of any dimension.
+
+[CALLOUT]
+id: inv-subspace-def
+label: Definition
+title: \(T\)-invariant subspace
+tone: key
+
+Let \(T : V \to V\) be a linear operator on a vector space \(V\) over \(F\). A subspace \(W \subseteq V\) is called \(T\)-invariant if
+\[
+T(\mathbf{w}) \in W \qquad \text{for every } \mathbf{w} \in W,
+\]
+written compactly as \(T(W) \subseteq W\).
+[/CALLOUT]
+
+When \(W\) is \(T\)-invariant, the restriction \(T|_W : W \to W\) defined by \(T|_W(\mathbf{w}) = T(\mathbf{w})\) is itself a well-defined linear operator on \(W\). We already know several examples of \(T\)-invariant subspaces: the trivial subspaces \(\{\mathbf{0}\}\) and \(V\), the kernel \(\ker(T)\), the image \(\operatorname{im}(T)\), and every eigenspace \(E_\lambda = \ker(T - \lambda I)\).
+
+What happens to the matrix of \(T\) when we build a basis of \(V\) starting with a basis of a \(T\)-invariant subspace \(W\)? Suppose \(\dim(W) = k\) and \(\dim(V) = n\). Choose a basis \(\{\mathbf{w}_1, \dots, \mathbf{w}_k\}\) of \(W\), and extend it to a basis
+\[
+\mathcal{B} = \{\mathbf{w}_1, \dots, \mathbf{w}_k,\; \mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}
+\]
+of \(V\). For each \(j = 1, \dots, k\), because \(W\) is \(T\)-invariant, \(T(\mathbf{w}_j) \in W = \operatorname{span}\{\mathbf{w}_1, \dots, \mathbf{w}_k\}\), so its coordinates along \(\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\) are ALL ZERO! Meanwhile, for each \(\mathbf{u}_m\), \(T(\mathbf{u}_m)\) can have components along BOTH the \(\mathbf{w}\)-vectors and the \(\mathbf{u}\)-vectors. Consequently, \([T]_{\mathcal{B}}\) takes the block upper-triangular form
+\[
+[T]_{\mathcal{B}} = \begin{bmatrix} A & B \\ 0 & C \end{bmatrix},
+\]
+where \(A = [T|_W]_{\{\mathbf{w}_1, \dots, \mathbf{w}_k\}} \in M_k(F)\), \(B\) is \(k \times (n - k)\), \(0\) is \((n - k) \times k\), and \(C \in M_{n-k}(F)\). Immediately by the block-triangular determinant theorem, the characteristic polynomial factors cleanly as
+\[
+p_T(\lambda) = p_A(\lambda)\,p_C(\lambda) = p_{T|_W}(\lambda)\,p_C(\lambda),
+\]
+so \(p_{T|_W}(\lambda)\) always divides \(p_T(\lambda)\).
+
+When does the upper-right block \(B\) vanish too, making \([T]_{\mathcal{B}}\) block DIAGONAL? Precisely when the complementary subspace \(U = \operatorname{span}\{\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}\) is ALSO \(T\)-invariant (so \(T(\mathbf{u}_m) \in U\) has zero coordinates along \(\mathbf{w}_1, \dots, \mathbf{w}_k\))! More generally, if \(V = W_1 \oplus W_2 \oplus \dots \oplus W_m\) is a direct sum of \(T\)-invariant subspaces and \(\mathcal{B}\) is formed by concatenating bases \(\mathcal{B}_1, \dots, \mathcal{B}_m\) of \(W_1, \dots, W_m\), then \([T]_{\mathcal{B}}\) is block diagonal:
+\[
+[T]_{\mathcal{B}} = \begin{bmatrix} [T|_{W_1}]_{\mathcal{B}_1} & 0 & \cdots & 0 \\ 0 & [T|_{W_2}]_{\mathcal{B}_2} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & [T|_{W_m}]_{\mathcal{B}_m} \end{bmatrix}.
+\]
+
+Watch the geometric distinction in \(\mathbb{R}^2\) for \(A = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix}\). The horizontal axis \(W = \operatorname{span}\{\mathbf{e}_1\}\) is \(A\)-invariant (\(A\mathbf{e}_1 = 2\mathbf{e}_1 \in W\)), which puts \(0\) in the bottom-left entry. By contrast, the vertical axis \(U = \operatorname{span}\{\mathbf{e}_2\}\) is NOT \(A\)-invariant: \(A\mathbf{e}_2 = (1, 3)^T = \mathbf{e}_1 + 3\mathbf{e}_2\) tilts off the vertical axis, creating the nonzero upper-right entry \(1\). (Here \(A\) DOES happen to have a second invariant line \(E_3 = \operatorname{span}\{(1, 1)^T\}\) that would make \(B = 0\), whereas for a defective shear \(\begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\), NO complementary invariant line exists at all!)
+
+[GRAPH]
+type: parametric2d
+title: Invariant axis \(W = \operatorname{span}\{\mathbf{e}_1\}\) versus non-invariant axis \(U = \operatorname{span}\{\mathbf{e}_2\}\) under \(A = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix}\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.6, 2.8
+yrange: -0.5, 3.5
+trace: 2*t, 0 | label: \(A\mathbf{e}_1 = (2, 0) \in W\)
+trace: 0, t | label: \(\mathbf{e}_2 = (0, 1) \in U\)
+trace: t, 3*t | label: \(A\mathbf{e}_2 = (1, 3) \notin U\)
+segment: 0, 3, 1, 3 | label: \(b = 1\) | dashed: true
+point: 1, 0 | label: \(\mathbf{e}_1\)
+point: 2, 0 | label: \(A\mathbf{e}_1\)
+point: 0, 1 | label: \(\mathbf{e}_2\)
+point: 1, 3 | label: \(A\mathbf{e}_2\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: D]
+Let
+\[
+A = \begin{bmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & -1 \end{bmatrix}.
+\]
+Which of the following subspaces of \(\mathbb{R}^3\) is NOT \(A\)-invariant?
+
+(A) \(\operatorname{span}\{\mathbf{e}_1\}\)
+(B) \(\operatorname{span}\{\mathbf{e}_3\}\)
+(C) \(\operatorname{span}\{\mathbf{e}_1, \mathbf{e}_2\}\)
+(D) \(\operatorname{span}\{\mathbf{e}_2, \mathbf{e}_3\}\)
+(E) \(\operatorname{span}\{\mathbf{e}_1, \mathbf{e}_3\}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+Let \(T : \mathbb{R}^4 \to \mathbb{R}^4\) be a linear operator with characteristic polynomial \(p_T(\lambda) = \lambda^4 - 5\lambda^3 + 8\lambda^2 - 4\lambda\). Suppose \(W \subset \mathbb{R}^4\) is a \(2\)-dimensional \(T\)-invariant subspace such that \(p_{T|_W}(\lambda) = \lambda^2 - 3\lambda + 2\). Extending a basis of \(W\) to a basis \(\mathcal{B}\) of \(\mathbb{R}^4\) gives \([T]_{\mathcal{B}} = \begin{bmatrix} A & B \\ 0 & C \end{bmatrix}\). What is \(p_C(\lambda)\)?
+
+(A) \(\lambda^2 - 3\lambda + 2\)
+(B) \(\lambda^2 - 2\lambda\)
+(C) \(\lambda^2 - 4\lambda + 4\)
+(D) \(\lambda^2 - 2\lambda + 2\)
+(E) \(\lambda^2 + 2\lambda\)
+[/QUESTION]
+
+=== SECTION 2: The Algebraic Upper-Triangularization Theorem ===
+
+Even when an operator \(T : V \to V\) is defective and cannot be diagonalized, can we ALWAYS find a basis \(\mathcal{B}\) of \(V\) in which \([T]_{\mathcal{B}}\) is upper triangular? Notice first what is NECESSARY: if \([T]_{\mathcal{B}} = U\) is upper triangular with diagonal entries \(\lambda_1, \dots, \lambda_n \in F\), then \(p_T(\lambda) = p_U(\lambda) = \prod_{i=1}^n (\lambda - \lambda_i)\) splits completely into linear factors over \(F\). Remarkably, that single condition is ALSO SUFFICIENT!
+
+[CALLOUT]
+id: upper-tri-theorem
+label: Theorem
+title: Algebraic Upper-Triangularization Theorem
+tone: key
+
+Let \(V\) be an \(n\)-dimensional vector space over \(F\) and \(T : V \to V\) a linear operator. There exists a basis \(\mathcal{B}\) of \(V\) in which \([T]_{\mathcal{B}}\) is upper triangular if and only if \(p_T(\lambda)\) splits completely into linear factors over \(F\).
+
+In particular, over \(\mathbb{C}\) (where every polynomial splits into linear factors by the Fundamental Theorem of Algebra), EVERY complex square matrix \(A \in M_n(\mathbb{C})\) is similar to an upper-triangular matrix \(U = P^{-1} A P\) whose diagonal entries are the eigenvalues of \(A\), counted with algebraic multiplicity.
+[/CALLOUT]
+
+Let us prove [REF: upper-tri-theorem | the upper-triangularization theorem] purely algebraically—without any inner products or orthogonality—by induction on \(n = \dim(V)\)! (Later, in Inner Product Spaces, Schur's Theorem strengthens this over \(\mathbb{C}\) by choosing the basis to be orthonormal so \(P\) is unitary; here we need only elementary basis extension and block matrices.)
+
+- Base case \(n = 1\): every \(1 \times 1\) matrix is already upper triangular.
+- Inductive step: assume the theorem holds in dimension \(n - 1\), and let \(T : V \to V\) be an operator on an \(n\)-dimensional space \(V\) whose characteristic polynomial \(p_T(\lambda)\) splits completely over \(F\).
+  1. Because \(p_T(\lambda)\) splits into linear factors over \(F\), it has at least one root \(\lambda_1 \in F\). Therefore \(T\) has at least one eigenvector \(\mathbf{v}_1 \in V \setminus \{\mathbf{0}\}\) with \(T(\mathbf{v}_1) = \lambda_1 \mathbf{v}_1\).
+  2. Extend \(\{\mathbf{v}_1\}\) to a basis \(\mathcal{B}_1 = \{\mathbf{v}_1, \mathbf{w}_2, \dots, \mathbf{w}_n\}\) of \(V\). Since \(W = \operatorname{span}\{\mathbf{v}_1\}\) is a \(1\)-dimensional \(T\)-invariant subspace, the matrix of \(T\) in \(\mathcal{B}_1\) has the block upper-triangular form
+\[
+[T]_{\mathcal{B}_1} = \begin{bmatrix} \lambda_1 & \mathbf{b}^T \\ \mathbf{0} & C \end{bmatrix},
+\]
+where \(\mathbf{b}^T\) is \(1 \times (n - 1)\) and \(C \in M_{n-1}(F)\).
+  3. By the block-triangular formula, \(p_T(\lambda) = (\lambda - \lambda_1)\,p_C(\lambda)\). Because \(p_T(\lambda)\) splits completely into linear factors over \(F\), its factor \(p_C(\lambda)\) MUST ALSO split completely into linear factors over \(F\)!
+  4. Apply the induction hypothesis to the \((n - 1) \times (n - 1)\) matrix \(C\): there exists an invertible matrix \(Q \in M_{n-1}(F)\) such that \(Q^{-1} C Q = U_1\) is upper triangular.
+  5. Now form the \(n \times n\) block-diagonal change-of-basis matrix \(R = \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q \end{bmatrix}\), which is invertible with \(R^{-1} = \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q^{-1} \end{bmatrix}\). Compute the similarity transformation explicitly using block multiplication:
+\[
+R^{-1} [T]_{\mathcal{B}_1} R = \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q^{-1} \end{bmatrix} \begin{bmatrix} \lambda_1 & \mathbf{b}^T \\ \mathbf{0} & C \end{bmatrix} \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q \end{bmatrix} = \begin{bmatrix} \lambda_1 & \mathbf{b}^T Q \\ \mathbf{0} & Q^{-1} C Q \end{bmatrix} = \begin{bmatrix} \lambda_1 & \mathbf{b}^T Q \\ \mathbf{0} & U_1 \end{bmatrix}.
+\]
+Because \(U_1\) is upper triangular, the entire \(n \times n\) matrix \(\begin{bmatrix} \lambda_1 & \mathbf{b}^T Q \\ \mathbf{0} & U_1 \end{bmatrix}\) is upper triangular! Letting \(P = P_1 R\) (where \(P_1\) is the change-of-basis matrix for \(\mathcal{B}_1\)) completes the induction.
+
+Notice how clean that step 5 is: we never needed to worry about whether \(\operatorname{span}\{\mathbf{w}_2, \dots, \mathbf{w}_n\}\) was \(T\)-invariant—conjugating by \(\operatorname{diag}(1, Q)\) left the first column \(\begin{bmatrix} \lambda_1 \\ \mathbf{0} \end{bmatrix}\) completely untouched while upper-triangularizing \(C\)!
+
+[QUESTION 3]
+[ANSWER: B]
+Which of the following real \(2 \times 2\) matrices is similar OVER \(\mathbb{R}\) to a real upper-triangular matrix (i.e., \(P^{-1} A P\) is upper triangular for some invertible \(P \in M_2(\mathbb{R})\))?
+
+(A) \(\begin{bmatrix} 1 & -2 \\ 2 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 5 & -4 \\ 1 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & -3 \\ 1 & 2 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 2 & -5 \\ 2 & -2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 1 \\ -2 & 3 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Suppose \(W \subset V\) is a \(k\)-dimensional \(T\)-invariant subspace with basis \(\{\mathbf{w}_1, \dots, \mathbf{w}_k\}\), extended by vectors \(\{\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}\) to a basis \(\mathcal{B}\) of \(V\), yielding \([T]_{\mathcal{B}} = \begin{bmatrix} A & B \\ 0 & C \end{bmatrix}\). What condition on \(U = \operatorname{span}\{\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}\) is BOTH necessary and sufficient for the off-diagonal block \(B\) to equal \(0\)?
+
+(A) \(T|_W\) is diagonalizable.
+(B) \(p_A(\lambda)\) and \(p_C(\lambda)\) have no roots in common.
+(C) \(U\) is also a \(T\)-invariant subspace (\(T(U) \subseteq U\)).
+(D) \(A\) and \(C\) are both invertible.
+(E) \(k = n - k\).
+[/QUESTION]
+
+=== SECTION 3: Universal consequences for all complex matrices ===
+
+Upper triangularization over \(\mathbb{C}\) is an extraordinarily powerful proof engine: whenever you want to prove an identity about eigenvalues, traces, determinants, or polynomials of an ARBITRARY complex matrix \(A \in M_n(\mathbb{C})\)—including defective matrices!—you can replace \(A\) by an upper-triangular matrix \(U = P^{-1} A P\) with eigenvalues \(\lambda_1, \dots, \lambda_n\) along its diagonal.
+
+Check how polynomials act on upper-triangular matrices! If \(U\) is upper triangular with diagonal entries \(\lambda_1, \dots, \lambda_n\), then multiplying two upper-triangular matrices produces another upper-triangular matrix whose diagonal entries are simply the products of the corresponding diagonal entries. By induction, for every integer \(k \ge 0\), \(U^k\) is upper triangular with diagonal entries \(\lambda_1^k, \dots, \lambda_n^k\). Taking any polynomial \(f(x) = c_0 + c_1 x + \dots + c_m x^m \in \mathbb{C}[x]\), the matrix \(f(U) = c_0 I_n + c_1 U + \dots + c_m U^m\) is STILL upper triangular, with diagonal entries
+\[
+f(\lambda_1),\; f(\lambda_2),\; \dots,\; f(\lambda_n).
+\]
+Now undo the similarity: because \((P^{-1} A P)^k = P^{-1} A^k P\) for every \(k \ge 0\), linearity gives
+\[
+f(U) = f(P^{-1} A P) = P^{-1} f(A) P.
+\]
+Since similar matrices have the exact same characteristic polynomial, we immediately obtain the universal polynomial-eigenvalue theorem—valid for EVERY complex matrix \(A\), defective or not!
+
+[CALLOUT]
+id: poly-eigenvalues
+label: Theorem
+title: Universal spectral mapping and trace/determinant identities over \(\mathbb{C}\)
+tone: key
+
+Let \(A \in M_n(\mathbb{C})\) have eigenvalues \(\lambda_1, \dots, \lambda_n \in \mathbb{C}\) (counted with algebraic multiplicity).
+
+(1) For EVERY polynomial \(f(x) \in \mathbb{C}[x]\), the eigenvalues of \(f(A)\) (counted with algebraic multiplicity) are \(f(\lambda_1), \dots, f(\lambda_n)\), so
+\[
+p_{f(A)}(\mu) = \prod_{i=1}^n \bigl(\mu - f(\lambda_i)\bigr).
+\]
+(2) Universally (without assuming diagonalizability),
+\[
+\operatorname{tr}(A) = \sum_{i=1}^n \lambda_i, \qquad \det(A) = \prod_{i=1}^n \lambda_i, \qquad \operatorname{tr}(f(A)) = \sum_{i=1}^n f(\lambda_i), \qquad \det(f(A)) = \prod_{i=1}^n f(\lambda_i).
+\]
+[/CALLOUT]
+
+Notice how [REF: poly-eigenvalues.1 | spectral mapping for polynomials] goes far beyond what eigenvectors alone can prove! From \(A\mathbf{v} = \lambda \mathbf{v}\) you can easily check \(f(A)\mathbf{v} = f(\lambda)\mathbf{v}\), which shows that every \(f(\lambda_i)\) is an eigenvalue of \(f(A)\)—but for a defective matrix, eigenvector calculations alone do NOT tell you the algebraic multiplicities of the eigenvalues of \(f(A)\), nor do they rule out extra eigenvalues of \(f(A)\) that might not come from eigenvectors of \(A\). Upper triangularization settles BOTH questions in three lines!
+
+[QUESTION 5]
+[ANSWER: A]
+Suppose \(A \in M_3(\mathbb{C})\) (NOT assumed diagonalizable) has characteristic polynomial \(p_A(\lambda) = (\lambda - 2)^2(\lambda + 1)\). What are \(\operatorname{tr}(A^2 - 3A + 4I_3)\) and \(\det(A^2 - 3A + 4I_3)\)?
+
+(A) \(\operatorname{tr} = 12\) and \(\det = 32\)
+(B) \(\operatorname{tr} = 10\) and \(\det = 16\)
+(C) \(\operatorname{tr} = 12\) and \(\det = -32\)
+(D) \(\operatorname{tr} = 8\) and \(\det = 16\)
+(E) Cannot be determined unless \(A\) is diagonalizable
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suppose \(A \in M_4(\mathbb{C})\) has eigenvalues \(1, 1, -2, 3\) (counted with algebraic multiplicity). What is \(\det(A^3 - A + 2I_4)\)?
+
+(A) \(-208\)
+(B) \(416\)
+(C) \(-104\)
+(D) \(-416\)
+(E) \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Let \(T : V \to V\) be ANY linear operator on a \(3\)-dimensional complex vector space \(V\) (possibly defective, with only a single \(1\)-dimensional eigenspace). Must \(T\) possess a \(2\)-dimensional \(T\)-invariant subspace?
+
+(A) No: if \(T\) has only one eigenline, then its only \(T\)-invariant subspaces are \(\{\mathbf{0}\}\), that eigenline, and \(V\).
+(B) Yes: in any basis \(\{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3\}\) in which \([T]_{\mathcal{B}}\) is upper triangular, \(\operatorname{span}\{\mathbf{v}_1, \mathbf{v}_2\}\) is a \(2\)-dimensional \(T\)-invariant subspace.
+(C) Yes, but ONLY when \(T\) is invertible.
+(D) No: a \(2\)-dimensional \(T\)-invariant subspace exists if and only if \(T\) has at least two distinct eigenvalues.
+(E) Yes, and every \(2\)-dimensional subspace containing an eigenvector of \(T\) is automatically \(T\)-invariant.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Suppose \(A, B \in M_n(\mathbb{C})\) are simultaneously upper-triangularizable: there exists an invertible matrix \(P \in M_n(\mathbb{C})\) such that BOTH \(P^{-1} A P\) and \(P^{-1} B P\) are upper triangular. What must be true about the eigenvalues of the commutator \(AB - BA\)?
+
+(A) They equal the differences \(\lambda_i - \mu_i\) of the eigenvalues of \(A\) and \(B\).
+(B) They are all equal to \(1\).
+(C) They sum to \(0\), but need not all vanish individually.
+(D) They are all purely imaginary.
+(E) Every eigenvalue of \(AB - BA\) is \(0\) (with algebraic multiplicity \(n\)).
+[/BONUS]

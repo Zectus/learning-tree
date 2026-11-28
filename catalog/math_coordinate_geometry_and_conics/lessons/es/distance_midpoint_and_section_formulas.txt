@@ -1,0 +1,325 @@
+=== SECTION 1: Medición de distancias en el plano coordenado ===
+
+Suponga que dos puntos de referencia en un mapa plano se encuentran en las coordenadas \(A(1, 2)\) y \(B(7, 10)\). Desplazarse estrictamente hacia el este a lo largo de la cuadrícula toma \(7 - 1 = 6\) unidades, y desplazarse estrictamente hacia el norte toma \(10 - 2 = 8\) unidades. Esos dos desplazamientos alineados con los ejes se leen directamente a partir de las coordenadas, pero ¿cuánto mide el segmento rectilíneo que une directamente a \(A\) con \(B\)?
+
+La jugada geométrica clave consiste en convertir el segmento diagonal \(AB\) en la hipotenusa de un triángulo rectángulo cuyos catetos sean paralelos a los ejes coordenados. Ubique un vértice auxiliar \(C(7, 2)\) que comparta la coordenada \(x\) de \(B\) y la coordenada \(y\) de \(A\). Como \(A\) y \(C\) tienen la misma coordenada \(y\), el segmento \(AC\) es horizontal y tiene longitud \(\lvert 7 - 1 \rvert = 6\). Como \(C\) y \(B\) tienen la misma coordenada \(x\), el segmento \(CB\) es vertical y tiene longitud \(\lvert 10 - 2 \rvert = 8\). Las rectas horizontales y verticales forman un ángulo recto al intersecarse, de modo que \(\triangle ACB\) tiene un ángulo recto en \(C\). Al aplicar el teorema de Pitágoras se obtiene
+\[
+AB = \sqrt{AC^2 + CB^2} = \sqrt{6^2 + 8^2} = \sqrt{36 + 64} = 10.
+\]
+
+[GRAPH]
+type: parametric2d
+title: Construcción del triángulo rectángulo para la distancia entre \(A(1, 2)\) y \(B(7, 10)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 9
+yrange: 0, 11.5
+trace: 1 + 6*t, 2 + 8*t | label: segmento \(AB\)
+segment: 1, 2, 7, 2 | label: \(\Delta x = 6\) | dashed: true
+segment: 7, 2, 7, 10 | label: \(\Delta y = 8\) | dashed: true
+point: 1, 2 | label: \(A(1, 2)\)
+point: 7, 10 | label: \(B(7, 10)\)
+point: 7, 2 | label: \(C(7, 2)\)
+[/GRAPH]
+
+Repita ahora exactamente la misma construcción para cualquier par de puntos \(P_1(x_1, y_1)\) y \(P_2(x_2, y_2)\) en el plano. Introduzca el vértice auxiliar \(R(x_2, y_1)\). El cateto horizontal \(P_1 R\) tiene longitud \(\lvert x_2 - x_1 \rvert\), y el cateto vertical \(R P_2\) tiene longitud \(\lvert y_2 - y_1 \rvert\). Por el teorema de Pitágoras, el cuadrado de la distancia es
+\[
+d(P_1, P_2)^2 = \lvert x_2 - x_1 \rvert^2 + \lvert y_2 - y_1 \rvert^2 = (x_2 - x_1)^2 + (y_2 - y_1)^2,
+\]
+ya que elevar al cuadrado cualquier número real elimina su signo. Al tomar la raíz cuadrada no negativa se obtiene la fórmula general de la distancia. Observe que también funciona sin inconvenientes en los casos degenerados en que el triángulo colapsa: si \(y_1 = y_2\) (segmento horizontal), se reduce a \(\sqrt{(x_2 - x_1)^2} = \lvert x_2 - x_1 \rvert\), y si \(x_1 = x_2\) (segmento vertical), se reduce a \(\lvert y_2 - y_1 \rvert\).
+
+[CALLOUT]
+id: distance-formula
+label: Fórmula
+title: Distancia euclidiana en el plano
+tone: key
+
+Para cualquier par de puntos \(P_1(x_1, y_1)\) y \(P_2(x_2, y_2)\) en el plano coordenado, la distancia \(d(P_1, P_2)\) entre ellos es
+\[
+d(P_1, P_2) = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}.
+\]
+Como \((x_1 - x_2)^2 = (x_2 - x_1)^2\) y \((y_1 - y_2)^2 = (y_2 - y_1)^2\), el orden de los dos puntos no altera el resultado: \(d(P_1, P_2) = d(P_2, P_1)\).
+[/CALLOUT]
+
+El cálculo de distancias permite clasificar de inmediato configuraciones geométricas comparando longitudes de lados. Para un triángulo \(\triangle DEF\), calcular los tres cuadrados de las longitudes \(DE^2\), \(EF^2\) y \(DF^2\) evita arrastrar raíces cuadradas innecesariamente:
+- Según sus lados: escaleno si los tres son distintos, isósceles si al menos dos son iguales y equilátero si los tres son iguales.
+- Según sus ángulos (recíproco del teorema de Pitágoras): si \(c^2\) es el mayor cuadrado de lado y \(a^2, b^2\) son los otros dos, el triángulo es rectángulo precisamente cuando \(a^2 + b^2 = c^2\) (con el ángulo recto opuesto al lado mayor).
+
+Por ejemplo, considere \(D(-2, 1)\), \(E(2, 4)\) y \(F(5, 0)\). Usando [REF: distance-formula | la fórmula de la distancia] en forma cuadrática:
+\[
+DE^2 = (2 - (-2))^2 + (4 - 1)^2 = 16 + 9 = 25,
+\]
+\[
+EF^2 = (5 - 2)^2 + (0 - 4)^2 = 9 + 16 = 25,
+\]
+\[
+DF^2 = (5 - (-2))^2 + (0 - 1)^2 = 49 + 1 = 50.
+\]
+Como \(DE = EF = 5\) y \(DE^2 + EF^2 = 25 + 25 = 50 = DF^2\), \(\triangle DEF\) es un triángulo rectángulo isósceles con su ángulo recto en \(E\).
+
+Las distancias también permiten comprobar colinealidad. Por la desigualdad triangular, tres puntos \(U\), \(V\) y \(W\) pertenecen a una misma línea recta si y solo si las dos distancias entre pares más cortas suman la distancia más larga. Por ejemplo, tome \(U(-1, 3)\), \(V(2, 5)\) y \(W(8, 9)\):
+\[
+UV = \sqrt{3^2 + 2^2} = \sqrt{13}, \qquad VW = \sqrt{6^2 + 4^2} = \sqrt{52} = 2\sqrt{13},
+\]
+\[
+UW = \sqrt{9^2 + 6^2} = \sqrt{117} = 3\sqrt{13}.
+\]
+Dado que \(UV + VW = \sqrt{13} + 2\sqrt{13} = 3\sqrt{13} = UW\), los tres puntos son colineales y \(V\) se encuentra estrictamente entre \(U\) y \(W\).
+
+[QUESTION 1]
+[ANSWER: B]
+Considere el triángulo con vértices \(P(0, -1)\), \(Q(4, 1)\) y \(R(1, 7)\). ¿Cuál clasificación describe con precisión a \(\triangle PQR\)?
+
+(A) Triángulo rectángulo isósceles con ángulo recto en \(Q\)
+(B) Triángulo rectángulo escaleno con ángulo recto en \(Q\)
+(C) Triángulo rectángulo escaleno con ángulo recto en \(P\)
+(D) Triángulo isósceles no rectángulo
+(E) Triángulo escaleno no rectángulo
+[/QUESTION]
+
+=== SECTION 2: Puntos medios y clasificación de cuadriláteros ===
+
+Suponga que deseamos hallar el punto medio exacto \(M(x_M, y_M)\) del segmento que une \(P_1(x_1, y_1)\) y \(P_2(x_2, y_2)\), es decir, el punto \(M\) sobre el segmento \(P_1 P_2\) tal que \(P_1 M = M P_2\). Trace segmentos horizontales y verticales para formar dos triángulos rectángulos: uno con hipotenusa \(P_1 M\) y catetos paralelos a los ejes, y un segundo con hipotenusa \(M P_2\) y catetos paralelos a los ejes. Como \(P_1\), \(M\) y \(P_2\) son colineales, los ángulos agudos correspondientes de estos dos triángulos rectángulos son iguales; dado que sus hipotenusas \(P_1 M\) y \(M P_2\) también tienen igual longitud, ambos triángulos rectángulos son congruentes.
+
+La congruencia obliga a que sus desplazamientos horizontales con signo y sus desplazamientos verticales con signo coincidan:
+\[
+x_M - x_1 = x_2 - x_M \implies 2x_M = x_1 + x_2 \implies x_M = \frac{x_1 + x_2}{2},
+\]
+y de manera idéntica,
+\[
+y_M - y_1 = y_2 - y_M \implies 2y_M = y_1 + y_2 \implies y_M = \frac{y_1 + y_2}{2}.
+\]
+Cada coordenada del punto medio es simplemente la media aritmética de las coordenadas correspondientes de los extremos.
+
+[CALLOUT]
+id: midpoint-formula
+label: Fórmula
+title: Punto medio de un segmento de recta
+tone: key
+
+El punto medio \(M\) del segmento con extremos \(P_1(x_1, y_1)\) y \(P_2(x_2, y_2)\) es
+\[
+M = \left(\frac{x_1 + x_2}{2},\; \frac{y_1 + y_2}{2}\right).
+\]
+[/CALLOUT]
+
+La fórmula del punto medio también funciona en sentido inverso: dados un extremo y el punto medio, resolvemos dos ecuaciones lineales para encontrar el extremo faltante. Suponga que el segmento \(AB\) tiene extremo \(A(-3, 5)\) y punto medio \(M(2, -1)\). Escribiendo \(B = (x_B, y_B)\), [REF: midpoint-formula | la fórmula del punto medio] da
+\[
+\frac{-3 + x_B}{2} = 2 \implies -3 + x_B = 4 \implies x_B = 7,
+\]
+\[
+\frac{5 + y_B}{2} = -1 \implies 5 + y_B = -2 \implies y_B = -7.
+\]
+Así, \(B = (7, -7)\). Una verificación rápida confirma que el paso de \(A\) a \(M\) es \((+5, -6)\), y repetir \((+5, -6)\) desde \(M(2, -1)\) cae directamente en \((7, -7)\).
+
+Combinar [REF: distance-formula | distancias] y [REF: midpoint-formula | puntos medios] proporciona una caja de herramientas limpia en coordenadas para clasificar cualquier cuadrilátero \(ABCD\) (con los vértices listados en orden alrededor del borde, de modo que sus diagonales son \(AC\) y \(BD\)).
+
+[TABLE]
+Tipo de cuadrilátero | Criterio en coordenadas mediante puntos medios y distancias
+Paralelogramo | Las diagonales \(AC\) y \(BD\) tienen el mismo punto medio (equivalentemente, \(AB = CD\) y \(BC = DA\) para un cuadrilátero convexo)
+Rectángulo | Paralelogramo con diagonales de igual longitud, \(AC = BD\)
+Rombo | Los cuatro lados tienen igual longitud, \(AB = BC = CD = DA\)
+Cuadrado | A la vez rombo y rectángulo: los cuatro lados iguales y \(AC = BD\)
+[/TABLE]
+
+Por ejemplo, analice el cuadrilátero con vértices consecutivos \(A(1, 1)\), \(B(5, 3)\), \(C(3, 7)\) y \(D(-1, 5)\). Primero verifique los puntos medios de las diagonales:
+\[
+M_{AC} = \left(\frac{1 + 3}{2}, \frac{1 + 7}{2}\right) = (2, 4), \qquad M_{BD} = \left(\frac{5 + (-1)}{2}, \frac{3 + 5}{2}\right) = (2, 4).
+\]
+Como las diagonales se bisecan mutuamente, \(ABCD\) es un paralelogramo. A continuación compare las longitudes de los lados:
+\[
+AB^2 = 4^2 + 2^2 = 20, \qquad BC^2 = (-2)^2 + 4^2 = 20, \qquad CD^2 = (-4)^2 + (-2)^2 = 20, \qquad DA^2 = 2^2 + (-4)^2 = 20.
+\]
+Los cuatro lados miden \(\sqrt{20}\), por lo que \(ABCD\) es un rombo. Finalmente verifique las longitudes de las diagonales:
+\[
+AC^2 = (3 - 1)^2 + (7 - 1)^2 = 4 + 36 = 40, \qquad BD^2 = (-1 - 5)^2 + (5 - 3)^2 = 36 + 4 = 40.
+\]
+Como \(AC = BD = \sqrt{40}\), \(ABCD\) también es un rectángulo y, por lo tanto, un cuadrado.
+
+[QUESTION 2]
+[ANSWER: D]
+Los puntos \(A(-2, 3)\), \(B(4, 1)\) y \(C(6, 5)\) son tres vértices consecutivos de un paralelogramo \(ABCD\). ¿Cuáles son las coordenadas del vértice \(D\) y cuál es la clasificación más específica de \(ABCD\)?
+
+(A) \(D(12, 3)\), y \(ABCD\) es un paralelogramo que no es rectángulo ni rombo
+(B) \(D(0, 7)\), y \(ABCD\) es un rectángulo
+(C) \(D(0, 7)\), y \(ABCD\) es un rombo
+(D) \(D(0, 7)\), y \(ABCD\) es un paralelogramo que no es rectángulo ni rombo
+(E) \(D(-4, -1)\), y \(ABCD\) es un rectángulo
+[/QUESTION]
+
+=== SECTION 3: División dirigida de un segmento y fórmula de la razón ===
+
+El punto medio divide un segmento en dos mitades iguales, una razón \(1 : 1\). De forma más general, suponga que recorremos el segmento dirigido desde \(P_1(x_1, y_1)\) hasta \(P_2(x_2, y_2)\) y buscamos el punto interior \(P(x, y)\) que divide a \(P_1 P_2\) en la razón \(m : n\) (con \(m > 0\) y \(n > 0\)), lo que significa
+\[
+\frac{P_1 P}{P P_2} = \frac{m}{n}.
+\]
+La expresión «de \(P_1\) a \(P_2\) en la razón \(m : n\)» asigna la parte de longitud relativa \(m\) a \(P_1 P\) (junto a \(P_1\)) y la parte de longitud relativa \(n\) a \(P P_2\) (junto a \(P_2\)).
+
+Para hallar \(x\) e \(y\), construya los mismos dos triángulos rectángulos alineados con los ejes que en la deducción del punto medio: uno con hipotenusa \(P_1 P\) y otro con hipotenusa \(P P_2\). Como \(P_1\), \(P\) y \(P_2\) son colineales, estos dos triángulos rectángulos tienen ángulos correspondientes iguales y, por lo tanto, son semejantes con factor de escala \(m : n\). Al igualar la razón de sus catetos horizontales con signo se obtiene
+\[
+\frac{x - x_1}{x_2 - x} = \frac{m}{n}.
+\]
+Multiplicando en cruz y agrupando los términos en \(x\):
+\[
+n(x - x_1) = m(x_2 - x) \implies n x - n x_1 = m x_2 - m x \implies (m + n)x = n x_1 + m x_2,
+\]
+y al dividir entre \(m + n\) resulta
+\[
+x = \frac{n x_1 + m x_2}{m + n}.
+\]
+La misma semejanza en los catetos verticales da \(y = \frac{n y_1 + m y_2}{m + n}\).
+
+[CALLOUT]
+id: section-formula
+label: Fórmula
+title: Fórmula de división interna de un segmento
+tone: key
+
+El punto \(P(x, y)\) que divide internamente el segmento dirigido de \(P_1(x_1, y_1)\) a \(P_2(x_2, y_2)\) en la razón \(P_1 P : P P_2 = m : n\) (con \(m, n > 0\)) es
+\[
+P = \left(\frac{n x_1 + m x_2}{m + n},\; \frac{n y_1 + m y_2}{m + n}\right).
+\]
+De manera equivalente, escribiendo \(r = \frac{m}{m + n} \in (0, 1)\) para la fracción del recorrido completada desde \(P_1\) hacia \(P_2\),
+\[
+P = \bigl(x_1 + r(x_2 - x_1),\; y_1 + r(y_2 - y_1)\bigr).
+\]
+[/CALLOUT]
+
+Observe que al fijar \(m = n = 1\) se recupera de inmediato [REF: midpoint-formula | la fórmula del punto medio]. La forma fraccionaria \(x_1 + \frac{m}{m+n}(x_2 - x_1) = (1 - r)x_1 + r x_2\) también vuelve completamente intuitiva la ponderación: si \(m\) es mayor que \(n\), entonces \(P\) ha recorrido más de la mitad del camino de \(P_1\) a \(P_2\), por lo que \(P\) queda más cerca de \(P_2\) y debe ponderar a \(P_2\) con mayor peso que a \(P_1\).
+
+[CALLOUT]
+id: section-order-trap
+label: Error frecuente
+title: Asociar los pesos de la razón con los extremos equivocados
+tone: caution
+
+Un error habitual consiste en escribir \(\frac{m x_1 + n x_2}{m + n}\) en lugar de \(\frac{n x_1 + m x_2}{m + n}\). Recuerde el emparejamiento cruzado: \(m\) (la parte contigua a \(P_1\)) multiplica al extremo opuesto \(P_2\), y \(n\) (la parte contigua a \(P_2\)) multiplica a \(P_1\). Verifique siempre visualmente de qué extremo debe quedar más cerca \(P\) antes de dar su respuesta definitiva.
+[/CALLOUT]
+
+Arrastre el deslizador \(r = \frac{m}{m+n}\) abajo para observar cómo \(P\) se desplaza desde \(P_1(-2, 1)\) hacia \(P_2(6, 5)\) mientras los catetos horizontal y vertical se escalan exactamente por la misma fracción \(r\).
+
+[GRAPH]
+type: parametric2d
+title: División dirigida del segmento \(P = (1 - r)P_1 + r P_2\) con deslizador \(r = m/(m+n)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -3, 7
+yrange: 0, 6
+trace: -2 + 8*t, 1 + 4*t | label: segmento \(P_1 P_2\)
+segment: -2, 1, -2 + 8*r, 1 | dashed: true
+segment: -2 + 8*r, 1, -2 + 8*r, 1 + 4*r | dashed: true
+segment: -2 + 8*r, 1 + 4*r, 6, 1 + 4*r | dashed: true
+segment: 6, 1 + 4*r, 6, 5 | dashed: true
+point: -2, 1 | label: \(P_1(-2, 1)\)
+point: 6, 5 | label: \(P_2(6, 5)\)
+point: -2 + 8*r, 1 + 4*r | label: \(P\)
+slider: r | range: 0.05, 0.95 | init: 0.25 | step: 0.05
+[/GRAPH]
+
+Apliquemos [REF: section-formula | la fórmula de división] a un ejemplo concreto. Halle el punto \(P\) que divide internamente el segmento dirigido de \(A(-4, 2)\) a \(B(6, 7)\) en la razón \(AP : PB = 2 : 3\). Aquí \(m = 2\) y \(n = 3\), de modo que \(P\) queda más cerca de \(A\) (a dos quintos del trayecto desde \(A\) hasta \(B\)):
+\[
+x = \frac{3(-4) + 2(6)}{2 + 3} = \frac{-12 + 12}{5} = 0, \qquad y = \frac{3(2) + 2(7)}{2 + 3} = \frac{6 + 14}{5} = 4.
+\]
+Así, \(P = (0, 4)\). Al comprobar con [REF: distance-formula | la fórmula de la distancia]: \(AP = \sqrt{4^2 + 2^2} = 2\sqrt{5}\) y \(PB = \sqrt{6^2 + 3^2} = 3\sqrt{5}\), lo que confirma \(AP : PB = 2 : 3\).
+
+Al igual que con los puntos medios, la fórmula de división también recupera un extremo desconocido cuando se conocen el punto de división y la razón. Por ejemplo, si \(Q(3, 1)\) divide al segmento de \(A(1, -3)\) a \(B(x_B, y_B)\) en la razón \(AQ : QB = 1 : 2\), entonces \(m = 1\) y \(n = 2\), lo cual da
+\[
+3 = \frac{2(1) + 1 \cdot x_B}{3} \implies x_B = 7, \qquad 1 = \frac{2(-3) + 1 \cdot y_B}{3} \implies y_B = 9,
+\]
+de modo que \(B = (7, 9)\).
+
+[QUESTION 3]
+[ANSWER: C]
+El punto \(P(5, -1)\) divide internamente el segmento dirigido de \(A(-1, 8)\) a \(B\) en la razón \(AP : PB = 3 : 2\). ¿Cuáles son las coordenadas de \(B\)?
+
+(A) \((14, -\frac{29}{2})\)
+(B) \((11, -10)\)
+(C) \((9, -7)\)
+(D) \((7, -4)\)
+(E) \((3, 2)\)
+[/QUESTION]
+
+=== SECTION 4: Traducción de lugares geométricos equidistantes a ecuaciones ===
+
+Hasta ahora hemos analizado puntos y segmentos fijos. La geometría de coordenadas se vuelve mucho más poderosa cuando describimos todo un conjunto geométrico de puntos —denominado lugar geométrico— mediante una ecuación algebraica que sus coordenadas \((x, y)\) deben satisfacer.
+
+Considere la condición clásica de equidistancia: ¿cuál es el conjunto de todos los puntos \(P(x, y)\) que se encuentran a la misma distancia de \(A(1, 2)\) y de \(B(5, 4)\)? Traduzca directamente la condición geométrica \(PA = PB\) usando [REF: distance-formula | la fórmula de la distancia]:
+\[
+\sqrt{(x - 1)^2 + (y - 2)^2} = \sqrt{(x - 5)^2 + (y - 4)^2}.
+\]
+Dado que ambos miembros representan distancias no negativas, elevar al cuadrado ambos lados produce una ecuación equivalente sin soluciones extrañas:
+\[
+(x - 1)^2 + (y - 2)^2 = (x - 5)^2 + (y - 4)^2.
+\]
+Desarrolle ambos miembros:
+\[
+x^2 - 2x + 1 + y^2 - 4y + 4 = x^2 - 10x + 25 + y^2 - 8y + 16.
+\]
+Note la cancelación crucial: \(x^2\) e \(y^2\) aparecen exactamente con el mismo coeficiente \(1\) en ambos lados, de modo que se cancelan por completo y dejan una relación lineal:
+\[
+8x + 4y = 36 \implies 2x + y = 9, \quad \text{o} \quad y = 9 - 2x.
+\]
+Verifique el punto medio de \(AB\), que es \(M(3, 3)\): \(2(3) + 3 = 9\), así que \(M\) pertenece a esta recta. Escoja otro punto de la recta, digamos \(P(2, 5)\): \(PA = \sqrt{(2 - 1)^2 + (5 - 2)^2} = \sqrt{10}\) y \(PB = \sqrt{(2 - 5)^2 + (5 - 4)^2} = \sqrt{10}\). Geométricamente, el lugar geométrico de los puntos equidistantes de dos puntos distintos es la mediatriz del segmento \(AB\).
+
+[GRAPH]
+type: function2d
+aspect: equal
+title: Lugar geométrico equidistante \(2x + y = 9\) de \(A(1, 2)\) y \(B(5, 4)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1, 7
+yrange: -1, 7
+trace: 9 - 2*x | label: \(2x + y = 9\)
+segment: 1, 2, 5, 4 | label: \(AB\)
+segment: 1, 2, 2, 5 | dashed: true
+segment: 5, 4, 2, 5 | dashed: true
+point: 1, 2 | label: \(A(1, 2)\)
+point: 5, 4 | label: \(B(5, 4)\)
+point: 3, 3 | label: \(M(3, 3)\)
+point: 2, 5 | label: \(P(2, 5)\)
+[/GRAPH]
+
+Compare esto con un lugar geométrico de distancias desiguales para apreciar por qué la cancelación de \(x^2\) e \(y^2\) fue especial. Suponga en cambio que buscamos todos los puntos \(P(x, y)\) cuya distancia a \(A(0, 0)\) es el doble de su distancia a \(B(3, 0)\), es decir, \(PA = 2 PB\). Al elevar al cuadrado se obtiene \(PA^2 = 4 PB^2\):
+\[
+x^2 + y^2 = 4\bigl((x - 3)^2 + y^2\bigr) = 4x^2 - 24x + 36 + 4y^2.
+\]
+Agrupando términos queda
+\[
+3x^2 + 3y^2 - 24x + 36 = 0 \implies x^2 + y^2 - 8x + 12 = 0.
+\]
+Aquí los términos cuadráticos no se cancelan: como la razón de distancias es \(2 : 1\) y no \(1 : 1\), el lugar geométrico no es una recta (de hecho, es una circunferencia, que estudiaremos en una lección posterior). En ambos casos, traducir la condición geométrica de distancia a una ecuación en \(x\) e \(y\) convierte la geometría en álgebra de manera limpia y reversible.
+
+[QUESTION 4]
+[ANSWER: A]
+¿Cuál ecuación describe el conjunto de todos los puntos \(P(x, y)\) equidistantes de \(A(-2, 5)\) y \(B(4, -1)\)?
+
+(A) \(x - y + 1 = 0\)
+(B) \(x + y - 3 = 0\)
+(C) \(x - y - 1 = 0\)
+(D) \(x + y + 1 = 0\)
+(E) \(x - 2y + 3 = 0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Los puntos \(A(1, 2)\), \(B(4, k)\) y \(C(10, 14)\) son colineales y \(B\) se encuentra entre \(A\) y \(C\). ¿Cuáles son el valor de \(k\) y la razón \(AB : BC\)?
+
+(A) \(k = 8\) y \(AB : BC = 1 : 2\)
+(B) \(k = 6\) y \(AB : BC = 2 : 1\)
+(C) \(k = 10\) y \(AB : BC = 2 : 1\)
+(D) \(k = 6\) y \(AB : BC = 1 : 2\)
+(E) \(k = 5\) y \(AB : BC = 1 : 3\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Un punto \(P\) sobre el eje \(x\) es equidistante de \(A(-1, 4)\) y \(B(5, 2)\). ¿Cuáles son las coordenadas de \(P\) y la distancia común \(PA\)?
+
+(A) \(P(2, 0)\) y \(PA = 5\)
+(B) \(P(1, 0)\) y \(PA = 2\sqrt{5}\)
+(C) \(P(1, 0)\) y \(PA = \sqrt{20} + 1\)
+(D) \(P(-1, 0)\) y \(PA = 4\)
+(E) \(P(3, 0)\) y \(PA = 4\sqrt{2}\)
+[/BONUS]

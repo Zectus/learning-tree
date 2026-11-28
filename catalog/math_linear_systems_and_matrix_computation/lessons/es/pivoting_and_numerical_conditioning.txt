@@ -1,0 +1,257 @@
+=== SECTION 1: Cómo falla el álgebra exacta en precisión finita ===
+
+En aritmética exacta, la eliminación gaussiana solo requiere un intercambio de filas cuando un pivote es literalmente \(0\). En una computadora real —que almacena cada número con una cantidad fija de cifras significativas (como \(7\) cifras decimales en precisión simple o alrededor de \(16\) en doble precisión)—, ¡un pivote no nulo DIMINUTO puede ser mucho más peligroso que un pivote cero! Un pivote cero detiene el algoritmo ruidosamente; un pivote diminuto destruye en silencio cada dígito de la respuesta.
+
+Observe cómo ocurre esta catástrofe en aritmética con redondeo a \(3\) cifras significativas sobre un sistema \(2 \times 2\) completamente ordinario y bien comportado:
+\[
+\begin{bmatrix} 0.0001 & 1 \\ 1 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}.
+\]
+Primero halle la solución EXACTA para comparar. Restar \(10000\) veces la fila \(1\) de la fila \(2\) produce \(-9999 x_2 = -9998\), de modo que
+\[
+x_2 = \frac{9998}{9999} \approx 0.999900, \qquad
+x_1 = \frac{1 - x_2}{0.0001} = \frac{10000}{9999} \approx 1.000100.
+\]
+Redondeada a \(3\) cifras significativas, la respuesta verdadera es \((x_1, x_2) = (1.00, 1.00)\).
+
+Ahora ejecute la eliminación gaussiana SIN pivoteo, redondeando el resultado de CADA operación aritmética a \(3\) cifras significativas (modelo estándar de punto flotante):
+1. Multiplicador: \(l_{21} = 1 / 0.0001 = 10000 = 1.00 \times 10^4\).
+2. Actualizar la entrada \((2, 2)\): \(1 - 10000(1) = -9999 \xrightarrow{\text{3 cifras sig.}} -1.00 \times 10^4\).
+3. Actualizar el lado derecho \(b_2\): \(2 - 10000(1) = -9998 \xrightarrow{\text{3 cifras sig.}} -1.00 \times 10^4\).
+El sistema reducido en aritmética de \(3\) cifras es
+\[
+\begin{bmatrix} 0.0001 & 1.00 \\ 0 & -1.00 \times 10^4 \end{bmatrix} \begin{bmatrix} \hat{x}_1 \\ \hat{x}_2 \end{bmatrix} = \begin{bmatrix} 1.00 \\ -1.00 \times 10^4 \end{bmatrix}.
+\]
+4. Sustitución hacia atrás:
+- De la fila \(2\): \(\hat{x}_2 = (-1.00 \times 10^4) / (-1.00 \times 10^4) = 1.00\).
+- De la fila \(1\): \(0.0001 \hat{x}_1 + 1.00(1.00) = 1.00 \implies 0.0001 \hat{x}_1 = 0.00 \implies \hat{x}_1 = 0.00\)!
+
+Mire ese desastre: \(\hat{x}_1 = 0.00\) en lugar de \(1.00\) —¡un \(100\%\) de error!—. Observe el mecanismo exacto que borró la respuesta: dividir por el pivote diminuto \(0.0001\) creó un multiplicador enorme \(l_{21} = 10^4\). Cuando \(1 - 10^4\) y \(2 - 10^4\) se redondearon a \(3\) cifras, los números \(1\) y \(2\) de la segunda ecuación quedaron completamente absorbidos y borrados, ¡dejando a la fila \(2\) con cero información sobre la ecuación original \(x_1 + x_2 = 2\)!
+
+Ahora resuelva EXACTAMENTE el mismo sistema en EXACTAMENTE la misma aritmética de \(3\) cifras significativas, salvo intercambiando primero las filas \(1\) y \(2\) para que la entrada mayor \(1\) se convierta en el pivote:
+\[
+\begin{bmatrix} 1 & 1 \\ 0.0001 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 2 \\ 1 \end{bmatrix}.
+\]
+1. Multiplicador: \(l_{21} = 0.0001 / 1 = 0.0001\) (¡diminuto!).
+2. Actualizar la entrada \((2, 2)\): \(1 - 0.0001(1) = 0.9999 \xrightarrow{\text{3 cifras sig.}} 1.00\).
+3. Actualizar \(b_2\): \(1 - 0.0001(2) = 0.9998 \xrightarrow{\text{3 cifras sig.}} 1.00\).
+4. Sustitución hacia atrás: \(\hat{x}_2 = 1.00 / 1.00 = 1.00\), ¡y \(\hat{x}_1 = 2.00 - 1.00 = 1.00\)!
+
+¡Ahora cada una de las cifras significativas es exacta! Simplemente intercambiar filas antes de eliminar impidió el multiplicador enorme y salvó el cálculo.
+
+[QUESTION 1]
+[ANSWER: C]
+Considere el sistema
+\[
+\begin{bmatrix} 0.0002 & 1 \\ 1 & 2 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 1 \\ 4 \end{bmatrix},
+\]
+cuya solución exacta redondeada a \(3\) cifras significativas es \((2.00, 1.00)\). Usando aritmética con redondeo a \(3\) cifras significativas después de cada operación, ¿qué pares calculados \((\hat{x}_1, \hat{x}_2)\) se obtienen SIN pivoteo frente a CON un intercambio de filas \(R_1 \leftrightarrow R_2\)?
+
+(A) Sin pivoteo: \((2.00, 1.00)\); con intercambio: \((2.00, 1.00)\)
+(B) Sin pivoteo: \((0.00, 2.00)\); con intercambio: \((2.00, 1.00)\)
+(C) Sin pivoteo: \((0.00, 1.00)\); con intercambio: \((2.00, 1.00)\)
+(D) Sin pivoteo: \((1.00, 0.00)\); con intercambio: \((1.00, 2.00)\)
+(E) Sin pivoteo: \((0.00, 0.00)\); con intercambio: \((2.00, 1.00)\)
+[/QUESTION]
+
+=== SECTION 2: Pivoteo parcial y pivoteo parcial escalado en \(PA = LU\) ===
+
+En la lección de \(PA = LU\), intercambiamos filas únicamente cuando un pivote era \(0\). Para evitar que multiplicadores grandes destruyan cifras en precisión finita, los algoritmos numéricos estándar SIEMPRE pivotean —¡incluso cuando la entrada diagonal actual es no nula!—.
+
+[CALLOUT]
+id: partial-pivoting-def
+label: Método
+title: Pivoteo parcial y pivoteo parcial escalado
+tone: key
+
+En el paso de eliminación \(k\) (despejando la columna \(k\) debajo de la fila \(k\)):
+
+(1) Pivoteo parcial: examine las entradas \(a_{ik}\) en la columna \(k\) para \(i = k, k+1, \dots, m\) y elija una fila pivote \(p \ge k\) que maximice el valor absoluto \(\lvert a_{ik} \rvert\). Intercambie la fila \(k\) y la fila \(p\) (actualizando \(U\), \(P\) y las entradas ya registradas en las columnas \(1, \dots, k - 1\) de \(L\)). Como \(\lvert a_{ik} \rvert \le \lvert a_{pk} \rvert\) para todo \(i > k\), todo multiplicador satisface
+\[
+\lvert l_{ik} \rvert = \frac{\lvert a_{ik} \rvert}{\lvert a_{pk} \rvert} \le 1.
+\]
+
+(2) Pivoteo parcial escalado: calcule primero el factor de escala de cada fila \(s_i = \max_{1 \le j \le n} \lvert a_{ij} \rvert\) (la mayor magnitud en la fila \(i\) de la matriz original \(A\)). En el paso \(k\), elija la fila \(p \ge k\) que maximice la razón relativa \(\lvert a_{ik} \rvert / s_i\) (comparando cada pivote candidato contra el tamaño de su propia fila), e intercambie las filas \(k\) y \(p\) (junto con sus factores de escala \(s_k\) y \(s_p\)).
+[/CALLOUT]
+
+Ejecutemos \(PA = LU\) con [REF: partial-pivoting-def.1 | pivoteo parcial] en una matriz concreta \(3 \times 3\):
+\[
+A = \begin{bmatrix} 1 & 2 & 1 \\ -4 & 1 & 2 \\ 2 & -3 & 5 \end{bmatrix}.
+\]
+Comience con \(P = I_3\) y \(L\) triangular inferior unitaria con entradas subdiagonales en blanco.
+- Paso 1 (columna \(1\)): compare las magnitudes \(\lvert 1 \rvert = 1\), \(\lvert -4 \rvert = 4\), \(\lvert 2 \rvert = 2\). La mayor es \(4\) en la fila \(2\), así que intercambie \(R_1 \leftrightarrow R_2\) tanto en la matriz de trabajo como en \(P\):
+\[
+\begin{bmatrix} -4 & 1 & 2 \\ 1 & 2 & 1 \\ 2 & -3 & 5 \end{bmatrix}, \qquad
+P^{(1)} = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+Multiplicadores: \(l_{21} = 1 / (-4) = -0.25\) y \(l_{31} = 2 / (-4) = -0.5\) (¡ambos tienen magnitud \(\le 1\)!). Aplique \(R_2 \leftarrow R_2 + 0.25 R_1\) y \(R_3 \leftarrow R_3 + 0.5 R_1\):
+\[
+U^{(1)} = \begin{bmatrix} -4 & 1 & 2 \\ 0 & 2.25 & 1.5 \\ 0 & -2.5 & 6 \end{bmatrix}, \qquad
+\text{col. 1 de } L: \begin{bmatrix} 1 & 0 & 0 \\ -0.25 & 1 & 0 \\ -0.5 & * & 1 \end{bmatrix}.
+\]
+- Paso 2 (columna \(2\), filas \(2\)–\(3\)): compare las magnitudes \(\lvert 2.25 \rvert = 2.25\) y \(\lvert -2.5 \rvert = 2.5\). La mayor es \(2.5\) en la fila \(3\), así que intercambie \(R_2 \leftrightarrow R_3\) en \(U^{(1)}\), en \(P^{(1)}\) Y en la columna \(1\) de \(L\) (¡intercambiando \(-0.25\) y \(-0.5\) mientras deja intactos los \(1\)'s de la diagonal!):
+\[
+\begin{bmatrix} -4 & 1 & 2 \\ 0 & -2.5 & 6 \\ 0 & 2.25 & 1.5 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{bmatrix}, \qquad
+\text{col. 1 de } L: \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ -0.25 & * & 1 \end{bmatrix}.
+\]
+Ahora calcule \(l_{32} = 2.25 / (-2.5) = -0.9\) (¡nuevamente \(\lvert l_{32} \rvert \le 1\)!) y aplique \(R_3 \leftarrow R_3 + 0.9 R_2\):
+\[
+U = \begin{bmatrix} -4 & 1 & 2 \\ 0 & -2.5 & 6 \\ 0 & 0 & 6.9 \end{bmatrix}, \qquad
+L = \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ -0.25 & -0.9 & 1 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{bmatrix}.
+\]
+Verifique \(LU = PA\): la fila \(1\) de \(LU\) es \(\begin{bmatrix} -4 & 1 & 2 \end{bmatrix} = R_2(A)\); la fila \(2\) es \((-0.5)\begin{bmatrix} -4 & 1 & 2 \end{bmatrix} + \begin{bmatrix} 0 & -2.5 & 6 \end{bmatrix} = \begin{bmatrix} 2 & -3 & 5 \end{bmatrix} = R_3(A)\); la fila \(3\) es \((-0.25)\begin{bmatrix} -4 & 1 & 2 \end{bmatrix} + (-0.9)\begin{bmatrix} 0 & -2.5 & 6 \end{bmatrix} + \begin{bmatrix} 0 & 0 & 6.9 \end{bmatrix} = \begin{bmatrix} 1 & 2 & 1 \end{bmatrix} = R_1(A)\). ¡Exacto!
+
+¿Por qué existe [REF: partial-pivoting-def.2 | el pivoteo parcial escalado] si el pivoteo parcial simple ya garantiza \(\lvert l_{ik} \rvert \le 1\)? ¡Porque el escalamiento de filas puede ENGAÑAR al pivoteo parcial simple! Tome nuestro sistema de la Sección 1 y simplemente multiplique la ecuación \(1\) por \(10^5\) (cambiando unidades, digamos de metros a \(10^{-5}\) metros):
+\[
+\begin{bmatrix} 10 & 10^5 \\ 1 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 10^5 \\ 2 \end{bmatrix}.
+\]
+El pivoteo parcial simple compara \(\lvert 10 \rvert = 10\) contra \(\lvert 1 \rvert = 1\), decide que \(10 > 1\), NO intercambia, usa el multiplicador \(l_{21} = 0.1 \le 1\) —y AÚN ASÍ sufre exactamente la misma catástrofe en aritmética de \(3\) cifras: \(u_{22} = \operatorname{fl}(1 - 0.1 \cdot 10^5) = -1.00 \times 10^4\), \(\tilde{b}_2 = \operatorname{fl}(2 - 0.1 \cdot 10^5) = -1.00 \times 10^4\), produciendo \(\hat{x}_2 = 1.00\) y \(\hat{x}_1 = 0.00\)—. ¡Aunque \(\lvert l_{21} \rvert = 0.1\) parecía pequeño, la entrada \(10\) SEGUÍA siendo diminuta respecto a \(10^5\) en su propia fila!
+
+Aplique ahora el pivoteo parcial escalado:
+- Escalas de fila: \(s_1 = \max(10, 10^5) = 10^5\), \(s_2 = \max(1, 1) = 1\).
+- Razones relativas en la columna \(1\):
+\[
+\text{Fila 1: } \frac{\lvert 10 \rvert}{10^5} = 10^{-4}, \qquad
+\text{Fila 2: } \frac{\lvert 1 \rvert}{1} = 1.
+\]
+Como \(1 > 10^{-4}\), el pivoteo parcial escalado ve de inmediato que la entrada de la fila \(1\) es diminuta en la escala de su propia fila, intercambia \(R_1 \leftrightarrow R_2\) y recupera \((\hat{x}_1, \hat{x}_2) = (1.00, 1.00)\) con exactitud.
+
+[QUESTION 2]
+[ANSWER: D]
+Aplique eliminación gaussiana con pivoteo parcial simple a
+\[
+A = \begin{bmatrix} 2 & 2 & 5 \\ -1 & 3 & 3 \\ -4 & 4 & 8 \end{bmatrix}
+\]
+para obtener \(PA = LU\) (con \(L\) triangular inferior unitaria). ¿Cuáles son la matriz de permutación \(P\) y el factor triangular inferior \(L\)?
+
+(A) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ 0.25 & 1 & 0 \\ -0.5 & 2 & 1 \end{bmatrix}\)
+(B) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ 0.25 & 1 & 0 \\ -0.5 & 0.5 & 1 \end{bmatrix}\)
+(C) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ 0.5 & 1 & 0 \\ -0.25 & -0.5 & 1 \end{bmatrix}\)
+(D) \(P = \begin{bmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ 0.25 & 0.5 & 1 \end{bmatrix}\)
+(E) \(P = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{bmatrix},\; L = \begin{bmatrix} 1 & 0 & 0 \\ -0.5 & 1 & 0 \\ 0.25 & 0.5 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+En el primer paso de eliminación (columna \(1\)) de
+\[
+A = \begin{bmatrix} 5 & 5000 & 10 \\ 3 & 6 & 1 \\ -2 & 1 & 0 \end{bmatrix},
+\]
+¿qué fila elige como fila pivote el pivoteo parcial simple, y qué fila elige el pivoteo parcial escalado?
+
+(A) Pivoteo parcial simple: Fila \(1\); pivoteo parcial escalado: Fila \(2\)
+(B) Pivoteo parcial simple: Fila \(1\); pivoteo parcial escalado: Fila \(3\)
+(C) Pivoteo parcial simple: Fila \(3\); pivoteo parcial escalado: Fila \(1\)
+(D) Pivoteo parcial simple: Fila \(1\); pivoteo parcial escalado: Fila \(1\)
+(E) Pivoteo parcial simple: Fila \(2\); pivoteo parcial escalado: Fila \(3\)
+[/QUESTION]
+
+=== SECTION 3: Sistemas mal condicionados y la trampa del residuo pequeño ===
+
+En la Sección 1, el sistema \(\begin{bmatrix} 0.0001 & 1 \\ 1 & 1 \end{bmatrix} \mathbf{x} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}\) estaba completamente BIEN CONDICIONADO: sus dos ecuaciones representan rectas casi perpendiculares (pendientes \(-0.0001\) y \(-1\)), por lo que cambios diminutos en los datos de entrada producen cambios diminutos en la solución exacta. El fallo sin pivoteo fue una inestabilidad algorítmica —un mal orden de eliminación, curado por completo mediante el pivoteo—.
+
+Contraste ahora eso con un sistema intrínsecamente MAL CONDICIONADO, ¡donde el problema mismo es hipersensible a cambios diminutos en \(A\) o \(\mathbf{b}\), INCLUSO EN ARITMÉTICA EXACTA! Considere el sistema \(2 \times 2\)
+\[
+\begin{bmatrix} 1 & 1 \\ 1 & 1.05 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 2 \\ 2.05 \end{bmatrix}.
+\]
+¡Las dos rectas \(x_1 + x_2 = 2\) (pendiente \(-1\)) y \(x_1 + 1.05 x_2 = 2.05\) (pendiente \(-1/1.05 \approx -0.952\)) son casi paralelas! En \(d = 0\), la intersección exacta es \((x_1, x_2) = (1, 1)\).
+
+Ahora perturbe la segunda entrada del lado derecho por una cantidad diminuta \(d\): \(\mathbf{b}(d) = \begin{bmatrix} 2 \\ 2.05 + d \end{bmatrix}\). Restar la ecuación \(1\) de la ecuación \(2\) da \(0.05 x_2 = 0.05 + d\), por lo que la solución EXACTA del sistema perturbado es
+\[
+x_2 = 1 + 20 d, \qquad x_1 = 1 - 20 d.
+\]
+¡Toda perturbación diminuta \(d\) se amplifica por un factor de \(20\)! Fijar \(d = 0.05\) cambia \(b_2\) en menos del \(2.5\%\) (de \(2.05\) a \(2.10\)), ¡pero desplaza la intersección exacta desde \((1, 1)\) hasta \((0, 2)\), un cambio del \(100\%\) en ambas coordenadas! ¡Y si \(1.05\) fuera \(1.001\), el factor de amplificación saltaría de \(20\) a \(1000\)!
+
+Arrastre el deslizador \(d\) abajo: observe cómo la segunda recta apenas parece moverse, mientras que la intersección se dispara bruscamente a lo largo de la primera recta.
+
+[GRAPH]
+type: function2d
+title: Rectas casi paralelas amplifican \(20\times\) un desplazamiento diminuto \(d\) en \(b_2\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+xrange: -1, 3
+yrange: -1, 3
+aspect: equal
+trace: 2 - x | label: \(x_1 + x_2 = 2\) | color: #2563eb
+trace: (2.05 + d - x) / 1.05 | label: \(x_1 + 1.05 x_2 = 2.05 + d\) | color: #dc2626
+point: 1, 1 | label: \((1, 1)\) | color: #059669
+point: 1 - 20*d, 1 + 20*d | label: perturbada | color: #dc2626
+segment: 1, 1, 1 - 20*d, 1 + 20*d | color: #6b7280 | dashed: true
+slider: d | range: -0.05, 0.05 | init: 0.04 | step: 0.01
+[/GRAPH]
+
+Ninguna estrategia de pivoteo puede borrar el mal condicionamiento intrínseco: el pivoteo evita que el algoritmo inyecte error adicional innecesario, pero una vez que las mediciones de entrada o el redondeo introducen siquiera una perturbación diminuta en \(A\) o \(\mathbf{b}\), la solución EXACTA del problema perturbado ya se ha desplazado drásticamente. (La medición cuantitativa formal de esta sensibilidad mediante números de condición de normas matriciales \(\kappa(A)\) y valores singulares se desarrolla en módulos posteriores de álgebra lineal numérica y de productos internos.)
+
+El mal condicionamiento también produce una de las trampas más peligrosas en el cálculo práctico: ¡confiar ciegamente en el residuo!
+
+[CALLOUT]
+id: small-residual-trap
+label: Error frecuente
+title: Un residuo diminuto NO garantiza una solución exacta
+tone: caution
+
+Dada una solución candidata \(\hat{\mathbf{x}}\) de \(A\mathbf{x} = \mathbf{b}\), su vector residuo es \(\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}}\) y su error verdadero es \(\mathbf{e} = \mathbf{x} - \hat{\mathbf{x}}\). Están vinculados por
+\[
+\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}} = A\mathbf{x} - A\hat{\mathbf{x}} = A\mathbf{e}.
+\]
+¡Cuando \(A\) está mal condicionada (cercana a una matriz singular), existen vectores no nulos grandes \(\mathbf{e}\) que \(A\) casi aniquila, haciendo que \(A\mathbf{e}\) sea diminuto aun cuando \(\mathbf{e}\) sea enorme! Por lo tanto, un residuo pequeño \(\mathbf{r}\) solo demuestra que \(\hat{\mathbf{x}}\) resuelve un problema cercano \(A\hat{\mathbf{x}} = \mathbf{b} - \mathbf{r}\), NO que \(\hat{\mathbf{x}}\) esté cerca de la solución verdadera \(\mathbf{x}\).
+[/CALLOUT]
+
+Vea [REF: small-residual-trap | esta trampa] en acción sobre nuestro sistema exacto \(2 \times 2\) \(A = \begin{bmatrix} 1 & 1 \\ 1 & 1.05 \end{bmatrix}\), \(\mathbf{b} = \begin{bmatrix} 2 \\ 2.05 \end{bmatrix}\) (solución verdadera \(\mathbf{x} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\)). Suponga que alguien le entrega la aproximación terriblemente inexacta \(\hat{\mathbf{x}} = \begin{bmatrix} 0 \\ 2 \end{bmatrix}\) (con un error enorme \(\mathbf{e} = \mathbf{x} - \hat{\mathbf{x}} = \begin{bmatrix} 1 \\ -1 \end{bmatrix}\), ¡errónea en \(100\%\) en cada componente!). Calcule su residuo:
+\[
+\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}}
+= \begin{bmatrix} 2 \\ 2.05 \end{bmatrix} - \begin{bmatrix} 1 & 1 \\ 1 & 1.05 \end{bmatrix} \begin{bmatrix} 0 \\ 2 \end{bmatrix}
+= \begin{bmatrix} 2 \\ 2.05 \end{bmatrix} - \begin{bmatrix} 2 \\ 2.10 \end{bmatrix}
+= \begin{bmatrix} 0 \\ -0.05 \end{bmatrix}!
+\]
+¡El residuo es \(20\) veces menor que el error verdadero porque \(\mathbf{e} = \begin{bmatrix} 1 \\ -1 \end{bmatrix}\) yace justo en el espacio nulo de la matriz singular cercana \(\begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}\)! Sustituir \(\hat{\mathbf{x}}\) de vuelta en \(A\mathbf{x} = \mathbf{b}\) y observar una discrepancia diminuta puede adormecer a un solucionador descuidado y hacerle confiar en una respuesta completamente errónea.
+
+[TABLE]
+Modo de fallo | Causa raíz | Indicio diagnóstico | Remedio
+Inestabilidad algorítmica (mal orden de pivoteo) | Un pivote diminuto crea multiplicadores enormes, absorbiendo cifras durante la eliminación | Matriz bien condicionada, pero la eliminación sin pivoteo pierde exactitud mientras la eliminación con pivoteo acierta | Usar pivoteo parcial (o pivoteo parcial escalado cuando las escalas de fila varían drásticamente)
+Mal condicionamiento intrínseco | La matriz \(A\) está cerca de ser singular (ecuaciones casi paralelas / columnas casi dependientes) | Perturbaciones diminutas en \(A\) o \(\mathbf{b}\) desplazan bruscamente la solución exacta; un residuo pequeño oculta un error enorme | Mayor precisión, reformulación del problema o regularización (el pivoteo por sí solo no puede eliminar la sensibilidad)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Considere el sistema
+\[
+A\mathbf{x} = \mathbf{b}, \qquad
+A = \begin{bmatrix} 1 & 2 \\ 1 & 2.01 \end{bmatrix}, \qquad
+\mathbf{b} = \begin{bmatrix} 3 \\ 3.01 \end{bmatrix},
+\]
+cuya solución exacta es \(\mathbf{x} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\). Un estudiante evalúa la candidata \(\hat{\mathbf{x}} = \begin{bmatrix} 3 \\ 0 \end{bmatrix}\) calculando el residuo \(\mathbf{r} = \mathbf{b} - A\hat{\mathbf{x}}\). ¿Cuál es \(\mathbf{r}\), y qué conclusión se sigue?
+
+(A) \(\mathbf{r} = \begin{bmatrix} 0 \\ 0.01 \end{bmatrix}\); aunque \(\mathbf{r}\) es diminuto, el error verdadero \(\mathbf{x} - \hat{\mathbf{x}} = \begin{bmatrix} -2 \\ 1 \end{bmatrix}\) es enorme, ilustrando por qué un residuo pequeño no garantiza una solución exacta para una matriz mal condicionada
+(B) \(\mathbf{r} = \begin{bmatrix} 0 \\ 0.01 \end{bmatrix}\); como toda entrada de \(\mathbf{r}\) tiene magnitud a lo sumo \(0.01\), \(\hat{\mathbf{x}}\) debe estar a menos de \(0.01\) de la solución verdadera
+(C) \(\mathbf{r} = \begin{bmatrix} 0 \\ -0.01 \end{bmatrix}\); como \(\mathbf{r} \neq \mathbf{0}\), la matriz \(A\) debe ser singular
+(D) \(\mathbf{r} = \begin{bmatrix} -2 \\ 1 \end{bmatrix}\); el residuo siempre es igual al error verdadero \(\mathbf{x} - \hat{\mathbf{x}}\)
+(E) \(\mathbf{r} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}\); el sistema tiene infinitas soluciones
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Considere el sistema exacto
+\[
+\begin{bmatrix} 1 & 1 \\ 1 & 1.01 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 2 \\ 2.01 \end{bmatrix},
+\]
+cuya solución exacta es \(\mathbf{x} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\). Si la entrada \((2, 2)\) de la matriz de coeficientes se perturba en apenas \(-0.005\) (cambiando \(1.01\) a \(1.005\), un cambio inferior al \(0.5\%\)) mientras \(\mathbf{b}\) permanece sin cambios, ¿cuál es la solución exacta del sistema perturbado?
+
+(A) \(\begin{bmatrix} 1.005 \\ 0.995 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0.995 \\ 1.005 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 2 \\ 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 \\ 2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0.5 \\ 1.5 \end{bmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suponga que una matriz invertible \(n \times n\) \(A\) se factoriza como \(PA = LU\) usando pivoteo parcial en aritmética de precisión finita y luego se usa para resolver \(A\mathbf{x} = \mathbf{b}\). ¿Qué enunciado es VERDADERO?
+
+(A) El pivoteo parcial garantiza \(\lvert l_{ij} \rvert \le 1\) para todas las entradas de \(L\) y elimina la sensibilidad ante perturbaciones de entrada incluso cuando \(A\) está mal condicionada
+(B) El pivoteo parcial garantiza \(\lvert l_{ij} \rvert \le 1\) para todas las entradas de \(L\), evitando multiplicadores de eliminación grandes, pero si \(A\) está intrínsecamente mal condicionada, perturbaciones diminutas de redondeo o de entrada aún pueden producir errores grandes en la solución calculada
+(C) El pivoteo parcial garantiza que cada entrada pivote diagonal de \(U\) satisface \(\lvert u_{ii} \rvert \ge 1\)
+(D) El pivoteo parcial garantiza que siempre que el residuo \(\mathbf{b} - A\hat{\mathbf{x}}\) sea pequeño, el error de la solución \(\mathbf{x} - \hat{\mathbf{x}}\) también debe ser pequeño
+(E) El pivoteo parcial solo es necesario cuando aparece un \(0\) literal en una posición pivote; cualquier pivote no nulo produce idéntica exactitud en punto flotante
+[/BONUS]

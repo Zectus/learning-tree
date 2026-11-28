@@ -1,0 +1,204 @@
+=== SECTION 1: Variable right-hand sides and the negative-bound trap ===
+
+In the previous absolute value lesson, every inequality compared \(|A(x)|\) against a constant \(c\) or against another absolute value \(|B(x)|\). Now suppose the right-hand side is an arbitrary expression \(B(x)\) whose sign depends on \(x\), such as
+\[
+|2x - 1| = x + 3, \qquad |2x - 1| < x + 3, \qquad \text{or} \qquad |2x - 1| > x + 3.
+\]
+Can we still translate these cleanly without splitting on the sign of \(A(x)\)? Yes—provided we handle the sign of \(B(x)\) with precision, because the three cases (\(=, <, >\)) behave VERY differently when \(B(x) < 0\)!
+
+1. Equation \(|A(x)| = B(x)\): Because \(|A(x)| \ge 0\), any solution MUST satisfy \(B(x) \ge 0\). Once \(B(x) \ge 0\), \(|A(x)| = B(x)\) holds iff \(A(x) = B(x)\) or \(A(x) = -B(x)\). Forgetting \(B(x) \ge 0\) imports extraneous roots!
+2. Upper bound \(|A(x)| < B(x)\): Look at the chained inequality \(-B(x) < A(x) < B(x)\). Notice something subtle: if \(-B(x) < A(x) < B(x)\) holds, then by transitivity \(-B(x) < B(x)\), which implies \(2B(x) > 0\), i.e., \(B(x) > 0\) AUTOMATICALLY! You do not even need a separate \(B(x) > 0\) check—the chained inequality already filters out every \(x\) where \(B(x) \le 0\). (Similarly, \(-B(x) \le A(x) \le B(x)\) automatically forces \(B(x) \ge 0\).)
+3. Lower bound \(|A(x)| > B(x)\): Here lies one of the most notorious traps in inequalities! If someone adds a condition "\(B(x) \ge 0\)" before writing \(A(x) < -B(x)\) or \(A(x) > B(x)\), they THROW AWAY EVERY VALID SOLUTION WHERE \(B(x) < 0\)! Whenever \(B(x) < 0\), the inequality \(|A(x)| > B(x)\) is AUTOMATICALLY TRUE (since \(|A(x)| \ge 0 > B(x)\)). Better yet, check what the disjunction "\(A(x) < -B(x)\) OR \(A(x) > B(x)\)" produces when \(B(x) < 0\): in that case \(B(x) < 0 < -B(x)\), so every real number \(A(x)\) is either less than \(-B(x)\) or greater than \(B(x)\)—the disjunction ALREADY holds automatically whenever \(B(x) < 0\)!
+
+[CALLOUT]
+id: var-bound-rules
+label: Theorem
+title: Exact variable-bound absolute value equivalences
+tone: key
+
+For any real expressions \(A(x)\) and \(B(x)\):
+
+(1) \(|A(x)| = B(x) \iff B(x) \ge 0 \text{ and } \bigl(A(x) = B(x) \text{ or } A(x) = -B(x)\bigr)\).
+(2) \(|A(x)| < B(x) \iff -B(x) < A(x) < B(x)\) (automatically forces \(B(x) > 0\)).
+(3) \(|A(x)| \le B(x) \iff -B(x) \le A(x) \le B(x)\) (automatically forces \(B(x) \ge 0\)).
+(4) \(|A(x)| > B(x) \iff A(x) < -B(x) \text{ or } A(x) > B(x)\) (do NOT impose \(B(x) \ge 0\)!).
+(5) \(|A(x)| \ge B(x) \iff A(x) \le -B(x) \text{ or } A(x) \ge B(x)\) (do NOT impose \(B(x) \ge 0\)!).
+[/CALLOUT]
+
+Test [REF: var-bound-rules.2 | rule (2)] and [REF: var-bound-rules.4 | rule (4)] on the same pair of expressions, \(A(x) = 2x - 1\) and \(B(x) = x - 2\).
+- For \(|2x - 1| < x - 2\): write \(-(x - 2) < 2x - 1 < x - 2\). Split the chain:
+  - \(2 - x < 2x - 1 \implies 3 < 3x \implies x > 1\).
+  - \(2x - 1 < x - 2 \implies x < -1\).
+  Intersection: \((1, \infty) \cap (-\infty, -1) = \emptyset\)!
+- For \(|2x - 1| > x - 2\): apply [REF: var-bound-rules.4 | rule (4)] WITHOUT restricting \(x - 2 \ge 0\):
+  - \(2x - 1 > x - 2 \implies x > -1\), OR
+  - \(2x - 1 < -(x - 2) = 2 - x \implies 3x < 3 \implies x < 1\).
+  Union: \((-1, \infty) \cup (-\infty, 1) = \mathbb{R}\)!
+
+The graph below confirms both answers visually: the V-shaped curve \(y = |2x - 1|\) stays strictly ABOVE the line \(y = x - 2\) for EVERY real \(x\), including the entire region \(x < 2\) where \(y = x - 2\) dips below the horizontal axis.
+
+[GRAPH]
+type: function2d
+title: \(y = |2x - 1|\) sits strictly above \(y = x - 2\) everywhere, even where \(x - 2 < 0\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 5
+yrange: -5, 9
+fill: abs(2*x - 1), x - 2 | range: -3, 5 | label: \(|2x - 1| > x - 2\) | color: #10b981 | opacity: 0.16
+trace: abs(2*x - 1) | label: \(y = |2x - 1|\)
+trace: x - 2 | label: \(y = x - 2\)
+trace: 0 | label: \(y = 0\)
+point: 0.5, 0 | label: \((1/2, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+What is the solution set of \(|x - 3| > 2x - 5\)?
+
+(A) \(\left[\frac{5}{2}, \frac{8}{3}\right)\)
+(B) \(\left(-\infty, \frac{8}{3}\right)\)
+(C) \((-\infty, 2)\)
+(D) \(\left(2, \frac{8}{3}\right)\)
+(E) \(\left(\frac{8}{3}, \infty\right)\)
+[/QUESTION]
+
+=== SECTION 2: Sums and differences via critical-point partitioning ===
+
+When an inequality contains a sum or difference of two or more absolute values—such as
+\[
+|x - 1| + |2x + 4| \le 9,
+\]
+neither squaring nor a single equivalence rule removes both sets of bars cleanly. Instead, we partition the real line using the zeros of every expression inside an absolute value bar.
+
+Here \(x - 1 = 0\) at \(x = 1\) and \(2x + 4 = 0\) at \(x = -2\). These two critical points divide \(\mathbb{R}\) into three intervals: \((-\infty, -2)\), \([-2, 1)\), and \([1, \infty)\). On each interval, each inner expression has a constant sign, so every absolute value simplifies to a plain linear expression.
+
+[TABLE]
+Region | Sign of \(2x + 4\) | Sign of \(x - 1\) | Simplified LHS | Inequality on region | Branch solution \(\cap\) region
+\((-\infty, -2)\) | \(-\) | \(-\) | \(-(x - 1) - (2x + 4) = -3x - 3\) | \(-3x - 3 \le 9 \iff x \ge -4\) | \([-4, -2)\)
+\([-2, 1)\) | \(+\) | \(-\) | \(-(x - 1) + (2x + 4) = x + 5\) | \(x + 5 \le 9 \iff x \le 4\) | \([-2, 1)\)
+\([1, \infty)\) | \(+\) | \(+\) | \((x - 1) + (2x + 4) = 3x + 3\) | \(3x + 3 \le 9 \iff x \le 2\) | \([1, 2]\)
+[/TABLE]
+
+Finally, take the UNION of the three intersected branch solutions:
+\[
+[-4, -2) \cup [-2, 1) \cup [1, 2] = [-4, 2].
+\]
+Notice the two-step logical discipline: INTERSECT within each region (a branch formula is valid ONLY inside its own region!), and UNITE across regions (a number satisfies the original inequality if it works in Region 1 OR Region 2 OR Region 3). Look at the middle row of the table above: solving \(x + 5 \le 9\) alone gave \(x \le 4\), which extends past \(x = 1\)—intersecting with \([-2, 1)\) kept us from keeping false values like \(x = 3\) (where \(|3 - 1| + |10| = 12 \not\le 9\)!).
+
+Graphing \(y = |x - 1| + |2x + 4|\) against \(y = 9\) shows why critical-point partitioning works geometrically: the sum of linear absolute values is a continuous piecewise-linear curve whose slope changes ONLY at the critical points \(x = -2\) and \(x = 1\).
+
+[GRAPH]
+type: function2d
+title: Piecewise-linear graph of \(y = |x - 1| + |2x + 4|\) below \(y = 9\) on \([-4, 2]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -5.5, 4
+yrange: 0, 14
+fill: 9, abs(x - 1) + abs(2*x + 4) | range: -4, 2 | label: solution \([-4, 2]\) | color: #3b82f6 | opacity: 0.22
+trace: abs(x - 1) + abs(2*x + 4) | label: \(y = |x - 1| + |2x + 4|\)
+trace: 9 | label: \(y = 9\)
+point: -2, 3 | label: \((-2, 3)\)
+point: 1, 6 | label: \((1, 6)\)
+point: -4, 9 | label: \((-4, 9)\)
+point: 2, 9 | label: \((2, 9)\)
+[/GRAPH]
+
+Differences like \(|x + 2| - |x - 3| > 1\) follow the exact same table—just be careful with minus signs when distributing into negated branches, and expect constant plateaus on the outer regions where the \(x\)-terms cancel!
+
+[QUESTION 2]
+[ANSWER: D]
+What is the solution set of \(|x + 2| - |x - 4| \ge 2\)?
+
+(A) \([2, 4]\)
+(B) \([-2, \infty)\)
+(C) \((-\infty, 2]\)
+(D) \([2, \infty)\)
+(E) \([4, \infty)\)
+[/QUESTION]
+
+=== SECTION 3: Nested absolute values and quadratic-in-\(|x|\) forms ===
+
+Two additional structures look intimidating at first glance but collapse rapidly when we use outside-in peeling or substitution instead of brute-force region splitting.
+
+Strategy A: Outside-in peeling (or substitution \(u = |\text{inner}| \ge 0\)) for nested absolute values such as
+\[
+\bigl|\,|x - 2| - 3\,\bigr| \le 1.
+\]
+Treat \(u = |x - 2|\) as a single quantity and peel the OUTER absolute value first:
+\[
+-1 \le u - 3 \le 1 \implies 2 \le u \le 4, \qquad \text{that is,} \qquad 2 \le |x - 2| \le 4.
+\]
+Now solve the two-sided distance band:
+- \(2 \le x - 2 \le 4 \implies 4 \le x \le 6\), i.e., \([4, 6]\).
+- \(-4 \le x - 2 \le -2 \implies -2 \le x \le 0\), i.e., \([-2, 0]\).
+Uniting both shells gives \([-2, 0] \cup [4, 6]\).
+
+What if peeling the outer bars produces a NEGATIVE lower bound on \(u = |\text{inner}|\)—for example, \(\bigl|\,|x + 1| - 2\,\bigr| < 5\)? Peeling gives \(-5 < |x + 1| - 2 < 5 \implies -3 < |x + 1| < 7\). Because \(|x + 1| \ge 0 > -3\) is ALWAYS satisfied, the left half drops out automatically, leaving just \(|x + 1| < 7 \implies (-8, 6)\). Always keep \(u \ge 0\) in mind before splitting!
+
+Strategy B: Quadratic-in-\(|x|\) and \(|\text{quadratic}|\) inequalities.
+1. Whenever an inequality contains \(x^2\) and \(|x|\) (and no bare \(x\)), recall that \(x^2 = |x|^2\) and substitute \(u = |x| \ge 0\). Consider
+\[
+x^2 - 3|x| - 4 \le 0.
+\]
+Rewriting as \(u^2 - 3u - 4 \le 0\) factors into \((u - 4)(u + 1) \le 0\), which gives \(-1 \le u \le 4\). Intersecting with \(u = |x| \ge 0\) yields \(0 \le |x| \le 4\), so the solution set is \([-4, 4]\). Had the inequality been \(x^2 - 3|x| - 4 > 0\), we would get \(u < -1\) (impossible since \(u \ge 0\)) OR \(u > 4\), giving \(|x| > 4\), i.e., \((-\infty, -4) \cup (4, \infty)\).
+2. For an absolute value around a quadratic—such as \(|x^2 - 2x| < 3\)—apply our basic equivalence directly and solve the resulting pair of quadratic inequalities! Here:
+\[
+-3 < x^2 - 2x < 3 \iff \bigl(x^2 - 2x + 3 > 0\bigr) \text{ AND } \bigl(x^2 - 2x - 3 < 0\bigr).
+\]
+For the first quadratic, \(\Delta = (-2)^2 - 4(1)(3) = -8 < 0\) and \(a = 1 > 0\), so \(x^2 - 2x + 3 > 0\) holds for ALL \(x \in \mathbb{R}\). For the second quadratic, \((x - 3)(x + 1) < 0\) gives \((-1, 3)\). Intersecting \(\mathbb{R} \cap (-1, 3)\) yields \((-1, 3)\).
+
+[CALLOUT]
+id: abs-strategy-pick
+label: Strategy
+title: Choosing the cleanest method for non-standard absolute values
+tone: note
+
+(1) Single \(|A(x)|\) vs variable \(B(x)\): use [REF: var-bound-rules | direct variable-bound equivalences] (watch the \(B(x) < 0\) trap in \(|A| > B\)).
+(2) Sum or difference of multiple \(|\cdot|\) terms: partition \(\mathbb{R}\) at all inner zeros, intersect within each region, and unite across regions.
+(3) Nested \(|\cdot|\) or quadratic in \(|x|\): peel from the outside in, or substitute \(u = |\text{inner}| \ge 0\) and use \(x^2 = |x|^2\).
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: C]
+What is the solution set of \(\bigl|\,|2x - 1| - 4\,\bigr| < 2\)?
+
+(A) \(\left(\frac{3}{2}, \frac{7}{2}\right)\)
+(B) \(\left(-\frac{5}{2}, \frac{7}{2}\right)\)
+(C) \(\left(-\frac{5}{2}, -\frac{1}{2}\right) \cup \left(\frac{3}{2}, \frac{7}{2}\right)\)
+(D) \(\left[-\frac{5}{2}, -\frac{1}{2}\right] \cup \left[\frac{3}{2}, \frac{7}{2}\right]\)
+(E) \(\left(-\infty, -\frac{5}{2}\right) \cup \left(\frac{7}{2}, \infty\right)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+What is the solution set of \(x^2 - 5|x| + 6 < 0\)?
+
+(A) \((-3, -2) \cup (2, 3)\)
+(B) \((2, 3)\)
+(C) \((-3, 3)\)
+(D) \((-\infty, -3) \cup (-2, 2) \cup (3, \infty)\)
+(E) \([-3, -2] \cup [2, 3]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+What is the solution set of \(|x^2 - 4x + 3| > 3\)?
+
+(A) \((0, 4)\)
+(B) \((-\infty, 0] \cup [4, \infty)\)
+(C) \((-\infty, -1) \cup (5, \infty)\)
+(D) \(\mathbb{R}\)
+(E) \((-\infty, 0) \cup (4, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+What is the solution set of \(|x - 1| + |x - 3| + |x - 6| \le 7\)?
+
+(A) \([1, 6]\)
+(B) \([1, 5]\)
+(C) \([0, 5]\)
+(D) \([2, 5]\)
+(E) \(\{3\}\)
+[/BONUS]

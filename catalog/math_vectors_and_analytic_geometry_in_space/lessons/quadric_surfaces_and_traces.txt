@@ -1,0 +1,240 @@
+=== SECTION 1: Quadric surfaces and the method of traces ===
+
+Spheres, cylinders, and surfaces of revolution give us our first vocabulary of curved shapes in \(\mathbb{R}^3\), yet many basic three-dimensional objects—an egg-shaped dome, a saddle pass between mountain peaks, or the curved waist of a cooling tower—are neither spheres nor cylinders nor necessarily circular in cross-section. What they share is that every one of them is defined by a second-degree polynomial equation in \(x\), \(y\), and \(z\):
+\[
+Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz + J = 0,
+\]
+where at least one of the quadratic coefficients \(A, \dots, F\) is nonzero. Such a surface is called a quadric surface, the three-dimensional counterpart of the conic sections (circles, ellipses, parabolas, hyperbolas) in \(\mathbb{R}^2\). In this lesson we analyze all axis-aligned quadrics (those with no mixed terms \(xy\), \(xz\), or \(yz\)).
+
+How do you understand the 3D shape of an unfamiliar equation \(F(x, y, z) = 0\) without guessing blindly? Slice it like a medical CT scan. Intersecting the surface with a family of parallel coordinate planes reduces a 3D puzzle to familiar 2D conic sections.
+
+[CALLOUT]
+id: method-of-traces
+label: Method
+title: The method of traces
+tone: key
+
+Given a surface \(F(x, y, z) = 0\) in \(\mathbb{R}^3\), its trace in a plane is the curve (or point set) where the surface intersects that plane:
+
+(1) Horizontal traces: set \(z = k\) (constant) and examine the resulting 2D curve in \((x, y)\).
+(2) Vertical traces: set \(x = k\) to slice parallel to the \(yz\)-plane, and set \(y = k\) to slice parallel to the \(xz\)-plane.
+(3) Domain constraints and degeneracies: track which values of \(k\) yield a full curve, which yield a single point or pair of crossing lines, and which yield the empty set \(\varnothing\).
+[/CALLOUT]
+
+Check intercepts (setting two variables to \(0\)) and symmetry alongside the traces: if a variable appears only as its square (say \(x^2\)), replacing \(x\) with \(-x\) leaves the equation unchanged, so the surface is symmetric across the \(yz\)-plane.
+
+Watch [REF: method-of-traces | the method of traces] decode two surfaces that look deceptively similar in formula:
+- First, consider \(z = \frac{x^2}{4} + y^2\).
+  - Traces in \(x = k\): \(z = \frac{k^2}{4} + y^2\), upward-opening parabolas in the \(yz\)-plane.
+  - Traces in \(y = k\): \(z = \frac{x^2}{4} + k^2\), upward-opening parabolas in the \(xz\)-plane.
+  - Traces in \(z = k\): \(\frac{x^2}{4} + y^2 = k\). Because the left-hand side is a sum of nonnegative squares, this trace is empty for \(k < 0\), the single vertex \((0, 0, 0)\) for \(k = 0\), and an expanding family of ellipses for \(k > 0\).
+  Putting those slices together reveals an elliptic paraboloid—a bowl with elliptic horizontal cross-sections opening upward along the \(z\)-axis.
+
+[GRAPH]
+type: surface3d
+title: Elliptic paraboloid \(z = \frac{x^2}{4} + y^2\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -3, 3
+yrange: -1.8, 1.8
+z: x^2/4 + y^2
+[/GRAPH]
+
+- Now flip a single sign to get \(z = \frac{x^2}{4} - \frac{y^2}{4}\).
+  - Traces in \(y = k\): \(z = \frac{x^2}{4} - \frac{k^2}{4}\), upward-opening parabolas parallel to the \(xz\)-plane.
+  - Traces in \(x = k\): \(z = \frac{k^2}{4} - \frac{y^2}{4}\), downward-opening parabolas parallel to the \(yz\)-plane.
+  - Traces in \(z = k\): \(\frac{x^2}{4} - \frac{y^2}{4} = k\), hyperbolas opening along the \(x\)-axis when \(k > 0\), hyperbolas opening along the \(y\)-axis when \(k < 0\), and the pair of crossing lines \(y = \pm x\) when \(k = 0\).
+  Because the surface curves upward in one direction and downward in the perpendicular direction, it forms a hyperbolic paraboloid (a saddle surface).
+
+[GRAPH]
+type: surface3d
+title: Hyperbolic paraboloid (saddle) \(z = \frac{x^2}{4} - \frac{y^2}{4}\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -3, 3
+yrange: -3, 3
+z: x^2/4 - y^2/4
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Consider the quadric surface \(y = 4x^2 - z^2\) in \(\mathbb{R}^3\). What are the traces in the planes \(x = k\), \(z = k\), and \(y = k\) (for \(k \ne 0\)), and what type of surface is it?
+
+(A) Ellipses for \(y = k\) and upward parabolas for \(x = k\) and \(z = k\); an elliptic paraboloid along the \(y\)-axis
+(B) Hyperbolas for \(x = k\) and \(z = k\) and ellipses for \(y = k\); a hyperboloid of one sheet along the \(y\)-axis
+(C) Downward parabolas (in \(y\)) for \(x = k\), upward parabolas (in \(y\)) for \(z = k\), and hyperbolas for \(y = k\); a hyperbolic paraboloid along the \(y\)-axis
+(D) Lines for \(y = k\) and hyperbolas for \(x = k\); a hyperbolic cylinder along the \(y\)-axis
+(E) Ellipses for \(y = k\) and straight lines for \(x = 0\); an elliptic cone along the \(y\)-axis
+[/QUESTION]
+
+=== SECTION 2: The six standard quadric surfaces ===
+
+Every non-degenerate, axis-aligned quadric surface centered at the origin falls into one of six standard families. The first step in recognizing any quadric is simply counting degrees:
+- Two variables squared and one variable linear produces one of the two paraboloids (elliptic or hyperbolic, depending on whether the two squared terms have the same sign or opposite signs when moved to the same side).
+- All three variables squared produces one of the four central quadrics: an ellipsoid, an elliptic cone, a hyperboloid of one sheet, or a hyperboloid of two sheets.
+
+[TABLE]
+Quadric surface | Canonical equation (along \(z\)-axis) | Horizontal traces \(z = k\) | Vertical traces \(x = k, y = k\) | Key signature
+Ellipsoid | \(\frac{x^2}{a^2} + \frac{y^2}{b^2} + \frac{z^2}{c^2} = 1\) | Ellipses for \(\lvert k \rvert < c\); empty for \(\lvert k \rvert > c\) | Ellipses (bounded) | All 3 squared, all \(+\), RHS \(= 1\)
+Elliptic paraboloid | \(\frac{z}{c} = \frac{x^2}{a^2} + \frac{y^2}{b^2}\) | Ellipses for \(k/c > 0\); empty for \(k/c < 0\) | Parabolas opening same way | 2 squared (same sign), 1 linear
+Hyperbolic paraboloid | \(\frac{z}{c} = \frac{x^2}{a^2} - \frac{y^2}{b^2}\) | Hyperbolas (\(k \ne 0\)); crossing lines (\(k = 0\)) | Parabolas opening opposite ways | 2 squared (opposite signs), 1 linear
+Elliptic cone | \(\frac{z^2}{c^2} = \frac{x^2}{a^2} + \frac{y^2}{b^2}\) | Ellipses (\(k \ne 0\)); single point (\(k = 0\)) | Hyperbolas (\(k \ne 0\)); lines (\(k = 0\)) | All 3 squared, 2 vs 1 signs, RHS \(= 0\)
+Hyperboloid of one sheet | \(\frac{x^2}{a^2} + \frac{y^2}{b^2} - \frac{z^2}{c^2} = 1\) | Ellipses for ALL \(k \in \mathbb{R}\) | Hyperbolas | All 3 squared, one \(-\), RHS \(= +1\)
+Hyperboloid of two sheets | \(-\frac{x^2}{a^2} - \frac{y^2}{b^2} + \frac{z^2}{c^2} = 1\) | Ellipses for \(\lvert k \rvert > c\); empty for \(\lvert k \rvert < c\) | Hyperbolas | All 3 squared, two \(-\), RHS \(= +1\)
+[/TABLE]
+
+Pay special attention to the visually confusing trio at the bottom of the table: the elliptic cone, the hyperboloid of one sheet, and the hyperboloid of two sheets. Writing all three with the same left-hand side makes the difference unmistakable:
+\[
+\frac{x^2}{a^2} + \frac{y^2}{b^2} - \frac{z^2}{c^2} = C.
+\]
+- When \(C = +1\): horizontal traces \(\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 + \frac{k^2}{c^2}\) are nonempty ellipses for every \(k \in \mathbb{R}\), shrinking to a narrowest waist at \(k = 0\) and widening smoothly above and below—a single connected hyperboloid of one sheet.
+- When \(C = 0\): horizontal traces \(\frac{x^2}{a^2} + \frac{y^2}{b^2} = \frac{k^2}{c^2}\) pinch all the way down to the single point \((0, 0, 0)\) at \(k = 0\), creating the double-napped elliptic cone.
+- When \(C = -1\): horizontal traces \(\frac{x^2}{a^2} + \frac{y^2}{b^2} = \frac{k^2}{c^2} - 1\) have no real solutions whenever \(|k| < c\), carving out an empty central gap \(-c < z < c\) that splits the surface into two disconnected bowls—a hyperboloid of two sheets with vertices at \((0, 0, \pm c)\).
+
+Drag the height slider \(k\) below to compare the horizontal cross-sections \(z = k\) of the circular versions \(x^2 + y^2 - z^2 = 1\) (one sheet), \(x^2 + y^2 - z^2 = 0\) (cone), and \(x^2 + y^2 - z^2 = -1\) (two sheets) simultaneously. Notice that for \(|k| < 1\), the two-sheet trace disappears completely while the one-sheet waist stays open.
+
+[GRAPH]
+type: parametric2d
+title: Horizontal traces \(z = k\) of one-sheet hyperboloid, cone, and two-sheet hyperboloid
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3, 3
+yrange: -3, 3
+trace: sqrt(k^2 + 1)*cos(t), sqrt(k^2 + 1)*sin(t) | label: one sheet \(x^2 + y^2 = k^2 + 1\)
+trace: abs(k)*cos(t), abs(k)*sin(t) | label: cone \(x^2 + y^2 = k^2\)
+trace: (k^2 - 1 >= 0 ? sqrt(k^2 - 1) : 0)*cos(t), (k^2 - 1 >= 0 ? sqrt(k^2 - 1) : 0)*sin(t) | label: two sheets (exists for \(\lvert k \rvert \ge 1\))
+slider: k | range: -2.2, 2.2 | init: 1.4 | step: 0.2
+[/GRAPH]
+
+Because a two-sheet hyperboloid \(z^2 - x^2 - y^2 = 1\) splits into an upper sheet \(z = +\sqrt{1 + x^2 + y^2}\) and a symmetric lower sheet \(z = -\sqrt{1 + x^2 + y^2}\), a single-valued graph \(z = f(x, y)\) displays one sheet at a time. The plot below shows the upper sheet resting at vertex \((0, 0, 1)\) above the empty gap \(-1 < z < 1\).
+
+[GRAPH]
+type: surface3d
+title: Upper sheet \(z = \sqrt{1 + x^2 + y^2}\) of the two-sheet hyperboloid \(z^2 - x^2 - y^2 = 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -2.5, 2.5
+yrange: -2.5, 2.5
+z: sqrt(1 + x^2 + y^2)
+[/GRAPH]
+
+=== SECTION 3: Permuted axes and sign-pattern traps ===
+
+Real problems rarely hand you a quadric neatly oriented along the \(z\)-axis with \(+1\) already sitting on the right-hand side. How do you classify any axis-aligned quadric rapidly without memorizing eighteen separate templates?
+
+[CALLOUT]
+id: quadric-axes
+label: Rule
+title: Identifying the distinguished axis and sign pattern
+tone: key
+
+(1) First normalize the constant term (if nonzero) to \(+1\) on the right-hand side by dividing through by the constant. Never count minus signs before the right-hand side is \(+1\) (or \(0\)).
+(2) For a paraboloid (two squared variables, one linear variable): the linear variable names the axis of the surface. For an elliptic paraboloid, its opening direction is the sign that makes the linear side nonnegative.
+(3) For a cone or hyperboloid (all three variables squared, mixed signs): the variable with the odd-one-out sign names the symmetry axis (the single \(-\) term for a one-sheet hyperboloid; the single \(+\) term for a two-sheet hyperboloid; the isolated squared term on one side for a cone).
+[/CALLOUT]
+
+Look at why [REF: quadric-axes.1 | normalizing the constant term first] is critical. Suppose you are given
+\[
+x^2 + 4y^2 - 9z^2 = -36.
+\]
+At first glance, the left-hand side shows only one minus sign, tempting a careless reader to call it a hyperboloid of one sheet. Dividing every term by \(-36\) to put \(+1\) on the right reverses every sign:
+\[
+-\frac{x^2}{36} - \frac{y^2}{9} + \frac{z^2}{4} = 1.
+\]
+Now there are two minus signs and one plus sign (on \(z^2\)), revealing a hyperboloid of two sheets opening along the \(z\)-axis, with empty central gap \(-2 < z < 2\) and vertices at \((0, 0, \pm 2)\).
+
+Similarly, look at \(x = -y^2 - 4z^2\). Only \(x\) is linear, so the axis is the \(x\)-axis. Rewriting as \(-x = y^2 + 4z^2\) shows that both squared terms carry the same positive sign, forcing \(-x \ge 0 \iff x \le 0\). Therefore this is an elliptic paraboloid with vertex \((0, 0, 0)\) opening in the negative \(x\)-direction.
+
+[QUESTION 2]
+[ANSWER: B]
+Classify the quadric surface \(4x^2 - y^2 + 9z^2 = -36\), identifying its symmetry axis and any empty trace gap.
+
+(A) Hyperboloid of one sheet along the \(y\)-axis, with no empty slice gap
+(B) Hyperboloid of two sheets along the \(y\)-axis, with empty traces for \(-6 < y < 6\)
+(C) Hyperboloid of two sheets along the \(y\)-axis, with empty traces for \(-36 < y < 36\)
+(D) Elliptic cone along the \(y\)-axis, with vertex at the origin
+(E) Hyperboloid of two sheets along the \(z\)-axis, with empty traces for \(-2 < z < 2\)
+[/QUESTION]
+
+=== SECTION 4: Translated quadrics via completing the square ===
+
+Just as spheres can be shifted away from the origin into \((x - h)^2 + (y - k)^2 + (z - l)^2 = r^2\), any quadric surface can be translated to a new center or vertex \((h, k, l)\) by adding linear terms in \(x\), \(y\), and \(z\). Completing the square in every variable that appears quadratically recovers both the shift and the true constant term—which can completely change the surface classification!
+
+Work through a concrete example: classify
+\[
+4x^2 + y^2 - 4z^2 - 8x + 6y + 16z - 7 = 0.
+\]
+Group each variable and factor out the leading coefficient of each squared term:
+\[
+4(x^2 - 2x) + (y^2 + 6y) - 4(z^2 - 4z) = 7.
+\]
+Complete each square carefully, multiplying each added number by the factored coefficient outside its parentheses before adding it to the right-hand side:
+\[
+4(x^2 - 2x + 1) + (y^2 + 6y + 9) - 4(z^2 - 4z + 4) = 7 + 4(1) + 9 - 4(4) = 4.
+\]
+Divide both sides by \(4\):
+\[
+(x - 1)^2 + \frac{(y + 3)^2}{4} - (z - 2)^2 = 1.
+\]
+Now read off the geometry directly: with \(+1\) on the right and a single minus sign on \((z - 2)^2\), this is a hyperboloid of one sheet centered at \((1, -3, 2)\), with its symmetry axis parallel to the \(z\)-axis (the vertical line \(x = 1, y = -3\)).
+
+Notice a vital lesson from the arithmetic above: the original constant term \(-7\) moved to \(+7\) on the right, and then completing the square shifted it to \(4\). Had the original constant been \(-3\) instead of \(-7\), the right-hand side after completing the square would have landed on \(0\) (an elliptic cone), and had it been \(+1\), the right-hand side would have landed on \(-4\) (a hyperboloid of two sheets!). Never guess between cone, one-sheet hyperboloid, and two-sheet hyperboloid before completing every square.
+
+[QUESTION 3]
+[ANSWER: A]
+Complete the square to classify the surface \(x^2 - 4x + 2y^2 + 4y - z^2 + 2z + 5 = 0\) and locate its center or vertex.
+
+(A) Elliptic cone with vertex \((2, -1, 1)\) and axis parallel to the \(z\)-axis
+(B) Hyperboloid of one sheet centered at \((2, -1, 1)\) with axis parallel to the \(z\)-axis
+(C) Hyperboloid of two sheets centered at \((2, -1, 1)\) with axis parallel to the \(z\)-axis
+(D) Elliptic cone with vertex \((-2, 1, -1)\) and axis parallel to the \(z\)-axis
+(E) Elliptic paraboloid with vertex \((2, -1, 1)\) opening along the \(z\)-axis
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Complete the square to classify the surface \(4y^2 + z^2 - 8y + 4z + 4x = 0\). What type of surface is it, where is its vertex, and which direction does it open?
+
+(A) Elliptic paraboloid with vertex \((2, 1, -2)\) opening in the positive \(x\)-direction
+(B) Hyperbolic paraboloid with saddle point \((2, 1, -2)\) along the \(x\)-axis
+(C) Elliptic paraboloid with vertex \((-2, 1, -2)\) opening in the negative \(x\)-direction
+(D) Elliptic paraboloid with vertex \((2, 1, -2)\) opening in the negative \(x\)-direction
+(E) Elliptic cylinder with rulings parallel to the \(x\)-axis
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Consider the one-parameter family of quadric surfaces \(x^2 + 4y^2 - z^2 = c\) as the real constant \(c\) increases from negative values, through \(c = 0\), to positive values. Which sequence of surfaces occurs?
+
+(A) Hyperboloid of one sheet (\(c < 0\)), elliptic cone (\(c = 0\)), hyperboloid of two sheets (\(c > 0\))
+(B) Hyperboloid of two sheets (\(c < 0\)), elliptic cone (\(c = 0\)), hyperboloid of one sheet (\(c > 0\))
+(C) Empty set (\(c < 0\)), single point (\(c = 0\)), ellipsoid (\(c > 0\))
+(D) Hyperbolic paraboloid (\(c < 0\)), elliptic cone (\(c = 0\)), elliptic paraboloid (\(c > 0\))
+(E) Hyperboloid of two sheets (\(c < 0\)), hyperbolic cylinder (\(c = 0\)), hyperboloid of one sheet (\(c > 0\))
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+The circular paraboloid \(z = x^2 + y^2\) intersects the plane \(z = 2x + 3\) in a curve in \(\mathbb{R}^3\). What is the orthogonal projection of this intersection curve onto the \(xy\)-plane?
+
+(A) A parabola with vertex \((1, 0)\)
+(B) A circle centered at \((-1, 0)\) of radius \(2\)
+(C) A circle centered at \((1, 0)\) of radius \(2\)
+(D) A circle centered at \((1, 0)\) of radius \(4\)
+(E) An ellipse with semi-axes \(2\) and \(3\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Which of the following quadric surfaces is bounded (fits completely inside some sufficiently large sphere centered at the origin)?
+
+(A) \(x^2 + 2y^2 - 3z^2 = 6\)
+(B) \(x^2 + 2y^2 = 3z\)
+(C) \(x^2 + 2y^2 = 6\)
+(D) \(x^2 + 2y^2 - 3z^2 = -6\)
+(E) \(x^2 + 2y^2 + 3z^2 = 6\)
+[/BONUS]

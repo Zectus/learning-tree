@@ -1,0 +1,259 @@
+=== SECTION 1: Distance from a point to a plane ===
+
+How far is a point \(P_1(x_1, y_1, z_1)\) from a plane \(\Pi: ax + by + cz = d\) in \(\mathbb{R}^3\)? The shortest path from \(P_1\) to \(\Pi\) meets \(\Pi\) at a right angle—meaning it travels strictly along the plane's normal direction \(\mathbf{n} = \langle a, b, c \rangle\). You do not need to locate that perpendicular landing point first just to find its length.
+
+Pick ANY point \(P_0(x_0, y_0, z_0)\) lying on \(\Pi\) and form the displacement vector \(\overrightarrow{P_0 P_1} = \langle x_1 - x_0,\; y_1 - y_0,\; z_1 - z_0 \rangle\). Decomposing \(\overrightarrow{P_0 P_1}\) into a component parallel to \(\Pi\) and a component perpendicular to \(\Pi\) shows that the perpendicular height of \(P_1\) above \(\Pi\) is precisely the magnitude of the scalar projection of \(\overrightarrow{P_0 P_1}\) onto \(\mathbf{n}\):
+\[
+d(P_1, \Pi) = \left|\operatorname{comp}_{\mathbf{n}} \overrightarrow{P_0 P_1}\right| = \frac{\left|\overrightarrow{P_0 P_1} \cdot \mathbf{n}\right|}{\|\mathbf{n}\|}.
+\]
+Expand the dot product in the numerator:
+\[
+\overrightarrow{P_0 P_1} \cdot \mathbf{n} = a(x_1 - x_0) + b(y_1 - y_0) + c(z_1 - z_0) = (ax_1 + by_1 + cz_1) - (ax_0 + by_0 + cz_0).
+\]
+Because \(P_0\) lies on \(\Pi\), we know \(ax_0 + by_0 + cz_0 = d\) regardless of WHICH point \(P_0 \in \Pi\) we chose! The base point \(P_0\) cancels completely, leaving a closed formula depending only on \(P_1\) and the plane's equation.
+
+[CALLOUT]
+id: pt-plane-dist
+label: Theorem
+title: Distance from a point to a plane
+tone: key
+
+The shortest (perpendicular) distance from a point \(P_1(x_1, y_1, z_1)\) to the plane \(\Pi: ax + by + cz = d\) with normal \(\mathbf{n} = \langle a, b, c \rangle \ne \mathbf{0}\) is
+\[
+d(P_1, \Pi) = \frac{|ax_1 + by_1 + cz_1 - d|}{\sqrt{a^2 + b^2 + c^2}}.
+\]
+[/CALLOUT]
+
+Drag the slider \(s\) in the side-view diagram below to move the reference point \(P_0\) anywhere along the plane \(\Pi\). Notice how the slanted arrow \(\overrightarrow{P_0 P_1}\) changes length and tilt, yet its orthogonal projection onto the normal \(\mathbf{n}\) always gives the exact same perpendicular height \(d(P_1, \Pi)\) from the foot \(F\) to \(P_1\).
+
+[GRAPH]
+type: parametric2d
+title: Invariance of the scalar projection onto \(\mathbf{n}\) as \(P_0\) slides along \(\Pi\)
+xlabel: plane direction
+ylabel: normal direction
+trange: -3.5, 4.5
+xrange: -3.8, 4.8
+yrange: -2.8, 3.2
+trace: t, 0 | label: plane \(\Pi\)
+segment: s, 0, 1, 2.2 | label: \(\overrightarrow{P_0 P_1}\)
+segment: 1, 0, 1, 2.2 | label: \(d\)
+segment: 1, 0, 1, -2.2 | label: \(P_1'\) | dashed: true
+point: s, 0 | label: \(P_0\)
+point: 1, 0 | label: \(F\)
+point: 1, 2.2 | label: \(P_1\)
+point: 1, -2.2 | label: \(P_1'\)
+slider: s | range: -3, 4 | init: -2 | step: 0.25
+[/GRAPH]
+
+=== SECTION 2: Foot of the perpendicular and mirror reflection ===
+
+What if you need not just the scalar distance \(d(P_1, \Pi)\), but also the exact closest point \(F \in \Pi\) (the foot of the perpendicular from \(P_1\) to \(\Pi\)) or the mirror image \(P_1'\) of \(P_1\) across \(\Pi\)?
+
+Look again at the diagram above. The vector from \(F\) to \(P_1\) is precisely the vector projection of \(\overrightarrow{P_0 P_1}\) onto \(\mathbf{n}\):
+\[
+\overrightarrow{F P_1} = \operatorname{proj}_{\mathbf{n}} \overrightarrow{P_0 P_1} = \frac{\overrightarrow{P_0 P_1} \cdot \mathbf{n}}{\mathbf{n} \cdot \mathbf{n}}\,\mathbf{n} = \frac{ax_1 + by_1 + cz_1 - d}{a^2 + b^2 + c^2}\,\mathbf{n}.
+\]
+Notice the signs work automatically—do NOT take an absolute value here! If \(P_1\) sits on the positive side of \(\mathbf{n}\), the numerator is positive and subtracting \(\overrightarrow{F P_1}\) pulls \(P_1\) backward onto \(\Pi\); if \(P_1\) sits on the negative side, the numerator is negative and subtracting pushes \(P_1\) forward onto \(\Pi\). Moving twice as far along the same step crosses \(\Pi\) and lands at the mirror reflection \(P_1'\).
+
+[CALLOUT]
+id: foot-reflect
+label: Formulas
+title: Closest point on a plane and mirror reflection across a plane
+tone: key
+
+For a point \(P_1\) (position vector \(\mathbf{r}_{P_1}\)) and plane \(\Pi: ax + by + cz = d\) with normal \(\mathbf{n} = \langle a, b, c \rangle\), define the signed step factor
+\[
+\lambda = \frac{ax_1 + by_1 + cz_1 - d}{a^2 + b^2 + c^2}.
+\]
+(1) Closest point (foot of the perpendicular \(F \in \Pi\)):
+\[
+\mathbf{r}_F = \mathbf{r}_{P_1} - \lambda\,\mathbf{n}.
+\]
+(2) Mirror reflection \(P_1'\) of \(P_1\) across \(\Pi\):
+\[
+\mathbf{r}_{P_1'} = \mathbf{r}_{P_1} - 2\lambda\,\mathbf{n} = 2\mathbf{r}_F - \mathbf{r}_{P_1}.
+\]
+[/CALLOUT]
+
+Equivalently, you can find \(F\) by forming the perpendicular line through \(P_1\) in direction \(\mathbf{n}\), namely \(\mathbf{r}(t) = \mathbf{r}_{P_1} + t\mathbf{n}\), and intersecting it with \(\Pi\): substituting gives \(t^* = -\lambda\), so \(\mathbf{r}_F = \mathbf{r}_{P_1} - \lambda\mathbf{n}\) and \(\mathbf{r}_{P_1'} = \mathbf{r}_{P_1} - 2\lambda\mathbf{n}\).
+
+Let us work a concrete case: find the distance, closest point \(F\), and reflection \(P_1'\) of \(P_1(4, 1, -2)\) across \(\Pi: x + 2y - 2z = 1\).
+- Here \(\mathbf{n} = \langle 1, 2, -2 \rangle\), so \(\|\mathbf{n}\| = \sqrt{1 + 4 + 4} = 3\) and \(\|\mathbf{n}\|^2 = 9\).
+- Compute the signed numerator: \(1(4) + 2(1) - 2(-2) - 1 = 4 + 2 + 4 - 1 = 9\).
+- By [REF: pt-plane-dist | the point-to-plane formula], \(d(P_1, \Pi) = \frac{|9|}{3} = 3\).
+- By [REF: foot-reflect | the foot and reflection formulas], \(\lambda = \frac{9}{9} = 1\), so
+\[
+\mathbf{r}_F = \langle 4, 1, -2 \rangle - 1\langle 1, 2, -2 \rangle = \langle 3, -1, 0 \rangle,
+\]
+and
+\[
+\mathbf{r}_{P_1'} = \langle 4, 1, -2 \rangle - 2\langle 1, 2, -2 \rangle = \langle 2, -3, 2 \rangle.
+\]
+Check: \(F(3, -1, 0)\) satisfies \(3 + 2(-1) - 2(0) = 1\), the midpoint of \(P_1\) and \(P_1'\) is \((3, -1, 0) = F\), and \(\|\overrightarrow{F P_1}\| = \|\langle 1, 2, -2 \rangle\| = 3\).
+
+[QUESTION 1]
+[ANSWER: A]
+Find the distance \(d\) from the point \(P_1(3, -1, 4)\) to the plane \(\Pi: 2x - y + 2z = 6\), together with the coordinates of the closest point \(F\) on \(\Pi\).
+
+(A) \(d = 3\) and \(F(1, 0, 2)\)
+(B) \(d = 3\) and \(F(5, -2, 6)\)
+(C) \(d = 3\) and \(F(-1, 1, 0)\)
+(D) \(d = 1\) and \(F(1, 0, 2)\)
+(E) \(d = 7\) and \(F(1, 0, 2)\)
+[/QUESTION]
+
+=== SECTION 3: Parallel planes and parallel line–plane distance ===
+
+How far apart are two parallel planes \(\Pi_1\) and \(\Pi_2\)? Because the distance from any point of \(\Pi_2\) to \(\Pi_1\) is identical everywhere along \(\Pi_2\), pick any point \(P_2(x_2, y_2, z_2) \in \Pi_2\) and measure its distance to \(\Pi_1\).
+
+Suppose first that both planes have ALREADY been scaled to share the EXACT same normal vector \(\mathbf{n} = \langle a, b, c \rangle\):
+\[
+\Pi_1:\; ax + by + cz = d_1, \qquad \Pi_2:\; ax + by + cz = d_2.
+\]
+Since \(P_2 \in \Pi_2\) satisfies \(ax_2 + by_2 + cz_2 = d_2\), plugging \(P_2\) into [REF: pt-plane-dist | the point-to-plane formula] for \(\Pi_1\) simplifies immediately to
+\[
+d(\Pi_1, \Pi_2) = \frac{|ax_2 + by_2 + cz_2 - d_1|}{\sqrt{a^2 + b^2 + c^2}} = \frac{|d_2 - d_1|}{\sqrt{a^2 + b^2 + c^2}}.
+\]
+The same idea handles the distance between a line \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) and a plane \(\Pi: ax + by + cz = d\) parallel to it (meaning \(\mathbf{v} \cdot \mathbf{n} = 0\)): every point of \(L\) lies at the exact same perpendicular height above \(\Pi\), so simply evaluate [REF: pt-plane-dist | the point-to-plane formula] at the base point \(P_0\) of \(L\). (If \(\mathbf{v} \cdot \mathbf{n} \ne 0\), the line pierces the plane, so the shortest distance is automatically \(0\).)
+
+[CALLOUT]
+id: parallel-plane-dist
+label: Caution
+title: Match normal coefficients before subtracting \(d_2 - d_1\)
+tone: caution
+
+The parallel-plane formula
+\[
+d(\Pi_1, \Pi_2) = \frac{|d_2 - d_1|}{\sqrt{a^2 + b^2 + c^2}}
+\]
+is valid ONLY when both equations are written with identical coefficients \((a, b, c)\) on the left-hand side. If \(\Pi_1\) is \(x - 2y + 2z = 3\) and \(\Pi_2\) is \(2x - 4y + 4z = 18\), you must first divide \(\Pi_2\) by \(2\) to rewrite it as \(x - 2y + 2z = 9\), giving \(d = \frac{|9 - 3|}{\sqrt{1 + 4 + 4}} = \frac{6}{3} = 2\) (NOT \(\frac{|18 - 3|}{3} = 5\)).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: E]
+What is the exact shortest distance between the parallel planes \(\Pi_1: 2x - 2y + z = 5\) and \(\Pi_2: 6x - 6y + 3z = -3\)?
+
+(A) \(\frac{8}{3}\)
+(B) \(\frac{8}{9}\)
+(C) \(\frac{4}{3}\)
+(D) \(6\)
+(E) \(2\)
+[/QUESTION]
+
+=== SECTION 4: Distance from a point to a line in \(\mathbb{R}^3\) ===
+
+Unlike a plane, a line \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) in \(\mathbb{R}^3\) does NOT have a single unique normal vector—an entire disk of directions is perpendicular to \(\mathbf{v}\). So how do we measure the shortest distance from an external point \(P_1\) to \(L\)?
+
+Look inside the single plane determined by \(L\) and \(P_1\), with \(P_0\) as the base point on \(L\) and \(\theta\) as the angle between \(\overrightarrow{P_0 P_1}\) and \(\mathbf{v}\). The perpendicular distance \(d(P_1, L)\) is the height of the right triangle with hypotenuse \(\|\overrightarrow{P_0 P_1}\|\) and base along \(\mathbf{v}\):
+\[
+d(P_1, L) = \|\overrightarrow{P_0 P_1}\|\sin\theta.
+\]
+Two complementary vector tools compute this height cleanly without ever finding \(\theta\):
+
+1. Cross-product (parallelogram area/base) method: the parallelogram spanned by \(\overrightarrow{P_0 P_1}\) and \(\mathbf{v}\) has area \(\|\overrightarrow{P_0 P_1} \times \mathbf{v}\| = \|\overrightarrow{P_0 P_1}\|\,\|\mathbf{v}\|\sin\theta\) and base length \(\|\mathbf{v}\|\). Dividing area by base yields the height directly:
+\[
+d(P_1, L) = \frac{\|\overrightarrow{P_0 P_1} \times \mathbf{v}\|}{\|\mathbf{v}\|}.
+\]
+2. Orthogonal decomposition method: split \(\overrightarrow{P_0 P_1}\) into its component parallel to \(\mathbf{v}\) and its component orthogonal to \(\mathbf{v}\):
+\[
+\overrightarrow{P_0 P_1} = \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1} + \mathbf{w}_\perp, \qquad \text{where } \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1} = \frac{\overrightarrow{P_0 P_1} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\,\mathbf{v}.
+\]
+The orthogonal remainder \(\mathbf{w}_\perp = \overrightarrow{P_0 P_1} - \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1}\) runs straight from the foot \(F \in L\) up to \(P_1\). Therefore \(d(P_1, L) = \|\mathbf{w}_\perp\|\), AND you obtain the exact closest point \(F\) on \(L\) for free:
+\[
+\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1} = \mathbf{r}_0 + \left(\frac{\overrightarrow{P_0 P_1} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v}.
+\]
+
+The planar slice below shows both viewpoints on the same picture: the height \(d\) of the parallelogram spanned by \(\overrightarrow{P_0 P_1}\) and \(\mathbf{v}\) equals the length of the orthogonal remainder \(\mathbf{w}_\perp = \overrightarrow{F P_1}\).
+
+[GRAPH]
+type: parametric2d
+title: Point-to-line distance as parallelogram height and orthogonal remainder \(\mathbf{w}_\perp\)
+xlabel: line direction
+ylabel: perpendicular direction
+trange: -0.5, 4.5
+xrange: -0.8, 4.8
+yrange: -0.6, 3.2
+trace: t, 0 | label: line \(L\)
+segment: 0, 0, 2.2, 0 | label: \(\mathbf{v}\)
+segment: 0, 0, 1.6, 2.1 | label: \(\overrightarrow{P_0 P_1}\)
+segment: 1.6, 0, 1.6, 2.1 | label: \(\mathbf{w}_\perp\)
+segment: 2.2, 0, 3.8, 2.1 | dashed: true
+segment: 1.6, 2.1, 3.8, 2.1 | dashed: true
+point: 0, 0 | label: \(P_0\)
+point: 1.6, 0 | label: \(F\)
+point: 1.6, 2.1 | label: \(P_1\)
+[/GRAPH]
+
+[CALLOUT]
+id: pt-line-dist
+label: Formulas
+title: Point-to-line distance and closest point on a line in \(\mathbb{R}^3\)
+tone: key
+
+For a point \(P_1\) and a line \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) through \(P_0\) with \(\mathbf{v} \ne \mathbf{0}\):
+
+(1) Cross-product distance formula (fastest when only the scalar distance is needed):
+\[
+d(P_1, L) = \frac{\left\|\overrightarrow{P_0 P_1} \times \mathbf{v}\right\|}{\|\mathbf{v}\|}.
+\]
+(2) Orthogonal decomposition formula (gives both the closest point \(F \in L\) and the distance):
+\[
+t^* = \frac{\overrightarrow{P_0 P_1} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}, \qquad \mathbf{r}_F = \mathbf{r}_0 + t^*\mathbf{v}, \qquad d(P_1, L) = \left\|\mathbf{r}_{P_1} - \mathbf{r}_F\right\|.
+\]
+[/CALLOUT]
+
+Let us verify both formulas from [REF: pt-line-dist | the point-to-line formulas] on \(P_1(3, 2, 1)\) and \(L: \mathbf{r}(t) = \langle 1, 0, -1 \rangle + t\langle 1, 1, 0 \rangle\). Here \(\overrightarrow{P_0 P_1} = \langle 2, 2, 2 \rangle\) and \(\mathbf{v} = \langle 1, 1, 0 \rangle\) with \(\|\mathbf{v}\| = \sqrt{2}\).
+- Cross-product method: \(\overrightarrow{P_0 P_1} \times \mathbf{v} = \langle -2, 2, 0 \rangle\), whose length is \(\sqrt{4 + 4} = 2\sqrt{2}\). Thus \(d = \frac{2\sqrt{2}}{\sqrt{2}} = 2\).
+- Orthogonal decomposition method: \(t^* = \frac{\langle 2, 2, 2 \rangle \cdot \langle 1, 1, 0 \rangle}{1 + 1 + 0} = \frac{4}{2} = 2\). The closest point is \(F = \langle 1, 0, -1 \rangle + 2\langle 1, 1, 0 \rangle = (3, 2, -1)\), and \(\overrightarrow{F P_1} = \langle 0, 0, 2 \rangle\) is indeed orthogonal to \(\mathbf{v}\) with length \(2\).
+
+[TABLE]
+Distance task | Core geometric idea | Formula | Also locates closest point?
+Point \(P_1\) to plane \(\Pi\) | Scalar projection onto \(\mathbf{n}\) | \(\frac{\lvert ax_1 + by_1 + cz_1 - d \rvert}{\sqrt{a^2 + b^2 + c^2}}\) | Yes, via \(\mathbf{r}_F = \mathbf{r}_{P_1} - \lambda\mathbf{n}\)
+Parallel planes \(\Pi_1, \Pi_2\) | Equalize \(\mathbf{n}\), project onto \(\mathbf{n}\) | \(\frac{\lvert d_2 - d_1 \rvert}{\sqrt{a^2 + b^2 + c^2}}\) | Not unique (every pair along \(\mathbf{n}\))
+Point \(P_1\) to line \(L\) (cross) | Parallelogram area / base | \(\frac{\|\overrightarrow{P_0 P_1} \times \mathbf{v}\|}{\|\mathbf{v}\|}\) | No (distance only)
+Point \(P_1\) to line \(L\) (proj) | Orthogonal decomposition | \(\|\overrightarrow{P_0 P_1} - \operatorname{proj}_{\mathbf{v}}\overrightarrow{P_0 P_1}\|\) | Yes, \(\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{v}}\overrightarrow{P_0 P_1}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+What is the shortest distance from the point \(P_1(2, 1, -1)\) to the line \(L: \mathbf{r}(t) = \langle 1, -1, 0 \rangle + t\langle 1, 2, -2 \rangle\)?
+
+(A) \(\sqrt{5}\)
+(B) \(\frac{\sqrt{5}}{3}\)
+(C) \(\frac{5}{3}\)
+(D) \(\frac{7}{3}\)
+(E) \(\frac{\sqrt{6}}{3}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Find the coordinates of the closest point \(F\) on the line \(L: \mathbf{r}(t) = \langle 0, 2, -1 \rangle + t\langle 2, -1, 2 \rangle\) to the point \(P_1(4, 2, 4)\).
+
+(A) \((4, -2, 4)\)
+(B) \((0, 2, 1)\)
+(C) \((4, 0, 3)\)
+(D) \((2, 1, 1)\)
+(E) \((6, -1, 5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Find the mirror reflection \(P_1'\) of the point \(P_1(1, 3, -2)\) across the plane \(\Pi: x - 2y + 2z = 9\).
+
+(A) \((3, -1, 2)\)
+(B) \((-1, 7, -6)\)
+(C) \((-3, 11, -10)\)
+(D) \((5, -5, 6)\)
+(E) \((4, -3, 4)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Consider the line \(L: \mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 1, -4, 1 \rangle\) and the plane \(\Pi: 2x + y + 2z = 12\). What is the distance between \(L\) and \(\Pi\)?
+
+(A) \(3\)
+(B) \(0\), because \(L\) intersects \(\Pi\)
+(C) \(5\)
+(D) \(9\)
+(E) It varies linearly with the parameter \(t\)
+[/BONUS]

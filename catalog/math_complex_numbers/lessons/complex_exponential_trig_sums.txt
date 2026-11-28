@@ -1,0 +1,233 @@
+=== SECTION 1: Lifting arithmetic-progression trigonometric sums to \(\mathbb{C}\) ===
+
+Suppose you need a single closed-form expression for a long sum of cosines or sines whose angles increase in equal steps \(\beta\):
+\[
+C = \sum_{k=0}^{n-1} \cos(\alpha + k\beta), \qquad S = \sum_{k=0}^{n-1} \sin(\alpha + k\beta),
+\]
+where \(n \ge 1\) is an integer and \(\alpha, \beta \in \mathbb{R}\). Trying to collapse \(C\) or \(S\) with real sum-to-product identities takes tedious telescoping tricks that are easy to drop a sign in.
+
+Euler's formula \(e^{i\theta} = \cos\theta + i\sin\theta\) transforms this trigonometric problem into an elementary geometric series! Combine \(C\) and \(S\) into a single complex sum \(C + iS\):
+\[
+C + iS = \sum_{k=0}^{n-1} \bigl(\cos(\alpha + k\beta) + i\sin(\alpha + k\beta)\bigr) = \sum_{k=0}^{n-1} e^{i(\alpha + k\beta)} = e^{i\alpha} \sum_{k=0}^{n-1} \bigl(e^{i\beta}\bigr)^k.
+\]
+Look at what just happened: \(C + iS\) is a finite geometric series with common ratio \(r = e^{i\beta}\)!
+
+Before applying the finite geometric-series formula \(\sum_{k=0}^{n-1} r^k = \frac{1 - r^n}{1 - r}\), we MUST separate the degenerate case \(r = 1\) (which occurs whenever \(\beta = 2\pi m\) for some integer \(m \in \mathbb{Z}\)):
+- Degenerate case (\(\beta \equiv 0 \pmod{2\pi}\)): here \(e^{i\beta} = 1\), so every single term equals \(e^{i\alpha}\). Hence \(C + iS = n e^{i\alpha}\), giving
+  \[
+  C = n\cos\alpha, \qquad S = n\sin\alpha.
+  \]
+- Non-degenerate case (\(\beta \not\equiv 0 \pmod{2\pi}\)): here \(e^{i\beta} \ne 1\), so the finite geometric-series formula applies cleanly:
+  \[
+  C + iS = e^{i\alpha}\,\frac{1 - e^{in\beta}}{1 - e^{i\beta}}.
+  \]
+
+Now comes the key simplification step — the half-angle factoring bridge from our Euler's-formula lesson! For any real angle \(\varphi\), factor out \(e^{i\varphi/2}\):
+\[
+1 - e^{i\varphi} = e^{i\varphi/2}\bigl(e^{-i\varphi/2} - e^{i\varphi/2}\bigr) = -2i\sin\!\left(\frac{\varphi}{2}\right) e^{i\varphi/2}.
+\]
+Apply this exact identity to BOTH the numerator (\(\varphi = n\beta\)) and the denominator (\(\varphi = \beta\)):
+\[
+C + iS = e^{i\alpha}\,\frac{-2i\sin\!\left(\frac{n\beta}{2}\right) e^{in\beta/2}}{-2i\sin\!\left(\frac{\beta}{2}\right) e^{i\beta/2}}.
+\]
+The factors \(-2i\) cancel completely! Combine the remaining exponential factors:
+\[
+e^{i\alpha}\,e^{in\beta/2}\,e^{-i\beta/2} = e^{i\left(\alpha + \frac{n - 1}{2}\beta\right)}.
+\]
+Since \(\frac{\sin(n\beta/2)}{\sin(\beta/2)}\) is PURELY REAL (and \(\sin(\beta/2) \ne 0\) because \(\beta \not\equiv 0 \pmod{2\pi}\)), taking real and imaginary parts yields BOTH closed forms simultaneously!
+
+[CALLOUT]
+id: trig-progression-closed-form
+label: Theorem
+title: Closed forms for finite arithmetic-progression cosine and sine sums
+tone: key
+
+Let \(n \ge 1\) be an integer and \(\alpha, \beta \in \mathbb{R}\).
+
+(1) If \(\beta \not\equiv 0 \pmod{2\pi}\):
+\[
+\sum_{k=0}^{n-1} \cos(\alpha + k\beta) = \frac{\sin\!\left(\frac{n\beta}{2}\right)}{\sin\!\left(\frac{\beta}{2}\right)} \cos\!\left(\alpha + \frac{n - 1}{2}\beta\right),
+\]
+\[
+\sum_{k=0}^{n-1} \sin(\alpha + k\beta) = \frac{\sin\!\left(\frac{n\beta}{2}\right)}{\sin\!\left(\frac{\beta}{2}\right)} \sin\!\left(\alpha + \frac{n - 1}{2}\beta\right).
+\]
+(2) If \(\beta \equiv 0 \pmod{2\pi}\) (the degenerate case \(e^{i\beta} = 1\)):
+\[
+\sum_{k=0}^{n-1} \cos(\alpha + k\beta) = n\cos\alpha, \qquad \sum_{k=0}^{n-1} \sin(\alpha + k\beta) = n\sin\alpha.
+\]
+[/CALLOUT]
+
+Notice the geometric beauty inside [REF: trig-progression-closed-form.1 | the closed-form formula]: the angle \(\alpha + \frac{n - 1}{2}\beta\) is the exact AVERAGE of the first angle \(\alpha\) and the last angle \(\alpha + (n - 1)\beta\)! Meanwhile, the complex sum \(\sum_{k=0}^{n-1} e^{ik\beta}\) adds \(n\) unit vectors tip-to-tail, turning by \(\beta\) at each joint. Drag the slider \(b\) in the plot below for \(n = 4\) to watch the four unit vectors wind up — notice how the chain closes back to the origin whenever \(b = \frac{\pi}{2}\) or \(b = \pi\) (matching \(\sin(4b/2) = \sin(2b) = 0\))!
+
+[GRAPH]
+type: parametric2d
+title: Tip-to-tail phasor chain for \(1 + e^{ib} + e^{2ib} + e^{3ib}\) and its endpoint curve
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.6, 4.3
+yrange: -2.6, 2.6
+trace: 1 + cos(t) + cos(2*t) + cos(3*t), sin(t) + sin(2*t) + sin(3*t) | label: endpoint locus as \(b\) varies | color: #94a3b8
+segment: 0, 0, 1, 0 | color: #2563eb
+segment: 1, 0, 1 + cos(b), sin(b) | color: #2563eb
+segment: 1 + cos(b), sin(b), 1 + cos(b) + cos(2*b), sin(b) + sin(2*b) | color: #2563eb
+segment: 1 + cos(b) + cos(2*b), sin(b) + sin(2*b), 1 + cos(b) + cos(2*b) + cos(3*b), sin(b) + sin(2*b) + sin(3*b) | color: #2563eb
+segment: 0, 0, 1 + cos(b) + cos(2*b) + cos(3*b), sin(b) + sin(2*b) + sin(3*b) | color: #dc2626 | dashed: true
+point: 1 + cos(b) + cos(2*b) + cos(3*b), sin(b) + sin(2*b) + sin(3*b) | label: \(S_4(b)\) | color: #dc2626
+slider: b | range: 0.3, 3.14 | init: 0.9 | step: 0.05
+[/GRAPH]
+
+Now look at the real and imaginary parts as functions of the step angle \(x = \beta\) for \(n = 6\) and \(\alpha = 0\):
+\[
+C_6(x) = \sum_{k=0}^{5} \cos(kx) = \frac{\sin(3x)}{\sin(x/2)}\cos\!\left(\frac{5x}{2}\right), \qquad S_6(x) = \sum_{k=0}^{5} \sin(kx) = \frac{\sin(3x)}{\sin(x/2)}\sin\!\left(\frac{5x}{2}\right).
+\]
+At \(x = 0\), the degenerate case gives \(C_6(0) = 6\) and \(S_6(0) = 0\), matching the tall central peak and crossing shown below.
+
+[GRAPH]
+type: function2d
+title: Cosine sum \(C_6(x)\) and sine sum \(S_6(x)\) versus step angle \(x\)
+xlabel: \(x\)
+ylabel: sum value
+xrange: -3.1416, 3.1416
+trace: abs(x) < 0.0001 ? 6 : sin(3*x)/sin(x/2)*cos(2.5*x) | label: \(C_6(x) = \sum_{k=0}^{5} \cos(kx)\) | color: #2563eb
+trace: abs(x) < 0.0001 ? 0 : sin(3*x)/sin(x/2)*sin(2.5*x) | label: \(S_6(x) = \sum_{k=0}^{5} \sin(kx)\) | color: #d97706
+point: 0, 6 | label: \((0, 6)\) | color: #2563eb
+[/GRAPH]
+
+Let us test [REF: trig-progression-closed-form.1 | the closed-form theorem] on two concrete evaluations:
+- Example 1: Evaluate \(\sum_{k=0}^{5} \cos\!\left(\frac{k\pi}{6}\right)\). Here \(n = 6\), \(\alpha = 0\), and \(\beta = \frac{\pi}{6} \not\equiv 0 \pmod{2\pi}\). Substituting gives
+  \[
+  \frac{\sin\!\left(\frac{6\pi}{12}\right)}{\sin\!\left(\frac{\pi}{12}\right)} \cos\!\left(\frac{5\pi}{12}\right) = \frac{\sin(\pi/2)}{\sin(\pi/12)}\cos\!\left(\frac{\pi}{2} - \frac{\pi}{12}\right) = \frac{1}{\sin(\pi/12)}\sin\!\left(\frac{\pi}{12}\right) = 1.
+  \]
+- Example 2: Evaluate \(\sum_{k=0}^{4} \cos\!\left(\frac{\pi}{5} + \frac{2k\pi}{5}\right)\). Here \(n = 5\), \(\alpha = \frac{\pi}{5}\), \(\beta = \frac{2\pi}{5}\). Since \(\frac{n\beta}{2} = \pi\), we have \(\sin(\pi) = 0\) while \(\sin(\pi/5) \ne 0\), so the entire sum collapses instantly to \(0\)! (That matches rotating the \(5\)th roots of unity by \(\frac{\pi}{5}\) — their sum is still \(0\).)
+
+[QUESTION 1]
+[ANSWER: B]
+Using the arithmetic-progression sum formula, what is the closed form of the odd-multiple cosine sum
+\[
+\sum_{k=1}^{n} \cos\bigl((2k - 1)\theta\bigr) = \cos\theta + \cos(3\theta) + \dots + \cos\bigl((2n - 1)\theta\bigr)
+\]
+for any integer \(n \ge 1\) and real \(\theta \not\equiv 0 \pmod{\pi}\)?
+
+(A) \(\frac{\sin(n\theta)}{2\sin\theta}\)
+(B) \(\frac{\sin(2n\theta)}{2\sin\theta}\)
+(C) \(\frac{\sin(2n\theta)}{\sin\theta}\)
+(D) \(\frac{\cos(2n\theta)}{2\sin\theta}\)
+(E) \(\frac{\sin(n\theta)\cos(n\theta)}{\sin(\theta/2)}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+What is the exact value of \(\sum_{k=0}^{9} \sin\!\left(\frac{\pi}{6} + 2k\pi\right)\), and why cannot the quotient formula \(\frac{\sin(n\beta/2)}{\sin(\beta/2)}\sin\!\left(\alpha + \frac{n-1}{2}\beta\right)\) be plugged in directly?
+
+(A) The sum is \(0\), because \(\sin(10\pi) = 0\) in the numerator.
+(B) The sum is \(10\), because \(e^{2\pi i} = 1\).
+(C) The sum is \(\frac{1}{2}\), because only the \(k = 0\) term survives.
+(D) The sum is \(5\), because \(\beta = 2\pi\) is the degenerate case where \(e^{i\beta} = 1\) (making \(\sin(\beta/2) = 0\) in the denominator), so all \(10\) terms equal \(\sin(\frac{\pi}{6}) = \frac{1}{2}\).
+(E) The sum is undefined, because the geometric series ratio \(r = e^{2\pi i} = 1\) diverges.
+[/QUESTION]
+
+=== SECTION 2: Binomial-weighted trigonometric sums ===
+
+The same lift-and-factor strategy evaluates binomial-weighted trigonometric sums that would look completely intractable using real trigonometry alone:
+\[
+\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta) \qquad \text{and} \qquad \sum_{k=0}^{n} \binom{n}{k} \sin(k\theta).
+\]
+Lift both sums into \(\mathbb{C}\) and recognize the Binomial Theorem \((1 + w)^n = \sum_{k=0}^{n} \binom{n}{k} w^k\) with \(w = e^{i\theta}\):
+\[
+\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta) + i\sum_{k=0}^{n} \binom{n}{k} \sin(k\theta) = \sum_{k=0}^{n} \binom{n}{k} e^{ik\theta} = \bigl(1 + e^{i\theta}\bigr)^n.
+\]
+Now apply the companion half-angle factoring bridge for \(1 + e^{i\theta}\):
+\[
+1 + e^{i\theta} = e^{i\theta/2}\bigl(e^{-i\theta/2} + e^{i\theta/2}\bigr) = 2\cos\!\left(\frac{\theta}{2}\right) e^{i\theta/2}.
+\]
+Raise both sides to the \(n\)th power (using De Moivre's Theorem on \(e^{i\theta/2}\)):
+\[
+\bigl(1 + e^{i\theta}\bigr)^n = 2^n \cos^n\!\left(\frac{\theta}{2}\right) e^{in\theta/2} = 2^n \cos^n\!\left(\frac{\theta}{2}\right)\left(\cos\!\left(\frac{n\theta}{2}\right) + i\sin\!\left(\frac{n\theta}{2}\right)\right).
+\]
+Notice a wonderful bonus: because \(2\cos(\theta/2)\) is ALWAYS real (whether positive, zero, or negative), there is NO degenerate denominator case here — the formula holds for EVERY real \(\theta \in \mathbb{R}\)!
+
+[CALLOUT]
+id: binomial-trig-sum
+label: Theorem
+title: Binomial-weighted cosine and sine sums
+tone: key
+
+For every integer \(n \ge 0\) and every real angle \(\theta \in \mathbb{R}\):
+\[
+\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta) = 2^n \cos^n\!\left(\frac{\theta}{2}\right) \cos\!\left(\frac{n\theta}{2}\right),
+\]
+\[
+\sum_{k=0}^{n} \binom{n}{k} \sin(k\theta) = 2^n \cos^n\!\left(\frac{\theta}{2}\right) \sin\!\left(\frac{n\theta}{2}\right).
+\]
+[/CALLOUT]
+
+What if the binomial sum alternates in sign, \(\sum_{k=0}^{n} (-1)^k \binom{n}{k} \cos(k\theta)\)? Do NOT memorize a separate formula — just reuse the exact same lift! Since \((-1)^k e^{ik\theta} = (-e^{i\theta})^k\), the complex sum is simply \((1 - e^{i\theta})^n\), where we apply the \(1 - e^{i\theta}\) half-angle bridge! The table below summarizes the three core lifting templates side by side:
+
+[TABLE]
+Trigonometric sum family | Complex lift | Half-angle bridge used
+\(\sum_{k=0}^{n-1} \cos(\alpha + k\beta)\) or \(\sin(\alpha + k\beta)\) | \(e^{i\alpha} \frac{1 - e^{in\beta}}{1 - e^{i\beta}}\) (for \(\beta \not\equiv 0 \pmod{2\pi}\)) | \(1 - e^{i\varphi} = -2i\sin(\varphi/2)e^{i\varphi/2}\)
+\(\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta)\) or \(\sin(k\theta)\) | \((1 + e^{i\theta})^n\) | \(1 + e^{i\theta} = 2\cos(\theta/2)e^{i\theta/2}\)
+\(\sum_{k=0}^{n} (-1)^k \binom{n}{k} \cos(k\theta)\) or \(\sin(k\theta)\) | \((1 - e^{i\theta})^n\) | \(1 - e^{i\theta} = -2i\sin(\theta/2)e^{i\theta/2}\)
+[/TABLE]
+
+Let us work through one numerical check of [REF: binomial-trig-sum | the binomial-sum theorem]: evaluate \(\sum_{k=0}^{6} \binom{6}{k} \cos\!\left(\frac{k\pi}{3}\right)\). Plugging \(n = 6\) and \(\theta = \frac{\pi}{3}\) gives
+\[
+2^6 \cos^6\!\left(\frac{\pi}{6}\right) \cos\!\left(\frac{6\pi}{6}\right) = 64 \left(\frac{\sqrt{3}}{2}\right)^6 \cos(\pi) = 64 \cdot \frac{27}{64} \cdot (-1) = -27.
+\]
+Direct check: \(1(1) + 6(\frac{1}{2}) + 15(-\frac{1}{2}) + 20(-1) + 15(-\frac{1}{2}) + 6(\frac{1}{2}) + 1(1) = 1 + 3 - 7.5 - 20 - 7.5 + 3 + 1 = -27\). The complex exponential method delivered the answer in one line — and works just as effortlessly when \(n = 12\) or \(n = 100\)!
+
+[QUESTION 3]
+[ANSWER: C]
+Evaluate the exact value of \(\sum_{k=0}^{12} \binom{12}{k} \cos\!\left(\frac{k\pi}{3}\right)\).
+
+(A) \(-729\)
+(B) \(0\)
+(C) \(729\)
+(D) \(4096\)
+(E) \(729\sqrt{3}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Evaluate the alternating binomial cosine sum \(\sum_{k=0}^{8} (-1)^k \binom{8}{k} \cos\!\left(\frac{k\pi}{3}\right)\).
+
+(A) \(-\frac{1}{2}\)
+(B) \(\frac{1}{2}\)
+(C) \(-\frac{\sqrt{3}}{2}\)
+(D) \(81\)
+(E) \(-81\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+For any integer \(n \ge 2\), apply the complex exponential sum method to evaluate \(\sum_{k=1}^{n-1} \sin\!\left(\frac{k\pi}{n}\right)\) in closed form.
+
+(A) \(\tan\!\left(\frac{\pi}{2n}\right)\)
+(B) \(\csc\!\left(\frac{\pi}{2n}\right)\)
+(C) \(\cot\!\left(\frac{\pi}{n}\right)\)
+(D) \(n\cot\!\left(\frac{\pi}{2n}\right)\)
+(E) \(\cot\!\left(\frac{\pi}{2n}\right)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+By lifting \(\sum_{k=0}^{n} \binom{n}{k} \sin(\alpha + k\theta)\) into \(\operatorname{Im}\!\left(e^{i\alpha}(1 + e^{i\theta})^n\right)\), what is its exact closed form for any integer \(n \ge 0\) and real \(\alpha, \theta \in \mathbb{R}\)?
+
+(A) \(2^n \cos^n\!\left(\frac{\theta}{2}\right) \sin(\alpha + n\theta)\)
+(B) \(2^n \cos^n\!\left(\frac{\theta}{2}\right) \sin\!\left(\alpha + \frac{n\theta}{2}\right)\)
+(C) \(2^n \sin^n\!\left(\frac{\theta}{2}\right) \sin\!\left(\alpha + \frac{n\theta}{2}\right)\)
+(D) \(2^n \cos^n\!\left(\frac{\theta}{2}\right) \cos\!\left(\alpha + \frac{n\theta}{2}\right)\)
+(E) \(2^n \cos^n(\theta) \sin\!\left(\alpha + \frac{n\theta}{2}\right)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Evaluate the exact value of \(\sum_{k=0}^{15} \binom{15}{k} \sin\!\left(\frac{k\pi}{2}\right)\).
+
+(A) \(0\)
+(B) \(128\)
+(C) \(-256\)
+(D) \(-128\)
+(E) \(-128\sqrt{2}\)
+[/BONUS]

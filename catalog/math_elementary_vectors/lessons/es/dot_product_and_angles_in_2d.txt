@@ -1,0 +1,218 @@
+=== SECTION 1: El producto punto algebraico y sus leyes ===
+
+Supón que te dan dos vectores del plano en forma en componentes, \(\mathbf{u} = \langle 4, 1 \rangle\) y \(\mathbf{v} = \langle 1, 3 \rangle\), y quieres conocer el ángulo \(\theta\) entre ellos. Hallar por separado el ángulo director de cada vector con \(\arctan\) y restarlos es engorroso —y no se generaliza limpiamente a situaciones geométricas donde no hay ejes coordenados privilegiados—. ¿Existe una única operación algebraica sobre las componentes de \(\mathbf{u}\) y \(\mathbf{v}\) que capture directamente el ángulo entre ellos?
+
+Existe, y es notablemente sencilla de calcular: multiplica las componentes correspondientes y suma los resultados.
+
+[CALLOUT]
+id: dot-def
+label: Definición
+title: El producto punto (escalar) en 2D
+tone: key
+
+Para cualesquiera dos vectores \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\) en \(\mathbb{R}^2\), su producto punto (o producto escalar) \(\mathbf{u} \cdot \mathbf{v}\) es el número real
+\[
+\mathbf{u} \cdot \mathbf{v} = u_x v_x + u_y v_y.
+\]
+[/CALLOUT]
+
+Observa qué tipo de objeto es \(\mathbf{u} \cdot \mathbf{v}\): introduces dos vectores y sale un único número real (un escalar). Para \(\mathbf{u} = \langle 4, 1 \rangle\) y \(\mathbf{v} = \langle 1, 3 \rangle\), obtenemos \(\mathbf{u} \cdot \mathbf{v} = (4)(1) + (1)(3) = 7\). Para \(\mathbf{a} = \langle 2, -5 \rangle\) y \(\mathbf{b} = \langle 3, 2 \rangle\), obtenemos \(\mathbf{a} \cdot \mathbf{b} = (2)(3) + (-5)(2) = -4\).
+
+[CALLOUT]
+id: dot-scalar-caution
+label: Error frecuente
+title: El producto punto devuelve un escalar, no un vector
+tone: caution
+
+Nunca escribas \(\mathbf{u} \cdot \mathbf{v} = \langle u_x v_x, u_y v_y \rangle\); debes sumar los productos en un solo número real. Por la misma razón, una expresión como \((\mathbf{u} \cdot \mathbf{v}) \cdot \mathbf{w}\) carece de sentido (no puedes hacer el producto punto de un escalar con un vector), mientras que \((\mathbf{u} \cdot \mathbf{v})\mathbf{w}\) es totalmente válida: es el escalar \(\mathbf{u} \cdot \mathbf{v}\) multiplicando al vector \(\mathbf{w}\).
+[/CALLOUT]
+
+Como [REF: dot-def | el producto punto] se construye directamente a partir de la multiplicación y la suma de números reales, obedece leyes algebraicas limpias que permiten desarrollar expresiones igual que binomios ordinarios. Comprobemos cada ley directamente en componentes para \(\mathbf{u} = \langle u_x, u_y \rangle\), \(\mathbf{v} = \langle v_x, v_y \rangle\), \(\mathbf{w} = \langle w_x, w_y \rangle\) y un escalar \(k \in \mathbb{R}\):
+- Conmutatividad: \(\mathbf{u} \cdot \mathbf{v} = u_x v_x + u_y v_y = v_x u_x + v_y u_y = \mathbf{v} \cdot \mathbf{u}\).
+- Distributividad: \(\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = u_x(v_x + w_x) + u_y(v_y + w_y) = (u_x v_x + u_y v_y) + (u_x w_x + u_y w_y) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}\).
+- Homogeneidad escalar: \((k\mathbf{u}) \cdot \mathbf{v} = (k u_x)v_x + (k u_y)v_y = k(u_x v_x + u_y v_y) = k(\mathbf{u} \cdot \mathbf{v})\), y análogamente \(\mathbf{u} \cdot (k\mathbf{v}) = k(\mathbf{u} \cdot \mathbf{v})\).
+- Identidad de la norma al cuadrado: \(\mathbf{v} \cdot \mathbf{v} = v_x^2 + v_y^2 = \|\mathbf{v}\|^2\).
+- Vector nulo: \(\mathbf{0} \cdot \mathbf{v} = 0 \cdot v_x + 0 \cdot v_y = 0\).
+
+[CALLOUT]
+id: dot-laws
+label: Teorema
+title: Propiedades algebraicas del producto punto
+tone: key
+
+Para todos \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^2\) y todo escalar real \(k\):
+
+(1) Conmutatividad: \(\mathbf{u} \cdot \mathbf{v} = \mathbf{v} \cdot \mathbf{u}\).
+(2) Distributividad: \(\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}\).
+(3) Homogeneidad escalar: \((k\mathbf{u}) \cdot \mathbf{v} = k(\mathbf{u} \cdot \mathbf{v}) = \mathbf{u} \cdot (k\mathbf{v})\).
+(4) Relación con la magnitud: \(\mathbf{v} \cdot \mathbf{v} = \|\mathbf{v}\|^2\), de modo que \(\mathbf{v} \cdot \mathbf{v} \ge 0\) con \(\mathbf{v} \cdot \mathbf{v} = 0 \iff \mathbf{v} = \mathbf{0}\).
+[/CALLOUT]
+
+Nota cómo [REF: dot-laws | estas leyes] nos permiten desarrollar longitudes al cuadrado sin usar componentes. Por ejemplo,
+\[
+\|\mathbf{u} + \mathbf{v}\|^2 = (\mathbf{u} + \mathbf{v}) \cdot (\mathbf{u} + \mathbf{v}) = \mathbf{u} \cdot \mathbf{u} + \mathbf{u} \cdot \mathbf{v} + \mathbf{v} \cdot \mathbf{u} + \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 + 2(\mathbf{u} \cdot \mathbf{v}) + \|\mathbf{v}\|^2.
+\]
+Ese desarrollo es justamente el puente que necesitamos para conectar \(u_x v_x + u_y v_y\) con la geometría.
+
+[QUESTION 1]
+[ANSWER: B]
+Supón que \(\mathbf{u}\) y \(\mathbf{v}\) son vectores en \(\mathbb{R}^2\) con \(\|\mathbf{u}\| = 3\), \(\|\mathbf{v}\| = 5\) y \(\mathbf{u} \cdot \mathbf{v} = -4\). ¿Cuánto vale \((2\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} + 3\mathbf{v})\)?
+
+(A) \(-37\)
+(B) \(-77\)
+(C) \(-29\)
+(D) \(-65\)
+(E) \(73\)
+[/QUESTION]
+
+=== SECTION 2: La fórmula geométrica del producto punto mediante la ley de los cosenos ===
+
+¿Por qué \(u_x v_x + u_y v_y\) sabe algo sobre el ángulo \(\theta\) entre dos vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\)? Deduzcamos directamente su significado geométrico en lugar de aceptarlo por fe.
+
+Coloca dos vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\) cola con cola en el origen, y sea \(\theta \in [0, \pi]\) (es decir, \(0^\circ \le \theta \le 180^\circ\)) el ángulo menor entre ellos. Supón primero que \(\mathbf{u}\) y \(\mathbf{v}\) no son paralelos, de modo que \(0 < \theta < \pi\). Entonces \(\mathbf{u}\), \(\mathbf{v}\) y el vector diferencia \(\mathbf{u} - \mathbf{v}\) forman un triángulo verdadero cuyos lados miden \(\|\mathbf{u}\|\), \(\|\mathbf{v}\|\) y \(\|\mathbf{u} - \mathbf{v}\|\), con el ángulo \(\theta\) opuesto al lado de longitud \(\|\mathbf{u} - \mathbf{v}\|\).
+
+[GRAPH]
+type: parametric2d
+title: Triángulo formado por \(\mathbf{u} = \langle 4, 1 \rangle\), \(\mathbf{v} = \langle 1, 3 \rangle\) y \(\mathbf{u} - \mathbf{v}\) con ángulo incluido \(\theta\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 5
+yrange: -0.5, 4
+trace: 4*t, t | label: \(\mathbf{u}\) | color: #2563eb
+trace: t, 3*t | label: \(\mathbf{v}\) | color: #d97706
+trace: 1 + 3*t, 3 - 2*t | label: \(\mathbf{u} - \mathbf{v}\) | color: #16a34a
+trace: 1.1*cos(0.245 + 1.004*t), 1.1*sin(0.245 + 1.004*t) | label: \(\theta\) | color: #7c3aed
+point: 0, 0 | label: \(O\)
+point: 4, 1 | label: \(\mathbf{u}\)
+point: 1, 3 | label: \(\mathbf{v}\)
+[/GRAPH]
+
+Ahora calcula \(\|\mathbf{u} - \mathbf{v}\|^2\) de dos maneras distintas:
+1. Geométricamente, mediante la ley de los cosenos aplicada al triángulo anterior:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2\|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+2. Algebraicamente, desarrollando \((\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v})\) por [REF: dot-laws | las leyes del producto punto]:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = (\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = \mathbf{u} \cdot \mathbf{u} - 2(\mathbf{u} \cdot \mathbf{v}) + \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2(\mathbf{u} \cdot \mathbf{v}).
+\]
+
+Ambas expresiones son iguales a \(\|\mathbf{u} - \mathbf{v}\|^2\). Al igualarlas, los términos \(\|\mathbf{u}\|^2 + \|\mathbf{v}\|^2\) se cancelan en ambos miembros, quedando
+\[
+-2(\mathbf{u} \cdot \mathbf{v}) = -2\|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+Dividir ambos lados entre \(-2\) produce la fórmula geométrica del producto punto:
+\[
+\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+¿Qué ocurre en los casos degenerados en que \(\mathbf{u}\) y \(\mathbf{v}\) son paralelos? Si \(\theta = 0\), entonces \(\mathbf{v} = c\mathbf{u}\) con \(c > 0\), de modo que \(\mathbf{u} \cdot \mathbf{v} = c\|\mathbf{u}\|^2 = \|\mathbf{u}\|(c\|\mathbf{u}\|) = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos 0\). Si \(\theta = \pi\), entonces \(\mathbf{v} = -c\mathbf{u}\) con \(c > 0\), así que \(\mathbf{u} \cdot \mathbf{v} = -c\|\mathbf{u}\|^2 = -\|\mathbf{u}\|\,\|\mathbf{v}\| = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\pi\). Por tanto, la fórmula vale para TODO par de vectores no nulos del plano.
+
+[CALLOUT]
+id: dot-geom
+label: Teorema
+title: Producto punto geométrico y fórmula del ángulo
+tone: key
+
+Para cualesquiera dos vectores no nulos \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) con ángulo comprendido \(\theta \in [0, \pi]\) (colocados cola con cola):
+
+(1) Producto punto geométrico:
+\[
+\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+(2) Fórmula del ángulo:
+\[
+\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}, \qquad \theta = \arccos\left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\right) \in [0, \pi].
+\]
+[/CALLOUT]
+
+Observa cómo [REF: dot-geom.2 | la fórmula del ángulo] supera a \(\arctan\): como \(\arccos\) devuelve valores en todo el intervalo \([0^\circ, 180^\circ]\), no hay ninguna ambigüedad de cuadrante. Solo asegúrate de que ambos vectores estén colocados cola con cola al interpretar \(\theta\) —por ejemplo, para hallar el ángulo interior \(\angle ABC\) en el vértice \(B\) de un triángulo, haz el producto punto de \(\overrightarrow{BA}\) y \(\overrightarrow{BC}\) (ambos partiendo de \(B\)), no de \(\overrightarrow{AB}\) y \(\overrightarrow{BC}\)—.
+
+Volvamos a nuestro par inicial \(\mathbf{u} = \langle 4, 1 \rangle\) y \(\mathbf{v} = \langle 1, 3 \rangle\). Tenemos \(\mathbf{u} \cdot \mathbf{v} = 7\), \(\|\mathbf{u}\| = \sqrt{17}\) y \(\|\mathbf{v}\| = \sqrt{10}\), de modo que
+\[
+\cos\theta = \frac{7}{\sqrt{17}\sqrt{10}} = \frac{7}{\sqrt{170}} \approx 0.5369 \implies \theta \approx 57.5^\circ.
+\]
+
+=== SECTION 3: Signo del producto punto y la desigualdad de Cauchy-Schwarz en 2D ===
+
+Observa de cerca [REF: dot-geom.1 | la fórmula geométrica] \(\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta\). Para vectores no nulos, tanto \(\|\mathbf{u}\|\) como \(\|\mathbf{v}\|\) son estrictamente positivos, de modo que el signo de \(\mathbf{u} \cdot \mathbf{v}\) queda determinado por completo por el signo de \(\cos\theta\) en \([0^\circ, 180^\circ]\). Eso significa que puedes clasificar de inmediato el ángulo entre dos vectores a partir de \(u_x v_x + u_y v_y\), sin calcular jamás una raíz cuadrada ni un arcocoseno.
+
+[TABLE]
+Signo de \(\mathbf{u} \cdot \mathbf{v}\) (\(\mathbf{u}, \mathbf{v}\) no nulos) | Signo de \(\cos\theta\) | Ángulo \(\theta \in [0^\circ, 180^\circ]\) | Relación geométrica
+\(\mathbf{u} \cdot \mathbf{v} > 0\) | \(\cos\theta > 0\) | \(0^\circ \le \theta < 90^\circ\) | Ángulo agudo (mismo sentido cuando \(\theta = 0^\circ\))
+\(\mathbf{u} \cdot \mathbf{v} = 0\) | \(\cos\theta = 0\) | \(\theta = 90^\circ\) | Ángulo recto (perpendiculares)
+\(\mathbf{u} \cdot \mathbf{v} < 0\) | \(\cos\theta < 0\) | \(90^\circ < \theta \le 180^\circ\) | Ángulo obtuso (sentido opuesto cuando \(\theta = 180^\circ\))
+[/TABLE]
+
+Arrastra el deslizador \(a\) (el ángulo \(\theta\) en radianes de \(0\) a \(\pi\)) en la gráfica siguiente para ver rotar un vector \(\mathbf{v}\) respecto a \(\mathbf{u} = \langle 3, 0 \rangle\). Para \(a < \frac{\pi}{2} \approx 1.57\), \(\mathbf{v}\) se inclina hacia adelante en el mismo semiplano que \(\mathbf{u}\) (\(\mathbf{u} \cdot \mathbf{v} > 0\)); en \(a = \frac{\pi}{2}\), forman un ángulo recto (\(\mathbf{u} \cdot \mathbf{v} = 0\)); para \(a > \frac{\pi}{2}\), \(\mathbf{v}\) se inclina hacia atrás (\(\mathbf{u} \cdot \mathbf{v} < 0\)).
+
+[GRAPH]
+type: parametric2d
+title: Rotación de \(\mathbf{v}\) por ángulos agudo, recto y obtuso respecto a \(\mathbf{u} = \langle 3, 0 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -3.2, 3.6
+yrange: -0.6, 3.2
+trace: 2*cos(t), 2*sin(t) | label: \(\text{semicircunferencia de radio } 2\) | color: #cbd5e1
+segment: 0, 0, 3, 0 | label: \(\mathbf{u}\) | color: #2563eb
+segment: 0, 0, 2*cos(a), 2*sin(a) | label: \(\mathbf{v}\) | color: #dc2626
+segment: 0, 0, 0, 2.5 | dashed: true
+point: 3, 0 | label: \(\mathbf{u}\)
+point: 2*cos(a), 2*sin(a) | label: \(\mathbf{v}\)
+slider: a | range: 0, 3.1416 | init: 1.0 | step: 0.1571
+[/GRAPH]
+
+Una desigualdad más de gran importancia se desprende directamente de [REF: dot-geom.1 | el producto punto geométrico]. Como \(|\cos\theta| \le 1\) para todo ángulo \(\theta\), tomar valores absolutos da
+\[
+|\mathbf{u} \cdot \mathbf{v}| = \|\mathbf{u}\|\,\|\mathbf{v}\|\,|\cos\theta| \le \|\mathbf{u}\|\,\|\mathbf{v}\|.
+\]
+Si \(\mathbf{u} = \mathbf{0}\) o \(\mathbf{v} = \mathbf{0}\), ambos lados valen \(0\) y la desigualdad sigue cumpliéndose. Esta es la desigualdad de Cauchy–Schwarz en 2D:
+\[
+|\mathbf{u} \cdot \mathbf{v}| \le \|\mathbf{u}\|\,\|\mathbf{v}\|, \qquad \text{ o en componentes, } \qquad |u_x v_x + u_y v_y| \le \sqrt{u_x^2 + u_y^2}\sqrt{v_x^2 + v_y^2}.
+\]
+La igualdad vale si y solo si \(|\cos\theta| = 1\) (o un vector es \(\mathbf{0}\)), es decir, cuando \(\mathbf{u}\) y \(\mathbf{v}\) son paralelos. Como verificación inmediata al calcular ángulos, si alguna vez obtienes \(\left|\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\right| > 1\), Cauchy–Schwarz garantiza que ocurrió un error aritmético en algún paso.
+
+[QUESTION 2]
+[ANSWER: C]
+¿Cuál es el ángulo exacto \(\theta \in [0^\circ, 180^\circ]\) entre los vectores \(\mathbf{u} = \langle 2, 1 \rangle\) y \(\mathbf{v} = \langle -3, 1 \rangle\)?
+
+(A) \(45^\circ\)
+(B) \(120^\circ\)
+(C) \(135^\circ\)
+(D) \(150^\circ\)
+(E) \(60^\circ\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+El triángulo \(ABC\) tiene vértices \(A(0, 1)\), \(B(2, 2)\) y \(C(1, 5)\). Clasifica el ángulo interior \(\angle ABC\) en el vértice \(B\).
+
+(A) Agudo, porque \(\overrightarrow{AB} \cdot \overrightarrow{BC} = 1 > 0\)
+(B) Obtuso, porque \(\overrightarrow{BA} \cdot \overrightarrow{BC} = -1 < 0\)
+(C) Recto, porque \(\overrightarrow{BA} \cdot \overrightarrow{BC} = 0\)
+(D) Obtuso, porque \(\overrightarrow{BA} \cdot \overrightarrow{BC} = -5 < 0\)
+(E) Agudo, porque \(\overrightarrow{BA} \cdot \overrightarrow{BC} = 5 > 0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Supón que \(\mathbf{u}\) y \(\mathbf{v}\) son vectores no nulos en \(\mathbb{R}^2\) que satisfacen \(\|\mathbf{u} + \mathbf{v}\| = \|\mathbf{u} - \mathbf{v}\|\). ¿Cuál debe ser el ángulo \(\theta\) entre \(\mathbf{u}\) y \(\mathbf{v}\)?
+
+(A) \(0^\circ\)
+(B) \(45^\circ\)
+(C) \(60^\circ\)
+(D) \(90^\circ\)
+(E) No puede determinarse sin conocer \(\|\mathbf{u}\|\) y \(\|\mathbf{v}\|\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Usando la desigualdad de Cauchy–Schwarz en 2D, ¿cuál es el valor máximo posible de \(3x + 4y\) sobre todos los pares reales \((x, y)\) que satisfacen \(x^2 + y^2 = 9\)?
+
+(A) \(7\)
+(B) \(9\)
+(C) \(12\)
+(D) \(21\)
+(E) \(15\)
+[/BONUS]

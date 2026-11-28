@@ -1,0 +1,259 @@
+=== SECTION 1: Deriving the point-to-line distance formula ===
+
+Given a point \(P_0(x_0, y_0)\) and a line \(L: Ax + By + C = 0\) (with \(A\) and \(B\) not both zero), how close does \(L\) get to \(P_0\)? If \(H\) is the foot of the perpendicular dropped from \(P_0\) to \(L\), then for any other point \(Q\) on \(L\), \(\triangle P_0 H Q\) is a right triangle with hypotenuse \(P_0 Q\), so \(P_0 H < P_0 Q\). Thus the shortest distance \(d(P_0, L)\) is the length of the perpendicular segment \(P_0 H\).
+
+Before deriving the general case, check the two axis-aligned lines directly:
+- If \(A = 0\) and \(B \neq 0\), the line is horizontal, \(y = -\frac{C}{B}\), so the perpendicular distance is purely vertical:
+\[
+d(P_0, L) = \left\lvert y_0 - \left(-\frac{C}{B}\right) \right\rvert = \frac{\lvert B y_0 + C \rvert}{\lvert B \rvert} = \frac{\lvert 0 \cdot x_0 + B y_0 + C \rvert}{\sqrt{0^2 + B^2}}.
+\]
+- If \(B = 0\) and \(A \neq 0\), the line is vertical, \(x = -\frac{C}{A}\), so the perpendicular distance is purely horizontal:
+\[
+d(P_0, L) = \left\lvert x_0 - \left(-\frac{C}{A}\right) \right\rvert = \frac{\lvert A x_0 + C \rvert}{\lvert A \rvert} = \frac{\lvert A x_0 + 0 \cdot y_0 + C \rvert}{\sqrt{A^2 + 0^2}}.
+\]
+
+Now suppose \(A \neq 0\) and \(B \neq 0\) (an oblique line). If \(P_0\) lies on \(L\), then \(Ax_0 + By_0 + C = 0\) and \(d(P_0, L) = 0\). Otherwise, instead of solving a system for the foot \(H\) immediately, drop a vertical segment from \(P_0(x_0, y_0)\) to the point \(Q(x_0, y_Q)\) on \(L\). Because \(Q\) lies on \(L\), we have \(A x_0 + B y_Q + C = 0\), so \(y_Q = -\frac{A x_0 + C}{B}\). The vertical length \(P_0 Q\) is therefore
+\[
+P_0 Q = \lvert y_0 - y_Q \rvert = \left\lvert y_0 + \frac{A x_0 + C}{B} \right\rvert = \frac{\lvert A x_0 + B y_0 + C \rvert}{\lvert B \rvert}.
+\]
+Now compare right triangle \(\triangle P_0 H Q\) (right angle at \(H\), hypotenuse \(P_0 Q\)) with a slope right triangle along \(L\). Since \(L\) has slope \(-\frac{A}{B}\), a slope triangle along \(L\) has horizontal leg \(\lvert B \rvert\), vertical leg \(\lvert A \rvert\), and hypotenuse \(\sqrt{A^2 + B^2}\). Look at the acute angle \(\angle H P_0 Q\) between the perpendicular \(P_0 H\) and the vertical segment \(P_0 Q\): it is complementary to \(\angle P_0 Q H\), which is itself complementary to the acute angle between \(L\) and the horizontal. Thus \(\angle H P_0 Q\) equals the acute angle between \(L\) and the horizontal, making \(\triangle P_0 H Q\) similar to the slope triangle!
+
+Matching the leg adjacent to this acute angle to the hypotenuse in both similar triangles gives
+\[
+\frac{P_0 H}{P_0 Q} = \frac{\lvert B \rvert}{\sqrt{A^2 + B^2}}.
+\]
+Substituting our expression for \(P_0 Q\) cancels \(\lvert B \rvert\) cleanly:
+\[
+P_0 H = \frac{\lvert B \rvert}{\sqrt{A^2 + B^2}} \cdot \frac{\lvert A x_0 + B y_0 + C \rvert}{\lvert B \rvert} = \frac{\lvert A x_0 + B y_0 + C \rvert}{\sqrt{A^2 + B^2}}.
+\]
+Notice that the exact same expression also covers the horizontal, vertical, and on-the-line cases we checked above.
+
+[CALLOUT]
+id: pt-line-dist
+label: Theorem
+title: Point-to-line distance formula
+tone: key
+
+The perpendicular distance from a point \(P_0(x_0, y_0)\) to a line \(L: Ax + By + C = 0\) (where \(A, B\) are not both zero) is
+\[
+d(P_0, L) = \frac{\lvert A x_0 + B y_0 + C \rvert}{\sqrt{A^2 + B^2}}.
+\]
+[/CALLOUT]
+
+Let us see this geometry on a concrete example: take \(L: 3x + 4y - 12 = 0\) and \(P_0(7, 4)\). The vertical drop from \(P_0\) hits \(L\) at \(Q(7, -\frac{9}{4})\), so \(P_0 Q = 4 - (-\frac{9}{4}) = \frac{25}{4}\). Meanwhile [REF: pt-line-dist | the distance formula] gives
+\[
+d(P_0, L) = \frac{\lvert 3(7) + 4(4) - 12 \rvert}{\sqrt{3^2 + 4^2}} = \frac{\lvert 25 \rvert}{5} = 5,
+\]
+which indeed equals \(\frac{4}{5} \cdot \frac{25}{4} = 5\). The foot of the perpendicular is \(H(4, 0)\): checking shows \(3(4) + 4(0) - 12 = 0\), segment \(P_0 H\) has slope \(\frac{4 - 0}{7 - 4} = \frac{4}{3}\) (perpendicular to \(-\frac{3}{4}\)), and \(P_0 H = \sqrt{3^2 + 4^2} = 5\).
+
+[GRAPH]
+type: function2d
+aspect: equal
+title: Perpendicular distance \(P_0 H = 5\) and vertical drop \(P_0 Q = 6.25\) to \(3x + 4y - 12 = 0\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1, 9
+yrange: -3.5, 5.5
+trace: 3 - 0.75*x | label: \(3x + 4y - 12 = 0\)
+segment: 7, 4, 4, 0 | label: \(d = 5\)
+segment: 7, 4, 7, -2.25 | dashed: true
+point: 7, 4 | label: \(P_0(7, 4)\)
+point: 4, 0 | label: \(H(4, 0)\)
+point: 7, -2.25 | label: \(Q(7, -2.25)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+What is the perpendicular distance from the point \(P_0(-2, 5)\) to the line \(5x - 12y + 18 = 0\)?
+
+(A) \(\frac{52}{17}\)
+(B) \(\frac{32}{13}\)
+(C) \(4\)
+(D) \(\frac{88}{13}\)
+(E) \(\frac{52}{169}\)
+[/QUESTION]
+
+=== SECTION 2: Signed half-planes and distance between parallel lines ===
+
+Inside [REF: pt-line-dist | the point-to-line distance formula], we took the absolute value of \(f(x, y) = Ax + By + C\). What information does the sign of \(Ax + By + C\) carry before we take the absolute value?
+
+Start from any point \((x_1, y_1)\) on \(L\), so \(A x_1 + B y_1 + C = 0\). If \(B \neq 0\) and we shift vertically to \((x_1, y_1 + \Delta y)\), then
+\[
+f(x_1, y_1 + \Delta y) = A x_1 + B(y_1 + \Delta y) + C = B\,\Delta y.
+\]
+Points strictly above \(L\) (\(\Delta y > 0\)) all share the sign of \(B\), while points strictly below \(L\) (\(\Delta y < 0\)) all share the sign of \(-B\). Similarly, if \(B = 0\) (a vertical line), shifting horizontally by \(\Delta x\) produces \(A\,\Delta x\), so points on opposite sides of the vertical line have opposite signs. Consequently, two points \(P_1(x_1, y_1)\) and \(P_2(x_2, y_2)\) not on \(L\) lie on the same side of \(L\) if and only if \(A x_1 + B y_1 + C\) and \(A x_2 + B y_2 + C\) have the same sign, and on opposite sides if and only if they have opposite signs.
+
+Now suppose two lines \(L_1\) and \(L_2\) are parallel. Because parallel lines maintain the same perpendicular separation everywhere, the distance \(d(L_1, L_2)\) equals \(d(P_1, L_2)\) for any single point \(P_1(x_1, y_1)\) chosen on \(L_1\). Write both lines with identical \(x\)- and \(y\)-coefficients:
+\[
+L_1: Ax + By + C_1 = 0, \qquad L_2: Ax + By + C_2 = 0.
+\]
+Since \(P_1(x_1, y_1)\) lies on \(L_1\), we have \(A x_1 + B y_1 = -C_1\). Substituting into [REF: pt-line-dist | the point-to-line distance formula] for \(L_2\) eliminates \(x_1\) and \(y_1\) completely:
+\[
+d(L_1, L_2) = \frac{\lvert A x_1 + B y_1 + C_2 \rvert}{\sqrt{A^2 + B^2}} = \frac{\lvert -C_1 + C_2 \rvert}{\sqrt{A^2 + B^2}} = \frac{\lvert C_2 - C_1 \rvert}{\sqrt{A^2 + B^2}}.
+\]
+
+[CALLOUT]
+id: parallel-dist
+label: Formula
+title: Distance between parallel lines
+tone: key
+
+For two parallel lines written with identical coefficients \(A\) and \(B\),
+\[
+L_1: Ax + By + C_1 = 0 \qquad \text{and} \qquad L_2: Ax + By + C_2 = 0,
+\]
+the perpendicular distance between them is
+\[
+d(L_1, L_2) = \frac{\lvert C_2 - C_1 \rvert}{\sqrt{A^2 + B^2}}.
+\]
+[/CALLOUT]
+
+[CALLOUT]
+id: parallel-scaling-trap
+label: Common pitfall
+title: Matching coefficients before subtracting \(C_1\) and \(C_2\)
+tone: caution
+
+Parallel lines are frequently given with proportional but unequal coefficients, such as \(3x - 4y + 7 = 0\) and \(6x - 8y - 11 = 0\). You must first multiply or divide one equation by a nonzero constant so that both equations share the exact same \(A\) and \(B\) before applying [REF: parallel-dist | the parallel-line distance formula].
+[/CALLOUT]
+
+Check that trap on \(3x - 4y + 7 = 0\) and \(6x - 8y - 11 = 0\). Multiplying the first equation by \(2\) puts both in the form \(6x - 8y + C = 0\), namely \(6x - 8y + 14 = 0\) and \(6x - 8y - 11 = 0\). Now [REF: parallel-dist | the formula] gives
+\[
+d = \frac{\lvert 14 - (-11) \rvert}{\sqrt{6^2 + (-8)^2}} = \frac{25}{10} = \frac{5}{2}.
+\]
+Equivalently, dividing the second equation by \(2\) gives \(3x - 4y - \frac{11}{2} = 0\), and \(\frac{\lvert 7 - (-11/2) \rvert}{5} = \frac{25/2}{5} = \frac{5}{2}\). Had we skipped rescaling and subtracted \(7 - (-11) = 18\), we would have gotten the wrong answer \(\frac{18}{5}\).
+
+[QUESTION 2]
+[ANSWER: B]
+What is the perpendicular distance between the parallel lines \(12x + 5y - 7 = 0\) and \(24x + 10y + 38 = 0\)?
+
+(A) \(\frac{45}{13}\)
+(B) \(2\)
+(C) \(\frac{12}{13}\)
+(D) \(\frac{45}{26}\)
+(E) \(4\)
+[/QUESTION]
+
+=== SECTION 3: Triangle altitudes and areas in coordinates ===
+
+[REF: pt-line-dist | The point-to-line distance formula] provides a direct route to computing altitudes and areas of triangles whose vertices are given in coordinates:
+1. Choose one side, say \(AB\), as the base and compute its length \(b = AB\).
+2. Write the equation of line \(AB\) in general form \(Ax + By + C = 0\).
+3. Compute the altitude \(h = d(C, AB)\) from the third vertex \(C\) to line \(AB\).
+4. Compute the area \(\operatorname{Area}(\triangle ABC) = \frac{1}{2} b h\).
+
+Watch how cleanly this works on \(A(1, 2)\), \(B(5, 5)\), and \(C(2, 7)\).
+- Base length: \(AB = \sqrt{(5 - 1)^2 + (5 - 2)^2} = \sqrt{16 + 9} = 5\).
+- Line \(AB\): slope \(m = \frac{5 - 2}{5 - 1} = \frac{3}{4}\), so \(y - 2 = \frac{3}{4}(x - 1)\), which rearranges to \(3x - 4y + 5 = 0\).
+- Altitude from \(C(2, 7)\):
+\[
+h = d(C, AB) = \frac{\lvert 3(2) - 4(7) + 5 \rvert}{\sqrt{3^2 + (-4)^2}} = \frac{\lvert 6 - 28 + 5 \rvert}{5} = \frac{17}{5}.
+\]
+- Area:
+\[
+\operatorname{Area}(\triangle ABC) = \frac{1}{2} \cdot 5 \cdot \frac{17}{5} = \frac{17}{2}.
+\]
+Notice why the denominator \(5\) cancelled the base length \(5\): when we write the line through \(A(x_A, y_A)\) and \(B(x_B, y_B)\) using \(A = y_B - y_A\) and \(B = -(x_B - x_A)\), the denominator \(\sqrt{A^2 + B^2}\) is literally the base length \(AB\) (or a constant multiple of it if we reduce common factors), so square roots always cancel in the area product!
+
+[QUESTION 3]
+[ANSWER: D]
+What is the area of the triangle with vertices \(P(-1, 1)\), \(Q(3, 4)\), and \(R(2, -2)\)?
+
+(A) \(\frac{13}{2}\)
+(B) \(10\)
+(C) \(21\)
+(D) \(\frac{21}{2}\)
+(E) \(\frac{19}{2}\)
+[/QUESTION]
+
+=== SECTION 4: Angle bisectors as equidistant line loci ===
+
+Two intersecting lines \(L_1: A_1 x + B_1 y + C_1 = 0\) and \(L_2: A_2 x + B_2 y + C_2 = 0\) form two pairs of vertical angles at their intersection point, so they have two angle bisector lines. Geometrically, a point \(P(x, y)\) lies on one of these two angle bisectors if and only if it is equidistant from \(L_1\) and \(L_2\):
+\[
+d(P, L_1) = d(P, L_2).
+\]
+Applying [REF: pt-line-dist | the point-to-line distance formula] to both sides translates this geometric locus directly into an algebraic equation:
+\[
+\frac{\lvert A_1 x + B_1 y + C_1 \rvert}{\sqrt{A_1^2 + B_1^2}} = \frac{\lvert A_2 x + B_2 y + C_2 \rvert}{\sqrt{A_2^2 + B_2^2}}.
+\]
+Two real numbers have equal absolute values if and only if they are equal or opposites, so removing the absolute values yields the equations of both angle bisectors simultaneously.
+
+[CALLOUT]
+id: angle-bisectors
+label: Formula
+title: Equations of the angle bisectors of two intersecting lines
+tone: key
+
+The two angle bisectors of intersecting lines \(L_1: A_1 x + B_1 y + C_1 = 0\) and \(L_2: A_2 x + B_2 y + C_2 = 0\) are given by
+\[
+\frac{A_1 x + B_1 y + C_1}{\sqrt{A_1^2 + B_1^2}} = \pm \frac{A_2 x + B_2 y + C_2}{\sqrt{A_2^2 + B_2^2}},
+\]
+where the \(+\) sign yields one bisector and the \(-\) sign yields the other.
+[/CALLOUT]
+
+We can immediately prove algebraically that these two bisectors are always perpendicular to each other. Write the normalized coefficients \(a_1 = \frac{A_1}{\sqrt{A_1^2 + B_1^2}}\), \(b_1 = \frac{B_1}{\sqrt{A_1^2 + B_1^2}}\) (so \(a_1^2 + b_1^2 = 1\)), and similarly \(a_2, b_2\) with \(a_2^2 + b_2^2 = 1\). The two bisectors have \((x, y)\)-coefficients \((a_1 - a_2, b_1 - b_2)\) and \((a_1 + a_2, b_1 + b_2)\). Checking the general-form perpendicularity condition \(A_p A_q + B_p B_q = 0\) gives
+\[
+(a_1 - a_2)(a_1 + a_2) + (b_1 - b_2)(b_1 + b_2) = (a_1^2 + b_1^2) - (a_2^2 + b_2^2) = 1 - 1 = 0,
+\]
+confirming that the two angle bisectors meet at a right angle.
+
+Let us find both angle bisectors of \(L_1: 3x - 4y = 0\) and \(L_2: 12x + 5y = 0\). Here \(\sqrt{3^2 + (-4)^2} = 5\) and \(\sqrt{12^2 + 5^2} = 13\), so [REF: angle-bisectors | the bisector equation] gives
+\[
+\frac{3x - 4y}{5} = \pm \frac{12x + 5y}{13} \implies 13(3x - 4y) = \pm 5(12x + 5y).
+\]
+- With the \(+\) sign: \(39x - 52y = 60x + 25y \implies 21x + 77y = 0 \implies 3x + 11y = 0\).
+- With the \(-\) sign: \(39x - 52y = -60x - 25y \implies 99x - 27y = 0 \implies 11x - 3y = 0\).
+
+Their slopes are \(-\frac{3}{11}\) and \(\frac{11}{3}\), whose product is \(-1\). Which bisector splits the acute angle between \(L_1\) and \(L_2\)? Pick any point on \(L_1\) away from the intersection, such as \(P(4, 3)\), and compare its distance to each bisector:
+\[
+d(P,\, 11x - 3y = 0) = \frac{\lvert 44 - 9 \rvert}{\sqrt{130}} = \frac{35}{\sqrt{130}}, \qquad d(P,\, 3x + 11y = 0) = \frac{\lvert 12 + 33 \rvert}{\sqrt{130}} = \frac{45}{\sqrt{130}}.
+\]
+Because \(P\) is closer to \(11x - 3y = 0\), that line bisects the acute angle, while \(3x + 11y = 0\) bisects the obtuse angle.
+
+[GRAPH]
+type: function2d
+aspect: equal
+title: Lines \(L_1: 3x - 4y = 0\), \(L_2: 12x + 5y = 0\), and their perpendicular angle bisectors
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 4
+yrange: -4, 4
+trace: 0.75*x | label: \(L_1: 3x - 4y = 0\)
+trace: -2.4*x | label: \(L_2: 12x + 5y = 0\)
+trace: (11/3)*x | label: acute bisector \(11x - 3y = 0\)
+trace: -(3/11)*x | label: obtuse bisector \(3x + 11y = 0\)
+point: 0, 0 | label: \(O\)
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: E]
+Which pair of equations gives the two angle bisectors of the intersecting lines \(L_1: 3x - 4y - 2 = 0\) and \(L_2: y - 1 = 0\)?
+
+(A) \(3x - 5y - 1 = 0\) and \(x - y - 1 = 0\)
+(B) \(x - 3y - 1 = 0\) and \(3x + y + 7 = 0\)
+(C) \(3x - y - 5 = 0\) and \(x + 3y - 5 = 0\)
+(D) \(x - 2y = 0\) and \(2x + y - 5 = 0\)
+(E) \(x - 3y + 1 = 0\) and \(3x + y - 7 = 0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+What are the equations of the two lines parallel to \(3x + 4y - 7 = 0\) at perpendicular distance \(2\) from it?
+
+(A) \(3x + 4y + 3 = 0\) and \(3x + 4y - 17 = 0\)
+(B) \(3x + 4y - 5 = 0\) and \(3x + 4y - 9 = 0\)
+(C) \(3x + 4y + 13 = 0\) and \(3x + 4y - 27 = 0\)
+(D) \(3x + 4y + 10 = 0\) and \(3x + 4y - 10 = 0\)
+(E) \(3x + 4y - 1 = 0\) and \(3x + 4y - 13 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Which points on the \(x\)-axis are equidistant from the lines \(L_1: 4x - 3y + 1 = 0\) and \(L_2: 3x + 4y - 8 = 0\)?
+
+(A) \((-7, 0)\) and \((1, 0)\)
+(B) \((-9, 0)\) and \((-1, 0)\)
+(C) \((-9, 0)\) and \((1, 0)\)
+(D) \((1, 0)\) and \((9, 0)\)
+(E) \((-1, 0)\) and \((7, 0)\)
+[/BONUS]

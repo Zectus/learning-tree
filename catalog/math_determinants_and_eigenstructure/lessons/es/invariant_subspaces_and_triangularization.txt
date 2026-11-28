@@ -1,0 +1,218 @@
+=== SECTION 1: Subespacios invariantes y matrices triangulares por bloques ===
+
+La diagonalización ofrece un sistema de coordenadas ideal siempre que un operador posee suficientes vectores propios; sin embargo, matrices defectivas como el cizallamiento \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) no pueden diagonalizarse ni siquiera sobre \(\mathbb{C}\). ¿Cuán sencilla podemos hacer AÚN la representación matricial de un operador lineal arbitrario \(T : V \to V\)? La clave consiste en ampliar nuestra atención de las rectas invariantes \(1\)-dimensionales (vectores propios) a subespacios invariantes generales de cualquier dimensión.
+
+[CALLOUT]
+id: inv-subspace-def
+label: Definición
+title: Subespacio \(T\)-invariante
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre un espacio vectorial \(V\) sobre \(F\). Un subespacio \(W \subseteq V\) se denomina \(T\)-invariante si
+\[
+T(\mathbf{w}) \in W \qquad \text{para todo } \mathbf{w} \in W,
+\]
+lo que se escribe de manera compacta como \(T(W) \subseteq W\).
+[/CALLOUT]
+
+Cuando \(W\) es \(T\)-invariante, la restricción \(T|_W : W \to W\) definida por \(T|_W(\mathbf{w}) = T(\mathbf{w})\) es a su vez un operador lineal bien definido sobre \(W\). Ya conocemos varios ejemplos de subespacios \(T\)-invariantes: los subespacios triviales \(\{\mathbf{0}\}\) y \(V\), el núcleo \(\ker(T)\), la imagen \(\operatorname{im}(T)\) y todo espacio propio \(E_\lambda = \ker(T - \lambda I)\).
+
+¿Qué ocurre con la matriz de \(T\) cuando construimos una base de \(V\) comenzando con una base de un subespacio \(T\)-invariante \(W\)? Suponga que \(\dim(W) = k\) y \(\dim(V) = n\). Elija una base \(\{\mathbf{w}_1, \dots, \mathbf{w}_k\}\) de \(W\), y extiéndala a una base
+\[
+\mathcal{B} = \{\mathbf{w}_1, \dots, \mathbf{w}_k,\; \mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}
+\]
+de \(V\). Para cada \(j = 1, \dots, k\), como \(W\) es \(T\)-invariante, \(T(\mathbf{w}_j) \in W = \operatorname{span}\{\mathbf{w}_1, \dots, \mathbf{w}_k\}\), ¡de modo que sus coordenadas a lo largo de \(\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\) son TODAS CERO! Mientras tanto, para cada \(\mathbf{u}_m\), \(T(\mathbf{u}_m)\) puede tener componentes tanto a lo largo de los vectores \(\mathbf{w}\) como de los vectores \(\mathbf{u}\). En consecuencia, \([T]_{\mathcal{B}}\) adopta la forma triangular superior por bloques
+\[
+[T]_{\mathcal{B}} = \begin{bmatrix} A & B \\ 0 & C \end{bmatrix},
+\]
+donde \(A = [T|_W]_{\{\mathbf{w}_1, \dots, \mathbf{w}_k\}} \in M_k(F)\), \(B\) es \(k \times (n - k)\), \(0\) es \((n - k) \times k\) y \(C \in M_{n-k}(F)\). De inmediato, por el teorema del determinante triangular por bloques, el polinomio característico se factoriza limpiamente como
+\[
+p_T(\lambda) = p_A(\lambda)\,p_C(\lambda) = p_{T|_W}(\lambda)\,p_C(\lambda),
+\]
+de modo que \(p_{T|_W}(\lambda)\) siempre divide a \(p_T(\lambda)\).
+
+¿Cuándo se anula también el bloque superior derecho \(B\), haciendo que \([T]_{\mathcal{B}}\) sea DIAGONAL por bloques? ¡Precisamente cuando el subespacio complementario \(U = \operatorname{span}\{\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}\) es TAMBIÉN \(T\)-invariante (de modo que \(T(\mathbf{u}_m) \in U\) tiene coordenadas nulas a lo largo de \(\mathbf{w}_1, \dots, \mathbf{w}_k\))! Más generalmente, si \(V = W_1 \oplus W_2 \oplus \dots \oplus W_m\) es una suma directa de subespacios \(T\)-invariantes y \(\mathcal{B}\) se forma concatenando bases \(\mathcal{B}_1, \dots, \mathcal{B}_m\) de \(W_1, \dots, W_m\), entonces \([T]_{\mathcal{B}}\) es diagonal por bloques:
+\[
+[T]_{\mathcal{B}} = \begin{bmatrix} [T|_{W_1}]_{\mathcal{B}_1} & 0 & \cdots & 0 \\ 0 & [T|_{W_2}]_{\mathcal{B}_2} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & [T|_{W_m}]_{\mathcal{B}_m} \end{bmatrix}.
+\]
+
+Observe la distinción geométrica en \(\mathbb{R}^2\) para \(A = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix}\). El eje horizontal \(W = \operatorname{span}\{\mathbf{e}_1\}\) es \(A\)-invariante (\(A\mathbf{e}_1 = 2\mathbf{e}_1 \in W\)), lo que pone \(0\) en la entrada inferior izquierda. En contraste, el eje vertical \(U = \operatorname{span}\{\mathbf{e}_2\}\) NO es \(A\)-invariante: \(A\mathbf{e}_2 = (1, 3)^T = \mathbf{e}_1 + 3\mathbf{e}_2\) se inclina fuera del eje vertical, creando la entrada superior derecha no nula \(1\). (Aquí \(A\) SÍ tiene una segunda recta invariante \(E_3 = \operatorname{span}\{(1, 1)^T\}\) que haría \(B = 0\), mientras que para un cizallamiento defectivo \(\begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\) NO existe ninguna recta invariante complementaria en absoluto.)
+
+[GRAPH]
+type: parametric2d
+title: Eje invariante \(W = \operatorname{span}\{\mathbf{e}_1\}\) frente a eje no invariante \(U = \operatorname{span}\{\mathbf{e}_2\}\) bajo \(A = \begin{bmatrix} 2 & 1 \\ 0 & 3 \end{bmatrix}\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.6, 2.8
+yrange: -0.5, 3.5
+trace: 2*t, 0 | label: \(A\mathbf{e}_1 = (2, 0) \in W\)
+trace: 0, t | label: \(\mathbf{e}_2 = (0, 1) \in U\)
+trace: t, 3*t | label: \(A\mathbf{e}_2 = (1, 3) \notin U\)
+segment: 0, 3, 1, 3 | label: \(b = 1\) | dashed: true
+point: 1, 0 | label: \(\mathbf{e}_1\)
+point: 2, 0 | label: \(A\mathbf{e}_1\)
+point: 0, 1 | label: \(\mathbf{e}_2\)
+point: 1, 3 | label: \(A\mathbf{e}_2\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: D]
+Sea
+\[
+A = \begin{bmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & -1 \end{bmatrix}.
+\]
+¿Cuál de los siguientes subespacios de \(\mathbb{R}^3\) NO es \(A\)-invariante?
+
+(A) \(\operatorname{span}\{\mathbf{e}_1\}\)
+(B) \(\operatorname{span}\{\mathbf{e}_3\}\)
+(C) \(\operatorname{span}\{\mathbf{e}_1, \mathbf{e}_2\}\)
+(D) \(\operatorname{span}\{\mathbf{e}_2, \mathbf{e}_3\}\)
+(E) \(\operatorname{span}\{\mathbf{e}_1, \mathbf{e}_3\}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+Sea \(T : \mathbb{R}^4 \to \mathbb{R}^4\) un operador lineal con polinomio característico \(p_T(\lambda) = \lambda^4 - 5\lambda^3 + 8\lambda^2 - 4\lambda\). Suponga que \(W \subset \mathbb{R}^4\) es un subespacio \(T\)-invariante \(2\)-dimensional tal que \(p_{T|_W}(\lambda) = \lambda^2 - 3\lambda + 2\). Extender una base de \(W\) a una base \(\mathcal{B}\) de \(\mathbb{R}^4\) da \([T]_{\mathcal{B}} = \begin{bmatrix} A & B \\ 0 & C \end{bmatrix}\). ¿Cuál es \(p_C(\lambda)\)?
+
+(A) \(\lambda^2 - 3\lambda + 2\)
+(B) \(\lambda^2 - 2\lambda\)
+(C) \(\lambda^2 - 4\lambda + 4\)
+(D) \(\lambda^2 - 2\lambda + 2\)
+(E) \(\lambda^2 + 2\lambda\)
+[/QUESTION]
+
+=== SECTION 2: El Teorema de Triangularización Superior Algebraica ===
+
+Incluso cuando un operador \(T : V \to V\) es defectivo y no puede diagonalizarse, ¿podemos encontrar SIEMPRE una base \(\mathcal{B}\) de \(V\) en la cual \([T]_{\mathcal{B}}\) sea triangular superior? Observe primero qué es NECESARIO: si \([T]_{\mathcal{B}} = U\) es triangular superior con entradas diagonales \(\lambda_1, \dots, \lambda_n \in F\), entonces \(p_T(\lambda) = p_U(\lambda) = \prod_{i=1}^n (\lambda - \lambda_i)\) se escinde completamente en factores lineales sobre \(F\). ¡Sorprendentemente, esa única condición es TAMBIÉN SUFICIENTE!
+
+[CALLOUT]
+id: upper-tri-theorem
+label: Teorema
+title: Teorema de Triangularización Superior Algebraica
+tone: key
+
+Sea \(V\) un espacio vectorial \(n\)-dimensional sobre \(F\) y \(T : V \to V\) un operador lineal. Existe una base \(\mathcal{B}\) de \(V\) en la cual \([T]_{\mathcal{B}}\) es triangular superior si y solo si \(p_T(\lambda)\) se escinde completamente en factores lineales sobre \(F\).
+
+En particular, sobre \(\mathbb{C}\) (donde todo polinomio se escinde en factores lineales por el Teorema Fundamental del Álgebra), TODA matriz cuadrada compleja \(A \in M_n(\mathbb{C})\) es semejante a una matriz triangular superior \(U = P^{-1} A P\) cuyas entradas diagonales son los valores propios de \(A\), contados con multiplicidad algebraica.
+[/CALLOUT]
+
+Demostremos [REF: upper-tri-theorem | el teorema de triangularización superior] de manera puramente algebraica —sin productos internos ni ortogonalidad— por inducción sobre \(n = \dim(V)\). (Más adelante, en Espacios con producto interno, el Teorema de Schur refuerza esto sobre \(\mathbb{C}\) eligiendo la base ortonormal para que \(P\) sea unitaria; aquí solo necesitamos extensión elemental de bases y matrices por bloques.)
+
+- Caso base \(n = 1\): toda matriz \(1 \times 1\) ya es triangular superior.
+- Paso inductivo: suponga que el teorema se cumple en dimensión \(n - 1\), y sea \(T : V \to V\) un operador sobre un espacio \(n\)-dimensional \(V\) cuyo polinomio característico \(p_T(\lambda)\) se escinde completamente sobre \(F\).
+  1. Como \(p_T(\lambda)\) se escinde en factores lineales sobre \(F\), tiene al menos una raíz \(\lambda_1 \in F\). Por lo tanto, \(T\) tiene al menos un vector propio \(\mathbf{v}_1 \in V \setminus \{\mathbf{0}\}\) con \(T(\mathbf{v}_1) = \lambda_1 \mathbf{v}_1\).
+  2. Extienda \(\{\mathbf{v}_1\}\) a una base \(\mathcal{B}_1 = \{\mathbf{v}_1, \mathbf{w}_2, \dots, \mathbf{w}_n\}\) de \(V\). Como \(W = \operatorname{span}\{\mathbf{v}_1\}\) es un subespacio \(T\)-invariante \(1\)-dimensional, la matriz de \(T\) en \(\mathcal{B}_1\) tiene la forma triangular superior por bloques
+\[
+[T]_{\mathcal{B}_1} = \begin{bmatrix} \lambda_1 & \mathbf{b}^T \\ \mathbf{0} & C \end{bmatrix},
+\]
+donde \(\mathbf{b}^T\) es \(1 \times (n - 1)\) y \(C \in M_{n-1}(F)\).
+  3. Por la fórmula triangular por bloques, \(p_T(\lambda) = (\lambda - \lambda_1)\,p_C(\lambda)\). Como \(p_T(\lambda)\) se escinde completamente en factores lineales sobre \(F\), ¡su factor \(p_C(\lambda)\) DEBE escindirse TAMBIÉN completamente en factores lineales sobre \(F\)!
+  4. Aplique la hipótesis de inducción a la matriz \((n - 1) \times (n - 1)\) \(C\): existe una matriz invertible \(Q \in M_{n-1}(F)\) tal que \(Q^{-1} C Q = U_1\) es triangular superior.
+  5. Forme ahora la matriz de cambio de base \(n \times n\) diagonal por bloques \(R = \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q \end{bmatrix}\), que es invertible con \(R^{-1} = \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q^{-1} \end{bmatrix}\). Calcule explícitamente la transformación de semejanza mediante multiplicación por bloques:
+\[
+R^{-1} [T]_{\mathcal{B}_1} R = \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q^{-1} \end{bmatrix} \begin{bmatrix} \lambda_1 & \mathbf{b}^T \\ \mathbf{0} & C \end{bmatrix} \begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{0} & Q \end{bmatrix} = \begin{bmatrix} \lambda_1 & \mathbf{b}^T Q \\ \mathbf{0} & Q^{-1} C Q \end{bmatrix} = \begin{bmatrix} \lambda_1 & \mathbf{b}^T Q \\ \mathbf{0} & U_1 \end{bmatrix}.
+\]
+Como \(U_1\) es triangular superior, toda la matriz \(n \times n\) \(\begin{bmatrix} \lambda_1 & \mathbf{b}^T Q \\ \mathbf{0} & U_1 \end{bmatrix}\) es triangular superior. Tomar \(P = P_1 R\) (donde \(P_1\) es la matriz de cambio de base para \(\mathcal{B}_1\)) completa la inducción.
+
+Note cuán limpio es ese paso 5: jamás tuvimos que preocuparnos por si \(\operatorname{span}\{\mathbf{w}_2, \dots, \mathbf{w}_n\}\) era \(T\)-invariante; conjugar por \(\operatorname{diag}(1, Q)\) dejó completamente intacta la primera columna \(\begin{bmatrix} \lambda_1 \\ \mathbf{0} \end{bmatrix}\) mientras triangularizó \(C\) superiormente.
+
+[QUESTION 3]
+[ANSWER: B]
+¿Cuál de las siguientes matrices reales \(2 \times 2\) es semejante SOBRE \(\mathbb{R}\) a una matriz real triangular superior (es decir, \(P^{-1} A P\) es triangular superior para alguna \(P \in M_2(\mathbb{R})\) invertible)?
+
+(A) \(\begin{bmatrix} 1 & -2 \\ 2 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 5 & -4 \\ 1 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & -3 \\ 1 & 2 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 2 & -5 \\ 2 & -2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 1 \\ -2 & 3 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Suponga que \(W \subset V\) es un subespacio \(T\)-invariante \(k\)-dimensional con base \(\{\mathbf{w}_1, \dots, \mathbf{w}_k\}\), extendida mediante vectores \(\{\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}\) a una base \(\mathcal{B}\) de \(V\), obteniéndose \([T]_{\mathcal{B}} = \begin{bmatrix} A & B \\ 0 & C \end{bmatrix}\). ¿Qué condición sobre \(U = \operatorname{span}\{\mathbf{u}_1, \dots, \mathbf{u}_{n-k}\}\) es A LA VEZ necesaria y suficiente para que el bloque fuera de la diagonal \(B\) sea igual a \(0\)?
+
+(A) \(T|_W\) es diagonalizable.
+(B) \(p_A(\lambda)\) y \(p_C(\lambda)\) no tienen raíces en común.
+(C) \(U\) es también un subespacio \(T\)-invariante (\(T(U) \subseteq U\)).
+(D) \(A\) y \(C\) son ambas invertibles.
+(E) \(k = n - k\).
+[/QUESTION]
+
+=== SECTION 3: Consecuencias universales para todas las matrices complejas ===
+
+La triangularización superior sobre \(\mathbb{C}\) es un motor de demostración extraordinariamente potente: cada vez que desee demostrar una identidad sobre valores propios, trazas, determinantes o polinomios de una matriz compleja ARBITRARIA \(A \in M_n(\mathbb{C})\) —¡incluidas las matrices defectivas!—, puede reemplazar \(A\) por una matriz triangular superior \(U = P^{-1} A P\) con los valores propios \(\lambda_1, \dots, \lambda_n\) a lo largo de su diagonal.
+
+Compruebe cómo actúan los polinomios sobre matrices triangulares superiores. Si \(U\) es triangular superior con entradas diagonales \(\lambda_1, \dots, \lambda_n\), entonces multiplicar dos matrices triangulares superiores produce otra matriz triangular superior cuyas entradas diagonales son simplemente los productos de las entradas diagonales correspondientes. Por inducción, para todo entero \(k \ge 0\), \(U^k\) es triangular superior con entradas diagonales \(\lambda_1^k, \dots, \lambda_n^k\). Tomando cualquier polinomio \(f(x) = c_0 + c_1 x + \dots + c_m x^m \in \mathbb{C}[x]\), la matriz \(f(U) = c_0 I_n + c_1 U + \dots + c_m U^m\) SIGUE siendo triangular superior, con entradas diagonales
+\[
+f(\lambda_1),\; f(\lambda_2),\; \dots,\; f(\lambda_n).
+\]
+Ahora deshaga la semejanza: como \((P^{-1} A P)^k = P^{-1} A^k P\) para todo \(k \ge 0\), la linealidad da
+\[
+f(U) = f(P^{-1} A P) = P^{-1} f(A) P.
+\]
+Puesto que matrices semejantes tienen exactamente el mismo polinomio característico, obtenemos de inmediato el teorema universal de polinomios de valores propios, ¡válido para TODA matriz compleja \(A\), defectiva o no!
+
+[CALLOUT]
+id: poly-eigenvalues
+label: Teorema
+title: Mapeo espectral universal e identidades de traza y determinante sobre \(\mathbb{C}\)
+tone: key
+
+Sea \(A \in M_n(\mathbb{C})\) con valores propios \(\lambda_1, \dots, \lambda_n \in \mathbb{C}\) (contados con multiplicidad algebraica).
+
+(1) Para TODO polinomio \(f(x) \in \mathbb{C}[x]\), los valores propios de \(f(A)\) (contados con multiplicidad algebraica) son \(f(\lambda_1), \dots, f(\lambda_n)\), por lo que
+\[
+p_{f(A)}(\mu) = \prod_{i=1}^n \bigl(\mu - f(\lambda_i)\bigr).
+\]
+(2) Universalmente (sin suponer diagonalizabilidad),
+\[
+\operatorname{tr}(A) = \sum_{i=1}^n \lambda_i, \qquad \det(A) = \prod_{i=1}^n \lambda_i, \qquad \operatorname{tr}(f(A)) = \sum_{i=1}^n f(\lambda_i), \qquad \det(f(A)) = \prod_{i=1}^n f(\lambda_i).
+\]
+[/CALLOUT]
+
+Observe cómo [REF: poly-eigenvalues.1 | el mapeo espectral para polinomios] va mucho más allá de lo que los vectores propios por sí solos pueden demostrar. A partir de \(A\mathbf{v} = \lambda \mathbf{v}\) es fácil comprobar \(f(A)\mathbf{v} = f(\lambda)\mathbf{v}\), lo que muestra que cada \(f(\lambda_i)\) es un valor propio de \(f(A)\); pero para una matriz defectiva, los cálculos con vectores propios por sí solos NO le indican las multiplicidades algebraicas de los valores propios de \(f(A)\), ni descartan valores propios adicionales de \(f(A)\) que pudieran no provenir de vectores propios de \(A\). ¡La triangularización superior resuelve AMBAS cuestiones en tres líneas!
+
+[QUESTION 5]
+[ANSWER: A]
+Suponga que \(A \in M_3(\mathbb{C})\) (NO supuesta diagonalizable) tiene polinomio característico \(p_A(\lambda) = (\lambda - 2)^2(\lambda + 1)\). ¿Cuáles son \(\operatorname{tr}(A^2 - 3A + 4I_3)\) y \(\det(A^2 - 3A + 4I_3)\)?
+
+(A) \(\operatorname{tr} = 12\) y \(\det = 32\)
+(B) \(\operatorname{tr} = 10\) y \(\det = 16\)
+(C) \(\operatorname{tr} = 12\) y \(\det = -32\)
+(D) \(\operatorname{tr} = 8\) y \(\det = 16\)
+(E) No pueden determinarse a menos que \(A\) sea diagonalizable
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suponga que \(A \in M_4(\mathbb{C})\) tiene valores propios \(1, 1, -2, 3\) (contados con multiplicidad algebraica). ¿Cuál es \(\det(A^3 - A + 2I_4)\)?
+
+(A) \(-208\)
+(B) \(416\)
+(C) \(-104\)
+(D) \(-416\)
+(E) \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sea \(T : V \to V\) CUALQUIER operador lineal sobre un espacio vectorial complejo \(3\)-dimensional \(V\) (posiblemente defectivo, con un único espacio propio \(1\)-dimensional). ¿Debe poseer \(T\) un subespacio \(T\)-invariante \(2\)-dimensional?
+
+(A) No: si \(T\) solo tiene una recta propia, sus únicos subespacios \(T\)-invariantes son \(\{\mathbf{0}\}\), esa recta propia y \(V\).
+(B) Sí: en cualquier base \(\{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3\}\) en la cual \([T]_{\mathcal{B}}\) sea triangular superior, \(\operatorname{span}\{\mathbf{v}_1, \mathbf{v}_2\}\) es un subespacio \(T\)-invariante \(2\)-dimensional.
+(C) Sí, pero SOLO cuando \(T\) es invertible.
+(D) No: existe un subespacio \(T\)-invariante \(2\)-dimensional si y solo si \(T\) tiene al menos dos valores propios distintos.
+(E) Sí, y todo subespacio \(2\)-dimensional que contenga un vector propio de \(T\) es automáticamente \(T\)-invariante.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Suponga que \(A, B \in M_n(\mathbb{C})\) son simultáneamente triangularizables superiormente: existe una matriz invertible \(P \in M_n(\mathbb{C})\) tal que TANTO \(P^{-1} A P\) como \(P^{-1} B P\) son triangulares superiores. ¿Qué debe cumplirse acerca de los valores propios del conmutador \(AB - BA\)?
+
+(A) Son iguales a las diferencias \(\lambda_i - \mu_i\) de los valores propios de \(A\) y \(B\).
+(B) Todos son iguales a \(1\).
+(C) Suman \(0\), pero no tienen por qué anularse todos individualmente.
+(D) Todos son puramente imaginarios.
+(E) Todo valor propio de \(AB - BA\) es \(0\) (con multiplicidad algebraica \(n\)).
+[/BONUS]

@@ -1,0 +1,291 @@
+=== SECTION 1: Right-handed coordinates, coordinate planes, and projections ===
+
+In two-dimensional analytic geometry, a point in the plane is pinned down by two numbers \((x, y)\) giving its signed horizontal and vertical offsets from two perpendicular axes. Moving into three-dimensional space \(\mathbb{R}^3\)—whether to track an aircraft, locate atoms in a crystal, or describe a curved shell—requires a third mutually perpendicular axis. How do we orient three axes consistently so that formulas for areas, rotations, and spatial regions do not depend on who drew the diagram?
+
+Choose an origin \(O(0, 0, 0)\) and three mutually perpendicular number lines passing through \(O\): the \(x\)-axis, the \(y\)-axis, and the \(z\)-axis. We orient them using the right-hand rule: if you curl the fingers of your right hand from the positive \(x\)-axis toward the positive \(y\)-axis through the \(90^\circ\) angle between them, your thumb points along the positive \(z\)-axis. Every coordinate system used in this tree is right-handed.
+
+[CALLOUT]
+id: coord-planes-octants
+label: Definition
+title: Coordinate planes, octants, and orthogonal projections
+tone: key
+
+In a right-handed Cartesian coordinate system on \(\mathbb{R}^3\), each point \(P\) corresponds uniquely to an ordered triple \((x, y, z) \in \mathbb{R}^3\):
+
+(1) The three coordinate planes are the \(xy\)-plane (defined by \(z = 0\)), the \(yz\)-plane (defined by \(x = 0\)), and the \(xz\)-plane (defined by \(y = 0\)).
+(2) Together, the three coordinate planes partition \(\mathbb{R}^3\) into eight regions called octants. The first octant consists of all points with \(x > 0\), \(y > 0\), and \(z > 0\).
+(3) The orthogonal projection of \(P(x, y, z)\) onto a coordinate plane is the foot of the perpendicular dropped from \(P\) to that plane, obtained by replacing the missing coordinate with \(0\): \((x, y, 0)\) on the \(xy\)-plane, \((0, y, z)\) on the \(yz\)-plane, and \((x, 0, z)\) on the \(xz\)-plane.
+(4) The orthogonal projection of \(P(x, y, z)\) onto a coordinate axis keeps only that axis's coordinate and sets the other two to \(0\): \((x, 0, 0)\) on the \(x\)-axis, \((0, y, 0)\) on the \(y\)-axis, and \((0, 0, z)\) on the \(z\)-axis.
+[/CALLOUT]
+
+Notice how each coordinate behaves as a signed distance from a coordinate plane: \(|z|\) is the perpendicular distance from \(P(x, y, z)\) to the \(xy\)-plane (\(z = 0\)), \(|x|\) is the distance from \(P\) to the \(yz\)-plane (\(x = 0\)), and \(|y|\) is the distance from \(P\) to the \(xz\)-plane (\(y = 0\)). For instance, take \(P(3, -4, 12)\). Dropping a perpendicular to the \(xy\)-plane reaches \((3, -4, 0)\), a vertical drop of \(|12| = 12\) units.
+
+What about the perpendicular distance from \(P(x, y, z)\) to a coordinate axis? To find the distance from \(P(3, -4, 12)\) to the \(z\)-axis, project \(P\) onto the \(z\)-axis to get \(Q(0, 0, 12)\). Both \(P\) and \(Q\) sit in the horizontal plane \(z = 12\), where the distance between them is simply the two-dimensional hypotenuse \(\sqrt{(3 - 0)^2 + (-4 - 0)^2} = \sqrt{9 + 16} = 5\). More generally, dropping a perpendicular to any coordinate axis leaves the two other coordinates as the legs of a right triangle.
+
+[TABLE]
+Target in \(\mathbb{R}^3\) | Defining equation(s) | Orthogonal projection of \(P(x, y, z)\) | Distance from \(P(x, y, z)\)
+\(xy\)-plane | \(z = 0\) | \((x, y, 0)\) | \(\lvert z \rvert\)
+\(yz\)-plane | \(x = 0\) | \((0, y, z)\) | \(\lvert x \rvert\)
+\(xz\)-plane | \(y = 0\) | \((x, 0, z)\) | \(\lvert y \rvert\)
+\(x\)-axis | \(y = 0, z = 0\) | \((x, 0, 0)\) | \(\sqrt{y^2 + z^2}\)
+\(y\)-axis | \(x = 0, z = 0\) | \((0, y, 0)\) | \(\sqrt{x^2 + z^2}\)
+\(z\)-axis | \(x = 0, y = 0\) | \((0, 0, z)\) | \(\sqrt{x^2 + y^2}\)
+[/TABLE]
+
+A common slip is to confuse the distance to a plane with the distance to the axis perpendicular to it. For \(P(3, -4, 12)\), the distance to the \(xy\)-plane is \(12\), whereas the distance to the \(z\)-axis (which is perpendicular to the \(xy\)-plane) is \(\sqrt{3^2 + (-4)^2} = 5\). Always identify the projection point first—checking which coordinates become zero—and the right distance follows immediately.
+
+[QUESTION 1]
+[ANSWER: B]
+Consider the point \(P(-5, 7, -12)\) in \(\mathbb{R}^3\). What is the perpendicular distance from \(P\) to the \(y\)-axis, and what are the coordinates of the orthogonal projection of \(P\) onto the \(xz\)-plane?
+
+(A) Distance \(7\) and projection \((-5, 0, -12)\)
+(B) Distance \(13\) and projection \((-5, 0, -12)\)
+(C) Distance \(13\) and projection \((0, 7, 0)\)
+(D) Distance \(\sqrt{74}\) and projection \((-5, 7, 0)\)
+(E) Distance \(\sqrt{193}\) and projection \((0, 7, -12)\)
+[/QUESTION]
+
+=== SECTION 2: Distance and midpoint in three dimensions ===
+
+Suppose two points \(P(x_1, y_1, z_1)\) and \(Q(x_2, y_2, z_2)\) lie anywhere in \(\mathbb{R}^3\), and we want the straight-line distance \(d(P, Q)\) between them. We already know the Pythagorean theorem in any flat plane, so the natural strategy is to break the spatial jump from \(P\) to \(Q\) into two perpendicular steps: first move horizontally within the plane \(z = z_1\) to the point \(R(x_2, y_2, z_1)\) directly beneath (or above) \(Q\), and then move vertically from \(R\) to \(Q\).
+
+In the horizontal plane \(z = z_1\), the points \(P(x_1, y_1, z_1)\) and \(R(x_2, y_2, z_1)\) share the same \(z\)-coordinate, so the planar Pythagorean theorem gives
+\[
+d(P, R)^2 = (x_2 - x_1)^2 + (y_2 - y_1)^2.
+\]
+Next, the segment \(PR\) lies entirely in the horizontal plane \(z = z_1\), while the segment \(RQ\) runs vertically parallel to the \(z\)-axis. Therefore \(\angle PRQ = 90^\circ\), making \(\triangle PRQ\) a right triangle with legs \(PR\) and \(RQ\) and hypotenuse \(PQ\). The vertical leg has length \(d(R, Q) = |z_2 - z_1|\). Applying the Pythagorean theorem a second time yields
+\[
+d(P, Q)^2 = d(P, R)^2 + d(R, Q)^2 = (x_2 - x_1)^2 + (y_2 - y_1)^2 + (z_2 - z_1)^2.
+\]
+Taking the nonnegative square root gives the 3D Euclidean distance formula.
+
+To see the two right triangles concretely, take \(P(1, 2, 1)\) and \(Q(4, 6, 13)\). The horizontal corner is \(R(4, 6, 1)\). The graph below shows the first right triangle in the horizontal plane \(z = 1\), where legs of length \(4 - 1 = 3\) and \(6 - 2 = 4\) produce the horizontal diagonal \(d(P, R) = 5\); rising vertically by \(13 - 1 = 12\) units perpendicular to this plane then creates the second right triangle with legs \(5\) and \(12\), yielding \(d(P, Q) = \sqrt{5^2 + 12^2} = 13\).
+
+[GRAPH]
+type: parametric2d
+title: First right triangle in the horizontal plane \(z = 1\) from \(P(1, 2, 1)\) to \(R(4, 6, 1)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: 0, 5.5
+yrange: 0.5, 7
+trace: 1 + 3*t, 2 + 4*t | label: horizontal leg \(PR\) of length \(5\)
+segment: 1, 2, 4, 2 | label: \(\Delta x = 3\) | dashed: true
+segment: 4, 2, 4, 6 | label: \(\Delta y = 4\) | dashed: true
+point: 1, 2 | label: \(P(1, 2, 1)\)
+point: 4, 2 | label: \((4, 2, 1)\)
+point: 4, 6 | label: \(R(4, 6, 1)\)
+[/GRAPH]
+
+What about the point \(M\) halfway between \(P\) and \(Q\)? Because orthogonal projection onto each coordinate axis preserves ratios along a line segment, each coordinate of \(M\) must lie halfway between the corresponding coordinates of \(P\) and \(Q\).
+
+[CALLOUT]
+id: dist-midpoint
+label: Formulas
+title: 3D distance and midpoint formulas
+tone: key
+
+For any two points \(P(x_1, y_1, z_1)\) and \(Q(x_2, y_2, z_2)\) in \(\mathbb{R}^3\):
+
+(1) The Euclidean distance between \(P\) and \(Q\) is
+\[
+d(P, Q) = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2 + (z_2 - z_1)^2}.
+\]
+(2) The midpoint \(M\) of the line segment \(PQ\) is
+\[
+M = \left(\frac{x_1 + x_2}{2},\; \frac{y_1 + y_2}{2},\; \frac{z_1 + z_2}{2}\right).
+\]
+[/CALLOUT]
+
+Notice how [REF: dist-midpoint.1 | the 3D distance formula] recovers every entry of our coordinate-axis table in Section 1: for example, setting \(Q = (0, 0, z)\) for the projection of \(P(x, y, z)\) onto the \(z\)-axis yields \(d(P, Q) = \sqrt{(x - 0)^2 + (y - 0)^2 + (z - z)^2} = \sqrt{x^2 + y^2}\).
+
+In practice, you can also verify geometric claims about triangles in space using distances alone. Consider \(A(1, 0, 2)\), \(B(3, 2, 1)\), and \(C(2, 4, 4)\). Computing squared distances avoids unnecessary square roots:
+\[
+d(A, B)^2 = 2^2 + 2^2 + (-1)^2 = 9, \qquad d(B, C)^2 = (-1)^2 + 2^2 + 3^2 = 14, \qquad d(A, C)^2 = 1^2 + 4^2 + 2^2 = 21.
+\]
+Since \(9 + 14 = 23 \ne 21\), \(\triangle ABC\) is not a right triangle (its largest angle at \(B\) is acute because \(d(A, C)^2 < d(A, B)^2 + d(B, C)^2\)), and because all three side lengths differ, it is scalene.
+
+[QUESTION 2]
+[ANSWER: C]
+The midpoint of the line segment \(AB\) in \(\mathbb{R}^3\) is \(M(1, 2, 4)\), and endpoint \(A\) has coordinates \((-1, 5, -2)\). What are the coordinates of endpoint \(B\) and the exact distance \(d(A, B)\)?
+
+(A) \(B(3, -1, 10)\) and \(d(A, B) = 7\)
+(B) \(B(0, 7/2, 1)\) and \(d(A, B) = 7\)
+(C) \(B(3, -1, 10)\) and \(d(A, B) = 14\)
+(D) \(B(-3, 8, -8)\) and \(d(A, B) = 14\)
+(E) \(B(3, -1, 6)\) and \(d(A, B) = 2\sqrt{29}\)
+[/QUESTION]
+
+=== SECTION 3: Equations of spheres and triple completing the square ===
+
+A sphere is the three-dimensional analogue of a circle: the set of all points \(P(x, y, z)\) in \(\mathbb{R}^3\) at a fixed nonnegative distance \(r\) (the radius) from a fixed point \(C(h, k, l)\) (the center). Applying [REF: dist-midpoint.1 | the distance formula] to the condition \(d(P, C) = r\) gives
+\[
+\sqrt{(x - h)^2 + (y - k)^2 + (z - l)^2} = r.
+\]
+Because both sides are nonnegative, squaring produces an equivalent algebraic equation with no square root.
+
+[CALLOUT]
+id: sphere-standard
+label: Equation
+title: Standard equation of a sphere
+tone: key
+
+The sphere with center \(C(h, k, l)\) and radius \(r > 0\) is the set of all points \((x, y, z) \in \mathbb{R}^3\) satisfying
+\[
+(x - h)^2 + (y - k)^2 + (z - l)^2 = r^2.
+\]
+In particular, the sphere of radius \(r\) centered at the origin has equation \(x^2 + y^2 + z^2 = r^2\).
+[/CALLOUT]
+
+To visualize the sphere \(x^2 + y^2 + z^2 = 4\) (center \((0, 0, 0)\) and radius \(r = 2\)), notice that solving for \(z\) yields two branches: \(z = +\sqrt{4 - x^2 - y^2}\) for the upper hemisphere and \(z = -\sqrt{4 - x^2 - y^2}\) for the lower hemisphere. Because a 3D surface plot of the form \(z = f(x, y)\) assigns at most one height \(z\) to each \((x, y)\) in the disk \(x^2 + y^2 \le 4\), the plot below displays the upper hemisphere \(z \ge 0\); reflecting it across the \(xy\)-plane \(z = 0\) completes the full sphere.
+
+[GRAPH]
+type: surface3d
+title: Upper hemisphere \(z = \sqrt{4 - x^2 - y^2}\) of the sphere \(x^2 + y^2 + z^2 = 4\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -2.2, 2.2
+yrange: -2.2, 2.2
+z: x^2 + y^2 <= 4 ? sqrt(4 - x^2 - y^2) : 0/0
+[/GRAPH]
+
+In applications, a sphere rarely arrives in standard form. Expanding \((x - h)^2 + (y - k)^2 + (z - l)^2 = r^2\) gives an equation of the form
+\[
+Ax^2 + Ay^2 + Az^2 + Dx + Ey + Fz + G = 0 \qquad (A \ne 0),
+\]
+where the coefficients of \(x^2\), \(y^2\), and \(z^2\) are all equal and nonzero, and no cross terms such as \(xy\), \(xz\), or \(yz\) appear. To recover the center and radius—or discover that the equation does not represent a genuine sphere at all—we divide through by \(A\) so the squared terms have coefficient \(1\), group each variable separately, and complete the square in \(x\), \(y\), and \(z\).
+
+Work through a concrete example: identify the locus of
+\[
+3x^2 + 3y^2 + 3z^2 - 6x + 12y - 18z + 15 = 0.
+\]
+First divide every term by \(3\) and move the constant term to the right-hand side:
+\[
+(x^2 - 2x) + (y^2 + 4y) + (z^2 - 6z) = -5.
+\]
+Now add the square of half each linear coefficient to both sides: \((-1)^2 = 1\) for \(x\), \(2^2 = 4\) for \(y\), and \((-3)^2 = 9\) for \(z\):
+\[
+(x^2 - 2x + 1) + (y^2 + 4y + 4) + (z^2 - 6z + 9) = -5 + 1 + 4 + 9 = 9.
+\]
+Factoring each trinomial yields
+\[
+(x - 1)^2 + (y + 2)^2 + (z - 3)^2 = 9 = 3^2,
+\]
+which is a sphere with center \(C(1, -2, 3)\) and radius \(r = 3\).
+
+What happens when the constant \(K\) on the right-hand side of \((x - h)^2 + (y - k)^2 + (z - l)^2 = K\) is not positive? Because a sum of three real squares is always nonnegative, there are exactly three mutually exclusive outcomes:
+
+[CALLOUT]
+id: sphere-cases
+label: Classification
+title: Three outcomes after triple completing the square
+tone: caution
+
+After rewriting an expanded sphere equation as \((x - h)^2 + (y - k)^2 + (z - l)^2 = K\):
+
+(1) If \(K > 0\), the locus is a sphere with center \((h, k, l)\) and positive radius \(r = \sqrt{K}\).
+(2) If \(K = 0\), each squared term must vanish individually, so the locus degenerates to the single point \((h, k, l)\).
+(3) If \(K < 0\), no real triple \((x, y, z)\) can satisfy the equation, so the locus is the empty set \(\varnothing\).
+[/CALLOUT]
+
+Remember to divide out any common leading coefficient \(A \ne 1\) before completing the square. If you forget to divide the constant term \(G\) by \(A\) while dividing the other terms, you shift \(K\) and misidentify both the radius and the threshold between spheres, points, and empty loci.
+
+[QUESTION 3]
+[ANSWER: C]
+Consider the equation \(2x^2 + 2y^2 + 2z^2 - 8x + 12y + 4z + c = 0\), where \(c\) is a real constant. For which values of \(c\) does this equation define a sphere of positive radius, and what is its center?
+
+(A) \(c < 14\), with center \((2, -3, -1)\)
+(B) \(c < 28\), with center \((-2, 3, 1)\)
+(C) \(c < 28\), with center \((2, -3, -1)\)
+(D) \(c \le 28\), with center \((2, -3, -1)\)
+(E) \(c < 56\), with center \((4, -6, -2)\)
+[/QUESTION]
+
+=== SECTION 4: Describing 3D coordinate regions with inequalities ===
+
+An equation in \(x\), \(y\), and \(z\) typically carves out a two-dimensional surface in \(\mathbb{R}^3\), such as a coordinate plane \(z = 0\) or a sphere \((x - h)^2 + (y - k)^2 + (z - l)^2 = r^2\). Replacing the equals sign with an inequality turns that surface into a boundary that splits \(\mathbb{R}^3\) into three-dimensional solid regions.
+
+The simplest regions constrain a single coordinate:
+- A half-space is all points on one side of a coordinate plane (or a plane parallel to one), such as the closed upper half-space \(z \ge 0\) or the open half-space \(x < 3\).
+- A slab is the region between two parallel planes, such as \(1 \le y \le 4\) (a vertical slab of thickness \(3\) bounded by the planes \(y = 1\) and \(y = 4\), extending infinitely in the \(x\)- and \(z\)-directions).
+- A rectangular box intersects three mutually perpendicular slabs: \(a \le x \le b\), \(c \le y \le d\), and \(p \le z \le q\).
+
+Replacing equality in [REF: sphere-standard | the standard sphere equation] with an inequality creates spherical regions centered at \(C(h, k, l)\):
+- The closed ball of radius \(r\) is \((x - h)^2 + (y - k)^2 + (z - l)^2 \le r^2\) (all points inside or on the sphere); using strict inequality \(<\) gives the open ball (excluding the boundary sphere).
+- The exterior of the sphere is \((x - h)^2 + (y - k)^2 + (z - l)^2 > r^2\).
+- A spherical shell (hollow ball) between concentric spheres of radii \(0 < r_1 < r_2\) is
+\[
+r_1^2 \le (x - h)^2 + (y - k)^2 + (z - l)^2 \le r_2^2.
+\]
+
+When two or more inequalities are imposed simultaneously, the region is the intersection of their individual sets. Take the region described by
+\[
+4 \le x^2 + y^2 + z^2 \le 16 \qquad \text{and} \qquad x \ge 0.
+\]
+Here \(4 = 2^2\) and \(16 = 4^2\), so the double inequality defines the closed spherical shell centered at the origin with inner radius \(2\) and outer radius \(4\) (not inner radius \(4\) and outer radius \(16\)—always take square roots of the bounding constants). The second condition \(x \ge 0\) keeps only the front half of that shell on or in front of the \(yz\)-plane.
+
+Slicing a 3D region with a coordinate plane reveals its cross-section in two dimensions. For the region \(4 \le x^2 + y^2 + z^2 \le 16\) with \(x \ge 0\), setting \(z = 0\) gives the right half of an annulus in the \(xy\)-plane: \(4 \le x^2 + y^2 \le 16\) with \(x \ge 0\). Dragging the slider \(z_0\) in the cross-section plot below shows how horizontal slices \(z = z_0\) shrink as \(|z_0|\) increases—losing the inner hole completely once \(|z_0| > 2\) and vanishing altogether when \(|z_0| > 4\).
+
+[GRAPH]
+type: parametric2d
+title: Horizontal slice \(z = z_0\) of the half-shell \(4 \le x^2 + y^2 + z^2 \le 16\), \(x \ge 0\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.5708, 1.5708
+xrange: -0.5, 4.5
+yrange: -4.5, 4.5
+trace: sqrt(16 - z0^2)*cos(t), sqrt(16 - z0^2)*sin(t) | label: outer boundary \(r_{\text{out}} = \sqrt{16 - z_0^2}\)
+trace: (4 - z0^2 >= 0 ? sqrt(4 - z0^2) : 0)*cos(t), (4 - z0^2 >= 0 ? sqrt(4 - z0^2) : 0)*sin(t) | label: inner boundary (present for \(\lvert z_0 \rvert \le 2\))
+segment: 0, -sqrt(16 - z0^2), 0, sqrt(16 - z0^2) | label: \(x = 0\) | dashed: true
+slider: z0 | range: -3.8, 3.8 | init: 0 | step: 0.2
+[/GRAPH]
+
+Notice that when a spherical region is centered at \((h, k, l)\) rather than the origin, a plane inequality like \(z \ge l\) passes right through the center and cuts the sphere or shell cleanly in half, whereas \(z \ge 0\) cuts off a smaller or larger spherical cap whenever \(l \ne 0\). Checking the center's coordinates against every linear inequality prevents misidentifying a cap as a hemisphere.
+
+[QUESTION 4]
+[ANSWER: A]
+Which geometric region in \(\mathbb{R}^3\) is described by the simultaneous inequalities
+\[
+1 \le (x - 2)^2 + y^2 + (z + 1)^2 \le 9 \qquad \text{and} \qquad z \ge -1?
+\]
+
+(A) The upper half of the closed spherical shell centered at \((2, 0, -1)\) with inner radius \(1\) and outer radius \(3\)
+(B) The upper half of the closed spherical shell centered at \((2, 0, -1)\) with inner radius \(1\) and outer radius \(9\)
+(C) The portion with \(z \ge -1\) of the closed spherical shell centered at \((-2, 0, 1)\) with inner radius \(1\) and outer radius \(3\)
+(D) The closed ball centered at \((2, 0, -1)\) of radius \(3\) lying on or above the plane \(z = 1\)
+(E) The slab \(-1 \le z \le 2\) with an open ball of radius \(1\) centered at \((2, 0, -1)\) removed
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+A sphere has center \(C(4, -3, 5)\). What is the radius of the largest sphere with center \(C\) that stays completely within the closed octant \(x \ge 0\), \(y \le 0\), \(z \ge 0\), and which coordinate plane is it tangent to?
+
+(A) Radius \(4\), tangent to the \(yz\)-plane
+(B) Radius \(5\), tangent to the \(xy\)-plane
+(C) Radius \(3\), tangent to the \(yz\)-plane
+(D) Radius \(3\), tangent to the \(xz\)-plane
+(E) Radius \(4\), tangent to the \(xz\)-plane
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+The sphere \((x - 1)^2 + (y + 2)^2 + (z - 4)^2 = 25\) intersects the \(xy\)-plane in a circle. What are the center and radius of this circle in \(\mathbb{R}^3\)?
+
+(A) Center \((1, -2, 4)\) and radius \(5\)
+(B) Center \((1, -2, 0)\) and radius \(3\)
+(C) Center \((1, -2, 0)\) and radius \(4\)
+(D) Center \((-1, 2, 0)\) and radius \(3\)
+(E) Center \((1, -2, 0)\) and radius \(9\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Find the equation of the sphere that has the points \(A(2, -1, 5)\) and \(B(-4, 3, 1)\) as the endpoints of a diameter.
+
+(A) \((x - 1)^2 + (y + 1)^2 + (z - 3)^2 = 17\)
+(B) \((x + 1)^2 + (y - 1)^2 + (z - 3)^2 = 68\)
+(C) \((x + 1)^2 + (y - 1)^2 + (z - 3)^2 = \sqrt{17}\)
+(D) \((x - 3)^2 + (y + 2)^2 + (z - 2)^2 = 17\)
+(E) \((x + 1)^2 + (y - 1)^2 + (z - 3)^2 = 17\)
+[/BONUS]

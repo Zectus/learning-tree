@@ -1,0 +1,248 @@
+=== SECTION 1: Injectivity and the Horizontal Line Test ===
+
+A function guarantees that knowing an input \(x\) uniquely determines its output \(y = f(x)\). Now ask the reverse question: if someone hands you an output \(y\) from the range of \(f\), can you uniquely recover the input \(x\) that produced it?
+
+Compare two simple functions:
+- For \(f(x) = 2x + 3\), if the output is \(y = 11\), solving \(2x + 3 = 11\) yields one unique input, \(x = 4\). Every output comes from a single input.
+- For \(g(x) = x^2\), if the output is \(y = 9\), both \(x = 3\) and \(x = -3\) produce \(9\). Knowing \(g(x) = 9\) does not tell you which input was used.
+
+When a function never sends two different inputs to the same output, it can be reversed without ambiguity. Such a function is called one-to-one, or injective.
+
+[CALLOUT]
+id: injective-def
+label: Definition
+title: One-to-one (injective) function
+tone: key
+
+A function \(f\) with domain \(D\) is one-to-one (injective) if it satisfies either of the following equivalent conditions for all \(x_1, x_2 \in D\):
+
+(1) Direct form: if \(x_1 \ne x_2\), then \(f(x_1) \ne f(x_2)\) (distinct inputs always produce distinct outputs).
+(2) Contrapositive form: if \(f(x_1) = f(x_2)\), then \(x_1 = x_2\).
+[/CALLOUT]
+
+Why state both forms in [REF: injective-def | the definition]? Because each form shines in a different job:
+- [REF: injective-def.2 | The contrapositive form] is ideal for PROVING a function is one-to-one: assume \(f(x_1) = f(x_2)\) and use algebra to deduce \(x_1 = x_2\).
+- [REF: injective-def.1 | The direct form] tells you how to DISPROVE injectivity: exhibit a single counterexample pair \(x_1 \ne x_2\) in the domain with \(f(x_1) = f(x_2)\).
+
+Geometrically, every point with output height \(c\) lies on the horizontal line \(y = c\). If a horizontal line intersects the graph of \(f\) at two distinct points \((x_1, c)\) and \((x_2, c)\) with \(x_1 \ne x_2\), then \(f(x_1) = f(x_2) = c\), so \(f\) fails to be one-to-one.
+
+[CALLOUT]
+id: hlt
+label: Criterion
+title: Horizontal Line Test
+tone: key
+
+A function \(f\) is one-to-one if and only if no horizontal line intersects the graph of \(y = f(x)\) at more than one point.
+[/CALLOUT]
+
+Keep the two line tests completely distinct: the Vertical Line Test checks whether a graph is a function at all (each \(x\) gives at most one \(y\)), whereas [REF: hlt | the Horizontal Line Test] checks whether a function is one-to-one (each \(y\) comes from at most one \(x\)). Drag the slider \(c\) in the graph below to sweep \(y = c\) across \(f(x) = x^3\) (which passes everywhere) and \(g(x) = x^2 - 1\) (which fails for every \(c > -1\)).
+
+[GRAPH]
+type: function2d
+title: Horizontal Line Test on \(f(x) = x^3\) (one-to-one) versus \(g(x) = x^2 - 1\) (not one-to-one)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.8, 2.8
+yrange: -3, 5
+trace: x^3 | label: \(f(x) = x^3\)
+trace: x^2 - 1 | label: \(g(x) = x^2 - 1\)
+trace: c | label: \(y = c\)
+point: cbrt(c), c | label: \(P\)
+point: sqrt(max(0, c + 1)), c | label: \(Q_1\)
+point: -sqrt(max(0, c + 1)), c | label: \(Q_2\)
+slider: c | range: -0.5, 4 | init: 1.5 | step: 0.5
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Which of the following parent functions is NOT one-to-one on its natural domain?
+
+(A) \(f(x) = x^3\)
+(B) \(f(x) = \sqrt{x}\)
+(C) \(f(x) = \dfrac{1}{x^2}\)
+(D) \(f(x) = \sqrt[3]{x}\)
+(E) \(f(x) = \dfrac{1}{x}\)
+[/QUESTION]
+
+=== SECTION 2: The two-sided algebraic workflow: proving versus disproving ===
+
+Graphs give quick visual intuition, but a finite viewing window can hide a turn far off-screen. To be certain whether an algebraic formula is one-to-one, we use a two-sided algebraic workflow:
+- To PROVE \(f\) is one-to-one: start from the equation \(f(x_1) = f(x_2)\) for arbitrary \(x_1, x_2 \in \operatorname{Dom}(f)\) and deduce \(x_1 = x_2\) using valid algebraic steps.
+- To DISPROVE injectivity: find ONE concrete pair of numbers \(x_1 \ne x_2\) in \(\operatorname{Dom}(f)\) such that \(f(x_1) = f(x_2)\). (Testing a few points and finding different outputs never proves injectivity, because a collision could still happen elsewhere!)
+
+Let us work through three algebraic proofs and two disproofs.
+
+Proof 1 (Linear fractional function). Show that \(f(x) = \dfrac{2x + 1}{x - 3}\) is one-to-one on its domain \(x \ne 3\).
+Suppose \(f(x_1) = f(x_2)\) with \(x_1, x_2 \ne 3\). Then
+\[
+\frac{2x_1 + 1}{x_1 - 3} = \frac{2x_2 + 1}{x_2 - 3}.
+\]
+Cross-multiplying (valid since \(x_1 - 3 \ne 0\) and \(x_2 - 3 \ne 0\)) gives
+\[
+(2x_1 + 1)(x_2 - 3) = (2x_2 + 1)(x_1 - 3).
+\]
+Expand both sides:
+\[
+2x_1 x_2 - 6x_1 + x_2 - 3 = 2x_1 x_2 - 6x_2 + x_1 - 3.
+\]
+Subtract \(2x_1 x_2 - 3\) from both sides:
+\[
+-6x_1 + x_2 = -6x_2 + x_1 \implies 7x_2 = 7x_1 \implies x_1 = x_2.
+\]
+By [REF: injective-def.2 | the contrapositive criterion], \(f\) is one-to-one.
+
+Proof 2 (Shifted square root). Show that \(g(x) = 4 - \sqrt{2x + 5}\) is one-to-one on \(\left[-\frac{5}{2}, \infty\right)\).
+Suppose \(g(x_1) = g(x_2)\). Then \(4 - \sqrt{2x_1 + 5} = 4 - \sqrt{2x_2 + 5}\), so \(\sqrt{2x_1 + 5} = \sqrt{2x_2 + 5}\). Squaring both sides gives \(2x_1 + 5 = 2x_2 + 5\), hence \(2x_1 = 2x_2\), and therefore \(x_1 = x_2\). Thus \(g\) is one-to-one.
+
+Proof 3 (Shifted cubic). Show that \(h(x) = (x - 1)^3 + 2\) is one-to-one on \((-\infty, \infty)\).
+If \((x_1 - 1)^3 + 2 = (x_2 - 1)^3 + 2\), then \((x_1 - 1)^3 = (x_2 - 1)^3\). Because every real number has a unique real cube root, taking cube roots gives \(x_1 - 1 = x_2 - 1\), so \(x_1 = x_2\).
+
+Now watch two disproofs:
+- Disproof 1: \(p(x) = x^2 - 4x + 7\). Notice that if \(p(x_1) = p(x_2)\), then \(x_1^2 - 4x_1 = x_2^2 - 4x_2\), which factors as \((x_1 - x_2)(x_1 + x_2 - 4) = 0\). That gives a second solution whenever \(x_1 + x_2 = 4\)! Pick \(x_1 = 0\) and \(x_2 = 4\): \(0 \ne 4\), yet \(p(0) = 7 = p(4)\). Hence \(p\) is not one-to-one.
+- Disproof 2: \(q(x) = \dfrac{x}{x^2 + 1}\). Although \(q\) is odd (and has no even symmetry to give an obvious \(\pm a\) pair!), test \(x_1 = 2\) and \(x_2 = \frac{1}{2}\):
+\[
+q(2) = \frac{2}{5} \qquad \text{and} \qquad q\!\left(\frac{1}{2}\right) = \frac{1/2}{5/4} = \frac{2}{5}.
+\]
+Because \(2 \ne \frac{1}{2}\) yet \(q(2) = q(1/2)\), \(q\) is NOT one-to-one! (Never assume an odd function is automatically one-to-one—\(x^3 - 3x\) is another odd counterexample!)
+
+[QUESTION 2]
+[ANSWER: A]
+Which pair of distinct inputs \((x_1, x_2)\) proves that \(f(x) = x^3 - 4x\) is NOT one-to-one on \((-\infty, \infty)\)?
+
+(A) \(x_1 = -2\) and \(x_2 = 2\)
+(B) \(x_1 = -1\) and \(x_2 = 1\)
+(C) \(x_1 = 1\) and \(x_2 = 3\)
+(D) \(x_1 = -3\) and \(x_2 = 3\)
+(E) No such pair exists because \(x^3 - 4x\) is an odd polynomial.
+[/QUESTION]
+
+=== SECTION 3: Strict monotonicity implies injectivity ===
+
+Solving \(f(x_1) = f(x_2)\) algebraically can get messy for sums of different powers, such as \(f(x) = x^3 + x\). Try solving \(x_1^3 + x_1 = x_2^3 + x_2\): factoring gives \((x_1 - x_2)(x_1^2 + x_1 x_2 + x_2^2 + 1) = 0\), which takes an extra trick to verify the second factor is always positive. Yet there is a much faster structural test! Notice that \(x^3\) is strictly increasing on \((-\infty, \infty)\) and \(x\) is strictly increasing on \((-\infty, \infty)\), so their sum \(x^3 + x\) is strictly increasing on \((-\infty, \infty)\).
+
+[CALLOUT]
+id: mono-implies-inj
+label: Theorem
+title: Strictly monotonic functions are one-to-one
+tone: key
+
+If a function \(f\) is strictly increasing on an interval \(I\), or strictly decreasing on an interval \(I\), then \(f\) is one-to-one on \(I\).
+[/CALLOUT]
+
+The proof of [REF: mono-implies-inj | this theorem] is remarkably clean and takes three lines. Suppose \(f\) is strictly increasing on \(I\), and take any two distinct inputs \(x_1, x_2 \in I\) with \(x_1 \ne x_2\). Because \(x_1\) and \(x_2\) are distinct real numbers, either \(x_1 < x_2\) or \(x_2 < x_1\):
+- If \(x_1 < x_2\), strict increase gives \(f(x_1) < f(x_2)\), so \(f(x_1) \ne f(x_2)\).
+- If \(x_2 < x_1\), strict increase gives \(f(x_2) < f(x_1)\), so again \(f(x_1) \ne f(x_2)\).
+In both cases \(f(x_1) \ne f(x_2)\), so \(f\) is one-to-one by [REF: injective-def.1 | the direct definition]. The proof for strictly decreasing functions is identical with the inequality signs reversed.
+
+Apply [REF: mono-implies-inj | this theorem] right away to \(f(x) = x^5 + 2x^3 + 7x - 4\): since \(x^5\), \(2x^3\), and \(7x\) are each strictly increasing on \((-\infty, \infty)\), if \(x_1 < x_2\) then \(x_1^5 < x_2^5\), \(2x_1^3 < 2x_2^3\), and \(7x_1 < 7x_2\). Adding those inequalities and subtracting \(4\) yields \(f(x_1) < f(x_2)\). Thus \(f\) is strictly increasing on \((-\infty, \infty)\) and therefore immediately one-to-one—with no messy polynomial factoring needed!
+
+Notice the word "strictly" in [REF: mono-implies-inj | the theorem]: a constant segment (such as in \(|x| + |x - 2|\) on \([0, 2]\)) immediately violates injectivity because infinitely many inputs share the same output.
+
+[QUESTION 3]
+[ANSWER: E]
+Which function is guaranteed to be one-to-one on its natural domain by strict monotonicity?
+
+(A) \(f(x) = x^3 - 3x\)
+(B) \(f(x) = x^4 + x^2 + 1\)
+(C) \(f(x) = |x - 2| + |x + 2|\)
+(D) \(f(x) = \dfrac{x}{x^2 + 4}\)
+(E) \(f(x) = \sqrt{x} + x^3\)
+[/QUESTION]
+
+=== SECTION 4: Why the converse fails: one-to-one without global monotonicity ===
+
+Knowing that strict monotonicity guarantees injectivity, it is very natural to wonder whether the converse holds: must every one-to-one function be either strictly increasing or strictly decreasing on its domain?
+
+The answer is NO! Two clean counterexamples show why:
+
+1. Disconnected domain: Consider \(f(x) = \frac{1}{x}\) on \((-\infty, 0) \cup (0, \infty)\). It is one-to-one (if \(1/x_1 = 1/x_2\), cross-multiplying gives \(x_1 = x_2\)). Yet it is NOT globally monotonic on its domain: take \(x_1 = -1 < x_2 = 1 < x_3 = 2\); then \(f(-1) = -1 < f(1) = 1\) (goes up), while \(f(1) = 1 > f(2) = \frac{1}{2}\) (goes down)!
+
+2. Piecewise function on a single interval: Even on the connected interval \([0, 2]\), define
+\[
+g(x) = \begin{cases}
+x, & 0 \le x \le 1, \\
+3 - x, & 1 < x \le 2.
+\end{cases}
+\]
+Check the outputs of each piece:
+- On \([0, 1]\), \(g(x) = x\) is strictly increasing and fills the output interval \([0, 1]\).
+- On \((1, 2]\), \(g(x) = 3 - x\) is strictly decreasing and fills the output interval \([1, 2)\)—wait, at \(x = 2\) we get \(3 - 2 = 1\), which collides with \(g(1) = 1\)! To avoid that collision, shift the second piece up by \(1\):
+\[
+h(x) = \begin{cases}
+x, & 0 \le x \le 1, \\
+4 - x, & 1 < x \le 2.
+\end{cases}
+\]
+Now on \([0, 1]\), \(h\) takes values in \([0, 1]\); on \((1, 2]\), \(h\) takes values in \([2, 3)\). Because the two output ranges \([0, 1]\) and \([2, 3)\) are completely disjoint and each piece is strictly monotonic on its own interval, NO horizontal line can hit the graph of \(h\) twice! Yet \(h\) rises on \([0, 1]\) and falls on \((1, 2]\), so it is NOT globally monotonic.
+
+[GRAPH]
+type: function2d
+title: A one-to-one function \(h(x)\) on \([0, 2]\) that is neither globally increasing nor globally decreasing
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.3, 2.4
+yrange: -0.3, 3.5
+trace: (x >= 0 and x <= 1) ? x : (0/0) | label: \(x\) on \([0, 1]\)
+trace: (x > 1 and x <= 2) ? (4 - x) : (0/0) | label: \(4 - x\) on \((1, 2]\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1, 1 | label: \((1, 1)\)
+point: 1, 3 | label: open (1, 3)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+Notice what made that counterexample possible: a jump gap at \(x = 1\)! (In calculus, you will see that a continuous function on a single unbroken interval IS one-to-one if and only if it is strictly monotonic—jumps or disconnected domains are the exact way a one-to-one function can switch direction without failing [REF: hlt | the Horizontal Line Test].)
+
+[QUESTION 4]
+[ANSWER: B]
+Consider the piecewise function
+\[
+p(x) = \begin{cases}
+x + 1, & x \le 0, \\
+c - x, & x > 0.
+\end{cases}
+\]
+Is there any constant \(c\) that makes \(p\) one-to-one on \((-\infty, \infty)\)?
+
+(A) Yes, \(c = 2\), because then the right branch starts above the left branch.
+(B) No, because for every choice of \(c\), as \(x \to \infty\) the right branch \(c - x\) plunges to \(-\infty\) and overlaps the output interval \((-\infty, 1]\) of the left branch.
+(C) Yes, \(c = 1\), because then the two branches meet cleanly at \((0, 1)\).
+(D) Yes, any \(c > 1\) works because the two pieces have disjoint domains.
+(E) No, because no piecewise function can ever be one-to-one.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+For which value of the constant \(k\) is the linear fractional function
+\[
+f(x) = \frac{2x + k}{x - 3}
+\]
+NOT one-to-one on its natural domain \((-\infty, 3) \cup (3, \infty)\)?
+
+(A) \(k = 0\)
+(B) \(k = 6\)
+(C) \(k = -3\)
+(D) \(k = -6\)
+(E) It is one-to-one for every real number \(k\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Suppose \(f\) is a one-to-one function whose domain is symmetric about \(0\). Can \(f\) be an even function?
+
+(A) Yes, whenever \(f(x) > 0\) for all \(x\).
+(B) Yes, for example \(f(x) = |x|\).
+(C) Only if its domain is the single point \(\{0\}\); if the domain contains any nonzero \(a\), then \(a \ne -a\) yet \(f(a) = f(-a)\).
+(D) Never, under any circumstances, even if the domain is \(\{0\}\).
+(E) Yes, whenever \(f\) is strictly increasing on \((0, \infty)\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Let \(f(x) = 3x - 2\) and \(g(x) = x^3 + 5\). Suppose \(f(a) = f(b)\) or \(g(a) = g(b)\) is used to test injectivity of a composition. Which statement is true about \((f \circ g)(x)\) and \((g \circ f)(x)\)?
+
+(A) Both \(f \circ g\) and \(g \circ f\) are one-to-one on \((-\infty, \infty)\).
+(B) Only \(f \circ g\) is one-to-one, because \(g\) is cubic.
+(C) Only \(g \circ f\) is one-to-one, because \(f\) is linear.
+(D) Neither is one-to-one because composing two functions destroys injectivity.
+(E) \(f \circ g\) is one-to-one, while \(g \circ f\) fails at \(x = \frac{2}{3}\).
+[/BONUS]

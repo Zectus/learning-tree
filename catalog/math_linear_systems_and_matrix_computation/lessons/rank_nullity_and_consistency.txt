@@ -1,0 +1,273 @@
+=== SECTION 1: Matrix rank and why column rank equals row rank ===
+
+Look back at the table at the end of the previous lesson: for ANY \(m \times n\) matrix \(A\), the minimal linearly independent spanning set of \(\operatorname{Col}(A)\) has \(r\) vectors (the pivot columns of \(A\)), and the minimal linearly independent spanning set of \(\operatorname{Row}(A)\) ALSO has \(r\) vectors (the nonzero rows of \(\operatorname{RREF}(A)\)), where \(r\) is the number of pivot positions of \(A\).
+
+That single integer \(r\)—which is completely well-defined because \(\operatorname{RREF}(A)\) is unique—is one of the most informative invariants of a matrix.
+
+[CALLOUT]
+id: rank-def
+label: Definition
+title: Rank and nullity of an \(m \times n\) matrix
+tone: key
+
+Let \(A\) be an \(m \times n\) matrix.
+
+(1) The rank of \(A\), written \(\operatorname{rank}(A)\), is the number of pivot positions in any REF (or \(\operatorname{RREF}(A)\)).
+(2) The nullity of \(A\), written \(\operatorname{nullity}(A)\), is the number of free variables (non-pivot columns) of \(A\)—equivalently, the number of special solution vectors in the minimal spanning set of \(\operatorname{Null}(A)\).
+[/CALLOUT]
+
+Immediately from our pivot-column and nonzero-row constructions, three fundamental facts drop out at once:
+
+1. Column rank equals row rank: the size of the minimal independent spanning set of \(\operatorname{Col}(A)\) (the number of pivot columns) equals the size of the minimal independent spanning set of \(\operatorname{Row}(A)\) (the number of nonzero rows in \(\operatorname{RREF}(A)\)), because every pivot occupies one distinct row and one distinct column! Both equal \(\operatorname{rank}(A)\).
+2. Size bound: because there is at most one pivot per row and at most one pivot per column,
+\[
+0 \le \operatorname{rank}(A) \le \min(m, n),
+\]
+with \(\operatorname{rank}(A) = 0\) if and only if \(A\) is the zero matrix.
+3. Transpose invariance:
+\[
+\operatorname{rank}(A^T) = \operatorname{rank}(A).
+\]
+Why does transposing preserve rank? Let us be careful not to assert it casually! The rows of \(A\) are the columns of \(A^T\), so \(\operatorname{Row}(A)\) and \(\operatorname{Col}(A^T)\) are the exact same set of vectors (written horizontally vs vertically). Can a set of vectors in \(\mathbb{R}^n\) have two minimal linearly independent spanning sets of DIFFERENT sizes? Let us check concretely! Suppose \(\{\mathbf{u}_1, \dots, \mathbf{u}_p\}\) and \(\{\mathbf{w}_1, \dots, \mathbf{w}_q\}\) are two linearly independent sets spanning the same set \(S \subseteq \mathbb{R}^n\), and pack them as the columns of \(n \times p\) matrix \(U\) and \(n \times q\) matrix \(W\). Since each \(\mathbf{w}_j\) is a linear combination of the columns of \(U\), we can write \(W = U C\) for a \(p \times q\) matrix \(C\). If \(q > p\), the homogeneous system \(C\mathbf{z} = \mathbf{0}\) is underdetermined (more columns than rows) and therefore has a nonzero solution \(\mathbf{z} \neq \mathbf{0}\); then \(W\mathbf{z} = U(C\mathbf{z}) = \mathbf{0}\), contradicting linear independence of the columns of \(W\)! Hence \(q \le p\), and by symmetry \(p \le q\), so \(p = q\)!
+Applying this to \(S = \operatorname{Row}(A) = \operatorname{Col}(A^T)\) proves that the number of pivot rows of \(A\) (which is \(\operatorname{rank}(A)\)) MUST equal the number of pivot columns of \(A^T\) (which is \(\operatorname{rank}(A^T)\)). Thus \(\operatorname{rank}(A^T) = \operatorname{rank}(A)\) holds for every matrix \(A\)!
+
+Now count the columns of \(A\). Every one of the \(n\) columns of \(A\) is EITHER a pivot column OR a non-pivot (free-variable) column—never both, and never neither. Adding those two counts produces the concrete Rank-Nullity counting law.
+
+[CALLOUT]
+id: rank-nullity-law
+label: Theorem
+title: Rank-Nullity Counting Law
+tone: key
+
+For every \(m \times n\) matrix \(A\),
+\[
+\operatorname{rank}(A) + \operatorname{nullity}(A) = n \quad (\text{the number of columns of } A).
+\]
+In particular, whenever \(A\mathbf{x} = \mathbf{b}\) is consistent, its general solution \(\mathbf{x} = \mathbf{x}_p + t_1 \mathbf{v}_1 + \cdots + t_k \mathbf{v}_k\) contains exactly \(k = \operatorname{nullity}(A) = n - \operatorname{rank}(A)\) free parameters.
+[/CALLOUT]
+
+Watch carefully when applying [REF: rank-nullity-law | Rank-Nullity] to \(A^T\): an \(m \times n\) matrix \(A\) has \(n\) columns, whereas its transpose \(A^T\) is \(n \times m\) and has \(m\) columns! Therefore:
+\[
+\operatorname{rank}(A) + \operatorname{nullity}(A) = n, \qquad \text{while} \qquad \operatorname{rank}(A^T) + \operatorname{nullity}(A^T) = m.
+\]
+Since \(\operatorname{rank}(A^T) = \operatorname{rank}(A)\), we get \(\operatorname{nullity}(A^T) = m - \operatorname{rank}(A)\).
+
+Let us check all four numbers on a concrete \(3 \times 4\) matrix:
+\[
+A = \begin{bmatrix} 1 & 2 & -1 & 4 \\ 2 & 4 & 1 & 5 \\ -1 & -2 & 4 & -7 \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\begin{bmatrix} 1 & 2 & -1 & 4 \\ 0 & 0 & 3 & -3 \\ 0 & 0 & 3 & -3 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - R_2}
+\begin{bmatrix} 1 & 2 & -1 & 4 \\ 0 & 0 & 3 & -3 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Here \(m = 3\), \(n = 4\), and there are \(2\) pivots (columns \(1\) and \(3\)). Hence:
+- \(\operatorname{rank}(A) = 2\),
+- \(\operatorname{nullity}(A) = n - \operatorname{rank}(A) = 4 - 2 = 2\),
+- \(\operatorname{rank}(A^T) = 2\),
+- \(\operatorname{nullity}(A^T) = m - \operatorname{rank}(A^T) = 3 - 2 = 1\).
+
+[QUESTION 1]
+[ANSWER: B]
+Consider the \(4 \times 5\) matrix
+\[
+A = \begin{bmatrix} 1 & 3 & -2 & 1 & 0 \\ 2 & 6 & -4 & 3 & 2 \\ -1 & -3 & 2 & 0 & 2 \\ 0 & 0 & 0 & 1 & 2 \end{bmatrix}.
+\]
+What is the ordered triple \(\bigl(\operatorname{rank}(A),\; \operatorname{nullity}(A),\; \operatorname{nullity}(A^T)\bigr)\)?
+
+(A) \((2, 2, 3)\)
+(B) \((2, 3, 2)\)
+(C) \((2, 3, 3)\)
+(D) \((3, 2, 1)\)
+(E) \((2, 2, 2)\)
+[/QUESTION]
+
+=== SECTION 2: The Rouché-Capelli consistency theorem ===
+
+Earlier, we characterized consistency of \(A\mathbf{x} = \mathbf{b}\) in two ways:
+1. Geometrically, \(\mathbf{b} \in \operatorname{Col}(A)\).
+2. Algorithmically, an echelon form of \([A \mid \mathbf{b}]\) has no pivot in its rightmost (augmented) column (no row of the form \([0 \cdots 0 \mid c]\) with \(c \neq 0\)).
+
+Compare the pivot count of \([A \mid \mathbf{b}]\) with the pivot count of \(A\)! Performing forward elimination on \([A \mid \mathbf{b}]\) reduces the left block \(A\) to an echelon form \(U\) with \(r = \operatorname{rank}(A)\) pivots. The single extra column \(\mathbf{b}\) can add AT MOST ONE new pivot (located in the rightmost column below the \(r\) nonzero rows of \(U\)). Thus there are only two possibilities:
+- \(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A)\): the rightmost column is NOT a pivot column, so the system is consistent.
+- \(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A) + 1\): the rightmost column IS a pivot column (producing a contradictory row \([0 \cdots 0 \mid c]\) with \(c \neq 0\)), so the system is inconsistent.
+
+This unifies consistency, uniqueness, and parameter counts into one clean rank test.
+
+[CALLOUT]
+id: rouche-capelli
+label: Theorem
+title: Rouché-Capelli Consistency Theorem
+tone: key
+
+Let \(A\) be an \(m \times n\) matrix and \(\mathbf{b} \in \mathbb{R}^m\).
+
+(1) The linear system \(A\mathbf{x} = \mathbf{b}\) is consistent if and only if
+\[
+\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A).
+\]
+(2) When \(A\mathbf{x} = \mathbf{b}\) is consistent:
+- The solution is UNIQUE if and only if \(\operatorname{rank}(A) = n\) (so \(\operatorname{nullity}(A) = 0\)).
+- There are INFINITELY MANY solutions if and only if \(\operatorname{rank}(A) < n\), with exactly \(n - \operatorname{rank}(A)\) free parameters.
+[/CALLOUT]
+
+To see [REF: rouche-capelli | Rouché-Capelli] geometrically in \(\mathbb{R}^2\), take the rank-\(1\) matrix \(A = \begin{bmatrix} 1 & 2 \\ 2 & 4 \end{bmatrix}\), whose column space is the line \(b_2 = 2 b_1\), and test right-hand sides \(\mathbf{b} = \begin{bmatrix} 1 \\ c \end{bmatrix}\) as the slider \(c\) varies. Only at the single value \(c = 2\) does \(\mathbf{b}\) land on \(\operatorname{Col}(A)\), keeping \(\operatorname{rank}([A \mid \mathbf{b}]) = 1 = \operatorname{rank}(A)\) (consistent with \(2 - 1 = 1\) free parameter). For every \(c \neq 2\), \(\mathbf{b}\) steps off the line, creating a second pivot so \(\operatorname{rank}([A \mid \mathbf{b}]) = 2 > \operatorname{rank}(A)\) (inconsistent).
+
+[GRAPH]
+type: parametric2d
+title: Appending \(\mathbf{b} = (1, c)\) raises the rank from \(1\) to \(2\) whenever \(\mathbf{b}\) leaves \(\operatorname{Col}(A)\)
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -1, 3
+xrange: -1, 3
+yrange: -1, 5
+trace: t, 2*t | label: \(\operatorname{Col}(A)\) (\(b_2 = 2 b_1\)) | color: #2563eb
+segment: 0, 0, 1, c | label: \(\mathbf{b}\) | color: #dc2626
+segment: 1, 2, 1, c | color: #6b7280 | dashed: true
+point: 1, 2 | label: \((1, 2)\) | color: #2563eb
+point: 1, c | label: \(\mathbf{b}\) | color: #dc2626
+slider: c | range: 0, 4 | init: 3.5 | step: 0.25
+[/GRAPH]
+
+Let us apply [REF: rouche-capelli | Rouché-Capelli] to our \(3 \times 4\) matrix from Section 1 with a general right-hand side \(\mathbf{b} = \begin{bmatrix} b_1 \\ b_2 \\ b_3 \end{bmatrix}\):
+\[
+\begin{bmatrix} 1 & 2 & -1 & 4 & \mid & b_1 \\ 2 & 4 & 1 & 5 & \mid & b_2 \\ -1 & -2 & 4 & -7 & \mid & b_3 \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\begin{bmatrix} 1 & 2 & -1 & 4 & \mid & b_1 \\ 0 & 0 & 3 & -3 & \mid & b_2 - 2 b_1 \\ 0 & 0 & 3 & -3 & \mid & b_3 + b_1 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - R_2}
+\begin{bmatrix} 1 & 2 & -1 & 4 & \mid & b_1 \\ 0 & 0 & 3 & -3 & \mid & b_2 - 2 b_1 \\ 0 & 0 & 0 & 0 & \mid & 3 b_1 - b_2 + b_3 \end{bmatrix}.
+\]
+Here \(\operatorname{rank}(A) = 2\). Therefore:
+- \(\operatorname{rank}([A \mid \mathbf{b}]) = 2\) if and only if \(3 b_1 - b_2 + b_3 = 0\): for every such \(\mathbf{b}\) (such as \(\mathbf{b} = (1, 4, 1)^T\)), the system is consistent with \(4 - 2 = 2\) free parameters.
+- If \(3 b_1 - b_2 + b_3 \neq 0\) (such as \(\mathbf{b} = (1, 4, 2)^T\)), then \(\operatorname{rank}([A \mid \mathbf{b}]) = 3 > 2\), and the system has no solution.
+
+[TABLE]
+Rank comparison for \(m \times n\) system \(A\mathbf{x} = \mathbf{b}\) | Solution behavior
+\(\operatorname{rank}([A \mid \mathbf{b}]) > \operatorname{rank}(A)\) | Inconsistent (no solution)
+\(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A) = n\) | Consistent with a unique solution (\(0\) free parameters)
+\(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A) < n\) | Consistent with infinitely many solutions (\(n - \operatorname{rank}(A)\) free parameters)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: C]
+Consider the linear system represented by the augmented matrix
+\[
+[A \mid \mathbf{b}] = \begin{bmatrix} 1 & -2 & 3 & 1 & \mid & 2 \\ 2 & -4 & 7 & 4 & \mid & 5 \\ -1 & 2 & -1 & 3 & \mid & k \end{bmatrix}.
+\]
+For which real value(s) of \(k\) is this system consistent, and how many free parameters appear in the general solution when it is consistent?
+
+(A) Consistent for all real \(k\), with \(2\) free parameters
+(B) Consistent only for \(k = 0\), with \(1\) free parameter
+(C) Consistent only for \(k = 0\), with \(2\) free parameters
+(D) Consistent only for \(k = -2\), with \(2\) free parameters
+(E) Consistent only for \(k = 0\), with a unique solution
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Suppose \(A\) is a \(4 \times 6\) matrix such that \(A\mathbf{x} = \mathbf{b}\) is consistent for EVERY \(\mathbf{b} \in \mathbb{R}^4\). What are \(\operatorname{rank}(A)\) and \(\operatorname{nullity}(A)\)?
+
+(A) \(\operatorname{rank}(A) = 6\) and \(\operatorname{nullity}(A) = 0\)
+(B) \(\operatorname{rank}(A) = 4\) and \(\operatorname{nullity}(A) = 0\)
+(C) \(\operatorname{rank}(A) = 2\) and \(\operatorname{nullity}(A) = 4\)
+(D) \(\operatorname{rank}(A) = 4\) and \(\operatorname{nullity}(A) = 2\)
+(E) \(\operatorname{rank}(A)\) could be any integer from \(1\) to \(4\), depending on the entries of \(A\)
+[/QUESTION]
+
+=== SECTION 3: Rank inequalities for matrix products ===
+
+How does matrix multiplication affect rank? Let \(A\) be \(m \times n\) and \(B\) be \(n \times p\), so the product \(AB\) is \(m \times p\). Intuitively:
+- Every column of \(AB\) has the form \(A\mathbf{b}_j\), which is a linear combination of the columns of \(A\), so \(\operatorname{Col}(AB) \subseteq \operatorname{Col}(A)\).
+- Every row of \(AB\) is a linear combination of the rows of \(B\), so \(\operatorname{Row}(AB) \subseteq \operatorname{Row}(B)\).
+
+Both inclusions suggest that multiplying two matrices can NEVER increase rank—it can only keep rank the same or push it down. Let us prove this cleanly using ONLY row reduction and transpose invariance, without needing any abstract subspace-dimension machinery!
+
+[CALLOUT]
+id: product-rank-bounds
+label: Theorem
+title: Rank of a matrix product and invariance under invertible factors
+tone: key
+
+Let \(A\) be \(m \times n\) and \(B\) be \(n \times p\).
+
+(1) Product rank bound:
+\[
+\operatorname{rank}(AB) \le \min\bigl(\operatorname{rank}(A),\; \operatorname{rank}(B)\bigr).
+\]
+(2) Invertible factor invariance: if \(P\) is an invertible \(m \times m\) matrix and \(Q\) is an invertible \(n \times n\) matrix, then
+\[
+\operatorname{rank}(PA) = \operatorname{rank}(AQ) = \operatorname{rank}(PAQ) = \operatorname{rank}(A).
+\]
+[/CALLOUT]
+
+Proof of [REF: product-rank-bounds.1 | part (1)].
+Let \(r = \operatorname{rank}(A)\), and let \(P\) be an invertible product of elementary matrices such that \(PA = R = \operatorname{RREF}(A)\). Then the bottom \(m - r\) rows of \(R\) are completely zero. Now multiply both sides on the right by \(B\):
+\[
+P(AB) = (PA)B = RB.
+\]
+Because the bottom \(m - r\) rows of \(R\) are all zeros, the bottom \(m - r\) rows of \(RB\) are ALSO all zeros! Hence \(RB\) has at most \(r\) nonzero rows, so reducing \(RB\) further can produce at most \(r\) pivots: \(\operatorname{rank}(RB) \le r = \operatorname{rank}(A)\). Since \(P\) is a product of elementary matrices, \(AB\) and \(P(AB) = RB\) are row-equivalent and share the exact same RREF and rank. Therefore
+\[
+\operatorname{rank}(AB) = \operatorname{rank}(RB) \le \operatorname{rank}(A).
+\]
+Now apply that exact inequality to the transpose \((AB)^T = B^T A^T\), using \(\operatorname{rank}(M^T) = \operatorname{rank}(M)\):
+\[
+\operatorname{rank}(AB) = \operatorname{rank}\bigl((AB)^T\bigr) = \operatorname{rank}(B^T A^T) \le \operatorname{rank}(B^T) = \operatorname{rank}(B).
+\]
+Combining both inequalities gives \(\operatorname{rank}(AB) \le \min(\operatorname{rank}(A), \operatorname{rank}(B))\)!
+
+Proof of [REF: product-rank-bounds.2 | part (2)].
+By [REF: product-rank-bounds.1 | part (1)], multiplying by ANY matrix cannot raise rank, so
+\[
+\operatorname{rank}(PAQ) \le \operatorname{rank}(A) = \operatorname{rank}\bigl(P^{-1}(PAQ)Q^{-1}\bigr) \le \operatorname{rank}(PAQ).
+\]
+Since \(\operatorname{rank}(PAQ)\) is both \(\le \operatorname{rank}(A)\) and \(\ge \operatorname{rank}(A)\), equality holds: \(\operatorname{rank}(PAQ) = \operatorname{rank}(A)\)! Setting \(Q = I_n\) gives \(\operatorname{rank}(PA) = \operatorname{rank}(A)\), and setting \(P = I_m\) gives \(\operatorname{rank}(AQ) = \operatorname{rank}(A)\).
+
+A crucial caution: [REF: product-rank-bounds.1 | part (1)] is an INEQUALITY, not an equality—the rank of \(AB\) can drop strictly below BOTH \(\operatorname{rank}(A)\) and \(\operatorname{rank}(B)\)!
+- Example 1 (rank drops from \(2\) to \(1\)):
+\[
+A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\implies
+AB = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+Here \(\operatorname{rank}(A) = 2\) and \(\operatorname{rank}(B) = 2\), yet \(\operatorname{rank}(AB) = 1 < \min(2, 2)\).
+- Example 2 (rank drops all the way to \(0\)):
+\[
+A = \begin{bmatrix} 1 & -1 \\ 2 & -2 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 3 & 1 \\ 3 & 1 \end{bmatrix}
+\implies
+AB = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}.
+\]
+Both \(A\) and \(B\) have rank \(1\), yet \(AB = 0\) has rank \(0\)! Notice WHY the rank collapsed: every column of \(B\) is a multiple of \(\begin{bmatrix} 1 \\ 1 \end{bmatrix}\), which lies inside \(\operatorname{Null}(A)\), so \(A\) annihilates all of \(\operatorname{Col}(B)\).
+
+[QUESTION 4]
+[ANSWER: B]
+Suppose \(A\) is a \(6 \times 5\) matrix with \(\operatorname{rank}(A) = 3\), \(B\) is a \(5 \times 4\) matrix with \(\operatorname{rank}(B) = 2\), and \(P\) is an invertible \(6 \times 6\) matrix. Which statement MUST be true about \(\operatorname{rank}(PAB)\)?
+
+(A) \(\operatorname{rank}(PAB) = 2\) for every such choice of \(A\), \(B\), and \(P\)
+(B) \(\operatorname{rank}(PAB) \le 2\), and it can be strictly smaller than \(2\) (even \(0\)) depending on \(A\) and \(B\)
+(C) \(\operatorname{rank}(PAB) = 3\) because \(P\) is invertible and \(\operatorname{rank}(A) = 3\)
+(D) \(\operatorname{rank}(PAB)\) can be as large as \(4\) because \(PAB\) has \(4\) columns
+(E) \(\operatorname{rank}(PAB) \ge 2\) because multiplying by an invertible matrix \(P\) prevents rank loss
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose \(A\) is \(6 \times 2\), \(B\) is \(2 \times 7\), and \(C\) is \(7 \times 5\). What is the largest possible value of \(\operatorname{rank}(ABC)\), and what is the smallest possible value of \(\operatorname{nullity}(ABC)\)?
+
+(A) Maximum rank \(5\); minimum nullity \(0\)
+(B) Maximum rank \(5\); minimum nullity \(1\)
+(C) Maximum rank \(2\); minimum nullity \(3\)
+(D) Maximum rank \(2\); minimum nullity \(4\)
+(E) Maximum rank \(2\); minimum nullity \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose \(A\) and \(B\) are \(5 \times 5\) matrices such that \(AB = 0\) and \(\operatorname{rank}(A) = 3\). What is the largest possible value of \(\operatorname{rank}(B)\)?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(5\)
+[/BONUS]

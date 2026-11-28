@@ -1,0 +1,189 @@
+=== SECTION 1: The Twelvefold Way — classifying distributions along three axes ===
+
+Across this entire module, we have encountered a dozen seemingly different counting problems: functions, injective maps, surjections, subsets, weak and strong compositions, set partitions, and Bell-type groupings. In the 1960s, mathematician Gian-Carlo Rota organized all of them into a single unified framework known as the Twelvefold Way.
+
+Think of placing \(m\) balls into \(n\) boxes—or equivalently, defining a function \(f : M \to N\) from a set \(M\) of \(m\) balls to a set \(N\) of \(n\) boxes, where \(f(b)\) records which box receives ball \(b\). Every basic distribution problem is uniquely pinned down by answering THREE independent structural questions:
+
+1. Are the \(m\) balls LABELED (distinguishable, like \(m\) named tasks or distinct people) or UNLABELED (indistinguishable, like identical coins or fungible server credits)?
+2. Are the \(n\) boxes LABELED (distinguishable, like numbered rooms or named accounts) or UNLABELED (indistinguishable, like identical unmarked pouches or unnamed teams)?
+3. What occupancy restriction applies to each box?
+   - Arbitrary (no restriction): any box may hold \(0, 1, 2, \dots\) balls (any function \(f : M \to N\)).
+   - At most \(1\) ball per box: no two balls may share a box (an injective function \(f : M \to N\)).
+   - At least \(1\) ball per box: no box may remain empty (a surjective function \(f : M \to N\)).
+
+Since there are \(2 \times 2 \times 3 = 12\) combinations of these three choices, every problem lands in one of \(12\) cells. Notice that making balls unlabeled means we treat two functions as the same whenever permuting the domain \(M\) converts one into the other; making boxes unlabeled means we treat two functions as the same whenever permuting the codomain \(N\) converts one into the other.
+
+[CALLOUT]
+id: twelvefold-matrix
+label: Reference
+title: Rota's Twelvefold Way (\(m\) balls into \(n\) boxes, with \(m, n \ge 1\))
+tone: key
+
+Here \(S(m, n)\) is the Stirling number of the second kind (partitions of an \(m\)-element labeled set into \(n\) nonempty unlabeled blocks), and \(p(m, n)\) is the number of integer partitions of \(m\) into \(n\) positive parts (developed in Section 2).
+
+[TABLE]
+Balls (\(m\)) | Boxes (\(n\)) | Any occupancy (arbitrary) | At most \(1\) per box (injective) | At least \(1\) per box (surjective)
+Labeled | Labeled | \(n^m\) | \(P(n, m) = \frac{n!}{(n - m)!}\) | \(\operatorname{surj}(m, n) = n!\,S(m, n)\)
+Unlabeled | Labeled | \(\binom{m + n - 1}{m}\) | \(\binom{n}{m}\) | \(\binom{m - 1}{n - 1}\)
+Labeled | Unlabeled | \(\sum_{k=1}^n S(m, k)\) | \(1\) if \(m \le n\), else \(0\) | \(S(m, n)\)
+Unlabeled | Unlabeled | \(\sum_{k=1}^n p(m, k)\) | \(1\) if \(m \le n\), else \(0\) | \(p(m, n)\)
+[/TABLE]
+[/CALLOUT]
+
+Inspect the middle column ("At most \(1\) per box") when the boxes are UNLABELED: whether the \(m\) balls are labeled OR unlabeled, the answer collapses to simply \(1\) (when \(m \le n\)) or \(0\) (when \(m > n\))! Why? If \(m > n\), the Pigeonhole Principle makes it impossible to put at most one ball per box. If \(m \le n\), every valid placement puts each of the \(m\) balls alone inside its own unmarked box and leaves \(n - m\) identical empty boxes. Because the boxes carry NO labels, permuting which unmarked box holds which ball produces the EXACT same configuration—there is only \(1\) way!
+
+Also verify the two rows with labeled boxes:
+- Row 1 (Labeled balls, Labeled boxes): every ball chooses a box independently (\(n^m\)); requiring distinct boxes gives \(k\)-permutations \(P(n, m)\); requiring every box to be hit gives surjections \(\operatorname{surj}(m, n) = n!\,S(m, n)\).
+- Row 2 (Unlabeled balls, Labeled boxes): only the occupancy counts \((x_1, \dots, x_n)\) with \(x_1 + \cdots + x_n = m\) matter! Arbitrary occupancy is Stars and Bars \(\binom{m + n - 1}{m}\); at most \(1\) per box chooses which \(m\) of the \(n\) labeled boxes get a ball (\(\binom{n}{m}\)); at least \(1\) per box is strong compositions \(\binom{m - 1}{n - 1}\).
+
+[QUESTION 1]
+[ANSWER: D]
+A software team has \(5\) distinct bug tickets and \(3\) identical, interchangeable worker queues. Each ticket must be assigned to a queue, and every queue must receive at least one ticket. How many distinct assignments are possible?
+
+(A) \(2\)
+(B) \(6\)
+(C) \(41\)
+(D) \(25\)
+(E) \(150\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+In how many ways can \(4\) distinct museum paintings be placed into \(6\) identical, unmarked storage crates if each crate may hold AT MOST ONE painting (empty crates are allowed)?
+
+(A) \(1\)
+(B) \(15\)
+(C) \(24\)
+(D) \(360\)
+(E) \(1296\)
+[/QUESTION]
+
+=== SECTION 2: Bell numbers and integer partitions — the unlabeled-box cells ===
+
+The bottom two rows of [REF: twelvefold-matrix | the Twelvefold Way]—where the boxes are UNLABELED—introduce two rich combinatorial families that cannot be reduced to a single binomial coefficient or power.
+
+First, look at Row 3, arbitrary occupancy: placing \(m\) LABELED balls into \(n\) UNLABELED boxes with empty boxes allowed. Partition all placements by the exact number \(k\) of NONEMPTY boxes actually used (\(1 \le k \le \min(m, n)\)). For each fixed \(k\), there are \(S(m, k)\) ways to split the \(m\) labeled balls into \(k\) nonempty unlabeled blocks, and the remaining \(n - k\) empty unlabeled boxes are indistinguishable. By the Sum Rule, the count is \(\sum_{k=1}^n S(m, k)\).
+
+When \(n \ge m\), there are enough boxes that NO box-count cap restricts the partition at all! The total number of ways to partition an \(m\)-element labeled set into ANY number of nonempty unlabeled blocks is called the \(m\)-th Bell number, written \(B_m\):
+\[
+B_m = \sum_{k=1}^m S(m, k) \qquad (m \ge 1), \qquad \text{with } B_0 = 1.
+\]
+Using our known Stirling values gives \(B_1 = 1\), \(B_2 = 1 + 1 = 2\), \(B_3 = 1 + 3 + 1 = 5\), and \(B_4 = 1 + 7 + 6 + 1 = 15\). Bell numbers also satisfy an elegant recurrence proved by combinatorial decomposition: in any partition of \(\{1, 2, \dots, m + 1\}\), suppose \(k\) of the other \(m\) elements do NOT share the block of element \(m + 1\) (so \(m - k\) of them join \(m + 1\) in its block). Choosing those \(k\) outside elements takes \(\binom{m}{k}\) ways, and partitioning them into any number of nonempty blocks takes \(B_k\) ways! Summing over \(k = 0, 1, \dots, m\) gives
+\[
+B_{m + 1} = \sum_{k=0}^m \binom{m}{k} B_k.
+\]
+
+Second, look at Row 4: placing \(m\) UNLABELED balls into \(n\) UNLABELED boxes. Now NEITHER the balls NOR the boxes have identities—the ONLY observable feature of a placement is the UNORDERED multiset of box sizes! Placing \(m\) identical balls into \(n\) identical boxes with at least \(1\) ball per box is therefore equivalent to writing \(m\) as an UNORDERED sum of \(n\) positive integers:
+\[
+m = \lambda_1 + \lambda_2 + \cdots + \lambda_n, \qquad \lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_n \ge 1.
+\]
+Such an unordered sum is called an integer partition of \(m\) into \(n\) positive parts, and their count is denoted \(p(m, n)\).
+
+For example, let us find \(p(6, 3)\) by listing all nonincreasing triples of positive integers summing to \(6\):
+\[
+4 + 1 + 1, \qquad 3 + 2 + 1, \qquad 2 + 2 + 2.
+\]
+Hence \(p(6, 3) = 3\). Compare that against strong compositions of \(6\) into \(3\) LABELED boxes: \(\binom{6 - 1}{3 - 1} = \binom{5}{2} = 10\), because \((4, 1, 1)\) has \(3\) orderings, \((3, 2, 1)\) has \(6\) orderings, and \((2, 2, 2)\) has \(1\) ordering (\(3 + 6 + 1 = 10\)). Look right there at WHY integer partitions have NO elementary closed-form formula in terms of factorials or powers: different partitions have different numbers of repeated parts, so dividing compositions by \(n!\) fails—the symmetry multiplicity varies wildly from partition to partition!
+
+Instead, we compute \(p(m, n)\) cleanly using a combinatorial recurrence (and study them further via generating functions in later combinatorics). Classify every partition of \(m\) into \(n\) positive parts by its SMALLEST part \(\lambda_n\):
+- Case 1 (\(\lambda_n = 1\)): at least one part equals \(1\). Deleting one part of size \(1\) leaves a partition of \(m - 1\) into \(n - 1\) positive parts (\(p(m - 1, n - 1)\) partitions).
+- Case 2 (\(\lambda_n \ge 2\)): EVERY one of the \(n\) parts is at least \(2\). Subtracting \(1\) from EVERY part reduces the total sum by \(n\) while keeping all \(n\) parts positive, creating a bijection with partitions of \(m - n\) into \(n\) positive parts (\(p(m - n, n)\) partitions).
+
+Since the two cases are disjoint and exhaustive, we obtain the partition recurrence.
+
+[CALLOUT]
+id: bell-and-partitions
+label: Theorems
+title: Bell numbers and the integer-partition recurrence
+tone: key
+
+(1) Bell numbers: \(B_m = \sum_{k=1}^m S(m, k)\) counts all partitions of an \(m\)-element labeled set into nonempty unlabeled blocks, satisfying \(B_0 = 1\) and
+\[
+B_{m + 1} = \sum_{k=0}^m \binom{m}{k} B_k.
+\]
+(2) Integer partitions \(p(m, n)\): the number of unordered sums of \(n\) positive integers totaling \(m\) satisfies
+\[
+p(m, n) = p(m - 1, n - 1) + p(m - n, n) \qquad (1 \le n \le m),
+\]
+with boundary values \(p(m, 1) = 1\), \(p(m, m) = 1\), and \(p(m, n) = 0\) whenever \(n > m\) or \(n \le 0\) (for \(m \ge 1\)).
+[/CALLOUT]
+
+Check [REF: bell-and-partitions.2 | the partition recurrence] on \(p(7, 2)\) and \(p(6, 3)\):
+- \(p(7, 2) = p(6, 1) + p(5, 2) = 1 + (p(4, 1) + p(3, 2)) = 1 + 1 + 1 = 3\) (corresponding to \(6 + 1\), \(5 + 2\), and \(4 + 3\)).
+- \(p(6, 3) = p(5, 2) + p(3, 3) = 2 + 1 = 3\) (matching our direct list above!).
+
+And when empty unlabeled boxes ARE allowed (Row 4, arbitrary occupancy), partitioning by the exact number \(k\) of nonempty boxes gives \(\sum_{k=1}^n p(m, k)\), the number of integer partitions of \(m\) into AT MOST \(n\) positive parts.
+
+[QUESTION 3]
+[ANSWER: B]
+In how many ways can \(8\) identical gold coins be divided into \(3\) identical pouches if every pouch must contain at least one coin?
+
+(A) \(10\)
+(B) \(5\)
+(C) \(21\)
+(D) \(45\)
+(E) \(966\)
+[/QUESTION]
+
+=== SECTION 3: Rapid model identification on disguised word problems ===
+
+Real counting problems rarely announce "place \(m\) unlabeled balls into \(n\) labeled boxes." Instead, they talk about distributing grant money, assigning tasks to servers, rolling dice, or sorting cards. Before writing down ANY binomial coefficient or exponential, run a strict three-step diagnostic to identify the exact cell of [REF: twelvefold-matrix | the Twelvefold Way]:
+
+1. Identify what plays the role of BALLS (the items being assigned, i.e., the domain of \(f\)) and what plays the role of BOXES (the destinations or categories, i.e., the codomain of \(f\)). A quick check: each ball goes to EXACTLY ONE box, whereas a box may hold \(0\), \(1\), or many balls!
+2. Test distinguishability on BOTH sides: ask "if I swap two balls inside different boxes, do I get a different outcome?" (Yes \(\implies\) labeled balls; No \(\implies\) unlabeled balls.) Then ask "if I swap the entire contents of two boxes, do I get a different outcome?" (Yes \(\implies\) labeled boxes; No \(\implies\) unlabeled boxes.)
+3. Read the occupancy rule: can a box be empty? Can a box hold more than one ball? (And watch for hybrid twists—such as a cap like "at most \(2\) balls in box 1"—which mean you start from the matching Twelvefold Way cell and then apply complement counting or PIE!)
+
+Watch how tiny wording changes flip the cell—and the numerical answer—completely for \(m = 4\) and \(n = 3\):
+- "Assign \(4\) distinct interns to \(3\) named departments, with every department getting at least one intern": labeled balls, labeled boxes, surjective \(\implies \operatorname{surj}(4, 3) = 36\).
+- "Split \(4\) distinct interns into \(3\) unnamed project squads, with every squad nonempty": labeled balls, unlabeled boxes, surjective \(\implies S(4, 3) = 6\).
+- "Allocate \(4\) identical $1,000 stipends among \(3\) named departments, with every department getting at least one": unlabeled balls, labeled boxes, surjective \(\implies \binom{4 - 1}{3 - 1} = 3\).
+- "Split \(4\) identical $1,000 stipends into \(3\) identical unmarked envelopes, with every envelope nonempty": unlabeled balls, unlabeled boxes, surjective \(\implies p(4, 3) = 1\) (only \(2 + 1 + 1\)).
+
+Four sentences sharing the exact same numbers \(4\) and \(3\) and the exact same "at least one" clause produce four completely different answers—\(36\), \(6\), \(3\), and \(1\)—solely because of the two distinguishability switches!
+
+[QUESTION 4]
+[ANSWER: C]
+Compare two distribution problems:
+- Problem P: Distributing \(7\) identical server credits among \(4\) distinct student accounts, where an account may receive \(0\) credits.
+- Problem Q: Distributing \(7\) identical server credits into \(4\) identical unmarked envelopes, where every envelope must receive at least \(1\) credit.
+Which ordered pair gives the exact counts for Problem P and Problem Q?
+
+(A) \((120, 20)\)
+(B) \((20, 3)\)
+(C) \((120, 3)\)
+(D) \((120, 11)\)
+(E) \((16384, 3)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Using [REF: bell-and-partitions.2 | the integer-partition recurrence] \(p(m, n) = p(m - 1, n - 1) + p(m - n, n)\), what is the exact value of \(p(9, 3)\)?
+
+(A) \(5\)
+(B) \(6\)
+(C) \(8\)
+(D) \(7\)
+(E) \(28\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Using [REF: bell-and-partitions.1 | the Bell number recurrence] \(B_{m + 1} = \sum_{k=0}^m \binom{m}{k} B_k\) together with \(B_0 = 1\), \(B_1 = 1\), \(B_2 = 2\), \(B_3 = 5\), and \(B_4 = 15\), what is the exact value of \(B_5\)?
+
+(A) \(37\)
+(B) \(52\)
+(C) \(51\)
+(D) \(55\)
+(E) \(64\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Four distinct books are placed onto \(3\) distinct shelves (top, middle, and bottom), where the order of books on each shelf does NOT matter and empty shelves ARE allowed—except that the top shelf may hold AT MOST \(2\) books. How many valid placements are possible?
+
+(A) \(72\)
+(B) \(12\)
+(C) \(64\)
+(D) \(73\)
+(E) \(81\)
+[/BONUS]

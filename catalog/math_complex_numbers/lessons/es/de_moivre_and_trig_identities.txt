@@ -1,0 +1,219 @@
+=== SECTION 1: El Teorema de De Moivre para todos los exponentes enteros ===
+
+Supón que necesitas calcular \((1 + i\sqrt{3})^{12}\) en forma rectangular estándar. Desarrollar mediante el Teorema del Binomio produce trece términos repletos de potencias de \(\sqrt{3}\) e \(i\). Sin embargo, geométricamente ya sabemos qué hace elevar a una potencia un número complejo \(z = r(\cos\theta + i\sin\theta) = r\operatorname{cis}\theta\): cada multiplicación por \(z\) escala el módulo por \(r\) y rota el ángulo en \(\theta\). Repetir esa operación \(n\) veces debería escalar el módulo a \(r^n\) y multiplicar el ángulo por \(n\).
+
+Demostremos esta regla rigurosamente para todo entero \(n \in \mathbb{Z}\) directamente a partir de las fórmulas polares del producto y del recíproco.
+
+[CALLOUT]
+id: de-moivre-thm
+label: Teorema
+title: Teorema de De Moivre
+tone: key
+
+Para todo ángulo real \(\theta\) y todo entero \(n \in \mathbb{Z}\):
+
+(1) \((\cos\theta + i\sin\theta)^n = \cos(n\theta) + i\sin(n\theta)\).
+(2) Más generalmente, para cualquier \(z = r(\cos\theta + i\sin\theta)\) no nulo con \(r > 0\),
+\[
+z^n = r^n\bigl(\cos(n\theta) + i\sin(n\theta)\bigr).
+\]
+[/CALLOUT]
+
+Demostración de [REF: de-moivre-thm.1 | la parte (1)]:
+- Caso base \(n = 0\): el miembro izquierdo es \((\cos\theta + i\sin\theta)^0 = 1\), y el miembro derecho es \(\cos 0 + i\sin 0 = 1 + 0i = 1\).
+- Inducción para \(n \ge 0\): supón que \((\cos\theta + i\sin\theta)^k = \cos(k\theta) + i\sin(k\theta)\) se cumple para algún entero \(k \ge 0\). Multiplica ambos miembros por \(\cos\theta + i\sin\theta\) y aplica la fórmula polar del producto:
+\[
+(\cos\theta + i\sin\theta)^{k+1} = \bigl(\cos(k\theta) + i\sin(k\theta)\bigr)(\cos\theta + i\sin\theta) = \cos\bigl((k + 1)\theta\bigr) + i\sin\bigl((k + 1)\theta\bigr).
+\]
+Por inducción matemática, la identidad se cumple para todo entero \(n \ge 0\).
+- Enteros negativos \(n < 0\): escribe \(n = -m\) donde \(m = -n\) es un entero positivo. Aplicar el caso de enteros positivos a \(m\) y luego la regla polar del recíproco \(\frac{1}{\operatorname{cis}\phi} = \operatorname{cis}(-\phi)\) da
+\[
+(\cos\theta + i\sin\theta)^{-m} = \frac{1}{(\cos\theta + i\sin\theta)^m} = \frac{1}{\cos(m\theta) + i\sin(m\theta)} = \cos(-m\theta) + i\sin(-m\theta) = \cos(n\theta) + i\sin(n\theta).
+\]
+Finalmente, [REF: de-moivre-thm.2 | la parte (2)] se sigue de inmediato de \(z^n = \bigl(r(\cos\theta + i\sin\theta)\bigr)^n = r^n(\cos\theta + i\sin\theta)^n\).
+
+Usa el deslizador siguiente para variar el ángulo base \(\theta\) de \(z = \cos\theta + i\sin\theta\) sobre la circunferencia unitaria y observar cómo \(z\), \(z^2\), \(z^3\) y \(z^4\) avanzan por la circunferencia a intervalos angulares iguales \(\theta, 2\theta, 3\theta, 4\theta\).
+
+[GRAPH]
+type: parametric2d
+title: Potencias sucesivas \(z, z^2, z^3, z^4\) de \(z = \cos\theta + i\sin\theta\) sobre la circunferencia unitaria
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.45, 1.45
+yrange: -1.45, 1.45
+trace: cos(t), sin(t) | label: \(|z| = 1\) | color: #94a3b8
+segment: 0, 0, cos(a), sin(a) | color: #2563eb
+segment: 0, 0, cos(2*a), sin(2*a) | color: #16a34a
+segment: 0, 0, cos(3*a), sin(3*a) | color: #ea580c
+segment: 0, 0, cos(4*a), sin(4*a) | color: #9333ea
+point: 1, 0 | label: \(1\)
+point: cos(a), sin(a) | label: \(z\)
+point: cos(2*a), sin(2*a) | label: \(z^2\)
+point: cos(3*a), sin(3*a) | label: \(z^3\)
+point: cos(4*a), sin(4*a) | label: \(z^4\)
+slider: a | range: 0.1, 1.5708 | init: 0.5236 | step: 0.05
+[/GRAPH]
+
+[CALLOUT]
+id: de-moivre-int-caution
+label: Error frecuente
+title: El Teorema de De Moivre es válido únicamente para exponentes enteros
+tone: caution
+
+No apliques ingenuamente \((\cos\theta + i\sin\theta)^p = \cos(p\theta) + i\sin(p\theta)\) a exponentes fraccionarios \(p\). Como \(\theta\) y \(\theta + 2\pi\) representan el mismo número complejo, sustituir \(p = 1/2\) en \(1 = \operatorname{cis}(0) = \operatorname{cis}(2\pi)\) produciría dos números distintos: \(\operatorname{cis}(0) = 1\) y \(\operatorname{cis}(\pi) = -1\). Las raíces fraccionarias son multivaluadas y requieren un método específico tratado en lecciones posteriores.
+[/CALLOUT]
+
+=== SECTION 2: Cálculo de potencias enteras altas positivas y negativas ===
+
+Para evaluar con limpieza una potencia entera alta \(z^n\) en forma rectangular:
+1. Convierte \(z\) a forma polar \(r(\cos\theta + i\sin\theta)\), teniendo cuidado de ubicar \(\theta\) en el cuadrante correcto.
+2. Aplica [REF: de-moivre-thm.2 | el Teorema de De Moivre]: \(z^n = r^n(\cos(n\theta) + i\sin(n\theta))\).
+3. Reduce el ángulo \(n\theta\) módulo \(2\pi\) y vuelve a convertir a forma rectangular estándar.
+
+Ejemplo resuelto 1 (potencia positiva): evalúa \((1 + i\sqrt{3})^{12}\).
+Aquí \(1 + i\sqrt{3}\) yace en el cuadrante I con \(r = \sqrt{1 + 3} = 2\) y \(\theta = \frac{\pi}{3}\). Por tanto,
+\[
+(1 + i\sqrt{3})^{12} = 2^{12}\left(\cos\!\left(12 \cdot \frac{\pi}{3}\right) + i\sin\!\left(12 \cdot \frac{\pi}{3}\right)\right) = 4096(\cos 4\pi + i\sin 4\pi) = 4096.
+\]
+¡Lo que habría llevado una página de aritmética binomial se reduce a una sola línea!
+
+Ejemplo resuelto 2 (potencia negativa): evalúa \((-1 + i)^{-8}\).
+Como \(-1 + i\) está en el cuadrante II, \(r = \sqrt{(-1)^2 + 1^2} = \sqrt{2}\) y \(\theta = \frac{3\pi}{4}\). Aplicando [REF: de-moivre-thm.2 | el Teorema de De Moivre] con \(n = -8\):
+\[
+(-1 + i)^{-8} = (\sqrt{2})^{-8}\left(\cos\!\left(-8 \cdot \frac{3\pi}{4}\right) + i\sin\!\left(-8 \cdot \frac{3\pi}{4}\right)\right) = 2^{-4}\bigl(\cos(-6\pi) + i\sin(-6\pi)\bigr) = \frac{1}{16}.
+\]
+
+[QUESTION 1]
+[ANSWER: A]
+Evalúa \((-\sqrt{3} + i)^9\) en forma rectangular estándar.
+
+(A) \(-512i\)
+(B) \(512i\)
+(C) \(-512\)
+(D) \(512\)
+(E) \(256\sqrt{3} - 256i\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Evalúa \((1 - i)^{-10}\) en forma rectangular estándar.
+
+(A) \(\frac{1}{32}i\)
+(B) \(-\frac{1}{32}i\)
+(C) \(\frac{1}{32}\)
+(D) \(-\frac{1}{32}\)
+(E) \(\frac{1}{1024}i\)
+[/QUESTION]
+
+=== SECTION 3: Identidades trigonométricas de ángulo múltiple ===
+
+El Teorema de De Moivre proporciona una fábrica inmediata de identidades trigonométricas que expresan \(\cos(n\theta)\) y \(\sin(n\theta)\) como polinomios en \(\cos\theta\) y \(\sin\theta\). ¡La idea consiste simplemente en calcular \((\cos\theta + i\sin\theta)^n\) de DOS maneras —una mediante [REF: de-moivre-thm.1 | el Teorema de De Moivre] y otra mediante el Teorema del Binomio— e igualar después las partes reales y las partes imaginarias de ambos miembros!
+
+Deduzcamos desde cero las identidades del ángulo triple para \(\cos(3\theta)\) y \(\sin(3\theta)\). Escribe temporalmente \(c = \cos\theta\) y \(s = \sin\theta\) para mantener compacta el álgebra. Desarrollar \((c + is)^3\) por el Teorema del Binomio da
+\[
+(c + is)^3 = c^3 + 3c^2(is) + 3c(is)^2 + (is)^3 = c^3 + 3ic^2 s - 3cs^2 - is^3 = (c^3 - 3cs^2) + i(3c^2 s - s^3).
+\]
+Por el Teorema de De Moivre, exactamente la misma expresión equivale a \(\cos(3\theta) + i\sin(3\theta)\). Puesto que \(c\) y \(s\) son números reales, igualar partes reales e imaginarias arroja
+\[
+\cos(3\theta) = \cos^3\theta - 3\cos\theta\sin^2\theta, \qquad \sin(3\theta) = 3\cos^2\theta\sin\theta - \sin^3\theta.
+\]
+Usa ahora la identidad pitagórica \(\sin^2\theta = 1 - \cos^2\theta\) en la fórmula del coseno y \(\cos^2\theta = 1 - \sin^2\theta\) en la del seno para expresar cada una en términos de una sola función:
+\[
+\cos(3\theta) = \cos^3\theta - 3\cos\theta(1 - \cos^2\theta) = 4\cos^3\theta - 3\cos\theta,
+\]
+\[
+\sin(3\theta) = 3(1 - \sin^2\theta)\sin\theta - \sin^3\theta = 3\sin\theta - 4\sin^3\theta.
+\]
+Comprobación rápida en \(\theta = \frac{\pi}{6}\): \(3\theta = \frac{\pi}{2}\), \(\sin(\pi/6) = \frac{1}{2}\), y \(3\left(\frac{1}{2}\right) - 4\left(\frac{1}{8}\right) = \frac{3}{2} - \frac{1}{2} = 1 = \sin\left(\frac{\pi}{2}\right)\).
+
+Observa por qué cada potencia par de \(i\) en el desarrollo binomial cae dentro de \(\cos(n\theta)\) (produciendo únicamente potencias PARES de \(\sin\theta\), que siempre se convierten limpiamente en polinomios en \(\cos^2\theta\)): como resultado, \(\cos(n\theta)\) SIEMPRE puede escribirse puramente como un polinomio en \(\cos\theta\) para todo entero positivo \(n\).
+
+[QUESTION 3]
+[ANSWER: A]
+¿Cuál de las siguientes expresiones escribe \(\cos(4\theta)\) puramente como un polinomio en \(\cos\theta\)?
+
+(A) \(8\cos^4\theta - 8\cos^2\theta + 1\)
+(B) \(8\cos^4\theta - 4\cos^2\theta + 1\)
+(C) \(4\cos^4\theta - 4\cos^2\theta + 1\)
+(D) \(8\cos^4\theta + 8\cos^2\theta - 1\)
+(E) \(16\cos^4\theta - 12\cos^2\theta + 1\)
+[/QUESTION]
+
+=== SECTION 4: Linealización de potencias de coseno y seno ===
+
+Plantea ahora la pregunta exactamente opuesta: ¿cómo reescribimos una potencia como \(\cos^4\theta\) o \(\sin^3\theta\) como combinación lineal de cosenos y senos de primer grado de ángulos múltiplos \(\cos(k\theta)\) y \(\sin(k\theta)\)? Este proceso —denominado linealización o reducción de potencias— es indispensable en cálculo integral y análisis de señales porque \(\cos(k\theta)\) y \(\sin(k\theta)\) son mucho más fáciles de integrar y analizar que las potencias altas.
+
+Fija \(z = \cos\theta + i\sin\theta\). Por [REF: de-moivre-thm.1 | el Teorema de De Moivre] con \(n = k\) y \(n = -k\) para cualquier entero \(k \ge 1\):
+\[
+z^k = \cos(k\theta) + i\sin(k\theta), \qquad z^{-k} = \cos(-k\theta) + i\sin(-k\theta) = \cos(k\theta) - i\sin(k\theta).
+\]
+Sumar y restar estas dos ecuaciones produce un par de identidades puente que funcionan de manera idéntica para todo \(k \ge 1\):
+
+[CALLOUT]
+id: linearization-bridges
+label: Identidades
+title: Puentes de reducción de potencias con \(z = \cos\theta + i\sin\theta\)
+tone: key
+
+Sea \(z = \cos\theta + i\sin\theta\). Para todo entero \(k \ge 1\):
+
+(1) \(z^k + z^{-k} = 2\cos(k\theta)\) (en particular, \(2\cos\theta = z + z^{-1}\)).
+(2) \(z^k - z^{-k} = 2i\sin(k\theta)\) (en particular, \(2i\sin\theta = z - z^{-1}\)).
+[/CALLOUT]
+
+Para linealizar \(\cos^m\theta\) o \(\sin^m\theta\), eleva \(z + z^{-1} = 2\cos\theta\) o \(z - z^{-1} = 2i\sin\theta\) a la potencia \(m\)-ésima, desarrolla con el Teorema del Binomio, agrupa parejas simétricas \(z^k \pm z^{-k}\), sustituye cada pareja mediante [REF: linearization-bridges | las identidades puente] y divide por el coeficiente constante \(2^m\) o \((2i)^m\).
+
+Ejemplo resuelto: linealiza \(\cos^4\theta\).
+Parte de \(2\cos\theta = z + z^{-1}\) y eleva ambos miembros a la potencia \(4\):
+\[
+(2\cos\theta)^4 = 16\cos^4\theta = (z + z^{-1})^4 = z^4 + 4z^2 + 6 + 4z^{-2} + z^{-4}.
+\]
+Agrupa potencias simétricas de \(z\):
+\[
+16\cos^4\theta = (z^4 + z^{-4}) + 4(z^2 + z^{-2}) + 6.
+\]
+Sustituye \(z^4 + z^{-4} = 2\cos(4\theta)\) y \(z^2 + z^{-2} = 2\cos(2\theta)\) a partir de [REF: linearization-bridges.1 | la parte (1)]:
+\[
+16\cos^4\theta = 2\cos(4\theta) + 8\cos(2\theta) + 6.
+\]
+Dividir ambos miembros entre \(16\) da la identidad linealizada exacta:
+\[
+\cos^4\theta = \frac{1}{8}\cos(4\theta) + \frac{1}{2}\cos(2\theta) + \frac{3}{8}.
+\]
+Comprobación rápida en dos ángulos: en \(\theta = 0\), \(\frac{1}{8} + \frac{1}{2} + \frac{3}{8} = 1 = \cos^4 0\); en \(\theta = \frac{\pi}{2}\), \(\frac{1}{8}(1) + \frac{1}{2}(-1) + \frac{3}{8} = 0 = \cos^4\left(\frac{\pi}{2}\right)\).
+
+Al linealizar \(\sin^m\theta\), presta especial atención a la potencia de \(i\) en el miembro izquierdo \((2i\sin\theta)^m = 2^m i^m \sin^m\theta\): cuando \(m\) es PAR, \(i^m = \pm 1\) es real y los términos simétricos se emparejan como \(z^k + z^{-k} = 2\cos(k\theta)\); cuando \(m\) es IMPAR, \(i^m = \pm i\) es imaginario puro y los términos simétricos se emparejan como \(z^k - z^{-k} = 2i\sin(k\theta)\), ¡de modo que los factores \(i\) se cancelan limpiamente en ambos lados!
+
+[QUESTION 4]
+[ANSWER: A]
+Expresa \(\sin^3\theta\) como combinación lineal de senos de múltiplos de \(\theta\).
+
+(A) \(\frac{3}{4}\sin\theta - \frac{1}{4}\sin(3\theta)\)
+(B) \(\frac{1}{4}\sin(3\theta) - \frac{3}{4}\sin\theta\)
+(C) \(\frac{3}{4}\sin\theta + \frac{1}{4}\sin(3\theta)\)
+(D) \(\frac{3}{4}\cos\theta - \frac{1}{4}\cos(3\theta)\)
+(E) \(\frac{1}{2}\sin\theta - \frac{1}{2}\sin(3\theta)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+¿Cuál es el menor entero positivo \(n\) para el cual \(\left(\dfrac{\sqrt{3} + i}{2}\right)^n\) es un número real negativo?
+
+(A) \(6\)
+(B) \(3\)
+(C) \(12\)
+(D) \(4\)
+(E) \(9\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Expresa \(\sin^4\theta\) como combinación lineal de cosenos de múltiplos de \(\theta\) y un término constante.
+
+(A) \(\frac{1}{8}\cos(4\theta) - \frac{1}{2}\cos(2\theta) + \frac{3}{8}\)
+(B) \(\frac{1}{8}\cos(4\theta) + \frac{1}{2}\cos(2\theta) + \frac{3}{8}\)
+(C) \(-\frac{1}{8}\cos(4\theta) + \frac{1}{2}\cos(2\theta) - \frac{3}{8}\)
+(D) \(\frac{1}{8}\sin(4\theta) - \frac{1}{2}\sin(2\theta) + \frac{3}{8}\)
+(E) \(\frac{1}{4}\cos(4\theta) - \frac{1}{2}\cos(2\theta) + \frac{1}{4}\)
+[/BONUS]

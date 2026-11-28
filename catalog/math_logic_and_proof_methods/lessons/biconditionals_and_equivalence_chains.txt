@@ -1,0 +1,257 @@
+=== SECTION 1: Proving biconditionals in two directions ===
+
+Many of the strongest theorems in mathematics are characterizations: they assert that two seemingly different conditions hold for the exact same objects. For example, for an integer \(n \in \mathbb{Z}\), "\(n\) is odd if and only if \(n^2\) is odd," or for a real number \(x \in \mathbb{R}\), "\(x\) is rational if and only if \(3x - 5\) is rational."
+
+Recall from propositional logic that a biconditional \(P \Leftrightarrow Q\) is logically equivalent to the conjunction of two opposite implications:
+\[
+(P \iff Q) \;\equiv\; (P \implies Q) \;\wedge\; (Q \implies P).
+\]
+Consequently, a complete proof of a biconditional MUST establish BOTH directions:
+- The forward direction (\(\Rightarrow\)): assume \(P\) and prove \(Q\).
+- The reverse (converse) direction (\(\Leftarrow\)): assume \(Q\) and prove \(P\).
+
+A critical practical insight: the two directions do NOT have to use the same proof method! Very often one direction is a quick direct proof while the opposite direction is cleanest by contraposition or contradiction.
+
+[CALLOUT]
+id: template-biconditional
+label: Method
+title: Two-direction proof of \(\forall x \in D,\, (P(x) \Leftrightarrow Q(x))\)
+tone: key
+
+(1) Fix an arbitrary \(x \in D\).
+(2) Label and prove the forward direction (\(\Rightarrow\)): show \(P(x) \Rightarrow Q(x)\) using whichever method (direct, cases, contraposition, or contradiction) fits best.
+(3) Label and prove the reverse direction (\(\Leftarrow\)): show \(Q(x) \Rightarrow P(x)\) independently, again choosing the cleanest method for that direction.
+(4) Never assume one direction implies the other — a statement and its converse are logically independent.
+[/CALLOUT]
+
+Let us apply [REF: template-biconditional | the two-direction template] to a classic divisibility characterization where mixing direct proof and contraposition pays off immediately. Recall from our lesson on proof by cases that every integer \(n \in \mathbb{Z}\) leaves remainder \(0, 1,\) or \(2\) upon division by \(3\).
+
+[CALLOUT]
+id: proof-div-by-3-iff
+label: Proof
+title: Theorem: For every \(n \in \mathbb{Z}\), \(3 \mid n\) if and only if \(3 \mid n^2\)
+tone: note
+
+Proof: Let \(n \in \mathbb{Z}\) be arbitrary.
+
+(\(\Rightarrow\)) Assume \(3 \mid n\). By definition of divisibility, \(n = 3k\) for some \(k \in \mathbb{Z}\). Squaring gives
+\[
+n^2 = (3k)^2 = 9k^2 = 3(3k^2).
+\]
+Since \(3k^2 \in \mathbb{Z}\), we have \(3 \mid n^2\).
+
+(\(\Leftarrow\)) We prove the contrapositive: if \(3 \nmid n\), then \(3 \nmid n^2\). Assume \(3 \nmid n\). By the division algorithm modulo \(3\), either \(n = 3q + 1\) or \(n = 3q + 2\) for some \(q \in \mathbb{Z}\).
+- Case 1: \(n = 3q + 1\). Then \(n^2 = 9q^2 + 6q + 1 = 3(3q^2 + 2q) + 1\), which leaves remainder \(1\) upon division by \(3\), so \(3 \nmid n^2\).
+- Case 2: \(n = 3q + 2\). Then \(n^2 = 9q^2 + 12q + 4 = 3(3q^2 + 4q + 1) + 1\), which also leaves remainder \(1\) upon division by \(3\), so \(3 \nmid n^2\).
+
+In both cases \(3 \nmid n^2\). By contraposition, if \(3 \mid n^2\), then \(3 \mid n\). Combining both directions establishes \(3 \mid n \iff 3 \mid n^2\).
+[/CALLOUT]
+
+Look at how cleanly [REF: proof-div-by-3-iff | that proof] paired a two-line direct proof for (\(\Rightarrow\)) with a contrapositive plus case-split proof for (\(\Leftarrow\)). Note also that we could equivalently have proved (\(\Rightarrow\)) by direct proof and (\(\Leftarrow\)) by contradiction — what matters is that each direction is independently airtight.
+
+[QUESTION 1]
+[ANSWER: D]
+We wish to prove: "For every real number \(x \in \mathbb{R}\), \(x\) is irrational if and only if \(5x - 2\) is irrational." Which pair of sub-proofs establishes the theorem completely?
+
+(A) Assume \(x \in \mathbb{Q}\) and prove \(5x - 2 \in \mathbb{Q}\); then assume \(x \notin \mathbb{Q}\) and prove \(x \notin \mathbb{Q}\).
+(B) Assume \(x \notin \mathbb{Q}\) and prove \(5x - 2 \notin \mathbb{Q}\); this already covers the reverse direction because \(5x - 2\) is linear.
+(C) Assume \(5x - 2 \in \mathbb{Q}\) and prove \(x \in \mathbb{Q}\); then assume \(x \notin \mathbb{Q}\) and prove \(5x - 2 \notin \mathbb{Q}\) (note that these are contrapositives of each other).
+(D) Prove (\(\Rightarrow\)) by contraposition: assume \(5x - 2 \in \mathbb{Q}\) and deduce \(x = \frac{(5x - 2) + 2}{5} \in \mathbb{Q}\); prove (\(\Leftarrow\)) by contraposition: assume \(x \in \mathbb{Q}\) and deduce \(5x - 2 \in \mathbb{Q}\).
+(E) Assume \(x \in \mathbb{Q}\) and \(5x - 2 \notin \mathbb{Q}\) to get a contradiction; no second direction is needed once a contradiction is reached.
+[/QUESTION]
+
+=== SECTION 2: Single-chain \(\iff\) derivations and irreversible steps ===
+
+Occasionally, a biconditional can be proved in a single chain of equivalences:
+\[
+P \iff R_1 \iff R_2 \iff \dots \iff Q.
+\]
+For example, for arbitrary \(x, y \in \mathbb{R}\):
+\[
+x^2 + y^2 = 2xy \iff x^2 - 2xy + y^2 = 0 \iff (x - y)^2 = 0 \iff x - y = 0 \iff x = y.
+\]
+Why is that single chain completely valid? Check EVERY arrow in BOTH directions:
+- Subtracting \(2xy\) from both sides is reversed by adding \(2xy\).
+- Rewriting \(x^2 - 2xy + y^2\) as \((x - y)^2\) is an algebraic identity (reversible).
+- Over \(\mathbb{R}\), \(u^2 = 0\) holds if and only if \(u = 0\) (both directions hold).
+- Adding \(y\) reverses subtracting \(y\).
+
+However, single-chain \(\iff\) proofs are notorious traps whenever EVEN ONE step is only one-way (\(\Rightarrow\) holds, but \(\Leftarrow\) fails). Compare reversible operations against one-way operations over \(\mathbb{R}\):
+
+[TABLE]
+Algebraic operation on \(A = B\) | Forward (\(\Rightarrow\)) | Reverse (\(\Leftarrow\)) | Safe for \(\iff\)?
+Add or subtract the same real expression \(C\) | Always valid | Always valid | Yes
+Multiply or divide both sides by a known NONZERO number \(c \ne 0\) | Always valid | Always valid | Yes
+Multiply both sides by an expression \(E(x)\) that might equal \(0\) | Valid | FAILS when \(E(x) = 0\) | No
+Square both sides (\(A = B \to A^2 = B^2\)) | Valid | FAILS when \(A = -B \ne 0\) | No
+Take cubes of both sides over \(\mathbb{R}\) (\(A = B \to A^3 = B^3\)) | Valid | Always valid (since \(t \mapsto t^3\) is strictly increasing on \(\mathbb{R}\)) | Yes
+[/TABLE]
+
+[CALLOUT]
+id: caution-irreversible-steps
+label: Caution
+title: Irreversible steps silently destroy a single-chain \(\iff\) proof
+tone: caution
+
+(1) If a chain contains even a single step where only \(\Rightarrow\) holds (such as squaring both sides without sign restrictions, or multiplying by an expression that can vanish), the chain proves ONLY \(P \Rightarrow Q\), not \(P \Leftrightarrow Q\).
+(2) Test suspected links by checking whether extraneous solutions can appear in the reverse direction.
+(3) Whenever a step is reversible only under extra conditions (for example, \(A = B \iff A^2 = B^2\) ONLY when \(A \ge 0\) and \(B \ge 0\)), either carry those side conditions explicitly on every line or switch to [REF: template-biconditional | a two-direction proof].
+[/CALLOUT]
+
+See [REF: caution-irreversible-steps.1 | this failure] in action on the real equation \(\sqrt{x + 2} = x\):
+\[
+\sqrt{x + 2} = x \;\stackrel{?}{\iff}\; x + 2 = x^2 \iff x^2 - x - 2 = 0 \iff (x - 2)(x + 1) = 0 \iff x \in \{-1, 2\}.
+\]
+Check \(x = -1\): the left side is \(\sqrt{-1 + 2} = 1\), while the right side is \(-1 \ne 1\)! The first arrow was ONLY \(\Rightarrow\), NOT \(\iff\), because squaring erased the sign constraint \(x \ge 0\). Keeping the side condition explicit restores true equivalence:
+\[
+\sqrt{x + 2} = x \iff \bigl(x \ge 0 \text{ and } x + 2 = x^2\bigr) \iff \bigl(x \ge 0 \text{ and } x \in \{-1, 2\}\bigr) \iff x = 2.
+\]
+
+[QUESTION 2]
+[ANSWER: B]
+A student attempts to prove for all \(x, y \in \mathbb{R}\) that \(x = y \iff x^2 = xy\) by writing:
+Step 1: \(x = y\)
+Step 2: Multiply both sides by \(x\) to get \(x^2 = xy\).
+Step 3: Conclude \(x = y \iff x^2 = xy\).
+Where does the proof fail, and is the claimed biconditional true?
+
+(A) Step 2 is invalid in the forward direction when \(x = 0\); the biconditional is true.
+(B) Step 2 is irreversible when \(x = 0\) (it only proves \(x = y \Rightarrow x^2 = xy\)); the biconditional is FALSE, as shown by \(x = 0, y = 5\).
+(C) Step 2 is reversible, so the proof is valid and the biconditional is true.
+(D) Step 2 fails only when \(y = 0\); the biconditional is false for \(x = 3, y = 0\).
+(E) Step 2 is irreversible only when \(x < 0\); the biconditional holds for all \(x, y \ge 0\).
+[/QUESTION]
+
+=== SECTION 3: Equivalence chains (TFAE) and cyclic implication strategies ===
+
+Often a theorem asserts not just that two statements are equivalent, but that three, four, or \(k\) statements are ALL pairwise equivalent. Mathematicians introduce such results with the phrase "The following are equivalent" (abbreviated TFAE):
+"For every \(x \in D\), the following statements are equivalent: (1) \(P_1(x)\), (2) \(P_2(x)\), ..., (k) \(P_k(x)\)."
+
+What does TFAE mean logically? It asserts that for EVERY pair of indices \(i, j \in \{1, \dots, k\}\) with \(i \ne j\), the implication \(P_i(x) \Rightarrow P_j(x)\) holds! For \(k = 3\) statements, there are \(3 \times 2 = 6\) ordered implications; for \(k = 4\), there are \(4 \times 3 = 12\); in general, there are \(k(k - 1)\) ordered implications.
+
+Proving all \(k(k - 1)\) implications separately would be painfully repetitive. Instead, remember hypothetical syllogism (transitivity of implication): if \(A \Rightarrow B\) and \(B \Rightarrow C\), then \(A \Rightarrow C\). Therefore, if we prove just \(k\) implications arranged in a single closed cycle,
+\[
+(1) \implies (2) \implies (3) \implies \dots \implies (k) \implies (1),
+\]
+then we can reach ANY statement \(P_j\) from ANY statement \(P_i\) simply by walking forward along the cycle! For instance, in the 4-cycle \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (4) \Rightarrow (1)\), we automatically get \((3) \Rightarrow (1)\) via \((3) \Rightarrow (4) \Rightarrow (1)\), and \((4) \Rightarrow (2)\) via \((4) \Rightarrow (1) \Rightarrow (2)\). Just \(k\) proofs establish all \(k(k - 1)\) implications!
+
+In general, any set of proved implications establishes TFAE if and only if its directed graph is STRONGLY CONNECTED — meaning there is a directed path of arrows from every statement \(P_i\) to every other statement \(P_j\). A single cycle of length \(k\) uses the minimum possible number of implications (\(k\)), though other strongly connected patterns (like a "hub" \((1) \iff (2)\) and \((1) \iff (3)\), using \(4\) implications for \(k = 3\), or two overlapping cycles) are also completely valid when they make the algebra simpler.
+
+[CALLOUT]
+id: template-tfae-cycle
+label: Method
+title: Cyclic and strongly connected proofs for TFAE
+tone: key
+
+(1) To prove \(k\) statements \((1), (2), \dots, (k)\) are equivalent, you do NOT need to prove all \(k(k - 1)\) implications.
+(2) Proving a single closed cycle — in ANY order you choose, such as \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\) — requires only \(k\) implications and establishes every pairwise equivalence by transitivity.
+(3) More generally, any collection of implications works if and only if every statement can reach every other statement by following directed arrows. If even one statement has no outgoing path to another, TFAE is NOT proved!
+[/CALLOUT]
+
+Notice the strategic freedom in [REF: template-tfae-cycle.2 | choosing the cycle order]: you do NOT have to follow the numbering \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (1)\)! Reordering the cycle often eliminates messy algebra. Watch this on a 3-statement integer characterization:
+"For every integer \(n \in \mathbb{Z}\), the following are equivalent:
+(1) \(n\) is odd;
+(2) \(n^2\) is odd;
+(3) \(8 \mid (n^2 - 1)\)."
+
+Compare the two possible cycles:
+- Naive order \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (1)\): proving \((2) \Rightarrow (3)\) directly ("if \(n^2\) is odd, then \(8 \mid (n^2 - 1)\)") forces you to first prove \(n\) is odd anyway!
+- Smart order \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\): watch every single link become effortless!
+
+[CALLOUT]
+id: proof-tfae-odd-mod8
+label: Proof
+title: Theorem: For \(n \in \mathbb{Z}\), (1) \(n\) is odd, (2) \(n^2\) is odd, and (3) \(8 \mid (n^2 - 1)\) are equivalent
+tone: note
+
+Proof: Let \(n \in \mathbb{Z}\) be arbitrary. We prove the cycle \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\).
+
+\((1) \Rightarrow (3)\): Assume \(n\) is odd, so \(n = 2k + 1\) for some \(k \in \mathbb{Z}\). Then
+\[
+n^2 - 1 = (2k + 1)^2 - 1 = 4k^2 + 4k = 4k(k + 1).
+\]
+Since \(k\) and \(k + 1\) are consecutive integers, one of them is even, so \(k(k + 1) = 2m\) for some \(m \in \mathbb{Z}\) (as established in our lesson on proof by cases). Thus \(n^2 - 1 = 4(2m) = 8m\), so \(8 \mid (n^2 - 1)\).
+
+\((3) \Rightarrow (2)\): Assume \(8 \mid (n^2 - 1)\). Then \(n^2 - 1 = 8m\) for some \(m \in \mathbb{Z}\), so
+\[
+n^2 = 8m + 1 = 2(4m) + 1.
+\]
+Since \(4m \in \mathbb{Z}\), \(n^2\) is odd.
+
+\((2) \Rightarrow (1)\): We prove the contrapositive. Assume \(n\) is even, so \(n = 2k\) for some \(k \in \mathbb{Z}\). Then \(n^2 = 4k^2 = 2(2k^2)\), which is even. By contraposition, if \(n^2\) is odd, then \(n\) is odd.
+
+Since \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\) forms a closed cycle, all three statements are equivalent.
+[/CALLOUT]
+
+Look how cleanly [REF: proof-tfae-odd-mod8 | choosing the cycle \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\)] avoided duplicating work: \((1) \Rightarrow (3)\) used the strong assumption \(n = 2k + 1\), \((3) \Rightarrow (2)\) was a one-line rewrite, and \((2) \Rightarrow (1)\) was a two-line contrapositive!
+
+Now contrast a valid cycle with a classic TFAE mistake. Suppose for four statements \((1), (2), (3), (4)\), a proof establishes:
+\[
+(1) \implies (2), \qquad (2) \implies (3), \qquad (3) \implies (4), \qquad (1) \implies (4).
+\]
+There are \(4\) implications, just like a 4-cycle — yet this FAILS completely to prove TFAE! Follow the arrows: you can NEVER leave \((4)\) (it has no outgoing arrow), so \((4) \Rightarrow (1)\), \((4) \Rightarrow (2)\), and \((4) \Rightarrow (3)\) are all unproved. Counting \(k\) arrows is never enough; you must verify that the arrows actually form a closed loop (or strongly connected network) reaching every statement from every other.
+
+[QUESTION 3]
+[ANSWER: E]
+To prove that four statements \((1), (2), (3), (4)\) are pairwise equivalent (TFAE), which of the following collections of proved implications is SUFFICIENT?
+
+(A) \((1) \Rightarrow (2)\), \((2) \Rightarrow (3)\), \((3) \Rightarrow (1)\), and \((1) \Rightarrow (4)\).
+(B) \((1) \Rightarrow (2)\), \((2) \Rightarrow (3)\), \((3) \Rightarrow (4)\), and \((2) \Rightarrow (4)\).
+(C) \((1) \Leftrightarrow (2)\) and \((3) \Leftrightarrow (4)\).
+(D) \((1) \Rightarrow (2)\), \((2) \Rightarrow (1)\), \((2) \Rightarrow (3)\), and \((4) \Rightarrow (3)\).
+(E) \((1) \Rightarrow (3)\), \((3) \Rightarrow (4)\), \((4) \Rightarrow (2)\), and \((2) \Rightarrow (1)\).
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Consider three statements about a fixed integer \(n \in \mathbb{Z}\):
+(1) \(n\) is even;
+(2) \(n^3\) is even;
+(3) \(n^2 + 3n\) is even.
+Which assessment of the claim "Statements (1), (2), and (3) are equivalent for all \(n \in \mathbb{Z}\)" is correct?
+
+(A) FALSE: statement (3) holds for EVERY integer \(n \in \mathbb{Z}\) (since \(n^2 + 3n = n(n + 3)\) is always even), so \((3) \Rightarrow (1)\) fails (e.g., for \(n = 1\)), even though \((1) \Leftrightarrow (2)\) is true.
+(B) TRUE: the cycle \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (1)\) holds for every integer \(n \in \mathbb{Z}\).
+(C) FALSE: \((1) \Rightarrow (2)\) fails for negative integers \(n\).
+(D) TRUE: all three statements hold if and only if \(2 \mid n\).
+(E) FALSE: \((2) \Rightarrow (1)\) fails because \(n^3\) can be even while \(n\) is odd.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose a proof establishes the following five implications among four statements \((1), (2), (3), (4)\):
+\((1) \Rightarrow (2)\), \((2) \Rightarrow (3)\), \((3) \Rightarrow (1)\), \((2) \Rightarrow (4)\), and \((4) \Rightarrow (3)\).
+Does this collection establish that all four statements are equivalent (TFAE)?
+
+(A) No, because there is no single arrow going directly from \((4)\) to \((1)\).
+(B) No, because \((1), (2), (3)\) form a closed cycle that traps \((4)\) outside.
+(C) Yes: every statement has a directed path to every other (for example, \((4) \Rightarrow (3) \Rightarrow (1) \Rightarrow (2)\) and \((1) \Rightarrow (2) \Rightarrow (4)\)).
+(D) No, because a valid TFAE proof for \(4\) statements must use a single cycle of exactly \(4\) implications.
+(E) Yes, but only if we also prove \((3) \Rightarrow (2)\) directly.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+For positive real numbers \(a > 0\) and \(b > 0\), consider three statements:
+(1) \(a = b\);
+(2) \(a^2 + b^2 = 2ab\);
+(3) \(\frac{a + b}{2} = \sqrt{ab}\).
+Which single-chain equivalence is valid for all \(a, b > 0\) without introducing any irreversible step?
+
+(A) \(\frac{a + b}{2} = \sqrt{ab} \iff a + b = 2\sqrt{ab} \iff a^2 + b^2 = 4ab \iff a = b\).
+(B) \(\frac{a + b}{2} = \sqrt{ab} \iff a + b = 2\sqrt{ab} \iff (\sqrt{a} - \sqrt{b})^2 = 0 \iff \sqrt{a} = \sqrt{b} \iff a = b\).
+(C) \(a = b \iff a^2 = ab \iff a^2 + b^2 = 2ab\), which requires \(a > 0\) only at the first step and fails if \(a = b = 1\).
+(D) \(\frac{a + b}{2} = \sqrt{ab} \iff \frac{a^2 + b^2}{4} = ab \iff a^2 + b^2 = 4ab \iff (a - b)^2 = 2ab\).
+(E) None of these, because \(\frac{a + b}{2} = \sqrt{ab}\) can hold when \(a \ne b\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+What is the MINIMUM number of individual implications \(P_i \Rightarrow P_j\) (\(i \ne j\)) that can ever suffice to establish TFAE among \(k \ge 2\) statements \((1), (2), \dots, (k)\) by transitivity alone?
+
+(A) \(k - 1\), because a spanning path \((1) \Rightarrow (2) \Rightarrow \dots \Rightarrow (k)\) touches all \(k\) statements.
+(B) \(2(k - 1)\), because every statement must be paired bidirectionally with statement \((1)\).
+(C) \(\frac{k(k - 1)}{2}\), because half the pairs determine the other half.
+(D) \(k\), because each of the \(k\) statements must have at least one outgoing arrow (so at least \(k\) arrows are required), and a single \(k\)-cycle achieves this minimum.
+(E) \(k(k - 1)\), because transitivity cannot replace direct implications.
+[/BONUS]

@@ -1,0 +1,285 @@
+=== SECTION 1: Matrix addition, scalar multiplication, and matrix multiplication ===
+
+So far, matrices have served as bookkeeping tables for linear systems and as operators mapping an input vector \(\mathbf{x}\) to \(A\mathbf{x}\). Suppose now that we apply one matrix \(B\) to a vector \(\mathbf{x}\), producing \(B\mathbf{x}\), and immediately feed that output into a second matrix \(A\) to obtain \(A(B\mathbf{x})\). Can this two-step action be packaged into a single matrix \(AB\) satisfying \((AB)\mathbf{x} = A(B\mathbf{x})\) for every \(\mathbf{x}\)? Answering that question motivates the entire algebra of matrices—and explains why matrix multiplication is defined the way it is rather than entry by entry.
+
+First, record the straightforward entrywise operations. Two matrices \(A\) and \(B\) are equal if they have the same dimensions \(m \times n\) and \(a_{ij} = b_{ij}\) for every \(i, j\). For two \(m \times n\) matrices \(A\) and \(B\) and any scalar \(c \in \mathbb{R}\), the sum \(A + B\) and scalar multiple \(cA\) are the \(m \times n\) matrices defined entrywise by
+\[
+(A + B)_{ij} = a_{ij} + b_{ij}, \qquad (cA)_{ij} = c\,a_{ij}.
+\]
+Because addition and scalar multiplication act entry by entry, they obey all familiar arithmetic laws: \(A + B = B + A\), \((A + B) + C = A + (B + C)\), \(A + 0 = A\) (where \(0\) denotes the \(m \times n\) zero matrix), and \(c(A + B) = cA + cB\).
+
+Now let \(A\) be an \(m \times n\) matrix and let \(B = \begin{bmatrix} \mathbf{b}_1 & \mathbf{b}_2 & \cdots & \mathbf{b}_p \end{bmatrix}\) be an \(n \times p\) matrix, so each column \(\mathbf{b}_j\) lives in \(\mathbb{R}^n\). Take any vector \(\mathbf{x} = \begin{bmatrix} x_1 \\ \vdots \\ x_p \end{bmatrix} \in \mathbb{R}^p\). By the column definition of the matrix-vector product and linearity of \(A\):
+\[
+A(B\mathbf{x})
+= A(x_1 \mathbf{b}_1 + x_2 \mathbf{b}_2 + \dots + x_p \mathbf{b}_p)
+= x_1 (A\mathbf{b}_1) + x_2 (A\mathbf{b}_2) + \dots + x_p (A\mathbf{b}_p).
+\]
+Look at that right-hand side: it is literally a linear combination of the \(p\) vectors \(A\mathbf{b}_1, \dots, A\mathbf{b}_p \in \mathbb{R}^m\) with weights \(x_1, \dots, x_p\)! That is the matrix-vector product of the \(m \times p\) matrix whose columns are \(A\mathbf{b}_1, \dots, A\mathbf{b}_p\) with \(\mathbf{x}\). This derivation forces the definition of \(AB\).
+
+[CALLOUT]
+id: matmul-def
+label: Definition
+title: Matrix multiplication (column-by-column definition)
+tone: key
+
+Let \(A\) be an \(m \times n\) matrix and let \(B = \begin{bmatrix} \mathbf{b}_1 & \mathbf{b}_2 & \cdots & \mathbf{b}_p \end{bmatrix}\) be an \(n \times p\) matrix. The matrix product \(AB\) is the \(m \times p\) matrix whose \(j\)-th column is \(A\mathbf{b}_j\):
+\[
+AB = \begin{bmatrix} A\mathbf{b}_1 & A\mathbf{b}_2 & \cdots & A\mathbf{b}_p \end{bmatrix}.
+\]
+By construction, \((AB)\mathbf{x} = A(B\mathbf{x})\) holds for every \(\mathbf{x} \in \mathbb{R}^p\).
+[/CALLOUT]
+
+Always check dimensions before multiplying: \(AB\) is defined ONLY when the number of columns of \(A\) equals the number of rows of \(B\). In symbols, \((m \times n)(n \times p) = m \times p\)—the inner \(n\)'s must match, and the outer dimensions give the size of \(AB\).
+
+From [REF: matmul-def | this single definition], three complementary computational viewpoints drop out immediately:
+
+1. Entrywise row-column dot product: the \((i, j)\) entry of \(AB\) is the \(i\)-th entry of column \(A\mathbf{b}_j\), which by the row-dot-product rule for matrix-vector multiplication equals
+\[
+(AB)_{ij} = \sum_{k=1}^n a_{ik} b_{kj} = a_{i1} b_{1j} + a_{i2} b_{2j} + \dots + a_{in} b_{nj},
+\]
+the dot product of row \(i\) of \(A\) with column \(j\) of \(B\).
+2. Column combinations: column \(j\) of \(AB\) is \(A\mathbf{b}_j = b_{1j}\mathbf{a}_1 + \dots + b_{nj}\mathbf{a}_n\), a linear combination of the columns of \(A\) weighted by the entries of column \(j\) of \(B\).
+3. Row combinations: reading the entire \(i\)-th row of \(AB\) across all \(j = 1, \dots, p\) shows that row \(i\) of \(AB\) equals
+\[
+a_{i1}(\text{row } 1 \text{ of } B) + a_{i2}(\text{row } 2 \text{ of } B) + \dots + a_{in}(\text{row } n \text{ of } B),
+\]
+a linear combination of the rows of \(B\) weighted by the entries of row \(i\) of \(A\).
+
+Let us verify all three views on \(A = \begin{bmatrix} 1 & 2 \\ -1 & 3 \end{bmatrix}\) and \(B = \begin{bmatrix} 2 & 0 \\ 1 & -4 \end{bmatrix}\):
+- Column view: \(A\mathbf{b}_1 = 2\begin{bmatrix} 1 \\ -1 \end{bmatrix} + 1\begin{bmatrix} 2 \\ 3 \end{bmatrix} = \begin{bmatrix} 4 \\ 1 \end{bmatrix}\), and \(A\mathbf{b}_2 = 0\begin{bmatrix} 1 \\ -1 \end{bmatrix} - 4\begin{bmatrix} 2 \\ 3 \end{bmatrix} = \begin{bmatrix} -8 \\ -12 \end{bmatrix}\).
+- Row view: row \(1\) of \(AB\) is \(1\begin{bmatrix} 2 & 0 \end{bmatrix} + 2\begin{bmatrix} 1 & -4 \end{bmatrix} = \begin{bmatrix} 4 & -8 \end{bmatrix}\); row \(2\) is \(-1\begin{bmatrix} 2 & 0 \end{bmatrix} + 3\begin{bmatrix} 1 & -4 \end{bmatrix} = \begin{bmatrix} 1 & -12 \end{bmatrix}\).
+- Entrywise dot product: \((AB)_{22} = (-1)(0) + 3(-4) = -12\), matching the entry above.
+
+All three give \(AB = \begin{bmatrix} 4 & -8 \\ 1 & -12 \end{bmatrix}\). Notice a fourth, equally remarkable viewpoint—the outer-product sum—which decomposes \(AB\) as a sum of \(n\) rank-simple \(m \times p\) matrices: writing \(\mathbf{a}_k\) for column \(k\) of \(A\) (\(m \times 1\)) and \(\mathbf{r}_k\) for row \(k\) of \(B\) (\(1 \times p\)), the \((i, j)\) entry of \(\mathbf{a}_k \mathbf{r}_k\) is \(a_{ik} b_{kj}\), so summing over \(k = 1, \dots, n\) reproduces \((AB)_{ij} = \sum_{k=1}^n a_{ik} b_{kj}\) entry by entry:
+\[
+AB = \sum_{k=1}^n \mathbf{a}_k \mathbf{r}_k.
+\]
+In the example above,
+\[
+AB = \begin{bmatrix} 1 \\ -1 \end{bmatrix} \begin{bmatrix} 2 & 0 \end{bmatrix} + \begin{bmatrix} 2 \\ 3 \end{bmatrix} \begin{bmatrix} 1 & -4 \end{bmatrix}
+= \begin{bmatrix} 2 & 0 \\ -2 & 0 \end{bmatrix} + \begin{bmatrix} 2 & -8 \\ 3 & -12 \end{bmatrix}
+= \begin{bmatrix} 4 & -8 \\ 1 & -12 \end{bmatrix}.
+\]
+
+[QUESTION 1]
+[ANSWER: B]
+Let
+\[
+A = \begin{bmatrix} 1 & -2 & 0 \\ 3 & 1 & -1 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 2 & 1 \\ -1 & 3 \\ 4 & -2 \end{bmatrix}.
+\]
+What is the matrix product \(AB\)?
+
+(A) \(\begin{bmatrix} 4 & -5 \\ 9 & 4 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 4 & -5 \\ 1 & 8 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & -5 \\ 1 & 8 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 4 & 1 \\ -5 & 8 \end{bmatrix}\)
+(E) Undefined because the dimensions do not match
+[/QUESTION]
+
+=== SECTION 2: Associativity, identity matrices, and where scalar algebra fails ===
+
+Because [REF: matmul-def | matrix multiplication] was designed so that \((AB)\mathbf{x} = A(B\mathbf{x})\), proving associativity for three matrices requires no messy triple sums at all. Let \(A\) be \(m \times n\), \(B\) be \(n \times p\), and \(C\) be \(p \times q\). For any standard basis vector \(\mathbf{e}_j \in \mathbb{R}^q\) (which extracts the \(j\)-th column of any matrix it multiplies on the right), applying \((XY)\mathbf{v} = X(Y\mathbf{v})\) repeatedly gives:
+\[
+((AB)C)\mathbf{e}_j = (AB)(C\mathbf{e}_j) = A(B(C\mathbf{e}_j)) = A((BC)\mathbf{e}_j) = (A(BC))\mathbf{e}_j.
+\]
+Since \((AB)C\) and \(A(BC)\) have the exact same \(j\)-th column for every \(j = 1, \dots, q\), they are equal!
+
+[CALLOUT]
+id: mat-algebra-laws
+label: Theorem
+title: Algebraic laws of matrix multiplication
+tone: key
+
+Assuming all matrix sizes are compatible for the stated sums and products, and \(c \in \mathbb{R}\) is any scalar:
+
+(1) Associativity: \((AB)C = A(BC)\).
+(2) Left distributivity: \(A(B + C) = AB + AC\).
+(3) Right distributivity: \((A + B)C = AC + BC\).
+(4) Scalar compatibility: \(c(AB) = (cA)B = A(cB)\).
+(5) Identity property: \(I_m A = A\) and \(A I_n = A\) for any \(m \times n\) matrix \(A\), where \(I_k\) is the \(k \times k\) identity matrix with \(1\)'s on the main diagonal and \(0\)'s elsewhere.
+[/CALLOUT]
+
+Distributivity follows just as cleanly by comparing the \(j\)-th columns: column \(j\) of \(A(B + C)\) is \(A(\mathbf{b}_j + \mathbf{c}_j) = A\mathbf{b}_j + A\mathbf{c}_j\), which is column \(j\) of \(AB + AC\); similarly, column \(j\) of \((A + B)C\) is \((A + B)\mathbf{c}_j = A\mathbf{c}_j + B\mathbf{c}_j\). For a square \(n \times n\) matrix \(A\), associativity also lets us define nonnegative integer powers unambiguously: \(A^0 = I_n\), \(A^1 = A\), and \(A^k = A \cdot A \cdots A\) (\(k\) factors) for every positive integer \(k\).
+
+Now comes the most important warning in matrix algebra: several rules that hold automatically for real numbers FAIL for matrices. Never assume a scalar-algebra identity holds for matrices until you check whether it secretly used commutativity or cancellation!
+
+[CALLOUT]
+id: scalar-pitfalls
+label: Common pitfall
+title: Four scalar rules that FAIL for matrices
+tone: caution
+
+(1) Non-commutativity: in general, \(AB \neq BA\) (and even when \(AB\) is defined, \(BA\) may have a different size or be undefined altogether).
+(2) Nonzero zero-divisors: \(AB = 0\) does NOT imply \(A = 0\) or \(B = 0\).
+(3) No general cancellation: \(AB = AC\) with \(A \neq 0\) does NOT imply \(B = C\).
+(4) Binomial expansion fails unless \(AB = BA\): \((A + B)^2 = A^2 + AB + BA + B^2\), which differs from \(A^2 + 2AB + B^2\) whenever \(AB \neq BA\).
+[/CALLOUT]
+
+Let us verify each failure with concrete \(2 \times 2\) counterexamples.
+
+First, for non-commutativity, take a vertical reflection \(F = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}\) (which flips the \(x_2\)-coordinate) and a horizontal shear \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) (which adds \(x_2\) to \(x_1\)). Multiplying in both orders yields
+\[
+SF = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix} = \begin{bmatrix} 1 & -1 \\ 0 & -1 \end{bmatrix}, \qquad
+FS = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix} \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}.
+\]
+Geometrically, reflecting \(\mathbf{v} = (1, 1)\) first to \((1, -1)\) and then shearing lands at \(SF\mathbf{v} = (0, -1)\), whereas shearing first to \((2, 1)\) and then reflecting lands at \(FS\mathbf{v} = (2, -1)\)—two completely different points!
+
+[GRAPH]
+type: parametric2d
+title: Order matters: \(SF\mathbf{v} = (0, -1)\) versus \(FS\mathbf{v} = (2, -1)\) for \(\mathbf{v} = (1, 1)\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -1, 3.5
+yrange: -2, 2
+trace: t, t | label: \(\mathbf{v} = (1, 1)\) | color: #2563eb
+trace: 1 + t, 1 | label: shear \(S\) then reflect \(F\) | color: #059669
+trace: 1 - t, -1 | label: reflect \(F\) then shear \(S\) | color: #dc2626
+segment: 1, 1, 1, -1 | color: #dc2626 | dashed: true
+segment: 2, 1, 2, -1 | color: #059669 | dashed: true
+point: 1, 1 | label: \(\mathbf{v}\) | color: #2563eb
+point: 0, -1 | label: \(SF\mathbf{v}\) | color: #dc2626
+point: 2, -1 | label: \(FS\mathbf{v}\) | color: #059669
+[/GRAPH]
+
+Second, for zero-divisors and failure of cancellation, take
+\[
+A = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix}, \qquad
+C = \begin{bmatrix} 0 & 0 \\ 5 & 2 \end{bmatrix}.
+\]
+Here \(A \neq 0\) and \(B \neq 0\), yet \(AB = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix} = 0\). Moreover, \(AC = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix} = AB\), even though \(B \neq C\)!
+
+Third, expand \((A + B)^2\) using [REF: mat-algebra-laws.2 | distributivity] carefully without swapping factors:
+\[
+(A + B)^2 = (A + B)(A + B) = A(A + B) + B(A + B) = A^2 + AB + BA + B^2.
+\]
+Only when \(A\) and \(B\) happen to commute (\(AB = BA\))—for instance, when \(B = c I_n\) is a scalar multiple of the identity matrix—does \(AB + BA\) combine into \(2AB\).
+
+[QUESTION 2]
+[ANSWER: B]
+For arbitrary \(n \times n\) real matrices \(A\) and \(B\), which of the following algebraic statements ALWAYS holds?
+
+(A) \((A + B)(A - B) = A^2 - B^2\)
+(B) \((A + 2I_n)(A - 2I_n) = A^2 - 4I_n\)
+(C) If \(AB = 0\), then \(A = 0\) or \(B = 0\)
+(D) \((AB)^2 = A^2 B^2\)
+(E) If \(AB = AC\) and \(A \neq 0\), then \(B = C\)
+[/QUESTION]
+
+=== SECTION 3: The transpose, outer products, and symmetric matrices ===
+
+Rows and columns play dual roles in matrix algebra. Swapping their roles produces a fundamental operation called the transpose.
+
+[CALLOUT]
+id: transpose-def
+label: Definition
+title: Transpose, symmetric, and skew-symmetric matrices
+tone: key
+
+Let \(A\) be an \(m \times n\) matrix with entries \(a_{ij}\). The transpose of \(A\), denoted \(A^T\), is the \(n \times m\) matrix whose \((i, j)\) entry is the \((j, i)\) entry of \(A\):
+\[
+(A^T)_{ij} = a_{ji} \qquad (1 \le i \le n,\; 1 \le j \le m).
+\]
+Equivalently, the rows of \(A^T\) are the columns of \(A\), and the columns of \(A^T\) are the rows of \(A\).
+
+A square \(n \times n\) matrix \(A\) is called:
+(1) symmetric if \(A^T = A\) (i.e., \(a_{ij} = a_{ji}\) for all \(i, j\)).
+(2) skew-symmetric if \(A^T = -A\) (i.e., \(a_{ij} = -a_{ji}\) for all \(i, j\)).
+[/CALLOUT]
+
+Notice what [REF: transpose-def.2 | skew-symmetry] forces along the main diagonal: setting \(i = j\) gives \(a_{ii} = -a_{ii}\), hence \(2 a_{ii} = 0\), so every diagonal entry of a skew-symmetric matrix must be \(0\). For example,
+\[
+S = \begin{bmatrix} 3 & -2 & 5 \\ -2 & 0 & 4 \\ 5 & 4 & -1 \end{bmatrix} \quad (\text{symmetric}), \qquad
+K = \begin{bmatrix} 0 & -2 & 5 \\ 2 & 0 & -4 \\ -5 & 4 & 0 \end{bmatrix} \quad (\text{skew-symmetric}).
+\]
+
+The transpose also lets us write inner products and outer products of column vectors cleanly inside matrix multiplication. If \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) are \(n \times 1\) column vectors, then \(\mathbf{u}^T\) is a \(1 \times n\) row vector, so:
+- \(\mathbf{u}^T \mathbf{v} = \sum_{k=1}^n u_k v_k\) is a \(1 \times 1\) matrix (identified with the scalar dot product \(\mathbf{u} \cdot \mathbf{v}\)).
+- \(\mathbf{u}\mathbf{v}^T\) is an \(n \times n\) matrix whose \((i, j)\) entry is \(u_i v_j\) (the outer product of \(\mathbf{u}\) and \(\mathbf{v}\)).
+
+Using this notation, if \(A\) has columns \(\mathbf{a}_1, \dots, \mathbf{a}_n \in \mathbb{R}^m\) and \(B\) has rows \(\mathbf{b}_1^T, \dots, \mathbf{b}_n^T\) (where each \(\mathbf{b}_k \in \mathbb{R}^p\) is the \(k\)-th column of \(B^T\)), our outer-product expansion of \(AB\) from Section 1 reads concisely as \(AB = \sum_{k=1}^n \mathbf{a}_k \mathbf{b}_k^T\).
+
+How does transposition interact with matrix sums, scalar multiples, and matrix products? For sums and scalars it acts straight through, but for a product \(AB\) it REVERSES the order of multiplication!
+
+[CALLOUT]
+id: transpose-props
+label: Theorem
+title: Algebraic properties of the transpose
+tone: key
+
+Whenever the matrix sizes are compatible and \(c \in \mathbb{R}\):
+
+(1) \((A^T)^T = A\).
+(2) \((A + B)^T = A^T + B^T\) and \((cA)^T = c(A^T)\).
+(3) Order reversal for products: \((AB)^T = B^T A^T\).
+[/CALLOUT]
+
+Let us prove [REF: transpose-props.3 | order reversal] carefully so it is never forgotten. Let \(A\) be \(m \times n\) and \(B\) be \(n \times p\). First check sizes: \(AB\) is \(m \times p\), so \((AB)^T\) is \(p \times m\). Meanwhile \(B^T\) is \(p \times n\) and \(A^T\) is \(n \times m\), so \(B^T A^T\) is \(p \times m\) (whereas \(A^T B^T\) is not even defined unless \(m = p\)!). Now compare the \((i, j)\) entry of both sides for \(1 \le i \le p\) and \(1 \le j \le m\):
+\[
+\bigl((AB)^T\bigr)_{ij} = (AB)_{ji} = \sum_{k=1}^n a_{jk} b_{ki} = \sum_{k=1}^n b_{ki} a_{jk} = \sum_{k=1}^n (B^T)_{ik} (A^T)_{kj} = (B^T A^T)_{ij}.
+\]
+Notice the single crucial step in the middle: \(a_{jk}\) and \(b_{ki}\) are ordinary real numbers, so \(a_{jk} b_{ki} = b_{ki} a_{jk}\) commutes scalar-by-scalar, allowing us to recognize \((B^T)_{ik}(A^T)_{kj}\)! Repeating this rule on a three-factor product gives \((ABC)^T = ((AB)C)^T = C^T (AB)^T = C^T B^T A^T\).
+
+An immediate, heavily used consequence of [REF: transpose-props.3 | order reversal] is that for ANY \(m \times n\) matrix \(A\) (even rectangular!), both \(A^T A\) (size \(n \times n\)) and \(A A^T\) (size \(m \times m\)) are automatically symmetric:
+\[
+(A^T A)^T = A^T (A^T)^T = A^T A, \qquad (A A^T)^T = (A^T)^T A^T = A A^T.
+\]
+
+[TABLE]
+Expression | Size (for \(A\) of size \(m \times n\), \(B\) of size \(n \times p\)) | Symmetry or transpose rule
+\(AB\) | \(m \times p\) | \((AB)^T = B^T A^T\)
+\(A^T A\) | \(n \times n\) | Always symmetric
+\(A A^T\) | \(m \times m\) | Always symmetric
+\(\mathbf{u}^T \mathbf{v}\) (\(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\)) | \(1 \times 1\) (scalar) | Equals \(\mathbf{v}^T \mathbf{u}\)
+\(\mathbf{u}\mathbf{v}^T\) (\(\mathbf{u} \in \mathbb{R}^m, \mathbf{v} \in \mathbb{R}^p\)) | \(m \times p\) | \((\mathbf{u}\mathbf{v}^T)^T = \mathbf{v}\mathbf{u}^T\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: D]
+Let \(\mathbf{u} = \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix}\) and \(\mathbf{v} = \begin{bmatrix} 1 \\ 4 \\ -2 \end{bmatrix}\). What are the scalar value \(\mathbf{u}^T \mathbf{v}\) and the \((3, 2)\) entry of the \(3 \times 3\) matrix \(\mathbf{u}\mathbf{v}^T\)?
+
+(A) \(\mathbf{u}^T \mathbf{v} = -8\) and \((\mathbf{u}\mathbf{v}^T)_{32} = 2\)
+(B) \(\mathbf{u}^T \mathbf{v} = 4\) and \((\mathbf{u}\mathbf{v}^T)_{32} = 12\)
+(C) \(\mathbf{u}^T \mathbf{v} = -8\) and \((\mathbf{u}\mathbf{v}^T)_{32} = -6\)
+(D) \(\mathbf{u}^T \mathbf{v} = -8\) and \((\mathbf{u}\mathbf{v}^T)_{32} = 12\)
+(E) \(\mathbf{u}^T \mathbf{v} = 12\) and \((\mathbf{u}\mathbf{v}^T)_{32} = -8\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose \(A\) is an \(m \times n\) matrix and \(B\) is an \(n \times n\) skew-symmetric matrix (\(B^T = -B\)). Which of the following matrices is guaranteed to be skew-symmetric?
+
+(A) \(A B A^T\)
+(B) \(A^T A\)
+(C) \(B^2\)
+(D) \(A B^2 A^T\)
+(E) \(B + I_n\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Suppose \(A\) is \(3 \times 4\), \(B\) is \(4 \times 2\), \(C\) is \(2 \times 4\), and \(D\) is \(3 \times 2\). Which matrix product is well-defined and results in a \(2 \times 2\) matrix?
+
+(A) \(B^T A^T D\)
+(B) \(C A B\)
+(C) \(A B C\)
+(D) \(D A B\)
+(E) \(C^T D^T\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Every square matrix \(M\) can be written uniquely as \(M = S + K\), where \(S\) is symmetric (\(S^T = S\)) and \(K\) is skew-symmetric (\(K^T = -K\)). For
+\[
+M = \begin{bmatrix} 4 & -3 \\ 7 & 2 \end{bmatrix},
+\]
+what is the symmetric matrix \(S\) in this decomposition?
+
+(A) \(\begin{bmatrix} 4 & -5 \\ -5 & 2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0 & -5 \\ 5 & 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 4 & 2 \\ 2 & 2 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 4 & -3 \\ -3 & 2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 8 & 4 \\ 4 & 4 \end{bmatrix}\)
+[/BONUS]

@@ -1,0 +1,224 @@
+=== SECTION 1: Compresión de órdenes de magnitud en escalas aditivas ===
+
+El sonido más tenue que puede detectar el oído humano tiene una intensidad física de \(I_0 = 10^{-12}\text{ W/m}^2\), mientras que un concierto de rock o un motor a reacción puede alcanzar \(1\text{ W/m}^2\): una razón de \(10^{12}\) (¡un billón!). Las concentraciones de iones hidrógeno en líquidos comunes abarcan un rango aún mayor, de \(14\) órdenes de magnitud, desde \(1\text{ mol/L}\) en ácido fuerte de batería hasta \(10^{-14}\text{ mol/L}\) en lejía fuerte. Representar en una regla lineal cantidades que abarcan un factor de un billón aplasta casi todas las mediciones cotidianas en una franja ilegible cerca del cero.
+
+Los logaritmos en base 10 (\(\log_{10}\), a menudo escritos simplemente como \(\log\)) resuelven este problema de compresión convirtiendo potencias de \(10\) en pequeños pasos aditivos. Cada incremento de \(1\) en \(\log_{10}(x)\) representa una multiplicación de \(x\) por \(10\) (un orden de magnitud). Tres escalas científicas emplean exactamente este diseño:
+
+1. Magnitud sísmica: Comparar la intensidad de onda medida \(I\) de un sismo con una intensidad de referencia estándar \(I_0\) define su magnitud
+\[
+M = \log_{10}\!\left(\frac{I}{I_0}\right).
+\]
+2. Nivel de intensidad sonora (decibelios, \(\text{dB}\)): Multiplicar \(\log_{10}(I/I_0)\) por \(10\) subdivide cada orden de magnitud en diez cómodos pasos llamados decibelios:
+\[
+\beta = 10\log_{10}\!\left(\frac{I}{I_0}\right), \qquad I_0 = 10^{-12}\text{ W/m}^2.
+\]
+3. Acidez (\(\text{pH}\)): Como las concentraciones de iones hidrógeno \([\text{H}^+]\) (en moles por litro, \(\text{mol/L}\)) casi siempre son pequeñas potencias negativas de \(10\) (como \(10^{-7}\)), anteponer un signo menos produce números positivos:
+\[
+\text{pH} = -\log_{10}[\text{H}^+].
+\]
+
+[CALLOUT]
+id: log-scales-def
+label: Definición
+title: Escalas logarítmicas estándar de base 10 y sus inversas
+tone: key
+
+Cada escala convierte entre una razón o concentración física y un índice aditivo compacto usando exponenciales y logaritmos en base 10:
+
+(1) Magnitud sísmica:
+\[
+M = \log_{10}\!\left(\frac{I}{I_0}\right) \iff I = I_0 \cdot 10^M.
+\]
+(2) Nivel de intensidad sonora (decibelios):
+\[
+\beta = 10\log_{10}\!\left(\frac{I}{I_0}\right) \iff I = I_0 \cdot 10^{\beta / 10} \qquad \bigl(I_0 = 10^{-12}\text{ W/m}^2\bigr).
+\]
+(3) Acidez (\(\text{pH}\)):
+\[
+\text{pH} = -\log_{10}[\text{H}^+] \iff [\text{H}^+] = 10^{-\text{pH}}.
+\]
+[/CALLOUT]
+
+[TABLE]
+Escala | Fórmula | Efecto de \(+1\) unidad en la escala | Sentido físico
+Magnitud sísmica \(M\) | \(\log_{10}(I/I_0)\) | Multiplica \(I\) por \(10\) | Mayor \(M\) implica mayor \(I\)
+Nivel sonoro \(\beta\) (\(\text{dB}\)) | \(10\log_{10}(I/I_0)\) | Multiplica \(I\) por \(10^{0.1} \approx 1.26\) (\(10\text{ dB} \to 10\times\)) | Mayor \(\beta\) implica mayor \(I\)
+Acidez \(\text{pH}\) | \(-\log_{10}[\text{H}^+]\) | Divide \([\text{H}^+]\) entre \(10\) | Menor \(\text{pH}\) implica mayor \([\text{H}^+]\)
+[/TABLE]
+
+La gráfica siguiente muestra cómo la curva de decibelios \(\beta = 10\log_{10}(I/I_0)\) se dobla bruscamente hacia abajo conforme crece \(I/I_0\): pasar de \(10\text{ dB}\) a \(20\text{ dB}\) exige multiplicar la intensidad por \(10\) (sumar \(90 I_0\)), mientras que subir otros \(10\text{ dB}\) hasta \(30\text{ dB}\) exige sumar \(900 I_0\).
+
+[GRAPH]
+type: function2d
+title: El nivel de decibelios \(\beta = 10\log_{10}(I/I_0)\) comprime saltos de diez veces en pasos iguales de \(10\text{ dB}\)
+xlabel: Razón de intensidades I / I0
+ylabel: Nivel sonoro (dB)
+xrange: 1, 1000
+yrange: 0, 35
+trace: 10 * log(x) / log(10) | label: \(\beta = 10\log_{10}(I/I_0)\)
+point: 10, 10 | label: \((10, 10)\)
+point: 100, 20 | label: \((100, 20)\)
+point: 1000, 30 | label: \((1000, 30)\)
+[/GRAPH]
+
+Ejemplo resuelto (Inversión de lecturas de escala):
+- El jugo de limón tiene \(\text{pH} = 2.3\). Por [REF: log-scales-def.3 | la relación inversa del pH],
+\[
+[\text{H}^+] = 10^{-2.3} \approx 5.01 \times 10^{-3}\text{ mol/L}.
+\]
+- Una calle transitada mide \(\beta = 75\text{ dB}\). Por [REF: log-scales-def.2 | la relación inversa de los decibelios],
+\[
+I = 10^{-12} \cdot 10^{75/10} = 10^{-12} \cdot 10^{7.5} = 10^{-4.5} \approx 3.16 \times 10^{-5}\text{ W/m}^2.
+\]
+
+[QUESTION 1]
+[ANSWER: B]
+Usando la intensidad de referencia \(I_0 = 10^{-12}\text{ W/m}^2\), ¿cuál es la intensidad sonora física \(I\) (en \(\text{W/m}^2\)) de un sonido que mide \(\beta = 90\text{ dB}\)?
+
+(A) \(10^{-9}\text{ W/m}^2\)
+(B) \(10^{-3}\text{ W/m}^2\)
+(C) \(10^{9}\text{ W/m}^2\)
+(D) \(9 \times 10^{-12}\text{ W/m}^2\)
+(E) \(10^{78}\text{ W/m}^2\)
+[/QUESTION]
+
+=== SECTION 2: Traducción de diferencias aditivas en razones multiplicativas ===
+
+Al comparar dos sismos, dos sonidos o dos disoluciones químicas, ni siquiera necesitas el valor de \(I_0\). La ley del cociente de los logaritmos cancela \(I_0\) por completo y convierte cualquier diferencia aditiva de escala directamente en una razón multiplicativa física:
+\[
+M_2 - M_1 = \log_{10}\!\left(\frac{I_2}{I_0}\right) - \log_{10}\!\left(\frac{I_1}{I_0}\right) = \log_{10}\!\left(\frac{I_2 / I_0}{I_1 / I_0}\right) = \log_{10}\!\left(\frac{I_2}{I_1}\right).
+\]
+Reescribir en forma exponencial da \(\dfrac{I_2}{I_1} = 10^{M_2 - M_1}\). Efectuar la misma resta para los decibelios y para el \(\text{pH}\) produce tres puentes paralelos de razones.
+
+[CALLOUT]
+id: ratio-bridge
+label: Principio
+title: Conversión de diferencias de escala en razones físicas
+tone: key
+
+Sean \(\Delta M = M_2 - M_1\), \(\Delta\beta = \beta_2 - \beta_1\) y \(\Delta\text{pH} = \text{pH}_2 - \text{pH}_1\):
+
+(1) Razón de intensidades sísmicas:
+\[
+\frac{I_2}{I_1} = 10^{M_2 - M_1}.
+\]
+(2) Razón de intensidades sonoras:
+\[
+\frac{I_2}{I_1} = 10^{(\beta_2 - \beta_1) / 10}.
+\]
+(3) Razón de concentraciones de iones hidrógeno (¡cuidado con la inversión de signo!):
+\[
+\text{pH}_2 - \text{pH}_1 = -\log_{10}\!\left(\frac{[\text{H}^+]_2}{[\text{H}^+]_1}\right) = \log_{10}\!\left(\frac{[\text{H}^+]_1}{[\text{H}^+]_2}\right) \implies \frac{[\text{H}^+]_1}{[\text{H}^+]_2} = 10^{\text{pH}_2 - \text{pH}_1}.
+\]
+[/CALLOUT]
+
+Ejemplos resueltos:
+1. Razón sísmica: Compara un sismo de magnitud \(6.8\) con un sismo de magnitud \(5.2\). La diferencia es \(\Delta M = 6.8 - 5.2 = 1.6\). Por [REF: ratio-bridge.1 | la regla de razón sísmica],
+\[
+\frac{I_2}{I_1} = 10^{1.6} \approx 39.8.
+\]
+¡Un incremento aparentemente modesto de \(1.6\) puntos en la escala de magnitud corresponde a casi \(40\) veces la intensidad de onda!
+
+2. Referencia de duplicación en decibelios: ¿Qué ocurre cuando el nivel sonoro aumenta en \(+3\text{ dB}\)? Por [REF: ratio-bridge.2 | la regla de razón en decibelios],
+\[
+\frac{I_2}{I_1} = 10^{3/10} = 10^{0.3} \approx 1.995 \approx 2.
+\]
+Cada \(+3\text{ dB}\) duplica aproximadamente la intensidad sonora física, mientras que cada \(+10\text{ dB}\) multiplica la intensidad por \(10\).
+
+3. Comparación de acidez: El café negro tiene \(\text{pH} = 5.0\), mientras que el agua pura tiene \(\text{pH} = 7.0\). Como el café tiene el \(\text{pH}\) MÁS BAJO, el café es más ácido. Por [REF: ratio-bridge.3 | la regla de razón de pH],
+\[
+\frac{[\text{H}^+]_{\text{café}}}{[\text{H}^+]_{\text{agua}}} = 10^{7.0 - 5.0} = 10^2 = 100.
+\]
+El café tiene \(100\) veces la concentración de iones hidrógeno del agua pura.
+
+[QUESTION 2]
+[ANSWER: A]
+El vinagre tiene \(\text{pH} = 2.5\) y la leche tiene \(\text{pH} = 6.5\). ¿Cómo se compara la concentración de iones hidrógeno \([\text{H}^+]\) del vinagre con la de la leche?
+
+(A) El vinagre tiene \(10\,000\) veces el \([\text{H}^+]\) de la leche
+(B) La leche tiene \(10\,000\) veces el \([\text{H}^+]\) del vinagre
+(C) El vinagre tiene \(4\) veces el \([\text{H}^+]\) de la leche
+(D) El vinagre tiene \(40\) veces el \([\text{H}^+]\) de la leche
+(E) La leche tiene \(400\) veces el \([\text{H}^+]\) del vinagre
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: C]
+Un sistema de altavoces de concierto aumenta su nivel sonoro de \(84\text{ dB}\) a \(104\text{ dB}\). ¿En qué factor aumenta la intensidad sonora física \(I\)?
+
+(A) \(2\)
+(B) \(20\)
+(C) \(100\)
+(D) \(200\)
+(E) \(10^{20}\)
+[/QUESTION]
+
+=== SECTION 3: Combinación de fuentes físicas independientes ===
+
+Si una sola aspiradora produce \(70\text{ dB}\), ¿qué ocurre cuando enciendes una segunda aspiradora idéntica junto a ella? Una concepción errónea muy conocida suma ambas lecturas en decibelios para obtener \(70 + 70 = 140\text{ dB}\), ¡lo cual sería más ruidoso que un motor a reacción al despegar!
+
+Las lecturas logarítmicas NUNCA se suman cuando se combinan fuentes físicas independientes. En su lugar, se suman las intensidades FÍSICAS subyacentes: \(I_{\text{total}} = I_1 + I_2\). Para \(N\) fuentes idénticas, cada una con intensidad individual \(I\) y nivel sonoro \(\beta_1 = 10\log_{10}(I / I_0)\), la intensidad combinada es \(N \cdot I\). Aplicar la ley del producto de los logaritmos da
+\[
+\beta_{\text{total}} = 10\log_{10}\!\left(\frac{N \cdot I}{I_0}\right) = 10\log_{10}\!\left(\frac{I}{I_0}\right) + 10\log_{10}(N) = \beta_1 + 10\log_{10}(N).
+\]
+Para dos máquinas idénticas de \(70\text{ dB}\) (\(N = 2\)):
+\[
+\beta_{\text{total}} = 70 + 10\log_{10}(2) \approx 70 + 3.01 = 73.01\text{ dB}.
+\]
+Incluso diez máquinas idénticas de \(70\text{ dB}\) funcionando juntas producen solo \(70 + 10\log_{10}(10) = 80\text{ dB}\).
+
+¿Qué pasa si dos fuentes combinadas tienen niveles DISTINTOS, digamos un ventilador de \(60\text{ dB}\) y una bomba de \(70\text{ dB}\)? Convierte ambos de vuelta a múltiplos lineales de \(I_0\), suma las intensidades y vuelve a aplicar el logaritmo:
+- Ventilador: \(I_1 = 10^{60/10} I_0 = 10^6 I_0\).
+- Bomba: \(I_2 = 10^{70/10} I_0 = 10^7 I_0\).
+- Total: \(I_{\text{total}} = (10^6 + 10^7) I_0 = 11 \times 10^6 I_0 = 1.1 \times 10^7 I_0\).
+- Nivel combinado:
+\[
+\beta_{\text{total}} = 10\log_{10}(1.1 \times 10^7) = 70 + 10\log_{10}(1.1) \approx 70.41\text{ dB}.
+\]
+Observa con cuánta fuerza domina la fuente más ruidosa: ¡añadir un sonido de \(60\text{ dB}\) a uno de \(70\text{ dB}\) eleva el total en menos de medio decibelio!
+
+[CALLOUT]
+id: combining-sources
+label: Error frecuente
+title: Combinar fuentes físicas sin sumar lecturas logarítmicas
+tone: caution
+
+(1) Nunca sumes decibelios, magnitudes ni valores de \(\text{pH}\) directamente. Convierte siempre cada lectura de vuelta a su cantidad lineal subyacente (intensidad \(I\) o concentración \([\text{H}^+]\)), combínalas linealmente y luego vuelve a aplicar el logaritmo.
+(2) Atajo para \(N\) fuentes sonoras idénticas de nivel \(\beta_1\):
+\[
+\beta_{\text{total}} = \beta_1 + 10\log_{10}(N).
+\]
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: C]
+Un solo ventilador industrial produce un nivel sonoro de \(62\text{ dB}\). ¿Cuántos ventiladores idénticos funcionando juntos se necesitarían para producir un nivel sonoro combinado de \(82\text{ dB}\)?
+
+(A) \(2\text{ ventiladores}\)
+(B) \(20\text{ ventiladores}\)
+(C) \(100\text{ ventiladores}\)
+(D) \(200\text{ ventiladores}\)
+(E) \(1000\text{ ventiladores}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+La máquina A sola produce \(80\text{ dB}\), la máquina B sola produce \(80\text{ dB}\) y la máquina C sola produce \(90\text{ dB}\). Cuando las tres máquinas independientes funcionan simultáneamente, ¿cuál es el nivel sonoro combinado exacto en decibelios?
+
+(A) \(90 + 10\log_{10}(1.2)\text{ dB}\)
+(B) \(90 + 10\log_{10}(3)\text{ dB}\)
+(C) \(80 + 10\log_{10}(3)\text{ dB}\)
+(D) \(250\text{ dB}\)
+(E) \(90 + 10\log_{10}(2)\text{ dB}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Se mezclan volúmenes iguales de dos disoluciones de ácido fuerte —la Disolución 1 con \(\text{pH} = 3.0\) y la Disolución 2 con \(\text{pH} = 5.0\)— de modo que la concentración de iones hidrógeno de la mezcla \([\text{H}^+]_{\text{mix}}\) es el promedio aritmético exacto de las dos concentraciones individuales. ¿Qué expresión equivale al \(\text{pH}\) exacto de la mezcla?
+
+(A) \(4.0\)
+(B) \(3 - \log_{10}(0.505)\)
+(C) \(3 + \log_{10}(0.505)\)
+(D) \(5 - \log_{10}(101)\)
+(E) \(4 - \log_{10}(2)\)
+[/BONUS]

@@ -1,0 +1,318 @@
+=== SECTION 1: Composición de funciones, asociatividad y no conmutatividad ===
+
+Las funciones rara vez actúan aisladas: habitualmente introducimos la salida de una función directamente como entrada de una segunda función, construyendo cadenas a partir de aplicaciones más simples. En términos conjuntistas, esta operación de encadenamiento es la composición de funciones.
+
+[CALLOUT]
+id: composition-def
+label: Definición
+title: Composición de funciones
+tone: key
+
+Sean \(f : A \to B\) y \(g : B \to C\) funciones tales que el codominio de \(f\) es igual al dominio de \(g\). La composición de \(g\) con \(f\) es la función \(g \circ f : A \to C\) definida por
+\[
+(g \circ f)(a) = g\bigl(f(a)\bigr) \qquad \text{para todo } a \in A.
+\]
+[/CALLOUT]
+
+Léase el orden con cuidado: en \(g \circ f\), la función de la DERECHA \(f\) actúa PRIMERO, llevando \(a \in A\) a \(f(a) \in B\), y la función de la IZQUIERDA \(g\) actúa DESPUÉS, llevando \(f(a) \in B\) a \(g(f(a)) \in C\). (Esto concuerda con la convención de composición de relaciones \(S \circ R\) de nuestro estudio previo de las relaciones binarias.)
+
+Obsérvese el requisito de compatibilidad entre dominio y codominio: para que \(g \circ f\) esté definida como función \(A \to C\), toda salida de \(f\) debe ser una entrada válida para \(g\), lo cual queda garantizado al igualar \(\operatorname{codominio}(f) = \operatorname{dominio}(g) = B\). (Más en general, si \(f : A \to B_1\) y \(g : B_2 \to C\) con \(\operatorname{im}(f) \subseteq B_2\), la fórmula \(g(f(a))\) sigue teniendo sentido, aunque en notación tipada estricta emparejamos primero \(B_1 = B_2\) —por ejemplo, componiendo con la aplicación de inclusión \(B_1 \hookrightarrow B_2\).)
+
+Dos leyes algebraicas básicas rigen la composición —¡y una ley aritmética familiar FALLA!
+
+[CALLOUT]
+id: composition-laws
+label: Teorema
+title: Leyes de asociatividad e identidad para la composición
+tone: key
+
+(1) Asociatividad: para cualesquiera funciones \(f : A \to B\), \(g : B \to C\) y \(h : C \to D\),
+\[
+h \circ (g \circ f) = (h \circ g) \circ f : A \to D.
+\]
+(2) Leyes de identidad: para cualquier función \(f : A \to B\),
+\[
+f \circ \operatorname{id}_A = f \qquad \text{y} \qquad \operatorname{id}_B \circ f = f.
+\]
+[/CALLOUT]
+
+Demostración de (1): Tanto \(h \circ (g \circ f)\) como \((h \circ g) \circ f\) tienen el MISMO dominio \(A\) y el MISMO codominio \(D\). Sea ahora \(a \in A\) arbitrario:
+\[
+\bigl(h \circ (g \circ f)\bigr)(a) = h\bigl((g \circ f)(a)\bigr) = h\bigl(g(f(a))\bigr) = (h \circ g)\bigl(f(a)\bigr) = \bigl((h \circ g) \circ f\bigr)(a).
+\]
+Por igualdad de funciones, \(h \circ (g \circ f) = (h \circ g) \circ f\). Como los paréntesis no alteran el resultado, podemos escribir \(h \circ g \circ f\) sin ambigüedad.
+
+Demostración de (2): Tanto \(f \circ \operatorname{id}_A\) como \(f\) aplican \(A \to B\), y para todo \(a \in A\), \((f \circ \operatorname{id}_A)(a) = f(\operatorname{id}_A(a)) = f(a)\). Análogamente, \(\operatorname{id}_B \circ f : A \to B\) cumple \((\operatorname{id}_B \circ f)(a) = \operatorname{id}_B(f(a)) = f(a)\).
+
+Por el contrario, la composición de funciones NO es conmutativa en general. Incluso cuando tanto \(g \circ f\) como \(f \circ g\) están definidas (por ejemplo, en \(A = B = C = \mathbb{R}\)), típicamente difieren. Tómense \(f(x) = x^2\) y \(g(x) = x + 1\) en \(\mathbb{R}\):
+\[
+(g \circ f)(x) = g(x^2) = x^2 + 1, \qquad\text{mientras que}\qquad (f \circ g)(x) = f(x + 1) = (x + 1)^2 = x^2 + 2x + 1.
+\]
+En \(x = 1\), \((g \circ f)(1) = 2\) mientras que \((f \circ g)(1) = 4\), por lo que \(g \circ f \ne f \circ g\).
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(f : \mathbb{Z} \to \mathbb{N}\) definida por \(f(n) = n^2\), sea \(g : \mathbb{N} \to \mathbb{Q}\) definida por \(g(k) = \frac{k}{k + 1}\), y sea \(h : \mathbb{Q} \to \mathbb{R}\) definida por \(h(q) = 2q - 1\). ¿Qué afirmación es verdadera?
+
+(A) \(f \circ g\) está definida y aplica \(\mathbb{N} \to \mathbb{N}\)
+(B) \((h \circ g \circ f)(-2) = \frac{1}{5}\)
+(C) \((h \circ g \circ f)(-2) = \frac{3}{5}\), y \(h \circ g \circ f\) tiene dominio \(\mathbb{Z}\) y codominio \(\mathbb{R}\)
+(D) \((g \circ h \circ f)(-2)\) está definida y es igual a \(\frac{3}{5}\)
+(E) \((h \circ g \circ f)(-2) = \frac{3}{5}\), y \(h \circ g \circ f\) tiene dominio \(\mathbb{N}\) y codominio \(\mathbb{Q}\)
+[/QUESTION]
+
+=== SECTION 2: Cómo interactúan la inyectividad y la sobreyectividad con la composición ===
+
+Supongamos que encadenamos dos funciones \(f : A \to B\) y \(g : B \to C\) en \(g \circ f : A \to C\). Surgen dos preguntas naturales:
+- Sentido directo: si \(f\) y \(g\) son inyectivas (o sobreyectivas, o biyectivas), ¿hereda \(g \circ f\) esa propiedad?
+- Sentido inverso: si la compuesta \(g \circ f\) es inyectiva (o sobreyectiva), ¿qué DEBE cumplirse sobre \(f\) y \(g\) individualmente?
+
+El sentido inverso conlleva una asimetría célebre: la inyectividad de \(g \circ f\) restringe a la aplicación INTERIOR \(f\), mientras que la sobreyectividad de \(g \circ f\) restringe a la aplicación EXTERIOR \(g\).
+
+[CALLOUT]
+id: comp-inj-surj
+label: Teorema
+title: Inyectividad, sobreyectividad y biyectividad bajo composición
+tone: key
+
+Sean \(f : A \to B\) y \(g : B \to C\) funciones.
+
+(1) Si \(f\) y \(g\) son ambas inyectivas, entonces \(g \circ f\) es inyectiva.
+(2) Si \(f\) y \(g\) son ambas sobreyectivas, entonces \(g \circ f\) es sobreyectiva.
+(3) Si \(f\) y \(g\) son ambas biyectivas, entonces \(g \circ f\) es biyectiva.
+(4) Si \(g \circ f\) es inyectiva, entonces \(f\) DEBE ser inyectiva (pero \(g\) no tiene por qué ser inyectiva).
+(5) Si \(g \circ f\) es sobreyectiva, entonces \(g\) DEBE ser sobreyectiva (pero \(f\) no tiene por qué ser sobreyectiva).
+[/CALLOUT]
+
+Demostremos cada afirmación positiva y construyamos contraejemplos precisos para las dos observaciones negativas.
+
+Demostración de (1): Supongamos que \(f\) y \(g\) son inyectivas. Sean \(a_1, a_2 \in A\) tales que \((g \circ f)(a_1) = (g \circ f)(a_2)\), es decir, \(g(f(a_1)) = g(f(a_2))\). Como \(g\) es inyectiva, \(f(a_1) = f(a_2)\). Como \(f\) es inyectiva, \(a_1 = a_2\). Por tanto, \(g \circ f\) es inyectiva.
+
+Demostración de (2): Supongamos que \(f\) y \(g\) son sobreyectivas. Sea \(c \in C\) arbitrario. Como \(g : B \to C\) es sobreyectiva, existe \(b \in B\) tal que \(g(b) = c\). Como \(f : A \to B\) es sobreyectiva, existe \(a \in A\) tal que \(f(a) = b\). Entonces \((g \circ f)(a) = g(f(a)) = g(b) = c\). Por tanto, \(g \circ f\) es sobreyectiva.
+
+La parte (3) se sigue de inmediato combinando (1) y (2).
+
+Demostración de (4): Supongamos que \(g \circ f\) es inyectiva. Sean \(a_1, a_2 \in A\) tales que \(f(a_1) = f(a_2)\). Aplicando \(g\) a ambos lados se obtiene \(g(f(a_1)) = g(f(a_2))\), es decir, \((g \circ f)(a_1) = (g \circ f)(a_2)\). Como \(g \circ f\) es inyectiva, \(a_1 = a_2\). Así pues, \(f\) es inyectiva. (Intuitivamente, si \(f\) ya colisionara dos entradas \(a_1 \ne a_2\), entonces \(g\) jamás podría deshacer esa colisión después.)
+
+Contraejemplo que muestra que \(g\) NO tiene por qué ser inyectiva en (4) Y \(f\) NO tiene por qué ser sobreyectiva en (5) exactamente al mismo tiempo: tómense \(A = \{1\}\), \(B = \{1, 2\}\), \(C = \{1\}\). Defínase \(f : A \to B\) por \(f(1) = 1\) (inyectiva, NO sobreyectiva) y defínase \(g : B \to C\) por \(g(1) = 1\) y \(g(2) = 1\) (sobreyectiva, NO inyectiva). Entonces \(g \circ f : \{1\} \to \{1\}\) envía \(1 \mapsto 1\), ¡que es BIYECTIVA (tanto inyectiva como sobreyectiva)! Sin embargo, \(g\) NO es inyectiva (su colisión ocurre en \(2 \notin \operatorname{im}(f)\), que \(f\) nunca visita) y \(f\) NO es sobreyectiva (no alcanzar \(2\) no impide que \(g\) alcance \(1\)).
+
+Demostración de (5): Supongamos que \(g \circ f\) es sobreyectiva. Sea \(c \in C\) arbitrario. Como \(g \circ f : A \to C\) es sobreyectiva, existe \(a \in A\) tal que \((g \circ f)(a) = c\), es decir, \(g(f(a)) = c\). Poniendo \(b = f(a) \in B\) obtenemos un elemento de \(B\) con \(g(b) = c\). Por tanto, \(g\) es sobreyectiva.
+
+[TABLE]
+Propiedad dada de \(g \circ f : A \to C\) | Forzada en la aplicación interior \(f : A \to B\) | Forzada en la aplicación exterior \(g : B \to C\)
+\(g \circ f\) es inyectiva | \(f\) DEBE ser inyectiva | Nada forzado en \(g\) (no tiene por qué ser inyectiva ni sobreyectiva)
+\(g \circ f\) es sobreyectiva | Nada forzado en \(f\) (no tiene por qué ser inyectiva ni sobreyectiva) | \(g\) DEBE ser sobreyectiva
+\(g \circ f\) es biyectiva | \(f\) DEBE ser inyectiva | \(g\) DEBE ser sobreyectiva
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+Sean \(f : A \to B\) y \(g : B \to C\) funciones. Supongamos que \(g \circ f\) es BIYECTIVA y que \(f\) es SOBREYECTIVA. ¿Qué puede concluirse acerca de \(f\) y \(g\)?
+
+(A) \(f\) es biyectiva, mientras que \(g\) debe ser sobreyectiva pero no necesariamente inyectiva
+(B) Tanto \(f\) como \(g\) DEBEN ser biyectivas
+(C) \(g\) es biyectiva, mientras que \(f\) debe ser sobreyectiva pero no necesariamente inyectiva
+(D) \(f\) es inyectiva y \(g\) es sobreyectiva, pero ninguna está forzada a ser biyectiva
+(E) \(A\), \(B\) y \(C\) deben ser todos conjuntos finitos
+[/QUESTION]
+
+=== SECTION 3: Inversas bilaterales y caracterización mediante biyecciones ===
+
+¿Podemos «deshacer» una función \(f : A \to B\) componiéndola con una función compañera \(g : B \to A\) que restituya cada entrada de \(A\) Y cada salida de \(B\)?
+
+[CALLOUT]
+id: two-sided-inverse-def
+label: Definición
+title: Inversa bilateral (función invertible)
+tone: key
+
+Sea \(f : A \to B\) una función. Una función \(g : B \to A\) es una inversa bilateral (o simplemente una inversa) de \(f\) si se cumplen AMBAS ecuaciones:
+\[
+g \circ f = \operatorname{id}_A \qquad \text{y} \qquad f \circ g = \operatorname{id}_B.
+\]
+Explícitamente, \(g(f(a)) = a\) para todo \(a \in A\), Y \(f(g(b)) = b\) para todo \(b \in B\). Si existe tal \(g\), decimos que \(f\) es invertible.
+[/CALLOUT]
+
+Antes de preguntar CUÁNDO existe una inversa, demostremos que SI existe una inversa bilateral, es ÚNICA —y obsérvese con qué soltura hacen el trabajo las [REF: composition-laws | leyes de asociatividad e identidad]. Supongamos que \(g_1 : B \to A\) y \(g_2 : B \to A\) son ambas inversas bilaterales de \(f\). Entonces
+\[
+g_1 = g_1 \circ \operatorname{id}_B = g_1 \circ (f \circ g_2) = (g_1 \circ f) \circ g_2 = \operatorname{id}_A \circ g_2 = g_2.
+\]
+Como la inversa bilateral es única siempre que existe, podemos denotarla sin ambigüedad por \(f^{-1} : B \to A\). (Téngase cuidado de no confundir esta función inversa \(f^{-1} : B \to A\) con la operación de preimagen sobre conjuntos \(f^{-1}(T)\) de lecciones anteriores; cuando \(f\) SÍ es invertible, ambas concuerdan limpiamente mediante \(f^{-1}(\{b\}) = \{f^{-1}(b)\}\).)
+
+Demostremos ahora el teorema central que vincula invertibilidad y biyecciones.
+
+[CALLOUT]
+id: inverse-bijection-thm
+label: Teorema
+title: Caracterización y álgebra de las inversas bilaterales
+tone: key
+
+Sean \(f : A \to B\) y \(g : B \to C\) funciones.
+
+(1) \(f\) tiene inversa bilateral si y solo si \(f\) es biyectiva.
+(2) Si \(f\) es biyectiva, entonces \(f^{-1} : B \to A\) es también biyectiva, y \((f^{-1})^{-1} = f\).
+(3) Regla de los calcetines y los zapatos: si \(f : A \to B\) y \(g : B \to C\) son ambas biyectivas, entonces \(g \circ f : A \to C\) es biyectiva y
+\[
+(g \circ f)^{-1} = f^{-1} \circ g^{-1}.
+\]
+[/CALLOUT]
+
+Demostración de (1):
+- (\(\implies\)): Supongamos que \(f\) tiene una inversa bilateral \(h : B \to A\). Como \(h \circ f = \operatorname{id}_A\) es biyectiva (en particular inyectiva), [REF: comp-inj-surj.4 | nuestro teorema de composición] obliga de inmediato a que \(f\) sea inyectiva. Como \(f \circ h = \operatorname{id}_B\) es biyectiva (en particular sobreyectiva), [REF: comp-inj-surj.5 | nuestro teorema de composición] obliga de inmediato a que \(f\) sea sobreyectiva. Por tanto, \(f\) es biyectiva.
+- (\(\Longleftarrow\)): Supongamos que \(f : A \to B\) es biyectiva. Por definición de biyección, para todo \(b \in B\) existe un ÚNICO \(a \in A\) tal que \(f(a) = b\). Defínase \(h : B \to A\) haciendo que \(h(b)\) sea ese único elemento \(a\). Por construcción, \(h\) satisface existencia y unicidad, de modo que \(h : B \to A\) es una función bien definida. Comprobemos ambas composiciones:
+  - Para todo \(b \in B\), \(f(h(b)) = b\) directamente por definición de \(h(b)\), luego \(f \circ h = \operatorname{id}_B\).
+  - Para todo \(a \in A\), póngase \(b = f(a)\). Como \(a\) satisface \(f(a) = b\) y tal elemento es único, \(h(f(a)) = h(b) = a\), luego \(h \circ f = \operatorname{id}_A\).
+Así, \(h\) es una inversa bilateral de \(f\).
+
+Demostración de (2): Como \(f^{-1} \circ f = \operatorname{id}_A\) y \(f \circ f^{-1} = \operatorname{id}_B\), los papeles de \(f\) y \(f^{-1}\) son completamente simétricos: \(f\) es la única inversa bilateral de \(f^{-1}\). Por (1), \(f^{-1}\) es biyectiva y \((f^{-1})^{-1} = f\).
+
+Demostración de (3): Sabemos que \(g \circ f\) es biyectiva por [REF: comp-inj-surj.3 | composición de biyecciones]. Para demostrar \((g \circ f)^{-1} = f^{-1} \circ g^{-1}\), por unicidad de las inversas bilaterales basta comprobar AMBAS composiciones usando la [REF: composition-laws.1 | asociatividad]:
+\[
+(f^{-1} \circ g^{-1}) \circ (g \circ f) = f^{-1} \circ (g^{-1} \circ g) \circ f = f^{-1} \circ \operatorname{id}_B \circ f = f^{-1} \circ f = \operatorname{id}_A,
+\]
+\[
+(g \circ f) \circ (f^{-1} \circ g^{-1}) = g \circ (f \circ f^{-1}) \circ g^{-1} = g \circ \operatorname{id}_B \circ g^{-1} = g \circ g^{-1} = \operatorname{id}_C.
+\]
+¿Por qué se invierte el orden? Para deshacer «ponerse los calcetines (\(f\)) y después ponerse los zapatos (\(g\))», primero hay que quitarse los zapatos (\(g^{-1}\)) y después quitarse los calcetines (\(f^{-1}\)).
+
+Geométricamente, para una biyección real \(f : A \to B\) con \(A, B \subseteq \mathbb{R}\), el grafo de \(f^{-1}\) se obtiene intercambiando coordenadas \((a, b) \leftrightarrow (b, a)\) —reflejando el grafo de \(f\) respecto a la recta diagonal \(y = x\). Arrastre el deslizador \(a\) más abajo para la biyección \(f : [0, \infty) \to [0, \infty)\), \(f(x) = x^2\), y su inversa \(f^{-1}(x) = \sqrt{x}\), observando cómo los puntos emparejados \((a, a^2)\) y \((a^2, a)\) se reflejan respecto a \(y = x\).
+
+[GRAPH]
+type: function2d
+title: Reflexión de \(f(x) = x^2\) y \(f^{-1}(x) = \sqrt{x}\) en \([0, \infty)\) respecto a \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 3.2
+yrange: 0, 3.2
+aspect: equal
+trace: x^2 | label: \(y = x^2\) | color: #2563eb
+trace: sqrt(x) | label: \(y = \sqrt{x}\) | color: #16a34a
+trace: x | label: \(y = x\) | color: #64748b
+point: a, a^2 | label: \((a, f(a))\) | color: #2563eb | offset: -18, 12
+point: a^2, a | label: \((f(a), a)\) | color: #16a34a | offset: 14, -14
+segment: a, a^2, a^2, a | color: #94a3b8 | dashed: true
+slider: a | range: 0.2, 1.7 | init: 1.4 | step: 0.1
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: D]
+Sea \(f : \mathbb{R} \to \mathbb{R}\) dada por \(f(x) = 2x - 3\) y sea \(g : \mathbb{R} \to \mathbb{R}\) dada por \(g(x) = x^3 + 1\). Tanto \(f\) como \(g\) son biyecciones. ¿Cuánto vale \((g \circ f)^{-1}(9)\)?
+
+(A) \(1\)
+(B) \(\frac{11}{2}\)
+(C) \(15\)
+(D) \(\frac{5}{2}\)
+(E) \(126\)
+[/QUESTION]
+
+=== SECTION 4: Inversas unilaterales — inversas por la izquierda e inversas por la derecha ===
+
+¿Qué ocurre si una función \(f : A \to B\) es inyectiva pero NO sobreyectiva, o sobreyectiva pero NO inyectiva? Entonces no puede tener una inversa bilateral, aunque todavía podemos deshacerla desde UN lado.
+
+[CALLOUT]
+id: one-sided-inverse-def
+label: Definición
+title: Inversa por la izquierda (retracción) e inversa por la derecha (sección)
+tone: key
+
+Sea \(f : A \to B\) una función.
+
+(1) Una función \(r : B \to A\) es una inversa por la izquierda (o retracción) de \(f\) si \(r \circ f = \operatorname{id}_A\).
+(2) Una función \(s : B \to A\) es una inversa por la derecha (o sección) de \(f\) si \(f \circ s = \operatorname{id}_B\).
+[/CALLOUT]
+
+Obsérvese cuán limpiamente caracterizan las inversas unilaterales la inyectividad y la sobreyectividad:
+
+[CALLOUT]
+id: one-sided-inverse-thm
+label: Teorema
+title: Existencia de inversas por la izquierda y por la derecha
+tone: key
+
+Sea \(f : A \to B\) una función.
+
+(1) Inversas por la izquierda e inyectividad (para \(A\) no vacío): si \(A \ne \emptyset\), entonces \(f\) posee una inversa por la izquierda \(r : B \to A\) si y solo si \(f\) es inyectiva.
+(2) Inversas por la derecha y sobreyectividad: \(f\) posee una inversa por la derecha \(s : B \to A\) si y solo si \(f\) es sobreyectiva.
+(3) Compatibilidad: si \(f\) posee TANTO una inversa por la izquierda \(r : B \to A\) COMO una inversa por la derecha \(s : B \to A\), entonces \(r = s\), y esta función común es la única inversa bilateral \(f^{-1}\).
+[/CALLOUT]
+
+Examinemos las tres partes con cuidado, incluido el caso límite \(A = \emptyset\) y el papel del principio de elección.
+
+Demostración de (1):
+- (\(\implies\)): Si \(r \circ f = \operatorname{id}_A\), entonces \(r \circ f\) es inyectiva, de modo que por [REF: comp-inj-surj.4 | nuestro teorema de composición], \(f\) es inyectiva. (Esta dirección ni siquiera necesita \(A \ne \emptyset\).)
+- (\(\Longleftarrow\)): Supóngase \(A \ne \emptyset\) y \(f : A \to B\) inyectiva. Fíjese un elemento por defecto \(a_0 \in A\) (¡aquí es donde se usa \(A \ne \emptyset\)!). Defínase \(r : B \to A\) mediante:
+  - si \(b \in \operatorname{im}(f)\), tómese \(r(b)\) como el ÚNICO \(a \in A\) con \(f(a) = b\) (único porque \(f\) es inyectiva);
+  - si \(b \notin \operatorname{im}(f)\), póngase \(r(b) = a_0\).
+  Entonces, para todo \(a \in A\), \(f(a) \in \operatorname{im}(f)\) y \(a\) es la única entrada que va a \(f(a)\), luego \(r(f(a)) = a\). Así pues, \(r \circ f = \operatorname{id}_A\).
+
+¿Por qué exigimos \(A \ne \emptyset\) en (1)? Si \(A = \emptyset\) y \(B \ne \emptyset\), la función vacía \(f : \emptyset \to B\) es inyectiva por vacuidad, ¡pero NO existe función alguna \(r : B \to \emptyset\)!
+
+Adviértase también que cuando \(f\) es inyectiva pero NO sobreyectiva (y \(A\) tiene al menos dos elementos), la inversa por la izquierda \(r\) NO es única: se tiene libertad de asignar CUALQUIER elemento de \(A\) a cada elemento omitido \(b \in B \setminus \operatorname{im}(f)\). Por ejemplo, tómese la aplicación de duplicación \(f : \mathbb{Z} \to \mathbb{Z}\) definida por \(f(n) = 2n\). Es inyectiva (no sobreyectiva). Tanto
+\[
+r_1(m) = \begin{cases} m/2 & \text{si } m \text{ es par}, \\ 0 & \text{si } m \text{ es impar} \end{cases}
+\qquad\text{como}\qquad
+r_2(m) = \lfloor m/2 \rfloor
+\]
+satisfacen \(r_1(2n) = n\) y \(r_2(2n) = n\) para todo \(n \in \mathbb{Z}\), de modo que TANTO \(r_1\) COMO \(r_2\) son inversas por la izquierda válidas de \(f\), aunque \(r_1(1) = 0\) mientras que \(r_2(3) = 1 \ne 0 = r_1(3)\).
+
+Demostración de (2):
+- (\(\implies\)): Si \(f \circ s = \operatorname{id}_B\), entonces \(f \circ s\) es sobreyectiva, de modo que por [REF: comp-inj-surj.5 | nuestro teorema de composición], \(f\) es sobreyectiva.
+- (\(\Longleftarrow\)): Supóngase que \(f : A \to B\) es sobreyectiva. Entonces, para TODO \(b \in B\), la fibra de preimagen \(f^{-1}(\{b\})\) es no vacía. Para construir una inversa por la derecha \(s : B \to A\), debemos escoger UN elemento \(s(b) \in f^{-1}(\{b\})\) para cada \(b \in B\). Una vez elegido, \(f(s(b)) = b\) se cumple automáticamente para todo \(b \in B\), dando \(f \circ s = \operatorname{id}_B\).
+
+Deténgase en ese paso de elección. Para dominios concretos como \(\mathbb{R}\) o \(\mathbb{N}\), normalmente podemos escribir una regla explícita que elija una preimagen por cada fibra sin ambigüedad:
+- Para la aplicación sobreyectiva \(f : \mathbb{R} \to [0, \infty)\) dada por \(f(x) = x^2\), cada fibra \(f^{-1}(\{y\}) = \{-\sqrt{y}, \sqrt{y}\}\) es no vacía, y tenemos inversas por la derecha explícitas \(s_1(y) = \sqrt{y}\), \(s_2(y) = -\sqrt{y}\), e incluso elecciones a trozos como \(s_3(y) = \sqrt{y}\) para \(y \in \mathbb{Q} \cap [0, \infty)\) y \(s_3(y) = -\sqrt{y}\) para \(y > 0\) irracional.
+- Sin embargo, para una sobreyección ARBITRARIA \(f : A \to B\) entre conjuntos infinitos completamente carentes de estructura, puede no existir fórmula explícita alguna para elegir un elemento simultáneamente de infinitas fibras no vacías \(f^{-1}(\{b\})\). Garantizar la existencia de tal función de selección \(s\) en toda generalidad requiere un principio conjuntista de elección (el Axioma de Elección).
+
+Por último, demostración de (3): Si \(r \circ f = \operatorname{id}_A\) y \(f \circ s = \operatorname{id}_B\), entonces por la [REF: composition-laws.1 | asociatividad],
+\[
+r = r \circ \operatorname{id}_B = r \circ (f \circ s) = (r \circ f) \circ s = \operatorname{id}_A \circ s = s.
+\]
+Así que en cuanto existen TANTO una inversa por la izquierda como una inversa por la derecha, ambas colapsan en exactamente la misma única inversa bilateral.
+
+[QUESTION 4]
+[ANSWER: A]
+Considérese la función \(f : \mathbb{Z} \to \mathbb{N}\) definida por \(f(n) = |n|\) (donde \(\mathbb{N} = \{0, 1, 2, \dots\}\)). ¿Qué afirmación es verdadera?
+
+(A) \(f\) tiene infinitas inversas por la derecha (por ejemplo, \(s_1(k) = k\) y \(s_2(k) = -k\)), y NINGUNA inversa por la izquierda
+(B) \(f\) tiene una única inversa por la derecha \(s(k) = k\), y NINGUNA inversa por la izquierda
+(C) \(f\) tiene infinitas inversas por la izquierda, y NINGUNA inversa por la derecha
+(D) \(f\) tiene una inversa bilateral porque \(f(k) = k\) para todo \(k \in \mathbb{N}\)
+(E) \(f\) no tiene ni inversa por la izquierda ni inversa por la derecha
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Sea \(f : A \to B\) una función, donde \(A\) tiene al menos dos elementos. Supongamos que \(f\) tiene una ÚNICA inversa por la izquierda \(r : B \to A\) (es decir, existe exactamente una función \(r : B \to A\) tal que \(r \circ f = \operatorname{id}_A\)). ¿Qué debe cumplirse acerca de \(f\)?
+
+(A) \(f\) es inyectiva, y \(B \setminus \operatorname{im}(f)\) tiene a lo sumo un elemento
+(B) \(f\) es constante
+(C) \(A\) y \(B\) deben ser finitos
+(D) \(f\) es inyectiva, pero \(B \setminus \operatorname{im}(f)\) puede ser cualquier conjunto finito
+(E) \(f\) DEBE ser biyectiva (por lo que \(r\) es también su inversa por la derecha)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Sea \(f : A \to B\) una función. Decimos que \(f\) es cancelable por la izquierda si para TODO conjunto \(X\) y TODAS las funciones \(g_1, g_2 : X \to A\),
+\[
+f \circ g_1 = f \circ g_2 \implies g_1 = g_2.
+\]
+¿Qué propiedad de \(f\) es equivalente a que \(f\) sea cancelable por la izquierda?
+
+(A) \(f\) es sobreyectiva
+(B) \(f\) es biyectiva
+(C) \(f\) es inyectiva
+(D) \(f\) es constante
+(E) \(A\) es no vacío
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Supongamos que \(f : A \to A\) es una función que satisface \(f \circ f = f\) (una aplicación idempotente, como el redondeo \(x \mapsto \lfloor x \rfloor\) sobre \(\mathbb{R}\)). ¿Qué afirmación es SIEMPRE verdadera?
+
+(A) \(f\) debe ser la aplicación identidad \(\operatorname{id}_A\)
+(B) \(f(y) = y\) para todo \(y \in \operatorname{im}(f)\), y si \(f\) es inyectiva O sobreyectiva entonces \(f = \operatorname{id}_A\)
+(C) \(f\) debe ser biyectiva, luego \(f^{-1} = f\)
+(D) Si \(f\) es sobreyectiva entonces \(f = \operatorname{id}_A\), pero \(f\) puede ser inyectiva sin ser igual a \(\operatorname{id}_A\)
+(E) \(\operatorname{im}(f)\) puede contener a lo sumo un elemento
+[/BONUS]

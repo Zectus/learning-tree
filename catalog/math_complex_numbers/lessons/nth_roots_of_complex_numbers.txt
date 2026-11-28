@@ -1,0 +1,254 @@
+=== SECTION 1: Solving \(z^n = w\) in \(\mathbb{C}\) ===
+
+In the previous lesson, we found all \(n\) complex solutions to \(z^n = 1\) and saw that they sit at the vertices of a regular \(n\)-gon on the unit circle. Now suppose we need to solve a general binomial equation such as \(z^4 = -16\) or \(z^3 = 8i\) — in general,
+\[
+z^n = w
+\]
+for any positive integer \(n \ge 1\) and any nonzero complex number \(w \in \mathbb{C} \setminus \{0\}\).
+
+Write the given number \(w\) in exponential form \(w = R e^{i\varphi}\), where \(R = |w| > 0\) and \(\varphi = \operatorname{Arg}(w) \in (-\pi, \pi]\) (any valid argument of \(w\) works). Write an unknown nonzero solution \(z\) in exponential form \(z = r e^{i\theta}\) with \(r > 0\) and \(\theta \in \mathbb{R}\). By De Moivre's Theorem, \(z^n = r^n e^{in\theta}\), so \(z^n = w\) becomes
+\[
+r^n e^{in\theta} = R e^{i\varphi}.
+\]
+Equate positive moduli and match arguments modulo \(2\pi\):
+- Matching moduli: \(r^n = R\) with \(r > 0\). Since \(r \mapsto r^n\) is strictly increasing on \((0, \infty)\), there is a UNIQUE positive real solution \(r = R^{1/n} = \sqrt[n]{R}\). Every \(n\)th root of \(w\) lies on the circle \(|z| = R^{1/n}\).
+- Matching arguments modulo \(2\pi\): \(n\theta = \varphi + 2\pi k\) for \(k \in \mathbb{Z}\), giving
+\[
+\theta_k = \frac{\varphi + 2\pi k}{n}, \qquad k \in \mathbb{Z}.
+\]
+Just as with roots of unity, taking \(k = 0, 1, \dots, n - 1\) yields \(n\) distinct angles spaced by \(\frac{2\pi}{n}\) (since any two differ by strictly less than \(2\pi\)), while any other integer \(k = qn + m\) shifts the angle by \(2\pi q\) and repeats \(z_m\).
+
+Now look at the exponential formula for \(z_k\):
+\[
+z_k = R^{1/n} e^{i(\varphi + 2\pi k)/n} = \left(R^{1/n} e^{i\varphi/n}\right) e^{2\pi i k / n} = z_0\,\omega_k,
+\]
+where \(z_0 = R^{1/n} e^{i\varphi/n}\) is one particular \(n\)th root of \(w\) and \(\omega_k = e^{2\pi i k/n}\) (\(k = 0, 1, \dots, n - 1\)) are the \(n\)th roots of unity! This factorization reveals the complete geometry in one stroke: once you find ANY SINGLE root \(z_0\) of \(z^n = w\), multiplying \(z_0\) by the \(n\)th roots of unity simply rotates \(z_0\) counterclockwise in steps of \(\frac{2\pi}{n}\) around the origin, placing all \(n\) roots at the vertices of a regular \(n\)-gon of radius \(R^{1/n}\) centered at \(0\). Moreover, for every \(n \ge 2\), the sum of all \(n\) roots vanishes automatically:
+\[
+\sum_{k=0}^{n-1} z_k = \sum_{k=0}^{n-1} z_0 \omega_k = z_0 \sum_{k=0}^{n-1} \omega_k = z_0 \cdot 0 = 0.
+\]
+
+[CALLOUT]
+id: general-nth-roots
+label: Theorem
+title: All \(n\)th roots of a nonzero complex number
+tone: key
+
+Let \(n \ge 1\) be an integer and let \(w = R e^{i\varphi}\) with \(R = |w| > 0\). The equation \(z^n = w\) has exactly \(n\) distinct solutions in \(\mathbb{C}\):
+\[
+z_k = R^{1/n} e^{i(\varphi + 2\pi k)/n} = z_0 \omega_k, \qquad k = 0, 1, \dots, n - 1,
+\]
+where \(R^{1/n} > 0\) is the unique positive real \(n\)th root of \(R\), \(z_0 = R^{1/n} e^{i\varphi/n}\), and \(\omega_k = e^{2\pi i k/n}\).
+
+(1) All \(n\) roots lie on the circle \(|z| = R^{1/n}\) at equally spaced angles separated by \(\frac{2\pi}{n}\).
+(2) For \(n \ge 3\), they form the vertices of a regular \(n\)-gon centered at the origin.
+(3) For every \(n \ge 2\), their sum is \(z_0 + z_1 + \dots + z_{n-1} = 0\).
+[/CALLOUT]
+
+Let us apply [REF: general-nth-roots | this theorem] to solve \(z^4 + 16 = 0\), i.e., \(z^4 = -16\).
+1. Convert \(w = -16\) to exponential form: \(R = |-16| = 16\) and \(\varphi = \operatorname{Arg}(-16) = \pi\), so \(-16 = 16 e^{i\pi}\).
+2. Take the positive real \(4\)th root of the modulus: \(r = 16^{1/4} = 2\).
+3. Divide the angle by \(4\) and add multiples of \(\frac{2\pi}{4} = \frac{\pi}{2}\):
+   - \(k = 0\): \(\theta_0 = \frac{\pi}{4}\), giving \(z_0 = 2 e^{i\pi/4} = \sqrt{2} + i\sqrt{2}\).
+   - \(k = 1\): \(\theta_1 = \frac{3\pi}{4}\), giving \(z_1 = 2 e^{3i\pi/4} = -\sqrt{2} + i\sqrt{2}\).
+   - \(k = 2\): \(\theta_2 = \frac{5\pi}{4}\), giving \(z_2 = 2 e^{5i\pi/4} = -\sqrt{2} - i\sqrt{2}\).
+   - \(k = 3\): \(\theta_3 = \frac{7\pi}{4}\), giving \(z_3 = 2 e^{7i\pi/4} = \sqrt{2} - i\sqrt{2}\).
+
+Notice that \(z_1 = i z_0\), \(z_2 = -z_0\), and \(z_3 = -i z_0\) — each root is a \(90^\circ\) counterclockwise rotation of the previous one on the circle \(|z| = 2\), forming a square rotated by \(45^\circ\) relative to the coordinate axes.
+
+[GRAPH]
+type: parametric2d
+title: The four solutions of \(z^4 = -16\) on the circle \(|z| = 2\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -2.7, 2.7
+yrange: -2.7, 2.7
+trace: 2*cos(t), 2*sin(t) | label: \(|z| = 2\) | color: #94a3b8
+segment: sqrt(2), sqrt(2), -sqrt(2), sqrt(2) | color: #2563eb
+segment: -sqrt(2), sqrt(2), -sqrt(2), -sqrt(2) | color: #2563eb
+segment: -sqrt(2), -sqrt(2), sqrt(2), -sqrt(2) | color: #2563eb
+segment: sqrt(2), -sqrt(2), sqrt(2), sqrt(2) | color: #2563eb
+segment: 0, 0, sqrt(2), sqrt(2) | color: #059669 | dashed: true
+point: sqrt(2), sqrt(2) | label: \(z_0\)
+point: -sqrt(2), sqrt(2) | label: \(z_1\)
+point: -sqrt(2), -sqrt(2) | label: \(z_2\)
+point: sqrt(2), -sqrt(2) | label: \(z_3\)
+[/GRAPH]
+
+Before solving more equations, resolve a persistent notational trap. Over the positive real numbers, \(\sqrt[n]{R}\) or \(R^{1/n}\) denotes ONE unique positive real number (for instance, \(16^{1/4} = 2\)). Over \(\mathbb{C}\), however, the equation \(z^n = w\) has \(n\) equally valid solutions! Writing \(w^{1/n}\) or \(\sqrt[n]{w}\) for a complex number \(w\) is therefore AMBIGUOUS unless you explicitly specify whether you mean the full set of \(n\) roots or one chosen value (such as the principal value using \(\varphi = \operatorname{Arg}(w)\)).
+
+[CALLOUT]
+id: caution-complex-radicals
+label: Caution
+title: Positive real roots versus multi-valued complex \(n\)th roots
+tone: caution
+
+(1) Reserve \(R^{1/n}\) and \(\sqrt[n]{R}\) (with \(R > 0\)) strictly for the unique POSITIVE REAL \(n\)th root of \(R\).
+(2) For general \(w \in \mathbb{C}\), state "all solutions of \(z^n = w\)" rather than treating \(w^{1/n}\) as a single number.
+(3) Naive real exponent identities such as \((z^n)^{1/n} = z\) or \((w_1 w_2)^{1/n} = w_1^{1/n} w_2^{1/n}\) can fail when interpreted as single values (for example, \((-2)^4 = 16\), yet the positive real \(4\)th root of \(16\) is \(2 \ne -2\)).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: B]
+What are all three complex solutions to the equation \(z^3 = -27i\)?
+
+(A) \(-3i\), \(\frac{3\sqrt{3}}{2} + \frac{3}{2}i\), and \(-\frac{3\sqrt{3}}{2} + \frac{3}{2}i\)
+(B) \(3i\), \(\frac{3\sqrt{3}}{2} - \frac{3}{2}i\), and \(-\frac{3\sqrt{3}}{2} - \frac{3}{2}i\)
+(C) \(3i\), \(-3i\), and \(3\)
+(D) \(3e^{i\pi/6}\), \(3e^{5i\pi/6}\), and \(3e^{3i\pi/2}\)
+(E) \(9i\), \(\frac{9\sqrt{3}}{2} - \frac{9}{2}i\), and \(-\frac{9\sqrt{3}}{2} - \frac{9}{2}i\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Suppose \(z_0 = 1 + 2i\) is one solution to the equation \(z^4 = w\) for some complex number \(w\). Without even computing \(w\), what are the other three solutions to \(z^4 = w\)?
+
+(A) \(1 - 2i\), \(-1 + 2i\), and \(-1 - 2i\)
+(B) \(2 + i\), \(-1 - 2i\), and \(-2 - i\)
+(C) \(1 + 2i\), \(-1 - 2i\), and \(2 - i\)
+(D) \(-2 + i\), \(-1 - 2i\), and \(2 - i\)
+(E) \(-1 + 2i\), \(-2 - i\), and \(2 + i\)
+[/QUESTION]
+
+=== SECTION 2: Shifted binomial and reducible polynomial equations ===
+
+The same machinery solves far more than bare equations \(z^n = w\). Two common generalizations appear constantly in algebra and engineering: shifted binomial equations \((z - c)^n = w\) and polynomial equations reducible to binomial form by substitution.
+
+First, consider a shifted binomial equation:
+\[
+(z + 1)^3 = 8i.
+\]
+Do NOT expand \((z + 1)^3\) into a cubic polynomial! Instead, substitute \(u = z + 1\) so the equation becomes \(u^3 = 8i\):
+1. Write \(8i = 8 e^{i\pi/2}\), so \(|u| = 8^{1/3} = 2\) and \(\arg(u_k) = \frac{\pi/2 + 2\pi k}{3}\) for \(k = 0, 1, 2\):
+   - \(k = 0\): \(\theta_0 = \frac{\pi}{6}\), so \(u_0 = 2\left(\frac{\sqrt{3}}{2} + \frac{1}{2}i\right) = \sqrt{3} + i\).
+   - \(k = 1\): \(\theta_1 = \frac{5\pi}{6}\), so \(u_1 = 2\left(-\frac{\sqrt{3}}{2} + \frac{1}{2}i\right) = -\sqrt{3} + i\).
+   - \(k = 2\): \(\theta_2 = \frac{3\pi}{2}\), so \(u_2 = -2i\).
+2. Shift back via \(z_k = u_k - 1\):
+   \[
+   z_0 = (\sqrt{3} - 1) + i, \qquad z_1 = (-\sqrt{3} - 1) + i, \qquad z_2 = -1 - 2i.
+   \]
+Geometrically, shifting \(u\) by \(-1\) translates the entire equilateral triangle \(1\) unit to the left: the three solutions form an equilateral triangle of radius \(2\) centered at \(-1\) instead of \(0\), and their sum is \(z_0 + z_1 + z_2 = (u_0 + u_1 + u_2) - 3 = 0 - 3 = -3\)!
+
+[GRAPH]
+type: parametric2d
+title: Solutions of \((z + 1)^3 = 8i\) forming an equilateral triangle centered at \(-1\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -3.5, 1.5
+yrange: -2.5, 2.5
+trace: -1 + 2*cos(t), 2*sin(t) | label: \(|z + 1| = 2\) | color: #94a3b8
+segment: sqrt(3) - 1, 1, -sqrt(3) - 1, 1 | color: #2563eb
+segment: -sqrt(3) - 1, 1, -1, -2 | color: #2563eb
+segment: -1, -2, sqrt(3) - 1, 1 | color: #2563eb
+point: -1, 0 | label: \(-1\) | color: #dc2626
+point: sqrt(3) - 1, 1 | label: \(z_0\)
+point: -sqrt(3) - 1, 1 | label: \(z_1\)
+point: -1, -2 | label: \(z_2\)
+[/GRAPH]
+
+Second, consider a polynomial equation that is quadratic in \(z^n\), such as
+\[
+z^6 + 7z^3 - 8 = 0.
+\]
+Substitute \(u = z^3\) to obtain a quadratic equation \(u^2 + 7u - 8 = 0\), which factors cleanly as \((u + 8)(u - 1) = 0\). Thus \(z^3 = 1\) OR \(z^3 = -8\):
+- From \(z^3 = 1\): the three cube roots of unity \(1\), \(-\frac{1}{2} + i\frac{\sqrt{3}}{2}\), and \(-\frac{1}{2} - i\frac{\sqrt{3}}{2}\) (lying on the circle \(|z| = 1\)).
+- From \(z^3 = -8 = 8 e^{i\pi}\): modulus \(2\) and angles \(\frac{\pi}{3}, \pi, \frac{5\pi}{3}\), giving \(1 + i\sqrt{3}\), \(-2\), and \(1 - i\sqrt{3}\) (lying on the circle \(|z| = 2\)).
+
+Together, these give all \(6\) roots of the degree-\(6\) polynomial, arranged as two nested equilateral triangles on concentric circles of radii \(1\) and \(2\).
+
+[QUESTION 3]
+[ANSWER: C]
+Consider the shifted binomial equation \((z - 3)^4 = -16\). Where do its four complex solutions lie in the Argand plane, and what is the sum of all four solutions?
+
+(A) They form a square of radius \(2\) centered at \(-3\), and their sum is \(-12\).
+(B) They form a square of radius \(4\) centered at \(3\), and their sum is \(12\).
+(C) They form a square of radius \(2\) centered at \(3\), and their sum is \(12\).
+(D) They form a square of radius \(2\) centered at \(3\), and their sum is \(0\).
+(E) They form a square of radius \(16\) centered at \(3\), and their sum is \(3\).
+[/QUESTION]
+
+=== SECTION 3: Factoring \(z^n + a^n\) over \(\mathbb{R}\) by conjugate pairing ===
+
+In our lesson on roots of unity, we factored \(z^n - 1\) completely into real linear and irreducible quadratic factors by pairing conjugate roots. Using [REF: general-nth-roots | our general \(n\)th-root theorem], we can do the exact same thing for \(z^n + a^n\) (for any real \(a > 0\))!
+
+Solving \(z^n + a^n = 0\) means solving \(z^n = -a^n = a^n e^{i\pi}\). The \(n\) distinct roots are
+\[
+z_k = a\,e^{i(2k + 1)\pi/n}, \qquad k = 0, 1, \dots, n - 1.
+\]
+Because the polynomial \(z^n + a^n\) has real coefficients, its non-real roots occur in complex conjugate pairs! Specifically, check the angle of \(z_{n - 1 - k}\):
+\[
+\frac{\bigl(2(n - 1 - k) + 1\bigr)\pi}{n} = \frac{(2n - 2k - 1)\pi}{n} = 2\pi - \frac{(2k + 1)\pi}{n},
+\]
+so \(z_{n - 1 - k} = a\,e^{-i(2k + 1)\pi/n} = \overline{z_k}\)! Multiplying each non-real conjugate pair together produces an irreducible real quadratic factor:
+\[
+(z - z_k)(z - \overline{z_k}) = z^2 - 2\operatorname{Re}(z_k)\,z + |z_k|^2 = z^2 - 2a\cos\!\left(\frac{(2k + 1)\pi}{n}\right)z + a^2.
+\]
+What about real roots? A root \(z_k\) is real if and only if \(\frac{(2k + 1)\pi}{n} = \pi\), i.e., \(2k + 1 = n\):
+- When \(n = 2m\) is EVEN, \(2k + 1 = 2m\) has no integer solution, so there are NO real roots — \(z^{2m} + a^{2m}\) factors entirely into \(m\) irreducible real quadratics!
+- When \(n = 2m + 1\) is ODD, the middle index \(k = m\) gives the sole real root \(z_m = a e^{i\pi} = -a\) (contributing the linear factor \(z + a\)), and the remaining \(2m\) roots form \(m\) conjugate pairs!
+
+[CALLOUT]
+id: zn-plus-an-factor
+label: Formula
+title: Complete irreducible factorization of \(z^n + a^n\) over \(\mathbb{R}\) (for \(a > 0\))
+tone: key
+
+(1) If \(n = 2m\) is even:
+\[
+z^n + a^n = \prod_{k=0}^{m-1} \left(z^2 - 2a\cos\!\left(\frac{(2k + 1)\pi}{n}\right)z + a^2\right).
+\]
+(2) If \(n = 2m + 1\) is odd:
+\[
+z^n + a^n = (z + a)\prod_{k=0}^{m-1} \left(z^2 - 2a\cos\!\left(\frac{(2k + 1)\pi}{n}\right)z + a^2\right).
+\]
+[/CALLOUT]
+
+Check [REF: zn-plus-an-factor.1 | the even formula] on our Section 1 example \(z^4 + 16\) (\(n = 4\), \(m = 2\), \(a = 2\)):
+- \(k = 0\): \(\cos(\pi/4) = \frac{\sqrt{2}}{2}\), giving \(z^2 - 2(2)\frac{\sqrt{2}}{2}z + 4 = z^2 - 2\sqrt{2}\,z + 4\).
+- \(k = 1\): \(\cos(3\pi/4) = -\frac{\sqrt{2}}{2}\), giving \(z^2 + 2\sqrt{2}\,z + 4\).
+Multiplying confirms \((z^2 + 4)^2 - (2\sqrt{2}\,z)^2 = z^4 + 8z^2 + 16 - 8z^2 = z^4 + 16\)!
+
+[QUESTION 4]
+[ANSWER: A]
+What is the complete factorization of \(z^6 + 64\) into irreducible polynomials over \(\mathbb{R}\)?
+
+(A) \((z^2 + 4)(z^2 - 2\sqrt{3}\,z + 4)(z^2 + 2\sqrt{3}\,z + 4)\)
+(B) \((z + 2)(z - 2)(z^2 - 2\sqrt{3}\,z + 4)(z^2 + 2\sqrt{3}\,z + 4)\)
+(C) \((z^2 + 4)(z^4 - 4z^2 + 16)\)
+(D) \((z^2 + 4)(z^2 - 2z + 4)(z^2 + 2z + 4)\)
+(E) \((z^2 + 4)(z^2 - 4\sqrt{3}\,z + 4)(z^2 + 4\sqrt{3}\,z + 4)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(n \ge 2\) be an integer and let \(w \in \mathbb{C} \setminus \{0\}\). By comparing \(z^n - w = \prod_{k=0}^{n-1}(z - z_k)\) at \(z = 0\) (or by multiplying \(z_k = z_0 \omega_k\) directly), what is the exact product \(z_0 z_1 \cdots z_{n-1}\) of all \(n\) complex \(n\)th roots of \(w\)?
+
+(A) \(w\) for every integer \(n \ge 2\)
+(B) \(-w\) for every integer \(n \ge 2\)
+(C) \(|w|\) for every integer \(n \ge 2\)
+(D) \((-1)^n w\)
+(E) \((-1)^{n-1} w\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Find all complex solutions to the equation \((z + 1)^4 = (z - 1)^4\). (Hint: first verify whether \(z = 1\) can be a solution, then rewrite the equation in terms of \(\frac{z + 1}{z - 1}\).)
+
+(A) \(z \in \{0, 1, i, -i\}\)
+(B) \(z \in \{0, i, -i\}\)
+(C) \(z \in \{1, -1, i, -i\}\)
+(D) \(z \in \{0, 2i, -2i\}\)
+(E) \(z = 0\) is the only complex solution
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+The six complex solutions of \(z^6 = -64\) form the vertices of a regular hexagon in the Argand plane. What is the exact area of this hexagon?
+
+(A) \(3\sqrt{3}\)
+(B) \(4\sqrt{3}\)
+(C) \(6\sqrt{3}\)
+(D) \(12\sqrt{3}\)
+(E) \(24\sqrt{3}\)
+[/BONUS]

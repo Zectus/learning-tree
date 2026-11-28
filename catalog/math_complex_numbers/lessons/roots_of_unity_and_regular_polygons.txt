@@ -1,0 +1,231 @@
+=== SECTION 1: Solving \(z^n = 1\) in \(\mathbb{C}\) ===
+
+Over the real numbers, the equation \(z^n = 1\) has very few solutions: only \(z = 1\) when \(n\) is odd, and \(z = \pm 1\) when \(n\) is even. Over \(\mathbb{C}\), however, the polynomial \(z^n - 1\) has degree \(n\), so we expect \(n\) distinct solutions. How do we find all of them systematically, and where do they sit in the Argand plane?
+
+Write an unknown solution \(z \ne 0\) in exponential form \(z = r e^{i\theta}\) with \(r > 0\) and \(\theta \in \mathbb{R}\). By De Moivre's Theorem, \(z^n = r^n e^{in\theta}\). Meanwhile, \(1 = 1\cdot e^{i\cdot 0}\). Thus \(z^n = 1\) becomes
+\[
+r^n e^{in\theta} = 1\cdot e^{i\cdot 0}.
+\]
+Two nonzero complex numbers in exponential form are equal if and only if their positive moduli match and their arguments differ by an integer multiple of \(2\pi\):
+- Matching moduli: \(r^n = 1\) with \(r > 0\). Because \(r \mapsto r^n\) is strictly increasing on \((0, \infty)\), the unique positive real solution is \(r = 1\). Every \(n\)th root of unity lies on the unit circle \(|z| = 1\).
+- Matching arguments modulo \(2\pi\): \(n\theta = 0 + 2\pi k\) for some integer \(k \in \mathbb{Z}\), which gives
+\[
+\theta_k = \frac{2\pi k}{n}, \qquad k \in \mathbb{Z}.
+\]
+This produces complex numbers \(\omega_k = e^{2\pi i k / n} = \cos\!\left(\frac{2\pi k}{n}\right) + i\sin\!\left(\frac{2\pi k}{n}\right)\).
+
+At first glance, letting \(k\) range over all integers seems to give infinitely many solutions. Why do we get EXACTLY \(n\) distinct roots? Check both directions:
+1. Distinctness for \(k = 0, 1, \dots, n - 1\): if \(0 \le j < k \le n - 1\), then the angle difference satisfies \(0 < \theta_k - \theta_j = \frac{2\pi(k - j)}{n} < 2\pi\), so it is NOT a multiple of \(2\pi\); hence \(\omega_j \ne \omega_k\).
+2. Repetition for all other \(k \in \mathbb{Z}\): by integer division by \(n\), write any \(k = qn + r\) with \(q \in \mathbb{Z}\) and remainder \(r \in \{0, 1, \dots, n - 1\}\). Then
+\[
+\omega_k = e^{2\pi i(qn + r)/n} = e^{2\pi i q} e^{2\pi i r / n} = 1 \cdot \omega_r = \omega_r.
+\]
+Therefore every integer \(k\) repeats one of the \(n\) roots \(\omega_0, \omega_1, \dots, \omega_{n-1}\). Notice also that setting \(\omega = \omega_1 = e^{2\pi i/n}\) gives \(\omega_k = (e^{2\pi i/n})^k = \omega^k\) for every \(k\).
+
+[CALLOUT]
+id: roots-of-unity-def
+label: Theorem
+title: The \(n\)th roots of unity
+tone: key
+
+For every integer \(n \ge 1\), the equation \(z^n = 1\) has exactly \(n\) distinct complex solutions, called the \(n\)th roots of unity:
+\[
+\omega_k = e^{2\pi i k / n} = \cos\!\left(\frac{2\pi k}{n}\right) + i\sin\!\left(\frac{2\pi k}{n}\right) = \omega^k, \qquad k = 0, 1, \dots, n - 1,
+\]
+where \(\omega = e^{2\pi i / n}\).
+
+(1) All \(n\) roots lie on the unit circle \(|z| = 1\) at angles spaced by \(\frac{2\pi}{n}\).
+(2) For \(n \ge 3\), they form the vertices of a regular \(n\)-gon inscribed in the unit circle with one vertex at \(\omega_0 = 1\).
+(3) Every root satisfies \(\overline{\omega_k} = \omega_k^{-1} = \omega_{n - k}\) (for \(1 \le k \le n - 1\)).
+[/CALLOUT]
+
+Let us list the first few small cases concretely:
+- \(n = 2\): \(1\) and \(-1\).
+- \(n = 3\) (cube roots of unity): \(1\), \(\omega = e^{2\pi i/3} = -\frac{1}{2} + i\frac{\sqrt{3}}{2}\), and \(\omega^2 = e^{4\pi i/3} = -\frac{1}{2} - i\frac{\sqrt{3}}{2}\) (an equilateral triangle).
+- \(n = 4\): \(1, i, -1, -i\) (a square).
+- \(n = 5\): \(1, e^{2\pi i/5}, e^{4\pi i/5}, e^{6\pi i/5}, e^{8\pi i/5}\) (a regular pentagon).
+
+The plot below shows the \(5\)th roots of unity inscribed in the unit circle. Notice how \(\omega^1\) and \(\omega^4 = \overline{\omega^1}\) are symmetric across the real axis, as are \(\omega^2\) and \(\omega^3 = \overline{\omega^2}\), while every step from \(\omega^k\) to \(\omega^{k+1}\) rotates counterclockwise by \(\frac{2\pi}{5} = 72^\circ\).
+
+[GRAPH]
+type: parametric2d
+title: The \(5\)th roots of unity forming a regular pentagon on the unit circle
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.4, 1.4
+yrange: -1.4, 1.4
+trace: cos(t), sin(t) | label: \(|z| = 1\) | color: #94a3b8
+segment: 1, 0, cos(2*pi/5), sin(2*pi/5) | color: #2563eb
+segment: cos(2*pi/5), sin(2*pi/5), cos(4*pi/5), sin(4*pi/5) | color: #2563eb
+segment: cos(4*pi/5), sin(4*pi/5), cos(6*pi/5), sin(6*pi/5) | color: #2563eb
+segment: cos(6*pi/5), sin(6*pi/5), cos(8*pi/5), sin(8*pi/5) | color: #2563eb
+segment: cos(8*pi/5), sin(8*pi/5), 1, 0 | color: #2563eb
+point: 1, 0 | label: \(1\)
+point: cos(2*pi/5), sin(2*pi/5) | label: \(\omega\)
+point: cos(4*pi/5), sin(4*pi/5) | label: \(\omega^2\)
+point: cos(6*pi/5), sin(6*pi/5) | label: \(\omega^3\)
+point: cos(8*pi/5), sin(8*pi/5) | label: \(\omega^4\)
+[/GRAPH]
+
+=== SECTION 2: Vanishing sums and primitive roots of unity ===
+
+Look at the regular pentagon above. If you place five equal masses at the five vertices on the unit circle, where is their center of mass? By rotational symmetry, it MUST be the origin \(0\)! That geometric intuition corresponds to one of the most useful algebraic identities in complex numbers.
+
+[CALLOUT]
+id: vanishing-sum-identity
+label: Theorem
+title: Vanishing sum of \(n\)th roots of unity
+tone: key
+
+For every integer \(n \ge 2\) and every \(n\)th root of unity \(\zeta\) with \(\zeta \ne 1\):
+\[
+1 + \zeta + \zeta^2 + \dots + \zeta^{n-1} = 0.
+\]
+In particular, the sum of all \(n\)th roots of unity is \(0\): \(\sum_{k=0}^{n-1} \omega^k = 0\).
+[/CALLOUT]
+
+We can prove [REF: vanishing-sum-identity | the vanishing sum identity] in two complementary ways:
+- Algebraic proof: expand \((\zeta - 1)(1 + \zeta + \zeta^2 + \dots + \zeta^{n-1})\) to see every middle term telescope, leaving \(\zeta^n - 1\). Because \(\zeta\) is an \(n\)th root of unity, \(\zeta^n - 1 = 0\). Because \(\zeta \ne 1\), we have \(\zeta - 1 \ne 0\), so dividing by \(\zeta - 1\) forces \(1 + \zeta + \zeta^2 + \dots + \zeta^{n-1} = 0\).
+- Geometric symmetry proof (for the full sum \(S = 1 + \omega + \omega^2 + \dots + \omega^{n-1}\)): multiplying \(S\) by \(\omega = e^{2\pi i/n}\) rotates every vertex counterclockwise by \(\frac{2\pi}{n}\), sending \(\omega^k \mapsto \omega^{k+1}\) and wrapping \(\omega^{n-1} \mapsto \omega^n = 1\). Thus \(\omega S\) sums the exact same \(n\) vertices in shifted order, so \(\omega S = S\), i.e., \((\omega - 1)S = 0\). Since \(\omega \ne 1\), we conclude \(S = 0\).
+
+Notice a subtle distinction inside [REF: roots-of-unity-def | the set of \(n\)th roots of unity]. Take \(n = 6\) with \(\omega = e^{2\pi i/6} = e^{i\pi/3}\). The six roots are \(1, \omega, \omega^2, \omega^3, \omega^4, \omega^5\). Look at the powers generated by each individual root:
+- Powers of \(\omega_1 = \omega\): \(\omega^0, \omega^1, \omega^2, \omega^3, \omega^4, \omega^5\) — all \(6\) roots!
+- Powers of \(\omega_2 = \omega^2 = e^{2\pi i/3}\): \(1, \omega^2, \omega^4\), and then \((\omega^2)^3 = 1\) — only \(3\) roots (it is really a cube root of unity!).
+- Powers of \(\omega_3 = \omega^3 = -1\): \(1, -1\) — only \(2\) roots.
+- Powers of \(\omega_5 = \omega^5 = e^{-i\pi/3}\): \(1, \omega^5, \omega^4, \omega^3, \omega^2, \omega^1\) — all \(6\) roots!
+
+An \(n\)th root of unity \(\zeta\) is called a primitive \(n\)th root of unity if \(n\) is the SMALLEST positive integer \(m\) such that \(\zeta^m = 1\) (equivalently, its powers \(1, \zeta, \zeta^2, \dots, \zeta^{n-1}\) generate all \(n\) roots of unity without repeating early).
+
+Which \(\omega_k = e^{2\pi i k/n}\) (\(0 \le k \le n - 1\)) are primitive? Let \(d = \gcd(k, n)\). If \(d > 1\), write \(k = d k'\) and \(n = d n'\) with \(1 \le n' < n\); then
+\[
+\omega_k^{n'} = e^{2\pi i (d k') n' / (d n')} = e^{2\pi i k'} = 1,
+\]
+so \(\omega_k\) already hits \(1\) at the smaller exponent \(n' < n\) and is NOT primitive. Conversely, if \(\gcd(k, n) = 1\), then \(\omega_k^m = 1 \iff \frac{km}{n} \in \mathbb{Z} \iff n \mid km\); since \(n\) and \(k\) share no common factor greater than \(1\), \(n\) must divide \(m\), so the smallest positive exponent is \(m = n\).
+
+[CALLOUT]
+id: primitive-roots-criterion
+label: Theorem
+title: Primitive \(n\)th roots of unity
+tone: key
+
+An \(n\)th root of unity \(\omega_k = e^{2\pi i k / n}\) (\(0 \le k \le n - 1\)) is a primitive \(n\)th root of unity if and only if \(\gcd(k, n) = 1\).
+[/CALLOUT]
+
+[TABLE]
+Index \(k\) (for \(n = 6\)) | \(\omega_k = e^{2\pi i k/6}\) | Smallest \(m \ge 1\) with \(\omega_k^m = 1\) | \(\gcd(k, 6)\) | Primitive \(6\)th root?
+\(0\) | \(1\) | \(1\) | \(6\) | No
+\(1\) | \(\frac{1}{2} + i\frac{\sqrt{3}}{2}\) | \(6\) | \(1\) | Yes
+\(2\) | \(-\frac{1}{2} + i\frac{\sqrt{3}}{2}\) | \(3\) | \(2\) | No (primitive \(3\)rd root)
+\(3\) | \(-1\) | \(2\) | \(3\) | No (primitive \(2\)nd root)
+\(4\) | \(-\frac{1}{2} - i\frac{\sqrt{3}}{2}\) | \(3\) | \(2\) | No (primitive \(3\)rd root)
+\(5\) | \(\frac{1}{2} - i\frac{\sqrt{3}}{2}\) | \(6\) | \(1\) | Yes
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(\omega = e^{2\pi i / 7}\). What is the value of \(\omega^2 + \omega^4 + \omega^6 + \omega^8 + \omega^{10} + \omega^{12}\)?
+
+(A) \(-1\)
+(B) \(0\)
+(C) \(1\)
+(D) \(-\omega\)
+(E) \(6\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Among the \(12\)th roots of unity \(\omega_k = e^{2\pi i k / 12}\) (\(k = 0, 1, \dots, 11\)), how many are primitive \(12\)th roots of unity, and which values of \(k\) produce them?
+
+(A) \(4\) primitive roots, corresponding to \(k = 1, 5, 7, 11\)
+(B) \(6\) primitive roots, corresponding to \(k = 1, 3, 5, 7, 9, 11\)
+(C) \(2\) primitive roots, corresponding to \(k = 1, 11\)
+(D) \(11\) primitive roots, corresponding to \(k = 1, 2, \dots, 11\)
+(E) \(4\) primitive roots, corresponding to \(k = 1, 2, 5, 7\)
+[/QUESTION]
+
+=== SECTION 3: Factoring \(z^n - 1\) over \(\mathbb{C}\) and over \(\mathbb{R}\) ===
+
+Because \(\omega_0, \omega_1, \dots, \omega_{n-1}\) are the \(n\) distinct roots of the monic degree-\(n\) polynomial \(z^n - 1\), its complete factorization over \(\mathbb{C}\) is
+\[
+z^n - 1 = \prod_{k=0}^{n-1}(z - \omega_k) = (z - 1)(z - \omega_1)(z - \omega_2)\cdots(z - \omega_{n-1}).
+\]
+Now pair the non-real conjugate roots to obtain the complete factorization of \(z^n - 1\) into irreducible factors over \(\mathbb{R}\). By [REF: roots-of-unity-def.3 | conjugate pairing], for every index \(k\) strictly between \(0\) and \(n/2\), the conjugate of \(\omega_k = e^{2\pi i k/n}\) is \(\omega_{n-k} = e^{-2\pi i k/n}\). Multiplying their linear factors gives
+\[
+(z - \omega_k)(z - \omega_{n-k}) = z^2 - (\omega_k + \overline{\omega_k})z + |\omega_k|^2 = z^2 - 2\cos\!\left(\frac{2\pi k}{n}\right)z + 1.
+\]
+What remains unpaired on the real axis?
+- Always \(k = 0\), giving the real linear factor \((z - 1)\).
+- When \(n\) is even, also \(k = n/2\) (\(\omega_{n/2} = e^{i\pi} = -1\)), giving the real linear factor \((z + 1)\).
+
+[CALLOUT]
+id: zn-minus-1-real-factor
+label: Formula
+title: Complete real factorization of \(z^n - 1\)
+tone: key
+
+(1) If \(n = 2m + 1\) is odd:
+\[
+z^n - 1 = (z - 1)\prod_{k=1}^{m}\left(z^2 - 2\cos\!\left(\frac{2\pi k}{n}\right)z + 1\right).
+\]
+(2) If \(n = 2m\) is even:
+\[
+z^n - 1 = (z - 1)(z + 1)\prod_{k=1}^{m-1}\left(z^2 - 2\cos\!\left(\frac{2\pi k}{n}\right)z + 1\right).
+\]
+[/CALLOUT]
+
+Let us apply [REF: zn-minus-1-real-factor | these formulas] to \(n = 6\) and \(n = 5\):
+- For \(n = 6\) (even, \(m = 3\)): the real roots give \((z - 1)(z + 1)\), and the conjugate pairs \(k = 1\) (\(\frac{2\pi}{6} = \frac{\pi}{3}\), \(\cos\frac{\pi}{3} = \frac{1}{2}\)) and \(k = 2\) (\(\frac{4\pi}{6} = \frac{2\pi}{3}\), \(\cos\frac{2\pi}{3} = -\frac{1}{2}\)) give
+\[
+z^6 - 1 = (z - 1)(z + 1)(z^2 - z + 1)(z^2 + z + 1),
+\]
+matching the classical algebraic factorization \((z^3 - 1)(z^3 + 1)\).
+- For \(n = 5\) (odd, \(m = 2\)):
+\[
+z^5 - 1 = (z - 1)\left(z^2 - 2\cos\!\left(\frac{2\pi}{5}\right)z + 1\right)\left(z^2 - 2\cos\!\left(\frac{4\pi}{5}\right)z + 1\right).
+\]
+This factorization would be nearly invisible from elementary algebra alone, yet roots of unity deliver it in one line!
+
+[QUESTION 3]
+[ANSWER: A]
+What is the complete factorization of \(z^8 - 1\) into irreducible polynomials over \(\mathbb{R}\)?
+
+(A) \((z - 1)(z + 1)(z^2 + 1)(z^2 - \sqrt{2}\,z + 1)(z^2 + \sqrt{2}\,z + 1)\)
+(B) \((z - 1)(z + 1)(z^2 + 1)(z^4 + 1)\)
+(C) \((z - 1)(z + 1)(z^2 + 1)(z^2 - z + 1)(z^2 + z + 1)\)
+(D) \((z - 1)(z + 1)(z^2 - 1)(z^2 - \sqrt{2}\,z + 1)(z^2 + \sqrt{2}\,z + 1)\)
+(E) \((z - 1)(z^2 - \sqrt{2}\,z + 1)(z^2 + 1)(z^2 + \sqrt{2}\,z + 1)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+What is the side length of the regular \(n\)-gon formed in the Argand plane by the \(n\)th roots of unity (for \(n \ge 3\))?
+
+(A) \(2\sin\!\left(\frac{\pi}{n}\right)\)
+(B) \(2\sin\!\left(\frac{2\pi}{n}\right)\)
+(C) \(2\cos\!\left(\frac{\pi}{n}\right)\)
+(D) \(\sin\!\left(\frac{2\pi}{n}\right)\)
+(E) \(\frac{2\pi}{n}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Using the vanishing sum of the \(5\)th roots of unity, find the exact value of \(\cos\!\left(\frac{2\pi}{5}\right) + \cos\!\left(\frac{4\pi}{5}\right)\).
+
+(A) \(-\frac{1}{2}\)
+(B) \(-1\)
+(C) \(0\)
+(D) \(\frac{1}{2}\)
+(E) \(-\frac{\sqrt{5}}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Let \(\omega_0 = 1, \omega_1, \dots, \omega_{n-1}\) be the \(n\)th roots of unity for an integer \(n \ge 2\). By dividing \(z^n - 1\) by \(z - 1\) and evaluating at \(z = 1\), find the product of the Euclidean distances from the vertex \(1\) to all other \(n - 1\) vertices of the inscribed regular \(n\)-gon, \(\prod_{k=1}^{n-1} |1 - \omega_k|\).
+
+(A) \(n\)
+(B) \(n - 1\)
+(C) \(2^{n-1}\)
+(D) \(1\)
+(E) \(\sqrt{n}\)
+[/BONUS]

@@ -1,0 +1,217 @@
+=== SECTION 1: Order out of chaos — Ramsey numbers and the party problem ===
+
+The Pigeonhole Principle tells us that crowding enough objects into too few boxes forces a cluster inside a single box. Ramsey theory pushes that same spirit into relationships between PAIRS of objects: if a network is large enough, no matter how chaotically you color every pair of vertices either red or blue, a guaranteed monochromatic cluster MUST appear.
+
+To make this precise, represent \(N\) points (vertices) with every unordered pair connected by an edge—the complete graph \(K_N\), which has \(\binom{N}{2}\) edges—and color each edge either RED or BLUE. A subset of \(s\) vertices is called a red \(s\)-clique (or monochromatic red \(K_s\)) if ALL \(\binom{s}{2}\) edges joining pairs inside that subset are red; a blue \(t\)-clique is defined identically with blue edges.
+
+[CALLOUT]
+id: ramsey-def
+label: Definition
+title: Two-color Ramsey numbers \(R(s, t)\)
+tone: key
+
+For integers \(s, t \ge 2\), the Ramsey number \(R(s, t)\) is the SMALLEST positive integer \(N\) such that EVERY red/blue edge-coloring of \(K_N\) contains either a red \(s\)-clique or a blue \(t\)-clique.
+[/CALLOUT]
+
+Pause and inspect the quantifiers inside [REF: ramsey-def | this definition], because proving an UPPER bound versus a LOWER bound requires opposite logical moves:
+- To prove \(R(s, t) \le N\), you must show that EVERY red/blue coloring of \(K_N\) produces a red \(s\)-clique or a blue \(t\)-clique.
+- To prove \(R(s, t) > N\) (equivalently \(R(s, t) \ge N + 1\)), it is enough to exhibit ONE explicit red/blue coloring of \(K_N\) that avoids BOTH a red \(s\)-clique and a blue \(t\)-clique!
+
+Check the trivial boundary values and symmetry immediately:
+1. Symmetry: Swapping the words "red" and "blue" shows \(R(s, t) = R(t, s)\).
+2. \(R(s, 2) = s\) (and symmetrically \(R(2, t) = t\)): On \(K_s\), either at least one edge is blue (which by itself is a blue \(2\)-clique!), or NO edge is blue, in which case all \(\binom{s}{2}\) edges are red (forming a red \(s\)-clique). Thus \(R(s, 2) \le s\). Conversely, coloring ALL edges of \(K_{s - 1}\) red creates neither a red \(s\)-clique (there are only \(s - 1\) vertices) nor a blue \(2\)-clique, so \(R(s, 2) > s - 1\). Hence \(R(s, 2) = s\).
+
+Now tackle the first genuinely nontrivial Ramsey number—the classic "party problem": at a party of \(6\) people, where every pair of people are either mutual friends (red edge) or mutual strangers (blue edge), must there ALWAYS be either \(3\) mutual friends (a red triangle, \(K_3\)) or \(3\) mutual strangers (a blue triangle)? Let us prove \(R(3, 3) = 6\) in full.
+
+Upper bound (\(R(3, 3) \le 6\)): Take ANY red/blue edge-coloring of \(K_6\), and fix one vertex \(v\). There are \(5\) edges incident to \(v\), each colored either red or blue. By the Generalized Pigeonhole Principle, one color appears on at least \(\lceil 5 / 2 \rceil = 3\) of these edges. Without loss of generality (by swapping colors if needed), suppose \(v\) has \(3\) red edges going to vertices \(u_1, u_2, u_3\). Now inspect the \(3\) edges among \(\{u_1, u_2, u_3\}\):
+- If AT LEAST ONE edge among \(u_1, u_2, u_3\) is red—say \(u_1 u_2\) is red—then \(\{v, u_1, u_2\}\) forms a red triangle!
+- Otherwise, ALL THREE edges \(u_1 u_2\), \(u_2 u_3\), and \(u_1 u_3\) are blue, so \(\{u_1, u_2, u_3\}\) itself forms a blue triangle!
+In every possible coloring of \(K_6\), a monochromatic triangle is forced, proving \(R(3, 3) \le 6\).
+
+Lower bound (\(R(3, 3) > 5\)): Arrange \(5\) vertices \(v_1, v_2, v_3, v_4, v_5\) around a circle as a regular pentagon. Color the \(5\) outer cycle edges RED and the \(5\) inner star diagonals BLUE, as shown below.
+
+[GRAPH]
+type: parametric2d
+title: A red/blue edge-coloring of \(K_5\) with no monochromatic triangle
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.283
+xrange: -1.35, 1.35
+yrange: -1.35, 1.35
+trace: cos(t), sin(t) | label: circumcircle | color: #94a3b8
+segment: 0, 1, 0.951, 0.309 | color: #dc2626
+segment: 0.951, 0.309, 0.588, -0.809 | color: #dc2626
+segment: 0.588, -0.809, -0.588, -0.809 | color: #dc2626
+segment: -0.588, -0.809, -0.951, 0.309 | color: #dc2626
+segment: -0.951, 0.309, 0, 1 | color: #dc2626
+segment: 0, 1, 0.588, -0.809 | color: #2563eb
+segment: 0.588, -0.809, -0.951, 0.309 | color: #2563eb
+segment: -0.951, 0.309, 0.951, 0.309 | color: #2563eb
+segment: 0.951, 0.309, -0.588, -0.809 | color: #2563eb
+segment: -0.588, -0.809, 0, 1 | color: #2563eb
+point: 0, 1 | label: \(v_1\) | offset: 0, 10
+point: 0.951, 0.309 | label: \(v_2\) | offset: 12, 4
+point: 0.588, -0.809 | label: \(v_3\) | offset: 10, -10
+point: -0.588, -0.809 | label: \(v_4\) | offset: -12, -10
+point: -0.951, 0.309 | label: \(v_5\) | offset: -14, 4
+[/GRAPH]
+
+In this coloring of \(K_5\), the red edges form a single \(5\)-cycle \(v_1 v_2 v_3 v_4 v_5 v_1\) (which contains no \(3\)-cycle), and the blue edges ALSO form a single \(5\)-cycle \(v_1 v_3 v_5 v_2 v_4 v_1\) (which likewise contains no \(3\)-cycle). Thus \(K_5\) admits a triangle-free \(2\)-coloring, proving \(R(3, 3) > 5\). Combining \(R(3, 3) \le 6\) and \(R(3, 3) > 5\) establishes \(R(3, 3) = 6\).
+
+[QUESTION 1]
+[ANSWER: A]
+To prove rigorously that \(R(s, t) > N\) for specific integers \(s, t, N\), which of the following is logically sufficient?
+
+(A) Exhibiting ONE red/blue edge-coloring of \(K_N\) that contains neither a red \(s\)-clique nor a blue \(t\)-clique.
+(B) Proving that EVERY red/blue edge-coloring of \(K_N\) contains neither a red \(s\)-clique nor a blue \(t\)-clique.
+(C) Exhibiting ONE red/blue edge-coloring of \(K_{N + 1}\) that contains a red \(s\)-clique.
+(D) Showing that the total number of edges \(\binom{N}{2}\) is strictly smaller than \(\binom{s}{2} + \binom{t}{2}\).
+(E) Checking that every vertex of \(K_N\) has fewer than \(s + t\) incident edges.
+[/QUESTION]
+
+=== SECTION 2: The Erdős–Szekeres recurrence and the even-even parity refinement ===
+
+How do we even know that \(R(s, t)\) is FINITE for arbitrary \(s, t \ge 2\)? In 1935, Paul Erdős and George Szekeres generalized the exact neighborhood-splitting trick we just used for \(R(3, 3)\) into a recursive inequality that guarantees \(R(s, t)\) exists and bounds it cleanly from above.
+
+Take \(s, t \ge 3\), and suppose \(R(s - 1, t)\) and \(R(s, t - 1)\) are already known to be finite. Set
+\[
+N = R(s - 1, t) + R(s, t - 1),
+\]
+and consider ANY red/blue edge-coloring of \(K_N\). Pick one vertex \(v\). It has
+\[
+N - 1 = \bigl(R(s - 1, t) - 1\bigr) + \bigl(R(s, t - 1) - 1\bigr) + 1
+\]
+incident edges, each colored red or blue. By the Pigeonhole Principle, it is IMPOSSIBLE for \(v\) to have at most \(R(s - 1, t) - 1\) red edges AND at most \(R(s, t - 1) - 1\) blue edges, because those maximums sum to only \(N - 2 < N - 1\). Therefore one of two cases must occur:
+- Case 1: Vertex \(v\) has at least \(R(s - 1, t)\) red neighbors. Let \(A\) be a set of \(R(s - 1, t)\) red neighbors of \(v\). By definition of \(R(s - 1, t)\), the subgraph on \(A\) contains either a blue \(t\)-clique (done!) or a red \((s - 1)\)-clique. Since every vertex in \(A\) is joined to \(v\) by a red edge, adding \(v\) to that red \((s - 1)\)-clique creates a red \(s\)-clique!
+- Case 2: Vertex \(v\) has at least \(R(s, t - 1)\) blue neighbors. Let \(B\) be a set of \(R(s, t - 1)\) blue neighbors of \(v\). By definition of \(R(s, t - 1)\), \(B\) contains either a red \(s\)-clique (done!) or a blue \((t - 1)\)-clique, which together with \(v\) forms a blue \(t\)-clique!
+
+Thus EVERY red/blue coloring of \(K_N\) contains a red \(s\)-clique or a blue \(t\)-clique, proving \(R(s, t) \le R(s - 1, t) + R(s, t - 1)\).
+
+Can we shave \(1\) off this bound? Try setting \(N = R(s - 1, t) + R(s, t - 1) - 1\). Now each vertex \(v\) has \(N - 1 = (R(s - 1, t) - 1) + (R(s, t - 1) - 1)\) incident edges, so the Pigeonhole Principle ONLY fails if EVERY SINGLE VERTEX \(v\) in the entire graph has EXACTLY \(R(s - 1, t) - 1\) red edges and EXACTLY \(R(s, t - 1) - 1\) blue edges.
+
+Now watch what happens when BOTH \(R(s - 1, t)\) and \(R(s, t - 1)\) are EVEN:
+- First, \(N = R(s - 1, t) + R(s, t - 1) - 1\) is ODD (even \(+\) even \(-\) \(1\)).
+- Second, the required red degree \(d = R(s - 1, t) - 1\) of every vertex is ALSO ODD!
+- Therefore, summing the red degrees across all \(N\) vertices gives \(N \cdot d\), which is \(\text{ODD} \times \text{ODD} = \text{ODD}\).
+- Yet in ANY graph, every red edge has two endpoints, so summing red degrees over all vertices counts every red edge TWICE—meaning the sum of red degrees MUST be EVEN!
+
+Contradiction! Hence no avoiding coloring can exist on \(N = R(s - 1, t) + R(s, t - 1) - 1\) vertices when both previous Ramsey numbers are even.
+
+[CALLOUT]
+id: erdos-szekeres
+label: Theorem
+title: Erdős–Szekeres inequality and even-even parity refinement
+tone: key
+
+For all integers \(s, t \ge 3\):
+
+(1) General recurrence inequality:
+\[
+R(s, t) \le R(s - 1, t) + R(s, t - 1).
+\]
+(2) Strict even-even improvement: If BOTH \(R(s - 1, t)\) and \(R(s, t - 1)\) are even, then
+\[
+R(s, t) \le R(s - 1, t) + R(s, t - 1) - 1.
+\]
+[/CALLOUT]
+
+Apply [REF: erdos-szekeres.2 | the even-even improvement] immediately to \(R(3, 4)\): we know \(R(2, 4) = 4\) (even) and \(R(3, 3) = 6\) (even). Because both terms are even,
+\[
+R(3, 4) \le 4 + 6 - 1 = 9!
+\]
+(In fact \(R(3, 4) = 9\) is exact—you will verify an explicit \(K_8\) lower-bound coloring in Bonus 2.) Notice that the strict \(-1\) improvement ONLY applies when BOTH \(R(s - 1, t)\) and \(R(s, t - 1)\) are even; if either one is odd, either \(N\) is even or \(d = R(s - 1, t) - 1\) is even, so \(N \cdot d\) is even and no handshaking contradiction arises!
+
+[QUESTION 2]
+[ANSWER: B]
+Given \(R(2, 5) = 5\) and \(R(3, 4) = 9\), what is the tightest upper bound on \(R(3, 5)\) that follows directly from [REF: erdos-szekeres | the Erdős–Szekeres theorem]?
+
+(A) \(13\), because \(5 + 9 - 1 = 13\) by the strict parity improvement.
+(B) \(14\), because \(5 + 9 = 14\), and the strict parity improvement does NOT apply since \(5\) and \(9\) are odd.
+(C) \(12\), because subtracting \(1\) for each odd term gives \(5 + 9 - 2 = 12\).
+(D) \(15\), from the binomial upper bound, which is always tighter than the recurrence.
+(E) \(13\), because \(13\) is odd so no \(4\)-regular red graph can exist on \(13\) vertices.
+[/QUESTION]
+
+=== SECTION 3: The binomial upper bound by induction and constructive lower bounds ===
+
+Look again at [REF: erdos-szekeres.1 | the recurrence inequality] \(R(s, t) \le R(s - 1, t) + R(s, t - 1)\) together with the boundary values \(R(s, 2) = s\) and \(R(2, t) = t\). That recurrence mirrors Pascal's identity \(\binom{m}{k} = \binom{m - 1}{k - 1} + \binom{m - 1}{k}\)! Ordinary mathematical induction turns this match into an explicit closed-form upper bound for every Ramsey number.
+
+[CALLOUT]
+id: ramsey-binomial-bound
+label: Theorem
+title: Binomial upper bound on \(R(s, t)\)
+tone: key
+
+For all integers \(s, t \ge 2\), the Ramsey number \(R(s, t)\) is finite and satisfies
+\[
+R(s, t) \le \binom{s + t - 2}{s - 1}.
+\]
+[/CALLOUT]
+
+Proof of [REF: ramsey-binomial-bound | the binomial upper bound] by ordinary induction on the sum \(m = s + t \ge 4\):
+- Base case (\(m = 4\)): The only pair with \(s, t \ge 2\) and \(s + t = 4\) is \((s, t) = (2, 2)\). We have \(R(2, 2) = 2 = \binom{2 + 2 - 2}{2 - 1} = \binom{2}{1}\), so the bound holds.
+- Inductive step: Fix \(m \ge 4\) and assume that \(R(a, b) \le \binom{a + b - 2}{a - 1}\) holds for ALL integer pairs \(a, b \ge 2\) satisfying \(a + b = m\). Now take any \(s, t \ge 2\) with \(s + t = m + 1\).
+  - If \(s = 2\), then \(R(2, t) = t = \binom{t}{1} = \binom{2 + t - 2}{2 - 1}\), so the bound holds with equality.
+  - If \(t = 2\), then \(R(s, 2) = s = \binom{s}{s - 1} = \binom{s + 2 - 2}{s - 1}\), so the bound holds with equality.
+  - If \(s \ge 3\) and \(t \ge 3\), then both pairs \((s - 1, t)\) and \((s, t - 1)\) have entries \(\ge 2\) and sum \((s - 1) + t = s + (t - 1) = m\). Applying [REF: erdos-szekeres.1 | the Erdős–Szekeres inequality], the inductive hypothesis, and Pascal's identity yields
+\[
+R(s, t) \le R(s - 1, t) + R(s, t - 1) \le \binom{s + t - 3}{s - 2} + \binom{s + t - 3}{s - 1} = \binom{s + t - 2}{s - 1}.
+\]
+By the Principle of Mathematical Induction, \(R(s, t) \le \binom{s + t - 2}{s - 1}\) for all \(s, t \ge 2\).
+
+For diagonal Ramsey numbers \(R(s, s)\), this gives \(R(s, s) \le \binom{2s - 2}{s - 1} < 2^{2s - 2} = 4^{s - 1}\) (since every binomial coefficient in row \(2s - 2\) is bounded by the row sum \(2^{2s - 2}\) from the Binomial Theorem!). Even for small values, computing exact Ramsey numbers is famously difficult—\(R(3, 3) = 6\), \(R(3, 4) = 9\), \(R(4, 4) = 18\), while \(R(5, 5)\) is still only known to lie between \(43\) and \(46\)! Tightening lower bounds for large \(s\) requires probabilistic methods studied in later combinatorics, whereas explicit block or circular colorings already give crisp elementary lower bounds.
+
+[QUESTION 3]
+[ANSWER: C]
+Given \(R(3, 4) = R(4, 3) = 9\), what upper bound on \(R(4, 4)\) follows from [REF: erdos-szekeres | the Erdős–Szekeres theorem], and what upper bound follows from [REF: ramsey-binomial-bound | the binomial upper bound]?
+
+(A) \(17\) from the recurrence; \(20\) from the binomial bound
+(B) \(18\) from the recurrence; \(15\) from the binomial bound
+(C) \(18\) from the recurrence; \(20\) from the binomial bound
+(D) \(17\) from the recurrence; \(70\) from the binomial bound
+(E) \(18\) from the recurrence; \(70\) from the binomial bound
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+For integers \(s, t \ge 2\), take \((s - 1)(t - 1)\) vertices and partition them into \(t - 1\) disjoint blocks, each containing \(s - 1\) vertices. Color every edge joining two vertices in the SAME block RED, and color every edge joining two vertices in DIFFERENT blocks BLUE. What lower bound on \(R(s, t)\) does this explicit coloring prove?
+
+(A) \(R(s, t) \ge (s - 1)(t - 1)\)
+(B) \(R(s, t) \le (s - 1)(t - 1) + 1\)
+(C) \(R(s, t) \ge st + 1\)
+(D) \(R(s, t) \ge s + t - 1\)
+(E) \(R(s, t) \ge (s - 1)(t - 1) + 1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose every edge of \(K_N\) is colored with one of THREE colors—red, blue, or green. Fix one vertex \(v\) and apply the Generalized Pigeonhole Principle to the \(N - 1\) edges incident to \(v\), together with the known two-color value \(R(3, 3) = 6\), to guarantee a monochromatic triangle in \(K_N\). What is the SMALLEST integer \(N\) for which this direct neighborhood argument succeeds?
+
+(A) \(15\)
+(B) \(16\)
+(C) \(17\)
+(D) \(18\)
+(E) \(19\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Place \(8\) vertices labeled \(0, 1, 2, 3, 4, 5, 6, 7\) equally spaced around a circle, so the circular distance between \(i\) and \(j\) is \(\min(\lvert i - j \rvert, 8 - \lvert i - j \rvert) \in \{1, 2, 3, 4\}\). Color an edge RED if its circular distance is \(1\) or \(4\), and BLUE if its circular distance is \(2\) or \(3\). What are the sizes of the largest red clique and the largest blue clique in this coloring of \(K_8\)?
+
+(A) Largest red clique has size \(2\); largest blue clique has size \(2\).
+(B) Largest red clique has size \(2\); largest blue clique has size \(3\).
+(C) Largest red clique has size \(3\); largest blue clique has size \(3\).
+(D) Largest red clique has size \(2\); largest blue clique has size \(4\).
+(E) Largest red clique has size \(3\); largest blue clique has size \(4\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Given \(R(2, 6) = 6\) and \(R(3, 5) = 14\), what is the tightest upper bound on \(R(3, 6)\) that follows directly from [REF: erdos-szekeres | the Erdős–Szekeres theorem]?
+
+(A) \(18\)
+(B) \(20\)
+(C) \(21\)
+(D) \(19\)
+(E) \(28\)
+[/BONUS]

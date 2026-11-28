@@ -1,0 +1,218 @@
+=== SECTION 1: Composiciones enteras acotadas superiormente mediante Inclusión-Exclusión ===
+
+En la lección de Estrellas y Barras vimos que las cotas inferiores \(x_i \ge a_i\) en una ecuación entera \(x_1 + x_2 + \cdots + x_n = k\) se manejan sin esfuerzo desplazando variables, mientras que las cotas SUPERIORES simultáneas \(x_i \le b_i\) se resisten al desplazamiento. El Principio de Inclusión-Exclusión (PIE) resuelve por completo las composiciones acotadas superiormente convirtiendo cada infracción de cota superior en una cota inferior.
+
+Fija como universo \(U\) TODAS las soluciones enteras no negativas de \(x_1 + x_2 + \cdots + x_n = k\), de modo que \(\lvert U \rvert = \binom{k + n - 1}{n - 1}\). Para cada variable \(x_i\) con una cota superior \(x_i \le b_i\), define la propiedad prohibida \(A_i\) como la infracción:
+\[
+A_i = \{ (x_1, \dots, x_n) \in U : x_i \ge b_i + 1 \}.
+\]
+¡Observa el desplazamiento estricto \(b_i + 1\) (no \(b_i\))!: la negación de \(x_i \le b_i\) para un entero \(x_i\) es \(x_i \ge b_i + 1\).
+
+Observa ahora CUALQUIER intersección \(A_{i_1} \cap \cdots \cap A_{i_r}\). Consta de las soluciones enteras no negativas de \(x_1 + \cdots + x_n = k\) que satisfacen las cotas INFERIORES simultáneas \(x_{i_1} \ge b_{i_1} + 1, \dots, x_{i_r} \ge b_{i_r} + 1\). Desplazar esas \(r\) variables reduce el lado derecho en \(s = (b_{i_1} + 1) + \cdots + (b_{i_r} + 1)\), así que
+\[
+\lvert A_{i_1} \cap \cdots \cap A_{i_r} \rvert = \binom{k - s + n - 1}{n - 1} \qquad (\text{o } 0 \text{ siempre que } k - s < 0).
+\]
+Observa con qué rapidez se anulan las intersecciones de orden superior en cuanto el total desplazado \(k - s\) se vuelve negativo.
+
+Ejemplo resuelto: Cuenta las soluciones enteras no negativas de \(x_1 + x_2 + x_3 = 11\) con \(x_1 \le 3\), \(x_2 \le 4\) y \(x_3 \le 6\).
+
+Aquí \(\lvert U \rvert = \binom{11 + 3 - 1}{2} = \binom{13}{2} = 78\). Las tres infracciones son \(A_1: x_1 \ge 4\), \(A_2: x_2 \ge 5\) y \(A_3: x_3 \ge 7\):
+- Infracciones individuales:
+  \(\lvert A_1 \rvert = \binom{11 - 4 + 2}{2} = \binom{9}{2} = 36\),
+  \(\lvert A_2 \rvert = \binom{11 - 5 + 2}{2} = \binom{8}{2} = 28\),
+  \(\lvert A_3 \rvert = \binom{11 - 7 + 2}{2} = \binom{6}{2} = 15\).
+  Así, \(S_1 = 36 + 28 + 15 = 79\).
+- Infracciones por pares:
+  \(\lvert A_1 \cap A_2 \rvert\): suma restante \(11 - 4 - 5 = 2 \implies \binom{2 + 2}{2} = 6\).
+  \(\lvert A_1 \cap A_3 \rvert\): suma restante \(11 - 4 - 7 = 0 \implies \binom{0 + 2}{2} = 1\).
+  \(\lvert A_2 \cap A_3 \rvert\): suma restante \(11 - 5 - 7 = -1 < 0 \implies 0\).
+  Así, \(S_2 = 6 + 1 + 0 = 7\).
+- Infracción triple: \(11 - 4 - 5 - 7 = -5 < 0\), así que \(S_3 = 0\).
+
+Por el PIE, el número de soluciones válidas es
+\[
+\lvert U \rvert - S_1 + S_2 - S_3 = 78 - 79 + 7 - 0 = 6.
+\]
+Si un problema también impone cotas inferiores \(a_i \le x_i \le b_i\), elimina primero todas las cotas inferiores desplazando \(y_i = x_i - a_i\) (convirtiendo cada restricción en \(0 \le y_i \le b_i - a_i\)), y LUEGO aplica el PIE a las cotas superiores sobre \(y_i\).
+
+[CALLOUT]
+id: bounded-compositions
+label: Método
+title: Conteo de composiciones acotadas superiormente mediante PIE
+tone: key
+
+Para contar soluciones enteras de \(x_1 + \cdots + x_n = k\) sujetas a \(a_i \le x_i \le b_i\):
+
+(1) Elimina primero todas las cotas inferiores poniendo \(y_i = x_i - a_i\), lo que da \(y_1 + \cdots + y_n = k'\) con \(0 \le y_i \le c_i\), donde \(k' = k - \sum a_i\) y \(c_i = b_i - a_i\).
+(2) Define \(U\) como todas las soluciones no negativas de \(\sum y_i = k'\) y define \(A_i\) como la infracción \(y_i \ge c_i + 1\).
+(3) Evalúa cada intersección mediante Estrellas y Barras desplazadas (poniendo en \(0\) cualquier término con suma restante negativa) y combina mediante la forma del complemento del PIE.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+¿Cuántas soluciones enteras no negativas \((x_1, x_2, x_3, x_4)\) satisfacen
+\[
+x_1 + x_2 + x_3 + x_4 = 13
+\]
+con \(x_i \le 5\) para todo \(i = 1, 2, 3, 4\)?
+
+(A) \(20\)
+(B) \(56\)
+(C) \(80\)
+(D) \(104\)
+(E) \(128\)
+[/QUESTION]
+
+=== SECTION 2: Funciones sobreyectivas y números de Stirling de segunda especie ===
+
+Ya conocemos dos conteos básicos de funciones de un dominio \(M = \{1, 2, \dots, m\}\) de \(m\) elementos a un codominio \(N = \{1, 2, \dots, n\}\) de \(n\) elementos: hay \(n^m\) funciones en total y \(P(n, m)\) funciones inyectivas (uno a uno). Considera ahora el requisito dual: una función \(f : M \to N\) se llama sobreyectiva (o suprayectiva) si todo elemento destino \(y \in N\) es alcanzado por al menos un elemento de \(M\) (equivalentemente, la imagen \(f(M)\) es igual a todo \(N\)). ¿Cuántas funciones sobreyectivas \(\operatorname{surj}(m, n)\) existen de \(M\) sobre \(N\)?
+
+¿Por qué no podemos elegir primero \(n\) elementos de \(M\) para cubrir los \(n\) destinos y luego enviar los \(m - n\) elementos restantes a cualquier lugar? Eso cae directo en la trampa de sobreconteo del representante designado: cada vez que un destino recibe dos o más entradas, contamos la misma función varias veces según qué entrada se eligió primero.
+
+¡El PIE hace el conteo sin esfuerzo! Sea \(U\) el conjunto de TODAS las \(n^m\) funciones \(f : M \to N\). Para cada elemento destino \(i \in \{1, \dots, n\}\), define la propiedad prohibida
+\[
+A_i = \{ f \in U : i \text{ queda omitido de la imagen de } f \}.
+\]
+Entonces una función es sobreyectiva si y solo si no omite NINGÚN elemento destino —es decir, pertenece a \(\bigcap_{i=1}^n A_i^c\).
+
+Calcula ahora el tamaño de cualquier intersección \(j\)-ésima \(A_{i_1} \cap \cdots \cap A_{i_j}\) (donde \(0 \le j \le n\)). Una función pertenece a esta intersección si y solo si evita los \(j\) destinos prohibidos \(i_1, \dots, i_j\), lo que significa que cada una de las \(m\) entradas debe enviarse a los \(n - j\) destinos restantes. ¡Por la Regla del Producto, hay \((n - j)^m\) funciones tales! Como las \(\binom{n}{j}\) elecciones de \(j\) destinos omitidos producen exactamente el mismo conteo \((n - j)^m\), tenemos \(S_j = \binom{n}{j}(n - j)^m\). Sustituir en la forma del complemento del PIE da la fórmula de sobreyecciones.
+
+Aplica ahora la Regla de la División para suprimir las etiquetas de los \(n\) destinos. Toda función sobreyectiva \(f : M \to \{1, \dots, n\}\) particiona el conjunto etiquetado \(M\) de \(m\) elementos en \(n\) bloques no vacíos —a saber, las preimágenes \(f^{-1}(1), f^{-1}(2), \dots, f^{-1}(n)\)— ordenados por sus etiquetas destino \(1, \dots, n\). Reordenar esas \(n\) etiquetas de cualquiera de las \(n!\) maneras produce \(n!\) sobreyecciones distintas que inducen EXACTAMENTE la misma partición SIN ETIQUETAR de \(M\) en \(n\) bloques no vacíos. Dividir \(\operatorname{surj}(m, n)\) entre \(n!\) define una de las familias numéricas más importantes de la combinatoria: los números de Stirling de segunda especie, escritos \(S(m, n)\) o \(\left\{\!{m \atop n}\!\right\}\).
+
+[CALLOUT]
+id: surjections-stirling
+label: Teoremas
+title: Sobreyeciones y números de Stirling de segunda especie
+tone: key
+
+Para enteros positivos \(m\) y \(n\):
+
+(1) El número de funciones sobreyectivas de un conjunto etiquetado de \(m\) elementos sobre un conjunto etiquetado de \(n\) elementos es
+\[
+\operatorname{surj}(m, n) = \sum_{j=0}^n (-1)^j \binom{n}{j} (n - j)^m.
+\]
+(2) El número de Stirling de segunda especie \(S(m, n)\) —el número de maneras de particionar un conjunto etiquetado de \(m\) elementos en \(n\) bloques SIN ETIQUETAR no vacíos— satisface
+\[
+S(m, n) = \frac{\operatorname{surj}(m, n)}{n!} = \frac{1}{n!} \sum_{j=0}^n (-1)^j \binom{n}{j} (n - j)^m.
+\]
+[/CALLOUT]
+
+Probemos [REF: surjections-stirling | ambas fórmulas] con \(m = 4\) elementos etiquetados y \(n = 3\) destinos/bloques:
+\[
+\operatorname{surj}(4, 3) = \binom{3}{0} 3^4 - \binom{3}{1} 2^4 + \binom{3}{2} 1^4 - \binom{3}{3} 0^4 = 81 - 48 + 3 - 0 = 36,
+\]
+y por tanto \(S(4, 3) = \frac{36}{3!} = \frac{36}{6} = 6\). Comprueba directamente: particionar \(4\) elementos etiquetados en \(3\) bloques sin etiquetar no vacíos fuerza tamaños de bloque \(2, 1, 1\), lo cual queda únicamente determinado al elegir el par de elementos que comparten bloque —¡\(\binom{4}{2} = 6\) maneras! Comprueba también qué ocurre cuando \(m < n\): ninguna función puede alcanzar los \(n\) destinos, de modo que [REF: surjections-stirling.1 | la fórmula de sobreyecciones] evalúa automáticamente a \(0\) (por ejemplo, en \(m = 2, n = 3\): \(9 - 12 + 3 - 0 = 0\)).
+
+[QUESTION 2]
+[ANSWER: C]
+¿Cuántas funciones sobreyectivas existen del conjunto de \(5\) elementos \(\{1, 2, 3, 4, 5\}\) sobre el conjunto de \(3\) elementos \(\{a, b, c\}\)?
+
+(A) \(25\)
+(B) \(125\)
+(C) \(150\)
+(D) \(147\)
+(E) \(243\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+¿De cuántas maneras pueden particionarse \(6\) tareas de investigación distintas en \(3\) equipos SIN ETIQUETAR y no vacíos?
+
+(A) \(75\)
+(B) \(90\)
+(C) \(120\)
+(D) \(180\)
+(E) \(540\)
+[/QUESTION]
+
+=== SECTION 3: Desarreglos — permutaciones sin puntos fijos ===
+
+Supón que \(n\) personas lanzan sus sombreros al aire y cada una recoge un sombrero al azar. ¿Cuántas permutaciones \(\sigma\) de \(\{1, 2, \dots, n\}\) dejan a NADIE con su propio sombrero —es decir, satisfacen \(\sigma(i) \neq i\) para todo \(i = 1, \dots, n\)? Una permutación sin puntos fijos así se llama un desarreglo, y denotamos el número de desarreglos de \(n\) elementos por \(D_n\).
+
+Fija como universo \(U\) todas las \(n!\) permutaciones de \(\{1, 2, \dots, n\}\). Para cada \(i \in \{1, \dots, n\}\), define la propiedad prohibida
+\[
+A_i = \{ \sigma \in U : \sigma(i) = i \},
+\]
+el conjunto de permutaciones que dejan fijo al elemento \(i\). Una permutación es un desarreglo precisamente cuando pertenece a \(\bigcap_{i=1}^n A_i^c\).
+
+Para cualesquiera \(k\) índices distintos \(1 \le i_1 < \cdots < i_k \le n\), una permutación yace en \(A_{i_1} \cap \cdots \cap A_{i_k}\) si y solo si esos \(k\) elementos permanecen fijos en sus propias posiciones mientras que los \(n - k\) elementos restantes se permutan arbitrariamente. Por consiguiente,
+\[
+\lvert A_{i_1} \cap \cdots \cap A_{i_k} \rvert = (n - k)!.
+\]
+Como hay \(\binom{n}{k}\) elecciones de qué \(k\) índices fijar, la \(k\)-ésima suma del PIE colapsa con una cancelación factorial notable:
+\[
+S_k = \binom{n}{k}(n - k)! = \frac{n!}{k!\,(n - k)!} (n - k)! = \frac{n!}{k!}.
+\]
+Sustituir \(S_k = n! / k!\) en la forma del complemento del PIE da la fórmula explícita para \(D_n\).
+
+[CALLOUT]
+id: derangements-formula
+label: Teorema
+title: La fórmula de los desarreglos
+tone: key
+
+Para todo entero no negativo \(n\) (tomando \(D_0 = 1\) para la permutación vacía), el número de permutaciones sin puntos fijos de \(n\) elementos es
+\[
+D_n = n! \sum_{k=0}^n \frac{(-1)^k}{k!} = n!\left(1 - \frac{1}{1!} + \frac{1}{2!} - \frac{1}{3!} + \cdots + \frac{(-1)^n}{n!}\right).
+\]
+[/CALLOUT]
+
+Tabulemos los primeros seis valores de \(D_n\) junto con la fracción \(D_n / n!\) (la probabilidad de que una permutación aleatoria uniforme de \(n\) elementos no tenga puntos fijos):
+
+[TABLE]
+\(n\) | \(n!\) | \(D_n\) | \(D_n / n!\) (aprox.)
+\(1\) | \(1\) | \(0\) | \(0.000000\)
+\(2\) | \(2\) | \(1\) | \(0.500000\)
+\(3\) | \(6\) | \(2\) | \(0.333333\)
+\(4\) | \(24\) | \(9\) | \(0.375000\)
+\(5\) | \(120\) | \(44\) | \(0.366667\)
+\(6\) | \(720\) | \(265\) | \(0.368056\)
+[/TABLE]
+
+Mira la última columna: la proporción \(D_n / n! = \sum_{k=0}^n (-1)^k / k!\) es la \(n\)-ésima suma parcial de la serie de Maclaurin de \(e^{-1} \approx 0.367879\). Como \(1/k!\) decrece tan rápidamente, ¡\(D_n / n!\) ya está a menos de \(0.0002\) de \(1/e\) para \(n = 6\)! Ya sean \(10\) invitados o \(10{,}000\) invitados quienes revuelvan sus sombreros, la probabilidad de que nadie recupere su propio sombrero se mantiene prácticamente clavada en \(1/e \approx 36.8\%\).
+
+También podemos combinar [REF: derangements-formula | los desarreglos] con combinaciones ordinarias para contar permutaciones con un número EXACTO \(r\) de puntos fijos: elige qué \(r\) elementos quedan fijos de \(\binom{n}{r}\) maneras y desarregla los \(n - r\) elementos restantes de \(D_{n - r}\) maneras, obteniendo \(\binom{n}{r} D_{n - r}\). Observa por qué aquí no hay sobreconteo: especificar el conjunto EXACTO de puntos fijos particiona todas las \(n!\) permutaciones en casos disjuntos, dando la elegante identidad \(\sum_{r=0}^n \binom{n}{r} D_{n - r} = n!\).
+
+[QUESTION 4]
+[ANSWER: E]
+Seis invitados dejan sus abrigos en el guardarropa de un restaurante. ¿De cuántas maneras pueden devolverse los abrigos de modo que EXACTAMENTE \(2\) invitados reciban su propio abrigo y los otros \(4\) invitados NO reciban su propio abrigo?
+
+(A) \(9\)
+(B) \(265\)
+(C) \(270\)
+(D) \(360\)
+(E) \(135\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+¿Cuántas soluciones enteras positivas \((x_1, x_2, x_3)\) satisfacen \(x_1 + x_2 + x_3 = 14\) con \(1 \le x_i \le 6\) para todo \(i = 1, 2, 3\)?
+
+(A) \(12\)
+(B) \(15\)
+(C) \(21\)
+(D) \(33\)
+(E) \(78\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Seis servidores distintos se asignan a \(4\) clústeres etiquetados de modo que cada clúster reciba al menos un servidor. ¿Cuántas asignaciones tales son posibles?
+
+(A) \(65\)
+(B) \(1180\)
+(C) \(1564\)
+(D) \(1560\)
+(E) \(4096\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Cinco cartas distintas se colocan en cinco sobres con sus respectivas direcciones, una carta por sobre. ¿De cuántas maneras puede hacerse esto de modo que AL MENOS \(4\) cartas vayan a los sobres INCORRECTOS?
+
+(A) \(89\)
+(B) \(44\)
+(C) \(45\)
+(D) \(90\)
+(E) \(100\)
+[/BONUS]

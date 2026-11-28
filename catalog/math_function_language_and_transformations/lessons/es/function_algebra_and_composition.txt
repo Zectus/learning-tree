@@ -1,0 +1,262 @@
+=== SECTION 1: Combinaciones algebraicas puntuales y sus dominios ===
+
+Supón que un pequeño taller fabrica \(x\) mesas de madera por semana. Su ingreso semanal se modela mediante \(R(x) = 180x - 2x^2\) y su costo semanal mediante \(C(x) = 400 + 60x\). Para estudiar la ganancia semanal, formamos una nueva función \(P(x) = R(x) - C(x)\) restando ambas salidas en cada entrada \(x\). Así como los números reales pueden sumarse, restarse, multiplicarse y dividirse, las funciones pueden combinarse punto a punto para construir nuevas funciones.
+
+[CALLOUT]
+id: alg-comb-def
+label: Definición
+title: Combinaciones algebraicas de funciones
+tone: key
+
+Sean \(f\) y \(g\) funciones con dominios \(\operatorname{Dom}(f)\) y \(\operatorname{Dom}(g)\). Su suma, resta, producto y cociente se definen punto a punto mediante:
+
+(1) \((f + g)(x) = f(x) + g(x)\), con dominio \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g)\).
+(2) \((f - g)(x) = f(x) - g(x)\), con dominio \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g)\).
+(3) \((fg)(x) = f(x) \cdot g(x)\), con dominio \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g)\).
+(4) \(\left(\dfrac{f}{g}\right)(x) = \dfrac{f(x)}{g(x)}\), con dominio \(\{x \in \operatorname{Dom}(f) \cap \operatorname{Dom}(g) : g(x) \ne 0\}\).
+[/CALLOUT]
+
+Aquí el símbolo de intersección \(\cap\) significa «en AMBOS conjuntos»: para calcular \(f(x) + g(x)\), la entrada \(x\) debe ser válida para \(f\) Y válida para \(g\) al mismo tiempo. Para el cociente \(f/g\), [REF: alg-comb-def.4 | la regla (4)] impone una restricción adicional: debemos excluir también todo \(x\) donde \(g(x) = 0\).
+
+Trabajemos un ejemplo concreto con dominios restringidos. Toma
+\[
+f(x) = \sqrt{x + 2} \qquad \text{y} \qquad g(x) = \sqrt{5 - x}.
+\]
+Individualmente, \(\operatorname{Dom}(f) = [-2, \infty)\) y \(\operatorname{Dom}(g) = (-\infty, 5]\). Su superposición es el intervalo cerrado
+\[
+\operatorname{Dom}(f) \cap \operatorname{Dom}(g) = [-2, 5].
+\]
+Por lo tanto:
+- \((f + g)(x) = \sqrt{x + 2} + \sqrt{5 - x}\) tiene dominio \([-2, 5]\).
+- \((fg)(x) = \sqrt{x + 2}\sqrt{5 - x} = \sqrt{(x + 2)(5 - x)}\) también tiene dominio \([-2, 5]\).
+- \(\left(\frac{f}{g}\right)(x) = \frac{\sqrt{x + 2}}{\sqrt{5 - x}}\) exige \(x \in [-2, 5]\) Y \(g(x) = \sqrt{5 - x} \ne 0\), lo cual excluye \(x = 5\), dejando el dominio \([-2, 5)\).
+- \(\left(\frac{g}{f}\right)(x) = \frac{\sqrt{5 - x}}{\sqrt{x + 2}}\) excluye en cambio \(x = -2\), dejando el dominio \((-2, 5]\).
+
+Geométricamente, \((f + g)(x)\) simplemente suma las alturas verticales de las dos gráficas en cada \(x\) de su dominio compartido. En la gráfica siguiente, observa cómo \((f + g)(x)\) existe solo en la superposición \([-2, 5]\), donde su altura en \(x = 1\) es igual a \(f(1) + g(1) = \sqrt{3} + 2 \approx 3.73\).
+
+[GRAPH]
+type: function2d
+title: Suma puntual \((f + g)(x) = \sqrt{x + 2} + \sqrt{5 - x}\) en \(\operatorname{Dom}(f) \cap \operatorname{Dom}(g) = [-2, 5]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 6
+yrange: 0, 5
+trace: x >= -2 ? sqrt(x + 2) : (0/0) | label: \(f(x) = \sqrt{x + 2}\)
+trace: x <= 5 ? sqrt(5 - x) : (0/0) | label: \(g(x) = \sqrt{5 - x}\)
+trace: (x >= -2 and x <= 5) ? (sqrt(x + 2) + sqrt(5 - x)) : (0/0) | label: \((f + g)(x)\)
+point: 1, 1.7321 | label: \((1, f(1))\)
+point: 1, 2 | label: \((1, g(1))\)
+point: 1, 3.7321 | label: \((1, (f + g)(1))\)
+segment: 1, 0, 1, 3.7321 | dashed: true
+[/GRAPH]
+
+Cuidado con una trampa sutil de simplificación en productos y cocientes. Supón que \(u(x) = \sqrt{x}\) y \(v(x) = \sqrt{x}\). La intersección de sus dominios es \([0, \infty)\), de modo que \((uv)(x) = \sqrt{x}\cdot\sqrt{x} = x\) tiene dominio \([0, \infty)\), NO \((-\infty, \infty)\): ¡aunque la fórmula simplificada parezca ser \(x\), sigues sin poder introducir \(x = -4\) en \(u\) ni en \(v\)!
+
+[QUESTION 1]
+[ANSWER: C]
+Sean \(f(x) = \sqrt{x - 1}\) y \(g(x) = x^2 - 9\). ¿Cuál es el dominio de \(\left(\dfrac{f}{g}\right)(x)\)?
+
+(A) \([1, \infty)\)
+(B) \((1, 3) \cup (3, \infty)\)
+(C) \([1, 3) \cup (3, \infty)\)
+(D) \((-\infty, -3) \cup (-3, 3) \cup (3, \infty)\)
+(E) \([1, 9) \cup (9, \infty)\)
+[/QUESTION]
+
+=== SECTION 2: Composición de funciones en fórmulas, tablas y gráficas ===
+
+Las combinaciones aritméticas introducen la misma entrada \(x\) en \(f\) y \(g\) en paralelo. Una manera completamente distinta de combinar dos funciones es encadenarlas en serie: introduce \(x\) en una función interna \(g\), toma su salida \(g(x)\) e introduce ese resultado en una función externa \(f\). Por ejemplo, si \(g(t)\) convierte la temperatura \(t\) de grados Celsius a Fahrenheit y \(f(F)\) calcula el nivel de potencia de un controlador de calefacción a partir de una lectura en Fahrenheit, encadenarlas produce \(f(g(t))\), el nivel de potencia directamente desde grados Celsius.
+
+[CALLOUT]
+id: comp-def
+label: Definición
+title: Composición de funciones
+tone: key
+
+Dadas dos funciones \(f\) y \(g\), la función compuesta \(f \circ g\) (léase «\(f\) compuesta con \(g\)» o «\(f\) de \(g\)») se define por
+\[
+(f \circ g)(x) = f(g(x)).
+\]
+La función interna \(g\) actúa primero sobre \(x\), y la función externa \(f\) actúa después sobre \(g(x)\).
+[/CALLOUT]
+
+Observa el orden de lectura de derecha a izquierda en [REF: comp-def | la composición]: en \((f \circ g)(x) = f(g(x))\), la función más cercana a \(x\) actúa primero. No confundas el pequeño círculo abierto \(\circ\) con la multiplicación \(\cdot\): \((fg)(x)\) multiplica \(f(x)\) por \(g(x)\), mientras que \((f \circ g)(x)\) anida \(g(x)\) dentro de \(f\).
+
+Evaluemos composiciones en tres representaciones distintas:
+
+1. A partir de fórmulas algebraicas: Sean \(f(x) = 2x + 1\) y \(g(x) = x^2 - 3\).
+   - \((f \circ g)(x) = f(g(x)) = f(x^2 - 3) = 2(x^2 - 3) + 1 = 2x^2 - 5\).
+   - \((g \circ f)(x) = g(f(x)) = g(2x + 1) = (2x + 1)^2 - 3 = 4x^2 + 4x - 2\).
+
+   Observa esas dos salidas: \(2x^2 - 5 \ne 4x^2 + 4x - 2\). En general, la composición de funciones NO es conmutativa:
+   \[
+   f \circ g \ne g \circ f.
+   \]
+   El orden importa, así como ponerse primero los calcetines y luego los zapatos es muy distinto a ponerse primero los zapatos y luego los calcetines.
+
+   En cambio, la composición SÍ es asociativa: para cualesquiera tres funciones \(f\), \(g\) y \(h\) (donde las composiciones estén definidas),
+   \[
+   \bigl((f \circ g) \circ h\bigr)(x) = (f \circ g)(h(x)) = f\bigl(g(h(x))\bigr) = \bigl(f \circ (g \circ h)\bigr)(x).
+   \]
+   Ambas agrupaciones aplican primero \(h\), luego \(g\) y luego \(f\), por lo que podemos escribir \(f \circ g \circ h\) sin ambigüedad.
+
+2. A partir de una tabla de valores: Supón que \(f\) y \(g\) vienen dadas únicamente por la tabla siguiente.
+
+[TABLE]
+\(x\) | \(1\) | \(2\) | \(3\) | \(4\) | \(5\)
+\(f(x)\) | \(4\) | \(5\) | \(2\) | \(1\) | \(3\)
+\(g(x)\) | \(3\) | \(1\) | \(4\) | \(2\) | \(2\)
+[/TABLE]
+
+   - Para hallar \((f \circ g)(1)\): primero lee \(g(1) = 3\), luego busca \(f(3) = 2\). Así que \((f \circ g)(1) = 2\).
+   - Para hallar \((g \circ f)(1)\): primero lee \(f(1) = 4\), luego busca \(g(4) = 2\).
+   - Para hallar \((g \circ g)(1)\): primero lee \(g(1) = 3\), luego busca \(g(3) = 4\).
+
+3. A partir de gráficas: Para evaluar \((f \circ g)(a)\) a partir de las gráficas de \(f\) y \(g\), comienza en \(x = a\), muévete verticalmente hasta la gráfica de \(g\) para leer su altura \(b = g(a)\), luego muévete a \(x = b\) sobre el eje horizontal y lee la altura \(f(b)\) en la gráfica de \(f\).
+
+[QUESTION 2]
+[ANSWER: B]
+Usando la tabla de valores de \(f\) y \(g\) en la Sección 2 anterior, ¿cuál es el valor de \((f \circ g)(2) - (g \circ f)(3)\)?
+
+(A) \(1\)
+(B) \(3\)
+(C) \(4\)
+(D) \(2\)
+(E) \(-1\)
+[/QUESTION]
+
+=== SECTION 3: Dominios exactos de funciones compuestas ===
+
+Hallar el dominio de \(f \circ g\) es la habilidad más importante —y más frecuentemente pasada por alto— en la composición de funciones. Para que \(f(g(x))\) produzca un número real, deben superarse AMBOS obstáculos en secuencia:
+1. Primero, \(x\) debe ser una entrada válida para la función interna \(g\): \(x \in \operatorname{Dom}(g)\).
+2. Segundo, la salida intermedia \(g(x)\) debe ser una entrada válida para la función externa \(f\): \(g(x) \in \operatorname{Dom}(f)\).
+
+[CALLOUT]
+id: comp-domain
+label: Regla
+title: Dominio de una función compuesta
+tone: key
+
+El dominio de \(f \circ g\) es
+\[
+\operatorname{Dom}(f \circ g) = \{x \in \operatorname{Dom}(g) : g(x) \in \operatorname{Dom}(f)\}.
+\]
+Determina siempre \(\operatorname{Dom}(f \circ g)\) ANTES de simplificar la fórmula algebraica de \(f(g(x))\).
+[/CALLOUT]
+
+¿Por qué insiste [REF: comp-domain | la regla] en comprobar el dominio ANTES de simplificar? Observa dos trampas clásicas:
+
+Trampa 1: Sean \(f(x) = x^2\) y \(g(x) = \sqrt{x}\).
+Si simplificas ingenuamente primero, obtienes \((f \circ g)(x) = (\sqrt{x})^2 = x\) y podrías declarar falsamente que el dominio es \((-\infty, \infty)\). ¡Pero \(x = -4\) ni siquiera puede entrar en \(g(x) = \sqrt{x}\)! Al aplicar [REF: comp-domain | la regla exacta del dominio]:
+- Paso 1: \(x \in \operatorname{Dom}(g) = [0, \infty)\).
+- Paso 2: \(g(x) = \sqrt{x} \in \operatorname{Dom}(f) = (-\infty, \infty)\) (sin restricción adicional).
+Por consiguiente, \(\operatorname{Dom}(f \circ g) = [0, \infty)\), de modo que \((f \circ g)(x) = x\) ÚNICAMENTE para \(x \ge 0\).
+
+Trampa 2: Sean \(f(x) = \frac{1}{x}\) y \(g(x) = \frac{1}{x}\).
+Simplificar da \((f \circ g)(x) = \frac{1}{1/x} = x\). Sin embargo, \(x = 0\) está excluido de \(\operatorname{Dom}(g)\), por lo que \(\operatorname{Dom}(f \circ g) = (-\infty, 0) \cup (0, \infty)\).
+
+Ahora trabajemos un ejemplo completo de dos obstáculos donde AMBOS pasos imponen restricciones genuinas. Sean
+\[
+f(x) = \frac{1}{x - 2} \qquad \text{y} \qquad g(x) = \frac{3}{x + 1}.
+\]
+Primero halla cada dominio individual: \(\operatorname{Dom}(f) = \{x : x \ne 2\}\) y \(\operatorname{Dom}(g) = \{x : x \ne -1\}\).
+Ahora aplica [REF: comp-domain | la regla del dominio compuesto]:
+- Obstáculo 1 (\(x \in \operatorname{Dom}(g)\)): \(x \ne -1\).
+- Obstáculo 2 (\(g(x) \in \operatorname{Dom}(f)\)): exigimos \(g(x) \ne 2\), así que resolvemos \(\frac{3}{x + 1} = 2\):
+\[
+3 = 2(x + 1) \implies 3 = 2x + 2 \implies x = \frac{1}{2}.
+\]
+Así debemos excluir TANTO \(x = -1\) como \(x = \frac{1}{2}\), obteniendo
+\[
+\operatorname{Dom}(f \circ g) = (-\infty, -1) \cup \left(-1, \frac{1}{2}\right) \cup \left(\frac{1}{2}, \infty\right).
+\]
+Ahora simplifica la fórmula (para \(x\) en ese dominio):
+\[
+(f \circ g)(x) = \frac{1}{\frac{3}{x + 1} - 2} = \frac{x + 1}{3 - 2(x + 1)} = \frac{x + 1}{1 - 2x}.
+\]
+¡Observa lo que ocultó la simplificación! En la fracción simplificada \(\frac{x + 1}{1 - 2x}\), la exclusión \(x \ne \frac{1}{2}\) sigue siendo visible en el denominador \(1 - 2x\), ¡pero la exclusión \(x \ne -1\) desapareció por completo! Comprobar el dominio antes de simplificar es la única manera fiable de mantener fuera a \(x = -1\).
+
+[GRAPH]
+type: function2d
+title: Gráfica de \((f \circ g)(x) = (x + 1)/(1 - 2x)\) con asíntota \(x = 1/2\) y hueco oculto en \(x = -1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -6, 6
+trace: abs(x - 0.5) > 0.12 ? (x + 1)/(1 - 2*x) : (0/0) | label: \((f \circ g)(x)\)
+segment: 0.5, -6, 0.5, 6 | label: \(x = 1/2\) | dashed: true
+point: -1, 0 | label: abierto (-1, 0)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: E]
+Sean \(f(x) = \sqrt{x - 4}\) y \(g(x) = x^2\). ¿Cuál es el dominio exacto de \(f \circ g\)?
+
+(A) \([4, \infty)\)
+(B) \([2, \infty)\)
+(C) \((-\infty, \infty)\)
+(D) \((-2, 2)\)
+(E) \((-\infty, -2] \cup [2, \infty)\)
+[/QUESTION]
+
+=== SECTION 4: Descomposición de funciones anidadas en capas ===
+
+En álgebra y más adelante en cálculo, a menudo necesitarás ejecutar la composición en sentido inverso: tomar una fórmula complicada \(H(x)\) y expresarla como una composición \(H(x) = (f \circ g)(x) = f(g(x))\) de funciones más simples \(f\) y \(g\) (ninguna de las cuales sea la función identidad trivial \(I(x) = x\)).
+
+La pregunta guía es sencilla: si sustituyeras un número por \(x\) en una calculadora, ¿qué expresión calcularías PRIMERO (función interna \(g\)), y qué operación realizarías AL FINAL sobre ese resultado (función externa \(f\))?
+
+Recorre dos ejemplos:
+1. \(H(x) = (3x - 1)^3 + 2\).
+   - Descomposición natural: calcula primero \(g(x) = 3x - 1\), luego eleva al cubo y suma \(2\) con \(f(u) = u^3 + 2\). Comprobación: \(f(g(x)) = (3x - 1)^3 + 2\).
+   - Descomposición alternativa: calcula primero \(g_2(x) = (3x - 1)^3\), luego suma \(2\) con \(f_2(u) = u + 2\). Comprobación: \(f_2(g_2(x)) = (3x - 1)^3 + 2\).
+
+2. \(K(x) = \dfrac{1}{\sqrt{2x + 5}}\).
+   - Descomposición en dos capas A: \(g(x) = 2x + 5\) y \(f(u) = \frac{1}{\sqrt{u}}\).
+   - Descomposición en dos capas B: \(g(x) = \sqrt{2x + 5}\) y \(f(u) = \frac{1}{u}\).
+   - Descomposición en tres capas: \(h(x) = 2x + 5\), \(g(u) = \sqrt{u}\) y \(f(v) = \frac{1}{v}\), dando \(K = f \circ g \circ h\).
+
+Como muestran estos ejemplos, la descomposición de funciones en general NO es única: existen varias formas válidas de separar capas, y eliges la que mejor se adapte al problema en cuestión.
+
+[QUESTION 4]
+[ANSWER: A]
+¿Qué par de funciones \(f\) y \(g\) satisface \((f \circ g)(x) = \dfrac{5}{(x^2 + 3)^2} - 1\)?
+
+(A) \(f(x) = \dfrac{5}{x^2} - 1\) y \(g(x) = x^2 + 3\)
+(B) \(f(x) = x^2 + 3\) y \(g(x) = \dfrac{5}{x^2} - 1\)
+(C) \(f(x) = \dfrac{5}{x} - 1\) y \(g(x) = x^2 + 3\)
+(D) \(f(x) = \dfrac{5}{(x + 3)^2} - 1\) y \(g(x) = x^2 + 3\)
+(E) \(f(x) = \dfrac{5}{x^2 - 1}\) y \(g(x) = x^2 + 3\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Sean \(f(x) = \dfrac{1}{x - 3}\) y \(g(x) = \dfrac{2}{x}\). ¿Cuál es el dominio exacto de \(f \circ g\)?
+
+(A) \((-\infty, 3) \cup (3, \infty)\)
+(B) \((-\infty, 0) \cup (0, \infty)\)
+(C) \(\left(-\infty, \frac{2}{3}\right) \cup \left(\frac{2}{3}, \infty\right)\)
+(D) \((-\infty, 0) \cup \left(0, \frac{2}{3}\right) \cup \left(\frac{2}{3}, \infty\right)\)
+(E) \((-\infty, 0) \cup (0, 3) \cup (3, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Sean \(f(x) = 3x - 2\) y \(g(x) = 2x + c\), donde \(c\) es una constante. ¿Para qué valor de \(c\) conmutan \(f\) y \(g\), es decir, \((f \circ g)(x) = (g \circ f)(x)\) para todo \(x\) real?
+
+(A) \(c = 0\)
+(B) \(c = -2\)
+(C) \(c = -1\)
+(D) \(c = 1\)
+(E) Ninguna constante \(c\) hace que \(f \circ g = g \circ f\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Sean \(f(x) = \sqrt{4 - x}\) y \(g(x) = \sqrt{x + 1}\). ¿Cuál es el dominio exacto de \(f \circ g\)?
+
+(A) \([-1, 4]\)
+(B) \([-1, 15]\)
+(C) \([0, 15]\)
+(D) \([-1, 16]\)
+(E) \((-\infty, 15]\)
+[/BONUS]

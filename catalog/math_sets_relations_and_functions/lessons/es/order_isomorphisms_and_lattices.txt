@@ -1,0 +1,265 @@
+=== SECTION 1: Aplicaciones que preservan el orden, inmersiones de orden e isomorfismos de orden ===
+
+Para conjuntos simples sin estructura adicional, dos conjuntos son «estructuralmente idénticos» siempre que existe una biyección entre ellos. Sin embargo, una vez que dotamos a los conjuntos de órdenes parciales \((P, \preceq_P)\) y \((Q, \preceq_Q)\), ¡una mera biyección ignora por completo el orden! Para comparar fielmente estructuras ordenadas necesitamos funciones que interactúen limpiamente con \(\preceq_P\) y \(\preceq_Q\). Tres niveles anidados de compatibilidad con el orden cumplen esa labor.
+
+[CALLOUT]
+id: order-maps-def
+label: Definición
+title: Aplicación que preserva el orden, inmersión de orden e isomorfismo de orden
+tone: key
+
+Sean \((P, \preceq_P)\) y \((Q, \preceq_Q)\) conjuntos parcialmente ordenados, y sea \(f : P \to Q\) una función.
+
+(1) Que preserva el orden (monótona): para cualesquiera \(x, y \in P\),
+\[
+x \preceq_P y \implies f(x) \preceq_Q f(y).
+\]
+(2) Inmersión de orden (preserva el orden Y refleja el orden): para cualesquiera \(x, y \in P\),
+\[
+x \preceq_P y \iff f(x) \preceq_Q f(y).
+\]
+(3) Isomorfismo de orden: \(f\) es una inmersión de orden BIYECTIVA. Equivalentemente, \(f\) es una biyección tal que TANTO \(f : P \to Q\) COMO \(f^{-1} : Q \to P\) preservan el orden.
+[/CALLOUT]
+
+Comprobemos dos consecuencias inmediatas de [REF: order-maps-def | esta definición]:
+- Toda inmersión de orden \(f : P \to Q\) es AUTOMÁTICAMENTE INYECTIVA. Demostración: supongamos \(f(x) = f(y)\). Por reflexividad de \(\preceq_Q\), tenemos TANTO \(f(x) \preceq_Q f(y)\) COMO \(f(y) \preceq_Q f(x)\). Como \(f\) es una inmersión de orden (¡implicación inversa!), esto produce TANTO \(x \preceq_P y\) COMO \(y \preceq_P x\). Por antisimetría de \(\preceq_P\), \(x = y\).
+- Una inmersión de orden \(f : P \to Q\) NO tiene por qué ser sobreyectiva (por ejemplo, \(n \mapsto 2n\) es una inmersión de orden de \((\mathbb{Z}, \le)\) en \((\mathbb{Z}, \le)\)); vuelve a \(P\) isomorfo en orden al subposet \(\operatorname{im}(f) \subseteq Q\).
+
+Afronte ahora el error conceptual más importante al comparar posets:
+
+[CALLOUT]
+id: bijective-monotone-trap
+label: Error frecuente
+title: ¡Una biyección que preserva el orden NO es necesariamente un isomorfismo de orden!
+tone: caution
+
+Para posets generales, una biyección \(f : P \to Q\) que preserva el orden (\(x \preceq_P y \implies f(x) \preceq_Q f(y)\)) puede NO ser un isomorfismo de orden —porque \(f\) tiene permitido AÑADIR nuevas comparaciones de orden que no existían en \(P\).
+
+Contraejemplo finito concreto: sea \(P = \{a, b\}\) dotado del orden de anticadena discreto (donde SOLO se cumplen \(a \preceq_P a\) y \(b \preceq_P b\), de modo que \(a\) y \(b\) son incomparables), y sea \(Q = \{1, 2\}\) dotado del orden usual de cadena \(1 \le 2\). Defínase \(f : P \to Q\) por \(f(a) = 1\) y \(f(b) = 2\).
+- \(f\) es claramente biyectiva.
+- \(f\) preserva el orden: los únicos pares con \(x \preceq_P y\) son \((a, a)\) y \((b, b)\), y en efecto \(f(a) \le f(a)\) y \(f(b) \le f(b)\).
+- Sin embargo, \(f\) NO es un isomorfismo de orden: \(f(a) = 1 \le 2 = f(b)\) en \(Q\), mientras que \(a \npreceq_P b\) en \(P\). Equivalentemente, \(f^{-1} : Q \to P\) deja de preservar el orden porque \(1 \le 2\) mientras que \(f^{-1}(1) = a \npreceq_P b = f^{-1}(2)\).
+[/CALLOUT]
+
+¿Qué sucede si el dominio \((P, \preceq_P)\) es un orden TOTAL (lineal)? ¡Entonces esa trampa DESAPARECE!
+
+Teorema (Ascenso para órdenes totales): Si \((P, \preceq_P)\) es un orden TOTAL, entonces TODA aplicación biyectiva que preserva el orden \(f : P \to Q\) es automáticamente un isomorfismo de orden.
+
+Demostración: Ya sabemos que \(f\) es biyectiva y cumple \(x \preceq_P y \implies f(x) \preceq_Q f(y)\). Para demostrar la implicación inversa, supongamos \(f(x) \preceq_Q f(y)\) para ciertos \(x, y \in P\). Como \(P\) está totalmente ordenado, o bien \(x \preceq_P y\) o bien \(y \prec_P x\) (es decir, \(y \preceq_P x\) e \(y \ne x\)). Supongamos por contradicción que \(y \prec_P x\). Como \(f\) preserva el orden, \(y \preceq_P x\) implica \(f(y) \preceq_Q f(x)\). Junto con \(f(x) \preceq_Q f(y)\), la antisimetría de \(\preceq_Q\) fuerza \(f(x) = f(y)\). Como \(f\) es inyectiva, \(x = y\), contradiciendo \(y \ne x\). Por tanto \(x \preceq_P y\), demostrando que \(f\) es un isomorfismo de orden. (Obsérvese que una aplicación biyectiva que preserva el orden desde un orden total \(P\) también obliga a \(Q\) a estar totalmente ordenado.)
+
+[QUESTION 1]
+[ANSWER: D]
+Sea \(P = \{1, 2, 3, 6\}\) ordenado por divisibilidad (\(a \mid b\)), y sea \(Q = \{1, 2, 3, 4\}\) ordenado por el \(\le\) usual en enteros. Defínase \(f : P \to Q\) por \(f(1) = 1,\; f(2) = 2,\; f(3) = 3,\; f(6) = 4\). ¿Qué afirmación clasifica con exactitud a \(f\)?
+
+(A) \(f\) es un isomorfismo de orden de \((P, \mid)\) en \((Q, \le)\)
+(B) \(f\) NO preserva el orden
+(C) \(f\) es una inmersión de orden, pero no sobreyectiva
+(D) \(f\) es una aplicación biyectiva que preserva el orden, pero NO un isomorfismo de orden
+(E) \(f^{-1}\) preserva el orden, pero \(f\) no
+[/QUESTION]
+
+=== SECTION 2: Invariantes de isomorfía de orden y clasificación de posets ===
+
+Cuando dos posets \((P, \preceq_P)\) y \((Q, \preceq_Q)\) son isomorfos en orden (escrito \(P \cong Q\)), poseen EXACTAMENTE LA MISMA estructura de orden: ¡sus diagramas de Hasse son idénticos salvo reetiquetado de vértices! Enumeremos las propiedades estructurales preservadas por todo isomorfismo de orden, porque cualquier discrepancia en estos invariantes demuestra \(P \not\cong Q\) de inmediato.
+
+[CALLOUT]
+id: iso-invariants
+label: Teorema
+title: Invariantes estructurales preservados por isomorfismos de orden
+tone: key
+
+Sea \(f : (P, \preceq_P) \to (Q, \preceq_Q)\) un isomorfismo de orden. Entonces:
+
+(1) Orden estricto y coberturas: \(x \prec_P y \iff f(x) \prec_Q f(y)\), y \(y\) cubre a \(x\) en \(P\) si y solo si \(f(y)\) cubre a \(f(x)\) en \(Q\).
+(2) Elementos extremales: \(a\) es minimal (resp. maximal, mínimo, máximo) en \(P\) si y solo si \(f(a)\) es minimal (resp. maximal, mínimo, máximo) en \(Q\).
+(3) Cadenas y anticadenas: \(C \subseteq P\) es una cadena (resp. anticadena) en \(P\) si y solo si \(f(C)\) es una cadena (resp. anticadena) en \(Q\).
+(4) Cotas, supremos e ínfimos: para cualquier \(S \subseteq P\) y \(u \in P\), \(u\) es cota superior (resp. cota inferior, supremo, ínfimo) de \(S\) en \(P\) si y solo si \(f(u)\) es cota superior (resp. cota inferior, supremo, ínfimo) de \(f(S)\) en \(Q\).
+[/CALLOUT]
+
+Verifiquemos la parte (4) para supremos —obsérvese cuán limpia resulta la demostración usando [REF: order-maps-def.2 | el bicondicional \(x \preceq_P y \iff f(x) \preceq_Q f(y)\)]. Supongamos \(u = \sup_P S\).
+- Primero, ¿es \(f(u)\) cota superior de \(f(S)\) en \(Q\)? Tómese cualquier \(f(s) \in f(S)\) (con \(s \in S\)). Como \(s \preceq_P u\), la preservación del orden da \(f(s) \preceq_Q f(u)\).
+- Segundo, ¿es \(f(u)\) la MÍNIMA cota superior de \(f(S)\)? Sea \(v \in Q\) CUALQUIER cota superior de \(f(S)\). Como \(f\) es sobreyectiva, escríbase \(v = f(w)\) para un único \(w \in P\). Para todo \(s \in S\), tenemos \(f(s) \preceq_Q f(w)\), lo cual por reflexión del orden implica \(s \preceq_P w\). ¡Así pues, \(w\) es una cota superior de \(S\) en \(P\)! Como \(u = \sup_P S\), obtenemos \(u \preceq_P w\), y aplicando \(f\) se obtiene \(f(u) \preceq_Q f(w) = v\).
+Por consiguiente, \(f(\sup_P S) = \sup_Q f(S)\) (y dualmente \(f(\inf_P S) = \inf_Q f(S)\)).
+
+Usemos ahora tanto isomorfismos explícitos como [REF: iso-invariants | estos invariantes] para clasificar posets concretos finitos e infinitos:
+
+1. Poset de divisores \((D_{30}, \mid)\) frente a conjunto potencia \((\mathcal{P}(\{2, 3, 5\}), \subseteq)\):
+   Aquí \(D_{30} = \{1, 2, 3, 5, 6, 10, 15, 30\}\) consta de todos los divisores positivos de \(30 = 2 \cdot 3 \cdot 5\) (un producto de tres primos distintos). Defínase \(f : \mathcal{P}(\{2, 3, 5\}) \to D_{30}\) mediante
+   \[
+   f(S) = \prod_{p \in S} p \qquad (\text{con el producto vacío } f(\emptyset) = 1).
+   \]
+   Por factorización única en primos, \(f\) es biyectiva, y \(S_1 \subseteq S_2 \iff \bigl(\prod_{p \in S_1} p\bigr) \mid \bigl(\prod_{p \in S_2} p\bigr) \iff f(S_1) \mid f(S_2)\). Así pues, \((\mathcal{P}(\{2, 3, 5\}), \subseteq) \cong (D_{30}, \mid)\) —ambos tienen el diagrama de Hasse del cubo tridimensional.
+
+2. ¿Qué ocurre con \((D_{12}, \mid)\) siendo \(D_{12} = \{1, 2, 3, 4, 6, 12\}\)?
+   Todo divisor de \(12 = 2^2 \cdot 3^1\) tiene la forma única \(2^a 3^b\) con \(a \in \{0, 1, 2\}\) y \(b \in \{0, 1\}\), y \(2^{a_1} 3^{b_1} \mid 2^{a_2} 3^{b_2} \iff (a_1 \le a_2 \land b_1 \le b_2)\). Así que \((D_{12}, \mid) \cong (\{0, 1, 2\} \times \{0, 1\}, \le_{\mathrm{prod}})\). Por el contrario, \(D_{12}\) NO es isomorfo a la cadena de \(6\) elementos \(\{1, 2, 3, 4, 5, 6\}\) (bajo \(\le\)), porque \(D_{12}\) tiene elementos incomparables \(2\) y \(3\) (anticadena de tamaño \(2\)), mientras que una cadena no tiene ninguna anticadena de tamaño \(2\).
+
+3. Órdenes totales infinitos con la MISMA cardinalidad pueden aun así no ser isomorfos en orden. Compárense \((\mathbb{N}, \le)\), \((\mathbb{Z}, \le)\) y \((\mathbb{Q}, \le)\): los tres son infinitos numerables, y sin embargo NINGÚN PAR es isomorfo en orden:
+   - \((\mathbb{N}, \le) \not\cong (\mathbb{Z}, \le)\) porque \((\mathbb{N}, \le)\) tiene un elemento mínimo \(0\), mientras que \((\mathbb{Z}, \le)\) NO tiene elemento mínimo.
+   - \((\mathbb{Z}, \le) \not\cong (\mathbb{Q}, \le)\) porque en \((\mathbb{Z}, \le)\) cada elemento \(n\) es cubierto por \(n + 1\) (no hay ningún entero estrictamente entre \(n\) y \(n + 1\)), mientras que en \((\mathbb{Q}, \le)\) NINGÚN elemento cubre a ningún otro (entre cualesquiera \(p < q\) yace \(\frac{p + q}{2}\)).
+
+[TABLE]
+Poset | Cardinalidad | ¿Mínimo / máximo? | Tamaño máximo de anticadena | Isomorfo en orden a
+\((D_6, \mid)\) | \(4\) | \(1\) / \(6\) | \(2\) (\(\{2, 3\}\)) | \((\mathcal{P}(\{a, b\}), \subseteq)\)
+\((D_8, \mid)\) | \(4\) | \(1\) / \(8\) | \(1\) (orden total) | \((\{0, 1, 2, 3\}, \le)\)
+\((D_{30}, \mid)\) | \(8\) | \(1\) / \(30\) | \(3\) (\(\{2, 3, 5\}\)) | \((\mathcal{P}(\{a, b, c\}), \subseteq)\)
+\((\mathbb{N}, \le)\) | \(\aleph_0\) | \(0\) / ninguno | \(1\) | \((\mathbb{Z}^+, \le)\) vía \(n \mapsto n + 1\)
+\((\mathbb{Z}, \le)\) | \(\aleph_0\) | ninguno / ninguno | \(1\) | \((2\mathbb{Z}, \le)\) vía \(n \mapsto 2n\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: C]
+¿Qué par de posets SÍ es isomorfo en orden?
+
+(A) \((D_8, \mid)\) y \((D_{10}, \mid)\)
+(B) \((\mathbb{N}, \le)\) y \((\mathbb{Z}, \le)\)
+(C) \((D_{18}, \mid)\) y \((D_{12}, \mid)\)
+(D) \((D_{24}, \mid)\) y \((D_{30}, \mid)\)
+(E) \((\mathbb{Z}, \le)\) y \((\mathbb{Q}, \le)\)
+[/QUESTION]
+
+=== SECTION 3: Retículos — uniones (joins) y encuentros (meets) por todas partes ===
+
+En nuestra lección anterior sobre supremos e ínfimos, vimos que en algunos posets (como \((\mathbb{Q}, \le)\) o posets de divisores con elementos suprimidos), ciertos subconjuntos pueden carecer de mínima cota superior o de máxima cota inferior. Una clase particularmente importante de posets —central en lógica, álgebra e informática— garantiza que TODO PAR de elementos posee tanto un supremo como un ínfimo.
+
+[CALLOUT]
+id: lattice-def
+label: Definición
+title: Retículo, unión (join) y encuentro (meet)
+tone: key
+
+Un conjunto parcialmente ordenado \((L, \preceq)\) es un retículo si para TODO par de elementos \(a, b \in L\), el subconjunto de dos elementos \(\{a, b\}\) posee TANTO:
+
+(1) Una mínima cota superior (supremo), denominada unión (o join) de \(a\) y \(b\) y denotada por \(a \lor b = \sup\{a, b\}\).
+(2) Una máxima cota inferior (ínfimo), denominada encuentro (o meet) de \(a\) y \(b\) y denotada por \(a \land b = \inf\{a, b\}\).
+[/CALLOUT]
+
+Como los supremos y los ínfimos son únicos siempre que existen, \(\lor\) y \(\land\) son operaciones binarias bien definidas \(L \times L \to L\) en todo retículo. Compruebe nuestras tres familias canónicas de retículos:
+
+1. Todo orden total \((T, \le)\) es un retículo: para cualesquiera \(a, b \in T\), son comparables, por lo que
+\[
+a \lor b = \max(a, b) \qquad \text{y} \qquad a \land b = \min(a, b).
+\]
+Obsérvese que \((\mathbb{Q}, \le)\) SÍ es un retículo aunque subconjuntos acotados infinitos de \(\mathbb{Q}\) puedan carecer de supremos —¡la condición de retículo exige supremos e ínfimos ÚNICAMENTE para PARES \(\{a, b\}\) (y por tanto, por inducción, para todo subconjunto FINITO no vacío)!
+
+2. Todo conjunto potencia \((\mathcal{P}(X), \subseteq)\) es un retículo: para cualesquiera \(A, B \subseteq X\),
+\[
+A \lor B = A \cup B \qquad \text{y} \qquad A \land B = A \cap B.
+\]
+
+3. Los enteros positivos bajo divisibilidad \((\mathbb{Z}^+, \mid)\) forman un retículo: para cualesquiera \(a, b \in \mathbb{Z}^+\),
+\[
+a \lor b = \operatorname{mcm}(a, b) \qquad \text{y} \qquad a \land b = \operatorname{mcd}(a, b).
+\]
+De igual modo, para todo entero positivo \(N\), el poset de divisores \((D_N, \mid)\) es un retículo finito, porque si \(a \mid N\) y \(b \mid N\), entonces TANTO \(\operatorname{mcd}(a, b) \mid N\) COMO \(\operatorname{mcm}(a, b) \mid N\).
+
+Observe ahora DOS maneras distintas en que un poset finito puede DEJAR de ser un retículo:
+
+- Fallo 1 (cota superior o inferior ausente): tómese \(P_1 = \{2, 3, 4, 6\}\) ordenado por divisibilidad. Aquí \(2\) y \(3\) NO tienen ninguna cota inferior común en \(P_1\) (pues \(1 \notin P_1\)), luego \(2 \land 3\) no existe; y \(4\) y \(6\) NO tienen ninguna cota superior común en \(P_1\) (pues \(12 \notin P_1\)), luego \(4 \lor 6\) no existe.
+
+- Fallo 2 (múltiples cotas superiores minimales —¡la trampa de la pajarita!): tómese el poset de \(6\) elementos \(B_6 = \{0, a_1, a_2, b_1, b_2, 1\}\) donde \(0\) es el mínimo, \(1\) es el máximo, \(a_1, a_2\) son incomparables, \(b_1, b_2\) son incomparables y TANTO \(a_1, a_2\) están estrictamente por debajo de TANTO \(b_1, b_2\):
+  \[
+  0 \prec a_1, a_2 \prec b_1, b_2 \prec 1.
+  \]
+  Obsérvese que \(B_6\) TIENE elemento mínimo \(0\) y elemento máximo \(1\), ¡así que todo par tiene cotas superiores comunes y cotas inferiores comunes! Sin embargo, \(B_6\) NO es un retículo. Compruébese \(\{a_1, a_2\}\): su conjunto de cotas superiores es \(\{b_1, b_2, 1\}\). Tanto \(b_1\) como \(b_2\) son cotas superiores minimales de \(\{a_1, a_2\}\), y son INCOMPARABLES —no se cumple ni \(b_1 \preceq b_2\) ni \(b_2 \preceq b_1\). Por consiguiente, \(\sup\{a_1, a_2\}\) NO EXISTE. (Dualmente, \(\{b_1, b_2\}\) tiene dos cotas inferiores maximales \(a_1, a_2\) y NINGÚN ínfimo.)
+
+[QUESTION 3]
+[ANSWER: B]
+¿Cuál de los siguientes posets es un RETÍCULO?
+
+(A) \(P_1 = \{1, 2, 3, 4, 6\}\) ordenado por divisibilidad
+(B) \(P_2 = \{1, 2, 3, 6, 12\}\) ordenado por divisibilidad
+(C) \(P_3 = \mathcal{P}(\{1, 2, 3\}) \setminus \{\emptyset\}\) ordenado por \(\subseteq\)
+(D) \(P_4 = \{1, 2, 3, 12, 18, 36\}\) ordenado por divisibilidad
+(E) \(P_5 = \{2, 3, 6, 12\}\) ordenado por divisibilidad
+[/QUESTION]
+
+=== SECTION 4: Leyes algebraicas de los retículos y preservación bajo isomorfismos ===
+
+En todo retículo \((L, \preceq)\), la unión \(\lor\) y el encuentro \(\land\) obedecen automáticamente leyes algebraicas limpias —recuérdese cómo unión/intersección en \(\mathcal{P}(X)\) y \(\operatorname{mcm}\)/\(\operatorname{mcd}\) en \(\mathbb{Z}^+\) obedecen exactamente las mismas identidades.
+
+[CALLOUT]
+id: lattice-laws
+label: Teorema
+title: Leyes algebraicas fundamentales de un retículo
+tone: key
+
+Sea \((L, \preceq)\) cualquier retículo, y sean \(a, b, c \in L\). Entonces:
+
+(1) Recuperación del orden: \(a \preceq b \iff a \lor b = b \iff a \land b = a\).
+(2) Idempotencia: \(a \lor a = a\) y \(a \land a = a\).
+(3) Conmutatividad: \(a \lor b = b \lor a\) y \(a \land b = b \land a\).
+(4) Asociatividad: \((a \lor b) \lor c = a \lor (b \lor c)\) y \((a \land b) \land c = a \land (b \land c)\).
+(5) Absorción: \(a \lor (a \land b) = a\) y \(a \land (a \lor b) = a\).
+[/CALLOUT]
+
+Demostremos la [REF: lattice-laws.1 | recuperación del orden] y la [REF: lattice-laws.5 | absorción] directamente desde la definición de \(\sup\) e \(\inf\):
+- Recuperación del orden (\(a \preceq b \iff a \lor b = b\)):
+  - Si \(a \preceq b\), entonces \(b\) es cota superior de \(\{a, b\}\) (pues \(a \preceq b\) y \(b \preceq b\)), y cualquier cota superior \(u\) de \(\{a, b\}\) cumple \(b \preceq u\); luego \(b = \sup\{a, b\} = a \lor b\).
+  - Recíprocamente, si \(a \lor b = b\), entonces como \(a \preceq a \lor b\), obtenemos \(a \preceq b\).
+  La demostración de \(a \preceq b \iff a \land b = a\) es completamente dual.
+- Absorción (\(a \lor (a \land b) = a\)): por definición de encuentro, \(a \land b \preceq a\). Aplicando la [REF: lattice-laws.1 | recuperación del orden] a \((a \land b) \preceq a\) se obtiene al instante \((a \land b) \lor a = a\), es decir, \(a \lor (a \land b) = a\).
+- La asociatividad se cumple porque tanto \((a \lor b) \lor c\) como \(a \lor (b \lor c)\) son iguales a la única mínima cota superior \(\sup\{a, b, c\}\) del conjunto de tres elementos \(\{a, b, c\}\).
+
+Por último, ¿cómo interactúan los isomorfismos de orden con las uniones y los encuentros? Directamente por la [REF: iso-invariants.4 | preservación de supremos e ínfimos], si \(f : L_1 \to L_2\) es un isomorfismo de orden entre dos retículos, entonces para TODOS los \(a, b \in L_1\):
+\[
+f(a \lor b) = f(\sup\{a, b\}) = \sup\{f(a), f(b)\} = f(a) \lor f(b),
+\]
+\[
+f(a \land b) = f(\inf\{a, b\}) = \inf\{f(a), f(b)\} = f(a) \land f(b).
+\]
+Contraste esto con una aplicación MERAMENTE que preserva el orden \(g : L_1 \to L_2\): como \(a \preceq a \lor b\) y \(b \preceq a \lor b\), la monotonía da \(g(a) \preceq g(a \lor b)\) y \(g(b) \preceq g(a \lor b)\), de modo que \(g(a \lor b)\) es una cota superior de \(\{g(a), g(b)\}\), dando únicamente la desigualdad EN UN SENTIDO
+\[
+g(a) \lor g(b) \preceq g(a \lor b) \qquad \text{y dualmente} \qquad g(a \land b) \preceq g(a) \land g(b),
+\]
+¡la cual puede ser estricta! (Tómese la biyección que preserva el orden \(g : \mathcal{P}(\{x, y\}) \to \{0, 1, 2, 3\}\) definida por \(g(\emptyset) = 0,\; g(\{x\}) = 1,\; g(\{y\}) = 2,\; g(\{x, y\}) = 3\): en \(\mathcal{P}(\{x, y\})\), \(\{x\} \lor \{y\} = \{x, y\}\), luego \(g(\{x\} \lor \{y\}) = 3\), mientras que \(g(\{x\}) \lor g(\{y\}) = \max(1, 2) = 2 < 3\).) Así pues, un isomorfismo de orden preserva uniones y encuentros EXACTAMENTE, convirtiendo un isomorfismo de teoría del orden en un isomorfismo algebraico de retículos.
+
+[QUESTION 4]
+[ANSWER: A]
+Sean \(L_1\) y \(L_2\) retículos, y sea \(f : L_1 \to L_2\) una biyección que satisface \(f(a \lor b) = f(a) \lor f(b)\) para TODOS los \(a, b \in L_1\). Usando la [REF: lattice-laws.1 | recuperación del orden], ¿qué puede concluirse acerca de \(f\)?
+
+(A) \(f\) DEBE ser un isomorfismo de orden de \(L_1\) en \(L_2\) (y por lo tanto también preserva encuentros \(f(a \land b) = f(a) \land f(b)\))
+(B) \(f\) preserva el orden, pero no tiene por qué ser un isomorfismo de orden a menos que también asumamos \(f(a \land b) = f(a) \land f(b)\)
+(C) \(f\) ni siquiera tiene por qué preservar el orden
+(D) \(f\) es un isomorfismo de orden únicamente cuando \(L_1\) y \(L_2\) son órdenes totales
+(E) \(f\) invierte el orden (\(a \preceq b \iff f(b) \preceq f(a)\))
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Sea \((L, \preceq)\) un retículo FINITO no vacío. ¿Qué puede concluirse SIEMPRE sobre los elementos extremales en \(L\)?
+
+(A) \(L\) debe ser un orden total
+(B) \(L\) posee un elemento mínimo, pero no tiene por qué poseer un elemento máximo
+(C) \(L\) puede tener múltiples elementos minimales siempre que todo par tenga un encuentro
+(D) \(L\) DEBE poseer TANTO un único elemento mínimo como un único elemento máximo
+(E) \(L\) posee elemento mínimo y máximo únicamente si \(|L|\) es una potencia de \(2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Para todo poset \((P, \preceq)\), su poset dual \(P^{\mathrm{op}} = (P, \succeq)\) invierte todas las comparaciones de orden (\(x \preceq^{\mathrm{op}} y \iff y \preceq x\)). ¿Qué poset \(P\) es isomorfo en orden a su propio dual \(P^{\mathrm{op}}\)?
+
+(A) \((\mathbb{N}, \le)\)
+(B) \(([0, 1), \le)\)
+(C) \((\mathbb{Z}, \le)\) (y también \((\mathcal{P}(X), \subseteq)\) para todo conjunto \(X\))
+(D) \((\mathbb{Z}^+, \mid)\)
+(E) \((\mathbb{N} \times \mathbb{N}, \le_{\mathrm{lex}})\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Salvo isomorfismo de orden, existen exactamente \(5\) posets distintos de \(3\) elementos:
+1. La cadena de \(3\) elementos (\(a \prec b \prec c\)).
+2. La anticadena de \(3\) elementos (\(a, b, c\) incomparables dos a dos).
+3. El poset en V (\(a \prec b\) y \(a \prec c\), con \(b, c\) incomparables).
+4. El poset en V invertida (\(a \prec c\) y \(b \prec c\), con \(a, b\) incomparables).
+5. La cadena de \(2\) elementos más un elemento aislado (\(a \prec b\), con \(c\) incomparable a ambos).
+
+¿Cuántas de estas \(5\) clases de isomorfía son RETÍCULOS?
+
+(A) Las \(5\)
+(B) \(4\)
+(C) \(3\)
+(D) \(2\)
+(E) Solo \(1\) (la cadena de \(3\) elementos)
+[/BONUS]

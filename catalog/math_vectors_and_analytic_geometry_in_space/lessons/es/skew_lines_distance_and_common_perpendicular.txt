@@ -1,0 +1,235 @@
+=== SECTION 1: Alojamiento de rectas alabeadas en planos paralelos ===
+
+Dos rectas alabeadas \(L_1\) y \(L_2\) en \(\mathbb{R}^3\) no son paralelas ni se intersecan: pasan una junto a la otra a distinta profundidad, como dos corredores aéreos de vuelo no paralelos a altitudes diferentes. ¿Cómo podemos hallar la separación mínima exacta \(d(L_1, L_2)\) entre ellas?
+
+Escriba ambas rectas en forma vectorial:
+\[
+L_1:\; \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1, \qquad L_2:\; \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2,
+\]
+donde \(P_1\) (posición \(\mathbf{p}_1\)) pertenece a \(L_1\), \(P_2\) (posición \(\mathbf{p}_2\)) pertenece a \(L_2\) y los vectores directores no son paralelos, por lo que su producto vectorial satisface
+\[
+\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}.
+\]
+He aquí la intuición geométrica decisiva: como \(\mathbf{n}\) es perpendicular TANTO a \(\mathbf{d}_1\) como a \(\mathbf{d}_2\), existe un único plano \(\Pi_1\) que pasa por \(P_1\) con normal \(\mathbf{n}\) (el cual contiene a toda \(L_1\)), y un único plano paralelo \(\Pi_2\) que pasa por \(P_2\) con EXACTAMENTE la misma normal \(\mathbf{n}\) (el cual contiene a toda \(L_2\)). Todo punto de \(L_1\) yace dentro de \(\Pi_1\) y todo punto de \(L_2\) yace dentro de \(\Pi_2\), de modo que la distancia mínima entre \(L_1\) y \(L_2\) NO puede ser menor que la separación perpendicular \(d(\Pi_1, \Pi_2)\) entre los dos planos paralelos; y como confirmaremos en la Sección 2, existe un único par de puntos \(Q_1 \in L_1\) y \(Q_2 \in L_2\) cuyo segmento conector discurre estrictamente a lo largo de \(\mathbf{n}\), alcanzando ese mínimo exacto.
+
+Por lo tanto, \(d(L_1, L_2)\) es igual a la distancia desde \(P_2 \in \Pi_2\) hasta \(\Pi_1\), que es la magnitud de la proyección escalar del vector puente \(\overrightarrow{P_1 P_2} = \mathbf{p}_2 - \mathbf{p}_1\) sobre la normal común \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\):
+\[
+d(L_1, L_2) = \left|\operatorname{comp}_{\mathbf{n}} \overrightarrow{P_1 P_2}\right| = \frac{\left|\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\right|}{\|\mathbf{d}_1 \times \mathbf{d}_2\|}.
+\]
+Advierta la segunda interpretación geométrica oculta en esta fracción: el numerador \(\left|\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\right|\) es el volumen del paralelepípedo generado por \(\overrightarrow{P_1 P_2}\), \(\mathbf{d}_1\) y \(\mathbf{d}_2\), mientras que el denominador \(\|\mathbf{d}_1 \times \mathbf{d}_2\|\) es el área de su base generada por \(\mathbf{d}_1\) y \(\mathbf{d}_2\). Dividir el volumen por el área de la base recupera la altura perpendicular entre ambos planos paralelos.
+
+[CALLOUT]
+id: skew-dist
+label: Teorema
+title: Distancia mínima entre dos rectas no paralelas en \(\mathbb{R}^3\)
+tone: key
+
+Sean \(L_1: \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1\) y \(L_2: \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2\) dos rectas con \(\mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}\).
+
+(1) Fórmula de distancia mínima:
+\[
+d(L_1, L_2) = \frac{\left|\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\right|}{\|\mathbf{d}_1 \times \mathbf{d}_2\|}.
+\]
+(2) Prueba de coplanariedad e intersección: \(d(L_1, L_2) = 0\) si y solo si \(\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2) = 0\), lo que ocurre precisamente cuando \(L_1\) y \(L_2\) yacen en un plano común y se intersecan en un punto.
+[/CALLOUT]
+
+Observe el diagrama en vista lateral siguiente, visto de canto a lo largo de los dos planos paralelos \(\Pi_1\) y \(\Pi_2\). Arrastre el deslizador \(a\) para desplazar el punto base arbitrario \(P_2\) a lo largo de \(\Pi_2\): aunque el puente inclinado \(\overrightarrow{P_1 P_2}\) se alargue o acorte, su componente a lo largo de \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\) permanece anclada en la verdadera separación \(d(L_1, L_2)\).
+
+[GRAPH]
+type: parametric2d
+title: Vista lateral de los planos paralelos contenedores \(\Pi_1 \supset L_1\) y \(\Pi_2 \supset L_2\)
+xlabel: dirección del plano
+ylabel: dirección normal
+trange: -3.5, 4.5
+xrange: -3.8, 4.8
+yrange: -0.8, 3.2
+trace: t, 0 | label: plano \(\Pi_1\) que contiene a \(L_1\)
+trace: t, 2 | label: plano \(\Pi_2\) que contiene a \(L_2\)
+segment: -1.5, 0, a, 2 | label: \(\overrightarrow{P_1 P_2}\)
+segment: 0.5, 0, 0.5, 2 | label: \(d\)
+point: -1.5, 0 | label: \(P_1\)
+point: a, 2 | label: \(P_2\)
+point: 0.5, 0 | label: \(Q_1\)
+point: 0.5, 2 | label: \(Q_2\)
+slider: a | range: -3, 4 | init: 2.5 | step: 0.25
+[/GRAPH]
+
+[CALLOUT]
+id: skew-parallel-warn
+label: Error frecuente
+title: Nunca aplique la fórmula de rectas alabeadas a rectas paralelas
+tone: caution
+
+Si \(L_1\) y \(L_2\) son paralelas, entonces \(\mathbf{d}_1 \times \mathbf{d}_2 = \mathbf{0}\), por lo que [REF: skew-dist.1 | la fórmula de distancia entre rectas alabeadas] colapsa a \(\frac{0}{0}\), incluso cuando las rectas están muy separadas. Verifique siempre primero que \(\mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}\). Cuando \(\mathbf{d}_1 \times \mathbf{d}_2 = \mathbf{0}\), calcule la distancia entre las rectas paralelas como la distancia punto-recta desde cualquier punto \(P_2 \in L_2\) hasta \(L_1\):
+\[
+d(L_1, L_2) = \frac{\left\|\overrightarrow{P_1 P_2} \times \mathbf{d}_1\right\|}{\|\mathbf{d}_1\|}.
+\]
+[/CALLOUT]
+
+Resolvamos un ejemplo concreto: calcule la distancia mínima entre \(L_1: \mathbf{r}_1(t) = \langle 0, 1, 2 \rangle + t\langle 1, 2, -1 \rangle\) y \(L_2: \mathbf{r}_2(s) = \langle 2, 0, 1 \rangle + s\langle 2, 1, 1 \rangle\).
+- Primero calcule la normal común:
+\[
+\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2 = \langle 2(1) - (-1)(1),\; (-1)(2) - 1(1),\; 1(1) - 2(2) \rangle = \langle 3, -3, -3 \rangle.
+\]
+Su longitud es \(\|\mathbf{n}\| = \sqrt{9 + 9 + 9} = 3\sqrt{3}\). (Advierta que podemos sacar factor \(3\) y trabajar con \(\hat{\mathbf{n}} = \langle 1, -1, -1 \rangle\) de longitud \(\sqrt{3}\) tanto en el numerador como en el denominador, pues cualquier múltiplo escalar positivo se cancela en \(\frac{|\overrightarrow{P_1 P_2} \cdot \mathbf{n}|}{\|\mathbf{n}\|}\).)
+- Forme el vector puente \(\overrightarrow{P_1 P_2} = \langle 2 - 0,\; 0 - 1,\; 1 - 2 \rangle = \langle 2, -1, -1 \rangle\).
+- Haga el producto escalar con \(\langle 1, -1, -1 \rangle\): \(2(1) + (-1)(-1) + (-1)(-1) = 4\).
+- Así \(d(L_1, L_2) = \frac{|4|}{\sqrt{3}} = \frac{4\sqrt{3}}{3}\).
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál es la distancia mínima exacta entre las rectas alabeadas
+\[
+L_1:\; \mathbf{r}_1(t) = \langle 1, 0, 2 \rangle + t\langle 1, -1, 1 \rangle \qquad \text{y} \qquad L_2:\; \mathbf{r}_2(s) = \langle 0, 2, 1 \rangle + s\langle 2, 1, -1 \rangle?
+\]
+
+(A) \(3\)
+(B) \(\sqrt{6}\)
+(C) \(\frac{\sqrt{2}}{2}\)
+(D) \(\frac{1}{3\sqrt{2}}\)
+(E) \(0\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Suponga que dos rectas \(L_1: \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1\) y \(L_2: \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2\) en \(\mathbb{R}^3\) satisfacen \(\mathbf{d}_1 \times \mathbf{d}_2 = \mathbf{0}\) mientras que \(\overrightarrow{P_1 P_2} \times \mathbf{d}_1 \ne \mathbf{0}\). ¿Cuál es la relación geométrica entre \(L_1\) y \(L_2\), y cómo debe calcularse \(d(L_1, L_2)\)?
+
+(A) Son rectas secantes, así que \(d(L_1, L_2) = 0\)
+(B) Son rectas alabeadas, y \(d(L_1, L_2) = \frac{\lvert\overrightarrow{P_1 P_2} \cdot (\mathbf{d}_1 \times \mathbf{d}_2)\rvert}{\|\mathbf{d}_1 \times \mathbf{d}_2\|}\)
+(C) Son rectas coincidentes, así que \(d(L_1, L_2) = 0\)
+(D) Son rectas paralelas y distintas, y \(d(L_1, L_2) = \frac{\|\overrightarrow{P_1 P_2} \times \mathbf{d}_1\|}{\|\mathbf{d}_1\|}\)
+(E) Son rectas paralelas y distintas, y \(d(L_1, L_2) = \|\overrightarrow{P_1 P_2}\|\)
+[/QUESTION]
+
+=== SECTION 2: Obtención de los puntos más cercanos y la perpendicular común ===
+
+Saber que dos tuberías alabeadas guardan una holgura de \(2\) metros es útil, pero los ingenieros suelen necesitar más: ¿EN QUÉ PUNTO sobre \(L_1\) y EN QUÉ PUNTO sobre \(L_2\) ocurre esa aproximación mínima, y qué segmento de recta los conecta?
+
+Mire directamente hacia abajo a lo largo de la normal común \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\) sobre el plano \(\Pi_1\). Como \(\mathbf{d}_1\) y \(\mathbf{d}_2\) no son paralelos, la sombra de \(L_2\) en \(\Pi_1\) no es paralela a \(L_1\), de modo que ambas sombras se cruzan en UN único punto. Directamente encima de ese cruce se encuentra \(Q_2 = \mathbf{r}_2(s^*) \in L_2\), y directamente debajo se encuentra \(Q_1 = \mathbf{r}_1(t^*) \in L_1\). El segmento \(Q_1 Q_2\) es la única perpendicular común de \(L_1\) y \(L_2\): encuentra a \(L_1\) en ángulo recto y encuentra a \(L_2\) en ángulo recto.
+
+Arrastre el deslizador \(u\) en la proyección desde arriba siguiente (mirando a lo largo de \(\mathbf{n}\)) para deslizar un punto a lo largo de \(L_1\): su brecha horizontal hacia \(L_2\) se cierra a cero en el cruce único donde \(Q_1\) queda situado directamente debajo de \(Q_2\).
+
+[GRAPH]
+type: parametric2d
+title: Vista superior a lo largo de \(\mathbf{n} = \mathbf{d}_1 \times \mathbf{d}_2\): el cruce único sitúa \(Q_1\) directamente bajo \(Q_2\)
+xlabel: \(x'\)
+ylabel: \(y'\)
+trange: -1.5, 3
+xrange: -2, 4.5
+yrange: -1.5, 3.8
+trace: t, 0.5*t + 0.5 | label: sombra de \(L_1\)
+trace: 3 - t, t | label: sombra de \(L_2\)
+segment: u, 0.5*u + 0.5, 1.6667, 1.3333 | dashed: true
+point: 1.6667, 1.3333 | label: \(Q_1, Q_2\)
+point: u, 0.5*u + 0.5 | label: \(\mathbf{r}_1(u)\)
+slider: u | range: -1, 3 | init: 0 | step: 0.2
+[/GRAPH]
+
+¿Cómo resolvemos algebraicamente para hallar los parámetros exactos \((t^*, s^*)\) de \(Q_1\) y \(Q_2\)? Forme el vector conector general desde \(L_1\) hasta \(L_2\):
+\[
+\mathbf{w}(t, s) = \mathbf{r}_2(s) - \mathbf{r}_1(t) = \overrightarrow{P_1 P_2} + s\mathbf{d}_2 - t\mathbf{d}_1.
+\]
+El vector \(\mathbf{w}(t^*, s^*)\) es perpendicular TANTO a \(L_1\) como a \(L_2\) si y solo si su producto escalar con cada vector director se anula simultáneamente:
+\[
+\mathbf{w}(t, s) \cdot \mathbf{d}_1 = 0, \qquad \mathbf{w}(t, s) \cdot \mathbf{d}_2 = 0.
+\]
+Desarrollar estos dos productos escalares produce un sistema lineal \(2 \times 2\) en las dos incógnitas escalares \(t\) y \(s\):
+\[
+(\mathbf{d}_1 \cdot \mathbf{d}_1)\,t - (\mathbf{d}_1 \cdot \mathbf{d}_2)\,s = \overrightarrow{P_1 P_2} \cdot \mathbf{d}_1,
+\]
+\[
+(\mathbf{d}_1 \cdot \mathbf{d}_2)\,t - (\mathbf{d}_2 \cdot \mathbf{d}_2)\,s = \overrightarrow{P_1 P_2} \cdot \mathbf{d}_2.
+\]
+¿Por qué está GARANTIZADO que este sistema \(2 \times 2\) tiene solución única siempre que \(L_1\) y \(L_2\) no sean paralelas? Calcule su determinante de coeficientes:
+\[
+-(\mathbf{d}_1 \cdot \mathbf{d}_1)(\mathbf{d}_2 \cdot \mathbf{d}_2) + (\mathbf{d}_1 \cdot \mathbf{d}_2)^2 = -\bigl(\|\mathbf{d}_1\|^2 \|\mathbf{d}_2\|^2 - (\mathbf{d}_1 \cdot \mathbf{d}_2)^2\bigr) = -\|\mathbf{d}_1 \times \mathbf{d}_2\|^2,
+\]
+donde la última igualdad es la identidad de Lagrange. Como \(\mathbf{d}_1 \times \mathbf{d}_2 \ne \mathbf{0}\), este determinante es estrictamente no nulo, demostrando que los puntos más cercanos \(Q_1\) y \(Q_2\) existen y son únicos.
+
+[CALLOUT]
+id: common-perp
+label: Método
+title: Obtención de los puntos más cercanos y la perpendicular común de dos rectas alabeadas
+tone: key
+
+Dadas dos rectas alabeadas \(L_1: \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{d}_1\) y \(L_2: \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{d}_2\):
+
+(1) Forme \(\mathbf{w}(t, s) = \mathbf{r}_2(s) - \mathbf{r}_1(t)\) y resuelva el sistema de ortogonalidad \(2 \times 2\)
+\[
+\mathbf{w}(t, s) \cdot \mathbf{d}_1 = 0, \qquad \mathbf{w}(t, s) \cdot \mathbf{d}_2 = 0
+\]
+para obtener el par único de parámetros \((t^*, s^*)\).
+(2) Evalúe los puntos más cercanos \(Q_1 = \mathbf{r}_1(t^*) \in L_1\) y \(Q_2 = \mathbf{r}_2(s^*) \in L_2\).
+(3) Segmento y recta de perpendicular común: \(\mathbf{r}(u) = \mathbf{r}_1(t^*) + u\bigl(\mathbf{r}_2(s^*) - \mathbf{r}_1(t^*)\bigr)\), con \(0 \le u \le 1\) para el segmento de \(Q_1\) a \(Q_2\) y \(u \in \mathbb{R}\) para la recta perpendicular común infinita.
+(4) Comprobación integrada: verifique que \(\overrightarrow{Q_1 Q_2}\) es un múltiplo escalar de \(\mathbf{d}_1 \times \mathbf{d}_2\) y que \(\|\overrightarrow{Q_1 Q_2}\|\) coincide con [REF: skew-dist.1 | la fórmula de distancia por producto mixto].
+[/CALLOUT]
+
+Apliquemos [REF: common-perp | el método de la perpendicular común] a \(L_1: \mathbf{r}_1(t) = \langle 1, 0, -1 \rangle + t\langle 1, 1, 0 \rangle\) y \(L_2: \mathbf{r}_2(s) = \langle 0, 2, 1 \rangle + s\langle 0, 1, 2 \rangle\).
+- Primero escriba el vector conector:
+\[
+\mathbf{w}(t, s) = \mathbf{r}_2(s) - \mathbf{r}_1(t) = \langle -1 - t,\; 2 + s - t,\; 2 + 2s \rangle.
+\]
+- Imponga ambas ecuaciones de ortogonalidad:
+\[
+\mathbf{w} \cdot \langle 1, 1, 0 \rangle = (-1 - t) + (2 + s - t) = 1 + s - 2t = 0 \implies s = 2t - 1,
+\]
+\[
+\mathbf{w} \cdot \langle 0, 1, 2 \rangle = (2 + s - t) + 2(2 + 2s) = 6 + 5s - t = 0.
+\]
+- Sustituya \(s = 2t - 1\) en la segunda ecuación:
+\[
+6 + 5(2t - 1) - t = 1 + 9t = 0 \implies t^* = -\frac{1}{9}, \qquad s^* = -\frac{11}{9}.
+\]
+- Evalúe \(Q_1\) y \(Q_2\):
+\[
+Q_1 = \mathbf{r}_1\!\left(-\frac{1}{9}\right) = \left(\frac{8}{9},\; -\frac{1}{9},\; -1\right), \qquad Q_2 = \mathbf{r}_2\!\left(-\frac{11}{9}\right) = \left(0,\; \frac{7}{9},\; -\frac{13}{9}\right).
+\]
+- Comprobación independiente: \(\overrightarrow{Q_1 Q_2} = \left\langle -\frac{8}{9},\; \frac{8}{9},\; -\frac{4}{9} \right\rangle = -\frac{4}{9}\langle 2, -2, 1 \rangle\). Advierta que \(\mathbf{d}_1 \times \mathbf{d}_2 = \langle 2, -2, 1 \rangle\) tiene longitud \(3\), de modo que \(\|\overrightarrow{Q_1 Q_2}\| = \frac{4}{9}\cdot 3 = \frac{4}{3}\). Comprobar mediante [REF: skew-dist.1 | la fórmula del producto mixto] da \(\overrightarrow{P_1 P_2} = \langle -1, 2, 2 \rangle\), \(\overrightarrow{P_1 P_2} \cdot \langle 2, -2, 1 \rangle = -2 - 4 + 2 = -4\) y \(d = \frac{|-4|}{3} = \frac{4}{3}\): una coincidencia exacta.
+
+[QUESTION 3]
+[ANSWER: B]
+Considere las rectas alabeadas \(L_1: \mathbf{r}_1(t) = \langle 1, 0, 0 \rangle + t\langle 1, 1, 0 \rangle\) y \(L_2: \mathbf{r}_2(s) = \langle 1, 1, 4 \rangle + s\langle 0, 1, 1 \rangle\). ¿Cuáles son los únicos puntos más cercanos \(Q_1 \in L_1\) y \(Q_2 \in L_2\)?
+
+(A) \(Q_1(1, 0, 0)\) y \(Q_2(1, 1, 4)\)
+(B) \(Q_1(0, -1, 0)\) y \(Q_2(1, -2, 1)\)
+(C) \(Q_1(2, 1, 0)\) y \(Q_2(1, 0, 3)\)
+(D) \(Q_1(0, -1, 0)\) y \(Q_2(1, 2, 5)\)
+(E) \(Q_1(1, 0, 0)\) y \(Q_2(1, -2, 1)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+¿Para qué valor(es) real(es) de \(k\) la distancia mínima entre
+\[
+L_1:\; \mathbf{r}_1(t) = t\langle 1, 1, 0 \rangle \qquad \text{y} \qquad L_2:\; \mathbf{r}_2(s) = \langle 1, 0, k \rangle + s\langle 0, 1, 1 \rangle
+\]
+es igual a \(\sqrt{3}\)?
+
+(A) \(k = 2\) o \(k = -4\)
+(B) Solo \(k = 2\)
+(C) \(k = 2\) o \(k = -2\)
+(D) \(k = 4\) o \(k = -2\)
+(E) Solo \(k = -1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Halle una ecuación paramétrica para el segmento perpendicular común (para \(0 \le u \le 1\)) que une el punto más cercano sobre \(L_1: \mathbf{r}_1(t) = \langle 0, 2, 0 \rangle + t\langle 1, 0, 1 \rangle\) con el punto más cercano sobre \(L_2: \mathbf{r}_2(s) = \langle -1, 2, 5 \rangle + s\langle 0, 1, -1 \rangle\).
+
+(A) \(\mathbf{r}(u) = \langle 0, 2, 0 \rangle + u\langle -1, 0, 5 \rangle\)
+(B) \(\mathbf{r}(u) = \langle 1, 2, 1 \rangle + u\langle -1, 1, 1 \rangle\)
+(C) \(\mathbf{r}(u) = \langle 2, 2, 2 \rangle + u\langle -2, 2, 2 \rangle\)
+(D) \(\mathbf{r}(u) = \langle 1, 2, 1 \rangle + u\langle -2, 2, 2 \rangle\)
+(E) \(\mathbf{r}(u) = \langle -1, 2, 5 \rangle + u\langle 2, -2, -2 \rangle\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Un cubo unitario en \(\mathbb{R}^3\) tiene vértices opuestos en \(O(0, 0, 0)\) y \(C(1, 1, 1)\). ¿Cuál es la distancia mínima exacta entre la recta que pasa por la diagonal espacial \(OC\) y la recta que pasa por la diagonal de la cara superior que une \(A(1, 0, 1)\) y \(B(0, 1, 1)\)?
+
+(A) \(\frac{1}{2}\)
+(B) \(\frac{\sqrt{3}}{3}\)
+(C) \(\frac{\sqrt{6}}{6}\)
+(D) \(\frac{\sqrt{2}}{2}\)
+(E) \(\frac{\sqrt{6}}{3}\)
+[/BONUS]

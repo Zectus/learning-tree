@@ -1,0 +1,345 @@
+=== SECTION 1: Row Echelon Form and Reduced Row Echelon Form ===
+
+Knowing that elementary row operations preserve the solution set of a linear system raises an immediate practical question: given an arbitrary \(m \times n\) augmented matrix, what target shape should we steer it toward so that consistency and every single solution can be read off without guesswork? If we eliminate variables in a random order, we can easily undo our own progress by reintroducing eliminated unknowns. To avoid going in circles, we aim for a staircase pattern called echelon form.
+
+First, define one piece of terminology: the leading entry of a nonzero row is its leftmost nonzero entry. A row whose entries are all zero has no leading entry and is called a zero row.
+
+[CALLOUT]
+id: echelon-defs
+label: Definition
+title: Row Echelon Form (REF) and Reduced Row Echelon Form (RREF)
+tone: key
+
+A rectangular matrix is in Row Echelon Form (REF) if it satisfies three conditions:
+
+(1) All zero rows (if any) lie at the bottom of the matrix, below all nonzero rows.
+(2) Each leading entry of a nonzero row lies in a column strictly to the right of the leading entry of the row above it.
+(3) Every entry in a column below a leading entry is zero.
+
+A matrix is in Reduced Row Echelon Form (RREF) if it is in REF and satisfies two additional conditions:
+
+(4) Every leading entry is equal to \(1\).
+(5) Each leading \(1\) is the only nonzero entry in its column (so all entries above it, as well as below it, are zero).
+[/CALLOUT]
+
+Notice the staircase shape enforced by [REF: echelon-defs.1 | condition (1)]–[REF: echelon-defs.3 | condition (3)]: as you step down from row to row, the leading entries move strictly rightward, leaving a triangle of zeros underneath the staircase. Compare two matrices of the same size:
+\[
+U = \begin{bmatrix} 2 & -4 & 6 & 2 \\ 0 & 0 & 3 & -9 \\ 0 & 0 & 0 & 0 \end{bmatrix}, \qquad
+R = \begin{bmatrix} 1 & -2 & 0 & 10 \\ 0 & 0 & 1 & -3 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Both \(U\) and \(R\) are in REF: the zero row is at the bottom, leading entries sit in columns \(1\) and \(3\) (moving strictly right), and everything below each leading entry is \(0\). However, \(U\) is not in RREF because its leading entries are \(2\) and \(3\) (not \(1\)) and column \(3\) contains a nonzero entry \(6\) above its leading entry. Applying \(R_2 \leftarrow \frac{1}{3} R_2\), \(R_1 \leftarrow \frac{1}{2} R_1\), and \(R_1 \leftarrow R_1 - 3 R_2\) converts \(U\) into \(R\), which satisfies all five conditions of RREF. Notice also that column \(2\) of \(R\) contains \(-2\)—that is completely allowed because column \(2\) has no leading entry! Condition (5) requires zeros above and below leading \(1\)'s only, not in non-leading columns.
+
+A crucial structural fact separates REF from RREF: a matrix can be row-equivalent to many different REF matrices (scaling a row by any nonzero constant, or adding a multiple of a lower row to an upper row, preserves REF), yet its RREF is completely unique.
+
+[CALLOUT]
+id: rref-uniqueness
+label: Theorem
+title: Uniqueness of Reduced Row Echelon Form
+tone: key
+
+Every matrix \(M\) is row-equivalent to one and only one matrix in Reduced Row Echelon Form, written \(\operatorname{RREF}(M)\).
+
+Because \(\operatorname{RREF}(M)\) is unique, the locations of its leading \(1\)'s are intrinsic properties of \(M\). A pivot position of \(M\) is a location \((i, j)\) that holds a leading \(1\) in \(\operatorname{RREF}(M)\), and a pivot column of \(M\) is any column containing a pivot position.
+[/CALLOUT]
+
+Conceptually, why should \(\operatorname{RREF}(M)\) be unique? Think of an augmented matrix of a consistent system: the equations of \(\operatorname{RREF}\) express each pivot-column variable purely as a linear formula in the remaining variables (with no pivot variable appearing in any other equation). If two different RREF matrices were row-equivalent, they would have the same solution set; yet choosing arbitrary values for the non-pivot variables forces each pivot variable's value uniquely, which locks every coefficient in place. Once we develop column-dependence invariance later in the course, we will turn this conceptual argument into a complete algebraic proof that covers all matrices at once.
+
+An immediate practical payoff of uniqueness is that even an REF of \(M\) already reveals all pivot positions and pivot columns: scaling nonzero rows and clearing entries above leading entries never moves a leading entry to a different row or column.
+
+[QUESTION 1]
+[ANSWER: A]
+Which of the following matrices is in Reduced Row Echelon Form (RREF)?
+
+(A) \(\begin{bmatrix} 1 & 2 & 0 & 4 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 3 & 0 \\ 0 & 1 & -2 & 0 \\ 0 & 0 & 0 & 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 2 \\ 0 & 0 & 0 \\ 0 & 1 & -1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 & 1 & 0 & 3 \\ 1 & 0 & 0 & -2 \\ 0 & 0 & 1 & 5 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Forward elimination and Gauss-Jordan elimination ===
+
+How do we actually reduce any matrix to REF or RREF without ever undoing our own work? The procedure has two clean phases: a forward phase (Gaussian elimination) that works top-to-bottom and left-to-right to produce REF, followed optionally by a backward phase (Gauss-Jordan elimination) that works bottom-to-top and right-to-left to produce RREF.
+
+[CALLOUT]
+id: row-reduction-algo
+label: Algorithm
+title: Gaussian and Gauss-Jordan elimination
+tone: key
+
+Forward phase (produces REF):
+(1) Begin at the leftmost column containing at least one nonzero entry. This is a pivot column, and its top position is a pivot position.
+(2) Select a nonzero entry in this pivot column (at or below the current pivot row) and, if necessary, swap rows so that this nonzero entry sits in the pivot position.
+(3) Use row replacement operations (\(R_k \leftarrow R_k - c R_i\)) to create zeros in every position strictly below the pivot.
+(4) Cover the row containing the pivot and all rows above it. Repeat steps (1)–(3) on the remaining submatrix until no nonzero rows remain.
+
+Backward phase (upgrades REF to RREF):
+(5) Beginning with the rightmost pivot and working upward and leftward, scale each pivot row so its leading entry becomes \(1\), then use row replacement operations to create zeros in every position strictly above that pivot.
+[/CALLOUT]
+
+Notice why the backward phase works from right to left (bottom pivot up to top pivot): clearing above a lower pivot only adds multiples of a row whose entries to the left of that pivot are all zero, so it can NEVER disturb any zeros already created to the left!
+
+Let us trace the entire algorithm on a concrete \(3 \times 3\) linear system:
+\[
+\begin{aligned}
+x_1 - 2x_2 + x_3 &= 0, \\
+2x_1 - 3x_2 + 5x_3 &= 7, \\
+-x_1 + 4x_2 + 2x_3 &= 9.
+\end{aligned}
+\]
+Form the augmented matrix:
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+2 & -3 & 5 & 7 \\
+-1 & 4 & 2 & 9
+\end{array}\right].
+\]
+Forward phase, column \(1\): the top-left entry is already \(1\) (a convenient pivot). Clear below it using \(R_2 \leftarrow R_2 - 2 R_1\) and \(R_3 \leftarrow R_3 + R_1\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+0 & 1 & 3 & 7 \\
+0 & 2 & 3 & 9
+\end{array}\right].
+\]
+Forward phase, submatrix starting at row \(2\): column \(2\) has nonzero pivot \(1\) in row \(2\). Clear below it with \(R_3 \leftarrow R_3 - 2 R_2\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+0 & 1 & 3 & 7 \\
+0 & 0 & -3 & -5
+\end{array}\right].
+\]
+At this stage the matrix is in REF! If we only want the solution, we can stop here and use back-substitution: row \(3\) gives \(-3x_3 = -5 \implies x_3 = 5/3\); row \(2\) gives \(x_2 = 7 - 3(5/3) = 2\); row \(1\) gives \(x_1 = 2(2) - 5/3 = 7/3\).
+
+Alternatively, let us continue with the backward phase (Gauss-Jordan elimination) to reach RREF. Start with the bottom-right pivot \(-3\) in row \(3\): scale \(R_3 \leftarrow -\frac{1}{3} R_3\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 1 & 0 \\
+0 & 1 & 3 & 7 \\
+0 & 0 & 1 & 5/3
+\end{array}\right].
+\]
+Clear column \(3\) above row \(3\) using \(R_2 \leftarrow R_2 - 3 R_3\) and \(R_1 \leftarrow R_1 - R_3\):
+\[
+\left[\begin{array}{ccc|c}
+1 & -2 & 0 & -5/3 \\
+0 & 1 & 0 & 2 \\
+0 & 0 & 1 & 5/3
+\end{array}\right].
+\]
+Finally, clear column \(2\) above row \(2\) using \(R_1 \leftarrow R_1 + 2 R_2\):
+\[
+\left[\begin{array}{ccc|c}
+1 & 0 & 0 & 7/3 \\
+0 & 1 & 0 & 2 \\
+0 & 0 & 1 & 5/3
+\end{array}\right].
+\]
+Now the unique solution \((7/3, 2, 5/3)\) sits directly in the right-hand column.
+
+Geometrically, what is Gauss-Jordan elimination doing to the lines of a \(2 \times 2\) system? Take \(x_1 + 2x_2 = 5\) and \(2x_1 - x_2 = 0\), which meet at \((1, 2)\). Forward elimination replaces the second equation by \(-5x_2 = -10\), i.e., the horizontal line \(x_2 = 2\) passing through \((1, 2)\). Backward elimination then replaces the first equation by \(x_1 = 1\), the vertical line through \((1, 2)\). Every row operation pivots the lines around the fixed intersection point until they align directly with the coordinate axes!
+
+[GRAPH]
+type: function2d
+title: Gauss-Jordan elimination rotates two lines around \((1, 2)\) into axis-aligned RREF lines
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+xrange: -1, 4
+yrange: -1, 4
+aspect: equal
+trace: (5 - x) / 2 | label: \(x_1 + 2x_2 = 5\) | color: #2563eb
+trace: 2*x | label: \(2x_1 - x_2 = 0\) | color: #059669
+trace: 2 | label: RREF row 2: \(x_2 = 2\) | color: #dc2626
+segment: 1, -1, 1, 4 | label: \(x_1 = 1\) | color: #d97706 | dashed: true
+point: 1, 2 | label: \((1, 2)\)
+[/GRAPH]
+
+=== SECTION 3: Consistency criterion, basic variables, and free variables ===
+
+Once an augmented matrix \([A \mid \mathbf{b}]\) has been reduced to REF (or RREF), two questions become completely transparent: does any solution exist, and if so, how do we describe all of them?
+
+Suppose an echelon form contains a row of the form
+\[
+\begin{bmatrix} 0 & 0 & \cdots & 0 & \mid & c \end{bmatrix} \qquad \text{with } c \neq 0.
+\]
+Translated back into an equation, this row asserts
+\[
+0 x_1 + 0 x_2 + \dots + 0 x_n = c,
+\]
+which simplifies to \(0 = c\)—a contradiction since \(c \neq 0\). No assignment of numbers to \(x_1, \dots, x_n\) can make \(0 = c\) true, so the system is inconsistent. Notice what such a row means in terms of pivots: its leading entry \(c\) sits in the rightmost (augmented) column! Conversely, if the rightmost column is NOT a pivot column, then no row of the form \(0 = c\) (\(c \neq 0\)) exists; as we are about to see, every remaining variable can be assigned freely and each pivot variable solved uniquely in terms of them, so at least one solution always exists.
+
+[CALLOUT]
+id: consistency-criterion
+label: Theorem
+title: Echelon consistency and variable classification
+tone: key
+
+Reduce the augmented matrix \([A \mid \mathbf{b}]\) of a linear system in \(x_1, \dots, x_n\) to any Row Echelon Form (or RREF):
+
+(1) Consistency test: The linear system is consistent if and only if the rightmost (augmented) column is NOT a pivot column—equivalently, no echelon row has the form \(\begin{bmatrix} 0 & \cdots & 0 & \mid & c \end{bmatrix}\) with \(c \neq 0\).
+(2) Basic and free variables: When the system is consistent, every unknown \(x_j\) corresponding to a pivot column of \(A\) is called a basic variable, and every unknown \(x_k\) corresponding to a non-pivot column of \(A\) is called a free variable.
+(3) Uniqueness test: A consistent system has a unique solution if and only if it has no free variables (every variable column is a pivot column), and has infinitely many solutions if and only if it has at least one free variable.
+[/CALLOUT]
+
+Why does every consistent system with at least one free variable have infinitely many solutions? Reduce \([A \mid \mathbf{b}]\) all the way to RREF. Because each basic variable has a leading \(1\) with zeros everywhere else in its column, each basic variable appears in exactly ONE nonzero equation, with coefficient \(1\), alongside only free variables and a constant! Moving the free-variable terms to the right-hand side expresses every basic variable explicitly as a formula in the free variables. Assigning ANY real numbers whatsoever to the free variables then determines a valid solution—and choosing infinitely many different values for even a single free variable produces infinitely many distinct solutions.
+
+Let us work through a full \(3 \times 4\) example with free variables and verify the answer by substitution. Consider
+\[
+\begin{aligned}
+x_1 + 2x_2 - x_3 + 3x_4 &= 4, \\
+2x_1 + 4x_2 - x_3 + 7x_4 &= 10, \\
+-x_1 - 2x_2 + 2x_3 - 2x_4 &= -2.
+\end{aligned}
+\]
+Set up the augmented matrix and apply [REF: row-reduction-algo | Gauss-Jordan elimination]:
+\[
+\left[\begin{array}{cccc|c}
+1 & 2 & -1 & 3 & 4 \\
+2 & 4 & -1 & 7 & 10 \\
+-1 & -2 & 2 & -2 & -2
+\end{array}\right]
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\left[\begin{array}{cccc|c}
+1 & 2 & -1 & 3 & 4 \\
+0 & 0 & 1 & 1 & 2 \\
+0 & 0 & 1 & 1 & 2
+\end{array}\right].
+\]
+Notice that column \(2\) has zeros below row \(1\), so we skip column \(2\) and place the second pivot in column \(3\). Clearing below with \(R_3 \leftarrow R_3 - R_2\) gives REF:
+\[
+\left[\begin{array}{cccc|c}
+1 & 2 & -1 & 3 & 4 \\
+0 & 0 & 1 & 1 & 2 \\
+0 & 0 & 0 & 0 & 0
+\end{array}\right].
+\]
+First check [REF: consistency-criterion.1 | consistency]: row \(3\) is all zeros (saying \(0 = 0\), which is always true—do not confuse a row of all zeros with an inconsistent row!). The rightmost column is not a pivot column, so the system is consistent.
+
+Now finish the backward phase with \(R_1 \leftarrow R_1 + R_2\) to reach RREF:
+\[
+\left[\begin{array}{cccc|c}
+1 & 2 & 0 & 4 & 6 \\
+0 & 0 & 1 & 1 & 2 \\
+0 & 0 & 0 & 0 & 0
+\end{array}\right].
+\]
+The pivot columns are columns \(1\) and \(3\), so \(x_1\) and \(x_3\) are basic variables, while \(x_2\) and \(x_4\) are free variables. Writing out the nonzero rows gives
+\[
+\begin{aligned}
+x_1 + 2x_2 + 4x_4 &= 6, \\
+x_3 + x_4 &= 2.
+\end{aligned}
+\]
+Solving each basic variable in terms of the free parameters \(x_2\) and \(x_4\) (remembering to flip the sign of every term moved across the equals sign!) yields the general solution:
+\[
+\begin{aligned}
+x_1 &= 6 - 2x_2 - 4x_4, \\
+x_2 &\text{ is free}, \\
+x_3 &= 2 - x_4, \\
+x_4 &\text{ is free}.
+\end{aligned}
+\]
+Always verify by substituting the general expressions (or a couple of non-trivial choices of the free variables, such as \(x_2 = 1, x_4 = -1\) giving \((8, 1, 3, -1)\)) back into the ORIGINAL equations:
+- Equation 1: \(8 + 2(1) - 3 + 3(-1) = 8 + 2 - 3 - 3 = 4\).
+- Equation 2: \(2(8) + 4(1) - 3 + 7(-1) = 16 + 4 - 3 - 7 = 10\).
+- Equation 3: \(-8 - 2(1) + 2(3) - 2(-1) = -8 - 2 + 6 + 2 = -2\).
+In fact, substituting the symbolic expressions into Equation 2 gives \(2(6 - 2x_2 - 4x_4) + 4x_2 - (2 - x_4) + 7x_4 = 12 - 2 + (-4 + 4)x_2 + (-8 + 1 + 7)x_4 = 10\) identically for all \(x_2, x_4 \in \mathbb{R}\).
+
+[TABLE]
+Echelon feature | Meaning for the system
+Row \(\begin{bmatrix} 0 & \cdots & 0 & \mid & c \end{bmatrix}\) with \(c \neq 0\) | Inconsistent (no solution)
+Row \(\begin{bmatrix} 0 & \cdots & 0 & \mid & 0 \end{bmatrix}\) | Redundant equation \(0 = 0\); does NOT by itself indicate inconsistency or infinitely many solutions
+Pivot in every variable column, none in augmented column | Consistent with a unique solution
+No pivot in augmented column, at least one non-pivot variable column | Consistent with infinitely many solutions (one free parameter per non-pivot variable column)
+[/TABLE]
+
+Notice the subtle warning in the second row of the table: a zero row \(\begin{bmatrix} 0 & \cdots & 0 & \mid & 0 \end{bmatrix}\) does NOT automatically mean infinitely many solutions! A \(3 \times 2\) system such as \(x_1 = 1,\; x_2 = 2,\; x_1 + x_2 = 3\) reduces to \(\left[\begin{array}{cc|c} 1 & 0 & 1 \\ 0 & 1 & 2 \\ 0 & 0 & 0 \end{array}\right]\), which has a zero row yet has a UNIQUE solution because every variable column has a pivot. Free variables are counted by non-pivot variable columns, not by zero rows.
+
+[QUESTION 2]
+[ANSWER: C]
+For which real value(s) of \(k\) is the linear system with augmented matrix
+\[
+\left[\begin{array}{ccc|c}
+1 & -1 & 2 & 3 \\
+2 & -2 & 5 & 7 \\
+1 & -1 & 3 & k
+\end{array}\right]
+\]
+consistent?
+
+(A) \(k = 0\) only
+(B) \(k = 3\) only
+(C) \(k = 4\) only
+(D) All real numbers \(k \neq 4\)
+(E) All real numbers \(k\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+The RREF of the augmented matrix of a linear system in the unknowns \(x_1, x_2, x_3, x_4\) is
+\[
+\left[\begin{array}{cccc|c}
+1 & -3 & 0 & 2 & 5 \\
+0 & 0 & 1 & -4 & -1 \\
+0 & 0 & 0 & 0 & 0
+\end{array}\right].
+\]
+Which statement correctly describes the complete solution set?
+
+(A) \(x_1 = 5 + 3x_2 - 2x_4\) and \(x_3 = -1 + 4x_4\), with \(x_2, x_4\) free
+(B) \(x_1 = 5 - 3x_2 + 2x_4\) and \(x_3 = -1 - 4x_4\), with \(x_2, x_4\) free
+(C) \(x_1 = 5 + 3x_2 - 2x_4\) and \(x_3 = -1 + 4x_4\), with \(x_2 = 0\) and \(x_4\) free
+(D) The system is inconsistent because the bottom row consists entirely of zeros
+(E) \(x_1 = 5\) and \(x_3 = -1\), with \(x_2, x_4\) free
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Solve the following linear system by Gaussian or Gauss-Jordan elimination:
+\[
+\begin{aligned}
+x_1 + 2x_2 - x_3 &= -1, \\
+2x_1 + 5x_2 + x_3 &= 0, \\
+-x_1 - x_2 + 5x_3 &= 4.
+\end{aligned}
+\]
+What is the unique solution \((x_1, x_2, x_3)\)?
+
+(A) \((1, -1, 0)\)
+(B) \((2, -1, 1)\)
+(C) \((2, 1, 1)\)
+(D) \((-2, 1, 1)\)
+(E) \((0, -1, -1)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+A consistent linear system of \(4\) equations in \(5\) unknowns has an augmented matrix whose Row Echelon Form contains exactly \(3\) pivot positions. How many free variables does the system have?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Consider the linear system with real parameters \(a\) and \(b\):
+\[
+\begin{aligned}
+x_1 + x_2 + x_3 &= 2, \\
+2x_1 + 3x_2 + 2x_3 &= 5, \\
+x_1 + 2x_2 + a x_3 &= b.
+\end{aligned}
+\]
+For which values of \(a\) and \(b\) does this system have infinitely many solutions?
+
+(A) \(a \neq 1\) and \(b = 3\)
+(B) \(a = 1\) and \(b \neq 3\)
+(C) \(a = 1\) and any real number \(b\)
+(D) \(a = 1\) and \(b = 3\)
+(E) \(a = 0\) and \(b = 2\)
+[/BONUS]

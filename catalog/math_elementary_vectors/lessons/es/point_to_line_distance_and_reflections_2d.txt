@@ -1,0 +1,254 @@
+=== SECTION 1: Punto más cercano sobre una recta mediante proyección ortogonal ===
+
+Supongamos que una carretera discurre a lo largo de una recta \(L\) en el plano y que una torre de radio se alza en un punto exterior \(P\) fuera de la carretera. ¿Qué punto \(F\) de la carretera está más cerca de \(P\), y a qué distancia se encuentra? Por geometría euclidiana, el segmento más corto desde \(P\) hasta \(L\) corta a \(L\) en ángulo recto: para cualquier otro punto \(Q\) sobre \(L\), el triángulo \(PFQ\) tiene un ángulo recto en \(F\), por lo que según el teorema de Pitágoras
+\[
+\|\overrightarrow{QP}\|^2 = \|\overrightarrow{QF}\|^2 + \|\overrightarrow{FP}\|^2 > \|\overrightarrow{FP}\|^2
+\]
+siempre que \(Q \ne F\). El único punto más cercano \(F\) se denomina pie de la perpendicular (o proyección ortogonal de \(P\)) sobre \(L\).
+
+Con vectores normales y proyecciones ortogonales a mano, podemos localizar \(F\) en un solo paso vectorial directo, sin plantear un sistema de dos rectas que se cortan. Supongamos que \(L\) viene dada en forma punto-normal \(\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\), donde \(P_0\) (con vector de posición \(\mathbf{r}_0\)) es cualquier punto base sobre \(L\) y \(\mathbf{n} = \langle a, b \rangle \ne \mathbf{0}\) es perpendicular a \(L\). Considera el vector de desplazamiento \(\mathbf{r}_P - \mathbf{r}_0 = \overrightarrow{P_0 P}\) de \(P_0\) a \(P\). Mediante la descomposición ortogonal respecto a \(\mathbf{n}\), este desplazamiento se divide de forma única en dos partes perpendiculares:
+\[
+\mathbf{r}_P - \mathbf{r}_0 = \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) + \bigl((\mathbf{r}_P - \mathbf{r}_0) - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\bigr).
+\]
+El primer término es perpendicular a \(L\) (a lo largo de \(\mathbf{n}\)), mientras que el segundo término es ortogonal a \(\mathbf{n}\) y por tanto apunta directamente a lo largo de \(L\). Partir de \(P\) y restar esa componente normal desliza a \(P\) en línea recta en sentido contrario a \(\mathbf{n}\) hasta caer sobre \(L\):
+\[
+\mathbf{r}_F = \mathbf{r}_P - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - \left(\frac{\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)}{\mathbf{n} \cdot \mathbf{n}}\right)\mathbf{n}.
+\]
+
+Verifiquemos algebraicamente ambas condiciones geométricas. Primero, ¿pertenece realmente \(F\) a \(L\)? Haz el producto punto de \(\mathbf{r}_F - \mathbf{r}_0\) con \(\mathbf{n}\):
+\[
+\mathbf{n} \cdot (\mathbf{r}_F - \mathbf{r}_0) = \mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0) - \frac{\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)}{\mathbf{n} \cdot \mathbf{n}}(\mathbf{n} \cdot \mathbf{n}) = 0,
+\]
+luego \(F \in L\). Segundo, \(\overrightarrow{FP} = \mathbf{r}_P - \mathbf{r}_F = \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\) es un múltiplo escalar de \(\mathbf{n}\), de modo que \(\overrightarrow{FP} \perp L\).
+
+Mejor aún: cuando \(L\) está escrita en forma cartesiana \(ax + by = c\), recuerda que \(\mathbf{n} \cdot \mathbf{r}_0 = c\) para TODO punto \(P_0\) sobre \(L\). Por lo tanto
+\[
+\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0) = \mathbf{n} \cdot \mathbf{r}_P - \mathbf{n} \cdot \mathbf{r}_0 = ax_P + by_P - c,
+\]
+¡de modo que ni siquiera necesitas elegir un punto base \(P_0\) sobre \(L\)! ¿Y si \(L\) se entrega en forma paramétrica \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\) con vector director \(\mathbf{d} \ne \mathbf{0}\)? Como la componente de \(\mathbf{r}_P - \mathbf{r}_0\) a lo largo de \(L\) es simplemente \(\operatorname{proj}_{\mathbf{d}}(\mathbf{r}_P - \mathbf{r}_0)\), avanzar desde \(P_0\) a lo largo de \(L\) esa proyección cae exactamente en el mismo pie \(F\):
+\[
+\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{d}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_0 + \left(\frac{(\mathbf{r}_P - \mathbf{r}_0) \cdot \mathbf{d}}{\mathbf{d} \cdot \mathbf{d}}\right)\mathbf{d}.
+\]
+Puesto que \(\mathbf{d}\) y \(\mathbf{n}\) son ortogonales en \(\mathbb{R}^2\), ambas fórmulas producen exactamente el mismo punto \(F\): elige la forma en la que ya venga escrita \(L\).
+
+[CALLOUT]
+id: foot-formula
+label: Teorema
+title: Pie de la perpendicular (punto más cercano sobre una recta \(L\) a \(P\))
+tone: key
+
+Sea \(P(x_P, y_P)\) con vector de posición \(\mathbf{r}_P\), y sea \(L\) una recta en \(\mathbb{R}^2\). El único punto más cercano \(F\) sobre \(L\) a \(P\) tiene vector de posición \(\mathbf{r}_F\) dado por:
+
+(1) Forma normal / cartesiana \(L: \mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\), o \(ax + by = c\) con \(\mathbf{n} = \langle a, b \rangle\):
+\[
+\mathbf{r}_F = \mathbf{r}_P - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - \left(\frac{ax_P + by_P - c}{a^2 + b^2}\right)\mathbf{n}.
+\]
+(2) Forma paramétrica \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\) con \(\mathbf{d} \ne \mathbf{0}\):
+\[
+\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{d}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_0 + \left(\frac{(\mathbf{r}_P - \mathbf{r}_0) \cdot \mathbf{d}}{\mathbf{d} \cdot \mathbf{d}}\right)\mathbf{d}.
+\]
+[/CALLOUT]
+
+Probemos ambas rutas con la recta \(L: 2x + y = 4\) y el punto exterior \(P(5, 4)\).
+- Usando [REF: foot-formula.1 | la forma normal]: lee \(\mathbf{n} = \langle 2, 1 \rangle\), así que \(a^2 + b^2 = 4 + 1 = 5\). Evalúa \(ax_P + by_P - c = 2(5) + 1(4) - 4 = 10\). Entonces
+\[
+\mathbf{r}_F = \langle 5, 4 \rangle - \frac{10}{5}\langle 2, 1 \rangle = \langle 5, 4 \rangle - \langle 4, 2 \rangle = \langle 1, 2 \rangle,
+\]
+luego \(F = (1, 2)\). Comprobación rápida: \(2(1) + 2 = 4\), por lo que \(F\) está sobre \(L\), y \(\overrightarrow{FP} = \langle 4, 2 \rangle = 2\mathbf{n}\) es perpendicular a \(L\).
+- Usando [REF: foot-formula.2 | la forma paramétrica]: elige el punto base \(P_0(2, 0)\) sobre \(L\) y el vector director \(\mathbf{d} = \langle -1, 2 \rangle\), de modo que \(\mathbf{r}_P - \mathbf{r}_0 = \langle 3, 4 \rangle\). Calcula \((\mathbf{r}_P - \mathbf{r}_0) \cdot \mathbf{d} = 3(-1) + 4(2) = 5\) y \(\mathbf{d} \cdot \mathbf{d} = 1 + 4 = 5\). Así \(t = \frac{5}{5} = 1\), lo que da
+\[
+\mathbf{r}_F = \langle 2, 0 \rangle + 1\langle -1, 2 \rangle = \langle 1, 2 \rangle,
+\]
+¡exactamente el mismo pie \(F(1, 2)\)!
+
+Arrastra el deslizador \(s\) en la gráfica interactiva siguiente para mover un punto de prueba \(Q(2 - s, 2s)\) a lo largo de la recta \(L: 2x + y = 4\). Observa el triángulo rectángulo \(PFQ\): siempre que \(s \ne 1\) (es decir, \(Q \ne F\)), la hipotenusa discontinua \(PQ\) es estrictamente más larga que el segmento perpendicular \(PF\).
+
+[GRAPH]
+type: parametric2d
+title: Punto más cercano \(F(1, 2)\) sobre \(L: 2x + y = 4\) a \(P(5, 4)\) comparado con \(Q(2 - s, 2s)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.6, 3.1
+xrange: -1.5, 6.2
+yrange: -2.2, 5.8
+trace: 2 - t, 2*t | label: \(2x + y = 4\) | color: #2563eb
+segment: 1, 2, 5, 4 | label: \(\overrightarrow{FP}\) | color: #16a34a
+segment: 2 - s, 2*s, 5, 4 | label: \(PQ\) | color: #dc2626 | dashed: true
+segment: 1, 2, 2 - s, 2*s | color: #d97706
+point: 5, 4 | label: \(P(5, 4)\)
+point: 1, 2 | label: \(F(1, 2)\)
+point: 2 - s, 2*s | label: \(Q\)
+slider: s | range: -1, 2.5 | init: -0.5 | step: 0.1
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál es el punto más cercano (pie de la perpendicular) \(F\) sobre la recta \(L: x - 3y = 2\) al punto \(P(7, -5)\)?
+
+(A) \((9, -11)\)
+(B) \((5, 1)\)
+(C) \((3, 7)\)
+(D) \((6, -2)\)
+(E) \((2, 0)\)
+[/QUESTION]
+
+=== SECTION 2: Distancia exacta punto-recta y rectas paralelas ===
+
+Muchas veces no necesitamos las coordenadas del pie \(F\) en absoluto: solo queremos la distancia mínima \(d(P, L) = \|\overrightarrow{FP}\|\) desde \(P\) hasta \(L\). Vuelve al desplazamiento desde \(F\) hasta \(P\) en [REF: foot-formula.1 | la construcción en forma normal]:
+\[
+\overrightarrow{FP} = \mathbf{r}_P - \mathbf{r}_F = \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0).
+\]
+¿Cuál es la longitud de una proyección vectorial sobre \(\mathbf{n}\)? Es simplemente el valor absoluto de la proyección escalar sobre \(\mathbf{n}\):
+\[
+d(P, L) = \|\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\| = |\operatorname{comp}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)| = \frac{|\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)|}{\|\mathbf{n}\|}.
+\]
+Sustituir \(\mathbf{n} = \langle a, b \rangle\) y \(\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0) = ax_P + by_P - c\) entrega de inmediato la célebre fórmula cartesiana de distancia punto-recta:
+\[
+d(P, L) = \frac{|ax_P + by_P - c|}{\sqrt{a^2 + b^2}}.
+\]
+Observa por qué esta fórmula tiene pleno sentido: el numerador \(|ax_P + by_P - c|\) mide cuánto falla \(P\) al satisfacer la ecuación de la recta \(ax + by = c\), y dividir entre \(\|\mathbf{n}\| = \sqrt{a^2 + b^2}\) elimina la escala arbitraria de la ecuación (multiplicar \(ax + by = c\) por \(5\) multiplica tanto el numerador como el denominador por \(5\), dejando intacta la distancia). Cuando \(P\) pertenece a \(L\), \(ax_P + by_P - c = 0\), lo que da \(d(P, L) = 0\).
+
+[CALLOUT]
+id: pt-line-dist
+label: Fórmula
+title: Distancia punto-recta en \(\mathbb{R}^2\)
+tone: key
+
+La distancia mínima (perpendicular) desde un punto \(P(x_P, y_P)\) hasta una recta \(L\) con ecuación normal \(\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\), o ecuación cartesiana \(ax + by = c\) con \(\mathbf{n} = \langle a, b \rangle \ne \mathbf{0}\), es
+\[
+d(P, L) = |\operatorname{comp}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)| = \frac{|\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)|}{\|\mathbf{n}\|} = \frac{|ax_P + by_P - c|}{\sqrt{a^2 + b^2}}.
+\]
+[/CALLOUT]
+
+Comprueba [REF: pt-line-dist | esta fórmula] en nuestro ejemplo anterior \(L: 2x + y = 4\) y \(P(5, 4)\):
+\[
+d(P, L) = \frac{|2(5) + 1(4) - 4|}{\sqrt{2^2 + 1^2}} = \frac{10}{\sqrt{5}} = 2\sqrt{5},
+\]
+¡coincidiendo con \(\|\overrightarrow{FP}\| = \|\langle 4, 2 \rangle\| = \sqrt{16 + 4} = 2\sqrt{5}\) sin haber calculado nunca \(F\)!
+
+Ahora particulariza [REF: pt-line-dist | la fórmula de distancia punto-recta] para hallar la distancia perpendicular entre dos rectas paralelas \(L_1\) y \(L_2\). Como \(L_1 \parallel L_2\), comparten un vector normal común \(\mathbf{n} = \langle a, b \rangle\), por lo que, tras escalar una ecuación si hace falta, podemos escribir ambas rectas con los MISMOS coeficientes \(a\) y \(b\) en el primer miembro:
+\[
+L_1: ax + by = c_1, \qquad L_2: ax + by = c_2.
+\]
+Elige CUALQUIER punto \(P(x_P, y_P)\) sobre \(L_1\). Como \(P \in L_1\), satisface \(ax_P + by_P = c_1\). Sustituir \(P\) en la fórmula de distancia a \(L_2\) reemplaza \(ax_P + by_P\) directamente por \(c_1\):
+\[
+d(L_1, L_2) = d(P, L_2) = \frac{|ax_P + by_P - c_2|}{\sqrt{a^2 + b^2}} = \frac{|c_1 - c_2|}{\sqrt{a^2 + b^2}}.
+\]
+La elección del punto \(P\) sobre \(L_1\) desaparece por completo, confirmando que las rectas paralelas mantienen en todo lugar la misma separación perpendicular.
+
+[CALLOUT]
+id: parallel-lines-trap
+label: Error frecuente
+title: Iguala los coeficientes normales antes de restar \(c_1\) y \(c_2\)
+tone: caution
+
+La fórmula para rectas paralelas \(d(L_1, L_2) = \frac{|c_1 - c_2|}{\sqrt{a^2 + b^2}}\) SOLO se aplica cuando ambas rectas están escritas con exactamente el mismo par de coeficientes \((a, b)\) en el mismo lado del signo igual. Si te dan \(2x + 3y = 5\) y \(4x + 6y = 22\), PRIMERO debes reescribir la segunda recta como \(2x + 3y = 11\) (o reescribir la primera como \(4x + 6y = 10\)) antes de restar las constantes.
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: C]
+¿Cuál es la distancia perpendicular entre las dos rectas paralelas \(L_1: 3x - 4y = 7\) y \(L_2: 6x - 8y = -6\)?
+
+(A) \(\frac{4}{5}\)
+(B) \(\frac{13}{10}\)
+(C) \(2\)
+(D) \(\frac{13}{5}\)
+(E) \(10\)
+[/QUESTION]
+
+=== SECTION 3: Reflexiones especulares respecto a una recta arbitraria ===
+
+Una vez que sabes trazar una perpendicular desde \(P\) hasta su pie \(F\) sobre \(L\), calcular la reflexión especular \(P'\) de \(P\) respecto a \(L\) casi no requiere trabajo adicional. ¿Qué define a la reflexión \(P'\) de \(P\) respecto a un eje espejo \(L\)? Dos condiciones geométricas:
+1. El segmento \(PP'\) es perpendicular a \(L\).
+2. La recta \(L\) biseca a \(PP'\), lo que significa que el punto medio de \(PP'\) es el pie \(F\) sobre \(L\).
+
+Observa el recorrido de \(P\) a \(P'\) en pasos vectoriales. Ir de \(P\) a \(F\) suma el paso \(\overrightarrow{PF} = -\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\). Para alcanzar la imagen especular \(P'\) exactamente a la misma distancia al lado opuesto de \(L\), ¡simplemente da ese MISMO paso una SEGUNDA vez! Sumar \(-2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\) a \(\mathbf{r}_P\) da
+\[
+\mathbf{r}_{P'} = \mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - 2\left(\frac{ax_P + by_P - c}{a^2 + b^2}\right)\mathbf{n}.
+\]
+Equivalentemente, si ya calculaste el pie \(\mathbf{r}_F\), la condición del punto medio \(\frac{\mathbf{r}_P + \mathbf{r}_{P'}}{2} = \mathbf{r}_F\) se despeja de inmediato como
+\[
+\mathbf{r}_{P'} = 2\mathbf{r}_F - \mathbf{r}_P.
+\]
+
+Verifiquemos ambas propiedades de reflexión directamente a partir de \(\mathbf{r}_{P'} = \mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\):
+- Comprobación del punto medio: \(\frac{\mathbf{r}_P + \mathbf{r}_{P'}}{2} = \frac{2\mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)}{2} = \mathbf{r}_P - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_F\), que ya demostramos que está sobre \(L\).
+- Comprobación de perpendicularidad: \(\overrightarrow{PP'} = \mathbf{r}_{P'} - \mathbf{r}_P = -2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\), que es un múltiplo escalar de \(\mathbf{n}\) y por lo tanto perpendicular a \(L\).
+- Comprobación de autoinversión: si \(P\) ya está sobre \(L\), entonces \(ax_P + by_P - c = 0\), así que \(\mathbf{r}_{P'} = \mathbf{r}_P\): ¡todo punto sobre el espejo permanece fijo!
+
+[CALLOUT]
+id: reflect-line
+label: Fórmula
+title: Reflexión de un punto \(P\) respecto a una recta \(L\) en 2D
+tone: key
+
+Para un punto \(P(x_P, y_P)\) y una recta \(L: \mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\) (forma cartesiana \(ax + by = c\) con \(\mathbf{n} = \langle a, b \rangle\)), la reflexión especular \(P'\) de \(P\) respecto a \(L\) tiene vector de posición
+\[
+\mathbf{r}_{P'} = \mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - 2\left(\frac{ax_P + by_P - c}{a^2 + b^2}\right)\mathbf{n} = 2\mathbf{r}_F - \mathbf{r}_P.
+\]
+[/CALLOUT]
+
+Aplica [REF: reflect-line | la fórmula de reflexión] a nuestro ejemplo continuo \(L: 2x + y = 4\) y \(P(5, 4)\), donde hallamos \(\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \langle 4, 2 \rangle\) y \(F = (1, 2)\):
+\[
+\mathbf{r}_{P'} = \langle 5, 4 \rangle - 2\langle 4, 2 \rangle = \langle -3, 0 \rangle,
+\]
+de modo que \(P' = (-3, 0)\). Doble comprobación: el punto medio de \(P(5, 4)\) y \(P'(-3, 0)\) es \(\left(\frac{5 - 3}{2}, \frac{4 + 0}{2}\right) = (1, 2) = F \in L\), y \(\overrightarrow{PP'} = \langle -8, -4 \rangle = -4\langle 2, 1 \rangle \perp L\).
+
+Arrastra el deslizador \(a\) en la gráfica siguiente para desplazar horizontalmente \(P(a, 4)\) a través de la recta espejo \(L: 2x + y = 4\). Observa cómo el pie \(F\) se desliza a lo largo de \(L\) mientras \(P'\) se mantiene simétricamente opuesto a \(P\) respecto a \(L\), coincidiendo con \(P\) en \((0, 4)\) cuando \(P\) cruza el espejo.
+
+[GRAPH]
+type: parametric2d
+title: Reflexión especular \(P'\) de \(P(a, 4)\) respecto a \(L: 2x + y = 4\) con pie \(F\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -2.5, 3
+xrange: -4.2, 6
+yrange: -1.5, 6.8
+trace: 2 - t, 2*t | label: \(\text{espejo } 2x + y = 4\) | color: #2563eb
+segment: a, 4, -0.6*a, 4 - 0.8*a | label: \(PP'\) | color: #d97706 | dashed: true
+segment: 0.2*a, 4 - 0.4*a, a, 4 | color: #16a34a
+point: a, 4 | label: \(P\)
+point: 0.2*a, 4 - 0.4*a | label: \(F\)
+point: -0.6*a, 4 - 0.8*a | label: \(P'\)
+slider: a | range: -3, 5 | init: 5 | step: 0.25
+[/GRAPH]
+
+[TABLE]
+Tarea para \(P(x_P, y_P)\) y \(L: ax + by = c\) | Expresión vectorial (\(\mathbf{n} = \langle a, b \rangle\)) | Comprobación geométrica clave
+Pie de la perpendicular \(F\) | \(\mathbf{r}_P - \frac{ax_P + by_P - c}{a^2 + b^2}\mathbf{n}\) | \(F \in L\) y \(\overrightarrow{FP} \parallel \mathbf{n}\)
+Distancia mínima \(d(P, L)\) | \(\frac{\lvert ax_P + by_P - c \rvert}{\sqrt{a^2 + b^2}}\) | Igual a \(\lVert \overrightarrow{FP} \rVert \ge 0\)
+Reflexión especular \(P'\) | \(\mathbf{r}_P - 2\frac{ax_P + by_P - c}{a^2 + b^2}\mathbf{n}\) | Punto medio de \(PP'\) es \(F \in L\) y \(\overrightarrow{PP'} \parallel \mathbf{n}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: D]
+¿Cuál es la reflexión especular \(P'\) del punto \(P(-2, 5)\) respecto a la recta \(L: x + 2y = 3\)?
+
+(A) \((-3, 3)\)
+(B) \((0, 9)\)
+(C) \((-5, -1)\)
+(D) \((-4, 1)\)
+(E) \((2, -5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Un dron vuela por la trayectoria rectilínea \(\mathbf{r}(t) = \langle 1, 2 \rangle + t\langle 2, -1 \rangle\) (coordenadas en km, \(t \in \mathbb{R}\)), mientras que una torre de radio está ubicada en \(P(6, 7)\). ¿En qué valor del parámetro \(t\) está el dron más cerca de la torre, y cuál es esa distancia mínima?
+
+(A) \(t = 1\), distancia mínima \(3\sqrt{5}\text{ km}\)
+(B) \(t = 1\), distancia mínima \(5\sqrt{2}\text{ km}\)
+(C) \(t = 5\), distancia mínima \(3\sqrt{5}\text{ km}\)
+(D) \(t = 1\), distancia mínima \(15\text{ km}\)
+(E) \(t = -1\), distancia mínima \(3\sqrt{5}\text{ km}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+El punto \(P'(8, 9)\) es la reflexión especular de \(P(2, 1)\) respecto a una recta desconocida \(L\). ¿Cuál es la distancia perpendicular desde el origen \(O(0, 0)\) hasta la recta \(L\)?
+
+(A) \(1\)
+(B) \(5\)
+(C) \(5\sqrt{2}\)
+(D) \(35\)
+(E) \(7\)
+[/BONUS]

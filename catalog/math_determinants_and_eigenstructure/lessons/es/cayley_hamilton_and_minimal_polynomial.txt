@@ -1,0 +1,306 @@
+=== SECTION 1: El Teorema de Cayley-Hamilton y por qué falla la sustitución ingenua ===
+
+Toda matriz \(n \times n\) \(A \in M_n(F)\) pertenece a un espacio vectorial de dimensión \(n^2\), por lo que sus potencias \(I_n, A, A^2, \dots, A^{n^2}\) deben satisfacer alguna relación polinómica no trivial de grado a lo sumo \(n^2\). Sin embargo, las matrices diagonalizables logran algo mucho mejor: si \(A\) tiene valores propios \(\lambda_1, \dots, \lambda_n\), aplicar \((A - \lambda_1 I_n)\cdots(A - \lambda_n I_n)\) a cualquier vector propio \(\mathbf{v}_j\) encuentra el factor \((A - \lambda_j I_n)\mathbf{v}_j = \mathbf{0}\), de modo que \(A\) satisface su PROPIA ecuación característica \(p_A(A) = 0\) de grado apenas \(n\). ¿Sigue valiendo esta notable identidad de grado \(n\) para matrices defectivas que carecen de base propia?
+
+Antes de demostrar que la respuesta es sí para TODA matriz cuadrada, deténgase a examinar una famosa «demostración» de una línea que circula ampliamente, y que es por completo inválida.
+
+[CALLOUT]
+id: ch-fallacy
+label: Error frecuente
+title: La pseudodemostración falaz por sustitución directa
+tone: caution
+
+Es tentador escribir: «Como \(p_A(\lambda) = \det(\lambda I_n - A)\), sustituya \(\lambda = A\) para obtener \(p_A(A) = \det(A I_n - A) = \det(0) = 0\)».
+
+Este argumento es completamente inválido por dos razones:
+
+(1) Incompatibilidad de tipos: \(\det(\lambda I_n - A)\) es un ESCALAR en \(F\) (o un polinomio escalar en la indeterminada \(\lambda\)), mientras que \(p_A(A)\) es una MATRIZ \(n \times n\) en \(M_n(F)\) obtenida al expandir primero \(p_A(\lambda) = \lambda^n + c_{n-1}\lambda^{n-1} + \dots + c_1\lambda + c_0\) y luego calcular \(A^n + c_{n-1}A^{n-1} + \dots + c_1 A + c_0 I_n\). Incluso el «\(0\)» final en el lado derecho de \(\det(0) = 0\) es el escalar \(0\), no la matriz nula \(0 \in M_n(F)\).
+(2) Sustitución ilegal dentro de \(\det\): la matriz \(\lambda I_n - A\) tiene entradas escalares en \(F[\lambda]\); reemplazar el escalar \(\lambda\) por la matriz \(A\) dentro de \(\det(\cdot)\) carece de definición, porque el determinante es solo una función polinómica de entradas escalares, no de bloques matriciales.
+[/CALLOUT]
+
+Para demostrar el teorema con rigor —tanto para matrices defectivas como no defectivas—, utilizamos la triangularización superior sobre \(\mathbb{C}\) de la lección anterior. Note que si \(A \in M_n(\mathbb{R})\), podemos ver \(A\) dentro de \(M_n(\mathbb{C})\) sin cambiar su polinomio característico \(p_A(\lambda)\) ni la matriz \(p_A(A)\), de modo que demostrar \(p_A(A) = 0\) sobre \(\mathbb{C}\) cubre de inmediato también a todas las matrices reales.
+
+[CALLOUT]
+id: cayley-hamilton
+label: Teorema
+title: Teorema de Cayley-Hamilton
+tone: key
+
+Sea \(A \in M_n(F)\) (con \(F = \mathbb{R}\) o \(\mathbb{C}\)) con polinomio característico
+\[
+p_A(\lambda) = \det(\lambda I_n - A) = \lambda^n + c_{n-1}\lambda^{n-1} + \dots + c_1\lambda + c_0.
+\]
+Entonces \(A\) satisface su propia ecuación característica:
+\[
+p_A(A) = A^n + c_{n-1}A^{n-1} + \dots + c_1 A + c_0 I_n = 0.
+\]
+Equivalentemente, todo operador lineal \(T : V \to V\) sobre un espacio de dimensión finita sobre \(F\) satisface \(p_T(T) = 0\).
+[/CALLOUT]
+
+Demostremos [REF: cayley-hamilton | el Teorema de Cayley-Hamilton] rigurosamente mediante triangularización superior. Por el Teorema de Triangularización Superior Algebraica sobre \(\mathbb{C}\), existe una matriz invertible \(P \in M_n(\mathbb{C})\) tal que \(U = P^{-1} A P\) es triangular superior con los valores propios \(\lambda_1, \dots, \lambda_n \in \mathbb{C}\) de \(A\) (contados con multiplicidad algebraica) a lo largo de su diagonal principal. Como \(p_A(\lambda) = p_U(\lambda) = (\lambda - \lambda_1)(\lambda - \lambda_2)\cdots(\lambda - \lambda_n)\) y los polinomios matriciales respetan la semejanza (\(p_A(U) = P^{-1} p_A(A) P\)), tenemos \(p_A(A) = 0\) si y solo si
+\[
+p_A(U) = (U - \lambda_1 I_n)(U - \lambda_2 I_n)\cdots(U - \lambda_n I_n) = 0.
+\]
+Observe que todos los factores \((U - \lambda_i I_n)\) son polinomios en la MISMA matriz \(U\), por lo que conmutan entre sí. Para probar \(p_A(U) = 0\), basta demostrar que \(p_A(U)\mathbf{e}_j = \mathbf{0}\) para todo vector de la base estándar \(\mathbf{e}_1, \dots, \mathbf{e}_n\). Probamos una afirmación más fina por inducción sobre \(j = 1, \dots, n\):
+\[
+(U - \lambda_1 I_n)(U - \lambda_2 I_n)\cdots(U - \lambda_j I_n)\mathbf{e}_j = \mathbf{0}.
+\]
+- Caso base \(j = 1\): como \(U\) es triangular superior con entrada \((1, 1)\) igual a \(\lambda_1\), tenemos \(U\mathbf{e}_1 = \lambda_1\mathbf{e}_1\), así que \((U - \lambda_1 I_n)\mathbf{e}_1 = \mathbf{0}\).
+- Paso inductivo: suponga que \((U - \lambda_1 I_n)\cdots(U - \lambda_{k} I_n)\mathbf{e}_k = \mathbf{0}\) se cumple para todo \(k < j\). Como los factores conmutan, \((U - \lambda_1 I_n)\cdots(U - \lambda_{j-1} I_n)\) anula a TODO vector \(\mathbf{e}_1, \dots, \mathbf{e}_{j-1}\), y por ende anula a todo el subespacio \(W_{j-1} = \operatorname{span}\{\mathbf{e}_1, \dots, \mathbf{e}_{j-1}\}\). Observe ahora la columna \(j\) de \(U\): puesto que \(U\) es triangular superior con entrada \((j, j)\) igual a \(\lambda_j\),
+\[
+U\mathbf{e}_j = u_{1j}\mathbf{e}_1 + \dots + u_{j-1, j}\mathbf{e}_{j-1} + \lambda_j \mathbf{e}_j,
+\]
+y restar \(\lambda_j \mathbf{e}_j\) cancela por completo el término en \(\mathbf{e}_j\):
+\[
+(U - \lambda_j I_n)\mathbf{e}_j = u_{1j}\mathbf{e}_1 + \dots + u_{j-1, j}\mathbf{e}_{j-1} \in W_{j-1}.
+\]
+¡Aplicar \((U - \lambda_1 I_n)\cdots(U - \lambda_{j-1} I_n)\) a este vector en \(W_{j-1}\) arroja \(\mathbf{0}\) de inmediato!
+
+Así, para todo \(j = 1, \dots, n\), reordenar los factores que conmutan da
+\[
+p_A(U)\mathbf{e}_j = (U - \lambda_{j+1} I_n)\cdots(U - \lambda_n I_n)\,\bigl[(U - \lambda_1 I_n)\cdots(U - \lambda_j I_n)\mathbf{e}_j\bigr] = \mathbf{0}.
+\]
+Como \(p_A(U)\) anula a cada vector de la base estándar, \(p_A(U) = 0\), y por tanto \(p_A(A) = P p_A(U) P^{-1} = 0\).
+
+[REF: cayley-hamilton | Cayley-Hamilton] entrega una recompensa algebraica inmediata: colapsa CUALQUIER potencia \(A^k\) (para \(k \ge n\)) —y también \(A^{-1}\) siempre que \(\det(A) \neq 0\)— en un polinomio de grado a lo sumo \(n - 1\) en \(A\), ¡SIN diagonalizar \(A\)!
+
+Observe cómo funciona esto en \(A = \begin{bmatrix} 3 & 2 \\ 1 & 4 \end{bmatrix}\). Su polinomio característico es
+\[
+p_A(\lambda) = (\lambda - 3)(\lambda - 4) - 2 = \lambda^2 - 7\lambda + 10.
+\]
+Por [REF: cayley-hamilton | Cayley-Hamilton], \(A^2 - 7A + 10 I_2 = 0\), lo que da DOS reducciones instantáneas:
+- Potencias superiores: reescriba \(A^2 = 7A - 10 I_2\). Multiplicar por \(A\) da
+\[
+A^3 = 7A^2 - 10A = 7(7A - 10 I_2) - 10A = 39A - 70 I_2.
+\]
+- Inversa (cuando \(c_0 = (-1)^n \det(A) \neq 0\)): aísle el término constante \(10 I_2 = 7A - A^2 = A(7I_2 - A)\) y divida por \(10\):
+\[
+A^{-1} = \frac{1}{10}(7I_2 - A) = \frac{1}{10}\begin{bmatrix} 4 & -2 \\ -1 & 3 \end{bmatrix}.
+\]
+Más generalmente, para reducir un polinomio de grado alto \(f(A)\) (como \(A^k\) con \(k \ge n\)), divida \(f(x)\) entre \(p_A(x)\) en \(F[x]\) mediante división larga de polinomios:
+\[
+f(x) = q(x)\,p_A(x) + r(x), \qquad \deg r < n.
+\]
+Evaluar en \(A\) anula el término \(p_A(A)\), ¡dejando \(f(A) = r(A)\)! Por ejemplo, si \(B \in M_3(\mathbb{R})\) tiene \(p_B(x) = x^3 - 2x^2 - x + 2\), dividir \(x^4\) entre \(p_B(x)\) produce \(x^4 = (x + 2)(x^3 - 2x^2 - x + 2) + (5x^2 - 4)\), de modo que \(B^4 = 5B^2 - 4I_3\) se cumple automáticamente, sin conocer jamás las entradas de \(B\).
+
+[QUESTION 1]
+[ANSWER: B]
+Suponga que \(A \in M_3(\mathbb{R})\) tiene polinomio característico \(p_A(\lambda) = \lambda^3 - 4\lambda^2 + 2\lambda - 5\). ¿Qué polinomio en \(A\) es igual a \(A^{-1}\)?
+
+(A) \(\frac{1}{5}(A^2 + 4A - 2I_3)\)
+(B) \(\frac{1}{5}(A^2 - 4A + 2I_3)\)
+(C) \(-\frac{1}{5}(A^2 - 4A + 2I_3)\)
+(D) \(\frac{1}{5}(A^3 - 4A^2 + 2A)\)
+(E) \(A^{-1}\) no puede expresarse como polinomio en \(A\) a menos que \(A\) sea diagonalizable.
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Por qué falla como demostración del Teorema de Cayley-Hamilton el argumento de una línea «sustituya \(\lambda = A\) en \(p_A(\lambda) = \det(\lambda I_n - A)\) para obtener \(p_A(A) = \det(A I_n - A) = \det(0) = 0\)»?
+
+(A) Porque solo está garantizado que \(p_A(\lambda)\) tenga raíces sobre \(\mathbb{C}\), no sobre \(\mathbb{R}\).
+(B) Porque \(\lambda I_n - A\) podría ser invertible cuando se reemplaza \(\lambda\) por una matriz.
+(C) Porque \(p_A(A) = 0\) en realidad solo se cumple cuando \(A\) es triangular superior.
+(D) Porque \(\det(\lambda I_n - A)\) es una función escalar de una indeterminada escalar \(\lambda\), mientras que \(p_A(A)\) es una matriz \(n \times n\) definida sustituyendo \(A\) en los coeficientes del polinomio ya expandido; insertar una matriz dentro de \(\det(\cdot)\) no es una evaluación válida.
+(E) Porque \(A I_n - A\) es igual a \(0\) únicamente cuando \(A\) conmuta con toda matriz \(n \times n\).
+[/QUESTION]
+
+=== SECTION 2: Polinomios anuladores y el polinomio mínimo ===
+
+El Teorema de Cayley-Hamilton garantiza que toda matriz \(A \in M_n(F)\) es anulada por ALGÚN polinomio no nulo, a saber \(p_A(x)\) de grado \(n\). Sin embargo, \(p_A(x)\) es con frecuencia mayor de lo necesario. Para la matriz identidad \(3 \times 3\) \(I_3\), \(p_{I_3}(x) = (x - 1)^3\) tiene grado \(3\), aunque \(I_3\) ya satisface la ecuación de grado \(1\) \(I_3 - I_3 = 0\) (polinomio \(x - 1\)). ¿Cuál es la MENOR ecuación polinómica que satisface una matriz, y cómo se relaciona con todos los demás polinomios que anulan a \(A\)?
+
+[CALLOUT]
+id: min-poly-def
+label: Definición
+title: Polinomios anuladores y el polinomio mínimo
+tone: key
+
+Sea \(A \in M_n(F)\) (o sea \(T : V \to V\) un operador lineal sobre un espacio de dimensión finita sobre \(F\)).
+
+(1) Un polinomio \(f(x) \in F[x]\) se denomina polinomio anulador de \(A\) si \(f(A) = 0\).
+(2) El polinomio mínimo de \(A\), denotado \(m_A(x)\), es el único polinomio mónico (coeficiente principal \(1\)) de menor grado positivo en \(F[x]\) tal que \(m_A(A) = 0\).
+[/CALLOUT]
+
+¿Por qué está garantizado que \(m_A(x)\) existe y es único? La existencia es inmediata por [REF: cayley-hamilton | Cayley-Hamilton]: puesto que \(p_A(A) = 0\) y \(\deg p_A = n \ge 1\), el conjunto de grados positivos de polinomios anuladores no nulos es no vacío y, por tanto, posee un elemento mínimo \(d \ge 1\). Dividir un polinomio anulador de grado \(d\) por su coeficiente principal produce un polinomio anulador mónico \(m_A(x)\) de grado \(d\).
+
+El algoritmo de la división en \(F[x]\) desbloquea ahora TODAS las propiedades fundamentales de \(m_A(x)\) de golpe.
+
+[CALLOUT]
+id: min-poly-props
+label: Teorema
+title: Propiedades fundamentales del polinomio mínimo
+tone: key
+
+Sea \(A \in M_n(F)\) con polinomio característico \(p_A(x)\) y polinomio mínimo \(m_A(x)\).
+
+(1) Divisibilidad y unicidad: Un polinomio \(f(x) \in F[x]\) satisface \(f(A) = 0\) si y solo si \(m_A(x)\) divide a \(f(x)\) en \(F[x]\). En particular, \(m_A(x)\) es único, y \(m_A(x) \mid p_A(x)\).
+(2) Invariancia por semejanza: Para toda \(P \in M_n(F)\) invertible, \(m_{P^{-1} A P}(x) = m_A(x)\). Así, \(m_T(x)\) queda bien definido independientemente de la elección de la base para un operador lineal \(T : V \to V\).
+(3) Raíces idénticas (valores propios): Un escalar \(\lambda \in F\) es raíz de \(m_A(x)\) si y solo si \(\lambda\) es un valor propio de \(A\) (equivalentemente, una raíz de \(p_A(x)\)).
+[/CALLOUT]
+
+Verifiquemos cada una de las tres afirmaciones de [REF: min-poly-props | este teorema]:
+- Demostración de [REF: min-poly-props.1 | la divisibilidad]: Si \(f(x) = q(x) m_A(x)\), entonces \(f(A) = q(A) m_A(A) = q(A)\cdot 0 = 0\). Recíprocamente, suponga que \(f(A) = 0\). Divida \(f(x)\) entre \(m_A(x)\) en \(F[x]\):
+\[
+f(x) = q(x)\,m_A(x) + r(x), \qquad \text{donde } r(x) = 0 \text{ o } \deg r < \deg m_A.
+\]
+Evalúe en \(A\): \(0 = f(A) = q(A)\,m_A(A) + r(A) = r(A)\). Si \(r(x)\) fuera no nulo, sería un polinomio anulador no nulo de grado estrictamente menor que \(\deg m_A\), ¡contradiciendo la minimalidad! Por tanto \(r(x) = 0\), de modo que \(m_A(x) \mid f(x)\). La unicidad sigue de inmediato: si \(m_1\) y \(m_2\) son ambos polinomios anuladores mónicos de grado mínimo, entonces \(m_1 \mid m_2\) y \(\deg m_1 = \deg m_2\), lo que obliga a \(m_1 = m_2\). Tomar \(f = p_A\) da \(m_A \mid p_A\).
+- Demostración de [REF: min-poly-props.2 | la invariancia por semejanza]: Para cualquier polinomio \(f(x) \in F[x]\), \(f(P^{-1} A P) = P^{-1} f(A) P\), de modo que \(f(P^{-1} A P) = 0\) si y solo si \(f(A) = 0\). Como \(A\) y \(P^{-1} A P\) tienen exactamente el mismo conjunto de polinomios anuladores, tienen exactamente el mismo polinomio mínimo.
+- Demostración de [REF: min-poly-props.3 | las raíces idénticas]: Si \(m_A(\lambda) = 0\), entonces puesto que \(m_A \mid p_A\) obtenemos de inmediato \(p_A(\lambda) = 0\), así que \(\lambda\) es un valor propio de \(A\). Recíprocamente, suponga que \(\lambda \in F\) es un valor propio de \(A\) con vector propio \(\mathbf{v} \neq \mathbf{0}\). Para todo polinomio \(f(x)\), \(A\mathbf{v} = \lambda\mathbf{v}\) implica \(f(A)\mathbf{v} = f(\lambda)\mathbf{v}\). Aplicar esto a \(f = m_A\) da
+\[
+\mathbf{0} = m_A(A)\mathbf{v} = m_A(\lambda)\mathbf{v}.
+\]
+Como \(\mathbf{v} \neq \mathbf{0}\), ¡debemos tener \(m_A(\lambda) = 0\)! (El mismo argumento sobre \(\mathbb{C}\) muestra que TODA raíz compleja de \(p_A\) es raíz de \(m_A\), de modo que \(m_A\) y \(p_A\) comparten exactamente los mismos factores irreducibles distintos sobre \(F\).)
+
+[REF: min-poly-props.1 | La divisibilidad en \(p_A\)] combinada con [REF: min-poly-props.3 | las raíces idénticas] da un algoritmo limpio para hallar \(m_A(x)\) siempre que \(p_A(x)\) se factoriza en factores lineales:
+\[
+p_A(x) = (x - \lambda_1)^{a_1}(x - \lambda_2)^{a_2}\cdots(x - \lambda_r)^{a_r} \implies m_A(x) = (x - \lambda_1)^{e_1}(x - \lambda_2)^{e_2}\cdots(x - \lambda_r)^{e_r}
+\]
+con \(1 \le e_i \le a_i\) para todo \(i = 1, \dots, r\). ¡Todo valor propio distinto DEBE aparecer con exponente al menos \(1\), y ningún exponente puede superar su multiplicidad algebraica! Así, basta probar los divisores candidatos en orden creciente de grado hasta alcanzar la matriz nula.
+
+Compare dos matrices \(3 \times 3\) que comparten EXACTAMENTE el mismo polinomio característico \(p(x) = (x - 3)^2(x + 1)\):
+\[
+A = \begin{bmatrix} 3 & 0 & 0 \\ 1 & 3 & 0 \\ 0 & 0 & -1 \end{bmatrix}, \qquad B = \begin{bmatrix} 3 & 0 & 0 \\ 0 & 3 & 0 \\ 1 & 0 & -1 \end{bmatrix}.
+\]
+Para ambas matrices, los ÚNICOS candidatos para el polinomio mínimo son \((x - 3)(x + 1)\) y \((x - 3)^2(x + 1)\). Pruebe primero el candidato menor:
+\[
+(A - 3I_3)(A + I_3) = \begin{bmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & -4 \end{bmatrix}\begin{bmatrix} 4 & 0 & 0 \\ 1 & 4 & 0 \\ 0 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 0 & 0 \\ 4 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \neq 0,
+\]
+así que \(m_A(x) = (x - 3)^2(x + 1)\). En contraste,
+\[
+(B - 3I_3)(B + I_3) = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 1 & 0 & -4 \end{bmatrix}\begin{bmatrix} 4 & 0 & 0 \\ 0 & 4 & 0 \\ 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} = 0,
+\]
+¡así que \(m_B(x) = (x - 3)(x + 1)\)! Note que \(B\) es diagonalizable (ya que \(m_g(3) = 2 = m_a(3)\)) mientras que \(A\) es defectiva (\(m_g(3) = 1 < 2 = m_a(3)\)). La tabla siguiente reúne cuatro ejemplos representativos \(3 \times 3\): ¡detecte el patrón!
+
+[TABLE]
+Matriz \(M\) | \(p_M(x)\) | \(m_M(x)\) | ¿Diagonalizable sobre \(\mathbb{R}\)?
+\(2I_3\) | \((x - 2)^3\) | \(x - 2\) | Sí
+\(B\) arriba | \((x - 3)^2(x + 1)\) | \((x - 3)(x + 1)\) | Sí
+\(A\) arriba | \((x - 3)^2(x + 1)\) | \((x - 3)^2(x + 1)\) | No (defectiva)
+\(\begin{bmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 2 \end{bmatrix}\) | \((x^2 + 1)(x - 2)\) | \((x^2 + 1)(x - 2)\) | No sobre \(\mathbb{R}\); sí sobre \(\mathbb{C}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+Calcule el polinomio mínimo \(m_A(x)\) de la matriz
+\[
+A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 1 & 1 \end{bmatrix}.
+\]
+
+(A) \(x - 1\)
+(B) \((x - 1)^2\)
+(C) \((x - 1)(x - 2)\)
+(D) \((x - 1)^2(x - 2)\)
+(E) \((x - 1)(x - 2)^2\)
+[/QUESTION]
+
+=== SECTION 3: El criterio de diagonalizabilidad mediante el polinomio mínimo ===
+
+La tabla al final de la Sección 2 sugiere un teorema preciso: en cada caso diagonalizable, el polinomio mínimo se escindió en factores lineales SIN RAÍCES REPETIDAS, mientras que en el caso defectivo apareció un factor elevado al cuadrado. Esa observación no es una casualidad: ¡es una equivalencia exacta!
+
+[CALLOUT]
+id: min-poly-diag
+label: Teorema
+title: Criterio de diagonalizabilidad mediante el polinomio mínimo
+tone: key
+
+Un operador lineal \(T : V \to V\) sobre un espacio vectorial de dimensión finita \(V\) sobre \(F\) (o una matriz \(A \in M_n(F)\)) es diagonalizable sobre \(F\) si y solo si su polinomio mínimo \(m_T(x)\) se escinde completamente en factores lineales DISTINTOS sobre \(F\):
+\[
+m_T(x) = (x - \lambda_1)(x - \lambda_2)\cdots(x - \lambda_r)
+\]
+para escalares distintos dos a dos \(\lambda_1, \dots, \lambda_r \in F\).
+[/CALLOUT]
+
+Demostremos AMBAS direcciones de [REF: min-poly-diag | el criterio del polinomio mínimo].
+
+- Dirección directa (\(\Rightarrow\)): Suponga que \(T\) es diagonalizable sobre \(F\), con valores propios distintos \(\lambda_1, \dots, \lambda_r \in F\). Considere el polinomio libre de cuadrados \(f(x) = (x - \lambda_1)(x - \lambda_2)\cdots(x - \lambda_r)\). Para TODO vector propio \(\mathbf{v}\) de \(T\) con valor propio \(\lambda_k\), como los factores \((T - \lambda_i I)\) conmutan, podemos mover \((T - \lambda_k I)\) a la derecha:
+\[
+f(T)\mathbf{v} = \left(\prod_{i \neq k} (T - \lambda_i I)\right)(T - \lambda_k I)\mathbf{v} = \mathbf{0}.
+\]
+Como \(V\) tiene una base de vectores propios de \(T\) y \(f(T)\) anula a todo vector de la base, \(f(T) = 0\). Por [REF: min-poly-props.1 | la divisibilidad], \(m_T(x)\) divide a \(f(x)\). Recíprocamente, por [REF: min-poly-props.3 | las raíces idénticas], todo \(\lambda_i\) es raíz de \(m_T(x)\), de modo que \(f(x)\) divide a \(m_T(x)\). Ambos son mónicos, por lo que \(m_T(x) = (x - \lambda_1)\cdots(x - \lambda_r)\).
+
+- Dirección recíproca (\(\Leftarrow\)): Suponga que \(m_T(x) = (x - \lambda_1)(x - \lambda_2)\cdots(x - \lambda_r)\) con \(\lambda_1, \dots, \lambda_r \in F\) distintos dos a dos. (Si \(r = 1\), entonces \(T = \lambda_1 I\) ya es diagonal.) Para \(r \ge 2\), ¿cómo construimos una descomposición de TODO vector \(\mathbf{v} \in V\) como suma de vectores propios? ¡La herramienta es la interpolación de Lagrange! Para cada \(i = 1, \dots, r\), defina el \(i\)-ésimo polinomio de Lagrange de grado \(r - 1\):
+\[
+L_i(x) = \prod_{j \neq i} \frac{x - \lambda_j}{\lambda_i - \lambda_j}.
+\]
+Note dos propiedades inmediatas de \(L_i(x)\):
+  1. En cada valor propio \(\lambda_k\), \(L_i(\lambda_k) = 1\) si \(k = i\) y \(L_i(\lambda_k) = 0\) si \(k \neq i\). Por lo tanto, el polinomio \(g(x) = L_1(x) + L_2(x) + \dots + L_r(x) - 1\) tiene grado a lo sumo \(r - 1\), pero se anula en los \(r\) puntos DISTINTOS \(\lambda_1, \dots, \lambda_r\). ¡Un polinomio no nulo de grado a lo sumo \(r - 1\) puede tener a lo sumo \(r - 1\) raíces, así que \(g(x)\) DEBE ser el polinomio nulo! Es decir,
+\[
+L_1(x) + L_2(x) + \dots + L_r(x) = 1.
+\]
+  2. Multiplicar \(L_i(x)\) por \((x - \lambda_i)\) aporta el factor lineal faltante, dando
+\[
+(x - \lambda_i)\,L_i(x) = c_i\,m_T(x), \qquad \text{donde } c_i = \prod_{j \neq i} \frac{1}{\lambda_i - \lambda_j}.
+\]
+¡Evalúe ahora AMBAS identidades polinómicas en el operador \(T\)! Primero,
+\[
+L_1(T) + L_2(T) + \dots + L_r(T) = I,
+\]
+así que todo vector \(\mathbf{v} \in V\) se descompone como \(\mathbf{v} = L_1(T)\mathbf{v} + L_2(T)\mathbf{v} + \dots + L_r(T)\mathbf{v}\). Segundo, para cada \(i = 1, \dots, r\),
+\[
+(T - \lambda_i I)\bigl(L_i(T)\mathbf{v}\bigr) = c_i\,m_T(T)\mathbf{v} = \mathbf{0},
+\]
+¡lo que demuestra que \(L_i(T)\mathbf{v} \in E_{\lambda_i}\) para TODO \(\mathbf{v} \in V\)! En consecuencia, \(V = E_{\lambda_1} + E_{\lambda_2} + \dots + E_{\lambda_r} = E_{\lambda_1} \oplus \dots \oplus E_{\lambda_r}\), y por lo tanto \(T\) tiene una base propia y es diagonalizable sobre \(F\).
+
+Note con qué facilidad permite [REF: min-poly-diag | este criterio] comprobar la diagonalizabilidad a partir de CUALQUIER identidad polinómica: si apenas sabe que una matriz satisface \(f(A) = 0\) para ALGÚN polinomio \(f(x)\) que se escinde en factores lineales distintos sobre \(F\), entonces \(m_A(x) \mid f(x)\) TAMBIÉN debe escindirse en factores lineales distintos sobre \(F\), de modo que \(A\) es AUTOMÁTICAMENTE diagonalizable sobre \(F\), ¡sin calcular un solo determinante ni vector propio!
+- Toda proyección (\(A^2 = A\)) satisface \(f(x) = x(x - 1)\), que tiene raíces distintas \(0, 1 \in F\), así que toda proyección es diagonalizable sobre \(F\).
+- Toda involución (\(A^2 = I_n\)) satisface \(f(x) = (x - 1)(x + 1)\), que tiene raíces distintas \(1, -1 \in F\), así que toda involución es diagonalizable sobre \(\mathbb{R}\) y \(\mathbb{C}\).
+- Una matriz real que satisface \(A^2 + I_n = 0\) tiene \(m_A(x) = x^2 + 1\): sobre \(\mathbb{C}\), \(x^2 + 1 = (x - i)(x + i)\) se escinde en factores lineales distintos, por lo que \(A\) es diagonalizable sobre \(\mathbb{C}\); sobre \(\mathbb{R}\), \(x^2 + 1\) no se escinde, por lo que \(A\) NO es diagonalizable sobre \(\mathbb{R}\).
+
+[QUESTION 4]
+[ANSWER: A]
+Suponga que \(A \in M_n(\mathbb{R})\) satisface \(A^3 = I_n\). ¿Qué enunciado DEBE ser verdadero?
+
+(A) \(A\) es garantizadamente diagonalizable sobre \(\mathbb{C}\), pero no tiene por qué ser diagonalizable sobre \(\mathbb{R}\).
+(B) \(A\) es garantizadamente diagonalizable tanto sobre \(\mathbb{R}\) como sobre \(\mathbb{C}\).
+(C) \(A\) no puede ser diagonalizable sobre \(\mathbb{R}\) a menos que \(A = I_n\).
+(D) \(A\) no tiene por qué ser diagonalizable ni siquiera sobre \(\mathbb{C}\), porque \(A\) podría tener valores propios repetidos.
+(E) \(m_A(x)\) debe ser igual a \(x^3 - 1\).
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Suponga que una matriz \(A \in M_4(\mathbb{C})\) satisface la ecuación polinómica
+\[
+A^3 - 5A^2 + 8A - 4I_4 = 0.
+\]
+¿Qué condición es A LA VEZ necesaria y suficiente para que \(A\) sea diagonalizable sobre \(\mathbb{C}\)?
+
+(A) \(A\) es invertible.
+(B) \(A\) es automáticamente diagonalizable sobre \(\mathbb{C}\) sin ninguna condición adicional, porque \(x^3 - 5x^2 + 8x - 4\) se escinde sobre \(\mathbb{C}\).
+(C) \((A - 2I_4)^2 = 0\).
+(D) \(A\) tiene \(4\) valores propios distintos.
+(E) \(A^2 - 3A + 2I_4 = 0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suponga que \(A \in M_n(\mathbb{R})\) satisface \(A^2 - 3A + 2I_n = 0\). Exprese \(A^6\) como combinación lineal \(aA + bI_n\).
+
+(A) \(31A - 30I_n\)
+(B) \(64A - 63I_n\)
+(C) \(63A - 64I_n\)
+(D) \(63A - 62I_n\)
+(E) \(32A - 31I_n\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suponga que \(A \in M_4(\mathbb{C})\) tiene polinomio característico \(p_A(x) = (x - 3)^4\) y satisface \((A - 3I_4)^2 = 0\). ¿Qué expresión es igual a \((A - 2I_4)^{-1}\)?
+
+(A) \(A - 4I_4\)
+(B) \(4I_4 - A\)
+(C) \(2I_4 - A\)
+(D) \(A - 2I_4\)
+(E) \(I_4 + (A - 3I_4)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suponga que \(A \in M_5(\mathbb{C})\) satisface \(A^2 - 3A + 2I_5 = 0\) y tiene \(\operatorname{tr}(A) = 7\). ¿Cuál es \(\det(A)\)?
+
+(A) \(2\)
+(B) \(8\)
+(C) \(4\)
+(D) \(16\)
+(E) No puede determinarse sin conocer las entradas de \(A\).
+[/BONUS]

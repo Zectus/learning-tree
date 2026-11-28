@@ -1,0 +1,278 @@
+=== SECTION 1: Lectura, evaluación y validación de reglas a trozos ===
+
+Las reglas del mundo real rara vez siguen una sola fórmula en todas partes. Una empresa de mensajería puede cobrar una tarifa plana de \(\$8\) para paquetes de hasta \(2\text{ kg}\), luego \(\$8\) más \(\$3\) por cada kilogramo por encima de \(2\text{ kg}\) hasta \(10\text{ kg}\), y rechazar paquetes más pesados. Un termostato, una tabla de impuestos sobre la renta o incluso la función valor absoluto \(|x|\) cambian de fórmula según dónde caiga la entrada \(x\). Una función construida uniendo distintas fórmulas sobre distintos subconjuntos de su dominio se denomina función definida a trozos.
+
+Escribimos una función definida a trozos usando una llave grande a la izquierda que enumera cada fórmula de rama junto a su condición de dominio:
+\[
+f(x) = \begin{cases}
+x + 3, & x < -1, \\
+x^2, & -1 \le x \le 2, \\
+\dfrac{8}{x}, & x > 2.
+\end{cases}
+\]
+Para evaluar \(f(a)\) en un número específico \(a\), NO sustituyas \(a\) en todas las fórmulas. Primero comprueba las condiciones de dominio a la derecha para hallar la única rama que contiene a \(a\), y luego sustituye \(a\) únicamente en esa rama:
+- \(f(-4)\): como \(-4 < -1\), usa la rama superior: \(f(-4) = -4 + 3 = -1\).
+- \(f(-1)\): la desigualdad \(-1 \le x \le 2\) incluye a \(-1\) (mientras que \(x < -1\) lo excluye), así que usa la rama intermedia: \(f(-1) = (-1)^2 = 1\).
+- \(f(2)\): como \(2\) satisface \(-1 \le x \le 2\), usa la rama intermedia: \(f(2) = 2^2 = 4\).
+- \(f(4)\): como \(4 > 2\), usa la rama inferior: \(f(4) = \frac{8}{4} = 2\).
+
+Dado que una regla a trozos debe seguir cumpliendo la definición básica de función —cada entrada en el dominio recibe exactamente una salida—, sus condiciones de rama deben verificarse cuidadosamente en los puntos frontera.
+
+[CALLOUT]
+id: piecewise-well-defined
+label: Criterio
+title: Buena definición de una función a trozos
+tone: key
+
+Una fórmula a trozos define una función válida sobre la unión de los dominios de sus ramas si y solo si a ninguna entrada \(x\) se le asignan dos salidas contradictorias. En particular:
+
+(1) Si los intervalos de las ramas son disjuntos dos a dos (sin superposición, ni siquiera en los extremos frontera), los conflictos son imposibles.
+(2) Si dos ramas incluyen ambas un punto frontera compartido \(x = c\), la regla está bien definida si y solo si ambas fórmulas de rama producen exactamente el mismo valor en \(x = c\).
+(3) Cada fórmula de rama debe estar definida por sí misma en el trozo asignado (por ejemplo, una rama \(\frac{1}{x - 3}\) en \(x \ge 2\) excluye a \(x = 3\) a menos que \(x = 3\) se omita de la condición de esa rama).
+[/CALLOUT]
+
+Compara dos reglas candidatas en la frontera compartida \(x = 1\):
+- Regla A: \(g(x) = 2x + 1\) para \(x \le 1\), y \(g(x) = x^2 + 2\) para \(x \ge 1\). En \(x = 1\), la primera rama da \(2(1) + 1 = 3\) y la segunda da \(1^2 + 2 = 3\). Como ambas ramas coinciden en \(3\), la Regla A está bien definida.
+- Regla B: \(h(x) = 2x + 1\) para \(x \le 1\), y \(h(x) = x^2 + 5\) para \(x \ge 1\). En \(x = 1\), la primera rama asigna \(3\) mientras que la segunda asigna \(6\). Por [REF: piecewise-well-defined.2 | la condición (2)], la Regla B no define una función.
+
+[QUESTION 1]
+[ANSWER: D]
+Sea
+\[
+p(x) = \begin{cases}
+|x + 2|, & x < 0, \\
+3 - x^2, & 0 \le x < 3, \\
+\sqrt{x + 1}, & x \ge 3.
+\end{cases}
+\]
+¿Cuál es el valor de \(p(-5) + p(0) + p(3)\)?
+
+(A) \(5\)
+(B) \(10\)
+(C) \(11\)
+(D) \(8\)
+(E) \(6\)
+[/QUESTION]
+
+=== SECTION 2: Graficación de funciones a trozos: uniones, saltos y rasgos cualitativos ===
+
+Para graficar una función a trozos, bosqueja cada familia básica o rama algebraica ÚNICAMENTE sobre su intervalo de \(x\) asignado, y presta mucha atención a cada extremo frontera \(x = c\):
+- Si la condición de la rama incluye a \(c\) (\(\le\) o \(\ge\)), dibuja un punto sólido en \((c, y_{\text{rama}})\).
+- Si la condición de la rama excluye a \(c\) (\(<\) o \(>\)), dibuja un círculo abierto a la altura límite \((c, y_{\text{rama}})\).
+
+Observa lo que ocurre en una frontera \(x = c\) donde una rama izquierda se encuentra con una rama derecha:
+- Si la rama izquierda se aproxima exactamente a la misma altura que la rama derecha (y ese punto está incluido por una de las ramas), ambas piezas se encuentran sin interrupción en una unión conectada.
+- Si las dos ramas se aproximan a alturas distintas en \(x = c\), la gráfica brinca verticalmente a través de un salto. (Las definiciones formales de límites y continuidad pertenecen al cálculo; aquí distinguimos las uniones conectadas de los saltos directamente comparando los valores en los extremos de las ramas.)
+
+Considera la función de tres trozos
+\[
+f(x) = \begin{cases}
+x + 2, & -3 \le x < 0, \\
+2 - x^2, & 0 \le x \le 2, \\
+1, & 2 < x \le 4.
+\end{cases}
+\]
+Comprueba las dos fronteras:
+- En \(x = 0\): la rama izquierda \(x + 2\) se aproxima a \(0 + 2 = 2\) (extremo abierto \((0, 2)\)), y la rama intermedia \(2 - x^2\) comienza en \(2 - 0^2 = 2\) (punto sólido \((0, 2)\)). Como el punto sólido rellena el círculo abierto, las piezas se encuentran en una unión conectada en \((0, 2)\).
+- En \(x = 2\): la rama intermedia termina en el punto sólido \((2, 2 - 4) = (2, -2)\), mientras que la rama derecha comienza en el círculo abierto \((2, 1)\). Ese brinco vertical de \(-2\) a \(1\) es un salto.
+
+En la gráfica siguiente, cada rama se traza sobre su intervalo exacto; como el gráfico marca los puntos con marcadores uniformes, el extremo abierto en \((2, 1)\) se etiqueta explícitamente como abierto.
+
+[GRAPH]
+type: function2d
+title: Unión conectada en \((0, 2)\) y salto en \(x = 2\) para \(f(x)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 4.5
+yrange: -3, 3.5
+trace: (x >= -3 and x < 0) ? (x + 2) : (0/0) | label: \(x + 2\) en \([-3, 0)\)
+trace: (x >= 0 and x <= 2) ? (2 - x^2) : (0/0) | label: \(2 - x^2\) en \([0, 2]\)
+trace: (x > 2 and x <= 4) ? 1 : (0/0) | label: \(1\) en \((2, 4]\)
+point: -3, -1 | label: \((-3, -1)\)
+point: 0, 2 | label: \((0, 2)\)
+point: 2, -2 | label: \((2, -2)\)
+point: 2, 1 | label: abierto (2, 1)
+point: 4, 1 | label: \((4, 1)\)
+[/GRAPH]
+
+Ahora lee el perfil cualitativo global directamente de la gráfica:
+- Dominio: \([-3, 0) \cup [0, 2] \cup (2, 4] = [-3, 4]\), sin valores de \(x\) faltantes dentro de \([-3, 4]\).
+- Rango: la primera rama cubre \([-1, 2)\), la rama intermedia cubre \([-2, 2]\) y la tercera rama produce solo \(y = 1\) (ya dentro de \([-2, 2]\)). Tomar la unión da \(\operatorname{Rango}(f) = [-2, 2]\).
+- Monotonía: estrictamente creciente en \((-3, 0)\), estrictamente decreciente en \((0, 2)\) y constante en \((2, 4)\).
+
+[QUESTION 2]
+[ANSWER: B]
+Considera la función
+\[
+g(x) = \begin{cases}
+x^2 - 1, & -2 \le x < 1, \\
+3, & x = 1, \\
+4 - x, & 1 < x \le 4.
+\end{cases}
+\]
+¿Cuál es el rango de \(g\)?
+
+(A) \([-1, 3)\)
+(B) \([-1, 3]\)
+(C) \([0, 3]\)
+(D) \([-1, 4]\)
+(E) \([0, 4]\)
+[/QUESTION]
+
+=== SECTION 3: Reescritura de expresiones con valor absoluto como funciones lineales a trozos ===
+
+La función valor absoluto misma es la función a trozos más célebre del álgebra:
+\[
+|u| = \begin{cases}
+u, & u \ge 0, \\
+-u, & u < 0.
+\end{cases}
+\]
+Con esta definición, cualquier expresión construida a partir de valores absolutos lineales puede reescribirse limpiamente sin barras de valor absoluto hallando los puntos de división donde cada expresión interior se iguala a \(0\).
+
+Comienza con un solo valor absoluto: \(h(x) = |x - 3|\). La expresión interior \(x - 3\) vale \(0\) en \(x = 3\). Para \(x \ge 3\), tenemos \(x - 3 \ge 0\), de modo que \(|x - 3| = x - 3\). Para \(x < 3\), tenemos \(x - 3 < 0\), de modo que \(|x - 3| = -(x - 3) = 3 - x\). Así,
+\[
+|x - 3| = \begin{cases}
+3 - x, & x < 3, \\
+x - 3, & x \ge 3.
+\end{cases}
+\]
+
+Ahora toma una suma de dos valores absolutos, como \(k(x) = |x| + |x - 2|\). Las dos expresiones interiores \(x\) y \(x - 2\) se anulan en \(x = 0\) y \(x = 2\). Esos dos puntos de división parten la recta numérica en tres intervalos: \(x < 0\), \(0 \le x < 2\) y \(x \ge 2\). Construye una tabla rápida de signos para eliminar cada par de barras sin adivinar.
+
+[TABLE]
+Intervalo | Signo de \(x\) | \(\lvert x \rvert\) | Signo de \(x - 2\) | \(\lvert x - 2 \rvert\) | Suma \(k(x) = \lvert x \rvert + \lvert x - 2 \rvert\)
+\(x < 0\) | negativo | \(-x\) | negativo | \(-(x - 2) = 2 - x\) | \(-2x + 2\)
+\(0 \le x < 2\) | no negativo | \(x\) | negativo | \(-(x - 2) = 2 - x\) | \(2\)
+\(x \ge 2\) | no negativo | \(x\) | no negativo | \(x - 2\) | \(2x - 2\)
+[/TABLE]
+
+Escribir el resultado en notación a trozos estándar da
+\[
+k(x) = \begin{cases}
+-2x + 2, & x < 0, \\
+2, & 0 \le x < 2, \\
+2x - 2, & x \ge 2.
+\end{cases}
+\]
+Comprueba las uniones en \(x = 0\) y \(x = 2\): en \(x = 0\), \(-2(0) + 2 = 2\); en \(x = 2\), \(2(2) - 2 = 2\). ¡Ambas esquinas conectan limpiamente, produciendo un fondo plano de altura \(2\) a lo largo de \([0, 2]\)!
+
+[GRAPH]
+type: function2d
+title: Gráfica lineal a trozos de \(k(x) = |x| + |x - 2|\) con fondo plano en \([0, 2]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 4.5
+yrange: 0, 7
+trace: abs(x) + abs(x - 2) | label: \(k(x) = |x| + |x - 2|\)
+point: 0, 2 | label: \((0, 2)\)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+A partir de ese desglose a trozos, características que parecían ocultas en la fórmula \(|x| + |x - 2|\) se vuelven inmediatas: el mínimo global es \(2\) (alcanzado en todo \(x \in [0, 2]\)), el rango es \([2, \infty)\) y \(k\) es estrictamente decreciente en \((-\infty, 0)\), constante en \((0, 2)\) y estrictamente creciente en \((2, \infty)\).
+
+[QUESTION 3]
+[ANSWER: C]
+¿Qué fórmula a trozos es equivalente a \(m(x) = |x + 1| - |x - 3|\)?
+
+(A) \(m(x) = \begin{cases} -4, & x < -1 \\ 2x + 4, & -1 \le x < 3 \\ 4, & x \ge 3 \end{cases}\)
+(B) \(m(x) = \begin{cases} 4, & x < -1 \\ 2x - 2, & -1 \le x < 3 \\ -4, & x \ge 3 \end{cases}\)
+(C) \(m(x) = \begin{cases} -4, & x < -1 \\ 2x - 2, & -1 \le x < 3 \\ 4, & x \ge 3 \end{cases}\)
+(D) \(m(x) = \begin{cases} -2x + 2, & x < -1 \\ 4, & -1 \le x < 3 \\ 2x - 2, & x \ge 3 \end{cases}\)
+(E) \(m(x) = \begin{cases} -2, & x < -1 \\ 2x - 2, & -1 \le x < 3 \\ 2, & x \ge 3 \end{cases}\)
+[/QUESTION]
+
+=== SECTION 4: Funciones escalonadas, tarifas por tramos y reconstrucción de fórmulas ===
+
+Una función escalonada es una función a trozos cuyas ramas son todas constantes en intervalos, por lo que su gráfica luce como una escalera de segmentos horizontales separados por saltos.
+
+La función escalonada matemática prototípica es la función parte entera (también llamada función piso o mayor entero), denotada \(\lfloor x \rfloor\): devuelve el mayor entero menor o igual que \(x\).
+- Para números positivos, \(\lfloor x \rfloor\) simplemente descarta la parte fraccionaria: \(\lfloor 2.7 \rfloor = 2\) y \(\lfloor 3 \rfloor = 3\).
+- Para números negativos no enteros, ten cuidado: ¡redondea siempre HACIA ABAJO (a la izquierda en la recta numérica), no hacia cero! Como \(-2 < -1.3 < -1\), el mayor entero menor o igual que \(-1.3\) es \(\lfloor -1.3 \rfloor = -2\), no \(-1\).
+
+En cada intervalo entero \([n, n + 1)\), la función piso es igual a la constante \(n\), con un punto sólido en el extremo izquierdo \((n, n)\) y un círculo abierto en el extremo derecho \((n + 1, n)\).
+
+[GRAPH]
+type: function2d
+title: Función parte entera (piso) \(f(x) = \lfloor x \rfloor\) en \([-2, 3)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 3.5
+yrange: -2.5, 3
+trace: (x >= -2 and x < -1) ? -2 : (0/0) | label: \(-2\) en \([-2, -1)\)
+trace: (x >= -1 and x < 0) ? -1 : (0/0) | label: \(-1\) en \([-1, 0)\)
+trace: (x >= 0 and x < 1) ? 0 : (0/0) | label: \(0\) en \([0, 1)\)
+trace: (x >= 1 and x < 2) ? 1 : (0/0) | label: \(1\) en \([1, 2)\)
+trace: (x >= 2 and x < 3) ? 2 : (0/0) | label: \(2\) en \([2, 3)\)
+point: -2, -2 | label: \((-2, -2)\)
+point: -1, -1 | label: \((-1, -1)\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1, 1 | label: \((1, 1)\)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+Observa que \(\lfloor x \rfloor\) tiene dominio \((-\infty, \infty)\), mientras que su rango es el conjunto discreto de todos los enteros \(\{\dots, -2, -1, 0, 1, 2, \dots\}\) —¡no un intervalo!
+
+Las funciones escalonadas y lineales a trozos modelan dos clases distintas de tarifas por tramos:
+1. Esquema de tarifa fija por tramos (con saltos): Un estacionamiento cobra \(\$5\) por hasta \(1\) hora (\(0 < t \le 1\)), \(\$9\) por más de \(1\) hora hasta \(2\) horas (\(1 < t \le 2\)) y \(\$13\) por más de \(2\) horas hasta \(3\) horas (\(2 < t \le 3\)). Cruzar \(t = 1\) hace saltar de inmediato la tarifa de \(\$5\) a \(\$9\).
+2. Esquema de tasa marginal (conectado): Supón que un estado grava los primeros \(\$10{,}000\) de ingreso \(x\) al \(5\%\) y únicamente la porción del ingreso POR ENCIMA de \(\$10{,}000\) al \(10\%\). Entonces para \(0 \le x \le 10{,}000\), el impuesto es \(T(x) = 0.05x\). Para \(x > 10{,}000\), pagas \(0.05(10{,}000) = 500\) por el primer tramo más \(0.10(x - 10{,}000)\) por el excedente:
+\[
+T(x) = \begin{cases}
+0.05x, & 0 \le x \le 10{,}000, \\
+500 + 0.10(x - 10{,}000), & x > 10{,}000.
+\end{cases}
+\]
+Comprueba la unión en \(x = 10{,}000\): ambas ramas dan \(\$500\). ¡Entrar al tramo marginal superior aumenta la pendiente de \(0.05\) a \(0.10\), sin crear un salto repentino en el impuesto adeudado!
+
+Por último, para reconstruir una fórmula a trozos a partir de una gráfica, divide el eje \(x\) en subintervalos en cada esquina, salto o cambio de forma, halla la fórmula de cada pieza usando dos puntos de referencia (para una recta, la pendiente \(m = \frac{y_2 - y_1}{x_2 - x_1}\) y la forma punto-pendiente \(y - y_1 = m(x - x_1)\)), y haz corresponder los puntos sólidos frente a los círculos abiertos con \(\le/\ge\) frente a \(</>\).
+
+[QUESTION 4]
+[ANSWER: A]
+Una compañía eléctrica cobra \(\$0.12\) por kWh por los primeros \(500\text{ kWh}\) de electricidad consumida en un mes, y \(\$0.20\) por kWh por cada kWh por encima de \(500\). ¿Qué función a trozos da la factura mensual \(B(x)\) en dólares para \(x \ge 0\) kWh?
+
+(A) \(B(x) = \begin{cases} 0.12x, & 0 \le x \le 500 \\ 60 + 0.20(x - 500), & x > 500 \end{cases}\)
+(B) \(B(x) = \begin{cases} 0.12x, & 0 \le x \le 500 \\ 0.20x, & x > 500 \end{cases}\)
+(C) \(B(x) = \begin{cases} 0.12x, & 0 \le x \le 500 \\ 60 + 0.20x, & x > 500 \end{cases}\)
+(D) \(B(x) = \begin{cases} 0.12x, & 0 \le x < 500 \\ 100 + 0.20(x - 500), & x \ge 500 \end{cases}\)
+(E) \(B(x) = \begin{cases} 60, & 0 \le x \le 500 \\ 60 + 0.20(x - 500), & x > 500 \end{cases}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+¿Para qué valor de la constante \(c\) los dos trozos de
+\[
+f(x) = \begin{cases}
+x^2 - 4x + c, & x \le 3, \\
+2x - 5, & x > 3
+\end{cases}
+\]
+se encuentran en una unión conectada (sin salto) en \(x = 3\)?
+
+(A) \(c = 1\)
+(B) \(c = 2\)
+(C) \(c = 3\)
+(D) \(c = 4\)
+(E) \(c = 5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+¿Cuál es el valor de \(\lfloor -3.2 \rfloor + \lfloor 2.9 \rfloor - \lfloor -1 \rfloor\)?
+
+(A) \(0\)
+(B) \(-2\)
+(C) \(1\)
+(D) \(-3\)
+(E) \(-1\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Una gráfica lineal a trozos en \([-2, 4]\) consta del segmento recto desde el punto sólido \((-2, 5)\) hasta el círculo abierto \((1, -1)\), seguido del segmento recto desde el punto sólido \((1, 2)\) hasta el punto sólido \((4, 2)\). ¿Qué regla a trozos corresponde a esta gráfica?
+
+(A) \(f(x) = \begin{cases} -2x + 1, & -2 \le x \le 1 \\ 2, & 1 < x \le 4 \end{cases}\)
+(B) \(f(x) = \begin{cases} -2x + 1, & -2 \le x < 1 \\ 2, & 1 \le x \le 4 \end{cases}\)
+(C) \(f(x) = \begin{cases} 2x + 1, & -2 \le x < 1 \\ 2, & 1 \le x \le 4 \end{cases}\)
+(D) \(f(x) = \begin{cases} -2x - 1, & -2 \le x < 1 \\ 2x, & 1 \le x \le 4 \end{cases}\)
+(E) \(f(x) = \begin{cases} -\frac{1}{2}x + 4, & -2 \le x < 1 \\ 2, & 1 \le x \le 4 \end{cases}\)
+[/BONUS]

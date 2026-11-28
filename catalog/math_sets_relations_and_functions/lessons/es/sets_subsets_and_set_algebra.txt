@@ -1,0 +1,358 @@
+=== SECTION 1: Descripción de conjuntos, pertenencia y subconjuntos ===
+
+La matemática construye casi todas sus estructuras —soluciones de ecuaciones, regiones geométricas, colecciones de números y, más adelante, relaciones y funciones— a partir de conjuntos. Intuitivamente, un conjunto es una colección bien definida de objetos distintos, llamados sus elementos o miembros. Para razonar con rigor sobre conjuntos, necesitamos una notación precisa para especificarlos y una distinción tajante entre pertenecer a un conjunto como elemento y estar contenido en él como subconjunto.
+
+Existen dos maneras estándar de especificar un conjunto. En la notación por extensión, enumeramos los elementos entre llaves, como en
+\[
+A = \{2, 4, 6, 8\}.
+\]
+En un conjunto, el orden y la repetición no importan: \(\{2, 4, 6, 8\}\), \(\{8, 2, 6, 4\}\) y \(\{2, 2, 4, 6, 8\}\) designan exactamente el mismo conjunto. Cuando un conjunto es grande o infinito, utilizamos la notación por comprensión, especificando un dominio ambiente y una condición lógica (predicado) \(P(x)\):
+\[
+B = \{x \in \mathbb{Z} : x^2 < 10\} = \{-3, -2, -1, 0, 1, 2, 3\}.
+\]
+Los dos puntos se leen «tal que». Aquí empleamos los sistemas numéricos estándar \(\mathbb{N} = \{0, 1, 2, 3, \dots\}\) (o \(\mathbb{Z}^+ = \{1, 2, 3, \dots\}\) cuando se excluye el cero), \(\mathbb{Z}\) (números enteros), \(\mathbb{Q}\) (números racionales) y \(\mathbb{R}\) (números reales).
+
+Escribimos \(x \in A\) para significar «\(x\) es un elemento de \(A\)» (o «\(x\) pertenece a \(A\)»), y \(x \notin A\) para significar «\(x\) no es un elemento de \(A\)». Por ejemplo, \(4 \in \{2, 4, 6, 8\}\) y \(5 \notin \{2, 4, 6, 8\}\). Una relación completamente distinta compara dos conjuntos preguntando si todo elemento del primero es también un elemento del segundo.
+
+[CALLOUT]
+id: subset-and-equality
+label: Definición
+title: Subconjunto, subconjunto propio e igualdad de conjuntos
+tone: key
+
+Sean \(A\) y \(B\) conjuntos.
+
+(1) Subconjunto: \(A\) es un subconjunto de \(B\), lo cual se escribe \(A \subseteq B\), si todo elemento de \(A\) es un elemento de \(B\):
+\[
+A \subseteq B \iff \forall x,\,(x \in A \implies x \in B).
+\]
+(2) Igualdad de conjuntos (extensionalidad): \(A\) y \(B\) son iguales, lo cual se escribe \(A = B\), si tienen exactamente los mismos elementos:
+\[
+A = B \iff \forall x,\,(x \in A \iff x \in B) \iff (A \subseteq B \land B \subseteq A).
+\]
+(3) Subconjunto propio: \(A\) es un subconjunto propio de \(B\), lo cual se escribe \(A \subsetneq B\), si \(A \subseteq B\) y \(A \ne B\) (equivalentemente, \(A \subseteq B\) y existe al menos un \(b \in B\) tal que \(b \notin A\)).
+[/CALLOUT]
+
+Obsérvese cómo la [REF: subset-and-equality.2 | igualdad de conjuntos] nos proporciona de inmediato una plantilla de demostración: para probar \(A = B\), se demuestran dos inclusiones por separado: primero \(A \subseteq B\) y luego \(B \subseteq A\). Este método se denomina doble inclusión. Para demostrar \(A \subseteq B\), se comienza con «Sea \(x \in A\) arbitrario» y se deduce \(x \in B\). Recíprocamente, para refutar \(A \subseteq B\), considérese la negación de \(\forall x,\,(x \in A \implies x \in B)\): es \(\exists x,\,(x \in A \land x \notin B)\). Un único elemento contraejemplo \(x\) que esté en \(A\) pero fuera de \(B\) basta para establecer \(A \nsubseteq B\).
+
+Un conjunto requiere especial cuidado porque no contiene elemento alguno.
+
+[CALLOUT]
+id: empty-set
+label: Definición
+title: El conjunto vacío
+tone: key
+
+El conjunto vacío, denotado \(\emptyset\) (o \(\{\}\)), es el único conjunto sin elementos: para todo objeto \(x\), \(x \notin \emptyset\).
+[/CALLOUT]
+
+¿Por qué \(\emptyset\) es único? Supóngase que \(E_1\) y \(E_2\) son ambos conjuntos sin elementos. Entonces, para todo \(x\), tanto \(x \in E_1\) como \(x \in E_2\) son falsas, de modo que el bicondicional \(x \in E_1 \iff x \in E_2\) es verdadero por vacuidad. Por [REF: subset-and-equality.2 | extensionalidad], \(E_1 = E_2\).
+
+Por el mismo principio de verdad por vacuidad, \(\emptyset \subseteq A\) se cumple para todo conjunto \(A\). Para demostrar \(\emptyset \subseteq A\), debemos verificar la implicación \(\forall x,\,(x \in \emptyset \implies x \in A)\). Puesto que la hipótesis \(x \in \emptyset\) es falsa para todo \(x\), la implicación \(x \in \emptyset \implies x \in A\) es verdadera por vacuidad para todo \(x\). (Equivalentemente, por contradicción: si \(\emptyset \nsubseteq A\), existiría algún \(x \in \emptyset\) con \(x \notin A\), lo cual es imposible porque \(\emptyset\) no tiene elementos.)
+
+[CALLOUT]
+id: empty-vs-singleton
+label: Error frecuente
+title: Distinguir \(\emptyset\) de \(\{\emptyset\}\), y \(\in\) de \(\subseteq\)
+tone: caution
+
+Los conjuntos \(\emptyset\) y \(\{\emptyset\}\) no son iguales:
+
+(1) \(\emptyset\) tiene \(0\) elementos.
+(2) \(\{\emptyset\}\) tiene \(1\) elemento, a saber, el propio conjunto \(\emptyset\).
+
+Piénsese en \(\emptyset\) como una caja vacía y en \(\{\emptyset\}\) como una caja que contiene una caja vacía en su interior. En consecuencia, \(\emptyset \in \{\emptyset\}\) es verdadera (porque \(\emptyset\) figura como el único elemento dentro de las llaves exteriores), y \(\emptyset \subseteq \{\emptyset\}\) también es verdadera (porque \(\emptyset\) es subconjunto de todo conjunto). Por otro lado, \(\{\emptyset\} \subseteq \emptyset\) es falsa, ya que \(\emptyset \in \{\emptyset\}\) mientras que \(\emptyset \notin \emptyset\).
+[/CALLOUT]
+
+Mantener bien diferenciadas la pertenencia (\(\in\)) y la inclusión (\(\subseteq\)) resulta esencial siempre que los conjuntos contienen otros conjuntos como elementos. Considérese el conjunto
+\[
+C = \{1, \{2\}, \{1, 3\}\}.
+\]
+Sus elementos son los tres objetos \(1\), \(\{2\}\) y \(\{1, 3\}\). Comprobemos cuidadosamente varias afirmaciones:
+- \(1 \in C\) es verdadera, porque \(1\) es uno de los tres elementos enumerados.
+- \(2 \in C\) es falsa: el número \(2\) no figura como elemento de \(C\); en cambio, el conjunto unitario \(\{2\}\) sí es un elemento de \(C\), por lo que \(\{2\} \in C\) es verdadera.
+- \(\{1\} \subseteq C\) es verdadera, porque el único elemento de \(\{1\}\) es \(1\), y \(1 \in C\). Sin embargo, \(\{1\} \in C\) es falsa, pues \(\{1\}\) no es uno de los tres elementos enumerados.
+- \(\{2\} \subseteq C\) es falsa, porque \(2 \in \{2\}\) mientras que \(2 \notin C\). En contraste, \(\{\{2\}\} \subseteq C\) es verdadera, porque su único elemento es \(\{2\}\), y \(\{2\} \in C\).
+- \(\{1, 3\} \in C\) es verdadera, mientras que \(\{1, 3\} \subseteq C\) es falsa (ya que \(3 \in \{1, 3\}\) pero \(3 \notin C\)).
+
+En resumen, para comprobar \(X \in C\), búsquese \(X\) literalmente entre los elementos de primer nivel de \(C\). Para comprobar \(X \subseteq C\), retírense las llaves exteriores de \(X\) y verifíquese si todo elemento dentro de \(X\) aparece como elemento de primer nivel de \(C\).
+
+[QUESTION 1]
+[ANSWER: D]
+Sea \(S = \{\emptyset, \{1\}, \{1, 2\}\}\). ¿Cuál de las siguientes afirmaciones es FALSA?
+
+(A) \(\emptyset \in S\)
+(B) \(\emptyset \subseteq S\)
+(C) \(\{\emptyset, \{1\}\} \subseteq S\)
+(D) \(\{1, 2\} \subseteq S\)
+(E) \(\{\{1, 2\}\} \subseteq S\)
+[/QUESTION]
+
+=== SECTION 2: Operaciones elementales con conjuntos ===
+
+Así como la lógica proposicional combina enunciados con \(\lor\), \(\land\) y \(\lnot\), el álgebra de conjuntos combina conjuntos dentro de un universo ambiente fijo \(U\) (un conjunto de referencia que contiene todos los elementos bajo estudio, como \(\mathbb{Z}\) o \(\mathbb{R}\)). Cada operación conjuntista se define directamente mediante una regla lógica de pertenencia.
+
+[CALLOUT]
+id: set-operations
+label: Definición
+title: Operaciones elementales con conjuntos
+tone: key
+
+Sean \(A\) y \(B\) subconjuntos de un universo ambiente fijo \(U\).
+
+(1) Unión: \(A \cup B = \{x \in U : x \in A \lor x \in B\}\).
+(2) Intersección: \(A \cap B = \{x \in U : x \in A \land x \in B\}\).
+(3) Diferencia de conjuntos (complemento relativo): \(A \setminus B = \{x \in U : x \in A \land x \notin B\}\).
+(4) Diferencia simétrica: \(A \Delta B = (A \setminus B) \cup (B \setminus A) = \{x \in U : (x \in A \land x \notin B) \lor (x \in B \land x \notin A)\}\).
+(5) Complemento (en \(U\)): \(A^c = U \setminus A = \{x \in U : x \notin A\}\).
+[/CALLOUT]
+
+Dos conjuntos \(A\) y \(B\) se llaman disjuntos si \(A \cap B = \emptyset\). Obsérvese cómo la diferencia simétrica \(A \Delta B\) reúne los elementos que pertenecen exactamente a uno de \(A\) o \(B\): el equivalente conjuntista de la disyunción exclusiva. De manera equivalente, se puede verificar que \(A \Delta B = (A \cup B) \setminus (A \cap B)\): un elemento pertenece al menos a uno de \(A\) o \(B\) y no a ambos si y solo si pertenece solo a \(A\) o solo a \(B\).
+
+Obsérvese también que el complemento \(A^c\) siempre depende del universo \(U\) elegido. Si \(A = \{1, 2\}\), entonces dentro de \(U = \{1, 2, 3, 4\}\) tenemos \(A^c = \{3, 4\}\), mientras que dentro de \(U = \mathbb{Z}^+\) tenemos \(A^c = \{3, 4, 5, \dots\}\). Sin un universo fijo \(U\), el símbolo \(A^c\) es ambiguo. En cambio, \(A \cup B\), \(A \cap B\), \(A \setminus B\) y \(A \Delta B\) dependen únicamente de los elementos de \(A\) y \(B\) mismos.
+
+Calculemos las cinco operaciones en un ejemplo concreto. Tómese \(U = \{1, 2, 3, 4, 5, 6\}\), \(A = \{1, 2, 3, 4\}\) y \(B = \{3, 4, 5\}\).
+- \(A \cup B = \{1, 2, 3, 4, 5\}\) (elementos en \(A\), o en \(B\), o en ambos).
+- \(A \cap B = \{3, 4\}\) (elementos comunes a \(A\) y \(B\)).
+- \(A \setminus B = \{1, 2\}\) (elementos en \(A\) tras retirar todo lo que está en \(B\)), mientras que \(B \setminus A = \{5\}\). Nótese que la diferencia de conjuntos no es conmutativa: \(A \setminus B \ne B \setminus A\).
+- \(A \Delta B = (A \setminus B) \cup (B \setminus A) = \{1, 2, 5\}\) (elementos en \(A\) o en \(B\), pero no en ambos).
+- \(A^c = \{5, 6\}\) y \(B^c = \{1, 2, 6\}\).
+
+Obsérvese una traducción muy práctica que convierte la diferencia de conjuntos en intersección y complemento: dentro de un universo fijo \(U\),
+\[
+A \setminus B = A \cap B^c,
+\]
+porque \(x \in A \setminus B \iff (x \in A \land x \notin B) \iff (x \in A \land x \in B^c) \iff x \in A \cap B^c\).
+
+[TABLE]
+Operación | Notación | Condición de pertenencia para \(x \in U\) | Conectivo lógico
+Unión | \(A \cup B\) | \(x \in A \lor x \in B\) | Disyunción («o» inclusivo)
+Intersección | \(A \cap B\) | \(x \in A \land x \in B\) | Conjunción («y»)
+Diferencia de conjuntos | \(A \setminus B\) | \(x \in A \land x \notin B\) | Conjunción con negación
+Diferencia simétrica | \(A \Delta B\) | \((x \in A \land x \notin B) \lor (x \in B \land x \notin A)\) | Disyunción exclusiva
+Complemento en \(U\) | \(A^c\) | \(x \notin A\) | Negación
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+Sean \(U = \{1, 2, 3, 4, 5, 6, 7\}\), \(A = \{1, 3, 5, 7\}\) y \(B = \{2, 3, 5, 6\}\). ¿Qué conjunto es \((A \Delta B)^c\)?
+
+(A) \(\{3, 5\}\)
+(B) \(\{3, 4, 5\}\)
+(C) \(\{1, 2, 6, 7\}\)
+(D) \(\{4\}\)
+(E) \(\{1, 2, 4, 6, 7\}\)
+[/QUESTION]
+
+=== SECTION 3: Demostraciones por seguimiento de elementos e identidades booleanas fundamentales ===
+
+Muchas identidades generales valen para todos los conjuntos \(A, B, C \subseteq U\), sin importar qué elementos contengan ni si son finitos o infinitos. La técnica principal de demostración es el seguimiento de elementos: tomar un elemento arbitrario \(x\) del miembro izquierdo, desglosar las definiciones de las operaciones conjuntistas en lógica proposicional, aplicar equivalencias o implicaciones lógicas válidas y volver a empaquetar el resultado como pertenencia al miembro derecho.
+
+Para apreciar el ritmo completo del seguimiento de elementos, demostremos con todo detalle una de las leyes distributivas y una de las leyes de De Morgan.
+
+[CALLOUT]
+id: boolean-identities
+label: Teorema
+title: Identidades booleanas fundamentales de conjuntos
+tone: key
+
+Sean \(A, B, C\) subconjuntos de un universo ambiente \(U\).
+
+(1) Distributividad:
+\[
+A \cap (B \cup C) = (A \cap B) \cup (A \cap C), \qquad A \cup (B \cap C) = (A \cup B) \cap (A \cup C).
+\]
+(2) Leyes de De Morgan:
+\[
+(A \cup B)^c = A^c \cap B^c, \qquad (A \cap B)^c = A^c \cup B^c.
+\]
+(3) Absorción:
+\[
+A \cup (A \cap B) = A, \qquad A \cap (A \cup B) = A.
+\]
+(4) Involución y leyes básicas: \((A^c)^c = A\), \(A \cup \emptyset = A\), \(A \cap \emptyset = \emptyset\), \(A \cup U = U\), \(A \cap U = A\), \(A \cup A^c = U\) y \(A \cap A^c = \emptyset\).
+[/CALLOUT]
+
+Demostremos la primera ley distributiva de [REF: boolean-identities.1 | distributividad]: \(A \cap (B \cup C) = (A \cap B) \cup (A \cap C)\). Utilizamos doble inclusión.
+
+Primero demostramos \(A \cap (B \cup C) \subseteq (A \cap B) \cup (A \cap C)\). Sea \(x \in A \cap (B \cup C)\). Por la [REF: set-operations.2 | definición de intersección], \(x \in A\) y \(x \in B \cup C\). Por la [REF: set-operations.1 | definición de unión], \(x \in B\) o \(x \in C\). Dividimos en dos casos:
+- Caso 1: \(x \in B\). Como ya sabemos que \(x \in A\), tenemos \(x \in A \cap B\), y por tanto \(x \in (A \cap B) \cup (A \cap C)\).
+- Caso 2: \(x \in C\). Como \(x \in A\), tenemos \(x \in A \cap C\), y por tanto \(x \in (A \cap B) \cup (A \cap C)\).
+En ambos casos \(x \in (A \cap B) \cup (A \cap C)\), lo que establece la inclusión directa.
+
+En segundo lugar demostramos \((A \cap B) \cup (A \cap C) \subseteq A \cap (B \cup C)\). Sea \(x \in (A \cap B) \cup (A \cap C)\). Entonces \(x \in A \cap B\) o \(x \in A \cap C\).
+- Caso 1: \(x \in A \cap B\). Entonces \(x \in A\) y \(x \in B\). De \(x \in B\) se obtiene \(x \in B \cup C\), de modo que \(x \in A \cap (B \cup C)\).
+- Caso 2: \(x \in A \cap C\). Entonces \(x \in A\) y \(x \in C\). De \(x \in C\) se obtiene \(x \in B \cup C\), de modo que \(x \in A \cap (B \cup C)\).
+En ambos casos \(x \in A \cap (B \cup C)\). Al haber demostrado ambas inclusiones, la [REF: subset-and-equality.2 | extensionalidad] da \(A \cap (B \cup C) = (A \cap B) \cup (A \cap C)\).
+
+Cuando cada paso de un seguimiento de elementos es una equivalencia lógica limpia (\(\iff\)), podemos demostrar ambas inclusiones simultáneamente en una cadena de bicondicionales. Demostremos la primera de las [REF: boolean-identities.2 | leyes de De Morgan], \((A \cup B)^c = A^c \cap B^c\), para un \(x \in U\) arbitrario:
+\[
+\begin{aligned}
+x \in (A \cup B)^c &\iff x \notin A \cup B && \text{(definición de complemento)} \\
+&\iff \lnot(x \in A \lor x \in B) && \text{(definición de unión)} \\
+&\iff (x \notin A) \land (x \notin B) && \text{(ley de De Morgan proposicional)} \\
+&\iff x \in A^c \land x \in B^c && \text{(definición de complemento)} \\
+&\iff x \in A^c \cap B^c && \text{(definición de intersección).}
+\end{aligned}
+\]
+Como la cadena de bicondicionales vale para todo \(x \in U\), los dos conjuntos tienen exactamente los mismos elementos, luego \((A \cup B)^c = A^c \cap B^c\).
+
+Ahora demostremos la primera ley de [REF: boolean-identities.3 | absorción], \(A \cup (A \cap B) = A\), por doble inclusión.
+- Para probar \(A \cup (A \cap B) \subseteq A\): sea \(x \in A \cup (A \cap B)\). Entonces \(x \in A\) o \(x \in A \cap B\). Si \(x \in A\), hemos terminado. Si \(x \in A \cap B\), entonces \(x \in A\) y \(x \in B\), luego en particular \(x \in A\).
+- Para probar \(A \subseteq A \cup (A \cap B)\): sea \(x \in A\). Como \(x \in A\) hace verdadera la disyunción \((x \in A) \lor (x \in A \cap B)\), se tiene de inmediato \(x \in A \cup (A \cap B)\).
+Por lo tanto, \(A \cup (A \cap B) = A\).
+
+Una vez establecidas identidades básicas como las [REF: boolean-identities | identidades booleanas de conjuntos], también podemos deducir nuevas identidades algebraicamente sin bajar a elementos cada vez. Por ejemplo, para simplificar \(A \setminus (B \cup C)\) dentro de \(U\), úsese \(X \setminus Y = X \cap Y^c\) junto con la [REF: boolean-identities.2 | ley de De Morgan]:
+\[
+A \setminus (B \cup C) = A \cap (B \cup C)^c = A \cap (B^c \cap C^c) = (A \cap B^c) \cap (A \cap C^c) = (A \setminus B) \cap (A \setminus C).
+\]
+(Aquí también hemos usado \(A = A \cap A\) y la conmutatividad y asociatividad de \(\cap\).) Obsérvese que la diferencia relativa obedece su propio comportamiento tipo De Morgan: quitar una unión quita ambas partes, por lo que un elemento sobrevive solo si sobrevive al quitar \(B\) y sobrevive al quitar \(C\).
+
+[QUESTION 3]
+[ANSWER: C]
+Para conjuntos arbitrarios \(A, B, C \subseteq U\), ¿qué expresión es siempre igual a \(A \setminus (B \setminus C)\)?
+
+(A) \((A \setminus B) \setminus C\)
+(B) \((A \setminus B) \cap (A \cup C)\)
+(C) \((A \setminus B) \cup (A \cap C)\)
+(D) \((A \cup C) \setminus B\)
+(E) \(A \cap (B \cup C)^c\)
+[/QUESTION]
+
+=== SECTION 4: Caracterizaciones equivalentes de la inclusión de subconjuntos ===
+
+En demostraciones de toda la matemática, la condición \(A \subseteq B\) aparece con frecuencia disfrazada: a veces como una ecuación de intersección, a veces como una diferencia vacía y a veces como una inclusión invertida de complementos. Reconocer que las cuatro condiciones expresan exactamente lo mismo permite elegir la forma que mejor se adapte al problema en cuestión.
+
+[CALLOUT]
+id: subset-equivalences
+label: Teorema
+title: Caracterizaciones equivalentes de \(A \subseteq B\)
+tone: key
+
+Sean \(A\) y \(B\) subconjuntos de un universo ambiente fijo \(U\). Los siguientes cuatro enunciados son lógicamente equivalentes:
+
+(1) \(A \subseteq B\).
+(2) \(A \cap B = A\).
+(3) \(A \setminus B = \emptyset\).
+(4) \(B^c \subseteq A^c\).
+[/CALLOUT]
+
+En lugar de demostrar por separado los seis bicondicionales por pares, demostramos un ciclo cerrado de cuatro implicaciones: \((1) \implies (2) \implies (3) \implies (4) \implies (1)\).
+
+[CALLOUT]
+id: subset-equivalences-proof
+label: Demostración
+title: Demostración cíclica de las [REF: subset-equivalences | caracterizaciones equivalentes de la inclusión]
+tone: note
+
+(1) \(\implies\) (2): Supóngase \(A \subseteq B\). Demostramos \(A \cap B = A\) por doble inclusión. Para todo \(x \in A \cap B\), se tiene \(x \in A\) y \(x \in B\), luego \(x \in A\); así, \(A \cap B \subseteq A\) vale para todos los conjuntos. Recíprocamente, sea \(x \in A\). Como \(A \subseteq B\), también tenemos \(x \in B\), por lo que \(x \in A \cap B\). Así \(A \subseteq A \cap B\), lo cual da \(A \cap B = A\).
+
+(2) \(\implies\) (3): Supóngase \(A \cap B = A\). Supóngase por contradicción que \(A \setminus B \ne \emptyset\). Entonces existe \(x \in A \setminus B\), es decir, \(x \in A\) y \(x \notin B\). Como \(A = A \cap B\), \(x \in A\) implica \(x \in A \cap B\), lo que fuerza \(x \in B\), contradiciendo \(x \notin B\). Por lo tanto \(A \setminus B = \emptyset\).
+
+(3) \(\implies\) (4): Supóngase \(A \setminus B = \emptyset\). Sea \(x \in B^c\), de modo que \(x \in U\) y \(x \notin B\). ¿Podría ser \(x \in A\)? Si \(x \in A\), entonces \(x \in A\) y \(x \notin B\), luego \(x \in A \setminus B\), contradiciendo \(A \setminus B = \emptyset\). Por consiguiente \(x \notin A\), lo que significa \(x \in A^c\). Así \(B^c \subseteq A^c\).
+
+(4) \(\implies\) (1): Supóngase \(B^c \subseteq A^c\). Sea \(x \in A\). Razonamos por contrarrecíproca sobre la implicación \(x \in B^c \implies x \in A^c\): puesto que \(x \in A\), tenemos \(x \notin A^c\), luego \(x \notin B^c\), lo que significa \(x \in B\). Por lo tanto \(A \subseteq B\).
+[/CALLOUT]
+
+Obsérvese la inversión de sentido en el [REF: subset-equivalences.4 | enunciado (4)]: tomar complementos invierte la inclusión. Si \(A\) está contenido en \(B\), entonces todo lo que queda fuera de \(B\) debe quedar también fuera de \(A\), de modo que \(B^c\) está contenido en \(A^c\). Una quinta caracterización, \(A \cup B = B\), también es equivalente a \(A \subseteq B\), y puede demostrarse exactamente con el mismo método de doble inclusión.
+
+[QUESTION 4]
+[ANSWER: A]
+Supóngase que \(A, B, C\) son subconjuntos de un universo \(U\) que satisfacen \(A \subseteq B\) y \(C \cap B = \emptyset\). ¿Cuál de las siguientes conclusiones DEBE cumplirse?
+
+(A) \(A \subseteq C^c\) y \(A \cap C = \emptyset\)
+(B) \(B^c \subseteq C\)
+(C) \(A \cup C = B\)
+(D) \(C \setminus A = B \setminus A\)
+(E) \(A^c \subseteq C\)
+[/QUESTION]
+
+=== SECTION 5: Diagramas de Venn, intuición y refutación de identidades falsas ===
+
+¿Cómo saber si una identidad conjuntista propuesta es verdadera (y merece demostrarse por seguimiento de elementos) o falsa (y espera un contraejemplo)? Los diagramas de Venn son una herramienta diagnóstica excelente para dos o tres conjuntos. Dibujar dos círculos superpuestos \(A\) y \(B\) dentro de un rectángulo \(U\) divide el plano en \(4\) regiones disjuntas correspondientes a las \(4\) asignaciones de verdad de \((x \in A, x \in B)\); tres círculos superpuestos \(A, B, C\) dividen el rectángulo en \(8\) regiones correspondientes a las \(8\) asignaciones de verdad de \((x \in A, x \in B, x \in C)\).
+
+Sombrear el miembro izquierdo y el miembro derecho de una identidad candidata revela de inmediato si cubren las mismas regiones. Si una región queda sombreada en un lado y sin sombrear en el otro, esa región entrega en bandeja de plata un contraejemplo finito concreto: basta colocar un único elemento (digamos \(1\)) dentro de esa región diferenciadora, y dejar vacías todas las demás regiones si no se necesitan.
+
+Pongamos esto a prueba con una trampa clásica: ¿es asociativa la diferencia de conjuntos? Es decir, ¿se cumple
+\[
+(A \setminus B) \setminus C = A \setminus (B \setminus C)
+\]
+para todos los conjuntos \(A, B, C\)?
+
+Considérese un elemento \(x\) que pertenezca a los tres conjuntos: \(x \in A\), \(x \in B\) y \(x \in C\).
+- En el miembro izquierdo: como \(x \in B\), tenemos \(x \notin A \setminus B\), luego \(x \notin (A \setminus B) \setminus C\).
+- En el miembro derecho: como \(x \in C\), tenemos \(x \notin B \setminus C\). Dado que \(x \in A\) y \(x \notin B \setminus C\), obtenemos \(x \in A \setminus (B \setminus C)\).
+
+Esa sola región (\(A \cap B \cap C\)) separa ambos lados. Así que elíjanse los conjuntos más simples posibles que coloquen un elemento en \(A \cap B \cap C\):
+\[
+A = \{1\}, \qquad B = \{1\}, \qquad C = \{1\}.
+\]
+Entonces \((A \setminus B) \setminus C = \emptyset \setminus \{1\} = \emptyset\), mientras que \(A \setminus (B \setminus C) = \{1\} \setminus \emptyset = \{1\}\). Como \(\emptyset \ne \{1\}\), la identidad es falsa.
+
+[CALLOUT]
+id: venn-limits
+label: Error frecuente
+title: Por qué los diagramas de Venn no son demostraciones generales
+tone: caution
+
+Los diagramas de Venn son invaluables para construir intuición y detectar contraejemplos, pero en general no constituyen demostraciones rigurosas:
+
+(1) Un diagrama para dos o tres conjuntos presupone implícitamente un dibujo geométrico particular en el plano y no se generaliza limpiamente a un número arbitrario de conjuntos ni a enunciados con cuantificadores, familias infinitas o construcciones de conjuntos anidados.
+(2) Un bosquejo específico puede omitir accidentalmente una región de intersección posible (por ejemplo, dibujar cuatro círculos en el plano no puede generar las \(16\) regiones), ocultando un contraejemplo.
+(3) Para demostrar rigurosamente una identidad universal de conjuntos, utilícese el seguimiento de elementos o identidades booleanas ya demostradas. Para refutar una identidad universal de conjuntos, exhíbase una elección explícita de conjuntos (a menudo conjuntos finitos muy pequeños, o incluso \(\emptyset\)) para la cual ambos lados difieran.
+[/CALLOUT]
+
+Considérese una segunda afirmación falsa habitual: «Si \(A \cup C = B \cup C\), entonces \(A = B\)». La cancelación vale para la suma de números reales, por lo que resulta tentador suponer que la unión también se cancela. Pongámosla a prueba buscando un elemento \(x\) oculto dentro de \(C\): si \(x \in C\), entonces \(x\) cae automáticamente tanto en \(A \cup C\) como en \(B \cup C\), sin importar si \(x\) está en \(A\) o en \(B\). Tómese
+\[
+A = \emptyset, \qquad B = \{1\}, \qquad C = \{1\}.
+\]
+Entonces \(A \cup C = \{1\} = B \cup C\), y sin embargo \(A \ne B\). Análogamente, la intersección tampoco se cancela: con \(A = \{1\}\), \(B = \{2\}\) y \(C = \emptyset\), se tiene \(A \cap C = \emptyset = B \cap C\), pero \(A \ne B\).
+
+Curiosamente, ¿qué ocurre si tanto \(A \cup C = B \cup C\) como \(A \cap C = B \cap C\) se cumplen simultáneamente? ¡Eso sí fuerza \(A = B\)! Verifiquemos por seguimiento de elementos que \(A \subseteq B\) (y por simetría \(B \subseteq A\)): sea \(x \in A\).
+- Caso 1: \(x \in C\). Entonces \(x \in A \cap C = B \cap C\), luego \(x \in B\).
+- Caso 2: \(x \notin C\). Como \(x \in A \subseteq A \cup C = B \cup C\), se tiene \(x \in B\) o \(x \in C\). Como \(x \notin C\), esto fuerza \(x \in B\).
+En ambos casos \(x \in B\), por lo que \(A \subseteq B\). Invirtiendo los papeles de \(A\) y \(B\) se obtiene \(B \subseteq A\), y por tanto \(A = B\).
+
+[QUESTION 5]
+[ANSWER: E]
+¿Cuál de las siguientes identidades de conjuntos vale para TODOS los conjuntos \(A, B, C\)?
+
+(A) \(A \setminus (B \cup C) = (A \setminus B) \cup (A \setminus C)\)
+(B) \((A \cup B) \setminus C = A \cup (B \setminus C)\)
+(C) Si \(A \setminus C = B \setminus C\), entonces \(A = B\)
+(D) \((A \setminus B) \cup B = A\)
+(E) \((A \setminus B) \setminus C = A \setminus (B \cup C)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Supóngase que \(A, B, C\) son subconjuntos de un universo \(U\). ¿Cuál de los siguientes enunciados es equivalente a \(A \Delta B = \emptyset\)?
+
+(A) \(A \cap B = \emptyset\)
+(B) \(A = B\)
+(C) \(A \subseteq B\)
+(D) \(A \cup B = U\)
+(E) \(A = B^c\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Demuestre o evalúe la expresión \((A \Delta B) \Delta B\) para conjuntos arbitrarios \(A\) y \(B\). ¿A qué conjunto es siempre igual \((A \Delta B) \Delta B\)?
+
+(A) \(\emptyset\)
+(B) \(A \setminus B\)
+(C) \(A\)
+(D) \(A \cup B\)
+(E) \(A \cap B\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Sean \(A\) y \(B\) subconjuntos de un universo \(U\) tales que \(A \Delta B = A \cup B\). ¿Cuál de las siguientes condiciones DEBE cumplirse?
+
+(A) \(A = B\)
+(B) \(A \subseteq B\)
+(C) \(A \cup B = U\)
+(D) \(A \cap B = \emptyset\)
+(E) \(A = \emptyset\) o \(B = \emptyset\)
+[/BONUS]

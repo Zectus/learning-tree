@@ -1,0 +1,303 @@
+=== SECTION 1: Tres espacios concretos construidos a partir de una matriz ===
+
+Cuando estudiamos un sistema lineal \(A\mathbf{x} = \mathbf{b}\) para una matriz \(m \times n\) \(A\), reaparecen tres preguntas distintas:
+- ¿Qué lados derechos \(\mathbf{b} \in \mathbb{R}^m\) hacen que \(A\mathbf{x} = \mathbf{b}\) sea consistente?
+- ¿Qué vectores de entrada \(\mathbf{x} \in \mathbb{R}^n\) envía \(A\) hacia \(\mathbf{0}\) (controlando la unicidad y el desplazamiento de las soluciones particulares)?
+- ¿Qué ecuaciones lineales en \(\mathbb{R}^n\) pueden formarse combinando las ecuaciones de \(A\mathbf{x} = \mathbf{0}\)?
+
+Cada pregunta define un subconjunto concreto de \(\mathbb{R}^m\) o \(\mathbb{R}^n\) construido directamente a partir de \(A\). Antes de pasar a los espacios vectoriales abstractos en cursos posteriores, podemos calcular y comprender por completo estos tres espacios dentro de \(\mathbb{R}^m\) y \(\mathbb{R}^n\) mediante reducción por filas y matrices elementales.
+
+[CALLOUT]
+id: three-spaces-def
+label: Definición
+title: Espacio columna, espacio fila y espacio nulo de una matriz \(m \times n\)
+tone: key
+
+Sea \(A\) una matriz \(m \times n\) con columnas \(\mathbf{a}_1, \dots, \mathbf{a}_n \in \mathbb{R}^m\) y filas \(\mathbf{r}_1^T, \dots, \mathbf{r}_m^T\) (cada una con \(n\) entradas).
+
+(1) El espacio columna \(\operatorname{Col}(A) \subseteq \mathbb{R}^m\) es el conjunto de todas las combinaciones lineales de las columnas de \(A\):
+\[
+\operatorname{Col}(A) = \operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\} = \{A\mathbf{x} : \mathbf{x} \in \mathbb{R}^n\}.
+\]
+Equivalentemente, \(\mathbf{b} \in \operatorname{Col}(A)\) si y solo si \(A\mathbf{x} = \mathbf{b}\) es consistente.
+
+(2) El espacio fila \(\operatorname{Row}(A) \subseteq \mathbb{R}^n\) es el conjunto de todas las combinaciones lineales de las filas de \(A\):
+\[
+\operatorname{Row}(A) = \operatorname{Span}\{\mathbf{r}_1^T, \dots, \mathbf{r}_m^T\}.
+\]
+Al escribir las filas como vectores \(1 \times n\) (o equivalentemente como los vectores columna \(n \times 1\) de \(A^T\)), \(\operatorname{Row}(A)\) vive en \(\mathbb{R}^n\).
+
+(3) El espacio nulo \(\operatorname{Null}(A) \subseteq \mathbb{R}^n\) es el conjunto solución del sistema homogéneo \(A\mathbf{x} = \mathbf{0}\):
+\[
+\operatorname{Null}(A) = \{\mathbf{x} \in \mathbb{R}^n : A\mathbf{x} = \mathbf{0}\}.
+\]
+[/CALLOUT]
+
+Preste mucha atención a dónde vive cada espacio cuando \(m \neq n\):
+- Las columnas de \(A\) tienen \(m\) entradas, así que \(\operatorname{Col}(A)\) vive en \(\mathbb{R}^m\).
+- Las filas de \(A\) tienen \(n\) entradas, así que \(\operatorname{Row}(A)\) vive en \(\mathbb{R}^n\).
+- Las soluciones \(\mathbf{x}\) de \(A\mathbf{x} = \mathbf{0}\) tienen \(n\) entradas (una por cada columna de \(A\)), así que \(\operatorname{Null}(A)\) también vive en \(\mathbb{R}^n\).
+
+Note además que los tres conjuntos son cerrados bajo combinaciones lineales:
+- Si \(\mathbf{b}_1 = A\mathbf{x}_1\) y \(\mathbf{b}_2 = A\mathbf{x}_2\) pertenecen a \(\operatorname{Col}(A)\), entonces \(c\mathbf{b}_1 + d\mathbf{b}_2 = A(c\mathbf{x}_1 + d\mathbf{x}_2) \in \operatorname{Col}(A)\) por linealidad de la multiplicación matriz-vector.
+- Toda combinación lineal de combinaciones lineales de filas es nuevamente una combinación lineal de filas, así que \(\operatorname{Row}(A)\) es cerrado bajo combinaciones lineales.
+- Si \(A\mathbf{u} = \mathbf{0}\) y \(A\mathbf{v} = \mathbf{0}\), entonces \(A(c\mathbf{u} + d\mathbf{v}) = cA\mathbf{u} + dA\mathbf{v} = \mathbf{0}\), así que \(\operatorname{Null}(A)\) es cerrado bajo combinaciones lineales (y siempre contiene a \(\mathbf{0}\)).
+
+En cada caso buscamos una descripción compacta del espacio: un conjunto generador linealmente independiente minimal —la menor cantidad posible de vectores que aún generen cada vector del espacio sin redundancia—. Para hallar esos conjuntos limpiamente, primero debemos hacernos una pregunta crucial: cuando reducimos por filas \(A\) a una forma escalonada \(R\), ¿cuáles de los tres espacios sobreviven sin cambios y cuál se desplaza?
+
+[QUESTION 1]
+[ANSWER: A]
+Sea \(A\) una matriz \(3 \times 5\). ¿Qué enunciado identifica correctamente los espacios ambiente de \(\operatorname{Col}(A)\), \(\operatorname{Row}(A)\) y \(\operatorname{Null}(A)\)?
+
+(A) \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^5\) y \(\operatorname{Null}(A) \subseteq \mathbb{R}^5\)
+(B) \(\operatorname{Col}(A) \subseteq \mathbb{R}^5\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^3\) y \(\operatorname{Null}(A) \subseteq \mathbb{R}^3\)
+(C) \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^3\) y \(\operatorname{Null}(A) \subseteq \mathbb{R}^5\)
+(D) \(\operatorname{Col}(A) \subseteq \mathbb{R}^5\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^5\) y \(\operatorname{Null}(A) \subseteq \mathbb{R}^3\)
+(E) \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^5\) y \(\operatorname{Null}(A) \subseteq \mathbb{R}^3\)
+[/QUESTION]
+
+=== SECTION 2: Qué preservan las operaciones por fila y qué modifican ===
+
+Suponga que \(R\) se obtiene a partir de una matriz \(m \times n\) \(A\) mediante una secuencia de operaciones elementales por fila. Por la factorización mediante matrices elementales, existe un producto invertible \(m \times m\) de matrices elementales \(P = E_k \cdots E_1\) tal que
+\[
+R = PA \qquad \text{y equivalentemente} \qquad A = P^{-1} R.
+\]
+Este único par de ecuaciones determina por completo cómo actúan las operaciones por fila sobre los tres espacios.
+
+Primero, verifique \(\operatorname{Null}(A)\). Si \(A\mathbf{x} = \mathbf{0}\), multiplicar por la izquierda por \(P\) da \(R\mathbf{x} = (PA)\mathbf{x} = P(A\mathbf{x}) = P\mathbf{0} = \mathbf{0}\). Recíprocamente, si \(R\mathbf{x} = \mathbf{0}\), multiplicar por la izquierda por \(P^{-1}\) da \(A\mathbf{x} = P^{-1}(R\mathbf{x}) = \mathbf{0}\). Por lo tanto,
+\[
+\operatorname{Null}(R) = \operatorname{Null}(A).
+\]
+
+Segundo, verifique \(\operatorname{Row}(A)\). Por el punto de vista de combinación de filas de la multiplicación matricial, cada fila de \(R = PA\) es una combinación lineal de las filas de \(A\) (usando las entradas de la fila correspondiente de \(P\) como pesos). Por ende, toda combinación lineal de las filas de \(R\) es también una combinación lineal de las filas de \(A\), lo que significa \(\operatorname{Row}(R) \subseteq \operatorname{Row}(A)\). Invertir los papeles mediante \(A = P^{-1} R\) muestra que cada fila de \(A\) es una combinación lineal de las filas de \(R\), de modo que \(\operatorname{Row}(A) \subseteq \operatorname{Row}(R)\). Juntando ambos resultados,
+\[
+\operatorname{Row}(R) = \operatorname{Row}(A).
+\]
+
+Tercero, verifique \(\operatorname{Col}(A)\) —¡y observe cómo se DESPLAZA!—. Considere la matriz \(2 \times 2\)
+\[
+A = \begin{bmatrix} 1 & 3 \\ 2 & 6 \end{bmatrix}
+\xrightarrow{R_2 \leftarrow R_2 - 2 R_1}
+R = \begin{bmatrix} 1 & 3 \\ 0 & 0 \end{bmatrix}.
+\]
+Las columnas de \(A\) son \(\begin{bmatrix} 1 \\ 2 \end{bmatrix}\) y \(\begin{bmatrix} 3 \\ 6 \end{bmatrix}\), así que \(\operatorname{Col}(A)\) es la recta \(y = 2x\) que pasa por el origen en \(\mathbb{R}^2\). Tras un reemplazo de fila, las columnas de \(R\) son \(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\) y \(\begin{bmatrix} 3 \\ 0 \end{bmatrix}\), así que \(\operatorname{Col}(R)\) es el eje horizontal \(y = 0\): ¡una recta completamente distinta! Las operaciones por fila mezclan entradas entre filas, lo cual modifica los vectores columna mismos y, en general, cambia \(\operatorname{Col}(A)\).
+
+[GRAPH]
+type: parametric2d
+title: La reducción por filas mueve \(\operatorname{Col}(A)\) a \(\operatorname{Col}(R)\) preservando \(\mathbf{a}_2 = 3\mathbf{a}_1\)
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -1, 4
+xrange: -1, 4
+yrange: -1, 7
+trace: t, 2*t | label: \(\operatorname{Col}(A)\) (recta \(b_2 = 2 b_1\)) | color: #2563eb
+trace: t, 0 | label: \(\operatorname{Col}(R)\) (recta \(b_2 = 0\)) | color: #dc2626
+segment: 0, 0, 1, 2 | label: \(\mathbf{a}_1\) | color: #2563eb
+segment: 0, 0, 3, 6 | label: \(\mathbf{a}_2\) | color: #1d4ed8 | dashed: true
+segment: 0, 0, 1, 0 | label: \(\mathbf{r}_1\) | color: #dc2626
+segment: 0, 0, 3, 0 | label: \(\mathbf{r}_2\) | color: #991b1b | dashed: true
+point: 1, 2 | color: #2563eb
+point: 3, 6 | color: #1d4ed8
+point: 1, 0 | color: #dc2626
+point: 3, 0 | color: #991b1b
+[/GRAPH]
+
+Sin embargo, mire con atención la gráfica anterior: aunque el espacio columna se desplazó de \(b_2 = 2 b_1\) a \(b_2 = 0\), ¡la RELACIÓN entre las columnas no cambió en absoluto! En \(A\) tenemos \(\mathbf{a}_2 = 3 \mathbf{a}_1\); en \(R\) tenemos \(\mathbf{r}_2 = 3 \mathbf{r}_1\). ¿Por qué?
+
+Porque una relación de dependencia lineal entre las columnas de \(A\),
+\[
+c_1 \mathbf{a}_1 + c_2 \mathbf{a}_2 + \cdots + c_n \mathbf{a}_n = \mathbf{0},
+\]
+¡es literalmente la ecuación matricial \(A\mathbf{c} = \mathbf{0}\) con \(\mathbf{c} = \begin{bmatrix} c_1 & \cdots & c_n \end{bmatrix}^T\)! Como \(\operatorname{Null}(A) = \operatorname{Null}(R)\), tenemos
+\[
+A\mathbf{c} = \mathbf{0} \iff R\mathbf{c} = \mathbf{0}.
+\]
+En otras palabras, las operaciones por fila NUNCA cambian qué subconjuntos de columnas son linealmente independientes, ni qué coeficientes expresan una columna dependiente como combinación lineal de columnas anteriores.
+
+[CALLOUT]
+id: row-op-invariance
+label: Teorema
+title: Efecto de las operaciones elementales por fila sobre los espacios matriciales
+tone: key
+
+Si \(A\) y \(R\) son matrices \(m \times n\) equivalentes por filas (\(R = PA\) para un producto invertible \(P\) de matrices elementales), entonces:
+
+(1) \(\operatorname{Null}(R) = \operatorname{Null}(A)\).
+(2) \(\operatorname{Row}(R) = \operatorname{Row}(A)\).
+(3) \(\operatorname{Col}(R)\) en general difiere de \(\operatorname{Col}(A)\), pero \(A\) y \(R\) tienen EXACTAMENTE las mismas relaciones de dependencia lineal entre sus columnas: para todo \(\mathbf{c} \in \mathbb{R}^n\),
+\[
+c_1 \mathbf{a}_1 + \cdots + c_n \mathbf{a}_n = \mathbf{0} \iff c_1 \mathbf{r}_1 + \cdots + c_n \mathbf{r}_n = \mathbf{0}.
+\]
+[/CALLOUT]
+
+=== SECTION 3: Extraer conjuntos generadores minimales a partir de RREF ===
+
+Armados con [REF: row-op-invariance | el teorema de invariancia], podemos leer directamente conjuntos generadores linealmente independientes minimales para los tres espacios a partir de una única reducción por filas de \(A\) hasta \(R = \operatorname{RREF}(A)\). Demostremos por qué funciona cada receta y luego apliquemos las tres a una matriz concreta.
+
+1. Espacio columna \(\operatorname{Col}(A)\): tome las columnas pivote de la matriz ORIGINAL \(A\) (¡NUNCA las columnas de \(R\)!).
+Sean \(p_1 < p_2 < \cdots < p_r\) los índices de las columnas pivote de \(R = \operatorname{RREF}(A)\).
+- En \(R\), la columna \(p_k\) es el vector unitario estándar \(\mathbf{e}_k\) (un \(1\) en la fila \(k\) y \(0\)'s en todas las demás). Evidentemente \(\{\mathbf{e}_1, \dots, \mathbf{e}_r\}\) es linealmente independiente. Por [REF: row-op-invariance.3 | la invariancia de relaciones entre columnas], las columnas correspondientes \(\{\mathbf{a}_{p_1}, \dots, \mathbf{a}_{p_r}\}\) de \(A\) TAMBIÉN son linealmente independientes (cualquier relación no trivial \(\sum c_k \mathbf{a}_{p_k} = \mathbf{0}\) obligaría a que \(\sum c_k \mathbf{e}_k = \mathbf{0}\), imposible).
+- Más aún, toda columna no pivote \(\mathbf{r}_j\) de \(R\) tiene ceros debajo de la fila \(r\), de modo que \(\mathbf{r}_j = r_{1j} \mathbf{e}_1 + \cdots + r_{rj} \mathbf{e}_r = r_{1j} \mathbf{r}_{p_1} + \cdots + r_{rj} \mathbf{r}_{p_r}\). Pasar \(\mathbf{r}_j\) al otro lado da una relación de dependencia lineal con pesos \((r_{1j}, \dots, r_{rj}, -1)\). Por [REF: row-op-invariance.3 | la invariancia de relaciones entre columnas], EXACTAMENTE la misma ecuación se cumple en \(A\):
+\[
+\mathbf{a}_j = r_{1j} \mathbf{a}_{p_1} + \cdots + r_{rj} \mathbf{a}_{p_r}.
+\]
+¡Por lo tanto, toda columna de \(A\) es combinación lineal de las columnas pivote de \(A\), de modo que \(\{\mathbf{a}_{p_1}, \dots, \mathbf{a}_{p_r}\}\) genera \(\operatorname{Col}(A)\)!
+
+2. Espacio fila \(\operatorname{Row}(A)\): tome las filas no nulas de cualquier REF (o RREF) \(R\) de \(A\).
+- Por [REF: row-op-invariance.2 | la invariancia del espacio fila], \(\operatorname{Row}(A) = \operatorname{Row}(R)\). Descartar las filas completamente nulas de \(R\) no cambia nada, así que las \(r\) filas no nulas \(\mathbf{w}_1^T, \dots, \mathbf{w}_r^T\) de \(R\) generan \(\operatorname{Row}(A)\).
+- ¿Por qué son linealmente independientes esas \(r\) filas no nulas? Suponga que \(c_1 \mathbf{w}_1^T + \cdots + c_r \mathbf{w}_r^T = \mathbf{0}^T\). Mire la columna pivote \(p_1\): la fila \(1\) tiene una entrada principal no nula allí, mientras que las filas \(2, \dots, r\) tienen todas \(0\) en la columna \(p_1\). ¡Así que la \(p_1\)-ésima entrada de la combinación obliga a que \(c_1 = 0\)! Al avanzar a la columna pivote \(p_2\), solo sobrevive la fila \(2\) entre las filas restantes, forzando \(c_2 = 0\); continuar bajando por la escalera escalonada fuerza \(c_1 = c_2 = \cdots = c_r = 0\).
+
+3. Espacio nulo \(\operatorname{Null}(A)\): tome los vectores solución especiales (de variables libres) de \(R\mathbf{x} = \mathbf{0}\).
+- Por [REF: row-op-invariance.1 | la invariancia del espacio nulo], \(\operatorname{Null}(A) = \operatorname{Null}(R)\). Resolver \(R\mathbf{x} = \mathbf{0}\) en forma vectorial paramétrica expresa cada solución como \(\mathbf{x} = t_1 \mathbf{v}_1 + \cdots + t_{n-r} \mathbf{v}_{n-r}\), donde \(\mathbf{v}_k\) se obtiene igualando la \(k\)-ésima variable libre a \(1\) y todas las demás variables libres a \(0\). Así, \(\{\mathbf{v}_1, \dots, \mathbf{v}_{n-r}\}\) genera \(\operatorname{Null}(A)\).
+- ¿Por qué son linealmente independientes \(\mathbf{v}_1, \dots, \mathbf{v}_{n-r}\)? Suponga que \(c_1 \mathbf{v}_1 + \cdots + c_{n-r} \mathbf{v}_{n-r} = \mathbf{0}\). En la entrada correspondiente a la \(k\)-ésima variable libre, \(\mathbf{v}_k\) tiene \(1\) y CUALQUIER otro \(\mathbf{v}_j\) (\(j \neq k\)) tiene \(0\), ¡de modo que esa única coordenada da \(c_k = 0\) de inmediato!
+
+[CALLOUT]
+id: space-extraction-pitfall
+label: Error frecuente
+title: Nunca tome las columnas pivote de \(\operatorname{RREF}(A)\) para \(\operatorname{Col}(A)\)
+tone: caution
+
+Las columnas pivote de \(R = \operatorname{RREF}(A)\) le indican QUÉ índices de columna elegir, NO los vectores columna mismos. Para \(\operatorname{Col}(A)\), regrese siempre a la matriz original \(A\) y copie esas columnas pivote. (En cambio, para \(\operatorname{Row}(A)\), tomar las filas no nulas de \(R\) es totalmente válido porque las operaciones por fila dejan \(\operatorname{Row}(A)\) invariante.)
+[/CALLOUT]
+
+Ejecutemos las tres recetas en una matriz concreta \(3 \times 4\):
+\[
+A = \begin{bmatrix} 1 & 2 & -1 & 3 \\ 2 & 4 & 1 & 3 \\ -1 & -2 & 4 & -6 \end{bmatrix}.
+\]
+Reduzca por filas \(A\) a RREF:
+\[
+\begin{bmatrix} 1 & 2 & -1 & 3 \\ 2 & 4 & 1 & 3 \\ -1 & -2 & 4 & -6 \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\begin{bmatrix} 1 & 2 & -1 & 3 \\ 0 & 0 & 3 & -3 \\ 0 & 0 & 3 & -3 \end{bmatrix}
+\xrightarrow{\substack{R_3 \leftarrow R_3 - R_2 \\ R_2 \leftarrow \frac{1}{3} R_2}}
+\begin{bmatrix} 1 & 2 & -1 & 3 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}
+\xrightarrow{R_1 \leftarrow R_1 + R_2}
+R = \begin{bmatrix} 1 & 2 & 0 & 2 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Los pivotes se encuentran en las columnas \(1\) y \(3\) (de modo que \(r = 2\)). Leemos de inmediato los tres conjuntos generadores linealmente independientes minimales:
+- \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\): las columnas \(1\) y \(3\) de la matriz ORIGINAL \(A\):
+\[
+\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} \right\}.
+\]
+Compruebe directamente la trampa: la columna \(1\) de \(R\) es \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\). ¿Podría \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\) pertenecer a \(\operatorname{Col}(A)\)? Intentar \(c_1 \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + c_2 \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\) obliga a \(c_1 = \frac{1}{3}\) y \(c_2 = -\frac{2}{3}\) en las dos primeras filas, lo que produce \(-\frac{1}{3} - \frac{8}{3} = -3 \neq 0\) en la fila \(3\). Así que \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} \notin \operatorname{Col}(A)\): ¡tomar las columnas pivote de \(R\) produciría un vector que ni siquiera pertenece al espacio columna!
+Verifique también las relaciones entre columnas no pivote predichas por \(R\): la columna \(2\) de \(R\) es \(2\mathbf{r}_1\), y en efecto \(\mathbf{a}_2 = 2\mathbf{a}_1\); la columna \(4\) de \(R\) es \(2\mathbf{r}_1 - \mathbf{r}_3\), y en efecto \(2\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} - \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} = \begin{bmatrix} 3 \\ 3 \\ -6 \end{bmatrix} = \mathbf{a}_4\).
+- \(\operatorname{Row}(A) \subseteq \mathbb{R}^4\): las dos filas no nulas de \(R\):
+\[
+\left\{ \begin{bmatrix} 1 & 2 & 0 & 2 \end{bmatrix},\; \begin{bmatrix} 0 & 0 & 1 & -1 \end{bmatrix} \right\}.
+\]
+- \(\operatorname{Null}(A) \subseteq \mathbb{R}^4\): a partir de \(R\mathbf{x} = \mathbf{0}\), tenemos \(x_1 = -2x_2 - 2x_4\) y \(x_3 = x_4\), con variables libres \(x_2, x_4\). Fijar \((x_2, x_4) = (1, 0)\) y \((0, 1)\) da
+\[
+\left\{ \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} -2 \\ 0 \\ 1 \\ 1 \end{bmatrix} \right\}.
+\]
+
+[TABLE]
+Espacio matricial | Espacio ambiente | Conjunto generador minimal desde \(R = \operatorname{RREF}(A)\) | Cantidad de vectores
+\(\operatorname{Col}(A)\) | \(\mathbb{R}^m\) | Columnas pivote de la matriz ORIGINAL \(A\) | \(r\) (número de pivotes)
+\(\operatorname{Row}(A)\) | \(\mathbb{R}^n\) | Filas no nulas de REF o RREF \(R\) | \(r\) (número de pivotes)
+\(\operatorname{Null}(A)\) | \(\mathbb{R}^n\) | Soluciones especiales de variables libres de \(R\mathbf{x} = \mathbf{0}\) | \(n - r\) (número de variables libres)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: C]
+Considere la matriz
+\[
+B = \begin{bmatrix} 1 & -1 & 2 & 0 \\ 2 & -2 & 5 & 3 \\ -1 & 1 & -1 & 3 \end{bmatrix},
+\qquad \text{cuya RREF es} \qquad
+R = \begin{bmatrix} 1 & -1 & 0 & -6 \\ 0 & 0 & 1 & 3 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+¿Qué par entrega un conjunto generador linealmente independiente minimal válido para \(\operatorname{Col}(B)\) y un conjunto generador linealmente independiente minimal válido para \(\operatorname{Null}(B)\)?
+
+(A) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+(B) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} -1 \\ -2 \\ 1 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+(C) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} 2 \\ 5 \\ -1 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+(D) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} 2 \\ 5 \\ -1 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} -6 \\ 0 \\ 3 \\ 1 \end{bmatrix} \right\}\)
+(E) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 & -1 & 0 & -6 \end{bmatrix},\; \begin{bmatrix} 0 & 0 & 1 & 3 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+Suponga que una matriz \(3 \times 4\) \(A\) tiene
+\[
+\operatorname{RREF}(A) = \begin{bmatrix} 1 & 0 & -2 & 3 \\ 0 & 1 & 4 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix},
+\]
+y sus dos primeras columnas son \(\mathbf{a}_1 = \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix}\) y \(\mathbf{a}_2 = \begin{bmatrix} 1 \\ 2 \\ -2 \end{bmatrix}\). ¿Cuál es la cuarta columna \(\mathbf{a}_4\) de \(A\)?
+
+(A) \(\begin{bmatrix} 0 \\ 10 \\ -14 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 5 \\ -5 \\ 11 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 7 \\ -1 \\ 7 \end{bmatrix}\)
+(D) \(\begin{bmatrix} -5 \\ 5 \\ -11 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 3 \\ -1 \\ 0 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 4: Demostrar que la RREF es única ===
+
+Antes, cuando aprendimos por primera vez la eliminación de Gauss-Jordan, afirmamos que sin importar qué secuencia válida de operaciones por fila aplique a una matriz \(m \times n\) \(A\), siempre se llega exactamente a la misma Forma Escalonada Reducida por Filas \(\operatorname{RREF}(A)\). Ahora disponemos de la herramienta exacta necesaria para demostrar ese teorema por completo: [REF: row-op-invariance.3 | la invariancia de las relaciones entre columnas]!
+
+[CALLOUT]
+id: rref-uniqueness
+label: Teorema
+title: Unicidad de la Forma Escalonada Reducida por Filas
+tone: key
+
+Toda matriz \(m \times n\) \(A\) es equivalente por filas a una y solo una matriz en Forma Escalonada Reducida por Filas.
+[/CALLOUT]
+
+Demostración. Suponga que \(R = \begin{bmatrix} \mathbf{r}_1 & \cdots & \mathbf{r}_n \end{bmatrix}\) y \(R' = \begin{bmatrix} \mathbf{r}'_1 & \cdots & \mathbf{r}'_n \end{bmatrix}\) están AMBAS en RREF y ambas son equivalentes por filas a \(A\). Por [REF: row-op-invariance.3 | la invariancia de relaciones entre columnas], \(R\) y \(R'\) comparten exactamente las mismas relaciones de dependencia lineal entre sus columnas (porque \(R\mathbf{c} = \mathbf{0} \iff A\mathbf{c} = \mathbf{0} \iff R'\mathbf{c} = \mathbf{0}\)).
+
+Primero, observe una caracterización limpia de las columnas pivote dentro de CUALQUIER matriz \(M\) en RREF:
+- La columna \(1\) es una columna pivote de \(M\) si y solo si la columna \(1\) es no nula.
+- Para \(j \ge 2\), la columna \(j\) es una columna pivote de \(M\) si y solo si la columna \(j\) NO es combinación lineal de las columnas precedentes \(1, \dots, j - 1\). ¿Por qué? Si la columna \(j\) ES una columna pivote, su \(1\) principal se sitúa en una nueva fila donde todas las columnas anteriores tienen \(0\), de modo que ninguna combinación de columnas anteriores puede producir ese \(1\). Recíprocamente, si la columna \(j\) NO es una columna pivote, todas sus entradas no nulas yacen en las filas \(1, \dots, k\) donde las \(k\) columnas pivote precedentes son iguales a \(\mathbf{e}_1, \dots, \mathbf{e}_k\), ¡así que la columna \(j\) SÍ es una combinación lineal de esas columnas anteriores!
+
+Aplique ahora esa caracterización a \(R\) y \(R'\):
+1. Mismas columnas pivote: como \(R\) y \(R'\) satisfacen exactamente las mismas relaciones de dependencia entre columnas sobre las columnas \(1, \dots, j\) para todo \(j = 1, \dots, n\), la columna \(j\) es independiente de las columnas anteriores en \(R\) si y solo si es independiente de las columnas anteriores en \(R'\). Por lo tanto, \(R\) y \(R'\) tienen EXACTAMENTE los mismos índices de columnas pivote \(p_1 < p_2 < \cdots < p_r\).
+2. Las columnas pivote coinciden: en toda matriz en RREF, la \(k\)-ésima columna pivote es SIEMPRE el vector unitario estándar \(\mathbf{e}_k\) (con \(1\) en la fila \(k\) y \(0\) en el resto). Así, \(\mathbf{r}_{p_k} = \mathbf{e}_k = \mathbf{r}'_{p_k}\) para todo \(k = 1, \dots, r\).
+3. Las columnas no pivote coinciden: tome cualquier columna no pivote \(j\), y sean \(p_1, \dots, p_s\) las columnas pivote situadas estrictamente a la izquierda de la columna \(j\) (si \(s = 0\), entonces la columna \(j\) es \(\mathbf{0}\) tanto en \(R\) como en \(R'\)). En \(R\), la columna \(j\) tiene ceros debajo de la fila \(s\), de modo que
+\[
+\mathbf{r}_j = c_1 \mathbf{r}_{p_1} + \cdots + c_s \mathbf{r}_{p_s},
+\]
+donde \(c_1, \dots, c_s\) son las \(s\) entradas superiores de \(\mathbf{r}_j\). Como \(R\) y \(R'\) comparten exactamente las mismas relaciones de dependencia entre columnas, exactamente la misma ecuación se cumple en \(R'\):
+\[
+\mathbf{r}'_j = c_1 \mathbf{r}'_{p_1} + \cdots + c_s \mathbf{r}'_{p_s} = c_1 \mathbf{e}_1 + \cdots + c_s \mathbf{e}_s = \mathbf{r}_j.
+\]
+Cada columna de \(R\) es igual a la columna correspondiente de \(R'\), por lo que \(R = R'\).
+
+Mire hacia atrás cuánto logra esa demostración: muestra que \(\operatorname{RREF}(A)\) queda completamente determinada por \(\operatorname{Null}(A)\) por sí solo: toda la información en \(\operatorname{RREF}(A)\) es literalmente un registro codificado de cada dependencia lineal entre las columnas de \(A\).
+
+[QUESTION 4]
+[ANSWER: B]
+Suponga que una matriz \(m \times n\) \(B\) se obtiene a partir de \(A\) mediante una secuencia de operaciones elementales por fila (y \(B \neq A\)). ¿Qué enunciado DEBE ser verdadero?
+
+(A) \(\operatorname{Col}(A) = \operatorname{Col}(B)\), mientras que \(\operatorname{Row}(A)\) y \(\operatorname{Null}(A)\) pueden diferir
+(B) \(\operatorname{Row}(A) = \operatorname{Row}(B)\) y \(\operatorname{Null}(A) = \operatorname{Null}(B)\), mientras que \(\operatorname{Col}(A)\) no tiene por qué ser igual a \(\operatorname{Col}(B)\)
+(C) \(\operatorname{Col}(A) = \operatorname{Col}(B)\) y \(\operatorname{Null}(A) = \operatorname{Null}(B)\), mientras que \(\operatorname{Row}(A)\) puede diferir
+(D) \(\operatorname{Row}(A) = \operatorname{Row}(B)\), mientras que \(\operatorname{Null}(A)\) cambia siempre que se intercambian dos filas
+(E) Se garantiza que los tres espacios \(\operatorname{Col}(A)\), \(\operatorname{Row}(A)\) y \(\operatorname{Null}(A)\) permanecen inalterados
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Una matriz \(4 \times 5\) \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 & \mathbf{a}_4 & \mathbf{a}_5 \end{bmatrix}\) satisface:
+- \(\mathbf{a}_1 = \mathbf{0}\),
+- \(\mathbf{a}_2 \neq \mathbf{0}\),
+- \(\mathbf{a}_3 = -3\mathbf{a}_2\),
+- \(\mathbf{a}_4\) no es un múltiplo escalar de \(\mathbf{a}_2\),
+- \(\mathbf{a}_5 = 2\mathbf{a}_2 - 5\mathbf{a}_4\).
+¿Cuál es la segunda fila de \(\operatorname{RREF}(A)\)?
+
+(A) \(\begin{bmatrix} 0 & 1 & -3 & 0 & 2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0 & 0 & 0 & 1 & 5 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & 0 & 1 & 0 & -5 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 & 0 & 0 & 1 & -5 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 & 1 & 0 & 1 & -3 \end{bmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suponga que \(A\) y \(B\) son dos matrices \(3 \times 4\) (de las que no se asume de antemano que estén relacionadas por operaciones por fila) que resultan satisfacer \(\operatorname{Null}(A) = \operatorname{Null}(B)\). Usando el razonamiento detrás de [REF: rref-uniqueness | la unicidad de la RREF], ¿qué conclusión DEBE cumplirse?
+
+(A) \(\operatorname{RREF}(A) = \operatorname{RREF}(B)\) y \(\operatorname{Row}(A) = \operatorname{Row}(B)\), aunque \(\operatorname{Col}(A)\) no tiene por qué ser igual a \(\operatorname{Col}(B)\)
+(B) \(\operatorname{Col}(A) = \operatorname{Col}(B)\), aunque \(\operatorname{Row}(A)\) no tiene por qué ser igual a \(\operatorname{Row}(B)\)
+(C) \(A = B\) entrada por entrada
+(D) \(\operatorname{RREF}(A)\) y \(\operatorname{RREF}(B)\) tienen el mismo número de pivotes, pero sus entradas no pivote pueden diferir
+(E) No puede concluirse nada sobre \(\operatorname{Row}(A)\) o \(\operatorname{RREF}(A)\) sin saber además que \(\operatorname{Col}(A) = \operatorname{Col}(B)\)
+[/BONUS]

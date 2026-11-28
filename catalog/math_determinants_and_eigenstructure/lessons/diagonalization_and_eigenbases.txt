@@ -1,0 +1,213 @@
+=== SECTION 1: Eigenbases and the four criteria for diagonalizability ===
+
+Diagonal matrices are the simplest operators in all of linear algebra: to multiply a diagonal matrix \(D = \operatorname{diag}(\lambda_1, \dots, \lambda_n)\) by a vector, you scale each coordinate independently; to raise \(D\) to the \(k\)-th power, you simply raise each diagonal entry to the \(k\)-th power, \(D^k = \operatorname{diag}(\lambda_1^k, \dots, \lambda_n^k)\). When can a general linear operator \(T : V \to V\) (or matrix \(A \in M_n(F)\)) be made diagonal by changing to a smarter basis?
+
+Suppose \(\mathcal{B} = \{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) is a basis of \(V\) consisting entirely of eigenvectors of \(T\)—called an eigenbasis of \(T\)—with \(T(\mathbf{v}_j) = \lambda_j \mathbf{v}_j\) for \(j = 1, \dots, n\). Then column \(j\) of the matrix \([T]_{\mathcal{B}}\) has \(\lambda_j\) in row \(j\) and \(0\) elsewhere, so \([T]_{\mathcal{B}} = D = \operatorname{diag}(\lambda_1, \dots, \lambda_n)\) is diagonal! Conversely, if \([T]_{\mathcal{B}} = \operatorname{diag}(\lambda_1, \dots, \lambda_n)\) is diagonal in some basis \(\mathcal{B} = \{\mathbf{v}_1, \dots, \mathbf{v}_n\}\), then \(T(\mathbf{v}_j) = \lambda_j \mathbf{v}_j\) for every \(j\), so \(\mathcal{B}\) is an eigenbasis.
+
+Translating to matrices \(A \in M_n(F)\), let \(P = \begin{bmatrix} \mathbf{v}_1 & \mathbf{v}_2 & \cdots & \mathbf{v}_n \end{bmatrix}\) be the matrix whose columns are \(\mathbf{v}_1, \dots, \mathbf{v}_n \in F^n\). Computing \(AP\) and \(PD\) column by column gives
+\[
+AP = \begin{bmatrix} A\mathbf{v}_1 & A\mathbf{v}_2 & \cdots & A\mathbf{v}_n \end{bmatrix}, \qquad PD = \begin{bmatrix} \lambda_1 \mathbf{v}_1 & \lambda_2 \mathbf{v}_2 & \cdots & \lambda_n \mathbf{v}_n \end{bmatrix}.
+\]
+Thus \(AP = PD\) holds if and only if \(A\mathbf{v}_j = \lambda_j \mathbf{v}_j\) for every \(j = 1, \dots, n\), and \(P\) is invertible if and only if its columns \(\{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) form a basis of \(F^n\). Multiplying \(AP = PD\) on the right by \(P^{-1}\) gives \(A = P D P^{-1}\) (equivalently, \(P^{-1} A P = D\)).
+
+Combining this with our direct-sum theorem for eigenspaces and the fundamental inequality \(1 \le m_g(\lambda) \le m_a(\lambda)\) gives the complete characterization of diagonalizability.
+
+[CALLOUT]
+id: diag-criteria
+label: Theorem
+title: Four equivalent criteria for diagonalizability
+tone: key
+
+Let \(T : V \to V\) be a linear operator on an \(n\)-dimensional vector space \(V\) over \(F = \mathbb{R}\) or \(\mathbb{C}\) (or let \(A \in M_n(F)\)), and let \(\lambda_1, \dots, \lambda_r \in F\) be all the DISTINCT eigenvalues of \(T\) in \(F\). The following four statements are equivalent:
+
+(1) \(V\) admits a basis consisting of eigenvectors of \(T\) (an eigenbasis).
+(2) \(A = P D P^{-1}\) for some invertible matrix \(P \in M_n(F)\) and diagonal matrix \(D \in M_n(F)\).
+(3) \(\sum_{i=1}^r m_g(\lambda_i) = n\), i.e., \(V = E_{\lambda_1} \oplus E_{\lambda_2} \oplus \dots \oplus E_{\lambda_r}\).
+(4) The characteristic polynomial \(p_T(\lambda)\) splits completely into linear factors over \(F\), AND \(m_g(\lambda_i) = m_a(\lambda_i)\) for every eigenvalue \(\lambda_i\).
+[/CALLOUT]
+
+Let us verify the key equivalence between [REF: diag-criteria.3 | criterion (3)] and [REF: diag-criteria.4 | criterion (4)], since that is the test you will actually run in practice. Let \(\lambda_1, \dots, \lambda_r\) be the distinct roots of \(p_T(\lambda)\) in \(F\). Because \(p_T(\lambda)\) has degree \(n\), the sum of the algebraic multiplicities of its roots in \(F\) satisfies
+\[
+\sum_{i=1}^r m_a(\lambda_i) \le n,
+\]
+with equality IF AND ONLY IF \(p_T(\lambda)\) splits completely into linear factors over \(F\) (no irreducible quadratic or higher-degree factors left over in \(F\)). Meanwhile, the multiplicity inequality gives \(m_g(\lambda_i) \le m_a(\lambda_i)\) for every \(i\), so
+\[
+\sum_{i=1}^r m_g(\lambda_i) \le \sum_{i=1}^r m_a(\lambda_i) \le n.
+\]
+For the left-hand side \(\sum_{i=1}^r m_g(\lambda_i)\) to reach \(n\), BOTH inequalities must be equalities: first, \(\sum_{i=1}^r m_a(\lambda_i) = n\) (so \(p_T\) splits completely over \(F\)), and second, \(m_g(\lambda_i) = m_a(\lambda_i)\) for EVERY \(i\) (no eigenvalue is defective). Finally, since \(E_{\lambda_1} + \dots + E_{\lambda_r} = E_{\lambda_1} \oplus \dots \oplus E_{\lambda_r}\) is ALWAYS a direct sum, concatenating bases of the individual eigenspaces produces a linearly independent set of \(\sum m_g(\lambda_i)\) eigenvectors, which forms a basis of \(V\) if and only if that sum equals \(n\).
+
+An immediate, widely used corollary: if \(A \in M_n(F)\) has \(n\) DISTINCT eigenvalues in \(F\), then each eigenvalue has \(m_a(\lambda_i) = 1\), which forces \(1 \le m_g(\lambda_i) \le 1 \implies m_g(\lambda_i) = 1\), so \(\sum_{i=1}^n m_g(\lambda_i) = n\) and \(A\) is automatically diagonalizable! Be careful NOT to reverse that statement: \(n\) distinct eigenvalues are SUFFICIENT for diagonalizability, NOT NECESSARY. The identity matrix \(I_n\) has only ONE eigenvalue \(\lambda = 1\) (with \(m_a(1) = m_g(1) = n\)), and it is already diagonal!
+
+Notice also that [REF: diag-criteria.4 | criterion (4)] cleanly separates the TWO completely different ways an operator can fail to be diagonalizable over \(F\):
+- Missing field roots: \(p_A(\lambda)\) fails to split over \(F\). For instance, the \(90^\circ\) rotation \(R_{\pi/2} = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}\) has \(p(\lambda) = \lambda^2 + 1\), which has no real roots. It fails to be diagonalizable over \(\mathbb{R}\), YET becomes diagonalizable over \(\mathbb{C}\) (where it has two distinct roots \(\pm i\)).
+- Defective multiplicity: even after \(p_A(\lambda)\) splits into linear factors, some eigenvalue satisfies \(m_g(\lambda) < m_a(\lambda)\). For instance, the shear \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) has \(p_S(\lambda) = (\lambda - 1)^2\) with \(m_a(1) = 2\) but \(m_g(1) = 1\). Expanding the field from \(\mathbb{R}\) to \(\mathbb{C}\) does NOT help—\(S\) is non-diagonalizable over BOTH \(\mathbb{R}\) and \(\mathbb{C}\).
+
+[QUESTION 1]
+[ANSWER: C]
+Consider the three real matrices
+\[
+A_1 = \begin{bmatrix} 0 & -2 \\ 2 & 0 \end{bmatrix}, \qquad A_2 = \begin{bmatrix} 3 & 1 \\ 0 & 3 \end{bmatrix}, \qquad A_3 = \begin{bmatrix} 3 & 0 \\ 0 & 3 \end{bmatrix}.
+\]
+Which statement correctly describes their diagonalizability over \(\mathbb{R}\) and over \(\mathbb{C}\)?
+
+(A) \(A_1\) is diagonalizable over \(\mathbb{R}\), \(A_2\) is diagonalizable over \(\mathbb{C}\) only, and \(A_3\) is diagonalizable over both \(\mathbb{R}\) and \(\mathbb{C}\).
+(B) None of \(A_1, A_2, A_3\) is diagonalizable over \(\mathbb{R}\), because none has two distinct real eigenvalues.
+(C) \(A_1\) is diagonalizable over \(\mathbb{C}\) but not over \(\mathbb{R}\); \(A_2\) is not diagonalizable over either \(\mathbb{R}\) or \(\mathbb{C}\); \(A_3\) is diagonalizable over both \(\mathbb{R}\) and \(\mathbb{C}\).
+(D) Both \(A_1\) and \(A_2\) are diagonalizable over \(\mathbb{C}\) but not over \(\mathbb{R}\), while \(A_3\) is diagonalizable over both.
+(E) \(A_1\) is not diagonalizable over \(\mathbb{C}\), while \(A_2\) and \(A_3\) are both diagonalizable over \(\mathbb{R}\).
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+For which real value(s) of \(c\) is the matrix
+\[
+A(c) = \begin{bmatrix} 2 & c & 1 \\ 0 & 2 & 0 \\ 0 & 0 & 5 \end{bmatrix}
+\]
+diagonalizable over \(\mathbb{R}\)?
+
+(A) \(c = 0\) only
+(B) All \(c \in \mathbb{R}\)
+(C) No value of \(c \in \mathbb{R}\) (because of the entry \(1\) in the top right)
+(D) \(c = -1\) only
+(E) All \(c \neq 0\)
+[/QUESTION]
+
+=== SECTION 2: Constructing \(P\) and \(D\) cleanly ===
+
+When [REF: diag-criteria | the diagonalizability test] succeeds, constructing \(P\) and \(D\) follows a direct three-step recipe:
+1. Compute \(p_A(\lambda) = \det(\lambda I_n - A)\) and find all distinct eigenvalues \(\lambda_1, \dots, \lambda_r \in F\).
+2. For each \(\lambda_i\), solve \((A - \lambda_i I_n)\mathbf{v} = \mathbf{0}\) to find a basis of \(E_{\lambda_i}\). Verify that the total number of basis vectors equals \(n\).
+3. Place those \(n\) eigenvectors as the columns of \(P = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_n \end{bmatrix}\), and place their corresponding eigenvalues along the diagonal of \(D = \operatorname{diag}(\mu_1, \dots, \mu_n)\) in the EXACT SAME ORDER.
+
+Two practical remarks save many sign and index headaches:
+- Column-order matching: column \(j\) of \(P\) MUST be an eigenvector for the \(j\)-th diagonal entry \(D_{jj}\). If you swap two columns of \(P\), you must swap the corresponding two diagonal entries of \(D\).
+- Non-uniqueness of \(P\): any nonzero scalar multiple of a column of \(P\) is still an eigenvector, any basis of a multi-dimensional eigenspace \(E_\lambda\) works, and any permutation of the columns of \(P\) (matched in \(D\)) gives another valid diagonalization \(A = P D P^{-1}\).
+
+Let us diagonalize \(A = \begin{bmatrix} 1 & 1/2 \\ 1/2 & 1 \end{bmatrix}\):
+- Characteristic polynomial: \(p_A(\lambda) = (\lambda - 1)^2 - \frac{1}{4} = \lambda^2 - 2\lambda + \frac{3}{4} = \left(\lambda - \frac{3}{2}\right)\left(\lambda - \frac{1}{2}\right)\), giving distinct eigenvalues \(\lambda_1 = \frac{3}{2}\) and \(\lambda_2 = \frac{1}{2}\).
+- Eigenvectors: solving \((A - \frac{3}{2}I)\mathbf{v} = \mathbf{0}\) gives \(-\frac{1}{2}x_1 + \frac{1}{2}x_2 = 0\), so \(\mathbf{v}_1 = (1, 1)^T\). Solving \((A - \frac{1}{2}I)\mathbf{v} = \mathbf{0}\) gives \(\frac{1}{2}x_1 + \frac{1}{2}x_2 = 0\), so \(\mathbf{v}_2 = (1, -1)^T\).
+- Assemble matching \(P\) and \(D\):
+\[
+P = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \qquad D = \begin{bmatrix} 3/2 & 0 \\ 0 & 1/2 \end{bmatrix}, \qquad P^{-1} = \frac{1}{2}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}.
+\]
+Quick check: \(P D P^{-1} = \frac{1}{2}\begin{bmatrix} 3/2 & 1/2 \\ 3/2 & -1/2 \end{bmatrix}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} = \begin{bmatrix} 1 & 1/2 \\ 1/2 & 1 \end{bmatrix} = A\).
+
+=== SECTION 3: Matrix powers and discrete linear dynamical systems ===
+
+Why do we go to the trouble of factoring \(A = P D P^{-1}\)? Watch what happens when we compute \(A^k\):
+\[
+A^k = (P D P^{-1})(P D P^{-1})\cdots(P D P^{-1}) = P D (P^{-1}P) D (P^{-1}P) \cdots D P^{-1} = P D^k P^{-1}.
+\]
+All interior factors \(P^{-1}P = I_n\) collapse! Computing \(A^{100}\) now takes no more work than computing \(\lambda_1^{100}, \dots, \lambda_n^{100}\) and multiplying three matrices.
+
+This yields an immediate closed-form solution to any discrete linear dynamical system
+\[
+\mathbf{x}_{k+1} = A \mathbf{x}_k \qquad (k = 0, 1, 2, \dots)
+\]
+with given initial state \(\mathbf{x}_0 \in F^n\). Repeated application gives \(\mathbf{x}_k = A^k \mathbf{x}_0\). Rather than computing \(P^{-1}\) blindly, expand the initial vector \(\mathbf{x}_0\) directly in the eigenbasis \(\{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) (which is equivalent to solving \(P\mathbf{c} = \mathbf{x}_0\)):
+\[
+\mathbf{x}_0 = c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_n \mathbf{v}_n.
+\]
+Applying \(A^k\) term by term using \(A^k \mathbf{v}_j = \lambda_j^k \mathbf{v}_j\) produces the exact state at every step \(k\):
+\[
+\mathbf{x}_k = c_1 \lambda_1^k \mathbf{v}_1 + c_2 \lambda_2^k \mathbf{v}_2 + \dots + c_n \lambda_n^k \mathbf{v}_n.
+\]
+Even better, this formula makes long-term behavior transparent! Suppose one eigenvalue \(\lambda_1\) is strictly dominant in magnitude, meaning \(|\lambda_1| > |\lambda_j|\) for all \(j \ge 2\), and \(c_1 \neq 0\). Factoring out \(\lambda_1^k\) gives
+\[
+\mathbf{x}_k = \lambda_1^k \left( c_1 \mathbf{v}_1 + c_2 \left(\frac{\lambda_2}{\lambda_1}\right)^k \mathbf{v}_2 + \dots + c_n \left(\frac{\lambda_n}{\lambda_1}\right)^k \mathbf{v}_n \right).
+\]
+Because \(|\lambda_j / \lambda_1| < 1\), every ratio \((\lambda_j / \lambda_1)^k \to 0\) as \(k \to \infty\). Thus for large \(k\), \(\mathbf{x}_k \approx c_1 \lambda_1^k \mathbf{v}_1\): the trajectory bends exponentially toward the dominant eigenline \(\operatorname{span}\{\mathbf{v}_1\}\), growing unboundedly if \(|\lambda_1| > 1\), settling to a nonzero steady state if \(\lambda_1 = 1\), or decaying to \(\mathbf{0}\) if \(|\lambda_1| < 1\) (and alternating sign along the line if \(\lambda_1 < 0\)).
+
+Let us watch this happen for our matrix \(A = \begin{bmatrix} 1 & 1/2 \\ 1/2 & 1 \end{bmatrix}\) with \(\lambda_1 = 1.5\), \(\mathbf{v}_1 = (1, 1)^T\), \(\lambda_2 = 0.5\), \(\mathbf{v}_2 = (1, -1)^T\), and initial state \(\mathbf{x}_0 = 0.5\mathbf{v}_1 + 2\mathbf{v}_2 = (2.5, -1.5)^T\). Then \(\mathbf{x}_k = 0.5(1.5)^k(1, 1)^T + 2(0.5)^k(1, -1)^T\). Even though \(\mathbf{x}_0\) starts in the fourth quadrant far from the diagonal line \(y = x\), the \((0.5)^k\) component shrinks by half at every step while the \((1.5)^k\) component grows by \(50\%\), pulling the iterates \(\mathbf{x}_0, \mathbf{x}_1, \mathbf{x}_2, \mathbf{x}_3, \mathbf{x}_4\) tightly onto the dominant eigenline \(E_{1.5}\).
+
+[GRAPH]
+type: parametric2d
+title: Trajectory \(\mathbf{x}_k = 0.5(1.5)^k \mathbf{v}_1 + 2(0.5)^k \mathbf{v}_2\) bending toward the dominant eigenline \(E_{1.5}\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 4
+xrange: -0.5, 3.3
+yrange: -2.0, 3.0
+trace: 0.5 * 1.5^t + 2 * 0.5^t, 0.5 * 1.5^t - 2 * 0.5^t | label: trajectory \(\mathbf{x}(t)\)
+segment: -0.5, -0.5, 3.0, 3.0 | label: \(E_{1.5}\) | dashed: true
+segment: 0, 0, 2.0, -2.0 | label: \(E_{0.5}\) | dashed: true
+point: 2.5, -1.5 | label: \(\mathbf{x}_0\)
+point: 1.75, -0.25 | label: \(\mathbf{x}_1\)
+point: 1.625, 0.625 | label: \(\mathbf{x}_2\)
+point: 1.9375, 1.4375 | label: \(\mathbf{x}_3\)
+point: 2.65625, 2.40625 | label: \(\mathbf{x}_4\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: B]
+Suppose \(A = P D P^{-1}\) where
+\[
+P = \begin{bmatrix} 1 & 2 \\ 1 & 3 \end{bmatrix}, \qquad D = \begin{bmatrix} 2 & 0 \\ 0 & -1 \end{bmatrix}.
+\]
+What is \(A^4 \mathbf{v}\) for \(\mathbf{v} = \begin{bmatrix} 5 \\ 7 \end{bmatrix}\)?
+
+(A) \(\begin{bmatrix} 18 \\ 20 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 20 \\ 22 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 12 \\ 10 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 34 \\ 50 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 80 \\ 112 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Let
+\[
+A = \begin{bmatrix} 4 & -3 \\ 2 & -1 \end{bmatrix}.
+\]
+By diagonalizing \(A\), find the \((1, 1)\)-entry of \(A^k\) for every integer \(k \ge 0\).
+
+(A) \(2^{k+1} - 1\)
+(B) \(2^k + 3\)
+(C) \(3 \cdot 2^k - 3\)
+(D) \(3 \cdot 2^k - 2\)
+(E) \(4^k - 3^k\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Consider the discrete dynamical system \(\mathbf{x}_{k+1} = A\mathbf{x}_k\) in \(\mathbb{R}^2\), where \(A\) has eigenvalues \(\lambda_1 = 0.8\) with eigenvector \(\mathbf{v}_1 = (1, 2)^T\) and \(\lambda_2 = -1.2\) with eigenvector \(\mathbf{v}_2 = (1, -1)^T\). If \(\mathbf{x}_0 = 3\mathbf{v}_1 - 0.5\mathbf{v}_2\), which description best captures the long-term behavior of \(\mathbf{x}_k\) as \(k \to \infty\)?
+
+(A) \(\mathbf{x}_k\) converges to the zero vector \(\mathbf{0}\).
+(B) \(\mathbf{x}_k\) grows unboundedly in a fixed direction along \(\operatorname{span}\{(1, 2)^T\}\).
+(C) \(\mathbf{x}_k\) approaches a nonzero equilibrium vector on \(\operatorname{span}\{(1, -1)^T\}\).
+(D) \(\mathbf{x}_k\) grows unboundedly in a fixed direction along \(\operatorname{span}\{(1, -1)^T\}\) without changing sign.
+(E) \(\mathbf{x}_k\) grows unboundedly in magnitude while alternating direction at each step along \(\operatorname{span}\{(1, -1)^T\}\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose \(A \in M_5(\mathbb{R})\) is idempotent (\(A^2 = A\)) and satisfies \(\operatorname{rank}(A) = 3\). By decomposing any \(\mathbf{x} \in \mathbb{R}^5\) as \(\mathbf{x} = A\mathbf{x} + (\mathbf{x} - A\mathbf{x})\), determine \(\operatorname{tr}(A)\).
+
+(A) \(2\)
+(B) \(5\)
+(C) \(3\)
+(D) \(0\)
+(E) Cannot be determined without knowing the entries of \(A\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose \(A \in M_n(\mathbb{C})\) is BOTH diagonalizable over \(\mathbb{C}\) AND nilpotent (\(A^m = 0\) for some positive integer \(m\)). What must \(A\) equal?
+
+(A) The zero matrix \(0\)
+(B) Any strictly upper-triangular matrix
+(C) Any matrix with \(\det(A) = 0\)
+(D) The identity matrix \(I_n\)
+(E) Any diagonal matrix with at least one zero on the diagonal
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+A sequence \((F_k)_{k \ge 0}\) satisfies \(F_{k+2} = F_{k+1} + 2 F_k\) with \(F_0 = 0\) and \(F_1 = 3\). Writing \(\begin{bmatrix} F_{k+1} \\ F_k \end{bmatrix} = \begin{bmatrix} 1 & 2 \\ 1 & 0 \end{bmatrix}^k \begin{bmatrix} 3 \\ 0 \end{bmatrix}\) and diagonalizing the transition matrix, what is the closed-form formula for \(F_k\)?
+
+(A) \(3 \cdot 2^k - 3\)
+(B) \(2^{k+1} - 2(-1)^k\)
+(C) \(2^k + (-1)^k\)
+(D) \(2^k - (-1)^k\)
+(E) \(3 \cdot 2^{k-1} - 3(-1)^k\)
+[/BONUS]

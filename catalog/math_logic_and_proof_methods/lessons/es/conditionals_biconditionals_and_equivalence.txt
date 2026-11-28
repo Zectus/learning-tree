@@ -1,0 +1,324 @@
+=== SECTION 1: El condicional material y la verdad por vacuidad ===
+
+La mayoría de los teoremas matemáticos no son meras afirmaciones aisladas de un hecho; adoptan una forma condicional: "si \(x\) satisface una propiedad, entonces \(x\) satisface otra". Por ejemplo, "si un entero \(n\) es divisible entre \(6\), entonces \(n\) es par". Ya sabemos cómo combinar enunciados con \(\neg\), \(\wedge\) y \(\vee\), y cómo comparar fórmulas mediante la equivalencia por tablas de verdad \(\equiv\). Ahora introducimos el conectivo que expresa "si ... entonces ...".
+
+[CALLOUT]
+id: def-conditional
+label: Definición
+title: Condicional material
+tone: key
+
+Sean \(P\) y \(Q\) enunciados. El enunciado condicional \(P \Rightarrow Q\) (se lee "si \(P\), entonces \(Q\)" o "\(P\) implica \(Q\)") es falso únicamente en el caso en que \(P\) es verdadero y \(Q\) es falso, y verdadero en todos los demás casos. Aquí \(P\) es la hipótesis (o antecedente) y \(Q\) es la conclusión (o consecuente).
+[/CALLOUT]
+
+[TABLE]
+\(P\) | \(Q\) | \(P \Rightarrow Q\)
+\(V\) | \(V\) | \(V\)
+\(V\) | \(F\) | \(F\)
+\(F\) | \(V\) | \(V\)
+\(F\) | \(F\) | \(V\)
+[/TABLE]
+
+Las dos primeras filas de esta tabla coinciden de inmediato con la intuición cotidiana: si la hipótesis \(P\) se cumple y la conclusión \(Q\) le sigue, la implicación tiene éxito (\(V\)); si \(P\) se cumple pero \(Q\) falla, la implicación se rompe (\(F\)). Las dos últimas filas, sin embargo —donde \(P\) es \(F\) y \(P \Rightarrow Q\) se declara \(V\) sin importar \(Q\)—, desconciertan a casi todo el mundo al principio. Este fenómeno se denomina verdad por vacuidad.
+
+¿Por qué debe ser \(P \Rightarrow Q\) verdadero siempre que \(P\) sea falso? Piense en \(P \Rightarrow Q\) como una promesa más que como una relación causal. Suponga que un profesor promete: "Si obtiene al menos \(90\%\) en el examen final, entonces recibirá una A en el curso". ¿En qué circunstancias ha roto la promesa el profesor? Únicamente si usted obtiene al menos \(90\%\) (\(P\) es \(V\)) y no recibe una A (\(Q\) es \(F\)). Si obtiene \(82\%\) (\(P\) es \(F\)), la promesa nunca fue violada, ya sea que de todos modos obtenga una A (\(Q\) es \(V\)) o una B (\(Q\) es \(F\)).
+
+La razón matemática es aún más decisiva. Considere el enunciado "si \(n\) es divisible entre \(6\), entonces \(n\) es par". Queremos que esta implicación valga para todo entero \(n\). Pruébela en \(n = 4\) (donde "\(4\) es divisible entre \(6\)" es \(F\) y "\(4\) es par" es \(V\)) y en \(n = 5\) (donde tanto la hipótesis como la conclusión son \(F\)). ¡Ni \(n = 4\) ni \(n = 5\) refutan la afirmación! Un condicional falla únicamente cuando su hipótesis se cumple y su conclusión se incumple.
+
+[CALLOUT]
+id: caution-causal
+label: Precaución
+title: La implicación lógica no es causalidad
+tone: caution
+
+En lógica proposicional, \(P \Rightarrow Q\) depende únicamente de los valores de verdad de \(P\) y \(Q\), nunca de si \(P\) causa a \(Q\) ni de si tiene relación temática con \(Q\). Así, "si \(2 + 2 = 5\), entonces \(100\) es primo" tiene valor de verdad \(V\) simplemente porque su hipótesis "\(2 + 2 = 5\)" es falsa.
+[/CALLOUT]
+
+La prosa matemática expresa exactamente el mismo conectivo \(P \Rightarrow Q\) mediante muchas formulaciones equivalentes. Dominar estas traducciones evita implicaciones invertidas, especialmente con "solo si" y "necesario frente a suficiente".
+
+[TABLE]
+Formulación en español | Forma simbólica | Papel de \(P\) y \(Q\)
+Si \(P\), entonces \(Q\) | \(P \Rightarrow Q\) | \(P\) es suficiente para \(Q\)
+\(Q\) si \(P\) | \(P \Rightarrow Q\) | \(P\) es suficiente para \(Q\)
+\(Q\) siempre que \(P\) (o con tal que \(P\)) | \(P \Rightarrow Q\) | \(P\) es suficiente para \(Q\)
+\(P\) solo si \(Q\) | \(P \Rightarrow Q\) | \(Q\) es necesario para \(P\)
+\(P\) es una condición suficiente para \(Q\) | \(P \Rightarrow Q\) | Saber \(P\) basta para garantizar \(Q\)
+\(Q\) es una condición necesaria para \(P\) | \(P \Rightarrow Q\) | \(Q\) debe cumplirse para que \(P\) sea posible
+\(Q\) a menos que \(\neg P\) (equivalentemente, \(P\) a menos que \(Q\) es \(\neg Q \Rightarrow P\)) | \(P \Rightarrow Q\) | Cuando falla \(\neg P\) (es decir, \(P\) se cumple), \(Q\) debe cumplirse
+[/TABLE]
+
+Examinemos con cuidado "solo si" y "a menos que", pues son las dos formulaciones más malinterpretadas.
+
+Primero, ¿por qué "\(P\) solo si \(Q\)" se traduce a \(P \Rightarrow Q\) en lugar de \(Q \Rightarrow P\)? Pruébelo con un hecho aritmético familiar: "Un número natural \(n\) es divisible entre \(4\) solo si \(n\) es par". Aquí \(P\) es "\(n\) es divisible entre \(4\)" y \(Q\) es "\(n\) es par". Decir "\(P\) solo si \(Q\)" significa que \(P\) no puede ocurrir sin \(Q\) —es decir, si \(Q\) falla, \(P\) falla, o equivalentemente, siempre que \(P\) se cumpla, \(Q\) debe cumplirse (\(P \Rightarrow Q\))—. Note que \(Q \Rightarrow P\) ("si \(n\) es par, entonces \(n\) es divisible entre \(4\)") es falso para \(n = 6\). Por lo tanto, "solo si" apunta hacia adelante a la condición necesaria \(Q\), mientras que el simple "si" introduce la condición suficiente \(P\).
+
+Segundo, ¿por qué "\(A\) a menos que \(B\)" se traduce a \(\neg B \Rightarrow A\) (lo cual, como demostraremos en la siguiente sección, equivale a \(A \vee B\))? Lea "la matriz no es invertible a menos que su determinante sea distinto de cero": si la condición después de "a menos que" no se cumple (el determinante es cero, \(\neg B\)), entonces debe cumplirse la cláusula principal (\(A\)).
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(P\) el enunciado "\(n\) es múltiplo de \(10\)" y sea \(Q\) el enunciado "\(n\) es múltiplo de \(5\)" (para un entero fijo \(n\)). ¿Cuál de las siguientes oraciones en español expresa \(P \Rightarrow Q\)?
+
+(A) Ser múltiplo de \(5\) es una condición suficiente para que \(n\) sea múltiplo de \(10\).
+(B) \(n\) es múltiplo de \(10\) si \(n\) es múltiplo de \(5\).
+(C) \(n\) es múltiplo de \(10\) solo si \(n\) es múltiplo de \(5\).
+(D) Ser múltiplo de \(10\) es una condición necesaria para que \(n\) sea múltiplo de \(5\).
+(E) \(n\) es múltiplo de \(10\) a menos que \(n\) sea múltiplo de \(5\).
+[/QUESTION]
+
+=== SECTION 2: Recíproca, inversa, contrarrecíproca y forma disyuntiva ===
+
+A partir de un único condicional \(P \Rightarrow Q\), pueden formarse tres condicionales estrechamente relacionados intercambiando \(P\) y \(Q\), negándolos o haciendo ambas cosas. Llevar la cuenta de cuáles son lógicamente equivalentes a \(P \Rightarrow Q\) —y cuáles no— es esencial para todo el razonamiento posterior.
+
+[CALLOUT]
+id: def-related-conditionals
+label: Definición
+title: Recíproca, inversa y contrarrecíproca
+tone: key
+
+Dado un enunciado condicional \(P \Rightarrow Q\):
+
+(1) Su recíproca es \(Q \Rightarrow P\).
+(2) Su inversa es \(\neg P \Rightarrow \neg Q\).
+(3) Su contrarrecíproca es \(\neg Q \Rightarrow \neg P\).
+[/CALLOUT]
+
+Construyamos una única tabla de verdad que compare \(P \Rightarrow Q\) con sus tres variantes relacionadas y con la disyunción \(\neg P \vee Q\).
+
+[TABLE]
+\(P\) | \(Q\) | \(\neg P\) | \(\neg Q\) | \(P \Rightarrow Q\) | \(\neg Q \Rightarrow \neg P\) | \(\neg P \vee Q\) | \(Q \Rightarrow P\) | \(\neg P \Rightarrow \neg Q\)
+\(V\) | \(V\) | \(F\) | \(F\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\)
+\(V\) | \(F\) | \(F\) | \(V\) | \(F\) | \(F\) | \(F\) | \(V\) | \(V\)
+\(F\) | \(V\) | \(V\) | \(F\) | \(V\) | \(V\) | \(V\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\)
+[/TABLE]
+
+Lea las columnas una al lado de la otra. Las columnas 5, 6 y 7 son idénticas (\(V, F, V, V\)), y las columnas 8 y 9 son idénticas (\(V, V, F, V\)), mientras que los dos grupos difieren en las filas 2 y 3. Esto establece dos familias fundamentales de equivalencia:
+
+[CALLOUT]
+id: thm-conditional-equivalences
+label: Teorema
+title: Equivalencias contrarrecíproca y disyuntiva
+tone: key
+
+Para todos los enunciados \(P\) y \(Q\):
+
+(1) \(P \Rightarrow Q \equiv \neg Q \Rightarrow \neg P\) (un condicional es lógicamente equivalente a su contrarrecíproca).
+(2) \(P \Rightarrow Q \equiv \neg P \vee Q\) (eliminación de la implicación).
+(3) \(Q \Rightarrow P \equiv \neg P \Rightarrow \neg Q\) (la recíproca y la inversa son equivalentes entre sí), mientras que en general \(P \Rightarrow Q \not\equiv Q \Rightarrow P\).
+[/CALLOUT]
+
+Compruébelo con un enunciado aritmético concreto para un número real fijo \(x\): "Si \(x > 3\), entonces \(x^2 > 9\)".
+- Original (\(P \Rightarrow Q\)): Si \(x > 3\), entonces \(x^2 > 9\). (Verdadero para todo \(x \in \mathbb{R}\).)
+- Contrarrecíproca (\(\neg Q \Rightarrow \neg P\)): Si \(x^2 \le 9\), entonces \(x \le 3\). (También verdadero para todo \(x \in \mathbb{R}\).)
+- Recíproca (\(Q \Rightarrow P\)): Si \(x^2 > 9\), entonces \(x > 3\). (Falso cuando \(x = -5\), pues \((-5)^2 = 25 > 9\) y sin embargo \(-5 \le 3\).)
+- Inversa (\(\neg P \Rightarrow \neg Q\)): Si \(x \le 3\), entonces \(x^2 \le 9\). (También falso para exactamente el mismo testigo \(x = -5\).)
+
+Observe también por qué [REF: thm-conditional-equivalences.2 | la eliminación de la implicación] (\(P \Rightarrow Q \equiv \neg P \vee Q\)) es tan útil: traduce todo condicional a los conectivos básicos \(\neg\) y \(\vee\), permitiéndonos aplicar de inmediato las leyes de De Morgan y la distributividad. Por ejemplo, "si \(P\) y \(Q\), entonces \(R\)" se convierte en \(\neg(P \wedge Q) \vee R\), y "si \(P\), entonces \(Q\) o \(R\)" se convierte en \(\neg P \vee Q \vee R\). Y recuerde "\(A\) a menos que \(B\)" de la Sección 1: como significa \(\neg B \Rightarrow A\), la eliminación de la implicación da \(\neg(\neg B) \vee A \equiv B \vee A \equiv A \vee B\).
+
+[QUESTION 2]
+[ANSWER: D]
+Considere el enunciado \(S\): "Si \(x \ge 2\) y \(y \ge 2\), entonces \(xy \ge 4\)". ¿Cuál de las siguientes opciones es la contrarrecíproca de \(S\)?
+
+(A) Si \(xy \ge 4\), entonces \(x \ge 2\) y \(y \ge 2\).
+(B) Si \(x < 2\) o \(y < 2\), entonces \(xy < 4\).
+(C) Si \(xy < 4\), entonces \(x < 2\) y \(y < 2\).
+(D) Si \(xy < 4\), entonces \(x < 2\) o \(y < 2\).
+(E) Si \(x < 2\) y \(y < 2\), entonces \(xy < 4\).
+[/QUESTION]
+
+=== SECTION 3: Negación de un condicional y el bicondicional ===
+
+Una de las trampas más persistentes en matemática es negar un enunciado del tipo "si ... entonces ...". Cuando se les pide negar "si llueve, entonces el campo está mojado", muchos principiantes escriben por instinto otro condicional, como "si llueve, entonces el campo no está mojado" o "si no llueve, entonces el campo no está mojado". Ambos son incorrectos.
+
+Podemos deducir la negación exacta directamente a partir de [REF: thm-conditional-equivalences.2 | la eliminación de la implicación] junto con la ley de De Morgan y la doble negación:
+\[
+\neg(P \Rightarrow Q) \equiv \neg(\neg P \vee Q) \equiv \neg(\neg P) \wedge \neg Q \equiv P \wedge \neg Q.
+\]
+Observe lo que esto dice en términos sencillos —y compárelo con la tabla de verdad de [REF: def-conditional | el condicional]—: \(P \Rightarrow Q\) es falso en una sola fila, a saber, cuando \(P\) es verdadero y \(Q\) es falso. Por lo tanto, \(\neg(P \Rightarrow Q)\) es verdadero exactamente en esa fila y en ninguna otra, lo cual es precisamente \(P \wedge \neg Q\).
+
+[CALLOUT]
+id: thm-negation-conditional
+label: Teorema
+title: Negación de un condicional
+tone: key
+
+Para todos los enunciados \(P\) y \(Q\),
+\[
+\neg(P \Rightarrow Q) \equiv P \wedge \neg Q.
+\]
+La negación de un condicional es una conjunción, nunca otro condicional.
+[/CALLOUT]
+
+Compruebe por qué "\(P \Rightarrow \neg Q\)" falla como negación de \(P \Rightarrow Q\). Cuando \(P\) es falso, \(P \Rightarrow Q\) es verdadero por vacuidad, ¡y \(P \Rightarrow \neg Q\) TAMBIÉN es verdadero por vacuidad! Dos enunciados que son ambos verdaderos en la misma fila no pueden ser negaciones mutuas. En cambio, cuando \(P\) es falso, \(P \wedge \neg Q\) es falso, coincidiendo con \(\neg(P \Rightarrow Q)\) en todas las filas.
+
+Para un ejemplo concreto, tome un entero fijo \(n\) y el enunciado "si \(n\) es primo, entonces \(n\) es impar". Su negación es "\(n\) es primo y \(n\) es par" (que es verdadera cuando \(n = 2\)), no "si \(n\) es primo, entonces \(n\) es par".
+
+A menudo en matemática se cumplen conjuntamente tanto un condicional \(P \Rightarrow Q\) como su recíproca \(Q \Rightarrow P\). Esa implicación bidireccional se captura mediante el bicondicional.
+
+[CALLOUT]
+id: def-biconditional
+label: Definición
+title: Bicondicional
+tone: key
+
+Sean \(P\) y \(Q\) enunciados. El bicondicional \(P \Leftrightarrow Q\) (se lee "\(P\) si y solo si \(Q\)", a menudo abreviado "\(P\) ssi \(Q\)") es verdadero precisamente cuando \(P\) y \(Q\) tienen el mismo valor de verdad (ambos \(V\) o ambos \(F\)), y falso cuando tienen valores de verdad opuestos. Equivalentemente,
+\[
+P \Leftrightarrow Q \equiv (P \Rightarrow Q) \wedge (Q \Rightarrow P).
+\]
+[/CALLOUT]
+
+[TABLE]
+\(P\) | \(Q\) | \(P \Rightarrow Q\) | \(Q \Rightarrow P\) | \((P \Rightarrow Q) \wedge (Q \Rightarrow P)\) | \(P \Leftrightarrow Q\)
+\(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\)
+\(V\) | \(F\) | \(F\) | \(V\) | \(F\) | \(F\)
+\(F\) | \(V\) | \(V\) | \(F\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(V\) | \(V\) | \(V\) | \(V\)
+[/TABLE]
+
+En español, \(P \Leftrightarrow Q\) también se expresa como "\(P\) es una condición necesaria y suficiente para \(Q\)". Note por qué: "\(P\) es suficiente para \(Q\)" da \(P \Rightarrow Q\), y "\(P\) es necesario para \(Q\)" da \(Q \Rightarrow P\), así que juntos producen \((P \Rightarrow Q) \wedge (Q \Rightarrow P) \equiv P \Leftrightarrow Q\).
+
+No confunda el conectivo \(\Leftrightarrow\) con el metasímbolo \(\equiv\):
+- \(P \Leftrightarrow Q\) es un enunciado compuesto dentro de la lógica; puede ser verdadero en algunas filas y falso en otras.
+- \(A \equiv B\) es una afirmación sobre dos fórmulas \(A\) y \(B\) que asegura que coinciden en toda fila de la tabla de verdad, lo cual ocurre precisamente cuando la fórmula única \(A \Leftrightarrow B\) se evalúa como \(V\) en toda fila.
+
+¿Cuál es la negación de \(P \Leftrightarrow Q\)? Puesto que \(P \Leftrightarrow Q\) es verdadero cuando \(P\) y \(Q\) comparten el mismo valor de verdad, \(\neg(P \Leftrightarrow Q)\) es verdadero precisamente cuando \(P\) y \(Q\) tienen valores de verdad opuestos:
+\[
+\neg(P \Leftrightarrow Q) \equiv (P \wedge \neg Q) \vee (\neg P \wedge Q) \equiv P \Leftrightarrow \neg Q.
+\]
+También podemos verificar la primera equivalencia algebraicamente usando [REF: thm-negation-conditional | la negación de un condicional] y la ley de De Morgan:
+\[
+\neg\bigl((P \Rightarrow Q) \wedge (Q \Rightarrow P)\bigr) \equiv \neg(P \Rightarrow Q) \vee \neg(Q \Rightarrow P) \equiv (P \wedge \neg Q) \vee (Q \wedge \neg P).
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+Para un entero fijo \(n\), considere el enunciado: "Si \(n\) es divisible entre \(2\) y \(n\) es divisible entre \(3\), entonces \(n\) es divisible entre \(12\)". ¿Cuál de las siguientes opciones es lógicamente equivalente a su negación?
+
+(A) Si \(n\) es divisible entre \(2\) y \(n\) es divisible entre \(3\), entonces \(n\) no es divisible entre \(12\).
+(B) \(n\) es divisible entre \(2\), \(n\) es divisible entre \(3\) y \(n\) no es divisible entre \(12\).
+(C) \(n\) no es divisible entre \(2\), o \(n\) no es divisible entre \(3\), o \(n\) es divisible entre \(12\).
+(D) Si \(n\) no es divisible entre \(12\), entonces \(n\) no es divisible entre \(2\) o \(n\) no es divisible entre \(3\).
+(E) \(n\) no es divisible entre \(2\) y \(n\) no es divisible entre \(3\), y \(n\) es divisible entre \(12\).
+[/QUESTION]
+
+=== SECTION 4: Tautologías, contradicciones y simplificación algebraica ===
+
+Algunos enunciados compuestos tienen un valor de verdad que nunca cambia, sin importar qué valores de verdad tomen sus variables.
+
+[CALLOUT]
+id: def-tautology
+label: Definición
+title: Tautología, contradicción y contingencia
+tone: key
+
+(1) Una tautología (a menudo denotada \(\mathbf{V}\)) es un enunciado compuesto cuya columna en la tabla de verdad es \(V\) en todas las filas.
+(2) Una contradicción (a menudo denotada \(\mathbf{F}\)) es un enunciado compuesto cuya columna en la tabla de verdad es \(F\) en todas las filas.
+(3) Una contingencia es un enunciado compuesto que es \(V\) en al menos una fila y \(F\) en al menos una fila.
+[/CALLOUT]
+
+La tautología más simple es la ley del tercero excluido, \(P \vee \neg P\): sea \(P\) verdadero o falso, uno de \(P\) o \(\neg P\) es \(V\). La contradicción más simple es \(P \wedge \neg P\): ningún enunciado puede ser simultáneamente verdadero y falso. Con estas constantes \(\mathbf{V}\) y \(\mathbf{F}\), obtenemos una familia compacta de leyes de simplificación junto a nuestras leyes de equivalencia anteriores.
+
+[CALLOUT]
+id: laws-tautology-algebra
+label: Teorema
+title: Leyes de identidad, dominación, negación y absorción
+tone: key
+
+Para todos los enunciados \(P\) y \(Q\):
+
+(1) Leyes de negación: \(P \vee \neg P \equiv \mathbf{V}\) y \(P \wedge \neg P \equiv \mathbf{F}\).
+(2) Leyes de identidad: \(P \wedge \mathbf{V} \equiv P\) y \(P \vee \mathbf{F} \equiv P\).
+(3) Leyes de dominación: \(P \vee \mathbf{V} \equiv \mathbf{V}\) y \(P \wedge \mathbf{F} \equiv \mathbf{F}\).
+(4) Leyes de absorción: \(P \vee (P \wedge Q) \equiv P\) y \(P \wedge (P \vee Q) \equiv P\).
+[/CALLOUT]
+
+Cada ley de [REF: laws-tautology-algebra | este teorema] es fácil de comprobar mentalmente. Por ejemplo, ¿por qué se cumple \(P \vee (P \wedge Q) \equiv P\)? Usando identidad y distributividad:
+\[
+P \vee (P \wedge Q) \equiv (P \wedge \mathbf{V}) \vee (P \wedge Q) \equiv P \wedge (\mathbf{V} \vee Q) \equiv P \wedge \mathbf{V} \equiv P.
+\]
+
+Debido a que reemplazar cualquier subfórmula por una subfórmula lógicamente equivalente deja sin cambios el valor de verdad en cada fila, podemos simplificar enunciados compuestos complejos y verificar tautologías puramente por sustitución algebraica, sin dibujar una tabla de verdad de \(8\) o \(16\) filas.
+
+Trabajemos dos ejemplos para ver el método en acción.
+
+Primero, simplifique el enunciado compuesto \((P \Rightarrow Q) \wedge (P \Rightarrow R)\). Comience eliminando ambas implicaciones mediante [REF: thm-conditional-equivalences.2 | la eliminación de la implicación] y luego saque factor común \(\neg P\) usando distributividad:
+\[
+\begin{aligned}
+(P \Rightarrow Q) \wedge (P \Rightarrow R)
+&\equiv (\neg P \vee Q) \wedge (\neg P \vee R) \\
+&\equiv \neg P \vee (Q \wedge R) \\
+&\equiv P \Rightarrow (Q \wedge R).
+\end{aligned}
+\]
+Esa identidad limpia coincide con la intuición: mostrar que \(P\) implica \(Q\) y \(P\) implica \(R\) equivale a mostrar que \(P\) implica \(Q \wedge R\).
+
+Segundo, determine si \(\bigl((P \Rightarrow Q) \wedge P\bigr) \Rightarrow Q\) es una tautología, una contradicción o una contingencia. Elimine los condicionales de adentro hacia afuera y distribuya:
+\[
+\begin{aligned}
+\bigl((P \Rightarrow Q) \wedge P\bigr) \Rightarrow Q
+&\equiv \neg\bigl((\neg P \vee Q) \wedge P\bigr) \vee Q \\
+&\equiv \neg\bigl((\neg P \wedge P) \vee (Q \wedge P)\bigr) \vee Q \\
+&\equiv \neg\bigl(\mathbf{F} \vee (Q \wedge P)\bigr) \vee Q \\
+&\equiv \neg(Q \wedge P) \vee Q \\
+&\equiv (\neg Q \vee \neg P) \vee Q \\
+&\equiv (Q \vee \neg Q) \vee \neg P \\
+&\equiv \mathbf{V} \vee \neg P \\
+&\equiv \mathbf{V}.
+\end{aligned}
+\]
+La fórmula se reduce a \(\mathbf{V}\), demostrando que es una tautología. (Observe con atención la estructura de esa tautología: si se cumple \(P \Rightarrow Q\) y se cumple \(P\), entonces se cumple \(Q\), un patrón que desempeñará un papel central en el razonamiento deductivo.)
+
+Tenga cuidado con los condicionales anidados: a diferencia de \(\wedge\) y \(\vee\), el condicional \(\Rightarrow\) NO es asociativo. Compare
+\[
+(P \Rightarrow Q) \Rightarrow R \qquad \text{y} \qquad P \Rightarrow (Q \Rightarrow R).
+\]
+Pruebe la única fila \(P = F\), \(Q = F\), \(R = F\):
+- \((P \Rightarrow Q) \Rightarrow R\) se convierte en \((F \Rightarrow F) \Rightarrow F\), que es \(V \Rightarrow F = F\).
+- \(P \Rightarrow (Q \Rightarrow R)\) se convierte en \(F \Rightarrow (F \Rightarrow F)\), que es \(F \Rightarrow V = V\).
+Por lo tanto, \((P \Rightarrow Q) \Rightarrow R \not\equiv P \Rightarrow (Q \Rightarrow R)\), de modo que los paréntesis en condicionales anidados son obligatorios. Mientras tanto, \(P \Rightarrow (Q \Rightarrow R)\) se simplifica limpiamente mediante eliminación de la implicación:
+\[
+P \Rightarrow (Q \Rightarrow R) \equiv \neg P \vee (\neg Q \vee R) \equiv (\neg P \vee \neg Q) \vee R \equiv \neg(P \wedge Q) \vee R \equiv (P \wedge Q) \Rightarrow R.
+\]
+
+[QUESTION 4]
+[ANSWER: E]
+Usando leyes de equivalencia, ¿cuál de las siguientes fórmulas es lógicamente equivalente a \((P \Rightarrow R) \wedge (Q \Rightarrow R)\)?
+
+(A) \((P \wedge Q) \Rightarrow R\)
+(B) \(R \Rightarrow (P \vee Q)\)
+(C) \(R \Rightarrow (P \wedge Q)\)
+(D) \((\neg P \wedge \neg Q) \Rightarrow R\)
+(E) \((P \vee Q) \Rightarrow R\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+¿Cuál de las siguientes fórmulas es una tautología?
+
+(A) \((P \Rightarrow Q) \vee (Q \Rightarrow P)\)
+(B) \((P \Rightarrow Q) \Rightarrow (Q \Rightarrow P)\)
+(C) \((P \Rightarrow Q) \Leftrightarrow (\neg P \Rightarrow \neg Q)\)
+(D) \((P \vee Q) \Rightarrow (P \wedge Q)\)
+(E) \(\bigl(P \wedge (P \Rightarrow Q)\bigr) \Leftrightarrow Q\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suponga que \(P \Rightarrow (Q \vee R)\) es falso. ¿Cuáles deben ser los valores de verdad de \(P\), \(Q\) y \(R\)?
+
+(A) \(P = V\), \(Q = V\), \(R = F\)
+(B) \(P = F\), \(Q = F\), \(R = F\)
+(C) \(P = V\), \(Q = F\), \(R = V\)
+(D) \(P = V\), \(Q = F\), \(R = F\)
+(E) \(P = F\), \(Q = V\), \(R = F\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+¿Cuál de las siguientes fórmulas es lógicamente equivalente a \(\neg\bigl(P \Rightarrow (Q \Rightarrow R)\bigr)\)?
+
+(A) \(P \wedge \neg Q \wedge \neg R\)
+(B) \((P \wedge \neg Q) \vee (P \wedge \neg R)\)
+(C) \(P \wedge Q \wedge \neg R\)
+(D) \(\neg P \vee (\neg Q \wedge R)\)
+(E) \(P \Rightarrow (Q \wedge \neg R)\)
+[/BONUS]

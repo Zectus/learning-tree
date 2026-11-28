@@ -1,0 +1,307 @@
+=== SECTION 1: Qué hace que una oración sea un enunciado matemático ===
+
+La matemática se construye a partir de afirmaciones que pueden juzgarse verdaderas o falsas, pero no toda expresión escrita en una pizarra formula una afirmación de este tipo. Considere estos cuatro elementos:
+
+1. \(7^2 - 1 = 48\).
+2. \(x^2 - 1 = 48\).
+3. \(3n + 5\).
+4. Resuelva \(x^2 - 1 = 48\) para \(x \in \mathbb{R}\).
+
+Solo el primer elemento tiene un valor de verdad definido (es verdadero). El segundo parece una ecuación, pero hasta que alguien asigne un valor específico a la variable \(x\), no es ni verdadero ni falso: se vuelve verdadero para \(x = 7\) y \(x = -7\), y falso para \(x = 0\). El tercero es simplemente una expresión numérica: se evalúa como un número, no como verdadero o falso. El cuarto es una instrucción, no una afirmación sobre lo que se cumple.
+
+Para razonar con fiabilidad, primero trazamos una línea clara entre las oraciones que poseen un valor de verdad y todo lo demás. A lo largo de esta lección trabajaremos informalmente con los sistemas numéricos familiares: los números naturales \(\mathbb{N} = \{1, 2, 3, \dots\}\), los números enteros \(\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}\), los números racionales \(\mathbb{Q}\) y los números reales \(\mathbb{R}\).
+
+[CALLOUT]
+id: def-statement
+label: Definición
+title: Enunciado matemático (proposición)
+tone: key
+
+Un enunciado matemático (o proposición) es una oración declarativa que es verdadera (\(V\)) o falsa (\(F\)), y no ambas cosas a la vez.
+[/CALLOUT]
+
+Observe qué exige y qué no exige [REF: def-statement | esta definición]. Una proposición no necesita ser verdadera: la oración "\(17\) es divisible entre \(3\)" es un enunciado perfectamente válido cuyo valor de verdad es \(F\). Tampoco tenemos que saber cuál es su valor de verdad en este momento. Por ejemplo, la célebre conjetura de Goldbach —"todo entero par mayor que \(2\) es la suma de dos números primos"— es un enunciado matemático aunque actualmente no se conozca una demostración ni un contraejemplo: o bien todo entero par de ese tipo se descompone así, o bien al menos uno no lo hace.
+
+En contraste, cuatro tipos habituales de escritura matemática no cumplen [REF: def-statement | la definición de enunciado]:
+
+- Las expresiones algebraicas, como \(\frac{2a + 1}{a^2 + 1}\) o \(\sqrt{2} + \pi\), denotan valores en lugar de afirmaciones susceptibles de ser verdaderas o falsas.
+- Las órdenes y preguntas, como "Factorice \(x^2 - 9\)" o "¿Es \(91\) primo?", no afirman que algo sea verdadero o falso.
+- Las definiciones, como "Llamaremos par a un entero \(n\) cuando \(n = 2k\) para algún entero \(k\)", introducen terminología por estipulación en lugar de hacer una afirmación fáctica comprobable.
+- Los enunciados abiertos que contienen variables no asignadas (libres), como "\(x > 5\)" o "\(m + n = 10\)", tienen valores de verdad que dependen de los valores que se sustituyan en sus variables. Una vez que se introducen valores específicos (por ejemplo, \(x = 3\), lo que da "\(3 > 5\)"), un enunciado abierto se convierte en un enunciado.
+
+[TABLE]
+Expresión escrita | Categoría | ¿Enunciado? | Motivo
+\(\sqrt{2}\) es un número racional | Afirmación declarativa | Sí (falso) | Tiene un valor de verdad definido (\(F\))
+\(2^{100} + 1\) es primo | Afirmación declarativa | Sí (valor de verdad fijo) | Es verdadero o falso, incluso sin calcularlo
+\(x^2 + 1 = 0\) (con \(x\) sin especificar) | Enunciado abierto | No | Su verdad depende del valor que tome \(x\)
+\(4n^2 - 1\) | Expresión algebraica | No | Se evalúa como un número, no como \(V\) o \(F\)
+Calcule la suma de los diez primeros primos | Orden | No | Instrucción imperativa, no una afirmación
+[/TABLE]
+
+[CALLOUT]
+id: caution-open-sentence
+label: Precaución
+title: Variables en ecuaciones frente a enunciados sobre números
+tone: caution
+
+Una ecuación como \(x^2 - 4 = 0\) sin ningún valor ni restricción asociados a \(x\) es un enunciado abierto, no una proposición. Espere hasta que la variable quede ligada a un valor específico (o cuantificada, lo cual formalizaremos en una lección posterior) antes de asignar un valor de verdad \(V\) o \(F\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+¿Cuál de las siguientes expresiones es un enunciado matemático (proposición)?
+
+(A) \(3x + 2 = 11\), donde \(x\) es un número real sin especificar
+(B) \((n + 1)^2 - n^2 - 2n\)
+(C) Encuentre todos los enteros \(k\) tales que \(k^2 < 20\).
+(D) La ecuación \(x^2 + 4 = 0\) tiene una solución real.
+(E) ¿Es \(2^{31} - 1\) un número primo?
+[/QUESTION]
+
+=== SECTION 2: Negación, conjunción y disyunción inclusiva ===
+
+Los enunciados simples rara vez bastan por sí solos. En álgebra y geometría combinamos afirmaciones constantemente: un punto debe satisfacer dos desigualdades a la vez, un producto cuadrático se anula cuando al menos un factor es cero, o un número no cumple cierta condición. La lógica proposicional utiliza letras como \(P\), \(Q\) y \(R\) para representar enunciados arbitrarios y construye enunciados compuestos a partir de ellos mediante conectivos lógicos.
+
+El valor de verdad de un enunciado compuesto construido con estos conectivos depende únicamente de los valores de verdad de sus enunciados componentes, nunca de su contenido temático. Por ello, definimos cada conectivo por completo mediante una tabla de verdad que enumera todas las combinaciones posibles de valores de verdad de sus entradas.
+
+[CALLOUT]
+id: def-basic-connectives
+label: Definición
+title: Negación, conjunción y disyunción
+tone: key
+
+Sean \(P\) y \(Q\) enunciados.
+
+(1) La negación, escrita \(\neg P\) (se lee "no \(P\)"), es verdadera cuando \(P\) es falso y falsa cuando \(P\) es verdadero.
+(2) La conjunción, escrita \(P \wedge Q\) (se lee "\(P\) y \(Q\)"), es verdadera precisamente cuando tanto \(P\) como \(Q\) son verdaderos.
+(3) La disyunción, escrita \(P \vee Q\) (se lee "\(P\) o \(Q\)"), es verdadera siempre que al menos uno de \(P\) o \(Q\) sea verdadero, y falsa únicamente cuando ambos \(P\) y \(Q\) son falsos.
+[/CALLOUT]
+
+[TABLE]
+\(P\) | \(Q\) | \(\neg P\) | \(P \wedge Q\) | \(P \vee Q\)
+\(V\) | \(V\) | \(F\) | \(V\) | \(V\)
+\(V\) | \(F\) | \(F\) | \(F\) | \(V\)
+\(F\) | \(V\) | \(V\) | \(F\) | \(V\)
+\(F\) | \(F\) | \(V\) | \(F\) | \(F\)
+[/TABLE]
+
+Preste mucha atención a la primera fila de \(P \vee Q\): cuando \(P\) es \(V\) y \(Q\) es \(V\), \(P \vee Q\) es \(V\). En el lenguaje cotidiano, la "o" suele ser exclusiva —un menú que ofrece "sopa o ensalada" normalmente significa una u otra, no ambas—. En matemática, sin embargo, la "o" es siempre inclusiva a menos que se indique explícitamente lo contrario. Piense en la propiedad del producto cero en álgebra: si \(ab = 0\), concluimos "\(a = 0\) o \(b = 0\)". Esa conclusión debe seguir siendo verdadera en el caso en que \(a = 0\) y \(b = 0\) simultáneamente. De modo similar, la desigualdad \(x \le 5\) significa "\(x < 5\) o \(x = 5\)", y una afirmación como "\(12\) es divisible entre \(2\) o \(12\) es divisible entre \(3\)" es verdadera aunque \(12\) sea divisible entre ambos.
+
+Cuando realmente necesite la "o" exclusiva ("o bien \(P\) o bien \(Q\), pero no ambos"), puede construirla directamente a partir de los tres conectivos básicos:
+\[
+(P \vee Q) \wedge \neg(P \wedge Q).
+\]
+Compruebe esta fórmula frente a las cuatro filas de la tabla anterior: cuando tanto \(P\) como \(Q\) son \(V\), \(P \vee Q\) es \(V\) pero \(\neg(P \wedge Q)\) es \(F\), de modo que la conjunción es \(F\); cuando exactamente uno es \(V\), ambas partes son \(V\); cuando ambos son \(F\), \(P \vee Q\) es \(F\).
+
+Observe cómo el lenguaje cotidiano oculta conjunciones y negaciones dentro de formulaciones compactas:
+
+- La desigualdad compuesta \(2 < x \le 7\) (para un número dado \(x\)) es una conjunción: \((2 < x) \wedge (x \le 7)\).
+- Palabras como "pero", "sin embargo" y "aunque" tienen la misma fuerza lógica que "y". Así, "\(2\) es primo, pero \(2\) es par" es simplemente \(P \wedge Q\), donde \(P\) es "\(2\) es primo" y \(Q\) es "\(2\) es par".
+- "Ni \(P\) ni \(Q\)" afirma que tanto \(P\) como \(Q\) fallan: \((\neg P) \wedge (\neg Q)\).
+
+Así como las expresiones aritméticas como \(2 + 3 \cdot 4\) dependen de paréntesis y convenciones de precedencia para evitar ambigüedades, las fórmulas lógicas compuestas deben llevar paréntesis de forma clara. Compare las dos fórmulas
+\[
+(\neg P) \wedge Q \qquad \text{y} \qquad \neg(P \wedge Q).
+\]
+Cuando \(P\) es \(F\) y \(Q\) es \(F\), \((\neg P) \wedge Q\) se evalúa como \(V \wedge F = F\), mientras que \(\neg(P \wedge Q)\) se evalúa como \(\neg(F \wedge F) = \neg F = V\). Son enunciados completamente distintos.
+
+Peor aún, mezclar \(\wedge\) y \(\vee\) sin paréntesis crea una ambigüedad genuina. Observe
+\[
+(P \wedge Q) \vee R \qquad \text{frente a} \qquad P \wedge (Q \vee R).
+\]
+Suponga que \(P\) es \(F\), \(Q\) es \(V\) y \(R\) es \(V\). Entonces \((P \wedge Q) \vee R = (F \wedge V) \vee V = F \vee V = V\), mientras que \(P \wedge (Q \vee R) = F \wedge (V \vee V) = F \wedge V = F\). Dado que \(\wedge\) y \(\vee\) tienen igual precedencia, escribir \(P \wedge Q \vee R\) sin paréntesis es ambiguo y nunca debe hacerse.
+
+[CALLOUT]
+id: rule-precedence
+label: Convención
+title: Precedencia de conectivos y uso de paréntesis
+tone: note
+
+(1) La negación \(\neg\) liga con mayor fuerza: \(\neg P \wedge Q\) siempre significa \((\neg P) \wedge Q\), y \(\neg P \vee Q\) siempre significa \((\neg P) \vee Q\). Para negar una fórmula compuesta, enciérrela entre paréntesis: \(\neg(P \wedge Q)\).
+(2) La conjunción \(\wedge\) y la disyunción \(\vee\) no tienen precedencia relativa una sobre la otra: use siempre paréntesis cuando mezcle \(\wedge\) y \(\vee\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: B]
+Suponga que \(P\) es falso, \(Q\) es verdadero y \(R\) es falso. ¿Cuáles son los valores de verdad de los dos enunciados \(\neg P \wedge (Q \vee R)\) y \(\neg(P \wedge Q) \wedge R\), en ese orden?
+
+(A) \(V\), \(V\)
+(B) \(V\), \(F\)
+(C) \(F\), \(V\)
+(D) \(F\), \(F\)
+(E) El primero es ambiguo sin paréntesis adicionales y el segundo es \(F\).
+[/QUESTION]
+
+=== SECTION 3: Tablas de verdad y equivalencia lógica ===
+
+Cuando un enunciado compuesto contiene \(n\) variables proposicionales distintas, cada variable puede tomar cualquiera de \(2\) valores (\(V\) o \(F\)), de modo que una tabla de verdad completa tiene \(2^n\) filas: \(2\) filas para una variable, \(4\) filas para dos variables y \(8\) filas para tres variables. Para construir una tabla de verdad sistemáticamente sin omitir filas, alterne la última variable en cada fila, la penúltima cada \(2\) filas, la anterior cada \(4\) filas, y así sucesivamente. Luego añada columnas intermedias desde los paréntesis más internos hacia afuera hasta llegar a la fórmula completa.
+
+Construyamos la tabla de verdad para \((P \vee Q) \wedge \neg(P \wedge Q)\) junto con \((P \wedge \neg Q) \vee (\neg P \wedge Q)\), que es otra manera natural de escribir "o bien se cumple \(P\) sin \(Q\), o bien se cumple \(Q\) sin \(P\)".
+
+[TABLE]
+\(P\) | \(Q\) | \(P \vee Q\) | \(P \wedge Q\) | \(\neg(P \wedge Q)\) | \((P \vee Q) \wedge \neg(P \wedge Q)\) | \(P \wedge \neg Q\) | \(\neg P \wedge Q\) | \((P \wedge \neg Q) \vee (\neg P \wedge Q)\)
+\(V\) | \(V\) | \(V\) | \(V\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\)
+\(V\) | \(F\) | \(V\) | \(F\) | \(V\) | \(V\) | \(V\) | \(F\) | \(V\)
+\(F\) | \(V\) | \(V\) | \(F\) | \(V\) | \(V\) | \(F\) | \(V\) | \(V\)
+\(F\) | \(F\) | \(F\) | \(F\) | \(V\) | \(F\) | \(F\) | \(F\) | \(F\)
+[/TABLE]
+
+Compare la sexta columna y la novena columna fila por fila: dicen \(F, V, V, F\) en ambas columnas. Sin importar qué valores de verdad tengan \(P\) y \(Q\), las dos fórmulas compuestas siempre coinciden. Esa coincidencia exacta es lo que captura la equivalencia lógica.
+
+[CALLOUT]
+id: def-equivalence
+label: Definición
+title: Equivalencia lógica
+tone: key
+
+Dos enunciados compuestos \(A\) y \(B\) construidos a partir de las mismas variables proposicionales son lógicamente equivalentes, lo que se escribe \(A \equiv B\), si tienen exactamente el mismo valor de verdad en cada fila de su tabla de verdad combinada.
+[/CALLOUT]
+
+Observe una asimetría importante entre demostrar equivalencia y refutar equivalencia. Para establecer \(A \equiv B\) mediante una tabla de verdad, debe verificar que \(A\) y \(B\) coinciden en todas y cada una de las filas —las \(2^n\) filas—. Para refutar \(A \equiv B\) (escrito \(A \not\equiv B\)), basta exhibir una sola fila donde una fórmula se evalúa como \(V\) y la otra como \(F\). Por ejemplo, en la Sección 2 ya demostramos que \((P \wedge Q) \vee R \not\equiv P \wedge (Q \vee R)\) simplemente comprobando la única fila \(P = F\), \(Q = V\), \(R = V\).
+
+Distinga también la equivalencia lógica (\(\equiv\)) del mero hecho de tener el mismo valor de verdad para un par particular de hechos verdaderos o falsos. Los enunciados "\(2 + 2 = 4\)" y "\(7\) es primo" son ambos verdaderos, por lo que coinciden en tener valor de verdad \(V\). La equivalencia lógica trata sobre la estructura de la fórmula: afirma que reemplazar \(P\) y \(Q\) por cualesquiera enunciados deja siempre a \(A\) y \(B\) con valores de verdad idénticos.
+
+Pongamos a prueba una afirmación con tres variables: ¿es \(P \vee (Q \wedge R)\) lógicamente equivalente a \((P \vee Q) \wedge (P \vee R)\)? Como hay \(3\) variables, la tabla de verdad tiene \(2^3 = 8\) filas.
+
+[TABLE]
+\(P\) | \(Q\) | \(R\) | \(Q \wedge R\) | \(P \vee (Q \wedge R)\) | \(P \vee Q\) | \(P \vee R\) | \((P \vee Q) \wedge (P \vee R)\)
+\(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\)
+\(V\) | \(V\) | \(F\) | \(F\) | \(V\) | \(V\) | \(V\) | \(V\)
+\(V\) | \(F\) | \(V\) | \(F\) | \(V\) | \(V\) | \(V\) | \(V\)
+\(V\) | \(F\) | \(F\) | \(F\) | \(V\) | \(V\) | \(V\) | \(V\)
+\(F\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\)
+\(F\) | \(V\) | \(F\) | \(F\) | \(F\) | \(V\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(V\) | \(F\) | \(F\) | \(F\) | \(V\) | \(F\)
+\(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\)
+[/TABLE]
+
+Todas y cada una de las \(8\) filas coinciden: las columnas 5 y 8 dicen ambas \(V, V, V, V, V, F, F, F\). Por lo tanto,
+\[
+P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R).
+\]
+Observe algo llamativo aquí: en la aritmética ordinaria, la multiplicación distribuye sobre la suma (\(a \cdot (b + c) = a \cdot b + a \cdot c\)), mientras que la suma no distribuye sobre la multiplicación (\(a + (b \cdot c) \ne (a + b) \cdot (a + c)\) en general). En lógica proposicional, sin embargo, \(\vee\) distribuye sobre \(\wedge\) y \(\wedge\) también distribuye sobre \(\vee\).
+
+[QUESTION 3]
+[ANSWER: C]
+¿Cuál de los siguientes pares de fórmulas proposicionales NO son lógicamente equivalentes?
+
+(A) \(P \vee (P \wedge Q)\) y \(P\)
+(B) \(\neg(\neg P \vee Q)\) y \(P \wedge \neg Q\)
+(C) \(\neg(P \wedge Q)\) y \(\neg P \wedge \neg Q\)
+(D) \((P \wedge Q) \vee (P \wedge \neg Q)\) y \(P\)
+(E) \(\neg(P \vee \neg Q)\) y \(\neg P \wedge Q\)
+[/QUESTION]
+
+=== SECTION 4: Leyes de De Morgan y el álgebra de los conectivos básicos ===
+
+Comprobar una tabla de verdad de \(8\) o \(16\) filas cada vez que queremos negar o reescribir una oración matemática se volvería rápidamente tedioso. Por fortuna, un pequeño conjunto de equivalencias fundamentales —todas verificadas de una vez por todas mediante tablas de verdad— nos permite transformar y negar enunciados compuestos con limpieza.
+
+Las dos reglas de negación más utilizadas gobiernan cómo entra \(\neg\) dentro de una conjunción o una disyunción. Suponga que un candidato debe cumplir dos requisitos para aprobar una calificación: "\(x > 0\) y \(x\) es un entero". ¿Cómo falla alguien en cumplir ese requisito combinado? No necesita fallar en ambos requisitos; basta con que falle en uno solo. Así, la negación de "\(P\) y \(Q\)" es "(no \(P\)) o (no \(Q\))".
+
+Recíprocamente, suponga que se otorga un premio si "\(x > 10\) o \(x\) es par". ¿Cómo puede fallar esa condición? Únicamente si no se cumple ninguna de las dos partes —es decir, \(x \le 10\) y \(x\) no es par—. Así, la negación de "\(P\) o \(Q\)" es "(no \(P\)) y (no \(Q\))".
+
+Verifiquemos ambas equivalencias simultáneamente con una tabla de verdad.
+
+[TABLE]
+\(P\) | \(Q\) | \(\neg P\) | \(\neg Q\) | \(\neg(P \wedge Q)\) | \(\neg P \vee \neg Q\) | \(\neg(P \vee Q)\) | \(\neg P \wedge \neg Q\)
+\(V\) | \(V\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\) | \(F\)
+\(V\) | \(F\) | \(F\) | \(V\) | \(V\) | \(V\) | \(F\) | \(F\)
+\(F\) | \(V\) | \(V\) | \(F\) | \(V\) | \(V\) | \(F\) | \(F\)
+\(F\) | \(F\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\) | \(V\)
+[/TABLE]
+
+Las columnas 5 y 6 coinciden en cada fila, y las columnas 7 y 8 coinciden en cada fila. Estas son las leyes de De Morgan, y junto con las leyes algebraicas centrales de \(\neg\), \(\wedge\) y \(\vee\) conforman nuestro conjunto fundamental de equivalencias.
+
+[CALLOUT]
+id: laws-propositional
+label: Teorema
+title: Leyes fundamentales de equivalencia para \(\neg\), \(\wedge\) y \(\vee\)
+tone: key
+
+Para todos los enunciados \(P\), \(Q\) y \(R\):
+
+(1) Doble negación: \(\neg(\neg P) \equiv P\).
+(2) Idempotencia: \(P \wedge P \equiv P\) y \(P \vee P \equiv P\).
+(3) Conmutatividad: \(P \wedge Q \equiv Q \wedge P\) y \(P \vee Q \equiv Q \vee P\).
+(4) Asociatividad: \((P \wedge Q) \wedge R \equiv P \wedge (Q \wedge R)\) y \((P \vee Q) \vee R \equiv P \vee (Q \vee R)\).
+(5) Distributividad: \(P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)\) y \(P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)\).
+(6) Leyes de De Morgan: \(\neg(P \wedge Q) \equiv \neg P \vee \neg Q\) y \(\neg(P \vee Q) \equiv \neg P \wedge \neg Q\).
+[/CALLOUT]
+
+Observe lo que [REF: laws-propositional.4 | la asociatividad] nos brinda: cuando una cadena usa solo \(\wedge\) (como \(P \wedge Q \wedge R\)) o solo \(\vee\) (como \(P \vee Q \vee R\)), pueden omitirse los paréntesis porque toda agrupación da una fórmula equivalente. Los paréntesis siguen siendo obligatorios únicamente cuando se mezclan \(\wedge\) y \(\vee\), o cuando se aclara el alcance de \(\neg\).
+
+Pongamos [REF: laws-propositional | estas leyes] a trabajar en dos tareas matemáticas realistas.
+
+Primero, considere un número real fijo \(x\) y el enunciado "\(2 < x \le 7\)". Lo escribimos en símbolos como \((2 < x) \wedge (x \le 7)\). ¿Cuál es su negación? Aplicar [REF: laws-propositional.6 | la ley de De Morgan para la conjunción] cambia \(\wedge\) por \(\vee\) y niega cada desigualdad:
+\[
+\neg\bigl((2 < x) \wedge (x \le 7)\bigr) \equiv \neg(2 < x) \vee \neg(x \le 7) \equiv (x \le 2) \vee (x > 7).
+\]
+Observe dos detalles que los principiantes pasan por alto con frecuencia: primero, el conectivo cambia de "y" a "o" (¡ningún número real puede satisfacer simultáneamente \(x \le 2\) y \(x > 7\)!); segundo, el carácter estricto o amplio de cada desigualdad se invierte (\(\neg(2 < x)\) es \(x \le 2\), no \(x < 2\), porque \(x = 2\) también incumple \(2 < x\)).
+
+Segundo, suponga que queremos negar el enunciado anidado
+\[
+P \vee (\neg Q \wedge R)
+\]
+y empujar todas las negaciones hacia adentro hasta que queden directamente sobre variables individuales. Aplique [REF: laws-propositional.6 | las leyes de De Morgan] paso a paso de afuera hacia adentro y luego limpie con [REF: laws-propositional.1 | la doble negación]:
+\[
+\begin{aligned}
+\neg\bigl(P \vee (\neg Q \wedge R)\bigr)
+&\equiv \neg P \wedge \neg(\neg Q \wedge R) \\
+&\equiv \neg P \wedge \bigl(\neg(\neg Q) \vee \neg R\bigr) \\
+&\equiv \neg P \wedge (Q \vee \neg R).
+\end{aligned}
+\]
+Obtuvimos la forma positiva limpia \(\neg P \wedge (Q \vee \neg R)\) en tres pasos algebraicos sin construir nunca una tabla de verdad de \(8\) filas.
+
+[CALLOUT]
+id: caution-demorgan-english
+label: Precaución
+title: No distribuya \(\neg\) manteniendo el mismo conectivo
+tone: caution
+
+La negación de "\(a\) es par y \(b\) es impar" NO es "\(a\) es impar y \(b\) es impar". Por [REF: laws-propositional.6 | la ley de De Morgan], negar una conjunción produce una disyunción: "\(a\) es impar o \(b\) es par". Cada vez que \(\neg\) cruza un paréntesis, \(\wedge\) cambia a \(\vee\) y \(\vee\) cambia a \(\wedge\).
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: A]
+Sean \(a\) y \(b\) números reales fijos, y considere el enunciado: "\(a \ge 0\) y o bien \(b < 3\) o bien \(b > 8\)". ¿Cuál de las siguientes opciones es lógicamente equivalente a la negación de este enunciado?
+
+(A) \(a < 0\) o \(3 \le b \le 8\)
+(B) \(a < 0\) y \(3 \le b \le 8\)
+(C) \(a \le 0\) o \(3 < b < 8\)
+(D) \(a < 0\) o (\(b \ge 3\) o \(b \le 8\))
+(E) \(a \ge 0\) y \(3 \le b \le 8\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suponga que \(P\) es verdadero, \(Q\) es falso, \(R\) es verdadero y \(S\) es falso. ¿Cuál de los siguientes enunciados compuestos se evalúa como falso?
+
+(A) \((P \wedge \neg Q) \vee (R \wedge S)\)
+(B) \(\neg(P \wedge Q) \wedge (R \vee S)\)
+(C) \(\neg(Q \vee S) \wedge (P \vee R)\)
+(D) \((P \vee S) \wedge \neg(Q \wedge R)\)
+(E) \(\neg(P \vee Q) \vee (R \wedge S)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Un estudiante afirma que \(\neg\bigl((P \wedge Q) \vee (\neg P \wedge R)\bigr)\) es lógicamente equivalente a \((\neg P \vee \neg Q) \wedge (P \vee \neg R)\). ¿Cuál de las siguientes opciones evalúa con precisión la afirmación del estudiante?
+
+(A) Es falsa; la fila \(P = V, Q = F, R = V\) hace que las dos fórmulas discrepen.
+(B) Es falsa; el conectivo \(\wedge\) exterior en la respuesta del estudiante debería ser \(\vee\).
+(C) Es verdadera; aplicar dos veces las leyes de De Morgan y la doble negación transforma la primera fórmula en la segunda.
+(D) Es falsa; \(\neg(\neg P \wedge R)\) se simplifica a \(P \wedge \neg R\), no a \(P \vee \neg R\).
+(E) Es verdadera únicamente cuando \(P\) y \(Q\) tienen valores de verdad opuestos.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Considere la fórmula \(A = (P \vee Q) \wedge (P \vee \neg Q) \wedge (\neg P \vee Q)\). De las \(4\) filas de la tabla de verdad para \(P\) y \(Q\), ¿cuántas filas hacen verdadera a \(A\), y a qué fórmula más simple es lógicamente equivalente \(A\)?
+
+(A) \(2\) filas; equivalente a \(P\)
+(B) \(2\) filas; equivalente a \(Q\)
+(C) \(3\) filas; equivalente a \(P \vee Q\)
+(D) \(1\) fila; equivalente a \(P \wedge Q\)
+(E) \(0\) filas; siempre falsa
+[/BONUS]

@@ -1,0 +1,213 @@
+=== SECTION 1: Domain, vertical asymptote, and shifts of logarithmic graphs ===
+
+For a transformed exponential function \(a \cdot b^{k(x - h)} + c\), the vertical shift \(c\) determines the horizontal asymptote \(y = c\), while horizontal shifts leave the asymptote untouched. Because logarithms are the mirror inverses of exponentials, those roles reverse completely for a transformed logarithmic function
+\[
+g(x) = a \cdot \log_b\!\bigl(k(x - h)\bigr) + c,
+\]
+where \(b > 0\), \(b \ne 1\), \(a \ne 0\), and \(k \ne 0\).
+
+A logarithm is defined only when its argument is strictly positive:
+\[
+k(x - h) > 0.
+\]
+The boundary where the argument hits \(0\) is \(x = h\). As \(x\) approaches \(h\) from inside the domain, the argument approaches \(0^+\), so \(\log_b(k(x - h))\) plunges toward \(-\infty\) or climbs toward \(+\infty\). Thus the vertical line \(x = h\) is always the vertical asymptote. Meanwhile, adding \(c\) shifts the graph vertically, sliding the vertical line \(x = h\) along itself without changing its location. Because a parent logarithm already achieves every real output, scaling vertically by \(a \ne 0\) and shifting by \(c\) leaves the range equal to \((-\infty, \infty)\).
+
+[CALLOUT]
+id: log-sketch-method
+label: Strategy
+title: Anchor method for sketching transformed logarithms
+tone: key
+
+To sketch \(g(x) = a \cdot \log_b\!\bigl(k(x - h)\bigr) + c\):
+
+(1) Solve \(k(x - h) > 0\) to find the domain: \((h, \infty)\) if \(k > 0\), or \((-\infty, h)\) if \(k < 0\). Draw the vertical asymptote \(x = h\) as a dashed line.
+(2) Find two exact anchor points by solving \(k(x - h) = 1\) (which gives \(y = c\), since \(\log_b(1) = 0\)) and \(k(x - h) = b\) (which gives \(y = a + c\), since \(\log_b(b) = 1\)).
+(3) Connect the anchor points with a smooth logarithmic curve that approaches \(x = h\) asymptotically at one end and extends slowly to \(\pm\infty\) across the rest of the domain.
+[/CALLOUT]
+
+Let us apply [REF: log-sketch-method | the anchor method] to \(g(x) = \log_2(x - h) + 1\) for varying horizontal shift \(h\). Here \(a = 1\), \(k = 1 > 0\), \(b = 2\), and \(c = 1\), so the domain is \((h, \infty)\) and the vertical asymptote is \(x = h\). Setting \(x - h = 1\) gives the anchor point \((h + 1, 1)\), and setting \(x - h = 2\) gives \((h + 2, 2)\).
+
+[GRAPH]
+type: function2d
+title: Shifting the vertical asymptote and anchor points of \(g(x) = \log_2(x - h) + 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 6
+yrange: -4, 4.5
+trace: log(x - h) / log(2) + 1 | label: \(g(x) = \log_2(x - h) + 1\)
+segment: h, -4, h, 4.5 | label: \(x = h\) | dashed: true
+point: h + 1, 1 | label: \((h + 1, 1)\)
+point: h + 2, 2 | label: \((h + 2, 2)\)
+slider: h | range: -3, 2 | init: -1 | step: 0.5
+[/GRAPH]
+
+Drag the slider \(h\) in the graph above: the vertical asymptote \(x = h\), the domain \((h, \infty)\), and both anchor points glide horizontally together as a rigid frame.
+
+[QUESTION 1]
+[ANSWER: A]
+Consider \(g(x) = 3\log_2(x + 4) - 5\). What are its domain, vertical asymptote, and \(y\)-intercept?
+
+(A) Domain \((-4, \infty)\), vertical asymptote \(x = -4\), \(y\)-intercept \((0, 1)\)
+(B) Domain \((-5, \infty)\), vertical asymptote \(x = -5\), \(y\)-intercept \((0, 1)\)
+(C) Domain \((4, \infty)\), vertical asymptote \(x = 4\), \(y\)-intercept \((0, 1)\)
+(D) Domain \((-4, \infty)\), vertical asymptote \(x = -4\), \(y\)-intercept \((0, -5)\)
+(E) Domain \((-\infty, -4)\), vertical asymptote \(x = -4\), \(y\)-intercept \((0, 1)\)
+[/QUESTION]
+
+=== SECTION 2: Reflections, negative arguments, and base inversion ===
+
+Reflections behave symmetrically with what we saw for exponentials, with one important twist: horizontal reflection flips the domain to the left of the asymptote, while vertical reflection corresponds algebraically to inverting the base.
+
+First, look at a horizontal reflection (\(k < 0\)), such as \(g(x) = \log_2(3 - x)\). Before reading off the horizontal shift, factor out the coefficient of \(x\):
+\[
+3 - x = -(x - 3).
+\]
+Here \(k = -1\) and \(h = 3\) (not \(-3\)!). The domain inequality \(3 - x > 0\) gives \(x < 3\), so the domain is \((-\infty, 3)\) and the vertical asymptote is \(x = 3\). Because the argument shrinks toward \(0^+\) as \(x\) approaches \(3\) from the left, the graph lies entirely to the left of \(x = 3\) and is strictly decreasing: setting \(3 - x = 1\) gives \((2, 0)\) and setting \(3 - x = 2\) gives \((1, 1)\).
+
+Second, look at a vertical reflection across the \(x\)-axis: \(y = -\log_b(x)\). Multiply both sides by \(-1\) to write \(-y = \log_b(x)\), then convert to exponential form:
+\[
+x = b^{-y} = \left(\frac{1}{b}\right)^y \iff y = \log_{1/b}(x).
+\]
+This derives a clean bridge between vertical reflections and base inversion.
+
+[CALLOUT]
+id: log-base-flip
+label: Identity
+title: Reflection across the \(x\)-axis as base inversion
+tone: key
+
+For every valid base \(b > 0\), \(b \ne 1\), and every \(x > 0\):
+\[
+-\log_b(x) = \log_{1/b}(x).
+\]
+[/CALLOUT]
+
+Notice how [REF: log-base-flip | this identity] mirrors \(b^{-x} = (1/b)^x\): for exponentials, reflecting across the \(y\)-axis inverts the base; for logarithms, reflecting across the \(x\)-axis inverts the base!
+
+[GRAPH]
+type: function2d
+title: Comparing \(y = \log_2(x)\), vertical reflection \(-\log_2(x)\), and horizontal reflection \(\log_2(3 - x)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 6
+yrange: -3.5, 3.5
+trace: log(x) / log(2) | label: \(y = \log_2(x)\)
+trace: -log(x) / log(2) | label: \(y = -\log_2(x) = \log_{1/2}(x)\)
+trace: log(3 - x) / log(2) | label: \(y = \log_2(3 - x)\)
+segment: 3, -3.5, 3, 3.5 | label: \(x = 3\) | dashed: true
+point: 1, 0 | label: \((1, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+When both \(a < 0\) and \(k < 0\), track monotonicity step by step rather than guessing. For \(f(x) = -\log_2(3 - x)\), as \(x\) increases inside \((-\infty, 3)\), the argument \(3 - x\) decreases, so \(\log_2(3 - x)\) decreases, and the minus sign flips that decrease back into a strict increase!
+
+[QUESTION 2]
+[ANSWER: C]
+Which description is accurate for \(f(x) = -\log_3(5 - 2x) + 1\)?
+
+(A) Domain \((5/2, \infty)\), vertical asymptote \(x = 5/2\), strictly decreasing
+(B) Domain \((-\infty, 5/2)\), vertical asymptote \(x = 5/2\), strictly decreasing
+(C) Domain \((-\infty, 5/2)\), vertical asymptote \(x = 5/2\), strictly increasing
+(D) Domain \((-\infty, -5/2)\), vertical asymptote \(x = -5/2\), strictly increasing
+(E) Domain \((-\infty, 5/2)\), vertical asymptote \(x = 1\), strictly increasing
+[/QUESTION]
+
+=== SECTION 3: Exact algebraic inverses of transformed exponentials and logarithms ===
+
+Because every transformed exponential \(f(x) = a \cdot b^{k(x - h)} + c\) is strictly monotonic, it has an explicit inverse—and that inverse is always a transformed logarithm. Conversely, the inverse of every transformed logarithm is a transformed exponential.
+
+To compute the inverse algebraically, swap \(x\) and \(y\), isolate the exponential (or logarithmic) piece, and convert using the defining equivalence \(u = \log_b(v) \iff b^u = v\).
+
+Worked example 1 (exponential to logarithm): Find the inverse of \(f(x) = 2 \cdot 3^{x - 1} - 4\).
+1. Write \(y = 2 \cdot 3^{x - 1} - 4\) and swap \(x\) and \(y\):
+\[
+x = 2 \cdot 3^{y - 1} - 4.
+\]
+2. Isolate the exponential term \(3^{y - 1}\) by adding \(4\) and dividing by \(2\):
+\[
+\frac{x + 4}{2} = 3^{y - 1}.
+\]
+3. Convert to logarithmic form and solve for \(y\):
+\[
+y - 1 = \log_3\!\left(\frac{x + 4}{2}\right) \implies f^{-1}(x) = \log_3\!\left(\frac{x + 4}{2}\right) + 1.
+\]
+
+Look at how every geometric feature swaps between \(f\) and \(f^{-1}\):
+- \(f\) has domain \((-\infty, \infty)\), range \((-4, \infty)\), and horizontal asymptote \(y = -4\).
+- \(f^{-1}\) has domain \(\frac{x + 4}{2} > 0 \iff (-4, \infty)\), range \((-\infty, \infty)\), and vertical asymptote \(x = -4\).
+- The point \((1, -2)\) on \(f\) reflects across \(y = x\) to \((-2, 1)\) on \(f^{-1}\).
+
+[GRAPH]
+type: function2d
+title: Inverse pair \(f(x) = 2 \cdot 3^{x - 1} - 4\) and \(f^{-1}(x) = \log_3((x + 4)/2) + 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+aspect: equal
+xrange: -5.5, 6
+yrange: -5.5, 6
+trace: 2 * 3^(x - 1) - 4 | label: \(f(x) = 2 \cdot 3^{x - 1} - 4\)
+trace: log((x + 4) / 2) / log(3) + 1 | label: \(f^{-1}(x) = \log_3((x + 4)/2) + 1\)
+trace: x | label: \(y = x\)
+segment: -5.5, -4, 6, -4 | label: \(y = -4\) | dashed: true
+segment: -4, -5.5, -4, 6 | label: \(x = -4\) | dashed: true
+point: 1, -2 | label: \((1, -2)\)
+point: -2, 1 | label: \((-2, 1)\)
+[/GRAPH]
+
+Worked example 2 (logarithm to exponential): Find the inverse of \(g(x) = -2\log_5(3 - x) + 1\).
+1. Swap \(x\) and \(y\): \(x = -2\log_5(3 - y) + 1\).
+2. Isolate the logarithm:
+\[
+\log_5(3 - y) = \frac{x - 1}{-2} = \frac{1 - x}{2}.
+\]
+3. Convert to exponential form and solve for \(y\):
+\[
+3 - y = 5^{(1 - x)/2} \implies g^{-1}(x) = 3 - 5^{(1 - x)/2}.
+\]
+Again, the asymptotes and bounds match in exact mirror symmetry: \(g\) has vertical asymptote \(x = 3\) and domain \((-\infty, 3)\), while \(g^{-1}\) has horizontal asymptote \(y = 3\) and range \((-\infty, 3)\).
+
+Finally, just as we reconstructed \(a \cdot b^x + c\) from a horizontal asymptote and two points, we can reconstruct \(g(x) = a\log_b(x - h) + c\) from its vertical asymptote \(x = h\) and two points. The asymptote gives \(h\) immediately; plugging in a point where \(x - h = 1\) gives \(c\) directly (because \(\log_b(1) = 0\)); and the second point then determines \(a\).
+
+[QUESTION 3]
+[ANSWER: D]
+What is the inverse function \(f^{-1}(x)\) of \(f(x) = 4 - 3 \cdot 2^{x + 1}\)?
+
+(A) \(\log_2\!\left(\frac{x - 4}{3}\right) - 1\)
+(B) \(\log_2\!\left(\frac{4 - x}{3}\right) + 1\)
+(C) \(-\log_2\!\left(\frac{x + 4}{3}\right) - 1\)
+(D) \(\log_2\!\left(\frac{4 - x}{3}\right) - 1\)
+(E) \(\log_2\!\left(\frac{4 - x}{6}\right)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+The graph of \(g(x) = a\log_2(x - h) + c\) has vertical asymptote \(x = 3\) and passes through the points \((4, -1)\) and \((7, 5)\). What is \(g(11)\)?
+
+(A) \(5\)
+(B) \(7\)
+(C) \(8\)
+(D) \(9\)
+(E) \(11\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Which formula gives the exact inverse function \(g^{-1}(x)\) of \(g(x) = 2\log_4(1 - 3x) - 6\)?
+
+(A) \(\frac{1 - 4^{x + 6}}{3}\)
+(B) \(\frac{1 - 2^{x + 6}}{3}\)
+(C) \(\frac{2^{x + 6} - 1}{3}\)
+(D) \(\frac{1 - 2^{x - 6}}{3}\)
+(E) \(\frac{1 - 4^{2x + 12}}{3}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suppose \(f(x) = a \cdot b^{x - h} + c\) (with \(a \ne 0\), \(b > 0\), \(b \ne 1\)) has horizontal asymptote \(y = -2\) and passes through \((3, 4)\). Which statement must be true about its inverse function \(f^{-1}\)?
+
+(A) \(f^{-1}\) has vertical asymptote \(x = 3\) and domain \((3, \infty)\).
+(B) \(f^{-1}\) has vertical asymptote \(x = -2\) and domain \((-\infty, -2)\).
+(C) \(f^{-1}\) has horizontal asymptote \(y = -2\) and passes through \((4, 3)\).
+(D) \(f^{-1}\) has vertical asymptote \(x = 2\) and passes through \((4, 3)\).
+(E) \(f^{-1}\) has vertical asymptote \(x = -2\), domain \((-2, \infty)\), and passes through \((4, 3)\).
+[/BONUS]

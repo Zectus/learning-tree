@@ -1,0 +1,335 @@
+=== SECTION 1: Power sets and levels of membership ===
+
+Elementary set algebra builds new sets whose elements come from the same ambient universe as the original sets. Many mathematical constructions, however, require stepping up a level: collecting all subsets of a set into a single set, or pairing elements from two sets in a definite order. These two constructions—the power set and the Cartesian product—supply the raw material for relations, functions, topologies, and algebraic structures.
+
+Start with the question: given a set \(A\), what do we get if we gather every subset of \(A\) into one collection?
+
+[CALLOUT]
+id: power-set-def
+label: Definition
+title: Power set
+tone: key
+
+For any set \(A\), the power set of \(A\), denoted \(\mathcal{P}(A)\), is the set of all subsets of \(A\):
+\[
+\mathcal{P}(A) = \{S : S \subseteq A\}.
+\]
+Equivalently, for any set \(S\),
+\[
+S \in \mathcal{P}(A) \iff S \subseteq A.
+\]
+[/CALLOUT]
+
+Let us write out \(\mathcal{P}(A)\) explicitly for three very small sets to watch the level shift happen in real time:
+- When \(A = \emptyset\), the only subset of \(\emptyset\) is \(\emptyset\) itself. Therefore
+\[
+\mathcal{P}(\emptyset) = \{\emptyset\}.
+\]
+Notice that \(\mathcal{P}(\emptyset) \ne \emptyset\): the power set of the empty set is NOT empty—it contains one element, namely \(\emptyset\).
+- When \(A = \{a\}\), the subsets of \(A\) are \(\emptyset\) and \(\{a\}\), so
+\[
+\mathcal{P}(\{a\}) = \{\emptyset, \{a\}\}.
+\]
+- When \(A = \{1, 2\}\), the subsets of \(A\) are \(\emptyset\), \(\{1\}\), \(\{2\}\), and \(\{1, 2\}\), so
+\[
+\mathcal{P}(\{1, 2\}) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\}.
+\]
+- What about \(\mathcal{P}(\mathcal{P}(\emptyset))\)? Since \(\mathcal{P}(\emptyset) = \{\emptyset\}\) is a one-element set whose single element is \(\emptyset\), its subsets are \(\emptyset\) and \(\{\emptyset\}\). Hence
+\[
+\mathcal{P}(\mathcal{P}(\emptyset)) = \{\emptyset, \{\emptyset\}\}.
+\]
+
+Working with power sets demands total clarity about the level distinction between \(\in\) and \(\subseteq\). An element of \(A\) sits one level below a subset of \(A\), which in turn sits at the same level as an element of \(\mathcal{P}(A)\). Specifically, for any object \(x\) and any set \(A\):
+\[
+x \in A \iff \{x\} \subseteq A \iff \{x\} \in \mathcal{P}(A).
+\]
+Notice also that \(\emptyset \in \mathcal{P}(A)\) and \(A \in \mathcal{P}(A)\) hold for EVERY set \(A\), because \(\emptyset \subseteq A\) and \(A \subseteq A\) always hold.
+
+[CALLOUT]
+id: power-set-level-pitfall
+label: Common pitfall
+title: Elements of \(A\) are not automatically elements of \(\mathcal{P}(A)\)
+tone: caution
+
+If \(A = \{1, 2\}\), then \(1 \in A\) is true, whereas \(1 \in \mathcal{P}(A)\) is false: the elements of \(\mathcal{P}(A)\) are subsets of \(A\), not numbers. Instead, \(\{1\} \in \mathcal{P}(A)\), and \(\{\{1\}\} \subseteq \mathcal{P}(A)\). Similarly, \(\emptyset \in \mathcal{P}(A)\) and \(\emptyset \subseteq \mathcal{P}(A)\) are both true, for two distinct reasons: \(\emptyset \in \mathcal{P}(A)\) holds because \(\emptyset \subseteq A\), while \(\emptyset \subseteq \mathcal{P}(A)\) holds because \(\emptyset\) is a subset of every set.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(A = \{a, b\}\). Which of the following statements is FALSE?
+
+(A) \(\emptyset \in \mathcal{P}(A)\)
+(B) \(\{\emptyset\} \subseteq \mathcal{P}(A)\)
+(C) \(\{a\} \subseteq \mathcal{P}(A)\)
+(D) \(\{\{a\}, A\} \subseteq \mathcal{P}(A)\)
+(E) \(A \in \mathcal{P}(A)\)
+[/QUESTION]
+
+=== SECTION 2: Set algebra of power sets ===
+
+How does the power set operation interact with inclusion, intersection, and union? Let us test each one carefully by element chasing—remembering that an arbitrary element of a power set is itself a set, so we typically name it with a capital letter such as \(S\) or \(X\).
+
+[CALLOUT]
+id: power-set-identities
+label: Theorem
+title: Power sets with inclusion and intersection
+tone: key
+
+For any sets \(A\) and \(B\):
+
+(1) \(A \subseteq B \iff \mathcal{P}(A) \subseteq \mathcal{P}(B)\).
+(2) \(\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)\).
+(3) \(\mathcal{P}(A) \cup \mathcal{P}(B) \subseteq \mathcal{P}(A \cup B)\), and this inclusion can be strict.
+[/CALLOUT]
+
+Let us prove [REF: power-set-identities.1 | statement (1)] in both directions.
+- Forward direction (\(\implies\)): Assume \(A \subseteq B\). To prove \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\), let \(S \in \mathcal{P}(A)\) be arbitrary. By [REF: power-set-def | definition of power set], \(S \subseteq A\). Since \(S \subseteq A\) and \(A \subseteq B\), every element of \(S\) belongs to \(A\) and therefore to \(B\), so \(S \subseteq B\). Hence \(S \in \mathcal{P}(B)\). Thus \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\).
+- Converse direction (\(\Longleftarrow\)): Assume \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\). We want to prove \(A \subseteq B\). Rather than picking \(x \in A\) directly, look for a smart element of \(\mathcal{P}(A)\) that captures all of \(A\) at once: since \(A \subseteq A\), we have \(A \in \mathcal{P}(A)\). Because \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\), it follows immediately that \(A \in \mathcal{P}(B)\), which by [REF: power-set-def | definition of power set] means \(A \subseteq B\)! (Alternatively, one can take \(x \in A\), note \(\{x\} \in \mathcal{P}(A) \subseteq \mathcal{P}(B)\), so \(\{x\} \subseteq B\) and \(x \in B\).)
+
+Next, let us prove [REF: power-set-identities.2 | statement (2)], \(\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)\), by a chain of equivalences for an arbitrary set \(S\):
+\[
+\begin{aligned}
+S \in \mathcal{P}(A \cap B) &\iff S \subseteq A \cap B \\
+&\iff (S \subseteq A) \land (S \subseteq B) \\
+&\iff S \in \mathcal{P}(A) \land S \in \mathcal{P}(B) \\
+&\iff S \in \mathcal{P}(A) \cap \mathcal{P}(B).
+\end{aligned}
+\]
+Let us pause and verify the middle equivalence \(S \subseteq A \cap B \iff (S \subseteq A \land S \subseteq B)\): every element of \(S\) lies in both \(A\) and \(B\) if and only if every element of \(S\) lies in \(A\) and every element of \(S\) lies in \(B\). That justifies every step cleanly.
+
+Now why does the analogous equality \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\) FAIL? Notice first that the one-sided inclusion \(\mathcal{P}(A) \cup \mathcal{P}(B) \subseteq \mathcal{P}(A \cup B)\) does hold: if \(S \in \mathcal{P}(A) \cup \mathcal{P}(B)\), then \(S \subseteq A\) or \(S \subseteq B\); in either case, since \(A \subseteq A \cup B\) and \(B \subseteq A \cup B\), we have \(S \subseteq A \cup B\), so \(S \in \mathcal{P}(A \cup B)\).
+
+What goes wrong in the reverse direction? A subset \(S \subseteq A \cup B\) can grab SOME elements from \(A\) (outside \(B\)) and SOME elements from \(B\) (outside \(A\)), so \(S\) lies in neither \(A\) nor \(B\) individually! Let us turn that insight into the cleanest possible counterexample: take
+\[
+A = \{1\}, \qquad B = \{2\}.
+\]
+Then \(A \cup B = \{1, 2\}\), so
+\[
+\mathcal{P}(A \cup B) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\},
+\]
+whereas
+\[
+\mathcal{P}(A) \cup \mathcal{P}(B) = \{\emptyset, \{1\}\} \cup \{\emptyset, \{2\}\} = \{\emptyset, \{1\}, \{2\}\}.
+\]
+The mixed subset \(\{1, 2\}\) belongs to \(\mathcal{P}(A \cup B)\) but not to \(\mathcal{P}(A) \cup \mathcal{P}(B)\).
+
+In fact, when DOES equality \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\) hold? Precisely when \(A \subseteq B\) or \(B \subseteq A\). Why? If \(A \subseteq B\), then \(A \cup B = B\) and \(\mathcal{P}(A) \subseteq \mathcal{P}(B)\), so both sides equal \(\mathcal{P}(B)\) (and symmetrically if \(B \subseteq A\)). Conversely, if neither \(A \subseteq B\) nor \(B \subseteq A\), there exist \(a \in A \setminus B\) and \(b \in B \setminus A\); then the two-element set \(\{a, b\}\) belongs to \(\mathcal{P}(A \cup B)\) but to neither \(\mathcal{P}(A)\) nor \(\mathcal{P}(B)\).
+
+[QUESTION 2]
+[ANSWER: B]
+Let \(A\) and \(B\) be arbitrary sets. Which of the following statements is ALWAYS true?
+
+(A) \(\mathcal{P}(A \setminus B) = \mathcal{P}(A) \setminus \mathcal{P}(B)\)
+(B) \(\mathcal{P}(A \setminus B) \subseteq (\mathcal{P}(A) \setminus \mathcal{P}(B)) \cup \{\emptyset\}\)
+(C) \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\)
+(D) If \(A \cap B = \emptyset\), then \(\mathcal{P}(A) \cap \mathcal{P}(B) = \emptyset\)
+(E) \(\mathcal{P}(A) \setminus \mathcal{P}(B) \subseteq \mathcal{P}(A \setminus B)\)
+[/QUESTION]
+
+=== SECTION 3: Ordered pairs and Cartesian products ===
+
+In an unordered set \(\{a, b\}\), order is invisible: \(\{1, 2\} = \{2, 1\}\) and \(\{1, 1\} = \{1\}\). Yet in coordinate geometry, point \((1, 2)\) is not \((2, 1)\); in a fraction or division, numerator and denominator cannot be swapped; in a graph or relation, an arrow from \(a\) to \(b\) differs from an arrow from \(b\) to \(a\). We need a pairing construction that remembers order and preserves repeated entries.
+
+[CALLOUT]
+id: ordered-pair-def
+label: Definition
+title: Ordered pair and Cartesian product
+tone: key
+
+(1) An ordered pair \((a, b)\) is an object formed from a first coordinate \(a\) and a second coordinate \(b\), characterized by the equality property:
+\[
+(a, b) = (c, d) \iff (a = c \land b = d).
+\]
+(2) For any sets \(A\) and \(B\), the Cartesian product of \(A\) and \(B\), denoted \(A \times B\), is the set of all ordered pairs with first coordinate in \(A\) and second coordinate in \(B\):
+\[
+A \times B = \{(a, b) : a \in A \land b \in B\}.
+\]
+(3) More generally, for any positive integer \(n\) and sets \(A_1, \dots, A_n\), an ordered \(n\)-tuple \((a_1, \dots, a_n)\) satisfies \((a_1, \dots, a_n) = (b_1, \dots, b_n) \iff (a_1 = b_1 \land \dots \land a_n = b_n)\), and the \(n\)-fold Cartesian product is
+\[
+A_1 \times \dots \times A_n = \{(a_1, \dots, a_n) : a_i \in A_i \text{ for all } i = 1, \dots, n\}.
+\]
+When \(A_1 = \dots = A_n = A\), we write \(A^n\).
+[/CALLOUT]
+
+Why does an ordered pair exist within pure set theory? As a brief motivating remark (we will not need this encoding in proofs), Kazimierz Kuratowski showed in 1921 that one can encode \((a, b)\) purely as the set \(\{\{a\}, \{a, b\}\}\) and prove from extensionality alone that \(\{\{a\}, \{a, b\}\} = \{\{c\}, \{c, d\}\} \iff (a = c \land b = d)\). In everyday mathematical work, we use only the characterizing property in [REF: ordered-pair-def.1 | the ordered-pair definition], never unpacking Kuratowski braces.
+
+Let us inspect two small examples. Take \(A = \{1, 2\}\) and \(B = \{x, y, z\}\). Then
+\[
+A \times B = \{(1, x), (1, y), (1, z), (2, x), (2, y), (2, z)\},
+\]
+whereas
+\[
+B \times A = \{(x, 1), (x, 2), (y, 1), (y, 2), (z, 1), (z, 2)\}.
+\]
+Clearly \(A \times B \ne B \times A\) in general: Cartesian product is not commutative. When DOES \(A \times B = B \times A\) hold? Either \(A = B\), or at least one of \(A\) and \(B\) is empty! Let us check the empty-factor edge case carefully.
+
+[CALLOUT]
+id: empty-product
+label: Proposition
+title: Empty Cartesian product
+tone: key
+
+For any sets \(A\) and \(B\),
+\[
+A \times B = \emptyset \iff (A = \emptyset \lor B = \emptyset).
+\]
+[/CALLOUT]
+
+Proof: We prove the contrapositive of each direction, which is cleaner: \(A \times B \ne \emptyset \iff (A \ne \emptyset \land B \ne \emptyset)\).
+- If \(A \times B \ne \emptyset\), there exists some element \(p \in A \times B\). By [REF: ordered-pair-def.2 | definition of Cartesian product], \(p = (a, b)\) with \(a \in A\) and \(b \in B\), so \(A \ne \emptyset\) and \(B \ne \emptyset\).
+- Conversely, if \(A \ne \emptyset\) and \(B \ne \emptyset\), we can pick \(a \in A\) and \(b \in B\); then \((a, b) \in A \times B\), so \(A \times B \ne \emptyset\).
+
+Notice a subtle consequence of [REF: empty-product | empty products]: suppose \(A \times B \subseteq C \times D\). Does this force \(A \subseteq C\) and \(B \subseteq D\)? ONLY if \(A \times B \ne \emptyset\) (that is, both \(A\) and \(B\) are nonempty)! If \(A = \{1, 2\}\), \(B = \emptyset\), \(C = \emptyset\), and \(D = \{3\}\), then \(A \times B = \emptyset \subseteq \emptyset = C \times D\) holds vacuously, even though \(A \nsubseteq C\). Always check for empty factors before cancelling a Cartesian product!
+
+On the real line, Cartesian products of intervals are literally rectangles in \(\mathbb{R}^2 = \mathbb{R} \times \mathbb{R}\). For instance, \([1, 3] \times [1, 2]\) is the closed rectangle \(\{(x, y) \in \mathbb{R}^2 : 1 \le x \le 3 \text{ and } 1 \le y \le 2\}\). Visualizing subsets of \(\mathbb{R} \times \mathbb{R}\) as rectangles makes product-algebra identities—and counterexamples—instantly transparent.
+
+[QUESTION 3]
+[ANSWER: E]
+Suppose \(A, B, C, D\) are sets such that \(A \times B = C \times D\). Which of the following statements MUST be true?
+
+(A) \(A = C\) and \(B = D\)
+(B) \(A \cup B = C \cup D\)
+(C) If \(A \ne \emptyset\), then \(B = D\)
+(D) If \(A = C\), then \(B = D\)
+(E) Either \(A \times B = \emptyset\), or both \(A = C\) and \(B = D\)
+[/QUESTION]
+
+=== SECTION 4: Product-algebra identities and counterexamples ===
+
+How does the Cartesian product interact with union, intersection, and set difference? Because every element of \(A \times B\) is an ordered pair \((x, y)\), element-chasing proofs on Cartesian products always begin with "Let \((x, y) \in \dots\)" rather than "Let \(x \in \dots\)."
+
+[CALLOUT]
+id: product-identities
+label: Theorem
+title: Core Cartesian product identities
+tone: key
+
+For any sets \(A, B, C, D\):
+
+(1) Distributivity over union: \(A \times (B \cup C) = (A \times B) \cup (A \times C)\).
+(2) Distributivity over intersection: \(A \times (B \cap C) = (A \times B) \cap (A \times C)\).
+(3) Distributivity over set difference: \(A \times (B \setminus C) = (A \times B) \setminus (A \times C)\).
+(4) Intersection of products: \((A \times B) \cap (C \times D) = (A \cap C) \times (B \cap D)\).
+[/CALLOUT]
+
+Let us prove [REF: product-identities.1 | distributivity over union] and [REF: product-identities.4 | intersection of products] by element chasing. Every element of both sides in [REF: product-identities.1 | statement (1)] is an ordered pair \((x, y)\), and for any ordered pair \((x, y)\):
+\[
+\begin{aligned}
+(x, y) \in A \times (B \cup C) &\iff x \in A \land y \in B \cup C \\
+&\iff x \in A \land (y \in B \lor y \in C) \\
+&\iff (x \in A \land y \in B) \lor (x \in A \land y \in C) \\
+&\iff (x, y) \in A \times B \lor (x, y) \in A \times C \\
+&\iff (x, y) \in (A \times B) \cup (A \times C).
+\end{aligned}
+\]
+Because the chain of biconditionals holds for every ordered pair \((x, y)\) (and neither side contains non-pairs), the two sets are equal.
+
+For [REF: product-identities.4 | statement (4)], take an arbitrary ordered pair \((x, y)\):
+\[
+\begin{aligned}
+(x, y) \in (A \times B) \cap (C \times D) &\iff (x, y) \in A \times B \land (x, y) \in C \times D \\
+&\iff (x \in A \land y \in B) \land (x \in C \land y \in D) \\
+&\iff (x \in A \land x \in C) \land (y \in B \land y \in D) \\
+&\iff x \in A \cap C \land y \in B \cap D \\
+&\iff (x, y) \in (A \cap C) \times (B \cap D).
+\end{aligned}
+\]
+The proof works purely by regrouping conjunctions! The geometric meaning in \(\mathbb{R}^2\) is equally clear: the overlap of two axis-aligned rectangles \(A \times B\) and \(C \times D\) is again an axis-aligned rectangle, whose horizontal span is \(A \cap C\) and whose vertical span is \(B \cap D\).
+
+What about the union of two products? Does \((A \times B) \cup (C \times D)\) equal \((A \cup C) \times (B \cup D)\)? Think geometrically about two rectangles in \(\mathbb{R}^2\): let
+\[
+A = [0, 1], \quad B = [0, 1], \qquad C = [2, 3], \quad D = [2, 3].
+\]
+Then \((A \times B) \cup (C \times D)\) consists of two separated unit squares—one in the lower-left and one in the upper-right. Meanwhile, \(A \cup C = [0, 1] \cup [2, 3]\) and \(B \cup D = [0, 1] \cup [2, 3]\), so \((A \cup C) \times (B \cup D)\) has FOUR unit squares: it adds the two off-diagonal squares \(A \times D = [0, 1] \times [2, 3]\) and \(C \times B = [2, 3] \times [0, 1]\)!
+
+[GRAPH]
+type: function2d
+title: \((A \times B) \cup (C \times D)\) versus \((A \cup C) \times (B \cup D)\) in \(\mathbb{R}^2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.5, 3.5
+yrange: -0.5, 3.5
+aspect: equal
+fill: 1, 0 | range: 0, 1 | label: \(A \times B\) | color: #2563eb | opacity: 0.35
+fill: 3, 2 | range: 2, 3 | label: \(C \times D\) | color: #2563eb | opacity: 0.35
+fill: 3, 2 | range: 0, 1 | label: \(A \times D\) (extra) | color: #ef4444 | opacity: 0.22
+fill: 1, 0 | range: 2, 3 | label: \(C \times B\) (extra) | color: #ef4444 | opacity: 0.22
+trace: 0 | color: #94a3b8
+segment: 0, 0, 1, 0 | color: #2563eb
+segment: 1, 0, 1, 1 | color: #2563eb
+segment: 1, 1, 0, 1 | color: #2563eb
+segment: 0, 1, 0, 0 | color: #2563eb
+segment: 2, 2, 3, 2 | color: #2563eb
+segment: 3, 2, 3, 3 | color: #2563eb
+segment: 3, 3, 2, 3 | color: #2563eb
+segment: 2, 3, 2, 2 | color: #2563eb
+segment: 0, 2, 1, 2 | color: #ef4444 | dashed: true
+segment: 1, 2, 1, 3 | color: #ef4444 | dashed: true
+segment: 1, 3, 0, 3 | color: #ef4444 | dashed: true
+segment: 0, 3, 0, 2 | color: #ef4444 | dashed: true
+segment: 2, 0, 3, 0 | color: #ef4444 | dashed: true
+segment: 3, 0, 3, 1 | color: #ef4444 | dashed: true
+segment: 3, 1, 2, 1 | color: #ef4444 | dashed: true
+segment: 2, 1, 2, 0 | color: #ef4444 | dashed: true
+point: 0.5, 2.5 | label: \((1/2, 5/2)\)
+[/GRAPH]
+
+In fact, applying [REF: product-identities.1 | distributivity over union] twice (on the right and on the left) reveals the exact expansion:
+\[
+(A \cup C) \times (B \cup D) = (A \times B) \cup (A \times D) \cup (C \times B) \cup (C \times D).
+\]
+This shows immediately why \((A \times B) \cup (C \times D) \subseteq (A \cup C) \times (B \cup D)\) always holds, and why the reverse inclusion fails whenever there is a point in \(A \times D\) or \(C \times B\) that does not lie in \((A \times B) \cup (C \times D)\). A tiny finite counterexample is \(A = \{1\}\), \(B = \{1\}\), \(C = \{2\}\), \(D = \{2\}\): then \((A \times B) \cup (C \times D) = \{(1, 1), (2, 2)\}\), whereas \((A \cup C) \times (B \cup D) = \{(1, 1), (1, 2), (2, 1), (2, 2)\}\).
+
+Notice the exact structural parallel between power sets and Cartesian products: BOTH operations distribute cleanly over intersection, and BOTH fail to distribute over union (producing only a one-sided inclusion) because union allows "cross-terms" that mix pieces from different sets.
+
+[TABLE]
+Candidate identity | Status | Exact relation or counterexample
+\(\mathcal{P}(A \cap B) = \mathcal{P}(A) \cap \mathcal{P}(B)\) | Always true | Proved by \(S \subseteq A \cap B \iff S \subseteq A \land S \subseteq B\)
+\(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\) | False in general | Only \(\supseteq\) holds; fails for \(A = \{1\}, B = \{2\}\) via \(\{1, 2\}\)
+\((A \times B) \cap (C \times D) = (A \cap C) \times (B \cap D)\) | Always true | Proved by regrouping coordinate conjunctions
+\((A \times B) \cup (C \times D) = (A \cup C) \times (B \cup D)\) | False in general | Only \(\subseteq\) holds; fails for \(A = B = \{1\}, C = D = \{2\}\) via \((1, 2)\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(A, B, C, D\) be arbitrary sets. Which expression is ALWAYS equal to \((A \times B) \setminus (C \times D)\)?
+
+(A) \(((A \setminus C) \times B) \cup (A \times (B \setminus D))\)
+(B) \((A \setminus C) \times (B \setminus D)\)
+(C) \(((A \setminus C) \times B) \cap (A \times (B \setminus D))\)
+(D) \((A \cap C) \times (B \setminus D)\)
+(E) \((A \times (B \setminus D)) \setminus (C \times B)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Let \(A\) and \(B\) be sets with \(A \ne \emptyset\) and \(B \ne \emptyset\). Under what necessary and sufficient condition does \(\mathcal{P}(A \cup B) = \mathcal{P}(A) \cup \mathcal{P}(B)\) hold?
+
+(A) \(A \cap B = \emptyset\)
+(B) \(A = B\)
+(C) \(A \cap B \ne \emptyset\)
+(D) \(A \subseteq B\) or \(B \subseteq A\)
+(E) \(A\) and \(B\) are both finite
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Let \(A = \{1, 2\}\), \(B = \{1, 2, 3\}\), \(C = \{2, 3\}\), and \(D = \{1, 3\}\). Which element belongs to \((A \times B) \setminus (C \times D)\) but NOT to \((A \setminus C) \times (B \setminus D)\)?
+
+(A) \((1, 2)\)
+(B) \((2, 2)\)
+(C) \((2, 3)\)
+(D) \((3, 2)\)
+(E) \((2, 1)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suppose \(A, B, C\) are nonempty sets. If \((A \times B) \cup (B \times A) = C \times C\), which of the following MUST be true?
+
+(A) \(A \cap B = \emptyset\)
+(B) \(A \subsetneq B\) or \(B \subsetneq A\)
+(C) \(A = B = C\)
+(D) \(A \cup B = C\), with \(A\) and \(B\) possibly distinct
+(E) No such nonempty sets \(A, B, C\) exist
+[/BONUS]

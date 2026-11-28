@@ -1,0 +1,294 @@
+=== SECTION 1: Rango completo por columnas e inversas por la izquierda ===
+
+Para una matriz cuadrada \(n \times n\), el Teorema de la Matriz Invertible nos dice que la independencia de columnas, el generado por columnas, la unicidad, la existencia, las inversas por la izquierda y las inversas por la derecha ocurren juntas o fallan juntas. En cuanto una matriz \(A\) es rectangular (\(m \neq n\)), esas propiedades se dividen limpiamente por la mitad:
+- Una matriz alta (\(m > n\)) puede tener columnas independientes (\(\operatorname{rank}(A) = n\)), lo que da a lo sumo una solución para \(A\mathbf{x} = \mathbf{b}\), pero sus \(n\) columnas NUNCA pueden generar todo \(\mathbb{R}^m\) porque \(\operatorname{rank}(A) \le n < m\).
+- Una matriz ancha (\(m < n\)) puede tener columnas que generen \(\mathbb{R}^m\) (\(\operatorname{rank}(A) = m\)), haciendo que \(A\mathbf{x} = \mathbf{b}\) sea siempre consistente, pero sus \(n\) columnas NUNCA pueden ser linealmente independientes porque \(\operatorname{nullity}(A) = n - m > 0\).
+
+Analicemos primero el caso alto (rango completo por columnas). Una matriz \(m \times n\) \(A\) tiene rango completo por columnas cuando \(\operatorname{rank}(A) = n\) (lo que exige \(n \le m\)). ¿Puede una matriz así seguir teniendo una inversa unilateral \(CA = I_n\)?
+
+Un momento: si \(A\) es \(m \times n\) con rango completo por columnas \(n\), no podemos invertir \(A\) directamente porque \(A\) no es cuadrada. ¿Cómo podemos fabricar una matriz CUADRADA \(n \times n\) invertible a partir de \(A\)? ¡Multiplique \(A\) por la izquierda por su transpuesta \(A^T\)! La matriz simétrica \(n \times n\) resultante \(A^T A\) (a menudo llamada la matriz de Gram de las columnas de \(A\)) es cuadrada, ¡y podemos comprobar su invertibilidad verificando si \((A^T A)\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial!
+
+Observe este argumento de tres líneas —uno de los trucos más limpios del álgebra lineal—. Suponga que \((A^T A)\mathbf{x} = \mathbf{0}\) para algún \(\mathbf{x} \in \mathbb{R}^n\). Multiplique ambos lados por la izquierda por \(\mathbf{x}^T\):
+\[
+\mathbf{x}^T (A^T A) \mathbf{x} = \mathbf{x}^T \mathbf{0} = 0.
+\]
+Usando \((A\mathbf{x})^T = \mathbf{x}^T A^T\), reescriba el lado izquierdo como una suma de cuadrados de las entradas del vector \(\mathbf{y} = A\mathbf{x} \in \mathbb{R}^m\):
+\[
+(A\mathbf{x})^T (A\mathbf{x}) = y_1^2 + y_2^2 + \cdots + y_m^2 = 0.
+\]
+Como las entradas \(y_i\) son números reales, ¡una suma de cuadrados es igual a \(0\) si y solo si cada entrada es \(0\), es decir, \(A\mathbf{x} = \mathbf{0}\)! Y como \(A\) tiene rango completo por columnas, \(\operatorname{Null}(A) = \{\mathbf{0}\}\), ¡lo que fuerza \(\mathbf{x} = \mathbf{0}\)! Por lo tanto, \((A^T A)\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial, de modo que por el Teorema de la Matriz Invertible la matriz cuadrada \(A^T A\) es INVERTIBLE.
+
+Una vez que \((A^T A)^{-1}\) existe, vea qué sucede al definir la matriz \(n \times m\)
+\[
+C_* = (A^T A)^{-1} A^T:
+\]
+\[
+C_* A = (A^T A)^{-1} A^T A = (A^T A)^{-1} (A^T A) = I_n!
+\]
+¡Acabamos de construir una inversa por la izquierda explícita para TODA matriz con rango completo por columnas!
+
+[CALLOUT]
+id: full-col-rank
+label: Teorema
+title: Caracterizaciones de rango completo por columnas
+tone: key
+
+Sea \(A\) una matriz real \(m \times n\) (necesariamente \(n \le m\) para que estas condiciones se cumplan). Los seis enunciados siguientes son equivalentes:
+
+(1) \(A\) tiene rango completo por columnas: \(\operatorname{rank}(A) = n\).
+(2) Las columnas de \(A\) son linealmente independientes.
+(3) \(\operatorname{Null}(A) = \{\mathbf{0}\}\) (equivalentemente, \(\operatorname{nullity}(A) = 0\)).
+(4) Para todo \(\mathbf{b} \in \mathbb{R}^m\), el sistema \(A\mathbf{x} = \mathbf{b}\) tiene A LO SUMO UNA solución (o bien única o bien inconsistente).
+(5) La matriz \(n \times n\) \(A^T A\) es invertible.
+(6) \(A\) tiene una inversa por la izquierda: existe una matriz \(n \times m\) \(C\) con \(CA = I_n\). En particular, \(C_* = (A^T A)^{-1} A^T\) es siempre una inversa por la izquierda de \(A\).
+[/CALLOUT]
+
+Cerremos el ciclo en [REF: full-col-rank | el teorema]: \((1) \iff (2) \iff (3) \iff (4)\) se deducen directamente de Rango-Nulidad (\(\operatorname{rank}(A) = n \iff \operatorname{nullity}(A) = 0\)) y de la estructura del conjunto solución. Acabamos de demostrar \((3) \implies (5) \implies (6)\). Finalmente, \((6) \implies (3)\) toma una línea: si \(CA = I_n\) y \(A\mathbf{x} = \mathbf{0}\), entonces \(\mathbf{x} = I_n \mathbf{x} = (CA)\mathbf{x} = C(A\mathbf{x}) = C\mathbf{0} = \mathbf{0}\).
+
+Ahora llega una sorpresa vital cuando \(m > n\): a diferencia de las inversas bilaterales de las matrices cuadradas, ¡las inversas por la izquierda NO SON ÚNICAS!
+
+Veámoslo en una matriz concreta \(3 \times 2\) de rango \(2\):
+\[
+A = \begin{bmatrix} 1 & 0 \\ 1 & 1 \\ 0 & 1 \end{bmatrix}.
+\]
+Calcule la inversa por la izquierda canónica \(C_* = (A^T A)^{-1} A^T\):
+\[
+A^T A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}, \qquad
+(A^T A)^{-1} = \frac{1}{3} \begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix}.
+\]
+Multiplicar por \(A^T\) da
+\[
+C_* = \frac{1}{3} \begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix} \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \end{bmatrix}
+= \frac{1}{3} \begin{bmatrix} 2 & 1 & -1 \\ -1 & 1 & 2 \end{bmatrix}.
+\]
+Compruebe: \(C_* A = \frac{1}{3} \begin{bmatrix} 3 & 0 \\ 0 & 3 \end{bmatrix} = I_2\). Sin embargo, por inspección, mire
+\[
+C_2 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}:
+\]
+¡multiplicar \(C_2 A\) TAMBIÉN da \(\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I_2\)! De hecho, como \(\operatorname{nullity}(A^T) = m - n = 3 - 2 = 1\), existe un vector fila no nulo \(\mathbf{z}^T = \begin{bmatrix} 1 & -1 & 1 \end{bmatrix}\) que satisface \(\mathbf{z}^T A = \mathbf{0}^T\). ¡Sumar CUALESQUIERA múltiplos de \(\mathbf{z}^T\) a las filas de \(C_*\) produce infinitas inversas por la izquierda distintas de \(A\)!
+
+Podemos visualizar esa familia infinita directamente para la matriz alta más sencilla \(A_1 = \begin{bmatrix} 1 \\ 2 \end{bmatrix}\) (\(2 \times 1\), rango \(1\)). Una matriz \(1 \times 2\) \(C = \begin{bmatrix} c_1 & c_2 \end{bmatrix}\) satisface \(C A_1 = [1]\) si y solo si
+\[
+c_1 + 2 c_2 = 1.
+\]
+¡Cada punto sobre esa recta en el plano \((c_1, c_2)\) es una inversa por la izquierda válida de \(A_1\)! La fórmula \(C_* = (A_1^T A_1)^{-1} A_1^T = \begin{bmatrix} 1/5 & 2/5 \end{bmatrix}\) selecciona un punto especial de la recta, junto con \((1, 0)\), \((0, 0.5)\) e infinitos otros.
+
+[GRAPH]
+type: function2d
+title: Todas las inversas por la izquierda \(1 \times 2\) \(C = [c_1 \; c_2]\) de \(A_1 = [1, 2]^T\) yacen en \(c_1 + 2 c_2 = 1\)
+xlabel: \(c_1\)
+ylabel: \(c_2\)
+xrange: -1.5, 2.5
+yrange: -1, 1.5
+aspect: equal
+trace: (1 - x) / 2 | label: \(c_1 + 2 c_2 = 1\) | color: #2563eb
+point: 0.2, 0.4 | label: \(C_* = (0.2, 0.4)\) | color: #dc2626
+point: 1, 0 | label: \((1, 0)\) | color: #059669
+point: 0, 0.5 | label: \((0, 0.5)\) | color: #059669
+segment: 0, 0, 0.2, 0.4 | color: #dc2626 | dashed: true
+[/GRAPH]
+
+=== SECTION 2: Rango completo por filas e inversas por la derecha ===
+
+Ahora invierta la forma: una matriz \(m \times n\) \(A\) tiene rango completo por filas cuando \(\operatorname{rank}(A) = m\) (lo que exige \(m \le n\)).
+
+Como \(\operatorname{rank}(A^T) = \operatorname{rank}(A)\), ¡decir que \(A\) (\(m \times n\)) tiene rango completo por filas \(m\) es IDÉNTICO a decir que \(A^T\) (\(n \times m\)) tiene rango completo por COLUMNAS \(m\)! Cada enunciado de [REF: full-col-rank | el teorema de rango completo por columnas] se traduce de inmediato reemplazando \(A\) por \(A^T\):
+- ¡\((A^T)^T A^T = A A^T\) es una matriz invertible \(m \times m\)!
+- Una inversa por la izquierda \(C\) de \(A^T\) satisface \(C A^T = I_m\); tomar la transpuesta de ambos lados da \(A C^T = I_m\), ¡así que \(D = C^T\) es una inversa por la DERECHA de \(A\)!
+- Transponer la inversa por la izquierda canónica \(C_* = (A A^T)^{-1} A\) de \(A^T\) produce la inversa por la derecha canónica explícita de \(A\):
+\[
+D_* = A^T (A A^T)^{-1}, \qquad A D_* = (A A^T)(A A^T)^{-1} = I_m!
+\]
+- Dado CUALQUIER \(\mathbf{b} \in \mathbb{R}^m\), el vector \(\mathbf{x}_p = D\mathbf{b}\) resuelve automáticamente \(A\mathbf{x}_p = (AD)\mathbf{b} = I_m \mathbf{b} = \mathbf{b}\), demostrando que \(A\mathbf{x} = \mathbf{b}\) es consistente para todo \(\mathbf{b} \in \mathbb{R}^m\) (con \(n - m\) parámetros libres por Rango-Nulidad).
+
+[CALLOUT]
+id: full-row-rank
+label: Teorema
+title: Caracterizaciones de rango completo por filas
+tone: key
+
+Sea \(A\) una matriz real \(m \times n\) (necesariamente \(m \le n\) para que estas condiciones se cumplan). Los seis enunciados siguientes son equivalentes:
+
+(1) \(A\) tiene rango completo por filas: \(\operatorname{rank}(A) = m\).
+(2) \(\operatorname{Col}(A) = \mathbb{R}^m\) (las columnas de \(A\) generan \(\mathbb{R}^m\)).
+(3) Para todo \(\mathbf{b} \in \mathbb{R}^m\), el sistema \(A\mathbf{x} = \mathbf{b}\) es consistente, con exactamente \(n - m\) parámetros libres.
+(4) \(A^T\) tiene rango completo por columnas.
+(5) La matriz \(m \times m\) \(A A^T\) es invertible.
+(6) \(A\) tiene una inversa por la derecha: existe una matriz \(n \times m\) \(D\) con \(AD = I_m\). En particular, \(D_* = A^T (A A^T)^{-1}\) es siempre una inversa por la derecha de \(A\).
+[/CALLOUT]
+
+Al igual que las inversas por la izquierda para matrices altas, las inversas por la derecha de matrices anchas (\(n > m\)) NUNCA son únicas: sumar a \(D_*\) cualquier matriz \(n \times m\) \(E\) cuyas columnas yazcan en \(\operatorname{Null}(A)\) (de modo que \(AE = 0\)) produce otra inversa por la derecha \(D_* + E\).
+
+Calculemos \(D_* = A^T (A A^T)^{-1}\) para la matriz \(2 \times 3\) de rango completo por filas
+\[
+B = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \end{bmatrix}.
+\]
+Primero forme la matriz \(2 \times 2\) \(B B^T\):
+\[
+B B^T = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 2 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 5 & 2 \\ 2 & 2 \end{bmatrix}.
+\]
+Su inversa es \((B B^T)^{-1} = \frac{1}{6} \begin{bmatrix} 2 & -2 \\ -2 & 5 \end{bmatrix}\). Por lo tanto,
+\[
+D_* = B^T (B B^T)^{-1} = \frac{1}{6} \begin{bmatrix} 1 & 0 \\ 2 & 1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 2 & -2 \\ -2 & 5 \end{bmatrix} = \frac{1}{6} \begin{bmatrix} 2 & -2 \\ 2 & 1 \\ -2 & 5 \end{bmatrix}.
+\]
+Verifique: \(B D_* = \frac{1}{6} \begin{bmatrix} 2 + 4 & -2 + 2 \\ 2 - 2 & 1 + 5 \end{bmatrix} = I_2\). (¡Y observe que \(D_2 = \begin{bmatrix} 1 & 0 \\ 0 & 0 \\ 0 & 1 \end{bmatrix}\) es una inversa por la derecha distinta de \(B\), confirmando la no unicidad!)
+
+Ahora podemos clasificar TODA matriz \(m \times n\) en una sola tabla.
+
+[TABLE]
+Caso de rango para matriz \(m \times n\) \(A\) | Soluciones de \(A\mathbf{x} = \mathbf{b}\) | Inversas unilaterales / bilaterales
+Rango completo y cuadrada (\(r = m = n\)) | Exactamente \(1\) solución para todo \(\mathbf{b}\) | Única inversa bilateral \(A^{-1}\)
+Rango completo por columnas, alta (\(r = n < m\)) | \(0\) o \(1\) solución (a lo sumo una) | Infinitas inversas por la izquierda; NINGUNA inversa por la derecha
+Rango completo por filas, ancha (\(r = m < n\)) | Infinitas soluciones (\(n - m\) libres) para todo \(\mathbf{b}\) | Infinitas inversas por la derecha; NINGUNA inversa por la izquierda
+Deficiente en rango (\(r < m\) y \(r < n\)) | \(0\) o infinitas soluciones | Ni inversa por la izquierda ni inversa por la derecha
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: D]
+Sea \(A\) una matriz real \(5 \times 3\) con \(\operatorname{rank}(A) = 3\). ¿Qué afirmación es FALSA?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) tiene a lo sumo una solución para todo \(\mathbf{b} \in \mathbb{R}^5\)
+(B) La matriz \(3 \times 3\) \(A^T A\) es invertible
+(C) \(A\) tiene infinitas inversas por la izquierda \(3 \times 5\) \(C\) que satisfacen \(CA = I_3\)
+(D) La matriz \(5 \times 5\) \(A A^T\) es invertible
+(E) \(\operatorname{Null}(A) = \{\mathbf{0}\}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Sea
+\[
+A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \end{bmatrix}.
+\]
+¿Cuál es la inversa por la derecha \(D_* = A^T (A A^T)^{-1}\) de \(A\)?
+
+(A) \(\frac{1}{3} \begin{bmatrix} 2 & -1 \\ 1 & 1 \\ -1 & 2 \end{bmatrix}\)
+(B) \(\frac{1}{3} \begin{bmatrix} 2 & 1 \\ -1 & 1 \\ -1 & 2 \end{bmatrix}\)
+(C) \(\frac{1}{3} \begin{bmatrix} 2 & -1 \\ 3 & 1 \\ -1 & 2 \end{bmatrix}\)
+(D) \(\frac{1}{3} \begin{bmatrix} 2 & 1 & -1 \\ -1 & 1 & 2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 & -1 \\ 1 & 1 \\ -1 & 2 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Productos exteriores de rango 1 y la factorización \(A = CR\) ===
+
+¿Qué ocurre con una matriz general \(m \times n\) \(A\) de rango arbitrario \(r \ge 1\), que no tiene rango completo por columnas ni por filas? Sorprendentemente, CUALQUIER matriz de rango \(r\) se descompone limpiamente en el producto de una matriz \(C\) de rango completo por columnas y una matriz \(R\) de rango completo por filas, ¡y simultáneamente en una suma minimal de \(r\) piezas de rango \(1\)!
+
+Comience con el bloque constructivo más simple: un producto exterior de rango \(1\). Dados cualquier vector columna no nulo \(\mathbf{u} \in \mathbb{R}^m\) y cualquier vector columna no nulo \(\mathbf{v} \in \mathbb{R}^n\), su producto exterior es la matriz \(m \times n\)
+\[
+\mathbf{u} \mathbf{v}^T = \begin{bmatrix} u_1 \\ \vdots \\ u_m \end{bmatrix} \begin{bmatrix} v_1 & \cdots & v_n \end{bmatrix}
+= \begin{bmatrix} v_1 \mathbf{u} & v_2 \mathbf{u} & \cdots & v_n \mathbf{u} \end{bmatrix}.
+\]
+Toda columna de \(\mathbf{u}\mathbf{v}^T\) es un múltiplo escalar del único vector no nulo \(\mathbf{u}\) (y al menos un \(v_j \neq 0\), así que la matriz es no nula). Por lo tanto, \(\operatorname{Col}(\mathbf{u}\mathbf{v}^T) = \operatorname{Span}\{\mathbf{u}\}\) está generado por UN vector, ¡de modo que \(\operatorname{rank}(\mathbf{u}\mathbf{v}^T) = 1\)! Recíprocamente, toda matriz \(M\) de rango \(1\) tiene todas sus columnas iguales a múltiplos de una columna no nula \(\mathbf{u}\), así que \(M = \mathbf{u}\mathbf{v}^T\) para la fila de multiplicadores \(\mathbf{v}^T\).
+
+Ahora tome CUALQUIER matriz \(m \times n\) no nula \(A\) de rango \(r\). Por nuestro teorema previo del espacio columna, cada columna \(\mathbf{a}_j\) de \(A\) es combinación lineal de las \(r\) columnas pivote \(\mathbf{c}_1, \dots, \mathbf{c}_r\) de \(A\), ¡y los pesos exactos de la combinación son las \(r\) entradas superiores de la columna \(j\) de \(\operatorname{RREF}(A)\)!
+Empaquete esos objetos en dos matrices más pequeñas:
+- Sea \(C = \begin{bmatrix} \mathbf{c}_1 & \cdots & \mathbf{c}_r \end{bmatrix}\) la matriz \(m \times r\) formada por las \(r\) columnas pivote de \(A\). Por construcción, \(C\) tiene rango completo por columnas \(r\).
+- Sea \(R\) la matriz \(r \times n\) formada por las \(r\) filas no nulas de \(\operatorname{RREF}(A)\) (simplemente eliminando las \(m - r\) filas nulas de abajo). Por construcción, \(R\) tiene rango completo por filas \(r\).
+
+Compruebe la \(j\)-ésima columna del producto \(CR\): por el punto de vista de combinación de columnas de la multiplicación matricial, la columna \(j\) de \(CR\) es
+\[
+r_{1j} \mathbf{c}_1 + r_{2j} \mathbf{c}_2 + \cdots + r_{rj} \mathbf{c}_r,
+\]
+¡que por la invariancia de relaciones entre columnas es literalmente \(\mathbf{a}_j\)! Como cada columna de \(CR\) es igual a la columna correspondiente de \(A\), obtenemos \(A = CR\).
+
+[CALLOUT]
+id: cr-factorization
+label: Teorema
+title: Factorización de rango completo \(A = CR\) y suma minimal de productos exteriores
+tone: key
+
+Toda matriz \(m \times n\) no nula \(A\) de rango \(r\) se factoriza como
+\[
+A = C R,
+\]
+donde \(C\) (\(m \times r\)) contiene las \(r\) columnas pivote de \(A\) (rango completo por columnas \(r\)) y \(R\) (\(r \times n\)) contiene las \(r\) filas no nulas de \(\operatorname{RREF}(A)\) (rango completo por filas \(r\)).
+
+Al escribir las columnas de \(C\) como \(\mathbf{c}_1, \dots, \mathbf{c}_r\) y las filas de \(R\) como \(\mathbf{w}_1^T, \dots, \mathbf{w}_r^T\), la regla del producto exterior para la multiplicación matricial expresa \(A\) como una suma de \(r\) matrices de rango \(1\):
+\[
+A = \mathbf{c}_1 \mathbf{w}_1^T + \mathbf{c}_2 \mathbf{w}_2^T + \cdots + \mathbf{c}_r \mathbf{w}_r^T.
+\]
+Más aún, \(r = \operatorname{rank}(A)\) es el número MÍNIMO de matrices de rango \(1\) cuya suma puede igualar a \(A\).
+[/CALLOUT]
+
+¿Por qué ninguna suma de menos de \(r\) matrices de rango \(1\) puede igualar jamás a \(A\)? Suponga que \(A = \sum_{k=1}^s \mathbf{u}_k \mathbf{v}_k^T\) es una suma de \(s\) matrices de rango \(1\). Por el punto de vista de productos exteriores de la multiplicación matricial en sentido inverso, podemos ensamblar \(U = \begin{bmatrix} \mathbf{u}_1 & \cdots & \mathbf{u}_s \end{bmatrix}\) (\(m \times s\)) y \(V^T = \begin{bmatrix} \mathbf{v}_1^T \\ \vdots \\ \mathbf{v}_s^T \end{bmatrix}\) (\(s \times n\)) de modo que \(A = U V^T\). Por la desigualdad de rango para productos,
+\[
+r = \operatorname{rank}(A) = \operatorname{rank}(U V^T) \le \operatorname{rank}(U) \le s!
+\]
+¡Así que \(s \ge r\) siempre! Esto otorga un significado nítido y concreto al rango: \(\operatorname{rank}(A)\) es literalmente el número mínimo de capas de rango \(1\) necesarias para reconstruir \(A\).
+
+Factoricemos una matriz concreta \(3 \times 4\) de rango \(2\):
+\[
+M = \begin{bmatrix} 1 & 2 & -1 & 4 \\ 2 & 4 & 1 & 5 \\ -1 & -2 & 4 & -7 \end{bmatrix}.
+\]
+Su RREF es
+\[
+\operatorname{RREF}(M) = \begin{bmatrix} 1 & 2 & 0 & 3 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Las columnas pivote son las columnas \(1\) y \(3\), y hay \(r = 2\) filas no nulas. Por lo tanto:
+\[
+C = \begin{bmatrix} 1 & -1 \\ 2 & 1 \\ -1 & 4 \end{bmatrix} \quad (3 \times 2), \qquad
+R = \begin{bmatrix} 1 & 2 & 0 & 3 \\ 0 & 0 & 1 & -1 \end{bmatrix} \quad (2 \times 4).
+\]
+Compruebe \(CR\) directamente:
+\[
+\begin{bmatrix} 1 & -1 \\ 2 & 1 \\ -1 & 4 \end{bmatrix}
+\begin{bmatrix} 1 & 2 & 0 & 3 \\ 0 & 0 & 1 & -1 \end{bmatrix}
+= \begin{bmatrix} 1 & 2 & -1 & 4 \\ 2 & 4 & 1 & 5 \\ -1 & -2 & 4 & -7 \end{bmatrix} = M,
+\]
+y como suma minimal de dos productos exteriores de rango \(1\),
+\[
+M = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} \begin{bmatrix} 1 & 2 & 0 & 3 \end{bmatrix}
+  + \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} \begin{bmatrix} 0 & 0 & 1 & -1 \end{bmatrix}.
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+Calcule la factorización \(A = CR\) de
+\[
+A = \begin{bmatrix} 2 & -4 & 1 & 3 \\ 1 & -2 & 2 & 0 \\ 3 & -6 & 3 & 3 \end{bmatrix}.
+\]
+¿Qué par \((C, R)\) es correcto?
+
+(A) \(C = \begin{bmatrix} 2 & -4 \\ 1 & -2 \\ 3 & -6 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+(B) \(C = \begin{bmatrix} 2 & 1 \\ 1 & 2 \\ 3 & 3 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+(C) \(C = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+(D) \(C = \begin{bmatrix} 2 & 1 \\ 1 & 2 \\ 3 & 3 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}\)
+(E) \(C = \begin{bmatrix} 2 & 3 \\ 1 & 0 \\ 3 & 3 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Suponga que una matriz \(5 \times 6\) \(A\) se escribe como una suma de tres productos exteriores
+\[
+A = \mathbf{u}_1 \mathbf{v}_1^T + \mathbf{u}_2 \mathbf{v}_2^T + \mathbf{u}_3 \mathbf{v}_3^T,
+\]
+donde \(\mathbf{u}_1, \mathbf{u}_2, \mathbf{u}_3 \in \mathbb{R}^5\) son no nulos y \(\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3 \in \mathbb{R}^6\) son no nulos. ¿Qué enunciado DEBE ser verdadero?
+
+(A) \(\operatorname{rank}(A) = 3\) automáticamente porque cada producto exterior tiene rango \(1\)
+(B) \(\operatorname{rank}(A) \ge 3\) porque se sumaron tres términos no nulos
+(C) \(\operatorname{rank}(A) \le 3\), y \(\operatorname{rank}(A)\) puede ser estrictamente menor que \(3\) si \(\{\mathbf{u}_1, \mathbf{u}_2, \mathbf{u}_3\}\) o \(\{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3\}\) es linealmente dependiente
+(D) \(A\) debe tener rango completo por filas \(5\)
+(E) \(\operatorname{rank}(A) = 1\) porque cada producto exterior tiene rango \(1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suponga que \(A\) es una matriz \(4 \times 2\) de rango \(2\), y \(C_1, C_2\) son dos inversas por la izquierda \(2 \times 4\) DISTINTAS de \(A\) (de modo que \(C_1 A = C_2 A = I_2\) con \(C_1 \neq C_2\)). Si \(\mathbf{b} \in \operatorname{Col}(A)\), ¿qué puede concluirse acerca de los dos vectores \(C_1 \mathbf{b}\) y \(C_2 \mathbf{b}\)?
+
+(A) \(C_1 \mathbf{b}\) y \(C_2 \mathbf{b}\) deben ser distintos siempre que \(\mathbf{b} \neq \mathbf{0}\)
+(B) \(C_1 \mathbf{b}\) y \(C_2 \mathbf{b}\) son ambos soluciones de \(A\mathbf{x} = \mathbf{b}\), y pueden ser dos soluciones distintas
+(C) \(C_1 \mathbf{b} = C_2 \mathbf{b}\) solo cuando \(C_1 = (A^T A)^{-1} A^T\)
+(D) Ni para \(C_1 \mathbf{b}\) ni para \(C_2 \mathbf{b}\) se garantiza que satisfaga \(A\mathbf{x} = \mathbf{b}\)
+(E) \(C_1 \mathbf{b} = C_2 \mathbf{b}\), y ambos son iguales a la única solución \(\mathbf{x}\) de \(A\mathbf{x} = \mathbf{b}\) (aunque \(C_1 \mathbf{w}\) y \(C_2 \mathbf{w}\) pueden diferir cuando \(\mathbf{w} \notin \operatorname{Col}(A)\))
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Sea \(A\) una matriz \(m \times n\) no nula de rango \(r\) con factorización de rango completo \(A = CR\), donde \(C\) es \(m \times r\) y \(R\) es \(r \times n\). Tanto \(C^T C\) como \(R R^T\) son matrices cuadradas \(r \times r\). ¿Qué enunciado es VERDADERO?
+
+(A) Ni \(C^T C\) ni \(R R^T\) es invertible salvo que \(r = m = n\)
+(B) \(C^T C\) es invertible, pero \(R R^T\) es singular siempre que \(r < n\)
+(C) Tanto \(C^T C\) como \(R R^T\) son invertibles, y \((C^T C)^{-1} C^T A R^T (R R^T)^{-1} = A\)
+(D) Tanto \(C^T C\) como \(R R^T\) son invertibles, y \((C^T C)^{-1} C^T A R^T (R R^T)^{-1} = I_r\)
+(E) Tanto \(C^T C\) como \(R R^T\) son invertibles, y \((C^T C)^{-1} C^T A R^T (R R^T)^{-1} = 0\)
+[/BONUS]

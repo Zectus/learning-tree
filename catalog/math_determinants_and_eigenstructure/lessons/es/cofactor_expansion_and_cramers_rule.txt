@@ -1,0 +1,282 @@
+=== SECTION 1: Menores, cofactores y expansión de Laplace ===
+
+La eliminación gaussiana calcula con rapidez el determinante de una matriz numérica \(n \times n\), pero deja abiertas dos lagunas que aún no hemos cerrado. En primer lugar, en nuestra lección axiomática demostramos la unicidad del determinante para todo \(n \ge 1\), pero dejamos sin demostrar la existencia para \(n \ge 4\) general. En segundo lugar, cuando una matriz contiene variables simbólicas o entradas mayormente nulas en una fila o columna, deseamos una fórmula recursiva explícita que exprese un determinante \(n \times n\) en términos de determinantes \((n - 1) \times (n - 1)\) sin dividir por parámetros desconocidos. Ambas necesidades quedan cubiertas por la expansión por cofactores de Laplace.
+
+Para cualquier matriz \(A = [a_{ij}] \in M_n(F)\) con \(n \ge 2\) y cualesquiera índices \(1 \le i, j \le n\), denote por \(A_{ij} \in M_{n-1}(F)\) la submatriz \((n - 1) \times (n - 1)\) obtenida al eliminar la fila \(i\) y la columna \(j\) de \(A\).
+
+[CALLOUT]
+id: minor-cofactor-def
+label: Definición
+title: Menores y cofactores
+tone: key
+
+Sea \(A = [a_{ij}] \in M_n(F)\) con \(n \ge 2\).
+
+(1) El \((i, j)\)-menor de \(A\) es \(M_{ij} = \det(A_{ij})\).
+(2) El \((i, j)\)-cofactor de \(A\) es el menor con signo \(C_{ij} = (-1)^{i+j} M_{ij}\).
+[/CALLOUT]
+
+El factor de signo \((-1)^{i+j}\) sigue un patrón de tablero de ajedrez que comienza con \(+\) en \((1, 1)\): moverse un paso horizontal o verticalmente siempre invierte el signo.
+
+¿De dónde proviene la fórmula de expansión por cofactores? Suponga que ya sabemos que existen los determinantes para matrices \((n - 1) \times (n - 1)\), y que deseamos evaluar \(\det(A)\) para una matriz \(n \times n\) \(A\) expandiendo a lo largo de la fila \(i\). Escriba la fila \(i\) como combinación lineal de los vectores fila de la base estándar \(\mathbf{e}_1, \dots, \mathbf{e}_n\):
+\[
+\mathbf{r}_i = \sum_{j=1}^n a_{ij} \mathbf{e}_j.
+\]
+Por multilinealidad en la fila \(i\),
+\[
+\det(A) = \sum_{j=1}^n a_{ij} \det(A^{(i, j)}),
+\]
+donde \(A^{(i, j)}\) es idéntica a \(A\) excepto en que la fila \(i\) se ha reemplazado por \(\mathbf{e}_j\) (un \(1\) en la entrada \((i, j)\) y ceros en el resto de la fila \(i\)). ¿Cómo evaluamos \(\det(A^{(i, j)})\)? Mueva la fila \(i\) hacia arriba hasta la fila \(1\) mediante \(i - 1\) intercambios de filas adyacentes (multiplicando \(\det\) por \((-1)^{i-1}\)), y mueva la columna \(j\) hacia la izquierda hasta la columna \(1\) mediante \(j - 1\) intercambios de columnas adyacentes (válido por invariancia por traspuesta, multiplicando \(\det\) por \((-1)^{j-1}\)). Ninguna de las dos secuencias altera el orden relativo de las \(n - 1\) filas restantes ni de las \(n - 1\) columnas restantes. La matriz resultante tiene la forma por bloques
+\[
+\begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{c} & A_{ij} \end{bmatrix},
+\]
+donde \(\mathbf{c}\) es la parte restante de la columna \(j\) y \(A_{ij}\) es exactamente la submatriz obtenida al eliminar la fila \(i\) y la columna \(j\). Como esta matriz es triangular inferior por bloques con bloques diagonales \([1]\) y \(A_{ij}\), su determinante es \(1 \cdot \det(A_{ij}) = M_{ij}\). Contabilizar los \((i - 1) + (j - 1) = i + j - 2\) intercambios (y notar que \((-1)^{i+j-2} = (-1)^{i+j}\)) da
+\[
+\det(A^{(i, j)}) = (-1)^{i+j} M_{ij} = C_{ij}.
+\]
+Sustituir esto de vuelta en la expansión multilineal produce la expansión de Laplace por cofactores a lo largo de la fila \(i\); aplicar la misma fórmula a \(A^T\) (cuya \((j, i)\)-submatriz es \((A_{ij})^T\), por lo que tiene el mismo determinante \(M_{ij}\)) arroja de inmediato la expansión por cofactores a lo largo de la columna \(j\).
+
+[CALLOUT]
+id: laplace-expansion
+label: Teorema
+title: Expansión de Laplace por cofactores
+tone: key
+
+Para toda \(A = [a_{ij}] \in M_n(F)\) (\(n \ge 2\)):
+
+(1) Expansión a lo largo de cualquier fila \(i \in \{1, \dots, n\}\):
+\[
+\det(A) = \sum_{j=1}^n a_{ij} C_{ij} = \sum_{j=1}^n (-1)^{i+j} a_{ij} M_{ij}.
+\]
+(2) Expansión a lo largo de cualquier columna \(j \in \{1, \dots, n\}\):
+\[
+\det(A) = \sum_{i=1}^n a_{ij} C_{ij} = \sum_{i=1}^n (-1)^{i+j} a_{ij} M_{ij}.
+\]
+[/CALLOUT]
+
+Esta fórmula también cierra la demostración de existencia que quedó abierta en nuestra primera lección. Proceda por inducción sobre \(n\). Para \(n = 1\), \(\det([a]) = a\) satisface trivialmente los tres axiomas. Suponiendo la existencia (y por tanto la unicidad) de \(\det\) en \(M_{n-1}(F)\), DEFINA una función candidata \(D : M_n(F) \to F\) usando la fórmula de cofactores de la fila \(1\), \(D(A) = \sum_{j=1}^n (-1)^{1+j} a_{1j} \det(A_{1j})\). Verifiquemos los tres axiomas para \(D\):
+- Normalización: para \(A = I_n\), \(a_{11} = 1\) con \((I_n)_{11} = I_{n-1}\), y \(a_{1j} = 0\) para \(j > 1\), de modo que \(D(I_n) = 1 \cdot \det(I_{n-1}) = 1\).
+- Multilinealidad en cada fila: en la fila \(1\), ninguna \(A_{1j}\) contiene la fila \(1\), por lo que \(D(A)\) es una combinación lineal explícita de las entradas \(a_{11}, \dots, a_{1n}\). En cualquier fila \(k \ge 2\), el coeficiente \(a_{1j}\) es fijo mientras que la fila \(k\) de \(A\) aparece como la fila \(k - 1\) de cada submatriz \((n - 1) \times (n - 1)\) \(A_{1j}\); por la hipótesis de inducción \(\det(A_{1j})\) es lineal en esa fila, de modo que la suma \(D(A)\) es lineal en la fila \(k\).
+- Propiedad alternante: suponga que dos filas \(\mathbf{r}_p = \mathbf{r}_q\) (\(p < q\)) de \(A\) son iguales. Si \(p \ge 2\), entonces ambas filas iguales sobreviven dentro de cada submatriz \(A_{1j}\), por lo que cada \(\det(A_{1j}) = 0\) por la hipótesis de inducción y \(D(A) = 0\). Si \(p = 1\) y \(q \ge 2\), expanda cada \(\det(A_{1j})\) a lo largo de su fila que contiene a \(\mathbf{r}_q\) (que es la fila \(q - 1\) de \(A_{1j}\)); cada par de índices \(j < k\) aporta dos términos que involucran a la submatriz \((n - 2) \times (n - 2)\) \(A_{1,q; j,k}\) (eliminando las filas \(1, q\) y las columnas \(j, k\)) con producto idéntico \(a_{1j} a_{qk} = a_{1j} a_{1k}\) y signos opuestos: eliminar la columna \(j\) desplaza la columna \(k\) una posición hacia la izquierda, cambiando el exponente del signo en \(1\). Todos los pares se cancelan idénticamente, dando \(D(A) = 0\).
+
+Así, \(D\) satisface los tres axiomas, demostrando que el determinante existe (¡y es único!) para todo \(n \ge 1\).
+
+=== SECTION 2: Expansión estratégica y determinantes simbólicos ===
+
+En la práctica, la expansión por cofactores brilla en dos situaciones: cuando una fila o columna tiene muchos ceros, o cuando una matriz depende de un parámetro simbólico \(t\). Aún mejor, podemos combinar primero operaciones de fila o columna para crear ceros adicionales en una fila o columna, y luego expandir a lo largo de esa línea dispersa.
+
+Considere la matriz dependiente de un parámetro
+\[
+A(t) = \begin{bmatrix} t & 0 & 2 \\ 1 & t - 2 & 0 \\ 3 & 0 & t + 1 \end{bmatrix}.
+\]
+Observe la columna \(2\): solo tiene UNA entrada distinta de cero, \(a_{22} = t - 2\). Expandir a lo largo de la columna \(2\) da inmediatamente
+\[
+\det(A(t)) = (-1)^{2+2} (t - 2) \det\begin{bmatrix} t & 2 \\ 3 & t + 1 \end{bmatrix} = (t - 2)(t^2 + t - 6) = (t - 2)^2 (t + 3).
+\]
+Note con qué limpieza se factorizó sin dividir jamás por \(t\) ni por \(t - 2\): vemos a simple vista que \(A(t)\) es invertible para todo \(t \notin \{-3, 2\}\) y singular precisamente en \(t = -3\) y \(t = 2\). La gráfica siguiente traza \(f(t) = \det(A(t))\) al variar \(t\), mostrando el cambio de signo al cruzar la raíz simple \(t = -3\) y la tangencia en la raíz doble \(t = 2\).
+
+[GRAPH]
+type: function2d
+title: Determinante simbólico \(\det(A(t)) = (t - 2)^2 (t + 3)\) y valores singulares de \(t\)
+xlabel: \(t\)
+ylabel: \(\det(A(t))\)
+xrange: -4, 4
+yrange: -15, 30
+trace: (x - 2)^2 * (x + 3) | label: \(\det(A(t)) = (t - 2)^2(t + 3)\)
+trace: 0 | label: \(\det = 0\)
+point: -3, 0 | label: \((-3, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Calcule \(\det(A)\) expandiendo a lo largo de la fila o columna más dispersa de
+\[
+A = \begin{bmatrix} 2 & 0 & -1 & 3 \\ 0 & 4 & 0 & 0 \\ 1 & 5 & 2 & 0 \\ 3 & -2 & 0 & 1 \end{bmatrix}.
+\]
+
+(A) \(52\)
+(B) \(-52\)
+(C) \(-13\)
+(D) \(-40\)
+(E) \(28\)
+[/QUESTION]
+
+=== SECTION 3: La matriz adjunta clásica y la inversa simbólica ===
+
+¿Qué ocurre si tomamos el producto punto de la fila \(i\) de \(A\) con los cofactores de una fila DIFERENTE \(k \neq i\), formando \(\sum_{j=1}^n a_{ij} C_{kj}\)? Considere la matriz \(\tilde{A}\) construida manteniendo iguales todas las filas de \(A\) EXCEPTO la fila \(k\), que se reemplaza por una copia de la fila \(i\). Como la fila \(k\) de \(\tilde{A}\) tiene entradas \(a_{i1}, \dots, a_{in}\) mientras todas las demás filas coinciden con \(A\), los \((k, j)\)-cofactores de \(\tilde{A}\) son idénticos a los \((k, j)\)-cofactores \(C_{kj}\) de \(A\). Expandir \(\det(\tilde{A})\) a lo largo de la fila \(k\) da
+\[
+\sum_{j=1}^n a_{ij} C_{kj} = \det(\tilde{A}) = 0 \qquad (i \neq k),
+\]
+¡porque \(\tilde{A}\) tiene dos filas idénticas (las filas \(i\) y \(k\))! Juntar esto con [REF: laplace-expansion.1 | la expansión por cofactores en fila] da una única identidad unificada para todo \(1 \le i, k \le n\):
+\[
+\sum_{j=1}^n a_{ij} C_{kj} = \begin{cases} \det(A) & \text{si } i = k, \\ 0 & \text{si } i \neq k. \end{cases}
+\]
+Observe los índices del lado izquierdo: \(a_{ij}\) se multiplica por \(C_{kj}\), donde el índice sumado \(j\) es el segundo índice de AMBOS, \(a_{ij}\) y \(C_{kj}\). Para convertir esta suma en una multiplicación matricial ordinaria (donde el índice sumado debe ser el segundo índice del primer factor y el PRIMER índice del segundo factor), trasponemos la matriz de cofactores \([C_{ij}]\).
+
+[CALLOUT]
+id: adjugate-def
+label: Definición
+title: Matriz adjunta clásica
+tone: key
+
+La adjunta clásica de \(A \in M_n(F)\), denotada \(\operatorname{adj}(A)\), es la traspuesta de la matriz de cofactores de \(A\):
+\[
+(\operatorname{adj}(A))_{jk} = C_{kj}.
+\]
+[/CALLOUT]
+
+Cuide mucho esa trasposición: la entrada \((j, k)\) de \(\operatorname{adj}(A)\) es \(C_{kj}\), NO \(C_{jk}\). Con la trasposición aplicada, la \((i, k)\)-entrada del producto \(A\,\operatorname{adj}(A)\) es precisamente \(\sum_{j=1}^n a_{ij} C_{kj}\), que vale \(\det(A)\) cuando \(i = k\) y \(0\) cuando \(i \neq k\). Aplicar el argumento análogo a las columnas (multiplicar la columna \(j\) de \(A\) por los cofactores de la columna \(k\)) da exactamente el mismo resultado para \(\operatorname{adj}(A)\,A\).
+
+[CALLOUT]
+id: adjugate-identity
+label: Teorema
+title: Identidad de la adjunta y fórmula explícita de la inversa
+tone: key
+
+(1) Para TODA matriz \(A \in M_n(F)\) (invertible o singular),
+\[
+A\,\operatorname{adj}(A) = \operatorname{adj}(A)\,A = \det(A)\,I_n.
+\]
+(2) Siempre que \(\det(A) \neq 0\), la inversa de \(A\) viene dada explícitamente por
+\[
+A^{-1} = \frac{1}{\det(A)}\,\operatorname{adj}(A).
+\]
+[/CALLOUT]
+
+Verifique esto en una matriz \(2 \times 2\) general \(A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\). Sus cuatro cofactores son \(C_{11} = d\), \(C_{12} = -c\), \(C_{21} = -b\) y \(C_{22} = a\). Trasponer la matriz de cofactores \(\begin{bmatrix} d & -c \\ -b & a \end{bmatrix}\) da
+\[
+\operatorname{adj}(A) = \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}, \qquad A^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix},
+\]
+¡recuperando la fórmula estándar de la inversa \(2 \times 2\) como caso particular! Note también que [REF: adjugate-identity.2 | la fórmula de la inversa mediante la adjunta] nos permite extraer una SOLA entrada de \(A^{-1}\) sin calcular el resto de la inversa: la \((i, j)\)-entrada de \(A^{-1}\) es simplemente \(C_{ji} / \det(A)\).
+
+[QUESTION 2]
+[ANSWER: D]
+Sea
+\[
+A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 3 \\ 2 & 0 & 1 \end{bmatrix}.
+\]
+Usando [REF: adjugate-identity | la fórmula de la adjunta], ¿cuál es la \((1, 3)\)-entrada de \(A^{-1}\)?
+
+(A) \(-\dfrac{2}{13}\)
+(B) \(\dfrac{2}{13}\)
+(C) \(-\dfrac{6}{13}\)
+(D) \(\dfrac{6}{13}\)
+(E) \(\dfrac{6}{11}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Suponga que \(A \in M_4(\mathbb{R})\) es invertible con \(\det(A) = 3\). ¿Cuál es \(\det(\operatorname{adj}(A))\)?
+
+(A) \(27\)
+(B) \(81\)
+(C) \(9\)
+(D) \(\dfrac{1}{3}\)
+(E) \(3\)
+[/QUESTION]
+
+=== SECTION 4: La regla de Cramer y su costo computacional ===
+
+Cuando \(A \in M_n(F)\) es invertible y \(\mathbf{b} \in F^n\), el sistema lineal \(A\mathbf{x} = \mathbf{b}\) tiene una única solución \(\mathbf{x} = (x_1, \dots, x_n)^T = A^{-1}\mathbf{b}\). ¿Podemos escribir cada coordenada individual \(x_j\) directamente como un cociente de determinantes?
+
+Para cualquier índice \(j \in \{1, \dots, n\}\), denote por \(I_j(\mathbf{x})\) la matriz \(n \times n\) obtenida al reemplazar la columna \(j\) de \(I_n\) por el vector columna \(\mathbf{x}\), y por \(A_j(\mathbf{b})\) la matriz obtenida al reemplazar la columna \(j\) de \(A\) por \(\mathbf{b}\). Multiplique \(A\) por \(I_j(\mathbf{x})\) columna a columna:
+- Para todo \(k \neq j\), la columna \(k\) de \(I_j(\mathbf{x})\) es el vector de la base estándar \(\mathbf{e}_k\), de modo que la columna \(k\) de \(A I_j(\mathbf{x})\) es \(A\mathbf{e}_k\), que es la columna \(k\) de \(A\).
+- Para la columna \(j\), la columna \(j\) de \(A I_j(\mathbf{x})\) es \(A\mathbf{x} = \mathbf{b}\).
+
+Por lo tanto tenemos la factorización matricial exacta
+\[
+A\,I_j(\mathbf{x}) = A_j(\mathbf{b}).
+\]
+Ahora tome determinantes en ambos lados. Por multiplicatividad, \(\det(A)\det(I_j(\mathbf{x})) = \det(A_j(\mathbf{b}))\). Para hallar \(\det(I_j(\mathbf{x}))\), observe que la fila \(j\) de \(I_j(\mathbf{x})\) tiene \(x_j\) en la columna \(j\) y \(0\) en todas las demás columnas (porque cada columna \(k \neq j\) es \(\mathbf{e}_k\), que tiene su único \(1\) en la fila \(k \neq j\)). Expandir a lo largo de la fila \(j\) deja un único término: \((-1)^{j+j} x_j \det(I_{n-1}) = x_j\). Así, \(\det(A) x_j = \det(A_j(\mathbf{b}))\), y dividir por \(\det(A) \neq 0\) produce la regla de Cramer.
+
+[CALLOUT]
+id: cramers-rule
+label: Teorema
+title: Regla de Cramer
+tone: key
+
+Si \(A \in M_n(F)\) es invertible (\(\det(A) \neq 0\)) y \(\mathbf{b} \in F^n\), la única solución \(\mathbf{x} = (x_1, \dots, x_n)^T\) de \(A\mathbf{x} = \mathbf{b}\) viene dada para cada \(j = 1, \dots, n\) por
+\[
+x_j = \frac{\det(A_j(\mathbf{b}))}{\det(A)},
+\]
+donde \(A_j(\mathbf{b})\) se forma reemplazando la columna \(j\) de \(A\) por \(\mathbf{b}\).
+[/CALLOUT]
+
+Como ejemplo rápido resuelto, suponga que solo necesitamos \(x_2\) en el sistema
+\[
+\begin{bmatrix} 2 & 1 & 0 \\ 1 & 3 & 1 \\ 0 & 2 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 5 \\ 4 \\ 1 \end{bmatrix}.
+\]
+Expandiendo a lo largo de la fila \(1\), \(\det(A) = 2(3 - 2) - 1(1 - 0) = 2 - 1 = 1\). Reemplazar la columna \(2\) por \(\mathbf{b}\) da
+\[
+A_2(\mathbf{b}) = \begin{bmatrix} 2 & 5 & 0 \\ 1 & 4 & 1 \\ 0 & 1 & 1 \end{bmatrix}, \qquad \det(A_2(\mathbf{b})) = 2(4 - 1) - 5(1 - 0) = 6 - 5 = 1,
+\]
+así que \(x_2 = 1/1 = 1\).
+
+Es tentador preguntar: puesto que [REF: laplace-expansion | la expansión por cofactores], [REF: adjugate-identity | la adjunta] y [REF: cramers-rule | la regla de Cramer] dan fórmulas cerradas, ¿por qué las bibliotecas de álgebra lineal numérica siguen usando la eliminación gaussiana? ¡Cuente las operaciones aritméticas! La expansión ingenua por cofactores de una matriz \(n \times n\) realiza \(n\) llamadas recursivas de tamaño \(n - 1\), de modo que su número de operaciones crece como \(n!\) (factorial). Para \(n = 20\), \(20! \approx 2.4 \times 10^{18}\) operaciones: incluso a mil millones de operaciones por segundo, la expansión ingenua por cofactores tardaría más de \(75\) años para un solo determinante \(20 \times 20\), ¡y la regla de Cramer necesitaría \(21\) determinantes de ese tamaño! En contraste, la eliminación gaussiana toma aproximadamente \(\frac{2}{3} n^3\) operaciones: menos de \(6000\) operaciones para \(n = 20\), terminando en microsegundos.
+
+[TABLE]
+Método | Costo de operaciones (matriz densa general \(n \times n\)) | Mejor caso de uso
+Eliminación gaussiana | \(O(n^3)\) | Determinantes numéricos, resolver \(A\mathbf{x} = \mathbf{b}\), calcular \(A^{-1}\) para \(n \ge 4\)
+Expansión de Laplace por cofactores | \(O(n!)\) ingenua | \(n\) pequeño (\(n \le 3\)), filas o columnas muy dispersas, parámetros simbólicos, demostraciones teóricas
+Adjunta y regla de Cramer | \(O((n+1)!)\) ingenua (o \(O(n^4)\) con eliminación) | Fórmulas simbólicas para \(A^{-1}\) o una coordenada \(x_j\), dependencia teórica de parámetros (p. ej., probar que las entradas de \(A^{-1}\) son funciones racionales de las entradas de \(A\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: C]
+Considere el sistema lineal dependiente de un parámetro
+\[
+\begin{bmatrix} k & 1 & 0 \\ 1 & k & 1 \\ 0 & 1 & k \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix},
+\]
+donde \(k \in \mathbb{R}\) se elige de modo que la matriz de coeficientes sea invertible. Usando [REF: cramers-rule | la regla de Cramer], ¿cuál es \(x_2\) como función de \(k\)?
+
+(A) \(\dfrac{3}{k^2 - 2}\)
+(B) \(\dfrac{-3}{k^2 + 2}\)
+(C) \(\dfrac{-3}{k^2 - 2}\)
+(D) \(\dfrac{-1}{k^2 - 2}\)
+(E) \(\dfrac{3}{k^2 + 2}\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Suponga que \(A\) es una matriz densa \(15 \times 15\) con entradas reales de punto flotante y \(\mathbf{b} \in \mathbb{R}^{15}\). ¿Qué valoración compara con precisión el cálculo de la solución \(\mathbf{x}\) de \(A\mathbf{x} = \mathbf{b}\) mediante eliminación gaussiana frente a la regla de Cramer ingenua (evaluando cada determinante mediante expansión recursiva por cofactores)?
+
+(A) Ambos métodos requieren \(O(n^3)\) operaciones aritméticas, por lo que tienen un tiempo de ejecución comparable para \(n = 15\).
+(B) La regla de Cramer ingenua es más rápida porque evita intercambios de filas y divisiones hasta el paso final.
+(C) La regla de Cramer ingenua deja de dar la solución matemática exacta siempre que \(n > 3\).
+(D) La eliminación gaussiana requiere \(O(n!)\) operaciones cuando también se necesita \(\det(A)\), lo que hace preferible la regla de Cramer.
+(E) Ambos métodos definen la misma solución exacta cuando \(\det(A) \neq 0\), pero la regla de Cramer ingenua requiere \(O((n+1)!)\) operaciones y es enormemente más lenta que la eliminación gaussiana \(O(n^3)\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suponga que \(A \in M_n(\mathbb{Z})\) es una matriz con entradas enteras. ¿Qué condición es A LA VEZ necesaria y suficiente para que \(A^{-1}\) exista Y también tenga todas sus entradas enteras (\(A^{-1} \in M_n(\mathbb{Z})\))?
+
+(A) \(\det(A) \neq 0\)
+(B) \(\det(A) \in \{-1, 1\}\)
+(C) \(\det(A) = 1\)
+(D) Toda entrada de \(\operatorname{adj}(A)\) es divisible por \(n\)
+(E) \(\det(A)\) es un entero impar distinto de cero
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suponga que \(A \in M_n(\mathbb{R})\) (\(n \ge 3\)) tiene rango estrictamente menor que \(n - 1\). ¿Qué es \(\operatorname{adj}(A)\)?
+
+(A) La matriz nula \(0 \in M_n(\mathbb{R})\)
+(B) Una matriz de rango \(1\)
+(C) Una matriz de rango \(n - 1\)
+(D) Una matriz invertible con determinante \(1\)
+(E) Imposible de determinar sin conocer las entradas exactas de \(A\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Sea \(A \in M_n(\mathbb{R})\) (\(n \ge 2\)) invertible, y sea \(C\) la matriz de cofactores de \(A\) (de modo que \(\operatorname{adj}(A) = C^T\)). Exprese \(\operatorname{adj}(\operatorname{adj}(A))\) en términos de \(A\) y \(\det(A)\).
+
+(A) \((\det A)^{n-1} A\)
+(B) \((\det A)^{n-2} A^T\)
+(C) \((\det A)^{-1} A\)
+(D) \((\det A)^{n-2} A\)
+(E) \((\det A)^{n} A^{-1}\)
+[/BONUS]

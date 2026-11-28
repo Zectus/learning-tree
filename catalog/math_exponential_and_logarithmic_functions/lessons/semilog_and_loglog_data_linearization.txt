@@ -1,0 +1,201 @@
+=== SECTION 1: Straightening exponential curves on a semi-log plot ===
+
+Suppose an experiment produces a table of positive measurements \((x, y)\) whose scatter plot bends sharply upward. Is the underlying relationship an exponential law \(y = a \cdot b^x\) or a power law \(y = a \cdot x^p\)? By eye alone, both curves look smoothly upward-bending and can appear nearly indistinguishable over a modest window. Yet our eyes—and linear algebra—are extraordinarily sharp at spotting a STRAIGHT LINE. By applying logarithms to one or both axes, we can straighten each model type into a linear equation \(Y = m X + c\), diagnose which model fits the data, and read its exact parameters off the slope and vertical intercept.
+
+Start with an exponential relationship \(y = a \cdot b^x\) (with \(a > 0, b > 0\)). Taking the natural logarithm \(\ln\) of both sides and applying the product and power laws of logarithms gives
+\[
+\ln y = \ln(a \cdot b^x) = \ln a + \ln(b^x) = (\ln b)\, x + \ln a.
+\]
+If we set \(Y = \ln y\) while keeping the horizontal coordinate \(x\) untransformed, this equation takes the exact linear form
+\[
+Y = m x + c, \qquad \text{where } m = \ln b \text{ and } c = \ln a.
+\]
+A plot of \((x, \ln y)\) (or equivalently \((x, \log_{10} y)\)) is called a SEMI-LOG plot because only ONE axis (the vertical axis) is logarithmic. Every exponential function becomes a straight line on a semi-log plot, and back-transforming the line's slope \(m\) and vertical intercept \(c\) recovers the original parameters exactly:
+\[
+a = e^c \qquad \text{and} \qquad b = e^m \qquad (\text{so } y = e^c \cdot (e^m)^x = e^c e^{mx}).
+\]
+Notice that if you write the exponential model in continuous form \(y = a e^{kx}\), then \(\ln y = kx + \ln a\), so the semi-log slope equals \(k\) directly while \(a = e^c\). If base-10 logarithms are used instead (\(\log_{10} y = m x + c\)), the exact same derivation gives \(a = 10^c\) and \(b = 10^m\).
+
+[CALLOUT]
+id: semilog-bridge
+label: Method
+title: Semi-log linearization for exponential models
+tone: key
+
+An exponential model \(y = a \cdot b^x\) (\(a > 0, b > 0\)) linearizes on a semi-log plot as follows:
+
+(1) Natural-log semi-log line: Plotting \(Y = \ln y\) against \(x\) gives \(Y = m x + c\) with \(m = \ln b\) and \(c = \ln a\).
+(2) Back-transformation: Recover \(a = e^c\) and \(b = e^m\) (or \(y = e^c e^{mx}\) in continuous form).
+(3) Base-10 variant: Plotting \(Y = \log_{10} y\) against \(x\) gives \(Y = m x + c\) with \(a = 10^c\) and \(b = 10^m\).
+[/CALLOUT]
+
+The semi-log graph below plots \(Y = \ln y\) against \(x\) for two competing curves: the exponential \(y = 2(1.6)^x\) becomes a perfectly straight line of slope \(\ln(1.6)\) and intercept \(\ln 2\), whereas the power law \(y = 2 x^2\) bends visibly downward as \(Y = \ln 2 + 2\ln x\).
+
+[GRAPH]
+type: function2d
+title: Semi-log plot \((x, \ln y)\): exponential becomes linear while power law bends
+xlabel: \(x\)
+ylabel: \(\ln y\)
+xrange: 0.5, 5
+yrange: -1, 5
+trace: log(2) + x * log(1.6) | label: Exponential \(y = 2(1.6)^x\) (straight)
+trace: log(2) + 2 * log(x) | label: Power law \(y = 2x^2\) (curved)
+point: 1, log(3.2) | label: \((1, \ln 3.2)\)
+point: 3, log(2 * 1.6^3) | label: \((3, \ln 8.192)\)
+[/GRAPH]
+
+Worked example (Recovering an exponential formula from a semi-log line): Suppose a semi-log plot of \((x, \ln y)\) produces a straight line passing through \((0, 1.5)\) and \((4, 3.5)\). Find the exact equation for \(y\) in terms of \(x\).
+
+1. Compute the slope and vertical intercept of the line \(Y = m x + c\):
+\[
+m = \frac{3.5 - 1.5}{4 - 0} = 0.5, \qquad c = 1.5.
+\]
+2. Back-transform using [REF: semilog-bridge.2 | the semi-log back-transformation]:
+\[
+a = e^{1.5} \approx 4.482, \qquad b = e^{0.5} \approx 1.649.
+\]
+Therefore \(y = e^{1.5} e^{0.5 x} \approx 4.482 (1.649)^x\). Resist the temptation to read \(c = 1.5\) directly as \(a\): at \(x = 0\), \(\ln y = 1.5\) means \(y = e^{1.5}\), not \(y = 1.5\)!
+
+[QUESTION 1]
+[ANSWER: B]
+On a base-10 semi-log plot of \((x, \log_{10} y)\), a dataset lies exactly on the straight line passing through \((0, 2)\) and \((3, 5)\). What is the exact formula for \(y\) as a function of \(x\)?
+
+(A) \(y = 2 \cdot 10^x\)
+(B) \(y = 100 \cdot 10^x\)
+(C) \(y = 100 x\)
+(D) \(y = x + 2\)
+(E) \(y = 10 \cdot 100^x\)
+[/QUESTION]
+
+=== SECTION 2: Straightening power laws on a log-log plot ===
+
+Why did \(y = 2 x^2\) remain curved on the semi-log plot? Because taking \(\ln\) of a power law \(y = a \cdot x^p\) (for \(a > 0\) and \(x > 0\)) produces a logarithm on BOTH sides:
+\[
+\ln y = \ln(a \cdot x^p) = \ln a + p \ln x.
+\]
+Now set \(X = \ln x\) AND \(Y = \ln y\). In the transformed coordinates \((X, Y)\), the equation becomes a straight line:
+\[
+Y = p X + \ln a.
+\]
+A plot of \((\ln x, \ln y)\) (or \((\log_{10} x, \log_{10} y)\)) is called a LOG-LOG plot because BOTH axes are logarithmic. Compare the parameter recovery carefully with semi-log:
+- The slope \(m\) of the log-log line equals the exponent \(p\) DIRECTLY (\(p = m\))—do NOT exponentiate \(m\)! Notice also that \(p\) is identical whether you use \(\ln\) or \(\log_{10}\).
+- The vertical intercept \(c\) (evaluated at \(X = 0\), which corresponds to \(x = 1\) because \(\ln 1 = 0\)) equals \(\ln a\) (or \(\log_{10} a\)), so you still back-transform \(a = e^c\) (or \(a = 10^c\) in base \(10\)).
+
+[CALLOUT]
+id: loglog-bridge
+label: Method
+title: Log-log linearization for power-law models
+tone: key
+
+A power-law model \(y = a \cdot x^p\) (\(a > 0, x > 0\)) linearizes on a log-log plot as follows:
+
+(1) Linear form: Setting \(X = \ln x\) and \(Y = \ln y\) yields \(Y = m X + c\), where \(m = p\) and \(c = \ln a\).
+(2) Back-transformation: Recover \(p = m\) directly and \(a = e^c\) (or \(a = 10^c\) if base-\(10\) logarithms are plotted on both axes).
+[/CALLOUT]
+
+Now compare the exact same two functions \(y = 2 x^2\) and \(y = 2(1.6)^x\) on log-log coordinates \((X, Y) = (\ln x, \ln y)\). Here \(x = e^X\), so the power law turns into the straight line \(Y = \ln 2 + 2 X\), while the exponential turns into the upward-curving graph \(Y = \ln 2 + \ln(1.6)\, e^X\).
+
+[GRAPH]
+type: function2d
+title: Log-log plot \((\ln x, \ln y)\): power law becomes linear while exponential bends
+xlabel: \(\ln x\)
+ylabel: \(\ln y\)
+xrange: -0.5, 2.2
+yrange: -1, 6
+trace: log(2) + 2 * x | label: Power law \(y = 2x^2\) (straight)
+trace: log(2) + log(1.6) * exp(x) | label: Exponential \(y = 2(1.6)^x\) (curved)
+point: 0, log(2) | label: \((0, \ln 2)\)
+point: 1, log(2) + 2 | label: \((1, \ln 2 + 2)\)
+[/GRAPH]
+
+[CALLOUT]
+id: intercept-pitfall
+label: Common Pitfall
+title: Two high-frequency back-transformation traps
+tone: caution
+
+(1) Never read the vertical intercept \(c\) directly as \(a\): on BOTH semi-log and log-log plots, \(c = \ln a\) (or \(\log_{10} a\)), so \(a = e^c\) (or \(10^c\)). On a log-log plot, remember that the vertical axis \(X = 0\) corresponds to \(x = 1\), not \(x = 0\).
+(2) Keep the slope roles distinct: on a semi-log plot, \(b = e^m\) (exponentiate the slope to get the base \(b\)); on a log-log plot, \(p = m\) directly (never compute \(e^m\)).
+[/CALLOUT]
+
+Worked example (Recovering a power law from a log-log line): Measurements of orbital period \(y\) versus orbital radius \(x\) produce a log-log line \((\ln x, \ln y)\) through \((0, \ln 5)\) and \((2, \ln 5 + 3)\). Find \(y\) as a function of \(x\).
+
+The slope is
+\[
+p = m = \frac{(\ln 5 + 3) - \ln 5}{2 - 0} = \frac{3}{2},
+\]
+and the vertical intercept is \(c = \ln 5\), so \(a = e^{\ln 5} = 5\). By [REF: loglog-bridge.2 | the log-log recovery rule], \(y = 5 x^{3/2}\).
+
+[QUESTION 2]
+[ANSWER: B]
+On a log-log plot of \((\ln x, \ln y)\) for positive data points, the points lie along the straight line \(\ln y = -2 \ln x + 3\). Which equation expresses \(y\) directly in terms of \(x\)?
+
+(A) \(y = 3 x^{-2}\)
+(B) \(y = e^3 x^{-2}\)
+(C) \(y = e^3 e^{-2x}\)
+(D) \(y = 3 e^{-2x}\)
+(E) \(y = e^3 x^{e^{-2}}\)
+[/QUESTION]
+
+=== SECTION 3: Diagnosing exponential versus power-law behavior from tables ===
+
+When handed a table of raw \((x, y)\) pairs, you can test linearity on semi-log and log-log axes directly by computing consecutive slopes:
+- Semi-log slope test (for exponential \(y = a b^x\)): check whether \(\dfrac{\ln y_2 - \ln y_1}{x_2 - x_1} = \dfrac{\ln(y_2 / y_1)}{x_2 - x_1}\) stays constant across all pairs of points. Equivalently, equal ADDITIVE steps in \(x\) produce equal MULTIPLICATIVE ratios in \(y\).
+- Log-log slope test (for power law \(y = a x^p\)): check whether \(\dfrac{\ln y_2 - \ln y_1}{\ln x_2 - \ln x_1} = \dfrac{\ln(y_2 / y_1)}{\ln(x_2 / x_1)}\) stays constant across all pairs of points. Equivalently, equal MULTIPLICATIVE ratios in \(x\) produce equal MULTIPLICATIVE ratios in \(y\).
+
+[TABLE]
+Model | Linearizing plot | Linear equation | Slope \(m\) | Intercept \(c\) | Raw-data signature
+Exponential \(y = a b^x\) | Semi-log \((x, \ln y)\) | \(\ln y = (\ln b) x + \ln a\) | \(\ln b\) (so \(b = e^m\)) | \(\ln a\) (so \(a = e^c\)) | Equal \(\Delta x \implies\) equal \(y\)-ratio
+Power law \(y = a x^p\) | Log-log \((\ln x, \ln y)\) | \(\ln y = p \ln x + \ln a\) | \(p\) directly | \(\ln a\) (so \(a = e^c\)) | Equal \(x\)-ratio \(\implies\) equal \(y\)-ratio
+[/TABLE]
+
+Worked diagnostic comparison: Test the following two datasets to see which is exponential and which is a power law:
+- Dataset 1: \((1, 4),\; (2, 16),\; (4, 64)\).
+  - Semi-log slopes: from \(x = 1\) to \(2\), \(\frac{\ln(16/4)}{2 - 1} = \ln 4\); from \(x = 2\) to \(4\), \(\frac{\ln(64/16)}{4 - 2} = \frac{\ln 4}{2}\). Not constant—NOT exponential!
+  - Log-log slopes: from \(x = 1\) to \(2\), \(\frac{\ln(16/4)}{\ln(2/1)} = \frac{\ln 4}{\ln 2} = 2\); from \(x = 2\) to \(4\), \(\frac{\ln(64/16)}{\ln(4/2)} = \frac{\ln 4}{\ln 2} = 2\). Constant! So \(p = 2\), and plugging \((1, 4)\) into \(y = a x^2\) gives \(a = 4\), hence \(y = 4 x^2\).
+- Dataset 2: \((1, 6),\; (2, 18),\; (4, 162)\).
+  - Semi-log slopes: from \(x = 1\) to \(2\), \(\frac{\ln(18/6)}{2 - 1} = \ln 3\); from \(x = 2\) to \(4\), \(\frac{\ln(162/18)}{4 - 2} = \frac{\ln 9}{2} = \ln 3\). Constant! So \(b = e^{\ln 3} = 3\), and plugging \((1, 6)\) into \(y = a \cdot 3^x\) gives \(a = 2\), hence \(y = 2 \cdot 3^x\).
+
+[QUESTION 3]
+[ANSWER: C]
+An experiment records three exact positive data points: \((x, y) = (1, 3),\; (2, 24),\; (3, 81)\). Which model fits all three points exactly?
+
+(A) Exponential: \(y = 3 \cdot 8^x\)
+(B) Exponential: \(y = \dfrac{3}{8} \cdot 8^x\)
+(C) Power law: \(y = 3 x^3\)
+(D) Power law: \(y = x^3 + 2\)
+(E) Power law: \(y = 3 x^8\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose a physical quantity obeys \(y = 7 e^{0.4 x}\) for \(x > 0\). How does its graph appear on a natural-log semi-log plot \((x, \ln y)\) compared with a natural-log log-log plot \((\ln x, \ln y)\)?
+
+(A) A straight line with slope \(0.4\) and vertical intercept \(\ln 7\) on the semi-log plot; curved on the log-log plot
+(B) A straight line with slope \(0.4\) and vertical intercept \(7\) on the semi-log plot; curved on the log-log plot
+(C) Curved on the semi-log plot; a straight line with slope \(0.4\) and vertical intercept \(\ln 7\) on the log-log plot
+(D) A straight line on both plots, with slope \(0.4\) on semi-log and slope \(e^{0.4}\) on log-log
+(E) A straight line with slope \(\ln(0.4)\) and vertical intercept \(\ln 7\) on the semi-log plot; curved on the log-log plot
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+A dataset obeys a power law \(y = a x^p\) (\(a > 0, x > 0\)). Alice plots \((\ln x, \ln y)\) and obtains a straight line with slope \(m_A\) and vertical intercept \(c_A\). Bob plots \((\log_{10} x, \log_{10} y)\) for the exact same dataset and obtains slope \(m_B\) and vertical intercept \(c_B\). How do \((m_B, c_B)\) relate to \((m_A, c_A)\)?
+
+(A) \(m_B = m_A\) and \(c_B = \dfrac{c_A}{\ln 10}\)
+(B) \(m_B = \dfrac{m_A}{\ln 10}\) and \(c_B = \dfrac{c_A}{\ln 10}\)
+(C) \(m_B = m_A\) and \(c_B = c_A\)
+(D) \(m_B = m_A \ln 10\) and \(c_B = c_A \ln 10\)
+(E) \(m_B = \dfrac{m_A}{\ln 10}\) and \(c_B = c_A\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A power-law relationship \(y = a x^p\) (\(x > 0\)) passes through \((2, 12)\) and \((8, 3)\). What is the exact value of \(y\) when \(x = 32\)?
+
+(A) \(\dfrac{3}{16}\)
+(B) \(\dfrac{3}{4}\)
+(C) \(\dfrac{3}{2}\)
+(D) \(1\)
+(E) \(\dfrac{3}{8}\)
+[/BONUS]

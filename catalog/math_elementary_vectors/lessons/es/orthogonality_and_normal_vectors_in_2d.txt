@@ -1,0 +1,181 @@
+=== SECTION 1: Ortogonalidad y rotaciones de 90 grados en el plano ===
+
+En la lección anterior vimos que dos vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\) forman un ángulo de \(90^\circ\) si y solo si \(\mathbf{u} \cdot \mathbf{v} = 0\). Como también se cumple \(\mathbf{0} \cdot \mathbf{v} = 0\) para todo vector \(\mathbf{v}\), los matemáticos adoptan una única palabra algebraica uniforme que abarca ambos casos limpiamente: decimos que dos vectores \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) son ortogonales (escrito \(\mathbf{u} \perp \mathbf{v}\)) siempre que \(\mathbf{u} \cdot \mathbf{v} = 0\). Para vectores no nulos, «ortogonal» y «perpendicular» significan exactamente lo mismo; por convención, el vector nulo \(\mathbf{0}\) es ortogonal a todo vector aunque no tenga dirección geométrica.
+
+Plantea ahora una pregunta práctica de construcción: dado un único vector no nulo \(\mathbf{v} = \langle a, b \rangle\), ¿cómo escribimos de inmediato un vector no nulo perpendicular a \(\mathbf{v}\)? Necesitamos \(\langle x, y \rangle\) que satisfaga \(ax + by = 0\). Observa las dos maneras más sencillas de hacer que los productos se cancelen idénticamente:
+\[
+a(-b) + b(a) = 0 \qquad \text{y} \qquad a(b) + b(-a) = 0.
+\]
+Intercambiar las dos componentes y negar una de ellas produce dos vectores ortogonales de exactamente la misma longitud \(\sqrt{(-b)^2 + a^2} = \sqrt{a^2 + b^2} = \|\mathbf{v}\|\):
+- \(\langle -b, a \rangle\) es \(\mathbf{v}\) rotado \(90^\circ\) en sentido antihorario. (Comprueba en \(\mathbf{i} = \langle 1, 0 \rangle\): intercambiar y negar la primera da \(\langle 0, 1 \rangle = \mathbf{j}\), ¡un giro de \(90^\circ\) en sentido antihorario!)
+- \(\langle b, -a \rangle = -\langle -b, a \rangle\) es \(\mathbf{v}\) rotado \(90^\circ\) en sentido horario.
+
+[CALLOUT]
+id: orthog-2d
+label: Regla
+title: Prueba de ortogonalidad y construcción perpendicular en 2D
+tone: key
+
+Sean \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\).
+
+(1) Prueba de ortogonalidad: \(\mathbf{u} \perp \mathbf{v}\) si y solo si \(\mathbf{u} \cdot \mathbf{v} = u_x v_x + u_y v_y = 0\).
+(2) Rotaciones de \(90^\circ\): para cualquier \(\mathbf{v} = \langle a, b \rangle\) no nulo, el vector \(\langle -b, a \rangle\) se obtiene rotando \(\mathbf{v}\) \(90^\circ\) en sentido antihorario, y \(\langle b, -a \rangle\) rotándolo \(90^\circ\) en sentido horario. Todo vector ortogonal a \(\mathbf{v}\) es un múltiplo escalar \(k\langle -b, a \rangle\).
+[/CALLOUT]
+
+Observa cómo [REF: orthog-2d | esta regla vectorial] generaliza la clásica regla de la pendiente recíproca negativa de la geometría analítica. Cuando \(a \ne 0\) y \(b \ne 0\), la pendiente a lo largo de \(\langle a, b \rangle\) es \(m_1 = \frac{b}{a}\) y la pendiente a lo largo de \(\langle -b, a \rangle\) es \(m_2 = \frac{a}{-b} = -\frac{a}{b}\), de modo que \(m_1 m_2 = -1\). Sin embargo, la regla vectorial nunca falla con rectas horizontales o verticales: para el vector horizontal \(\langle 4, 0 \rangle\), [REF: orthog-2d.2 | la regla de rotación] produce inmediatamente los vectores verticales \(\langle 0, 4 \rangle\) y \(\langle 0, -4 \rangle\) sin división por cero.
+
+La gráfica siguiente muestra \(\mathbf{v} = \langle 3, 1 \rangle\) junto con sus dos rotaciones de \(90^\circ\), \(\langle -1, 3 \rangle\) y \(\langle 1, -3 \rangle\), todas sobre la misma circunferencia de radio \(\sqrt{10}\).
+
+[GRAPH]
+type: parametric2d
+title: Rotación de \(\mathbf{v} = \langle 3, 1 \rangle\) en \(+90^\circ\) a \(\langle -1, 3 \rangle\) y en \(-90^\circ\) a \(\langle 1, -3 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.8, 3.8
+yrange: -3.8, 3.8
+trace: sqrt(10)*cos(t), sqrt(10)*sin(t) | label: \(\text{circunferencia de radio } \sqrt{10}\) | color: #cbd5e1
+segment: 0, 0, 3, 1 | label: \(\mathbf{v}\) | color: #2563eb
+segment: 0, 0, -1, 3 | label: \(\langle -1, 3 \rangle\) | color: #16a34a
+segment: 0, 0, 1, -3 | label: \(\langle 1, -3 \rangle\) | color: #d97706
+point: 3, 1 | label: \((3, 1)\)
+point: -1, 3 | label: \((-1, 3)\)
+point: 1, -3 | label: \((1, -3)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Para qué valor real de \(k\) son ortogonales los vectores \(\mathbf{u} = \langle k + 1, 4 \rangle\) y \(\mathbf{v} = \langle 2, k - 5 \rangle\)?
+
+(A) \(k = -3\)
+(B) \(k = 2\)
+(C) \(k = 3\)
+(D) \(k = 6\)
+(E) \(k = 9\)
+[/QUESTION]
+
+=== SECTION 2: Vectores normales y formas duales de una recta en 2D ===
+
+Antes describimos una recta \(L\) especificando un punto base \(P_0(x_0, y_0)\) y un vector director \(\mathbf{d}\) que apunta A LO LARGO de la recta, dando la forma paramétrica \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\). En \(\mathbb{R}^2\) existe una segunda manera, igualmente poderosa, de determinar una recta: especificar un punto base \(P_0\) y un vector normal no nulo \(\mathbf{n} = \langle a, b \rangle\) que apunta PERPENDICULAR a la recta.
+
+¿Qué puntos \(P(x, y)\) (con vector de posición \(\mathbf{r} = \langle x, y \rangle\)) pertenecen a la recta \(L\) que pasa por \(P_0\) y es perpendicular a \(\mathbf{n}\)? Precisamente aquellos puntos para los cuales el desplazamiento \(\overrightarrow{P_0 P} = \mathbf{r} - \mathbf{r}_0\) es ortogonal a \(\mathbf{n}\). Usando [REF: orthog-2d.1 | la prueba de ortogonalidad], esa única condición geométrica se convierte en la ecuación punto-normal de \(L\):
+\[
+\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0.
+\]
+Desarrolla ahora ese producto punto en componentes, con \(\mathbf{n} = \langle a, b \rangle\) y \(\mathbf{r} - \mathbf{r}_0 = \langle x - x_0, y - y_0 \rangle\):
+\[
+a(x - x_0) + b(y - y_0) = 0 \iff ax + by = ax_0 + by_0.
+\]
+Fijando la constante \(c = ax_0 + by_0 = \mathbf{n} \cdot \mathbf{r}_0\), recuperamos la ecuación cartesiana familiar \(ax + by = c\), ¡y acabamos de descubrir una enorme clave geométrica! Los coeficientes \(a\) y \(b\) que acompañan a \(x\) y a \(y\) en \(ax + by = c\) son literalmente las componentes de un vector normal \(\mathbf{n} = \langle a, b \rangle\) perpendicular a la recta.
+
+[CALLOUT]
+id: normal-line
+label: Teorema
+title: Formas punto-normal y cartesiana de una recta en 2D
+tone: key
+
+Sea \(L\) una recta en \(\mathbb{R}^2\) que pasa por \(P_0(x_0, y_0)\) (\(\mathbf{r}_0 = \langle x_0, y_0 \rangle\)) con vector normal no nulo \(\mathbf{n} = \langle a, b \rangle\).
+
+(1) Forma punto-normal: \(\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\).
+(2) Forma cartesiana (general): \(ax + by = c\), donde \(c = \mathbf{n} \cdot \mathbf{r}_0 = ax_0 + by_0\).
+(3) Lectura geométrica de \(ax + by = c\): \(\mathbf{n} = \langle a, b \rangle\) es perpendicular a \(L\), y \(\mathbf{d} = \langle -b, a \rangle\) (o \(\langle b, -a \rangle\)) es paralelo a \(L\).
+[/CALLOUT]
+
+Unir [REF: orthog-2d.2 | la regla de rotación de 90 grados] con [REF: normal-line | la forma normal] hace que pasar entre las descripciones paramétrica y cartesiana sea inmediato:
+- Paramétrica \(\to\) Cartesiana: dada \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\), rota \(\mathbf{d} = \langle d_x, d_y \rangle\) en \(90^\circ\) para obtener una normal \(\mathbf{n} = \langle -d_y, d_x \rangle\) (o \(\langle d_y, -d_x \rangle\)), y luego evalúa \(c = \mathbf{n} \cdot \mathbf{r}_0\) para escribir \(ax + by = c\).
+- Cartesiana \(\to\) Paramétrica: dada \(ax + by = c\), elige cualquier punto conveniente \(P_0(x_0, y_0)\) que satisfaga \(ax_0 + by_0 = c\) (como una intersección con un eje), y rota \(\mathbf{n} = \langle a, b \rangle\) en \(90^\circ\) para obtener un vector director \(\mathbf{d} = \langle -b, a \rangle\), lo que da \(\mathbf{r}(t) = \langle x_0, y_0 \rangle + t\langle -b, a \rangle\).
+
+Por ejemplo, toma la recta cartesiana \(2x + 3y = 12\). Leer los coeficientes entrega de inmediato el vector normal \(\mathbf{n} = \langle 2, 3 \rangle\) y un vector director \(\mathbf{d} = \langle -3, 2 \rangle\). Como \(P_0(3, 2)\) satisface \(2(3) + 3(2) = 12\), una forma paramétrica es \(\mathbf{r}(t) = \langle 3, 2 \rangle + t\langle -3, 2 \rangle\), ilustrada a continuación.
+
+[GRAPH]
+type: parametric2d
+title: Recta \(2x + 3y = 12\) con punto base \(P_0(3, 2)\), dirección \(\mathbf{d} = \langle -3, 2 \rangle\) y normal \(\mathbf{n} = \langle 2, 3 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.2, 1.4
+xrange: -1.5, 7
+yrange: -1, 6
+trace: 3 - 3*t, 2 + 2*t | label: \(2x + 3y = 12\) | color: #2563eb
+segment: 3, 2, 0, 4 | label: \(\mathbf{d}\) | color: #16a34a
+segment: 3, 2, 5, 5 | label: \(\mathbf{n}\) | color: #dc2626
+point: 3, 2 | label: \(P_0(3, 2)\)
+point: 5, 5 | label: \((5, 5)\)
+point: 0, 4 | label: \((0, 4)\)
+[/GRAPH]
+
+[TABLE]
+Forma de la recta \(L\) | Ecuación | Vector directamente visible | Más adecuada para
+Paramétrica | \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\) | Vector director \(\mathbf{d}\) a lo largo de \(L\) | Generar puntos sobre \(L\), movimiento, intersecciones
+Punto-normal | \(\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\) | Vector normal \(\mathbf{n} \perp L\) | Construir una recta perpendicular a una dirección dada
+Cartesiana | \(ax + by = c\) | Vector normal \(\mathbf{n} = \langle a, b \rangle\) | Comprobar pertenencia de puntos, comparar rectas paralelas/perpendiculares
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Qué ecuación cartesiana representa la recta dada paramétricamente por \(\mathbf{r}(t) = \langle 2, -3 \rangle + t\langle 4, 5 \rangle\)?
+
+(A) \(4x + 5y = -7\)
+(B) \(5x + 4y = -2\)
+(C) \(5x - 4y = -2\)
+(D) \(5x - 4y = 22\)
+(E) \(4x - 5y = 23\)
+[/QUESTION]
+
+=== SECTION 3: Ángulos agudos entre rectas y demostraciones vectoriales de ángulos rectos ===
+
+Cuando dos rectas \(L_1\) y \(L_2\) se intersecan en \(\mathbb{R}^2\), forman dos pares de ángulos opuestos por el vértice: un ángulo agudo \(\phi \in (0^\circ, 90^\circ]\) y su ángulo obtuso suplementario \(180^\circ - \phi\). Por convención, el ángulo entre dos rectas designa al ángulo agudo (o recto) \(\phi \in [0^\circ, 90^\circ]\).
+
+Supón que \(L_1\) y \(L_2\) tienen vectores directores \(\mathbf{d}_1, \mathbf{d}_2\) y vectores normales \(\mathbf{n}_1, \mathbf{n}_2\). Según en qué sentido orientemos \(\mathbf{d}_1\) y \(\mathbf{d}_2\) a lo largo de sus rectas, \(\mathbf{d}_1 \cdot \mathbf{d}_2\) puede resultar positivo (dando \(\phi\)) o negativo (dando \(180^\circ - \phi\)). Tomar el valor absoluto elimina la elección de orientación y selecciona siempre \(\cos\phi \ge 0\), es decir, \(\phi \in [0^\circ, 90^\circ]\). Más aún, rotar ambas rectas \(90^\circ\) convierte \(\mathbf{d}_1, \mathbf{d}_2\) en \(\mathbf{n}_1, \mathbf{n}_2\) sin alterar el ángulo entre ellas, por lo que podemos usar el par de vectores que ya tengamos a la mano:
+\[
+\cos\phi = \frac{|\mathbf{d}_1 \cdot \mathbf{d}_2|}{\|\mathbf{d}_1\|\,\|\mathbf{d}_2\|} = \frac{|\mathbf{n}_1 \cdot \mathbf{n}_2|}{\|\mathbf{n}_1\|\,\|\mathbf{n}_2\|}, \qquad \phi \in [0^\circ, 90^\circ].
+\]
+En particular, dos rectas \(a_1 x + b_1 y = c_1\) y \(a_2 x + b_2 y = c_2\) son perpendiculares si y solo si \(\mathbf{n}_1 \cdot \mathbf{n}_2 = a_1 a_2 + b_1 b_2 = 0\), y paralelas (o coincidentes) si y solo si \(a_1 b_2 - b_1 a_2 = 0\).
+
+Por último, combinar vectores de posición con [REF: orthog-2d.1 | la prueba de ortogonalidad] convierte teoremas clásicos de ángulos rectos de la geometría euclidiana en identidades algebraicas de dos líneas.
+
+Demostración resuelta 1 (Teorema de Tales): Todo ángulo inscrito en una semicircunferencia es siempre un ángulo recto.
+Coloca el origen \(O\) en el centro de una circunferencia de radio \(R\). Sean \(A\) y \(B\) los extremos de un diámetro, con vectores de posición \(\mathbf{a}\) y \(-\mathbf{a}\) (ya que \(O\) es el punto medio de \(AB\)), y sea \(P\) cualquier otro punto de la circunferencia con vector de posición \(\mathbf{p}\). Como tanto \(A\) como \(P\) pertenecen a la circunferencia de radio \(R\), se cumple \(\|\mathbf{p}\| = \|\mathbf{a}\| = R\). Expresa ahora los dos lados de \(\angle APB\) como \(\overrightarrow{AP} = \mathbf{p} - \mathbf{a}\) y \(\overrightarrow{BP} = \mathbf{p} - (-\mathbf{a}) = \mathbf{p} + \mathbf{a}\), y calcula su producto punto:
+\[
+\overrightarrow{AP} \cdot \overrightarrow{BP} = (\mathbf{p} - \mathbf{a}) \cdot (\mathbf{p} + \mathbf{a}) = \mathbf{p} \cdot \mathbf{p} + \mathbf{p} \cdot \mathbf{a} - \mathbf{a} \cdot \mathbf{p} - \mathbf{a} \cdot \mathbf{a} = \|\mathbf{p}\|^2 - \|\mathbf{a}\|^2 = R^2 - R^2 = 0.
+\]
+Como \(\overrightarrow{AP}\) y \(\overrightarrow{BP}\) son no nulos y su producto punto vale \(0\), son perpendiculares: \(\angle APB = 90^\circ\).
+
+Demostración resuelta 2 (Las diagonales de un rombo son perpendiculares):
+Sea \(OACB\) un rombo con un vértice en el origen \(O\) y lados adyacentes \(\mathbf{u} = \overrightarrow{OA}\) y \(\mathbf{v} = \overrightarrow{OB}\). Por definición de rombo, los cuatro lados tienen igual longitud, de modo que \(\|\mathbf{u}\| = \|\mathbf{v}\|\). Las dos diagonales son \(\overrightarrow{OC} = \mathbf{u} + \mathbf{v}\) y \(\overrightarrow{BA} = \mathbf{u} - \mathbf{v}\). Al tomar su producto punto se obtiene
+\[
+(\mathbf{u} + \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = \|\mathbf{u}\|^2 - \|\mathbf{v}\|^2 = 0,
+\]
+lo que demuestra de inmediato que las diagonales se cortan a \(90^\circ\). Nota que exactamente la misma álgebra funciona al revés: si las diagonales de un paralelogramo satisfacen \((\mathbf{u} + \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = 0\), entonces \(\|\mathbf{u}\| = \|\mathbf{v}\|\), por lo que el paralelogramo debe ser un rombo.
+
+[QUESTION 3]
+[ANSWER: B]
+¿Cuál es el ángulo agudo \(\phi \in [0^\circ, 90^\circ]\) entre las dos rectas \(L_1: x + 2y = 5\) y \(L_2: x - 3y = 4\)?
+
+(A) \(30^\circ\)
+(B) \(45^\circ\)
+(C) \(60^\circ\)
+(D) \(90^\circ\)
+(E) \(135^\circ\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+¿Cuál es la ecuación cartesiana de la mediatriz del segmento de recta que une \(A(-1, 2)\) y \(B(5, 6)\)?
+
+(A) \(3x + 2y = 14\)
+(B) \(2x - 3y = -8\)
+(C) \(3x + 2y = 7\)
+(D) \(3x - 2y = -2\)
+(E) \(2x + 3y = 16\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+En el triángulo \(ABC\), sea \(H\) el punto donde la altura desde \(A\) (perpendicular a \(BC\)) interseca a la altura desde \(B\) (perpendicular a \(AC\)). Colocando el origen en \(H\) y fijando \(\mathbf{a} = \overrightarrow{HA}\), \(\mathbf{b} = \overrightarrow{HB}\) y \(\mathbf{c} = \overrightarrow{HC}\), estas dos condiciones de perpendicularidad se escriben \(\mathbf{a} \cdot (\mathbf{c} - \mathbf{b}) = 0\) y \(\mathbf{b} \cdot (\mathbf{c} - \mathbf{a}) = 0\). ¿Qué identidad se deduce directamente al combinar estas dos ecuaciones y qué demuestra?
+
+(A) \(\mathbf{a} \cdot \mathbf{b} = 0\), demostrando que \(\angle AHB = 90^\circ\)
+(B) \(\|\mathbf{a}\| = \|\mathbf{b}\| = \|\mathbf{c}\|\), demostrando que \(H\) equidista de \(A, B\) y \(C\)
+(C) \(\mathbf{a} + \mathbf{b} + \mathbf{c} = \mathbf{0}\), demostrando que \(H\) es el baricentro de \(\triangle ABC\)
+(D) \((\mathbf{c} - \mathbf{a}) \cdot (\mathbf{c} - \mathbf{b}) = 0\), demostrando que \(\angle ACB = 90^\circ\)
+(E) \(\mathbf{c} \cdot (\mathbf{b} - \mathbf{a}) = 0\), demostrando que \(CH\) es perpendicular a \(AB\) (por lo que las tres alturas concurren en \(H\))
+[/BONUS]

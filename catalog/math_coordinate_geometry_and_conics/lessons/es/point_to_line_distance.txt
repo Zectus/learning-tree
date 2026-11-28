@@ -1,0 +1,259 @@
+=== SECTION 1: Deducción de la fórmula de la distancia de un punto a una recta ===
+
+Dados un punto \(P_0(x_0, y_0)\) y una recta \(L: Ax + By + C = 0\) (con \(A\) y \(B\) no ambos nulos), ¿qué tan cerca pasa \(L\) de \(P_0\)? Si \(H\) es el pie de la perpendicular trazada desde \(P_0\) a \(L\), entonces para cualquier otro punto \(Q\) sobre \(L\), \(\triangle P_0 H Q\) es un triángulo rectángulo con hipotenusa \(P_0 Q\), de modo que \(P_0 H < P_0 Q\). Por lo tanto, la distancia mínima \(d(P_0, L)\) es la longitud del segmento perpendicular \(P_0 H\).
+
+Antes de deducir el caso general, verifique directamente las dos rectas alineadas con los ejes:
+- Si \(A = 0\) y \(B \neq 0\), la recta es horizontal, \(y = -\frac{C}{B}\), así que la distancia perpendicular es puramente vertical:
+\[
+d(P_0, L) = \left\lvert y_0 - \left(-\frac{C}{B}\right) \right\rvert = \frac{\lvert B y_0 + C \rvert}{\lvert B \rvert} = \frac{\lvert 0 \cdot x_0 + B y_0 + C \rvert}{\sqrt{0^2 + B^2}}.
+\]
+- Si \(B = 0\) y \(A \neq 0\), la recta es vertical, \(x = -\frac{C}{A}\), así que la distancia perpendicular es puramente horizontal:
+\[
+d(P_0, L) = \left\lvert x_0 - \left(-\frac{C}{A}\right) \right\rvert = \frac{\lvert A x_0 + C \rvert}{\lvert A \rvert} = \frac{\lvert A x_0 + 0 \cdot y_0 + C \rvert}{\sqrt{A^2 + 0^2}}.
+\]
+
+Suponga ahora que \(A \neq 0\) y \(B \neq 0\) (una recta oblicua). Si \(P_0\) pertenece a \(L\), entonces \(Ax_0 + By_0 + C = 0\) y \(d(P_0, L) = 0\). En caso contrario, en lugar de resolver de inmediato un sistema para el pie \(H\), trace un segmento vertical desde \(P_0(x_0, y_0)\) hasta el punto \(Q(x_0, y_Q)\) sobre \(L\). Como \(Q\) está sobre \(L\), se cumple \(A x_0 + B y_Q + C = 0\), de modo que \(y_Q = -\frac{A x_0 + C}{B}\). La longitud vertical \(P_0 Q\) es por tanto
+\[
+P_0 Q = \lvert y_0 - y_Q \rvert = \left\lvert y_0 + \frac{A x_0 + C}{B} \right\rvert = \frac{\lvert A x_0 + B y_0 + C \rvert}{\lvert B \rvert}.
+\]
+Compare ahora el triángulo rectángulo \(\triangle P_0 H Q\) (ángulo recto en \(H\), hipotenusa \(P_0 Q\)) con un triángulo rectángulo de pendiente a lo largo de \(L\). Como \(L\) tiene pendiente \(-\frac{A}{B}\), un triángulo de pendiente a lo largo de \(L\) tiene cateto horizontal \(\lvert B \rvert\), cateto vertical \(\lvert A \rvert\) e hipotenusa \(\sqrt{A^2 + B^2}\). Observe el ángulo agudo \(\angle H P_0 Q\) entre la perpendicular \(P_0 H\) y el segmento vertical \(P_0 Q\): es complementario de \(\angle P_0 Q H\), que a su vez es complementario del ángulo agudo entre \(L\) y la horizontal. Así pues, \(\angle H P_0 Q\) es igual al ángulo agudo entre \(L\) y la horizontal, lo que hace a \(\triangle P_0 H Q\) semejante al triángulo de pendiente.
+
+Igualar la razón del cateto adyacente a este ángulo agudo respecto a la hipotenusa en ambos triángulos semejantes da
+\[
+\frac{P_0 H}{P_0 Q} = \frac{\lvert B \rvert}{\sqrt{A^2 + B^2}}.
+\]
+Al sustituir nuestra expresión de \(P_0 Q\) se cancela \(\lvert B \rvert\) limpiamente:
+\[
+P_0 H = \frac{\lvert B \rvert}{\sqrt{A^2 + B^2}} \cdot \frac{\lvert A x_0 + B y_0 + C \rvert}{\lvert B \rvert} = \frac{\lvert A x_0 + B y_0 + C \rvert}{\sqrt{A^2 + B^2}}.
+\]
+Note que exactamente la misma expresión cubre también los casos horizontal, vertical y sobre la recta que verificamos arriba.
+
+[CALLOUT]
+id: pt-line-dist
+label: Teorema
+title: Fórmula de la distancia de un punto a una recta
+tone: key
+
+La distancia perpendicular de un punto \(P_0(x_0, y_0)\) a una recta \(L: Ax + By + C = 0\) (donde \(A\) y \(B\) no son ambos cero) es
+\[
+d(P_0, L) = \frac{\lvert A x_0 + B y_0 + C \rvert}{\sqrt{A^2 + B^2}}.
+\]
+[/CALLOUT]
+
+Veamos esta geometría en un ejemplo concreto: tome \(L: 3x + 4y - 12 = 0\) y \(P_0(7, 4)\). La caída vertical desde \(P_0\) corta a \(L\) en \(Q(7, -\frac{9}{4})\), de modo que \(P_0 Q = 4 - (-\frac{9}{4}) = \frac{25}{4}\). Por su parte, [REF: pt-line-dist | la fórmula de la distancia] arroja
+\[
+d(P_0, L) = \frac{\lvert 3(7) + 4(4) - 12 \rvert}{\sqrt{3^2 + 4^2}} = \frac{\lvert 25 \rvert}{5} = 5,
+\]
+que en efecto coincide con \(\frac{4}{5} \cdot \frac{25}{4} = 5\). El pie de la perpendicular es \(H(4, 0)\): la comprobación muestra que \(3(4) + 4(0) - 12 = 0\), el segmento \(P_0 H\) tiene pendiente \(\frac{4 - 0}{7 - 4} = \frac{4}{3}\) (perpendicular a \(-\frac{3}{4}\)) y \(P_0 H = \sqrt{3^2 + 4^2} = 5\).
+
+[GRAPH]
+type: function2d
+aspect: equal
+title: Distancia perpendicular \(P_0 H = 5\) y caída vertical \(P_0 Q = 6.25\) a \(3x + 4y - 12 = 0\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1, 9
+yrange: -3.5, 5.5
+trace: 3 - 0.75*x | label: \(3x + 4y - 12 = 0\)
+segment: 7, 4, 4, 0 | label: \(d = 5\)
+segment: 7, 4, 7, -2.25 | dashed: true
+point: 7, 4 | label: \(P_0(7, 4)\)
+point: 4, 0 | label: \(H(4, 0)\)
+point: 7, -2.25 | label: \(Q(7, -2.25)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál es la distancia perpendicular desde el punto \(P_0(-2, 5)\) hasta la recta \(5x - 12y + 18 = 0\)?
+
+(A) \(\frac{52}{17}\)
+(B) \(\frac{32}{13}\)
+(C) \(4\)
+(D) \(\frac{88}{13}\)
+(E) \(\frac{52}{169}\)
+[/QUESTION]
+
+=== SECTION 2: Semiplanos con signo y distancia entre rectas paralelas ===
+
+Dentro de [REF: pt-line-dist | la fórmula de distancia de un punto a una recta], tomamos el valor absoluto de \(f(x, y) = Ax + By + C\). ¿Qué información aporta el signo de \(Ax + By + C\) antes de tomar el valor absoluto?
+
+Parta de cualquier punto \((x_1, y_1)\) sobre \(L\), de modo que \(A x_1 + B y_1 + C = 0\). Si \(B \neq 0\) y nos desplazamos verticalmente hasta \((x_1, y_1 + \Delta y)\), entonces
+\[
+f(x_1, y_1 + \Delta y) = A x_1 + B(y_1 + \Delta y) + C = B\,\Delta y.
+\]
+Los puntos estrictamente por encima de \(L\) (\(\Delta y > 0\)) comparten todos el signo de \(B\), mientras que los puntos estrictamente por debajo de \(L\) (\(\Delta y < 0\)) comparten todos el signo de \(-B\). De modo análogo, si \(B = 0\) (una recta vertical), desplazarse horizontalmente en \(\Delta x\) produce \(A\,\Delta x\), de modo que los puntos en lados opuestos de la recta vertical tienen signos opuestos. En consecuencia, dos puntos \(P_1(x_1, y_1)\) y \(P_2(x_2, y_2)\) fuera de \(L\) están del mismo lado de \(L\) si y solo si \(A x_1 + B y_1 + C\) y \(A x_2 + B y_2 + C\) tienen el mismo signo, y en lados opuestos si y solo si tienen signos opuestos.
+
+Suponga ahora que dos rectas \(L_1\) y \(L_2\) son paralelas. Como las rectas paralelas mantienen la misma separación perpendicular en todas partes, la distancia \(d(L_1, L_2)\) es igual a \(d(P_1, L_2)\) para cualquier punto \(P_1(x_1, y_1)\) elegido sobre \(L_1\). Escriba ambas rectas con coeficientes idénticos para \(x\) e \(y\):
+\[
+L_1: Ax + By + C_1 = 0, \qquad L_2: Ax + By + C_2 = 0.
+\]
+Como \(P_1(x_1, y_1)\) pertenece a \(L_1\), tenemos \(A x_1 + B y_1 = -C_1\). Sustituir en [REF: pt-line-dist | la fórmula de distancia de un punto a una recta] para \(L_2\) elimina por completo a \(x_1\) e \(y_1\):
+\[
+d(L_1, L_2) = \frac{\lvert A x_1 + B y_1 + C_2 \rvert}{\sqrt{A^2 + B^2}} = \frac{\lvert -C_1 + C_2 \rvert}{\sqrt{A^2 + B^2}} = \frac{\lvert C_2 - C_1 \rvert}{\sqrt{A^2 + B^2}}.
+\]
+
+[CALLOUT]
+id: parallel-dist
+label: Fórmula
+title: Distancia entre rectas paralelas
+tone: key
+
+Para dos rectas paralelas escritas con coeficientes idénticos \(A\) y \(B\),
+\[
+L_1: Ax + By + C_1 = 0 \qquad \text{y} \qquad L_2: Ax + By + C_2 = 0,
+\]
+la distancia perpendicular entre ellas es
+\[
+d(L_1, L_2) = \frac{\lvert C_2 - C_1 \rvert}{\sqrt{A^2 + B^2}}.
+\]
+[/CALLOUT]
+
+[CALLOUT]
+id: parallel-scaling-trap
+label: Error frecuente
+title: Igualar coeficientes antes de restar \(C_1\) y \(C_2\)
+tone: caution
+
+Con frecuencia las rectas paralelas se dan con coeficientes proporcionales pero distintos, como \(3x - 4y + 7 = 0\) y \(6x - 8y - 11 = 0\). Primero debe multiplicar o dividir una de las ecuaciones por una constante distinta de cero para que ambas ecuaciones compartan exactamente los mismos \(A\) y \(B\) antes de aplicar [REF: parallel-dist | la fórmula de distancia entre rectas paralelas].
+[/CALLOUT]
+
+Compruebe esa trampa con \(3x - 4y + 7 = 0\) y \(6x - 8y - 11 = 0\). Multiplicar la primera ecuación por \(2\) lleva ambas a la forma \(6x - 8y + C = 0\), es decir, \(6x - 8y + 14 = 0\) y \(6x - 8y - 11 = 0\). Ahora [REF: parallel-dist | la fórmula] da
+\[
+d = \frac{\lvert 14 - (-11) \rvert}{\sqrt{6^2 + (-8)^2}} = \frac{25}{10} = \frac{5}{2}.
+\]
+De manera equivalente, dividir la segunda ecuación entre \(2\) da \(3x - 4y - \frac{11}{2} = 0\), y \(\frac{\lvert 7 - (-11/2) \rvert}{5} = \frac{25/2}{5} = \frac{5}{2}\). Si hubiéramos omitido el reescalado y restado \(7 - (-11) = 18\), habríamos obtenido la respuesta incorrecta \(\frac{18}{5}\).
+
+[QUESTION 2]
+[ANSWER: B]
+¿Cuál es la distancia perpendicular entre las rectas paralelas \(12x + 5y - 7 = 0\) y \(24x + 10y + 38 = 0\)?
+
+(A) \(\frac{45}{13}\)
+(B) \(2\)
+(C) \(\frac{12}{13}\)
+(D) \(\frac{45}{26}\)
+(E) \(4\)
+[/QUESTION]
+
+=== SECTION 3: Alturas y áreas de triángulos en coordenadas ===
+
+[REF: pt-line-dist | La fórmula de distancia de un punto a una recta] ofrece una ruta directa para calcular alturas y áreas de triángulos cuyos vértices se dan en coordenadas:
+1. Elija un lado, digamos \(AB\), como base y calcule su longitud \(b = AB\).
+2. Escriba la ecuación de la recta \(AB\) en forma general \(Ax + By + C = 0\).
+3. Calcule la altura \(h = d(C, AB)\) desde el tercer vértice \(C\) hasta la recta \(AB\).
+4. Calcule el área \(\text{Área}(\triangle ABC) = \frac{1}{2} b h\).
+
+Observe qué limpiamente funciona esto con \(A(1, 2)\), \(B(5, 5)\) y \(C(2, 7)\).
+- Longitud de la base: \(AB = \sqrt{(5 - 1)^2 + (5 - 2)^2} = \sqrt{16 + 9} = 5\).
+- Recta \(AB\): pendiente \(m = \frac{5 - 2}{5 - 1} = \frac{3}{4}\), de modo que \(y - 2 = \frac{3}{4}(x - 1)\), que se reordena como \(3x - 4y + 5 = 0\).
+- Altura desde \(C(2, 7)\):
+\[
+h = d(C, AB) = \frac{\lvert 3(2) - 4(7) + 5 \rvert}{\sqrt{3^2 + (-4)^2}} = \frac{\lvert 6 - 28 + 5 \rvert}{5} = \frac{17}{5}.
+\]
+- Área:
+\[
+\text{Área}(\triangle ABC) = \frac{1}{2} \cdot 5 \cdot \frac{17}{5} = \frac{17}{2}.
+\]
+Note por qué el denominador \(5\) canceló la longitud de la base \(5\): cuando escribimos la recta que pasa por \(A(x_A, y_A)\) y \(B(x_B, y_B)\) tomando \(A = y_B - y_A\) y \(B = -(x_B - x_A)\), el denominador \(\sqrt{A^2 + B^2}\) es literalmente la longitud de la base \(AB\) (o un múltiplo constante de ella si simplificamos factores comunes), ¡así que las raíces cuadradas siempre se cancelan en el producto del área!
+
+[QUESTION 3]
+[ANSWER: D]
+¿Cuál es el área del triángulo con vértices \(P(-1, 1)\), \(Q(3, 4)\) y \(R(2, -2)\)?
+
+(A) \(\frac{13}{2}\)
+(B) \(10\)
+(C) \(21\)
+(D) \(\frac{21}{2}\)
+(E) \(\frac{19}{2}\)
+[/QUESTION]
+
+=== SECTION 4: Bisectrices como lugares geométricos equidistantes de rectas ===
+
+Dos rectas que se intersecan \(L_1: A_1 x + B_1 y + C_1 = 0\) y \(L_2: A_2 x + B_2 y + C_2 = 0\) forman dos pares de ángulos opuestos por el vértice en su punto de intersección, por lo que poseen dos rectas bisectrices. Geométricamente, un punto \(P(x, y)\) pertenece a una de estas dos bisectrices si y solo si equidista de \(L_1\) y \(L_2\):
+\[
+d(P, L_1) = d(P, L_2).
+\]
+Aplicar [REF: pt-line-dist | la fórmula de distancia de un punto a una recta] en ambos miembros traduce este lugar geométrico directamente a una ecuación algebraica:
+\[
+\frac{\lvert A_1 x + B_1 y + C_1 \rvert}{\sqrt{A_1^2 + B_1^2}} = \frac{\lvert A_2 x + B_2 y + C_2 \rvert}{\sqrt{A_2^2 + B_2^2}}.
+\]
+Dos números reales tienen igual valor absoluto si y solo si son iguales u opuestos, de modo que suprimir los valores absolutos produce simultáneamente las ecuaciones de ambas bisectrices.
+
+[CALLOUT]
+id: angle-bisectors
+label: Fórmula
+title: Ecuaciones de las bisectrices de dos rectas que se intersecan
+tone: key
+
+Las dos bisectrices de los ángulos formados por las rectas secantes \(L_1: A_1 x + B_1 y + C_1 = 0\) y \(L_2: A_2 x + B_2 y + C_2 = 0\) están dadas por
+\[
+\frac{A_1 x + B_1 y + C_1}{\sqrt{A_1^2 + B_1^2}} = \pm \frac{A_2 x + B_2 y + C_2}{\sqrt{A_2^2 + B_2^2}},
+\]
+donde el signo \(+\) produce una bisectriz y el signo \(-\) produce la otra.
+[/CALLOUT]
+
+Podemos demostrar de inmediato por vía algebraica que estas dos bisectrices son siempre perpendiculares entre sí. Escriba los coeficientes normalizados \(a_1 = \frac{A_1}{\sqrt{A_1^2 + B_1^2}}\), \(b_1 = \frac{B_1}{\sqrt{A_1^2 + B_1^2}}\) (de modo que \(a_1^2 + b_1^2 = 1\)), y análogamente \(a_2, b_2\) con \(a_2^2 + b_2^2 = 1\). Las dos bisectrices tienen coeficientes en \((x, y)\) iguales a \((a_1 - a_2, b_1 - b_2)\) y \((a_1 + a_2, b_1 + b_2)\). Al verificar la condición de perpendicularidad en forma general \(A_p A_q + B_p B_q = 0\) se obtiene
+\[
+(a_1 - a_2)(a_1 + a_2) + (b_1 - b_2)(b_1 + b_2) = (a_1^2 + b_1^2) - (a_2^2 + b_2^2) = 1 - 1 = 0,
+\]
+lo que confirma que las dos bisectrices se cortan en ángulo recto.
+
+Hallemos ambas bisectrices de \(L_1: 3x - 4y = 0\) y \(L_2: 12x + 5y = 0\). Aquí \(\sqrt{3^2 + (-4)^2} = 5\) y \(\sqrt{12^2 + 5^2} = 13\), así que [REF: angle-bisectors | la ecuación de las bisectrices] da
+\[
+\frac{3x - 4y}{5} = \pm \frac{12x + 5y}{13} \implies 13(3x - 4y) = \pm 5(12x + 5y).
+\]
+- Con el signo \(+\): \(39x - 52y = 60x + 25y \implies 21x + 77y = 0 \implies 3x + 11y = 0\).
+- Con el signo \(-\): \(39x - 52y = -60x - 25y \implies 99x - 27y = 0 \implies 11x - 3y = 0\).
+
+Sus pendientes son \(-\frac{3}{11}\) y \(\frac{11}{3}\), cuyo producto es \(-1\). ¿Cuál bisectriz divide el ángulo agudo entre \(L_1\) y \(L_2\)? Elija cualquier punto sobre \(L_1\) distinto de la intersección, como \(P(4, 3)\), y compare su distancia a cada bisectriz:
+\[
+d(P,\, 11x - 3y = 0) = \frac{\lvert 44 - 9 \rvert}{\sqrt{130}} = \frac{35}{\sqrt{130}}, \qquad d(P,\, 3x + 11y = 0) = \frac{\lvert 12 + 33 \rvert}{\sqrt{130}} = \frac{45}{\sqrt{130}}.
+\]
+Como \(P\) está más cerca de \(11x - 3y = 0\), esa recta biseca el ángulo agudo, mientras que \(3x + 11y = 0\) biseca el ángulo obtuso.
+
+[GRAPH]
+type: function2d
+aspect: equal
+title: Rectas \(L_1: 3x - 4y = 0\), \(L_2: 12x + 5y = 0\) y sus bisectrices perpendiculares
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 4
+yrange: -4, 4
+trace: 0.75*x | label: \(L_1: 3x - 4y = 0\)
+trace: -2.4*x | label: \(L_2: 12x + 5y = 0\)
+trace: (11/3)*x | label: bisectriz aguda \(11x - 3y = 0\)
+trace: -(3/11)*x | label: bisectriz obtusa \(3x + 11y = 0\)
+point: 0, 0 | label: \(O\)
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: E]
+¿Qué par de ecuaciones da las dos bisectrices de los ángulos formados por las rectas secantes \(L_1: 3x - 4y - 2 = 0\) y \(L_2: y - 1 = 0\)?
+
+(A) \(3x - 5y - 1 = 0\) y \(x - y - 1 = 0\)
+(B) \(x - 3y - 1 = 0\) y \(3x + y + 7 = 0\)
+(C) \(3x - y - 5 = 0\) y \(x + 3y - 5 = 0\)
+(D) \(x - 2y = 0\) y \(2x + y - 5 = 0\)
+(E) \(x - 3y + 1 = 0\) y \(3x + y - 7 = 0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+¿Cuáles son las ecuaciones de las dos rectas paralelas a \(3x + 4y - 7 = 0\) situadas a una distancia perpendicular \(2\) de ella?
+
+(A) \(3x + 4y + 3 = 0\) y \(3x + 4y - 17 = 0\)
+(B) \(3x + 4y - 5 = 0\) y \(3x + 4y - 9 = 0\)
+(C) \(3x + 4y + 13 = 0\) y \(3x + 4y - 27 = 0\)
+(D) \(3x + 4y + 10 = 0\) y \(3x + 4y - 10 = 0\)
+(E) \(3x + 4y - 1 = 0\) y \(3x + 4y - 13 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+¿Qué puntos sobre el eje \(x\) equidistan de las rectas \(L_1: 4x - 3y + 1 = 0\) y \(L_2: 3x + 4y - 8 = 0\)?
+
+(A) \((-7, 0)\) y \((1, 0)\)
+(B) \((-9, 0)\) y \((-1, 0)\)
+(C) \((-9, 0)\) y \((1, 0)\)
+(D) \((1, 0)\) y \((9, 0)\)
+(E) \((-1, 0)\) y \((7, 0)\)
+[/BONUS]

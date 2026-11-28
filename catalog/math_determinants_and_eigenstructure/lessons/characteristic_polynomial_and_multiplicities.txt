@@ -1,0 +1,285 @@
+=== SECTION 1: The characteristic polynomial and similarity invariance ===
+
+In the previous lesson we verified candidate eigenvalues by checking whether the homogeneous system \((A - \lambda I)\mathbf{x} = \mathbf{0}\) had a nontrivial solution, and we deduced eigenvalues of simple geometric operators directly from their geometry. For a general \(n \times n\) matrix \(A \in M_n(F)\), how do we find ALL unknown eigenvalues systematically?
+
+Combine the definition of an eigenspace with the determinant test for invertibility:
+\[
+\begin{aligned}
+\lambda \in F \text{ is an eigenvalue of } A
+&\iff \ker(A - \lambda I) \neq \{\mathbf{0}\} \\
+&\iff \lambda I - A \text{ is singular} \\
+&\iff \det(\lambda I - A) = 0.
+\end{aligned}
+\]
+Because the entries of \(\lambda I - A\) are linear polynomials in the variable \(\lambda\) (along the diagonal) and constants (off the diagonal), expanding \(\det(\lambda I - A)\) produces a monic polynomial of degree \(n\) in \(\lambda\).
+
+[CALLOUT]
+id: char-poly-def
+label: Definition
+title: Characteristic polynomial and characteristic equation
+tone: key
+
+For \(A \in M_n(F)\), the characteristic polynomial of \(A\) is
+\[
+p_A(\lambda) = \det(\lambda I_n - A).
+\]
+The equation \(p_A(\lambda) = 0\) is the characteristic equation of \(A\). A scalar \(\lambda \in F\) is an eigenvalue of \(A\) if and only if \(\lambda\) is a root of \(p_A\) in \(F\).
+[/CALLOUT]
+
+Note on sign conventions: some textbooks define the characteristic polynomial as \(\det(A - \lambda I_n)\). Because \(A - \lambda I_n = -(\lambda I_n - A)\), the scalar-multiple determinant rule gives
+\[
+\det(A - \lambda I_n) = (-1)^n \det(\lambda I_n - A) = (-1)^n p_A(\lambda).
+\]
+Both conventions have the EXACT same roots with the exact same multiplicities! Throughout this tree we standardize on \(p_A(\lambda) = \det(\lambda I_n - A)\) so that \(p_A(\lambda)\) is always monic (leading term \(+\lambda^n\)), which keeps later theorems on minimal polynomials and canonical forms sign-clean.
+
+Does the characteristic polynomial depend on the basis chosen to represent a linear operator \(T : V \to V\)? Suppose \(B = P^{-1} A P\) is similar to \(A\). Write \(\lambda I_n = P^{-1}(\lambda I_n)P\), so
+\[
+\lambda I_n - B = P^{-1}(\lambda I_n)P - P^{-1} A P = P^{-1}(\lambda I_n - A)P.
+\]
+Taking determinants and applying similarity invariance of \(\det\) immediately yields
+\[
+p_B(\lambda) = \det\bigl(P^{-1}(\lambda I_n - A)P\bigr) = \det(\lambda I_n - A) = p_A(\lambda).
+\]
+
+[CALLOUT]
+id: char-poly-similarity
+label: Theorem
+title: Similarity invariance of the characteristic polynomial
+tone: key
+
+(1) Similar matrices have the exact same characteristic polynomial: \(p_{P^{-1}AP}(\lambda) = p_A(\lambda)\).
+(2) For any linear operator \(T : V \to V\) on a finite-dimensional space \(V\), the characteristic polynomial \(p_T(\lambda) = p_{[T]_{\mathcal{B}}}(\lambda)\) is independent of the choice of basis \(\mathcal{B}\) of \(V\).
+[/CALLOUT]
+
+Consequently, similar matrices have the same eigenvalues (though generally DIFFERENT eigenvectors: if \(A\mathbf{v} = \lambda \mathbf{v}\), then \((P^{-1}AP)(P^{-1}\mathbf{v}) = \lambda(P^{-1}\mathbf{v})\), so the eigenvector transforms to \(P^{-1}\mathbf{v}\)).
+
+Let us compute a concrete \(3 \times 3\) example:
+\[
+A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 0 \\ 3 & -1 & -2 \end{bmatrix}.
+\]
+Form \(\lambda I_3 - A\) and expand along column \(3\) (which has only one nonzero entry):
+\[
+p_A(\lambda) = \det\begin{bmatrix} \lambda - 1 & -2 & 0 \\ 0 & \lambda - 1 & 0 \\ -3 & 1 & \lambda + 2 \end{bmatrix} = (\lambda + 2)\det\begin{bmatrix} \lambda - 1 & -2 \\ 0 & \lambda - 1 \end{bmatrix} = (\lambda + 2)(\lambda - 1)^2.
+\]
+The eigenvalues are \(\lambda = -2\) (simple root) and \(\lambda = 1\) (double root). More generally, if \(A\) is upper or lower triangular, then \(\lambda I_n - A\) is also triangular with diagonal entries \(\lambda - a_{ii}\), so
+\[
+p_A(\lambda) = \prod_{i=1}^n (\lambda - a_{ii}),
+\]
+and the eigenvalues of any triangular matrix are simply its diagonal entries! Likewise, for a block-triangular matrix \(M = \begin{bmatrix} A & B \\ 0 & D \end{bmatrix}\), the matrix \(\lambda I - M = \begin{bmatrix} \lambda I - A & -B \\ 0 & \lambda I - D \end{bmatrix}\) is also block-triangular, so the block-triangular determinant theorem immediately gives
+\[
+p_M(\lambda) = p_A(\lambda)\,p_D(\lambda).
+\]
+
+[QUESTION 1]
+[ANSWER: C]
+What is the characteristic polynomial \(p_A(\lambda) = \det(\lambda I_3 - A)\) of
+\[
+A = \begin{bmatrix} 1 & 0 & 2 \\ 0 & -1 & 3 \\ 1 & 0 & 2 \end{bmatrix}?
+\]
+
+(A) \((\lambda - 1)(\lambda + 3)\lambda\)
+(B) \((\lambda - 1)(\lambda - 3)\lambda\)
+(C) \(\lambda(\lambda + 1)(\lambda - 3)\)
+(D) \(-(\lambda + 1)(\lambda - 3)\lambda\)
+(E) \((\lambda + 1)(\lambda^2 - 3\lambda + 4)\)
+[/QUESTION]
+
+=== SECTION 2: Coefficients of \(p_A(\lambda)\), trace, and determinant ===
+
+Three coefficients of the degree-\(n\) polynomial \(p_A(\lambda) = \lambda^n + c_{n-1}\lambda^{n-1} + \dots + c_1 \lambda + c_0\) carry direct, basis-independent invariants of \(A\):
+1. Leading term: Look at the diagonal product \((\lambda - a_{11})(\lambda - a_{22})\cdots(\lambda - a_{nn})\). Every other permutation term in the expansion of \(\det(\lambda I_n - A)\) picks at least TWO off-diagonal entries (which are constants, degree \(0\) in \(\lambda\)), so every off-diagonal permutation term has degree AT MOST \(n - 2\)! Therefore the \(\lambda^n\) and \(\lambda^{n-1}\) terms of \(p_A(\lambda)\) come SOLELY from expanding \(\prod_{i=1}^n (\lambda - a_{ii})\):
+\[
+\prod_{i=1}^n (\lambda - a_{ii}) = \lambda^n - (a_{11} + a_{22} + \dots + a_{nn})\lambda^{n-1} + (\text{terms of degree } \le n - 2).
+\]
+Recall that the sum of the diagonal entries of \(A\) is the trace, \(\operatorname{tr}(A) = \sum_{i=1}^n a_{ii}\). Thus \(c_{n-1} = -\operatorname{tr}(A)\)—which simultaneously proves that \(\operatorname{tr}(A)\) is similarity invariant, since \(p_A(\lambda)\) is!
+2. Constant term: Substitute \(\lambda = 0\) into \(p_A(\lambda) = \det(\lambda I_n - A)\):
+\[
+c_0 = p_A(0) = \det(-A) = (-1)^n \det(A).
+\]
+
+In particular, for every \(2 \times 2\) matrix \(A\), this gives the ultra-fast formula
+\[
+p_A(\lambda) = \lambda^2 - \operatorname{tr}(A)\,\lambda + \det(A).
+\]
+Moreover, over \(\mathbb{C}\) (by the Fundamental Theorem of Algebra), \(p_A(\lambda)\) always factors completely into linear factors \(p_A(\lambda) = (\lambda - \lambda_1)(\lambda - \lambda_2)\cdots(\lambda - \lambda_n)\), where \(\lambda_1, \dots, \lambda_n \in \mathbb{C}\) are the eigenvalues repeated according to their root multiplicities. Expanding that product and matching the \(\lambda^{n-1}\) and constant terms yields Vieta's formulas for matrices:
+\[
+\operatorname{tr}(A) = \sum_{i=1}^n \lambda_i, \qquad \det(A) = \prod_{i=1}^n \lambda_i.
+\]
+(Note carefully: over \(\mathbb{R}\), these identities hold whenever \(p_A(\lambda)\) splits completely into real linear factors; if \(p_A(\lambda)\) has nonreal complex roots, the identities still hold once all \(n\) complex roots are included in the sum and product!)
+
+[CALLOUT]
+id: trace-det-charpoly
+label: Theorem
+title: Trace and determinant in the characteristic polynomial
+tone: key
+
+For every \(A \in M_n(F)\),
+\[
+p_A(\lambda) = \lambda^n - \operatorname{tr}(A)\,\lambda^{n-1} + \dots + (-1)^n \det(A).
+\]
+Whenever \(p_A(\lambda) = \prod_{i=1}^n (\lambda - \lambda_i)\) splits into linear factors over \(F\) (which is always true over \(\mathbb{C}\)),
+\[
+\operatorname{tr}(A) = \sum_{i=1}^n \lambda_i \qquad \text{and} \qquad \det(A) = \prod_{i=1}^n \lambda_i.
+\]
+[/CALLOUT]
+
+These two identities provide an effortless sanity check whenever you compute eigenvalues by hand: add your eigenvalues (with multiplicities) and verify the sum equals \(\operatorname{tr}(A)\); multiply them and verify the product equals \(\det(A)\).
+
+[QUESTION 2]
+[ANSWER: B]
+Suppose \(A \in M_3(\mathbb{C})\) has characteristic polynomial \(p_A(\lambda) = \lambda^3 + 5\lambda^2 - 2\lambda - 24\). What are \(\operatorname{tr}(A)\) and \(\det(A)\)?
+
+(A) \(\operatorname{tr}(A) = 5\) and \(\det(A) = -24\)
+(B) \(\operatorname{tr}(A) = -5\) and \(\det(A) = 24\)
+(C) \(\operatorname{tr}(A) = -5\) and \(\det(A) = -24\)
+(D) \(\operatorname{tr}(A) = 5\) and \(\det(A) = 24\)
+(E) \(\operatorname{tr}(A) = 2\) and \(\det(A) = 24\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Find all eigenvalues of the block-triangular matrix
+\[
+M = \begin{bmatrix} 1 & 2 & 5 & -1 \\ 3 & 0 & 4 & 2 \\ 0 & 0 & 3 & -2 \\ 0 & 0 & 1 & 1 \end{bmatrix}
+\]
+over \(\mathbb{C}\).
+
+(A) \(1, 0, 3, 1\)
+(B) \(3, -2\) only (no other complex eigenvalues)
+(C) \(-3, 2, 2 + i, 2 - i\)
+(D) \(3, -2, 2 + i, 2 - i\)
+(E) \(3, -2, 1 + 2i, 1 - 2i\)
+[/QUESTION]
+
+=== SECTION 3: Algebraic versus geometric multiplicity ===
+
+When a root \(\lambda_0\) of \(p_T(\lambda)\) is repeated, two different integers measure how strongly \(\lambda_0\) appears in the structure of \(T\): one counts its multiplicity as a root of the polynomial, and the other measures the dimension of its eigenspace.
+
+[CALLOUT]
+id: multiplicities-def
+label: Definition
+title: Algebraic and geometric multiplicity
+tone: key
+
+Let \(\lambda_0 \in F\) be an eigenvalue of a linear operator \(T : V \to V\) (or matrix \(A \in M_n(F)\)).
+
+(1) The algebraic multiplicity \(m_a(\lambda_0)\) is the multiplicity of \(\lambda_0\) as a root of \(p_T(\lambda)\)—that is, the largest positive integer \(m\) such that \((\lambda - \lambda_0)^m\) divides \(p_T(\lambda)\).
+(2) The geometric multiplicity \(m_g(\lambda_0)\) is the dimension of the eigenspace \(E_{\lambda_0}\):
+\[
+m_g(\lambda_0) = \dim(E_{\lambda_0}) = \dim\ker(T - \lambda_0 I) = n - \operatorname{rank}(A - \lambda_0 I).
+\]
+(3) An eigenvalue \(\lambda_0\) is called defective if \(m_g(\lambda_0) < m_a(\lambda_0)\).
+[/CALLOUT]
+
+Compare two \(3 \times 3\) matrices that share the EXACT same characteristic polynomial \(p(\lambda) = (\lambda - 1)^2(\lambda + 2)\):
+\[
+A_1 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & -2 \end{bmatrix}, \qquad A_2 = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & -2 \end{bmatrix}.
+\]
+Both have the exact same polynomial graph below—a simple root at \(\lambda = -2\) (\(m_a(-2) = 1\)) and a tangent double root at \(\lambda = 1\) (\(m_a(1) = 2\)). Yet look at their eigenspaces for \(\lambda = 1\):
+- For \(A_1\), \(A_1 - I = \operatorname{diag}(0, 0, -3)\) has rank \(1\), so \(m_g(1) = 3 - 1 = 2 = m_a(1)\).
+- For \(A_2\), \(A_2 - I = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & -3 \end{bmatrix}\) has rank \(2\), so \(m_g(1) = 3 - 2 = 1 < m_a(1) = 2\): \(\lambda = 1\) is defective for \(A_2\)!
+
+The graph of \(p(\lambda)\) determines \(m_a(\lambda_0)\) completely, but it CANNOT distinguish \(A_1\) from \(A_2\); computing \(m_g(\lambda_0)\) always requires finding the nullity of \(A - \lambda_0 I\).
+
+[GRAPH]
+type: function2d
+title: Characteristic polynomial \(p(\lambda) = (\lambda - 1)^2(\lambda + 2)\) shared by both \(A_1\) (\(m_g(1)=2\)) and \(A_2\) (\(m_g(1)=1\))
+xlabel: \(\lambda\)
+ylabel: \(p(\lambda)\)
+xrange: -3, 3
+yrange: -6, 12
+trace: (x - 1)^2 * (x + 2) | label: \(p(\lambda) = (\lambda - 1)^2(\lambda + 2)\)
+trace: 0 | label: \(p = 0\)
+point: -2, 0 | label: \((-2, 0)\)
+point: 1, 0 | label: \((1, 0)\)
+[/GRAPH]
+
+Can \(m_g(\lambda_0)\) ever EXCEED \(m_a(\lambda_0)\)? Never! Here is the central inequality connecting the two multiplicities, proved cleanly via basis extension and block-triangular determinants.
+
+[CALLOUT]
+id: mult-inequality
+label: Theorem
+title: Fundamental multiplicity inequality
+tone: key
+
+For every eigenvalue \(\lambda_0 \in F\) of a linear operator \(T : V \to V\) on a finite-dimensional space \(V\),
+\[
+1 \le m_g(\lambda_0) \le m_a(\lambda_0).
+\]
+In particular, every simple root of \(p_T(\lambda)\) (where \(m_a(\lambda_0) = 1\)) automatically satisfies \(m_g(\lambda_0) = 1\).
+[/CALLOUT]
+
+To prove [REF: mult-inequality | the multiplicity inequality], first note that \(m_g(\lambda_0) \ge 1\) because \(\lambda_0\) is an eigenvalue, so \(E_{\lambda_0}\) contains at least one nonzero eigenvector. Let \(k = m_g(\lambda_0) = \dim(E_{\lambda_0})\), and choose a basis \(\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) of \(E_{\lambda_0}\). Extend this linearly independent set to a basis
+\[
+\mathcal{B} = \{\mathbf{v}_1, \dots, \mathbf{v}_k, \mathbf{w}_1, \dots, \mathbf{w}_{n-k}\}
+\]
+of the entire space \(V\). What does the matrix \([T]_{\mathcal{B}}\) look like in this basis? For each \(j = 1, \dots, k\), we have \(T(\mathbf{v}_j) = \lambda_0 \mathbf{v}_j\), so column \(j\) of \([T]_{\mathcal{B}}\) has \(\lambda_0\) in row \(j\) and \(0\) in every other row! Consequently, \([T]_{\mathcal{B}}\) has the block upper-triangular form
+\[
+[T]_{\mathcal{B}} = \begin{bmatrix} \lambda_0 I_k & B \\ 0 & C \end{bmatrix},
+\]
+where \(B\) is \(k \times (n - k)\) and \(C \in M_{n-k}(F)\). By [REF: char-poly-similarity.2 | basis independence of \(p_T\)] and the block-triangular determinant formula,
+\[
+p_T(\lambda) = \det(\lambda I_n - [T]_{\mathcal{B}}) = \det\begin{bmatrix} (\lambda - \lambda_0)I_k & -B \\ 0 & \lambda I_{n-k} - C \end{bmatrix} = (\lambda - \lambda_0)^k \, p_C(\lambda).
+\]
+Because \((\lambda - \lambda_0)^k\) divides \(p_T(\lambda)\) and \(m_a(\lambda_0)\) is the LARGEST power of \((\lambda - \lambda_0)\) dividing \(p_T(\lambda)\), we conclude immediately that \(k \le m_a(\lambda_0)\), i.e., \(m_g(\lambda_0) \le m_a(\lambda_0)\)!
+
+Look at how that proof works: even if \(C\) happens to have \(\lambda_0\) as an eigenvalue too (which is exactly what happens for a defective matrix like \(A_2\) above, where \(k = 1\) and \((\lambda - 1)\) also divides \(p_C(\lambda) = (\lambda - 1)(\lambda + 2)\)), the factor \((\lambda - \lambda_0)^k\) is ALWAYS guaranteed to divide \(p_T(\lambda)\).
+
+[QUESTION 4]
+[ANSWER: A]
+Consider the matrix
+\[
+B = \begin{bmatrix} 2 & 0 & 1 \\ -1 & 3 & -1 \\ 1 & 0 & 2 \end{bmatrix}.
+\]
+What are the algebraic multiplicity \(m_a(3)\) and geometric multiplicity \(m_g(3)\) of the eigenvalue \(\lambda = 3\)?
+
+(A) \(m_a(3) = 2\) and \(m_g(3) = 1\) (defective)
+(B) \(m_a(3) = 2\) and \(m_g(3) = 2\) (non-defective)
+(C) \(m_a(3) = 1\) and \(m_g(3) = 1\) (non-defective)
+(D) \(m_a(3) = 3\) and \(m_g(3) = 1\) (defective)
+(E) \(m_a(3) = 1\) and \(m_g(3) = 2\) (defective)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: B]
+Suppose \(A \in M_4(\mathbb{R})\) has characteristic polynomial \(p_A(\lambda) = (\lambda - 2)^3(\lambda + 5)\). Which of the following statements MUST hold for EVERY such matrix \(A\)?
+
+(A) \(\dim\ker(A - 2I_4) = 3\)
+(B) \(\dim\ker(A + 5I_4) = 1\)
+(C) \(A\) is singular
+(D) \(\operatorname{tr}(A) = -3\)
+(E) \(A\) is similar to \(\operatorname{diag}(2, 2, 2, -5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Let \(A, B \in M_3(\mathbb{R})\) with \(A\) invertible. Suppose the product \(AB\) has eigenvalues \(1\), \(-2\), and \(5\). What is \(\operatorname{tr}(BA) + \det(BA)\)?
+
+(A) \(14\)
+(B) \(-14\)
+(C) \(-6\)
+(D) \(6\)
+(E) Cannot be determined without knowing \(A\) and \(B\) separately
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suppose \(A \in M_n(\mathbb{C})\) (\(n \ge 2\)) has \(\operatorname{rank}(A) = 1\). Which expression equals the characteristic polynomial \(p_A(\lambda)\)?
+
+(A) \(\lambda^n - \det(A)\)
+(B) \((\lambda - \operatorname{tr}(A))^n\)
+(C) \(\lambda^{n-1}(\lambda + \operatorname{tr}(A))\)
+(D) \(\lambda^{n-2}(\lambda - \operatorname{tr}(A))^2\)
+(E) \(\lambda^{n-1}(\lambda - \operatorname{tr}(A))\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suppose \(A \in M_3(\mathbb{R})\) has characteristic polynomial \(p_A(\lambda) = (\lambda - 1)(\lambda - 2)(\lambda - 3)\). What is the characteristic polynomial \(p_{A^{-1}}(\lambda)\) of its inverse \(A^{-1}\)?
+
+(A) \(\lambda^3 - 6\lambda^2 + 11\lambda - 6\)
+(B) \(\lambda^3 + \dfrac{11}{6}\lambda^2 + \lambda + \dfrac{1}{6}\)
+(C) \(6\lambda^3 - 11\lambda^2 + 6\lambda - 1\)
+(D) \(\lambda^3 - \dfrac{11}{6}\lambda^2 + \lambda - \dfrac{1}{6}\)
+(E) \(\lambda^3 - \dfrac{1}{6}\lambda^2 + \dfrac{1}{11}\lambda - \dfrac{1}{6}\)
+[/BONUS]

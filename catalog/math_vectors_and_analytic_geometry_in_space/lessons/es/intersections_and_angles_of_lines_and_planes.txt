@@ -1,0 +1,257 @@
+=== SECTION 1: Intersecciones de una recta y un plano ===
+
+Ahora que sabemos escribir ecuaciones tanto para rectas como para planos en \(\mathbb{R}^3\), el siguiente paso natural es analizar cómo se encuentran —y con qué ángulos lo hacen—. Considere una recta \(L\) dada paramétricamente por
+\[
+\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}, \qquad x = x_0 + v_1 t,\quad y = y_0 + v_2 t,\quad z = z_0 + v_3 t
+\]
+y un plano \(\Pi\) dado por \(ax + by + cz = d\) con vector normal no nulo \(\mathbf{n} = \langle a, b, c \rangle\).
+
+¿Cómo hallamos todos los puntos que pertenecen tanto a \(L\) como a \(\Pi\)? Sustituya directamente las coordenadas paramétricas de \(L\) en la ecuación escalar de \(\Pi\):
+\[
+a(x_0 + v_1 t) + b(y_0 + v_2 t) + c(z_0 + v_3 t) = d.
+\]
+Agrupar los términos que contienen \(t\) y los términos constantes deja al descubierto la geometría vectorial exacta oculta bajo el álgebra:
+\[
+(a v_1 + b v_2 + c v_3)\,t + (a x_0 + b y_0 + c z_0) = d \iff (\mathbf{v} \cdot \mathbf{n})\,t = d - \mathbf{r}_0 \cdot \mathbf{n}.
+\]
+Como se trata de una única ecuación lineal en la incógnita escalar \(t\), su coeficiente \(\mathbf{v} \cdot \mathbf{n}\) divide todas las configuraciones posibles recta-plano en tres resultados mutuamente excluyentes.
+
+[CALLOUT]
+id: line-plane-int
+label: Clasificación
+title: Tres posiciones relativas de una recta y un plano en \(\mathbb{R}^3\)
+tone: key
+
+Dada una recta \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) y un plano \(\Pi: \mathbf{n} \cdot \mathbf{r} = d\), sustituir \(\mathbf{r}(t)\) en \(\Pi\) produce \((\mathbf{v} \cdot \mathbf{n})t = d - \mathbf{r}_0 \cdot \mathbf{n}\):
+
+(1) Punto de intersección único: si \(\mathbf{v} \cdot \mathbf{n} \ne 0\), la recta no es paralela a \(\Pi\) y lo atraviesa en el único valor del parámetro
+\[
+t^* = \frac{d - \mathbf{r}_0 \cdot \mathbf{n}}{\mathbf{v} \cdot \mathbf{n}},
+\]
+lo que da el punto de intersección \(\mathbf{r}(t^*)\).
+(2) Paralela y disjunta: si \(\mathbf{v} \cdot \mathbf{n} = 0\) y \(\mathbf{r}_0 \cdot \mathbf{n} \ne d\), la ecuación se reduce a una contradicción \(0 = c\) (con \(c \ne 0\)). La recta discurre paralela a \(\Pi\) sin tocarlo jamás.
+(3) Recta contenida en el plano: si \(\mathbf{v} \cdot \mathbf{n} = 0\) y \(\mathbf{r}_0 \cdot \mathbf{n} = d\), la ecuación se reduce a la identidad \(0 = 0\). Todo punto de \(L\) yace dentro de \(\Pi\).
+[/CALLOUT]
+
+Advierta con qué claridad el álgebra refleja la geometría: \(\mathbf{v} \cdot \mathbf{n} = 0\) expresa que la dirección \(\mathbf{v}\) de la recta es ortogonal a la normal \(\mathbf{n}\) del plano, lo que significa que \(L\) es paralela a \(\Pi\). Una vez que \(L\) es paralela a \(\Pi\), comprobar el único punto base \(P_0\) decide si toda la recta queda contenida en \(\Pi\) o flota por fuera de él.
+
+Como ejemplo resuelto, contraste la recta \(L: x = 1 + t,\; y = 2 - 2t,\; z = 3 + t\) con el plano \(\Pi: 3x + y - z = 2\). Al sustituir se obtiene
+\[
+3(1 + t) + (2 - 2t) - (3 + t) = 2 \implies (3 + 2 - 3) + (3 - 2 - 1)t = 2 \implies 2 + 0t = 2.
+\]
+La variable \(t\) desaparece y deja la identidad \(2 = 2\) (equivalentemente \(0 = 0\)). Aquí \(\mathbf{v} \cdot \mathbf{n} = 3 - 2 - 1 = 0\) y el punto base \((1, 2, 3)\) satisface \(3(1) + 2 - 3 = 2\), por lo que toda la recta \(L\) yace contenida en \(\Pi\). Si el lado derecho de \(\Pi\) hubiera sido \(5\) en lugar de \(2\), habríamos llegado a \(2 = 5\), mostrando que \(L\) es paralela y disjunta.
+
+[QUESTION 1]
+[ANSWER: C]
+Halle la intersección de la recta \(L: x = 2 + t,\; y = -1 + 3t,\; z = 4 - 2t\) y el plano \(\Pi: 2x - y + 3z = 3\).
+
+(A) No hay intersección; \(L\) es paralela y disjunta respecto de \(\Pi\)
+(B) Toda la recta \(L\) está contenida en \(\Pi\)
+(C) El punto único \((4, 5, 0)\)
+(D) El punto único \((0, -7, 8)\)
+(E) El punto único \((3, 2, 2)\)
+[/QUESTION]
+
+=== SECTION 2: Intersecciones de dos planos ===
+
+Tome ahora dos planos en \(\mathbb{R}^3\):
+\[
+\Pi_1:\; a_1 x + b_1 y + c_1 z = d_1, \qquad \Pi_2:\; a_2 x + b_2 y + c_2 z = d_2,
+\]
+con vectores normales \(\mathbf{n}_1 = \langle a_1, b_1, c_1 \rangle\) y \(\mathbf{n}_2 = \langle a_2, b_2, c_2 \rangle\). Por la lección anterior, si \(\mathbf{n}_1\) y \(\mathbf{n}_2\) son proporcionales (\(\mathbf{n}_1 \times \mathbf{n}_2 = \mathbf{0}\)), los dos planos son coincidentes o bien paralelos y distintos.
+
+¿Qué ocurre si \(\mathbf{n}_1\) y \(\mathbf{n}_2\) NO son paralelos (\(\mathbf{n}_1 \times \mathbf{n}_2 \ne \mathbf{0}\))? Entonces \(\Pi_1\) y \(\Pi_2\) DEBEN intersecarse a lo largo de una recta \(L\). ¿Por qué podemos hallar de inmediato un vector director \(\mathbf{d}\) para \(L\)? Como \(L\) yace simultáneamente dentro de \(\Pi_1\) y dentro de \(\Pi_2\), su dirección \(\mathbf{d}\) debe ser ortogonal a \(\mathbf{n}_1\) Y ortogonal a \(\mathbf{n}_2\). El producto vectorial produce un vector no nulo perpendicular a ambos:
+\[
+\mathbf{d} = \mathbf{n}_1 \times \mathbf{n}_2.
+\]
+Para terminar de especificar \(L\), solo necesitamos UN punto \(P_0\) que pertenezca a ambos planos. ¿Cómo hallar \(P_0\) de forma fiable? Fije una coordenada igual a \(0\) y resuelva el sistema lineal \(2 \times 2\) resultante para las otras dos coordenadas, asegurándose de elegir una coordenada cuya componente correspondiente en \(\mathbf{d} = \langle d_1, d_2, d_3 \rangle\) sea NO NULA. ¿Por qué? Si \(d_3 \ne 0\), la recta asciende o desciende en \(z\), por lo que está garantizado que atraviesa el plano \(z = 0\) en un punto único; si \(d_3 = 0\), la recta discurre horizontalmente y podría no tocar nunca \(z = 0\) (en cuyo caso fije \(x = 0\) o \(y = 0\)).
+
+[CALLOUT]
+id: plane-plane-int
+label: Métodos
+title: Obtención de la recta de intersección de dos planos no paralelos
+tone: key
+
+Dados dos planos \(\Pi_1: \mathbf{n}_1 \cdot \mathbf{r} = d_1\) y \(\Pi_2: \mathbf{n}_2 \cdot \mathbf{r} = d_2\) con \(\mathbf{n}_1 \times \mathbf{n}_2 \ne \mathbf{0}\), su intersección es una recta \(L\) que puede obtenerse por cualquiera de dos rutas equivalentes:
+
+(1) Método geométrico del producto vectorial:
+- Calcule el vector director \(\mathbf{d} = \mathbf{n}_1 \times \mathbf{n}_2\).
+- Elija una coordenada cuya componente en \(\mathbf{d}\) sea no nula (por ejemplo \(z\) si \(d_3 \ne 0\)), iguale esa coordenada a \(0\) en ambas ecuaciones de plano y resuelva el sistema \(2 \times 2\) para obtener un punto común \(P_0\).
+- Escriba \(L\) como \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\).
+(2) Método de eliminación algebraica: trate una variable como parámetro libre (por ejemplo \(z = t\)) y elimine una de las variables restantes de las dos ecuaciones lineales para expresar \(x\) e \(y\) directamente en términos de \(t\).
+[/CALLOUT]
+
+Comparemos ambas rutas de [REF: plane-plane-int | los métodos de intersección de planos] sobre \(\Pi_1: x - y + 2z = 4\) y \(\Pi_2: 2x + y - z = 5\).
+- Método geométrico: \(\mathbf{n}_1 = \langle 1, -1, 2 \rangle\) y \(\mathbf{n}_2 = \langle 2, 1, -1 \rangle\), de modo que
+\[
+\mathbf{d} = \mathbf{n}_1 \times \mathbf{n}_2 = \langle (-1)(-1) - 2(1),\; 2(2) - 1(-1),\; 1(1) - (-1)(2) \rangle = \langle -1, 5, 3 \rangle.
+\]
+Como la componente \(z\), que vale \(3\), es no nula, fije \(z = 0\):
+\[
+x - y = 4, \qquad 2x + y = 5.
+\]
+Sumar las dos ecuaciones da \(3x = 9 \implies x = 3\), y luego \(y = -1\). Así \(P_0(3, -1, 0)\) pertenece a ambos planos, dando
+\[
+x = 3 - t, \qquad y = -1 + 5t, \qquad z = 3t.
+\]
+- Eliminación algebraica: sumar las dos ecuaciones originales elimina \(y\) de inmediato: \(3x + z = 9 \implies z = 9 - 3x\). Tomar \(x = s\) da \(z = 9 - 3s\), y sustituir en \(\Pi_1\) da \(y = x + 2z - 4 = s + 18 - 6s - 4 = 14 - 5s\). Advierta que el vector director \(\langle 1, -5, -3 \rangle = -\mathbf{d}\) tiene exactamente la misma dirección, y en \(s = 3\) el punto es \((3, -1, 0)\): exactamente la misma recta geométrica.
+
+[QUESTION 2]
+[ANSWER: B]
+Halle una ecuación vectorial para la recta de intersección de los planos \(\Pi_1: x + 2y - z = 3\) y \(\Pi_2: 2x - y + z = 1\).
+
+(A) \(\mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 1, 3, -5 \rangle\)
+(B) \(\mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 1, -3, -5 \rangle\)
+(C) \(\mathbf{r}(t) = \langle 1, -1, 0 \rangle + t\langle 1, -3, -5 \rangle\)
+(D) \(\mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 3, 1, 0 \rangle\)
+(E) \(\mathbf{r}(t) = \langle 0, 1, -1 \rangle + t\langle -1, -3, 5 \rangle\)
+[/QUESTION]
+
+=== SECTION 3: Ángulos entre dos planos y entre una recta y un plano ===
+
+Dos planos secantes dividen el espacio en cuatro cuñas, formando dos ángulos suplementarios \(\theta\) y \(\pi - \theta\). Por convención, el ángulo diedro entre dos planos secantes se define como el ángulo AGUDO (o recto) \(\theta \in [0, \pi/2]\) entre ellos.
+
+Mire directamente a lo largo de la recta de intersección de \(\Pi_1\) y \(\Pi_2\). En este corte transversal, los dos planos aparecen como dos rectas que se cruzan con un ángulo \(\theta\), y sus normales \(\mathbf{n}_1\) y \(\mathbf{n}_2\) se sitúan a \(90^\circ\) de esas dos rectas. Rotar ambas rectas en \(90^\circ\) deja intacto el ángulo entre ellas. Según en qué sentido se haya elegido cada normal, el ángulo entre \(\mathbf{n}_1\) y \(\mathbf{n}_2\) será \(\theta\) o bien \(\pi - \theta\). Tomar el valor absoluto del producto escalar selecciona automáticamente el ángulo agudo \(\theta \in [0, \pi/2]\):
+\[
+\cos\theta = \frac{|\mathbf{n}_1 \cdot \mathbf{n}_2|}{\|\mathbf{n}_1\|\,\|\mathbf{n}_2\|}.
+\]
+En particular, dos planos son perpendiculares (ortogonales) si y solo si \(\mathbf{n}_1 \cdot \mathbf{n}_2 = 0\).
+
+Arrastre el deslizador del ángulo \(a\) en el corte transversal siguiente para comprobar que rotar el plano \(\Pi_2\) un ángulo \(a\) hace rotar su normal \(\mathbf{n}_2\) exactamente el mismo ángulo \(a\) respecto de \(\mathbf{n}_1\).
+
+[GRAPH]
+type: parametric2d
+title: Corte transversal a lo largo de la recta de intersección: el ángulo diedro \(a\) coincide con el ángulo entre \(\mathbf{n}_1\) y \(\mathbf{n}_2\)
+xlabel: dirección del plano 1
+ylabel: dirección normal 1
+trange: -2.4, 2.4
+xrange: -2.6, 2.6
+yrange: -2.2, 2.6
+trace: t, 0 | label: plano \(\Pi_1\)
+trace: t*cos(a), t*sin(a) | label: plano \(\Pi_2\)
+segment: 0, 0, 0, 2 | label: \(\mathbf{n}_1\)
+segment: 0, 0, -2*sin(a), 2*cos(a) | label: \(\mathbf{n}_2\)
+point: 0, 0 | label: \(L\)
+slider: a | range: 0.15, 1.45 | init: 0.65 | step: 0.05
+[/GRAPH]
+
+Pase ahora al ángulo \(\phi \in [0, \pi/2]\) entre una recta \(L\) (vector director \(\mathbf{v}\)) y un plano \(\Pi\) (vector normal \(\mathbf{n}\)). Aquí reside una de las trampas más célebres de la geometría analítica en 3D.
+
+Por definición, el ángulo \(\phi\) entre una recta y un plano es el ángulo agudo entre la recta y su proyección ortogonal sobre el plano. Cuando aplica directamente la fórmula del ángulo del producto escalar a \(\mathbf{v}\) y \(\mathbf{n}\), NO calcula \(\phi\): calcula el ángulo agudo \(\alpha\) entre la recta y el vector NORMAL \(\mathbf{n}\). Como \(\mathbf{n}\) es perpendicular al plano, \(\alpha\) y \(\phi\) son ángulos complementarios:
+\[
+\phi + \alpha = \frac{\pi}{2} \implies \sin\phi = \cos\alpha = \frac{|\mathbf{v} \cdot \mathbf{n}|}{\|\mathbf{v}\|\,\|\mathbf{n}\|}.
+\]
+Observe la vista lateral siguiente y arrastre el deslizador de inclinación de la recta \(p\) (que representa \(\phi\)). Cuando la recta yace contenida en el plano (\(p = 0\)), \(\mathbf{v}\) es ortogonal a \(\mathbf{n}\) (\(\mathbf{v} \cdot \mathbf{n} = 0\)), lo que da \(\sin 0 = 0\). Cuando la recta se alza verticalmente a lo largo de \(\mathbf{n}\) (\(p = \pi/2\)), \(\mathbf{v}\) es paralelo a \(\mathbf{n}\), lo que da \(\sin(\pi/2) = 1\).
+
+[GRAPH]
+type: parametric2d
+title: Ángulo recta-plano \(\phi\) frente al ángulo complementario \(\alpha = \frac{\pi}{2} - \phi\) con \(\mathbf{n}\)
+xlabel: dirección del plano
+ylabel: dirección normal
+trange: -2.2, 2.2
+xrange: -2.4, 2.4
+yrange: -0.6, 2.4
+trace: t, 0 | label: plano \(\Pi\)
+trace: t*cos(p), t*sin(p) | label: recta \(L\)
+segment: 0, 0, 0, 2 | label: \(\mathbf{n}\) | dashed: true
+segment: 0, 0, 2*cos(p), 2*sin(p) | label: \(\mathbf{v}\)
+segment: 2*cos(p), 0, 2*cos(p), 2*sin(p) | dashed: true
+point: 0, 0 | label: \(P\)
+slider: p | range: 0.1, 1.45 | init: 0.55 | step: 0.05
+[/GRAPH]
+
+[CALLOUT]
+id: angle-formulas
+label: Fórmulas
+title: Ángulo diedro y ángulo recta-plano
+tone: key
+
+(1) Ángulo diedro agudo \(\theta \in [0, \pi/2]\) entre dos planos secantes con normales \(\mathbf{n}_1\) y \(\mathbf{n}_2\):
+\[
+\cos\theta = \frac{|\mathbf{n}_1 \cdot \mathbf{n}_2|}{\|\mathbf{n}_1\|\,\|\mathbf{n}_2\|}.
+\]
+(2) Ángulo \(\phi \in [0, \pi/2]\) entre una recta con dirección \(\mathbf{v}\) y un plano con normal \(\mathbf{n}\):
+\[
+\sin\phi = \frac{|\mathbf{v} \cdot \mathbf{n}|}{\|\mathbf{v}\|\,\|\mathbf{n}\|}.
+\]
+[/CALLOUT]
+
+[CALLOUT]
+id: angle-trap
+label: Error frecuente
+title: Coseno para plano-plano, seno para recta-plano
+tone: caution
+
+La fórmula \(\arccos\!\bigl(\frac{|\mathbf{v} \cdot \mathbf{n}|}{\|\mathbf{v}\|\,\|\mathbf{n}\|}\bigr)\) devuelve el ángulo \(\alpha\) entre la recta y el vector NORMAL, NO el ángulo \(\phi\) entre la recta y el PLANO. Utilice siempre \(\arcsin\) (o reste \(\alpha\) de \(\frac{\pi}{2}\)) para un ángulo recta-plano. Como comprobación rápida de coherencia: si \(\mathbf{v} \cdot \mathbf{n} = 0\), la recta es paralela al plano, de modo que el ángulo recta-plano debe ser \(0\) (lo cual concuerda con \(\sin 0 = 0\), mientras que \(\cos 0 = 1\) daría falsamente \(\frac{\pi}{2}\)).
+[/CALLOUT]
+
+[TABLE]
+Par de objetos | Vectores definitorios | Fórmula del ángulo (agudo) | Condición de paralelismo | Condición de perpendicularidad
+Dos rectas \(L_1, L_2\) | \(\mathbf{v}_1,\; \mathbf{v}_2\) | \(\cos\theta = \frac{\lvert\mathbf{v}_1 \cdot \mathbf{v}_2\rvert}{\|\mathbf{v}_1\|\,\|\mathbf{v}_2\|}\) | \(\mathbf{v}_1 \times \mathbf{v}_2 = \mathbf{0}\) | \(\mathbf{v}_1 \cdot \mathbf{v}_2 = 0\)
+Dos planos \(\Pi_1, \Pi_2\) | \(\mathbf{n}_1,\; \mathbf{n}_2\) | \(\cos\theta = \frac{\lvert\mathbf{n}_1 \cdot \mathbf{n}_2\rvert}{\|\mathbf{n}_1\|\,\|\mathbf{n}_2\|}\) | \(\mathbf{n}_1 \times \mathbf{n}_2 = \mathbf{0}\) | \(\mathbf{n}_1 \cdot \mathbf{n}_2 = 0\)
+Recta \(L\) y plano \(\Pi\) | \(\mathbf{v},\; \mathbf{n}\) | \(\sin\phi = \frac{\lvert\mathbf{v} \cdot \mathbf{n}\rvert}{\|\mathbf{v}\|\,\|\mathbf{n}\|}\) | \(\mathbf{v} \cdot \mathbf{n} = 0\) | \(\mathbf{v} \times \mathbf{n} = \mathbf{0}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+¿Cuál es el ángulo agudo \(\phi\) entre la recta \(L: \mathbf{r}(t) = \langle 3, 0, -2 \rangle + t\langle 1, 1, 0 \rangle\) y el plano \(\Pi: x + z = 5\)?
+
+(A) \(\frac{\pi}{6}\)
+(B) \(\frac{\pi}{3}\)
+(C) \(\frac{\pi}{4}\)
+(D) \(\frac{\pi}{2}\)
+(E) \(0\)
+[/QUESTION]
+
+=== SECTION 4: Construcción de planos con restricciones angulares ===
+
+La condición de ortogonalidad \(\mathbf{n}_1 \cdot \mathbf{n}_2 = 0\) nos permite construir planos que satisfagan requisitos angulares junto con restricciones de punto o de recta.
+
+Suponga que desea la ecuación de un plano \(\Pi\) que contenga una recta dada \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) (o dos puntos dados \(A\) y \(B\), lo que da \(\mathbf{v} = \overrightarrow{AB}\)) Y sea perpendicular a un segundo plano \(\Pi_2\) con normal \(\mathbf{n}_2\). Traduzca ambos requisitos geométricos a condiciones de ortogonalidad sobre la normal desconocida \(\mathbf{n}\) de \(\Pi\):
+1. Como \(\Pi\) contiene a \(L\), su normal \(\mathbf{n}\) debe ser perpendicular a \(\mathbf{v}\): \(\mathbf{n} \cdot \mathbf{v} = 0\).
+2. Como \(\Pi \perp \Pi_2\), su normal \(\mathbf{n}\) debe ser perpendicular a \(\mathbf{n}_2\): \(\mathbf{n} \cdot \mathbf{n}_2 = 0\).
+
+Un vector no nulo ortogonal tanto a \(\mathbf{v}\) como a \(\mathbf{n}_2\) queda dado de inmediato por su producto vectorial:
+\[
+\mathbf{n} = \mathbf{v} \times \mathbf{n}_2.
+\]
+(Note la única excepción geométrica: si \(\mathbf{v}\) ya es paralelo a \(\mathbf{n}_2\), entonces \(L\) misma es perpendicular a \(\Pi_2\), de modo que TODO plano que contenga a \(L\) es automáticamente perpendicular a \(\Pi_2\) y \(\mathbf{v} \times \mathbf{n}_2 = \mathbf{0}\) señala correctamente la falta de unicidad.)
+
+Por ejemplo, halle el plano que contiene la recta \(L: \mathbf{r}(t) = \langle 0, 1, 2 \rangle + t\langle 1, -1, 2 \rangle\) y es perpendicular a \(\Pi_2: x + 2y + z = 6\). Aquí \(\mathbf{v} = \langle 1, -1, 2 \rangle\) y \(\mathbf{n}_2 = \langle 1, 2, 1 \rangle\), por lo que
+\[
+\mathbf{n} = \mathbf{v} \times \mathbf{n}_2 = \langle (-1)(1) - 2(2),\; 2(1) - 1(1),\; 1(2) - (-1)(1) \rangle = \langle -5, 1, 3 \rangle.
+\]
+Usar el punto \(P_0(0, 1, 2)\) sobre \(L\) da \(-5(x - 0) + 1(y - 1) + 3(z - 2) = 0\), o bien \(5x - y - 3z = -7\). Compruebe ambos requisitos: \(\mathbf{n} \cdot \mathbf{v} = -5 - 1 + 6 = 0\) y \(\mathbf{n} \cdot \mathbf{n}_2 = -5 + 2 + 3 = 0\).
+
+[QUESTION 4]
+[ANSWER: D]
+Halle la ecuación cartesiana lineal del plano que pasa por \(A(1, 0, -1)\) y \(B(2, 2, 1)\) y es perpendicular al plano \(2x - y + z = 7\).
+
+(A) \(4x - 3y - 5z = 9\)
+(B) \(4x + 3y - 5z = -1\)
+(C) \(2x - y + z = 1\)
+(D) \(4x + 3y - 5z = 9\)
+(E) \(x + 2y + 2z = -1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Para qué par de constantes reales \((a, d)\) la recta \(L: x = 1 + 2t,\; y = 3 - t,\; z = -2 + 4t\) yace completamente contenida en el plano \(ax + 2y + z = d\)?
+
+(A) \(a = -1,\; d = -3\)
+(B) \(a = 1,\; d = 5\)
+(C) \(a = -1,\; d = 3\)
+(D) \(a = -2,\; d = 2\)
+(E) No existe tal par \((a, d)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Cuál es el ángulo diedro agudo entre los planos \(\Pi_1: x + 2y - z = 4\) y \(\Pi_2: -2x - y - z = 7\)?
+
+(A) \(\frac{2\pi}{3}\)
+(B) \(\frac{\pi}{3}\)
+(C) \(\frac{\pi}{6}\)
+(D) \(\frac{\pi}{4}\)
+(E) \(\frac{\pi}{2}\)
+[/BONUS]

@@ -1,0 +1,189 @@
+=== SECTION 1: La vía duodécuple — clasificación de distribuciones a lo largo de tres ejes ===
+
+A lo largo de todo este módulo hemos encontrado una docena de problemas de conteo aparentemente distintos: funciones, aplicaciones inyectivas, sobreyecciones, subconjuntos, composiciones débiles y fuertes, particiones de conjuntos y agrupaciones de tipo Bell. En la década de 1960, el matemático Gian-Carlo Rota organizó todos ellos en un único marco unificado conocido como la vía duodécuple.
+
+Piensa en colocar \(m\) bolas en \(n\) cajas —o equivalentemente, definir una función \(f : M \to N\) de un conjunto \(M\) de \(m\) bolas a un conjunto \(N\) de \(n\) cajas, donde \(f(b)\) registra qué caja recibe la bola \(b\). Todo problema básico de distribución queda determinado de manera única respondiendo TRES preguntas estructurales independientes:
+
+1. ¿Son las \(m\) bolas ETIQUETADAS (distinguibles, como \(m\) tareas con nombre o personas distintas) o NO ETIQUETADAS (indistinguibles, como monedas idénticas o créditos intercambiables de servidor)?
+2. ¿Son las \(n\) cajas ETIQUETADAS (distinguibles, como habitaciones numeradas o cuentas con nombre) o NO ETIQUETADAS (indistinguibles, como bolsas idénticas sin marcar o equipos sin nombre)?
+3. ¿Qué restricción de ocupación aplica a cada caja?
+   - Arbitraria (sin restricción): cualquier caja puede contener \(0, 1, 2, \dots\) bolas (cualquier función \(f : M \to N\)).
+   - A lo sumo \(1\) bola por caja: ningún par de bolas puede compartir caja (una función inyectiva \(f : M \to N\)).
+   - Al menos \(1\) bola por caja: ninguna caja puede quedar vacía (una función sobreyectiva \(f : M \to N\)).
+
+Como hay \(2 \times 2 \times 3 = 12\) combinaciones de estas tres elecciones, todo problema cae en una de \(12\) celdas. Observa que hacer las bolas no etiquetadas significa que tratamos dos funciones como iguales siempre que permutar el dominio \(M\) convierta una en la otra; hacer las cajas no etiquetadas significa que tratamos dos funciones como iguales siempre que permutar el codominio \(N\) convierta una en la otra.
+
+[CALLOUT]
+id: twelvefold-matrix
+label: Referencia
+title: La vía duodécuple de Rota (\(m\) bolas en \(n\) cajas, con \(m, n \ge 1\))
+tone: key
+
+Aquí \(S(m, n)\) es el número de Stirling de segunda especie (particiones de un conjunto etiquetado de \(m\) elementos en \(n\) bloques no vacíos sin etiquetar), y \(p(m, n)\) es el número de particiones enteras de \(m\) en \(n\) partes positivas (desarrollado en la Sección 2).
+
+[TABLE]
+Bolas (\(m\)) | Cajas (\(n\)) | Ocupación libre (arbitraria) | A lo sumo \(1\) por caja (inyectiva) | Al menos \(1\) por caja (sobreyectiva)
+Etiquetadas | Etiquetadas | \(n^m\) | \(P(n, m) = \frac{n!}{(n - m)!}\) | \(\operatorname{surj}(m, n) = n!\,S(m, n)\)
+No etiquetadas | Etiquetadas | \(\binom{m + n - 1}{m}\) | \(\binom{n}{m}\) | \(\binom{m - 1}{n - 1}\)
+Etiquetadas | No etiquetadas | \(\sum_{k=1}^n S(m, k)\) | \(1\) si \(m \le n\), si no \(0\) | \(S(m, n)\)
+No etiquetadas | No etiquetadas | \(\sum_{k=1}^n p(m, k)\) | \(1\) si \(m \le n\), si no \(0\) | \(p(m, n)\)
+[/TABLE]
+[/CALLOUT]
+
+Inspecciona la columna central («A lo sumo \(1\) por caja») cuando las cajas son NO ETIQUETADAS: tanto si las \(m\) bolas son etiquetadas COMO si son no etiquetadas, ¡la respuesta colapsa simplemente a \(1\) (cuando \(m \le n\)) o \(0\) (cuando \(m > n\))! ¿Por qué? Si \(m > n\), el Principio del Palomar hace imposible poner a lo sumo una bola por caja. Si \(m \le n\), toda colocación válida pone cada una de las \(m\) bolas sola dentro de su propia caja sin marcar y deja \(n - m\) cajas vacías idénticas. Como las cajas NO llevan etiquetas, permutar qué caja sin marcar guarda qué bola produce EXACTAMENTE la misma configuración —¡solo hay \(1\) manera!
+
+Verifica también las dos filas con cajas etiquetadas:
+- Fila 1 (Bolas etiquetadas, Cajas etiquetadas): cada bola elige una caja independientemente (\(n^m\)); exigir cajas distintas da \(k\)-permutaciones \(P(n, m)\); exigir que cada caja sea alcanzada da sobreyecciones \(\operatorname{surj}(m, n) = n!\,S(m, n)\).
+- Fila 2 (Bolas no etiquetadas, Cajas etiquetadas): ¡solo importan los conteos de ocupación \((x_1, \dots, x_n)\) con \(x_1 + \cdots + x_n = m\)! La ocupación arbitraria es Estrellas y Barras \(\binom{m + n - 1}{m}\); a lo sumo \(1\) por caja elige cuáles \(m\) de las \(n\) cajas etiquetadas reciben bola (\(\binom{n}{m}\)); al menos \(1\) por caja son composiciones fuertes \(\binom{m - 1}{n - 1}\).
+
+[QUESTION 1]
+[ANSWER: D]
+Un equipo de software tiene \(5\) tickets de error distintos y \(3\) colas de trabajadores idénticas e intercambiables. Cada ticket debe asignarse a una cola, y toda cola debe recibir al menos un ticket. ¿Cuántas asignaciones distintas son posibles?
+
+(A) \(2\)
+(B) \(6\)
+(C) \(41\)
+(D) \(25\)
+(E) \(150\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+¿De cuántas maneras pueden colocarse \(4\) cuadros de museo distintos en \(6\) cajas de almacenamiento idénticas y sin marcar si cada caja puede guardar A LO SUMO UN cuadro (se permiten cajas vacías)?
+
+(A) \(1\)
+(B) \(15\)
+(C) \(24\)
+(D) \(360\)
+(E) \(1296\)
+[/QUESTION]
+
+=== SECTION 2: Números de Bell y particiones enteras — las celdas de cajas sin etiquetar ===
+
+Las dos filas inferiores de [REF: twelvefold-matrix | la vía duodécuple] —donde las cajas son NO ETIQUETADAS— introducen dos familias combinatorias ricas que no pueden reducirse a un único coeficiente binomial ni a una potencia.
+
+Primero, observa la Fila 3, ocupación arbitraria: colocar \(m\) bolas ETIQUETADAS en \(n\) cajas NO ETIQUETADAS permitiendo cajas vacías. Particiona todas las colocaciones según el número exacto \(k\) de cajas NO VACÍAS realmente usadas (\(1 \le k \le \min(m, n)\)). Para cada \(k\) fijo, hay \(S(m, k)\) maneras de dividir las \(m\) bolas etiquetadas en \(k\) bloques no vacíos sin etiquetar, y las \(n - k\) cajas vacías sin etiquetar restantes son indistinguibles. Por la Regla de la Suma, el conteo es \(\sum_{k=1}^n S(m, k)\).
+
+Cuando \(n \ge m\), ¡hay suficientes cajas como para que ningún tope de cajas restrinja la partición en absoluto! El número total de maneras de particionar un conjunto etiquetado de \(m\) elementos en CUALQUIER número de bloques no vacíos sin etiquetar se llama el \(m\)-ésimo número de Bell, escrito \(B_m\):
+\[
+B_m = \sum_{k=1}^m S(m, k) \qquad (m \ge 1), \qquad \text{con } B_0 = 1.
+\]
+Usar nuestros valores conocidos de Stirling da \(B_1 = 1\), \(B_2 = 1 + 1 = 2\), \(B_3 = 1 + 3 + 1 = 5\) y \(B_4 = 1 + 7 + 6 + 1 = 15\). Los números de Bell también satisfacen una elegante recurrencia demostrada por descomposición combinatoria: en cualquier partición de \(\{1, 2, \dots, m + 1\}\), supón que \(k\) de los otros \(m\) elementos NO comparten el bloque del elemento \(m + 1\) (de modo que \(m - k\) de ellos se unen a \(m + 1\) en su bloque). ¡Elegir esos \(k\) elementos externos toma \(\binom{m}{k}\) maneras, y particionarlos en cualquier número de bloques no vacíos toma \(B_k\) maneras! Sumar sobre \(k = 0, 1, \dots, m\) da
+\[
+B_{m + 1} = \sum_{k=0}^m \binom{m}{k} B_k.
+\]
+
+Segundo, observa la Fila 4: colocar \(m\) bolas NO ETIQUETADAS en \(n\) cajas NO ETIQUETADAS. Ahora NI las bolas NI las cajas tienen identidad —¡el ÚNICO rasgo observable de una colocación es el multiconjunto NO ORDENADO de tamaños de caja! Colocar \(m\) bolas idénticas en \(n\) cajas idénticas con al menos \(1\) bola por caja equivale por tanto a escribir \(m\) como una suma NO ORDENADA de \(n\) enteros positivos:
+\[
+m = \lambda_1 + \lambda_2 + \cdots + \lambda_n, \qquad \lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_n \ge 1.
+\]
+Una suma no ordenada así se llama una partición entera de \(m\) en \(n\) partes positivas, y su conteo se denota \(p(m, n)\).
+
+Por ejemplo, hallemos \(p(6, 3)\) listando todas las ternas no crecientes de enteros positivos que suman \(6\):
+\[
+4 + 1 + 1, \qquad 3 + 2 + 1, \qquad 2 + 2 + 2.
+\]
+Por consiguiente, \(p(6, 3) = 3\). Compara eso con las composiciones fuertes de \(6\) en \(3\) cajas ETIQUETADAS: \(\binom{6 - 1}{3 - 1} = \binom{5}{2} = 10\), porque \((4, 1, 1)\) tiene \(3\) ordenaciones, \((3, 2, 1)\) tiene \(6\) ordenaciones y \((2, 2, 2)\) tiene \(1\) ordenación (\(3 + 6 + 1 = 10\)). Mira justo ahí POR QUÉ las particiones enteras NO tienen fórmula cerrada elemental en términos de factoriales o potencias: distintas particiones tienen distintos números de partes repetidas, de modo que dividir composiciones entre \(n!\) falla —¡la multiplicidad por simetría varía enormemente de una partición a otra!
+
+En su lugar, calculamos \(p(m, n)\) limpiamente usando una recurrencia combinatoria (y las estudiamos más a fondo mediante funciones generatrices en combinatoria posterior). Clasifica toda partición de \(m\) en \(n\) partes positivas según su parte MENOR \(\lambda_n\):
+- Caso 1 (\(\lambda_n = 1\)): al menos una parte es igual a \(1\). Suprimir una parte de tamaño \(1\) deja una partición de \(m - 1\) en \(n - 1\) partes positivas (\(p(m - 1, n - 1)\) particiones).
+- Caso 2 (\(\lambda_n \ge 2\)): CADA una de las \(n\) partes es al menos \(2\). Restar \(1\) a CADA parte reduce la suma total en \(n\) manteniendo positivas las \(n\) partes, creando una biyección con particiones de \(m - n\) en \(n\) partes positivas (\(p(m - n, n)\) particiones).
+
+Como los dos casos son disjuntos y exhaustivos, obtenemos la recurrencia de particiones.
+
+[CALLOUT]
+id: bell-and-partitions
+label: Teoremas
+title: Números de Bell y la recurrencia de particiones enteras
+tone: key
+
+(1) Números de Bell: \(B_m = \sum_{k=1}^m S(m, k)\) cuenta todas las particiones de un conjunto etiquetado de \(m\) elementos en bloques no vacíos sin etiquetar, satisfaciendo \(B_0 = 1\) y
+\[
+B_{m + 1} = \sum_{k=0}^m \binom{m}{k} B_k.
+\]
+(2) Particiones enteras \(p(m, n)\): el número de sumas no ordenadas de \(n\) enteros positivos que suman \(m\) satisface
+\[
+p(m, n) = p(m - 1, n - 1) + p(m - n, n) \qquad (1 \le n \le m),
+\]
+con valores frontera \(p(m, 1) = 1\), \(p(m, m) = 1\) y \(p(m, n) = 0\) siempre que \(n > m\) o \(n \le 0\) (para \(m \ge 1\)).
+[/CALLOUT]
+
+Comprueba [REF: bell-and-partitions.2 | la recurrencia de particiones] en \(p(7, 2)\) y \(p(6, 3)\):
+- \(p(7, 2) = p(6, 1) + p(5, 2) = 1 + (p(4, 1) + p(3, 2)) = 1 + 1 + 1 = 3\) (correspondiente a \(6 + 1\), \(5 + 2\) y \(4 + 3\)).
+- \(p(6, 3) = p(5, 2) + p(3, 3) = 2 + 1 = 3\) (¡coincidiendo con nuestra lista directa de arriba!).
+
+Y cuando SÍ se permiten cajas vacías sin etiquetar (Fila 4, ocupación arbitraria), particionar por el número exacto \(k\) de cajas no vacías da \(\sum_{k=1}^n p(m, k)\), el número de particiones enteras de \(m\) en A LO SUMO \(n\) partes positivas.
+
+[QUESTION 3]
+[ANSWER: B]
+¿De cuántas maneras pueden repartirse \(8\) monedas de oro idénticas en \(3\) bolsas idénticas si cada bolsa debe contener al menos una moneda?
+
+(A) \(10\)
+(B) \(5\)
+(C) \(21\)
+(D) \(45\)
+(E) \(966\)
+[/QUESTION]
+
+=== SECTION 3: Identificación rápida de modelos en problemas verbales disfrazados ===
+
+Los problemas reales de conteo rara vez anuncian «coloca \(m\) bolas no etiquetadas en \(n\) cajas etiquetadas». En su lugar, hablan de distribuir fondos de becas, asignar tareas a servidores, lanzar dados o clasificar cartas. Antes de escribir CUALQUIER coeficiente binomial o exponencial, ejecuta un diagnóstico estricto de tres pasos para identificar la celda exacta de [REF: twelvefold-matrix | la vía duodécuple]:
+
+1. Identifica qué hace el papel de BOLAS (los elementos asignados, es decir, el dominio de \(f\)) y qué hace el papel de CAJAS (los destinos o categorías, es decir, el codominio de \(f\)). Comprobación rápida: cada bola va a EXACTAMENTE UNA caja, mientras que una caja puede guardar \(0\), \(1\) o muchas bolas.
+2. Pon a prueba la distinguibilidad en AMBOS lados: pregunta «si intercambio dos bolas que están en cajas distintas, ¿obtengo un resultado diferente?» (Sí \(\implies\) bolas etiquetadas; No \(\implies\) bolas no etiquetadas). Luego pregunta «si intercambio todo el contenido de dos cajas, ¿obtengo un resultado diferente?» (Sí \(\implies\) cajas etiquetadas; No \(\implies\) cajas no etiquetadas).
+3. Lee la regla de ocupación: ¿puede quedar vacía una caja? ¿Puede una caja guardar más de una bola? (¡Y vigila giros híbridos —como un tope «a lo sumo \(2\) bolas en la caja 1»—, que significan que partes de la celda correspondiente de la vía duodécuple y luego aplicas conteo por complemento o PIE!)
+
+Observa cómo minúsculos cambios de redacción voltean por completo la celda —y la respuesta numérica— para \(m = 4\) y \(n = 3\):
+- «Asignar \(4\) pasantes distintos a \(3\) departamentos con nombre, recibiendo cada departamento al menos un pasante»: bolas etiquetadas, cajas etiquetadas, sobreyectiva \(\implies \operatorname{surj}(4, 3) = 36\).
+- «Dividir a \(4\) pasantes distintos en \(3\) escuadrones de proyecto sin nombre, con cada escuadrón no vacío»: bolas etiquetadas, cajas no etiquetadas, sobreyectiva \(\implies S(4, 3) = 6\).
+- «Asignar \(4\) estipendios idénticos de \(1000\) dólares entre \(3\) departamentos con nombre, recibiendo cada departamento al menos uno»: bolas no etiquetadas, cajas etiquetadas, sobreyectiva \(\implies \binom{4 - 1}{3 - 1} = 3\).
+- «Repartir \(4\) estipendios idénticos de \(1000\) dólares en \(3\) sobres idénticos sin marcar, con cada sobre no vacío»: bolas no etiquetadas, cajas no etiquetadas, sobreyectiva \(\implies p(4, 3) = 1\) (solo \(2 + 1 + 1\)).
+
+Cuatro frases que comparten exactamente los mismos números \(4\) y \(3\) y exactamente la misma cláusula de «al menos uno» producen cuatro respuestas completamente distintas —\(36\), \(6\), \(3\) y \(1\)— ¡únicamente por los dos interruptores de distinguibilidad!
+
+[QUESTION 4]
+[ANSWER: C]
+Compara dos problemas de distribución:
+- Problema P: Distribuir \(7\) créditos idénticos de servidor entre \(4\) cuentas distintas de estudiantes, donde una cuenta puede recibir \(0\) créditos.
+- Problema Q: Distribuir \(7\) créditos idénticos de servidor en \(4\) sobres idénticos sin marcar, donde cada sobre debe recibir al menos \(1\) crédito.
+¿Qué par ordenado da los conteos exactos para el Problema P y el Problema Q?
+
+(A) \((120, 20)\)
+(B) \((20, 3)\)
+(C) \((120, 3)\)
+(D) \((120, 11)\)
+(E) \((16384, 3)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Usando [REF: bell-and-partitions.2 | la recurrencia de particiones enteras] \(p(m, n) = p(m - 1, n - 1) + p(m - n, n)\), ¿cuál es el valor exacto de \(p(9, 3)\)?
+
+(A) \(5\)
+(B) \(6\)
+(C) \(8\)
+(D) \(7\)
+(E) \(28\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Usando [REF: bell-and-partitions.1 | la recurrencia de los números de Bell] \(B_{m + 1} = \sum_{k=0}^m \binom{m}{k} B_k\) junto con \(B_0 = 1\), \(B_1 = 1\), \(B_2 = 2\), \(B_3 = 5\) y \(B_4 = 15\), ¿cuál es el valor exacto de \(B_5\)?
+
+(A) \(37\)
+(B) \(52\)
+(C) \(51\)
+(D) \(55\)
+(E) \(64\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Cuatro libros distintos se colocan en \(3\) repisas distintas (superior, media e inferior), donde el orden de los libros en cada repisa NO importa y SÍ se permiten repisas vacías —salvo que la repisa superior puede guardar A LO SUMO \(2\) libros. ¿Cuántas colocaciones válidas son posibles?
+
+(A) \(72\)
+(B) \(12\)
+(C) \(64\)
+(D) \(73\)
+(E) \(81\)
+[/BONUS]

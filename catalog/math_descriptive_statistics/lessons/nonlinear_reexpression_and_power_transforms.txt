@@ -1,0 +1,181 @@
+=== SECTION 1: Taming skewness with Tukey's ladder of powers ===
+
+Real-world quantitative measurements—city populations, insurance claims, biological weights, network latencies—are frequently strongly skewed or follow curved relationships where raw means, standard deviations, and straight trendlines perform poorly. Rather than discarding informative structure or accepting a distorted summary, exploratory data analysis often re-expresses a strictly positive variable \(x > 0\) by applying a smooth, strictly increasing nonlinear function \(g(x)\)—such as \(\sqrt{x}\), \(\ln x\), or \(x^2\)—so the distribution becomes more symmetric, group spreads stabilize across side-by-side boxplots, or a curved scatterplot straightens into a line.
+
+John Tukey organized the most useful re-expressions into a single ordered sequence called the ladder of powers.
+
+[CALLOUT]
+id: tukey-ladder
+label: Framework
+title: Tukey's ladder of powers (for strictly positive \(x > 0\))
+tone: key
+
+Arrange power transformations by exponent \(p\), adding a minus sign for \(p < 0\) so EVERY rung stays strictly increasing (preserving the ordering of all observations and quantiles):
+
+(1) Moving DOWN the ladder (\(p < 1\): \(\sqrt{x}\), \(\ln x\) at the \(p = 0\) slot, \(-1/\sqrt{x}\), \(-1/x\)): these functions are CONCAVE—their slopes decrease as \(x\) grows, compressing large values relative to small values. Moving down pulls in a long RIGHT tail (reducing positive skewness) and stabilizes spread when groups with larger centers have wider spreads.
+(2) Identity rung (\(p = 1\)): raw data \(x\) (no change in shape).
+(3) Moving UP the ladder (\(p > 1\): \(x^2, x^3\)): these functions are CONVEX—their slopes increase as \(x\) grows, stretching large values relative to small values. Moving up pulls in a long LEFT tail (reducing negative skewness).
+[/CALLOUT]
+
+Why does \(\ln x\) sit precisely at the \(p = 0\) rung between \(x^{1/2}\) and \(-x^{-1/2}\)? Write each power in the rescaled, order-preserving Box-Cox form \(T_p(x) = \frac{x^p - 1}{p}\) for \(p \ne 0\). Every \(T_p\) passes through \((1, 0)\) with slope \(1\) at \(x = 1\), and as \(p \to 0\), \(T_p(x)\) converges smoothly to \(\ln x\)! Drag the slider \(p\) up and down Tukey's ladder in the graph below to see how \(p < 1\) bends downward (compressing the right tail) while \(p > 1\) bends upward (stretching the right tail).
+
+[GRAPH]
+type: function2d
+title: Tukey's ladder of powers in anchored form \(T_p(x) = (x^p - 1)/p\) (with \(\ln x\) at \(p = 0\))
+xlabel: \(x\)
+ylabel: Re-expressed value
+xrange: 0.25, 4.0
+yrange: -3.2, 6.0
+trace: x - 1 | label: Raw scale (\(p = 1\), linear) | color: #94a3b8
+trace: log(x) | label: Natural log (\(p = 0\)) | color: #10b981
+trace: abs(p) < 0.01 ? log(x) : (x^p - 1) / p | label: Selected ladder rung \(p\) | color: #3b82f6
+point: 1, 0 | label: (1, 0) | color: #ef4444
+slider: p | range: -1, 2 | init: 0.5 | step: 0.5
+[/GRAPH]
+
+See [REF: tukey-ladder.1 | moving down the ladder] in action on the right-skewed \(n = 7\) dataset \(1, 2, 4, 8, 16, 32, 64\). On the raw scale, its quartiles are \(Q_1 = 2\), \(M = 8\), \(Q_3 = 32\), giving a large positive Bowley quartile skewness \(\text{Sk}_B = \frac{32 + 2 - 2(8)}{32 - 2} = \frac{18}{30} = +0.60\). Because \(\ln x\) is strictly increasing, it maps each order statistic directly: \(\ln 1, \ln 2, 2\ln 2, 3\ln 2, 4\ln 2, 5\ln 2, 6\ln 2\). The re-expressed values are evenly spaced! Their quartiles are \(Q_{1,\ln} = \ln 2\), \(M_{\ln} = 3\ln 2\), \(Q_{3,\ln} = 5\ln 2\), yielding \(\text{Sk}_B = 0\) and \(g_1 = 0\)—exact symmetry!
+
+Watch the domain condition carefully: \(\ln x\), \(\sqrt{x}\), and negative powers require \(x > 0\) (with \(\sqrt{x}\) allowing \(x = 0\)). If a right-skewed variable contains zeros (such as count data), adding a small shift \(\ln(x + c)\) is sometimes used exploratorily, but the resulting shape depends on the arbitrary choice of \(c\), so any shift must be reported transparently rather than hidden.
+
+[QUESTION 1]
+[ANSWER: C]
+A strictly positive, right-skewed dataset of \(n = 11\) claim amounts has quartiles \(Q_1 = 1\), \(M = 9\), and \(Q_3 = 25\). What are Bowley's quartile skewness \(\text{Sk}_B\) on the raw scale and after applying the square-root re-expression \(u = \sqrt{x}\), respectively?
+
+(A) \(+0.50\) before and \(+0.25\) after
+(B) \(+1/3\) before and \(+1/3\) after
+(C) \(+1/3\) before and \(0\) after
+(D) \(-1/3\) before and \(0\) after
+(E) \(+2/3\) before and \(+1/3\) after
+[/QUESTION]
+
+=== SECTION 2: Linearizing exponential and power-law trends ===
+
+When a scatterplot of \((x_i, y_i)\) bends smoothly upward or downward—and an OLS residual plot on the raw scale displays a clear U-shape or arch—two logarithmic re-expressions straighten the two most common nonlinear patterns in science and economics into ordinary straight lines.
+
+[CALLOUT]
+id: log-linearization
+label: Method
+title: Semi-log and log-log linearization for positive response \(y > 0\)
+tone: key
+
+(1) Semi-log re-expression (\(\ln y\) versus \(x\)) linearizes an EXPONENTIAL trend \(y \approx a b^x\) (with \(a > 0, b > 0\)): taking natural logarithms yields
+\[
+\ln y \approx \ln a + (\ln b)\,x = c_0 + c_1 x.
+\]
+Fit descriptive OLS to \((x_i, \ln y_i)\) to obtain \(\widehat{\ln y} = c_0 + c_1 x\), then back-transform as \(\hat{y} = e^{c_0} (e^{c_1})^x\). Increasing \(x\) by \(\Delta x\) multiplies \(\hat{y}\) by \(e^{c_1 \Delta x}\) (a constant multiplicative growth or decay factor per unit of \(x\)).
+(2) Log-log re-expression (\(\ln y\) versus \(\ln x\), requiring \(x > 0, y > 0\)) linearizes a POWER-LAW trend \(y \approx a x^p\) (with \(a > 0\)): taking natural logarithms of both sides yields
+\[
+\ln y \approx \ln a + p \ln x = c_0 + c_1 \ln x.
+\]
+Fit descriptive OLS to \((\ln x_i, \ln y_i)\) to obtain \(\widehat{\ln y} = c_0 + c_1 \ln x\), then back-transform as \(\hat{y} = e^{c_0} x^{c_1}\). Multiplying \(x\) by any factor \(m > 0\) multiplies \(\hat{y}\) by \(m^{c_1}\).
+[/CALLOUT]
+
+How do you know whether an upward-curving scatterplot is better linearized by semi-log or log-log? Fit OLS on the transformed coordinates and ALWAYS inspect the residual plot ON THE TRANSFORMED SCALE! Look at the graph below: on a semi-log plot (\(\ln y\) on the vertical axis against raw \(x\) on the horizontal axis), a genuine exponential curve \(y = 2 e^{0.4 x}\) flattens into an exact straight line \(\ln y = \ln 2 + 0.4 x\), whereas a power law \(y = 2 x^{1.5}\) remains visibly concave (\(\ln y = \ln 2 + 1.5 \ln x\)), leaving an unmistakable arched residual plot until you also take \(\ln x\).
+
+[GRAPH]
+type: function2d
+title: Semi-log diagnostic (\(\ln y\) vs \(x\)): exponential straightens while power law stays curved
+xlabel: \(x\)
+ylabel: Natural log of y
+xrange: 0.5, 5.5
+yrange: -0.5, 3.6
+trace: log(2) + 0.4 * x | label: Exponential \(y = 2 e^{0.4x}\) becomes straight | color: #3b82f6
+trace: log(2) + 1.5 * log(x) | label: Power law \(y = 2 x^{1.5}\) stays curved | color: #ef4444
+point: 1, log(2) + 0.4 | label: Exp at x=1 | color: #1d4ed8
+point: 4, log(2) + 1.6 | label: Exp at x=4 | color: #1d4ed8
+[/GRAPH]
+
+Work through a quick semi-log check. Suppose a descriptive OLS fit of \(\ln y\) against time \(x\) (in days) yields \(\widehat{\ln y} = 1.5 + 0.20 x\) with a patternless transformed residual plot. Back-transforming gives \(\hat{y} = e^{1.5} e^{0.20 x} \approx 4.48 (1.221)^x\). Each additional day (\(\Delta x = 1\)) multiplies predicted \(y\) by \(e^{0.20} \approx 1.221\)—a roughly \(22.1\%\) daily increase—rather than adding a fixed constant amount.
+
+[QUESTION 2]
+[ANSWER: B]
+A descriptive OLS trendline fitted to \((x_i, \ln y_i)\) for bacterial count \(y\) versus time \(x\) (in hours) produces \(\widehat{\ln y} = 2.0 + 0.50 x\), with a patternless residual plot on the log scale. According to this back-transformed trend, how does predicted count \(\hat{y}\) change when \(x\) increases by \(2\) hours?
+
+(A) \(\hat{y}\) increases by \(1.0\) bacterium.
+(B) \(\hat{y}\) is multiplied by \(e^{1} = e \approx 2.718\) (an increase of roughly \(171.8\%\)).
+(C) \(\hat{y}\) increases by exactly \(100\%\) (doubles).
+(D) \(\hat{y}\) is multiplied by \(0.50\).
+(E) \(\hat{y}\) is multiplied by \(e^{2} \approx 7.389\).
+[/QUESTION]
+
+=== SECTION 3: Back-transformation, elasticity, and the geometric-mean trap ===
+
+Re-expression simplifies exploration and linear fitting, but translating results back to the original units demands precision on two key points.
+
+First, interpret the log-log slope \(c_1\) as an elasticity. In the back-transformed power law \(\hat{y} = e^{c_0} x^{c_1}\), replacing \(x\) by \(m x\) yields
+\[
+\hat{y}(m x) = e^{c_0} (m x)^{c_1} = m^{c_1}\,\hat{y}(x).
+\]
+For any exact scaling factor \(m\)—such as doubling \(x\) (\(m = 2\))—predicted \(\hat{y}\) multiplies by \(2^{c_1}\) (for instance, if \(c_1 = 0.5\), doubling \(x\) multiplies \(\hat{y}\) by \(\sqrt{2} \approx 1.414\)). For small percentage changes (say a \(1\%\) increase, \(m = 1.01\)), the elementary approximation \((1 + \delta)^{c_1} \approx 1 + c_1 \delta\) implies that a \(1\%\) increase in \(x\) corresponds to roughly a \(c_1\%\) change in \(\hat{y}\). That percentage-to-percentage ratio is why economists and biologists call \(c_1\) the elasticity of \(y\) with respect to \(x\).
+
+Second, beware of back-transforming an arithmetic mean computed on the log scale!
+
+[CALLOUT]
+id: backtransform-mean-trap
+label: Common pitfall
+title: Exponentiating the mean of logs gives the geometric mean, NOT the arithmetic mean
+tone: caution
+
+For strictly positive observations \(x_1, \dots, x_n\), averaging their natural logarithms and exponentiating gives
+\[
+\exp\!\left(\frac{1}{n}\sum_{i=1}^n \ln x_i\right) = \exp\!\left(\ln \left(\prod_{i=1}^n x_i\right)^{1/n}\right) = \left(\prod_{i=1}^n x_i\right)^{1/n} = G,
+\]
+which is the GEOMETRIC mean \(G\), NOT the arithmetic mean \(\bar{x}\)! Because \(\ln x\) is strictly concave, whenever the values are not all equal we have \(G < \bar{x}\), so \(\exp(\overline{\ln x})\) systematically understates the arithmetic mean \(\bar{x}\). (By contrast, because \(\exp\) is strictly increasing, exponentiating the median of \(\ln x\) recovers the median of \(x\) directly whenever \(n\) is odd, and recovers the geometric mean of the two middle values when \(n\) is even.)
+[/CALLOUT]
+
+Notice what [REF: backtransform-mean-trap | this identity] also means for a back-transformed regression prediction \(\hat{y} = \exp(\widehat{\ln y})\): on a right-skewed log-transformed dataset, \(\exp(\widehat{\ln y})\) tracks the typical multiplicative center (approximating the conditional median or geometric center) rather than the arithmetic average of \(y\) at a given \(x\). State clearly whether a back-transformed summary represents a typical multiplicative level or a raw arithmetic average.
+
+[QUESTION 3]
+[ANSWER: D]
+In an allometric biology dataset of strictly positive body masses \(x\) (in kg) and metabolic rates \(y\) (in watts), a descriptive OLS fit on \((\ln x_i, \ln y_i)\) yields \(\widehat{\ln y} = 1.2 + 0.75 \ln x\). What is the back-transformed equation, and by what exact factor does predicted metabolic rate \(\hat{y}\) multiply when body mass \(x\) is multiplied by \(16\)?
+
+(A) \(\hat{y} = 1.2\, x^{0.75}\); multiplies by \(12\)
+(B) \(\hat{y} = e^{1.2} (0.75)^x\); multiplies by \(8\)
+(C) \(\hat{y} = e^{1.2} x^{0.75}\); multiplies by \(12\)
+(D) \(\hat{y} = e^{1.2} x^{0.75}\); multiplies by \(8\)
+(E) \(\hat{y} = e^{1.2} x^{0.75}\); multiplies by \(e^{12}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Four positive server response times (in ms) are \(1, 4, 16, 64\). An analyst takes \(\ln x_i\), averages those four log values to get \(\overline{\ln x}\), and exponentiates \(\exp(\overline{\ln x})\), reporting the result as the arithmetic mean response time. What value does \(\exp(\overline{\ln x})\) actually produce, and how does it compare to the true arithmetic mean \(\bar{x}\)?
+
+(A) \(\exp(\overline{\ln x}) = 8\text{ ms}\) (the geometric mean), which is much smaller than the true arithmetic mean \(\bar{x} = 21.25\text{ ms}\).
+(B) \(\exp(\overline{\ln x}) = 21.25\text{ ms}\), matching the arithmetic mean exactly because \(\exp\) and \(\ln\) are inverses.
+(C) \(\exp(\overline{\ln x}) = 10\text{ ms}\), which equals the sample median.
+(D) \(\exp(\overline{\ln x}) = 32\text{ ms}\), which overstates the true arithmetic mean \(\bar{x} = 21.25\text{ ms}\).
+(E) \(\exp(\overline{\ln x}) = 4\text{ ms}\), which equals the harmonic mean.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+A strictly positive, left-skewed dataset of \(n = 11\) test scores has quartiles \(Q_1 = 2\), \(M = 8\), and \(Q_3 = 10\) (so Bowley's skewness is \(\text{Sk}_B = -0.50\)). Which direction on Tukey's ladder helps tame left skewness, and what is Bowley's skewness after applying \(u = x^2\)?
+
+(A) Move down the ladder (\(\sqrt{x}\) or \(\ln x\)); applying \(u = x^2\) yields \(\text{Sk}_B = -0.75\).
+(B) Move up the ladder (\(p > 1\)); applying \(u = x^2\) yields \(\text{Sk}_B = 0\).
+(C) Move down the ladder (\(p < 1\)); applying \(u = x^2\) yields \(\text{Sk}_B = -0.25\).
+(D) Move up the ladder (\(p > 1\)); applying \(u = x^2\) yields \(\text{Sk}_B = +0.25\).
+(E) Move up the ladder (\(p > 1\)); applying \(u = x^2\) yields \(\text{Sk}_B = -0.25\), cutting the left skewness in half.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose paired positive data follow an exact power law \(y = 5 x^2\) over \(x \in [1, 10]\), but an analyst mistakenly fits a semi-log OLS line \(\widehat{\ln y} = c_0 + c_1 x\) instead of a log-log line. What systematic pattern appears in the residual plot of \(\ln y - (c_0 + c_1 x)\) plotted against \(x\)?
+
+(A) A patternless horizontal band centered at \(0\), because \(\ln y\) is linear in \(x\).
+(B) A downward-opening arch (negative residuals at low and high \(x\), positive residuals in the middle), because \(\ln y = \ln 5 + 2\ln x\) is strictly concave in \(x\).
+(C) An upward-opening U-shape (positive residuals at low and high \(x\), negative residuals in the middle), because \(\ln y\) is strictly convex in \(x\).
+(D) All residuals equal to zero because taking logs removes every power exponent.
+(E) A perfectly straight diagonal line with positive slope.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Why does Tukey's ladder of powers write the \(p = -1\) rung as \(-1 / x\) (with a leading minus sign) rather than \(+1 / x\) for strictly positive data \(x > 0\)?
+
+(A) Because \(+1 / x\) is undefined for positive numbers \(x > 0\).
+(B) Because \(-1 / x\) guarantees that the transformed arithmetic mean equals \(0\).
+(C) Because \(+1 / x\) is strictly decreasing on \(x > 0\) and reverses the order of every observation (flipping right tails to left tails and inverting correlation signs), whereas \(-1 / x\) is strictly increasing and concave, preserving order while compressing the right tail.
+(D) Because \(+1 / x\) is convex while \(-1 / x\) is linear.
+(E) Because taking a minus sign allows \(x = 0\) to be transformed cleanly.
+[/BONUS]

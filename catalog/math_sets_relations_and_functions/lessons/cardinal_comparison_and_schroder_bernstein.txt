@@ -1,0 +1,253 @@
+=== SECTION 1: Comparing cardinalities via injections ===
+
+In the previous two lessons, we compared sets only by equality of cardinality (\(|A| = |B|\) via a bijection) and proved that \(\mathcal{P}(A)\) is never equinumerous with \(A\). To turn cardinality into a full comparison toolkit—telling when one set is "at most as large as" or "strictly smaller than" another—we replace bijections with INJECTIONS.
+
+[CALLOUT]
+id: cardinal-ineq-def
+label: Definition
+title: Cardinality inequality (\(\le\) and \(<\))
+tone: key
+
+Let \(A\) and \(B\) be sets.
+
+(1) Weak inequality: \(|A| \le |B|\) if there exists an INJECTION \(f : A \to B\).
+(2) Strict inequality: \(|A| < |B|\) if \(|A| \le |B|\) AND \(|A| \ne |B|\) (i.e., there exists an injection \(A \to B\), but NO bijection \(A \to B\)).
+[/CALLOUT]
+
+Check the basic order properties of \(\le\) on cardinalities immediately:
+- Reflexivity: \(|A| \le |A|\) for every set \(A\), witnessed by the injective identity map \(\operatorname{id}_A : A \to A\).
+- Transitivity: if \(|A| \le |B|\) and \(|B| \le |C|\), witnessed by injections \(f : A \to B\) and \(g : B \to C\), then the composite \(g \circ f : A \to C\) is an injection, so \(|A| \le |C|\).
+- Subset monotonicity: if \(A \subseteq B\), then the inclusion map \(\iota : A \hookrightarrow B\) is injective, so \(|A| \le |B|\).
+- Cantor's Theorem restated: for EVERY set \(A\), \(a \mapsto \{a\}\) is an injection \(A \to \mathcal{P}(A)\), giving \(|A| \le |\mathcal{P}(A)|\), while Cantor's Theorem forbids any bijection \(A \to \mathcal{P}(A)\); hence \(|A| < |\mathcal{P}(A)|\)!
+
+Can we also characterize \(|A| \le |B|\) using SURJECTIONS in the opposite direction? For nonempty \(A\), YES—by our theorem on one-sided inverses!
+- Suppose \(A \ne \emptyset\) and \(|A| \le |B|\), witnessed by an injection \(f : A \to B\). Because \(A \ne \emptyset\), \(f\) has a left inverse \(r : B \to A\) satisfying \(r \circ f = \operatorname{id}_A\); therefore \(r : B \to A\) is SURJECTIVE! (Notice this direction uses NO choice principle at all.)
+- Conversely, suppose there exists a surjection \(q : B \to A\). By our theorem on right inverses (which invokes the Axiom of Choice for arbitrary unstructured infinite sets to pick one preimage per fiber \(q^{-1}(\{a\})\)), \(q\) has a right inverse \(s : A \to B\) satisfying \(q \circ s = \operatorname{id}_A\); therefore \(s : A \to B\) is INJECTIVE, proving \(|A| \le |B|\)!
+
+Notice why \(A \ne \emptyset\) is essential in that equivalence: when \(A = \emptyset\) and \(B \ne \emptyset\), we have \(|\emptyset| \le |B|\) (via the empty injection \(\emptyset \to B\)), yet there is NO surjection \(B \to \emptyset\) because no function \(B \to \emptyset\) exists!
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(A\) and \(B\) be nonempty sets. Which statement is equivalent to \(|A| \le |B|\) (assuming the Axiom of Choice where needed for arbitrary sets)?
+
+(A) There exists a surjection \(f : A \to B\)
+(B) Every function \(f : A \to B\) is injective
+(C) There exists a surjection \(q : B \to A\)
+(D) \(A\) is a subset of \(B\)
+(E) There is no injection from \(B\) into \(A\)
+[/QUESTION]
+
+=== SECTION 2: The Cantor–Schröder–Bernstein Theorem ===
+
+We just checked that \(\le\) on cardinalities is reflexive and transitive. What about ANTISYMMETRY? That is: if \(|A| \le |B|\) AND \(|B| \le |A|\) (meaning there exists an injection \(f : A \to B\) AND an injection \(g : B \to A\)), MUST there exist a BIJECTION \(h : A \to B\)?
+
+For finite sets, this is obvious from ordinary integer inequality (\(m \le n\) and \(n \le m\) implies \(m = n\)). For INFINITE sets, however, \(f\) and \(g\) might each miss infinitely many elements of their codomains and tangle together in complicated ways—there is no obvious reason you can splice them into a single bijection! Yet you ALWAYS can, and astonishingly, the construction requires NO Axiom of Choice at all!
+
+[CALLOUT]
+id: csb-theorem
+label: Theorem
+title: Cantor–Schröder–Bernstein (CSB) Theorem
+tone: key
+
+Let \(A\) and \(B\) be sets. If there exist an injection \(f : A \to B\) and an injection \(g : B \to A\), then there exists a bijection \(h : A \to B\).
+
+In cardinality notation: if \(|A| \le |B|\) and \(|B| \le |A|\), then \(|A| = |B|\).
+[/CALLOUT]
+
+How do we actually BUILD the bijection \(h : A \to B\) from \(f : A \to B\) and \(g : B \to A\)? Look closely at the obstacle, and let the obstacle dictate the exact construction!
+
+We have two candidate rules to send an element \(x \in A\) into \(B\):
+- Push forward using \(f(x) \in B\) (always defined for every \(x \in A\)), OR
+- Pull back using \(g^{-1}(x) \in B\) (defined ONLY when \(x \in g(B)\), and uniquely defined there because \(g\) is injective!).
+
+Consider any "orphan" element \(x \in A_0 = A \setminus g(B)\). Since \(x \notin g(B)\), \(g^{-1}(x)\) DOES NOT EXIST—we have NO CHOICE: every \(x \in A_0\) MUST be sent to \(f(x)\)!
+Now look at the ripple effect: once \(x \in A_0\) claims \(f(x) \in B\), the element \(g(f(x)) \in A\) can NO LONGER use \(g^{-1}\) (because \(g^{-1}(g(f(x))) = f(x)\) is ALREADY taken by \(x\)!). So \(g(f(x))\) is ALSO forced to use \(f\)!
+That forces \((g \circ f)(g(f(x))) = (g \circ f)^2(x)\) to use \(f\) too, and so on forever!
+
+This motivates collecting ALL elements of \(A\) forced to use \(f\) into a single countable union! Define iteratively:
+\[
+C_0 = A \setminus g(B), \qquad C_{n+1} = (g \circ f)(C_n) = (g \circ f)^{n+1}(A \setminus g(B)) \quad (n \in \mathbb{N}),
+\]
+and set
+\[
+C = \bigcup_{n=0}^{\infty} C_n = \bigcup_{n=0}^{\infty} (g \circ f)^n\bigl(A \setminus g(B)\bigr) \subseteq A.
+\]
+(Here \((g \circ f)^0 = \operatorname{id}_A\), so \((g \circ f)^0(S) = S\).)
+
+Before defining \(h\), check one crisp identity about \(C\) using our direct-image union law:
+\[
+(g \circ f)(C) = (g \circ f)\!\left(\bigcup_{n=0}^{\infty} C_n\right) = \bigcup_{n=0}^{\infty} (g \circ f)(C_n) = \bigcup_{n=0}^{\infty} C_{n+1} = \bigcup_{k=1}^{\infty} C_k.
+\]
+Therefore
+\[
+C = C_0 \cup \bigcup_{k=1}^{\infty} C_k = (A \setminus g(B)) \cup (g \circ f)(C).
+\]
+Now define \(h : A \to B\) piecewise:
+\[
+h(x) = \begin{cases} f(x) & \text{if } x \in C, \\ g^{-1}(x) & \text{if } x \in A \setminus C. \end{cases}
+\]
+
+Let us verify EVERY single requirement—well-definedness, injectivity, and surjectivity—with zero handwaving!
+
+1. Well-definedness: If \(x \in A \setminus C\), then in particular \(x \notin C_0 = A \setminus g(B)\), so \(x \in g(B)\)! Because \(g : B \to A\) is injective, there is a UNIQUE \(y \in B\) such that \(g(y) = x\), denoted \(g^{-1}(x)\). Since \(C\) and \(A \setminus C\) partition \(A\), \(h : A \to B\) is completely well-defined.
+
+2. Injectivity: Suppose \(x_1, x_2 \in A\) satisfy \(h(x_1) = h(x_2)\).
+   - Case 1: \(x_1, x_2 \in C\). Then \(f(x_1) = f(x_2)\), so \(x_1 = x_2\) because \(f\) is injective.
+   - Case 2: \(x_1, x_2 \in A \setminus C\). Then \(g^{-1}(x_1) = g^{-1}(x_2)\); applying \(g\) to both sides gives \(x_1 = g(g^{-1}(x_1)) = g(g^{-1}(x_2)) = x_2\).
+   - Case 3 (cross-branch check!): Could \(x_1 \in C\) and \(x_2 \in A \setminus C\) have \(h(x_1) = h(x_2)\)? That would mean \(f(x_1) = g^{-1}(x_2)\). Apply \(g\) to both sides:
+   \[
+   x_2 = g\bigl(g^{-1}(x_2)\bigr) = g\bigl(f(x_1)\bigr) = (g \circ f)(x_1) \in (g \circ f)(C) \subseteq C!
+   \]
+   Contradiction, because \(x_2 \in A \setminus C\)! So cross-branch collisions are impossible, and \(h\) is INJECTIVE.
+
+3. Surjectivity: Let \(y \in B\) be arbitrary. There are only two possibilities:
+   - Case 1: \(y \in f(C)\). Then \(y = f(x)\) for some \(x \in C\), so \(h(x) = f(x) = y\).
+   - Case 2: \(y \notin f(C)\). Consider the element \(x = g(y) \in A\). Can \(x\) lie in \(C\)? Remember \(C = (A \setminus g(B)) \cup (g \circ f)(C)\). Since \(x = g(y) \in g(B)\), we know \(x \notin A \setminus g(B)\). If \(x \in (g \circ f)(C)\), then \(g(y) = g(f(c))\) for some \(c \in C\); because \(g\) is injective, this forces \(y = f(c) \in f(C)\), contradicting \(y \notin f(C)\)! Therefore \(x = g(y)\) MUST lie in \(A \setminus C\)! Evaluating \(h\) at \(x \in A \setminus C\) gives
+   \[
+   h(x) = g^{-1}(x) = g^{-1}\bigl(g(y)\bigr) = y.
+   \]
+   Thus EVERY \(y \in B\) is hit, proving \(h\) is SURJECTIVE—and hence a BIJECTION!
+
+Look how cleanly that proof works: NO vague infinite-chain diagrams, NO casework on cycles vs. doubly infinite chains, and NO Axiom of Choice!
+
+[QUESTION 2]
+[ANSWER: B]
+In the iterative-union proof of [REF: csb-theorem | the Cantor–Schröder–Bernstein Theorem] with \(C = \bigcup_{n=0}^{\infty} (g \circ f)^n(A \setminus g(B))\) and \(h(x) = f(x)\) on \(C\), \(h(x) = g^{-1}(x)\) on \(A \setminus C\): why is it IMPOSSIBLE for an element \(x_1 \in C\) and an element \(x_2 \in A \setminus C\) to collide under \(h\) (i.e., satisfy \(h(x_1) = h(x_2)\))?
+
+(A) Because \(f\) and \(g\) are assumed to be surjective
+(B) Because \(f(x_1) = g^{-1}(x_2)\) implies \(x_2 = g(f(x_1)) \in (g \circ f)(C) \subseteq C\), contradicting \(x_2 \in A \setminus C\)
+(C) Because \(C\) is always empty unless \(A = B\)
+(D) Because \(g(f(C))\) is disjoint from \(C\)
+(E) Because \(A \setminus g(B)\) is always finite
+[/QUESTION]
+
+=== SECTION 3: Effortless equinumerosity — intervals, \(\mathbb{R}\), \(\{0, 1\}^{\mathbb{N}}\), and \(\mathcal{P}(\mathbb{N})\) ===
+
+The true power of [REF: csb-theorem | Cantor–Schröder–Bernstein] appears the moment we compare infinite sets whose explicit bijections are awkward to write down. Instead of engineering one delicate bijection, we just write TWO easy injections—one in each direction!
+
+Application 1: Open, closed, and half-open intervals all have the SAME cardinality:
+\[
+|(0, 1)| = |[0, 1]| = |[0, 1)| = |(0, 1]| = |\mathbb{R}|.
+\]
+Proof for \(|(0, 1)| = |[0, 1]|\):
+- Injection \(f : (0, 1) \to [0, 1]\): the inclusion map \(f(x) = x\) (trivially injective!).
+- Injection \(g : [0, 1] \to (0, 1)\): the linear shrink \(g(x) = \frac{1}{4} + \frac{1}{2}x\), which maps \([0, 1]\) injectively onto \([\frac{1}{4}, \frac{3}{4}] \subseteq (0, 1)\)!
+By CSB, \(|(0, 1)| = |[0, 1]|\) in TWO lines! (No Hilbert's Hotel endpoint surgery needed!) And because \((0, 1) \subseteq [0, 1) \subseteq [0, 1]\) and \((0, 1) \subseteq (0, 1] \subseteq [0, 1]\), sandwiching with inclusions gives \(|(0, 1)| \le |[0, 1)| \le |[0, 1]| = |(0, 1)|\), so CSB immediately forces \(|[0, 1)| = |(0, 1]| = |(0, 1)| = |\mathbb{R}|\)!
+
+[GRAPH]
+type: function2d
+title: Two opposing injections for CSB: inclusion \(f(x) = x\) on \((0, 1)\) and shrink \(g(x) = \frac{1}{4} + \frac{1}{2}x\) from \([0, 1]\) into \((0, 1)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 1
+yrange: 0, 1
+aspect: equal
+trace: x | label: \(f(x) = x\) | color: #2563eb
+trace: 0.25 + 0.5*x | label: \(g(x) = 0.25 + 0.5x\) | color: #16a34a
+point: 0, 0.25 | label: \((0, 0.25)\) | color: #16a34a | offset: 28, -4
+point: 1, 0.75 | label: \((1, 0.75)\) | color: #16a34a | offset: -28, 8
+segment: 0, 0.25, 0, 0.75 | color: #16a34a
+[/GRAPH]
+
+Application 2: Real numbers have the EXACT SAME cardinality as infinite binary sequences and \(\mathcal{P}(\mathbb{N})\)!
+\[
+|\mathbb{R}| = |(0, 1)| = |\{0, 1\}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{N})|.
+\]
+In the previous lesson, we proved BOTH \((0, 1)\) and \(\{0, 1\}^{\mathbb{N}}\) are uncountable—could one be strictly bigger than the other? CSB settles it cleanly:
+- Injection \(f : (0, 1) \to \{0, 1\}^{\mathbb{N}}\): write each \(x \in (0, 1)\) in its binary (base-2) expansion \(x = \sum_{k=1}^{\infty} b_k 2^{-k} = 0.b_1 b_2 b_3 \dots_2\) (resolving non-uniqueness by always choosing the representation that does NOT end in repeating \(1\)s, e.g., \(1/2 = 0.1000\dots_2\)). Define \(f(x) = (b_1, b_2, b_3, \dots) \in \{0, 1\}^{\mathbb{N}}\). If \(f(x) = f(y)\), then \(x\) and \(y\) have the exact same binary expansion, hence \(x = y\)! So \(f\) is injective.
+- Injection \(g : \{0, 1\}^{\mathbb{N}} \to (0, 1)\): given any binary sequence \(a = (a_1, a_2, a_3, \dots) \in \{0, 1\}^{\mathbb{N}}\), define the BASE-10 (decimal) real number \(g(a) = 0.d_1 d_2 d_3 \dots_{10}\) where
+\[
+d_n = \begin{cases} 3 & \text{if } a_n = 0, \\ 7 & \text{if } a_n = 1. \end{cases}
+\]
+Because \(g(a)\) uses only digits \(3\) and \(7\), we have \(g(a) \in (0, 1)\) AND its decimal expansion is UNIQUE! Therefore if \(a \ne a'\) differ at coordinate \(n\), then \(g(a)\) and \(g(a')\) differ in their \(n\)-th decimal digit and cannot represent the same real number, so \(g(a) \ne g(a')\). Hence \(g\) is injective!
+- By [REF: csb-theorem | CSB], \(|(0, 1)| = |\{0, 1\}^{\mathbb{N}}|\). Combined with \(|\mathbb{R}| = |(0, 1)|\) and \(|\{0, 1\}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{N})|\), we get
+\[
+|\mathbb{R}| = |(0, 1)| = |[0, 1]| = |\{0, 1\}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{N})|!
+\]
+This common cardinality is called the cardinality of the continuum, often denoted \(\mathfrak{c}\) (or \(2^{\aleph_0}\)), while the cardinality of \(\mathbb{N}\) is denoted \(\aleph_0\).
+
+[QUESTION 3]
+[ANSWER: D]
+We want to prove \(|\mathbb{R} \setminus \mathbb{Z}| = |\mathbb{R}|\) using [REF: csb-theorem | the Cantor–Schröder–Bernstein Theorem]. Which pair of injections accomplishes this cleanly?
+
+(A) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) by \(f(x) = x\), and \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) by \(g(x) = x + 1\)
+(B) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) by \(f(x) = \lfloor x \rfloor\), and \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) by \(g(x) = \frac{1}{2} + \frac{1}{\pi}\arctan(x)\)
+(C) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) by \(f(x) = x^2\), and \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) by \(g(x) = x + \frac{1}{2}\)
+(D) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) by \(f(x) = x\), and \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) by \(g(x) = \frac{1}{2} + \frac{1}{\pi}\arctan(x)\) (whose image is \((0, 1) \subseteq \mathbb{R} \setminus \mathbb{Z}\))
+(E) \(f : \mathbb{R} \setminus \mathbb{Z} \to \mathbb{R}\) by \(f(x) = x\), and \(g : \mathbb{R} \to \mathbb{R} \setminus \mathbb{Z}\) by \(g(x) = x + \frac{1}{2}\)
+[/QUESTION]
+
+=== SECTION 4: The plane equals the line — \(|\mathbb{R} \times \mathbb{R}| = |\mathbb{R}|\) ===
+
+One of Cantor's most astonishing discoveries (about which he wrote to Dedekind in 1877, "I see it, but I do not believe it!") is that a two-dimensional square \([0, 1] \times [0, 1]\)—and the entire plane \(\mathbb{R} \times \mathbb{R}\)—has the EXACT SAME cardinality as the one-dimensional line \(\mathbb{R}\)!
+
+Let us prove \(|\mathbb{R} \times \mathbb{R}| = |\mathbb{R}|\) cleanly via CSB and digit interleaving! Since \(|\mathbb{R}| = |(0, 1)|\), we have \(|\mathbb{R} \times \mathbb{R}| = |(0, 1) \times (0, 1)|\) (via the product bijection \((x, y) \mapsto (f^{-1}(x), f^{-1}(y))\)). Thus it suffices to prove \(|(0, 1) \times (0, 1)| = |(0, 1)|\).
+
+- First injection \(f : (0, 1) \to (0, 1) \times (0, 1)\): define \(f(x) = (x, 0.5)\). Obviously injective!
+- Second injection \(g : (0, 1) \times (0, 1) \to (0, 1)\): for every real number \(x \in (0, 1)\), choose its UNIQUE decimal expansion \(x = 0.x_1 x_2 x_3 \dots\) that does NOT end in repeating \(9\)s (so infinitely many digits of \(x\) are NOT \(9\)). Given \((x, y) \in (0, 1) \times (0, 1)\) with \(x = 0.x_1 x_2 x_3 \dots\) and \(y = 0.y_1 y_2 y_3 \dots\), INTERLEAVE their digits into a single decimal:
+\[
+g(x, y) = 0.x_1 y_1 x_2 y_2 x_3 y_3 \dots.
+\]
+For example, \(g(0.123000\dots,\; 0.456000\dots) = 0.142536000\dots\).
+
+Check carefully that \(g\) lands in \((0, 1)\) and is INJECTIVE (despite decimal non-uniqueness!):
+1. Does \(g(x, y)\) lie in \((0, 1)\)? Since \(x \in (0, 1)\), at least one digit \(x_k\) is nonzero, so \(g(x, y) > 0\). Since \(x\) has infinitely many digits \(\ne 9\), the interleaved decimal \(g(x, y)\) also has infinitely many digits \(\ne 9\), so \(g(x, y) < 1\) AND \(g(x, y)\) does NOT end in repeating \(9\)s!
+2. Is \(g\) injective? Suppose \((x, y) \ne (x', y')\). Then either \(x \ne x'\) or \(y \ne y'\), so their chosen non-repeating-9 expansions differ at some digit \(k\) (either \(x_k \ne x'_k\) or \(y_k \ne y'_k\)). Consequently, the interleaved expansions of \(g(x, y)\) and \(g(x', y')\) differ at position \(2k - 1\) or \(2k\). Crucially, NEITHER \(g(x, y)\) nor \(g(x', y')\) ends in repeating \(9\)s—could one end in repeating \(0\)s while the other ends in repeating \(9\)s? NO, because NEITHER ends in repeating \(9\)s! Therefore two distinct non-repeating-9 decimal strings ALWAYS represent two distinct real numbers, so \(g(x, y) \ne g(x', y')\)!
+
+(Why did we use CSB instead of claiming \(g\) is a bijection? Because \(g\) is NOT surjective! The number \(0.59090909\dots \in (0, 1)\) would de-interleave into \(x = 0.5000\dots\) and \(y = 0.9999\dots\), which was forbidden as a representation! CSB lets us bypass that surjectivity nuisance completely!)
+
+By [REF: csb-theorem | CSB], \(|(0, 1) \times (0, 1)| = |(0, 1)|\), and therefore \(|\mathbb{R} \times \mathbb{R}| = |\mathbb{R}|\)! By induction, \(|\mathbb{R}^n| = |\mathbb{R}|\) for every finite dimension \(n \in \mathbb{Z}^+\)!
+
+Let us put our entire cardinality map together in one reference table, contrasting CSB equalities against Cantor's strict inequalities:
+
+[TABLE]
+Cardinality tier | Notation | Representative sets of this exact cardinality
+Finite | \(0, 1, 2, \dots, n\) | \(\emptyset,\; \{1, \dots, n\},\; \mathcal{P}(\{1, \dots, k\})\) (size \(2^k\))
+Countably infinite | \(\aleph_0 = |\mathbb{N}|\) | \(\mathbb{N},\; \mathbb{Z},\; \mathbb{N} \times \mathbb{N},\; \mathbb{Q},\; \{0, 1\}^*,\; \mathbb{Q}[x],\; \mathcal{P}_{\mathrm{fin}}(\mathbb{N})\)
+Continuum | \(\mathfrak{c} = |\mathbb{R}| = |\mathcal{P}(\mathbb{N})|\) | \((0, 1),\; [0, 1],\; \mathbb{R},\; \mathbb{R} \setminus \mathbb{Q},\; \{0, 1\}^{\mathbb{N}},\; \mathcal{P}(\mathbb{N}),\; \mathbb{R} \times \mathbb{R},\; \mathbb{R}^n\)
+Strictly larger than \(\mathfrak{c}\) | \(|\mathcal{P}(\mathbb{R})| > \mathfrak{c}\) | \(\mathcal{P}(\mathbb{R}),\; \{0, 1\}^{\mathbb{R}}\) (all functions \(\mathbb{R} \to \{0, 1\}\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: E]
+Which of the following sets has a cardinality STRICTLY GREATER than \(|\mathbb{R}|\)?
+
+(A) \([0, 1] \times [0, 1]\)
+(B) \(\mathbb{R}^3\)
+(C) \(\mathcal{P}(\mathbb{Q})\)
+(D) \(\{0, 1\}^{\mathbb{N}}\)
+(E) The set \(\{0, 1\}^{\mathbb{R}}\) of all functions \(f : \mathbb{R} \to \{0, 1\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Let \(\mathbb{N}^{\mathbb{N}}\) be the set of all functions \(f : \mathbb{N} \to \mathbb{N}\). Using the fact that every function \(f : \mathbb{N} \to \mathbb{N}\) is uniquely determined by its graph \(\Gamma_f \subseteq \mathbb{N} \times \mathbb{N}\) (so \(f \mapsto \Gamma_f\) injects \(\mathbb{N}^{\mathbb{N}}\) into \(\mathcal{P}(\mathbb{N} \times \mathbb{N})\)), what is the exact cardinality of \(\mathbb{N}^{\mathbb{N}}\)?
+
+(A) \(|\mathbb{N}^{\mathbb{N}}| = |\mathbb{N}|\) (countably infinite)
+(B) \(|\mathbb{N}^{\mathbb{N}}| = |\mathbb{R}|\) (cardinality of the continuum)
+(C) \(|\mathbb{N}^{\mathbb{N}}| = |\mathcal{P}(\mathbb{R})|\) (strictly larger than \(|\mathbb{R}|\))
+(D) \(|\mathbb{N}| < |\mathbb{N}^{\mathbb{N}}| < |\mathbb{R}|\)
+(E) \(|\mathbb{N}^{\mathbb{N}}| = |\mathcal{P}(\mathcal{P}(\mathbb{N}))|\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Apply the iterative-union CSB construction explicitly to \(A = \mathbb{N}\), \(B = \mathbb{N}\), with injections \(f : \mathbb{N} \to \mathbb{N}\) given by \(f(n) = n + 2\) and \(g : \mathbb{N} \to \mathbb{N}\) given by \(g(n) = n + 1\). What is the set \(C = \bigcup_{k=0}^{\infty} (g \circ f)^k(A \setminus g(B))\), and what is \(h(4)\) for the resulting CSB bijection \(h : \mathbb{N} \to \mathbb{N}\)?
+
+(A) \(C = \{0, 3, 6, 9, \dots\} = \{3k : k \in \mathbb{N}\}\), and \(h(4) = 3\)
+(B) \(C = \{0, 3, 6, 9, \dots\} = \{3k : k \in \mathbb{N}\}\), and \(h(4) = 6\)
+(C) \(C = \{0, 2, 4, 6, \dots\} = 2\mathbb{N}\), and \(h(4) = 6\)
+(D) \(C = \{0, 1, 3, 4, 6, 7, \dots\}\), and \(h(4) = 6\)
+(E) \(C = \emptyset\), and \(h(4) = 3\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Let \(S = \{0, 1, 2, 3, 4\}\) and suppose \(A\) is an infinite set such that \(|A| = |\mathbb{R}|\). What is the cardinality of the set of all functions from \(S\) to \(A\) (denoted \(A^S\)), and what is the cardinality of the set of all functions from \(A\) to \(S\) (denoted \(S^A\))?
+
+(A) \(|A^S| = |\mathbb{R}|\) and \(|S^A| = |\mathbb{R}|\)
+(B) \(|A^S| = |\mathcal{P}(\mathbb{R})|\) and \(|S^A| = |\mathbb{R}|\)
+(C) \(|A^S| = |\mathbb{R}|\) and \(|S^A| = |\mathcal{P}(\mathbb{R})|\)
+(D) \(|A^S| = |\mathbb{N}|\) and \(|S^A| = |\mathcal{P}(\mathbb{R})|\)
+(E) \(|A^S| = |\mathbb{R}|\) and \(|S^A| > |\mathcal{P}(\mathbb{R})|\)
+[/BONUS]

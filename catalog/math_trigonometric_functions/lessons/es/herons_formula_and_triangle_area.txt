@@ -1,0 +1,207 @@
+=== SECTION 1: Cálculo del área del triángulo directamente a partir de tres lados ===
+
+Suponga que un agrimensor mide los tres linderos de un terreno triangular —por ejemplo \(a = 13\text{ m}\), \(b = 14\text{ m}\) y \(c = 15\text{ m}\)— sin medir un solo ángulo. Usted YA conoce una forma de calcular su área: usar la ley de los cosenos para hallar \(\cos C\), recuperar un ángulo aproximado \(C\) y sustituirlo en la fórmula de área LAL \(K = \frac{1}{2}ab\sin C\). ¡Sin embargo, pasar por un ángulo aproximado resulta extrañamente indirecto cuando el área depende únicamente de las tres longitudes de los lados \(a, b, c\)!
+
+¿Podemos eliminar algebraicamente el ángulo \(C\) de una vez por todas para obtener una fórmula directa y exacta para \(K\) puramente en términos de \(a, b, c\)? ¡Sí, y la deducción no utiliza nada más allá de \(K = \frac{1}{2}ab\sin C\), la identidad pitagórica \(\sin^2 C = 1 - \cos^2 C\), la ley de los cosenos y la factorización de diferencias de cuadrados!
+
+Comience con la fórmula de área LAL y eleve ambos miembros al cuadrado para que aparezca \(\sin^2 C\):
+\[
+K^2 = \frac{1}{4}a^2b^2\sin^2 C = \frac{1}{4}a^2b^2(1 - \cos^2 C) = \frac{1}{4}a^2b^2(1 + \cos C)(1 - \cos C).
+\]
+Sustituya ahora la ley de los cosenos \(\cos C = \frac{a^2 + b^2 - c^2}{2ab}\) en cada factor por separado. Observe cómo ambos numeradores colapsan en diferencias de cuadrados perfectos:
+\[
+1 + \cos C = 1 + \frac{a^2 + b^2 - c^2}{2ab} = \frac{a^2 + 2ab + b^2 - c^2}{2ab} = \frac{(a + b)^2 - c^2}{2ab} = \frac{(a + b + c)(a + b - c)}{2ab},
+\]
+\[
+1 - \cos C = 1 - \frac{a^2 + b^2 - c^2}{2ab} = \frac{2ab - a^2 - b^2 + c^2}{2ab} = \frac{c^2 - (a - b)^2}{2ab} = \frac{(c - a + b)(c + a - b)}{2ab}.
+\]
+Multiplique esas dos fracciones de regreso en la expresión de \(K^2\). Advierta que \((2ab)(2ab) = 4a^2b^2\) cancela por completo el \(a^2b^2\) exterior, dejando \(\frac{1}{4} \cdot \frac{1}{4} = \frac{1}{16}\):
+\[
+K^2 = \frac{1}{16}(a + b + c)(b + c - a)(a + c - b)(a + b - c).
+\]
+Esa fórmula ya es simétrica en \(a, b, c\), y una última sustitución la vuelve asombrosamente limpia. Defina el semiperímetro \(s\) (la mitad del perímetro):
+\[
+s = \frac{a + b + c}{2} \iff a + b + c = 2s.
+\]
+Restar \(2a\), \(2b\) y \(2c\) sucesivamente de \(a + b + c = 2s\) reescribe los otros tres factores:
+\[
+b + c - a = 2s - 2a = 2(s - a), \qquad a + c - b = 2(s - b), \qquad a + b - c = 2(s - c).
+\]
+Al sustituir los cuatro factores en \(K^2\), los cuatro factores de \(2\) se multiplican dando \(2^4 = 16\) y cancelan por completo \(\frac{1}{16}\):
+\[
+K^2 = \frac{1}{16} \cdot 2s \cdot 2(s - a) \cdot 2(s - b) \cdot 2(s - c) = s(s - a)(s - b)(s - c).
+\]
+Tomar la raíz cuadrada positiva produce la fórmula de Herón.
+
+[CALLOUT]
+id: herons-formula
+label: Teorema
+title: Fórmula de Herón para el área del triángulo
+tone: key
+
+Para todo triángulo con longitudes de lados \(a, b, c\) y semiperímetro \(s = \dfrac{a + b + c}{2}\), el área exacta \(K\) es
+\[
+K = \sqrt{s(s - a)(s - b)(s - c)}.
+\]
+[/CALLOUT]
+
+=== SECTION 2: Aplicación de la fórmula de Herón y la desigualdad triangular ===
+
+Pruebe [REF: herons-formula | la fórmula de Herón] en nuestro terreno inicial de lados \(a = 13\text{ m}\), \(b = 14\text{ m}\) y \(c = 15\text{ m}\).
+
+1. Calcule el semiperímetro: \(s = \frac{13 + 14 + 15}{2} = \frac{42}{2} = 21\text{ m}\).
+2. Calcule las tres diferencias:
+\[
+s - a = 21 - 13 = 8, \qquad s - b = 21 - 14 = 7, \qquad s - c = 21 - 15 = 6.
+\]
+(¡Comprobación aritmética rápida: \((s - a) + (s - b) + (s - c)\) debe ser SIEMPRE igual a \(s\)! Aquí \(8 + 7 + 6 = 21 = s\).)
+3. Factorice ANTES de multiplicar para que la raíz cuadrada se simplifique sin esfuerzo:
+\[
+K = \sqrt{21 \cdot 8 \cdot 7 \cdot 6} = \sqrt{(3 \cdot 7) \cdot (2^3) \cdot 7 \cdot (2 \cdot 3)} = \sqrt{2^4 \cdot 3^2 \cdot 7^2} = 2^2 \cdot 3 \cdot 7 = 84\text{ m}^2.
+\]
+Observe abajo la geometría exacta de este triángulo clásico: colocado sobre la base \(b = 14\), el vértice \(B\) cae en \((5, 12)\) con altura \(12\) (dividiendo la base en \(5\) y \(9\), formando ¡los triángulos rectángulos \(5\)-\(12\)-\(13\) y \(9\)-\(12\)-\(15\)!), lo que confirma \(\frac{1}{2}(14)(12) = 84\text{ m}^2\).
+
+[GRAPH]
+type: parametric2d
+title: El triángulo \(13\)-\(14\)-\(15\) con semiperímetro \(s = 21\) y área exacta \(K = 84\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1.176
+xrange: -1.0, 15.2
+yrange: -1.2, 13.5
+trace: 2.0*cos(t), 2.0*sin(t) | label: \(\angle A\) | color: #2563eb
+segment: 0, 0, 14, 0 | label: \(b = 14\) | color: #0f172a
+segment: 0, 0, 5, 12 | label: \(a = 13\) | color: #2563eb
+segment: 14, 0, 5, 12 | label: \(c = 15\) | color: #dc2626
+segment: 5, 0, 5, 12 | label: \(h = 12\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.5, -0.5
+point: 5, 12 | label: \(B\) | offset: 0, 0.5
+point: 14, 0 | label: \(C\) | offset: 0.5, -0.5
+[/GRAPH]
+
+Observe con atención los tres factores diferencia \(s - a = \frac{b + c - a}{2}\), \(s - b = \frac{a + c - b}{2}\) y \(s - c = \frac{a + b - c}{2}\). La desigualdad triangular establece \(b + c > a\), \(a + c > b\) y \(a + b > c\), lo que significa que LOS TRES factores \(s - a\), \(s - b\) y \(s - c\) son estrictamente positivos si y solo si \(a, b, c\) forman un triángulo válido no degenerado.
+- Si los dos lados más cortos suman igual que el lado más largo (digamos \(3, 4, 7\)), entonces \(s = 7\) y \(s - 7 = 0\), dando \(K = 0\) (un segmento de recta aplastado de área nula).
+- Si los dos lados más cortos suman MENOS que el lado más largo (digamos \(3, 4, 9\)), entonces \(s = 8\) y \(s - 9 = -1 < 0\), mientras que los otros tres factores son positivos, volviendo NEGATIVO el producto dentro de la raíz cuadrada: ¡una alarma algebraica inmediata de que no existe triángulo!
+
+[CALLOUT]
+id: heron-tip
+label: Consejo práctico
+title: Simplifique radicales factorizando antes de multiplicar
+tone: note
+
+En la fórmula de Herón, multiplicar primero cuatro números grandes (como \(21 \cdot 8 \cdot 7 \cdot 6 = 7056\)) vuelve mucho más difícil detectar cuadrados perfectos. Mantenga separados \(s\), \(s - a\), \(s - b\) y \(s - c\), factorice cada uno en primos y extraiga de inmediato los pares de la raíz cuadrada. Además, compruebe \((s - a) + (s - b) + (s - c) = s\) para detectar errores aritméticos antes de tomar la raíz.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál es el área exacta de un triángulo con longitudes de lados \(a = 7\), \(b = 8\) y \(c = 9\)?
+
+(A) \(24\sqrt{5}\)
+(B) \(12\sqrt{6}\)
+(C) \(12\sqrt{5}\)
+(D) \(6\sqrt{5}\)
+(E) \(18\sqrt{2}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+En la deducción algebraica de la fórmula de Herón partiendo de \(K^2 = \frac{1}{4}a^2b^2(1 - \cos^2 C)\), ¿qué paso clave elimina \(\cos C\) y transforma la expresión en un producto de cuatro factores lineales en \(a, b, c\)?
+
+(A) Factorizar \(1 - \cos^2 C = (1 + \cos C)(1 - \cos C)\), sustituir \(\cos C = \dfrac{a^2 + b^2 - c^2}{2ab}\) en cada factor y factorizar cada numerador como una diferencia de cuadrados
+(B) Reemplazar \(\cos^2 C\) directamente por \(\dfrac{c^2}{a^2 + b^2}\) a partir del teorema de Pitágoras
+(C) Fijar \(C = 90^\circ\) de modo que \(\cos C = 0\) y escalar el resultado por el semiperímetro \(s\)
+(D) Sustituir \(\sin C = \dfrac{a + b + c}{2ab}\) a partir de la ley de los senos
+(E) Aplicar la ley de los senos dos veces para escribir \(ab = s^2\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+Un estudiante intenta calcular el área de una figura con longitudes de lados \(a = 4\), \(b = 5\) y \(c = 11\) usando la fórmula de Herón. ¿Qué sucede dentro de la raíz cuadrada y qué significa geométricamente?
+
+(A) Los cuatro factores son positivos, dando un área exacta de \(10\sqrt{3}\)
+(B) Un factor es igual a \(0\), dando área \(0\) porque los lados forman un triángulo rectángulo
+(C) Dos factores son negativos, por lo que su producto es positivo y da un área válida
+(D) El semiperímetro \(s = 20\) produce un área de \(40\sqrt{15}\)
+(E) El factor \(s - c = 10 - 11 = -1\) es negativo mientras los otros tres factores son positivos, lo que produce un radicando negativo porque \(4 + 5 < 11\) viola la desigualdad triangular
+[/QUESTION]
+
+=== SECTION 3: Medición de parcelas poligonales irregulares ===
+
+Los agrimensores suelen medir el área de un terreno irregular de cuatro o cinco lados utilizando únicamente una cinta métrica (¡sin necesidad de instrumentos angulares!): miden todos los lados del contorno exterior más suficientes diagonales interiores para dividir el polígono en triángulos, luego aplican [REF: herons-formula | la fórmula de Herón] a cada triángulo y suman las áreas.
+
+Considere la parcela cuadrilátera \(ABCD\) que se muestra abajo, con lados exteriores \(AB = 13\text{ m}\), \(AD = 20\text{ m}\), \(BC = 10\text{ m}\), \(CD = 17\text{ m}\) y la diagonal medida \(BD = 21\text{ m}\).
+
+[GRAPH]
+type: parametric2d
+title: Parcela \(ABCD\) dividida por la diagonal \(BD = 21\text{ m}\) en dos triángulos LLL
+xlabel: x (m)
+ylabel: y (m)
+trange: 0, 1.176
+xrange: -1.5, 22.5
+yrange: -9.5, 13.5
+trace: 2.5*cos(t), 2.5*sin(t) | label: \(\angle ABD\) | color: #2563eb
+segment: 0, 0, 21, 0 | label: \(21\) | color: #dc2626 | dashed: true
+segment: 0, 0, 5, 12 | label: \(13\) | color: #2563eb
+segment: 5, 12, 21, 0 | label: \(20\) | color: #2563eb
+segment: 0, 0, 6, -8 | label: \(10\) | color: #059669
+segment: 6, -8, 21, 0 | label: \(17\) | color: #059669
+point: 0, 0 | label: \(B\) | offset: -0.7, -0.4
+point: 21, 0 | label: \(D\) | offset: 0.7, -0.4
+point: 5, 12 | label: \(A\) | offset: 0, 0.7
+point: 6, -8 | label: \(C\) | offset: 0, -0.8
+[/GRAPH]
+
+Calcule el área de cada triángulo por separado usando [REF: heron-tip | nuestra estrategia de factorización]:
+- Triángulo superior \(\triangle ABD\) (\(13, 20, 21\)): \(s_1 = \frac{13 + 20 + 21}{2} = 27\). Diferencias: \(14, 7, 6\) (comprobación: \(14 + 7 + 6 = 27\)).
+\[
+K_1 = \sqrt{27 \cdot 14 \cdot 7 \cdot 6} = \sqrt{(3^3) \cdot (2 \cdot 7) \cdot 7 \cdot (2 \cdot 3)} = \sqrt{2^2 \cdot 3^4 \cdot 7^2} = 2 \cdot 9 \cdot 7 = 126\text{ m}^2.
+\]
+- Triángulo inferior \(\triangle BCD\) (\(10, 17, 21\)): \(s_2 = \frac{10 + 17 + 21}{2} = 24\). Diferencias: \(14, 7, 3\) (comprobación: \(14 + 7 + 3 = 24\)).
+\[
+K_2 = \sqrt{24 \cdot 14 \cdot 7 \cdot 3} = \sqrt{(2^3 \cdot 3) \cdot (2 \cdot 7) \cdot 7 \cdot 3} = \sqrt{2^4 \cdot 3^2 \cdot 7^2} = 4 \cdot 3 \cdot 7 = 84\text{ m}^2.
+\]
+- Área total de la parcela: \(K = 126 + 84 = 210\text{ m}^2\), ¡obtenida limpiamente sin medir un solo ángulo!
+
+[QUESTION 4]
+[ANSWER: B]
+Una parcela cuadrilátera \(PQRS\) se divide mediante la diagonal \(PR = 20\text{ m}\) en dos triángulos: \(\triangle PQR\) tiene lados \(11\text{ m}\), \(13\text{ m}\) y \(20\text{ m}\), y \(\triangle PRS\) tiene lados \(7\text{ m}\), \(15\text{ m}\) y \(20\text{ m}\). ¿Cuál es el área total exacta de la parcela \(PQRS\)?
+
+(A) \(96\text{ m}^2\)
+(B) \(108\text{ m}^2\)
+(C) \(114\text{ m}^2\)
+(D) \(216\text{ m}^2\)
+(E) \(104\text{ m}^2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Un triángulo tiene longitudes de lados \(a = 9\), \(b = 10\) y \(c = 17\). Usando la fórmula de Herón junto con \(K = \frac{1}{2}ch_c\), ¿cuál es la longitud exacta de la altura \(h_c\) trazada perpendicularmente al lado más largo \(c = 17\)?
+
+(A) \(\dfrac{36}{17}\)
+(B) \(\dfrac{72}{9}\)
+(C) \(\dfrac{18}{17}\)
+(D) \(\dfrac{72}{17}\)
+(E) \(\dfrac{144}{17}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+En el triángulo \(\triangle ABC\) con longitudes de lados \(a = 4\), \(b = 13\) y \(c = 15\), ¿cuáles son el área exacta \(K\) y el valor exacto de \(\sin C\) (donde \(C\) es el ángulo opuesto al lado \(c = 15\))?
+
+(A) \(K = 24\) y \(\sin C = \dfrac{12}{13}\)
+(B) \(K = 24\) y \(\sin C = \dfrac{5}{13}\)
+(C) \(K = 48\) y \(\sin C = \dfrac{12}{13}\)
+(D) \(K = 24\) y \(\sin C = \dfrac{8}{15}\)
+(E) \(K = 26\) y \(\sin C = \dfrac{12}{13}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Un triángulo tiene dos longitudes de lados \(a = 5\) y \(b = 6\) y un área exacta de \(K = 12\). ¿Qué dos valores positivos del tercer lado \(c\) producen un triángulo válido con área \(12\)?
+
+(A) \(c = 5\) únicamente (no existe un segundo triángulo)
+(B) \(c = 5\) y \(c = 10\)
+(C) \(c = 5\) y \(c = \sqrt{97}\)
+(D) \(c = 4\) y \(c = \sqrt{97}\)
+(E) \(c = \sqrt{25}\) y \(c = \sqrt{61}\)
+[/BONUS]

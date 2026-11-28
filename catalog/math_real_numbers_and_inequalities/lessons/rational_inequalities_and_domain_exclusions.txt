@@ -1,0 +1,194 @@
+=== SECTION 1: Moving to one side and why cross-multiplying fails ===
+
+Suppose we want to solve the rational inequality
+\[
+\frac{x + 3}{x - 1} \ge 2.
+\]
+If this were an equation \(\frac{x + 3}{x - 1} = 2\), multiplying both sides by \(x - 1\) (while noting \(x \ne 1\)) would give \(x + 3 = 2(x - 1)\), leading immediately to \(x = 5\). For an inequality, however, multiplying by \(x - 1\) is ILLEGAL without splitting into sign cases: when \(x > 1\), \(x - 1 > 0\) preserves \(\ge\), whereas when \(x < 1\), \(x - 1 < 0\) REVERSES \(\ge\) to \(\le\). Worse, a naive cross-multiplication produces \(x + 3 \ge 2x - 2 \implies x \le 5\), which falsely claims that \(x = 0\) is a solution even though \(\frac{0 + 3}{0 - 1} = -3 \not\ge 2\)!
+
+Instead of cross-multiplying, we reuse the exact same zero-comparison strategy from polynomial inequalities: move every term to one side and combine over a single common denominator to obtain
+\[
+\frac{P(x)}{Q(x)} \lesseqqgtr 0.
+\]
+Carry this out on \(\frac{x + 3}{x - 1} \ge 2\):
+\[
+\frac{x + 3}{x - 1} - 2 \ge 0 \implies \frac{(x + 3) - 2(x - 1)}{x - 1} \ge 0 \implies \frac{5 - x}{x - 1} \ge 0.
+\]
+Why is comparing a single quotient against \(0\) so powerful? By the quotient sign rule from real-number order properties, for every \(x\) where \(Q(x) \ne 0\), the quotient \(\frac{P(x)}{Q(x)}\) has the EXACT SAME sign as the product \(P(x)\,Q(x)\)! Thus a rational function \(\frac{P(x)}{Q(x)}\) can change sign ONLY at:
+- Numerator zeros (real roots of \(P(x) = 0\)), where the quotient equals \(0\) (provided \(Q(x) \ne 0\)), and
+- Denominator zeros (real roots of \(Q(x) = 0\)), where the quotient is undefined and typically has a vertical asymptote.
+
+Both types of zeros belong on the sign chart as critical points—yet they obey an absolute, non-negotiable asymmetry when forming the final solution set.
+
+[CALLOUT]
+id: rational-endpoint-asymmetry
+label: Rule
+title: Numerator zeros versus denominator zeros
+tone: key
+
+When solving a reduced rational inequality \(\frac{P(x)}{Q(x)} \lesseqqgtr 0\) (where \(P(x)\) and \(Q(x)\) are polynomials):
+
+(1) Denominator zeros (\(Q(r) = 0\)): ALWAYS EXCLUDED from the solution set (open parenthesis), even for \(\le\) and \(\ge\), because division by \(0\) is undefined.
+(2) Numerator zeros (\(P(r) = 0\) with \(Q(r) \ne 0\)): INCLUDED (square bracket or isolated singleton) for \(\le\) and \(\ge\), and EXCLUDED for \(<\) and \(>\).
+[/CALLOUT]
+
+Finish \(\frac{5 - x}{x - 1} \ge 0\) using [REF: rational-endpoint-asymmetry | this rule]. The critical points are \(x = 1\) (denominator zero, excluded) and \(x = 5\) (numerator zero, included). Rewrite \(\frac{5 - x}{x - 1} = -\frac{x - 5}{x - 1}\):
+- For \(x > 5\): numerator \(5 - x < 0\), denominator \(x - 1 > 0\), quotient \(-\).
+- For \(1 < x < 5\): numerator \(5 - x > 0\), denominator \(x - 1 > 0\), quotient \(+\).
+- For \(x < 1\): numerator \(5 - x > 0\), denominator \(x - 1 < 0\), quotient \(-\).
+
+Hence the solution set is \((1, 5]\)—open at \(1\), closed at \(5\). The graph below displays both branches of \(y = \frac{x + 3}{x - 1}\) alongside the horizontal line \(y = 2\) and the vertical asymptote \(x = 1\), showing why the curve lies at or above \(2\) strictly to the right of \(1\) and up through \(5\), and stays strictly below \(2\) everywhere to the left of \(1\).
+
+[GRAPH]
+type: function2d
+title: Comparing \(y = \frac{x + 3}{x - 1}\) with \(y = 2\) across the asymptote \(x = 1\) and crossing \(x = 5\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 8
+yrange: -4, 8
+fill: (x + 3)/(x - 1), 2 | range: 1.75, 5 | label: solution region | color: #3b82f6 | opacity: 0.22
+trace: x < 0.95 ? (x + 3)/(x - 1) : 0/0 | label: \(y = \frac{x + 3}{x - 1}\) (left) | color: #2563eb
+trace: x > 1.05 ? (x + 3)/(x - 1) : 0/0 | label: \(y = \frac{x + 3}{x - 1}\) (right) | color: #2563eb
+trace: 2 | label: \(y = 2\) | color: #f59e0b
+segment: 1, -4, 1, 8 | label: \(x = 1\) | dashed: true
+point: 5, 2 | label: \((5, 2)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+What is the solution set of the rational inequality \(\frac{2x - 5}{x + 1} \le 1\)?
+
+(A) \([-1, 6]\)
+(B) \((-1, 6]\)
+(C) \((-\infty, 6]\)
+(D) \((-\infty, -1) \cup [6, \infty)\)
+(E) \((-1, 6)\)
+[/QUESTION]
+
+=== SECTION 2: Multiplicities in rational sign charts ===
+
+Because \(\frac{1}{(x - r)^k}\) has the exact same sign as \((x - r)^k\) for every \(x \ne r\), the odd/even multiplicity sign-change rules from polynomial inequalities carry over word for word to BOTH numerator and denominator factors:
+- Across a critical point \(r\) whose factor \((x - r)^k\) (in the numerator or in the denominator) has ODD multiplicity \(k\), the quotient \(\frac{P(x)}{Q(x)}\) CHANGES SIGN.
+- Across a critical point \(r\) whose factor \((x - r)^k\) has EVEN multiplicity \(k\), the quotient KEEPS THE SAME SIGN on both sides of \(r\).
+- An irreducible quadratic factor (\(\Delta < 0\)) in either the numerator or the denominator never vanishes and simply contributes the constant sign of its leading coefficient.
+
+Let us build a complete sign chart for
+\[
+\frac{(x + 1)(x - 4)^2}{(x - 2)^3 (x + 3)^2} \le 0.
+\]
+List all four critical points in order, tagging each by role (N = numerator, D = denominator) and multiplicity:
+- \(x = -3\): D, even (multiplicity \(2\)) — always excluded.
+- \(x = -1\): N, odd (multiplicity \(1\)) — included because of \(\le\).
+- \(x = 2\): D, odd (multiplicity \(3\)) — always excluded.
+- \(x = 4\): N, even (multiplicity \(2\)) — included because of \(\le\).
+
+Every factor has leading coefficient \(+1\), so for \(x > 4\) the quotient is \(+\). Propagate signs from right to left across each critical point:
+
+[TABLE]
+Region or point | \((-\infty, -3)\) | \(-3\) | \((-3, -1)\) | \(-1\) | \((-1, 2)\) | \(2\) | \((2, 4)\) | \(4\) | \((4, \infty)\)
+Role / multiplicity | — | D (even) | — | N (odd) | — | D (odd) | — | N (even) | —
+Sign / status | \(+\) | undef | \(+\) | \(0\) | \(-\) | undef | \(+\) | \(0\) | \(+\)
+[/TABLE]
+
+Read off the solution set for \(\le 0\) directly from the bottom row: the negative interval is \((-1, 2)\); the numerator zero \(-1\) closes its left endpoint to \([-1, 2)\); the denominator zero \(2\) stays open; and the numerator zero \(4\) is an isolated point where the quotient equals \(0 \le 0\), so \(\{4\}\) must be included! Thus the solution set is
+\[
+[-1, 2) \cup \{4\}.
+\]
+Notice what would have happened had we asked for \(\ge 0\) instead: the positive intervals are \((-\infty, -3)\), \((-3, -1)\), \((2, 4)\), and \((4, \infty)\). At the numerator zero \(4\), the two adjacent intervals \((2, 4)\) and \((4, \infty)\) MERGE across \(4\) into \((2, \infty)\). At the denominator zero \(-3\), however, the two adjacent intervals \((-\infty, -3)\) and \((-3, -1]\) CANNOT merge because \(-3\) is undefined—leaving \((-\infty, -3) \cup (-3, -1] \cup (2, \infty)\).
+
+[QUESTION 2]
+[ANSWER: D]
+What is the solution set of \(\frac{(x - 3)^2 (x + 2)}{(x - 1)(x + 4)^2} \ge 0\)?
+
+(A) \((-\infty, -2] \cup (1, \infty)\)
+(B) \((-\infty, -4) \cup (-4, -2] \cup (1, 3) \cup (3, \infty)\)
+(C) \([-2, 1) \cup \{3\}\)
+(D) \((-\infty, -4) \cup (-4, -2] \cup (1, \infty)\)
+(E) \((-\infty, -4] \cup [-2, 1) \cup [3, \infty)\)
+[/QUESTION]
+
+=== SECTION 3: Common factors and multi-fraction inequalities ===
+
+Two structural situations require extra discipline: canceling common factors between numerator and denominator, and combining two or more rational terms.
+
+First, consider a rational inequality where numerator and denominator share a common factor:
+\[
+\frac{x^2 - 1}{x^2 - 4x + 3} \le 0.
+\]
+Factor both polynomials completely:
+\[
+\frac{(x - 1)(x + 1)}{(x - 1)(x - 3)} \le 0.
+\]
+BEFORE canceling \((x - 1)\), record the full domain restriction of the ORIGINAL expression: the denominator vanishes at BOTH \(x = 1\) and \(x = 3\), so \(x \ne 1\) and \(x \ne 3\). Only for \(x \ne 1\) is the original quotient equal to \(\frac{x + 1}{x - 3}\). Solving \(\frac{x + 1}{x - 3} \le 0\) yields \([-1, 3)\). Now intersect with the recorded domain exclusion \(x \ne 1\): because \(1\) lies inside \([-1, 3)\), we must remove it! The true solution set is
+\[
+[-1, 1) \cup (1, 3).
+\]
+
+[CALLOUT]
+id: cancel-domain-trap
+label: Caution
+title: Never cancel a common factor without preserving its domain exclusion
+tone: caution
+
+If \((x - a)\) divides both \(P(x)\) and \(Q(x)\), the original rational expression is UNDEFINED at \(x = a\). Whenever you cancel \((x - a)\), write the restriction \(x \ne a\) explicitly beside the simplified inequality and exclude \(a\) from the final solution set.
+[/CALLOUT]
+
+What if the common factor has different multiplicities in numerator and denominator, such as \(\frac{(x - 1)^2(x + 2)}{(x - 1)(x - 3)} \le 0\)? Again, record \(x \ne 1\) and \(x \ne 3\) first! After canceling one copy of \((x - 1)\), the reduced inequality is \(\frac{(x - 1)(x + 2)}{x - 3} \le 0\) with \(x \ne 1\). The reduced inequality alone would include \(x = 1\) as a numerator zero, but the original domain restriction \(x \ne 1\) overrides it and forces an open parenthesis at \(1\).
+
+Second, consider an inequality with rational expressions on both sides, such as
+\[
+\frac{2}{x - 1} \le \frac{1}{x + 2}.
+\]
+Resist every temptation to cross-multiply! Subtract the right side from the left and combine over the least common denominator \((x - 1)(x + 2)\):
+\[
+\frac{2}{x - 1} - \frac{1}{x + 2} \le 0 \implies \frac{2(x + 2) - (x - 1)}{(x - 1)(x + 2)} \le 0 \implies \frac{x + 5}{(x - 1)(x + 2)} \le 0.
+\]
+The critical points are \(-5\) (numerator, odd, included), \(-2\) (denominator, odd, excluded), and \(1\) (denominator, odd, excluded). All factors have positive leading coefficient, so the sign alternates from right to left as \(+\) on \((1, \infty)\), \(-\) on \((-2, 1)\), \(+\) on \((-5, -2)\), and \(-\) on \((-\infty, -5)\). Thus the solution set is
+\[
+(-\infty, -5] \cup (-2, 1).
+\]
+Notice how cleanly the sign chart captures BOTH pieces—including the interval \((-2, 1)\) where the two denominators \((x - 1)\) and \((x + 2)\) have opposite signs, which naive cross-multiplication completely scrambles.
+
+[QUESTION 3]
+[ANSWER: A]
+What is the solution set of \(\frac{x^2 - 4}{x^2 - 5x + 6} \le 0\)?
+
+(A) \([-2, 2) \cup (2, 3)\)
+(B) \([-2, 3)\)
+(C) \((-2, 2) \cup (2, 3)\)
+(D) \([-2, 2] \cup (2, 3]\)
+(E) \((-\infty, -2] \cup (3, \infty)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+What is the solution set of \(\frac{1}{x - 2} > \frac{2}{x + 1}\)?
+
+(A) \((-\infty, 5)\)
+(B) \((-1, 2) \cup (5, \infty)\)
+(C) \((-\infty, -1) \cup (2, 5)\)
+(D) \((-\infty, -1) \cup (2, 5]\)
+(E) \((2, 5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+What is the solution set of \(\frac{x}{x^2 - 1} \ge \frac{1}{x + 1}\)?
+
+(A) \((-\infty, -1] \cup [1, \infty)\)
+(B) \((-1, 1)\)
+(C) \((1, \infty)\)
+(D) \(\emptyset\)
+(E) \((-\infty, -1) \cup (1, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+What is the solution set of \(\frac{(x - 1)^2(x^2 + 3x + 5)}{x^2 - 4x + 4} \le 0\)?
+
+(A) \(\emptyset\)
+(B) \(\{1\}\)
+(C) \(\{1, 2\}\)
+(D) \((-\infty, 1] \cup (2, \infty)\)
+(E) \((-\infty, 2) \cup (2, \infty)\)
+[/BONUS]

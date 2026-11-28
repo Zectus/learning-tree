@@ -1,0 +1,220 @@
+=== SECTION 1: Dropping an altitude—the SAS area formula for any triangle ===
+
+Every right triangle gives us immediate trigonometric ratios because one angle is already \(90^\circ\). Most real triangles in surveying, navigation, and geometry, however, are oblique—they contain no right angle at all. How can we compute the area or missing sides of an arbitrary triangle \(\triangle ABC\) (with side \(a\) opposite angle \(A\), side \(b\) opposite angle \(B\), and side \(c\) opposite angle \(C\)) using only right-triangle trigonometry and what we know about sine on the unit circle?
+
+The bridge is simple: create a right triangle by dropping a perpendicular altitude \(h\) from one vertex (say \(B\)) to the line containing the opposite side \(AC\) (of length \(b\)). By basic geometry, the area \(K\) of \(\triangle ABC\) is always
+\[
+K = \frac{1}{2}(\text{base})(\text{height}) = \frac{1}{2}bh.
+\]
+Now express \(h\) in terms of side \(a = BC\) and angle \(C\). There are three possibilities for angle \(C\):
+
+1. Angle \(C\) is acute (\(0^\circ < C < 90^\circ\)): the altitude falls inside the triangle (or on side \(AC\)), forming a right triangle with hypotenuse \(a\) and opposite leg \(h\). Therefore \(\sin C = \frac{h}{a}\), so \(h = a\sin C\).
+
+[GRAPH]
+type: parametric2d
+title: Acute case: internal altitude \(h = a\sin C\) inside \(\triangle ABC\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 2.3036, 3.1416
+xrange: -0.5, 6.6
+yrange: -0.6, 3.8
+trace: 6 + 0.9*cos(t), 0.9*sin(t) | label: angle \(C\) | color: #dc2626
+segment: 0, 0, 6, 0 | label: \(b\) | color: #0f172a
+segment: 0, 0, 3.2, 3.1 | label: \(c\) | color: #2563eb
+segment: 6, 0, 3.2, 3.1 | label: \(a\) | color: #dc2626
+segment: 3.2, 0, 3.2, 3.1 | label: \(h\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.25, -0.25
+point: 3.2, 3.1 | label: \(B\) | offset: 0, 0.25
+point: 6, 0 | label: \(C\) | offset: 0.25, -0.25
+point: 3.2, 0 | label: \(H\) | offset: 0, -0.3
+[/GRAPH]
+
+2. Angle \(C\) is obtuse (\(90^\circ < C < 180^\circ\)): the altitude from \(B\) falls OUTSIDE the triangle onto the extension of side \(AC\), creating right triangle \(\triangle BHC\) with hypotenuse \(a\) and acute interior angle \(180^\circ - C\). Hence \(h = a\sin(180^\circ - C)\). By the supplementary-angle identity from the unit circle, \(\sin(180^\circ - C) = \sin C\), so we STILL get \(h = a\sin C\)!
+
+[GRAPH]
+type: parametric2d
+title: Obtuse case: external altitude \(h = a\sin(180^\circ - C) = a\sin C\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0.876, 3.1416
+xrange: -0.5, 7.0
+yrange: -0.6, 3.7
+trace: 4 + 0.8*cos(t), 0.8*sin(t) | label: obtuse \(C\) | color: #dc2626
+segment: 0, 0, 4, 0 | label: \(b\) | color: #0f172a
+segment: 4, 0, 6.2, 0 | dashed: true
+segment: 0, 0, 6.2, 2.8 | label: \(c\) | color: #2563eb
+segment: 4, 0, 6.2, 2.8 | label: \(a\) | color: #dc2626
+segment: 6.2, 0, 6.2, 2.8 | label: \(h\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.25, -0.25
+point: 4, 0 | label: \(C\) | offset: 0, -0.3
+point: 6.2, 0 | label: \(H\) | offset: 0.25, -0.25
+point: 6.2, 2.8 | label: \(B\) | offset: 0.15, 0.25
+[/GRAPH]
+
+3. Angle \(C\) is a right angle (\(C = 90^\circ\)): side \(a\) itself is the altitude, and since \(\sin 90^\circ = 1\), \(h = a = a\sin 90^\circ\).
+
+In all three cases \(h = a\sin C\), so substituting into \(K = \frac{1}{2}bh\) produces the Side-Angle-Side (SAS) area formula. Dropping an altitude to either of the other two sides gives the matching cyclic forms.
+
+[CALLOUT]
+id: sas-area
+label: Theorem
+title: SAS Triangle Area Formula
+tone: key
+
+For any triangle \(\triangle ABC\) with side lengths \(a, b, c\) opposite angles \(A, B, C\), the area \(K\) equals one-half the product of any two sides and the sine of their included angle:
+\[
+K = \frac{1}{2}ab\sin C = \frac{1}{2}bc\sin A = \frac{1}{2}ac\sin B.
+\]
+[/CALLOUT]
+
+For instance, a triangle with sides \(9\text{ m}\) and \(12\text{ m}\) enclosing a \(135^\circ\) angle has exact area
+\[
+K = \frac{1}{2}(9)(12)\sin 135^\circ = 54 \cdot \frac{\sqrt{2}}{2} = 27\sqrt{2}\text{ m}^2 \approx 38.2\text{ m}^2.
+\]
+To find the area of an irregular polygon, simply partition it into non-overlapping triangles using diagonals and add the SAS areas of the pieces.
+
+[QUESTION 1]
+[ANSWER: B]
+A triangular garden plot has two sides of lengths \(10\text{ m}\) and \(14\text{ m}\) meeting at an included angle of \(120^\circ\). What is the exact area of the plot?
+
+(A) \(70\sqrt{3}\text{ m}^2\)
+(B) \(35\sqrt{3}\text{ m}^2\)
+(C) \(35\text{ m}^2\)
+(D) \(70\text{ m}^2\)
+(E) \(35\sqrt{2}\text{ m}^2\)
+[/QUESTION]
+
+=== SECTION 2: Deriving the Law of Sines ===
+
+Look again at the three equal area expressions in [REF: sas-area | the SAS area formula]:
+\[
+\frac{1}{2}bc\sin A = \frac{1}{2}ac\sin B = \frac{1}{2}ab\sin C.
+\]
+Because the side lengths \(a, b, c\) are all strictly positive, we can divide every expression by \(\frac{1}{2}abc\). On the first term, \(\frac{1}{2}bc\) cancels leaving \(\frac{\sin A}{a}\); on the second term, \(\frac{1}{2}ac\) cancels leaving \(\frac{\sin B}{b}\); on the third term, \(\frac{1}{2}ab\) cancels leaving \(\frac{\sin C}{c}\)! That single algebraic step proves the Law of Sines for every acute, right, and obtuse triangle simultaneously.
+
+[CALLOUT]
+id: law-of-sines
+label: Theorem
+title: The Law of Sines
+tone: key
+
+In any triangle \(\triangle ABC\) with side lengths \(a, b, c\) opposite angles \(A, B, C\), the ratio of the sine of each angle to its opposite side is constant:
+\[
+\frac{\sin A}{a} = \frac{\sin B}{b} = \frac{\sin C}{c},
+\]
+or equivalently in reciprocal form (most convenient when solving for an unknown side),
+\[
+\frac{a}{\sin A} = \frac{b}{\sin B} = \frac{c}{\sin C}.
+\]
+[/CALLOUT]
+
+Notice what you need to unlock [REF: law-of-sines | the Law of Sines]: one complete opposite pair—an angle together with the side across from it—so that one full ratio \(\frac{a}{\sin A}\) is known! Once that common ratio is pinned down, any other angle immediately determines its opposite side.
+
+=== SECTION 3: Solving AAS and ASA triangles unambiguously ===
+
+Two triangle configurations always determine a UNIQUE triangle and yield immediately to the Law of Sines:
+- AAS (Angle-Angle-Side): two angles and a side opposite one of them are given.
+- ASA (Angle-Side-Angle): two angles and the side included between them are given.
+
+In both cases, the very first step is effortless: find the third angle using the angle sum \(A + B + C = 180^\circ\). (Notice that if the two given angles already sum to \(180^\circ\) or more, no triangle exists.) Once all three angles are known, you are guaranteed to have a complete opposite pair—even in ASA, where the given side sits opposite the third angle you just computed!
+
+Worked example (ASA): Solve \(\triangle ABC\) given \(A = 42^\circ\), \(B = 75^\circ\), and included side \(c = 18\text{ cm}\).
+1. Find the third angle \(C\):
+\[
+C = 180^\circ - 42^\circ - 75^\circ = 63^\circ.
+\]
+Now \((C, c) = (63^\circ, 18\text{ cm})\) is our exact known opposite pair.
+2. Solve for side \(a\) directly from the known pair:
+\[
+\frac{a}{\sin 42^\circ} = \frac{18}{\sin 63^\circ} \implies a = \frac{18\sin 42^\circ}{\sin 63^\circ} \approx \frac{18(0.6691)}{0.8910} \approx 13.52\text{ cm}.
+\]
+3. Solve for side \(b\) directly from the SAME original pair \((C, c)\)—never from the rounded value of \(a\):
+\[
+\frac{b}{\sin 75^\circ} = \frac{18}{\sin 63^\circ} \implies b = \frac{18\sin 75^\circ}{\sin 63^\circ} \approx \frac{18(0.9659)}{0.8910} \approx 19.51\text{ cm}.
+\]
+4. Reasonableness check: the angles satisfy \(A = 42^\circ < C = 63^\circ < B = 75^\circ\), and the opposite sides satisfy \(a \approx 13.52 < c = 18 < b \approx 19.51\)—strictly the same order!
+
+[CALLOUT]
+id: ssa-deferral-note
+label: Scope note
+title: Why we stop at AAS and ASA here
+tone: note
+
+What if you know two sides and a non-included angle (SSA), so you must use the Law of Sines to solve for an unknown ANGLE rather than an unknown side? Because \(\sin(180^\circ - \theta) = \sin\theta\), a single sine value can match both an acute angle and its obtuse supplement, creating zero, one, or two valid triangles! We devote the entire next lesson to mastering that ambiguous SSA case cleanly.
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: D]
+In triangle \(\triangle ABC\), \(A = 30^\circ\), \(B = 45^\circ\), and side \(a = 8\). What is the exact length of side \(b\)?
+
+(A) \(4\sqrt{2}\)
+(B) \(8\sqrt{3}\)
+(C) \(16\sqrt{2}\)
+(D) \(8\sqrt{2}\)
+(E) \(4\sqrt{6}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+In triangle \(\triangle ABC\), you are given \(A = 40^\circ\), \(B = 65^\circ\), and the included side \(c = 20\text{ m}\). Which exact expression gives the length of side \(a\)?
+
+(A) \(\dfrac{20\sin 40^\circ}{\sin 75^\circ}\)
+(B) \(\dfrac{20\sin 75^\circ}{\sin 40^\circ}\)
+(C) \(\dfrac{20\sin 40^\circ}{\sin 65^\circ}\)
+(D) \(\dfrac{20\sin 65^\circ}{\sin 75^\circ}\)
+(E) \(\dfrac{20\sin 40^\circ}{\sin 105^\circ}\)
+[/QUESTION]
+
+=== SECTION 4: Partitioned polygons and indirect measurement ===
+
+Combining [REF: sas-area | the SAS area formula] with [REF: law-of-sines | the Law of Sines] solves surveying and land-area problems that right triangles alone cannot handle directly.
+
+Consider a surveyor measuring the distance across a wide river from point \(A\) on one bank to a landmark \(C\) on the far bank. The surveyor marks a second point \(B\) \(120\text{ m}\) away along the near bank, then measures \(\angle BAC = 54^\circ\) and \(\angle ABC = 78^\circ\). Notice this is an ASA triangle with included baseline \(c = 120\text{ m}\). First compute \(\angle ACB = 180^\circ - 54^\circ - 78^\circ = 48^\circ\). Then the distance \(b = AC\) across the river follows immediately from the Law of Sines:
+\[
+b = \frac{120\sin 78^\circ}{\sin 48^\circ} \approx 157.9\text{ m}.
+\]
+And if we need the area of a four-sided parcel \(ABCD\) where diagonal \(BD\) splits the parcel into \(\triangle ABD\) and \(\triangle CBD\), we apply the SAS area formula to each triangle separately and sum them.
+
+[QUESTION 4]
+[ANSWER: C]
+A quadrilateral field \(ABCD\) is divided by diagonal \(BD = 12\text{ m}\) into two triangles. In \(\triangle ABD\), \(AB = 10\text{ m}\) and \(\angle ABD = 30^\circ\). In \(\triangle CBD\), \(CD = 8\text{ m}\) and \(\angle BDC = 150^\circ\). What is the exact total area of quadrilateral \(ABCD\)?
+
+(A) \(108\text{ m}^2\)
+(B) \(54\sqrt{3}\text{ m}^2\)
+(C) \(54\text{ m}^2\)
+(D) \(48\text{ m}^2\)
+(E) \(6\text{ m}^2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+A regular hexagon is inscribed in a circle of radius \(6\text{ cm}\), so drawing radii from the center to all six vertices partitions the hexagon into six congruent triangles. What is the exact total area of the hexagon?
+
+(A) \(18\sqrt{3}\text{ cm}^2\)
+(B) \(27\sqrt{3}\text{ cm}^2\)
+(C) \(108\sqrt{3}\text{ cm}^2\)
+(D) \(36\sqrt{3}\text{ cm}^2\)
+(E) \(54\sqrt{3}\text{ cm}^2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+In triangle \(\triangle ABC\), \(A = 60^\circ\), \(C = 75^\circ\), and side \(b = 12\). What is the exact simplified length of side \(a\)?
+
+(A) \(6\sqrt{3}\)
+(B) \(6\sqrt{6}\)
+(C) \(12\sqrt{6}\)
+(D) \(4\sqrt{6}\)
+(E) \(12\sqrt{3}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+In any triangle \(\triangle ABC\) where all three angles \(A, B, C\) and side \(c\) are known, which formula expresses the exact area \(K\) purely in terms of \(c\) and the sines of the angles?
+
+(A) \(K = \dfrac{c^2\sin C}{2\sin A\sin B}\)
+(B) \(K = \dfrac{c\sin A\sin B}{2\sin C}\)
+(C) \(K = \dfrac{c^2\sin A\sin C}{2\sin B}\)
+(D) \(K = \dfrac{c^2\sin A\sin B}{2\sin C}\)
+(E) \(K = \dfrac{c^2\sin A\sin B}{\sin C}\)
+[/BONUS]

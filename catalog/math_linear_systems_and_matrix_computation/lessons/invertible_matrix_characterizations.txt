@@ -1,0 +1,211 @@
+=== SECTION 1: The Invertible Matrix Theorem ===
+
+Across the previous lessons, we have accumulated many seemingly different questions about a square \(n \times n\) matrix \(A\): Does \(A^{-1}\) exist? Does \(A\) reduce to \(I_n\)? Does \(A\mathbf{x} = \mathbf{0}\) have only the trivial solution? Are its columns linearly independent? Do its columns span \(\mathbb{R}^n\)? Does \(A\) have a left inverse or a right inverse? Is \(A^T\) invertible?
+
+For a rectangular matrix with \(m \neq n\), these questions split apart—columns can be independent without spanning \(\mathbb{R}^m\), or span \(\mathbb{R}^m\) without being independent. For a SQUARE \(n \times n\) matrix, something extraordinary happens: ALL TEN of these properties collapse into a single all-or-nothing equivalence! Either every one of them holds for \(A\), or every single one of them fails.
+
+[CALLOUT]
+id: imt-theorem
+label: Theorem
+title: Invertible Matrix Theorem (system and computational equivalences)
+tone: key
+
+Let \(A\) be a square \(n \times n\) matrix. The following ten statements are logically equivalent (for any given \(n \times n\) matrix \(A\), either ALL ten are true or ALL ten are false):
+
+(1) \(A\) is invertible.
+(2) \(\operatorname{RREF}(A) = I_n\).
+(3) \(A\) has \(n\) pivot positions.
+(4) The homogeneous equation \(A\mathbf{x} = \mathbf{0}\) has only the trivial solution \(\mathbf{x} = \mathbf{0}\) (equivalently, the columns of \(A\) are linearly independent).
+(5) The equation \(A\mathbf{x} = \mathbf{b}\) is consistent for every \(\mathbf{b} \in \mathbb{R}^n\) (equivalently, the columns of \(A\) span \(\mathbb{R}^n\)).
+(6) The equation \(A\mathbf{x} = \mathbf{b}\) has a unique solution for every \(\mathbf{b} \in \mathbb{R}^n\).
+(7) \(A\) can be written as a product of elementary matrices.
+(8) \(A\) has a left inverse: there exists an \(n \times n\) matrix \(C\) with \(CA = I_n\).
+(9) \(A\) has a right inverse: there exists an \(n \times n\) matrix \(D\) with \(AD = I_n\).
+(10) \(A^T\) is invertible.
+[/CALLOUT]
+
+Notice the scope of [REF: imt-theorem | this theorem]: later courses add further characterizations involving determinants (\(\det(A) \neq 0\)), nonzero eigenvalues, and abstract linear-map isomorphisms, but the ten computational and linear-system statements above can be proved completely right now using only row reduction, linearity, and elementary matrices.
+
+Let us prove the full web of implications cleanly in three short chains.
+
+Chain 1: \((1) \implies (8) \implies (4) \implies (3) \implies (2) \implies (7) \implies (1)\).
+- \((1) \implies (8)\): If \(A\) is invertible, take \(C = A^{-1}\); then \(CA = I_n\).
+- \((8) \implies (4)\): Suppose \(CA = I_n\) and \(A\mathbf{x} = \mathbf{0}\). Left-multiplying by \(C\) gives \(\mathbf{x} = I_n \mathbf{x} = (CA)\mathbf{x} = C(A\mathbf{x}) = C\mathbf{0} = \mathbf{0}\), so \(A\mathbf{x} = \mathbf{0}\) has only the trivial solution.
+- \((4) \implies (3)\): If \(A\mathbf{x} = \mathbf{0}\) has only the trivial solution, there are no free variables, so every one of the \(n\) columns of \(A\) contains a pivot; hence \(A\) has \(n\) pivot positions.
+- \((3) \implies (2)\): An \(n \times n\) matrix in RREF with \(n\) pivots has one leading \(1\) in every row and every column, moving strictly rightward down the main diagonal \((1,1), (2,2), \dots, (n,n)\), with zeros everywhere above and below each leading \(1\). That matrix is literally \(I_n\).
+- \((2) \implies (7)\): Since \(\operatorname{RREF}(A) = I_n\), there exist elementary matrices \(E_1, \dots, E_k\) with \(E_k \cdots E_1 A = I_n\). Multiplying on the left by \(E_1^{-1} \cdots E_k^{-1}\) expresses \(A = E_1^{-1} \cdots E_k^{-1}\), a product of elementary matrices.
+- \((7) \implies (1)\): Every elementary matrix is invertible, and a product of invertible matrices is invertible (with inverse obtained by reversing and inverting each factor). Thus \(A\) is invertible.
+
+That single loop already proves \((1), (2), (3), (4), (7), (8)\) are all equivalent!
+
+Chain 2: Connecting \((1), (6), (5), (9)\) back into the loop.
+- \((1) \implies (6) \implies (5)\): If \(A\) is invertible, \(\mathbf{x} = A^{-1}\mathbf{b}\) is the unique solution of \(A\mathbf{x} = \mathbf{b}\) for every \(\mathbf{b} \in \mathbb{R}^n\), so in particular \(A\mathbf{x} = \mathbf{b}\) is always consistent.
+- \((1) \implies (9) \implies (5)\): If \(A\) is invertible, take \(D = A^{-1}\) so \(AD = I_n\). Now suppose \(AD = I_n\) for some \(n \times n\) matrix \(D\). Given ANY \(\mathbf{b} \in \mathbb{R}^n\), define \(\mathbf{x} = D\mathbf{b}\). Then \(A\mathbf{x} = A(D\mathbf{b}) = (AD)\mathbf{b} = I_n \mathbf{b} = \mathbf{b}\), proving \(A\mathbf{x} = \mathbf{b}\) is consistent for every \(\mathbf{b} \in \mathbb{R}^n\)!
+- \((5) \implies (3)\): We prove the contrapositive: suppose (3) fails, meaning the \(n \times n\) matrix \(A\) has fewer than \(n\) pivots. Then \(R = \operatorname{RREF}(A)\) has a zero bottom row. Let \(P = E_k \cdots E_1\) be the invertible product of elementary matrices satisfying \(PA = R\), and choose \(\mathbf{b} = P^{-1}\mathbf{e}_n\), where \(\mathbf{e}_n = \begin{bmatrix} 0 & \cdots & 0 & 1 \end{bmatrix}^T\). Applying \(P\) to \([A \mid \mathbf{b}]\) produces
+\[
+[PA \mid P\mathbf{b}] = [R \mid \mathbf{e}_n],
+\]
+whose bottom row is \(\begin{bmatrix} 0 & \cdots & 0 & \mid & 1 \end{bmatrix}\)! Therefore \(A\mathbf{x} = \mathbf{b}\) is inconsistent, so (5) fails.
+
+Chain 3: \((1) \iff (10)\).
+We already proved in the previous lesson that if \(A\) is invertible then \(A^T\) is invertible with \((A^T)^{-1} = (A^{-1})^T\). Conversely, if \(A^T\) is invertible, applying the exact same fact to \(A^T\) shows \((A^T)^T = A\) is invertible!
+
+Every single implication is now complete.
+
+Geometrically in \(\mathbb{R}^2\), the equivalence between [REF: imt-theorem.4 | column independence (4)] and [REF: imt-theorem.5 | column span (5)] is immediately visible. Compare the invertible matrix \(A_1 = \begin{bmatrix} 2 & -1 \\ 1 & 2 \end{bmatrix}\) with the singular matrix \(A_2 = \begin{bmatrix} 2 & -1 \\ 1 & -0.5 \end{bmatrix}\). For \(A_1\), the two non-collinear columns are independent AND span all of \(\mathbb{R}^2\), reaching \(\mathbf{b} = (1, 3)\) uniquely as \(1\mathbf{a}_1 + 1\mathbf{a}_2\). The moment the second column becomes parallel to the first (as in \(A_2\)), independence and spanning break AT THE EXACT SAME INSTANT: the columns collapse onto the single line \(x_2 = \frac{1}{2} x_1\), leaving \(\mathbf{b} = (1, 3)\) completely unreachable while producing nontrivial dependence \(\mathbf{a}_1 + 2\mathbf{a}_2 = \mathbf{0}\).
+
+[GRAPH]
+type: parametric2d
+title: Invertible columns span \(\mathbb{R}^2\) uniquely; singular columns collapse onto one line
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -2, 3
+xrange: -2.5, 4
+yrange: -1.5, 4
+trace: 2*t, t | label: singular span of \(A_2\) | color: #dc2626
+segment: 0, 0, 2, 1 | label: \(\mathbf{a}_1\) | color: #2563eb
+segment: 0, 0, -1, 2 | label: \(\mathbf{a}_2\) (in \(A_1\)) | color: #059669
+segment: 2, 1, 1, 3 | color: #059669 | dashed: true
+segment: 0, 0, -1, -0.5 | label: \(\tilde{\mathbf{a}}_2\) (in \(A_2\)) | color: #dc2626
+point: 1, 3 | label: \(\mathbf{b} = (1, 3)\) | color: #111827
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(A\) be a \(4 \times 4\) matrix, and suppose that for one particular vector \(\mathbf{b}_0 \in \mathbb{R}^4\), the linear system \(A\mathbf{x} = \mathbf{b}_0\) has two distinct solutions \(\mathbf{x}_1 \neq \mathbf{x}_2\). Which statement MUST be true?
+
+(A) There exists at least one vector \(\mathbf{c} \in \mathbb{R}^4\) for which \(A\mathbf{x} = \mathbf{c}\) is inconsistent
+(B) The system \(A\mathbf{x} = \mathbf{c}\) is inconsistent for every nonzero vector \(\mathbf{c} \in \mathbb{R}^4\)
+(C) \(A^T\) is invertible even though \(A\) is not
+(D) \(A\) has a right inverse \(D\) satisfying \(AD = I_4\), but no left inverse
+(E) \(A\) must be the \(4 \times 4\) zero matrix
+[/QUESTION]
+
+=== SECTION 2: One-sided inverses and products of square matrices ===
+
+Look closely at [REF: imt-theorem.8 | condition (8)] and [REF: imt-theorem.9 | condition (9)] of the Invertible Matrix Theorem. They deliver one of the biggest time-saving payoffs in matrix algebra:
+
+[CALLOUT]
+id: one-sided-square
+label: Corollary
+title: One-sided inverses are automatically two-sided for square matrices
+tone: key
+
+Let \(A\) and \(B\) be SQUARE \(n \times n\) matrices.
+(1) If \(BA = I_n\), then \(A\) and \(B\) are both invertible, \(AB = I_n\) holds automatically, and \(B = A^{-1}\).
+(2) If \(AB\) is invertible, then BOTH square factors \(A\) and \(B\) are individually invertible.
+[/CALLOUT]
+
+Let us verify both parts right from [REF: imt-theorem | the Invertible Matrix Theorem].
+- For [REF: one-sided-square.1 | part (1)]: if \(BA = I_n\), then \(A\) has a left inverse, so by [REF: imt-theorem.8 | (8) \(\implies\) (1)], \(A\) is invertible! Right-multiplying \(BA = I_n\) by \(A^{-1}\) then yields \(B = B(A A^{-1}) = (BA)A^{-1} = I_n A^{-1} = A^{-1}\). Hence \(AB = A A^{-1} = I_n\) automatically!
+- For [REF: one-sided-square.2 | part (2)]: suppose \(AB\) is invertible, and set \(M = (AB)^{-1}\). Then:
+  - \((AB)M = I_n \implies A(BM) = I_n\), so \(A\) has a right inverse \(BM\), hence \(A\) is invertible!
+  - \(M(AB) = I_n \implies (MA)B = I_n\), so \(B\) has a left inverse \(MA\), hence \(B\) is invertible!
+
+NEVER apply [REF: one-sided-square | this corollary] to non-square (rectangular) matrices! Here is a concrete counterexample showing why squareness is essential. Take
+\[
+A = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \end{bmatrix} \quad (2 \times 3), \qquad
+D = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix} \quad (3 \times 2).
+\]
+Multiplying in one order gives
+\[
+AD = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I_2,
+\]
+so \(A\) DOES have a right inverse \(D\) (and therefore \(A\mathbf{x} = \mathbf{b}\) is consistent for every \(\mathbf{b} \in \mathbb{R}^2\)). Yet reversing the order gives
+\[
+DA = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \\ 0 & 0 & 0 \end{bmatrix} \neq I_3!
+\]
+In fact, \(A\) cannot have ANY left inverse \(C\) (of size \(3 \times 2\)): the nonzero vector \(\mathbf{v} = \begin{bmatrix} -2 \\ 1 \\ 1 \end{bmatrix}\) satisfies \(A\mathbf{v} = \mathbf{0}\), so if \(CA = I_3\) existed we would get \(\mathbf{v} = I_3 \mathbf{v} = C(A\mathbf{v}) = C\mathbf{0} = \mathbf{0}\), a contradiction.
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose \(A\), \(B\), and \(C\) are square \(n \times n\) matrices satisfying \(ABC = I_n\). Which statement MUST be true?
+
+(A) \(B\) is invertible and \(B^{-1} = CA\)
+(B) \(B\) is invertible and \(B^{-1} = AC\)
+(C) \(A\) and \(C\) are invertible, but \(B\) may be singular
+(D) \(A\) and \(B\) must commute (\(AB = BA\))
+(E) \(A\), \(B\), and \(C\) must all be diagonal matrices
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Let
+\[
+A = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix}.
+\]
+Notice that \(AD = I_2\). Which statement is TRUE?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) is consistent for every \(\mathbf{b} \in \mathbb{R}^2\), yet \(DA \neq I_3\) and \(A\) has no left inverse
+(B) Because \(AD = I_2\), it follows automatically that \(DA = I_3\)
+(C) \(A\mathbf{x} = \mathbf{0}\) has only the trivial solution \(\mathbf{x} = \mathbf{0}\)
+(D) \(A\mathbf{x} = \mathbf{b}\) has a unique solution for every \(\mathbf{b} \in \mathbb{R}^2\)
+(E) \(D\mathbf{y} = \mathbf{c}\) is consistent for every \(\mathbf{c} \in \mathbb{R}^3\)
+[/QUESTION]
+
+=== SECTION 3: Choosing the fastest invertibility test ===
+
+In practice, [REF: imt-theorem | the Invertible Matrix Theorem] lets you pick whichever criterion answers a problem in the fewest steps rather than blindly running full Gauss-Jordan inversion on \([A \mid I_n]\).
+
+[TABLE]
+Given information about \(n \times n\) matrix \(A\) | Fastest IMT criterion to apply | Verdict
+Matrix entries given numerically | Forward elimination to REF only; count pivots (criterion (3)) | Invertible iff \(n\) pivots (no need for backward phase!)
+Two columns are identical, or one column is a linear combination of others | Column linear independence (criterion (4)) | Immediately singular
+A row or column is all zeros | Row/column dependence via \(A\) or \(A^T\) (criteria (4) and (10)) | Immediately singular
+An algebraic identity like \(A(A^2 + 3I_n) = I_n\) is known | One-sided inverse (criteria (8) or (9)) | Immediately invertible, inverse read off directly
+Upper- or lower-triangular matrix | Pivot count along the diagonal (criterion (3)) | Invertible iff EVERY diagonal entry is nonzero
+[/TABLE]
+
+Let us apply the fastest-test mindset to a concrete parameter problem: for which values of \(k\) is
+\[
+M = \begin{bmatrix} 1 & 2 & 1 \\ 2 & 5 & 3 \\ 1 & 4 & k \end{bmatrix}
+\]
+invertible? Instead of computing \(M^{-1}\), simply reduce \(M\) to REF and count pivots!
+\[
+\begin{bmatrix} 1 & 2 & 1 \\ 2 & 5 & 3 \\ 1 & 4 & k \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 - R_1}}
+\begin{bmatrix} 1 & 2 & 1 \\ 0 & 1 & 1 \\ 0 & 2 & k - 1 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - 2 R_2}
+\begin{bmatrix} 1 & 2 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & k - 3 \end{bmatrix}.
+\]
+The matrix has \(3\) pivot positions if and only if \(k - 3 \neq 0\), i.e., \(k \neq 3\). By [REF: imt-theorem.3 | criterion (3)], \(M\) is invertible for all \(k \neq 3\) and singular when \(k = 3\). Notice we never touched \(I_3\) or the backward elimination phase!
+
+Be careful not to jump to a conclusion too early during elimination: if a zero appears on the diagonal in an intermediate step, check the entries BELOW it in the same column before declaring the matrix singular—a row swap might bring a nonzero pivot right into place!
+
+[QUESTION 4]
+[ANSWER: C]
+For which real values of \(k\) is the matrix
+\[
+A = \begin{bmatrix} 1 & 3 & -1 \\ 2 & 6 & k \\ 0 & 1 & 2 \end{bmatrix}
+\]
+invertible?
+
+(A) No real value of \(k\) (the matrix is always singular)
+(B) All real numbers \(k \neq 2\)
+(C) All real numbers \(k \neq -2\)
+(D) Only \(k = -2\)
+(E) All real numbers \(k\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suppose \(A\), \(B\), and \(C\) are square \(n \times n\) matrices such that \(AB\) is invertible while \(AC\) is singular. What can be concluded with certainty?
+
+(A) \(A\) is singular, while \(B\) and \(C\) are invertible
+(B) \(A\) and \(B\) are invertible, and \(C\) is singular
+(C) \(A\) and \(C\) are singular, and \(B\) is invertible
+(D) \(B\) is invertible, while either \(A\) or \(C\) (or both) could be invertible
+(E) All three matrices \(A\), \(B\), and \(C\) must be singular
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suppose \(A\) is a \(3 \times 3\) matrix such that the homogeneous equation \(A^T \mathbf{y} = \mathbf{0}\) has only the trivial solution \(\mathbf{y} = \mathbf{0}\). Which of the following statements is NOT guaranteed to be true?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) has a unique solution for every \(\mathbf{b} \in \mathbb{R}^3\)
+(B) \(A\) can be written as a product of elementary matrices
+(C) The columns of \(A\) span \(\mathbb{R}^3\)
+(D) \(A + I_3\) is invertible
+(E) \(A^2\) is invertible
+[/BONUS]

@@ -1,0 +1,221 @@
+=== SECTION 1: Pares complejos conjugados de matrices reales ===
+
+En la lección anterior vimos que una matriz real \(A \in M_n(\mathbb{R})\) puede no ser diagonalizable sobre \(\mathbb{R}\) únicamente porque su polinomio característico \(p_A(\lambda)\) tiene raíces complejas no reales, aun cuando \(A\) se diagonaliza sin dificultad sobre \(\mathbb{C}\). En lugar de abandonar las coordenadas reales cada vez que aparecen valores propios complejos, podemos extraer una forma canónica completamente REAL directamente a partir de los pares propios complejos, una forma que revela con exactitud la geometría de rotación y escalamiento oculta dentro de \(A\).
+
+El puente comienza con la conjugación compleja. Para cualquier vector \(\mathbf{v} = (v_1, \dots, v_n)^T \in \mathbb{C}^n\) o matriz \(M = [m_{ij}]\), denote por \(\overline{\mathbf{v}}\) y \(\overline{M}\) la conjugación compleja entrada a entrada. Como la conjugación respeta la suma y la multiplicación (\(\overline{z + w} = \overline{z} + \overline{w}\) y \(\overline{zw} = \overline{z}\,\overline{w}\)), se distribuye sobre los productos matriz-vector: \(\overline{M\mathbf{v}} = \overline{M}\,\overline{\mathbf{v}}\). Suponga ahora que \(A \in M_n(\mathbb{R})\) es una matriz REAL, de modo que \(\overline{A} = A\). Tomar el conjugado complejo de la ecuación de valor propio \(A\mathbf{v} = \lambda \mathbf{v}\) produce
+\[
+A\overline{\mathbf{v}} = \overline{A}\,\overline{\mathbf{v}} = \overline{A\mathbf{v}} = \overline{\lambda \mathbf{v}} = \overline{\lambda}\,\overline{\mathbf{v}}.
+\]
+Más aún, \(\mathbf{v} \neq \mathbf{0}\) si y solo si \(\overline{\mathbf{v}} \neq \mathbf{0}\), y conjugar una base linealmente independiente \(\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) de \(E_\lambda\) produce una base linealmente independiente \(\{\overline{\mathbf{v}}_1, \dots, \overline{\mathbf{v}}_k\}\) de \(E_{\overline{\lambda}}\) (ya que \(\sum c_j \overline{\mathbf{v}}_j = \mathbf{0} \iff \sum \overline{c_j}\mathbf{v}_j = \mathbf{0} \iff\) todo \(c_j = 0\)). De manera similar, como \(p_A(\lambda)\) tiene coeficientes reales, \(p_A(\overline{\lambda}) = \overline{p_A(\lambda)}\) y toda derivada satisface \(p_A^{(m)}(\overline{\lambda}) = \overline{p_A^{(m)}(\lambda)}\), lo que obliga a que \(\lambda\) y \(\overline{\lambda}\) tengan exactamente la misma multiplicidad como raíces.
+
+[CALLOUT]
+id: conjugate-pairs
+label: Teorema
+title: Simetría por pares conjugados para matrices reales
+tone: key
+
+Sea \(A \in M_n(\mathbb{R})\) una matriz real.
+
+(1) \(A\mathbf{v} = \lambda \mathbf{v}\) (\(\mathbf{v} \in \mathbb{C}^n \setminus \{\mathbf{0}\}\)) si y solo si \(A\overline{\mathbf{v}} = \overline{\lambda}\,\overline{\mathbf{v}}\).
+(2) Los valores propios no reales aparecen en pares complejos conjugados \(\lambda = a \pm bi\) (\(a, b \in \mathbb{R}\), \(b \neq 0\)) con multiplicidades algebraicas y geométricas IDÉNTICAS: \(m_a(\overline{\lambda}) = m_a(\lambda)\) y \(m_g(\overline{\lambda}) = m_g(\lambda)\).
+[/CALLOUT]
+
+Note una agradable consecuencia inmediata de [REF: conjugate-pairs.2 | la simetría por pares conjugados]: siempre que \(n\) es impar, una matriz real \(n \times n\) DEBE tener al menos un valor propio real (porque las raíces no reales se emparejan de dos en dos, dejando un número impar de raíces reales), y basta resolver UN solo vector propio en cada par conjugado: conjugarlo entrega el segundo vector propio gratis.
+
+[QUESTION 1]
+[ANSWER: B]
+Suponga que \(A \in M_4(\mathbb{R})\) tiene un valor propio complejo \(\lambda_1 = 2 - 3i\) con vector propio \(\mathbf{v}_1 = (1, i, 1 - i, 0)^T\), y un valor propio real \(\lambda_3 = 5\) con multiplicidad algebraica \(2\). ¿Cuál de las siguientes opciones garantiza ser otro par propio de \(A\), y cuáles son \(\operatorname{tr}(A)\) y \(\det(A)\)?
+
+(A) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 14\), \(\det(A) = 325\)
+(B) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 14\), \(\det(A) = 325\)
+(C) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 9\), \(\det(A) = 65\)
+(D) \(\lambda_2 = -2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 10\), \(\det(A) = -325\)
+(E) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 14\), \(\det(A) = -125\)
+[/QUESTION]
+
+=== SECTION 2: El bloque canónico real \(2 \times 2\) de rotación-escalamiento ===
+
+Suponga que \(A \in M_n(\mathbb{R})\) tiene un valor propio no real \(\lambda = a + bi\) (\(a, b \in \mathbb{R}\), \(b \neq 0\)) con vector propio complejo \(\mathbf{v} \in \mathbb{C}^n \setminus \{\mathbf{0}\}\). Separe \(\mathbf{v}\) en sus partes vectoriales real e imaginaria:
+\[
+\mathbf{v} = \mathbf{u} + i\mathbf{w}, \qquad \mathbf{u} = \operatorname{Re}(\mathbf{v}) \in \mathbb{R}^n, \quad \mathbf{w} = \operatorname{Im}(\mathbf{v}) \in \mathbb{R}^n.
+\]
+Surgen de inmediato dos preguntas: primero, ¿son \(\mathbf{u}\) y \(\mathbf{w}\) linealmente independientes sobre \(\mathbb{R}\)? Segundo, ¿cómo actúa \(A\) sobre el plano real \(W = \operatorname{span}_{\mathbb{R}}\{\mathbf{u}, \mathbf{w}\}\)?
+
+Verifique primero la independencia lineal sobre \(\mathbb{R}\). Como \(b \neq 0\), tenemos \(\lambda \neq \overline{\lambda}\), así que por [REF: conjugate-pairs.1 | la simetría conjugada] y el teorema de independencia para valores propios distintos, \(\{\mathbf{v}, \overline{\mathbf{v}}\}\) es linealmente independiente sobre \(\mathbb{C}\). Suponga que \(c_1 \mathbf{u} + c_2 \mathbf{w} = \mathbf{0}\) para escalares reales \(c_1, c_2 \in \mathbb{R}\). Sustituir \(\mathbf{u} = \frac{1}{2}(\mathbf{v} + \overline{\mathbf{v}})\) y \(\mathbf{w} = \frac{1}{2i}(\mathbf{v} - \overline{\mathbf{v}})\) da
+\[
+\frac{c_1 - i c_2}{2}\,\mathbf{v} + \frac{c_1 + i c_2}{2}\,\overline{\mathbf{v}} = \mathbf{0}.
+\]
+La independencia lineal de \(\{\mathbf{v}, \overline{\mathbf{v}}\}\) sobre \(\mathbb{C}\) obliga a que \(c_1 - i c_2 = 0\), y como \(c_1, c_2 \in \mathbb{R}\), tanto \(c_1 = 0\) como \(c_2 = 0\). Así, \(\{\mathbf{u}, \mathbf{w}\}\) es SIEMPRE linealmente independiente sobre \(\mathbb{R}\) y genera un subespacio real \(2\)-dimensional \(W \subseteq \mathbb{R}^n\).
+
+Segundo, calcule \(A\mathbf{u}\) y \(A\mathbf{w}\) desarrollando \(A(\mathbf{u} + i\mathbf{w}) = (a + bi)(\mathbf{u} + i\mathbf{w})\):
+\[
+A\mathbf{u} + i(A\mathbf{w}) = (a\mathbf{u} - b\mathbf{w}) + i(b\mathbf{u} + a\mathbf{w}).
+\]
+Como \(A\), \(\mathbf{u}\), \(\mathbf{w}\), \(a\) y \(b\) son todos REALES, igualamos por separado las partes reales e imaginarias:
+\[
+A\mathbf{u} = a\mathbf{u} - b\mathbf{w}, \qquad A\mathbf{w} = b\mathbf{u} + a\mathbf{w}.
+\]
+¡Observe lo que esto afirma! Tanto \(A\mathbf{u}\) como \(A\mathbf{w}\) permanecen dentro de \(W = \operatorname{span}_{\mathbb{R}}\{\mathbf{u}, \mathbf{w}\}\), de modo que \(W\) es un subespacio real \(A\)-invariante de dimensión \(2\). Además, escribir las coordenadas de \(A\mathbf{u}\) y \(A\mathbf{w}\) como columnas da la matriz de \(A|_W\) en la base ordenada \((\mathbf{u}, \mathbf{w})\):
+\[
+[A|_W]_{(\mathbf{u}, \mathbf{w})} = \begin{bmatrix} a & b \\ -b & a \end{bmatrix}.
+\]
+Ahora convierta el número complejo \(\lambda = a + bi\) a forma polar: sea \(r = |\lambda| = \sqrt{a^2 + b^2} > 0\), y sea \(\theta\) un ángulo con \(a = r\cos\theta\) y \(b = r\sin\theta\). Factorizar \(r\) fuera de la matriz arroja
+\[
+\begin{bmatrix} a & b \\ -b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix}.
+\]
+Observe con cuidado los signos de las entradas fuera de la diagonal: dado que \(\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}\) es la rotación ANTIHORARIA de ángulo \(\theta\), la matriz \(\begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix}\) es la rotación HORARIA de ángulo \(\theta\) (es decir, antihoraria de ángulo \(-\theta\)). ¿Qué ocurre si en cambio ordenamos la base como \((\mathbf{w}, \mathbf{u})\) —o, de manera equivalente, partimos del valor propio conjugado \(\overline{\lambda} = a - bi\) con el vector propio \(\mathbf{u} - i\mathbf{w}\)? Entonces \(A\mathbf{w} = a\mathbf{w} + b\mathbf{u}\) y \(A\mathbf{u} = -b\mathbf{w} + a\mathbf{u}\), así que
+\[
+[A|_W]_{(\mathbf{w}, \mathbf{u})} = \begin{bmatrix} a & -b \\ b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix},
+\]
+¡que es la rotación ANTIHORARIA de ángulo \(\theta\) escalada por \(r\)!
+
+[CALLOUT]
+id: real-canonical-block
+label: Teorema
+title: Bloque canónico real \(2 \times 2\) de rotación-escalamiento
+tone: key
+
+Sea \(A \in M_n(\mathbb{R})\) con valor propio no real \(\lambda = a + bi = r e^{i\theta}\) (\(b \neq 0\), \(r = \sqrt{a^2 + b^2}\)) y vector propio complejo \(\mathbf{v} = \mathbf{u} + i\mathbf{w}\) (\(\mathbf{u}, \mathbf{w} \in \mathbb{R}^n\)).
+
+(1) \(\{\mathbf{u}, \mathbf{w}\}\) es linealmente independiente sobre \(\mathbb{R}\) y genera un subespacio \(A\)-invariante \(2\)-dimensional \(W \subseteq \mathbb{R}^n\).
+(2) En la base ordenada \((\mathbf{u}, \mathbf{w})\), la restricción \(A|_W\) tiene matriz
+\[
+C = \begin{bmatrix} a & b \\ -b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix}.
+\]
+(3) Intercambiar el orden de la base a \((\mathbf{w}, \mathbf{u})\) (o usar \(\overline{\lambda} = a - bi\) con \((\mathbf{u}, \mathbf{w})\), donde \(\mathbf{u} - i\mathbf{w}\) es el vector propio para \(\overline{\lambda}\)) invierte los signos fuera de la diagonal a
+\[
+C' = \begin{bmatrix} a & -b \\ b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}.
+\]
+[/CALLOUT]
+
+¡Nunca adivine los signos de las entradas fuera de la diagonal! Compruebe siempre UNA columna directamente: calcule \(A\mathbf{u}\) y expréselo como combinación lineal de \(\mathbf{u}\) y \(\mathbf{w}\), lo cual fija el signo de inmediato.
+
+Ejecutemos un ejemplo \(2 \times 2\) completo: \(A = \begin{bmatrix} 0 & -5 \\ 1 & 2 \end{bmatrix}\).
+- Polinomio característico: \(p_A(\lambda) = \lambda^2 - 2\lambda + 5 = (\lambda - 1)^2 + 4\), de modo que \(\lambda = 1 \pm 2i\).
+- Tome \(\lambda = 1 + 2i\): \(A - (1 + 2i)I = \begin{bmatrix} -1 - 2i & -5 \\ 1 & 1 - 2i \end{bmatrix}\). De la fila \(2\), \(v_1 + (1 - 2i)v_2 = 0\), así que elegir \(v_2 = 1\) da \(\mathbf{v} = \begin{bmatrix} -1 + 2i \\ 1 \end{bmatrix} = \begin{bmatrix} -1 \\ 1 \end{bmatrix} + i\begin{bmatrix} 2 \\ 0 \end{bmatrix}\).
+- Aquí \(\mathbf{u} = (-1, 1)^T\) y \(\mathbf{w} = (2, 0)^T\). Poner \(P = \begin{bmatrix} \mathbf{u} & \mathbf{w} \end{bmatrix} = \begin{bmatrix} -1 & 2 \\ 1 & 0 \end{bmatrix}\) da \(C = \begin{bmatrix} 1 & 2 \\ -2 & 1 \end{bmatrix}\).
+- Comprobación: \(A P = \begin{bmatrix} -5 & 0 \\ 1 & 2 \end{bmatrix}\) y \(P C = \begin{bmatrix} -1 & 2 \\ 1 & 0 \end{bmatrix}\begin{bmatrix} 1 & 2 \\ -2 & 1 \end{bmatrix} = \begin{bmatrix} -5 & 0 \\ 1 & 2 \end{bmatrix}\). ¡Coincidencia exacta! Aquí \(r = \sqrt{1^2 + 2^2} = \sqrt{5}\), así que en el sistema de coordenadas \((\mathbf{u}, \mathbf{w})\), \(A\) escala por \(\sqrt{5}\) y rota en sentido horario un ángulo \(\theta = \arctan(2)\).
+
+[QUESTION 2]
+[ANSWER: C]
+Considere la matriz real
+\[
+A = \begin{bmatrix} 1 & -2 \\ 1 & 3 \end{bmatrix},
+\]
+que tiene valor propio complejo \(\lambda = 2 + i\) con vector propio \(\mathbf{v} = (-1 + i,\; 1)^T\). Tomando \(\mathbf{u} = \operatorname{Re}(\mathbf{v})\), \(\mathbf{w} = \operatorname{Im}(\mathbf{v})\) y \(P = \begin{bmatrix} \mathbf{u} & \mathbf{w} \end{bmatrix}\), ¿cuáles son \(P\) y la matriz canónica real \(C = P^{-1} A P\)?
+
+(A) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & -1 \\ 1 & 2 \end{bmatrix}\)
+(B) \(P = \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & 1 \\ -1 & 2 \end{bmatrix}\)
+(C) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & 1 \\ -1 & 2 \end{bmatrix}\)
+(D) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 1 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & 1 \\ -1 & 2 \end{bmatrix}\)
+(E) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\), \(C = \begin{bmatrix} 1 & 2 \\ -2 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Suponga que \(A \in M_2(\mathbb{R})\) tiene valor propio \(\lambda = 3 + 4i\) con vector propio complejo \(\mathbf{v} = \mathbf{u} + i\mathbf{w}\) (\(\mathbf{u}, \mathbf{w} \in \mathbb{R}^2\)). Sean \(P_1 = \begin{bmatrix} \mathbf{u} & \mathbf{w} \end{bmatrix}\) y \(P_2 = \begin{bmatrix} \mathbf{w} & \mathbf{u} \end{bmatrix}\). ¿Cuáles son \(P_1^{-1} A P_1\) y \(P_2^{-1} A P_2\), y cuál es el factor de escalamiento común \(r\)?
+
+(A) \(P_1^{-1} A P_1 = \begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 3 & -4 \\ 4 & 3 \end{bmatrix}\), \(r = 5\)
+(B) \(P_1^{-1} A P_1 = \begin{bmatrix} 3 & -4 \\ 4 & 3 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(r = 5\)
+(C) Ambas son iguales a \(\begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(r = 5\)
+(D) \(P_1^{-1} A P_1 = \begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 3 & -4 \\ 4 & 3 \end{bmatrix}\), \(r = 25\)
+(E) \(P_1^{-1} A P_1 = \begin{bmatrix} 4 & 3 \\ -3 & 4 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 4 & -3 \\ 3 & 4 \end{bmatrix}\), \(r = 5\)
+[/QUESTION]
+
+=== SECTION 3: Forma diagonal por bloques reales y dinámica espiral ===
+
+Extienda ahora [REF: real-canonical-block | la construcción del bloque \(2 \times 2\)] a CUALQUIER matriz real \(A \in M_n(\mathbb{R})\) que sea diagonalizable sobre \(\mathbb{C}\). Suponga que \(A\) tiene valores propios reales (contados con multiplicidad) \(\mu_1, \dots, \mu_p\) con vectores propios reales \(\mathbf{x}_1, \dots, \mathbf{x}_p \in \mathbb{R}^n\), y \(q\) pares conjugados de valores propios no reales \(a_j \pm b_j i\) (\(b_j \neq 0\), \(p + 2q = n\)) con vectores propios complejos \(\mathbf{v}_j = \mathbf{u}_j + i\mathbf{w}_j\) y \(\overline{\mathbf{v}}_j = \mathbf{u}_j - i\mathbf{w}_j\). Como los \(n\) vectores complejos \(\{\mathbf{x}_1, \dots, \mathbf{x}_p, \mathbf{v}_1, \overline{\mathbf{v}}_1, \dots, \mathbf{v}_q, \overline{\mathbf{v}}_q\}\) forman una base de \(\mathbb{C}^n\) y cada par real \(\{\mathbf{u}_j, \mathbf{w}_j\}\) genera exactamente el mismo subespacio complejo que \(\{\mathbf{v}_j, \overline{\mathbf{v}}_j\}\), ¡los \(n\) vectores REALES
+\[
+\mathcal{B} = \{\mathbf{x}_1, \dots, \mathbf{x}_p,\; \mathbf{u}_1, \mathbf{w}_1, \dots, \mathbf{u}_q, \mathbf{w}_q\}
+\]
+forman una base de \(\mathbb{R}^n\)! Construir la matriz real invertible \(P = \begin{bmatrix} \mathbf{x}_1 & \cdots & \mathbf{x}_p & \mathbf{u}_1 & \mathbf{w}_1 & \cdots & \mathbf{u}_q & \mathbf{w}_q \end{bmatrix}\) transforma \(A\) en forma diagonal por bloques reales \(A = P C P^{-1}\), donde
+\[
+C = \begin{bmatrix} \mu_1 & & & & \\ & \ddots & & & \\ & & \mu_p & & \\ & & & C_1 & \\ & & & & \ddots & \\ & & & & & C_q \end{bmatrix}, \qquad C_j = \begin{bmatrix} a_j & b_j \\ -b_j & a_j \end{bmatrix} = r_j \begin{bmatrix} \cos\theta_j & \sin\theta_j \\ -\sin\theta_j & \cos\theta_j \end{bmatrix}.
+\]
+
+Observe lo que esto predice de inmediato para sistemas dinámicos discretos \(\mathbf{x}_{k+1} = A \mathbf{x}_k\) en \(\mathbb{R}^n\). Dentro de cada plano invariante \(2\)-dimensional \(W_j = \operatorname{span}_{\mathbb{R}}\{\mathbf{u}_j, \mathbf{w}_j\}\), elevar un bloque de rotación-escalamiento a la \(k\)-ésima potencia simplemente multiplica el factor de escala \(k\) veces y suma el ángulo \(k\) veces:
+\[
+C_j^k = r_j^k \begin{bmatrix} \cos(k\theta_j) & \sin(k\theta_j) \\ -\sin(k\theta_j) & \cos(k\theta_j) \end{bmatrix}.
+\]
+En la base \((\mathbf{u}_j, \mathbf{w}_j)\), los iterados yacen sobre una espiral logarítmica (en las coordenadas estándar originales, una espiral elíptica inclinada/estirada obtenida al aplicar \(P\)):
+- Si \(r_j = |\lambda_j| < 1\), la trayectoria gira en espiral HACIA ADENTRO tendiendo a \(\mathbf{0}\).
+- Si \(r_j = |\lambda_j| = 1\), la trayectoria orbita a lo largo de un círculo cerrado (o elipse en coordenadas estándar), sin crecer ni decaer.
+- Si \(r_j = |\lambda_j| > 1\), la trayectoria gira en espiral HACIA AFUERA hacia el infinito.
+
+Arrastre el deslizador \(r\) en la gráfica siguiente a través de \(r < 1\), \(r = 1\) y \(r > 1\) para observar cómo el módulo \(r = |\lambda|\) rige por completo el destino cualitativo de los iterados discretos \(\mathbf{x}_0, \mathbf{x}_1, \mathbf{x}_2, \mathbf{x}_3, \mathbf{x}_4\) bajo un bloque de rotación-escalamiento con ángulo de rotación \(0.7\text{ rad}\) por paso.
+
+[GRAPH]
+type: parametric2d
+title: Órbita de rotación-escalamiento \((r^t \cos(0.7t),\, r^t \sin(0.7t))\) al variar el módulo \(r = \lvert\lambda\rvert\)
+xlabel: \(c_1\)
+ylabel: \(c_2\)
+trange: 0, 9
+xrange: -2.4, 2.4
+yrange: -2.4, 2.4
+trace: r^t * cos(0.7*t), r^t * sin(0.7*t) | label: envolvente espiral
+point: 1, 0 | label: \(\mathbf{x}_0\)
+point: r * cos(0.7), r * sin(0.7) | label: \(\mathbf{x}_1\)
+point: r^2 * cos(1.4), r^2 * sin(1.4) | label: \(\mathbf{x}_2\)
+point: r^3 * cos(2.1), r^3 * sin(2.1) | label: \(\mathbf{x}_3\)
+point: r^4 * cos(2.8), r^4 * sin(2.8) | label: \(\mathbf{x}_4\)
+slider: r | range: 0.7, 1.2 | init: 0.85 | step: 0.05
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: D]
+Sea \(A \in M_3(\mathbb{R})\) con valores propios \(\lambda_1 = \dfrac{1}{2}\) y \(\lambda_{2,3} = \dfrac{3}{5} \pm \dfrac{4}{5}i\). Considere el sistema dinámico discreto \(\mathbf{x}_{k+1} = A\mathbf{x}_k\) que parte de un vector inicial genérico \(\mathbf{x}_0 \in \mathbb{R}^3\) con componentes no nulas tanto a lo largo de la recta propia real \(E_{1/2}\) como en el plano invariante \(2\)-dimensional \(W\) asociado a \(\lambda_{2,3}\). ¿Qué le ocurre a \(\mathbf{x}_k\) cuando \(k \to \infty\)?
+
+(A) \(\mathbf{x}_k\) gira en espiral hacia adentro tendiendo al origen \(\mathbf{0}\).
+(B) \(\mathbf{x}_k\) gira en espiral hacia afuera hasta infinito a lo largo del plano \(W\).
+(C) \(\mathbf{x}_k\) converge a un único punto fijo no nulo sobre la recta propia \(E_{1/2}\).
+(D) La componente a lo largo de \(E_{1/2}\) decae a \(0\), mientras que \(\mathbf{x}_k\) se aproxima a una órbita rotatoria acotada sobre una elipse dentro del plano \(W\).
+(E) \(\mathbf{x}_k\) oscila entre dos puntos opuestos \(\pm \mathbf{x}_0\) sin rotar.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Una matriz real \(A \in M_3(\mathbb{R})\) tiene valores propios \(2\), \(1 + i\) y \(1 - i\). ¿Qué enunciado es VERDADERO?
+
+(A) \(A\) es diagonalizable sobre \(\mathbb{R}\) porque tiene tres valores propios distintos.
+(B) \(A\) NO es diagonalizable sobre \(\mathbb{C}\) porque dos valores propios son no reales.
+(C) \(A\) es semejante sobre \(\mathbb{R}\) a \(\operatorname{diag}(2, 1, 1)\).
+(D) \(A\) no tiene ningún subespacio invariante real \(1\)-dimensional.
+(E) \(A\) es diagonalizable sobre \(\mathbb{C}\), no es diagonalizable sobre \(\mathbb{R}\), y es semejante sobre \(\mathbb{R}\) a \(\begin{bmatrix} 2 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & -1 & 1 \end{bmatrix}\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Sea
+\[
+A = \begin{bmatrix} 1 & -\sqrt{3} \\ \sqrt{3} & 1 \end{bmatrix}.
+\]
+Usando su forma polar de rotación-escalamiento, calcule \(A^{12}\).
+
+(A) \(-4096\,I_2\)
+(B) \(64\,I_2\)
+(C) \(4096\,I_2\)
+(D) \(2048\begin{bmatrix} 1 & -\sqrt{3} \\ \sqrt{3} & 1 \end{bmatrix}\)
+(E) \(I_2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suponga que \(A \in M_2(\mathbb{R})\) tiene \(\operatorname{tr}(A) = 0\) y \(\det(A) = 9\). ¿Qué es \(A^2\)?
+
+(A) \(9\,I_2\)
+(B) \(-9\,I_2\)
+(C) \(3\,I_2\)
+(D) \(-3\,I_2\)
+(E) No puede determinarse sin conocer las entradas de \(A\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Suponga que \(A \in M_n(\mathbb{R})\) tiene un vector propio complejo \(\mathbf{v} = \mathbf{u} + i\mathbf{w}\) (\(\mathbf{u}, \mathbf{w} \in \mathbb{R}^n\)) para un valor propio \(\lambda = a + bi\). ¿Por qué es esencial la condición \(b \neq 0\) para garantizar que \(\{\mathbf{u}, \mathbf{w}\}\) sea linealmente independiente sobre \(\mathbb{R}\)?
+
+(A) Cuando \(b = 0\), \(\lambda = \overline{\lambda}\) es real, por lo que \(\mathbf{v}\) y \(\overline{\mathbf{v}}\) no tienen por qué ser linealmente independientes (por ejemplo, \(\mathbf{v}\) puede ser real con \(\mathbf{w} = \mathbf{0}\), o \(\mathbf{w}\) puede ser un múltiplo real de \(\mathbf{u}\)).
+(B) Cuando \(b = 0\), \(A\) no puede tener ningún vector propio no nulo en \(\mathbb{C}^n\).
+(C) Cuando \(b = 0\), deja de cumplirse \(A\mathbf{u} = a\mathbf{u} - b\mathbf{w}\).
+(D) Cuando \(b = 0\), \(\operatorname{span}_{\mathbb{R}}\{\mathbf{u}, \mathbf{w}\}\) deja de ser \(A\)-invariante.
+(E) En realidad \(b \neq 0\) no es necesario: \(\{\mathbf{u}, \mathbf{w}\}\) es linealmente independiente para todo vector propio complejo \(\mathbf{v} \neq \mathbf{0}\).
+[/BONUS]

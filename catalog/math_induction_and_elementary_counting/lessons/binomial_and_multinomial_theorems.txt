@@ -1,0 +1,241 @@
+=== SECTION 1: The Binomial Theorem — combinatorial meaning and inductive proof ===
+
+Expand the first few nonnegative integer powers of a sum \((x + y)\):
+\[
+(x + y)^0 = 1, \qquad (x + y)^1 = x + y, \qquad (x + y)^2 = x^2 + 2xy + y^2, \qquad (x + y)^3 = x^3 + 3x^2 y + 3x y^2 + y^3.
+\]
+The numerical coefficients—\(1\); \(1, 1\); \(1, 2, 1\); \(1, 3, 3, 1\)—are the rows of Pascal's triangle! That is not a coincidence; it is the reason the subset-counting numbers \(\binom{n}{k}\) are called binomial coefficients in the first place.
+
+Before stating the general theorem, let us derive it from scratch in two completely independent ways: first by counting terms directly, and second by ordinary mathematical induction using Pascal's identity. Seeing both proofs reveals how algebraic multiplication and finite counting mirror each other.
+
+Combinatorial derivation: Write \((x + y)^n\) as the product of \(n\) identical factors:
+\[
+(x + y)^n = \underbrace{(x + y)(x + y)\cdots(x + y)}_{n\text{ factors}}.
+\]
+By repeated use of the distributive law, multiplying out this product yields a sum of \(2^n\) uncollected monomials, obtained by picking either \(x\) or \(y\) from each of the \(n\) factors and multiplying those \(n\) choices together. Because multiplication is commutative, a monomial simplifies to \(x^{n - k} y^k\) if and only if we picked \(y\) from exactly \(k\) of the \(n\) factors and \(x\) from the remaining \(n - k\) factors. How many ways can we choose which \(k\) of the \(n\) factors contribute \(y\)? Exactly \(\binom{n}{k}\). Collecting all like terms for each \(k = 0, 1, \dots, n\) produces the Binomial Theorem.
+
+[CALLOUT]
+id: binomial-theorem
+label: Theorem
+title: The Binomial Theorem
+tone: key
+
+For every nonnegative integer \(n\) and all real or complex numbers (or commuting algebraic symbols) \(x\) and \(y\),
+\[
+(x + y)^n = \sum_{k=0}^n \binom{n}{k} x^{n - k} y^k.
+\]
+[/CALLOUT]
+
+Now let us give a rigorous algebraic proof of [REF: binomial-theorem | the Binomial Theorem] by ordinary mathematical induction on \(n\), using Pascal's identity \(\binom{m}{k - 1} + \binom{m}{k} = \binom{m + 1}{k}\).
+
+[CALLOUT]
+id: binomial-induction-proof
+label: Proof
+title: Proof of the Binomial Theorem by ordinary induction
+tone: note
+
+Let \(P(n)\) be the statement \((x + y)^n = \sum_{k=0}^n \binom{n}{k} x^{n - k} y^k\).
+
+Base case (\(n = 0\)): The left-hand side is \((x + y)^0 = 1\), and the right-hand side is \(\binom{0}{0} x^0 y^0 = 1\). Thus \(P(0)\) holds.
+
+Inductive step: Fix an integer \(m \ge 0\) and assume \(P(m)\) holds. Multiply both sides of \(P(m)\) by \((x + y)\):
+\[
+(x + y)^{m + 1} = (x + y)\sum_{k=0}^m \binom{m}{k} x^{m - k} y^k = \sum_{k=0}^m \binom{m}{k} x^{m + 1 - k} y^k + \sum_{j=0}^m \binom{m}{j} x^{m - j} y^{j + 1}.
+\]
+To align powers of \(y\) in the second sum, re-index it by setting \(k = j + 1\) (so \(j = k - 1\), and \(k\) runs from \(1\) to \(m + 1\)):
+\[
+(x + y)^{m + 1} = \sum_{k=0}^m \binom{m}{k} x^{m + 1 - k} y^k + \sum_{k=1}^{m + 1} \binom{m}{k - 1} x^{m + 1 - k} y^k.
+\]
+Peel off the \(k = 0\) term from the first sum and the \(k = m + 1\) term from the second sum, and combine the shared interior indices \(1 \le k \le m\):
+\[
+(x + y)^{m + 1} = \binom{m}{0} x^{m + 1} + \sum_{k=1}^m \left[\binom{m}{k} + \binom{m}{k - 1}\right] x^{m + 1 - k} y^k + \binom{m}{m} y^{m + 1}.
+\]
+Since \(\binom{m}{0} = 1 = \binom{m + 1}{0}\), \(\binom{m}{m} = 1 = \binom{m + 1}{m + 1}\), and \(\binom{m}{k} + \binom{m}{k - 1} = \binom{m + 1}{k}\) by Pascal's identity, this simplifies to
+\[
+(x + y)^{m + 1} = \sum_{k=0}^{m + 1} \binom{m + 1}{k} x^{(m + 1) - k} y^k.
+\]
+Thus \(P(m + 1)\) holds. By the Principle of Mathematical Induction, \(P(n)\) holds for all \(n \ge 0\).
+[/CALLOUT]
+
+When extracting a single coefficient from a binomial power like \((3u - 2v)^5\), be careful to keep signs and scalar factors attached to \(x\) and \(y\). Setting \(x = 3u\) and \(y = -2v\), the term containing \(u^2 v^3\) has \(k = 3\):
+\[
+\binom{5}{3} (3u)^2 (-2v)^3 = 10 \cdot 9u^2 \cdot (-8v^3) = -720 u^2 v^3,
+\]
+so the coefficient of \(u^2 v^3\) is \(-720\).
+
+[QUESTION 1]
+[ANSWER: B]
+What is the coefficient of \(a^4 b^3\) in the expansion of \((2a - b)^7\)?
+
+(A) \(-1120\)
+(B) \(-560\)
+(C) \(-280\)
+(D) \(-35\)
+(E) \(560\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: E]
+Suppose you are carrying out an inductive proof of the Binomial Theorem from \(n = m\) to \(n = m + 1\), and after multiplying the inductive hypothesis by \((x + y)\) you obtain
+\[
+\sum_{k=0}^m \binom{m}{k} x^{m + 1 - k} y^k + \sum_{j=0}^m \binom{m}{j} x^{m - j} y^{j + 1}.
+\]
+Why is the substitution \(k = j + 1\) made in the second sum rather than simply adding the \(k\)-th and \(j\)-th terms directly at \(j = k\)?
+
+(A) Because \(j\) runs to \(m + 1\) while \(k\) runs only to \(m\).
+(B) Because \(\binom{m}{k} + \binom{m}{k}\) cannot be simplified for arbitrary \(m\).
+(C) Because the first sum omits the \(y^0\) term whereas the second sum includes it.
+(D) Because Pascal's identity applies only when the upper index is \(m + 1\).
+(E) Because at \(j = k\) the two sums multiply different monomials (\(x^{m + 1 - k} y^k\) versus \(x^{m - k} y^{k + 1}\)), whereas setting \(k = j + 1\) aligns matching powers \(x^{m + 1 - k} y^k\) so their coefficients combine into \(\binom{m}{k} + \binom{m}{k - 1}\).
+[/QUESTION]
+
+=== SECTION 2: Extracting combinatorial identities from \((1 + x)^n\) ===
+
+Setting \(x = 1\) and renaming \(y\) to \(x\) in [REF: binomial-theorem | the Binomial Theorem] turns it into a compact polynomial identity:
+\[
+(1 + x)^n = \sum_{k=0}^n \binom{n}{k} x^k.
+\]
+Because this identity holds for EVERY number \(x\), plugging in clever values of \(x\) collapses entire sums of binomial coefficients in a single line.
+
+1. Set \(x = 1\):
+\[
+2^n = (1 + 1)^n = \sum_{k=0}^n \binom{n}{k} = \binom{n}{0} + \binom{n}{1} + \cdots + \binom{n}{n}.
+\]
+Combinatorially, the right-hand side partitions all subsets of an \(n\)-element set by size \(k\), confirming the total subset count \(2^n\).
+
+2. Set \(x = -1\) (for any integer \(n \ge 1\)):
+\[
+0 = (1 - 1)^n = \sum_{k=0}^n (-1)^k \binom{n}{k} = \binom{n}{0} - \binom{n}{1} + \binom{n}{2} - \cdots + (-1)^n \binom{n}{n}.
+\]
+Why must we require \(n \ge 1\)? Because at \(n = 0\) the sum has only one term, \(\binom{0}{0} = 1 \neq 0\)! Moving all negative (odd-\(k\)) terms to the other side yields a striking symmetry:
+\[
+\sum_{k\text{ even}} \binom{n}{k} = \sum_{k\text{ odd}} \binom{n}{k} \qquad (n \ge 1).
+\]
+Since the even-sized subsets and odd-sized subsets partition all \(2^n\) subsets into two equal halves, EVERY nonempty finite set of size \(n \ge 1\) has exactly \(2^{n - 1}\) subsets of even size and \(2^{n - 1}\) subsets of odd size!
+
+3. Set \(x = 2\):
+\[
+3^n = (1 + 2)^n = \sum_{k=0}^n 2^k \binom{n}{k}.
+\]
+Combinatorially, both sides count length-\(n\) strings over \(\{0, 1, 2\}\): choose the \(k\) positions that are NOT \(0\) in \(\binom{n}{k}\) ways, then fill each of those \(k\) positions with either \(1\) or \(2\) in \(2^k\) ways.
+
+4. Weighted sum \(\sum_{k=0}^n k \binom{n}{k}\): We do not even need calculus to evaluate this sum. Combine the committee-chair identity \(k \binom{n}{k} = n \binom{n - 1}{k - 1}\) (for \(k \ge 1\)) with the \(x = 1\) row sum:
+\[
+\sum_{k=0}^n k \binom{n}{k} = \sum_{k=1}^n n \binom{n - 1}{k - 1} = n \sum_{j=0}^{n - 1} \binom{n - 1}{j} = n \, 2^{n - 1} \qquad (n \ge 1).
+\]
+Notice how cleanly the \(k = 0\) term drops out before shifting \(j = k - 1\).
+
+[CALLOUT]
+id: binomial-identities
+label: Reference
+title: Core identities from the Binomial Theorem
+tone: key
+
+(1) Row sum (\(n \ge 0\)): \(\sum_{k=0}^n \binom{n}{k} = 2^n\).
+(2) Alternating row sum (\(n \ge 1\)): \(\sum_{k=0}^n (-1)^k \binom{n}{k} = 0\), while for \(n = 0\) the sum equals \(1\).
+(3) Even-odd subset balance (\(n \ge 1\)): \(\sum_{k\text{ even}} \binom{n}{k} = \sum_{k\text{ odd}} \binom{n}{k} = 2^{n - 1}\).
+(4) First-moment weighted sum (\(n \ge 1\)): \(\sum_{k=0}^n k \binom{n}{k} = n \, 2^{n - 1}\).
+[/CALLOUT]
+
+Keep [REF: binomial-identities.2 | the alternating row sum] firmly in mind: the fact that \(\sum_{k=0}^m (-1)^k \binom{m}{k}\) equals \(1\) when \(m = 0\) and \(0\) for every \(m \ge 1\) is the exact algebraic engine that proves the Principle of Inclusion–Exclusion in the next lesson.
+
+[QUESTION 3]
+[ANSWER: C]
+For every positive integer \(n\), what is the exact value of the sum
+\[
+\sum_{k=0}^n (-1)^k \, 3^k \binom{n}{k}?
+\]
+
+(A) \(0\)
+(B) \(2^n\)
+(C) \((-2)^n\)
+(D) \((-3)^n\)
+(E) \(4^n\)
+[/QUESTION]
+
+=== SECTION 3: The Multinomial Theorem ===
+
+What happens when we raise a sum of \(r\) terms—not just two—to the \(n\)-th power? Consider
+\[
+(x_1 + x_2 + \cdots + x_r)^n = \underbrace{(x_1 + x_2 + \cdots + x_r)\cdots(x_1 + x_2 + \cdots + x_r)}_{n\text{ factors}}.
+\]
+Multiplying out produces a sum of \(r^n\) uncollected monomials: from each of the \(n\) factors we choose one variable \(x_j\). Collecting factors gives a monomial \(x_1^{k_1} x_2^{k_2} \cdots x_r^{k_r}\), where each \(k_j \ge 0\) records how many of the \(n\) factors contributed \(x_j\), so \(k_1 + k_2 + \cdots + k_r = n\).
+
+How many of those \(r^n\) choices produce the exact same exponent tuple \((k_1, k_2, \dots, k_r)\)? Each choice corresponds to a length-\(n\) word over the alphabet \(\{x_1, \dots, x_r\}\) containing \(k_1\) copies of \(x_1\), \(k_2\) copies of \(x_2\), \(\dots\), and \(k_r\) copies of \(x_r\). From our earlier work on multiset permutations, the number of such words is the multinomial coefficient:
+\[
+\binom{n}{k_1, k_2, \dots, k_r} = \frac{n!}{k_1!\, k_2!\, \cdots \, k_r!}.
+\]
+Notice that when \(r = 2\), the condition \(k_1 + k_2 = n\) forces \(k_1 = n - k\) and \(k_2 = k\), so \(\binom{n}{n - k, k} = \frac{n!}{(n - k)!\,k!} = \binom{n}{k}\), recovering the Binomial Theorem as a special case.
+
+[CALLOUT]
+id: multinomial-theorem
+label: Theorem
+title: The Multinomial Theorem
+tone: key
+
+For every nonnegative integer \(n\) and positive integer \(r\),
+\[
+(x_1 + x_2 + \cdots + x_r)^n = \sum_{\substack{k_1 + k_2 + \cdots + k_r = n \\ k_1, \dots, k_r \ge 0}} \binom{n}{k_1, k_2, \dots, k_r} x_1^{k_1} x_2^{k_2} \cdots x_r^{k_r},
+\]
+where \(\binom{n}{k_1, k_2, \dots, k_r} = \frac{n!}{k_1!\,k_2!\,\cdots\,k_r!}\).
+[/CALLOUT]
+
+Setting \(x_1 = x_2 = \cdots = x_r = 1\) in [REF: multinomial-theorem | the Multinomial Theorem] yields the identity
+\[
+\sum_{k_1 + \cdots + k_r = n} \binom{n}{k_1, \dots, k_r} = r^n.
+\]
+To see the theorem in action on a polynomial with scalar coefficients, let us find the coefficient of \(a^3 b c^2\) in \((2a + b - 5c)^6\). Since \(3 + 1 + 2 = 6\), only one exponent triple \((k_1, k_2, k_3) = (3, 1, 2)\) contributes:
+\[
+\binom{6}{3, 1, 2} (2a)^3 (b)^1 (-5c)^2 = \frac{6!}{3!\,1!\,2!} \cdot 8 \cdot 1 \cdot 25 \, a^3 b c^2 = 60 \cdot 200 \, a^3 b c^2 = 12000 \, a^3 b c^2.
+\]
+Beware of one twist when expanding a single-variable polynomial such as \((1 + x + x^2)^n\): DIFFERENT exponent triples \((k_0, k_1, k_2)\) with \(k_0 + k_1 + k_2 = n\) can yield the SAME power of \(x\) (since the power of \(x\) is \(0 \cdot k_0 + 1 \cdot k_1 + 2 \cdot k_2\)). In that situation, you must find all valid triples producing the target degree and ADD their multinomial contributions.
+
+[QUESTION 4]
+[ANSWER: A]
+What is the coefficient of \(x^2 y^3 z\) in the expansion of \((x - 2y + 3z)^6\)?
+
+(A) \(-1440\)
+(B) \(1440\)
+(C) \(-720\)
+(D) \(-60\)
+(E) \(-24\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+For every integer \(n \ge 2\), what is the exact value of the alternating weighted sum
+\[
+\sum_{k=0}^n (-1)^k \, k \binom{n}{k}?
+\]
+
+(A) \(-n\)
+(B) \((-1)^n n\)
+(C) \(n \, 2^{n - 1}\)
+(D) \(0\)
+(E) \((-1)^n 2^{n - 1}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+What is the coefficient of \(x^4\) in the expansion of \((1 + x + x^2)^5\)?
+
+(A) \(30\)
+(B) \(35\)
+(C) \(45\)
+(D) \(40\)
+(E) \(50\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+For every integer \(n \ge 1\), what is the exact closed-form value of
+\[
+\sum_{k=0}^n k^2 \binom{n}{k}?
+\]
+
+(A) \(n^2 2^{n - 1}\)
+(B) \(n(n - 1) 2^{n - 2}\)
+(C) \(n^2 2^{n - 2}\)
+(D) \(n(n + 1) 2^{n - 1}\)
+(E) \(n(n + 1) 2^{n - 2}\)
+[/BONUS]

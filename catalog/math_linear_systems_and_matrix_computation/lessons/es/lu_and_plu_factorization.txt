@@ -1,0 +1,301 @@
+=== SECTION 1: Empaquetar la eliminación gaussiana como \(A = LU\) ===
+
+Suponga que una simulación en ingeniería necesita resolver \(A\mathbf{x} = \mathbf{b}_1\), luego \(A\mathbf{x} = \mathbf{b}_2\) y finalmente \(A\mathbf{x} = \mathbf{b}_{100}\), donde la matriz de coeficientes \(A\) permanece fija y solo llega un lado derecho \(\mathbf{b}_j\) a la vez. ¡Ejecutar la eliminación gaussiana desde cero sobre \([A \mid \mathbf{b}_j]\) repite exactamente el mismo trabajo sobre \(A\) cien veces! Por otro lado, ya vimos que calcular \(A^{-1}\) explícitamente cuesta el triple de aritmética por adelantado que una sola eliminación gaussiana. ¿Existe una manera de registrar UNA SOLA VEZ los pasos de eliminación efectuados sobre \(A\), en una factorización triangular compacta, de modo que cada nuevo lado derecho \(\mathbf{b}_j\) pueda resolverse rápidamente sin volver a reducir \(A\) jamás?
+
+Esa factorización es \(A = LU\).
+
+Suponga primero que la eliminación gaussiana hacia adelante reduce una matriz \(m \times n\) (o cuadrada \(n \times n\)) \(A\) a una matriz escalonada por filas triangular superior \(U\) usando ÚNICAMENTE operaciones de reemplazo de fila hacia abajo —sin intercambios de filas y sin escalar filas pivote—. En concreto, en la columna \(1\) despejamos debajo del pivote \(a_{11}\) aplicando \(R_i \leftarrow R_i - l_{i1} R_1\) para \(i = 2, \dots, m\), donde \(l_{i1} = a_{i1} / a_{11}\) es el multiplicador de eliminación; luego, en la columna \(2\) despejamos debajo del pivote actualizado \(u_{22}\) aplicando \(R_i \leftarrow R_i - l_{i2} R_2\) para \(i = 3, \dots, m\); y así sucesivamente de izquierda a derecha.
+
+Traduzca esos \(k\) reemplazos de fila hacia abajo en matrices elementales \(E_1, E_2, \dots, E_k\):
+\[
+E_k \cdots E_2 E_1 A = U.
+\]
+Cada \(E_r\) es triangular inferior unitaria (\(1\)'s en la diagonal principal, \(0\)'s arriba y una sola entrada \(-l_{ij}\) debajo de la diagonal en la posición \((i, j)\) con \(i > j\)). Invertir ambos lados da
+\[
+A = L U, \qquad \text{donde } L = E_1^{-1} E_2^{-1} \cdots E_k^{-1}.
+\]
+¡Cada matriz elemental inversa \(E_r^{-1}\) simplemente cambia el signo de su única entrada fuera de la diagonal de \(-l_{ij}\) a \(+l_{ij}\)!
+
+Ahora llega el milagro algebraico crucial que hace que la factorización \(LU\) sea directa a mano y en código: al multiplicar \(E_1^{-1} E_2^{-1} \cdots E_k^{-1}\) en ese orden exacto de eliminación hacia adelante, NO se forma ningún término cruzado: ¡cada multiplicador \(l_{ij}\) cae directamente en la posición \((i, j)\) de \(L\) sin alterarse!
+
+Demostremos POR QUÉ ningún término cruzado contamina a \(L\) (y por qué SÍ aparecen si se multiplica en el orden inverso \(E_k \cdots E_1\)). Considere el caso \(3 \times 3\), donde la eliminación aplica:
+1. \(E_1\) (\(R_2 \leftarrow R_2 - l_{21} R_1\)),
+2. \(E_2\) (\(R_3 \leftarrow R_3 - l_{31} R_1\)),
+3. \(E_3\) (\(R_3 \leftarrow R_3 - l_{32} R_2\)).
+
+Entonces
+\[
+L = E_1^{-1} E_2^{-1} E_3^{-1}
+= \begin{bmatrix} 1 & 0 & 0 \\ l_{21} & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+  \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ l_{31} & 0 & 1 \end{bmatrix}
+  \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & l_{32} & 1 \end{bmatrix}.
+\]
+Multiplique de derecha a izquierda y observe lo que hace cada multiplicación por la izquierda:
+- Primero, \(E_2^{-1}\) actúa sobre \(E_3^{-1}\) sumando \(l_{31}\) veces la FILA \(1\) de \(E_3^{-1}\) a la fila \(3\) de \(E_3^{-1}\). Como la fila \(1\) de \(E_3^{-1}\) es \(\begin{bmatrix} 1 & 0 & 0 \end{bmatrix}\) —¡tiene CERO en la columna \(2\)!—, sumar \(l_{31}\) veces la fila \(1\) coloca \(l_{31}\) en la posición \((3, 1)\) dejando completamente intacto \(l_{32}\) en la posición \((3, 2)\):
+\[
+E_2^{-1} E_3^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ l_{31} & l_{32} & 1 \end{bmatrix}.
+\]
+- Luego, \(E_1^{-1}\) actúa sobre \(E_2^{-1} E_3^{-1}\) sumando \(l_{21}\) veces la FILA \(1\) a la fila \(2\). Nuevamente la fila \(1\) es \(\begin{bmatrix} 1 & 0 & 0 \end{bmatrix}\), por lo que coloca \(l_{21}\) en la posición \((2, 1)\) y no toca nada más:
+\[
+L = E_1^{-1} E_2^{-1} E_3^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ l_{21} & 1 & 0 \\ l_{31} & l_{32} & 1 \end{bmatrix}!
+\]
+Exactamente la misma demostración funciona para cualquier tamaño \(m \times m\): cada vez que un factor anterior \(E_{\text{ant}}^{-1}\) (que opera desde la columna \(p\)) multiplica por la izquierda al producto acumulado de todos los factores posteriores (que solo guardan multiplicadores en columnas \(q \ge p\), nunca en la fila \(p\)), la fila \(p\) de ese producto derecho SIGUE siendo la fila estándar intacta \(\mathbf{e}_p^T\). Por lo tanto, sumar \(l_{ip}\) veces la fila \(p\) a la fila \(i\) escribe \(l_{ip}\) en la posición \((i, p)\) y suma \(0\) en todo lo demás.
+
+En contraste, si calcula \(L^{-1} = E_3 E_2 E_1\), \(E_3\) actúa por la izquierda restando \(l_{32}\) veces la fila \(2\) (¡que YA contiene \(-l_{21}\) en la columna \(1\)!) de la fila \(3\), creando un término cruzado \(+l_{32} l_{21}\) en la entrada \((3, 1)\). Por eso factorizamos \(A = LU\) en lugar de almacenar \(L^{-1} A = U\): \(L\) conserva cada multiplicador de eliminación limpio en su lugar.
+
+[CALLOUT]
+id: lu-theorem
+label: Teorema
+title: Factorización \(LU\) sin intercambios de filas
+tone: key
+
+Si la eliminación gaussiana hacia adelante reduce \(A\) a una matriz triangular superior (escalonada por filas) \(U\) usando ÚNICAMENTE reemplazos de fila hacia abajo \(R_i \leftarrow R_i - l_{ij} R_j\) (\(i > j\), avanzando de izquierda a derecha por las columnas), entonces
+\[
+A = LU,
+\]
+donde \(L\) es la matriz triangular inferior unitaria (\(1\)'s en la diagonal principal, \(0\)'s arriba) cuya entrada en la posición \((i, j)\) para \(i > j\) es simplemente el multiplicador \(l_{ij}\) usado para eliminar la posición \((i, j)\).
+[/CALLOUT]
+
+Calculemos a mano una factorización \(LU\) para
+\[
+A = \begin{bmatrix} 2 & 4 & -2 \\ 4 & 9 & -3 \\ -2 & -3 & 7 \end{bmatrix}.
+\]
+Columna \(1\) (pivote \(2\)):
+- Para eliminar \(4\) en \((2, 1)\): multiplicador \(l_{21} = 4/2 = 2\), aplique \(R_2 \leftarrow R_2 - 2 R_1\).
+- Para eliminar \(-2\) en \((3, 1)\): multiplicador \(l_{31} = -2/2 = -1\), aplique \(R_3 \leftarrow R_3 - (-1) R_1 = R_3 + R_1\).
+Matriz intermedia:
+\[
+\begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 1 & 5 \end{bmatrix}.
+\]
+Columna \(2\) (pivote \(1\)):
+- Para eliminar \(1\) en \((3, 2)\): multiplicador \(l_{32} = 1/1 = 1\), aplique \(R_3 \leftarrow R_3 - 1 R_2\).
+Obtenemos
+\[
+U = \begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 0 & 4 \end{bmatrix}, \qquad
+L = \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 1 & 1 \end{bmatrix}.
+\]
+Verifique multiplicando \(LU\):
+\[
+\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 1 & 1 \end{bmatrix}
+\begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 0 & 4 \end{bmatrix}
+= \begin{bmatrix} 2 & 4 & -2 \\ 4 & 9 & -3 \\ -2 & -3 & 7 \end{bmatrix} = A.
+\]
+Cuide la convención de signos: el multiplicador registrado en \(L\) es el número RESTADO en \(R_i \leftarrow R_i - l_{ij} R_j\). Como en la fila \(3\) se usó \(R_3 + R_1 = R_3 - (-1) R_1\), ¡la entrada \(l_{31}\) es \(-1\), NO \(+1\)!
+
+[QUESTION 1]
+[ANSWER: B]
+Calcule la factorización \(LU\) (con \(L\) triangular inferior unitaria) de
+\[
+A = \begin{bmatrix} 2 & -1 & 3 \\ 4 & 1 & 5 \\ -2 & 7 & -4 \end{bmatrix}.
+\]
+¿Cuál es el factor triangular inferior \(L\)?
+
+(A) \(\begin{bmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ 1 & -2 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 2 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 1 & 2 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 7 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 & 0 & 0 \\ 4 & 3 & 0 \\ -2 & 6 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Resolver \(A\mathbf{x} = \mathbf{b}\) mediante sistemas triangulares y análisis de costo ===
+
+Una vez conocida \(A = LU\), resolver \(A\mathbf{x} = \mathbf{b}\) se divide limpiamente en dos sistemas triangulares rápidos. Reescriba \(LU\mathbf{x} = \mathbf{b}\) definiendo el vector intermedio \(\mathbf{y} = U\mathbf{x}\):
+
+1. Sustitución hacia adelante: resuelva el sistema triangular inferior \(L\mathbf{y} = \mathbf{b}\) de arriba hacia abajo (\(y_1\), luego \(y_2\), ..., hasta \(y_n\)).
+2. Sustitución hacia atrás: resuelva el sistema triangular superior \(U\mathbf{x} = \mathbf{y}\) de abajo hacia arriba (\(x_n\), luego \(x_{n-1}\), ..., hasta \(x_1\)).
+
+Verifique por qué esto resuelve el sistema original: \(A\mathbf{x} = (LU)\mathbf{x} = L(U\mathbf{x}) = L\mathbf{y} = \mathbf{b}\).
+
+Resolvamos \(A\mathbf{x} = \begin{bmatrix} 2 \\ 8 \\ 6 \end{bmatrix}\) usando las matrices \(L\) y \(U\) que obtuvimos en la Sección 1:
+- Sustitución hacia adelante \(L\mathbf{y} = \mathbf{b}\):
+\[
+\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 1 & 1 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix} = \begin{bmatrix} 2 \\ 8 \\ 6 \end{bmatrix}
+\implies
+\begin{aligned}
+y_1 &= 2, \\
+2(2) + y_2 &= 8 \implies y_2 = 4, \\
+-1(2) + 1(4) + y_3 &= 6 \implies y_3 = 4.
+\end{aligned}
+\]
+- Sustitución hacia atrás \(U\mathbf{x} = \mathbf{y}\):
+\[
+\begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 0 & 4 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 2 \\ 4 \\ 4 \end{bmatrix}
+\implies
+\begin{aligned}
+4x_3 &= 4 \implies x_3 = 1, \\
+x_2 + 1 &= 4 \implies x_2 = 3, \\
+2x_1 + 4(3) - 2(1) &= 2 \implies 2x_1 = -8 \implies x_1 = -4.
+\end{aligned}
+\]
+Compruebe directamente: \(A\mathbf{x} = \begin{bmatrix} 2(-4) + 4(3) - 2(1) \\ 4(-4) + 9(3) - 3(1) \\ -2(-4) - 3(3) + 7(1) \end{bmatrix} = \begin{bmatrix} 2 \\ 8 \\ 6 \end{bmatrix}\). ¡Exacto!
+
+Ahora cuente las operaciones de punto flotante (sumas, restas, multiplicaciones y divisiones) para un sistema grande \(n \times n\):
+- Calcular \(A = LU\) una sola vez toma aproximadamente \(\frac{2}{3} n^3\) operaciones —crecimiento cúbico, escrito \(O(n^3)\)—.
+- Cada sustitución hacia adelante \(L\mathbf{y} = \mathbf{b}\) toma aproximadamente \(n^2\) operaciones, y cada sustitución hacia atrás \(U\mathbf{x} = \mathbf{y}\) toma aproximadamente \(n^2\) operaciones —en conjunto alrededor de \(2 n^2\) operaciones por lado derecho, escrito \(O(n^2)\)—.
+
+Cuando resuelve \(A\mathbf{x}_j = \mathbf{b}_j\) para \(k\) lados derechos diferentes:
+- La eliminación gaussiana desde cero cada vez cuesta \(\approx \frac{2}{3} k n^3\).
+- Factorizar \(A = LU\) UNA VEZ y ejecutar \(k\) pares de resoluciones triangulares cuesta \(\approx \frac{2}{3} n^3 + 2 k n^2\).
+
+Para \(n = 1000\) y \(k = 20\), la eliminación repetida necesita \(\approx 1.33 \times 10^{10}\) operaciones, mientras que una \(LU\) más \(20\) resoluciones triangulares necesita solo \(\approx 7.07 \times 10^8\) operaciones —¡casi \(19\) veces más rápido!—. Incluso en comparación con calcular \(A^{-1}\) una vez (\(\approx 2 n^3\)) más \(k\) productos matriz-vector (\(\approx 2 k n^2\)), \(LU\) ahorra aproximadamente \(\frac{4}{3} n^3\) operaciones al inicio manteniendo el mismo costo \(2 n^2\) por cada lado derecho adicional.
+
+Arrastre el deslizador \(k\) en la gráfica siguiente para comparar el trabajo total (en miles de operaciones) en función del tamaño de la matriz \(n\) desde \(10\) hasta \(80\).
+
+[GRAPH]
+type: function2d
+title: Costo aritmético total (miles de operaciones) para \(k\) lados derechos
+xlabel: \(n\)
+ylabel: miles de operaciones
+xrange: 10, 80
+trace: (2/3) * k * x^3 / 1000 | label: Eliminación repetida \(\frac{2}{3} k n^3\) | color: #dc2626
+trace: ((2/3) * x^3 + 2 * k * x^2) / 1000 | label: Una \(LU\) + \(k\) resoluciones \(\frac{2}{3} n^3 + 2 k n^2\) | color: #2563eb
+slider: k | range: 1, 20 | init: 10 | step: 1
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: C]
+Una matriz invertible \(A\) tiene la factorización \(A = LU\), donde
+\[
+L = \begin{bmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ 3 & 1 & 1 \end{bmatrix}, \qquad
+U = \begin{bmatrix} 2 & 1 & -1 \\ 0 & 3 & 2 \\ 0 & 0 & 4 \end{bmatrix}.
+\]
+Para resolver \(A\mathbf{x} = \mathbf{b}\) con \(\mathbf{b} = \begin{bmatrix} -1 \\ 3 \\ 6 \end{bmatrix}\), ¿cuáles son el vector intermedio \(\mathbf{y}\) (de \(L\mathbf{y} = \mathbf{b}\)) y la solución final \(\mathbf{x}\) (de \(U\mathbf{x} = \mathbf{y}\))?
+
+(A) \(\mathbf{y} = \begin{bmatrix} -1 \\ 5 \\ 4 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix}\)
+(B) \(\mathbf{y} = \begin{bmatrix} -1 \\ 1 \\ 8 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 2 \\ -1 \\ 2 \end{bmatrix}\)
+(C) \(\mathbf{y} = \begin{bmatrix} -1 \\ 1 \\ 8 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 1 \\ -1 \\ 2 \end{bmatrix}\)
+(D) \(\mathbf{y} = \begin{bmatrix} -1 \\ 1 \\ 10 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 1 \\ -1 \\ 2 \end{bmatrix}\)
+(E) \(\mathbf{y} = \begin{bmatrix} 1 \\ -1 \\ 2 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} -1 \\ 1 \\ 8 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Matrices de permutación y factorización \(PA = LU\) ===
+
+No toda matriz invertible admite una factorización \(A = LU\) sin intercambios. Tome el ejemplo más sencillo posible:
+\[
+A = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}.
+\]
+Si \(A = LU\) con \(L = \begin{bmatrix} 1 & 0 \\ l & 1 \end{bmatrix}\) triangular inferior unitaria y \(U = \begin{bmatrix} u_{11} & u_{12} \\ 0 & u_{22} \end{bmatrix}\) triangular superior, entonces la entrada \((1, 1)\) obliga a que \(u_{11} = 0\), lo cual hace que la entrada \((2, 1) = l u_{11} = 0 \neq 1\): ¡imposible! La eliminación hacia adelante requiere un intercambio de filas siempre que aparezca un cero en una posición pivote necesaria (y, como veremos en el condicionamiento numérico, los intercambios de filas también se usan para evitar pivotes diminutos).
+
+Para incorporar limpiamente los intercambios de filas dentro de la factorización matricial, registramos todos los intercambios mediante una matriz de permutación.
+
+[CALLOUT]
+id: perm-matrix-def
+label: Definición
+title: Matriz de permutación y su inversa
+tone: key
+
+Una matriz de permutación \(m \times m\) \(P\) es cualquier matriz obtenida a partir de \(I_m\) reordenando sus filas (equivalentemente, cualquier producto \(P = E_r \cdots E_1\) de matrices elementales de intercambio de filas). Cada fila y cada columna de \(P\) contiene un único \(1\) y ceros en las demás entradas.
+
+Toda matriz de permutación \(P\) es invertible, y su inversa es simplemente su transpuesta:
+\[
+P^{-1} = P^T.
+\]
+[/CALLOUT]
+
+¡Demostremos \(P^{-1} = P^T\) en una línea! Toda matriz elemental de intercambio de filas \(E\) es tanto simétrica (\(E^T = E\)) como su propia inversa (\(E^{-1} = E\)). Escribir \(P = E_r \cdots E_2 E_1\) y aplicar la inversión del orden tanto para inversas como para transpuestas da
+\[
+P^{-1} = E_1^{-1} E_2^{-1} \cdots E_r^{-1} = E_1^T E_2^T \cdots E_r^T = (E_r \cdots E_2 E_1)^T = P^T.
+\]
+Cuidado: aunque un ÚNICO intercambio satisface \(P^{-1} = P\), un producto de dos o más intercambios NO necesariamente cumple \(P^{-1} = P\): ¡debe tomar la transpuesta \(P^T\)!
+
+Suponga ahora que aplicamos eliminación gaussiana a una matriz general \(A\), intercambiando filas siempre que se encuentre un pivote cero. El resultado es una factorización
+\[
+P A = L U,
+\]
+donde \(P\) registra los intercambios de filas acumulados, \(L\) es triangular inferior unitaria y \(U\) está en forma escalonada por filas (triangular superior). Piense en \(PA = LU\) como decir: «si hubiéramos conocido de antemano todos los intercambios de filas necesarios y permutado previamente las filas de \(A\) para formar \(PA\), entonces \(PA\) se habría reducido limpiamente a \(U\) sin ningún intercambio».
+
+Hay UNA regla contable crucial al construir \(P\), \(L\) y \(U\) simultáneamente sobre la marcha: siempre que intercambie las filas \(i\) y \(j\) en el paso \(k\), DEBE intercambiar:
+1. Las filas \(i\) y \(j\) de la matriz de trabajo \(U\);
+2. Las filas \(i\) y \(j\) de \(P\) (comenzando desde \(P = I_m\));
+3. Los multiplicadores subdiagonales YA REGISTRADOS en las filas \(i\) y \(j\) de \(L\) (únicamente las entradas en las columnas \(1, \dots, k - 1\); ¡mantenga intactos los \(1\)'s de la diagonal principal y los \(0\)'s por encima!).
+
+Veamos POR QUÉ importa la regla 3 en un ejemplo concreto \(3 \times 3\) donde el intercambio ocurre en la columna \(2\), DESPUÉS de haber registrado los multiplicadores de la columna \(1\):
+\[
+A = \begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 5 \\ -1 & 1 & 3 \end{bmatrix}.
+\]
+Comience con \(P = I_3\) y \(L\) con \(1\)'s en la diagonal y huecos subdiagonales sin llenar.
+- Columna \(1\): multiplicadores \(l_{21} = 2\) y \(l_{31} = -1\). Aplique \(R_2 \leftarrow R_2 - 2 R_1\) y \(R_3 \leftarrow R_3 + R_1\):
+\[
+U^{(1)} = \begin{bmatrix} 1 & 2 & 1 \\ 0 & 0 & 3 \\ 0 & 3 & 4 \end{bmatrix}, \qquad
+\text{col. 1 registrada de } L: \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & * & 1 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+- Columna \(2\): la entrada \((2, 2)\) es \(0\), ¡así que debemos intercambiar \(R_2 \leftrightarrow R_3\)! Aplicar las tres actualizaciones de intercambio (incluyendo intercambiar \(2\) y \(-1\) en la columna \(1\) de \(L\), ¡dejando los \(1\)'s de la diagonal en su sitio!) produce:
+\[
+U = \begin{bmatrix} 1 & 2 & 1 \\ 0 & 3 & 4 \\ 0 & 0 & 3 \end{bmatrix}, \qquad
+L = \begin{bmatrix} 1 & 0 & 0 \\ -1 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}.
+\]
+Note que tras el intercambio, la entrada \((3, 2)\) de \(U\) ya es \(0\), de modo que \(l_{32} = 0\). Compruebe \(PA = LU\) directamente:
+\[
+PA = \begin{bmatrix} 1 & 2 & 1 \\ -1 & 1 & 3 \\ 2 & 4 & 5 \end{bmatrix}, \qquad
+LU = \begin{bmatrix} 1 & 0 & 0 \\ -1 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 2 & 1 \\ 0 & 3 & 4 \\ 0 & 0 & 3 \end{bmatrix}
+= \begin{bmatrix} 1 & 2 & 1 \\ -1 & 1 & 3 \\ 2 & 4 & 5 \end{bmatrix} = PA!
+\]
+Si hubiéramos olvidado intercambiar los multiplicadores ya registrados \(2\) y \(-1\) en la columna \(1\) de \(L\), \(LU\) no habría coincidido con \(PA\).
+
+Por último, ¿cómo resolvemos \(A\mathbf{x} = \mathbf{b}\) una vez que tenemos \(PA = LU\)? Multiplique ambos lados de \(A\mathbf{x} = \mathbf{b}\) por la izquierda por \(P\):
+\[
+PA\mathbf{x} = P\mathbf{b} \implies LU\mathbf{x} = P\mathbf{b}.
+\]
+¡Así que simplemente permuta el lado derecho para obtener \(P\mathbf{b}\), resuelve \(L\mathbf{y} = P\mathbf{b}\) por sustitución hacia adelante y resuelve \(U\mathbf{x} = \mathbf{y}\) por sustitución hacia atrás!
+
+[TABLE]
+Etapa al resolver \(A\mathbf{x} = \mathbf{b}\) vía \(PA = LU\) | Operación | Costo
+1. Factorizar una vez | Hallar \(P, L, U\) con \(PA = LU\) | \(\approx \frac{2}{3} n^3\)
+2. Permutar el lado derecho | Calcular \(\tilde{\mathbf{b}} = P\mathbf{b}\) (reordenar entradas) | Despreciable (\(n\) movimientos)
+3. Sustitución hacia adelante | Resolver \(L\mathbf{y} = \tilde{\mathbf{b}}\) | \(\approx n^2\)
+4. Sustitución hacia atrás | Resolver \(U\mathbf{x} = \mathbf{y}\) | \(\approx n^2\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: D]
+Considere la matriz
+\[
+A = \begin{bmatrix} 1 & -1 & 2 \\ 3 & -3 & 7 \\ 2 & 1 & 5 \end{bmatrix}.
+\]
+Al aplicar eliminación hacia adelante con un intercambio de filas \(R_2 \leftrightarrow R_3\) cuando aparece un pivote cero en la columna \(2\), se obtiene \(PA = LU\) con \(P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}\) y \(U = \begin{bmatrix} 1 & -1 & 2 \\ 0 & 3 & 1 \\ 0 & 0 & 1 \end{bmatrix}\). ¿Cuál es el factor triangular inferior unitario \(L\)?
+
+(A) \(\begin{bmatrix} 1 & 0 & 0 \\ 3 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ -3 & 0 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 0 & 1 \\ 3 & 1 & 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 3 & 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 3 & -1 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Debe resolver \(A\mathbf{x}_j = \mathbf{b}_j\) para \(k = 40\) lados derechos distintos \(\mathbf{b}_1, \dots, \mathbf{b}_{40}\) usando la misma matriz invertible \(1000 \times 1000\) \(A\). Al comparar el costo aritmético aproximado de tres métodos, ¿qué afirmación es precisa?
+
+(A) La eliminación gaussiana repetida sobre cada \([A \mid \mathbf{b}_j]\) tiene el mismo orden de costo que una factorización \(PA = LU\) más \(40\) resoluciones triangulares
+(B) Una factorización \(PA = LU\) (\(\approx \frac{2}{3} n^3\)) más \(40\) resoluciones triangulares (\(\approx 40 \cdot 2 n^2\)) es aproximadamente \(36\) veces más rápida que la eliminación gaussiana repetida (\(\approx 40 \cdot \frac{2}{3} n^3\)) y además usa aproximadamente un tercio del trabajo cúbico inicial de calcular \(A^{-1}\)
+(C) Calcular \(A^{-1}\) vía \([A \mid I_n]\) cuesta solo \(O(n^2)\) operaciones, superando a \(PA = LU\) en cuanto \(k > 2\)
+(D) Como interviene \(P\), cada nuevo lado derecho \(\mathbf{b}_j\) requiere recalcular \(L\) y \(U\) desde cero
+(E) La sustitución hacia adelante y la sustitución hacia atrás cuestan cada una \(O(n^3)\) operaciones, de modo que reutilizar \(L\) y \(U\) no ahorra trabajo asintótico
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Sea
+\[
+L = \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 3 & 1 \end{bmatrix}.
+\]
+Observe que \(L\) registra los multiplicadores de eliminación directamente en su lugar, mientras que \(L^{-1}\) acumula términos cruzados. ¿Cuál es la entrada \((3, 1)\) de \(L^{-1}\)?
+
+(A) \(1\)
+(B) \(-5\)
+(C) \(7\)
+(D) \(-7\)
+(E) \(5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sea \(P\) la matriz de permutación \(4 \times 4\) formada al aplicar \(R_1 \leftrightarrow R_3\) y luego \(R_3 \leftrightarrow R_4\) a \(I_4\) (de modo que \(P = E_{34} E_{13}\)). Para cualquier vector \(\mathbf{v} = \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix} \in \mathbb{R}^4\), ¿qué es \(P^{-1} \mathbf{v}\)?
+
+(A) \(\begin{bmatrix} c \\ b \\ d \\ a \end{bmatrix}\)
+(B) \(\begin{bmatrix} d \\ b \\ a \\ c \end{bmatrix}\)
+(C) \(\begin{bmatrix} c \\ b \\ a \\ d \end{bmatrix}\)
+(D) \(\begin{bmatrix} a \\ b \\ d \\ c \end{bmatrix}\)
+(E) \(\begin{bmatrix} b \\ c \\ d \\ a \end{bmatrix}\)
+[/BONUS]

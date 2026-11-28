@@ -1,0 +1,283 @@
+=== SECTION 1: Formas normales disyuntiva y conjuntiva a partir de tablas de verdad ===
+
+Suponga que alguien le entrega una tabla de verdad arbitraria sobre \(n\) variables proposicionales —digamos, una columna de \(V\) y \(F\) que especifica una función booleana deseada— y le pregunta: ¿podemos escribir siempre una fórmula proposicional que produzca esa tabla de verdad exacta, y podemos llevar toda fórmula a una forma estándar limpia? Responder esa pregunta conduce a las formas normales y a la teoría de la completitud funcional.
+
+Comenzamos construyendo formas estándar a partir de las piezas más simples posibles.
+
+[CALLOUT]
+id: def-normal-forms
+label: Definición
+title: Literales, FND y FNC
+tone: key
+
+Sean \(P_1, P_2, \dots, P_n\) variables proposicionales (átomos).
+
+(1) Un literal es un átomo \(P_i\) o su negación \(\neg P_i\).
+(2) Una fórmula está en forma normal disyuntiva (FND) si es una disyunción de una o más conjunciones de literales (una "O de Y"), como \((P \wedge \neg Q) \vee (\neg P \wedge Q) \vee (Q \wedge R)\).
+(3) Una fórmula está en forma normal conjuntiva (FNC) si es una conjunción de una o más disyunciones de literales (una "Y de O"), como \((P \vee \neg Q) \wedge (\neg P \vee R)\).
+[/CALLOUT]
+
+Note que los casos degenerados de un solo término cuentan como FND y FNC a la vez: un único literal como \(\neg P\) es una disyunción de \(1\) cláusula formada por una conjunción de \(1\) literal, y una única conjunción \(P \wedge \neg Q\) está en FND (una cláusula) y también en FNC (dos cláusulas de \(1\) literal). Lo que está prohibido tanto en FND como en FNC es cualquier \(\neg\) situado fuera de paréntesis (como \(\neg(P \wedge Q)\)) y cualquier \(\Rightarrow\) o \(\Leftrightarrow\).
+
+Sorprendentemente, toda tabla de verdad sobre \(P_1, \dots, P_n\) que tenga al menos una fila \(V\) produce una FND de inmediato, y toda tabla de verdad con al menos una fila \(F\) produce una FNC de inmediato. Veamos cómo en una tabla de verdad concreta de \(3\) variables para una función booleana objetivo \(F(P, Q, R)\).
+
+[TABLE]
+Fila | \(P\) | \(Q\) | \(R\) | \(F(P, Q, R)\) | Mintérmino (para filas \(V\)) | Maxtérmino (para filas \(F\))
+1 | \(V\) | \(V\) | \(V\) | \(V\) | \(P \wedge Q \wedge R\) | —
+2 | \(V\) | \(V\) | \(F\) | \(F\) | — | \(\neg P \vee \neg Q \vee R\)
+3 | \(V\) | \(F\) | \(V\) | \(F\) | — | \(\neg P \vee Q \vee \neg R\)
+4 | \(V\) | \(F\) | \(F\) | \(V\) | \(P \wedge \neg Q \wedge \neg R\) | —
+5 | \(F\) | \(V\) | \(V\) | \(F\) | — | \(P \vee \neg Q \vee \neg R\)
+6 | \(F\) | \(V\) | \(F\) | \(F\) | — | \(P \vee \neg Q \vee R\)
+7 | \(F\) | \(F\) | \(V\) | \(V\) | \(\neg P \wedge \neg Q \wedge R\) | —
+8 | \(F\) | \(F\) | \(F\) | \(F\) | — | \(P \vee Q \vee R\)
+[/TABLE]
+
+¿Cómo construimos la FND a partir de las filas \(V\)? Para cada fila donde \(F\) se evalúa como \(V\), escriba una conjunción (llamada mintérmino) que sea \(V\) en ESA fila y \(F\) en todas las demás: incluya \(X\) si la variable \(X\) es \(V\) en esa fila, y \(\neg X\) si \(X\) es \(F\) en esa fila. Para la Fila 4 (\(P = V, Q = F, R = F\)), el mintérmino es \(P \wedge \neg Q \wedge \neg R\). Tomar la disyunción de los mintérminos de todas las filas \(V\) (Filas 1, 4 y 7) produce una FND completa:
+\[
+F(P, Q, R) \equiv (P \wedge Q \wedge R) \vee (P \wedge \neg Q \wedge \neg R) \vee (\neg P \wedge \neg Q \wedge R).
+\]
+Compruebe por qué funciona: en cualquier fila \(V\) de \(F\), el mintérmino correspondiente es \(V\), de modo que toda la disyunción es \(V\); en cualquier fila \(F\) de \(F\), cada mintérmino tiene al menos un literal que discrepa de la fila, por lo que todo mintérmino es \(F\) y la disyunción es \(F\).
+
+Ahora, ¿cómo construimos la FNC a partir de las filas \(F\)? Observe la idea dual: queremos una conjunción de cláusulas (llamadas maxtérminos), una por cada fila \(F\), de tal modo que cada maxtérmino sea \(F\) ÚNICAMENTE en su fila \(F\) designada y \(V\) en todas las demás filas. ¿Cuándo es falsa una disyunción \(L_1 \vee L_2 \vee L_3\)? ¡Únicamente cuando TODOS los literales son \(F\)! Así que para la Fila 2 (\(P = V, Q = V, R = F\)), elegimos el literal que se evalúa como \(F\) en esa fila: \(\neg P\) (ya que \(P = V\)), \(\neg Q\) (ya que \(Q = V\)) y \(R\) (ya que \(R = F\)), obteniendo el maxtérmino \(\neg P \vee \neg Q \vee R\).
+
+Note que esta regla de polaridad no es un truco arbitrario: ¡proviene directamente de la ley de De Morgan! La negación \(\neg F\) es \(V\) en las filas \(F\) de \(F\), de modo que \(\neg F\) tiene una FND formada por los mintérminos de las filas \(F\) (para la Fila 2, \(P \wedge Q \wedge \neg R\)). Negar esa FND para \(\neg F\) recupera \(F \equiv \neg(\neg F)\): De Morgan convierte la \(\vee\) exterior en \(\wedge\), convierte cada \(\wedge\) interior en \(\vee\) e invierte cada literal. Eso transforma de inmediato el mintérmino \(P \wedge Q \wedge \neg R\) en el maxtérmino \(\neg P \vee \neg Q \vee R\).
+
+Tomar la conjunción de los cinco maxtérminos de las Filas 2, 3, 5, 6 y 8 da una FNC completa para \(F(P, Q, R)\). (¿Y qué ocurre con las dos tablas de verdad extremas? Una contradicción que es \(F\) en todas las filas ya está en FND como \(P \wedge \neg P\), y una tautología que es \(V\) en todas las filas ya está en FNC como \(P \vee \neg P\).)
+
+[QUESTION 1]
+[ANSWER: C]
+Una función booleana \(G(P, Q)\) se evalúa como \(V\) únicamente en las filas \((P = V, Q = F)\) y \((P = F, Q = V)\), y como \(F\) en las filas \((P = V, Q = V)\) y \((P = F, Q = F)\). ¿Cuál de las siguientes opciones es la FNC completa de \(G(P, Q)\) leída directamente de sus filas \(F\)?
+
+(A) \((P \wedge \neg Q) \vee (\neg P \wedge Q)\)
+(B) \((P \vee Q) \wedge (P \vee \neg Q)\)
+(C) \((\neg P \vee \neg Q) \wedge (P \vee Q)\)
+(D) \((P \vee \neg Q) \wedge (\neg P \vee Q)\)
+(E) \((\neg P \wedge \neg Q) \vee (P \wedge Q)\)
+[/QUESTION]
+
+=== SECTION 2: Conversión algebraica a FND y FNC ===
+
+Cuando una fórmula tiene muchas variables —digamos \(5\) o \(6\) variables, donde una tabla de verdad tiene \(32\) o \(64\) filas—, leer mintérminos o maxtérminos de una tabla de verdad resulta poco práctico. En su lugar, convertimos cualquier fórmula proposicional directamente en FND o FNC usando las leyes de equivalencia que ya demostramos.
+
+[CALLOUT]
+id: proc-normal-conversion
+label: Método
+title: Conversión algebraica a FND o FNC
+tone: key
+
+Para convertir cualquier fórmula proposicional a FND o FNC:
+
+(1) Elimine todos los bicondicionales y condicionales usando \(A \Leftrightarrow B \equiv (A \Rightarrow B) \wedge (B \Rightarrow A)\) y \(A \Rightarrow B \equiv \neg A \vee B\).
+(2) Empuje cada \(\neg\) hacia adentro hasta átomos individuales usando las leyes de De Morgan \(\neg(A \wedge B) \equiv \neg A \vee \neg B\), \(\neg(A \vee B) \equiv \neg A \wedge \neg B\) y la doble negación \(\neg(\neg A) \equiv A\).
+(3) Distribuya para alcanzar la forma objetivo:
+- Para FND, distribuya \(\wedge\) sobre \(\vee\): \(A \wedge (B \vee C) \equiv (A \wedge B) \vee (A \wedge C)\).
+- Para FNC, distribuya \(\vee\) sobre \(\wedge\): \(A \vee (B \wedge C) \equiv (A \vee B) \wedge (A \vee C)\).
+(4) Simplifique usando idempotencia, conmutatividad, negación, identidad y dominación (por ejemplo, suprimiendo cualquier cláusula de FNC que contenga \(X \vee \neg X \equiv \mathbf{V}\), o suprimiendo cualquier cláusula de FND que contenga \(X \wedge \neg X \equiv \mathbf{F}\)).
+[/CALLOUT]
+
+Apliquemos [REF: proc-normal-conversion | este procedimiento en cuatro pasos] para convertir
+\[
+(P \Rightarrow Q) \Rightarrow (R \wedge \neg P)
+\]
+TANTO a FNC como a FND.
+
+Los pasos (1) y (2) son compartidos por ambos objetivos:
+\[
+\begin{aligned}
+(P \Rightarrow Q) \Rightarrow (R \wedge \neg P)
+&\equiv \neg(\neg P \vee Q) \vee (R \wedge \neg P) \\
+&\equiv \bigl(\neg(\neg P) \wedge \neg Q\bigr) \vee (R \wedge \neg P) \\
+&\equiv (P \wedge \neg Q) \vee (R \wedge \neg P).
+\end{aligned}
+\]
+Deténgase e inspeccione el resultado \((P \wedge \neg Q) \vee (R \wedge \neg P)\): ¡YA está en FND! Ni siquiera hace falta el paso (3) de distribución para la FND.
+
+Ahora continúe desde \((P \wedge \neg Q) \vee (R \wedge \neg P)\) para obtener una FNC distribuyendo \(\vee\) sobre \(\wedge\):
+\[
+\begin{aligned}
+(P \wedge \neg Q) \vee (R \wedge \neg P)
+&\equiv \bigl((P \wedge \neg Q) \vee R\bigr) \wedge \bigl((P \wedge \neg Q) \vee \neg P\bigr) \\
+&\equiv (P \vee R) \wedge (\neg Q \vee R) \wedge (P \vee \neg P) \wedge (\neg Q \vee \neg P).
+\end{aligned}
+\]
+Ahora aplique el paso (4): la tercera cláusula \(P \vee \neg P\) es la tautología \(\mathbf{V}\), y por la ley de identidad \(X \wedge \mathbf{V} \equiv X\), desaparece limpiamente, dejando la FNC compacta
+\[
+(P \vee R) \wedge (\neg Q \vee R) \wedge (\neg Q \vee \neg P).
+\]
+Note una ventaja elegante de la FNC: una fórmula en FNC es una tautología si y solo si CADA cláusula individual es una tautología (contiene alguna variable junto con su negación, como \(X \vee \neg X\)), porque si alguna cláusula careciera de un par complementario, podría asignar valores de verdad para hacer \(F\) a todos los literales de esa cláusula, ¡haciendo \(F\) a toda la FNC! Dualmente, una fórmula en FND es una contradicción si y solo si CADA cláusula conjuntiva contiene un par complementario \(X \wedge \neg X\).
+
+[QUESTION 2]
+[ANSWER: B]
+¿Cuál de las siguientes opciones es una FNC válida lógicamente equivalente a \(\neg\bigl((P \Rightarrow Q) \wedge R\bigr)\)?
+
+(A) \((P \wedge \neg Q) \vee \neg R\)
+(B) \((P \vee \neg R) \wedge (\neg Q \vee \neg R)\)
+(C) \((\neg P \vee Q) \wedge \neg R\)
+(D) \((P \vee Q \vee \neg R) \wedge (\neg P \vee \neg Q \vee \neg R)\)
+(E) \((\neg P \vee \neg R) \wedge (Q \vee \neg R)\)
+[/QUESTION]
+
+=== SECTION 3: Completitud funcional ===
+
+La Sección 1 reveló algo notable: TODA tabla de verdad sobre cualquier número finito de variables puede escribirse usando únicamente los tres conectivos \(\{\neg, \wedge, \vee\}\). ¿Podríamos arreglarnos con aún menos conectivos —digamos solo dos, o incluso un único conectivo?
+
+[CALLOUT]
+id: def-functional-completeness
+label: Definición
+title: Completitud funcional
+tone: key
+
+Un conjunto \(\mathcal{S}\) de conectivos lógicos es funcionalmente completo si toda función booleana posible (es decir, toda tabla de verdad sobre cualquier número \(n \ge 1\) de variables proposicionales) es lógicamente equivalente a alguna fórmula construida exclusivamente con variables y conectivos pertenecientes a \(\mathcal{S}\).
+[/CALLOUT]
+
+Por la construcción de la FND de la Sección 1, el conjunto \(\{\neg, \wedge, \vee\}\) ya es funcionalmente completo:
+- Si una tabla de verdad sobre \(P_1, \dots, P_n\) tiene al menos una fila \(V\), la disyunción de sus mintérminos la representa usando únicamente \(\neg, \wedge, \vee\).
+- Si una tabla de verdad tiene todas sus filas \(F\), la fórmula \(P_1 \wedge \neg P_1\) la representa usando únicamente \(\neg\) y \(\wedge\).
+
+Esto nos da una estrategia rápida de arranque para demostrar que cualquier otro conjunto \(\mathcal{S}\) es funcionalmente completo: ¡NO tenemos que construir cada tabla de verdad desde cero! Basta con mostrar que todo conectivo de un conjunto que ya SE SABE funcionalmente completo (como \(\{\neg, \wedge, \vee\}\)) puede expresarse usando conectivos de \(\mathcal{S}\). Una vez que pueda expresar \(\neg\), \(\wedge\) y \(\vee\) usando \(\mathcal{S}\), sustituir esas expresiones en cualquier FND representa toda tabla de verdad usando únicamente \(\mathcal{S}\).
+
+Recorramos esta cadena de arranque paso a paso:
+
+1. \(\{\neg, \wedge\}\) es funcionalmente completo. Ya disponemos de \(\neg\) y \(\wedge\), así que solo necesitamos expresar \(\vee\). Por la ley de De Morgan y la doble negación,
+\[
+P \vee Q \equiv \neg(\neg P \wedge \neg Q).
+\]
+Como \(\{\neg, \wedge, \vee\}\) es funcionalmente completo y \(\vee\) se construye a partir de \(\{\neg, \wedge\}\), el conjunto \(\{\neg, \wedge\}\) es funcionalmente completo.
+
+2. \(\{\neg, \vee\}\) es funcionalmente completo. Dualmente, solo necesitamos expresar \(\wedge\) a partir de \(\neg\) y \(\vee\):
+\[
+P \wedge Q \equiv \neg(\neg P \vee \neg Q).
+\]
+Por lo tanto, \(\{\neg, \vee\}\) es funcionalmente completo.
+
+3. ¿Puede un ÚNICO conectivo binario ser funcionalmente completo por sí solo? ¡Sí! Defina los dos conectivos clásicos de barra NAND (\(\uparrow\), "no ambos") y NOR (\(\downarrow\), "ni ... ni ..."):
+\[
+P \uparrow Q \equiv \neg(P \wedge Q), \qquad P \downarrow Q \equiv \neg(P \vee Q).
+\]
+
+[TABLE]
+\(P\) | \(Q\) | \(P \uparrow Q\) (NAND) | \(P \downarrow Q\) (NOR)
+\(V\) | \(V\) | \(F\) | \(F\)
+\(V\) | \(F\) | \(V\) | \(F\)
+\(F\) | \(V\) | \(V\) | \(F\)
+\(F\) | \(F\) | \(V\) | \(V\)
+[/TABLE]
+
+Demostremos que \(\{\uparrow\}\) por sí solo es funcionalmente completo expresando \(\neg\) y \(\wedge\) usando ÚNICAMENTE \(\uparrow\):
+- Primero, fije ambas entradas iguales a \(P\):
+\[
+P \uparrow P \equiv \neg(P \wedge P) \equiv \neg P.
+\]
+- Luego, niegue \(P \uparrow Q\) aplicando \(\uparrow\) a dos copias de \((P \uparrow Q)\):
+\[
+(P \uparrow Q) \uparrow (P \uparrow Q) \equiv \neg(P \uparrow Q) \equiv \neg\bigl(\neg(P \wedge Q)\bigr) \equiv P \wedge Q.
+\]
+Como hemos expresado tanto \(\neg\) como \(\wedge\) usando únicamente \(\uparrow\), y \(\{\neg, \wedge\}\) es funcionalmente completo, ¡\(\{\uparrow\}\) es funcionalmente completo!
+
+Mediante una derivación exactamente paralela, \(\{\downarrow\}\) por sí solo es funcionalmente completo:
+- \(P \downarrow P \equiv \neg(P \vee P) \equiv \neg P\).
+- \((P \downarrow Q) \downarrow (P \downarrow Q) \equiv \neg(P \downarrow Q) \equiv \neg\bigl(\neg(P \vee Q)\bigr) \equiv P \vee Q\).
+Puesto que expresamos tanto \(\neg\) como \(\vee\) a partir de \(\downarrow\), y \(\{\neg, \vee\}\) es funcionalmente completo, \(\{\downarrow\}\) es funcionalmente completo.
+
+[CALLOUT]
+id: thm-complete-sets
+label: Teorema
+title: Conjuntos fundamentales de conectivos funcionalmente completos
+tone: key
+
+Cada uno de los siguientes conjuntos de conectivos es funcionalmente completo:
+\[
+\{\neg, \wedge, \vee\}, \qquad \{\neg, \wedge\}, \qquad \{\neg, \vee\}, \qquad \{\uparrow\}, \qquad \{\downarrow\}.
+\]
+[/CALLOUT]
+
+¿Qué ocurre con \(\{\neg, \Rightarrow\}\)? También es funcionalmente completo, porque \(P \vee Q \equiv (\neg P) \Rightarrow Q\), lo que expresa \(\vee\) y reduce directamente a \(\{\neg, \vee\}\).
+
+[QUESTION 3]
+[ANSWER: D]
+Usando únicamente el conectivo NAND \(\uparrow\) (donde \(A \uparrow B \equiv \neg(A \wedge B)\)), ¿qué fórmula es lógicamente equivalente a \(P \vee Q\)?
+
+(A) \((P \uparrow Q) \uparrow (P \uparrow Q)\)
+(B) \((P \uparrow P) \uparrow Q\)
+(C) \(P \uparrow (Q \uparrow Q)\)
+(D) \((P \uparrow P) \uparrow (Q \uparrow Q)\)
+(E) \(\bigl((P \uparrow P) \uparrow (Q \uparrow Q)\bigr) \uparrow \bigl((P \uparrow P) \uparrow (Q \uparrow Q)\bigr)\)
+[/QUESTION]
+
+=== SECTION 4: Demostración de incompletitud mediante invariantes ===
+
+¿Cómo se demuestra que un conjunto candidato de conectivos —como \(\{\wedge, \vee\}\)— NO es funcionalmente completo? Comprobar unos cuantos intentos fallidos de escribir \(\neg P\) no demuestra que sea imposible; necesita una propiedad (un invariante) compartida por TODA fórmula construida con \(\{\wedge, \vee\}\) que alguna función booleana objetivo incumpla.
+
+Observe la fila todo-\(V\) de cualquier tabla de verdad, donde cada variable \(P_1, \dots, P_n\) toma el valor \(V\). ¿Qué sucede cuando combina entradas \(V\) usando únicamente \(\wedge\) y \(\vee\)?
+- \(V \wedge V = V\).
+- \(V \vee V = V\).
+Por lo tanto, partiendo de átomos que se evalúan todos como \(V\), toda subfórmula construida usando \(\wedge\) y \(\vee\) se evalúa como \(V\), y al repetir esa comprobación desde las subfórmulas más internas hacia afuera, ¡la fórmula ENTERA debe evaluarse como \(V\)!
+
+[CALLOUT]
+id: thm-truth-preserving
+label: Teorema
+title: Invariante de preservación de la verdad e incompletitud de \(\{\wedge, \vee\}\)
+tone: key
+
+Se dice que un conectivo preserva la verdad si devuelve \(V\) siempre que todas sus entradas son \(V\).
+
+(1) Si todo conectivo de un conjunto \(\mathcal{S}\) preserva la verdad, entonces toda fórmula construida con \(\mathcal{S}\) se evalúa como \(V\) cuando todas sus variables toman el valor \(V\).
+(2) En consecuencia, ningún conjunto \(\mathcal{S}\) formado únicamente por conectivos que preservan la verdad es funcionalmente completo, porque nunca podrá representar \(\neg P\) (que se evalúa como \(F\) cuando \(P = V\)).
+[/CALLOUT]
+
+Apliquemos [REF: thm-truth-preserving | el invariante de preservación de la verdad] de inmediato:
+- \(\{\wedge, \vee\}\) NO es funcionalmente completo, porque \(V \wedge V = V\) y \(V \vee V = V\).
+- ¡Incluso añadir \(\Rightarrow\) y \(\Leftrightarrow\) NO lo vuelve completo! Compruébelo: \(V \Rightarrow V = V\) y \(V \Leftrightarrow V = V\). Así, \(\{\wedge, \vee, \Rightarrow, \Leftrightarrow\}\) SIGUE sin ser funcionalmente completo: toda fórmula construida con esos cuatro conectivos devuelve \(V\) en la fila todo-\(V\), de modo que ninguna puede representar \(\neg P\).
+
+Un invariante análogo funciona en la fila todo-\(F\): diremos que un conectivo preserva la falsedad si devuelve \(F\) siempre que todas sus entradas son \(F\). Como \(F \wedge F = F\) y \(F \vee F = F\), \(\{\wedge, \vee\}\) también preserva la falsedad (mientras que \(\Rightarrow\) NO preserva la falsedad, ya que \(F \Rightarrow F = V\)). ¿Qué ocurre al añadir la constante \(\mathbf{F}\) a \(\{\Rightarrow\}\)? Como \(\mathbf{F}\) NO preserva la verdad, el invariante se rompe —y en efecto \(P \Rightarrow \mathbf{F} \equiv \neg P\), de modo que \(\{\Rightarrow, \mathbf{F}\}\) SÍ es funcionalmente completo (puesto que ya vimos que \(\{\neg, \Rightarrow\}\) es completo)—.
+
+¿Y qué pasa con \(\{\neg\}\) por sí solo? No preserva la verdad ni preserva la falsedad, pero aun así no es funcionalmente completo: toda fórmula construida únicamente con \(\{\neg\}\) puede involucrar como máximo una variable proposicional \(P\) (ya que \(\neg\) es unario), por lo que solo podrá representar \(P\) o \(\neg P\), nunca una función genuinamente de dos variables como \(P \wedge Q\).
+
+[QUESTION 4]
+[ANSWER: A]
+¿Cuál de los siguientes conjuntos de conectivos (incluyendo posiblemente constantes de verdad \(\mathbf{V}\) o \(\mathbf{F}\)) es funcionalmente COMPLETO?
+
+(A) \(\{\Rightarrow, \mathbf{F}\}\)
+(B) \(\{\Rightarrow, \mathbf{V}\}\)
+(C) \(\{\wedge, \vee, \Rightarrow, \Leftrightarrow\}\)
+(D) \(\{\wedge, \vee, \mathbf{V}, \mathbf{F}\}\)
+(E) \(\{\neg, \mathbf{V}, \mathbf{F}\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Cuántas filas de la tabla de verdad para \((P, Q, R)\) hacen que la fórmula en FNC
+\[
+(P \vee \neg Q \vee R) \wedge (\neg P \vee Q \vee \neg R)
+\]
+se evalúe como VERDADERO?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(4\)
+(D) \(5\)
+(E) \(6\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Usando únicamente el conectivo NOR \(\downarrow\) (donde \(A \downarrow B \equiv \neg(A \vee B)\)), ¿qué fórmula es lógicamente equivalente a \(P \Rightarrow Q\)?
+
+(A) \((P \downarrow P) \downarrow Q\)
+(B) \(\bigl((P \downarrow P) \downarrow Q\bigr) \downarrow \bigl((P \downarrow P) \downarrow Q\bigr)\)
+(C) \((P \downarrow Q) \downarrow (P \downarrow Q)\)
+(D) \(P \downarrow (Q \downarrow Q)\)
+(E) \((P \downarrow P) \downarrow (Q \downarrow Q)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Denote por \(\oplus\) la disyunción exclusiva ("\(P\) o \(Q\), pero no ambos"), que es \(V\) cuando \(P\) y \(Q\) tienen valores de verdad opuestos y \(F\) cuando tienen el mismo valor de verdad. ¿Es funcionalmente completo el conjunto \(\{\oplus, \mathbf{V}\}\)?
+
+(A) Sí, porque \(P \oplus \mathbf{V} \equiv \neg P\) y \(P \oplus Q\) desempeña el papel de \(\vee\).
+(B) Sí, porque \(\mathbf{V}\) rompe la preservación de la falsedad y \(\oplus\) rompe la preservación de la verdad.
+(C) No, porque toda fórmula construida con \(\{\oplus, \mathbf{V}\}\) sobre dos variables \(P, Q\) se evalúa como \(V\) en un número par de filas de la tabla de verdad de \(4\) filas (concretamente \(0\), \(2\) o \(4\) filas), por lo que no puede representar \(P \wedge Q\) (que es \(V\) en \(1\) fila).
+(D) No, porque \(\{\oplus, \mathbf{V}\}\) preserva la verdad.
+(E) No, porque \(\{\oplus, \mathbf{V}\}\) no puede representar \(\neg P\).
+[/BONUS]

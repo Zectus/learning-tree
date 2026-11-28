@@ -1,0 +1,266 @@
+=== SECTION 1: Injectivity (one-to-one functions) ===
+
+In the previous lesson, we saw two distinct ways a function \(f : A \to B\) can fail to behave like an exact matching between \(A\) and \(B\): two different inputs can collide at the same output, or some elements of the codomain \(B\) can be missed completely. Eliminating collisions gives INJECTIVITY; eliminating missed targets gives SURJECTIVITY; eliminating both gives a BIJECTION.
+
+[CALLOUT]
+id: injective-def
+label: Definition
+title: Injective (one-to-one) function
+tone: key
+
+A function \(f : A \to B\) is injective (or one-to-one) if distinct inputs always produce distinct outputs:
+\[
+\forall x_1, x_2 \in A,\quad (x_1 \ne x_2 \implies f(x_1) \ne f(x_2)).
+\]
+Equivalently, by taking the contrapositive:
+\[
+\forall x_1, x_2 \in A,\quad (f(x_1) = f(x_2) \implies x_1 = x_2).
+\]
+Equivalently, in terms of preimages (fibers): for every \(y \in B\), the preimage \(f^{-1}(\{y\})\) contains AT MOST ONE element.
+[/CALLOUT]
+
+Notice how the contrapositive form in [REF: injective-def | the definition] turns proving injectivity into an algebraic recipe, while the direct form gives a concrete disproof recipe:
+- To PROVE \(f : A \to B\) is injective: let \(x_1, x_2 \in A\) be arbitrary, assume \(f(x_1) = f(x_2)\), and deduce \(x_1 = x_2\).
+- To DISPROVE injectivity: exhibit TWO specific elements \(x_1, x_2 \in A\) with \(x_1 \ne x_2\) such that \(f(x_1) = f(x_2)\).
+
+Let us apply both templates across three different types of domains:
+
+1. Rational function: let \(f : \mathbb{R} \setminus \{3\} \to \mathbb{R}\) be given by \(f(x) = \frac{2x + 1}{x - 3}\).
+   Suppose \(x_1, x_2 \in \mathbb{R} \setminus \{3\}\) satisfy \(f(x_1) = f(x_2)\). Then
+   \[
+   \frac{2x_1 + 1}{x_1 - 3} = \frac{2x_2 + 1}{x_2 - 3}.
+   \]
+   Since \(x_1 \ne 3\) and \(x_2 \ne 3\), cross-multiplying gives \((2x_1 + 1)(x_2 - 3) = (2x_2 + 1)(x_1 - 3)\), which expands to
+   \[
+   2x_1 x_2 - 6x_1 + x_2 - 3 = 2x_1 x_2 - 6x_2 + x_1 - 3.
+   \]
+   Canceling \(2x_1 x_2 - 3\) from both sides yields \(-6x_1 + x_2 = -6x_2 + x_1\), hence \(7x_2 = 7x_1\), so \(x_1 = x_2\). Thus \(f\) is injective!
+
+2. Tuple function: let \(g : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z} \times \mathbb{Z}\) be defined by \(g(m, n) = (m + n, m - n)\).
+   Suppose \(g(m_1, n_1) = g(m_2, n_2)\). By equality of ordered pairs, both coordinates agree:
+   \[
+   m_1 + n_1 = m_2 + n_2 \qquad \text{and} \qquad m_1 - n_1 = m_2 - n_2.
+   \]
+   Adding the two equations gives \(2m_1 = 2m_2\), so \(m_1 = m_2\); subtracting gives \(2n_1 = 2n_2\), so \(n_1 = n_2\). Hence \((m_1, n_1) = (m_2, n_2)\), proving \(g\) is injective.
+
+3. Disproof by counterexample: let \(h : \mathbb{R} \to \mathbb{R}\) be \(h(x) = x^2 - 4x\). Notice \(h(x) = x(x - 4)\), so \(h(0) = 0 = h(4)\) while \(0 \ne 4\). Thus \(h\) is NOT injective on \(\mathbb{R}\). However, if we restrict the domain to \([2, \infty)\), then \(h|_{[2, \infty)}(x) = (x - 2)^2 - 4\) IS injective, because \((x_1 - 2)^2 = (x_2 - 2)^2\) with \(x_1, x_2 \ge 2\) forces \(x_1 - 2 = x_2 - 2 \ge 0\), so \(x_1 = x_2\)!
+
+For real functions \(f : \mathbb{R} \to \mathbb{R}\), the fiber test in [REF: injective-def | the definition] is the HORIZONTAL LINE TEST: \(f\) is injective if and only if every horizontal line \(y = c\) intersects the graph of \(f\) in AT MOST ONE point. Drag the slider \(c\) below to compare \(f(x) = x^3/4 + x/2\) (strictly increasing, so every horizontal line hits it exactly once—both injective and surjective!) against \(g(x) = x^2 - 1\) (for \(c > -1\), the line hits twice, violating injectivity; for \(c < -1\), the line misses completely, violating surjectivity!).
+
+[GRAPH]
+type: function2d
+title: Horizontal line test at \(y = c\): \(f(x) = \frac{1}{4}x^3 + \frac{1}{2}x\) (injective and surjective) versus \(g(x) = x^2 - 1\) (neither)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -3, 4
+trace: 0.25*x^3 + 0.5*x | label: \(f(x) = \frac{1}{4}x^3 + \frac{1}{2}x\) | color: #2563eb
+trace: x^2 - 1 | label: \(g(x) = x^2 - 1\) | color: #dc2626
+trace: c | label: \(y = c\) | color: #64748b
+slider: c | range: -2.5, 3.5 | init: 1 | step: 0.25
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Which of the following functions is INJECTIVE?
+
+(A) \(f_1 : \mathbb{Z} \to \mathbb{Z}\) defined by \(f_1(n) = n^2 + n\)
+(B) \(f_2 : \mathbb{Z}^+ \to \mathbb{Z}\) defined by \(f_2(n) = n^2 + n\)
+(C) \(f_3 : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}\) defined by \(f_3(m, n) = 2m + 3n\)
+(D) \(f_4 : \mathbb{R} \to \mathbb{R}\) defined by \(f_4(x) = x^3 - x\)
+(E) \(f_5 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) defined by \(f_5([a]) = [2a]\)
+[/QUESTION]
+
+=== SECTION 2: Surjectivity (onto functions) and the two-part check ===
+
+While injectivity prevents collisions among inputs, surjectivity guarantees that NO element of the declared codomain \(B\) is left unhit.
+
+[CALLOUT]
+id: surjective-def
+label: Definition
+title: Surjective (onto) function
+tone: key
+
+A function \(f : A \to B\) is surjective (or onto) if every element of the codomain \(B\) is the image of at least one element of \(A\):
+\[
+\forall y \in B,\quad \exists x \in A,\quad f(x) = y.
+\]
+Equivalently:
+(1) \(\operatorname{im}(f) = B\).
+(2) For every \(y \in B\), the preimage \(f^{-1}(\{y\})\) contains AT LEAST ONE element (is nonempty).
+[/CALLOUT]
+
+Proving surjectivity is where students most often skip a hidden step. Given an arbitrary \(y \in B\), solving \(f(x) = y\) algebraically for a candidate expression \(x\) is NOT enough by itself! You must check TWO things:
+1. Domain membership: the candidate \(x\) you built from \(y\) actually belongs to the domain \(A\).
+2. Verification: substituting that \(x\) into \(f\) genuinely yields \(f(x) = y\).
+
+Watch how checking domain membership immediately separates two functions with the EXACT SAME formula:
+- Let \(f : \mathbb{Q} \to \mathbb{Q}\) be \(f(q) = 2q + 1\). Given arbitrary \(y \in \mathbb{Q}\), solve \(2q + 1 = y\) to get the candidate \(q = \frac{y - 1}{2}\). Check (1): since \(y \in \mathbb{Q}\), we have \(\frac{y - 1}{2} \in \mathbb{Q}\). Check (2): \(f\bigl(\frac{y - 1}{2}\bigr) = 2\bigl(\frac{y - 1}{2}\bigr) + 1 = y\). Thus \(f\) IS surjective!
+- Now let \(g : \mathbb{Z} \to \mathbb{Z}\) be \(g(n) = 2n + 1\). The exact same algebra gives \(n = \frac{y - 1}{2}\). Check (1) FAILS whenever \(y\) is even! For \(y = 0 \in \mathbb{Z}\), \(2n + 1 = 0\) has NO integer solution \(n \in \mathbb{Z}\) (since \(2n + 1\) is always odd). Thus \(g\) is NOT surjective!
+
+Now check a tuple function from Section 1: \(g : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z} \times \mathbb{Z}\) given by \(g(m, n) = (m + n, m - n)\). We proved \(g\) is injective; is it surjective? Take an arbitrary target \((u, v) \in \mathbb{Z} \times \mathbb{Z}\). Solving \(m + n = u\) and \(m - n = v\) yields \(m = \frac{u + v}{2}\) and \(n = \frac{u - v}{2}\). Check domain membership: are \(m\) and \(n\) integers? Take \((u, v) = (1, 0) \in \mathbb{Z} \times \mathbb{Z}\): the unique real solution is \((m, n) = (1/2, 1/2) \notin \mathbb{Z} \times \mathbb{Z}\)! Indeed, for any integers \(m, n\), the sum \(m + n\) and difference \(m - n\) always have the SAME parity, so \((1, 0)\) is never hit. Therefore \(g\) is injective on \(\mathbb{Z} \times \mathbb{Z}\) but NOT surjective! (If we instead replace \(\mathbb{Z} \times \mathbb{Z}\) by \(\mathbb{R} \times \mathbb{R}\), the same formula IS surjective because \((u + v)/2\) and \((u - v)/2\) always lie in \(\mathbb{R}\).)
+
+Look also at modular arithmetic on \(\mathbb{Z}/6\mathbb{Z} = \{[0], [1], [2], [3], [4], [5]\}\):
+- The map \(h_1 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) given by \(h_1([a]) = [2a]\) has image \(\{[0], [2], [4]\}\), missing \([1], [3], [5]\), so \(h_1\) is neither injective nor surjective.
+- By contrast, \(h_2 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) given by \(h_2([a]) = [5a]\) IS surjective (and injective): given any \([y] \in \mathbb{Z}/6\mathbb{Z}\), choose \([x] = [5y] \in \mathbb{Z}/6\mathbb{Z}\), and observe \(h_2([5y]) = [25y] = [y]\) because \(25 \equiv 1 \pmod 6\)!
+
+Because injectivity depends on the DOMAIN and surjectivity depends on the CODOMAIN, changing domain or codomain—without touching the formula at all—can produce all four combinations!
+
+[TABLE]
+Function (same formula \(x \mapsto x^2\)) | Domain \(A\) | Codomain \(B\) | Injective? | Surjective?
+\(f_1 : \mathbb{R} \to \mathbb{R}\) | \(\mathbb{R}\) | \(\mathbb{R}\) | No (\(f_1(-1) = f_1(1)\)) | No (\(-1 \notin \operatorname{im}(f_1)\))
+\(f_2 : [0, \infty) \to \mathbb{R}\) | \([0, \infty)\) | \(\mathbb{R}\) | Yes | No (\(-1 \notin \operatorname{im}(f_2)\))
+\(f_3 : \mathbb{R} \to [0, \infty)\) | \(\mathbb{R}\) | \([0, \infty)\) | No (\(f_3(-1) = f_3(1)\)) | Yes (\(\sqrt{y} \in \mathbb{R}\))
+\(f_4 : [0, \infty) \to [0, \infty)\) | \([0, \infty)\) | \([0, \infty)\) | Yes | Yes (bijective)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: D]
+Consider the function \(f : \mathbb{R} \setminus \{2\} \to \mathbb{R} \setminus \{3\}\) defined by \(f(x) = \frac{3x + 1}{x - 2}\). Which statement accurately describes whether \(f\) is surjective, and why?
+
+(A) \(f\) is NOT surjective, because \(x = 2\) is excluded from the domain
+(B) \(f\) is NOT surjective, because \(f(x) = 0\) has no solution in \(\mathbb{R} \setminus \{2\}\)
+(C) \(f\) is NOT surjective, because solving \(f(x) = y\) yields \(x = \frac{2y + 1}{y - 3}\), which equals \(2\) when \(y = -1/2\)
+(D) \(f\) IS surjective, because for every \(y \in \mathbb{R} \setminus \{3\}\), \(x = \frac{2y + 1}{y - 3}\) lies in \(\mathbb{R} \setminus \{2\}\) and satisfies \(f(x) = y\)
+(E) \(f\) is surjective onto all of \(\mathbb{R}\), including \(y = 3\)
+[/QUESTION]
+
+=== SECTION 3: Bijections — exact one-to-one correspondences ===
+
+When a function is BOTH injective and surjective, every output in the codomain is hit by one and ONLY one input in the domain.
+
+[CALLOUT]
+id: bijection-def
+label: Definition
+title: Bijective function (bijection)
+tone: key
+
+A function \(f : A \to B\) is bijective (a bijection, or one-to-one correspondence) if it is BOTH injective and surjective. Equivalently:
+\[
+\forall y \in B,\quad \exists! x \in A,\quad f(x) = y.
+\]
+Equivalently, for every \(y \in B\), the fiber \(f^{-1}(\{y\})\) is a singleton (has cardinality exactly \(1\)).
+[/CALLOUT]
+
+Notice how [REF: bijection-def | the bijection condition] mirrors the definition of a function in reverse: a function pairs every \(a \in A\) with a unique \(b \in B\), and a bijection ALSO pairs every \(b \in B\) with a unique \(a \in A\)!
+
+Let us verify two non-obvious bijections that look nothing like linear formulas:
+
+1. A piecewise bijection \(f : \mathbb{N} \to \mathbb{Z}\) (where \(\mathbb{N} = \{0, 1, 2, \dots\}\)):
+   \[
+   f(n) = \begin{cases} n/2 & \text{if } n \text{ is even}, \\ -(n + 1)/2 & \text{if } n \text{ is odd}. \end{cases}
+   \]
+   List the first few values: \(f(0) = 0\), \(f(1) = -1\), \(f(2) = 1\), \(f(3) = -2\), \(f(4) = 2\), \(f(5) = -3, \dots\).
+   - Well-definedness: if \(n\) is even, \(n/2 \in \mathbb{Z}\); if \(n\) is odd, \(n + 1\) is even, so \(-(n + 1)/2 \in \mathbb{Z}\).
+   - Injectivity: notice that even inputs map to \(\{0, 1, 2, \dots\}\) (nonnegative integers), while odd inputs map to \(\{-1, -2, -3, \dots\}\) (strictly negative integers). Because these two target sets are disjoint, \(f(n_1) = f(n_2)\) forces \(n_1\) and \(n_2\) to have the SAME parity! If both are even, \(n_1/2 = n_2/2 \implies n_1 = n_2\); if both are odd, \(-(n_1 + 1)/2 = -(n_2 + 1)/2 \implies n_1 = n_2\).
+   - Surjectivity: let \(k \in \mathbb{Z}\) be arbitrary. If \(k \ge 0\), take \(n = 2k \in \mathbb{N}\) (even), giving \(f(2k) = k\). If \(k < 0\), take \(n = -2k - 1\); since \(k \le -1\), we have \(-2k - 1 \ge 1\), so \(n \in \mathbb{N}\) is odd and \(f(-2k - 1) = -(-2k - 1 + 1)/2 = k\).
+   Hence \(f\) is a bijection from \(\mathbb{N}\) onto \(\mathbb{Z}\)!
+
+2. A set-valued bijection on a power set: fix a universe \(U\) and define \(C : \mathcal{P}(U) \to \mathcal{P}(U)\) by \(C(S) = S^c = U \setminus S\).
+   - Injectivity: if \(S_1^c = S_2^c\), taking complements of both sides gives \(S_1 = (S_1^c)^c = (S_2^c)^c = S_2\).
+   - Surjectivity: for any \(T \in \mathcal{P}(U)\), choose \(S = T^c \in \mathcal{P}(U)\); then \(C(S) = (T^c)^c = T\).
+   So complementation is a bijection \(\mathcal{P}(U) \to \mathcal{P}(U)\).
+
+[QUESTION 3]
+[ANSWER: A]
+Define \(f : \mathbb{Z} \to \mathbb{Z}\) by
+\[
+f(n) = \begin{cases} n + 2 & \text{if } n \text{ is even}, \\ n - 2 & \text{if } n \text{ is odd}. \end{cases}
+\]
+Which statement about \(f\) is true?
+
+(A) \(f\) is bijective
+(B) \(f\) is injective, but not surjective
+(C) \(f\) is surjective, but not injective
+(D) \(f\) is neither injective nor surjective
+(E) \(f\) is not well-defined on \(\mathbb{Z}\)
+[/QUESTION]
+
+=== SECTION 4: Set-image characterizations of injectivity and surjectivity ===
+
+In the previous lesson, we proved three one-sided inclusions that hold for EVERY function \(f : A \to B\):
+- \(S \subseteq f^{-1}(f(S))\) for all \(S \subseteq A\),
+- \(f(S_1 \cap S_2) \subseteq f(S_1) \cap f(S_2)\) for all \(S_1, S_2 \subseteq A\),
+- \(f(f^{-1}(T)) \subseteq T\) for all \(T \subseteq B\).
+
+We also observed informally that strictness in the first two came from colliding inputs, and strictness in the third came from missed outputs. We can now prove that turning these inclusions into universal equalities characterizes injectivity and surjectivity EXACTLY.
+
+[CALLOUT]
+id: image-char-inj-surj
+label: Theorem
+title: Set-image characterizations of injectivity and surjectivity
+tone: key
+
+Let \(f : A \to B\) be any function.
+
+(1) The following three statements are equivalent:
+   (a) \(f\) is injective.
+   (b) \(f^{-1}(f(S)) = S\) for EVERY subset \(S \subseteq A\).
+   (c) \(f(S_1 \cap S_2) = f(S_1) \cap f(S_2)\) for ALL subsets \(S_1, S_2 \subseteq A\).
+
+(2) The following two statements are equivalent:
+   (a) \(f\) is surjective.
+   (b) \(f(f^{-1}(T)) = T\) for EVERY subset \(T \subseteq B\).
+[/CALLOUT]
+
+Let us prove part (1) in a clean cycle \((a) \implies (b) \implies (c) \implies (a)\):
+
+- \((a) \implies (b)\): Assume \(f\) is injective, and let \(S \subseteq A\). We already know \(S \subseteq f^{-1}(f(S))\) holds for every function. For the reverse inclusion \(f^{-1}(f(S)) \subseteq S\), let \(x \in f^{-1}(f(S))\). Then \(f(x) \in f(S)\), so by definition of direct image there exists \(s \in S\) such that \(f(x) = f(s)\). Because \(f\) is injective, \(f(x) = f(s)\) forces \(x = s \in S\). Thus \(f^{-1}(f(S)) = S\).
+
+- \((b) \implies (c)\): Assume \(f^{-1}(f(S)) = S\) for every \(S \subseteq A\), and let \(S_1, S_2 \subseteq A\). We already know \(f(S_1 \cap S_2) \subseteq f(S_1) \cap f(S_2)\). For the reverse inclusion, let \(y \in f(S_1) \cap f(S_2)\). Then there exist \(x_1 \in S_1\) and \(x_2 \in S_2\) with \(f(x_1) = y = f(x_2)\). Because \(f(x_1) = f(x_2) \in f(S_2)\), we have \(x_1 \in f^{-1}(f(S_2))\). Applying hypothesis (b) to \(S = S_2\) gives \(f^{-1}(f(S_2)) = S_2\), so \(x_1 \in S_2\)! Now \(x_1 \in S_1 \cap S_2\) and \(y = f(x_1) \in f(S_1 \cap S_2)\). Thus \(f(S_1 \cap S_2) = f(S_1) \cap f(S_2)\).
+
+- \((c) \implies (a)\): Assume \(f(S_1 \cap S_2) = f(S_1) \cap f(S_2)\) for all \(S_1, S_2 \subseteq A\). To prove \(f\) is injective, let \(x_1, x_2 \in A\) satisfy \(f(x_1) = f(x_2)\). Apply (c) to the singletons \(S_1 = \{x_1\}\) and \(S_2 = \{x_2\}\):
+\[
+f(\{x_1\} \cap \{x_2\}) = f(\{x_1\}) \cap f(\{x_2\}) = \{f(x_1)\} \cap \{f(x_2)\} = \{f(x_1)\} \ne \emptyset.
+\]
+Since the image of the empty set is empty, \(\{x_1\} \cap \{x_2\}\) MUST be nonempty, which forces \(x_1 = x_2\)! Thus \(f\) is injective.
+
+Now prove part (2) in two short directions:
+- \((a) \implies (b)\): Assume \(f\) is surjective, so \(\operatorname{im}(f) = B\). From the previous lesson's exact round-trip identity \(f(f^{-1}(T)) = T \cap \operatorname{im}(f)\), we get \(f(f^{-1}(T)) = T \cap B = T\) for every \(T \subseteq B\).
+- \((b) \implies (a)\): Assume \(f(f^{-1}(T)) = T\) for every \(T \subseteq B\). Apply this to \(T = B\) (or to any singleton \(T = \{y\}\)): since \(f^{-1}(B) = A\), we immediately get \(\operatorname{im}(f) = f(A) = f(f^{-1}(B)) = B\), so \(f\) is surjective!
+
+Pay attention to the UNIVERSAL quantifier "for EVERY subset" in [REF: image-char-inj-surj | the theorem]! Having \(f^{-1}(f(S)) = S\) for ONE particular subset \(S\) does NOT imply \(f\) is injective (for instance, \(f(x) = x^2\) satisfies \(f^{-1}(f(\{0\})) = \{0\}\) and \(f^{-1}(f([-1, 1])) = [-1, 1]\), yet \(f\) is not injective). Likewise, having \(f(f^{-1}(T)) = T\) for one \(T \subseteq \operatorname{im}(f)\) does NOT make \(f\) surjective. Only holding for ALL subsets (or for all singletons!) forces injectivity or surjectivity.
+
+[QUESTION 4]
+[ANSWER: E]
+Let \(f : A \to B\) be a function. Suppose you know that \(f(A \setminus S) = B \setminus f(S)\) holds for EVERY subset \(S \subseteq A\). What can you conclude about \(f\)?
+
+(A) \(f\) must be injective, but need not be surjective
+(B) \(f\) must be surjective, but need not be injective
+(C) \(f\) can be neither injective nor surjective if \(A\) is infinite
+(D) \(f\) is constant whenever \(A\) has at least two elements
+(E) \(f\) must be bijective (both injective and surjective)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Fix a nonempty set \(U\) and a fixed subset \(K \subseteq U\). Define \(\Phi_K : \mathcal{P}(U) \to \mathcal{P}(U)\) by \(\Phi_K(S) = S \Delta K\) (symmetric difference with \(K\)), and define \(\Psi_K : \mathcal{P}(U) \to \mathcal{P}(U)\) by \(\Psi_K(S) = S \cup K\). For which subsets \(K \subseteq U\) is \(\Phi_K\) bijective, and for which subsets \(K \subseteq U\) is \(\Psi_K\) bijective?
+
+(A) \(\Phi_K\) is bijective only when \(K = \emptyset\); \(\Psi_K\) is bijective for every \(K \subseteq U\)
+(B) Both \(\Phi_K\) and \(\Psi_K\) are bijective for every \(K \subseteq U\)
+(C) \(\Phi_K\) is bijective for EVERY \(K \subseteq U\); \(\Psi_K\) is bijective ONLY when \(K = \emptyset\)
+(D) \(\Phi_K\) is bijective only when \(K = U\); \(\Psi_K\) is bijective only when \(K = \emptyset\)
+(E) \(\Phi_K\) is bijective for every \(K \subseteq U\); \(\Psi_K\) is bijective only when \(K = U\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Given any function \(f : A \to B\), define the induced preimage map \(f^* : \mathcal{P}(B) \to \mathcal{P}(A)\) by \(f^*(T) = f^{-1}(T)\) for each \(T \subseteq B\). Which condition on \(f\) is equivalent to \(f^*\) being INJECTIVE?
+
+(A) \(f\) is injective
+(B) \(f\) is surjective
+(C) \(f\) is bijective
+(D) \(A\) is nonempty
+(E) \(f^*\) is always injective for every function \(f\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Let \(f : \mathbb{Z} \to \mathbb{Z}\) be defined by \(f(n) = 3n + 1\) for \(n \in \mathbb{Z}\). Suppose we change ONLY the domain or codomain of \(f\) (keeping the formula \(n \mapsto 3n + 1\)). Which choice turns \(f\) into a BIJECTION?
+
+(A) Domain \(\mathbb{Z}\), codomain \(\{3k : k \in \mathbb{Z}\}\)
+(B) Domain \(\{3k + 1 : k \in \mathbb{Z}\}\), codomain \(\mathbb{Z}\)
+(C) Domain \(\mathbb{N}\), codomain \(\{3k + 1 : k \in \mathbb{Z}\}\)
+(D) Domain \(\mathbb{Z}\), codomain \(\{3k + 1 : k \in \mathbb{Z}\}\)
+(E) Domain \(\mathbb{Z}\), codomain \(\{k \in \mathbb{Z} : k \not\equiv 0 \pmod{3}\}\)
+[/BONUS]

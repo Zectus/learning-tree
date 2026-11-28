@@ -1,0 +1,255 @@
+=== SECTION 1: Iteración de funciones, puntos fijos e intersecciones fuera de la diagonal ===
+
+Una vez que sabes componer una función consigo misma, surge una pregunta natural: ¿qué sucede cuando introduces la salida de una regla \(f\) directamente de nuevo en \(f\) como la siguiente entrada, una y otra vez? Este proceso se llama ITERACIÓN DE FUNCIONES.
+
+[CALLOUT]
+id: iteration-def
+label: Definición
+title: Composición iterada \(f^n\) y puntos fijos
+tone: key
+
+Sea \(f\) una función.
+(1) Para cada entero positivo \(n\), la \(n\)-ésima iterada \(f^n\) es la composición de \(f\) consigo misma \(n\) veces:
+\[
+f^1(x) = f(x), \qquad f^2(x) = f(f(x)), \qquad f^n(x) = \underbrace{(f \circ f \circ \dots \circ f)}_{n\text{ veces}}(x).
+\]
+NO confundas la iterada \(f^n(x)\) con la potencia algebraica ordinaria \([f(x)]^n\), del mismo modo que \(f^{-1}(x)\) denota la función inversa y no el recíproco \(1/f(x)\).
+(2) Un número \(x \in \operatorname{Dom}(f)\) es un PUNTO FIJO de \(f\) si \(f(x) = x\).
+[/CALLOUT]
+
+Por ejemplo, si \(f(x) = 2x + 1\), entonces \(f^2(x) = f(2x + 1) = 2(2x + 1) + 1 = 4x + 3\), mientras que \([f(x)]^2 = (2x + 1)^2 = 4x^2 + 4x + 1\): ¡funciones completamente distintas!
+
+Los puntos fijos son las entradas que la iteración deja completamente intactas: si \(f(x_0) = x_0\), entonces \(f^2(x_0) = f(x_0) = x_0\), y de hecho \(f^n(x_0) = x_0\) para todo \(n \ge 1\). Geométricamente, \(f(x) = x\) significa que el punto \((x, x)\) yace TANTO sobre la curva \(y = f(x)\) como sobre la recta diagonal \(y = x\).
+
+¿Qué pasa si \(f\) es uno a uno de modo que existe \(f^{-1}\)? Supón que un punto \((a, b)\) yace TANTO sobre \(y = f(x)\) como sobre \(y = f^{-1}(x)\).
+- Si la intersección yace SOBRE la diagonal \(y = x\) (así que \(a = b\)), entonces \(f(a) = a\), lo que significa que \(a\) es un punto fijo de \(f\) (y de \(f^{-1}\)).
+- Sin embargo, ¡es una idea errónea clásica pensar que \(y = f(x)\) e \(y = f^{-1}(x)\) SOLO pueden intersecarse sobre la diagonal \(y = x\)!
+
+¿Por qué? Un punto \((a, b)\) está en \(y = f(x)\) cuando \(b = f(a)\), y está en \(y = f^{-1}(x)\) cuando \(a = f(b)\). Si \(a \ne b\), entonces \((a, b)\) y su reflejo \((b, a)\) forman un PAR SIMÉTRICO FUERA DE LA DIAGONAL donde \(f\) intercambia \(a\) y \(b\):
+\[
+f(a) = b \quad \text{y} \quad f(b) = a \implies f(f(a)) = a \quad \text{y} \quad f(f(b)) = b.
+\]
+
+Observa dos contraejemplos concretos:
+1. \(f(x) = 1 - x\): Aquí \(f^{-1}(x) = 1 - x = f(x)\), por lo que ambas gráficas coinciden en CADA punto de la recta \(y = 1 - x\) —infinitas intersecciones fuera de la diagonal como \((0, 1)\) y \((1, 0)\)— aunque solo haya UN punto fijo \(\left(\frac{1}{2}, \frac{1}{2}\right)\) sobre \(y = x\).
+2. \(f(x) = -x^3\): Esta función es estrictamente decreciente en \(\mathbb{R}\), con inversa \(f^{-1}(x) = -\sqrt[3]{x}\). Resolver \(-x^3 = x\) da solo UN punto fijo, \((0, 0)\), sobre \(y = x\). Sin embargo, comprueba \(a = 1\) y \(b = -1\): ¡\(f(1) = -1\) y \(f(-1) = 1\)! Así que las gráficas de \(f\) y \(f^{-1}\) TAMBIÉN se intersecan en el par simétrico fuera de la diagonal \((1, -1)\) y \((-1, 1)\).
+
+[GRAPH]
+type: function2d
+title: Intersecciones de \(f(x) = -x^3\) y \(f^{-1}(x) = -\sqrt[3]{x}\) sobre \(y = x\) y fuera de ella
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1.6, 1.6
+yrange: -1.6, 1.6
+aspect: equal
+trace: -x^3 | label: \(f(x) = -x^3\)
+trace: -cbrt(x) | label: \(f^{-1}(x) = -\sqrt[3]{x}\)
+trace: x | label: \(y = x\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1, -1 | label: \((1, -1)\)
+point: -1, 1 | label: \((-1, 1)\)
+[/GRAPH]
+
+[CALLOUT]
+id: off-diagonal-intersections
+label: Idea clave
+title: Intersecciones de \(y = f(x)\) e \(y = f^{-1}(x)\)
+tone: caution
+
+Toda intersección de \(y = f(x)\) con la diagonal \(y = x\) es una intersección de \(y = f(x)\) e \(y = f^{-1}(x)\) (un punto fijo). Sin embargo, \(y = f(x)\) e \(y = f^{-1}(x)\) TAMBIÉN pueden intersecarse fuera de la diagonal en pares simétricos \((a, b)\) y \((b, a)\) con \(a \ne b\) siempre que \(f(a) = b\) y \(f(b) = a\) (es decir, siempre que \(f^2(a) = a\) con \(f(a) \ne a\)).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Considera la función uno a uno \(f(x) = 1 - (x - 1)^3\) en \(\mathbb{R}\). ¿Qué conjunto enumera TODOS los puntos de intersección de las gráficas de \(y = f(x)\) e \(y = f^{-1}(x)\)?
+
+(A) Únicamente \((1, 1)\)
+(B) \((0, 0)\), \((1, 1)\) y \((2, 2)\)
+(C) \((1, 1)\), \((0, 2)\) y \((2, 0)\)
+(D) Únicamente \((0, 2)\) y \((2, 0)\)
+(E) \((1, 1)\), \((-1, 1)\) y \((1, -1)\)
+[/QUESTION]
+
+=== SECTION 2: Involuciones (funciones autoinversas) ===
+
+En el Ejemplo 1 anterior, \(f(x) = 1 - x\) tenía una propiedad extraordinaria: aplicar \(f\) dos veces devolvía CADA entrada a sí misma (\(f(f(x)) = 1 - (1 - x) = x\)), ¡de modo que \(f\) era su PROPIA inversa! Una función que se deshace a sí misma en una aplicación más se denomina INVOLUCIÓN.
+
+[CALLOUT]
+id: involution-def
+label: Definición
+title: Involución (función autoinversa)
+tone: key
+
+Una función \(f\) sobre un dominio \(D\) es una INVOLUCIÓN si:
+(1) \(f(x) \in D\) para todo \(x \in D\); y
+(2) \(f(f(x)) = x\) para todo \(x \in D\).
+Equivalentemente, \(f\) es uno a uno con \(\operatorname{Rango}(f) = D\) y \(f^{-1} = f\). Geométricamente, la gráfica de \(y = f(x)\) es su propia imagen especular exacta respecto a la recta diagonal \(y = x\).
+[/CALLOUT]
+
+Observa lo que [REF: involution-def | ser una involución] te dice de inmediato sobre las iteradas altas:
+\[
+f^2(x) = x, \qquad f^3(x) = f(x), \qquad f^4(x) = x,
+\]
+así que para todo entero positivo \(n\), \(f^n(x) = x\) cuando \(n\) es PAR y \(f^n(x) = f(x)\) cuando \(n\) es IMPAR.
+
+Varias familias elementales clásicas son involuciones:
+1. Reflexiones lineales \(f(x) = c - x\) (para cualquier constante real \(c\)): \(f(f(x)) = c - (c - x) = x\). Sus gráficas son rectas de pendiente \(-1\), perpendiculares a \(y = x\), de modo que reflejar respecto a \(y = x\) las deja invariantes. (La identidad \(f(x) = x\) es la única otra involución lineal en \(\mathbb{R}\).)
+2. Hipérbolas recíprocas \(f(x) = \dfrac{k}{x}\) (para cualquier \(k \ne 0\), en \(D = \mathbb{R} \setminus \{0\}\)): \(f(f(x)) = \dfrac{k}{k/x} = x\).
+
+¿Qué hay de las funciones fraccionarias lineales generales \(f(x) = \dfrac{ax + b}{cx + d}\) (donde \(ad - bc \ne 0\) para que la función no sea constante)? DEDUZCAMOS la condición exacta para que \(f\) sea una involución calculando \(f(f(x))\):
+\[
+f(f(x)) = \frac{a\left(\dfrac{ax + b}{cx + d}\right) + b}{c\left(\dfrac{ax + b}{cx + d}\right) + d} = \frac{a(ax + b) + b(cx + d)}{c(ax + b) + d(cx + d)} = \frac{(a^2 + bc)x + b(a + d)}{c(a + d)x + (bc + d^2)}.
+\]
+Para que esta expresión racional sea igual a \(x = \dfrac{1 \cdot x + 0}{0 \cdot x + 1}\) para todo \(x\) del dominio, dos términos fuera de la diagonal deben anularse y los coeficientes diagonales deben coincidir y ser distintos de cero:
+\[
+b(a + d) = 0, \qquad c(a + d) = 0, \qquad a^2 + bc = bc + d^2 \ne 0.
+\]
+- Si \(b = c = 0\) y \(a = d \ne 0\), obtenemos la identidad trivial \(f(x) = x\).
+- De lo contrario, al menos uno de \(b, c\) es distinto de cero, lo que FUERZA \(a + d = 0\), ¡es decir, \(d = -a\)! Poner \(d = -a\) hace automáticamente \(a^2 + bc = bc + d^2\), dejando ÚNICAMENTE la comprobación de no degeneración \(a^2 + bc \ne 0\) (que asegura que el numerador y el denominador no compartan un factor común y colapsen a una constante).
+
+[CALLOUT]
+id: mobius-involution
+label: Caracterización
+title: Involuciones fraccionarias lineales
+tone: key
+
+Toda involución fraccionaria lineal distinta de la identidad tiene la forma
+\[
+f(x) = \frac{ax + b}{cx - a}, \qquad \text{con } a^2 + bc \ne 0,
+\]
+en el dominio \(x \ne \dfrac{a}{c}\) (cuando \(c \ne 0\); cuando \(c = 0\) y \(a \ne 0\), se reduce a la recta \(f(x) = -x - \frac{b}{a}\)). Observa que su asíntota vertical \(x = \dfrac{a}{c}\) y su asíntota horizontal \(y = \dfrac{a}{c}\) se reflejan mutuamente respecto a \(y = x\).
+[/CALLOUT]
+
+Mira el ejemplo \(f(x) = \dfrac{2x + 1}{x - 2}\) (aquí \(a = 2, b = 1, c = 1, d = -2 = -a\), y \(a^2 + bc = 4 + 1 = 5 \ne 0\)). Su asíntota vertical \(x = 2\) y su asíntota horizontal \(y = 2\) se encuentran justo sobre \(y = x\) en \((2, 2)\), y las dos ramas de la hipérbola se reflejan perfectamente sobre sí mismas respecto a \(y = x\). Sus puntos fijos satisfacen \(\dfrac{2x + 1}{x - 2} = x \iff x^2 - 4x - 1 = 0 \iff x = 2 \pm \sqrt{5}\).
+
+[GRAPH]
+type: function2d
+title: Involución fraccionaria lineal \(f(x) = \frac{2x + 1}{x - 2}\) simétrica respecto a \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 7.5
+yrange: -3.5, 7.5
+aspect: equal
+trace: x < 1.65 ? ((2*x + 1)/(x - 2)) : (0/0) | label: \(f(x),\; x < 2\)
+trace: x > 2.35 ? ((2*x + 1)/(x - 2)) : (0/0) | label: \(f(x),\; x > 2\)
+trace: x | label: \(y = x\)
+point: 4.236, 4.236 | label: \((2 + \sqrt{5},\, 2 + \sqrt{5})\)
+point: -0.236, -0.236 | label: \((2 - \sqrt{5},\, 2 - \sqrt{5})\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: C]
+¿Cuál de las siguientes funciones es una involución en su dominio natural?
+
+(A) \(f(x) = \dfrac{2x - 4}{x - 2}\)
+(B) \(f(x) = \dfrac{3x + 1}{2x + 3}\)
+(C) \(f(x) = \dfrac{4x - 5}{x - 4}\)
+(D) \(f(x) = x - 5\)
+(E) \(f(x) = \dfrac{1}{x - 1}\)
+[/QUESTION]
+
+=== SECTION 3: Iteración algebraica y gráfica (diagrama de telaraña) ===
+
+La mayoría de las funciones NO son involuciones, por lo que iterar \(x_0 \mapsto x_1 = f(x_0) \mapsto x_2 = f(x_1) \mapsto x_3 = f(x_2) \mapsto \dots\) crea una sucesión de salidas (llamada la ÓRBITA de \(x_0\)) que puede trepar hacia un punto fijo, girar en espiral alrededor de uno, saltar entre valores o divergir.
+
+Algebraicamente, calcula cada iterada paso a paso:
+- Ejemplo 1 (regla lineal): Para \(f(x) = \dfrac{1}{2}x + 2\) partiendo de \(x_0 = 0\):
+\[
+x_1 = f(0) = 2, \qquad x_2 = f(2) = 3, \qquad x_3 = f(3) = 3.5, \qquad x_4 = f(3.5) = 3.75.
+\]
+Cada paso reduce exactamente a la mitad la distancia restante al punto fijo \(x = 4\) (donde \(\frac{1}{2}x + 2 = x\)).
+- Ejemplo 2 (regla no lineal): Para \(h(x) = \sqrt{x + 2}\) partiendo de \(x_0 = 0\):
+\[
+x_1 = \sqrt{2} \approx 1.414, \qquad x_2 = \sqrt{2 + \sqrt{2}} \approx 1.848, \qquad x_3 = \sqrt{2 + \sqrt{2 + \sqrt{2}}} \approx 1.962.
+\]
+Las iteradas ascienden de forma constante hacia el punto fijo \(x = 2\) (la solución positiva de \(\sqrt{x + 2} = x\)).
+
+¿Cómo puedes VER toda una órbita directamente en una sola gráfica sin sustituir decimales a mano? ¡Usa la recta diagonal \(y = x\) como un espejo que convierte cada salida vertical \(y = x_1\) en la entrada horizontal \(x = x_1\)! Este procedimiento geométrico se llama DIAGRAMA DE TELARAÑA.
+
+[CALLOUT]
+id: cobweb-method
+label: Método
+title: Iteración gráfica (diagrama de telaraña)
+tone: key
+
+Para trazar la órbita \(x_0, x_1, x_2, \dots\) de \(y = f(x)\) en una gráfica de razón de aspecto igual que contenga tanto a \(y = f(x)\) como a \(y = x\):
+(1) Comienza sobre el eje horizontal en \((x_0, 0)\) (o sobre la diagonal en \((x_0, x_0)\)).
+(2) Muévete VERTICALMENTE hasta la curva \(y = f(x)\) para caer en \((x_0, x_1)\), donde \(x_1 = f(x_0)\).
+(3) Muévete HORIZONTALMENTE hasta la diagonal \(y = x\) para caer en \((x_1, x_1)\), convirtiendo la salida \(x_1\) en la siguiente entrada horizontal.
+(4) Repite: muévete verticalmente a \((x_1, x_2)\) sobre \(y = f(x)\), horizontalmente a \((x_2, x_2)\) sobre \(y = x\), y así sucesivamente.
+[/CALLOUT]
+
+Observa [REF: cobweb-method | el diagrama de telaraña] en acción sobre \(g(x) = -\dfrac{1}{2}x + 3\) partiendo de \(x_0 = 0\). Halla primero el punto fijo: \(-\frac{1}{2}x + 3 = x \iff \frac{3}{2}x = 3 \iff x = 2\). Ahora sigue los segmentos en la gráfica siguiente:
+- Vertical desde \((0, 0)\) hasta la curva: \((0, 3)\) (así que \(x_1 = 3\)).
+- Horizontal hasta la diagonal: \((3, 3)\).
+- Vertical hasta la curva: \((3, 1.5)\) (así que \(x_2 = 1.5\)).
+- Horizontal hasta la diagonal: \((1.5, 1.5)\).
+- Vertical hasta la curva: \((1.5, 2.25)\) (así que \(x_3 = 2.25\)).
+- Horizontal hasta la diagonal: \((2.25, 2.25)\).
+
+Como \(g\) tiene una pendiente negativa entre \(-1\) y \(0\), la órbita alterna por encima y por debajo de \(2\), formando una telaraña cuadrada en espiral hacia adentro alrededor del punto fijo \((2, 2)\).
+
+[GRAPH]
+type: function2d
+title: Espiral de telaraña de \(g(x) = -\frac{1}{2}x + 3\) desde \(x_0 = 0\) hacia \((2, 2)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.4, 3.8
+yrange: -0.4, 3.8
+aspect: equal
+trace: -0.5*x + 3 | label: \(y = -\frac{1}{2}x + 3\)
+trace: x | label: \(y = x\)
+segment: 0, 0, 0, 3 | color: #10b981
+segment: 0, 3, 3, 3 | color: #10b981
+segment: 3, 3, 3, 1.5 | color: #10b981
+segment: 3, 1.5, 1.5, 1.5 | color: #10b981
+segment: 1.5, 1.5, 1.5, 2.25 | color: #10b981
+segment: 1.5, 2.25, 2.25, 2.25 | color: #10b981
+point: 0, 3 | label: \((0, 3)\)
+point: 3, 1.5 | label: \((3, 1.5)\)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: B]
+Sea \(f(x) = 3 - 2x\). ¿Cuál es el valor de la tercera iterada \(f^3(2)\)?
+
+(A) \(-1\)
+(B) \(-7\)
+(C) \(5\)
+(D) \(-13\)
+(E) \(17\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Supón que trazamos el diagrama de telaraña de \(f(x) = \dfrac{1}{3}x + 4\) partiendo de \((0, 0)\) usando la secuencia estándar: vertical hasta \(y = f(x)\), horizontal hasta \(y = x\), vertical hasta \(y = f(x)\), horizontal hasta \(y = x\). ¿Cuáles son los cuatro puntos visitados en orden exacto?
+
+(A) \((4, 0) \to (4, 4) \to \left(\frac{16}{3}, 4\right) \to \left(\frac{16}{3}, \frac{16}{3}\right)\)
+(B) \((0, 4) \to (4, 4) \to \left(4, \frac{13}{3}\right) \to \left(\frac{13}{3}, \frac{13}{3}\right)\)
+(C) \((0, 4) \to (0, 0) \to (4, 4) \to \left(4, \frac{16}{3}\right)\)
+(D) \((0, 4) \to (4, 4) \to \left(4, \frac{16}{3}\right) \to \left(\frac{16}{3}, \frac{16}{3}\right)\)
+(E) \((0, 4) \to \left(4, \frac{16}{3}\right) \to (4, 4) \to \left(\frac{16}{3}, \frac{16}{3}\right)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Sea \(f(x) = \dfrac{1}{1 - x}\) para \(x \ne 0, 1\). ¿Cuál es el valor de la iterada \(2026\)-ésima \(f^{2026}(3)\)?
+
+(A) \(-\dfrac{1}{2}\)
+(B) \(\dfrac{2}{3}\)
+(C) \(3\)
+(D) \(\dfrac{1}{2}\)
+(E) \(-\dfrac{1}{2^{2026}}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Sea \(f(x) = \dfrac{x + 3}{x - 1}\) para \(x \ne 1\). ¿Cuáles son los puntos fijos de \(f\), y cuál es el valor de \(f^{99}(5)\)?
+
+(A) Puntos fijos \(x = 1\) y \(x = 3\); \(f^{99}(5) = 2\)
+(B) Puntos fijos \(x = -1\) y \(x = 3\); \(f^{99}(5) = 5\)
+(C) Puntos fijos \(x = -3\) y \(x = 1\); \(f^{99}(5) = 2\)
+(D) Únicamente punto fijo \(x = 3\); \(f^{99}(5) = 2\)
+(E) Puntos fijos \(x = -1\) y \(x = 3\); \(f^{99}(5) = 2\)
+[/BONUS]

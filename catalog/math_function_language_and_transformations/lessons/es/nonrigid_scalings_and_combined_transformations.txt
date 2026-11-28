@@ -1,0 +1,250 @@
+=== SECTION 1: Escalamientos verticales y horizontales ===
+
+Las transformaciones rígidas deslizan y reflejan una gráfica sin alterar su forma. ¿Qué sucede si multiplicamos la salida o la entrada por una constante distinta de cero? Eso estira o comprime la gráfica a lo largo de un eje, produciendo un escalamiento no rígido.
+
+Primero, coloca un multiplicador distinto de cero \(a\) FUERA de la función: \(y = a \cdot f(x)\). Para cada entrada \(x\), la altura \(y\) se multiplica directamente por \(a\):
+- Si \(|a| > 1\), los puntos se alejan del eje \(x\) (estiramiento vertical por un factor de \(|a|\)).
+- Si \(0 < |a| < 1\), los puntos se acercan al eje \(x\) (compresión vertical por un factor de \(|a|\)).
+- Si \(a < 0\), el escalamiento vertical va acompañado de una reflexión respecto al eje \(x\).
+- Observa que las intersecciones con el eje \(x\) \((r, 0)\) permanecen fijas porque \(a \cdot 0 = 0\).
+
+Segundo, coloca un multiplicador distinto de cero \(b\) DENTRO del paréntesis: \(y = f(bx)\). Así como los desplazamientos horizontales se comportaban de forma opuesta al signo visible, ¡el escalamiento horizontal se comporta de manera recíproca al factor visible! Aplica el puente de igualación de entradas: para introducir la entrada original \(x\) en \(f\) y obtener la misma salida \(y\), la nueva coordenada \(x'\) debe satisfacer
+\[
+b x' = x \implies x' = \frac{x}{b}.
+\]
+Por lo tanto:
+- Si \(|b| > 1\) (digamos \(b = 2\)), entonces \(x' = x/2\): cada punto se acerca a la MITAD de la distancia al eje \(y\), provocando una COMPRESIÓN horizontal por un factor de \(\frac{1}{|b|}\).
+- Si \(0 < |b| < 1\) (digamos \(b = \frac{1}{3}\)), entonces \(x' = 3x\): cada punto se aleja el TRIPLE del eje \(y\), provocando un ESTIRAMIENTO horizontal por un factor de \(\frac{1}{|b|}\).
+- Si \(b < 0\), el escalamiento horizontal va acompañado de una reflexión respecto al eje \(y\).
+- La intersección con el eje \(y\) \((0, f(0))\) permanece fija porque \(0/b = 0\).
+
+[CALLOUT]
+id: scaling-rules
+label: Regla
+title: Escalamientos verticales y horizontales
+tone: key
+
+Partiendo de \(y = f(x)\) con un punto típico \((x, y)\):
+
+(1) Escalamiento vertical \(y = a \cdot f(x)\) (\(a \ne 0\)): aplica \((x, y) \mapsto (x, a y)\). Estira verticalmente si \(|a| > 1\); comprime verticalmente si \(0 < |a| < 1\); refleja respecto al eje \(x\) si \(a < 0\).
+(2) Escalamiento horizontal \(y = f(bx)\) (\(b \ne 0\)): aplica \((x, y) \mapsto (x/b, y)\). Comprime horizontalmente por \(1/|b|\) si \(|b| > 1\); estira horizontalmente por \(1/|b|\) si \(0 < |b| < 1\); refleja respecto al eje \(y\) si \(b < 0\).
+[/CALLOUT]
+
+Arrastra los deslizadores \(a\) y \(b\) en la gráfica siguiente sobre \(f(x) = x^3 - 3x\) para contrastar el escalamiento vertical \(a f(x)\) (que mueve verticalmente los puntos de cambio manteniendo fijas las intersecciones con el eje \(x\) en \(\pm\sqrt{3}\)) con el escalamiento horizontal \(f(bx)\) (que mueve horizontalmente los puntos de cambio y las intersecciones con el eje \(x\) manteniendo fijas las alturas de los puntos de cambio en \(\pm 2\)).
+
+[GRAPH]
+type: function2d
+title: Escalamiento vertical \(a f(x)\) frente a escalamiento horizontal \(f(bx)\) en \(f(x) = x^3 - 3x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 3.5
+yrange: -5, 5
+trace: x^3 - 3*x | label: \(f(x) = x^3 - 3x\)
+trace: a*(x^3 - 3*x) | label: \(a f(x)\)
+trace: (b*x)^3 - 3*(b*x) | label: \(f(bx)\)
+point: 1, -2*a | label: \((1, a f(1))\)
+point: 1/b, -2 | label: \((1/b, f(1))\)
+slider: a | range: 0.5, 2 | init: 1.5 | step: 0.25
+slider: b | range: 0.5, 2 | init: 2 | step: 0.25
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+La gráfica de \(y = f(x)\) tiene dominio \([-6, 4]\), rango \([-2, 8]\) y pasa por \((2, 6)\). ¿Cuáles son el dominio, el rango y el punto imagen correspondiente de \(y = \frac{1}{2} f(2x)\)?
+
+(A) Dominio \([-12, 8]\), rango \([-1, 4]\), punto \((4, 3)\)
+(B) Dominio \([-3, 2]\), rango \([-1, 4]\), punto \((1, 3)\)
+(C) Dominio \([-3, 2]\), rango \([-4, 16]\), punto \((1, 12)\)
+(D) Dominio \([-12, 8]\), rango \([-4, 16]\), punto \((4, 12)\)
+(E) Dominio \([-3, 2]\), rango \([-1, 4]\), punto \((4, 3)\)
+[/QUESTION]
+
+=== SECTION 2: Combinación de escalamientos, reflexiones y traslaciones — y el puente de factorización ===
+
+Ahora reúne todas las transformaciones en la transformación afín general de cualquier función \(f\):
+\[
+y = a \cdot f\bigl(b(x - h)\bigr) + k \qquad (a \ne 0,\; b \ne 0).
+\]
+Observa la crucial forma factorizada dentro del paréntesis: \(b(x - h)\), ¡NO \(bx - c\)! ¿Por qué es indispensable sacar \(b\) como factor común de \(bx - c\)?
+
+Supón que quieres graficar \(g(x) = f(2x - 6)\). Un error muy común es decir «comprimir horizontalmente por \(1/2\) y desplazar \(6\) a la derecha». ¡Pon a prueba esa afirmación usando el puente de igualación de entradas! Queremos que el argumento de \(f\) sea igual a \(x\):
+\[
+2x' - 6 = x \implies 2x' = x + 6 \implies x' = \frac{x}{2} + 3.
+\]
+Mira el término de desplazamiento: ¡es \(+3\), NO \(+6\)! Reescribir el interior en forma factorizada revela de inmediato por qué:
+\[
+f(2x - 6) = f\bigl(2(x - 3)\bigr).
+\]
+Una vez factorizado \(b = 2\), lees directamente el verdadero desplazamiento horizontal \(h = 3\): comprime horizontalmente por \(1/2\) y LUEGO desplaza \(3\) a la derecha. (Equivalentemente, si decides desplazar ANTES de escalar, debes desplazar \(6\) a la derecha PRIMERO —llevando \(x \mapsto x + 6\)— y LUEGO comprimir por \(1/2\) —llevando \(x + 6 \mapsto \frac{x + 6}{2} = \frac{x}{2} + 3\).)
+
+La misma sensibilidad al orden ocurre verticalmente: en \(y = a \cdot f(x) + k\), el escalamiento/reflexión por \(a\) ocurre PRIMERO y el desplazamiento vertical por \(k\) ocurre SEGUNDO, llevando \(y \mapsto ay \mapsto ay + k\). Hacer primero el desplazamiento vertical daría \(a(y + k) = ay + ak \ne ay + k\).
+
+[CALLOUT]
+id: combined-transform-bridge
+label: Teorema
+title: Transformación afín combinada y regla exacta de puntos
+tone: key
+
+Dada \(y = a \cdot f(bx - c) + k\) con \(a \ne 0\) y \(b \ne 0\), primero factoriza \(b\) en el argumento para escribir
+\[
+y = a \cdot f\bigl(b(x - h)\bigr) + k, \qquad \text{donde } h = \frac{c}{b}.
+\]
+(1) Todo punto \((x, y)\) sobre \(y = f(x)\) se transforma en el punto exacto
+\[
+(x, y) \mapsto \left(\frac{x}{b} + h,\; ay + k\right).
+\]
+(2) Secuencia geométrica estándar (escalar/reflejar antes de desplazar en cada eje):
+   - Horizontalmente: escalar por \(1/|b|\) (y reflejar respecto al eje \(y\) si \(b < 0\)), luego desplazar horizontalmente en \(h\).
+   - Verticalmente: escalar por \(|a|\) (y reflejar respecto al eje \(x\) si \(a < 0\)), luego desplazar verticalmente en \(k\).
+   (Las operaciones horizontales y las verticales son completamente independientes, por lo que puedes realizar el grupo horizontal antes o después del grupo vertical.)
+[/CALLOUT]
+
+Apliquemos [REF: combined-transform-bridge | este marco] para bosquejar
+\[
+g(x) = -2\sqrt{6 - 3x} + 1.
+\]
+Paso 1 (Factorizar dentro del radical):
+\[
+6 - 3x = -3(x - 2), \quad \text{así que} \quad g(x) = -2\sqrt{-3(x - 2)} + 1.
+\]
+Aquí la función básica es \(f(x) = \sqrt{x}\), con \(a = -2\), \(b = -3\), \(h = 2\) y \(k = 1\).
+
+Paso 2 (Aplicar la regla de puntos \((x, y) \mapsto \left(\frac{x}{-3} + 2,\; -2y + 1\right)\)):
+- Punto de referencia básico \((0, 0) \mapsto (2, 1)\). Comprobación: \(g(2) = -2\sqrt{0} + 1 = 1\).
+- Punto de referencia básico \((1, 1) \mapsto \left(\frac{5}{3}, -1\right)\). Comprobación: \(g(5/3) = -2\sqrt{6 - 5} + 1 = -1\).
+- Punto de referencia básico \((4, 2) \mapsto \left(\frac{2}{3}, -3\right)\). Comprobación: \(g(2/3) = -2\sqrt{6 - 2} + 1 = -3\).
+- Punto de referencia básico \((9, 3) \mapsto (-1, -5)\). Comprobación: \(g(-1) = -2\sqrt{9} + 1 = -5\).
+
+Paso 3 (Seguir dominio y rango):
+- El dominio básico \(x \ge 0\) pasa bajo \(x' = -x/3 + 2\) a \(x' \le 2\), así que \(\operatorname{Dom}(g) = (-\infty, 2]\).
+- El rango básico \(y \ge 0\) pasa bajo \(y' = -2y + 1\) a \(y' \le 1\), así que \(\operatorname{Rango}(g) = (-\infty, 1]\).
+
+[GRAPH]
+type: function2d
+title: Función básica \(\sqrt{x}\) transformada en \(g(x) = -2\sqrt{-3(x - 2)} + 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2, 5
+yrange: -6, 3
+trace: x >= 0 ? sqrt(x) : (0/0) | label: \(f(x) = \sqrt{x}\)
+trace: x <= 2 ? (-2*sqrt(6 - 3*x) + 1) : (0/0) | label: \(g(x) = -2\sqrt{6 - 3x} + 1\)
+point: 0, 0 | label: \((0, 0)\)
+point: 4, 2 | label: \((4, 2)\)
+point: 2, 1 | label: \((2, 1)\)
+point: -1, -5 | label: \((-1, -5)\)
+[/GRAPH]
+
+Observa lo rápida y a prueba de errores que es [REF: combined-transform-bridge.1 | la regla de puntos]: incluso si prefieres bosquejar geométricamente paso a paso, probar dos puntos con \((x/b + h, ay + k)\) detecta de inmediato cualquier error de desplazar antes de escalar.
+
+[QUESTION 2]
+[ANSWER: D]
+Para obtener la gráfica de \(y = f(3x + 12)\) a partir de la gráfica de \(y = f(x)\), ¿qué secuencia de transformaciones horizontales es válida?
+
+(A) Comprimir horizontalmente por un factor de \(1/3\) y luego desplazar \(12\) unidades a la izquierda.
+(B) Estirar horizontalmente por un factor de \(3\) y luego desplazar \(4\) unidades a la izquierda.
+(C) Desplazar \(4\) unidades a la izquierda y luego comprimir horizontalmente por un factor de \(1/3\).
+(D) Comprimir horizontalmente por un factor de \(1/3\) y luego desplazar \(4\) unidades a la izquierda.
+(E) Comprimir horizontalmente por un factor de \(1/3\) y luego desplazar \(4\) unidades a la derecha.
+[/QUESTION]
+
+=== SECTION 3: Cuándo coinciden los escalamientos vertical y horizontal — y cuándo no ===
+
+Observa las dos fórmulas \(y = (2x)^2\) e \(y = 4x^2\). ¡Algebraicamente son idénticas! Sobre la función básica \(f(x) = x^2\), una compresión horizontal por un factor de \(1/2\) produce exactamente la misma parábola que un estiramiento vertical por un factor de \(4\). Análogamente:
+- En \(f(x) = \sqrt{x}\): \(\sqrt{4x} = 2\sqrt{x}\) (compresión horizontal por \(1/4\) equivale a estiramiento vertical por \(2\)).
+- En \(f(x) = |x|\): \(|3x| = 3|x|\) (compresión horizontal por \(1/3\) equivale a estiramiento vertical por \(3\)).
+- En \(f(x) = \frac{1}{x}\): \(\frac{1}{2x} = \frac{1}{2} \cdot \frac{1}{x}\) (compresión horizontal por \(1/2\) equivale a compresión vertical por \(1/2\)).
+
+Como esta coincidencia algebraica ocurre en todas las funciones básicas de potencia pura, raíz, valor absoluto y recíproca, resulta tentador pensar que los escalamientos horizontal y vertical son siempre intercambiables. ¡Eso es FALSO para funciones generales!
+
+Compara \(f(2x)\) y \(a \cdot f(x)\) en una función acotada o con múltiples rasgos —por ejemplo, \(f(x) = \frac{1}{x^2 + 1}\) (cuya altura pico es \(1\) y cuyo dominio es \((-\infty, \infty)\)) o una poligonal sin fórmula con esquinas en \((-2, 0)\), \((0, 2)\) y \((2, 0)\):
+- El escalamiento vertical \(2f(x)\) duplica la altura del pico a \(4\) mientras mantiene fijas las intersecciones con el eje \(x\) en \(-2\) y \(2\).
+- El escalamiento horizontal \(f(2x)\) deja fija la altura del pico en \(2\) mientras acerca las intersecciones con el eje \(x\) hacia adentro hasta \(-1\) y \(1\).
+
+Ningún estiramiento vertical \(a \cdot f(x)\) puede mover jamás una intersección con el eje \(x\), ¡y ningún estiramiento horizontal \(f(bx)\) puede cambiar jamás la altura máxima global de una curva acotada! La tabla siguiente aclara esta distinción.
+
+[TABLE]
+Familia funcional | Efecto de \(f(bx)\) (\(b > 0\)) | ¿Equivalente a algún \(a f(x)\)? | Razón
+\(x^2\) | \((bx)^2 = b^2 x^2\) | Sí, \(a = b^2\) | Ley homogénea de potencias
+\(\sqrt{x}\) | \(\sqrt{bx} = \sqrt{b}\,\sqrt{x}\) | Sí, \(a = \sqrt{b}\) | Ley homogénea de raíces
+\(x^2 - 1\) | \(b^2 x^2 - 1\) | No (salvo si \(b = 1\)) | \(a(x^2 - 1) = a x^2 - a\) mueve el vértice \((0, -1)\)
+\(f\) general sin fórmula | Escala las coordenadas \(x\) por \(1/b\) | No | El escalamiento vertical fija intersecciones con eje \(x\); el horizontal fija alturas de pico
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Sea \(f(x) = x^2 - 4\). ¿Qué afirmación compara con precisión a \(g(x) = f(2x)\) y \(h(x) = 4f(x)\)?
+
+(A) \(g\) tiene intersecciones con el eje \(x\) en \(x = \pm 1\) y vértice \((0, -4)\), mientras que \(h\) tiene intersecciones con el eje \(x\) en \(x = \pm 2\) y vértice \((0, -16)\).
+(B) \(g\) y \(h\) son exactamente la misma función porque \((2x)^2 = 4x^2\).
+(C) \(g\) tiene intersecciones con el eje \(x\) en \(x = \pm 4\) y vértice \((0, -4)\), mientras que \(h\) tiene intersecciones con el eje \(x\) en \(x = \pm 2\) y vértice \((0, -16)\).
+(D) \(g\) y \(h\) tienen el mismo vértice \((0, -4)\), pero distintas intersecciones con el eje \(x\).
+(E) \(g\) y \(h\) tienen las mismas intersecciones con el eje \(x\) en \(x = \pm 2\), pero distintos vértices.
+[/QUESTION]
+
+=== SECTION 4: Reconstrucción de fórmulas y seguimiento de asíntotas ===
+
+Al reconstruir una fórmula transformada a partir de una gráfica, los rasgos de referencia te revelan los parámetros sistemáticamente:
+1. Identifica la familia básica a partir de la forma global (forma de V, parábola, curva en S, semiparábola, hipérbola).
+2. Lee el desplazamiento \((h, k)\) en el punto clave: el vértice de una parábola o de una V, el punto inicial de una raíz cuadrada, el centro de inflexión de una cúbica o la intersección de las asíntotas vertical y horizontal de una curva recíproca.
+3. Sustituye un punto adicional claramente marcado \((x_1, y_1)\) de la gráfica en la plantilla \(y = a \cdot f(x - h) + k\) para despejar el parámetro de escalamiento \(a\).
+
+Por ejemplo, supón que una gráfica tiene la forma de una curva recíproca \(1/x\) con asíntota vertical \(x = 3\), asíntota horizontal \(y = -1\) y pasa por \((5, 2)\).
+- Las asíntotas fijan de inmediato \(h = 3\) y \(k = -1\), dando la plantilla
+\[
+g(x) = \frac{a}{x - 3} - 1.
+\]
+- Sustituyendo el punto \((5, 2)\):
+\[
+2 = \frac{a}{5 - 3} - 1 \implies 3 = \frac{a}{2} \implies a = 6.
+\]
+Así \(g(x) = \frac{6}{x - 3} - 1\). Su dominio es \((-\infty, 3) \cup (3, \infty)\) y su rango es \((-\infty, -1) \cup (-1, \infty)\).
+
+¿Qué pasa si una expresión racional está escrita con un coeficiente en \(x\) en el denominador, como \(p(x) = \frac{3}{2x - 8} + 5\)? Factoriza \(2\) del denominador:
+\[
+p(x) = \frac{3}{2(x - 4)} + 5 = \frac{3/2}{x - 4} + 5.
+\]
+Ahora lees al instante: asíntota vertical \(x = 4\), asíntota horizontal \(y = 5\) y factor de escala vertical \(a = 3/2\) (o equivalentemente, compresión horizontal por \(1/2\) y estiramiento vertical por \(3\)).
+
+[QUESTION 4]
+[ANSWER: C]
+Una gráfica sin fórmula \(y = f(x)\) tiene dominio \([-2, 6]\) y rango \([-4, 2]\). ¿Cuáles son el dominio y el rango de \(y = -3 f(2x - 4) + 5\)?
+
+(A) Dominio \([-3, 1]\), rango \([-1, 17]\)
+(B) Dominio \([-1, 3]\), rango \([-7, 11]\)
+(C) Dominio \([1, 5]\), rango \([-1, 17]\)
+(D) Dominio \([1, 5]\), rango \([-17, 1]\)
+(E) Dominio \([3, 7]\), rango \([-1, 17]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Supón que \(y = f(x)\) pasa por el punto \((6, -2)\). ¿Qué punto debe pertenecer a la gráfica de \(y = 4 f(3 - 2x) - 1\)?
+
+(A) \((-\frac{3}{2}, -7)\)
+(B) \((\frac{9}{2}, -9)\)
+(C) \((-9, -9)\)
+(D) \((\frac{3}{2}, -9)\)
+(E) \((-\frac{3}{2}, -9)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Una parábola abre hacia abajo, tiene vértice \((-1, 7)\) y pasa por \((1, -5)\). ¿Qué ecuación describe esta parábola?
+
+(A) \(y = -6(x + 1)^2 + 7\)
+(B) \(y = -3(x + 1)^2 + 7\)
+(C) \(y = -3(x - 1)^2 + 7\)
+(D) \(y = 3(x + 1)^2 + 7\)
+(E) \(y = -\frac{3}{2}(x + 1)^2 + 7\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Supón que comienzas con \(y = f(x)\), PRIMERO desplazas la gráfica \(4\) unidades a la derecha y LUEGO comprimes horizontalmente la gráfica resultante por un factor de \(1/2\). ¿Qué fórmula describe la gráfica final?
+
+(A) \(y = f(2x - 4)\)
+(B) \(y = f(2x - 8)\)
+(C) \(y = f(2x - 2)\)
+(D) \(y = f\left(\frac{1}{2}x - 4\right)\)
+(E) \(y = f\left(\frac{1}{2}x - 2\right)\)
+[/BONUS]

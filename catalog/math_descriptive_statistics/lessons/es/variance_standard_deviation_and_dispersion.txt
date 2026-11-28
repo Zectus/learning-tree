@@ -1,0 +1,263 @@
+=== SECTION 1: Medición de la variabilidad: rango, DAM y desviaciones cuadráticas ===
+
+Conocer únicamente el centro de un conjunto de datos puede ocultar enormes diferencias prácticas. Considere dos talleres de mecanizado de precisión que cortan varillas de acero de \(100\text{ mm}\): el Taller A produce varillas que miden \(99.9, 100.0, 100.0, 100.0, 100.1\text{ mm}\), mientras que el Taller B produce \(95.0, 98.0, 100.0, 102.0, 105.0\text{ mm}\). Ambos talleres logran exactamente la misma media (\(100.0\text{ mm}\)) y mediana (\(100.0\text{ mm}\)), pero las varillas del Taller A ajustan con alta precisión mientras que las del Taller B varían enormemente. Necesitamos medidas cuantitativas de dispersión para captar cuán apretadas o sueltas se agrupan las observaciones alrededor de su centro.
+
+La medida de dispersión más sencilla es el rango:
+\[
+\text{Rango} = x_{(n)} - x_{(1)} = \max - \min.
+\]
+Para el Taller A el rango es \(0.2\text{ mm}\); para el Taller B es \(10.0\text{ mm}\). Pese a su simplicidad, el rango presenta dos debilidades graves: utiliza solo los dos valores más extremos (ignorando todo lo intermedio, de modo que un único valor atípico puede inflarlo arbitrariamente) y tiende a crecer sistemáticamente conforme aumenta el tamaño muestral \(n\), porque las muestras grandes tienen mayor probabilidad de capturar extremos raros.
+
+Para aprovechar TODAS las \(n\) observaciones, examinamos naturalmente las desviaciones \(x_i - \bar{x}\) respecto a la media. ¿Por qué no podemos simplemente promediar esas desviaciones con signo? Porque por la identidad del punto de equilibrio, \(\sum_{i=1}^n (x_i - \bar{x}) = 0\) para todo conjunto de datos: ¡las desviaciones positivas y negativas se cancelan por completo! Existen dos formas naturales de eliminar la cancelación de signos: tomar valores absolutos o elevar al cuadrado cada desviación.
+
+[CALLOUT]
+id: mad-variance-sd
+label: Definición
+title: Desviación absoluta media, varianza y desviación estándar
+tone: key
+
+Sean \(x_1, \dots, x_n\) una muestra cuantitativa con media \(\bar{x}\) (o una población finita \(x_1, \dots, x_N\) con media \(\mu\)).
+
+(1) La desviación absoluta media (DAM) promedia las distancias sin signo respecto a la media:
+\[
+\text{DAM} = \frac{1}{n} \sum_{i=1}^n |x_i - \bar{x}|.
+\]
+(2) La varianza poblacional \(\sigma^2\) y la desviación estándar poblacional \(\sigma\) son
+\[
+\sigma^2 = \frac{1}{N} \sum_{i=1}^N (x_i - \mu)^2, \qquad \sigma = \sqrt{\sigma^2}.
+\]
+(3) Para \(n \ge 2\), la varianza muestral \(s^2\) y la desviación estándar muestral \(s\) son
+\[
+s^2 = \frac{1}{n - 1} \sum_{i=1}^n (x_i - \bar{x})^2, \qquad s = \sqrt{s^2}.
+\]
+[/CALLOUT]
+
+Calculemos cada resumen de [REF: mad-variance-sd | esta definición] en una muestra de \(n = 5\) derivas diarias de un sensor (en milímetros): \(3, 5, 7, 9, 16\). Primero halle la media: \(\bar{x} = (3 + 5 + 7 + 9 + 16)/5 = 40/5 = 8\text{ mm}\).
+
+[TABLE]
+Observación (\(x_i\)) | Desviación (\(x_i - \bar{x}\)) | Desviación absoluta (\(\lvert x_i - \bar{x} \rvert\)) | Desviación cuadrática (\((x_i - \bar{x})^2\))
+3 | \(-5\) | 5 | 25
+5 | \(-3\) | 3 | 9
+7 | \(-1\) | 1 | 1
+9 | \(+1\) | 1 | 1
+16 | \(+8\) | 8 | 64
+Suma \(= 40\) | Suma \(= 0\) | Suma \(= 18\) | Suma \(= 100\)
+[/TABLE]
+
+A partir de las sumas de columna:
+- \(\text{Rango} = 16 - 3 = 13\text{ mm}\).
+- \(\text{DAM} = 18 / 5 = 3.6\text{ mm}\).
+- Varianza muestral: \(s^2 = 100 / (5 - 1) = 100 / 4 = 25\text{ mm}^2\).
+- Desviación estándar muestral: \(s = \sqrt{25} = 5.0\text{ mm}\).
+
+¡Preste mucha atención a las unidades! Como la varianza eleva cada desviación al cuadrado, \(s^2 = 25\) se mide en milímetros cuadrados (\(\text{mm}^2\)), no en milímetros. Extraer la raíz cuadrada no negativa para obtener \(s = 5.0\text{ mm}\) restituye las unidades originales de medición, de modo que la desviación estándar pueda compararse directamente con \(\bar{x} = 8\text{ mm}\) y \(\text{DAM} = 3.6\text{ mm}\). Observe también que \(s = 5.0 > \text{DAM} = 3.6\): elevar al cuadrado pondera las desviaciones grandes (como \(8^2 = 64\)) mucho más fuertemente que las pequeñas, haciendo que la varianza y la desviación estándar sean sensibles a valores atípicos, al igual que la media aritmética. Por último, note que \(s \ge 0\) siempre, y \(s = 0\) si y solo si cada desviación cuadrática es \(0\), lo que ocurre precisamente cuando todas las \(n\) observaciones son idénticas.
+
+El gráfico siguiente muestra cómo la desviación estándar \(\sigma\) controla la dispersión horizontal de una distribución simétrica centrada en \(\mu = 10\). Arrastre el deslizador \(s\) para observar cómo una desviación estándar mayor ensancha el perfil y empuja las marcas \(\mu \pm s\) hacia afuera mientras el centro permanece fijo.
+
+[GRAPH]
+type: function2d
+title: Efecto de la desviación estándar \(s\) sobre la dispersión alrededor de una media fija \(\mu = 10\)
+xlabel: \(x\)
+ylabel: Densidad
+xrange: 0, 20
+yrange: 0, 0.45
+trace: (1 / (1.5 * sqrt(2 * pi))) * exp(-0.5 * ((x - 10) / 1.5)^2) | label: Referencia (\(s = 1.5\)) | color: #94a3b8
+trace: (1 / (s * sqrt(2 * pi))) * exp(-0.5 * ((x - 10) / s)^2) | label: Dispersión ajustable \(s\) | color: #3b82f6
+segment: 10 - s, 0, 10 - s, (1 / (s * sqrt(2 * pi))) * exp(-0.5) | label: \(\mu - s\) | dashed: true | color: #ef4444
+segment: 10 + s, 0, 10 + s, (1 / (s * sqrt(2 * pi))) * exp(-0.5) | label: \(\mu + s\) | dashed: true | color: #ef4444
+point: 10, 0 | label: \(\mu\)
+slider: s | range: 1, 4 | init: 2.5 | step: 0.25
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Calcule la desviación absoluta media \(\text{DAM}\) y la desviación estándar muestral \(s\) para la muestra de \(n = 5\) observaciones \(2, 2, 6, 10, 10\).
+
+(A) \(\text{DAM} = 3.2\), \(s = 3.58\)
+(B) \(\text{DAM} = 4.0\), \(s = 4.0\)
+(C) \(\text{DAM} = 3.2\), \(s = 4.0\)
+(D) \(\text{DAM} = 3.2\), \(s = 16.0\)
+(E) \(\text{DAM} = 4.0\), \(s = 3.58\)
+[/QUESTION]
+
+=== SECTION 2: ¿Por qué \(n - 1\)? Grados de libertad ===
+
+Quienes se inician naturalmente preguntan por qué [REF: mad-variance-sd.3 | la varianza muestral] divide entre \(n - 1\) en lugar de \(n\). Dos ideas complementarias explican este denominador.
+
+Primero, piense en los grados de libertad: el número de piezas de información independientes disponibles para estimar la variabilidad alrededor de \(\bar{x}\). Como las desviaciones muestrales DEBEN obedecer la restricción lineal \(\sum_{i=1}^n (x_i - \bar{x}) = 0\), una vez que usted conoce cualesquiera \(n - 1\) desviaciones, ¡la desviación final queda completamente forzada! En nuestro ejemplo de cinco valores anterior, una vez que las primeras cuatro desviaciones son \(-5, -3, -1, +1\) (que suman \(-8\)), la quinta desviación no tiene libertad alguna: DEBE ser igual a \(+8\). En particular, si \(n = 1\), la única desviación es \(x_1 - \bar{x} = 0\) sin importar cuán variable sea la población; dividir entre \(n - 1 = 0\) deja a \(s^2\) adecuadamente indefinida para una sola observación, porque una única medición aporta cero grados de libertad para estimar la dispersión.
+
+Segundo, las desviaciones respecto a la PROPIA media muestral \(\bar{x}\) son sistemáticamente un poco menores que las desviaciones respecto a la verdadera media poblacional (desconocida) \(\mu\). De hecho, para cualquier constante \(c\), desarrollar \(x_i - c = (x_i - \bar{x}) + (\bar{x} - c)\) y usar \(\sum (x_i - \bar{x}) = 0\) muestra que
+\[
+\sum_{i=1}^n (x_i - c)^2 = \sum_{i=1}^n (x_i - \bar{x})^2 + n(\bar{x} - c)^2 \ge \sum_{i=1}^n (x_i - \bar{x})^2.
+\]
+Así pues, \(\sum (x_i - \bar{x})^2\) es estrictamente menor que \(\sum (x_i - \mu)^2\) siempre que \(\bar{x} \ne \mu\). Dividir entre \(n\) subestimaría sistemáticamente \(\sigma^2\) en promedio; reducir ligeramente el denominador de \(n\) a \(n - 1\) (corrección de Bessel) compensa exactamente de modo que el promedio de \(s^2\) a través de muestras aleatorias repetidas iguale a \(\sigma^2\). La demostración probabilística formal de esta propiedad de insesgadez (\(E[s^2] = \sigma^2\)) pertenece a la Inferencia Estadística; en el trabajo descriptivo, recuerde usar \(N\) al resumir una población completa y \(n - 1\) al calcular la varianza muestral \(s^2\).
+
+[QUESTION 2]
+[ANSWER: A]
+¿Qué enunciado explica mejor el papel conceptual del denominador \(n - 1\) en la varianza muestral \(s^2 = \frac{1}{n - 1}\sum_{i=1}^n (x_i - \bar{x})^2\)?
+
+(A) La identidad \(\sum_{i=1}^n (x_i - \bar{x}) = 0\) deja solo \(n - 1\) desviaciones independientes (grados de libertad), y dividir entre \(n - 1\) compensa el hecho de que las desviaciones respecto a \(\bar{x}\) son ligeramente menores que las desviaciones respecto a la media poblacional \(\mu\).
+(B) Dividir entre \(n - 1\) garantiza que \(s\) siempre sea igual a \(\text{DAM}\).
+(C) Dividir entre \(n - 1\) descarta el valor atípico más grande del cálculo para volver resistente a \(s^2\).
+(D) Dividir entre \(n - 1\) es necesario para convertir las unidades al cuadrado de vuelta a las unidades originales de medición.
+(E) Dividir entre \(n - 1\) hace que \(s^2\) sea menor que la fórmula de varianza poblacional con denominador \(n\).
+[/QUESTION]
+
+=== SECTION 3: La fórmula abreviada, estabilidad numérica y varianza agrupada ===
+
+Desarrollar el numerador de la varianza —la suma de desviaciones al cuadrado, a menudo denotada \(S_{xx} = \sum_{i=1}^n (x_i - \bar{x})^2\)— produce una forma algebraica equivalente que evita restar \(\bar{x}\) de cada observación a mano.
+
+Parta de la definición y desarrolle cada cuadrado, luego aplique la linealidad de la sumatoria:
+\[
+\sum_{i=1}^n (x_i - \bar{x})^2 = \sum_{i=1}^n (x_i^2 - 2 \bar{x} x_i + \bar{x}^2) = \sum_{i=1}^n x_i^2 - 2 \bar{x} \sum_{i=1}^n x_i + \sum_{i=1}^n \bar{x}^2.
+\]
+Sustituya \(\sum_{i=1}^n x_i = n \bar{x}\) en el término central y \(\sum_{i=1}^n \bar{x}^2 = n \bar{x}^2\) en el último término:
+\[
+\sum_{i=1}^n (x_i - \bar{x})^2 = \sum_{i=1}^n x_i^2 - 2 n \bar{x}^2 + n \bar{x}^2 = \sum_{i=1}^n x_i^2 - n \bar{x}^2.
+\]
+
+[CALLOUT]
+id: variance-shortcut
+label: Identidad
+title: Fórmula algebraica abreviada para la suma de desviaciones al cuadrado
+tone: key
+
+Para todo conjunto de datos cuantitativo \(x_1, \dots, x_n\) con media muestral \(\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i\):
+\[
+\sum_{i=1}^n (x_i - \bar{x})^2 = \sum_{i=1}^n x_i^2 - n \bar{x}^2 = \sum_{i=1}^n x_i^2 - \frac{1}{n}\left(\sum_{i=1}^n x_i\right)^2.
+\]
+Por consiguiente, la varianza muestral puede escribirse como
+\[
+s^2 = \frac{1}{n - 1}\left(\sum_{i=1}^n x_i^2 - n \bar{x}^2\right).
+\]
+[/CALLOUT]
+
+Verifique [REF: variance-shortcut | esta identidad] en nuestras \(n = 5\) derivas de sensor \(3, 5, 7, 9, 16\) (donde \(\bar{x} = 8\)): \(\sum x_i^2 = 9 + 25 + 49 + 81 + 256 = 420\) y \(n \bar{x}^2 = 5(8^2) = 320\), de modo que \(S_{xx} = 420 - 320 = 100\) y \(s^2 = 100 / 4 = 25\), coincidiendo exactamente con nuestro cálculo anterior.
+
+En aritmética exacta, [REF: variance-shortcut | la fórmula abreviada] siempre es exacta. En computadoras y calculadoras reales con precisión decimal finita, sin embargo, conlleva un famoso peligro numérico.
+
+[CALLOUT]
+id: catastrophic-cancellation
+label: Error común
+title: Cancelación catastrófica en la fórmula abreviada
+tone: caution
+
+Cuando las observaciones son muy grandes en relación con su dispersión (por ejemplo, marcas de tiempo o lecturas de alta precisión agrupadas alrededor de \(10^6\)), \(\sum x_i^2\) y \(n \bar{x}^2\) son dos números enormes casi idénticos. Restarlos en aritmética de punto flotante con precisión finita borra dígitos significativos iniciales —un fenómeno llamado cancelación catastrófica—, produciendo varianzas calculadas sumamente inexactas o incluso negativas. En software o datos con un desplazamiento grande, calcule siempre las desviaciones directamente respecto a \(\bar{x}\) (algoritmo de dos pasadas) o reste a todos los datos una constante cercana antes de elevar al cuadrado.
+[/CALLOUT]
+
+Observe [REF: catastrophic-cancellation | la cancelación catastrófica] en \(n = 3\) valores \(1{,}000{,}001\), \(1{,}000{,}002\) y \(1{,}000{,}003\). A simple vista, \(\bar{x} = 1{,}000{,}002\) y las desviaciones son \(-1, 0, +1\), de modo que la suma exacta de cuadrados es \(2\) y \(s^2 = 2/2 = 1\). Sin embargo, \(\sum x_i^2 = 3{,}000{,}012{,}000{,}014\) mientras que \(n \bar{x}^2 = 3{,}000{,}012{,}000{,}012\). Una calculadora que conserva \(10\) dígitos significativos redondea AMBOS números a \(3.000012000 \times 10^{12}\) y reporta \(s^2 = 0\): ¡un error del \(100\%\)!
+
+Cuando los datos llegan únicamente en una tabla de frecuencias agrupadas con marcas de clase \(m_j\) y frecuencias \(f_j\) (\(\sum_{j=1}^k f_j = n\)), aproximamos la varianza muestral situando todas las \(f_j\) observaciones de la clase \(j\) en su marca de clase \(m_j\):
+\[
+s_{\text{agrupada}}^2 \approx \frac{1}{n - 1} \sum_{j=1}^k f_j (m_j - \bar{x}_{\text{agrupada}})^2 = \frac{1}{n - 1}\left(\sum_{j=1}^k f_j m_j^2 - n \bar{x}_{\text{agrupada}}^2\right).
+\]
+Por ejemplo, si \(n = 20\) observaciones caen en tres clases con marcas de clase \(10\) (\(f_1 = 4\)), \(20\) (\(f_2 = 12\)) y \(30\) (\(f_3 = 4\)), entonces \(\bar{x}_{\text{agrupada}} = (40 + 240 + 120)/20 = 20\), y
+\[
+s_{\text{agrupada}}^2 \approx \frac{4(10 - 20)^2 + 12(20 - 20)^2 + 4(30 - 20)^2}{20 - 1} = \frac{400 + 0 + 400}{19} = \frac{800}{19} \approx 42.11,
+\]
+lo que da \(s_{\text{agrupada}} \approx 6.49\).
+
+[QUESTION 3]
+[ANSWER: B]
+Para una muestra de \(n = 10\) mediciones, se conocen los resúmenes exactos \(\sum_{i=1}^{10} x_i = 60\) y \(\sum_{i=1}^{10} x_i^2 = 450\). ¿Cuál es la varianza muestral \(s^2\)?
+
+(A) \(9.0\)
+(B) \(10.0\)
+(C) \(15.0\)
+(D) \(45.0\)
+(E) \(39.0\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Un ingeniero necesita calcular la varianza muestral de \(n = 3\) lecturas de sensor \(50{,}000.1\), \(50{,}000.2\) y \(50{,}000.3\) en un microcontrolador integrado de baja precisión que almacena solo \(8\) dígitos significativos. ¿Qué estrategia de cálculo evita la cancelación catastrófica?
+
+(A) Calcular \(\sum x_i^2 - n \bar{x}^2\) directamente para que los errores de redondeo se cancelen.
+(B) Reemplazar \(n - 1\) por \(n\) en el denominador.
+(C) Multiplicar todas las lecturas por \(10\) antes de aplicar \(\sum x_i^2 - n \bar{x}^2\).
+(D) Restar primero un valor de referencia cercano (como \(50{,}000\)) o la media \(\bar{x}\) de cada lectura, y luego elevar al cuadrado las pequeñas desviaciones \(-0.1, 0, +0.1\).
+(E) Usar la fórmula abreviada de varianza poblacional \(\frac{1}{n}\sum x_i^2 - \bar{x}^2\) en lugar de la fórmula abreviada de varianza muestral.
+[/QUESTION]
+
+=== SECTION 4: Dispersión relativa y el coeficiente de variación ===
+
+Supongamos que un biólogo compara la variabilidad de la masa corporal entre dos especies: los ratones adultos de laboratorio tienen masa media \(\bar{x}_1 = 25\text{ g}\) con \(s_1 = 5\text{ g}\), mientras que los elefantes adultos tienen masa media \(\bar{x}_2 = 4{,}000\text{ kg}\) con \(s_2 = 400\text{ kg}\). Comparar directamente \(s_1 = 5\text{ g}\) contra \(s_2 = 400\text{ kg}\) no es útil: no solo son distintas las unidades, sino que una variación de \(400\text{ kg}\) en un animal de \(4{,}000\text{ kg}\) es proporcionalmente menor que una variación de \(5\text{ g}\) en un ratón de \(25\text{ g}\). Para comparar la dispersión respecto a la escala entre variables con distintas magnitudes o unidades, formamos un cociente adimensional.
+
+[CALLOUT]
+id: coeff-variation
+label: Definición
+title: Coeficiente de variación (CV) y su restricción estricta de dominio
+tone: key
+
+Para una variable en escala de razón estrictamente positiva con media muestral \(\bar{x} > 0\) y desviación estándar \(s\) (o población \(\mu > 0\) y \(\sigma\)), el coeficiente de variación es
+\[
+\text{CV} = \frac{s}{\bar{x}} \qquad \left(\text{a menudo expresado como porcentaje, } \frac{s}{\bar{x}} \times 100\%\right).
+\]
+Restricción de dominio: el \(\text{CV}\) es matemáticamente válido ÚNICAMENTE para variables en escala de razón estrictamente positivas (variables con un cero verdadero y valores positivos). Es INVÁLIDO en escalas de intervalo (como temperaturas en grados Celsius o Fahrenheit) o en variables que pueden ser cero o negativas.
+[/CALLOUT]
+
+Aplique [REF: coeff-variation | la fórmula del CV] a los ratones y a los elefantes:
+- Ratones: \(\text{CV}_1 = 5\text{ g} / 25\text{ g} = 0.20 = 20\%\).
+- Elefantes: \(\text{CV}_2 = 400\text{ kg} / 4{,}000\text{ kg} = 0.10 = 10\%\).
+
+Como las unidades se cancelan limpiamente en el numerador y el denominador, convertir las masas de los ratones de gramos a kilogramos (\(0.005\text{ kg} / 0.025\text{ kg} = 20\%\)) deja el \(\text{CV}\) completamente invariante. Los ratones exhiben el doble de variabilidad relativa en masa que los elefantes.
+
+¿Por qué es innegociable la restricción a escala de razón en [REF: coeff-variation | la definición]? Considere temperaturas diarias con \(\bar{x} = 10^\circ\text{C}\) y \(s = 5^\circ\text{C}\). Calcular \(s / \bar{x}\) en grados Celsius da \(5 / 10 = 50\%\). Convierta exactamente los mismos días a grados Fahrenheit (\(y = 1.8 x + 32\)): la media se vuelve \(50^\circ\text{F}\) mientras que la desviación estándar pasa a ser \(1.8 \times 5 = 9^\circ\text{F}\), dando \(9 / 50 = 18\%\): ¡un número totalmente diferente para exactamente el mismo clima físico! Peor aún, si la media invernal es \(0^\circ\text{C}\), \(s / \bar{x}\) divide entre cero. Verifique siempre que una variable esté en una escala de razón estrictamente positiva antes de reportar el \(\text{CV}\).
+
+[TABLE]
+Medida de dispersión | Unidades | ¿Usa todos los datos? | ¿Resistente a atípicos? | Escalas válidas
+Rango (\(\max - \min\)) | Unidades originales | No (solo \(2\) valores) | No | De intervalo, de razón
+\(\text{RIC} = Q_3 - Q_1\) | Unidades originales | Basada en rangos (\(50\%\) central) | Sí | De intervalo, de razón
+\(\text{DAM}\) | Unidades originales | Sí | Moderada | De intervalo, de razón
+Varianza (\(s^2, \sigma^2\)) | Unidades al cuadrado | Sí | No | De intervalo, de razón
+Desviación estándar (\(s, \sigma\)) | Unidades originales | Sí | No | De intervalo, de razón
+\(\text{CV} = s / \bar{x}\) | Adimensional (\(\%\)) | Sí | No | Solo razón estrictamente positiva
+[/TABLE]
+
+[QUESTION 5]
+[ANSWER: E]
+Un analista desea comparar la variabilidad relativa de tres conjuntos de datos usando el coeficiente de variación \(\text{CV} = s / \bar{x}\):
+(I) Precipitación mensual en milímetros (\(\bar{x} = 80\text{ mm}, s = 12\text{ mm}\)),
+(II) Consumo diario de agua en litros (\(\bar{x} = 300\text{ L}, s = 30\text{ L}\)),
+(III) Temperatura exterior diaria al mediodía en grados Celsius (\(\bar{x} = 15^\circ\text{C}, s = 3^\circ\text{C}\)).
+¿Qué conclusión es matemáticamente sólida?
+
+(A) El Conjunto III tiene la mayor variabilidad relativa (\(\text{CV} = 20\%\)), seguido del Conjunto I (\(15\%\)) y el Conjunto II (\(10\%\)).
+(B) El Conjunto II tiene mayor variabilidad relativa que el Conjunto I porque \(30 > 12\).
+(C) Los tres coeficientes de variación son válidos porque las tres medias son positivas.
+(D) El \(\text{CV}\) no puede comparar el Conjunto I y el Conjunto II porque los milímetros y los litros son unidades distintas.
+(E) El \(\text{CV}\) es válido para el Conjunto I (\(15\%\)) y el Conjunto II (\(10\%\)), lo que muestra que la precipitación tiene mayor variabilidad relativa que el consumo de agua, mientras que el \(\text{CV}\) es inválido para el Conjunto III porque la escala Celsius es de intervalo con un cero arbitrario.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Una muestra de \(n = 9\) mediciones tiene media \(\bar{x} = 24\) y varianza muestral \(s^2 = 18\). Se agrega a la muestra una décima medición igual a \(24\). ¿Cuál es la nueva desviación estándar muestral \(s_{\text{nueva}}\) de las \(10\) mediciones?
+
+(A) \(4.0\)
+(B) \(\sqrt{18} \approx 4.24\)
+(C) \(16.0\)
+(D) \(3.8\)
+(E) \(4.5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Una distribución de frecuencias agrupadas de \(n = 20\) mediciones tiene tres clases: \([0, 10)\) con frecuencia \(5\), \([10, 20)\) con frecuencia \(10\) y \([20, 30)\) con frecuencia \(5\). Usando las marcas de clase, ¿cuál es la varianza muestral aproximada \(s_{\text{agrupada}}^2\)?
+
+(A) \(50.0\)
+(B) \(100.0\)
+(C) \(7.25\)
+(D) \(1000 / 19 \approx 52.63\)
+(E) \(25.0\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Para una muestra de \(n = 6\) observaciones \(x_1, \dots, x_6\) con media \(\bar{x} = 10\), suponga que calcula \(\sum_{i=1}^6 (x_i - c)^2\) para varias constantes \(c \in \mathbb{R}\). Si \(\sum_{i=1}^6 (x_i - 10)^2 = 40\), ¿cuál es el valor exacto de \(\sum_{i=1}^6 (x_i - 12)^2\)?
+
+(A) \(44\)
+(B) \(64\)
+(C) \(52\)
+(D) \(16\)
+(E) No puede determinarse sin conocer las observaciones individuales \(x_1, \dots, x_6\).
+[/BONUS]

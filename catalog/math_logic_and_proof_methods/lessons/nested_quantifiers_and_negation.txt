@@ -1,0 +1,258 @@
+=== SECTION 1: Nested quantifiers and order dependence ===
+
+Single-quantified statements describe properties of one variable at a time. Most serious mathematical statements, however, relate two or more variables simultaneously: "every integer has a larger integer," "there is a real number that acts as an additive identity for every real number," or "between any two distinct real numbers lies a rational number." To write and evaluate such statements accurately, we stack two or more quantifiers in front of a multi-variable predicate \(P(x, y)\).
+
+Read nested quantifiers strictly from left to right. In \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\), we first encounter an arbitrary \(x \in D_1\), and then we ask whether there exists a \(y \in D_2\)—which is ALLOWED to depend on \(x\)—such that \(P(x, y)\) holds. In \(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\), we must first pick ONE fixed \(y \in D_2\) that works simultaneously for ALL \(x \in D_1\).
+
+Does the order of two adjacent quantifiers matter? That depends entirely on whether they are of the same type or of mixed types.
+
+[CALLOUT]
+id: thm-quantifier-order
+label: Theorem
+title: Commutation and non-commutation of nested quantifiers
+tone: key
+
+Let \(P(x, y)\) be a predicate with \(x \in D_1\) and \(y \in D_2\).
+
+(1) Same-type quantifiers commute:
+\[
+\forall x \in D_1\,\forall y \in D_2,\, P(x, y) \equiv \forall y \in D_2\,\forall x \in D_1,\, P(x, y),
+\]
+\[
+\exists x \in D_1\,\exists y \in D_2,\, P(x, y) \equiv \exists y \in D_2\,\exists x \in D_1,\, P(x, y).
+\]
+(2) Mixed quantifiers do NOT commute in general, though one direction always holds:
+\[
+\bigl(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\bigr) \implies \bigl(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\bigr),
+\]
+while the converse \(\bigl(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\bigr) \implies \bigl(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\bigr)\) is NOT generally valid.
+[/CALLOUT]
+
+Why does the one-way implication in [REF: thm-quantifier-order.2 | part (2)] always hold? Suppose \(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\) is true. Then there is a single "universal champion" \(y_0 \in D_2\) such that \(P(x, y_0)\) holds for every \(x \in D_1\). Now check \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\): given any \(x \in D_1\), we simply choose \(y = y_0\), and \(P(x, y_0)\) holds! Having one \(y_0\) that works for all \(x\) certainly implies that every \(x\) has some \(y\) that works for it.
+
+To see why the converse fails dramatically, compare two statements on the domain \(\mathbb{Z}\) with \(P(x, y)\) being "\(y > x\)":
+- \(\forall x \in \mathbb{Z}\,\exists y \in \mathbb{Z},\, y > x\): "Every integer has a larger integer." TRUE! Given any integer \(x\), we can choose \(y = x + 1\), which depends on \(x\) and satisfies \(x + 1 > x\).
+- \(\exists y \in \mathbb{Z}\,\forall x \in \mathbb{Z},\, y > x\): "There is an integer larger than every integer." FALSE! Pick any candidate integer \(y_0\); then taking \(x = y_0\) (or \(x = y_0 + 1\)) violates \(y_0 > x\). No single \(y_0\) can beat every \(x\) at once.
+
+A concrete way to keep variable dependence straight—even with three or four quantifiers—is the Prover–Challenger game. Imagine two players testing whether a quantified statement is true:
+- Whenever the statement reads \(\forall x \in D\), the Challenger chooses any element \(x \in D\) they like, trying to make the inner predicate false.
+- Whenever the statement reads \(\exists y \in D\), the Prover chooses an element \(y \in D\), trying to make the inner predicate true.
+- The players move in the exact left-to-right order of the quantifiers. Thus each player can see—and let their choice depend on—ONLY the variables already chosen to the left!
+- The statement is TRUE if and only if the Prover has a winning strategy that satisfies the inner predicate against every legal choice of the Challenger.
+
+Test the Prover–Challenger game on \(\forall x \in \mathbb{R}\,\exists y \in \mathbb{R},\, x + y = 0\) versus \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, x + y = 0\):
+- In the first statement, Challenger picks \(x\) first; Prover sees \(x\) and responds with \(y = -x\), winning every round (\(x + (-x) = 0\)). So the statement is TRUE.
+- In the second statement, Prover must announce \(y\) BEFORE knowing \(x\); Challenger then picks \(x = 1 - y\), giving \(x + y = 1 \ne 0\). Challenger always wins, so the statement is FALSE.
+
+Now test the same two orders on \(x \cdot y = 0\) over \(\mathbb{R}\):
+- \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, x \cdot y = 0\): Prover announces \(y = 0\) up front. Whatever \(x \in \mathbb{R}\) Challenger picks, \(x \cdot 0 = 0\). So BOTH \(\exists y\,\forall x,\, xy = 0\) and \(\forall x\,\exists y,\, xy = 0\) are TRUE! (Remember: non-commutation means the two orders are not equivalent in general, not that they must always have opposite truth values.)
+
+[TABLE]
+Formula (domain \(\mathbb{R}\)) | Prover–Challenger order | Truth value | Reason
+\(\forall x\,\exists y,\, x + y = 0\) | Challenger \(x\), then Prover \(y\) | \(T\) | Prover picks \(y = -x\)
+\(\exists y\,\forall x,\, x + y = 0\) | Prover \(y\), then Challenger \(x\) | \(F\) | Challenger picks \(x = 1 - y\)
+\(\exists y\,\forall x,\, x \cdot y = 0\) | Prover \(y\), then Challenger \(x\) | \(T\) | Prover picks \(y = 0\)
+\(\forall x\,\exists y,\, x \cdot y = 1\) | Challenger \(x\), then Prover \(y\) | \(F\) | Challenger picks \(x = 0\); no \(y\) works
+\(\forall x \ne 0\,\exists y,\, x \cdot y = 1\) | Challenger \(x \ne 0\), then Prover \(y\) | \(T\) | Prover picks \(y = 1/x\)
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: B]
+On the domain \(\mathbb{N} = \{1, 2, 3, \dots\}\), consider the two statements:
+\(S_1\): \(\exists m \in \mathbb{N}\,\forall n \in \mathbb{N},\, m \le n\)
+\(S_2\): \(\forall n \in \mathbb{N}\,\exists m \in \mathbb{N},\, m < n\).
+What are the truth values of \(S_1\) and \(S_2\), respectively?
+
+(A) \(S_1\) is \(T\), \(S_2\) is \(T\)
+(B) \(S_1\) is \(T\), \(S_2\) is \(F\)
+(C) \(S_1\) is \(F\), \(S_2\) is \(T\)
+(D) \(S_1\) is \(F\), \(S_2\) is \(F\)
+(E) \(S_1\) and \(S_2\) must have the same truth value because both involve one \(\forall\) and one \(\exists\).
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Consider a three-quantifier statement of the form
+\[
+\forall a \in \mathbb{R}\,\exists b \in \mathbb{R}\,\forall c \in \mathbb{R},\, P(a, b, c).
+\]
+In the Prover–Challenger game for this statement, which variables is the choice of \(b\) allowed to depend on?
+
+(A) Neither \(a\) nor \(c\): \(b\) must be a single constant.
+(B) Both \(a\) and \(c\).
+(C) Only \(c\).
+(D) Only \(a\).
+(E) \(a\) and \(c\) whenever \(c > a\).
+[/QUESTION]
+
+=== SECTION 2: Negating nested quantifiers ===
+
+Negating a nested quantified statement follows one completely mechanical rule: push the negation symbol \(\neg\) inward across one quantifier at a time, flipping every \(\forall\) to \(\exists\) and every \(\exists\) to \(\forall\) while keeping the variable names, their order, and their domains intact. Once \(\neg\) passes all quantifiers and reaches the inner propositional formula, apply De Morgan's laws and the conditional negation rule \(\neg(A \Rightarrow B) \equiv A \wedge \neg B\).
+
+[CALLOUT]
+id: proc-nested-negation
+label: Method
+title: Step-by-step negation of nested quantifiers
+tone: key
+
+To negate a prefix of quantifiers \(Q_1 x_1 \in D_1\, Q_2 x_2 \in D_2 \cdots Q_k x_k \in D_k,\, \Phi(x_1, \dots, x_k)\):
+
+(1) Flip each quantifier in order from left to right (\(\forall \leftrightarrow \exists\)), keeping each variable and domain unchanged.
+(2) Place \(\neg\) directly in front of the inner formula \(\Phi(x_1, \dots, x_k)\).
+(3) Simplify \(\neg \Phi\) using De Morgan's laws, double negation, and \(\neg(A \Rightarrow B) \equiv A \wedge \neg B\), while preserving the pairing convention on any restricted quantifiers inside the prefix.
+[/CALLOUT]
+
+Notice how [REF: proc-nested-negation | this rule] matches the Prover–Challenger game: negating a statement swaps the roles of Prover and Challenger! Every move that used to belong to Challenger (\(\forall\)) now belongs to Prover (\(\exists\)), every move that used to belong to Prover (\(\exists\)) now belongs to Challenger (\(\forall\)), and the winning condition flips from \(\Phi\) to \(\neg \Phi\).
+
+Watch out for restricted quantifiers in the prefix! Suppose a statement begins with \(\forall \varepsilon > 0\) (shorthand for \(\forall \varepsilon \in \mathbb{R},\, \varepsilon > 0 \Rightarrow \dots\)) or \(\exists \delta > 0\) (shorthand for \(\exists \delta \in \mathbb{R},\, \delta > 0 \wedge \dots\)). What happens when \(\neg\) passes across a restricted quantifier?
+- \(\neg\bigl(\forall \varepsilon > 0,\, \Phi(\varepsilon)\bigr) \equiv \neg\bigl(\forall \varepsilon \in \mathbb{R},\, (\varepsilon > 0 \Rightarrow \Phi(\varepsilon))\bigr) \equiv \exists \varepsilon \in \mathbb{R},\, (\varepsilon > 0 \wedge \neg \Phi(\varepsilon)) \equiv \exists \varepsilon > 0,\, \neg \Phi(\varepsilon)\).
+- \(\neg\bigl(\exists \delta > 0,\, \Phi(\delta)\bigr) \equiv \neg\bigl(\exists \delta \in \mathbb{R},\, (\delta > 0 \wedge \Phi(\delta))\bigr) \equiv \forall \delta \in \mathbb{R},\, (\delta > 0 \Rightarrow \neg \Phi(\delta)) \equiv \forall \delta > 0,\, \neg \Phi(\delta)\).
+
+Look how clean that is: the restriction "\(\varepsilon > 0\)" or "\(\delta > 0\)" acts just like a domain—it does NOT flip to "\(\varepsilon \le 0\)" or "\(\delta \le 0\)"! Only the quantifier flips (\(\forall \leftrightarrow \exists\)) and \(\neg\) moves past it to \(\Phi\).
+
+Let us apply [REF: proc-nested-negation | step-by-step negation] to two realistic mathematical statements modeled on real-analysis syntax (here we treat them purely as logical structures without needing any calculus).
+
+Example 1 (Boundedness of a sequence). Let \((a_n)\) be a sequence of real numbers. The statement "\(a_n\) is bounded above" is written
+\[
+\exists M \in \mathbb{R}\,\forall n \in \mathbb{N},\, a_n \le M.
+\]
+Push \(\neg\) inward one step at a time:
+\[
+\begin{aligned}
+\neg\bigl(\exists M \in \mathbb{R}\,\forall n \in \mathbb{N},\, a_n \le M\bigr)
+&\equiv \forall M \in \mathbb{R}\,\neg\bigl(\forall n \in \mathbb{N},\, a_n \le M\bigr) \\
+&\equiv \forall M \in \mathbb{R}\,\exists n \in \mathbb{N},\, \neg(a_n \le M) \\
+&\equiv \forall M \in \mathbb{R}\,\exists n \in \mathbb{N},\, a_n > M.
+\end{aligned}
+\]
+Read that aloud: a sequence fails to be bounded above precisely when, for every real threshold \(M\), there is some index \(n \in \mathbb{N}\) (allowed to depend on \(M\)) where \(a_n\) exceeds \(M\).
+
+Example 2 (An \(\varepsilon\)–\(\delta\) condition). Consider the three-quantifier statement about a function \(f : \mathbb{R} \to \mathbb{R}\) and numbers \(a, L \in \mathbb{R}\):
+\[
+\forall \varepsilon > 0\,\exists \delta > 0\,\forall x \in \mathbb{R},\, \bigl(0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon\bigr).
+\]
+Negate it line by line without rushing:
+\[
+\begin{aligned}
+&\neg\Bigl(\forall \varepsilon > 0\,\exists \delta > 0\,\forall x \in \mathbb{R},\, \bigl(0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon\bigr)\Bigr) \\
+&\equiv \exists \varepsilon > 0\,\forall \delta > 0\,\exists x \in \mathbb{R},\, \neg\bigl(0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon\bigr) \\
+&\equiv \exists \varepsilon > 0\,\forall \delta > 0\,\exists x \in \mathbb{R},\, \bigl(0 < |x - a| < \delta \;\wedge\; |f(x) - L| \ge \varepsilon\bigr).
+\end{aligned}
+\]
+Check all three critical features of that final line:
+1. Every quantifier flipped (\(\forall \to \exists\), \(\exists \to \forall\), \(\forall \to \exists\)), while the restrictions \(\varepsilon > 0\), \(\delta > 0\), and \(x \in \mathbb{R}\) remained unchanged.
+2. The inner conditional \(A \Rightarrow B\) became the conjunction \(A \wedge \neg B\), NOT another conditional.
+3. The strict inequality \(|f(x) - L| < \varepsilon\) negated to \(|f(x) - L| \ge \varepsilon\) (including equality!).
+
+[QUESTION 3]
+[ANSWER: C]
+Let \((x_n)\) be a sequence of real numbers and let \(L \in \mathbb{R}\). Consider the statement:
+\[
+\forall \varepsilon > 0\,\exists N \in \mathbb{N}\,\forall n \in \mathbb{N},\, \bigl(n \ge N \implies |x_n - L| < \varepsilon\bigr).
+\]
+Which of the following is logically equivalent to its negation?
+
+(A) \(\exists \varepsilon \le 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n \ge N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+(B) \(\exists \varepsilon > 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n \ge N \implies |x_n - L| \ge \varepsilon\bigr)\)
+(C) \(\exists \varepsilon > 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n \ge N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+(D) \(\exists \varepsilon > 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n < N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+(E) \(\forall \varepsilon > 0\,\exists N \in \mathbb{N}\,\forall n \in \mathbb{N},\, \bigl(n \ge N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+[/QUESTION]
+
+=== SECTION 3: The uniqueness quantifier \(\exists!\) ===
+
+In algebra we often care not just whether a solution exists, but whether there is EXACTLY ONE solution. Saying \(\exists x \in \mathbb{R},\, x^2 = 9\) is true, even though there are two solutions (\(x = 3\) and \(x = -3\)). By contrast, the linear equation \(2x - 6 = 0\) has one and only one real solution (\(x = 3\)). Mathematics captures "there exists a unique" with the special quantifier \(\exists!\).
+
+[CALLOUT]
+id: def-uniqueness
+label: Definition
+title: The uniqueness quantifier \(\exists!\)
+tone: key
+
+Let \(P(x)\) be a predicate over a domain \(D\). The statement \(\exists! x \in D,\, P(x)\) (read "there exists a unique \(x \in D\) such that \(P(x)\)" or "there is exactly one \(x \in D\) with \(P(x)\)") asserts two things simultaneously:
+
+(1) Existence: \(\exists x \in D,\, P(x)\) (at least one element satisfies \(P\)).
+(2) Uniqueness: \(\forall x \in D\,\forall y \in D,\, \bigl((P(x) \wedge P(y)) \implies x = y\bigr)\) (at most one element satisfies \(P\): any two elements satisfying \(P\) must actually be the same element).
+
+Equivalently, \(\exists! x \in D,\, P(x)\) can be written in a single nested formula:
+\[
+\exists x \in D,\, \Bigl(P(x) \;\wedge\; \forall y \in D,\, \bigl(P(y) \implies y = x\bigr)\Bigr).
+\]
+[/CALLOUT]
+
+Look carefully at [REF: def-uniqueness.2 | the uniqueness clause] on its own:
+\[
+\forall x \in D\,\forall y \in D,\, \bigl((P(x) \wedge P(y)) \implies x = y\bigr).
+\]
+Why does this clause mean "at most one" rather than "exactly one"? Test it when NO element of \(D\) satisfies \(P\)—for example, \(P(x)\) is "\(x^2 = -1\)" over \(D = \mathbb{R}\). Then for every \(x, y \in \mathbb{R}\), the hypothesis \(P(x) \wedge P(y)\) is FALSE, so the implication \((P(x) \wedge P(y)) \implies x = y\) is VACUOUSLY TRUE! Thus uniqueness alone allows \(0\) solutions; you must combine it with [REF: def-uniqueness.1 | existence] to get "exactly \(1\) solution."
+
+And why are the two forms in [REF: def-uniqueness | the definition] equivalent?
+- If existence gives some \(x_0 \in D\) with \(P(x_0)\) and uniqueness holds, then for any \(y \in D\) with \(P(y)\), both \(P(x_0)\) and \(P(y)\) hold, forcing \(y = x_0\).
+- Conversely, if there is an \(x_0 \in D\) with \(P(x_0)\) such that every \(y\) satisfying \(P(y)\) satisfies \(y = x_0\), then existence holds (via \(x_0\)), and for any \(x, y \in D\) with \(P(x) \wedge P(y)\) we get \(x = x_0\) and \(y = x_0\), hence \(x = y\).
+
+What is the negation of \(\exists! x \in D,\, P(x)\)? Since \(\exists!\) is the conjunction "(at least one) AND (at most one)," by De Morgan's law its negation is the disjunction "(none) OR (at least two distinct elements)":
+\[
+\neg\bigl(\exists! x \in D,\, P(x)\bigr) \;\equiv\; \bigl(\forall x \in D,\, \neg P(x)\bigr) \;\vee\; \bigl(\exists x \in D\,\exists y \in D,\, P(x) \wedge P(y) \wedge x \ne y\bigr).
+\]
+Notice how natural that is: there are two completely different ways for "exactly one" to fail—either there are ZERO solutions (as in \(\exists! x \in \mathbb{R},\, x^2 = -1\)), or there are TWO OR MORE distinct solutions (as in \(\exists! x \in \mathbb{R},\, x^2 = 9\)).
+
+Finally, watch how \(\exists!\) interacts with other quantifiers:
+- \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, x + y = 0\) is TRUE: for each real \(x\), there is a unique \(y\) (namely \(y = -x\)) solving \(x + y = 0\).
+- \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, x \cdot y = 0\) is FALSE: when Challenger picks \(x = 0\), EVERY real number \(y\) satisfies \(0 \cdot y = 0\), so uniqueness fails!
+
+[QUESTION 4]
+[ANSWER: E]
+Which of the following statements using the uniqueness quantifier \(\exists!\) is TRUE?
+
+(A) \(\exists! x \in \mathbb{R},\, x^2 = 4\)
+(B) \(\exists! x \in \mathbb{Q},\, x^2 = 2\)
+(C) \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, x^2 = y^2\)
+(D) \(\forall x \in \mathbb{Z}\,\exists! y \in \mathbb{Z},\, x \cdot y = 1\)
+(E) \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, y^3 = x\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Let \(D = \mathbb{R}\) and consider the statement:
+\[
+S: \forall x \in \mathbb{R}\,\forall y \in \mathbb{R},\, \bigl(x < y \implies \exists z \in \mathbb{Q},\, (x < z \wedge z < y)\bigr).
+\]
+Which of the following is logically equivalent to \(\neg S\)?
+
+(A) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x < y \wedge \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+(B) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x \ge y \wedge \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+(C) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x < y \wedge \forall z \in \mathbb{Q},\, (z \le x \wedge z \ge y)\bigr)\)
+(D) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x < y \implies \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+(E) \(\forall x \in \mathbb{R}\,\forall y \in \mathbb{R},\, \bigl(x < y \wedge \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Let \(P(x, y)\) be the predicate "\(x + y\) is an even integer" on the domain \(D = \mathbb{Z}\). Evaluate the four statements:
+(i) \(\forall x \in \mathbb{Z}\,\forall y \in \mathbb{Z},\, P(x, y)\)
+(ii) \(\forall x \in \mathbb{Z}\,\exists y \in \mathbb{Z},\, P(x, y)\)
+(iii) \(\exists x \in \mathbb{Z}\,\forall y \in \mathbb{Z},\, P(x, y)\)
+(iv) \(\exists x \in \mathbb{Z}\,\exists y \in \mathbb{Z},\, P(x, y)\).
+Which of these four statements are TRUE?
+
+(A) (ii) only
+(B) (iv) only
+(C) (ii), (iii), and (iv)
+(D) (ii) and (iv) only
+(E) All four are true.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Suppose a predicate \(P(x)\) over a domain \(D\) makes the uniqueness clause
+\[
+U: \forall x \in D\,\forall y \in D,\, \bigl((P(x) \wedge P(y)) \implies x = y\bigr)
+\]
+TRUE, while \(\exists! x \in D,\, P(x)\) is FALSE. What can you conclude with certainty about the number of elements \(x \in D\) that satisfy \(P(x)\)?
+
+(A) There are at least \(2\) elements satisfying \(P(x)\).
+(B) There are \(0\) elements satisfying \(P(x)\).
+(C) There is exactly \(1\) element satisfying \(P(x)\).
+(D) Either \(0\) or at least \(2\) elements satisfy \(P(x)\), and both are possible.
+(E) This combination is logically impossible.
+[/BONUS]

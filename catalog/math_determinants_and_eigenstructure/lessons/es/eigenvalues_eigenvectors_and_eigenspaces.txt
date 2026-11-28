@@ -1,0 +1,256 @@
+=== SECTION 1: Direcciones invariantes, valores propios y vectores propios ===
+
+Cuando un operador lineal \(T : V \to V\) actúa sobre un vector \(\mathbf{v} \in V\), por lo general cambia tanto la dirección como la magnitud del vector. Observar cómo se mueve \(T(\mathbf{v})\) en una base general puede parecer enredado y opaco: cada coordenada se mezcla con todas las demás. Sin embargo, para muchos operadores, ciertas direcciones especiales no nulas se comportan con suma sencillez: aplicar \(T\) deja esas rectas completamente invariantes, limitándose a estirar, encoger, invertir o aplastar los vectores a lo largo de la misma recta. Esas direcciones invariantes son los vectores propios de \(T\).
+
+A lo largo de esta lección, \(V\) es un espacio vectorial de dimensión finita sobre \(F = \mathbb{R}\) o \(F = \mathbb{C}\), y \(T : V \to V\) es un operador lineal (o concretamente, \(T(\mathbf{x}) = A\mathbf{x}\) para una matriz cuadrada \(A \in M_n(F)\)).
+
+[CALLOUT]
+id: eigen-def
+label: Definición
+title: Valor propio y vector propio
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre \(F\).
+
+(1) Un escalar \(\lambda \in F\) es un valor propio de \(T\) si existe un vector NO NULO \(\mathbf{v} \in V \setminus \{\mathbf{0}\}\) tal que
+\[
+T(\mathbf{v}) = \lambda \mathbf{v}.
+\]
+(2) Todo vector no nulo \(\mathbf{v} \neq \mathbf{0}\) que satisface \(T(\mathbf{v}) = \lambda \mathbf{v}\) se llama vector propio de \(T\) correspondiente al valor propio \(\lambda\).
+[/CALLOUT]
+
+Deténgase en la asimetría entre \(\mathbf{v} = \mathbf{0}\) y \(\lambda = 0\): es una de las distinciones más importantes del álgebra lineal.
+
+[CALLOUT]
+id: zero-distinction
+label: Error frecuente
+title: Vector cero frente a valor propio cero
+tone: caution
+
+(1) ¡El vector cero \(\mathbf{v} = \mathbf{0}\) NUNCA es un vector propio! Como \(T(\mathbf{0}) = \mathbf{0} = \lambda \mathbf{0}\) se cumple para TODO escalar \(\lambda \in F\) y TODO operador \(T\), permitir \(\mathbf{v} = \mathbf{0}\) convertiría a todo escalar en valor propio de todo operador y vaciaría de contenido el concepto.
+(2) El escalar \(\lambda = 0\) SÍ es un valor propio perfectamente válido: \(\lambda = 0\) es valor propio de \(T\) si y solo si existe \(\mathbf{v} \neq \mathbf{0}\) con \(T(\mathbf{v}) = 0 \cdot \mathbf{v} = \mathbf{0}\), es decir, si y solo si \(\ker(T) \neq \{\mathbf{0}\}\) (equivalentemente, \(T\) es singular / no invertible).
+[/CALLOUT]
+
+Note también que si \(\mathbf{v}\) es un vector propio para \(\lambda\), entonces todo múltiplo escalar no nulo \(c\mathbf{v}\) (\(c \neq 0\)) también es un vector propio para el MISMO \(\lambda\), porque \(T(c\mathbf{v}) = c T(\mathbf{v}) = c(\lambda \mathbf{v}) = \lambda(c\mathbf{v})\). Aún mejor, la suma de dos vectores propios para el mismo \(\lambda\) satisface \(T(\mathbf{v}_1 + \mathbf{v}_2) = \lambda \mathbf{v}_1 + \lambda \mathbf{v}_2 = \lambda(\mathbf{v}_1 + \mathbf{v}_2)\). Reescribir \(T(\mathbf{v}) = \lambda \mathbf{v}\) como \((T - \lambda I)(\mathbf{v}) = \mathbf{0}\) (donde \(I\) es el operador identidad en \(V\)) reúne a todos los vectores propios para \(\lambda\), junto con \(\mathbf{0}\), en un solo subespacio.
+
+[CALLOUT]
+id: eigenspace-def
+label: Definición
+title: Espacio propio
+tone: key
+
+Para un valor propio \(\lambda \in F\) de \(T : V \to V\), el espacio propio asociado con \(\lambda\) es
+\[
+E_\lambda = \ker(T - \lambda I) = \{\mathbf{v} \in V : T(\mathbf{v}) = \lambda \mathbf{v}\}.
+\]
+Como \(E_\lambda\) es el núcleo del operador lineal \(T - \lambda I\), es un subespacio de \(V\); como \(\lambda\) es un valor propio, \(E_\lambda\) contiene al menos un vector no nulo, por lo que \(\dim(E_\lambda) \ge 1\). Además, \(E_\lambda\) es \(T\)-invariante: para todo \(\mathbf{v} \in E_\lambda\), \(T(\mathbf{v}) = \lambda \mathbf{v} \in E_\lambda\).
+[/CALLOUT]
+
+Para una matriz \(A \in M_n(F)\) y un escalar candidato dado \(\lambda \in F\), comprobar si \(\lambda\) es un valor propio —y hallar una base de \(E_\lambda\)— no requiere más que resolver el sistema lineal homogéneo \((A - \lambda I)\mathbf{x} = \mathbf{0}\) mediante reducción por filas. Si el sistema solo tiene la solución trivial \(\mathbf{x} = \mathbf{0}\), entonces \(\lambda\) NO es un valor propio; si hay variables libres, entonces \(\lambda\) SÍ es un valor propio y las soluciones básicas del espacio nulo forman una base de \(E_\lambda\).
+
+Verifiquemos esto en \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\). Pruebe \(\lambda = 3\):
+\[
+A - 3I = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix} \sim \begin{bmatrix} 1 & -1 \\ 0 & 0 \end{bmatrix},
+\]
+así que \(x_1 = x_2\) y \(E_3 = \operatorname{span}\{(1, 1)^T\}\). Pruebe \(\lambda = 1\):
+\[
+A - I = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix} \sim \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix},
+\]
+así que \(x_1 = -x_2\) y \(E_1 = \operatorname{span}\{(-1, 1)^T\}\). En la gráfica siguiente, observe cómo \(A\) deforma el círculo unitario en una elipse: el vector unitario a lo largo de \(E_3\) se estira por un factor de \(3\) sobre su PROPIA recta, el vector unitario a lo largo de \(E_1\) permanece completamente fijo sobre su PROPIA recta, mientras que un no vector propio como \(\mathbf{e}_1 = (1, 0)^T\) se envía a \((2, 1)^T\), ¡rotando fuera del eje horizontal!
+
+[GRAPH]
+type: parametric2d
+title: Acción de \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\) sobre el círculo unitario, rectas propias \(E_3\) y \(E_1\), y no vector propio \(\mathbf{e}_1\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 6.2832
+xrange: -3.2, 3.2
+yrange: -3.2, 3.2
+trace: cos(t), sin(t) | label: círculo unitario
+trace: 2*cos(t) + sin(t), cos(t) + 2*sin(t) | label: elipse imagen \(A(S^1)\)
+segment: 0, 0, 2.1213, 2.1213 | label: \(E_3\)
+segment: 0, 0, -0.7071, 0.7071 | label: \(E_1\)
+segment: 0, 0, 1, 0 | dashed: true
+segment: 0, 0, 2, 1 | label: \(A\mathbf{e}_1\) | dashed: true
+point: 0.7071, 0.7071 | label: \(\mathbf{v}_1\)
+point: 2.1213, 2.1213 | label: \(3\mathbf{v}_1\)
+point: -0.7071, 0.7071 | label: \(\mathbf{v}_2 = A\mathbf{v}_2\)
+point: 2, 1 | label: \((2, 1)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Considere la matriz
+\[
+A = \begin{bmatrix} 4 & -2 & 2 \\ 2 & 0 & 2 \\ -1 & 1 & 1 \end{bmatrix}.
+\]
+¿Cuál de las siguientes opciones proporciona un vector propio válido \(\mathbf{v}\) de \(A\) junto con su valor propio correspondiente \(\lambda\)?
+
+(A) \(\mathbf{v} = (0, 0, 0)^T\), \(\lambda = 2\)
+(B) \(\mathbf{v} = (1, 1, 0)^T\), \(\lambda = 2\)
+(C) \(\mathbf{v} = (1, 1, 0)^T\), \(\lambda = 3\)
+(D) \(\mathbf{v} = (1, 1, 1)^T\), \(\lambda = 4\)
+(E) \(\mathbf{v} = (0, 1, 1)^T\), \(\lambda = 2\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Sea
+\[
+A = \begin{bmatrix} 3 & -1 & 1 \\ 0 & 2 & 0 \\ 1 & -1 & 3 \end{bmatrix},
+\]
+y suponga que se le indica que \(\lambda = 2\) es un valor propio de \(A\). ¿Qué conjunto es una base para el espacio propio \(E_2\)?
+
+(A) \(\{(1, 1, 0)^T\}\)
+(B) \(\{(1, 0, -1)^T\}\)
+(C) \(\{(1, 0, 1)^T,\; (0, 1, 0)^T\}\)
+(D) \(\{(1, 1, 0)^T,\; (-1, 0, 1)^T\}\)
+(E) \(\{(1, 1, 0)^T,\; (-1, 0, 1)^T,\; (0, 1, 1)^T\}\)
+[/QUESTION]
+
+=== SECTION 2: Estructura propia geométrica antes de los determinantes ===
+
+Antes de siquiera tocar determinantes para calcular valores propios desconocidos algebraicamente, podemos leer TODA la estructura propia de operadores geométricos estándar directamente de su geometría. Hacerlo construye una intuición que las fórmulas algebraicas por sí solas rara vez aportan.
+
+1. Proyecciones: Sea \(P : \mathbb{R}^n \to \mathbb{R}^n\) la proyección ortogonal sobre un subespacio propio no nulo \(W \subset \mathbb{R}^n\). Todo vector no nulo \(\mathbf{w} \in W\) satisface \(P(\mathbf{w}) = \mathbf{w}\), de modo que \(\lambda = 1\) es un valor propio con \(E_1 = W\). Todo vector no nulo \(\mathbf{u} \in W^\perp\) (perpendicular a \(W\)) satisface \(P(\mathbf{u}) = \mathbf{0}\), de modo que \(\lambda = 0\) es un valor propio con \(E_0 = W^\perp\). ¿Puede \(P\) tener algún otro valor propio \(\lambda\)? Como \(P^2 = P\), cualquier vector propio \(P(\mathbf{v}) = \lambda \mathbf{v}\) satisface \(\lambda^2 \mathbf{v} = P^2(\mathbf{v}) = P(\mathbf{v}) = \lambda \mathbf{v}\), así que \((\lambda^2 - \lambda)\mathbf{v} = \mathbf{0}\). Como \(\mathbf{v} \neq \mathbf{0}\), \(\lambda \in \{0, 1\}\).
+2. Reflexiones: Sea \(R : \mathbb{R}^n \to \mathbb{R}^n\) la reflexión respecto a un hiperplano \(H\). Todo vector no nulo en \(H\) queda fijo (\(R(\mathbf{v}) = \mathbf{v}\), dando \(E_1 = H\)), mientras que todo vector no nulo perpendicular a \(H\) se invierte de signo (\(R(\mathbf{v}) = -\mathbf{v}\), dando \(E_{-1} = H^\perp\)). Como \(R^2 = I\), todo valor propio satisface \(\lambda^2 = 1\), por lo que \(\lambda \in \{1, -1\}\).
+3. Escalamientos: \(T(\mathbf{v}) = c\mathbf{v}\) tiene a todo vector no nulo de \(V\) como vector propio con \(\lambda = c\), de modo que \(E_c = V\) y no hay otros valores propios.
+4. Cizallamiento horizontal en \(\mathbb{R}^2\): Considere \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\), que envía \((x, y)^T \mapsto (x + y, y)^T\). Si \(S(x, y)^T = \lambda(x, y)^T\), entonces \(x + y = \lambda x\) e \(y = \lambda y\). De la segunda ecuación, o bien \(y = 0\) o bien \(\lambda = 1\):
+   - Si \(\lambda = 1\), la primera ecuación pasa a \(x + y = x \implies y = 0\).
+   - Si \(y = 0\) (y \(x \neq 0\) para que el vector sea no nulo), la primera ecuación pasa a \(x = \lambda x \implies \lambda = 1\).
+   ¡En CUALQUIERA de los dos casos, \(\lambda = 1\) e \(y = 0\)! Así, \(S\) tiene UN SOLO valor propio \(\lambda = 1\) y UNA SOLA recta invariante \(E_1 = \operatorname{span}\{(1, 0)^T\}\), ¡a pesar de que \(\mathbb{R}^2\) es \(2\)-dimensional! Todo vector fuera del eje \(x\) se inclina horizontalmente y no permanece sobre su recta.
+5. Rotación antihoraria de \(90^\circ\) en \(\mathbb{R}^2\): Considere \(R_{\pi/2} = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}\). Sobre \(\mathbb{R}\), todo vector no nulo en \(\mathbb{R}^2\) rota \(90^\circ\), de modo que NINGÚN vector real no nulo puede ser un múltiplo escalar real de sí mismo: ¡\(R_{\pi/2}\) no tiene NINGÚN valor propio real! Sin embargo, observe exactamente la MISMA matriz como operador sobre \(\mathbb{C}^2\): pruebe \(\mathbf{v}_1 = (1, -i)^T\) y \(\mathbf{v}_2 = (1, i)^T\):
+\[
+\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ -i \end{bmatrix} = \begin{bmatrix} i \\ 1 \end{bmatrix} = i \begin{bmatrix} 1 \\ -i \end{bmatrix}, \qquad \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ i \end{bmatrix} = \begin{bmatrix} -i \\ 1 \end{bmatrix} = -i \begin{bmatrix} 1 \\ i \end{bmatrix}.
+\]
+Sobre \(\mathbb{C}\), ¡\(R_{\pi/2}\) adquiere DOS valores propios \(\lambda = i\) y \(\lambda = -i\)! Esto ilustra una lección crucial: la existencia de valores propios depende del cuerpo de escalares \(F\).
+
+[GRAPH]
+type: parametric2d
+title: Cizallamiento horizontal \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\): solo el eje horizontal \(E_1\) permanece invariante
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -2.2, 2.8
+yrange: -1.6, 1.8
+trace: -2 + 4.5*t, 0 | label: recta invariante \(E_1\)
+trace: 0, t | label: \(\mathbf{e}_2 = (0, 1)\)
+trace: t, t | label: \(S\mathbf{e}_2 = (1, 1)\)
+segment: -1, 1, 0, 1 | dashed: true
+segment: 0, 0, -1, 1 | dashed: true
+point: 1, 0 | label: \(\mathbf{e}_1 = S\mathbf{e}_1\)
+point: 0, 1 | label: \(\mathbf{e}_2\)
+point: 1, 1 | label: \(S\mathbf{e}_2\)
+[/GRAPH]
+
+[TABLE]
+Operador en \(\mathbb{R}^2\) o \(\mathbb{R}^n\) | Valores propios reales | Espacios propios | Conclusión geométrica
+Proyección sobre el subespacio \(W\) | \(1, 0\) | \(E_1 = W\), \(E_0 = W^\perp\) | Divide el espacio en vectores fijos y vectores anulados
+Reflexión respecto al hiperplano \(H\) | \(1, -1\) | \(E_1 = H\), \(E_{-1} = H^\perp\) | Espejo fijo, normal invertida
+Cizallamiento horizontal \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) | Solo \(1\) | \(E_1 = \operatorname{span}\{(1, 0)^T\}\) | Escasez de rectas propias (\(\dim E_1 = 1 < 2\))
+Rotación \(R_{\pi/2}\) en \(\mathbb{R}^2\) | Ninguno sobre \(\mathbb{R}\) (\(\pm i\) sobre \(\mathbb{C}\)) | Ninguno sobre \(\mathbb{R}\) | No tienen por qué existir rectas invariantes reales
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Sea \(T : \mathbb{R}^3 \to \mathbb{R}^3\) la proyección ortogonal sobre el plano \(W = \{(x, y, z)^T \in \mathbb{R}^3 : x + y + z = 0\}\). ¿Cuáles son todos los valores propios de \(T\) y las dimensiones de sus espacios propios correspondientes?
+
+(A) \(\lambda = 1\) con \(\dim(E_1) = 2\), y \(\lambda = 0\) con \(\dim(E_0) = 1\)
+(B) \(\lambda = 1\) con \(\dim(E_1) = 1\), y \(\lambda = 0\) con \(\dim(E_0) = 2\)
+(C) \(\lambda = 1\) con \(\dim(E_1) = 2\), y \(\lambda = -1\) con \(\dim(E_{-1}) = 1\)
+(D) Solo \(\lambda = 1\), con \(\dim(E_1) = 2\)
+(E) \(\lambda = 0\) con \(\dim(E_0) = 1\), \(\lambda = 1\) con \(\dim(E_1) = 1\), y \(\lambda = -1\) con \(\dim(E_{-1}) = 1\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+¿Para qué ángulos \(\theta \in [0, 2\pi)\) posee al menos un valor propio REAL el operador de rotación antihoraria \(R_\theta : \mathbb{R}^2 \to \mathbb{R}^2\), representado por \(\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}\)?
+
+(A) Solo \(\theta = 0\)
+(B) \(\theta = 0, \pi/2, \pi, 3\pi/2\)
+(C) Solo \(\theta = 0\) y \(\theta = \pi\)
+(D) Todo \(\theta \in [0, 2\pi)\)
+(E) Ningún \(\theta \in [0, 2\pi)\)
+[/QUESTION]
+
+=== SECTION 3: Independencia lineal de vectores propios y sumas directas ===
+
+Suponga que un operador \(T : V \to V\) tiene varios valores propios distintos \(\lambda_1, \dots, \lambda_k\). ¿Podría un vector propio de \(\lambda_3\) ser accidentalmente una combinación lineal de vectores propios de \(\lambda_1\) y \(\lambda_2\)? El siguiente teorema fundamental demuestra que esto es imposible: valores propios distintos obligan a sus vectores propios —y de hecho a sus espacios propios completos— a mantenerse linealmente independientes.
+
+[CALLOUT]
+id: eigen-independence
+label: Teorema
+title: Independencia de vectores propios para valores propios distintos
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre \(F\), y sean \(\lambda_1, \dots, \lambda_k \in F\) valores propios DISTINTOS DOS A DOS de \(T\).
+
+(1) Si \(\mathbf{v}_1, \dots, \mathbf{v}_k\) son vectores propios con \(T(\mathbf{v}_i) = \lambda_i \mathbf{v}_i\) para cada \(i = 1, \dots, k\), entonces \(\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) es linealmente independiente.
+(2) Más generalmente, la suma de espacios propios \(E_{\lambda_1} + E_{\lambda_2} + \dots + E_{\lambda_k}\) es una suma directa \(E_{\lambda_1} \oplus E_{\lambda_2} \oplus \dots \oplus E_{\lambda_k}\). En consecuencia,
+\[
+\dim(E_{\lambda_1}) + \dim(E_{\lambda_2}) + \dots + \dim(E_{\lambda_k}) \le \dim(V),
+\]
+y un operador sobre un espacio \(n\)-dimensional \(V\) tiene a lo sumo \(n\) valores propios distintos.
+[/CALLOUT]
+
+Demostremos [REF: eigen-independence.1 | la parte (1)] por inducción sobre \(k\), usando un limpio truco de eliminación que reaparece a lo largo de toda la teoría de operadores.
+- Caso base \(k = 1\): un solo vector propio \(\mathbf{v}_1\) es no nulo por [REF: eigen-def.2 | definición], por lo que \(\{\mathbf{v}_1\}\) es linealmente independiente.
+- Paso inductivo: suponga que cualesquiera \(k - 1\) vectores propios pertenecientes a valores propios distintos dos a dos son linealmente independientes, y suponga que
+\[
+c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_{k-1} \mathbf{v}_{k-1} + c_k \mathbf{v}_k = \mathbf{0}
+\]
+para escalares \(c_1, \dots, c_k \in F\). Queremos eliminar el último término \(c_k \mathbf{v}_k\) sin perder el rastro de los demás términos. ¡Aplique el operador \(T - \lambda_k I\) a ambos lados! Como \((T - \lambda_k I)(\mathbf{v}_i) = T(\mathbf{v}_i) - \lambda_k \mathbf{v}_i = (\lambda_i - \lambda_k)\mathbf{v}_i\) para todo \(i\), el último término se convierte en \((\lambda_k - \lambda_k)\mathbf{v}_k = \mathbf{0}\) y desaparece por completo, dejando
+\[
+c_1(\lambda_1 - \lambda_k)\mathbf{v}_1 + c_2(\lambda_2 - \lambda_k)\mathbf{v}_2 + \dots + c_{k-1}(\lambda_{k-1} - \lambda_k)\mathbf{v}_{k-1} = \mathbf{0}.
+\]
+Por la hipótesis de inducción, \(\{\mathbf{v}_1, \dots, \mathbf{v}_{k-1}\}\) es linealmente independiente, de modo que cada coeficiente se anula: \(c_i(\lambda_i - \lambda_k) = 0\) para \(i = 1, \dots, k - 1\). Como los valores propios son distintos dos a dos, \(\lambda_i - \lambda_k \neq 0\) para todo \(i < k\), lo cual obliga a que \(c_1 = c_2 = \dots = c_{k-1} = 0\). Sustituir esos ceros de vuelta en la relación original deja \(c_k \mathbf{v}_k = \mathbf{0}\), y como \(\mathbf{v}_k \neq \mathbf{0}\), concluimos \(c_k = 0\). ¡Así, \(\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) es linealmente independiente!
+
+Deduzca ahora [REF: eigen-independence.2 | la propiedad de suma directa] directamente a partir de la parte (1). Recuerde que una suma \(E_{\lambda_1} + \dots + E_{\lambda_k}\) es suma directa si y solo si siempre que \(\mathbf{w}_1 + \dots + \mathbf{w}_k = \mathbf{0}\) con cada \(\mathbf{w}_i \in E_{\lambda_i}\), todo \(\mathbf{w}_i = \mathbf{0}\). Suponga por el contrario que \(\mathbf{w}_1 + \dots + \mathbf{w}_k = \mathbf{0}\) con al menos un \(\mathbf{w}_i \neq \mathbf{0}\). Quédese SOLO con los vectores no nulos de esa suma: cada \(\mathbf{w}_i\) no nulo es un vector propio para \(\lambda_i\), y sus valores propios son distintos dos a dos, de modo que la parte (1) dice que esos vectores no nulos son linealmente independientes, ¡haciendo imposible que su suma sea igual a \(\mathbf{0}\)! Por tanto todo \(\mathbf{w}_i = \mathbf{0}\), lo que demuestra que la suma es directa.
+
+Como la dimensión de una suma directa es la suma de las dimensiones de sus sumandos, y \(E_{\lambda_1} \oplus \dots \oplus E_{\lambda_k} \subseteq V\), obtenemos de inmediato \(\sum_{i=1}^k \dim(E_{\lambda_i}) \le \dim(V)\). Puesto que cada \(\dim(E_{\lambda_i}) \ge 1\), tenemos \(k \le \sum_{i=1}^k \dim(E_{\lambda_i}) \le n\): un operador en un espacio \(n\)-dimensional no puede tener más de \(n\) valores propios distintos. Además, concatenar bases de los distintos espacios propios \(E_{\lambda_1}, \dots, E_{\lambda_k}\) produce automáticamente un conjunto linealmente independiente de vectores propios.
+
+¿Cómo hallamos sistemáticamente TODOS los valores propios desconocidos de una matriz general \(A\) sin adivinar? Ese es exactamente el problema que resolveremos en la siguiente lección uniendo \(E_\lambda = \ker(A - \lambda I)\) con el criterio de invertibilidad del determinante.
+
+[QUESTION 5]
+[ANSWER: E]
+Suponga que \(T : V \to V\) es un operador lineal sobre un espacio vectorial \(5\)-dimensional \(V\), y que \(T\) tiene valores propios distintos \(\lambda_1 = -1\), \(\lambda_2 = 2\) y \(\lambda_3 = 4\), con \(\dim(E_{-1}) = 2\) y \(\dim(E_2) = 2\). ¿Qué enunciado DEBE ser verdadero?
+
+(A) \(\dim(E_4)\) puede ser \(1\) o \(2\), y \(T\) no puede tener un cuarto valor propio distinto
+(B) \(\dim(E_4) = 1\), y \(T\) aún puede tener un cuarto valor propio distinto \(\lambda_4 = 7\)
+(C) \(\dim(E_4)\) podría ser \(0\) si \(E_{-1} + E_2\) ya tiene dimensión \(4\)
+(D) \(E_{-1} \cap E_2\) debe ser \(1\)-dimensional
+(E) \(\dim(E_4) = 1\), y \(T\) no puede tener ningún cuarto valor propio distinto
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suponga que \(A \in M_n(\mathbb{R})\) satisface la ecuación matricial \(A^2 - 3A + 2I_n = 0\). ¿Qué conjunto contiene TODOS los valores propios posibles de \(A\)?
+
+(A) \(\{-1, -2\}\)
+(B) \(\{1, 2\}\)
+(C) \(\{0, 1, 2\}\)
+(D) \(\{1, 2, 3\}\)
+(E) \(\{-2, 1\}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Sean \(\mathbf{v}_1\) y \(\mathbf{v}_2\) vectores propios de un operador lineal \(T : V \to V\) correspondientes a dos valores propios DISTINTOS \(\lambda_1 \neq \lambda_2\). ¿Cuándo es la suma \(\mathbf{v}_1 + \mathbf{v}_2\) también un vector propio de \(T\)?
+
+(A) Nunca, para ninguna elección de \(\lambda_1 \neq \lambda_2\)
+(B) Siempre que \(\lambda_1 + \lambda_2 \neq 0\)
+(C) Siempre que \(\lambda_1 = -\lambda_2\)
+(D) Siempre, con valor propio \(\lambda_1 + \lambda_2\)
+(E) Solo cuando uno de \(\lambda_1\) o \(\lambda_2\) es igual a \(0\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Sea \(\mathcal{P}_3(\mathbb{R})\) el espacio vectorial \(4\)-dimensional de polinomios reales de grado a lo sumo \(3\), y sea \(D : \mathcal{P}_3(\mathbb{R}) \to \mathcal{P}_3(\mathbb{R})\) el operador de derivación \(D(p) = p'\). ¿Cuáles son todos los valores propios de \(D\) y la dimensión de cada espacio propio?
+
+(A) \(\lambda = 0, 1, 2, 3\), cada uno con un espacio propio \(1\)-dimensional
+(B) Ningún valor propio real en absoluto
+(C) Solo \(\lambda = 0\), con \(\dim(E_0) = 3\)
+(D) Solo \(\lambda = 0\), con \(\dim(E_0) = 1\)
+(E) \(\lambda = 0\) y \(\lambda = 1\), cada uno con un espacio propio \(1\)-dimensional
+[/BONUS]

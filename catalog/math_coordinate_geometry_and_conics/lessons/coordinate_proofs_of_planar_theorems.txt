@@ -1,0 +1,246 @@
+=== SECTION 1: Strategic placement without losing generality ===
+
+Suppose you want to prove a general theorem of Euclidean geometry—for example, that the diagonals of every parallelogram bisect each other, or that the medians of every triangle meet at a single point. Checking one concrete triangle such as \((0, 0), (6, 0), (2, 4)\) verifies only that single example; it never proves the claim for all triangles. On the other hand, assigning six completely arbitrary letters \((x_1, y_1), (x_2, y_2), (x_3, y_3)\) to a triangle is always valid, yet it often creates heavier algebra than necessary.
+
+Coordinate proof bridges that gap by placing a general figure on the coordinate axes strategically. Because sliding or rotating a rigid figure in the plane changes none of its lengths, midpoints, or angles, we may always place one vertex at the origin \((0, 0)\) and one side along the positive \(x\)-axis. Every remaining independent degree of freedom must stay an unrestricted symbolic variable, constrained only by the hypotheses of the theorem. Moreover, whenever a proof will take midpoints, scaling symbolic coordinates by \(2\)—for example writing \((2a, 0)\) and \((2b, 2c)\)—causes no loss of generality (every real number can be written as twice another real number) while eliminating fractions from every midpoint formula.
+
+[CALLOUT]
+id: lossless-placement
+label: Strategy
+title: Rules for lossless coordinate placement
+tone: key
+
+(1) Anchor conveniently: place one vertex (or center) at \((0, 0)\) and one side (or axis of symmetry) along the \(x\)-axis.
+(2) Preserve generality: use distinct symbolic variables for all remaining free coordinates, imposing only the exact relations required by the figure's definition.
+(3) Simplify fractions cleanly: multiply free variables by \(2\) (such as \(2a, 2b, 2c\)) when midpoints appear in the proof.
+[/CALLOUT]
+
+[CALLOUT]
+id: accidental-specialization
+label: Common pitfall
+title: Accidentally specializing the figure
+tone: caution
+
+Never substitute specific numbers (like \((4, 0)\)) for a general length, and never tie two independent coordinates together unless the hypothesis demands it. For example, placing a general triangle at \((0, 0), (a, 0), (0, c)\) secretly forces a right triangle; placing it at \((0, 0), (2a, 0), (a, c)\) secretly forces an isosceles triangle; and placing a general parallelogram at \((0, 0), (a, 0), (a, c), (0, c)\) secretly forces a rectangle.
+[/CALLOUT]
+
+Drag the horizontal-shift slider \(b\) in the parallelogram below to see why \(b\) must remain a free parameter: only the single slice \(b = 0\) is a rectangle, while nonzero values of \(b\) capture genuinely tilted parallelograms.
+
+[GRAPH]
+type: parametric2d
+title: General parallelogram \(O(0,0), A(a,0), B(a+b,c), C(b,c)\) with \(a = 4, c = 2.5\) and free shear \(b\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -3, 8
+yrange: -0.6, 3.4
+trace: 4*t, 0 | label: parallelogram \(OABC\)
+trace: 4 + b*t, 2.5*t
+trace: b + 4*t, 2.5
+trace: b*t, 2.5*t
+segment: 0, 0, 4 + b, 2.5 | dashed: true
+segment: 4, 0, b, 2.5 | dashed: true
+point: 0, 0 | label: \(O(0, 0)\)
+point: 4, 0 | label: \(A(a, 0)\)
+point: 4 + b, 2.5 | label: \(B(a+b, c)\)
+point: b, 2.5 | label: \(C(b, c)\)
+slider: b | range: -2.5, 3 | init: 1.5 | step: 0.25
+[/GRAPH]
+
+The table below collects lossless placements for the figures most frequently used in planar coordinate proofs.
+
+[TABLE]
+Figure | Lossless coordinate placement | Conditions on parameters
+General triangle | \((0, 0),\; (2a, 0),\; (2b, 2c)\) | \(a > 0,\; c \neq 0,\; b \in \mathbb{R}\)
+Right triangle | \((0, 0),\; (2a, 0),\; (0, 2b)\) | \(a > 0,\; b > 0\)
+Isosceles triangle | \((-a, 0),\; (a, 0),\; (0, c)\) | \(a > 0,\; c > 0\)
+Parallelogram | \((0, 0),\; (a, 0),\; (a + b, c),\; (b, c)\) | \(a > 0,\; c \neq 0,\; b \in \mathbb{R}\)
+Rectangle | \((0, 0),\; (a, 0),\; (a, c),\; (0, c)\) | \(a > 0,\; c > 0\)
+Rhombus | \((0, 0),\; (a, 0),\; (a + b, c),\; (b, c)\) | \(a > 0,\; c \neq 0,\; b^2 + c^2 = a^2\)
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+Which coordinate assignment represents an arbitrary parallelogram \(OABC\) without losing generality and without secretly adding extra properties?
+
+(A) \(O(0, 0),\; A(a, 0),\; B(a, c),\; C(0, c)\) with \(a > 0,\; c > 0\)
+(B) \(O(0, 0),\; A(6, 0),\; B(8, 4),\; C(2, 4)\)
+(C) \(O(0, 0),\; A(a, 0),\; B(a + b, c),\; C(b, c)\) with \(a > 0,\; c > 0,\; b \in \mathbb{R}\)
+(D) \(O(0, 0),\; A(a, 0),\; B(a + b, c),\; C(b, d)\) with \(a, c, d > 0,\; b \in \mathbb{R}\)
+(E) \(O(0, 0),\; A(a, 0),\; B(2a, a),\; C(a, a)\) with \(a > 0\)
+[/QUESTION]
+
+=== SECTION 2: Midsegment, parallelogram, and rhombus proofs ===
+
+With [REF: lossless-placement | lossless coordinate placements] in hand, we can prove three cornerstone theorems of planar geometry using exact algebraic identities.
+
+First, consider the triangle midsegment theorem: the segment joining the midpoints of two sides of any triangle is parallel to the third side and has half its length. Place an arbitrary triangle at \(O(0, 0)\), \(A(2a, 0)\), and \(B(2b, 2c)\) with \(a > 0\) and \(c \neq 0\). Compute the midpoints \(M\) of \(OB\) and \(N\) of \(AB\):
+\[
+M = \left(\frac{0 + 2b}{2}, \frac{0 + 2c}{2}\right) = (b, c), \qquad N = \left(\frac{2a + 2b}{2}, \frac{0 + 2c}{2}\right) = (a + b, c).
+\]
+Notice how scaling by \(2\) kept both midpoints completely fraction-free. Now verify both claims:
+- Parallelism: the slope of \(MN\) is \(\frac{c - c}{(a + b) - b} = \frac{0}{a} = 0\) (valid since \(a > 0\)), and the slope of \(OA\) is \(\frac{0 - 0}{2a - 0} = 0\). Because both segments are horizontal, \(MN \parallel OA\).
+- Half-length: by the distance formula,
+\[
+MN = \sqrt{\bigl((a + b) - b\bigr)^2 + (c - c)^2} = \sqrt{a^2} = a,
+\]
+whereas \(OA = 2a\) (using \(a > 0\)). Hence \(MN = \frac{1}{2} OA\), completing the proof.
+
+Second, prove that the diagonals of any parallelogram bisect each other. Place an arbitrary parallelogram at \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\), and \(C(b, c)\) with \(a > 0\) and \(c \neq 0\). Confirm first that opposite sides are indeed parallel: \(OA\) and \(CB\) are both horizontal (slope \(0\)), while \(OC\) and \(AB\) both have horizontal change \(b\) and vertical change \(c\) (so both are vertical if \(b = 0\), or share slope \(c/b\) if \(b \neq 0\)). Now compute the midpoints of diagonals \(OB\) and \(AC\):
+\[
+M_{OB} = \left(\frac{0 + (a + b)}{2}, \frac{0 + c}{2}\right) = \left(\frac{a + b}{2}, \frac{c}{2}\right), \qquad M_{AC} = \left(\frac{a + b}{2}, \frac{0 + c}{2}\right) = \left(\frac{a + b}{2}, \frac{c}{2}\right).
+\]
+Because \(M_{OB} = M_{AC}\), the two diagonals intersect at their common midpoint and therefore bisect each other.
+
+Third, prove that the diagonals of any rhombus are perpendicular. Start with the exact same general parallelogram \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\), \(C(b, c)\) (\(a > 0, c \neq 0\)), and enforce the defining condition of a rhombus: adjacent sides have equal length, \(OC = OA\). Squaring gives
+\[
+b^2 + c^2 = a^2.
+\]
+Before computing slopes of the diagonals \(OB\) and \(AC\), check that neither diagonal is vertical. Since \(c \neq 0\), we have \(b^2 = a^2 - c^2 < a^2\), so \(\lvert b \rvert < a\). Therefore both \(a + b > 0\) and \(b - a < 0\) are strictly nonzero! Both slopes are well defined:
+\[
+m_{OB} = \frac{c - 0}{(a + b) - 0} = \frac{c}{a + b}, \qquad m_{AC} = \frac{c - 0}{b - a} = \frac{c}{b - a}.
+\]
+Multiplying them and substituting \(b^2 - a^2 = -c^2\) from the rhombus condition \(b^2 + c^2 = a^2\) gives
+\[
+m_{OB} \cdot m_{AC} = \frac{c^2}{(b + a)(b - a)} = \frac{c^2}{b^2 - a^2} = \frac{c^2}{-c^2} = -1.
+\]
+Thus \(OB \perp AC\) for every rhombus.
+
+[QUESTION 2]
+[ANSWER: A]
+In a coordinate proof, an arbitrary parallelogram is placed at \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\), and \(C(b, c)\) with \(a > 0\) and \(c > 0\). Imposing the condition that the two diagonals have equal length (\(OB = AC\)) simplifies to which algebraic equation, and what geometric theorem does it prove?
+
+(A) \(4ab = 0\), forcing \(b = 0\) and proving that any parallelogram with congruent diagonals is a rectangle
+(B) \(b^2 + c^2 = a^2\), proving that any parallelogram with congruent diagonals is a rhombus
+(C) \(a^2 + c^2 = b^2\), proving that \(OA \perp OB\)
+(D) \(2a^2 = 2b^2\), forcing \(a = b\) and proving that the parallelogram is a square
+(E) \(c = 0\), showing that no non-degenerate parallelogram has congruent diagonals
+[/QUESTION]
+
+=== SECTION 3: Concurrency of triangle medians ===
+
+Every triangle has three medians, each joining a vertex to the midpoint of the opposite side. Two non-parallel lines always intersect, so the surprise is that the third median passes through the exact same point.
+
+Sometimes a coordinate proof is actually cleaner without anchoring a vertex at the origin, because full symmetry among the three vertices does the work for us. Let \(\triangle ABC\) have completely arbitrary vertices \(A(x_1, y_1)\), \(B(x_2, y_2)\), and \(C(x_3, y_3)\). Let \(M_A\) be the midpoint of side \(BC\):
+\[
+M_A = \left(\frac{x_2 + x_3}{2},\; \frac{y_2 + y_3}{2}\right).
+\]
+Instead of finding equations of two median lines and worrying about vertical-line cases, apply the internal section formula directly to median \(A M_A\). Find the point \(G_A\) dividing the directed segment from \(A\) to \(M_A\) in the ratio \(A G_A : G_A M_A = 2 : 1\) (so \(m = 2\) and \(n = 1\)):
+\[
+x_{G_A} = \frac{1 \cdot x_1 + 2 \cdot \frac{x_2 + x_3}{2}}{2 + 1} = \frac{x_1 + x_2 + x_3}{3},
+\]
+\[
+y_{G_A} = \frac{1 \cdot y_1 + 2 \cdot \frac{y_2 + y_3}{2}}{2 + 1} = \frac{y_1 + y_2 + y_3}{3}.
+\]
+Now look at the coordinates of \(G_A\): they are completely symmetric in the three vertices \(A\), \(B\), and \(C\)! Repeating the exact same \(2 : 1\) division from \(B\) to the midpoint \(M_B\) of \(AC\) produces the identical point \(G_B = G_A\), and repeating it from \(C\) to the midpoint \(M_C\) of \(AB\) produces \(G_C = G_A\). Because this single point \(G\) lies on all three medians, the three medians are concurrent at \(G\), and \(G\) divides every median in the ratio \(2 : 1\) from vertex to midpoint.
+
+[CALLOUT]
+id: centroid-proof
+label: Theorem
+title: Concurrency of medians and centroid formula
+tone: key
+
+In any triangle with vertices \(A(x_1, y_1)\), \(B(x_2, y_2)\), and \(C(x_3, y_3)\), the three medians intersect at the single point (the centroid)
+\[
+G = \left(\frac{x_1 + x_2 + x_3}{3},\; \frac{y_1 + y_2 + y_3}{3}\right),
+\]
+which divides each median internally in the ratio \(2 : 1\) from the vertex to the opposite midpoint.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: D]
+In \(\triangle PQR\), the centroid is \(G(2, 1)\) and the midpoint of side \(QR\) is \(M(5, -2)\). What are the coordinates of vertex \(P\)?
+
+(A) \((-1, 4)\)
+(B) \(\left(\frac{1}{2}, \frac{5}{2}\right)\)
+(C) \((16, -1)\)
+(D) \((-4, 7)\)
+(E) \((-4, -1)\)
+[/QUESTION]
+
+=== SECTION 4: Thales' theorem for a semicircle ===
+
+Thales' theorem states that any angle inscribed in a semicircle is a right angle: if \(AB\) is a diameter of a circle and \(P\) is any other point on the circle, then \(\angle APB = 90^\circ\).
+
+Choose a placement that makes the circle condition as simple as possible: put the circle's center at the origin \(O(0, 0)\) and let its radius be \(r > 0\). Align the diameter along the \(x\)-axis so its endpoints are \(A(-r, 0)\) and \(B(r, 0)\). Any point \(P(x, y)\) lies on this circle if and only if its distance from the origin is \(r\), meaning
+\[
+x^2 + y^2 = r^2.
+\]
+Because \(P\) is distinct from \(A(-r, 0)\) and \(B(r, 0)\), we must have \(y \neq 0\), which forces \(x^2 = r^2 - y^2 < r^2\) and hence \(x \neq -r\) and \(x \neq r\). Consequently, neither chord \(PA\) nor chord \(PB\) is vertical, so both slopes are well defined:
+\[
+m_{PA} = \frac{y - 0}{x - (-r)} = \frac{y}{x + r}, \qquad m_{PB} = \frac{y - 0}{x - r} = \frac{y}{x - r}.
+\]
+Multiply the two slopes and apply the circle relation \(x^2 - r^2 = -y^2\):
+\[
+m_{PA} \cdot m_{PB} = \frac{y^2}{(x + r)(x - r)} = \frac{y^2}{x^2 - r^2} = \frac{y^2}{-y^2} = -1,
+\]
+where cancelling \(y^2\) is justified because \(y \neq 0\). By the perpendicular slope criterion, \(PA \perp PB\), so \(\angle APB = 90^\circ\).
+
+[CALLOUT]
+id: thales-proof
+label: Theorem
+title: Thales' theorem via coordinates
+tone: key
+
+If \(A(-r, 0)\) and \(B(r, 0)\) are endpoints of a diameter of the circle \(x^2 + y^2 = r^2\) (\(r > 0\)), and \(P(x, y)\) is any point on the circle with \(y \neq 0\), then
+\[
+m_{PA} \cdot m_{PB} = \frac{y^2}{x^2 - r^2} = \frac{y^2}{-y^2} = -1,
+\]
+so \(\angle APB = 90^\circ\).
+[/CALLOUT]
+
+Drag the angle slider \(a\) below to move \(P\) along the semicircle of radius \(r = 3\) and watch the right angle at \(P\) persist at every position between \(A\) and \(B\).
+
+[GRAPH]
+type: parametric2d
+title: Thales' theorem on the semicircle \(x^2 + y^2 = 9\) with movable point \(P\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -3.6, 3.6
+yrange: -0.6, 3.6
+trace: 3*cos(t), 3*sin(t) | label: semicircle \(r = 3\)
+segment: -3, 0, 3, 0 | label: \(AB\)
+segment: -3, 0, 3*cos(a), 3*sin(a)
+segment: 3, 0, 3*cos(a), 3*sin(a)
+point: -3, 0 | label: \(A(-r, 0)\)
+point: 3, 0 | label: \(B(r, 0)\)
+point: 0, 0 | label: \(O\)
+point: 3*cos(a), 3*sin(a) | label: \(P(x, y)\)
+slider: a | range: 0.2, 2.94 | init: 1.05 | step: 0.05
+[/GRAPH]
+
+Notice how closely the algebra in [REF: thales-proof | Thales' theorem] resembles our rhombus diagonal proof: in both proofs, an exact geometric constraint (\(b^2 + c^2 = a^2\) or \(x^2 + y^2 = r^2\)) turns a difference of squares in the denominator into the exact negative of the numerator, producing a slope product of \(-1\) universally across all parameter values.
+
+[QUESTION 4]
+[ANSWER: B]
+To prove that the midpoint of the hypotenuse of any right triangle is equidistant from all three vertices, a student places an arbitrary right triangle at \(O(0, 0)\), \(A(2a, 0)\), and \(B(0, 2b)\) with \(a > 0\) and \(b > 0\), and denotes the midpoint of hypotenuse \(AB\) by \(M\). Which calculation completes the proof?
+
+(A) Showing \(M = (a, b)\) and checking that \(m_{OM} \cdot m_{AB} = -1\)
+(B) Showing \(M = (a, b)\) and verifying \(MO = MA = MB = \sqrt{a^2 + b^2}\)
+(C) Showing \(M = (a, b)\) and verifying \(MA = MB = \sqrt{a^2 + b^2}\)
+(D) Showing \(M = (2a, 2b)\) and verifying \(MO^2 = OA^2 + OB^2\)
+(E) Setting \(a = b\) so that \(M = (a, a)\) and verifying \(MO = a\sqrt{2}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(ABCD\) be an arbitrary quadrilateral with vertices \(A(x_1, y_1)\), \(B(x_2, y_2)\), \(C(x_3, y_3)\), and \(D(x_4, y_4)\), and let \(P, Q, R, S\) be the midpoints of sides \(AB, BC, CD, DA\) in order. Which algebraic identity proves that \(PQRS\) is always a parallelogram without requiring slope case-splits?
+
+(A) \(PQ = RS\) by expanding both distance formulas
+(B) \(P + Q = R + S\) coordinatewise
+(C) \(M_{PQ} = M_{RS}\)
+(D) \(PR^2 = QS^2\)
+(E) \(M_{PR} = M_{QS} = \left(\frac{x_1 + x_2 + x_3 + x_4}{4},\; \frac{y_1 + y_2 + y_3 + y_4}{4}\right)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+For a general parallelogram \(O(0, 0)\), \(A(a, 0)\), \(B(a + b, c)\), and \(C(b, c)\) (\(a > 0, c \neq 0\)), what is the sum of the squared lengths of its diagonals, \(OB^2 + AC^2\), in terms of its side lengths \(OA\) and \(OC\)?
+
+(A) \(2(OA^2 + OC^2)\)
+(B) \(OA^2 + OC^2\)
+(C) \(4(OA^2 + OC^2)\)
+(D) \((OA + OC)^2\)
+(E) \(2(OA^2 - OC^2)\)
+[/BONUS]

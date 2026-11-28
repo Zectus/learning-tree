@@ -1,0 +1,241 @@
+=== SECTION 1: Matrices elementales y el puente de la multiplicación por la izquierda ===
+
+Hasta ahora, la eliminación gaussiana y la multiplicación matricial han vivido en habitaciones separadas: las operaciones por fila parecían pasos procedimentales ejecutados a mano sobre un arreglo, mientras que la multiplicación matricial era una operación algebraica que obedecía la asociatividad y la distributividad. Unificar estos dos mundos —expresar CADA operación elemental por fila sobre una matriz \(A\) como una multiplicación por la izquierda por una matriz específica \(E\)— convierte la eliminación en álgebra y desbloquea la inversión matricial, la factorización \(LU\) y la teoría estructural de los espacios matriciales.
+
+[CALLOUT]
+id: elem-matrix-def
+label: Definición
+title: Matriz elemental
+tone: key
+
+Una matriz \(m \times m\) \(E\) se denomina matriz elemental si se obtiene a partir de la matriz identidad \(m \times m\) \(I_m\) aplicando UNA ÚNICA operación elemental por fila.
+[/CALLOUT]
+
+Existen tres familias de matrices elementales \(m \times m\), correspondientes a las tres operaciones elementales por fila. Para \(m = 3\), he aquí un ejemplar concreto de cada tipo:
+- Intercambio de filas \(R_1 \leftrightarrow R_3\) aplicado a \(I_3\):
+\[
+E_{\text{interc}} = \begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}.
+\]
+- Escalamiento de fila \(R_2 \leftarrow 5 R_2\) aplicado a \(I_3\):
+\[
+E_{\text{esc}} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 5 & 0 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+- Reemplazo de fila \(R_3 \leftarrow R_3 - 2 R_1\) aplicado a \(I_3\):
+\[
+E_{\text{reemp}} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -2 & 0 & 1 \end{bmatrix}.
+\]
+Note que realizar DOS operaciones elementales por fila distintas sobre \(I_3\) —por ejemplo, modificar dos entradas fuera de la diagonal para obtener \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -4 & 0 & 1 \end{bmatrix}\)— produce un producto de dos matrices elementales, NO una sola matriz elemental.
+
+Ahora llega el teorema puente que convierte la reducción por filas en álgebra matricial.
+
+[CALLOUT]
+id: left-mult-bridge
+label: Teorema
+title: Las operaciones elementales por fila equivalen a multiplicar por la izquierda
+tone: key
+
+Sea \(E\) la matriz elemental \(m \times m\) obtenida al aplicar una única operación elemental por fila a \(I_m\). Entonces, para TODA matriz \(m \times n\) \(A\), el producto \(EA\) es exactamente la matriz obtenida al aplicar esa MISMA operación elemental por fila a \(A\).
+[/CALLOUT]
+
+La demostración utiliza directa y limpiamente el punto de vista de combinación de filas de la multiplicación matricial. Recuerde que para cualquier producto \(EA\), la fila \(k\) de \(EA\) es la combinación lineal de las filas \(\mathbf{r}_1, \dots, \mathbf{r}_m\) de \(A\) cuyos pesos son las entradas de la fila \(k\) de \(E\):
+\[
+\text{fila } k \text{ de } (EA) = e_{k1} \mathbf{r}_1 + e_{k2} \mathbf{r}_2 + \dots + e_{km} \mathbf{r}_m.
+\]
+Verifique cada una de las tres operaciones por fila:
+1. Intercambio de filas \(R_i \leftrightarrow R_j\): la fila \(i\) de \(E\) tiene \(1\) en la posición \(j\) y \(0\) en el resto, de modo que la fila \(i\) de \(EA\) es \(1 \cdot \mathbf{r}_j = \mathbf{r}_j\); la fila \(j\) de \(E\) tiene \(1\) en la posición \(i\), de modo que la fila \(j\) de \(EA\) es \(\mathbf{r}_i\); toda otra fila \(k\) tiene \(1\) en la posición \(k\) y permanece como \(\mathbf{r}_k\). Así, \(EA\) intercambia las filas \(i\) y \(j\) de \(A\).
+2. Escalamiento de fila \(R_i \leftarrow c R_i\) (\(c \neq 0\)): la fila \(i\) de \(E\) tiene \(c\) en la posición \(i\) y \(0\) en el resto, de modo que la fila \(i\) de \(EA\) es \(c \mathbf{r}_i\), mientras que toda otra fila \(k \neq i\) permanece como \(\mathbf{r}_k\).
+3. Reemplazo de fila \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)): la fila \(i\) de \(E\) tiene \(1\) en la posición \(i\), \(c\) en la posición \(j\) y \(0\) en el resto, de modo que la fila \(i\) de \(EA\) es \(\mathbf{r}_i + c \mathbf{r}_j\), mientras que toda otra fila \(k \neq i\) permanece como \(\mathbf{r}_k\).
+
+En los tres casos, ¡multiplicar \(A\) por la izquierda por \(E\) ejecuta exactamente la operación por fila!
+
+Verifiquemos en una matriz \(3 \times 2\) \(A = \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 3 & 5 \end{bmatrix}\) usando \(E_{\text{reemp}}\) para \(R_3 \leftarrow R_3 - 2 R_1\):
+\[
+E_{\text{reemp}} A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -2 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 3 & 5 \end{bmatrix}
+= \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 3 - 2(1) & 5 - 2(4) \end{bmatrix}
+= \begin{bmatrix} 1 & 4 \\ 2 & -1 \\ 1 & -3 \end{bmatrix}.
+\]
+¿Qué sucede si en cambio multiplicamos \(A\) por la DERECHA por una matriz elemental \(n \times n\) \(E\)? Por el punto de vista de combinación de columnas, la columna \(k\) de \(AE\) es una combinación lineal de las columnas de \(A\) ponderadas por la columna \(k\) de \(E\). Así, multiplicar por la derecha por una matriz elemental ejecuta una operación elemental por COLUMNA sobre \(A\). Tenga cuidado con el reemplazo por la derecha: si \(E\) tiene \(c\) en la posición \((i, j)\) (\(i \neq j\)), entonces \(EA\) realiza \(R_i \leftarrow R_i + c R_j\), mientras que \(AE\) lee la columna \(j\) de \(E\) (que tiene \(1\) en el lugar \(j\) y \(c\) en el lugar \(i\)) y por lo tanto realiza \(C_j \leftarrow C_j + c C_i\): ¡los dos índices intercambian sus papeles!
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(A\) una matriz \(3 \times 5\) y sea
+\[
+E = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -4 & 1 \end{bmatrix}.
+\]
+¿Qué efecto tiene multiplicar \(A\) por la izquierda por \(E\) (formar \(EA\)) sobre \(A\)?
+
+(A) Reemplaza la fila \(2\) de \(A\) por \(R_2 - 4 R_3\)
+(B) Reemplaza la columna \(2\) de \(A\) por \(C_2 - 4 C_3\)
+(C) Reemplaza la fila \(3\) de \(A\) por \(R_3 - 4 R_2\)
+(D) Escala la fila \(3\) de \(A\) por \(-4\)
+(E) Reemplaza la fila \(3\) de \(A\) por \(R_3 + 4 R_2\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál de las siguientes matrices \(3 \times 3\) NO es una matriz elemental?
+
+(A) \(\begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & -3 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 5 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 3 & 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & -2 \\ 0 & 0 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Inversas de matrices elementales ===
+
+Como toda operación elemental por fila es reversible mediante otra operación elemental por fila, toda matriz elemental \(E\) tiene una matriz elemental compañera explícita \(E^{-1}\) que deshace su acción —es decir, \(E^{-1} E = I_m\) y \(E E^{-1} = I_m\)—.
+
+[CALLOUT]
+id: elem-inverse
+label: Teorema
+title: Toda matriz elemental tiene una inversa elemental
+tone: key
+
+Toda matriz elemental \(m \times m\) \(E\) posee una única inversa elemental \(E^{-1}\) que satisface \(E^{-1} E = E E^{-1} = I_m\), construida aplicando la operación inversa por fila a \(I_m\):
+
+(1) Si \(E\) intercambia las filas \(i\) y \(j\), entonces \(E^{-1} = E\) (intercambiar dos veces las mismas dos filas restaura \(I_m\)).
+(2) Si \(E\) escala la fila \(i\) por \(c \neq 0\), entonces \(E^{-1}\) escala la fila \(i\) por \(1/c\).
+(3) Si \(E\) reemplaza \(R_i\) por \(R_i + c R_j\) (\(i \neq j\)), entonces \(E^{-1}\) reemplaza \(R_i\) por \(R_i - c R_j\) (basta con cambiar el signo de la entrada fuera de la diagonal \(c\)).
+[/CALLOUT]
+
+¿Por qué se cumple \(E^{-1} E = I_m\) en los tres casos? Por [REF: left-mult-bridge | el teorema de multiplicación por la izquierda], \(E^{-1} E\) es el resultado de aplicar la operación inversa por fila a \(E\), lo cual deshace la operación que convirtió \(I_m\) en \(E\), devolviendo \(I_m\). Del mismo modo, \(E E^{-1}\) aplica la operación directa a \(E^{-1}\), deshaciendo la operación inversa y devolviendo \(I_m\). Comprobémoslo también directamente multiplicando matrices de reemplazo de fila \(2 \times 2\):
+\[
+\begin{bmatrix} 1 & 0 \\ c & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ -c & 1 \end{bmatrix}
+= \begin{bmatrix} 1 & 0 \\ c - c & 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}, \qquad
+\begin{bmatrix} 1 & 0 \\ -c & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ c & 1 \end{bmatrix}
+= \begin{bmatrix} 1 & 0 \\ -c + c & 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}.
+\]
+
+Geométricamente, para \(m = 2\) esta reversibilidad es visible en el cuadrado unitario. La matriz de cizalla elemental \(E = \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}\) (que representa \(R_2 \leftarrow R_2 + 2 R_1\)) envía \((1, 0) \mapsto (1, 2)\) y \((0, 1) \mapsto (0, 1)\), inclinando verticalmente el cuadrado unitario en un paralelogramo. Su inversa \(E^{-1} = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}\) aplica una cizalla vertical en sentido opuesto por \(-2\), devolviendo cada vértice exactamente sobre el cuadrado unitario original.
+
+[GRAPH]
+type: parametric2d
+title: La cizalla elemental \(E\) inclina el cuadrado unitario; \(E^{-1}\) lo restaura exactamente
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.5, 2
+yrange: -0.5, 3.5
+trace: t, 0 | label: cuadrado unitario original | color: #2563eb
+trace: 1, t | color: #2563eb
+trace: 1 - t, 1 | color: #2563eb
+trace: 0, 1 - t | color: #2563eb
+trace: t, 2*t | label: imagen bajo \(E\) | color: #059669
+trace: 1, 2 + t | color: #059669
+trace: 1 - t, 3 - 2*t | color: #059669
+trace: 0, 1 - t | color: #059669
+point: 1, 0 | label: \((1, 0)\) | color: #2563eb
+point: 1, 2 | label: \(E(1, 0)\) | color: #059669
+point: 1, 3 | label: \(E(1, 1)\) | color: #059669
+[/GRAPH]
+
+[TABLE]
+Operación por fila | Ejemplo \(E\) (\(3 \times 3\)) | Inversa \(E^{-1}\)
+\(R_1 \leftrightarrow R_3\) | \(\begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}\) | \(\begin{bmatrix} 0 & 0 & 1 \\ 0 & 1 & 0 \\ 1 & 0 & 0 \end{bmatrix}\)
+\(R_2 \leftarrow 5 R_2\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 5 & 0 \\ 0 & 0 & 1 \end{bmatrix}\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1/5 & 0 \\ 0 & 0 & 1 \end{bmatrix}\)
+\(R_3 \leftarrow R_3 - 2 R_1\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -2 & 0 & 1 \end{bmatrix}\) | \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix}\)
+[/TABLE]
+
+=== SECTION 3: Secuencias de operaciones por fila como factorización matricial ===
+
+Ahora rastreemos lo que ocurre cuando realizamos una SECUENCIA de \(k\) operaciones elementales por fila sobre una matriz \(m \times n\) \(A\), con sus matrices elementales correspondientes \(E_1, E_2, \dots, E_k\).
+
+1. Tras el paso \(1\), \(A\) se convierte en \(E_1 A\).
+2. Tras el paso \(2\), multiplicamos \(E_1 A\) por la izquierda por \(E_2\), obteniendo \(E_2 (E_1 A) = (E_2 E_1) A\).
+3. Tras los \(k\) pasos, llegamos a una matriz equivalente por filas \(B\) dada por
+\[
+B = E_k \cdots E_2 E_1 A = PA, \qquad \text{donde } P = E_k \cdots E_2 E_1.
+\]
+Observe con cuidado el orden de los factores en \(P\): la PRIMERA operación \(E_1\) queda en el EXTREMO DERECHO, más cerca de \(A\), y la ÚLTIMA operación \(E_k\) queda en el EXTREMO IZQUIERDO. Más aún, como \(P = P I_m = E_k \cdots E_2 E_1 I_m\), ni siquiera necesita multiplicar \(k\) matrices a mano para hallar \(P\): simplemente aplique exactamente las mismas \(k\) operaciones por fila en el mismo orden a \(I_m\), y el resultado es \(P\).
+
+También podemos invertir la cadena algebraicamente para expresar \(A\) de vuelta en términos de \(B\). Partiendo de \(E_k \cdots E_2 E_1 A = B\), despegue las matrices elementales una por una desde la izquierda multiplicando por la izquierda por \(E_k^{-1}\), luego \(E_{k-1}^{-1}\), hasta llegar a \(E_1^{-1}\):
+\[
+A = E_1^{-1} E_2^{-1} \cdots E_k^{-1} B.
+\]
+Note nuevamente el orden inverso: para deshacer \(E_k \cdots E_1\), el producto inverso es \(P^{-1} = E_1^{-1} E_2^{-1} \cdots E_k^{-1}\). Verifíquelo directamente por asociatividad:
+\[
+(E_1^{-1} \cdots E_{k-1}^{-1} E_k^{-1})(E_k E_{k-1} \cdots E_1) = E_1^{-1} \cdots E_{k-1}^{-1} I_m E_{k-1} \cdots E_1 = \dots = I_m.
+\]
+
+[CALLOUT]
+id: row-equiv-factor
+label: Teorema
+title: Caracterización algebraica de la equivalencia por filas
+tone: key
+
+Dos matrices \(m \times n\) \(A\) y \(B\) son equivalentes por filas si y solo si existe una matriz \(P = E_k \cdots E_1\), producto de matrices elementales \(m \times m\), tal que
+\[
+B = PA.
+\]
+En particular, si una secuencia de operaciones por fila \(E_1, \dots, E_k\) reduce \(A\) a una forma escalonada \(R\), entonces \(E_k \cdots E_1 A = R\) y \(A = E_1^{-1} \cdots E_k^{-1} R\).
+[/CALLOUT]
+
+Desarrollemos un ejemplo completo. Tome \(A = \begin{bmatrix} 2 & 4 \\ 1 & 5 \end{bmatrix}\) y redúzcala a forma escalonada triangular superior \(U\):
+1. Intercambie \(R_1 \leftrightarrow R_2\) (\(E_1 = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\)): \(\begin{bmatrix} 1 & 5 \\ 2 & 4 \end{bmatrix}\).
+2. Reemplace \(R_2 \leftarrow R_2 - 2 R_1\) (\(E_2 = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}\)): \(U = \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix}\).
+
+Entonces \(E_2 E_1 A = U\), donde la matriz de transformación acumulada es
+\[
+P = E_2 E_1 = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix} \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 1 \\ 1 & -2 \end{bmatrix}.
+\]
+Comprobar \(PA = \begin{bmatrix} 0 & 1 \\ 1 & -2 \end{bmatrix} \begin{bmatrix} 2 & 4 \\ 1 & 5 \end{bmatrix} = \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix} = U\) confirma la relación directa. Invertir el proceso da la factorización
+\[
+A = E_1^{-1} E_2^{-1} U = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix}.
+\]
+Multiplicar las dos primeras matrices da \(\begin{bmatrix} 2 & 1 \\ 1 & 0 \end{bmatrix}\), y \(\begin{bmatrix} 2 & 1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 & 5 \\ 0 & -6 \end{bmatrix} = \begin{bmatrix} 2 & 4 \\ 1 & 5 \end{bmatrix} = A\).
+
+Este motor de factorización \(E_k \cdots E_1 A = R\) es el fundamento exacto para la inversión matricial de Gauss-Jordan, las factorizaciones \(LU\) y \(PA = LU\), y la demostración de propiedades de invariancia de los espacios matriciales en las lecciones siguientes.
+
+[QUESTION 3]
+[ANSWER: B]
+Una matriz \(2 \times 3\) \(A\) se reduce a una matriz \(R\) aplicando en orden las siguientes tres operaciones elementales por fila:
+1. \(R_2 \leftarrow R_2 - 2 R_1\)
+2. \(R_1 \leftrightarrow R_2\)
+3. \(R_1 \leftarrow 3 R_1\)
+
+¿Cuál es la única matriz \(2 \times 2\) \(P\) tal que \(PA = R\)?
+
+(A) \(\begin{bmatrix} 0 & 1 \\ 3 & -2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} -6 & 3 \\ 1 & 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -2 & 1 \\ 3 & 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 6 & 3 \\ 1 & 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 3 & 0 \\ -2 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Suponga que \(E_2 E_1 A = R\) para una matriz \(2 \times 4\) \(A\), donde \(E_1\) corresponde a \(R_2 \leftarrow R_2 + 3 R_1\) y \(E_2\) corresponde a \(R_2 \leftarrow \frac{1}{2} R_2\). ¿Qué matriz \(Q\) satisface \(A = Q R\)?
+
+(A) \(\begin{bmatrix} 1 & 0 \\ -3 & 2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 \\ -6 & 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 \\ 3 & 2 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 \\ -3/2 & 1/2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 \\ 3/2 & 1/2 \end{bmatrix}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Sea \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) una matriz \(4 \times 3\), y sea
+\[
+E = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 5 & 1 \end{bmatrix}.
+\]
+¿Qué efecto tiene multiplicar \(A\) por la derecha por \(E\) (formar \(AE\)) sobre las columnas de \(A\)?
+
+(A) Reemplaza la columna \(3\) por \(\mathbf{a}_3 + 5 \mathbf{a}_2\)
+(B) Reemplaza la columna \(3\) por \(\mathbf{a}_3 - 5 \mathbf{a}_2\)
+(C) Reemplaza la columna \(2\) por \(\mathbf{a}_2 - 5 \mathbf{a}_3\)
+(D) Reemplaza la columna \(2\) por \(\mathbf{a}_2 + 5 \mathbf{a}_3\)
+(E) Multiplica la columna \(2\) por \(5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+¿Qué producto de matrices elementales es igual a \(A = \begin{bmatrix} 1 & 3 \\ 2 & 8 \end{bmatrix}\)?
+
+(A) \(\begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 1/2 \end{bmatrix} \begin{bmatrix} 1 & -3 \\ 0 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 1/2 \end{bmatrix} \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix} \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}\)
+[/BONUS]

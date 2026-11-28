@@ -1,0 +1,212 @@
+=== SECTION 1: The Sum and Product Rules of Counting ===
+
+Every finite counting problem asks for the cardinality \(|A|\) of some finite set \(A\) of configurations. Listing every element one by one fails as soon as \(|A|\) reaches a few dozen; instead, we break \(A\) apart into simpler pieces whose sizes combine arithmetically. Two foundational rules govern the two basic ways of combining choices: mutually exclusive alternatives ("either this or that") and sequential stages ("first this, then that").
+
+[CALLOUT]
+id: sum-product-rules
+label: Principles
+title: Sum Rule and Product Rule
+tone: key
+
+(1) Addition (Sum) Rule: If \(A_1, A_2, \dots, A_m\) are pairwise disjoint finite sets (meaning \(A_i \cap A_j = \emptyset\) whenever \(i \ne j\)), then
+\[
+|A_1 \cup A_2 \cup \dots \cup A_m| = |A_1| + |A_2| + \dots + |A_m|.
+\]
+(2) Multiplication (Product) Rule: For finite sets \(A_1, \dots, A_m\), the Cartesian product \(A_1 \times \dots \times A_m\) of ordered \(m\)-tuples satisfies
+\[
+|A_1 \times A_2 \times \dots \times A_m| = |A_1| \cdot |A_2| \cdots |A_m|.
+\]
+More generally, if a finite set of outcomes can be constructed uniquely by a sequence of \(m\) stages such that stage \(i\) always offers exactly \(n_i\) choices—regardless of which choices were made in stages \(1, \dots, i - 1\)—then the total number of outcomes is \(n_1 n_2 \cdots n_m\).
+[/CALLOUT]
+
+Pay close attention to the two bold conditions hidden inside [REF: sum-product-rules | these rules]:
+- In [REF: sum-product-rules.1 | the Sum Rule], the sets MUST be pairwise disjoint. Suppose you count integers in \(\{1, 2, \dots, 30\}\) divisible by \(2\) or \(3\). There are \(15\) multiples of \(2\) and \(10\) multiples of \(3\), yet the answer is NOT \(15 + 10 = 25\): the five multiples of \(6\) (\(6, 12, 18, 24, 30\)) lie in both sets and were counted twice. Whenever sets overlap, either partition into genuinely disjoint subcases first (here: multiples of \(2\) gives \(15\), plus odd multiples of \(3\), namely \(3, 9, 15, 21, 27\), giving \(15 + 5 = 20\)) or wait for the general inclusion-exclusion machinery developed later in this sequence.
+- In [REF: sum-product-rules.2 | the Product Rule], the number of choices at stage \(i\) MUST be independent of earlier choices. The actual set of available options at stage \(i\) is allowed to change (for example, choosing without replacement leaves different remaining elements), as long as the COUNT \(n_i\) of available options is the same on every branch.
+
+Watch what happens when that invariance condition fails.
+
+Worked Example: How many \(3\)-digit positive integers (from \(100\) to \(999\)) are even and have all three digits distinct?
+
+If you try to pick left to right—hundreds, then units, then tens—the hundreds digit has \(9\) choices (\(1\) through \(9\)). Now try to pick the units digit (which must be even, from \(\{0, 2, 4, 6, 8\}\), and different from the hundreds digit):
+- If the hundreds digit was odd (\(1, 3, 5, 7, 9\)), all \(5\) even digits remain available for the units place.
+- If the hundreds digit was even (\(2, 4, 6, 8\)), only \(4\) even digits remain available for the units place.
+Because the number of choices at stage \(2\) depends on what happened at stage \(1\), you CANNOT collapse this into a single product.
+
+The remedy is to combine [REF: sum-product-rules.1 | the Sum Rule] with [REF: sum-product-rules.2 | the Product Rule]: partition the problem into disjoint cases inside which every stage count IS constant. Here we can split by the parity of the hundreds digit:
+- Case 1 (hundreds digit odd): \(5\) choices for hundreds (\(1, 3, 5, 7, 9\)), then \(5\) choices for units (\(0, 2, 4, 6, 8\)), then \(8\) choices for tens (any of the \(10\) digits not yet used). Count: \(5 \cdot 5 \cdot 8 = 200\).
+- Case 2 (hundreds digit even): \(4\) choices for hundreds (\(2, 4, 6, 8\)), then \(4\) choices for units (the remaining four even digits), then \(8\) choices for tens. Count: \(4 \cdot 4 \cdot 8 = 128\).
+Because the two cases are disjoint and cover every valid integer, the Sum Rule yields \(200 + 128 = 328\).
+
+As a sanity check, split by the units digit instead:
+- Case A (units digit is \(0\)): \(1\) choice for units, \(9\) choices for hundreds (\(1\)–\(9\)), \(8\) choices for tens \(\implies 1 \cdot 9 \cdot 8 = 72\).
+- Case B (units digit in \(\{2, 4, 6, 8\}\)): \(4\) choices for units, \(8\) choices for hundreds (\(1\)–\(9\) except the units digit), \(8\) choices for tens (\(0\)–\(9\) except the two digits already used) \(\implies 4 \cdot 8 \cdot 8 = 256\).
+Total: \(72 + 256 = 328\), confirming the answer independently.
+
+[QUESTION 1]
+[ANSWER: C]
+How many \(3\)-digit positive integers (from \(100\) to \(999\)) are divisible by \(5\) and have all three digits distinct?
+
+(A) \(128\)
+(B) \(132\)
+(C) \(136\)
+(D) \(144\)
+(E) \(162\)
+[/QUESTION]
+
+=== SECTION 2: The Complement Rule and the Division Rule ===
+
+Many counting problems are awkward to count directly because their conditions split into overlapping possibilities ("contains at least one vowel") or because a natural sequential procedure generates each target configuration multiple times. Two more foundational rules handle these exact situations.
+
+[CALLOUT]
+id: comp-div-rules
+label: Principles
+title: Complement (Subtraction) Rule and Division Rule
+tone: key
+
+(1) Complement (Subtraction) Rule: If \(A\) is a subset of a finite universe \(U\), then
+\[
+|A| = |U| - |U \setminus A|.
+\]
+(2) Division Rule: Suppose a finite set \(X\) of intermediate configurations maps onto a finite target set \(Y\) such that EVERY element \(y \in Y\) arises from exactly \(k\) elements of \(X\) (a uniform \(k\)-to-\(1\) correspondence, with \(k \ge 1\)). Then
+\[
+|Y| = \frac{|X|}{k}.
+\]
+[/CALLOUT]
+
+Consider [REF: comp-div-rules.1 | the Complement Rule] on an "at least one" constraint: how many \(4\)-letter strings over the alphabet \(\{A, B, C, D, E\}\) contain at least one vowel (\(A\) or \(E\))?
+
+First watch the most common beginner error—hidden overcounting. Someone might say: "Pick one of the \(4\) positions to hold a vowel (\(4\) ways), pick a vowel for that position (\(2\) ways), and fill the remaining \(3\) positions with any of the \(5\) letters (\(5^3 = 125\) ways), giving \(4 \cdot 2 \cdot 125 = 1000\)." That answer is impossible: the ENTIRE universe of \(4\)-letter strings over a \(5\)-letter alphabet has size only \(5^4 = 625\)! Why did the formula overshoot? Because a string like \(AABE\) has three vowels, so it was generated three separate times—once with position \(1\) designated as "the chosen vowel slot," once with position \(2\), and once with position \(4\).
+
+Using [REF: comp-div-rules.1 | the Complement Rule] makes the problem effortless. The universe \(U\) of all \(4\)-letter strings has size \(|U| = 5^4 = 625\). The complement \(U \setminus A\) consists of strings with NO vowels—built strictly from \(\{B, C, D\}\)—so \(|U \setminus A| = 3^4 = 81\). Therefore
+\[
+|A| = 625 - 81 = 544.
+\]
+
+Now consider [REF: comp-div-rules.2 | the Division Rule]. Its power comes from letting you count in a convenient over-specified way (say, with an artificial ordering) and then divide away the exact symmetry factor \(k\)—provided \(k\) is strictly constant across every target configuration!
+
+Worked Example 1 (Handshakes): At a meeting of \(n\) people, every pair of distinct people shakes hands once. How many handshakes occur?
+Form an ordered pair \((u, v)\) of distinct people: \(n\) choices for \(u\) and \(n - 1\) choices for \(v\), giving \(|X| = n(n - 1)\) ordered pairs. Each unordered handshake \(\{u, v\}\) corresponds to exactly \(k = 2\) ordered pairs, \((u, v)\) and \((v, u)\). By [REF: comp-div-rules.2 | the Division Rule], there are \(\frac{n(n - 1)}{2}\) handshakes.
+
+Worked Example 2 (Unlabeled pairings): How many ways can \(4\) distinct players \(\{1, 2, 3, 4\}\) be divided into \(2\) unlabeled doubles teams of \(2\) players each?
+List all \(4\) players in a row \((p_1, p_2 \mid p_3, p_4)\) to form team \(\{p_1, p_2\}\) and team \(\{p_3, p_4\}\). By the Product Rule, there are \(|X| = 4 \cdot 3 \cdot 2 \cdot 1 = 24\) ordered listings. How many listings produce the exact same unlabeled pairing?
+- Swapping the two players inside the first team: factor \(2\).
+- Swapping the two players inside the second team: factor \(2\).
+- Swapping which team is written first versus second: factor \(2\).
+Every pairing arises from exactly \(k = 2 \cdot 2 \cdot 2 = 8\) listings. By the Division Rule, the number of pairings is \(24 / 8 = 3\)—which we can check by hand: \(\{\{1, 2\}, \{3, 4\}\}\), \(\{\{1, 3\}, \{2, 4\}\}\), and \(\{\{1, 4\}, \{2, 3\}\}\).
+
+[QUESTION 2]
+[ANSWER: B]
+How many \(4\)-digit codes formed from the digits \(\{1, 2, 3, 4, 5, 6\}\) contain at least one repeated digit?
+
+(A) \(360\)
+(B) \(936\)
+(C) \(1080\)
+(D) \(1260\)
+(E) \(1290\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Suppose we want to count \(4\)-letter strings over \(\{R, B\}\) up to reversal—that is, a string \(w\) and its reverse \(w^R\) are considered the same pattern (for example, \(RRRB\) and \(BRRR\) count as one pattern). A student argues: "There are \(2^4 = 16\) strings; pairing each string with its reverse gives \(16 / 2 = 8\) patterns." Why is this application of [REF: comp-div-rules.2 | the Division Rule] invalid, and what is the true number of patterns?
+
+(A) The Division Rule fails because \(w\) and \(w^R\) are never distinct, so the true number of patterns is \(16\).
+(B) The Division Rule should divide by \(4\) instead of \(2\), giving \(4\) patterns.
+(C) The Division Rule fails because strings of length \(4\) have \(2\) palindromes; splitting gives \(2 + (14 / 2) = 9\) patterns.
+(D) The Division Rule requires a constant multiplicity \(k\), but the \(4\) palindromes (\(RRRR, RBBR, BRRB, BBBB\)) are their own reverses (\(k = 1\)) while the \(12\) non-palindromes pair up (\(k = 2\)); splitting gives \(4 + (12 / 2) = 10\) patterns.
+(E) The Division Rule fails because \(4\) is even, and the true number of patterns is \(12\).
+[/QUESTION]
+
+=== SECTION 3: Bijection counting, subsets, and functions ===
+
+Often the sharpest way to determine \(|A|\) is not to count \(A\) directly at all, but to build an exact one-to-one dictionary between \(A\) and another finite set \(B\) whose size you already know.
+
+Recall that a function \(f : A \to B\) is a bijection (one-to-one correspondence) if it is both injective (distinct inputs in \(A\) produce distinct outputs in \(B\)) and surjective (every element of \(B\) is the output \(f(a)\) for some \(a \in A\)). Equivalently, \(f\) has an inverse function \(f^{-1} : B \to A\) that cleanly reverses the encoding.
+
+[CALLOUT]
+id: bijection-rule
+label: Principle
+title: Bijection Rule
+tone: key
+
+If there exists a bijection \(f : A \to B\) between two finite sets \(A\) and \(B\), then
+\[
+|A| = |B|.
+\]
+[/CALLOUT]
+
+Two fundamental formulas of discrete mathematics fall straight out of [REF: bijection-rule | the Bijection Rule] combined with [REF: sum-product-rules.2 | the Product Rule].
+
+1. Counting subsets of an \(n\)-element set: Let \(S = \{s_1, s_2, \dots, s_n\}\) be a finite set of size \(n \ge 0\), and let \(\mathcal{P}(S)\) denote the set of all subsets of \(S\) (including \(\emptyset\) and \(S\) itself). Define a map \(f\) from \(\mathcal{P}(S)\) to the set \(\{0, 1\}^n\) of length-\(n\) bitstrings \((b_1, b_2, \dots, b_n)\) by setting
+\[
+b_i = \begin{cases} 1 & \text{if } s_i \in T, \\ 0 & \text{if } s_i \notin T \end{cases} \qquad \text{for each } i = 1, 2, \dots, n.
+\]
+For example, when \(S = \{s_1, s_2, s_3\}\), the subset \(\{s_1, s_3\}\) corresponds to \(101\), the empty set \(\emptyset\) corresponds to \(000\), and \(S\) itself corresponds to \(111\). Every subset produces a unique bitstring, and conversely every bitstring \((b_1, \dots, b_n)\) reconstructs the unique subset \(\{s_i \in S : b_i = 1\}\). Thus \(f\) is a bijection! By the Product Rule, \(|\{0, 1\}^n| = 2 \cdot 2 \cdots 2 = 2^n\) (for \(n = 0\), the single empty string matches the single subset \(\emptyset\), agreeing with \(2^0 = 1\)). Hence an \(n\)-element set has exactly \(2^n\) subsets.
+
+2. Counting functions between finite sets: Let \(A = \{a_1, a_2, \dots, a_m\}\) have size \(|A| = m\) and let \(B\) have size \(|B| = n\). Every function \(g : A \to B\) assigns one output \(g(a_i) \in B\) to each input \(a_i \in A\), so the map
+\[
+g \longmapsto \bigl(g(a_1), g(a_2), \dots, g(a_m)\bigr)
+\]
+is a bijection from the set of all functions \(A \to B\) onto the Cartesian product \(B^m = B \times B \times \dots \times B\) (\(m\) copies of \(B\)). By the Product Rule, \(|B^m| = |B|^m = n^m\), so there are exactly
+\[
+n^m = |B|^{|A|}
+\]
+functions from an \(m\)-element domain \(A\) to an \(n\)-element codomain \(B\).
+
+Beware the base-versus-exponent slip: beginners routinely swap \(n^m\) and \(m^n\). Always test on a tiny sanity check: if \(|A| = 1\) and \(|B| = 3\), how many functions map one element to a \(3\)-element set? Clearly \(3\) (choose which of the \(3\) outputs that single input hits), matching \(|B|^{|A|} = 3^1 = 3\) rather than \(1^3 = 1\). Each of the \(m\) domain elements independently makes a choice from the \(n\) codomain elements, giving \(n \cdot n \cdots n = n^m\).
+
+[TABLE]
+Counting rule | Core formula | When it applies | Primary pitfall to avoid
+Sum Rule | \(\lvert A_1 \cup \dots \cup A_m \rvert = \sum \lvert A_i \rvert\) | Pairwise disjoint cases | Adding overlapping sets without removing overlap
+Product Rule | \(\lvert A_1 \times \dots \times A_m \rvert = \prod n_i\) | \(m\) stages with invariant choice counts \(n_i\) | Multiplying when later choice counts depend on earlier picks
+Complement Rule | \(\lvert A \rvert = \lvert U \rvert - \lvert U \setminus A \rvert\) | "At least one" or negated constraints | Direct "pick one required item, then any others" overcounting
+Division Rule | \(\lvert Y \rvert = \lvert X \rvert / k\) | Uniform \(k\)-to-\(1\) map \(X \to Y\) | Dividing by \(k\) when some configurations have different multiplicities
+Bijection Rule | \(\lvert A \rvert = \lvert B \rvert\) | Explicit invertible encoding \(A \leftrightarrow B\) | Forgetting to verify both injectivity and surjectivity
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(A = \{1, 2, 3, 4, 5\}\) and \(B = \{x, y, z\}\). How many functions \(f : A \to B\) satisfy BOTH \(f(1) \ne f(2)\) AND \(f(5) \in \{x, y\}\)?
+
+(A) \(108\)
+(B) \(125\)
+(C) \(144\)
+(D) \(162\)
+(E) \(243\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Let \(S = \{1, 2, \dots, n\}\) with \(n \ge 1\). Let \(\mathcal{E}\) be the collection of subsets of \(S\) having an even number of elements, and let \(\mathcal{O}\) be the collection of subsets of \(S\) having an odd number of elements. Define a map \(\phi : \mathcal{E} \to \mathcal{O}\) by toggling element \(1\):
+\[
+\phi(T) = \begin{cases} T \cup \{1\} & \text{if } 1 \notin T, \\ T \setminus \{1\} & \text{if } 1 \in T. \end{cases}
+\]
+Using this map together with the rules of this lesson, what is \(|\mathcal{E}|\), and why?
+
+(A) \(|\mathcal{E}| = 2^n / n\), because toggling each of the \(n\) elements gives an \(n\)-to-\(1\) map.
+(B) \(|\mathcal{E}| = 2^{n-1} - 1\), because the empty set \(\emptyset\) has no image under \(\phi\).
+(C) \(|\mathcal{E}| = 2^{n-1}\), because \(\phi\) is its own inverse and therefore a bijection between \(\mathcal{E}\) and \(\mathcal{O}\), so \(|\mathcal{E}| = |\mathcal{O}|\) and the Sum Rule on the disjoint partition \(\mathcal{P}(S) = \mathcal{E} \cup \mathcal{O}\) gives \(2|\mathcal{E}| = 2^n\).
+(D) \(|\mathcal{E}| = 2^{n-1}\) when \(n\) is even, and \(|\mathcal{E}| = 2^{n-1} + 1\) when \(n\) is odd.
+(E) \(|\mathcal{E}| = 2^{n-2}\), because both element \(1\) and element \(n\) must be toggled together.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Let \(S = \{1, 2, \dots, n\}\) with \(n \ge 1\). How many ordered pairs of subsets \((A, B)\) of \(S\) satisfy \(A \subseteq B\)?
+
+(A) \(2^n\)
+(B) \(2^{2n}\)
+(C) \(2^{n+1} - 1\)
+(D) \(n^3\)
+(E) \(3^n\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+The positive integer \(720\) has prime factorization \(720 = 2^4 \cdot 3^2 \cdot 5^1\), so every positive divisor of \(720\) corresponds bijectively to an integer triple \((a, b, c)\) with \(0 \le a \le 4\), \(0 \le b \le 2\), and \(0 \le c \le 1\) via \(d = 2^a 3^b 5^c\). How many positive divisors of \(720\) are divisible by \(2\) OR divisible by \(3\) (or both)?
+
+(A) \(20\)
+(B) \(28\)
+(C) \(29\)
+(D) \(30\)
+(E) \(34\)
+[/BONUS]

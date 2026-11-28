@@ -1,0 +1,121 @@
+{
+  "topic": "Linear Systems and Matrix Computation",
+  "language": "English",
+  "collectionId": "math_linear_systems_and_matrix_computation",
+  "nodes": [
+    {
+      "id": "linear_systems_and_row_operations",
+      "label": "Linear Systems, Augmented Matrices, and Elementary Row Operations",
+      "explanation": "Assumes university entry background in high-school algebra, solving 2×2 systems of linear equations, and basic Cartesian geometry of lines and planes in ℝ² and ℝ³. Introduces general m×n linear systems over ℝ (noting that the same algebraic mechanics apply over ℂ), classifies systems as consistent (unique or infinitely many solutions) or inconsistent (no solution) with geometric interpretations in ℝ² and ℝ³, and encodes a system compactly as a coefficient matrix A and augmented matrix [A | b]. Defines the three elementary row operations—row swapping, scaling a row by a nonzero constant, and adding a scalar multiple of one row to another—and proves the foundational equivalence theorem: because every elementary row operation is reversible by another elementary row operation, row-equivalent augmented matrices share the exact same solution set. Highlights common entry errors such as multiplying a row by zero (destroying equivalence) or confusing nonlinear terms (x_1 x_2, x_1²) with linear equations. Enables the learner to translate between equation systems and augmented matrices, perform valid row operations, and justify why row reduction preserves solutions. Leaves systematic reduction algorithms (REF/RREF) to the next lesson."
+    },
+    {
+      "id": "vectors_linear_combinations_and_matrix_vector_products",
+      "label": "Vectors in ℝⁿ, Linear Combinations, and the Matrix-Vector Product Ax",
+      "explanation": "Assumes university entry background in high-school algebra and elementary coordinate vectors in ℝ² and ℝ³. Extends column vectors, vector addition, and scalar multiplication to ℝⁿ, defines linear combinations c_1 v_1 + … + c_k v_k, and introduces the concrete span Span{v_1, …, v_k} ⊆ ℝᵐ as the set of all linear combinations of those vectors (visualizing spans of 1, 2, or 3 vectors in ℝ² and ℝ³ as lines, planes, or the full space without invoking abstract vector-space axioms). Defines the matrix-vector product Ax for an m×n matrix A and x ∈ ℝⁿ primarily as the linear combination x_1 a_1 + … + x_n a_n of the columns of A, proves equivalence with the row-by-column dot-product rule, and establishes the algebraic linearity identities A(u + v) = Au + Av and A(cu) = c(Au). Establishes the three-way equivalence among a linear system, a vector equation x_1 a_1 + … + x_n a_n = b, and the matrix equation Ax = b, framing consistency of Ax = b as the membership question b ∈ Span{a_1, …, a_n}. Enables the learner to compute Ax via both column and row perspectives, translate freely among the three representations, and test concrete span membership. Leaves abstract vector spaces and general linear transformations to Vector Spaces and Linear Maps."
+    },
+    {
+      "id": "gaussian_elimination_and_rref",
+      "label": "Row Echelon Form, RREF, and Gauss-Jordan Elimination",
+      "explanation": "Builds on augmented matrices and elementary row operations to turn elimination into a deterministic algorithm for solving arbitrary m×n linear systems. Defines leading entries, Row Echelon Form (REF), Reduced Row Echelon Form (RREF), pivot positions, and pivot columns, and executes both forward elimination (Gaussian elimination to REF plus back-substitution) and backward elimination (Gauss-Jordan elimination to RREF), explicitly stating that every matrix reduces to a unique RREF (with uniqueness justified conceptually here and confirmed algebraically once column-dependence invariance is developed). Establishes the exact consistency criterion—a system is inconsistent iff the rightmost (augmented) column of an echelon form is a pivot column (a row of the form [0 … 0 | c] with c ≠ 0)—and classifies variables into basic (pivot-column) and free (non-pivot-column) variables. Trains expressing infinite solution sets cleanly by solving each basic variable in terms of the free parameters and verifying solutions by substitution. Enables the learner to reduce any matrix to REF or RREF accurately, determine consistency, and write out complete solution sets. Leaves parametric vector decomposition of solution sets and homogeneous structure to the next lesson.",
+      "requires": [
+        "linear_systems_and_row_operations"
+      ]
+    },
+    {
+      "id": "homogeneous_systems_and_solution_structure",
+      "label": "Homogeneous Systems, Linear Independence in ℝⁿ, and Solution-Set Structure",
+      "explanation": "Synthesizes RREF with matrix-vector linearity A(cu + dv) = cAu + dAv to uncover the geometric and algebraic structure of all linear-system solution sets. Analyzes homogeneous systems Ax = 0 (always consistent via the trivial solution x = 0), writing every solution in parametric vector form as a linear combination of the special (free-variable) solution vectors—one per free variable—and proving that an underdetermined homogeneous system (n > m) always has nontrivial solutions. Defines concrete linear independence of vectors {a_1, …, a_n} in ℝᵐ via Ax = 0 having only the trivial solution, establishing the exact computational test: columns of A are linearly independent iff A has a pivot in every column (no free variables). Proves the fundamental structure theorem for consistent nonhomogeneous systems Ax = b: if x_p is any particular solution, then the full solution set is {x_p + x_h : A x_h = 0}, showing geometrically that nonhomogeneous solution sets are parallel translates of the homogeneous solution set and that solutions are unique iff Ax = 0 has only the trivial solution. Enables the learner to test linear independence in ℝᵐ, write general solutions in x_p + ∑ t_j v_j form, and infer uniqueness or non-uniqueness directly from pivot counts.",
+      "requires": [
+        "gaussian_elimination_and_rref",
+        "vectors_linear_combinations_and_matrix_vector_products"
+      ]
+    },
+    {
+      "id": "matrix_algebra_and_transpose",
+      "label": "Matrix Operations, Multiplication, and the Transpose",
+      "explanation": "Builds on the matrix-vector product Ax and its linearity to construct the full algebra of matrices. Defines matrix equality, addition, and scalar multiplication entrywise, and defines the product AB of an m×n matrix A and n×p matrix B column-by-column as AB = [Ab_1 … Ab_p] so that (AB)x = A(Bx) holds by design. Derives three complementary viewpoints of AB—linear combinations of columns of A, linear combinations of rows of B, and entrywise row-column dot products (AB)_{ij} = ∑_k a_{ik} b_{kj} (plus the outer-product sum ∑_k a_k b_k^T)—and proves associativity (AB)C = A(BC) cleanly from ((AB)C)x = A(B(Cx)) alongside distributivity. Systematically contrasts matrix algebra with scalar arithmetic through concrete counterexamples: non-commutativity (AB ≠ BA), nonzero zero-divisors (AB = 0 with A, B ≠ 0), failure of cancellation (AB = AC without B = C), and non-validity of (A + B)² = A² + 2AB + B². Introduces identity matrices I_n, nonnegative integer powers A^k, and the transpose A^T, proving (AB)^T = B^T A^T (order reversal) and characterizing symmetric (A^T = A) and skew-symmetric (A^T = −A) matrices. Enables the learner to compute products fluently from multiple perspectives, prove matrix identities without scalar-algebra errors, and manipulate transposes accurately.",
+      "requires": [
+        "vectors_linear_combinations_and_matrix_vector_products"
+      ]
+    },
+    {
+      "id": "elementary_matrices_and_row_factorization",
+      "label": "Elementary Matrices and Row Operations as Matrix Multiplication",
+      "explanation": "Synthesizes RREF/row operations with matrix multiplication to encode elimination algebraically inside matrix algebra. Defines an elementary matrix E as the result of performing a single elementary row operation on the identity matrix I_m, and proves the central bridge theorem: performing an elementary row operation on an m×n matrix A produces the exact same matrix as left-multiplying A by the corresponding elementary matrix E (noting briefly that elementary column operations correspond to right-multiplication). Constructs the explicit inverse elementary matrix E^{-1} for each of the three row-operation types (verifying EE^{-1} = E^{-1}E = I_m directly) and writes any row-reduction sequence from A to an echelon form R as a product E_k … E_1 A = R, concluding that A and B are row-equivalent iff B = PA for some product P of elementary matrices. Enables the learner to translate row-reduction steps into elementary matrices, invert elementary matrices by inspection, and track cumulative row operations algebraically—supplying the engine for matrix inversion, LU factorization, and invariance of matrix spaces.",
+      "requires": [
+        "gaussian_elimination_and_rref",
+        "matrix_algebra_and_transpose"
+      ]
+    },
+    {
+      "id": "matrix_inverses_and_gauss_jordan",
+      "label": "Matrix Inverses and the Gauss-Jordan Inversion Algorithm",
+      "explanation": "Builds on elementary matrices and row factorization to develop inverses of square n×n matrices. Defines A to be invertible (nonsingular) if there exists an n×n matrix B with AB = BA = I_n, proves uniqueness of A^{-1}, establishes (A^{-1})^{-1} = A, (AB)^{-1} = B^{-1}A^{-1} (order reversal), and (A^T)^{-1} = (A^{-1})^T, and verifies the explicit 2×2 inverse formula when ad − bc ≠ 0 purely algebraically (leaving general determinants to Determinants and Eigenstructure). Proves the Gauss-Jordan inversion theorem using elementary matrices: if row operations reduce A to I_n (so E_k … E_1 A = I_n), then applying the same operations to [A | I_n] produces [I_n | E_k … E_1] = [I_n | A^{-1}], whereas if RREF(A) contains a zero row then A cannot be invertible (explicitly verifying right-multiplication and left-multiplication consistency for products of elementary matrices). Demonstrates solving Ax = b via x = A^{-1}b and contrasts its computational cost with direct elimination, explaining why one solves Ax = b by elimination or factorization rather than computing A^{-1} explicitly unless the inverse itself is required. Enables the learner to compute matrix inverses by Gauss-Jordan reduction, manipulate inverse expressions algebraically, and diagnose singular matrices.",
+      "requires": [
+        "elementary_matrices_and_row_factorization"
+      ]
+    },
+    {
+      "id": "invertible_matrix_characterizations",
+      "label": "Equivalences for Invertible Square Matrices",
+      "explanation": "Synthesizes homogeneous systems, concrete linear independence/span in ℝⁿ, and Gauss-Jordan matrix inversion to establish the computational and system-level Invertible Matrix Theorem for a square n×n matrix A. Proves the full cycle of equivalences: (1) A is invertible; (2) RREF(A) = I_n; (3) A has n pivot positions; (4) Ax = 0 has only the trivial solution (the columns of A are linearly independent); (5) Ax = b is consistent for every b ∈ ℝⁿ (the columns of A span ℝⁿ); (6) Ax = b has a unique solution for every b ∈ ℝⁿ; (7) A is a product of elementary matrices; (8) A has a left inverse CA = I_n; (9) A has a right inverse AD = I_n; and (10) A^T is invertible. Highlights the crucial square-matrix payoff: verifying a single one-sided inverse (CA = I_n or AD = I_n) automatically guarantees two-sided invertibility with C = D = A^{-1} (a theorem that fails for non-square matrices), and shows why AB invertible implies both square factors A and B are invertible. Enables the learner to prove or refute invertibility using whichever criterion is fastest for a given matrix problem. Explicitly leaves det(A) ≠ 0 and nonzero eigenvalues to Determinants and Eigenstructure, and general linear-map isomorphisms to Vector Spaces and Linear Maps.",
+      "requires": [
+        "homogeneous_systems_and_solution_structure",
+        "matrix_inverses_and_gauss_jordan"
+      ]
+    },
+    {
+      "id": "lu_and_plu_factorization",
+      "label": "LU and PA = LU Factorization for Solving Linear Systems",
+      "explanation": "Builds on elementary matrices and row factorization to package Gaussian elimination into reusable triangular factorizations. Shows that when forward elimination reduces A to an upper-triangular (or row-echelon) matrix U using only row replacements (no row swaps), the product of lower-triangular row-replacement elementary matrices E_k … E_1 A = U inverts cleanly into A = LU where L = E_1^{-1} … E_k^{-1} is unit lower-triangular whose subdiagonal entries are simply the elimination multipliers recorded in place—proving why no cross-terms corrupt those multipliers in the forward elimination order. Trains the two-step triangular solve for Ax = b—forward substitution Ly = b followed by back substitution Ux = y—and quantifies the operational advantage (O(n³) factorization once vs. O(n²) per solve) when solving Ax = b_k for many right-hand sides. Extends to general matrices requiring row swaps by introducing permutation matrices P (products of swap elementary matrices, with P^{-1} = P^T) and constructing PA = LU, taking special care to track how row swaps permute both P and already-recorded multipliers in L. Enables the learner to compute LU and PA = LU factorizations by hand and use them to solve multiple linear systems efficiently.",
+      "requires": [
+        "elementary_matrices_and_row_factorization"
+      ]
+    },
+    {
+      "id": "column_row_and_null_spaces",
+      "label": "Column Space, Row Space, and Null Space via Elimination",
+      "explanation": "Synthesizes homogeneous solution-set structure and elementary-matrix row factorization to define and compute the three concrete matrix spaces associated with an m×n matrix A—Col(A) ⊆ ℝᵐ (all linear combinations of columns of A, i.e., all b for which Ax = b is consistent), Row(A) ⊆ ℝⁿ (all linear combinations of rows of A), and Null(A) ⊆ ℝⁿ (the solution set of Ax = 0)—strictly inside concrete Euclidean coordinate spaces ℝᵏ without abstract vector-space axioms. Proves precisely how row operations interact with each space: Row(A) and Null(A) remain invariant under row operations, whereas Col(A) generally changes, yet every linear dependence relation among the columns is preserved because Ac = 0 ⇔ Rc = 0. Uses this invariance bridge to extract minimal linearly independent spanning sets for all three spaces from RREF(A): the pivot columns of the ORIGINAL matrix A for Col(A), the nonzero rows of REF or RREF for Row(A), and the special free-variable solution vectors for Null(A), directly resolving the classic error of taking pivot columns from RREF instead of A. Also completes the proof that RREF(A) is unique for every matrix via column dependence relations. Leaves abstract vector spaces, general bases, and coordinate isomorphisms to Vector Spaces and Linear Maps.",
+      "requires": [
+        "homogeneous_systems_and_solution_structure",
+        "elementary_matrices_and_row_factorization"
+      ]
+    },
+    {
+      "id": "rank_nullity_and_consistency",
+      "label": "Matrix Rank, the Rank-Nullity Counting Law, and Consistency",
+      "explanation": "Builds on column, row, and null spaces to define matrix rank and derive its structural consequences for linear systems and matrix products. Defines rank(A) as the number of pivot positions in REF/RREF(A), proving immediately from the pivot-column and nonzero-row constructions that column rank equals row rank equals rank(A), and hence rank(A^T) = rank(A) and rank(A) ≤ min(m, n). Establishes the concrete Rank-Nullity counting law—rank(A) + nullity(A) = n (pivot columns plus free variables equals the number of columns of A)—and interprets nullity(A) as the number of free parameters in any consistent solution set of Ax = b. Proves the Rouché-Capelli consistency theorem: Ax = b is consistent iff rank([A | b]) = rank(A), unifying consistency and solution-set dimension in a single rank test. Proves fundamental rank inequalities for matrix products—rank(AB) ≤ min(rank(A), rank(B)) via Col(AB) ⊆ Col(A) and Row(AB) ⊆ Row(B), and rank(PAQ) = rank(A) when P and Q are products of elementary matrices—and exhibits concrete examples where rank(AB) drops strictly below both factors. Enables the learner to compute rank and nullity, diagnose system consistency and parameter counts via rank, and apply product rank bounds.",
+      "requires": [
+        "column_row_and_null_spaces"
+      ]
+    },
+    {
+      "id": "full_rank_and_rectangular_systems",
+      "label": "Full Column Rank, Full Row Rank, CR Factorization, and One-Sided Inverses",
+      "explanation": "Synthesizes square-matrix invertibility characterizations and rank-nullity to classify rectangular m×n matrices and generalize invertibility beyond square matrices. Analyzes full column rank (rank(A) = n ≤ m): proves equivalence among independent columns, Null(A) = {0}, at most one solution to Ax = b, invertibility of the n×n Gram matrix A^T A (proved elementarily via x^T A^T A x = ∑ (Ax)_i² = 0 ⇒ Ax = 0 ⇒ x = 0), and existence of a left inverse CA = I_n (explicitly constructing C = (A^T A)^{-1} A^T and illustrating non-uniqueness of left inverses when m > n). Analyzes full row rank (rank(A) = m ≤ n): proves equivalence among Col(A) = ℝᵐ, consistency of Ax = b for every b ∈ ℝᵐ with n − m free parameters, invertibility of AA^T, and existence of a right inverse AD = I_m (constructing D = A^T (AA^T)^{-1}). Introduces rank-1 outer products uv^T and develops the exact A = CR factorization for any rank-r matrix (where C holds the r pivot columns of A and R holds the r nonzero rows of RREF(A)), connecting rank directly to minimal outer-product representations. Enables the learner to diagnose overdetermined and underdetermined systems, construct left/right inverses when they exist, and factor any matrix as A = CR.",
+      "requires": [
+        "invertible_matrix_characterizations",
+        "rank_nullity_and_consistency"
+      ]
+    },
+    {
+      "id": "block_matrices_and_schur_complements",
+      "label": "Partitioned Matrices, Block Elimination, and Schur Complements",
+      "explanation": "Optional enrichment building on matrix inverses and Gauss-Jordan elimination (and matrix multiplication/transposes from earlier ancestors) to exploit block structure in large matrices. Defines conforming block partitions and verifies that partitioned matrix multiplication and block transposition follow the ordinary matrix rules while strictly respecting non-commutativity of sub-blocks. Develops inversion formulas for block diagonal and block triangular matrices, then performs block Gaussian elimination on M = [[A, B], [C, D]] when the leading block A is invertible by left-multiplying by [[I, 0], [−CA^{-1}, I]]. Derives the Schur complement S = D − CA^{-1}B, the block LDU factorization of M, the invertibility criterion (M is invertible iff S is invertible), and the explicit 2×2 block inverse formula. Enables the learner to compute block products, invert structured block matrices efficiently, and reduce coupled block linear systems to smaller Schur-complement systems.",
+      "requires": [
+        "matrix_inverses_and_gauss_jordan"
+      ],
+      "optional": true
+    },
+    {
+      "id": "pivoting_and_numerical_conditioning",
+      "label": "Partial Pivoting, Rounding Error, and Ill-Conditioned Systems",
+      "explanation": "Optional enrichment synthesizing PA = LU factorization and invertible-matrix characterizations to bridge exact algebraic elimination with finite-precision matrix computation. Demonstrates via an explicit fixed-significant-digit (e.g., 3-digit) worked example how Gaussian elimination without pivoting fails catastrophically on a well-conditioned system when an early pivot is tiny relative to entries below it, producing huge multipliers and wiping out significant digits. Develops partial pivoting (selecting the largest-magnitude entry in the current column at or below the pivot row) and scaled partial pivoting as practical stabilizing strategies inside PA = LU. Contrasts algorithmic instability with intrinsic problem sensitivity (ill-conditioning): constructs concrete 2×2 near-parallel systems where a tiny perturbation in b or A causes a massive change in the exact solution x, and explicitly demonstrates the crucial diagnostic warning that a tiny residual b − A x̂ does NOT guarantee x̂ is close to the true solution x when A is nearly singular. Enables the learner to apply partial pivoting by hand, distinguish ill-conditioned systems from poor elimination order, and avoid trusting residuals blindly, leaving formal matrix-norm condition numbers and SVD to numerical linear algebra or inner-product modules.",
+      "requires": [
+        "invertible_matrix_characterizations",
+        "lu_and_plu_factorization"
+      ],
+      "optional": true
+    }
+  ]
+}

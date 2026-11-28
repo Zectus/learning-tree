@@ -1,0 +1,221 @@
+=== SECTION 1: Complex conjugate pairs of real matrices ===
+
+In the previous lesson we saw that a real matrix \(A \in M_n(\mathbb{R})\) can fail to be diagonalizable over \(\mathbb{R}\) purely because its characteristic polynomial \(p_A(\lambda)\) has nonreal complex roots, even while \(A\) diagonalizes smoothly over \(\mathbb{C}\). Rather than abandoning real coordinates whenever complex eigenvalues appear, we can extract a completely REAL canonical form directly from the complex eigenpairs—one that reveals the exact rotation and scaling geometry hidden inside \(A\).
+
+The bridge starts with complex conjugation. For any vector \(\mathbf{v} = (v_1, \dots, v_n)^T \in \mathbb{C}^n\) or matrix \(M = [m_{ij}]\), let \(\overline{\mathbf{v}}\) and \(\overline{M}\) denote entrywise complex conjugation. Because conjugation respects addition and multiplication (\(\overline{z + w} = \overline{z} + \overline{w}\) and \(\overline{zw} = \overline{z}\,\overline{w}\)), it distributes over matrix-vector products: \(\overline{M\mathbf{v}} = \overline{M}\,\overline{\mathbf{v}}\). Now assume \(A \in M_n(\mathbb{R})\) is a REAL matrix, so \(\overline{A} = A\). Taking the complex conjugate of the eigenvector equation \(A\mathbf{v} = \lambda \mathbf{v}\) yields
+\[
+A\overline{\mathbf{v}} = \overline{A}\,\overline{\mathbf{v}} = \overline{A\mathbf{v}} = \overline{\lambda \mathbf{v}} = \overline{\lambda}\,\overline{\mathbf{v}}.
+\]
+Moreover, \(\mathbf{v} \neq \mathbf{0}\) if and only if \(\overline{\mathbf{v}} \neq \mathbf{0}\), and conjugating a linearly independent basis \(\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) of \(E_\lambda\) yields a linearly independent basis \(\{\overline{\mathbf{v}}_1, \dots, \overline{\mathbf{v}}_k\}\) of \(E_{\overline{\lambda}}\) (since \(\sum c_j \overline{\mathbf{v}}_j = \mathbf{0} \iff \sum \overline{c_j}\mathbf{v}_j = \mathbf{0} \iff\) every \(c_j = 0\)). Similarly, because \(p_A(\lambda)\) has real coefficients, \(p_A(\overline{\lambda}) = \overline{p_A(\lambda)}\) and every derivative satisfies \(p_A^{(m)}(\overline{\lambda}) = \overline{p_A^{(m)}(\lambda)}\), forcing \(\lambda\) and \(\overline{\lambda}\) to have the exact same root multiplicity.
+
+[CALLOUT]
+id: conjugate-pairs
+label: Theorem
+title: Conjugate-pair symmetry for real matrices
+tone: key
+
+Let \(A \in M_n(\mathbb{R})\) be a real matrix.
+
+(1) \(A\mathbf{v} = \lambda \mathbf{v}\) (\(\mathbf{v} \in \mathbb{C}^n \setminus \{\mathbf{0}\}\)) if and only if \(A\overline{\mathbf{v}} = \overline{\lambda}\,\overline{\mathbf{v}}\).
+(2) Nonreal eigenvalues occur in complex conjugate pairs \(\lambda = a \pm bi\) (\(a, b \in \mathbb{R}\), \(b \neq 0\)) with IDENTICAL algebraic and geometric multiplicities: \(m_a(\overline{\lambda}) = m_a(\lambda)\) and \(m_g(\overline{\lambda}) = m_g(\lambda)\).
+[/CALLOUT]
+
+Notice a nice immediate consequence of [REF: conjugate-pairs.2 | conjugate-pair symmetry]: whenever \(n\) is odd, a real \(n \times n\) matrix MUST have at least one real eigenvalue (because nonreal roots pair up in twos, leaving an odd number of real roots), and you only ever need to solve for ONE eigenvector in each conjugate pair—conjugating it gives the second eigenvector for free!
+
+[QUESTION 1]
+[ANSWER: B]
+Suppose \(A \in M_4(\mathbb{R})\) has a complex eigenvalue \(\lambda_1 = 2 - 3i\) with eigenvector \(\mathbf{v}_1 = (1, i, 1 - i, 0)^T\), and a real eigenvalue \(\lambda_3 = 5\) with algebraic multiplicity \(2\). Which of the following is guaranteed to be another eigenpair of \(A\), and what are \(\operatorname{tr}(A)\) and \(\det(A)\)?
+
+(A) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 14\), \(\det(A) = 325\)
+(B) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 14\), \(\det(A) = 325\)
+(C) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 9\), \(\det(A) = 65\)
+(D) \(\lambda_2 = -2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 10\), \(\det(A) = -325\)
+(E) \(\lambda_2 = 2 + 3i\), \(\mathbf{v}_2 = (1, -i, 1 + i, 0)^T\); \(\operatorname{tr}(A) = 14\), \(\det(A) = -125\)
+[/QUESTION]
+
+=== SECTION 2: The real \(2 \times 2\) rotation-scaling canonical block ===
+
+Suppose \(A \in M_n(\mathbb{R})\) has a nonreal eigenvalue \(\lambda = a + bi\) (\(a, b \in \mathbb{R}\), \(b \neq 0\)) with complex eigenvector \(\mathbf{v} \in \mathbb{C}^n \setminus \{\mathbf{0}\}\). Split \(\mathbf{v}\) into its real and imaginary vector parts:
+\[
+\mathbf{v} = \mathbf{u} + i\mathbf{w}, \qquad \mathbf{u} = \operatorname{Re}(\mathbf{v}) \in \mathbb{R}^n, \quad \mathbf{w} = \operatorname{Im}(\mathbf{v}) \in \mathbb{R}^n.
+\]
+Two questions arise immediately: first, are \(\mathbf{u}\) and \(\mathbf{w}\) linearly independent over \(\mathbb{R}\)? Second, how does \(A\) act on the real plane \(W = \operatorname{span}_{\mathbb{R}}\{\mathbf{u}, \mathbf{w}\}\)?
+
+First check linear independence over \(\mathbb{R}\). Because \(b \neq 0\), we have \(\lambda \neq \overline{\lambda}\), so by [REF: conjugate-pairs.1 | conjugate symmetry] and the independence theorem for distinct eigenvalues, \(\{\mathbf{v}, \overline{\mathbf{v}}\}\) is linearly independent over \(\mathbb{C}\). Suppose \(c_1 \mathbf{u} + c_2 \mathbf{w} = \mathbf{0}\) for real scalars \(c_1, c_2 \in \mathbb{R}\). Substituting \(\mathbf{u} = \frac{1}{2}(\mathbf{v} + \overline{\mathbf{v}})\) and \(\mathbf{w} = \frac{1}{2i}(\mathbf{v} - \overline{\mathbf{v}})\) yields
+\[
+\frac{c_1 - i c_2}{2}\,\mathbf{v} + \frac{c_1 + i c_2}{2}\,\overline{\mathbf{v}} = \mathbf{0}.
+\]
+Linear independence of \(\{\mathbf{v}, \overline{\mathbf{v}}\}\) over \(\mathbb{C}\) forces \(c_1 - i c_2 = 0\), and since \(c_1, c_2 \in \mathbb{R}\), both \(c_1 = 0\) and \(c_2 = 0\)! Thus \(\{\mathbf{u}, \mathbf{w}\}\) is ALWAYS linearly independent over \(\mathbb{R}\) and spans a \(2\)-dimensional real subspace \(W \subseteq \mathbb{R}^n\).
+
+Second, compute \(A\mathbf{u}\) and \(A\mathbf{w}\) by expanding \(A(\mathbf{u} + i\mathbf{w}) = (a + bi)(\mathbf{u} + i\mathbf{w})\):
+\[
+A\mathbf{u} + i(A\mathbf{w}) = (a\mathbf{u} - b\mathbf{w}) + i(b\mathbf{u} + a\mathbf{w}).
+\]
+Because \(A\), \(\mathbf{u}\), \(\mathbf{w}\), \(a\), and \(b\) are all REAL, we equate the real and imaginary parts separately:
+\[
+A\mathbf{u} = a\mathbf{u} - b\mathbf{w}, \qquad A\mathbf{w} = b\mathbf{u} + a\mathbf{w}.
+\]
+Look at what this says! Both \(A\mathbf{u}\) and \(A\mathbf{w}\) lie back inside \(W = \operatorname{span}_{\mathbb{R}}\{\mathbf{u}, \mathbf{w}\}\), so \(W\) is a \(2\)-dimensional \(A\)-invariant real subspace! Furthermore, writing the coordinates of \(A\mathbf{u}\) and \(A\mathbf{w}\) as columns gives the matrix of \(A|_W\) in the ordered basis \((\mathbf{u}, \mathbf{w})\):
+\[
+[A|_W]_{(\mathbf{u}, \mathbf{w})} = \begin{bmatrix} a & b \\ -b & a \end{bmatrix}.
+\]
+Now convert the complex number \(\lambda = a + bi\) into polar form: let \(r = |\lambda| = \sqrt{a^2 + b^2} > 0\), and let \(\theta\) be an angle with \(a = r\cos\theta\) and \(b = r\sin\theta\). Factoring \(r\) out of the matrix yields
+\[
+\begin{bmatrix} a & b \\ -b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix}.
+\]
+Look closely at the signs of the off-diagonal entries! Since \(\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}\) is COUNTERCLOCKWISE rotation by \(\theta\), the matrix \(\begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix}\) is CLOCKWISE rotation by \(\theta\) (i.e., counterclockwise by \(-\theta\)). What if instead we order the basis as \((\mathbf{w}, \mathbf{u})\)—or equivalently, start from the conjugate eigenvalue \(\overline{\lambda} = a - bi\) with the eigenvector \(\mathbf{u} - i\mathbf{w}\)? Then \(A\mathbf{w} = a\mathbf{w} + b\mathbf{u}\) and \(A\mathbf{u} = -b\mathbf{w} + a\mathbf{u}\), so
+\[
+[A|_W]_{(\mathbf{w}, \mathbf{u})} = \begin{bmatrix} a & -b \\ b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix},
+\]
+which is COUNTERCLOCKWISE rotation by \(\theta\) scaled by \(r\)!
+
+[CALLOUT]
+id: real-canonical-block
+label: Theorem
+title: Real \(2 \times 2\) rotation-scaling canonical block
+tone: key
+
+Let \(A \in M_n(\mathbb{R})\) have nonreal eigenvalue \(\lambda = a + bi = r e^{i\theta}\) (\(b \neq 0\), \(r = \sqrt{a^2 + b^2}\)) with complex eigenvector \(\mathbf{v} = \mathbf{u} + i\mathbf{w}\) (\(\mathbf{u}, \mathbf{w} \in \mathbb{R}^n\)).
+
+(1) \(\{\mathbf{u}, \mathbf{w}\}\) is linearly independent over \(\mathbb{R}\) and spans a \(2\)-dimensional \(A\)-invariant subspace \(W \subseteq \mathbb{R}^n\).
+(2) In the ordered basis \((\mathbf{u}, \mathbf{w})\), the restriction \(A|_W\) has matrix
+\[
+C = \begin{bmatrix} a & b \\ -b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix}.
+\]
+(3) Swapping the basis order to \((\mathbf{w}, \mathbf{u})\) (or using \(\overline{\lambda} = a - bi\) with \((\mathbf{u}, \mathbf{w})\) where \(\mathbf{u} - i\mathbf{w}\) is the eigenvector for \(\overline{\lambda}\)) flips the off-diagonal signs to
+\[
+C' = \begin{bmatrix} a & -b \\ b & a \end{bmatrix} = r\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}.
+\]
+[/CALLOUT]
+
+Never guess the signs of the off-diagonal entries! Always check ONE column directly—compute \(A\mathbf{u}\) and express it as a linear combination of \(\mathbf{u}\) and \(\mathbf{w}\), which locks in the sign immediately.
+
+Let us run a complete \(2 \times 2\) worked example: \(A = \begin{bmatrix} 0 & -5 \\ 1 & 2 \end{bmatrix}\).
+- Characteristic polynomial: \(p_A(\lambda) = \lambda^2 - 2\lambda + 5 = (\lambda - 1)^2 + 4\), so \(\lambda = 1 \pm 2i\).
+- Take \(\lambda = 1 + 2i\): \(A - (1 + 2i)I = \begin{bmatrix} -1 - 2i & -5 \\ 1 & 1 - 2i \end{bmatrix}\). From row \(2\), \(v_1 + (1 - 2i)v_2 = 0\), so choosing \(v_2 = 1\) gives \(\mathbf{v} = \begin{bmatrix} -1 + 2i \\ 1 \end{bmatrix} = \begin{bmatrix} -1 \\ 1 \end{bmatrix} + i\begin{bmatrix} 2 \\ 0 \end{bmatrix}\).
+- Here \(\mathbf{u} = (-1, 1)^T\) and \(\mathbf{w} = (2, 0)^T\). Putting \(P = \begin{bmatrix} \mathbf{u} & \mathbf{w} \end{bmatrix} = \begin{bmatrix} -1 & 2 \\ 1 & 0 \end{bmatrix}\) gives \(C = \begin{bmatrix} 1 & 2 \\ -2 & 1 \end{bmatrix}\).
+- Check: \(A P = \begin{bmatrix} -5 & 0 \\ 1 & 2 \end{bmatrix}\) and \(P C = \begin{bmatrix} -1 & 2 \\ 1 & 0 \end{bmatrix}\begin{bmatrix} 1 & 2 \\ -2 & 1 \end{bmatrix} = \begin{bmatrix} -5 & 0 \\ 1 & 2 \end{bmatrix}\). Exact match! Here \(r = \sqrt{1^2 + 2^2} = \sqrt{5}\), so in the \((\mathbf{u}, \mathbf{w})\)-coordinate system, \(A\) scales by \(\sqrt{5}\) and rotates clockwise by \(\theta = \arctan(2)\).
+
+[QUESTION 2]
+[ANSWER: C]
+Consider the real matrix
+\[
+A = \begin{bmatrix} 1 & -2 \\ 1 & 3 \end{bmatrix},
+\]
+which has complex eigenvalue \(\lambda = 2 + i\) with eigenvector \(\mathbf{v} = (-1 + i,\; 1)^T\). Setting \(\mathbf{u} = \operatorname{Re}(\mathbf{v})\), \(\mathbf{w} = \operatorname{Im}(\mathbf{v})\), and \(P = \begin{bmatrix} \mathbf{u} & \mathbf{w} \end{bmatrix}\), what are \(P\) and the real canonical matrix \(C = P^{-1} A P\)?
+
+(A) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & -1 \\ 1 & 2 \end{bmatrix}\)
+(B) \(P = \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & 1 \\ -1 & 2 \end{bmatrix}\)
+(C) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & 1 \\ -1 & 2 \end{bmatrix}\)
+(D) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 1 \end{bmatrix}\), \(C = \begin{bmatrix} 2 & 1 \\ -1 & 2 \end{bmatrix}\)
+(E) \(P = \begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\), \(C = \begin{bmatrix} 1 & 2 \\ -2 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Suppose \(A \in M_2(\mathbb{R})\) has eigenvalue \(\lambda = 3 + 4i\) with complex eigenvector \(\mathbf{v} = \mathbf{u} + i\mathbf{w}\) (\(\mathbf{u}, \mathbf{w} \in \mathbb{R}^2\)). Let \(P_1 = \begin{bmatrix} \mathbf{u} & \mathbf{w} \end{bmatrix}\) and \(P_2 = \begin{bmatrix} \mathbf{w} & \mathbf{u} \end{bmatrix}\). What are \(P_1^{-1} A P_1\) and \(P_2^{-1} A P_2\), and what is the common scaling factor \(r\)?
+
+(A) \(P_1^{-1} A P_1 = \begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 3 & -4 \\ 4 & 3 \end{bmatrix}\), \(r = 5\)
+(B) \(P_1^{-1} A P_1 = \begin{bmatrix} 3 & -4 \\ 4 & 3 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(r = 5\)
+(C) Both equal \(\begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(r = 5\)
+(D) \(P_1^{-1} A P_1 = \begin{bmatrix} 3 & 4 \\ -4 & 3 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 3 & -4 \\ 4 & 3 \end{bmatrix}\), \(r = 25\)
+(E) \(P_1^{-1} A P_1 = \begin{bmatrix} 4 & 3 \\ -3 & 4 \end{bmatrix}\), \(P_2^{-1} A P_2 = \begin{bmatrix} 4 & -3 \\ 3 & 4 \end{bmatrix}\), \(r = 5\)
+[/QUESTION]
+
+=== SECTION 3: Real block-diagonal form and spiraling dynamics ===
+
+Now extend [REF: real-canonical-block | the \(2 \times 2\) block construction] to ANY real matrix \(A \in M_n(\mathbb{R})\) that is diagonalizable over \(\mathbb{C}\). Suppose \(A\) has real eigenvalues (counted with multiplicity) \(\mu_1, \dots, \mu_p\) with real eigenvectors \(\mathbf{x}_1, \dots, \mathbf{x}_p \in \mathbb{R}^n\), and \(q\) conjugate pairs of nonreal eigenvalues \(a_j \pm b_j i\) (\(b_j \neq 0\), \(p + 2q = n\)) with complex eigenvectors \(\mathbf{v}_j = \mathbf{u}_j + i\mathbf{w}_j\) and \(\overline{\mathbf{v}}_j = \mathbf{u}_j - i\mathbf{w}_j\). Because the \(n\) complex vectors \(\{\mathbf{x}_1, \dots, \mathbf{x}_p, \mathbf{v}_1, \overline{\mathbf{v}}_1, \dots, \mathbf{v}_q, \overline{\mathbf{v}}_q\}\) form a basis of \(\mathbb{C}^n\) and each real pair \(\{\mathbf{u}_j, \mathbf{w}_j\}\) spans the exact same complex subspace as \(\{\mathbf{v}_j, \overline{\mathbf{v}}_j\}\), the \(n\) REAL vectors
+\[
+\mathcal{B} = \{\mathbf{x}_1, \dots, \mathbf{x}_p,\; \mathbf{u}_1, \mathbf{w}_1, \dots, \mathbf{u}_q, \mathbf{w}_q\}
+\]
+form a basis of \(\mathbb{R}^n\)! Forming the real invertible matrix \(P = \begin{bmatrix} \mathbf{x}_1 & \cdots & \mathbf{x}_p & \mathbf{u}_1 & \mathbf{w}_1 & \cdots & \mathbf{u}_q & \mathbf{w}_q \end{bmatrix}\) transforms \(A\) into real block-diagonal form \(A = P C P^{-1}\), where
+\[
+C = \begin{bmatrix} \mu_1 & & & & \\ & \ddots & & & \\ & & \mu_p & & \\ & & & C_1 & \\ & & & & \ddots & \\ & & & & & C_q \end{bmatrix}, \qquad C_j = \begin{bmatrix} a_j & b_j \\ -b_j & a_j \end{bmatrix} = r_j \begin{bmatrix} \cos\theta_j & \sin\theta_j \\ -\sin\theta_j & \cos\theta_j \end{bmatrix}.
+\]
+
+Watch what this immediately predicts for discrete dynamical systems \(\mathbf{x}_{k+1} = A \mathbf{x}_k\) in \(\mathbb{R}^n\)! Inside each \(2\)-dimensional invariant plane \(W_j = \operatorname{span}_{\mathbb{R}}\{\mathbf{u}_j, \mathbf{w}_j\}\), taking the \(k\)-th power of a rotation-scaling block simply multiplies the scaling factor \(k\) times and adds the angle \(k\) times:
+\[
+C_j^k = r_j^k \begin{bmatrix} \cos(k\theta_j) & \sin(k\theta_j) \\ -\sin(k\theta_j) & \cos(k\theta_j) \end{bmatrix}.
+\]
+In the \((\mathbf{u}_j, \mathbf{w}_j)\)-basis, the iterates lie on a logarithmic spiral (in original standard coordinates, a tilted/stretched elliptical spiral obtained by applying \(P\)):
+- If \(r_j = |\lambda_j| < 1\), the trajectory spirals INWARD toward \(\mathbf{0}\).
+- If \(r_j = |\lambda_j| = 1\), the trajectory orbits along a closed circle (or ellipse in standard coordinates), neither growing nor decaying.
+- If \(r_j = |\lambda_j| > 1\), the trajectory spirals OUTWARD to infinity.
+
+Drag the slider \(r\) in the graph below across \(r < 1\), \(r = 1\), and \(r > 1\) to see how the modulus \(r = |\lambda|\) governs the entire qualitative fate of the discrete iterates \(\mathbf{x}_0, \mathbf{x}_1, \mathbf{x}_2, \mathbf{x}_3, \mathbf{x}_4\) under a rotation-scaling block with rotation angle \(0.7\text{ rad}\) per step.
+
+[GRAPH]
+type: parametric2d
+title: Rotation-scaling orbit \((r^t \cos(0.7t),\, r^t \sin(0.7t))\) as modulus \(r = \lvert\lambda\rvert\) varies
+xlabel: \(c_1\)
+ylabel: \(c_2\)
+trange: 0, 9
+xrange: -2.4, 2.4
+yrange: -2.4, 2.4
+trace: r^t * cos(0.7*t), r^t * sin(0.7*t) | label: spiral envelope
+point: 1, 0 | label: \(\mathbf{x}_0\)
+point: r * cos(0.7), r * sin(0.7) | label: \(\mathbf{x}_1\)
+point: r^2 * cos(1.4), r^2 * sin(1.4) | label: \(\mathbf{x}_2\)
+point: r^3 * cos(2.1), r^3 * sin(2.1) | label: \(\mathbf{x}_3\)
+point: r^4 * cos(2.8), r^4 * sin(2.8) | label: \(\mathbf{x}_4\)
+slider: r | range: 0.7, 1.2 | init: 0.85 | step: 0.05
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: D]
+Let \(A \in M_3(\mathbb{R})\) have eigenvalues \(\lambda_1 = \dfrac{1}{2}\) and \(\lambda_{2,3} = \dfrac{3}{5} \pm \dfrac{4}{5}i\). Consider the discrete dynamical system \(\mathbf{x}_{k+1} = A\mathbf{x}_k\) starting from a generic initial vector \(\mathbf{x}_0 \in \mathbb{R}^3\) that has nonzero components along both the real eigenline \(E_{1/2}\) and the \(2\)-dimensional invariant plane \(W\) associated with \(\lambda_{2,3}\). What happens to \(\mathbf{x}_k\) as \(k \to \infty\)?
+
+(A) \(\mathbf{x}_k\) spirals inward to the origin \(\mathbf{0}\).
+(B) \(\mathbf{x}_k\) spirals outward to infinity along the plane \(W\).
+(C) \(\mathbf{x}_k\) converges to a single fixed nonzero point on the eigenline \(E_{1/2}\).
+(D) The component along \(E_{1/2}\) decays to \(0\), while \(\mathbf{x}_k\) approaches a bounded rotating orbit on an ellipse inside the plane \(W\).
+(E) \(\mathbf{x}_k\) oscillates between two opposite points \(\pm \mathbf{x}_0\) without rotating.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+A real matrix \(A \in M_3(\mathbb{R})\) has eigenvalues \(2\), \(1 + i\), and \(1 - i\). Which statement is TRUE?
+
+(A) \(A\) is diagonalizable over \(\mathbb{R}\) because it has three distinct eigenvalues.
+(B) \(A\) is NOT diagonalizable over \(\mathbb{C}\) because two eigenvalues are nonreal.
+(C) \(A\) is similar over \(\mathbb{R}\) to \(\operatorname{diag}(2, 1, 1)\).
+(D) \(A\) has no real \(1\)-dimensional invariant subspace.
+(E) \(A\) is diagonalizable over \(\mathbb{C}\), not diagonalizable over \(\mathbb{R}\), and similar over \(\mathbb{R}\) to \(\begin{bmatrix} 2 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & -1 & 1 \end{bmatrix}\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Let
+\[
+A = \begin{bmatrix} 1 & -\sqrt{3} \\ \sqrt{3} & 1 \end{bmatrix}.
+\]
+Using its polar rotation-scaling form, compute \(A^{12}\).
+
+(A) \(-4096\,I_2\)
+(B) \(64\,I_2\)
+(C) \(4096\,I_2\)
+(D) \(2048\begin{bmatrix} 1 & -\sqrt{3} \\ \sqrt{3} & 1 \end{bmatrix}\)
+(E) \(I_2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose \(A \in M_2(\mathbb{R})\) has \(\operatorname{tr}(A) = 0\) and \(\det(A) = 9\). What is \(A^2\)?
+
+(A) \(9\,I_2\)
+(B) \(-9\,I_2\)
+(C) \(3\,I_2\)
+(D) \(-3\,I_2\)
+(E) Cannot be determined without knowing the entries of \(A\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Suppose \(A \in M_n(\mathbb{R})\) has a complex eigenvector \(\mathbf{v} = \mathbf{u} + i\mathbf{w}\) (\(\mathbf{u}, \mathbf{w} \in \mathbb{R}^n\)) for an eigenvalue \(\lambda = a + bi\). Why is the condition \(b \neq 0\) essential to guarantee that \(\{\mathbf{u}, \mathbf{w}\}\) is linearly independent over \(\mathbb{R}\)?
+
+(A) When \(b = 0\), \(\lambda = \overline{\lambda}\) is real, so \(\mathbf{v}\) and \(\overline{\mathbf{v}}\) need not be linearly independent (for instance, \(\mathbf{v}\) can be real with \(\mathbf{w} = \mathbf{0}\), or \(\mathbf{w}\) can be a real multiple of \(\mathbf{u}\)).
+(B) When \(b = 0\), \(A\) cannot have any nonzero eigenvectors in \(\mathbb{C}^n\).
+(C) When \(b = 0\), \(A\mathbf{u} = a\mathbf{u} - b\mathbf{w}\) fails to hold.
+(D) When \(b = 0\), \(\operatorname{span}_{\mathbb{R}}\{\mathbf{u}, \mathbf{w}\}\) is no longer \(A\)-invariant.
+(E) Actually \(b \neq 0\) is not needed: \(\{\mathbf{u}, \mathbf{w}\}\) is linearly independent for every complex eigenvector \(\mathbf{v} \neq \mathbf{0}\).
+[/BONUS]

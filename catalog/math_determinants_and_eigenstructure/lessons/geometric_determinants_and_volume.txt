@@ -1,0 +1,210 @@
+=== SECTION 1: Area of parallelograms and volume of parallelepipeds ===
+
+So far we have treated \(\det(A)\) purely as an algebraic machine: an alternating multilinear function of rows (or columns) normalized by \(\det(I_n) = 1\). Over the real numbers \(\mathbb{R}\), however, that algebraic machine measures something directly visible in Euclidean space: how a linear transformation \(T(\mathbf{x}) = A\mathbf{x}\) scales areas and volumes, and whether it preserves or reverses spatial orientation.
+
+Start in \(\mathbb{R}^2\) with a matrix \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 \end{bmatrix} = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\) whose columns are \(\mathbf{a}_1 = (a, c)^T\) and \(\mathbf{a}_2 = (b, d)^T\). Under \(T(\mathbf{x}) = A\mathbf{x}\), the standard basis vectors \(\mathbf{e}_1 = (1, 0)^T\) and \(\mathbf{e}_2 = (0, 1)^T\) map to \(\mathbf{a}_1\) and \(\mathbf{a}_2\), so the unit square \([0, 1]^2 = \{s\mathbf{e}_1 + t\mathbf{e}_2 : 0 \le s, t \le 1\}\) maps onto the parallelogram
+\[
+P(\mathbf{a}_1, \mathbf{a}_2) = \{s\mathbf{a}_1 + t\mathbf{a}_2 : 0 \le s, t \le 1\}
+\]
+spanned by \(\mathbf{a}_1\) and \(\mathbf{a}_2\). Let \(\theta\) be the angle from \(\mathbf{a}_1\) to \(\mathbf{a}_2\). Express both columns in polar form: \(\mathbf{a}_1 = r_1(\cos\alpha, \sin\alpha)^T\) and \(\mathbf{a}_2 = r_2(\cos(\alpha + \theta), \sin(\alpha + \theta))^T\), where \(r_1 = \|\mathbf{a}_1\|\) and \(r_2 = \|\mathbf{a}_2\|\). Computing the determinant directly gives
+\[
+\det(A) = r_1 r_2 \bigl(\cos\alpha \sin(\alpha + \theta) - \sin\alpha \cos(\alpha + \theta)\bigr) = r_1 r_2 \sin\theta.
+\]
+Look at the two parts of \(r_1 r_2 \sin\theta\):
+- Its magnitude \(|\det(A)| = r_1 r_2 |\sin\theta|\) is base (\(r_1\)) times perpendicular height (\(r_2 |\sin\theta|\))—the exact Euclidean area of \(P(\mathbf{a}_1, \mathbf{a}_2)\)!
+- Its sign is the sign of \(\sin\theta\): positive when the counterclockwise angle from \(\mathbf{a}_1\) to \(\mathbf{a}_2\) lies in \((0, \pi)\) (the same counterclockwise ordering as \((\mathbf{e}_1, \mathbf{e}_2)\)), negative when the angle lies in \((\pi, 2\pi)\) (clockwise ordering), and zero when \(\mathbf{a}_1\) and \(\mathbf{a}_2\) are collinear.
+
+For example, take \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\). Its columns \(\mathbf{a}_1 = (2, 1)^T\) and \(\mathbf{a}_2 = (1, 2)^T\) span a parallelogram of area \(|\det(A)| = |2 \cdot 2 - 1 \cdot 1| = 3\), and since \(\det(A) = +3 > 0\), moving from \(\mathbf{a}_1\) to \(\mathbf{a}_2\) goes counterclockwise, just like moving from \(\mathbf{e}_1\) to \(\mathbf{e}_2\).
+
+[GRAPH]
+type: parametric2d
+title: Image of the unit square under \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\) has area \(\lvert\det(A)\rvert = 3\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.4, 3.5
+yrange: -0.4, 3.5
+trace: t, 0 | label: unit square
+trace: 1, t
+trace: 1 - t, 1
+trace: 0, 1 - t
+trace: 2*t, t | label: \(\mathbf{a}_1 = (2, 1)\)
+trace: t, 2*t | label: \(\mathbf{a}_2 = (1, 2)\)
+segment: 2, 1, 3, 3 | dashed: true
+segment: 1, 2, 3, 3 | dashed: true
+point: 2, 1 | label: \((2, 1)\)
+point: 1, 2 | label: \((1, 2)\)
+point: 3, 3 | label: \((3, 3)\)
+[/GRAPH]
+
+In \(\mathbb{R}^3\), the columns \(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3\) of \(A \in M_3(\mathbb{R})\) span a parallelepiped
+\[
+P(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3) = \{s_1 \mathbf{a}_1 + s_2 \mathbf{a}_2 + s_3 \mathbf{a}_3 : 0 \le s_i \le 1\}.
+\]
+Recall from vector geometry that the scalar triple product \(\mathbf{a}_1 \cdot (\mathbf{a}_2 \times \mathbf{a}_3)\) equals \(\det\begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) (expanding along the first column recovers the exact components of \(\mathbf{a}_2 \times \mathbf{a}_3\)). Its magnitude \(|\mathbf{a}_1 \cdot (\mathbf{a}_2 \times \mathbf{a}_3)| = \|\mathbf{a}_2 \times \mathbf{a}_3\| \cdot (\text{height of }\mathbf{a}_1\text{ perpendicular to the base})\) is the exact \(3\)-dimensional volume of the parallelepiped, while its sign tells whether \((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\) is right-handed (\(\det(A) > 0\)) or left-handed (\(\det(A) < 0\)).
+
+[QUESTION 1]
+[ANSWER: C]
+A parallelogram in \(\mathbb{R}^2\) has vertices at \((1, 2)\), \((4, 3)\), \((2, 6)\), and \((5, 7)\). What is its area?
+
+(A) \(9\)
+(B) \(13\)
+(C) \(11\)
+(D) \(10\)
+(E) \(14\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+What is the volume of the parallelepiped in \(\mathbb{R}^3\) spanned by the three column vectors \(\mathbf{v}_1 = (1, 0, 2)^T\), \(\mathbf{v}_2 = (0, 3, -1)^T\), and \(\mathbf{v}_3 = (2, 1, 1)^T\)?
+
+(A) \(8\)
+(B) \(-8\)
+(C) \(16\)
+(D) \(4\)
+(E) \(12\)
+[/QUESTION]
+
+=== SECTION 2: Parallelotopes in \(\mathbb{R}^n\) and elementary geometry ===
+
+Does \(|\det(A)|\) still measure \(n\)-dimensional volume for an arbitrary \(n \times n\) real matrix \(A = \begin{bmatrix} \mathbf{a}_1 & \cdots & \mathbf{a}_n \end{bmatrix}\)? Let \(P(\mathbf{a}_1, \dots, \mathbf{a}_n) = \{\sum_{j=1}^n s_j \mathbf{a}_j : 0 \le s_j \le 1\}\) be the \(n\)-dimensional parallelotope spanned by the columns of \(A\), and let \(\operatorname{Vol}(P)\) be its \(n\)-dimensional volume. We can verify \(\operatorname{Vol}(P(\mathbf{a}_1, \dots, \mathbf{a}_n)) = |\det(A)|\) by interpreting each of the three elementary column operations (equivalently, right-multiplying \(A\) by an elementary matrix \(E\), or left-multiplying by \(E\) in the ambient space \(\mathbb{R}^n\)) geometrically!
+
+Consider how an elementary matrix \(E\) acts on ANY parallelotope \(P \subset \mathbb{R}^n\) when we apply the linear map \(\mathbf{x} \mapsto E\mathbf{x}\):
+
+[TABLE]
+Elementary matrix \(E\) | Geometric action on \(\mathbb{R}^n\) | Volume factor on regions | \(\lvert\det(E)\rvert\) | Orientation effect
+Scaling row \(i\) by \(c \neq 0\) | Stretches coordinate \(x_i\) by \(\lvert c \rvert\) (and reflects if \(c < 0\)) | Multiplies volume by \(\lvert c \rvert\) | \(\lvert c \rvert\) | Preserves if \(c > 0\), reverses if \(c < 0\)
+Swapping rows \(i\) and \(j\) | Reflects across the hyperplane \(x_i = x_j\) | Multiplies volume by \(1\) | \(1\) | Reverses (\(\det E = -1\))
+Row replacement \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) | Shears parallel to axis \(i\) by \(c x_j\) | Multiplies volume by \(1\) (Cavalieri's principle: parallel cross-sections translate without changing area) | \(1\) | Preserves (\(\det E = +1\))
+[/TABLE]
+
+In every single case, applying an elementary transformation \(E\) multiplies \(n\)-dimensional volume by \(|\det(E)|\)! Now take ANY matrix \(A \in M_n(\mathbb{R})\):
+- If \(A\) is invertible, factor \(A = E_1 E_2 \cdots E_k\) into elementary matrices. Starting with the unit \(n\)-cube \(Q = [0, 1]^n\) (which has \(\operatorname{Vol}(Q) = 1\)), applying \(E_k\), then \(E_{k-1}\), ..., up to \(E_1\) transforms \(Q\) into the parallelotope \(A(Q) = P(\mathbf{a}_1, \dots, \mathbf{a}_n)\) and multiplies volume at each step by \(|\det(E_m)|\). By multiplicativity of the determinant,
+\[
+\operatorname{Vol}(A(Q)) = |\det(E_1)| \cdots |\det(E_k)| \cdot \operatorname{Vol}(Q) = |\det(E_1 \cdots E_k)| \cdot 1 = |\det(A)|.
+\]
+- If \(A\) is singular, the image \(A(Q)\) lies inside the column space \(\operatorname{Col}(A)\), which is a proper subspace of dimension strictly less than \(n\); a flat lower-dimensional slice inside \(\mathbb{R}^n\) has \(n\)-dimensional volume \(0 = |\det(A)|\).
+
+Because any elementary region \(S \subset \mathbb{R}^n\) (such as a box, ball, or polygon) can be approximated arbitrarily closely from inside and outside by finite grids of tiny axis-aligned cubes—and each tiny cube \(Q_j\) of volume \(\operatorname{Vol}(Q_j)\) maps under \(T(\mathbf{x}) = A\mathbf{x}\) to a translated parallelotope of volume \(|\det(A)| \operatorname{Vol}(Q_j)\)—summing over the cubes gives the universal volume-scaling principle for linear transformations.
+
+[CALLOUT]
+id: volume-scaling
+label: Theorem
+title: Volume scaling under linear maps
+tone: key
+
+Let \(A \in M_n(\mathbb{R})\) and define \(T : \mathbb{R}^n \to \mathbb{R}^n\) by \(T(\mathbf{x}) = A\mathbf{x}\).
+
+(1) The \(n\)-dimensional parallelotope spanned by the columns of \(A\) has volume \(|\det(A)|\).
+(2) For any parallelotope or elementary bounded region \(S \subset \mathbb{R}^n\) with volume \(\operatorname{Vol}(S)\),
+\[
+\operatorname{Vol}(T(S)) = |\det(A)|\,\operatorname{Vol}(S).
+\]
+[/CALLOUT]
+
+Notice how [REF: volume-scaling.2 | volume scaling] explains multiplicativity geometrically too: applying \(B\) first scales all volumes by \(|\det(B)|\), and then applying \(A\) scales the resulting volumes by \(|\det(A)|\), so the composition \(AB\) must scale volumes by \(|\det(A)|\,|\det(B)| = |\det(AB)|\)! (In multivariable calculus, this exact local linear scaling principle reappears when the determinant of the Jacobian matrix governs change of variables in multiple integrals.)
+
+[QUESTION 3]
+[ANSWER: D]
+A solid region \(S \subset \mathbb{R}^3\) has volume \(5\). Define \(T : \mathbb{R}^3 \to \mathbb{R}^3\) as the composition of three steps applied to \(\mathbf{x} = (x, y, z)^T\): first reflect across the \(xy\)-plane, then scale every coordinate by \(2\), and finally apply the shear \((x, y, z) \mapsto (x + 3z, y, z)\). What is \(\operatorname{Vol}(T(S))\), and how does \(T\) affect orientation?
+
+(A) Volume \(10\), orientation-reversing
+(B) Volume \(40\), orientation-preserving
+(C) Volume \(120\), orientation-reversing
+(D) Volume \(40\), orientation-reversing
+(E) Volume \(10\), orientation-preserving
+[/QUESTION]
+
+=== SECTION 3: Orientation and passing through singularity ===
+
+The sign of \(\det(A)\) captures a topological property that magnitude alone misses: spatial orientation (handedness). An ordered basis \((\mathbf{v}_1, \dots, \mathbf{v}_n)\) of \(\mathbb{R}^n\) is called positively oriented if the matrix \(A = \begin{bmatrix} \mathbf{v}_1 & \cdots & \mathbf{v}_n \end{bmatrix}\) satisfies \(\det(A) > 0\), and negatively oriented if \(\det(A) < 0\).
+
+[CALLOUT]
+id: orientation-classification
+label: Classification
+title: Geometric meaning of the sign of \(\det(A)\)
+tone: key
+
+For \(A \in M_n(\mathbb{R})\) defining \(T(\mathbf{x}) = A\mathbf{x}\):
+
+(1) \(\det(A) > 0\): \(T\) is orientation-preserving (maps every positively oriented basis to a positively oriented basis). Examples: rotations, pure shears, positive scalings \(cI_n\) (\(c > 0\)), and compositions of an EVEN number of reflections.
+(2) \(\det(A) < 0\): \(T\) is orientation-reversing (flips handedness, turning a right-handed frame into a left-handed one). Examples: single reflections across a hyperplane, coordinate swaps, and compositions of an ODD number of reflections.
+(3) \(\det(A) = 0\): \(T\) is dimension-collapsing (singular), flattening \(\mathbb{R}^n\) onto a lower-dimensional subspace of zero \(n\)-dimensional volume.
+[/CALLOUT]
+
+Watch dimension parity closely when applying \(-I_n\) (central inversion \(\mathbf{x} \mapsto -\mathbf{x}\)): because \(\det(-I_n) = (-1)^n\), central inversion in \(\mathbb{R}^2\) is a \(180^\circ\) rotation and is orientation-PRESERVING (\(\det(-I_2) = +1\)), whereas central inversion in \(\mathbb{R}^3\) turns a right hand into a left hand and is orientation-REVERSING (\(\det(-I_3) = -1\))!
+
+There is a striking geometric consequence of continuity of the determinant: you can NEVER continuously deform an orientation-preserving transformation into an orientation-reversing transformation without crushing volume down to zero at some intermediate moment. Watch the continuous family
+\[
+A(s) = \begin{bmatrix} 1 & 0 \\ 0 & s \end{bmatrix}
+\]
+as the slider \(s\) moves from \(s = 1\) (the identity, \(\det = 1\)) down to \(s = -1\) (reflection across the \(x_1\)-axis, \(\det = -1\)). To get from \(s = 1\) to \(s = -1\), the image of the unit square MUST flatten into a horizontal line segment at \(s = 0\) (\(\det(A(0)) = 0\)) before re-expanding upside down with reversed orientation.
+
+[GRAPH]
+type: parametric2d
+title: Continuous deformation \(A(s) = \operatorname{diag}(1, s)\) from \(\det > 0\) through collapse (\(\det = 0\)) to \(\det < 0\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.5, 1.8
+yrange: -1.6, 1.6
+trace: t, 0 | label: \(\mathbf{a}_1 = (1, 0)\)
+trace: 0, s*t | label: \(\mathbf{a}_2(s) = (0, s)\)
+segment: 1, 0, 1, s | dashed: true
+segment: 0, s, 1, s | dashed: true
+point: 1, 0 | label: \((1, 0)\)
+point: 0, s | label: \((0, s)\)
+slider: s | range: -1.4, 1.4 | init: 1 | step: 0.1
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: B]
+Which of the following linear transformations \(T : \mathbb{R}^3 \to \mathbb{R}^3\) is orientation-reversing?
+
+(A) Rotation by \(60^\circ\) around the \(z\)-axis
+(B) Uniform scaling \(T(\mathbf{x}) = -2\mathbf{x}\)
+(C) Reflection across the \(xy\)-plane followed by reflection across the \(yz\)-plane
+(D) The shear \(T(x, y, z) = (x + 5y,\; y - 2z,\; z)\)
+(E) Cyclic coordinate permutation \(T(x, y, z) = (y, z, x)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(D = \{(x, y) \in \mathbb{R}^2 : x^2 + y^2 \le 1\}\) be the closed unit disk (of area \(\pi\)), and let \(T(\mathbf{x}) = A\mathbf{x}\) where
+\[
+A = \begin{bmatrix} 3 & 1 \\ 1 & 2 \end{bmatrix}.
+\]
+What is the area of the tilted elliptical region \(T(D)\)?
+
+(A) \(6\pi\)
+(B) \(7\pi\)
+(C) \(4\pi\)
+(D) \(25\pi\)
+(E) \(5\pi\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(A \in M_2(\mathbb{R})\) be a matrix whose two column vectors \(\mathbf{a}_1, \mathbf{a}_2\) have Euclidean lengths \(\|\mathbf{a}_1\| = 4\) and \(\|\mathbf{a}_2\| = 5\). What is the maximum possible value of \(|\det(A)|\), and when is it attained?
+
+(A) \(9\), attained when \(\mathbf{a}_1\) and \(\mathbf{a}_2\) point in the same direction
+(B) \(10\), attained when the angle between \(\mathbf{a}_1\) and \(\mathbf{a}_2\) is \(30^\circ\)
+(C) \(20\), attained when \(\mathbf{a}_1\) and \(\mathbf{a}_2\) are perpendicular
+(D) \(20\), attained whenever \(\det(A) > 0\) regardless of the angle
+(E) There is no finite maximum, because shearing can grow the parallelogram indefinitely
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Consider the continuous family of matrices
+\[
+A(t) = (1 - t)\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} + t\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} \qquad (0 \le t \le 1),
+\]
+which connects the identity \(I_2\) (at \(t = 0\)) to the reflection across the line \(y = x\) (at \(t = 1\)). At what value of \(t \in [0, 1]\) does \(A(t)\) collapse the plane onto a line?
+
+(A) \(t = \dfrac{1}{4}\)
+(B) \(t = \dfrac{1}{2}\)
+(C) \(t = \dfrac{1}{\sqrt{2}}\)
+(D) \(t = \dfrac{2}{3}\)
+(E) \(A(t)\) is invertible for every \(t \in [0, 1]\)
+[/BONUS]

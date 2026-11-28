@@ -500,7 +500,8 @@ function renderLibraryGrid() {
     const collectionDraft = !builtinPointer && !total && entry.data?.collectionId;
     let done = 0;
     if (builtinPointer) {
-      const rec = builtinMeta?.signature ? progressCache[builtinMeta.signature] : null;
+      const sig = typeof getCatalogSignature === 'function' ? getCatalogSignature(builtinMeta) : builtinMeta?.signature;
+      const rec = sig ? progressCache[sig] : null;
       if (rec) done = Object.values(rec).filter(r => r?.done).length;
     } else {
       done = libraryProgressFor(entry.data).done;

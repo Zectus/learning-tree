@@ -1,0 +1,320 @@
+=== SECTION 1: Elevar una función de elementos a subconjuntos ===
+
+Una función \(f : A \to B\) aplica elementos individuales de \(A\) en elementos individuales de \(B\). Sin embargo, en casi toda rama de la matemática necesitamos empujar SUBCONJUNTOS enteros de \(A\) hacia delante mediante \(f\), o traer SUBCONJUNTOS enteros de \(B\) hacia atrás mediante \(f\). En análisis, la continuidad se define trayendo conjuntos abiertos hacia atrás; en álgebra, los núcleos son preimágenes del elemento neutro; en probabilidad, los sucesos son preimágenes de intervalos numéricos. Estas dos operaciones a nivel de subconjuntos son la imagen directa y la preimagen.
+
+[CALLOUT]
+id: image-preimage-def
+label: Definición
+title: Imagen directa y preimagen (imagen inversa) de un subconjunto
+tone: key
+
+Sea \(f : A \to B\) una función.
+
+(1) Imagen directa: para todo subconjunto \(S \subseteq A\), la imagen directa (o simplemente imagen) de \(S\) bajo \(f\) es el subconjunto de \(B\) definido por
+\[
+f(S) = \{f(x) : x \in S\} = \{y \in B : \exists x \in S,\; f(x) = y\}.
+\]
+(2) Preimagen (imagen inversa): para todo subconjunto \(T \subseteq B\), la preimagen de \(T\) bajo \(f\) es el subconjunto de \(A\) definido por
+\[
+f^{-1}(T) = \{x \in A : f(x) \in T\}.
+\]
+[/CALLOUT]
+
+Léanse con atención las dos equivalencias de pertenencia, porque toda demostración de esta lección brota directamente de ellas:
+- Para todo \(y \in B\) y \(S \subseteq A\): \(y \in f(S) \iff \exists x \in S,\; f(x) = y\).
+- Para todo \(x \in A\) y \(T \subseteq B\): \(x \in f^{-1}(T) \iff f(x) \in T\).
+
+Obsérvense dos casos particulares inmediatos. Tomar \(S = A\) da \(f(A) = \operatorname{im}(f)\), la imagen (recorrido) de \(f\); tomar \(S = \emptyset\) da \(f(\emptyset) = \emptyset\). Del lado de la preimagen, tomar \(T = B\) da \(f^{-1}(B) = A\) (todo \(x \in A\) cumple \(f(x) \in B\)), mientras que \(f^{-1}(\emptyset) = \emptyset\). Más aún, \(f^{-1}(T)\) puede ser vacío para un subconjunto NO VACÍO \(T \subseteq B\): concretamente, \(f^{-1}(T) = \emptyset\) siempre que \(T\) evite por completo a \(\operatorname{im}(f)\) (\(T \cap \operatorname{im}(f) = \emptyset\)).
+
+[CALLOUT]
+id: preimage-not-inverse
+label: Error frecuente
+title: \(f^{-1}(T)\) NO requiere una función inversa
+tone: caution
+
+La notación \(f^{-1}(T)\) para un subconjunto \(T \subseteq B\) está definida para TODA función \(f : A \to B\), ¡tenga o no tenga \(f\) una función inversa!
+
+(1) \(f^{-1}(T)\) es un SUBCONJUNTO de \(A\), nunca un único elemento (incluso cuando \(T = \{y\}\) es un singulete, \(f^{-1}(\{y\}) = \{x \in A : f(x) = y\}\) es un subconjunto —denominado fibra sobre \(y\)— que puede tener cero, uno o infinitos elementos).
+(2) Escribir \(f^{-1}(y)\) como un ELEMENTO de \(A\) exige que \(f\) sea invertible, una condición mucho más fuerte estudiada en lecciones posteriores. Para evitar ambigüedades, escríbase siempre \(f^{-1}(\{y\})\) para la preimagen de una única salida \(y\).
+[/CALLOUT]
+
+Veamos ambas operaciones visualmente en la función real no invertible \(f : \mathbb{R} \to \mathbb{R}\) dada por \(f(x) = x^2 - 1\).
+- Tómese \(S = [0.5, 1.5] \subseteq \mathbb{R}\). Conforme \(x\) varía de \(0.5\) a \(1.5\), \(x^2 - 1\) crece de \(0.25 - 1 = -0.75\) a \(2.25 - 1 = 1.25\). Por tanto, \(f([0.5, 1.5]) = [-0.75, 1.25]\).
+- Tómese ahora \(T = [0, 3] \subseteq \mathbb{R}\) en el eje vertical y pregúntese qué entradas \(x \in \mathbb{R}\) satisfacen \(0 \le x^2 - 1 \le 3\). Sumando \(1\) se obtiene \(1 \le x^2 \le 4\), luego \(1 \le |x| \le 2\). De ahí que la preimagen se divida en DOS intervalos disjuntos:
+\[
+f^{-1}([0, 3]) = [-2, -1] \cup [1, 2].
+\]
+- ¿Qué pasa con \(T' = [-3, -2]\)? Como \(x^2 - 1 \ge -1\) para todo \(x \in \mathbb{R}\), ninguna entrada cae en \([-3, -2]\), por lo que \(f^{-1}([-3, -2]) = \emptyset\).
+- ¿Y la fibra sobre \(0\)? Resolver \(x^2 - 1 = 0\) da \(f^{-1}(\{0\}) = \{-1, 1\}\), un conjunto de dos elementos.
+
+[GRAPH]
+type: function2d
+title: Imagen directa \(f([0.5, 1.5]) = [-0.75, 1.25]\) y preimagen \(f^{-1}([0, 3]) = [-2, -1] \cup [1, 2]\) para \(f(x) = x^2 - 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 2.5
+yrange: -1.4, 3.6
+trace: x^2 - 1 | label: \(f(x) = x^2 - 1\) | color: #2563eb
+segment: 0.5, 0, 1.5, 0 | label: \(S\) | color: #16a34a
+segment: 0, -0.75, 0, 1.25 | label: \(f(S)\) | color: #16a34a
+segment: -2, 3, 2, 3 | color: #dc2626 | dashed: true
+segment: -2, 0, -1, 0 | color: #dc2626
+segment: 1, 0, 2, 0 | color: #dc2626
+point: 0.5, -0.75 | label: \((0.5, -0.75)\) | color: #16a34a | offset: 18, -14
+point: 1.5, 1.25 | label: \((1.5, 1.25)\) | color: #16a34a | offset: 18, 8
+point: -2, 3 | label: \((-2, 3)\) | color: #dc2626 | offset: -20, 10
+point: 2, 3 | label: \((2, 3)\) | color: #dc2626 | offset: 16, 10
+point: -1, 0 | color: #dc2626
+point: 1, 0 | color: #dc2626
+[/GRAPH]
+
+Téngase cuidado al calcular \(f(S)\) para una función no monótona: NO basta con evaluar los extremos de un intervalo \(S\). Para la misma función \(f(x) = x^2 - 1\), tómese \(S = [-1, 2]\). Los extremos dan \(f(-1) = 0\) y \(f(2) = 3\), lo que podría tentarle a conjeturar \([0, 3]\). Sin embargo, \(0 \in [-1, 2]\) da \(f(0) = -1\), el verdadero mínimo en \(S\), por lo que \(f([-1, 2]) = [-1, 3]\). Rastréense siempre TODOS los valores \(f(x)\) alcanzados cuando \(x\) recorre \(S\).
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(f : \mathbb{R} \to \mathbb{R}\) definida por \(f(x) = (x - 1)^2\). ¿Cuáles son la imagen directa \(f([-1, 2])\) y la preimagen \(f^{-1}([1, 9])\)?
+
+(A) \(f([-1, 2]) = [1, 4]\) y \(f^{-1}([1, 9]) = [2, 4]\)
+(B) \(f([-1, 2]) = [0, 4]\) y \(f^{-1}([1, 9]) = [2, 4]\)
+(C) \(f([-1, 2]) = [0, 4]\) y \(f^{-1}([1, 9]) = [-2, 0] \cup [2, 4]\)
+(D) \(f([-1, 2]) = [1, 4]\) y \(f^{-1}([1, 9]) = [-2, 0] \cup [2, 4]\)
+(E) \(f([-1, 2]) = [0, 1]\) y \(f^{-1}([1, 9]) = [-3, -1] \cup [1, 3]\)
+[/QUESTION]
+
+=== SECTION 2: Las preimágenes preservan todas las operaciones conjuntistas ===
+
+Una asimetría notable separa las preimágenes de las imágenes directas: las preimágenes conmutan limpiamente con TODA operación conjuntista —uniones arbitrarias, intersecciones arbitrarias, diferencias de conjuntos y complementos— para TODA función \(f : A \to B\), sin ninguna hipótesis adicional sobre \(f\). ¿Por qué? Mire de nuevo el [REF: image-preimage-def.2 | criterio de pertenencia para una preimagen]:
+\[
+x \in f^{-1}(T) \iff f(x) \in T.
+\]
+¡No aparece ningún cuantificador nuevo! Comprobar si \(x\) pertenece a una preimagen simplemente comprueba si el ÚNICO elemento \(f(x)\) satisface la condición conjuntista en \(B\). En consecuencia, todo conectivo lógico (\(\exists\), \(\forall\), \(\land\), \(\lor\), \(\neg\)) atraviesa directamente \(f^{-1}\) sin distorsión.
+
+[CALLOUT]
+id: preimage-algebra
+label: Teorema
+title: Leyes algebraicas exactas para preimágenes
+tone: key
+
+Sea \(f : A \to B\) cualquier función, sean \(T, T_1, T_2 \subseteq B\), y sea \(\{T_i\}_{i \in I}\) cualquier familia indexada de subconjuntos de \(B\) (con \(I\) finito, infinito o vacío, tomando intersecciones dentro del codominio ambiente \(B\) y del dominio \(A\)). Entonces:
+
+(1) Monotonía: si \(T_1 \subseteq T_2\), entonces \(f^{-1}(T_1) \subseteq f^{-1}(T_2)\).
+(2) Uniones arbitrarias: \(f^{-1}\!\left(\bigcup_{i \in I} T_i\right) = \bigcup_{i \in I} f^{-1}(T_i)\).
+(3) Intersecciones arbitrarias: \(f^{-1}\!\left(\bigcap_{i \in I} T_i\right) = \bigcap_{i \in I} f^{-1}(T_i)\).
+(4) Diferencias de conjuntos: \(f^{-1}(T_1 \setminus T_2) = f^{-1}(T_1) \setminus f^{-1}(T_2)\).
+(5) Complementos: \(f^{-1}(T^c) = \bigl(f^{-1}(T)\bigr)^c\) (donde \(T^c = B \setminus T\) y \((f^{-1}(T))^c = A \setminus f^{-1}(T)\)).
+[/CALLOUT]
+
+Escribamos las demostraciones por seguimiento de elementos de (2), (3) y (4) para que la mecánica de cuantificadores resulte completamente transparente.
+
+Demostración de (2): Sea \(x \in A\) arbitrario. Entonces
+\[
+\begin{aligned}
+x \in f^{-1}\!\left(\bigcup_{i \in I} T_i\right)
+&\iff f(x) \in \bigcup_{i \in I} T_i \\
+&\iff \exists i \in I,\; f(x) \in T_i \\
+&\iff \exists i \in I,\; x \in f^{-1}(T_i) \\
+&\iff x \in \bigcup_{i \in I} f^{-1}(T_i).
+\end{aligned}
+\]
+Como cada paso es un bicondicional (\(\iff\)), la extensionalidad da la igualdad directamente en una sola cadena.
+
+Demostración de (3): Sea \(x \in A\) arbitrario. Entonces
+\[
+\begin{aligned}
+x \in f^{-1}\!\left(\bigcap_{i \in I} T_i\right)
+&\iff f(x) \in \bigcap_{i \in I} T_i \\
+&\iff \forall i \in I,\; f(x) \in T_i \\
+&\iff \forall i \in I,\; x \in f^{-1}(T_i) \\
+&\iff x \in \bigcap_{i \in I} f^{-1}(T_i).
+\end{aligned}
+\]
+Compruébese también la convención de índice vacío \(I = \emptyset\): la intersección vacía en \(B\) es \(B\), cuya preimagen es \(f^{-1}(B) = A\), coincidiendo con la intersección vacía en \(A\).
+
+Demostración de (4): Sea \(x \in A\) arbitrario. Entonces
+\[
+\begin{aligned}
+x \in f^{-1}(T_1 \setminus T_2)
+&\iff f(x) \in T_1 \setminus T_2 \\
+&\iff f(x) \in T_1 \land f(x) \notin T_2 \\
+&\iff x \in f^{-1}(T_1) \land x \notin f^{-1}(T_2) \\
+&\iff x \in f^{-1}(T_1) \setminus f^{-1}(T_2).
+\end{aligned}
+\]
+La parte (5) es inmediata a partir de (4) tomando \(T_1 = B\) y \(T_2 = T\), pues \(f^{-1}(B) = A\). La parte (1) es igual de breve: si \(T_1 \subseteq T_2\) y \(x \in f^{-1}(T_1)\), entonces \(f(x) \in T_1 \subseteq T_2\), luego \(x \in f^{-1}(T_2)\).
+
+¿Por qué resultan tan útiles estas identidades en la práctica? A menudo calcular \(f^{-1}(T_i)\) por separado para cada \(i\) es engorroso, mientras que combinar primero los \(T_i\) dentro de \(B\) reduce el problema a una única ecuación elemental. Por ejemplo, si \(f(x) = \sin(\pi x)\) y \(T_n = [1/n, 1]\) para \(n \in \mathbb{Z}^+\), hallar cada \(f^{-1}(T_n)\) requiere intervalos de arcoseno, pero la [REF: preimage-algebra.2 | ley de la unión] dice
+\[
+\bigcup_{n=1}^{\infty} f^{-1}\!\left(\left[\frac{1}{n}, 1\right]\right) = f^{-1}\!\left(\bigcup_{n=1}^{\infty} \left[\frac{1}{n}, 1\right]\right) = f^{-1}((0, 1]) = \{x \in \mathbb{R} : \sin(\pi x) > 0\},
+\]
+que es de inmediato la unión de todos los intervalos abiertos \((2k, 2k + 1)\) para \(k \in \mathbb{Z}\).
+
+[QUESTION 2]
+[ANSWER: D]
+Sea \(f : \mathbb{R} \to \mathbb{R}\) definida por \(f(x) = x^2 - 4\), y para cada \(n \in \mathbb{Z}^+\) sea \(T_n = \left(-\frac{1}{n}, \frac{1}{n}\right)\). ¿Cuál es el conjunto \(\bigcap_{n=1}^{\infty} f^{-1}(T_n)\)?
+
+(A) \(\emptyset\)
+(B) \(\{0\}\)
+(C) \(\{2\}\)
+(D) \(\{-2, 2\}\)
+(E) \([-2, 2]\)
+[/QUESTION]
+
+=== SECTION 3: Imágenes directas — exactitud en uniones e inclusión en un sentido en intersecciones ===
+
+Intentemos ahora exactamente el mismo seguimiento de elementos con IMÁGENES DIRECTAS. Recuérdese la [REF: image-preimage-def.1 | equivalencia de pertenencia para una imagen directa]:
+\[
+y \in f(S) \iff \exists x \in S,\; f(x) = y.
+\]
+¡Aquí SÍ se introduce un cuantificador existencial \(\exists x\)! ¿Cómo interactúa \(\exists x\) con otro cuantificador existencial (procedente de una unión) frente a un cuantificador universal (procedente de una intersección)?
+- Dos cuantificadores existenciales conmutan libremente: \(\exists x\, \exists i\) es lógicamente equivalente a \(\exists i\, \exists x\). Por tanto, las imágenes directas preservan UNIONES ARBITRARIAS con igualdad exacta.
+- Un cuantificador existencial y un cuantificador universal NO conmutan: \(\exists x\, \forall i\) implica \(\forall i\, \exists x\) (un solo \(x\) que sirve para todo \(i\) sin duda suministra un \(x\) para cada \(i\)), pero \(\forall i\, \exists x\) NO implica \(\exists x\, \forall i\) (índices \(i\) distintos pueden usar testigos DISTINTOS \(x_i\) que casualmente comparten la misma salida \(y\)). Por tanto, las imágenes directas dan SOLO una inclusión en un sentido para intersecciones.
+
+[CALLOUT]
+id: direct-image-algebra
+label: Teorema
+title: Leyes algebraicas para imágenes directas
+tone: key
+
+Sea \(f : A \to B\) cualquier función, sean \(S_1, S_2 \subseteq A\), y sea \(\{S_i\}_{i \in I}\) cualquier familia indexada de subconjuntos de \(A\). Entonces:
+
+(1) Monotonía: si \(S_1 \subseteq S_2\), entonces \(f(S_1) \subseteq f(S_2)\).
+(2) Uniones arbitrarias (igualdad exacta):
+\[
+f\!\left(\bigcup_{i \in I} S_i\right) = \bigcup_{i \in I} f(S_i).
+\]
+(3) Intersecciones arbitrarias (inclusión en un sentido):
+\[
+f\!\left(\bigcap_{i \in I} S_i\right) \subseteq \bigcap_{i \in I} f(S_i).
+\]
+En general, la inclusión inversa \(\bigcap_{i \in I} f(S_i) \subseteq f(\bigcap_{i \in I} S_i)\) FALLA.
+[/CALLOUT]
+
+Demostremos (2) y (3) explícitamente y luego construyamos un contraejemplo minimal para el recíproco de (3).
+
+Demostración de (2): Sea \(y \in B\) arbitrario. Entonces
+\[
+\begin{aligned}
+y \in f\!\left(\bigcup_{i \in I} S_i\right)
+&\iff \exists x \in \bigcup_{i \in I} S_i,\; f(x) = y \\
+&\iff \exists x \in A,\; \bigl((\exists i \in I,\; x \in S_i) \land f(x) = y\bigr) \\
+&\iff \exists i \in I,\; \exists x \in S_i,\; f(x) = y \\
+&\iff \exists i \in I,\; y \in f(S_i) \\
+&\iff y \in \bigcup_{i \in I} f(S_i).
+\end{aligned}
+\]
+
+Demostración de (3): Sea \(y \in f\bigl(\bigcap_{i \in I} S_i\bigr)\). Entonces existe UN único elemento \(x \in \bigcap_{i \in I} S_i\) tal que \(f(x) = y\). Como \(x \in \bigcap_{i \in I} S_i\), se cumple \(x \in S_i\) para TODO \(i \in I\). Por tanto, para todo \(i \in I\), \(y = f(x) \in f(S_i)\), lo que significa \(y \in \bigcap_{i \in I} f(S_i)\). (Adviértase también cuán limpiamente demuestra (3) la monotonía: para todo \(j \in I\), \(\bigcap_{i \in I} S_i \subseteq S_j\), luego \(f(\bigcap_{i \in I} S_i) \subseteq f(S_j)\) para todo \(j \in I\), y en consecuencia \(f(\bigcap_{i \in I} S_i) \subseteq \bigcap_{j \in I} f(S_j)\).)
+
+¿Dónde falla la inclusión recíproca? Siempre que dos entradas DISTINTAS \(x_1 \in S_1\) y \(x_2 \in S_2\) colisionen en la misma salida \(f(x_1) = f(x_2) = y\). Tómese \(f : \mathbb{R} \to \mathbb{R}\) dada por \(f(x) = x^2\), con \(S_1 = \{-1\}\) y \(S_2 = \{1\}\):
+- \(S_1 \cap S_2 = \emptyset\), luego \(f(S_1 \cap S_2) = f(\emptyset) = \emptyset\).
+- Sin embargo, \(f(S_1) = \{1\}\) y \(f(S_2) = \{1\}\), luego \(f(S_1) \cap f(S_2) = \{1\} \ne \emptyset\).
+Así pues, \(f(S_1 \cap S_2) = \emptyset \subsetneq \{1\} = f(S_1) \cap f(S_2)\).
+
+Incluso cuando \(S_1\) y \(S_2\) se solapan, sigue produciéndose inclusión estricta: con \(f(x) = x^2\), \(S_1 = [-2, 0]\) y \(S_2 = [0, 2]\), obtenemos \(S_1 \cap S_2 = \{0\}\), luego \(f(S_1 \cap S_2) = \{0\}\), mientras que \(f(S_1) \cap f(S_2) = [0, 4] \cap [0, 4] = [0, 4]\).
+
+Resumamos la comparación establecida hasta ahora para uniones, intersecciones y monotonía:
+
+[TABLE]
+Operación | Preimagen \(f^{-1}\) sobre subconjuntos de \(B\) | Imagen directa \(f\) sobre subconjuntos de \(A\)
+Monotonía | \(T_1 \subseteq T_2 \implies f^{-1}(T_1) \subseteq f^{-1}(T_2)\) | \(S_1 \subseteq S_2 \implies f(S_1) \subseteq f(S_2)\)
+Unión arbitraria | \(f^{-1}(\bigcup_{i \in I} T_i) = \bigcup_{i \in I} f^{-1}(T_i)\) (exacta) | \(f(\bigcup_{i \in I} S_i) = \bigcup_{i \in I} f(S_i)\) (exacta)
+Intersección arbitraria | \(f^{-1}(\bigcap_{i \in I} T_i) = \bigcap_{i \in I} f^{-1}(T_i)\) (exacta) | \(f(\bigcap_{i \in I} S_i) \subseteq \bigcap_{i \in I} f(S_i)\) (puede ser estricta)
+Conjunto vacío | \(f^{-1}(\emptyset) = \emptyset\) (y \(f^{-1}(T) = \emptyset\) si \(T \cap \operatorname{im}(f) = \emptyset\)) | \(f(\emptyset) = \emptyset\) (y \(f(S) = \emptyset \iff S = \emptyset\))
+[/TABLE]
+
+¿Qué ocurre con la diferencia de conjuntos bajo imágenes directas —comparar \(f(S_1 \setminus S_2)\) con \(f(S_1) \setminus f(S_2)\)? El seguimiento de elementos (y probar un pequeño ejemplo con colisión como \(f(x) = x^2\)) decide qué inclusión se cumple en general.
+
+[QUESTION 3]
+[ANSWER: C]
+Sea \(f : A \to B\) una función arbitraria y sean \(S_1, S_2 \subseteq A\). ¿Qué afirmación sobre \(f(S_1 \setminus S_2)\) y \(f(S_1) \setminus f(S_2)\) es SIEMPRE verdadera?
+
+(A) \(f(S_1 \setminus S_2) = f(S_1) \setminus f(S_2)\) para cualesquiera \(f, S_1, S_2\)
+(B) \(f(S_1 \setminus S_2) \subseteq f(S_1) \setminus f(S_2)\) siempre se cumple, mientras que la inclusión inversa puede fallar
+(C) \(f(S_1) \setminus f(S_2) \subseteq f(S_1 \setminus S_2)\) siempre se cumple, mientras que la inclusión inversa puede fallar
+(D) Ni \(f(S_1 \setminus S_2) \subseteq f(S_1) \setminus f(S_2)\) ni \(f(S_1) \setminus f(S_2) \subseteq f(S_1 \setminus S_2)\) se cumplen en general
+(E) \(f(S_1 \setminus S_2) = f(S_1) \setminus f(S_2)\) se cumple siempre que \(S_2 \subseteq S_1\)
+[/QUESTION]
+
+=== SECTION 4: Idas y vueltas — empujar hacia delante y traer hacia atrás ===
+
+¿Qué sucede cuando aplicamos \(f\) y \(f^{-1}\) una tras otra? Partiendo de \(S \subseteq A\), podemos empujar hacia delante hasta \(f(S) \subseteq B\) y traer hacia atrás hasta \(f^{-1}(f(S)) \subseteq A\). Partiendo de \(T \subseteq B\), podemos traer hacia atrás hasta \(f^{-1}(T) \subseteq A\) y empujar hacia delante hasta \(f(f^{-1}(T)) \subseteq B\). En general, ninguno de los dos recorridos devuelve el subconjunto original —en su lugar, apuntan en direcciones de inclusión OPUESTAS.
+
+[CALLOUT]
+id: round-trip-inclusions
+label: Teorema
+title: Inclusiones de ida y vuelta para imágenes y preimágenes
+tone: key
+
+Sea \(f : A \to B\) cualquier función.
+
+(1) Para todo subconjunto \(S \subseteq A\):
+\[
+S \subseteq f^{-1}\bigl(f(S)\bigr).
+\]
+(2) Para todo subconjunto \(T \subseteq B\):
+\[
+f\bigl(f^{-1}(T)\bigr) \subseteq T.
+\]
+Más precisamente, \(f\bigl(f^{-1}(T)\bigr) = T \cap \operatorname{im}(f)\).
+[/CALLOUT]
+
+Demostremos ambas partes directamente por seguimiento de elementos, y veamos por qué la igualdad exacta en (2) es aún más informativa que la inclusión por sí sola.
+
+Demostración de (1): Sea \(x \in S\). Por definición de imagen directa, \(f(x) \in f(S)\). Por la [REF: image-preimage-def.2 | definición de preimagen], \(f(x) \in f(S)\) significa precisamente que \(x \in f^{-1}(f(S))\). Por tanto, \(S \subseteq f^{-1}(f(S))\).
+
+¿Por qué puede ser \(f^{-1}(f(S))\) ESTRICTAMENTE MAYOR que \(S\)? Porque traer hacia atrás \(f(S)\) recoge TODA entrada de \(A\) cuya salida cae en \(f(S)\) —incluidos intrusos \(x' \in A \setminus S\) que coinciden en salida con algún \(x \in S\) (es decir, \(f(x') = f(x)\)). En \(f : \mathbb{R} \to \mathbb{R}\) con \(f(x) = x^2\), tómese \(S = [0, 2]\). Empujar hacia delante da \(f([0, 2]) = [0, 4]\); traer hacia atrás da \(f^{-1}([0, 4]) = [-2, 2] \supsetneq [0, 2]\). Todo número negativo en \([-2, 0)\) quedó arrastrado a la preimagen porque su cuadrado coincidía con el cuadrado de algún punto de \(S\).
+
+Demostración de (2): Demostramos \(f(f^{-1}(T)) = T \cap \operatorname{im}(f)\) directamente (de donde \(f(f^{-1}(T)) \subseteq T\) se sigue de inmediato):
+- (\(\subseteq\)): Sea \(y \in f(f^{-1}(T))\). Entonces \(y = f(x)\) para algún \(x \in f^{-1}(T)\). Como \(x \in A\), tenemos \(y = f(x) \in \operatorname{im}(f)\); como \(x \in f^{-1}(T)\), tenemos \(y = f(x) \in T\). Por tanto \(y \in T \cap \operatorname{im}(f)\).
+- (\(\supseteq\)): Sea \(y \in T \cap \operatorname{im}(f)\). Como \(y \in \operatorname{im}(f)\), existe \(x \in A\) con \(f(x) = y\). Como \(f(x) = y \in T\), tenemos \(x \in f^{-1}(T)\). En consecuencia, \(y = f(x) \in f(f^{-1}(T))\).
+
+¿Por qué puede ser \(f(f^{-1}(T))\) ESTRICTAMENTE MENOR que \(T\)? Porque cualquier elemento de \(T\) que yazca FUERA de \(\operatorname{im}(f)\) carece por completo de preimagen, de modo que se pierde al traer hacia atrás y no puede recuperarse al empujar hacia delante. En \(f : \mathbb{R} \to \mathbb{R}\) con \(f(x) = x^2\), tómese \(T = [-1, 4]\). Traer hacia atrás da \(f^{-1}([-1, 4]) = [-2, 2]\) (los valores negativos en \([-1, 0)\) no tienen raíces cuadradas reales); empujar hacia delante da \(f([-2, 2]) = [0, 4] \subsetneq [-1, 4]\).
+
+Obsérvese la limpia simetría estructural entre ambos fallos:
+- \(S \subseteq f^{-1}(f(S))\) se vuelve estricta cuando entradas distintas colisionan (el fallo de la inyectividad).
+- \(f(f^{-1}(T)) \subseteq T\) se vuelve estricta cuando salidas en \(B\) quedan sin alcanzar por \(f\) (el fallo de la sobreyectividad).
+En la próxima lección transformaremos estas dos observaciones en caracterizaciones bicondicionales exactas de la inyectividad y la sobreyectividad.
+
+[QUESTION 4]
+[ANSWER: B]
+Defínase \(f : \mathbb{Z} \to \mathbb{Z}\) tomando \(f(n)\) igual al resto en \(\{0, 1, 2, 3\}\) al dividir \(n\) por \(4\) (por ejemplo, \(f(7) = 3\) y \(f(-1) = 3\)). Sean \(S = \{1, 2\} \subseteq \mathbb{Z}\) y \(T = \{1, 5\} \subseteq \mathbb{Z}\). ¿Cuáles son \(f^{-1}(f(S))\) y \(f(f^{-1}(T))\)?
+
+(A) \(f^{-1}(f(S)) = \{1, 2\}\) y \(f(f^{-1}(T)) = \{1, 5\}\)
+(B) \(f^{-1}(f(S)) = \{n \in \mathbb{Z} : n \equiv 1 \text{ o } 2 \pmod{4}\}\) y \(f(f^{-1}(T)) = \{1\}\)
+(C) \(f^{-1}(f(S)) = \{n \in \mathbb{Z} : n \equiv 1 \text{ o } 2 \pmod{4}\}\) y \(f(f^{-1}(T)) = \{1, 5\}\)
+(D) \(f^{-1}(f(S)) = \{1, 2, 5, 6\}\) y \(f(f^{-1}(T)) = \{1\}\)
+(E) \(f^{-1}(f(S)) = \{n \in \mathbb{Z} : n \equiv 1 \text{ o } 2 \pmod{4}\}\) y \(f(f^{-1}(T)) = \emptyset\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Sea \(f : A \to B\) cualquier función, y sean \(S \subseteq A\) y \(T \subseteq B\). ¿Qué expresión es SIEMPRE igual a \(f\bigl(S \cap f^{-1}(T)\bigr)\)?
+
+(A) \(f(S) \cap T\)
+(B) \(f(S) \cup T\)
+(C) \(f(S) \cap f(A \setminus f^{-1}(T))\)
+(D) \(T \setminus f(S)\)
+(E) \(f(S)\) siempre que \(T \ne \emptyset\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Sea \(f : A \to B\) cualquier función, \(S \subseteq A\) y \(T \subseteq B\). Considérense los recorridos triples \(f\bigl(f^{-1}(f(S))\bigr)\) y \(f^{-1}\bigl(f(f^{-1}(T))\bigr)\). ¿Qué afirmación es SIEMPRE verdadera?
+
+(A) Puede ocurrir \(f(f^{-1}(f(S))) \supsetneq f(S)\), y puede ocurrir \(f^{-1}(f(f^{-1}(T))) \subsetneq f^{-1}(T)\)
+(B) \(f(f^{-1}(f(S))) = f(S)\) siempre se cumple, pero puede ocurrir \(f^{-1}(f(f^{-1}(T))) \subsetneq f^{-1}(T)\)
+(C) \(f^{-1}(f(f^{-1}(T))) = f^{-1}(T)\) siempre se cumple, pero puede ocurrir \(f(f^{-1}(f(S))) \supsetneq f(S)\)
+(D) Tanto \(f\bigl(f^{-1}(f(S))\bigr) = f(S)\) como \(f^{-1}\bigl(f(f^{-1}(T))\bigr) = f^{-1}(T)\) se cumplen SIEMPRE
+(E) Ninguna de las dos igualdades se cumple salvo que \(f(A) = B\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Sea \(f : \mathbb{R} \to \mathbb{R}\) definida por \(f(x) = \lfloor x \rfloor\) (el mayor entero menor o igual que \(x\)). Para cada \(n \in \mathbb{Z}^+\), sea \(S_n = \left(0, \frac{1}{n}\right)\). Compárese \(f\!\left(\bigcap_{n=1}^{\infty} S_n\right)\) con \(\bigcap_{n=1}^{\infty} f(S_n)\).
+
+(A) Ambos conjuntos son iguales a \(\emptyset\)
+(B) Ambos conjuntos son iguales a \(\{0\}\)
+(C) \(f\bigl(\bigcap_{n=1}^{\infty} S_n\bigr) = \{0\}\) y \(\bigcap_{n=1}^{\infty} f(S_n) = \{0, 1\}\)
+(D) \(f\bigl(\bigcap_{n=1}^{\infty} S_n\bigr) = \emptyset\) y \(\bigcap_{n=1}^{\infty} f(S_n) = \{0, 1\}\)
+(E) \(f\bigl(\bigcap_{n=1}^{\infty} S_n\bigr) = \emptyset\) y \(\bigcap_{n=1}^{\infty} f(S_n) = \{0\}\)
+[/BONUS]

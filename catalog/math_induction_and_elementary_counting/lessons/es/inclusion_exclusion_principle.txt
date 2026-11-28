@@ -1,0 +1,204 @@
+=== SECTION 1: Conteo de uniones solapadas — de dos y tres conjuntos a \(n\) conjuntos ===
+
+La Regla de la Adición afirma que \(\lvert A_1 \cup A_2 \rvert = \lvert A_1 \rvert + \lvert A_2 \rvert\), siempre que \(A_1\) y \(A_2\) sean DISJUNTOS. ¿Qué ocurre cuando los conjuntos se solapan?
+
+Supón que un club de \(50\) estudiantes tiene \(28\) que juegan ajedrez (\(A_1\)), \(24\) que juegan go (\(A_2\)) y \(10\) que juegan ambos (\(A_1 \cap A_2\)). Sumar \(28 + 24 = 52\) cuenta dos veces a cada estudiante en \(A_1 \cap A_2\) —una vez en \(A_1\) y otra vez en \(A_2\)—, así que restar el solapamiento una vez da el tamaño exacto de la unión:
+\[
+\lvert A_1 \cup A_2 \rvert = \lvert A_1 \rvert + \lvert A_2 \rvert - \lvert A_1 \cap A_2 \rvert = 28 + 24 - 10 = 42,
+\]
+dejando \(50 - 42 = 8\) estudiantes que no juegan ninguno de los dos juegos.
+
+Añade ahora un tercer conjunto solapado \(A_3\). Si calculas
+\[
+\lvert A_1 \rvert + \lvert A_2 \rvert + \lvert A_3 \rvert - \lvert A_1 \cap A_2 \rvert - \lvert A_1 \cap A_3 \rvert - \lvert A_2 \cap A_3 \rvert,
+\]
+¿cuántas veces se cuenta un elemento en LOS TRES conjuntos \(A_1 \cap A_2 \cap A_3\)? Se suma \(3\) veces en la suma de conjuntos individuales y se resta \(3\) veces en las intersecciones por pares, ¡dando un conteo neto de \(3 - 3 = 0\)! Corregimos en exceso y borramos por completo la intersección triple. Volver a sumar \(\lvert A_1 \cap A_2 \cap A_3 \rvert\) restaura su conteo a \(3 - 3 + 1 = 1\):
+\[
+\lvert A_1 \cup A_2 \cup A_3 \rvert = \lvert A_1 \rvert + \lvert A_2 \rvert + \lvert A_3 \rvert - \lvert A_1 \cap A_2 \rvert - \lvert A_1 \cap A_3 \rvert - \lvert A_2 \cap A_3 \rvert + \lvert A_1 \cap A_2 \cap A_3 \rvert.
+\]
+
+Este patrón alternante —sumar conjuntos individuales, restar intersecciones por pares, sumar intersecciones triples, restar intersecciones cuádruples, y así sucesivamente— se generaliza limpiamente a CUALQUIER número finito \(n\) de conjuntos. Aún mejor, en muchos problemas de conteo tenemos un universo finito \(U\) y \(n\) propiedades «malas» (prohibidas) \(A_1, \dots, A_n \subseteq U\), y queremos contar los elementos de \(U\) que evitan TODAS las \(n\) propiedades:
+\[
+\left\lvert \bigcap_{i=1}^n A_i^c \right\rvert = \lvert U \rvert - \left\lvert \bigcup_{i=1}^n A_i \right\rvert,
+\]
+donde \(A_i^c = U \setminus A_i\) denota el complemento de \(A_i\) en \(U\). Restar de \(\lvert U \rvert\) la fórmula de la unión invierte cada signo y coloca \(\lvert U \rvert\) al principio como el término \(k = 0\).
+
+[CALLOUT]
+id: pie-theorem
+label: Teorema
+title: El Principio de Inclusión-Exclusión (PIE)
+tone: key
+
+Sean \(A_1, A_2, \dots, A_n\) subconjuntos finitos de un universo finito \(U\). Para cada \(k = 1, 2, \dots, n\), define
+\[
+S_k = \sum_{1 \le i_1 < i_2 < \cdots < i_k \le n} \lvert A_{i_1} \cap A_{i_2} \cap \cdots \cap A_{i_k} \rvert,
+\]
+la suma de los tamaños de todas las \(\binom{n}{k}\) intersecciones de \(k\) conjuntos distintos, y pon \(S_0 = \lvert U \rvert\). Entonces:
+
+(1) Forma de la unión:
+\[
+\left\lvert \bigcup_{i=1}^n A_i \right\rvert = S_1 - S_2 + S_3 - \cdots + (-1)^{n - 1} S_n = \sum_{k=1}^n (-1)^{k - 1} S_k.
+\]
+(2) Forma del complemento (elementos en NINGUNO de \(A_1, \dots, A_n\)):
+\[
+\left\lvert \bigcap_{i=1}^n A_i^c \right\rvert = S_0 - S_1 + S_2 - S_3 + \cdots + (-1)^n S_n = \sum_{k=0}^n (-1)^k S_k.
+\]
+[/CALLOUT]
+
+Observa que [REF: pie-theorem.1 | la forma de la unión] y [REF: pie-theorem.2 | la forma del complemento] son algebraicamente equivalentes mediante la ley de De Morgan \(\bigcap_{i=1}^n A_i^c = U \setminus \bigcup_{i=1}^n A_i\) y la Regla del Complemento.
+
+[QUESTION 1]
+[ANSWER: A]
+Entre \(120\) estudiantes, \(65\) estudian francés, \(50\) estudian alemán y \(45\) estudian español. Supón que \(22\) estudian tanto francés como alemán, \(18\) estudian tanto francés como español, \(15\) estudian tanto alemán como español y \(8\) estudian los tres idiomas. ¿Cuántos de los \(120\) estudiantes no estudian NINGUNO de estos tres idiomas?
+
+(A) \(7\)
+(B) \(15\)
+(C) \(23\)
+(D) \(113\)
+(E) \(0\)
+[/QUESTION]
+
+=== SECTION 2: Por qué los signos alternantes se cancelan exactamente ===
+
+¿Por qué la suma alternante \(\sum_{k=0}^n (-1)^k S_k\) siempre es igual al número exacto de elementos que evitan los \(n\) conjuntos, sin ningún sobreconteo ni subconteo oculto incluso para \(n = 10\) conjuntos solapados? La demostración es uno de los usos más limpios de la identidad de suma binomial alternante \(\sum_{k=0}^m (-1)^k \binom{m}{k} = 0\) (\(m \ge 1\)).
+
+Rastrea la contribución neta de un ÚNICO elemento arbitrario \(x \in U\) al lado derecho \(\sum_{k=0}^n (-1)^k S_k\). Supón que \(x\) pertenece a EXACTAMENTE \(m\) de los conjuntos \(A_1, \dots, A_n\), donde \(0 \le m \le n\).
+
+- Caso 1 (\(m = 0\)): El elemento \(x\) pertenece a NINGUNO de los conjuntos \(A_1, \dots, A_n\). Se cuenta una vez en \(S_0 = \lvert U \rvert\) y \(0\) veces en cada \(S_k\) para \(k \ge 1\). Por consiguiente, su contribución neta a \(\sum_{k=0}^n (-1)^k S_k\) es \(1\) —coincidiendo con su contribución de \(1\) al lado izquierdo \(\lvert \bigcap_{i=1}^n A_i^c \rvert\).
+
+- Caso 2 (\(m \ge 1\)): El elemento \(x\) pertenece al menos a uno de los conjuntos, de modo que aporta \(0\) al lado izquierdo \(\lvert \bigcap_{i=1}^n A_i^c \rvert\). En el lado derecho, \(x\) yace en una intersección de \(k\) conjuntos \(A_{i_1} \cap \cdots \cap A_{i_k}\) si y solo si TODOS los \(k\) índices \(i_1, \dots, i_k\) se eligen entre los \(m\) conjuntos que contienen a \(x\). Hay \(\binom{m}{k}\) intersecciones tales para \(0 \le k \le m\), y \(0\) intersecciones tales para \(k > m\). Por tanto, la contribución neta de \(x\) a \(\sum_{k=0}^n (-1)^k S_k\) es
+\[
+\sum_{k=0}^m (-1)^k \binom{m}{k} = (1 - 1)^m = 0,
+\]
+¡por el Teorema del Binomio aplicado a \((1 - 1)^m\) para \(m \ge 1\)!
+
+Como TODO elemento \(x \in U\) aporta \(1\) a ambos lados cuando \(m = 0\) y \(0\) a ambos lados cuando \(m \ge 1\), sumar sobre todo \(x \in U\) demuestra [REF: pie-theorem.2 | la forma del complemento del PIE], y restar de \(\lvert U \rvert\) demuestra de inmediato [REF: pie-theorem.1 | la forma de la unión].
+
+Observa que el PIE también puede demostrarse por inducción matemática ordinaria sobre \(n\): partiendo de la fórmula para \(n = 2\), \(\lvert B \cup A_{n + 1} \rvert = \lvert B \rvert + \lvert A_{n + 1} \rvert - \lvert B \cap A_{n + 1} \rvert\) con \(B = \bigcup_{i=1}^n A_i\), distribuye la intersección sobre la unión como \(B \cap A_{n + 1} = \bigcup_{i=1}^n (A_i \cap A_{n + 1})\) y aplica la hipótesis inductiva a ambas uniones de \(n\) conjuntos. La demostración por contribución de elementos de arriba es más corta y expone la cancelación binomial exacta que impulsa los signos alternantes.
+
+[QUESTION 2]
+[ANSWER: D]
+En la demostración por contribución de elementos de la forma del complemento \(\sum_{k=0}^5 (-1)^k S_k\) para \(n = 5\) propiedades \(A_1, \dots, A_5\), considera un elemento específico \(x \in U\) que pertenece a \(A_1\), \(A_2\) y \(A_4\), y ni a \(A_3\) ni a \(A_5\). ¿Cuáles son las contribuciones de \(x\) a los seis términos con signo \((-1)^k S_k\) para \(k = 0, 1, 2, 3, 4, 5\) en orden?
+
+(A) \((+1, -5, +10, -10, +5, -1)\)
+(B) \((+1, +3, +3, +1, 0, 0)\)
+(C) \((0, -3, +3, -1, 0, 0)\)
+(D) \((+1, -3, +3, -1, 0, 0)\)
+(E) \((+1, -2, +1, 0, 0, 0)\)
+[/QUESTION]
+
+=== SECTION 3: Conteo por divisibilidad y la función φ de Euler ===
+
+Una de las aplicaciones más limpias de [REF: pie-theorem | PIE] es contar enteros en \(\{1, 2, \dots, N\}\) que evitan la divisibilidad por una lista dada de primos. El hecho clave es que, para cualquier entero positivo \(d\), el número de múltiplos de \(d\) en \(\{1, 2, \dots, N\}\) es \(\lfloor N / d \rfloor\). Además, un entero es divisible por varios primos DISTINTOS \(p_1, \dots, p_k\) simultáneamente si y solo si es divisible por su producto \(p_1 \cdots p_k\).
+
+Ejemplo resuelto: ¿Cuántos enteros en \(U = \{1, 2, \dots, 60\}\) son relativamente primos con \(60\) (es decir, no comparten ningún factor primo con \(60\))?
+
+Factoriza \(60 = 2^2 \cdot 3 \cdot 5\), de modo que sus divisores primos distintos son \(2\), \(3\) y \(5\). Define los tres conjuntos de propiedades prohibidas dentro de \(U\):
+- \(A_2 = \{x \in U : 2 \mid x\}\), tamaño \(\frac{60}{2} = 30\),
+- \(A_3 = \{x \in U : 3 \mid x\}\), tamaño \(\frac{60}{3} = 20\),
+- \(A_5 = \{x \in U : 5 \mid x\}\), tamaño \(\frac{60}{5} = 12\).
+
+Las intersecciones cuentan múltiplos de los productos \(6\), \(10\), \(15\) y \(30\):
+- \(\lvert A_2 \cap A_3 \rvert = \frac{60}{6} = 10\), \(\lvert A_2 \cap A_5 \rvert = \frac{60}{10} = 6\), \(\lvert A_3 \cap A_5 \rvert = \frac{60}{15} = 4\),
+- \(\lvert A_2 \cap A_3 \cap A_5 \rvert = \frac{60}{30} = 2\).
+
+Por [REF: pie-theorem.2 | la forma del complemento del PIE], el conteo de enteros en \(\{1, \dots, 60\}\) divisibles por ninguno de \(2, 3, 5\) es
+\[
+60 - (30 + 20 + 12) + (10 + 6 + 4) - 2 = 60 - 62 + 20 - 2 = 16.
+\]
+
+¡Factoriza ahora \(60\) de esa expresión exacta del PIE! Como cada producto de divisores primos distintos de \(n\) divide a \(n\) de forma exacta (no hace falta redondeo por función piso), obtenemos
+\[
+60\left(1 - \frac{1}{2} - \frac{1}{3} - \frac{1}{5} + \frac{1}{2 \cdot 3} + \frac{1}{2 \cdot 5} + \frac{1}{3 \cdot 5} - \frac{1}{2 \cdot 3 \cdot 5}\right) = 60\left(1 - \frac{1}{2}\right)\left(1 - \frac{1}{3}\right)\left(1 - \frac{1}{5}\right) = 60 \cdot \frac{1}{2} \cdot \frac{2}{3} \cdot \frac{4}{5} = 16.
+\]
+Exactamente la misma factorización vale para CUALQUIER entero positivo \(n\) con divisores primos distintos \(p_1, p_2, \dots, p_r\).
+
+[CALLOUT]
+id: euler-totient
+label: Aplicación
+title: La función φ(n) de Euler
+tone: key
+
+Para cualquier entero positivo \(n\), sea \(\varphi(n)\) el número de enteros en \(\{1, 2, \dots, n\}\) que son relativamente primos con \(n\). Si \(p_1, p_2, \dots, p_r\) son los factores primos distintos de \(n\), entonces [REF: pie-theorem.2 | PIE] arroja
+\[
+\varphi(n) = n \prod_{i=1}^r \left(1 - \frac{1}{p_i}\right).
+\]
+[/CALLOUT]
+
+Observa un detalle fronterizo crucial: [REF: euler-totient | la fórmula del producto] funciona automáticamente cuando el límite superior \(N\) es múltiplo de \(p_1 p_2 \cdots p_r\). Cuando \(N\) NO es múltiplo de todos esos primos —por ejemplo, contar enteros en \(\{1, \dots, 100\}\) no divisibles por \(2\), \(3\) ni \(5\)—, DEBES usar valores con función piso \(\lfloor N / d \rfloor\) dentro del PIE en lugar de multiplicar \(N(1 - 1/2)(1 - 1/3)(1 - 1/5)\), lo que daría una fracción no entera (\(100 \cdot \frac{4}{15} = 26.\overline{6}\), mientras que el conteo exacto por PIE es \(100 - (50 + 33 + 20) + (16 + 10 + 6) - 3 = 26\)).
+
+[QUESTION 3]
+[ANSWER: B]
+¿Cuántos enteros en \(\{1, 2, \dots, 210\}\) no son divisibles por NINGUNO de \(2\), \(3\) o \(7\)?
+
+(A) \(48\)
+(B) \(60\)
+(C) \(65\)
+(D) \(70\)
+(E) \(150\)
+[/QUESTION]
+
+=== SECTION 4: Evitar patrones prohibidos en cadenas y permutaciones ===
+
+El PIE es igualmente poderoso para contar cadenas binarias o permutaciones que evitan varios patrones prohibidos simultáneamente. El flujo de trabajo tiene tres pasos disciplinados:
+1. Elige un universo limpio \(U\) cuyo tamaño \(\lvert U \rvert\) ya conozcas.
+2. Define un conjunto de propiedad \(A_i\) para cada patrón prohibido.
+3. Calcula cuidadosamente cada tamaño de intersección \(\lvert A_{i_1} \cap \cdots \cap A_{i_k} \rvert\) —prestando mucha atención a si dos patrones prohibidos pueden solaparse o incluso contradecirse entre sí.
+
+Ejemplo resuelto (cadenas binarias): ¿Cuántas cadenas binarias de longitud \(8\) sobre \(\{0, 1\}\) ni comienzan por \(00\), ni terminan en \(11\), ni tienen \(01\) en las posiciones \(4\) y \(5\)?
+
+Aquí \(\lvert U \rvert = 2^8 = 256\). Define:
+- \(A_1\): comienza por \(00\) (fija las posiciones \(1, 2\)), así que \(\lvert A_1 \rvert = 2^6 = 64\).
+- \(A_2\): termina en \(11\) (fija las posiciones \(7, 8\)), así que \(\lvert A_2 \rvert = 2^6 = 64\).
+- \(A_3\): tiene \(01\) en las posiciones \(4, 5\) (fija las posiciones \(4, 5\)), así que \(\lvert A_3 \rvert = 2^6 = 64\).
+
+Como las posiciones \(\{1, 2\}\), \(\{4, 5\}\) y \(\{7, 8\}\) son completamente disjuntas, fijar cualesquiera dos patrones deja \(4\) bits libres (\(\lvert A_i \cap A_j \rvert = 2^4 = 16\)), y fijar los tres deja \(2\) bits libres (\(\lvert A_1 \cap A_2 \cap A_3 \rvert = 2^2 = 4\)). Por [REF: pie-theorem.2 | PIE], el número de cadenas binarias válidas es
+\[
+256 - 3(64) + 3(16) - 4 = 256 - 192 + 48 - 4 = 108.
+\]
+
+Cuando los patrones prohibidos SÍ comparten posiciones o letras, ¡comprueba las intersecciones una por una en lugar de suponer simetría! Por ejemplo, en cadenas binarias de longitud \(6\), evitar comenzar por \(00\) (\(A_1\)) y tener \(1\) en la posición \(2\) (\(A_2\)) da \(A_1 \cap A_2 = \emptyset\), porque la posición \(2\) no puede ser simultáneamente \(0\) y \(1\). De forma análoga, en permutaciones de letras distintas, agrupar dos bloques disjuntos como \(AB\) y \(CD\) crea dos superelementos independientes, mientras que agrupar dos bloques solapados como \(AB\) y \(BC\) los fusiona en el único bloque de \(3\) letras \(ABC\).
+
+[QUESTION 4]
+[ANSWER: C]
+¿Cuántas permutaciones de las \(6\) letras distintas \(A, B, C, D, E, F\) NO contienen NI el bloque contiguo \(AB\), NI el bloque contiguo \(CD\), NI el bloque contiguo \(EF\)?
+
+(A) \(294\)
+(B) \(360\)
+(C) \(426\)
+(D) \(432\)
+(E) \(438\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+¿Cuánto vale \(\varphi(180)\), el número de enteros en \(\{1, 2, \dots, 180\}\) que son relativamente primos con \(180\)?
+
+(A) \(36\)
+(B) \(48\)
+(C) \(54\)
+(D) \(60\)
+(E) \(72\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+¿Cuántas permutaciones de las \(6\) letras distintas \(A, B, C, D, E, F\) NO contienen NINGUNO de los tres bloques contiguos \(AB\), \(BC\) o \(CA\)?
+
+(A) \(360\)
+(B) \(408\)
+(C) \(426\)
+(D) \(432\)
+(E) \(438\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+¿Cuántos enteros en \(\{1, 2, \dots, 100\}\) son divisibles por AL MENOS UNO de \(2\), \(3\) o \(5\), pero NO divisibles por \(10\)?
+
+(A) \(26\)
+(B) \(61\)
+(C) \(64\)
+(D) \(71\)
+(E) \(74\)
+[/BONUS]

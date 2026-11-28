@@ -1,0 +1,261 @@
+=== SECTION 1: Solving single linear inequalities ===
+
+In earlier lessons we established the algebraic order properties of \(\mathbb{R}\) and the language of interval notation. Now we combine both tools to solve inequalities in one unknown \(x\), starting with linear inequalities of the form \(ax + b < cx + d\) (or with \(\le\), \(>\), \(\ge\)). Every step must preserve the exact solution set—meaning the new inequality must hold for precisely the same real numbers \(x\) as the original one.
+
+Two operations always preserve the solution set of an inequality:
+1. Adding or subtracting the same expression on both sides (additive preservation).
+2. Multiplying or dividing both sides by a nonzero constant—keeping the inequality direction when the constant is positive, and reversing it when the constant is negative.
+
+Applying these moves to any linear inequality collects all \(x\)-terms on one side and all constants on the other, reducing it to the canonical form
+\[
+Ax < B \qquad (\text{or } \le,\; >,\; \ge).
+\]
+When \(A > 0\), dividing by \(A\) gives \(x < B/A\), or \((-\infty, B/A)\). When \(A < 0\), dividing by \(A\) reverses the direction to \(x > B/A\), or \((B/A, \infty)\). What if \(A = 0\)? Then \(x\) disappears completely, leaving a numerical statement \(0 < B\): if that numerical statement is true, every \(x \in \mathbb{R}\) is a solution (solution set \((-\infty, \infty)\)); if it is false, no real number works (solution set \(\emptyset\)).
+
+Let us work through a numerical example with fractions:
+\[
+\frac{3x - 1}{2} - 2x \le \frac{5 - x}{3}.
+\]
+To clear denominators cleanly, multiply both sides by their least common positive multiple, \(6 > 0\) (so the inequality direction stays unchanged):
+\[
+3(3x - 1) - 12x \le 2(5 - x) \implies 9x - 3 - 12x \le 10 - 2x \implies -3x - 3 \le 10 - 2x.
+\]
+Add \(2x\) and \(3\) to both sides:
+\[
+-x \le 13.
+\]
+Multiply by \(-1 < 0\), reversing the inequality sign:
+\[
+x \ge -13.
+\]
+In interval notation, the solution set is \([-13, \infty)\).
+
+Geometrically, solving \(ax + b \le cx + d\) asks for all \(x\)-values where the line \(y = ax + b\) lies on or below the line \(y = cx + d\). Plotting the two sides of our example—\(L(x) = \frac{3x - 1}{2} - 2x = -\frac{1}{2}x - \frac{1}{2}\) and \(R(x) = \frac{5 - x}{3}\)—shows the two lines crossing at \(x = -13\), with \(L(x)\) below \(R(x)\) across the entire shaded ray \(x \ge -13\).
+
+[GRAPH]
+type: function2d
+title: Comparing \(L(x) = -\frac{1}{2}x - \frac{1}{2}\) and \(R(x) = \frac{5 - x}{3}\) across their crossing at \(x = -13\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -18, -5
+yrange: 1, 9
+fill: (5 - x)/3, -0.5*x - 0.5 | range: -13, -5 | label: \(L(x) \le R(x)\) | color: #3b82f6 | opacity: 0.22
+trace: -0.5*x - 0.5 | label: \(L(x) = -\frac{1}{2}x - \frac{1}{2}\)
+trace: (5 - x)/3 | label: \(R(x) = \frac{5 - x}{3}\)
+point: -13, 6 | label: \((-13, 6)\)
+segment: -13, 1, -13, 6 | dashed: true
+[/GRAPH]
+
+Before moving to compound inequalities, watch a quick degenerate example: \(4(x - 1) > 2(2x + 3)\). Expanding gives \(4x - 4 > 4x + 6\), and subtracting \(4x\) leaves \(-4 > 6\), which is false for every real \(x\); hence the solution set is \(\emptyset\). Had the inequality been \(4(x - 1) < 2(2x + 3)\), subtracting \(4x\) would leave \(-4 < 6\), which is always true, giving \((-\infty, \infty)\).
+
+[QUESTION 1]
+[ANSWER: B]
+What is the solution set of the linear inequality \(\frac{2 - 3x}{4} \ge \frac{x + 5}{2} - 1\)?
+
+(A) \(\left[-\frac{4}{5}, \infty\right)\)
+(B) \(\left(-\infty, -\frac{4}{5}\right]\)
+(C) \(\left(-\infty, \frac{4}{5}\right]\)
+(D) \(\left(-\infty, -\frac{12}{5}\right]\)
+(E) \(\left[-\frac{12}{5}, \infty\right)\)
+[/QUESTION]
+
+=== SECTION 2: Chained double inequalities and compound systems ===
+
+A compound inequality links two or more inequalities using "and" (intersection) or "or" (union). The most compact conjunctive form is the chained double inequality
+\[
+f(x) < g(x) \le h(x),
+\]
+which is shorthand for the conjunction "\(f(x) < g(x)\) AND \(g(x) \le h(x)\)."
+
+There are two sharply different situations for solving a chained inequality.
+
+Case A: The variable \(x\) appears ONLY in the middle expression, as in \(-5 < 3 - 2x \le 9\). Here, performing the same valid step to all three parts simultaneously is equivalent to performing it on both constituent inequalities at once. Subtract \(3\) from all three parts:
+\[
+-8 < -2x \le 6.
+\]
+Now divide all three parts by \(-2 < 0\), reversing BOTH inequality signs:
+\[
+4 > x \ge -3.
+\]
+Rewrite from smallest to largest so it translates cleanly to interval notation: \(-3 \le x < 4\), giving \([-3, 4)\).
+
+Case B: The variable \(x\) appears OUTSIDE the middle expression, as in \(2x - 1 < 4x + 3 \le 3x + 7\). Simultaneous manipulation can no longer isolate \(x\) in the center, and trying to "shortcut" by comparing only the outer two expressions \(2x - 1 < 3x + 7\) drops the middle requirement entirely and introduces false solutions. Instead, always split the chain into its two adjacent inequalities, solve each one, and intersect their solution sets.
+
+[CALLOUT]
+id: chained-split
+label: Rule
+title: Splitting chained inequalities
+tone: key
+
+A chained inequality \(f(x) < g(x) \le h(x)\) is always equivalent to the conjunction
+\[
+f(x) < g(x) \quad \text{AND} \quad g(x) \le h(x).
+\]
+Its solution set is \(S_1 \cap S_2\), where \(S_1\) solves \(f(x) < g(x)\) and \(S_2\) solves \(g(x) \le h(x)\). Use simultaneous three-part manipulation only when \(x\) appears exclusively in the middle expression.
+[/CALLOUT]
+
+Let us apply [REF: chained-split | the splitting rule] to \(2x - 1 < 4x + 3 \le 3x + 7\):
+1. Left inequality: \(2x - 1 < 4x + 3 \implies -4 < 2x \implies x > -2\), so \(S_1 = (-2, \infty)\).
+2. Right inequality: \(4x + 3 \le 3x + 7 \implies x \le 4\), so \(S_2 = (-\infty, 4]\).
+3. Intersect: \(S_1 \cap S_2 = (-2, \infty) \cap (-\infty, 4] = (-2, 4]\).
+
+Note why we do not need a third check \(f(x) < h(x)\): whenever \(f(x) < g(x)\) and \(g(x) \le h(x)\) both hold, transitivity guarantees \(f(x) < h(x)\) automatically. Geometrically, the solution set \((-2, 4]\) is the exact horizontal band where the middle line \(y = 4x + 3\) sits strictly above \(y = 2x - 1\) and on or below \(y = 3x + 7\).
+
+[GRAPH]
+type: function2d
+title: Middle line \(y = 4x + 3\) sandwiched between \(y = 2x - 1\) and \(y = 3x + 7\) on \((-2, 4]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 6
+yrange: -10, 26
+fill: 3*x + 7, 2*x - 1 | range: -2, 4 | label: valid band | color: #10b981 | opacity: 0.18
+trace: 2*x - 1 | label: \(y = 2x - 1\)
+trace: 4*x + 3 | label: \(y = 4x + 3\)
+trace: 3*x + 7 | label: \(y = 3x + 7\)
+point: -2, -5 | label: \((-2, -5)\)
+point: 4, 19 | label: \((4, 19)\)
+[/GRAPH]
+
+For disjunctive ("or") compound inequalities, solve each linear inequality separately and take the UNION of their solution sets. For example, solve
+\[
+3x + 1 \le 2x - 2 \qquad \text{or} \qquad 5 - 2x < 1.
+\]
+The first branch gives \(x \le -3\), i.e., \((-\infty, -3]\). The second branch gives \(-2x < -4 \implies x > 2\), i.e., \((2, \infty)\). Because the connective is "or", the solution set is their union \((-\infty, -3] \cup (2, \infty)\). Had the connective been "and", the intersection \((-\infty, -3] \cap (2, \infty)\) would have been \(\emptyset\). Always check whether an "or" union overlaps and simplifies—for instance, \((-\infty, 5) \cup (1, \infty)\) simplifies all the way to \((-\infty, \infty)\).
+
+[QUESTION 2]
+[ANSWER: C]
+What is the solution set of the chained inequality \(x - 4 < 3x + 2 \le 2x + 5\)?
+
+(A) \((-9, 3]\)
+(B) \([-3, 3)\)
+(C) \((-3, 3]\)
+(D) \((-\infty, -3) \cup [3, \infty)\)
+(E) \((3, 9)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+What is the solution set of the compound inequality
+\[
+4x - 1 < 2x + 5 \qquad \text{or} \qquad 5 - x \le 2x - 7\,?
+\]
+
+(A) \(\emptyset\)
+(B) \((3, 4]\)
+(C) \((-\infty, 3] \cup (4, \infty)\)
+(D) \((-\infty, \infty)\)
+(E) \((-\infty, 3) \cup [4, \infty)\)
+[/QUESTION]
+
+=== SECTION 3: Parametric linear inequalities and exhaustive case splitting ===
+
+Frequently an inequality involves not only the unknown \(x\) we are solving for, but also an unspecified real parameter—such as \(a\), \(k\), or \(m\)—that represents a fixed but unknown constant. Consider the parametric linear inequality
+\[
+(m - 2)x \le m^2 - 4,
+\]
+where \(m \in \mathbb{R}\) is a parameter and we want all real solutions \(x\) for each possible value of \(m\).
+
+The tempting shortcut is to factor \(m^2 - 4 = (m - 2)(m + 2)\) and immediately divide both sides by \(m - 2\) to write \(x \le m + 2\). That step commits TWO simultaneous errors:
+1. If \(m = 2\), then \(m - 2 = 0\), so division by \(m - 2\) is undefined.
+2. If \(m < 2\), then \(m - 2 < 0\), so dividing by \(m - 2\) must REVERSE the inequality sign to \(x \ge m + 2\).
+
+Because the sign and vanishing of the coefficient of \(x\) control the next legal step, every parametric linear inequality requires an exhaustive three-case split once it is written in the form \(A(m)\,x \lesseqqgtr B(m)\).
+
+[CALLOUT]
+id: param-linear-cases
+label: Method
+title: Exhaustive three-case split for \(A(m)\,x \le B(m)\)
+tone: key
+
+After isolating \(x\)-terms on one side to obtain \(A(m)\,x \le B(m)\) (and analogously for \(<\), \(>\), \(\ge\)), split into the three exhaustive regimes of the coefficient \(A(m)\):
+
+(1) Positive coefficient (\(A(m) > 0\)): divide by \(A(m)\) keeping the inequality direction, giving \(x \le \frac{B(m)}{A(m)}\).
+(2) Zero coefficient (\(A(m) = 0\)): substitute directly to obtain \(0 \le B(m)\); the solution set is \(\mathbb{R}\) if this numerical statement holds, and \(\emptyset\) if it fails.
+(3) Negative coefficient (\(A(m) < 0\)): divide by \(A(m)\) reversing the inequality direction, giving \(x \ge \frac{B(m)}{A(m)}\).
+[/CALLOUT]
+
+Let us execute [REF: param-linear-cases | the three-case split] on \((m - 2)x \le m^2 - 4 = (m - 2)(m + 2)\):
+- Case 1 (\(m > 2\)): here \(m - 2 > 0\). Dividing preserves the sign: \(x \le m + 2\), so the solution set is \((-\infty, m + 2]\).
+- Case 2 (\(m = 2\)): substituting \(m = 2\) yields \(0 \cdot x \le 0\), which is TRUE for every \(x \in \mathbb{R}\). Hence the solution set is \((-\infty, \infty)\).
+- Case 3 (\(m < 2\)): here \(m - 2 < 0\). Dividing reverses the sign: \(x \ge m + 2\), so the solution set is \([m + 2, \infty)\).
+
+Watch how sensitive Case 2 is to strictness! If the original inequality had been STRICT, \((m - 2)x < m^2 - 4\), then at \(m = 2\) we would obtain \(0 \cdot x < 0\), which is FALSE for every \(x \in \mathbb{R}\), flipping the Case 2 solution set from \(\mathbb{R}\) to \(\emptyset\).
+
+Drag the parameter slider \(m\) in the graph below for \(f(x) = (m - 2)x - (m^2 - 4)\) to see why the solution set \(f(x) \le 0\) flips across \(m = 2\): when \(m > 2\) the line slopes upward so it stays at or below \(0\) to the left of \(x = m + 2\); when \(m = 2\) the line collapses flat onto the horizontal axis \(y = 0\); when \(m < 2\) the line slopes downward so it stays at or below \(0\) to the right of \(x = m + 2\).
+
+[GRAPH]
+type: function2d
+title: Family \(y = (m - 2)x - (m^2 - 4)\) as \(m\) varies across \(m = 2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 8
+yrange: -12, 12
+trace: (m - 2)*x - (m^2 - 4) | label: \(y = (m - 2)x - (m^2 - 4)\)
+trace: 0 | label: \(y = 0\)
+point: m + 2, 0 | label: \(x = m + 2\)
+slider: m | range: -1, 5 | init: 3 | step: 0.5
+[/GRAPH]
+
+Let us do one more parametric example where the coefficient vanishes at two values: solve
+\[
+(k^2 - 1)x > k + 1.
+\]
+Factor the coefficient as \((k - 1)(k + 1)x > k + 1\). The coefficient \(k^2 - 1\) is positive when \(k < -1\) or \(k > 1\), negative when \(-1 < k < 1\), and zero when \(k = 1\) or \(k = -1\). Notice that we must check BOTH zero values separately!
+
+[TABLE]
+Parameter regime | Sign of \(k^2 - 1\) | Reduced inequality | Solution set in \(x\)
+\(k < -1\) or \(k > 1\) | Positive | \(x > \frac{k + 1}{(k - 1)(k + 1)} = \frac{1}{k - 1}\) | \(\left(\frac{1}{k - 1}, \infty\right)\)
+\(-1 < k < 1\) | Negative | \(x < \frac{1}{k - 1}\) | \(\left(-\infty, \frac{1}{k - 1}\right)\)
+\(k = 1\) | Zero | \(0 \cdot x > 2\) (false) | \(\emptyset\)
+\(k = -1\) | Zero | \(0 \cdot x > 0\) (false) | \(\emptyset\)
+[/TABLE]
+
+Notice how checking \(k = 1\) and \(k = -1\) separately is essential: if the inequality had been \((k^2 - 1)x \ge k + 1\), then \(k = 1\) would give \(0 \ge 2\) (\(\emptyset\)), whereas \(k = -1\) would give \(0 \ge 0\) (\(\mathbb{R}\))—two opposite answers at the two roots of the coefficient!
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(a \in \mathbb{R}\) be a parameter. Which statement gives the complete solution set in \(x\) of the inequality \((a - 1)x \le 2a - 2\) across all real values of \(a\)?
+
+(A) \((-\infty, 2]\) if \(a > 1\); \(\mathbb{R}\) if \(a = 1\); \([2, \infty)\) if \(a < 1\)
+(B) \((-\infty, 2]\) if \(a > 1\); \(\emptyset\) if \(a = 1\); \([2, \infty)\) if \(a < 1\)
+(C) \([2, \infty)\) if \(a > 1\); \(\mathbb{R}\) if \(a = 1\); \((-\infty, 2]\) if \(a < 1\)
+(D) \((-\infty, 2]\) for every \(a \ne 1\); \(\mathbb{R}\) if \(a = 1\)
+(E) \((-\infty, 2)\) if \(a > 1\); \(\{2\}\) if \(a = 1\); \((2, \infty)\) if \(a < 1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+For which real value(s) of the parameter \(k\) does the inequality \((k - 4)x + 7 \le 2x + 1\) have NO real solutions (solution set \(\emptyset\))?
+
+(A) No real value of \(k\)
+(B) All \(k < 6\)
+(C) \(k = 4\) only
+(D) \(k = 6\) only
+(E) \(k = 6\) and \(k = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+For which real values of the parameter \(p\) does the compound system
+\[
+2x - 1 > 3 \qquad \text{and} \qquad x - p \le 2
+\]
+have at least one real solution \(x\)?
+
+(A) \(p \in [0, \infty)\)
+(B) \(p \in (0, \infty)\)
+(C) \(p \in (-2, \infty)\)
+(D) \(p \in [2, \infty)\)
+(E) \(p \in (-\infty, 0)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suppose \(a < 0\). What is the solution set in \(x\) of the chained inequality \(1 < ax + 1 \le 5\)?
+
+(A) \(\left(0, \frac{4}{a}\right]\)
+(B) \(\left(\frac{4}{a}, 0\right]\)
+(C) \(\left[\frac{4}{a}, 0\right)\)
+(D) \(\left(-\infty, \frac{4}{a}\right] \cup (0, \infty)\)
+(E) \(\left[-\frac{4}{a}, 0\right)\)
+[/BONUS]

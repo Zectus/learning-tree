@@ -1,0 +1,246 @@
+=== SECTION 1: Elementos minimales, maximales, mínimo y máximo ===
+
+En un orden total como \((\mathbb{R}, \le)\), estar «en el fondo» significa una sola cosa: ser menor o igual que todos los demás elementos. Sin embargo, en cuanto un poset contiene elementos incomparables, estar «en el fondo» se divide en DOS conceptos claramente distintos: no tener nada estrictamente por debajo, frente a estar por debajo de TODOS los elementos del poset. Confundir estas dos nociones es el error más común en teoría del orden.
+
+[CALLOUT]
+id: extremal-elements-def
+label: Definición
+title: Elementos minimales, maximales, mínimo y máximo
+tone: key
+
+Sea \((P, \preceq)\) un conjunto parcialmente ordenado y sea \(a \in P\).
+
+(1) Elemento minimal: \(a\) es minimal en \(P\) si NO existe ningún elemento \(x \in P\) con \(x \prec a\) (equivalentemente, \(\forall x \in P,\; (x \preceq a \implies x = a)\)).
+(2) Elemento mínimo: \(a\) es el elemento mínimo de \(P\) si \(a \preceq x\) para TODO \(x \in P\).
+(3) Elemento maximal: \(a\) es maximal en \(P\) si NO existe ningún elemento \(x \in P\) con \(a \prec x\) (equivalentemente, \(\forall x \in P,\; (a \preceq x \implies x = a)\)).
+(4) Elemento máximo: \(a\) es el elemento máximo de \(P\) si \(x \preceq a\) para TODO \(x \in P\).
+[/CALLOUT]
+
+Obsérvese el contraste en el diagrama de Hasse de un poset finito:
+- Un elemento MINIMAL es cualquier vértice sin aristas descendentes que partan de él. ¡Puede haber varios elementos minimales!
+- Un elemento MÍNIMO es un único vértice inferior desde el cual TODO vértice del poset completo es alcanzable mediante un camino ascendente (o es igual a él).
+
+Veamos los cuatro comportamientos en posets concretos:
+1. \(P_1 = \{2, 3, 4, 6, 12\}\) ordenado por divisibilidad (tomando \(D_{12}\) y suprimiendo \(1\)):
+   - Elementos minimales: TANTO \(2\) como \(3\), pues ningún elemento de \(P_1\) divide estrictamente a \(2\) ni a \(3\).
+   - Elemento mínimo: NINGUNO, porque \(2 \nmid 3\) y \(3 \nmid 2\).
+   - Elemento máximo (y único elemento maximal): \(12\), ya que todo elemento de \(P_1\) divide a \(12\).
+2. \(P_2 = \{2, 3, 4, 6\}\) ordenado por divisibilidad:
+   - Elementos minimales: \(2\) y \(3\) (sin mínimo).
+   - Elementos maximales: \(4\) y \(6\) (sin máximo).
+3. \((\mathbb{Z}, \le)\): SIN minimal, SIN mínimo, SIN maximal y SIN máximo.
+4. \(((0, 1), \le)\): aunque acotado entre \(0\) y \(1\), este intervalo abierto no tiene NI minimal, NI mínimo, NI maximal, NI máximo dentro de \((0, 1)\).
+
+¿Cómo se relacionan lógicamente los elementos mínimos y los minimales? Dos teoremas breves fijan la relación exacta —y un contraejemplo sorprendente previene contra un recíproco falso muy tentador.
+
+[CALLOUT]
+id: extremal-uniqueness
+label: Teorema
+title: Unicidad de mínimo y máximo y relación con la minimalidad
+tone: key
+
+Sea \((P, \preceq)\) un conjunto parcialmente ordenado.
+
+(1) Si \(P\) posee un elemento mínimo, es único. (Dualmente, si \(P\) posee un elemento máximo, es único.)
+(2) Si \(a\) es el elemento mínimo de \(P\), entonces \(a\) es el ÚNICO elemento minimal de \(P\). (Dualmente, todo elemento máximo es el único elemento maximal.)
+[/CALLOUT]
+
+Demostración de (1): Supongamos que tanto \(a\) como \(b\) son elementos mínimos de \(P\). Como \(a\) es mínimo y \(b \in P\), tenemos \(a \preceq b\). Como \(b\) es mínimo y \(a \in P\), tenemos \(b \preceq a\). Por antisimetría de \(\preceq\), \(a = b\).
+
+Demostración de (2): Supongamos que \(a\) es el elemento mínimo de \(P\). Primero, ¿es \(a\) minimal? Sea \(x \in P\) tal que \(x \preceq a\). Como \(a\) es mínimo, \(a \preceq x\); por antisimetría, \(x = a\), de modo que \(a\) es minimal. Segundo, ¿podría existir otro elemento minimal \(m \in P\)? Como \(a\) es mínimo, \(a \preceq m\). Por [REF: extremal-elements-def.1 | minimalidad de \(m\)], \(a \preceq m\) fuerza \(a = m\). Por consiguiente, \(a\) es el único elemento minimal.
+
+[CALLOUT]
+id: unique-minimal-trap
+label: Error frecuente
+title: Un único elemento minimal NO tiene por qué ser elemento mínimo
+tone: caution
+
+En un poset FINITO, tener un único elemento minimal SÍ lo obliga a ser el elemento mínimo (si \(x \in P\) no estuviera por encima del único elemento minimal \(m\), descender por elementos estrictamente menores en un conjunto finito acabaría topando con un segundo elemento minimal).
+
+Sin embargo, en un poset INFINITO esto falla. Tómese \(P = \mathbb{Z} \cup \{*\}\), donde los enteros llevan su orden usual \(\le\) y el elemento adicional \(*\) es incomparable con todo entero (de modo que únicamente se cumple \(* \preceq *\)). Entonces:
+- Ningún entero es minimal (todo \(n \in \mathbb{Z}\) tiene \(n - 1 < n\)).
+- El elemento \(*\) no tiene nada estrictamente por debajo de él, por lo que \(*\) es el ÚNICO elemento minimal de \(P\).
+- Sin embargo, \(*\) NO es elemento mínimo de \(P\), porque \(* \not\preceq 0\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+Considérese el poset \(P = \mathcal{P}(\{1, 2, 3\}) \setminus \{\emptyset, \{1, 2, 3\}\}\) (todos los subconjuntos propios y no vacíos de \(\{1, 2, 3\}\)), ordenado por inclusión de subconjuntos \(\subseteq\). ¿Qué afirmación describe con exactitud sus elementos extremales?
+
+(A) Tiene \(1\) elemento minimal y \(1\) elemento maximal, y ambos son mínimo y máximo.
+(B) Tiene \(3\) elementos minimales, \(1\) elemento maximal y ningún elemento mínimo.
+(C) No tiene elementos minimales ni elementos maximales.
+(D) Tiene \(3\) elementos minimales, \(3\) elementos maximales, ningún elemento mínimo y ningún elemento máximo.
+(E) Tiene \(3\) elementos minimales y \(3\) elementos maximales, y su elemento mínimo es \(\emptyset\).
+[/QUESTION]
+
+=== SECTION 2: Cotas superiores, cotas inferiores, supremos e ínfimos ===
+
+Traslademos ahora la atención del poset completo \(P\) a un SUBCONJUNTO \(S \subseteq P\). Incluso cuando \(S\) mismo carece de máximo o mínimo, elementos del poset ambiente \(P\) pueden situarse por encima o por debajo de todo \(S\).
+
+[CALLOUT]
+id: bounds-sup-inf-def
+label: Definición
+title: Cotas superiores e inferiores, supremo (join) e ínfimo (meet)
+tone: key
+
+Sea \((P, \preceq)\) un poset y sea \(S \subseteq P\).
+
+(1) Un elemento \(u \in P\) es cota superior de \(S\) si \(s \preceq u\) para todo \(s \in S\).
+(2) Un elemento \(\ell \in P\) es cota inferior de \(S\) si \(\ell \preceq s\) para todo \(s \in S\).
+(3) Un elemento \(u_0 \in P\) es la mínima cota superior (o supremo, o join) de \(S\), escrito \(u_0 = \sup S\), si \(u_0\) es el elemento mínimo del conjunto de todas las cotas superiores de \(S\) —explícitamente:
+- \(u_0\) es cota superior de \(S\) (\(\forall s \in S,\; s \preceq u_0\)), Y
+- para toda cota superior \(u \in P\) de \(S\), \(u_0 \preceq u\).
+(4) Un elemento \(\ell_0 \in P\) es la máxima cota inferior (o ínfimo, o meet) de \(S\), escrito \(\ell_0 = \inf S\), si \(\ell_0\) es el elemento máximo del conjunto de todas las cotas inferiores de \(S\) —explícitamente:
+- \(\ell_0\) es cota inferior de \(S\) (\(\forall s \in S,\; \ell_0 \preceq s\)), Y
+- para toda cota inferior \(\ell \in P\) de \(S\), \(\ell \preceq \ell_0\).
+[/CALLOUT]
+
+Obsérvese de inmediato: como \(\sup S\) se define como el elemento MÍNIMO del poset \(U(S)\) de cotas superiores de \(S\) (e \(\inf S\) es el elemento MÁXIMO del poset \(L(S)\) de cotas inferiores de \(S\)), la [REF: extremal-uniqueness.1 | unicidad de mínimo y máximo] demuestra al instante que, siempre que \(\sup S\) exista, es ÚNICO, y siempre que \(\inf S\) exista, es ÚNICO. Adviértase también que \(\sup S\) e \(\inf S\) deben pertenecer al poset ambiente \(P\), NO necesariamente a \(S\). (Cuando \(\sup S \in S\), es el elemento máximo de \(S\); cuando \(\inf S \in S\), es el elemento mínimo de \(S\).)
+
+Traduzcamos \(\sup\) e \(\inf\) a operaciones familiares en cuatro posets fundamentales: aquí es donde la teoría del orden unifica ideas de conjuntos, teoría de números y análisis real.
+
+1. Poset del conjunto potencia \((\mathcal{P}(X), \subseteq)\): Sea \(\mathcal{F} \subseteq \mathcal{P}(X)\) cualquier colección de subconjuntos de \(X\).
+   - Un subconjunto \(U \subseteq X\) es cota superior de \(\mathcal{F}\) si y solo si \(A \subseteq U\) para todo \(A \in \mathcal{F}\), lo cual ocurre si y solo si \(\bigcup_{A \in \mathcal{F}} A \subseteq U\). Por consiguiente,
+\[
+\sup \mathcal{F} = \bigcup_{A \in \mathcal{F}} A.
+\]
+   - Dualmente, \(L \subseteq X\) es cota inferior de \(\mathcal{F}\) si y solo si \(L \subseteq A\) para todo \(A \in \mathcal{F}\), lo cual ocurre si y solo si \(L \subseteq \bigcap_{A \in \mathcal{F}} A\) (interpretado como \(X\) cuando \(\mathcal{F} = \emptyset\)). Por consiguiente,
+\[
+\inf \mathcal{F} = \bigcap_{A \in \mathcal{F}} A.
+\]
+2. Poset de divisibilidad \((\mathbb{Z}^+, \mid)\): Sea \(S = \{a, b\} \subseteq \mathbb{Z}^+\).
+   - Una cota superior \(u \in \mathbb{Z}^+\) satisface \(a \mid u\) y \(b \mid u\) —es decir, \(u\) es un múltiplo común de \(a\) y \(b\). Por teoría elemental de números, todo múltiplo común de \(a\) y \(b\) es múltiplo de \(\operatorname{mcm}(a, b)\), luego \(\operatorname{mcm}(a, b) \mid u\) para toda cota superior \(u\). Por tanto,
+\[
+\sup\{a, b\} = \operatorname{mcm}(a, b).
+\]
+   - Dualmente, una cota inferior \(\ell \in \mathbb{Z}^+\) es un divisor común de \(a\) y \(b\), y todo divisor común divide a \(\operatorname{mcd}(a, b)\). Por tanto,
+\[
+\inf\{a, b\} = \operatorname{mcd}(a, b).
+\]
+   Por ejemplo, en \((\mathbb{Z}^+, \mid)\), \(\sup\{12, 18\} = 36\) e \(\inf\{12, 18\} = 6\). ¡Cuidado si achicamos el poset ambiente! En el subposet finito \(P = \{1, 2, 3, 4, 6, 12, 18\}\) bajo divisibilidad, el subconjunto \(S = \{4, 6\}\) tiene como cota superior a \(12\) (y solo a \(12\)), luego \(\sup\{4, 6\} = 12\); en cambio, en \(Q = \{1, 2, 3, 4, 6, 12, 18, 24, 36\}\) habiendo ELIMINADO \(12\), las cotas superiores de \(\{4, 6\}\) son \(24\) y \(36\) —ninguna divide a la otra, por lo que \(\{4, 6\}\) tiene DOS cotas superiores minimales y NINGÚN supremo.
+3. Números racionales \((\mathbb{Q}, \le)\) frente a números reales \((\mathbb{R}, \le)\): Considérese el conjunto no vacío y acotado
+\[
+S = \{q \in \mathbb{Q} : q > 0 \text{ y } q^2 < 2\}.
+\]
+   - Dentro de \((\mathbb{R}, \le)\), las cotas superiores de \(S\) forman \([\sqrt{2}, \infty)\), luego \(\sup_{\mathbb{R}} S = \sqrt{2}\) existe (aunque \(\sqrt{2} \notin S\)).
+   - Dentro de \((\mathbb{Q}, \le)\), las cotas superiores de \(S\) son \(\{u \in \mathbb{Q} : u > \sqrt{2}\}\) (como \(\sqrt{2}\) es irracional, ningún racional cumple \(u^2 = 2\)). Dada CUALQUIER cota superior racional \(u > \sqrt{2}\), podemos encontrar un racional estrictamente menor \(u'\) con \(\sqrt{2} < u' < u\), de modo que el conjunto de cotas superiores racionales NO tiene elemento mínimo. Así pues, \(\sup_{\mathbb{Q}} S\) NO EXISTE en \((\mathbb{Q}, \le)\).
+
+[TABLE]
+Poset \((P, \preceq)\) | Subconjunto \(S \subseteq P\) | \(\sup S\) (si existe) | \(\inf S\) (si existe)
+\((\mathcal{P}(X), \subseteq)\) | Cualquier familia \(\mathcal{F} \subseteq \mathcal{P}(X)\) | \(\bigcup_{A \in \mathcal{F}} A\) | \(\bigcap_{A \in \mathcal{F}} A\)
+\((\mathbb{Z}^+, \mid)\) | Par \(\{a, b\}\) | \(\operatorname{mcm}(a, b)\) | \(\operatorname{mcd}(a, b)\)
+\((\mathbb{R}, \le)\) | \((0, 1)\) | \(1\) | \(0\)
+\((\mathbb{Q}, \le)\) | \(\{q \in \mathbb{Q} : q > 0 \land q^2 < 2\}\) | No existe | \(0\)
+\((P, \preceq)\) con mínimo \(0_P\) y máximo \(1_P\) | Subconjunto vacío \(S = \emptyset\) | \(0_P\) (elemento mínimo de \(P\)) | \(1_P\) (elemento máximo de \(P\))
+[/TABLE]
+
+Un momento: deténgase a comprobar esa última fila de la tabla. Para \(S = \emptyset\), TODO \(u \in P\) es por vacuidad una cota superior de \(\emptyset\) (ya que \(\forall s \in \emptyset,\, s \preceq u\) es verdadera por vacuidad). De modo que el conjunto de cotas superiores de \(\emptyset\) es TODO \(P\), cuyo elemento mínimo —si \(P\) tiene uno— es el elemento mínimo de \(P\). Así, \(\sup \emptyset\) es el elemento mínimo de \(P\) y, dualmente, \(\inf \emptyset\) es el elemento máximo de \(P\).
+
+[QUESTION 2]
+[ANSWER: C]
+Sea \(P = \{2, 3, 4, 6, 8, 12, 24\}\) ordenado por divisibilidad \(\mid\), y sea \(S = \{4, 6\} \subseteq P\). ¿Qué afirmación sobre las cotas de \(S\) en \(P\) es VERDADERA?
+
+(A) \(S\) no tiene cotas inferiores en \(P\), y \(\sup S = 12\).
+(B) \(\inf S = 2\) y \(\sup S = 24\).
+(C) \(\inf S = 2\) y \(\sup S = 12\).
+(D) \(\inf S = 1\) y \(\sup S = 12\).
+(E) \(S\) tiene dos cotas superiores \(12\) y \(24\), por lo que \(\sup S\) no existe.
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+En el poset \(P = \{1, 2, 3, 6, 12, 18, 36\} \setminus \{6\}\) (es decir, \(P = \{1, 2, 3, 12, 18, 36\}\)) ordenado por divisibilidad \(\mid\), considérese el subconjunto \(S = \{2, 3\}\). ¿Qué puede afirmarse sobre \(\sup S\) en \(P\)?
+
+(A) \(\sup S\) no existe en \(P\), porque las cotas superiores de \(S\) en \(P\) son \(12, 18, 36\), conjunto que tiene dos elementos minimales \(12\) y \(18\).
+(B) \(\sup S = 6\), porque \(\operatorname{mcm}(2, 3) = 6\).
+(C) \(\sup S = 36\), porque \(36\) es divisible tanto por \(12\) como por \(18\).
+(D) \(\sup S = 12\), porque \(12\) es numéricamente la menor cota superior de \(S\) en \(P\).
+(E) \(S\) no tiene cotas superiores en \(P\).
+[/QUESTION]
+
+=== SECTION 3: Conjuntos bien ordenados ===
+
+Entre los órdenes totales, \((\mathbb{N}, \le)\) posee una propiedad notablemente fuerte —el Principio del Buen Orden— que falla en \((\mathbb{Z}, \le)\), \((\mathbb{Q}^+, \le)\) y \(([0, 1], \le)\). Extender esa propiedad a posets arbitrarios define los conjuntos bien ordenados.
+
+[CALLOUT]
+id: well-ordered-def
+label: Definición
+title: Conjunto bien ordenado
+tone: key
+
+Un poset \((W, \preceq)\) se denomina bien ordenado (y \(\preceq\) se llama un buen orden de \(W\)) si:
+
+(1) \(\preceq\) es un orden total sobre \(W\), Y
+(2) todo subconjunto no vacío \(S \subseteq W\) posee un elemento mínimo en \(S\) (existe \(m \in S\) tal que \(m \preceq s\) para todo \(s \in S\)).
+[/CALLOUT]
+
+Adviértase que la condición (1) en realidad está implicada por la condición (2): dados cualesquiera \(x, y \in W\), el conjunto de dos elementos \(\{x, y\}\) es no vacío, por lo que por la condición (2) tiene un elemento mínimo —o bien \(x\) (dando \(x \preceq y\)) o bien \(y\) (dando \(y \preceq x\)). Así, \(x\) e \(y\) son automáticamente comparables. Aun así, enunciar explícitamente la totalidad mantiene clara la definición.
+
+Nótense las palabras cruciales «en \(S\)» de la [REF: well-ordered-def.2 | condición (2)]: tener una cota inferior o un ínfimo fuera de \(S\) NO basta —el elemento mínimo debe pertenecer al propio \(S\). Pongamos a prueba cinco órdenes totales importantes:
+
+1. \((\mathbb{N}, \le)\): BIEN ORDENADO. Este es el Principio del Buen Orden estándar de los números naturales. Nótese también que TODO orden total finito está automáticamente bien ordenado.
+2. \((\mathbb{Z}, \le)\): NO está bien ordenado. El subconjunto no vacío \(S = \mathbb{Z}\) mismo (o \(S = \{-1, -2, -3, \dots\}\)) carece de elemento mínimo.
+3. \((\mathbb{Q}^+, \le)\) (racionales positivos): NO está bien ordenado. Aunque todo racional positivo está acotado inferiormente por \(0\), el propio subconjunto \(S = \mathbb{Q}^+\) no tiene mínimo: para cualquier \(q \in \mathbb{Q}^+\), \(q/2 \in \mathbb{Q}^+\) es estrictamente menor.
+4. \(([0, 1], \le)\): NO está bien ordenado. Aunque el intervalo completo \([0, 1]\) tiene elemento mínimo \(0\), la definición exige que TODO subconjunto no vacío \(S \subseteq [0, 1]\) tenga elemento mínimo. Tómese el subintervalo abierto \(S = (0, 1) \subseteq [0, 1]\) (o \(S = \{1/n : n \in \mathbb{Z}^+\}\)): \(S\) es no vacío y tiene \(\inf S = 0\), pero \(0 \notin S\), por lo que \(S\) NO tiene elemento mínimo.
+5. Orden lexicográfico \((\mathbb{N} \times \mathbb{N}, \preceq_{\text{lex}})\): ¡BIEN ORDENADO! Demostrémoslo con cuidado: es un modelo elegante de cómo funcionan las demostraciones de buen orden.
+
+[CALLOUT]
+id: lex-n-well-ordered
+label: Demostración
+title: \((\mathbb{N} \times \mathbb{N}, \preceq_{\text{lex}})\) está bien ordenado
+tone: note
+
+Ya sabemos por la lección anterior que, como \((\mathbb{N}, \le)\) es un orden total, \(\preceq_{\text{lex}}\) es un orden total sobre \(\mathbb{N} \times \mathbb{N}\). Sea \(S \subseteq \mathbb{N} \times \mathbb{N}\) un subconjunto no vacío arbitrario. Construimos su elemento mínimo en dos etapas:
+
+(1) Proyección sobre la primera coordenada: sea \(A = \{m \in \mathbb{N} : \exists n \in \mathbb{N},\; (m, n) \in S\}\). Como \(S \ne \emptyset\), \(A\) es un subconjunto no vacío de \(\mathbb{N}\). Dado que \((\mathbb{N}, \le)\) está bien ordenado, \(A\) posee un elemento mínimo \(m_0 \in A\).
+(2) Corte en \(m_0\): sea \(B = \{n \in \mathbb{N} : (m_0, n) \in S\}\). Como \(m_0 \in A\), existe al menos un \(n\) con \((m_0, n) \in S\), por lo que \(B\) es un subconjunto no vacío de \(\mathbb{N}\). De nuevo por el buen orden de \(\mathbb{N}\), \(B\) posee un elemento mínimo \(n_0 \in B\).
+
+Ahora \((m_0, n_0) \in S\) por construcción de \(B\). Tómese cualquier \((m, n) \in S\). Entonces \(m \in A\), luego \(m_0 \le m\). Si \(m_0 < m\), entonces \((m_0, n_0) \prec_{\text{lex}} (m, n)\) de inmediato. Si \(m_0 = m\), entonces \(n \in B\), por lo que \(n_0 \le n\), lo que da \((m_0, n_0) \preceq_{\text{lex}} (m, n)\). En consecuencia, \((m_0, n_0)\) es el elemento mínimo de \(S\).
+[/CALLOUT]
+
+Obsérvese un rasgo llamativo de \((\mathbb{N} \times \mathbb{N}, \preceq_{\text{lex}})\): un elemento como \((1, 0)\) tiene INFINITOS elementos estrictamente por debajo de él —a saber, \((0, 0), (0, 1), (0, 2), \dots\)— y sin embargo todo subconjunto no vacío SIGUE teniendo elemento mínimo. Lo que prohíbe el buen orden NO es tener infinitos predecesores, sino tener una cadena infinita ESTRICTAMENTE DESCENDENTE \(w_1 \succ w_2 \succ w_3 \succ \dots\): si existiera tal cadena descendente, el subconjunto no vacío \(\{w_1, w_2, w_3, \dots\}\) carecería de elemento mínimo. Por ejemplo, en \(\mathbb{N} \times \mathbb{N}\) con el orden lexicográfico, descender de \((1, 0)\) a \((0, 100)\) rebaja la primera coordenada de \(1\) a \(0\), y a partir de ahí se puede descender a lo sumo \(100\) pasos más antes de llegar a \((0, 0)\): toda cadena descendente debe terminar en un número finito de pasos.
+
+[QUESTION 4]
+[ANSWER: B]
+¿Cuál de los siguientes subconjuntos de \(\mathbb{R}\), dotado del orden usual \(\le\), está BIEN ORDENADO?
+
+(A) \(\{1/n : n \in \mathbb{Z}^+\}\)
+(B) \(\{1 - 1/n : n \in \mathbb{Z}^+\} \cup \{1\}\)
+(C) \(\{m/2^k : m \in \mathbb{Z}^+,\; k \in \mathbb{N}\}\)
+(D) \(\mathbb{Q} \cap [0, 1]\)
+(E) \(\{n \in \mathbb{Z} : n \le 100\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Supongamos que un subconjunto \(S\) de un poset \((P, \preceq)\) tiene un elemento máximo \(g \in S\). ¿Qué afirmación sobre \(\sup S\) es SIEMPRE verdadera?
+
+(A) \(\sup S\) existe únicamente si \(P\) es un orden total.
+(B) \(\sup S\) puede existir y ser estrictamente mayor que \(g\).
+(C) \(\sup S\) podría no existir si \(g\) no es maximal en \(P\).
+(D) \(\sup S\) existe únicamente si \(S\) es finito.
+(E) \(\sup S\) existe necesariamente y es igual a \(g\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Considérese el conjunto \(W = \mathbb{Z}\) con un orden no estándar \(\preceq\) definido colocando \(0 \prec 1 \prec -1 \prec 2 \prec -2 \prec 3 \prec -3 \prec \dots\) (formalmente, \(a \prec b\) si y solo si \(|a| < |b|\), o \(|a| = |b|\) con \(a > 0 > b\)). ¿Está bien ordenado \((\mathbb{Z}, \preceq)\)?
+
+(A) Sí; todo subconjunto no vacío \(S \subseteq \mathbb{Z}\) tiene un valor mínimo de \(|x|\), y entre los a lo sumo dos elementos de \(S\) con ese valor absoluto mínimo, el positivo (si está presente) es el elemento mínimo.
+(B) No; como \(\mathbb{Z}\) contiene infinitos enteros negativos, \(S = \{-1, -2, -3, \dots\}\) no tiene elemento mínimo.
+(C) No; como \(1\) y \(-1\) tienen el mismo valor absoluto, el orden no es antisimétrico.
+(D) No; como \(0\) no tiene predecesor inmediato, el orden no es total.
+(E) Sí, pero únicamente si eliminamos el \(0\) de \(\mathbb{Z}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Sea \((P, \preceq)\) un poset y sean \(A \subseteq B \subseteq P\) dos subconjuntos tales que tanto \(\sup A\) como \(\sup B\) existen en \(P\). ¿Qué relación DEBE cumplirse?
+
+(A) \(\sup B \preceq \sup A\)
+(B) \(\sup A = \sup B\)
+(C) \(\sup A\) y \(\sup B\) pueden ser incomparables
+(D) \(\sup A \preceq \sup B\)
+(E) \(\sup A \prec \sup B\) siempre que \(A \subsetneq B\)
+[/BONUS]

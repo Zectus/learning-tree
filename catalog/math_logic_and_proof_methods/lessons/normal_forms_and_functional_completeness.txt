@@ -1,0 +1,283 @@
+=== SECTION 1: Disjunctive and conjunctive normal forms from truth tables ===
+
+Suppose someone hands you an arbitrary truth table on \(n\) propositional variables—say, a column of \(T\)'s and \(F\)'s specifying a desired Boolean function—and asks: can we always write down a propositional formula that produces that exact truth table, and can we put every formula into a clean standard shape? Answering that question leads to normal forms and to the theory of functional completeness.
+
+We start by building standard shapes from the simplest possible pieces.
+
+[CALLOUT]
+id: def-normal-forms
+label: Definition
+title: Literals, DNF, and CNF
+tone: key
+
+Let \(P_1, P_2, \dots, P_n\) be propositional variables (atoms).
+
+(1) A literal is either an atom \(P_i\) or its negation \(\neg P_i\).
+(2) A formula is in disjunctive normal form (DNF) if it is a disjunction of one or more conjunctions of literals (an "OR of ANDs"), such as \((P \wedge \neg Q) \vee (\neg P \wedge Q) \vee (Q \wedge R)\).
+(3) A formula is in conjunctive normal form (CNF) if it is a conjunction of one or more disjunctions of literals (an "AND of ORs"), such as \((P \vee \neg Q) \wedge (\neg P \vee R)\).
+[/CALLOUT]
+
+Note that degenerate single-term cases count as both DNF and CNF: a single literal like \(\neg P\) is a \(1\)-clause disjunction of a \(1\)-literal conjunction, and a single conjunction \(P \wedge \neg Q\) is in DNF (one clause) and also in CNF (two \(1\)-literal clauses). What is forbidden in both DNF and CNF is any \(\neg\) sitting outside parentheses (like \(\neg(P \wedge Q)\)) and any \(\Rightarrow\) or \(\Leftrightarrow\).
+
+Remarkably, any truth table on \(P_1, \dots, P_n\) that has at least one \(T\) row yields a DNF immediately, and any truth table with at least one \(F\) row yields a CNF immediately! Let us see how on a concrete \(3\)-variable truth table for a target Boolean function \(F(P, Q, R)\).
+
+[TABLE]
+Row | \(P\) | \(Q\) | \(R\) | \(F(P, Q, R)\) | Minterm (for \(T\) rows) | Maxterm (for \(F\) rows)
+1 | \(T\) | \(T\) | \(T\) | \(T\) | \(P \wedge Q \wedge R\) | —
+2 | \(T\) | \(T\) | \(F\) | \(F\) | — | \(\neg P \vee \neg Q \vee R\)
+3 | \(T\) | \(F\) | \(T\) | \(F\) | — | \(\neg P \vee Q \vee \neg R\)
+4 | \(T\) | \(F\) | \(F\) | \(T\) | \(P \wedge \neg Q \wedge \neg R\) | —
+5 | \(F\) | \(T\) | \(T\) | \(F\) | — | \(P \vee \neg Q \vee \neg R\)
+6 | \(F\) | \(T\) | \(F\) | \(F\) | — | \(P \vee \neg Q \vee R\)
+7 | \(F\) | \(F\) | \(T\) | \(T\) | \(\neg P \wedge \neg Q \wedge R\) | —
+8 | \(F\) | \(F\) | \(F\) | \(F\) | — | \(P \vee Q \vee R\)
+[/TABLE]
+
+How do we construct the DNF from the \(T\) rows? For each row where \(F\) evaluates to \(T\), write a conjunction (called a minterm) that is \(T\) on THAT row and \(F\) on every other row: include \(X\) if variable \(X\) is \(T\) in that row, and \(\neg X\) if \(X\) is \(F\) in that row. For Row 4 (\(P = T, Q = F, R = F\)), the minterm is \(P \wedge \neg Q \wedge \neg R\). Taking the disjunction of the minterms from all \(T\) rows (Rows 1, 4, and 7) yields a full DNF:
+\[
+F(P, Q, R) \equiv (P \wedge Q \wedge R) \vee (P \wedge \neg Q \wedge \neg R) \vee (\neg P \wedge \neg Q \wedge R).
+\]
+Check why this works: on any \(T\) row of \(F\), the corresponding minterm is \(T\), so the whole disjunction is \(T\); on any \(F\) row of \(F\), every minterm has at least one literal that disagrees with the row, so every minterm is \(F\) and the disjunction is \(F\).
+
+Now how do we construct the CNF from the \(F\) rows? Look at the dual idea: we want a conjunction of clauses (called maxterms), one for each \(F\) row, such that each maxterm is \(F\) ONLY on its designated \(F\) row and \(T\) on every other row. When is a disjunction \(L_1 \vee L_2 \vee L_3\) false? Only when EVERY literal is \(F\)! So for Row 2 (\(P = T, Q = T, R = F\)), we pick the literal that evaluates to \(F\) on that row: \(\neg P\) (since \(P = T\)), \(\neg Q\) (since \(Q = T\)), and \(R\) (since \(R = F\)), giving the maxterm \(\neg P \vee \neg Q \vee R\).
+
+Notice that this polarity rule is not an arbitrary trick—it comes straight from De Morgan's law! The negation \(\neg F\) is \(T\) on the \(F\) rows of \(F\), so \(\neg F\) has a DNF made of minterms of the \(F\) rows (for Row 2, \(P \wedge Q \wedge \neg R\)). Negating that DNF for \(\neg F\) recovers \(F \equiv \neg(\neg F)\): De Morgan turns the outer \(\vee\) into \(\wedge\), turns each inner \(\wedge\) into \(\vee\), and flips every literal! That immediately turns the minterm \(P \wedge Q \wedge \neg R\) into the maxterm \(\neg P \vee \neg Q \vee R\).
+
+Taking the conjunction of all five maxterms from Rows 2, 3, 5, 6, and 8 gives a full CNF for \(F(P, Q, R)\). (And what about the two extreme truth tables? An all-\(F\) contradiction is already in DNF as \(P \wedge \neg P\), and an all-\(T\) tautology is already in CNF as \(P \vee \neg P\).)
+
+[QUESTION 1]
+[ANSWER: C]
+A Boolean function \(G(P, Q)\) evaluates to \(T\) only on the rows \((P = T, Q = F)\) and \((P = F, Q = T)\), and to \(F\) on the rows \((P = T, Q = T)\) and \((P = F, Q = F)\). Which of the following is the full CNF of \(G(P, Q)\) read directly from its \(F\) rows?
+
+(A) \((P \wedge \neg Q) \vee (\neg P \wedge Q)\)
+(B) \((P \vee Q) \wedge (P \vee \neg Q)\)
+(C) \((\neg P \vee \neg Q) \wedge (P \vee Q)\)
+(D) \((P \vee \neg Q) \wedge (\neg P \vee Q)\)
+(E) \((\neg P \wedge \neg Q) \vee (P \wedge Q)\)
+[/QUESTION]
+
+=== SECTION 2: Algebraic conversion to DNF and CNF ===
+
+When a formula has many variables—say \(5\) or \(6\) variables, where a truth table has \(32\) or \(64\) rows—reading minterms or maxterms from a truth table is impractical. Instead, we convert any propositional formula directly into DNF or CNF using the equivalence laws we already proved.
+
+[CALLOUT]
+id: proc-normal-conversion
+label: Method
+title: Algebraic conversion to DNF or CNF
+tone: key
+
+To convert any propositional formula into DNF or CNF:
+
+(1) Eliminate all biconditionals and conditionals using \(A \Leftrightarrow B \equiv (A \Rightarrow B) \wedge (B \Rightarrow A)\) and \(A \Rightarrow B \equiv \neg A \vee B\).
+(2) Push every \(\neg\) inward to single atoms using De Morgan's laws \(\neg(A \wedge B) \equiv \neg A \vee \neg B\), \(\neg(A \vee B) \equiv \neg A \wedge \neg B\), and double negation \(\neg(\neg A) \equiv A\).
+(3) Distribute to reach the target shape:
+- For DNF, distribute \(\wedge\) over \(\vee\): \(A \wedge (B \vee C) \equiv (A \wedge B) \vee (A \wedge C)\).
+- For CNF, distribute \(\vee\) over \(\wedge\): \(A \vee (B \wedge C) \equiv (A \vee B) \wedge (A \vee C)\).
+(4) Simplify using idempotence, commutativity, negation, identity, and domination laws (for example, dropping any CNF clause containing \(X \vee \neg X \equiv \mathbf{T}\), or dropping any DNF clause containing \(X \wedge \neg X \equiv \mathbf{F}\)).
+[/CALLOUT]
+
+Let us apply [REF: proc-normal-conversion | this four-step procedure] to convert
+\[
+(P \Rightarrow Q) \Rightarrow (R \wedge \neg P)
+\]
+into BOTH CNF and DNF.
+
+Steps (1) and (2) are shared by both targets:
+\[
+\begin{aligned}
+(P \Rightarrow Q) \Rightarrow (R \wedge \neg P)
+&\equiv \neg(\neg P \vee Q) \vee (R \wedge \neg P) \\
+&\equiv \bigl(\neg(\neg P) \wedge \neg Q\bigr) \vee (R \wedge \neg P) \\
+&\equiv (P \wedge \neg Q) \vee (R \wedge \neg P).
+\end{aligned}
+\]
+Pause and inspect the result \((P \wedge \neg Q) \vee (R \wedge \neg P)\): it is ALREADY in DNF! No Step (3) distribution is even needed for DNF.
+
+Now continue from \((P \wedge \neg Q) \vee (R \wedge \neg P)\) to obtain a CNF by distributing \(\vee\) over \(\wedge\):
+\[
+\begin{aligned}
+(P \wedge \neg Q) \vee (R \wedge \neg P)
+&\equiv \bigl((P \wedge \neg Q) \vee R\bigr) \wedge \bigl((P \wedge \neg Q) \vee \neg P\bigr) \\
+&\equiv (P \vee R) \wedge (\neg Q \vee R) \wedge (P \vee \neg P) \wedge (\neg Q \vee \neg P).
+\end{aligned}
+\]
+Now apply Step (4): the third clause \(P \vee \neg P\) is the tautology \(\mathbf{T}\), and by the identity law \(X \wedge \mathbf{T} \equiv X\), it drops out cleanly, leaving the compact CNF
+\[
+(P \vee R) \wedge (\neg Q \vee R) \wedge (\neg Q \vee \neg P).
+\]
+Notice a neat bonus of CNF: a formula in CNF is a tautology if and only if EVERY single clause is a tautology (contains some variable alongside its negation, like \(X \vee \neg X\)), because if any clause lacked a complementary pair, you could assign truth values to make every literal in that clause \(F\), making the entire CNF \(F\)! Dually, a formula in DNF is a contradiction if and only if EVERY single conjunction clause contains a complementary pair \(X \wedge \neg X\).
+
+[QUESTION 2]
+[ANSWER: B]
+Which of the following is a valid CNF logically equivalent to \(\neg\bigl((P \Rightarrow Q) \wedge R\bigr)\)?
+
+(A) \((P \wedge \neg Q) \vee \neg R\)
+(B) \((P \vee \neg R) \wedge (\neg Q \vee \neg R)\)
+(C) \((\neg P \vee Q) \wedge \neg R\)
+(D) \((P \vee Q \vee \neg R) \wedge (\neg P \vee \neg Q \vee \neg R)\)
+(E) \((\neg P \vee \neg R) \wedge (Q \vee \neg R)\)
+[/QUESTION]
+
+=== SECTION 3: Functional completeness ===
+
+Section 1 revealed something remarkable: EVERY truth table on any finite number of variables can be written using only the three connectives \(\{\neg, \wedge, \vee\}\). Could we get by with even fewer connectives—say just two, or even a single connective?
+
+[CALLOUT]
+id: def-functional-completeness
+label: Definition
+title: Functional completeness
+tone: key
+
+A set \(\mathcal{S}\) of logical connectives is functionally complete if every possible Boolean function (that is, every truth table on any number \(n \ge 1\) of propositional variables) is logically equivalent to some formula built exclusively from variables and connectives in \(\mathcal{S}\).
+[/CALLOUT]
+
+By the DNF construction in Section 1, the set \(\{\neg, \wedge, \vee\}\) is already functionally complete:
+- If a truth table on \(P_1, \dots, P_n\) has at least one \(T\) row, the disjunction of its minterms represents it using only \(\neg, \wedge, \vee\).
+- If a truth table has all \(F\) rows, the formula \(P_1 \wedge \neg P_1\) represents it using only \(\neg\) and \(\wedge\).
+
+This gives us a fast bootstrap strategy to prove any other set \(\mathcal{S}\) is functionally complete: we do NOT have to build every truth table from scratch! It suffices to show that every connective in a KNOWN functionally complete set (such as \(\{\neg, \wedge, \vee\}\)) can be expressed using connectives from \(\mathcal{S}\). Once you can express \(\neg\), \(\wedge\), and \(\vee\) using \(\mathcal{S}\), substituting those expressions into any DNF represents every truth table using \(\mathcal{S}\) alone.
+
+Let us run this bootstrap chain step by step:
+
+1. \(\{\neg, \wedge\}\) is functionally complete. We already have \(\neg\) and \(\wedge\), so we only need to express \(\vee\). By De Morgan's law and double negation,
+\[
+P \vee Q \equiv \neg(\neg P \wedge \neg Q).
+\]
+Since \(\{\neg, \wedge, \vee\}\) is functionally complete and \(\vee\) is built from \(\{\neg, \wedge\}\), the set \(\{\neg, \wedge\}\) is functionally complete.
+
+2. \(\{\neg, \vee\}\) is functionally complete. Dually, we only need to express \(\wedge\) from \(\neg\) and \(\vee\):
+\[
+P \wedge Q \equiv \neg(\neg P \vee \neg Q).
+\]
+Hence \(\{\neg, \vee\}\) is functionally complete.
+
+3. Can a SINGLE binary connective be functionally complete on its own? Yes! Define the two classical stroke connectives NAND (\(\uparrow\), "not both") and NOR (\(\downarrow\), "neither ... nor"):
+\[
+P \uparrow Q \equiv \neg(P \wedge Q), \qquad P \downarrow Q \equiv \neg(P \vee Q).
+\]
+
+[TABLE]
+\(P\) | \(Q\) | \(P \uparrow Q\) (NAND) | \(P \downarrow Q\) (NOR)
+\(T\) | \(T\) | \(F\) | \(F\)
+\(T\) | \(F\) | \(T\) | \(F\)
+\(F\) | \(T\) | \(T\) | \(F\)
+\(F\) | \(F\) | \(T\) | \(T\)
+[/TABLE]
+
+Let us prove that \(\{\uparrow\}\) alone is functionally complete by expressing \(\neg\) and \(\wedge\) using ONLY \(\uparrow\):
+- First, set both inputs equal to \(P\):
+\[
+P \uparrow P \equiv \neg(P \wedge P) \equiv \neg P.
+\]
+- Next, negate \(P \uparrow Q\) by applying \(\uparrow\) to two copies of \((P \uparrow Q)\):
+\[
+(P \uparrow Q) \uparrow (P \uparrow Q) \equiv \neg(P \uparrow Q) \equiv \neg\bigl(\neg(P \wedge Q)\bigr) \equiv P \wedge Q.
+\]
+Because we have expressed both \(\neg\) and \(\wedge\) using only \(\uparrow\), and \(\{\neg, \wedge\}\) is functionally complete, \(\{\uparrow\}\) is functionally complete!
+
+By an exactly parallel derivation, \(\{\downarrow\}\) alone is functionally complete:
+- \(P \downarrow P \equiv \neg(P \vee P) \equiv \neg P\).
+- \((P \downarrow Q) \downarrow (P \downarrow Q) \equiv \neg(P \downarrow Q) \equiv \neg\bigl(\neg(P \vee Q)\bigr) \equiv P \vee Q\).
+Since we expressed both \(\neg\) and \(\vee\) from \(\downarrow\), and \(\{\neg, \vee\}\) is functionally complete, \(\{\downarrow\}\) is functionally complete.
+
+[CALLOUT]
+id: thm-complete-sets
+label: Theorem
+title: Core functionally complete sets of connectives
+tone: key
+
+Each of the following sets of connectives is functionally complete:
+\[
+\{\neg, \wedge, \vee\}, \qquad \{\neg, \wedge\}, \qquad \{\neg, \vee\}, \qquad \{\uparrow\}, \qquad \{\downarrow\}.
+\]
+[/CALLOUT]
+
+What about \(\{\neg, \Rightarrow\}\)? It is also functionally complete, because \(P \vee Q \equiv (\neg P) \Rightarrow Q\), which expresses \(\vee\) and reduces directly to \(\{\neg, \vee\}\).
+
+[QUESTION 3]
+[ANSWER: D]
+Using only the NAND connective \(\uparrow\) (where \(A \uparrow B \equiv \neg(A \wedge B)\)), which formula is logically equivalent to \(P \vee Q\)?
+
+(A) \((P \uparrow Q) \uparrow (P \uparrow Q)\)
+(B) \((P \uparrow P) \uparrow Q\)
+(C) \(P \uparrow (Q \uparrow Q)\)
+(D) \((P \uparrow P) \uparrow (Q \uparrow Q)\)
+(E) \(\bigl((P \uparrow P) \uparrow (Q \uparrow Q)\bigr) \uparrow \bigl((P \uparrow P) \uparrow (Q \uparrow Q)\bigr)\)
+[/QUESTION]
+
+=== SECTION 4: Proving incompleteness via invariants ===
+
+How do you prove that a candidate set of connectives—such as \(\{\wedge, \vee\}\)—is NOT functionally complete? Checking a few failed attempts at writing \(\neg P\) does not prove it is impossible; you need a property (an invariant) shared by EVERY formula built from \(\{\wedge, \vee\}\) that some target Boolean function violates.
+
+Look at the all-\(T\) row of any truth table, where every variable \(P_1, \dots, P_n\) is set to \(T\). What happens when you combine \(T\) inputs using only \(\wedge\) and \(\vee\)?
+- \(T \wedge T = T\).
+- \(T \vee T = T\).
+Therefore, starting from atoms that all evaluate to \(T\), every subformula built using \(\wedge\) and \(\vee\) evaluates to \(T\), and by repeating that check from the innermost subformulas outward, the ENTIRE formula must evaluate to \(T\)!
+
+[CALLOUT]
+id: thm-truth-preserving
+label: Theorem
+title: Truth-preserving invariant and incompleteness of \(\{\wedge, \vee\}\)
+tone: key
+
+Say a connective is truth-preserving if it outputs \(T\) whenever all of its inputs are \(T\).
+
+(1) If every connective in a set \(\mathcal{S}\) is truth-preserving, then every formula built from \(\mathcal{S}\) evaluates to \(T\) when all of its variables are set to \(T\).
+(2) Consequently, no set \(\mathcal{S}\) consisting solely of truth-preserving connectives is functionally complete, because it can never represent \(\neg P\) (which evaluates to \(F\) when \(P = T\)).
+[/CALLOUT]
+
+Let us apply [REF: thm-truth-preserving | the truth-preserving invariant] immediately:
+- \(\{\wedge, \vee\}\) is NOT functionally complete, because \(T \wedge T = T\) and \(T \vee T = T\).
+- Even adding \(\Rightarrow\) and \(\Leftrightarrow\) does NOT make it complete! Check: \(T \Rightarrow T = T\) and \(T \Leftrightarrow T = T\). Thus \(\{\wedge, \vee, \Rightarrow, \Leftrightarrow\}\) is STILL not functionally complete—every formula built from those four connectives outputs \(T\) on the all-\(T\) row, so none of them can represent \(\neg P\)!
+
+An analogous invariant works on the all-\(F\) row: call a connective falsity-preserving if it outputs \(F\) whenever all of its inputs are \(F\). Since \(F \wedge F = F\) and \(F \vee F = F\), \(\{\wedge, \vee\}\) is also falsity-preserving (while \(\Rightarrow\) is NOT falsity-preserving, since \(F \Rightarrow F = T\)). What about adding the constant \(\mathbf{F}\) to \(\{\Rightarrow\}\)? Because \(\mathbf{F}\) is NOT truth-preserving, the invariant breaks—and indeed \(P \Rightarrow \mathbf{F} \equiv \neg P\), so \(\{\Rightarrow, \mathbf{F}\}\) IS functionally complete (since we already saw \(\{\neg, \Rightarrow\}\) is complete)!
+
+What about \(\{\neg\}\) alone? It is neither truth-preserving nor falsity-preserving, yet it is still not functionally complete: every formula built from \(\{\neg\}\) alone can involve at most one propositional variable \(P\) (since \(\neg\) is unary), so it can only ever represent \(P\) or \(\neg P\)—never a genuinely two-variable function like \(P \wedge Q\).
+
+[QUESTION 4]
+[ANSWER: A]
+Which of the following sets of connectives (possibly including truth constants \(\mathbf{T}\) or \(\mathbf{F}\)) is functionally COMPLETE?
+
+(A) \(\{\Rightarrow, \mathbf{F}\}\)
+(B) \(\{\Rightarrow, \mathbf{T}\}\)
+(C) \(\{\wedge, \vee, \Rightarrow, \Leftrightarrow\}\)
+(D) \(\{\wedge, \vee, \mathbf{T}, \mathbf{F}\}\)
+(E) \(\{\neg, \mathbf{T}, \mathbf{F}\}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+How many rows of the truth table for \((P, Q, R)\) make the CNF formula
+\[
+(P \vee \neg Q \vee R) \wedge (\neg P \vee Q \vee \neg R)
+\]
+evaluate to TRUE?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(4\)
+(D) \(5\)
+(E) \(6\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Using only the NOR connective \(\downarrow\) (where \(A \downarrow B \equiv \neg(A \vee B)\)), which formula is logically equivalent to \(P \Rightarrow Q\)?
+
+(A) \((P \downarrow P) \downarrow Q\)
+(B) \(\bigl((P \downarrow P) \downarrow Q\bigr) \downarrow \bigl((P \downarrow P) \downarrow Q\bigr)\)
+(C) \((P \downarrow Q) \downarrow (P \downarrow Q)\)
+(D) \(P \downarrow (Q \downarrow Q)\)
+(E) \((P \downarrow P) \downarrow (Q \downarrow Q)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Let \(\oplus\) denote exclusive disjunction ("\(P\) or \(Q\), but not both"), which is \(T\) when \(P\) and \(Q\) have opposite truth values and \(F\) when they have the same truth value. Is the set \(\{\oplus, \mathbf{T}\}\) functionally complete?
+
+(A) Yes, because \(P \oplus \mathbf{T} \equiv \neg P\) and \(P \oplus Q\) plays the role of \(\vee\).
+(B) Yes, because \(\mathbf{T}\) breaks falsity preservation and \(\oplus\) breaks truth preservation.
+(C) No, because every formula built from \(\{\oplus, \mathbf{T}\}\) on two variables \(P, Q\) evaluates to \(T\) on an even number of rows of the \(4\)-row truth table (specifically \(0\), \(2\), or \(4\) rows), so it cannot represent \(P \wedge Q\) (which is \(T\) on \(1\) row).
+(D) No, because \(\{\oplus, \mathbf{T}\}\) is truth-preserving.
+(E) No, because \(\{\oplus, \mathbf{T}\}\) cannot represent \(\neg P\).
+[/BONUS]

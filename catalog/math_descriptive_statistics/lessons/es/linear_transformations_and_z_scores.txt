@@ -1,0 +1,218 @@
+=== SECTION 1: Cómo actúan las transformaciones lineales sobre el centro y la dispersión ===
+
+Supongamos que un meteorólogo ya calculó el resumen de cinco números, la media, la varianza y la desviación estándar de \(n = 365\) temperaturas máximas diarias en grados Celsius, y un editor pide exactamente el mismo informe en grados Fahrenheit usando \(y_i = 1.8 x_i + 32\). ¿Tiene el meteorólogo que convertir las \(365\) mediciones brutas y recalcular cada estadístico desde cero? No, porque todo resumen descriptivo de posición y dispersión obedece una ley algebraica exacta y sencilla bajo cualquier transformación lineal \(y_i = a x_i + b\).
+
+Deduzcamos esas leyes directamente a partir de las definiciones, para cualesquiera constantes \(a, b \in \mathbb{R}\) con \(a \ne 0\).
+
+Primero, verifique la media aritmética usando la linealidad de la sumatoria:
+\[
+\bar{y} = \frac{1}{n} \sum_{i=1}^n (a x_i + b) = a \left(\frac{1}{n} \sum_{i=1}^n x_i\right) + \frac{1}{n}(n b) = a \bar{x} + b.
+\]
+Luego, reste \(\bar{y} = a\bar{x} + b\) de cada \(y_i = a x_i + b\) para ver qué le ocurre a cada desviación:
+\[
+y_i - \bar{y} = (a x_i + b) - (a \bar{x} + b) = a (x_i - \bar{x}).
+\]
+¡El desplazamiento aditivo \(b\) desaparece por completo de toda desviación! Trasladar cada punto sobre una recta numérica en \(+b\) desliza rígidamente toda la nube de puntos sin alterar ninguna distancia entre ellos. Ahora sustituya \(y_i - \bar{y} = a(x_i - \bar{x})\) directamente en la varianza, la desviación estándar y la \(\text{DAM}\):
+- Varianza muestral:
+\[
+s_y^2 = \frac{1}{n - 1} \sum_{i=1}^n \bigl(a(x_i - \bar{x})\bigr)^2 = a^2 \cdot \frac{1}{n - 1} \sum_{i=1}^n (x_i - \bar{x})^2 = a^2 s_x^2.
+\]
+- Desviación estándar muestral (tomando la raíz cuadrada no negativa \(\sqrt{a^2} = |a|\)):
+\[
+s_y = \sqrt{a^2 s_x^2} = |a| s_x.
+\]
+- Desviación absoluta media:
+\[
+\text{DAM}_y = \frac{1}{n} \sum_{i=1}^n |a(x_i - \bar{x})| = |a| \cdot \frac{1}{n} \sum_{i=1}^n |x_i - \bar{x}| = |a| \, \text{DAM}_x.
+\]
+¡Observe las barras de valor absoluto \(|a|\)! Como las medidas de dispersión (DE, DAM, RIC, rango) son SIEMPRE no negativas, multiplicar los datos por una pendiente negativa \(a < 0\) invierte la distribución como una imagen especular mientras escala su amplitud por \(|a| = -a > 0\).
+
+¿Qué ocurre con los estadísticos de orden, las medianas y los cuartiles?
+- Cuando \(a > 0\), \(y_i = a x_i + b\) es estrictamente creciente, de modo que conserva exactamente el orden: \(y_{(k)} = a x_{(k)} + b\). Todo cuantil se transforma igual que la media: \(q_p(y) = a q_p(x) + b\), y \(\text{RIC}_y = Q_{3,y} - Q_{1,y} = a(Q_{3,x} - Q_{1,x}) = |a|\,\text{RIC}_x\).
+- Cuando \(a < 0\), \(y_i = a x_i + b\) es estrictamente decreciente, de modo que INVIERTE el orden: ¡el mayor \(x\) se convierte en el menor \(y\) y viceversa! Por lo tanto, \(Q_{1,y} = a Q_{3,x} + b\), \(Q_{3,y} = a Q_{1,x} + b\), y en general \(q_p(y) = a q_{1-p}(x) + b\). La mediana permanece en el centro (\(M_y = a M_x + b\) porque \(1 - 0.5 = 0.5\)), y el rango intercuartílico sigue escalando positivamente:
+\[
+\text{RIC}_y = Q_{3,y} - Q_{1,y} = (a Q_{1,x} + b) - (a Q_{3,x} + b) = (-a)(Q_{3,x} - Q_{1,x}) = |a| \, \text{RIC}_x.
+\]
+
+[CALLOUT]
+id: linear-transform-rules
+label: Teorema
+title: Reglas de resumen bajo reescalamiento lineal \(y_i = a x_i + b\) (\(a \ne 0\))
+tone: key
+
+Sea \(y_i = a x_i + b\) para \(i = 1, \dots, n\).
+
+(1) Centro (media y mediana): \(\bar{y} = a \bar{x} + b\) y \(M_y = a M_x + b\).
+(2) Cuantiles: si \(a > 0\), \(q_p(y) = a q_p(x) + b\) (así \(Q_{1,y} = a Q_{1,x} + b\) y \(Q_{3,y} = a Q_{3,x} + b\)). Si \(a < 0\), el orden de rangos se invierte: \(q_p(y) = a q_{1-p}(x) + b\) (así \(Q_{1,y} = a Q_{3,x} + b\) y \(Q_{3,y} = a Q_{1,x} + b\)).
+(3) Dispersión en unidades originales (invariante ante traslaciones): \(s_y = |a| s_x\), \(\sigma_y = |a| \sigma_x\), \(\text{DAM}_y = |a| \text{DAM}_x\), \(\text{RIC}_y = |a| \text{RIC}_x\) y \(\text{Rango}_y = |a| \text{Rango}_x\).
+(4) Varianza (invariante ante traslaciones): \(s_y^2 = a^2 s_x^2\) y \(\sigma_y^2 = a^2 \sigma_x^2\).
+[/CALLOUT]
+
+Aplique [REF: linear-transform-rules | estas reglas] al instante a dos ejemplos contrastantes:
+- Escalamiento positivo (de Celsius a Fahrenheit, \(y = 1.8 x + 32\)): si las máximas diarias en Celsius tienen \(\bar{x} = 20^\circ\text{C}\), \(Q_{1,x} = 15^\circ\text{C}\), \(Q_{3,x} = 25^\circ\text{C}\) (\(\text{RIC}_x = 10^\circ\text{C}\)), \(s_x = 5^\circ\text{C}\) y \(s_x^2 = 25\,(^\circ\text{C})^2\), entonces sin tocar las temperaturas brutas obtenemos \(\bar{y} = 1.8(20) + 32 = 68^\circ\text{F}\), \(Q_{1,y} = 59^\circ\text{F}\), \(Q_{3,y} = 77^\circ\text{F}\), \(\text{RIC}_y = 1.8(10) = 18^\circ\text{F}\), \(s_y = 1.8(5) = 9^\circ\text{F}\) y \(s_y^2 = (1.8)^2 (25) = 81\,(^\circ\text{F})^2\).
+- Escalamiento negativo (deducciones por errores en examen): supongamos que la calificación de un estudiante es \(y = 100 - 2x\), donde \(x\) es el número de errores cometidos (\(a = -2, b = 100\)). Si los errores de la clase tienen \(Q_{1,x} = 8\), \(M_x = 14\), \(Q_{3,x} = 22\) (\(\text{RIC}_x = 14\)) y \(s_x = 6\), entonces las calificaciones finales tienen \(M_y = 100 - 2(14) = 72\), \(Q_{1,y} = 100 - 2(22) = 56\) (¡que proviene de \(Q_{3,x}\)!), \(Q_{3,y} = 100 - 2(8) = 84\) (¡que proviene de \(Q_{1,x}\)!), \(\text{RIC}_y = |-2|(14) = 28\) y \(s_y = |-2|(6) = 12\).
+
+[QUESTION 1]
+[ANSWER: C]
+Los precios \(x_i\) (en dólares) de los artículos en una tienda en línea tienen media \(\bar{x} = 40\), desviación estándar muestral \(s_x = 5\) y rango intercuartílico \(\text{RIC}_x = 6\). Durante una rebaja, cada artículo recibe un descuento del \(20\%\) seguido de una tarifa fija de envío de \(\$4\), lo que da precios finales \(y_i = 0.8 x_i + 4\). ¿Cuáles son la nueva media \(\bar{y}\), la varianza muestral \(s_y^2\) y el rango intercuartílico \(\text{RIC}_y\)?
+
+(A) \(\bar{y} = 36\), \(s_y^2 = 20\), \(\text{RIC}_y = 4.8\)
+(B) \(\bar{y} = 36\), \(s_y^2 = 16\), \(\text{RIC}_y = 8.8\)
+(C) \(\bar{y} = 36\), \(s_y^2 = 16\), \(\text{RIC}_y = 4.8\)
+(D) \(\bar{y} = 32\), \(s_y^2 = 16\), \(\text{RIC}_y = 4.8\)
+(E) \(\bar{y} = 36\), \(s_y^2 = 20\), \(\text{RIC}_y = 8.8\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+En una competencia cronometrada de acertijos, el número de segundos de penalización \(x\) entre los participantes tiene cuartiles \(Q_{1,x} = 5\), \(Q_{2,x} = 9\), \(Q_{3,x} = 15\) y desviación estándar muestral \(s_x = 4\). Los puntos finales se asignan mediante \(y = 50 - 3x\). ¿Cuáles son el primer cuartil \(Q_{1,y}\) y la desviación estándar muestral \(s_y\) de los puntos finales?
+
+(A) \(Q_{1,y} = 35\), \(s_y = 12\)
+(B) \(Q_{1,y} = 5\), \(s_y = -12\)
+(C) \(Q_{1,y} = 35\), \(s_y = -12\)
+(D) \(Q_{1,y} = 5\), \(s_y = 12\)
+(E) \(Q_{1,y} = 23\), \(s_y = 12\)
+[/QUESTION]
+
+=== SECTION 2: Estandarización y puntuaciones \(z\) ===
+
+Una transformación lineal especial aparece a lo largo de toda la estadística: restar la media y dividir entre la desviación estándar para colocar cada variable sobre una regla común sin unidades, medida en desviaciones estándar por encima o por debajo de su propia media.
+
+[CALLOUT]
+id: z-score-def
+label: Definición
+title: Estandarización y puntuaciones \(z\)
+tone: key
+
+Para una muestra cuantitativa \(x_1, \dots, x_n\) con media muestral \(\bar{x}\) y desviación estándar estrictamente positiva \(s > 0\), el valor estandarizado (puntuación \(z\)) de la observación \(x_i\) es
+\[
+z_i = \frac{x_i - \bar{x}}{s}.
+\]
+(Para una población con media \(\mu\) y desviación estándar \(\sigma > 0\), \(z_i = (x_i - \mu) / \sigma\).)
+
+Dado que \(z_i = \left(\frac{1}{s}\right) x_i + \left(-\frac{\bar{x}}{s}\right)\) es una transformación lineal positiva con \(a = 1/s > 0\) y \(b = -\bar{x}/s\), todo conjunto de datos estandarizado satisface
+\[
+\bar{z} = 0 \qquad \text{y} \qquad s_z = 1
+\]
+sin importar las unidades originales de medición.
+[/CALLOUT]
+
+Compruebe la demostración de dos líneas de \(\bar{z} = 0\) y \(s_z = 1\) directamente a partir de [REF: linear-transform-rules | el teorema de transformaciones lineales] con \(a = 1/s > 0\) y \(b = -\bar{x}/s\):
+\[
+\bar{z} = a \bar{x} + b = \frac{1}{s}\bar{x} - \frac{\bar{x}}{s} = 0, \qquad s_z = |a| s = \frac{1}{s} \cdot s = 1.
+\]
+Observe también cómo se cancelan las unidades: si \(x_i\) se mide en kilogramos, tanto \((x_i - \bar{x})\) como \(s\) están en kilogramos, de modo que \(z_i\) es puramente adimensional. Una puntuación \(z\) de \(z_i = +1.5\) significa que la observación \(x_i\) se sitúa \(1.5\) desviaciones estándar POR ENCIMA de la media; \(z_i = -0.8\) significa que se sitúa \(0.8\) desviaciones estándar POR DEBAJO de la media; y \(z_i = 0\) significa que coincide exactamente con la media.
+
+La estandarización nos permite comparar la posición relativa entre escalas completamente distintas. Suponga que un estudiante obtiene \(82\) en el Examen A (\(\bar{x}_A = 70, s_A = 8\)) y \(64\) en el Examen B (\(\bar{x}_B = 50, s_B = 7\)). Los puntajes brutos lucen más altos en el Examen A (\(82 > 64\)), pero calcular las puntuaciones \(z\) invierte el veredicto:
+\[
+z_A = \frac{82 - 70}{8} = +1.50, \qquad z_B = \frac{64 - 50}{7} = +2.00.
+\]
+En relación con sus compañeros de clase, el puntaje de \(64\) en el Examen B queda más arriba del promedio del grupo (\(2.0\) desviaciones estándar frente a \(1.5\) desviaciones estándar).
+
+[QUESTION 3]
+[ANSWER: B]
+Un paciente se realiza dos análisis de sangre diagnósticos no relacionados. En la Prueba 1, el grupo sano de referencia tiene media \(120\text{ mg/dL}\) y desviación estándar \(15\text{ mg/dL}\), y el paciente marca \(144\text{ mg/dL}\). En la Prueba 2, el grupo sano de referencia tiene media \(4.5\text{ mmol/L}\) y desviación estándar \(0.4\text{ mmol/L}\), y el paciente marca \(5.2\text{ mmol/L}\). En relación con el grupo de referencia de cada prueba, ¿qué lectura está más por encima de la media en unidades de desviación estándar?
+
+(A) Prueba 1 (\(z = +1.60\) frente a \(z = +1.40\) en la Prueba 2)
+(B) Prueba 2 (\(z = +1.75\) frente a \(z = +1.60\) en la Prueba 1)
+(C) Prueba 1, porque \(144 - 120 = 24\) es mucho mayor que \(5.2 - 4.5 = 0.7\)
+(D) Ambas lecturas tienen exactamente la misma posición estandarizada (\(z = +1.60\))
+(E) Prueba 2 (\(z = +2.00\) frente a \(z = +1.60\) en la Prueba 1)
+[/QUESTION]
+
+=== SECTION 3: Invariancia de la forma y diagnóstico de valores atípicos mediante puntuaciones \(z\) ===
+
+Una de las ideas erróneas más persistentes en la estadística introductoria es la creencia de que «estandarizar un conjunto de datos lo convierte en una distribución normal simétrica en forma de campana». ¡Esa afirmación es FALSA!
+
+[CALLOUT]
+id: shape-preservation
+label: Error común
+title: La estandarización NO cambia la forma de la distribución
+tone: caution
+
+Debido a que \(z_i = (x_i - \bar{x}) / s\) es un reescalamiento lineal positivo (\(a = 1/s > 0\)), traslada el origen y estira o encoge el eje horizontal de manera uniforme. NUNCA altera la forma de una distribución: un conjunto asimétrico a la derecha permanece igual de asimétrico a la derecha tras estandarizarlo, un conjunto bimodal permanece igual de bimodal y un conjunto uniforme sigue siendo uniforme. Únicamente cambian el centro (ahora \(0\)) y la desviación estándar (ahora \(1\)).
+[/CALLOUT]
+
+Observe el gráfico interactivo siguiente. La curva representa una distribución fuertemente asimétrica a la derecha (como tiempos de espera o ingresos familiares). Arrastre el deslizador de escala \(a\) y el deslizador de desplazamiento \(b\) para transformar \(x \mapsto a x + b\). Note que trasladar \(b\) desplaza rígidamente toda la curva, y estirar \(a\) la ensancha o estrecha horizontalmente (ajustando la altura por \(1/a\) para mantener el área total igual a \(1\)), ¡pero la cola larga derecha NUNCA desaparece y NUNCA se vuelve simétrica!
+
+[GRAPH]
+type: function2d
+title: El reescalamiento lineal \(y = a x + b\) traslada y estira una distribución asimétrica a la derecha sin eliminar la asimetría
+xlabel: Valor
+ylabel: Densidad
+xrange: -4, 14
+yrange: 0, 0.8
+trace: x > 0 ? 0.5 * x * exp(-x) : 0 | label: Variable original \(x\) asimétrica a la derecha | color: #94a3b8
+trace: (x - b) / a > 0 ? (0.5 / a) * ((x - b) / a) * exp(-(x - b) / a) : 0 | label: Reescalada \(y = a x + b\) | color: #3b82f6
+point: 2, 0 | label: \(\mu_x\) | color: #94a3b8
+point: 2*a + b, 0 | label: \(\mu_y\) | color: #3b82f6
+slider: a | range: 0.5, 2.5 | init: 1.5 | step: 0.25
+slider: b | range: -3, 4 | init: 1 | step: 0.5
+[/GRAPH]
+
+Esta propiedad de invariancia de forma aclara de inmediato cómo se comportan las puntuaciones \(z\) como detectores de valores atípicos en comparación con las cercas del RIC de Tukey. En datos aproximadamente simétricos y acampanados, reglas heurísticas como \(|z_i| > 2\) (inusual) o \(|z_i| > 3\) (muy inusual) concuerdan bien con las cercas del RIC. Sin embargo, en datos fuertemente asimétricos o conjuntos pequeños con un único valor atípico enorme, las heurísticas basadas en puntuaciones \(z\) sufren dos debilidades:
+1. Enmascaramiento por falta de resistencia: como tanto \(\bar{x}\) como \(s\) no son resistentes, un único valor atípico enorme arrastra a \(\bar{x}\) hacia sí e infla \(s\), ¡encogiendo su propia puntuación \(z\)! De hecho, en un conjunto de tamaño \(n\), es algebraicamente imposible que la puntuación \(z\) muestral de CUALQUIER observación supere \((n - 1) / \sqrt{n}\); para \(n = 9\), incluso una observación igual a \(1{,}000{,}000\) junto a ocho ceros alcanza como máximo \(z = 8 / 3 \approx 2.67\), ¡sin activar NUNCA \(|z| > 3\)!
+2. Colas asimétricas: en una distribución fuertemente asimétrica a la derecha, muchas observaciones válidas en la cola derecha larga tienen \(z > 2\) o \(z > 3\), mientras que incluso el valor más pequeño posible cerca de \(0\) apenas podría alcanzar \(z \approx -0.8\).
+
+Para comparar la posición relativa en distribuciones aproximadamente simétricas, las puntuaciones \(z\) son precisas y convenientes; para señalar valores atípicos en muestras asimétricas o pequeñas, las cercas resistentes del RIC de Tukey son mucho más confiables.
+
+[TABLE]
+Criterio | Fórmula | ¿Resistente a atípicos? | Mejor contexto de uso
+Regla de puntuación \(z\) | \(\lvert (x_i - \bar{x}) / s \rvert > 2\) o \(3\) | No (\(\bar{x}\) y \(s\) se inflan) | Aproximadamente simétrica, \(n\) moderado o grande
+Cercas del RIC de Tukey | Fuera de \([Q_1 - 1.5\,\text{RIC},\; Q_3 + 1.5\,\text{RIC}]\) | Sí (basada en cuartiles) | Datos asimétricos, muestras pequeñas, cribado exploratorio
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Un conjunto de datos de \(n = 500\) ingresos anuales familiares es fuertemente asimétrico a la derecha y bimodal. Cada observación se convierte a su puntuación \(z_i = (x_i - \bar{x}) / s\). ¿Qué enunciado describe con precisión el conjunto de datos estandarizado?
+
+(A) Tiene media \(0\) y desviación estándar \(1\), y permanece exactamente igual de asimétrico a la derecha y bimodal que el conjunto original de ingresos.
+(B) Se vuelve simétrico y acampanado con media \(0\) y desviación estándar \(1\).
+(C) Conserva su media y desviación estándar originales, pero su asimetría se reduce a \(0\).
+(D) Tiene media \(0\) y desviación estándar \(1\), y sus dos modas se fusionan en una sola moda en \(z = 0\).
+(E) No puede estandarizarse a menos que los datos se transformen primero para volverlos simétricos.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Un laboratorio registra \(n = 8\) concentraciones químicas: siete lecturas se agrupan estrechamente alrededor de \(10.0\text{ ppm}\) y una lectura contaminada es de \(500\text{ ppm}\). Un analista señala valores atípicos ÚNICAMENTE si \(|z_i| > 3\), y concluye que no hay valores atípicos porque la puntuación \(z\) de la lectura contaminada es cercana a \(+2.47\). ¿Por qué falló la regla \(|z| > 3\) en detectar un punto tan extremo?
+
+(A) Porque las puntuaciones \(z\) no pueden calcularse cuando todas las observaciones son positivas.
+(B) Porque \(500\text{ ppm}\) está dentro de \(3\) rangos intercuartílicos respecto a la mediana.
+(C) Porque restar la media siempre divide a la mitad la observación más grande.
+(D) Porque \(|z| > 3\) solo detecta valores atípicos negativos en la cola izquierda.
+(E) Porque el propio punto extremo infló tanto a \(\bar{x}\) como a \(s\) —y en una muestra de tamaño \(n = 8\), ninguna observación individual puede jamás alcanzar \(|z| > 3\)—, enmascarando su propio carácter extremo.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+En un conjunto de puntajes de examen con media \(\bar{x} = 76\) y desviación estándar muestral \(s = 8\), la puntuación estandarizada de un estudiante es \(z = -1.25\). ¿Cuál fue el puntaje bruto \(x\) del estudiante?
+
+(A) \(64\)
+(B) \(68\)
+(C) \(66\)
+(D) \(86\)
+(E) \(74.75\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suponga que cada observación en un conjunto de datos \(x_1, \dots, x_n\) (con \(s_x > 0\)) se transforma mediante una función lineal \(y_i = a x_i + b\) con una pendiente NEGATIVA \(a < 0\). ¿Cómo se relaciona la puntuación estandarizada \(z_{y,i} = (y_i - \bar{y}) / s_y\) con la puntuación estandarizada original \(z_{x,i} = (x_i - \bar{x}) / s_x\)?
+
+(A) \(z_{y,i} = z_{x,i}\)
+(B) \(z_{y,i} = a z_{x,i}\)
+(C) \(z_{y,i} = |a| z_{x,i} + b\)
+(D) \(z_{y,i} = -z_{x,i}\)
+(E) \(z_{y,i} = -a z_{x,i}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Un instrumento entrega valores brutos \(x_i\) con mediana \(M_x = 24\) y desviación estándar muestral \(s_x = 5\). Tras aplicar una calibración lineal que conserva el orden \(y_i = a x_i + b\) (de modo que \(a > 0\)), los valores calibrados tienen mediana \(M_y = 60\) y varianza muestral \(s_y^2 = 225\). ¿Cuáles son las constantes de calibración \(a\) y \(b\)?
+
+(A) \(a = 9\), \(b = -156\)
+(B) \(a = 3\), \(b = -12\)
+(C) \(a = 3\), \(b = +12\)
+(D) \(a = 45\), \(b = -1020\)
+(E) \(a = 2.5\), \(b = 0\)
+[/BONUS]

@@ -1,0 +1,250 @@
+=== SECTION 1: Three equivalent forms of unconstrained exponential change ===
+
+Suppose a bacterial colony starts with \(100\) cells and grows by \(25\%\) every hour. A biologist might describe the same colony by saying it doubles every \(3.11\text{ hours}\), while a physicist might write \(A(t) = 100 e^{0.2231 t}\). All three descriptions represent the exact same curve, written in three different parameterizations of unconstrained exponential change.
+
+Recall from the previous lesson that every positive base \(b\) can be rewritten in base \(e\) via the conversion identity \(b^t = e^{t \ln b}\). Applying that single bridge to an exponential function \(A(t) = A_0 b^t\) (with \(A_0 > 0\) and \(b > 0, b \ne 1\)) links the three standard modeling forms directly:
+
+1. Discrete-rate form: \(A(t) = A_0 (1 + r)^t\), where \(r > -1\) (\(r \ne 0\)) is the fractional change per unit of time (\(r > 0\) for growth, \(-1 < r < 0\) for decay). Writing \((1 + r)^t = e^{t \ln(1 + r)}\) immediately matches it to the continuous-rate form \(A(t) = A_0 e^{kt}\) with
+\[
+k = \ln(1 + r) \qquad \Longleftrightarrow \qquad 1 + r = e^k \quad (r = e^k - 1).
+\]
+
+2. Doubling-time form (growth, \(k > 0\)): The doubling time \(T_d > 0\) is the elapsed time required for the quantity to reach \(2A_0\). Setting \(A(T_d) = 2A_0\) in \(A(t) = A_0 e^{kt}\) gives
+\[
+A_0 e^{k T_d} = 2 A_0 \implies e^{k T_d} = 2 \implies k T_d = \ln 2 \implies T_d = \frac{\ln 2}{k}.
+\]
+Notice that \(A_0\) canceled on the very first step! Whether the colony starts at \(100\) cells or \(10{,}000\) cells, it takes the exact same time \(T_d\) to double. Substituting \(k = \frac{\ln 2}{T_d}\) back into \(A_0 e^{kt}\) yields \(A_0 e^{(t/T_d)\ln 2} = A_0 \cdot 2^{t / T_d}\).
+
+3. Half-life form (decay, \(k < 0\)): The half-life \(T_{1/2} > 0\) is the elapsed time required for the quantity to fall to \(\frac{1}{2} A_0\). Setting \(A(T_{1/2}) = \frac{1}{2} A_0\) in \(A(t) = A_0 e^{kt}\) cancels \(A_0\) again:
+\[
+A_0 e^{k T_{1/2}} = \frac{1}{2} A_0 \implies e^{k T_{1/2}} = \frac{1}{2} \implies k T_{1/2} = \ln\!\left(\frac{1}{2}\right) = -\ln 2 \implies T_{1/2} = -\frac{\ln 2}{k} = \frac{\ln 2}{|k|}.
+\]
+(Note the minus sign: because \(k < 0\) during decay, \(-\frac{\ln 2}{k}\) is positive.) Equivalently, \(A(t) = A_0 \left(\frac{1}{2}\right)^{t / T_{1/2}}\), and since \(\ln 2 \approx 0.6931\), both formulas scale directly with \(\ln 2\).
+
+[CALLOUT]
+id: exp-model-forms
+label: Reference
+title: Equivalent forms of exponential growth and decay
+tone: key
+
+For an unconstrained exponential process with initial value \(A_0 > 0\) at \(t = 0\):
+
+(1) Discrete-rate and continuous-rate conversion:
+\[
+A(t) = A_0 (1 + r)^t = A_0 e^{kt}, \qquad k = \ln(1 + r), \qquad r = e^k - 1.
+\]
+(2) Doubling time (growth, \(k > 0\)):
+\[
+A(t) = A_0 \cdot 2^{t / T_d}, \qquad T_d = \frac{\ln 2}{k}, \qquad k = \frac{\ln 2}{T_d}.
+\]
+(3) Half-life (decay, \(k < 0\)):
+\[
+A(t) = A_0 \left(\frac{1}{2}\right)^{t / T_{1/2}}, \qquad T_{1/2} = -\frac{\ln 2}{k}, \qquad k = -\frac{\ln 2}{T_{1/2}}.
+\]
+(4) Independence from initial amount: Both \(T_d\) and \(T_{1/2}\) depend only on the rate \(k\), never on \(A_0\). Any equal time step \(\Delta t\) multiplies \(A(t)\) by the same factor \(e^{k \Delta t}\) regardless of how large or small \(A(t)\) currently is.
+[/CALLOUT]
+
+[TABLE]
+Model form | Equation | Growth condition | Decay condition | Continuous rate \(k\)
+Discrete rate | \(A_0 (1 + r)^t\) | \(r > 0\) | \(-1 < r < 0\) | \(\ln(1 + r)\)
+Continuous rate | \(A_0 e^{kt}\) | \(k > 0\) | \(k < 0\) | \(k\)
+Doubling / half-life | \(A_0 \cdot 2^{t/T_d}\) or \(A_0 (1/2)^{t/T_{1/2}}\) | \(T_d > 0\) | \(T_{1/2} > 0\) | \(\frac{\ln 2}{T_d}\) or \(-\frac{\ln 2}{T_{1/2}}\)
+[/TABLE]
+
+Use the slider below to vary the continuous rate \(k\) in \(A(t) = 100 e^{kt}\) from decay (\(k < 0\)) through steady state (\(k = 0\)) to growth (\(k > 0\)). Watch where the curve crosses the horizontal lines \(2 A_0 = 200\) (marking \(T_d\) when \(k > 0\)) and \(A_0 / 2 = 50\) (marking \(T_{1/2}\) when \(k < 0\)).
+
+[GRAPH]
+type: function2d
+title: Continuous exponential family \(A(t) = 100 e^{kt}\) across growth and decay rates
+xlabel: \(t\)
+ylabel: \(A(t)\)
+xrange: 0, 10
+yrange: 0, 450
+trace: 100 * exp(k * x) | label: \(A(t) = 100 e^{kt}\)
+trace: 200 | label: \(2A_0 = 200\)
+trace: 50 | label: \(A_0/2 = 50\)
+point: 0, 100 | label: \((0, 100)\)
+slider: k | range: -0.5, 0.35 | init: 0.15 | step: 0.05
+[/GRAPH]
+
+Worked example (Converting a decay specification): A radioactive sample loses \(15\%\) of its mass every \(2\text{ days}\). Find its continuous decay constant \(k\) (in \(\text{day}^{-1}\)) and its exact half-life \(T_{1/2}\) in days.
+
+Losing \(15\%\) every \(2\text{ days}\) means \(85\% = 0.85\) remains after each \(2\text{ day}\) interval, so \(A(t) = A_0 (0.85)^{t/2}\). Matching \(e^{2k} = 0.85\) gives
+\[
+k = \frac{\ln(0.85)}{2} \approx -0.08126\text{ day}^{-1}.
+\]
+Applying [REF: exp-model-forms.3 | the half-life formula] gives
+\[
+T_{1/2} = -\frac{\ln 2}{k} = -\frac{2\ln 2}{\ln(0.85)} = \frac{2\ln 2}{\ln(20/17)} \approx 8.53\text{ days}.
+\]
+Check: after \(8.53\text{ days}\), \((0.85)^{8.53/2} \approx 0.50\).
+
+[QUESTION 1]
+[ANSWER: C]
+Two samples of the same radioactive isotope start with initial masses \(A_0 = 40\text{ mg}\) and \(B_0 = 320\text{ mg}\). Both decay according to \(M(t) = M_0 e^{-0.05 t}\), where \(t\) is measured in hours. How do their half-lives \(T_A\) and \(T_B\) compare?
+
+(A) \(T_B = 8 T_A\), because sample B begins with \(8\) times the mass of sample A
+(B) \(T_B = 3 T_A\), because \(320 / 40 = 2^3\)
+(C) \(T_A = T_B = 20\ln 2\text{ hours}\), independent of the initial mass
+(D) \(T_B = T_A + 20\ln 8\text{ hours}\)
+(E) \(T_A = 8 T_B\), because the larger sample decays \(8\) times faster
+[/QUESTION]
+
+=== SECTION 2: Calibrating models from data and comparing rate conventions ===
+
+In practice, you rarely receive \(k\) directly—you receive two measurements \((t_1, A_1)\) and \((t_2, A_2)\), often neither of them at \(t = 0\). Dividing the two equations \(A_2 = A_0 e^{k t_2}\) and \(A_1 = A_0 e^{k t_1}\) eliminates the unknown \(A_0\) in one step:
+\[
+\frac{A_2}{A_1} = \frac{A_0 e^{k t_2}}{A_0 e^{k t_1}} = e^{k(t_2 - t_1)} \implies k = \frac{\ln(A_2 / A_1)}{t_2 - t_1}.
+\]
+Once \(k\) is known, substitute either measurement back into \(A(t) = A_0 e^{kt}\) to solve for \(A_0 = A_1 e^{-k t_1}\).
+
+[CALLOUT]
+id: calibration-rule
+label: Workflow
+title: Two-point calibration and comparing rate conventions
+tone: note
+
+(1) Calibrating from two measurements \((t_1, A_1)\) and \((t_2, A_2)\) with \(A_1, A_2 > 0\) and \(t_1 \ne t_2\):
+\[
+k = \frac{\ln(A_2 / A_1)}{t_2 - t_1}, \qquad A_0 = A_1 e^{-k t_1}.
+\]
+(2) Comparing models across conventions: Never compare a discrete rate \(r\), a continuous rate \(k\), and a doubling time \(T_d\) directly by their raw numbers. Convert every model to one shared metric—most cleanly the continuous rate \(k\) (using \(k = \ln(1 + r)\) or \(k = \frac{\ln 2}{T_d}\))—and compare the values of \(k\).
+[/CALLOUT]
+
+Worked example 1 (Calibrating from two non-zero times): A yeast culture contains \(300\) cells at \(t = 2\text{ hours}\) and \(1200\) cells at \(t = 5\text{ hours}\). Find the continuous growth rate \(k\), the doubling time \(T_d\), and the initial cell count \(A_0\).
+
+Using [REF: calibration-rule.1 | the two-point calibration formula],
+\[
+k = \frac{\ln(1200 / 300)}{5 - 2} = \frac{\ln 4}{3} = \frac{2\ln 2}{3} \approx 0.4621\text{ h}^{-1}.
+\]
+Then the doubling time is
+\[
+T_d = \frac{\ln 2}{k} = \frac{\ln 2}{(2\ln 2)/3} = 1.5\text{ hours}.
+\]
+That makes immediate intuitive sense: quadrupling (two doublings) over a \(3\text{ hour}\) span means one doubling every \(1.5\text{ hours}\). To recover \(A_0\), substitute \((2, 300)\) into \(A(t) = A_0 \cdot 2^{t / 1.5}\):
+\[
+300 = A_0 \cdot 2^{2 / 1.5} = A_0 \cdot 2^{4/3} \implies A_0 = 300 \cdot 2^{-4/3} = 75 \cdot 2^{2/3} \approx 119\text{ cells}.
+\]
+
+Worked example 2 (Comparing rate conventions): Account X earns \(6.5\%\) per year compounded annually, while Account Y grows continuously at \(k_Y = 0.064\text{ yr}^{-1}\). Which account grows faster?
+
+Convert Account X to its continuous rate via [REF: exp-model-forms.1 | the discrete-to-continuous bridge]:
+\[
+k_X = \ln(1.065) \approx 0.06297\text{ yr}^{-1}.
+\]
+Because \(k_Y = 0.064 > 0.06297 \approx k_X\), Account Y grows faster! Equivalently, Account Y's effective annual rate is \(r_Y = e^{0.064} - 1 \approx 6.609\% > 6.5\%\). Even though \(6.5\%\) looks larger than \(6.4\%\) at a glance, continuous compounding more than makes up the \(0.1\) percentage-point gap.
+
+[QUESTION 2]
+[ANSWER: A]
+A newly synthesized compound loses \(20\%\) of its remaining mass every \(4\text{ hours}\). Which expression gives its exact half-life \(T_{1/2}\) in hours?
+
+(A) \(\dfrac{4\ln 2}{\ln(5/4)}\)
+(B) \(\dfrac{4\ln 2}{\ln 5}\)
+(C) \(\dfrac{\ln(5/4)}{4\ln 2}\)
+(D) \(20\ln 2\)
+(E) \(10\)
+[/QUESTION]
+
+=== SECTION 3: Solving for elapsed time in applied models ===
+
+Once a model is calibrated, the most common inverse question asks for the elapsed time \(t\) required to reach a target amount or threshold. Isolate the exponential factor first, then take \(\ln\) of both sides.
+
+Application 1 (Radiocarbon dating): Living organic tissue maintains a steady fraction of radioactive carbon-14 (\(^{14}\text{C}\)), which decays with half-life \(T_{1/2} = 5730\text{ years}\) once the organism dies. Suppose a wooden beam from an archaeological site retains \(35\%\) of its original \(^{14}\text{C}\). How old is the beam?
+
+Using the half-life form \(A(t) = A_0 \left(\frac{1}{2}\right)^{t / 5730}\), set \(A(t) = 0.35 A_0\):
+\[
+0.35 A_0 = A_0 \left(\frac{1}{2}\right)^{t / 5730} \implies 0.35 = \left(\frac{1}{2}\right)^{t / 5730}.
+\]
+Take \(\ln\) of both sides:
+\[
+\ln(0.35) = \frac{t}{5730}\ln\!\left(\frac{1}{2}\right) = -\frac{t\ln 2}{5730} \implies t = 5730 \cdot \frac{-\ln(0.35)}{\ln 2} \approx 8679\text{ years}.
+\]
+The plot below displays this carbon-14 decay curve with time measured in thousands of years, marking both the first half-life at \(5.73\) thousand years and the beam's \(35\%\) measurement at \(8.68\) thousand years.
+
+[GRAPH]
+type: function2d
+title: Carbon-14 decay curve \(P(t) = 100 \cdot (1/2)^{t / 5.73}\) (time in thousands of years)
+xlabel: Time t (thousands of years)
+ylabel: Remaining C-14 (%)
+xrange: 0, 20
+yrange: 0, 105
+trace: 100 * 2^(-x / 5.73) | label: \(P(t) = 100 \cdot (1/2)^{t/5.73}\)
+point: 5.73, 50 | label: \((5.73, 50)\)
+point: 8.679, 35 | label: \((8.68, 35)\)
+segment: 0, 35, 8.679, 35 | dashed: true
+segment: 8.679, 0, 8.679, 35 | dashed: true
+[/GRAPH]
+
+Application 2 (Time to financial target): An investment of \(\$5000\) grows continuously at \(6\%\) per year, so \(A(t) = 5000 e^{0.06 t}\). How long does it take to triple to \(\$15{,}000\)?
+
+Divide by \(5000\) first to obtain \(e^{0.06 t} = 3\). Taking \(\ln\) gives
+\[
+0.06 t = \ln 3 \implies t = \frac{\ln 3}{0.06} \approx 18.31\text{ years}.
+\]
+
+Application 3 (Drug clearance below a threshold): A patient receives a \(240\text{ mg}\) dose of a medication whose half-life in the bloodstream is \(6\text{ hours}\). When does the amount fall below \(15\text{ mg}\)?
+
+Solve the boundary equation \(240 \left(\frac{1}{2}\right)^{t/6} = 15\):
+\[
+\left(\frac{1}{2}\right)^{t/6} = \frac{15}{240} = \frac{1}{16} = \left(\frac{1}{2}\right)^4 \implies \frac{t}{6} = 4 \implies t = 24\text{ hours}.
+\]
+Because the amount decreases strictly, the level stays below \(15\text{ mg}\) for all \(t > 24\text{ hours}\).
+
+[CALLOUT]
+id: time-solve-pitfall
+label: Common Pitfall
+title: Remaining fraction versus decayed fraction
+tone: caution
+
+(1) Exponential decay formulas track the REMAINING quantity \(A(t)\), not the amount lost. If a problem states that "\(75\%\) has decayed," the remaining fraction is \(100\% - 75\% = 25\% = \frac{1}{4}\), so set \(A(t) / A_0 = 0.25\) (never \(0.75\)).
+(2) Decay is multiplicative, not linear: losing \(50\%\) in one half-life does not mean losing \(100\%\) in two half-lives. After \(n\) half-lives, \(\left(\frac{1}{2}\right)^n\) of the original quantity still remains.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: C]
+A medical tracer has a half-life of \(8\text{ hours}\). How many hours does it take for \(87.5\%\) of the initial dose to decay?
+
+(A) \(14\text{ hours}\)
+(B) \(16\text{ hours}\)
+(C) \(24\text{ hours}\)
+(D) \(8 \cdot \dfrac{\ln(0.875)}{\ln(0.5)}\text{ hours}\)
+(E) \(32\text{ hours}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Three unconstrained growth models are defined for \(t \ge 0\) (in years):
+- Model P grows continuously at rate \(k_P = 0.08\text{ yr}^{-1}\), so \(P(t) = P_0 e^{0.08 t}\).
+- Model Q grows by \(8\%\) per year discretely, so \(Q(t) = Q_0 (1.08)^t\).
+- Model R doubles every \(8\text{ years}\), so \(R(t) = R_0 \cdot 2^{t/8}\).
+
+Rank the three models from SLOWEST to FASTEST exponential growth rate.
+
+(A) Q slowest, then P, then R fastest
+(B) P slowest, then Q, then R fastest
+(C) R slowest, then Q, then P fastest
+(D) Q and P are tied for slowest, with R fastest
+(E) R slowest, then P, then Q fastest
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+A bacterial population grows exponentially according to \(P(t) = P_0 e^{kt}\). At \(t = 3\text{ hours}\) the population is \(200\), and at \(t = 7\text{ hours}\) it is \(1800\). At what time \(t\) (in hours) will the population reach \(5400\)?
+
+(A) \(8\)
+(B) \(9\)
+(C) \(11\)
+(D) \(13\)
+(E) \(19\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Colony A starts at \(t = 0\) with \(500\) cells and doubles every \(3\text{ hours}\). Colony B starts at \(t = 0\) with \(2000\) cells and doubles every \(6\text{ hours}\). After how many hours \(t > 0\) will both colonies contain the exact same number of cells?
+
+(A) \(4\text{ hours}\)
+(B) \(6\text{ hours}\)
+(C) \(9\text{ hours}\)
+(D) \(12\text{ hours}\)
+(E) \(18\text{ hours}\)
+[/BONUS]

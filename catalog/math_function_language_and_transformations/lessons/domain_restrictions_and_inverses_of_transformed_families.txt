@@ -1,0 +1,259 @@
+=== SECTION 1: Restricting domains to construct branch inverses ===
+
+Many of the most useful functions in mathematics—such as \(f(x) = x^2\), \(g(x) = (x - 2)^2 - 1\), and \(h(x) = |x + 3|\)—fail the Horizontal Line Test on their full natural domains, so they do not have an inverse as written. Yet we still invert squaring all the time when we take a square root! How? By restricting the domain of the function to a maximal interval on which it is strictly monotonic (and hence one-to-one), and then inverting that restricted branch.
+
+Consider the shifted parabola \(f(x) = (x - 2)^2 - 1\). Its vertex is at \(x = 2\), which splits its domain \((-\infty, \infty)\) into two maximal intervals of strict monotonicity:
+- Right branch \(f_R\): restrict \(f\) to \(x \in [2, \infty)\), where \(f_R\) is strictly increasing with range \([-1, \infty)\).
+- Left branch \(f_L\): restrict \(f\) to \(x \in (-\infty, 2]\), where \(f_L\) is strictly decreasing with range \([-1, \infty)\).
+
+Now solve \(y = (x - 2)^2 - 1\) for \(x\):
+\[
+(x - 2)^2 = y + 1 \implies |x - 2| = \sqrt{y + 1} \implies x - 2 = \pm\sqrt{y + 1}.
+\]
+Here is the exact algebraic bridge that tells you whether to choose \(+\) or \(-\): check the SIGN of \(x - 2\) on your restricted domain!
+- On the right branch \(x \ge 2\), we have \(x - 2 \ge 0\), so \(|x - 2| = +(x - 2)\). Therefore \(x - 2 = +\sqrt{y + 1}\), giving
+\[
+f_R^{-1}(x) = 2 + \sqrt{x + 1}, \qquad \operatorname{Dom}(f_R^{-1}) = [-1, \infty),\quad \operatorname{Range}(f_R^{-1}) = [2, \infty).
+\]
+- On the left branch \(x \le 2\), we have \(x - 2 \le 0\), so \(|x - 2| = -(x - 2)\), meaning \(x - 2 = -\sqrt{y + 1}\). Therefore
+\[
+f_L^{-1}(x) = 2 - \sqrt{x + 1}, \qquad \operatorname{Dom}(f_L^{-1}) = [-1, \infty),\quad \operatorname{Range}(f_L^{-1}) = (-\infty, 2].
+\]
+
+[CALLOUT]
+id: branch-sign-bridge
+label: Method
+title: Selecting the correct radical branch via domain sign
+tone: key
+
+To invert a transformed quadratic \(f(x) = a(x - h)^2 + k\) restricted to either \(x \ge h\) or \(x \le h\):
+
+(1) Solve for \((x - h)^2 = \dfrac{y - k}{a}\) and take the nonnegative square root to get \(|x - h| = \sqrt{\dfrac{y - k}{a}}\).
+(2) Use the restricted domain to resolve the sign of \(x - h\):
+   - If the restricted domain is \(x \ge h\), then \(x - h \ge 0\), so \(x = h + \sqrt{\dfrac{y - k}{a}}\).
+   - If the restricted domain is \(x \le h\), then \(x - h \le 0\), so \(x = h - \sqrt{\dfrac{y - k}{a}}\).
+(3) Swap \(x\) and \(y\), and verify that \(\operatorname{Range}(f^{-1})\) equals the restricted domain of \(f\) and \(\operatorname{Dom}(f^{-1})\) equals the range of \(f\).
+[/CALLOUT]
+
+Inspect the equal-aspect graph below to see both branches of \(f(x) = (x - 2)^2 - 1\) and their distinct mirror images across \(y = x\): the right branch (\(x \ge 2\)) reflects onto the upper half-parabola \(2 + \sqrt{x + 1}\), while the left branch (\(x \le 2\)) reflects onto the lower half-parabola \(2 - \sqrt{x + 1}\).
+
+[GRAPH]
+type: function2d
+title: Right and left branches of \(f(x) = (x - 2)^2 - 1\) and their inverses across \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 6
+yrange: -2.5, 6
+aspect: equal
+trace: x >= 2 ? ((x - 2)^2 - 1) : (0/0) | label: \(f_R(x),\; x \ge 2\)
+trace: x <= 2 ? ((x - 2)^2 - 1) : (0/0) | label: \(f_L(x),\; x \le 2\)
+trace: x >= -1 ? (2 + sqrt(x + 1)) : (0/0) | label: \(f_R^{-1}(x) = 2 + \sqrt{x + 1}\)
+trace: x >= -1 ? (2 - sqrt(x + 1)) : (0/0) | label: \(f_L^{-1}(x) = 2 - \sqrt{x + 1}\)
+trace: x | label: \(y = x\)
+point: 2, -1 | label: \((2, -1)\)
+point: -1, 2 | label: \((-1, 2)\)
+[/GRAPH]
+
+What if a quadratic is written in expanded form, such as \(q(x) = -2x^2 + 12x - 13\) on \(x \le 3\)? Complete the square first!
+\[
+q(x) = -2(x^2 - 6x) - 13 = -2\bigl((x - 3)^2 - 9\bigr) - 13 = -2(x - 3)^2 + 5.
+\]
+Here \(a = -2 < 0\), \(h = 3\), \(k = 5\), and \(\operatorname{Range}(q) = (-\infty, 5]\). Solving \(y = -2(x - 3)^2 + 5\) gives
+\[
+(x - 3)^2 = \frac{5 - y}{2}.
+\]
+Because the restricted domain is \(x \le 3\), we have \(x - 3 \le 0\), so [REF: branch-sign-bridge.2 | the sign bridge] selects the minus sign:
+\[
+q^{-1}(x) = 3 - \sqrt{\frac{5 - x}{2}}, \qquad \operatorname{Dom}(q^{-1}) = (-\infty, 5],\quad \operatorname{Range}(q^{-1}) = (-\infty, 3].
+\]
+Check one test point! On \(q\), \(x = 1 \le 3\) gives \(q(1) = -2(4) + 5 = -3\). Plugging \(-3\) into \(q^{-1}\) gives \(3 - \sqrt{\frac{5 - (-3)}{2}} = 3 - \sqrt{4} = 1\).
+
+The exact same idea works for absolute-value branches. For \(m(x) = 2|x + 4| - 3\), the corner is at \(x = -4\). Restricting to \(x \le -4\) makes \(x + 4 \le 0\), so \(m(x) = 2(-(x + 4)) - 3 = -2x - 11\) on \((-\infty, -4]\), whose range is \([-3, \infty)\) and whose inverse is the linear ray \(m^{-1}(x) = -\frac{x + 11}{2}\) on \([-3, \infty)\).
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(f(x) = 3(x + 1)^2 - 4\) restricted to the domain \((-\infty, -1]\). What is \(f^{-1}(x)\) together with its exact domain?
+
+(A) \(f^{-1}(x) = -1 + \sqrt{\dfrac{x + 4}{3}}\), domain \([-4, \infty)\)
+(B) \(f^{-1}(x) = 1 - \sqrt{\dfrac{x + 4}{3}}\), domain \([-4, \infty)\)
+(C) \(f^{-1}(x) = -1 - \sqrt{\dfrac{x + 4}{3}}\), domain \([-4, \infty)\)
+(D) \(f^{-1}(x) = -1 - \sqrt{\dfrac{x - 4}{3}}\), domain \([4, \infty)\)
+(E) \(f^{-1}(x) = -1 - \sqrt{\dfrac{x + 4}{3}}\), domain \((-\infty, -1]\)
+[/QUESTION]
+
+=== SECTION 2: The reversal ("socks-and-shoes") law for inverses of composites ===
+
+When you get dressed in the morning, you put on your socks first (\(g\)), and then put on your shoes (\(f\)), giving the composite operation \(f \circ g\). When you get undressed at night, you cannot take off your socks first! You must undo the LAST step first: take off your shoes (\(f^{-1}\)), and then take off your socks (\(g^{-1}\)).
+
+This everyday reversal is an exact theorem for invertible functions.
+
+[CALLOUT]
+id: socks-shoes
+label: Theorem
+title: Reversal law for inverses of compositions
+tone: key
+
+If \(f\) and \(g\) are one-to-one functions such that the composite \(f \circ g\) is defined (with \(\operatorname{Range}(g) \subseteq \operatorname{Dom}(f)\)), then \(f \circ g\) is one-to-one and its inverse is
+\[
+(f \circ g)^{-1} = g^{-1} \circ f^{-1}.
+\]
+More generally, for a chain of invertible functions,
+\[
+(f_1 \circ f_2 \circ \dots \circ f_n)^{-1} = f_n^{-1} \circ \dots \circ f_2^{-1} \circ f_1^{-1}.
+\]
+[/CALLOUT]
+
+Let us prove [REF: socks-shoes | the reversal law] directly using the two cancellation identities for inverses! Test \(g^{-1} \circ f^{-1}\) against \(f \circ g\) from both sides:
+1. For any \(x \in \operatorname{Dom}(g)\):
+\[
+(g^{-1} \circ f^{-1})\bigl((f \circ g)(x)\bigr) = g^{-1}\!\Bigl(f^{-1}\bigl(f(g(x))\bigr)\Bigr) = g^{-1}\bigl(g(x)\bigr) = x.
+\]
+2. For any \(y\) in the range of \(f \circ g\):
+\[
+(f \circ g)\bigl((g^{-1} \circ f^{-1})(y)\bigr) = f\!\Bigl(g\bigl(g^{-1}(f^{-1}(y))\bigr)\Bigr) = f\bigl(f^{-1}(y)\bigr) = y.
+\]
+Both compositions cancel cleanly to the identity, proving \((f \circ g)^{-1} = g^{-1} \circ f^{-1}\).
+
+Notice what fails if you forget to reverse the order and guess \(f^{-1} \circ g^{-1}\) instead! Test with \(f(x) = 2x\) (so \(f^{-1}(x) = x/2\)) and \(g(x) = x + 3\) (so \(g^{-1}(x) = x - 3\)):
+- \((f \circ g)(x) = 2(x + 3) = 2x + 6\).
+- Reversed order: \((g^{-1} \circ f^{-1})(x) = \frac{x}{2} - 3\). Check at \(x = 10\): \((f \circ g)(2) = 10\), and \((g^{-1} \circ f^{-1})(10) = 5 - 3 = 2\). Correct!
+- Unreversed order: \((f^{-1} \circ g^{-1})(x) = \frac{x - 3}{2}\). At \(x = 10\), that gives \(\frac{7}{2} \ne 2\). Wrong!
+
+[QUESTION 2]
+[ANSWER: B]
+Suppose \(f\) and \(g\) are one-to-one functions on \((-\infty, \infty)\) with \(f^{-1}(x) = 3x - 1\) and \(g^{-1}(x) = x^3 + 2\). What is the value of \((f \circ g)^{-1}(2)\)?
+
+(A) \(29\)
+(B) \(127\)
+(C) \(125\)
+(D) \(27\)
+(E) \(15\)
+[/QUESTION]
+
+=== SECTION 3: Inverting transformed families structurally ===
+
+Every combined affine transformation \(T(x) = a \cdot f\bigl(b(x - h)\bigr) + k\) (where \(f\) is one-to-one and \(a, b \ne 0\)) is simply a 5-step chain of elementary invertible maps applied to \(x\) in sequence:
+1. Subtract \(h\): \(x \mapsto x - h\)
+2. Multiply by \(b\): \(u \mapsto b u\)
+3. Apply \(f\): \(v \mapsto f(v)\)
+4. Multiply by \(a\): \(w \mapsto a w\)
+5. Add \(k\): \(z \mapsto z + k\)
+
+By [REF: socks-shoes | the reversal law], to form \(T^{-1}(x)\) we simply undo Steps 5 down to 1 in exact reverse order:
+1. Subtract \(k\): \(x \mapsto x - k\)
+2. Divide by \(a\): \(x - k \mapsto \dfrac{x - k}{a}\)
+3. Apply \(f^{-1}\): \(\dfrac{x - k}{a} \mapsto f^{-1}\!\left(\dfrac{x - k}{a}\right)\)
+4. Divide by \(b\): \(\mapsto \dfrac{1}{b}\,f^{-1}\!\left(\dfrac{x - k}{a}\right)\)
+5. Add \(h\): \(\mapsto \dfrac{1}{b}\,f^{-1}\!\left(\dfrac{x - k}{a}\right) + h\).
+
+[CALLOUT]
+id: transformed-inverse
+label: Formula
+title: Structural inverse of a transformed function
+tone: key
+
+If \(f\) is one-to-one and \(T(x) = a \cdot f\bigl(b(x - h)\bigr) + k\) with \(a, b \ne 0\), then
+\[
+T^{-1}(x) = \frac{1}{b}\,f^{-1}\!\left(\frac{1}{a}(x - k)\right) + h.
+\]
+[/CALLOUT]
+
+Pause and marvel at the geometry hidden inside [REF: transformed-inverse | this formula]! Look at where the four parameters \(a, b, h, k\) moved:
+- The VERTICAL shift \(+k\) of \(T\) became a HORIZONTAL shift right by \(k\) inside \(T^{-1}\)!
+- The VERTICAL scaling by \(a\) of \(T\) became a HORIZONTAL scaling by \(a\) (argument factor \(1/a\)) inside \(T^{-1}\)!
+- The HORIZONTAL scaling by \(1/b\) of \(T\) became a VERTICAL scaling by \(1/b\) outside \(T^{-1}\)!
+- The HORIZONTAL shift \(+h\) of \(T\) became a VERTICAL shift \(+h\) outside \(T^{-1}\)!
+
+Why? Because reflecting the entire \(xy\)-plane across the diagonal line \(y = x\) literally swaps the horizontal and vertical directions! Every horizontal move on \(T\) turns into the matching vertical move on \(T^{-1}\), and every vertical move on \(T\) turns into the matching horizontal move on \(T^{-1}\).
+
+The table below displays this exact geometric duality side by side.
+
+[TABLE]
+Transformation on \(y = f(x)\) | Formula for \(T(x)\) | Corresponding inverse \(T^{-1}(x)\) | Transformation on \(y = f^{-1}(x)\)
+Shift up by \(k\) | \(f(x) + k\) | \(f^{-1}(x - k)\) | Shift right by \(k\)
+Shift right by \(h\) | \(f(x - h)\) | \(f^{-1}(x) + h\) | Shift up by \(h\)
+Vertical scale by \(a\) | \(a f(x)\) | \(f^{-1}(x / a)\) | Horizontal scale by \(a\)
+Horizontal scale by \(1/b\) | \(f(bx)\) | \(\dfrac{1}{b}\,f^{-1}(x)\) | Vertical scale by \(1/b\)
+Reflect across \(x\)-axis | \(-f(x)\) | \(f^{-1}(-x)\) | Reflect across \(y\)-axis
+Reflect across \(y\)-axis | \(f(-x)\) | \(-f^{-1}(x)\) | Reflect across \(x\)-axis
+[/TABLE]
+
+Look at the last two rows too: reflecting \(f\) across the \(x\)-axis turns into reflecting \(f^{-1}\) across the \(y\)-axis, and vice versa!
+
+Test [REF: transformed-inverse | the formula] immediately on \(T(x) = -2\bigl(3(x - 4)\bigr)^3 + 5\). Here the parent is \(f(x) = x^3\) with \(f^{-1}(x) = \sqrt[3]{x}\), and \(a = -2\), \(b = 3\), \(h = 4\), \(k = 5\). Reading straight off the structural formula gives
+\[
+T^{-1}(x) = \frac{1}{3}\sqrt[3]{\frac{x - 5}{-2}} + 4 = -\frac{1}{3}\sqrt[3]{\frac{x - 5}{2}} + 4.
+\]
+No tedious equation rearranging needed—and you immediately see how the inflection center \((4, 5)\) of \(T\) reflects to the inflection center \((5, 4)\) of \(T^{-1}\)!
+
+[QUESTION 3]
+[ANSWER: A]
+Suppose \(f\) is a one-to-one function whose inverse is \(f^{-1}\). What is the inverse of \(g(x) = 3 f(x + 2) - 5\)?
+
+(A) \(g^{-1}(x) = f^{-1}\!\left(\dfrac{x + 5}{3}\right) - 2\)
+(B) \(g^{-1}(x) = \dfrac{1}{3} f^{-1}(x - 2) + 5\)
+(C) \(g^{-1}(x) = f^{-1}\!\left(\dfrac{x - 5}{3}\right) + 2\)
+(D) \(g^{-1}(x) = 3 f^{-1}(x + 5) - 2\)
+(E) \(g^{-1}(x) = \dfrac{1}{3} f^{-1}(x + 5) - 2\)
+[/QUESTION]
+
+=== SECTION 4: Putting domain restriction and structural inversion together ===
+
+What if a transformed function is NOT one-to-one on its full domain, such as \(T(x) = 2|3x - 6| + 1\) or \(P(x) = -\frac{1}{2}(x + 3)^2 + 4\)? Combine Section 1 and Section 3:
+1. Rewrite the inside in factored form \(b(x - h)\) to locate the exact turning point (vertex or corner) \(x = h\).
+2. Choose one maximal monotonic half-domain: \(x \ge h\) or \(x \le h\).
+3. On that half-domain, track the exact range of \(T\) to fix \(\operatorname{Dom}(T^{-1})\), invert step by step (using [REF: branch-sign-bridge | the sign bridge] when taking a square root or dropping absolute-value bars), and confirm that \(\operatorname{Range}(T^{-1})\) matches your chosen half-domain.
+
+Let us run one complete synthesis on \(T(x) = 2|3x - 6| + 1\) restricted to \(x \le 2\):
+- Factor inside: \(3x - 6 = 3(x - 2)\), so the corner is at \((2, 1)\).
+- On \(x \le 2\), we have \(x - 2 \le 0\), so \(|3x - 6| = -(3x - 6) = 6 - 3x\).
+- Thus on \((-\infty, 2]\), \(T(x) = 2(6 - 3x) + 1 = -6x + 13\), which is strictly decreasing with range \([1, \infty)\).
+- Inverting \(y = -6x + 13\) gives \(x = \frac{13 - y}{6}\), so
+\[
+T^{-1}(x) = \frac{13 - x}{6} \qquad \text{for } x \ge 1.
+\]
+- Quick check: at \(x = 1\), \(T^{-1}(1) = 2\), and as \(x\) increases from \(1\) to \(\infty\), \(T^{-1}(x)\) decreases from \(2\) to \(-\infty\), giving \(\operatorname{Range}(T^{-1}) = (-\infty, 2]\), which matches the restricted domain of \(T\) exactly.
+
+[QUESTION 4]
+[ANSWER: D]
+Let \(f(x) = x^2 - 6x + 11\). If we restrict \(f\) to the largest interval of the form \([c, \infty)\) on which \(f\) is one-to-one, what are \(c\) and \(f^{-1}(x)\) (with its domain)?
+
+(A) \(c = 0\), \(f^{-1}(x) = 3 + \sqrt{x - 2}\) on \([2, \infty)\)
+(B) \(c = 3\), \(f^{-1}(x) = 3 - \sqrt{x - 2}\) on \([2, \infty)\)
+(C) \(c = 3\), \(f^{-1}(x) = 3 + \sqrt{x + 2}\) on \([-2, \infty)\)
+(D) \(c = 3\), \(f^{-1}(x) = 3 + \sqrt{x - 2}\) on \([2, \infty)\)
+(E) \(c = 2\), \(f^{-1}(x) = 3 + \sqrt{x - 2}\) on \([3, \infty)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(f\) is a one-to-one function with domain \([0, 4]\) and range \([-2, 6]\). Define \(g(x) = f(2x - 4) + 3\). What are the domain and range of \(g^{-1}\)?
+
+(A) Domain \([2, 4]\), range \([1, 9]\)
+(B) Domain \([-2, 6]\), range \([0, 4]\)
+(C) Domain \([1, 9]\), range \([0, 4]\)
+(D) Domain \([-5, 3]\), range \([2, 4]\)
+(E) Domain \([1, 9]\), range \([2, 4]\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Let \(f(x) = \dfrac{1}{(x - 2)^2} + 1\) restricted to the domain \((-\infty, 2)\). What is \(f^{-1}(x)\) together with its exact domain?
+
+(A) \(f^{-1}(x) = 2 - \dfrac{1}{\sqrt{x - 1}}\), domain \((1, \infty)\)
+(B) \(f^{-1}(x) = 2 + \dfrac{1}{\sqrt{x - 1}}\), domain \((1, \infty)\)
+(C) \(f^{-1}(x) = 2 - \dfrac{1}{\sqrt{x - 1}}\), domain \([1, \infty)\)
+(D) \(f^{-1}(x) = 2 - \sqrt{x - 1}\), domain \((1, \infty)\)
+(E) \(f^{-1}(x) = -2 - \dfrac{1}{\sqrt{x - 1}}\), domain \((1, \infty)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suppose \(f\) is a one-to-one function on \((-\infty, \infty)\) whose graph is shifted left \(4\) units and stretched vertically by a factor of \(2\) to form \(g(x) = 2f(x + 4)\). How is the graph of \(y = g^{-1}(x)\) obtained from the graph of \(y = f^{-1}(x)\)?
+
+(A) Shift left \(4\) units and stretch horizontally by a factor of \(2\).
+(B) Shift down \(4\) units and compress horizontally by a factor of \(1/2\).
+(C) Stretch horizontally by a factor of \(2\) and shift down \(4\) units.
+(D) Stretch vertically by a factor of \(2\) and shift up \(4\) units.
+(E) Compress vertically by a factor of \(1/2\) and shift up \(4\) units.
+[/BONUS]

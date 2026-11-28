@@ -1,0 +1,318 @@
+=== SECTION 1: Function composition, associativity, and non-commutativity ===
+
+Functions rarely act in isolation: we routinely feed the output of one function directly into the input of a second function, building pipelines from simpler maps. Set-theoretically, this chaining operation is function composition.
+
+[CALLOUT]
+id: composition-def
+label: Definition
+title: Composition of functions
+tone: key
+
+Let \(f : A \to B\) and \(g : B \to C\) be functions such that the codomain of \(f\) equals the domain of \(g\). The composition of \(g\) with \(f\) is the function \(g \circ f : A \to C\) defined by
+\[
+(g \circ f)(a) = g\bigl(f(a)\bigr) \qquad \text{for all } a \in A.
+\]
+[/CALLOUT]
+
+Read the order carefully: in \(g \circ f\), the RIGHT-HAND function \(f\) acts FIRST, taking \(a \in A\) to \(f(a) \in B\), and the LEFT-HAND function \(g\) acts SECOND, taking \(f(a) \in B\) to \(g(f(a)) \in C\). (This matches the relation composition convention \(S \circ R\) from our earlier study of binary relations.)
+
+Notice the domain-codomain compatibility requirement: for \(g \circ f\) to be defined as a function \(A \to C\), every output of \(f\) must be a valid input to \(g\), which is guaranteed by matching \(\operatorname{codomain}(f) = \operatorname{domain}(g) = B\). (More generally, if \(f : A \to B_1\) and \(g : B_2 \to C\) with \(\operatorname{im}(f) \subseteq B_2\), the formula \(g(f(a))\) still makes sense, though in strict typed notation we match \(B_1 = B_2\) first—for instance by composing with the inclusion map \(B_1 \hookrightarrow B_2\).)
+
+Two basic algebraic laws govern composition—and one familiar arithmetic law FAILS!
+
+[CALLOUT]
+id: composition-laws
+label: Theorem
+title: Associativity and identity laws for composition
+tone: key
+
+(1) Associativity: for any functions \(f : A \to B\), \(g : B \to C\), and \(h : C \to D\),
+\[
+h \circ (g \circ f) = (h \circ g) \circ f : A \to D.
+\]
+(2) Identity laws: for any function \(f : A \to B\),
+\[
+f \circ \operatorname{id}_A = f \qquad \text{and} \qquad \operatorname{id}_B \circ f = f.
+\]
+[/CALLOUT]
+
+Proof of (1): Both \(h \circ (g \circ f)\) and \((h \circ g) \circ f\) have the SAME domain \(A\) and the SAME codomain \(D\). Now let \(a \in A\) be arbitrary:
+\[
+\bigl(h \circ (g \circ f)\bigr)(a) = h\bigl((g \circ f)(a)\bigr) = h\bigl(g(f(a))\bigr) = (h \circ g)\bigl(f(a)\bigr) = \bigl((h \circ g) \circ f\bigr)(a).
+\]
+By equality of functions, \(h \circ (g \circ f) = (h \circ g) \circ f\). Because parentheses do not affect the result, we may write \(h \circ g \circ f\) unambiguously.
+
+Proof of (2): Both \(f \circ \operatorname{id}_A\) and \(f\) map \(A \to B\), and for every \(a \in A\), \((f \circ \operatorname{id}_A)(a) = f(\operatorname{id}_A(a)) = f(a)\). Similarly, \(\operatorname{id}_B \circ f : A \to B\) satisfies \((\operatorname{id}_B \circ f)(a) = \operatorname{id}_B(f(a)) = f(a)\).
+
+By contrast, function composition is NOT commutative in general! Even when both \(g \circ f\) and \(f \circ g\) are defined (for example, on \(A = B = C = \mathbb{R}\)), they typically differ. Take \(f(x) = x^2\) and \(g(x) = x + 1\) on \(\mathbb{R}\):
+\[
+(g \circ f)(x) = g(x^2) = x^2 + 1, \qquad\text{whereas}\qquad (f \circ g)(x) = f(x + 1) = (x + 1)^2 = x^2 + 2x + 1.
+\]
+At \(x = 1\), \((g \circ f)(1) = 2\) while \((f \circ g)(1) = 4\), so \(g \circ f \ne f \circ g\).
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(f : \mathbb{Z} \to \mathbb{N}\) be defined by \(f(n) = n^2\), let \(g : \mathbb{N} \to \mathbb{Q}\) be defined by \(g(k) = \frac{k}{k + 1}\), and let \(h : \mathbb{Q} \to \mathbb{R}\) be defined by \(h(q) = 2q - 1\). Which statement is true?
+
+(A) \(f \circ g\) is defined and maps \(\mathbb{N} \to \mathbb{N}\)
+(B) \((h \circ g \circ f)(-2) = \frac{1}{5}\)
+(C) \((h \circ g \circ f)(-2) = \frac{3}{5}\), and \(h \circ g \circ f\) has domain \(\mathbb{Z}\) and codomain \(\mathbb{R}\)
+(D) \((g \circ h \circ f)(-2)\) is defined and equals \(\frac{3}{5}\)
+(E) \((h \circ g \circ f)(-2) = \frac{3}{5}\), and \(h \circ g \circ f\) has domain \(\mathbb{N}\) and codomain \(\mathbb{Q}\)
+[/QUESTION]
+
+=== SECTION 2: How injectivity and surjectivity interact with composition ===
+
+Suppose we chain two functions \(f : A \to B\) and \(g : B \to C\) into \(g \circ f : A \to C\). Two natural questions arise:
+- Forward direction: if \(f\) and \(g\) are injective (or surjective, or bijective), does \(g \circ f\) inherit that property?
+- Backward direction: if the composite \(g \circ f\) is injective (or surjective), what MUST be true about \(f\) and \(g\) individually?
+
+The backward direction carries a notorious asymmetry: injectivity of \(g \circ f\) constrains the INNER map \(f\), whereas surjectivity of \(g \circ f\) constrains the OUTER map \(g\)!
+
+[CALLOUT]
+id: comp-inj-surj
+label: Theorem
+title: Injectivity, surjectivity, and bijectivity under composition
+tone: key
+
+Let \(f : A \to B\) and \(g : B \to C\) be functions.
+
+(1) If \(f\) and \(g\) are both injective, then \(g \circ f\) is injective.
+(2) If \(f\) and \(g\) are both surjective, then \(g \circ f\) is surjective.
+(3) If \(f\) and \(g\) are both bijective, then \(g \circ f\) is bijective.
+(4) If \(g \circ f\) is injective, then \(f\) MUST be injective (but \(g\) need not be injective).
+(5) If \(g \circ f\) is surjective, then \(g\) MUST be surjective (but \(f\) need not be surjective).
+[/CALLOUT]
+
+Let us prove every positive claim and construct sharp counterexamples for the two negative remarks!
+
+Proof of (1): Assume \(f\) and \(g\) are injective. Let \(a_1, a_2 \in A\) satisfy \((g \circ f)(a_1) = (g \circ f)(a_2)\), i.e., \(g(f(a_1)) = g(f(a_2))\). Since \(g\) is injective, \(f(a_1) = f(a_2)\). Since \(f\) is injective, \(a_1 = a_2\). Hence \(g \circ f\) is injective.
+
+Proof of (2): Assume \(f\) and \(g\) are surjective. Let \(c \in C\) be arbitrary. Since \(g : B \to C\) is surjective, there exists \(b \in B\) such that \(g(b) = c\). Since \(f : A \to B\) is surjective, there exists \(a \in A\) such that \(f(a) = b\). Then \((g \circ f)(a) = g(f(a)) = g(b) = c\). Hence \(g \circ f\) is surjective.
+
+Part (3) follows immediately from combining (1) and (2).
+
+Proof of (4): Assume \(g \circ f\) is injective. Let \(a_1, a_2 \in A\) satisfy \(f(a_1) = f(a_2)\). Applying \(g\) to both sides gives \(g(f(a_1)) = g(f(a_2))\), i.e., \((g \circ f)(a_1) = (g \circ f)(a_2)\). Because \(g \circ f\) is injective, \(a_1 = a_2\). Thus \(f\) is injective! (Intuitively, if \(f\) already collided two inputs \(a_1 \ne a_2\), then \(g\) could never un-collide them afterwards.)
+
+Counterexample showing \(g\) need NOT be injective in (4) AND \(f\) need NOT be surjective in (5) at the exact same time: take \(A = \{1\}\), \(B = \{1, 2\}\), \(C = \{1\}\). Define \(f : A \to B\) by \(f(1) = 1\) (injective, NOT surjective), and define \(g : B \to C\) by \(g(1) = 1\) and \(g(2) = 1\) (surjective, NOT injective). Then \(g \circ f : \{1\} \to \{1\}\) sends \(1 \mapsto 1\), which is BIJECTIVE (both injective and surjective)! Yet \(g\) is NOT injective (its collision happens at \(2 \notin \operatorname{im}(f)\), which \(f\) never visits) and \(f\) is NOT surjective (missing \(2\) doesn't stop \(g\) from hitting \(1\)).
+
+Proof of (5): Assume \(g \circ f\) is surjective. Let \(c \in C\) be arbitrary. Because \(g \circ f : A \to C\) is surjective, there exists \(a \in A\) such that \((g \circ f)(a) = c\), i.e., \(g(f(a)) = c\). Setting \(b = f(a) \in B\) gives an element of \(B\) with \(g(b) = c\). Hence \(g\) is surjective!
+
+[TABLE]
+Given property of \(g \circ f : A \to C\) | Forced on inner map \(f : A \to B\) | Forced on outer map \(g : B \to C\)
+\(g \circ f\) is injective | \(f\) MUST be injective | Nothing forced on \(g\) (need not be injective or surjective)
+\(g \circ f\) is surjective | Nothing forced on \(f\) (need not be injective or surjective) | \(g\) MUST be surjective
+\(g \circ f\) is bijective | \(f\) MUST be injective | \(g\) MUST be surjective
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+Let \(f : A \to B\) and \(g : B \to C\) be functions. Suppose that \(g \circ f\) is BIJECTIVE and that \(f\) is SURJECTIVE. What can you conclude about \(f\) and \(g\)?
+
+(A) \(f\) is bijective, while \(g\) must be surjective but need not be injective
+(B) Both \(f\) and \(g\) MUST be bijective
+(C) \(g\) is bijective, while \(f\) must be surjective but need not be injective
+(D) \(f\) is injective and \(g\) is surjective, but neither is forced to be bijective
+(E) \(A\), \(B\), and \(C\) must all be finite sets
+[/QUESTION]
+
+=== SECTION 3: Two-sided inverses and the bijection characterization ===
+
+Can we "undo" a function \(f : A \to B\) by composing it with a partner function \(g : B \to A\) that restores every input in \(A\) AND every output in \(B\)?
+
+[CALLOUT]
+id: two-sided-inverse-def
+label: Definition
+title: Two-sided inverse (invertible function)
+tone: key
+
+Let \(f : A \to B\) be a function. A function \(g : B \to A\) is a two-sided inverse (or simply an inverse) of \(f\) if BOTH equations hold:
+\[
+g \circ f = \operatorname{id}_A \qquad \text{and} \qquad f \circ g = \operatorname{id}_B.
+\]
+Explicitly, \(g(f(a)) = a\) for all \(a \in A\), AND \(f(g(b)) = b\) for all \(b \in B\). If such a \(g\) exists, we say \(f\) is invertible.
+[/CALLOUT]
+
+Before asking WHEN an inverse exists, let us prove that IF a two-sided inverse exists, it is UNIQUE—and notice how effortlessly [REF: composition-laws | associativity and identity laws] do the work! Suppose \(g_1 : B \to A\) and \(g_2 : B \to A\) are both two-sided inverses of \(f\). Then
+\[
+g_1 = g_1 \circ \operatorname{id}_B = g_1 \circ (f \circ g_2) = (g_1 \circ f) \circ g_2 = \operatorname{id}_A \circ g_2 = g_2.
+\]
+Because the two-sided inverse is unique whenever it exists, we may denote it unambiguously by \(f^{-1} : B \to A\). (Be careful not to confuse this inverse function \(f^{-1} : B \to A\) with the set-valued preimage operation \(f^{-1}(T)\) from earlier lessons; when \(f\) IS invertible, the two agree cleanly via \(f^{-1}(\{b\}) = \{f^{-1}(b)\}\).)
+
+Now we prove the central theorem linking invertibility and bijections.
+
+[CALLOUT]
+id: inverse-bijection-thm
+label: Theorem
+title: Characterization and algebra of two-sided inverses
+tone: key
+
+Let \(f : A \to B\) and \(g : B \to C\) be functions.
+
+(1) \(f\) has a two-sided inverse if and only if \(f\) is bijective.
+(2) If \(f\) is bijective, then \(f^{-1} : B \to A\) is also bijective, and \((f^{-1})^{-1} = f\).
+(3) Socks-and-shoes rule: if \(f : A \to B\) and \(g : B \to C\) are both bijective, then \(g \circ f : A \to C\) is bijective and
+\[
+(g \circ f)^{-1} = f^{-1} \circ g^{-1}.
+\]
+[/CALLOUT]
+
+Proof of (1):
+- (\(\implies\)): Suppose \(f\) has a two-sided inverse \(h : B \to A\). Since \(h \circ f = \operatorname{id}_A\) is bijective (in particular injective), [REF: comp-inj-surj.4 | our composition theorem] immediately forces \(f\) to be injective! Since \(f \circ h = \operatorname{id}_B\) is bijective (in particular surjective), [REF: comp-inj-surj.5 | our composition theorem] immediately forces \(f\) to be surjective! Hence \(f\) is bijective.
+- (\(\Longleftarrow\)): Suppose \(f : A \to B\) is bijective. By the definition of bijection, for every \(b \in B\) there exists a UNIQUE \(a \in A\) such that \(f(a) = b\). Define \(h : B \to A\) by letting \(h(b)\) be this unique element \(a\). By construction, \(h\) satisfies existence and uniqueness, so \(h : B \to A\) is a well-defined function. Check both compositions:
+  - For any \(b \in B\), \(f(h(b)) = b\) directly by definition of \(h(b)\), so \(f \circ h = \operatorname{id}_B\).
+  - For any \(a \in A\), set \(b = f(a)\). Since \(a\) satisfies \(f(a) = b\) and such an element is unique, \(h(f(a)) = h(b) = a\), so \(h \circ f = \operatorname{id}_A\).
+Thus \(h\) is a two-sided inverse of \(f\).
+
+Proof of (2): Since \(f^{-1} \circ f = \operatorname{id}_A\) and \(f \circ f^{-1} = \operatorname{id}_B\), the roles of \(f\) and \(f^{-1}\) are completely symmetric: \(f\) is the unique two-sided inverse of \(f^{-1}\). By (1), \(f^{-1}\) is bijective and \((f^{-1})^{-1} = f\).
+
+Proof of (3): We know \(g \circ f\) is bijective by [REF: comp-inj-surj.3 | composition of bijections]. To prove \((g \circ f)^{-1} = f^{-1} \circ g^{-1}\), by uniqueness of two-sided inverses it suffices to verify BOTH compositions using [REF: composition-laws.1 | associativity]:
+\[
+(f^{-1} \circ g^{-1}) \circ (g \circ f) = f^{-1} \circ (g^{-1} \circ g) \circ f = f^{-1} \circ \operatorname{id}_B \circ f = f^{-1} \circ f = \operatorname{id}_A,
+\]
+\[
+(g \circ f) \circ (f^{-1} \circ g^{-1}) = g \circ (f \circ f^{-1}) \circ g^{-1} = g \circ \operatorname{id}_B \circ g^{-1} = g \circ g^{-1} = \operatorname{id}_C.
+\]
+Why does the order reverse? To undo "put on socks (\(f\)), then put on shoes (\(g\))," you must first take off shoes (\(g^{-1}\)), then take off socks (\(f^{-1}\))!
+
+Geometrically, for a real bijection \(f : A \to B\) with \(A, B \subseteq \mathbb{R}\), the graph of \(f^{-1}\) is obtained by swapping coordinates \((a, b) \leftrightarrow (b, a)\)—reflecting the graph of \(f\) across the diagonal line \(y = x\). Drag the slider \(a\) below for the bijection \(f : [0, \infty) \to [0, \infty)\), \(f(x) = x^2\), and its inverse \(f^{-1}(x) = \sqrt{x}\), watching the paired points \((a, a^2)\) and \((a^2, a)\) reflect across \(y = x\).
+
+[GRAPH]
+type: function2d
+title: Reflection of \(f(x) = x^2\) and \(f^{-1}(x) = \sqrt{x}\) on \([0, \infty)\) across \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 3.2
+yrange: 0, 3.2
+aspect: equal
+trace: x^2 | label: \(y = x^2\) | color: #2563eb
+trace: sqrt(x) | label: \(y = \sqrt{x}\) | color: #16a34a
+trace: x | label: \(y = x\) | color: #64748b
+point: a, a^2 | label: \((a, f(a))\) | color: #2563eb | offset: -18, 12
+point: a^2, a | label: \((f(a), a)\) | color: #16a34a | offset: 14, -14
+segment: a, a^2, a^2, a | color: #94a3b8 | dashed: true
+slider: a | range: 0.2, 1.7 | init: 1.4 | step: 0.1
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: D]
+Let \(f : \mathbb{R} \to \mathbb{R}\) be \(f(x) = 2x - 3\) and let \(g : \mathbb{R} \to \mathbb{R}\) be \(g(x) = x^3 + 1\). Both \(f\) and \(g\) are bijections. What is \((g \circ f)^{-1}(9)\)?
+
+(A) \(1\)
+(B) \(\frac{11}{2}\)
+(C) \(15\)
+(D) \(\frac{5}{2}\)
+(E) \(126\)
+[/QUESTION]
+
+=== SECTION 4: One-sided inverses — left inverses and right inverses ===
+
+What if a function \(f : A \to B\) is injective but NOT surjective, or surjective but NOT injective? Then it cannot have a two-sided inverse, yet we can still undo it from ONE side!
+
+[CALLOUT]
+id: one-sided-inverse-def
+label: Definition
+title: Left inverse (retraction) and right inverse (section)
+tone: key
+
+Let \(f : A \to B\) be a function.
+
+(1) A function \(r : B \to A\) is a left inverse (or retraction) of \(f\) if \(r \circ f = \operatorname{id}_A\).
+(2) A function \(s : B \to A\) is a right inverse (or section) of \(f\) if \(f \circ s = \operatorname{id}_B\).
+[/CALLOUT]
+
+Look how cleanly one-sided inverses characterize injectivity and surjectivity:
+
+[CALLOUT]
+id: one-sided-inverse-thm
+label: Theorem
+title: Existence of left and right inverses
+tone: key
+
+Let \(f : A \to B\) be a function.
+
+(1) Left inverses and injectivity (for nonempty \(A\)): if \(A \ne \emptyset\), then \(f\) has a left inverse \(r : B \to A\) if and only if \(f\) is injective.
+(2) Right inverses and surjectivity: \(f\) has a right inverse \(s : B \to A\) if and only if \(f\) is surjective.
+(3) Compatibility: if \(f\) has BOTH a left inverse \(r : B \to A\) and a right inverse \(s : B \to A\), then \(r = s\), and this common function is the unique two-sided inverse \(f^{-1}\).
+[/CALLOUT]
+
+Let us examine all three parts carefully, including the edge case \(A = \emptyset\) and the role of choice!
+
+Proof of (1):
+- (\(\implies\)): If \(r \circ f = \operatorname{id}_A\), then \(r \circ f\) is injective, so by [REF: comp-inj-surj.4 | our composition theorem], \(f\) is injective. (This direction does not even need \(A \ne \emptyset\).)
+- (\(\Longleftarrow\)): Assume \(A \ne \emptyset\) and \(f : A \to B\) is injective. Fix one default element \(a_0 \in A\) (this is where \(A \ne \emptyset\) is used!). Define \(r : B \to A\) by:
+  - if \(b \in \operatorname{im}(f)\), set \(r(b)\) to be the UNIQUE \(a \in A\) with \(f(a) = b\) (unique because \(f\) is injective!);
+  - if \(b \notin \operatorname{im}(f)\), set \(r(b) = a_0\).
+  Then for every \(a \in A\), \(f(a) \in \operatorname{im}(f)\) and \(a\) is the unique input mapping to \(f(a)\), so \(r(f(a)) = a\). Thus \(r \circ f = \operatorname{id}_A\).
+
+Why did we require \(A \ne \emptyset\) in (1)? If \(A = \emptyset\) and \(B \ne \emptyset\), the empty function \(f : \emptyset \to B\) is vacuously injective, yet NO function \(r : B \to \emptyset\) exists at all!
+
+Notice also that when \(f\) is injective but NOT surjective (and \(A\) has at least two elements), the left inverse \(r\) is NOT unique: you are free to assign ANY element of \(A\) to each missed element \(b \in B \setminus \operatorname{im}(f)\). For example, take the doubling map \(f : \mathbb{Z} \to \mathbb{Z}\) defined by \(f(n) = 2n\). It is injective (not surjective). Both
+\[
+r_1(m) = \begin{cases} m/2 & \text{if } m \text{ is even}, \\ 0 & \text{if } m \text{ is odd} \end{cases}
+\qquad\text{and}\qquad
+r_2(m) = \lfloor m/2 \rfloor
+\]
+satisfy \(r_1(2n) = n\) and \(r_2(2n) = n\) for every \(n \in \mathbb{Z}\), so BOTH \(r_1\) and \(r_2\) are valid left inverses of \(f\), even though \(r_1(1) = 0\) while \(r_2(3) = 1 \ne 0 = r_1(3)\)!
+
+Proof of (2):
+- (\(\implies\)): If \(f \circ s = \operatorname{id}_B\), then \(f \circ s\) is surjective, so by [REF: comp-inj-surj.5 | our composition theorem], \(f\) is surjective.
+- (\(\Longleftarrow\)): Assume \(f : A \to B\) is surjective. Then for EVERY \(b \in B\), the preimage fiber \(f^{-1}(\{b\})\) is nonempty. To build a right inverse \(s : B \to A\), we must select ONE element \(s(b) \in f^{-1}(\{b\})\) for each \(b \in B\). Once chosen, \(f(s(b)) = b\) holds automatically for all \(b \in B\), giving \(f \circ s = \operatorname{id}_B\).
+
+Pause on that selection step! For concrete domains like \(\mathbb{R}\) or \(\mathbb{N}\), we can usually write down an explicit rule that picks one preimage per fiber without ambiguity:
+- For the surjective map \(f : \mathbb{R} \to [0, \infty)\) given by \(f(x) = x^2\), every fiber \(f^{-1}(\{y\}) = \{-\sqrt{y}, \sqrt{y}\}\) is nonempty, and we have explicit right inverses \(s_1(y) = \sqrt{y}\), \(s_2(y) = -\sqrt{y}\), and even piecewise choices such as \(s_3(y) = \sqrt{y}\) for \(y \in \mathbb{Q} \cap [0, \infty)\) and \(s_3(y) = -\sqrt{y}\) for irrational \(y > 0\)!
+- For an ARBITRARY surjection \(f : A \to B\) between completely unstructured infinite sets, however, there may be no explicit formula to pick one element simultaneously from infinitely many nonempty fibers \(f^{-1}(\{b\})\). Guaranteeing that such a selection function \(s\) exists in full generality relies on a set-theoretic choice principle (the Axiom of Choice).
+
+Finally, proof of (3): If \(r \circ f = \operatorname{id}_A\) and \(f \circ s = \operatorname{id}_B\), then by [REF: composition-laws.1 | associativity],
+\[
+r = r \circ \operatorname{id}_B = r \circ (f \circ s) = (r \circ f) \circ s = \operatorname{id}_A \circ s = s.
+\]
+So the moment BOTH a left inverse and a right inverse exist, they collapse into the exact same unique two-sided inverse!
+
+[QUESTION 4]
+[ANSWER: A]
+Consider the function \(f : \mathbb{Z} \to \mathbb{N}\) defined by \(f(n) = |n|\) (where \(\mathbb{N} = \{0, 1, 2, \dots\}\)). Which statement is true?
+
+(A) \(f\) has infinitely many right inverses (for example, \(s_1(k) = k\) and \(s_2(k) = -k\)), and NO left inverse
+(B) \(f\) has a unique right inverse \(s(k) = k\), and NO left inverse
+(C) \(f\) has infinitely many left inverses, and NO right inverse
+(D) \(f\) has a two-sided inverse because \(f(k) = k\) for all \(k \in \mathbb{N}\)
+(E) \(f\) has neither a left inverse nor a right inverse
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(f : A \to B\) be a function, where \(A\) has at least two elements. Suppose \(f\) has a UNIQUE left inverse \(r : B \to A\) (meaning there is exactly one function \(r : B \to A\) satisfying \(r \circ f = \operatorname{id}_A\)). What must be true about \(f\)?
+
+(A) \(f\) is injective, and \(B \setminus \operatorname{im}(f)\) has at most one element
+(B) \(f\) is constant
+(C) \(A\) and \(B\) must be finite
+(D) \(f\) is injective, but \(B \setminus \operatorname{im}(f)\) can be any finite set
+(E) \(f\) MUST be bijective (so \(r\) is also its right inverse)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(f : A \to B\) be a function. We say \(f\) is left-cancelable if for EVERY set \(X\) and ALL functions \(g_1, g_2 : X \to A\),
+\[
+f \circ g_1 = f \circ g_2 \implies g_1 = g_2.
+\]
+Which property of \(f\) is equivalent to \(f\) being left-cancelable?
+
+(A) \(f\) is surjective
+(B) \(f\) is bijective
+(C) \(f\) is injective
+(D) \(f\) is constant
+(E) \(A\) is nonempty
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Suppose \(f : A \to A\) is a function satisfying \(f \circ f = f\) (an idempotent map, such as rounding \(x \mapsto \lfloor x \rfloor\) on \(\mathbb{R}\)). Which statement is ALWAYS true?
+
+(A) \(f\) must be the identity map \(\operatorname{id}_A\)
+(B) \(f(y) = y\) for every \(y \in \operatorname{im}(f)\), and if \(f\) is either injective OR surjective then \(f = \operatorname{id}_A\)
+(C) \(f\) must be bijective, so \(f^{-1} = f\)
+(D) If \(f\) is surjective then \(f = \operatorname{id}_A\), but \(f\) can be injective without equaling \(\operatorname{id}_A\)
+(E) \(\operatorname{im}(f)\) can contain at most one element
+[/BONUS]

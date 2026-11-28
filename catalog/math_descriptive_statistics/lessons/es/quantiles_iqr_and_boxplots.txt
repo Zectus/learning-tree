@@ -1,0 +1,234 @@
+=== SECTION 1: Cuantiles, percentiles y convenciones en muestras discretas ===
+
+La mediana divide un conjunto de datos ordenado en dos mitades: el \(50\%\) de las observaciones se sitúa en ella o por debajo, y el \(50\%\) en ella o por encima. Con frecuencia queremos puntos de referencia de posición más finos: ¿dónde termina el \(25\%\) inferior?, ¿dónde comienza el \(10\%\) superior? y ¿qué amplitud tiene la mitad central de los datos? Responder estas preguntas generaliza la mediana hacia los \(p\)-cuantiles y percentiles.
+
+[CALLOUT]
+id: quantile-definition
+label: Definición
+title: \(p\)-cuantiles, percentiles, cuartiles y el rango intercuartílico
+tone: key
+
+Para una proporción \(p \in (0, 1)\), el \(p\)-cuantil \(q_p\) (equivalentemente, el percentil \(100p\)) es un umbral que separa aproximadamente la fracción inferior \(p\) de las observaciones ordenadas de la fracción superior \(1 - p\).
+
+Tres cuantiles de referencia son los cuartiles:
+(1) Primer cuartil \(Q_1 = q_{0.25}\) (percentil \(25\)).
+(2) Segundo cuartil \(Q_2 = q_{0.50}\) (percentil \(50\), la mediana muestral).
+(3) Tercer cuartil \(Q_3 = q_{0.75}\) (percentil \(75\)).
+
+El resumen de cinco números de un conjunto de datos es \((\min, Q_1, Q_2, Q_3, \max)\), y su rango intercuartílico es
+\[
+\text{RIC} = Q_3 - Q_1,
+\]
+el cual mide la dispersión del \(50\%\) central de las observaciones.
+[/CALLOUT]
+
+En una ojiva continua obtenida a partir de una tabla de frecuencias agrupadas, hallar un \(p\)-cuantil es una lectura inversa exacta: ubique \(p\) en el eje vertical de proporciones acumuladas, trace una horizontal hasta la curva de la ojiva y lea hacia abajo sobre el eje horizontal de los datos. Sin embargo, para una lista finita de \(n\) números ordenados \(x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}\), los saltos discretos entre observaciones hacen que exista más de una forma razonable de asignar una proporción \(p\) a un índice. Conocer las convenciones principales evita confusiones cuando dos libros de texto o programas estadísticos reportan cuartiles ligeramente distintos para un conjunto pequeño de datos:
+- Método del rango más cercano: tome la observación en el índice \(k = \lceil n p \rceil\) (el menor entero \(\ge n p\)). Para \(n = 8\) y \(p = 0.25\), \(k = \lceil 2 \rceil = 2\), lo que da \(x_{(2)}\).
+- Mediana de mitades (bisagras de Tukey / mediana exclusiva): halle la mediana \(Q_2\), divida los datos ordenados en una mitad inferior estrictamente por debajo de la posición de la mediana y una mitad superior estrictamente por encima (excluyendo la observación central única cuando \(n\) es impar), y tome las medianas de esas dos mitades como \(Q_1\) y \(Q_3\).
+- Métodos de interpolación lineal: calcule un rango continuo \(r\) e interpole entre los estadísticos de orden adyacentes \(x_{(\lfloor r \rfloor)}\) y \(x_{(\lceil r \rceil)}\). Dos fórmulas de rango ampliamente utilizadas son \(r = (n + 1)p\) (usada por muchos textos introductorios) y \(r = 1 + (n - 1)p\) (predeterminada en R y Excel).
+
+Compare estas reglas en \(n = 8\) puntajes ordenados: \(10, 14, 18, 22, 26, 30, 34, 38\) para \(p = 0.25\):
+- Rango más cercano: \(\lceil 8(0.25) \rceil = 2 \implies x_{(2)} = 14\).
+- Mediana de mitades: la mitad inferior es \(10, 14, 18, 22\), cuya mediana es \((14 + 18)/2 = 16\).
+- Interpolación lineal con \(r = (n + 1)p\): \(r = 9(0.25) = 2.25 \implies x_{(2)} + 0.25(x_{(3)} - x_{(2)}) = 14 + 0.25(4) = 15\).
+- Interpolación lineal con \(r = 1 + (n - 1)p\): \(r = 1 + 7(0.25) = 2.75 \implies 14 + 0.75(4) = 17\).
+
+Las cuatro convenciones convergen conforme \(n\) crece, y para tamaños muestrales de la forma \(n = 4m + 3\) (como \(n = 7, 11, 15\)), el rango más cercano, la mediana de mitades y \(r = (n + 1)p\) coinciden TODOS en la MISMA observación exacta. A lo largo de nuestros cálculos usaremos la regla de mediana de mitades para los cuartiles e indicaremos explícitamente la regla de interpolación cada vez que se calcule un \(p\)-cuantil general.
+
+[QUESTION 1]
+[ANSWER: C]
+Considere la muestra ordenada de \(n = 10\) mediciones:
+\[
+12,\; 15,\; 18,\; 20,\; 24,\; 28,\; 30,\; 35,\; 40,\; 50.
+\]
+Usando la fórmula de interpolación lineal \(r = (n + 1)p\), ¿cuál es el percentil \(30\) (\(p = 0.30\))?
+
+(A) \(18.0\)
+(B) \(18.4\)
+(C) \(18.6\)
+(D) \(19.0\)
+(E) \(19.4\)
+[/QUESTION]
+
+=== SECTION 2: Cercas de Tukey para valores atípicos y diagramas de caja modificados ===
+
+Debido a que \(Q_1\) y \(Q_3\) dependen únicamente de las posiciones centrales de rango y no de las magnitudes extremas, [REF: quantile-definition | el rango intercuartílico \(\text{RIC} = Q_3 - Q_1\)] es una medida resistente de dispersión: cambiar la única observación más grande de un conjunto de datos de \(40\) a \(4{,}000\) deja \(Q_1\), \(Q_3\) y \(\text{RIC}\) completamente inalterados. John Tukey construyó una regla estándar y resistente para señalar observaciones inusualmente distantes directamente a partir de \(Q_1\), \(Q_3\) y \(\text{RIC}\).
+
+[CALLOUT]
+id: tukey-fences
+label: Definición
+title: Cercas interiores y exteriores de Tukey para valores atípicos
+tone: key
+
+Dados los cuartiles \(Q_1, Q_3\) y \(\text{RIC} = Q_3 - Q_1\):
+
+(1) Cercas interiores: \(\text{CII} = Q_1 - 1.5 \cdot \text{RIC}\) y \(\text{CIS} = Q_3 + 1.5 \cdot \text{RIC}\).
+(2) Cercas exteriores: \(\text{CEI} = Q_1 - 3 \cdot \text{RIC}\) y \(\text{CES} = Q_3 + 3 \cdot \text{RIC}\).
+(3) Clasificación: las observaciones situadas estrictamente fuera de las cercas interiores pero dentro (o sobre) las cercas exteriores se señalan como valores atípicos leves (o sospechosos). Las observaciones situadas estrictamente fuera de las cercas exteriores se señalan como valores atípicos extremos.
+[/CALLOUT]
+
+Apliquemos [REF: tukey-fences | las cercas de Tukey] a \(n = 15\) tiempos de entrega ordenados (en minutos):
+\[
+12,\; 14,\; 15,\; 16,\; 17,\; 18,\; 20,\; 21,\; 22,\; 23,\; 25,\; 26,\; 35,\; 45,\; 62.
+\]
+Con \(n = 15\), la mediana es \(Q_2 = x_{(8)} = 21\). Las \(7\) observaciones inferiores tienen mediana \(Q_1 = x_{(4)} = 16\), y las \(7\) observaciones superiores tienen mediana \(Q_3 = x_{(12)} = 26\). Por lo tanto:
+- Resumen de cinco números: \((12,\; 16,\; 21,\; 26,\; 62)\).
+- \(\text{RIC} = 26 - 16 = 10\) minutos.
+- Cercas interiores: \(\text{CII} = 16 - 1.5(10) = 1\), \(\text{CIS} = 26 + 1.5(10) = 41\).
+- Cercas exteriores: \(\text{CEI} = 16 - 3(10) = -14\), \(\text{CES} = 26 + 3(10) = 56\).
+
+Ahora inspeccione cada observación respecto a estas cercas:
+- A la izquierda, el valor menor \(12\) está muy por encima de \(\text{CII} = 1\), así que no hay valores atípicos bajos.
+- A la derecha, \(45\) se encuentra entre \(41\) y \(56\), señalando a \(45\) como un valor atípico leve; \(62\) supera \(56\), señalando a \(62\) como un valor atípico extremo.
+
+Un diagrama de caja (o diagrama de caja y bigotes) transforma el resumen de cinco números y estos diagnósticos de cercas en un resumen visual compacto. En un diagrama de caja estándar (esquelético), la caja abarca desde \(Q_1\) hasta \(Q_3\) con una línea divisoria en \(Q_2\), y los bigotes se extienden hasta \(\min\) y \(\max\). En la práctica, los estadísticos prefieren un diagrama de caja modificado, que separa visualmente los valores atípicos del cuerpo principal de los datos.
+
+[CALLOUT]
+id: modified-boxplot-rule
+label: Error común
+title: Dónde se detienen los bigotes de un diagrama de caja modificado
+tone: caution
+
+En un diagrama de caja modificado, cada bigote se extiende desde su cuartil ÚNICAMENTE hasta la OBSERVACIÓN REAL más extrema dentro (o sobre) la cerca interior —¡NUNCA hasta el valor de la cerca misma!—. Los valores atípicos señalados más allá de las cercas interiores se grafican individualmente como puntos marcados (a menudo con símbolos distintos para valores atípicos leves frente a extremos).
+[/CALLOUT]
+
+Observe [REF: modified-boxplot-rule | esta regla] en acción sobre nuestros tiempos de entrega. La cerca interior superior se sitúa en \(41\), ¡pero NINGUNA entrega tardó \(41\) minutos! La observación no atípica más grande dentro de \([1, 41]\) es \(35\) minutos. En consecuencia, el bigote superior se detiene en \(35\) —no en \(41\)—, y \(45\) y \(62\) aparecen como puntos atípicos aislados a la derecha, tal como se ilustra a continuación.
+
+[GRAPH]
+type: function2d
+title: Diagrama de caja modificado de tiempos de entrega (\(n = 15\)): el bigote termina en \(35\), no en CIS \(= 41\)
+xlabel: Tiempo de entrega (min)
+ylabel: Eje de visualización
+xrange: 8, 66
+yrange: 0, 2.2
+trace: 0 | label: línea base | color: #94a3b8
+fill: 1.35, 0.65 | range: 16, 26 | label: Caja del RIC \([Q_1, Q_3]\) | color: #3b82f6 | opacity: 0.28
+segment: 16, 0.65, 26, 0.65 | color: #2563eb
+segment: 16, 1.35, 26, 1.35 | color: #2563eb
+segment: 16, 0.65, 16, 1.35 | color: #2563eb
+segment: 26, 0.65, 26, 1.35 | color: #2563eb
+segment: 21, 0.65, 21, 1.35 | label: \(Q_2 = 21\) | color: #1d4ed8
+segment: 12, 1.0, 16, 1.0 | color: #2563eb
+segment: 12, 0.82, 12, 1.18 | color: #2563eb
+segment: 26, 1.0, 35, 1.0 | color: #2563eb
+segment: 35, 0.82, 35, 1.18 | color: #2563eb
+segment: 41, 0.3, 41, 1.75 | label: CIS | dashed: true | color: #f59e0b
+segment: 56, 0.3, 56, 1.75 | label: CES | dashed: true | color: #ef4444
+point: 35, 1.0 | label: \(35\)
+point: 45, 1.0 | label: \(45\) | color: #f59e0b
+point: 62, 1.0 | label: \(62\) | color: #ef4444
+[/GRAPH]
+
+Una advertencia crucial sobre los valores atípicos señalados: la regla \(1.5 \cdot \text{RIC}\) de Tukey es una señal de alerta, NO una orden de eliminación automática. Si la investigación muestra que \(62\) minutos fue un error de digitación (por ejemplo, \(26\) tecleado al revés), corríjalo o documente su retiro. Si \(62\) minutos fue una entrega real retrasada por el cierre de un puente, eliminarla oculta un riesgo operativo genuino. Investigue siempre la causa contextual de todo punto señalado y, ante la duda, reporte los análisis con y sin la observación extrema.
+
+[QUESTION 2]
+[ANSWER: B]
+Un conjunto de datos de \(n = 30\) tiempos de realización en laboratorio tiene cuartiles \(Q_1 = 40\), \(Q_2 = 52\) y \(Q_3 = 60\). La observación menor es \(25\), y las cuatro observaciones mayores son \(74, 82, 95\) y \(130\). En un diagrama de caja modificado de estos datos, ¿dónde termina el bigote superior y cómo se clasifican \(95\) y \(130\)?
+
+(A) El bigote superior termina en \(90\); \(95\) es un valor atípico leve y \(130\) es un valor atípico extremo.
+(B) El bigote superior termina en \(82\); \(95\) es un valor atípico leve y \(130\) es un valor atípico extremo.
+(C) El bigote superior termina en \(74\); \(82\) y \(95\) son valores atípicos leves y \(130\) es un valor atípico extremo.
+(D) El bigote superior termina en \(82\); tanto \(95\) como \(130\) son valores atípicos leves.
+(E) El bigote superior termina en \(95\); solo \(130\) es un valor atípico extremo.
+[/QUESTION]
+
+=== SECTION 3: Comparación de grupos con diagramas de caja paralelos y lo que ocultan ===
+
+Un histograma sobresale al mostrar la forma detallada de UNA distribución, pero superponer cuatro o cinco histogramas en los mismos ejes se convierte rápidamente en una maraña ilegible. Como un diagrama de caja comprime cada grupo en una sola franja delgada, colocar diagramas de caja paralelos sobre una escala numérica compartida facilita comparar múltiples grupos en cuatro dimensiones:
+1. Centro: compare las líneas de mediana \(Q_2\) entre los grupos.
+2. Dispersión: compare los anchos de las cajas (\(\text{RIC}\)) para la variabilidad típica y el recorrido total de bigote a bigote para la variabilidad global.
+3. Asimetría: dentro de la caja, si \(Q_3 - Q_2 > Q_2 - Q_1\) y el bigote superior es más largo que el inferior (con valores atípicos altos), la distribución es asimétrica a la derecha; la imagen especular indica asimetría a la izquierda.
+4. Valores atípicos: identifique qué grupos exhiben valores extremos aislados.
+
+[TABLE]
+Grupo (calificaciones de prueba) | Mín | \(Q_1\) | \(Q_2\) | \(Q_3\) | Máx | \(\text{RIC}\) | Diagnóstico visual
+Sección matutina | 54 | 68 | 74 | 82 | 94 | 14 | Aproximadamente simétrica, dispersión moderada
+Sección vespertina | 42 | 64 | 68 | 84 | 98 | 20 | Caja asimétrica a la derecha (\(84-68 > 68-64\)), RIC más amplio
+Sección nocturna | 66 | 76 | 80 | 84 | 90 | 8 | Mediana más alta, puntajes más consistentes y compactos
+[/TABLE]
+
+Sin embargo, esta compresión conlleva un punto ciego fundamental. Un diagrama de caja conserva ÚNICAMENTE cinco números (más las coordenadas de los valores atípicos), descartando todo lo que ocurre DENTRO de cada cuarto del \(25\%\). En consecuencia, dos distribuciones radicalmente distintas —una curva acampanada simétrica y suave frente a una distribución marcadamente bimodal con un amplio valle vacío justo alrededor de la mediana— pueden compartir EXACTAMENTE el mismo resumen de cinco números y producir diagramas de caja IDÉNTICOS.
+
+Observe el gráfico siguiente. Ambas curvas abarcan aproximadamente \([0, 10]\), comparten exactamente la misma mediana \(Q_2 = 5\) y tienen cuartiles casi idénticos \(Q_1 \approx 3.1\) y \(Q_3 \approx 6.9\). Un diagrama de caja declararía estas dos distribuciones prácticamente indistinguibles, ocultando por completo la profunda división bimodal de la curva naranja.
+
+[GRAPH]
+type: function2d
+title: Una curva unimodal y una curva bimodal que comparten el mismo centro y cuartiles
+xlabel: \(x\)
+ylabel: Densidad
+xrange: 0, 10
+yrange: 0, 0.35
+trace: 0.16 * exp(-0.5 * ((x - 5) / 2.5)^2) | label: Unimodal simétrica | color: #3b82f6
+trace: 0.25 * exp(-0.5 * ((x - 2.9) / 0.75)^2) + 0.25 * exp(-0.5 * ((x - 7.1) / 0.75)^2) | label: Bimodal con valle central | color: #f59e0b
+segment: 3.1, 0, 3.1, 0.30 | label: \(Q_1\) | dashed: true
+segment: 5.0, 0, 5.0, 0.30 | label: \(Q_2\) | dashed: true
+segment: 6.9, 0, 6.9, 0.30 | label: \(Q_3\) | dashed: true
+[/GRAPH]
+
+Por esta razón, trate los diagramas de caja y los histogramas (o diagramas de puntos) como herramientas complementarias: utilice diagramas de caja paralelos para comparar rápidamente centros, dispersiones y valores atípicos entre muchos grupos, y acompáñelos con histogramas o diagramas de puntos siempre que la modalidad, los conglomerados o las brechas internas puedan importar.
+
+[QUESTION 3]
+[ANSWER: A]
+Al comparar dos grupos mediante diagramas de caja modificados paralelos, el Grupo 1 tiene resumen de cinco números \((10, 24, 30, 36, 90)\) con un valor atípico alto en \(90\) y bigote superior que termina en \(48\), mientras que el Grupo 2 tiene resumen de cinco números \((15, 20, 34, 48, 55)\) sin valores atípicos. ¿Qué comparación es precisa?
+
+(A) El Grupo 1 tiene un \(\text{RIC}\) menor (\(12\) frente a \(28\)) a pesar de tener un rango total mayor (\(80\) frente a \(40\)), y el Grupo 2 tiene la mediana más alta.
+(B) El Grupo 1 tiene tanto el \(\text{RIC}\) mayor como el rango total mayor debido a su valor atípico en \(90\).
+(C) El Grupo 2 es fuertemente asimétrico a la derecha porque su mediana \(34\) es mayor que la mediana \(30\) del Grupo 1.
+(D) El Grupo 1 tiene un centro típico más alto que el Grupo 2 porque su máximo \(90\) tira del centro hacia arriba.
+(E) Más del \(50\%\) de las observaciones del Grupo 1 superan la mediana \(34\) del Grupo 2.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Dos conjuntos de datos de \(n = 200\) puntajes de examen producen diagramas de caja modificados idénticos con \(Q_1 = 60\), \(Q_2 = 75\), \(Q_3 = 90\) y bigotes desde \(45\) hasta \(100\). ¿Qué rasgo estructural podría aun así diferir drásticamente entre ambos conjuntos?
+
+(A) Sus rangos intercuartílicos.
+(B) Sus medianas muestrales.
+(C) La fracción de observaciones entre \(60\) y \(90\).
+(D) Si los puntajes forman un único montículo acampanado centrado en \(75\) o dos conglomerados separados alrededor de \(60\) y \(90\) con una brecha vacía en \(75\).
+(E) Si algún puntaje supera la cerca interior superior de Tukey igual a \(135\).
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Al analizar tiempos de espera en la sala de urgencias de un hospital, la regla \(1.5 \cdot \text{RIC}\) de Tukey señala tres visitas con esperas superiores a \(6\) horas. ¿Cuál es el paso siguiente estadísticamente sólido?
+
+(A) Eliminar de inmediato los tres registros porque la regla de Tukey demuestra que son errores de medición.
+(B) Reemplazar los tres valores por el valor de la cerca interior superior para que el bigote del diagrama de caja modificado los alcance.
+(C) Recalcular las cercas usando \(3 \cdot \text{RIC}\) y eliminar solo los valores fuera de la cerca exterior.
+(D) Conservar los registros únicamente si al retirarlos la media aritmética permanece igual.
+(E) Investigar los registros clínicos y operativos de esas tres visitas para distinguir errores de captura de eventos genuinos de alta demora antes de decidir cómo reportarlos.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Un conjunto de datos ordenado de \(n = 11\) observaciones tiene \(Q_1 = 20\) y \(Q_3 = 32\). ¿Cuál es el menor valor entero que puede tomar la observación máxima \(x_{(11)}\) para ser señalada como un valor atípico extremo según la regla de cercas exteriores de Tukey?
+
+(A) \(51\)
+(B) \(68\)
+(C) \(69\)
+(D) \(50\)
+(E) \(70\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+En un conjunto de datos de \(n = 100\) observaciones distintas, cada observación estrictamente mayor que \(Q_3\) se incrementa en \(10\) unidades, mientras que todas las observaciones menores o iguales a \(Q_3\) permanecen sin cambio. ¿Cómo cambian \(Q_1\), \(Q_2\), \(Q_3\) y \(\text{RIC}\)?
+
+(A) \(Q_1\), \(Q_2\), \(Q_3\) y \(\text{RIC}\) permanecen todos completamente sin cambio.
+(B) Tanto \(Q_3\) como \(\text{RIC}\) aumentan en \(10\), mientras que \(Q_1\) y \(Q_2\) permanecen sin cambio.
+(C) \(Q_2\) aumenta en \(2.5\), \(Q_3\) aumenta en \(10\) y \(Q_1\) permanece sin cambio.
+(D) Únicamente \(\text{RIC}\) aumenta porque la cola superior se ensancha.
+(E) \(Q_3\) aumenta en \(10\), mientras que \(Q_1\), \(Q_2\) y \(\text{RIC}\) permanecen sin cambio.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+La ojiva de frecuencias relativas acumuladas de un conjunto grande de datos agrupados pasa por los puntos \((20, 0.25)\), \((32, 0.50)\) y \((56, 0.75)\). Usando estas estimaciones cuantílicas de la ojiva, ¿cuáles son aproximadamente el \(\text{RIC}\), la cerca interior superior y la dirección indicada de asimetría?
+
+(A) \(\text{RIC} \approx 36\), \(\text{CIS} \approx 92\), asimétrica a la izquierda
+(B) \(\text{RIC} \approx 36\), \(\text{CIS} \approx 110\), asimétrica a la derecha
+(C) \(\text{RIC} \approx 24\), \(\text{CIS} \approx 92\), asimétrica a la derecha
+(D) \(\text{RIC} \approx 36\), \(\text{CIS} \approx 110\), asimétrica a la izquierda
+(E) \(\text{RIC} \approx 12\), \(\text{CIS} \approx 74\), simétrica
+[/BONUS]

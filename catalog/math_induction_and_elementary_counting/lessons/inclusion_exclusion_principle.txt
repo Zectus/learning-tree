@@ -1,0 +1,204 @@
+=== SECTION 1: Counting overlapping unions — from two and three sets to \(n\) sets ===
+
+The Addition Rule says \(\lvert A_1 \cup A_2 \rvert = \lvert A_1 \rvert + \lvert A_2 \rvert\), provided \(A_1\) and \(A_2\) are DISJOINT. What happens when sets overlap?
+
+Suppose a club of \(50\) students has \(28\) who play chess (\(A_1\)), \(24\) who play go (\(A_2\)), and \(10\) who play both (\(A_1 \cap A_2\)). Adding \(28 + 24 = 52\) counts every student in \(A_1 \cap A_2\) twice—once in \(A_1\) and once in \(A_2\)—so subtracting the overlap once gives the exact union size:
+\[
+\lvert A_1 \cup A_2 \rvert = \lvert A_1 \rvert + \lvert A_2 \rvert - \lvert A_1 \cap A_2 \rvert = 28 + 24 - 10 = 42,
+\]
+leaving \(50 - 42 = 8\) students who play neither game.
+
+Now add a third overlapping set \(A_3\). If you compute
+\[
+\lvert A_1 \rvert + \lvert A_2 \rvert + \lvert A_3 \rvert - \lvert A_1 \cap A_2 \rvert - \lvert A_1 \cap A_3 \rvert - \lvert A_2 \cap A_3 \rvert,
+\]
+how many times is an element in ALL THREE sets \(A_1 \cap A_2 \cap A_3\) counted? It is added \(3\) times in the single-set sum and subtracted \(3\) times in the pairwise intersections, for a net count of \(3 - 3 = 0\)! We over-corrected and completely erased the triple intersection. Adding \(\lvert A_1 \cap A_2 \cap A_3 \rvert\) back restores its count to \(3 - 3 + 1 = 1\):
+\[
+\lvert A_1 \cup A_2 \cup A_3 \rvert = \lvert A_1 \rvert + \lvert A_2 \rvert + \lvert A_3 \rvert - \lvert A_1 \cap A_2 \rvert - \lvert A_1 \cap A_3 \rvert - \lvert A_2 \cap A_3 \rvert + \lvert A_1 \cap A_2 \cap A_3 \rvert.
+\]
+
+This alternating pattern—add single sets, subtract pairwise intersections, add triple intersections, subtract quadruple intersections, and so on—generalizes cleanly to ANY finite number \(n\) of sets. Even better, in many counting problems we have a finite universe \(U\) and \(n\) "bad" (forbidden) properties \(A_1, \dots, A_n \subseteq U\), and we want to count elements of \(U\) that avoid ALL \(n\) properties:
+\[
+\left\lvert \bigcap_{i=1}^n A_i^c \right\rvert = \lvert U \rvert - \left\lvert \bigcup_{i=1}^n A_i \right\rvert,
+\]
+where \(A_i^c = U \setminus A_i\) denotes the complement of \(A_i\) in \(U\). Subtracting the union formula from \(\lvert U \rvert\) flips every sign and puts \(\lvert U \rvert\) at the front as the \(k = 0\) term.
+
+[CALLOUT]
+id: pie-theorem
+label: Theorem
+title: The Principle of Inclusion–Exclusion (PIE)
+tone: key
+
+Let \(A_1, A_2, \dots, A_n\) be finite subsets of a finite universe \(U\). For each \(k = 1, 2, \dots, n\), define
+\[
+S_k = \sum_{1 \le i_1 < i_2 < \cdots < i_k \le n} \lvert A_{i_1} \cap A_{i_2} \cap \cdots \cap A_{i_k} \rvert,
+\]
+the sum of sizes of all \(\binom{n}{k}\) intersections of \(k\) distinct sets, and set \(S_0 = \lvert U \rvert\). Then:
+
+(1) Union form:
+\[
+\left\lvert \bigcup_{i=1}^n A_i \right\rvert = S_1 - S_2 + S_3 - \cdots + (-1)^{n - 1} S_n = \sum_{k=1}^n (-1)^{k - 1} S_k.
+\]
+(2) Complement form (elements in NONE of \(A_1, \dots, A_n\)):
+\[
+\left\lvert \bigcap_{i=1}^n A_i^c \right\rvert = S_0 - S_1 + S_2 - S_3 + \cdots + (-1)^n S_n = \sum_{k=0}^n (-1)^k S_k.
+\]
+[/CALLOUT]
+
+Notice that [REF: pie-theorem.1 | the union form] and [REF: pie-theorem.2 | the complement form] are algebraically equivalent via De Morgan's law \(\bigcap_{i=1}^n A_i^c = U \setminus \bigcup_{i=1}^n A_i\) and the Complement Rule.
+
+[QUESTION 1]
+[ANSWER: A]
+Among \(120\) students, \(65\) study French, \(50\) study German, and \(45\) study Spanish. Suppose \(22\) study both French and German, \(18\) study both French and Spanish, \(15\) study both German and Spanish, and \(8\) study all three languages. How many of the \(120\) students study NONE of these three languages?
+
+(A) \(7\)
+(B) \(15\)
+(C) \(23\)
+(D) \(113\)
+(E) \(0\)
+[/QUESTION]
+
+=== SECTION 2: Why the alternating signs cancel exactly ===
+
+Why does the alternating sum \(\sum_{k=0}^n (-1)^k S_k\) always equal the exact number of elements avoiding all \(n\) sets, with no hidden overcounting or undercounting even for \(n = 10\) overlapping sets? The proof is one of the cleanest uses of the alternating binomial-sum identity \(\sum_{k=0}^m (-1)^k \binom{m}{k} = 0\) (\(m \ge 1\)).
+
+Track the net contribution of a SINGLE arbitrary element \(x \in U\) to the right-hand side \(\sum_{k=0}^n (-1)^k S_k\). Suppose \(x\) belongs to EXACTLY \(m\) of the sets \(A_1, \dots, A_n\), where \(0 \le m \le n\).
+
+- Case 1 (\(m = 0\)): The element \(x\) belongs to NONE of the sets \(A_1, \dots, A_n\). It is counted once in \(S_0 = \lvert U \rvert\) and \(0\) times in every \(S_k\) for \(k \ge 1\). Hence its net contribution to \(\sum_{k=0}^n (-1)^k S_k\) is \(1\)—matching its contribution of \(1\) to the left-hand side \(\lvert \bigcap_{i=1}^n A_i^c \rvert\).
+
+- Case 2 (\(m \ge 1\)): The element \(x\) belongs to at least one of the sets, so it contributes \(0\) to the left-hand side \(\lvert \bigcap_{i=1}^n A_i^c \rvert\). On the right-hand side, \(x\) lies in a \(k\)-fold intersection \(A_{i_1} \cap \cdots \cap A_{i_k}\) if and only if ALL \(k\) indices \(i_1, \dots, i_k\) are chosen from the \(m\) sets that contain \(x\). There are \(\binom{m}{k}\) such intersections for \(0 \le k \le m\), and \(0\) such intersections for \(k > m\). Therefore \(x\)'s net contribution to \(\sum_{k=0}^n (-1)^k S_k\) is
+\[
+\sum_{k=0}^m (-1)^k \binom{m}{k} = (1 - 1)^m = 0,
+\]
+by the Binomial Theorem applied to \((1 - 1)^m\) for \(m \ge 1\)!
+
+Since EVERY element \(x \in U\) contributes \(1\) to both sides when \(m = 0\) and \(0\) to both sides when \(m \ge 1\), summing over all \(x \in U\) proves [REF: pie-theorem.2 | the complement form of PIE], and subtracting from \(\lvert U \rvert\) immediately proves [REF: pie-theorem.1 | the union form].
+
+Notice that PIE can also be proved by ordinary mathematical induction on \(n\): starting from the \(n = 2\) formula \(\lvert B \cup A_{n + 1} \rvert = \lvert B \rvert + \lvert A_{n + 1} \rvert - \lvert B \cap A_{n + 1} \rvert\) with \(B = \bigcup_{i=1}^n A_i\), distribute the intersection across the union as \(B \cap A_{n + 1} = \bigcup_{i=1}^n (A_i \cap A_{n + 1})\) and apply the inductive hypothesis to both \(n\)-set unions. The element-contribution proof above is shorter and exposes the exact binomial cancellation driving the alternating signs.
+
+[QUESTION 2]
+[ANSWER: D]
+In the element-contribution proof of the complement form \(\sum_{k=0}^5 (-1)^k S_k\) for \(n = 5\) properties \(A_1, \dots, A_5\), consider a specific element \(x \in U\) that belongs to \(A_1\), \(A_2\), and \(A_4\), and to neither \(A_3\) nor \(A_5\). What are \(x\)'s contributions to the six signed terms \((-1)^k S_k\) for \(k = 0, 1, 2, 3, 4, 5\) in order?
+
+(A) \((+1, -5, +10, -10, +5, -1)\)
+(B) \((+1, +3, +3, +1, 0, 0)\)
+(C) \((0, -3, +3, -1, 0, 0)\)
+(D) \((+1, -3, +3, -1, 0, 0)\)
+(E) \((+1, -2, +1, 0, 0, 0)\)
+[/QUESTION]
+
+=== SECTION 3: Divisibility counting and Euler's totient function ===
+
+One of the cleanest applications of [REF: pie-theorem | PIE] is counting integers in \(\{1, 2, \dots, N\}\) that avoid divisibility by a given list of primes. The key fact is that for any positive integer \(d\), the number of multiples of \(d\) in \(\{1, 2, \dots, N\}\) is \(\lfloor N / d \rfloor\). Moreover, an integer is divisible by several DISTINCT primes \(p_1, \dots, p_k\) simultaneously if and only if it is divisible by their product \(p_1 \cdots p_k\).
+
+Worked example: How many integers in \(U = \{1, 2, \dots, 60\}\) are relatively prime to \(60\) (that is, share no prime factor with \(60\))?
+
+Factor \(60 = 2^2 \cdot 3 \cdot 5\), so its distinct prime divisors are \(2\), \(3\), and \(5\). Define the three forbidden property sets inside \(U\):
+- \(A_2 = \{x \in U : 2 \mid x\}\), size \(\frac{60}{2} = 30\),
+- \(A_3 = \{x \in U : 3 \mid x\}\), size \(\frac{60}{3} = 20\),
+- \(A_5 = \{x \in U : 5 \mid x\}\), size \(\frac{60}{5} = 12\).
+
+The intersections count multiples of the products \(6\), \(10\), \(15\), and \(30\):
+- \(\lvert A_2 \cap A_3 \rvert = \frac{60}{6} = 10\), \(\lvert A_2 \cap A_5 \rvert = \frac{60}{10} = 6\), \(\lvert A_3 \cap A_5 \rvert = \frac{60}{15} = 4\),
+- \(\lvert A_2 \cap A_3 \cap A_5 \rvert = \frac{60}{30} = 2\).
+
+By [REF: pie-theorem.2 | the complement form of PIE], the count of integers in \(\{1, \dots, 60\}\) divisible by none of \(2, 3, 5\) is
+\[
+60 - (30 + 20 + 12) + (10 + 6 + 4) - 2 = 60 - 62 + 20 - 2 = 16.
+\]
+
+Now factor out \(60\) from that exact PIE expression! Because every product of distinct prime divisors of \(n\) divides \(n\) evenly (no floor rounding is needed), we get
+\[
+60\left(1 - \frac{1}{2} - \frac{1}{3} - \frac{1}{5} + \frac{1}{2 \cdot 3} + \frac{1}{2 \cdot 5} + \frac{1}{3 \cdot 5} - \frac{1}{2 \cdot 3 \cdot 5}\right) = 60\left(1 - \frac{1}{2}\right)\left(1 - \frac{1}{3}\right)\left(1 - \frac{1}{5}\right) = 60 \cdot \frac{1}{2} \cdot \frac{2}{3} \cdot \frac{4}{5} = 16.
+\]
+The exact same factorization holds for ANY positive integer \(n\) with distinct prime divisors \(p_1, p_2, \dots, p_r\).
+
+[CALLOUT]
+id: euler-totient
+label: Application
+title: Euler's totient function \(\varphi(n)\)
+tone: key
+
+For any positive integer \(n\), let \(\varphi(n)\) denote the number of integers in \(\{1, 2, \dots, n\}\) that are relatively prime to \(n\). If \(p_1, p_2, \dots, p_r\) are the distinct prime factors of \(n\), then [REF: pie-theorem.2 | PIE] yields
+\[
+\varphi(n) = n \prod_{i=1}^r \left(1 - \frac{1}{p_i}\right).
+\]
+[/CALLOUT]
+
+Notice a crucial boundary detail: [REF: euler-totient | the product formula] works automatically when the upper bound \(N\) is a multiple of \(p_1 p_2 \cdots p_r\). When \(N\) is NOT a multiple of all those primes—for instance, counting integers in \(\{1, \dots, 100\}\) not divisible by \(2\), \(3\), or \(5\)—you MUST use floor values \(\lfloor N / d \rfloor\) inside PIE rather than multiplying \(N(1 - 1/2)(1 - 1/3)(1 - 1/5)\), which would give a non-integer fraction (\(100 \cdot \frac{4}{15} = 26.\overline{6}\), whereas the exact PIE count is \(100 - (50 + 33 + 20) + (16 + 10 + 6) - 3 = 26\)).
+
+[QUESTION 3]
+[ANSWER: B]
+How many integers in \(\{1, 2, \dots, 210\}\) are divisible by NONE of \(2\), \(3\), or \(7\)?
+
+(A) \(48\)
+(B) \(60\)
+(C) \(65\)
+(D) \(70\)
+(E) \(150\)
+[/QUESTION]
+
+=== SECTION 4: Avoiding forbidden patterns in strings and permutations ===
+
+PIE is equally powerful for counting bitstrings or permutations that avoid several forbidden patterns simultaneously. The workflow has three disciplined steps:
+1. Choose a clean universe \(U\) whose size \(\lvert U \rvert\) you already know.
+2. Define one property set \(A_i\) for each forbidden pattern.
+3. Compute every intersection size \(\lvert A_{i_1} \cap \cdots \cap A_{i_k} \rvert\) carefully—paying close attention to whether two forbidden patterns can overlap or even contradict each other!
+
+Worked example (bitstrings): How many length-\(8\) bitstrings over \(\{0, 1\}\) neither start with \(00\), nor end with \(11\), nor have \(01\) in positions \(4\) and \(5\)?
+
+Here \(\lvert U \rvert = 2^8 = 256\). Define:
+- \(A_1\): starts with \(00\) (fixes positions \(1, 2\)), so \(\lvert A_1 \rvert = 2^6 = 64\).
+- \(A_2\): ends with \(11\) (fixes positions \(7, 8\)), so \(\lvert A_2 \rvert = 2^6 = 64\).
+- \(A_3\): has \(01\) in positions \(4, 5\) (fixes positions \(4, 5\)), so \(\lvert A_3 \rvert = 2^6 = 64\).
+
+Because positions \(\{1, 2\}\), \(\{4, 5\}\), and \(\{7, 8\}\) are completely disjoint, fixing any two patterns leaves \(4\) free bits (\(\lvert A_i \cap A_j \rvert = 2^4 = 16\)), and fixing all three leaves \(2\) free bits (\(\lvert A_1 \cap A_2 \cap A_3 \rvert = 2^2 = 4\)). By [REF: pie-theorem.2 | PIE], the number of valid bitstrings is
+\[
+256 - 3(64) + 3(16) - 4 = 256 - 192 + 48 - 4 = 108.
+\]
+
+When forbidden patterns DO share positions or letters, check intersections one by one rather than assuming symmetry! For instance, in length-\(6\) bitstrings, avoiding starting with \(00\) (\(A_1\)) and having \(1\) in position \(2\) (\(A_2\)) gives \(A_1 \cap A_2 = \emptyset\), because position \(2\) cannot simultaneously be \(0\) and \(1\). Similarly, in permutations of distinct letters, bundling two disjoint blocks like \(AB\) and \(CD\) creates two independent super-elements, whereas bundling two overlapping blocks like \(AB\) and \(BC\) fuses them into the single \(3\)-letter block \(ABC\).
+
+[QUESTION 4]
+[ANSWER: C]
+How many permutations of the \(6\) distinct letters \(A, B, C, D, E, F\) contain NEITHER the contiguous block \(AB\), NOR the contiguous block \(CD\), NOR the contiguous block \(EF\)?
+
+(A) \(294\)
+(B) \(360\)
+(C) \(426\)
+(D) \(432\)
+(E) \(438\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+What is \(\varphi(180)\), the number of integers in \(\{1, 2, \dots, 180\}\) that are relatively prime to \(180\)?
+
+(A) \(36\)
+(B) \(48\)
+(C) \(54\)
+(D) \(60\)
+(E) \(72\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+How many permutations of the \(6\) distinct letters \(A, B, C, D, E, F\) contain NONE of the three contiguous blocks \(AB\), \(BC\), or \(CA\)?
+
+(A) \(360\)
+(B) \(408\)
+(C) \(426\)
+(D) \(432\)
+(E) \(438\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+How many integers in \(\{1, 2, \dots, 100\}\) are divisible by AT LEAST ONE of \(2\), \(3\), or \(5\), yet NOT divisible by \(10\)?
+
+(A) \(26\)
+(B) \(61\)
+(C) \(64\)
+(D) \(71\)
+(E) \(74\)
+[/BONUS]

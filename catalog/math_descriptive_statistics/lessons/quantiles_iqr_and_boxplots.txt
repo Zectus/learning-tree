@@ -1,0 +1,234 @@
+=== SECTION 1: Quantiles, percentiles, and discrete-sample conventions ===
+
+The median splits a sorted dataset into two halves: \(50\%\) of observations sit at or below it, and \(50\%\) sit at or above it. Often we want finer position landmarks—where does the bottom \(25\%\) end, where does the top \(10\%\) begin, and how wide is the middle half of the data? Answering these questions generalizes the median to \(p\)-quantiles and percentiles.
+
+[CALLOUT]
+id: quantile-definition
+label: Definition
+title: \(p\)-quantiles, percentiles, quartiles, and the interquartile range
+tone: key
+
+For a proportion \(p \in (0, 1)\), the \(p\)-quantile \(q_p\) (equivalently, the \((100p)\)-th percentile) is a threshold separating roughly the lowest fraction \(p\) of sorted observations from the highest fraction \(1 - p\).
+
+Three landmark quantiles are the quartiles:
+(1) First quartile \(Q_1 = q_{0.25}\) (\(25\)-th percentile).
+(2) Second quartile \(Q_2 = q_{0.50}\) (\(50\)-th percentile, the sample median).
+(3) Third quartile \(Q_3 = q_{0.75}\) (\(75\)-th percentile).
+
+The five-number summary of a dataset is \((\min, Q_1, Q_2, Q_3, \max)\), and its interquartile range is
+\[
+\text{IQR} = Q_3 - Q_1,
+\]
+measuring the spread of the central \(50\%\) of observations.
+[/CALLOUT]
+
+On a continuous ogive from a grouped frequency table, finding a \(p\)-quantile is an exact inverse read: locate \(p\) on the vertical cumulative-proportion axis, trace horizontally to the ogive curve, and read down to the horizontal data axis. For a finite list of \(n\) sorted numbers \(x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}\), however, discrete gaps between observations mean there is more than one reasonable way to map a proportion \(p\) to an index! Knowing the main conventions prevents confusion when two textbooks or software tools report slightly different quartiles on a small dataset:
+- Nearest-rank method: take the observation at index \(k = \lceil n p \rceil\) (the smallest integer \(\ge n p\)). For \(n = 8\) and \(p = 0.25\), \(k = \lceil 2 \rceil = 2\), giving \(x_{(2)}\).
+- Median-of-halves (Tukey's hinges / exclusive median): find the median \(Q_2\), split the sorted data into a lower half strictly below the median position and an upper half strictly above it (excluding the single middle observation when \(n\) is odd), and take the medians of those two halves as \(Q_1\) and \(Q_3\).
+- Linear interpolation methods: compute a continuous rank \(r\) and interpolate between adjacent order statistics \(x_{(\lfloor r \rfloor)}\) and \(x_{(\lceil r \rceil)}\). Two widely used rank formulas are \(r = (n + 1)p\) (used by many introductory texts) and \(r = 1 + (n - 1)p\) (default in R and Excel).
+
+Compare these rules on \(n = 8\) sorted scores: \(10, 14, 18, 22, 26, 30, 34, 38\) for \(p = 0.25\):
+- Nearest-rank: \(\lceil 8(0.25) \rceil = 2 \implies x_{(2)} = 14\).
+- Median-of-halves: lower half is \(10, 14, 18, 22\), whose median is \((14 + 18)/2 = 16\).
+- Linear interpolation with \(r = (n + 1)p\): \(r = 9(0.25) = 2.25 \implies x_{(2)} + 0.25(x_{(3)} - x_{(2)}) = 14 + 0.25(4) = 15\).
+- Linear interpolation with \(r = 1 + (n - 1)p\): \(r = 1 + 7(0.25) = 2.75 \implies 14 + 0.75(4) = 17\).
+
+All four conventions converge as \(n\) grows large, and for sample sizes of the form \(n = 4m + 3\) (such as \(n = 7, 11, 15\)), nearest-rank, median-of-halves, and \(r = (n + 1)p\) all land on the EXACT same observation! Throughout our calculations, we will use the median-of-halves rule for quartiles and state the interpolation rule explicitly whenever a general \(p\)-quantile is computed.
+
+[QUESTION 1]
+[ANSWER: C]
+Consider the sorted sample of \(n = 10\) measurements:
+\[
+12,\; 15,\; 18,\; 20,\; 24,\; 28,\; 30,\; 35,\; 40,\; 50.
+\]
+Using the linear interpolation formula \(r = (n + 1)p\), what is the \(30\)-th percentile (\(p = 0.30\))?
+
+(A) \(18.0\)
+(B) \(18.4\)
+(C) \(18.6\)
+(D) \(19.0\)
+(E) \(19.4\)
+[/QUESTION]
+
+=== SECTION 2: Tukey's outlier fences and modified boxplots ===
+
+Because \(Q_1\) and \(Q_3\) depend only on the central rank positions rather than extreme magnitudes, [REF: quantile-definition | the interquartile range \(\text{IQR} = Q_3 - Q_1\)] is a resistant measure of spread: changing the single largest observation in a dataset from \(40\) to \(4{,}000\) leaves \(Q_1\), \(Q_3\), and \(\text{IQR}\) completely unchanged. John Tukey built a standard, resistant rule for flagging unusually distant observations directly from \(Q_1\), \(Q_3\), and \(\text{IQR}\).
+
+[CALLOUT]
+id: tukey-fences
+label: Definition
+title: Tukey's inner and outer outlier fences
+tone: key
+
+Given quartiles \(Q_1, Q_3\) and \(\text{IQR} = Q_3 - Q_1\):
+
+(1) Inner fences: \(\text{LIF} = Q_1 - 1.5 \cdot \text{IQR}\) and \(\text{UIF} = Q_3 + 1.5 \cdot \text{IQR}\).
+(2) Outer fences: \(\text{LOF} = Q_1 - 3 \cdot \text{IQR}\) and \(\text{UOF} = Q_3 + 3 \cdot \text{IQR}\).
+(3) Classification: Observations strictly outside the inner fences but within (or on) the outer fences are flagged as mild outliers (or suspected outliers). Observations strictly outside the outer fences are flagged as extreme outliers.
+[/CALLOUT]
+
+Let us apply [REF: tukey-fences | Tukey's fences] to \(n = 15\) sorted delivery times (in minutes):
+\[
+12,\; 14,\; 15,\; 16,\; 17,\; 18,\; 20,\; 21,\; 22,\; 23,\; 25,\; 26,\; 35,\; 45,\; 62.
+\]
+With \(n = 15\), the median is \(Q_2 = x_{(8)} = 21\). The lower \(7\) observations have median \(Q_1 = x_{(4)} = 16\), and the upper \(7\) observations have median \(Q_3 = x_{(12)} = 26\). Thus:
+- Five-number summary: \((12,\; 16,\; 21,\; 26,\; 62)\).
+- \(\text{IQR} = 26 - 16 = 10\) minutes.
+- Inner fences: \(\text{LIF} = 16 - 1.5(10) = 1\), \(\text{UIF} = 26 + 1.5(10) = 41\).
+- Outer fences: \(\text{LOF} = 16 - 3(10) = -14\), \(\text{UOF} = 26 + 3(10) = 56\).
+
+Now inspect every observation against these fences:
+- On the left, the smallest value \(12\) is well above \(\text{LIF} = 1\), so there are no low outliers.
+- On the right, \(45\) lies between \(41\) and \(56\), flagging \(45\) as a mild outlier; \(62\) exceeds \(56\), flagging \(62\) as an extreme outlier.
+
+A boxplot (box-and-whisker plot) turns the five-number summary and these fence diagnostics into a compact visual summary. In a standard (skeleton) boxplot, the box spans from \(Q_1\) to \(Q_3\) with a dividing line at \(Q_2\), and whiskers stretch all the way to \(\min\) and \(\max\). In practice, statisticians prefer a modified boxplot, which separates outliers visually from the main body of data.
+
+[CALLOUT]
+id: modified-boxplot-rule
+label: Common pitfall
+title: Where modified boxplot whiskers stop
+tone: caution
+
+In a modified boxplot, each whisker extends from its quartile ONLY to the most extreme ACTUAL OBSERVATION inside (or on) the inner fence—NEVER to the fence value itself! Flagged outliers beyond the inner fences are plotted individually as marked points (often distinct symbols for mild versus extreme outliers).
+[/CALLOUT]
+
+Watch [REF: modified-boxplot-rule | this rule] in action on our delivery times. The upper inner fence sits at \(41\), yet NO delivery took \(41\) minutes! The largest non-outlier observation inside \([1, 41]\) is \(35\) minutes. Therefore, the upper whisker stops at \(35\)—not at \(41\)—and \(45\) and \(62\) appear as isolated outlier dots to the right, as drawn below.
+
+[GRAPH]
+type: function2d
+title: Modified boxplot of delivery times (\(n = 15\)): whisker stops at \(35\), not at UIF \(= 41\)
+xlabel: Delivery time (min)
+ylabel: Display axis
+xrange: 8, 66
+yrange: 0, 2.2
+trace: 0 | label: baseline | color: #94a3b8
+fill: 1.35, 0.65 | range: 16, 26 | label: IQR box \([Q_1, Q_3]\) | color: #3b82f6 | opacity: 0.28
+segment: 16, 0.65, 26, 0.65 | color: #2563eb
+segment: 16, 1.35, 26, 1.35 | color: #2563eb
+segment: 16, 0.65, 16, 1.35 | color: #2563eb
+segment: 26, 0.65, 26, 1.35 | color: #2563eb
+segment: 21, 0.65, 21, 1.35 | label: \(Q_2 = 21\) | color: #1d4ed8
+segment: 12, 1.0, 16, 1.0 | color: #2563eb
+segment: 12, 0.82, 12, 1.18 | color: #2563eb
+segment: 26, 1.0, 35, 1.0 | color: #2563eb
+segment: 35, 0.82, 35, 1.18 | color: #2563eb
+segment: 41, 0.3, 41, 1.75 | label: UIF | dashed: true | color: #f59e0b
+segment: 56, 0.3, 56, 1.75 | label: UOF | dashed: true | color: #ef4444
+point: 35, 1.0 | label: \(35\)
+point: 45, 1.0 | label: \(45\) | color: #f59e0b
+point: 62, 1.0 | label: \(62\) | color: #ef4444
+[/GRAPH]
+
+One crucial warning about flagged outliers: Tukey's \(1.5 \cdot \text{IQR}\) rule is an alarm bell, NOT an automatic deletion command. If investigation shows that \(62\) minutes was a data-entry typo (say \(26\) typed backwards), correct or document its removal. If \(62\) minutes was a real delivery delayed by a bridge closure, deleting it hides genuine operational risk! Always investigate the domain cause of a flagged point, and when in doubt report analyses both with and without the extreme observation.
+
+[QUESTION 2]
+[ANSWER: B]
+A dataset of \(n = 30\) lab completion times has quartiles \(Q_1 = 40\), \(Q_2 = 52\), and \(Q_3 = 60\). The smallest observation is \(25\), and the four largest observations are \(74, 82, 95,\) and \(130\). On a modified boxplot of these data, where does the upper whisker end, and how are \(95\) and \(130\) classified?
+
+(A) Upper whisker ends at \(90\); \(95\) is a mild outlier and \(130\) is an extreme outlier.
+(B) Upper whisker ends at \(82\); \(95\) is a mild outlier and \(130\) is an extreme outlier.
+(C) Upper whisker ends at \(74\); \(82\) and \(95\) are mild outliers and \(130\) is an extreme outlier.
+(D) Upper whisker ends at \(82\); both \(95\) and \(130\) are mild outliers.
+(E) Upper whisker ends at \(95\); only \(130\) is an extreme outlier.
+[/QUESTION]
+
+=== SECTION 3: Comparing groups with side-by-side boxplots and knowing what boxplots hide ===
+
+A histogram excels at showing the fine shape of ONE distribution, but overlaying four or five histograms on the same axes quickly turns into an unreadable tangle. Because a boxplot compresses each group into a single slim strip, placing boxplots side by side on a shared numeric scale makes comparing multiple groups effortless along four dimensions:
+1. Center: compare the median lines \(Q_2\) across groups.
+2. Spread: compare the box widths (\(\text{IQR}\)) for typical variability and the overall whisker-to-whisker span for total variability.
+3. Asymmetry: inside the box, if \(Q_3 - Q_2 > Q_2 - Q_1\) and the upper whisker is longer than the lower whisker (with high outliers), the distribution is right-skewed; the mirror image signals left-skewness.
+4. Outliers: spot which groups exhibit isolated extreme values.
+
+[TABLE]
+Group (quiz scores) | Min | \(Q_1\) | \(Q_2\) | \(Q_3\) | Max | \(\text{IQR}\) | Visual diagnostic
+Morning section | 54 | 68 | 74 | 82 | 94 | 14 | Roughly symmetric, moderate spread
+Afternoon section | 42 | 64 | 68 | 84 | 98 | 20 | Right-skewed box (\(84-68 > 68-64\)), wider IQR
+Evening section | 66 | 76 | 80 | 84 | 90 | 8 | Highest median, tightest consistent scores
+[/TABLE]
+
+Yet this compression comes with a fundamental blind spot. A boxplot retains ONLY five numbers (plus outlier coordinates), discarding everything that happens INSIDE each \(25\%\) quarter. Consequently, two radically different distributions—one smooth symmetric bell curve and one sharply bimodal distribution with a wide empty valley right around the median—can share the EXACT same five-number summary and produce IDENTICAL boxplots!
+
+Look at the graph below. Both curves span roughly \([0, 10]\), share the exact same median \(Q_2 = 5\), and have nearly identical quartiles \(Q_1 \approx 3.1\) and \(Q_3 \approx 6.9\). A boxplot would declare these two distributions virtually indistinguishable, completely concealing the huge bimodal split in the orange curve.
+
+[GRAPH]
+type: function2d
+title: A unimodal curve and a bimodal curve sharing the same center and quartiles
+xlabel: \(x\)
+ylabel: Density
+xrange: 0, 10
+yrange: 0, 0.35
+trace: 0.16 * exp(-0.5 * ((x - 5) / 2.5)^2) | label: Unimodal symmetric | color: #3b82f6
+trace: 0.25 * exp(-0.5 * ((x - 2.9) / 0.75)^2) + 0.25 * exp(-0.5 * ((x - 7.1) / 0.75)^2) | label: Bimodal with central valley | color: #f59e0b
+segment: 3.1, 0, 3.1, 0.30 | label: \(Q_1\) | dashed: true
+segment: 5.0, 0, 5.0, 0.30 | label: \(Q_2\) | dashed: true
+segment: 6.9, 0, 6.9, 0.30 | label: \(Q_3\) | dashed: true
+[/GRAPH]
+
+For this reason, treat boxplots and histograms (or dotplots) as complementary tools: use side-by-side boxplots to compare centers, spreads, and outliers across many groups quickly, and pair them with histograms or dotplots whenever modality, clusters, or internal gaps could matter.
+
+[QUESTION 3]
+[ANSWER: A]
+Comparing two groups on side-by-side modified boxplots, Group 1 has five-number summary \((10, 24, 30, 36, 90)\) with one high outlier at \(90\) and upper whisker ending at \(48\), while Group 2 has five-number summary \((15, 20, 34, 48, 55)\) with no outliers. Which comparison is accurate?
+
+(A) Group 1 has a smaller \(\text{IQR}\) (\(12\) versus \(28\)) despite having a larger overall range (\(80\) versus \(40\)), and Group 2 has the higher median.
+(B) Group 1 has both the larger \(\text{IQR}\) and the larger overall range because of its outlier at \(90\).
+(C) Group 2 is strongly right-skewed because its median \(34\) is larger than Group 1's median \(30\).
+(D) Group 1 has a higher typical center than Group 2 because its maximum \(90\) pulls the center upward.
+(E) More than \(50\%\) of Group 1 observations exceed Group 2's median of \(34\).
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Two datasets of \(n = 200\) test scores produce identical modified boxplots with \(Q_1 = 60\), \(Q_2 = 75\), \(Q_3 = 90\), and whiskers from \(45\) to \(100\). Which structural feature could still differ dramatically between the two datasets?
+
+(A) Their interquartile ranges.
+(B) Their sample medians.
+(C) The fraction of observations between \(60\) and \(90\).
+(D) Whether the scores form a single bell-shaped mound centered at \(75\) or two separate clusters around \(60\) and \(90\) with an empty gap at \(75\).
+(E) Whether any score exceeds Tukey's upper inner fence of \(135\).
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+While analyzing hospital emergency-room waiting times, Tukey's \(1.5 \cdot \text{IQR}\) rule flags three visits with waits over \(6\) hours. What is the statistically sound next step?
+
+(A) Delete all three records immediately because Tukey's rule proves they are measurement errors.
+(B) Replace all three values with the upper inner fence value so the modified boxplot whisker reaches them.
+(C) Recompute the fences using \(3 \cdot \text{IQR}\) and delete only values outside the outer fence.
+(D) Keep the records only if removing them leaves the arithmetic mean unchanged.
+(E) Investigate the clinical/operational records for those three visits to distinguish data-entry errors from genuine high-delay events before deciding how to report them.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+A sorted dataset of \(n = 11\) observations has \(Q_1 = 20\) and \(Q_3 = 32\). What is the smallest integer value that the maximum observation \(x_{(11)}\) can take in order to be flagged as an extreme outlier under Tukey's outer fence rule?
+
+(A) \(51\)
+(B) \(68\)
+(C) \(69\)
+(D) \(50\)
+(E) \(70\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+In a dataset of \(n = 100\) distinct observations, every observation strictly greater than \(Q_3\) is increased by \(10\) units, while all observations less than or equal to \(Q_3\) stay unchanged. How do \(Q_1\), \(Q_2\), \(Q_3\), and \(\text{IQR}\) change?
+
+(A) \(Q_1\), \(Q_2\), \(Q_3\), and \(\text{IQR}\) all remain completely unchanged.
+(B) \(Q_3\) and \(\text{IQR}\) both increase by \(10\), while \(Q_1\) and \(Q_2\) remain unchanged.
+(C) \(Q_2\) increases by \(2.5\), \(Q_3\) increases by \(10\), and \(Q_1\) remains unchanged.
+(D) Only \(\text{IQR}\) increases because the upper tail becomes wider.
+(E) \(Q_3\) increases by \(10\), while \(Q_1\), \(Q_2\), and \(\text{IQR}\) remain unchanged.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+The cumulative relative frequency ogive for a large grouped dataset passes through the points \((20, 0.25)\), \((32, 0.50)\), and \((56, 0.75)\). Using these ogive quantile estimates, what are the approximate \(\text{IQR}\), the upper inner fence, and the indicated direction of skewness?
+
+(A) \(\text{IQR} \approx 36\), \(\text{UIF} \approx 92\), left-skewed
+(B) \(\text{IQR} \approx 36\), \(\text{UIF} \approx 110\), right-skewed
+(C) \(\text{IQR} \approx 24\), \(\text{UIF} \approx 92\), right-skewed
+(D) \(\text{IQR} \approx 36\), \(\text{UIF} \approx 110\), left-skewed
+(E) \(\text{IQR} \approx 12\), \(\text{UIF} \approx 74\), symmetric
+[/BONUS]

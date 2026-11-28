@@ -1,0 +1,253 @@
+=== SECTION 1: Partial orders and strict partial orders ===
+
+Equivalence relations capture the idea of "sameness." A second fundamental class of relations captures the idea of "preceding" or "being at most": \(x \le y\) on the real line, \(a \mid b\) on positive integers, \(S \subseteq T\) on subsets of a set, or task \(A\) being a prerequisite for task \(B\). Notice what changes when we move from sameness to ordering: symmetry disappears, and in its place stands antisymmetry—two elements cannot each precede the other unless they are equal.
+
+[CALLOUT]
+id: poset-def
+label: Definition
+title: Partial order and partially ordered set (poset)
+tone: key
+
+A binary relation \(\preceq\) on a set \(P\) is a partial order on \(P\) if it satisfies three properties for all \(x, y, z \in P\):
+
+(1) Reflexivity: \(x \preceq x\).
+(2) Antisymmetry: if \(x \preceq y\) and \(y \preceq x\), then \(x = y\).
+(3) Transitivity: if \(x \preceq y\) and \(y \preceq z\), then \(x \preceq z\).
+
+A set equipped with a partial order, written \((P, \preceq)\), is called a partially ordered set, or poset.
+[/CALLOUT]
+
+Why is it called a PARTIAL order? Because we do NOT require every pair of elements \(x, y \in P\) to be comparable! We say \(x\) and \(y\) are comparable if \(x \preceq y\) or \(y \preceq x\); otherwise they are incomparable.
+
+Let us inspect three canonical posets across mathematics:
+1. Standard numerical ordering \((\mathbb{R}, \le)\): reflexive (\(x \le x\)), antisymmetric (\(x \le y \land y \le x \implies x = y\)), and transitive (\(x \le y \land y \le z \implies x \le z\)). Here every pair of real numbers is comparable.
+2. Divisibility on positive integers \((\mathbb{Z}^+, \mid)\): as verified in the lesson on binary relations, \(a \mid b\) is reflexive, antisymmetric on \(\mathbb{Z}^+\), and transitive. Here \(2\) and \(3\) are incomparable because \(2 \nmid 3\) and \(3 \nmid 2\). (Remember: on all of \(\mathbb{Z}\), divisibility is NOT a partial order because \(2 \mid -2\) and \(-2 \mid 2\) while \(2 \ne -2\).)
+3. Subset inclusion \((\mathcal{P}(X), \subseteq)\): for any set \(X\), inclusion on \(\mathcal{P}(X)\) is reflexive (\(A \subseteq A\)), antisymmetric (\(A \subseteq B \land B \subseteq A \implies A = B\) by extensionality), and transitive (\(A \subseteq B \land B \subseteq C \implies A \subseteq C\)). Whenever \(X\) has at least two elements \(a \ne b\), the singletons \(\{a\}\) and \(\{b\}\) are incomparable.
+
+Every non-strict order \(\preceq\) (like \(\le\) or \(\subseteq\)) has a strict twin \(\prec\) (like \(<\) or \(\subsetneq\)). Rather than treating strict orders as a separate universe, we formalize them and prove a clean one-to-one correspondence between the two.
+
+[CALLOUT]
+id: strict-order-def
+label: Definition
+title: Strict partial order
+tone: key
+
+A binary relation \(\prec\) on a set \(P\) is a strict partial order on \(P\) if it satisfies two properties for all \(x, y, z \in P\):
+
+(1) Irreflexivity: \(x \not\prec x\).
+(2) Transitivity: if \(x \prec y\) and \(y \prec z\), then \(x \prec z\).
+[/CALLOUT]
+
+Notice that every strict partial order is automatically asymmetric (meaning \(x \prec y \implies y \not\prec x\)): if both \(x \prec y\) and \(y \prec x\) held, transitivity would force \(x \prec x\), contradicting [REF: strict-order-def.1 | irreflexivity].
+
+Now let us check the canonical correspondence between partial orders \(\preceq\) and strict partial orders \(\prec\) on \(P\):
+- Given a partial order \(\preceq\), define \(\prec\) by
+\[
+x \prec y \iff (x \preceq y \land x \ne y).
+\]
+Then \(\prec\) is irreflexive (since \(x \ne x\) is false) and transitive: if \(x \prec y\) and \(y \prec z\), then \(x \preceq y\) and \(y \preceq z\) give \(x \preceq z\) by transitivity of \(\preceq\). Could \(x = z\)? If \(x = z\), then \(x \preceq y\) and \(y \preceq x\) would force \(x = y\) by [REF: poset-def.2 | antisymmetry], contradicting \(x \ne y\). Thus \(x \ne z\), so \(x \prec z\).
+- Conversely, given a strict partial order \(\prec\), define \(\preceq\) by
+\[
+x \preceq y \iff (x \prec y \lor x = y).
+\]
+Then \(\preceq\) is immediately reflexive (since \(x = x\)), antisymmetric (if \(x \preceq y\) and \(y \preceq x\) with \(x \ne y\), then \(x \prec y\) and \(y \prec x\), contradicting asymmetry of \(\prec\)), and transitive (check the four cases of \(x \prec y\) or \(x = y\) combined with \(y \prec z\) or \(y = z\)).
+- Moreover, these two recipes undo each other: removing the diagonal \(\Delta_P\) from \(\preceq\) gives \(\prec\), and putting \(\Delta_P\) back onto \(\prec\) recovers \(\preceq\).
+
+[QUESTION 1]
+[ANSWER: C]
+Which of the following pairs \((P, R)\) is a partially ordered set?
+
+(A) \((\mathbb{Z}, \mid)\), where \(a \mid b\) is divisibility on all integers
+(B) \((\mathbb{R}^2, R)\), where \((x_1, y_1) \mathrel{R} (x_2, y_2) \iff x_1 + y_1 \le x_2 + y_2\)
+(C) \((\mathbb{N}, R)\), where \(m \mathrel{R} n \iff (m \le n \text{ and } m \equiv n \pmod 2)\)
+(D) \((\mathcal{P}(\{1, 2, 3\}), R)\), where \(A \mathrel{R} B \iff |A| \le |B|\)
+(E) \((\mathbb{R}, <)\), with strict inequality
+[/QUESTION]
+
+=== SECTION 2: Total orders, chains, and antichains ===
+
+Among posets, the ones that line up into a single file with no incomparable elements deserve a special name.
+
+[CALLOUT]
+id: total-chain-antichain
+label: Definition
+title: Total order, chain, and antichain
+tone: key
+
+Let \((P, \preceq)\) be a partially ordered set.
+
+(1) Total (or linear) order: \(\preceq\) is a total order on \(P\) if every pair of elements is comparable, i.e., for all \(x, y \in P\), either \(x \preceq y\) or \(y \preceq x\).
+(2) Chain: a subset \(C \subseteq P\) is a chain in \(P\) if the restriction of \(\preceq\) to \(C\) is a total order (every two elements of \(C\) are comparable).
+(3) Antichain: a subset \(A \subseteq P\) is an antichain in \(P\) if no two distinct elements of \(A\) are comparable (for all \(x, y \in A\), if \(x \preceq y\), then \(x = y\)).
+[/CALLOUT]
+
+Let us examine chains and antichains inside two concrete posets:
+- In \((\mathcal{P}(\{1, 2, 3\}), \subseteq)\):
+  - The subset \(C = \{\emptyset, \{2\}, \{1, 2\}, \{1, 2, 3\}\}\) is a chain of size \(4\), because \(\emptyset \subseteq \{2\} \subseteq \{1, 2\} \subseteq \{1, 2, 3\}\).
+  - The subset \(A = \{\{1\}, \{2\}, \{3\}\}\) is an antichain of size \(3\): none of these three singletons is a subset of another. Similarly, \(\{\{1, 2\}, \{1, 3\}, \{2, 3\}\}\) is an antichain of size \(3\).
+- In \((\mathbb{Z}^+, \mid)\):
+  - The powers of \(2\), \(C = \{1, 2, 4, 8, 16, \dots\}\), form an infinite chain.
+  - The set of all prime numbers \(A = \{2, 3, 5, 7, 11, \dots\}\) forms an infinite antichain, because no prime divides a different prime!
+
+Watch out for one easy edge case: any empty subset \(\emptyset\) and any one-element subset \(\{x\}\) of \(P\) is simultaneously BOTH a chain AND an antichain! Why? Because there are no pairs of DISTINCT elements in \(\emptyset\) or \(\{x\}\), so both definitions hold vacuously.
+
+[QUESTION 2]
+[ANSWER: B]
+Consider the poset \((D_{30}, \mid)\) consisting of all positive divisors of \(30\):
+\[
+D_{30} = \{1, 2, 3, 5, 6, 10, 15, 30\}
+\]
+ordered by divisibility. Which of the following subsets of \(D_{30}\) is an ANTICHAIN?
+
+(A) \(\{1, 2, 6, 30\}\)
+(B) \(\{2, 3, 5\}\)
+(C) \(\{2, 5, 10\}\)
+(D) \(\{3, 6, 15\}\)
+(E) \(\{1, 5, 15\}\)
+[/QUESTION]
+
+=== SECTION 3: Product orders and lexicographic orders ===
+
+Suppose we already have two posets \((P, \preceq_P)\) and \((Q, \preceq_Q)\). How can we put a partial order on their Cartesian product \(P \times Q\)? Two canonical constructions behave very differently—especially regarding comparability!
+
+[CALLOUT]
+id: product-and-lex
+label: Definition
+title: Product order and lexicographic order on \(P \times Q\)
+tone: key
+
+Let \((P, \preceq_P)\) and \((Q, \preceq_Q)\) be partially ordered sets.
+
+(1) Product (coordinatewise) order \(\preceq_{\text{prod}}\):
+\[
+(p_1, q_1) \preceq_{\text{prod}} (p_2, q_2) \iff \bigl(p_1 \preceq_P p_2 \land q_1 \preceq_Q q_2\bigr).
+\]
+(2) Lexicographic (dictionary) order \(\preceq_{\text{lex}}\):
+\[
+(p_1, q_1) \preceq_{\text{lex}} (p_2, q_2) \iff \bigl(p_1 \prec_P p_2\bigr) \lor \bigl(p_1 = p_2 \land q_1 \preceq_Q q_2\bigr).
+\]
+[/CALLOUT]
+
+Let us verify that BOTH are genuine partial orders, and then compare their behavior on \((\mathbb{R}, \le) \times (\mathbb{R}, \le)\):
+- For [REF: product-and-lex.1 | the product order]: reflexivity, antisymmetry, and transitivity all hold directly coordinate by coordinate.
+- For [REF: product-and-lex.2 | the lexicographic order]:
+  - Reflexive: \((p, q) \preceq_{\text{lex}} (p, q)\) holds via the second clause \(p = p \land q \preceq_Q q\).
+  - Antisymmetric: suppose \((p_1, q_1) \preceq_{\text{lex}} (p_2, q_2)\) and \((p_2, q_2) \preceq_{\text{lex}} (p_1, q_1)\). Notice that we CANNOT have \(p_1 \prec_P p_2\) (since the second inequality gives \(p_2 \preceq_P p_1\), contradicting asymmetry of \(\prec_P\)) nor \(p_2 \prec_P p_1\). Hence \(p_1 = p_2\), which reduces both inequalities to \(q_1 \preceq_Q q_2\) and \(q_2 \preceq_Q q_1\), forcing \(q_1 = q_2\) by antisymmetry of \(\preceq_Q\).
+  - Transitive: suppose \((p_1, q_1) \preceq_{\text{lex}} (p_2, q_2)\) and \((p_2, q_2) \preceq_{\text{lex}} (p_3, q_3)\). Then \(p_1 \preceq_P p_2 \preceq_P p_3\), so \(p_1 \preceq_P p_3\). If \(p_1 \prec_P p_3\), we are done immediately! Otherwise \(p_1 = p_3\); since \(p_1 \preceq_P p_2 \preceq_P p_1\), antisymmetry forces \(p_1 = p_2 = p_3\). That puts both original inequalities in the tie-breaker clause: \(q_1 \preceq_Q q_2\) and \(q_2 \preceq_Q q_3\), so \(q_1 \preceq_Q q_3\) by transitivity of \(\preceq_Q\).
+
+Now see the dramatic contrast between the two orders when \(P = Q = \mathbb{R}\) with the standard total order \(\le\)!
+- Under the PRODUCT order on \(\mathbb{R} \times \mathbb{R}\): \((1, 5)\) and \((2, 0)\) are INCOMPARABLE, because \(1 < 2\) in the first coordinate while \(5 > 0\) in the second! So even when BOTH \((P, \preceq_P)\) and \((Q, \preceq_Q)\) are total orders (with at least two elements each), the product order is NEVER a total order.
+- Under the LEXICOGRAPHIC order on \(\mathbb{R} \times \mathbb{R}\): \((1, 5) \prec_{\text{lex}} (2, 0)\), because \(1 < 2\) already settles the comparison in the first coordinate—just like "az" comes before "ba" in a dictionary! In general, if \((P, \preceq_P)\) and \((Q, \preceq_Q)\) are BOTH total orders, then the lexicographic order on \(P \times Q\) IS a total order: for any \((p_1, q_1)\) and \((p_2, q_2)\), totality of \(P\) gives \(p_1 \prec_P p_2\), \(p_2 \prec_P p_1\), or \(p_1 = p_2\), and in the tie case \(p_1 = p_2\), totality of \(Q\) compares \(q_1\) and \(q_2\).
+
+Notice also that \((p_1, q_1) \preceq_{\text{prod}} (p_2, q_2)\) ALWAYS implies \((p_1, q_1) \preceq_{\text{lex}} (p_2, q_2)\) (if \(p_1 \preceq_P p_2\) and \(q_1 \preceq_Q q_2\), then either \(p_1 \prec_P p_2\), or \(p_1 = p_2\) and \(q_1 \preceq_Q q_2\)), so \({\preceq_{\text{prod}}} \subseteq {\preceq_{\text{lex}}}\).
+
+[QUESTION 3]
+[ANSWER: D]
+Let \(P = \{1, 2, 3\}\) and \(Q = \{1, 2, 3\}\), both equipped with the usual order \(\le\). Consider the four pairs \(u = (1, 3)\), \(v = (2, 1)\), \(w = (2, 2)\), and \(z = (3, 1)\) in \(P \times Q\). Which statement is TRUE?
+
+(A) \(u \preceq_{\text{prod}} v\) and \(u \preceq_{\text{lex}} v\)
+(B) \(u\) and \(w\) are comparable under \(\preceq_{\text{prod}}\), while \(v\) and \(z\) are incomparable under \(\preceq_{\text{prod}}\)
+(C) \(v \prec_{\text{lex}} u \prec_{\text{lex}} w \prec_{\text{lex}} z\)
+(D) \(u\) and \(z\) are incomparable under \(\preceq_{\text{prod}}\), while \(u \prec_{\text{lex}} v \prec_{\text{lex}} w \prec_{\text{lex}} z\)
+(E) \(\{u, v, w, z\}\) is a chain under \(\preceq_{\text{prod}}\)
+[/QUESTION]
+
+=== SECTION 4: Cover relations and Hasse diagrams ===
+
+If you draw the full directed graph of a finite poset—say, the \(6\) divisors of \(12\) ordered by divisibility—the picture quickly becomes a tangle of clutter: \(6\) self-loops (from reflexivity) plus diagonal shortcut arrows like \(1 \to 4\), \(1 \to 6\), \(1 \to 12\), \(2 \to 12\), and \(3 \to 12\) (all forced by transitivity). Since EVERY poset is reflexive and transitive, those loops and transitive shortcuts carry zero new information! Stripping them away leaves only the immediate "one-step-up" links, called the cover relation.
+
+[CALLOUT]
+id: cover-hasse-def
+label: Definition
+title: Cover relation and Hasse diagram
+tone: key
+
+Let \((P, \preceq)\) be a poset and let \(x, y \in P\).
+
+(1) We say \(y\) covers \(x\) (written \(x \lessdot y\)) if \(x \prec y\) and there is NO element \(z \in P\) strictly between them (that is, no \(z \in P\) satisfies \(x \prec z \prec y\)).
+(2) The Hasse diagram of a finite poset \((P, \preceq)\) is a drawing of the elements of \(P\) as vertices in the plane such that:
+- whenever \(x \lessdot y\), vertex \(y\) is placed strictly higher than vertex \(x\) and an undirected line segment connects \(x\) and \(y\);
+- no self-loops are drawn, and no edge is drawn between \(x\) and \(y\) unless \(y\) covers \(x\).
+[/CALLOUT]
+
+Look at how clean the cover relation makes \((D_{12}, \mid)\), where \(D_{12} = \{1, 2, 3, 4, 6, 12\}\):
+- Does \(4\) cover \(1\)? NO, because \(1 \mid 2 \mid 4\) puts \(2\) strictly between \(1\) and \(4\).
+- Does \(2\) cover \(1\)? YES: no divisor of \(12\) lies strictly between \(1\) and \(2\).
+- Checking all pairs, the cover relations are exactly: \(1 \lessdot 2\), \(1 \lessdot 3\), \(2 \lessdot 4\), \(2 \lessdot 6\), \(3 \lessdot 6\), \(4 \lessdot 12\), and \(6 \lessdot 12\).
+
+Below is the Hasse diagram of \((D_{12}, \mid)\). Notice that EVERY edge slopes upward, and there are only \(7\) edges instead of the \(18\) ordered pairs in the full divisibility relation!
+
+[GRAPH]
+type: parametric2d
+title: Hasse diagram of \((D_{12}, \mid)\)
+xlabel: width
+ylabel: level
+trange: 0, 1
+xrange: -2.2, 2.2
+yrange: -0.4, 3.5
+trace: -t, t | color: #2563eb
+trace: t, t | color: #2563eb
+trace: -1 - t, 1 + t | color: #2563eb
+trace: -1 + t, 1 + t | color: #2563eb
+trace: 1 - t, 1 + t | color: #2563eb
+trace: -2 + t, 2 + t | color: #2563eb
+trace: -t, 2 + t | color: #2563eb
+point: 0, 0 | label: \(1\) | offset: 0, -14
+point: -1, 1 | label: \(2\) | offset: -14, 0
+point: 1, 1 | label: \(3\) | offset: 14, 0
+point: -2, 2 | label: \(4\) | offset: -14, 0
+point: 0, 2 | label: \(6\) | offset: 14, 0
+point: -1, 3 | label: \(12\) | offset: 0, 14
+[/GRAPH]
+
+How do you read the FULL partial order \(\preceq\) back out of a Hasse diagram on a finite poset?
+- \(x \preceq y\) holds if and only if EITHER \(x = y\) OR there is a path of one or more edges going STRICTLY UPWARD from \(x\) to \(y\)!
+For instance, in the Hasse diagram of \((D_{12}, \mid)\) above:
+- Is \(1 \mid 12\)? YES, via the upward path \(1 \to 2 \to 4 \to 12\) (or \(1 \to 3 \to 6 \to 12\)).
+- Is \(3 \mid 4\)? NO! Even though \(4\) sits higher on the page than \(3\), there is NO strictly upward path from \(3\) to \(4\) (you would have to go down from \(3\) to \(1\) or from \(6\) to \(2\)). Vertical height alone never implies comparability; only an UPWARD PATH does!
+
+Why does this recovery theorem ("\(x \prec y \iff\) there is a finite upward chain of covers from \(x\) to \(y\)") always work for FINITE posets, yet can fail for INFINITE posets? On a finite poset, if \(x \prec y\) and \(y\) does not cover \(x\), insert an intermediate element \(z\) with \(x \prec z \prec y\) and repeat; because \(P\) is finite, this refinement must terminate in a finite chain of covers \(x = c_0 \lessdot c_1 \lessdot \dots \lessdot c_k = y\). On an infinite dense poset like \((\mathbb{Q}, \le)\) or \((\mathbb{R}, \le)\), between any \(x < y\) lies their midpoint \((x + y)/2\), so NO element covers any other element at all—the cover relation is completely empty! That is why Hasse diagrams are a tool specifically for finite (or locally finite, like \(\mathbb{Z}\)) posets.
+
+[QUESTION 4]
+[ANSWER: A]
+In the Hasse diagram of a finite poset \((P, \preceq)\), which of the following statements is ALWAYS true?
+
+(A) \(x \prec y\) holds if and only if there is a path of one or more edges moving strictly upward from \(x\) to \(y\).
+(B) \(x \prec y\) holds if and only if \(y\) is drawn at a strictly greater vertical height than \(x\).
+(C) If \(x \prec y\), then there must be a single edge directly connecting \(x\) and \(y\).
+(D) If there is an upward path from \(x\) to \(y\) and an upward path from \(y\) to \(x\) (with \(x \ne y\)), then \(x\) and \(y\) are incomparable.
+(E) A Hasse diagram can represent any reflexive and transitive relation, even one that is not antisymmetric.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+How many edges are in the Hasse diagram of the power-set poset \((\mathcal{P}(\{1, 2, 3\}), \subseteq)\)?
+
+(A) \(6\)
+(B) \(8\)
+(C) \(9\)
+(D) \(10\)
+(E) \(12\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Consider the poset \((\mathbb{Z}, \preceq)\) where \(m \preceq n\) if and only if either \(m = n\) or \(m + 2 \le n\) (Wait—check transitivity: if \(m + 2 \le n\) and \(n + 2 \le p\), then \(m + 4 \le p \implies m + 2 \le p\)!). Which elements cover \(0\) in \((\mathbb{Z}, \preceq)\)?
+
+(A) Only \(2\)
+(B) Only \(1\) and \(2\)
+(C) \(2\) and \(3\)
+(D) \(2, 3,\) and \(4\)
+(E) No element covers \(0\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Let \((P, \preceq)\) be a poset and let \(C\) be a chain in \(P\) and \(A\) be an antichain in \(P\). What is the maximum possible number of elements in \(C \cap A\)?
+
+(A) \(0\)
+(B) \(1\)
+(C) \(2\)
+(D) It depends on the size of \(P\) and can be arbitrarily large
+(E) \(\min(|C|, |A|)\)
+[/BONUS]

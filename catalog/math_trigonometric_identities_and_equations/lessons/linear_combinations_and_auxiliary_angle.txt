@@ -1,0 +1,238 @@
+=== SECTION 1: Collapsing \(a\sin x + b\cos x\) into a single sinusoid ===
+
+Consider the wave
+\[
+y = \sqrt{3}\sin x + \cos x.
+\]
+It is a sum of two waves that have the EXACT SAME frequency (both have period \(2\pi\)), one sine and one cosine. What is its maximum value? A quick guess might add the two individual maximums \(\sqrt{3} + 1 \approx 2.732\), yet \(\sin x\) reaches \(1\) at \(x = \frac{\pi}{2}\) (where \(\cos x = 0\)) while \(\cos x\) reaches \(1\) at \(x = 0\) (where \(\sin x = 0\))—they never peak at the same time! In fact, the sum of ANY same-frequency sine and cosine is not some exotic curve at all: it is a single pure shifted sine wave \(R\sin(x + \varphi)\) (and for \(\sqrt{3}\sin x + \cos x\), its true peak is exactly \(2\)).
+
+How do we find the amplitude \(R > 0\) and phase angle \(\varphi\) for ANY \(a\sin x + b\cos x\) (where \(a\) and \(b\) are real numbers, not both \(0\))? Compare \(a\sin x + b\cos x\) against the sine sum identity:
+\[
+R\sin(x + \varphi) = R(\sin x \cos\varphi + \cos x \sin\varphi) = (R\cos\varphi)\sin x + (R\sin\varphi)\cos x.
+\]
+Matching coefficients of \(\sin x\) and \(\cos x\) requires
+\[
+R\cos\varphi = a \qquad \text{and} \qquad R\sin\varphi = b.
+\]
+Can we ALWAYS find \(R > 0\) and \(\varphi \in [0, 2\pi)\) satisfying both equations? Square and add them:
+\[
+R^2\cos^2\varphi + R^2\sin^2\varphi = a^2 + b^2 \implies R^2(\cos^2\varphi + \sin^2\varphi) = a^2 + b^2 \implies R = \sqrt{a^2 + b^2}.
+\]
+Because \(a\) and \(b\) are not both \(0\), \(R > 0\). Now factor \(R\) out of \(a\sin x + b\cos x\):
+\[
+a\sin x + b\cos x = R\left(\frac{a}{R}\sin x + \frac{b}{R}\cos x\right).
+\]
+Check the point \(\left(\frac{a}{R}, \frac{b}{R}\right)\):
+\[
+\left(\frac{a}{R}\right)^2 + \left(\frac{b}{R}\right)^2 = \frac{a^2 + b^2}{R^2} = \frac{a^2 + b^2}{a^2 + b^2} = 1!
+\]
+That single calculation guarantees that \(\left(\frac{a}{R}, \frac{b}{R}\right)\) lies right on the UNIT CIRCLE! Therefore there exists a UNIQUE angle \(\varphi \in [0, 2\pi)\) (called the auxiliary angle) such that
+\[
+\cos\varphi = \frac{a}{R} \qquad \text{and} \qquad \sin\varphi = \frac{b}{R}.
+\]
+Substituting \(\frac{a}{R} = \cos\varphi\) and \(\frac{b}{R} = \sin\varphi\) collapses the expression in one line:
+\[
+a\sin x + b\cos x = R(\sin x \cos\varphi + \cos x \sin\varphi) = R\sin(x + \varphi).
+\]
+
+[CALLOUT]
+id: auxiliary-angle
+label: Theorem
+title: The auxiliary-angle (harmonic combination) identity
+tone: key
+
+For any real constants \(a, b\) not both zero, let \(R = \sqrt{a^2 + b^2} > 0\). Then:
+
+(1) Sine form: \(a\sin x + b\cos x = R\sin(x + \varphi)\), where \(\varphi \in [0, 2\pi)\) is the unique angle satisfying \(\cos\varphi = \dfrac{a}{R}\) and \(\sin\varphi = \dfrac{b}{R}\) (the direction angle of the point \((a, b)\)).
+(2) Cosine form (alternative): \(a\cos x + b\sin x = R\cos(x - \psi)\), where \(\cos\psi = \dfrac{a}{R}\) and \(\sin\psi = \dfrac{b}{R}\).
+(3) Extreme values: The maximum value of \(a\sin x + b\cos x\) is \(+R = \sqrt{a^2 + b^2}\) and the minimum value is \(-R = -\sqrt{a^2 + b^2}\).
+[/CALLOUT]
+
+Apply [REF: auxiliary-angle.1 | the sine auxiliary-angle form] to our opening example \(\sqrt{3}\sin x + \cos x\):
+Here \(a = \sqrt{3}\) and \(b = 1\), so \(R = \sqrt{(\sqrt{3})^2 + 1^2} = \sqrt{4} = 2\). Then
+\[
+\cos\varphi = \frac{\sqrt{3}}{2}, \qquad \sin\varphi = \frac{1}{2} \implies \varphi = \frac{\pi}{6}.
+\]
+Therefore
+\[
+\sqrt{3}\sin x + \cos x = 2\sin\!\left(x + \frac{\pi}{6}\right).
+\]
+Read the wave's properties right off the collapsed form: its amplitude is \(2\), its maximum value is \(2\) (attained when \(x + \frac{\pi}{6} = \frac{\pi}{2}\), i.e., \(x = \frac{\pi}{3}\)), its minimum is \(-2\) (at \(x = \frac{4\pi}{3}\)), and its graph is \(2\sin x\) shifted \(\frac{\pi}{6}\) units to the left.
+
+[GRAPH]
+type: function2d
+title: Combining \(\sqrt{3}\sin x\) and \(\cos x\) yields the single sinusoid \(2\sin(x + \pi/6)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2832
+yrange: -2.4, 2.4
+trace: sqrt(3)*sin(x) + cos(x) | label: \(\sqrt{3}\sin x + \cos x = 2\sin(x + \pi/6)\)
+trace: sqrt(3)*sin(x) | label: \(\sqrt{3}\sin x\)
+trace: cos(x) | label: \(\cos x\)
+point: 1.0472, 2 | label: \((\pi/3, 2)\)
+point: 4.1888, -2 | label: \((4\pi/3, -2)\)
+[/GRAPH]
+
+Explore how changing \(b\) in \(\sin x + b\cos x\) affects the combined wave using the slider below: as \(b\) varies from \(-3\) to \(3\), watch the peak height grow as \(R = \sqrt{1 + b^2}\) and the peak location shift smoothly across the cycle!
+
+[GRAPH]
+type: function2d
+title: Interactive family \(y = \sin x + b\cos x = \sqrt{1 + b^2}\sin(x + \varphi)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2832
+yrange: -3.5, 3.5
+trace: sin(x) + b*cos(x) | label: \(\sin x + b\cos x\)
+trace: sqrt(1 + b^2) | label: \(y = +R\)
+trace: -sqrt(1 + b^2) | label: \(y = -R\)
+slider: b | range: -3, 3 | init: 1 | step: 0.25
+[/GRAPH]
+
+=== SECTION 2: The quadrant pitfall when finding \(\varphi\) ===
+
+Because \(\cos\varphi = \frac{a}{R}\) and \(\sin\varphi = \frac{b}{R}\), dividing gives \(\tan\varphi = \frac{b}{a}\) whenever \(a \neq 0\). Yet writing \(\varphi = \arctan\!\left(\frac{b}{a}\right)\) is a notorious trap whenever \(a < 0\)!
+
+Why? Because \(\arctan\!\left(\frac{b}{a}\right)\) ALWAYS outputs an angle in \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\) (Quadrants I and IV), where \(\cos\varphi > 0\). If \(a < 0\), then \(\cos\varphi = \frac{a}{R} < 0\), so the true auxiliary angle \(\varphi\) MUST lie in Quadrant II or Quadrant III—off by \(\pi\) from \(\arctan\!\left(\frac{b}{a}\right)\)! Using the wrong quadrant flips the sign of BOTH \(\cos\varphi\) and \(\sin\varphi\), turning \(R\sin(x + \varphi)\) into \(-R\sin(x + \varphi)\)—the exact negative of the expression you started with.
+
+[CALLOUT]
+id: phi-quadrant-rule
+label: Common Pitfall
+title: Determining the exact quadrant of \(\varphi\) from \((a, b)\)
+tone: caution
+
+Always read the quadrant of \(\varphi\) from the signs of the pair \((\cos\varphi, \sin\varphi) = \left(\frac{a}{R}, \frac{b}{R}\right)\)—never from \(\arctan(b/a)\) alone:
+(1) If \(a > 0\): \(\varphi = \arctan(b/a)\) (or add \(2\pi\) if you want \(\varphi \in [0, 2\pi)\) when \(b < 0\)).
+(2) If \(a < 0\): \(\varphi = \arctan(b/a) + \pi\) (Quadrant II when \(b > 0\), Quadrant III when \(b < 0\)).
+(3) If \(a = 0\): \(\varphi = \frac{\pi}{2}\) when \(b > 0\), and \(\varphi = \frac{3\pi}{2}\) when \(b < 0\).
+[/CALLOUT]
+
+Worked example (Negative \(a\)): Express \(-3\sin x + 4\cos x\) in the form \(R\sin(x + \varphi)\) with \(R > 0\) and \(\varphi \in [0, 2\pi)\).
+- Here \(a = -3\) and \(b = 4\), so \(R = \sqrt{(-3)^2 + 4^2} = 5\).
+- We need \(\cos\varphi = -\frac{3}{5} < 0\) and \(\sin\varphi = \frac{4}{5} > 0\), which places \(\varphi\) in Quadrant II!
+- By [REF: phi-quadrant-rule.2 | the negative-\(a\) rule], \(\varphi = \arctan\!\left(-\frac{4}{3}\right) + \pi = \pi - \arctan\!\left(\frac{4}{3}\right) \approx 2.2143\) radians (equivalently \(\varphi = \arccos\!\left(-\frac{3}{5}\right)\)).
+- Check at \(x = 0\): the original expression gives \(4\), and \(5\sin(\varphi) = 5\left(\frac{4}{5}\right) = 4\)! (Had you mistakenly used \(\varphi = \arctan(-4/3) \approx -0.9273\), \(5\sin(\varphi)\) would have given \(-4\) instead of \(+4\).)
+
+[TABLE]
+Expression \(a\sin x + b\cos x\) | \(R = \sqrt{a^2 + b^2}\) | \((\cos\varphi, \sin\varphi)\) | Quadrant of \(\varphi\) | Collapsed form \(R\sin(x + \varphi)\)
+\(\sin x + \cos x\) | \(\sqrt{2}\) | \(\left(\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2}\right)\) | I | \(\sqrt{2}\sin\!\left(x + \frac{\pi}{4}\right)\)
+\(\sin x - \sqrt{3}\cos x\) | \(2\) | \(\left(\frac{1}{2}, -\frac{\sqrt{3}}{2}\right)\) | IV | \(2\sin\!\left(x - \frac{\pi}{3}\right)\) or \(2\sin\!\left(x + \frac{5\pi}{3}\right)\)
+\(-\sin x + \cos x\) | \(\sqrt{2}\) | \(\left(-\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2}\right)\) | II | \(\sqrt{2}\sin\!\left(x + \frac{3\pi}{4}\right)\)
+\(-\sqrt{3}\sin x - \cos x\) | \(2\) | \(\left(-\frac{\sqrt{3}}{2}, -\frac{1}{2}\right)\) | III | \(2\sin\!\left(x + \frac{7\pi}{6}\right)\)
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+Write \(-5\sin x - 5\sqrt{3}\cos x\) in the form \(R\sin(x + \varphi)\) with \(R > 0\) and \(\varphi \in [0, 2\pi)\).
+
+(A) \(10\sin\!\left(x + \frac{\pi}{3}\right)\)
+(B) \(10\sin\!\left(x + \frac{2\pi}{3}\right)\)
+(C) \(10\sin\!\left(x + \frac{4\pi}{3}\right)\)
+(D) \(10\sin\!\left(x + \frac{5\pi}{3}\right)\)
+(E) \(5\sqrt{2}\sin\!\left(x + \frac{4\pi}{3}\right)\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+What are the exact maximum and minimum values of \(f(x) = 5\sin x - 12\cos x + 4\) over all \(x \in \mathbb{R}\)?
+
+(A) Maximum \(17\), minimum \(-9\)
+(B) Maximum \(21\), minimum \(-13\)
+(C) Maximum \(13\), minimum \(-13\)
+(D) Maximum \(16\), minimum \(-8\)
+(E) Maximum \(11\), minimum \(-3\)
+[/QUESTION]
+
+=== SECTION 3: Solving linear harmonic equations \(a\sin x + b\cos x = c\) ===
+
+In the previous lesson, solving an equation like \(\sin x + \cos x = 1\) by squaring both sides forced you to check every candidate root by hand because squaring introduces extraneous roots. The auxiliary-angle method eliminates that hazard completely—every step is reversible, and no-solution equations announce themselves instantly!
+
+Rewrite \(a\sin x + b\cos x = c\) using [REF: auxiliary-angle.1 | \(R\sin(x + \varphi)\)] and divide by \(R = \sqrt{a^2 + b^2}\):
+\[
+R\sin(x + \varphi) = c \iff \sin(x + \varphi) = \frac{c}{R}.
+\]
+- Existence criterion: Because \(|\sin(x + \varphi)| \le 1\), the equation \(a\sin x + b\cos x = c\) has real solutions IF AND ONLY IF
+\[
+|c| \le \sqrt{a^2 + b^2}.
+\]
+For example, \(3\sin x - 4\cos x = 6\) has NO real solutions because \(R = \sqrt{3^2 + (-4)^2} = 5 < 6\). You never even need to compute \(\varphi\)!
+- When \(|c| \le R\), simply solve the shifted-argument equation \(\sin(x + \varphi) = \frac{c}{R}\) by the standard substitution bridge \(u = x + \varphi\). No squaring, no extraneous roots!
+
+Worked example 1 (Special angle): Solve \(\sqrt{3}\sin x - \cos x = \sqrt{2}\) on \([0, 2\pi)\).
+- Here \(a = \sqrt{3}, b = -1\), so \(R = \sqrt{3 + 1} = 2\). Since \(|\sqrt{2}| \le 2\), solutions exist.
+- Find \(\varphi\): \(\cos\varphi = \frac{\sqrt{3}}{2} > 0\) and \(\sin\varphi = -\frac{1}{2} < 0\) (Quadrant IV), so we can take \(\varphi = -\frac{\pi}{6}\) (or \(\frac{11\pi}{6}\)). Thus
+\[
+2\sin\!\left(x - \frac{\pi}{6}\right) = \sqrt{2} \iff \sin\!\left(x - \frac{\pi}{6}\right) = \frac{\sqrt{2}}{2}.
+\]
+- Write the complete general solution for \(u = x - \frac{\pi}{6}\):
+\[
+x - \frac{\pi}{6} = \frac{\pi}{4} + 2\pi n \qquad \text{or} \qquad x - \frac{\pi}{6} = \frac{3\pi}{4} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Add \(\frac{\pi}{6}\) to both sides:
+\[
+x = \frac{5\pi}{12} + 2\pi n \qquad \text{or} \qquad x = \frac{11\pi}{12} + 2\pi n.
+\]
+- On \([0, 2\pi)\), the exact solutions are \(x = \frac{5\pi}{12}\) and \(x = \frac{11\pi}{12}\). (Check \(x = \frac{5\pi}{12}\): \(\sqrt{3}\sin(75^\circ) - \cos(75^\circ) = \sqrt{3}\frac{\sqrt{6}+\sqrt{2}}{4} - \frac{\sqrt{6}-\sqrt{2}}{4} = \frac{3\sqrt{2}+\sqrt{6}-\sqrt{6}+\sqrt{2}}{4} = \sqrt{2}\). Exact!)
+
+Worked example 2 (Non-special angle): Solve \(3\sin x + 4\cos x = 2\) on \([0, 2\pi)\).
+- \(R = \sqrt{3^2 + 4^2} = 5 \ge 2\). Since \(a = 3 > 0\) and \(b = 4 > 0\), \(\varphi = \arctan\!\left(\frac{4}{3}\right) \approx 0.9273\) (Quadrant I).
+- The equation becomes \(\sin(x + \varphi) = \frac{2}{5} = 0.4\).
+- Let \(\alpha = \arcsin(0.4) \approx 0.4115\). Then:
+  - \(x + \varphi = \alpha + 2\pi n \implies x = \alpha - \varphi + 2\pi n \approx -0.5158 + 2\pi n\). Taking \(n = 1\) gives \(x_1 = 2\pi + \arcsin(0.4) - \arctan\!\left(\frac{4}{3}\right) \approx 5.7674 \in [0, 2\pi)\).
+  - \(x + \varphi = \pi - \alpha + 2\pi n \implies x = \pi - \alpha - \varphi + 2\pi n\). Taking \(n = 0\) gives \(x_2 = \pi - \arcsin(0.4) - \arctan\!\left(\frac{4}{3}\right) \approx 1.8028 \in [0, 2\pi)\).
+
+Notice that the method works identically for a scaled frequency \(a\sin(kx) + b\cos(kx) = c\): it collapses to \(R\sin(kx + \varphi) = c\), which you solve immediately via the multiple-angle substitution bridge!
+
+[QUESTION 3]
+[ANSWER: E]
+Which of the following equations has NO real solutions?
+
+(A) \(5\sin x - 12\cos x = 13\)
+(B) \(\sin x + \cos x = -1.4\)
+(C) \(8\sin(3x) + 15\cos(3x) = -17\)
+(D) \(\sqrt{3}\sin x - \cos x = 2\)
+(E) \(6\sin x + 8\cos x = -10.5\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Find ALL solutions of \(\sin x + \sqrt{3}\cos x = -1\) in the interval \([0, 2\pi)\).
+
+(A) \(\frac{7\pi}{6}, \frac{11\pi}{6}\)
+(B) \(\frac{5\pi}{6}, \frac{3\pi}{2}\)
+(C) \(\frac{\pi}{6}, \frac{5\pi}{6}\)
+(D) \(\frac{5\pi}{6}, \frac{11\pi}{6}\)
+(E) \(\frac{\pi}{2}, \frac{7\pi}{6}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+At which angle \(x \in [0, 2\pi)\) does \(g(x) = \sin x - \cos x\) attain its MAXIMUM value?
+
+(A) \(x = \frac{\pi}{4}\)
+(B) \(x = \frac{\pi}{2}\)
+(C) \(x = \frac{5\pi}{4}\)
+(D) \(x = \frac{3\pi}{4}\)
+(E) \(x = \frac{7\pi}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Write \(3\cos x + 3\sin x\) in the COSINE auxiliary-angle form \(R\cos(x - \psi)\) with \(R > 0\) and \(\psi \in [0, 2\pi)\).
+
+(A) \(6\cos\!\left(x - \frac{\pi}{4}\right)\)
+(B) \(3\sqrt{2}\cos\!\left(x + \frac{\pi}{4}\right)\)
+(C) \(3\sqrt{2}\cos\!\left(x - \frac{\pi}{4}\right)\)
+(D) \(3\sqrt{2}\cos\!\left(x - \frac{3\pi}{4}\right)\)
+(E) \(3\sqrt{2}\cos\!\left(x - \frac{7\pi}{4}\right)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Find ALL solutions of \(\sin(2x) + \cos(2x) = 1\) in the interval \([0, \pi)\).
+
+(A) \(0, \frac{\pi}{4}\)
+(B) \(0, \frac{\pi}{2}\)
+(C) \(\frac{\pi}{4}, \frac{3\pi}{4}\)
+(D) \(0, \frac{\pi}{4}, \frac{\pi}{2}, \frac{3\pi}{4}\)
+(E) \(\frac{\pi}{8}, \frac{3\pi}{8}\)
+[/BONUS]

@@ -1,0 +1,239 @@
+=== SECTION 1: Particiones y conjuntos cociente ===
+
+En la lección anterior demostramos que las clases de equivalencia de una relación de equivalencia \(\sim\) sobre un conjunto \(A\) son no vacías, nunca se solapan parcialmente y cubren todo \(A\) (pues cada \(a \in A\) pertenece a \([a]\)). En otras palabras, una relación de equivalencia divide limpiamente a \(A\) en piezas disjuntas no vacías. Recíprocamente, si partimos de CUALQUIER manera de dividir \(A\) en piezas disjuntas no vacías, declarar que dos elementos son «equivalentes» cuando caen en la misma pieza debería producir una relación de equivalencia. Esta lección convierte esa intuición en una biyección global precisa entre dos objetos matemáticos fundamentales: las relaciones de equivalencia sobre \(A\) y las particiones de \(A\).
+
+Para evitar confundir una partición con el conjunto potencia \(\mathcal{P}(A)\), denotaremos una partición por \(\Pi\) (un conjunto de subconjuntos de \(A\), de modo que \(\Pi \subseteq \mathcal{P}(A)\)).
+
+[CALLOUT]
+id: partition-def
+label: Definición
+title: Partición de un conjunto
+tone: key
+
+Una partición de un conjunto \(A\) es una colección \(\Pi\) de subconjuntos de \(A\) (cuyos elementos se denominan bloques o partes de \(\Pi\)) que cumple tres condiciones:
+
+(1) No vacuidad: todo bloque \(B \in \Pi\) es no vacío (\(B \ne \emptyset\)).
+(2) Disjunción dos a dos: para cualesquiera \(B, C \in \Pi\), si \(B \ne C\), entonces \(B \cap C = \emptyset\) (equivalentemente, \(B \cap C \ne \emptyset \implies B = C\)).
+(3) Recubrimiento: la unión de todos los bloques es igual a \(A\), es decir, \(\bigcup_{B \in \Pi} B = A\).
+[/CALLOUT]
+
+Comprobemos las tres condiciones en candidatos concretos para \(A = \{1, 2, 3, 4\}\):
+- \(\Pi_1 = \{\{1, 3\}, \{2\}, \{4\}\}\): cada bloque es no vacío, bloques distintos no comparten elementos y \(\{1, 3\} \cup \{2\} \cup \{4\} = \{1, 2, 3, 4\}\). Por tanto, \(\Pi_1\) SÍ es una partición de \(A\).
+- \(\mathcal{C}_2 = \{\{1, 2\}, \{2, 3\}, \{4\}\}\): NO es una partición, porque \(\{1, 2\} \ne \{2, 3\}\) pero \(\{1, 2\} \cap \{2, 3\} = \{2\} \ne \emptyset\) (viola la [REF: partition-def.2 | disjunción dos a dos]).
+- \(\mathcal{C}_3 = \{\{1, 2\}, \{3, 4\}, \emptyset\}\): NO es una partición, porque \(\emptyset\) pertenece a \(\mathcal{C}_3\) (viola la [REF: partition-def.1 | no vacuidad]).
+- \(\mathcal{C}_4 = \{\{1, 2\}, \{3\}\}\): NO es una partición, porque falta el \(4\) en la unión (viola el [REF: partition-def.3 | recubrimiento]).
+
+¿Qué ocurre en el caso límite \(A = \emptyset\)? Compruebe la [REF: partition-def | definición de partición] para \(\Pi = \emptyset\) (la colección vacía sin bloques):
+- (1) No vacuidad: verdadera por vacuidad (no existe ningún \(B \in \emptyset\)).
+- (2) Disjunción dos a dos: verdadera por vacuidad.
+- (3) Recubrimiento: \(\bigcup_{B \in \emptyset} B = \emptyset = A\).
+Así, \(\Pi = \emptyset\) es la única partición de \(\emptyset\), mientras que \(\{\emptyset\}\) NO es una partición de \(\emptyset\) porque contiene un bloque vacío.
+
+Obsérvese también que para todo conjunto no vacío \(A\) siempre existen dos particiones triviales: la partición más gruesa (indiscreta) \(\{A\}\) con un único bloque, y la partición más fina (discreta) \(\{\{a\} : a \in A\}\) en singuletes.
+
+Las particiones también pueden tener infinitos bloques (incluso una cantidad no numerable). Por ejemplo, en \(\mathbb{R}^2\), sea \(C_r = \{(x, y) \in \mathbb{R}^2 : x^2 + y^2 = r^2\}\) para cada \(r \in [0, \infty)\). Cada \(C_r\) es no vacío (contiene a \((r, 0)\)), radios distintos \(r_1 \ne r_2\) dan circunferencias disjuntas \(C_{r_1} \cap C_{r_2} = \emptyset\) (pues un punto \((x, y)\) tiene un único valor de \(\sqrt{x^2 + y^2}\)) y todo \((x, y) \in \mathbb{R}^2\) yace en \(C_r\) para \(r = \sqrt{x^2 + y^2}\). Así pues, \(\{C_r : r \ge 0\}\) particiona todo el plano \(\mathbb{R}^2\) en el origen \(C_0 = \{(0, 0)\}\) junto con todas las circunferencias concéntricas centradas en el origen.
+
+[GRAPH]
+type: parametric2d
+title: Partición de \(\mathbb{R}^2\) en circunferencias concéntricas \(C_r = \{(x, y) : x^2 + y^2 = r^2\}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.4, 3.4
+yrange: -3.4, 3.4
+trace: cos(t), sin(t) | label: \(C_1\) (\(r = 1\)) | color: #2563eb
+trace: 2*cos(t), 2*sin(t) | label: \(C_2\) (\(r = 2\)) | color: #16a34a
+trace: 3*cos(t), 3*sin(t) | label: \(C_3\) (\(r = 3\)) | color: #d97706
+point: 0, 0 | label: \(C_0\) | color: #ef4444
+[/GRAPH]
+
+Cuando reunimos todas las clases de equivalencia de una relación de equivalencia \(\sim\) sobre \(A\) en un único conjunto, le damos a esa colección un nombre propio.
+
+[CALLOUT]
+id: quotient-set-def
+label: Definición
+title: Conjunto cociente
+tone: key
+
+Sea \(\sim\) una relación de equivalencia sobre un conjunto \(A\). El conjunto cociente de \(A\) módulo \(\sim\), denotado por \(A/{\sim}\), es el conjunto de todas las clases de equivalencia de \(\sim\):
+\[
+A/{\sim} = \{[a] : a \in A\} \subseteq \mathcal{P}(A).
+\]
+[/CALLOUT]
+
+Recuérdese que, como los conjuntos ignoran elementos repetidos, incluso si \(A\) es infinito, \(A/{\sim}\) puede ser finito. Para la congruencia módulo \(n\) en \(\mathbb{Z}\), el conjunto cociente \(\mathbb{Z}/{\equiv_n}\) (escrito \(\mathbb{Z}/n\mathbb{Z}\)) tiene exactamente \(n\) elementos: \(\{[0], [1], \dots, [n - 1]\}\). Todo elemento de \(A/{\sim}\) es un SUBCONJUNTO de \(A\), no un elemento de \(A\).
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál de las siguientes colecciones es una partición válida del conjunto de los enteros \(\mathbb{Z}\)?
+
+(A) \(\{\{x \in \mathbb{Z} : x \ge 0\},\; \{x \in \mathbb{Z} : x \le 0\}\}\)
+(B) \(\{\{2k : k \in \mathbb{Z}\},\; \{3k : k \in \mathbb{Z}\},\; \{x \in \mathbb{Z} : 2 \nmid x \land 3 \nmid x\}\}\)
+(C) \(\{\{x \in \mathbb{Z} : |x| = n\} : n \in \mathbb{N}\}\)
+(D) \(\{\{x \in \mathbb{Z} : x < n\} : n \in \mathbb{Z}\}\)
+(E) \(\{\{x \in \mathbb{Z} : x^2 = n\} : n \in \mathbb{N}\}\)
+[/QUESTION]
+
+=== SECTION 2: El Teorema Fundamental de las Relaciones de Equivalencia ===
+
+Disponemos ahora de dos construcciones sobre un conjunto fijo \(A\):
+- Construcción directa (\(\sim \;\mapsto\; A/{\sim}\)): partiendo de una relación de equivalencia \(\sim\) sobre \(A\), formamos su conjunto cociente \(A/{\sim} = \{[a] : a \in A\}\).
+- Construcción inversa (\(\Pi \;\mapsto\; {\sim_\Pi}\)): partiendo de una partición \(\Pi\) de \(A\), definimos una relación \(\sim_\Pi\) sobre \(A\) mediante
+\[
+x \sim_\Pi y \iff \exists B \in \Pi,\; (x \in B \land y \in B),
+\]
+es decir, \(x\) e \(y\) pertenecen al mismo bloque de \(\Pi\).
+
+El Teorema Fundamental afirma no solo que cada construcción cae en el lugar adecuado, sino que aplicar una después de la otra nos devuelve exactamente al punto de partida.
+
+[CALLOUT]
+id: fundamental-thm-equiv
+label: Teorema
+title: Teorema Fundamental de las Relaciones de Equivalencia
+tone: key
+
+Sea \(A\) cualquier conjunto.
+
+(1) Si \(\sim\) es una relación de equivalencia sobre \(A\), entonces el conjunto cociente \(A/{\sim}\) es una partición de \(A\).
+(2) Si \(\Pi\) es una partición de \(A\), entonces la relación \(\sim_\Pi\) definida por \(x \sim_\Pi y \iff \exists B \in \Pi,\; (x \in B \land y \in B)\) es una relación de equivalencia sobre \(A\).
+(3) Ambas construcciones son inversas mutuas exactas:
+- Partiendo de cualquier relación de equivalencia \(\sim\) sobre \(A\), formando \(\Pi = A/{\sim}\) y luego formando \(\sim_\Pi\), se recupera la relación original: \({\sim_{A/{\sim}}} = {\sim}\).
+- Partiendo de cualquier partición \(\Pi\) de \(A\), formando \(\sim_\Pi\) y luego tomando su conjunto cociente, se recupera la partición original: \(A/{\sim_\Pi} = \Pi\).
+[/CALLOUT]
+
+Demostremos cada parte con claridad, observando cómo se utiliza cada hipótesis de la [REF: partition-def | definición de partición].
+
+[CALLOUT]
+id: fundamental-thm-proof
+label: Demostración
+title: Demostración del [REF: fundamental-thm-equiv | Teorema Fundamental]
+tone: note
+
+Demostración de (1): Sea \(\sim\) una relación de equivalencia sobre \(A\) y póngase \(\Pi = A/{\sim} = \{[a] : a \in A\}\). Comprobamos los tres axiomas de partición de la [REF: partition-def | definición de partición]:
+- No vacuidad: para todo \(a \in A\), \(a \in [a]\) por el Lema Fundamental de las Clases de Equivalencia, luego \([a] \ne \emptyset\).
+- Disjunción dos a dos: para cualesquiera \([a], [b] \in A/{\sim}\), el Lema Fundamental garantiza que \([a] = [b]\) o \([a] \cap [b] = \emptyset\). Así, si \([a] \ne [b]\), entonces \([a] \cap [b] = \emptyset\).
+- Recubrimiento: todo bloque \([a]\) es subconjunto de \(A\), luego \(\bigcup_{a \in A} [a] \subseteq A\). Recíprocamente, para todo \(x \in A\), se tiene \(x \in [x] \subseteq \bigcup_{a \in A} [a]\), por lo que \(A \subseteq \bigcup_{a \in A} [a]\). Por tanto \(\bigcup_{[a] \in A/{\sim}} [a] = A\).
+
+Demostración de (2): Sea \(\Pi\) una partición de \(A\). Comprobamos que \(\sim_\Pi\) es reflexiva, simétrica y transitiva:
+- Reflexiva: sea \(x \in A\). Como \(\bigcup_{B \in \Pi} B = A\), existe \(B \in \Pi\) con \(x \in B\). Entonces \(x \in B \land x \in B\), luego \(x \sim_\Pi x\).
+- Simétrica: si \(x \sim_\Pi y\), existe \(B \in \Pi\) con \(x \in B\) e \(y \in B\), luego \(y \in B\) y \(x \in B\), por lo que \(y \sim_\Pi x\).
+- Transitiva: supongamos \(x \sim_\Pi y\) e \(y \sim_\Pi z\). Entonces existen bloques \(B, C \in \Pi\) tales que \(x, y \in B\) e \(y, z \in C\). Ahora bien, \(y \in B \cap C\), de modo que \(B \cap C \ne \emptyset\). Por la [REF: partition-def.2 | disjunción dos a dos de \(\Pi\)], ¡esto obliga a que \(B = C\)! Por consiguiente, \(x, z \in B\), lo que significa \(x \sim_\Pi z\).
+
+Demostración de (3):
+- En primer lugar, sea \(\sim\) una relación de equivalencia y póngase \(\Pi = A/{\sim}\). Para cualesquiera \(x, y \in A\):
+  - Si \(x \sim y\), entonces \(x, y \in [y] \in \Pi\), luego \(x \sim_\Pi y\).
+  - Recíprocamente, si \(x \sim_\Pi y\), existe alguna clase \([a] \in A/{\sim}\) que contiene tanto a \(x\) como a \(y\). Así, \(x \sim a\) e \(y \sim a\); por simetría y transitividad, \(x \sim y\).
+  Por tanto \((x, y) \in {\sim_\Pi} \iff (x, y) \in {\sim}\), es decir, \({\sim_{A/{\sim}}} = {\sim}\).
+- En segundo lugar, sea \(\Pi\) una partición de \(A\). Probamos \(A/{\sim_\Pi} = \Pi\) por doble inclusión:
+  - Sea \([x]_{\sim_\Pi} \in A/{\sim_\Pi}\). Como \(\Pi\) recubre \(A\), existe un único bloque \(B \in \Pi\) con \(x \in B\) (único por disjunción dos a dos). Para todo \(y \in A\), se cumple \(y \sim_\Pi x\) si y solo si \(y\) y \(x\) están en un bloque común de \(\Pi\) —lo cual, al ser \(B\) el único bloque que contiene a \(x\), equivale a \(y \in B\). Por lo tanto \([x]_{\sim_\Pi} = B \in \Pi\). Así, \(A/{\sim_\Pi} \subseteq \Pi\).
+  - Recíprocamente, sea \(B \in \Pi\). Por la [REF: partition-def.1 | no vacuidad de los bloques], existe un elemento \(x \in B\). Por el mismo argumento recién dado, \([x]_{\sim_\Pi} = B\), luego \(B \in A/{\sim_\Pi}\). Así, \(\Pi \subseteq A/{\sim_\Pi}\).
+  En consecuencia, \(A/{\sim_\Pi} = \Pi\).
+[/CALLOUT]
+
+Deténgase y mire el último paso de la demostración de (3): ¿dónde empleamos la [REF: partition-def.1 | no vacuidad de los bloques]? ¡Precisamente ahí! Si se permitiera que una colección \(\Pi\) contuviera \(\emptyset\) como bloque, entonces \(\sim_\Pi\) jamás sabría si \(\emptyset\) estaba presente o no, y \(A/{\sim_\Pi}\) perdería a \(\emptyset\) —rompiendo la correspondencia biunívoca entre particiones y relaciones de equivalencia. Cada axioma de la [REF: partition-def | definición de partición] es indispensable.
+
+[QUESTION 2]
+[ANSWER: A]
+Sea \(A = \{1, 2, 3, 4\}\) y sea \(\Pi = \{\{1, 4\}, \{2, 3\}\}\). ¿Cuántos pares ordenados pertenecen a la relación de equivalencia inducida \(\sim_\Pi \subseteq A \times A\)?
+
+(A) \(8\)
+(B) \(4\)
+(C) \(6\)
+(D) \(10\)
+(E) \(16\)
+[/QUESTION]
+
+=== SECTION 3: Uso de la correspondencia — invariantes, fibras y diseño de relaciones ===
+
+El [REF: fundamental-thm-equiv | Teorema Fundamental] no es solo un teorema abstracto; es un puente práctico para resolver problemas. Siempre que un problema pida diseñar, contar o analizar relaciones de equivalencia, se puede alternar libremente entre el «punto de vista relacional» (comprobar reflexividad, simetría y transitividad) y el «punto de vista de particiones» (dividir \(A\) en bloques disjuntos no vacíos).
+
+Aplicación 1 (Descomponer un dominio mediante un invariante): Supongamos que todo elemento \(a \in A\) lleva asociada una etiqueta o valor bien definido \(v(a)\) (como el resto de un entero módulo \(n\), la distancia \(\sqrt{x^2 + y^2}\) de un punto en \(\mathbb{R}^2\) al origen o el número de elementos de un subconjunto finito \(S \subseteq \{1, 2, 3, 4\}\)). Definir
+\[
+a \sim b \iff v(a) = v(b)
+\]
+produce automáticamente una relación de equivalencia —la reflexividad, la simetría y la transitividad se siguen de inmediato de las propiedades correspondientes de la igualdad \(=\). Sus clases de equivalencia son los conjuntos de nivel no vacíos (también llamados fibras)
+\[
+F_c = \{a \in A : v(a) = c\}
+\]
+conforme \(c\) recorre los valores efectivamente alcanzados por \(v\). Nótese el detalle sutil: SOLO los valores \(c\) realmente alcanzados generan bloques en la partición, porque un valor \(c\) no alcanzado da \(F_c = \emptyset\), que no puede ser bloque de una partición.
+
+Por ejemplo, tómese \(A = \mathbb{R}\) y la etiqueta \(v(x) = x^2\). Para \(c > 0\), la fibra es el conjunto de dos elementos \(\{-\sqrt{c}, \sqrt{c}\}\); para \(c = 0\), la fibra es \(\{0\}\); para \(c < 0\), se excluye el conjunto \(\{x \in \mathbb{R} : x^2 = c\} = \emptyset\). Así, el conjunto cociente \(\mathbb{R}/{\sim}\) consta de \(\{0\}\) junto con todos los pares de opuestos \(\{-r, r\}\) para \(r > 0\).
+
+Aplicación 2 (Contar relaciones de equivalencia en conjuntos finitos pequeños): Supongamos que alguien pregunta: «¿Cuántas relaciones de equivalencia distintas existen sobre el conjunto de \(3\) elementos \(A = \{1, 2, 3\}\)?». Comprobar los \(2^9 = 512\) subconjuntos de \(A \times A\) para verificar reflexividad, simetría y transitividad sería penoso. En cambio, por el [REF: fundamental-thm-equiv | Teorema Fundamental], contar relaciones de equivalencia sobre \(\{1, 2, 3\}\) es IDÉNTICO a contar particiones de \(\{1, 2, 3\}\):
+- \(1\) bloque de tamaño \(3\): \(\{\{1, 2, 3\}\}\) (\(1\) partición).
+- \(2\) bloques de tamaños \(2\) y \(1\): \(\{\{1, 2\}, \{3\}\}\), \(\{\{1, 3\}, \{2\}\}\), \(\{\{2, 3\}, \{1\}\}\) (\(3\) particiones).
+- \(3\) bloques de tamaño \(1\): \(\{\{1\}, \{2\}, \{3\}\}\) (\(1\) partición).
+Total: \(1 + 3 + 1 = 5\) relaciones de equivalencia sobre \(\{1, 2, 3\}\), halladas en diez segundos.
+
+Aplicación 3 (Refinamiento de particiones frente a inclusión de relaciones): Supongamos que \(\sim_1\) y \(\sim_2\) son dos relaciones de equivalencia sobre \(A\) con particiones correspondientes \(\Pi_1 = A/{\sim_1}\) y \(\Pi_2 = A/{\sim_2}\). ¿Cómo se ve la inclusión \({\sim_1} \subseteq {\sim_2}\) (es decir, \(x \sim_1 y \implies x \sim_2 y\)) en términos de las particiones \(\Pi_1\) y \(\Pi_2\)?
+
+Veámoslo. Tómese cualquier bloque \([a]_{\sim_1} \in \Pi_1\). Si \(x \in [a]_{\sim_1}\), entonces \(x \sim_1 a\), por lo que \({\sim_1} \subseteq {\sim_2}\) implica \(x \sim_2 a\), es decir, \(x \in [a]_{\sim_2}\). Por lo tanto, CADA bloque de \(\Pi_1\) está contenido dentro de un único bloque de \(\Pi_2\). Equivalentemente, cada bloque de \(\Pi_2\) es unión disjunta de uno o más bloques de \(\Pi_1\). Decimos que \(\Pi_1\) refina a \(\Pi_2\) (es más fina que \(\Pi_2\)) y que \(\Pi_2\) es más gruesa que \(\Pi_1\).
+
+Por ejemplo, en \(\mathbb{Z}\), la congruencia módulo \(6\) implica la congruencia módulo \(3\) (\({\equiv_6} \subseteq {\equiv_3}\)): cada clase mod-\(6\) yace dentro de una clase mod-\(3\), y cada clase mod-\(3\) se divide limpiamente en dos clases mod-\(6\), como \([1]_3 = [1]_6 \cup [4]_6\). Nótese la comprobación mental útil: una relación MÁS PEQUEÑA (menos pares relacionados) crea MÁS bloques y MÁS PEQUEÑOS (una partición más fina); una relación MÁS GRANDE (más pares relacionados) fusiona bloques en MENOS bloques y MÁS GRANDES (una partición más gruesa).
+
+[TABLE]
+Punto de vista relacional sobre \(A\) | Punto de vista de particiones sobre \(A\)
+Relación de igualdad \(\Delta_A\) (relación de equivalencia mínima) | Partición discreta \(\{\{a\} : a \in A\}\) (partición más fina)
+Relación universal \(A \times A\) (relación de equivalencia máxima) | Partición indiscreta \(\{A\}\) (partición más gruesa, para \(A \ne \emptyset\))
+\({\sim_1} \subseteq {\sim_2}\) | Todo bloque de \(\Pi_1\) es subconjunto de algún bloque de \(\Pi_2\) (\(\Pi_1\) refina a \(\Pi_2\))
+Relación de equivalencia \(\sim_1 \cap \sim_2\) | Refinamiento común \(\{B \cap C : B \in \Pi_1,\, C \in \Pi_2,\, B \cap C \ne \emptyset\}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+Sea \(A = \{1, 2, 3, 4\}\). ¿Cuántas relaciones de equivalencia distintas sobre \(A\) cumplen la propiedad de que \(1 \sim 2\) y \(3 \not\sim 4\)?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(4\)
+(D) \(5\)
+(E) \(7\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Sean \(\sim_1\) y \(\sim_2\) las relaciones de equivalencia sobre \(\mathbb{Z}\) definidas por \(a \sim_1 b \iff 12 \mid (a - b)\) y \(a \sim_2 b \iff 4 \mid (a - b)\). ¿Qué afirmación compara con precisión sus conjuntos cociente \(\Pi_1 = \mathbb{Z}/{\sim_1}\) y \(\Pi_2 = \mathbb{Z}/{\sim_2}\)?
+
+(A) \({\sim_2} \subseteq {\sim_1}\), y cada bloque de \(\Pi_1\) es la unión de \(3\) bloques de \(\Pi_2\).
+(B) \({\sim_1} \subseteq {\sim_2}\), y cada bloque de \(\Pi_2\) es la unión de \(3\) bloques de \(\Pi_1\).
+(C) \({\sim_1} \subseteq {\sim_2}\), y \(\Pi_1 \subseteq \Pi_2\).
+(D) Ninguna relación es subconjunto de la otra, porque \(12\) y \(4\) tienen restos distintos.
+(E) \({\sim_1} \cap {\sim_2} = {\sim_2}\), de modo que \(\Pi_1\) y \(\Pi_2\) tienen el mismo número de bloques.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Sea \(A = \{1, 2, 3, 4\}\). ¿Cuántas relaciones de equivalencia distintas existen sobre \(A\) en total?
+
+(A) \(5\)
+(B) \(12\)
+(C) \(14\)
+(D) \(16\)
+(E) \(15\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Sean \(\Pi_1\) y \(\Pi_2\) particiones de un conjunto \(A\), con relaciones de equivalencia correspondientes \(\sim_1\) y \(\sim_2\). Supongamos que formamos la colección
+\[
+\mathcal{C} = \{B \cap C : B \in \Pi_1,\; C \in \Pi_2\}.
+\]
+¿Bajo qué condición es \(\mathcal{C}\) misma una partición de \(A\)?
+
+(A) Siempre, para cualesquiera dos particiones \(\Pi_1\) y \(\Pi_2\) de \(A\)
+(B) Únicamente cuando \(\Pi_1 = \Pi_2\)
+(C) Si y solo si \(B \cap C \ne \emptyset\) para todo \(B \in \Pi_1\) y todo \(C \in \Pi_2\)
+(D) Si y solo si \(\Pi_1\) refina a \(\Pi_2\) o \(\Pi_2\) refina a \(\Pi_1\)
+(E) Nunca, salvo que \(A\) tenga un solo elemento
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Sean \(\sim_1\) y \(\sim_2\) relaciones de equivalencia sobre un conjunto \(A\). ¿Cuál de las siguientes afirmaciones es equivalente a \({\sim_1} \subseteq {\sim_2}\)?
+
+(A) Para todo \(a \in A\), \([a]_{\sim_1} \subseteq [a]_{\sim_2}\)
+(B) \(A/{\sim_1} \subseteq A/{\sim_2}\)
+(C) \(A/{\sim_2} \subseteq A/{\sim_1}\)
+(D) Para todo \(a \in A\), \([a]_{\sim_2} \subseteq [a]_{\sim_1}\)
+(E) Todo bloque de \(A/{\sim_1}\) es igual a algún bloque de \(A/{\sim_2}\)
+[/BONUS]

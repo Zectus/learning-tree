@@ -1,0 +1,249 @@
+=== SECTION 1: Mathematical definitions and our arithmetic toolkit ===
+
+In previous lessons we analyzed the logical structure of propositional arguments and quantified statements. Now we cross a crucial bridge: writing complete, university-level mathematical proofs in clear prose. Almost every proof begins in the exact same place—unpacking the definitions of the terms in the statement.
+
+A mathematical definition does not describe a preexisting empirical fact; it fixes the exact meaning of a technical word or symbol so that every reader agrees on what it takes to qualify. Because of this role, mathematical definitions carry an important logical convention.
+
+[CALLOUT]
+id: principle-def-biconditional
+label: Principle
+title: Definitions are always biconditionals
+tone: key
+
+Even when mathematical prose writes a definition using the word "if"—for example, "An integer \(n\) is called even if there exists an integer \(k\) such that \(n = 2k\)"—every definition is logically an "if and only if" (\(\Leftrightarrow\)). Whenever you know a term applies, you may unpack it into its defining condition; whenever you establish the defining condition, you may conclude the term applies.
+[/CALLOUT]
+
+To practice proof writing without introducing formal set theory, we adopt four concrete working definitions over the familiar number systems \(\mathbb{Z}\), \(\mathbb{Q}\), and \(\mathbb{R}\), together with the standard arithmetic properties of integers and real numbers (closure of \(\mathbb{Z}\) under addition, subtraction, and multiplication; commutativity, associativity, distributivity; and standard order properties).
+
+[CALLOUT]
+id: defs-arithmetic
+label: Definition
+title: Core arithmetic definitions for direct proof
+tone: key
+
+(1) Even integer: An integer \(n \in \mathbb{Z}\) is even if and only if there exists \(k \in \mathbb{Z}\) such that \(n = 2k\).
+(2) Odd integer: An integer \(n \in \mathbb{Z}\) is odd if and only if there exists \(k \in \mathbb{Z}\) such that \(n = 2k + 1\).
+(3) Divisibility: For \(a, b \in \mathbb{Z}\), we say "\(a\) divides \(b\)" (written \(a \mid b\)) if and only if there exists \(k \in \mathbb{Z}\) such that \(b = ak\). We write \(a \nmid b\) when \(a\) does not divide \(b\).
+(4) Rational number: A real number \(x \in \mathbb{R}\) is rational (written \(x \in \mathbb{Q}\)) if and only if there exist \(p, q \in \mathbb{Z}\) with \(q \ne 0\) such that \(x = \frac{p}{q}\).
+[/CALLOUT]
+
+Pause to check two details of [REF: defs-arithmetic.3 | divisibility], because beginners frequently trip over them:
+- First, \(a \mid b\) is a STATEMENT (true or false), never a number! Do not confuse the vertical bar in "\(3 \mid 12\)" (a true statement asserting that \(12 = 3 \cdot 4\)) with the fraction "\(3/12 = 1/4\)."
+- Second, test edge cases directly against the formula \(b = ak\) rather than guessing from fractions. Does \(5 \mid 0\) hold? Yes: \(0 = 5 \cdot 0\) with \(k = 0 \in \mathbb{Z}\). Does \(0 \mid 0\) hold? Yes: \(0 = 0 \cdot 1\) (any \(k \in \mathbb{Z}\) works). Does \(0 \mid 5\) hold? No: \(5 = 0 \cdot k = 0\) has no integer solution \(k\). Notice why defining divisibility via multiplication (\(b = ak\)) instead of division (\(b/a \in \mathbb{Z}\)) avoids dividing by zero!
+
+Also verify every clause in [REF: defs-arithmetic.4 | the definition of a rational number]: to show a real number \(x\) is rational, you must exhibit two integers \(p\) and \(q\), prove \(q \ne 0\), and verify \(x = p/q\). Forgetting to justify \(q \ne 0\) is an incomplete proof.
+
+[QUESTION 1]
+[ANSWER: D]
+Using [REF: defs-arithmetic.3 | the definition of divisibility], which of the following statements about integers is FALSE?
+
+(A) \(-4 \mid 20\)
+(B) \(7 \mid 0\)
+(C) \(0 \mid 0\)
+(D) \(0 \mid -3\)
+(E) \(-1 \mid 13\)
+[/QUESTION]
+
+=== SECTION 2: The direct proof template ===
+
+Most foundational theorems take the universal conditional shape
+\[
+\forall x \in D,\, \bigl(P(x) \implies Q(x)\bigr).
+\]
+How can a finite piece of writing prove a claim about INFINITELY many elements \(x \in D\)? The logical mechanism is called universal generalization from an arbitrary element: we pick a symbolic element \(x \in D\) about which we assume NOTHING except that \(x \in D\) and \(P(x)\) holds. If our chain of valid deductions then establishes \(Q(x)\) without ever relying on any special value of \(x\), the exact same argument applies to every \(x \in D\) simultaneously, proving \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\).
+
+[CALLOUT]
+id: template-direct-proof
+label: Method
+title: Direct proof template for \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\)
+tone: key
+
+(1) Introduce an arbitrary element: Begin with "Let \(x \in D\) be arbitrary, and assume \(P(x)\)." (For multi-variable claims like \(\forall a, b \in \mathbb{Z}\), introduce all arbitrary variables up front.)
+(2) Unpack the hypothesis: Replace defined terms in \(P(x)\) by their exact defining equations or conditions, introducing FRESH variable names for any existential witnesses.
+(3) Bridge to the target: Use valid inference rules, algebraic identities, and properties of \(D\) to reshape the given relations until they match the defining form of \(Q(x)\). Explicitly verify every side condition (such as integrality of a new witness or a nonzero denominator).
+(4) Conclude: State clearly that \(Q(x)\) holds, completing the proof of \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\).
+[/CALLOUT]
+
+Let us work through three complete direct proofs using [REF: template-direct-proof | this template], highlighting every bridge step explicitly.
+
+[CALLOUT]
+id: proof-sum-odds
+label: Proof
+title: Theorem: The sum of any two odd integers is even
+tone: note
+
+Statement: \(\forall m, n \in \mathbb{Z},\, (m \text{ is odd} \wedge n \text{ is odd}) \implies m + n \text{ is even}\).
+
+Proof: Let \(m, n \in \mathbb{Z}\) be arbitrary odd integers. By [REF: defs-arithmetic.2 | the definition of odd], there exist integers \(k \in \mathbb{Z}\) and \(\ell \in \mathbb{Z}\) such that
+\[
+m = 2k + 1 \qquad \text{and} \qquad n = 2\ell + 1.
+\]
+Adding these two equations gives
+\[
+m + n = (2k + 1) + (2\ell + 1) = 2k + 2\ell + 2 = 2(k + \ell + 1).
+\]
+Let \(r = k + \ell + 1\). Because \(k, \ell, 1 \in \mathbb{Z}\) and \(\mathbb{Z}\) is closed under addition, we have \(r \in \mathbb{Z}\) and \(m + n = 2r\). By [REF: defs-arithmetic.1 | the definition of even], \(m + n\) is even.
+[/CALLOUT]
+
+Look closely at the witness choice in [REF: proof-sum-odds | that proof]: we used TWO distinct letters \(k\) and \(\ell\) for \(m\) and \(n\). And after factoring out \(2\), we explicitly noted that \(r = k + \ell + 1 \in \mathbb{Z}\) so that the existential requirement "\(\exists r \in \mathbb{Z}\)" in the definition of even is visibly satisfied.
+
+Next, let us prove that divisibility is transitive.
+
+[CALLOUT]
+id: proof-div-trans
+label: Proof
+title: Theorem: Transitivity of divisibility
+tone: note
+
+Statement: \(\forall a, b, c \in \mathbb{Z},\, (a \mid b \wedge b \mid c) \implies a \mid c\).
+
+Proof: Let \(a, b, c \in \mathbb{Z}\) be arbitrary, and assume \(a \mid b\) and \(b \mid c\). By [REF: defs-arithmetic.3 | the definition of divisibility], there exist integers \(k, m \in \mathbb{Z}\) such that
+\[
+b = ak \qquad \text{and} \qquad c = bm.
+\]
+Substituting \(b = ak\) into the second equation yields
+\[
+c = (ak)m = a(km).
+\]
+Since \(k, m \in \mathbb{Z}\) and \(\mathbb{Z}\) is closed under multiplication, \(km \in \mathbb{Z}\). Thus there exists an integer \(t = km\) with \(c = at\), so \(a \mid c\).
+[/CALLOUT]
+
+Third, let us prove that the sum of two rational numbers is rational—paying special attention to the nonzero-denominator condition.
+
+[CALLOUT]
+id: proof-sum-rationals
+label: Proof
+title: Theorem: The sum of any two rational numbers is rational
+tone: note
+
+Statement: \(\forall x, y \in \mathbb{R},\, (x \in \mathbb{Q} \wedge y \in \mathbb{Q}) \implies x + y \in \mathbb{Q}\).
+
+Proof: Let \(x, y \in \mathbb{Q}\) be arbitrary. By [REF: defs-arithmetic.4 | the definition of rational], there exist integers \(p_1, q_1, p_2, q_2 \in \mathbb{Z}\) with \(q_1 \ne 0\) and \(q_2 \ne 0\) such that
+\[
+x = \frac{p_1}{q_1} \qquad \text{and} \qquad y = \frac{p_2}{q_2}.
+\]
+Combining over a common denominator gives
+\[
+x + y = \frac{p_1}{q_1} + \frac{p_2}{q_2} = \frac{p_1 q_2 + p_2 q_1}{q_1 q_2}.
+\]
+Let \(p = p_1 q_2 + p_2 q_1\) and \(q = q_1 q_2\). Because \(\mathbb{Z}\) is closed under addition and multiplication, both \(p \in \mathbb{Z}\) and \(q \in \mathbb{Z}\). Moreover, since \(q_1 \ne 0\) and \(q_2 \ne 0\), their product satisfies \(q = q_1 q_2 \ne 0\). Therefore \(x + y = p/q\) with \(p, q \in \mathbb{Z}\) and \(q \ne 0\), so \(x + y \in \mathbb{Q}\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: C]
+Suppose we want to prove directly that for all integers \(a, b, c \in \mathbb{Z}\), if \(a \mid b\) and \(a \mid c\), then \(a \mid (3b - 5c)\). After letting \(a, b, c \in \mathbb{Z}\) be arbitrary and unpacking \(b = ak\) and \(c = am\) for some \(k, m \in \mathbb{Z}\), which expression for the witness integer \(t\) correctly completes \(3b - 5c = at\)?
+
+(A) \(t = 3b - 5c\)
+(B) \(t = 3k - 5k\)
+(C) \(t = 3k - 5m\)
+(D) \(t = 3m - 5k\)
+(E) \(t = (3b - 5c)/a\), which requires assuming \(a \ne 0\)
+[/QUESTION]
+
+=== SECTION 3: Unpacking unfamiliar definitions and avoiding classic direct-proof errors ===
+
+One of the strongest tests of whether you truly understand direct proof is working with a brand-new definition you have never seen before. Because [REF: principle-def-biconditional | definitions are biconditionals], you never need outside intuition—just substitute the exact formula.
+
+For example, call an integer \(n \in \mathbb{Z}\) "triangular-shifted" if there exists \(k \in \mathbb{Z}\) such that \(n = 6k + 2\). Let us prove: "If \(n\) is triangular-shifted, then \(n^2 - 4\) is divisible by \(12\)."
+- Let \(n \in \mathbb{Z}\) be arbitrary and assume \(n\) is triangular-shifted.
+- Unpack the new definition: there exists \(k \in \mathbb{Z}\) with \(n = 6k + 2\).
+- Compute \(n^2 - 4\):
+\[
+n^2 - 4 = (6k + 2)^2 - 4 = (36k^2 + 24k + 4) - 4 = 36k^2 + 24k = 12(3k^2 + 2k).
+\]
+- Since \(k \in \mathbb{Z}\), the quantity \(3k^2 + 2k\) is an integer. By [REF: defs-arithmetic.3 | the definition of divisibility], \(12 \mid (n^2 - 4)\).
+
+Notice how effortless that was once the definition was unpacked!
+
+Now let us examine the three most damaging errors beginners make when writing direct proofs, so you can recognize and eliminate them on sight.
+
+[CALLOUT]
+id: caution-direct-errors
+label: Caution
+title: Three critical errors in direct proofs
+tone: caution
+
+(1) Reusing an existential witness name: If \(m\) and \(n\) are both even, writing \(m = 2k\) and \(n = 2k\) forces \(m = n\)! That secretly proves the theorem only for equal numbers, not for arbitrary pairs \((m, n)\). Always pick a fresh letter (\(k\) and \(\ell\), or \(k_1\) and \(k_2\)) for each independent existential instantiation.
+(2) Proof by example: Checking that \(3 + 5 = 8\), \(7 + 11 = 18\), and \((-1) + 9 = 8\) are all even illustrates a universal claim, and checking examples is great scratchwork, but no finite list of examples ever proves \(\forall m, n \in \mathbb{Z}\).
+(3) Arguing backward from the conclusion: Starting with the desired statement \(Q(x)\) and deriving a true statement (like \(0 = 0\) or \((a - b)^2 \ge 0\)) proves \(Q(x) \Rightarrow \mathbf{T}\), which is always true EVEN WHEN \(Q(x)\) IS FALSE!
+[/CALLOUT]
+
+Error (3) is especially deceptive, so let us watch it both break and succeed.
+
+First, see how arguing backward can "prove" a falsehood: suppose someone tries to prove \(-2 = 2\). They write:
+\[
+-2 = 2 \implies (-2)^2 = 2^2 \implies 4 = 4.
+\]
+Every forward arrow \(\implies\) is valid, and the final line \(4 = 4\) is true—yet the starting line \(-2 = 2\) is FALSE! Squaring both sides is NOT reversible (we proved earlier that \(P \Rightarrow Q\) does not imply \(Q \Rightarrow P\)).
+
+Now see how to use backward scratchwork PROPERLY to discover a valid forward proof. Suppose we want to prove:
+\[
+\forall a, b \in \mathbb{R},\, (a > 0 \wedge b > 0) \implies \sqrt{ab} \le \frac{a + b}{2}.
+\]
+Scratchwork (do NOT hand this in as the proof):
+Start from the target \(\sqrt{ab} \le \frac{a + b}{2}\), multiply by \(2\) to get \(2\sqrt{ab} \le a + b\), square both sides to get \(4ab \le a^2 + 2ab + b^2\), and subtract \(4ab\) to get \(0 \le a^2 - 2ab + b^2 = (a - b)^2\).
+
+Now reverse every single step—and check whether each reversed step is actually valid!
+- Starting from \((a - b)^2 \ge 0\) (true for all \(a, b \in \mathbb{R}\)), expand to \(a^2 - 2ab + b^2 \ge 0\).
+- Add \(4ab\) to both sides: \(a^2 + 2ab + b^2 \ge 4ab\), i.e., \((a + b)^2 \ge 4ab\).
+- Take nonnegative square roots of both sides: because \(a > 0\) and \(b > 0\), we know \(a + b > 0\) and \(ab > 0\), so \(\sqrt{(a + b)^2} = a + b\) and taking square roots preserves the inequality, yielding \(a + b \ge 2\sqrt{ab}\).
+- Divide by \(2 > 0\): \(\frac{a + b}{2} \ge \sqrt{ab}\).
+
+Notice the difference! In the finished forward proof, we NEVER assume the conclusion \(\sqrt{ab} \le \frac{a+b}{2}\). We begin with the known fact \((a - b)^2 \ge 0\) and explicitly use the hypothesis \(a > 0, b > 0\) at the exact step where taking square roots requires nonnegativity.
+
+[QUESTION 3]
+[ANSWER: B]
+A student writes the following "proof" of the claim: "For all even integers \(m\) and \(n\), \(m + n\) is divisible by \(4\)."
+"Let \(m\) and \(n\) be arbitrary even integers. By definition of even, there exists \(k \in \mathbb{Z}\) such that \(m = 2k\) and \(n = 2k\). Then \(m + n = 2k + 2k = 4k\). Since \(k \in \mathbb{Z}\), \(4 \mid (m + n)\)."
+What is the exact logical flaw in this argument?
+
+(A) It argues backward from the conclusion \(4 \mid (m + n)\).
+(B) It reuses the same existential witness \(k\) for both \(m\) and \(n\), secretly assuming \(m = n\) (and indeed the claim itself is false, e.g., \(m = 2, n = 4\)).
+(C) It forgets to verify that \(k \in \mathbb{Z}\).
+(D) It treats the definition of divisibility as a fraction instead of a product.
+(E) It uses proof by example rather than arbitrary integers.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Call an integer \(n \in \mathbb{Z}\) "balanced" if there exists an integer \(k \in \mathbb{Z}\) such that \(n = 4k + 1\). Which of the following statements can be established by a direct proof from this definition?
+
+(A) If \(m\) and \(n\) are balanced integers, then \(mn\) is balanced.
+(B) If \(m\) and \(n\) are balanced integers, then \(m + n\) is balanced.
+(C) If \(n\) is balanced, then \(3n\) is balanced.
+(D) If \(m\) and \(n\) are balanced integers, then \(m - n\) is balanced.
+(E) If \(n\) is balanced, then \(-n\) is balanced.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose we want a valid direct forward proof of the claim: "For all real numbers \(x > 0\), \(x + \frac{1}{x} \ge 2\)." Which of the following starting steps and forward derivations is logically airtight?
+
+(A) Assume \(x + \frac{1}{x} \ge 2\). Multiply by \(x > 0\) to get \(x^2 + 1 \ge 2x\), so \((x - 1)^2 \ge 0\), which is true; hence \(x + \frac{1}{x} \ge 2\).
+(B) Test \(x = 1\) (giving \(2 \ge 2\)), \(x = 2\) (giving \(2.5 \ge 2\)), and \(x = 1/2\) (giving \(2.5 \ge 2\)); by symmetry this holds for all \(x > 0\).
+(C) Since \((x - 1)^2 \ge 0\), we get \(x^2 - 2x + 1 \ge 0\), so \(x^2 + 1 \ge 2x\). Dividing both sides by \(x\) gives \(x + \frac{1}{x} \ge 2\) for every real number \(x \ne 0\).
+(D) Let \(x > 0\). Because \(x > 0\), either \(x \ge 2\) or \(\frac{1}{x} \ge 2\), so in either case \(x + \frac{1}{x} \ge 2\).
+(E) Let \(x > 0\). Since \((x - 1)^2 \ge 0\), expanding gives \(x^2 - 2x + 1 \ge 0\), so \(x^2 + 1 \ge 2x\). Because \(x > 0\), dividing both sides by \(x\) preserves the inequality and yields \(x + \frac{1}{x} \ge 2\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(a, b, c \in \mathbb{Z}\) with \(a \mid b\) and \(b \mid (a + c)\). Which of the following conclusions ALWAYS follows by a direct proof from [REF: defs-arithmetic.3 | the definition of divisibility]?
+
+(A) \(b \mid c\)
+(B) \(c \mid a\)
+(C) \(a \mid c\)
+(D) \(a \mid (b - a)\) only when \(b \ne 0\)
+(E) \(b \mid a\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Call a real number \(x\) "dyadic" if there exist integers \(m \in \mathbb{Z}\) and \(k \in \mathbb{Z}\) with \(k \ge 0\) such that \(x = \frac{m}{2^k}\). Suppose \(x = \frac{m_1}{2^{k_1}}\) and \(y = \frac{m_2}{2^{k_2}}\) are arbitrary dyadic numbers. Which witness expression proves directly that \(x + y\) is dyadic without needing any case split on whether \(k_1 \le k_2\)?
+
+(A) \(x + y = \frac{m_1 + m_2}{2^{k_1 + k_2}}\)
+(B) \(x + y = \frac{m_1 2^{k_1} + m_2 2^{k_2}}{2^{k_1 + k_2}}\)
+(C) \(x + y = \frac{m_1 + m_2}{2^{k_1} + 2^{k_2}}\)
+(D) \(x + y = \frac{m_1 2^{k_2} + m_2 2^{k_1}}{2^{k_1 + k_2}}\)
+(E) \(x + y = \frac{m_1 m_2}{2^{k_1 + k_2}}\)
+[/BONUS]

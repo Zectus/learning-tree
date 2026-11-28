@@ -1,0 +1,285 @@
+=== SECTION 1: Suma de matrices, multiplicación por escalar y multiplicación matricial ===
+
+Hasta ahora, las matrices han servido como tablas de registro para sistemas lineales y como operadores que envían un vector de entrada \(\mathbf{x}\) a \(A\mathbf{x}\). Suponga ahora que aplicamos una matriz \(B\) a un vector \(\mathbf{x}\), produciendo \(B\mathbf{x}\), e introducimos de inmediato esa salida en una segunda matriz \(A\) para obtener \(A(B\mathbf{x})\). ¿Puede empaquetarse esta acción en dos pasos en una única matriz \(AB\) que satisfaga \((AB)\mathbf{x} = A(B\mathbf{x})\) para todo \(\mathbf{x}\)? Responder a esa pregunta motiva toda el álgebra de matrices —y explica por qué la multiplicación matricial se define como se define en lugar de hacerse entrada por entrada—.
+
+Primero, registramos las operaciones sencillas entrada por entrada. Dos matrices \(A\) y \(B\) son iguales si tienen las mismas dimensiones \(m \times n\) y \(a_{ij} = b_{ij}\) para todo \(i, j\). Para dos matrices \(m \times n\) \(A\) y \(B\) y cualquier escalar \(c \in \mathbb{R}\), la suma \(A + B\) y el múltiplo escalar \(cA\) son las matrices \(m \times n\) definidas entrada por entrada mediante
+\[
+(A + B)_{ij} = a_{ij} + b_{ij}, \qquad (cA)_{ij} = c\,a_{ij}.
+\]
+Como la suma y la multiplicación por escalar actúan entrada por entrada, obedecen todas las leyes aritméticas familiares: \(A + B = B + A\), \((A + B) + C = A + (B + C)\), \(A + 0 = A\) (donde \(0\) denota la matriz nula \(m \times n\)) y \(c(A + B) = cA + cB\).
+
+Ahora sea \(A\) una matriz \(m \times n\) y sea \(B = \begin{bmatrix} \mathbf{b}_1 & \mathbf{b}_2 & \cdots & \mathbf{b}_p \end{bmatrix}\) una matriz \(n \times p\), de modo que cada columna \(\mathbf{b}_j\) vive en \(\mathbb{R}^n\). Tome cualquier vector \(\mathbf{x} = \begin{bmatrix} x_1 \\ \vdots \\ x_p \end{bmatrix} \in \mathbb{R}^p\). Por la definición por columnas del producto matriz-vector y la linealidad de \(A\):
+\[
+A(B\mathbf{x})
+= A(x_1 \mathbf{b}_1 + x_2 \mathbf{b}_2 + \dots + x_p \mathbf{b}_p)
+= x_1 (A\mathbf{b}_1) + x_2 (A\mathbf{b}_2) + \dots + x_p (A\mathbf{b}_p).
+\]
+Observe ese lado derecho: es literalmente una combinación lineal de los \(p\) vectores \(A\mathbf{b}_1, \dots, A\mathbf{b}_p \in \mathbb{R}^m\) con pesos \(x_1, \dots, x_p\). Eso es el producto matriz-vector de la matriz \(m \times p\) cuyas columnas son \(A\mathbf{b}_1, \dots, A\mathbf{b}_p\) con \(\mathbf{x}\). Esta deducción impone la definición de \(AB\).
+
+[CALLOUT]
+id: matmul-def
+label: Definición
+title: Multiplicación matricial (definición columna por columna)
+tone: key
+
+Sea \(A\) una matriz \(m \times n\) y sea \(B = \begin{bmatrix} \mathbf{b}_1 & \mathbf{b}_2 & \cdots & \mathbf{b}_p \end{bmatrix}\) una matriz \(n \times p\). El producto matricial \(AB\) es la matriz \(m \times p\) cuya \(j\)-ésima columna es \(A\mathbf{b}_j\):
+\[
+AB = \begin{bmatrix} A\mathbf{b}_1 & A\mathbf{b}_2 & \cdots & A\mathbf{b}_p \end{bmatrix}.
+\]
+Por construcción, \((AB)\mathbf{x} = A(B\mathbf{x})\) se cumple para todo \(\mathbf{x} \in \mathbb{R}^p\).
+[/CALLOUT]
+
+Verifique siempre las dimensiones antes de multiplicar: \(AB\) está definido ÚNICAMENTE cuando el número de columnas de \(A\) es igual al número de filas de \(B\). En símbolos, \((m \times n)(n \times p) = m \times p\): las \(n\) internas deben coincidir, y las dimensiones externas dan el tamaño de \(AB\).
+
+A partir de [REF: matmul-def | esta única definición], surgen de inmediato tres puntos de vista computacionales complementarios:
+
+1. Producto punto fila por columna entrada a entrada: la entrada \((i, j)\) de \(AB\) es la \(i\)-ésima entrada de la columna \(A\mathbf{b}_j\), la cual por la regla del producto punto por filas para la multiplicación matriz-vector es igual a
+\[
+(AB)_{ij} = \sum_{k=1}^n a_{ik} b_{kj} = a_{i1} b_{1j} + a_{i2} b_{2j} + \dots + a_{in} b_{nj},
+\]
+el producto punto de la fila \(i\) de \(A\) con la columna \(j\) de \(B\).
+2. Combinaciones de columnas: la columna \(j\) de \(AB\) es \(A\mathbf{b}_j = b_{1j}\mathbf{a}_1 + \dots + b_{nj}\mathbf{a}_n\), una combinación lineal de las columnas de \(A\) ponderada por las entradas de la columna \(j\) de \(B\).
+3. Combinaciones de filas: leer toda la \(i\)-ésima fila de \(AB\) a lo largo de todo \(j = 1, \dots, p\) muestra que la fila \(i\) de \(AB\) es igual a
+\[
+a_{i1}(\text{fila } 1 \text{ de } B) + a_{i2}(\text{fila } 2 \text{ de } B) + \dots + a_{in}(\text{fila } n \text{ de } B),
+\]
+una combinación lineal de las filas de \(B\) ponderada por las entradas de la fila \(i\) de \(A\).
+
+Verifiquemos las tres perspectivas en \(A = \begin{bmatrix} 1 & 2 \\ -1 & 3 \end{bmatrix}\) y \(B = \begin{bmatrix} 2 & 0 \\ 1 & -4 \end{bmatrix}\):
+- Perspectiva por columnas: \(A\mathbf{b}_1 = 2\begin{bmatrix} 1 \\ -1 \end{bmatrix} + 1\begin{bmatrix} 2 \\ 3 \end{bmatrix} = \begin{bmatrix} 4 \\ 1 \end{bmatrix}\), y \(A\mathbf{b}_2 = 0\begin{bmatrix} 1 \\ -1 \end{bmatrix} - 4\begin{bmatrix} 2 \\ 3 \end{bmatrix} = \begin{bmatrix} -8 \\ -12 \end{bmatrix}\).
+- Perspectiva por filas: la fila \(1\) de \(AB\) es \(1\begin{bmatrix} 2 & 0 \end{bmatrix} + 2\begin{bmatrix} 1 & -4 \end{bmatrix} = \begin{bmatrix} 4 & -8 \end{bmatrix}\); la fila \(2\) es \(-1\begin{bmatrix} 2 & 0 \end{bmatrix} + 3\begin{bmatrix} 1 & -4 \end{bmatrix} = \begin{bmatrix} 1 & -12 \end{bmatrix}\).
+- Producto punto entrada por entrada: \((AB)_{22} = (-1)(0) + 3(-4) = -12\), coincidiendo con la entrada anterior.
+
+Las tres dan \(AB = \begin{bmatrix} 4 & -8 \\ 1 & -12 \end{bmatrix}\). Note un cuarto punto de vista igualmente notable —la suma de productos exteriores—, que descompone \(AB\) como una suma de \(n\) matrices \(m \times p\) de rango simple: escribiendo \(\mathbf{a}_k\) para la columna \(k\) de \(A\) (\(m \times 1\)) y \(\mathbf{r}_k\) para la fila \(k\) de \(B\) (\(1 \times p\)), la entrada \((i, j)\) de \(\mathbf{a}_k \mathbf{r}_k\) es \(a_{ik} b_{kj}\), de modo que sumar sobre \(k = 1, \dots, n\) reproduce \((AB)_{ij} = \sum_{k=1}^n a_{ik} b_{kj}\) entrada por entrada:
+\[
+AB = \sum_{k=1}^n \mathbf{a}_k \mathbf{r}_k.
+\]
+En el ejemplo anterior,
+\[
+AB = \begin{bmatrix} 1 \\ -1 \end{bmatrix} \begin{bmatrix} 2 & 0 \end{bmatrix} + \begin{bmatrix} 2 \\ 3 \end{bmatrix} \begin{bmatrix} 1 & -4 \end{bmatrix}
+= \begin{bmatrix} 2 & 0 \\ -2 & 0 \end{bmatrix} + \begin{bmatrix} 2 & -8 \\ 3 & -12 \end{bmatrix}
+= \begin{bmatrix} 4 & -8 \\ 1 & -12 \end{bmatrix}.
+\]
+
+[QUESTION 1]
+[ANSWER: B]
+Sean
+\[
+A = \begin{bmatrix} 1 & -2 & 0 \\ 3 & 1 & -1 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 2 & 1 \\ -1 & 3 \\ 4 & -2 \end{bmatrix}.
+\]
+¿Cuál es el producto matricial \(AB\)?
+
+(A) \(\begin{bmatrix} 4 & -5 \\ 9 & 4 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 4 & -5 \\ 1 & 8 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & -5 \\ 1 & 8 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 4 & 1 \\ -5 & 8 \end{bmatrix}\)
+(E) Indefinido porque las dimensiones no coinciden
+[/QUESTION]
+
+=== SECTION 2: Asociatividad, matrices identidad y dónde falla el álgebra escalar ===
+
+Como [REF: matmul-def | la multiplicación matricial] se diseñó de manera que \((AB)\mathbf{x} = A(B\mathbf{x})\), demostrar la asociatividad para tres matrices no requiere ninguna triple suma engorrosa. Sea \(A\) de \(m \times n\), \(B\) de \(n \times p\) y \(C\) de \(p \times q\). Para cualquier vector de la base estándar \(\mathbf{e}_j \in \mathbb{R}^q\) (que extrae la \(j\)-ésima columna de cualquier matriz a la que multiplica por la derecha), aplicar \((XY)\mathbf{v} = X(Y\mathbf{v})\) repetidamente da:
+\[
+((AB)C)\mathbf{e}_j = (AB)(C\mathbf{e}_j) = A(B(C\mathbf{e}_j)) = A((BC)\mathbf{e}_j) = (A(BC))\mathbf{e}_j.
+\]
+Como \((AB)C\) y \(A(BC)\) tienen exactamente la misma \(j\)-ésima columna para todo \(j = 1, \dots, q\), ¡son iguales!
+
+[CALLOUT]
+id: mat-algebra-laws
+label: Teorema
+title: Leyes algebraicas de la multiplicación matricial
+tone: key
+
+Suponiendo que todos los tamaños de las matrices son compatibles para las sumas y los productos indicados, y que \(c \in \mathbb{R}\) es cualquier escalar:
+
+(1) Asociatividad: \((AB)C = A(BC)\).
+(2) Distributividad por la izquierda: \(A(B + C) = AB + AC\).
+(3) Distributividad por la derecha: \((A + B)C = AC + BC\).
+(4) Compatibilidad escalar: \(c(AB) = (cA)B = A(cB)\).
+(5) Propiedad de la identidad: \(I_m A = A\) y \(A I_n = A\) para cualquier matriz \(m \times n\) \(A\), donde \(I_k\) es la matriz identidad \(k \times k\) con \(1\) en la diagonal principal y \(0\) en el resto.
+[/CALLOUT]
+
+La distributividad se sigue con la misma limpieza comparando las \(j\)-ésimas columnas: la columna \(j\) de \(A(B + C)\) es \(A(\mathbf{b}_j + \mathbf{c}_j) = A\mathbf{b}_j + A\mathbf{c}_j\), que es la columna \(j\) de \(AB + AC\); de forma análoga, la columna \(j\) de \((A + B)C\) es \((A + B)\mathbf{c}_j = A\mathbf{c}_j + B\mathbf{c}_j\). Para una matriz cuadrada \(n \times n\) \(A\), la asociatividad también nos permite definir potencias enteras no negativas sin ambigüedad: \(A^0 = I_n\), \(A^1 = A\) y \(A^k = A \cdot A \cdots A\) (\(k\) factores) para todo entero positivo \(k\).
+
+Ahora llega la advertencia más importante del álgebra matricial: varias reglas que se cumplen automáticamente para los números reales FALLAN para las matrices. Nunca asuma que una identidad del álgebra escalar vale para matrices sin comprobar antes si usó en secreto la conmutatividad o la cancelación.
+
+[CALLOUT]
+id: scalar-pitfalls
+label: Error frecuente
+title: Cuatro reglas escalares que FALLAN para matrices
+tone: caution
+
+(1) No conmutatividad: en general, \(AB \neq BA\) (e incluso cuando \(AB\) está definido, \(BA\) puede tener otro tamaño o no estar definido en absoluto).
+(2) Divisores de cero no nulos: \(AB = 0\) NO implica \(A = 0\) ni \(B = 0\).
+(3) Sin cancelación general: \(AB = AC\) con \(A \neq 0\) NO implica \(B = C\).
+(4) El desarrollo binomial falla salvo que \(AB = BA\): \((A + B)^2 = A^2 + AB + BA + B^2\), lo cual difiere de \(A^2 + 2AB + B^2\) siempre que \(AB \neq BA\).
+[/CALLOUT]
+
+Verifiquemos cada fallo con contraejemplos concretos \(2 \times 2\).
+
+Primero, para la no conmutatividad, tome una reflexión vertical \(F = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}\) (que invierte el signo de la coordenada \(x_2\)) y una cizalla horizontal \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) (que suma \(x_2\) a \(x_1\)). Multiplicar en ambos órdenes produce
+\[
+SF = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix} = \begin{bmatrix} 1 & -1 \\ 0 & -1 \end{bmatrix}, \qquad
+FS = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix} \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}.
+\]
+Geométricamente, reflejar \(\mathbf{v} = (1, 1)\) primero a \((1, -1)\) y luego aplicar la cizalla cae en \(SF\mathbf{v} = (0, -1)\), mientras que aplicar la cizalla primero a \((2, 1)\) y luego reflejar cae en \(FS\mathbf{v} = (2, -1)\): ¡dos puntos completamente distintos!
+
+[GRAPH]
+type: parametric2d
+title: El orden importa: \(SF\mathbf{v} = (0, -1)\) frente a \(FS\mathbf{v} = (2, -1)\) para \(\mathbf{v} = (1, 1)\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -1, 3.5
+yrange: -2, 2
+trace: t, t | label: \(\mathbf{v} = (1, 1)\) | color: #2563eb
+trace: 1 + t, 1 | label: cizalla \(S\) y luego reflexión \(F\) | color: #059669
+trace: 1 - t, -1 | label: reflexión \(F\) y luego cizalla \(S\) | color: #dc2626
+segment: 1, 1, 1, -1 | color: #dc2626 | dashed: true
+segment: 2, 1, 2, -1 | color: #059669 | dashed: true
+point: 1, 1 | label: \(\mathbf{v}\) | color: #2563eb
+point: 0, -1 | label: \(SF\mathbf{v}\) | color: #dc2626
+point: 2, -1 | label: \(FS\mathbf{v}\) | color: #059669
+[/GRAPH]
+
+Segundo, para divisores de cero y fallo de la cancelación, tome
+\[
+A = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix}, \qquad
+C = \begin{bmatrix} 0 & 0 \\ 5 & 2 \end{bmatrix}.
+\]
+Aquí \(A \neq 0\) y \(B \neq 0\), pero \(AB = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix} = 0\). Además, \(AC = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix} = AB\), ¡aunque \(B \neq C\)!
+
+Tercero, desarrolle \((A + B)^2\) usando [REF: mat-algebra-laws.2 | la distributividad] con cuidado sin intercambiar factores:
+\[
+(A + B)^2 = (A + B)(A + B) = A(A + B) + B(A + B) = A^2 + AB + BA + B^2.
+\]
+Únicamente cuando \(A\) y \(B\) conmutan (\(AB = BA\)) —por ejemplo, cuando \(B = c I_n\) es un múltiplo escalar de la matriz identidad— se combina \(AB + BA\) en \(2AB\).
+
+[QUESTION 2]
+[ANSWER: B]
+Para matrices reales \(n \times n\) arbitrarias \(A\) y \(B\), ¿cuál de las siguientes afirmaciones algebraicas se cumple SIEMPRE?
+
+(A) \((A + B)(A - B) = A^2 - B^2\)
+(B) \((A + 2I_n)(A - 2I_n) = A^2 - 4I_n\)
+(C) Si \(AB = 0\), entonces \(A = 0\) o \(B = 0\)
+(D) \((AB)^2 = A^2 B^2\)
+(E) Si \(AB = AC\) y \(A \neq 0\), entonces \(B = C\)
+[/QUESTION]
+
+=== SECTION 3: La transpuesta, productos exteriores y matrices simétricas ===
+
+Las filas y las columnas desempeñan papeles duales en el álgebra matricial. Intercambiar sus papeles produce una operación fundamental llamada transposición.
+
+[CALLOUT]
+id: transpose-def
+label: Definición
+title: Transpuesta, matrices simétricas y antisimétricas
+tone: key
+
+Sea \(A\) una matriz \(m \times n\) con entradas \(a_{ij}\). La transpuesta de \(A\), denotada \(A^T\), es la matriz \(n \times m\) cuya entrada \((i, j)\) es la entrada \((j, i)\) de \(A\):
+\[
+(A^T)_{ij} = a_{ji} \qquad (1 \le i \le n,\; 1 \le j \le m).
+\]
+Equivalentemente, las filas de \(A^T\) son las columnas de \(A\), y las columnas de \(A^T\) son las filas de \(A\).
+
+Una matriz cuadrada \(n \times n\) \(A\) se dice:
+(1) simétrica si \(A^T = A\) (es decir, \(a_{ij} = a_{ji}\) para todos \(i, j\)).
+(2) antisimétrica si \(A^T = -A\) (es decir, \(a_{ij} = -a_{ji}\) para todos \(i, j\)).
+[/CALLOUT]
+
+Note lo que [REF: transpose-def.2 | la antisimetría] impone sobre la diagonal principal: tomar \(i = j\) da \(a_{ii} = -a_{ii}\), de donde \(2 a_{ii} = 0\), por lo que toda entrada diagonal de una matriz antisimétrica debe ser \(0\). Por ejemplo,
+\[
+S = \begin{bmatrix} 3 & -2 & 5 \\ -2 & 0 & 4 \\ 5 & 4 & -1 \end{bmatrix} \quad (\text{simétrica}), \qquad
+K = \begin{bmatrix} 0 & -2 & 5 \\ 2 & 0 & -4 \\ -5 & 4 & 0 \end{bmatrix} \quad (\text{antisimétrica}).
+\]
+
+La transpuesta también nos permite escribir productos internos y productos exteriores de vectores columna con limpieza dentro de la multiplicación matricial. Si \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) son vectores columna \(n \times 1\), entonces \(\mathbf{u}^T\) es un vector fila \(1 \times n\), de modo que:
+- \(\mathbf{u}^T \mathbf{v} = \sum_{k=1}^n u_k v_k\) es una matriz \(1 \times 1\) (identificada con el producto punto escalar \(\mathbf{u} \cdot \mathbf{v}\)).
+- \(\mathbf{u}\mathbf{v}^T\) es una matriz \(n \times n\) cuya entrada \((i, j)\) es \(u_i v_j\) (el producto exterior de \(\mathbf{u}\) y \(\mathbf{v}\)).
+
+Con esta notación, si \(A\) tiene columnas \(\mathbf{a}_1, \dots, \mathbf{a}_n \in \mathbb{R}^m\) y \(B\) tiene filas \(\mathbf{b}_1^T, \dots, \mathbf{b}_n^T\) (donde cada \(\mathbf{b}_k \in \mathbb{R}^p\) es la \(k\)-ésima columna de \(B^T\)), nuestra expansión en productos exteriores de \(AB\) de la Sección 1 se lee concisamente como \(AB = \sum_{k=1}^n \mathbf{a}_k \mathbf{b}_k^T\).
+
+¿Cómo interactúa la transposición con las sumas matriciales, los múltiplos escalares y los productos de matrices? Para sumas y escalares actúa directamente, pero para un producto \(AB\) INVIERTE el orden de la multiplicación.
+
+[CALLOUT]
+id: transpose-props
+label: Teorema
+title: Propiedades algebraicas de la transpuesta
+tone: key
+
+Siempre que los tamaños matriciales sean compatibles y \(c \in \mathbb{R}\):
+
+(1) \((A^T)^T = A\).
+(2) \((A + B)^T = A^T + B^T\) y \((cA)^T = c(A^T)\).
+(3) Inversión del orden para productos: \((AB)^T = B^T A^T\).
+[/CALLOUT]
+
+Demostremos [REF: transpose-props.3 | la inversión del orden] con cuidado para no olvidarla jamás. Sea \(A\) de \(m \times n\) y \(B\) de \(n \times p\). Primero revise los tamaños: \(AB\) es \(m \times p\), así que \((AB)^T\) es \(p \times m\). Mientras tanto, \(B^T\) es \(p \times n\) y \(A^T\) es \(n \times m\), por lo que \(B^T A^T\) es \(p \times m\) (en cambio, ¡\(A^T B^T\) ni siquiera está definida salvo que \(m = p\)!). Ahora compare la entrada \((i, j)\) de ambos lados para \(1 \le i \le p\) y \(1 \le j \le m\):
+\[
+\bigl((AB)^T\bigr)_{ij} = (AB)_{ji} = \sum_{k=1}^n a_{jk} b_{ki} = \sum_{k=1}^n b_{ki} a_{jk} = \sum_{k=1}^n (B^T)_{ik} (A^T)_{kj} = (B^T A^T)_{ij}.
+\]
+Observe el único paso crucial en medio: \(a_{jk}\) y \(b_{ki}\) son números reales ordinarios, por lo que \(a_{jk} b_{ki} = b_{ki} a_{jk}\) conmuta escalar por escalar, permitiéndonos reconocer \((B^T)_{ik}(A^T)_{kj}\). Repetir esta regla en un producto de tres factores da \((ABC)^T = ((AB)C)^T = C^T (AB)^T = C^T B^T A^T\).
+
+Una consecuencia inmediata y muy utilizada de [REF: transpose-props.3 | la inversión del orden] es que para CUALQUIER matriz \(m \times n\) \(A\) (¡incluso rectangular!), tanto \(A^T A\) (de tamaño \(n \times n\)) como \(A A^T\) (de tamaño \(m \times m\)) son automáticamente simétricas:
+\[
+(A^T A)^T = A^T (A^T)^T = A^T A, \qquad (A A^T)^T = (A^T)^T A^T = A A^T.
+\]
+
+[TABLE]
+Expresión | Tamaño (para \(A\) de \(m \times n\), \(B\) de \(n \times p\)) | Simetría o regla de transposición
+\(AB\) | \(m \times p\) | \((AB)^T = B^T A^T\)
+\(A^T A\) | \(n \times n\) | Siempre simétrica
+\(A A^T\) | \(m \times m\) | Siempre simétrica
+\(\mathbf{u}^T \mathbf{v}\) (\(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\)) | \(1 \times 1\) (escalar) | Igual a \(\mathbf{v}^T \mathbf{u}\)
+\(\mathbf{u}\mathbf{v}^T\) (\(\mathbf{u} \in \mathbb{R}^m, \mathbf{v} \in \mathbb{R}^p\)) | \(m \times p\) | \((\mathbf{u}\mathbf{v}^T)^T = \mathbf{v}\mathbf{u}^T\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: D]
+Sean \(\mathbf{u} = \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix}\) y \(\mathbf{v} = \begin{bmatrix} 1 \\ 4 \\ -2 \end{bmatrix}\). ¿Cuáles son el valor escalar \(\mathbf{u}^T \mathbf{v}\) y la entrada \((3, 2)\) de la matriz \(3 \times 3\) \(\mathbf{u}\mathbf{v}^T\)?
+
+(A) \(\mathbf{u}^T \mathbf{v} = -8\) y \((\mathbf{u}\mathbf{v}^T)_{32} = 2\)
+(B) \(\mathbf{u}^T \mathbf{v} = 4\) y \((\mathbf{u}\mathbf{v}^T)_{32} = 12\)
+(C) \(\mathbf{u}^T \mathbf{v} = -8\) y \((\mathbf{u}\mathbf{v}^T)_{32} = -6\)
+(D) \(\mathbf{u}^T \mathbf{v} = -8\) y \((\mathbf{u}\mathbf{v}^T)_{32} = 12\)
+(E) \(\mathbf{u}^T \mathbf{v} = 12\) y \((\mathbf{u}\mathbf{v}^T)_{32} = -8\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Suponga que \(A\) es una matriz \(m \times n\) y \(B\) es una matriz \(n \times n\) antisimétrica (\(B^T = -B\)). ¿Cuál de las siguientes matrices es con certeza antisimétrica?
+
+(A) \(A B A^T\)
+(B) \(A^T A\)
+(C) \(B^2\)
+(D) \(A B^2 A^T\)
+(E) \(B + I_n\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Suponga que \(A\) es \(3 \times 4\), \(B\) es \(4 \times 2\), \(C\) es \(2 \times 4\) y \(D\) es \(3 \times 2\). ¿Qué producto matricial está bien definido y da como resultado una matriz \(2 \times 2\)?
+
+(A) \(B^T A^T D\)
+(B) \(C A B\)
+(C) \(A B C\)
+(D) \(D A B\)
+(E) \(C^T D^T\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Toda matriz cuadrada \(M\) puede escribirse de manera única como \(M = S + K\), donde \(S\) es simétrica (\(S^T = S\)) y \(K\) es antisimétrica (\(K^T = -K\)). Para
+\[
+M = \begin{bmatrix} 4 & -3 \\ 7 & 2 \end{bmatrix},
+\]
+¿cuál es la matriz simétrica \(S\) en esta descomposición?
+
+(A) \(\begin{bmatrix} 4 & -5 \\ -5 & 2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0 & -5 \\ 5 & 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 4 & 2 \\ 2 & 2 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 4 & -3 \\ -3 & 2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 8 & 4 \\ 4 & 4 \end{bmatrix}\)
+[/BONUS]

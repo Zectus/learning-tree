@@ -1,0 +1,392 @@
+=== SECTION 1: Partitioned matrices, block multiplication, and block transpose ===
+
+Large matrices in physics, engineering, and optimization rarely consist of unstructured numbers: they naturally split into meaningful submatrices—for instance, separating position variables from velocity variables, or separating interior grid nodes from boundary nodes. Drawing horizontal and vertical dividing lines partitions a matrix into blocks, letting us carry out matrix algebra and elimination at the block level rather than one scalar entry at a time.
+
+A partitioned (or block) matrix is written as a grid of submatrices, such as
+\[
+M = \begin{bmatrix} A & B \\ C & D \end{bmatrix},
+\]
+where all blocks in the same block-row share the same number of rows, and all blocks in the same block-column share the same number of columns. Specifically, if \(A\) is \(m_1 \times n_1\), \(B\) is \(m_1 \times n_2\), \(C\) is \(m_2 \times n_1\), and \(D\) is \(m_2 \times n_2\), then \(M\) is an \((m_1 + m_2) \times (n_1 + n_2)\) matrix.
+
+How do we multiply two partitioned matrices \(M\) and \(N\)? Suppose \(M\) has column-block widths \(n_1, n_2\) and \(N\) has row-block heights \(n_1, n_2\) (we call such partitions conforming: the column split of the left factor matches the row split of the right factor). Write
+\[
+M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}, \qquad
+N = \begin{bmatrix} E & F \\ G & H \end{bmatrix},
+\]
+where \(E, F\) have \(n_1\) rows and \(G, H\) have \(n_2\) rows. Look at any single entry \((i, j)\) in the upper-left block of the ordinary product \(MN\): its row-column dot product splits into the first \(n_1\) terms plus the remaining \(n_2\) terms:
+\[
+(MN)_{ij} = \sum_{k=1}^{n_1} m_{ik} n_{kj} + \sum_{k=n_1+1}^{n_1+n_2} m_{ik} n_{kj} = (AE)_{ij} + (BG)_{ij} = (AE + BG)_{ij}.
+\]
+The exact same split holds in all four quadrants! Therefore block multiplication follows the exact same row-by-column formula as ordinary \(2 \times 2\) matrix multiplication—with ONE non-negotiable rule: keep the left-to-right order of every block product intact, because matrix blocks do NOT generally commute (\(AE \neq EA\))!
+
+[CALLOUT]
+id: block-rules
+label: Theorem
+title: Conforming block multiplication and block transpose
+tone: key
+
+Let \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) and \(N = \begin{bmatrix} E & F \\ G & H \end{bmatrix}\) be partitioned conformably (the column partition of \(M\) matches the row partition of \(N\)).
+
+(1) Block multiplication:
+\[
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+\begin{bmatrix} E & F \\ G & H \end{bmatrix}
+=
+\begin{bmatrix} AE + BG & AF + BH \\ CE + DG & CF + DH \end{bmatrix}.
+\]
+(2) Block transpose:
+\[
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}^T
+=
+\begin{bmatrix} A^T & C^T \\ B^T & D^T \end{bmatrix}.
+\]
+Notice that taking the transpose of a block matrix BOTH transposes the block layout (swapping off-diagonal positions \(B\) and \(C\)) AND transposes every individual submatrix inside!
+[/CALLOUT]
+
+Why does [REF: block-rules.2 | the block transpose rule] require transposing every individual submatrix? Check dimensions! If \(B\) is \(m_1 \times n_2\) sitting in block position \((1, 2)\) of \(M\), then entry \((i, n_1 + j)\) of \(M\) moves to entry \((n_1 + j, i)\) of \(M^T\), which sits in block position \((2, 1)\) with row and column indices swapped—that is literally \(B^T\) (of size \(n_2 \times m_1\)). Leaving \(B\) untransposed in slot \((2, 1)\) would not even have the right dimensions when \(m_1 \neq n_2\)!
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) be a \(5 \times 5\) partitioned matrix where \(A\) is \(2 \times 2\), \(B\) is \(2 \times 3\), \(C\) is \(3 \times 2\), and \(D\) is \(3 \times 3\). What is \(M^T\)?
+
+(A) \(\begin{bmatrix} A & C \\ B & D \end{bmatrix}\)
+(B) \(\begin{bmatrix} A^T & B^T \\ C^T & D^T \end{bmatrix}\)
+(C) \(\begin{bmatrix} A^T & C^T \\ B^T & D^T \end{bmatrix}\)
+(D) \(\begin{bmatrix} D^T & B^T \\ C^T & A^T \end{bmatrix}\)
+(E) \(\begin{bmatrix} D^T & C^T \\ B^T & A^T \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Inverting block diagonal and block triangular matrices ===
+
+Before tackling a general \(2 \times 2\) block matrix, let us derive exact inverse formulas for the two simplest structured block shapes: block diagonal and block triangular matrices, where the diagonal blocks \(A\) (\(p \times p\)) and \(D\) (\(q \times q\)) are SQUARE.
+
+First, consider a block diagonal matrix \(M = \begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix}\). If both \(A\) and \(D\) are invertible, direct block multiplication gives
+\[
+\begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix}
+\begin{bmatrix} A^{-1} & 0 \\ 0 & D^{-1} \end{bmatrix}
+=
+\begin{bmatrix} A A^{-1} & 0 \\ 0 & D D^{-1} \end{bmatrix}
+=
+\begin{bmatrix} I_p & 0 \\ 0 & I_q \end{bmatrix}
+= I_{p+q}.
+\]
+Conversely, if \(M\) is invertible with partitioned inverse \(\begin{bmatrix} W & X \\ Y & Z \end{bmatrix}\), then \(\begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix} \begin{bmatrix} W & X \\ Y & Z \end{bmatrix} = \begin{bmatrix} AW & AX \\ DY & DZ \end{bmatrix} = \begin{bmatrix} I_p & 0 \\ 0 & I_q \end{bmatrix}\) gives \(AW = I_p\) and \(DZ = I_q\). Because \(A\) and \(D\) are square, one-sided inverses guarantee that BOTH \(A\) and \(D\) are invertible! Thus a block diagonal matrix is invertible if and only if every diagonal block is invertible.
+
+Second, consider a block upper-triangular matrix
+\[
+M = \begin{bmatrix} A & B \\ 0 & D \end{bmatrix},
+\]
+where \(A\) (\(p \times p\)) and \(D\) (\(q \times q\)) are square and invertible, and \(B\) is \(p \times q\). Instead of guessing its inverse, let us SOLVE for the unknown blocks of \(M^{-1} = \begin{bmatrix} W & X \\ Y & Z \end{bmatrix}\) directly from \(M M^{-1} = I_{p+q}\):
+\[
+\begin{bmatrix} A & B \\ 0 & D \end{bmatrix}
+\begin{bmatrix} W & X \\ Y & Z \end{bmatrix}
+=
+\begin{bmatrix} AW + BY & AX + BZ \\ DY & DZ \end{bmatrix}
+=
+\begin{bmatrix} I_p & 0 \\ 0 & I_q \end{bmatrix}.
+\]
+Solve from the bottom block-row upward:
+1. \(DY = 0\): left-multiply by \(D^{-1}\) to get \(Y = 0\).
+2. \(DZ = I_q\): left-multiply by \(D^{-1}\) to get \(Z = D^{-1}\).
+3. \(AW + BY = I_p\): since \(Y = 0\), this simplifies to \(AW = I_p\), so \(W = A^{-1}\).
+4. \(AX + BZ = 0\): substitute \(Z = D^{-1}\) to get \(AX = -B D^{-1}\), then left-multiply by \(A^{-1}\) (preserving order carefully!) to obtain
+\[
+X = -A^{-1} B D^{-1}.
+\]
+Notice the exact order: \(A^{-1}\) sits on the LEFT of \(B\), and \(D^{-1}\) sits on the RIGHT of \(B\)! Even when \(p = q\), reversing them to \(-D^{-1} B A^{-1}\) is generally WRONG because matrices do not commute.
+
+An identical top-down derivation for a block lower-triangular matrix \(\begin{bmatrix} A & 0 \\ C & D \end{bmatrix}\) produces the lower-left block \(-D^{-1} C A^{-1}\).
+
+[CALLOUT]
+id: block-tri-inv
+label: Theorem
+title: Inverses of block diagonal and block triangular matrices
+tone: key
+
+Let \(A\) (\(p \times p\)) and \(D\) (\(q \times q\)) be square matrices. Each block matrix below is invertible if and only if BOTH \(A\) and \(D\) are invertible, in which case:
+
+(1) Block diagonal:
+\[
+\begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} A^{-1} & 0 \\ 0 & D^{-1} \end{bmatrix}.
+\]
+(2) Block upper-triangular:
+\[
+\begin{bmatrix} A & B \\ 0 & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} A^{-1} & -A^{-1} B D^{-1} \\ 0 & D^{-1} \end{bmatrix}.
+\]
+(3) Block lower-triangular:
+\[
+\begin{bmatrix} A & 0 \\ C & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} A^{-1} & 0 \\ -D^{-1} C A^{-1} & D^{-1} \end{bmatrix}.
+\]
+In particular, unit block-triangular matrices (with \(A = I_p\) and \(D = I_q\)) are ALWAYS invertible, and inverting them simply negates the off-diagonal block:
+\[
+\begin{bmatrix} I_p & B \\ 0 & I_q \end{bmatrix}^{-1} = \begin{bmatrix} I_p & -B \\ 0 & I_q \end{bmatrix}, \qquad
+\begin{bmatrix} I_p & 0 \\ C & I_q \end{bmatrix}^{-1} = \begin{bmatrix} I_p & 0 \\ -C & I_q \end{bmatrix}.
+\]
+[/CALLOUT]
+
+Let us verify [REF: block-tri-inv.2 | the block upper-triangular formula] on a \(4 \times 4\) example with \(2 \times 2\) blocks:
+\[
+A = \begin{bmatrix} 1 & 2 \\ 0 & 1 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 1 & 0 \\ -1 & 2 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 2 & 1 \\ 1 & 1 \end{bmatrix}.
+\]
+First invert the two small \(2 \times 2\) diagonal blocks:
+\[
+A^{-1} = \begin{bmatrix} 1 & -2 \\ 0 & 1 \end{bmatrix}, \qquad
+D^{-1} = \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix}.
+\]
+Now compute \(-A^{-1} B D^{-1}\) in the exact order:
+\[
+A^{-1} B = \begin{bmatrix} 1 & -2 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ -1 & 2 \end{bmatrix} = \begin{bmatrix} 3 & -4 \\ -1 & 2 \end{bmatrix},
+\qquad
+-A^{-1} B D^{-1} = -\begin{bmatrix} 3 & -4 \\ -1 & 2 \end{bmatrix} \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix} = \begin{bmatrix} -7 & 11 \\ 3 & -5 \end{bmatrix}.
+\]
+Therefore
+\[
+\begin{bmatrix} A & B \\ 0 & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} 1 & -2 & -7 & 11 \\ 0 & 1 & 3 & -5 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & -1 & 2 \end{bmatrix}.
+\]
+We inverted a \(4 \times 4\) matrix using only two \(2 \times 2\) inverses and two \(2 \times 2\) multiplications!
+
+[QUESTION 2]
+[ANSWER: B]
+Consider the \(4 \times 4\) block upper-triangular matrix \(M = \begin{bmatrix} A & B \\ 0 & D \end{bmatrix}\), where
+\[
+A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 2 & 1 \\ 1 & 0 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}.
+\]
+What is the upper-right \(2 \times 2\) block of \(M^{-1}\)?
+
+(A) \(\begin{bmatrix} -2 & 1 \\ 3 & -1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & -1 \\ -1 & 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 & -1 \\ -1 & 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} -2 & -1 \\ -1 & 0 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Block Gaussian elimination, Schur complements, and block LDU ===
+
+Now take a general \(2 \times 2\) block matrix
+\[
+M = \begin{bmatrix} A & B \\ C & D \end{bmatrix},
+\]
+where the leading diagonal block \(A\) (\(p \times p\)) is square and INVERTIBLE, \(D\) is \(q \times q\), \(B\) is \(p \times q\), and \(C\) is \(q \times p\).
+
+How do we eliminate the lower-left block \(C\)—just as scalar Gaussian elimination eliminates entry \(c\) below pivot \(a\) by subtracting \((c/a)\) times row \(1\) from row \(2\)? In block form, division on the right by \(a\) becomes right-multiplication by \(A^{-1}\), so the block multiplier is \(C A^{-1}\)! Left-multiply \(M\) by the unit block lower-triangular matrix \(\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}\):
+\[
+\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+=
+\begin{bmatrix} A & B \\ -C A^{-1} A + C & -C A^{-1} B + D \end{bmatrix}
+=
+\begin{bmatrix} A & B \\ 0 & D - C A^{-1} B \end{bmatrix}.
+\]
+The lower-left block vanishes cleanly, and sitting in the lower-right corner is a \(q \times q\) matrix with a famous name:
+\[
+S = D - C A^{-1} B,
+\]
+called the Schur complement of \(A\) in \(M\).
+
+Now take one more step! To clear the upper-right block \(B\) as well, right-multiply by the unit block upper-triangular matrix \(\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}\):
+\[
+\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}
+=
+\begin{bmatrix} A & B \\ 0 & S \end{bmatrix}
+\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}
+=
+\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}!
+\]
+Look at what we just produced: moving the two outer unit block-triangular matrices to the right side using [REF: block-tri-inv | their sign-flip inverses] gives the exact block \(LDU\) factorization of \(M\):
+\[
+M =
+\begin{bmatrix} I_p & 0 \\ C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}
+\begin{bmatrix} I_p & A^{-1} B \\ 0 & I_q \end{bmatrix}.
+\]
+
+From that single factorization, BOTH the invertibility criterion AND the full \(2 \times 2\) block inverse formula fall straight into our lap!
+1. Invertibility criterion: the outer factors \(L_B = \begin{bmatrix} I_p & 0 \\ C A^{-1} & I_q \end{bmatrix}\) and \(U_B = \begin{bmatrix} I_p & A^{-1} B \\ 0 & I_q \end{bmatrix}\) are ALWAYS invertible. Therefore \(M = L_B \begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix} U_B\) is invertible if and only if the middle block-diagonal factor \(\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}\) is invertible. Since \(A\) is already invertible, \(M\) is invertible if and only if the Schur complement \(S\) is invertible!
+2. Explicit \(2 \times 2\) block inverse: when \(S\) is invertible, invert \(M = L_B \begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix} U_B\) in reverse order:
+\[
+M^{-1} = U_B^{-1} \begin{bmatrix} A^{-1} & 0 \\ 0 & S^{-1} \end{bmatrix} L_B^{-1}
+=
+\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}
+\begin{bmatrix} A^{-1} & 0 \\ 0 & S^{-1} \end{bmatrix}
+\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}.
+\]
+Multiplying the first two factors gives \(\begin{bmatrix} A^{-1} & -A^{-1} B S^{-1} \\ 0 & S^{-1} \end{bmatrix}\), and multiplying by the third factor gives the exact \(2 \times 2\) block inverse:
+\[
+M^{-1} =
+\begin{bmatrix} A^{-1} + A^{-1} B S^{-1} C A^{-1} & -A^{-1} B S^{-1} \\ -S^{-1} C A^{-1} & S^{-1} \end{bmatrix}.
+\]
+
+[CALLOUT]
+id: schur-theorem
+label: Theorem
+title: Block LDU factorization, Schur complement, and \(2 \times 2\) block inverse
+tone: key
+
+Let \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) have square diagonal blocks \(A\) (\(p \times p\)) and \(D\) (\(q \times q\)), with \(A\) invertible. Define the Schur complement of \(A\) in \(M\) by
+\[
+S = D - C A^{-1} B.
+\]
+
+(1) Block \(LDU\) factorization:
+\[
+M =
+\begin{bmatrix} I_p & 0 \\ C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}
+\begin{bmatrix} I_p & A^{-1} B \\ 0 & I_q \end{bmatrix}.
+\]
+(2) Invertibility criterion: \(M\) is invertible if and only if \(S\) is invertible.
+(3) Explicit block inverse (when \(S\) is invertible):
+\[
+M^{-1} =
+\begin{bmatrix} A^{-1} + A^{-1} B S^{-1} C A^{-1} & -A^{-1} B S^{-1} \\ -S^{-1} C A^{-1} & S^{-1} \end{bmatrix}.
+\]
+[/CALLOUT]
+
+Notice how [REF: schur-theorem.3 | the explicit block inverse] generalizes the scalar \(2 \times 2\) inverse formula \(\frac{1}{ad - bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}\)! When \(p = q = 1\), \(S = d - c a^{-1} b = (ad - bc)/a\), so \(S^{-1} = a/(ad - bc)\), \(-S^{-1} c a^{-1} = -c/(ad - bc)\), \(-a^{-1} b S^{-1} = -b/(ad - bc)\), and \(a^{-1} + a^{-1} b S^{-1} c a^{-1} = d/(ad - bc)\)!
+
+[QUESTION 3]
+[ANSWER: D]
+Consider the \(4 \times 4\) partitioned matrix \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\), where
+\[
+A = \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 1 & 2 \\ 2 & 0 \end{bmatrix}, \qquad
+C = \begin{bmatrix} 1 & 2 \\ 2 & 2 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 4 & 3 \\ 6 & k \end{bmatrix}.
+\]
+For which real values of \(k\) is \(M\) invertible?
+
+(A) All real \(k \neq 4\)
+(B) All real \(k \neq 2\)
+(C) Only \(k = 6\)
+(D) All real \(k \neq 6\)
+(E) All real \(k \neq 0\)
+[/QUESTION]
+
+=== SECTION 4: Reducing coupled block linear systems ===
+
+In practice, you rarely need to form the entire inverse \(M^{-1}\)—just as in ordinary \(LU\) factorization, block elimination solves a coupled block linear system directly by shrinking it to a smaller Schur-complement system!
+
+Consider the coupled system
+\[
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+\begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix}
+=
+\begin{bmatrix} \mathbf{f} \\ \mathbf{g} \end{bmatrix},
+\qquad \text{meaning} \qquad
+\begin{aligned}
+A\mathbf{x} + B\mathbf{y} &= \mathbf{f}, \\
+C\mathbf{x} + D\mathbf{y} &= \mathbf{g},
+\end{aligned}
+\]
+where \(A\) is invertible (and often diagonal, triangular, or easy to solve with). Applying the block elimination matrix \(\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}\) to both sides gives
+\[
+\begin{bmatrix} A & B \\ 0 & S \end{bmatrix}
+\begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix}
+=
+\begin{bmatrix} \mathbf{f} \\ \mathbf{g} - C A^{-1} \mathbf{f} \end{bmatrix}.
+\]
+This decouples the system into two smaller solves:
+1. Solve the smaller \(q \times q\) Schur-complement system \(S \mathbf{y} = \mathbf{g} - C A^{-1} \mathbf{f}\) for \(\mathbf{y}\).
+2. Back-substitute \(\mathbf{y}\) into the first block equation and solve \(A \mathbf{x} = \mathbf{f} - B \mathbf{y}\) for \(\mathbf{x}\).
+
+[TABLE]
+Stage of solving a coupled block system | Equation | Size
+1. Eliminate \(\mathbf{x}\) from the bottom block | Form \(S = D - C A^{-1} B\) and \(\tilde{\mathbf{g}} = \mathbf{g} - C A^{-1} \mathbf{f}\) | \(q \times q\) matrix, \(q \times 1\) vector
+2. Solve for \(\mathbf{y}\) | Solve \(S \mathbf{y} = \tilde{\mathbf{g}}\) | \(q \times q\) system
+3. Back-solve for \(\mathbf{x}\) | Solve \(A \mathbf{x} = \mathbf{f} - B \mathbf{y}\) | \(p \times p\) system
+[/TABLE]
+
+Let us run all three stages on a concrete \(4 \times 4\) system with \(2 \times 2\) blocks:
+\[
+A = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}, \quad
+B = \begin{bmatrix} 2 & -2 \\ 1 & 0 \end{bmatrix}, \quad
+C = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}, \quad
+D = \begin{bmatrix} 4 & 1 \\ 3 & 2 \end{bmatrix}, \quad
+\mathbf{f} = \begin{bmatrix} 2 \\ 1 \end{bmatrix}, \quad
+\mathbf{g} = \begin{bmatrix} 7 \\ 5 \end{bmatrix}.
+\]
+Stage 1: Since \(A\) is diagonal, \(A^{-1} = \begin{bmatrix} 1/2 & 0 \\ 0 & 1 \end{bmatrix}\). Compute \(C A^{-1}\) first so we can reuse it on both \(B\) and \(\mathbf{f}\):
+\[
+C A^{-1} = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 1/2 & 0 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix}.
+\]
+Then
+\[
+S = D - (C A^{-1}) B = \begin{bmatrix} 4 & 1 \\ 3 & 2 \end{bmatrix} - \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 2 & -2 \\ 1 & 0 \end{bmatrix}
+= \begin{bmatrix} 4 & 1 \\ 3 & 2 \end{bmatrix} - \begin{bmatrix} 3 & -2 \\ 2 & 0 \end{bmatrix}
+= \begin{bmatrix} 1 & 3 \\ 1 & 2 \end{bmatrix},
+\]
+and the reduced right-hand side is
+\[
+\tilde{\mathbf{g}} = \mathbf{g} - (C A^{-1}) \mathbf{f} = \begin{bmatrix} 7 \\ 5 \end{bmatrix} - \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 2 \\ 1 \end{bmatrix}
+= \begin{bmatrix} 7 \\ 5 \end{bmatrix} - \begin{bmatrix} 3 \\ 2 \end{bmatrix}
+= \begin{bmatrix} 4 \\ 3 \end{bmatrix}.
+\]
+Stage 2: Solve \(S \mathbf{y} = \tilde{\mathbf{g}}\), i.e., \(\begin{bmatrix} 1 & 3 \\ 1 & 2 \end{bmatrix} \mathbf{y} = \begin{bmatrix} 4 \\ 3 \end{bmatrix}\). Subtracting row \(2\) from row \(1\) gives \(y_2 = 1\), and then \(y_1 = 4 - 3(1) = 1\), so \(\mathbf{y} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\).
+
+Stage 3: Back-solve \(A \mathbf{x} = \mathbf{f} - B \mathbf{y}\):
+\[
+\mathbf{f} - B \mathbf{y} = \begin{bmatrix} 2 \\ 1 \end{bmatrix} - \begin{bmatrix} 2 & -2 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 1 \end{bmatrix} - \begin{bmatrix} 0 \\ 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 0 \end{bmatrix}
+\implies
+\mathbf{x} = A^{-1} \begin{bmatrix} 2 \\ 0 \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}.
+\]
+Check in the original equations: \(A\mathbf{x} + B\mathbf{y} = \begin{bmatrix} 2 \\ 0 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 1 \end{bmatrix} = \mathbf{f}\) and \(C\mathbf{x} + D\mathbf{y} = \begin{bmatrix} 2 \\ 0 \end{bmatrix} + \begin{bmatrix} 5 \\ 5 \end{bmatrix} = \begin{bmatrix} 7 \\ 5 \end{bmatrix} = \mathbf{g}\). Exact!
+
+[QUESTION 4]
+[ANSWER: A]
+Solve the coupled block linear system \(\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix} = \begin{bmatrix} \mathbf{f} \\ \mathbf{g} \end{bmatrix}\), where
+\[
+A = \begin{bmatrix} 1 & 0 \\ 0 & 3 \end{bmatrix}, \quad
+B = \begin{bmatrix} 1 & 1 \\ 3 & 0 \end{bmatrix}, \quad
+C = \begin{bmatrix} 2 & 3 \\ 1 & 0 \end{bmatrix}, \quad
+D = \begin{bmatrix} 6 & 3 \\ 2 & 3 \end{bmatrix}, \quad
+\mathbf{f} = \begin{bmatrix} 2 \\ 3 \end{bmatrix}, \quad
+\mathbf{g} = \begin{bmatrix} 11 \\ 7 \end{bmatrix}.
+\]
+What is the solution pair \((\mathbf{x}, \mathbf{y})\)?
+
+(A) \(\mathbf{x} = \begin{bmatrix} -2 \\ -2 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 3 \\ 1 \end{bmatrix}\)
+(B) \(\mathbf{x} = \begin{bmatrix} 3 \\ 1 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} -2 \\ -2 \end{bmatrix}\)
+(C) \(\mathbf{x} = \begin{bmatrix} -2 \\ -6 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 3 \\ 1 \end{bmatrix}\)
+(D) \(\mathbf{x} = \begin{bmatrix} 1 \\ -1 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 1 \\ 3 \end{bmatrix}\)
+(E) \(\mathbf{x} = \begin{bmatrix} -1 \\ -1 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 2 \\ 2 \end{bmatrix}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Let \(A\) be an invertible \(n \times n\) matrix, let \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) be column vectors, and form the \((n + 1) \times (n + 1)\) bordered matrix
+\[
+M = \begin{bmatrix} A & \mathbf{u} \\ \mathbf{v}^T & 0 \end{bmatrix}.
+\]
+What is the exact necessary and sufficient condition for \(M\) to be invertible?
+
+(A) \(\mathbf{v}^T \mathbf{u} \neq 0\)
+(B) \(\mathbf{u} \neq \mathbf{0}\) and \(\mathbf{v} \neq \mathbf{0}\)
+(C) \(\mathbf{v}^T A^{-1} \mathbf{u} \neq 0\)
+(D) \(\mathbf{u}^T A^{-1} \mathbf{v} = 0\)
+(E) \(M\) is always singular because its lower-right entry is \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suppose \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) has square diagonal blocks \(A\) (\(p \times p\)) and \(D\) (\(q \times q\)), where \(D\) is invertible (while \(A\) may be singular). Which block elimination matrix left-multiplies \(M\) to zero out the upper-right block \(B\), and what is the resulting Schur complement of \(D\) in \(M\)?
+
+(A) \(\begin{bmatrix} I_p & -D^{-1} B \\ 0 & I_q \end{bmatrix}\); Schur complement \(A - D^{-1} B C\)
+(B) \(\begin{bmatrix} I_p & B D^{-1} \\ 0 & I_q \end{bmatrix}\); Schur complement \(A + B D^{-1} C\)
+(C) \(\begin{bmatrix} I_p & 0 \\ -C D^{-1} & I_q \end{bmatrix}\); Schur complement \(A - C D^{-1} B\)
+(D) \(\begin{bmatrix} I_p & -B D^{-1} \\ 0 & I_q \end{bmatrix}\); Schur complement \(D - C A^{-1} B\)
+(E) \(\begin{bmatrix} I_p & -B D^{-1} \\ 0 & I_q \end{bmatrix}\); Schur complement \(A - B D^{-1} C\)
+[/BONUS]

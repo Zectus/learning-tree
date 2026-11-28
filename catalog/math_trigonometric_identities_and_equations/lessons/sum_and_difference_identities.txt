@@ -1,0 +1,279 @@
+=== SECTION 1: Deriving the cosine difference identity on the unit circle ===
+
+You already know exact trigonometric values at multiples of \(\frac{\pi}{6}\) (\(30^\circ\)) and \(\frac{\pi}{4}\) (\(45^\circ\)). What about an angle like \(15^\circ = 45^\circ - 30^\circ\) or \(\frac{5\pi}{12} = \frac{\pi}{4} + \frac{\pi}{6}\)? A tempting guess is to distribute cosine or sine across subtraction: \(\cos(45^\circ - 30^\circ) \stackrel{?}{=} \cos 45^\circ - \cos 30^\circ\). Check that guess immediately: \(\cos 45^\circ - \cos 30^\circ = \frac{\sqrt{2} - \sqrt{3}}{2} < 0\), whereas \(15^\circ\) lies in Quadrant I where cosine is strictly positive (in fact close to \(1\))! Even simpler, for \(\alpha = \frac{\pi}{2}\) and \(\beta = \frac{\pi}{2}\),
+\[
+\cos\!\left(\frac{\pi}{2} - \frac{\pi}{2}\right) = \cos 0 = 1, \qquad \text{while} \qquad \cos\!\left(\frac{\pi}{2}\right) - \cos\!\left(\frac{\pi}{2}\right) = 0.
+\]
+Trigonometric functions are nonlinear, so \(\cos(\alpha - \beta) \neq \cos\alpha - \cos\beta\) and \(\sin(\alpha + \beta) \neq \sin\alpha + \sin\beta\).
+
+To find the true formula for \(\cos(\alpha - \beta)\), place two angles \(\alpha\) and \(\beta\) on the unit circle \(x^2 + y^2 = 1\). They determine two points on the circle:
+\[
+P = (\cos\alpha, \sin\alpha), \qquad Q = (\cos\beta, \sin\beta).
+\]
+The central angle between the rays to \(P\) and \(Q\) has measure \(|\alpha - \beta|\). Now rotate the entire figure clockwise by \(\beta\) radians around the origin. Rotation preserves distances and angles:
+- \(Q\) rotates to \(A = (1, 0)\),
+- \(P\) rotates to \(R = (\cos(\alpha - \beta), \sin(\alpha - \beta))\).
+
+Because a rigid rotation keeps chord lengths unchanged, the chord \(PQ\) has the exact same length as the chord \(RA\), so \(d(P, Q)^2 = d(R, A)^2\).
+
+[GRAPH]
+type: parametric2d
+title: Congruent chords \(PQ\) and \(RA\) on the unit circle (illustrated for \(\alpha = 2.0\), \(\beta = 0.7\), \(\alpha - \beta = 1.3\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -1.35, 1.35
+yrange: -1.35, 1.35
+trace: cos(t), sin(t) | label: unit circle
+segment: cos(2.0), sin(2.0), cos(0.7), sin(0.7) | label: \(PQ\)
+segment: cos(1.3), sin(1.3), 1, 0 | label: \(RA\) | dashed: true
+point: cos(2.0), sin(2.0) | label: \(P\)
+point: cos(0.7), sin(0.7) | label: \(Q\)
+point: cos(1.3), sin(1.3) | label: \(R\)
+point: 1, 0 | label: \(A\)
+[/GRAPH]
+
+Now compute both squared chord lengths using the distance formula. For \(PQ\):
+\[
+d(P, Q)^2 = (\cos\alpha - \cos\beta)^2 + (\sin\alpha - \sin\beta)^2.
+\]
+Expand both squares and group \(\cos^2 + \sin^2 = 1\) for each angle:
+\[
+d(P, Q)^2 = (\cos^2\alpha + \sin^2\alpha) + (\cos^2\beta + \sin^2\beta) - 2\cos\alpha\cos\beta - 2\sin\alpha\sin\beta = 2 - 2\cos\alpha\cos\beta - 2\sin\alpha\sin\beta.
+\]
+For \(RA\):
+\[
+d(R, A)^2 = (\cos(\alpha - \beta) - 1)^2 + (\sin(\alpha - \beta) - 0)^2 = \cos^2(\alpha - \beta) + \sin^2(\alpha - \beta) - 2\cos(\alpha - \beta) + 1 = 2 - 2\cos(\alpha - \beta).
+\]
+Equate \(d(P, Q)^2 = d(R, A)^2\):
+\[
+2 - 2\cos(\alpha - \beta) = 2 - 2\cos\alpha\cos\beta - 2\sin\alpha\sin\beta.
+\]
+Subtract \(2\) from both sides and divide by \(-2\) to obtain the master identity:
+\[
+\cos(\alpha - \beta) = \cos\alpha\cos\beta + \sin\alpha\sin\beta.
+\]
+Notice that our chord argument works for ALL real numbers \(\alpha\) and \(\beta\), regardless of quadrant or sign. Every other sum and difference identity in trigonometry flows algebraically from this single geometric equation.
+
+=== SECTION 2: Deriving the full family for cosine, sine, and tangent ===
+
+With \(\cos(\alpha - \beta)\) proved, we derive the remaining five formulas cleanly using only even/odd, cofunction, and quotient identities.
+
+1. Cosine of a sum: Replace \(\beta\) by \(-\beta\) in \(\cos(\alpha - \beta)\):
+\[
+\cos(\alpha + \beta) = \cos(\alpha - (-\beta)) = \cos\alpha\cos(-\beta) + \sin\alpha\sin(-\beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta,
+\]
+because cosine is even (\(\cos(-\beta) = \cos\beta\)) and sine is odd (\(\sin(-\beta) = -\sin\beta\)).
+
+2. Sine of a sum and difference: Use the cofunction bridge \(\sin\theta = \cos\!\left(\frac{\pi}{2} - \theta\right)\) with \(\theta = \alpha + \beta\), grouping the angle as \(\left(\frac{\pi}{2} - \alpha\right) - \beta\):
+\[
+\sin(\alpha + \beta) = \cos\!\left(\left(\frac{\pi}{2} - \alpha\right) - \beta\right) = \cos\!\left(\frac{\pi}{2} - \alpha\right)\cos\beta + \sin\!\left(\frac{\pi}{2} - \alpha\right)\sin\beta = \sin\alpha\cos\beta + \cos\alpha\sin\beta.
+\]
+Replacing \(\beta\) by \(-\beta\) immediately gives
+\[
+\sin(\alpha - \beta) = \sin\alpha\cos\beta - \cos\alpha\sin\beta.
+\]
+
+3. Tangent of a sum and difference: Provided \(\cos\alpha \neq 0\), \(\cos\beta \neq 0\), and \(\cos(\alpha + \beta) \neq 0\), divide \(\sin(\alpha + \beta)\) by \(\cos(\alpha + \beta)\):
+\[
+\tan(\alpha + \beta) = \frac{\sin\alpha\cos\beta + \cos\alpha\sin\beta}{\cos\alpha\cos\beta - \sin\alpha\sin\beta}.
+\]
+To turn the right-hand side entirely into tangents, divide every term in both numerator and denominator by \(\cos\alpha\cos\beta\):
+\[
+\tan(\alpha + \beta) = \frac{\frac{\sin\alpha\cos\beta}{\cos\alpha\cos\beta} + \frac{\cos\alpha\sin\beta}{\cos\alpha\cos\beta}}{\frac{\cos\alpha\cos\beta}{\cos\alpha\cos\beta} - \frac{\sin\alpha\sin\beta}{\cos\alpha\cos\beta}} = \frac{\tan\alpha + \tan\beta}{1 - \tan\alpha\tan\beta}.
+\]
+Replacing \(\beta\) by \(-\beta\) and using \(\tan(-\beta) = -\tan\beta\) yields
+\[
+\tan(\alpha - \beta) = \frac{\tan\alpha - \tan\beta}{1 + \tan\alpha\tan\beta}.
+\]
+
+[CALLOUT]
+id: sum-diff-identities
+label: Theorem
+title: Sum and difference identities
+tone: key
+
+For all real angles \(\alpha, \beta\) (with the tangent denominators nonzero for (3)):
+
+(1) Cosine: \(\cos(\alpha \pm \beta) = \cos\alpha\cos\beta \mp \sin\alpha\sin\beta\) (opposite middle sign).
+(2) Sine: \(\sin(\alpha \pm \beta) = \sin\alpha\cos\beta \pm \cos\alpha\sin\beta\) (same middle sign).
+(3) Tangent: \(\tan(\alpha \pm \beta) = \dfrac{\tan\alpha \pm \tan\beta}{1 \mp \tan\alpha\tan\beta}\) (numerator matches the sign; denominator reverses it).
+[/CALLOUT]
+
+Notice the sign pattern: cosine pairs like functions (\(\cos\cos\) and \(\sin\sin\)) and flips the sign; sine mixes functions (\(\sin\cos\) and \(\cos\sin\)) and keeps the sign.
+
+[QUESTION 1]
+[ANSWER: B]
+Which single trigonometric expression equals \(\cos\!\left(\dfrac{7\pi}{12}\right)\cos\!\left(\dfrac{\pi}{4}\right) + \sin\!\left(\dfrac{7\pi}{12}\right)\sin\!\left(\dfrac{\pi}{4}\right)\), and what is its exact numerical value?
+
+(A) \(\cos\!\left(\frac{5\pi}{6}\right) = -\frac{\sqrt{3}}{2}\)
+(B) \(\cos\!\left(\frac{\pi}{3}\right) = \frac{1}{2}\)
+(C) \(\sin\!\left(\frac{5\pi}{6}\right) = \frac{1}{2}\)
+(D) \(\sin\!\left(\frac{\pi}{3}\right) = \frac{\sqrt{3}}{2}\)
+(E) \(\cos\!\left(\frac{\pi}{3}\right) = -\frac{1}{2}\)
+[/QUESTION]
+
+=== SECTION 3: Exact values at non-standard angles and collapsing expressions ===
+
+One immediate payoff of [REF: sum-diff-identities | the sum and difference identities] is computing exact trigonometric values at every multiple of \(15^\circ\) (\(\frac{\pi}{12}\)) by writing the angle as a sum or difference of two special angles whose values you already know (\(\frac{\pi}{6}, \frac{\pi}{4}, \frac{\pi}{3}\), or \(30^\circ, 45^\circ, 60^\circ\)).
+
+Example 1: Find the exact value of \(\cos(15^\circ)\).
+Write \(15^\circ = 45^\circ - 30^\circ\) and apply [REF: sum-diff-identities.1 | the cosine difference identity]:
+\[
+\cos(15^\circ) = \cos(45^\circ - 30^\circ) = \cos 45^\circ \cos 30^\circ + \sin 45^\circ \sin 30^\circ = \frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2}\cdot\frac{1}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}.
+\]
+Notice a quick reasonableness check: \(\frac{\sqrt{6} + \sqrt{2}}{4} \approx \frac{2.449 + 1.414}{4} \approx 0.966\), right next to \(1\), as expected for a small \(15^\circ\) angle.
+
+Example 2: Find the exact values of \(\sin\!\left(\frac{5\pi}{12}\right)\) and \(\tan\!\left(\frac{5\pi}{12}\right)\).
+Notice that \(\frac{5\pi}{12} = \frac{3\pi}{12} + \frac{2\pi}{12} = \frac{\pi}{4} + \frac{\pi}{6}\) (which is \(75^\circ\)). Applying [REF: sum-diff-identities.2 | the sine sum identity]:
+\[
+\sin\!\left(\frac{5\pi}{12}\right) = \sin\!\left(\frac{\pi}{4} + \frac{\pi}{6}\right) = \sin\!\left(\frac{\pi}{4}\right)\cos\!\left(\frac{\pi}{6}\right) + \cos\!\left(\frac{\pi}{4}\right)\sin\!\left(\frac{\pi}{6}\right) = \frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2}\cdot\frac{1}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}.
+\]
+(That equals \(\cos(15^\circ)\) because \(75^\circ\) and \(15^\circ\) are complementary angles!)
+Now apply [REF: sum-diff-identities.3 | the tangent sum identity], using \(\tan(\frac{\pi}{4}) = 1\) and \(\tan(\frac{\pi}{6}) = \frac{1}{\sqrt{3}}\):
+\[
+\tan\!\left(\frac{5\pi}{12}\right) = \frac{1 + \frac{1}{\sqrt{3}}}{1 - 1 \cdot \frac{1}{\sqrt{3}}} = \frac{\sqrt{3} + 1}{\sqrt{3} - 1}.
+\]
+Rationalize the denominator by multiplying top and bottom by \(\sqrt{3} + 1\):
+\[
+\tan\!\left(\frac{5\pi}{12}\right) = \frac{(\sqrt{3} + 1)^2}{3 - 1} = \frac{3 + 2\sqrt{3} + 1}{2} = 2 + \sqrt{3}.
+\]
+
+Reading [REF: sum-diff-identities | the sum and difference identities] from RIGHT to LEFT is just as valuable: it collapses expanded expressions back into a single trig function. For example,
+\[
+\frac{\tan(80^\circ) - \tan(20^\circ)}{1 + \tan(80^\circ)\tan(20^\circ)} = \tan(80^\circ - 20^\circ) = \tan(60^\circ) = \sqrt{3},
+\]
+and symbolically,
+\[
+\sin(3x)\cos(x) - \cos(3x)\sin(x) = \sin(3x - x) = \sin(2x).
+\]
+
+[QUESTION 2]
+[ANSWER: D]
+What is the exact value of \(\sin\!\left(\dfrac{\pi}{12}\right)\)?
+
+(A) \(\frac{\sqrt{6} + \sqrt{2}}{4}\)
+(B) \(\frac{\sqrt{3} - 1}{2}\)
+(C) \(\frac{\sqrt{2} - \sqrt{6}}{4}\)
+(D) \(\frac{\sqrt{6} - \sqrt{2}}{4}\)
+(E) \(\frac{\sqrt{6} - \sqrt{2}}{2}\)
+[/QUESTION]
+
+=== SECTION 4: Evaluating compound angles from quadrant information ===
+
+Often you do NOT know the angles \(\alpha\) and \(\beta\) themselves—you are only told one trigonometric ratio for \(\alpha\), one for \(\beta\), and which quadrant each angle lies in. Sum and difference identities still yield exact values for \(\sin(\alpha \pm \beta)\), \(\cos(\alpha \pm \beta)\), and \(\tan(\alpha \pm \beta)\) without ever finding \(\alpha\) or \(\beta\).
+
+Worked example: Suppose \(\sin\alpha = \frac{3}{5}\) with \(\alpha\) in Quadrant II, and \(\cos\beta = -\frac{5}{13}\) with \(\beta\) in Quadrant III. Find the exact values of \(\sin(\alpha + \beta)\), \(\cos(\alpha + \beta)\), and \(\tan(\alpha + \beta)\).
+
+Step 1: Find the missing sine and cosine for each angle using \(\sin^2\theta + \cos^2\theta = 1\) and quadrant signs.
+- For \(\alpha\) in Quadrant II (\(\cos\alpha < 0\)):
+\[
+\cos\alpha = -\sqrt{1 - \left(\frac{3}{5}\right)^2} = -\sqrt{\frac{16}{25}} = -\frac{4}{5}.
+\]
+- For \(\beta\) in Quadrant III (\(\sin\beta < 0\)):
+\[
+\sin\beta = -\sqrt{1 - \left(-\frac{5}{13}\right)^2} = -\sqrt{\frac{144}{169}} = -\frac{12}{13}.
+\]
+
+Step 2: Substitute all four values directly into [REF: sum-diff-identities | the sum formulas]:
+\[
+\sin(\alpha + \beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta = \left(\frac{3}{5}\right)\left(-\frac{5}{13}\right) + \left(-\frac{4}{5}\right)\left(-\frac{12}{13}\right) = \frac{-15 + 48}{65} = \frac{33}{65},
+\]
+\[
+\cos(\alpha + \beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta = \left(-\frac{4}{5}\right)\left(-\frac{5}{13}\right) - \left(\frac{3}{5}\right)\left(-\frac{12}{13}\right) = \frac{20 + 36}{65} = \frac{56}{65}.
+\]
+Step 3: Divide to get tangent (and check with a quick Pythagorean sanity check: \(33^2 + 56^2 = 1089 + 3136 = 4225 = 65^2\), confirming our arithmetic is exact!):
+\[
+\tan(\alpha + \beta) = \frac{\sin(\alpha + \beta)}{\cos(\alpha + \beta)} = \frac{33}{56}.
+\]
+Since both \(\sin(\alpha + \beta) > 0\) and \(\cos(\alpha + \beta) > 0\), the angle \(\alpha + \beta\) terminates in Quadrant I.
+
+[QUESTION 3]
+[ANSWER: A]
+Suppose \(\cos\alpha = -\dfrac{8}{17}\) with \(\alpha\) in Quadrant II, and \(\sin\beta = -\dfrac{4}{5}\) with \(\beta\) in Quadrant IV. What is the exact value of \(\cos(\alpha - \beta)\)?
+
+(A) \(-\frac{84}{85}\)
+(B) \(\frac{36}{85}\)
+(C) \(-\frac{36}{85}\)
+(D) \(\frac{84}{85}\)
+(E) \(-\frac{13}{85}\)
+[/QUESTION]
+
+=== SECTION 5: Reduction formulas and verifying compound-angle identities ===
+
+Every unit-circle shift or reflection formula—called a reduction formula—is a one-line special case of [REF: sum-diff-identities | the sum and difference identities]. Instead of memorizing dozens of shift rules, expand them on the spot:
+
+- Supplement identity for sine:
+\[
+\sin(\pi - x) = \sin\pi\cos x - \cos\pi\sin x = (0)\cos x - (-1)\sin x = \sin x.
+\]
+- Quarter-turn shift for cosine:
+\[
+\cos\!\left(x + \frac{\pi}{2}\right) = \cos x\cos\!\left(\frac{\pi}{2}\right) - \sin x\sin\!\left(\frac{\pi}{2}\right) = \cos x(0) - \sin x(1) = -\sin x.
+\]
+- Period-\(\pi\) shift for tangent:
+\[
+\tan(x + \pi) = \frac{\tan x + \tan\pi}{1 - \tan x \tan\pi} = \frac{\tan x + 0}{1 - 0} = \tan x.
+\]
+- Eighth-turn shift for tangent (where \(\tan x \neq 1\)):
+\[
+\tan\!\left(x + \frac{\pi}{4}\right) = \frac{\tan x + \tan(\pi/4)}{1 - \tan x \tan(\pi/4)} = \frac{\tan x + 1}{1 - \tan x} = \frac{1 + \tan x}{1 - \tan x}.
+\]
+
+Watch one domain pitfall when applying [REF: sum-diff-identities.3 | the tangent sum/difference formula]: you CANNOT expand \(\tan\!\left(x + \frac{\pi}{2}\right)\) directly with \(\frac{\tan x + \tan(\pi/2)}{1 - \tan x \tan(\pi/2)}\) because \(\tan(\frac{\pi}{2})\) is undefined! Instead, rewrite in terms of sine and cosine first:
+\[
+\tan\!\left(x + \frac{\pi}{2}\right) = \frac{\sin\!\left(x + \frac{\pi}{2}\right)}{\cos\!\left(x + \frac{\pi}{2}\right)} = \frac{\cos x}{-\sin x} = -\cot x \qquad (\sin x \neq 0).
+\]
+
+[TABLE]
+Reduction expression | Sum/difference expansion | Simplified form
+\(\sin(\pi - x)\) | \(\sin\pi\cos x - \cos\pi\sin x\) | \(\sin x\)
+\(\cos(\pi - x)\) | \(\cos\pi\cos x + \sin\pi\sin x\) | \(-\cos x\)
+\(\cos\!\left(x + \frac{\pi}{2}\right)\) | \(\cos x(0) - \sin x(1)\) | \(-\sin x\)
+\(\sin\!\left(x + \frac{\pi}{2}\right)\) | \(\sin x(0) + \cos x(1)\) | \(\cos x\)
+\(\tan\!\left(x - \frac{\pi}{4}\right)\) | \(\frac{\tan x - 1}{1 + \tan x}\) | \(\frac{\tan x - 1}{1 + \tan x}\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: E]
+Which simplified expression is identically equal to \(\sin\!\left(x + \dfrac{\pi}{6}\right) + \sin\!\left(x - \dfrac{\pi}{6}\right)\) for all real \(x\)?
+
+(A) \(\sin x\)
+(B) \(\cos x\)
+(C) \(\sqrt{3}\cos x\)
+(D) \(2\sin x\)
+(E) \(\sqrt{3}\sin x\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Simplify \(\dfrac{\sin(\alpha + \beta)}{\cos\alpha\cos\beta}\) on its common domain into an expression using only \(\tan\alpha\) and \(\tan\beta\).
+
+(A) \(\tan\alpha\tan\beta\)
+(B) \(\tan\alpha - \tan\beta\)
+(C) \(\tan\alpha + \tan\beta\)
+(D) \(\frac{\tan\alpha + \tan\beta}{1 - \tan\alpha\tan\beta}\)
+(E) \(1 - \tan\alpha\tan\beta\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Compute the exact value of \(\tan\!\left(\dfrac{11\pi}{12}\right)\) using a sum or difference of special angles.
+
+(A) \(2 - \sqrt{3}\)
+(B) \(\sqrt{3} - 2\)
+(C) \(-2 - \sqrt{3}\)
+(D) \(2 + \sqrt{3}\)
+(E) \(1 - \sqrt{3}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suppose \(\tan\alpha = 2\) and \(\tan\beta = 3\), with both \(\alpha\) and \(\beta\) in Quadrant I (\(0 < \alpha, \beta < \frac{\pi}{2}\)). What is the exact value of \(\alpha + \beta\)?
+
+(A) \(\frac{\pi}{4}\)
+(B) \(-\frac{\pi}{4}\)
+(C) \(\frac{5\pi}{4}\)
+(D) \(\frac{3\pi}{4}\)
+(E) \(\frac{2\pi}{3}\)
+[/BONUS]

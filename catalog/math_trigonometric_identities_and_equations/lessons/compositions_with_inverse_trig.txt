@@ -1,0 +1,213 @@
+=== SECTION 1: Safe cancellation versus the reverse-order trap ===
+
+In algebra, an inverse function \(f^{-1}\) cancels \(f\) in both orders: \(f(f^{-1}(u)) = u\) and \(f^{-1}(f(x)) = x\). For trigonometric functions, however, \(\arcsin\), \(\arccos\), and \(\arctan\) are inverses only of RESTRICTED branches of \(\sin\), \(\cos\), and \(\tan\). That restriction creates a sharp asymmetry between the two composition orders.
+
+First, look at the OUTER-trig, INNER-inverse order \(f(f^{-1}(u))\):
+- \(\sin(\arcsin u) = u\) whenever \(u \in [-1, 1]\),
+- \(\cos(\arccos u) = u\) whenever \(u \in [-1, 1]\),
+- \(\tan(\arctan u) = u\) for all \(u \in \mathbb{R}\).
+
+Why does this order cancel cleanly on the entire domain of \(f^{-1}\)? By definition, \(\theta = \arcsin u\) is the angle whose sine equals \(u\); taking \(\sin\theta\) immediately returns \(u\). The ONLY thing to check is whether \(u\) actually belongs to the domain of \(f^{-1}\)! For example, \(\sin(\arcsin(0.73)) = 0.73\) and \(\tan(\arctan(-4.5)) = -4.5\), whereas \(\cos(\arccos(1.2))\) is UNDEFINED in \(\mathbb{R}\) because \(1.2 \notin [-1, 1]\).
+
+Now reverse the order to OUTER-inverse, INNER-trig: \(f^{-1}(f(x))\). Does \(\arcsin(\sin x)\) equal \(x\) for all \(x\)? Test \(x = \frac{5\pi}{6}\):
+\[
+\sin\!\left(\frac{5\pi}{6}\right) = \frac{1}{2}, \qquad \text{so} \qquad \arcsin\!\left(\sin\!\left(\frac{5\pi}{6}\right)\right) = \arcsin\!\left(\frac{1}{2}\right) = \frac{\pi}{6} \neq \frac{5\pi}{6}!
+\]
+Why did cancellation fail? Because \(\arcsin\) can ONLY output angles in its principal range \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\). The input \(\frac{5\pi}{6}\) lies outside \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\), so \(\arcsin\) cannot hand \(\frac{5\pi}{6}\) back—instead it returns the unique angle in \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\) that has the same sine, namely \(\frac{\pi}{6}\).
+
+[CALLOUT]
+id: cancellation-rules
+label: Theorem
+title: Exact cancellation rules for trig and inverse-trig compositions
+tone: key
+
+(1) Outer trig, inner inverse (domain check only):
+- \(\sin(\arcsin u) = u\) for \(u \in [-1, 1]\) (undefined for \(|u| > 1\)),
+- \(\cos(\arccos u) = u\) for \(u \in [-1, 1]\) (undefined for \(|u| > 1\)),
+- \(\tan(\arctan u) = u\) for all \(u \in \mathbb{R}\).
+
+(2) Outer inverse, inner trig (principal-range check required):
+- \(\arcsin(\sin x) = x\) ONLY when \(x \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\),
+- \(\arccos(\cos x) = x\) ONLY when \(x \in [0, \pi]\),
+- \(\arctan(\tan x) = x\) ONLY when \(x \in \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\).
+[/CALLOUT]
+
+The graphs of \(y = \arcsin(\sin x)\) and \(y = \arccos(\cos x)\) make [REF: cancellation-rules.2 | the reverse-order behavior] visually unforgettable. Instead of the straight line \(y = x\), \(\arcsin(\sin x)\) forms a periodic sawtooth trapped in \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\) (coinciding with \(y = x\) only on \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\)), while \(\arccos(\cos x)\) forms a periodic triangle wave trapped in \([0, \pi]\) (coinciding with \(y = x\) only on \([0, \pi]\)).
+
+[GRAPH]
+type: function2d
+title: Reverse-order compositions \(y = \arcsin(\sin x)\) and \(y = \arccos(\cos x)\) versus \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -6.2832, 6.2832
+yrange: -2.2, 3.6
+trace: asin(sin(x)) | label: \(y = \arcsin(\sin x)\)
+trace: acos(cos(x)) | label: \(y = \arccos(\cos x)\)
+point: 2.6180, 0.5236 | label: \((5\pi/6, \pi/6)\)
+point: -1.0472, 1.0472 | label: \((-\pi/3, \pi/3)\)
+[/GRAPH]
+
+=== SECTION 2: The two-step reduction for \(f^{-1}(f(x))\) ===
+
+Whenever you evaluate \(f^{-1}(f(x))\) and \(x\) lies OUTSIDE the principal range of \(f^{-1}\), use this reliable two-step procedure:
+1. Evaluate \(f(x)\) directly (or determine its sign and acute reference angle \(\theta_{\text{ref}}\) on the unit circle).
+2. Return the unique angle in the principal range of \(f^{-1}\) that produces that exact same value (same sign and same reference angle).
+
+Watch this two-step reduction on four concrete examples—including non-special angles where you cannot read a decimal off a table:
+
+Example 1: \(\arccos\!\left(\cos\!\left(-\frac{\pi}{3}\right)\right)\).
+Since \(-\frac{\pi}{3} \notin [0, \pi]\), do NOT cancel. Step 1: \(\cos\!\left(-\frac{\pi}{3}\right) = \cos\!\left(\frac{\pi}{3}\right) = \frac{1}{2}\) (positive, reference angle \(\frac{\pi}{3}\)). Step 2: the unique angle in \([0, \pi]\) with cosine \(\frac{1}{2}\) is \(\frac{\pi}{3}\). Thus \(\arccos\!\left(\cos\!\left(-\frac{\pi}{3}\right)\right) = \frac{\pi}{3}\).
+
+Example 2: \(\arcsin\!\left(\sin\!\left(\frac{7\pi}{6}\right)\right)\).
+Here \(\frac{7\pi}{6} \notin \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\). Step 1: \(\frac{7\pi}{6}\) is in Quadrant III with reference angle \(\frac{\pi}{6}\), so \(\sin\!\left(\frac{7\pi}{6}\right) = -\frac{1}{2}\). Step 2: the unique angle in \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\) with sine \(-\frac{1}{2}\) is \(-\frac{\pi}{6}\). Thus \(\arcsin\!\left(\sin\!\left(\frac{7\pi}{6}\right)\right) = -\frac{\pi}{6}\).
+
+Example 3: \(\arctan\!\left(\tan\!\left(\frac{4\pi}{3}\right)\right)\).
+Because \(\tan x\) has period \(\pi\), we simply add or subtract multiples of \(\pi\) to shift the angle into \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\) (checking first that the angle is not an odd multiple of \(\frac{\pi}{2}\), where \(\tan x\) is undefined!). Subtracting \(\pi\) from \(\frac{4\pi}{3}\) gives \(\frac{\pi}{3} \in \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\), so \(\arctan\!\left(\tan\!\left(\frac{4\pi}{3}\right)\right) = \frac{\pi}{3}\).
+
+Example 4 (Non-special angle): \(\arcsin(\sin(4))\), where \(4\) is in radians.
+Where is \(4\) radians? Since \(\pi \approx 3.1416\) and \(\frac{3\pi}{2} \approx 4.7124\), \(4\) lies in Quadrant III, past \(\pi\) by a reference angle of \(4 - \pi\). Its sine is negative: \(\sin(4) = -\sin(4 - \pi) = \sin(\pi - 4)\). Check whether \(\pi - 4\) lies in \(\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\): \(\pi - 4 \approx -0.8584 \in [-1.5708, 1.5708]\). Yes! Therefore \(\arcsin(\sin(4)) = \pi - 4\) exactly.
+
+[QUESTION 1]
+[ANSWER: C]
+Evaluate \(\arcsin\!\left(\sin\!\left(\dfrac{4\pi}{3}\right)\right) + \arccos\!\left(\cos\!\left(\dfrac{5\pi}{4}\right)\right) + \arctan\!\left(\tan\!\left(\dfrac{3\pi}{4}\right)\right)\).
+
+(A) \(\frac{10\pi}{3}\)
+(B) \(\frac{5\pi}{6}\)
+(C) \(\frac{\pi}{6}\)
+(D) \(\frac{5\pi}{12}\)
+(E) \(-\frac{\pi}{6}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Which of the following equals \(\arccos(\cos(5))\), where \(5\) is measured in radians?
+
+(A) \(5\)
+(B) \(5 - \pi\)
+(C) \(5 - 2\pi\)
+(D) \(2\pi - 5\)
+(E) \(\pi - 5\)
+[/QUESTION]
+
+=== SECTION 3: Mixed compositions \(g(f^{-1}(u))\) with numeric inputs ===
+
+Now consider mixing TWO DIFFERENT functions, such as \(\tan\!\left(\arccos\!\left(-\frac{3}{5}\right)\right)\) or \(\cos\!\left(\arcsin\!\left(-\frac{5}{13}\right)\right)\). You do NOT need a calculator or the angle in degrees or radians—a single substitution and a labeled reference triangle give the exact answer.
+
+[CALLOUT]
+id: triangle-method
+label: Method
+title: Evaluating mixed compositions \(g(f^{-1}(u))\)
+tone: key
+
+(1) Name the inner angle: set \(\theta = f^{-1}(u)\), so \(f(\theta) = u\).
+(2) Pin down the quadrant of \(\theta\) using the principal range of \(f^{-1}\) and the sign of \(u\). (Never skip this step when \(u < 0\)!)
+(3) Sketch a reference right triangle in that quadrant (or apply a Pythagorean identity) to find the remaining side, keeping exact signs for coordinates \(x\) and \(y\) (hypotenuse \(r > 0\) is always positive).
+(4) Read off \(g(\theta)\) directly from the triangle or identities.
+[/CALLOUT]
+
+Worked example 1: Evaluate \(\tan\!\left(\arccos\!\left(-\frac{3}{5}\right)\right)\).
+- Step 1: Set \(\theta = \arccos\!\left(-\frac{3}{5}\right)\), so \(\cos\theta = -\frac{3}{5}\) and \(\theta \in [0, \pi]\).
+- Step 2: Because \(\cos\theta < 0\) and \(\theta \in [0, \pi]\), \(\theta\) lies in Quadrant II, where \(x < 0\) and \(y > 0\).
+- Step 3: Place \(x = -3\) and hypotenuse \(r = 5\). Then \(y = +\sqrt{5^2 - (-3)^2} = +\sqrt{16} = 4\). (Equivalently, \(\sin\theta = +\sqrt{1 - (-3/5)^2} = \frac{4}{5}\).)
+- Step 4: Read off \(\tan\theta = \frac{y}{x} = \frac{4}{-3} = -\frac{4}{3}\).
+
+Worked example 2: Evaluate \(\sec\!\left(\arcsin\!\left(-\frac{5}{13}\right)\right)\).
+- Step 1: Set \(\theta = \arcsin\!\left(-\frac{5}{13}\right)\), so \(\sin\theta = -\frac{5}{13}\) and \(\theta \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\).
+- Step 2: Because \(\sin\theta < 0\) and \(\theta \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\), \(\theta\) lies in Quadrant IV, where \(x > 0\) and \(y < 0\).
+- Step 3: With \(y = -5\) and \(r = 13\), we get \(x = +\sqrt{13^2 - (-5)^2} = 12\). (Notice \(\cos\theta = \frac{12}{13} > 0\) in Quadrant IV!)
+- Step 4: Therefore \(\sec\theta = \frac{r}{x} = \frac{13}{12}\).
+
+Notice why [REF: triangle-method.2 | Step 2 (quadrant tracking)] saved us in both examples: in Example 1, a negative input to \(\arccos\) put \(\theta\) in Quadrant II (making \(\tan\theta\) negative), whereas in Example 2, a negative input to \(\arcsin\) put \(\theta\) in Quadrant IV (keeping \(\sec\theta\) positive!).
+
+[QUESTION 3]
+[ANSWER: B]
+Compute the exact value of \(\csc\!\left(\arctan\!\left(-\dfrac{7}{24}\right)\right)\).
+
+(A) \(\frac{25}{7}\)
+(B) \(-\frac{25}{7}\)
+(C) \(-\frac{25}{24}\)
+(D) \(\frac{25}{24}\)
+(E) \(-\frac{24}{7}\)
+[/QUESTION]
+
+=== SECTION 4: Converting \(g(f^{-1}(u))\) into algebraic expressions ===
+
+In calculus—especially trigonometric substitution—you must rewrite mixed compositions like \(\sin(\arccos u)\), \(\sec(\arctan u)\), or \(\cos(\arcsin(2u))\) as purely algebraic functions of a variable \(u\), valid for BOTH positive and negative \(u\) in the domain.
+
+The exact same [REF: triangle-method | four-step method] works symbolically, and checking the sign of \(g(\theta)\) across the ENTIRE principal range of \(f^{-1}\) guarantees your algebraic formula has the right sign even when \(u < 0\).
+
+Example 1: Rewrite \(\sin(\arccos u)\) algebraically and state its domain.
+- Set \(\theta = \arccos u\), so \(\cos\theta = u\) with \(u \in [-1, 1]\) and \(\theta \in [0, \pi]\).
+- On the ENTIRE interval \(\theta \in [0, \pi]\) (Quadrants I and II), \(\sin\theta \ge 0\)!
+- Therefore \(\sin\theta = +\sqrt{1 - \cos^2\theta} = \sqrt{1 - u^2}\) for ALL \(u \in [-1, 1]\) (no \(\pm\) ambiguity and no absolute value needed).
+
+Example 2: Rewrite \(\sec(\arctan u)\) algebraically for all \(u \in \mathbb{R}\).
+- Set \(\theta = \arctan u\), so \(\tan\theta = u\) and \(\theta \in \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\).
+- On the ENTIRE interval \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\) (Quadrants I and IV), \(\cos\theta > 0\), so \(\sec\theta > 0\) regardless of whether \(u\) is positive, zero, or negative!
+- By the Pythagorean identity \(\sec^2\theta = 1 + \tan^2\theta = 1 + u^2\), taking the positive square root gives
+\[
+\sec(\arctan u) = \sqrt{1 + u^2} \qquad \text{for all } u \in \mathbb{R}.
+\]
+
+Example 3 (Where the sign of \(u\) DOES survive): Rewrite \(\tan(\arcsin u)\) algebraically and state its domain.
+- Set \(\theta = \arcsin u\), so \(\sin\theta = u\) with \(\theta \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\).
+- Because \(\theta \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]\), \(\cos\theta = +\sqrt{1 - u^2} \ge 0\). For \(\tan\theta\) to be defined, we need \(\cos\theta \neq 0\), which restricts the domain to the open interval \(-1 < u < 1\) (i.e. \(|u| < 1\)).
+- Dividing gives
+\[
+\tan(\arcsin u) = \frac{\sin\theta}{\cos\theta} = \frac{u}{\sqrt{1 - u^2}} \qquad (|u| < 1).
+\]
+Check negative \(u\): if \(u < 0\), then \(\theta\) is in Quadrant IV, so \(\tan\theta < 0\), and \(\frac{u}{\sqrt{1 - u^2}}\) is indeed negative!
+
+[TABLE]
+Composition | Algebraic equivalent | Valid domain for \(u\) | Why the sign is exact for all \(u\)
+\(\sin(\arccos u)\) | \(\sqrt{1 - u^2}\) | \([-1, 1]\) | \(\theta \in [0, \pi] \implies \sin\theta \ge 0\)
+\(\cos(\arcsin u)\) | \(\sqrt{1 - u^2}\) | \([-1, 1]\) | \(\theta \in [-\frac{\pi}{2}, \frac{\pi}{2}] \implies \cos\theta \ge 0\)
+\(\sec(\arctan u)\) | \(\sqrt{1 + u^2}\) | \((-\infty, \infty)\) | \(\theta \in (-\frac{\pi}{2}, \frac{\pi}{2}) \implies \sec\theta > 0\)
+\(\sin(\arctan u)\) | \(\dfrac{u}{\sqrt{1 + u^2}}\) | \((-\infty, \infty)\) | Sign matches \(u\) in Q I / Q IV
+\(\tan(\arcsin u)\) | \(\dfrac{u}{\sqrt{1 - u^2}}\) | \((-1, 1)\) | Exclude \(u = \pm 1\) where \(\cos\theta = 0\)
+\(\cot(\arccos u)\) | \(\dfrac{u}{\sqrt{1 - u^2}}\) | \((-1, 1)\) | Exclude \(u = \pm 1\) where \(\sin\theta = 0\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: E]
+Which algebraic expression is equal to \(\sin(\arccos(3u))\) on its full real domain, and what is that domain?
+
+(A) \(\sqrt{1 - 3u^2}\) on \(\left[-\frac{1}{\sqrt{3}}, \frac{1}{\sqrt{3}}\right]\)
+(B) \(3\sqrt{1 - u^2}\) on \([-1, 1]\)
+(C) \(\frac{\sqrt{1 - 9u^2}}{3u}\) on \(\left(-\frac{1}{3}, \frac{1}{3}\right) \setminus \{0\}\)
+(D) \(\pm\sqrt{1 - 9u^2}\) on \(\left[-\frac{1}{3}, \frac{1}{3}\right]\)
+(E) \(\sqrt{1 - 9u^2}\) on \(\left[-\frac{1}{3}, \frac{1}{3}\right]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Compute the exact value of \(\cos\!\left(\operatorname{arccsc}\!\left(-\dfrac{17}{8}\right)\right)\), using the standard principal range \(\left[-\frac{\pi}{2}, 0\right) \cup \left(0, \frac{\pi}{2}\right]\) for \(\operatorname{arccsc}\).
+
+(A) \(\frac{15}{17}\)
+(B) \(-\frac{15}{17}\)
+(C) \(-\frac{8}{15}\)
+(D) \(\frac{8}{15}\)
+(E) \(-\frac{17}{15}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Carefully checking the sign of \(\tan\theta\) on the standard principal range \(\left[0, \frac{\pi}{2}\right) \cup \left(\frac{\pi}{2}, \pi\right]\) of \(\operatorname{arcsec} u\), which expression equals \(\tan(\operatorname{arcsec} u)\) for \(u \le -1\)?
+
+(A) \(\sqrt{u^2 - 1}\)
+(B) \(\sqrt{1 - u^2}\)
+(C) \(-\sqrt{u^2 - 1}\)
+(D) \(\frac{\sqrt{u^2 - 1}}{u^2}\)
+(E) \(\frac{1}{\sqrt{u^2 - 1}}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Evaluate \(\cos(\arccos(0.6)) + \arccos\!\left(\cos\!\left(-\dfrac{2\pi}{3}\right)\right) - \arcsin\!\left(\sin\!\left(\dfrac{5\pi}{6}\right)\right)\).
+
+(A) \(0.6 - \frac{5\pi}{6}\)
+(B) \(0.6 + \frac{\pi}{2}\)
+(C) \(0.6 - \frac{\pi}{6}\)
+(D) \(0.6 + \frac{5\pi}{6}\)
+(E) Undefined because \(-\frac{2\pi}{3}\) is negative
+[/BONUS]

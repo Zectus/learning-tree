@@ -1,0 +1,259 @@
+=== SECTION 1: Restricción de dominios para construir inversas por ramas ===
+
+Muchas de las funciones más útiles en matemáticas —como \(f(x) = x^2\), \(g(x) = (x - 2)^2 - 1\) y \(h(x) = |x + 3|\)— no pasan la prueba de la recta horizontal en sus dominios naturales completos, por lo que tal como están escritas no tienen inversa. ¡Sin embargo, invertimos el elevar al cuadrado todo el tiempo cuando tomamos una raíz cuadrada! ¿Cómo? Restringiendo el dominio de la función a un intervalo maximal en el que sea estrictamente monótona (y, por ende, uno a uno), e invirtiendo después esa rama restringida.
+
+Considera la parábola desplazada \(f(x) = (x - 2)^2 - 1\). Su vértice está en \(x = 2\), lo que divide su dominio \((-\infty, \infty)\) en dos intervalos maximales de monotonía estricta:
+- Rama derecha \(f_R\): restringe \(f\) a \(x \in [2, \infty)\), donde \(f_R\) es estrictamente creciente con rango \([-1, \infty)\).
+- Rama izquierda \(f_L\): restringe \(f\) a \(x \in (-\infty, 2]\), donde \(f_L\) es estrictamente decreciente con rango \([-1, \infty)\).
+
+Ahora despeja \(x\) en \(y = (x - 2)^2 - 1\):
+\[
+(x - 2)^2 = y + 1 \implies |x - 2| = \sqrt{y + 1} \implies x - 2 = \pm\sqrt{y + 1}.
+\]
+Este es el puente algebraico exacto que te indica si elegir \(+\) o \(-\): ¡comprueba el SIGNO de \(x - 2\) en tu dominio restringido!
+- En la rama derecha \(x \ge 2\), tenemos \(x - 2 \ge 0\), de modo que \(|x - 2| = +(x - 2)\). Por lo tanto \(x - 2 = +\sqrt{y + 1}\), lo que da
+\[
+f_R^{-1}(x) = 2 + \sqrt{x + 1}, \qquad \operatorname{Dom}(f_R^{-1}) = [-1, \infty),\quad \operatorname{Rango}(f_R^{-1}) = [2, \infty).
+\]
+- En la rama izquierda \(x \le 2\), tenemos \(x - 2 \le 0\), de modo que \(|x - 2| = -(x - 2)\), es decir, \(x - 2 = -\sqrt{y + 1}\). Por lo tanto
+\[
+f_L^{-1}(x) = 2 - \sqrt{x + 1}, \qquad \operatorname{Dom}(f_L^{-1}) = [-1, \infty),\quad \operatorname{Rango}(f_L^{-1}) = (-\infty, 2].
+\]
+
+[CALLOUT]
+id: branch-sign-bridge
+label: Método
+title: Selección de la rama radical correcta mediante el signo del dominio
+tone: key
+
+Para invertir una cuadrática transformada \(f(x) = a(x - h)^2 + k\) restringida a \(x \ge h\) o a \(x \le h\):
+
+(1) Despeja \((x - h)^2 = \dfrac{y - k}{a}\) y toma la raíz cuadrada no negativa para obtener \(|x - h| = \sqrt{\dfrac{y - k}{a}}\).
+(2) Usa el dominio restringido para resolver el signo de \(x - h\):
+   - Si el dominio restringido es \(x \ge h\), entonces \(x - h \ge 0\), por lo que \(x = h + \sqrt{\dfrac{y - k}{a}}\).
+   - Si el dominio restringido es \(x \le h\), entonces \(x - h \le 0\), por lo que \(x = h - \sqrt{\dfrac{y - k}{a}}\).
+(3) Intercambia \(x\) e \(y\), y verifica que \(\operatorname{Rango}(f^{-1})\) coincida con el dominio restringido de \(f\) y que \(\operatorname{Dom}(f^{-1})\) coincida con el rango de \(f\).
+[/CALLOUT]
+
+Inspecciona la gráfica de razón de aspecto igual a continuación para ver ambas ramas de \(f(x) = (x - 2)^2 - 1\) y sus distintas imágenes especulares respecto a \(y = x\): la rama derecha (\(x \ge 2\)) se refleja en la semiparábola superior \(2 + \sqrt{x + 1}\), mientras que la rama izquierda (\(x \le 2\)) se refleja en la semiparábola inferior \(2 - \sqrt{x + 1}\).
+
+[GRAPH]
+type: function2d
+title: Ramas derecha e izquierda de \(f(x) = (x - 2)^2 - 1\) y sus inversas respecto a \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 6
+yrange: -2.5, 6
+aspect: equal
+trace: x >= 2 ? ((x - 2)^2 - 1) : (0/0) | label: \(f_R(x),\; x \ge 2\)
+trace: x <= 2 ? ((x - 2)^2 - 1) : (0/0) | label: \(f_L(x),\; x \le 2\)
+trace: x >= -1 ? (2 + sqrt(x + 1)) : (0/0) | label: \(f_R^{-1}(x) = 2 + \sqrt{x + 1}\)
+trace: x >= -1 ? (2 - sqrt(x + 1)) : (0/0) | label: \(f_L^{-1}(x) = 2 - \sqrt{x + 1}\)
+trace: x | label: \(y = x\)
+point: 2, -1 | label: \((2, -1)\)
+point: -1, 2 | label: \((-1, 2)\)
+[/GRAPH]
+
+¿Qué pasa si una cuadrática está escrita en forma desarrollada, como \(q(x) = -2x^2 + 12x - 13\) en \(x \le 3\)? ¡Completa primero el cuadrado!
+\[
+q(x) = -2(x^2 - 6x) - 13 = -2\bigl((x - 3)^2 - 9\bigr) - 13 = -2(x - 3)^2 + 5.
+\]
+Aquí \(a = -2 < 0\), \(h = 3\), \(k = 5\) y \(\operatorname{Rango}(q) = (-\infty, 5]\). Despejar de \(y = -2(x - 3)^2 + 5\) da
+\[
+(x - 3)^2 = \frac{5 - y}{2}.
+\]
+Como el dominio restringido es \(x \le 3\), tenemos \(x - 3 \le 0\), así que [REF: branch-sign-bridge.2 | el puente del signo] selecciona el signo menos:
+\[
+q^{-1}(x) = 3 - \sqrt{\frac{5 - x}{2}}, \qquad \operatorname{Dom}(q^{-1}) = (-\infty, 5],\quad \operatorname{Rango}(q^{-1}) = (-\infty, 3].
+\]
+¡Comprueba un punto de prueba! En \(q\), \(x = 1 \le 3\) da \(q(1) = -2(4) + 5 = -3\). Introducir \(-3\) en \(q^{-1}\) da \(3 - \sqrt{\frac{5 - (-3)}{2}} = 3 - \sqrt{4} = 1\).
+
+Exactamente la misma idea funciona para ramas de valor absoluto. Para \(m(x) = 2|x + 4| - 3\), la esquina está en \(x = -4\). Restringir a \(x \le -4\) hace \(x + 4 \le 0\), por lo que \(m(x) = 2(-(x + 4)) - 3 = -2x - 11\) en \((-\infty, -4]\), cuyo rango es \([-3, \infty)\) y cuya inversa es la semirrecta lineal \(m^{-1}(x) = -\frac{x + 11}{2}\) en \([-3, \infty)\).
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(f(x) = 3(x + 1)^2 - 4\) restringida al dominio \((-\infty, -1]\). ¿Cuál es \(f^{-1}(x)\) junto con su dominio exacto?
+
+(A) \(f^{-1}(x) = -1 + \sqrt{\dfrac{x + 4}{3}}\), dominio \([-4, \infty)\)
+(B) \(f^{-1}(x) = 1 - \sqrt{\dfrac{x + 4}{3}}\), dominio \([-4, \infty)\)
+(C) \(f^{-1}(x) = -1 - \sqrt{\dfrac{x + 4}{3}}\), dominio \([-4, \infty)\)
+(D) \(f^{-1}(x) = -1 - \sqrt{\dfrac{x - 4}{3}}\), dominio \([4, \infty)\)
+(E) \(f^{-1}(x) = -1 - \sqrt{\dfrac{x + 4}{3}}\), dominio \((-\infty, -1]\)
+[/QUESTION]
+
+=== SECTION 2: La ley de inversión en orden inverso («calcetines y zapatos») para inversas de compuestas ===
+
+Cuando te vistes por la mañana, te pones primero los calcetines (\(g\)) y luego los zapatos (\(f\)), dando la operación compuesta \(f \circ g\). Cuando te desvistes por la noche, ¡no puedes quitarte los calcetines primero! Debes deshacer el ÚLTIMO paso primero: quitarte los zapatos (\(f^{-1}\)) y después quitarte los calcetines (\(g^{-1}\)).
+
+Esta inversión cotidiana es un teorema exacto para funciones invertibles.
+
+[CALLOUT]
+id: socks-shoes
+label: Teorema
+title: Ley de inversión en orden inverso para inversas de composiciones
+tone: key
+
+Si \(f\) y \(g\) son funciones uno a uno tales que la composición \(f \circ g\) está definida (con \(\operatorname{Rango}(g) \subseteq \operatorname{Dom}(f)\)), entonces \(f \circ g\) es uno a uno y su inversa es
+\[
+(f \circ g)^{-1} = g^{-1} \circ f^{-1}.
+\]
+Más generalmente, para una cadena de funciones invertibles,
+\[
+(f_1 \circ f_2 \circ \dots \circ f_n)^{-1} = f_n^{-1} \circ \dots \circ f_2^{-1} \circ f_1^{-1}.
+\]
+[/CALLOUT]
+
+Demostremos [REF: socks-shoes | la ley de orden inverso] directamente usando las dos identidades de cancelación de las inversas. Pon a prueba \(g^{-1} \circ f^{-1}\) contra \(f \circ g\) por ambos lados:
+1. Para todo \(x \in \operatorname{Dom}(g)\):
+\[
+(g^{-1} \circ f^{-1})\bigl((f \circ g)(x)\bigr) = g^{-1}\!\Bigl(f^{-1}\bigl(f(g(x))\bigr)\Bigr) = g^{-1}\bigl(g(x)\bigr) = x.
+\]
+2. Para todo \(y\) en el rango de \(f \circ g\):
+\[
+(f \circ g)\bigl((g^{-1} \circ f^{-1})(y)\bigr) = f\!\Bigl(g\bigl(g^{-1}(f^{-1}(y))\bigr)\Bigr) = f\bigl(f^{-1}(y)\bigr) = y.
+\]
+Ambas composiciones se cancelan limpiamente a la identidad, demostrando \((f \circ g)^{-1} = g^{-1} \circ f^{-1}\).
+
+¡Observa qué falla si olvidas invertir el orden y supones en cambio \(f^{-1} \circ g^{-1}\)! Compruébalo con \(f(x) = 2x\) (de modo que \(f^{-1}(x) = x/2\)) y \(g(x) = x + 3\) (de modo que \(g^{-1}(x) = x - 3\)):
+- \((f \circ g)(x) = 2(x + 3) = 2x + 6\).
+- Orden invertido: \((g^{-1} \circ f^{-1})(x) = \frac{x}{2} - 3\). Comprobación en \(x = 10\): \((f \circ g)(2) = 10\), y \((g^{-1} \circ f^{-1})(10) = 5 - 3 = 2\). ¡Correcto!
+- Orden sin invertir: \((f^{-1} \circ g^{-1})(x) = \frac{x - 3}{2}\). En \(x = 10\), eso da \(\frac{7}{2} \ne 2\). ¡Incorrecto!
+
+[QUESTION 2]
+[ANSWER: B]
+Supón que \(f\) y \(g\) son funciones uno a uno en \((-\infty, \infty)\) con \(f^{-1}(x) = 3x - 1\) y \(g^{-1}(x) = x^3 + 2\). ¿Cuál es el valor de \((f \circ g)^{-1}(2)\)?
+
+(A) \(29\)
+(B) \(127\)
+(C) \(125\)
+(D) \(27\)
+(E) \(15\)
+[/QUESTION]
+
+=== SECTION 3: Inversión estructural de familias transformadas ===
+
+Toda transformación afín combinada \(T(x) = a \cdot f\bigl(b(x - h)\bigr) + k\) (donde \(f\) es uno a uno y \(a, b \ne 0\)) es simplemente una cadena de 5 pasos de aplicaciones invertibles elementales aplicadas a \(x\) en secuencia:
+1. Restar \(h\): \(x \mapsto x - h\)
+2. Multiplicar por \(b\): \(u \mapsto b u\)
+3. Aplicar \(f\): \(v \mapsto f(v)\)
+4. Multiplicar por \(a\): \(w \mapsto a w\)
+5. Sumar \(k\): \(z \mapsto z + k\)
+
+Por [REF: socks-shoes | la ley de orden inverso], para formar \(T^{-1}(x)\) simplemente deshacemos del Paso 5 al Paso 1 en orden exactamente inverso:
+1. Restar \(k\): \(x \mapsto x - k\)
+2. Dividir por \(a\): \(x - k \mapsto \dfrac{x - k}{a}\)
+3. Aplicar \(f^{-1}\): \(\dfrac{x - k}{a} \mapsto f^{-1}\!\left(\dfrac{x - k}{a}\right)\)
+4. Dividir por \(b\): \(\mapsto \dfrac{1}{b}\,f^{-1}\!\left(\dfrac{x - k}{a}\right)\)
+5. Sumar \(h\): \(\mapsto \dfrac{1}{b}\,f^{-1}\!\left(\dfrac{x - k}{a}\right) + h\).
+
+[CALLOUT]
+id: transformed-inverse
+label: Fórmula
+title: Inversa estructural de una función transformada
+tone: key
+
+Si \(f\) es uno a uno y \(T(x) = a \cdot f\bigl(b(x - h)\bigr) + k\) con \(a, b \ne 0\), entonces
+\[
+T^{-1}(x) = \frac{1}{b}\,f^{-1}\!\left(\frac{1}{a}(x - k)\right) + h.
+\]
+[/CALLOUT]
+
+Detente a admirar la geometría oculta dentro de [REF: transformed-inverse | esta fórmula]. Mira adónde fueron a parar los cuatro parámetros \(a, b, h, k\):
+- ¡El desplazamiento VERTICAL \(+k\) de \(T\) se convirtió en un desplazamiento HORIZONTAL a la derecha en \(k\) dentro de \(T^{-1}\)!
+- ¡El escalamiento VERTICAL por \(a\) de \(T\) se convirtió en un escalamiento HORIZONTAL por \(a\) (factor \(1/a\) en el argumento) dentro de \(T^{-1}\)!
+- ¡El escalamiento HORIZONTAL por \(1/b\) de \(T\) se convirtió en un escalamiento VERTICAL por \(1/b\) fuera de \(T^{-1}\)!
+- ¡El desplazamiento HORIZONTAL \(+h\) de \(T\) se convirtió en un desplazamiento VERTICAL \(+h\) fuera de \(T^{-1}\)!
+
+¿Por qué? ¡Porque reflejar todo el plano \(xy\) respecto a la recta diagonal \(y = x\) literalmente intercambia las direcciones horizontal y vertical! Todo movimiento horizontal en \(T\) se convierte en el movimiento vertical correspondiente en \(T^{-1}\), y todo movimiento vertical en \(T\) se convierte en el movimiento horizontal correspondiente en \(T^{-1}\).
+
+La tabla siguiente muestra esta dualidad geométrica exacta lado a lado.
+
+[TABLE]
+Transformación sobre \(y = f(x)\) | Fórmula para \(T(x)\) | Inversa correspondiente \(T^{-1}(x)\) | Transformación sobre \(y = f^{-1}(x)\)
+Desplazar hacia arriba en \(k\) | \(f(x) + k\) | \(f^{-1}(x - k)\) | Desplazar a la derecha en \(k\)
+Desplazar a la derecha en \(h\) | \(f(x - h)\) | \(f^{-1}(x) + h\) | Desplazar hacia arriba en \(h\)
+Escalamiento vertical por \(a\) | \(a f(x)\) | \(f^{-1}(x / a)\) | Escalamiento horizontal por \(a\)
+Escalamiento horizontal por \(1/b\) | \(f(bx)\) | \(\dfrac{1}{b}\,f^{-1}(x)\) | Escalamiento vertical por \(1/b\)
+Reflejar respecto al eje \(x\) | \(-f(x)\) | \(f^{-1}(-x)\) | Reflejar respecto al eje \(y\)
+Reflejar respecto al eje \(y\) | \(f(-x)\) | \(-f^{-1}(x)\) | Reflejar respecto al eje \(x\)
+[/TABLE]
+
+Mira también las dos últimas filas: ¡reflejar \(f\) respecto al eje \(x\) se convierte en reflejar \(f^{-1}\) respecto al eje \(y\), y viceversa!
+
+Pon a prueba [REF: transformed-inverse | la fórmula] de inmediato en \(T(x) = -2\bigl(3(x - 4)\bigr)^3 + 5\). Aquí la función básica es \(f(x) = x^3\) con \(f^{-1}(x) = \sqrt[3]{x}\), y \(a = -2\), \(b = 3\), \(h = 4\), \(k = 5\). Leer directamente de la fórmula estructural da
+\[
+T^{-1}(x) = \frac{1}{3}\sqrt[3]{\frac{x - 5}{-2}} + 4 = -\frac{1}{3}\sqrt[3]{\frac{x - 5}{2}} + 4.
+\]
+Sin necesidad de reordenar ecuaciones tediosamente, ¡y ves al instante cómo el centro de inflexión \((4, 5)\) de \(T\) se refleja en el centro de inflexión \((5, 4)\) de \(T^{-1}\)!
+
+[QUESTION 3]
+[ANSWER: A]
+Supón que \(f\) es una función uno a uno cuya inversa es \(f^{-1}\). ¿Cuál es la inversa de \(g(x) = 3 f(x + 2) - 5\)?
+
+(A) \(g^{-1}(x) = f^{-1}\!\left(\dfrac{x + 5}{3}\right) - 2\)
+(B) \(g^{-1}(x) = \dfrac{1}{3} f^{-1}(x - 2) + 5\)
+(C) \(g^{-1}(x) = f^{-1}\!\left(\dfrac{x - 5}{3}\right) + 2\)
+(D) \(g^{-1}(x) = 3 f^{-1}(x + 5) - 2\)
+(E) \(g^{-1}(x) = \dfrac{1}{3} f^{-1}(x + 5) - 2\)
+[/QUESTION]
+
+=== SECTION 4: Combinación de restricción de dominio e inversión estructural ===
+
+¿Qué ocurre si una función transformada NO es uno a uno en su dominio completo, como \(T(x) = 2|3x - 6| + 1\) o \(P(x) = -\frac{1}{2}(x + 3)^2 + 4\)? Combina la Sección 1 y la Sección 3:
+1. Reescribe el interior en forma factorizada \(b(x - h)\) para localizar el punto de cambio exacto (vértice o esquina) \(x = h\).
+2. Elige un semidominio monótono maximal: \(x \ge h\) o \(x \le h\).
+3. En ese semidominio, haz el seguimiento del rango exacto de \(T\) para fijar \(\operatorname{Dom}(T^{-1})\), invierte paso a paso (usando [REF: branch-sign-bridge | el puente del signo] al sacar una raíz cuadrada o quitar barras de valor absoluto) y confirma que \(\operatorname{Rango}(T^{-1})\) coincida con tu semidominio elegido.
+
+Hagamos una síntesis completa en \(T(x) = 2|3x - 6| + 1\) restringida a \(x \le 2\):
+- Factoriza el interior: \(3x - 6 = 3(x - 2)\), de modo que la esquina está en \((2, 1)\).
+- En \(x \le 2\), tenemos \(x - 2 \le 0\), así que \(|3x - 6| = -(3x - 6) = 6 - 3x\).
+- Por lo tanto en \((-\infty, 2]\), \(T(x) = 2(6 - 3x) + 1 = -6x + 13\), que es estrictamente decreciente con rango \([1, \infty)\).
+- Invertir \(y = -6x + 13\) da \(x = \frac{13 - y}{6}\), de modo que
+\[
+T^{-1}(x) = \frac{13 - x}{6} \qquad \text{para } x \ge 1.
+\]
+- Comprobación rápida: en \(x = 1\), \(T^{-1}(1) = 2\), y a medida que \(x\) crece de \(1\) a \(\infty\), \(T^{-1}(x)\) decrece de \(2\) a \(-\infty\), dando \(\operatorname{Rango}(T^{-1}) = (-\infty, 2]\), que coincide exactamente con el dominio restringido de \(T\).
+
+[QUESTION 4]
+[ANSWER: D]
+Sea \(f(x) = x^2 - 6x + 11\). Si restringimos \(f\) al mayor intervalo de la forma \([c, \infty)\) en el cual \(f\) es uno a uno, ¿cuáles son \(c\) y \(f^{-1}(x)\) (con su dominio)?
+
+(A) \(c = 0\), \(f^{-1}(x) = 3 + \sqrt{x - 2}\) en \([2, \infty)\)
+(B) \(c = 3\), \(f^{-1}(x) = 3 - \sqrt{x - 2}\) en \([2, \infty)\)
+(C) \(c = 3\), \(f^{-1}(x) = 3 + \sqrt{x + 2}\) en \([-2, \infty)\)
+(D) \(c = 3\), \(f^{-1}(x) = 3 + \sqrt{x - 2}\) en \([2, \infty)\)
+(E) \(c = 2\), \(f^{-1}(x) = 3 + \sqrt{x - 2}\) en \([3, \infty)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Supón que \(f\) es una función uno a uno con dominio \([0, 4]\) y rango \([-2, 6]\). Define \(g(x) = f(2x - 4) + 3\). ¿Cuáles son el dominio y el rango de \(g^{-1}\)?
+
+(A) Dominio \([2, 4]\), rango \([1, 9]\)
+(B) Dominio \([-2, 6]\), rango \([0, 4]\)
+(C) Dominio \([1, 9]\), rango \([0, 4]\)
+(D) Dominio \([-5, 3]\), rango \([2, 4]\)
+(E) Dominio \([1, 9]\), rango \([2, 4]\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Sea \(f(x) = \dfrac{1}{(x - 2)^2} + 1\) restringida al dominio \((-\infty, 2)\). ¿Cuál es \(f^{-1}(x)\) junto con su dominio exacto?
+
+(A) \(f^{-1}(x) = 2 - \dfrac{1}{\sqrt{x - 1}}\), dominio \((1, \infty)\)
+(B) \(f^{-1}(x) = 2 + \dfrac{1}{\sqrt{x - 1}}\), dominio \((1, \infty)\)
+(C) \(f^{-1}(x) = 2 - \dfrac{1}{\sqrt{x - 1}}\), dominio \([1, \infty)\)
+(D) \(f^{-1}(x) = 2 - \sqrt{x - 1}\), dominio \((1, \infty)\)
+(E) \(f^{-1}(x) = -2 - \dfrac{1}{\sqrt{x - 1}}\), dominio \((1, \infty)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Supón que \(f\) es una función uno a uno en \((-\infty, \infty)\) cuya gráfica se desplaza \(4\) unidades a la izquierda y se estira verticalmente por un factor de \(2\) para formar \(g(x) = 2f(x + 4)\). ¿Cómo se obtiene la gráfica de \(y = g^{-1}(x)\) a partir de la gráfica de \(y = f^{-1}(x)\)?
+
+(A) Desplazar \(4\) unidades a la izquierda y estirar horizontalmente por un factor de \(2\).
+(B) Desplazar \(4\) unidades hacia abajo y comprimir horizontalmente por un factor de \(1/2\).
+(C) Estirar horizontalmente por un factor de \(2\) y desplazar \(4\) unidades hacia abajo.
+(D) Estirar verticalmente por un factor de \(2\) y desplazar \(4\) unidades hacia arriba.
+(E) Comprimir verticalmente por un factor de \(1/2\) y desplazar \(4\) unidades hacia arriba.
+[/BONUS]

@@ -1,0 +1,248 @@
+=== SECTION 1: Inyectividad y la prueba de la recta horizontal ===
+
+Una función garantiza que conocer una entrada \(x\) determina de manera única su salida \(y = f(x)\). Ahora hazte la pregunta inversa: si alguien te entrega una salida \(y\) del rango de \(f\), ¿puedes recuperar de manera única la entrada \(x\) que la produjo?
+
+Compara dos funciones sencillas:
+- Para \(f(x) = 2x + 3\), si la salida es \(y = 11\), resolver \(2x + 3 = 11\) produce una única entrada, \(x = 4\). Cada salida proviene de una sola entrada.
+- Para \(g(x) = x^2\), si la salida es \(y = 9\), tanto \(x = 3\) como \(x = -3\) producen \(9\). Saber que \(g(x) = 9\) no te dice qué entrada se utilizó.
+
+Cuando una función nunca envía dos entradas distintas a la misma salida, puede invertirse sin ambigüedad. Una función así se llama uno a uno, o inyectiva.
+
+[CALLOUT]
+id: injective-def
+label: Definición
+title: Función uno a uno (inyectiva)
+tone: key
+
+Una función \(f\) con dominio \(D\) es uno a uno (inyectiva) si satisface cualquiera de las siguientes condiciones equivalentes para todo \(x_1, x_2 \in D\):
+
+(1) Forma directa: si \(x_1 \ne x_2\), entonces \(f(x_1) \ne f(x_2)\) (entradas distintas siempre producen salidas distintas).
+(2) Forma contrapositiva: si \(f(x_1) = f(x_2)\), entonces \(x_1 = x_2\).
+[/CALLOUT]
+
+¿Por qué enunciar ambas formas en [REF: injective-def | la definición]? Porque cada forma destaca en una tarea distinta:
+- [REF: injective-def.2 | La forma contrapositiva] es ideal para DEMOSTRAR que una función es uno a uno: supón \(f(x_1) = f(x_2)\) y usa álgebra para deducir \(x_1 = x_2\).
+- [REF: injective-def.1 | La forma directa] te indica cómo REFUTAR la inyectividad: exhibe un único par contraejemplo \(x_1 \ne x_2\) en el dominio tal que \(f(x_1) = f(x_2)\).
+
+Geométricamente, todo punto con altura de salida \(c\) yace sobre la recta horizontal \(y = c\). Si una recta horizontal interseca la gráfica de \(f\) en dos puntos distintos \((x_1, c)\) y \((x_2, c)\) con \(x_1 \ne x_2\), entonces \(f(x_1) = f(x_2) = c\), de modo que \(f\) deja de ser uno a uno.
+
+[CALLOUT]
+id: hlt
+label: Criterio
+title: Prueba de la recta horizontal
+tone: key
+
+Una función \(f\) es uno a uno si y solo si ninguna recta horizontal interseca la gráfica de \(y = f(x)\) en más de un punto.
+[/CALLOUT]
+
+Mantén las dos pruebas de rectas completamente diferenciadas: la prueba de la recta vertical comprueba si una gráfica es siquiera una función (cada \(x\) da a lo sumo un \(y\)), mientras que [REF: hlt | la prueba de la recta horizontal] comprueba si una función es uno a uno (cada \(y\) proviene de a lo sumo un \(x\)). Arrastra el deslizador \(c\) en la gráfica siguiente para barrer \(y = c\) sobre \(f(x) = x^3\) (que la supera en todas partes) y \(g(x) = x^2 - 1\) (que falla para todo \(c > -1\)).
+
+[GRAPH]
+type: function2d
+title: Prueba de la recta horizontal en \(f(x) = x^3\) (uno a uno) frente a \(g(x) = x^2 - 1\) (no uno a uno)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.8, 2.8
+yrange: -3, 5
+trace: x^3 | label: \(f(x) = x^3\)
+trace: x^2 - 1 | label: \(g(x) = x^2 - 1\)
+trace: c | label: \(y = c\)
+point: cbrt(c), c | label: \(P\)
+point: sqrt(max(0, c + 1)), c | label: \(Q_1\)
+point: -sqrt(max(0, c + 1)), c | label: \(Q_2\)
+slider: c | range: -0.5, 4 | init: 1.5 | step: 0.5
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál de las siguientes funciones básicas NO es uno a uno en su dominio natural?
+
+(A) \(f(x) = x^3\)
+(B) \(f(x) = \sqrt{x}\)
+(C) \(f(x) = \dfrac{1}{x^2}\)
+(D) \(f(x) = \sqrt[3]{x}\)
+(E) \(f(x) = \dfrac{1}{x}\)
+[/QUESTION]
+
+=== SECTION 2: El flujo de trabajo algebraico bidireccional: demostrar frente a refutar ===
+
+Las gráficas dan una intuición visual rápida, pero una ventana de visualización finita puede ocultar un giro muy fuera de la pantalla. Para estar seguro de si una fórmula algebraica es uno a uno, usamos un flujo de trabajo algebraico bidireccional:
+- Para DEMOSTRAR que \(f\) es uno a uno: parte de la ecuación \(f(x_1) = f(x_2)\) para \(x_1, x_2 \in \operatorname{Dom}(f)\) arbitrarios y deduce \(x_1 = x_2\) mediante pasos algebraicos válidos.
+- Para REFUTAR la inyectividad: halla UN par concreto de números \(x_1 \ne x_2\) en \(\operatorname{Dom}(f)\) tales que \(f(x_1) = f(x_2)\). (¡Probar unos pocos puntos y hallar salidas distintas nunca demuestra inyectividad, porque aún podría ocurrir una colisión en otro lugar!)
+
+Recorramos tres demostraciones algebraicas y dos refutaciones.
+
+Demostración 1 (Función fraccionaria lineal). Muestra que \(f(x) = \dfrac{2x + 1}{x - 3}\) es uno a uno en su dominio \(x \ne 3\).
+Supón \(f(x_1) = f(x_2)\) con \(x_1, x_2 \ne 3\). Entonces
+\[
+\frac{2x_1 + 1}{x_1 - 3} = \frac{2x_2 + 1}{x_2 - 3}.
+\]
+Multiplicar en cruz (válido ya que \(x_1 - 3 \ne 0\) y \(x_2 - 3 \ne 0\)) da
+\[
+(2x_1 + 1)(x_2 - 3) = (2x_2 + 1)(x_1 - 3).
+\]
+Desarrolla ambos miembros:
+\[
+2x_1 x_2 - 6x_1 + x_2 - 3 = 2x_1 x_2 - 6x_2 + x_1 - 3.
+\]
+Resta \(2x_1 x_2 - 3\) de ambos miembros:
+\[
+-6x_1 + x_2 = -6x_2 + x_1 \implies 7x_2 = 7x_1 \implies x_1 = x_2.
+\]
+Por [REF: injective-def.2 | el criterio contrapositivo], \(f\) es uno a uno.
+
+Demostración 2 (Raíz cuadrada desplazada). Muestra que \(g(x) = 4 - \sqrt{2x + 5}\) es uno a uno en \(\left[-\frac{5}{2}, \infty\right)\).
+Supón \(g(x_1) = g(x_2)\). Entonces \(4 - \sqrt{2x_1 + 5} = 4 - \sqrt{2x_2 + 5}\), de modo que \(\sqrt{2x_1 + 5} = \sqrt{2x_2 + 5}\). Elevar ambos miembros al cuadrado da \(2x_1 + 5 = 2x_2 + 5\), luego \(2x_1 = 2x_2\), y por tanto \(x_1 = x_2\). Así \(g\) es uno a uno.
+
+Demostración 3 (Cúbica desplazada). Muestra que \(h(x) = (x - 1)^3 + 2\) es uno a uno en \((-\infty, \infty)\).
+Si \((x_1 - 1)^3 + 2 = (x_2 - 1)^3 + 2\), entonces \((x_1 - 1)^3 = (x_2 - 1)^3\). Como todo número real tiene una única raíz cúbica real, tomar raíces cúbicas da \(x_1 - 1 = x_2 - 1\), de modo que \(x_1 = x_2\).
+
+Ahora observa dos refutaciones:
+- Refutación 1: \(p(x) = x^2 - 4x + 7\). Observa que si \(p(x_1) = p(x_2)\), entonces \(x_1^2 - 4x_1 = x_2^2 - 4x_2\), lo que se factoriza como \((x_1 - x_2)(x_1 + x_2 - 4) = 0\). ¡Eso da una segunda solución siempre que \(x_1 + x_2 = 4\)! Elige \(x_1 = 0\) y \(x_2 = 4\): \(0 \ne 4\), pero \(p(0) = 7 = p(4)\). Por ende, \(p\) no es uno a uno.
+- Refutación 2: \(q(x) = \dfrac{x}{x^2 + 1}\). Aunque \(q\) es impar (y no tiene simetría par que dé un par obvio \(\pm a\)), prueba \(x_1 = 2\) y \(x_2 = \frac{1}{2}\):
+\[
+q(2) = \frac{2}{5} \qquad \text{y} \qquad q\!\left(\frac{1}{2}\right) = \frac{1/2}{5/4} = \frac{2}{5}.
+\]
+Como \(2 \ne \frac{1}{2}\) pero \(q(2) = q(1/2)\), ¡\(q\) NO es uno a uno! (Nunca supongas que una función impar es automáticamente uno a uno: \(x^3 - 3x\) es otro contraejemplo impar.)
+
+[QUESTION 2]
+[ANSWER: A]
+¿Qué par de entradas distintas \((x_1, x_2)\) demuestra que \(f(x) = x^3 - 4x\) NO es uno a uno en \((-\infty, \infty)\)?
+
+(A) \(x_1 = -2\) y \(x_2 = 2\)
+(B) \(x_1 = -1\) y \(x_2 = 1\)
+(C) \(x_1 = 1\) y \(x_2 = 3\)
+(D) \(x_1 = -3\) y \(x_2 = 3\)
+(E) No existe tal par porque \(x^3 - 4x\) es un polinomio impar.
+[/QUESTION]
+
+=== SECTION 3: La monotonía estricta implica inyectividad ===
+
+Resolver \(f(x_1) = f(x_2)\) algebraicamente puede volverse engorroso para sumas de distintas potencias, como \(f(x) = x^3 + x\). Intenta resolver \(x_1^3 + x_1 = x_2^3 + x_2\): factorizar da \((x_1 - x_2)(x_1^2 + x_1 x_2 + x_2^2 + 1) = 0\), lo cual requiere un truco extra para verificar que el segundo factor es siempre positivo. ¡Pero existe una prueba estructural mucho más rápida! Observa que \(x^3\) es estrictamente creciente en \((-\infty, \infty)\) y \(x\) es estrictamente creciente en \((-\infty, \infty)\), por lo que su suma \(x^3 + x\) es estrictamente creciente en \((-\infty, \infty)\).
+
+[CALLOUT]
+id: mono-implies-inj
+label: Teorema
+title: Las funciones estrictamente monótonas son uno a uno
+tone: key
+
+Si una función \(f\) es estrictamente creciente en un intervalo \(I\), o estrictamente decreciente en un intervalo \(I\), entonces \(f\) es uno a uno en \(I\).
+[/CALLOUT]
+
+La demostración de [REF: mono-implies-inj | este teorema] es notablemente limpia y ocupa tres líneas. Supón que \(f\) es estrictamente creciente en \(I\), y toma dos entradas distintas cualesquiera \(x_1, x_2 \in I\) con \(x_1 \ne x_2\). Como \(x_1\) y \(x_2\) son números reales distintos, o bien \(x_1 < x_2\) o bien \(x_2 < x_1\):
+- Si \(x_1 < x_2\), el crecimiento estricto da \(f(x_1) < f(x_2)\), de modo que \(f(x_1) \ne f(x_2)\).
+- Si \(x_2 < x_1\), el crecimiento estricto da \(f(x_2) < f(x_1)\), de modo que nuevamente \(f(x_1) \ne f(x_2)\).
+En ambos casos \(f(x_1) \ne f(x_2)\), por lo que \(f\) es uno a uno por [REF: injective-def.1 | la definición directa]. La demostración para funciones estrictamente decrecientes es idéntica invirtiendo los signos de desigualdad.
+
+Aplica [REF: mono-implies-inj | este teorema] de inmediato a \(f(x) = x^5 + 2x^3 + 7x - 4\): como \(x^5\), \(2x^3\) y \(7x\) son cada una estrictamente crecientes en \((-\infty, \infty)\), si \(x_1 < x_2\) entonces \(x_1^5 < x_2^5\), \(2x_1^3 < 2x_2^3\) y \(7x_1 < 7x_2\). Sumar esas desigualdades y restar \(4\) produce \(f(x_1) < f(x_2)\). Así \(f\) es estrictamente creciente en \((-\infty, \infty)\) y por tanto inmediatamente uno a uno, ¡sin necesidad de factorizaciones polinómicas engorrosas!
+
+Observa la palabra «estrictamente» en [REF: mono-implies-inj | el teorema]: un segmento constante (como en \(|x| + |x - 2|\) sobre \([0, 2]\)) viola de inmediato la inyectividad porque infinitas entradas comparten la misma salida.
+
+[QUESTION 3]
+[ANSWER: E]
+¿Qué función está garantizada como uno a uno en su dominio natural por monotonía estricta?
+
+(A) \(f(x) = x^3 - 3x\)
+(B) \(f(x) = x^4 + x^2 + 1\)
+(C) \(f(x) = |x - 2| + |x + 2|\)
+(D) \(f(x) = \dfrac{x}{x^2 + 4}\)
+(E) \(f(x) = \sqrt{x} + x^3\)
+[/QUESTION]
+
+=== SECTION 4: Por qué falla el recíproco: uno a uno sin monotonía global ===
+
+Sabiendo que la monotonía estricta garantiza la inyectividad, es muy natural preguntarse si vale el recíproco: ¿debe toda función uno a uno ser estrictamente creciente o estrictamente decreciente en su dominio?
+
+¡La respuesta es NO! Dos contraejemplos limpios muestran por qué:
+
+1. Dominio disconexo: Considera \(f(x) = \frac{1}{x}\) en \((-\infty, 0) \cup (0, \infty)\). Es uno a uno (si \(1/x_1 = 1/x_2\), multiplicar en cruz da \(x_1 = x_2\)). Sin embargo, NO es globalmente monótona en su dominio: toma \(x_1 = -1 < x_2 = 1 < x_3 = 2\); entonces \(f(-1) = -1 < f(1) = 1\) (sube), mientras que \(f(1) = 1 > f(2) = \frac{1}{2}\) (baja).
+
+2. Función a trozos en un único intervalo: Incluso en el intervalo conexo \([0, 2]\), define
+\[
+g(x) = \begin{cases}
+x, & 0 \le x \le 1, \\
+3 - x, & 1 < x \le 2.
+\end{cases}
+\]
+Comprueba las salidas de cada pieza:
+- En \([0, 1]\), \(g(x) = x\) es estrictamente creciente y llena el intervalo de salidas \([0, 1]\).
+- En \((1, 2]\), \(g(x) = 3 - x\) es estrictamente decreciente y llena el intervalo de salidas \([1, 2)\) —espera, en \(x = 2\) obtenemos \(3 - 2 = 1\), ¡que choca con \(g(1) = 1\)! Para evitar ese choque, desplaza la segunda pieza \(1\) unidad hacia arriba:
+\[
+h(x) = \begin{cases}
+x, & 0 \le x \le 1, \\
+4 - x, & 1 < x \le 2.
+\end{cases}
+\]
+Ahora en \([0, 1]\), \(h\) toma valores en \([0, 1]\); en \((1, 2]\), \(h\) toma valores en \([2, 3)\). Como los dos rangos de salida \([0, 1]\) y \([2, 3)\) son completamente disjuntos y cada pieza es estrictamente monótona en su propio intervalo, ¡NINGUNA recta horizontal puede cortar la gráfica de \(h\) dos veces! Sin embargo, \(h\) sube en \([0, 1]\) y baja en \((1, 2]\), por lo que NO es globalmente monótona.
+
+[GRAPH]
+type: function2d
+title: Una función uno a uno \(h(x)\) en \([0, 2]\) que no es ni globalmente creciente ni globalmente decreciente
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.3, 2.4
+yrange: -0.3, 3.5
+trace: (x >= 0 and x <= 1) ? x : (0/0) | label: \(x\) en \([0, 1]\)
+trace: (x > 1 and x <= 2) ? (4 - x) : (0/0) | label: \(4 - x\) en \((1, 2]\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1, 1 | label: \((1, 1)\)
+point: 1, 3 | label: abierto (1, 3)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+Observa qué hizo posible ese contraejemplo: ¡un salto en \(x = 1\)! (En cálculo verás que una función continua en un único intervalo sin interrupciones SÍ es uno a uno si y solo si es estrictamente monótona: los saltos o los dominios disconexos son exactamente la forma en que una función uno a uno puede cambiar de dirección sin fallar [REF: hlt | la prueba de la recta horizontal].)
+
+[QUESTION 4]
+[ANSWER: B]
+Considera la función a trozos
+\[
+p(x) = \begin{cases}
+x + 1, & x \le 0, \\
+c - x, & x > 0.
+\end{cases}
+\]
+¿Existe alguna constante \(c\) que haga a \(p\) uno a uno en \((-\infty, \infty)\)?
+
+(A) Sí, \(c = 2\), porque entonces la rama derecha comienza por encima de la rama izquierda.
+(B) No, porque para cualquier elección de \(c\), cuando \(x \to \infty\) la rama derecha \(c - x\) desciende hacia \(-\infty\) y se superpone al intervalo de salidas \((-\infty, 1]\) de la rama izquierda.
+(C) Sí, \(c = 1\), porque entonces las dos ramas se encuentran limpiamente en \((0, 1)\).
+(D) Sí, cualquier \(c > 1\) funciona porque los dos trozos tienen dominios disjuntos.
+(E) No, porque ninguna función a trozos puede ser jamás uno a uno.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+¿Para qué valor de la constante \(k\) la función fraccionaria lineal
+\[
+f(x) = \frac{2x + k}{x - 3}
+\]
+NO es uno a uno en su dominio natural \((-\infty, 3) \cup (3, \infty)\)?
+
+(A) \(k = 0\)
+(B) \(k = 6\)
+(C) \(k = -3\)
+(D) \(k = -6\)
+(E) Es uno a uno para todo número real \(k\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Supón que \(f\) es una función uno a uno cuyo dominio es simétrico respecto a \(0\). ¿Puede \(f\) ser una función par?
+
+(A) Sí, siempre que \(f(x) > 0\) para todo \(x\).
+(B) Sí, por ejemplo \(f(x) = |x|\).
+(C) Solo si su dominio es el único punto \(\{0\}\); si el dominio contiene algún \(a\) distinto de cero, entonces \(a \ne -a\) pero \(f(a) = f(-a)\).
+(D) Nunca, bajo ninguna circunstancia, ni siquiera si el dominio es \(\{0\}\).
+(E) Sí, siempre que \(f\) sea estrictamente creciente en \((0, \infty)\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Sean \(f(x) = 3x - 2\) y \(g(x) = x^3 + 5\). Supón que se usa \(f(a) = f(b)\) o \(g(a) = g(b)\) para probar la inyectividad de una composición. ¿Qué afirmación es verdadera acerca de \((f \circ g)(x)\) y \((g \circ f)(x)\)?
+
+(A) Tanto \(f \circ g\) como \(g \circ f\) son uno a uno en \((-\infty, \infty)\).
+(B) Solo \(f \circ g\) es uno a uno, porque \(g\) es cúbica.
+(C) Solo \(g \circ f\) es uno a uno, porque \(f\) es lineal.
+(D) Ninguna es uno a uno porque componer dos funciones destruye la inyectividad.
+(E) \(f \circ g\) es uno a uno, mientras que \(g \circ f\) falla en \(x = \frac{2}{3}\).
+[/BONUS]

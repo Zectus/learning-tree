@@ -1,0 +1,263 @@
+=== SECTION 1: Measuring variability—range, MAD, and squared deviations ===
+
+Knowing only the center of a dataset can hide huge practical differences. Consider two precision machine shops cutting \(100\text{ mm}\) steel rods: Shop A produces rods measuring \(99.9, 100.0, 100.0, 100.0, 100.1\text{ mm}\), while Shop B produces \(95.0, 98.0, 100.0, 102.0, 105.0\text{ mm}\). Both shops achieve the exact same mean (\(100.0\text{ mm}\)) and median (\(100.0\text{ mm}\)), yet Shop A's rods fit tightly while Shop B's rods vary wildly. We need quantitative measures of spread (dispersion) to capture how tightly or loosely observations cluster around their center.
+
+The simplest measure of spread is the range:
+\[
+\text{Range} = x_{(n)} - x_{(1)} = \max - \min.
+\]
+For Shop A the range is \(0.2\text{ mm}\); for Shop B it is \(10.0\text{ mm}\). Despite its simplicity, the range has two severe weaknesses: it uses only the two most extreme values (ignoring everything in between, so a single outlier can inflate it arbitrarily), and it tends to grow systematically as the sample size \(n\) increases, because larger samples are more likely to catch rare extremes.
+
+To use ALL \(n\) observations, we naturally look at the deviations \(x_i - \bar{x}\) from the mean. Why can't we just average those signed deviations? Because by the balance-point identity, \(\sum_{i=1}^n (x_i - \bar{x}) = 0\) for every dataset—positive and negative deviations cancel out completely! There are two natural ways to eliminate sign cancellation: take absolute values or square each deviation.
+
+[CALLOUT]
+id: mad-variance-sd
+label: Definition
+title: Mean absolute deviation, variance, and standard deviation
+tone: key
+
+Let \(x_1, \dots, x_n\) be a quantitative sample with mean \(\bar{x}\) (or a finite population \(x_1, \dots, x_N\) with mean \(\mu\)).
+
+(1) The mean absolute deviation (MAD) averages the unsigned distances from the mean:
+\[
+\text{MAD} = \frac{1}{n} \sum_{i=1}^n |x_i - \bar{x}|.
+\]
+(2) The population variance \(\sigma^2\) and population standard deviation \(\sigma\) are
+\[
+\sigma^2 = \frac{1}{N} \sum_{i=1}^N (x_i - \mu)^2, \qquad \sigma = \sqrt{\sigma^2}.
+\]
+(3) For \(n \ge 2\), the sample variance \(s^2\) and sample standard deviation \(s\) are
+\[
+s^2 = \frac{1}{n - 1} \sum_{i=1}^n (x_i - \bar{x})^2, \qquad s = \sqrt{s^2}.
+\]
+[/CALLOUT]
+
+Let us compute every summary in [REF: mad-variance-sd | this definition] on a sample of \(n = 5\) daily sensor drifts (in millimeters): \(3, 5, 7, 9, 16\). First find the mean: \(\bar{x} = (3 + 5 + 7 + 9 + 16)/5 = 40/5 = 8\text{ mm}\).
+
+[TABLE]
+Observation (\(x_i\)) | Deviation (\(x_i - \bar{x}\)) | Absolute deviation (\(\lvert x_i - \bar{x} \rvert\)) | Squared deviation (\((x_i - \bar{x})^2\))
+3 | \(-5\) | 5 | 25
+5 | \(-3\) | 3 | 9
+7 | \(-1\) | 1 | 1
+9 | \(+1\) | 1 | 1
+16 | \(+8\) | 8 | 64
+Sum \(= 40\) | Sum \(= 0\) | Sum \(= 18\) | Sum \(= 100\)
+[/TABLE]
+
+From the column sums:
+- \(\text{Range} = 16 - 3 = 13\text{ mm}\).
+- \(\text{MAD} = 18 / 5 = 3.6\text{ mm}\).
+- Sample variance: \(s^2 = 100 / (5 - 1) = 100 / 4 = 25\text{ mm}^2\).
+- Sample standard deviation: \(s = \sqrt{25} = 5.0\text{ mm}\).
+
+Pay careful attention to units! Because variance squares each deviation, \(s^2 = 25\) is measured in squared millimeters (\(\text{mm}^2\)), not millimeters. Taking the nonnegative square root to obtain \(s = 5.0\text{ mm}\) restores the original measurement units so standard deviation can be compared directly with \(\bar{x} = 8\text{ mm}\) and \(\text{MAD} = 3.6\text{ mm}\). Notice also that \(s = 5.0 > \text{MAD} = 3.6\): squaring weights large deviations (like \(8^2 = 64\)) much more heavily than small ones, making variance and standard deviation sensitive to outliers, just like the arithmetic mean. Finally, notice that \(s \ge 0\) always, and \(s = 0\) if and only if every squared deviation is \(0\), which happens precisely when all \(n\) observations are identical.
+
+The graph below shows how the standard deviation \(\sigma\) controls the horizontal spread of a symmetric distribution centered at \(\mu = 10\). Drag the slider \(s\) to watch a larger standard deviation widen the profile and push the \(\mu \pm s\) landmarks outward while the center stays fixed.
+
+[GRAPH]
+type: function2d
+title: Effect of standard deviation \(s\) on spread around a fixed mean \(\mu = 10\)
+xlabel: \(x\)
+ylabel: Density
+xrange: 0, 20
+yrange: 0, 0.45
+trace: (1 / (1.5 * sqrt(2 * pi))) * exp(-0.5 * ((x - 10) / 1.5)^2) | label: Reference (\(s = 1.5\)) | color: #94a3b8
+trace: (1 / (s * sqrt(2 * pi))) * exp(-0.5 * ((x - 10) / s)^2) | label: Adjustable spread \(s\) | color: #3b82f6
+segment: 10 - s, 0, 10 - s, (1 / (s * sqrt(2 * pi))) * exp(-0.5) | label: \(\mu - s\) | dashed: true | color: #ef4444
+segment: 10 + s, 0, 10 + s, (1 / (s * sqrt(2 * pi))) * exp(-0.5) | label: \(\mu + s\) | dashed: true | color: #ef4444
+point: 10, 0 | label: \(\mu\)
+slider: s | range: 1, 4 | init: 2.5 | step: 0.25
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Compute the mean absolute deviation \(\text{MAD}\) and the sample standard deviation \(s\) for the sample of \(n = 5\) observations \(2, 2, 6, 10, 10\).
+
+(A) \(\text{MAD} = 3.2\), \(s = 3.58\)
+(B) \(\text{MAD} = 4.0\), \(s = 4.0\)
+(C) \(\text{MAD} = 3.2\), \(s = 4.0\)
+(D) \(\text{MAD} = 3.2\), \(s = 16.0\)
+(E) \(\text{MAD} = 4.0\), \(s = 3.58\)
+[/QUESTION]
+
+=== SECTION 2: Why \(n - 1\)? Degrees of freedom ===
+
+Beginners naturally ask why [REF: mad-variance-sd.3 | sample variance] divides by \(n - 1\) instead of \(n\). Two complementary ideas explain this denominator.
+
+First, think about degrees of freedom—the number of independent pieces of information available to estimate variability around \(\bar{x}\). Because the sample deviations MUST obey the linear constraint \(\sum_{i=1}^n (x_i - \bar{x}) = 0\), once you know any \(n - 1\) deviations, the final deviation is completely forced! In our five-value example above, once the first four deviations are \(-5, -3, -1, +1\) (summing to \(-8\)), the fifth deviation has no freedom left—it MUST equal \(+8\). In particular, if \(n = 1\), the sole deviation is \(x_1 - \bar{x} = 0\) regardless of how variable the population is; dividing by \(n - 1 = 0\) makes \(s^2\) properly undefined for a single observation, because one measurement carries zero degrees of freedom for estimating spread.
+
+Second, deviations around a sample's OWN mean \(\bar{x}\) are systematically slightly smaller than deviations around the true (unknown) population mean \(\mu\). In fact, for any constant \(c\), expanding \(x_i - c = (x_i - \bar{x}) + (\bar{x} - c)\) and using \(\sum (x_i - \bar{x}) = 0\) shows that
+\[
+\sum_{i=1}^n (x_i - c)^2 = \sum_{i=1}^n (x_i - \bar{x})^2 + n(\bar{x} - c)^2 \ge \sum_{i=1}^n (x_i - \bar{x})^2.
+\]
+So \(\sum (x_i - \bar{x})^2\) is strictly smaller than \(\sum (x_i - \mu)^2\) whenever \(\bar{x} \ne \mu\). Dividing by \(n\) would systematically underestimate \(\sigma^2\) on average; shrinking the denominator slightly from \(n\) to \(n - 1\) (Bessel's correction) compensates exactly so that the average of \(s^2\) across repeated random samples equals \(\sigma^2\). The formal probabilistic proof of this unbiasedness property (\(E[s^2] = \sigma^2\)) belongs to Statistical Inference; in descriptive work, remember to use \(N\) when summarizing an entire population and \(n - 1\) when computing the sample variance \(s^2\).
+
+[QUESTION 2]
+[ANSWER: A]
+Which statement best explains the conceptual role of the denominator \(n - 1\) in the sample variance \(s^2 = \frac{1}{n - 1}\sum_{i=1}^n (x_i - \bar{x})^2\)?
+
+(A) The identity \(\sum_{i=1}^n (x_i - \bar{x}) = 0\) leaves only \(n - 1\) independent deviations (degrees of freedom), and dividing by \(n - 1\) compensates for deviations around \(\bar{x}\) being slightly smaller than deviations around the population mean \(\mu\).
+(B) Dividing by \(n - 1\) ensures that \(s\) always equals \(\text{MAD}\).
+(C) Dividing by \(n - 1\) drops the largest outlier from the calculation to make \(s^2\) resistant.
+(D) Dividing by \(n - 1\) is required to convert squared units back into original measurement units.
+(E) Dividing by \(n - 1\) makes \(s^2\) smaller than the population variance formula with denominator \(n\).
+[/QUESTION]
+
+=== SECTION 3: The computational shortcut, numerical stability, and grouped variance ===
+
+Expanding the numerator of variance—the sum of squared deviations, often denoted \(S_{xx} = \sum_{i=1}^n (x_i - \bar{x})^2\)—produces an equivalent algebraic form that avoids subtracting \(\bar{x}\) from every observation by hand.
+
+Start from the definition and expand each square, then apply summation linearity:
+\[
+\sum_{i=1}^n (x_i - \bar{x})^2 = \sum_{i=1}^n (x_i^2 - 2 \bar{x} x_i + \bar{x}^2) = \sum_{i=1}^n x_i^2 - 2 \bar{x} \sum_{i=1}^n x_i + \sum_{i=1}^n \bar{x}^2.
+\]
+Substitute \(\sum_{i=1}^n x_i = n \bar{x}\) in the middle term and \(\sum_{i=1}^n \bar{x}^2 = n \bar{x}^2\) in the last term:
+\[
+\sum_{i=1}^n (x_i - \bar{x})^2 = \sum_{i=1}^n x_i^2 - 2 n \bar{x}^2 + n \bar{x}^2 = \sum_{i=1}^n x_i^2 - n \bar{x}^2.
+\]
+
+[CALLOUT]
+id: variance-shortcut
+label: Identity
+title: Algebraic shortcut for the sum of squared deviations
+tone: key
+
+For every quantitative dataset \(x_1, \dots, x_n\) with sample mean \(\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i\):
+\[
+\sum_{i=1}^n (x_i - \bar{x})^2 = \sum_{i=1}^n x_i^2 - n \bar{x}^2 = \sum_{i=1}^n x_i^2 - \frac{1}{n}\left(\sum_{i=1}^n x_i\right)^2.
+\]
+Hence the sample variance can be written as
+\[
+s^2 = \frac{1}{n - 1}\left(\sum_{i=1}^n x_i^2 - n \bar{x}^2\right).
+\]
+[/CALLOUT]
+
+Verify [REF: variance-shortcut | this identity] on our \(n = 5\) sensor drifts \(3, 5, 7, 9, 16\) (where \(\bar{x} = 8\)): \(\sum x_i^2 = 9 + 25 + 49 + 81 + 256 = 420\) and \(n \bar{x}^2 = 5(8^2) = 320\), so \(S_{xx} = 420 - 320 = 100\) and \(s^2 = 100 / 4 = 25\), matching our earlier calculation exactly.
+
+In exact arithmetic, [REF: variance-shortcut | the shortcut formula] is always exact. On real computers and calculators with finite decimal precision, however, it carries a famous numerical danger.
+
+[CALLOUT]
+id: catastrophic-cancellation
+label: Common pitfall
+title: Catastrophic cancellation in the shortcut formula
+tone: caution
+
+When observations are very large relative to their spread (for example, timestamps or high-precision readings clustered around \(10^6\)), \(\sum x_i^2\) and \(n \bar{x}^2\) are two huge, nearly identical numbers. Subtracting them in finite-precision floating-point arithmetic wipes out leading significant digits—a phenomenon called catastrophic cancellation—producing wildly inaccurate or even negative computed variances! In software or high-offset data, always compute deviations directly from \(\bar{x}\) (two-pass formula) or shift all data by a nearby constant before squaring.
+[/CALLOUT]
+
+See [REF: catastrophic-cancellation | catastrophic cancellation] on \(n = 3\) values \(1{,}000{,}001\), \(1{,}000{,}002\), and \(1{,}000{,}003\). By inspection, \(\bar{x} = 1{,}000{,}002\) and the deviations are \(-1, 0, +1\), so the exact sum of squares is \(2\) and \(s^2 = 2/2 = 1\). Yet \(\sum x_i^2 = 3{,}000{,}012{,}000{,}014\) while \(n \bar{x}^2 = 3{,}000{,}012{,}000{,}012\). A calculator keeping \(10\) significant digits rounds BOTH numbers to \(3.000012000 \times 10^{12}\) and reports \(s^2 = 0\)—a \(100\%\) error!
+
+When data arrive only as a grouped frequency table with class midpoints \(m_j\) and frequencies \(f_j\) (\(\sum_{j=1}^k f_j = n\)), we approximate the sample variance by placing all \(f_j\) observations in class \(j\) at its midpoint \(m_j\):
+\[
+s_{\text{grouped}}^2 \approx \frac{1}{n - 1} \sum_{j=1}^k f_j (m_j - \bar{x}_{\text{grouped}})^2 = \frac{1}{n - 1}\left(\sum_{j=1}^k f_j m_j^2 - n \bar{x}_{\text{grouped}}^2\right).
+\]
+For example, if \(n = 20\) observations fall in three classes with midpoints \(10\) (\(f_1 = 4\)), \(20\) (\(f_2 = 12\)), and \(30\) (\(f_3 = 4\)), then \(\bar{x}_{\text{grouped}} = (40 + 240 + 120)/20 = 20\), and
+\[
+s_{\text{grouped}}^2 \approx \frac{4(10 - 20)^2 + 12(20 - 20)^2 + 4(30 - 20)^2}{20 - 1} = \frac{400 + 0 + 400}{19} = \frac{800}{19} \approx 42.11,
+\]
+giving \(s_{\text{grouped}} \approx 6.49\).
+
+[QUESTION 3]
+[ANSWER: B]
+For a sample of \(n = 10\) measurements, you are given the exact summaries \(\sum_{i=1}^{10} x_i = 60\) and \(\sum_{i=1}^{10} x_i^2 = 450\). What is the sample variance \(s^2\)?
+
+(A) \(9.0\)
+(B) \(10.0\)
+(C) \(15.0\)
+(D) \(45.0\)
+(E) \(39.0\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+An engineer needs to compute the sample variance of \(n = 3\) sensor readings \(50{,}000.1\), \(50{,}000.2\), and \(50{,}000.3\) on a low-precision embedded microcontroller that stores only \(8\) significant digits. Which computation strategy avoids catastrophic cancellation?
+
+(A) Compute \(\sum x_i^2 - n \bar{x}^2\) directly so that rounding errors cancel out.
+(B) Replace \(n - 1\) with \(n\) in the denominator.
+(C) Multiply all readings by \(10\) before applying \(\sum x_i^2 - n \bar{x}^2\).
+(D) Subtract a nearby reference value (such as \(50{,}000\)) or the mean \(\bar{x}\) from every reading first, then square the small deviations \(-0.1, 0, +0.1\).
+(E) Use the population variance shortcut \(\frac{1}{n}\sum x_i^2 - \bar{x}^2\) instead of the sample variance shortcut.
+[/QUESTION]
+
+=== SECTION 4: Relative spread and the coefficient of variation ===
+
+Suppose a biologist compares mass variability across two species: adult laboratory mice have mean mass \(\bar{x}_1 = 25\text{ g}\) with \(s_1 = 5\text{ g}\), whereas adult elephants have mean mass \(\bar{x}_2 = 4{,}000\text{ kg}\) with \(s_2 = 400\text{ kg}\). Comparing \(s_1 = 5\text{ g}\) directly against \(s_2 = 400\text{ kg}\) is unhelpful—not only are the units different, but a \(400\text{ kg}\) swing on a \(4{,}000\text{ kg}\) animal is proportionally smaller than a \(5\text{ g}\) swing on a \(25\text{ g}\) mouse! To compare spread relative to scale across variables with different magnitudes or units, we form a dimensionless ratio.
+
+[CALLOUT]
+id: coeff-variation
+label: Definition
+title: Coefficient of variation (CV) and its strict domain rule
+tone: key
+
+For a strictly positive ratio-scale variable with sample mean \(\bar{x} > 0\) and standard deviation \(s\) (or population \(\mu > 0\) and \(\sigma\)), the coefficient of variation is
+\[
+\text{CV} = \frac{s}{\bar{x}} \qquad \left(\text{often expressed as a percentage, } \frac{s}{\bar{x}} \times 100\%\right).
+\]
+Domain restriction: \(\text{CV}\) is mathematically valid ONLY for strictly positive ratio-scale variables (variables with a true zero and positive values). It is INVALID on interval scales (such as Celsius or Fahrenheit temperatures) or variables that can be zero or negative.
+[/CALLOUT]
+
+Apply [REF: coeff-variation | the CV formula] to the mice and elephants:
+- Mice: \(\text{CV}_1 = 5\text{ g} / 25\text{ g} = 0.20 = 20\%\).
+- Elephants: \(\text{CV}_2 = 400\text{ kg} / 4{,}000\text{ kg} = 0.10 = 10\%\).
+
+Because the units cancel cleanly in numerator and denominator, converting mouse masses from grams to kilograms (\(0.005\text{ kg} / 0.025\text{ kg} = 20\%\)) leaves \(\text{CV}\) completely invariant! Mice exhibit twice as much relative variability in mass as elephants.
+
+Why is the ratio-scale restriction in [REF: coeff-variation | the definition] non-negotiable? Consider daily temperatures with \(\bar{x} = 10^\circ\text{C}\) and \(s = 5^\circ\text{C}\). Computing \(s / \bar{x}\) in Celsius gives \(5 / 10 = 50\%\). Convert the exact same days to Fahrenheit (\(y = 1.8 x + 32\)): the mean becomes \(50^\circ\text{F}\) while the standard deviation becomes \(1.8 \times 5 = 9^\circ\text{F}\), giving \(9 / 50 = 18\%\)—a totally different number for the exact same physical weather! Even worse, if the winter mean is \(0^\circ\text{C}\), \(s / \bar{x}\) divides by zero! Always check that a variable is on a strictly positive ratio scale before reporting \(\text{CV}\).
+
+[TABLE]
+Spread measure | Units | Uses all data? | Outlier resistant? | Valid scales
+Range (\(\max - \min\)) | Original units | No (only \(2\) values) | No | Interval, ratio
+\(\text{IQR} = Q_3 - Q_1\) | Original units | Rank-based (middle \(50\%\)) | Yes | Interval, ratio
+\(\text{MAD}\) | Original units | Yes | Moderate | Interval, ratio
+Variance (\(s^2, \sigma^2\)) | Squared units | Yes | No | Interval, ratio
+Standard deviation (\(s, \sigma\)) | Original units | Yes | No | Interval, ratio
+\(\text{CV} = s / \bar{x}\) | Dimensionless (\(\%\)) | Yes | No | Strictly positive ratio only
+[/TABLE]
+
+[QUESTION 5]
+[ANSWER: E]
+An analyst wants to compare the relative variability of three datasets using the coefficient of variation \(\text{CV} = s / \bar{x}\):
+(I) Monthly rainfall in millimeters (\(\bar{x} = 80\text{ mm}, s = 12\text{ mm}\)),
+(II) Daily water usage in liters (\(\bar{x} = 300\text{ L}, s = 30\text{ L}\)),
+(III) Daily outdoor noon temperature in degrees Celsius (\(\bar{x} = 15^\circ\text{C}, s = 3^\circ\text{C}\)).
+Which conclusion is mathematically sound?
+
+(A) Dataset III has the largest relative variability (\(\text{CV} = 20\%\)), followed by Dataset I (\(15\%\)) and Dataset II (\(10\%\)).
+(B) Dataset II has greater relative variability than Dataset I because \(30 > 12\).
+(C) All three coefficients of variation are valid because all three means are positive.
+(D) \(\text{CV}\) cannot compare Dataset I and Dataset II because millimeters and liters are different units.
+(E) \(\text{CV}\) is valid for Dataset I (\(15\%\)) and Dataset II (\(10\%\)), showing rainfall has higher relative variability than water usage, whereas \(\text{CV}\) is invalid for Dataset III because Celsius is an interval scale with an arbitrary zero.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+A sample of \(n = 9\) measurements has mean \(\bar{x} = 24\) and sample variance \(s^2 = 18\). A tenth measurement equal to \(24\) is appended to the sample. What is the new sample standard deviation \(s_{\text{new}}\) of all \(10\) measurements?
+
+(A) \(4.0\)
+(B) \(\sqrt{18} \approx 4.24\)
+(C) \(16.0\)
+(D) \(3.8\)
+(E) \(4.5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+A grouped frequency distribution of \(n = 20\) measurements has three classes: \([0, 10)\) with frequency \(5\), \([10, 20)\) with frequency \(10\), and \([20, 30)\) with frequency \(5\). Using class midpoints, what is the approximate sample variance \(s_{\text{grouped}}^2\)?
+
+(A) \(50.0\)
+(B) \(100.0\)
+(C) \(7.25\)
+(D) \(1000 / 19 \approx 52.63\)
+(E) \(25.0\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+For a sample of \(n = 6\) observations \(x_1, \dots, x_6\) with mean \(\bar{x} = 10\), suppose you compute \(\sum_{i=1}^6 (x_i - c)^2\) for various constants \(c \in \mathbb{R}\). If \(\sum_{i=1}^6 (x_i - 10)^2 = 40\), what is the exact value of \(\sum_{i=1}^6 (x_i - 12)^2\)?
+
+(A) \(44\)
+(B) \(64\)
+(C) \(52\)
+(D) \(16\)
+(E) Cannot be determined without knowing the individual observations \(x_1, \dots, x_6\).
+[/BONUS]

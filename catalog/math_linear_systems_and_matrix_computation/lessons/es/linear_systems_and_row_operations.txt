@@ -1,0 +1,321 @@
+=== SECTION 1: Ecuaciones lineales y sistemas sobre los reales ===
+
+Muchos problemas en ciencia, ingeniería y análisis de datos buscan varios números desconocidos que deben satisfacer una colección de restricciones simultáneas. Cuando cada restricción combina las incógnitas únicamente mediante escalamiento y suma —sin multiplicar incógnitas entre sí, elevarlas a potencias ni introducirlas en funciones no lineales—, la colección constituye un sistema de ecuaciones lineales. Aunque las reglas para resolver dos ecuaciones con dos incógnitas resultan familiares desde la educación secundaria, las aplicaciones reales suelen involucrar decenas o miles de ecuaciones e incógnitas. Para manejar tamaños arbitrarios de manera sistemática sin perder de vista ninguna solución, necesitamos un lenguaje preciso para los sistemas lineales, una representación matricial compacta y un pequeño conjunto de movimientos algebraicos garantizados para no crear ni destruir soluciones jamás.
+
+[CALLOUT]
+id: linear-system-def
+label: Definición
+title: Ecuación lineal y sistema lineal
+tone: key
+
+Una ecuación lineal en las \(n\) incógnitas \(x_1, x_2, \dots, x_n\) sobre \(\mathbb{R}\) es una ecuación que puede escribirse en la forma
+\[
+a_1 x_1 + a_2 x_2 + \dots + a_n x_n = b,
+\]
+donde los coeficientes \(a_1, a_2, \dots, a_n\) y el término constante \(b\) son números reales fijos.
+
+Un sistema de \(m\) ecuaciones lineales en \(n\) incógnitas (un sistema lineal \(m \times n\)) es una lista finita de \(m\) ecuaciones lineales en las mismas incógnitas:
+\[
+\begin{aligned}
+a_{11} x_1 + a_{12} x_2 + \dots + a_{1n} x_n &= b_1, \\
+a_{21} x_1 + a_{22} x_2 + \dots + a_{2n} x_n &= b_2, \\
+&\;\;\vdots \\
+a_{m1} x_1 + a_{m2} x_2 + \dots + a_{mn} x_n &= b_m.
+\end{aligned}
+\]
+Una solución del sistema es una \(n\)-tupla ordenada \((s_1, s_2, \dots, s_n)\) de números reales que hace verdadera cada ecuación al sustituir simultáneamente \(x_1 = s_1, \dots, x_n = s_n\). La colección de todas las soluciones se denomina conjunto solución del sistema.
+[/CALLOUT]
+
+Preste atención a la convención de doble subíndice \(a_{ij}\): el primer índice \(i\) nombra la ecuación (fila) de \(1\) a \(m\), y el segundo índice \(j\) nombra la incógnita (columna) de \(1\) a \(n\). Por ejemplo, \(a_{23}\) es el coeficiente de \(x_3\) en la segunda ecuación. A lo largo de este curso trabajaremos principalmente sobre los números reales \(\mathbb{R}\), aunque cada paso algebraico de esta lección —sumar ecuaciones, escalar por constantes no nulas y reescribir sistemas como matrices— funciona de manera idéntica sobre los números complejos \(\mathbb{C}\) siempre que aparezcan coeficientes complejos.
+
+Lo que hace lineal a una ecuación es cómo intervienen las incógnitas, no cuán complicadas parezcan las constantes. En \(x_1, x_2, x_3\), la ecuación
+\[
+\sqrt{5}\,x_1 - \frac{2}{7}x_2 + \cos(2)\,x_3 = \pi
+\]
+es completamente lineal porque \(\sqrt{5}\), \(-2/7\), \(\cos(2)\) y \(\pi\) son números fijos que multiplican la primera potencia de cada incógnita. En cambio, cada una de las siguientes deja de ser lineal:
+- \(x_1 x_2 + x_3 = 4\) multiplica dos incógnitas entre sí.
+- \(x_1^2 - 3x_2 = 1\) eleva una incógnita a la segunda potencia.
+- \(2x_1 + \sqrt{x_2} = 5\) aplica una raíz cuadrada a una incógnita.
+- \(x_1 + \sin(x_2) = 0\) coloca una incógnita dentro de una función trigonométrica.
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál de las siguientes ecuaciones es lineal en las incógnitas \(x_1, x_2, x_3\)?
+
+(A) \(x_1 + 2 x_2 x_3 = 5\)
+(B) \(\sqrt{2}\,x_1 - \pi x_2 + \frac{1}{3} x_3 = \sin(1)\)
+(C) \(3 x_1 - x_2^2 + 4 x_3 = 0\)
+(D) \(x_1 + \frac{2}{x_2} - x_3 = 1\)
+(E) \(2 x_1 + \sin(x_2) - x_3 = 4\)
+[/QUESTION]
+
+=== SECTION 2: Consistencia e interpretación geométrica en \(\mathbb{R}^2\) y \(\mathbb{R}^3\) ===
+
+Al resolver un sistema lineal, ¿cuántas soluciones puede tener? Para una sola ecuación en dos incógnitas \(a_1 x_1 + a_2 x_2 = b\) (con \(a_1, a_2\) no ambos cero), el conjunto solución es una recta en el plano \(x_1 x_2\), \(\mathbb{R}^2\). Un sistema de dos ecuaciones en dos incógnitas pide todos los puntos \((x_1, x_2)\) que yacen en ambas rectas a la vez. Dos rectas en un plano solo pueden disponerse de tres maneras:
+
+1. Se cruzan en un único punto, dando una solución única. Por ejemplo, \(x_1 + x_2 = 3\) y \(2x_1 - x_2 = 0\) se intersecan exclusivamente en \((1, 2)\).
+2. Son rectas paralelas distintas, que nunca se cortan, sin dar solución alguna. Por ejemplo, \(x_1 - 2x_2 = 2\) y \(x_1 - 2x_2 = -4\) tienen la misma pendiente \(1/2\) pero distintas ordenadas al origen.
+3. Coinciden como exactamente la misma recta, dando infinitas soluciones. Por ejemplo, \(x_1 - 2x_2 = 2\) y \(-3x_1 + 6x_2 = -6\) describen la misma recta, de modo que todo punto \((2 + 2t, t)\) con \(t \in \mathbb{R}\) es solución.
+
+Observe que dos rectas en \(\mathbb{R}^2\) nunca pueden cortarse en exactamente dos puntos ni en exactamente tres puntos: si dos puntos distintos yacen sobre ambas rectas, la recta completa que pasa por esos dos puntos debe yacer sobre ambas.
+
+[GRAPH]
+type: function2d
+title: Solución única consistente frente a rectas paralelas inconsistentes en \(\mathbb{R}^2\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+xrange: -3, 5
+yrange: -3, 5
+aspect: equal
+trace: 3 - x | label: \(x_1 + x_2 = 3\) | color: #2563eb
+trace: 2*x | label: \(2x_1 - x_2 = 0\) | color: #059669
+trace: 0.5*x - 1 | label: \(x_1 - 2x_2 = 2\) | color: #dc2626
+trace: 0.5*x + 2 | label: \(x_1 - 2x_2 = -4\) | color: #f97316
+point: 1, 2 | label: \((1, 2)\)
+[/GRAPH]
+
+En \(\mathbb{R}^3\), cada ecuación lineal \(a_1 x_1 + a_2 x_2 + a_3 x_3 = b\) (con no todos los coeficientes nulos) define un plano. Un sistema de tres ecuaciones en tres incógnitas busca la intersección común de tres planos. Aunque los planos en el espacio admiten más configuraciones geométricas que las rectas en el plano, los posibles conteos de soluciones siguen siendo exactamente los mismos tres:
+- Ninguna solución: por ejemplo, dos planos pueden ser paralelos y distintos, o los tres planos pueden cortarse por pares en tres rectas paralelas formando un prisma triangular abierto.
+- Exactamente una solución: los tres planos se intersecan en un único punto esquina, como los tres planos coordenados \(x_1 = 0\), \(x_2 = 0\), \(x_3 = 0\) al encontrarse en \((0, 0, 0)\).
+- Infinitas soluciones: los tres planos pueden compartir una recta común de intersección (como las páginas de un libro abierto), o las tres ecuaciones pueden describir exactamente el mismo plano.
+
+Sorprendentemente, esta división en tres casos se cumple para todo sistema lineal \(m \times n\) sobre \(\mathbb{R}\) (y sobre \(\mathbb{C}\)), sin importar el tamaño. Demostraremos esta estructura algebraica con total generalidad una vez que estudiemos los sistemas homogéneos; por ahora registramos el vocabulario fundamental que clasifica todo sistema lineal.
+
+[CALLOUT]
+id: consistency-def
+label: Definición
+title: Sistemas consistentes e inconsistentes
+tone: key
+
+Un sistema lineal se denomina consistente si su conjunto solución es no vacío; es decir, si tiene una solución única o infinitas soluciones.
+
+Un sistema lineal se denomina inconsistente si su conjunto solución es vacío; es decir, ninguna \(n\)-tupla \((s_1, \dots, s_n)\) satisface todas sus ecuaciones simultáneamente.
+[/CALLOUT]
+
+[TABLE]
+Resultado | Clasificación | Ejemplo geométrico en \(\mathbb{R}^2\) | Ejemplo geométrico en \(\mathbb{R}^3\)
+Sin solución | Inconsistente | Dos rectas paralelas distintas | Planos paralelos, o un prisma triangular de tres planos
+Exactamente una solución | Consistente (única) | Dos rectas no paralelas que se cruzan en un punto | Tres planos que se cortan en un único punto
+Infinitas soluciones | Consistente (no única) | Dos rectas coincidentes | Tres planos que comparten una recta, o todos idénticos
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+¿Para qué valor de la constante real \(k\) es consistente el sistema lineal
+\[
+\begin{aligned}
+3x_1 - 6x_2 &= 9, \\
+-x_1 + 2x_2 &= k
+\end{aligned}
+\]?
+
+(A) \(k = 3\)
+(B) \(k = -3\)
+(C) \(k = 0\)
+(D) \(k = -9\)
+(E) Todo número real \(k \neq -3\)
+[/QUESTION]
+
+=== SECTION 3: Matrices de coeficientes y matrices aumentadas ===
+
+Escribir una y otra vez los nombres de las variables \(x_1, x_2, \dots, x_n\), los signos más y los signos igual durante el trabajo algebraico es tedioso e induce errores de copia. Observe que, una vez fijado un orden para las incógnitas —\(x_1\) primero, \(x_2\) segundo, hasta \(x_n\) al final—, toda la información de un sistema lineal \(m \times n\) reside en la cuadrícula rectangular de coeficientes \(a_{ij}\) y constantes del lado derecho \(b_i\).
+
+[CALLOUT]
+id: augmented-matrix-def
+label: Definición
+title: Matriz de coeficientes y matriz aumentada
+tone: key
+
+Para el sistema lineal \(m \times n\) de [REF: linear-system-def | la definición de sistema lineal], la matriz de coeficientes es el arreglo rectangular \(m \times n\)
+\[
+A = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix},
+\]
+y la matriz aumentada es el arreglo \(m \times (n + 1)\) obtenido al agregar la columna \(\mathbf{b}\) de constantes del lado derecho:
+\[
+\left[\begin{array}{cccc|c}
+a_{11} & a_{12} & \cdots & a_{1n} & b_1 \\
+a_{21} & a_{22} & \cdots & a_{2n} & b_2 \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn} & b_m
+\end{array}\right],
+\]
+abreviada como \([A \mid \mathbf{b}]\).
+[/CALLOUT]
+
+La barra vertical dentro de \([A \mid \mathbf{b}]\) es puramente un recordatorio visual de dónde están los signos igual; separa las \(n\) columnas pertenecientes a \(x_1, \dots, x_n\) de la columna final de constantes del lado derecho. Siempre que falte una variable en una ecuación, debemos escribir \(0\) en su columna para que los coeficientes restantes no se desplacen hacia la izquierda ocupando el lugar de otra variable.
+
+Por ejemplo, considere el sistema \(3 \times 3\)
+\[
+\begin{aligned}
+2x_1 - x_2 + 4x_3 &= 7, \\
+3x_2 - x_3 &= -2, \\
+-x_1 + 5x_3 &= 0.
+\end{aligned}
+\]
+Alinear explícitamente las tres incógnitas da \(0 x_1\) en la ecuación \(2\) y \(0 x_2\) en la ecuación \(3\), lo que produce la matriz de coeficientes \(A\) y la matriz aumentada \([A \mid \mathbf{b}]\):
+\[
+A = \begin{bmatrix} 2 & -1 & 4 \\ 0 & 3 & -1 \\ -1 & 0 & 5 \end{bmatrix}, \qquad
+[A \mid \mathbf{b}] = \left[\begin{array}{ccc|c} 2 & -1 & 4 & 7 \\ 0 & 3 & -1 & -2 \\ -1 & 0 & 5 & 0 \end{array}\right].
+\]
+Leer en sentido inverso funciona igual de directo: cada fila \(\begin{bmatrix} c_1 & c_2 & c_3 & \mid & d \end{bmatrix}\) se traduce nuevamente en la ecuación \(c_1 x_1 + c_2 x_2 + c_3 x_3 = d\). Antes de escribir una matriz aumentada, pase siempre todo término que contenga una incógnita al lado izquierdo y toda constante pura al lado derecho. Por ejemplo, \(x_1 = 4x_2 - 3\) debe reescribirse como \(x_1 - 4x_2 = -3\) antes de ingresar la fila \(\begin{bmatrix} 1 & -4 & \mid & -3 \end{bmatrix}\).
+
+=== SECTION 4: Operaciones elementales por fila y el teorema de equivalencia ===
+
+En la educación media, usted resolvió sistemas \(2 \times 2\) reordenando ecuaciones, multiplicando una ecuación por un número distinto de cero o sumando un múltiplo de una ecuación a otra para eliminar una variable. En la matriz aumentada \([A \mid \mathbf{b}]\), cada ecuación es simplemente una fila, de modo que esas mismas manipulaciones de ecuaciones se convierten en operaciones directas sobre filas.
+
+[CALLOUT]
+id: ero-def
+label: Definición
+title: Operaciones elementales por fila
+tone: key
+
+Sean \(R_1, R_2, \dots, R_m\) las filas de una matriz. Las tres operaciones elementales por fila son:
+
+(1) Intercambio de filas: intercambiar dos filas distintas \(R_i\) y \(R_j\), escrito \(R_i \leftrightarrow R_j\).
+(2) Escalamiento de fila: multiplicar cada entrada de una fila \(R_i\) por un escalar no nulo \(c \neq 0\), escrito \(R_i \leftarrow c R_i\).
+(3) Reemplazo de fila: sumar un múltiplo escalar \(c R_j\) de una fila \(R_j\) a otra fila distinta \(R_i\) (\(i \neq j\)), dejando \(R_j\) sin cambios, escrito \(R_i \leftarrow R_i + c R_j\).
+
+Dos matrices \(M\) y \(N\) se dicen equivalentes por filas, escrito \(M \sim N\), si \(N\) puede obtenerse a partir de \(M\) mediante una secuencia finita de operaciones elementales por fila.
+[/CALLOUT]
+
+Observemos cómo estas operaciones simplifican un sistema \(2 \times 2\) manteniendo el registro de cada fila. Comience con
+\[
+\begin{aligned}
+2x_1 + 4x_2 &= 10, \\
+3x_1 - x_2 &= 1,
+\end{aligned}
+\qquad
+\left[\begin{array}{cc|c} 2 & 4 & 10 \\ 3 & -1 & 1 \end{array}\right].
+\]
+Primero aplique [REF: ero-def.2 | escalamiento de fila] \(R_1 \leftarrow \frac{1}{2} R_1\) para volver \(1\) la entrada superior izquierda:
+\[
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 3 & -1 & 1 \end{array}\right].
+\]
+Luego aplique [REF: ero-def.3 | reemplazo de fila] \(R_2 \leftarrow R_2 - 3 R_1\) para eliminar \(x_1\) de la segunda fila (note que \(R_1\) misma permanece intacta):
+\[
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 0 & -7 & -14 \end{array}\right].
+\]
+Ahora escale \(R_2 \leftarrow -\frac{1}{7} R_2\) para despejar \(x_2\):
+\[
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 0 & 1 & 2 \end{array}\right].
+\]
+Finalmente, aplique \(R_1 \leftarrow R_1 - 2 R_2\) para eliminar \(x_2\) de la primera fila:
+\[
+\left[\begin{array}{cc|c} 1 & 0 & 1 \\ 0 & 1 & 2 \end{array}\right].
+\]
+Traducir la matriz final de vuelta a ecuaciones da \(x_1 = 1\) y \(x_2 = 2\). Sustituir \((1, 2)\) en las ecuaciones originales confirma \(2(1) + 4(2) = 10\) y \(3(1) - 2 = 1\).
+
+¿Por qué tenemos certeza de que \((1, 2)\) es la única solución del sistema original —de que no se perdió ninguna solución oculta ni se creó ninguna solución espuria en el camino—? La garantía descansa en una única propiedad estructural: toda operación elemental por fila es completamente reversible mediante otra operación elemental por fila.
+
+[TABLE]
+Operación directa | Operación inversa | Verificación de que aplicar ambas restaura las filas
+\(R_i \leftrightarrow R_j\) | \(R_i \leftrightarrow R_j\) | Intercambiar dos veces las mismas dos filas las devuelve a su sitio
+\(R_i \leftarrow c R_i\) (\(c \neq 0\)) | \(R_i \leftarrow \frac{1}{c} R_i\) | \(\frac{1}{c}(c R_i) = R_i\) (requiere \(c \neq 0\))
+\(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) | \(R_i \leftarrow R_i - c R_j\) | \((R_i + c R_j) - c R_j = R_i\) porque \(R_j\) no cambió
+[/TABLE]
+
+Note por qué ambas restricciones en [REF: ero-def | la definición] son indispensables para la reversibilidad. En el escalamiento de fila, si \(c = 0\), entonces \(1/c\) no existe: multiplicar una fila por \(0\) borra sus coeficientes permanentemente, de modo que ninguna operación por fila puede recuperarla jamás. En el reemplazo de fila, exigir \(i \neq j\) asegura que \(R_j\) permanezca intacta después del paso; si reemplazara \(R_i\) por \(R_i + c R_i = (1 + c)R_i\) con \(c = -1\), ¡en secreto estaría multiplicando \(R_i\) por \(0\)!
+
+[CALLOUT]
+id: equivalence-theorem
+label: Teorema
+title: Invariancia del conjunto solución bajo equivalencia por filas
+tone: key
+
+Si las matrices aumentadas \([A \mid \mathbf{b}]\) y \([C \mid \mathbf{d}]\) de dos sistemas lineales son equivalentes por filas, entonces los dos sistemas tienen exactamente el mismo conjunto solución.
+[/CALLOUT]
+
+Para demostrar [REF: equivalence-theorem | este teorema], basta demostrarlo para una única operación elemental por fila, ya que una secuencia finita de operaciones que individualmente preservan el conjunto solución lo preserva en conjunto.
+
+Sea \(S_{\text{ant}}\) el conjunto solución de un sistema antes de una operación elemental por fila, y sea \(S_{\text{nuevo}}\) el conjunto solución después de esa operación.
+
+Primero, mostramos que \(S_{\text{ant}} \subseteq S_{\text{nuevo}}\) (no se pierde ninguna solución). Tome cualquier \(\mathbf{x} = (s_1, \dots, s_n) \in S_{\text{ant}}\), lo que significa que \(\mathbf{x}\) satisface cada ecuación del sistema anterior:
+- Bajo un intercambio de filas \(R_i \leftrightarrow R_j\), el nuevo sistema contiene exactamente las mismas ecuaciones en distinto orden, de modo que \(\mathbf{x}\) sigue satisfaciéndolas todas.
+- Bajo un escalamiento de fila \(R_i \leftarrow c R_i\), toda ecuación distinta de la \(i\)-ésima permanece igual, y multiplicar ambos lados de una igualdad verdadera \(a_{i1} s_1 + \dots + a_{in} s_n = b_i\) por \(c\) produce una igualdad verdadera \(c(a_{i1} s_1 + \dots + a_{in} s_n) = c b_i\).
+- Bajo un reemplazo de fila \(R_i \leftarrow R_i + c R_j\), toda ecuación distinta de la \(i\)-ésima permanece igual. Como tanto la \(i\)-ésima como la \(j\)-ésima ecuación anterior se cumplen en \(\mathbf{x}\), multiplicar la \(j\)-ésima igualdad por \(c\) y sumarla a la \(i\)-ésima igualdad produce una igualdad verdadera, por lo que \(\mathbf{x}\) satisface también la nueva \(i\)-ésima ecuación.
+
+En los tres casos, \(\mathbf{x} \in S_{\text{nuevo}}\). Por lo tanto, \(S_{\text{ant}} \subseteq S_{\text{nuevo}}\).
+
+Segundo, mostramos que \(S_{\text{nuevo}} \subseteq S_{\text{ant}}\) (no se introducen soluciones extrañas). Como se verificó en la tabla anterior, la matriz aumentada anterior puede obtenerse a partir de la nueva matriz aumentada aplicando la operación elemental por fila inversa correspondiente. Aplicar exactamente el mismo argumento directo que acabamos de demostrar a ese paso inverso muestra que toda solución del nuevo sistema debe satisfacer el sistema anterior; por ende, \(S_{\text{nuevo}} \subseteq S_{\text{ant}}\).
+
+Dado que \(S_{\text{ant}} \subseteq S_{\text{nuevo}}\) y \(S_{\text{nuevo}} \subseteq S_{\text{ant}}\), concluimos que \(S_{\text{ant}} = S_{\text{nuevo}}\).
+
+Observe también cómo funciona la reversibilidad para una secuencia de varios pasos: si una matriz \(M\) se transforma en \(N\) mediante las operaciones \(O_1\), luego \(O_2\) y luego \(O_3\), deshacer la cadena de regreso a \(M\) requiere aplicar las operaciones inversas en orden inverso —primero deshacer \(O_3\), luego deshacer \(O_2\) y finalmente deshacer \(O_1\)—, tal como quitarse los zapatos antes que los calcetines.
+
+[CALLOUT]
+id: invalid-ops-caution
+label: Error frecuente
+title: Operaciones que rompen la equivalencia
+tone: caution
+
+(1) Multiplicar una fila por \(0\) (\(R_i \leftarrow 0 \cdot R_i\)) NO es una operación elemental por fila. Convierte la \(i\)-ésima ecuación en \(0 = 0\), eliminando una restricción genuina y ampliando potencialmente el conjunto solución. Por ejemplo, reemplazar la segunda ecuación de \(x_1 + x_2 = 2,\; x_1 - x_2 = 0\) por \(0 = 0\) expande la solución única \((1, 1)\) a toda la recta \(x_1 + x_2 = 2\).
+(2) Sumar una constante no nula \(k\) a cada entrada de una fila NO es una operación elemental por fila. Altera la ecuación sumando \(k(x_1 + \dots + x_n)\) al lado izquierdo y \(k\) al lado derecho, lo que en general destruye soluciones genuinas y crea soluciones falsas.
+(3) Combinar dos filas en una sin conservar ninguna de las dos filas originales (por ejemplo, escribir \(R_1 \leftarrow R_1 + R_2\) y simultáneamente \(R_2 \leftarrow R_1 + R_2\)) descarta información y no es reversible.
+[/CALLOUT]
+
+En la siguiente lección desarrollaremos algoritmos sistemáticos para elegir qué operaciones por fila aplicar y en qué orden —conduciendo a la forma escalonada por filas y a la forma escalonada reducida por filas—. Antes de avanzar, verifique que puede rastrear operaciones por fila en sentido inverso y diagnosticar operaciones que violan la equivalencia.
+
+[QUESTION 3]
+[ANSWER: D]
+Una matriz aumentada \(M\) se transforma en una matriz \(N\) aplicando en orden las siguientes tres operaciones elementales por fila:
+1. \(R_2 \leftarrow R_2 - 3 R_1\)
+2. \(R_1 \leftrightarrow R_2\)
+3. \(R_2 \leftarrow \frac{1}{2} R_2\)
+
+¿Qué secuencia de operaciones elementales por fila transforma \(N\) de vuelta en \(M\)?
+
+(A) \(R_2 \leftarrow R_2 + 3 R_1\), luego \(R_1 \leftrightarrow R_2\), luego \(R_2 \leftarrow 2 R_2\)
+(B) \(R_2 \leftarrow 2 R_2\), luego \(R_1 \leftrightarrow R_2\), luego \(R_2 \leftarrow R_2 - 3 R_1\)
+(C) \(R_2 \leftarrow 2 R_2\), luego \(R_1 \leftrightarrow R_2\), luego \(R_1 \leftarrow R_1 + 3 R_2\)
+(D) \(R_2 \leftarrow 2 R_2\), luego \(R_1 \leftrightarrow R_2\), luego \(R_2 \leftarrow R_2 + 3 R_1\)
+(E) \(R_2 \leftarrow \frac{1}{2} R_2\), luego \(R_1 \leftrightarrow R_2\), luego \(R_2 \leftarrow R_2 + 3 R_1\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Suponga que un sistema lineal \(3 \times 3\) consistente tiene conjunto solución \(S\), y ninguna de sus tres ecuaciones es redundante. ¿Qué única operación realizada sobre su matriz aumentada garantiza producir un nuevo sistema cuyo conjunto solución contiene propiamente a \(S\) (toda solución en \(S\) sigue funcionando y se introduce al menos una solución nueva)?
+
+(A) Reemplazar \(R_2\) por \(R_2 - 5 R_1\)
+(B) Intercambiar \(R_1\) y \(R_3\)
+(C) Reemplazar \(R_1\) por \(0 \cdot R_1\)
+(D) Reemplazar \(R_3\) por \(-\frac{1}{4} R_3\)
+(E) Sumar \(2\) a cada entrada de \(R_1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Un sistema lineal \(3 \times 3\) tiene como primeras dos ecuaciones
+\[
+\begin{aligned}
+x_1 + x_2 + x_3 &= 2, \\
+2x_1 - x_2 + x_3 &= 1.
+\end{aligned}
+\]
+¿Qué elección para la tercera ecuación hace inconsistente al sistema?
+
+(A) \(3x_1 + 2x_3 = 3\)
+(B) \(x_1 - 2x_2 = -1\)
+(C) \(3x_1 + 2x_3 = 5\)
+(D) \(x_3 = 0\)
+(E) \(x_1 + 2x_2 + x_3 = 4\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Partiendo de la matriz aumentada \(M\) de un sistema lineal \(2 \times 2\), aplicar \(R_2 \leftarrow R_2 + 2 R_1\) seguido de \(R_2 \leftarrow -R_2\) produce
+\[
+\left[\begin{array}{cc|c} 1 & -2 & 3 \\ 0 & 5 & -10 \end{array}\right].
+\]
+¿Cuál era la segunda ecuación del sistema original representado por \(M\)?
+
+(A) \(-2x_1 - x_2 = 4\)
+(B) \(2x_1 + 9x_2 = -16\)
+(C) \(-2x_1 + 9x_2 = -16\)
+(D) \(2x_1 - x_2 = 4\)
+(E) \(-2x_1 - 5x_2 = 10\)
+[/BONUS]

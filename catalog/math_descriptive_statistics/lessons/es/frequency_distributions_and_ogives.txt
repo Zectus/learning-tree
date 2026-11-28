@@ -1,0 +1,269 @@
+=== SECTION 1: Tablas de frecuencias no agrupadas, relativas y acumuladas ===
+
+Los datos sin procesar rara vez hablan por sí solos. Si un bibliotecario registra el número de libros prestados a \(n = 20\) estudiantes en una sola tarde,
+\[
+2,\; 0,\; 1,\; 3,\; 2,\; 1,\; 2,\; 0,\; 4,\; 2,\; 1,\; 3,\; 2,\; 0,\; 1,\; 2,\; 3,\; 1,\; 2,\; 3,
+\]
+resulta difícil saber a simple vista qué proporción de estudiantes sacó a lo sumo dos libros o si sacar un libro es más común que sacar tres. Organizar los valores repetidos en una distribución de frecuencias comprime la lista bruta en un resumen estructurado sin perder ninguna información sobre cuántas veces ocurre cada valor distinto.
+
+[CALLOUT]
+id: freq-definitions
+label: Definición
+title: Frecuencia, frecuencia relativa y frecuencias acumuladas
+tone: key
+
+Sea un conjunto de datos de tamaño \(n\) que toma valores (o clases) distintos indexados por \(j = 1, 2, \dots, k\).
+
+(1) La frecuencia (o conteo) \(f_j\) es el número de observaciones en la categoría o valor \(j\), de modo que \(\sum_{j=1}^k f_j = n\).
+(2) La frecuencia relativa \(p_j = f_j / n\) es la proporción de observaciones en la categoría \(j\). Dado que las categorías son mutuamente excluyentes y cubren todas las observaciones, \(\sum_{j=1}^k p_j = 1\) (salvo error de redondeo cuando se redondean decimales).
+(3) Cuando los valores están ordenados de menor a mayor, la frecuencia acumulada \(F_j = \sum_{m=1}^j f_m\) es el número total de observaciones iguales o menores al valor \(j\), y la frecuencia relativa acumulada \(P_j = F_j / n = \sum_{m=1}^j p_m\) es la proporción acumulada correspondiente, terminando en \(F_k = n\) y \(P_k = 1\).
+[/CALLOUT]
+
+Aplicar [REF: freq-definitions | estas definiciones] a los \(n = 20\) préstamos de biblioteca produce la siguiente tabla de frecuencias no agrupadas.
+
+[TABLE]
+Libros prestados (\(x_j\)) | Frecuencia (\(f_j\)) | Frecuencia relativa (\(p_j\)) | Frecuencia acumulada (\(F_j\)) | Frec. rel. acumulada (\(P_j\))
+0 | 3 | 0.15 | 3 | 0.15
+1 | 5 | 0.25 | 8 | 0.40
+2 | 7 | 0.35 | 15 | 0.75
+3 | 4 | 0.20 | 19 | 0.95
+4 | 1 | 0.05 | 20 | 1.00
+[/TABLE]
+
+Verifique de inmediato todas las comprobaciones de coherencia: \(3 + 5 + 7 + 4 + 1 = 20 = n\), y \(0.15 + 0.25 + 0.35 + 0.20 + 0.05 = 1.00\). Las columnas acumuladas responden al instante preguntas de umbral: \(F_2 = 15\) estudiantes —es decir, \(P_2 = 0.75\), o \(75\%\)— sacaron como máximo \(2\) libros, mientras que \(1 - P_2 = 0.25\) (\(25\%\)) sacaron más de \(2\) libros.
+
+Note la condición explícita en [REF: freq-definitions.3 | el inciso (3)]: las frecuencias acumuladas requieren un ordenamiento intrínseco, por lo que solo son válidas para variables medidas al menos en escala ordinal (ordinal, de intervalo o de razón). Si usted construye una tabla de frecuencias para una variable nominal como el grupo sanguíneo (\(\text{A}, \text{B}, \text{AB}, \text{O}\)), las frecuencias y frecuencias relativas tienen pleno sentido, pero la «frecuencia acumulada hasta el tipo \(\text{B}\)» cambia por completo si reordena las filas alfabéticamente en lugar de por frecuencia. Nunca añada columnas acumuladas a una tabla nominal.
+
+[QUESTION 1]
+[ANSWER: C]
+Una tabla de frecuencias no agrupadas resume el número de llamadas de servicio previas (\(0, 1, 2, 3, 4\)) para \(n = 50\) máquinas. Las frecuencias relativas acumuladas para los valores \(0, 1, 2, 3, 4\) son \(0.18, 0.46, 0.78, 0.94, 1.00\), respectivamente. ¿Cuántas máquinas tuvieron exactamente \(2\) llamadas de servicio previas?
+
+(A) \(14\)
+(B) \(15\)
+(C) \(16\)
+(D) \(23\)
+(E) \(39\)
+[/QUESTION]
+
+=== SECTION 2: Distribuciones de frecuencias agrupadas, fronteras y elección de clases ===
+
+Cuando una variable es continua (como el tiempo de traslado en minutos) o discreta con decenas de valores distintos (como calificaciones de examen de \(0\) a \(100\)), listar cada valor único en su propia fila genera una tabla enorme donde la mayoría de las frecuencias son \(0\) o \(1\). Para revelar el patrón general, particionamos el rango numérico en intervalos contiguos y no traslapados llamados clases (o intervalos de clase).
+
+Construir una tabla agrupada limpia exige precisión sobre dónde termina una clase y comienza la siguiente. Supongamos que los tiempos de traslado se registran a la décima de minuto más cercana y los agrupamos en intervalos de diez minutos. Si se escribe «0–10» y «10–20», resulta ambiguo en qué clase entra una observación de exactamente \(10.0\) minutos. Resolver esta ambigüedad de manera coherente separa los límites aparentes (o declarados) de clase de las fronteras (o límites exactos) de clase.
+
+[CALLOUT]
+id: grouped-class-anatomy
+label: Definición
+title: Fronteras de clase, amplitud, marca de clase y convención de frontera
+tone: key
+
+Al agrupar una variable cuantitativa en \(k\) intervalos contiguos:
+
+(1) Bajo la convención cerrado por la izquierda, abierto por la derecha \([L_j, U_j)\), una observación \(x\) pertenece a la clase \(j\) si y solo si \(L_j \le x < U_j\). Aquí \(L_j\) es la frontera inferior de clase y \(U_j\) es la frontera superior de clase, y las clases adyacentes comparten fronteras exactas (\(U_j = L_{j+1}\)) sin traslape y sin brechas. (La última clase puede escribirse \([L_k, U_k]\) si alguna observación cae exactamente en \(U_k\).)
+(2) Cuando datos discretos redondeados se escriben con límites aparentes separados como \(10\text{–}19\) y \(20\text{–}29\) (redondeados a enteros), las fronteras exactas de clase se ubican a mitad de camino de la brecha de redondeo: aquí de \(9.5\) a \(19.5\) y de \(19.5\) a \(29.5\).
+(3) La amplitud de clase es la distancia entre las fronteras exactas: \(w_j = U_j - L_j\).
+(4) La marca de clase (o punto medio de clase) es el centro del intervalo: \(m_j = (L_j + U_j) / 2\).
+[/CALLOUT]
+
+Cuidado con un error clásico de amplitud en tablas con límites enteros: para los límites enteros declarados \(10\text{–}19\), la amplitud no es \(19 - 10 = 9\). Como los enteros \(10, 11, \dots, 19\) abarcan diez números enteros —coincidiendo con las fronteras exactas \(9.5\) a \(19.5\)—, la verdadera amplitud de clase es \(19.5 - 9.5 = 10\). Usar [REF: grouped-class-anatomy.1 | la notación de intervalos \([L_j, U_j)\)] evita por completo la confusión de las brechas de redondeo porque las fronteras exactas se indican directamente.
+
+¿Cuántas clases \(k\) conviene elegir? Muy pocas clases (digamos \(k = 2\) o \(3\)) suavizan en exceso los datos, borrando picos, brechas y asimetrías. Demasiadas clases (digamos \(k = 30\) para \(n = 40\) observaciones) dispersan los puntos en intervalos ruidosos y en su mayoría vacíos. Dos heurísticas sencillas ofrecen puntos de partida razonables para un conjunto de tamaño \(n\):
+- La regla de la raíz cuadrada: \(k \approx \sqrt{n}\).
+- La regla de Sturges: \(k \approx 1 + \log_2 n = 1 + \dfrac{\ln n}{\ln 2}\).
+
+Para los tiempos de traslado de \(n = 40\) trabajadores, \(\sqrt{40} \approx 6.3\) y \(1 + \log_2(40) \approx 1 + 5.32 = 6.32\). Ambas sugieren aproximadamente entre \(5\) y \(7\) clases. Ninguna fórmula es una ley rígida: elegir \(k = 5\) intervalos limpios de diez minutos que cubran de \(0\) a \(50\) minutos es mucho más legible que \(6\) intervalos incómodos de amplitud \(8.33\) minutos.
+
+A continuación se presenta la tabla de frecuencias agrupadas resultante para los \(n = 40\) tiempos de traslado (en minutos):
+
+[TABLE]
+Intervalo de clase (min) | Marca de clase (\(m_j\)) | Amplitud (\(w_j\)) | Frecuencia (\(f_j\)) | Frec. rel. (\(p_j\)) | Frec. acum. (\(F_j\)) | Frec. rel. acum. (\(P_j\))
+\([0, 10)\) | 5 | 10 | 4 | 0.10 | 4 | 0.10
+\([10, 20)\) | 15 | 10 | 10 | 0.25 | 14 | 0.35
+\([20, 30)\) | 25 | 10 | 14 | 0.35 | 28 | 0.70
+\([30, 40)\) | 35 | 10 | 8 | 0.20 | 36 | 0.90
+\([40, 50)\) | 45 | 10 | 4 | 0.10 | 40 | 1.00
+[/TABLE]
+
+Bajo nuestra convención, un tiempo de traslado de exactamente \(20.0\) minutos cae en \([20, 30)\), no en \([10, 20)\). Agrupar sacrifica precisión individual a cambio de claridad: podemos leer directamente que \(70\%\) de los trabajadores tarda menos de \(30\) minutos, aunque ya no veamos los minutos individuales exactos dentro de \([20, 30)\).
+
+[QUESTION 2]
+[ANSWER: B]
+Las temperaturas diarias redondeadas al grado entero más cercano se agrupan en las clases declaradas \(50\text{–}54\), \(55\text{–}59\), \(60\text{–}64\) y \(65\text{–}69\). Utilizando las fronteras exactas a mitad de brecha, ¿cuáles son la amplitud de clase \(w\) y la marca de clase \(m\) del intervalo \(55\text{–}59\)?
+
+(A) \(w = 4\), \(m = 57\)
+(B) \(w = 5\), \(m = 57\)
+(C) \(w = 5\), \(m = 57.5\)
+(D) \(w = 4\), \(m = 57.5\)
+(E) \(w = 6\), \(m = 57\)
+[/QUESTION]
+
+=== SECTION 3: Amplitudes de clase desiguales y densidad de frecuencia ===
+
+Los informes del mundo real —especialmente sobre ingresos, tamaños de empresas o tramos de edad— utilizan con frecuencia amplitudes de clase desiguales porque la cola superior se extiende a lo largo de un recorrido numérico mucho más amplio que el extremo inferior. Supongamos que una encuesta registra ingresos anuales (en miles de dólares) para \(n = 100\) hogares mediante cuatro intervalos: \([0, 20)\), \([20, 40)\), \([40, 80)\) y \([80, 160)\). Observe con atención las frecuencias:
+- \([0, 20)\): \(f_1 = 16\)
+- \([20, 40)\): \(f_2 = 28\)
+- \([40, 80)\): \(f_3 = 36\)
+- \([80, 160)\): \(f_4 = 20\)
+
+A primera vista, \([40, 80)\) parece más poblado que \([20, 40)\) porque \(36 > 28\). ¡Esa comparación es engañosa! El intervalo \([40, 80)\) es el doble de ancho (\(w_3 = 40\)) que \([20, 40)\) (\(w_2 = 20\)), por lo que recoge hogares a lo largo de un tramo de ingresos el doble de grande. En promedio, \([40, 80)\) contiene solo \(36 / 40 = 0.90\) hogares por cada mil dólares, mientras que \([20, 40)\) contiene \(28 / 20 = 1.40\) hogares por cada mil dólares. Para comparar la concentración de forma justa entre amplitudes desiguales, dividimos la frecuencia relativa entre la amplitud de clase.
+
+[CALLOUT]
+id: frequency-density
+label: Definición
+title: Densidad de frecuencia
+tone: key
+
+Para una clase agrupada \(j\) con frecuencia relativa \(p_j = f_j / n\) y amplitud de clase \(w_j = U_j - L_j > 0\), la densidad de frecuencia (también llamada densidad de frecuencia relativa) es
+\[
+d_j = \frac{p_j}{w_j} = \frac{f_j}{n \, w_j}.
+\]
+Sus unidades son proporción por unidad de \(x\). Al multiplicar la densidad de cada clase por su amplitud se recupera su frecuencia relativa, \(d_j w_j = p_j\), de modo que la suma total de densidad por amplitud a lo largo de las \(k\) clases siempre es igual a \(1\):
+\[
+\sum_{j=1}^k d_j w_j = \sum_{j=1}^k p_j = 1.
+\]
+[/CALLOUT]
+
+Completemos la tabla de ingresos familiares usando [REF: frequency-density | la fórmula de densidad].
+
+[TABLE]
+Clase de ingreso (miles de \(\$\)) | Amplitud (\(w_j\)) | Frec. (\(f_j\)) | Frec. rel. (\(p_j\)) | Densidad (\(d_j = p_j / w_j\)) | Comprobación de área (\(d_j w_j\))
+\([0, 20)\) | 20 | 16 | 0.16 | 0.0080 | 0.16
+\([20, 40)\) | 20 | 28 | 0.28 | 0.0140 | 0.28
+\([40, 80)\) | 40 | 36 | 0.36 | 0.0090 | 0.36
+\([80, 160)\) | 80 | 20 | 0.20 | 0.0025 | 0.20
+[/TABLE]
+
+Verifique el total: \(20(0.0080) + 20(0.0140) + 40(0.0090) + 80(0.0025) = 0.16 + 0.28 + 0.36 + 0.20 = 1.00\). La columna de densidad revela de inmediato el verdadero patrón de concentración: los hogares se concentran con mayor densidad en \([20, 40)\) (\(d_2 = 0.0140\) por cada mil dólares), seguidos de \([40, 80)\) (\(0.0090\)), \([0, 20)\) (\(0.0080\)) y, finalmente, la cola superior dispersa \([80, 160)\) (\(0.0025\)). En la próxima lección, la densidad de frecuencia servirá como la altura vertical exacta necesaria para trazar histogramas honestos con amplitudes de intervalo desiguales.
+
+[QUESTION 3]
+[ANSWER: D]
+Una tabla agrupada de \(n = 200\) duraciones de baterías (en horas) utiliza amplitudes de clase desiguales. Una clase es \([10, 35)\) con frecuencia \(f = 45\), y otra clase es \([35, 45)\) con frecuencia \(f = 24\). ¿Qué enunciado compara con precisión sus densidades de frecuencia \(d = p / w\)?
+
+(A) \([10, 35)\) tiene mayor densidad porque \(45 > 24\).
+(B) \([10, 35)\) tiene densidad \(0.018\) y \([35, 45)\) tiene densidad \(0.012\), por lo que \([10, 35)\) es más densa.
+(C) Ambas clases tienen la misma densidad \(0.012\) por hora.
+(D) \([10, 35)\) tiene densidad \(0.009\) por hora y \([35, 45)\) tiene densidad \(0.012\) por hora, por lo que \([35, 45)\) está más densamente concentrada.
+(E) La densidad no puede calcularse a menos que todas las clases compartan la misma amplitud.
+[/QUESTION]
+
+=== SECTION 4: Construcción e interpretación de ojivas ===
+
+Una tabla de frecuencias relativas acumuladas proporciona proporciones acumuladas exactas en cada frontera superior de clase \(U_j\). ¿Qué sucede si un planificador pregunta por la fracción aproximada de trabajadores cuyo viaje dura menos de \(24\) minutos, o desea hallar el umbral de tiempo de viaje por debajo del cual cae el \(60\%\) de los trabajadores? Como \(24\) se ubica dentro de la clase \([20, 30)\), la tabla por sí sola ofrece únicamente las cotas \(0.35\) (en \(20\) min) y \(0.70\) (en \(30\) min). Trazar la frecuencia relativa acumulada frente a las fronteras superiores de clase y unir puntos consecutivos mediante segmentos de recta crea una ojiva (un polígono de frecuencias acumuladas), que convierte esos valores discretos de frontera en una curva continua lineal por tramos.
+
+[CALLOUT]
+id: ogive-construction
+label: Definición
+title: Construcción de ojivas e interpolación lineal dentro de clase
+tone: key
+
+Para construir una ojiva de frecuencias relativas acumuladas a partir de clases agrupadas \([L_1, U_1), \dots, [L_k, U_k)\) con frecuencias relativas acumuladas \(P_1, \dots, P_k\):
+
+(1) Ancle la curva en el eje horizontal en la frontera inferior más baja: \((L_1, 0)\).
+(2) Trace un punto en cada frontera superior de clase: \((U_j, P_j)\) para \(j = 1, \dots, k\), terminando en \((U_k, 1)\).
+(3) Una los puntos consecutivos trazados con segmentos de recta.
+
+Suponiendo que las observaciones se reparten de manera aproximadamente uniforme dentro de la clase \([L_j, U_j)\) (donde \(P_0 = 0\)), la ojiva estima la proporción acumulada por debajo de cualquier umbral \(c \in [L_j, U_j]\) mediante
+\[
+\hat{P}(c) = P_{j-1} + \frac{c - L_j}{U_j - L_j}\,(P_j - P_{j-1}),
+\]
+y estima el umbral inverso \(c\) para una proporción acumulada objetivo \(q \in [P_{j-1}, P_j]\) despejando \(c\):
+\[
+\hat{c}(q) = L_j + \frac{q - P_{j-1}}{P_j - P_{j-1}}\,(U_j - L_j).
+\]
+[/CALLOUT]
+
+¿Por qué deben trazarse los puntos en las fronteras superiores de clase \(U_j\) en lugar de las marcas de clase \(m_j\)? Porque, por definición, \(P_j\) es la proporción de todas las observaciones estrictamente menores que \(U_j\) (acumulando toda la clase \([L_j, U_j)\)). Trazar \(P_j\) en el punto medio \(m_j\) afirmaría falsamente que todas las observaciones de \([L_j, U_j)\) ya habían ocurrido a mitad del intervalo, desplazando toda la curva hacia la izquierda. De forma análoga, anclar en \((L_1, 0)\) expresa el hecho exacto de que cero observaciones caen por debajo del inicio de la primera clase.
+
+Apliquemos [REF: ogive-construction | las fórmulas de la ojiva] a nuestra tabla de \(n = 40\) tiempos de traslado, cuyos vértices son \((0, 0)\), \((10, 0.10)\), \((20, 0.35)\), \((30, 0.70)\), \((40, 0.90)\) y \((50, 1.00)\).
+- Lectura directa (proporción por debajo de \(c = 24\) min): puesto que \(24\) está en \([20, 30)\), donde \(P_2 = 0.35\) y \(P_3 = 0.70\), avanzamos \((24 - 20)/(30 - 20) = 0.4\) del recorrido de la clase, sumando \(0.4 \times (0.70 - 0.35) = 0.14\) a \(0.35\):
+\[
+\hat{P}(24) = 0.35 + \frac{24 - 20}{30 - 20}(0.70 - 0.35) = 0.35 + 0.14 = 0.49.
+\]
+Así, aproximadamente el \(49\%\) de los trabajadores viaja menos de \(24\) minutos.
+- Lectura inversa (umbral de tiempo para el \(q = 0.60\), o \(60\%\), inferior de los trabajadores): puesto que \(0.60\) se encuentra entre \(P_2 = 0.35\) y \(P_3 = 0.70\), el corte se sitúa dentro de \([20, 30)\). Necesitamos subir \(0.60 - 0.35 = 0.25\) respecto al ascenso vertical total de la clase \(0.70 - 0.35 = 0.35\):
+\[
+\hat{c}(0.60) = 20 + \frac{0.60 - 0.35}{0.70 - 0.35}(30 - 20) = 20 + \frac{5}{7}(10) \approx 27.14\text{ min}.
+\]
+
+El gráfico interactivo siguiente traza esta ojiva de tiempos de traslado. Arrastre el deslizador \(c\) a lo largo del rango de tiempos de traslado para observar cómo desplazarse horizontalmente sobre el eje del tiempo proyecta verticalmente la proporción acumulada en curso, y note dónde es más empinada la curva: en \([20, 30)\), el intervalo con mayor densidad de frecuencia.
+
+[GRAPH]
+type: function2d
+title: Ojiva de frecuencias relativas acumuladas para tiempos de traslado (\(n = 40\))
+xlabel: Tiempo de traslado (min)
+ylabel: Proporción acumulada
+xrange: 0, 50
+yrange: 0, 1.05
+trace: x < 10 ? 0.01*x : (x < 20 ? 0.10 + 0.025*(x - 10) : (x < 30 ? 0.35 + 0.035*(x - 20) : (x < 40 ? 0.70 + 0.020*(x - 30) : 0.90 + 0.010*(x - 40)))) | label: Ojiva \(P(x)\)
+point: 0, 0 | label: \((0, 0)\)
+point: 10, 0.10 | label: \((10, 0.10)\)
+point: 20, 0.35 | label: \((20, 0.35)\)
+point: 30, 0.70 | label: \((30, 0.70)\)
+point: 40, 0.90 | label: \((40, 0.90)\)
+point: 50, 1.00 | label: \((50, 1.00)\)
+point: c, c < 10 ? 0.01*c : (c < 20 ? 0.10 + 0.025*(c - 10) : (c < 30 ? 0.35 + 0.035*(c - 20) : (c < 40 ? 0.70 + 0.020*(c - 30) : 0.90 + 0.010*(c - 40)))) | label: Umbral | color: #ef4444
+segment: c, 0, c, c < 10 ? 0.01*c : (c < 20 ? 0.10 + 0.025*(c - 10) : (c < 30 ? 0.35 + 0.035*(c - 20) : (c < 40 ? 0.70 + 0.020*(c - 30) : 0.90 + 0.010*(c - 40)))) | dashed: true | color: #ef4444
+segment: 0, c < 10 ? 0.01*c : (c < 20 ? 0.10 + 0.025*(c - 10) : (c < 30 ? 0.35 + 0.035*(c - 20) : (c < 40 ? 0.70 + 0.020*(c - 30) : 0.90 + 0.010*(c - 40)))), c, c < 10 ? 0.01*c : (c < 20 ? 0.10 + 0.025*(c - 10) : (c < 30 ? 0.35 + 0.035*(c - 20) : (c < 40 ? 0.70 + 0.020*(c - 30) : 0.90 + 0.010*(c - 40)))) | dashed: true | color: #ef4444
+slider: c | range: 0, 50 | init: 24 | step: 1
+[/GRAPH]
+
+Observe con atención la pendiente de cada segmento recto de una ojiva. Sobre la clase \([L_j, U_j)\), el cambio vertical es \(P_j - P_{j-1} = p_j\) y el cambio horizontal es \(U_j - L_j = w_j\), de modo que la pendiente del \(j\)-ésimo segmento de la ojiva es
+\[
+\frac{P_j - P_{j-1}}{U_j - L_j} = \frac{p_j}{w_j} = d_j,
+\]
+que es precisamente [REF: frequency-density | la densidad de frecuencia] de esa clase. Este vínculo geométrico explica por qué una ojiva es siempre no decreciente (ya que \(d_j \ge 0\)), asciende con mayor pendiente donde se concentran las observaciones, se aplana donde son escasas y permanece completamente plana sobre cualquier clase vacía (\(f_j = 0\)). Tenga en cuenta también que las estimaciones de la ojiva entre fronteras son aproximaciones basadas en el supuesto de dispersión uniforme dentro de cada clase; si todas las observaciones en \([20, 30)\) se agruparan en realidad cerca de \(29\) minutos, la interpolación lineal sobreestimaría la proporción por debajo de \(24\) minutos.
+
+[QUESTION 4]
+[ANSWER: A]
+Una tabla agrupada de frecuencias relativas acumuladas para calificaciones de examen tiene vértices consecutivos \((60, 0.20)\), \((70, 0.45)\), \((80, 0.85)\) y \((90, 1.00)\) en su ojiva. Usando interpolación lineal dentro de clase a partir de la ojiva, ¿cuál es la proporción aproximada de estudiantes que obtuvieron menos de \(76\)?
+
+(A) \(0.69\)
+(B) \(0.60\)
+(C) \(0.65\)
+(D) \(0.71\)
+(E) \(0.75\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Utilizando la misma ojiva de calificaciones de examen con vértices \((60, 0.20)\), \((70, 0.45)\), \((80, 0.85)\) y \((90, 1.00)\), ¿cuál es el puntaje de corte aproximado por debajo del cual cae el \(30\%\) de los estudiantes?
+
+(A) \(62.0\)
+(B) \(63.0\)
+(C) \(66.0\)
+(D) \(65.0\)
+(E) \(64.0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+En una ojiva de frecuencias relativas acumuladas, la clase A abarca \([10, 15)\) y sube de proporción acumulada \(0.20\) a \(0.35\), mientras que la clase B abarca \([15, 35)\) y sube de \(0.35\) a \(0.75\). ¿Qué enunciado compara correctamente los dos segmentos de la ojiva?
+
+(A) La clase B tiene la pendiente más pronunciada porque su salto vertical \(0.40\) es mayor que el salto vertical \(0.15\) de la clase A.
+(B) La clase A tiene la pendiente más pronunciada (\(0.03\) por unidad frente a \(0.02\) por unidad de la clase B) porque su densidad de frecuencia es mayor.
+(C) Ambos segmentos tienen la misma pendiente porque sus frecuencias relativas escalan proporcionalmente con sus fronteras superiores.
+(D) La clase B tiene pendiente \(0.04\) por unidad y la clase A tiene pendiente \(0.03\) por unidad.
+(E) La clase A no puede compararse con la clase B en una ojiva porque sus amplitudes de clase difieren.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Un estudiante construye una ojiva para tiempos de espera agrupados \([0, 5), [5, 10), [10, 15), [15, 20)\) trazando cada frecuencia relativa acumulada \(P_j\) en la marca de clase \((2.5, P_1), (7.5, P_2), (12.5, P_3), (17.5, P_4)\) en lugar de hacerlo en las fronteras superiores de clase. Para cualquier umbral \(c\) dentro del rango de los datos, ¿cómo afecta sistemáticamente este error a la proporción estimada de observaciones por debajo de \(c\)?
+
+(A) Desplaza la ojiva hacia la izquierda y sobreestima sistemáticamente la proporción de observaciones por debajo de \(c\).
+(B) Desplaza la ojiva hacia la derecha y subestima sistemáticamente la proporción de observaciones por debajo de \(c\).
+(C) Deja sin cambios todas las estimaciones de umbral porque las marcas de clase conservan las amplitudes de clase.
+(D) Hace que la ojiva disminuya en intervalos donde las frecuencias son pequeñas.
+(E) Sobreestima las proporciones por debajo de la mediana y subestima las proporciones por encima de la mediana.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Una distribución de frecuencias agrupadas tiene \(4\) clases desiguales que cubren \([0, 100)\): \([0, 10)\) con densidad \(0.015\), \([10, 30)\) con densidad \(0.020\), \([30, 60)\) con densidad \(0.010\) y \([60, 100)\) con una densidad desconocida \(d_4\). Si la distribución es válida, ¿a qué debe ser igual \(d_4\)?
+
+(A) \(0.0025\)
+(B) \(0.0050\)
+(C) \(0.0150\)
+(D) \(0.00375\)
+(E) \(0.0075\)
+[/BONUS]

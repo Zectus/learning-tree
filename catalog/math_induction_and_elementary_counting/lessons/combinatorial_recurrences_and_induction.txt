@@ -1,0 +1,214 @@
+=== SECTION 1: Combinatorial decomposition — turning counting problems into recurrences ===
+
+When a counting problem grows with a size parameter \(n\), direct closed-form formulas are often hard to spot right away—yet the configurations of size \(n\) frequently break cleanly into smaller copies of the exact same problem. The strategy is combinatorial decomposition: partition the set \(S_n\) of all valid size-\(n\) configurations into pairwise disjoint cases according to one fixed boundary feature—such as the last symbol of a string, the rightmost tile of a board, or the block containing the largest element—and express each case in terms of earlier counts \(a_{n - 1}, a_{n - 2}, \dots\).
+
+Every valid combinatorial recurrence needs TWO equally important parts:
+1. A recurrence relation expressing \(a_n\) in terms of earlier terms for all \(n \ge n_0\), justified by a disjoint partition of \(S_n\).
+2. Enough exact initial conditions (base values) to launch the recurrence uniquely—if the recurrence looks back \(r\) steps (using \(a_{n - 1}, \dots, a_{n - r}\)), you must determine \(r\) consecutive starting values directly by hand.
+
+Let us build three classical recurrences using this decomposition discipline.
+
+Example 1 (Binary strings avoiding \(11\)): Let \(a_n\) be the number of length-\(n\) binary strings over \(\{0, 1\}\) that contain NO two consecutive \(1\)'s.
+For \(n \ge 3\), partition every valid length-\(n\) string by its LAST bit:
+- Ends in \(0\): the preceding \(n - 1\) bits can be ANY valid length-\((n - 1)\) string avoiding \(11\) (since appending \(0\) can never create \(11\)). This contributes \(a_{n - 1}\) strings.
+- Ends in \(1\): because \(11\) is forbidden, the second-to-last bit MUST be \(0\), so the string ends in \(01\). The preceding \(n - 2\) bits can be ANY valid length-\((n - 2)\) string avoiding \(11\). This contributes \(a_{n - 2}\) strings.
+
+Since these two cases are disjoint and exhaustive, \(a_n = a_{n - 1} + a_{n - 2}\) for all \(n \ge 3\). Check the two initial values directly: for \(n = 1\), the valid strings are \(0, 1\), so \(a_1 = 2\); for \(n = 2\), the valid strings are \(00, 01, 10\), so \(a_2 = 3\). (By convention \(a_0 = 1\) for the empty string, and indeed \(a_2 = a_1 + a_0 = 2 + 1 = 3\).) Thus \(a_n\) follows the Fibonacci recurrence shifted by two indices: \(a_n = F_{n + 2}\) (where \(F_1 = 1, F_2 = 1, F_3 = 2, F_4 = 3, \dots\)).
+
+Example 2 (Domino tilings of a \(2 \times n\) strip): Let \(t_n\) be the number of ways to tile a \(2 \times n\) rectangle completely using \(1 \times 2\) dominoes placed vertically or horizontally. Look at the rightmost column of the \(2 \times n\) strip (for \(n \ge 3\)):
+- Covered by one vertical domino: removing it leaves an arbitrary tiling of the remaining \(2 \times (n - 1)\) strip (\(t_{n - 1}\) ways).
+- Covered by a horizontal domino: a single horizontal domino covers only one cell of column \(n\), forcing a second horizontal domino directly beside it to fill the rest of columns \(n - 1\) and \(n\). Removing both stacked horizontal dominoes leaves an arbitrary tiling of the remaining \(2 \times (n - 2)\) strip (\(t_{n - 2}\) ways).
+
+Hence \(t_n = t_{n - 1} + t_{n - 2}\) for \(n \ge 3\), with \(t_1 = 1\) (one vertical domino) and \(t_2 = 2\) (two vertical or two horizontal dominoes), giving \(t_n = F_{n + 1}\).
+
+Example 3 (Ternary strings with parity constraints): Let \(e_n\) be the number of length-\(n\) strings over \(\{0, 1, 2\}\) containing an EVEN number of \(0\)'s, and let \(o_n\) be the number containing an ODD number of \(0\)'s. Condition on the last symbol of a length-\(n\) string (\(n \ge 2\)):
+- Ends in \(1\) or \(2\): the prefix of length \(n - 1\) must already have an even number of \(0\)'s (\(2 e_{n - 1}\) strings).
+- Ends in \(0\): the prefix of length \(n - 1\) must have an ODD number of \(0\)'s (\(o_{n - 1}\) strings).
+
+Thus \(e_n = 2 e_{n - 1} + o_{n - 1}\). Now eliminate \(o_{n - 1}\) using the complement relation \(e_{n - 1} + o_{n - 1} = 3^{n - 1}\) (every length-\((n - 1)\) ternary string has either an even or an odd number of \(0\)'s!):
+\[
+e_n = 2 e_{n - 1} + (3^{n - 1} - e_{n - 1}) = e_{n - 1} + 3^{n - 1} \qquad (n \ge 2),
+\]
+with base value \(e_1 = 2\) (the strings \(1\) and \(2\) have zero \(0\)'s, which is even; or \(e_0 = 1\)).
+
+Notice also how strong compositions of a positive integer \(n\) into ANY number of positive parts yield a recurrence by tracking the last part \(k \in \{1, \dots, n\}\): either the composition is the single part \((n)\) itself (\(1\) way), or its last part is \(k \in \{1, \dots, n - 1\}\) preceded by a composition of \(n - k\) (\(c_{n - k}\) ways), giving \(c_n = 1 + \sum_{j=1}^{n - 1} c_j\) with \(c_1 = 1\). Equivalently, comparing \(c_n\) and \(c_{n - 1}\) shows \(c_n = 2 c_{n - 1}\) (for \(n \ge 2\)), immediately producing \(c_n = 2^{n - 1}\).
+
+[CALLOUT]
+id: decomp-checklist
+label: Method
+title: Combinatorial decomposition checklist
+tone: key
+
+To derive a recurrence for the size \(a_n = \lvert S_n \rvert\) of a family of configurations:
+
+(1) Fix one canonical piece (such as the last symbol, rightmost tile, or element \(n\)) to classify every element of \(S_n\) into mutually exclusive, exhaustive cases.
+(2) Verify a bijection between each case and valid configurations of smaller sizes (do not double-count configurations that could be built in two ways).
+(3) Check the exact minimum index \(n_0\) at which all smaller-size references exist, and compute every required base value below \(n_0\) directly.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(b_n\) be the number of length-\(n\) strings over the alphabet \(\{0, 1, 2\}\) that do NOT contain two consecutive \(0\)'s (so \(00\) is forbidden, while \(11\) and \(22\) are allowed). Which recurrence and initial conditions hold for all \(n \ge 3\)?
+
+(A) \(b_n = 2 b_{n - 1} + b_{n - 2}\), with \(b_1 = 3\) and \(b_2 = 8\)
+(B) \(b_n = 2 b_{n - 1} + 2 b_{n - 2}\), with \(b_1 = 3\) and \(b_2 = 9\)
+(C) \(b_n = 2 b_{n - 1} + 2 b_{n - 2}\), with \(b_1 = 3\) and \(b_2 = 8\)
+(D) \(b_n = 3 b_{n - 1} - b_{n - 2}\), with \(b_1 = 3\) and \(b_2 = 8\)
+(E) \(b_n = b_{n - 1} + 2 b_{n - 2}\), with \(b_1 = 2\) and \(b_2 = 6\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+In how many ways can a \(2 \times 5\) strip be tiled using \(1 \times 2\) dominoes (placed horizontally or vertically) AND \(2 \times 2\) square tiles?
+
+(A) \(8\)
+(B) \(16\)
+(C) \(19\)
+(D) \(21\)
+(E) \(43\)
+[/QUESTION]
+
+=== SECTION 2: Two-variable and permutation recurrences — set partitions and derangements ===
+
+Combinatorial decomposition works just as cleanly on two-parameter families and constrained permutations.
+
+First, define a set partition of \(\{1, 2, \dots, m\}\) into \(n\) nonempty unlabeled blocks to be a collection of \(n\) pairwise disjoint nonempty subsets whose union is \(\{1, 2, \dots, m\}\), where neither the order of the blocks nor the order of elements inside a block matters. Let \(S(m, n)\) denote the number of such partitions (known as the Stirling numbers of the second kind). Clearly \(S(m, 1) = 1\) (all \(m\) elements in one block), \(S(m, m) = 1\) (each element in its own singleton block), and \(S(m, n) = 0\) whenever \(n > m\) or \(n \le 0\) (for \(m \ge 1\)).
+
+For \(1 < n < m\), classify every partition of \(\{1, 2, \dots, m\}\) into \(n\) nonempty blocks by the role of the single element \(m\):
+- Case 1 (\(m\) sits alone in a singleton block \(\{m\}\)): the remaining \(m - 1\) elements \(\{1, \dots, m - 1\}\) must be partitioned into the remaining \(n - 1\) nonempty blocks. There are \(S(m - 1, n - 1)\) such partitions.
+- Case 2 (\(m\) shares its block with at least one smaller element): removing \(m\) leaves a valid partition of \(\{1, \dots, m - 1\}\) into \(n\) nonempty blocks. Conversely, starting from ANY partition of \(\{1, \dots, m - 1\}\) into \(n\) nonempty blocks, there are \(n\) distinct blocks into which we may insert \(m\) (even though the blocks have no external labels, they contain distinct subsets of \(\{1, \dots, m - 1\}\), so inserting \(m\) into different blocks produces \(n\) distinct partitions!). By the Product Rule, this case contributes \(n\,S(m - 1, n)\) partitions.
+
+Combining the two disjoint cases yields the triangular recurrence for set partitions:
+\[
+S(m, n) = S(m - 1, n - 1) + n\,S(m - 1, n) \qquad (1 \le n \le m).
+\]
+Notice how similar this looks to Pascal's identity \(\binom{m}{n} = \binom{m - 1}{n - 1} + \binom{m - 1}{n}\), except for the multiplier \(n\) on the second term! For small \(m\):
+- Row \(m = 1\): \(S(1, 1) = 1\).
+- Row \(m = 2\): \(S(2, 1) = 1\), \(S(2, 2) = 1\).
+- Row \(m = 3\): \(S(3, 1) = 1\), \(S(3, 2) = S(2, 1) + 2\,S(2, 2) = 1 + 2(1) = 3\), \(S(3, 3) = 1\).
+
+Second, consider derangements: permutations \(\sigma\) of \(\{1, 2, \dots, n\}\) with NO fixed points (\(\sigma(i) \neq i\) for every \(i\)). Let \(D_n\) be the number of derangements of \(\{1, \dots, n\}\). Directly by hand, \(D_1 = 0\) (the single element \(1\) must map to \(1\)) and \(D_2 = 1\) (only the swap \(1 \leftrightarrow 2\) has no fixed points).
+
+For \(n \ge 3\), classify every derangement \(\sigma\) by where element \(1\) maps. Since \(\sigma(1) \neq 1\), there are \(n - 1\) choices for \(k = \sigma(1) \in \{2, \dots, n\}\). Having fixed \(k\), split into two disjoint cases according to whether \(k\) maps back to \(1\) or not:
+- Case 1 (\(\sigma(k) = 1\)): elements \(1\) and \(k\) swap places in a \(2\)-cycle, and the remaining \(n - 2\) elements must be deranged among themselves. This gives \(D_{n - 2}\) derangements for this fixed \(k\).
+- Case 2 (\(\sigma(k) \neq 1\)): think of the remaining \(n - 1\) elements \(\{2, \dots, n\}\) each needing a distinct target in \(\{1, 2, \dots, n\} \setminus \{k\}\). Every element \(i \in \{2, \dots, n\} \setminus \{k\}\) is forbidden from mapping to \(i\), and element \(k\) is forbidden from mapping to \(1\). Relabeling target \(1\) as "the forbidden slot for \(k\)" puts Case 2 in exact bijection with derangements of the \(n - 1\) elements \(\{2, \dots, n\}\), giving \(D_{n - 1}\) derangements for this fixed \(k\).
+
+Since all \(n - 1\) choices of \(k = \sigma(1)\) yield the exact same count \(D_{n - 1} + D_{n - 2}\), the Product Rule gives the combinatorial derangement recurrence.
+
+[CALLOUT]
+id: classic-recurrences
+label: Reference
+title: Set-partition and derangement recurrences
+tone: key
+
+(1) Set partitions (Stirling numbers of the second kind):
+\[
+S(m, n) = S(m - 1, n - 1) + n\,S(m - 1, n) \qquad (1 < n < m),
+\]
+with \(S(m, 1) = S(m, m) = 1\).
+
+(2) Derangements (fixed-point-free permutations):
+\[
+D_n = (n - 1)(D_{n - 1} + D_{n - 2}) \qquad (n \ge 3),
+\]
+with \(D_1 = 0\) and \(D_2 = 1\) (and \(D_0 = 1\) by convention).
+[/CALLOUT]
+
+Check [REF: classic-recurrences.2 | the derangement recurrence] on the first few values: \(D_3 = 2(1 + 0) = 2\), \(D_4 = 3(2 + 1) = 9\), and \(D_5 = 4(9 + 2) = 44\).
+
+[QUESTION 3]
+[ANSWER: C]
+Using [REF: classic-recurrences.1 | the set-partition recurrence] \(S(m, n) = S(m - 1, n - 1) + n\,S(m - 1, n)\) with \(S(m, 1) = S(m, m) = 1\), what is the exact value of \(S(5, 3)\)?
+
+(A) \(10\)
+(B) \(19\)
+(C) \(25\)
+(D) \(31\)
+(E) \(41\)
+[/QUESTION]
+
+=== SECTION 3: Proving closed forms and identities by induction from recurrences ===
+
+Systematic methods for SOLVING general recurrences from scratch (such as characteristic equations and generating functions) belong to a later discrete-mathematics module. Right now, however, you already possess a completely rigorous engine for VERIFYING conjectured closed forms, bounds, and identities once a recurrence is established: ordinary and strong mathematical induction!
+
+Let us work through three distinct inductive proofs driven directly by our recurrences.
+
+1. Closed form for even-\(0\) ternary strings: In Section 1 we found \(e_1 = 2\) and \(e_n = e_{n - 1} + 3^{n - 1}\) for \(n \ge 2\). Computing the first few values gives \(e_1 = 2\), \(e_2 = 5\), \(e_3 = 14\), \(e_4 = 41\), suggesting the closed form \(e_n = \frac{3^n + 1}{2}\).
+- Base case (\(n = 1\)): \(\frac{3^1 + 1}{2} = 2 = e_1\).
+- Inductive step: Assume \(e_k = \frac{3^k + 1}{2}\) for a fixed \(k \ge 1\). Then by the recurrence,
+\[
+e_{k + 1} = e_k + 3^k = \frac{3^k + 1}{2} + 3^k = \frac{3^k + 1 + 2 \cdot 3^k}{2} = \frac{3 \cdot 3^k + 1}{2} = \frac{3^{k + 1} + 1}{2}.
+\]
+By ordinary induction, \(e_n = \frac{3^n + 1}{2}\) for all \(n \ge 1\).
+
+2. Cassini's identity for Fibonacci numbers: Recall \(F_1 = 1\), \(F_2 = 1\), and \(F_{n + 1} = F_n + F_{n - 1}\) for \(n \ge 2\). We prove by ordinary induction on \(n \ge 2\) that
+\[
+F_{n + 1} F_{n - 1} - F_n^2 = (-1)^n.
+\]
+- Base case (\(n = 2\)): \(F_3 F_1 - F_2^2 = 2 \cdot 1 - 1^2 = 1 = (-1)^2\).
+- Inductive step: Fix \(k \ge 2\) and assume \(F_{k + 1} F_{k - 1} - F_k^2 = (-1)^k\). For \(n = k + 1\), rewrite \(F_{k + 2} = F_{k + 1} + F_k\) and factor \(F_{k + 1}\) out of the second term:
+\[
+F_{k + 2} F_k - F_{k + 1}^2 = (F_{k + 1} + F_k) F_k - F_{k + 1}^2 = F_k^2 + F_{k + 1}(F_k - F_{k + 1}).
+\]
+Because \(F_{k + 1} = F_k + F_{k - 1}\), we have \(F_k - F_{k + 1} = -F_{k - 1}\). Substituting this gives
+\[
+F_{k + 2} F_k - F_{k + 1}^2 = F_k^2 - F_{k + 1} F_{k - 1} = -\left(F_{k + 1} F_{k - 1} - F_k^2\right) = -(-1)^k = (-1)^{k + 1}.
+\]
+By ordinary induction, Cassini's identity holds for every \(n \ge 2\).
+
+3. A one-step recurrence for derangements: From the two-step recurrence \(D_n = (n - 1)(D_{n - 1} + D_{n - 2})\) (\(n \ge 3\)) with \(D_1 = 0, D_2 = 1\), we prove by ordinary induction on \(n \ge 2\) that
+\[
+D_n = n D_{n - 1} + (-1)^n.
+\]
+- Base case (\(n = 2\)): \(2 D_1 + (-1)^2 = 2(0) + 1 = 1 = D_2\).
+- Inductive step: Fix \(k \ge 2\) and assume \(D_k = k D_{k - 1} + (-1)^k\), which rearranges to \(k D_{k - 1} = D_k - (-1)^k\). Substituting into the two-step recurrence for \(D_{k + 1}\) gives
+\[
+D_{k + 1} = k(D_k + D_{k - 1}) = k D_k + k D_{k - 1} = k D_k + \left(D_k - (-1)^k\right) = (k + 1) D_k + (-1)^{k + 1}.
+\]
+By ordinary induction, \(D_n = n D_{n - 1} + (-1)^n\) for all \(n \ge 2\) (and also at \(n = 1\) when \(D_0 = 1\)).
+
+Notice a vital lesson when using induction on a two-step recurrence \(c_n = \alpha c_{n - 1} + \beta c_{n - 2}\): to prove a direct closed form for \(c_n\), you need STRONG induction with TWO base cases (\(n = 1\) and \(n = 2\)), because the inductive step for \(c_{k + 1}\) reaches back to BOTH \(c_k\) and \(c_{k - 1}\). Checking only one base case leaves a gap—different closed forms can share the same first value yet diverge at the second!
+
+[QUESTION 4]
+[ANSWER: B]
+A sequence is defined recursively by \(u_0 = 1\) and \(u_n = 3 u_{n - 1} + 2\) for all \(n \ge 1\). Which closed-form formula satisfies BOTH the base case \(u_0 = 1\) and the inductive step \(u_{k + 1} = 3 u_k + 2\) for every integer \(k \ge 0\)?
+
+(A) \(u_n = 3^n + 2n\)
+(B) \(u_n = 2 \cdot 3^n - 1\)
+(C) \(u_n = 3^{n + 1} - 2\)
+(D) \(u_n = 2 \cdot 3^n + 1\)
+(E) \(u_n = 3^n + 2^{n + 1} - 2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+A staircase has \(n\) steps, and at each move you may climb \(1\), \(2\), or \(3\) steps. Let \(s_n\) be the number of distinct sequences of moves to reach the top of an \(n\)-step staircase (so \(s_1 = 1\), \(s_2 = 2\), and \(s_3 = 4\)). How many ways are there to climb a \(7\)-step staircase?
+
+(A) \(21\)
+(B) \(24\)
+(C) \(44\)
+(D) \(48\)
+(E) \(81\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+How many ways are there to partition the \(5\)-element set \(\{1, 2, 3, 4, 5\}\) into AT MOST \(3\) nonempty unlabeled blocks (that is, computing \(S(5, 1) + S(5, 2) + S(5, 3)\))?
+
+(A) \(25\)
+(B) \(40\)
+(C) \(51\)
+(D) \(41\)
+(E) \(52\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Modify the derangement decomposition of Section 2 to count permutations \(\sigma\) of \(\{1, 2, \dots, n\}\) (for even \(n \ge 2\)) that have NO fixed points AND satisfy \(\sigma(\sigma(i)) = i\) for every \(i\) (that is, every element is paired in a disjoint \(2\)-cycle). Let \(p_n\) be the number of such fixed-point-free pairings (with \(p_2 = 1\)). Which recurrence holds for all even \(n \ge 4\)?
+
+(A) \(p_n = (n - 1) p_{n - 1}\)
+(B) \(p_n = (n - 1) p_{n - 2}\)
+(C) \(p_n = (n - 1)(p_{n - 1} + p_{n - 2})\)
+(D) \(p_n = n \, p_{n - 2}\)
+(E) \(p_n = \binom{n}{2} p_{n - 2}\)
+[/BONUS]

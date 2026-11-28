@@ -1,0 +1,293 @@
+=== SECTION 1: Invertibilidad y el teorema de multiplicatividad ===
+
+En la lección anterior definimos \(\det : M_n(F) \to F\) mediante multilinealidad alternante en las filas y normalización \(\det(I_n) = 1\), y demostramos que \(\det(EA) = \det(E)\det(A)\) siempre que \(E\) es una matriz elemental. Esa sola identidad resulta desbloquear dos teoremas algebraicos fundamentales: una prueba numérica precisa para la invertibilidad y la regla de multiplicatividad \(\det(AB) = \det(A)\det(B)\) para todas las matrices cuadradas \(A, B \in M_n(F)\).
+
+Comencemos con la invertibilidad. Sea \(A \in M_n(F)\) y sea \(R\) su forma escalonada reducida por filas. Como la reducción por filas aplica una secuencia finita de operaciones elementales de fila, existen matrices elementales \(E_1, \dots, E_k\) tales que
+\[
+R = E_k \cdots E_2 E_1 A.
+\]
+Tomando determinantes y aplicando repetidamente \(\det(E_m X) = \det(E_m)\det(X)\) se obtiene
+\[
+\det(R) = \det(E_k) \cdots \det(E_1)\det(A).
+\]
+Toda matriz elemental tiene determinante distinto de cero (\(1\), \(-1\) o un factor de escalamiento no nulo \(c \neq 0\)), por lo que el producto \(\det(E_k) \cdots \det(E_1)\) es distinto de cero. En consecuencia, \(\det(A) \neq 0\) si y solo si \(\det(R) \neq 0\). Ahora examine las dos posibilidades para \(R\):
+- Si \(A\) es invertible, entonces \(R = I_n\), de modo que \(\det(R) = 1 \neq 0\), y por tanto \(\det(A) \neq 0\).
+- Si \(A\) es singular (no invertible), entonces \(R\) tiene al menos una fila formada enteramente por ceros, de modo que \(\det(R) = 0\), y por tanto \(\det(A) = 0\).
+
+[CALLOUT]
+id: det-invertibility
+label: Teorema
+title: Criterio del determinante para la invertibilidad
+tone: key
+
+Una matriz \(A \in M_n(F)\) es invertible si y solo si \(\det(A) \neq 0\).
+[/CALLOUT]
+
+Ahora podemos demostrar la multiplicatividad para CUALESQUIERA dos matrices \(n \times n\) \(A\) y \(B\) dividiendo según si \(A\) es invertible o singular.
+
+[CALLOUT]
+id: det-multiplicativity
+label: Teorema
+title: Multiplicatividad del determinante
+tone: key
+
+Para todas las matrices \(A, B \in M_n(F)\),
+\[
+\det(AB) = \det(A)\det(B).
+\]
+[/CALLOUT]
+
+Para demostrar [REF: det-multiplicativity | la multiplicatividad], examine los dos casos para \(A\):
+- Caso 1: \(A\) es invertible. Recuerde del álgebra matricial que toda matriz invertible es un producto finito de matrices elementales, digamos \(A = E_1 E_2 \cdots E_k\). Aplicar la regla de las matrices elementales repetidamente primero a \(AB\) y luego a \(A = E_1 \cdots E_k I_n\) produce
+\[
+\det(AB) = \det(E_1 E_2 \cdots E_k B) = \det(E_1)\det(E_2)\cdots\det(E_k)\det(B) = \det(E_1 E_2 \cdots E_k I_n)\det(B) = \det(A)\det(B).
+\]
+- Caso 2: \(A\) es singular. Por [REF: det-invertibility | el criterio de invertibilidad], \(\det(A) = 0\), de modo que el lado derecho \(\det(A)\det(B)\) es \(0\). ¿Qué sucede con \(AB\)? Si \(AB\) fuera invertible, con inversa \(C\), entonces \(A(BC) = I_n\), lo cual para matrices cuadradas obliga a que \(A\) sea invertible, una contradicción. Así, \(AB\) también es singular, por lo que \(\det(AB) = 0 = \det(A)\det(B)\).
+
+Ambos casos coinciden, ¡completando la demostración! Note cuán limpiamente esta prueba evita sumas engorrosas de índices: factorizar las matrices invertibles en matrices elementales hace casi todo el trabajo.
+
+=== SECTION 2: Consecuencias algebraicas y errores clásicos ===
+
+Tres identidades de uso cotidiano se desprenden inmediatamente de [REF: det-multiplicativity | la multiplicatividad] y de la multilinealidad en las filas.
+
+[CALLOUT]
+id: det-algebra-rules
+label: Corolario
+title: Reglas de la inversa, de potencias y de múltiplos escalares
+tone: key
+
+Sean \(A \in M_n(F)\) y \(c \in F\).
+
+(1) Si \(A\) es invertible, entonces \(\det(A^{-1}) = \dfrac{1}{\det(A)}\).
+(2) Para todo entero \(k \ge 0\), \(\det(A^k) = (\det A)^k\) (y también para \(k < 0\) siempre que \(A\) sea invertible).
+(3) \(\det(cA) = c^n \det(A)\).
+[/CALLOUT]
+
+Verifiquemos cada punto directamente. Para [REF: det-algebra-rules.1 | la regla de la inversa], aplique [REF: det-multiplicativity | la multiplicatividad] a \(A A^{-1} = I_n\): obtenemos \(\det(A)\det(A^{-1}) = \det(I_n) = 1\), y como \(\det(A) \neq 0\), dividir da \(\det(A^{-1}) = 1/\det(A)\). Para [REF: det-algebra-rules.2 | la regla de potencias], \(k = 0\) da \(\det(I_n) = 1 = (\det A)^0\), los enteros positivos siguen por inducción a partir de \(\det(A^{k+1}) = \det(A^k)\det(A)\), y los enteros negativos se obtienen combinando potencias positivas con la regla de la inversa. Para [REF: det-algebra-rules.3 | la regla del múltiplo escalar], escriba \(cA = (cI_n)A\); como \(cI_n\) es diagonal con \(n\) copias de \(c\) en su diagonal, \(\det(cI_n) = c^n\), de modo que \(\det(cA) = \det(cI_n)\det(A) = c^n \det(A)\). (De forma equivalente, multiplicar \(A\) por \(c\) escala cada una de las \(n\) filas por \(c\), extrayendo \(n\) factores separados de \(c\).)
+
+[CALLOUT]
+id: det-pitfalls
+label: Error frecuente
+title: Dos identidades que fallan en general
+tone: caution
+
+(1) \(\det(cA) \neq c\det(A)\) en general cuando \(n \ge 2\): el escalar \(c\) queda elevado al tamaño matricial \(n\), por lo que \(\det(cA) = c^n \det(A)\). En particular, \(\det(-A) = (-1)^n \det(A)\), que equivale a \(+\det(A)\) cuando \(n\) es par y a \(-\det(A)\) cuando \(n\) es impar.
+(2) \(\det(A + B) \neq \det(A) + \det(B)\) en general: el determinante es multilineal en cada fila por separado, NO aditivo en la matriz completa.
+[/CALLOUT]
+
+Un ejemplo \(2 \times 2\) zanja [REF: det-pitfalls.2 | la no aditividad] en una línea: tome \(A = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}\) y \(B = \begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix}\). Tanto \(A\) como \(B\) tienen una fila nula, de modo que \(\det(A) = 0\) y \(\det(B) = 0\), pero \(A + B = I_2\) tiene \(\det(A + B) = 1 \neq 0 + 0\).
+
+La gráfica siguiente ilustra cuán fuertemente rige la dimensión matricial \(n\) la razón de escalamiento \(\det(cA)/\det(A) = c^n\) a medida que \(c\) varía en \([-2, 2]\). Observe tanto el crecimiento más pronunciado para \(n\) mayor como el comportamiento del signo para \(c\) negativo: cuando \(n = 2\), \(\det(-A) = (-1)^2 \det(A) = \det(A)\), mientras que cuando \(n = 3\), \(\det(-A) = -\det(A)\).
+
+[GRAPH]
+type: function2d
+title: Factor de escalamiento \(\det(cA)/\det(A) = c^n\) para dimensiones \(n = 1, 2, 3\)
+xlabel: \(c\)
+ylabel: \(c^n\)
+xrange: -2, 2
+yrange: -8.5, 8.5
+trace: x | label: \(n = 1:\; c\)
+trace: x^2 | label: \(n = 2:\; c^2\)
+trace: x^3 | label: \(n = 3:\; c^3\)
+point: -1, 1 | label: \((-1, 1)\)
+point: -1, -1 | label: \((-1, -1)\)
+point: 2, 8 | label: \((2, 8)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Sean \(A\) y \(B\) matrices \(4 \times 4\) con \(\det(A) = 3\) y \(\det(B) = -2\). ¿Cuál es \(\det(-2 A^2 B^{-1})\)?
+
+(A) \(9\)
+(B) \(18\)
+(C) \(-72\)
+(D) \(72\)
+(E) \(-18\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Suponga que \(A \in M_n(\mathbb{R})\) satisface \(A^3 = 2A\) y que \(A\) es invertible. ¿Cuál de los siguientes es el conjunto de todos los valores posibles de \(\det(A)\) cuando \(n = 3\)?
+
+(A) \(\{-2\sqrt{2},\; 2\sqrt{2}\}\)
+(B) \(\{8\}\)
+(C) \(\{0,\; 2\sqrt{2},\; -2\sqrt{2}\}\)
+(D) \(\{-\sqrt{2},\; \sqrt{2}\}\)
+(E) \(\{-8,\; 8\}\)
+[/QUESTION]
+
+=== SECTION 3: Invariancia por traspuesta y operaciones de columna ===
+
+Todo lo que hemos establecido hasta aquí se construyó a partir de operaciones de fila. ¿Trata el determinante a las columnas exactamente con la misma simetría? La respuesta es sí, porque trasponer una matriz deja invariante su determinante.
+
+[CALLOUT]
+id: det-transpose
+label: Teorema
+title: Invariancia por traspuesta
+tone: key
+
+Para toda matriz \(A \in M_n(F)\),
+\[
+\det(A^T) = \det(A).
+\]
+[/CALLOUT]
+
+Para demostrar [REF: det-transpose | la invariancia por traspuesta], verifique primero cada matriz elemental \(E\):
+1. Si \(E\) es una matriz de escalamiento de fila (diagonal con \(c\) en la entrada \((i, i)\) y \(1\) en el resto), entonces \(E^T = E\), por lo que \(\det(E^T) = \det(E) = c\).
+2. Si \(E\) es una matriz de intercambio de filas (obtenida al intercambiar las filas \(i\) y \(j\) de \(I_n\)), entonces \(E\) es simétrica (\(E^T = E\)), por lo que \(\det(E^T) = \det(E) = -1\).
+3. Si \(E\) es una matriz de reemplazo de fila (con \(c\) en la entrada fuera de la diagonal \((i, j)\), \(i \neq j\)), entonces \(E^T\) tiene \(c\) en la entrada fuera de la diagonal \((j, i)\), que SIGUE siendo una matriz de reemplazo de fila, por lo que \(\det(E^T) = 1 = \det(E)\).
+
+Considere ahora una matriz arbitraria \(A \in M_n(F)\):
+- Si \(A\) es invertible, factorícela en matrices elementales \(A = E_1 E_2 \cdots E_k\). Recuerde que \((XY)^T = Y^T X^T\), de modo que \(A^T = E_k^T \cdots E_2^T E_1^T\). Aplicar [REF: det-multiplicativity | la multiplicatividad] y la verificación anterior sobre matrices elementales da
+\[
+\det(A^T) = \det(E_k^T)\cdots\det(E_1^T) = \det(E_k)\cdots\det(E_1) = \det(E_1)\cdots\det(E_k) = \det(A),
+\]
+porque la multiplicación de escalares en \(F\) es conmutativa.
+- Si \(A\) es singular, entonces \(A^T\) también es singular (si \(A^T\) tuviera una inversa \(C\), entonces \(A C^T = (C A^T)^T = I_n^T = I_n\), lo que obligaría a \(A\) a ser invertible). Por [REF: det-invertibility | el criterio de invertibilidad], \(\det(A^T) = 0 = \det(A)\).
+
+Como las columnas de \(A\) son las filas de \(A^T\), [REF: det-transpose | la invariancia por traspuesta] traslada de inmediato TODA propiedad de filas del determinante a las columnas:
+- \(\det(A)\) es multilineal en cada columna por separado.
+- Intercambiar dos columnas cambia el signo de \(\det(A)\), y dos columnas idénticas obligan a que \(\det(A) = 0\).
+- Escalar una columna por \(c\) multiplica \(\det(A)\) por \(c\).
+- Sumar un múltiplo de una columna a otra columna deja invariante a \(\det(A)\).
+- Cualquier columna nula obliga a que \(\det(A) = 0\).
+
+En la práctica, esto duplica nuestra flexibilidad de cálculo: ¡puede mezclar libremente operaciones elementales de fila y operaciones elementales de columna al reducir una matriz para calcular su determinante! (Tenga cuidado de no confundir esto con la resolución de sistemas lineales \(A\mathbf{x} = \mathbf{b}\), donde las operaciones de columna cambian las variables y no están permitidas de la misma manera; para calcular únicamente \(\det(A)\), mezclar operaciones de fila y de columna es completamente válido.)
+
+[QUESTION 3]
+[ANSWER: E]
+Suponga que \(A \in M_5(\mathbb{R})\) es antisimétrica, es decir, \(A^T = -A\). ¿Qué se puede concluir acerca de \(\det(A)\)?
+
+(A) \(\det(A) = 1\)
+(B) \(\det(A) = -1\)
+(C) \(\det(A)\) puede ser cualquier número real no nulo
+(D) \(\det(A) \ge 0\), y puede ser estrictamente positivo
+(E) \(\det(A) = 0\)
+[/QUESTION]
+
+=== SECTION 4: Invariancia por semejanza y el determinante de un operador lineal ===
+
+Suponga que \(V\) es un espacio vectorial de dimensión \(n\) sobre \(F\) y que \(T : V \to V\) es un operador lineal. Si elegimos una base \(\mathcal{B}\) de \(V\), obtenemos una representación matricial \(n \times n\) \([T]_{\mathcal{B}}\). Elegir una base diferente \(\mathcal{C}\) produce una matriz distinta \([T]_{\mathcal{C}}\), relacionada con la primera mediante una transformación de semejanza por cambio de base
+\[
+[T]_{\mathcal{C}} = P^{-1} [T]_{\mathcal{B}} P,
+\]
+donde \(P\) es la matriz invertible de cambio de base de \(\mathcal{C}\) a \(\mathcal{B}\). ¿Depende el determinante de qué base hayamos elegido?
+
+Aplique [REF: det-multiplicativity | la multiplicatividad] y [REF: det-algebra-rules.1 | la regla de la inversa] a cualesquiera matrices semejantes \(B = P^{-1} A P\):
+\[
+\det(P^{-1} A P) = \det(P^{-1})\det(A)\det(P) = \frac{1}{\det(P)}\det(A)\det(P) = \det(A).
+\]
+¡Los factores \(\det(P)\) y \(\det(P)^{-1}\) se cancelan por completo!
+
+[CALLOUT]
+id: det-similarity
+label: Teorema
+title: Invariancia por semejanza y determinantes de operadores
+tone: key
+
+(1) Si \(A, B \in M_n(F)\) son semejantes (\(B = P^{-1} A P\) para alguna \(P \in M_n(F)\) invertible), entonces \(\det(B) = \det(A)\).
+(2) Para todo operador lineal \(T : V \to V\) sobre un espacio vectorial \(V\) de dimensión finita, el determinante \(\det(T) = \det([T]_{\mathcal{B}})\) es independiente de la elección de la base \(\mathcal{B}\) de \(V\).
+[/CALLOUT]
+
+Note lo que nos ofrece [REF: det-similarity.2 | la independencia de la base]: para calcular \(\det(T)\) para un operador abstracto \(T : V \to V\) (como un operador de derivación o de reflexión), tenemos libertad para elegir la base más conveniente de \(V\), ¡una que haga que \([T]_{\mathcal{B}}\) sea triangular o diagonal! Por ejemplo, sea \(T : \mathcal{P}_2(\mathbb{R}) \to \mathcal{P}_2(\mathbb{R})\) definido sobre polinomios de grado a lo sumo \(2\) por \(T(p(x)) = p(x) + x p'(x)\). En la base estándar \(\mathcal{B} = \{1, x, x^2\}\), calculamos \(T(1) = 1\), \(T(x) = 2x\) y \(T(x^2) = 3x^2\), de modo que \([T]_{\mathcal{B}} = \operatorname{diag}(1, 2, 3)\) y \(\det(T) = 1 \cdot 2 \cdot 3 = 6\). En cualquier otra base de \(\mathcal{P}_2(\mathbb{R})\), la representación matricial se vería mucho más complicada, pero su determinante está garantizado a ser igual a \(6\).
+
+Tenga cuidado de no invertir la implicación en [REF: det-similarity.1 | la invariancia por semejanza]: tener \(\det(A) = \det(B)\) NO implica que \(A\) y \(B\) sean semejantes. Por ejemplo, \(I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}\) y \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) tienen ambas determinante \(1\), pero \(P^{-1} I_2 P = I_2\) para toda \(P\) invertible, por lo que \(I_2\) solo es semejante a sí misma.
+
+[QUESTION 4]
+[ANSWER: B]
+Sea \(V = \mathcal{P}_2(\mathbb{R})\) el espacio de los polinomios reales de grado a lo sumo \(2\), y defina \(T : V \to V\) por \(T(p)(x) = p(x + 1) - 2p(x)\). ¿Cuál es \(\det(T)\)?
+
+(A) \(1\)
+(B) \(-1\)
+(C) \(0\)
+(D) \(-8\)
+(E) \(2\)
+[/QUESTION]
+
+=== SECTION 5: Matrices triangulares por bloques ===
+
+Muchas matrices en álgebra lineal —especialmente cuando luego analizamos subespacios invariantes y polinomios característicos— se descomponen de forma natural en bloques. Suponga que una matriz \(M\) de tamaño \((p + q) \times (p + q)\) es triangular superior por bloques:
+\[
+M = \begin{bmatrix} A & B \\ 0 & D \end{bmatrix},
+\]
+donde \(A \in M_p(F)\), \(D \in M_q(F)\), \(B\) es \(p \times q\) y el bloque inferior izquierdo \(q \times p\) es enteramente nulo. ¿Cómo se relaciona \(\det(M)\) con \(\det(A)\) y \(\det(D)\)?
+
+[CALLOUT]
+id: block-triangular-det
+label: Teorema
+title: Determinante de una matriz triangular por bloques
+tone: key
+
+Si \(A \in M_p(F)\), \(D \in M_q(F)\) y \(B\) es una matriz \(p \times q\), entonces
+\[
+\det\begin{bmatrix} A & B \\ 0 & D \end{bmatrix} = \det(A)\det(D).
+\]
+Por invariancia por traspuesta, la misma fórmula vale para matrices triangulares inferiores por bloques \(\begin{bmatrix} A & 0 \\ C & D \end{bmatrix}\).
+[/CALLOUT]
+
+Podemos demostrar [REF: block-triangular-det | la fórmula triangular por bloques] limpiamente reduciendo por filas el bloque superior y el bloque inferior por separado, ¡sin mezclar jamás filas de las \(p\) filas superiores con las \(q\) filas inferiores!
+1. Realice operaciones elementales de fila únicamente sobre las primeras \(p\) filas de \(M\) (lo que corresponde a multiplicar \(A\) por la izquierda por matrices elementales \(E_1, \dots, E_r\)) para reducir \(A\) a una matriz triangular superior \(U_A\). Estas operaciones modifican \(B\) convirtiéndolo en cierta matriz \(\tilde{B}\), dejan el bloque nulo \(0\) y a \(D\) completamente intactos, y multiplican el determinante de \(M\) exactamente por el mismo factor escalar \(\alpha = \det(E_r)\cdots\det(E_1)\) que cumple \(\det(U_A) = \alpha \det(A)\).
+2. A continuación, realice operaciones elementales de fila únicamente sobre las últimas \(q\) filas de \(M\) (lo que corresponde a multiplicar \(D\) por la izquierda por matrices elementales \(F_1, \dots, F_s\)) para reducir \(D\) a una matriz triangular superior \(U_D\). Como el bloque inferior izquierdo es nulo, estas operaciones mantienen nulo dicho bloque \(0\) y no tocan las \(p\) filas superiores; multiplican el determinante por \(\beta = \det(F_s)\cdots\det(F_1)\) que satisface \(\det(U_D) = \beta \det(D)\).
+
+Después de ambas etapas, \(M\) se ha transformado en la matriz completamente triangular superior
+\[
+\begin{bmatrix} U_A & \tilde{B} \\ 0 & U_D \end{bmatrix},
+\]
+cuyas entradas diagonales son simplemente las entradas diagonales de \(U_A\) seguidas de las entradas diagonales de \(U_D\). Por lo tanto,
+\[
+\alpha \beta \det(M) = \det\begin{bmatrix} U_A & \tilde{B} \\ 0 & U_D \end{bmatrix} = \det(U_A)\det(U_D) = (\alpha \det(A))(\beta \det(D)).
+\]
+Como \(\alpha \neq 0\) y \(\beta \neq 0\), cancelar \(\alpha \beta\) en ambos lados da \(\det(M) = \det(A)\det(D)\). Por inducción, el determinante de cualquier matriz triangular por bloques con bloques diagonales cuadrados \(A_1, \dots, A_m\) es el producto \(\det(A_1)\cdots\det(A_m)\), y los bloques fuera de la diagonal (como \(B\)) no tienen ningún efecto sobre el determinante.
+
+Advierta una frontera crucial de este teorema: para una matriz de bloques \(2 \times 2\) GENERAL \(\begin{bmatrix} A & B \\ C & D \end{bmatrix}\) donde TANTO \(B\) como \(C\) son distintos de cero, \(\det(M)\) NO es igual en general a \(\det(A)\det(D) - \det(B)\det(C)\). Incluso para \(p = q = 2\), los bloques matriciales no conmutan en general, ¡así que la regla escalar \(2 \times 2\) no puede aplicarse ciegamente a bloques!
+
+[QUESTION 5]
+[ANSWER: D]
+Calcule el determinante de la matriz \(4 \times 4\)
+\[
+M = \begin{bmatrix} 3 & 1 & 7 & -4 \\ 5 & 2 & 9 & 8 \\ 0 & 0 & 2 & -3 \\ 0 & 0 & 4 & 1 \end{bmatrix}.
+\]
+
+(A) \(7\)
+(B) \(-14\)
+(C) \(28\)
+(D) \(14\)
+(E) \(-10\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Sea \(A \in M_n(\mathbb{R})\) una matriz ortogonal, es decir, \(A^T A = I_n\). ¿Qué enunciado se cumple con seguridad para \(\det(A)\)?
+
+(A) \(\det(A) = 1\)
+(B) \(\det(A) = (-1)^n\)
+(C) \(\det(A) \in \{-1, 1\}\)
+(D) \(\det(A) = 0\)
+(E) \(\det(A)\) puede ser cualquier número real no nulo
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sean \(A, B \in M_n(\mathbb{C})\) con \(n\) impar, y suponga que \(AB = -BA\). ¿Cuál de las siguientes afirmaciones debe ser verdadera?
+
+(A) \(\det(A) = \det(B)\)
+(B) Al menos una de \(A\) o \(B\) es singular
+(C) Tanto \(A\) como \(B\) deben ser singulares
+(D) \(\det(AB) = 1\)
+(E) \(A\) y \(B\) son ambas invertibles siempre que \(A + B\) sea invertible
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Sea \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\), donde \(A, B, C, D \in M_p(F)\) y \(A\) es invertible. Factorizando
+\[
+\begin{bmatrix} A & B \\ C & D \end{bmatrix} = \begin{bmatrix} A & 0 \\ C & I_p \end{bmatrix} \begin{bmatrix} I_p & A^{-1}B \\ 0 & D - C A^{-1} B \end{bmatrix},
+\]
+¿qué identidad se deduce para \(\det(M)\)?
+
+(A) \(\det(M) = \det(A)\det(D) - \det(B)\det(C)\)
+(B) \(\det(M) = \det(AD - BC)\)
+(C) \(\det(M) = \det(A)\det(D - B A^{-1} C)\)
+(D) \(\det(M) = \det(A)^{-1}\det(D - C A^{-1} B)\)
+(E) \(\det(M) = \det(A)\det(D - C A^{-1} B)\)
+[/BONUS]

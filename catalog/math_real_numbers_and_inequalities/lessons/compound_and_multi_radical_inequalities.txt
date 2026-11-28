@@ -1,0 +1,224 @@
+=== SECTION 1: Sums and differences of radicals: arrange non-negative sides first ===
+
+When an inequality contains two even radicals alongside a constant or polynomial—such as \(\sqrt{x + 5} - \sqrt{x - 1} > 1\) or \(\sqrt{x + 4} + \sqrt{x - 1} \le 5\)—you cannot eliminate both roots in a single step. Squaring once removes two outer roots and leaves one middle cross-term radical, which then reduces to a single-radical inequality from the previous lesson.
+
+The decisive rule before that first squaring is the same sign discipline we already established: establish the common domain FIRST, and rearrange terms if needed so that BOTH sides are guaranteed to be non-negative on that domain before you square.
+
+[CALLOUT]
+id: two-radical-prep
+label: Method
+title: Preparing sums and differences of radicals for squaring
+tone: key
+
+To solve an inequality involving a sum or difference of two even radicals:
+(1) Intersect all radicand constraints \(A(x) \ge 0\) and \(B(x) \ge 0\) to fix the working domain \(D\).
+(2) Move any subtracted radical to the opposite side so that every term on both sides is non-negative on \(D\) (when possible).
+(3) Square both sides cleanly—preserving the inequality direction—then isolate the remaining single radical and apply the single-radical equivalence rules.
+(4) Intersect the resulting set with the working domain \(D\).
+[/CALLOUT]
+
+Example 1 (difference of radicals): Solve \(\sqrt{x + 5} - \sqrt{x - 1} > 1\).
+Step 1: Domain \(D\). We need \(x + 5 \ge 0\) and \(x - 1 \ge 0\), so \(D = [1, \infty)\).
+Step 2: Do NOT square \(\sqrt{x + 5} - \sqrt{x - 1} > 1\) as written—before solving, we have not yet checked whether the left-hand difference is positive everywhere on \(D\). Instead, move \(\sqrt{x - 1}\) to the right:
+\[
+\sqrt{x + 5} > 1 + \sqrt{x - 1}.
+\]
+Now BOTH sides are strictly positive on \(D = [1, \infty)\)!
+Step 3: Square both sides cleanly:
+\[
+x + 5 > 1 + 2\sqrt{x - 1} + (x - 1) \iff 5 > 2\sqrt{x - 1} \iff \sqrt{x - 1} < \frac{5}{2}.
+\]
+Both sides are again non-negative on \(D\), so square once more:
+\[
+x - 1 < \frac{25}{4} \iff x < \frac{29}{4}.
+\]
+Step 4: Intersect with \(D = [1, \infty)\) to obtain \(x \in \left[1, \frac{29}{4}\right)\).
+
+The graph below shows why this solution stops at \(\frac{29}{4} = 7.25\): as \(x\) increases, the two square roots grow closer together, so their difference \(y = \sqrt{x + 5} - \sqrt{x - 1}\) strictly decreases from \(\sqrt{6} \approx 2.45\) at \(x = 1\), crossing \(y = 1\) at \(x = 7.25\).
+
+[GRAPH]
+type: function2d
+title: Decreasing difference \(y = \sqrt{x + 5} - \sqrt{x - 1}\) compared with \(y = 1\) on \([1, 10]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.5, 10
+yrange: 0, 3
+trace: x >= 1 ? (sqrt(x + 5) - sqrt(x - 1)) : (0/0) | label: \(y = \sqrt{x + 5} - \sqrt{x - 1}\)
+trace: 1 | label: \(y = 1\)
+point: 1, 2.4495 | label: \((1, \sqrt{6})\)
+point: 7.25, 1 | label: \((\frac{29}{4}, 1)\)
+[/GRAPH]
+
+Example 2 (sum of radicals): Solve \(\sqrt{x + 4} + \sqrt{x - 1} \le 5\).
+Step 1: Domain \(D = [1, \infty)\) (since \(x - 1 \ge 0\) automatically implies \(x + 4 \ge 5 > 0\)).
+Step 2: Both sides are already non-negative on \(D\). Square once:
+\[
+(x + 4) + 2\sqrt{(x + 4)(x - 1)} + (x - 1) \le 25 \iff 2\sqrt{x^2 + 3x - 4} \le 22 - 2x \iff \sqrt{x^2 + 3x - 4} \le 11 - x.
+\]
+Step 3: Apply the non-strict upper-bound radical equivalence: we need \(11 - x \ge 0\) (so \(x \le 11\)) and
+\[
+x^2 + 3x - 4 \le (11 - x)^2 = 121 - 22x + x^2 \iff 25x \le 125 \iff x \le 5.
+\]
+Step 4: Intersect \(x \le 5\) with \(x \le 11\) and \(D = [1, \infty)\) to obtain \(x \in [1, 5]\). Check the right endpoint: at \(x = 5\), \(\sqrt{9} + \sqrt{4} = 3 + 2 = 5\).
+
+[QUESTION 1]
+[ANSWER: C]
+What is the solution set of \(\sqrt{x + 3} - \sqrt{x - 2} > 1\)?
+
+(A) \((2, 6)\)
+(B) \((-\infty, 6)\)
+(C) \([2, 6)\)
+(D) \([2, 6]\)
+(E) \((6, \infty)\)
+[/QUESTION]
+
+=== SECTION 2: Radical substitution and positive conjugates ===
+
+Repeated squaring is not always the fastest or cleanest tool. Two algebraic techniques often turn a formidable radical inequality into a two-line polynomial step.
+
+Technique 1: Substitution \(t = \sqrt{A(x)} \ge 0\).
+Whenever the polynomial part of an inequality can be written linearly in the radicand \(A(x)\), setting \(t = \sqrt{A(x)}\) turns the inequality into a pure quadratic in \(t\)—with the built-in restriction \(t \ge 0\).
+
+Example 3: Solve \(x - 3\sqrt{x} + 2 \le 0\).
+Domain: \(x \ge 0\). Set \(t = \sqrt{x} \ge 0\), so \(x = t^2\). The inequality becomes
+\[
+t^2 - 3t + 2 \le 0 \iff (t - 1)(t - 2) \le 0 \iff 1 \le t \le 2.
+\]
+Since \(1 \ge 0\), the non-negativity guard \(t \ge 0\) is already satisfied. Converting back via \(t = \sqrt{x}\):
+\[
+1 \le \sqrt{x} \le 2 \iff 1 \le x \le 4,
+\]
+so the solution set is \([1, 4]\).
+
+What if the quadratic in \(t\) produces a negative lower endpoint? Always intersect with \(t \ge 0\) BEFORE squaring back! For example, if a substitution \(t = \sqrt{x - 1}\) yields \(-3 \le t \le 2\), intersecting with \(t \ge 0\) first gives \(0 \le \sqrt{x - 1} \le 2 \iff 0 \le x - 1 \le 4 \iff x \in [1, 5]\). If you forgot \(t \ge 0\) and squared \(-3 \le t\) blindly, you would distort the lower bound completely.
+
+Technique 2: Multiplying by a strictly positive conjugate \(\sqrt{A} + \sqrt{B}\).
+Look back at \(\sqrt{x + 5} - \sqrt{x - 1}\) on \(x \ge 1\). On that domain, \(\sqrt{x + 5} > 0\) and \(\sqrt{x - 1} \ge 0\), so their sum \(\sqrt{x + 5} + \sqrt{x - 1}\) is STRICTLY POSITIVE everywhere on \([1, \infty)\). Multiplying and dividing by that positive conjugate gives the identity
+\[
+\sqrt{x + 5} - \sqrt{x - 1} = \frac{(x + 5) - (x - 1)}{\sqrt{x + 5} + \sqrt{x - 1}} = \frac{6}{\sqrt{x + 5} + \sqrt{x - 1}}.
+\]
+That single identity explains immediately why the graph in Section 1 was strictly decreasing: as \(x\) grows, the denominator \(\sqrt{x + 5} + \sqrt{x - 1}\) grows, so the fraction shrinks! And because \(\sqrt{A} + \sqrt{B} > 0\), multiplying both sides of an inequality by the conjugate NEVER flips the inequality sign and never introduces extraneous zeros.
+
+[CALLOUT]
+id: sub-and-conj
+label: Strategy
+title: Substitution and positive-conjugate shortcuts
+tone: note
+
+(1) For forms quadratic in \(\sqrt{A(x)}\), substitute \(t = \sqrt{A(x)}\), solve the polynomial inequality for \(t\), intersect with \(t \ge 0\), and square back to \(A(x)\).
+(2) For a radical difference \(\sqrt{A(x)} - \sqrt{B(x)}\), multiplying by \(\sqrt{A(x)} + \sqrt{B(x)}\) replaces the difference by \(\dfrac{A(x) - B(x)}{\sqrt{A(x)} + \sqrt{B(x)}}\), preserving sign everywhere that \(\sqrt{A(x)} + \sqrt{B(x)} > 0\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: A]
+What is the solution set of \(x - \sqrt{x + 2} - 4 \le 0\)?
+
+(A) \([-2, 7]\)
+(B) \([0, 7]\)
+(C) \([2, 7]\)
+(D) \([-2, 7)\)
+(E) \([-6, 7]\)
+[/QUESTION]
+
+=== SECTION 3: Domain-guarded sign charts for radical products and quotients ===
+
+When radicals appear as factors in a product or quotient—such as \(\sqrt{x - 1}\,(x^2 - 4) \ge 0\) or \(\dfrac{\sqrt{x + 3} - 2}{x - 5} \le 0\)—do NOT square both sides! Squaring a product or quotient destroys all sign information. Instead, combine your rational sign-chart method with two domain-aware rules.
+
+[CALLOUT]
+id: radical-sign-chart
+label: Rules
+title: Domain-guarded sign charts with even radicals
+tone: key
+
+For a product or quotient involving even radicals:
+(1) Restrict the number line to the exact domain \(D\) first (all even radicands \(\ge 0\) and all denominators \(\ne 0\)). Never test or include intervals outside \(D\).
+(2) Isolated radical zeros in products: a standalone factor \(\sqrt{A(x)}\) is positive whenever \(A(x) > 0\) and equals \(0\) whenever \(A(x) = 0\). In a NON-STRICT inequality (\(\le 0\) or \(\ge 0\)), any point \(x_0 \in D\) where \(\sqrt{A(x_0)} = 0\) makes the entire numerator \(0\) and MUST be included—even if the other factors are negative at \(x_0\)!
+(3) Denominator zeros remain strictly excluded regardless of strictness.
+[/CALLOUT]
+
+Example 4 (product with an isolated radical zero): Solve \(\sqrt{x - 1}\,(x^2 - 4) \ge 0\).
+- Domain \(D\): \(x - 1 \ge 0\), so \(D = [1, \infty)\).
+- On the open ray \((1, \infty)\), the factor \(\sqrt{x - 1}\) is strictly positive, so the sign of the product matches the sign of \(x^2 - 4 = (x - 2)(x + 2)\). On \((1, \infty)\), \(x + 2 > 0\), so \(x^2 - 4 \ge 0 \iff x \ge 2\). That gives \([2, \infty)\).
+- Now check the domain endpoint \(x = 1\) where \(\sqrt{x - 1} = 0\): substituting \(x = 1\) gives \(\sqrt{0}\cdot(1 - 4) = 0 \cdot (-3) = 0 \ge 0\), which is TRUE!
+
+Therefore the complete solution set is
+\[
+\{1\} \cup [2, \infty).
+\]
+Look at the graph of \(y = \sqrt{x - 1}\,(x^2 - 4)\) below. The curve starts right on the horizontal axis at the isolated zero \((1, 0)\), dips below the axis across \((1, 2)\), and rises back to and above the axis from \((2, 0)\) onward. Anyone who casually divided by \(\sqrt{x - 1}\) without checking \(x = 1\) loses the isolated point \(\{1\}\).
+
+[GRAPH]
+type: function2d
+title: Graph of \(y = \sqrt{x - 1}\,(x^2 - 4)\) showing the isolated zero at \((1, 0)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.6, 2.8
+yrange: -2.5, 4
+trace: x >= 1 ? (sqrt(x - 1)*(x^2 - 4)) : (0/0) | label: \(y = \sqrt{x - 1}\,(x^2 - 4)\)
+trace: 0 | label: \(y = 0\)
+point: 1, 0 | label: \((1, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+Example 5 (quotient with a shifted radical): Solve \(\dfrac{\sqrt{x + 3} - 2}{x - 5} \le 0\).
+- Domain \(D\): \(x + 3 \ge 0\) and \(x - 5 \ne 0\), so \(D = [-3, 5) \cup (5, \infty)\).
+- Critical points inside \(D\):
+  - Numerator zero: \(\sqrt{x + 3} - 2 = 0 \iff \sqrt{x + 3} = 2 \iff x + 3 = 4 \iff x = 1\). Because \(\sqrt{x + 3}\) is strictly increasing, the numerator is negative on \([-3, 1)\) and positive on \((1, \infty)\).
+  - Denominator zero: \(x = 5\) (always excluded from the solution).
+
+Build the domain-guarded sign chart on \([-3, \infty)\):
+
+[TABLE]
+Interval or point | \(\sqrt{x + 3} - 2\) | \(x - 5\) | Quotient | Satisfies \(\le 0\)?
+\([-3, 1)\) | \(-\) | \(-\) | \(+\) | No
+\(x = 1\) | \(0\) | \(-4\) | \(0\) | Yes
+\((1, 5)\) | \(+\) | \(-\) | \(-\) | Yes
+\(x = 5\) | \(\sqrt{8} - 2\) | \(0\) | undefined | No
+\((5, \infty)\) | \(+\) | \(+\) | \(+\) | No
+[/TABLE]
+
+Reading off the "Yes" rows gives the exact solution set \([1, 5)\). Notice that we did not need to square anything at all: locating the single zero of \(\sqrt{x + 3} - 2\) and using the fact that \(\sqrt{x + 3}\) increases with \(x\) determined every sign cleanly.
+
+[QUESTION 3]
+[ANSWER: D]
+What is the solution set of \(\sqrt{x + 2}\,(x^2 - 9) \ge 0\)?
+
+(A) \([3, \infty)\)
+(B) \([-2, 3]\)
+(C) \((-\infty, -3] \cup [3, \infty)\)
+(D) \(\{-2\} \cup [3, \infty)\)
+(E) \([-2, -2] \cup (3, \infty)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+What is the solution set of \(\dfrac{\sqrt{2x + 1} - 3}{x - 1} \le 0\)?
+
+(A) \([1, 4]\)
+(B) \((1, 4]\)
+(C) \(\left[-\frac{1}{2}, 1\right) \cup [4, \infty)\)
+(D) \((1, 4)\)
+(E) \(\left[-\frac{1}{2}, 4\right]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+What is the solution set of \(\dfrac{\sqrt{x + 2} - 2}{\sqrt{x + 5} - 3} \ge 0\)?
+
+(A) \((-\infty, 2] \cup (4, \infty)\)
+(B) \([-2, 2) \cup (4, \infty)\)
+(C) \([2, 4)\)
+(D) \([-2, 2] \cup [4, \infty)\)
+(E) \([-2, 2] \cup (4, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+What is the solution set of \(\sqrt{3 - x} + \sqrt{x + 1} > 2\)?
+
+(A) \([-1, 3]\)
+(B) \(\emptyset\)
+(C) \((-1, 3)\)
+(D) \((0, 2)\)
+(E) \((-\infty, -1) \cup (3, \infty)\)
+[/BONUS]

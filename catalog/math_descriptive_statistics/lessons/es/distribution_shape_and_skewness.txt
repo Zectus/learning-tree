@@ -1,0 +1,206 @@
+=== SECTION 1: Conexión de la forma visual con la heurística media-mediana (y su falla) ===
+
+Las representaciones visuales como los histogramas y los diagramas de caja dan una impresión cualitativa inmediata de si una distribución es simétrica, asimétrica a la derecha, asimétrica a la izquierda, de colas pesadas o multimodal. Sin embargo, los juicios visuales pueden variar de una persona a otra —y al comparar decenas de variables o justificar una elección de estadísticos de resumen, necesitamos diagnósticos cuantitativos de forma que midan la asimetría y el comportamiento de las colas en una escala coherente y libre de unidades.
+
+Primero, examine la pista numérica más citada para detectar asimetría: comparar la media aritmética \(\bar{x}\) con la mediana \(M\). En una distribución unimodal y suave asimétrica a la derecha (como los ingresos familiares), la cola derecha larga ejerce un fuerte brazo de palanca sobre el punto de equilibrio \(\bar{x}\) mientras deja el rango central \(M\) cerca del cuerpo principal de los datos, produciendo el ordenamiento clásico \(\text{moda} < M < \bar{x}\). A la inversa, en una distribución unimodal y suave asimétrica a la izquierda, la cola izquierda larga tira de la media hacia abajo, dando \(\bar{x} < M < \text{moda}\).
+
+[CALLOUT]
+id: mean-median-caution
+label: Error común
+title: El ordenamiento media-mediana es una heurística, NO un teorema
+tone: caution
+
+Para distribuciones unimodales y suaves, \(\bar{x} > M\) suele acompañar a la asimetría a la derecha y \(\bar{x} < M\) suele acompañar a la asimetría a la izquierda. No obstante, en distribuciones discretas, multimodales o con cuerpo asimétrico, el signo de \(\bar{x} - M\) PUEDE discrepar de la dirección de la cola más larga y del tercer momento de asimetría. Inspeccione siempre la distribución visualmente o calcule índices explícitos de asimetría en lugar de tratar \(\bar{x} > M\) como una demostración matemática de asimetría a la derecha.
+[/CALLOUT]
+
+Observe [REF: mean-median-caution | esta falla] en un conjunto de datos discreto elemental de \(n = 10\) observaciones:
+\[
+0,\; 0,\; 0,\; 5,\; 5,\; 5,\; 5,\; 5,\; 5,\; 10.
+\]
+Aquí seis observaciones se acumulan en \(5\), tres se sitúan en \(0\) y una observación aislada se extiende hasta \(10\) a la derecha. Calcule sus resúmenes directamente:
+- Mediana \(M = 5\) y moda \(= 5\).
+- Media aritmética \(\bar{x} = (0 + 0 + 0 + 30 + 10) / 10 = 40 / 10 = 4\).
+- Desviaciones respecto a \(\bar{x} = 4\): tres valores \(-4\), seis valores \(+1\) y un valor \(+6\).
+- Suma de desviaciones cuadráticas: \(3(-4)^2 + 6(1)^2 + 1(6)^2 = 48 + 6 + 36 = 90\), de modo que la desviación estándar de tipo poblacional es \(\sigma = \sqrt{90 / 10} = 3\).
+- Observe qué sucede al elevar al cubo las desviaciones estandarizadas \(z_i = (x_i - 4)/3\): los tres valores \(-4/3\) aportan \(3(-64/27) = -192/27\), los seis valores \(+1/3\) aportan \(6(1/27) = +6/27\) y el único valor \(+6/3 = +2\) aporta \(+216/27\). Su promedio es \((-192 + 6 + 216)/(10 \cdot 27) = +30 / 270 = +1/9 > 0\).
+
+¡Aunque el tercer momento estandarizado es estrictamente positivo (\(+1/9\)) debido al valor superior estirado en \(10\), la media (\(\bar{x} = 4\)) queda POR DEBAJO de la mediana (\(M = 5\))! Por ello, una auditoría confiable de la forma emplea índices explícitos de asimetría junto con los gráficos.
+
+=== SECTION 2: Tres índices de asimetría adimensionales y el peso de las colas ===
+
+Para medir la asimetría sin que las unidades estorben, todo índice cuantitativo de asimetría divide una medida de asimetría entre una medida de dispersión acorde. Tres índices aparecen ampliamente en estadística, cada uno explorando un matiz ligeramente distinto de la asimetría.
+
+[CALLOUT]
+id: skewness-indices
+label: Definición
+title: Índices de asimetría de Pearson, Bowley y tercer momento
+tone: key
+
+Para un conjunto cuantitativo de datos \(x_1, \dots, x_n\) con media \(\bar{x}\), mediana \(M = Q_2\), cuartiles \(Q_1, Q_3\) (\(\text{RIC} = Q_3 - Q_1 > 0\)) y desviación estándar \(s > 0\):
+
+(1) El segundo coeficiente de asimetría de Pearson compara la brecha media-mediana con la desviación estándar:
+\[
+\text{As}_P = \frac{3(\bar{x} - M)}{s}.
+\]
+(2) El coeficiente de asimetría (cuartílico) de Bowley compara la mitad superior de la caja del diagrama de caja con la mitad inferior, normalizado por el \(\text{RIC}\):
+\[
+\text{As}_B = \frac{(Q_3 - Q_2) - (Q_2 - Q_1)}{Q_3 - Q_1} = \frac{Q_3 + Q_1 - 2 Q_2}{\text{RIC}}.
+\]
+Como \(Q_1 \le Q_2 \le Q_3\), el índice de Bowley siempre satisface \(-1 \le \text{As}_B \le 1\).
+(3) El tercer momento estandarizado muestral promedia los cubos de las desviaciones estandarizadas \(z_i = (x_i - \bar{x}) / s_p\), donde \(s_p = \sqrt{\frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^2}\):
+\[
+g_1 = \frac{1}{n} \sum_{i=1}^n z_i^3 = \frac{\frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^3}{\left(\frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^2\right)^{3/2}}.
+\]
+(Los programas estadísticos suelen reportar la asimetría ajustada de Fisher-Pearson \(G_1 = \frac{\sqrt{n(n-1)}}{n-2}\,g_1 = \frac{n}{(n-1)(n-2)}\sum_{i=1}^n \left(\frac{x_i - \bar{x}}{s}\right)^3\) para \(n \ge 3\), que concuerda en signo con \(g_1\) y se aproxima a \(g_1\) conforme crece \(n\).)
+[/CALLOUT]
+
+¿Por qué elevar \(z_i\) al cubo en [REF: skewness-indices.3 | el tercer momento estandarizado \(g_1\)] detecta la asimetría? Elevar al cuadrado \(z_i^2\) destruye la información del signo, mientras que tomar primeras potencias \(\sum z_i = 0\) se cancela por completo. Elevar \(z_i\) a la tercera potencia impar \(z_i^3\) CONSERVA el signo (positivo para observaciones por encima de la media, negativo por debajo) mientras pondera fuertemente los valores lejanos en las colas (\((+3)^3 = +27\) frente a \((+1)^3 = +1\)). En una distribución perfectamente simétrica, cada \(+z\) se empareja con su correspondiente \(-z\), de modo que \(g_1 = 0\) (y \(\text{As}_P = \text{As}_B = 0\)). Una cola derecha larga produce cubos positivos grandes, dando \(g_1 > 0\); una cola izquierda larga produce cubos negativos grandes, dando \(g_1 < 0\).
+
+Calculemos los tres índices en \(n = 9\) salarios anuales (en miles de dólares):
+\[
+20,\; 22,\; 24,\; 26,\; 28,\; 30,\; 34,\; 42,\; 98.
+\]
+Aquí \(\bar{x} = 324 / 9 = 36\), \(Q_1 = 23\), \(Q_2 = 28\), \(Q_3 = 38\) (\(\text{RIC} = 15\)), \(\sum (x_i - 36)^2 = 4680\) (lo que da \(s = \sqrt{4680 / 8} \approx 24.19\) y \(s_p = \sqrt{4680 / 9} = \sqrt{520} \approx 22.80\)), y \(\sum (x_i - 36)^3 = +228{,}240\). Al sustituir:
+- Pearson: \(\text{As}_P = \dfrac{3(36 - 28)}{24.19} \approx +0.99\).
+- Bowley: \(\text{As}_B = \dfrac{38 + 23 - 2(28)}{15} = \dfrac{5}{15} = +\dfrac{1}{3} \approx +0.33\).
+- Tercer momento estandarizado: \(g_1 = \dfrac{228{,}240 / 9}{(520)^{3/2}} \approx +2.14\).
+
+Los tres índices son positivos, confirmando asimetría a la derecha, pero compare su sensibilidad frente al único valor atípico \(98\): elevar al cubo \((98 - 36)/22.80 \approx +2.72\) dispara \(g_1\) hasta \(+2.14\), mientras que \(\text{As}_B = +0.33\) de Bowley depende puramente de los cuartiles y resiste por completo los valores atípicos extremos —aunque Bowley solo ve la asimetría dentro de la caja central del \(50\%\) e ignora las colas extremas más allá de \(Q_1\) y \(Q_3\).
+
+Ahora verifique cómo se comportan los tres índices de asimetría bajo una transformación lineal \(y_i = a x_i + b\) (\(a \ne 0\)):
+- Si \(a > 0\), demostramos en la lección anterior que \(z_{y,i} = z_{x,i}\), \(\bar{y} - M_y = a(\bar{x} - M_x)\), \(s_y = a s_x\) y \(Q_{k,y} = a Q_{k,x} + b\). Todo factor de \(a\) se cancela entre numerador y denominador, de modo que \(\text{As}_P\), \(\text{As}_B\) y \(g_1\) son TODOS COMPLETAMENTE INVARIANTES bajo reescalamientos lineales positivos (¡cambiar unidades de dólares a euros o de Celsius a Fahrenheit nunca cambia la asimetría!).
+- Si \(a < 0\), la distribución se refleja de izquierda a derecha: \(z_{y,i} = -z_{x,i}\), \(Q_{1,y}\) y \(Q_{3,y}\) intercambian sus papeles y \(s_y = -a s_x > 0\), de modo que LOS TRES índices simplemente INVIERTEN EL SIGNO (\(\text{As}(y) = -\text{As}(x)\)).
+
+¿Qué sucede si dos distribuciones son AMBAS perfectamente simétricas (\(g_1 = 0\)) con la MISMA media \(0\) y desviación estándar \(1\), pero una tiene colas mucho más pesadas (más observaciones extremas lejos de \(0\)) que la otra? Como las cuartas potencias \(z_i^4\) son siempre no negativas y crecen enormemente para \(|z_i|\) extremos, el cuarto momento estandarizado \(\frac{1}{n}\sum_{i=1}^n z_i^4\) (curtosis) captura el peso de las colas: una distribución normal acampanada de referencia tiene cuarto momento estandarizado igual a \(3\), de modo que las distribuciones con exceso de curtosis \(\frac{1}{n}\sum z_i^4 - 3 > 0\) presentan colas más pesadas (más valores atípicos extremos) que una curva normal, mientras que un exceso de curtosis negativo indica colas más ligeras y cortas (como en una distribución uniforme plana).
+
+El gráfico siguiente contrasta una curva acampanada simétrica frente a una distribución asimétrica a la derecha (mostrando \(\bar{x}\) desplazada a la derecha de \(M\)) y una distribución simétrica de colas pesadas que comparten el mismo centro \(0\).
+
+[GRAPH]
+type: function2d
+title: Comparación de formas simétrica acampanada, asimétrica a la derecha y simétrica de colas pesadas
+xlabel: \(x\)
+ylabel: Densidad
+xrange: -4, 6
+yrange: 0, 0.55
+trace: 0.399 * exp(-0.5 * x^2) | label: Simétrica acampanada (\(g_1 = 0\)) | color: #3b82f6
+trace: x > -2 ? 0.45 * ((x + 2) / 1.5) * exp(1 - (x + 2) / 1.5) : 0 | label: Asimétrica a la derecha (\(g_1 > 0\)) | color: #ef4444
+trace: 0.318 / (1 + x^2) | label: Simétrica de colas pesadas (colas elevadas) | color: #10b981
+segment: -0.5, 0, -0.5, 0.45 | label: Moda | dashed: true | color: #ef4444
+segment: 0.52, 0, 0.52, 0.34 | label: Mediana | dashed: true | color: #f59e0b
+segment: 1.0, 0, 1.0, 0.25 | label: Media | dashed: true | color: #991b1b
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Un conjunto de datos de puntajes de examen tiene resumen de cinco números \((10, 22, 32, 36, 50)\). ¿Cuál es el coeficiente de asimetría cuartílico de Bowley \(\text{As}_B\) y qué forma indica dentro del \(50\%\) central de los datos?
+
+(A) \(+3/7 \approx +0.43\), asimétrica a la derecha
+(B) \(-3/7 \approx -0.43\), asimétrica a la izquierda
+(C) \(-6/40 = -0.15\), asimétrica a la izquierda
+(D) \(-3/5 = -0.60\), asimétrica a la izquierda
+(E) \(+3/5 = +0.60\), asimétrica a la derecha
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Un conjunto de datos de \(n = 5\) observaciones tiene valores estandarizados \(z_1 = -0.5\), \(z_2 = -0.5\), \(z_3 = -0.5\), \(z_4 = -0.5\) y \(z_5 = +2.0\) (los cuales satisfacen \(\frac{1}{5}\sum z_i = 0\) y \(\frac{1}{5}\sum z_i^2 = 1\)). ¿Cuál es el tercer momento estandarizado muestral \(g_1 = \frac{1}{n}\sum_{i=1}^n z_i^3\)?
+
+(A) \(+1.60\)
+(B) \(+1.70\)
+(C) \(+7.50\)
+(D) \(+1.50\)
+(E) \(+1.25\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Un conjunto de datos \(x_1, \dots, x_n\) de tiempos de reacción tiene tercer momento estandarizado muestral \(g_1 = +1.40\) y asimetría de Bowley \(\text{As}_B = +0.40\). Cada observación se convierte en una puntuación de bonificación por rapidez mediante \(y_i = 100 - 2 x_i\). ¿Cuáles son los valores resultantes de \(g_1\) y \(\text{As}_B\) para la variable transformada \(y\)?
+
+(A) \(g_1 = -1.40\) y \(\text{As}_B = -0.40\)
+(B) \(g_1 = +1.40\) y \(\text{As}_B = +0.40\)
+(C) \(g_1 = -2.80\) y \(\text{As}_B = -0.80\)
+(D) \(g_1 = -11.20\) y \(\text{As}_B = -0.40\)
+(E) \(g_1 = +1.40\) y \(\text{As}_B = -0.40\)
+[/QUESTION]
+
+=== SECTION 3: Protocolo de decisión fundamentado para elegir centro y dispersión ===
+
+Todas las lecciones anteriores de estadística descriptiva univariada convergen en un juicio práctico fundamental: ante un nuevo conjunto de datos cuantitativos, ¿QUÉ pareja de resúmenes de centro y dispersión debe reportar? Reportar una pareja inadecuada —como media y desviación estándar sobre precios de vivienda fuertemente asimétricos— puede confundir a los lectores tanto sobre los valores típicos como sobre la variabilidad típica.
+
+[CALLOUT]
+id: summary-protocol
+label: Principio
+title: Protocolo de decisión para reportar centro y dispersión
+tone: key
+
+Inspeccione siempre una representación visual (histograma, diagrama de puntos o diagrama de caja) junto con diagnósticos de forma antes de elegir estadísticos de resumen:
+
+(1) Aproximadamente simétrica, unimodal y libre de valores atípicos severos (\(|g_1|\) pequeño, sin alertas extremas en las cercas): reporte la media aritmética \(\bar{x}\) y la desviación estándar \(s\). Juntas aprovechan todos los datos con eficiencia y conectan directamente con las puntuaciones \(z\) y modelos estadísticos posteriores.
+(2) Notablemente asimétrica (a la derecha o a la izquierda) O con valores atípicos extremos / colas pesadas: reporte la mediana \(M\) (o una media recortada) junto con el rango intercuartílico \(\text{RIC}\) (y el resumen completo de cinco números), porque ambos resisten la distorsión de las colas. Si importan los totales (por ejemplo, gasto total), reporte \(\bar{x}\) junto con \(M\) y \(\text{RIC}\), nunca sola.
+(3) Claramente bimodal o multimodal con conglomerados distintos: NO dependa de un único centro y una única dispersión para los datos combinados —¡una sola media o mediana puede caer justo dentro de un valle vacío!—. Identifique la variable de agrupamiento oculta, separe el conjunto en sus subpoblaciones y resuma cada subgrupo por separado.
+[/CALLOUT]
+
+Observe cómo [REF: summary-protocol | este protocolo] empareja centro y dispersión como compañeros naturales: \(\bar{x}\) va con \(s\) (ambas construidas a partir de sumas aritméticas y sensibles a las colas), mientras que \(M\) va con \(\text{RIC}\) (ambas construidas a partir de estadísticos de orden y resistentes a las colas).
+
+[TABLE]
+Forma observada de la distribución | Centro recomendado | Dispersión recomendada | Acción / precaución
+Unimodal, aprox. simétrica, sin atípicos severos | Media (\(\bar{x}\)) | Desviación estándar (\(s\)) | Verificar visualmente; anotar atípicos leves
+Fuertemente asimétrica (derecha o izquierda) | Mediana (\(M\)) o media recortada | \(\text{RIC}\) (más resumen de cinco números) | Evitar reportar solo \(\bar{x} \pm s\)
+Simétrica con colas pesadas / atípicos extremos | Mediana (\(M\)) o media recortada | \(\text{RIC}\) (o \(\text{DAM}\)) | Investigar atípicos; reportar con y sin ellos
+Bimodal / conglomerados distintos | Centros separados por subgrupo | Dispersiones separadas por subgrupo | No ocultar dos grupos detrás de un promedio
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: C]
+Un analista de operaciones mide la duración de estancia hospitalaria (en días) de \(n = 320\) pacientes. El histograma es fuertemente unimodal y asimétrico a la derecha (\(g_1 = +2.8\)), con \(Q_1 = 2\), \(M = 3\), \(Q_3 = 5\), \(\bar{x} = 6.2\), \(s = 9.4\) y varias estancias quirúrgicas complicadas que superan los \(45\) días. Un colega propone reportar «la estancia típica es de \(6.2 \pm 9.4\) días». ¿Cuál es la crítica más sólida y la corrección recomendada?
+
+(A) Reportar únicamente el rango y la moda, porque la duración de estancia se mide en una escala ordinal.
+(B) Eliminar toda estancia superior a \(10\) días para que \(\bar{x}\) y \(s\) se vuelvan simétricas.
+(C) Usar \(\bar{x} \pm s\) en datos fuertemente asimétricos a la derecha infla el centro por encima del \(75\%\) de los pacientes e implica un límite inferior negativo imposible (\(6.2 - 9.4 = -3.2\) días); reporte la mediana (\(3\) días) y el \(\text{RIC}\) (\(3\) días, de \(2\) a \(5\)), señalando aparte la cola superior larga.
+(D) Usar el coeficiente de asimetría de Pearson en lugar de la desviación estándar.
+(E) Estandarizar primero las estancias a puntuaciones \(z\) para que la distribución se vuelva simétrica y luego reportar \(\bar{x}\) y \(s\).
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Un equipo de analítica minorista grafica los montos diarios de transacción de \(n = 1{,}000\) ventas y observa dos picos nítidos y bien separados: uno centrado alrededor de \(\$18\) (compras en mostrador de café y panadería) y otro centrado alrededor de \(\$145\) (pedidos de cajas para eventos), casi sin transacciones entre \(\$50\) y \(\$100\). ¿Por qué reportar únicamente la mediana y el \(\text{RIC}\) combinados sigue siendo un resumen inadecuado?
+
+(A) Porque las medianas y los RIC están indefinidos para conjuntos de datos bimodales.
+(B) Porque la media aritmética separaría automáticamente los dos picos.
+(C) Porque la asimetría de Bowley es igual a \(0\) siempre que hay dos picos.
+(D) Porque \(g_1\) no puede calcularse en datos bimodales.
+(E) Porque cualquier centro y dispersión únicos ocultan la estructura de dos subpoblaciones y pueden situar el centro reportado en el valle escaso entre grupos; el equipo debe estratificar por tipo de pedido (mostrador frente a eventos) y resumir cada grupo por separado.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+¿Bajo qué condición sobre los cuartiles \(Q_1 \le Q_2 \le Q_3\) (con \(\text{RIC} = Q_3 - Q_1 > 0\)) alcanza la asimetría cuartílica de Bowley \(\text{As}_B = \frac{Q_3 + Q_1 - 2 Q_2}{Q_3 - Q_1}\) su valor máximo posible de \(+1\)?
+
+(A) Siempre que \(\bar{x} > Q_3\)
+(B) Siempre que \(Q_2 = Q_1\) (y \(Q_3 > Q_1\)), lo que significa que toda la mitad inferior de la caja central ha colapsado a ancho \(0\)
+(C) Siempre que \(Q_2 = Q_3\) (y \(Q_3 > Q_1\)), lo que significa que toda la mitad superior de la caja central ha colapsado a ancho \(0\)
+(D) Siempre que \(Q_3 = 2 Q_1\)
+(E) Siempre que la observación máxima tienda a \(+\infty\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Considere la muestra discreta de \(n = 10\) observaciones: \(0, 10, 10, 10, 10, 10, 10, 15, 15, 15\). Compare el signo de \((\bar{x} - M)\) con el signo del tercer momento estandarizado \(g_1\).
+
+(A) Tanto \((\bar{x} - M)\) como \(g_1\) son positivos.
+(B) Tanto \((\bar{x} - M)\) como \(g_1\) son negativos.
+(C) \((\bar{x} - M) < 0\), mientras que \(g_1 > 0\).
+(D) \((\bar{x} - M) > 0\) (ya que \(\bar{x} = 10.5 > M = 10\)), mientras que \(g_1 < 0\) porque el único valor bajo distante en \(0\) domina la suma de desviaciones al cubo.
+(E) Tanto \((\bar{x} - M)\) como \(g_1\) son iguales a \(0\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Dos conjuntos de datos simétricos X e Y tienen ambos media \(0\), desviación estándar \(1\) y tercer momento estandarizado \(g_1 = 0\). Sin embargo, el Conjunto X tiene cuarto momento estandarizado \(\frac{1}{n}\sum z_i^4 = 1.8\) mientras que el Conjunto Y tiene \(\frac{1}{n}\sum z_i^4 = 8.4\). ¿En qué difieren estructuralmente los Conjuntos X e Y?
+
+(A) El Conjunto Y tiene colas mucho más pesadas (más observaciones extremas lejos de \(0\)) que una curva acampanada, mientras que el Conjunto X tiene colas más ligeras y cortas.
+(B) El Conjunto Y es asimétrico a la derecha y el Conjunto X es asimétrico a la izquierda.
+(C) El Conjunto Y tiene una desviación estándar mayor que el Conjunto X.
+(D) El Conjunto X tiene colas más pesadas y más valores atípicos que el Conjunto Y.
+(E) El Conjunto X y el Conjunto Y deben tener diagramas de caja idénticos porque ambos tienen \(g_1 = 0\), media \(0\) y desviación estándar \(1\).
+[/BONUS]

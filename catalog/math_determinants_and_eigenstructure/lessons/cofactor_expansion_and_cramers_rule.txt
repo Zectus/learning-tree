@@ -1,0 +1,282 @@
+=== SECTION 1: Minors, cofactors, and Laplace expansion ===
+
+Gaussian elimination computes the determinant of a numeric \(n \times n\) matrix rapidly, yet it has two gaps we have not closed. First, in our axiomatic lesson we proved uniqueness of the determinant for every \(n \ge 1\), while leaving existence for general \(n \ge 4\) unproved. Second, when a matrix contains symbolic variables or mostly zero entries in a row or column, we want an explicit recursive formula that expresses an \(n \times n\) determinant in terms of \((n - 1) \times (n - 1)\) determinants without dividing by unknown parameters. Both needs are met by Laplace's cofactor expansion.
+
+For any matrix \(A = [a_{ij}] \in M_n(F)\) with \(n \ge 2\) and any indices \(1 \le i, j \le n\), let \(A_{ij} \in M_{n-1}(F)\) denote the \((n - 1) \times (n - 1)\) submatrix obtained by deleting row \(i\) and column \(j\) of \(A\).
+
+[CALLOUT]
+id: minor-cofactor-def
+label: Definition
+title: Minors and cofactors
+tone: key
+
+Let \(A = [a_{ij}] \in M_n(F)\) with \(n \ge 2\).
+
+(1) The \((i, j)\)-minor of \(A\) is \(M_{ij} = \det(A_{ij})\).
+(2) The \((i, j)\)-cofactor of \(A\) is the signed minor \(C_{ij} = (-1)^{i+j} M_{ij}\).
+[/CALLOUT]
+
+The sign factor \((-1)^{i+j}\) follows a checkerboard pattern starting with \(+\) at \((1, 1)\): moving one step horizontally or vertically always flips the sign.
+
+Where does the cofactor expansion formula come from? Suppose we already know determinants exist for \((n - 1) \times (n - 1)\) matrices, and we want to evaluate \(\det(A)\) for an \(n \times n\) matrix \(A\) by expanding along row \(i\). Write row \(i\) as a linear combination of the standard basis row vectors \(\mathbf{e}_1, \dots, \mathbf{e}_n\):
+\[
+\mathbf{r}_i = \sum_{j=1}^n a_{ij} \mathbf{e}_j.
+\]
+By multilinearity in row \(i\),
+\[
+\det(A) = \sum_{j=1}^n a_{ij} \det(A^{(i, j)}),
+\]
+where \(A^{(i, j)}\) is identical to \(A\) except that row \(i\) has been replaced by \(\mathbf{e}_j\) (a \(1\) in entry \((i, j)\) and \(0\)s elsewhere in row \(i\)). How do we evaluate \(\det(A^{(i, j)})\)? Move row \(i\) upward to row \(1\) via \(i - 1\) adjacent row swaps (multiplying \(\det\) by \((-1)^{i-1}\)), and move column \(j\) leftward to column \(1\) via \(j - 1\) adjacent column swaps (valid by transpose invariance, multiplying \(\det\) by \((-1)^{j-1}\)). Neither sequence disturbs the relative order of the remaining \(n - 1\) rows or \(n - 1\) columns! The resulting matrix has the block form
+\[
+\begin{bmatrix} 1 & \mathbf{0}^T \\ \mathbf{c} & A_{ij} \end{bmatrix},
+\]
+where \(\mathbf{c}\) is the remaining part of column \(j\) and \(A_{ij}\) is the exact submatrix obtained by deleting row \(i\) and column \(j\). Since this matrix is block lower-triangular with diagonal blocks \([1]\) and \(A_{ij}\), its determinant is \(1 \cdot \det(A_{ij}) = M_{ij}\). Accounting for the \((i - 1) + (j - 1) = i + j - 2\) swaps (and noting \((-1)^{i+j-2} = (-1)^{i+j}\)) gives
+\[
+\det(A^{(i, j)}) = (-1)^{i+j} M_{ij} = C_{ij}.
+\]
+Substituting this back into the multilinear expansion produces Laplace's cofactor expansion along row \(i\); applying the same formula to \(A^T\) (whose \((j, i)\)-submatrix is \((A_{ij})^T\), so it has the same determinant \(M_{ij}\)) immediately yields cofactor expansion along column \(j\).
+
+[CALLOUT]
+id: laplace-expansion
+label: Theorem
+title: Laplace cofactor expansion
+tone: key
+
+For every \(A = [a_{ij}] \in M_n(F)\) (\(n \ge 2\)):
+
+(1) Expansion along any row \(i \in \{1, \dots, n\}\):
+\[
+\det(A) = \sum_{j=1}^n a_{ij} C_{ij} = \sum_{j=1}^n (-1)^{i+j} a_{ij} M_{ij}.
+\]
+(2) Expansion along any column \(j \in \{1, \dots, n\}\):
+\[
+\det(A) = \sum_{i=1}^n a_{ij} C_{ij} = \sum_{i=1}^n (-1)^{i+j} a_{ij} M_{ij}.
+\]
+[/CALLOUT]
+
+This formula also closes the existence proof left open in our very first lesson! Proceed by induction on \(n\). For \(n = 1\), \(\det([a]) = a\) trivially satisfies all three axioms. Assuming existence (and hence uniqueness) of \(\det\) on \(M_{n-1}(F)\), DEFINE a candidate function \(D : M_n(F) \to F\) using the row-\(1\) cofactor formula \(D(A) = \sum_{j=1}^n (-1)^{1+j} a_{1j} \det(A_{1j})\). Let us verify all three axioms for \(D\):
+- Normalization: for \(A = I_n\), \(a_{11} = 1\) with \((I_n)_{11} = I_{n-1}\), and \(a_{1j} = 0\) for \(j > 1\), so \(D(I_n) = 1 \cdot \det(I_{n-1}) = 1\).
+- Multilinearity in each row: in row \(1\), each \(A_{1j}\) does not contain row \(1\), so \(D(A)\) is an explicit linear combination of the entries \(a_{11}, \dots, a_{1n}\). In any row \(k \ge 2\), the coefficient \(a_{1j}\) is fixed while row \(k\) of \(A\) appears as row \(k - 1\) of each \((n - 1) \times (n - 1)\) submatrix \(A_{1j}\); by the induction hypothesis \(\det(A_{1j})\) is linear in that row, so the sum \(D(A)\) is linear in row \(k\).
+- Alternating property: suppose two rows \(\mathbf{r}_p = \mathbf{r}_q\) (\(p < q\)) of \(A\) are equal. If \(p \ge 2\), then both equal rows survive inside every submatrix \(A_{1j}\), so every \(\det(A_{1j}) = 0\) by the induction hypothesis and \(D(A) = 0\). If \(p = 1\) and \(q \ge 2\), expand each \(\det(A_{1j})\) along its row containing \(\mathbf{r}_q\) (which is row \(q - 1\) of \(A_{1j}\)); every pair of indices \(j < k\) contributes two terms involving the \((n - 2) \times (n - 2)\) submatrix \(A_{1,q; j,k}\) (deleting rows \(1, q\) and columns \(j, k\)) with identical product \(a_{1j} a_{qk} = a_{1j} a_{1k}\) and opposite signs: deleting column \(j\) shifts column \(k\) leftward by \(1\), changing the sign exponent by \(1\). All pairs cancel identically, giving \(D(A) = 0\).
+
+Thus \(D\) satisfies all three axioms, proving that the determinant exists (and is unique!) for every \(n \ge 1\).
+
+=== SECTION 2: Strategic expansion and symbolic determinants ===
+
+In practice, cofactor expansion shines in two situations: when a row or column has many zeros, or when a matrix depends on a symbolic parameter \(t\). Even better, we can combine row or column operations first to create extra zeros in a row or column, and then expand along that sparse line.
+
+Consider the parameter-dependent matrix
+\[
+A(t) = \begin{bmatrix} t & 0 & 2 \\ 1 & t - 2 & 0 \\ 3 & 0 & t + 1 \end{bmatrix}.
+\]
+Look at column \(2\): it has only ONE nonzero entry, \(a_{22} = t - 2\). Expanding along column \(2\) immediately gives
+\[
+\det(A(t)) = (-1)^{2+2} (t - 2) \det\begin{bmatrix} t & 2 \\ 3 & t + 1 \end{bmatrix} = (t - 2)(t^2 + t - 6) = (t - 2)^2 (t + 3).
+\]
+Notice how cleanly that factored without ever dividing by \(t\) or \(t - 2\): we see at a glance that \(A(t)\) is invertible for all \(t \notin \{-3, 2\}\) and singular precisely at \(t = -3\) and \(t = 2\). The graph below plots \(f(t) = \det(A(t))\) as \(t\) varies, showing the sign change across the simple root \(t = -3\) and the tangency at the double root \(t = 2\).
+
+[GRAPH]
+type: function2d
+title: Symbolic determinant \(\det(A(t)) = (t - 2)^2 (t + 3)\) and singular values of \(t\)
+xlabel: \(t\)
+ylabel: \(\det(A(t))\)
+xrange: -4, 4
+yrange: -15, 30
+trace: (x - 2)^2 * (x + 3) | label: \(\det(A(t)) = (t - 2)^2(t + 3)\)
+trace: 0 | label: \(\det = 0\)
+point: -3, 0 | label: \((-3, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Compute \(\det(A)\) by expanding along the sparsest row or column of
+\[
+A = \begin{bmatrix} 2 & 0 & -1 & 3 \\ 0 & 4 & 0 & 0 \\ 1 & 5 & 2 & 0 \\ 3 & -2 & 0 & 1 \end{bmatrix}.
+\]
+
+(A) \(52\)
+(B) \(-52\)
+(C) \(-13\)
+(D) \(-40\)
+(E) \(28\)
+[/QUESTION]
+
+=== SECTION 3: The classical adjugate and the symbolic inverse ===
+
+What happens if we take the dot product of row \(i\) of \(A\) with the cofactors of a DIFFERENT row \(k \neq i\), forming \(\sum_{j=1}^n a_{ij} C_{kj}\)? Consider the matrix \(\tilde{A}\) constructed by keeping every row of \(A\) the same EXCEPT replacing row \(k\) with a copy of row \(i\). Because row \(k\) of \(\tilde{A}\) has entries \(a_{i1}, \dots, a_{in}\) while all other rows match \(A\), the \((k, j)\)-cofactors of \(\tilde{A}\) are identical to the \((k, j)\)-cofactors \(C_{kj}\) of \(A\). Expanding \(\det(\tilde{A})\) along row \(k\) gives
+\[
+\sum_{j=1}^n a_{ij} C_{kj} = \det(\tilde{A}) = 0 \qquad (i \neq k),
+\]
+because \(\tilde{A}\) has two identical rows (rows \(i\) and \(k\))! Putting this together with [REF: laplace-expansion.1 | row cofactor expansion] gives a single unified identity for all \(1 \le i, k \le n\):
+\[
+\sum_{j=1}^n a_{ij} C_{kj} = \begin{cases} \det(A) & \text{if } i = k, \\ 0 & \text{if } i \neq k. \end{cases}
+\]
+Look at the indices on the left-hand side: \(a_{ij}\) is multiplied by \(C_{kj}\), where the summed index \(j\) is the second index of BOTH \(a_{ij}\) and \(C_{kj}\). To turn this sum into ordinary matrix multiplication (where the summed index must be the second index of the first factor and the FIRST index of the second factor), we transpose the cofactor matrix \([C_{ij}]\).
+
+[CALLOUT]
+id: adjugate-def
+label: Definition
+title: Classical adjugate matrix
+tone: key
+
+The classical adjugate (or adjoint) of \(A \in M_n(F)\), denoted \(\operatorname{adj}(A)\), is the transpose of the matrix of cofactors of \(A\):
+\[
+(\operatorname{adj}(A))_{jk} = C_{kj}.
+\]
+[/CALLOUT]
+
+Watch that transpose carefully: entry \((j, k)\) of \(\operatorname{adj}(A)\) is \(C_{kj}\), NOT \(C_{jk}\). With the transpose in place, the \((i, k)\)-entry of the product \(A\,\operatorname{adj}(A)\) is precisely \(\sum_{j=1}^n a_{ij} C_{kj}\), which equals \(\det(A)\) when \(i = k\) and \(0\) when \(i \neq k\). Applying the analogous argument to columns (multiplying column \(j\) of \(A\) against the cofactors of column \(k\)) gives the exact same result for \(\operatorname{adj}(A)\,A\).
+
+[CALLOUT]
+id: adjugate-identity
+label: Theorem
+title: Adjugate identity and explicit inverse formula
+tone: key
+
+(1) For EVERY matrix \(A \in M_n(F)\) (invertible or singular),
+\[
+A\,\operatorname{adj}(A) = \operatorname{adj}(A)\,A = \det(A)\,I_n.
+\]
+(2) Whenever \(\det(A) \neq 0\), the inverse of \(A\) is given explicitly by
+\[
+A^{-1} = \frac{1}{\det(A)}\,\operatorname{adj}(A).
+\]
+[/CALLOUT]
+
+Check this on a general \(2 \times 2\) matrix \(A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\). Its four cofactors are \(C_{11} = d\), \(C_{12} = -c\), \(C_{21} = -b\), and \(C_{22} = a\). Transposing the cofactor matrix \(\begin{bmatrix} d & -c \\ -b & a \end{bmatrix}\) gives
+\[
+\operatorname{adj}(A) = \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}, \qquad A^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix},
+\]
+recovering the standard \(2 \times 2\) inverse formula as a special case! Notice also that [REF: adjugate-identity.2 | the adjugate inverse formula] lets us extract a SINGLE entry of \(A^{-1}\) without computing the rest of the inverse: the \((i, j)\)-entry of \(A^{-1}\) is simply \(C_{ji} / \det(A)\).
+
+[QUESTION 2]
+[ANSWER: D]
+Let
+\[
+A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 3 \\ 2 & 0 & 1 \end{bmatrix}.
+\]
+Using [REF: adjugate-identity | the adjugate formula], what is the \((1, 3)\)-entry of \(A^{-1}\)?
+
+(A) \(-\dfrac{2}{13}\)
+(B) \(\dfrac{2}{13}\)
+(C) \(-\dfrac{6}{13}\)
+(D) \(\dfrac{6}{13}\)
+(E) \(\dfrac{6}{11}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Suppose \(A \in M_4(\mathbb{R})\) is invertible with \(\det(A) = 3\). What is \(\det(\operatorname{adj}(A))\)?
+
+(A) \(27\)
+(B) \(81\)
+(C) \(9\)
+(D) \(\dfrac{1}{3}\)
+(E) \(3\)
+[/QUESTION]
+
+=== SECTION 4: Cramer's Rule and computational cost ===
+
+When \(A \in M_n(F)\) is invertible and \(\mathbf{b} \in F^n\), the linear system \(A\mathbf{x} = \mathbf{b}\) has a unique solution \(\mathbf{x} = (x_1, \dots, x_n)^T = A^{-1}\mathbf{b}\). Can we write each individual coordinate \(x_j\) directly as a ratio of determinants?
+
+For any index \(j \in \{1, \dots, n\}\), let \(I_j(\mathbf{x})\) denote the \(n \times n\) matrix obtained by replacing column \(j\) of \(I_n\) with the column vector \(\mathbf{x}\), and let \(A_j(\mathbf{b})\) denote the matrix obtained by replacing column \(j\) of \(A\) with \(\mathbf{b}\). Multiply \(A\) by \(I_j(\mathbf{x})\) column by column:
+- For every \(k \neq j\), column \(k\) of \(I_j(\mathbf{x})\) is the standard basis vector \(\mathbf{e}_k\), so column \(k\) of \(A I_j(\mathbf{x})\) is \(A\mathbf{e}_k\), which is column \(k\) of \(A\).
+- For column \(j\), column \(j\) of \(A I_j(\mathbf{x})\) is \(A\mathbf{x} = \mathbf{b}\).
+
+Therefore we have the exact matrix factorization
+\[
+A\,I_j(\mathbf{x}) = A_j(\mathbf{b}).
+\]
+Now take determinants of both sides. By multiplicativity, \(\det(A)\det(I_j(\mathbf{x})) = \det(A_j(\mathbf{b}))\). To find \(\det(I_j(\mathbf{x}))\), notice that row \(j\) of \(I_j(\mathbf{x})\) has \(x_j\) in column \(j\) and \(0\) in every other column (because each column \(k \neq j\) is \(\mathbf{e}_k\), which has its single \(1\) in row \(k \neq j\)). Expanding along row \(j\) leaves a single term: \((-1)^{j+j} x_j \det(I_{n-1}) = x_j\). Thus \(\det(A) x_j = \det(A_j(\mathbf{b}))\), and dividing by \(\det(A) \neq 0\) yields Cramer's Rule.
+
+[CALLOUT]
+id: cramers-rule
+label: Theorem
+title: Cramer's Rule
+tone: key
+
+If \(A \in M_n(F)\) is invertible (\(\det(A) \neq 0\)) and \(\mathbf{b} \in F^n\), the unique solution \(\mathbf{x} = (x_1, \dots, x_n)^T\) of \(A\mathbf{x} = \mathbf{b}\) is given for each \(j = 1, \dots, n\) by
+\[
+x_j = \frac{\det(A_j(\mathbf{b}))}{\det(A)},
+\]
+where \(A_j(\mathbf{b})\) is formed by replacing column \(j\) of \(A\) with \(\mathbf{b}\).
+[/CALLOUT]
+
+As a quick worked example, suppose we only need \(x_2\) in the system
+\[
+\begin{bmatrix} 2 & 1 & 0 \\ 1 & 3 & 1 \\ 0 & 2 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 5 \\ 4 \\ 1 \end{bmatrix}.
+\]
+Expanding along row \(1\), \(\det(A) = 2(3 - 2) - 1(1 - 0) = 2 - 1 = 1\). Replacing column \(2\) by \(\mathbf{b}\) gives
+\[
+A_2(\mathbf{b}) = \begin{bmatrix} 2 & 5 & 0 \\ 1 & 4 & 1 \\ 0 & 1 & 1 \end{bmatrix}, \qquad \det(A_2(\mathbf{b})) = 2(4 - 1) - 5(1 - 0) = 6 - 5 = 1,
+\]
+so \(x_2 = 1/1 = 1\).
+
+It is tempting to ask: since [REF: laplace-expansion | cofactor expansion], [REF: adjugate-identity | the adjugate], and [REF: cramers-rule | Cramer's Rule] give closed-form formulas, why do numerical linear algebra libraries still use Gaussian elimination? Count the arithmetic operations! Naive cofactor expansion of an \(n \times n\) matrix makes \(n\) recursive calls of size \(n - 1\), so its operation count grows like \(n!\) (factorial). For \(n = 20\), \(20! \approx 2.4 \times 10^{18}\) operations—even at one billion operations per second, naive cofactor expansion would take over \(75\) years for a single \(20 \times 20\) determinant, and Cramer's Rule would need \(21\) such determinants! By contrast, Gaussian elimination takes roughly \(\frac{2}{3} n^3\) operations—fewer than \(6000\) operations for \(n = 20\), finishing in microseconds.
+
+[TABLE]
+Method | Operation cost (general dense \(n \times n\)) | Best use case
+Gaussian elimination | \(O(n^3)\) | Numeric determinants, solving \(A\mathbf{x} = \mathbf{b}\), computing \(A^{-1}\) for \(n \ge 4\)
+Laplace cofactor expansion | \(O(n!)\) naive | Small \(n\) (\(n \le 3\)), very sparse rows/columns, symbolic parameters, theoretical proofs
+Adjugate & Cramer's Rule | \(O((n+1)!)\) naive (or \(O(n^4)\) with elimination) | Symbolic formulas for \(A^{-1}\) or one coordinate \(x_j\), theoretical dependence on parameters (e.g., proving \(A^{-1}\) entries are rational functions of entries of \(A\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: C]
+Consider the parameter-dependent linear system
+\[
+\begin{bmatrix} k & 1 & 0 \\ 1 & k & 1 \\ 0 & 1 & k \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix},
+\]
+where \(k \in \mathbb{R}\) is chosen so the coefficient matrix is invertible. Using [REF: cramers-rule | Cramer's Rule], what is \(x_2\) as a function of \(k\)?
+
+(A) \(\dfrac{3}{k^2 - 2}\)
+(B) \(\dfrac{-3}{k^2 + 2}\)
+(C) \(\dfrac{-3}{k^2 - 2}\)
+(D) \(\dfrac{-1}{k^2 - 2}\)
+(E) \(\dfrac{3}{k^2 + 2}\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Suppose \(A\) is a dense \(15 \times 15\) matrix with real floating-point entries and \(\mathbf{b} \in \mathbb{R}^{15}\). Which assessment accurately compares computing the solution \(\mathbf{x}\) of \(A\mathbf{x} = \mathbf{b}\) via Gaussian elimination versus via naive Cramer's Rule (evaluating each determinant by recursive cofactor expansion)?
+
+(A) Both methods require \(O(n^3)\) arithmetic operations, so they have comparable runtime for \(n = 15\).
+(B) Naive Cramer's Rule is faster because it avoids row swaps and division until the final step.
+(C) Naive Cramer's Rule fails to give the exact mathematical solution whenever \(n > 3\).
+(D) Gaussian elimination requires \(O(n!)\) operations when \(\det(A)\) is also needed, making Cramer's Rule preferable.
+(E) Both methods define the same exact solution when \(\det(A) \neq 0\), but naive Cramer's Rule requires \(O((n+1)!)\) operations and is vastly slower than \(O(n^3)\) Gaussian elimination.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suppose \(A \in M_n(\mathbb{Z})\) is a matrix with integer entries. Which condition is BOTH necessary and sufficient for \(A^{-1}\) to exist AND also have all integer entries (\(A^{-1} \in M_n(\mathbb{Z})\))?
+
+(A) \(\det(A) \neq 0\)
+(B) \(\det(A) \in \{-1, 1\}\)
+(C) \(\det(A) = 1\)
+(D) Every entry of \(\operatorname{adj}(A)\) is divisible by \(n\)
+(E) \(\det(A)\) is a nonzero odd integer
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose \(A \in M_n(\mathbb{R})\) (\(n \ge 3\)) has rank strictly less than \(n - 1\). What is \(\operatorname{adj}(A)\)?
+
+(A) The zero matrix \(0 \in M_n(\mathbb{R})\)
+(B) A matrix of rank \(1\)
+(C) A matrix of rank \(n - 1\)
+(D) An invertible matrix with determinant \(1\)
+(E) Impossible to determine without knowing the exact entries of \(A\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Let \(A \in M_n(\mathbb{R})\) (\(n \ge 2\)) be invertible, and let \(C\) be the cofactor matrix of \(A\) (so \(\operatorname{adj}(A) = C^T\)). Express \(\operatorname{adj}(\operatorname{adj}(A))\) in terms of \(A\) and \(\det(A)\).
+
+(A) \((\det A)^{n-1} A\)
+(B) \((\det A)^{n-2} A^T\)
+(C) \((\det A)^{-1} A\)
+(D) \((\det A)^{n-2} A\)
+(E) \((\det A)^{n} A^{-1}\)
+[/BONUS]

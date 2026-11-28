@@ -1,0 +1,218 @@
+=== SECTION 1: The algebraic dot product and its laws ===
+
+Suppose you are given two planar vectors in component form, \(\mathbf{u} = \langle 4, 1 \rangle\) and \(\mathbf{v} = \langle 1, 3 \rangle\), and you want to know the angle \(\theta\) between them. Finding each vector's direction angle separately with \(\arctan\) and subtracting them is clumsy—and it fails to generalize cleanly to geometry where no coordinate axes are preferred. Is there a single algebraic operation on the components of \(\mathbf{u}\) and \(\mathbf{v}\) that captures the angle between them directly?
+
+There is, and it is remarkably simple to compute: multiply matching components and add the results.
+
+[CALLOUT]
+id: dot-def
+label: Definition
+title: The 2D dot (scalar) product
+tone: key
+
+For any two vectors \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\) in \(\mathbb{R}^2\), their dot product (or scalar product) \(\mathbf{u} \cdot \mathbf{v}\) is the real number
+\[
+\mathbf{u} \cdot \mathbf{v} = u_x v_x + u_y v_y.
+\]
+[/CALLOUT]
+
+Notice what type of object \(\mathbf{u} \cdot \mathbf{v}\) is: you put two vectors in, and a single real number (a scalar) comes out. For \(\mathbf{u} = \langle 4, 1 \rangle\) and \(\mathbf{v} = \langle 1, 3 \rangle\), we get \(\mathbf{u} \cdot \mathbf{v} = (4)(1) + (1)(3) = 7\). For \(\mathbf{a} = \langle 2, -5 \rangle\) and \(\mathbf{b} = \langle 3, 2 \rangle\), we get \(\mathbf{a} \cdot \mathbf{b} = (2)(3) + (-5)(2) = -4\).
+
+[CALLOUT]
+id: dot-scalar-caution
+label: Common pitfall
+title: The dot product outputs a scalar, not a vector
+tone: caution
+
+Never write \(\mathbf{u} \cdot \mathbf{v} = \langle u_x v_x, u_y v_y \rangle\); you must sum the products into one real number. For the same reason, an expression like \((\mathbf{u} \cdot \mathbf{v}) \cdot \mathbf{w}\) makes no sense (you cannot dot a scalar with a vector), whereas \((\mathbf{u} \cdot \mathbf{v})\mathbf{w}\) is perfectly valid—it is the scalar \(\mathbf{u} \cdot \mathbf{v}\) multiplying the vector \(\mathbf{w}\).
+[/CALLOUT]
+
+Because [REF: dot-def | the dot product] is built directly from real-number multiplication and addition, it obeys clean algebraic laws that let us expand expressions just like ordinary binomials. Let us check each law directly from components for \(\mathbf{u} = \langle u_x, u_y \rangle\), \(\mathbf{v} = \langle v_x, v_y \rangle\), \(\mathbf{w} = \langle w_x, w_y \rangle\), and scalar \(k \in \mathbb{R}\):
+- Commutativity: \(\mathbf{u} \cdot \mathbf{v} = u_x v_x + u_y v_y = v_x u_x + v_y u_y = \mathbf{v} \cdot \mathbf{u}\).
+- Distributivity: \(\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = u_x(v_x + w_x) + u_y(v_y + w_y) = (u_x v_x + u_y v_y) + (u_x w_x + u_y w_y) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}\).
+- Scalar homogeneity: \((k\mathbf{u}) \cdot \mathbf{v} = (k u_x)v_x + (k u_y)v_y = k(u_x v_x + u_y v_y) = k(\mathbf{u} \cdot \mathbf{v})\), and similarly \(\mathbf{u} \cdot (k\mathbf{v}) = k(\mathbf{u} \cdot \mathbf{v})\).
+- Norm-squared identity: \(\mathbf{v} \cdot \mathbf{v} = v_x^2 + v_y^2 = \|\mathbf{v}\|^2\).
+- Zero vector: \(\mathbf{0} \cdot \mathbf{v} = 0 \cdot v_x + 0 \cdot v_y = 0\).
+
+[CALLOUT]
+id: dot-laws
+label: Theorem
+title: Algebraic properties of the dot product
+tone: key
+
+For all \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^2\) and all real scalars \(k\):
+
+(1) Commutativity: \(\mathbf{u} \cdot \mathbf{v} = \mathbf{v} \cdot \mathbf{u}\).
+(2) Distributivity: \(\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}\).
+(3) Scalar homogeneity: \((k\mathbf{u}) \cdot \mathbf{v} = k(\mathbf{u} \cdot \mathbf{v}) = \mathbf{u} \cdot (k\mathbf{v})\).
+(4) Link to magnitude: \(\mathbf{v} \cdot \mathbf{v} = \|\mathbf{v}\|^2\), so \(\mathbf{v} \cdot \mathbf{v} \ge 0\) with \(\mathbf{v} \cdot \mathbf{v} = 0 \iff \mathbf{v} = \mathbf{0}\).
+[/CALLOUT]
+
+Notice how [REF: dot-laws | these laws] let us expand squared lengths without components! For instance,
+\[
+\|\mathbf{u} + \mathbf{v}\|^2 = (\mathbf{u} + \mathbf{v}) \cdot (\mathbf{u} + \mathbf{v}) = \mathbf{u} \cdot \mathbf{u} + \mathbf{u} \cdot \mathbf{v} + \mathbf{v} \cdot \mathbf{u} + \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 + 2(\mathbf{u} \cdot \mathbf{v}) + \|\mathbf{v}\|^2.
+\]
+That expansion is the exact bridge we need to connect \(u_x v_x + u_y v_y\) to geometry.
+
+[QUESTION 1]
+[ANSWER: B]
+Suppose \(\mathbf{u}\) and \(\mathbf{v}\) are vectors in \(\mathbb{R}^2\) with \(\|\mathbf{u}\| = 3\), \(\|\mathbf{v}\| = 5\), and \(\mathbf{u} \cdot \mathbf{v} = -4\). What is \((2\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} + 3\mathbf{v})\)?
+
+(A) \(-37\)
+(B) \(-77\)
+(C) \(-29\)
+(D) \(-65\)
+(E) \(73\)
+[/QUESTION]
+
+=== SECTION 2: The geometric dot product formula via the Law of Cosines ===
+
+Why does \(u_x v_x + u_y v_y\) know anything about the angle \(\theta\) between two nonzero vectors \(\mathbf{u}\) and \(\mathbf{v}\)? Let us derive the geometric meaning directly rather than taking it on faith.
+
+Place two nonzero vectors \(\mathbf{u}\) and \(\mathbf{v}\) tail-to-tail at the origin, and let \(\theta \in [0, \pi]\) (that is, \(0^\circ \le \theta \le 180^\circ\)) be the smaller angle between them. First suppose \(\mathbf{u}\) and \(\mathbf{v}\) are not parallel, so \(0 < \theta < \pi\). Then \(\mathbf{u}\), \(\mathbf{v}\), and the difference vector \(\mathbf{u} - \mathbf{v}\) form a genuine triangle whose side lengths are \(\|\mathbf{u}\|\), \(\|\mathbf{v}\|\), and \(\|\mathbf{u} - \mathbf{v}\|\), with angle \(\theta\) opposite the side of length \(\|\mathbf{u} - \mathbf{v}\|\).
+
+[GRAPH]
+type: parametric2d
+title: Triangle formed by \(\mathbf{u} = \langle 4, 1 \rangle\), \(\mathbf{v} = \langle 1, 3 \rangle\), and \(\mathbf{u} - \mathbf{v}\) with included angle \(\theta\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 5
+yrange: -0.5, 4
+trace: 4*t, t | label: \(\mathbf{u}\) | color: #2563eb
+trace: t, 3*t | label: \(\mathbf{v}\) | color: #d97706
+trace: 1 + 3*t, 3 - 2*t | label: \(\mathbf{u} - \mathbf{v}\) | color: #16a34a
+trace: 1.1*cos(0.245 + 1.004*t), 1.1*sin(0.245 + 1.004*t) | label: \(\theta\) | color: #7c3aed
+point: 0, 0 | label: \(O\)
+point: 4, 1 | label: \(\mathbf{u}\)
+point: 1, 3 | label: \(\mathbf{v}\)
+[/GRAPH]
+
+Now compute \(\|\mathbf{u} - \mathbf{v}\|^2\) in two different ways:
+1. Geometrically, by the Law of Cosines applied to the triangle above:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2\|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+2. Algebraically, by expanding \((\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v})\) via [REF: dot-laws | the dot-product laws]:
+\[
+\|\mathbf{u} - \mathbf{v}\|^2 = (\mathbf{u} - \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = \mathbf{u} \cdot \mathbf{u} - 2(\mathbf{u} \cdot \mathbf{v}) + \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2(\mathbf{u} \cdot \mathbf{v}).
+\]
+
+Both expressions equal \(\|\mathbf{u} - \mathbf{v}\|^2\). Setting them equal, the \(\|\mathbf{u}\|^2 + \|\mathbf{v}\|^2\) terms cancel on both sides, leaving
+\[
+-2(\mathbf{u} \cdot \mathbf{v}) = -2\|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+Dividing both sides by \(-2\) produces the geometric dot product formula:
+\[
+\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+What about the degenerate cases where \(\mathbf{u}\) and \(\mathbf{v}\) are parallel? If \(\theta = 0\), then \(\mathbf{v} = c\mathbf{u}\) with \(c > 0\), so \(\mathbf{u} \cdot \mathbf{v} = c\|\mathbf{u}\|^2 = \|\mathbf{u}\|(c\|\mathbf{u}\|) = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos 0\). If \(\theta = \pi\), then \(\mathbf{v} = -c\mathbf{u}\) with \(c > 0\), so \(\mathbf{u} \cdot \mathbf{v} = -c\|\mathbf{u}\|^2 = -\|\mathbf{u}\|\,\|\mathbf{v}\| = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\pi\). So the formula holds for EVERY pair of nonzero planar vectors!
+
+[CALLOUT]
+id: dot-geom
+label: Theorem
+title: Geometric dot product and angle formula
+tone: key
+
+For any two nonzero vectors \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) with included angle \(\theta \in [0, \pi]\) (when placed tail-to-tail):
+
+(1) Geometric dot product:
+\[
+\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta.
+\]
+(2) Angle formula:
+\[
+\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}, \qquad \theta = \arccos\left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\right) \in [0, \pi].
+\]
+[/CALLOUT]
+
+Notice how [REF: dot-geom.2 | the angle formula] beats \(\arctan\): because \(\arccos\) outputs values across the entire interval \([0^\circ, 180^\circ]\), there is no quadrant ambiguity at all! Just make sure the two vectors are placed tail-to-tail when interpreting \(\theta\)—for example, to find interior angle \(\angle ABC\) at vertex \(B\) of a triangle, dot \(\overrightarrow{BA}\) and \(\overrightarrow{BC}\) (both starting at \(B\)), not \(\overrightarrow{AB}\) and \(\overrightarrow{BC}\).
+
+Let us return to our opening pair \(\mathbf{u} = \langle 4, 1 \rangle\) and \(\mathbf{v} = \langle 1, 3 \rangle\). We have \(\mathbf{u} \cdot \mathbf{v} = 7\), \(\|\mathbf{u}\| = \sqrt{17}\), and \(\|\mathbf{v}\| = \sqrt{10}\), so
+\[
+\cos\theta = \frac{7}{\sqrt{17}\sqrt{10}} = \frac{7}{\sqrt{170}} \approx 0.5369 \implies \theta \approx 57.5^\circ.
+\]
+
+=== SECTION 3: Sign of the dot product and the 2D Cauchy–Schwarz inequality ===
+
+Look closely at [REF: dot-geom.1 | the geometric formula] \(\mathbf{u} \cdot \mathbf{v} = \|\mathbf{u}\|\,\|\mathbf{v}\|\cos\theta\). For nonzero vectors, both \(\|\mathbf{u}\|\) and \(\|\mathbf{v}\|\) are strictly positive, so the sign of \(\mathbf{u} \cdot \mathbf{v}\) is determined entirely by the sign of \(\cos\theta\) on \([0^\circ, 180^\circ]\). That means you can classify the angle between two vectors immediately from \(u_x v_x + u_y v_y\), without ever computing a square root or an inverse cosine!
+
+[TABLE]
+Sign of \(\mathbf{u} \cdot \mathbf{v}\) (nonzero \(\mathbf{u}, \mathbf{v}\)) | Sign of \(\cos\theta\) | Angle \(\theta \in [0^\circ, 180^\circ]\) | Geometric relationship
+\(\mathbf{u} \cdot \mathbf{v} > 0\) | \(\cos\theta > 0\) | \(0^\circ \le \theta < 90^\circ\) | Acute angle (same direction when \(\theta = 0^\circ\))
+\(\mathbf{u} \cdot \mathbf{v} = 0\) | \(\cos\theta = 0\) | \(\theta = 90^\circ\) | Right angle (perpendicular)
+\(\mathbf{u} \cdot \mathbf{v} < 0\) | \(\cos\theta < 0\) | \(90^\circ < \theta \le 180^\circ\) | Obtuse angle (opposite direction when \(\theta = 180^\circ\))
+[/TABLE]
+
+Drag the slider \(a\) (the angle \(\theta\) in radians from \(0\) to \(\pi\)) below to watch a vector \(\mathbf{v}\) rotate relative to \(\mathbf{u} = \langle 3, 0 \rangle\). For \(a < \frac{\pi}{2} \approx 1.57\), \(\mathbf{v}\) leans forward into the same half-plane as \(\mathbf{u}\) (\(\mathbf{u} \cdot \mathbf{v} > 0\)); at \(a = \frac{\pi}{2}\), they meet at a right angle (\(\mathbf{u} \cdot \mathbf{v} = 0\)); for \(a > \frac{\pi}{2}\), \(\mathbf{v}\) leans backward (\(\mathbf{u} \cdot \mathbf{v} < 0\)).
+
+[GRAPH]
+type: parametric2d
+title: Rotating \(\mathbf{v}\) through acute, right, and obtuse angles relative to \(\mathbf{u} = \langle 3, 0 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -3.2, 3.6
+yrange: -0.6, 3.2
+trace: 2*cos(t), 2*sin(t) | label: semicircle of radius \(2\) | color: #cbd5e1
+segment: 0, 0, 3, 0 | label: \(\mathbf{u}\) | color: #2563eb
+segment: 0, 0, 2*cos(a), 2*sin(a) | label: \(\mathbf{v}\) | color: #dc2626
+segment: 0, 0, 0, 2.5 | dashed: true
+point: 3, 0 | label: \(\mathbf{u}\)
+point: 2*cos(a), 2*sin(a) | label: \(\mathbf{v}\)
+slider: a | range: 0, 3.1416 | init: 1.0 | step: 0.1571
+[/GRAPH]
+
+One more important inequality drops straight out of [REF: dot-geom.1 | the geometric dot product]. Because \(|\cos\theta| \le 1\) for every angle \(\theta\), taking absolute values gives
+\[
+|\mathbf{u} \cdot \mathbf{v}| = \|\mathbf{u}\|\,\|\mathbf{v}\|\,|\cos\theta| \le \|\mathbf{u}\|\,\|\mathbf{v}\|.
+\]
+If either \(\mathbf{u} = \mathbf{0}\) or \(\mathbf{v} = \mathbf{0}\), both sides are \(0\) and the inequality still holds. This is the 2D Cauchy–Schwarz inequality:
+\[
+|\mathbf{u} \cdot \mathbf{v}| \le \|\mathbf{u}\|\,\|\mathbf{v}\|, \qquad \text{or in components,} \qquad |u_x v_x + u_y v_y| \le \sqrt{u_x^2 + u_y^2}\sqrt{v_x^2 + v_y^2}.
+\]
+Equality holds if and only if \(|\cos\theta| = 1\) (or one vector is \(\mathbf{0}\))—that is, when \(\mathbf{u}\) and \(\mathbf{v}\) are parallel. As an immediate sanity check when computing angles, if you ever get \(\left|\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\right| > 1\), Cauchy–Schwarz guarantees an arithmetic error occurred somewhere!
+
+[QUESTION 2]
+[ANSWER: C]
+What is the exact angle \(\theta \in [0^\circ, 180^\circ]\) between the vectors \(\mathbf{u} = \langle 2, 1 \rangle\) and \(\mathbf{v} = \langle -3, 1 \rangle\)?
+
+(A) \(45^\circ\)
+(B) \(120^\circ\)
+(C) \(135^\circ\)
+(D) \(150^\circ\)
+(E) \(60^\circ\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+Triangle \(ABC\) has vertices \(A(0, 1)\), \(B(2, 2)\), and \(C(1, 5)\). Classify the interior angle \(\angle ABC\) at vertex \(B\).
+
+(A) Acute, because \(\overrightarrow{AB} \cdot \overrightarrow{BC} = 1 > 0\)
+(B) Obtuse, because \(\overrightarrow{BA} \cdot \overrightarrow{BC} = -1 < 0\)
+(C) Right, because \(\overrightarrow{BA} \cdot \overrightarrow{BC} = 0\)
+(D) Obtuse, because \(\overrightarrow{BA} \cdot \overrightarrow{BC} = -5 < 0\)
+(E) Acute, because \(\overrightarrow{BA} \cdot \overrightarrow{BC} = 5 > 0\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suppose \(\mathbf{u}\) and \(\mathbf{v}\) are nonzero vectors in \(\mathbb{R}^2\) satisfying \(\|\mathbf{u} + \mathbf{v}\| = \|\mathbf{u} - \mathbf{v}\|\). What must be the angle \(\theta\) between \(\mathbf{u}\) and \(\mathbf{v}\)?
+
+(A) \(0^\circ\)
+(B) \(45^\circ\)
+(C) \(60^\circ\)
+(D) \(90^\circ\)
+(E) It cannot be determined without knowing \(\|\mathbf{u}\|\) and \(\|\mathbf{v}\|\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Using the 2D Cauchy–Schwarz inequality, what is the maximum possible value of \(3x + 4y\) over all real pairs \((x, y)\) satisfying \(x^2 + y^2 = 9\)?
+
+(A) \(7\)
+(B) \(9\)
+(C) \(12\)
+(D) \(21\)
+(E) \(15\)
+[/BONUS]

@@ -1,0 +1,294 @@
+=== SECTION 1: Full column rank and left inverses ===
+
+For a square \(n \times n\) matrix, the Invertible Matrix Theorem tells us that column independence, column spanning, uniqueness, existence, left inverses, and right inverses all happen together or fail together. Once a matrix \(A\) is rectangular (\(m \neq n\)), those properties split cleanly in half:
+- A tall matrix (\(m > n\)) can have independent columns (\(\operatorname{rank}(A) = n\)), giving at most one solution to \(A\mathbf{x} = \mathbf{b}\), but its \(n\) columns can NEVER span all of \(\mathbb{R}^m\) because \(\operatorname{rank}(A) \le n < m\).
+- A wide matrix (\(m < n\)) can have columns that span \(\mathbb{R}^m\) (\(\operatorname{rank}(A) = m\)), making \(A\mathbf{x} = \mathbf{b}\) always consistent, but its \(n\) columns can NEVER be linearly independent because \(\operatorname{nullity}(A) = n - m > 0\).
+
+Let us analyze the tall (full column rank) case first. An \(m \times n\) matrix \(A\) has full column rank when \(\operatorname{rank}(A) = n\) (which requires \(n \le m\)). Can such a matrix still have a one-sided inverse \(CA = I_n\)?
+
+Wait: if \(A\) is \(m \times n\) with full column rank \(n\), we cannot invert \(A\) directly because \(A\) is not square. How can we manufacture a SQUARE \(n \times n\) invertible matrix out of \(A\)? Multiply \(A\) on the left by its transpose \(A^T\)! The resulting \(n \times n\) symmetric matrix \(A^T A\) (often called the Gram matrix of the columns of \(A\)) is square, and we can test its invertibility by checking whether \((A^T A)\mathbf{x} = \mathbf{0}\) has only the trivial solution!
+
+Watch this three-line argument—one of the cleanest tricks in linear algebra. Suppose \((A^T A)\mathbf{x} = \mathbf{0}\) for some \(\mathbf{x} \in \mathbb{R}^n\). Left-multiply both sides by \(\mathbf{x}^T\):
+\[
+\mathbf{x}^T (A^T A) \mathbf{x} = \mathbf{x}^T \mathbf{0} = 0.
+\]
+Using \((A\mathbf{x})^T = \mathbf{x}^T A^T\), rewrite the left side as a sum of squares of the entries of the vector \(\mathbf{y} = A\mathbf{x} \in \mathbb{R}^m\):
+\[
+(A\mathbf{x})^T (A\mathbf{x}) = y_1^2 + y_2^2 + \cdots + y_m^2 = 0.
+\]
+Because the entries \(y_i\) are real numbers, a sum of squares equals \(0\) if and only if every single entry is \(0\), i.e., \(A\mathbf{x} = \mathbf{0}\)! And because \(A\) has full column rank, \(\operatorname{Null}(A) = \{\mathbf{0}\}\), which forces \(\mathbf{x} = \mathbf{0}\)! Therefore \((A^T A)\mathbf{x} = \mathbf{0}\) has only the trivial solution, so by the Invertible Matrix Theorem the square matrix \(A^T A\) is INVERTIBLE!
+
+Once \((A^T A)^{-1}\) exists, look what happens when we define the \(n \times m\) matrix
+\[
+C_* = (A^T A)^{-1} A^T:
+\]
+\[
+C_* A = (A^T A)^{-1} A^T A = (A^T A)^{-1} (A^T A) = I_n!
+\]
+We have just constructed an explicit left inverse of EVERY full-column-rank matrix!
+
+[CALLOUT]
+id: full-col-rank
+label: Theorem
+title: Characterizations of full column rank
+tone: key
+
+Let \(A\) be a real \(m \times n\) matrix (necessarily \(n \le m\) for these conditions to hold). The following six statements are equivalent:
+
+(1) \(A\) has full column rank: \(\operatorname{rank}(A) = n\).
+(2) The columns of \(A\) are linearly independent.
+(3) \(\operatorname{Null}(A) = \{\mathbf{0}\}\) (equivalently, \(\operatorname{nullity}(A) = 0\)).
+(4) For every \(\mathbf{b} \in \mathbb{R}^m\), the system \(A\mathbf{x} = \mathbf{b}\) has AT MOST ONE solution (either unique or inconsistent).
+(5) The \(n \times n\) matrix \(A^T A\) is invertible.
+(6) \(A\) has a left inverse: there exists an \(n \times m\) matrix \(C\) with \(CA = I_n\). In particular, \(C_* = (A^T A)^{-1} A^T\) is always a left inverse of \(A\).
+[/CALLOUT]
+
+Let us close the loop on [REF: full-col-rank | the theorem]: \((1) \iff (2) \iff (3) \iff (4)\) all follow directly from Rank-Nullity (\(\operatorname{rank}(A) = n \iff \operatorname{nullity}(A) = 0\)) and solution-set structure. We just proved \((3) \implies (5) \implies (6)\). Finally, \((6) \implies (3)\) takes one line: if \(CA = I_n\) and \(A\mathbf{x} = \mathbf{0}\), then \(\mathbf{x} = I_n \mathbf{x} = (CA)\mathbf{x} = C(A\mathbf{x}) = C\mathbf{0} = \mathbf{0}\).
+
+Now comes a vital surprise when \(m > n\): unlike two-sided inverses of square matrices, left inverses are NOT UNIQUE!
+
+Let us see this on a concrete \(3 \times 2\) matrix of rank \(2\):
+\[
+A = \begin{bmatrix} 1 & 0 \\ 1 & 1 \\ 0 & 1 \end{bmatrix}.
+\]
+Compute the canonical left inverse \(C_* = (A^T A)^{-1} A^T\):
+\[
+A^T A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}, \qquad
+(A^T A)^{-1} = \frac{1}{3} \begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix}.
+\]
+Multiplying by \(A^T\) gives
+\[
+C_* = \frac{1}{3} \begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix} \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \end{bmatrix}
+= \frac{1}{3} \begin{bmatrix} 2 & 1 & -1 \\ -1 & 1 & 2 \end{bmatrix}.
+\]
+Check: \(C_* A = \frac{1}{3} \begin{bmatrix} 3 & 0 \\ 0 & 3 \end{bmatrix} = I_2\). Yet by inspection, look at
+\[
+C_2 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}:
+\]
+multiplying \(C_2 A\) ALSO gives \(\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I_2\)! In fact, because \(\operatorname{nullity}(A^T) = m - n = 3 - 2 = 1\), there is a nonzero row vector \(\mathbf{z}^T = \begin{bmatrix} 1 & -1 & 1 \end{bmatrix}\) satisfying \(\mathbf{z}^T A = \mathbf{0}^T\). Adding ANY multiples of \(\mathbf{z}^T\) to the rows of \(C_*\) produces infinitely many distinct left inverses of \(A\)!
+
+We can visualize that infinite family directly for the simplest tall matrix \(A_1 = \begin{bmatrix} 1 \\ 2 \end{bmatrix}\) (\(2 \times 1\), rank \(1\)). A \(1 \times 2\) matrix \(C = \begin{bmatrix} c_1 & c_2 \end{bmatrix}\) satisfies \(C A_1 = [1]\) if and only if
+\[
+c_1 + 2 c_2 = 1.
+\]
+Every single point on that line in the \((c_1, c_2)\)-plane is a valid left inverse of \(A_1\)! The formula \(C_* = (A_1^T A_1)^{-1} A_1^T = \begin{bmatrix} 1/5 & 2/5 \end{bmatrix}\) picks out one special point on the line, alongside \((1, 0)\), \((0, 0.5)\), and infinitely many others.
+
+[GRAPH]
+type: function2d
+title: All \(1 \times 2\) left inverses \(C = [c_1 \; c_2]\) of \(A_1 = [1, 2]^T\) lie on \(c_1 + 2 c_2 = 1\)
+xlabel: \(c_1\)
+ylabel: \(c_2\)
+xrange: -1.5, 2.5
+yrange: -1, 1.5
+aspect: equal
+trace: (1 - x) / 2 | label: \(c_1 + 2 c_2 = 1\) | color: #2563eb
+point: 0.2, 0.4 | label: \(C_* = (0.2, 0.4)\) | color: #dc2626
+point: 1, 0 | label: \((1, 0)\) | color: #059669
+point: 0, 0.5 | label: \((0, 0.5)\) | color: #059669
+segment: 0, 0, 0.2, 0.4 | color: #dc2626 | dashed: true
+[/GRAPH]
+
+=== SECTION 2: Full row rank and right inverses ===
+
+Now flip the shape: an \(m \times n\) matrix \(A\) has full row rank when \(\operatorname{rank}(A) = m\) (which requires \(m \le n\)).
+
+Because \(\operatorname{rank}(A^T) = \operatorname{rank}(A)\), saying that \(A\) (\(m \times n\)) has full row rank \(m\) is IDENTICAL to saying that \(A^T\) (\(n \times m\)) has full COLUMN rank \(m\)! Every single statement of [REF: full-col-rank | the full-column-rank theorem] immediately translates by replacing \(A\) with \(A^T\):
+- \((A^T)^T A^T = A A^T\) is an invertible \(m \times m\) matrix!
+- A left inverse \(C\) of \(A^T\) satisfies \(C A^T = I_m\); taking the transpose of both sides gives \(A C^T = I_m\), so \(D = C^T\) is a RIGHT inverse of \(A\)!
+- Transposing the canonical left inverse \(C_* = (A A^T)^{-1} A\) of \(A^T\) produces the explicit canonical right inverse of \(A\):
+\[
+D_* = A^T (A A^T)^{-1}, \qquad A D_* = (A A^T)(A A^T)^{-1} = I_m!
+\]
+- Given ANY \(\mathbf{b} \in \mathbb{R}^m\), the vector \(\mathbf{x}_p = D\mathbf{b}\) automatically solves \(A\mathbf{x}_p = (AD)\mathbf{b} = I_m \mathbf{b} = \mathbf{b}\), proving \(A\mathbf{x} = \mathbf{b}\) is consistent for every \(\mathbf{b} \in \mathbb{R}^m\) (with \(n - m\) free parameters by Rank-Nullity).
+
+[CALLOUT]
+id: full-row-rank
+label: Theorem
+title: Characterizations of full row rank
+tone: key
+
+Let \(A\) be a real \(m \times n\) matrix (necessarily \(m \le n\) for these conditions to hold). The following six statements are equivalent:
+
+(1) \(A\) has full row rank: \(\operatorname{rank}(A) = m\).
+(2) \(\operatorname{Col}(A) = \mathbb{R}^m\) (the columns of \(A\) span \(\mathbb{R}^m\)).
+(3) For every \(\mathbf{b} \in \mathbb{R}^m\), the system \(A\mathbf{x} = \mathbf{b}\) is consistent, with exactly \(n - m\) free parameters.
+(4) \(A^T\) has full column rank.
+(5) The \(m \times m\) matrix \(A A^T\) is invertible.
+(6) \(A\) has a right inverse: there exists an \(n \times m\) matrix \(D\) with \(AD = I_m\). In particular, \(D_* = A^T (A A^T)^{-1}\) is always a right inverse of \(A\).
+[/CALLOUT]
+
+Just like left inverses for tall matrices, right inverses of wide matrices (\(n > m\)) are NEVER unique: adding any \(n \times m\) matrix \(E\) whose columns lie in \(\operatorname{Null}(A)\) (so \(AE = 0\)) to \(D_*\) produces another right inverse \(D_* + E\).
+
+Let us compute \(D_* = A^T (A A^T)^{-1}\) for the \(2 \times 3\) full-row-rank matrix
+\[
+B = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \end{bmatrix}.
+\]
+First form the \(2 \times 2\) matrix \(B B^T\):
+\[
+B B^T = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 2 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 5 & 2 \\ 2 & 2 \end{bmatrix}.
+\]
+Its inverse is \((B B^T)^{-1} = \frac{1}{6} \begin{bmatrix} 2 & -2 \\ -2 & 5 \end{bmatrix}\). Therefore
+\[
+D_* = B^T (B B^T)^{-1} = \frac{1}{6} \begin{bmatrix} 1 & 0 \\ 2 & 1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 2 & -2 \\ -2 & 5 \end{bmatrix} = \frac{1}{6} \begin{bmatrix} 2 & -2 \\ 2 & 1 \\ -2 & 5 \end{bmatrix}.
+\]
+Verify: \(B D_* = \frac{1}{6} \begin{bmatrix} 2 + 4 & -2 + 2 \\ 2 - 2 & 1 + 5 \end{bmatrix} = I_2\). (And notice that \(D_2 = \begin{bmatrix} 1 & 0 \\ 0 & 0 \\ 0 & 1 \end{bmatrix}\) is a different right inverse of \(B\), confirming non-uniqueness!)
+
+We can now classify EVERY \(m \times n\) matrix in one table.
+
+[TABLE]
+Rank case for \(m \times n\) matrix \(A\) | Solutions of \(A\mathbf{x} = \mathbf{b}\) | One-sided / two-sided inverses
+Full rank and square (\(r = m = n\)) | Exactly \(1\) solution for every \(\mathbf{b}\) | Unique two-sided inverse \(A^{-1}\)
+Full column rank, tall (\(r = n < m\)) | \(0\) or \(1\) solution (at most one) | Infinitely many left inverses; NO right inverse
+Full row rank, wide (\(r = m < n\)) | Infinitely many solutions (\(n - m\) free) for every \(\mathbf{b}\) | Infinitely many right inverses; NO left inverse
+Rank-deficient (\(r < m\) and \(r < n\)) | \(0\) or infinitely many solutions | Neither a left inverse nor a right inverse
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: D]
+Let \(A\) be a real \(5 \times 3\) matrix with \(\operatorname{rank}(A) = 3\). Which statement is FALSE?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) has at most one solution for every \(\mathbf{b} \in \mathbb{R}^5\)
+(B) The \(3 \times 3\) matrix \(A^T A\) is invertible
+(C) \(A\) has infinitely many \(3 \times 5\) left inverses \(C\) satisfying \(CA = I_3\)
+(D) The \(5 \times 5\) matrix \(A A^T\) is invertible
+(E) \(\operatorname{Null}(A) = \{\mathbf{0}\}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Let
+\[
+A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \end{bmatrix}.
+\]
+What is the right inverse \(D_* = A^T (A A^T)^{-1}\) of \(A\)?
+
+(A) \(\frac{1}{3} \begin{bmatrix} 2 & -1 \\ 1 & 1 \\ -1 & 2 \end{bmatrix}\)
+(B) \(\frac{1}{3} \begin{bmatrix} 2 & 1 \\ -1 & 1 \\ -1 & 2 \end{bmatrix}\)
+(C) \(\frac{1}{3} \begin{bmatrix} 2 & -1 \\ 3 & 1 \\ -1 & 2 \end{bmatrix}\)
+(D) \(\frac{1}{3} \begin{bmatrix} 2 & 1 & -1 \\ -1 & 1 & 2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 & -1 \\ 1 & 1 \\ -1 & 2 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Rank-1 outer products and the \(A = CR\) factorization ===
+
+What about a general \(m \times n\) matrix \(A\) of arbitrary rank \(r \ge 1\)—neither full column rank nor full row rank? Remarkably, ANY rank-\(r\) matrix splits cleanly into the product of a full-column-rank matrix \(C\) and a full-row-rank matrix \(R\), and simultaneously into a minimal sum of \(r\) rank-\(1\) pieces!
+
+Start with the simplest building block: a rank-\(1\) outer product. Given any nonzero column vector \(\mathbf{u} \in \mathbb{R}^m\) and any nonzero column vector \(\mathbf{v} \in \mathbb{R}^n\), their outer product is the \(m \times n\) matrix
+\[
+\mathbf{u} \mathbf{v}^T = \begin{bmatrix} u_1 \\ \vdots \\ u_m \end{bmatrix} \begin{bmatrix} v_1 & \cdots & v_n \end{bmatrix}
+= \begin{bmatrix} v_1 \mathbf{u} & v_2 \mathbf{u} & \cdots & v_n \mathbf{u} \end{bmatrix}.
+\]
+Every column of \(\mathbf{u}\mathbf{v}^T\) is a scalar multiple of the single nonzero vector \(\mathbf{u}\) (and at least one \(v_j \neq 0\), so the matrix is nonzero). Therefore \(\operatorname{Col}(\mathbf{u}\mathbf{v}^T) = \operatorname{Span}\{\mathbf{u}\}\) is spanned by ONE vector, so \(\operatorname{rank}(\mathbf{u}\mathbf{v}^T) = 1\)! Conversely, any rank-\(1\) matrix \(M\) has all columns equal to multiples of one nonzero column \(\mathbf{u}\), so \(M = \mathbf{u}\mathbf{v}^T\) for the row of multipliers \(\mathbf{v}^T\).
+
+Now take ANY nonzero \(m \times n\) matrix \(A\) of rank \(r\). From our earlier column-space theorem, every column \(\mathbf{a}_j\) of \(A\) is a linear combination of the \(r\) pivot columns \(\mathbf{c}_1, \dots, \mathbf{c}_r\) of \(A\), and the exact combination weights are the top \(r\) entries of column \(j\) of \(\operatorname{RREF}(A)\)!
+Pack those objects into two smaller matrices:
+- Let \(C = \begin{bmatrix} \mathbf{c}_1 & \cdots & \mathbf{c}_r \end{bmatrix}\) be the \(m \times r\) matrix formed by the \(r\) pivot columns of \(A\). By construction, \(C\) has full column rank \(r\).
+- Let \(R\) be the \(r \times n\) matrix formed by the \(r\) nonzero rows of \(\operatorname{RREF}(A)\) (simply dropping the \(m - r\) zero rows at the bottom). By construction, \(R\) has full row rank \(r\).
+
+Check the \(j\)-th column of the product \(CR\): by the column-combination view of matrix multiplication, column \(j\) of \(CR\) is
+\[
+r_{1j} \mathbf{c}_1 + r_{2j} \mathbf{c}_2 + \cdots + r_{rj} \mathbf{c}_r,
+\]
+which by column-relation invariance is literally \(\mathbf{a}_j\)! Since every column of \(CR\) equals the corresponding column of \(A\), we obtain \(A = CR\).
+
+[CALLOUT]
+id: cr-factorization
+label: Theorem
+title: Full-rank \(A = CR\) factorization and minimal outer-product sum
+tone: key
+
+Every nonzero \(m \times n\) matrix \(A\) of rank \(r\) factors as
+\[
+A = C R,
+\]
+where \(C\) (\(m \times r\)) contains the \(r\) pivot columns of \(A\) (full column rank \(r\)) and \(R\) (\(r \times n\)) contains the \(r\) nonzero rows of \(\operatorname{RREF}(A)\) (full row rank \(r\)).
+
+Writing the columns of \(C\) as \(\mathbf{c}_1, \dots, \mathbf{c}_r\) and the rows of \(R\) as \(\mathbf{w}_1^T, \dots, \mathbf{w}_r^T\), the outer-product rule for matrix multiplication expresses \(A\) as a sum of \(r\) rank-\(1\) matrices:
+\[
+A = \mathbf{c}_1 \mathbf{w}_1^T + \mathbf{c}_2 \mathbf{w}_2^T + \cdots + \mathbf{c}_r \mathbf{w}_r^T.
+\]
+Moreover, \(r = \operatorname{rank}(A)\) is the MINIMUM number of rank-\(1\) matrices whose sum can equal \(A\).
+[/CALLOUT]
+
+Why can no sum of fewer than \(r\) rank-\(1\) matrices ever equal \(A\)? Suppose \(A = \sum_{k=1}^s \mathbf{u}_k \mathbf{v}_k^T\) is a sum of \(s\) rank-\(1\) matrices. By the outer-product view of matrix multiplication in reverse, we can assemble \(U = \begin{bmatrix} \mathbf{u}_1 & \cdots & \mathbf{u}_s \end{bmatrix}\) (\(m \times s\)) and \(V^T = \begin{bmatrix} \mathbf{v}_1^T \\ \vdots \\ \mathbf{v}_s^T \end{bmatrix}\) (\(s \times n\)) so that \(A = U V^T\). By the product rank inequality,
+\[
+r = \operatorname{rank}(A) = \operatorname{rank}(U V^T) \le \operatorname{rank}(U) \le s!
+\]
+Thus \(s \ge r\) always! This gives a crisp, concrete meaning to rank: \(\operatorname{rank}(A)\) is literally the minimum number of rank-\(1\) layers needed to reconstruct \(A\).
+
+Let us factor a concrete \(3 \times 4\) matrix of rank \(2\):
+\[
+M = \begin{bmatrix} 1 & 2 & -1 & 4 \\ 2 & 4 & 1 & 5 \\ -1 & -2 & 4 & -7 \end{bmatrix}.
+\]
+Its RREF is
+\[
+\operatorname{RREF}(M) = \begin{bmatrix} 1 & 2 & 0 & 3 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+The pivot columns are columns \(1\) and \(3\), and there are \(r = 2\) nonzero rows. Therefore:
+\[
+C = \begin{bmatrix} 1 & -1 \\ 2 & 1 \\ -1 & 4 \end{bmatrix} \quad (3 \times 2), \qquad
+R = \begin{bmatrix} 1 & 2 & 0 & 3 \\ 0 & 0 & 1 & -1 \end{bmatrix} \quad (2 \times 4).
+\]
+Check \(CR\) directly:
+\[
+\begin{bmatrix} 1 & -1 \\ 2 & 1 \\ -1 & 4 \end{bmatrix}
+\begin{bmatrix} 1 & 2 & 0 & 3 \\ 0 & 0 & 1 & -1 \end{bmatrix}
+= \begin{bmatrix} 1 & 2 & -1 & 4 \\ 2 & 4 & 1 & 5 \\ -1 & -2 & 4 & -7 \end{bmatrix} = M,
+\]
+and as a minimal sum of two rank-\(1\) outer products,
+\[
+M = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} \begin{bmatrix} 1 & 2 & 0 & 3 \end{bmatrix}
+  + \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} \begin{bmatrix} 0 & 0 & 1 & -1 \end{bmatrix}.
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+Compute the \(A = CR\) factorization of
+\[
+A = \begin{bmatrix} 2 & -4 & 1 & 3 \\ 1 & -2 & 2 & 0 \\ 3 & -6 & 3 & 3 \end{bmatrix}.
+\]
+Which pair \((C, R)\) is correct?
+
+(A) \(C = \begin{bmatrix} 2 & -4 \\ 1 & -2 \\ 3 & -6 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+(B) \(C = \begin{bmatrix} 2 & 1 \\ 1 & 2 \\ 3 & 3 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+(C) \(C = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+(D) \(C = \begin{bmatrix} 2 & 1 \\ 1 & 2 \\ 3 & 3 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}\)
+(E) \(C = \begin{bmatrix} 2 & 3 \\ 1 & 0 \\ 3 & 3 \end{bmatrix},\; R = \begin{bmatrix} 1 & -2 & 0 & 2 \\ 0 & 0 & 1 & -1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Suppose a \(5 \times 6\) matrix \(A\) is written as a sum of three outer products
+\[
+A = \mathbf{u}_1 \mathbf{v}_1^T + \mathbf{u}_2 \mathbf{v}_2^T + \mathbf{u}_3 \mathbf{v}_3^T,
+\]
+where \(\mathbf{u}_1, \mathbf{u}_2, \mathbf{u}_3 \in \mathbb{R}^5\) are nonzero and \(\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3 \in \mathbb{R}^6\) are nonzero. Which statement MUST be true?
+
+(A) \(\operatorname{rank}(A) = 3\) automatically because each outer product has rank \(1\)
+(B) \(\operatorname{rank}(A) \ge 3\) because three nonzero terms were added together
+(C) \(\operatorname{rank}(A) \le 3\), and \(\operatorname{rank}(A)\) can be strictly less than \(3\) if \(\{\mathbf{u}_1, \mathbf{u}_2, \mathbf{u}_3\}\) or \(\{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3\}\) is linearly dependent
+(D) \(A\) must have full row rank \(5\)
+(E) \(\operatorname{rank}(A) = 1\) because every outer product has rank \(1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(A\) is a \(4 \times 2\) matrix of rank \(2\), and \(C_1, C_2\) are two DISTINCT \(2 \times 4\) left inverses of \(A\) (so \(C_1 A = C_2 A = I_2\) with \(C_1 \neq C_2\)). If \(\mathbf{b} \in \operatorname{Col}(A)\), what can be concluded about the two vectors \(C_1 \mathbf{b}\) and \(C_2 \mathbf{b}\)?
+
+(A) \(C_1 \mathbf{b}\) and \(C_2 \mathbf{b}\) must be different whenever \(\mathbf{b} \neq \mathbf{0}\)
+(B) \(C_1 \mathbf{b}\) and \(C_2 \mathbf{b}\) are both solutions of \(A\mathbf{x} = \mathbf{b}\), and they may be two different solutions
+(C) \(C_1 \mathbf{b} = C_2 \mathbf{b}\) only when \(C_1 = (A^T A)^{-1} A^T\)
+(D) Neither \(C_1 \mathbf{b}\) nor \(C_2 \mathbf{b}\) is guaranteed to satisfy \(A\mathbf{x} = \mathbf{b}\)
+(E) \(C_1 \mathbf{b} = C_2 \mathbf{b}\), and both equal the unique solution \(\mathbf{x}\) of \(A\mathbf{x} = \mathbf{b}\) (even though \(C_1 \mathbf{w}\) and \(C_2 \mathbf{w}\) can differ when \(\mathbf{w} \notin \operatorname{Col}(A)\))
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Let \(A\) be a nonzero \(m \times n\) matrix of rank \(r\) with full-rank factorization \(A = CR\), where \(C\) is \(m \times r\) and \(R\) is \(r \times n\). Both \(C^T C\) and \(R R^T\) are square \(r \times r\) matrices. Which statement is TRUE?
+
+(A) Neither \(C^T C\) nor \(R R^T\) is invertible unless \(r = m = n\)
+(B) \(C^T C\) is invertible, but \(R R^T\) is singular whenever \(r < n\)
+(C) Both \(C^T C\) and \(R R^T\) are invertible, and \((C^T C)^{-1} C^T A R^T (R R^T)^{-1} = A\)
+(D) Both \(C^T C\) and \(R R^T\) are invertible, and \((C^T C)^{-1} C^T A R^T (R R^T)^{-1} = I_r\)
+(E) Both \(C^T C\) and \(R R^T\) are invertible, and \((C^T C)^{-1} C^T A R^T (R R^T)^{-1} = 0\)
+[/BONUS]

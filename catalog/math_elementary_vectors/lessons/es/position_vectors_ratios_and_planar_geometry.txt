@@ -1,0 +1,247 @@
+=== SECTION 1: Vectores de posición, fórmula de división y baricentros ===
+
+Hasta ahora hemos usado los vectores principalmente para describir desplazamientos. Ahora convertimos los vectores en una herramienta precisa para la propia geometría plana: localizar puntos que dividen un segmento en cualquier razón, describir rectas completas sin preocuparnos por pendientes verticales y demostrar teoremas euclidianos clásicos en unas pocas líneas algebraicas sin elegir jamás ejes coordenados.
+
+Fija un origen de referencia arbitrario \(O\) en el plano y representa cada punto \(P\) mediante su vector de posición \(\mathbf{r}_P = \overrightarrow{OP}\). Observa cómo todo desplazamiento entre dos puntos \(A\) y \(B\) se convierte de inmediato en una diferencia de vectores de posición:
+\[
+\overrightarrow{AB} = \mathbf{r}_B - \mathbf{r}_A.
+\]
+Plantea ahora una pregunta geométrica concreta: dados dos puntos distintos \(A\) y \(B\), ¿cuál es el vector de posición \(\mathbf{r}_P\) del punto \(P\) que yace sobre el segmento \(AB\) y lo divide internamente en la razón \(m : n\) (con \(m > 0\) y \(n > 0\)), es decir, de modo que las longitudes satisfacen \(AP : PB = m : n\)?
+
+Como \(P\) está sobre el segmento dirigido de \(A\) a \(B\), los vectores \(\overrightarrow{AP}\) y \(\overrightarrow{AB}\) apuntan exactamente en el mismo sentido, y \(AP\) es la fracción \(\frac{m}{m + n}\) de la longitud total \(AB\). Tomando \(t = \frac{m}{m + n} \in (0, 1)\), tenemos
+\[
+\overrightarrow{AP} = t\,\overrightarrow{AB} = \frac{m}{m + n}(\mathbf{r}_B - \mathbf{r}_A).
+\]
+Como \(\mathbf{r}_P = \mathbf{r}_A + \overrightarrow{AP}\), sustituimos y agrupamos términos:
+\[
+\mathbf{r}_P = \mathbf{r}_A + \frac{m}{m + n}(\mathbf{r}_B - \mathbf{r}_A) = \left(1 - \frac{m}{m + n}\right)\mathbf{r}_A + \frac{m}{m + n}\mathbf{r}_B = \frac{n\mathbf{r}_A + m\mathbf{r}_B}{m + n}.
+\]
+En términos de la fracción \(t = \frac{m}{m + n}\), el mismo punto se escribe como el promedio ponderado \((1 - t)\mathbf{r}_A + t\mathbf{r}_B\). Observa que, incluso sin calcular longitudes ni ángulos, la mera suma y el escalamiento vectorial ubican \(P\) con exactitud.
+
+[CALLOUT]
+id: section-formula
+label: Teorema
+title: Fórmula de división interna, punto medio y baricentro
+tone: key
+
+Sean \(A, B, C\) puntos en el plano con vectores de posición \(\mathbf{r}_A, \mathbf{r}_B, \mathbf{r}_C\).
+
+(1) División interna: el punto \(P\) que divide el segmento \(AB\) internamente en la razón \(AP : PB = m : n\) (\(m, n > 0\)) tiene vector de posición
+\[
+\mathbf{r}_P = \frac{n\mathbf{r}_A + m\mathbf{r}_B}{m + n} = (1 - t)\mathbf{r}_A + t\mathbf{r}_B, \qquad t = \frac{m}{m + n} \in (0, 1).
+\]
+(2) Punto medio: tomar \(m = n = 1\) (\(t = \frac{1}{2}\)) da el punto medio \(M\) de \(AB\):
+\[
+\mathbf{r}_M = \frac{\mathbf{r}_A + \mathbf{r}_B}{2}.
+\]
+(3) Baricentro (centroide) de \(\triangle ABC\): el punto \(G\) que divide cada mediana en la razón \(2 : 1\) desde el vértice hasta el punto medio opuesto tiene vector de posición
+\[
+\mathbf{r}_G = \frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}.
+\]
+[/CALLOUT]
+
+[CALLOUT]
+id: weight-swap
+label: Error frecuente
+title: Los pesos \(n\) y \(m\) se cruzan en la fórmula de división
+tone: caution
+
+Cuando \(AP : PB = m : n\), el peso \(n\) multiplica a \(\mathbf{r}_A\) y \(m\) multiplica a \(\mathbf{r}_B\), no al revés. Verifícalo en un caso extremo: si \(AP : PB = 1 : 9\), entonces \(P\) está muy cerca de \(A\), por lo que \(\mathbf{r}_P = \frac{9\mathbf{r}_A + 1\mathbf{r}_B}{10}\) debe dar mucho peso a \(\mathbf{r}_A\) (nueve décimos) y poco peso a \(\mathbf{r}_B\) (un décimo).
+[/CALLOUT]
+
+Arrastra el deslizador \(s\) (que representa la fracción \(t\)) en la gráfica siguiente para ver cómo el punto \(P(t) = (1 - t)\mathbf{r}_A + t\mathbf{r}_B\) se desliza suavemente a lo largo del segmento \(AB\) desde \(A(1, 1)\) en \(t = 0\) hasta \(B(5, 3)\) en \(t = 1\), pasando por el punto medio \((3, 2)\) en \(t = 0.5\).
+
+[GRAPH]
+type: parametric2d
+title: Vector de posición \(\mathbf{r}_P = (1 - t)\mathbf{r}_A + t\mathbf{r}_B\) recorriendo el segmento \(AB\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 6
+yrange: -0.5, 4
+trace: 1 + 4*t, 1 + 2*t | label: \(\text{segmento } AB\) | color: #2563eb
+segment: 0, 0, 1, 1 | label: \(\mathbf{r}_A\) | color: #64748b | dashed: true
+segment: 0, 0, 5, 3 | label: \(\mathbf{r}_B\) | color: #64748b | dashed: true
+segment: 0, 0, 1 + 4*s, 1 + 2*s | label: \(\mathbf{r}_P\) | color: #dc2626
+point: 0, 0 | label: \(O\)
+point: 1, 1 | label: \(A(1, 1)\)
+point: 5, 3 | label: \(B(5, 3)\)
+point: 1 + 4*s, 1 + 2*s | label: \(P\)
+slider: s | range: 0, 1 | init: 0.25 | step: 0.05
+[/GRAPH]
+
+Espera: ¿de dónde salió [REF: section-formula.3 | la fórmula del baricentro]? Deduzcámosla ahora mismo a partir de [REF: section-formula.1 | la fórmula de división] y [REF: section-formula.2 | la fórmula del punto medio]. En \(\triangle ABC\), sea \(M_A\) el punto medio del lado \(BC\), de modo que \(\mathbf{r}_{M_A} = \frac{\mathbf{r}_B + \mathbf{r}_C}{2}\). Ahora halla el punto \(G\) sobre la mediana \(AM_A\) que divide \(AM_A\) en la razón \(AG : GM_A = 2 : 1\):
+\[
+\mathbf{r}_G = \frac{1 \cdot \mathbf{r}_A + 2 \cdot \mathbf{r}_{M_A}}{2 + 1} = \frac{\mathbf{r}_A + 2\left(\frac{\mathbf{r}_B + \mathbf{r}_C}{2}\right)}{3} = \frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}.
+\]
+Detente y admira la simetría de ese resultado: \(\frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}\) trata a \(A, B\) y \(C\) por igual. Si en cambio hubiéramos tomado el punto en razón \(2 : 1\) sobre la mediana desde \(B\) al punto medio de \(AC\), o desde \(C\) al punto medio de \(AB\), habríamos obtenido exactamente el mismo vector de posición \(\frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}\). Por lo tanto, las tres medianas de todo triángulo son concurrentes: se cortan en un único punto \(G\), el baricentro, a dos tercios del camino desde cada vértice hasta el punto medio del lado opuesto.
+
+[QUESTION 1]
+[ANSWER: C]
+El punto \(P\) divide el segmento de recta \(AB\) internamente en la razón \(AP : PB = 3 : 2\), donde \(A(-4, 7)\) y \(B(6, -3)\). ¿Cuáles son las coordenadas de \(P\)?
+
+(A) \((0, 3)\)
+(B) \((1, 2)\)
+(C) \((2, 1)\)
+(D) \((2, -1)\)
+(E) \((10, 5)\)
+[/QUESTION]
+
+=== SECTION 2: Ecuaciones vectorial y paramétrica de rectas en 2D ===
+
+En [REF: section-formula.1 | la fórmula de división], restringir \(t\) a \([0, 1]\) trazaba el segmento finito \(AB\). ¿Qué sucede si dejamos que el parámetro real \(t\) recorra libremente todos los números reales \((-\infty, \infty)\)? Partir de un punto base fijo \(P_0\) con vector de posición \(\mathbf{r}_0 = \langle x_0, y_0 \rangle\) y desplazarse cualquier múltiplo escalar \(t\mathbf{d}\) a lo largo de un vector director no nulo \(\mathbf{d} = \langle d_x, d_y \rangle\) barre toda la recta infinita que pasa por \(P_0\) paralela a \(\mathbf{d}\).
+
+[CALLOUT]
+id: param-line
+label: Definición
+title: Ecuaciones vectorial y paramétrica de una recta en 2D
+tone: key
+
+Sea \(P_0(x_0, y_0)\) un punto de una recta \(L\) con vector de posición \(\mathbf{r}_0 = \langle x_0, y_0 \rangle\), y sea \(\mathbf{d} = \langle d_x, d_y \rangle \ne \mathbf{0}\) un vector director paralelo a \(L\).
+
+(1) La ecuación vectorial de \(L\) es
+\[
+\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}, \qquad t \in \mathbb{R}.
+\]
+(2) Al escribir \(\mathbf{r}(t) = \langle x(t), y(t) \rangle\) componente a componente se obtienen las ecuaciones paramétricas de \(L\):
+\[
+x(t) = x_0 + t d_x, \qquad y(t) = y_0 + t d_y, \qquad t \in \mathbb{R}.
+\]
+[/CALLOUT]
+
+¿Cómo se relaciona un vector director \(\mathbf{d} = \langle d_x, d_y \rangle\) con la pendiente ordinaria? Siempre que \(d_x \ne 0\), aumentar \(t\) en \(1\) hace variar \(x\) en \(d_x\) y \(y\) en \(d_y\), de modo que la pendiente de la recta es sencillamente \(m = \frac{d_y}{d_x}\). Y cuando \(d_x = 0\) (por ejemplo, \(\mathbf{d} = \langle 0, 1 \rangle\)), la ecuación vectorial \(\mathbf{r}(t) = \langle x_0, y_0 \rangle + t\langle 0, 1 \rangle\) describe la recta vertical \(x = x_0\) sin esfuerzo, sin pendiente indefinida ni ecuación de caso especial.
+
+Observa también que una recta posee infinitas ecuaciones vectoriales válidas: puedes elegir cualquier punto de \(L\) como \(\mathbf{r}_0\) y cualquier múltiplo escalar no nulo \(k\mathbf{d}\) como vector director. Para escribir la ecuación vectorial de la recta que pasa por dos puntos distintos \(A\) y \(B\), elige \(\mathbf{r}_0 = \mathbf{r}_A\) y \(\mathbf{d} = \overrightarrow{AB} = \mathbf{r}_B - \mathbf{r}_A\).
+
+Con [REF: param-line | las rectas paramétricas] surgen constantemente dos tareas prácticas:
+1. Prueba de pertenencia de un punto a una recta: ¿pertenece un punto dado \(Q(x_Q, y_Q)\) a \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\)? Pertenece si y solo si existe UN ÚNICO valor de \(t\) que satisface simultáneamente \(x_Q = x_0 + t d_x\) y \(y_Q = y_0 + t d_y\). Por ejemplo, para comprobar si \(Q(7, 3)\) pertenece a \(\mathbf{r}(t) = \langle 1, 0 \rangle + t\langle 2, 1 \rangle\), resuelve \(1 + 2t = 7 \implies t = 3\) y \(0 + t = 3 \implies t = 3\). Ambas dan el mismo \(t = 3\), así que \(Q\) pertenece a la recta. Para \(R(7, 4)\), la primera da \(t = 3\) mientras que la segunda da \(t = 4\), por lo que \(R\) no está en la recta.
+2. Intersección de dos rectas: supón que \(L_1\) viene dada por \(\mathbf{r}_1(s) = \langle 1, 0 \rangle + s\langle 2, 1 \rangle\) y \(L_2\) viene dada por \(\mathbf{r}_2(t) = \langle 0, 4 \rangle + t\langle 1, -1 \rangle\). Se intersecan donde \(\mathbf{r}_1(s) = \mathbf{r}_2(t)\), lo que produce el sistema lineal \(2 \times 2\)
+\[
+1 + 2s = t, \qquad s = 4 - t.
+\]
+Sustituir \(t = 1 + 2s\) en la segunda ecuación da \(s = 4 - (1 + 2s) = 3 - 2s\), de modo que \(3s = 3 \implies s = 1\), y luego \(t = 1 + 2(1) = 3\). Al verificar ambas rectas se obtiene \(\mathbf{r}_1(1) = \langle 3, 1 \rangle\) y \(\mathbf{r}_2(3) = \langle 3, 1 \rangle\), confirmando el punto de intersección \((3, 1)\).
+
+[CALLOUT]
+id: two-params
+label: Error frecuente
+title: Usa dos letras de parámetro distintas al intersecar dos rectas
+tone: caution
+
+Aunque en el enunciado ambas rectas estén escritas con la letra \(t\), cambia el nombre de un parámetro a \(s\) antes de igualar \(\mathbf{r}_1(s) = \mathbf{r}_2(t)\). Igualar \(\mathbf{r}_1(t) = \mathbf{r}_2(t)\) pregunta si dos partículas llegan al mismo punto en el mismo instante \(t\), lo cual pasa por alto casi toda intersección geométrica. En el ejemplo anterior, las rectas se cruzan en \((3, 1)\) con \(s = 1\) en \(L_1\) y \(t = 3\) en \(L_2\).
+[/CALLOUT]
+
+La gráfica siguiente muestra \(L_1\) y \(L_2\) cortándose en \((3, 1)\), junto con sus puntos base \(P_1(1, 0)\) y \(P_2(0, 4)\) y los vectores directores \(\mathbf{d}_1 = \langle 2, 1 \rangle\) y \(\mathbf{d}_2 = \langle 1, -1 \rangle\).
+
+[GRAPH]
+type: parametric2d
+title: Rectas paramétricas secantes \(L_1\) y \(L_2\) en \((3, 1)\) (\(s = 1, t = 3\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.5, 4.5
+xrange: -1.5, 6.5
+yrange: -1, 5.5
+trace: 1 + 2*t, t | label: \(L_1: \langle 1, 0 \rangle + s\langle 2, 1 \rangle\) | color: #2563eb
+trace: t, 4 - t | label: \(L_2: \langle 0, 4 \rangle + t\langle 1, -1 \rangle\) | color: #d97706
+point: 1, 0 | label: \(P_1(1, 0)\)
+point: 0, 4 | label: \(P_2(0, 4)\)
+point: 3, 1 | label: \((3, 1)\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: A]
+Halla el punto de intersección de las dos rectas
+\[
+L_1: \mathbf{r}_1(s) = \langle -1, 2 \rangle + s\langle 3, 1 \rangle \qquad \text{y} \qquad L_2: \mathbf{r}_2(t) = \langle 7, 1 \rangle + t\langle -2, 3 \rangle.
+\]
+
+(A) \((5, 4)\)
+(B) \((2, 3)\)
+(C) \((1, 2)\)
+(D) \((7, 4)\)
+(E) Las dos rectas no se intersecan
+[/QUESTION]
+
+=== SECTION 3: Demostraciones vectoriales sin coordenadas en geometría plana ===
+
+Antes demostramos que las medianas de todo triángulo concurren en un único punto \(G\) sin introducir jamás coordenadas \(x\) e \(y\). Ese mismo enfoque —escribir puntos como vectores de posición respecto a un origen arbitrario \(O\) y traducir hipótesis geométricas en ecuaciones vectoriales— convierte muchos teoremas clásicos de la geometría euclidiana en cálculos breves y transparentes.
+
+[TABLE]
+Enunciado geométrico | Traducción mediante vectores de posición
+\(M\) es el punto medio del segmento \(AB\) | \(\mathbf{r}_M = \frac{1}{2}(\mathbf{r}_A + \mathbf{r}_B)\)
+\(P\) divide el segmento \(AB\) en la razón \(m : n\) | \(\mathbf{r}_P = \frac{n\mathbf{r}_A + m\mathbf{r}_B}{m + n}\)
+\(ABCD\) (en orden) es un paralelogramo | \(\mathbf{r}_B - \mathbf{r}_A = \mathbf{r}_C - \mathbf{r}_D\) (equivalentemente \(\mathbf{r}_A + \mathbf{r}_C = \mathbf{r}_B + \mathbf{r}_D\))
+Los segmentos \(PQ\) y \(RS\) son paralelos con \(PQ = k \cdot RS\) | \(\mathbf{r}_Q - \mathbf{r}_P = \pm k(\mathbf{r}_S - \mathbf{r}_R)\)
+Los puntos \(A, B, C\) son colineales | \(\mathbf{r}_C - \mathbf{r}_A = t(\mathbf{r}_B - \mathbf{r}_A)\) para algún \(t \in \mathbb{R}\)
+[/TABLE]
+
+Mostremos dos demostraciones clásicas sin coordenadas usando este diccionario.
+
+Primero, demuestra el teorema de la base media del triángulo: en cualquier triángulo \(\triangle ABC\), el segmento que une los puntos medios \(M\) de \(AB\) y \(N\) de \(AC\) es paralelo al tercer lado \(BC\) y mide la mitad que este.
+Por [REF: section-formula.2 | la fórmula del punto medio],
+\[
+\mathbf{r}_M = \frac{\mathbf{r}_A + \mathbf{r}_B}{2}, \qquad \mathbf{r}_N = \frac{\mathbf{r}_A + \mathbf{r}_C}{2}.
+\]
+Restar para formar el vector del segmento \(\overrightarrow{MN}\) hace que \(\mathbf{r}_A\) se cancele limpiamente:
+\[
+\overrightarrow{MN} = \mathbf{r}_N - \mathbf{r}_M = \frac{\mathbf{r}_A + \mathbf{r}_C}{2} - \frac{\mathbf{r}_A + \mathbf{r}_B}{2} = \frac{1}{2}(\mathbf{r}_C - \mathbf{r}_B) = \frac{1}{2}\overrightarrow{BC}.
+\]
+Como \(\overrightarrow{MN} = \frac{1}{2}\overrightarrow{BC}\) es un múltiplo escalar de \(\overrightarrow{BC}\) con escalar \(\frac{1}{2}\), el segmento \(MN\) es paralelo a \(BC\) y tiene longitud \(\frac{1}{2}BC\).
+
+Segundo, demuestra que las diagonales de todo paralelogramo \(ABCD\) (con vértices en orden alrededor del contorno) se bisecan mutuamente.
+Como \(ABCD\) es un paralelogramo, los lados opuestos representan el mismo vector: \(\overrightarrow{AB} = \overrightarrow{DC}\), de modo que
+\[
+\mathbf{r}_B - \mathbf{r}_A = \mathbf{r}_C - \mathbf{r}_D.
+\]
+Reordenar los términos agrupa en un mismo lado los extremos de cada diagonal:
+\[
+\mathbf{r}_A + \mathbf{r}_C = \mathbf{r}_B + \mathbf{r}_D.
+\]
+Dividir ambos miembros entre \(2\) da
+\[
+\frac{\mathbf{r}_A + \mathbf{r}_C}{2} = \frac{\mathbf{r}_B + \mathbf{r}_D}{2}.
+\]
+El miembro izquierdo es el vector de posición del punto medio de la diagonal \(AC\); el miembro derecho es el vector de posición del punto medio de la diagonal \(BD\). Como sus vectores de posición son iguales, los dos puntos medios son exactamente el mismo punto, de manera que las diagonales se bisecan mutuamente.
+
+[CALLOUT]
+id: vector-proof-strategy
+label: Estrategia
+title: Plan para demostraciones vectoriales sin coordenadas
+tone: note
+
+(1) Fija un origen arbitrario \(O\) (o coloca \(O\) en un vértice de la figura para hacer \(\mathbf{0}\) su vector de posición) y asigna vectores de posición \(\mathbf{r}_A, \mathbf{r}_B, \dots\) a los vértices principales.
+(2) Expresa los puntos derivados (puntos medios, puntos de división) en términos de los vectores de posición de los vértices mediante [REF: section-formula | la fórmula de división].
+(3) Forma el vector de desplazamiento o la expresión del punto medio correspondiente a la afirmación geométrica buscada, simplifica algebraicamente y traduce la identidad vectorial final de regreso a la geometría.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: A]
+Sea \(ABCD\) un cuadrilátero arbitrario en el plano (no necesariamente un paralelogramo), y sean \(P, Q, R, S\) los puntos medios de los lados \(AB, BC, CD, DA\), respectivamente. Usando vectores de posición, ¿qué puedes concluir acerca del cuadrilátero \(PQRS\)?
+
+(A) \(PQRS\) es siempre un paralelogramo, porque \(\overrightarrow{PQ} = \overrightarrow{SR} = \frac{1}{2}\overrightarrow{AC}\)
+(B) \(PQRS\) es un paralelogramo únicamente cuando \(ABCD\) ya es un paralelogramo
+(C) \(PQRS\) es siempre un paralelogramo, porque \(\overrightarrow{PQ} = \overrightarrow{RS} = \frac{1}{2}\overrightarrow{BD}\)
+(D) Los segmentos \(PQ\) y \(SR\) son paralelos, pero \(PQ = 2\,SR\) salvo que \(AB = CD\)
+(E) \(PQRS\) es siempre un paralelogramo cuyas diagonales tienen igual longitud que \(AC\) y \(BD\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+En el triángulo \(ABC\), el punto \(D\) está sobre el lado \(BC\) de modo que \(BD : DC = 1 : 2\), y el punto \(E\) es el punto medio del segmento \(AD\). Expresa el vector de posición \(\mathbf{r}_E\) en términos de \(\mathbf{r}_A, \mathbf{r}_B\) y \(\mathbf{r}_C\).
+
+(A) \(\frac{1}{2}\mathbf{r}_A + \frac{1}{6}\mathbf{r}_B + \frac{1}{3}\mathbf{r}_C\)
+(B) \(\frac{1}{3}\mathbf{r}_A + \frac{1}{3}\mathbf{r}_B + \frac{1}{3}\mathbf{r}_C\)
+(C) \(\frac{1}{2}\mathbf{r}_A + \frac{1}{4}\mathbf{r}_B + \frac{1}{4}\mathbf{r}_C\)
+(D) \(\frac{1}{2}\mathbf{r}_A + \frac{1}{3}\mathbf{r}_B + \frac{1}{6}\mathbf{r}_C\)
+(E) \(\frac{1}{3}\mathbf{r}_A + \frac{1}{2}\mathbf{r}_B + \frac{1}{6}\mathbf{r}_C\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+El triángulo \(ABC\) tiene vértices \(A(1, 4)\) y \(B(7, -2)\), y su baricentro es \(G(2, 3)\). ¿Cuáles son las coordenadas del tercer vértice \(C\)?
+
+(A) \((-4, 5)\)
+(B) \((-2, 7)\)
+(C) \((2, 7)\)
+(D) \((-2, 5)\)
+(E) \((4, 1)\)
+[/BONUS]

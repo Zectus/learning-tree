@@ -1,0 +1,202 @@
+=== SECTION 1: A four-step diagnostic workflow for hybrid inequalities ===
+
+Real problems rarely arrive labeled "absolute value," "rational," or "radical." An unfamiliar inequality such as \(\dfrac{|x - 2|}{x^2 - 1} \ge 1\), \(\sqrt{x^2 - 4x + 4} < 3 - x\), or \(\dfrac{|x| - 2}{\sqrt{x + 4} - 1} \le 0\) mixes several structures at once. If you jump straight into expanding or squaring, you create needless case splits and invite sign or domain errors.
+
+Instead, pause for ten seconds and run a disciplined four-step diagnostic pass before writing any long algebra.
+
+[CALLOUT]
+id: four-step-workflow
+label: Workflow
+title: Four-step strategy for mixed inequalities
+tone: key
+
+(1) Fix and intersect all domain constraints first: require every even radicand \(\ge 0\) and every denominator \(\ne 0\). Check whether the domain itself already eliminates part or all of the inequality.
+(2) Simplify structural identities before branching: replace \(\sqrt{u^2}\) with \(|u|\) (never with \(u\)), spot sign-definite quadratics (\(\Delta < 0\)), and identify strictly positive factors or terms that cannot change sign.
+(3) Choose the lowest-branching method: use sign pruning or a domain-guarded sign chart for products and quotients, direct equivalences for single absolute values or radicals, substitution for repeated structures, and case splitting only as a last resort.
+(4) Audit every boundary point: verify all numerator zeros, isolated zeros of non-negative factors, domain endpoints, and excluded denominator zeros against the ORIGINAL inequality.
+[/CALLOUT]
+
+Watch how [REF: four-step-workflow.1 | Step 1] and [REF: four-step-workflow.2 | Step 2] can collapse a scary-looking inequality in two lines.
+
+Example 1 (domain and sign-definite pruning):
+- Solve \(\sqrt{3 - x}\,(x^2 - 2x + 3) \le 0\).
+  Domain: \(x \le 3\). Complete the square on the quadratic factor: \(x^2 - 2x + 3 = (x - 1)^2 + 2 \ge 2 > 0\) for EVERY \(x \in \mathbb{R}\). On the domain \((-\infty, 3]\), \(\sqrt{3 - x} \ge 0\) as well. Thus the product is \(\ge 0\) everywhere on its domain, so it can satisfy \(\le 0\) ONLY when it equals \(0\), which happens solely at \(x = 3\). Solution set: \(\{3\}\).
+- Solve \(\sqrt{x - 5} + |x - 1| < 3\).
+  Domain: \(x \ge 5\). On \(x \ge 5\), we automatically have \(|x - 1| = x - 1 \ge 4\) and \(\sqrt{x - 5} \ge 0\), so the left-hand side is at least \(4\) everywhere on its domain and can never be less than \(3\). Solution set: \(\emptyset\)—zero squaring, zero case splitting!
+
+=== SECTION 2: Hidden absolute values and rational-absolute hybrids ===
+
+One of the most frequent traps in hybrid inequalities is an even-power radical hiding an absolute value. Whenever a quadratic radicand is a perfect square, apply the exact identity \(\sqrt{u^2} = |u|\) BEFORE doing anything else.
+
+Example 2: Solve \(\sqrt{x^2 - 4x + 4} < 3 - x\).
+Step 1: The radicand factors as \((x - 2)^2 \ge 0\), so the domain is all of \(\mathbb{R}\).
+Step 2: Apply \(\sqrt{(x - 2)^2} = |x - 2|\). The inequality transforms immediately into a variable-bound absolute value inequality:
+\[
+|x - 2| < 3 - x.
+\]
+Step 3: Use the direct equivalence \(|A| < B \iff -B < A < B\) (remembering that this automatically enforces \(B > 0\)!):
+\[
+-(3 - x) < x - 2 < 3 - x \iff x - 3 < x - 2 \quad \text{and} \quad x - 2 < 3 - x.
+\]
+The left inequality simplifies to \(-3 < -2\), which is true for every \(x \in \mathbb{R}\). The right inequality simplifies to \(2x < 5 \iff x < \frac{5}{2}\).
+Step 4: Solution set: \(\left(-\infty, \frac{5}{2}\right)\).
+
+The graph below confirms why replacing \(\sqrt{(x - 2)^2}\) by \(x - 2\) would have failed catastrophically: the curve \(y = \sqrt{x^2 - 4x + 4}\) is a V-shaped absolute value graph that stays non-negative for \(x < 2\), meeting the line \(y = 3 - x\) once at \(\left(\frac{5}{2}, \frac{1}{2}\right)\) and remaining strictly underneath it for every \(x < \frac{5}{2}\).
+
+[GRAPH]
+type: function2d
+title: Hidden absolute value \(y = \sqrt{x^2 - 4x + 4} = |x - 2|\) versus \(y = 3 - x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1, 5
+yrange: -2, 5
+trace: sqrt(x^2 - 4*x + 4) | label: \(y = \sqrt{x^2 - 4x + 4}\)
+trace: 3 - x | label: \(y = 3 - x\)
+point: 2, 0 | label: \((2, 0)\)
+point: 2.5, 0.5 | label: \((\frac{5}{2}, \frac{1}{2})\)
+[/GRAPH]
+
+Now watch how sign pruning streamlines a rational-absolute inequality.
+
+Example 3: Solve \(\dfrac{|x - 2|}{x^2 - 1} \ge 1\).
+Step 1: Domain \(D = \mathbb{R} \setminus \{-1, 1\}\).
+Step 2: Observe the sign of the numerator: \(|x - 2| \ge 0\) everywhere! Therefore, whenever the denominator \(x^2 - 1\) is NEGATIVE—that is, on \((-1, 1)\)—the quotient \(\dfrac{|x - 2|}{x^2 - 1}\) is \(\le 0\), so it can NEVER be \(\ge 1\). That eliminates \((-1, 1)\) immediately!
+Step 3: On the remaining region \(x^2 - 1 > 0\) (meaning \(x < -1\) or \(x > 1\)), multiplying both sides by the strictly positive denominator \(x^2 - 1\) preserves the inequality:
+\[
+|x - 2| \ge x^2 - 1.
+\]
+Apply the variable-bound equivalence \(|A| \ge B \iff A \ge B \text{ or } A \le -B\):
+- Branch A: \(x - 2 \ge x^2 - 1 \iff x^2 - x + 1 \le 0\). Check the discriminant: \(\Delta = (-1)^2 - 4(1)(1) = -3 < 0\) with leading coefficient \(1 > 0\), so \(x^2 - x + 1 > 0\) everywhere. Branch A yields \(\emptyset\).
+- Branch B: \(x - 2 \le -(x^2 - 1) \iff x^2 + x - 3 \le 0\). By the quadratic formula, the roots are \(\dfrac{-1 \pm \sqrt{13}}{2}\) (approximately \(-2.303\) and \(1.303\)), so Branch B gives \(\left[\dfrac{-1 - \sqrt{13}}{2}, \dfrac{-1 + \sqrt{13}}{2}\right]\).
+Step 4: Intersect Branch B with the positive-denominator region \((-\infty, -1) \cup (1, \infty)\):
+\[
+\left[\frac{-1 - \sqrt{13}}{2}, -1\right) \cup \left(1, \frac{-1 + \sqrt{13}}{2}\right].
+\]
+Both excluded denominator points \(x = \pm 1\) carry open parentheses, while the two roots where equality holds carry closed brackets.
+
+[QUESTION 1]
+[ANSWER: B]
+What is the solution set of \(\sqrt{x^2 + 6x + 9} \le 2x + 1\)?
+
+(A) \(\left[-\frac{4}{3}, \infty\right)\)
+(B) \([2, \infty)\)
+(C) \(\left[-\frac{4}{3}, 2\right]\)
+(D) \(\left[-\frac{1}{2}, \infty\right)\)
+(E) \((-\infty, 2]\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+What is the solution set of \(\dfrac{|x - 3|}{x^2 - 4} \le 0\)?
+
+(A) \((-2, 2)\)
+(B) \([-2, 2] \cup \{3\}\)
+(C) \((-\infty, -2) \cup (2, 3]\)
+(D) \((-2, 2) \cup \{3\}\)
+(E) \((-2, 3]\)
+[/QUESTION]
+
+=== SECTION 3: Quotients mixing absolute values and radicals ===
+
+When a single fraction compares to \(0\) and mixes an absolute value in one part with a radical in the other, resist the temptation to break into cases on the sign inside the absolute value! A single domain-guarded sign chart handles the entire problem at once, because we only need the zeros of the numerator and denominator and the sign of each expression between them.
+
+Example 4: Solve \(\dfrac{|x| - 2}{\sqrt{x + 4} - 1} \le 0\).
+Step 1 (Domain): We need \(x + 4 \ge 0\) (so \(x \ge -4\)) and \(\sqrt{x + 4} - 1 \ne 0 \iff x + 4 \ne 1 \iff x \ne -3\). Thus
+\[
+D = [-4, -3) \cup (-3, \infty).
+\]
+Step 2 (Critical points inside \(D\)):
+- Numerator zeros: \(|x| - 2 = 0 \iff x = -2\) or \(x = 2\). Both lie in \(D\) and will be INCLUDED because the inequality is \(\le 0\).
+- Denominator zero: \(x = -3\) (EXCLUDED).
+
+Step 3 (Domain-guarded sign chart on \([-4, \infty)\)):
+
+[TABLE]
+Interval or point | \(\lvert x \rvert - 2\) | \(\sqrt{x + 4} - 1\) | Quotient | Satisfies \(\le 0\)?
+\([-4, -3)\) | \(+\) | \(-\) | \(-\) | Yes
+\(x = -3\) | \(1\) | \(0\) | undefined | No
+\((-3, -2)\) | \(+\) | \(+\) | \(+\) | No
+\(x = -2\) | \(0\) | \(\sqrt{2} - 1\) | \(0\) | Yes
+\((-2, 2)\) | \(-\) | \(+\) | \(-\) | Yes
+\(x = 2\) | \(0\) | \(\sqrt{6} - 1\) | \(0\) | Yes
+\((2, \infty)\) | \(+\) | \(+\) | \(+\) | No
+[/TABLE]
+
+Step 4 (Assemble and check endpoints): Reading off the "Yes" rows produces
+\[
+[-4, -3) \cup [-2, 2].
+\]
+Check the left domain endpoint \(x = -4\) explicitly: \(\dfrac{|-4| - 2}{\sqrt{0} - 1} = \dfrac{2}{-1} = -2 \le 0\), so \(-4\) definitely belongs in the solution set.
+
+The graph below shows both branches of \(y = \dfrac{|x| - 2}{\sqrt{x + 4} - 1}\) separated by the vertical asymptote at \(x = -3\). Notice how the left branch starts at \((-4, -2)\) and stays negative up to \(x = -3\), while the right branch drops below the horizontal axis precisely on \([-2, 2]\).
+
+[GRAPH]
+type: function2d
+title: Graph of \(y = \dfrac{|x| - 2}{\sqrt{x + 4} - 1}\) on \([-4, 4]\) with asymptote at \(x = -3\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4.2, 4
+yrange: -6, 6
+trace: x >= -4 and x < -3.08 ? ((abs(x) - 2)/(sqrt(x + 4) - 1)) : (0/0) | label: left branch (\(x < -3\))
+trace: x > -2.92 ? ((abs(x) - 2)/(sqrt(x + 4) - 1)) : (0/0) | label: right branch (\(x > -3\))
+trace: 0 | label: \(y = 0\)
+segment: -3, -6, -3, 6 | dashed: true
+point: -4, -2 | label: \((-4, -2)\)
+point: -2, 0 | label: \((-2, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+Before picking a method on any unfamiliar hybrid inequality, use this quick decision guide to choose the path with the fewest branches:
+
+[TABLE]
+Feature spotted in the inequality | Best immediate action
+\(\sqrt{a x^2 + b x + c}\) where radicand is a perfect square \(u^2\) | Replace immediately with \(\lvert u \rvert\)
+Sign-definite quadratic (\(\Delta < 0\)) or strictly positive sum | Note its constant sign and factor it out of the sign analysis
+Single quotient or product compared with \(0\) | Fix domain \(D\), find all zeros, run one domain-guarded sign chart
+Non-negative numerator over variable denominator compared with a positive constant | Prune the negative-denominator region immediately, then multiply through
+Domain forces a term above or below the bound | Conclude \(\emptyset\) or a single boundary point without expanding
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+What is the solution set of \(\dfrac{|x - 1| - 2}{\sqrt{x + 3} - 2} > 0\)?
+
+(A) \((-1, 1) \cup (3, \infty)\)
+(B) \([-3, -1) \cup (1, 3)\)
+(C) \((-1, 1] \cup (3, \infty)\)
+(D) \((-1, 3)\)
+(E) \([-1, 1) \cup [3, \infty)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+What is the solution set of \(\dfrac{\sqrt{x - 2}\,(x^2 + 4x + 5)}{|x - 5| - 1} \le 0\)?
+
+(A) \((4, 6)\)
+(B) \([4, 6]\)
+(C) \([2, 4) \cup (6, \infty)\)
+(D) \(\{2\} \cup [4, 6]\)
+(E) \(\{2\} \cup (4, 6)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+What is the solution set of \(\sqrt{x^2 - 2x + 1} + \sqrt{x^2 - 8x + 16} \le 5\)?
+
+(A) \([1, 4]\)
+(B) \((0, 5)\)
+(C) \([0, 5]\)
+(D) \([-1, 5]\)
+(E) \([0, 4]\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+What is the solution set of \(\dfrac{\sqrt{4 - x} - \sqrt{x + 2}}{|x - 1|} \ge 0\)?
+
+(A) \([-2, 1]\)
+(B) \([-2, 1)\)
+(C) \((-\infty, 1)\)
+(D) \((1, 4]\)
+(E) \([-2, 1) \cup (1, 4]\)
+[/BONUS]

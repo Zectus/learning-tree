@@ -1,0 +1,189 @@
+=== SECTION 1: Puntos críticos y el método del diagrama de signos ===
+
+En la lección anterior resolvimos desigualdades cuadráticas ubicando las raíces reales de \(ax^2 + bx + c\) y leyendo su signo en los intervalos comprendidos entre ellas. Supongamos ahora que nos enfrentamos a una desigualdad polinómica de grado superior, como
+\[
+x^3 - 3x^2 - 4x + 12 > 0 \qquad \text{o} \qquad (x + 2)(x - 1)^2(x - 4) \le 0.
+\]
+Ya no podemos deducir la respuesta a partir del sentido de apertura de una única parábola. ¿Qué nos permite generalizar los intervalos de signo cuadráticos a polinomios de CUALQUIER grado?
+
+El puente esencial es una propiedad básica de continuidad de los polinomios, que aquí aceptamos sin demostración: un polinomio \(P(x)\) solo puede cambiar de signo en sus ceros reales. Entre dos ceros reales consecutivos —y más allá del menor y del mayor cero real— \(P(x)\) no puede cruzar \(0\), de modo que debe permanecer o bien estrictamente positivo en todo ese intervalo abierto, o bien estrictamente negativo en todo él.
+
+Para resolver cualquier desigualdad polinómica factorizable \(P(x) \lesseqqgtr 0\):
+1. Traslade todos los términos a un mismo lado para que la desigualdad compare un único polinomio \(P(x)\) con \(0\).
+2. Factorice \(P(x)\) completamente en \(\mathbb{R}\) como el producto de una constante principal \(a\), potencias de factores lineales reales distintos \((x - r_j)^{k_j}\) y posibles factores cuadráticos irreducibles (aquellos con \(\Delta < 0\), que carecen de ceros reales).
+3. Enumere todos los ceros reales distintos \(r_1 < r_2 < \dots < r_m\) en orden creciente. Estos números son los puntos críticos de \(P(x)\); particionan \(\mathbb{R}\) en \(m + 1\) intervalos de prueba abiertos:
+\[
+(-\infty, r_1),\quad (r_1, r_2),\quad \dots,\quad (r_{m-1}, r_m),\quad (r_m, \infty).
+\]
+4. Determine el signo de \(P(x)\) en cada intervalo abierto —ya sea construyendo un diagrama de signos factor por factor o evaluando un punto de prueba por intervalo— y luego decida si cada punto crítico \(r_j\) se incluye (para \(\le\) o \(\ge\)) o se excluye (para \(<\) o \(>\)).
+
+Apliquemos este procedimiento a
+\[
+(x + 3)(x - 1)(x - 4) \ge 0.
+\]
+El polinomio ya está factorizado con coeficiente principal \(1 > 0\) y tres ceros reales simples: \(-3\), \(1\) y \(4\). Construyamos un diagrama de signos factor por factor que registre el signo de cada factor en los cuatro intervalos abiertos:
+
+[TABLE]
+Intervalo | Signo de \(x + 3\) | Signo de \(x - 1\) | Signo de \(x - 4\) | Signo de \(P(x)\)
+\((-\infty, -3)\) | \(-\) | \(-\) | \(-\) | \(-\)
+\((-3, 1)\) | \(+\) | \(-\) | \(-\) | \(+\)
+\((1, 4)\) | \(+\) | \(+\) | \(-\) | \(-\)
+\((4, \infty)\) | \(+\) | \(+\) | \(+\) | \(+\)
+[/TABLE]
+
+Como la desigualdad es no estricta (\(\ge 0\)), conservamos los intervalos positivos junto con los tres ceros reales \(-3\), \(1\) y \(4\):
+\[
+[-3, 1] \cup [4, \infty).
+\]
+
+=== SECTION 2: Reglas de multiplicidad y factores cuadráticos irreducibles ===
+
+Construir una tabla de signos fila por fila siempre funciona, pero observar cómo se comportan los factores individuales cerca de sus raíces brinda un atajo mucho más rápido —y mucho menos propenso a errores— llamado regla de cambio de signo según la multiplicidad.
+
+Supongamos que \(P(x)\) contiene un factor \((x - r)^k\) donde \(k\) es un entero positivo (la multiplicidad de la raíz \(r\)). Al desplazarse \(x\) desde justo por debajo de \(r\) hasta justo por encima de \(r\), la base \(x - r\) cambia de signo negativo a positivo, mientras que CADA UNO DE LOS DEMÁS factores de \(P(x)\) mantiene el mismo signo no nulo en un entorno pequeño de \(r\). ¿Qué ocurre con \((x - r)^k\)?
+- Si \(k\) es IMPAR (\(k = 1, 3, 5, \dots\)): \((x - r)^k\) cambia de signo de \(-\) a \(+\), por lo que \(P(x)\) CAMBIA DE SIGNO al cruzar \(x = r\) (la gráfica cruza el eje horizontal).
+- Si \(k\) es PAR (\(k = 2, 4, 6, \dots\)): \((x - r)^k = \bigl((x - r)^{k/2}\bigr)^2\) es positivo a AMBOS lados de \(r\), por lo que \(P(x)\) CONSERVA EL MISMO SIGNO al cruzar \(x = r\) (la gráfica toca el eje horizontal y rebota).
+
+¿Qué sucede con un factor cuadrático irreducible \(ax^2 + bx + c\) con \(\Delta = b^2 - 4ac < 0\)? Por el criterio de signo definido de las desigualdades cuadráticas, una cuadrática irreducible NUNCA se anula y conserva el signo constante de \(a\) en todo \(\mathbb{R}\). Por lo tanto, NO aporta ningún punto crítico al diagrama de signos; simplemente multiplica el signo global por el signo de \(a\) (positivo si \(a > 0\), negativo si \(a < 0\)).
+
+[CALLOUT]
+id: multiplicity-rule
+label: Teorema
+title: Reglas de signo según la multiplicidad y factores irreducibles
+tone: key
+
+Sea \(P(x)\) factorizado completamente sobre \(\mathbb{R}\) con ceros reales \(r_1 < r_2 < \dots < r_m\):
+
+(1) Signo en el extremo derecho: Para \(x > r_m\), todo factor \((x - r_j)\) es positivo, de modo que el signo de \(P(x)\) en \((r_m, \infty)\) coincide con el signo del coeficiente principal de \(P(x)\).
+(2) Multiplicidad impar: Cruzar una raíz \(r_j\) de multiplicidad impar invierte el signo de \(P(x)\).
+(3) Multiplicidad par: Cruzar una raíz \(r_j\) de multiplicidad par deja inalterado el signo de \(P(x)\).
+(4) Cuadrática irreducible (\(\Delta < 0\)): No aporta puntos críticos y multiplica el signo en todas partes por el signo de su coeficiente principal.
+[/CALLOUT]
+
+¡Cuidado con los factores lineales invertidos como \((5 - x)\)! Reescriba \((5 - x) = -(x - 5)\) (o calcule el coeficiente principal con cuidado: el término principal de \((5 - x)\) es \(-x\), lo que aporta un factor \(-1\) al coeficiente principal de \(P(x)\)).
+
+Apliquemos [REF: multiplicity-rule | las reglas de multiplicidad] a
+\[
+P(x) = (x - 2)^2(x + 1).
+\]
+Sus ceros reales son \(-1\) (multiplicidad \(1\), impar) y \(2\) (multiplicidad \(2\), par), y su coeficiente principal es \(+1\). Empezando por el extremo derecho \((2, \infty)\), \(P(x)\) es \(+\). Al movernos hacia la izquierda cruzando \(x = 2\) (multiplicidad par), el signo PERMANECE \(+\) en \((-1, 2)\). Al cruzar hacia la izquierda \(x = -1\) (multiplicidad impar), el signo CAMBIA a \(-\) en \((-\infty, -1)\).
+
+La gráfica de \(y = (x - 2)^2(x + 1)\) hace esto inmediatamente visible: la curva cruza el eje en \(-1\) y apenas roza el eje desde arriba en \(2\).
+
+[GRAPH]
+type: function2d
+title: Gráfica de \(P(x) = (x - 2)^2(x + 1)\): cruce en \(x = -1\) y rebote en \(x = 2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2, 3.4
+yrange: -4.5, 7
+fill: 0, (x - 2)^2*(x + 1) | range: -2, -1 | label: \(P(x) < 0\) | color: #ef4444 | opacity: 0.22
+fill: (x - 2)^2*(x + 1), 0 | range: -1, 3.4 | label: \(P(x) \ge 0\) | color: #3b82f6 | opacity: 0.18
+trace: (x - 2)^2*(x + 1) | label: \(P(x) = (x - 2)^2(x + 1)\)
+trace: 0 | label: \(y = 0\)
+point: -1, 0 | label: \((-1, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál es el conjunto solución de la desigualdad \((x - 4)(x + 1)^2(x^2 + 4) < 0\)?
+
+(A) \((-\infty, 4)\)
+(B) \((-\infty, -1] \cup [-1, 4)\)
+(C) \((-\infty, -1) \cup (-1, 4)\)
+(D) \((-1, 4)\)
+(E) \((-\infty, -2) \cup (-1, 4)\)
+[/QUESTION]
+
+=== SECTION 3: Ceros aislados y la trampa de dividir por un factor ===
+
+Las raíces de multiplicidad par crean dos trampas clásicas en las que caen incluso estudiantes cuidadosos a menos que verifiquen deliberadamente los ceros frontera.
+
+Trampa 1: Clasificar mal un cero aislado en la frontera (o un hueco interior) en una raíz de multiplicidad par. Volvamos a \(P(x) = (x - 2)^2(x + 1)\) de la Sección 2, cuyo signo es \(-\) en \((-\infty, -1)\), \(0\) en \(-1\), \(+\) en \((-1, 2)\), \(0\) en \(2\), y \(+\) en \((2, \infty)\). Compare las CUATRO desigualdades construidas con este mismo polinomio:
+
+[TABLE]
+Desigualdad | Intervalos abiertos donde el signo coincide | Comportamiento en \(x = 2\) | Conjunto solución completo
+\((x - 2)^2(x + 1) < 0\) | \((-\infty, -1)\) | \(P(2) = 0\), no cumple \(< 0\) | \((-\infty, -1)\)
+\((x - 2)^2(x + 1) \le 0\) | \((-\infty, -1)\) | \(P(2) = 0\), ¡cumple \(\le 0\)! | \((-\infty, -1] \cup \{2\}\)
+\((x - 2)^2(x + 1) > 0\) | \((-1, 2)\) y \((2, \infty)\) | \(P(2) = 0\), ¡no cumple \(> 0\)! | \((-1, 2) \cup (2, \infty)\)
+\((x - 2)^2(x + 1) \ge 0\) | \((-1, 2)\) y \((2, \infty)\) | \(P(2) = 0\), ¡une ambos a través de \(2\)! | \([-1, \infty)\)
+[/TABLE]
+
+Examine detenidamente la segunda y la tercera fila. En \((x - 2)^2(x + 1) \le 0\), \(P(x)\) es positivo a AMBOS lados de \(2\), pero en \(x = 2\) se tiene \(P(2) = 0 \le 0\), de modo que el conjunto unitario aislado \(\{2\}\) DEBE unirse con \((-\infty, -1]\). A la inversa, en \((x - 2)^2(x + 1) > 0\), \(P(x)\) es positivo a ambos lados de \(2\), pero \(x = 2\) incumple la positividad estricta, abriendo un hueco que divide \((-1, \infty)\) en \((-1, 2) \cup (2, \infty)\).
+
+[CALLOUT]
+id: zero-accounting
+label: Estrategia
+title: Contabilizar cada cero real
+tone: note
+
+Después de leer los intervalos abiertos en un diagrama de signos, realice una revisión explícita aparte sobre CADA cero real \(r_j\):
+(1) Para \(\le 0\) o \(\ge 0\), TODO cero real de \(P(x)\) pertenece al conjunto solución —ya sea cerrando el extremo de un intervalo, uniendo dos intervalos abiertos adyacentes o apareciendo como un punto aislado \(\{r_j\}\).
+(2) Para \(< 0\) o \(> 0\), NINGÚN cero real pertenece al conjunto solución —así que cualquier cero situado entre dos intervalos abiertos que cumplen la condición abre un hueco en dicho punto.
+[/CALLOUT]
+
+Trampa 2: Dividir ambos lados de una desigualdad polinómica entre un factor variable como \((x - 2)\) o \((x - 2)^2\). Suponga que se pide resolver
+\[
+x(x - 2) \ge 3(x - 2).
+\]
+Si divide ambos lados entre \((x - 2)\) para obtener \(x \ge 3\), comete dos errores fatales: cuando \(x = 2\) dividió entre cero (eliminando la solución válida \(x = 2\)), y cuando \(x < 2\) el factor \((x - 2)\) es negativo (por lo que la desigualdad debió invertirse a \(x \le 3\), ¡lo cual se cumple para TODO \(x < 2\)!). El método correcto NUNCA divide entre un factor variable; pasa todo a un lado y factoriza:
+\[
+x(x - 2) - 3(x - 2) \ge 0 \implies (x - 2)(x - 3) \ge 0 \implies (-\infty, 2] \cup [3, \infty).
+\]
+Incluso dividir entre una potencia par \((x - a)^2\) es inseguro. Aunque \((x - a)^2\) nunca es negativo, se anula en \(x = a\), de modo que cancelarlo o bien elimina la raíz válida \(x = a\) (en \(\le\) o \(\ge\)), o bien conserva silenciosamente el punto inválido \(x = a\) (en \(<\) o \(>\)). Restar hacia un lado y factorizar evita automáticamente todas las variantes de esta trampa.
+
+[QUESTION 2]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \((3 - x)(x + 2)^4(x - 1)^3 \ge 0\)?
+
+(A) \([1, 3]\)
+(B) \(\{-2\} \cup [1, 3]\)
+(C) \((-\infty, -2] \cup [1, 3]\)
+(D) \((-\infty, 1] \cup [3, \infty)\)
+(E) \(\{-2\} \cup (-\infty, 1] \cup [3, \infty)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+¿Cuál es el conjunto solución de \(x^2(x - 3) \le 4(x - 3)\)?
+
+(A) \((-\infty, -2] \cup [2, 3]\)
+(B) \([-2, 2]\)
+(C) \([-2, 2] \cup \{3\}\)
+(D) \([-2, 3]\)
+(E) \((-\infty, -2] \cup [3, \infty)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Para resolver \((x - 1)^2(x + 2) > (x - 1)^2(3x - 4)\), un estudiante divide ambos lados entre \((x - 1)^2\) (argumentando que un cuadrado no puede ser negativo), obtiene \(x + 2 > 3x - 4\), es decir, \(x < 3\), e informa que el conjunto solución es \((-\infty, 3)\). ¿Qué afirmación describe con precisión el error del estudiante?
+
+(A) La respuesta del estudiante \((-\infty, 3)\) es completamente correcta porque \((x - 1)^2\) nunca invierte el sentido de la desigualdad.
+(B) Dividir entre \((x - 1)^2\) invierte la desigualdad para \(x < 1\), de modo que el verdadero conjunto solución es \((1, 3)\).
+(C) El estudiante omitió la solución aislada \(x = 3\), de modo que el verdadero conjunto solución es \((-\infty, 3]\).
+(D) Dividir entre \((x - 1)^2\) ignora que \((x - 1)^2 = 0\) en \(x = 1\), donde la desigualdad estricta no se cumple; el verdadero conjunto solución es \((-\infty, 1) \cup (1, 3)\).
+(E) Dividir entre \((x - 1)^2\) eliminó las soluciones válidas para \(x > 3\), de modo que el verdadero conjunto solución es \((-\infty, 1) \cup (3, \infty)\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \((x^2 - 5x + 6)(x^2 - 4x + 4)(x^2 + x + 1) \le 0\)?
+
+(A) \(\{2\} \cup [3, \infty)\)
+(B) \((-\infty, 2] \cup [3, \infty)\)
+(C) \([2, 3]\)
+(D) \((-\infty, 3]\)
+(E) \([2, 3] \cup \{-1\}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+¿Cuál es el conjunto solución de \(x^4 - 5x^2 + 4 > 0\)?
+
+(A) \((-2, -1) \cup (1, 2)\)
+(B) \((-\infty, 1) \cup (4, \infty)\)
+(C) \((-\infty, -2) \cup (2, \infty)\)
+(D) \((-\infty, -2] \cup [-1, 1] \cup [2, \infty)\)
+(E) \((-\infty, -2) \cup (-1, 1) \cup (2, \infty)\)
+[/BONUS]

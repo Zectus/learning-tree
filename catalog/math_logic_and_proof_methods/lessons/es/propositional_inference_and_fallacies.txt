@@ -1,0 +1,261 @@
+=== SECTION 1: Argumentos deductivos, validez y solidez ===
+
+Las tablas de verdad y las leyes de equivalencia nos indican cuándo dos enunciados tienen el mismo significado o cuándo un enunciado aislado es una tautología. En matemática, sin embargo, rara vez nos quedamos dentro de una sola fórmula: partimos de suposiciones aceptadas (premisas) y deducimos una nueva afirmación (una conclusión). ¿Cómo decidimos si un paso deductivo es lógicamente hermético, con independencia de si sus premisas resultan ser verdaderas?
+
+Un argumento consta de una lista finita de enunciados \(P_1, P_2, \dots, P_k\), llamados premisas, junto con un único enunciado \(C\), llamado conclusión. A menudo presentamos un argumento en forma vertical, colocando una línea horizontal (o el símbolo \(\therefore\), que se lee "por lo tanto") antes de la conclusión.
+
+[CALLOUT]
+id: def-validity
+label: Definición
+title: Argumentos válidos y sólidos
+tone: key
+
+Considere un argumento con premisas \(P_1, P_2, \dots, P_k\) y conclusión \(C\).
+
+(1) El argumento es válido si, en toda asignación de valores de verdad en la que todas las premisas \(P_1, P_2, \dots, P_k\) son simultáneamente verdaderas, la conclusión \(C\) también es verdadera. Equivalentemente, el único enunciado condicional
+\[
+(P_1 \wedge P_2 \wedge \dots \wedge P_k) \Rightarrow C
+\]
+es una tautología.
+(2) El argumento es sólido si es válido Y todas sus premisas \(P_1, P_2, \dots, P_k\) son efectivamente verdaderas.
+[/CALLOUT]
+
+¿Por qué la condición de tautología en [REF: def-validity.1 | la definición de validez] equivale a "siempre que todas las premisas son verdaderas, \(C\) es verdadero"? Recuerde la tabla de verdad del condicional material: \((P_1 \wedge \dots \wedge P_k) \Rightarrow C\) deja de ser verdadero únicamente en una fila donde la conjunción \(P_1 \wedge \dots \wedge P_k\) es \(V\) (lo que significa que toda premisa es \(V\)) y \(C\) es \(F\). Decir que no existe tal fila es decir precisamente que \((P_1 \wedge \dots \wedge P_k) \Rightarrow C\) es \(V\) en todas las filas: una tautología.
+
+Observe una distinción crucial entre validez y solidez. La validez evalúa únicamente el puente lógico de las premisas a la conclusión; no dice nada sobre si las premisas son verdaderas en el mundo real o en aritmética. Observe el siguiente argumento:
+
+1. Si \(4\) es un entero impar, entonces \(4\) es divisible entre \(9\).
+2. \(4\) es un entero impar.
+3. Por lo tanto, \(4\) es divisible entre \(9\).
+
+Este argumento es completamente VÁLIDO: su estructura es \((P \Rightarrow Q)\) y \(P\), por lo tanto \(Q\), de modo que es imposible que ambas premisas sean verdaderas mientras la conclusión es falsa. Sin embargo, es NO SÓLIDO porque su segunda premisa ("\(4\) es un entero impar") es falsa (y su conclusión resulta ser falsa también).
+
+Recíprocamente, ¡tener premisas verdaderas y una conclusión verdadera NO hace válido a un argumento! Considere:
+
+1. Si \(6\) es divisible entre \(12\), entonces \(6\) es par. (Verdadero, por vacuidad.)
+2. \(6\) es par. (Verdadero.)
+3. Por lo tanto, \(6\) es divisible entre \(12\). (¡Falso!)
+
+Incluso si reemplaza \(6\) por \(24\) —de modo que "si \(24\) es divisible entre \(12\), entonces \(24\) es par", "\(24\) es par" y "\(24\) es divisible entre \(12\)" son TODOS verdaderos—, la forma argumentativa proposicional subyacente (\(P \Rightarrow Q\), \(Q\), por lo tanto \(P\)) sigue siendo INVÁLIDA, porque la fila \(P = F, Q = V\) hace verdaderas ambas premisas y falsa la conclusión.
+
+[TABLE]
+Caso | Premisas | Forma lógica | Conclusión | ¿Válido? | ¿Sólido?
+1 | Todas verdaderas | Preserva la verdad | Debe ser verdadera | Sí | Sí
+2 | Al menos una falsa | Preserva la verdad | Puede ser verdadera o falsa | Sí | No
+3 | Todas verdaderas | Falla en alguna fila de verdad | Puede resultar verdadera o falsa | No | No
+4 | Al menos una falsa | Falla en alguna fila de verdad | Puede resultar verdadera o falsa | No | No
+[/TABLE]
+
+[CALLOUT]
+id: caution-valid-sound
+label: Precaución
+title: Válido no significa "conclusión verdadera"
+tone: caution
+
+Un argumento válido garantiza una conclusión verdadera únicamente cuando todas sus premisas son verdaderas (es decir, cuando el argumento es sólido). Un argumento válido puede tener premisas falsas y conclusión verdadera, o premisas falsas y conclusión falsa. La única combinación que un argumento válido NUNCA puede tener es todas las premisas verdaderas con una conclusión falsa.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál de las siguientes combinaciones es IMPOSIBLE para un argumento deductivo?
+
+(A) Válido, con al menos una premisa falsa y conclusión verdadera
+(B) Válido, con al menos una premisa falsa y conclusión falsa
+(C) Válido, con todas las premisas verdaderas y conclusión falsa
+(D) Inválido, con todas las premisas verdaderas y conclusión verdadera
+(E) Inválido, con al menos una premisa falsa y conclusión verdadera
+[/QUESTION]
+
+=== SECTION 2: Reglas estándar de inferencia proposicional ===
+
+Así como las leyes de equivalencia algebraica nos ahorraron dibujar tablas de verdad enormes para simplificar fórmulas, una lista compacta de formas argumentativas válidas estándar —llamadas reglas de inferencia— nos permite verificar y construir deducciones de varios pasos con limpieza. Cada regla siguiente se justifica por el hecho de que su condicional correspondiente es una tautología (lo cual puede comprobarse directamente por tabla de verdad o simplificación algebraica).
+
+[CALLOUT]
+id: rules-inference
+label: Teorema
+title: Reglas estándar de inferencia proposicional
+tone: key
+
+Cada uno de los siguientes esquemas argumentativos es válido para todos los enunciados \(P\), \(Q\) y \(R\):
+
+(1) Modus ponens: de \(P \Rightarrow Q\) y \(P\), infiérase \(Q\).
+(2) Modus tollens: de \(P \Rightarrow Q\) y \(\neg Q\), infiérase \(\neg P\).
+(3) Silogismo hipotético: de \(P \Rightarrow Q\) y \(Q \Rightarrow R\), infiérase \(P \Rightarrow R\).
+(4) Silogismo disyuntivo: de \(P \vee Q\) y \(\neg P\), infiérase \(Q\) (y análogamente, de \(P \vee Q\) y \(\neg Q\), infiérase \(P\)).
+(5) Conjunción: de \(P\) y \(Q\), infiérase \(P \wedge Q\).
+(6) Simplificación: de \(P \wedge Q\), infiérase \(P\) (y análogamente, infiérase \(Q\)).
+(7) Adición: de \(P\), infiérase \(P \vee Q\) (para cualquier enunciado \(Q\)).
+(8) Demostración por casos: de \(P \vee Q\), \(P \Rightarrow R\) y \(Q \Rightarrow R\), infiérase \(R\).
+[/CALLOUT]
+
+Observe de cerca cómo trabajan juntas [REF: rules-inference | estas ocho reglas] con las equivalencias de lecciones anteriores:
+
+- [REF: rules-inference.2 | El modus tollens] es simplemente modus ponens aplicado a la contrarrecíproca \(\neg Q \Rightarrow \neg P\): saber \(P \Rightarrow Q\) y \(\neg Q\) fuerza \(\neg P\), porque si \(P\) fuera verdadero entonces \(Q\) tendría que ser verdadero.
+- [REF: rules-inference.4 | El silogismo disyuntivo] refleja el significado de la "o" inclusiva: si al menos uno de \(P\) o \(Q\) se cumple y \(P\) falla, entonces \(Q\) debe cumplirse.
+- [REF: rules-inference.7 | La adición] a veces sorprende a los estudiantes porque \(Q\) puede no tener relación alguna con \(P\). Sin embargo, si \(P\) ya es verdadero, entonces \(P \vee Q\) es verdadero con seguridad sin importar si \(Q\) es verdadero o falso.
+- [REF: rules-inference.8 | La demostración por casos] (también llamada eliminación de la disyunción) tiene la forma tautológica
+\[
+\bigl((P \vee Q) \wedge (P \Rightarrow R) \wedge (Q \Rightarrow R)\bigr) \Rightarrow R.
+\]
+Ya demostramos en la lección anterior que \((P \Rightarrow R) \wedge (Q \Rightarrow R) \equiv (P \vee Q) \Rightarrow R\). Combine esa equivalencia con \(P \vee Q\) y aplique modus ponens: ¡\(R\) se deduce de inmediato!
+
+Encadenemos varias reglas en una deducción proposicional de múltiples pasos. Suponga que nos dan cinco premisas:
+1. \(\neg P \wedge Q\)
+2. \(R \Rightarrow P\)
+3. \(\neg R \Rightarrow S\)
+4. \(S \Rightarrow (T \vee U)\)
+5. \(\neg T\)
+
+Meta: deducir \(U \wedge Q\).
+
+Construimos la derivación línea por línea, citando en cada paso la regla exacta y las líneas previas:
+
+[TABLE]
+Paso | Enunciado | Justificación
+1 | \(\neg P \wedge Q\) | Premisa
+2 | \(R \Rightarrow P\) | Premisa
+3 | \(\neg R \Rightarrow S\) | Premisa
+4 | \(S \Rightarrow (T \vee U)\) | Premisa
+5 | \(\neg T\) | Premisa
+6 | \(\neg P\) | Simplificación a partir de (1)
+7 | \(\neg R\) | Modus tollens a partir de (2) y (6)
+8 | \(S\) | Modus ponens a partir de (3) y (7)
+9 | \(T \vee U\) | Modus ponens a partir de (4) y (8)
+10 | \(U\) | Silogismo disyuntivo a partir de (9) y (5)
+11 | \(Q\) | Simplificación a partir de (1)
+12 | \(U \wedge Q\) | Conjunción a partir de (10) y (11)
+[/TABLE]
+
+Note cuán limpia es la cadena: cada línea está autorizada por una línea anterior y una regla verificada, de modo que siempre que las premisas (1)–(5) sean todas verdaderas, toda línea posterior —culminando en \(U \wedge Q\)— debe ser verdadera. También podemos usar [REF: rules-inference.3 | el silogismo hipotético] para acortar los pasos (8)–(9) si primero combinamos (3) y (4) en \(\neg R \Rightarrow (T \vee U)\).
+
+He aquí una segunda deducción resuelta que ilustra [REF: rules-inference.8 | la demostración por casos] combinada con equivalencias lógicas. Dadas las premisas:
+1. \(P \Rightarrow Q\)
+2. \(\neg P \Rightarrow R\)
+3. \(Q \Rightarrow S\)
+4. \(R \Rightarrow S\)
+
+Meta: deducir \(S\).
+
+Por la ley del tercero excluido (una tautología que podemos introducir en cualquier paso), se cumple \(P \vee \neg P\). Por [REF: rules-inference.3 | silogismo hipotético] en (1) y (3), obtenemos \(P \Rightarrow S\). Por [REF: rules-inference.3 | silogismo hipotético] en (2) y (4), obtenemos \(\neg P \Rightarrow S\). Finalmente, aplicando [REF: rules-inference.8 | demostración por casos] a \(P \vee \neg P\), \(P \Rightarrow S\) y \(\neg P \Rightarrow S\) se obtiene \(S\).
+
+[QUESTION 2]
+[ANSWER: A]
+Suponga que las siguientes cuatro premisas son todas verdaderas:
+1. \(A \vee B\)
+2. \(A \Rightarrow \neg C\)
+3. \(B \Rightarrow D\)
+4. \(C \wedge \neg E\)
+
+¿Cuál de los siguientes enunciados puede deducirse válidamente únicamente a partir de estas premisas?
+
+(A) \(D \wedge \neg A\)
+(B) \(A \wedge \neg E\)
+(C) \(D \Rightarrow A\)
+(D) \(E \vee A\)
+(E) \(\neg B \wedge D\)
+[/QUESTION]
+
+=== SECTION 3: Refutación de argumentos inválidos y diagnóstico de falacias ===
+
+Cuando un argumento es válido, una cadena de reglas de [REF: rules-inference | nuestro repertorio de inferencia] lo demuestra. ¿Qué ocurre si un argumento es INVÁLIDO? No necesita una tabla de verdad completa para refutarlo: por [REF: def-validity.1 | la definición de validez], un argumento deja de ser válido tan pronto como existe una única asignación de valores de verdad —llamada contraasignación— que hace \(V\) a cada premisa y \(F\) a la conclusión.
+
+Encontrar una contraasignación funciona mejor en sentido inverso:
+1. Fuerce a la conclusión \(C\) a ser \(F\).
+2. Trabaje hacia atrás a través de las premisas para asignar las variables restantes de modo que cada premisa \(P_1, \dots, P_k\) se evalúe como \(V\).
+3. Verifique su asignación final de verdad en cada premisa y en \(C\).
+
+Apliquemos este método para poner a prueba el argumento:
+- Premisa 1: \(P \Rightarrow (Q \vee R)\)
+- Premisa 2: \(\neg Q\)
+- Conclusión: \(R\)
+
+Intentemos construir una contraasignación:
+- Para hacer falsa la conclusión \(R\), fijamos \(R = F\).
+- Para hacer verdadera la Premisa 2 (\(\neg Q\)), debemos fijar \(Q = F\).
+- Ahora comprobemos la Premisa 1: \(P \Rightarrow (Q \vee R)\) se convierte en \(P \Rightarrow (F \vee F)\), que es \(P \Rightarrow F\). Para hacer verdadero \(P \Rightarrow F\), ¡basta fijar \(P = F\)!
+
+Verifique la asignación completa \(P = F\), \(Q = F\), \(R = F\): la Premisa 1 es \(F \Rightarrow F = V\), la Premisa 2 es \(\neg F = V\) y la conclusión \(R\) es \(F\). Esa sola fila refuta el argumento por completo. (Note por qué falló el argumento: la Premisa 1 dice que \(Q \vee R\) se cumple si \(P\) se cumple, ¡pero nadie nos dio \(P\)!)
+
+Cuatro patrones inválidos recurrentes aparecen con tanta frecuencia en el razonamiento cotidiano y en las primeras demostraciones que tienen nombres estándar.
+
+[CALLOUT]
+id: fallacies-propositional
+label: Precaución
+title: Cuatro falacias proposicionales clásicas
+tone: caution
+
+(1) Afirmación del consecuente (error de la recíproca): de \(P \Rightarrow Q\) y \(Q\), inferir \(P\). Se refuta con la contraasignación \(P = F, Q = V\).
+(2) Negación del antecedente (error de la inversa): de \(P \Rightarrow Q\) y \(\neg P\), inferir \(\neg Q\). Se refuta con la contraasignación \(P = F, Q = V\).
+(3) Falsa dicotomía (falso dilema): afirmar \(P \vee Q\) cuando \(P\) y \(Q\) en realidad no agotan todas las posibilidades, y luego usar \(\neg P\) para forzar \(Q\) (o usar demostración por casos sobre una partición incompleta). El paso de inferencia en sí puede ser válido, de modo que el argumento es no sólido porque su premisa disyuntiva \(P \vee Q\) es falsa.
+(4) Razonamiento circular (petición de principio): suponer la conclusión \(C\) (directamente o bajo una forma equivalente disfrazada) entre las premisas usadas para justificar \(C\). Formalmente, \(C \Rightarrow C\) es una tautología (¡válida!), pero el argumento no establece nada porque la conclusión nunca recibió respaldo desde premisas independientes.
+[/CALLOUT]
+
+Observe con atención las dos primeras falacias en [REF: fallacies-propositional | este catálogo] —reflejan exactamente las no equivalencias de la lección anterior—:
+- La afirmación del consecuente confunde \(P \Rightarrow Q\) con su recíproca \(Q \Rightarrow P\). Ejemplo: "Si \(x = 3\), entonces \(x^2 = 9\). Sabemos que \(x^2 = 9\). Por lo tanto, \(x = 3\)". Contraejemplo: \(x = -3\) hace \(P\) falso y \(Q\) verdadero.
+- La negación del antecedente confunde \(P \Rightarrow Q\) con su inversa \(\neg P \Rightarrow \neg Q\). Ejemplo: "Si un número es divisible entre \(6\), entonces es par. El número \(10\) no es divisible entre \(6\). Por lo tanto, \(10\) no es par". Aquí \(P\) es falso y \(Q\) es verdadero.
+
+Ahora compare la tercera y la cuarta falacia —muestran por qué la forma lógica por sí sola no lo es todo—:
+- Ejemplo de falsa dicotomía: "O bien \(x > 0\) o bien \(x < 0\). Como \(x\) no es positivo, \(x < 0\)". El paso de silogismo disyuntivo es válido, pero la premisa oculta "\(x > 0\) o \(x < 0\)" omite \(x = 0\), haciendo que el argumento sea no sólido cuando \(x = 0\).
+- Ejemplo de razonamiento circular: para argumentar que cierto entero \(n\) es impar, un estudiante escribe "como \(n\) no es par, \(n\) no es divisible entre \(2\), lo que significa que \(n\) es impar". A menos que "\(n\) no es par" se haya establecido de manera independiente, el argumento simplemente reformula su conclusión objetivo con palabras equivalentes y gira en círculo.
+
+[QUESTION 3]
+[ANSWER: D]
+Considere el argumento con premisas \((P \vee Q) \Rightarrow R\) y \(\neg P\), y conclusión \(\neg R\). ¿Qué asignación de valores de verdad es una contraasignación que demuestra que este argumento es inválido?
+
+(A) \(P = V, Q = V, R = V\)
+(B) \(P = V, Q = F, R = F\)
+(C) \(P = F, Q = F, R = F\)
+(D) \(P = F, Q = V, R = V\)
+(E) No existe ninguna contraasignación; el argumento es válido.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Lea el siguiente razonamiento sobre un número real \(x\):
+"Si \(x > 5\), entonces \(x^2 > 25\). Se nos da que \(x \le 5\). Por lo tanto, \(x^2 \le 25\)."
+¿Qué diagnóstico identifica mejor el defecto de este argumento?
+
+(A) Afirmación del consecuente (error de la recíproca): aplica la recíproca \(x^2 > 25 \Rightarrow x > 5\).
+(B) Negación del antecedente (error de la inversa): infiere \(\neg Q\) a partir de \(P \Rightarrow Q\) y \(\neg P\), lo cual falla por ejemplo cuando \(x = -6\).
+(C) Falsa dicotomía: omite el caso \(x = 5\).
+(D) Razonamiento circular: supone \(x^2 \le 25\) como premisa oculta.
+(E) Error de silogismo disyuntivo: trata la "o" inclusiva como "o" exclusiva.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Cuál de los siguientes esquemas argumentativos es VÁLIDO?
+
+(A) Premisas: \(P \Rightarrow Q\), \(R \Rightarrow Q\), \(P \vee R\). Conclusión: \(P \wedge R\).
+(B) Premisas: \(P \Rightarrow (Q \vee R)\), \(Q\). Conclusión: \(P\).
+(C) Premisas: \(P \Rightarrow Q\), \(\neg R \Rightarrow \neg Q\), \(P\). Conclusión: \(R\).
+(D) Premisas: \(P \vee Q\), \(P \Rightarrow R\). Conclusión: \(Q \vee \neg R\).
+(E) Premisas: \((P \wedge Q) \Rightarrow R\), \(\neg P\). Conclusión: \(\neg R\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suponga que nos dan las premisas:
+1. \((P \vee Q) \Rightarrow (R \wedge S)\)
+2. \(S \Rightarrow \neg T\)
+3. \(T\)
+
+¿Qué conclusión puede inferirse válidamente a partir de estas tres premisas?
+
+(A) \(P \wedge \neg Q\)
+(B) \(Q \wedge \neg P\)
+(C) \(\neg P \vee \neg Q\), pero no \(\neg P \wedge \neg Q\)
+(D) \(\neg R\)
+(E) \(\neg P \wedge \neg Q\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Considere el argumento con premisas \(P \Rightarrow (Q \wedge R)\), \(Q \Rightarrow S\) y \(S\), y conclusión \(P \vee R\). ¿Cuántas de las \(16\) filas de la tabla de verdad para \((P, Q, R, S)\) son contraasignaciones para este argumento?
+
+(A) \(2\)
+(B) \(1\)
+(C) \(3\)
+(D) \(4\)
+(E) \(0\) (el argumento es válido)
+[/BONUS]

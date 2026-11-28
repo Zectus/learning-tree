@@ -1,0 +1,264 @@
+=== SECTION 1: Donde la inducción débil se estanca y el Principio de Inducción Fuerte ===
+
+La inducción matemática ordinaria (débil) demuestra \(P(k + 1)\) usando únicamente el enunciado inmediatamente anterior \(P(k)\). Sin embargo, a veces la forma natural de construir el objeto \(k + 1\) no proviene en absoluto de \(k\), sino que retrocede hasta \(k - 1\), \(k - 2\), o incluso hasta enteros menores arbitrarios entre \(n_0\) y \(k\).
+
+Considera el problema de las estampillas postales: supón que dispones de un suministro ilimitado de estampillas de \(3\) centavos y de \(5\) centavos. ¿Puedes formar toda cantidad entera \(n \ge 8\) centavos? Revisa las primeras cantidades:
+\[
+8 = 3 + 5, \qquad 9 = 3 + 3 + 3, \qquad 10 = 5 + 5, \qquad 11 = 8 + 3, \qquad 12 = 9 + 3, \qquad 13 = 10 + 3.
+\]
+Observa lo que ocurrió a partir de \(11\): para formar \(11\), no modificamos una representación de \(10\); tomamos nuestra representación de \(8 = 11 - 3\) y agregamos una estampilla de \(3\) centavos. Para formar \(12\), agregamos una estampilla de \(3\) centavos a \(9\). En general, para demostrar \(P(k + 1)\) —«la cantidad \(k + 1\) puede escribirse como \(3a + 5b\) con enteros \(a, b \ge 0\)»— queremos invocar \(P(k - 2)\), tres pasos atrás, no \(P(k)\).
+
+La inducción fuerte (también llamada inducción completa) nos concede acceso simultáneo a todos los enunciados anteriores desde \(n_0\) hasta \(k\).
+
+[CALLOUT]
+id: strong-induction
+label: Principio
+title: Principio de Inducción Fuerte (Completa)
+tone: key
+
+Sea \(n_0 \in \mathbb{Z}\) un entero inicial fijo, y sea \(P(n)\) un enunciado para todo entero \(n \ge n_0\). Supongamos que:
+
+(1) Caso(s) base: \(P(n_0)\) es verdadero (y, si el paso inductivo solo aplica una vez que \(k + 1 \ge n_0 + b\), todos los casos base explícitos \(P(n_0), P(n_0 + 1), \dots, P(n_0 + b - 1)\) son verdaderos).
+(2) Paso inductivo fuerte: Para todo entero \(k \ge n_0 + b - 1\) (con \(b \ge 1\)), si \(P(j)\) es verdadero para todos los enteros \(j\) que satisfacen \(n_0 \le j \le k\), entonces \(P(k + 1)\) es verdadero.
+
+Entonces \(P(n)\) es verdadero para todo entero \(n \ge n_0\).
+[/CALLOUT]
+
+¿Por qué [REF: strong-induction.1 | la cláusula de los casos base] requiere a veces múltiples casos base explícitos? Porque la hipótesis inductiva fuerte solo cubre los enteros \(j\) con \(n_0 \le j \le k\). Si tu argumento para \(P(k + 1)\) retrocede un desfase fijo \(L\) —es decir, invoca \(P(k + 1 - L)\)—, entonces ese índice anterior cae dentro del rango válido \([n_0, k]\) únicamente cuando \(k + 1 - L \ge n_0\), esto es, cuando \(k + 1 \ge n_0 + L\). Ningún entero \(n\) desde \(n_0\) hasta \(n_0 + L - 1\) puede alcanzarse retrocediendo \(L\) pasos, de modo que los \(L\) valores iniciales deben verificarse explícitamente como casos base.
+
+Completemos la demostración de las estampillas postales usando [REF: strong-induction | inducción fuerte] con \(n_0 = 8\) y desfase \(L = 3\).
+
+Afirmación: Todo entero \(n \ge 8\) puede escribirse como \(n = 3a + 5b\) para ciertos enteros \(a, b \ge 0\).
+
+Demostración: Sea \(P(n)\) el enunciado de que \(n = 3a + 5b\) para ciertos enteros \(a, b \ge 0\).
+
+Casos base (\(n = 8, 9, 10\)):
+- \(n = 8 = 3(1) + 5(1)\),
+- \(n = 9 = 3(3) + 5(0)\),
+- \(n = 10 = 3(0) + 5(2)\).
+Por tanto, \(P(8)\), \(P(9)\) y \(P(10)\) se cumplen todos.
+
+Paso inductivo fuerte: Fija un entero \(k \ge 10\) y supone que \(P(j)\) se cumple para todo entero \(j\) con \(8 \le j \le k\). Considera \(k + 1\). Como \(k \ge 10\), el entero \(j = (k + 1) - 3 = k - 2\) satisface \(8 \le k - 2 \le k\). Por la hipótesis inductiva fuerte aplicada en \(j = k - 2\), existen enteros \(a, b \ge 0\) tales que \(k - 2 = 3a + 5b\). Sumando \(3\) a ambos lados se obtiene
+\[
+k + 1 = (k - 2) + 3 = 3(a + 1) + 5b,
+\]
+con \(a + 1 \ge 1 > 0\) y \(b \ge 0\). Así, \(P(k + 1)\) se cumple. Por [REF: strong-induction | inducción fuerte], \(P(n)\) es verdadero para todo \(n \ge 8\).
+
+Observa que verificar únicamente \(n = 8\) y \(n = 9\) dejaría una brecha fatal: en \(k = 9\), intentar demostrar \(P(10)\) retrocediendo \(3\) pasos lleva a \(10 - 3 = 7 < 8\), que está fuera del dominio del teorema (y en efecto \(7\) no puede formarse con estampillas de \(3\) y \(5\) centavos).
+
+La inducción fuerte con desfase fijo es igualmente esencial para sucesiones multipaso. Define la sucesión de Fibonacci mediante \(F_1 = 1\), \(F_2 = 1\) y \(F_n = F_{n-1} + F_{n-2}\) para todo \(n \ge 3\). Demostremos que \(F_n < 2^n\) para todo \(n \ge 1\). Como la recurrencia para \(F_{k+1} = F_k + F_{k-1}\) retrocede \(2\) pasos, verificamos dos casos base:
+- \(n = 1\): \(F_1 = 1 < 2 = 2^1\),
+- \(n = 2\): \(F_2 = 1 < 4 = 2^2\).
+Ahora fija \(k \ge 2\) y supone \(F_j < 2^j\) para todo \(1 \le j \le k\). Como \(k \ge 2\), tanto \(k\) como \(k - 1\) están en \(\{1, \dots, k\}\), de modo que la hipótesis inductiva fuerte aplica a ambos:
+\[
+F_{k+1} = F_k + F_{k-1} < 2^k + 2^{k-1} < 2^k + 2^k = 2^{k+1}.
+\]
+Luego \(F_n < 2^n\) para todo entero \(n \ge 1\).
+
+[QUESTION 1]
+[ANSWER: C]
+Todo entero \(n \ge 18\) puede expresarse como \(n = 4a + 7b\) para enteros no negativos \(a, b\). Supón que demuestras esto por inducción fuerte usando el paso «\(k + 1 = (k - 3) + 4\)», que suma un \(4\) a una representación válida de \(k - 3\). ¿Cuál es el conjunto mínimo exacto de casos base que debes verificar antes de que ese paso inductivo aplique a todos los enteros restantes \(n \ge 18\)?
+
+(A) Solo \(n = 18\)
+(B) \(n = 18, 19, 20\)
+(C) \(n = 18, 19, 20, 21\)
+(D) \(n = 18, 19, 20, 21, 22, 23, 24\)
+(E) \(n = 14, 15, 16, 17\)
+[/QUESTION]
+
+=== SECTION 2: Descomposiciones menores arbitrarias y factorización prima ===
+
+En problemas de desfase fijo como las estampillas postales o las cotas de Fibonacci, sabes de antemano cuántos pasos atrás llega el paso inductivo. En otra gran clase de problemas, el paso inductivo divide \(k + 1\) en una o más piezas estrictamente menores cuyos tamaños exactos no pueden predecirse de antemano —pueden situarse en cualquier lugar entre \(n_0\) y \(k\). La inducción fuerte maneja esto sin esfuerzo porque su hipótesis cubre todo el intervalo \([n_0, k]\).
+
+El ejemplo emblemático es la existencia de la factorización prima. Recuerda que un entero \(p \ge 2\) es primo si sus únicos divisores positivos son \(1\) y \(p\); un entero \(n \ge 2\) que no es primo es compuesto, lo que significa que \(n = ab\) para ciertos enteros \(a, b\) con \(2 \le a < n\) y \(2 \le b < n\).
+
+[CALLOUT]
+id: prime-factorization
+label: Teorema
+title: Existencia de la factorización prima
+tone: key
+
+Todo entero \(n \ge 2\) es un número primo o un producto de números primos.
+[/CALLOUT]
+
+Demostración: Sea \(P(n)\) el enunciado de que \(n\) es primo o un producto de primos, para \(n \ge 2\).
+
+Caso base (\(n = 2\)): El entero \(2\) es primo, por lo que \(P(2)\) se cumple.
+
+Paso inductivo fuerte: Fija un entero \(k \ge 2\) y supone que \(P(j)\) se cumple para todo entero \(j\) que satisface \(2 \le j \le k\). Considera \(k + 1\). Hay dos casos:
+- Caso 1: \(k + 1\) es primo. Entonces \(P(k + 1)\) se cumple de inmediato.
+- Caso 2: \(k + 1\) es compuesto. Por definición de número compuesto, existen enteros \(a\) y \(b\) tales que \(k + 1 = ab\) y \(2 \le a \le k\), \(2 \le b \le k\). Como tanto \(a\) como \(b\) pertenecen al rango \([2, k]\), la hipótesis inductiva fuerte proporciona tanto \(P(a)\) como \(P(b)\): cada uno de \(a\) y \(b\) es primo o un producto de primos. Al multiplicar sus factorizaciones primas entre sí se escribe \(k + 1 = ab\) como un producto de primos, de modo que \(P(k + 1)\) se cumple.
+
+En ambos casos \(P(k + 1)\) se cumple. Por [REF: strong-induction | inducción fuerte], todo entero \(n \ge 2\) es primo o un producto de primos.
+
+Detente y observa dos aspectos cruciales de esta demostración. Primero, ¡solo se necesitó UN caso base (\(n = 2\))! ¿Por qué? Porque para todo entero \(k \ge 2\), si \(k + 1\) es compuesto, sus factores propios \(a\) y \(b\) satisfacen automáticamente \(2 \le a, b \le k\) —nunca pueden caer por debajo de \(n_0 = 2\). Segundo, la inducción ordinaria sería completamente impotente aquí: factorizar \(k + 1 = 15 = 3 \cdot 5\) no dice nada sobre \(k = 14\); necesitas el resultado para \(3\) y \(5\), que están muy atrás en el rango \([2, 14]\). (Esta demostración establece la existencia de una factorización prima; demostrar la unicidad —el Teorema Fundamental de la Aritmética— requiere propiedades adicionales de divisibilidad de los primos y pertenece a la teoría de números).
+
+[QUESTION 2]
+[ANSWER: B]
+Considera el teorema: «Todo entero \(n \ge 1\) puede escribirse como suma de una o más potencias distintas de \(2\) (tomadas de \(\{2^0, 2^1, 2^2, \dots\}\))». En una demostración por inducción fuerte con caso base \(n = 1 = 2^0\), fija \(k \ge 1\), supone la afirmación para todo \(1 \le j \le k\) y examina \(k + 1\) dividiendo en dos casos:
+- Si \(k + 1\) es par, escribe \(k + 1 = 2m\), aplica la hipótesis inductiva fuerte a \(m\) y multiplica por \(2\) cada potencia de \(2\) en la suma para \(m\).
+- Si \(k + 1\) es impar, escribe \(k + 1 = 2m + 1\) (con \(m \ge 1\)), aplica la hipótesis inductiva fuerte a \(m\), multiplica cada término por \(2\) y suma \(2^0 = 1\).
+
+¿Por qué esta demostración es completamente válida con el único caso base \(n = 1\)?
+
+(A) Porque \(k + 1\) siempre es \(2k\) o \(2k - 1\), de modo que la inducción ordinaria sobre \(k\) funcionaría igual de bien.
+(B) Porque para todo \(k \ge 1\), \(k + 1 \ge 2\) obliga a que \(1 \le m \le k\) en ambos casos, y multiplicar por \(2\) una suma de potencias distintas de \(2\) produce potencias distintas de \(2\) todas al menos iguales a \(2^1\), de modo que sumar \(2^0\) en el caso impar no introduce ningún duplicado.
+(C) Porque en el caso impar \(k + 1 = (k) + 1\) siempre evita usar \(2^0\) en la representación de \(k\).
+(D) Porque \(m\) siempre es igual a \(k - 1\), de modo que el paso tiene desfase fijo \(2\) y \(n = 1\) cubre ambas paridades.
+(E) En realidad, la demostración no es válida con un solo caso base porque \(m = 0\) ocurre cuando \(k = 1\) en el caso impar.
+[/QUESTION]
+
+=== SECTION 3: El Principio del Buen Orden y demostraciones por contraejemplo mínimo ===
+
+La inducción asciende desde un caso base. Existe un principio gemelo que mira en la dirección opuesta —hacia abajo, al menor elemento de un conjunto no vacío de números naturales— y resulta tener exactamente el mismo poder lógico. A lo largo de esta sección, sea \(\mathbb{N} = \{0, 1, 2, \dots\}\).
+
+[CALLOUT]
+id: wop
+label: Principio
+title: Principio del Buen Orden (PBO)
+tone: key
+
+Todo subconjunto no vacío \(S \subseteq \mathbb{N}\) tiene un elemento mínimo; es decir, existe \(m \in S\) tal que \(m \le s\) para todo \(s \in S\).
+[/CALLOUT]
+
+No des por sentado [REF: wop | el Principio del Buen Orden] como una propiedad de todo conjunto numérico ordenado —es especial de \(\mathbb{N}\) (y de cualquier conjunto acotado inferiormente en \(\mathbb{Z}\), como \(\{n \in \mathbb{Z} : n \ge n_0\}\)). En \(\mathbb{Z}\), el subconjunto no vacío de los enteros negativos \(\{-1, -2, -3, \dots\}\) no tiene elemento mínimo. En los números reales positivos \(\mathbb{R}^+\), el intervalo abierto \((0, 1)\) es no vacío y está acotado inferiormente por \(0\), pero no tiene elemento mínimo: para cualquier \(x \in (0, 1)\), el número menor \(x/2\) sigue perteneciendo a \((0, 1)\). Lo mismo falla en los racionales positivos \(\mathbb{Q}^+\). Es el tamaño de paso discreto de \(\mathbb{N}\) junto con su cota inferior \(0\) lo que garantiza un mínimo.
+
+En las demostraciones, [REF: wop | el PBO] suele emplearse de una de dos maneras: directamente, eligiendo el menor elemento de un conjunto de números naturales cuidadosamente construido, o indirectamente, como una demostración por contradicción mediante contraejemplo mínimo.
+
+Primero, veamos una aplicación directa del [REF: wop | PBO] que demuestra la parte de existencia del Algoritmo de la División Entera.
+
+[CALLOUT]
+id: division-alg
+label: Teorema
+title: Algoritmo de la división (existencia)
+tone: key
+
+Para todo entero \(a\) y todo entero positivo \(d \ge 1\), existen enteros \(q\) y \(r\) tales que
+\[
+a = dq + r \qquad \text{y} \qquad 0 \le r < d.
+\]
+[/CALLOUT]
+
+Demostración: Fija \(a \in \mathbb{Z}\) y \(d \ge 1\). Define el conjunto de residuos no negativos que pueden obtenerse restando múltiplos enteros de \(d\) a \(a\):
+\[
+S = \{a - dq : q \in \mathbb{Z} \text{ y } a - dq \ge 0\} \subseteq \mathbb{N}.
+\]
+Primero verifica que \(S\) es no vacío —¡esta comprobación es obligatoria antes de invocar [REF: wop | el PBO]! Si \(a \ge 0\), tomar \(q = 0\) da \(a - d(0) = a \ge 0\), así que \(a \in S\). Si \(a < 0\), tomar \(q = a\) da \(a - da = a(1 - d) \ge 0\) (ya que \(a < 0\) y \(1 - d \le 0\)), así que \(a(1 - d) \in S\). Por tanto, \(S\) es siempre un subconjunto no vacío de \(\mathbb{N}\).
+
+Por [REF: wop | el Principio del Buen Orden], \(S\) tiene un elemento mínimo \(r \in S\). Como \(r \in S\), tenemos \(r \ge 0\) y \(r = a - dq\) para algún \(q \in \mathbb{Z}\), lo que significa \(a = dq + r\). Falta demostrar que \(r < d\). Supón por contradicción que \(r \ge d\). Entonces
+\[
+r - d = (a - dq) - d = a - d(q + 1) \ge 0.
+\]
+Como \(q + 1 \in \mathbb{Z}\) y \(r - d \ge 0\), el número \(r - d\) pertenece a \(S\). Sin embargo, \(d \ge 1\) implica \(r - d < r\), contradiciendo la minimalidad de \(r\) en \(S\). En consecuencia, \(0 \le r < d\).
+
+En segundo lugar, veamos el patrón de contraejemplo mínimo en un resultado clásico: demostrar que \(\sqrt{2}\) es irracional. Supón por contradicción que \(\sqrt{2} = a/b\) para enteros positivos \(a, b\). Entonces el conjunto
+\[
+C = \{b \in \mathbb{Z}^+ : \text{existe } a \in \mathbb{Z}^+ \text{ con } a^2 = 2b^2\}
+\]
+es un subconjunto no vacío de \(\mathbb{N}\). Por [REF: wop | el PBO], \(C\) tiene un elemento mínimo \(b_0\), con su correspondiente \(a_0 \in \mathbb{Z}^+\) que satisface \(a_0^2 = 2b_0^2\). Entonces \(a_0^2\) es par, lo que obliga a que \(a_0\) sea par (el cuadrado de un entero impar es impar), así que \(a_0 = 2a_1\) para algún \(a_1 \in \mathbb{Z}^+\). Al sustituir resulta \(4a_1^2 = 2b_0^2\), luego \(b_0^2 = 2a_1^2\). Por el mismo razonamiento, \(b_0\) es par, así que \(b_0 = 2b_1\) con \(b_1 \in \mathbb{Z}^+\). Al sustituir de nuevo resulta \(4b_1^2 = 2a_1^2\), luego \(a_1^2 = 2b_1^2\). Por tanto, \(b_1 \in C\). Pero \(0 < b_1 = b_0/2 < b_0\), contradiciendo la elección de \(b_0\) como el elemento mínimo de \(C\). Luego \(C = \emptyset\), y \(\sqrt{2}\) es irracional.
+
+Observa qué limpio resultó: ni siquiera necesitamos invocar de antemano «reducir la fracción \(a/b\) a términos mínimos» —[REF: wop | el PBO] nos entregó automáticamente el denominador mínimo \(b_0\), y producir un elemento estrictamente menor \(b_1 \in C\) generó una contradicción inmediata.
+
+[QUESTION 3]
+[ANSWER: D]
+En la demostración de [REF: division-alg | el algoritmo de la división] usando \(S = \{a - dq : q \in \mathbb{Z},\, a - dq \ge 0\}\), supón que un estudiante olvida la hipótesis \(d \ge 1\) e intenta ejecutar exactamente el mismo argumento con \(d = 0\) y \(a = 5\). ¿En qué punto exacto se rompe la demostración?
+
+(A) \(S\) es vacío cuando \(d = 0\) y \(a = 5\), de modo que no puede aplicarse el PBO.
+(B) \(S\) es infinito y por tanto no puede tener un elemento mínimo según el PBO.
+(C) \(r = 5\) no puede escribirse como \(a - dq\) para ningún entero \(q\).
+(D) \(S = \{5\}\) tiene elemento mínimo \(r = 5 \ge 0 = d\), así que \(r - d = 5 \in S\), pero \(r - d < r\) falla porque \(d = 0\) no es estrictamente positivo.
+(E) \(S\) contiene enteros negativos cuando \(d = 0\), violando \(S \subseteq \mathbb{N}\).
+[/QUESTION]
+
+=== SECTION 4: Equivalencia lógica entre inducción débil, inducción fuerte y PBO ===
+
+Ahora tenemos tres principios en \(\mathbb{N}\): la inducción ordinaria (débil), [REF: strong-induction | la inducción fuerte] y [REF: wop | el Principio del Buen Orden]. A primera vista, la inducción fuerte parece estrictamente más poderosa que la inducción débil porque su hipótesis inductiva supone mucho más, y el PBO parece una clase de axioma completamente distinta. Sorprendentemente, los tres son lógicamente equivalentes: suponer cualquiera de ellos te permite demostrar los otros dos.
+
+[CALLOUT]
+id: equiv-three
+label: Teorema
+title: Equivalencia de la inducción ordinaria, la inducción fuerte y el PBO
+tone: key
+
+En los números naturales \(\mathbb{N}\), los tres enunciados siguientes son lógicamente equivalentes:
+
+(1) Inducción matemática ordinaria (débil).
+(2) Inducción matemática fuerte (completa).
+(3) El Principio del Buen Orden.
+[/CALLOUT]
+
+Demostramos el ciclo \((1) \implies (2) \implies (3) \implies (1)\), suponiendo \(n_0 = 0\) sin pérdida de generalidad (desplazar por \(n_0\) simplemente sustituye \(P(n)\) por \(\widetilde{P}(m) = P(n_0 + m)\) en \(\mathbb{N}\)).
+
+[CALLOUT]
+id: equiv-proof
+label: Demostración
+title: Ciclo de implicaciones \((1) \implies (2) \implies (3) \implies (1)\)
+tone: note
+
+Demostración de \((1) \implies (2)\): Supón que vale la inducción ordinaria, y sea \(P(n)\) un predicado en \(\mathbb{N}\) que satisface las hipótesis de la inducción fuerte: \(P(0)\) es verdadero y, para todo \(k \ge 0\), si \(P(0), P(1), \dots, P(k)\) son todos verdaderos, entonces \(P(k + 1)\) es verdadero. Define un nuevo predicado fortalecido
+\[
+Q(k) : \text{para todo entero } j \text{ con } 0 \le j \le k,\, P(j) \text{ es verdadero.}
+\]
+Demostramos \(\forall k \in \mathbb{N},\, Q(k)\) por inducción ordinaria. Para el caso base \(k = 0\), \(Q(0)\) afirma simplemente \(P(0)\), que vale por hipótesis. Para el paso inductivo ordinario, fija \(k \ge 0\) y supone \(Q(k)\). Por definición de \(Q(k)\), todo \(P(j)\) para \(0 \le j \le k\) se cumple. Por la hipótesis de inducción fuerte sobre \(P\), esto implica \(P(k + 1)\). Combinar \(P(0), \dots, P(k)\) con \(P(k + 1)\) da \(Q(k + 1)\). Por inducción ordinaria, \(Q(n)\) vale para todo \(n \in \mathbb{N}\); en particular, \(P(n)\) vale para todo \(n \in \mathbb{N}\).
+
+Demostración de \((2) \implies (3)\): Supón que vale la inducción fuerte. Demostramos el PBO por contrarrecíproca: sea \(S \subseteq \mathbb{N}\) un subconjunto sin elemento mínimo, y demostremos \(S = \emptyset\). Define \(P(n)\) como el enunciado «\(n \notin S\)». Caso base (\(n = 0\)): si \(0 \in S\), como \(0 \le s\) para todo \(s \in \mathbb{N}\), \(0\) sería el elemento mínimo de \(S\), imposible; por tanto \(P(0)\) se cumple. Paso inductivo fuerte: fija \(k \ge 0\) y supone que \(P(0), P(1), \dots, P(k)\) se cumplen todos, es decir, ninguno de \(0, 1, \dots, k\) pertenece a \(S\). Entonces \(k + 1\) tampoco puede pertenecer a \(S\) —de lo contrario todo elemento de \(S\) sería al menos \(k + 1\), convirtiendo a \(k + 1\) en el elemento mínimo de \(S\). Así, \(P(k + 1)\) se cumple. Por inducción fuerte, \(n \notin S\) para todo \(n \in \mathbb{N}\), luego \(S = \emptyset\).
+
+Demostración de \((3) \implies (1)\): Supón que vale el PBO, y supón que \(P(0)\) es verdadero y \(\forall k \ge 0,\, P(k) \implies P(k + 1)\). Sea \(C = \{n \in \mathbb{N} : P(n) \text{ es falso}\}\) el conjunto de los contraejemplos. Supón por contradicción que \(C \ne \emptyset\). Por el PBO, \(C\) tiene un elemento mínimo \(m \in C\). Como \(P(0)\) es verdadero, \(0 \notin C\), de modo que \(m \ge 1\). Por tanto \(m - 1 \in \mathbb{N}\), y puesto que \(m - 1 < m\) y \(m\) es el elemento mínimo de \(C\), tenemos \(m - 1 \notin C\), es decir, \(P(m - 1)\) es verdadero. Aplicar el paso inductivo en \(k = m - 1\) produce \(P(m)\), contradiciendo \(m \in C\). Luego \(C = \emptyset\), y \(P(n)\) vale para todo \(n \in \mathbb{N}\).
+[/CALLOUT]
+
+Observa con atención el tercer tramo de [REF: equiv-proof | la demostración de equivalencia]: ofrece una receta universal de traducción entre la inducción fuerte y las demostraciones por contraejemplo mínimo con el PBO. Decir «supón que \(P(j)\) vale para todo \(n_0 \le j < m\) y demuestra \(P(m)\)» en inducción fuerte es estructuralmente idéntico a decir «sea \(m\) el menor contraejemplo, de modo que \(P(j)\) vale para todo \(n_0 \le j < m\), y deduce \(P(m)\) para llegar a una contradicción» en el PBO. Como ambos principios son equivalentes, la elección entre ellos es una cuestión de claridad y naturalidad, no de poder lógico.
+
+[TABLE]
+Método | Configuración inicial | Deducción central | Más adecuado para
+Inducción ordinaria | Caso base \(P(n_0)\) | \(P(k) \implies P(k + 1)\) | Sumas, potencias, divisibilidad o desigualdades de un solo paso
+Inducción fuerte | Casos base \(P(n_0), \dots, P(n_0 + b - 1)\) | \(\bigl(\forall j \in [n_0, k],\, P(j)\bigr) \implies P(k + 1)\) | Estampillas o recurrencias con desfase fijo; descomposiciones menores arbitrarias como factorización
+Principio del Buen Orden | \(S \subseteq \mathbb{N}\) no vacío (o conjunto de contraejemplos \(C\)) | Elegir el menor \(m \in S\); construir una contradicción o un elemento menor | Algoritmo de la división, descenso e irracionalidad, contraejemplo mínimo
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+En la demostración de que la inducción ordinaria implica la inducción fuerte ([REF: equiv-proof | el primer tramo del teorema de equivalencia]), definimos \(Q(k)\) como «\(\forall j \in \{0, 1, \dots, k\},\, P(j)\) se cumple» y demostramos \(Q(k)\) por inducción ordinaria. ¿Por qué definir \(Q(k)\) de esta manera resuelve el desajuste entre inducción débil y fuerte?
+
+(A) Un único enunciado \(Q(k)\) empaqueta juntos todos los valores de verdad previos \(P(0), \dots, P(k)\), de modo que la hipótesis inductiva ordinaria \(Q(k)\) suministra toda la hipótesis inductiva fuerte necesaria para deducir \(P(k + 1)\), lo cual junto con \(Q(k)\) establece \(Q(k + 1)\).
+(B) \(Q(k)\) elimina automáticamente la necesidad del caso base \(P(0)\) porque la cuantificación universal sobre un conjunto vacío es vacuamente verdadera.
+(C) \(Q(k)\) demuestra \(P(k + 1)\) directamente a partir de \(P(k)\) únicamente, sin usar \(P(0), \dots, P(k - 1)\).
+(D) Definir \(Q(k)\) restringe \(j\) a finitos valores de modo que pueda evitarse el Principio del Buen Orden al verificar \(Q(0)\).
+(E) \(Q(k)\) convierte la implicación \(P(k) \implies P(k + 1)\) en su contrarrecíproca \(\neg P(k + 1) \implies \neg P(k)\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Considera los números de Fibonacci \(F_1 = 1\), \(F_2 = 1\), \(F_n = F_{n-1} + F_{n-2}\) para \(n \ge 3\). Supón que intentamos demostrar una cota inferior de la forma \(F_n \ge c^{n-2}\) para todo \(n \ge 1\) usando una constante positiva \(c > 1\) e inducción fuerte con casos base \(n = 1\) y \(n = 2\). En el paso inductivo para \(k \ge 2\), la hipótesis inductiva fuerte da
+\[
+F_{k+1} = F_k + F_{k-1} \ge c^{k-2} + c^{k-3}.
+\]
+¿Para qué condición sobre \(c > 1\) se cumple \(c^{k-2} + c^{k-3} \ge c^{k-1}\), permitiendo que el paso inductivo tenga éxito?
+
+(A) \(c \ge 2\)
+(B) \(c \le \frac{3}{2}\) únicamente; ningún \(c\) mayor funciona
+(C) \(c \ge \frac{1 + \sqrt{5}}{2}\)
+(D) \(1 < c \le \frac{1 + \sqrt{5}}{2}\)
+(E) Todo \(c > 1\) funciona siempre que se cumplan los casos base \(n = 1, 2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Considera una barra de chocolate de \(1 \times n\) formada por \(n \ge 1\) cuadraditos conectados en fila. Un movimiento elige una pieza conexa de longitud \(m \ge 2\) y la parte por una de sus líneas internas de cuadrícula en dos piezas menores de longitudes \(a\) y \(b\) con \(a + b = m\) y \(a, b \ge 1\). Quieres demostrar por inducción fuerte que, sin importar cómo elijas los cortes, reducir la barra a \(n\) cuadraditos individuales de \(1 \times 1\) siempre toma exactamente \(n - 1\) cortes. En el paso inductivo fuerte para \(k + 1 \ge 2\), después de que el primer corte divide la barra en piezas de longitudes \(a\) y \(b\) (con \(a + b = k + 1\) y \(1 \le a, b \le k\)), ¿cómo concluye la demostración la hipótesis inductiva fuerte?
+
+(A) Aplicando inducción débil únicamente a \(a = k\) y \(b = 1\), ya que todas las demás divisiones requieren menos cortes.
+(B) Aplicando la hipótesis inductiva fuerte tanto a \(a\) como a \(b\), lo que da \(1 + (a - 1) + (b - 1) = a + b - 1 = k\) cortes en total.
+(C) Aplicando la hipótesis inductiva fuerte a \(a + b\), lo que da \((a + b) - 1 = k\) cortes en total directamente.
+(D) Verificando los casos base \(n = 1, 2, 3\) e invocando la hipótesis en \(k - 1\) y \(k - 2\).
+(E) Observando que el primer corte siempre puede elegirse para dividir la barra en dos mitades iguales de tamaño \((k + 1)/2\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Un estudiante usa el Principio del Buen Orden para demostrar que la ecuación \(a^3 + 2b^3 = 4c^3\) no tiene solución en enteros positivos \((a, b, c)\). Suponiendo que existe una solución, el estudiante toma \((a, b, c)\) como una solución cuya primera coordenada \(a \in \mathbb{Z}^+\) es mínima. De \(a^3 = 4c^3 - 2b^3 = 2(2c^3 - b^3)\), \(a\) debe ser par, de modo que \(a = 2a_1\) para algún \(a_1 \in \mathbb{Z}^+\). Sustituyendo en \(a^3 + 2b^3 = 4c^3\) y dividiendo por \(2\) se obtiene \(4a_1^3 + b^3 = 2c^3\), lo que obliga a \(b = 2b_1\), y sustituyendo de nuevo se obtiene \(2a_1^3 + 4b_1^3 = c^3\), lo que obliga a \(c = 2c_1\). ¿Qué ecuación final produce la contradicción con la minimalidad de \(a\)?
+
+(A) \(a_1^3 + 2b_1^3 = 2c_1^3\), con \(0 < a_1 < a\)
+(B) \(2a_1^3 + b_1^3 = 4c_1^3\), con \(0 < b_1 < a\)
+(C) \(a_1^3 + 4b_1^3 = 2c_1^3\), con \(0 < c_1 < a\)
+(D) \(4a_1^3 + 2b_1^3 = c_1^3\), con \(0 < a_1 < a\)
+(E) \(a_1^3 + 2b_1^3 = 4c_1^3\), con \(0 < a_1 < a\)
+[/BONUS]

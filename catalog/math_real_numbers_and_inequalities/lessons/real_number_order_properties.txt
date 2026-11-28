@@ -1,0 +1,299 @@
+=== SECTION 1: The order axioms of the real numbers ===
+
+When you solve an equation such as \(2x = 6\), multiplying both sides by a nonzero number always produces an equivalent equation. Inequalities do not behave so permissively: multiplying \(2 < 5\) by \(-1\) turns a true statement into the false statement \(-2 < -5\) unless the inequality sign reverses to \(-2 > -5\). Why does multiplication by a negative number flip order while addition never does, and which algebraic transformations are genuinely safe when working with unknown real numbers?
+
+We take as given the standard arithmetic (field) rules of the real numbers \(\mathbb{R}\)—addition, subtraction, multiplication, and division by nonzero real numbers—and formalize the relation \(<\) ("is less than") through four order properties. The companion relations \(>\), \(\le\), and \(\ge\) are defined directly from \(<\): \(a > b\) means \(b < a\); \(a \le b\) means \(a < b\) or \(a = b\); and \(a \ge b\) means \(b \le a\).
+
+[CALLOUT]
+id: order-axioms
+label: Axioms
+title: Algebraic order properties of \(\mathbb{R}\)
+tone: key
+
+For all real numbers \(a, b, c \in \mathbb{R}\):
+
+(1) Trichotomy: Exactly one of the three statements \(a < b\), \(a = b\), or \(a > b\) holds.
+(2) Transitivity: If \(a < b\) and \(b < c\), then \(a < c\).
+(3) Additive preservation: If \(a < b\), then \(a + c < b + c\).
+(4) Multiplicative sign law: If \(a < b\) and \(c > 0\), then \(ac < bc\); if \(a < b\) and \(c < 0\), then \(ac > bc\).
+[/CALLOUT]
+
+Notice how [REF: order-axioms.3 | additive preservation] connects ordering to positivity: adding \(-a\) to both sides of \(a < b\) gives \(0 < b - a\), and conversely adding \(a\) to \(0 < b - a\) recovers \(a < b\). Thus
+\[
+a < b \iff b - a > 0.
+\]
+This simple equivalence is the engine behind nearly every inequality proof. To prove that one quantity is smaller than another, you can subtract them and determine the sign of their difference.
+
+Two immediate consequences follow from [REF: order-axioms | the order axioms]. First, negation reverses order: setting \(c = -1 < 0\) in [REF: order-axioms.4 | the multiplicative sign law] shows that \(a < b \iff -a > -b\). In particular, \(a > 0 \iff -a < 0\). Second, you can add two inequalities that point in the same direction. Suppose \(a < b\) and \(c < d\). By [REF: order-axioms.3 | additive preservation], adding \(c\) to the first gives \(a + c < b + c\), and adding \(b\) to the second gives \(b + c < b + d\). Applying [REF: order-axioms.2 | transitivity] links the two steps into
+\[
+a + c < b + d.
+\]
+The same argument works for non-strict inequalities: if \(a \le b\) and \(c \le d\), then \(a + c \le b + d\), and if at least one of the two inequalities is strict, the sum is strict.
+
+[CALLOUT]
+id: no-direct-subtraction
+label: Caution
+title: Never subtract inequalities directly
+tone: caution
+
+Knowing \(a < b\) and \(c < d\) does not imply \(a - c < b - d\). For example, \(1 < 2\) and \(0 < 10\), yet \(1 - 0 = 1\) is greater than \(2 - 10 = -8\). To bound a difference \(a - c\), first negate the second inequality to reverse its direction (\(-d < -c\)), and then add it to \(a < b\) to obtain \(a - d < b - c\).
+[/CALLOUT]
+
+Let us see that subtraction rule in action on a concrete numerical check. Suppose \(3 < a < 7\) and \(1 < c < 4\). Negating \(1 < c < 4\) reverses both signs to \(-4 < -c < -1\). Adding this to \(3 < a < 7\) gives
+\[
+3 + (-4) < a - c < 7 + (-1), \qquad \text{so} \qquad -1 < a - c < 6.
+\]
+These bounds are sharp: \(a - c\) approaches \(-1\) when \(a\) is close to \(3\) and \(c\) is close to \(4\), and approaches \(6\) when \(a\) is close to \(7\) and \(c\) is close to \(1\). Subtracting the endpoints straight across would have produced the incorrect range \(2 < a - c < 3\), missing values like \(a - c = 5\) (from \(a = 6.5, c = 1.5\)).
+
+[QUESTION 1]
+[ANSWER: D]
+Suppose \(a, b, c, d\) are real numbers satisfying \(a < b\) and \(c < d\). Which inequality is guaranteed to hold for every such choice of \(a, b, c, d\)?
+
+(A) \(a - c < b - d\)
+(B) \(ac < bd\)
+(C) \(a^2 + c < b^2 + d\)
+(D) \(a - d < b - c\)
+(E) \(ac - b < bd - a\)
+[/QUESTION]
+
+=== SECTION 2: Sign rules for products, quotients, and squares ===
+
+Many algebraic inequalities reduce to asking when a product \(ab\) or a quotient \(a/b\) is positive or negative. Every sign rule for products and quotients is a direct consequence of [REF: order-axioms.1 | trichotomy] and [REF: order-axioms.4 | the multiplicative sign law].
+
+Suppose first that \(a > 0\) and \(b > 0\). Multiplying \(a > 0\) by \(b > 0\) preserves direction, giving \(ab > 0 \cdot b = 0\). Next suppose \(a < 0\) and \(b < 0\). Multiplying \(a < 0\) by \(b < 0\) reverses direction, giving \(ab > 0 \cdot b = 0\). Finally, if \(a\) and \(b\) have opposite signs—say \(a > 0\) and \(b < 0\)—multiplying \(a > 0\) by \(b < 0\) reverses direction, giving \(ab < 0\). If either factor is \(0\), then \(ab = 0\). By trichotomy, these four cases exhaust all pairs \((a, b) \in \mathbb{R}^2\), so the converse implications also hold.
+
+What about a quotient \(a/b\) with \(b \ne 0\)? Notice that \(b\) and \(1/b\) must have the exact same sign: their product is \(b \cdot (1/b) = 1 > 0\), which is impossible unless both are positive or both are negative. Writing \(a/b = a \cdot (1/b)\) immediately shows that \(a/b\) has the exact same sign as \(ab\).
+
+[CALLOUT]
+id: sign-rules
+label: Proposition
+title: Product, quotient, and square sign rules
+tone: key
+
+For all real numbers \(a, b, x \in \mathbb{R}\):
+
+(1) Product positivity: \(ab > 0\) if and only if either (\(a > 0\) and \(b > 0\)) or (\(a < 0\) and \(b < 0\)).
+(2) Product negativity: \(ab < 0\) if and only if \(a\) and \(b\) have opposite signs.
+(3) Quotient sign: For \(b \ne 0\), \(a/b > 0 \iff ab > 0\), and \(a/b < 0 \iff ab < 0\).
+(4) Non-negativity of squares: \(x^2 \ge 0\) for every \(x \in \mathbb{R}\), with \(x^2 = 0\) if and only if \(x = 0\).
+[/CALLOUT]
+
+Verify [REF: sign-rules.4 | non-negativity of squares] from the rules right above it: by trichotomy, either \(x > 0\), \(x < 0\), or \(x = 0\). In the first two cases \(x\) and \(x\) share the same sign, so \(x^2 = x \cdot x > 0\) by [REF: sign-rules.1 | product positivity]; in the third case \(0^2 = 0\). As an immediate consequence, \(1 = 1^2 > 0\), and a sum of squares \(x^2 + y^2\) is always non-negative and equals \(0\) if and only if \(x = 0\) and \(y = 0\).
+
+Non-negativity of squares is one of the most versatile tools for proving algebraic inequalities. Suppose we want to prove that for all real numbers \(a\) and \(b\),
+\[
+a^2 + b^2 \ge 2ab.
+\]
+Following the difference strategy from Section 1, we do not start by assuming the inequality is true; instead we examine the difference between the two sides:
+\[
+(a^2 + b^2) - 2ab = a^2 - 2ab + b^2 = (a - b)^2.
+\]
+By [REF: sign-rules.4 | non-negativity of squares], \((a - b)^2 \ge 0\) for all \(a, b \in \mathbb{R}\), with equality if and only if \(a - b = 0\), i.e., \(a = b\). Adding \(2ab\) to both sides yields \(a^2 + b^2 \ge 2ab\).
+
+Watch how the same difference-and-square idea proves a slightly richer statement: for all real numbers \(a, b \in \mathbb{R}\),
+\[
+a^2 + ab + b^2 \ge 0,
+\]
+with equality only when \(a = b = 0\). Completing the square in \(a\) writes the expression as a sum of two squares:
+\[
+a^2 + ab + b^2 = \left(a + \frac{b}{2}\right)^2 + \frac{3}{4}b^2.
+\]
+Each term on the right is non-negative by [REF: sign-rules.4 | non-negativity of squares], so their sum is at least \(0\). Moreover, the sum can equal \(0\) only if both squares are \(0\), forcing \(b = 0\) and hence \(a = 0\). We will use this exact identity in the next section to settle odd-power inequalities.
+
+[QUESTION 2]
+[ANSWER: B]
+Let \(x\) and \(y\) be nonzero real numbers satisfying \(x^2 y < 0\) and \(x y^3 > 0\). Which statement must be true?
+
+(A) \(x > 0\) and \(y < 0\)
+(B) \(x < 0\) and \(y < 0\)
+(C) \(x < 0\) and \(y > 0\)
+(D) \(x > 0\) and \(y > 0\)
+(E) \(y < 0\), while the sign of \(x\) cannot be determined
+[/QUESTION]
+
+=== SECTION 3: Reciprocals and power monotonicity ===
+
+Two operations that frequently break naive inequality manipulation are taking reciprocals and raising both sides to a power. In both cases, signs determine whether order reverses, stays the same, or breaks down completely.
+
+First consider reciprocals of nonzero real numbers \(a\) and \(b\). To compare \(1/a\) and \(1/b\), compute their difference over a common denominator:
+\[
+\frac{1}{b} - \frac{1}{a} = \frac{a - b}{ab}.
+\]
+Suppose \(a < b\), so the numerator \(a - b\) is negative. By [REF: sign-rules.3 | the quotient sign rule], the sign of \((a - b)/(ab)\) depends entirely on the sign of \(ab\):
+- If \(a\) and \(b\) have the same sign (either \(0 < a < b\) or \(a < b < 0\)), then \(ab > 0\). Hence \((a - b)/(ab) < 0\), meaning \(1/b < 1/a\): taking reciprocals reverses the inequality.
+- If \(a\) and \(b\) have opposite signs (\(a < 0 < b\)), then \(ab < 0\). Hence \((a - b)/(ab) > 0\), meaning \(1/b > 1/a\), i.e., \(1/a < 1/b\): taking reciprocals preserves the inequality (indeed, \(1/a < 0 < 1/b\)).
+
+[CALLOUT]
+id: reciprocal-rules
+label: Theorem
+title: Reciprocal comparison rules
+tone: key
+
+Let \(a, b \in \mathbb{R}\) be nonzero.
+
+(1) Same-sign reversal: If \(0 < a < b\), then \(0 < \frac{1}{b} < \frac{1}{a}\). If \(a < b < 0\), then \(\frac{1}{b} < \frac{1}{a} < 0\).
+(2) Opposite-sign preservation: If \(a < 0 < b\), then \(\frac{1}{a} < 0 < \frac{1}{b}\).
+[/CALLOUT]
+
+Why is checking signs before taking reciprocals indispensable? If you only know \(-2 < x < 3\) with \(x \ne 0\), you cannot take reciprocals across \(0\) in one step: when \(x = 0.01\) we get \(1/x = 100\), and when \(x = -0.01\) we get \(1/x = -100\). Instead, you must split into the two sign-definite regions \(-2 < x < 0\) (which gives \(1/x < -1/2\)) and \(0 < x < 3\) (which gives \(1/x > 1/3\)).
+
+Now consider powers: when does \(a < b\) guarantee \(a^2 < b^2\) or \(a^3 < b^3\), and when can we go backward?
+
+For squares, factor the difference \(b^2 - a^2\):
+\[
+b^2 - a^2 = (b - a)(b + a).
+\]
+If \(0 \le a < b\), then \(b - a > 0\) and \(b + a > 0\), so \(b^2 - a^2 > 0\), giving \(a^2 < b^2\). Conversely, if \(a \ge 0\), \(b \ge 0\), and \(a^2 < b^2\), then \(b + a > 0\) (they cannot both be \(0\) since \(a^2 < b^2\)), so \((b - a)(b + a) > 0\) forces \(b - a > 0\), i.e., \(a < b\). Thus squaring preserves order (in both directions) on non-negative real numbers. On non-positive numbers, however, \(a < b \le 0\) gives \(b - a > 0\) and \(b + a < 0\), so \(b^2 - a^2 < 0\), reversing the inequality to \(a^2 > b^2\). When \(a < 0 < b\), the sign of \(b + a\) can be positive, zero, or negative depending on which number sits farther from \(0\): for instance, \(-1 < 2\) gives \((-1)^2 < 2^2\), whereas \(-3 < 2\) gives \((-3)^2 > 2^2\).
+
+For cubes, factor the difference \(b^3 - a^3\):
+\[
+b^3 - a^3 = (b - a)(b^2 + ab + a^2).
+\]
+In Section 2 we showed that \(b^2 + ab + a^2 = (b + a/2)^2 + \frac{3}{4}a^2 \ge 0\), with equality only when \(a = b = 0\). Whenever \(a \ne b\), the second factor \(b^2 + ab + a^2\) is strictly positive regardless of the signs of \(a\) and \(b\). Therefore \(b^3 - a^3\) always has the exact same sign as \(b - a\): cubing preserves order on all of \(\mathbb{R}\), in both directions!
+
+The graph below displays \(y = x^2\) and \(y = x^3\) on the same axes. Moving left to right, \(y = x^3\) rises everywhere (every increase in \(x\) increases \(x^3\)), while \(y = x^2\) falls for \(x < 0\) and rises for \(x > 0\), explaining visually why squaring flips order on the left half of the real line and preserves it on the right half.
+
+[GRAPH]
+type: function2d
+title: Monotonicity of \(y = x^3\) across all of \(\mathbb{R}\) versus \(y = x^2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.1, 2.1
+yrange: -4.5, 4.5
+trace: x^2 | label: \(y = x^2\)
+trace: x^3 | label: \(y = x^3\)
+point: -1.5, 2.25 | label: \((-1.5, 2.25)\)
+point: 1, 1 | label: \((1, 1)\)
+segment: -1.5, 0, -1.5, 2.25 | dashed: true
+segment: 1, 0, 1, 1 | dashed: true
+[/GRAPH]
+
+[CALLOUT]
+id: power-monotonicity
+label: Theorem
+title: Square and cube monotonicity
+tone: key
+
+For all real numbers \(a, b \in \mathbb{R}\):
+
+(1) Non-negative squares: If \(a \ge 0\) and \(b \ge 0\), then \(a < b \iff a^2 < b^2\).
+(2) Non-positive squares: If \(a \le 0\) and \(b \le 0\), then \(a < b \iff a^2 > b^2\).
+(3) Cubes everywhere: For all \(a, b \in \mathbb{R}\), \(a < b \iff a^3 < b^3\).
+[/CALLOUT]
+
+More generally, any even positive integer power \(x^{2n}\) behaves like \(x^2\) (order-preserving for \(x \ge 0\), order-reversing for \(x \le 0\)), and any odd positive integer power \(x^{2n+1}\) behaves like \(x^3\) (order-preserving across all of \(\mathbb{R}\)).
+
+[QUESTION 3]
+[ANSWER: A]
+Suppose \(a\) and \(b\) are nonzero real numbers satisfying both \(a < b\) and \(\frac{1}{a} < \frac{1}{b}\). Which condition must hold?
+
+(A) \(a < 0 < b\)
+(B) \(0 < a < b\)
+(C) \(a < b < 0\)
+(D) \(a^2 < b^2\)
+(E) \(a + b > 0\)
+[/QUESTION]
+
+=== SECTION 4: Composite bounds and auditing algebraic steps ===
+
+Combining the order axioms, sign rules, and reciprocal laws lets us build sharp bounds on composite expressions such as \(a - b\), \(ab\), and \(a/b\) from separate bounds on \(a\) and \(b\). The key discipline is to perform only sign-verified operations—never applying a rule whose sign hypothesis has not been checked.
+
+Consider the problem of finding sharp bounds on \(ab\) when \(2 < a < 5\) and \(-4 < b < -1\). Because \(b\) is negative, multiplying the bounds directly is dangerous unless we track signs explicitly. Convert \(b\) to a positive variable first: multiplying \(-4 < b < -1\) by \(-1\) reverses both inequalities to
+\[
+1 < -b < 4.
+\]
+Now both \(a\) and \(-b\) are strictly positive, so we can multiply same-direction positive inequalities safely:
+\[
+2 \cdot 1 < a(-b) < 5 \cdot 4 \implies 2 < -ab < 20.
+\]
+Multiplying by \(-1\) once more reverses the direction back:
+\[
+-20 < ab < -2.
+\]
+Let us verify why these bounds cannot be tightened. Taking \(a\) arbitrarily close to \(5\) and \(b\) arbitrarily close to \(-4\) pushes \(ab\) arbitrarily close to \(-20\); taking \(a\) near \(2\) and \(b\) near \(-1\) pushes \(ab\) arbitrarily close to \(-2\).
+
+What if one variable can change sign—say, \(-2 < a < 5\) and \(1 < b < 3\)? Split \(a\) into three sign cases:
+- When \(0 < a < 5\): \(0 < ab < 5 \cdot 3 = 15\).
+- When \(a = 0\): \(ab = 0\).
+- When \(-2 < a < 0\): \(0 < -a < 2\) and \(1 < b < 3\), so \(0 < -ab < 6\), hence \(-6 < ab < 0\).
+Combining all three cases shows that every value of \(ab\) satisfies \(-6 < ab < 15\), and both endpoints are approached as \((a, b)\) approaches \((-2, 3)\) and \((5, 3)\). Notice the general shortcut when bounding a product \(ab\) over separate bounds on \(a\) and \(b\): the extreme values of \(ab\) are always controlled by the four corner products formed from the endpoints of \(a\) and \(b\), because fixing either variable makes \(ab\) linear (hence monotonic) in the other.
+
+For quotients such as \(a/b\), write \(a/b = a \cdot (1/b)\), bound \(1/b\) using [REF: reciprocal-rules | the reciprocal comparison rules] (splitting at \(0\) if \(b\) can change sign), and then bound the product.
+
+Finally, the exact same sign checks serve as an audit checklist whenever you inspect an algebraic derivation for hidden errors. The table below summarizes the three most frequent invalid inequality steps and the exact sign check that catches each one.
+
+[TABLE]
+Invalid step | Why it fails | Concrete counterexample | Safe replacement
+Multiplying both sides by an unknown-sign expression \(E\) | Reverses direction when \(E < 0\) and collapses strictness when \(E = 0\) | \(1 < 2\) multiplied by \(x - 3\) at \(x = 1\) gives \(-2 < -4\) (false) | Split into \(E > 0\), \(E = 0\), \(E < 0\), or subtract to one side
+Taking reciprocals across zero | Reverses within each sign but preserves across \(0\) | \(-2 < x < 3\) does not imply \(1/3 < 1/x < -1/2\) | Split into \(x < 0\) and \(x > 0\) before inverting
+Squaring both sides without checking signs | Reverses when both sides are negative; unpredictable when signs differ | \(-3 < 2\) is true, yet \((-3)^2 < 2^2\) (\(9 < 4\)) is false | Verify both sides are \(\ge 0\), or split by sign
+[/TABLE]
+
+Let us audit a short argument using this checklist. Suppose someone claims to show that \(x > 1\) whenever \(\frac{x + 2}{x - 1} > 2\), writing:
+Step 1: Multiply both sides by \(x - 1\) to get \(x + 2 > 2(x - 1)\).
+Step 2: Expand to get \(x + 2 > 2x - 2\).
+Step 3: Subtract \(x\) and add \(2\) to get \(4 > x\), i.e., \(x < 4\).
+
+Step 1 is already invalid because the sign of \(x - 1\) is unknown. Test \(x = 0\): it satisfies \(x < 4\), yet \(\frac{0 + 2}{0 - 1} = -2\), which is NOT greater than \(2\). When \(x < 1\), \(x - 1\) is negative, so multiplying by \(x - 1\) flips the inequality to \(x + 2 < 2(x - 1)\), giving \(x > 4\)—impossible alongside \(x < 1\). Only when \(x > 1\) does Step 1 keep the direction, yielding \(1 < x < 4\). Catching the missing sign check at Step 1 immediately exposes why the naive argument imported every \(x < 1\) as a false solution.
+
+[QUESTION 4]
+[ANSWER: C]
+Suppose real numbers \(a\) and \(b\) satisfy \(2 < a < 5\) and \(-4 < b < -1\). Which inequality gives the sharpest (tightest) guaranteed bounds on \(\frac{a}{b}\)?
+
+(A) \(-2 < \frac{a}{b} < -\frac{5}{4}\)
+(B) \(-\frac{5}{4} < \frac{a}{b} < -\frac{1}{2}\)
+(C) \(-5 < \frac{a}{b} < -\frac{1}{2}\)
+(D) \(\frac{1}{2} < \frac{a}{b} < 5\)
+(E) \(-5 < \frac{a}{b} < -2\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: B]
+A student wants to find all real numbers \(x\) satisfying \(x - 3 < 2 - x\) and also claims to check when \((x - 3)^2 < (2 - x)^2\). They write the following argument to show that \(x - 3 < 2 - x\) implies \((x - 3)^2 < (2 - x)^2\):
+
+Step 1: Start from \(x - 3 < 2 - x\).
+Step 2: Square both sides to obtain \((x - 3)^2 < (2 - x)^2\).
+Step 3: Expand to obtain \(x^2 - 6x + 9 < 4 - 4x + x^2\).
+Step 4: Subtract \(x^2\) from both sides to obtain \(-6x + 9 < 4 - 4x\), so \(5 < 2x\), i.e., \(x > \frac{5}{2}\).
+
+Which critique accurately diagnoses the flaw in this argument?
+
+(A) Step 1 is invalid because \(x\) appears on both sides of the inequality.
+(B) Step 2 is invalid because \(x - 3\) can be negative when \(x - 3 < 2 - x\); for example, \(x = 0\) satisfies \(x - 3 < 2 - x\) yet fails \((x - 3)^2 < (2 - x)^2\).
+(C) Step 3 is invalid because \((2 - x)^2 = 4 - 2x + x^2\), not \(4 - 4x + x^2\).
+(D) Step 4 is invalid because subtracting \(x^2\) requires knowing the sign of \(x\).
+(E) Step 4 is invalid because dividing \(5 < 2x\) by \(2\) reverses the inequality to \(x < \frac{5}{2}\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(x\) and \(y\) be distinct real numbers (\(x \ne y\)). For exactly which pairs \((x, y)\) does the inequality \(x^3 + y^3 > x^2 y + x y^2\) hold?
+
+(A) Only when \(x > 0\) and \(y > 0\)
+(B) Only when \(x > y > 0\)
+(C) For all distinct real numbers \(x\) and \(y\)
+(D) Only when \(xy > 0\)
+(E) Precisely when \(x + y > 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose real numbers \(a\) and \(b\) satisfy \(-3 < a < 2\) and \(-2 < b < 4\). What are the sharpest guaranteed bounds on the product \(ab\)?
+
+(A) \(-12 < ab < 8\)
+(B) \(-6 < ab < 8\)
+(C) \(-12 < ab < 6\)
+(D) \(6 < ab < 8\)
+(E) \(-8 < ab < 12\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suppose \(a\), \(b\), and \(c\) are positive real numbers with \(a > b > 0\) and \(c > 0\). How does \(\frac{a + c}{b + c}\) compare with \(\frac{a}{b}\)?
+
+(A) \(\frac{a + c}{b + c} > \frac{a}{b}\) for all such \(a, b, c\)
+(B) \(\frac{a + c}{b + c} = \frac{a}{b}\) for all such \(a, b, c\)
+(C) \(\frac{a + c}{b + c} > \frac{a}{b}\) when \(c > 1\), and \(\frac{a + c}{b + c} < \frac{a}{b}\) when \(0 < c < 1\)
+(D) \(\frac{a + c}{b + c} < \frac{a}{b}\) for all such \(a, b, c\)
+(E) The comparison depends on whether \(a - b > c\) or \(a - b < c\)
+[/BONUS]

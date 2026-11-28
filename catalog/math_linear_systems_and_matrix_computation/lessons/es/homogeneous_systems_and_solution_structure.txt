@@ -1,0 +1,260 @@
+=== SECTION 1: Sistemas homogéneos y forma vectorial paramétrica ===
+
+Todo sistema lineal \(A\mathbf{x} = \mathbf{b}\) tiene un gemelo más silencioso que se obtiene reemplazando toda constante del lado derecho por cero: la ecuación \(A\mathbf{x} = \mathbf{0}\). A primera vista, igualar el lado derecho a cero podría parecer un caso particular estrecho. En realidad, las soluciones de \(A\mathbf{x} = \mathbf{0}\) gobiernan la forma, el tamaño y la unicidad del conjunto solución de \(A\mathbf{x} = \mathbf{b}\) para todo posible \(\mathbf{b}\).
+
+[CALLOUT]
+id: homogeneous-def
+label: Definición
+title: Sistema lineal homogéneo y solución trivial
+tone: key
+
+Un sistema lineal se llama homogéneo si puede escribirse en la forma
+\[
+A\mathbf{x} = \mathbf{0},
+\]
+donde \(A\) es una matriz \(m \times n\) y \(\mathbf{0} \in \mathbb{R}^m\) es el vector nulo.
+
+Todo sistema homogéneo es automáticamente consistente porque \(\mathbf{x} = \mathbf{0} \in \mathbb{R}^n\) siempre satisface \(A\mathbf{0} = \mathbf{0}\); esta solución se denomina solución trivial. Toda solución \(\mathbf{x} \neq \mathbf{0}\) se denomina solución no trivial.
+[/CALLOUT]
+
+Cuando reducimos por filas la matriz aumentada \([A \mid \mathbf{0}]\), toda operación elemental por fila deja la última columna llena de ceros: intercambiar dos ceros, escalar cero o sumar un múltiplo de cero a cero siempre da cero. Así podemos reducir \(A\) por sí sola, y el criterio de consistencia de la eliminación gaussiana confirma que \([A \mid \mathbf{0}]\) nunca adquiere un pivote en la columna más a la derecha. En consecuencia, \(A\mathbf{x} = \mathbf{0}\) tiene soluciones no triviales si y solo si \(A\) posee al menos una variable libre (al menos una columna no pivote).
+
+Para ver la estructura algebraica exacta de esas soluciones, reduzca un sistema homogéneo concreto \(2 \times 4\) \(A\mathbf{x} = \mathbf{0}\) donde
+\[
+A = \begin{bmatrix} 1 & 2 & -3 & 1 \\ 2 & 4 & -5 & 4 \end{bmatrix}.
+\]
+Aplicar \(R_2 \leftarrow R_2 - 2 R_1\) y luego \(R_1 \leftarrow R_1 + 3 R_2\) produce
+\[
+\operatorname{RREF}(A) = \begin{bmatrix} 1 & 2 & 0 & 7 \\ 0 & 0 & 1 & 2 \end{bmatrix}.
+\]
+Las columnas pivote son la \(1\) y la \(3\), de modo que \(x_1\) y \(x_3\) son variables básicas mientras que \(x_2\) y \(x_4\) son variables libres. Despejar las variables básicas en términos de las libres da \(x_1 = -2x_2 - 7x_4\) y \(x_3 = -2x_4\). Ahora reúna las cuatro coordenadas en un solo vector columna \(\mathbf{x} \in \mathbb{R}^4\) y separe los términos que multiplican a cada parámetro libre:
+\[
+\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ x_3 \\ x_4 \end{bmatrix}
+= \begin{bmatrix} -2x_2 - 7x_4 \\ x_2 \\ -2x_4 \\ x_4 \end{bmatrix}
+= x_2 \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + x_4 \begin{bmatrix} -7 \\ 0 \\ -2 \\ 1 \end{bmatrix}.
+\]
+Escribiendo \(\mathbf{v}_1 = \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix}\) y \(\mathbf{v}_2 = \begin{bmatrix} -7 \\ 0 \\ -2 \\ 1 \end{bmatrix}\), el conjunto solución completo de \(A\mathbf{x} = \mathbf{0}\) es
+\[
+\mathbf{x} = s\mathbf{v}_1 + t\mathbf{v}_2 \qquad (s, t \in \mathbb{R}),
+\]
+que es simplemente \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\} \subseteq \mathbb{R}^4\).
+
+Esta representación se denomina forma vectorial paramétrica, y los vectores \(\mathbf{v}_1, \mathbf{v}_2\) se llaman soluciones especiales (de variables libres). Observe cómo se construye cada solución especial directamente desde \(\operatorname{RREF}(A)\): iguale una variable libre a \(1\) y todas las demás variables libres a \(0\), y luego lea las variables básicas. Aquí, fijar \((x_2, x_4) = (1, 0)\) produce \(\mathbf{v}_1\), y fijar \((x_2, x_4) = (0, 1)\) produce \(\mathbf{v}_2\). Como la linealidad da \(A(s\mathbf{v}_1 + t\mathbf{v}_2) = s(A\mathbf{v}_1) + t(A\mathbf{v}_2) = s\mathbf{0} + t\mathbf{0} = \mathbf{0}\), toda combinación lineal de soluciones de \(A\mathbf{x} = \mathbf{0}\) vuelve a ser solución de \(A\mathbf{x} = \mathbf{0}\).
+
+Un simple conteo de pivotes entrega de inmediato un potente teorema siempre que un sistema homogéneo tiene más incógnitas que ecuaciones (un sistema homogéneo subdeterminado).
+
+[CALLOUT]
+id: underdetermined-homog
+label: Teorema
+title: Los sistemas homogéneos subdeterminados siempre tienen soluciones no triviales
+tone: key
+
+Si \(A\) es una matriz \(m \times n\) con \(n > m\) (estrictamente más incógnitas que ecuaciones), entonces el sistema homogéneo \(A\mathbf{x} = \mathbf{0}\) tiene siempre infinitas soluciones no triviales.
+[/CALLOUT]
+
+La demostración toma dos frases. Como cada posición pivote ocupa su propia fila en \(\operatorname{RREF}(A)\), una matriz \(m \times n\) puede tener a lo sumo \(m\) posiciones pivote —y, por lo tanto, a lo sumo \(m\) columnas pivote—. Dado que \(A\) tiene \(n > m\) columnas en total, al menos \(n - m \ge 1\) columnas no pueden contener ningún pivote, lo que garantiza al menos \(n - m\) variables libres y, por consiguiente, infinitas soluciones no triviales.
+
+[QUESTION 1]
+[ANSWER: C]
+Suponga que la matriz de coeficientes \(A\) de un sistema homogéneo \(A\mathbf{x} = \mathbf{0}\) se reduce a
+\[
+\operatorname{RREF}(A) = \begin{bmatrix} 1 & -2 & 0 & 3 \\ 0 & 0 & 1 & -5 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+¿Qué expresión da el conjunto solución completo de \(A\mathbf{x} = \mathbf{0}\) en forma vectorial paramétrica (con \(s, t \in \mathbb{R}\))?
+
+(A) \(s \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + t \begin{bmatrix} 3 \\ 0 \\ -5 \\ 1 \end{bmatrix}\)
+(B) \(s \begin{bmatrix} 2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + t \begin{bmatrix} 3 \\ 0 \\ 5 \\ 1 \end{bmatrix}\)
+(C) \(s \begin{bmatrix} 2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + t \begin{bmatrix} -3 \\ 0 \\ 5 \\ 1 \end{bmatrix}\)
+(D) \(s \begin{bmatrix} 2 \\ 0 \\ 1 \\ 0 \end{bmatrix} + t \begin{bmatrix} -3 \\ 0 \\ 5 \\ 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 \\ 0 \\ 0 \\ 0 \end{bmatrix}\) solamente
+[/QUESTION]
+
+=== SECTION 2: Independencia lineal en \(\mathbb{R}^m\) ===
+
+Antes vimos que agregar un vector redundante a una lista no agranda su generado —por ejemplo, si \(\mathbf{a}_3 = 2\mathbf{a}_1 - \mathbf{a}_2\), entonces \(\mathbf{a}_3\) no aporta ninguna dirección nueva más allá de \(\mathbf{a}_1\) y \(\mathbf{a}_2\)—. Note que reescribir \(\mathbf{a}_3 = 2\mathbf{a}_1 - \mathbf{a}_2\) como
+\[
+2\mathbf{a}_1 - 1\mathbf{a}_2 - 1\mathbf{a}_3 = \mathbf{0}
+\]
+produce una solución no trivial \(\mathbf{x} = \begin{bmatrix} 2 \\ -1 \\ -1 \end{bmatrix} \neq \mathbf{0}\) de la ecuación homogénea \(A\mathbf{x} = \mathbf{0}\), donde \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\). Esta observación convierte la idea geométrica de «sin vectores redundantes» en una prueba algebraica exacta.
+
+[CALLOUT]
+id: lin-indep-def
+label: Definición
+title: Independencia lineal y dependencia lineal en \(\mathbb{R}^m\)
+tone: key
+
+Una lista finita de vectores \(\{\mathbf{a}_1, \mathbf{a}_2, \dots, \mathbf{a}_n\}\) en \(\mathbb{R}^m\) se dice linealmente independiente si la ecuación vectorial
+\[
+x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \dots + x_n \mathbf{a}_n = \mathbf{0}
+\]
+tiene ÚNICAMENTE la solución trivial \(x_1 = x_2 = \dots = x_n = 0\).
+
+La lista se dice linealmente dependiente si existen pesos \(c_1, \dots, c_n \in \mathbb{R}\), NO todos cero, tales que
+\[
+c_1 \mathbf{a}_1 + c_2 \mathbf{a}_2 + \dots + c_n \mathbf{a}_n = \mathbf{0}.
+\]
+Una ecuación así con al menos un \(c_j \neq 0\) se llama relación de dependencia lineal entre \(\mathbf{a}_1, \dots, \mathbf{a}_n\).
+[/CALLOUT]
+
+¿Por qué la dependencia lineal captura la redundancia? Suponga que \(c_1 \mathbf{a}_1 + \dots + c_n \mathbf{a}_n = \mathbf{0}\) con algún \(c_k \neq 0\). Dividir por \(c_k\) despeja \(\mathbf{a}_k\) como combinación lineal de los vectores restantes:
+\[
+\mathbf{a}_k = -\frac{c_1}{c_k}\mathbf{a}_1 - \dots - \frac{c_{k-1}}{c_k}\mathbf{a}_{k-1} - \frac{c_{k+1}}{c_k}\mathbf{a}_{k+1} - \dots - \frac{c_n}{c_k}\mathbf{a}_n.
+\]
+Recíprocamente, si un vector de la lista es combinación lineal de los otros, restarlo hacia el otro lado produce una relación de dependencia no trivial con coeficiente \(-1\) en ese vector.
+
+Ahora traduzca [REF: lin-indep-def | la definición] mediante el producto matriz-vector \(A\mathbf{x} = x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\) para \(A = \begin{bmatrix} \mathbf{a}_1 & \cdots & \mathbf{a}_n \end{bmatrix}\): ¡las columnas de \(A\) son linealmente independientes si y solo si \(A\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial! Combinado con la eliminación gaussiana, esto entrega la prueba computacional exacta para la independencia lineal.
+
+[CALLOUT]
+id: indep-pivot-test
+label: Teorema
+title: Prueba de pivotes para la independencia lineal
+tone: key
+
+Sea \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}\) una matriz \(m \times n\). Las columnas \(\mathbf{a}_1, \dots, \mathbf{a}_n\) son linealmente independientes si y solo si \(A\) tiene una posición pivote en CADA columna (equivalentemente, \(A\mathbf{x} = \mathbf{0}\) no tiene variables libres).
+[/CALLOUT]
+
+Varios atajos estructurales rápidos se siguen de inmediato sin necesidad de ninguna reducción por filas:
+1. Un único vector \(\{\mathbf{v}\}\) es linealmente independiente si y solo si \(\mathbf{v} \neq \mathbf{0}\).
+2. Dos vectores \(\{\mathbf{u}, \mathbf{v}\}\) son linealmente dependientes si y solo si uno es múltiplo escalar del otro. (Cuidado: para tres o más vectores, la no proporcionalidad por pares NO garantiza independencia; por ejemplo, \(\begin{bmatrix} 1 \\ 0 \end{bmatrix}, \begin{bmatrix} 0 \\ 1 \end{bmatrix}, \begin{bmatrix} 1 \\ 1 \end{bmatrix}\) no tiene ningún par de múltiplos escalares, pero \(\mathbf{v}_3 = \mathbf{v}_1 + \mathbf{v}_2\).)
+3. Toda lista que contenga al vector nulo \(\mathbf{0}\) es automáticamente linealmente dependiente, porque \(1 \cdot \mathbf{0} + 0\mathbf{v}_2 + \dots + 0\mathbf{v}_n = \mathbf{0}\) tiene un peso no nulo sobre \(\mathbf{0}\).
+4. Si \(n > m\) (más vectores que coordenadas), la lista \(\{\mathbf{a}_1, \dots, \mathbf{a}_n\} \subseteq \mathbb{R}^m\) es SIEMPRE linealmente dependiente, directamente por [REF: underdetermined-homog | el teorema homogéneo subdeterminado]. Por ejemplo, cualesquiera cuatro vectores en \(\mathbb{R}^3\) deben ser linealmente dependientes.
+
+Probemos una lista concreta en \(\mathbb{R}^3\): ¿son linealmente independientes \(\mathbf{a}_1 = \begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix}\), \(\mathbf{a}_2 = \begin{bmatrix} -1 \\ 3 \\ 1 \end{bmatrix}\) y \(\mathbf{a}_3 = \begin{bmatrix} 0 \\ 3 \\ 3 \end{bmatrix}\)? Forme \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) y reduzca por filas:
+\[
+\begin{bmatrix} 1 & -1 & 0 \\ 0 & 3 & 3 \\ 2 & 1 & 3 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - 2 R_1}
+\begin{bmatrix} 1 & -1 & 0 \\ 0 & 3 & 3 \\ 0 & 3 & 3 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - R_2}
+\begin{bmatrix} 1 & -1 & 0 \\ 0 & 3 & 3 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+¡La columna \(3\) no tiene pivote! Por [REF: indep-pivot-test | la prueba de pivotes], los vectores son linealmente dependientes. Continuar hasta \(\operatorname{RREF}(A) = \begin{bmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{bmatrix}\) da \(x_1 = -x_3, x_2 = -x_3\); fijar \(x_3 = 1\) revela la relación explícita de dependencia \(-\mathbf{a}_1 - \mathbf{a}_2 + \mathbf{a}_3 = \mathbf{0}\), es decir, \(\mathbf{a}_3 = \mathbf{a}_1 + \mathbf{a}_2\).
+
+[QUESTION 2]
+[ANSWER: D]
+¿Para qué valor(es) real(es) de \(k\) son linealmente dependientes en \(\mathbb{R}^3\) los tres vectores
+\[
+\mathbf{v}_1 = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}, \qquad
+\mathbf{v}_2 = \begin{bmatrix} 2 \\ 5 \\ 0 \end{bmatrix}, \qquad
+\mathbf{v}_3 = \begin{bmatrix} 1 \\ 4 \\ k \end{bmatrix}
+\]?
+
+(A) \(k = 0\) solamente
+(B) \(k = -3\) solamente
+(C) \(k = 1\) solamente
+(D) \(k = 3\) solamente
+(E) Todo número real \(k\)
+[/QUESTION]
+
+=== SECTION 3: Estructura de los conjuntos solución no homogéneos ===
+
+Volvamos ahora a un sistema no homogéneo consistente general \(A\mathbf{x} = \mathbf{b}\) con \(\mathbf{b} \neq \mathbf{0}\). ¿Cómo se relaciona su conjunto solución con el conjunto solución del sistema homogéneo asociado \(A\mathbf{x} = \mathbf{0}\)?
+
+Suponga que hemos encontrado siquiera UNA solución particular \(\mathbf{x}_p\) que satisface \(A\mathbf{x}_p = \mathbf{b}\). Sea \(\mathbf{x}\) cualquier otra solución de \(A\mathbf{x} = \mathbf{b}\), y considere la diferencia \(\mathbf{x}_h = \mathbf{x} - \mathbf{x}_p\). Por linealidad de la multiplicación matriz-vector,
+\[
+A\mathbf{x}_h = A(\mathbf{x} - \mathbf{x}_p) = A\mathbf{x} - A\mathbf{x}_p = \mathbf{b} - \mathbf{b} = \mathbf{0}.
+\]
+¡Así que la diferencia entre CUALESQUIERA dos soluciones de \(A\mathbf{x} = \mathbf{b}\) es una solución del sistema homogéneo \(A\mathbf{x} = \mathbf{0}\)! Reescribir \(\mathbf{x} - \mathbf{x}_p = \mathbf{x}_h\) como \(\mathbf{x} = \mathbf{x}_p + \mathbf{x}_h\) muestra que toda solución de \(A\mathbf{x} = \mathbf{b}\) se obtiene sumando alguna solución homogénea a \(\mathbf{x}_p\).
+
+Recíprocamente, tome CUALQUIER solución homogénea \(\mathbf{x}_h\) (de modo que \(A\mathbf{x}_h = \mathbf{0}\)) y forme \(\mathbf{x} = \mathbf{x}_p + \mathbf{x}_h\). Aplicar nuevamente la linealidad da
+\[
+A\mathbf{x} = A(\mathbf{x}_p + \mathbf{x}_h) = A\mathbf{x}_p + A\mathbf{x}_h = \mathbf{b} + \mathbf{0} = \mathbf{b}.
+\]
+Acabamos de demostrar ambas direcciones de uno de los teoremas más esclarecedores de todo el álgebra lineal.
+
+[CALLOUT]
+id: structure-theorem
+label: Teorema
+title: Estructura de los conjuntos solución no homogéneos
+tone: key
+
+Suponga que el sistema lineal \(A\mathbf{x} = \mathbf{b}\) es consistente, y sea \(\mathbf{x}_p\) CUALQUIER solución particular (tal que \(A\mathbf{x}_p = \mathbf{b}\)). Entonces el conjunto solución completo de \(A\mathbf{x} = \mathbf{b}\) es
+\[
+\{ \mathbf{x}_p + \mathbf{x}_h : A\mathbf{x}_h = \mathbf{0} \}.
+\]
+En particular:
+(1) Geométricamente, el conjunto solución de \(A\mathbf{x} = \mathbf{b}\) es una traslación paralela del conjunto solución homogéneo de \(A\mathbf{x} = \mathbf{0}\), desplazado fuera del origen por el vector \(\mathbf{x}_p\).
+(2) Criterio de unicidad: un sistema consistente \(A\mathbf{x} = \mathbf{b}\) tiene solución ÚNICA si y solo si el sistema homogéneo \(A\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial \(\mathbf{x}_h = \mathbf{0}\) (equivalentemente, las columnas de \(A\) son linealmente independientes).
+[/CALLOUT]
+
+Visualicemos [REF: structure-theorem.1 | esta traslación paralela] directamente en \(\mathbb{R}^2\). Tome
+\[
+A = \begin{bmatrix} 1 & -2 \\ -2 & 4 \end{bmatrix}, \qquad \mathbf{b} = \begin{bmatrix} 3 \\ -6 \end{bmatrix}.
+\]
+Reducir \(A\) deja la única ecuación \(x_1 - 2x_2 = 0\) para \(A\mathbf{x} = \mathbf{0}\), por lo que el conjunto solución homogéneo es la recta \(\mathbf{x}_h = t\mathbf{v}\) con \(\mathbf{v} = \begin{bmatrix} 2 \\ 1 \end{bmatrix}\) que pasa por el origen. Para \(A\mathbf{x} = \mathbf{b}\), reducir \([A \mid \mathbf{b}]\) deja \(x_1 - 2x_2 = 3\), dando \(x_1 = 3 + 2x_2\). En forma vectorial paramétrica:
+\[
+\mathbf{x} = \begin{bmatrix} 3 + 2x_2 \\ x_2 \end{bmatrix} = \begin{bmatrix} 3 \\ 0 \end{bmatrix} + x_2 \begin{bmatrix} 2 \\ 1 \end{bmatrix} = \mathbf{x}_p + t\mathbf{v}.
+\]
+Arrastre el deslizador \(s\) en la gráfica siguiente para observar cómo \(\mathbf{x}_h = s\mathbf{v}\) se mueve a lo largo de la recta homogénea mientras \(\mathbf{x}_p + s\mathbf{v}\) la acompaña a lo largo de la recta paralela desplazada, siempre separadas exactamente por el mismo vector \(\mathbf{x}_p = (3, 0)\).
+
+[GRAPH]
+type: parametric2d
+title: Conjunto solución no homogéneo \(\mathbf{x}_p + t\mathbf{v}\) como traslación paralela de \(t\mathbf{v}\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: -2.5, 2.5
+xrange: -4, 8
+yrange: -3, 3.5
+trace: 2*t, t | label: Homogéneo \(A\mathbf{x} = \mathbf{0}\): \(t\mathbf{v}\) | color: #2563eb
+trace: 3 + 2*t, t | label: No homogéneo \(A\mathbf{x} = \mathbf{b}\): \(\mathbf{x}_p + t\mathbf{v}\) | color: #059669
+segment: 0, 0, 3, 0 | label: \(\mathbf{x}_p\) | color: #dc2626
+segment: 2*s, s, 3 + 2*s, s | color: #dc2626 | dashed: true
+point: 2*s, s | label: \(s\mathbf{v}\) | color: #2563eb
+point: 3 + 2*s, s | label: \(\mathbf{x}_p + s\mathbf{v}\) | color: #059669
+slider: s | range: -2, 2 | init: 1 | step: 0.25
+[/GRAPH]
+
+Note una consecuencia importante de [REF: structure-theorem | el teorema de estructura]: la solución particular \(\mathbf{x}_p\) NO es única cuando hay variables libres. En el ejemplo anterior, elegir \(t = 1\) da otra solución particular \(\tilde{\mathbf{x}}_p = \begin{bmatrix} 5 \\ 1 \end{bmatrix}\), y \(\begin{bmatrix} 5 \\ 1 \end{bmatrix} + t\begin{bmatrix} 2 \\ 1 \end{bmatrix}\) traza exactamente la misma recta desplazada. Lo que SÍ es único es el conjunto de direcciones homogéneo \(\{t\mathbf{v}\}\) y la recta afín resultante en su conjunto.
+
+Note también cómo [REF: structure-theorem | este teorema] explica por fin por qué todo sistema lineal sobre \(\mathbb{R}\) tiene \(0\), \(1\) o infinitas soluciones —nunca \(2\) ni \(5\)—: si un sistema tiene dos soluciones distintas \(\mathbf{x}_1 \neq \mathbf{x}_2\), entonces \(\mathbf{v} = \mathbf{x}_2 - \mathbf{x}_1 \neq \mathbf{0}\) satisface \(A\mathbf{v} = \mathbf{0}\), por lo que \(\mathbf{x}_1 + t\mathbf{v}\) produce infinitas soluciones distintas conforme \(t\) recorre \(\mathbb{R}\).
+
+[TABLE]
+Sistema | Condición de pivotes sobre \(A\) | Forma del conjunto solución
+\(A\mathbf{x} = \mathbf{0}\) | Pivote en cada columna (\(n\) pivotes) | Solución trivial única \(\{\mathbf{0}\}\) (columnas linealmente independientes)
+\(A\mathbf{x} = \mathbf{0}\) | \(k \ge 1\) columnas no pivote | \(\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) por el origen (columnas dependientes)
+\(A\mathbf{x} = \mathbf{b}\) consistente | Pivote en cada columna (\(n\) pivotes) | Solución única \(\{\mathbf{x}_p\}\)
+\(A\mathbf{x} = \mathbf{b}\) consistente | \(k \ge 1\) columnas no pivote | \(\mathbf{x}_p + t_1 \mathbf{v}_1 + \dots + t_k \mathbf{v}_k\) (trasladado paralelamente al conjunto homogéneo)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+Suponga que \(A\) es una matriz \(3 \times 4\) y \(\mathbf{b} \in \mathbb{R}^3\) es un vector no nulo. Tanto \(\mathbf{u}_1 = \begin{bmatrix} 1 \\ 0 \\ 2 \\ -1 \end{bmatrix}\) como \(\mathbf{u}_2 = \begin{bmatrix} 3 \\ 1 \\ 0 \\ 1 \end{bmatrix}\) satisfacen \(A\mathbf{x} = \mathbf{b}\). ¿Qué vector satisface con certeza la ecuación homogénea \(A\mathbf{x} = \mathbf{0}\)?
+
+(A) \(\begin{bmatrix} 4 \\ 1 \\ 2 \\ 0 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 2 \\ 1 \\ -2 \\ 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -1 \\ -1 \\ 4 \\ -3 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 2 \\ 1/2 \\ 1 \\ 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 7 \\ 2 \\ 2 \\ 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Sea \(A\) una matriz \(4 \times 3\) cuyas columnas son linealmente independientes, y suponga que \(\mathbf{x}_0 \in \mathbb{R}^3\) es una solución de \(A\mathbf{x} = \mathbf{b}\). ¿Qué puede concluirse acerca del conjunto solución de \(A\mathbf{x} = \mathbf{b}\)?
+
+(A) \(\mathbf{x}_0\) es la única solución de \(A\mathbf{x} = \mathbf{b}\)
+(B) \(A\mathbf{x} = \mathbf{b}\) tiene infinitas soluciones que forman una recta que pasa por \(\mathbf{x}_0\)
+(C) \(A\mathbf{x} = \mathbf{b}\) debe ser inconsistente salvo que \(\mathbf{b} = \mathbf{0}\)
+(D) \(A\mathbf{x} = \mathbf{b}\) tiene exactamente \(1\) variable libre porque \(4 - 3 = 1\)
+(E) No puede decidirse la unicidad sin conocer \(\mathbf{b}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Sea \(A\) cualquier matriz \(3 \times 5\) con entradas reales. ¿Qué afirmación DEBE ser verdadera sin importar las entradas específicas de \(A\)?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) es consistente para todo \(\mathbf{b} \in \mathbb{R}^3\)
+(B) Las columnas de \(A\) son linealmente independientes
+(C) \(A\mathbf{x} = \mathbf{0}\) tiene al menos dos variables libres y, por lo tanto, infinitas soluciones no triviales
+(D) \(A\mathbf{x} = \mathbf{0}\) tiene exactamente dos variables libres
+(E) Todo sistema consistente \(A\mathbf{x} = \mathbf{b}\) tiene solución única
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suponga que \(A\) es una matriz \(3 \times 3\) con exactamente \(2\) columnas pivote, y suponga que tanto \(\mathbf{p} = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\) como \(\mathbf{q} = \begin{bmatrix} 4 \\ 0 \\ 3 \end{bmatrix}\) son soluciones de \(A\mathbf{x} = \mathbf{b}\). ¿Qué expresión da el conjunto solución completo de \(A\mathbf{x} = \mathbf{b}\) (para \(s, t \in \mathbb{R}\))?
+
+(A) \(\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + t \begin{bmatrix} 3 \\ -2 \\ 4 \end{bmatrix}\)
+(B) \(t \begin{bmatrix} 3 \\ -2 \\ 4 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + t \begin{bmatrix} 5 \\ 2 \\ 2 \end{bmatrix}\)
+(D) \(s \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + t \begin{bmatrix} 4 \\ 0 \\ 3 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 3 \\ -2 \\ 4 \end{bmatrix} + t \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\)
+[/BONUS]

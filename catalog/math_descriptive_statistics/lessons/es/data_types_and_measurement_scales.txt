@@ -1,0 +1,247 @@
+=== SECTION 1: Organización de datos en casos, variables y valores ===
+
+Supongamos que una clínica universitaria registra información de \(180\) consultas estudiantiles durante una semana: el número de identificación de cada estudiante, el año académico, la temperatura corporal en grados Celsius, la calificación de dolor autoreportada en una escala de \(1\) a \(5\), el número de consultas previas en el semestre y el tiempo de espera en minutos. Antes de calcular un solo promedio o trazar un gráfico, un analista debe responder dos preguntas fundamentales: ¿cómo está estructurada esta información y qué operaciones matemáticas tienen siquiera sentido en cada columna? Calcular un «número de identificación estudiantil promedio» o afirmar que una temperatura de \(38^\circ\text{C}\) es «el doble de cálida» que \(19^\circ\text{C}\) produce un número que parece cuantitativo pero carece de significado. La estadística descriptiva comienza auditando la estructura y la escala de medición de un conjunto de datos.
+
+[CALLOUT]
+id: tidy-data-structure
+label: Definición
+title: Unidades de observación, variables, valores y disposición ordenada
+tone: key
+
+Un conjunto de datos rectangular organiza la información registrada mediante tres componentes básicos:
+
+(1) Una unidad de observación (también llamada caso o individuo) es la persona, objeto, evento o entidad sobre la cual se recopilan los datos.
+(2) Una variable es una característica o atributo registrado para cada unidad de observación.
+(3) Un valor es la medición o categoría específica que toma una variable en una sola unidad de observación.
+
+Un conjunto de datos tiene una disposición ordenada (de casos por variables o formato tidy) cuando cada fila corresponde exactamente a una unidad de observación, cada columna corresponde exactamente a una variable y cada celda contiene un único valor.
+[/CALLOUT]
+
+Para ver cómo luce en la práctica la [REF: tidy-data-structure | disposición ordenada], examine un extracto de cinco consultas del registro de la clínica que se muestra a continuación. Cada fila representa una consulta (la unidad de observación), cada columna registra un único atributo (como el tiempo de espera o la calificación de dolor) y cada celda contiene una sola entrada con una unidad coherente.
+
+[TABLE]
+ID de consulta | Año académico | Temp (\(^\circ\text{C}\)) | Dolor (\(1\text{–}5\)) | Consultas previas | Tiempo de espera (min)
+1041 | Primer año | 36.8 | 2 | 0 | 14.5
+1042 | Tercer año | 38.4 | 4 | 2 | 9.0
+1043 | Cuarto año | 37.1 | 1 | 1 | 22.0
+1044 | Segundo año | 37.9 | 3 | 0 | 11.5
+1045 | Posgrado | 36.6 | 2 | 3 | 16.0
+[/TABLE]
+
+Las hojas de cálculo reales violan con frecuencia la disposición ordenada. Por ejemplo, un informe podría listar las sedes de la clínica en las filas y colocar los meses del calendario («Ene», «Feb», «Mar») en los encabezados de columna, con los conteos de consultas dentro de la cuadrícula. En esa tabla de resumen ancha, la variable «mes» está repartida entre múltiples encabezados de columna en lugar de ocupar una sola columna, y el «conteo de consultas» está disperso por las celdas en vez de ubicarse en una columna dedicada. Reorganizar esa tabla para que cada fila represente una combinación sede-mes, con columnas para sede, mes y conteo de consultas, restablece la estructura ordenada y garantiza que cada variable pueda auditarse y resumirse con limpieza.
+
+Igualmente importante antes de resumir cualquier conjunto de datos es identificar si las filas recopiladas constituyen todo el grupo de interés o solo un subconjunto de él.
+
+[CALLOUT]
+id: pop-vs-sample
+label: Definición
+title: Población frente a muestra
+tone: key
+
+(1) Una población es la colección completa de todas las unidades de observación de interés para una pregunta dada. Su tamaño se denota por \(N\), y un resumen numérico calculado sobre toda la población se denomina parámetro descriptivo.
+(2) Una muestra es un subconjunto de unidades de observación seleccionado de la población. Su tamaño se denota por \(n\) (con \(n \le N\)), y un resumen numérico calculado sobre la muestra se denomina estadístico muestral.
+[/CALLOUT]
+
+En estadística descriptiva, la distinción en [REF: pop-vs-sample | población frente a muestra] determina tanto la notación como el alcance. Si una agencia de transporte urbano desea describir la puntualidad de los autobuses en todos los \(N = 3{,}600\) viajes programados en octubre y descarga los registros GPS de cada uno de esos viajes, el retraso promedio resultante es un parámetro poblacional que describe la programación completa de octubre. Si, en cambio, un auditor extrae registros de \(n = 150\) viajes de octubre para resumir el desempeño típico, el retraso promedio de esos \(150\) viajes es un estadístico muestral. Nótese que el hecho de que un conjunto de datos sea una población o una muestra depende de la pregunta planteada: las \(180\) consultas clínicas de una semana forman una población si la dirección de la clínica solo desea describir esa semana específica, pero forman una muestra si pretende estudiar las consultas estudiantiles a lo largo de todo el año académico. Cómo seleccionar muestras aleatorias y utilizar estadísticos muestrales para inferir parámetros poblacionales desconocidos son temas de cursos posteriores de probabilidad e inferencia estadística; aquí nos enfocamos estrictamente en describir con precisión los datos disponibles.
+
+[QUESTION 1]
+[ANSWER: D]
+El departamento de registro de una universidad recopila las calificaciones del examen final de los \(N = 420\) estudiantes inscritos en Cálculo I durante el semestre de otoño para redactar un informe interno que describa el desempeño de dicho semestre. Además, un auxiliar docente selecciona \(n = 35\) exámenes de una sección de ejercicios y registra la calificación promedio de esos \(35\) exámenes. ¿Qué enunciado identifica con precisión la estructura de estos dos resúmenes?
+
+(A) Ambos promedios son estadísticos muestrales porque \(420\) estudiantes son solo un subconjunto de todos los estudiantes que cursarán Cálculo I alguna vez.
+(B) Ambos promedios son parámetros poblacionales porque ambos se calculan a partir de registros exactos y observados del examen, sin calificaciones faltantes.
+(C) El promedio de las \(420\) calificaciones es un estadístico muestral de tamaño \(n = 420\), y el promedio de las \(35\) calificaciones es un parámetro poblacional de tamaño \(N = 35\).
+(D) Respecto al objetivo del departamento de registro de describir el desempeño en Cálculo I de otoño, el promedio de las \(420\) calificaciones es un parámetro poblacional (\(N = 420\)), mientras que el promedio de las \(35\) calificaciones es un estadístico muestral (\(n = 35\)).
+(E) Ninguno de los dos promedios es un parámetro ni un estadístico mientras no se utilice un muestreo aleatorio para recopilar las calificaciones.
+[/QUESTION]
+
+=== SECTION 2: Variables categóricas y cuantitativas ===
+
+Una vez que un conjunto de datos está dispuesto en formato ordenado, el primer paso de clasificación divide las variables en dos grandes familias según lo que representan sus valores.
+
+[CALLOUT]
+id: var-types
+label: Definición
+title: Variables categóricas y cuantitativas
+tone: key
+
+(1) Una variable categórica (o cualitativa) asigna cada unidad de observación a uno de un conjunto de grupos o etiquetas mutuamente excluyentes.
+(2) Una variable cuantitativa (o numérica) registra una medición numérica o un conteo para los cuales operaciones aritméticas como la resta y el promedio reflejan cantidades genuinas.
+(3) Una variable cuantitativa es discreta si sus valores posibles forman números aislados y contables (típicamente conteos como \(0, 1, 2, \dots\)), y continua si en principio puede tomar cualquier valor real dentro de un intervalo (como tiempo, masa o longitud), limitado únicamente por la precisión del instrumento.
+[/CALLOUT]
+
+Observe nuevamente la tabla de la clínica aplicando [REF: var-types | estas definiciones]. El año académico es categórico porque ubica a cada estudiante en un grupo con nombre. Las consultas previas (\(0, 1, 2, 3, \dots\)) constituyen una variable cuantitativa discreta: un estudiante puede tener \(1\) o \(2\) consultas previas, nunca \(1.4\) consultas previas, y la diferencia \(3 - 1 = 2\) representa dos consultas adicionales. El tiempo de espera y la temperatura corporal son cuantitativas continuas: aunque un reloj redondee los tiempos de espera al medio minuto más cercano (\(14.5\) min, \(9.0\) min) y un termómetro marque décimas de grado (\(36.8^\circ\text{C}\)), las magnitudes físicas subyacentes varían de manera continua a lo largo de un intervalo. Registrar una variable continua con una precisión decimal finita no la convierte en discreta; la continuidad se refiere a la naturaleza de la magnitud medida, no a la cantidad de dígitos que muestra un sensor.
+
+Dos errores frecuentes de clasificación muestran por qué nunca basta con mirar si una columna contiene dígitos. Primero, el ID de consulta (\(1041, 1042, 1043, \dots\)), los códigos postales, los números de camiseta y los prefijos telefónicos se escriben con dígitos, pero son variables categóricas, no cuantitativas. Restar el ID de consulta \(1043\) del ID de consulta \(1045\) no mide cantidad alguna, y el promedio de los códigos postales \(02138\) y \(94305\) carece de sentido. Segundo, variables cuantitativas discretas como el tamaño del hogar o el número de artículos defectuosos por lote a veces se etiquetan erróneamente como categóricas simplemente porque toman pocos valores enteros distintos. Si una variable cuenta cuántos elementos ocurren, la separación entre \(0, 1, 2, 3\) es exacta y aritméticamente significativa, lo que la hace cuantitativa discreta y no categórica.
+
+[QUESTION 2]
+[ANSWER: B]
+Un analista de comercio electrónico inspecciona cuatro columnas en una tabla de pedidos de clientes: (I) código postal de envío de cinco dígitos, (II) número de artículos en el pedido, (III) peso del paquete registrado al \(0.1\text{ kg}\) más cercano, y (IV) método de pago («Tarjeta», «Transferencia», «Billetera»). ¿Qué clasificación corresponde correctamente a las cuatro variables?
+
+(A) I: cuantitativa discreta; II: cuantitativa discreta; III: cuantitativa continua; IV: categórica
+(B) I: categórica; II: cuantitativa discreta; III: cuantitativa continua; IV: categórica
+(C) I: categórica; II: categórica; III: cuantitativa discreta; IV: categórica
+(D) I: categórica; II: cuantitativa discreta; III: cuantitativa discreta; IV: categórica
+(E) I: cuantitativa discreta; II: cuantitativa continua; III: cuantitativa continua; IV: categórica
+[/QUESTION]
+
+=== SECTION 3: Las cuatro escalas de medición de Stevens ===
+
+Dividir las variables en categóricas y cuantitativas sigue siendo demasiado grueso para el trabajo estadístico. Dentro de las variables categóricas, «Año académico» tiene una progresión natural (desde Primer año hasta Posgrado), mientras que «Grupo sanguíneo» no la tiene. Dentro de las variables cuantitativas, el tiempo de espera posee un cero genuino que significa «ninguna espera en absoluto», mientras que la temperatura en grados Celsius tiene un cero arbitrario fijado en el punto de congelación del agua. En 1946, el psicólogo Stanley Smith Stevens organizó estas distinciones en cuatro escalas de medición anidadas, cada una de las cuales añade una nueva operación matemática significativa sobre las anteriores.
+
+[CALLOUT]
+id: stevens-scales
+label: Definición
+title: Las cuatro escalas de medición de Stevens
+tone: key
+
+Cada escala de medición se define por las comparaciones y operaciones que siguen siendo válidas sobre sus valores:
+
+(1) Nominal: los valores son etiquetas distintas sin orden intrínseco. Solo tiene sentido la igualdad (\(=\) y \(\ne\)).
+(2) Ordinal: los valores son categorías con un orden de rango significativo, pero no se garantiza que la separación entre niveles consecutivos sea igual. Tienen sentido la igualdad y el orden (\(<, >\)).
+(3) De intervalo: los valores son mediciones numéricas con espaciado de unidad constante, por lo que las diferencias (\(x_2 - x_1\)) y las razones de diferencias tienen sentido, pero el punto cero es arbitrario y no representa ausencia completa de la magnitud.
+(4) De razón: los valores son mediciones numéricas con espaciado de unidad constante y un cero verdadero, no arbitrario, que representa la ausencia completa de la magnitud. Tienen sentido la igualdad, el orden, las diferencias y las razones (\(x_2 / x_1\) para \(x_1 \ne 0\)).
+[/CALLOUT]
+
+Las cuatro escalas forman una jerarquía: toda variable de razón es también de intervalo, ordinal y nominal, porque siempre se pueden comparar dos tiempos de espera por igualdad, ordenarlos, restarlos o dividirlos. Ascender en la jerarquía otorga permisos aritméticos adicionales; descender los retira.
+
+[TABLE]
+Escala | Tipo | ¿Cero verdadero? | Operaciones significativas | Ejemplos típicos
+Nominal | Categórica | No | \(=\), \(\ne\) (conteos, proporciones) | Grupo sanguíneo, ID de consulta, código postal, color de ojos
+Ordinal | Categórica | No | Las anteriores más \(<\), \(>\) (rangos, orden) | Año académico, dolor \(1\text{–}5\), calificación con letras, escala de Likert
+De intervalo | Cuantitativa | No (arbitrario) | Las anteriores más \(+\), \(-\) (diferencias) | Temperatura (\(^\circ\text{C}\), \(^\circ\text{F}\)), año calendario, longitud geográfica
+De razón | Cuantitativa | Sí (ausencia) | Las anteriores más \(\times\), \(\div\) (razones) | Tiempo de espera, consultas previas, masa, temperatura Kelvin, ingreso
+[/TABLE]
+
+¿Por qué importa tanto matemáticamente la distinción entre escalas de intervalo y de razón? Considere la temperatura medida en grados Celsius (\(x\)) frente a grados Fahrenheit (\(y\)). Ambas escalas miden exactamente el mismo estado térmico físico, relacionadas mediante la conversión lineal
+\[
+y = 1.8 x + 32.
+\]
+Supongamos que la Sala A está a \(x_1 = 10^\circ\text{C}\) y la Sala B a \(x_2 = 20^\circ\text{C}\). Mirando solo los números en Celsius, alguien podría decir que la Sala B está «el doble de caliente» que la Sala A porque \(20 / 10 = 2\). Convierta ambas salas a Fahrenheit: la Sala A está a \(y_1 = 1.8(10) + 32 = 50^\circ\text{F}\), y la Sala B a \(y_2 = 1.8(20) + 32 = 68^\circ\text{F}\). Ahora la razón es \(68 / 50 = 1.36\), ¡no \(2\)! Peor aún, en la escala Kelvin (\(K = x + 273.15\), que posee un cero físico verdadero en el cero absoluto), la razón es \(293.15 / 283.15 \approx 1.035\). Una afirmación física no puede depender de qué unidad de termómetro se haya elegido. Como la recta de conversión de Celsius a Fahrenheit tiene una ordenada al origen distinta de cero (\(32\)), no pasa por el origen \((0, 0)\), de modo que multiplicar \(x\) por \(2\) no multiplica \(y\) por \(2\).
+
+En cambio, examine las diferencias en una escala de intervalo. Añada una tercera sala, la Sala C, a \(x_3 = 30^\circ\text{C}\) (\(y_3 = 86^\circ\text{F}\)). El salto de temperatura de la Sala A a la Sala C es \(30 - 10 = 20^\circ\text{C}\), que es el doble del salto de la Sala A a la Sala B (\(20 - 10 = 10^\circ\text{C}\)). En Fahrenheit, los saltos son \(86 - 50 = 36^\circ\text{F}\) y \(68 - 50 = 18^\circ\text{F}\), y su razón es \(36 / 18 = 2\): ¡idéntica! Algebraicamente, bajo cualquier cambio lineal positivo de unidades \(y = ax + b\) (\(a > 0\)), el desplazamiento \(b\) se cancela en las diferencias:
+\[
+\frac{y_3 - y_1}{y_2 - y_1} = \frac{a(x_3 - x_1)}{a(x_2 - x_1)} = \frac{x_3 - x_1}{x_2 - x_1},
+\]
+mientras que las razones directas \(y_2 / y_1 = (a x_2 + b)/(a x_1 + b)\) coinciden con \(x_2 / x_1\) para todo \(x_1, x_2 > 0\) solo cuando \(b = 0\), es decir, cuando ambas escalas comparten el mismo cero verdadero.
+
+El gráfico siguiente muestra directamente esta geometría. En una conversión de razón como de metros a pies (\(y = 3.281 x\), o cualquier recta \(y = a x\) que pasa por el origen), duplicar la coordenada horizontal siempre duplica la coordenada vertical. En la conversión de intervalo \(y = 1.8 x + 32\), el desplazamiento vertical \(+32\) despega la recta del origen, rompiendo las razones directas pero manteniendo constante la pendiente, de modo que pasos horizontales iguales producen pasos verticales iguales.
+
+[GRAPH]
+type: function2d
+title: Conversión de intervalo \(y = 1.8x + 32\) frente a conversión proporcional de razón \(y = 1.8x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 35
+yrange: 0, 100
+trace: 1.8*x + 32 | label: Intervalo: \(y = 1.8x + 32\)
+trace: 1.8*x | label: Razón: \(y = 1.8x\)
+point: 10, 50 | label: \((10, 50)\)
+point: 20, 68 | label: \((20, 68)\)
+point: 10, 18 | label: \((10, 18)\)
+point: 20, 36 | label: \((20, 36)\)
+segment: 10, 50, 20, 50 | dashed: true
+segment: 20, 50, 20, 68 | label: \(\Delta y = 18\) | dashed: true
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: C]
+Un geógrafo registra cuatro mediciones para un conjunto de estaciones meteorológicas de montaña: (1) código de la estación (p. ej., «MT-04»), (2) nivel de riesgo de avalancha («Bajo», «Moderado», «Alto», «Extremo»), (3) elevación en metros respecto al nivel medio del mar (donde los valores pueden ser negativos en depresiones y \(0\) es el nivel del mar), y (4) precipitación total anual de nieve en centímetros. ¿Qué secuencia indica correctamente las escalas de medición de (1), (2), (3) y (4) en orden?
+
+(A) Nominal, nominal, de razón, de razón
+(B) Ordinal, ordinal, de intervalo, de razón
+(C) Nominal, ordinal, de intervalo, de razón
+(D) Nominal, ordinal, de razón, de razón
+(E) Nominal, ordinal, de intervalo, de intervalo
+[/QUESTION]
+
+=== SECTION 4: Trampas de escala y auditoría de resúmenes admisibles ===
+
+Conocer las definiciones de [REF: stevens-scales | las cuatro escalas de medición de Stevens] solo resulta útil cuando se detectan usos indebidos sutiles antes de aplicar fórmulas. Tres trampas aparecen repetidamente en conjuntos de datos aplicados.
+
+[CALLOUT]
+id: scale-pitfalls
+label: Error común
+title: Tres violaciones frecuentes de escala
+tone: caution
+
+(1) Códigos numéricos tratados como cuantitativos: los números de identificación, códigos postales y códigos de grupo arbitrarios (\(1 = \text{Norte}, 2 = \text{Sur}, 3 = \text{Este}\)) son nominales. La aritmética sobre ellos refleja el esquema de codificación, no la realidad.
+(2) Rangos ordinales tratados como números de intervalo o de razón: en una escala de dolor de \(1\text{–}5\) o una encuesta de Likert de \(1\text{–}5\) («Muy en desacuerdo» a «Muy de acuerdo»), \(4 > 2\), pero el salto de \(1\) a \(2\) no tiene por qué representar el mismo incremento psicológico o físico que el salto de \(4\) a \(5\), y una calificación de \(4\) no es «el doble de dolor» que una de \(2\).
+(3) Razones formadas sobre escalas de intervalo: como el \(0\) en una escala de intervalo es un punto de referencia elegido y no una ausencia completa, afirmaciones como «el doble de grande» o «\(50\%\) mayor» son inválidas para temperaturas en Celsius, años calendario o puntajes estandarizados con líneas base arbitrarias.
+[/CALLOUT]
+
+¿Por qué merece especial cuidado [REF: scale-pitfalls.2 | la trampa ordinal]? En la práctica, los investigadores suelen codificar las respuestas tipo Likert con los enteros \(1, 2, 3, 4, 5\) para agilizar la captura de datos. Esos dígitos hacen tentador calcular una diferencia como \(4 - 2\) o afirmar que una calificación de \(4\) es el doble de una de \(2\). Estrictamente bajo la escala ordinal, solo se garantiza la validez de los enunciados que sobreviven a cualquier reetiquetado estrictamente creciente de las categorías ordenadas. Por ejemplo, reemplazar \((1, 2, 3, 4, 5)\) por \((1, 2, 5, 20, 100)\) conserva exactamente el orden de gravedad del dolor, pero altera drásticamente tanto las diferencias como los promedios. En cambio, los conteos de cada calificación, los porcentajes en cada categoría y la observación ubicada en el rango central permanecen completamente invariantes ante cualquier reetiquetado estrictamente creciente.
+
+Ahora podemos vincular directamente la escala de medición con las grandes familias de resúmenes que resultan matemáticamente legítimas, dejando las fórmulas exactas de cálculo y las construcciones gráficas para las lecciones siguientes.
+
+[TABLE]
+Escala de medición | Comparaciones válidas | Familias de resúmenes legítimas (adelanto)
+Nominal | Igualdad de categorías (\(=\), \(\ne\)) | Conteos por categoría, proporciones, categoría más frecuente, gráficos de barras
+Ordinal | Orden (\(<, >\)) e igualdad | Todos los resúmenes nominales más proporciones acumuladas, rangos, rango central (mediana)
+De intervalo | Diferencias (\(x_2 - x_1\)) y orden | Todos los resúmenes ordinales más media aritmética, dispersión mediante diferencias, histogramas
+De razón | Razones (\(x_2 / x_1\)) y diferencias | Todos los resúmenes de intervalo más cambios porcentuales, dispersión relativa basada en razones
+[/TABLE]
+
+Realicemos una auditoría completa previa al análisis sobre un pequeño conjunto de datos de bienestar laboral con cinco columnas: ID de empleado, Departamento, Nivel de estrés («Bajo», «Medio», «Alto»), Año calendario de contratación y Horas semanales de ejercicio.
+- El ID de empleado es categórico nominal: úselo únicamente para identificar unidades de observación únicas y verificar filas duplicadas, nunca para calcular sumas o promedios.
+- El Departamento es categórico nominal: resúmalo mediante conteos y proporciones por departamento; ordenar las barras alfabéticamente o por frecuencia es una elección de presentación, no un orden intrínseco.
+- El Nivel de estrés es categórico ordinal: son válidos los conteos, las proporciones, las proporciones acumuladas (como el porcentaje en «Medio» o inferior) y la categoría central, mientras que tratar «Alto» como numéricamente el doble de «Bajo» es inválido.
+- El Año calendario de contratación es cuantitativo de intervalo (discreto por año entero): las diferencias entre años de contratación miden legítimamente diferencias de antigüedad (\(2024 - 2018 = 6\) años equivale a \(2018 - 2012 = 6\) años), y promediar años de contratación tiene sentido matemático como punto medio en la línea temporal, pero afirmar que \(2024\) es «\(1.012\) veces» \(2000\) carece de sentido porque el año \(0\) es una época calendario arbitraria.
+- Las Horas semanales de ejercicio son cuantitativas de razón (continuas): \(0\) horas significa ausencia total de ejercicio, por lo que alguien que hace ejercicio \(6\) horas por semana realmente entrena el doble de tiempo que alguien que entrena \(3\) horas por semana, y son válidos todos los resúmenes numéricos estándar y comparaciones porcentuales.
+
+Auditar cada variable de este modo antes de tocar una calculadora evita que resultados matemáticamente carentes de sentido entren jamás en un análisis.
+
+[QUESTION 4]
+[ANSWER: A]
+Un investigador climático mide la temperatura del aire exterior al mediodía en tres días consecutivos: el Día 1 es \(5^\circ\text{C}\), el Día 2 es \(15^\circ\text{C}\) y el Día 3 es \(25^\circ\text{C}\). ¿Cuál de las siguientes afirmaciones sigue siendo matemáticamente válida independientemente de si las temperaturas se expresan en grados Celsius o se convierten a Fahrenheit (\(F = 1.8 C + 32\))?
+
+(A) El aumento de temperatura del Día 1 al Día 3 es el doble del aumento de temperatura del Día 1 al Día 2.
+(B) El Día 2 hizo tres veces más calor que el Día 1.
+(C) El Día 3 hizo cinco veces más calor que el Día 1.
+(D) El incremento porcentual de temperatura del Día 2 al Día 3 fue de \(66.7\%\).
+(E) El Día 1 tuvo un tercio de la energía térmica del Día 2.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Una cadena hotelera encuesta a \(n = 600\) huéspedes sobre la limpieza de las habitaciones utilizando una escala de cuatro niveles codificada en la base de datos como \(1 = \text{Mala}\), \(2 = \text{Regular}\), \(3 = \text{Buena}\) y \(4 = \text{Excelente}\). Un analista principiante propone cinco enunciados de resumen. ¿Qué enunciado es estrictamente legítimo bajo la escala de medición de esta variable sin añadir supuestos adicionales de igual espaciado?
+
+(A) Los huéspedes que calificaron la limpieza con \(4\) encontraron la habitación el doble de limpia que quienes la calificaron con \(2\).
+(B) Mejorar una habitación de \(1\) a \(2\) representa exactamente la misma ganancia en limpieza que mejorarla de \(3\) a \(4\).
+(C) La razón entre el puntaje promedio de limpieza en el Hotel A (\(3.6\)) y en el Hotel B (\(1.8\)) demuestra que el Hotel A es \(100\%\) más limpio.
+(D) Restar el código mínimo del código máximo demuestra que la brecha de limpieza entre Mala y Excelente es de tres unidades iguales.
+(E) Al menos \(75\%\) de los huéspedes encuestados calificó la limpieza de la habitación como «Buena» o superior, y el huésped ubicado en el rango central otorgó la calificación «Buena».
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suponga que una variable en escala de intervalo \(x\) se convierte a otra escala de intervalo válida mediante \(y = a x + b\) con \(a > 0\) y \(b \ne 0\). Para tres observaciones distintas \(x_1, x_2, x_3\) con \(x_1 > 0\), \(x_2 > 0\) y \(x_1 \ne x_2\), ¿qué cantidad tiene garantizado exactamente el mismo valor en la escala \(y\) que en la escala \(x\)?
+
+(A) \(\dfrac{x_2}{x_1}\)
+(B) \(x_2 - x_1\)
+(C) \(\dfrac{x_3 - x_1}{x_2 - x_1}\)
+(D) \(\dfrac{x_1 + x_2}{2}\)
+(E) \(\dfrac{x_2 - x_1}{x_1}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Una encuesta registró originalmente el ingreso anual exacto del hogar en dólares (una variable continua de razón), pero por privacidad la publicación pública reemplaza cada ingreso exacto por uno de cuatro tramos: «Menos de \(\$40{,}000\)», «\(\$40{,}000\text{–}\$79{,}999\)», «\(\$80{,}000\text{–}\$119{,}999\)» y «\(\$120{,}000\) o más». ¿Cómo cambia esta recodificación la clasificación de la variable y sus operaciones admisibles?
+
+(A) Sigue siendo una variable de razón porque el ingreso aún tiene un cero verdadero, de modo que pueden calcularse razones exactas entre tramos.
+(B) Se convierte en una variable categórica ordinal, conservando el orden de rango entre los tramos pero perdiendo las diferencias y razones exactas entre hogares.
+(C) Se convierte en una variable cuantitativa de intervalo porque los tramos intermedios tienen amplitud \(\$40{,}000\).
+(D) Se convierte en una variable categórica nominal porque los tramos son cadenas de texto, por lo que ordenarlos ya no tiene sentido.
+(E) Se convierte en una variable discreta de razón con cuatro valores numéricos \(1, 2, 3, 4\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Una base de datos deportiva almacena resultados de maratones en una tabla donde cada fila es una ciudad (Boston, Berlín, Tokio) y las columnas se llaman «Tiempo_Ganador_2022_Min», «Tiempo_Ganador_2023_Min» y «Tiempo_Ganador_2024_Min», conteniendo cada celda el tiempo ganador en minutos para esa ciudad y año. Si reestructura esta tabla a una disposición ordenada (de casos por variables) de manera que cada edición del maratón sea una unidad de observación, ¿cuántas filas y columnas tendrá la tabla ordenada?
+
+(A) \(3\) filas y \(3\) columnas
+(B) \(3\) filas y \(4\) columnas
+(C) \(6\) filas y \(3\) columnas
+(D) \(9\) filas y \(3\) columnas
+(E) \(9\) filas y \(4\) columnas
+[/BONUS]

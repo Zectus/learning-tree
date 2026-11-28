@@ -1,0 +1,259 @@
+=== SECTION 1: Distancia de un punto a un plano ===
+
+¿A qué distancia se encuentra un punto \(P_1(x_1, y_1, z_1)\) de un plano \(\Pi: ax + by + cz = d\) en \(\mathbb{R}^3\)? El camino más corto desde \(P_1\) hasta \(\Pi\) incide sobre \(\Pi\) formando un ángulo recto, es decir, viaja estrictamente a lo largo de la dirección normal \(\mathbf{n} = \langle a, b, c \rangle\) del plano. No necesita localizar primero ese punto de llegada perpendicular solo para hallar su longitud.
+
+Elija CUALQUIER punto \(P_0(x_0, y_0, z_0)\) perteneciente a \(\Pi\) y forme el vector desplazamiento \(\overrightarrow{P_0 P_1} = \langle x_1 - x_0,\; y_1 - y_0,\; z_1 - z_0 \rangle\). Descomponer \(\overrightarrow{P_0 P_1}\) en una componente paralela a \(\Pi\) y otra perpendicular a \(\Pi\) muestra que la altura perpendicular de \(P_1\) sobre \(\Pi\) es precisamente la magnitud de la proyección escalar de \(\overrightarrow{P_0 P_1}\) sobre \(\mathbf{n}\):
+\[
+d(P_1, \Pi) = \left|\operatorname{comp}_{\mathbf{n}} \overrightarrow{P_0 P_1}\right| = \frac{\left|\overrightarrow{P_0 P_1} \cdot \mathbf{n}\right|}{\|\mathbf{n}\|}.
+\]
+Desarrolle el producto escalar del numerador:
+\[
+\overrightarrow{P_0 P_1} \cdot \mathbf{n} = a(x_1 - x_0) + b(y_1 - y_0) + c(z_1 - z_0) = (ax_1 + by_1 + cz_1) - (ax_0 + by_0 + cz_0).
+\]
+Como \(P_0\) yace en \(\Pi\), sabemos que \(ax_0 + by_0 + cz_0 = d\) sin importar QUÉ punto \(P_0 \in \Pi\) hayamos elegido. El punto base \(P_0\) se cancela por completo, dejando una fórmula cerrada que depende únicamente de \(P_1\) y de la ecuación del plano.
+
+[CALLOUT]
+id: pt-plane-dist
+label: Teorema
+title: Distancia de un punto a un plano
+tone: key
+
+La distancia mínima (perpendicular) desde un punto \(P_1(x_1, y_1, z_1)\) hasta el plano \(\Pi: ax + by + cz = d\) con normal \(\mathbf{n} = \langle a, b, c \rangle \ne \mathbf{0}\) es
+\[
+d(P_1, \Pi) = \frac{|ax_1 + by_1 + cz_1 - d|}{\sqrt{a^2 + b^2 + c^2}}.
+\]
+[/CALLOUT]
+
+Arrastre el deslizador \(s\) en el diagrama en vista lateral siguiente para desplazar el punto de referencia \(P_0\) a cualquier lugar a lo largo del plano \(\Pi\). Observe cómo la flecha inclinada \(\overrightarrow{P_0 P_1}\) cambia de longitud e inclinación, pero su proyección ortogonal sobre la normal \(\mathbf{n}\) produce siempre exactamente la misma altura perpendicular \(d(P_1, \Pi)\) desde el pie \(F\) hasta \(P_1\).
+
+[GRAPH]
+type: parametric2d
+title: Invariancia de la proyección escalar sobre \(\mathbf{n}\) al deslizar \(P_0\) a lo largo de \(\Pi\)
+xlabel: dirección del plano
+ylabel: dirección normal
+trange: -3.5, 4.5
+xrange: -3.8, 4.8
+yrange: -2.8, 3.2
+trace: t, 0 | label: plano \(\Pi\)
+segment: s, 0, 1, 2.2 | label: \(\overrightarrow{P_0 P_1}\)
+segment: 1, 0, 1, 2.2 | label: \(d\)
+segment: 1, 0, 1, -2.2 | label: \(P_1'\) | dashed: true
+point: s, 0 | label: \(P_0\)
+point: 1, 0 | label: \(F\)
+point: 1, 2.2 | label: \(P_1\)
+point: 1, -2.2 | label: \(P_1'\)
+slider: s | range: -3, 4 | init: -2 | step: 0.25
+[/GRAPH]
+
+=== SECTION 2: Pie de la perpendicular y reflexión especular ===
+
+¿Qué hacer si necesita no solo la distancia escalar \(d(P_1, \Pi)\), sino también el punto más cercano exacto \(F \in \Pi\) (el pie de la perpendicular desde \(P_1\) sobre \(\Pi\)) o la imagen especular \(P_1'\) de \(P_1\) respecto de \(\Pi\)?
+
+Observe de nuevo el diagrama anterior. El vector que va de \(F\) a \(P_1\) es precisamente la proyección vectorial de \(\overrightarrow{P_0 P_1}\) sobre \(\mathbf{n}\):
+\[
+\overrightarrow{F P_1} = \operatorname{proj}_{\mathbf{n}} \overrightarrow{P_0 P_1} = \frac{\overrightarrow{P_0 P_1} \cdot \mathbf{n}}{\mathbf{n} \cdot \mathbf{n}}\,\mathbf{n} = \frac{ax_1 + by_1 + cz_1 - d}{a^2 + b^2 + c^2}\,\mathbf{n}.
+\]
+Advierta que los signos funcionan automáticamente: NO tome valor absoluto aquí. Si \(P_1\) está en el lado positivo de \(\mathbf{n}\), el numerador es positivo y restar \(\overrightarrow{F P_1}\) lleva a \(P_1\) hacia atrás hasta \(\Pi\); si \(P_1\) está en el lado negativo, el numerador es negativo y restar empuja a \(P_1\) hacia adelante hasta \(\Pi\). Avanzar el doble a lo largo del mismo paso cruza \(\Pi\) y aterriza en la reflexión especular \(P_1'\).
+
+[CALLOUT]
+id: foot-reflect
+label: Fórmulas
+title: Punto más cercano sobre un plano y reflexión especular respecto de un plano
+tone: key
+
+Para un punto \(P_1\) (vector de posición \(\mathbf{r}_{P_1}\)) y un plano \(\Pi: ax + by + cz = d\) con normal \(\mathbf{n} = \langle a, b, c \rangle\), defina el factor de paso con signo
+\[
+\lambda = \frac{ax_1 + by_1 + cz_1 - d}{a^2 + b^2 + c^2}.
+\]
+(1) Punto más cercano (pie de la perpendicular \(F \in \Pi\)):
+\[
+\mathbf{r}_F = \mathbf{r}_{P_1} - \lambda\,\mathbf{n}.
+\]
+(2) Reflexión especular \(P_1'\) de \(P_1\) respecto de \(\Pi\):
+\[
+\mathbf{r}_{P_1'} = \mathbf{r}_{P_1} - 2\lambda\,\mathbf{n} = 2\mathbf{r}_F - \mathbf{r}_{P_1}.
+\]
+[/CALLOUT]
+
+De manera equivalente, puede hallar \(F\) formando la recta perpendicular que pasa por \(P_1\) en dirección \(\mathbf{n}\), a saber, \(\mathbf{r}(t) = \mathbf{r}_{P_1} + t\mathbf{n}\), e intersecándola con \(\Pi\): al sustituir resulta \(t^* = -\lambda\), de modo que \(\mathbf{r}_F = \mathbf{r}_{P_1} - \lambda\mathbf{n}\) y \(\mathbf{r}_{P_1'} = \mathbf{r}_{P_1} - 2\lambda\mathbf{n}\).
+
+Resolvamos un caso concreto: halle la distancia, el punto más cercano \(F\) y la reflexión \(P_1'\) de \(P_1(4, 1, -2)\) respecto de \(\Pi: x + 2y - 2z = 1\).
+- Aquí \(\mathbf{n} = \langle 1, 2, -2 \rangle\), así que \(\|\mathbf{n}\| = \sqrt{1 + 4 + 4} = 3\) y \(\|\mathbf{n}\|^2 = 9\).
+- Calcule el numerador con signo: \(1(4) + 2(1) - 2(-2) - 1 = 4 + 2 + 4 - 1 = 9\).
+- Por [REF: pt-plane-dist | la fórmula punto-plano], \(d(P_1, \Pi) = \frac{|9|}{3} = 3\).
+- Por [REF: foot-reflect | las fórmulas de pie y reflexión], \(\lambda = \frac{9}{9} = 1\), por lo que
+\[
+\mathbf{r}_F = \langle 4, 1, -2 \rangle - 1\langle 1, 2, -2 \rangle = \langle 3, -1, 0 \rangle,
+\]
+y
+\[
+\mathbf{r}_{P_1'} = \langle 4, 1, -2 \rangle - 2\langle 1, 2, -2 \rangle = \langle 2, -3, 2 \rangle.
+\]
+Comprobación: \(F(3, -1, 0)\) satisface \(3 + 2(-1) - 2(0) = 1\), el punto medio de \(P_1\) y \(P_1'\) es \((3, -1, 0) = F\), y \(\|\overrightarrow{F P_1}\| = \|\langle 1, 2, -2 \rangle\| = 3\).
+
+[QUESTION 1]
+[ANSWER: A]
+Halle la distancia \(d\) desde el punto \(P_1(3, -1, 4)\) hasta el plano \(\Pi: 2x - y + 2z = 6\), junto con las coordenadas del punto más cercano \(F\) sobre \(\Pi\).
+
+(A) \(d = 3\) y \(F(1, 0, 2)\)
+(B) \(d = 3\) y \(F(5, -2, 6)\)
+(C) \(d = 3\) y \(F(-1, 1, 0)\)
+(D) \(d = 1\) y \(F(1, 0, 2)\)
+(E) \(d = 7\) y \(F(1, 0, 2)\)
+[/QUESTION]
+
+=== SECTION 3: Distancia entre planos paralelos y entre recta y plano paralelos ===
+
+¿Qué distancia separa a dos planos paralelos \(\Pi_1\) y \(\Pi_2\)? Como la distancia desde cualquier punto de \(\Pi_2\) hasta \(\Pi_1\) es idéntica en toda la extensión de \(\Pi_2\), elija cualquier punto \(P_2(x_2, y_2, z_2) \in \Pi_2\) y mida su distancia a \(\Pi_1\).
+
+Suponga primero que ambos planos YA han sido escalados para compartir EXACTAMENTE el mismo vector normal \(\mathbf{n} = \langle a, b, c \rangle\):
+\[
+\Pi_1:\; ax + by + cz = d_1, \qquad \Pi_2:\; ax + by + cz = d_2.
+\]
+Como \(P_2 \in \Pi_2\) satisface \(ax_2 + by_2 + cz_2 = d_2\), introducir \(P_2\) en [REF: pt-plane-dist | la fórmula punto-plano] para \(\Pi_1\) se simplifica de inmediato a
+\[
+d(\Pi_1, \Pi_2) = \frac{|ax_2 + by_2 + cz_2 - d_1|}{\sqrt{a^2 + b^2 + c^2}} = \frac{|d_2 - d_1|}{\sqrt{a^2 + b^2 + c^2}}.
+\]
+La misma idea resuelve la distancia entre una recta \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) y un plano \(\Pi: ax + by + cz = d\) paralelo a ella (es decir, \(\mathbf{v} \cdot \mathbf{n} = 0\)): todo punto de \(L\) está exactamente a la misma altura perpendicular sobre \(\Pi\), de modo que basta evaluar [REF: pt-plane-dist | la fórmula punto-plano] en el punto base \(P_0\) de \(L\). (Si \(\mathbf{v} \cdot \mathbf{n} \ne 0\), la recta atraviesa el plano, por lo que la distancia mínima es automáticamente \(0\).)
+
+[CALLOUT]
+id: parallel-plane-dist
+label: Precaución
+title: Iguale los coeficientes normales antes de restar \(d_2 - d_1\)
+tone: caution
+
+La fórmula para planos paralelos
+\[
+d(\Pi_1, \Pi_2) = \frac{|d_2 - d_1|}{\sqrt{a^2 + b^2 + c^2}}
+\]
+es válida ÚNICAMENTE cuando ambas ecuaciones están escritas con coeficientes idénticos \((a, b, c)\) en el lado izquierdo. Si \(\Pi_1\) es \(x - 2y + 2z = 3\) y \(\Pi_2\) es \(2x - 4y + 4z = 18\), primero debe dividir \(\Pi_2\) por \(2\) para reescribirla como \(x - 2y + 2z = 9\), lo que da \(d = \frac{|9 - 3|}{\sqrt{1 + 4 + 4}} = \frac{6}{3} = 2\) (NO \(\frac{|18 - 3|}{3} = 5\)).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: E]
+¿Cuál es la distancia mínima exacta entre los planos paralelos \(\Pi_1: 2x - 2y + z = 5\) y \(\Pi_2: 6x - 6y + 3z = -3\)?
+
+(A) \(\frac{8}{3}\)
+(B) \(\frac{8}{9}\)
+(C) \(\frac{4}{3}\)
+(D) \(6\)
+(E) \(2\)
+[/QUESTION]
+
+=== SECTION 4: Distancia de un punto a una recta en \(\mathbb{R}^3\) ===
+
+A diferencia de un plano, una recta \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) en \(\mathbb{R}^3\) NO posee un único vector normal: todo un disco de direcciones es perpendicular a \(\mathbf{v}\). Entonces, ¿cómo medimos la distancia mínima desde un punto exterior \(P_1\) hasta \(L\)?
+
+Observe dentro del único plano determinado por \(L\) y \(P_1\), con \(P_0\) como el punto base sobre \(L\) y \(\theta\) como el ángulo entre \(\overrightarrow{P_0 P_1}\) y \(\mathbf{v}\). La distancia perpendicular \(d(P_1, L)\) es la altura del triángulo rectángulo con hipotenusa \(\|\overrightarrow{P_0 P_1}\|\) y base a lo largo de \(\mathbf{v}\):
+\[
+d(P_1, L) = \|\overrightarrow{P_0 P_1}\|\sin\theta.
+\]
+Dos herramientas vectoriales complementarias calculan limpiamente esta altura sin llegar a hallar \(\theta\):
+
+1. Método del producto vectorial (área del paralelogramo sobre base): el paralelogramo generado por \(\overrightarrow{P_0 P_1}\) y \(\mathbf{v}\) tiene área \(\|\overrightarrow{P_0 P_1} \times \mathbf{v}\| = \|\overrightarrow{P_0 P_1}\|\,\|\mathbf{v}\|\sin\theta\) y longitud de base \(\|\mathbf{v}\|\). Dividir el área por la base entrega directamente la altura:
+\[
+d(P_1, L) = \frac{\|\overrightarrow{P_0 P_1} \times \mathbf{v}\|}{\|\mathbf{v}\|}.
+\]
+2. Método de descomposición ortogonal: descomponga \(\overrightarrow{P_0 P_1}\) en su componente paralela a \(\mathbf{v}\) y su componente ortogonal a \(\mathbf{v}\):
+\[
+\overrightarrow{P_0 P_1} = \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1} + \mathbf{w}_\perp, \qquad \text{donde } \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1} = \frac{\overrightarrow{P_0 P_1} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\,\mathbf{v}.
+\]
+El resto ortogonal \(\mathbf{w}_\perp = \overrightarrow{P_0 P_1} - \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1}\) va directamente desde el pie \(F \in L\) hasta \(P_1\). Por lo tanto \(d(P_1, L) = \|\mathbf{w}_\perp\|\), Y obtiene de regalo el punto más cercano exacto \(F\) sobre \(L\):
+\[
+\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{v}} \overrightarrow{P_0 P_1} = \mathbf{r}_0 + \left(\frac{\overrightarrow{P_0 P_1} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v}.
+\]
+
+El corte plano siguiente muestra ambos puntos de vista en la misma figura: la altura \(d\) del paralelogramo generado por \(\overrightarrow{P_0 P_1}\) y \(\mathbf{v}\) es igual a la longitud del resto ortogonal \(\mathbf{w}_\perp = \overrightarrow{F P_1}\).
+
+[GRAPH]
+type: parametric2d
+title: Distancia punto-recta como altura del paralelogramo y resto ortogonal \(\mathbf{w}_\perp\)
+xlabel: dirección de la recta
+ylabel: dirección perpendicular
+trange: -0.5, 4.5
+xrange: -0.8, 4.8
+yrange: -0.6, 3.2
+trace: t, 0 | label: recta \(L\)
+segment: 0, 0, 2.2, 0 | label: \(\mathbf{v}\)
+segment: 0, 0, 1.6, 2.1 | label: \(\overrightarrow{P_0 P_1}\)
+segment: 1.6, 0, 1.6, 2.1 | label: \(\mathbf{w}_\perp\)
+segment: 2.2, 0, 3.8, 2.1 | dashed: true
+segment: 1.6, 2.1, 3.8, 2.1 | dashed: true
+point: 0, 0 | label: \(P_0\)
+point: 1.6, 0 | label: \(F\)
+point: 1.6, 2.1 | label: \(P_1\)
+[/GRAPH]
+
+[CALLOUT]
+id: pt-line-dist
+label: Fórmulas
+title: Distancia de un punto a una recta y punto más cercano sobre una recta en \(\mathbb{R}^3\)
+tone: key
+
+Para un punto \(P_1\) y una recta \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) que pasa por \(P_0\) con \(\mathbf{v} \ne \mathbf{0}\):
+
+(1) Fórmula de distancia por producto vectorial (la más rápida cuando solo se necesita la distancia escalar):
+\[
+d(P_1, L) = \frac{\left\|\overrightarrow{P_0 P_1} \times \mathbf{v}\right\|}{\|\mathbf{v}\|}.
+\]
+(2) Fórmula por descomposición ortogonal (entrega tanto el punto más cercano \(F \in L\) como la distancia):
+\[
+t^* = \frac{\overrightarrow{P_0 P_1} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}, \qquad \mathbf{r}_F = \mathbf{r}_0 + t^*\mathbf{v}, \qquad d(P_1, L) = \left\|\mathbf{r}_{P_1} - \mathbf{r}_F\right\|.
+\]
+[/CALLOUT]
+
+Verifiquemos ambas fórmulas de [REF: pt-line-dist | las fórmulas punto-recta] con \(P_1(3, 2, 1)\) y \(L: \mathbf{r}(t) = \langle 1, 0, -1 \rangle + t\langle 1, 1, 0 \rangle\). Aquí \(\overrightarrow{P_0 P_1} = \langle 2, 2, 2 \rangle\) y \(\mathbf{v} = \langle 1, 1, 0 \rangle\) con \(\|\mathbf{v}\| = \sqrt{2}\).
+- Método del producto vectorial: \(\overrightarrow{P_0 P_1} \times \mathbf{v} = \langle -2, 2, 0 \rangle\), cuya longitud es \(\sqrt{4 + 4} = 2\sqrt{2}\). Así \(d = \frac{2\sqrt{2}}{\sqrt{2}} = 2\).
+- Método de descomposición ortogonal: \(t^* = \frac{\langle 2, 2, 2 \rangle \cdot \langle 1, 1, 0 \rangle}{1 + 1 + 0} = \frac{4}{2} = 2\). El punto más cercano es \(F = \langle 1, 0, -1 \rangle + 2\langle 1, 1, 0 \rangle = (3, 2, -1)\), y \(\overrightarrow{F P_1} = \langle 0, 0, 2 \rangle\) es en efecto ortogonal a \(\mathbf{v}\) y tiene longitud \(2\).
+
+[TABLE]
+Problema de distancia | Idea geométrica central | Fórmula | ¿Localiza además el punto más cercano?
+Punto \(P_1\) a plano \(\Pi\) | Proyección escalar sobre \(\mathbf{n}\) | \(\frac{\lvert ax_1 + by_1 + cz_1 - d \rvert}{\sqrt{a^2 + b^2 + c^2}}\) | Sí, mediante \(\mathbf{r}_F = \mathbf{r}_{P_1} - \lambda\mathbf{n}\)
+Planos paralelos \(\Pi_1, \Pi_2\) | Igualar \(\mathbf{n}\), proyectar sobre \(\mathbf{n}\) | \(\frac{\lvert d_2 - d_1 \rvert}{\sqrt{a^2 + b^2 + c^2}}\) | No es único (todo par a lo largo de \(\mathbf{n}\))
+Punto \(P_1\) a recta \(L\) (cruz) | Área del paralelogramo / base | \(\frac{\|\overrightarrow{P_0 P_1} \times \mathbf{v}\|}{\|\mathbf{v}\|}\) | No (solo distancia)
+Punto \(P_1\) a recta \(L\) (proy.) | Descomposición ortogonal | \(\|\overrightarrow{P_0 P_1} - \operatorname{proj}_{\mathbf{v}}\overrightarrow{P_0 P_1}\|\) | Sí, \(\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{v}}\overrightarrow{P_0 P_1}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+¿Cuál es la distancia mínima desde el punto \(P_1(2, 1, -1)\) hasta la recta \(L: \mathbf{r}(t) = \langle 1, -1, 0 \rangle + t\langle 1, 2, -2 \rangle\)?
+
+(A) \(\sqrt{5}\)
+(B) \(\frac{\sqrt{5}}{3}\)
+(C) \(\frac{5}{3}\)
+(D) \(\frac{7}{3}\)
+(E) \(\frac{\sqrt{6}}{3}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Halle las coordenadas del punto más cercano \(F\) sobre la recta \(L: \mathbf{r}(t) = \langle 0, 2, -1 \rangle + t\langle 2, -1, 2 \rangle\) al punto \(P_1(4, 2, 4)\).
+
+(A) \((4, -2, 4)\)
+(B) \((0, 2, 1)\)
+(C) \((4, 0, 3)\)
+(D) \((2, 1, 1)\)
+(E) \((6, -1, 5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Halle la reflexión especular \(P_1'\) del punto \(P_1(1, 3, -2)\) respecto del plano \(\Pi: x - 2y + 2z = 9\).
+
+(A) \((3, -1, 2)\)
+(B) \((-1, 7, -6)\)
+(C) \((-3, 11, -10)\)
+(D) \((5, -5, 6)\)
+(E) \((4, -3, 4)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Considere la recta \(L: \mathbf{r}(t) = \langle 1, 1, 0 \rangle + t\langle 1, -4, 1 \rangle\) y el plano \(\Pi: 2x + y + 2z = 12\). ¿Cuál es la distancia entre \(L\) y \(\Pi\)?
+
+(A) \(3\)
+(B) \(0\), porque \(L\) interseca a \(\Pi\)
+(C) \(5\)
+(D) \(9\)
+(E) Varía linealmente con el parámetro \(t\)
+[/BONUS]

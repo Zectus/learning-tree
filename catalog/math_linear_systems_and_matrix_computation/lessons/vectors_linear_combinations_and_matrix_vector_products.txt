@@ -1,0 +1,299 @@
+=== SECTION 1: Vectors in \(\mathbb{R}^n\) and linear combinations ===
+
+In two- and three-dimensional coordinate geometry, a point or displacement is listed as an ordered pair or triple of real numbers. When a linear system has \(n\) unknowns or \(m\) equations, it is far more illuminating to package those \(n\) numbers into a single object—a column vector—so that an entire system of equations can be read as one geometric question about combining vectors.
+
+[CALLOUT]
+id: vector-ops-def
+label: Definition
+title: Column vectors in \(\mathbb{R}^n\), addition, and scalar multiplication
+tone: key
+
+The space \(\mathbb{R}^n\) consists of all ordered lists of \(n\) real numbers written vertically as column vectors:
+\[
+\mathbf{u} = \begin{bmatrix} u_1 \\ u_2 \\ \vdots \\ u_n \end{bmatrix}, \qquad \mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}.
+\]
+Two vectors in \(\mathbb{R}^n\) are equal if and only if they have the same size \(n\) and matching entries \(u_i = v_i\) for every \(i = 1, \dots, n\). For \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) and any scalar \(c \in \mathbb{R}\), vector addition and scalar multiplication are defined entry by entry:
+\[
+\mathbf{u} + \mathbf{v} = \begin{bmatrix} u_1 + v_1 \\ u_2 + v_2 \\ \vdots \\ u_n + v_n \end{bmatrix}, \qquad
+c\mathbf{u} = \begin{bmatrix} c u_1 \\ c u_2 \\ \vdots \\ c u_n \end{bmatrix}.
+\]
+The vector whose entries are all zero is the zero vector \(\mathbf{0} \in \mathbb{R}^n\).
+[/CALLOUT]
+
+Notice that addition is defined only between vectors of the same size \(n\): you cannot add a vector in \(\mathbb{R}^2\) to a vector in \(\mathbb{R}^3\). Because both operations act independently on each coordinate, the familiar arithmetic laws of real numbers carry over immediately to \(\mathbb{R}^n\): addition is commutative (\(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\)) and associative (\((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})\)), \(\mathbf{u} + \mathbf{0} = \mathbf{u}\), and scalar multiplication distributes over both vector addition and scalar addition: \(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\) and \((c + d)\mathbf{u} = c\mathbf{u} + d\mathbf{u}\).
+
+Combining scaling and addition across several vectors produces the single most important construction in linear algebra: a linear combination.
+
+[CALLOUT]
+id: lincomb-span-def
+label: Definition
+title: Linear combination and span
+tone: key
+
+Given vectors \(\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_k \in \mathbb{R}^m\) and scalars (called weights) \(c_1, c_2, \dots, c_k \in \mathbb{R}\), the vector
+\[
+\mathbf{y} = c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_k \mathbf{v}_k
+\]
+is called a linear combination of \(\mathbf{v}_1, \dots, \mathbf{v}_k\).
+
+The set of all linear combinations of \(\mathbf{v}_1, \dots, \mathbf{v}_k\) is called the span of those vectors and is denoted
+\[
+\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\} = \{ c_1 \mathbf{v}_1 + \dots + c_k \mathbf{v}_k : c_1, \dots, c_k \in \mathbb{R} \} \subseteq \mathbb{R}^m.
+\]
+[/CALLOUT]
+
+To see a linear combination geometrically in \(\mathbb{R}^2\), take \(\mathbf{v}_1 = \begin{bmatrix} 2 \\ 1 \end{bmatrix}\) and \(\mathbf{v}_2 = \begin{bmatrix} -1 \\ 2 \end{bmatrix}\). With weights \(c_1 = 2\) and \(c_2 = 1\), we scale \(\mathbf{v}_1\) by \(2\) to reach \((4, 2)\) and then move from \((4, 2)\) by \(\mathbf{v}_2 = (-1, 2)\) to land at
+\[
+2\mathbf{v}_1 + 1\mathbf{v}_2 = \begin{bmatrix} 4 \\ 2 \end{bmatrix} + \begin{bmatrix} -1 \\ 2 \end{bmatrix} = \begin{bmatrix} 3 \\ 4 \end{bmatrix}.
+\]
+The graph below displays this tip-to-tail construction; drag the slider \(s\) to watch how varying the weight on \(\mathbf{v}_2\) sweeps \(2\mathbf{v}_1 + s\mathbf{v}_2\) along a line parallel to \(\mathbf{v}_2\).
+
+[GRAPH]
+type: parametric2d
+title: Building a linear combination \(2\mathbf{v}_1 + s\mathbf{v}_2\) in \(\mathbb{R}^2\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: -2, 3
+xrange: -2, 6
+yrange: -2, 6
+trace: 4 - t, 2 + 2*t | label: \(2\mathbf{v}_1 + t\mathbf{v}_2\) | color: #94a3b8
+segment: 0, 0, 2, 1 | label: \(\mathbf{v}_1\) | color: #2563eb
+segment: 0, 0, -1, 2 | label: \(\mathbf{v}_2\) | color: #059669
+segment: 0, 0, 4, 2 | label: \(2\mathbf{v}_1\) | color: #2563eb | dashed: true
+segment: 4, 2, 4 - s, 2 + 2*s | label: \(s\mathbf{v}_2\) | color: #059669 | dashed: true
+segment: 0, 0, 4 - s, 2 + 2*s | color: #dc2626
+point: 4 - s, 2 + 2*s | label: \(2\mathbf{v}_1 + s\mathbf{v}_2\)
+slider: s | range: -1.5, 2 | init: 1 | step: 0.25
+[/GRAPH]
+
+What geometric shapes can \(\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) take inside \(\mathbb{R}^2\) and \(\mathbb{R}^3\)? First observe that \(\mathbf{0}\) belongs to EVERY span, because choosing all weights \(c_1 = \dots = c_k = 0\) always gives \(\mathbf{0}\). Beyond the origin:
+- For a single nonzero vector \(\mathbf{v} \in \mathbb{R}^2\) or \(\mathbb{R}^3\), \(\operatorname{Span}\{\mathbf{v}\} = \{c\mathbf{v} : c \in \mathbb{R}\}\) is the line through the origin in the direction of \(\mathbf{v}\).
+- For two vectors \(\mathbf{v}_1, \mathbf{v}_2\) in \(\mathbb{R}^2\): if neither is a scalar multiple of the other (they are not collinear), then every target point in \(\mathbb{R}^2\) can be reached by traveling along \(\mathbf{v}_1\) and then along \(\mathbf{v}_2\), so \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\} = \mathbb{R}^2\). If one IS a scalar multiple of the other—say \(\mathbf{v}_2 = -2\mathbf{v}_1\) with \(\mathbf{v}_1 \neq \mathbf{0}\)—then \(c_1\mathbf{v}_1 + c_2(-2\mathbf{v}_1) = (c_1 - 2c_2)\mathbf{v}_1\) never leaves the line \(\operatorname{Span}\{\mathbf{v}_1\}\).
+- For two non-collinear vectors \(\mathbf{v}_1, \mathbf{v}_2\) in \(\mathbb{R}^3\), \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\) is the flat plane through the origin containing both \(\mathbf{v}_1\) and \(\mathbf{v}_2\). Adding a third vector \(\mathbf{v}_3\) enlarges the span to all of \(\mathbb{R}^3\) if \(\mathbf{v}_3\) points out of that plane, but leaves the span unchanged as that same plane if \(\mathbf{v}_3\) already lies inside \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\).
+
+Notice the key lesson: counting how many vectors are listed is not enough to know the shape of their span. You must ask whether each new vector actually points in a direction not already reachable from the others.
+
+How do we test concretely whether a target vector \(\mathbf{b}\) belongs to \(\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\)? We ask whether there exist scalars \(c_1, \dots, c_k\) solving the vector equation
+\[
+c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_k \mathbf{v}_k = \mathbf{b}.
+\]
+Comparing coordinate by coordinate converts this single vector equation directly into a system of \(m\) linear equations in the \(k\) unknowns \(c_1, \dots, c_k\). For instance, to test whether \(\mathbf{b} = \begin{bmatrix} 5 \\ 1 \\ 7 \end{bmatrix}\) lies in \(\operatorname{Span}\left\{\begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix}, \begin{bmatrix} 2 \\ 1 \\ 1 \end{bmatrix}\right\}\), we solve
+\[
+c_1 \begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix} + c_2 \begin{bmatrix} 2 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} 5 \\ 1 \\ 7 \end{bmatrix}
+\iff
+\begin{aligned}
+c_1 + 2c_2 &= 5, \\
+c_2 &= 1, \\
+2c_1 + c_2 &= 7.
+\end{aligned}
+\]
+The second equation fixes \(c_2 = 1\); the first then gives \(c_1 = 5 - 2(1) = 3\); checking the third gives \(2(3) + 1 = 7\), which matches. Thus \(\mathbf{b} = 3\mathbf{v}_1 + \mathbf{v}_2 \in \operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\). Had the third entry of \(\mathbf{b}\) been \(8\) instead of \(7\), the third equation \(2(3) + 1 = 8\) would fail, proving that \(\mathbf{b}\) lies outside the plane \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\).
+
+[QUESTION 1]
+[ANSWER: B]
+Let \(\mathbf{v}_1 = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\) and \(\mathbf{v}_2 = \begin{bmatrix} 0 \\ 1 \\ 3 \end{bmatrix}\). For which real number \(h\) does the vector \(\mathbf{b} = \begin{bmatrix} 2 \\ 7 \\ h \end{bmatrix}\) belong to \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\)?
+
+(A) \(h = 5\)
+(B) \(h = 7\)
+(C) \(h = 9\)
+(D) \(h = 11\)
+(E) No real value of \(h\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+Let \(\mathbf{u} = \begin{bmatrix} 1 \\ -2 \\ 3 \end{bmatrix}\), \(\mathbf{v} = \begin{bmatrix} -2 \\ 4 \\ -6 \end{bmatrix}\), and \(\mathbf{w} = \begin{bmatrix} 3 \\ -6 \\ 9 \end{bmatrix}\). What is the geometric shape of \(\operatorname{Span}\{\mathbf{u}, \mathbf{v}, \mathbf{w}\}\) in \(\mathbb{R}^3\)?
+
+(A) The single point \(\{\mathbf{0}\}\)
+(B) A line through the origin in \(\mathbb{R}^3\)
+(C) A plane through the origin in \(\mathbb{R}^3\)
+(D) All of \(\mathbb{R}^3\)
+(E) A line in \(\mathbb{R}^3\) that does not pass through the origin
+[/QUESTION]
+
+=== SECTION 2: The matrix-vector product \(A\mathbf{x}\) ===
+
+When we collect \(n\) column vectors \(\mathbf{a}_1, \mathbf{a}_2, \dots, \mathbf{a}_n \in \mathbb{R}^m\) side by side, they form an \(m \times n\) matrix
+\[
+A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}.
+\]
+Taking a linear combination of those columns with weights \(x_1, x_2, \dots, x_n\)—the entries of a vector \(\mathbf{x} \in \mathbb{R}^n\)—occurs so constantly that we give it its own multiplication notation.
+
+[CALLOUT]
+id: matvec-def
+label: Definition
+title: Matrix-vector product (column-combination definition)
+tone: key
+
+Let \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}\) be an \(m \times n\) matrix with columns \(\mathbf{a}_1, \dots, \mathbf{a}_n \in \mathbb{R}^m\), and let \(\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix} \in \mathbb{R}^n\). The matrix-vector product \(A\mathbf{x}\) is the vector in \(\mathbb{R}^m\) defined as the linear combination of the columns of \(A\) using the entries of \(\mathbf{x}\) as weights:
+\[
+A\mathbf{x} = x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \dots + x_n \mathbf{a}_n.
+\]
+[/CALLOUT]
+
+Check the sizes carefully: \(A\mathbf{x}\) is defined ONLY when the number of columns of \(A\) equals the number of entries of \(\mathbf{x}\). An \(m \times n\) matrix multiplies an \(n \times 1\) column vector to produce an \(m \times 1\) column vector—the inner dimensions \(n\) match and disappear, leaving \(m\).
+
+Let us compute an example by the column rule:
+\[
+\begin{bmatrix} 1 & -2 & 4 \\ 3 & 0 & -1 \end{bmatrix} \begin{bmatrix} 2 \\ 5 \\ -1 \end{bmatrix}
+= 2 \begin{bmatrix} 1 \\ 3 \end{bmatrix} + 5 \begin{bmatrix} -2 \\ 0 \end{bmatrix} + (-1) \begin{bmatrix} 4 \\ -1 \end{bmatrix}
+= \begin{bmatrix} 2 - 10 - 4 \\ 6 + 0 + 1 \end{bmatrix}
+= \begin{bmatrix} -12 \\ 7 \end{bmatrix}.
+\]
+Notice one especially useful special case of [REF: matvec-def | the column definition]. Let \(\mathbf{e}_j \in \mathbb{R}^n\) denote the \(j\)-th standard basis vector—the vector with \(1\) in entry \(j\) and \(0\) in every other entry. Then
+\[
+A\mathbf{e}_j = 0\mathbf{a}_1 + \dots + 1\mathbf{a}_j + \dots + 0\mathbf{a}_n = \mathbf{a}_j.
+\]
+Multiplying \(A\) by \(\mathbf{e}_j\) simply extracts the \(j\)-th column of \(A\).
+
+There is a second, equivalent way to compute \(A\mathbf{x}\) one entry at a time. Write out the \(i\)-th coordinate of the sum \(x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\): since the \(i\)-th entry of column \(\mathbf{a}_j\) is \(a_{ij}\), the \(i\)-th entry of \(A\mathbf{x}\) is
+\[
+(A\mathbf{x})_i = x_1 a_{i1} + x_2 a_{i2} + \dots + x_n a_{in} = \sum_{j=1}^n a_{ij} x_j.
+\]
+That sum is precisely the dot product of the \(i\)-th row of \(A\) with the column vector \(\mathbf{x}\). We have thus proved that the column-combination rule and the row-by-column dot-product rule always produce the exact same vector!
+
+In the example above, the row-dot-product rule gives:
+- Row \(1\) dotted with \(\mathbf{x}\): \(1(2) + (-2)(5) + 4(-1) = 2 - 10 - 4 = -12\).
+- Row \(2\) dotted with \(\mathbf{x}\): \(3(2) + 0(5) + (-1)(-1) = 6 + 0 + 1 = 7\).
+
+Both viewpoints are valuable for different reasons. The row-by-column rule is fast when computing individual numeric entries by hand, while the column-combination definition immediately reveals what \(A\mathbf{x}\) means geometrically and algebraically: the set of all possible outputs \(A\mathbf{x}\) as \(\mathbf{x}\) varies over \(\mathbb{R}^n\) is literally \(\operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\}\).
+
+[TABLE]
+Perspective | Formula | Best used for
+Column combination | \(A\mathbf{x} = x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\) | Understanding span, consistency, and zero entries in \(\mathbf{x}\)
+Row-by-column dot product | \((A\mathbf{x})_i = \sum_{j=1}^n a_{ij} x_j\) | Computing a single coordinate of \(A\mathbf{x}\) or reading back scalar equations
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+Let
+\[
+A = \begin{bmatrix} 2 & -1 & 4 & 0 \\ 0 & 3 & -2 & 1 \\ -1 & 1 & 5 & -3 \end{bmatrix}, \qquad
+\mathbf{x} = \begin{bmatrix} 1 \\ 0 \\ -1 \\ 2 \end{bmatrix}.
+\]
+What is the product \(A\mathbf{x}\)?
+
+(A) \(\begin{bmatrix} -2 \\ 4 \\ -6 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 6 \\ 0 \\ 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -2 \\ 4 \\ -12 \end{bmatrix}\)
+(D) \(\begin{bmatrix} -2 \\ 0 \\ -12 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 \\ -4 \\ 12 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Linearity of \(A\mathbf{x}\) and the three-way equivalence ===
+
+Why does matrix-vector multiplication sit at the center of linear algebra? Because for any fixed \(m \times n\) matrix \(A\), the operation \(\mathbf{x} \mapsto A\mathbf{x}\) obeys two exact algebraic rules called linearity.
+
+[CALLOUT]
+id: matvec-linearity
+label: Theorem
+title: Algebraic linearity of the matrix-vector product
+tone: key
+
+Let \(A\) be an \(m \times n\) matrix, let \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\), and let \(c \in \mathbb{R}\). Then:
+
+(1) Additivity: \(A(\mathbf{u} + \mathbf{v}) = A\mathbf{u} + A\mathbf{v}\).
+(2) Homogeneity: \(A(c\mathbf{u}) = c(A\mathbf{u})\).
+
+Combining both rules yields \(A(c\mathbf{u} + d\mathbf{v}) = c(A\mathbf{u}) + d(A\mathbf{v})\) for all scalars \(c, d \in \mathbb{R}\), and in particular \(A\mathbf{0} = \mathbf{0}\).
+[/CALLOUT]
+
+Both properties follow in one line from [REF: matvec-def | the column definition]. Writing \(\mathbf{u}\) with entries \(u_j\) and \(\mathbf{v}\) with entries \(v_j\), the \(j\)-th entry of \(\mathbf{u} + \mathbf{v}\) is \(u_j + v_j\), so
+\[
+A(\mathbf{u} + \mathbf{v})
+= \sum_{j=1}^n (u_j + v_j)\mathbf{a}_j
+= \sum_{j=1}^n u_j \mathbf{a}_j + \sum_{j=1}^n v_j \mathbf{a}_j
+= A\mathbf{u} + A\mathbf{v}.
+\]
+Similarly, the \(j\)-th entry of \(c\mathbf{u}\) is \(c u_j\), so
+\[
+A(c\mathbf{u})
+= \sum_{j=1}^n (c u_j)\mathbf{a}_j
+= c \sum_{j=1}^n u_j \mathbf{a}_j
+= c(A\mathbf{u}).
+\]
+Setting \(c = 0\) gives \(A\mathbf{0} = 0(A\mathbf{u}) = \mathbf{0}\). Notice how powerful [REF: matvec-linearity | linearity] is: even if you are never told a single entry of \(A\), knowing \(A\mathbf{u}\) and \(A\mathbf{v}\) immediately determines \(A(c\mathbf{u} + d\mathbf{v})\) for every linear combination of \(\mathbf{u}\) and \(\mathbf{v}\).
+
+We can now unite the two languages we have built—linear systems of equations and linear combinations of column vectors—into a single three-way equivalence.
+
+[CALLOUT]
+id: three-way-equiv
+label: Theorem
+title: Three-way equivalence for linear systems
+tone: key
+
+Let \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}\) be an \(m \times n\) matrix with entries \(a_{ij}\), let \(\mathbf{x} = \begin{bmatrix} x_1 \\ \vdots \\ x_n \end{bmatrix} \in \mathbb{R}^n\), and let \(\mathbf{b} = \begin{bmatrix} b_1 \\ \vdots \\ b_m \end{bmatrix} \in \mathbb{R}^m\). The following three equations have the exact same solution set:
+
+(1) The linear system of \(m\) equations in \(n\) unknowns:
+\[
+a_{i1} x_1 + a_{i2} x_2 + \dots + a_{in} x_n = b_i \qquad (i = 1, \dots, m).
+\]
+(2) The vector equation:
+\[
+x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \dots + x_n \mathbf{a}_n = \mathbf{b}.
+\]
+(3) The matrix equation:
+\[
+A\mathbf{x} = \mathbf{b}.
+\]
+
+Consequently, the matrix equation \(A\mathbf{x} = \mathbf{b}\) is consistent if and only if \(\mathbf{b} \in \operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\}\).
+[/CALLOUT]
+
+The proof is already in our hands. By [REF: matvec-def | the column definition], \(A\mathbf{x}\) and \(x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\) are literally the same vector, so (2) and (3) are identical. By the row-dot-product formula proved in Section 2, the \(i\)-th entry of \(A\mathbf{x}\) is \(a_{i1} x_1 + \dots + a_{in} x_n\); since two vectors in \(\mathbb{R}^m\) are equal if and only if all \(m\) of their entries agree, \(A\mathbf{x} = \mathbf{b}\) holds if and only if every equation in (1) holds. Finally, by [REF: lincomb-span-def | the definition of span], weights \(x_1, \dots, x_n\) solving (2) exist if and only if \(\mathbf{b} \in \operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\}\).
+
+Look at what this equivalence achieves conceptually. Consider the \(2 \times 2\) matrix \(A = \begin{bmatrix} 1 & -2 \\ 2 & -4 \end{bmatrix}\). Its second column is \(-2\) times its first column, so \(\operatorname{Span}\{\mathbf{a}_1, \mathbf{a}_2\}\) is just the line through the origin along \(\begin{bmatrix} 1 \\ 2 \end{bmatrix}\). By [REF: three-way-equiv | the three-way equivalence], the system \(A\mathbf{x} = \mathbf{b}\) is consistent if and only if \(\mathbf{b}\) lies on that line (for example, \(\mathbf{b} = \begin{bmatrix} 3 \\ 6 \end{bmatrix}\) works, whereas \(\mathbf{b} = \begin{bmatrix} 3 \\ 5 \end{bmatrix}\) fails).
+
+[GRAPH]
+type: parametric2d
+title: Span of collinear columns \(\mathbf{a}_1 = (1, 2)\) and \(\mathbf{a}_2 = (-2, -4)\) versus reachable and unreachable \(\mathbf{b}\)
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -2.5, 3.5
+xrange: -3, 4.5
+yrange: -5, 7
+trace: t, 2*t | label: \(\operatorname{Span}\{\mathbf{a}_1, \mathbf{a}_2\}\) | color: #2563eb
+segment: 0, 0, 1, 2 | label: \(\mathbf{a}_1\) | color: #059669
+segment: 0, 0, -2, -4 | label: \(\mathbf{a}_2\) | color: #0d9488
+point: 3, 6 | label: \((3, 6)\) | color: #059669
+point: 3, 5 | label: \((3, 5)\) | color: #dc2626
+[/GRAPH]
+
+Every question about solving a linear system can now be translated back and forth between equations, column spans, and matrix-vector multiplication—a bridge we will use throughout the rest of linear algebra.
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose \(A\) is an \(m \times n\) matrix, and for two vectors \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) we know
+\[
+A\mathbf{u} = \begin{bmatrix} 3 \\ -1 \end{bmatrix}, \qquad A\mathbf{v} = \begin{bmatrix} -2 \\ 4 \end{bmatrix}.
+\]
+What is \(A(2\mathbf{u} - 3\mathbf{v})\)?
+
+(A) \(\begin{bmatrix} 12 \\ -14 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0 \\ -14 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 12 \\ 10 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 \\ 3 \end{bmatrix}\)
+(E) It cannot be determined without knowing the entries of \(A\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Let \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) be a \(3 \times 3\) matrix whose columns satisfy the relation \(\mathbf{a}_3 = 2\mathbf{a}_1 - \mathbf{a}_2\). Which nonzero vector \(\mathbf{x} \in \mathbb{R}^3\) is guaranteed to satisfy \(A\mathbf{x} = \mathbf{0}\)?
+
+(A) \(\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 2 \\ -1 \\ -1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 \\ 1 \\ -1 \end{bmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Suppose \(A\) is a \(3 \times n\) matrix such that both systems \(A\mathbf{x} = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}\) and \(A\mathbf{x} = \begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix}\) are consistent. Which vector \(\mathbf{c} \in \mathbb{R}^3\) is guaranteed to make \(A\mathbf{x} = \mathbf{c}\) consistent, regardless of what \(A\) is?
+
+(A) \(\begin{bmatrix} 1 \\ 2 \\ 4 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 2 \\ 3 \\ 4 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 3 \\ 4 \\ 7 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\)
+[/BONUS]

@@ -1,0 +1,176 @@
+=== SECTION 1: Why logarithmic equations produce extraneous solutions ===
+
+Consider the logarithmic equation
+\[
+\log_2(x) + \log_2(x - 2) = 3.
+\]
+To solve it, we condense the left-hand side into a single logarithm using the product rule, convert to exponential form, and solve the resulting polynomial:
+\[
+\log_2\!\bigl(x(x - 2)\bigr) = 3 \implies x(x - 2) = 2^3 = 8 \implies x^2 - 2x - 8 = 0 \implies (x - 4)(x + 2) = 0.
+\]
+Every algebraic step was completely valid, yet test both candidates in the original equation:
+- At \(x = 4\): \(\log_2(4) + \log_2(2) = 2 + 1 = 3\). Valid!
+- At \(x = -2\): \(\log_2(-2) + \log_2(-4)\) is undefined over \(\mathbb{R}\), because both arguments are negative!
+
+How did valid algebra invent a fake root \(x = -2\)? The culprit is domain widening. The original left-hand side \(\log_2(x) + \log_2(x - 2)\) requires both \(x > 0\) and \(x - 2 > 0\), so its domain is \((2, \infty)\). When we condensed it to \(\log_2(x(x - 2))\), the product \(x(x - 2)\) is positive on \((-\infty, 0) \cup (2, \infty)\), creating a brand-new left branch where two negative factors multiply to a positive number. At \(x = -2\), the condensed expression equals \(\log_2((-2)(-4)) = \log_2(8) = 3\), so \(x = -2\) genuinely solves the condensed equation—just not the original one!
+
+[GRAPH]
+type: function2d
+title: Original curve \(\log_2(x) + \log_2(x - 2)\) versus widened curve \(\log_2(x(x - 2))\) meeting \(y = 3\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 6
+yrange: -2, 5
+trace: log(x * (x - 2)) / log(2) | label: \(\log_2(x(x - 2))\) (widened domain)
+trace: log(x) / log(2) + log(x - 2) / log(2) | label: \(\log_2(x) + \log_2(x - 2)\) (right branch only)
+trace: 3 | label: \(y = 3\)
+point: 4, 3 | label: \((4, 3)\)
+point: -2, 3 | label: \((-2, 3)\)
+[/GRAPH]
+
+In the graph above, the widened curve intersects \(y = 3\) twice, at \((-2, 3)\) and \((4, 3)\), while the original expression exists only for \(x > 2\) and intersects \(y = 3\) solely at \((4, 3)\).
+
+[CALLOUT]
+id: domain-verify
+label: Mandatory check
+title: Domain verification for logarithmic equations
+tone: caution
+
+Every candidate solution obtained after condensing, cancelling, or converting a logarithmic equation MUST be checked against the ORIGINAL equation:
+
+(1) Every logarithmic argument in the original equation must evaluate to a strictly positive real number.
+(2) If the variable \(x\) appears in any logarithm base \(b(x)\), that base must satisfy \(b(x) > 0\) and \(b(x) \ne 1\).
+
+Note carefully: do NOT blindly discard negative values of \(x\). A negative \(x\) is completely valid whenever every argument (and base) in the original equation stays valid!
+[/CALLOUT]
+
+=== SECTION 2: One-to-one matching, condensing, and mixed-base equations ===
+
+Three core classes cover the majority of algebraic logarithmic equations.
+
+Class 1: One-to-one matching, \(\log_b(A(x)) = \log_b(B(x))\).
+Because \(\log_b\) is one-to-one, equal base-\(b\) logarithms force equal arguments: \(A(x) = B(x)\). Afterward, verify \(A(x) > 0\) (which automatically guarantees \(B(x) > 0\) when \(A(x) = B(x)\)).
+
+Example: Solve \(\ln(2x + 3) = \ln(x^2)\).
+Matching arguments gives \(x^2 = 2x + 3 \implies x^2 - 2x - 3 = 0 \implies (x - 3)(x + 1) = 0\), so \(x = 3\) or \(x = -1\).
+Check both in the original equation:
+- At \(x = 3\): \(2(3) + 3 = 9 > 0\) and \(3^2 = 9 > 0\). Valid!
+- At \(x = -1\): \(2(-1) + 3 = 1 > 0\) and \((-1)^2 = 1 > 0\). Also valid! Both \(x = 3\) and \(x = -1\) are genuine solutions, illustrating the final caution in [REF: domain-verify | the verification rule].
+
+Class 2: Condensing sums and differences, then exponentiating.
+Group all logarithms with the same base on one side, condense into \(\log_b(A(x)) = c\), convert to \(A(x) = b^c\), solve for \(x\), and check the original arguments.
+
+Example: Solve \(\ln(x + 1) - \ln(x - 1) = 2\).
+Condense via the quotient rule:
+\[
+\ln\!\left(\frac{x + 1}{x - 1}\right) = 2 \implies \frac{x + 1}{x - 1} = e^2.
+\]
+Multiply by \(x - 1\) and collect \(x\)-terms:
+\[
+x + 1 = e^2 x - e^2 \implies e^2 + 1 = x(e^2 - 1) \implies x = \frac{e^2 + 1}{e^2 - 1}.
+\]
+Check the original domain (\(x > 1\)): since \(e^2 + 1 > e^2 - 1 > 0\), the quotient \(x = \frac{e^2 + 1}{e^2 - 1} \approx 1.313\) is strictly greater than \(1\), so both \(x + 1\) and \(x - 1\) are positive. The solution is valid.
+
+Class 3: Mixed-base equations via change of base.
+When an equation mixes different bases—especially powers of a common base—rebase every logarithm to one base before combining.
+
+Example: Solve \(\log_2(x) + \log_4(x) = 6\).
+Using \(\log_4(x) = \log_{2^2}(x) = \frac{1}{2}\log_2(x)\), the equation becomes
+\[
+\log_2(x) + \frac{1}{2}\log_2(x) = 6 \implies \frac{3}{2}\log_2(x) = 6 \implies \log_2(x) = 4 \implies x = 2^4 = 16.
+\]
+Checking \(x = 16 > 0\): \(\log_2(16) + \log_4(16) = 4 + 2 = 6\).
+
+[QUESTION 1]
+[ANSWER: C]
+What is the complete set of real solutions to \(\log_3(x + 6) + \log_3(x - 2) = 2\)?
+
+(A) \(x = -7\) and \(x = 3\)
+(B) \(x = -7\) only
+(C) \(x = 3\) only
+(D) \(x = 2\) and \(x = 3\)
+(E) No real solutions
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: C]
+What is the exact solution to \(\log_3(x) + \log_9(x) + \log_{27}(x) = 11\)?
+
+(A) \(81\)
+(B) \(243\)
+(C) \(729\)
+(D) \(3^{11}\)
+(E) \(6\)
+[/QUESTION]
+
+=== SECTION 3: Quadratic-in-logarithm and variable-exponent equations ===
+
+Two further equation types connect logarithmic solving directly to quadratic equations.
+
+Class 4: Quadratic substitution \(u = \log_b(x)\).
+Be careful to distinguish \((\log_b x)^2\) (the square of the logarithm) from \(\log_b(x^2) = 2\log_b(x)\) (the logarithm of the square, for \(x > 0\)). When an equation contains \((\log_b x)^2\) and \(\log_b(x)\), substitute \(u = \log_b(x)\).
+
+Unlike \(u = b^x\) in exponential equations—which had to be strictly positive—the range of \(u = \log_b(x)\) is ALL of \((-\infty, \infty)\). Therefore, negative values of \(u\) are completely valid and simply yield \(x = b^u \in (0, 1)\) (for \(b > 1\))!
+
+Example: Solve \((\log_2 x)^2 + \log_2(x) - 6 = 0\).
+Set \(u = \log_2(x)\):
+\[
+u^2 + u - 6 = 0 \implies (u + 3)(u - 2) = 0 \implies u = -3 \text{ or } u = 2.
+\]
+Converting both values back to \(x\) gives \(x = 2^{-3} = \frac{1}{8}\) and \(x = 2^2 = 4\). Both are strictly positive and satisfy the original equation.
+
+Class 5: Variable-exponent equations of the form \(x^{\log_b(x)} = \dots\) (with \(x > 0\)).
+When \(x\) appears in both the base and the exponent, apply the matching logarithm \(\log_b\) (or \(\ln\)) to both sides so the power rule brings the exponent down in front.
+
+Example: Solve \(x^{\ln x} = e^4\) for \(x > 0\).
+Take \(\ln\) of both sides:
+\[
+\ln\!\left(x^{\ln x}\right) = \ln(e^4) \implies (\ln x)(\ln x) = 4 \implies (\ln x)^2 = 4.
+\]
+Taking square roots yields \(\ln x = 2\) or \(\ln x = -2\), so \(x = e^2\) or \(x = e^{-2}\). Checking \(x = e^{-2} > 0\): \((e^{-2})^{\ln(e^{-2})} = (e^{-2})^{-2} = e^4\). Both solutions are valid.
+
+Finally, watch for equations where \(x\) sits in the base of a logarithm, such as \(\log_x(16) = 2\). Converting gives \(x^2 = 16 \implies x = 4\) or \(x = -4\). By [REF: domain-verify.2 | condition (2)], the base must satisfy \(x > 0\) and \(x \ne 1\), so \(x = -4\) is discarded and only \(x = 4\) survives.
+
+[QUESTION 3]
+[ANSWER: D]
+What are all real solutions to \((\ln x)^2 + \ln(x^2) - 8 = 0\)?
+
+(A) \(x = e^2\) only
+(B) \(x = e^{-2}\) and \(x = e^4\)
+(C) \(x = e^4\) only
+(D) \(x = e^{-4}\) and \(x = e^2\)
+(E) \(x = -4\) and \(x = 2\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+What are all positive real solutions to \(x^{\log_2 x} = 16x^3\)?
+
+(A) \(x = 16\) only
+(B) \(x = \frac{1}{2}\) and \(x = 16\)
+(C) \(x = 2\) and \(x = 16\)
+(D) \(x = \frac{1}{16}\) and \(x = 2\)
+(E) \(x = 4\) only
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+What is the complete set of real solutions to \(\log_x(4x + 5) = 2\)?
+
+(A) \(x = -1\) and \(x = 5\)
+(B) \(x = 5\) only
+(C) \(x = -1\) only
+(D) \(x = 1\) and \(x = 5\)
+(E) No real solutions
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+What is the complete set of real solutions to \(\ln(x^2 + 3x) = \ln(x + 8)\)?
+
+(A) \(x = 2\) only
+(B) \(x = -4\) only
+(C) \(x = -4\) and \(x = 2\)
+(D) \(x = -2\) and \(x = 4\)
+(E) No real solutions
+[/BONUS]

@@ -1,0 +1,358 @@
+=== SECTION 1: Describing sets, membership, and subsets ===
+
+Mathematics builds almost every structure—solutions of equations, geometric regions, collections of numbers, and later relations and functions—out of sets. Intuitively, a set is a well-defined collection of distinct objects, called its elements or members. To reason rigorously about sets, we need precise notation for specifying them and a sharp distinction between belonging to a set as an element and lying inside it as a subset.
+
+There are two standard ways to specify a set. In roster notation, we list the elements between curly braces, such as
+\[
+A = \{2, 4, 6, 8\}.
+\]
+In a set, order and repetition do not matter: \(\{2, 4, 6, 8\}\), \(\{8, 2, 6, 4\}\), and \(\{2, 2, 4, 6, 8\}\) all name the exact same set. When a set is large or infinite, we use set-builder notation, specifying an ambient domain and a logical condition (predicate) \(P(x)\):
+\[
+B = \{x \in \mathbb{Z} : x^2 < 10\} = \{-3, -2, -1, 0, 1, 2, 3\}.
+\]
+Read the colon as "such that." Here we use the standard number systems \(\mathbb{N} = \{0, 1, 2, 3, \dots\}\) (or \(\mathbb{Z}^+ = \{1, 2, 3, \dots\}\) when zero is excluded), \(\mathbb{Z}\) (integers), \(\mathbb{Q}\) (rational numbers), and \(\mathbb{R}\) (real numbers).
+
+We write \(x \in A\) to mean "\(x\) is an element of \(A\)," and \(x \notin A\) to mean "\(x\) is not an element of \(A\)." For example, \(4 \in \{2, 4, 6, 8\}\) and \(5 \notin \{2, 4, 6, 8\}\). A completely different relationship compares two sets by asking whether every element of the first is also an element of the second.
+
+[CALLOUT]
+id: subset-and-equality
+label: Definition
+title: Subset, proper subset, and set equality
+tone: key
+
+Let \(A\) and \(B\) be sets.
+
+(1) Subset: \(A\) is a subset of \(B\), written \(A \subseteq B\), if every element of \(A\) is an element of \(B\):
+\[
+A \subseteq B \iff \forall x,\,(x \in A \implies x \in B).
+\]
+(2) Set equality (extensionality): \(A\) and \(B\) are equal, written \(A = B\), if they have exactly the same elements:
+\[
+A = B \iff \forall x,\,(x \in A \iff x \in B) \iff (A \subseteq B \land B \subseteq A).
+\]
+(3) Proper subset: \(A\) is a proper subset of \(B\), written \(A \subsetneq B\), if \(A \subseteq B\) and \(A \ne B\) (equivalently, \(A \subseteq B\) and there exists at least one \(b \in B\) such that \(b \notin A\)).
+[/CALLOUT]
+
+Notice how [REF: subset-and-equality.2 | set equality] immediately gives us a proof template: to prove \(A = B\), prove two separate inclusions—first \(A \subseteq B\), then \(B \subseteq A\). This method is called double inclusion. To prove \(A \subseteq B\), start with "Let \(x \in A\) be arbitrary" and deduce \(x \in B\). Conversely, to disprove \(A \subseteq B\), look at the negation of \(\forall x,\,(x \in A \implies x \in B)\): it is \(\exists x,\,(x \in A \land x \notin B)\). A single counterexample element \(x\) lying in \(A\) but outside \(B\) suffices to establish \(A \nsubseteq B\).
+
+One set requires special care because it contains no elements at all.
+
+[CALLOUT]
+id: empty-set
+label: Definition
+title: The empty set
+tone: key
+
+The empty set, denoted \(\emptyset\) (or \(\{\}\)), is the unique set with no elements: for every object \(x\), \(x \notin \emptyset\).
+[/CALLOUT]
+
+Why is \(\emptyset\) unique? Suppose \(E_1\) and \(E_2\) are both sets with no elements. Then for every \(x\), both \(x \in E_1\) and \(x \in E_2\) are false, so the biconditional \(x \in E_1 \iff x \in E_2\) is vacuously true. By [REF: subset-and-equality.2 | extensionality], \(E_1 = E_2\).
+
+By the same vacuous-truth principle, \(\emptyset \subseteq A\) holds for every set \(A\). To prove \(\emptyset \subseteq A\), we must verify the implication \(\forall x,\,(x \in \emptyset \implies x \in A)\). Because the hypothesis \(x \in \emptyset\) is false for every \(x\), the implication \(x \in \emptyset \implies x \in A\) is vacuously true for every \(x\). (Equivalently, by contradiction: if \(\emptyset \nsubseteq A\), there would exist some \(x \in \emptyset\) with \(x \notin A\), which is impossible because \(\emptyset\) has no elements.)
+
+[CALLOUT]
+id: empty-vs-singleton
+label: Common pitfall
+title: Distinguishing \(\emptyset\) from \(\{\emptyset\}\), and \(\in\) from \(\subseteq\)
+tone: caution
+
+The sets \(\emptyset\) and \(\{\emptyset\}\) are not equal:
+
+(1) \(\emptyset\) has \(0\) elements.
+(2) \(\{\emptyset\}\) has \(1\) element, namely the set \(\emptyset\) itself.
+
+Think of \(\emptyset\) as an empty box, and \(\{\emptyset\}\) as a box containing one empty box inside it. Consequently, \(\emptyset \in \{\emptyset\}\) is true (because \(\emptyset\) is listed as the sole element inside the outer braces), and \(\emptyset \subseteq \{\emptyset\}\) is also true (because \(\emptyset\) is a subset of every set). On the other hand, \(\{\emptyset\} \subseteq \emptyset\) is false, since \(\emptyset \in \{\emptyset\}\) while \(\emptyset \notin \emptyset\).
+[/CALLOUT]
+
+Keeping membership (\(\in\)) and inclusion (\(\subseteq\)) straight becomes essential whenever sets contain other sets as elements. Consider the set
+\[
+C = \{1, \{2\}, \{1, 3\}\}.
+\]
+Its elements are the three objects \(1\), \(\{2\}\), and \(\{1, 3\}\). Let us test several statements carefully:
+- \(1 \in C\) is true, because \(1\) is one of the three listed elements.
+- \(2 \in C\) is false: the number \(2\) is not listed as an element of \(C\); rather, the one-element set \(\{2\}\) is an element of \(C\), so \(\{2\} \in C\) is true.
+- \(\{1\} \subseteq C\) is true, because the only element of \(\{1\}\) is \(1\), and \(1 \in C\). However, \(\{1\} \in C\) is false, since \(\{1\}\) is not one of the three listed elements.
+- \(\{2\} \subseteq C\) is false, because \(2 \in \{2\}\) while \(2 \notin C\). By contrast, \(\{\{2\}\} \subseteq C\) is true, because its only element is \(\{2\}\), and \(\{2\} \in C\).
+- \(\{1, 3\} \in C\) is true, while \(\{1, 3\} \subseteq C\) is false (since \(3 \in \{1, 3\}\) but \(3 \notin C\)).
+
+In short, to check \(X \in C\), look for \(X\) literally among the top-level elements of \(C\). To check \(X \subseteq C\), peel off the outer braces of \(X\) and check whether every element inside \(X\) appears as a top-level element of \(C\).
+
+[QUESTION 1]
+[ANSWER: D]
+Let \(S = \{\emptyset, \{1\}, \{1, 2\}\}\). Which of the following statements is FALSE?
+
+(A) \(\emptyset \in S\)
+(B) \(\emptyset \subseteq S\)
+(C) \(\{\emptyset, \{1\}\} \subseteq S\)
+(D) \(\{1, 2\} \subseteq S\)
+(E) \(\{\{1, 2\}\} \subseteq S\)
+[/QUESTION]
+
+=== SECTION 2: Elementary set operations ===
+
+Just as propositional logic combines statements with \(\lor\), \(\land\), and \(\lnot\), set algebra combines sets inside a fixed ambient universe \(U\) (a background set containing all elements under discussion, such as \(\mathbb{Z}\) or \(\mathbb{R}\)). Every set operation is defined directly by a logical membership rule.
+
+[CALLOUT]
+id: set-operations
+label: Definition
+title: Elementary set operations
+tone: key
+
+Let \(A\) and \(B\) be subsets of a fixed ambient universe \(U\).
+
+(1) Union: \(A \cup B = \{x \in U : x \in A \lor x \in B\}\).
+(2) Intersection: \(A \cap B = \{x \in U : x \in A \land x \in B\}\).
+(3) Set difference (relative complement): \(A \setminus B = \{x \in U : x \in A \land x \notin B\}\).
+(4) Symmetric difference: \(A \Delta B = (A \setminus B) \cup (B \setminus A) = \{x \in U : (x \in A \land x \notin B) \lor (x \in B \land x \notin A)\}\).
+(5) Complement (in \(U\)): \(A^c = U \setminus A = \{x \in U : x \notin A\}\).
+[/CALLOUT]
+
+Two sets \(A\) and \(B\) are called disjoint if \(A \cap B = \emptyset\). Notice how the symmetric difference \(A \Delta B\) collects the elements that belong to exactly one of \(A\) or \(B\)—the set-theoretic mirror of exclusive-or. Equivalently, one can verify that \(A \Delta B = (A \cup B) \setminus (A \cap B)\): an element belongs to at least one of \(A\) or \(B\) and not to both if and only if it belongs to \(A\) alone or \(B\) alone.
+
+Notice also that the complement \(A^c\) always depends on the chosen universe \(U\). If \(A = \{1, 2\}\), then inside \(U = \{1, 2, 3, 4\}\) we have \(A^c = \{3, 4\}\), whereas inside \(U = \mathbb{Z}^+\) we have \(A^c = \{3, 4, 5, \dots\}\). Without a fixed universe \(U\), the symbol \(A^c\) is ambiguous. By contrast, \(A \cup B\), \(A \cap B\), \(A \setminus B\), and \(A \Delta B\) depend only on the elements of \(A\) and \(B\) themselves.
+
+Let us compute all five operations on one concrete example. Take \(U = \{1, 2, 3, 4, 5, 6\}\), \(A = \{1, 2, 3, 4\}\), and \(B = \{3, 4, 5\}\).
+- \(A \cup B = \{1, 2, 3, 4, 5\}\) (elements in \(A\), or \(B\), or both).
+- \(A \cap B = \{3, 4\}\) (elements common to \(A\) and \(B\)).
+- \(A \setminus B = \{1, 2\}\) (elements in \(A\) after removing everything in \(B\)), while \(B \setminus A = \{5\}\). Note that set difference is not commutative: \(A \setminus B \ne B \setminus A\).
+- \(A \Delta B = (A \setminus B) \cup (B \setminus A) = \{1, 2, 5\}\) (elements in \(A\) or \(B\) but not both).
+- \(A^c = \{5, 6\}\) and \(B^c = \{1, 2, 6\}\).
+
+Observe one handy translation that converts set difference into intersection and complement: inside a fixed universe \(U\),
+\[
+A \setminus B = A \cap B^c,
+\]
+because \(x \in A \setminus B \iff (x \in A \land x \notin B) \iff (x \in A \land x \in B^c) \iff x \in A \cap B^c\).
+
+[TABLE]
+Operation | Notation | Membership condition for \(x \in U\) | Logical connective
+Union | \(A \cup B\) | \(x \in A \lor x \in B\) | Disjunction (inclusive or)
+Intersection | \(A \cap B\) | \(x \in A \land x \in B\) | Conjunction (and)
+Set difference | \(A \setminus B\) | \(x \in A \land x \notin B\) | Conjunction with negation
+Symmetric difference | \(A \Delta B\) | \((x \in A \land x \notin B) \lor (x \in B \land x \notin A)\) | Exclusive or
+Complement in \(U\) | \(A^c\) | \(x \notin A\) | Negation
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+Let \(U = \{1, 2, 3, 4, 5, 6, 7\}\), \(A = \{1, 3, 5, 7\}\), and \(B = \{2, 3, 5, 6\}\). What is \((A \Delta B)^c\)?
+
+(A) \(\{3, 5\}\)
+(B) \(\{3, 4, 5\}\)
+(C) \(\{1, 2, 6, 7\}\)
+(D) \(\{4\}\)
+(E) \(\{1, 2, 4, 6, 7\}\)
+[/QUESTION]
+
+=== SECTION 3: Element-chasing proofs and core Boolean set identities ===
+
+Many general identities hold for all sets \(A, B, C \subseteq U\), regardless of what elements they contain or whether they are finite or infinite. The primary proof technique is element chasing: pick an arbitrary element \(x\) from the left-hand side, unpack the definitions of the set operations into propositional logic, apply valid logical equivalences or implications, and repack the result into membership in the right-hand side.
+
+To see the full rhythm of element chasing, let us prove one of the distributive laws and one of De Morgan's laws in complete detail.
+
+[CALLOUT]
+id: boolean-identities
+label: Theorem
+title: Core Boolean set identities
+tone: key
+
+Let \(A, B, C\) be subsets of an ambient universe \(U\).
+
+(1) Distributivity:
+\[
+A \cap (B \cup C) = (A \cap B) \cup (A \cap C), \qquad A \cup (B \cap C) = (A \cup B) \cap (A \cup C).
+\]
+(2) De Morgan's laws:
+\[
+(A \cup B)^c = A^c \cap B^c, \qquad (A \cap B)^c = A^c \cup B^c.
+\]
+(3) Absorption:
+\[
+A \cup (A \cap B) = A, \qquad A \cap (A \cup B) = A.
+\]
+(4) Involution and basic laws: \((A^c)^c = A\), \(A \cup \emptyset = A\), \(A \cap \emptyset = \emptyset\), \(A \cup U = U\), \(A \cap U = A\), \(A \cup A^c = U\), and \(A \cap A^c = \emptyset\).
+[/CALLOUT]
+
+Let us prove the first distributive law in [REF: boolean-identities.1 | distributivity]: \(A \cap (B \cup C) = (A \cap B) \cup (A \cap C)\). We use double inclusion.
+
+First, we show \(A \cap (B \cup C) \subseteq (A \cap B) \cup (A \cap C)\). Let \(x \in A \cap (B \cup C)\). By [REF: set-operations.2 | definition of intersection], \(x \in A\) and \(x \in B \cup C\). By [REF: set-operations.1 | definition of union], \(x \in B\) or \(x \in C\). We split into two cases:
+- Case 1: \(x \in B\). Since we already know \(x \in A\), we have \(x \in A \cap B\), and hence \(x \in (A \cap B) \cup (A \cap C)\).
+- Case 2: \(x \in C\). Since \(x \in A\), we have \(x \in A \cap C\), and hence \(x \in (A \cap B) \cup (A \cap C)\).
+In both cases \(x \in (A \cap B) \cup (A \cap C)\), establishing the forward inclusion.
+
+Second, we show \((A \cap B) \cup (A \cap C) \subseteq A \cap (B \cup C)\). Let \(x \in (A \cap B) \cup (A \cap C)\). Then \(x \in A \cap B\) or \(x \in A \cap C\).
+- Case 1: \(x \in A \cap B\). Then \(x \in A\) and \(x \in B\). From \(x \in B\) we get \(x \in B \cup C\), so \(x \in A \cap (B \cup C)\).
+- Case 2: \(x \in A \cap C\). Then \(x \in A\) and \(x \in C\). From \(x \in C\) we get \(x \in B \cup C\), so \(x \in A \cap (B \cup C)\).
+In both cases \(x \in A \cap (B \cup C)\). Having proven both inclusions, [REF: subset-and-equality.2 | extensionality] gives \(A \cap (B \cup C) = (A \cap B) \cup (A \cap C)\).
+
+When every step in an element chase is a clean logical equivalence (\(\iff\)), we can prove both inclusions simultaneously in a chain of biconditionals. Let us prove the first of [REF: boolean-identities.2 | De Morgan's laws], \((A \cup B)^c = A^c \cap B^c\), for an arbitrary \(x \in U\):
+\[
+\begin{aligned}
+x \in (A \cup B)^c &\iff x \notin A \cup B && \text{(definition of complement)} \\
+&\iff \lnot(x \in A \lor x \in B) && \text{(definition of union)} \\
+&\iff (x \notin A) \land (x \notin B) && \text{(propositional De Morgan's law)} \\
+&\iff x \in A^c \land x \in B^c && \text{(definition of complement)} \\
+&\iff x \in A^c \cap B^c && \text{(definition of intersection).}
+\end{aligned}
+\]
+Because the chain of biconditionals holds for every \(x \in U\), the two sets have the exact same elements, so \((A \cup B)^c = A^c \cap B^c\).
+
+Now let us prove the first absorption law in [REF: boolean-identities.3 | absorption], \(A \cup (A \cap B) = A\), using double inclusion.
+- To show \(A \cup (A \cap B) \subseteq A\): let \(x \in A \cup (A \cap B)\). Then \(x \in A\) or \(x \in A \cap B\). If \(x \in A\), we are done. If \(x \in A \cap B\), then \(x \in A\) and \(x \in B\), so in particular \(x \in A\).
+- To show \(A \subseteq A \cup (A \cap B)\): let \(x \in A\). Since \(x \in A\) makes the disjunction \((x \in A) \lor (x \in A \cap B)\) true, we immediately have \(x \in A \cup (A \cap B)\).
+Therefore \(A \cup (A \cap B) = A\).
+
+Once basic identities like [REF: boolean-identities | the Boolean set identities] are established, we can also derive new identities algebraically without dropping down to elements every time. For example, to simplify \(A \setminus (B \cup C)\) inside \(U\), use \(X \setminus Y = X \cap Y^c\) together with [REF: boolean-identities.2 | De Morgan's law]:
+\[
+A \setminus (B \cup C) = A \cap (B \cup C)^c = A \cap (B^c \cap C^c) = (A \cap B^c) \cap (A \cap C^c) = (A \setminus B) \cap (A \setminus C).
+\]
+(Here we also used \(A = A \cap A\) and commutativity/associativity of \(\cap\).) Notice that relative difference obeys its own De Morgan behavior: removing a union removes both pieces, so an element survives only if it survives removing \(B\) and survives removing \(C\).
+
+[QUESTION 3]
+[ANSWER: C]
+For arbitrary sets \(A, B, C \subseteq U\), which expression is always equal to \(A \setminus (B \setminus C)\)?
+
+(A) \((A \setminus B) \setminus C\)
+(B) \((A \setminus B) \cap (A \cup C)\)
+(C) \((A \setminus B) \cup (A \cap C)\)
+(D) \((A \cup C) \setminus B\)
+(E) \(A \cap (B \cup C)^c\)
+[/QUESTION]
+
+=== SECTION 4: Equivalent characterizations of subset inclusion ===
+
+In proofs across mathematics, the condition \(A \subseteq B\) frequently appears in disguise—sometimes as an intersection equation, sometimes as an empty difference, and sometimes as a reversed inclusion of complements. Recognizing that all four conditions say the exact same thing lets you pick whichever form fits the problem at hand.
+
+[CALLOUT]
+id: subset-equivalences
+label: Theorem
+title: Equivalent characterizations of \(A \subseteq B\)
+tone: key
+
+Let \(A\) and \(B\) be subsets of a fixed ambient universe \(U\). The following four statements are logically equivalent:
+
+(1) \(A \subseteq B\).
+(2) \(A \cap B = A\).
+(3) \(A \setminus B = \emptyset\).
+(4) \(B^c \subseteq A^c\).
+[/CALLOUT]
+
+Rather than proving all six pairwise biconditionals separately, we prove a closed cycle of four implications: \((1) \implies (2) \implies (3) \implies (4) \implies (1)\).
+
+[CALLOUT]
+id: subset-equivalences-proof
+label: Proof
+title: Cyclic proof of [REF: subset-equivalences | equivalent characterizations of inclusion]
+tone: note
+
+(1) \(\implies\) (2): Assume \(A \subseteq B\). We prove \(A \cap B = A\) by double inclusion. For any \(x \in A \cap B\), we have \(x \in A\) and \(x \in B\), so \(x \in A\); thus \(A \cap B \subseteq A\) holds for all sets. Conversely, let \(x \in A\). Since \(A \subseteq B\), we also have \(x \in B\), hence \(x \in A \cap B\). Thus \(A \subseteq A \cap B\), giving \(A \cap B = A\).
+
+(2) \(\implies\) (3): Assume \(A \cap B = A\). Suppose for contradiction that \(A \setminus B \ne \emptyset\). Then there exists \(x \in A \setminus B\), meaning \(x \in A\) and \(x \notin B\). Because \(A = A \cap B\), \(x \in A\) implies \(x \in A \cap B\), which forces \(x \in B\), contradicting \(x \notin B\). Therefore \(A \setminus B = \emptyset\).
+
+(3) \(\implies\) (4): Assume \(A \setminus B = \emptyset\). Let \(x \in B^c\), so \(x \in U\) and \(x \notin B\). Could \(x \in A\)? If \(x \in A\), then \(x \in A\) and \(x \notin B\), so \(x \in A \setminus B\), contradicting \(A \setminus B = \emptyset\). Hence \(x \notin A\), which means \(x \in A^c\). Thus \(B^c \subseteq A^c\).
+
+(4) \(\implies\) (1): Assume \(B^c \subseteq A^c\). Let \(x \in A\). We argue by contraposition on the implication \(x \in B^c \implies x \in A^c\): since \(x \in A\), we have \(x \notin A^c\), so \(x \notin B^c\), which means \(x \in B\). Therefore \(A \subseteq B\).
+[/CALLOUT]
+
+Notice the reversal of direction in [REF: subset-equivalences.4 | statement (4)]: taking complements reverses inclusion. If \(A\) sits inside \(B\), then everything outside \(B\) must also lie outside \(A\), so \(B^c\) sits inside \(A^c\). A fifth characterization, \(A \cup B = B\), is also equivalent to \(A \subseteq B\)—and you can prove it by the exact same double-inclusion method.
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose \(A, B, C\) are subsets of a universe \(U\) satisfying \(A \subseteq B\) and \(C \cap B = \emptyset\). Which of the following conclusions MUST hold?
+
+(A) \(A \subseteq C^c\) and \(A \cap C = \emptyset\)
+(B) \(B^c \subseteq C\)
+(C) \(A \cup C = B\)
+(D) \(C \setminus A = B \setminus A\)
+(E) \(A^c \subseteq C\)
+[/QUESTION]
+
+=== SECTION 5: Venn diagrams, intuition, and disproving false identities ===
+
+How do you tell whether a proposed set identity is true (and worth proving by element chasing) or false (and waiting for a counterexample)? Venn diagrams are an excellent diagnostic tool for two or three sets. Drawing two overlapping circles \(A\) and \(B\) inside a rectangle \(U\) divides the plane into \(4\) disjoint regions corresponding to the \(4\) truth assignments of \((x \in A, x \in B)\); three overlapping circles \(A, B, C\) divide the rectangle into \(8\) regions corresponding to the \(8\) truth assignments of \((x \in A, x \in B, x \in C)\).
+
+Shading the left-hand side and the right-hand side of a candidate identity immediately reveals whether they cover the same regions. If a region is shaded on one side and unshaded on the other, that region hands you a concrete finite counterexample on a silver platter: just place a single element (say \(1\)) inside that distinguishing region, and leave all other regions empty if you do not need them!
+
+Let us test this on a classic trap: is set difference associative? That is, does
+\[
+(A \setminus B) \setminus C = A \setminus (B \setminus C)
+\]
+hold for all sets \(A, B, C\)?
+
+Consider an element \(x\) that belongs to all three sets: \(x \in A\), \(x \in B\), and \(x \in C\).
+- On the left-hand side: since \(x \in B\), we have \(x \notin A \setminus B\), so \(x \notin (A \setminus B) \setminus C\).
+- On the right-hand side: since \(x \in C\), we have \(x \notin B \setminus C\). Because \(x \in A\) and \(x \notin B \setminus C\), we obtain \(x \in A \setminus (B \setminus C)\).
+
+That single region (\(A \cap B \cap C\)) separates the two sides. So choose the simplest possible sets that put one element in \(A \cap B \cap C\):
+\[
+A = \{1\}, \qquad B = \{1\}, \qquad C = \{1\}.
+\]
+Then \((A \setminus B) \setminus C = \emptyset \setminus \{1\} = \emptyset\), while \(A \setminus (B \setminus C) = \{1\} \setminus \emptyset = \{1\}\). Since \(\emptyset \ne \{1\}\), the identity is false.
+
+[CALLOUT]
+id: venn-limits
+label: Common pitfall
+title: Why Venn diagrams are not general proofs
+tone: caution
+
+Venn diagrams are invaluable for building intuition and spotting counterexamples, but they do not constitute rigorous proofs in general:
+
+(1) A diagram for two or three sets implicitly assumes a particular geometric drawing in the plane and does not generalize cleanly to arbitrary numbers of sets or to statements involving quantifiers, infinite families, or nested set constructions.
+(2) A specific sketch can accidentally omit a possible intersection region (for instance, drawing four circles in the plane cannot create all \(16\) regions), hiding a counterexample.
+(3) To prove a universal set identity rigorously, use element chasing or previously proven Boolean identities. To disprove a universal set identity, exhibit one explicit choice of sets (often very small finite sets, or even \(\emptyset\)) for which the two sides differ.
+[/CALLOUT]
+
+Consider a second common false claim: "If \(A \cup C = B \cup C\), then \(A = B\)." Cancellation holds for addition of real numbers, so it is tempting to assume union cancels too. Let us test it by looking for an element \(x\) hidden inside \(C\): if \(x \in C\), then \(x\) automatically lands in both \(A \cup C\) and \(B \cup C\) regardless of whether \(x\) is in \(A\) or in \(B\). Take
+\[
+A = \emptyset, \qquad B = \{1\}, \qquad C = \{1\}.
+\]
+Then \(A \cup C = \{1\} = B \cup C\), yet \(A \ne B\). Similarly, intersection does not cancel: with \(A = \{1\}\), \(B = \{2\}\), and \(C = \emptyset\), we have \(A \cap C = \emptyset = B \cap C\), yet \(A \ne B\).
+
+Interestingly, what if BOTH \(A \cup C = B \cup C\) AND \(A \cap C = B \cap C\) hold simultaneously? That turns out to force \(A = B\)! Let us verify by element chasing that \(A \subseteq B\) (and by symmetry \(B \subseteq A\)): let \(x \in A\).
+- Case 1: \(x \in C\). Then \(x \in A \cap C = B \cap C\), so \(x \in B\).
+- Case 2: \(x \notin C\). Since \(x \in A \subseteq A \cup C = B \cup C\), we have \(x \in B\) or \(x \in C\). Because \(x \notin C\), this forces \(x \in B\).
+In both cases \(x \in B\), so \(A \subseteq B\). Reversing the roles of \(A\) and \(B\) gives \(B \subseteq A\), hence \(A = B\).
+
+[QUESTION 5]
+[ANSWER: E]
+Which of the following set identities holds for ALL sets \(A, B, C\)?
+
+(A) \(A \setminus (B \cup C) = (A \setminus B) \cup (A \setminus C)\)
+(B) \((A \cup B) \setminus C = A \cup (B \setminus C)\)
+(C) If \(A \setminus C = B \setminus C\), then \(A = B\)
+(D) \((A \setminus B) \cup B = A\)
+(E) \((A \setminus B) \setminus C = A \setminus (B \cup C)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suppose \(A, B, C\) are subsets of a universe \(U\). Which of the following statements is equivalent to \(A \Delta B = \emptyset\)?
+
+(A) \(A \cap B = \emptyset\)
+(B) \(A = B\)
+(C) \(A \subseteq B\)
+(D) \(A \cup B = U\)
+(E) \(A = B^c\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Prove or test the identity \((A \Delta B) \Delta B\) for arbitrary sets \(A\) and \(B\). Which set is \((A \Delta B) \Delta B\) always equal to?
+
+(A) \(\emptyset\)
+(B) \(A \setminus B\)
+(C) \(A\)
+(D) \(A \cup B\)
+(E) \(A \cap B\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Let \(A\) and \(B\) be subsets of a universe \(U\) such that \(A \Delta B = A \cup B\). Which of the following conditions MUST hold?
+
+(A) \(A = B\)
+(B) \(A \subseteq B\)
+(C) \(A \cup B = U\)
+(D) \(A \cap B = \emptyset\)
+(E) \(A = \emptyset\) or \(B = \emptyset\)
+[/BONUS]

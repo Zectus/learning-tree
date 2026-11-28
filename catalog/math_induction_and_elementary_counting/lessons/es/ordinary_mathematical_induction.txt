@@ -1,0 +1,328 @@
+=== SECTION 1: De verificaciones finitas al Principio de Inducción Matemática ===
+
+Supongamos que sumas los primeros enteros positivos impares y observas un patrón:
+\[
+1 = 1^2, \qquad 1 + 3 = 4 = 2^2, \qquad 1 + 3 + 5 = 9 = 3^2, \qquad 1 + 3 + 5 + 7 = 16 = 4^2.
+\]
+Verificar cuatro casos —o cuatro millones de casos— no puede demostrar que \(\sum_{j=1}^n (2j - 1) = n^2\) se cumpla para todo entero positivo \(n\). Considera el polinomio \(f(n) = n^2 + n + 41\): produce un número primo para cada entero \(n\) desde \(0\) hasta \(39\) (\(41, 43, 47, 53, \dots, 1601\)), pero en \(n = 40\) da \(40^2 + 40 + 41 = 41^2\), que es compuesto. Para establecer una afirmación cuantificada universalmente \(\forall n \ge n_0,\, P(n)\) sobre un conjunto infinito de enteros, necesitamos un mecanismo finito que cubra cada entero desde \(n_0\) en adelante sin dejar un solo hueco.
+
+Ese mecanismo es la inducción matemática. Piensa en una fila infinita de fichas de dominó numeradas \(n_0, n_0 + 1, n_0 + 2, \dots\). Dos condiciones garantizan que todas las fichas caigan: primero, alguien empuja la ficha inicial \(n_0\); segundo, las fichas están espaciadas de modo que, siempre que caiga cualquier ficha \(k \ge n_0\), derriba a la ficha inmediatamente siguiente \(k + 1\). Ninguna condición por sí sola basta. Sin empujar la ficha \(n_0\), ninguna tiene por qué caer; sin la garantía del espaciado, la cadena puede detenerse a mitad de camino.
+
+[CALLOUT]
+id: pmi-principle
+label: Principio
+title: Principio de Inducción Matemática (inducción ordinaria / débil)
+tone: key
+
+Sea \(n_0 \in \mathbb{Z}\) un entero inicial fijo, y sea \(P(n)\) un enunciado (predicado) definido para todo entero \(n \ge n_0\). Supongamos que:
+
+(1) Caso base: \(P(n_0)\) es verdadero.
+(2) Paso inductivo: Para todo entero \(k \ge n_0\), si \(P(k)\) es verdadero, entonces \(P(k + 1)\) es verdadero.
+
+Entonces \(P(n)\) es verdadero para todo entero \(n \ge n_0\).
+[/CALLOUT]
+
+Cuando \(n_0 = 0\) o \(n_0 = 1\), [REF: pmi-principle | el Principio de Inducción Matemática] demuestra enunciados para todos los números naturales \(\mathbb{N} = \{0, 1, 2, \dots\}\) o para todos los enteros positivos \(\mathbb{Z}^+ = \{1, 2, 3, \dots\}\). Desplazar el valor inicial a un entero arbitrario \(n_0\) no requiere ningún principio nuevo: simplemente estamos indexando nuestras fichas de dominó a partir de \(n_0\) en lugar de \(1\).
+
+Antes de redactar cualquier demostración por inducción, separa sus cuatro componentes explícitos:
+1. Predicado: Enuncia con claridad qué afirma \(P(n)\). Observa que \(P(n)\) es una proposición con valor de verdad (una ecuación, desigualdad o enunciado de divisibilidad), nunca una mera expresión numérica. Escribir «\(P(n) = n^2\)» es un error de categoría; escribir «\(P(n)\) es el enunciado \(\sum_{j=1}^n (2j - 1) = n^2\)» es preciso.
+2. Caso base: Verifica \(P(n_0)\) directamente evaluando ambos lados o comprobando la afirmación en \(n = n_0\).
+3. Hipótesis inductiva: Fija un entero arbitrario \(k \ge n_0\) y supone que \(P(k)\) se cumple para este único \(k\) fijo.
+4. Paso inductivo: Usando el supuesto \(P(k)\) junto con álgebra o lógica válidas, deduce \(P(k + 1)\).
+
+Una duda habitual al principio es que suponer \(P(k)\) parece circular: «¿acaso no estamos suponiendo lo que queremos demostrar?». Observa con atención los cuantificadores. Queremos demostrar el enunciado cuantificado universalmente \(\forall n \ge n_0,\, P(n)\). En [REF: pmi-principle.2 | el paso inductivo], no suponemos \(\forall n \ge n_0,\, P(n)\); suponemos \(P(k)\) para un entero fijo arbitrario \(k \ge n_0\) únicamente para demostrar la implicación condicional \(P(k) \implies P(k + 1)\). Demostrar una implicación \(A \implies B\) suponiendo temporalmente \(A\) y deduciendo \(B\) es una demostración directa ordinaria, no razonamiento circular. Lo que convierte esa implicación en una demostración para todo \(n \ge n_0\) es combinarla con [REF: pmi-principle.1 | el caso base] \(P(n_0)\): \(P(n_0)\) da \(P(n_0 + 1)\), que da \(P(n_0 + 2)\), y así sucesivamente sin fin.
+
+Ejecutemos con limpieza esta estructura en la conjetura de la suma de los impares.
+
+Afirmación: Para todo entero \(n \ge 1\), \(\sum_{j=1}^n (2j - 1) = n^2\).
+
+Demostración: Para cada entero \(n \ge 1\), sea \(P(n)\) el enunciado \(\sum_{j=1}^n (2j - 1) = n^2\).
+
+Caso base (\(n = 1\)): El lado izquierdo es \(\sum_{j=1}^1 (2j - 1) = 2(1) - 1 = 1\), y el lado derecho es \(1^2 = 1\). Por tanto, \(P(1)\) se cumple.
+
+Paso inductivo: Fija un entero arbitrario \(k \ge 1\) y supone \(P(k)\), es decir, que
+\[
+\sum_{j=1}^k (2j - 1) = k^2.
+\]
+Queremos demostrar \(P(k + 1)\), que afirma que \(\sum_{j=1}^{k+1} (2j - 1) = (k + 1)^2\). Partiendo del lado izquierdo de \(P(k + 1)\), separa el último término, el \((k + 1)\)-ésimo, para que pueda intervenir la hipótesis inductiva:
+\[
+\sum_{j=1}^{k+1} (2j - 1) = \left(\sum_{j=1}^k (2j - 1)\right) + \bigl(2(k + 1) - 1\bigr) = k^2 + (2k + 1) = (k + 1)^2.
+\]
+En consecuencia, \(P(k + 1)\) se cumple. Por [REF: pmi-principle | el Principio de Inducción Matemática], \(P(n)\) es verdadero para todo entero \(n \ge 1\).
+
+Observa el sentido del álgebra: partimos de un lado de \(P(k + 1)\) y lo transformamos en el otro lado, en lugar de escribir la ecuación aún no demostrada \(P(k + 1)\) y manipular ambos lados hasta llegar a \(0 = 0\). Partir de un solo lado mantiene hermética la dirección lógica.
+
+[QUESTION 1]
+[ANSWER: D]
+Un estudiante escribe: «La inducción me parece circular: para demostrar \(P(n)\) para todo \(n \ge 1\), el paso inductivo supone que \(P(k)\) es verdadero». ¿Qué respuesta explica con precisión por qué el paso inductivo es lógicamente válido y no circular?
+
+(A) En realidad, el paso inductivo supone que \(P(k)\) es falso y deduce una contradicción, de modo que nunca supone la conclusión.
+(B) El paso inductivo supone que \(P(n)\) vale para todo \(n \ge 1\), lo cual es válido una vez que se ha verificado el caso base \(P(1)\).
+(C) El paso inductivo solo verifica \(P(k + 1)\) para un número finito de valores de \(k\), y el caso base cubre el resto.
+(D) El paso inductivo no supone \(\forall n \ge 1,\, P(n)\); supone \(P(k)\) para un único \(k \ge 1\) fijo arbitrario con el único fin de establecer la implicación condicional \(P(k) \implies P(k + 1)\).
+(E) El paso inductivo demuestra \(P(k + 1) \implies P(k)\), lo que invierte la implicación y por ello evita la circularidad.
+[/QUESTION]
+
+=== SECTION 2: Demostración de identidades de sumatorias por inducción ===
+
+Las identidades de sumatorias constituyen el terreno más transparente para practicar el puente entre \(P(k)\) y \(P(k + 1)\), porque separar el último término de una suma expone de inmediato la suma de \(k\) términos:
+\[
+\sum_{j=n_0}^{k+1} a_j = \left(\sum_{j=n_0}^k a_j\right) + a_{k+1}.
+\]
+El verdadero trabajo del paso inductivo reside en la simplificación algebraica —a menudo factorizando una expresión común en lugar de desarrollar todo a ciegas.
+
+Considera primero la suma de los primeros \(n\) cuadrados:
+\[
+\sum_{j=1}^n j^2 = \frac{n(n + 1)(2n + 1)}{6} \qquad \text{para todo } n \ge 1.
+\]
+Denota por \(P(n)\) esta igualdad.
+
+Caso base (\(n = 1\)): El lado izquierdo es \(1^2 = 1\); el lado derecho es \(\frac{1 \cdot 2 \cdot 3}{6} = 1\). Así, \(P(1)\) se cumple.
+
+Paso inductivo: Fija un entero \(k \ge 1\) y supone \(P(k)\): \(\sum_{j=1}^k j^2 = \frac{k(k + 1)(2k + 1)}{6}\). Para \(n = k + 1\), nuestro objetivo es \(\frac{(k + 1)(k + 2)(2k + 3)}{6}\). Separa el \((k + 1)\)-ésimo término y aplica \(P(k)\):
+\[
+\sum_{j=1}^{k+1} j^2 = \sum_{j=1}^k j^2 + (k + 1)^2 = \frac{k(k + 1)(2k + 1)}{6} + (k + 1)^2.
+\]
+En vez de expandir polinomios cúbicos, factoriza \(\frac{k + 1}{6}\) de inmediato:
+\[
+\sum_{j=1}^{k+1} j^2 = \frac{k + 1}{6}\bigl(k(2k + 1) + 6(k + 1)\bigr) = \frac{k + 1}{6}(2k^2 + 7k + 6) = \frac{(k + 1)(k + 2)(2k + 3)}{6}.
+\]
+Como \(2(k + 1) + 1 = 2k + 3\), esto coincide con el lado derecho de \(P(k + 1)\). Por [REF: pmi-principle | inducción matemática], \(P(n)\) vale para todo \(n \ge 1\).
+
+Considera ahora un valor inicial desplazado \(n_0 = 0\) y un parámetro adicional \(r\): la suma geométrica finita.
+
+[CALLOUT]
+id: geometric-sum
+label: Teorema
+title: Fórmula de la suma geométrica finita
+tone: key
+
+Para todo número real \(r \ne 1\) y todo entero \(n \ge 0\),
+\[
+\sum_{j=0}^n r^j = \frac{r^{n+1} - 1}{r - 1}.
+\]
+[/CALLOUT]
+
+Observa sobre qué variable corre la inducción. Aquí \(r \ne 1\) es un número real fijo arbitrario (mantenido constante durante toda la demostración), mientras que \(n \ge 0\) es el índice entero de inducción. Sea \(P(n)\) el enunciado \(\sum_{j=0}^n r^j = \frac{r^{n+1} - 1}{r - 1}\).
+
+Caso base (\(n = 0\)): La suma tiene un único término \(r^0 = 1\) (usando la convención estándar \(0^0 = 1\) en sumas polinómicas y de potencias, de modo que la fórmula también funciona para \(r = 0\): \(\frac{0^1 - 1}{0 - 1} = 1\)). El lado derecho es \(\frac{r^1 - 1}{r - 1} = 1\), que está bien definido porque \(r \ne 1\). Por tanto, \(P(0)\) se cumple.
+
+Paso inductivo: Fija un entero \(k \ge 0\) y supone \(P(k)\). Entonces
+\[
+\sum_{j=0}^{k+1} r^j = \left(\sum_{j=0}^k r^j\right) + r^{k+1} = \frac{r^{k+1} - 1}{r - 1} + r^{k+1}.
+\]
+Lleva ambos términos al denominador común \(r - 1\):
+\[
+\frac{r^{k+1} - 1 + r^{k+1}(r - 1)}{r - 1} = \frac{r^{k+1} - 1 + r^{k+2} - r^{k+1}}{r - 1} = \frac{r^{k+2} - 1}{r - 1}.
+\]
+Como \((k + 1) + 1 = k + 2\), esto es \(P(k + 1)\). Por [REF: pmi-principle | inducción], [REF: geometric-sum | la fórmula de la suma geométrica] se cumple para todo entero \(n \ge 0\).
+
+[QUESTION 2]
+[ANSWER: B]
+Supón que estás demostrando por inducción sobre \(n \ge 1\) que
+\[
+\sum_{j=1}^n \frac{1}{(2j - 1)(2j + 1)} = \frac{n}{2n + 1}.
+\]
+En el paso inductivo, tras suponer la identidad para un \(k \ge 1\) fijo, sumas el \((k + 1)\)-ésimo término a \(\frac{k}{2k + 1}\) y escribes el resultado como una sola fracción con denominador \((2k + 1)(2k + 3)\). ¿Cuál es su numerador antes de simplificar factores comunes y qué factor se cancela para producir el objetivo \(\frac{k + 1}{2k + 3}\)?
+
+(A) Numerador \(2k^2 + 3k + 2\); se cancela el factor \((2k + 3)\).
+(B) Numerador \(2k^2 + 3k + 1\); se cancela el factor \((2k + 1)\).
+(C) Numerador \(2k^2 + k + 1\); se cancela el factor \((2k + 1)\).
+(D) Numerador \(2k^2 + 4k + 1\); se cancela el factor \((k + 1)\).
+(E) Numerador \(2k^2 + 5k + 3\); se cancela el factor \((2k + 3)\).
+[/QUESTION]
+
+=== SECTION 3: Divisibilidad y desigualdades por inducción ===
+
+La inducción matemática no es una herramienta especial para fórmulas de sumatorias; demuestra cualquier familia de enunciados indexados por enteros \(n \ge n_0\). Otros dos grandes ámbitos —la divisibilidad y las desigualdades— muestran por qué el corazón de un paso inductivo es siempre el mismo: reescribir la expresión en \((k + 1)\) de modo que la expresión en \(k\) aparezca explícitamente en su interior.
+
+Primero, recuerda la definición de divisibilidad: para enteros \(d\) y \(m\) con \(d \ne 0\), escribimos \(d \mid m\) («\(d\) divide a \(m\)») para significar que existe un entero \(q\) tal que \(m = dq\).
+
+Afirmación (Divisibilidad): Para todo entero \(n \ge 1\), \(3 \mid (4^n - 1)\).
+
+Sea \(P(n)\) el enunciado «\(3 \mid (4^n - 1)\)».
+
+Caso base (\(n = 1\)): \(4^1 - 1 = 3 = 3 \cdot 1\), por lo que \(3 \mid (4^1 - 1)\) y \(P(1)\) se cumple.
+
+Paso inductivo: Fija \(k \ge 1\) y supone \(P(k)\): existe un entero \(q\) tal que \(4^k - 1 = 3q\), o equivalentemente \(4^k = 3q + 1\). Debemos mostrar que \(4^{k+1} - 1\) es múltiplo de \(3\). Expresa \(4^{k+1} - 1\) en términos de \(4^k - 1\) (o sustituye \(4^k = 3q + 1\)):
+\[
+4^{k+1} - 1 = 4 \cdot 4^k - 1 = 4(4^k - 1) + 4 - 1 = 4(3q) + 3 = 3(4q + 1).
+\]
+Como \(q \in \mathbb{Z}\), la cantidad \(4q + 1\) es un entero, de modo que \(3 \mid (4^{k+1} - 1)\). Así, \(P(k + 1)\) se cumple y, por [REF: pmi-principle | inducción], \(3 \mid (4^n - 1)\) para todo \(n \ge 1\).
+
+Observa la maniobra algebraica \(4 \cdot 4^k - 1 = 4(4^k - 1) + 3\): extrajimos un factor \(4\) de \(4^{k+1}\), forzamos la aparición exacta de la expresión inductiva \(4^k - 1\) y luego compensamos sumando \(4 - 1 = 3\), que resultó ser divisible por \(3\). Esa táctica de «aislar la expresión en \(k\) e inspeccionar el residuo» impulsa casi toda inducción de divisibilidad.
+
+En segundo lugar, considera las desigualdades. Aquí el caso base a menudo comienza en un valor desplazado \(n_0 > 1\), y el paso inductivo suele usar la transitividad de \(<\) o \(\le\): aplicamos la hipótesis inductiva para obtener una cota intermedia y luego demostramos una desigualdad auxiliar aparte que muestra que dicha cota intermedia es suficientemente fuerte para alcanzar el objetivo en \((k + 1)\).
+
+Considera la comparación entre la exponencial \(2^n\) y la cuadrática \(n^2\). En \(n = 1\), \(2 > 1\); en \(n = 2\), \(4 = 4\); en \(n = 3\), \(8 < 9\); en \(n = 4\), \(16 = 16\); en \(n = 5\), \(32 > 25\). Graficar las extensiones continuas \(y = 2^x\) e \(y = x^2\) aclara el cruce: \(x^2\) supera a \(2^x\) entre \(x = 2\) y \(x = 4\), y luego \(2^x\) toma definitivamente la delantera a partir de \(x = 4\).
+
+[GRAPH]
+type: function2d
+title: Comparación de \(2^x\) y \(x^2\) cerca del cruce en \(x = 4\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2
+yrange: 0, 48
+trace: 2^x | label: \(y = 2^x\)
+trace: x^2 | label: \(y = x^2\)
+point: 2, 4 | label: \((2, 4)\)
+point: 4, 16 | label: \((4, 16)\)
+point: 5, 32 | label: \((5, 32)\)
+point: 5, 25 | label: \((5, 25)\)
+segment: 5, 25, 5, 32 | dashed: true
+[/GRAPH]
+
+Afirmación (Desigualdad con base desplazada): Para todo entero \(n \ge 5\), \(2^n > n^2\).
+
+Sea \(P(n)\) el enunciado \(2^n > n^2\).
+
+Caso base (\(n = 5\)): \(2^5 = 32 > 25 = 5^2\), por lo que \(P(5)\) se cumple.
+
+Paso inductivo: Fija un entero \(k \ge 5\) y supone \(P(k)\), es decir, \(2^k > k^2\). Para acotar \(2^{k+1}\), multiplica ambos lados de la hipótesis inductiva por \(2\):
+\[
+2^{k+1} = 2 \cdot 2^k > 2k^2.
+\]
+Nuestro objetivo es \((k + 1)^2 = k^2 + 2k + 1\), de modo que debemos verificar si \(2k^2 \ge k^2 + 2k + 1\) para todo \(k \ge 5\). Restando el lado derecho del lado izquierdo se obtiene
+\[
+2k^2 - (k^2 + 2k + 1) = k^2 - 2k - 1 = (k - 1)^2 - 2.
+\]
+Como \(k \ge 5\), tenemos \(k - 1 \ge 4\), así que \((k - 1)^2 - 2 \ge 16 - 2 = 14 > 0\). Por tanto \(2k^2 > (k + 1)^2\), y encadenando ambas desigualdades resulta
+\[
+2^{k+1} > 2k^2 > (k + 1)^2.
+\]
+Así, \(P(k + 1)\) se cumple. Por [REF: pmi-principle | inducción matemática] con \(n_0 = 5\), \(2^n > n^2\) para todo entero \(n \ge 5\).
+
+Observa un punto sutil: la desigualdad auxiliar \((k - 1)^2 - 2 > 0\) en realidad se cumple para todo entero \(k \ge 3\), pero el teorema solo comienza en \(n_0 = 5\) porque \(P(3)\) y \(P(4)\) son falsos. En demostraciones de desigualdades, el dominio donde funciona el paso inductivo y el dominio donde el caso base tiene éxito por primera vez no tienen por qué empezar en el mismo entero; debes comenzar en un valor \(n_0\) donde ambos se cumplan.
+
+Otra desigualdad fundamental muestra cómo entran en el paso inductivo las hipótesis laterales sobre un parámetro real.
+
+[CALLOUT]
+id: bernoulli-ineq
+label: Teorema
+title: Desigualdad de Bernoulli
+tone: key
+
+Para todo número real \(x > -1\) y todo entero \(n \ge 0\),
+\[
+(1 + x)^n \ge 1 + nx.
+\]
+[/CALLOUT]
+
+Fija un número real arbitrario \(x > -1\) y sea \(P(n)\) el enunciado \((1 + x)^n \ge 1 + nx\) para enteros \(n \ge 0\).
+
+Caso base (\(n = 0\)): \((1 + x)^0 = 1\) y \(1 + 0 \cdot x = 1\), así que \(1 \ge 1\) y \(P(0)\) se cumple.
+
+Paso inductivo: Fija \(k \ge 0\) y supone \((1 + x)^k \ge 1 + kx\). Como \(x > -1\), sabemos que \(1 + x > 0\). Multiplicar una desigualdad por una cantidad estrictamente positiva preserva su sentido, de modo que
+\[
+(1 + x)^{k+1} = (1 + x)(1 + x)^k \ge (1 + x)(1 + kx) = 1 + (k + 1)x + kx^2.
+\]
+Puesto que \(k \ge 0\) y \(x^2 \ge 0\), tenemos \(kx^2 \ge 0\). Descartar un término no negativo solo puede hacer menor o igual al lado derecho:
+\[
+1 + (k + 1)x + kx^2 \ge 1 + (k + 1)x.
+\]
+Combinar ambos pasos produce \((1 + x)^{k+1} \ge 1 + (k + 1)x\), que es \(P(k + 1)\). Por [REF: pmi-principle | inducción], [REF: bernoulli-ineq | la desigualdad de Bernoulli] vale para todo \(n \ge 0\).
+
+Observa dónde trabajó la hipótesis \(x > -1\): sin \(1 + x > 0\) (de hecho \(1 + x \ge 0\) también sirve, de modo que el teorema se extiende a \(x \ge -1\)), multiplicar ambos lados por \(1 + x\) invertiría el signo de la desigualdad.
+
+[QUESTION 3]
+[ANSWER: C]
+Considera la afirmación \(n! > 3^n\) para enteros \(n \ge n_0\), donde \(n! = 1 \cdot 2 \cdots n\). Sea \(m_{\text{paso}}\) el menor entero positivo tal que el paso inductivo estándar \((k + 1)! = (k + 1)k! > (k + 1)3^k \ge 3 \cdot 3^k = 3^{k+1}\) es válido para todo \(k \ge m_{\text{paso}}\), y sea \(n_0\) el menor entero positivo para el cual \(n! > 3^n\) se cumple efectivamente para todo \(n \ge n_0\). ¿Cuáles son \(m_{\text{paso}}\) y \(n_0\)?
+
+(A) \(m_{\text{paso}} = 3\) y \(n_0 = 6\)
+(B) \(m_{\text{paso}} = 2\) y \(n_0 = 6\)
+(C) \(m_{\text{paso}} = 2\) y \(n_0 = 7\)
+(D) \(m_{\text{paso}} = 3\) y \(n_0 = 7\)
+(E) \(m_{\text{paso}} = 6\) y \(n_0 = 7\)
+[/QUESTION]
+
+=== SECTION 4: Diagnóstico de demostraciones inductivas defectuosas ===
+
+Saber construir una demostración por inducción válida es solo la mitad de la destreza; la otra mitad es detectar cuándo un argumento que parece inductivo tiene una grieta fatal. Casi toda demostración defectuosa por inducción ordinaria falla de una de tres maneras.
+
+[CALLOUT]
+id: induction-pitfalls
+label: Errores frecuentes
+title: Cómo fallan las demostraciones por inducción ordinaria
+tone: caution
+
+(1) Caso base omitido o falso: El paso inductivo \(P(k) \implies P(k + 1)\) puede ser completamente válido aun cuando \(P(n)\) sea falso para absolutamente todo \(n\).
+(2) Brecha oculta de dominio en el paso inductivo: El argumento afirma demostrar \(P(k) \implies P(k + 1)\) para todo \(k \ge n_0\), pero usa silenciosamente una suposición que falla en algún \(k\) pequeño (a menudo \(k = n_0\)).
+(3) Circularidad o álgebra irreversible: Suponer \(P(n)\) para todo \(n\), o partir de la ecuación deseada \(P(k + 1)\) y aplicar operaciones no reversibles (como elevar al cuadrado o multiplicar por \(0\)) hasta llegar a un enunciado verdadero.
+[/CALLOUT]
+
+Para ver [REF: induction-pitfalls.1 | el fallo del caso base omitido], intenta demostrar la afirmación absurda «\(2n + 1\) es par para todo entero \(n \ge 1\)». El paso inductivo funciona sin tropiezos: si \(2k + 1\) es par, entonces \(2(k + 1) + 1 = (2k + 1) + 2\) es suma de dos enteros pares y, por tanto, ¡par! De manera similar, la identidad falsa \(\sum_{j=1}^n 2j = n^2 + n + 5\) supera exactamente igual el paso inductivo, porque sumar \(2(k + 1)\) a \(k^2 + k + 5\) da \((k + 1)^2 + (k + 1) + 5\). Ambas fallan únicamente porque el caso base \(n = 1\) es falso. Un paso inductivo válido solo demuestra una cadena condicional; sin una ficha inicial verdadera, todos los enunciados de la cadena pueden ser falsos.
+
+El fallo más sutil es [REF: induction-pitfalls.2 | una brecha oculta de dominio], inmortalizado por la falacia de «todos los caballos son del mismo color».
+
+Afirmación falaz: Para todo entero \(n \ge 1\), en cualquier conjunto de \(n\) caballos, los \(n\) caballos tienen el mismo color.
+
+Demostración falaz: Sea \(P(n)\) el enunciado de que todo conjunto de \(n\) caballos consta de caballos de un único color.
+Caso base (\(n = 1\)): En un conjunto que contiene \(1\) caballo, solo hay un color presente, ¡así que \(P(1)\) es innegablemente verdadero!
+Paso inductivo: Fija \(k \ge 1\) y supone \(P(k)\). Toma cualquier conjunto \(H = \{h_1, h_2, \dots, h_{k+1}\}\) de \(k + 1\) caballos. Retira el último caballo para obtener \(H_1 = \{h_1, \dots, h_k\}\), un conjunto de \(k\) caballos; por \(P(k)\), todos los caballos en \(H_1\) tienen el mismo color. Retira el primer caballo para obtener \(H_2 = \{h_2, \dots, h_{k+1}\}\), también un conjunto de \(k\) caballos; por \(P(k)\), todos los caballos en \(H_2\) tienen el mismo color. Como \(H_1\) y \(H_2\) se traslapan, su caballo en común obliga a ambos conjuntos a compartir el mismo color, de modo que los \(k + 1\) caballos de \(H\) tienen el mismo color.
+
+¿Dónde se rompió la demostración? Examina la intersección \(H_1 \cap H_2 = \{h_2, \dots, h_k\}\). Esa intersección es no vacía precisamente cuando \(k \ge 2\). En \(k = 1\), tenemos \(H = \{h_1, h_2\}\), de modo que \(H_1 = \{h_1\}\) y \(H_2 = \{h_2\}\), cuya intersección \(H_1 \cap H_2 = \emptyset\) ¡contiene cero caballos! Tanto \(H_1\) como \(H_2\) son monocromáticos, pero nada obliga a que \(h_1\) y \(h_2\) coincidan. El paso inductivo demuestra genuinamente \(P(k) \implies P(k + 1)\) para todo \(k \ge 2\), y el caso base demuestra \(P(1)\), dejando un único eslabón roto de \(k = 1\) a \(k = 2\). Una sola ficha faltante detiene toda la cascada.
+
+[TABLE]
+Modo de fallo | Qué se cumple | Qué se rompe realmente | Prueba diagnóstica
+Caso base omitido o falso | \(P(k) \implies P(k + 1)\) para todo \(k \ge n_0\) | \(P(n_0)\) es falso | Evaluar \(n = n_0\) directamente en \(P(n)\)
+Brecha oculta de dominio | \(P(n_0)\) y \(P(k) \implies P(k + 1)\) para \(k \ge m > n_0\) | La implicación falla en algún \(k\) con \(n_0 \le k < m\) | Probar el paso inductivo explícitamente en \(k = n_0\) y \(k = n_0 + 1\)
+Sentido incorrecto del álgebra | \(P(k + 1) \implies\) enunciado verdadero | No se establece la implicación inversa | Partir de un lado de \(P(k + 1)\) y deducir el otro
+[/TABLE]
+
+Siempre que revises una demostración por inducción —propia o ajena— prueba explícitamente el paso inductivo en el menor valor \(k = n_0\) (y en \(k = n_0 + 1\) si interviene alguna desigualdad o traslape de conjuntos). Ese solo hábito detecta casi cualquier brecha oculta de dominio.
+
+[QUESTION 4]
+[ANSWER: A]
+Un estudiante intenta demostrar la afirmación «\(2^n \ge n^2\) para todo entero \(n \ge 1\)» como sigue:
+Casos base: Para \(n = 1\), \(2^1 = 2 \ge 1 = 1^2\), y para \(n = 2\), \(2^2 = 4 \ge 4 = 2^2\).
+Paso inductivo: Supón \(2^k \ge k^2\) para un entero fijo \(k \ge 1\). Entonces
+\[
+2^{k+1} = 2 \cdot 2^k \ge 2k^2 = k^2 + k^2 \ge k^2 + 2k + 1 = (k + 1)^2,
+\]
+luego \(2^{k+1} \ge (k + 1)^2\). Por inducción, \(2^n \ge n^2\) para todo \(n \ge 1\).
+
+¿Qué enunciado ofrece el diagnóstico exacto de la falla en esta demostración?
+
+(A) El paso \(k^2 \ge 2k + 1\) falla en \(k = 1\) y \(k = 2\) (solo vale para enteros \(k \ge 3\)), por lo que el paso inductivo se rompe en \(k = 2 \to 3\), donde la afirmación es en efecto falsa (\(2^3 = 8 < 9 = 3^2\)).
+(B) La demostración es circular porque supone \(2^k \ge k^2\) en el paso inductivo antes de que el teorema haya sido demostrado.
+(C) Multiplicar la desigualdad \(2^k \ge k^2\) por \(2\) no es válido salvo que \(k \ge 2\).
+(D) El caso base \(n = 1\) es falso porque \(2^1\) es estrictamente mayor que \(1^2\) en lugar de igual a \(1^2\).
+(E) El paso \(2 \cdot 2^k \ge 2k^2\) falla en \(k = 3\), mientras que el paso \(k^2 \ge 2k + 1\) vale para todo \(k \ge 2\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Para demostrar por inducción ordinaria que \(9 \mid (4^n + 15n - 1)\) para todo entero \(n \ge 1\), suponemos \(4^k + 15k - 1 = 9q\) para algún entero \(q\) y reescribimos la expresión en \((k + 1)\) de la forma
+\[
+4^{k+1} + 15(k + 1) - 1 = 4(4^k + 15k - 1) + R(k).
+\]
+¿Qué es \(R(k)\) y por qué concluye el paso inductivo?
+
+(A) \(R(k) = 45k - 18 = 9(5k - 2)\), que es múltiplo de \(9\) para todo entero \(k\).
+(B) \(R(k) = -45k + 12\), que es divisible por \(9\) solo cuando \(k\) es par.
+(C) \(R(k) = -15k + 18 = 3(-5k + 6)\), lo que fuerza \(9 \mid (4^k + 15k - 1)\).
+(D) \(R(k) = -45k + 14\), por lo que el coeficiente \(4\) debe reemplazarse por \(1\) antes de factorizar \(9\).
+(E) \(R(k) = -45k + 18 = 9(2 - 5k)\), que es múltiplo de \(9\) para todo entero \(k\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Supón que quieres demostrar que \(\sum_{j=1}^n \frac{1}{j^2} < 2\) para todo entero \(n \ge 1\). Si tomas como \(P(n)\) directamente \(\sum_{j=1}^n \frac{1}{j^2} < 2\), el paso inductivo se estanca porque saber que una suma es estrictamente menor que \(2\) solo da \(\sum_{j=1}^{k+1} \frac{1}{j^2} < 2 + \frac{1}{(k + 1)^2}\), que es mayor que \(2\). En su lugar, demuestras el enunciado más fuerte \(Q(n)\): \(\sum_{j=1}^n \frac{1}{j^2} \le 2 - \frac{1}{n}\) para todo \(n \ge 1\). ¿Qué paso algebraico completa el paso inductivo para \(Q(n)\)?
+
+(A) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} \le 2 - \frac{1}{k} + \frac{1}{k^2} = 2 - \frac{1}{k + 1}\)
+(B) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} < 2 - \frac{1}{k} + \frac{1}{k(k + 1)} = 2 - \frac{1}{k + 1}\)
+(C) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} \le 2 - \frac{1}{k + 1} + \frac{1}{k(k + 1)} = 2 - \frac{1}{k}\)
+(D) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} = 2 - \frac{k^2 + k + 1}{k(k + 1)^2} < 2 - \frac{1}{k}\)
+(E) \(2 - \frac{1}{k} + \frac{1}{(k + 1)^2} < 2 - \frac{1}{k + 1} - \frac{1}{k(k + 1)} < 2 - \frac{1}{k + 1}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+[REF: bernoulli-ineq | La desigualdad de Bernoulli] afirma que \((1 + x)^n \ge 1 + nx\) para todos los enteros \(n \ge 0\) siempre que \(x > -1\). ¿Por qué no puede suprimirse por completo la hipótesis \(x > -1\), ni siquiera para enteros \(n \ge 2\)?
+
+(A) Para todo \(x < -1\) y todo \(n \ge 2\), tanto \((1 + x)^n\) como \(1 + nx\) son negativos, por lo que la desigualdad siempre se invierte.
+(B) En \(n = 2\), la desigualdad \((1 + x)^2 \ge 1 + 2x\) ya falla siempre que \(x < -1\).
+(C) En \(x = -4\) y \(n = 3\), tenemos \((1 + x)^3 = -27 < -11 = 1 + 3x\); en el paso inductivo, multiplicar por \(1 + x < 0\) invierte el sentido de la desigualdad.
+(D) El caso base \(n = 0\) falla siempre que \(x < -1\), porque \((1 + x)^0\) es negativo para \(x < -1\).
+(E) Suprimir \(x > -1\) vuelve negativo al término adicional \(kx^2\) en el desarrollo \((1 + x)(1 + kx) = 1 + (k + 1)x + kx^2\).
+[/BONUS]

@@ -1,0 +1,210 @@
+=== SECTION 1: El Teorema de la Matriz Invertible ===
+
+A lo largo de las lecciones anteriores, hemos acumulado muchas preguntas aparentemente distintas sobre una matriz cuadrada \(n \times n\) \(A\): ¿Existe \(A^{-1}\)? ¿Se reduce \(A\) a \(I_n\)? ¿Tiene \(A\mathbf{x} = \mathbf{0}\) únicamente la solución trivial? ¿Son sus columnas linealmente independientes? ¿Generan sus columnas todo \(\mathbb{R}^n\)? ¿Tiene \(A\) una inversa por la izquierda o una inversa por la derecha? ¿Es invertible \(A^T\)?
+
+Para una matriz rectangular con \(m \neq n\), estas preguntas se separan: las columnas pueden ser independientes sin generar \(\mathbb{R}^m\), o generar \(\mathbb{R}^m\) sin ser independientes. Para una matriz CUADRADA \(n \times n\), ocurre algo extraordinario: ¡TODAS ESTAS DIEZ propiedades colapsan en una única equivalencia de todo o nada! O bien todas se cumplen para \(A\), o bien todas y cada una de ellas fallan.
+
+[CALLOUT]
+id: imt-theorem
+label: Teorema
+title: Teorema de la Matriz Invertible (equivalencias de sistemas y computacionales)
+tone: key
+
+Sea \(A\) una matriz cuadrada \(n \times n\). Los diez enunciados siguientes son lógicamente equivalentes (para cualquier matriz \(n \times n\) dada \(A\), o bien los DIEZ son verdaderos, o bien los DIEZ son falsos):
+
+(1) \(A\) es invertible.
+(2) \(\operatorname{RREF}(A) = I_n\).
+(3) \(A\) tiene \(n\) posiciones pivote.
+(4) La ecuación homogénea \(A\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial \(\mathbf{x} = \mathbf{0}\) (equivalentemente, las columnas de \(A\) son linealmente independientes).
+(5) La ecuación \(A\mathbf{x} = \mathbf{b}\) es consistente para todo \(\mathbf{b} \in \mathbb{R}^n\) (equivalentemente, las columnas de \(A\) generan \(\mathbb{R}^n\)).
+(6) La ecuación \(A\mathbf{x} = \mathbf{b}\) tiene solución única para todo \(\mathbf{b} \in \mathbb{R}^n\).
+(7) \(A\) puede escribirse como un producto de matrices elementales.
+(8) \(A\) tiene una inversa por la izquierda: existe una matriz \(n \times n\) \(C\) con \(CA = I_n\).
+(9) \(A\) tiene una inversa por la derecha: existe una matriz \(n \times n\) \(D\) con \(AD = I_n\).
+(10) \(A^T\) es invertible.
+[/CALLOUT]
+
+Observe el alcance de [REF: imt-theorem | este teorema]: cursos posteriores añaden caracterizaciones adicionales con determinantes (\(\det(A) \neq 0\)), valores propios no nulos e isomorfismos abstractos de aplicaciones lineales, pero los diez enunciados computacionales y de sistemas lineales anteriores pueden demostrarse por completo desde ahora utilizando únicamente reducción por filas, linealidad y matrices elementales.
+
+Demostremos limpiamente la red completa de implicaciones mediante tres cadenas cortas.
+
+Cadena 1: \((1) \implies (8) \implies (4) \implies (3) \implies (2) \implies (7) \implies (1)\).
+- \((1) \implies (8)\): Si \(A\) es invertible, tome \(C = A^{-1}\); entonces \(CA = I_n\).
+- \((8) \implies (4)\): Suponga que \(CA = I_n\) y \(A\mathbf{x} = \mathbf{0}\). Multiplicar por la izquierda por \(C\) da \(\mathbf{x} = I_n \mathbf{x} = (CA)\mathbf{x} = C(A\mathbf{x}) = C\mathbf{0} = \mathbf{0}\), por lo que \(A\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial.
+- \((4) \implies (3)\): Si \(A\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial, no hay variables libres, de modo que cada una de las \(n\) columnas de \(A\) contiene un pivote; por ende, \(A\) tiene \(n\) posiciones pivote.
+- \((3) \implies (2)\): Una matriz \(n \times n\) en RREF con \(n\) pivotes tiene un \(1\) principal en cada fila y en cada columna, desplazándose estrictamente hacia la derecha por la diagonal principal \((1,1), (2,2), \dots, (n,n)\), con ceros por encima y por debajo de cada \(1\) principal. Esa matriz es literalmente \(I_n\).
+- \((2) \implies (7)\): Como \(\operatorname{RREF}(A) = I_n\), existen matrices elementales \(E_1, \dots, E_k\) con \(E_k \cdots E_1 A = I_n\). Multiplicar por la izquierda por \(E_1^{-1} \cdots E_k^{-1}\) expresa \(A = E_1^{-1} \cdots E_k^{-1}\), un producto de matrices elementales.
+- \((7) \implies (1)\): Toda matriz elemental es invertible, y un producto de matrices invertibles es invertible (con inversa obtenida invirtiendo el orden e invirtiendo cada factor). Por tanto, \(A\) es invertible.
+
+¡Ese único ciclo ya demuestra que \((1), (2), (3), (4), (7), (8)\) son todos equivalentes!
+
+Cadena 2: Conectar \((1), (6), (5), (9)\) de vuelta al ciclo.
+- \((1) \implies (6) \implies (5)\): Si \(A\) es invertible, \(\mathbf{x} = A^{-1}\mathbf{b}\) es la solución única de \(A\mathbf{x} = \mathbf{b}\) para todo \(\mathbf{b} \in \mathbb{R}^n\), de modo que, en particular, \(A\mathbf{x} = \mathbf{b}\) es siempre consistente.
+- \((1) \implies (9) \implies (5)\): Si \(A\) es invertible, tome \(D = A^{-1}\), de modo que \(AD = I_n\). Ahora suponga que \(AD = I_n\) para alguna matriz \(n \times n\) \(D\). Dado CUALQUIER \(\mathbf{b} \in \mathbb{R}^n\), defina \(\mathbf{x} = D\mathbf{b}\). Entonces \(A\mathbf{x} = A(D\mathbf{b}) = (AD)\mathbf{b} = I_n \mathbf{b} = \mathbf{b}\), ¡lo que demuestra que \(A\mathbf{x} = \mathbf{b}\) es consistente para todo \(\mathbf{b} \in \mathbb{R}^n\)!
+- \((5) \implies (3)\): Demostramos el contrarrecíproco: suponga que (3) falla, es decir, la matriz \(n \times n\) \(A\) tiene menos de \(n\) pivotes. Entonces \(R = \operatorname{RREF}(A)\) tiene su última fila nula. Sea \(P = E_k \cdots E_1\) el producto invertible de matrices elementales que satisface \(PA = R\), y elija \(\mathbf{b} = P^{-1}\mathbf{e}_n\), donde \(\mathbf{e}_n = \begin{bmatrix} 0 & \cdots & 0 & 1 \end{bmatrix}^T\). Aplicar \(P\) a \([A \mid \mathbf{b}]\) produce
+\[
+[PA \mid P\mathbf{b}] = [R \mid \mathbf{e}_n],
+\]
+¡cuya última fila es \(\begin{bmatrix} 0 & \cdots & 0 & \mid & 1 \end{bmatrix}\)! Por lo tanto, \(A\mathbf{x} = \mathbf{b}\) es inconsistente, así que (5) falla.
+
+Cadena 3: \((1) \iff (10)\).
+Ya demostramos en la lección anterior que si \(A\) es invertible entonces \(A^T\) es invertible con \((A^T)^{-1} = (A^{-1})^T\). Recíprocamente, si \(A^T\) es invertible, ¡aplicar exactamente el mismo hecho a \(A^T\) muestra que \((A^T)^T = A\) es invertible!
+
+Cada una de las implicaciones ha quedado completa.
+
+Geométricamente en \(\mathbb{R}^2\), la equivalencia entre [REF: imt-theorem.4 | la independencia de las columnas (4)] y [REF: imt-theorem.5 | el generado de las columnas (5)] es visible de inmediato. Compare la matriz invertible \(A_1 = \begin{bmatrix} 2 & -1 \\ 1 & 2 \end{bmatrix}\) con la matriz singular \(A_2 = \begin{bmatrix} 2 & -1 \\ 1 & -0.5 \end{bmatrix}\). Para \(A_1\), las dos columnas no colineales son independientes Y generan todo \(\mathbb{R}^2\), alcanzando \(\mathbf{b} = (1, 3)\) de manera única como \(1\mathbf{a}_1 + 1\mathbf{a}_2\). En el instante en que la segunda columna se vuelve paralela a la primera (como en \(A_2\)), la independencia y la capacidad de generar se rompen EXACTAMENTE AL MISMO TIEMPO: las columnas colapsan sobre la única recta \(x_2 = \frac{1}{2} x_1\), dejando a \(\mathbf{b} = (1, 3)\) completamente inalcanzable a la vez que producen la dependencia no trivial \(\mathbf{a}_1 + 2\mathbf{a}_2 = \mathbf{0}\).
+
+[GRAPH]
+type: parametric2d
+title: Las columnas invertibles generan \(\mathbb{R}^2\) de forma única; las singulares colapsan sobre una recta
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -2, 3
+xrange: -2.5, 4
+yrange: -1.5, 4
+trace: 2*t, t | label: generado singular de \(A_2\) | color: #dc2626
+segment: 0, 0, 2, 1 | label: \(\mathbf{a}_1\) | color: #2563eb
+segment: 0, 0, -1, 2 | label: \(\mathbf{a}_2 \text{ (en } A_1\text{)}\) | color: #059669
+segment: 2, 1, 1, 3 | color: #059669 | dashed: true
+segment: 0, 0, -1, -0.5 | label: \(\tilde{\mathbf{a}}_2 \text{ (en } A_2\text{)}\) | color: #dc2626
+point: 1, 3 | label: \(\mathbf{b} = (1, 3)\) | color: #111827
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: A]
+Sea \(A\) una matriz \(4 \times 4\), y suponga que para un vector particular \(\mathbf{b}_0 \in \mathbb{R}^4\), el sistema lineal \(A\mathbf{x} = \mathbf{b}_0\) tiene dos soluciones distintas \(\mathbf{x}_1 \neq \mathbf{x}_2\). ¿Qué enunciado DEBE ser verdadero?
+
+(A) Existe al menos un vector \(\mathbf{c} \in \mathbb{R}^4\) para el cual \(A\mathbf{x} = \mathbf{c}\) es inconsistente
+(B) El sistema \(A\mathbf{x} = \mathbf{c}\) es inconsistente para todo vector no nulo \(\mathbf{c} \in \mathbb{R}^4\)
+(C) \(A^T\) es invertible aunque \(A\) no lo sea
+(D) \(A\) tiene una inversa por la derecha \(D\) que satisface \(AD = I_4\), pero ninguna inversa por la izquierda
+(E) \(A\) debe ser la matriz nula \(4 \times 4\)
+[/QUESTION]
+
+=== SECTION 2: Inversas unilaterales y productos de matrices cuadradas ===
+
+Observe con atención [REF: imt-theorem.8 | la condición (8)] y [REF: imt-theorem.9 | la condición (9)] del Teorema de la Matriz Invertible. Entregan una de las mayores ventajas para ahorrar tiempo en el álgebra de matrices:
+
+[CALLOUT]
+id: one-sided-square
+label: Corolario
+title: Las inversas unilaterales son automáticamente bilaterales para matrices cuadradas
+tone: key
+
+Sean \(A\) y \(B\) matrices CUADRADAS \(n \times n\).
+(1) Si \(BA = I_n\), entonces \(A\) y \(B\) son ambas invertibles, se cumple automáticamente \(AB = I_n\), y \(B = A^{-1}\).
+(2) Si \(AB\) es invertible, entonces AMBOS factores cuadrados \(A\) y \(B\) son individualmente invertibles.
+[/CALLOUT]
+
+Verifiquemos ambas partes directamente a partir de [REF: imt-theorem | el Teorema de la Matriz Invertible].
+- Para [REF: one-sided-square.1 | la parte (1)]: si \(BA = I_n\), entonces \(A\) tiene una inversa por la izquierda, de modo que por [REF: imt-theorem.8 | \((8) \implies (1)\)], ¡\(A\) es invertible! Multiplicar \(BA = I_n\) por la derecha por \(A^{-1}\) da entonces \(B = B(A A^{-1}) = (BA)A^{-1} = I_n A^{-1} = A^{-1}\). ¡Por lo tanto, \(AB = A A^{-1} = I_n\) automáticamente!
+- Para [REF: one-sided-square.2 | la parte (2)]: suponga que \(AB\) es invertible y defina \(M = (AB)^{-1}\). Entonces:
+  - \((AB)M = I_n \implies A(BM) = I_n\), así que \(A\) tiene una inversa por la derecha \(BM\) y, por ende, ¡\(A\) es invertible!
+  - \(M(AB) = I_n \implies (MA)B = I_n\), así que \(B\) tiene una inversa por la izquierda \(MA\) y, por ende, ¡\(B\) es invertible!
+
+¡NUNCA aplique [REF: one-sided-square | este corolario] a matrices no cuadradas (rectangulares)! He aquí un contraejemplo concreto que muestra por qué el carácter cuadrado es esencial. Tome
+\[
+A = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \end{bmatrix} \quad (2 \times 3), \qquad
+D = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix} \quad (3 \times 2).
+\]
+Multiplicar en un orden da
+\[
+AD = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I_2,
+\]
+de modo que \(A\) SÍ tiene una inversa por la derecha \(D\) (y, por consiguiente, \(A\mathbf{x} = \mathbf{b}\) es consistente para todo \(\mathbf{b} \in \mathbb{R}^2\)). Sin embargo, invertir el orden da
+\[
+DA = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \\ 0 & 0 & 0 \end{bmatrix} \neq I_3!
+\]
+De hecho, \(A\) no puede tener NINGUNA inversa por la izquierda \(C\) (de tamaño \(3 \times 2\)): el vector no nulo \(\mathbf{v} = \begin{bmatrix} -2 \\ 1 \\ 1 \end{bmatrix}\) satisface \(A\mathbf{v} = \mathbf{0}\), así que si existiera \(CA = I_3\) obtendríamos \(\mathbf{v} = I_3 \mathbf{v} = C(A\mathbf{v}) = C\mathbf{0} = \mathbf{0}\), una contradicción.
+
+[QUESTION 2]
+[ANSWER: A]
+Suponga que \(A\), \(B\) y \(C\) son matrices cuadradas \(n \times n\) que satisfacen \(ABC = I_n\). ¿Qué enunciado DEBE ser verdadero?
+
+(A) \(B\) es invertible y \(B^{-1} = CA\)
+(B) \(B\) es invertible y \(B^{-1} = AC\)
+(C) \(A\) y \(C\) son invertibles, pero \(B\) puede ser singular
+(D) \(A\) y \(B\) deben conmutar (\(AB = BA\))
+(E) \(A\), \(B\) y \(C\) deben ser todas matrices diagonales
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Sean
+\[
+A = \begin{bmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix}.
+\]
+Observe que \(AD = I_2\). ¿Qué enunciado es VERDADERO?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) es consistente para todo \(\mathbf{b} \in \mathbb{R}^2\), aunque \(DA \neq I_3\) y \(A\) no tiene inversa por la izquierda
+(B) Debido a que \(AD = I_2\), se deduce automáticamente que \(DA = I_3\)
+(C) \(A\mathbf{x} = \mathbf{0}\) tiene únicamente la solución trivial \(\mathbf{x} = \mathbf{0}\)
+(D) \(A\mathbf{x} = \mathbf{b}\) tiene una solución única para todo \(\mathbf{b} \in \mathbb{R}^2\)
+(E) \(D\mathbf{y} = \mathbf{c}\) es consistente para todo \(\mathbf{c} \in \mathbb{R}^3\)
+[/QUESTION]
+
+=== SECTION 3: Elegir la prueba de invertibilidad más rápida ===
+
+En la práctica, [REF: imt-theorem | el Teorema de la Matriz Invertible] le permite elegir el criterio que responda un problema en la menor cantidad de pasos, en lugar de ejecutar a ciegas la inversión completa de Gauss-Jordan sobre \([A \mid I_n]\).
+
+[TABLE]
+Información dada sobre la matriz \(n \times n\) \(A\) | Criterio del TMI más rápido de aplicar | Veredicto
+Entradas de la matriz dadas numéricamente | Eliminación hacia adelante solo hasta REF; contar pivotes (criterio (3)) | Invertible sii \(n\) pivotes (¡sin necesidad de la fase hacia atrás!)
+Dos columnas son idénticas, o una columna es combinación lineal de otras | Independencia lineal de columnas (criterio (4)) | Inmediatamente singular
+Una fila o columna es completamente nula | Dependencia de filas/columnas vía \(A\) o \(A^T\) (criterios (4) y (10)) | Inmediatamente singular
+Se conoce una identidad algebraica como \(A(A^2 + 3I_n) = I_n\) | Inversa unilateral (criterios (8) o (9)) | Inmediatamente invertible; la inversa se lee directamente
+Matriz triangular superior o inferior | Conteo de pivotes a lo largo de la diagonal (criterio (3)) | Invertible sii TODA entrada diagonal es no nula
+[/TABLE]
+
+Apliquemos esta estrategia del criterio más rápido a un problema concreto con parámetro: ¿para qué valores de \(k\) es invertible
+\[
+M = \begin{bmatrix} 1 & 2 & 1 \\ 2 & 5 & 3 \\ 1 & 4 & k \end{bmatrix}
+\]?
+En lugar de calcular \(M^{-1}\), ¡simplemente reduzca \(M\) a REF y cuente los pivotes!
+\[
+\begin{bmatrix} 1 & 2 & 1 \\ 2 & 5 & 3 \\ 1 & 4 & k \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 - R_1}}
+\begin{bmatrix} 1 & 2 & 1 \\ 0 & 1 & 1 \\ 0 & 2 & k - 1 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - 2 R_2}
+\begin{bmatrix} 1 & 2 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & k - 3 \end{bmatrix}.
+\]
+La matriz tiene \(3\) posiciones pivote si y solo si \(k - 3 \neq 0\), es decir, \(k \neq 3\). Por [REF: imt-theorem.3 | el criterio (3)], \(M\) es invertible para todo \(k \neq 3\) y singular cuando \(k = 3\). ¡Observe que nunca tocamos \(I_3\) ni la fase de eliminación hacia atrás!
+
+Tenga cuidado de no sacar conclusiones apresuradas durante la eliminación: si aparece un cero en la diagonal en un paso intermedio, revise las entradas DEBAJO de él en la misma columna antes de declarar singular la matriz; ¡un intercambio de filas podría colocar un pivote no nulo justo en su lugar!
+
+[QUESTION 4]
+[ANSWER: C]
+¿Para qué valores reales de \(k\) es invertible la matriz
+\[
+A = \begin{bmatrix} 1 & 3 & -1 \\ 2 & 6 & k \\ 0 & 1 & 2 \end{bmatrix}
+\]?
+
+(A) Ningún valor real de \(k\) (la matriz es siempre singular)
+(B) Todos los números reales \(k \neq 2\)
+(C) Todos los números reales \(k \neq -2\)
+(D) Solamente \(k = -2\)
+(E) Todos los números reales \(k\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suponga que \(A\), \(B\) y \(C\) son matrices cuadradas \(n \times n\) tales que \(AB\) es invertible mientras que \(AC\) es singular. ¿Qué puede concluirse con certeza?
+
+(A) \(A\) es singular, mientras que \(B\) y \(C\) son invertibles
+(B) \(A\) y \(B\) son invertibles, y \(C\) es singular
+(C) \(A\) y \(C\) son singulares, y \(B\) es invertible
+(D) \(B\) es invertible, mientras que \(A\) o \(C\) (o ambas) podrían ser invertibles
+(E) Las tres matrices \(A\), \(B\) y \(C\) deben ser singulares
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suponga que \(A\) es una matriz \(3 \times 3\) tal que la ecuación homogénea \(A^T \mathbf{y} = \mathbf{0}\) tiene únicamente la solución trivial \(\mathbf{y} = \mathbf{0}\). ¿Cuál de las siguientes afirmaciones NO está garantizada que sea verdadera?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) tiene solución única para todo \(\mathbf{b} \in \mathbb{R}^3\)
+(B) \(A\) puede escribirse como un producto de matrices elementales
+(C) Las columnas de \(A\) generan \(\mathbb{R}^3\)
+(D) \(A + I_3\) es invertible
+(E) \(A^2\) es invertible
+[/BONUS]

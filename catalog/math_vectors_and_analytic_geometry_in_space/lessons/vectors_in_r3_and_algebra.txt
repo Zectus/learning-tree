@@ -1,0 +1,259 @@
+=== SECTION 1: Geometric vectors and component representation in \(\mathbb{R}^3\) ===
+
+A point in \(\mathbb{R}^3\) specifies a single location, such as where a satellite sits at noon. Yet many spatial quantities—a displacement from one landmark to another, a wind velocity, or a gravitational force—are not locations at all: they carry both a magnitude (size) and a direction in space, and the same displacement or wind can act equally well at two different starting points. How do we represent such a directed quantity so that we can move it freely in space while still computing with its coordinates?
+
+Geometrically, a three-dimensional vector is represented by a directed line segment (an arrow) \(\overrightarrow{PQ}\) from an initial point (tail) \(P\) to a terminal point (head) \(Q\). Two arrows represent the exact same free vector whenever they have the same length and point in the same direction, regardless of where their tails sit. In other words, translating an arrow rigidly without rotating or stretching it does not change the vector it represents.
+
+To translate this geometric picture into numbers, track how much the coordinates change from tail \(P(x_P, y_P, z_P)\) to head \(Q(x_Q, y_Q, z_Q)\). The ordered triple of signed coordinate changes is invariant under translation: if you shift both \(P\) and \(Q\) by the same amount in \(x\), \(y\), and \(z\), the differences \(x_Q - x_P\), \(y_Q - y_P\), and \(z_Q - z_P\) remain unchanged.
+
+[CALLOUT]
+id: vector-components
+label: Definition
+title: Component form, position vectors, and standard basis
+tone: key
+
+Let \(P(x_P, y_P, z_P)\) and \(Q(x_Q, y_Q, z_Q)\) be points in \(\mathbb{R}^3\).
+
+(1) The displacement vector from \(P\) to \(Q\) has component form
+\[
+\overrightarrow{PQ} = \langle x_Q - x_P,\; y_Q - y_P,\; z_Q - z_P \rangle.
+\]
+(2) Two vectors \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\) and \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) are equal if and only if \(u_1 = v_1\), \(u_2 = v_2\), and \(u_3 = v_3\). The zero vector is \(\mathbf{0} = \langle 0, 0, 0 \rangle\), which has length \(0\) and no defined direction.
+(3) The position vector of a point \(A(a_1, a_2, a_3)\) is \(\overrightarrow{OA} = \langle a_1, a_2, a_3 \rangle\), the unique representative of that vector with tail at the origin \(O(0, 0, 0)\).
+(4) The standard basis vectors are the three mutually perpendicular unit vectors along the positive coordinate axes:
+\[
+\mathbf{i} = \langle 1, 0, 0 \rangle, \qquad \mathbf{j} = \langle 0, 1, 0 \rangle, \qquad \mathbf{k} = \langle 0, 0, 1 \rangle.
+\]
+[/CALLOUT]
+
+Notice the distinction in notation: parentheses \((a_1, a_2, a_3)\) denote a point (a fixed location in \(\mathbb{R}^3\)), whereas angle brackets \(\langle v_1, v_2, v_3 \rangle\) denote a vector (a displacement that can be anchored at any tail). Always subtract "head minus tail" when forming \(\overrightarrow{PQ}\): reversing the order produces \(\overrightarrow{QP} = -\overrightarrow{PQ}\), which has the same length but the opposite direction.
+
+For example, the displacement from \(A(1, -3, 2)\) to \(B(4, -1, 7)\) is
+\[
+\overrightarrow{AB} = \langle 4 - 1,\; -1 - (-3),\; 7 - 2 \rangle = \langle 3, 2, 5 \rangle.
+\]
+If we place this same vector with its tail at \(C(-2, 0, 1)\), its head lands at \(D(-2 + 3, 0 + 2, 1 + 5) = (1, 2, 6)\), because \(\overrightarrow{CD} = \langle 1 - (-2), 2 - 0, 6 - 1 \rangle = \langle 3, 2, 5 \rangle = \overrightarrow{AB}\).
+
+[QUESTION 1]
+[ANSWER: A]
+A vector \(\mathbf{v}\) is represented by the directed segment \(\overrightarrow{PQ}\) from \(P(3, -1, 4)\) to \(Q(-2, 5, 1)\). If the same vector \(\mathbf{v}\) is drawn with its initial point at \(R(1, 2, -3)\), what is its terminal point \(S\)?
+
+(A) \((-4, 8, -6)\)
+(B) \((6, -4, 0)\)
+(C) \((-5, 6, -3)\)
+(D) \((-1, 7, -2)\)
+(E) \((4, -4, 6)\)
+[/QUESTION]
+
+=== SECTION 2: Vector addition, scalar multiplication, and algebraic laws ===
+
+Two operations turn the collection of vectors in \(\mathbb{R}^3\) into an algebraic system: adding two displacements end to end, and scaling a displacement by a real number.
+
+Geometrically, to form the sum \(\mathbf{u} + \mathbf{v}\), place the tail of \(\mathbf{v}\) at the head of \(\mathbf{u}\) (the tip-to-tail or triangle law); the sum is the arrow from the tail of \(\mathbf{u}\) to the head of \(\mathbf{v}\). Equivalently, placing both tails at the same point makes \(\mathbf{u} + \mathbf{v}\) the main diagonal of the parallelogram spanned by \(\mathbf{u}\) and \(\mathbf{v}\). When we follow \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\) by \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\), the net coordinate changes simply add in each slot:
+\[
+\mathbf{u} + \mathbf{v} = \langle u_1 + v_1,\; u_2 + v_2,\; u_3 + v_3 \rangle.
+\]
+Similarly, multiplying \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) by a scalar \(c \in \mathbb{R}\) scales every coordinate change by \(c\):
+\[
+c\mathbf{v} = \langle c v_1,\; c v_2,\; c v_3 \rangle.
+\]
+If \(c > 0\), \(c\mathbf{v}\) points in the same direction as \(\mathbf{v}\) with length multiplied by \(c\); if \(c < 0\), \(c\mathbf{v}\) reverses direction and multiplies the length by \(|c|\); if \(c = 0\), \(0\mathbf{v} = \mathbf{0}\). Subtraction is defined by \(\mathbf{u} - \mathbf{v} = \mathbf{u} + (-1)\mathbf{v} = \langle u_1 - v_1, u_2 - v_2, u_3 - v_3 \rangle\). Geometrically, when \(\mathbf{u}\) and \(\mathbf{v}\) share the same tail, \(\mathbf{u} - \mathbf{v}\) is the arrow from the head of \(\mathbf{v}\) to the head of \(\mathbf{u}\), since \(\mathbf{v} + (\mathbf{u} - \mathbf{v}) = \mathbf{u}\).
+
+Because every vector \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) splits into
+\[
+\langle v_1, v_2, v_3 \rangle = v_1\langle 1, 0, 0 \rangle + v_2\langle 0, 1, 0 \rangle + v_3\langle 0, 0, 1 \rangle = v_1\mathbf{i} + v_2\mathbf{j} + v_3\mathbf{k},
+\]
+component notation and [REF: vector-components.4 | standard basis notation] are interchangeable. For instance, \(\langle 4, 0, -7 \rangle = 4\mathbf{i} - 7\mathbf{k}\), where the missing \(\mathbf{j}\) term records a zero \(y\)-component.
+
+In the \(xy\)-plane (the slice \(z = 0\) of \(\mathbb{R}^3\)), we can see translation invariance, parallelogram addition, and the difference vector directly on a single diagram for \(\mathbf{u} = \langle 3, 1, 0 \rangle\) and \(\mathbf{v} = \langle 1, 3, 0 \rangle\).
+
+[GRAPH]
+type: parametric2d
+title: Parallelogram addition \(\mathbf{u} + \mathbf{v}\) and difference \(\mathbf{u} - \mathbf{v}\) in the \(xy\)-plane
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 4.8
+yrange: -0.5, 4.8
+trace: 3*t, t | label: \(\mathbf{u} = \langle 3, 1 \rangle\)
+trace: t, 3*t | label: \(\mathbf{v} = \langle 1, 3 \rangle\)
+trace: 4*t, 4*t | label: \(\mathbf{u} + \mathbf{v} = \langle 4, 4 \rangle\)
+segment: 3, 1, 4, 4 | label: \(\mathbf{v}\) | dashed: true
+segment: 1, 3, 4, 4 | label: \(\mathbf{u}\) | dashed: true
+segment: 1, 3, 3, 1 | label: \(\mathbf{u} - \mathbf{v}\)
+point: 0, 0 | label: \(O\)
+point: 3, 1 | label: \((3, 1)\)
+point: 1, 3 | label: \((1, 3)\)
+point: 4, 4 | label: \((4, 4)\)
+[/GRAPH]
+
+Because addition and scalar multiplication act slot by slot using ordinary real-number arithmetic, the familiar algebraic laws of real numbers carry over automatically to \(\mathbb{R}^3\).
+
+[CALLOUT]
+id: vector-laws
+label: Theorem
+title: Algebraic laws of vectors in \(\mathbb{R}^3\)
+tone: key
+
+For all vectors \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\) and all scalars \(a, b \in \mathbb{R}\):
+
+(1) Commutativity and associativity of addition: \(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\) and \((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})\).
+(2) Additive identity and inverse: \(\mathbf{u} + \mathbf{0} = \mathbf{u}\) and \(\mathbf{u} + (-\mathbf{u}) = \mathbf{0}\).
+(3) Distributivity: \(a(\mathbf{u} + \mathbf{v}) = a\mathbf{u} + a\mathbf{v}\) and \((a + b)\mathbf{u} = a\mathbf{u} + b\mathbf{u}\).
+(4) Scalar associativity and unit: \((ab)\mathbf{u} = a(b\mathbf{u})\) and \(1\mathbf{u} = \mathbf{u}\).
+[/CALLOUT]
+
+To check any one of these laws—say [REF: vector-laws.3 | distributivity] \(a(\mathbf{u} + \mathbf{v}) = a\mathbf{u} + a\mathbf{v}\)—expand the left-hand side in components:
+\[
+a(\mathbf{u} + \mathbf{v}) = \langle a(u_1 + v_1),\, a(u_2 + v_2),\, a(u_3 + v_3) \rangle = \langle au_1 + av_1,\, au_2 + av_2,\, au_3 + av_3 \rangle = a\mathbf{u} + a\mathbf{v}.
+\]
+These laws let you solve linear vector equations just like ordinary linear equations before ever substituting components. For example, if \(3\mathbf{x} + \mathbf{u} = \mathbf{v}\), subtract \(\mathbf{u}\) and multiply by \(1/3\) to get \(\mathbf{x} = \frac{1}{3}(\mathbf{v} - \mathbf{u})\), and only then evaluate the coordinates once.
+
+[QUESTION 2]
+[ANSWER: D]
+Let \(\mathbf{a} = 5\mathbf{i} - 2\mathbf{j} + 4\mathbf{k}\) and \(\mathbf{b} = \langle -1, 4, -2 \rangle\). Which vector \(\mathbf{x}\) satisfies \(2\mathbf{x} - \mathbf{a} = 3\mathbf{b}\)?
+
+(A) \(4\mathbf{i} - 7\mathbf{j} + 5\mathbf{k}\)
+(B) \(2\mathbf{i} + 10\mathbf{j} - 2\mathbf{k}\)
+(C) \(-4\mathbf{i} + 7\mathbf{j} - 5\mathbf{k}\)
+(D) \(\mathbf{i} + 5\mathbf{j} - \mathbf{k}\)
+(E) \(2\mathbf{i} + \mathbf{j} + \mathbf{k}\)
+[/QUESTION]
+
+=== SECTION 3: Magnitude, scaling, and unit vectors ===
+
+When a vector \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) is drawn as a position vector from the origin \(O(0, 0, 0)\) to the point \((v_1, v_2, v_3)\), its length—called the magnitude or norm of \(\mathbf{v}\) and written \(\|\mathbf{v}\|\)—is simply the 3D Euclidean distance from the origin to \((v_1, v_2, v_3)\):
+\[
+\|\mathbf{v}\| = \sqrt{v_1^2 + v_2^2 + v_3^2}.
+\]
+Because the distance between \(P\) and \(Q\) depends only on the coordinate differences \(x_Q - x_P\), \(y_Q - y_P\), and \(z_Q - z_P\), we have \(\|\overrightarrow{PQ}\| = d(P, Q)\). Note that \(\|\mathbf{v}\| \ge 0\) always, and \(\|\mathbf{v}\| = 0\) if and only if \(v_1^2 + v_2^2 + v_3^2 = 0\), which forces \(\mathbf{v} = \mathbf{0}\).
+
+How does scalar multiplication affect magnitude? Compute \(\|k\mathbf{v}\|\) directly for any real scalar \(k\):
+\[
+\|k\mathbf{v}\| = \sqrt{(k v_1)^2 + (k v_2)^2 + (k v_3)^2} = \sqrt{k^2(v_1^2 + v_2^2 + v_3^2)} = \sqrt{k^2}\,\sqrt{v_1^2 + v_2^2 + v_3^2} = |k|\,\|\mathbf{v}\|.
+\]
+The absolute value bars on \(|k|\) are essential: \(\sqrt{k^2} = |k|\), not \(k\). If \(k = -3\), multiplying \(\mathbf{v}\) by \(-3\) reverses its direction and triples its length, giving \(\|-3\mathbf{v}\| = 3\|\mathbf{v}\|\), never \(-3\|\mathbf{v}\|\).
+
+A vector of length \(1\) is called a unit vector. The standard basis vectors \(\mathbf{i}\), \(\mathbf{j}\), and \(\mathbf{k}\) are unit vectors, as is \(\langle 2/3, -1/3, 2/3 \rangle\) since \(\sqrt{4/9 + 1/9 + 4/9} = \sqrt{9/9} = 1\). Unit vectors isolate pure direction without any length attached. Given any nonzero vector \(\mathbf{v}\), choosing the positive scalar \(k = 1/\|\mathbf{v}\|\) scales its length to
+\[
+\left\|\frac{1}{\|\mathbf{v}\|}\mathbf{v}\right\| = \frac{1}{\|\mathbf{v}\|}\|\mathbf{v}\| = 1
+\]
+while preserving its direction. This process is called normalization.
+
+[CALLOUT]
+id: norm-unit
+label: Formula
+title: Magnitude, scaling, and normalization
+tone: key
+
+For every vector \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle \in \mathbb{R}^3\) and every scalar \(k \in \mathbb{R}\):
+
+(1) Magnitude: \(\|\mathbf{v}\| = \sqrt{v_1^2 + v_2^2 + v_3^2}\).
+(2) Scaling homogeneity: \(\|k\mathbf{v}\| = |k|\,\|\mathbf{v}\|\).
+(3) Normalization: if \(\mathbf{v} \ne \mathbf{0}\), then \(\mathbf{u} = \frac{\mathbf{v}}{\|\mathbf{v}\|}\) is the unique unit vector in the direction of \(\mathbf{v}\), and \(-\mathbf{u}\) is the unique unit vector in the opposite direction.
+[/CALLOUT]
+
+To build a vector of any desired length \(L > 0\) pointing in the direction of a nonzero vector \(\mathbf{v}\), normalize first and then scale by \(L\): the vector is \(L\,\frac{\mathbf{v}}{\|\mathbf{v}\|}\) (or \(-L\,\frac{\mathbf{v}}{\|\mathbf{v}\|}\) for the opposite direction). For example, to find a vector of length \(10\) in the direction of \(\mathbf{w} = \langle 0, 3, -4 \rangle\), compute \(\|\mathbf{w}\| = \sqrt{0 + 9 + 16} = 5\), normalize to \(\mathbf{u} = \langle 0, 3/5, -4/5 \rangle\), and multiply by \(10\) to obtain \(\langle 0, 6, -8 \rangle\).
+
+The interactive plot below shows a planar vector \(\mathbf{v} = \langle 3, 4 \rangle\) (of length \(5\)) and its scalar multiple \(k\mathbf{v}\) as \(k\) varies. Drag the slider through \(k = 0.2\) (where \(k\mathbf{v}\) hits the dashed unit circle as the normalized vector \(\mathbf{v}/5\)), through \(k = 0\), and into negative values where the arrow flips direction while its length grows as \(5|k|\).
+
+[GRAPH]
+type: parametric2d
+title: Scalar multiple \(k\mathbf{v}\) of \(\mathbf{v} = \langle 3, 4 \rangle\) and the unit circle
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -6.5, 6.5
+yrange: -8.5, 8.5
+trace: cos(t), sin(t) | label: unit circle \(\|\mathbf{u}\| = 1\)
+segment: 0, 0, 3, 4 | label: \(\mathbf{v}\) | dashed: true
+segment: 0, 0, 3*k, 4*k | label: \(k\mathbf{v}\)
+point: 3*k, 4*k | label: \(k\mathbf{v}\)
+point: 0.6, 0.8 | label: \(\mathbf{v}/5\)
+slider: k | range: -1.8, 1.8 | init: 0.6 | step: 0.1
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: B]
+What is the vector of length \(14\) that points in the opposite direction to \(\mathbf{v} = \langle -2, 6, -3 \rangle\)?
+
+(A) \(\langle -4, 12, -6 \rangle\)
+(B) \(\langle 4, -12, 6 \rangle\)
+(C) \(\langle 2/7, -6/7, 3/7 \rangle\)
+(D) \(\langle 28, -84, 42 \rangle\)
+(E) \(\langle 4/7, -12/7, 6/7 \rangle\)
+[/QUESTION]
+
+=== SECTION 4: Parallel vectors and collinear points in space ===
+
+When do two nonzero vectors \(\mathbf{u}\) and \(\mathbf{v}\) in \(\mathbb{R}^3\) point along the same line (either in the same direction or in opposite directions)? Because every nonzero vector can be written as its length times its unit direction vector, \(\mathbf{u} = \|\mathbf{u}\|\hat{\mathbf{u}}\) and \(\mathbf{v} = \|\mathbf{v}\|\hat{\mathbf{v}}\), they share the same line of action if and only if \(\hat{\mathbf{u}} = \pm \hat{\mathbf{v}}\), which happens if and only if one is a nonzero scalar multiple of the other.
+
+[CALLOUT]
+id: parallel-collinear
+label: Criterion
+title: Parallel vectors and collinear points in \(\mathbb{R}^3\)
+tone: key
+
+(1) Two nonzero vectors \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^3\) are parallel (written \(\mathbf{u} \parallel \mathbf{v}\)) if and only if there exists a scalar \(k \ne 0\) such that \(\mathbf{u} = k\mathbf{v}\). (If \(k > 0\), they have the same direction; if \(k < 0\), they have opposite directions.)
+(2) Three distinct points \(A, B, C \in \mathbb{R}^3\) are collinear (lie on a single straight line) if and only if the displacement vectors \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) are parallel, i.e., \(\overrightarrow{AC} = k\,\overrightarrow{AB}\) for some scalar \(k \ne 0\).
+[/CALLOUT]
+
+Be careful when testing proportionality with ratios. When all three components of \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\) are nonzero, \(\mathbf{u} = k\mathbf{v}\) is equivalent to the equal-ratio test
+\[
+\frac{u_1}{v_1} = \frac{u_2}{v_2} = \frac{u_3}{v_3} = k.
+\]
+However, if one or two components of \(\mathbf{v}\) equal \(0\), you must not divide by zero—instead, fall back directly to the component equation \(\mathbf{u} = k\mathbf{v}\): whenever \(v_i = 0\), we must also have \(u_i = k \cdot 0 = 0\), while all remaining nonzero pairs must share a single common multiplier \(k\).
+
+Compare two quick examples:
+- Are \(\mathbf{u} = \langle -6, 0, 9 \rangle\) and \(\mathbf{v} = \langle 4, 0, -6 \rangle\) parallel? Both second components are \(0\). Checking the other slots gives \(-6/4 = -3/2\) and \(9/(-6) = -3/2\), so \(\mathbf{u} = -\frac{3}{2}\mathbf{v}\): yes, they are parallel (and point in opposite directions).
+- Are \(\mathbf{a} = \langle 2, 0, 4 \rangle\) and \(\mathbf{b} = \langle 4, 1, 8 \rangle\) parallel? Even though \(4/2 = 8/4 = 2\), the second component equation \(1 = k \cdot 0\) has no solution, so \(\mathbf{a}\) and \(\mathbf{b}\) are not parallel.
+
+Applying [REF: parallel-collinear.2 | the collinearity test] works the same way. Consider \(P(1, -2, 3)\), \(Q(3, -2, 0)\), and \(R(-3, -2, 9)\). Form two displacements sharing the common tail \(P\):
+\[
+\overrightarrow{PQ} = \langle 2, 0, -3 \rangle, \qquad \overrightarrow{PR} = \langle -4, 0, 6 \rangle.
+\]
+Check \(\overrightarrow{PR} = k\,\overrightarrow{PQ}\): the first component gives \(k = -4/2 = -2\), the second gives \(0 = (-2)(0)\), and the third gives \(6 = (-2)(-3)\). All three hold with \(k = -2\), so \(P\), \(Q\), and \(R\) are collinear (with \(P\) lying between \(R\) and \(Q\) because \(k < 0\)).
+
+[QUESTION 4]
+[ANSWER: C]
+For which values of \(p\) and \(q\) are the three points \(A(1, 4, -2)\), \(B(3, 4, 2)\), and \(C(p, q, 6)\) collinear in \(\mathbb{R}^3\)?
+
+(A) \(p = 5\) and \(q = 8\)
+(B) \(p = 5\) and \(q = 0\)
+(C) \(p = 5\) and \(q = 4\)
+(D) \(p = 4\) and \(q = 4\)
+(E) No such \(p\) and \(q\) exist because the second component of \(\overrightarrow{AB}\) is zero
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Three vertices of a parallelogram \(ABCD\), listed in cyclic order around its perimeter, are \(A(2, -1, 3)\), \(B(5, 1, 0)\), and \(C(4, 6, -2)\). What are the coordinates of the fourth vertex \(D\)?
+
+(A) \((7, 8, -5)\)
+(B) \((1, 4, 1)\)
+(C) \((3, -6, 5)\)
+(D) \((-1, 4, 1)\)
+(E) \((5, -4, 5)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suppose \(\mathbf{u} \in \mathbb{R}^3\) is a nonzero vector with \(\|\mathbf{u}\| = 6\), and \(\mathbf{v} \in \mathbb{R}^3\) satisfies \(\|2\mathbf{v} + 3\mathbf{u}\| = 0\). What are the magnitude of \(\mathbf{v}\) and its direction relative to \(\mathbf{u}\)?
+
+(A) \(\|\mathbf{v}\| = 4\), same direction as \(\mathbf{u}\)
+(B) \(\|\mathbf{v}\| = 4\), opposite direction to \(\mathbf{u}\)
+(C) \(\|\mathbf{v}\| = 9\), same direction as \(\mathbf{u}\)
+(D) \(\|\mathbf{v}\| = -9\), opposite direction to \(\mathbf{u}\)
+(E) \(\|\mathbf{v}\| = 9\), opposite direction to \(\mathbf{u}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+A point \(P\) lies on the line segment from \(A(-2, 5, 1)\) to \(B(7, -1, 10)\) one-third of the way from \(A\) to \(B\) (so \(\overrightarrow{AP} = \frac{1}{3}\overrightarrow{AB}\)). What are the coordinates of \(P\)?
+
+(A) \((1, 3, 4)\)
+(B) \((3, -2, 3)\)
+(C) \((4, 1, 7)\)
+(D) \((5/3, 4/3, 11/3)\)
+(E) \((1, 7, 4)\)
+[/BONUS]

@@ -8,7 +8,7 @@ const integration = 'math_integration_techniques';
 test('the complete math hierarchy has unique IDs, bounded scopes, monotonic 1-10 difficulty, and navigable branch sub-trees', () => {
   const app=loadApp();
   try {
-    assert.equal(app.ev('MATH_COLLECTION.count'),140);
+    assert.equal(app.ev('MATH_COLLECTION.count'),143);
     assert.equal(app.ev('[...mathItems.values()].filter(n=>!n.children).every(n=>!!n.scope && !!MATH_STAGES[n.stage] && n.difficulty>=1 && n.difficulty<=10)'),true);
     assert.equal(app.ev('MATH_COLLECTION.leaves.every(l=>l.recommendedPreparation.every(p=>mathItems.get(p).difficulty<=l.difficulty))'),true);
     assert.equal(app.ev('mathItems.size'),app.ev('(function count(n){return 1+(n.children||[]).reduce((s,c)=>s+count(c),0)})(MATH_COLLECTION)'));

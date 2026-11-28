@@ -1,0 +1,231 @@
+=== SECTION 1: Strategic double-angle selection ===
+
+When a trigonometric equation mixes different arguments—such as \(\cos(2x) + \sin x = 0\) or \(\sin(2x) - \cos x = 0\)—blindly rewriting terms can trap you in a tangle of mixed functions. The key is STRATEGIC identity selection: inspect the rest of the equation FIRST, then pick the identity that turns the entire equation into either a single-function polynomial or an immediate common-factor product.
+
+Recall that \(\cos(2x)\) has three equivalent forms: \(\cos^2 x - \sin^2 x\), \(2\cos^2 x - 1\), and \(1 - 2\sin^2 x\).
+- If the rest of the equation contains \(\sin x\), choose \(\cos(2x) = 1 - 2\sin^2 x\) so the entire equation becomes a pure quadratic in \(\sin x\).
+- If the rest of the equation contains \(\cos x\), choose \(\cos(2x) = 2\cos^2 x - 1\) so the entire equation becomes a pure quadratic in \(\cos x\).
+- Choosing \(\cos^2 x - \sin^2 x\) in either situation forces an unnecessary extra Pythagorean substitution.
+
+[CALLOUT]
+id: double-angle-strategy
+label: Strategy
+title: Matching double-angle and half-angle substitutions to the equation
+tone: key
+
+(1) \(\cos(2x)\) paired with \(\sin x\): substitute \(\cos(2x) = 1 - 2\sin^2 x\) to form a quadratic in \(\sin x\).
+(2) \(\cos(2x)\) paired with \(\cos x\): substitute \(\cos(2x) = 2\cos^2 x - 1\) to form a quadratic in \(\cos x\).
+(3) \(\sin(2x)\) paired with \(\sin x\) or \(\cos x\): substitute \(\sin(2x) = 2\sin x \cos x\), move all terms to one side, and factor out the common factor (NEVER divide both sides by \(\sin x\) or \(\cos x\)).
+(4) Mixed \(x\) and \(\frac{x}{2}\): view \(x = 2\!\left(\frac{x}{2}\right)\) and apply a double-angle cosine identity to \(\cos x\) (such as \(\cos x = 1 - 2\sin^2(x/2)\) or \(2\cos^2(x/2) - 1\)) so you avoid square roots and extraneous-root squaring completely.
+[/CALLOUT]
+
+Worked example 1 (Quadratic reduction via \(\cos(2x)\)): Solve \(\cos(2x) + \sin x = 0\) on \([0, 2\pi)\).
+
+Using [REF: double-angle-strategy.1 | rule (1)], replace \(\cos(2x) = 1 - 2\sin^2 x\):
+\[
+1 - 2\sin^2 x + \sin x = 0 \implies 2\sin^2 x - \sin x - 1 = 0.
+\]
+Factor as a quadratic in \(u = \sin x\):
+\[
+(2\sin x + 1)(\sin x - 1) = 0 \iff \sin x = -\frac{1}{2} \quad \text{or} \quad \sin x = 1.
+\]
+On \([0, 2\pi)\):
+- \(\sin x = 1\) gives \(x = \frac{\pi}{2}\).
+- \(\sin x = -\frac{1}{2}\) gives \(x = \frac{7\pi}{6}\) and \(x = \frac{11\pi}{6}\).
+The complete solution set on \([0, 2\pi)\) is \(\left\{\frac{\pi}{2}, \frac{7\pi}{6}, \frac{11\pi}{6}\right\}\), matching the three \(x\)-intercepts plotted below.
+
+[GRAPH]
+type: function2d
+title: Zeros of \(y = \cos(2x) + \sin x\) on \([0, 2\pi)\) at \(\frac{\pi}{2}, \frac{7\pi}{6}, \frac{11\pi}{6}\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2832
+yrange: -2.2, 2.2
+trace: cos(2 * x) + sin(x) | label: \(y = \cos(2x) + \sin x\)
+trace: 0 | label: \(y = 0\)
+point: 1.5708, 0 | label: \((\pi/2, 0)\)
+point: 3.6652, 0 | label: \((7\pi/6, 0)\)
+point: 5.7596, 0 | label: \((11\pi/6, 0)\)
+[/GRAPH]
+
+Worked example 2 (Common-factor split via \(\sin(2x)\)): Solve \(\sin(2x) - \cos x = 0\) on \([0, 2\pi)\).
+
+By [REF: double-angle-strategy.3 | rule (3)], rewrite \(\sin(2x) = 2\sin x \cos x\) and factor out \(\cos x\):
+\[
+2\sin x \cos x - \cos x = 0 \implies \cos x (2\sin x - 1) = 0.
+\]
+- \(\cos x = 0\) gives \(x = \frac{\pi}{2}, \frac{3\pi}{2}\).
+- \(2\sin x - 1 = 0 \iff \sin x = \frac{1}{2}\) gives \(x = \frac{\pi}{6}, \frac{5\pi}{6}\).
+Complete solution set on \([0, 2\pi)\): \(\left\{\frac{\pi}{6}, \frac{\pi}{2}, \frac{5\pi}{6}, \frac{3\pi}{2}\right\}\). (Had you divided both sides by \(\cos x\), you would have silently erased \(\frac{\pi}{2}\) and \(\frac{3\pi}{2}\)!)
+
+[QUESTION 1]
+[ANSWER: A]
+Find ALL solutions of \(\cos(2x) - \cos x = 0\) in the interval \([0, 2\pi)\).
+
+(A) \(0, \dfrac{2\pi}{3}, \dfrac{4\pi}{3}\)
+(B) \(0, \dfrac{\pi}{3}, \dfrac{5\pi}{3}\)
+(C) \(\dfrac{\pi}{3}, \pi, \dfrac{5\pi}{3}\)
+(D) \(0, \dfrac{2\pi}{3}, \pi, \dfrac{4\pi}{3}\)
+(E) \(\dfrac{2\pi}{3}, \dfrac{4\pi}{3}\)
+[/QUESTION]
+
+=== SECTION 2: Sum-to-product factoring and uniting solution families ===
+
+Double-angle formulas do not directly handle mixed-frequency equations such as \(\sin(5x) + \sin x = 0\) or \(\cos(3x) - \cos x = 0\). Whenever a sum or difference of two sines or two cosines equals \(0\), the sum-to-product identities factor the left-hand side directly into a product of two multiple-angle factors, which you solve via the multiple-angle method.
+
+Worked example 1 (Disjoint solution families): Solve \(\sin(5x) + \sin x = 0\) on \([0, 2\pi)\).
+
+Apply \(\sin u + \sin v = 2\sin\!\left(\frac{u+v}{2}\right)\cos\!\left(\frac{u-v}{2}\right)\) with \(u = 5x\) and \(v = x\):
+\[
+2\sin(3x)\cos(2x) = 0 \iff \sin(3x) = 0 \quad \text{or} \quad \cos(2x) = 0.
+\]
+Solve each multiple-angle equation completely on \(\mathbb{R}\) first, then extract all roots in \([0, 2\pi)\):
+- \(\sin(3x) = 0 \implies 3x = \pi k \implies x = \dfrac{\pi k}{3}\) (\(k \in \mathbb{Z}\)). For \(k = 0, 1, 2, 3, 4, 5\), this gives \(6\) roots:
+\[
+0, \;\frac{\pi}{3}, \;\frac{2\pi}{3}, \;\pi, \;\frac{4\pi}{3}, \;\frac{5\pi}{3}.
+\]
+- \(\cos(2x) = 0 \implies 2x = \frac{\pi}{2} + \pi n \implies x = \dfrac{\pi}{4} + \dfrac{\pi n}{2}\) (\(n \in \mathbb{Z}\)). For \(n = 0, 1, 2, 3\), this gives \(4\) roots:
+\[
+\frac{\pi}{4}, \;\frac{3\pi}{4}, \;\frac{5\pi}{4}, \;\frac{7\pi}{4}.
+\]
+None of the odd multiples of \(\frac{\pi}{4}\) match any multiple of \(\frac{\pi}{3}\), so the two families are disjoint and yield \(6 + 4 = 10\) distinct solutions on \([0, 2\pi)\).
+
+Worked example 2 (Overlapping solution families!): Solve \(\cos(3x) - \cos x = 0\) on \(\mathbb{R}\) and on \([0, 2\pi)\).
+
+Apply \(\cos u - \cos v = -2\sin\!\left(\frac{u+v}{2}\right)\sin\!\left(\frac{u-v}{2}\right)\):
+\[
+-2\sin(2x)\sin x = 0 \iff \sin(2x) = 0 \quad \text{or} \quad \sin x = 0.
+\]
+- \(\sin(2x) = 0 \implies 2x = \pi k \implies x = \dfrac{\pi k}{2}\) (\(k \in \mathbb{Z}\)). On \([0, 2\pi)\): \(\left\{0, \frac{\pi}{2}, \pi, \frac{3\pi}{2}\right\}\).
+- \(\sin x = 0 \implies x = \pi n\) (\(n \in \mathbb{Z}\)). On \([0, 2\pi)\): \(\{0, \pi\}\).
+
+Look closely before counting! Every solution \(x = \pi n\) of the second family is ALREADY contained in the first family \(x = \frac{\pi k}{2}\) (simply take even integers \(k = 2n\)). Therefore the complete general solution simplifies cleanly to a single family \(x = \frac{\pi k}{2}\) (\(k \in \mathbb{Z}\)), giving \(4\) distinct solutions on \([0, 2\pi)\)—NOT \(6\)!
+
+[CALLOUT]
+id: union-check
+label: Common Pitfall
+title: Removing duplicate roots when uniting solution families
+tone: caution
+
+After factoring a trigonometric equation into two (or more) multiple-angle factors, always compare the resulting solution families before counting or reporting the union. One family can be partially or completely absorbed inside another (for example, \(\{x = \pi n\} \subset \{x = \frac{\pi k}{2}\}\)). Report every distinct solution once without omitting periods or double-counting overlaps.
+[/CALLOUT]
+
+[GRAPH]
+type: function2d
+title: Curve \(y = \cos(3x) - \cos x\) has exactly \(4\) distinct zeros on \([0, 2\pi)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2832
+yrange: -2.2, 2.2
+trace: cos(3 * x) - cos(x) | label: \(y = \cos(3x) - \cos x\)
+trace: 0 | label: \(y = 0\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1.5708, 0 | label: \((\pi/2, 0)\)
+point: 3.1416, 0 | label: \((\pi, 0)\)
+point: 4.7124, 0 | label: \((3\pi/2, 0)\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+How many DISTINCT solutions does the equation \(\sin(3x) + \sin x = 0\) have in the interval \([0, 2\pi)\)?
+
+(A) \(2\)
+(B) \(4\)
+(C) \(6\)
+(D) \(8\)
+(E) \(3\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Which expression gives ALL real solutions of \(\cos(4x) + \cos(2x) = 0\)?
+
+(A) \(x = \dfrac{\pi}{6} + \dfrac{\pi k}{3}\) (\(k \in \mathbb{Z}\))
+(B) \(x = \dfrac{\pi}{6} + \pi k\) or \(x = \dfrac{\pi}{2} + \pi k\) (\(k \in \mathbb{Z}\))
+(C) \(x = \dfrac{\pi k}{3}\) (\(k \in \mathbb{Z}\))
+(D) \(x = \dfrac{\pi}{2} + \pi k\) (\(k \in \mathbb{Z}\))
+(E) \(x = \dfrac{\pi}{6} + \dfrac{2\pi k}{3}\) (\(k \in \mathbb{Z}\))
+[/QUESTION]
+
+=== SECTION 3: Half-angle, tangent, and domain-checked equations ===
+
+Two remaining situations call for extra care: equations pairing \(x\) with \(\frac{x}{2}\), and equations containing \(\tan, \cot, \sec,\) or \(\csc\) where hidden denominators restrict the domain.
+
+Worked example 1 (Half-angle equation without radicals): Solve \(\cos x + \sin\!\left(\frac{x}{2}\right) = 1\) on \([0, 2\pi)\).
+
+Using [REF: double-angle-strategy.4 | rule (4)], write \(\cos x = 1 - 2\sin^2\!\left(\frac{x}{2}\right)\) instead of introducing a \(\pm\sqrt{\cdot}\) half-angle radical:
+\[
+1 - 2\sin^2\!\left(\frac{x}{2}\right) + \sin\!\left(\frac{x}{2}\right) = 1 \implies \sin\!\left(\frac{x}{2}\right)\!\left(1 - 2\sin\!\left(\frac{x}{2}\right)\right) = 0.
+\]
+Let \(u = \frac{x}{2}\). As \(x\) spans \([0, 2\pi)\), \(u\) spans \([0, \pi)\):
+- \(\sin u = 0\) on \([0, \pi)\) gives \(u = 0 \implies x = 0\).
+- \(\sin u = \frac{1}{2}\) on \([0, \pi)\) gives \(u = \frac{\pi}{6}\) or \(u = \frac{5\pi}{6} \implies x = \frac{\pi}{3}\) or \(x = \frac{5\pi}{3}\).
+All three steps are completely reversible, giving the verified solution set \(\left\{0, \frac{\pi}{3}, \frac{5\pi}{3}\right\}\).
+
+Worked example 2 (Domain exclusions and extraneous roots): Solve \(\tan(2x) = \sec(2x) - 1\) on \([0, \pi)\).
+
+1. Record the ORIGINAL domain restrictions first: both \(\tan(2x) = \frac{\sin(2x)}{\cos(2x)}\) and \(\sec(2x) = \frac{1}{\cos(2x)}\) require \(\cos(2x) \ne 0\), so \(2x \ne \frac{\pi}{2}, \frac{3\pi}{2}\), meaning \(x \ne \frac{\pi}{4}, \frac{3\pi}{4}\).
+2. Multiply both sides by \(\cos(2x)\) (a potentially non-reversible step!) to get
+\[
+\sin(2x) = 1 - \cos(2x).
+\]
+3. Square both sides (another non-reversible step!) and use \(\sin^2(2x) = 1 - \cos^2(2x)\):
+\[
+1 - \cos^2(2x) = 1 - 2\cos(2x) + \cos^2(2x) \implies 2\cos^2(2x) - 2\cos(2x) = 0 \implies 2\cos(2x)\bigl(\cos(2x) - 1\bigr) = 0.
+\]
+4. Candidates on \([0, \pi)\):
+- \(\cos(2x) = 0 \implies x = \frac{\pi}{4}, \frac{3\pi}{4}\). REJECT BOTH—they violate the domain \(\cos(2x) \ne 0\)!
+- \(\cos(2x) = 1 \implies 2x = 0 \implies x = 0\). Check in the original equation: \(\tan 0 = 0\) and \(\sec 0 - 1 = 1 - 1 = 0\). Valid!
+So \(x = 0\) is the ONLY solution on \([0, \pi)\).
+
+Worked example 3 (Avoid artificially narrowing the domain): Solve \(\tan(2x) = \cot x\) on \([0, \pi)\).
+
+The original domain requires \(\cos(2x) \ne 0\) (\(x \ne \frac{\pi}{4}, \frac{3\pi}{4}\)) and \(\sin x \ne 0\) (\(x \ne 0\)). Notice that \(x = \frac{\pi}{2}\) IS IN THE DOMAIN because \(\tan(\pi) = 0\) and \(\cot(\frac{\pi}{2}) = 0\) are both well defined! Converting directly to sines and cosines preserves \(x = \frac{\pi}{2}\):
+\[
+\frac{\sin(2x)}{\cos(2x)} = \frac{\cos x}{\sin x} \implies \sin(2x)\sin x - \cos(2x)\cos x = 0 \implies -\cos(2x + x) = 0 \implies \cos(3x) = 0.
+\]
+Solving \(3x = \frac{\pi}{2} + \pi k\) gives \(x = \frac{\pi}{6}, \frac{\pi}{2}, \frac{5\pi}{6}\) on \([0, \pi)\). Checking all three confirms that none violates the domain—all three are valid! (Had you rewritten \(\cot x = \frac{1}{\tan x}\) and \(\tan(2x) = \frac{2\tan x}{1 - \tan^2 x}\), you would have accidentally excluded \(x = \frac{\pi}{2}\) where \(\tan x\) is undefined!)
+
+[CALLOUT]
+id: domain-extran-check
+label: Common Pitfall
+title: Domain checks and preserving valid roots
+tone: caution
+
+(1) Whenever an equation contains \(\tan, \cot, \sec,\) or \(\csc\), list the original denominator exclusions immediately and reject any candidate root that makes an original term undefined.
+(2) Whenever you multiply by a variable expression or square both sides, substitute every candidate back into the ORIGINAL equation to filter out extraneous roots.
+(3) Converting to \(\sin\) and \(\cos\) is safer than substituting \(\cot x = \frac{1}{\tan x}\), which can artificially drop valid roots where \(\cos x = 0\).
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: A]
+Find ALL solutions of \(\cos x - \cos\!\left(\dfrac{x}{2}\right) = 0\) in the interval \([0, 2\pi)\).
+
+(A) \(0, \dfrac{4\pi}{3}\)
+(B) \(0, \dfrac{2\pi}{3}, \dfrac{4\pi}{3}\)
+(C) \(0, \dfrac{2\pi}{3}\)
+(D) \(\dfrac{2\pi}{3}, \dfrac{4\pi}{3}\)
+(E) \(0, \dfrac{4\pi}{3}, \dfrac{8\pi}{3}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+How many DISTINCT solutions does the three-term equation \(\sin x + \sin(2x) + \sin(3x) = 0\) have in the interval \([0, 2\pi)\)?
+
+(A) \(4\)
+(B) \(5\)
+(C) \(6\)
+(D) \(8\)
+(E) \(10\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Find ALL valid solutions of \(\sec(2x) + \tan(2x) = 1\) in the interval \([0, \pi)\).
+
+(A) \(0\) only
+(B) \(0, \dfrac{3\pi}{4}\)
+(C) \(0, \dfrac{\pi}{4}, \dfrac{3\pi}{4}\)
+(D) \(\dfrac{\pi}{4}, \dfrac{3\pi}{4}\)
+(E) No solutions in \([0, \pi)\)
+[/BONUS]

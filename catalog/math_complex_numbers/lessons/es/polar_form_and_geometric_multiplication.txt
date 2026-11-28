@@ -1,0 +1,209 @@
+=== SECTION 1: Forma polar y argumento principal ===
+
+Las coordenadas rectangulares \(z = x + yi\) hacen que la suma y la resta complejas sean inmediatas, pues basta con sumar las componentes horizontales y verticales. Sin embargo, la multiplicación en forma rectangular mezcla \(x\) e \(y\) como \((x_1 x_2 - y_1 y_2) + (x_1 y_2 + y_1 x_2)i\), ocultando su verdadero significado geométrico. ¿Qué ocurre si, en lugar de emplear coordenadas horizontales y verticales, describimos un número complejo no nulo mediante su distancia al origen y el ángulo que forma su vector de posición con el semieje real positivo?
+
+Sea \(z = x + yi \ne 0\) un punto del plano de Argand. Su distancia al origen es su módulo \(r = |z| = \sqrt{x^2 + y^2} > 0\). Sea \(\theta\) un ángulo (medido en radianes, en sentido antihorario desde el semieje real positivo) hasta la semirrecta que parte de \(0\) y pasa por \(z\). Por trigonometría de la circunferencia unitaria,
+\[
+x = r\cos\theta, \qquad y = r\sin\theta.
+\]
+Al sustituir estas expresiones en \(z = x + yi\) se obtiene la forma polar (o trigonométrica) de \(z\):
+\[
+z = r(\cos\theta + i\sin\theta).
+\]
+Dado que \(\cos\theta + i\sin\theta\) aparece continuamente, suele abreviarse como \(\operatorname{cis}\theta\) (por "coseno más \(i\) seno"), escribiéndose \(z = r\operatorname{cis}\theta\).
+
+A diferencia del módulo \(r\), el ángulo \(\theta\) NO es único: sumar cualquier múltiplo entero de una vuelta completa \(2\pi\) cae exactamente sobre la misma semirrecta, puesto que \(\cos(\theta + 2\pi k) = \cos\theta\) y \(\sin(\theta + 2\pi k) = \sin\theta\) para todo \(k \in \mathbb{Z}\). Para distinguir el ángulo multivaluado de una única elección estándar, introducimos dos símbolos distintos: \(\arg(z)\) en minúscula para todos los ángulos válidos, y \(\operatorname{Arg}(z)\) con mayúscula inicial para la elección única dentro del intervalo semiabierto \((-\pi, \pi]\).
+
+[CALLOUT]
+id: polar-def
+label: Definición
+title: Forma polar, argumento y argumento principal
+tone: key
+
+Sea \(z = x + yi \ne 0\) con \(r = |z| = \sqrt{x^2 + y^2} > 0\).
+
+(1) Forma polar: \(z = r(\cos\theta + i\sin\theta) = r\operatorname{cis}\theta\), donde \(x = r\cos\theta\) e \(y = r\sin\theta\).
+(2) Argumento: \(\arg(z) = \{\theta + 2\pi k : k \in \mathbb{Z}\}\) es el conjunto de todos los ángulos que satisfacen \(x = r\cos\theta\) e \(y = r\sin\theta\).
+(3) Argumento principal: \(\operatorname{Arg}(z)\) es el único valor de \(\arg(z)\) situado en el intervalo \((-\pi, \pi]\).
+(4) Exclusión del cero: \(\arg(0)\) y \(\operatorname{Arg}(0)\) no están definidos, porque \(0\) carece de dirección desde el origen.
+[/CALLOUT]
+
+Utiliza el deslizador siguiente para rotar un punto \(z = 2(\cos\theta + i\sin\theta)\) alrededor de la circunferencia de radio \(r = 2\) mientras \(\theta = \operatorname{Arg}(z)\) varía en \((-\pi, \pi]\). Observa cómo cambian de signo la proyección horizontal \(x = 2\cos\theta\) y la proyección vertical \(y = 2\sin\theta\) al recorrer los cuatro cuadrantes.
+
+[GRAPH]
+type: parametric2d
+title: Representación polar \(z = 2(\cos\theta + i\sin\theta)\) sobre la circunferencia de radio \(r = 2\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -2.8, 2.8
+yrange: -2.8, 2.8
+trace: 2*cos(t), 2*sin(t) | label: \(|z| = 2\) | color: #2563eb
+segment: 0, 0, 2*cos(a), 2*sin(a) | label: \(r = 2\) | color: #dc2626
+segment: 0, 0, 2*cos(a), 0 | label: \(x\) | dashed: true | color: #16a34a
+segment: 2*cos(a), 0, 2*cos(a), 2*sin(a) | label: \(y\) | dashed: true | color: #9333ea
+point: 2*cos(a), 2*sin(a) | label: \(z\)
+slider: a | range: -3.1416, 3.1416 | init: 2.0944 | step: 0.05
+[/GRAPH]
+
+=== SECTION 2: Conversión precisa en los cuatro cuadrantes ===
+
+Pasar de la forma polar \(r(\cos\theta + i\sin\theta)\) a la forma rectangular es inmediato: basta evaluar \(x = r\cos\theta\) e \(y = r\sin\theta\). Por ejemplo, \(4\operatorname{cis}\left(-\frac{\pi}{3}\right) = 4\left(\frac{1}{2} - i\frac{\sqrt{3}}{2}\right) = 2 - 2\sqrt{3}\,i\).
+
+La conversión en sentido contrario —desde \(z = x + yi \ne 0\) hacia \(r\) y \(\operatorname{Arg}(z)\)— encierra una trampa clásica. Dado que \(\tan\theta = y/x\) cuando \(x \ne 0\), resulta tentador escribir \(\operatorname{Arg}(z) = \arctan(y/x)\). ¡Esa fórmula falla para TODOS los números complejos de los cuadrantes II y III! El motivo es que \(\arctan(y/x)\) solo devuelve ángulos en \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\) (cuadrantes I y IV). Por ejemplo, \(1 + i\) y \(-1 - i\) tienen ambos \(y/x = 1\), por lo que \(\arctan(y/x) = \frac{\pi}{4}\) para los dos; sin embargo, \(-1 - i\) se encuentra en el cuadrante III, opuesto a \(1 + i\), y su argumento principal es \(-\frac{3\pi}{4}\).
+
+[CALLOUT]
+id: quadrant-arg-rule
+label: Regla
+title: Cálculo de \(\operatorname{Arg}(x + yi)\) mediante comprobación de cuadrante
+tone: caution
+
+Nunca tomes \(\arctan(y/x)\) directamente como \(\operatorname{Arg}(x + yi)\) sin comprobar los signos de AMBAS coordenadas \(x\) e \(y\). Identifica siempre primero el cuadrante (o el eje coordenado) y sitúa después el ángulo dentro de \((-\pi, \pi]\).
+[/CALLOUT]
+
+[TABLE]
+Ubicación de \(z = x + yi \ne 0\) | Signo de \(x, y\) | Argumento principal \(\operatorname{Arg}(z) \in (-\pi, \pi]\)
+Semieje real positivo | \(x > 0, y = 0\) | \(0\)
+Cuadrante I | \(x > 0, y > 0\) | \(\arctan(y/x)\)
+Semieje imaginario positivo | \(x = 0, y > 0\) | \(\pi/2\)
+Cuadrante II | \(x < 0, y > 0\) | \(\arctan(y/x) + \pi\)
+Semieje real negativo | \(x < 0, y = 0\) | \(\pi\) (no \(-\pi\))
+Cuadrante III | \(x < 0, y < 0\) | \(\arctan(y/x) - \pi\)
+Semieje imaginario negativo | \(x = 0, y < 0\) | \(-\pi/2\)
+Cuadrante IV | \(x > 0, y < 0\) | \(\arctan(y/x)\)
+[/TABLE]
+
+Practiquemos en los distintos cuadrantes y sobre los ejes:
+- Cuadrante II: \(z = -1 + i\sqrt{3}\). Aquí \(r = \sqrt{1 + 3} = 2\). El ángulo de referencia es \(\arctan(\sqrt{3}/1) = \frac{\pi}{3}\), y como \(z\) está en el cuadrante II, \(\operatorname{Arg}(z) = \pi - \frac{\pi}{3} = \frac{2\pi}{3}\). Así, \(z = 2\operatorname{cis}\left(\frac{2\pi}{3}\right)\).
+- Cuadrante IV: \(z = 3 - 3i\). Aquí \(r = \sqrt{9 + 9} = 3\sqrt{2}\). Como \(x > 0\) e \(y < 0\), \(\operatorname{Arg}(z) = \arctan(-1) = -\frac{\pi}{4}\). Por tanto, \(z = 3\sqrt{2}\operatorname{cis}\left(-\frac{\pi}{4}\right)\).
+- Semieje real negativo: \(z = -5\). Aquí \(r = 5\) y \(\operatorname{Arg}(-5) = \pi\) (recuerda que \(-\pi\) queda excluido de \((-\pi, \pi]\)), de modo que \(-5 = 5\operatorname{cis}(\pi)\).
+- Semieje imaginario negativo: \(z = -7i\). Aquí \(r = 7\) y \(\operatorname{Arg}(-7i) = -\frac{\pi}{2}\), por lo que \(-7i = 7\operatorname{cis}\left(-\frac{\pi}{2}\right)\).
+
+[QUESTION 1]
+[ANSWER: A]
+Escribe \(z = -\sqrt{3} - i\) en forma polar \(r(\cos\theta + i\sin\theta)\) utilizando el argumento principal \(\theta = \operatorname{Arg}(z) \in (-\pi, \pi]\).
+
+(A) \(2\left(\cos\left(-\frac{5\pi}{6}\right) + i\sin\left(-\frac{5\pi}{6}\right)\right)\)
+(B) \(2\left(\cos\left(\frac{\pi}{6}\right) + i\sin\left(\frac{\pi}{6}\right)\right)\)
+(C) \(2\left(\cos\left(\frac{7\pi}{6}\right) + i\sin\left(\frac{7\pi}{6}\right)\right)\)
+(D) \(2\left(\cos\left(-\frac{2\pi}{3}\right) + i\sin\left(-\frac{2\pi}{3}\right)\right)\)
+(E) \(2\left(\cos\left(\frac{5\pi}{6}\right) + i\sin\left(\frac{5\pi}{6}\right)\right)\)
+[/QUESTION]
+
+=== SECTION 3: Multiplicación y división polar y rotación-homotecia geométrica ===
+
+Ahora llega la gran recompensa de pasar a coordenadas polares. Sean \(z_1 = r_1(\cos\theta_1 + i\sin\theta_1)\) y \(z_2 = r_2(\cos\theta_2 + i\sin\theta_2)\) dos números complejos no nulos. Multiplícalos directamente aplicando la propiedad distributiva:
+\[
+z_1 z_2 = r_1 r_2 \bigl((\cos\theta_1 \cos\theta_2 - \sin\theta_1 \sin\theta_2) + i(\sin\theta_1 \cos\theta_2 + \cos\theta_1 \sin\theta_2)\bigr).
+\]
+Reconoce las dos expresiones entre paréntesis: ¡son exactamente las identidades de suma de ángulos para el coseno y el seno, \(\cos(\theta_1 + \theta_2) = \cos\theta_1\cos\theta_2 - \sin\theta_1\sin\theta_2\) y \(\sin(\theta_1 + \theta_2) = \sin\theta_1\cos\theta_2 + \cos\theta_1\sin\theta_2\)! Por consiguiente,
+\[
+z_1 z_2 = r_1 r_2 \bigl(\cos(\theta_1 + \theta_2) + i\sin(\theta_1 + \theta_2)\bigr) = r_1 r_2 \operatorname{cis}(\theta_1 + \theta_2).
+\]
+Para la división, multiplica el numerador y el denominador de \(\frac{z_1}{z_2}\) por \(\cos\theta_2 - i\sin\theta_2\). El denominador pasa a ser \(\cos^2\theta_2 + \sin^2\theta_2 = 1\), y al desarrollar el numerador aparecen las identidades de diferencia de ángulos:
+\[
+\frac{z_1}{z_2} = \frac{r_1}{r_2}\bigl((\cos\theta_1\cos\theta_2 + \sin\theta_1\sin\theta_2) + i(\sin\theta_1\cos\theta_2 - \cos\theta_1\sin\theta_2)\bigr) = \frac{r_1}{r_2}\operatorname{cis}(\theta_1 - \theta_2).
+\]
+
+[CALLOUT]
+id: polar-mult-div
+label: Teorema
+title: Fórmulas polares del producto y del cociente
+tone: key
+
+Sean \(z_1 = r_1\operatorname{cis}\theta_1\) y \(z_2 = r_2\operatorname{cis}\theta_2\) con \(r_1, r_2 > 0\).
+
+(1) Producto: \(z_1 z_2 = r_1 r_2 \operatorname{cis}(\theta_1 + \theta_2)\). Los módulos se multiplican; los argumentos se suman.
+(2) Cociente: \(\frac{z_1}{z_2} = \frac{r_1}{r_2}\operatorname{cis}(\theta_1 - \theta_2)\). Los módulos se dividen; los argumentos se restan.
+(3) Conjugado y recíproco: \(\overline{z_1} = r_1\operatorname{cis}(-\theta_1)\) y \(z_1^{-1} = \frac{1}{r_1}\operatorname{cis}(-\theta_1)\).
+[/CALLOUT]
+
+Lee [REF: polar-mult-div.1 | la fórmula polar del producto] en clave geométrica: ¡multiplicar un número complejo \(z_1\) por \(z_2 = r_2\operatorname{cis}\theta_2\) toma el vector \(z_1\), escala su longitud por \(r_2 = |z_2|\) y lo rota en sentido antihorario alrededor del origen un ángulo \(\theta_2 = \arg(z_2)\)! (Si \(\theta_2 < 0\), la rotación es en sentido horario por un ángulo \(|\theta_2|\).)
+
+Esta única idea explica geométricamente por qué \(i^2 = -1\): como \(i = 1\operatorname{cis}\left(\frac{\pi}{2}\right)\), multiplicar CUALQUIER número complejo por \(i\) lo rota \(90^\circ\) (\(\frac{\pi}{2}\) radianes) en sentido antihorario sin alterar su longitud. Hacerlo dos veces —multiplicar por \(i^2\)— rota \(180^\circ\), lo que equivale a multiplicar por \(-1\).
+
+Observa un ejemplo concreto de rotación y escalamiento en el plano de Argand: toma \(z_1 = \sqrt{3} + i = 2\operatorname{cis}\left(\frac{\pi}{6}\right)\) y \(z_2 = \frac{3}{4} + \frac{3\sqrt{3}}{4}i = 1.5\operatorname{cis}\left(\frac{\pi}{3}\right)\). Multiplicar \(z_1\) por \(z_2\) escala su radio de \(2\) a \(2 \times 1.5 = 3\) y rota su ángulo desde \(\frac{\pi}{6}\) en \(+\frac{\pi}{3}\) hasta \(\frac{\pi}{2}\), aterrizando directamente sobre \(z_1 z_2 = 3\operatorname{cis}\left(\frac{\pi}{2}\right) = 3i\).
+
+[GRAPH]
+type: parametric2d
+title: Multiplicación geométrica: \(z_1 = 2\operatorname{cis}(\pi/6)\) por \(z_2 = 1.5\operatorname{cis}(\pi/3)\) da \(z_1 z_2 = 3i\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -3.5, 3.5
+yrange: -1.5, 3.6
+trace: 2*cos(t), 2*sin(t) | label: \(|z| = 2\) | color: #94a3b8
+trace: 3*cos(t), 3*sin(t) | label: \(|z| = 3\) | color: #9333ea
+segment: 0, 0, sqrt(3), 1 | label: \(z_1\) | color: #2563eb
+segment: 0, 0, 0.75, 0.75*sqrt(3) | label: \(z_2\) | color: #16a34a
+segment: 0, 0, 0, 3 | label: \(z_1 z_2\) | color: #dc2626
+point: sqrt(3), 1 | label: \(z_1\)
+point: 0.75, 0.75*sqrt(3) | label: \(z_2\)
+point: 0, 3 | label: \(3i\)
+[/GRAPH]
+
+Conviene tener presente una advertencia sutil acerca de los argumentos principales al multiplicar o dividir. Aunque \(\theta_1 + \theta_2\) es SIEMPRE un argumento válido en \(\arg(z_1 z_2)\), puede caer fuera del intervalo principal \((-\pi, \pi]\). Por ejemplo, toma \(z_1 = z_2 = -1 + i\), de modo que \(\operatorname{Arg}(z_1) = \operatorname{Arg}(z_2) = \frac{3\pi}{4}\). Su suma es \(\frac{3\pi}{4} + \frac{3\pi}{4} = \frac{3\pi}{2} > \pi\). Como \(z_1 z_2 = (-1 + i)^2 = -2i\), su argumento principal es \(\operatorname{Arg}(z_1 z_2) = -\frac{\pi}{2} = \frac{3\pi}{2} - 2\pi\).
+
+[CALLOUT]
+id: principal-arg-wrap
+label: Error frecuente
+title: Los argumentos principales pueden desbordarse en \(\pm 2\pi\)
+tone: caution
+
+En general, \(\operatorname{Arg}(z_1 z_2) \ne \operatorname{Arg}(z_1) + \operatorname{Arg}(z_2)\). En su lugar, \(\operatorname{Arg}(z_1 z_2) = \operatorname{Arg}(z_1) + \operatorname{Arg}(z_2) + 2\pi k\), donde \(k \in \{-1, 0, 1\}\) se elige para que el resultado quede dentro de \((-\pi, \pi]\). El mismo ajuste se aplica a \(\operatorname{Arg}(z_1 / z_2) = \operatorname{Arg}(z_1) - \operatorname{Arg}(z_2) + 2\pi k\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: A]
+Sean \(z_1 = 6\operatorname{cis}\left(\frac{5\pi}{12}\right)\) y \(z_2 = 2\operatorname{cis}\left(-\frac{\pi}{4}\right)\). Expresa \(\frac{z_1}{z_2}\) en forma rectangular estándar.
+
+(A) \(-\frac{3}{2} + \frac{3\sqrt{3}}{2}\,i\)
+(B) \(\frac{3\sqrt{3}}{2} + \frac{3}{2}\,i\)
+(C) \(\frac{3}{2} + \frac{3\sqrt{3}}{2}\,i\)
+(D) \(-\frac{3\sqrt{3}}{2} + \frac{3}{2}\,i\)
+(E) \(-\frac{3}{2} - \frac{3\sqrt{3}}{2}\,i\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+En el plano de Argand, un número complejo \(z\) se rota \(\frac{\pi}{3}\) radianes en sentido antihorario alrededor del origen y luego se estira desde el origen por un factor de \(4\). ¿Por qué número complejo en forma estándar debe multiplicarse \(z\) para producir esta transformación?
+
+(A) \(2 + 2\sqrt{3}\,i\)
+(B) \(2\sqrt{3} + 2i\)
+(C) \(2 - 2\sqrt{3}\,i\)
+(D) \(4 + \frac{\pi}{3}\,i\)
+(E) \(-2 + 2\sqrt{3}\,i\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Supón que dos números complejos no nulos satisfacen \(\operatorname{Arg}(z_1) = -\frac{2\pi}{3}\) y \(\operatorname{Arg}(z_2) = -\frac{5\pi}{6}\). ¿Cuánto vale \(\operatorname{Arg}(z_1 z_2)\)?
+
+(A) \(\frac{\pi}{2}\)
+(B) \(-\frac{3\pi}{2}\)
+(C) \(-\frac{\pi}{2}\)
+(D) \(\frac{3\pi}{2}\)
+(E) \(\frac{\pi}{6}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Sean \(z_1 = 1 + i\) y \(z_2 = \sqrt{3} + i\). Comparando las formas rectangular y polar del producto \(z_1 z_2\), halla el valor exacto de \(\cos\left(\frac{5\pi}{12}\right)\).
+
+(A) \(\frac{\sqrt{6} - \sqrt{2}}{4}\)
+(B) \(\frac{\sqrt{6} + \sqrt{2}}{4}\)
+(C) \(\frac{\sqrt{3} - 1}{2}\)
+(D) \(\frac{\sqrt{2} - \sqrt{6}}{4}\)
+(E) \(\frac{\sqrt{3} + 1}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Supón que \(z \ne 0\) cumple \(\operatorname{Arg}(z) = \theta\) con \(-\frac{\pi}{2} < \theta \le \frac{\pi}{2}\). ¿Cuánto vale \(\operatorname{Arg}\!\left(\frac{i}{\overline{z}}\right)\)?
+
+(A) \(\theta + \frac{\pi}{2}\)
+(B) \(\frac{\pi}{2} - \theta\)
+(C) \(-\theta - \frac{\pi}{2}\)
+(D) \(\theta - \frac{\pi}{2}\)
+(E) \(\pi - \theta\)
+[/BONUS]

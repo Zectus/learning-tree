@@ -1,0 +1,276 @@
+=== SECTION 1: Odd roots versus even roots in inequalities ===
+
+When we solve a radical equation such as \(\sqrt{x + 2} = x\), we can square both sides and check the handful of candidate roots at the end. Inequalities do not give us that luxury: an inequality produces entire intervals of real numbers, so you cannot check every number in the solution set one by one. If an algebraic step either adds an invalid interval or deletes a valid one, the final answer is silently wrong.
+
+Before doing any algebra on a radical inequality, look at the INDEX of the root. Odd-index roots and even-index roots obey completely different rules on the real line.
+
+An odd-index root such as the cube root \(\sqrt[3]{u}\) is defined for EVERY real number \(u \in \mathbb{R}\), keeps the sign of \(u\), and is strictly increasing everywhere on \(\mathbb{R}\). Because \(u \mapsto u^3\) is also strictly increasing on all of \(\mathbb{R}\), cubing both sides of an inequality is a reversible, order-preserving operation with no domain restrictions and no sign cases.
+
+[CALLOUT]
+id: odd-root-rule
+label: Equivalence
+title: Odd-index radical inequalities
+tone: key
+
+For any real expressions \(A(x)\) and \(B(x)\) and any positive odd integer \(2k + 1\) (in particular, cube roots):
+\[
+\sqrt[2k+1]{A(x)} < B(x) \iff A(x) < B(x)^{2k+1},
+\]
+and the same equivalence holds with \(\le\), \(>\), or \(\ge\) in place of \(<\). No domain restriction on \(A(x)\) and no sign condition on \(B(x)\) is required.
+[/CALLOUT]
+
+Consider the cube-root inequality \(\sqrt[3]{x - 1} < x - 1\). On the graph below, the curve \(y = \sqrt[3]{x - 1}\) is defined for every real \(x\) and crosses the line \(y = x - 1\) at three points: \((0, -1)\), \((1, 0)\), and \((2, 1)\). Notice that \(y = \sqrt[3]{x - 1}\) lies below \(y = x - 1\) on \((0, 1)\) and \((2, \infty)\), including negative values of \(x - 1\).
+
+[GRAPH]
+type: function2d
+title: Comparing \(y = \sqrt[3]{x - 1}\) and \(y = x - 1\) across all of \(\mathbb{R}\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1.5, 3.5
+yrange: -2.5, 2.5
+trace: cbrt(x - 1) | label: \(y = \sqrt[3]{x - 1}\)
+trace: x - 1 | label: \(y = x - 1\)
+point: 0, -1 | label: \((0, -1)\)
+point: 1, 0 | label: \((1, 0)\)
+point: 2, 1 | label: \((2, 1)\)
+[/GRAPH]
+
+Algebraically, applying [REF: odd-root-rule | the odd-root equivalence] directly gives
+\[
+x - 1 < (x - 1)^3 \iff (x - 1)^3 - (x - 1) > 0 \iff (x - 1)(x - 2)x > 0.
+\]
+Testing the sign intervals of \(x(x - 1)(x - 2)\) yields \(x \in (0, 1) \cup (2, \infty)\), matching the graph exactly without ever splitting into cases.
+
+Even-index roots behave very differently. By the principal square-root convention, \(\sqrt{u}\) is defined ONLY when \(u \ge 0\), and its output is ALWAYS non-negative (\(\sqrt{u} \ge 0\)). On the non-negative ray \([0, \infty)\), the squaring function \(u \mapsto u^2\) is strictly increasing, so comparing two even roots is straightforward as long as we keep the smaller radicand non-negative.
+
+[CALLOUT]
+id: two-even-roots
+label: Equivalence
+title: Comparing two even-index radicals
+tone: key
+
+For any real expressions \(A(x)\) and \(B(x)\):
+(1) \(\sqrt{A(x)} < \sqrt{B(x)} \iff 0 \le A(x) < B(x)\).
+(2) \(\sqrt{A(x)} \le \sqrt{B(x)} \iff 0 \le A(x) \le B(x)\).
+Notice that writing \(0 \le A(x) < B(x)\) enforces \(B(x) > 0\) automatically by transitivity, so both domains are guaranteed at once.
+[/CALLOUT]
+
+For example, to solve \(\sqrt{x + 3} < \sqrt{2x - 1}\), apply [REF: two-even-roots.1 | the strict two-radical equivalence]:
+\[
+0 \le x + 3 < 2x - 1.
+\]
+Split this chained inequality into its two conditions: \(x + 3 \ge 0\) gives \(x \ge -3\), and \(x + 3 < 2x - 1\) gives \(x > 4\). Intersecting them yields \(x \in (4, \infty)\). Checking the other domain \(2x - 1 \ge 0\) is redundant because \(2x - 1 > x + 3 \ge 0\) already forces \(2x - 1 > 0\).
+
+[QUESTION 1]
+[ANSWER: B]
+What is the solution set of \(\sqrt[3]{2x - x^2} \ge -2\)?
+
+(A) \([0, 2]\)
+(B) \([-2, 4]\)
+(C) \((-\infty, -2] \cup [4, \infty)\)
+(D) \([0, 4]\)
+(E) \((-2, 4)\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+What is the solution set of \(\sqrt{2x - 4} \le \sqrt{10 - x}\)?
+
+(A) \(\left(-\infty, \frac{14}{3}\right]\)
+(B) \([2, 10]\)
+(C) \(\left[\frac{14}{3}, 10\right]\)
+(D) \(\left[2, \frac{14}{3}\right]\)
+(E) \(\left(2, \frac{14}{3}\right)\)
+[/QUESTION]
+
+=== SECTION 2: Why naive squaring fails on \(\sqrt{A(x)} < B(x)\) and \(\sqrt{A(x)} > B(x)\) ===
+
+Trouble begins as soon as an even root is compared against an algebraic expression \(B(x)\) whose sign can change. Recall from real-number order properties that squaring preserves an inequality ONLY when both sides are non-negative. When \(B(x) < 0\), squaring reverses or destroys the comparison.
+
+Compare the two inequalities \(\sqrt{x + 2} < x\) and \(\sqrt{x + 2} > x\) visually before writing a single algebraic symbol. Both involve the curve \(y = \sqrt{x + 2}\) (which starts at \(x = -2\) and never drops below \(y = 0\)) and the line \(y = x\) (which is negative for \(x < 0\) and positive for \(x > 0\)). They cross once, at \((2, 2)\).
+
+[GRAPH]
+type: function2d
+title: Comparing \(y = \sqrt{x + 2}\) and \(y = x\) on \([-2, 5]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 5
+yrange: -2.5, 4.5
+trace: x >= -2 ? sqrt(x + 2) : (0/0) | label: \(y = \sqrt{x + 2}\)
+trace: x | label: \(y = x\)
+point: -2, 0 | label: \((-2, 0)\)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+Look closely at what happens if someone naively squares both sides of \(\sqrt{x + 2} < x\):
+\[
+x + 2 < x^2 \iff x^2 - x - 2 > 0 \iff (x - 2)(x + 1) > 0 \iff x \in (-\infty, -1) \cup (2, \infty).
+\]
+That naive result is badly wrong on the left! Look at the graph:
+- For \(x < -2\), \(\sqrt{x + 2}\) is not even a real number, yet naive squaring kept \((-\infty, -2)\).
+- For \(x \in [-2, -1)\), \(\sqrt{x + 2} \ge 0\) while \(x < 0\), so a non-negative number is certainly NOT less than a negative number! For example, at \(x = -1.5\), \(\sqrt{0.5} \approx 0.71\) is greater than \(-1.5\), not less. Naive squaring ADDED the entire extraneous interval \((-\infty, -1)\).
+
+Now watch the opposite error happen on \(\sqrt{x + 2} > x\). Naive squaring gives
+\[
+x + 2 > x^2 \iff x^2 - x - 2 < 0 \iff x \in (-1, 2).
+\]
+Test \(x = -2\) or \(x = -1.5\) in the original inequality \(\sqrt{x + 2} > x\): at \(x = -2\), \(\sqrt{0} = 0 > -2\) is TRUE! At \(x = -1.5\), \(\sqrt{0.5} > -1.5\) is TRUE! Every point in \([-2, 0)\) makes the left side non-negative and the right side strictly negative, so \(\sqrt{x + 2} > x\) holds AUTOMATICALLY across \([-2, 0)\). Naive squaring DELETED the valid interval \([-2, -1]\).
+
+[CALLOUT]
+id: squaring-trap
+label: Common pitfall
+title: The two opposite failures of naive squaring
+tone: caution
+
+Squaring both sides of an even-root inequality without checking the sign of the right-hand side \(B(x)\) breaks in opposite directions:
+(1) In \(\sqrt{A(x)} < B(x)\) or \(\sqrt{A(x)} \le B(x)\), naive squaring ADDS extraneous intervals where \(A(x) < 0\) or \(B(x) < 0\).
+(2) In \(\sqrt{A(x)} > B(x)\) or \(\sqrt{A(x)} \ge B(x)\), naive squaring DELETES valid intervals where \(A(x) \ge 0\) and \(B(x) < 0\).
+[/CALLOUT]
+
+The single bridge that prevents both failures is checking the sign of \(B(x)\) BEFORE squaring.
+
+=== SECTION 3: Upper-bounded even roots: \(\sqrt{A(x)} < B(x)\) and \(\sqrt{A(x)} \le B(x)\) ===
+
+Suppose we want to solve \(\sqrt{A(x)} < B(x)\). Ask two questions before squaring:
+1. When is the left side defined? Exactly when \(A(x) \ge 0\).
+2. What must the sign of \(B(x)\) be for \(\sqrt{A(x)} < B(x)\) to stand any chance of holding? Since \(\sqrt{A(x)} \ge 0\), a real number \(B(x)\) strictly larger than a non-negative number MUST satisfy \(B(x) > 0\). (If \(B(x) \le 0\), no solution is possible.)
+
+Once both \(A(x) \ge 0\) and \(B(x) > 0\) hold, both sides of \(\sqrt{A(x)} < B(x)\) are non-negative, so squaring is an exact equivalence: \(\sqrt{A(x)} < B(x) \iff A(x) < B(x)^2\).
+
+For the non-strict version \(\sqrt{A(x)} \le B(x)\), the only change is that \(B(x) = 0\) IS permitted (yielding \(0 \le 0\) when \(A(x) = 0\)), so the sign guard relaxes from \(B(x) > 0\) to \(B(x) \ge 0\).
+
+[CALLOUT]
+id: upper-bound-radical
+label: Equivalence
+title: Upper-bounded even-root inequalities
+tone: key
+
+For any real expressions \(A(x)\) and \(B(x)\):
+(1) Strict form:
+\[
+\sqrt{A(x)} < B(x) \iff \begin{cases} A(x) \ge 0, \\ B(x) > 0, \\ A(x) < B(x)^2. \end{cases}
+\]
+(2) Non-strict form:
+\[
+\sqrt{A(x)} \le B(x) \iff \begin{cases} A(x) \ge 0, \\ B(x) \ge 0, \\ A(x) \le B(x)^2. \end{cases}
+\]
+All three conditions in the brace must hold simultaneously (intersection of the three solution sets).
+[/CALLOUT]
+
+Let us apply [REF: upper-bound-radical.2 | the non-strict upper-bound equivalence] to \(\sqrt{3x + 4} \le x\). Write all three conditions before solving any of them:
+1. Domain: \(3x + 4 \ge 0 \iff x \ge -\frac{4}{3}\).
+2. Sign of right-hand side: \(x \ge 0\).
+3. Squared inequality: \(3x + 4 \le x^2 \iff x^2 - 3x - 4 \ge 0 \iff (x - 4)(x + 1) \ge 0 \iff x \in (-\infty, -1] \cup [4, \infty)\).
+
+Now intersect all three sets:
+\[
+\left[-\frac{4}{3}, \infty\right) \cap [0, \infty) \cap \bigl((-\infty, -1] \cup [4, \infty)\bigr) = [4, \infty).
+\]
+Notice how cleanly condition (2) filtered out the false branch \(\left[-\frac{4}{3}, -1\right]\).
+
+What about a non-strict edge case where \(B(x) = 0\) creates an isolated solution? Solve \(\sqrt{x^2 - 4} \le x - 2\).
+1. Domain: \(x^2 - 4 \ge 0 \iff x \in (-\infty, -2] \cup [2, \infty)\).
+2. Sign guard: \(x - 2 \ge 0 \iff x \ge 2\).
+3. Squared inequality: \(x^2 - 4 \le (x - 2)^2 = x^2 - 4x + 4 \iff 4x \le 8 \iff x \le 2\).
+
+Intersecting \(x \ge 2\) with \(x \le 2\) (which lies inside the domain) gives the single point \(\{2\}\). Check directly: at \(x = 2\), \(\sqrt{0} = 0 \le 0\) is true, whereas for any \(x > 2\), \(\sqrt{x^2 - 4} = \sqrt{(x - 2)(x + 2)} > \sqrt{(x - 2)(x - 2)} = x - 2\).
+
+[QUESTION 3]
+[ANSWER: C]
+What is the solution set of \(\sqrt{2x + 3} < x\)?
+
+(A) \((-\infty, -1) \cup (3, \infty)\)
+(B) \(\left[-\frac{3}{2}, -1\right) \cup (3, \infty)\)
+(C) \((3, \infty)\)
+(D) \([3, \infty)\)
+(E) \((0, 3)\)
+[/QUESTION]
+
+=== SECTION 4: Lower-bounded even roots: \(\sqrt{A(x)} > B(x)\) and \(\sqrt{A(x)} \ge B(x)\) ===
+
+Now flip the inequality sign to \(\sqrt{A(x)} > B(x)\). Again ask what happens according to the sign of \(B(x)\):
+
+- Case 1 (\(B(x) < 0\)): Whenever the radical is defined (\(A(x) \ge 0\)), the left side is \(\ge 0\) while the right side is \(< 0\). Every non-negative number is automatically greater than every negative number! So NO squaring is needed or wanted here: every \(x\) satisfying \(A(x) \ge 0\) and \(B(x) < 0\) is immediately a valid solution.
+- Case 2 (\(B(x) \ge 0\)): Now both sides are non-negative, so squaring is an exact equivalence: \(\sqrt{A(x)} > B(x) \iff A(x) > B(x)^2\). Better yet, in this branch we do not even need to check \(A(x) \ge 0\) separately, because \(A(x) > B(x)^2 \ge 0\) forces \(A(x) > 0\) automatically!
+
+Because \(B(x)\) must be either negative or non-negative, the full solution set is the UNION of Case 1 and Case 2.
+
+[CALLOUT]
+id: lower-bound-radical
+label: Equivalence
+title: Lower-bounded even-root inequalities
+tone: key
+
+For any real expressions \(A(x)\) and \(B(x)\):
+(1) Strict form:
+\[
+\sqrt{A(x)} > B(x) \iff \begin{cases} A(x) \ge 0 \\ B(x) < 0 \end{cases} \quad \text{or} \quad \begin{cases} B(x) \ge 0 \\ A(x) > B(x)^2. \end{cases}
+\]
+(2) Non-strict form:
+\[
+\sqrt{A(x)} \ge B(x) \iff \begin{cases} A(x) \ge 0 \\ B(x) < 0 \end{cases} \quad \text{or} \quad \begin{cases} B(x) \ge 0 \\ A(x) \ge B(x)^2. \end{cases}
+\]
+In Case 2 of both forms, \(A(x) \ge B(x)^2 \ge 0\) guarantees the domain condition \(A(x) \ge 0\) automatically.
+[/CALLOUT]
+
+Compare the logical structure of all four single-radical forms side by side so you can choose the right system on sight.
+
+[TABLE]
+Inequality | Sign split needed? | Equivalent polynomial system
+\(\sqrt[3]{A} < B\) (or \(\le, >, \ge\)) | No | \(A < B^3\) (same inequality sign)
+\(\sqrt{A} < \sqrt{B}\) | No | \(A \ge 0\) and \(A < B\)
+\(\sqrt{A} < B\) | No (single conjunction) | \(A \ge 0\) and \(B > 0\) and \(A < B^2\)
+\(\sqrt{A} \le B\) | No (single conjunction) | \(A \ge 0\) and \(B \ge 0\) and \(A \le B^2\)
+\(\sqrt{A} > B\) | Yes (union of two branches) | (\(A \ge 0\) and \(B < 0\)) or (\(B \ge 0\) and \(A > B^2\))
+\(\sqrt{A} \ge B\) | Yes (union of two branches) | (\(A \ge 0\) and \(B < 0\)) or (\(B \ge 0\) and \(A \ge B^2\))
+[/TABLE]
+
+Let us work through a full example of [REF: lower-bound-radical.2 | the non-strict lower-bound equivalence]: solve \(\sqrt{5 - x} \ge x - 3\).
+
+- Branch 1 (\(B < 0\) and \(A \ge 0\)): We need \(5 - x \ge 0\) (\(x \le 5\)) and \(x - 3 < 0\) (\(x < 3\)). Their intersection is \((-\infty, 3)\).
+- Branch 2 (\(B \ge 0\) and \(A \ge B^2\)): We need \(x - 3 \ge 0\) (\(x \ge 3\)) and
+\[
+5 - x \ge (x - 3)^2 = x^2 - 6x + 9 \iff x^2 - 5x + 4 \le 0 \iff (x - 1)(x - 4) \le 0 \iff x \in [1, 4].
+\]
+Intersecting \([1, 4]\) with \(x \ge 3\) gives \([3, 4]\).
+
+Uniting the two branches gives
+\[
+(-\infty, 3) \cup [3, 4] = (-\infty, 4].
+\]
+Check boundary and interior points: at \(x = 0\) (in Branch 1), \(\sqrt{5} \ge -3\) holds; at \(x = 4\), \(\sqrt{1} = 1 \ge 1\) holds; at \(x = 5\), \(\sqrt{0} = 0 \ge 2\) fails.
+
+Notice a crucial detail when the radicand \(A(x)\) is quadratic: Branch 1 does NOT blindly accept every \(x\) where \(B(x) < 0\)! It ONLY accepts those \(x\) with \(B(x) < 0\) that ALSO lie in the domain \(A(x) \ge 0\). Skipping \(A(x) \ge 0\) in Branch 1 puts undefined numbers into the solution set.
+
+[QUESTION 4]
+[ANSWER: A]
+What is the solution set of \(\sqrt{x + 4} > x - 2\)?
+
+(A) \([-4, 5)\)
+(B) \((0, 5)\)
+(C) \([2, 5)\)
+(D) \((-4, 5)\)
+(E) \((-\infty, 5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+What is the solution set of \(\sqrt{x^2 - 3x} \ge x - 2\)?
+
+(A) \((-\infty, 2) \cup [4, \infty)\)
+(B) \([4, \infty)\)
+(C) \((-\infty, 0] \cup [3, \infty)\)
+(D) \((-\infty, 0) \cup [4, \infty)\)
+(E) \((-\infty, 0] \cup [4, \infty)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+What is the solution set of \(\sqrt{4 - x^2} \le x + 2\)?
+
+(A) \([0, 2]\)
+(B) \(\{-2\} \cup [0, 2]\)
+(C) \([-2, 2]\)
+(D) \((-\infty, -2] \cup [0, \infty)\)
+(E) \((0, 2]\)
+[/BONUS]

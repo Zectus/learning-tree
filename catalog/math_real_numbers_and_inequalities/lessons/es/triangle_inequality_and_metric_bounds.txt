@@ -1,0 +1,233 @@
+=== SECTION 1: La desigualdad triangular y su condición exacta de igualdad ===
+
+El valor absoluto respeta exactamente la multiplicación: \(|ab| = |a|\,|b|\). La adición es más sutil: cuando dos números tienen signos opuestos, sumarlos produce cancelación, haciendo que \(|a + b|\) sea estrictamente menor que \(|a| + |b|\) (por ejemplo, \(|5 + (-3)| = 2 < 5 + 3 = 8\)). La desigualdad triangular captura esta cota superior exacta y resulta ser la desigualdad más importante para estimar tamaños y errores en toda la matemática.
+
+[CALLOUT]
+id: triangle-ineq
+label: Teorema
+title: La desigualdad triangular y su condición de igualdad
+tone: key
+
+Para todos los números reales \(a, b \in \mathbb{R}\):
+
+(1) \(|a + b| \le |a| + |b|\).
+(2) La igualdad \(|a + b| = |a| + |b|\) se cumple si y solo si \(ab \ge 0\) (es decir, \(a\) y \(b\) tienen el mismo signo, o al menos uno de ellos es \(0\)).
+[/CALLOUT]
+
+Conviene conocer DOS demostraciones complementarias de [REF: triangle-ineq | la desigualdad triangular], porque la primera es la forma más rápida de verificar la cota, mientras que la segunda revela de inmediato la condición exacta de igualdad.
+
+Demostración 1 (sumando cotas): Para todo número real \(u\), se cumple \(-|u| \le u \le |u|\) (compruebe: si \(u \ge 0\) esto dice \(-u \le u \le u\), y si \(u < 0\) dice \(u \le u \le -u\)). Escriba esto para \(a\) y para \(b\):
+\[
+-|a| \le a \le |a| \qquad \text{y} \qquad -|b| \le b \le |b|.
+\]
+Sumar ambas desigualdades del mismo sentido da
+\[
+-(|a| + |b|) \le a + b \le |a| + |b|,
+\]
+lo cual, por nuestra equivalencia básica del valor absoluto, es idéntico a \(|a + b| \le |a| + |b|\).
+
+Demostración 2 (elevando al cuadrado lados no negativos): Como tanto \(|a + b|\) como \(|a| + |b|\) son no negativos, compararlos equivale a comparar sus cuadrados. Calcule la diferencia:
+\[
+(|a| + |b|)^2 - |a + b|^2 = \bigl(|a|^2 + 2|a|\,|b| + |b|^2\bigr) - (a + b)^2 = \bigl(a^2 + 2|ab| + b^2\bigr) - (a^2 + 2ab + b^2) = 2\bigl(|ab| - ab\bigr).
+\]
+Dado que \(ab \le |ab|\) para todo número real \(ab\), tenemos \(2(|ab| - ab) \ge 0\), de modo que \(|a + b|^2 \le (|a| + |b|)^2\) y por ende \(|a + b| \le |a| + |b|\). Mejor aún, la diferencia \(2(|ab| - ab)\) se anula SI Y SOLO SI \(|ab| = ab\), lo cual por la definición a trozos del valor absoluto se cumple si y solo si \(ab \ge 0\). Esto demuestra [REF: triangle-ineq.2 | la condición de igualdad] en una línea.
+
+Reemplazar \(b\) por \(-b\) da la versión inmediata para diferencias \(|a - b| \le |a| + |b|\), y aplicar [REF: triangle-ineq.1 | la desigualdad] repetidamente da la versión de varios términos \(|a_1 + a_2 + \dots + a_n| \le |a_1| + |a_2| + \dots + |a_n|\).
+
+Observe cómo [REF: triangle-ineq.2 | la condición de igualdad] resuelve ecuaciones de suma de distancias instantáneamente SIN dividir en regiones.
+
+Ejemplo 1: Resuelva \(|x - 1| + |x - 5| = 4\).
+Reescriba \(|x - 5| = |5 - x|\) para que las dos expresiones interiores sumen la constante \(4\):
+\[
+(x - 1) + (5 - x) = 4.
+\]
+Por [REF: triangle-ineq.1 | la desigualdad triangular], para TODO \(x \in \mathbb{R}\),
+\[
+|x - 1| + |5 - x| \ge |(x - 1) + (5 - x)| = |4| = 4.
+\]
+Por [REF: triangle-ineq.2 | la condición de igualdad], la igualdad se cumple precisamente cuando los dos sumandos satisfacen
+\[
+(x - 1)(5 - x) \ge 0 \iff (x - 1)(x - 5) \le 0 \iff x \in [1, 5].
+\]
+Geométricamente, \(|x - 1| + |x - 5|\) es la suma de distancias desde \(x\) hasta \(1\) y hasta \(5\); esa suma se minimiza (y es constante igual a \(4\)) en todo el segmento \([1, 5]\) entre ambos puntos, y crece estrictamente fuera de \([1, 5]\).
+
+[GRAPH]
+type: function2d
+title: Valle plano de \(y = |x - 1| + |x - 5|\) alcanzando su mínimo \(4\) en todo \([1, 5]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1.5, 7.5
+yrange: 0, 11
+trace: abs(x - 1) + abs(x - 5) | label: \(y = |x - 1| + |x - 5|\)
+trace: 4 | label: \(y = 4\) | color: #f59e0b
+segment: 1, 4, 5, 4 | label: igualdad en [1, 5] | color: #10b981
+point: 1, 4 | label: \((1, 4)\)
+point: 5, 4 | label: \((5, 4)\)
+[/GRAPH]
+
+Ejemplo 2: Resuelva \(|x - 2| + |x + 3| = |2x + 1|\).
+Note de inmediato que \((x - 2) + (x + 3) = 2x + 1\). Así, la ecuación tiene la forma exacta \(|a| + |b| = |a + b|\) con \(a = x - 2\) y \(b = x + 3\). Por [REF: triangle-ineq.2 | la condición de igualdad], esto se cumple si y solo si
+\[
+(x - 2)(x + 3) \ge 0 \iff x \in (-\infty, -3] \cup [2, \infty).
+\]
+No hizo falta ninguna separación en tres regiones.
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(|2x - 6| + |x + 1| = |3x - 5|\)?
+
+(A) \([-1, 3]\)
+(B) \((-1, 3)\)
+(C) \((-\infty, -1] \cup [3, \infty)\)
+(D) \(\left\{\frac{5}{3}\right\}\)
+(E) \([3, \infty)\)
+[/QUESTION]
+
+=== SECTION 2: La desigualdad triangular inversa ===
+
+La desigualdad triangular impone una COTA SUPERIOR a \(|a + b|\) (y a \(|a - b|\)). Con igual frecuencia necesitamos una COTA INFERIOR para \(|a - b|\) o \(|a + b|\) —por ejemplo, para garantizar que un número perturbado \(x\) se mantenga a salvo lejos de \(0\) cuando \(x\) está cerca de un objetivo no nulo \(a\)—. Ese es exactamente el papel de la desigualdad triangular inversa.
+
+[CALLOUT]
+id: reverse-triangle
+label: Teorema
+title: La desigualdad triangular inversa
+tone: key
+
+Para todos los números reales \(a, b \in \mathbb{R}\):
+\[
+\bigl|\,|a| - |b|\,\bigr| \le |a - b|.
+\]
+En particular, retirar las barras exteriores da tanto \(|a| - |b| \le |a - b|\) como \(|b| - |a| \le |a - b|\), así como \(|a + b| \ge \bigl|\,|a| - |b|\,\bigr|\).
+[/CALLOUT]
+
+La deducción utiliza un truco clásico de «sumar y restar» junto con [REF: triangle-ineq.1 | la desigualdad triangular]. Comience escribiendo \(a = (a - b) + b\). Al aplicar [REF: triangle-ineq.1 | la desigualdad triangular] se obtiene
+\[
+|a| = |(a - b) + b| \le |a - b| + |b|.
+\]
+Restar \(|b|\) de ambos lados produce
+\[
+|a| - |b| \le |a - b|.
+\]
+Ahora intercambie los papeles de \(a\) y \(b\): \(|b| - |a| \le |b - a|\). Como \(|b - a| = |a - b|\), esto dice \(-(|a| - |b|) \le |a - b|\). Combinar \(-|a - b| \le |a| - |b| \le |a - b|\) da
+\[
+\bigl|\,|a| - |b|\,\bigr| \le |a - b|.
+\]
+Reemplazar \(b\) por \(-b\) proporciona la forma compañera \(\bigl|\,|a| - |b|\,\bigr| \le |a + b|\).
+
+Observe lo que [REF: reverse-triangle | la desigualdad triangular inversa] nos indica concretamente: las magnitudes \(|a|\) y \(|b|\) no pueden diferir en MÁS que la distancia \(|a - b|\) entre \(a\) y \(b\). Por ejemplo, si \(x\) satisface \(|x - 5| < 1\), entonces \(||x| - 5| \le |x - 5| < 1\), lo que fuerza \(4 < |x| < 6\) —¡y en particular garantiza la cota inferior estricta \(|x| > 4 > 0\)!
+
+[QUESTION 2]
+[ANSWER: A]
+Suponga que \(a\) y \(b\) son números reales que satisfacen \(|a| = 7\) y \(|a - b| < 2\). ¿Cuál es el rango más ajustado garantizado para \(|b|\)?
+
+(A) \(5 < |b| < 9\)
+(B) \(0 \le |b| < 9\)
+(C) \(5 \le |b| \le 9\)
+(D) \(7 < |b| < 9\)
+(E) \(2 < |b| < 7\)
+[/QUESTION]
+
+=== SECTION 3: Acotación de expresiones algebraicas perturbadas ===
+
+Una destreza central en análisis y matemática aplicada es la propagación de errores: supongamos que \(x\) aproxima un valor conocido \(a\) dentro de cierta tolerancia \(\delta > 0\), es decir, \(|x - a| < \delta\). ¿Con qué precisión podemos acotar el error resultante en una cantidad derivada como \(mx\), \(x^2\) o \(\frac{1}{x}\) únicamente en términos de \(\delta\) y \(a\) —sin que quede ninguna \(x\) en la cota final?
+
+Caso 1: Expresiones lineales \(mx + c\). Saque factor común la pendiente \(m\):
+\[
+|(mx + c) - (ma + c)| = |m(x - a)| = |m|\,|x - a| < |m|\,\delta.
+\]
+Aquí el factor \(|m|\) ya es una constante independiente de \(x\).
+
+Caso 2: Expresiones cuadráticas \(x^2\). Factorice la diferencia de cuadrados:
+\[
+|x^2 - a^2| = |x - a|\,|x + a|.
+\]
+Ahora tropezamos con un obstáculo real: el segundo factor \(|x + a|\) aún depende de \(x\). Si \(\delta\) pudiera ser arbitrariamente enorme, \(|x + a|\) también podría ser arbitrariamente grande. Para sustituir \(|x + a|\) por una constante, imponemos una cota preliminar sobre \(\delta\) —lo más común es \(\delta \le 1\)— y reescribimos \(x + a\) en función de la pieza pequeña conocida \(x - a\):
+\[
+|x + a| = |(x - a) + 2a| \le |x - a| + 2|a| < 1 + 2|a|.
+\]
+Multiplicar por \(|x - a| < \delta\) da una cota limpia de múltiplo constante válida siempre que \(|x - a| < \delta \le 1\):
+\[
+|x^2 - a^2| < (1 + 2|a|)\,\delta.
+\]
+Por ejemplo, cerca de \(a = 2\) con \(|x - 2| < \delta \le 1\), obtenemos \(|x + 2| < 1 + 4 = 5\), de modo que \(|x^2 - 4| < 5\delta\). Si deseamos \(|x^2 - 4| < 0.05\), elegir \(\delta = 0.01\) (que satisface \(\delta \le 1\)) garantiza \(|x^2 - 4| < 5(0.01) = 0.05\).
+
+Caso 3: Expresiones recíprocas \(\frac{1}{x}\) cuando \(a \ne 0\). Combine sobre un denominador común:
+\[
+\left|\frac{1}{x} - \frac{1}{a}\right| = \frac{|a - x|}{|a|\,|x|} = \frac{|x - a|}{|a|\,|x|}.
+\]
+¡Aquí \(|x|\) está en el DENOMINADOR! Para acotar SUPERIORMENTE la fracción, necesitamos una cota INFERIOR estrictamente positiva sobre \(|x|\) (manteniendo a \(x\) acotadamente alejado de \(0\)). Imponga la cota preliminar \(\delta \le \frac{|a|}{2}\) y aplique [REF: reverse-triangle | la desigualdad triangular inversa]:
+\[
+|x| = |a - (a - x)| \ge |a| - |x - a| > |a| - \frac{|a|}{2} = \frac{|a|}{2} > 0.
+\]
+Como tanto \(|x|\) como \(\frac{|a|}{2}\) son estrictamente positivos, tomar recíprocos invierte la desigualdad a \(\frac{1}{|x|} < \frac{2}{|a|}\). Sustituir de vuelta produce, para todo \(|x - a| < \delta \le \frac{|a|}{2}\),
+\[
+\left|\frac{1}{x} - \frac{1}{a}\right| < \frac{2}{|a|^2}\,\delta.
+\]
+Note cuán concreto es esto cuando \(a = 2\): acotar \(\delta \le \frac{2}{2} = 1\) garantiza \(|x| > 1\), de modo que \(\left|\frac{1}{x} - \frac{1}{2}\right| < \frac{1}{2}\delta\) en todo el intervalo \((1, 3)\). La gráfica inferior representa el error real \(y = \left|\frac{1}{x} - \frac{1}{2}\right|\) frente a la envolvente lineal \(y = \frac{1}{2}|x - 2|\) en \((1, 3)\), mostrando que la envolvente domina con seguridad al error real en toda la ventana acotada.
+
+[GRAPH]
+type: function2d
+title: Error recíproco \(y = \left|\frac{1}{x} - \frac{1}{2}\right|\) acotado por \(y = \frac{1}{2}|x - 2|\) en \((1, 3)\)
+xlabel: \(x\)
+ylabel: error
+xrange: 1.05, 3
+yrange: 0, 0.55
+trace: abs(1/x - 0.5) | label: \(\left|\frac{1}{x} - \frac{1}{2}\right|\)
+trace: 0.5*abs(x - 2) | label: \(\frac{1}{2}|x - 2|\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+[CALLOUT]
+id: error-bound-recipe
+label: Procedimiento
+title: Acotación de perturbaciones en dos etapas
+tone: note
+
+Para acotar \(|f(x) - f(a)|\) en términos de \(|x - a| < \delta\):
+(1) Factorice \(|x - a|\) de modo que \(|f(x) - f(a)| = |x - a|\cdot |g(x, a)|\).
+(2) Acote \(\delta\) primero (por ejemplo \(\delta \le 1\) para polinomios, o \(\delta \le |a|/2\) cuando \(|x|\) está en un denominador) y use [REF: triangle-ineq | la desigualdad triangular] o [REF: reverse-triangle | la desigualdad triangular inversa] para acotar \(|g(x, a)| \le M\) por una constante independiente de \(x\), dejando \(|f(x) - f(a)| < M\delta\).
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: B]
+Suponga que queremos garantizar \(|x^2 - 9| < 0.07\) siempre que \(|x - 3| < \delta\), utilizando el método en dos etapas: primero acotar \(\delta \le 1\) y aplicar la desigualdad triangular a \(|x + 3| = |(x - 3) + 6|\) para obtener \(|x + 3| < M\), y luego elegir \(\delta\) de modo que \(M\delta \le 0.07\). ¿Qué constante \(M\) y qué mayor valor resultante de \(\delta\) produce este método?
+
+(A) \(M = 6\), \(\delta = \frac{0.07}{6}\)
+(B) \(M = 7\), \(\delta = 0.01\)
+(C) \(M = 4\), \(\delta = 0.0175\)
+(D) \(M = 9\), \(\delta = \frac{0.07}{9}\)
+(E) \(M = 10\), \(\delta = 0.007\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Suponga que \(|x - 4| < \delta\) con \(0 < \delta \le 2\). Al aplicar la desigualdad triangular inversa para acotar inferiormente \(|x|\), ¿qué cota inferior estricta sobre \(|x|\) y qué cota superior resultante sobre \(\left|\frac{1}{x} - \frac{1}{4}\right|\) se obtienen?
+
+(A) \(|x| > 2\) y \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{2}\)
+(B) \(|x| > 4\) y \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{16}\)
+(C) \(|x| > 6\) y \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{24}\)
+(D) \(|x| > 2\) y \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{8}\)
+(E) \(|x| > 1\) y \(\left|\frac{1}{x} - \frac{1}{4}\right| < \frac{\delta}{4}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Cuál es el valor mínimo de \(f(x) = |x + 2| + |x - 1| + |x - 6|\) sobre todo \(x \in \mathbb{R}\), y para qué \(x\) se alcanza?
+
+(A) Mínimo \(6\), alcanzado en \([-2, 6]\)
+(B) Mínimo \(8\), alcanzado en \([-2, 6]\)
+(C) Mínimo \(9\), alcanzado únicamente en \(x = 0\)
+(D) Mínimo \(7\), alcanzado únicamente en \(x = 1\)
+(E) Mínimo \(8\), alcanzado únicamente en \(x = 1\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Para números reales \(a\), \(b\) y \(c\), ¿bajo qué condición exacta se cumple la igualdad \(|a - c| = |a - b| + |b - c|\)?
+
+(A) \(a \le b \le c\) únicamente
+(B) \(a + b + c \ge 0\)
+(C) O bien \(a \le b \le c\), o bien \(c \le b \le a\) (es decir, \(b\) se encuentra entre \(a\) y \(c\), inclusive)
+(D) \(b = \frac{a + c}{2}\) únicamente
+(E) \(ac \ge 0\)
+[/BONUS]

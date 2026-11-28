@@ -1,0 +1,230 @@
+=== SECTION 1: Subespacios cíclicos y matrices compañeras ===
+
+Tanto la diagonalización como la triangularización superior exigen que \(p_A(x)\) se escinda completamente en factores lineales sobre el cuerpo base \(F\). ¿Qué ocurre si trabaja sobre \(\mathbb{Q}\) o \(\mathbb{R}\) y se niega a ampliar el cuerpo —por ejemplo, con una matriz de rotación cuyo polinomio característico es \(x^2 + 1\), o una matriz racional con polinomio característico irreducible \(x^3 - 2\)? Sin valores propios en \(F\), los vectores propios desaparecen por completo. Sin embargo, existe una forma canónica por bloques que funciona sobre TODO cuerpo \(F\) sin factorizar jamás \(p_A(x)\) en factores lineales. Su bloque constructivo no es una recta propia, sino la órbita generada al aplicar repetidamente \(T\) a un único vector.
+
+[CALLOUT]
+id: cyclic-subspace
+label: Definición
+title: El anulador respecto a \(\mathbf{v}\) y el subespacio \(T\)-cíclico
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre un espacio de dimensión finita sobre \(F\), y sea \(\mathbf{v} \in V \setminus \{\mathbf{0}\}\).
+
+(1) El polinomio anulador de \(\mathbf{v}\), \(f_{\mathbf{v}}(x) \in F[x]\), es el único polinomio mónico de menor grado positivo tal que \(f_{\mathbf{v}}(T)\mathbf{v} = \mathbf{0}\).
+(2) Si \(d = \deg(f_{\mathbf{v}})\), el subespacio \(T\)-cíclico generado por \(\mathbf{v}\) es
+\[
+Z(\mathbf{v}; T) = \operatorname{span}\{\mathbf{v},\; T\mathbf{v},\; T^2\mathbf{v},\; \dots,\; T^{d-1}\mathbf{v}\}.
+\]
+[/CALLOUT]
+
+Compruebe por qué \(f_{\mathbf{v}}(x)\) siempre existe, es único y divide a \(m_T(x)\): como \(m_T(T)\mathbf{v} = \mathbf{0}\), el conjunto de polinomios \(g(x) \in F[x]\) con \(g(T)\mathbf{v} = \mathbf{0}\) contiene elementos no nulos. Tomando uno mónico \(f_{\mathbf{v}}(x)\) de grado positivo mínimo \(d \ge 1\), exactamente el mismo argumento del algoritmo de la división empleado para los polinomios mínimos demuestra que \(g(T)\mathbf{v} = \mathbf{0}\) si y solo si \(f_{\mathbf{v}}(x) \mid g(x)\); en particular, \(f_{\mathbf{v}}(x) \mid m_T(x)\).
+
+Aún mejor, el conjunto generador \(\mathcal{C} = \{\mathbf{v}, T\mathbf{v}, \dots, T^{d-1}\mathbf{v}\}\) es automáticamente una BASE de \(Z(\mathbf{v}; T)\), ¡y \(Z(\mathbf{v}; T)\) es \(T\)-invariante!
+- Independencia lineal: si \(a_0 \mathbf{v} + a_1 T\mathbf{v} + \dots + a_{d-1} T^{d-1}\mathbf{v} = \mathbf{0}\) sin que todos los \(a_j\) sean \(0\), entonces el polinomio no nulo \(g(x) = a_0 + a_1 x + \dots + a_{d-1} x^{d-1}\) de grado \(< d\) satisfaría \(g(T)\mathbf{v} = \mathbf{0}\), contradiciendo la minimalidad de \(d = \deg(f_{\mathbf{v}})\). Así, \(\dim Z(\mathbf{v}; T) = d\).
+- \(T\)-invariancia y forma matricial: escriba
+\[
+f_{\mathbf{v}}(x) = x^d + c_{d-1} x^{d-1} + \dots + c_1 x + c_0.
+\]
+Como \(f_{\mathbf{v}}(T)\mathbf{v} = \mathbf{0}\), despejar \(T^d \mathbf{v}\) da
+\[
+T^d \mathbf{v} = -c_0 \mathbf{v} - c_1 T\mathbf{v} - \dots - c_{d-1} T^{d-1}\mathbf{v} \in Z(\mathbf{v}; T).
+\]
+Observe lo que \(T\) le hace a cada vector de la base cíclica ordenada \(\mathcal{C} = (\mathbf{v}, T\mathbf{v}, \dots, T^{d-1}\mathbf{v})\): envía el primer vector al segundo, el segundo al tercero, ..., el \((d - 1)\)-ésimo al \(d\)-ésimo, y el \(d\)-ésimo vector \(T^{d-1}\mathbf{v}\) a \(T^d\mathbf{v} = -c_0\mathbf{v} - c_1 T\mathbf{v} - \dots - c_{d-1} T^{d-1}\mathbf{v}\). ¡Escribir esas imágenes como columnas produce la matriz compañera de \(f_{\mathbf{v}}\)!
+
+[CALLOUT]
+id: companion-matrix
+label: Definición y teorema
+title: Matriz compañera \(C(f)\)
+tone: key
+
+Para todo polinomio mónico \(f(x) = x^d + c_{d-1} x^{d-1} + \dots + c_1 x + c_0 \in F[x]\) (\(d \ge 1\)), su matriz compañera \(d \times d\) es
+\[
+C(f) = \begin{bmatrix} 0 & 0 & \cdots & 0 & -c_0 \\ 1 & 0 & \cdots & 0 & -c_1 \\ 0 & 1 & \cdots & 0 & -c_2 \\ \vdots & \vdots & \ddots & \vdots & \vdots \\ 0 & 0 & \cdots & 1 & -c_{d-1} \end{bmatrix}
+\]
+(para \(d = 1\) y \(f(x) = x - \lambda\), \(C(x - \lambda) = [\lambda]\)).
+
+(1) En la base cíclica \(\mathcal{C} = (\mathbf{v}, T\mathbf{v}, \dots, T^{d-1}\mathbf{v})\) de \(Z(\mathbf{v}; T)\), la matriz de restricción es \([T|_{Z(\mathbf{v}; T)}]_{\mathcal{C}} = C(f_{\mathbf{v}})\).
+(2) TANTO el polinomio mínimo COMO el polinomio característico de \(C(f)\) son iguales a \(f(x)\):
+\[
+m_{C(f)}(x) = p_{C(f)}(x) = f(x).
+\]
+[/CALLOUT]
+
+Demostremos [REF: companion-matrix.2 | \(m_{C(f)} = p_{C(f)} = f\)] limpiamente sin siquiera necesitar una expansión tediosa de determinantes. Observe la base estándar de \(F^d\) bajo \(C = C(f)\): por construcción, \(C\mathbf{e}_1 = \mathbf{e}_2\), \(C^2\mathbf{e}_1 = \mathbf{e}_3\), ..., \(C^{d-1}\mathbf{e}_1 = \mathbf{e}_d\), y \(f(C)\mathbf{e}_1 = \mathbf{0}\).
+- Para TODO polinomio \(g(x) = a_0 + a_1 x + \dots + a_{d-1} x^{d-1}\) de grado \(< d\), tenemos \(g(C)\mathbf{e}_1 = a_0\mathbf{e}_1 + a_1\mathbf{e}_2 + \dots + a_{d-1}\mathbf{e}_d\), que es igual a \(\mathbf{0}\) ÚNICAMENTE cuando todos los \(a_j = 0\). Por tanto NINGÚN polinomio no nulo de grado \(< d\) anula a \(C\), de modo que \(\deg(m_C) \ge d\).
+- Mientras tanto, para todo vector de la base \(\mathbf{e}_j = C^{j-1}\mathbf{e}_1\), la conmutatividad de los polinomios en \(C\) da \(f(C)\mathbf{e}_j = C^{j-1} f(C)\mathbf{e}_1 = \mathbf{0}\), así que \(f(C) = 0\). Como \(f\) es mónico de grado \(d\) y ningún polinomio de grado menor anula a \(C\), obtenemos \(m_C(x) = f(x)\).
+- Por último, \(m_C(x)\) divide a \(p_C(x)\), y AMBOS son mónicos exactamente del mismo grado \(d\), ¡lo cual obliga a \(p_C(x) = m_C(x) = f(x)\)!
+
+[QUESTION 1]
+[ANSWER: B]
+Considere la matriz compañera \(3 \times 3\)
+\[
+A = \begin{bmatrix} 0 & 0 & -2 \\ 1 & 0 & 1 \\ 0 & 1 & 3 \end{bmatrix}.
+\]
+¿Cuáles son el polinomio característico \(p_A(x)\) y el polinomio mínimo \(m_A(x)\)?
+
+(A) \(p_A(x) = m_A(x) = x^3 + 3x^2 + x - 2\)
+(B) \(p_A(x) = m_A(x) = x^3 - 3x^2 - x + 2\)
+(C) \(p_A(x) = x^3 - 3x^2 - x + 2\) y \(m_A(x) = x^2 - 3x - 1\)
+(D) \(p_A(x) = m_A(x) = x^3 - 2x^2 + x + 3\)
+(E) \(p_A(x) = m_A(x) = x^3 + 2x^2 - x - 3\)
+[/QUESTION]
+
+=== SECTION 2: Operadores cíclicos (no derogatorios) ===
+
+¿Cuándo puede representarse un operador COMPLETO \(T : V \to V\) sobre un espacio \(n\)-dimensional mediante una ÚNICA matriz compañera \(n \times n\)? Eso ocurre precisamente cuando existe un vector cíclico \(\mathbf{v} \in V\) tal que \(Z(\mathbf{v}; T) = V\) (equivalentemente, \(\deg f_{\mathbf{v}} = n\)). Un operador así se llama cíclico (o no derogatorio). Sorprendentemente, existe una única prueba polinómica para la ciclicidad.
+
+[CALLOUT]
+id: cyclic-criterion
+label: Teorema
+title: Caracterización de operadores cíclicos (no derogatorios)
+tone: key
+
+Un operador lineal \(T : V \to V\) sobre un espacio vectorial \(n\)-dimensional \(V\) sobre \(F\) es cíclico —es decir, \(V = Z(\mathbf{v}; T)\) para algún \(\mathbf{v} \in V\), por lo que \(T\) es semejante sobre \(F\) a la única matriz compañera \(C(p_T)\)— si y solo si
+\[
+m_T(x) = p_T(x).
+\]
+[/CALLOUT]
+
+La dirección directa (\(\Rightarrow\)) es inmediata por [REF: companion-matrix.2 | los polinomios de la matriz compañera]: si \([T]_{\mathcal{C}} = C(f_{\mathbf{v}})\), entonces \(m_T = m_{C(f_{\mathbf{v}})} = p_{C(f_{\mathbf{v}})} = p_T\).
+
+La recíproca (\(\Leftarrow\)) descansa en un hecho maravillosamente concreto: para TODO operador \(T\), existe al menos un vector \(\mathbf{v} \in V\) cuyo anulador ES IGUAL al polinomio mínimo completo \(f_{\mathbf{v}}(x) = m_T(x)\). He aquí la demostración elemental en dos pasos breves:
+1. Regla de la suma coprima: Suponga que \(\mathbf{u}, \mathbf{w} \in V\) tienen anuladores primos relativos, \(\gcd(f_{\mathbf{u}}, f_{\mathbf{w}}) = 1\). Entonces el anulador de \(\mathbf{u} + \mathbf{w}\) es su producto, \(f_{\mathbf{u}+\mathbf{w}} = f_{\mathbf{u}} f_{\mathbf{w}}\).
+   ¡Compruebe ambas divisibilidades! Claramente \(f_{\mathbf{u}}(T) f_{\mathbf{w}}(T)(\mathbf{u} + \mathbf{w}) = \mathbf{0}\), por lo que \(f_{\mathbf{u}+\mathbf{w}} \mid f_{\mathbf{u}} f_{\mathbf{w}}\). Recíprocamente, aplicar \(f_{\mathbf{w}}(T)\) a \(f_{\mathbf{u}+\mathbf{w}}(T)(\mathbf{u} + \mathbf{w}) = \mathbf{0}\) anula el término en \(\mathbf{w}\) y deja \(f_{\mathbf{u}+\mathbf{w}}(T) f_{\mathbf{w}}(T)\mathbf{u} = \mathbf{0}\), de modo que \(f_{\mathbf{u}} \mid f_{\mathbf{u}+\mathbf{w}} f_{\mathbf{w}}\). Como \(\gcd(f_{\mathbf{u}}, f_{\mathbf{w}}) = 1\), debemos tener \(f_{\mathbf{u}} \mid f_{\mathbf{u}+\mathbf{w}}\). Simétricamente, \(f_{\mathbf{w}} \mid f_{\mathbf{u}+\mathbf{w}}\), y como son coprimos, \(f_{\mathbf{u}} f_{\mathbf{w}} \mid f_{\mathbf{u}+\mathbf{w}}\). Ambos son mónicos, por lo que \(f_{\mathbf{u}+\mathbf{w}} = f_{\mathbf{u}} f_{\mathbf{w}}\).
+2. Construir un vector con anulador \(m_T\): Factorice \(m_T(x) = q_1(x)^{e_1} q_2(x)^{e_2}\cdots q_k(x)^{e_k}\) en potencias de polinomios mónicos irreducibles distintos sobre \(F\). Para cada \(i\), como \(m_T(x) / q_i(x)\) tiene grado estrictamente menor que \(m_T(x)\), NO anula a \(T\); por lo tanto podemos elegir \(\mathbf{w}_i \in V\) con \((m_T / q_i)(T)\mathbf{w}_i \neq \mathbf{0}\). Defina
+\[
+\mathbf{u}_i = \left(\frac{m_T}{q_i^{e_i}}\right)(T)\mathbf{w}_i.
+\]
+Entonces \(q_i(T)^{e_i}\mathbf{u}_i = m_T(T)\mathbf{w}_i = \mathbf{0}\) (luego \(f_{\mathbf{u}_i} \mid q_i^{e_i}\)), mientras que \(q_i(T)^{e_i - 1}\mathbf{u}_i = (m_T / q_i)(T)\mathbf{w}_i \neq \mathbf{0}\) (luego \(f_{\mathbf{u}_i}\) no puede ser una potencia menor de \(q_i\)). ¡Por lo tanto \(f_{\mathbf{u}_i} = q_i^{e_i}\)! Como \(q_1^{e_1}, \dots, q_k^{e_k}\) son coprimos dos a dos, aplicar repetidamente el paso 1 a \(\mathbf{v} = \mathbf{u}_1 + \mathbf{u}_2 + \dots + \mathbf{u}_k\) arroja \(f_{\mathbf{v}}(x) = q_1^{e_1}\cdots q_k^{e_k} = m_T(x)\).
+
+Suponga ahora que \(m_T(x) = p_T(x)\). Elegir ese vector \(\mathbf{v}\) con \(f_{\mathbf{v}} = m_T = p_T\) da \(\dim Z(\mathbf{v}; T) = \deg(p_T) = n = \dim V\), por lo que \(Z(\mathbf{v}; T) = V\) y \(T\) es cíclico.
+
+Note una consecuencia notable: si \(A \in M_n(F)\) tiene un polinomio característico IRREDUCIBLE sobre \(F\) (como \(x^3 - 2\) sobre \(\mathbb{Q}\)), entonces \(m_A(x) \mid p_A(x)\) obliga a \(m_A = p_A\), por lo que \(A\) es automáticamente cíclica —¡y de hecho TODO vector no nulo \(\mathbf{v} \in F^n\) genera una base cíclica de todo el espacio! En contraste, una matriz derogatoria como \(\operatorname{diag}(2, 2, 3)\) tiene \(m_A(x) = (x - 2)(x - 3) \neq (x - 2)^2(x - 3) = p_A(x)\), de modo que la órbita de ningún vector individual puede generar jamás todo \(\mathbb{R}^3\).
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál de las siguientes matrices sobre \(\mathbb{Q}\) NO es cíclica (es decir, NO es semejante sobre \(\mathbb{Q}\) a una única matriz compañera \(3 \times 3\))?
+
+(A) \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 2 & 1 & 0 \\ 0 & 2 & 1 \\ 0 & 0 & 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 5 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 & 0 & 3 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Factores invariantes y Forma Canónica Racional ===
+
+Cuando \(m_T(x) \neq p_T(x)\), un único subespacio cíclico \(Z(\mathbf{v}; T)\) no puede llenar \(V\). En su lugar, \(V\) se descompone en una suma directa de subespacios \(T\)-cíclicos cuyos anuladores forman una cadena anidada de divisibilidad. La demostración general de existencia y unicidad de esta descomposición pertenece al Álgebra Abstracta (el teorema de estructura para módulos finitamente generados sobre el dominio de ideales principales \(F[x]\)); aquí tomamos el teorema como fundamento estructural dado y aprendemos a calcular con él y a usarlo para decidir la semejanza matricial sobre CUALQUIER cuerpo \(F\).
+
+[CALLOUT]
+id: rcf-theorem
+label: Teorema
+title: Forma Canónica Racional (forma de factores invariantes)
+tone: key
+
+Sea \(A \in M_n(F)\) para cualquier cuerpo \(F\) (como \(\mathbb{Q}\), \(\mathbb{R}\) o \(\mathbb{C}\)). Entonces \(A\) es semejante SOBRE \(F\) a una matriz diagonal por bloques de bloques compañeros
+\[
+R = C(f_1) \oplus C(f_2) \oplus \dots \oplus C(f_s) = \begin{bmatrix} C(f_1) & 0 & \cdots & 0 \\ 0 & C(f_2) & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & C(f_s) \end{bmatrix},
+\]
+donde \(f_1, f_2, \dots, f_s \in F[x]\) son polinomios mónicos de grado \(\ge 1\) —llamados los factores invariantes de \(A\)— que satisfacen:
+
+(1) Cadena de divisibilidad: \(f_1(x) \mid f_2(x) \mid \dots \mid f_s(x)\) en \(F[x]\).
+(2) Polinomio mínimo: el mayor factor invariante es \(f_s(x) = m_A(x)\).
+(3) Polinomio característico: el producto de todos los factores invariantes es \(f_1(x) f_2(x) \cdots f_s(x) = p_A(x)\) (de modo que \(\sum_{i=1}^s \deg f_i = n\)).
+(4) Unicidad y semejanza: la lista \((f_1, \dots, f_s)\) está ÚNICAMENTE determinada por \(A\). Dos matrices \(A, B \in M_n(F)\) son semejantes sobre \(F\) si y solo si tienen exactamente los mismos factores invariantes (equivalentemente, la misma Forma Canónica Racional \(R\)).
+[/CALLOUT]
+
+Note una notable consecuencia de [REF: rcf-theorem.4 | la unicidad]: como los factores invariantes de \(A \in M_n(\mathbb{Q})\) pertenecen a \(\mathbb{Q}[x] \subset \mathbb{R}[x] \subset \mathbb{C}[x]\) y siguen satisfaciendo exactamente la misma cadena de divisibilidad sobre cualquier cuerpo mayor, ¡la Forma Canónica Racional de \(A\) NO cambia al ampliar el cuerpo! En consecuencia, dos matrices racionales (o reales) son semejantes sobre \(\mathbb{Q}\) (o \(\mathbb{R}\)) SI Y SOLO SI son semejantes sobre \(\mathbb{C}\).
+
+Observe cómo las reglas [REF: rcf-theorem.1 | \(f_1 \mid \dots \mid f_s\)], [REF: rcf-theorem.2 | \(f_s = m_A\)] y [REF: rcf-theorem.3 | \(\prod f_i = p_A\)] determinan limpiamente las Formas Canónicas Racionales en dimensiones \(2, 3,\) y \(4\):
+
+- Toda matriz \(2 \times 2\): o bien \(\deg m_A = 2\) (de modo que \(m_A = p_A\) y \(R = C(p_A)\) es un solo bloque compañero \(2 \times 2\)), o bien \(\deg m_A = 1\), lo cual obliga a \(m_A(x) = x - c\), \(f_1 = f_2 = x - c\), y \(R = cI_2\).
+- Un ejemplo \(3 \times 3\) sobre \(\mathbb{Q}\): suponga \(p_A(x) = (x - 1)^2(x + 2)\) y \(m_A(x) = (x - 1)(x + 2)\). Entonces \(f_s = (x - 1)(x + 2) = x^2 + x - 2\), y el factor restante debe ser \(f_1 = p_A / f_s = x - 1\). Verifique la cadena de divisibilidad: ¡\((x - 1) \mid (x - 1)(x + 2)\) se cumple! Así, la Forma Canónica Racional es
+\[
+R = C(x - 1) \oplus C(x^2 + x - 2) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 2 \\ 0 & 1 & -1 \end{bmatrix}.
+\]
+  ¡Cuidado con un error frecuente aquí! La matriz diagonal \(\operatorname{diag}(1, 1, -2)\) es semejante a \(R\), pero \(\operatorname{diag}(1, 1, -2) = C(x - 1) \oplus C(x - 1) \oplus C(x + 2)\) NO está en Forma Canónica Racional porque \((x - 1)\) NO divide a \((x + 2)\). La cadena de divisibilidad nos obliga a fusionar un \((x - 1)\) con \((x + 2)\) en el único bloque \(2 \times 2\) \(C(x^2 + x - 2)\).
+- Un ejemplo \(4 \times 4\) con una cuadrática irreducible sobre \(\mathbb{R}\) o \(\mathbb{Q}\): suponga \(p_A(x) = (x^2 + 1)^2\). Como \(x^2 + 1\) es irreducible sobre \(\mathbb{R}\) (y \(\mathbb{Q}\)), solo hay dos posibilidades para \(m_A(x)\):
+  - Si \(m_A(x) = x^2 + 1\), entonces \(f_2 = x^2 + 1\) y \(f_1 = x^2 + 1\), dando \(R = C(x^2 + 1) \oplus C(x^2 + 1)\) (dos bloques \(2 \times 2\)).
+  - Si \(m_A(x) = (x^2 + 1)^2 = x^4 + 2x^2 + 1\), entonces \(f_1 = x^4 + 2x^2 + 1\), dando un solo bloque \(4 \times 4\) \(R = C(x^4 + 2x^2 + 1)\).
+- Un ejemplo \(4 \times 4\) donde \(p_A\) y \(m_A\) por sí solos dejan dos opciones: suponga \(p_A(x) = (x - 2)^4\) y \(m_A(x) = (x - 2)^2\). Los factores invariantes restantes multiplican \((x - 2)^2\) y deben dividir a \((x - 2)^2\), lo que permite DOS cadenas válidas:
+  - Cadena 1: \(f_1 = (x - 2)^2,\; f_2 = (x - 2)^2\) (dos bloques \(2 \times 2\)).
+  - Cadena 2: \(f_1 = x - 2,\; f_2 = x - 2,\; f_3 = (x - 2)^2\) (dos bloques \(1 \times 1\) y un bloque \(2 \times 2\)).
+  ¿Cómo distinguirlas? Observe \(\dim \ker(C((x - \lambda)^k) - \lambda I_k)\): como \(C((x - \lambda)^k)\) representa un único bloque cíclico \(Z(\mathbf{v}; T)\) con polinomio mínimo \((x - \lambda)^k\), su espacio propio para \(\lambda\) es \(1\)-dimensional (generado por \((T - \lambda I)^{k-1}\mathbf{v}\); si existiera un segundo vector propio linealmente independiente, \(\ker(T - \lambda I)\) tendría dimensión \(\ge 2\) y \((T - \lambda I)^{k-1}\) tendría rango a lo sumo \(0\), ¡contradiciendo \(m_C = (x - \lambda)^k\)!). Por lo tanto, cada factor invariante divisible por \((x - \lambda)\) aporta EXACTAMENTE \(1\) a \(\dim \ker(A - \lambda I)\):
+  - La Cadena 1 tiene \(2\) factores invariantes \(\implies \operatorname{nullity}(A - 2I_4) = 2\).
+  - La Cadena 2 tiene \(3\) factores invariantes \(\implies \operatorname{nullity}(A - 2I_4) = 3\).
+
+[TABLE]
+\(p_A(x)\) sobre \(\mathbb{Q}\) | \(m_A(x)\) | Factores invariantes \((f_1, \dots, f_s)\) | Tamaños de bloques
+\((x - 1)^2(x + 2)\) | \((x - 1)(x + 2)\) | \((x - 1,\; (x - 1)(x + 2))\) | \(1, 2\)
+\((x - 1)^2(x + 2)\) | \((x - 1)^2(x + 2)\) | \(((x - 1)^2(x + 2))\) | \(3\)
+\((x^2 + 1)^2\) | \(x^2 + 1\) | \((x^2 + 1,\; x^2 + 1)\) | \(2, 2\)
+\((x^2 + 1)^2\) | \((x^2 + 1)^2\) | \(((x^2 + 1)^2)\) | \(4\)
+\((x - 2)^4\) con \(\operatorname{nullity}(A - 2I) = 3\) | \((x - 2)^2\) | \((x - 2,\; x - 2,\; (x - 2)^2)\) | \(1, 1, 2\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Suponga que \(A \in M_3(\mathbb{Q})\) tiene polinomio característico \(p_A(x) = (x - 2)^2(x + 3)\) y polinomio mínimo \(m_A(x) = (x - 2)(x + 3)\). ¿Cuál es la Forma Canónica Racional de \(A\) sobre \(\mathbb{Q}\)?
+
+(A) \(\begin{bmatrix} 2 & 0 & 0 \\ 0 & 0 & 6 \\ 0 & 1 & -1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & -3 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 2 & 0 & 0 \\ 0 & 0 & -6 \\ 0 & 1 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} -3 & 0 & 0 \\ 0 & 0 & -4 \\ 0 & 1 & 4 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 & 0 & -12 \\ 1 & 0 & 8 \\ 0 & 1 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+¿Cuál de las siguientes listas de polinomios mónicos es una lista VÁLIDA de factores invariantes \((f_1, \dots, f_s)\) para la Forma Canónica Racional de una matriz \(4 \times 4\) sobre \(\mathbb{R}\)?
+
+(A) \(f_1(x) = x - 1,\quad f_2(x) = x - 2,\quad f_3(x) = x^2 + 1\)
+(B) \(f_1(x) = x^2 + 1,\quad f_2(x) = x^2 + 4\)
+(C) \(f_1(x) = x - 2,\quad f_2(x) = (x - 2)(x^2 + 1)\)
+(D) \(f_1(x) = (x - 1)^2,\quad f_2(x) = (x - 1)(x + 1)\)
+(E) \(f_1(x) = x^2 + 1,\quad f_2(x) = x - 1,\quad f_3(x) = x - 1\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Suponga que \(A, B \in M_4(\mathbb{Q})\) tienen AMBAS polinomio característico \(p(x) = (x^2 + 3)^2\), y suponga que \(A^2 + 3I_4 = 0\) mientras que \(B^2 + 3I_4 \neq 0\). ¿Qué enunciado es correcto?
+
+(A) \(A\) y \(B\) son semejantes sobre \(\mathbb{C}\), pero NO semejantes sobre \(\mathbb{Q}\).
+(B) \(A\) y \(B\) son semejantes sobre \(\mathbb{Q}\), porque comparten el mismo polinomio característico.
+(C) \(A\) tiene un único factor invariante \((x^2 + 3)^2\), mientras que \(B\) tiene factores invariantes \(x^2 + 3,\; x^2 + 3\).
+(D) Ni \(A\) ni \(B\) tiene una Forma Canónica Racional sobre \(\mathbb{Q}\), porque \(x^2 + 3\) no tiene raíces racionales.
+(E) \(A\) tiene factores invariantes \(x^2 + 3,\; x^2 + 3\), mientras que \(B\) tiene el único factor invariante \((x^2 + 3)^2\), de modo que \(A\) y \(B\) NO son semejantes sobre \(\mathbb{Q}\) (ni sobre \(\mathbb{C}\)).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+¿Cuál es la Forma Canónica Racional sobre \(\mathbb{Q}\) de la matriz diagonal \(D = \operatorname{diag}(1, -1, 2)\)?
+
+(A) \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0 & 0 & -2 \\ 1 & 0 & 1 \\ 0 & 1 & 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & 0 & 2 \\ 1 & 0 & -1 \\ 0 & 1 & -2 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 2 \\ 0 & 1 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+¿Cuántas clases de semejanza distintas de matrices en \(M_4(\mathbb{Q})\) tienen polinomio característico \(p(x) = (x^2 + 1)(x^2 - 2)\)?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) Infinitas
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suponga que \(A \in M_4(\mathbb{R})\) tiene polinomio característico \(p_A(x) = (x - 3)^4\), polinomio mínimo \(m_A(x) = (x - 3)^2\), y \(\operatorname{rank}(A - 3I_4) = 2\). ¿Cuál es la lista exacta de factores invariantes de \(A\)?
+
+(A) \((x - 3)^4\)
+(B) \(x - 3,\; (x - 3)^3\)
+(C) \(x - 3,\; x - 3,\; (x - 3)^2\)
+(D) \((x - 3)^2,\; (x - 3)^2\)
+(E) \(x - 3,\; x - 3,\; x - 3,\; x - 3\)
+[/BONUS]

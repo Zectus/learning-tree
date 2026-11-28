@@ -1,0 +1,249 @@
+=== SECTION 1: Valor absoluto externo: \(y = |f(x)|\) ===
+
+Las transformaciones afines \(a \cdot f(b(x - h)) + k\) desplazan, reflejan y escalan una gráfica suavemente sin introducir nuevas esquinas ni borrar partes de la curva. Colocar un valor absoluto alrededor de una función —ya sea por fuera como \(y = |f(x)|\) o por dentro como \(y = f(|x|)\)— se comporta de manera completamente distinta: pliega o refleja partes de la gráfica de forma no lineal. Por fortuna, la definición a trozos del valor absoluto nos indica con exactitud lo que hace cada operación, sin lugar a conjeturas.
+
+Comienza con el valor absoluto externo \(y = |f(x)|\). Aplicar la definición de valor absoluto a la salida \(f(x)\) da el puente exacto a trozos:
+\[
+|f(x)| = \begin{cases}
+f(x), & \text{donde } f(x) \ge 0, \\
+-f(x), & \text{donde } f(x) < 0.
+\end{cases}
+\]
+Lee esas dos ramas geométricamente:
+- Dondequiera que la gráfica de \(y = f(x)\) esté sobre o por encima del eje \(x\) (\(f(x) \ge 0\)), déjala completamente intacta.
+- Dondequiera que la gráfica de \(y = f(x)\) descienda estrictamente por debajo del eje \(x\) (\(f(x) < 0\)), reemplaza \(y\) por \(-y\), reflejando esa porción negativa hacia arriba respecto al eje \(x\).
+
+[CALLOUT]
+id: outer-abs
+label: Regla
+title: Transformación con valor absoluto externo \(y = |f(x)|\)
+tone: key
+
+Para obtener la gráfica de \(y = |f(x)|\) a partir de la gráfica de \(y = f(x)\):
+
+(1) Conserva sin cambios todos los puntos con \(f(x) \ge 0\).
+(2) Refleja todos los puntos con \(f(x) < 0\) hacia arriba respecto al eje \(x\): \((x, y) \mapsto (x, -y)\).
+(3) El dominio no cambia: \(\operatorname{Dom}(|f|) = \operatorname{Dom}(f)\). Todas las salidas se vuelven no negativas (\(\operatorname{Rango}(|f|) \subseteq [0, \infty)\)).
+(4) En cada intersección con el eje \(x\) donde \(y = f(x)\) cruza el eje \(x\) con un ángulo no nulo, el pliegue hacia arriba crea una esquina aguda que apunta hacia abajo al eje \(x\).
+[/CALLOUT]
+
+Observa cómo actúa [REF: outer-abs | esta regla de plegado] sobre la parábola desplazada \(f(x) = x^2 - 4\), que desciende por debajo del eje \(x\) en \((-2, 2)\) hasta su vértice \((0, -4)\). Bajo \(y = |x^2 - 4|\), las ramas exteriores en \((-\infty, -2]\) y \([2, \infty)\) quedan sin cambios, mientras que la cubeta negativa entre \(-2\) y \(2\) se voltea hacia arriba formando una colina con cima en \((0, 4)\), creando dos esquinas agudas en \((-2, 0)\) y \((2, 0)\).
+
+[GRAPH]
+type: function2d
+title: Plegado hacia arriba de salidas negativas: \(f(x) = x^2 - 4\) frente a \(|f(x)| = |x^2 - 4|\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.2, 3.2
+yrange: -4.8, 5.5
+trace: x^2 - 4 | label: \(f(x) = x^2 - 4\)
+trace: abs(x^2 - 4) | label: \(|f(x)| = |x^2 - 4|\)
+point: -2, 0 | label: \((-2, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+point: 0, -4 | label: \((0, -4)\)
+point: 0, 4 | label: \((0, 4)\)
+[/GRAPH]
+
+Ahora aplica [REF: outer-abs | la misma regla] a una función recíproca transformada con asíntotas:
+\[
+g(x) = \left|\frac{1}{x - 1} - 2\right|.
+\]
+Comienza con la función interior \(h(x) = \frac{1}{x - 1} - 2\), que tiene asíntota vertical \(x = 1\), asíntota horizontal \(y = -2\) e intersección con el eje \(x\) en \(x = \frac{3}{2}\) (donde \(\frac{1}{x - 1} = 2\)).
+- Para \(1 < x \le \frac{3}{2}\), \(h(x) \ge 0\), por lo que ese trozo permanece sin cambios.
+- Para \(x < 1\) y para \(x > \frac{3}{2}\), \(h(x) < 0\), ¡de modo que ambos trozos se reflejan hacia arriba respecto al eje \(x\)! En particular, la asíntota horizontal \(y = -2\) se refleja hacia arriba a \(y = 2\), mientras que la asíntota vertical permanece en \(x = 1\).
+- El dominio sigue siendo \((-\infty, 1) \cup (1, \infty)\), y como \(h(x)\) alcanza \(0\) en \(x = \frac{3}{2}\) y crece sin cota cerca de \(x = 1\), el rango de \(g(x) = |h(x)|\) es \([0, \infty)\). (¡Observa que \(y = 2\) SÍ se alcanza en el rango sobre el trozo positivo derecho, en \(x = \frac{5}{4}\) donde \(h(5/4) = 4 - 2 = 2\)!)
+
+[GRAPH]
+type: function2d
+title: Valor absoluto externo en una curva recíproca: \(g(x) = |1/(x - 1) - 2|\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 4.5
+yrange: -4, 6
+trace: abs(x - 1) > 0.14 ? (1/(x - 1) - 2) : (0/0) | label: \(h(x) = 1/(x - 1) - 2\)
+trace: abs(x - 1) > 0.14 ? abs(1/(x - 1) - 2) : (0/0) | label: \(g(x) = |h(x)|\)
+trace: 2 | label: nueva AH \(y = 2\)
+segment: 1, -4, 1, 6 | label: \(x = 1\) | dashed: true
+point: 1.5, 0 | label: \((3/2, 0)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Una función sin fórmula \(y = f(x)\) tiene dominio \([-4, 5]\) y rango \([-6, 2]\). ¿Cuáles son el dominio y el rango de \(y = |f(x)|\)?
+
+(A) Dominio \([0, 5]\), rango \([0, 6]\)
+(B) Dominio \([-4, 5]\), rango \([0, 6]\)
+(C) Dominio \([-4, 5]\), rango \([2, 6]\)
+(D) Dominio \([-4, 5]\), rango \([0, 2]\)
+(E) Dominio \([-5, 5]\), rango \([0, 6]\)
+[/QUESTION]
+
+=== SECTION 2: Valor absoluto interno: \(y = f(|x|)\) ===
+
+Ahora coloca las barras de valor absoluto DENTRO del paréntesis para formar \(y = f(|x|)\). Nuevamente, reescríbelo directamente usando la definición a trozos de \(|x|\):
+\[
+f(|x|) = \begin{cases}
+f(x), & x \ge 0, \\
+f(-x), & x < 0.
+\end{cases}
+\]
+Observa lo que ocurre con el lado izquierdo original de \(y = f(x)\) (donde \(x < 0\)): ¡NUNCA se utiliza! Cuando introduces un número negativo como \(x = -3\) en \(f(|x|)\), el valor absoluto elimina primero el signo menos y evalúa \(f(3)\) en lugar de \(f(-3)\).
+
+[CALLOUT]
+id: inner-abs
+label: Regla
+title: Transformación con valor absoluto interno \(y = f(|x|)\)
+tone: key
+
+Para obtener la gráfica de \(y = f(|x|)\) a partir de la gráfica de \(y = f(x)\):
+
+(1) Descarta toda la porción de la gráfica a la izquierda del eje \(y\) (\(x < 0\)).
+(2) Conserva sin cambios la porción derecha (\(x \ge 0\)).
+(3) Refleja esa porción derecha respecto al eje \(y\) hacia el lado izquierdo (\(x < 0\)).
+(4) La función resultante \(g(x) = f(|x|)\) es SIEMPRE par, porque \(g(-x) = f(|-x|) = f(|x|) = g(x)\), y su dominio es simétrico respecto a \(0\): \(x \in \operatorname{Dom}(g) \iff |x| \in \operatorname{Dom}(f)\).
+[/CALLOUT]
+
+Observa la diferencia dramática entre [REF: outer-abs | \(|f(x)|\)] e [REF: inner-abs | \(f(|x|)\)] en la parábola desplazada \(f(x) = (x - 1)^2 - 4\), que tiene vértice \((1, -4)\) e intersección con el eje \(y\) en \((0, -3)\):
+- Para graficar \(y = f(|x|) = (|x| - 1)^2 - 4\), descarta \(x < 0\) (lo cual desecha la intersección con el eje \(x\) en \((-1, 0)\)), conserva la rama \(x \ge 0\) (que pasa por \((0, -3)\), el vértice \((1, -4)\) y \((3, 0)\)) y refleja esa rama derecha respecto al eje \(y\). El resultado es una curva par en forma de W con DOS mínimos globales en \((-1, -4)\) y \((1, -4)\), una esquina aguda de máximo local en \((0, -3)\) e intersecciones con el eje \(x\) en \((-3, 0)\) y \((3, 0)\).
+
+[GRAPH]
+type: function2d
+title: Descartar \(x < 0\) y reflejar \(x \ge 0\): \(f(x) = (x - 1)^2 - 4\) frente a \(f(|x|) = (|x| - 1)^2 - 4\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 3.5
+yrange: -4.8, 5
+trace: (x - 1)^2 - 4 | label: \(f(x) = (x - 1)^2 - 4\)
+trace: (abs(x) - 1)^2 - 4 | label: \(f(|x|) = (|x| - 1)^2 - 4\)
+point: 0, -3 | label: \((0, -3)\)
+point: 1, -4 | label: \((1, -4)\)
+point: -1, -4 | label: \((-1, -4)\)
+point: 3, 0 | label: \((3, 0)\)
+point: -3, 0 | label: \((-3, 0)\)
+[/GRAPH]
+
+Observa cómo [REF: inner-abs.4 | la regla del dominio] puede tanto encoger COMO ampliar el dominio de \(f\):
+- Si \(f(x) = \sqrt{x - 2}\) tiene dominio \([2, \infty)\), entonces \(f(|x|) = \sqrt{|x| - 2}\) exige \(|x| \ge 2\), dando el dominio \((-\infty, -2] \cup [2, \infty)\): ¡reflejar la rama derecha crea una rama izquierda completamente nueva!
+- Si \(f\) está definida solo en \([-5, 2]\), entonces \(f(|x|)\) descarta \([-5, 0)\), conserva \([0, 2]\) y lo refleja en \([-2, 2]\).
+
+[QUESTION 2]
+[ANSWER: D]
+Supón que \(f\) tiene dominio \([-4, 3]\) y satisface \(f(-4) = 9\), \(f(0) = 1\), \(f(2) = -3\) y \(f(3) = 2\), sin otros extremos. ¿Cuáles son el dominio y el valor de \(g(-2)\) para \(g(x) = f(|x|)\)?
+
+(A) Dominio \([-4, 4]\) y \(g(-2) = -3\)
+(B) Dominio \([-3, 3]\) y \(g(-2) = 3\)
+(C) Dominio \([0, 3]\) y \(g(-2)\) no está definido
+(D) Dominio \([-3, 3]\) y \(g(-2) = -3\)
+(E) Dominio \([-4, 3]\) y \(g(-2) = -3\)
+[/QUESTION]
+
+=== SECTION 3: Combinación de ambas operaciones: \(|f(|x|)|\) y orden con desplazamientos ===
+
+¿Qué ocurre cuando aplicamos AMBOS valores absolutos para formar \(y = |f(|x|)|\)? Comienza de adentro hacia afuera:
+1. Primero forma \(g(x) = f(|x|)\) usando [REF: inner-abs | la regla interna]: conserva \(x \ge 0\) y refléjala respecto al eje \(y\).
+2. Luego forma \(|g(x)| = |f(|x|)|\) usando [REF: outer-abs | la regla externa]: pliega hacia arriba respecto al eje \(x\) toda porción negativa de \(g\).
+
+Espera: ¿importa el orden entre el valor absoluto externo y el interno? ¡Compruébalo! Para cualquier \(x\):
+- Interno primero, luego externo: \(|f(|x|)|\).
+- Externo primero (define \(h(x) = |f(x)|\)), luego interno: \(h(|x|) = |f(|x|)|\).
+¡Producen exactamente la misma expresión! Los valores absolutos externo e interno conmutan porque uno actúa puramente sobre las salidas mientras que el otro actúa puramente sobre las entradas.
+
+Sin embargo, ¡los valores absolutos NO conmutan con desplazamientos ni reflexiones sobre el mismo eje! Compara dos expresiones engañosamente similares construidas a partir de \(f(x) = x^2\):
+- \(p(x) = |x^2 - 2|\): primero desplaza \(x^2\) hacia abajo \(2\) unidades (bajando el vértice a \((0, -2)\)), LUEGO toma el valor absoluto externo (plegando la cubeta negativa hacia arriba hasta un pico en \((0, 2)\)). Su rango es \([0, \infty)\).
+- \(q(x) = |x^2| - 2 = x^2 - 2\): primero toma el valor absoluto externo (que deja \(x^2 \ge 0\) sin cambios), LUEGO desplaza \(2\) unidades hacia abajo. Su rango es \([-2, \infty)\).
+
+Incluso en una función que ya toma valores negativos, como \(f(x) = x - 1\), desplazar antes frente a después de \(|\cdot|\) produce curvas completamente distintas:
+- \(|f(x) - 2| = |x - 3|\): vértice en \((3, 0)\), rango \([0, \infty)\).
+- \(|f(x)| - 2 = |x - 1| - 2\): vértice en \((1, -2)\), rango \([-2, \infty)\).
+
+[GRAPH]
+type: function2d
+title: El orden importa: \(|f(x) - 2|\) frente a \(|f(x)| - 2\) para \(f(x) = x - 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2, 6
+yrange: -3, 5
+trace: abs((x - 1) - 2) | label: \(|f(x) - 2| = |x - 3|\)
+trace: abs(x - 1) - 2 | label: \(|f(x)| - 2 = |x - 1| - 2\)
+point: 3, 0 | label: \((3, 0)\)
+point: 1, -2 | label: \((1, -2)\)
+[/GRAPH]
+
+De igual modo horizontalmente, compara \(f(|x| - 1)\) con \(f(|x - 1|)\):
+- En \(f(|x - 1|)\), el eje de simetría de reflexión se traslada de \(x = 0\) a \(x = 1\) (descarta \(x < 1\) y refleja \(x \ge 1\) respecto a la recta vertical \(x = 1\)).
+- En \(f(|x| - 1)\), primero desplaza \(f\) hacia la derecha \(1\) unidad para formar \(h(x) = f(x - 1)\), y luego aplica el valor absoluto interno \(h(|x|)\), ¡que refleja respecto a \(x = 0\)!
+
+La tabla siguiente contrasta las cuatro operaciones centrales con valor absoluto sobre una función general \(f\).
+
+[TABLE]
+Expresión | Acción geométrica | Simetría garantizada | Efecto en el rango
+\(\lvert f(x) \rvert\) | Refleja trozos \(f(x) < 0\) hacia arriba respecto al eje \(x\) | Ninguna en general | Subconjunto de \([0, \infty)\)
+\(f(\lvert x \rvert)\) | Descarta \(x < 0\); refleja \(x \ge 0\) respecto al eje \(y\) | Siempre par | Rango de \(f\) restringido a \(x \ge 0\)
+\(\lvert f(\lvert x \rvert) \rvert\) | Refleja \(x \ge 0\) respecto al eje \(y\), luego pliega negativos hacia arriba | Siempre par | Magnitudes no negativas de \(f\) en \(x \ge 0\)
+\(\lvert f(x) \rvert + k\) | Pliega negativos hacia arriba primero, luego desplaza verticalmente en \(k\) | Ninguna en general | Subconjunto de \([k, \infty)\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+Sea \(f(x) = x^3 - 1\). ¿Qué afirmación describe con precisión la gráfica de \(y = |f(|x|)| = ||x|^3 - 1|\)?
+
+(A) Tiene intersecciones con el eje \(x\) únicamente en \(x = 1\) y no es ni par ni impar.
+(B) Tiene intersecciones con el eje \(x\) en \(x = \pm 1\), un mínimo local de \(-1\) en \(x = 0\) y rango \([-1, \infty)\).
+(C) Es par, tiene esquinas agudas en \((-1, 0)\) y \((1, 0)\), un máximo local de \(1\) en \(x = 0\) y rango \([0, \infty)\).
+(D) Es impar, pasa por \((0, 0)\) y tiene rango \([0, \infty)\).
+(E) Es idéntica a \(y = |x^3 - 1|\) porque elevar al cubo preserva la simetría.
+[/QUESTION]
+
+=== SECTION 4: Análisis de gráficas abstractas bajo operaciones con valor absoluto ===
+
+Cuando \(y = f(x)\) se da únicamente como un bosquejo o mediante puntos característicos clave, aplica [REF: outer-abs | la regla externa] y [REF: inner-abs | la regla interna] punto por punto, prestando especial atención a intersecciones y extremos:
+- Para \(|f(x)|\): cada intersección con el eje \(x\) de \(f\) se convierte en un mínimo global de \(0\); cualquier mínimo local negativo \((c, -m)\) con \(m > 0\) se voltea hacia arriba en un máximo local \((c, m)\).
+- Para \(f(|x|)\): cada punto \((a, b)\) de \(f\) con \(a > 0\) genera un punto gemelo \((-a, b)\); los puntos de \(f\) con \(a < 0\) desaparecen por completo; la intersección con el eje \(y\) \((0, f(0))\) permanece fija (convirtiéndose a menudo en una esquina aguda si la curva llega a \(x = 0\) con una pendiente distinta de cero).
+
+Considera una función sin fórmula \(f\) cuya gráfica es el segmento rectilíneo desde \((-2, 4)\) pasando por \((0, 2)\) y \((2, 0)\) hasta \((4, -2)\), es decir, \(f(x) = 2 - x\) en \([-2, 4]\):
+- \(|f(x)|\) conserva de \((-2, 4)\) a \((2, 0)\) y refleja de \((2, 0)\) a \((4, -2)\) hacia arriba hasta \((4, 2)\), formando una V con vértice \((2, 0)\), dominio \([-2, 4]\) y rango \([0, 4]\).
+- \(f(|x|)\) descarta \([-2, 0)\), conserva de \((0, 2)\) a \((4, -2)\) y lo refleja respecto al eje \(y\) hasta \((-4, -2)\), formando una tienda simétrica con cima \((0, 2)\), dominio \([-4, 4]\) y rango \([-2, 2]\).
+
+[QUESTION 4]
+[ANSWER: E]
+Supón que \(y = f(x)\) está definida en \((-\infty, \infty)\), tiene su ÚNICA intersección con el eje \(x\) en \((3, 0)\), satisface \(f(x) < 0\) para \(x < 3\) y \(f(x) > 0\) para \(x > 3\), y tiene intersección con el eje \(y\) en \((0, -2)\). ¿Cuántas intersecciones con el eje \(x\) tiene \(g(x) = f(|x|)\), y cuánto vale \(g(0)\)?
+
+(A) Una intersección con el eje \(x\) en \((3, 0)\), y \(g(0) = -2\).
+(B) Dos intersecciones con el eje \(x\) en \((-3, 0)\) y \((3, 0)\), y \(g(0) = 2\).
+(C) Ninguna intersección con el eje \(x\), y \(g(0) = -2\).
+(D) Una intersección con el eje \(x\) en \((-3, 0)\), y \(g(0) = 2\).
+(E) Dos intersecciones con el eje \(x\) en \((-3, 0)\) y \((3, 0)\), y \(g(0) = -2\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+¿Cuál es el rango de \(h(x) = 5 - |x^2 - 9|\) en \((-\infty, \infty)\)?
+
+(A) \((-\infty, 5]\)
+(B) \([-4, 5]\)
+(C) \([0, 5]\)
+(D) \([-9, 5]\)
+(E) \((-\infty, 14]\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Sea \(f(x) = \dfrac{1}{x + 2}\). ¿Cuál es el dominio de \(g(x) = f(|x|)\)?
+
+(A) \((-\infty, -2) \cup (-2, 2) \cup (2, \infty)\)
+(B) \((-\infty, -2) \cup (-2, \infty)\)
+(C) \([0, \infty)\)
+(D) \((-\infty, \infty)\)
+(E) \((-\infty, 0) \cup (0, \infty)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Para una función \(f\) definida en \((-\infty, \infty)\), supón que \(|f(x)| = f(|x|)\) se cumple para todo número real \(x\). ¿Qué condición DEBE satisfacer \(f\)?
+
+(A) \(f\) debe ser estrictamente creciente en \((-\infty, \infty)\).
+(B) \(f\) debe ser par y satisfacer \(f(x) \ge 0\) para todo número real \(x\).
+(C) \(f\) debe ser impar y satisfacer \(f(0) = 0\).
+(D) \(f\) debe ser una función constante.
+(E) \(f\) debe satisfacer \(f(x) = x^2\) o \(f(x) = |x|\).
+[/BONUS]

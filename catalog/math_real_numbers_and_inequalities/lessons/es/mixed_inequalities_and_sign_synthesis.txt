@@ -1,0 +1,202 @@
+=== SECTION 1: Flujo diagnóstico de cuatro pasos para desigualdades híbridas ===
+
+Los problemas reales rara vez llegan etiquetados como «valor absoluto», «racional» o «radical». Una desigualdad poco familiar como \(\dfrac{|x - 2|}{x^2 - 1} \ge 1\), \(\sqrt{x^2 - 4x + 4} < 3 - x\), o \(\dfrac{|x| - 2}{\sqrt{x + 4} - 1} \le 0\) mezcla varias estructuras a la vez. Si se lanza de inmediato a desarrollar o elevar al cuadrado, crea divisiones en casos innecesarias e invita a errores de signo o de dominio.
+
+En su lugar, deténgase diez segundos y ejecute una revisión diagnóstica disciplinada de cuatro pasos antes de escribir cualquier álgebra extensa.
+
+[CALLOUT]
+id: four-step-workflow
+label: Procedimiento
+title: Estrategia de cuatro pasos para desigualdades mixtas
+tone: key
+
+(1) Fije e interseque primero todas las restricciones de dominio: exija todo radicando par \(\ge 0\) y todo denominador \(\ne 0\). Compruebe si el propio dominio ya elimina parte o la totalidad de la desigualdad.
+(2) Simplifique identidades estructurales antes de ramificar: reemplace \(\sqrt{u^2}\) por \(|u|\) (nunca por \(u\)), detecte cuadráticas de signo definido (\(\Delta < 0\)) e identifique factores o términos estrictamente positivos que no pueden cambiar de signo.
+(3) Elija el método con menor ramificación: use poda de signo o un diagrama de signos protegido por el dominio para productos y cocientes, equivalencias directas para un único valor absoluto o radical, sustitución para estructuras repetidas, y separación por casos solo como último recurso.
+(4) Audite todo punto frontera: verifique todos los ceros del numerador, los ceros aislados de factores no negativos, los extremos del dominio y los ceros excluidos del denominador frente a la desigualdad ORIGINAL.
+[/CALLOUT]
+
+Observe cómo [REF: four-step-workflow.1 | el Paso 1] y [REF: four-step-workflow.2 | el Paso 2] pueden colapsar una desigualdad de aspecto temible en dos líneas.
+
+Ejemplo 1 (poda por dominio y signo definido):
+- Resuelva \(\sqrt{3 - x}\,(x^2 - 2x + 3) \le 0\).
+  Dominio: \(x \le 3\). Complete el cuadrado en el factor cuadrático: \(x^2 - 2x + 3 = (x - 1)^2 + 2 \ge 2 > 0\) para TODO \(x \in \mathbb{R}\). En el dominio \((-\infty, 3]\), \(\sqrt{3 - x} \ge 0\) también. Por lo tanto, el producto es \(\ge 0\) en todo su dominio, de modo que solo puede satisfacer \(\le 0\) cuando vale \(0\), lo que ocurre únicamente en \(x = 3\). Conjunto solución: \(\{3\}\).
+- Resuelva \(\sqrt{x - 5} + |x - 1| < 3\).
+  Dominio: \(x \ge 5\). En \(x \ge 5\), tenemos automáticamente \(|x - 1| = x - 1 \ge 4\) y \(\sqrt{x - 5} \ge 0\), de modo que el lado izquierdo es al menos \(4\) en todo su dominio y nunca puede ser menor que \(3\). Conjunto solución: \(\emptyset\) —¡cero elevaciones al cuadrado, cero separaciones en casos!
+
+=== SECTION 2: Valores absolutos ocultos e híbridos racional-absolutos ===
+
+Una de las trampas más frecuentes en desigualdades híbridas es un radical de potencia par que oculta un valor absoluto. Siempre que un radicando cuadrático sea un cuadrado perfecto, aplique la identidad exacta \(\sqrt{u^2} = |u|\) ANTES de hacer cualquier otra cosa.
+
+Ejemplo 2: Resuelva \(\sqrt{x^2 - 4x + 4} < 3 - x\).
+Paso 1: El radicando se factoriza como \((x - 2)^2 \ge 0\), por lo que el dominio es todo \(\mathbb{R}\).
+Paso 2: Aplique \(\sqrt{(x - 2)^2} = |x - 2|\). La desigualdad se transforma de inmediato en una desigualdad con valor absoluto y cota variable:
+\[
+|x - 2| < 3 - x.
+\]
+Paso 3: Use la equivalencia directa \(|A| < B \iff -B < A < B\) (¡recordando que esto impone automáticamente \(B > 0\)!):
+\[
+-(3 - x) < x - 2 < 3 - x \iff x - 3 < x - 2 \quad \text{y} \quad x - 2 < 3 - x.
+\]
+La desigualdad izquierda se simplifica a \(-3 < -2\), que es verdadera para todo \(x \in \mathbb{R}\). La desigualdad derecha se simplifica a \(2x < 5 \iff x < \frac{5}{2}\).
+Paso 4: Conjunto solución: \(\left(-\infty, \frac{5}{2}\right)\).
+
+La gráfica inferior confirma por qué reemplazar \(\sqrt{(x - 2)^2}\) por \(x - 2\) habría fallado catastróficamente: la curva \(y = \sqrt{x^2 - 4x + 4}\) es una gráfica en forma de V de valor absoluto que permanece no negativa para \(x < 2\), cortando la recta \(y = 3 - x\) una sola vez en \(\left(\frac{5}{2}, \frac{1}{2}\right)\) y manteniéndose estrictamente por debajo de ella para todo \(x < \frac{5}{2}\).
+
+[GRAPH]
+type: function2d
+title: Valor absoluto oculto \(y = \sqrt{x^2 - 4x + 4} = |x - 2|\) frente a \(y = 3 - x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1, 5
+yrange: -2, 5
+trace: sqrt(x^2 - 4*x + 4) | label: \(y = \sqrt{x^2 - 4x + 4}\)
+trace: 3 - x | label: \(y = 3 - x\)
+point: 2, 0 | label: \((2, 0)\)
+point: 2.5, 0.5 | label: \((\frac{5}{2}, \frac{1}{2})\)
+[/GRAPH]
+
+Observe ahora cómo la poda de signos agiliza una desigualdad racional-absoluta.
+
+Ejemplo 3: Resuelva \(\dfrac{|x - 2|}{x^2 - 1} \ge 1\).
+Paso 1: Dominio \(D = \mathbb{R} \setminus \{-1, 1\}\).
+Paso 2: Observe el signo del numerador: ¡\(|x - 2| \ge 0\) en todas partes! Por consiguiente, siempre que el denominador \(x^2 - 1\) sea NEGATIVO —es decir, en \((-1, 1)\)—, el cociente \(\dfrac{|x - 2|}{x^2 - 1}\) es \(\le 0\), de modo que NUNCA puede ser \(\ge 1\). ¡Eso elimina \((-1, 1)\) de inmediato!
+Paso 3: En la región restante \(x^2 - 1 > 0\) (es decir, \(x < -1\) o \(x > 1\)), multiplicar ambos lados por el denominador estrictamente positivo \(x^2 - 1\) preserva la desigualdad:
+\[
+|x - 2| \ge x^2 - 1.
+\]
+Aplique la equivalencia con cota variable \(|A| \ge B \iff A \ge B \text{ o } A \le -B\):
+- Rama A: \(x - 2 \ge x^2 - 1 \iff x^2 - x + 1 \le 0\). Compruebe el discriminante: \(\Delta = (-1)^2 - 4(1)(1) = -3 < 0\) con coeficiente principal \(1 > 0\), así que \(x^2 - x + 1 > 0\) en todas partes. La Rama A da \(\emptyset\).
+- Rama B: \(x - 2 \le -(x^2 - 1) \iff x^2 + x - 3 \le 0\). Por la fórmula cuadrática, las raíces son \(\dfrac{-1 \pm \sqrt{13}}{2}\) (aproximadamente \(-2.303\) y \(1.303\)), de modo que la Rama B da \(\left[\dfrac{-1 - \sqrt{13}}{2}, \dfrac{-1 + \sqrt{13}}{2}\right]\).
+Paso 4: Interseque la Rama B con la región de denominador positivo \((-\infty, -1) \cup (1, \infty)\):
+\[
+\left[\frac{-1 - \sqrt{13}}{2}, -1\right) \cup \left(1, \frac{-1 + \sqrt{13}}{2}\right].
+\]
+Ambos puntos excluidos del denominador \(x = \pm 1\) llevan paréntesis abierto, mientras que las dos raíces donde se alcanza la igualdad llevan corchete cerrado.
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(\sqrt{x^2 + 6x + 9} \le 2x + 1\)?
+
+(A) \(\left[-\frac{4}{3}, \infty\right)\)
+(B) \([2, \infty)\)
+(C) \(\left[-\frac{4}{3}, 2\right]\)
+(D) \(\left[-\frac{1}{2}, \infty\right)\)
+(E) \((-\infty, 2]\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál es el conjunto solución de \(\dfrac{|x - 3|}{x^2 - 4} \le 0\)?
+
+(A) \((-2, 2)\)
+(B) \([-2, 2] \cup \{3\}\)
+(C) \((-\infty, -2) \cup (2, 3]\)
+(D) \((-2, 2) \cup \{3\}\)
+(E) \((-2, 3]\)
+[/QUESTION]
+
+=== SECTION 3: Cocientes que mezclan valores absolutos y radicales ===
+
+Cuando una única fracción se compara con \(0\) y mezcla un valor absoluto en una parte con un radical en la otra, resista la tentación de abrir casos según el signo dentro del valor absoluto. Un único diagrama de signos protegido por el dominio resuelve todo el problema de una vez, porque solo necesitamos los ceros del numerador y del denominador y el signo de cada expresión entre ellos.
+
+Ejemplo 4: Resuelva \(\dfrac{|x| - 2}{\sqrt{x + 4} - 1} \le 0\).
+Paso 1 (Dominio): Necesitamos \(x + 4 \ge 0\) (así que \(x \ge -4\)) y \(\sqrt{x + 4} - 1 \ne 0 \iff x + 4 \ne 1 \iff x \ne -3\). Así,
+\[
+D = [-4, -3) \cup (-3, \infty).
+\]
+Paso 2 (Puntos críticos dentro de \(D\)):
+- Ceros del numerador: \(|x| - 2 = 0 \iff x = -2\) o \(x = 2\). Ambos están en \(D\) y se INCLUIRÁN porque la desigualdad es \(\le 0\).
+- Cero del denominador: \(x = -3\) (EXCLUIDO).
+
+Paso 3 (Diagrama de signos protegido por el dominio en \([-4, \infty)\)):
+
+[TABLE]
+Intervalo o punto | \(\lvert x \rvert - 2\) | \(\sqrt{x + 4} - 1\) | Cociente | ¿Cumple \(\le 0\)?
+\([-4, -3)\) | \(+\) | \(-\) | \(-\) | Sí
+\(x = -3\) | \(1\) | \(0\) | indef. | No
+\((-3, -2)\) | \(+\) | \(+\) | \(+\) | No
+\(x = -2\) | \(0\) | \(\sqrt{2} - 1\) | \(0\) | Sí
+\((-2, 2)\) | \(-\) | \(+\) | \(-\) | Sí
+\(x = 2\) | \(0\) | \(\sqrt{6} - 1\) | \(0\) | Sí
+\((2, \infty)\) | \(+\) | \(+\) | \(+\) | No
+[/TABLE]
+
+Paso 4 (Ensamblar y comprobar extremos): Leer las filas con «Sí» produce
+\[
+[-4, -3) \cup [-2, 2].
+\]
+Compruebe explícitamente el extremo izquierdo del dominio \(x = -4\): \(\dfrac{|-4| - 2}{\sqrt{0} - 1} = \dfrac{2}{-1} = -2 \le 0\), por lo que \(-4\) definitivamente pertenece al conjunto solución.
+
+La gráfica inferior muestra ambas ramas de \(y = \dfrac{|x| - 2}{\sqrt{x + 4} - 1}\) separadas por la asíntota vertical en \(x = -3\). Observe cómo la rama izquierda comienza en \((-4, -2)\) y permanece negativa hasta \(x = -3\), mientras que la rama derecha desciende por debajo del eje horizontal precisamente en \([-2, 2]\).
+
+[GRAPH]
+type: function2d
+title: Gráfica de \(y = \dfrac{|x| - 2}{\sqrt{x + 4} - 1}\) en \([-4, 4]\) con asíntota en \(x = -3\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4.2, 4
+yrange: -6, 6
+trace: x >= -4 and x < -3.08 ? ((abs(x) - 2)/(sqrt(x + 4) - 1)) : (0/0) | label: rama izquierda (\(x < -3\))
+trace: x > -2.92 ? ((abs(x) - 2)/(sqrt(x + 4) - 1)) : (0/0) | label: rama derecha (\(x > -3\))
+trace: 0 | label: \(y = 0\)
+segment: -3, -6, -3, 6 | dashed: true
+point: -4, -2 | label: \((-4, -2)\)
+point: -2, 0 | label: \((-2, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+Antes de elegir un método ante cualquier desigualdad híbrida desconocida, use esta guía rápida de decisión para escoger el camino con menos ramas:
+
+[TABLE]
+Rasgo detectado en la desigualdad | Mejor acción inmediata
+\(\sqrt{a x^2 + b x + c}\) donde el radicando es un cuadrado perfecto \(u^2\) | Reemplazar de inmediato por \(\lvert u \rvert\)
+Cuadrática de signo definido (\(\Delta < 0\)) o suma estrictamente positiva | Anotar su signo constante y factorizarla fuera del análisis de signos
+Un único cociente o producto comparado con \(0\) | Fijar el dominio \(D\), hallar todos los ceros y ejecutar un diagrama de signos protegido por el dominio
+Numerador no negativo sobre denominador variable comparado con constante positiva | Podar de inmediato la región de denominador negativo y luego multiplicar
+El dominio fuerza un término por encima o por debajo de la cota | Concluir \(\emptyset\) o un único punto frontera sin desarrollar
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+¿Cuál es el conjunto solución de \(\dfrac{|x - 1| - 2}{\sqrt{x + 3} - 2} > 0\)?
+
+(A) \((-1, 1) \cup (3, \infty)\)
+(B) \([-3, -1) \cup (1, 3)\)
+(C) \((-1, 1] \cup (3, \infty)\)
+(D) \((-1, 3)\)
+(E) \([-1, 1) \cup [3, \infty)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+¿Cuál es el conjunto solución de \(\dfrac{\sqrt{x - 2}\,(x^2 + 4x + 5)}{|x - 5| - 1} \le 0\)?
+
+(A) \((4, 6)\)
+(B) \([4, 6]\)
+(C) \([2, 4) \cup (6, \infty)\)
+(D) \(\{2\} \cup [4, 6]\)
+(E) \(\{2\} \cup (4, 6)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(\sqrt{x^2 - 2x + 1} + \sqrt{x^2 - 8x + 16} \le 5\)?
+
+(A) \([1, 4]\)
+(B) \((0, 5)\)
+(C) \([0, 5]\)
+(D) \([-1, 5]\)
+(E) \([0, 4]\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(\dfrac{\sqrt{4 - x} - \sqrt{x + 2}}{|x - 1|} \ge 0\)?
+
+(A) \([-2, 1]\)
+(B) \([-2, 1)\)
+(C) \((-\infty, 1)\)
+(D) \((1, 4]\)
+(E) \([-2, 1) \cup (1, 4]\)
+[/BONUS]

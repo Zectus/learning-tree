@@ -1,0 +1,219 @@
+=== SECTION 1: De Moivre's Theorem for all integer exponents ===
+
+Suppose you need to compute \((1 + i\sqrt{3})^{12}\) in standard rectangular form. Expanding by the Binomial Theorem produces thirteen terms filled with powers of \(\sqrt{3}\) and \(i\). Yet geometrically we already know what raising a complex number \(z = r(\cos\theta + i\sin\theta) = r\operatorname{cis}\theta\) to a power does: each multiplication by \(z\) scales the modulus by \(r\) and rotates the angle by \(\theta\). Repeating that operation \(n\) times should scale the modulus to \(r^n\) and multiply the angle by \(n\).
+
+Let us prove this rule carefully for every integer \(n \in \mathbb{Z}\) directly from the polar product and reciprocal formulas.
+
+[CALLOUT]
+id: de-moivre-thm
+label: Theorem
+title: De Moivre's Theorem
+tone: key
+
+For every real angle \(\theta\) and every integer \(n \in \mathbb{Z}\):
+
+(1) \((\cos\theta + i\sin\theta)^n = \cos(n\theta) + i\sin(n\theta)\).
+(2) More generally, for any nonzero \(z = r(\cos\theta + i\sin\theta)\) with \(r > 0\),
+\[
+z^n = r^n\bigl(\cos(n\theta) + i\sin(n\theta)\bigr).
+\]
+[/CALLOUT]
+
+Proof of [REF: de-moivre-thm.1 | part (1)]:
+- Base case \(n = 0\): the left-hand side is \((\cos\theta + i\sin\theta)^0 = 1\), and the right-hand side is \(\cos 0 + i\sin 0 = 1 + 0i = 1\).
+- Induction for \(n \ge 0\): assume \((\cos\theta + i\sin\theta)^k = \cos(k\theta) + i\sin(k\theta)\) holds for some integer \(k \ge 0\). Multiply both sides by \(\cos\theta + i\sin\theta\) and apply the polar product formula:
+\[
+(\cos\theta + i\sin\theta)^{k+1} = \bigl(\cos(k\theta) + i\sin(k\theta)\bigr)(\cos\theta + i\sin\theta) = \cos\bigl((k + 1)\theta\bigr) + i\sin\bigl((k + 1)\theta\bigr).
+\]
+By mathematical induction, the identity holds for every integer \(n \ge 0\).
+- Negative integers \(n < 0\): write \(n = -m\) where \(m = -n\) is a positive integer. Applying the positive-integer case to \(m\) and then the polar reciprocal rule \(\frac{1}{\operatorname{cis}\phi} = \operatorname{cis}(-\phi)\) gives
+\[
+(\cos\theta + i\sin\theta)^{-m} = \frac{1}{(\cos\theta + i\sin\theta)^m} = \frac{1}{\cos(m\theta) + i\sin(m\theta)} = \cos(-m\theta) + i\sin(-m\theta) = \cos(n\theta) + i\sin(n\theta).
+\]
+Finally, [REF: de-moivre-thm.2 | part (2)] follows immediately from \(z^n = \bigl(r(\cos\theta + i\sin\theta)\bigr)^n = r^n(\cos\theta + i\sin\theta)^n\).
+
+Use the slider below to vary the base angle \(\theta\) of \(z = \cos\theta + i\sin\theta\) on the unit circle and watch \(z\), \(z^2\), \(z^3\), and \(z^4\) step around the circle at equal angular intervals \(\theta, 2\theta, 3\theta, 4\theta\).
+
+[GRAPH]
+type: parametric2d
+title: Successive powers \(z, z^2, z^3, z^4\) of \(z = \cos\theta + i\sin\theta\) on the unit circle
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.45, 1.45
+yrange: -1.45, 1.45
+trace: cos(t), sin(t) | label: \(|z| = 1\) | color: #94a3b8
+segment: 0, 0, cos(a), sin(a) | color: #2563eb
+segment: 0, 0, cos(2*a), sin(2*a) | color: #16a34a
+segment: 0, 0, cos(3*a), sin(3*a) | color: #ea580c
+segment: 0, 0, cos(4*a), sin(4*a) | color: #9333ea
+point: 1, 0 | label: \(1\)
+point: cos(a), sin(a) | label: \(z\)
+point: cos(2*a), sin(2*a) | label: \(z^2\)
+point: cos(3*a), sin(3*a) | label: \(z^3\)
+point: cos(4*a), sin(4*a) | label: \(z^4\)
+slider: a | range: 0.1, 1.5708 | init: 0.5236 | step: 0.05
+[/GRAPH]
+
+[CALLOUT]
+id: de-moivre-int-caution
+label: Common pitfall
+title: De Moivre's Theorem is for integer exponents only
+tone: caution
+
+Do not apply \((\cos\theta + i\sin\theta)^p = \cos(p\theta) + i\sin(p\theta)\) naively to fractional exponents \(p\). Because \(\theta\) and \(\theta + 2\pi\) represent the same complex number, substituting \(p = 1/2\) into \(1 = \operatorname{cis}(0) = \operatorname{cis}(2\pi)\) would produce two different numbers: \(\operatorname{cis}(0) = 1\) and \(\operatorname{cis}(\pi) = -1\). Fractional roots are multi-valued and require a dedicated method treated in later lessons.
+[/CALLOUT]
+
+=== SECTION 2: Computing high positive and negative integer powers ===
+
+To evaluate a high integer power \(z^n\) cleanly in rectangular form:
+1. Convert \(z\) to polar form \(r(\cos\theta + i\sin\theta)\), being careful to place \(\theta\) in the correct quadrant.
+2. Apply [REF: de-moivre-thm.2 | De Moivre's Theorem]: \(z^n = r^n(\cos(n\theta) + i\sin(n\theta))\).
+3. Reduce the angle \(n\theta\) modulo \(2\pi\) and convert back to standard rectangular form.
+
+Worked example 1 (positive power): evaluate \((1 + i\sqrt{3})^{12}\).
+Here \(1 + i\sqrt{3}\) lies in Quadrant I with \(r = \sqrt{1 + 3} = 2\) and \(\theta = \frac{\pi}{3}\). Therefore
+\[
+(1 + i\sqrt{3})^{12} = 2^{12}\left(\cos\!\left(12 \cdot \frac{\pi}{3}\right) + i\sin\!\left(12 \cdot \frac{\pi}{3}\right)\right) = 4096(\cos 4\pi + i\sin 4\pi) = 4096.
+\]
+What would have taken a page of binomial arithmetic collapses to a single line!
+
+Worked example 2 (negative power): evaluate \((-1 + i)^{-8}\).
+Because \(-1 + i\) lies in Quadrant II, \(r = \sqrt{(-1)^2 + 1^2} = \sqrt{2}\) and \(\theta = \frac{3\pi}{4}\). Applying [REF: de-moivre-thm.2 | De Moivre's Theorem] with \(n = -8\):
+\[
+(-1 + i)^{-8} = (\sqrt{2})^{-8}\left(\cos\!\left(-8 \cdot \frac{3\pi}{4}\right) + i\sin\!\left(-8 \cdot \frac{3\pi}{4}\right)\right) = 2^{-4}\bigl(\cos(-6\pi) + i\sin(-6\pi)\bigr) = \frac{1}{16}.
+\]
+
+[QUESTION 1]
+[ANSWER: A]
+Evaluate \((-\sqrt{3} + i)^9\) in standard rectangular form.
+
+(A) \(-512i\)
+(B) \(512i\)
+(C) \(-512\)
+(D) \(512\)
+(E) \(256\sqrt{3} - 256i\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Evaluate \((1 - i)^{-10}\) in standard rectangular form.
+
+(A) \(\frac{1}{32}i\)
+(B) \(-\frac{1}{32}i\)
+(C) \(\frac{1}{32}\)
+(D) \(-\frac{1}{32}\)
+(E) \(\frac{1}{1024}i\)
+[/QUESTION]
+
+=== SECTION 3: Multiple-angle trigonometric identities ===
+
+De Moivre's Theorem gives an effortless factory for trigonometric identities expressing \(\cos(n\theta)\) and \(\sin(n\theta)\) as polynomials in \(\cos\theta\) and \(\sin\theta\). The idea is simply to compute \((\cos\theta + i\sin\theta)^n\) in TWO ways—once by [REF: de-moivre-thm.1 | De Moivre's Theorem] and once by the Binomial Theorem—and then equate the real parts and the imaginary parts of both sides!
+
+Let us derive the triple-angle identities for \(\cos(3\theta)\) and \(\sin(3\theta)\) from scratch. Write \(c = \cos\theta\) and \(s = \sin\theta\) temporarily to keep the algebra compact. Expanding \((c + is)^3\) by the Binomial Theorem gives
+\[
+(c + is)^3 = c^3 + 3c^2(is) + 3c(is)^2 + (is)^3 = c^3 + 3ic^2 s - 3cs^2 - is^3 = (c^3 - 3cs^2) + i(3c^2 s - s^3).
+\]
+By De Moivre's Theorem, the exact same expression equals \(\cos(3\theta) + i\sin(3\theta)\). Since \(c\) and \(s\) are real numbers, equating real and imaginary parts yields
+\[
+\cos(3\theta) = \cos^3\theta - 3\cos\theta\sin^2\theta, \qquad \sin(3\theta) = 3\cos^2\theta\sin\theta - \sin^3\theta.
+\]
+Now use the Pythagorean identity \(\sin^2\theta = 1 - \cos^2\theta\) in the cosine formula and \(\cos^2\theta = 1 - \sin^2\theta\) in the sine formula to express each in terms of a single function:
+\[
+\cos(3\theta) = \cos^3\theta - 3\cos\theta(1 - \cos^2\theta) = 4\cos^3\theta - 3\cos\theta,
+\]
+\[
+\sin(3\theta) = 3(1 - \sin^2\theta)\sin\theta - \sin^3\theta = 3\sin\theta - 4\sin^3\theta.
+\]
+Quick sanity check at \(\theta = \frac{\pi}{6}\): \(3\theta = \frac{\pi}{2}\), \(\sin(\pi/6) = \frac{1}{2}\), and \(3\left(\frac{1}{2}\right) - 4\left(\frac{1}{8}\right) = \frac{3}{2} - \frac{1}{2} = 1 = \sin\left(\frac{\pi}{2}\right)\).
+
+Notice why every even power of \(i\) in the binomial expansion lands in \(\cos(n\theta)\) (producing only EVEN powers of \(\sin\theta\), which always convert cleanly to polynomials in \(\cos^2\theta\)): as a result, \(\cos(n\theta)\) can ALWAYS be written purely as a polynomial in \(\cos\theta\) for every positive integer \(n\).
+
+[QUESTION 3]
+[ANSWER: A]
+Which of the following expresses \(\cos(4\theta)\) purely as a polynomial in \(\cos\theta\)?
+
+(A) \(8\cos^4\theta - 8\cos^2\theta + 1\)
+(B) \(8\cos^4\theta - 4\cos^2\theta + 1\)
+(C) \(4\cos^4\theta - 4\cos^2\theta + 1\)
+(D) \(8\cos^4\theta + 8\cos^2\theta - 1\)
+(E) \(16\cos^4\theta - 12\cos^2\theta + 1\)
+[/QUESTION]
+
+=== SECTION 4: Linearizing powers of cosine and sine ===
+
+Now run the exact opposite question: how do we rewrite a power such as \(\cos^4\theta\) or \(\sin^3\theta\) as a linear combination of first-power cosines and sines of multiple angles \(\cos(k\theta)\) and \(\sin(k\theta)\)? This process—called linearization or power reduction—is indispensable in calculus and signal analysis because \(\cos(k\theta)\) and \(\sin(k\theta)\) are far easier to integrate and analyze than high powers.
+
+Set \(z = \cos\theta + i\sin\theta\). By [REF: de-moivre-thm.1 | De Moivre's Theorem] with \(n = k\) and \(n = -k\) for any integer \(k \ge 1\):
+\[
+z^k = \cos(k\theta) + i\sin(k\theta), \qquad z^{-k} = \cos(-k\theta) + i\sin(-k\theta) = \cos(k\theta) - i\sin(k\theta).
+\]
+Adding and subtracting these two equations yields a pair of bridge identities that work identically for every \(k \ge 1\):
+
+[CALLOUT]
+id: linearization-bridges
+label: Identities
+title: Power-reduction bridges with \(z = \cos\theta + i\sin\theta\)
+tone: key
+
+Let \(z = \cos\theta + i\sin\theta\). For every integer \(k \ge 1\):
+
+(1) \(z^k + z^{-k} = 2\cos(k\theta)\) (in particular, \(2\cos\theta = z + z^{-1}\)).
+(2) \(z^k - z^{-k} = 2i\sin(k\theta)\) (in particular, \(2i\sin\theta = z - z^{-1}\)).
+[/CALLOUT]
+
+To linearize \(\cos^m\theta\) or \(\sin^m\theta\), raise \(z + z^{-1} = 2\cos\theta\) or \(z - z^{-1} = 2i\sin\theta\) to the \(m\)th power, expand with the Binomial Theorem, group symmetric pairs \(z^k \pm z^{-k}\), replace each pair via [REF: linearization-bridges | the bridge identities], and divide out the constant coefficient \(2^m\) or \((2i)^m\).
+
+Worked example: linearize \(\cos^4\theta\).
+Start from \(2\cos\theta = z + z^{-1}\) and raise both sides to the \(4\)th power:
+\[
+(2\cos\theta)^4 = 16\cos^4\theta = (z + z^{-1})^4 = z^4 + 4z^2 + 6 + 4z^{-2} + z^{-4}.
+\]
+Group symmetric powers of \(z\):
+\[
+16\cos^4\theta = (z^4 + z^{-4}) + 4(z^2 + z^{-2}) + 6.
+\]
+Substitute \(z^4 + z^{-4} = 2\cos(4\theta)\) and \(z^2 + z^{-2} = 2\cos(2\theta)\) from [REF: linearization-bridges.1 | part (1)]:
+\[
+16\cos^4\theta = 2\cos(4\theta) + 8\cos(2\theta) + 6.
+\]
+Dividing both sides by \(16\) gives the exact linearized identity:
+\[
+\cos^4\theta = \frac{1}{8}\cos(4\theta) + \frac{1}{2}\cos(2\theta) + \frac{3}{8}.
+\]
+Quick check at two angles: at \(\theta = 0\), \(\frac{1}{8} + \frac{1}{2} + \frac{3}{8} = 1 = \cos^4 0\); at \(\theta = \frac{\pi}{2}\), \(\frac{1}{8}(1) + \frac{1}{2}(-1) + \frac{3}{8} = 0 = \cos^4\left(\frac{\pi}{2}\right)\).
+
+When linearizing \(\sin^m\theta\), pay special attention to the power of \(i\) on the left-hand side \((2i\sin\theta)^m = 2^m i^m \sin^m\theta\): when \(m\) is EVEN, \(i^m = \pm 1\) is real and symmetric terms pair as \(z^k + z^{-k} = 2\cos(k\theta)\); when \(m\) is ODD, \(i^m = \pm i\) is pure imaginary and symmetric terms pair as \(z^k - z^{-k} = 2i\sin(k\theta)\), so the factors of \(i\) cancel cleanly on both sides!
+
+[QUESTION 4]
+[ANSWER: A]
+Express \(\sin^3\theta\) as a linear combination of sines of multiples of \(\theta\).
+
+(A) \(\frac{3}{4}\sin\theta - \frac{1}{4}\sin(3\theta)\)
+(B) \(\frac{1}{4}\sin(3\theta) - \frac{3}{4}\sin\theta\)
+(C) \(\frac{3}{4}\sin\theta + \frac{1}{4}\sin(3\theta)\)
+(D) \(\frac{3}{4}\cos\theta - \frac{1}{4}\cos(3\theta)\)
+(E) \(\frac{1}{2}\sin\theta - \frac{1}{2}\sin(3\theta)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+What is the smallest positive integer \(n\) for which \(\left(\dfrac{\sqrt{3} + i}{2}\right)^n\) is a negative real number?
+
+(A) \(6\)
+(B) \(3\)
+(C) \(12\)
+(D) \(4\)
+(E) \(9\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Express \(\sin^4\theta\) as a linear combination of cosines of multiples of \(\theta\) and a constant term.
+
+(A) \(\frac{1}{8}\cos(4\theta) - \frac{1}{2}\cos(2\theta) + \frac{3}{8}\)
+(B) \(\frac{1}{8}\cos(4\theta) + \frac{1}{2}\cos(2\theta) + \frac{3}{8}\)
+(C) \(-\frac{1}{8}\cos(4\theta) + \frac{1}{2}\cos(2\theta) - \frac{3}{8}\)
+(D) \(\frac{1}{8}\sin(4\theta) - \frac{1}{2}\sin(2\theta) + \frac{3}{8}\)
+(E) \(\frac{1}{4}\cos(4\theta) - \frac{1}{2}\cos(2\theta) + \frac{1}{4}\)
+[/BONUS]

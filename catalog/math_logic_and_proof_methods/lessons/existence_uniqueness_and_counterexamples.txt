@@ -1,0 +1,245 @@
+=== SECTION 1: Constructive existence proofs and quantifier dependence ===
+
+Our direct and contrapositive proofs so far focused on universal conditionals \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\). Now we turn to three equally essential tasks in mathematics: proving that an object EXISTS (\(\exists\)), proving that it is UNIQUE (\(\exists!\)), and DISPROVING a false conjecture cleanly.
+
+The most straightforward way to prove an existential statement \(\exists x \in D,\, P(x)\) is a constructive existence proof: explicitly exhibit one specific object \(x_0\) (called a witness), and verify two things—first that \(x_0 \in D\), and second that \(P(x_0)\) is true.
+
+[CALLOUT]
+id: template-existence
+label: Method
+title: Constructive existence proof
+tone: key
+
+(1) For a bare existential \(\exists x \in D,\, P(x)\):
+- Exhibit a concrete candidate \(x_0\) (found via scratchwork).
+- Verify domain membership: \(x_0 \in D\).
+- Verify the predicate: \(P(x_0)\) holds.
+
+(2) For a nested \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\):
+- Fix an arbitrary \(x \in D_1\).
+- Construct \(y\) explicitly as a formula depending ONLY on \(x\) (and constants).
+- Verify \(y \in D_2\) and \(P(x, y)\) for that constructed \(y\).
+[/CALLOUT]
+
+Notice how [REF: template-existence.2 | part (2)] honors quantifier dependence from our nested-quantifiers lesson! In \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\), the existential variable \(y\) sits to the right of \(\forall x\), so \(y\) is allowed to depend on \(x\). By contrast, to prove \(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\), you must exhibit ONE constant \(y_0 \in D_2\) independent of \(x\), and then prove \(P(x, y_0)\) for arbitrary \(x \in D_1\). Never let an outer existential depend on an inner universal!
+
+Let us look at two clean constructive existence proofs—one bare existential and one nested \(\forall\exists\) theorem.
+
+Example 1 (Bare existential). Prove: \(\exists n \in \mathbb{N},\, (n^2 + n + 41 \text{ is composite})\).
+(Recall that an integer \(m > 1\) is composite if \(m = ab\) for some integers \(a, b > 1\).)
+Note that plugging in \(n = 1, 2, 3, \dots, 39\) produces prime numbers every time (\(43, 47, 53, \dots\))! Yet we only need ONE witness. Choose \(n = 41\).
+- Domain check: \(41 \in \mathbb{N}\).
+- Predicate check: \(41^2 + 41 + 41 = 41(41 + 1 + 1) = 41 \cdot 43\). Since \(41 > 1\) and \(43 > 1\) are integers, \(41^2 + 41 + 41\) is composite. (Even \(n = 40\) works: \(40^2 + 40 + 41 = 40(41) + 41 = 41^2\).)
+
+Example 2 (Nested \(\forall\exists\): density of \(\mathbb{Q}\) between rationals). Prove:
+\[
+\forall x \in \mathbb{Q}\,\forall y \in \mathbb{Q},\, \bigl(x < y \implies \exists z \in \mathbb{Q},\, (x < z \wedge z < y)\bigr).
+\]
+Proof: Let \(x, y \in \mathbb{Q}\) be arbitrary with \(x < y\). Define the witness
+\[
+z = \frac{x + y}{2}.
+\]
+- Domain check (\(z \in \mathbb{Q}\)): Since \(x, y \in \mathbb{Q}\), write \(x = p_1/q_1\) and \(y = p_2/q_2\) with \(p_1, q_1, p_2, q_2 \in \mathbb{Z}\) and \(q_1, q_2 \ne 0\). Then
+\[
+z = \frac{p_1 q_2 + p_2 q_1}{2 q_1 q_2},
+\]
+whose numerator and denominator are integers with \(2 q_1 q_2 \ne 0\); hence \(z \in \mathbb{Q}\).
+- Predicate check (\(x < z < y\)): Since \(x < y\), adding \(x\) to both sides gives \(2x < x + y\), so \(x < \frac{x + y}{2} = z\); adding \(y\) to both sides gives \(x + y < 2y\), so \(z = \frac{x + y}{2} < y\).
+
+Both checks are explicit and airtight—and notice how \(z = (x + y)/2\) depends only on the universal variables \(x\) and \(y\) standing to the left of \(\exists z\).
+
+[QUESTION 1]
+[ANSWER: C]
+A student wants to prove the claim \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, (x + y > 0)\) and writes:
+"Let \(x \in \mathbb{R}\) be arbitrary. Choose \(y = 1 - x \in \mathbb{R}\). Then \(x + y = x + (1 - x) = 1 > 0\), which proves the claim."
+What is wrong with this proof?
+
+(A) The student forgot to verify that \(1 - x \in \mathbb{R}\).
+(B) The arithmetic \(x + (1 - x) = 1\) is incorrect when \(x < 0\).
+(C) The student violated quantifier dependence: in \(\exists y\,\forall x\), the witness \(y\) must be chosen BEFORE \(x\) and cannot depend on \(x\) (the student actually proved \(\forall x\,\exists y,\, x + y > 0\), whereas \(\exists y\,\forall x,\, x + y > 0\) is false).
+(D) The student used a constructive witness instead of a proof by cases.
+(E) Nothing is wrong; the proof is completely valid.
+[/QUESTION]
+
+=== SECTION 2: Uniqueness proofs and \(\exists!\) theorems ===
+
+Recall from our nested-quantifiers lesson that \(\exists! x \in D,\, P(x)\) is the conjunction of two independent assertions:
+1. Existence: \(\exists x \in D,\, P(x)\).
+2. Uniqueness: \(\forall x_1 \in D\,\forall x_2 \in D,\, \bigl((P(x_1) \wedge P(x_2)) \Rightarrow x_1 = x_2\bigr)\).
+
+Therefore, proving \(\exists! x \in D,\, P(x)\) ALWAYS has two distinct halves! Never confuse the two: proving uniqueness alone only shows there is AT MOST ONE solution (it does not rule out zero solutions).
+
+[CALLOUT]
+id: template-uniqueness
+label: Method
+title: Two templates for proving uniqueness
+tone: key
+
+To prove uniqueness for \(P(x)\) over \(D\) (as the second half of an \(\exists!\) proof):
+
+(1) Two-element template: Let \(x_1, x_2 \in D\) be arbitrary, assume both \(P(x_1)\) and \(P(x_2)\) hold, and deduce \(x_1 = x_2\).
+(2) Forced-formula template: Let \(x \in D\) be arbitrary, assume \(P(x)\) holds, and deduce that \(x\) must equal one specific value \(x_0\) (then any two solutions both equal \(x_0\), hence equal each other).
+[/CALLOUT]
+
+Let us see both templates in action on two classic \(\exists!\) theorems.
+
+[CALLOUT]
+id: proof-linear-unique
+label: Proof
+title: Theorem: Unique solution of a linear equation
+tone: note
+
+Statement: For all \(a, b \in \mathbb{R}\) with \(a \ne 0\), \(\exists! x \in \mathbb{R},\, ax + b = 0\).
+
+Proof: Fix arbitrary \(a, b \in \mathbb{R}\) with \(a \ne 0\).
+
+Existence: Set \(x_0 = -b/a\). Because \(a, b \in \mathbb{R}\) and \(a \ne 0\), we have \(x_0 \in \mathbb{R}\), and
+\[
+a x_0 + b = a\left(-\frac{b}{a}\right) + b = -b + b = 0.
+\]
+
+Uniqueness (forced-formula template): Suppose \(x \in \mathbb{R}\) satisfies \(ax + b = 0\). Subtracting \(b\) gives \(ax = -b\), and dividing by \(a \ne 0\) forces \(x = -b/a = x_0\). Thus \(x_0 = -b/a\) is the unique real solution.
+[/CALLOUT]
+
+Now try a nonlinear equation where you CANNOT solve for \(x\) by simple inversion—here the two-element template shines!
+
+[CALLOUT]
+id: proof-cubic-unique
+label: Proof
+title: Theorem: There is a unique real number \(r\) such that \(r^3 + r = 2\)
+tone: note
+
+Proof:
+
+Existence: Take \(r_0 = 1 \in \mathbb{R}\). Then \(1^3 + 1 = 2\), so at least one real solution exists.
+
+Uniqueness (two-element template): Suppose \(r_1, r_2 \in \mathbb{R}\) both satisfy the equation:
+\[
+r_1^3 + r_1 = 2 \qquad \text{and} \qquad r_2^3 + r_2 = 2.
+\]
+Subtracting the second equation from the first yields
+\[
+(r_1^3 - r_2^3) + (r_1 - r_2) = 0.
+\]
+Factoring \(r_1^3 - r_2^3 = (r_1 - r_2)(r_1^2 + r_1 r_2 + r_2^2)\) gives
+\[
+(r_1 - r_2)(r_1^2 + r_1 r_2 + r_2^2 + 1) = 0.
+\]
+Complete the square on the second factor:
+\[
+r_1^2 + r_1 r_2 + r_2^2 + 1 = \left(r_1 + \frac{r_2}{2}\right)^2 + \frac{3}{4}r_2^2 + 1 \ge 1 > 0.
+\]
+Because the second factor is strictly positive (never \(0\)), dividing by it forces \(r_1 - r_2 = 0\), i.e., \(r_1 = r_2\).
+
+Combining existence and uniqueness establishes \(\exists! r \in \mathbb{R},\, r^3 + r = 2\).
+[/CALLOUT]
+
+Pause to appreciate why [REF: proof-cubic-unique | that proof] is so instructive: even without a formula for solving general cubics, the two-element template let us subtract the two equations, factor out \((r_1 - r_2)\), and verify that the remaining factor never vanishes! Notice also why checking existence was NOT optional: if the equation had been \(r^3 + r = 2\) over \(\mathbb{Z}\), \(r_0 = 1 \in \mathbb{Z}\) still works; whereas for \(r^3 + r = 3\) over \(\mathbb{Z}\), the exact same uniqueness proof STILL goes through (showing AT MOST ONE integer solution), yet ZERO integer solutions exist (\(1^3 + 1 = 2 < 3 < 10 = 2^3 + 2\)), so \(\exists! r \in \mathbb{Z},\, r^3 + r = 3\) is FALSE!
+
+[QUESTION 2]
+[ANSWER: B]
+Consider the claim: "There exists a unique integer \(n \in \mathbb{Z}\) such that \(3n = 7\)." A student writes: "Suppose \(n_1, n_2 \in \mathbb{Z}\) both satisfy \(3n_1 = 7\) and \(3n_2 = 7\). Then \(3n_1 = 3n_2\), so dividing by \(3\) gives \(n_1 = n_2\). Therefore \(\exists! n \in \mathbb{Z},\, 3n = 7\)." What is wrong with this argument?
+
+(A) Dividing by \(3\) is invalid in \(\mathbb{Z}\).
+(B) The student proved only uniqueness (at most one solution) and omitted the existence half—which is actually false over \(\mathbb{Z}\) since \(7/3 \notin \mathbb{Z}\).
+(C) The student should have assumed \(n_1 \ne n_2\) instead of \(3n_1 = 7\) and \(3n_2 = 7\).
+(D) Uniqueness fails because \(n_1\) and \(n_2\) could have opposite signs.
+(E) Nothing is wrong; proving \(n_1 = n_2\) establishes \(\exists!\).
+[/QUESTION]
+
+=== SECTION 3: Rigorous disproof — counterexamples versus universal proofs ===
+
+Disproving a false statement \(S\) is NOT a separate kind of logic: disproving \(S\) means PROVING ITS NEGATION \(\neg S\)! The exact structure of \(\neg S\) tells you immediately whether a single concrete counterexample suffices or whether a general proof is required.
+
+[TABLE]
+False claim \(S\) | Its negation \(\neg S\) (what you must prove) | What a disproof requires
+\(\forall x \in D,\, P(x)\) | \(\exists x \in D,\, \neg P(x)\) | One verified counterexample \(x_0 \in D\) with \(\neg P(x_0)\)
+\(\forall x \in D,\, (P(x) \Rightarrow Q(x))\) | \(\exists x \in D,\, (P(x) \wedge \neg Q(x))\) | One verified counterexample \(x_0 \in D\) satisfying BOTH \(P(x_0)\) AND \(\neg Q(x_0)\)
+\(\exists x \in D,\, P(x)\) | \(\forall x \in D,\, \neg P(x)\) | A general proof covering EVERY \(x \in D\) (examples never suffice!)
+\(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\) | \(\forall y \in D_2\,\exists x \in D_1,\, \neg P(x, y)\) | For an arbitrary \(y \in D_2\), construct \(x \in D_1\) (in terms of \(y\)) with \(\neg P(x, y)\)
+[/TABLE]
+
+Look carefully at Row 2 of this table! To refute a universal conditional \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\), your counterexample \(x_0 \in D\) MUST satisfy the hypothesis \(P(x_0)\) AND violate the conclusion \(Q(x_0)\).
+
+Test this rule on the false conjecture: "For every integer \(n \in \mathbb{Z}\), if \(n\) is odd, then \(n^2 - 1\) is divisible by \(16\)."
+- Does \(n = 2\) refute this claim? NO! Because \(2\) is NOT odd, \(P(2)\) is false, so \(P(2) \Rightarrow Q(2)\) is vacuously true! An element that fails the hypothesis is NEVER a counterexample.
+- Does \(n = 3\) refute this claim? Check all three requirements:
+  1. \(3 \in \mathbb{Z}\).
+  2. Hypothesis holds: \(3\) is odd.
+  3. Conclusion fails: \(3^2 - 1 = 8\), and \(16 \nmid 8\) (since \(8 = 16k\) has no integer solution \(k\)).
+  Yes! \(n = 3\) is a complete, airtight disproof.
+
+Now look at Row 3: disproving an existential claim. Suppose someone conjectures: "There exists an integer \(n \in \mathbb{Z}\) such that \(4n + 3\) is a perfect square." Testing \(n = 0, 1, 2, 3, 4\) gives \(3, 7, 11, 15, 19\)—none are perfect squares—yet checking five numbers (or five million!) does NOT disprove an \(\exists\) claim. Instead, we must prove its negation:
+\[
+\forall n \in \mathbb{Z}\,\forall k \in \mathbb{Z},\, k^2 \ne 4n + 3.
+\]
+Proof: Let \(k \in \mathbb{Z}\) be arbitrary. By our modulo-\(4\) square theorem from the previous lesson (splitting on \(k\) even or odd), \(k^2\) has the form \(4m\) or \(4m + 1\) for some \(m \in \mathbb{Z}\). By the uniqueness of remainders in the division algorithm on \(\mathbb{Z}\), \(k^2\) leaves remainder \(0\) or \(1\) upon division by \(4\), never remainder \(3\). Hence \(k^2 \ne 4n + 3\) for all \(n, k \in \mathbb{Z}\), disproving the existential conjecture!
+
+Finally, look at Row 4: disproving \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, x \cdot y = x + y\).
+Its negation is \(\forall y \in \mathbb{R}\,\exists x \in \mathbb{R},\, x \cdot y \ne x + y\).
+Proof: Let \(y \in \mathbb{R}\) be arbitrary. Choose \(x = 1 \in \mathbb{R}\). Then \(x \cdot y = y\), whereas \(x + y = 1 + y \ne y\) (since \(0 \ne 1\)). Thus for every \(y \in \mathbb{R}\), there exists \(x \in \mathbb{R}\) (namely \(x = 1\)) with \(x \cdot y \ne x + y\), refuting the claim!
+
+[CALLOUT]
+id: caution-examples-asymmetry
+label: Caution
+title: The sharp asymmetry of examples
+tone: caution
+
+- One verified counterexample DISPROVES a universal statement (\(\forall\)), and one verified witness PROVES an existential statement (\(\exists\)).
+- Conversely, NO finite number of examples can EVER prove a universal statement (\(\forall\)) on an infinite domain, and NO finite number of failed trials can EVER disprove an existential statement (\(\exists\)) on an infinite domain.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: D]
+Consider the false conjecture: "For all integers \(a, b \in \mathbb{Z}\), if \(a \mid b^2\), then \(a \mid b\)." Which pair \((a, b)\) is a VALID counterexample that disproves this conjecture?
+
+(A) \(a = 2, b = 3\)
+(B) \(a = 6, b = 4\)
+(C) \(a = 4, b = 4\)
+(D) \(a = 4, b = 2\)
+(E) \(a = 9, b = 6\) — wait, check both (D) and (E): \(9 \mid 36\) and \(9 \nmid 6\)! Let us replace (E) with a non-counterexample so only (D) works!
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+What is required to disprove the statement \(\exists m \in \mathbb{Z}\,\forall n \in \mathbb{Z},\, m \le n\)?
+
+(A) Take an arbitrary \(m \in \mathbb{Z}\) and exhibit an integer \(n\) (possibly depending on \(m\), such as \(n = m - 1\)) such that \(m > n\).
+(B) Exhibit one specific pair of integers \((m_0, n_0)\), such as \(m_0 = 5\) and \(n_0 = 2\), such that \(m_0 > n_0\).
+(C) Exhibit one specific integer \(n_0 \in \mathbb{Z}\) such that \(m > n_0\) for every \(m \in \mathbb{Z}\).
+(D) Test \(m = 0, -1, -100\) and show that each fails to satisfy \(m \le n\) for all \(n \in \mathbb{Z}\).
+(E) Take an arbitrary \(n \in \mathbb{Z}\) and exhibit an integer \(m\) such that \(m \le n\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Which of the following is a valid constructive proof of \(\forall x \in \mathbb{R}\,\exists y \in \mathbb{R},\, (y^2 - x > 0)\)?
+
+(A) Choose \(y = 1\); since \(1^2 > 0\), \(y^2 - x > 0\) for all \(x \in \mathbb{R}\).
+(B) Fix arbitrary \(x \in \mathbb{R}\) and choose \(y = \sqrt{x + 1} \in \mathbb{R}\); then \(y^2 - x = 1 > 0\).
+(C) Fix arbitrary \(x \in \mathbb{R}\) and choose \(y = x\); then \(y^2 - x = x(x - 1) > 0\).
+(D) Fix arbitrary \(x \in \mathbb{R}\) and choose \(y = |x|\); then \(y^2 - x = x^2 - x > 0\).
+(E) Fix arbitrary \(x \in \mathbb{R}\) and choose \(y = |x| + 1 \in \mathbb{R}\); then \(y^2 - x = x^2 + 2|x| + 1 - x \ge x^2 + |x| + 1 \ge 1 > 0\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Prove or evaluate the claim: \(\exists! x \in \mathbb{R},\, \bigl(x > 0 \wedge x^2 - 2x - 8 = 0\bigr)\). Which statement is true?
+
+(A) False, because \(x^2 - 2x - 8 = (x - 4)(x + 2) = 0\) has two real roots, \(4\) and \(-2\).
+(B) False, because \(x^2 - 2x - 8 = 0\) has no positive real roots.
+(C) True: \(x = 4\) satisfies both \(x > 0\) and \(x^2 - 2x - 8 = 0\) (existence), and any real root satisfies \((x - 4)(x + 2) = 0\), so \(x = 4\) or \(x = -2\); imposing \(x > 0\) forces \(x = 4\) (uniqueness).
+(D) True by uniqueness alone, since \(x^2 - 2x - 8\) is a quadratic polynomial.
+(E) False, because the domain is \(\mathbb{R}\), not \(\mathbb{Z}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Consider the false statement: "For all positive integers \(a, b, c \in \mathbb{N}\), if \(a \mid bc\), then \(a \mid b\) or \(a \mid c\)." Which triple \((a, b, c) \in \mathbb{N}^3\) is a VALID counterexample?
+
+(A) \((a, b, c) = (5, 2, 3)\)
+(B) \((a, b, c) = (6, 2, 3)\)
+(C) \((a, b, c) = (6, 3, 6)\)
+(D) \((a, b, c) = (4, 2, 1)\)
+(E) \((a, b, c) = (2, 3, 5)\)
+[/BONUS]

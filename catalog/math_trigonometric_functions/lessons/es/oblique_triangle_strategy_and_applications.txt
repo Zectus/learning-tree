@@ -1,0 +1,193 @@
+=== SECTION 1: Un marco completo de decisión para triángulos oblicuángulos ===
+
+Usted dispone ahora del repertorio completo para triángulos oblicuángulos: la ley de los senos (incluida su resolución ambigua LLA), la ley de los cosenos y la fórmula de área LAL. En problemas reales de geometría, topografía y navegación, nadie etiqueta el diagrama con «use la ley de los senos» o «use la ley de los cosenos». Su primera tarea consiste en clasificar las medidas dadas y elegir de inmediato la ley inicial adecuada.
+
+Todo triángulo oblicuángulo resoluble corresponde a una de cinco configuraciones de tres datos (advierta que AAA —tres ángulos únicamente— determina solo semejanza, nunca longitudes de lados):
+
+[TABLE]
+Datos dados | ¿Par opuesto conocido? | Ley inicial | Triángulos posibles | Precaución clave
+AAL o ALA | Sí (tras la suma de \(180^\circ\) en ALA) | Ley de los senos | \(1\) (si la suma angular \(< 180^\circ\)) | Conserve el par exacto original; evite reutilizar redondeos
+LLA | Sí (un par + segundo lado) | Ley de los senos | \(0, 1,\) o \(2\) | Evalúe siempre el suplemento \(B_2 = 180^\circ - B_1\)
+LAL | No | Ley de los cosenos (para el lado opuesto) | \(1\) | Cuide el signo de \(-2ab\cos C\) si \(C > 90^\circ\); evite usar la ley de los senos luego en el lado más largo
+LLL | No | Ley de los cosenos (para el ángulo mayor) | \(0\) o \(1\) | Verifique primero la desigualdad triangular
+[/TABLE]
+
+Observe la única regla de decisión binaria que gobierna toda la tabla:
+- ¿Conoce un par opuesto completo (un ángulo Y su lado opuesto, o dos ángulos que proporcionan de inmediato el tercer ángulo opuesto al lado dado)? Comience con la ley de los senos.
+- ¿NO tiene ningún par opuesto (LAL o LLL)? Comience con la ley de los cosenos.
+
+=== SECTION 2: Cómo evitar la trampa híbrida en LAL ===
+
+Uno de los errores más sutiles al resolver triángulos oblicuángulos ocurre a mitad de un problema LAL. Suponga que le dan \(a = 5\), \(b = 12\) y \(C = 40^\circ\). Usted comienza correctamente con la ley de los cosenos para hallar el tercer lado \(c\):
+\[
+c^2 = 5^2 + 12^2 - 2(5)(12)\cos 40^\circ \approx 169 - 120(0.7660) \approx 77.08 \implies c \approx 8.78.
+\]
+Ahora tiene los tres lados (\(a = 5, c \approx 8.78, b = 12\)) y el ángulo \(C = 40^\circ\). Resulta tentador pasar a la ley de los senos, más rápida, para hallar uno de los ángulos restantes \(A\) o \(B\). ¿Cuál de ellos es SEGURO hallar con la ley de los senos?
+
+Vea qué ocurre si despeja a ciegas el ángulo \(B\) (opuesto al lado MÁS LARGO \(b = 12\)):
+\[
+\sin B = \frac{12\sin 40^\circ}{8.78} \approx 0.8785 \implies \sin^{-1}(0.8785) \approx 61.5^\circ.
+\]
+Luego, al restar de \(180^\circ\), resulta \(A \approx 180^\circ - 40^\circ - 61.5^\circ = 78.5^\circ\). ¡Un momento! Mire ese resultado: \(A \approx 78.5^\circ > B \approx 61.5^\circ\), ¡aunque el lado \(a = 5\) mide MENOS DE LA MITAD que el lado \(b = 12\)! ¡Eso es imposible!
+
+¿Por qué falló? Porque \(b = 12\) es el lado más largo y \(a^2 + c^2 \approx 25 + 77.08 = 102.08 < 144 = b^2\), de modo que el ángulo \(B\) es en realidad OBTUSO: \(B \approx 180^\circ - 61.5^\circ = 118.5^\circ\), lo que da \(A \approx 180^\circ - 40^\circ - 118.5^\circ = 21.5^\circ\). ¡La tecla \(\sin^{-1}\) de la calculadora NUNCA puede devolver un ángulo obtuso!
+
+Vea ahora qué sucede si despeja en cambio el ángulo restante MÁS PEQUEÑO \(A\) (opuesto a \(a = 5\)):
+\[
+\sin A = \frac{5\sin 40^\circ}{8.78} \approx 0.3661 \implies A = \sin^{-1}(0.3661) \approx 21.5^\circ.
+\]
+Como \(a = 5\) NO es el lado más largo del triángulo, el ángulo \(A\) tiene GARANTIZADO ser agudo —un triángulo puede tener a lo sumo un ángulo obtuso, y DEBE oponerse al lado más largo—. ¡Restar luego produce automáticamente el verdadero ángulo obtuso \(B = 180^\circ - 40^\circ - 21.5^\circ = 118.5^\circ\)!
+
+[CALLOUT]
+id: hybrid-sas-rule
+label: Regla crítica
+title: Segundo paso seguro tras la ley de los cosenos en un triángulo LAL
+tone: caution
+
+Después de usar la ley de los cosenos para hallar el tercer lado de un triángulo LAL, dispone de dos opciones completamente libres de ambigüedad para el siguiente ángulo:
+(1) Aplique la ley de los senos ÚNICAMENTE al MÁS CORTO de los dos lados dados originalmente (cuyo ángulo opuesto es necesariamente agudo).
+(2) O continúe con la ley de los cosenos para hallar cualquiera de los ángulos restantes, ya que \(\cos^{-1}\) distingue automáticamente entre ángulos agudos y obtusos.
+
+Nunca aplique la ley de los senos a ciegas al ángulo opuesto al lado más largo del triángulo, y termine SIEMPRE comprobando el orden lado-ángulo (ángulo mayor frente al lado más largo, ángulo menor frente al lado más corto).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: B]
+Está resolviendo \(\triangle ABC\) con \(a = 5\), \(b = 11\) y \(C = 42^\circ\). Después de usar la ley de los cosenos para hallar \(c \approx 7.99\), ¿qué paso siguiente garantiza evitar obtener un ángulo agudo falso?
+
+(A) Usar la ley de los senos para hallar el ángulo \(B\), y luego calcular \(A = 180^\circ - B - C\)
+(B) Usar la ley de los senos para hallar el ángulo \(A\) (opuesto al lado más corto \(a = 5\)), y luego calcular \(B = 180^\circ - A - C\)
+(C) Usar \(\sin B = \frac{b\sin C}{c}\) y suponer \(B < 90^\circ\) porque \(C < 90^\circ\)
+(D) Fijar \(B = 90^\circ - C\) y hallar \(A\) por la ley de los senos
+(E) Promediar los ángulos \(A\) y \(B\) para obtener \(69^\circ\) cada uno
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Para un triángulo con medidas dadas \(a = 9\), \(b = 14\) y \(C = 52^\circ\), ¿qué estrategia comienza limpiamente y resuelve el triángulo con seguridad sin arriesgar ambigüedad LLA?
+
+(A) Clasificar como LLA; comenzar con la ley de los senos para hallar \(A\) y probar dos triángulos
+(B) Clasificar como ALA; hallar \(B = 180^\circ - 52^\circ\) primero, luego usar la ley de los senos
+(C) Clasificar como LAL; comenzar con la ley de los senos para hallar \(c\), luego usar la ley de los cosenos
+(D) Clasificar como LAL; comenzar con la ley de los cosenos para hallar \(c\), luego hallar el ángulo \(A\) mediante la ley de los senos (o cualquiera de los ángulos mediante la ley de los cosenos)
+(E) Clasificar como LLL; verificar la desigualdad triangular y comenzar con la ley de los cosenos para \(B\)
+[/QUESTION]
+
+=== SECTION 3: Rumbos de navegación, topografía y triangulación ===
+
+Los problemas geométricos del mundo real rara vez le entregan un triángulo ya rotulado; en su lugar, proporcionan rumbos, líneas base y visuales que usted traduce a un modelo LAL, ALA o AAL.
+
+Considere una ruta de navegación en dos tramos. Una embarcación zarpa del puerto \(P\) y navega \(10\text{ km}\) con un rumbo de brújula \(\mathrm{N}\,40^\circ\,\mathrm{E}\) hasta el punto de paso \(Q\), luego gira hacia un rumbo \(\mathrm{S}\,70^\circ\,\mathrm{E}\) y navega \(14\text{ km}\) hasta la isla \(R\). ¿A qué distancia en línea recta está la isla del puerto?
+
+Trace rectas verticales de referencia Norte-Sur tanto en \(P\) como en \(Q\). Por ángulos alternos internos, mirar hacia atrás desde \(Q\) hacia \(P\) apunta \(40^\circ\) al oeste del Sur franco (\(\mathrm{S}\,40^\circ\,\mathrm{W}\)). El tramo 2 avanza \(70^\circ\) al este del Sur franco (\(\mathrm{S}\,70^\circ\,\mathrm{E}\)). Como un rayo yace \(40^\circ\) al oeste del Sur y el otro \(70^\circ\) al este del Sur, el ángulo interior en el punto de paso \(Q\) es
+\[
+\angle PQR = 40^\circ + 70^\circ = 110^\circ.
+\]
+
+[GRAPH]
+type: parametric2d
+title: Ruta de brújula en dos tramos formando el triángulo LAL \(\triangle PQR\) con \(\angle Q = 110^\circ\)
+xlabel: Este-Oeste (km)
+ylabel: Norte-Sur (km)
+trange: 4.014, 5.934
+xrange: -2.0, 21.5
+yrange: -1.5, 10.0
+trace: 6.428 + 1.8*cos(t), 7.660 + 1.8*sin(t) | label: \(\angle Q = 110^\circ\) | color: #059669
+segment: 0, -1, 0, 9.5 | dashed: true
+segment: 6.428, 1.5, 6.428, 9.5 | dashed: true
+segment: 0, 0, 6.428, 7.660 | label: \(10\) | color: #2563eb
+segment: 6.428, 7.660, 19.584, 2.872 | label: \(14\) | color: #dc2626
+segment: 0, 0, 19.584, 2.872 | label: \(d\) | color: #0f172a
+point: 0, 0 | label: \(P\) | offset: -0.6, -0.5
+point: 6.428, 7.660 | label: \(Q\) | offset: 0, 0.6
+point: 19.584, 2.872 | label: \(R\) | offset: 0.6, -0.4
+[/GRAPH]
+
+Ahora \(\triangle PQR\) es un triángulo LAL con lados \(10\text{ km}\) y \(14\text{ km}\) que comprenden \(110^\circ\). La ley de los cosenos da la distancia en línea recta \(d = PR\):
+\[
+d = \sqrt{10^2 + 14^2 - 2(10)(14)\cos 110^\circ} \approx \sqrt{296 - 280(-0.3420)} \approx \sqrt{391.77} \approx 19.8\text{ km}.
+\]
+Para hallar el rumbo directo desde \(P\) hacia \(R\), aplique [REF: hybrid-sas-rule | nuestra regla segura para el segundo paso]: halle el ángulo agudo \(\angle QPR\) (opuesto a \(14 < 19.8\), por lo que es necesariamente agudo) mediante la ley de los senos (\(\sin\angle QPR = \frac{14\sin 110^\circ}{19.8} \approx 0.664 \implies \angle QPR \approx 41.6^\circ\)), y súmelo a los \(40^\circ\) al este del Norte del primer tramo para obtener \(\mathrm{N}\,81.6^\circ\,\mathrm{E}\).
+
+Por contraste, la triangulación a través de un obstáculo (como un cañón o una bahía) mide una línea base conocida \(AB\) y los dos ángulos de visual \(\angle CAB\) y \(\angle CBA\) hacia un objetivo lejano \(C\). Eso crea un triángulo ALA: reste de \(180^\circ\) para obtener \(\angle ACB\) y luego aplique la ley de los senos para hallar la distancia desde cualquiera de las estaciones hasta \(C\).
+
+[QUESTION 3]
+[ANSWER: C]
+Un buque de carga zarpa del puerto \(H\) y navega \(8\text{ km}\) con rumbo \(\mathrm{N}\,30^\circ\,\mathrm{E}\) hasta la boya \(B\). En la boya \(B\), gira hacia un rumbo \(\mathrm{S}\,30^\circ\,\mathrm{E}\) y navega \(15\text{ km}\) hasta el puerto \(P\). ¿Cuál es la distancia exacta en línea recta desde el puerto \(H\) hasta el puerto \(P\)?
+
+(A) \(17\text{ km}\)
+(B) \(\sqrt{409}\text{ km}\)
+(C) \(13\text{ km}\)
+(D) \(\sqrt{109}\text{ km}\)
+(E) \(23\text{ km}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Dos estaciones costeras de observación \(A\) y \(B\) están situadas a \(200\text{ m}\) entre sí a lo largo de una costa rectilínea. Ambas estaciones avistan un faro mar adentro \(C\), midiendo \(\angle CAB = 45^\circ\) y \(\angle CBA = 75^\circ\). ¿Cuál es la distancia exacta desde la estación \(B\) hasta el faro \(C\)?
+
+(A) \(\dfrac{200\sqrt{6}}{3}\text{ m}\)
+(B) \(100\sqrt{6}\text{ m}\)
+(C) \(\dfrac{200\sqrt{3}}{3}\text{ m}\)
+(D) \(200\sqrt{2}\text{ m}\)
+(E) \(100\sqrt{2}\text{ m}\)
+[/QUESTION]
+
+=== SECTION 4: Geometría en varias etapas: cuadriláteros irregulares ===
+
+Cuando un problema involucra una figura de cuatro lados \(ABCD\) sin lados paralelos ni ángulos rectos, trace UNA diagonal (digamos \(BD\)) que divida \(ABCD\) en dos triángulos que comparten esa diagonal como lado puente común.
+
+[GRAPH]
+type: parametric2d
+title: División del cuadrilátero irregular \(ABCD\) por la diagonal \(BD\) en dos triángulos resolubles
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1.0472
+xrange: -0.8, 9.2
+yrange: -0.8, 7.6
+trace: 1.4*cos(t), 1.4*sin(t) | label: \(\angle A\) | color: #2563eb
+segment: 0, 0, 8, 0 | label: \(AD\) | color: #0f172a
+segment: 0, 0, 3, 5.196 | label: \(AB\) | color: #0f172a
+segment: 3, 5.196, 8, 0 | label: \(BD\) | color: #dc2626 | dashed: true
+segment: 3, 5.196, 8.6, 6.2 | label: \(BC\) | color: #059669
+segment: 8, 0, 8.6, 6.2 | label: \(CD\) | color: #059669
+point: 0, 0 | label: \(A\) | offset: -0.35, -0.35
+point: 3, 5.196 | label: \(B\) | offset: -0.35, 0.35
+point: 8.6, 6.2 | label: \(C\) | offset: 0.3, 0.25
+point: 8, 0 | label: \(D\) | offset: 0.3, -0.35
+[/GRAPH]
+
+¡Elija siempre la diagonal que separe un triángulo en el que ya se conozcan TRES medidas! Resuelva ese primer triángulo para hallar la longitud exacta de la diagonal compartida \(BD\) (por lo general mediante la ley de los cosenos en LAL o la ley de los senos en ALA), y luego pase \(BD\) al segundo triángulo como lado conocido para determinar sus ángulos, lados y área restantes. Sume las áreas de ambos triángulos para obtener el área total del cuadrilátero.
+
+[BONUS 1]
+[ANSWER: E]
+En el cuadrilátero \(ABCD\), la diagonal \(BD\) divide la figura en \(\triangle ABD\) y \(\triangle BCD\). Se dan \(AB = 5\), \(AD = 8\), \(\angle BAD = 60^\circ\), \(BC = 7\) y \(CD = 7\). ¿Cuáles son la longitud exacta de la diagonal \(BD\) y el área total exacta del cuadrilátero \(ABCD\)?
+
+(A) \(BD = 7\) y área total \(10\sqrt{3}\)
+(B) \(BD = \sqrt{129}\) y área total \(\dfrac{89\sqrt{3}}{4}\)
+(C) \(BD = 7\) y área total \(\dfrac{69\sqrt{3}}{4}\)
+(D) \(BD = 7\) y área total \(\dfrac{49\sqrt{3}}{2}\)
+(E) \(BD = 7\) y área total \(\dfrac{89\sqrt{3}}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Para resolver \(\triangle ABC\) con \(a = 3\), \(b = 8\) y \(C = 60^\circ\), un estudiante halla correctamente \(c = 7\) usando la ley de los cosenos, luego calcula \(\sin B = \frac{8\sin 60^\circ}{7} \approx 0.9897\), toma \(B = \sin^{-1}(0.9897) \approx 81.8^\circ\) y termina con \(A = 180^\circ - 60^\circ - 81.8^\circ = 38.2^\circ\). ¿Qué enunciado diagnostica con precisión el trabajo del estudiante?
+
+(A) El trabajo es completamente correcto porque \(38.2^\circ + 81.8^\circ + 60^\circ = 180^\circ\) y \(A < C < B\)
+(B) El ángulo \(B\) es en realidad obtuso (\(B \approx 98.2^\circ\) y \(A \approx 21.8^\circ\)); como \(a^2 + c^2 = 58 < 64 = b^2\), aplicar \(\sin^{-1}\) al ángulo del lado más largo devolvió el suplemento agudo en lugar del verdadero ángulo obtuso
+(C) El estudiante cometió un error al hallar \(c\); el valor verdadero es \(c = \sqrt{97}\)
+(D) Existen dos triángulos diferentes para estos datos LAL, por lo que tanto \(B \approx 81.8^\circ\) como \(B \approx 98.2^\circ\) son soluciones válidas
+(E) El ángulo \(A\) debería ser obtuso porque \(a = 3\) es el lado más corto
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Dos senderos rectilíneos parten de una estación de guardabosques \(R\). El Sendero 1 recorre \(6\text{ km}\) con rumbo \(\mathrm{N}\,20^\circ\,\mathrm{W}\) hasta el Campamento \(P\), y el Sendero 2 recorre \(10\text{ km}\) con rumbo \(\mathrm{S}\,40^\circ\,\mathrm{W}\) hasta el Campamento \(Q\). ¿Cuáles son el ángulo interior \(\angle PRQ\) en la estación y la distancia exacta en línea recta entre el Campamento \(P\) y el Campamento \(Q\)?
+
+(A) \(\angle PRQ = 60^\circ\) y \(PQ = 2\sqrt{19}\text{ km}\)
+(B) \(\angle PRQ = 120^\circ\) y \(PQ = 2\sqrt{19}\text{ km}\)
+(C) \(\angle PRQ = 140^\circ\) y \(PQ = 14\text{ km}\)
+(D) \(\angle PRQ = 120^\circ\) y \(PQ = 14\text{ km}\)
+(E) \(\angle PRQ = 60^\circ\) y \(PQ = 14\text{ km}\)
+[/BONUS]

@@ -1,0 +1,285 @@
+=== SECTION 1: Recursive specifications of sequences and closed-form verification ===
+
+There are two fundamentally different ways to specify a sequence \((a_n)_{n \ge 0}\). A closed-form formula computes \(a_n\) directly from the index \(n\) in one shot, such as \(a_n = 2^n + 3^n\). A recursive definition, by contrast, specifies one or more initial (base) values together with a recurrence rule that builds each later term from earlier terms, such as
+\[
+a_0 = 2, \qquad a_1 = 5, \qquad a_n = 5a_{n-1} - 6a_{n-2} \quad (n \ge 2).
+\]
+Computing the first few terms from the recurrence gives \(a_2 = 5(5) - 6(2) = 13\), \(a_3 = 5(13) - 6(5) = 35\), and \(a_4 = 5(35) - 6(13) = 97\). Compare those with \(2^n + 3^n\): \(1 + 1 = 2\), \(2 + 3 = 5\), \(4 + 9 = 13\), \(8 + 27 = 35\), \(16 + 81 = 97\).
+
+We do not develop general algebraic solvers (such as characteristic equations or generating functions) in this lesson; instead, strong induction gives a clean, completely rigorous way to verify any supplied closed form or identity for a recursively defined sequence.
+
+Let us verify \(a_n = 2^n + 3^n\) for all \(n \ge 0\). Because the recurrence for \(a_{k+1}\) uses both \(a_k\) and \(a_{k-1}\) (lag \(2\)), we check two base cases:
+- \(n = 0\): \(a_0 = 2 = 2^0 + 3^0\),
+- \(n = 1\): \(a_1 = 5 = 2^1 + 3^1\).
+Now fix an integer \(k \ge 1\) and assume \(a_j = 2^j + 3^j\) for all integers \(0 \le j \le k\). Since \(k \ge 1\), both \(k\) and \(k - 1\) satisfy \(0 \le j \le k\), so the strong inductive hypothesis applies to both terms in the recurrence:
+\[
+a_{k+1} = 5a_k - 6a_{k-1} = 5(2^k + 3^k) - 6(2^{k-1} + 3^{k-1}).
+\]
+Group the powers of \(2\) and the powers of \(3\) separately:
+\[
+a_{k+1} = (5 \cdot 2 - 6)2^{k-1} + (5 \cdot 3 - 6)3^{k-1} = 4 \cdot 2^{k-1} + 9 \cdot 3^{k-1} = 2^{k+1} + 3^{k+1}.
+\]
+By strong induction, \(a_n = 2^n + 3^n\) holds for all integers \(n \ge 0\).
+
+Notice why both base cases are indispensable. Any formula of the form \(c_1 2^n + c_2 3^n\) satisfies the recurrence \(a_{k+1} = 5a_k - 6a_{k-1}\) identically! Checking \(n = 0\) alone would not distinguish \(2^n + 3^n\) from \(2 \cdot 2^n + 0 \cdot 3^n\) (which also equals \(2\) at \(n = 0\), yet gives \(4 \ne 5\) at \(n = 1\)). Both base cases are needed to lock in the unique sequence.
+
+Strong induction also verifies identities linking two recursively defined sequences. Recall the Fibonacci sequence \(F_0 = 0\), \(F_1 = 1\), \(F_n = F_{n-1} + F_{n-2}\) (\(n \ge 2\)), and define the companion Lucas sequence by the exact same recurrence with different seeds:
+\[
+L_0 = 2, \qquad L_1 = 1, \qquad L_n = L_{n-1} + L_{n-2} \quad (n \ge 2).
+\]
+Its first terms are \(2, 1, 3, 4, 7, 11, 18, \dots\). Compare \(L_n\) with \(F_{n-1} + F_{n+1}\):
+- \(n = 1\): \(L_1 = 1\) and \(F_0 + F_2 = 0 + 1 = 1\),
+- \(n = 2\): \(L_2 = 3\) and \(F_1 + F_3 = 1 + 2 = 3\),
+- \(n = 3\): \(L_3 = 4\) and \(F_2 + F_4 = 1 + 3 = 4\).
+
+To prove \(L_n = F_{n-1} + F_{n+1}\) for every integer \(n \ge 1\), we already verified the two base cases \(n = 1\) and \(n = 2\). Fix \(k \ge 2\) and assume \(L_j = F_{j-1} + F_{j+1}\) for all \(1 \le j \le k\). Using the Lucas recurrence, the strong inductive hypothesis at \(j = k\) and \(j = k - 1\), and finally the Fibonacci recurrence twice:
+\[
+L_{k+1} = L_k + L_{k-1} = (F_{k-1} + F_{k+1}) + (F_{k-2} + F_k) = (F_{k-1} + F_{k-2}) + (F_{k+1} + F_k) = F_k + F_{k+2}.
+\]
+By strong induction, \(L_n = F_{n-1} + F_{n+1}\) holds for all \(n \ge 1\).
+
+[QUESTION 1]
+[ANSWER: B]
+A sequence \((b_n)_{n \ge 0}\) is defined recursively by \(b_0 = 3\), \(b_1 = 4\), and \(b_n = 3b_{n-1} - 2b_{n-2}\) for all \(n \ge 2\). Which closed-form formula satisfies both the recurrence and the initial conditions for all \(n \ge 0\)?
+
+(A) \(b_n = 1 + 2^{n+1}\)
+(B) \(b_n = 2 + 2^n\)
+(C) \(b_n = 3 \cdot 2^n\)
+(D) \(b_n = 3 + n\)
+(E) \(b_n = 4 \cdot 2^n - 1\)
+[/QUESTION]
+
+=== SECTION 2: Recursively defined discrete sets ===
+
+Recursion is not limited to numerical sequences; it builds entire collections of discrete objects—lattice points, strings, trees, and formal expressions—from a few starting seeds and explicit assembly rules.
+
+[CALLOUT]
+id: recursive-set-def
+label: Definition
+title: Anatomy of a recursively defined set
+tone: key
+
+A recursive (or inductive) definition of a set \(S\) consists of three clauses:
+
+(1) Basis (seed) clause: Lists specific initial objects declared to belong to \(S\).
+(2) Recursive (constructor) clause: Gives rules that produce new elements of \(S\) from elements already known to lie in \(S\).
+(3) Extremal (closure) clause: Declares that no object belongs to \(S\) unless it can be obtained from the basis objects by finitely many applications of the constructor rules.
+[/CALLOUT]
+
+Why does [REF: recursive-set-def.3 | the extremal clause] matter? Suppose we state only that \((0, 0) \in S\) and that if \((x, y) \in S\) then \((x + 2, y + 3) \in S\). Without the extremal clause, the entire integer grid \(\mathbb{Z}^2\) satisfies both rules—so we could never prove that \((1, 0) \notin S\). The extremal clause guarantees that \(S\) is the smallest set containing the seeds and closed under the constructors: every element of \(S\) has a finite construction history starting from the seeds.
+
+Here are four core families of recursively defined sets.
+
+1. A subset \(S \subseteq \mathbb{Z}^2\):
+   - Basis: \((0, 0) \in S\).
+   - Constructors: If \((x, y) \in S\), then \((x + 2, y + 3) \in S\) and \((x + 3, y + 2) \in S\).
+   - Extremal clause: Only points generated in finitely many steps belong to \(S\).
+   For instance, \((0, 0) \to (2, 3) \to (5, 5) \in S\), and \((0, 0) \to (3, 2) \to (6, 4) \in S\). Notice a pattern: at every step, the coordinate sum \(x + y\) increases by \(5\), so \(5 \mid (x + y)\) for every \((x, y) \in S\).
+
+2. Balanced-parenthesis strings \(B\): Let \(\varepsilon\) denote the empty string (length \(0\)), and write \(uv\) for the concatenation of strings \(u\) and \(v\).
+   - Basis: \(\varepsilon \in B\).
+   - Constructors: If \(u \in B\), then \((u) \in B\); if \(u, v \in B\), then \(uv \in B\).
+   - Extremal clause: Nothing else is in \(B\).
+   For example, from \(\varepsilon\) we build \(()\), then \((())\) and \(()()\), then \((())()\). Notice that two different construction histories can produce the same string (for example, \(()\varepsilon = ()\)), which is completely legal when defining a set—though when defining a function recursively on \(S\), ambiguity must be checked carefully, as we will see in Section 4.
+
+3. Full binary trees \(\mathcal{T}\): A full binary tree is a rooted tree in which every node has either \(0\) children (a leaf) or exactly \(2\) ordered children, a left child and a right child (an internal node).
+   - Basis: A single isolated vertex \(\bullet\) (a tree with one leaf and no internal nodes) belongs to \(\mathcal{T}\).
+   - Constructor: If \(T_1, T_2 \in \mathcal{T}\), then \(\operatorname{node}(T_1, T_2) \in \mathcal{T}\), formed by attaching a new root whose left subtree is \(T_1\) and whose right subtree is \(T_2\).
+   - Extremal clause: Nothing else is in \(\mathcal{T}\).
+
+4. Arithmetic expression trees \(\mathcal{E}\) (over variables \(x, y, z\) and binary operators \(+, \times\)):
+   - Basis: Each single variable \(x, y, z\) is an expression tree in \(\mathcal{E}\) (a leaf).
+   - Constructors: If \(E_1, E_2 \in \mathcal{E}\), then \((E_1 + E_2) \in \mathcal{E}\) and \((E_1 \times E_2) \in \mathcal{E}\).
+   - Extremal clause: Nothing else is in \(\mathcal{E}\).
+
+[QUESTION 2]
+[ANSWER: C]
+Let \(S \subseteq \mathbb{Z}^2\) be defined recursively by:
+- Basis: \((1, 2) \in S\).
+- Constructors: If \((x, y) \in S\), then \((x + 3, y + 1) \in S\) and \((x - 1, y + 2) \in S\).
+- Extremal clause: Nothing else belongs to \(S\).
+
+Which of the following points definitely CANNOT belong to \(S\)?
+
+(A) \((4, 3)\)
+(B) \((0, 4)\)
+(C) \((5, 4)\)
+(D) \((3, 5)\)
+(E) \((6, 6)\)
+[/QUESTION]
+
+=== SECTION 3: Structural induction and its soundness ===
+
+To prove that a property \(P(x)\) holds for every element \(x\) of a recursively defined set \(S\), we do not have to force an artificial integer index onto \(S\) every time. Instead, we induct directly on the construction rules of \(S\).
+
+[CALLOUT]
+id: structural-induction
+label: Principle
+title: Principle of Structural Induction
+tone: key
+
+Let \(S\) be a recursively defined set satisfying [REF: recursive-set-def | the basis, constructor, and extremal clauses], and let \(P(x)\) be a predicate defined for elements \(x \in S\). Suppose that:
+
+(1) Base cases: \(P(b)\) holds for every basis (seed) object \(b\) of \(S\).
+(2) Inductive (constructor) steps: For every constructor rule \(c\) of \(S\), whenever \(P(x_1), \dots, P(x_r)\) hold for inputs \(x_1, \dots, x_r \in S\), the property \(P\bigl(c(x_1, \dots, x_r)\bigr)\) also holds.
+
+Then \(P(x)\) holds for every \(x \in S\).
+[/CALLOUT]
+
+Why is [REF: structural-induction | structural induction] guaranteed to be sound? Because it reduces directly to strong induction on the natural numbers!
+
+[CALLOUT]
+id: structural-soundness
+label: Proof
+title: Soundness of structural induction via strong induction
+tone: note
+
+Define the construction depth \(d(x) \in \mathbb{N}\) of each \(x \in S\) as the smallest number of constructor applications needed to generate \(x\) from the seeds:
+- Basis objects have depth \(0\).
+- If \(x = c(x_1, \dots, x_r)\) is built from \(x_1, \dots, x_r \in S\), then \(d(x) \le 1 + \max\bigl(d(x_1), \dots, d(x_r)\bigr)\); conversely, any \(x \in S\) with \(d(x) = n \ge 1\) must be of the form \(c(x_1, \dots, x_r)\) for some constructor \(c\) and inputs \(x_i \in S\) all having \(d(x_i) \le n - 1\).
+
+By [REF: recursive-set-def.3 | the extremal clause], every \(x \in S\) has a finite depth \(d(x) \in \mathbb{N}\). Let \(R(n)\) be the statement "\(P(x)\) holds for every \(x \in S\) with \(d(x) = n\)."
+- Base case (\(n = 0\)): Elements of depth \(0\) are the seeds, so \(R(0)\) holds by [REF: structural-induction.1 | the base cases].
+- Strong inductive step: Fix \(k \ge 0\) and assume \(R(j)\) holds for all \(0 \le j \le k\). Take any \(x \in S\) with \(d(x) = k + 1\). By minimality of depth, \(x = c(x_1, \dots, x_r)\) where each \(x_i \in S\) has \(d(x_i) \le k\). By the strong inductive hypothesis, \(P(x_1), \dots, P(x_r)\) all hold. By [REF: structural-induction.2 | the constructor step] for \(c\), \(P(x)\) holds. Thus \(R(k + 1)\) holds.
+
+By strong induction, \(R(n)\) holds for all \(n \in \mathbb{N}\), so \(P(x)\) holds for every \(x \in S\).
+[/CALLOUT]
+
+Let us apply [REF: structural-induction | structural induction] to two fundamental discrete invariants.
+
+Worked Proof 1 (Full binary trees): Define the leaf count \(L(T)\) and internal-node count \(I(T)\) recursively on \(\mathcal{T}\):
+- Basis: \(L(\bullet) = 1\) and \(I(\bullet) = 0\).
+- Constructor: For \(T = \operatorname{node}(T_1, T_2)\), set \(L(T) = L(T_1) + L(T_2)\) and \(I(T) = I(T_1) + I(T_2) + 1\) (adding \(1\) for the new root).
+
+Claim: For every full binary tree \(T \in \mathcal{T}\), \(L(T) = I(T) + 1\).
+
+Proof by structural induction:
+- Base case (\(T = \bullet\)): \(L(\bullet) = 1\) and \(I(\bullet) + 1 = 0 + 1 = 1\), so \(L(\bullet) = I(\bullet) + 1\).
+- Constructor step: Let \(T = \operatorname{node}(T_1, T_2)\), and assume the structural inductive hypotheses \(L(T_1) = I(T_1) + 1\) and \(L(T_2) = I(T_2) + 1\). Then
+\[
+L(T) = L(T_1) + L(T_2) = \bigl(I(T_1) + 1\bigr) + \bigl(I(T_2) + 1\bigr) = \bigl(I(T_1) + I(T_2) + 1\bigr) + 1 = I(T) + 1.
+\]
+By [REF: structural-induction | structural induction], \(L(T) = I(T) + 1\) for every \(T \in \mathcal{T}\).
+
+Because every vertex of a full binary tree is either a leaf or an internal node, this immediately implies that the total number of vertices \(V(T) = L(T) + I(T) = 2I(T) + 1\) is always odd.
+
+Worked Proof 2 (Balanced-parenthesis strings): For any string \(w\) over the alphabet \(\{\texttt{(}, \texttt{)}\}\), let \(\#_L(w)\) be the number of left parentheses and \(\#_R(w)\) be the number of right parentheses in \(w\). Notice that for concatenation, \(\#_L(uv) = \#_L(u) + \#_L(v)\) and \(\#_R(uv) = \#_R(u) + \#_R(v)\).
+
+Claim: For every string \(w \in B\), (a) \(\#_L(w) = \#_R(w)\), and (b) every prefix \(p\) of \(w\) satisfies \(\#_L(p) \ge \#_R(p)\).
+
+Proof by structural induction:
+- Base case (\(w = \varepsilon\)): \(\#_L(\varepsilon) = 0 = \#_R(\varepsilon)\), and the only prefix is \(\varepsilon\), which satisfies \(0 \ge 0\).
+- Constructor 1 (\(w = (u)\) with \(u \in B\)): Assume \(u\) satisfies (a) and (b). For (a), \(\#_L(w) = \#_L(u) + 1 = \#_R(u) + 1 = \#_R(w)\). For (b), any prefix \(p\) of \((u)\) is either \(\varepsilon\) (giving \(0 \ge 0\)), or \((p'\) for some prefix \(p'\) of \(u\) (giving \(\#_L(p) = 1 + \#_L(p') \ge 1 + \#_R(p') > \#_R(p)\)), or the whole string \((u)\) itself (which satisfies \(\#_L(w) = \#_R(w)\)).
+- Constructor 2 (\(w = uv\) with \(u, v \in B\)): Assume \(u\) and \(v\) satisfy (a) and (b). For (a),
+\[
+\#_L(uv) = \#_L(u) + \#_L(v) = \#_R(u) + \#_R(v) = \#_R(uv).
+\]
+For (b), any prefix \(p\) of \(uv\) is either a prefix of \(u\) (handled by (b) for \(u\)) or of the form \(u q\) where \(q\) is a prefix of \(v\). In the second case, using (a) for \(u\) and (b) for \(v\),
+\[
+\#_L(uq) = \#_L(u) + \#_L(q) = \#_R(u) + \#_L(q) \ge \#_R(u) + \#_R(q) = \#_R(uq).
+\]
+By [REF: structural-induction | structural induction], every string in \(B\) satisfies both (a) and (b).
+
+Watch what happened in Constructor 2: proving property (b) for \(uq\) actually USED property (a) for \(u\)! That is why proving (a) and (b) together in one combined invariant works so cleanly.
+
+[QUESTION 3]
+[ANSWER: D]
+Define the height \(h(T)\) of a full binary tree \(T \in \mathcal{T}\) recursively by \(h(\bullet) = 0\) and \(h\bigl(\operatorname{node}(T_1, T_2)\bigr) = 1 + \max\bigl(h(T_1), h(T_2)\bigr)\). You want to prove by structural induction that \(L(T) \le 2^{h(T)}\) for every \(T \in \mathcal{T}\). After checking \(L(\bullet) = 1 \le 2^0 = 1\) and assuming \(L(T_1) \le 2^{h(T_1)}\) and \(L(T_2) \le 2^{h(T_2)}\), which chain correctly completes the constructor step for \(T = \operatorname{node}(T_1, T_2)\)?
+
+(A) \(L(T) = L(T_1) L(T_2) \le 2^{h(T_1)} \cdot 2^{h(T_2)} = 2^{h(T_1) + h(T_2)} \le 2^{h(T)}\)
+(B) \(L(T) = L(T_1) + L(T_2) \le 2^{h(T_1)} + 2^{h(T_2)} = 2^{h(T_1) + h(T_2)} = 2^{h(T)}\)
+(C) \(L(T) = L(T_1) + L(T_2) + 1 \le 2^{h(T_1)} + 2^{h(T_2)} + 1 \le 2^{1 + \max(h(T_1), h(T_2))} = 2^{h(T)}\)
+(D) \(L(T) = L(T_1) + L(T_2) \le 2^{h(T_1)} + 2^{h(T_2)} \le 2^{\max(h(T_1), h(T_2))} + 2^{\max(h(T_1), h(T_2))} = 2^{1 + \max(h(T_1), h(T_2))} = 2^{h(T)}\)
+(E) \(L(T) = L(T_1) + L(T_2) \le 2^{\min(h(T_1), h(T_2))} + 2^{\min(h(T_1), h(T_2))} = 2^{h(T)}\)
+[/QUESTION]
+
+=== SECTION 4: Unambiguous recursive definitions and common pitfalls ===
+
+Defining a set recursively is forgiving—having two ways to build the same element does not harm membership. Defining a FUNCTION recursively on a set, however, requires extra care: if an element \(w\) can be constructed in two different ways, a recursive function \(f(w)\) is well-defined only if both construction histories assign \(w\) the exact same value.
+
+[CALLOUT]
+id: recursion-pitfalls
+label: Common Pitfalls
+title: Pitfalls in recursive definitions and structural induction
+tone: caution
+
+(1) Ambiguous function recursion: On the balanced strings \(B\) from Section 2, trying to define a function by \(f(\varepsilon) = 1\), \(f((u)) = f(u) + 1\), and \(f(uv) = f(u) + f(v)\) is ill-defined! Because \(\varepsilon = \varepsilon \varepsilon\), the third rule forces \(f(\varepsilon) = f(\varepsilon) + f(\varepsilon)\), giving \(1 = 2\). By contrast, full binary trees \(\mathcal{T}\) have unique parsing: every non-leaf tree has a unique left subtree \(T_1\) and unique right subtree \(T_2\), so recursive definitions like \(L(T)\), \(I(T)\), and \(h(T)\) are automatically unambiguous.
+(2) Missing a constructor case: If a set has two constructors (or multiple seeds), every single seed and every single constructor must be checked in structural induction.
+(3) Changing the constructors changes the invariants: Adding a new constructor can invalidate an earlier invariant unless the new rule also preserves it.
+[/CALLOUT]
+
+To see [REF: recursion-pitfalls.3 | how constructors control invariants], return to our arithmetic expression trees \(\mathcal{E}\) built from variable leaves \(x, y, z\) and binary constructors \((E_1 + E_2)\) and \((E_1 \times E_2)\). Because each expression tree is structurally a full binary tree whose leaves are operands and whose internal nodes are binary operators, the exact same structural induction as in Section 3 proves:
+\[
+\text{number of operand occurrences} = (\text{number of binary operators}) + 1.
+\]
+Now suppose we enrich \(\mathcal{E}\) by adding a unary negation constructor: if \(E \in \mathcal{E}\), then \((-E) \in \mathcal{E}\). Does the invariant "operands = operators + 1" survive? No: if \(E = x\) has \(1\) operand and \(0\) operators, then \((-x)\) still has \(1\) operand, yet now has \(1\) operator! The unary constructor adds \(1\) operator while adding \(0\) operands, breaking the equation. What DOES survive is the refined invariant:
+\[
+\text{number of operand occurrences} = (\text{number of binary operators}) + 1,
+\]
+because the unary constructor changes neither the number of operands nor the number of binary operators!
+
+[TABLE]
+Object family | Seeds | Constructors | Key structural invariant
+Subset of \(\mathbb{Z}^2\) | Initial points \((x_0, y_0)\) | Vector shifts \((x + a, y + b)\) | Linear congruence preserved by all shifts
+Full binary trees \(\mathcal{T}\) | Single leaf \(\bullet\) | \(\operatorname{node}(T_1, T_2)\) | \(L(T) = I(T) + 1\) and \(L(T) \le 2^{h(T)}\)
+Balanced strings \(B\) | Empty string \(\varepsilon\) | \((u)\) and \(uv\) | \(\#_L(w) = \#_R(w)\); every prefix has \(\#_L \ge \#_R\)
+Arithmetic trees \(\mathcal{E}\) | Variable/constant leaves | Binary \((E_1 + E_2)\), \((E_1 \times E_2)\) | Operands \(= \text{binary operators} + 1\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose we enlarge the family of full binary trees \(\mathcal{T}\) to a family \(\mathcal{T}_3\) of trees where every internal node has either \(2\) children or \(3\) children:
+- Basis: A single leaf \(\bullet \in \mathcal{T}_3\).
+- Constructor 1 (binary internal node): If \(T_1, T_2 \in \mathcal{T}_3\), then \(\operatorname{bin}(T_1, T_2) \in \mathcal{T}_3\).
+- Constructor 2 (ternary internal node): If \(T_1, T_2, T_3 \in \mathcal{T}_3\), then \(\operatorname{ter}(T_1, T_2, T_3) \in \mathcal{T}_3\).
+
+Let \(L(T)\) be the number of leaves, \(I_2(T)\) the number of binary internal nodes, and \(I_3(T)\) the number of ternary internal nodes in \(T \in \mathcal{T}_3\). Which invariant holds for EVERY tree \(T \in \mathcal{T}_3\)?
+
+(A) \(L(T) = I_2(T) + 2I_3(T) + 1\)
+(B) \(L(T) = I_2(T) + 3I_3(T) + 1\)
+(C) \(L(T) = 2I_2(T) + 3I_3(T) + 1\)
+(D) \(L(T) = I_2(T) + I_3(T) + 1\)
+(E) \(L(T) = I_2(T) + 2I_3(T)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+For any full binary tree \(T \in \mathcal{T}\), let \(d_T(v)\) denote the depth of a leaf \(v\) (its number of edges from the root, so for \(T = \bullet\) the single leaf has depth \(0\)). Define the weight sum
+\[
+W(T) = \sum_{v \text{ a leaf of } T} 2^{-d_T(v)}.
+\]
+What is the value of \(W(T)\) for an arbitrary full binary tree \(T \in \mathcal{T}\), and why does structural induction establish it?
+
+(A) \(W(T) = 2^{-h(T)} L(T)\), because every leaf lies at depth \(h(T)\).
+(B) \(W(T) = 1 / L(T)\), because each new root splits the weight evenly among all leaves.
+(C) \(W(T) = 1\) for every \(T \in \mathcal{T}\), because \(W(\bullet) = 2^0 = 1\) and attaching \(T_1, T_2\) under a new root increases every leaf's depth by \(1\), giving \(W\bigl(\operatorname{node}(T_1, T_2)\bigr) = \frac{1}{2}W(T_1) + \frac{1}{2}W(T_2) = 1\).
+(D) \(W(T) = L(T) - I(T) + 1 = 2\), because each constructor doubles the leaf weights.
+(E) \(W(T)\) depends on the shape of \(T\) and takes different values for balanced and skewed trees with the same number of leaves.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+A set \(M\) of binary strings over \(\{0, 1\}\) is defined recursively by:
+- Basis: \(\varepsilon \in M\).
+- Constructors: If \(w \in M\), then \(0w11 \in M\) and \(1w01 \in M\) and \(11w0 \in M\).
+- Extremal clause: Nothing else belongs to \(M\).
+
+For a string \(w \in M\), let \(z(w)\) be the number of \(0\)'s in \(w\) and \(o(w)\) be the number of \(1\)'s in \(w\). Which pair of conditions holds for EVERY string \(w \in M\)?
+
+(A) \(o(w) = 2z(w)\) and \(w\) cannot start with \(1\)
+(B) \(o(w) = z(w) + 2\) and \(|w|\) is even
+(C) \(o(w) \ge 2z(w)\) and \(z(w)\) is even
+(D) \(o(w) = 3z(w)\) and \(|w|\) is divisible by \(4\)
+(E) \(o(w) = 2z(w)\) and the length \(|w|\) is divisible by \(3\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Recall the Fibonacci numbers \(F_0 = 0, F_1 = 1, F_n = F_{n-1} + F_{n-2}\) and Lucas numbers \(L_0 = 2, L_1 = 1, L_n = L_{n-1} + L_{n-2}\). Earlier we proved \(L_n = F_{n-1} + F_{n+1}\) for all \(n \ge 1\). Now consider the identity \(F_1 + F_3 + F_5 + \dots + F_{2n-1} = F_{2n}\) for all integers \(n \ge 1\). Which step completes an ordinary-induction proof from \(k\) to \(k + 1\)?
+
+(A) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k} + F_{2k+1} = F_{2k+2}\)
+(B) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k} + F_{2k-1} = F_{2k+1}\)
+(C) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k+1} + F_{2k} = F_{2k+2} - 1\)
+(D) \(\sum_{j=1}^{k+1} F_{2j-1} = F_{2k} + F_{2k+2} = L_{2k+1}\)
+(E) Ordinary induction cannot prove this identity because it requires both \(F_{2k}\) and \(F_{2k-2}\) in the inductive step.
+[/BONUS]

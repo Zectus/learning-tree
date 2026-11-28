@@ -1,0 +1,317 @@
+=== SECTION 1: Measuring invertibility with three axioms ===
+
+Given an \(n \times n\) matrix \(A\) with entries in a field \(F\) (throughout this tree, \(F = \mathbb{R}\) or \(F = \mathbb{C}\)), Gaussian elimination reduces \(A\) to reduced row echelon form and tells us whether \(A\) is invertible: \(A\) is invertible if and only if every row produces a pivot, so its reduced row echelon form is the identity matrix \(I_n\). Yet running a full algorithm every time we want to test invertibility—or track how invertibility depends on a parameter inside \(A\)—is clumsy. Can we attach a single scalar \(\det(A) \in F\) to each \(n \times n\) matrix \(A\) that summarizes its row structure cleanly and changes in a completely predictable way under elementary row operations?
+
+For \(2 \times 2\) matrices, you may already know the expression \(ad - bc\) for \(A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\). Rather than guessing higher-dimensional formulas by pattern matching, we ask what algebraic rules a scalar function on the rows of an \(n \times n\) matrix ought to satisfy. Write \(M_n(F)\) for the set of all \(n \times n\) matrices with entries in \(F\), and write a matrix \(A \in M_n(F)\) by its rows \(\mathbf{r}_1, \mathbf{r}_2, \dots, \mathbf{r}_n \in F^{1 \times n}\) as
+\[
+A = \begin{bmatrix} \mathbf{r}_1 \\ \mathbf{r}_2 \\ \vdots \\ \mathbf{r}_n \end{bmatrix}.
+\]
+Treating the determinant as a function of the \(n\) row vectors \(\det(\mathbf{r}_1, \dots, \mathbf{r}_n)\), we characterize it by just three axioms.
+
+[CALLOUT]
+id: det-axioms
+label: Definition
+title: Axiomatic characterization of the determinant
+tone: key
+
+A determinant function on \(M_n(F)\) is a map \(\det : M_n(F) \to F\) satisfying three properties:
+
+(1) Multilinearity in the rows: holding all other rows fixed, \(\det\) is linear in each row \(i \in \{1, \dots, n\}\) separately. That is, for any rows \(\mathbf{u}, \mathbf{v} \in F^{1 \times n}\) and scalars \(\alpha, \beta \in F\),
+\[
+\det(\mathbf{r}_1, \dots, \alpha \mathbf{u} + \beta \mathbf{v}, \dots, \mathbf{r}_n) = \alpha \det(\mathbf{r}_1, \dots, \mathbf{u}, \dots, \mathbf{r}_n) + \beta \det(\mathbf{r}_1, \dots, \mathbf{v}, \dots, \mathbf{r}_n).
+\]
+(2) Alternating property: if any two rows of \(A\) are equal (\(\mathbf{r}_i = \mathbf{r}_j\) for some \(i \neq j\)), then \(\det(A) = 0\).
+(3) Normalization: \(\det(I_n) = 1\).
+[/CALLOUT]
+
+Pay close attention to what [REF: det-axioms.1 | multilinearity] says and what it does not say. It is linear in ONE row at a time while the other \(n - 1\) rows remain frozen. It does NOT claim that \(\det(A + B) = \det(A) + \det(B)\) or that \(\det(cA) = c \det(A)\). For instance, scaling a single row by \(c\) multiplies the determinant by \(c\); scaling ALL \(n\) rows by \(c\) applies that rule \(n\) separate times, multiplying the determinant by \(c^n\), not by \(c\).
+
+An immediate consequence of [REF: det-axioms.1 | multilinearity] is that any matrix containing an entire zero row has determinant \(0\): write the zero row as \(0 \cdot \mathbf{0}\), pull out the scalar \(0\) from that row, and obtain \(\det(A) = 0 \cdot \det(A) = 0\).
+
+A second consequence connects [REF: det-axioms.2 | the alternating property] to swapping rows. Suppose \(A\) has rows \(\mathbf{r}_1, \dots, \mathbf{r}_n\), and pick two distinct row indices \(i < j\). Replace both row \(i\) and row \(j\) by their sum \(\mathbf{r}_i + \mathbf{r}_j\) while keeping all other rows fixed. Because the resulting matrix has two identical rows, [REF: det-axioms.2 | the alternating property] forces its determinant to be \(0\). Now expand using [REF: det-axioms.1 | multilinearity] first in row \(i\) and then in row \(j\):
+\[
+\begin{aligned}
+0 &= \det(\dots, \mathbf{r}_i + \mathbf{r}_j, \dots, \mathbf{r}_i + \mathbf{r}_j, \dots) \\
+  &= \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_i, \dots) + \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_j, \dots) \\
+  &\quad + \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_i, \dots) + \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_j, \dots).
+\end{aligned}
+\]
+The first and fourth terms vanish because each has a repeated row. What remains is
+\[
+0 = \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_j, \dots) + \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_i, \dots),
+\]
+so swapping rows \(i\) and \(j\) multiplies the determinant by \(-1\). Conversely, if a function reverses sign whenever two rows are swapped and \(A\) has \(\mathbf{r}_i = \mathbf{r}_j\) (\(i \neq j\)), swapping those identical rows leaves \(A\) unchanged while negating its value, giving \(\det(A) = -\det(A)\), or \(2\det(A) = 0\). Because \(F = \mathbb{R}\) or \(\mathbb{C}\) satisfies \(2 \neq 0\), we divide by \(2\) to conclude \(\det(A) = 0\). Thus over \(\mathbb{R}\) or \(\mathbb{C}\), the alternating property is completely equivalent to sign reversal under any row swap (antisymmetry).
+
+=== SECTION 2: Elementary row operations and elementary matrices ===
+
+We now know how row scaling and row swaps affect \(\det(A)\). What about the third elementary row operation, row replacement, where we replace row \(i\) by \(\mathbf{r}_i + c \mathbf{r}_j\) for some \(j \neq i\) and scalar \(c \in F\)? Expand in row \(i\) using [REF: det-axioms.1 | multilinearity]:
+\[
+\det(\dots, \mathbf{r}_i + c\mathbf{r}_j, \dots, \mathbf{r}_j, \dots) = \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_j, \dots) + c \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_j, \dots).
+\]
+The second matrix has \(\mathbf{r}_j\) in both row \(i\) and row \(j\), so its determinant vanishes by [REF: det-axioms.2 | the alternating property]. Therefore row replacement leaves the determinant completely unchanged.
+
+In \(\mathbb{R}^2\), this invariance has a direct geometric picture. Take the \(2 \times 2\) matrix \(A(s) = \begin{bmatrix} 2 & 0 \\ s & 1 \end{bmatrix}\), obtained from \(\begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}\) by adding \(s\) times row \(1\)? More precisely, start with rows \(\mathbf{r}_1 = (2, 0)\) and \(\mathbf{r}_2 = (0, 1)\), and replace \(\mathbf{r}_2\) by \(\mathbf{r}_2 + s \mathbf{r}_1 = (2s, 1)\). As the shear parameter \(s\) slides back and forth, the parallelogram spanned by the two row vectors tilts sideways while keeping the same base length \(2\) along the horizontal axis and the same vertical height \(1\), so its area stays fixed at \(2\).
+
+[GRAPH]
+type: parametric2d
+title: Row replacement \(\mathbf{r}_2 \leftarrow \mathbf{r}_2 + s\,\mathbf{r}_1\) shears the row parallelogram without changing base or height
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -3.5, 5.5
+yrange: -0.5, 2.2
+trace: 2*t, 0*t | label: \(\mathbf{r}_1 = (2, 0)\)
+trace: 2*s*t, t | label: \(\mathbf{r}_2 + s\mathbf{r}_1 = (2s, 1)\)
+segment: 2, 0, 2 + 2*s, 1 | dashed: true
+segment: 2*s, 1, 2 + 2*s, 1 | dashed: true
+segment: 2*s, 0, 2*s, 1 | label: height | dashed: true
+point: 2, 0 | label: \((2, 0)\)
+point: 2*s, 1 | label: \((2s, 1)\)
+slider: s | range: -1.5, 1.5 | init: 0.5 | step: 0.1
+[/GRAPH]
+
+Let us record the exact behavior of all three elementary row operations, together with the determinants of the corresponding elementary matrices. Recall that an elementary matrix \(E\) is obtained by performing a single elementary row operation on \(I_n\), and left-multiplying \(A\) by \(E\) performs that exact row operation on \(A\). Applying each rule first to \(I_n\) (using [REF: det-axioms.3 | \(\det(I_n) = 1\)]) and then to an arbitrary matrix \(A\) yields the following summary.
+
+[TABLE]
+Elementary row operation | Effect on \(\det(A)\) | Elementary matrix \(E\) | \(\det(E)\)
+Row replacement: \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) | Unchanged: \(\det(EA) = \det(A)\) | \(I_n\) with \(c\) in entry \((i, j)\) | \(1\)
+Row scaling: \(R_i \leftarrow c R_i\) (\(c \neq 0\)) | Multiplied by \(c\): \(\det(EA) = c \det(A)\) | \(I_n\) with \(c\) in entry \((i, i)\) | \(c\)
+Row swap: \(R_i \leftrightarrow R_j\) (\(i \neq j\)) | Negated: \(\det(EA) = -\det(A)\) | \(I_n\) with rows \(i, j\) swapped | \(-1\)
+[/TABLE]
+
+Comparing the second and fourth columns of the table gives a key structural law: for every elementary matrix \(E\) and every matrix \(A \in M_n(F)\),
+\[
+\det(EA) = \det(E)\det(A).
+\]
+By induction, for any finite product of elementary matrices \(E_1, \dots, E_k\),
+\[
+\det(E_k \cdots E_2 E_1 A) = \det(E_k) \cdots \det(E_2)\det(E_1)\det(A).
+\]
+We will extend this multiplicative rule from elementary matrices to arbitrary pairs of matrices \(AB\) in the next lesson. For now, it already unlocks the determinants of all triangular matrices and proves that the three axioms pin down \(\det(A)\) uniquely.
+
+[QUESTION 1]
+[ANSWER: B]
+Let \(A\) be a \(3 \times 3\) matrix with \(\det(A) = 5\). Form a matrix \(B\) from \(A\) by swapping rows \(1\) and \(3\), then scaling row \(2\) by \(-3\), and finally replacing row \(3\) with row \(3\) plus \(4\) times row \(1\). What is \(\det(B)\)?
+
+(A) \(-15\)
+(B) \(15\)
+(C) \(60\)
+(D) \(-60\)
+(E) \(-5\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Suppose \(A \in M_3(\mathbb{R})\) has rows \(\mathbf{r}_1, \mathbf{r}_2, \mathbf{r}_3\) and \(\det(A) = 4\). What is the determinant of the matrix
+\[
+B = \begin{bmatrix} \mathbf{r}_1 + 2\mathbf{r}_2 \\ 3\mathbf{r}_2 - \mathbf{r}_3 \\ \mathbf{r}_3 + \mathbf{r}_1 \end{bmatrix}?
+\]
+
+(A) \(0\)
+(B) \(12\)
+(C) \(20\)
+(D) \(4\)
+(E) \(-4\)
+[/QUESTION]
+
+=== SECTION 3: Triangular matrices, uniqueness, and small formulas ===
+
+How do the three axioms force the determinant of an upper-triangular matrix \(U = [u_{ij}]\) (where \(u_{ij} = 0\) whenever \(i > j\))? Consider two cases for the diagonal entries \(u_{11}, u_{22}, \dots, u_{nn}\):
+
+1. Suppose every diagonal entry \(u_{ii}\) is nonzero. Working from the bottom row upward, we can use each pivot \(u_{jj} \neq 0\) to eliminate every nonzero entry directly above it via row replacements \(R_i \leftarrow R_i - (u_{ij}/u_{jj}) R_j\) for \(i < j\). None of these row replacements changes the determinant, and they reduce \(U\) to the diagonal matrix \(\operatorname{diag}(u_{11}, u_{22}, \dots, u_{nn})\). Pulling the factor \(u_{ii}\) out of each row \(i\) using [REF: det-axioms.1 | multilinearity] and applying [REF: det-axioms.3 | \(\det(I_n) = 1\)] gives
+\[
+\det(U) = u_{11} u_{22} \cdots u_{nn} \det(I_n) = \prod_{i=1}^n u_{ii}.
+\]
+2. Suppose at least one diagonal entry \(u_{kk} = 0\). Choose the LARGEST index \(k \in \{1, \dots, n\}\) with \(u_{kk} = 0\). Then every diagonal entry below row \(k\) (namely \(u_{k+1,k+1}, \dots, u_{nn}\)) is nonzero. Using rows \(k+1, \dots, n\) from bottom to top, row replacements clear EVERY entry in columns \(k+1, \dots, n\) of row \(k\). Because \(U\) was already upper triangular with \(u_{kk} = 0\), row \(k\) already had zeros in columns \(1, \dots, k\), and now it also has zeros in columns \(k+1, \dots, n\). Thus row \(k\) becomes an entire zero row without changing the determinant, forcing \(\det(U) = 0 = \prod_{i=1}^n u_{ii}\).
+
+Notice how clean that choice of the largest index \(k\) is! And the exact same reasoning works for a lower-triangular matrix \(L\) (where \(l_{ij} = 0\) for \(i < j\)): if all \(l_{ii} \neq 0\), eliminate downward to \(\operatorname{diag}(l_{11}, \dots, l_{nn})\); if some \(l_{kk} = 0\), choose the smallest index \(k\) with \(l_{kk} = 0\) and use the nonzero pivots \(l_{11}, \dots, l_{k-1,k-1}\) above it to clear columns \(1, \dots, k-1\) of row \(k\), producing a zero row.
+
+[CALLOUT]
+id: triangular-det
+label: Theorem
+title: Determinant of a triangular matrix
+tone: key
+
+If \(T = [t_{ij}] \in M_n(F)\) is upper triangular or lower triangular, then
+\[
+\det(T) = t_{11} t_{22} \cdots t_{nn} = \prod_{i=1}^n t_{ii}.
+\]
+[/CALLOUT]
+
+With [REF: triangular-det | the triangular formula] in hand, we can immediately prove that at most one function on \(M_n(F)\) satisfies [REF: det-axioms | the three determinant axioms].
+
+[CALLOUT]
+id: det-uniqueness
+label: Theorem
+title: Uniqueness of the determinant
+tone: key
+
+For each integer \(n \ge 1\), there is at most one function \(D : M_n(F) \to F\) satisfying multilinearity in the rows, the alternating property, and \(D(I_n) = 1\).
+[/CALLOUT]
+
+To prove [REF: det-uniqueness | uniqueness], let \(D : M_n(F) \to F\) be any function satisfying [REF: det-axioms | the three axioms], and let \(A \in M_n(F)\) be arbitrary. Apply Gaussian elimination to reduce \(A\) to an upper-triangular row echelon matrix \(U\), recording each elementary matrix \(E_1, \dots, E_k\) used along the way so that \(U = E_k \cdots E_1 A\). Because \(D\) satisfies the axioms, we already proved that
+\[
+D(U) = D(E_k) \cdots D(E_1) D(A),
+\]
+where each \(D(E_m)\) is completely fixed as \(1\), \(c \neq 0\), or \(-1\) according to the type of operation. In particular, every \(D(E_m)\) is nonzero, so
+\[
+D(A) = \frac{D(U)}{D(E_k) \cdots D(E_1)} = \frac{\prod_{i=1}^n u_{ii}}{D(E_k) \cdots D(E_1)}.
+\]
+The right-hand side depends ONLY on the entries of \(A\) and the chosen row operations—not on any hidden properties of \(D\). Hence any two functions \(D_1, D_2\) satisfying the axioms must agree on every \(A \in M_n(F)\). Notice, too, what happens if we drop normalization and only know \(D(I_n) = \alpha\) for some constant \(\alpha \in F\): the exact same reduction gives \(D(U) = \alpha \prod_{i=1}^n u_{ii}\), so \(D(A) = \alpha \det(A)\) for all \(A \in M_n(F)\).
+
+Does a function satisfying all three axioms actually EXIST for every \(n \ge 1\)? We have not proved existence in general dimension \(n\) yet—uniqueness alone does not rule out a contradiction among the axioms when \(n\) is large. For \(n = 1, 2, 3\) we can verify existence directly by writing the explicit formulas; for arbitrary \(n \ge 1\), existence will be established rigorously via recursive cofactor expansion in a later lesson.
+
+Let us derive the explicit \(2 \times 2\) and \(3 \times 3\) formulas directly from [REF: det-axioms | the three axioms] by expanding each row in terms of the standard basis row vectors \(\mathbf{e}_1, \dots, \mathbf{e}_n\). For \(n = 2\), write \(\mathbf{r}_1 = a \mathbf{e}_1 + b \mathbf{e}_2\) and \(\mathbf{r}_2 = c \mathbf{e}_1 + d \mathbf{e}_2\). Expanding by [REF: det-axioms.1 | multilinearity] in both rows produces four terms:
+\[
+\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ac\det(\mathbf{e}_1, \mathbf{e}_1) + ad\det(\mathbf{e}_1, \mathbf{e}_2) + bc\det(\mathbf{e}_2, \mathbf{e}_1) + bd\det(\mathbf{e}_2, \mathbf{e}_2).
+\]
+By [REF: det-axioms.2 | the alternating property], \(\det(\mathbf{e}_1, \mathbf{e}_1) = \det(\mathbf{e}_2, \mathbf{e}_2) = 0\). By [REF: det-axioms.3 | normalization], \(\det(\mathbf{e}_1, \mathbf{e}_2) = \det(I_2) = 1\), and swapping rows gives \(\det(\mathbf{e}_2, \mathbf{e}_1) = -1\). Therefore
+\[
+\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc.
+\]
+Direct substitution confirms that \(ad - bc\) indeed satisfies all three axioms, proving existence for \(n = 2\).
+
+For \(n = 3\), write each row \(\mathbf{r}_i = a_{i1}\mathbf{e}_1 + a_{i2}\mathbf{e}_2 + a_{i3}\mathbf{e}_3\). Expanding multilinearly across all three rows generates \(3^3 = 27\) terms, of which every term with a repeated basis vector vanishes. Only the \(3! = 6\) permutations of \((\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3)\) survive. Counting swaps from \((\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3)\):
+- Even permutations (sign \(+1\)): \((\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3)\) (0 swaps), \((\mathbf{e}_2, \mathbf{e}_3, \mathbf{e}_1)\) (2 swaps), and \((\mathbf{e}_3, \mathbf{e}_1, \mathbf{e}_2)\) (2 swaps).
+- Odd permutations (sign \(-1\)): \((\mathbf{e}_1, \mathbf{e}_3, \mathbf{e}_2)\), \((\mathbf{e}_3, \mathbf{e}_2, \mathbf{e}_1)\), and \((\mathbf{e}_2, \mathbf{e}_1, \mathbf{e}_3)\) (each 1 swap).
+
+Collecting those six signed products yields the explicit \(3 \times 3\) formula:
+\[
+\det\begin{bmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33} \end{bmatrix} = a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32} - a_{11}a_{23}a_{32} - a_{12}a_{21}a_{33} - a_{13}a_{22}a_{31}.
+\]
+Again, checking the three axioms on this polynomial is straightforward (and it matches the familiar \(3 \times 3\) rule of Sarrus, which works ONLY for \(3 \times 3\) matrices and fails completely for \(n \ge 4\), where \(n!\) jumps to \(24, 120, \dots\)).
+
+[QUESTION 3]
+[ANSWER: A]
+Suppose \(D : M_3(\mathbb{R}) \to \mathbb{R}\) is multilinear in the rows and vanishes whenever two rows are equal, but is NOT assumed to satisfy \(D(I_3) = 1\). If
+\[
+D\begin{bmatrix} 0 & 2 & 1 \\ 1 & 0 & 3 \\ 0 & 0 & -2 \end{bmatrix} = -12,
+\]
+what is \(D(I_3)\)?
+
+(A) \(-3\)
+(B) \(3\)
+(C) \(-4\)
+(D) \(4\)
+(E) \(12\)
+[/QUESTION]
+
+=== SECTION 4: Computing determinants efficiently by Gaussian elimination ===
+
+For any matrix of size \(4 \times 4\) or larger—and even for most \(3 \times 3\) matrices—expanding into \(n!\) permutation terms is impractical. Instead, the proof of [REF: det-uniqueness | uniqueness] gives us an efficient computational algorithm: reduce \(A\) to an upper-triangular matrix \(U\) using elementary row operations, carefully accounting for every sign flip and every row-scaling factor.
+
+[CALLOUT]
+id: elim-bookkeeping
+label: Procedure
+title: Determinant by Gaussian elimination
+tone: note
+
+To compute \(\det(A)\) for \(A \in M_n(F)\):
+
+(1) Reduce \(A\) to an upper-triangular matrix \(U\) using only row replacements, row swaps, and (if convenient) factoring scalars out of rows.
+(2) Each row replacement \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) multiplies the running factor by \(1\).
+(3) Each row swap \(R_i \leftrightarrow R_j\) multiplies the running factor by \(-1\).
+(4) Factoring a nonzero scalar \(c\) OUT of a row replaces \(\det(\text{old})\) by \(c \det(\text{new})\). Equivalently, if you scale a row of the working matrix by \(c\), you must compensate outside by multiplying by \(1/c\).
+(5) Once upper triangular, multiply the accumulated outside factor by \(\prod_{i=1}^n u_{ii}\).
+[/CALLOUT]
+
+Watch out for the single most common bookkeeping error in [REF: elim-bookkeeping.4 | step (4)]: confusing "factoring \(c\) out of a row" with "scaling a row by \(c\)." If a row of \(A\) is \((4, 8, -12)\), factoring out \(4\) writes
+\[
+\det\begin{bmatrix} 4 & 8 & -12 \\ \dots \end{bmatrix} = 4 \det\begin{bmatrix} 1 & 2 & -3 \\ \dots \end{bmatrix},
+\]
+so the \(4\) sits OUTSIDE as a multiplier. Conversely, if you multiply a row by \(2\) to clear fractions inside the matrix, you have doubled the matrix's determinant, so you must place \(\frac{1}{2}\) outside to preserve equality. Also be careful with compound steps like \(R_2 \leftarrow 2R_2 - 3R_1\): that is NOT a pure row replacement! It scales \(R_2\) by \(2\) and then subtracts \(3R_1\), which doubles the determinant. To stay safe, perform pure row replacements \(R_i \leftarrow R_i + c R_j\) (with coefficient \(1\) on \(R_i\)), or explicitly factor out scalars on a separate step.
+
+Let us work through a \(4 \times 4\) example step by step:
+\[
+A = \begin{bmatrix} 2 & 4 & -2 & 2 \\ 1 & 3 & 0 & 2 \\ -1 & -1 & 3 & 1 \\ 0 & 2 & 2 & 5 \end{bmatrix}.
+\]
+Factor \(2\) out of row \(1\) first so our top-left pivot becomes \(1\) without introducing fractions:
+\[
+\det(A) = 2 \det\begin{bmatrix} 1 & 2 & -1 & 1 \\ 1 & 3 & 0 & 2 \\ -1 & -1 & 3 & 1 \\ 0 & 2 & 2 & 5 \end{bmatrix}.
+\]
+Now use pure row replacements \(R_2 \leftarrow R_2 - R_1\) and \(R_3 \leftarrow R_3 + R_1\) to clear column \(1\) below the pivot:
+\[
+\det(A) = 2 \det\begin{bmatrix} 1 & 2 & -1 & 1 \\ 0 & 1 & 1 & 1 \\ 0 & 1 & 2 & 2 \\ 0 & 2 & 2 & 5 \end{bmatrix}.
+\]
+Next clear column \(2\) below the pivot in row \(2\) using \(R_3 \leftarrow R_3 - R_2\) and \(R_4 \leftarrow R_4 - 2R_2\):
+\[
+\det(A) = 2 \det\begin{bmatrix} 1 & 2 & -1 & 1 \\ 0 & 1 & 1 & 1 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 3 \end{bmatrix}.
+\]
+The matrix is already upper triangular! By [REF: triangular-det | the triangular determinant formula], its determinant is the product of its diagonal entries \(1 \cdot 1 \cdot 1 \cdot 3 = 3\), so
+\[
+\det(A) = 2 \cdot 3 = 6.
+\]
+
+When a matrix contains an unknown parameter \(t\), Gaussian elimination works just as cleanly, provided you avoid dividing by an expression that might be zero (or split into cases if division is unavoidable). Often pure row replacements eliminate the need to divide at all.
+
+[QUESTION 4]
+[ANSWER: C]
+Compute the determinant of
+\[
+M = \begin{bmatrix} 0 & 2 & 1 & 0 \\ 1 & -1 & 2 & 3 \\ 2 & 0 & 3 & 4 \\ 0 & 4 & 3 & -3 \end{bmatrix}.
+\]
+
+(A) \(16\)
+(B) \(-8\)
+(C) \(-16\)
+(D) \(8\)
+(E) \(0\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+For which real values of \(t\) does the matrix
+\[
+A(t) = \begin{bmatrix} 1 & 2 & 1 \\ 2 & t & 3 \\ 1 & 2 & t - 1 \end{bmatrix}
+\]
+satisfy \(\det(A(t)) = 0\)?
+
+(A) \(t = 4\) only
+(B) \(t = 2\) only
+(C) \(t = -2\) and \(t = 4\)
+(D) \(t = 1\) and \(t = 4\)
+(E) \(t = 2\) and \(t = 4\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Let \(J\) be the \(5 \times 5\) anti-diagonal matrix whose entries are \(J_{i, 6-i} = i\) for \(i = 1, 2, 3, 4, 5\) and \(0\) everywhere else:
+\[
+J = \begin{bmatrix} 0 & 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 2 & 0 \\ 0 & 0 & 3 & 0 & 0 \\ 0 & 4 & 0 & 0 & 0 \\ 5 & 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+What is \(\det(J)\)?
+
+(A) \(-120\)
+(B) \(120\)
+(C) \(15\)
+(D) \(-24\)
+(E) \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+What is the determinant of the \(4 \times 4\) matrix
+\[
+A = \begin{bmatrix} 2 & 1 & 1 & 1 \\ 1 & 2 & 1 & 1 \\ 1 & 1 & 2 & 1 \\ 1 & 1 & 1 & 2 \end{bmatrix}?
+\]
+
+(A) \(5\)
+(B) \(16\)
+(C) \(1\)
+(D) \(4\)
+(E) \(9\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Let \(a, b, c \in \mathbb{R}\). By applying elementary row operations to reduce to upper-triangular form, which expression equals
+\[
+\det\begin{bmatrix} 1 & a & a^2 \\ 1 & b & b^2 \\ 1 & c & c^2 \end{bmatrix}?
+\]
+
+(A) \((b - a)(c - b)(a - c)\)
+(B) \((b - a)(c - a)(a + b + c)\)
+(C) \((a + b)(b + c)(c + a)\)
+(D) \((b - a)(c - a)(c - b)\)
+(E) \((b - a)^2(c - b)\)
+[/BONUS]

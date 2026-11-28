@@ -1,0 +1,227 @@
+=== SECTION 1: Focus-directrix definition and standard equations ===
+
+You have likely met vertical parabolas \(y = ax^2 + bx + c\) as graphs of quadratic functions. Yet that algebraic description hides the true geometric reason parabolic mirrors, radio telescopes, and bridge arches share the same shape. Geometrically, a parabola is defined purely by distance—with no mention of functions or coordinate axes.
+
+[CALLOUT]
+id: parabola-def
+label: Definition
+title: Focus-directrix definition of a parabola
+tone: key
+
+Let \(F\) be a fixed point (the focus) and \(L\) be a fixed line not passing through \(F\) (the directrix). The parabola with focus \(F\) and directrix \(L\) is the locus of all points \(P\) in the plane that are equidistant from \(F\) and \(L\):
+\[
+d(P, F) = d(P, L).
+\]
+The line through \(F\) perpendicular to \(L\) is the axis of symmetry, and the midpoint \(V\) of the perpendicular segment from \(F\) to \(L\) is the vertex (the point on the parabola closest to both \(F\) and \(L\)).
+[/CALLOUT]
+
+Let us derive the coordinate equation directly from [REF: parabola-def | this definition]. First place the vertex at the origin \(V(0, 0)\), with a vertical axis of symmetry along the \(y\)-axis. Let \(p \neq 0\) be the signed focal parameter: the focus sits at \(F(0, p)\) and the horizontal directrix sits at \(L: y = -p\) (so \(V(0, 0)\) lies midway between them, at distance \(\lvert p \rvert\) from each). For any point \(P(x, y)\), the distance to \(F(0, p)\) is \(\sqrt{x^2 + (y - p)^2}\), and the vertical distance to \(y = -p\) is \(\lvert y - (-p) \rvert = \lvert y + p \rvert\). Setting \(d(P, F) = d(P, L)\):
+\[
+\sqrt{x^2 + (y - p)^2} = \lvert y + p \rvert.
+\]
+Both sides are nonnegative, so squaring gives an equivalent equation:
+\[
+x^2 + y^2 - 2py + p^2 = y^2 + 2py + p^2.
+\]
+Cancelling \(y^2\) and \(p^2\) from both sides and combining the \(py\)-terms leaves
+\[
+x^2 = 4py.
+\]
+When \(p > 0\), \(y = \frac{x^2}{4p} \ge 0\) so the parabola opens upward around \(F(0, p)\); when \(p < 0\), \(y \le 0\) so it opens downward around \(F(0, p)\). Notice that the parabola always wraps around its focus and bends away from its directrix.
+
+Repeating the exact same derivation with focus \(F(p, 0)\) and vertical directrix \(x = -p\) swaps the roles of \(x\) and \(y\), producing the horizontal-axis parabola
+\[
+y^2 = 4px,
+\]
+which opens to the right when \(p > 0\) and to the left when \(p < 0\). Finally, shifting the vertex from \((0, 0)\) to any point \((h, k)\) replaces \(x\) by \(x - h\) and \(y\) by \(y - k\).
+
+[CALLOUT]
+id: parabola-standard
+label: Formula
+title: Standard equations of axis-aligned parabolas
+tone: key
+
+(1) Vertical axis of symmetry \(x = h\): \((x - h)^2 = 4p(y - k)\), with vertex \((h, k)\), focus \((h, k + p)\), and directrix \(y = k - p\). Opens up if \(p > 0\), down if \(p < 0\).
+(2) Horizontal axis of symmetry \(y = k\): \((y - k)^2 = 4p(x - h)\), with vertex \((h, k)\), focus \((h + p, k)\), and directrix \(x = h - p\). Opens right if \(p > 0\), left if \(p < 0\).
+[/CALLOUT]
+
+[CALLOUT]
+id: four-p-trap
+label: Common pitfall
+title: Confusing \(4p\) with \(p\)
+tone: caution
+
+The coefficient multiplying the linear factor in [REF: parabola-standard | standard form] is \(4p\), not \(p\). For instance, in \((x - 1)^2 = 12(y + 2)\), we have \(4p = 12\), so \(p = 3\)—the focus is \(3\) units above the vertex, not \(12\) units.
+[/CALLOUT]
+
+Drag the focal parameter slider \(p\) below to watch the parabola \(x^2 = 4py\) widen as \(p\) grows, while the marked point \(P(2p, p)\) remains equally distant (distance \(2p\)) from focus \(F(0, p)\) and directrix \(y = -p\).
+
+[GRAPH]
+type: function2d
+aspect: equal
+title: Parabola \(x^2 = 4py\) with focus \(F(0, p)\), directrix \(y = -p\), and equidistant point \(P(2p, p)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -6, 6
+yrange: -3, 6
+trace: x^2 / (4*p) | label: \(x^2 = 4py\)
+trace: -p | label: directrix \(y = -p\)
+segment: 0, p, 2*p, p | dashed: true
+segment: 2*p, p, 2*p, -p | dashed: true
+point: 0, 0 | label: \(V(0, 0)\)
+point: 0, p | label: \(F(0, p)\)
+point: 2*p, p | label: \(P(2p, p)\)
+slider: p | range: 0.5, 2.5 | init: 1.5 | step: 0.25
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+A parabola has focus \(F(-2, 5)\) and directrix \(y = -1\). What is its standard equation?
+
+(A) \((x + 2)^2 = 3(y - 2)\)
+(B) \((x + 2)^2 = 12(y - 2)\)
+(C) \((x + 2)^2 = 24(y - 2)\)
+(D) \((x + 2)^2 = -12(y - 2)\)
+(E) \((y - 2)^2 = 12(x + 2)\)
+[/QUESTION]
+
+=== SECTION 2: The latus rectum and horizontal-axis parabolas ===
+
+In the graph above, notice the horizontal segment joining focus \(F(0, p)\) to \(P(2p, p)\). Extending it symmetrically to the other side reaches \((-2p, p)\), forming a chord of length \(4p\) through the focus perpendicular to the axis of symmetry. This focal chord is called the latus rectum.
+
+In general, for \((x - h)^2 = 4p(y - k)\), substituting the focus height \(y = k + p\) gives
+\[
+(x - h)^2 = 4p(p) = 4p^2 \implies x - h = \pm 2\lvert p \rvert,
+\]
+so the latus rectum has endpoints \((h \pm 2p, k + p)\) and total length \(\lvert 4p \rvert\). Similarly, for a horizontal-axis parabola \((y - k)^2 = 4p(x - h)\), substituting \(x = h + p\) yields \((y - k)^2 = 4p^2\), giving latus rectum endpoints \((h + p, k \pm 2p)\) and total length \(\lvert 4p \rvert\). Plotting the vertex and the two latus rectum endpoints immediately anchors the exact width of any parabola!
+
+[TABLE]
+Feature | Vertical axis \((x - h)^2 = 4p(y - k)\) | Horizontal axis \((y - k)^2 = 4p(x - h)\)
+Vertex | \((h, k)\) | \((h, k)\)
+Axis of symmetry | \(x = h\) | \(y = k\)
+Focus | \((h, k + p)\) | \((h + p, k)\)
+Directrix | \(y = k - p\) | \(x = h - p\)
+Opening direction | Up (\(p > 0\)), down (\(p < 0\)) | Right (\(p > 0\)), left (\(p < 0\))
+Latus rectum endpoints | \((h \pm 2p, k + p)\) | \((h + p, k \pm 2p)\)
+Latus rectum length | \(\lvert 4p \rvert\) | \(\lvert 4p \rvert\)
+[/TABLE]
+
+Let us analyze the horizontal parabola \((y - 1)^2 = -8(x - 3)\). Here \(y\) is squared, so the axis is horizontal, with vertex \(V(3, 1)\). Matching \(4p = -8\) gives \(p = -2 < 0\), so the parabola opens to the left:
+- Focus: \(F(3 + (-2), 1) = (1, 1)\).
+- Directrix: \(x = 3 - (-2) = 5\).
+- Latus rectum length: \(\lvert -8 \rvert = 8\), extending \(2\lvert p \rvert = 4\) units above and below \(F(1, 1)\) to endpoints \((1, 5)\) and \((1, -3)\).
+
+[GRAPH]
+type: parametric2d
+title: Horizontal parabola \((y - 1)^2 = -8(x - 3)\) with focus, directrix, and latus rectum
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -5, 5
+xrange: -2, 6.5
+yrange: -4.5, 6.5
+trace: 3 - (t^2)/8, 1 + t | label: \((y - 1)^2 = -8(x - 3)\)
+segment: 5, -4, 5, 6 | label: \(x = 5\) | dashed: true
+segment: 1, -3, 1, 5 | label: latus rectum | dashed: true
+point: 3, 1 | label: \(V(3, 1)\)
+point: 1, 1 | label: \(F(1, 1)\)
+point: 1, 5 | label: \((1, 5)\)
+point: 1, -3 | label: \((1, -3)\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: C]
+For the parabola \((y + 3)^2 = 12(x - 2)\), what are its focus, directrix, and latus rectum endpoints?
+
+(A) Focus \((2, 0)\), directrix \(y = -6\), endpoints \((-4, 0)\) and \((8, 0)\)
+(B) Focus \((-1, -3)\), directrix \(x = 5\), endpoints \((-1, 3)\) and \((-1, -9)\)
+(C) Focus \((5, -3)\), directrix \(x = -1\), endpoints \((5, 3)\) and \((5, -9)\)
+(D) Focus \((14, -3)\), directrix \(x = -10\), endpoints \((14, 9)\) and \((14, -15)\)
+(E) Focus \((5, -3)\), directrix \(x = -1\), endpoints \((5, 0)\) and \((5, -6)\)
+[/QUESTION]
+
+=== SECTION 3: Converting general one-square equations by completing the square ===
+
+An axis-aligned parabola written in expanded form has exactly ONE squared variable and a nonzero linear term in the other variable:
+\[
+Ax^2 + Dx + Ey + F = 0 \quad (A \neq 0, E \neq 0) \qquad \text{or} \qquad Cy^2 + Dx + Ey + F = 0 \quad (C \neq 0, D \neq 0).
+\]
+To extract its vertex, focus, and directrix:
+1. Keep the squared variable and its linear term on the left; move the other linear term and constant to the right.
+2. Divide through by the leading coefficient (\(A\) or \(C\)) so the squared term has coefficient \(1\).
+3. Complete the square on the left, adding the same constant to the right.
+4. Factor out the coefficient of the non-squared variable on the right to match [REF: parabola-standard | standard form].
+
+For example, convert \(2y^2 - 12y + 8x + 2 = 0\):
+\[
+2y^2 - 12y = -8x - 2 \implies y^2 - 6y = -4x - 1.
+\]
+Completing the square in \(y\) by adding \((-6/2)^2 = 9\) to both sides gives
+\[
+(y - 3)^2 = -4x - 1 + 9 = -4x + 8 = -4(x - 2).
+\]
+We immediately read off a horizontal parabola with vertex \(V(2, 3)\), \(4p = -4 \implies p = -1\) (opening left), focus \(F(1, 3)\), and directrix \(x = 3\).
+
+[QUESTION 3]
+[ANSWER: A]
+What are the vertex and focus of the parabola \(3x^2 - 18x + 12y + 51 = 0\)?
+
+(A) Vertex \((3, -2)\) and focus \((3, -3)\)
+(B) Vertex \((3, -2)\) and focus \((3, -1)\)
+(C) Vertex \((3, -2)\) and focus \((3, -6)\)
+(D) Vertex \((-3, 2)\) and focus \((-3, 1)\)
+(E) Vertex \((3, -2)\) and focus \((2, -2)\)
+[/QUESTION]
+
+=== SECTION 4: Applied reflector and bridge arch problems ===
+
+To model a physical parabola, place the coordinate axes so the vertex sits at a convenient point—typically \((0, 0)\) for a parabolic dish or \((0, H)\) for a symmetric arch of height \(H\)—and substitute a known boundary point to solve for \(4p\).
+
+Example 1 (Parabolic dish): A satellite dish is \(12\text{ ft}\) wide across its circular rim and \(2\text{ ft}\) deep at its center. Where should the receiver be mounted at the focus?
+Place the vertex at \((0, 0)\) with the dish opening upward, so \(x^2 = 4py\). Because the full width is \(12\text{ ft}\), the rim extends \(6\text{ ft}\) to each side of the axis, passing through \((6, 2)\). Substituting \(x = 6, y = 2\):
+\[
+6^2 = 4p(2) \implies 36 = 8p \implies p = 4.5\text{ ft}.
+\]
+The receiver should be placed \(4.5\text{ ft}\) directly above the vertex (notice it sits above the rim of this shallow dish).
+
+Example 2 (Parabolic arch): A parabolic bridge arch spans \(40\text{ m}\) at road level and rises \(10\text{ m}\) high at its center. Find the height of the arch \(12\text{ m}\) away from the center.
+Place road level along the \(x\)-axis and the vertex at \((0, 10)\) opening downward, so \(x^2 = 4p(y - 10)\). The base meets the road at \((\pm 20, 0)\):
+\[
+20^2 = 4p(0 - 10) \implies 400 = -40p \implies 4p = -40.
+\]
+Thus the arch satisfies \(x^2 = -40(y - 10)\). At \(x = 12\):
+\[
+12^2 = -40(y - 10) \implies 144 = -40(y - 10) \implies y - 10 = -3.6 \implies y = 6.4\text{ m}.
+\]
+
+[QUESTION 4]
+[ANSWER: D]
+A parabolic headlight mirror is \(8\text{ cm}\) wide across its opening, and its bulb is placed at the focus \(1\text{ cm}\) directly in front of the vertex. How deep is the mirror from its vertex to the plane of its rim?
+
+(A) \(1\text{ cm}\)
+(B) \(2\text{ cm}\)
+(C) \(8\text{ cm}\)
+(D) \(4\text{ cm}\)
+(E) \(16\text{ cm}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+A parabola has vertex \(V(1, -2)\), a vertical axis of symmetry, and passes through \(P(5, 6)\). What is the equation of its directrix?
+
+(A) \(y = -4\)
+(B) \(y = -3\)
+(C) \(y = -\frac{3}{2}\)
+(D) \(x = \frac{1}{2}\)
+(E) \(y = -\frac{5}{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Consider the parabola with focus \(F(3, 1)\) and directrix \(x = -5\). What is the area of the triangle whose vertices are the vertex of the parabola and the two endpoints of its latus rectum?
+
+(A) \(16\)
+(B) \(32\)
+(C) \(64\)
+(D) \(8\)
+(E) \(24\)
+[/BONUS]

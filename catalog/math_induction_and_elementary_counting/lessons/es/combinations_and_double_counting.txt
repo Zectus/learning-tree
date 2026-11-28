@@ -1,0 +1,262 @@
+=== SECTION 1: Coeficientes binomiales y sus tres interpretaciones centrales ===
+
+En la lección anterior, \(P(n, k) = \frac{n!}{(n - k)!}\) contó \(k\)-tuplas ordenadas de objetos distintos elegidos entre \(n\) objetos. Suprime ahora el orden: ¿cuántos subconjuntos NO ORDENADOS de \(k\) elementos pueden seleccionarse de un conjunto de \(n\) elementos?
+
+La Regla de la División responde en un solo paso. Todo subconjunto \(S\) de \(k\) elementos de un conjunto de \(n\) elementos puede enlistarse en \(k!\) órdenes distintos, produciendo \(k!\) \(k\)-permutaciones diferentes. Como esta multiplicidad \(k!\) es idéntica para todo subconjunto de \(k\) elementos, dividir \(P(n, k)\) entre \(k!\) da el número de subconjuntos de \(k\) elementos —llamado combinación o coeficiente binomial, escrito \(\binom{n}{k}\) o \(C(n, k)\) (se lee «\(n\) en \(k\)» o «combinaciones de \(n\) en \(k\)»):
+\[
+C(n, k) = \binom{n}{k} = \frac{P(n, k)}{k!} = \frac{n!}{k!\,(n - k)!} \qquad (0 \le k \le n).
+\]
+Comprueba las convenciones frontera: \(\binom{n}{0} = \frac{n!}{0!\,n!} = 1\) (hay un único subconjunto de \(0\) elementos, \(\emptyset\)) y \(\binom{n}{n} = \frac{n!}{n!\,0!} = 1\) (el conjunto entero mismo). Siempre que \(k < 0\) o \(k > n\), no hay subconjuntos de \(k\) elementos de un conjunto de \(n\) elementos, de modo que adoptamos la convención estándar
+\[
+\binom{n}{k} = 0 \qquad \text{para } k < 0 \text{ o } k > n.
+\]
+
+Lo que hace ubicuo a \(\binom{n}{k}\) en toda la matemática es que tres objetos finitos aparentemente distintos están en biyección explícita entre sí y, por tanto, comparten exactamente el mismo conteo.
+
+[CALLOUT]
+id: binom-interpretations
+label: Equivalencia
+title: Tres interpretaciones centrales de \(\binom{n}{k}\)
+tone: key
+
+Para enteros \(0 \le k \le n\), el coeficiente binomial \(\binom{n}{k} = \frac{n!}{k!(n - k)!}\) cuenta cada uno de los siguientes objetos:
+
+(1) Subconjuntos: Los subconjuntos de \(k\) elementos de un conjunto de \(n\) elementos \(\{1, 2, \dots, n\}\).
+(2) Cadenas binarias de peso \(k\): Las cadenas binarias de longitud \(n\) sobre \(\{0, 1\}\) que contienen exactamente \(k\) unos y \(n - k\) ceros (coincidiendo también con el conteo de permutaciones de multiconjuntos \(\frac{n!}{k!(n - k)!}\)).
+(3) Caminos reticulares noreste: Los caminos más cortos sobre la cuadrícula desde \((0, 0)\) hasta \((k, n - k)\) usando únicamente pasos unitarios al Este \((+1, 0)\) y pasos unitarios al Norte \((0, +1)\).
+[/CALLOUT]
+
+¿Por qué [REF: binom-interpretations.3 | la interpretación de caminos reticulares] coincide con [REF: binom-interpretations.2 | las cadenas binarias de peso \(k\)]? Todo camino noreste de \((0, 0)\) a \((k, n - k)\) debe dar exactamente \(k\) pasos al Este y \(n - k\) pasos al Norte en algún orden —un total de \(n\) pasos. Codificar cada paso al Este como \(1\) y cada paso al Norte como \(0\) da una biyección entre los caminos reticulares noreste hacia \((k, n - k)\) y las cadenas binarias de longitud \(n\) con \(k\) unos. Equivalentemente, para llegar a \((a, b)\) desde \((0, 0)\) usando pasos al Este y al Norte, hay \(\binom{a + b}{a} = \binom{a + b}{b}\) caminos.
+
+Por ejemplo, ir de \((0, 0)\) a \((4, 3)\) requiere \(4\) pasos al Este y \(3\) pasos al Norte (\(7\) pasos en total), de modo que hay \(\binom{7}{4} = \frac{7 \cdot 6 \cdot 5}{3 \cdot 2 \cdot 1} = 35\) caminos noreste. La figura siguiente muestra la cuadrícula y uno de esos caminos: \(E, N, E, E, N, N, E\) (correspondiente a la cadena binaria de peso \(4\) dada por \(1011001\) y al \(4\)-subconjunto \(\{1, 3, 4, 7\}\) de \(\{1, \dots, 7\}\)).
+
+[GRAPH]
+type: function2d
+title: Un camino reticular noreste de \((0, 0)\) a \((4, 3)\) que codifica \(1011001\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.3, 4.3
+yrange: -0.3, 3.3
+aspect: equal
+trace: 0 | label: borde de la cuadrícula
+segment: 0, 1, 4, 1 | dashed: true
+segment: 0, 2, 4, 2 | dashed: true
+segment: 0, 3, 4, 3 | dashed: true
+segment: 0, 0, 0, 3 | dashed: true
+segment: 1, 0, 1, 3 | dashed: true
+segment: 2, 0, 2, 3 | dashed: true
+segment: 3, 0, 3, 3 | dashed: true
+segment: 4, 0, 4, 3 | dashed: true
+segment: 0, 0, 1, 0 | color: #2563eb
+segment: 1, 0, 1, 1 | color: #2563eb
+segment: 1, 1, 3, 1 | color: #2563eb
+segment: 3, 1, 3, 3 | color: #2563eb
+segment: 3, 3, 4, 3 | color: #2563eb
+point: 0, 0 | label: \((0, 0)\)
+point: 4, 3 | label: \((4, 3)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuántos caminos reticulares noreste de \((0, 0)\) a \((6, 4)\) (tomando únicamente pasos unitarios al Este y al Norte) pasan por el punto \((2, 2)\)?
+
+(A) \(21\)
+(B) \(60\)
+(C) \(90\)
+(D) \(120\)
+(E) \(210\)
+[/QUESTION]
+
+=== SECTION 2: Demostraciones combinatorias por doble conteo ===
+
+Muchas identidades notables relacionan los coeficientes binomiales entre sí. A veces puedes verificar una identidad desarrollando factoriales a fuerza bruta, pero la manipulación algebraica suele ocultar POR QUÉ la identidad es cierta —y se vuelve irremediablemente engorrosa con sumatorias. Una demostración combinatoria (o demostración por doble conteo) revela directamente la estructura.
+
+[CALLOUT]
+id: double-counting
+label: Método
+title: Demostración combinatoria por doble conteo
+tone: key
+
+Para demostrar combinatoriamente una identidad \(L = R\):
+
+(1) Define explícitamente un único conjunto finito \(S\) de objetos combinatorios (como subconjuntos, comités, cadenas binarias o caminos).
+(2) Cuenta \(|S|\) de una manera para mostrar que \(|S| = L\).
+(3) Cuenta exactamente el mismo conjunto \(S\) de una segunda manera independiente para mostrar que \(|S| = R\).
+(4) Concluye \(L = R\), puesto que ambas expresiones igualan \(|S|\).
+[/CALLOUT]
+
+Demostremos tres identidades centrales usando [REF: double-counting | el doble conteo].
+
+1. Simetría: \(\binom{n}{k} = \binom{n}{n - k}\) para \(0 \le k \le n\).
+   Cuenta el conjunto \(S\) de subconjuntos de \(k\) elementos de \(\{1, \dots, n\}\). Manera 1: directamente, \(|S| = \binom{n}{k}\). Manera 2: especifica de manera única cada \(k\)-subconjunto eligiendo los \(n - k\) elementos que QUEDAN FUERA; hay \(\binom{n}{n - k}\) maneras de elegir el complemento. Así, \(\binom{n}{k} = \binom{n}{n - k}\).
+
+2. Identidad de Pascal: Para todos los enteros \(1 \le k \le n\),
+   \[
+   \binom{n}{k} = \binom{n - 1}{k - 1} + \binom{n - 1}{k}.
+   \]
+   Sea \(S\) el conjunto de subconjuntos de \(k\) elementos de \(\{1, 2, \dots, n\}\). Manera 1: \(|S| = \binom{n}{k}\). Manera 2: fija el elemento específico \(n\) y particiona \(S\) en dos colecciones disjuntas:
+   - Subconjuntos que contienen a \(n\): debemos elegir los \(k - 1\) elementos restantes de \(\{1, \dots, n - 1\}\), lo que da \(\binom{n - 1}{k - 1}\) subconjuntos.
+   - Subconjuntos que NO contienen a \(n\): debemos elegir todos los \(k\) elementos de \(\{1, \dots, n - 1\}\), lo que da \(\binom{n - 1}{k}\) subconjuntos.
+   Por la Regla de la Suma, \(|S| = \binom{n - 1}{k - 1} + \binom{n - 1}{k}\), demostrando la identidad de Pascal.
+
+La identidad de Pascal genera el triángulo de Pascal fila por fila: cada entrada interior es igual a la suma de las dos entradas situadas directamente encima en la fila anterior.
+
+[TABLE]
+Fila \(n\) | \(k = 0\) | \(k = 1\) | \(k = 2\) | \(k = 3\) | \(k = 4\) | \(k = 5\)
+\(n = 0\) | \(1\) | — | — | — | — | —
+\(n = 1\) | \(1\) | \(1\) | — | — | — | —
+\(n = 2\) | \(1\) | \(2\) | \(1\) | — | — | —
+\(n = 3\) | \(1\) | \(3\) | \(3\) | \(1\) | — | —
+\(n = 4\) | \(1\) | \(4\) | \(6\) | \(4\) | \(1\) | —
+\(n = 5\) | \(1\) | \(5\) | \(10\) | \(10\) | \(5\) | \(1\)
+[/TABLE]
+
+3. Identidad del presidente del comité (absorción): Para todos los enteros \(1 \le k \le n\),
+   \[
+   k \binom{n}{k} = n \binom{n - 1}{k - 1}.
+   \]
+   Sea \(S\) el conjunto de todos los pares \((C, c)\) donde \(C\) es un comité de \(k\) personas elegido entre \(n\) personas y \(c \in C\) queda designado como su presidente.
+   - Manera 1: Elige primero el comité \(C\) de \(k\) personas de \(\binom{n}{k}\) maneras, y luego selecciona a uno de sus \(k\) miembros para ser el presidente \(c\) de \(k\) maneras. Por la Regla del Producto, \(|S| = k \binom{n}{k}\).
+   - Manera 2: Elige primero al presidente \(c\) entre todas las \(n\) personas de \(n\) maneras, y luego elige a los \(k - 1\) miembros restantes del comité entre las \(n - 1\) personas restantes de \(\binom{n - 1}{k - 1}\) maneras. Por la Regla del Producto, \(|S| = n \binom{n - 1}{k - 1}\).
+   Por tanto, \(k \binom{n}{k} = n \binom{n - 1}{k - 1}\).
+
+[QUESTION 2]
+[ANSWER: D]
+Considera la identidad \(\binom{n}{r}\binom{r}{k} = \binom{n}{k}\binom{n - k}{r - k}\) para enteros \(0 \le k \le r \le n\). ¿Qué conjunto finito \(S\) es contado por ambos lados para dar una demostración combinatoria válida por doble conteo?
+
+(A) El conjunto de pares ordenados \((A, B)\) de subconjuntos disjuntos de \(\{1, \dots, n\}\) con \(|A| = r\) y \(|B| = k\).
+(B) El conjunto de subconjuntos de \((r + k)\) elementos de \(\{1, \dots, n\}\) que contienen al elemento \(k\).
+(C) El conjunto de funciones de un conjunto de \(r\) elementos a un conjunto de \(k\) elementos cuya imagen tiene tamaño \(n\).
+(D) El conjunto de pares \((A, B)\) de subconjuntos de \(\{1, \dots, n\}\) que satisfacen \(B \subseteq A\), \(|A| = r\) y \(|B| = k\) (por ejemplo, elegir un comité \(A\) de \(r\) personas y un subcomité \(B\) de \(k\) personas dentro de él).
+(E) El conjunto de cadenas binarias de longitud \(n\) con \(r\) unos o con \(k\) unos.
+[/QUESTION]
+
+=== SECTION 3: Las identidades del palo de hockey y de Vandermonde ===
+
+El doble conteo brilla de verdad en identidades de sumatorias, donde expandir factoriales sería penoso. Dos identidades clásicas de sumatorias forman parte de toda caja de herramientas combinatoria.
+
+[CALLOUT]
+id: hockey-vandermonde
+label: Teoremas
+title: Identidad del palo de hockey e identidad de Vandermonde
+tone: key
+
+(1) Identidad del palo de hockey: Para todos los enteros \(0 \le r \le n\),
+\[
+\sum_{m=r}^n \binom{m}{r} = \binom{n + 1}{r + 1}.
+\]
+(2) Identidad de Vandermonde: Para todos los enteros no negativos \(m, n, r\),
+\[
+\sum_{k=0}^r \binom{m}{k}\binom{n}{r - k} = \binom{m + n}{r}.
+\]
+[/CALLOUT]
+
+Demostración combinatoria de [REF: hockey-vandermonde.1 | la identidad del palo de hockey]: Sea \(S\) el conjunto de todos los subconjuntos de \((r + 1)\) elementos de \(\{1, 2, \dots, n + 1\}\).
+- Manera 1: Directamente, \(|S| = \binom{n + 1}{r + 1}\).
+- Manera 2: Particiona \(S\) en casos disjuntos según el MAYOR elemento del subconjunto. Como un subconjunto de tamaño \(r + 1\) debe tener al menos \(r\) elementos menores por debajo de su máximo, su mayor elemento debe ser \(m + 1\) para algún entero \(m\) con \(r \le m \le n\). Una vez fijado el mayor elemento \(m + 1\), los \(r\) elementos restantes son un subconjunto arbitrario de \(r\) elementos de \(\{1, 2, \dots, m\}\), que puede elegirse de \(\binom{m}{r}\) maneras. Sumar sobre todos los valores disjuntos \(m = r, r + 1, \dots, n\) arroja \(|S| = \sum_{m=r}^n \binom{m}{r}\).
+
+Vuelve a mirar el triángulo de Pascal de la Sección 2 para ver el origen del nombre: sumar bajando por la columna \(r = 2\) desde la fila \(2\) hasta la fila \(5\) da \(\binom{2}{2} + \binom{3}{2} + \binom{4}{2} + \binom{5}{2} = 1 + 3 + 6 + 10 = 20 = \binom{6}{3}\), que se dobla un paso hacia la derecha en la fila \(6\) como la pala de un palo de hockey.
+
+Demostración combinatoria de [REF: hockey-vandermonde.2 | la identidad de Vandermonde]: Supón que un club consta de \(m\) físicos y \(n\) químicos (\(m + n\) miembros en total), y sea \(S\) el conjunto de todos los comités de \(r\) personas elegidos del club.
+- Manera 1: Ignorando las etiquetas de departamento, \(|S| = \binom{m + n}{r}\).
+- Manera 2: Particiona \(S\) según el número exacto \(k\) de físicos en el comité, donde \(k\) va de \(0\) a \(r\). Para un \(k\) fijo, elige \(k\) físicos entre \(m\) de \(\binom{m}{k}\) maneras y, de forma independiente, elige los \(r - k\) químicos restantes entre \(n\) de \(\binom{n}{r - k}\) maneras (nuestra convención \(\binom{a}{b} = 0\) para \(b > a\) descarta automáticamente los casos imposibles donde \(k > m\) o \(r - k > n\)). Por las Reglas del Producto y de la Suma, \(|S| = \sum_{k=0}^r \binom{m}{k}\binom{n}{r - k}\).
+
+Un corolario famoso aparece de inmediato al poner \(m = n = r\) en [REF: hockey-vandermonde.2 | la identidad de Vandermonde] y aplicar la simetría \(\binom{n}{n - k} = \binom{n}{k}\):
+\[
+\sum_{k=0}^n \binom{n}{k}^2 = \sum_{k=0}^n \binom{n}{k}\binom{n}{n - k} = \binom{2n}{n}.
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+Para cualquier entero positivo \(n\), ¿cuál es el valor exacto en forma cerrada de la suma
+\[
+\sum_{k=0}^{n-1} \binom{n}{k}\binom{n}{k + 1}?
+\]
+
+(A) \(\binom{2n}{n}\)
+(B) \(\binom{2n}{n - 1}\)
+(C) \(\binom{2n + 1}{n}\)
+(D) \(\binom{2n - 1}{n}\)
+(E) \(n \binom{2n}{n}\)
+[/QUESTION]
+
+=== SECTION 4: Diagnóstico de la trampa de sobreconteo en comités con «al menos \(k\)» ===
+
+Igual que las cadenas con «al menos uno» crearon una trampa clásica de sobreconteo bajo la Regla del Producto, las selecciones de subconjuntos con «al menos uno» y «al menos \(k\)» generan el error individual más común con coeficientes binomiales.
+
+[CALLOUT]
+id: overcounting-trap
+label: Error frecuente
+title: La trampa de «elegir primero los representantes obligatorios y luego cualesquiera restantes»
+tone: caution
+
+Problema: De \(6\) mujeres y \(5\) hombres, ¿cuántos comités de \(4\) personas contienen AL MENOS \(1\) mujer?
+
+Intento defectuoso: «Elige primero \(1\) mujer para cumplir el requisito (\(\binom{6}{1} = 6\) maneras), y luego elige cualesquiera \(3\) personas más entre las \(10\) personas restantes (\(\binom{10}{3} = 120\) maneras), dando \(6 \cdot 120 = 720\).»
+
+Por qué falla: El número total de comités de \(4\) personas de todas las \(11\) personas es solo \(\binom{11}{4} = 330\), ¡así que \(720\) es imposible! El producto defectuoso trata a la primera mujer elegida como una «representante designada» etiquetada, de modo que un comité que contiene \(w\) mujeres se cuenta \(w\) veces distintas (una por cada mujer que pudo elegirse en la etapa \(1\)). Como \(w\) varía de \(1\) a \(4\), ¡ni siquiera puedes corregirlo dividiendo entre una única constante!
+[/CALLOUT]
+
+Verifiquemos la anatomía exacta de ese sobreconteo:
+- \(1\) mujer, \(3\) hombres: \(\binom{6}{1}\binom{5}{3} = 60\) comités, cada uno contado \(1\) vez \(\to 60\).
+- \(2\) mujeres, \(2\) hombres: \(\binom{6}{2}\binom{5}{2} = 150\) comités, cada uno contado \(2\) veces \(\to 300\).
+- \(3\) mujeres, \(1\) hombre: \(\binom{6}{3}\binom{5}{1} = 100\) comités, cada uno contado \(3\) veces \(\to 300\).
+- \(4\) mujeres, \(0\) hombres: \(\binom{6}{4}\binom{5}{0} = 15\) comités, cada uno contado \(4\) veces \(\to 60\).
+En efecto, \(60 + 300 + 300 + 60 = 720\), ¡mientras que el conteo verdadero es \(60 + 150 + 100 + 15 = 325\)!
+
+Hay dos maneras completamente fiables de evitar [REF: overcounting-trap | esta trampa]:
+1. Particionar en casos disjuntos de conteo exacto (Regla de la Suma): suma los conteos para exactamente \(1\), exactamente \(2\), exactamente \(3\) y exactamente \(4\) mujeres (\(60 + 150 + 100 + 15 = 325\)).
+2. Restar el complemento (Regla del Complemento): todos los comités de \(4\) personas menos los comités integrados solo por hombres, \(\binom{11}{4} - \binom{5}{4} = 330 - 5 = 325\).
+
+Comprueba siempre una señal de alerta cada vez que multipliques dos coeficientes binomiales: ¿las dos etapas extraen de grupos SOLAPADOS hacia el MISMO subconjunto no ordenado? Si es así, ¡estás imponiendo silenciosamente una etiqueta artificial de etapa sobre los elementos y sobrecontando!
+
+[QUESTION 4]
+[ANSWER: E]
+De \(5\) estudiantes de último año y \(7\) de tercer año, queremos contar todos los comités de \(5\) personas que incluyen AL MENOS \(2\) estudiantes de último año. Un estudiante escribe \(\binom{5}{2}\binom{10}{3} = 1200\). ¿Cuántas veces cuenta la fórmula del estudiante un comité particular que contiene \(3\) estudiantes de último año y \(2\) de tercer año, y cuál es el número VERDADERO de comités válidos?
+
+(A) Contado \(2\) veces; el número verdadero de comités válidos es \(596\).
+(B) Contado \(3\) veces; el número verdadero de comités válidos es \(617\).
+(C) Contado \(6\) veces; el número verdadero de comités válidos es \(596\).
+(D) Contado \(3\) veces; el número verdadero de comités válidos es \(400\).
+(E) Contado \(3\) veces; el número verdadero de comités válidos es \(596\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Qué conjunto finito \(S\) proporciona una demostración combinatoria directa por doble conteo de la identidad
+\[
+k(k - 1)\binom{n}{k} = n(n - 1)\binom{n - 2}{k - 2} \qquad (2 \le k \le n)?
+\]
+
+(A) El conjunto de comités de \(k\) personas elegidos entre \(n\) personas con dos copresidentes idénticos.
+(B) El conjunto de pares de comités disjuntos de tamaños \(k\) y \(2\) elegidos entre \(n\) personas.
+(C) El conjunto de comités de \(k\) personas elegidos entre \(n\) personas junto con un par ordenado (presidente, vicepresidente) de dos cargos distintos elegidos del comité.
+(D) El conjunto de comités de \((k - 2)\) personas elegidos entre \(n\) personas con \(2\) asesores elegidos fuera del comité.
+(E) El conjunto de \(k\)-permutaciones ordenadas de \(n\) personas cuyas dos primeras entradas están fijas.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Usando [REF: hockey-vandermonde.1 | la identidad del palo de hockey], ¿cuál es el valor exacto en forma cerrada de la suma
+\[
+\sum_{k=1}^n \frac{k(k + 1)}{2}
+\]
+para todo entero positivo \(n\)?
+
+(A) \(\binom{n + 2}{3}\)
+(B) \(\binom{n + 1}{3}\)
+(C) \(\binom{n + 2}{2}\)
+(D) \(\binom{n + 3}{3}\)
+(E) \(\binom{n + 1}{2}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+¿Cuántos caminos reticulares noreste de \((0, 0)\) a \((5, 4)\) (usando únicamente pasos unitarios al Este y al Norte) EVITAN pasar por el punto \((2, 2)\)?
+
+(A) \(56\)
+(B) \(60\)
+(C) \(64\)
+(D) \(66\)
+(E) \(126\)
+[/BONUS]

@@ -1,0 +1,211 @@
+=== SECTION 1: Cambio multiplicativo y funciones exponenciales ===
+
+Supón que una bióloga sigue dos poblaciones de laboratorio que comienzan con \(200\) células en el instante \(x = 0\) horas. La Población A gana \(400\) células cada hora, mientras que la Población B triplica su tamaño cada hora. Al cabo de una hora ambas poblaciones tienen \(600\) células, por lo que una sola medición instantánea no permite distinguirlas. Sin embargo, para la hora \(4\), la Población A ha crecido hasta \(1{,}800\) células, mientras que la Población B se ha disparado a \(16{,}200\) células. La diferencia radica en cómo cambia cada cantidad en un paso fijo: la Población A crece en una cantidad aditiva constante cada hora, mientras que la Población B crece por un factor multiplicativo constante.
+
+[TABLE]
+Hora \(x\) | Población A: \(g(x) = 200 + 400x\) | Diferencia por paso \(g(x) - g(x - 1)\) | Población B: \(f(x) = 200 \cdot 3^x\) | Razón por paso \(f(x) / f(x - 1)\)
+\(0\) | \(200\) | — | \(200\) | —
+\(1\) | \(600\) | \(+400\) | \(600\) | \(\times 3\)
+\(2\) | \(1{,}000\) | \(+400\) | \(1{,}800\) | \(\times 3\)
+\(3\) | \(1{,}400\) | \(+400\) | \(5{,}400\) | \(\times 3\)
+\(4\) | \(1{,}800\) | \(+400\) | \(16{,}200\) | \(\times 3\)
+[/TABLE]
+
+En una función lineal \(g(x) = mx + c\), aumentar \(x\) en \(1\) siempre suma la misma constante \(m\): \(g(x + 1) - g(x) = m\). En una función exponencial \(f(x) = a \cdot b^x\), aumentar \(x\) en \(1\) siempre multiplica la salida por la misma constante \(b\):
+\[
+\frac{f(x + 1)}{f(x)} = \frac{a \cdot b^{x+1}}{a \cdot b^x} = b.
+\]
+De manera más general, avanzar la entrada en cualquier paso \(\Delta x\) multiplica la salida por \(b^{\Delta x}\), sin importar dónde comience \(x\):
+\[
+\frac{f(x + \Delta x)}{f(x)} = \frac{a \cdot b^{x + \Delta x}}{a \cdot b^x} = b^{\Delta x}.
+\]
+Dado que la variable \(x\) aparece en el exponente y no en la base, las funciones exponenciales se comportan de forma muy distinta a las funciones potencia como \(x^3\). En \(x^3\), el exponente es fijo y la base varía; en \(3^x\), la base es fija y el exponente varía.
+
+[CALLOUT]
+id: exp-def
+label: Definición
+title: Función exponencial
+tone: key
+
+Una función exponencial tiene la forma
+\[
+f(x) = a \cdot b^x,
+\]
+donde:
+
+(1) \(a \ne 0\) es el valor inicial (la salida en \(x = 0\), ya que \(f(0) = a \cdot b^0 = a\)).
+(2) \(b > 0\) y \(b \ne 1\) es la base (también llamada factor de crecimiento o de decrecimiento por aumento unitario en \(x\)).
+[/CALLOUT]
+
+¿Por qué restringimos la base \(b\) a \(b > 0\) y \(b \ne 1\) en [REF: exp-def.2 | la condición (2)]? Cada caso excluido rompe el comportamiento que necesitamos de una función de valores reales definida para todo número real \(x\):
+
+- Si \(b < 0\), expresiones como \((-2)^x\) dejan de ser números reales en infinitos exponentes racionales: por ejemplo, \((-2)^{1/2} = \sqrt{-2}\) no es un número real, e incluso donde existen potencias racionales (como \((-2)^{1/3} = -\sqrt[3]{2}\) y \((-2)^{2/3} = \sqrt[3]{4}\)), el signo alterna de forma errática.
+- Si \(b = 0\), entonces \(0^x = 0\) para \(x > 0\), mientras que \(0^0\) es indeterminado y \(0^{-1} = 1/0\) no está definido.
+- Si \(b = 1\), entonces \(f(x) = a \cdot 1^x = a\) es una función constante sin crecimiento ni decrecimiento, y cada entrada produce la misma salida.
+
+Por las leyes de exponentes previas, \(b^x\) ya tiene un significado algebraico exacto siempre que \(x\) es un entero o un número racional \(p/q\) (con \(q > 0\)):
+\[
+b^0 = 1, \qquad b^{-n} = \frac{1}{b^n}, \qquad b^{p/q} = \left(\sqrt[q]{b}\right)^p.
+\]
+¿Qué ocurre con exponentes irracionales como \(2^{\sqrt{2}}\) o \(3^\pi\)? Como \(\sqrt{2} = 1.4142135\dots\) está comprendido entre cotas racionales cada vez más estrechas —tales como \(1.41 < \sqrt{2} < 1.42\), y aún más ajustadas, \(1.4142 < \sqrt{2} < 1.4143\)—, las potencias racionales correspondientes acorralan un único número real:
+\[
+2^{1.4142} \approx 2.66512 < 2^{\sqrt{2}} < 2.66530 \approx 2^{1.4143}.
+\]
+En esta lección aceptamos como un hecho matemático dado (cuya construcción formal mediante límites pertenece al análisis real) que, para todo \(b > 0\), \(b^x\) se extiende de manera única de los números racionales a todos los números reales \(x \in \mathbb{R}\) como una función continua que conserva todas las leyes habituales de los exponentes: \(b^{r+s} = b^r b^s\), \(b^{r-s} = b^r / b^s\) y \((b^r)^s = b^{rs}\) para todos \(r, s \in \mathbb{R}\). Además, esta extensión preserva el orden estricto: si \(b > 1\) y \(r < s\), entonces \(b^r < b^s\); si \(0 < b < 1\) y \(r < s\), entonces \(b^r > b^s\).
+
+[QUESTION 1]
+[ANSWER: C]
+Cada opción siguiente enumera las salidas \(f(0), f(1), f(2), f(3)\) de una función en \(x = 0, 1, 2, 3\). ¿Qué sucesión es coherente con una función exponencial \(f(x) = a \cdot b^x\)?
+
+(A) \(3,\; 6,\; 9,\; 12\)
+(B) \(1,\; 4,\; 9,\; 16\)
+(C) \(16,\; 12,\; 9,\; \frac{27}{4}\)
+(D) \(2,\; -4,\; 8,\; -16\)
+(E) \(5,\; 5,\; 5,\; 5\)
+[/QUESTION]
+
+=== SECTION 2: Crecimiento exponencial, decrecimiento y gráficas base ===
+
+Dado que \(b > 0\) y \(b \ne 1\), toda base válida cae en uno de dos regímenes: \(b > 1\) o \(0 < b < 1\). Para ver cómo la base controla la forma de la gráfica, compara las funciones base \(f(x) = b^x\) (donde \(a = 1\)) para \(b = 3\), \(b = 2\) y \(b = 1/2\).
+
+Cuando \(b > 1\), multiplicar repetidamente por \(b\) hace que \(b^x\) crezca sin cota a medida que \(x\) avanza hacia la derecha (\(x \to \infty\)). Avanzar hacia la izquierda (\(x \to -\infty\)) equivale a multiplicar por potencias negativas \(b^{-n} = 1/b^n\), lo que se encoge hacia \(0\) sin alcanzar nunca el \(0\) ni volverse negativo. Por ejemplo, \(2^{-1} = 1/2\), \(2^{-5} = 1/32\) y \(2^{-10} = 1/1024\). Así, el eje \(x\) (\(y = 0\)) actúa como una asíntota horizontal cuando \(x \to -\infty\). Esto es crecimiento exponencial.
+
+Cuando \(0 < b < 1\), los papeles de la izquierda y la derecha se invierten. Para \(b = 1/2\), aumentar \(x\) divide la salida a la mitad en cada paso: \((1/2)^1 = 1/2\), \((1/2)^2 = 1/4\), \((1/2)^{10} = 1/1024\), de modo que la curva se aproxima a la asíntota horizontal \(y = 0\) cuando \(x \to \infty\). Avanzar hacia la izquierda eleva \(1/2\) a potencias negativas —\((1/2)^{-1} = 2\), \((1/2)^{-3} = 8\)—, de modo que la salida crece sin cota cuando \(x \to -\infty\). Esto es decrecimiento exponencial.
+
+[GRAPH]
+type: function2d
+title: Curvas exponenciales base \(y = b^x\) para crecimiento (\(b > 1\)) y decrecimiento (\(0 < b < 1\))
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3, 3
+yrange: -0.5, 10
+trace: 3^x | label: \(y = 3^x\)
+trace: 2^x | label: \(y = 2^x\)
+trace: (0.5)^x | label: \(y = (1/2)^x\)
+trace: b^x | label: \(y = b^x\) (ajustable)
+point: 0, 1 | label: \((0, 1)\)
+slider: b | range: 0.25, 3.5 | init: 1.5 | step: 0.25
+[/GRAPH]
+
+Observa dos características sutiles en la gráfica anterior. Primero, toda curva base \(y = b^x\) pasa exactamente por la misma intersección con el eje \(y\) en \((0, 1)\), porque \(b^0 = 1\) para todo \(b > 0\). Segundo, compara \(y = 3^x\) y \(y = 2^x\): para \(x > 0\), la base mayor sube más rápido (\(3^x > 2^x\)), pero para \(x < 0\), la desigualdad se invierte (\(3^x < 2^x\), puesto que \(1/3^n < 1/2^n\)). Al arrastrar el deslizador \(b\) más allá de \(b = 1\), la curva gira alrededor de \((0, 1)\) en su transición entre crecimiento y decrecimiento.
+
+Multiplicar \(b^x\) por una constante no nula \(a\) escala verticalmente cada salida y fija la intersección con el eje \(y\) en \((0, a)\). Como \(b^x > 0\) para todo número real \(x\), el signo de \(f(x) = a \cdot b^x\) queda fijado al signo de \(a\): si \(a > 0\), toda salida es estrictamente positiva; si \(a < 0\), toda salida es estrictamente negativa.
+
+[CALLOUT]
+id: exp-features
+label: Resumen
+title: Propiedades clave de \(f(x) = a \cdot b^x\) (con \(a > 0\))
+tone: key
+
+Para \(f(x) = a \cdot b^x\) con \(a > 0\), \(b > 0\) y \(b \ne 1\):
+
+(1) Dominio: todos los números reales, \((-\infty, \infty)\).
+(2) Rango: todos los números reales positivos, \((0, \infty)\). (Si \(a < 0\), el rango es \((-\infty, 0)\).)
+(3) Intersecciones: intersección con el eje \(y\) en \((0, a)\), y ninguna intersección con el eje \(x\), ya que \(a \cdot b^x \ne 0\) para todo \(x\).
+(4) Asíntota horizontal: la recta \(y = 0\), a la que se aproxima cuando \(x \to -\infty\) si \(b > 1\) y cuando \(x \to \infty\) si \(0 < b < 1\).
+(5) Monotonía estricta e inyectividad: \(f\) es estrictamente creciente cuando \(b > 1\) y estrictamente decreciente cuando \(0 < b < 1\). En consecuencia, \(f\) es inyectiva (uno a uno): \(a \cdot b^{x_1} = a \cdot b^{x_2}\) implica \(x_1 = x_2\).
+[/CALLOUT]
+
+La propiedad de inyectividad en [REF: exp-features.5 | la propiedad (5)] es especialmente poderosa: siempre que dos potencias con la misma base válida son iguales, sus exponentes deben ser iguales. Por ejemplo, si \(2^{x+1} = 8 = 2^3\), la inyectividad obliga de inmediato a que \(x + 1 = 3\), de modo que \(x = 2\).
+
+[QUESTION 2]
+[ANSWER: B]
+Supón que \(f(x) = b^x\) y \(g(x) = c^x\) son funciones exponenciales base cuyas bases satisfacen \(0 < c < 1 < b\). ¿Qué desigualdad se cumple para todo número real negativo \(x < 0\)?
+
+(A) \(0 < g(x) < 1 < f(x)\)
+(B) \(0 < f(x) < 1 < g(x)\)
+(C) \(f(x) < 0 < g(x) < 1\)
+(D) \(1 < f(x) < g(x)\)
+(E) \(0 < f(x) < g(x) < 1\)
+[/QUESTION]
+
+=== SECTION 3: Construcción de \(f(x) = a \cdot b^x\) a partir de dos puntos ===
+
+Así como dos puntos con coordenadas \(x\) distintas determinan una única recta \(g(x) = mx + c\), dos puntos cualesquiera \((x_1, y_1)\) y \((x_2, y_2)\) con \(x_1 \ne x_2\) y donde \(y_1, y_2\) comparten el mismo signo no nulo determinan una única función exponencial \(f(x) = a \cdot b^x\). (Si \(y_1 = y_2\), la fórmula única tiene \(b = 1\), que es constante y no exponencial.)
+
+¿Por qué es indispensable el requisito del mismo signo? Dado que \(b > 0\), siempre tenemos \(b^x > 0\), de modo que \(y_1 = a b^{x_1}\) y \(y_2 = a b^{x_2}\) deben tener ambos el signo de \(a\). Si un punto está por encima del eje \(x\) y el otro está sobre él o por debajo, ninguna función de la forma \(a \cdot b^x\) puede pasar por ambos.
+
+Para hallar \(a\) y \(b\) cuando ambos puntos son válidos, no podemos restar las dos ecuaciones para eliminar \(a\) —eso funciona en las funciones lineales, donde el término constante se suma—. Como \(a\) multiplica a \(b^x\), en su lugar dividimos las dos ecuaciones:
+\[
+\frac{y_2}{y_1} = \frac{a \cdot b^{x_2}}{a \cdot b^{x_1}} = b^{x_2 - x_1}.
+\]
+Como \(y_1\) y \(y_2\) tienen el mismo signo no nulo, la razón \(y_2 / y_1\) es estrictamente positiva. Elevar ambos lados a la potencia \(\frac{1}{x_2 - x_1}\) despeja la única base positiva:
+\[
+b = \left(\frac{y_2}{y_1}\right)^{\frac{1}{x_2 - x_1}}.
+\]
+Una vez conocida \(b\), sustituye cualquiera de los puntos de vuelta en \(y_1 = a \cdot b^{x_1}\) para despejar \(a = y_1 / b^{x_1}\).
+
+Resolvamos dos ejemplos paso a paso. Primero, halla la función exponencial que pasa por \((1, 6)\) y \((4, 162)\). Dividir la segunda salida entre la primera elimina \(a\):
+\[
+\frac{162}{6} = \frac{a \cdot b^4}{a \cdot b^1} \implies 27 = b^3 \implies b = 27^{1/3} = 3.
+\]
+Al sustituir \(b = 3\) y el punto \((1, 6)\) en \(f(x) = a \cdot b^x\) se obtiene \(6 = a \cdot 3^1\), de modo que \(a = 2\). La fórmula es \(f(x) = 2 \cdot 3^x\). Como comprobación rápida, \(f(4) = 2 \cdot 3^4 = 2 \cdot 81 = 162\).
+
+A continuación, halla la función exponencial que pasa por \((-1, 20)\) y \((2, 5/2)\). Ten cuidado con el signo al restar las coordenadas \(x\): \(x_2 - x_1 = 2 - (-1) = 3\). Al dividir resulta
+\[
+\frac{5/2}{20} = \frac{a \cdot b^2}{a \cdot b^{-1}} \implies \frac{1}{8} = b^3 \implies b = \left(\frac{1}{8}\right)^{1/3} = \frac{1}{2}.
+\]
+Usando \((-1, 20)\) para hallar \(a\):
+\[
+20 = a \cdot \left(\frac{1}{2}\right)^{-1} = 2a \implies a = 10.
+\]
+Por lo tanto, \(f(x) = 10 \cdot \left(\frac{1}{2}\right)^x\). Observa que, aun cuando \(x = 0\) no es uno de los puntos dados, el método recupera directamente el valor inicial \(a = 10\).
+
+[GRAPH]
+type: function2d
+title: Curva de decrecimiento \(f(x) = 10 \cdot (1/2)^x\) determinada por \((-1, 20)\) y \((2, 5/2)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -1.5, 5
+yrange: -1, 22
+trace: 10 * (0.5)^x | label: \(f(x) = 10 \cdot (1/2)^x\)
+point: -1, 20 | label: \((-1, 20)\)
+point: 0, 10 | label: \((0, 10)\)
+point: 2, 2.5 | label: \((2, 5/2)\)
+[/GRAPH]
+
+¿Qué ocurre si la diferencia de exponentes \(x_2 - x_1\) es par, digamos \(b^2 = 9\)? Algebraicamente, \(b^2 = 9\) tiene dos soluciones, \(b = 3\) y \(b = -3\), pero [REF: exp-def.2 | la definición de función exponencial] exige \(b > 0\), por lo que siempre descartamos la raíz negativa y tomamos \(b = 3\).
+
+[QUESTION 3]
+[ANSWER: B]
+Una función exponencial \(f(x) = a \cdot b^x\) pasa por los puntos \((-2, 27)\) y \((1, 1)\). ¿Cuál es el valor de \(f(3)\)?
+
+(A) \(\frac{1}{27}\)
+(B) \(\frac{1}{9}\)
+(C) \(\frac{1}{3}\)
+(D) \(3\)
+(E) \(9\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Un estudiante afirma que \(f(x) = 4 \cdot (-2)^x\) es la única función exponencial que pasa por \((0, 4)\) y \((1, -8)\). ¿Cuál es el fallo fundamental de esta afirmación?
+
+(A) Una función exponencial no puede pasar por un punto con \(x = 0\).
+(B) La razón de las salidas es \(-2\), por lo que la base debería ser \(b = 1/2\) en lugar de \(-2\).
+(C) Toda función exponencial debe tener un valor \(y\) positivo en \(x = 1\) incluso cuando \(a < 0\).
+(D) Debido a que una base exponencial válida debe cumplir \(b > 0\), todas las salidas de \(a \cdot b^x\) comparten el signo de \(a\), por lo que ninguna función exponencial puede pasar por \((0, 4)\) y \((1, -8)\) a la vez.
+(E) Dos puntos no bastan para determinar una función exponencial a menos que sus coordenadas \(x\) difieran en \(2\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Una función exponencial \(f(x) = a \cdot b^x\) satisface \(f(x + 2) = 16\,f(x)\) para todo \(x \in \mathbb{R}\), y \(f(3) = 192\). ¿Cuánto vale \(f(0)\)?
+
+(A) \(3\)
+(B) \(6\)
+(C) \(12\)
+(D) \(24\)
+(E) \(48\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sea \(f(x) = a \cdot b^x\) una función exponencial con \(a > 0\), \(b > 0\) y \(b \ne 1\). Para cualesquiera números reales \(u\) y \(v\), ¿cuál es el valor de \(\dfrac{f(u + v)}{f(u) \cdot f(v)}\)?
+
+(A) \(1\)
+(B) \(\frac{1}{a}\)
+(C) \(a\)
+(D) \(\frac{b^{u+v}}{a}\)
+(E) \(b^{uv}\)
+[/BONUS]

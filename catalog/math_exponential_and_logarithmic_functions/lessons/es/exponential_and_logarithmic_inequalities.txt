@@ -1,0 +1,196 @@
+=== SECTION 1: Monotonía y sentido de la desigualdad ===
+
+Resolver una ecuación exponencial o logarítmica se apoya en la inyectividad: salidas iguales implican entradas iguales. Resolver una desigualdad se apoya en algo más fuerte: la monotonía estricta, que nos indica si aplicar o deshacer \(b^x\) o \(\log_b(x)\) conserva o invierte el orden entre dos cantidades.
+
+Cuando \(b > 1\), tanto \(b^x\) como \(\log_b(x)\) son estrictamente crecientes: entradas mayores siempre dan salidas mayores, y entradas menores siempre dan salidas menores. Cuando \(0 < b < 1\), tanto \(b^x\) como \(\log_b(x)\) son estrictamente decrecientes: entradas mayores dan salidas MENORES, por lo que la desigualdad se invierte.
+
+[CALLOUT]
+id: ineq-monotonicity
+label: Principio
+title: Reglas de monotonía para desigualdades exponenciales y logarítmicas
+tone: key
+
+Sea \(b > 0\) con \(b \ne 1\):
+
+(1) Si \(b > 1\) (incluidos \(b = e\) y \(b = 10\)), el sentido de la desigualdad SE CONSERVA:
+\[
+u < v \iff b^u < b^v \qquad \text{y (para } u, v > 0\text{)} \qquad u < v \iff \log_b(u) < \log_b(v).
+\]
+(2) Si \(0 < b < 1\), el sentido de la desigualdad SE INVIERTE:
+\[
+u < v \iff b^u > b^v \qquad \text{y (para } u, v > 0\text{)} \qquad u < v \iff \log_b(u) > \log_b(v).
+\]
+(3) Signo de \(\ln(b)\): \(\ln(b) > 0\) cuando \(b > 1\), mientras que \(\ln(b) < 0\) cuando \(0 < b < 1\). Multiplicar o dividir una desigualdad por \(\ln(b)\) cuando \(0 < b < 1\) invierte el signo de la desigualdad.
+[/CALLOUT]
+
+Para ver [REF: ineq-monotonicity.2 | la regla (2)] en acción, resuelve \(\left(\frac{1}{3}\right)^{x - 1} > 9\). Reescribe \(9 = 3^2 = \left(\frac{1}{3}\right)^{-2}\):
+\[
+\left(\frac{1}{3}\right)^{x - 1} > \left(\frac{1}{3}\right)^{-2}.
+\]
+Como la base \(1/3\) está entre \(0\) y \(1\), eliminar la base INVIERTE la desigualdad:
+\[
+x - 1 < -2 \implies x < -1.
+\]
+Podemos comprobar esto por una ruta alternativa usando base \(3 > 1\): reescribe \(\left(\frac{1}{3}\right)^{x - 1} = 3^{1 - x} > 3^2\). Ahora la base \(3 > 1\) conserva el sentido, dando \(1 - x > 2 \implies -x > 1 \implies x < -1\). Ambas rutas coinciden: el conjunto solución es \((-\infty, -1)\).
+
+[GRAPH]
+type: function2d
+title: Visualización de \(\left(\frac{1}{3}\right)^{x - 1} > 9\) en \(x \in (-\infty, -1)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.2, 2.5
+yrange: -1, 15
+trace: (1/3)^(x - 1) | label: \(y = (1/3)^{x - 1}\)
+trace: 9 | label: \(y = 9\)
+point: -1, 9 | label: \((-1, 9)\)
+segment: -1, 0, -1, 9 | dashed: true
+[/GRAPH]
+
+=== SECTION 2: Resolución de desigualdades exponenciales ===
+
+Con [REF: ineq-monotonicity | las reglas de monotonía] establecidas, las desigualdades exponenciales siguen las mismas clases algebraicas que las ecuaciones exponenciales, con una verificación de vigilancia adicional en cada división o eliminación de base.
+
+Clase 1: Comparación con base común (como en \(\left(\frac{1}{3}\right)^{x - 1} > 9\) arriba). Reescribe ambos lados en una misma base \(b\), luego conserva el sentido si \(b > 1\) o inviértelo si \(0 < b < 1\).
+
+Clase 2: Bases distintas mediante \(\ln\). Como \(e > 1\), tomar \(\ln\) de ambos lados SIEMPRE conserva el sentido de la desigualdad. El peligro llega en el paso final de división, donde el coeficiente de \(x\) puede ser negativo.
+
+Ejemplo: Resuelve \((0.5)^x \le 3^{x - 2}\).
+Aplica \(\ln\) (conservando \(\le\)):
+\[
+x\ln(0.5) \le (x - 2)\ln 3 \implies x\bigl(\ln(0.5) - \ln 3\bigr) \le -2\ln 3.
+\]
+Antes de dividir, comprueba el signo del coeficiente \(\ln(0.5) - \ln 3 = \ln(1/6)\). Como \(1/6 < 1\), ¡\(\ln(1/6) < 0\)! Dividir entre este número negativo invierte \(\le\) a \(\ge\):
+\[
+x \ge \frac{-2\ln 3}{\ln(1/6)} = \frac{-2\ln 3}{-\ln 6} = \frac{2\ln 3}{\ln 6}.
+\]
+El conjunto solución es \(\left[\dfrac{2\ln 3}{\ln 6}, \infty\right)\).
+
+Clase 3: Desigualdades cuadráticas en \(b^x\).
+Sustituye \(u = b^x > 0\), resuelve la desigualdad cuadrática para \(u\), interseca con \(u > 0\) y convierte de vuelta a \(x\).
+
+Ejemplo: Resuelve \(2^{2x} - 5 \cdot 2^x + 4 < 0\).
+Hacer \(u = 2^x > 0\) da \(u^2 - 5u + 4 < 0 \implies (u - 1)(u - 4) < 0\), por lo que \(1 < u < 4\). Sustituyendo de vuelta \(u = 2^x\) se obtiene
+\[
+2^0 < 2^x < 2^2 \implies 0 < x < 2,
+\]
+puesto que la base \(2 > 1\) conserva las desigualdades. El conjunto solución es \((0, 2)\).
+
+Observa qué sucede cuando la cota inferior sobre \(u\) es negativa: si una desigualdad cuadrática produce \(-2 < 3^x < 9\), intersecar con \(3^x > 0\) recorta la condición inferior a \(0 < 3^x < 9\). Como \(3^x > 0\) se cumple automáticamente para todo \(x\) real, solo \(3^x < 9 = 3^2\) restringe a \(x\), dando \((-\infty, 2)\).
+
+[QUESTION 1]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(\left(\frac{1}{2}\right)^{2x - 3} \ge 8\)?
+
+(A) \([0, \infty)\)
+(B) \((-\infty, 0]\)
+(C) \((-\infty, 3]\)
+(D) \([3, \infty)\)
+(E) \((-\infty, 0)\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+¿Cuál es el conjunto solución de \(3^{2x} - 10 \cdot 3^x + 9 \le 0\)?
+
+(A) \([1, 9]\)
+(B) \([0, 2]\)
+(C) \((-\infty, 0] \cup [2, \infty)\)
+(D) \((0, 2)\)
+(E) \([0, 3]\)
+[/QUESTION]
+
+=== SECTION 3: Desigualdades logarítmicas e intersección de dominios ===
+
+En las desigualdades logarítmicas, la monotonía es solo la mitad de la batalla. Cada logaritmo en la desigualdad original impone una restricción de positividad estricta sobre su argumento, y condensar o exponenciar puede ocultar esas fronteras, tal como creaba raíces extrañas en las ecuaciones.
+
+[CALLOUT]
+id: log-ineq-workflow
+label: Flujo de trabajo
+title: Procedimiento en tres pasos para desigualdades logarítmicas
+tone: key
+
+(1) Determina el dominio ORIGINAL: exige que todo argumento logarítmico en la desigualdad inicial sea estrictamente positivo.
+(2) Condensa o empareja los logaritmos y deshaz el logaritmo usando [REF: ineq-monotonicity | las reglas de monotonía] (conservando el sentido para \(b > 1\), invirtiéndolo para \(0 < b < 1\)).
+(3) Interseca el conjunto solución algebraico del paso (2) con el dominio original del paso (1).
+[/CALLOUT]
+
+Ejemplo resuelto 1 (\(b > 1\)): Resuelve \(\log_2(x + 2) < \log_2(3x - 1)\).
+1. Dominio original: \(x + 2 > 0\) (es decir, \(x > -2\)) Y \(3x - 1 > 0\) (es decir, \(x > 1/3\)). Dominio combinado: \((1/3, \infty)\).
+2. Como la base \(2 > 1\), eliminar \(\log_2\) conserva \(<\):
+\[
+x + 2 < 3x - 1 \implies 3 < 2x \implies x > \frac{3}{2}.
+\]
+3. Interseca \((3/2, \infty) \cap (1/3, \infty) = \left(\frac{3}{2}, \infty\right)\).
+
+Ejemplo resuelto 2 (\(0 < b < 1\) con recorte de dominio): Resuelve \(\log_{1/2}(x - 1) + \log_{1/2}(x - 3) \ge -3\).
+1. Dominio original: \(x - 1 > 0\) Y \(x - 3 > 0\), así que \(x > 3\), es decir, \((3, \infty)\).
+2. Condensa a \(\log_{1/2}\!\bigl((x - 1)(x - 3)\bigr) \ge -3\). Deshaz \(\log_{1/2}\) con base \(1/2 \in (0, 1)\), lo cual INVIERTE \(\ge\) a \(\le\):
+\[
+(x - 1)(x - 3) \le \left(\frac{1}{2}\right)^{-3} = 8.
+\]
+Expande y factoriza:
+\[
+x^2 - 4x + 3 \le 8 \implies x^2 - 4x - 5 \le 0 \implies (x - 5)(x + 1) \le 0 \implies x \in [-1, 5].
+\]
+3. Interseca \([-1, 5]\) con el dominio original \((3, \infty)\):
+\[
+[-1, 5] \cap (3, \infty) = (3, 5].
+\]
+Observa el corchete semiabierto: \(x = 5\) está incluido porque \(\log_{1/2}(4) + \log_{1/2}(2) = -2 + (-1) = -3\), mientras que \(x = 3\) queda estrictamente excluido porque \(\log_{1/2}(0)\) no está definido.
+
+[GRAPH]
+type: function2d
+title: La curva \(y = \log_{1/2}(x - 1) + \log_{1/2}(x - 3)\) se mantiene en \(y = -3\) o por encima en \((3, 5]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 2.5, 7
+yrange: -5, 4
+trace: log(x - 1) / log(0.5) + log(x - 3) / log(0.5) | label: \(y = \log_{1/2}(x - 1) + \log_{1/2}(x - 3)\)
+trace: -3 | label: \(y = -3\)
+segment: 3, -5, 3, 4 | label: \(x = 3\) | dashed: true
+point: 5, -3 | label: \((5, -3)\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(\log_{1/3}(2x - 5) > -2\)?
+
+(A) \((-\infty, 7)\)
+(B) \((7, \infty)\)
+(C) \(\left(\frac{5}{2}, 7\right)\)
+(D) \(\left(\frac{5}{2}, \frac{23}{9}\right)\)
+(E) \(\left[\frac{5}{2}, 7\right]\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(\log_2(x) + \log_2(x - 3) \le 2\)?
+
+(A) \([-1, 4]\)
+(B) \((0, 4]\)
+(C) \((3, 4]\)
+(D) \([3, 4]\)
+(E) \([4, \infty)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+¿Cuál es el conjunto solución exacto de \(2^{x + 1} > 5^{x - 1}\)?
+
+(A) \(\left(\dfrac{\ln 10}{\ln(5/2)}, \infty\right)\)
+(B) \(\left(-\infty, \dfrac{\ln 10}{\ln(5/2)}\right)\)
+(C) \(\left(-\infty, \dfrac{\ln(5/2)}{\ln 10}\right)\)
+(D) \(\left(\dfrac{\ln(5/2)}{\ln 10}, \infty\right)\)
+(E) \(\left(-\infty, \dfrac{\ln(2/5)}{\ln 10}\right)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+¿Cuál es el conjunto solución de \(\log_{1/2}\!\left(\log_3(x)\right) \ge 0\)?
+
+(A) \((0, 3]\)
+(B) \([1, 3]\)
+(C) \((1, 3]\)
+(D) \([3, \infty)\)
+(E) \((0, 1)\)
+[/BONUS]

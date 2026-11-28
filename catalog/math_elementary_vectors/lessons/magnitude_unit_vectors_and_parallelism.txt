@@ -1,0 +1,228 @@
+=== SECTION 1: Magnitude of a vector and its fundamental properties ===
+
+Component form lets us add and scale vectors with arithmetic, yet one basic geometric question remains: given \(\mathbf{v} = \langle v_x, v_y \rangle\), how long is the arrow? Once we can measure length directly from components, we can also strip away length to isolate pure direction, and we can test algebraically when two vectors lie along parallel lines.
+
+Draw a nonzero vector \(\mathbf{v} = \langle v_x, v_y \rangle\) in standard position from \(O(0, 0)\) to \((v_x, v_y)\). The horizontal leg from \((0, 0)\) to \((v_x, 0)\) has length \(|v_x|\), the vertical leg from \((v_x, 0)\) to \((v_x, v_y)\) has length \(|v_y|\), and the two legs meet at a right angle. By the Pythagorean theorem, the squared length of the hypotenuse is \(|v_x|^2 + |v_y|^2 = v_x^2 + v_y^2\). Taking the nonnegative square root gives the Euclidean magnitude (also called the norm or length) of \(\mathbf{v}\), written \(\|\mathbf{v}\|\):
+\[
+\|\mathbf{v}\| = \sqrt{v_x^2 + v_y^2}.
+\]
+Notice that if \(\mathbf{v} = \overrightarrow{PQ} = \langle x_Q - x_P, y_Q - y_P \rangle\), then \(\|\overrightarrow{PQ}\| = \sqrt{(x_Q - x_P)^2 + (y_Q - y_P)^2}\) recovers the standard Euclidean distance between points \(P\) and \(Q\).
+
+For example, \(\mathbf{v} = \langle 3, 4 \rangle\) forms a right triangle with legs \(3\) and \(4\), giving \(\|\mathbf{v}\| = \sqrt{3^2 + 4^2} = \sqrt{25} = 5\). Even when a component is negative, squaring makes every term inside the square root nonnegative: for \(\mathbf{w} = \langle -2, 5 \rangle\), \(\|\mathbf{w}\| = \sqrt{(-2)^2 + 5^2} = \sqrt{29}\).
+
+How does magnitude behave with zero, scalar multiplication, and vector addition? Let us check each property directly from the definition.
+1. Nonnegativity and definiteness: since \(v_x^2 \ge 0\) and \(v_y^2 \ge 0\), we always have \(\|\mathbf{v}\| \ge 0\). Moreover, \(\sqrt{v_x^2 + v_y^2} = 0\) holds if and only if \(v_x^2 + v_y^2 = 0\), which forces \(v_x = 0\) and \(v_y = 0\), i.e., \(\mathbf{v} = \mathbf{0}\).
+2. Scaling: for any real scalar \(k\) and any vector \(\mathbf{v} = \langle v_x, v_y \rangle\), compute directly:
+\[
+\|k\mathbf{v}\| = \sqrt{(k v_x)^2 + (k v_y)^2} = \sqrt{k^2(v_x^2 + v_y^2)} = \sqrt{k^2}\sqrt{v_x^2 + v_y^2} = |k|\,\|\mathbf{v}\|.
+\]
+Watch that step \(\sqrt{k^2} = |k|\): it is not \(k\) when \(k < 0\)!
+3. Triangle inequality: draw \(\mathbf{u}\) and \(\mathbf{v}\) head-to-tail. Together with \(\mathbf{u} + \mathbf{v}\), they form a triangle whose side lengths are \(\|\mathbf{u}\|\), \(\|\mathbf{v}\|\), and \(\|\mathbf{u} + \mathbf{v}\|\). Since a straight line is the shortest path between two points, the third side can never exceed the sum of the other two:
+\[
+\|\mathbf{u} + \mathbf{v}\| \le \|\mathbf{u}\| + \|\mathbf{v}\|.
+\]
+When does equality \(\|\mathbf{u} + \mathbf{v}\| = \|\mathbf{u}\| + \|\mathbf{v}\|\) hold? Only when the triangle collapses flat with no bend at all and no backtracking—that is, when one of \(\mathbf{u}, \mathbf{v}\) is \(\mathbf{0}\), or when they point in the exact same direction (\(\mathbf{v} = c\mathbf{u}\) for some \(c > 0\)). If they point in opposite directions, they partially cancel and \(\|\mathbf{u} + \mathbf{v}\| = \bigl|\|\mathbf{u}\| - \|\mathbf{v}\|\bigr| < \|\mathbf{u}\| + \|\mathbf{v}\|\).
+
+[CALLOUT]
+id: norm-props
+label: Properties
+title: Fundamental properties of Euclidean magnitude in \(\mathbb{R}^2\)
+tone: key
+
+For all vectors \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) and every real scalar \(k\):
+
+(1) Positive definiteness: \(\|\mathbf{v}\| \ge 0\), with \(\|\mathbf{v}\| = 0\) if and only if \(\mathbf{v} = \mathbf{0}\).
+(2) Absolute homogeneity (scaling): \(\|k\mathbf{v}\| = |k|\,\|\mathbf{v}\|\).
+(3) Triangle inequality: \(\|\mathbf{u} + \mathbf{v}\| \le \|\mathbf{u}\| + \|\mathbf{v}\|\), with equality if and only if one vector is \(\mathbf{0}\) or both point in the same direction.
+[/CALLOUT]
+
+[CALLOUT]
+id: abs-scaling
+label: Common pitfall
+title: Do not drop the absolute value in \(\|k\mathbf{v}\| = |k|\,\|\mathbf{v}\|\)
+tone: caution
+
+Length is never negative. If \(\|\mathbf{v}\| = 5\) and \(k = -3\), then \(\|-3\mathbf{v}\| = |-3|\cdot 5 = 15\), not \(-15\). The negative sign reverses direction; the magnitude still multiplies by \(3\).
+[/CALLOUT]
+
+The diagram below shows both the right-triangle construction of \(\|\mathbf{u}\|\) and the geometric triangle inequality for \(\mathbf{u} = \langle 4, 1 \rangle\) and \(\mathbf{v} = \langle 1, 3 \rangle\). Here \(\|\mathbf{u}\| = \sqrt{17} \approx 4.12\) and \(\|\mathbf{v}\| = \sqrt{10} \approx 3.16\), so \(\|\mathbf{u}\| + \|\mathbf{v}\| \approx 7.29\), whereas the direct arrow \(\mathbf{u} + \mathbf{v} = \langle 5, 4 \rangle\) has strictly shorter length \(\sqrt{41} \approx 6.40\).
+
+[GRAPH]
+type: parametric2d
+title: Triangle inequality: direct length \(\|\mathbf{u} + \mathbf{v}\| = \sqrt{41}\) vs two-leg length \(\sqrt{17} + \sqrt{10}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 6
+yrange: -0.5, 5
+trace: 4*t, 1*t | label: \(\mathbf{u} = \langle 4, 1 \rangle\) | color: #2563eb
+trace: 4 + 1*t, 1 + 3*t | label: \(\mathbf{v} = \langle 1, 3 \rangle\) | color: #d97706
+trace: 5*t, 4*t | label: \(\mathbf{u} + \mathbf{v} = \langle 5, 4 \rangle\) | color: #16a34a
+segment: 0, 0, 4, 0 | dashed: true
+segment: 4, 0, 4, 1 | dashed: true
+point: 0, 0 | label: \(O\)
+point: 4, 1 | label: \((4, 1)\)
+point: 5, 4 | label: \((5, 4)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Let \(\mathbf{u} = \langle 5, -12 \rangle\). Suppose a vector \(\mathbf{w} = k\mathbf{u}\) has magnitude \(39\) and points in the opposite direction to \(\mathbf{u}\). What are \(k\) and \(\mathbf{w}\)?
+
+(A) \(k = 3\) and \(\mathbf{w} = \langle 15, -36 \rangle\)
+(B) \(k = -3\) and \(\mathbf{w} = \langle -15, 36 \rangle\)
+(C) \(k = -3\) and \(\mathbf{w} = \langle 15, 36 \rangle\)
+(D) \(k = -\frac{1}{3}\) and \(\mathbf{w} = \langle -\frac{5}{3}, 4 \rangle\)
+(E) \(k = -39\) and \(\mathbf{w} = \langle -195, 468 \rangle\)
+[/QUESTION]
+
+=== SECTION 2: Unit vectors and normalization ===
+
+In many problems, we want to separate a vector's direction from its size—for example, to build a force or velocity of a prescribed magnitude \(L\) pointing along a given line. The cleanest way to represent a pure direction is with a vector whose length is \(1\).
+
+A unit vector is any vector \(\hat{\mathbf{u}}\) satisfying \(\|\hat{\mathbf{u}}\| = 1\). (The hat accent in \(\hat{\mathbf{u}}\) signals length \(1\).) You already know two unit vectors: the standard basis vectors \(\mathbf{i} = \langle 1, 0 \rangle\) and \(\mathbf{j} = \langle 0, 1 \rangle\). In fact, any point on the circle of radius \(1\) centered at the origin—the unit circle—corresponds to a unit vector in standard position.
+
+Given any nonzero vector \(\mathbf{v}\), how do we shrink or stretch it to length \(1\) without changing its direction? We need a positive scalar \(c > 0\) such that \(\|c\mathbf{v}\| = 1\). By [REF: norm-props.2 | the scaling identity], \(\|c\mathbf{v}\| = c\|\mathbf{v}\| = 1\), which uniquely forces \(c = \frac{1}{\|\mathbf{v}\|}\). Multiplying \(\mathbf{v}\) by \(\frac{1}{\|\mathbf{v}\|}\) is called normalizing \(\mathbf{v}\).
+
+[CALLOUT]
+id: normalization
+label: Method
+title: Normalization and scaling to a target length
+tone: key
+
+Let \(\mathbf{v} \in \mathbb{R}^2\) be any nonzero vector (\(\mathbf{v} \ne \mathbf{0}\)).
+
+(1) The unique unit vector in the same direction as \(\mathbf{v}\) is
+\[
+\hat{\mathbf{u}} = \frac{\mathbf{v}}{\|\mathbf{v}\|} = \left\langle \frac{v_x}{\|\mathbf{v}\|},\; \frac{v_y}{\|\mathbf{v}\|} \right\rangle.
+\]
+(2) For any prescribed target length \(L > 0\), the vector of length \(L\) in the same direction as \(\mathbf{v}\) is \(L\hat{\mathbf{u}} = L\frac{\mathbf{v}}{\|\mathbf{v}\|}\), and the vector of length \(L\) in the opposite direction is \(-L\hat{\mathbf{u}} = -L\frac{\mathbf{v}}{\|\mathbf{v}\|}\).
+[/CALLOUT]
+
+Why does [REF: normalization | normalization] require \(\mathbf{v} \ne \mathbf{0}\)? Because \(\|\mathbf{0}\| = 0\), dividing by \(\|\mathbf{0}\|\) is undefined—which matches the geometry, since \(\mathbf{0}\) has no direction to preserve.
+
+Let us work through a concrete example. To find the vector of length \(7\) pointing in the same direction as \(\mathbf{v} = \langle 3, 4 \rangle\):
+1. Compute \(\|\mathbf{v}\| = \sqrt{3^2 + 4^2} = 5\).
+2. Normalize to get the unit vector \(\hat{\mathbf{u}} = \frac{1}{5}\langle 3, 4 \rangle = \langle \frac{3}{5}, \frac{4}{5} \rangle\). (Check: \((\frac{3}{5})^2 + (\frac{4}{5})^2 = \frac{9 + 16}{25} = 1\).)
+3. Scale by \(7\): \(7\hat{\mathbf{u}} = \langle \frac{21}{5}, \frac{28}{5} \rangle\).
+
+Explore this process in the graph below. The unit vector \(\hat{\mathbf{u}} = \langle 0.6, 0.8 \rangle\) sits right on the dashed unit circle along the ray of \(\mathbf{v} = \langle 3, 4 \rangle\), and dragging the slider \(L\) builds \(L\hat{\mathbf{u}}\) of any length \(|L|\) in either the same direction (\(L > 0\)) or the opposite direction (\(L < 0\)).
+
+[GRAPH]
+type: parametric2d
+title: Normalizing \(\mathbf{v} = \langle 3, 4 \rangle\) to \(\hat{\mathbf{u}}\) on the unit circle and scaling to \(L\hat{\mathbf{u}}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -4.5, 4.5
+yrange: -4.5, 4.5
+trace: cos(t), sin(t) | label: unit circle | color: #94a3b8
+segment: 0, 0, 3, 4 | label: \(\mathbf{v}\) | color: #2563eb
+segment: 0, 0, 0.6, 0.8 | label: \(\hat{\mathbf{u}}\) | color: #16a34a
+segment: 0, 0, 0.6*L, 0.8*L | label: \(L\hat{\mathbf{u}}\) | color: #dc2626 | dashed: true
+point: 3, 4 | label: \((3, 4)\)
+point: 0.6, 0.8 | label: \(\hat{\mathbf{u}}\)
+point: 0.6*L, 0.8*L | label: \(L\hat{\mathbf{u}}\)
+slider: L | range: -4, 4 | init: -2.5 | step: 0.5
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+Which vector has magnitude \(15\) and points in the opposite direction to \(\mathbf{v} = \langle -4, 2 \rangle\)?
+
+(A) \(\langle -6\sqrt{5},\; 3\sqrt{5} \rangle\)
+(B) \(\langle 6\sqrt{5},\; -3\sqrt{5} \rangle\)
+(C) \(\langle 3\sqrt{5},\; -6\sqrt{5} \rangle\)
+(D) \(\langle 60,\; -30 \rangle\)
+(E) \(\langle 3,\; -\frac{3}{2} \rangle\)
+[/QUESTION]
+
+=== SECTION 3: Algebraic parallelism and collinearity ===
+
+In the first lesson, we saw that two nonzero vectors \(\mathbf{u}\) and \(\mathbf{v}\) are parallel if and only if \(\mathbf{u} = k\mathbf{v}\) for some scalar \(k \ne 0\). In component form, that condition reads
+\[
+u_x = k v_x \qquad \text{and} \qquad u_y = k v_y.
+\]
+When both \(v_x\) and \(v_y\) are nonzero, eliminating \(k\) says \(\frac{u_x}{v_x} = \frac{u_y}{v_y}\), which cross-multiplies to
+\[
+u_x v_y - u_y v_x = 0.
+\]
+What makes the cross-difference \(u_x v_y - u_y v_x = 0\) much better than comparing ratios is that it has no denominators—so we should check whether it still works cleanly when a component equals \(0\).
+
+Suppose \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\) are nonzero and \(u_x v_y - u_y v_x = 0\).
+- Case 1: \(v_x \ne 0\). Set \(k = \frac{u_x}{v_x}\). Then \(k v_x = u_x\), and from \(u_x v_y = u_y v_x\) we get \(k v_y = \frac{u_x v_y}{v_x} = \frac{u_y v_x}{v_x} = u_y\). So \(\mathbf{u} = k\mathbf{v}\). (Since \(\mathbf{u} \ne \mathbf{0}\), \(k\) cannot be \(0\).)
+- Case 2: \(v_x = 0\). Because \(\mathbf{v} \ne \mathbf{0}\), we must have \(v_y \ne 0\). Then \(u_x v_y - u_y(0) = 0\) forces \(u_x v_y = 0\), hence \(u_x = 0\). Setting \(k = \frac{u_y}{v_y}\) gives \(k v_x = 0 = u_x\) and \(k v_y = u_y\), so again \(\mathbf{u} = k\mathbf{v}\)!
+
+Conversely, if \(\mathbf{u} = k\mathbf{v}\), then \(u_x v_y - u_y v_x = (k v_x)v_y - (k v_y)v_x = 0\) unconditionally. Thus the cross-difference test holds for every pair of nonzero vectors in \(\mathbb{R}^2\), vertical and horizontal included.
+
+[CALLOUT]
+id: alg-parallel
+label: Theorem
+title: Algebraic test for parallelism and collinearity
+tone: key
+
+(1) Two nonzero vectors \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\) are parallel if and only if
+\[
+u_x v_y - u_y v_x = 0.
+\]
+(2) Three points \(A, B, C\) in \(\mathbb{R}^2\) are collinear (lie on a single straight line) if and only if the displacement vectors \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) are parallel (or at least one of them is \(\mathbf{0}\)), which holds if and only if the cross-difference of \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) equals \(0\).
+[/CALLOUT]
+
+Why does [REF: alg-parallel.2 | the collinearity test] work? Both \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) share the common tail \(A\). Two arrows drawn from the same point \(A\) lie on parallel lines if and only if they lie on the exact same line through \(A\)—which means \(A, B,\) and \(C\) are collinear.
+
+[TABLE]
+Test method | Formula for \(\mathbf{u} = \langle u_x, u_y \rangle, \mathbf{v} = \langle v_x, v_y \rangle\) | Handles zero components? | Tells same vs opposite direction?
+Scalar multiple | \(\mathbf{u} = k\mathbf{v}\) | Yes | Yes (sign of \(k\))
+Component ratio | \(\frac{u_x}{v_x} = \frac{u_y}{v_y}\) | No (division by \(0\) when \(v_x = 0\) or \(v_y = 0\)) | Yes (sign of ratio)
+Cross-difference | \(u_x v_y - u_y v_x = 0\) | Yes (no division) | No (check sign of matching nonzero components)
+[/TABLE]
+
+Let us apply [REF: alg-parallel.2 | the collinearity test] to test whether \(P(-1, 2)\), \(Q(2, 4)\), and \(R(8, 8)\) lie on one line. Form the two displacements from \(P\):
+\[
+\overrightarrow{PQ} = \langle 2 - (-1), 4 - 2 \rangle = \langle 3, 2 \rangle, \qquad \overrightarrow{PR} = \langle 8 - (-1), 8 - 2 \rangle = \langle 9, 6 \rangle.
+\]
+Their cross-difference is \(3(6) - 2(9) = 18 - 18 = 0\), so \(P, Q, R\) are collinear (indeed \(\overrightarrow{PR} = 3\overrightarrow{PQ}\)). If \(R\) were instead \((8, 7)\), then \(\overrightarrow{PR} = \langle 9, 5 \rangle\) and the cross-difference would be \(3(5) - 2(9) = -3 \ne 0\), proving immediately that the three points form a non-degenerate triangle.
+
+[QUESTION 3]
+[ANSWER: A]
+For which real value of \(c\) are the three points \(A(1, -2)\), \(B(4, 3)\), and \(C(-5, c)\) collinear?
+
+(A) \(-12\)
+(B) \(-8\)
+(C) \(8\)
+(D) \(-14\)
+(E) \(12\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Let \(\mathbf{u}\) and \(\mathbf{v}\) be nonzero vectors in \(\mathbb{R}^2\) with \(\|\mathbf{u}\| = 4\) and \(\|\mathbf{v}\| = 7\). Under which condition does \(\|\mathbf{u} + \mathbf{v}\| = 11\) hold?
+
+(A) Whenever \(u_x v_y - u_y v_x = 0\)
+(B) Only when \(\mathbf{u} = k\mathbf{v}\) for some scalar \(k > 0\)
+(C) Only when \(\mathbf{u} = k\mathbf{v}\) for some scalar \(k < 0\)
+(D) Whenever \(u_x\) and \(v_x\) have the same sign
+(E) For every pair of nonzero vectors \(\mathbf{u}\) and \(\mathbf{v}\) with these magnitudes
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+For which real value of \(t\) do the vectors \(\mathbf{u} = \langle t + 1, 2 \rangle\) and \(\mathbf{v} = \langle 3, t \rangle\) point in opposite directions?
+
+(A) \(t = 2\)
+(B) \(t = -1\)
+(C) \(t = -3\)
+(D) \(t = 3\)
+(E) No such real number \(t\) exists
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose \(\mathbf{a}\) and \(\mathbf{b}\) are two unit vectors in \(\mathbb{R}^2\) such that \(\|\mathbf{a} + \mathbf{b}\| = 2\). What must be true about \(\mathbf{a}\) and \(\mathbf{b}\)?
+
+(A) \(\mathbf{a} = \mathbf{b}\)
+(B) \(\mathbf{a} = -\mathbf{b}\)
+(C) \(\mathbf{a}\) and \(\mathbf{b}\) must be \(\mathbf{i}\) and \(\mathbf{j}\) in some order
+(D) Either \(\mathbf{a} = \mathbf{b}\) or \(\mathbf{a} = -\mathbf{b}\)
+(E) \(\|\mathbf{a} - \mathbf{b}\| = 2\)
+[/BONUS]

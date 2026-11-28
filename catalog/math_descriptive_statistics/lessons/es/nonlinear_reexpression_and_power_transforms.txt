@@ -1,0 +1,181 @@
+=== SECTION 1: Domar la asimetría con la escalera de potencias de Tukey ===
+
+Las mediciones cuantitativas del mundo real —poblaciones de ciudades, montos de reclamos de seguros, pesos biológicos, latencias de red— suelen ser fuertemente asimétricas o seguir relaciones curvas donde las medias brutas, las desviaciones estándar y las rectas de tendencia funcionan mal. En lugar de descartar estructura informativa o aceptar un resumen distorsionado, el análisis exploratorio de datos suele reexpresar una variable estrictamente positiva \(x > 0\) aplicando una función no lineal suave y estrictamente creciente \(g(x)\) —como \(\sqrt{x}\), \(\ln x\) o \(x^2\)— para que la distribución se vuelva más simétrica, las dispersiones de grupo se estabilicen entre diagramas de caja paralelos o un diagrama de dispersión curvo se enderece en una línea recta.
+
+John Tukey organizó las reexpresiones más útiles en una única secuencia ordenada llamada la escalera de potencias.
+
+[CALLOUT]
+id: tukey-ladder
+label: Marco conceptual
+title: La escalera de potencias de Tukey (para \(x > 0\) estrictamente positivo)
+tone: key
+
+Ordene las transformaciones de potencia por exponente \(p\), añadiendo un signo menos para \(p < 0\) de modo que CADA escalón permanezca estrictamente creciente (conservando el orden de todas las observaciones y cuantiles):
+
+(1) Bajar por la escalera (\(p < 1\): \(\sqrt{x}\), \(\ln x\) en la posición \(p = 0\), \(-1/\sqrt{x}\), \(-1/x\)): estas funciones son CÓNCAVAS; sus pendientes disminuyen conforme \(x\) crece, comprimiendo los valores grandes en relación con los pequeños. Bajar por la escalera recoge una cola DERECHA larga (reduciendo la asimetría positiva) y estabiliza la dispersión cuando los grupos con centros mayores tienen dispersiones más amplias.
+(2) Escalón identidad (\(p = 1\)): datos brutos \(x\) (sin cambio en la forma).
+(3) Subir por la escalera (\(p > 1\): \(x^2, x^3\)): estas funciones son CONVEXAS; sus pendientes aumentan conforme \(x\) crece, estirando los valores grandes en relación con los pequeños. Subir por la escalera recoge una cola IZQUIERDA larga (reduciendo la asimetría negativa).
+[/CALLOUT]
+
+¿Por qué se sitúa \(\ln x\) precisamente en el escalón \(p = 0\) entre \(x^{1/2}\) y \(-x^{-1/2}\)? Escriba cada potencia en la forma de Box-Cox reescalada y preservadora del orden \(T_p(x) = \frac{x^p - 1}{p}\) para \(p \ne 0\). Cada \(T_p\) pasa por \((1, 0)\) con pendiente \(1\) en \(x = 1\), y conforme \(p \to 0\), ¡\(T_p(x)\) converge suavemente a \(\ln x\)! Arrastre el deslizador \(p\) hacia arriba y hacia abajo por la escalera de Tukey en el gráfico siguiente para ver cómo \(p < 1\) se curva hacia abajo (comprimiendo la cola derecha) mientras que \(p > 1\) se curva hacia arriba (estirando la cola derecha).
+
+[GRAPH]
+type: function2d
+title: Escalera de potencias de Tukey en forma anclada \(T_p(x) = (x^p - 1)/p\) (con \(\ln x\) en \(p = 0\))
+xlabel: \(x\)
+ylabel: Valor reexpresado
+xrange: 0.25, 4.0
+yrange: -3.2, 6.0
+trace: x - 1 | label: Escala bruta (\(p = 1\), lineal) | color: #94a3b8
+trace: log(x) | label: Logaritmo natural (\(p = 0\)) | color: #10b981
+trace: abs(p) < 0.01 ? log(x) : (x^p - 1) / p | label: Escalón seleccionado \(p\) | color: #3b82f6
+point: 1, 0 | label: (1, 0) | color: #ef4444
+slider: p | range: -1, 2 | init: 0.5 | step: 0.5
+[/GRAPH]
+
+Observe [REF: tukey-ladder.1 | bajar por la escalera] en acción sobre el conjunto asimétrico a la derecha de \(n = 7\) datos \(1, 2, 4, 8, 16, 32, 64\). En la escala bruta, sus cuartiles son \(Q_1 = 2\), \(M = 8\) y \(Q_3 = 32\), dando una asimetría cuartílica de Bowley positiva grande \(\text{As}_B = \frac{32 + 2 - 2(8)}{32 - 2} = \frac{18}{30} = +0.60\). Como \(\ln x\) es estrictamente creciente, aplica directamente cada estadístico de orden: \(\ln 1, \ln 2, 2\ln 2, 3\ln 2, 4\ln 2, 5\ln 2, 6\ln 2\). ¡Los valores reexpresados quedan uniformemente espaciados! Sus cuartiles son \(Q_{1,\ln} = \ln 2\), \(M_{\ln} = 3\ln 2\) y \(Q_{3,\ln} = 5\ln 2\), produciendo \(\text{As}_B = 0\) y \(g_1 = 0\): ¡simetría exacta!
+
+Vigile con cuidado la condición de dominio: \(\ln x\), \(\sqrt{x}\) y las potencias negativas requieren \(x > 0\) (con \(\sqrt{x}\) permitiendo \(x = 0\)). Si una variable asimétrica a la derecha contiene ceros (como datos de conteo), a veces se usa de manera exploratoria añadir un pequeño desplazamiento \(\ln(x + c)\), pero la forma resultante depende de la elección arbitraria de \(c\), por lo que cualquier desplazamiento debe reportarse con transparencia y nunca ocultarse.
+
+[QUESTION 1]
+[ANSWER: C]
+Un conjunto de datos estrictamente positivo y asimétrico a la derecha de \(n = 11\) montos de reclamo tiene cuartiles \(Q_1 = 1\), \(M = 9\) y \(Q_3 = 25\). ¿Cuáles son los valores de la asimetría cuartílica de Bowley \(\text{As}_B\) en la escala bruta y tras aplicar la reexpresión de raíz cuadrada \(u = \sqrt{x}\), respectivamente?
+
+(A) \(+0.50\) antes y \(+0.25\) después
+(B) \(+1/3\) antes y \(+1/3\) después
+(C) \(+1/3\) antes y \(0\) después
+(D) \(-1/3\) antes y \(0\) después
+(E) \(+2/3\) antes y \(+1/3\) después
+[/QUESTION]
+
+=== SECTION 2: Linealización de tendencias exponenciales y potenciales ===
+
+Cuando un diagrama de dispersión de \((x_i, y_i)\) se dobla suavemente hacia arriba o hacia abajo —y un gráfico de residuos por MCO en la escala bruta exhibe una clara forma de U o arco—, dos reexpresiones logarítmicas enderezan los dos patrones no lineales más comunes en ciencia y economía convirtiéndolos en líneas rectas ordinarias.
+
+[CALLOUT]
+id: log-linearization
+label: Método
+title: Linealización semilogarítmica y log-log para respuesta positiva \(y > 0\)
+tone: key
+
+(1) Reexpresión semilogarítmica (\(\ln y\) frente a \(x\)) linealiza una tendencia EXPONENCIAL \(y \approx a b^x\) (con \(a > 0, b > 0\)): tomar logaritmos naturales produce
+\[
+\ln y \approx \ln a + (\ln b)\,x = c_0 + c_1 x.
+\]
+Ajuste MCO descriptivo a \((x_i, \ln y_i)\) para obtener \(\widehat{\ln y} = c_0 + c_1 x\), y luego realice la transformación inversa como \(\hat{y} = e^{c_0} (e^{c_1})^x\). Aumentar \(x\) en \(\Delta x\) multiplica \(\hat{y}\) por \(e^{c_1 \Delta x}\) (un factor multiplicativo constante de crecimiento o decaimiento por unidad de \(x\)).
+(2) Reexpresión logarítmico-logarítmica o log-log (\(\ln y\) frente a \(\ln x\), que requiere \(x > 0, y > 0\)) linealiza una tendencia POTENCIAL \(y \approx a x^p\) (con \(a > 0\)): tomar logaritmos naturales en ambos lados produce
+\[
+\ln y \approx \ln a + p \ln x = c_0 + c_1 \ln x.
+\]
+Ajuste MCO descriptivo a \((\ln x_i, \ln y_i)\) para obtener \(\widehat{\ln y} = c_0 + c_1 \ln x\), y luego realice la transformación inversa como \(\hat{y} = e^{c_0} x^{c_1}\). Multiplicar \(x\) por cualquier factor \(m > 0\) multiplica \(\hat{y}\) por \(m^{c_1}\).
+[/CALLOUT]
+
+¿Cómo saber si un diagrama de dispersión curvado hacia arriba se linealiza mejor mediante semilogarítmica o log-log? Ajuste MCO en las coordenadas transformadas e inspeccione SIEMPRE el gráfico de residuos EN LA ESCALA TRANSFORMADA. Observe el gráfico siguiente: en un gráfico semilogarítmico (\(\ln y\) en el eje vertical frente a \(x\) bruto en el eje horizontal), una curva exponencial genuina \(y = 2 e^{0.4 x}\) se aplana en una recta exacta \(\ln y = \ln 2 + 0.4 x\), mientras que una ley potencial \(y = 2 x^{1.5}\) sigue siendo visiblemente cóncava (\(\ln y = \ln 2 + 1.5 \ln x\)), dejando un gráfico de residuos inconfundiblemente arqueado hasta que también tome \(\ln x\).
+
+[GRAPH]
+type: function2d
+title: Diagnóstico semilogarítmico (\(\ln y\) vs \(x\)): la exponencial se endereza mientras la potencial sigue curva
+xlabel: \(x\)
+ylabel: Logaritmo natural de y
+xrange: 0.5, 5.5
+yrange: -0.5, 3.6
+trace: log(2) + 0.4 * x | label: Exponencial \(y = 2 e^{0.4x}\) se endereza | color: #3b82f6
+trace: log(2) + 1.5 * log(x) | label: Potencial \(y = 2 x^{1.5}\) sigue curva | color: #ef4444
+point: 1, log(2) + 0.4 | label: Exp en x=1 | color: #1d4ed8
+point: 4, log(2) + 1.6 | label: Exp en x=4 | color: #1d4ed8
+[/GRAPH]
+
+Desarrolle una verificación semilogarítmica rápida. Suponga que un ajuste descriptivo por MCO de \(\ln y\) frente al tiempo \(x\) (en días) produce \(\widehat{\ln y} = 1.5 + 0.20 x\) con un gráfico de residuos transformados sin patrón. Aplicar la transformación inversa da \(\hat{y} = e^{1.5} e^{0.20 x} \approx 4.48 (1.221)^x\). Cada día adicional (\(\Delta x = 1\)) multiplica la \(y\) predicha por \(e^{0.20} \approx 1.221\) —un incremento diario aproximado del \(22.1\%\)—, en lugar de sumar una cantidad constante fija.
+
+[QUESTION 2]
+[ANSWER: B]
+Una recta de tendencia descriptiva por MCO ajustada a \((x_i, \ln y_i)\) para el conteo bacteriano \(y\) frente al tiempo \(x\) (en horas) produce \(\widehat{\ln y} = 2.0 + 0.50 x\), con un gráfico de residuos sin patrón en la escala logarítmica. Según esta tendencia tras la transformación inversa, ¿cómo cambia el conteo predicho \(\hat{y}\) cuando \(x\) aumenta en \(2\) horas?
+
+(A) \(\hat{y}\) aumenta en \(1.0\) bacteria.
+(B) \(\hat{y}\) se multiplica por \(e^{1} = e \approx 2.718\) (un aumento de aproximadamente \(171.8\%\)).
+(C) \(\hat{y}\) aumenta exactamente en \(100\%\) (se duplica).
+(D) \(\hat{y}\) se multiplica por \(0.50\).
+(E) \(\hat{y}\) se multiplica por \(e^{2} \approx 7.389\).
+[/QUESTION]
+
+=== SECTION 3: Transformación inversa, elasticidad y la trampa de la media geométrica ===
+
+La reexpresión simplifica la exploración y el ajuste lineal, pero traducir los resultados de vuelta a las unidades originales exige precisión en dos puntos clave.
+
+Primero, interprete la pendiente log-log \(c_1\) como una elasticidad. En la ley potencial tras la transformación inversa \(\hat{y} = e^{c_0} x^{c_1}\), reemplazar \(x\) por \(m x\) arroja
+\[
+\hat{y}(m x) = e^{c_0} (m x)^{c_1} = m^{c_1}\,\hat{y}(x).
+\]
+Para cualquier factor de escala exacto \(m\) —como duplicar \(x\) (\(m = 2\))—, la predicción \(\hat{y}\) se multiplica por \(2^{c_1}\) (por ejemplo, si \(c_1 = 0.5\), duplicar \(x\) multiplica \(\hat{y}\) por \(\sqrt{2} \approx 1.414\)). Para cambios porcentuales pequeños (digamos un aumento del \(1\%\), \(m = 1.01\)), la aproximación elemental \((1 + \delta)^{c_1} \approx 1 + c_1 \delta\) implica que un aumento del \(1\%\) en \(x\) corresponde aproximadamente a un cambio del \(c_1\%\) en \(\hat{y}\). Esa razón de cambio porcentual es la razón por la que economistas y biólogos llaman a \(c_1\) la elasticidad de \(y\) respecto a \(x\).
+
+Segundo, ¡tenga cuidado al aplicar la transformación inversa a una media aritmética calculada en la escala logarítmica!
+
+[CALLOUT]
+id: backtransform-mean-trap
+label: Error común
+title: Exponenciar la media de los logaritmos da la media geométrica, NO la media aritmética
+tone: caution
+
+Para observaciones estrictamente positivas \(x_1, \dots, x_n\), promediar sus logaritmos naturales y exponenciar da
+\[
+\exp\!\left(\frac{1}{n}\sum_{i=1}^n \ln x_i\right) = \exp\!\left(\ln \left(\prod_{i=1}^n x_i\right)^{1/n}\right) = \left(\prod_{i=1}^n x_i\right)^{1/n} = G,
+\]
+¡que es la media GEOMÉTRICA \(G\), NO la media aritmética \(\bar{x}\)! Como \(\ln x\) es estrictamente cóncava, siempre que los valores no sean todos iguales se cumple \(G < \bar{x}\), por lo que \(\exp(\overline{\ln x})\) subestima sistemáticamente la media aritmética \(\bar{x}\). (Por el contrario, como \(\exp\) es estrictamente creciente, exponenciar la mediana de \(\ln x\) recupera directamente la mediana de \(x\) siempre que \(n\) sea impar, y recupera la media geométrica de los dos valores centrales cuando \(n\) es par.)
+[/CALLOUT]
+
+Observe también lo que [REF: backtransform-mean-trap | esta identidad] significa para una predicción de regresión tras la transformación inversa \(\hat{y} = \exp(\widehat{\ln y})\): en un conjunto de datos asimétrico a la derecha transformado logarítmicamente, \(\exp(\widehat{\ln y})\) sigue al centro multiplicativo típico (aproximando la mediana condicional o centro geométrico) en lugar del promedio aritmético de \(y\) en un \(x\) dado. Indique con claridad si un resumen tras la transformación inversa representa un nivel multiplicativo típico o un promedio aritmético bruto.
+
+[QUESTION 3]
+[ANSWER: D]
+En un conjunto de datos biológicos alométricos de masas corporales estrictamente positivas \(x\) (en kg) y tasas metabólicas \(y\) (en vatios), un ajuste descriptivo por MCO sobre \((\ln x_i, \ln y_i)\) arroja \(\widehat{\ln y} = 1.2 + 0.75 \ln x\). ¿Cuál es la ecuación tras la transformación inversa y por qué factor exacto se multiplica la tasa metabólica predicha \(\hat{y}\) cuando la masa corporal \(x\) se multiplica por \(16\)?
+
+(A) \(\hat{y} = 1.2\, x^{0.75}\); se multiplica por \(12\)
+(B) \(\hat{y} = e^{1.2} (0.75)^x\); se multiplica por \(8\)
+(C) \(\hat{y} = e^{1.2} x^{0.75}\); se multiplica por \(12\)
+(D) \(\hat{y} = e^{1.2} x^{0.75}\); se multiplica por \(8\)
+(E) \(\hat{y} = e^{1.2} x^{0.75}\); se multiplica por \(e^{12}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Cuatro tiempos de respuesta positivos de un servidor (en ms) son \(1, 4, 16, 64\). Un analista toma \(\ln x_i\), promedia esos cuatro valores logarítmicos para obtener \(\overline{\ln x}\) y exponencia \(\exp(\overline{\ln x})\), reportando el resultado como el tiempo de respuesta medio aritmético. ¿Qué valor produce realmente \(\exp(\overline{\ln x})\) y cómo se compara con la verdadera media aritmética \(\bar{x}\)?
+
+(A) \(\exp(\overline{\ln x}) = 8\text{ ms}\) (la media geométrica), que es mucho menor que la verdadera media aritmética \(\bar{x} = 21.25\text{ ms}\).
+(B) \(\exp(\overline{\ln x}) = 21.25\text{ ms}\), coincidiendo exactamente con la media aritmética porque \(\exp\) y \(\ln\) son inversas.
+(C) \(\exp(\overline{\ln x}) = 10\text{ ms}\), que equivale a la mediana muestral.
+(D) \(\exp(\overline{\ln x}) = 32\text{ ms}\), que sobrestima la verdadera media aritmética \(\bar{x} = 21.25\text{ ms}\).
+(E) \(\exp(\overline{\ln x}) = 4\text{ ms}\), que equivale a la media armónica.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Un conjunto de datos estrictamente positivo y asimétrico a la izquierda de \(n = 11\) puntajes de examen tiene cuartiles \(Q_1 = 2\), \(M = 8\) y \(Q_3 = 10\) (de modo que la asimetría de Bowley es \(\text{As}_B = -0.50\)). ¿Qué dirección en la escalera de Tukey ayuda a domar la asimetría a la izquierda y cuál es la asimetría de Bowley tras aplicar \(u = x^2\)?
+
+(A) Bajar por la escalera (\(\sqrt{x}\) o \(\ln x\)); aplicar \(u = x^2\) da \(\text{As}_B = -0.75\).
+(B) Subir por la escalera (\(p > 1\)); aplicar \(u = x^2\) da \(\text{As}_B = 0\).
+(C) Bajar por la escalera (\(p < 1\)); aplicar \(u = x^2\) da \(\text{As}_B = -0.25\).
+(D) Subir por la escalera (\(p > 1\)); aplicar \(u = x^2\) da \(\text{As}_B = +0.25\).
+(E) Subir por la escalera (\(p > 1\)); aplicar \(u = x^2\) da \(\text{As}_B = -0.25\), reduciendo a la mitad la asimetría a la izquierda.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suponga que unos datos positivos pareados siguen una ley potencial exacta \(y = 5 x^2\) sobre \(x \in [1, 10]\), pero un analista ajusta por error una recta MCO semilogarítmica \(\widehat{\ln y} = c_0 + c_1 x\) en lugar de una recta log-log. ¿Qué patrón sistemático aparece en el gráfico de residuos de \(\ln y - (c_0 + c_1 x)\) graficado frente a \(x\)?
+
+(A) Una banda horizontal sin patrón centrada en \(0\), porque \(\ln y\) es lineal en \(x\).
+(B) Un arco que abre hacia abajo (residuos negativos en valores bajos y altos de \(x\), residuos positivos en el centro), porque \(\ln y = \ln 5 + 2\ln x\) es estrictamente cóncava en \(x\).
+(C) Una forma de U que abre hacia arriba (residuos positivos en valores bajos y altos de \(x\), residuos negativos en el centro), porque \(\ln y\) es estrictamente convexa en \(x\).
+(D) Todos los residuos iguales a cero porque tomar logaritmos elimina todo exponente de potencia.
+(E) Una línea recta diagonal perfecta con pendiente positiva.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+¿Por qué la escalera de potencias de Tukey escribe el escalón \(p = -1\) como \(-1 / x\) (con un signo menos delante) en lugar de \(+1 / x\) para datos estrictamente positivos \(x > 0\)?
+
+(A) Porque \(+1 / x\) está indefinido para números positivos \(x > 0\).
+(B) Porque \(-1 / x\) garantiza que la media aritmética transformada sea igual a \(0\).
+(C) Porque \(+1 / x\) es estrictamente decreciente en \(x > 0\) e invierte el orden de toda observación (volteando colas derechas en colas izquierdas e invirtiendo los signos de correlación), mientras que \(-1 / x\) es estrictamente creciente y cóncava, conservando el orden mientras comprime la cola derecha.
+(D) Porque \(+1 / x\) es convexa mientras que \(-1 / x\) es lineal.
+(E) Porque poner un signo menos permite transformar \(x = 0\) limpiamente.
+[/BONUS]

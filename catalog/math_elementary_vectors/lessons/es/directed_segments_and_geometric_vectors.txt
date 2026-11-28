@@ -1,0 +1,262 @@
+=== SECTION 1: Escalares, vectores y segmentos de recta dirigidos ===
+
+Supón que un excursionista te dice que caminó \(4\text{ km}\) desde el campamento. Ese único número te indica qué tan lejos llegó, pero te deja adivinando dónde terminó: podría estar \(4\text{ km}\) al norte, \(4\text{ km}\) al este o en cualquier punto de una circunferencia de radio \(4\text{ km}\). Para especificar su nueva ubicación respecto al campamento, necesitas dos datos a la vez: un tamaño (qué distancia) y una dirección (hacia dónde).
+
+La matemática divide las magnitudes en dos tipos precisamente sobre esta base. Un escalar es una magnitud determinada por completo mediante un único número real (con unidades cuando se mide), como la temperatura, la masa, el tiempo transcurrido o la distancia recorrida. Un vector es una magnitud que posee tanto un módulo o magnitud (un tamaño o longitud no negativo) como una dirección, por ejemplo un desplazamiento en línea recta de un punto a otro, una velocidad o un empuje en una dirección determinada.
+
+En el plano euclidiano, representamos geométricamente un vector como un segmento de recta dirigido: una flecha trazada desde un punto inicial (su origen o cola) hasta un punto terminal (su extremo o punta). Si una flecha comienza en el punto \(A\) y termina en el punto \(B\), escribimos \(\overrightarrow{AB}\) para ese segmento dirigido. Su longitud es la distancia euclidiana ordinaria entre \(A\) y \(B\), y su dirección es el rayo recto que parte de \(A\) hacia \(B\). Cuando hablamos de un vector como una magnitud abstracta sin nombrar extremos específicos, escribimos una sola letra en negrita como \(\mathbf{v}\) o \(\mathbf{u}\).
+
+He aquí la convención fundamental que convierte a las flechas en vectores. Supón que caminas \(3\text{ m}\) hacia el este y \(2\text{ m}\) hacia el norte partiendo de una banca del parque, y que un amigo camina \(3\text{ m}\) hacia el este y \(2\text{ m}\) hacia el norte partiendo de una parada de autobús al otro lado de la ciudad. Las dos flechas ocupan lugares distintos en el mapa, pero representan exactamente el mismo desplazamiento. Si deslizas una flecha en línea recta por el plano sin rotarla ni estirarla —una traslación paralela—, cae exactamente encima de la otra.
+
+[CALLOUT]
+id: free-vector
+label: Definición
+title: Vectores libres, vector nulo y vector opuesto
+tone: key
+
+Dos segmentos de recta dirigidos \(\overrightarrow{AB}\) y \(\overrightarrow{CD}\) representan el mismo vector geométrico, escrito \(\overrightarrow{AB} = \overrightarrow{CD}\), si y solo si cumplen ambas condiciones:
+
+(1) Igual magnitud: los segmentos \(AB\) y \(CD\) tienen la misma longitud.
+(2) Misma dirección: los segmentos \(AB\) y \(CD\) yacen sobre la misma recta o sobre rectas paralelas y apuntan en el mismo sentido.
+
+Dos vectores especiales acompañan esta definición:
+
+(3) El vector nulo \(\mathbf{0}\) es el segmento dirigido degenerado cuyo origen y extremo coinciden (\(\overrightarrow{AA} = \mathbf{0}\)). Tiene longitud \(0\) y no posee dirección definida.
+(4) El opuesto (o negativo) de un vector \(\mathbf{v}\), escrito \(-\mathbf{v}\), tiene la misma longitud que \(\mathbf{v}\) y apunta en sentido exactamente contrario. En notación de extremos, \(\overrightarrow{BA} = -\overrightarrow{AB}\).
+[/CALLOUT]
+
+Como un vector conserva su identidad bajo traslación paralela, los vectores geométricos suelen llamarse vectores libres: la ubicación no forma parte de la identidad de un vector. Un error inicial frecuente consiste en tratar dos copias trasladadas de una flecha como vectores distintos solo porque comienzan en puntos diferentes. Según [REF: free-vector | la regla de equivalencia], únicamente importan la longitud y la dirección.
+
+Para observar esto visualmente, el diagrama siguiente emplea una cuadrícula de referencia de fondo solo para ayudarte a comparar longitudes y direcciones a simple vista (no introduciremos fórmulas de coordenadas hasta la próxima lección). Nota que las tres copias etiquetadas \(\mathbf{v}\) comparten la misma longitud y dirección —cada una sube lo mismo al desplazarse hacia la derecha—, por lo que todas representan un único y mismo vector \(\mathbf{v}\). En cambio, \(-\mathbf{v}\) tiene la misma longitud a lo largo de una recta paralela pero apunta en sentido opuesto, y \(\mathbf{w}\) tiene la misma longitud que \(\mathbf{v}\) en una dirección distinta, de modo que \(\mathbf{w} \ne \mathbf{v}\).
+
+[GRAPH]
+type: parametric2d
+title: Copias trasladadas iguales de \(\mathbf{v}\), su opuesto \(-\mathbf{v}\) y un vector distinto \(\mathbf{w}\) de igual longitud
+xlabel: horizontal de referencia
+ylabel: vertical de referencia
+trange: 0, 1
+xrange: -1, 10
+yrange: -1, 7
+trace: 3*t, 2*t | label: \(\mathbf{v}\text{ (copia 1)}\)
+trace: 4 + 3*t, 1 + 2*t | label: \(\mathbf{v}\text{ (copia 2)}\)
+trace: 1 + 3*t, 4 + 2*t | label: \(\mathbf{v}\text{ (copia 3)}\)
+trace: 9 - 3*t, 6 - 2*t | label: \(-\mathbf{v}\text{ (invertido)}\)
+trace: 5 + 2*t, 4 + 3*t | label: \(\mathbf{w}\text{ (otra dirección)}\)
+point: 3, 2 | label: extremo
+point: 7, 3 | label: extremo
+point: 4, 6 | label: extremo
+point: 6, 4 | label: extremo
+point: 7, 7 | label: extremo
+[/GRAPH]
+
+Observa también cómo [REF: free-vector | la equivalencia vectorial] se conecta directamente con los paralelogramos de la geometría euclidiana. Si cuatro puntos \(A, B, C, D\) (no todos sobre una misma recta) satisfacen \(\overrightarrow{AB} = \overrightarrow{DC}\), entonces los segmentos \(AB\) y \(DC\) tienen igual longitud y son paralelos, de modo que \(ABCD\) (recorriendo el contorno en el orden \(A \to B \to C \to D\)) es un paralelogramo. Recíprocamente, en cualquier paralelogramo \(ABCD\), los lados opuestos son paralelos y congruentes, lo que da \(\overrightarrow{AB} = \overrightarrow{DC}\) y \(\overrightarrow{AD} = \overrightarrow{BC}\), mientras que invertir la flecha de un lado produce \(\overrightarrow{CD} = -\overrightarrow{AB}\).
+
+[TABLE]
+Objeto | Qué lo define | ¿Cambia al trasladarse? | Ejemplo
+Escalar | Un único número real | No (carece de ubicación o dirección) | Distancia \(5\text{ km}\), masa \(2\text{ kg}\)
+Vector libre \(\mathbf{v}\) | Magnitud y dirección | No (misma longitud y dirección) | Desplazamiento \(3\text{ m}\) al este, \(2\text{ m}\) al norte
+Segmento dirigido fijo \(\overrightarrow{AB}\) | Origen específico \(A\) y extremo \(B\) | Sí (se mueve a nuevos extremos) | Flecha que comienza en \(A\) y termina en \(B\)
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(PQRS\) un paralelogramo con vértices enumerados en orden alrededor de su contorno, y sea \(M\) el punto donde se intersecan sus diagonales \(PR\) y \(QS\) (de modo que \(M\) es el punto medio de cada diagonal). ¿Qué afirmación es siempre verdadera?
+
+(A) \(\overrightarrow{PQ} = \overrightarrow{RS}\)
+(B) \(\overrightarrow{PM} = \overrightarrow{RM}\)
+(C) \(\overrightarrow{QR} = \overrightarrow{PS}\)
+(D) \(\overrightarrow{PR} = \overrightarrow{QS}\)
+(E) \(\overrightarrow{QM} = \overrightarrow{SM}\)
+[/QUESTION]
+
+=== SECTION 2: Suma y resta geométrica de vectores ===
+
+Supón que un velero realiza dos tramos rectilíneos sucesivos: primero el desplazamiento \(\mathbf{u}\) desde el puerto \(A\) hasta la boya \(B\), y luego el desplazamiento \(\mathbf{v}\) desde la boya \(B\) hasta la isla \(C\). ¿Qué único desplazamiento en línea recta habría llevado al barco directamente de \(A\) a \(C\)? La flecha \(\overrightarrow{AC}\) recoge el efecto neto de efectuar \(\mathbf{u}\) seguido de \(\mathbf{v}\). Esa flecha neta es la que define la suma \(\mathbf{u} + \mathbf{v}\).
+
+Como los vectores pueden trasladarse libremente, podemos sumar cualesquiera dos vectores \(\mathbf{u}\) y \(\mathbf{v}\) aunque al principio estén dibujados muy lejos entre sí. Basta deslizar una copia de \(\mathbf{v}\) sin rotarla hasta que su origen coincida con el extremo de \(\mathbf{u}\). La suma \(\mathbf{u} + \mathbf{v}\) es la flecha que va desde el origen de \(\mathbf{u}\) hasta el extremo de \(\mathbf{v}\). Esta es la regla cabeza con cola (también llamada regla del triángulo).
+
+Pregúntate ahora qué ocurre si realizamos los dos tramos en orden inverso: primero \(\mathbf{v}\) y después \(\mathbf{u}\). Coloca tanto \(\mathbf{u}\) como \(\mathbf{v}\) de modo que sus orígenes coincidan en un punto común \(O\). Al dibujar una copia de \(\mathbf{v}\) que empiece en el extremo de \(\mathbf{u}\) y una copia de \(\mathbf{u}\) que empiece en el extremo de \(\mathbf{v}\), se forma un paralelogramo cuyos lados opuestos son paralelos y de igual longitud. ¡Ambos recorridos cabeza con cola —\(\mathbf{u}\) seguido de \(\mathbf{v}\), y \(\mathbf{v}\) seguido de \(\mathbf{u}\)— terminan exactamente en el mismo vértice opuesto del paralelogramo!
+
+Esa única figura de paralelogramo nos entrega dos resultados de golpe:
+1. La regla del paralelogramo: cuando \(\mathbf{u}\) y \(\mathbf{v}\) se colocan cola con cola, su suma \(\mathbf{u} + \mathbf{v}\) es la diagonal que parte desde su origen compartido.
+2. Conmutatividad de la suma vectorial: \(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\) para todos los vectores del plano \(\mathbf{u}\) y \(\mathbf{v}\).
+
+¿Qué hay de sumar tres vectores \(\mathbf{u}\), \(\mathbf{v}\) y \(\mathbf{w}\)? Encadénalos cabeza con cola en secuencia: \(\mathbf{u} = \overrightarrow{AB}\), \(\mathbf{v} = \overrightarrow{BC}\), \(\mathbf{w} = \overrightarrow{CD}\). Agrupar los dos primeros da \((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \overrightarrow{AC} + \overrightarrow{CD} = \overrightarrow{AD}\). Agrupar los dos últimos da \(\mathbf{u} + (\mathbf{v} + \mathbf{w}) = \overrightarrow{AB} + \overrightarrow{BD} = \overrightarrow{AD}\). Ambas agrupaciones trazan la misma flecha global de inicio a fin \(\overrightarrow{AD}\), lo que establece la asociatividad:
+\[
+(\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w}).
+\]
+El mismo encadenamiento cabeza con cola funciona para cualquier recorrido de múltiples tramos: \(\overrightarrow{AB} + \overrightarrow{BC} + \overrightarrow{CD} = \overrightarrow{AD}\). Si un recorrido vuelve a su punto de partida, como en \(\overrightarrow{AB} + \overrightarrow{BC} + \overrightarrow{CA} = \overrightarrow{AA} = \mathbf{0}\), los vectores forman un polígono cerrado y su suma es el vector nulo. En particular, sumar un vector a su opuesto siempre te devuelve al origen: \(\mathbf{v} + (-\mathbf{v}) = \mathbf{0}\).
+
+Con los vectores opuestos a mano, la resta geométrica no guarda ningún misterio aparte. Así como restar números reales significa sumar el negativo, definimos la diferencia \(\mathbf{u} - \mathbf{v}\) mediante
+\[
+\mathbf{u} - \mathbf{v} = \mathbf{u} + (-\mathbf{v}).
+\]
+Para ver cómo luce \(\mathbf{u} - \mathbf{v}\) cuando \(\mathbf{u}\) y \(\mathbf{v}\) comparten un origen común \(O\), hazte la pregunta inversa: ¿qué vector debes sumar a \(\mathbf{v}\) para llegar a \(\mathbf{u}\)? Algebraicamente,
+\[
+\mathbf{v} + (\mathbf{u} - \mathbf{v}) = \mathbf{v} + \mathbf{u} + (-\mathbf{v}) = \mathbf{u} + \mathbf{0} = \mathbf{u}.
+\]
+Leyendo geométricamente esa ecuación cabeza con cola: comienza en \(O\), recorre \(\mathbf{v}\) hasta el extremo de \(\mathbf{v}\) y luego recorre \(\mathbf{u} - \mathbf{v}\) para llegar al extremo de \(\mathbf{u}\). Por lo tanto, cuando \(\mathbf{u}\) y \(\mathbf{v}\) se colocan cola con cola, \(\mathbf{u} - \mathbf{v}\) es la flecha que apunta DESDE el extremo de \(\mathbf{v}\) HASTA el extremo de \(\mathbf{u}\): ¡la segunda diagonal del paralelogramo!
+
+[CALLOUT]
+id: add-sub
+label: Regla
+title: Suma y resta geométrica de vectores
+tone: key
+
+Sean \(\mathbf{u}\) y \(\mathbf{v}\) vectores geométricos en el plano.
+
+(1) Regla cabeza con cola (del triángulo): coloca el origen de \(\mathbf{v}\) en el extremo de \(\mathbf{u}\); entonces \(\mathbf{u} + \mathbf{v}\) va desde el origen de \(\mathbf{u}\) hasta el extremo de \(\mathbf{v}\).
+(2) Regla del paralelogramo: coloca \(\mathbf{u}\) y \(\mathbf{v}\) cola con cola; entonces \(\mathbf{u} + \mathbf{v}\) es la diagonal desde el origen compartido hasta el vértice opuesto.
+(3) Resta: \(\mathbf{u} - \mathbf{v} = \mathbf{u} + (-\mathbf{v})\). Cuando \(\mathbf{u}\) y \(\mathbf{v}\) se colocan cola con cola, \(\mathbf{u} - \mathbf{v}\) va desde el extremo de \(\mathbf{v}\) hasta el extremo de \(\mathbf{u}\).
+[/CALLOUT]
+
+[CALLOUT]
+id: sub-direction
+label: Error frecuente
+title: No inviertas la flecha de \(\mathbf{u} - \mathbf{v}\)
+tone: caution
+
+Cuando \(\mathbf{u}\) y \(\mathbf{v}\) comparten origen, el segmento que une sus extremos tiene dos orientaciones posibles. La flecha que va del extremo de \(\mathbf{v}\) al extremo de \(\mathbf{u}\) es \(\mathbf{u} - \mathbf{v}\), mientras que la flecha que va del extremo de \(\mathbf{u}\) al extremo de \(\mathbf{v}\) es \(\mathbf{v} - \mathbf{u} = -(\mathbf{u} - \mathbf{v})\). Comprueba siempre el sentido verificando la suma cabeza con cola: \(\mathbf{v} + (\mathbf{u} - \mathbf{v}) = \mathbf{u}\) significa que la flecha debe apuntar hacia el extremo de \(\mathbf{u}\).
+[/CALLOUT]
+
+El diagrama siguiente muestra ambas diagonales del paralelogramo lado a lado para dos vectores \(\mathbf{u}\) y \(\mathbf{v}\) colocados cola con cola en \(O\). Observa cómo los lados discontinuos completan el paralelogramo de modo que la diagonal continua azul \(\mathbf{u} + \mathbf{v}\) parte de \(O\), mientras que la diagonal continua verde \(\mathbf{u} - \mathbf{v}\) parte del extremo de \(\mathbf{v}\) (punto \(B\)) y termina en el extremo de \(\mathbf{u}\) (punto \(A\)).
+
+[GRAPH]
+type: parametric2d
+title: Diagonales del paralelogramo \(\mathbf{u} + \mathbf{v}\) y \(\mathbf{u} - \mathbf{v}\) para vectores cola con cola
+xlabel: horizontal de referencia
+ylabel: vertical de referencia
+trange: 0, 1
+xrange: -0.5, 7
+yrange: -0.5, 5.5
+trace: 4*t, 1*t | label: \(\mathbf{u}\) | color: #2563eb
+trace: 2*t, 3.5*t | label: \(\mathbf{v}\) | color: #d97706
+trace: 6*t, 4.5*t | label: \(\mathbf{u} + \mathbf{v}\) | color: #7c3aed
+trace: 2 + 2*t, 3.5 - 2.5*t | label: \(\mathbf{u} - \mathbf{v}\) | color: #16a34a
+segment: 4, 1, 6, 4.5 | dashed: true
+segment: 2, 3.5, 6, 4.5 | dashed: true
+point: 0, 0 | label: \(O\)
+point: 4, 1 | label: \(A\)
+point: 2, 3.5 | label: \(B\)
+point: 6, 4.5 | label: \(C\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+Un excursionista parte del campamento \(O\), camina según el desplazamiento \(\mathbf{p}\) hasta la cresta \(A\) y luego camina según el desplazamiento \(\mathbf{q}\) hasta el mirador \(B\). Un manantial \(S\) está ubicado de modo que \(\overrightarrow{OS} = \mathbf{q}\). ¿Cuál es el vector de desplazamiento \(\overrightarrow{BS}\) desde el mirador \(B\) hasta el manantial \(S\)?
+
+(A) \(\mathbf{p}\)
+(B) \(-\mathbf{p}\)
+(C) \(\mathbf{q} - \mathbf{p}\)
+(D) \(\mathbf{p} - \mathbf{q}\)
+(E) \(-\mathbf{p} - 2\mathbf{q}\)
+[/QUESTION]
+
+=== SECTION 3: Multiplicación por un escalar y paralelismo geométrico ===
+
+Sumar repetidamente un vector \(\mathbf{v}\) consigo mismo —como \(\mathbf{v} + \mathbf{v} + \mathbf{v}\)— produce una flecha en la misma dirección con el triple de longitud. Resulta natural escribir esto como \(3\mathbf{v}\), y extender la misma idea a cualquier número real \(k\), ya sea positivo, negativo, fraccionario o cero.
+
+[CALLOUT]
+id: scalar-mult
+label: Definición
+title: Multiplicación geométrica por un escalar
+tone: key
+
+Sea \(\mathbf{v}\) un vector y \(k\) un escalar real. El múltiplo escalar \(k\mathbf{v}\) se define así:
+
+(1) Si \(k > 0\), entonces \(k\mathbf{v}\) tiene longitud \(k\) veces la longitud de \(\mathbf{v}\) y la misma dirección que \(\mathbf{v}\).
+(2) Si \(k < 0\), entonces \(k\mathbf{v}\) tiene longitud \(|k|\) veces la longitud de \(\mathbf{v}\) y dirección opuesta a la de \(\mathbf{v}\).
+(3) Si \(k = 0\) o \(\mathbf{v} = \mathbf{0}\), entonces \(k\mathbf{v} = \mathbf{0}\).
+
+En todos los casos, la longitud de \(k\mathbf{v}\) es igual a \(|k|\) veces la longitud de \(\mathbf{v}\).
+[/CALLOUT]
+
+Arrastra el deslizador \(k\) en la gráfica interactiva siguiente para ver cómo \(k\mathbf{v}\) se estira, se encoge, colapsa al vector nulo en \(k = 0\) y se invierte hacia el lado opuesto sobre la misma recta cuando \(k\) pasa de positivo a negativo.
+
+[GRAPH]
+type: parametric2d
+title: Escalamiento de un vector \(\mathbf{v}\) por un escalar real \(k\)
+xlabel: horizontal de referencia
+ylabel: vertical de referencia
+trange: 0, 1
+xrange: -6, 6
+yrange: -4, 4
+trace: 2*t, 1*t | label: \(\mathbf{v}\) | color: #2563eb
+trace: k*2*t, k*1*t | label: \(k\mathbf{v}\) | color: #dc2626
+point: 0, 0 | label: origen
+point: 2, 1 | label: \(\mathbf{v}\)
+point: 2*k, k | label: \(k\mathbf{v}\)
+slider: k | range: -2.5, 2.5 | init: 1.5 | step: 0.25
+[/GRAPH]
+
+Observa que todo múltiplo escalar \(k\mathbf{v}\) permanece sobre la misma recta que pasa por el origen de \(\mathbf{v}\) (o sobre una recta paralela tras una traslación). Esto conecta directamente la multiplicación escalar con el paralelismo geométrico.
+
+[CALLOUT]
+id: geom-parallel
+label: Criterio
+title: Paralelismo geométrico mediante múltiplos escalares
+tone: key
+
+Dos vectores no nulos \(\mathbf{u}\) y \(\mathbf{v}\) son paralelos si y solo si uno es un múltiplo escalar no nulo del otro —es decir, \(\mathbf{u} = k\mathbf{v}\) para algún número real \(k \ne 0\)—.
+
+(1) Si \(k > 0\), entonces \(\mathbf{u}\) y \(\mathbf{v}\) tienen el mismo sentido.
+(2) Si \(k < 0\), entonces \(\mathbf{u}\) y \(\mathbf{v}\) tienen sentidos opuestos (a veces llamados antiparalelos, aunque siguen siendo paralelos porque yacen sobre rectas paralelas).
+[/CALLOUT]
+
+Veamos por qué [REF: geom-parallel | el criterio de paralelismo] funciona en ambos sentidos: si \(\mathbf{u} = k\mathbf{v}\) con \(k \ne 0\), entonces por [REF: scalar-mult | la definición de multiplicación por un escalar] \(\mathbf{u}\) yace sobre la misma recta que \(\mathbf{v}\) o sobre una paralela. Recíprocamente, supón que \(\mathbf{u}\) y \(\mathbf{v}\) son no nulos y yacen sobre rectas paralelas, y sea \(r > 0\) la razón entre la longitud de \(\mathbf{u}\) y la de \(\mathbf{v}\). Si apuntan en el mismo sentido, entonces \(\mathbf{u} = r\mathbf{v}\); si apuntan en sentidos opuestos, entonces \(\mathbf{u} = (-r)\mathbf{v}\). En cualquier caso, \(\mathbf{u}\) es un múltiplo escalar no nulo de \(\mathbf{v}\).
+
+La multiplicación por un escalar también interactúa limpiamente con la suma vectorial mediante la ley distributiva
+\[
+k(\mathbf{u} + \mathbf{v}) = k\mathbf{u} + k\mathbf{v}.
+\]
+Los triángulos semejantes de la geometría euclidiana explican por qué. Dibuja el triángulo para \(\mathbf{u} + \mathbf{v}\) colocando \(\mathbf{u}\) y \(\mathbf{v}\) cabeza con cola. Para cualquier \(k > 0\), escalar los dos lados a \(k\mathbf{u}\) y \(k\mathbf{v}\) mantiene intacto el ángulo entre ellos y escala ambos lados adyacentes exactamente por el mismo factor \(k\). Por semejanza de triángulos LAL, el tercer lado \(k\mathbf{u} + k\mathbf{v}\) es paralelo a \(\mathbf{u} + \mathbf{v}\), apunta en el mismo sentido y tiene \(k\) veces su longitud, por lo que es igual a \(k(\mathbf{u} + \mathbf{v})\). Cuando \(k < 0\), escalar por \(|k|\) e invertir todas las flechas invierte también el tercer lado, produciendo exactamente la misma igualdad. De manera análoga, combinar dos pasos sobre la misma recta da \((k + m)\mathbf{v} = k\mathbf{v} + m\mathbf{v}\), y escalar dos veces seguidas da \(k(m\mathbf{v}) = (km)\mathbf{v}\).
+
+Pongamos en acción estas herramientas geométricas en una configuración clásica de triángulo. Supón que en \(\triangle OAB\) fijamos \(\mathbf{a} = \overrightarrow{OA}\) y \(\mathbf{b} = \overrightarrow{OB}\), y sean \(M\) y \(N\) los puntos medios de los lados \(OA\) y \(OB\). Entonces \(\overrightarrow{OM} = \frac{1}{2}\mathbf{a}\) y \(\overrightarrow{ON} = \frac{1}{2}\mathbf{b}\). Por [REF: add-sub.3 | la resta cola con cola] y la distributividad,
+\[
+\overrightarrow{MN} = \overrightarrow{ON} - \overrightarrow{OM} = \frac{1}{2}\mathbf{b} - \frac{1}{2}\mathbf{a} = \frac{1}{2}(\mathbf{b} - \mathbf{a}) = \frac{1}{2}\overrightarrow{AB}.
+\]
+Como \(\overrightarrow{MN}\) es un múltiplo escalar positivo de \(\overrightarrow{AB}\) con factor \(\frac{1}{2}\), vemos en una sola línea de álgebra vectorial que el segmento \(MN\) es paralelo a la base \(AB\), apunta de \(M\) a \(N\) en el mismo sentido que de \(A\) a \(B\) y tiene exactamente la mitad de la longitud de \(AB\).
+
+[QUESTION 3]
+[ANSWER: B]
+En el triángulo \(ABC\), sean \(\mathbf{u} = \overrightarrow{AB}\) y \(\mathbf{v} = \overrightarrow{AC}\). El punto \(D\) se encuentra sobre el segmento \(AB\) a un tercio del camino desde \(A\) hasta \(B\) (de modo que \(\overrightarrow{AD} = \frac{1}{3}\mathbf{u}\)), y el punto \(E\) se encuentra sobre el segmento \(AC\) a un tercio del camino desde \(A\) hasta \(C\) (de modo que \(\overrightarrow{AE} = \frac{1}{3}\mathbf{v}\)). ¿Qué es \(\overrightarrow{ED}\) en términos de \(\mathbf{u}\) y \(\mathbf{v}\), y cómo se compara con \(\overrightarrow{CB}\)?
+
+(A) \(\frac{1}{3}(\mathbf{v} - \mathbf{u})\), en sentido opuesto a \(\overrightarrow{CB}\) con un tercio de su longitud
+(B) \(\frac{1}{3}(\mathbf{u} - \mathbf{v})\), en el mismo sentido que \(\overrightarrow{CB}\) con un tercio de su longitud
+(C) \(\frac{1}{3}(\mathbf{u} + \mathbf{v})\), en el mismo sentido que \(\overrightarrow{CB}\) con un tercio de su longitud
+(D) \(\frac{1}{3}(\mathbf{u} - \mathbf{v})\), en sentido opuesto a \(\overrightarrow{CB}\) con un tercio de su longitud
+(E) \(3(\mathbf{u} - \mathbf{v})\), en el mismo sentido que \(\overrightarrow{CB}\) con el triple de su longitud
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+Supón que \(\mathbf{a}\) y \(\mathbf{b}\) son dos vectores no nulos en el plano cuyas longitudes son \(5\) y \(8\), respectivamente. Si \(\mathbf{a}\) y \(\mathbf{b}\) son paralelos, ¿cuáles son todas las longitudes posibles de \(\mathbf{a} + \mathbf{b}\)?
+
+(A) \(13\) solamente
+(B) \(3\) solamente
+(C) \(3\) o \(13\)
+(D) Cualquier longitud entre \(3\) y \(13\), inclusive
+(E) \(3\), \(8\) o \(13\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Sea \(ABCDEF\) un hexágono regular con vértices enumerados en orden alrededor de su contorno y centro \(O\). (Recuerda que un hexágono regular se descompone en seis triángulos equiláteros congruentes que concurren en \(O\), por lo que cada lado del contorno es paralelo e igual en longitud a un radio desde \(O\).) Si \(\mathbf{u} = \overrightarrow{AB}\) y \(\mathbf{v} = \overrightarrow{BC}\), expresa el vector diagonal \(\overrightarrow{CE}\) en términos de \(\mathbf{u}\) y \(\mathbf{v}\).
+
+(A) \(\mathbf{v} - \mathbf{u}\)
+(B) \(2\mathbf{v} - \mathbf{u}\)
+(C) \(-\mathbf{u} - \mathbf{v}\)
+(D) \(\mathbf{v} - 2\mathbf{u}\)
+(E) \(2\mathbf{u} - \mathbf{v}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Supón que \(\mathbf{u}\) y \(\mathbf{v}\) son dos vectores no nulos en el plano que no son paralelos. ¿Para qué número real \(k\) el vector \((k - 1)\mathbf{u} + 4\mathbf{v}\) es paralelo a \(2\mathbf{u} - 8\mathbf{v}\)?
+
+(A) \(k = 0\)
+(B) \(k = 2\)
+(C) \(k = -1\)
+(D) \(k = 1\)
+(E) No existe tal número real \(k\)
+[/BONUS]

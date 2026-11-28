@@ -1,0 +1,216 @@
+=== SECTION 1: Matching univariate displays to variable scale ===
+
+A frequency table preserves exact numbers, yet human eyes detect patterns—peaks, asymmetry, gaps, and unusual values—far faster in a picture than in rows of digits. Still, not every plot fits every variable. Plotting eye colors with touching bars on a continuous number line invents a fake numeric ordering, while leaving gaps between contiguous histogram bars hides the continuity of a quantitative scale. Selecting the right display starts with the measurement scale of the variable.
+
+[CALLOUT]
+id: chart-scale-match
+label: Principle
+title: Matching chart geometry to variable type
+tone: key
+
+(1) Categorical variables use bar charts (and Pareto charts, which sort nominal categories from highest to lowest frequency, often paired with a cumulative percentage curve). Bars are separated by visible gaps to emphasize discrete categories; nominal categories may be ordered by frequency or convention, whereas ordinal categories must keep their natural rank order.
+(2) Quantitative variables use displays anchored to a true numeric axis: histograms (contiguous bars spanning adjacent class intervals with no gaps unless a bin is empty), frequency polygons (line segments joining class midpoints at their bin heights, anchored to \(0\) one half-width outside the first and last bins), dotplots (one dot per observation stacked above a number line), and stem-and-leaf displays (splitting each value into a leading stem and trailing leaf digit to preserve exact numbers while showing shape).
+[/CALLOUT]
+
+Each quantitative display serves a slightly different data size and purpose. For a small dataset (\(n = 15\) to \(40\)), a dotplot or stem-and-leaf display shows every individual observation, making clusters, exact gaps, and specific extreme values immediately visible. For example, given exam scores \(62, 67, 71, 74, 74, 79, 83, 85, 88, 92\), a stem-and-leaf display groups the tens digits as stems (\(6, 7, 8, 9\)) and lists the ones digits in ascending order as leaves (\(6 \mid 2\, 7\); \(7 \mid 1\, 4\, 4\, 9\); \(8 \mid 3\, 5\, 8\); \(9 \mid 2\)). Turned ninety degrees counterclockwise, those rows of leaves form a mini-histogram while keeping every exact score recoverable. For larger datasets (\(n = 50\) to \(100{,}000\)), individual dots become cluttered, so histograms and frequency polygons summarize grouped intervals cleanly.
+
+[TABLE]
+Display | Variable scale | Bar/mark contact | Individual values kept? | Best suited for
+Bar chart | Nominal or ordinal | Separated bars | Counts/proportions per category | Comparing category sizes
+Pareto chart | Nominal (sorted descending) | Separated bars | Counts + cumulative \(\%\) | Spotting the "vital few" categories
+Dotplot | Quantitative (small \(n\)) | Dots on numeric axis | Yes (exact or rounded) | Small datasets, clusters, gaps
+Stem-and-leaf | Quantitative (small/mod \(n\)) | Rows of leaf digits | Yes (up to leaf digit) | Quick hand sketch preserving values
+Histogram | Quantitative (any \(n\)) | Contiguous numeric bins | No (grouped into classes) | Overall shape of medium/large data
+Frequency polygon | Quantitative (any \(n\)) | Connected midpoints | No (grouped into classes) | Overlaying two distributions on one axis
+[/TABLE]
+
+Notice one specific pitfall with Pareto charts: sorting bars from tallest to shortest is insightful for nominal categories like defect types ("Scratch", "Crack", "Dent", "Missing part"), because you immediately see which two defect types cause \(80\%\) of failures. Sorting an ordinal variable like pain rating ("None", "Mild", "Moderate", "Severe") by frequency instead of natural order destroys the progression of severity and makes the chart harder to read.
+
+[QUESTION 1]
+[ANSWER: C]
+An operations manager wants to visualize two variables from a survey of \(n = 450\) customers: Variable X is customer satisfaction ("Very Dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very Satisfied"), and Variable Y is checkout duration in seconds. Which pair of displays respects the measurement scale and size of each variable?
+
+(A) A Pareto chart sorted by frequency for Variable X, and a bar chart with separated bars for Variable Y.
+(B) A histogram for Variable X, and a stem-and-leaf display for Variable Y.
+(C) A bar chart keeping the natural satisfaction order for Variable X, and a histogram for Variable Y.
+(D) A dotplot for Variable X, and a Pareto chart for Variable Y.
+(E) A frequency polygon for Variable X, and a bar chart for Variable Y.
+[/QUESTION]
+
+=== SECTION 2: The area principle and unequal-width histograms ===
+
+In a bar chart, every bar has the same arbitrary width, so a reader compares category sizes purely by bar height. In a histogram, however, horizontal width is not arbitrary—it represents the class width \(w_j\) on the numeric axis. That geometric fact leads to the single most important rule in quantitative data graphics.
+
+[CALLOUT]
+id: area-principle
+label: Principle
+title: The area principle for histograms
+tone: key
+
+In any quantitative display representing data by shaded regions, the area of each region must be proportional to the count (or relative frequency) of observations it represents.
+
+For a histogram with class widths \(w_j\) and relative frequencies \(p_j\):
+(1) When all class widths are equal (\(w_j = w\)), bar height may be frequency \(f_j\), relative frequency \(p_j\), or frequency density \(d_j = p_j / w\), because multiplying a constant width \(w\) by height keeps area proportional to \(f_j\) and \(p_j\).
+(2) When class widths are unequal, bar height MUST be frequency density \(d_j = p_j / w_j\) (or count density \(f_j / w_j\)). Then each bar's area is \(\text{width} \times \text{height} = w_j \cdot d_j = p_j\), and the total area of all bars equals \(1\).
+[/CALLOUT]
+
+To see why violating [REF: area-principle.2 | the unequal-width rule] distorts reality, examine repair times (in minutes) for \(n = 50\) appliances grouped into four unequal classes:
+- \([0, 10)\): width \(10\), count \(10\), relative frequency \(0.20\), density \(0.20 / 10 = 0.020\)
+- \([10, 20)\): width \(10\), count \(15\), relative frequency \(0.30\), density \(0.30 / 10 = 0.030\)
+- \([20, 40)\): width \(20\), count \(18\), relative frequency \(0.36\), density \(0.36 / 20 = 0.018\)
+- \([40, 80)\): width \(40\), count \(7\), relative frequency \(0.14\), density \(0.14 / 40 = 0.0035\)
+
+If an analyst plotted raw counts (\(10, 15, 18, 7\)) on the vertical axis, the bar on \([20, 40)\) would appear tallest AND twice as wide as \([10, 20)\), giving it an area of \(20 \times 18 = 360\) compared to \(10 \times 15 = 150\)—visually claiming that \([20, 40)\) holds \(2.4\) times as many repairs as \([10, 20)\) when it actually holds only \(18/15 = 1.2\) times as many! Even worse, the sparse tail \([40, 80)\) would have visual area \(40 \times 7 = 280\), looking nearly twice as massive as \([10, 20)\) despite containing fewer than half as many repairs (\(7\) versus \(15\)).
+
+Plotting frequency density \(d_j = p_j / w_j\) on the vertical axis repairs the picture completely, as shown below. Now the area of each rectangle equals its exact relative frequency (\(0.20, 0.30, 0.36, 0.14\)), summing to \(1.00\), and the tallest bar sits honestly over \([10, 20)\), where repair times are most densely concentrated.
+
+[GRAPH]
+type: function2d
+title: Density histogram of appliance repair times (\(n = 50\), unequal bin widths)
+xlabel: Repair time (min)
+ylabel: Frequency density
+xrange: 0, 82
+yrange: 0, 0.036
+fill: 0.020, 0 | range: 0, 10 | label: \([0, 10)\), area \(0.20\) | color: #3b82f6 | opacity: 0.30
+fill: 0.030, 0 | range: 10, 20 | label: \([10, 20)\), area \(0.30\) | color: #2563eb | opacity: 0.35
+fill: 0.018, 0 | range: 20, 40 | label: \([20, 40)\), area \(0.36\) | color: #60a5fa | opacity: 0.30
+fill: 0.0035, 0 | range: 40, 80 | label: \([40, 80)\), area \(0.14\) | color: #93c5fd | opacity: 0.30
+trace: x < 10 ? 0.020 : (x < 20 ? 0.030 : (x < 40 ? 0.018 : (x <= 80 ? 0.0035 : 0))) | label: Density profile
+segment: 0, 0, 0, 0.020
+segment: 10, 0, 10, 0.030
+segment: 20, 0, 20, 0.030
+segment: 40, 0, 40, 0.018
+segment: 80, 0, 80, 0.0035
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+A density histogram has a bar over the interval \([50, 75)\) with vertical height (frequency density) \(0.012\) per unit. If the total sample size is \(n = 160\), how many observations lie in the class \([50, 75)\)?
+
+(A) \(24\)
+(B) \(48\)
+(C) \(30\)
+(D) \(19\)
+(E) \(60\)
+[/QUESTION]
+
+=== SECTION 3: Reading distribution shape from univariate displays ===
+
+Once a histogram, dotplot, or frequency polygon is drawn honestly, our primary goal is to read its overall shape systematically. Statisticians describe univariate shape along three dimensions: modality (number of prominent peaks), symmetry versus skewness (direction of the longer tail), and unusual features (gaps, clusters, and apparent outliers).
+
+[CALLOUT]
+id: shape-vocabulary
+label: Definition
+title: Core qualitative shape features
+tone: key
+
+(1) Modality: A distribution with one prominent peak is unimodal; two distinct prominent peaks is bimodal; three or more peaks is multimodal; and a distribution with roughly flat height across its range is approximately uniform.
+(2) Symmetry and skewness: A distribution is symmetric if its left and right halves are approximate mirror images. It is right-skewed (positively skewed) if the long, thin tail stretches toward larger values on the right, and left-skewed (negatively skewed) if the long, thin tail stretches toward smaller values on the left.
+(3) Unusual features: Gaps are wide empty intervals separating data clusters; clusters are distinct subgroups bunched around separate values (often signaling mixed subpopulations, such as combining adult and child heights); apparent outliers are isolated observations sitting far away from the main body of the data.
+[/CALLOUT]
+
+Notice the naming rule for skewness—it is the single direction people most often get backwards! Skewness is ALWAYS named after the direction of the stretched-out TAIL, not the side where the tall mound sits. In a right-skewed distribution (such as household incomes or repair times), most observations pile up on the left while a handful of very large values pull a long thin tail out to the right. In a left-skewed distribution (such as scores on an easy exam capped at \(100\)), most observations pile up near the high end while a few very low scores stretch a tail to the left.
+
+The graph below overlays smooth density profiles of four benchmark shapes on a common horizontal axis so you can compare peak count and tail direction directly.
+
+[GRAPH]
+type: function2d
+title: Benchmark univariate shapes: symmetric, right-skewed, left-skewed, and bimodal
+xlabel: \(x\)
+ylabel: Density
+xrange: 0, 12
+yrange: 0, 0.45
+trace: 0.36 * exp(-0.5 * ((x - 6) / 1.1)^2) | label: Symmetric unimodal | color: #3b82f6
+trace: x > 0 ? 0.38 * (x / 2.5) * exp(1 - x / 2.5) : 0 | label: Right-skewed (long right tail) | color: #ef4444
+trace: x < 12 ? 0.38 * ((12 - x) / 2.5) * exp(1 - (12 - x) / 2.5) : 0 | label: Left-skewed (long left tail) | color: #10b981
+trace: 0.24 * exp(-0.5 * ((x - 3.5) / 0.85)^2) + 0.26 * exp(-0.5 * ((x - 8.5) / 0.9)^2) | label: Bimodal (two clusters) | color: #f59e0b
+[/GRAPH]
+
+When you spot a bimodal display or a sharp gap in real data, pause before summarizing the whole dataset with a single center. Bimodality often means two distinct groups were pooled together—for instance, restaurant bill totals combining lunch diners and dinner diners, or wait times combining weekday and weekend shifts. Separating the display by subgroup frequently resolves a messy bimodal distribution into two clean unimodal distributions.
+
+[QUESTION 3]
+[ANSWER: D]
+A dotplot of final grades (out of \(100\)) for a large introductory course shows a dense pile of scores between \(85\) and \(98\), gradually thinning across the \(70\text{s}\) and \(60\text{s}\), with a few scattered scores trailing down to \(32\). How should this distribution's shape be described?
+
+(A) Right-skewed (positively skewed), because the main peak lies on the right side of the scale.
+(B) Symmetric and bimodal, because there are scores at both \(95\) and \(32\).
+(C) Uniform, because scores cover almost the full range from \(32\) to \(98\).
+(D) Left-skewed (negatively skewed), because the elongated tail extends toward the lower values on the left.
+(E) Right-skewed (positively skewed), because high scores are positive numbers.
+[/QUESTION]
+
+=== SECTION 4: Diagnosing deceptive graphics and bin-width artifacts ===
+
+Because visual impressions are immediate and persuasive, small design choices can easily mislead an audience—whether by accident or by intent. Every statistical reader should check three recurring graphical traps before trusting a chart's visual story.
+
+[CALLOUT]
+id: deceptive-graphics
+label: Common pitfall
+title: Three ways univariate displays mislead
+tone: caution
+
+(1) Truncated vertical axes on bar charts: Starting a bar chart's vertical count or percentage axis above \(0\) slices the same base off every bar, exaggerating small relative differences into dramatic height ratios.
+(2) Pictogram (2D/3D) area distortion: Replacing bars with scaled icons (bags of money, oil barrels, human figures) scales both width and height by the data ratio \(k\), multiplying the 2D visual area by \(k^2\) (and perceived 3D volume by \(k^3\)), violating [REF: area-principle | the area principle].
+(3) Extreme histogram bin-width choices: Overly wide bins can hide a genuine gap or merge two distinct modes into a single mound, while overly narrow bins splinter a smooth unimodal dataset into jagged, meaningless spikes.
+[/CALLOUT]
+
+Let us quantify the first two traps concretely. Suppose Brand A has \(92\%\) on-time delivery and Brand B has \(96\%\) on-time delivery—a genuine advantage of \(4\) percentage points, or a true ratio of \(96 / 92 \approx 1.043\) (about \(4.3\%\) higher). If a marketing slide starts the vertical axis at \(90\%\), Brand A's bar has height \(92 - 90 = 2\) units while Brand B's bar has height \(96 - 90 = 6\) units. Visually, Brand B looks three times as tall (\(6 / 2 = 3\)) instead of \(4.3\%\) higher! On any bar chart where bar length encodes magnitude, the baseline must start at \(0\). (Line charts tracking small fluctuations over time, such as daily stock prices or body temperature, are a different case where zooming in can be appropriate if the axis break is clearly labeled, because position—not bar length from zero—encodes the value.)
+
+Now examine [REF: deceptive-graphics.2 | pictogram distortion]. Suppose a company's sales double from \(\$1\text{ million}\) to \(\$2\text{ million}\) (a factor of \(k = 2\)). If a designer draws a dollar-bill icon twice as tall for the second year while keeping its aspect ratio fixed, its width also doubles. The second icon's area becomes \(2 \times 2 = 4\) times the first icon's area, exaggerating a \(2\times\) increase into a \(4\times\) visual impression. If drawn as a 3D cube or stack of coins scaled in all three dimensions, the visual volume explodes by \(2^3 = 8\) times! If icons are used at all, stack identical unit-sized icons (like a dotplot) rather than scaling one picture up.
+
+Finally, bin width in a histogram acts like a microscope's focus knob. Imagine \(n = 100\) exam scores made of two distinct clusters: one centered near \(62\) and another centered near \(78\), with almost nobody scoring near \(70\). With a bin width of \(5\) points (\([55, 60), [60, 65), [65, 70), [70, 75), [75, 80), \dots\)), the dip around \(70\) stands out clearly as a bimodal distribution. Change the bin width to \(25\) points (\([50, 75)\) and \([75, 100)\)), and the gap at \(70\) vanishes inside \([50, 75)\), making the histogram look unimodal. Conversely, shrink the bin width to \(1\) point, and random single-point fluctuations create dozens of needle-like spikes that obscure the two smooth clusters. Checking a histogram at two or three reasonable bin widths—or inspecting a dotplot alongside it for small samples—protects against mistaking a binning artifact for a real feature of the data.
+
+[QUESTION 4]
+[ANSWER: A]
+A magazine illustrates that City B's annual transit ridership is \(3\) times City A's ridership by drawing a circular train emblem for City B whose diameter is \(3\) times the diameter of City A's emblem. By what factor does the shaded area of City B's emblem exceed that of City A's emblem?
+
+(A) \(9\) times
+(B) \(3\) times
+(C) \(6\) times
+(D) \(27\) times
+(E) \(1.5\) times
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+An analyst plots a bar chart comparing customer retention across two plans: Plan 1 has \(82\%\) retention and Plan 2 has \(86\%\) retention. The chart starts its vertical axis at \(80\%\). Which statement accurately diagnoses the resulting visual distortion?
+
+(A) The visual distortion is negligible because both percentages are above \(80\%\).
+(B) The chart understates the difference between the two plans by compressing the vertical scale.
+(C) Starting at \(80\%\) makes Plan 2's bar appear \(86/82 \approx 1.05\) times as tall as Plan 1's bar, matching the true ratio.
+(D) Starting at \(80\%\) is required by the area principle whenever bar widths are equal.
+(E) Plan 2's bar appears \(3\) times as tall as Plan 1's bar (height \(6\) versus height \(2\)), drastically exaggerating an actual \(4\)-percentage-point difference.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+A density histogram consists of exactly three contiguous bars: \([0, 4)\) of height \(0.05\), \([4, 10)\) of height \(0.10\), and \([10, 20)\) of height \(h\). What must \(h\) equal, and what fraction of observations fall below \(10\)?
+
+(A) \(h = 0.04\), and \(60\%\) fall below \(10\).
+(B) \(h = 0.03\), and \(70\%\) fall below \(10\).
+(C) \(h = 0.02\), and \(80\%\) fall below \(10\).
+(D) \(h = 0.05\), and \(50\%\) fall below \(10\).
+(E) \(h = 0.02\), and \(60\%\) fall below \(10\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suppose a histogram of \(n = 80\) measurements uses unequal bin widths \([0, 5)\) (width \(5\), count \(20\)) and \([5, 25)\) (width \(20\), count \(40\)), but the software mistakenly plots raw counts (\(20\) and \(40\)) on the vertical axis instead of frequency density. What is the ratio of the drawn area of the \([5, 25)\) bar to the drawn area of the \([0, 5)\) bar, compared with the true ratio of their counts?
+
+(A) Drawn area ratio is \(2:1\), matching the true count ratio \(2:1\).
+(B) Drawn area ratio is \(4:1\), whereas the true count ratio is \(2:1\).
+(C) Drawn area ratio is \(1:2\), whereas the true count ratio is \(2:1\).
+(D) Drawn area ratio is \(8:1\), whereas the true count ratio is \(2:1\).
+(E) Drawn area ratio is \(16:1\), whereas the true count ratio is \(4:1\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+A dataset of \(n = 60\) reaction times is genuinely bimodal, with one tight cluster in \([220, 240)\text{ ms}\) and a second tight cluster in \([260, 280)\text{ ms}\), and zero observations in \([240, 260)\text{ ms}\). Which choice of equal-width histogram bins would completely conceal the gap between the two clusters?
+
+(A) Bins of width \(10\text{ ms}\) starting at \(220\): \([220, 230), [230, 240), [240, 250), \dots\)
+(B) Bins of width \(50\text{ ms}\) starting at \(200\): \([200, 250), [250, 300)\)
+(C) Bins of width \(20\text{ ms}\) starting at \(220\): \([220, 240), [240, 260), [260, 280)\)
+(D) Bins of width \(5\text{ ms}\) starting at \(220\): \([220, 225), [225, 230), \dots\)
+(E) Bins of width \(15\text{ ms}\) starting at \(215\): \([215, 230), [230, 245), [245, 260), [260, 275), [275, 290)\)
+[/BONUS]

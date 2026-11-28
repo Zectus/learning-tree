@@ -1,0 +1,253 @@
+=== SECTION 1: Órdenes parciales y órdenes parciales estrictos ===
+
+Las relaciones de equivalencia capturan la idea de «ser equivalente». Una segunda clase fundamental de relaciones captura la idea de «preceder» o «ser a lo sumo»: \(x \le y\) en la recta real, \(a \mid b\) en los enteros positivos, \(S \subseteq T\) en los subconjuntos de un conjunto, o la tarea \(A\) como requisito previo de la tarea \(B\). Obsérvese qué cambia al pasar de la equivalencia al orden: la simetría desaparece y en su lugar aparece la antisimetría —dos elementos no pueden precederse mutuamente a menos que sean iguales.
+
+[CALLOUT]
+id: poset-def
+label: Definición
+title: Orden parcial y conjunto parcialmente ordenado (poset)
+tone: key
+
+Una relación binaria \(\preceq\) sobre un conjunto \(P\) es un orden parcial sobre \(P\) si satisface tres propiedades para cualesquiera \(x, y, z \in P\):
+
+(1) Reflexividad: \(x \preceq x\).
+(2) Antisimetría: si \(x \preceq y\) e \(y \preceq x\), entonces \(x = y\).
+(3) Transitividad: si \(x \preceq y\) e \(y \preceq z\), entonces \(x \preceq z\).
+
+Un conjunto dotado de un orden parcial, escrito \((P, \preceq)\), se denomina conjunto parcialmente ordenado, o poset.
+[/CALLOUT]
+
+¿Por qué se llama orden PARCIAL? Porque NO exigimos que todo par de elementos \(x, y \in P\) sea comparable. Decimos que \(x\) e \(y\) son comparables si \(x \preceq y\) o \(y \preceq x\); en caso contrario, son incomparables.
+
+Examinemos tres posets canónicos de la matemática:
+1. Orden numérico estándar \((\mathbb{R}, \le)\): reflexivo (\(x \le x\)), antisimétrico (\(x \le y \land y \le x \implies x = y\)) y transitivo (\(x \le y \land y \le z \implies x \le z\)). Aquí todo par de números reales es comparable.
+2. Divisibilidad en los enteros positivos \((\mathbb{Z}^+, \mid)\): como se comprobó en la lección sobre relaciones binarias, \(a \mid b\) es reflexiva, antisimétrica en \(\mathbb{Z}^+\) y transitiva. Aquí \(2\) y \(3\) son incomparables porque \(2 \nmid 3\) y \(3 \nmid 2\). (Recuérdese que sobre todo \(\mathbb{Z}\), la divisibilidad NO es un orden parcial porque \(2 \mid -2\) y \(-2 \mid 2\) mientras que \(2 \ne -2\).)
+3. Inclusión de subconjuntos \((\mathcal{P}(X), \subseteq)\): para cualquier conjunto \(X\), la inclusión en \(\mathcal{P}(X)\) es reflexiva (\(A \subseteq A\)), antisimétrica (\(A \subseteq B \land B \subseteq A \implies A = B\) por extensionalidad) y transitiva (\(A \subseteq B \land B \subseteq C \implies A \subseteq C\)). Siempre que \(X\) tenga al menos dos elementos \(a \ne b\), los singuletes \(\{a\}\) y \(\{b\}\) son incomparables.
+
+Todo orden no estricto \(\preceq\) (como \(\le\) o \(\subseteq\)) posee un gemelo estricto \(\prec\) (como \(<\) o \(\subsetneq\)). En lugar de tratar los órdenes estrictos como un universo aparte, los formalizamos y demostramos una correspondencia biunívoca limpia entre ambos.
+
+[CALLOUT]
+id: strict-order-def
+label: Definición
+title: Orden parcial estricto
+tone: key
+
+Una relación binaria \(\prec\) sobre un conjunto \(P\) es un orden parcial estricto sobre \(P\) si cumple dos propiedades para cualesquiera \(x, y, z \in P\):
+
+(1) Irreflexividad: \(x \not\prec x\).
+(2) Transitividad: si \(x \prec y\) e \(y \prec z\), entonces \(x \prec z\).
+[/CALLOUT]
+
+Obsérvese que todo orden parcial estricto es automáticamente asimétrico (es decir, \(x \prec y \implies y \not\prec x\)): si se cumplieran tanto \(x \prec y\) como \(y \prec x\), la transitividad forzaría \(x \prec x\), contradiciendo la [REF: strict-order-def.1 | irreflexividad].
+
+Comprobemos ahora la correspondencia canónica entre órdenes parciales \(\preceq\) y órdenes parciales estrictos \(\prec\) sobre \(P\):
+- Dado un orden parcial \(\preceq\), definimos \(\prec\) mediante
+\[
+x \prec y \iff (x \preceq y \land x \ne y).
+\]
+Entonces \(\prec\) es irreflexiva (pues \(x \ne x\) es falsa) y transitiva: si \(x \prec y\) e \(y \prec z\), entonces \(x \preceq y\) e \(y \preceq z\) dan \(x \preceq z\) por transitividad de \(\preceq\). ¿Podría ser \(x = z\)? Si \(x = z\), entonces \(x \preceq y\) e \(y \preceq x\) forzarían \(x = y\) por [REF: poset-def.2 | antisimetría], contradiciendo \(x \ne y\). Luego \(x \ne z\), por lo que \(x \prec z\).
+- Recíprocamente, dado un orden parcial estricto \(\prec\), definimos \(\preceq\) mediante
+\[
+x \preceq y \iff (x \prec y \lor x = y).
+\]
+Entonces \(\preceq\) es inmediatamente reflexiva (pues \(x = x\)), antisimétrica (si \(x \preceq y\) e \(y \preceq x\) con \(x \ne y\), entonces \(x \prec y\) e \(y \prec x\), contradiciendo la asimetría de \(\prec\)) y transitiva (compruébense los cuatro casos de \(x \prec y\) o \(x = y\) combinados con \(y \prec z\) o \(y = z\)).
+- Además, estas dos recetas se deshacen mutuamente: quitar la diagonal \(\Delta_P\) de \(\preceq\) produce \(\prec\), y devolver \(\Delta_P\) a \(\prec\) recupera \(\preceq\).
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál de los siguientes pares \((P, R)\) es un conjunto parcialmente ordenado?
+
+(A) \((\mathbb{Z}, \mid)\), donde \(a \mid b\) es la divisibilidad sobre todos los enteros
+(B) \((\mathbb{R}^2, R)\), donde \((x_1, y_1) \mathrel{R} (x_2, y_2) \iff x_1 + y_1 \le x_2 + y_2\)
+(C) \((\mathbb{N}, R)\), donde \(m \mathrel{R} n \iff (m \le n \text{ y } m \equiv n \pmod 2)\)
+(D) \((\mathcal{P}(\{1, 2, 3\}), R)\), donde \(A \mathrel{R} B \iff |A| \le |B|\)
+(E) \((\mathbb{R}, <)\), con la desigualdad estricta
+[/QUESTION]
+
+=== SECTION 2: Órdenes totales, cadenas y anticadenas ===
+
+Entre los posets, aquellos cuyos elementos se alinean en una sola fila sin elementos incomparables merecen un nombre especial.
+
+[CALLOUT]
+id: total-chain-antichain
+label: Definición
+title: Orden total, cadena y anticadena
+tone: key
+
+Sea \((P, \preceq)\) un conjunto parcialmente ordenado.
+
+(1) Orden total (o lineal): \(\preceq\) es un orden total sobre \(P\) si todo par de elementos es comparable, es decir, para cualesquiera \(x, y \in P\), se cumple \(x \preceq y\) o \(y \preceq x\).
+(2) Cadena: un subconjunto \(C \subseteq P\) es una cadena en \(P\) si la restricción de \(\preceq\) a \(C\) es un orden total (cualesquiera dos elementos de \(C\) son comparables).
+(3) Anticadena: un subconjunto \(A \subseteq P\) es una anticadena en \(P\) si ningún par de elementos distintos de \(A\) es comparable (para cualesquiera \(x, y \in A\), si \(x \preceq y\), entonces \(x = y\)).
+[/CALLOUT]
+
+Examinemos cadenas y anticadenas dentro de dos posets concretos:
+- En \((\mathcal{P}(\{1, 2, 3\}), \subseteq)\):
+  - El subconjunto \(C = \{\emptyset, \{2\}, \{1, 2\}, \{1, 2, 3\}\}\) es una cadena de tamaño \(4\), porque \(\emptyset \subseteq \{2\} \subseteq \{1, 2\} \subseteq \{1, 2, 3\}\).
+  - El subconjunto \(A = \{\{1\}, \{2\}, \{3\}\}\) es una anticadena de tamaño \(3\): ninguno de estos tres singuletes es subconjunto de otro. De igual modo, \(\{\{1, 2\}, \{1, 3\}, \{2, 3\}\}\) es una anticadena de tamaño \(3\).
+- En \((\mathbb{Z}^+, \mid)\):
+  - Las potencias de \(2\), \(C = \{1, 2, 4, 8, 16, \dots\}\), forman una cadena infinita.
+  - El conjunto de todos los números primos \(A = \{2, 3, 5, 7, 11, \dots\}\) forma una anticadena infinita, porque ningún primo divide a otro primo distinto.
+
+Téngase cuidado con un caso límite sencillo: todo subconjunto vacío \(\emptyset\) y todo subconjunto de un solo elemento \(\{x\}\) de \(P\) es simultáneamente TANTO una cadena COMO una anticadena. ¿Por qué? Porque no hay pares de elementos DISTINTOS en \(\emptyset\) ni en \(\{x\}\), de modo que ambas definiciones se cumplen por vacuidad.
+
+[QUESTION 2]
+[ANSWER: B]
+Considérese el poset \((D_{30}, \mid)\) formado por todos los divisores positivos de \(30\):
+\[
+D_{30} = \{1, 2, 3, 5, 6, 10, 15, 30\}
+\]
+ordenados por divisibilidad. ¿Cuál de los siguientes subconjuntos de \(D_{30}\) es una ANTICADENA?
+
+(A) \(\{1, 2, 6, 30\}\)
+(B) \(\{2, 3, 5\}\)
+(C) \(\{2, 5, 10\}\)
+(D) \(\{3, 6, 15\}\)
+(E) \(\{1, 5, 15\}\)
+[/QUESTION]
+
+=== SECTION 3: Órdenes producto y órdenes lexicográficos ===
+
+Supongamos que ya disponemos de dos posets \((P, \preceq_P)\) y \((Q, \preceq_Q)\). ¿Cómo podemos dotar de un orden parcial a su producto cartesiano \(P \times Q\)? Dos construcciones canónicas se comportan de manera muy distinta —especialmente respecto a la comparabilidad.
+
+[CALLOUT]
+id: product-and-lex
+label: Definición
+title: Orden producto y orden lexicográfico en \(P \times Q\)
+tone: key
+
+Sean \((P, \preceq_P)\) y \((Q, \preceq_Q)\) conjuntos parcialmente ordenados.
+
+(1) Orden producto (componente a componente) \(\preceq_{\text{prod}}\):
+\[
+(p_1, q_1) \preceq_{\text{prod}} (p_2, q_2) \iff \bigl(p_1 \preceq_P p_2 \land q_1 \preceq_Q q_2\bigr).
+\]
+(2) Orden lexicográfico (de diccionario) \(\preceq_{\text{lex}}\):
+\[
+(p_1, q_1) \preceq_{\text{lex}} (p_2, q_2) \iff \bigl(p_1 \prec_P p_2\bigr) \lor \bigl(p_1 = p_2 \land q_1 \preceq_Q q_2\bigr).
+\]
+[/CALLOUT]
+
+Verifiquemos que AMBOS son auténticos órdenes parciales, y luego comparemos su comportamiento en \((\mathbb{R}, \le) \times (\mathbb{R}, \le)\):
+- Para el [REF: product-and-lex.1 | orden producto]: reflexividad, antisimetría y transitividad se cumplen directamente coordenada por coordenada.
+- Para el [REF: product-and-lex.2 | orden lexicográfico]:
+  - Reflexivo: \((p, q) \preceq_{\text{lex}} (p, q)\) se cumple mediante la segunda cláusula \(p = p \land q \preceq_Q q\).
+  - Antisimétrico: supongamos \((p_1, q_1) \preceq_{\text{lex}} (p_2, q_2)\) y \((p_2, q_2) \preceq_{\text{lex}} (p_1, q_1)\). Nótese que NO podemos tener \(p_1 \prec_P p_2\) (pues la segunda desigualdad da \(p_2 \preceq_P p_1\), contradiciendo la asimetría de \(\prec_P\)) ni \(p_2 \prec_P p_1\). Por tanto \(p_1 = p_2\), lo que reduce ambas desigualdades a \(q_1 \preceq_Q q_2\) y \(q_2 \preceq_Q q_1\), forzando \(q_1 = q_2\) por antisimetría de \(\preceq_Q\).
+  - Transitivo: supongamos \((p_1, q_1) \preceq_{\text{lex}} (p_2, q_2)\) y \((p_2, q_2) \preceq_{\text{lex}} (p_3, q_3)\). Entonces \(p_1 \preceq_P p_2 \preceq_P p_3\), luego \(p_1 \preceq_P p_3\). Si \(p_1 \prec_P p_3\), terminamos de inmediato. En caso contrario, \(p_1 = p_3\); como \(p_1 \preceq_P p_2 \preceq_P p_1\), la antisimetría fuerza \(p_1 = p_2 = p_3\). Eso sitúa ambas desigualdades originales en la cláusula de desempate: \(q_1 \preceq_Q q_2\) y \(q_2 \preceq_Q q_3\), luego \(q_1 \preceq_Q q_3\) por transitividad de \(\preceq_Q\).
+
+Obsérvese ahora el contraste llamativo entre ambos órdenes cuando \(P = Q = \mathbb{R}\) con el orden total estándar \(\le\):
+- Bajo el orden PRODUCTO en \(\mathbb{R} \times \mathbb{R}\): \((1, 5)\) y \((2, 0)\) son INCOMPARABLES, porque \(1 < 2\) en la primera coordenada mientras que \(5 > 0\) en la segunda. Así, incluso cuando TANTO \((P, \preceq_P)\) COMO \((Q, \preceq_Q)\) son órdenes totales (con al menos dos elementos cada uno), el orden producto NUNCA es un orden total.
+- Bajo el orden LEXICOGRÁFICO en \(\mathbb{R} \times \mathbb{R}\): \((1, 5) \prec_{\text{lex}} (2, 0)\), porque \(1 < 2\) ya decide la comparación en la primera coordenada —igual que «az» precede a «ba» en un diccionario. En general, si \((P, \preceq_P)\) y \((Q, \preceq_Q)\) son AMBOS órdenes totales, entonces el orden lexicográfico en \(P \times Q\) SÍ es un orden total: para cualesquiera \((p_1, q_1)\) y \((p_2, q_2)\), la totalidad de \(P\) da \(p_1 \prec_P p_2\), \(p_2 \prec_P p_1\) o \(p_1 = p_2\), y en el caso de empate \(p_1 = p_2\), la totalidad de \(Q\) compara \(q_1\) y \(q_2\).
+
+Nótese también que \((p_1, q_1) \preceq_{\text{prod}} (p_2, q_2)\) SIEMPRE implica \((p_1, q_1) \preceq_{\text{lex}} (p_2, q_2)\) (si \(p_1 \preceq_P p_2\) y \(q_1 \preceq_Q q_2\), entonces o bien \(p_1 \prec_P p_2\), o bien \(p_1 = p_2\) y \(q_1 \preceq_Q q_2\)), de modo que \({\preceq_{\text{prod}}} \subseteq {\preceq_{\text{lex}}}\).
+
+[QUESTION 3]
+[ANSWER: D]
+Sean \(P = \{1, 2, 3\}\) y \(Q = \{1, 2, 3\}\), ambos dotados del orden usual \(\le\). Considérense los cuatro pares \(u = (1, 3)\), \(v = (2, 1)\), \(w = (2, 2)\) y \(z = (3, 1)\) en \(P \times Q\). ¿Qué afirmación es VERDADERA?
+
+(A) \(u \preceq_{\text{prod}} v\) y \(u \preceq_{\text{lex}} v\)
+(B) \(u\) y \(w\) son comparables bajo \(\preceq_{\text{prod}}\), mientras que \(v\) y \(z\) son incomparables bajo \(\preceq_{\text{prod}}\)
+(C) \(v \prec_{\text{lex}} u \prec_{\text{lex}} w \prec_{\text{lex}} z\)
+(D) \(u\) y \(z\) son incomparables bajo \(\preceq_{\text{prod}}\), mientras que \(u \prec_{\text{lex}} v \prec_{\text{lex}} w \prec_{\text{lex}} z\)
+(E) \(\{u, v, w, z\}\) es una cadena bajo \(\preceq_{\text{prod}}\)
+[/QUESTION]
+
+=== SECTION 4: Relaciones de cobertura y diagramas de Hasse ===
+
+Si dibujamos el grafo dirigido completo de un poset finito —digamos, los \(6\) divisores de \(12\) ordenados por divisibilidad—, el dibujo se convierte rápidamente en una maraña recargada: \(6\) bucles (por la reflexividad) más flechas diagonales redundantes como \(1 \to 4\), \(1 \to 6\), \(1 \to 12\), \(2 \to 12\) y \(3 \to 12\) (todas forzadas por la transitividad). Como TODO poset es reflexivo y transitivo, esos bucles y atajos transitivos no aportan ninguna información nueva. Al suprimirlos quedan únicamente los enlaces inmediatos «de un paso hacia arriba», llamados relación de cobertura.
+
+[CALLOUT]
+id: cover-hasse-def
+label: Definición
+title: Relación de cobertura y diagrama de Hasse
+tone: key
+
+Sea \((P, \preceq)\) un poset y sean \(x, y \in P\).
+
+(1) Decimos que \(y\) cubre a \(x\) (escrito \(x \lessdot y\)) si \(x \prec y\) y NO existe ningún elemento \(z \in P\) estrictamente entre ambos (es decir, ningún \(z \in P\) cumple \(x \prec z \prec y\)).
+(2) El diagrama de Hasse de un poset finito \((P, \preceq)\) es una representación de los elementos de \(P\) como vértices en el plano tal que:
+- siempre que \(x \lessdot y\), el vértice \(y\) se sitúa estrictamente más arriba que el vértice \(x\) y un segmento no dirigido conecta \(x\) con \(y\);
+- no se dibujan bucles y no se traza ninguna arista entre \(x\) e \(y\) salvo cuando \(y\) cubre a \(x\).
+[/CALLOUT]
+
+Obsérvese cuán limpia vuelve la relación de cobertura a \((D_{12}, \mid)\), donde \(D_{12} = \{1, 2, 3, 4, 6, 12\}\):
+- ¿Cubre \(4\) a \(1\)? NO, porque \(1 \mid 2 \mid 4\) coloca a \(2\) estrictamente entre \(1\) y \(4\).
+- ¿Cubre \(2\) a \(1\)? SÍ: ningún divisor de \(12\) yace estrictamente entre \(1\) y \(2\).
+- Comprobando todos los pares, las relaciones de cobertura son exactamente: \(1 \lessdot 2\), \(1 \lessdot 3\), \(2 \lessdot 4\), \(2 \lessdot 6\), \(3 \lessdot 6\), \(4 \lessdot 12\) y \(6 \lessdot 12\).
+
+A continuación se muestra el diagrama de Hasse de \((D_{12}, \mid)\). Nótese que TODA arista asciende hacia arriba, y hay solo \(7\) aristas en lugar de los \(18\) pares ordenados de la relación completa de divisibilidad.
+
+[GRAPH]
+type: parametric2d
+title: Diagrama de Hasse de \((D_{12}, \mid)\)
+xlabel: anchura
+ylabel: nivel
+trange: 0, 1
+xrange: -2.2, 2.2
+yrange: -0.4, 3.5
+trace: -t, t | color: #2563eb
+trace: t, t | color: #2563eb
+trace: -1 - t, 1 + t | color: #2563eb
+trace: -1 + t, 1 + t | color: #2563eb
+trace: 1 - t, 1 + t | color: #2563eb
+trace: -2 + t, 2 + t | color: #2563eb
+trace: -t, 2 + t | color: #2563eb
+point: 0, 0 | label: \(1\) | offset: 0, -14
+point: -1, 1 | label: \(2\) | offset: -14, 0
+point: 1, 1 | label: \(3\) | offset: 14, 0
+point: -2, 2 | label: \(4\) | offset: -14, 0
+point: 0, 2 | label: \(6\) | offset: 14, 0
+point: -1, 3 | label: \(12\) | offset: 0, 14
+[/GRAPH]
+
+¿Cómo se recupera el orden parcial COMPLETO \(\preceq\) a partir de un diagrama de Hasse en un poset finito?
+- \(x \preceq y\) se cumple si y solo si O BIEN \(x = y\) O BIEN existe un camino de una o más aristas que sube ESTRICTAMENTE HACIA ARRIBA desde \(x\) hasta \(y\).
+Por ejemplo, en el diagrama de Hasse de \((D_{12}, \mid)\) anterior:
+- ¿Es \(1 \mid 12\)? SÍ, mediante el camino ascendente \(1 \to 2 \to 4 \to 12\) (o \(1 \to 3 \to 6 \to 12\)).
+- ¿Es \(3 \mid 4\)? NO. Aunque \(4\) esté dibujado más alto en la página que \(3\), NO hay ningún camino estrictamente ascendente de \(3\) a \(4\) (habría que bajar de \(3\) a \(1\) o de \(6\) a \(2\)). La altura vertical por sí sola nunca implica comparabilidad; únicamente un CAMINO ASCENDENTE lo hace.
+
+¿Por qué este teorema de recuperación («\(x \prec y \iff\) existe una cadena ascendente finita de coberturas de \(x\) a \(y\)») funciona siempre para posets FINITOS, pero puede fallar en posets INFINITOS? En un poset finito, si \(x \prec y\) y \(y\) no cubre a \(x\), insértese un elemento intermedio \(z\) con \(x \prec z \prec y\) y repítase el proceso; al ser \(P\) finito, este refinamiento debe terminar en una cadena finita de coberturas \(x = c_0 \lessdot c_1 \lessdot \dots \lessdot c_k = y\). En un poset denso infinito como \((\mathbb{Q}, \le)\) o \((\mathbb{R}, \le)\), entre cualesquiera \(x < y\) yace su punto medio \((x + y)/2\), de modo que NINGÚN elemento cubre a ningún otro —la relación de cobertura es completamente vacía. Por eso los diagramas de Hasse son una herramienta específica para posets finitos (o localmente finitos, como \(\mathbb{Z}\)).
+
+[QUESTION 4]
+[ANSWER: A]
+En el diagrama de Hasse de un poset finito \((P, \preceq)\), ¿cuál de las siguientes afirmaciones es SIEMPRE verdadera?
+
+(A) \(x \prec y\) se cumple si y solo si existe un camino de una o más aristas que asciende estrictamente desde \(x\) hasta \(y\).
+(B) \(x \prec y\) se cumple si y solo si \(y\) está dibujado a una altura vertical estrictamente mayor que \(x\).
+(C) Si \(x \prec y\), entonces debe haber una sola arista que conecte directamente a \(x\) y a \(y\).
+(D) Si existe un camino ascendente de \(x\) a \(y\) y un camino ascendente de \(y\) a \(x\) (con \(x \ne y\)), entonces \(x\) e \(y\) son incomparables.
+(E) Un diagrama de Hasse puede representar cualquier relación reflexiva y transitiva, incluso una que no sea antisimétrica.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+¿Cuántas aristas tiene el diagrama de Hasse del poset del conjunto potencia \((\mathcal{P}(\{1, 2, 3\}), \subseteq)\)?
+
+(A) \(6\)
+(B) \(8\)
+(C) \(9\)
+(D) \(10\)
+(E) \(12\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Considérese el poset \((\mathbb{Z}, \preceq)\) donde \(m \preceq n\) si y solo si \(m = n\) o \(m + 2 \le n\) (compruebe la transitividad: si \(m + 2 \le n\) y \(n + 2 \le p\), entonces \(m + 4 \le p \implies m + 2 \le p\)). ¿Qué elementos cubren a \(0\) en \((\mathbb{Z}, \preceq)\)?
+
+(A) Únicamente \(2\)
+(B) Únicamente \(1\) y \(2\)
+(C) \(2\) y \(3\)
+(D) \(2, 3\) y \(4\)
+(E) Ningún elemento cubre a \(0\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Sea \((P, \preceq)\) un poset, sea \(C\) una cadena en \(P\) y sea \(A\) una anticadena en \(P\). ¿Cuál es el máximo número posible de elementos en \(C \cap A\)?
+
+(A) \(0\)
+(B) \(1\)
+(C) \(2\)
+(D) Depende del tamaño de \(P\) y puede ser arbitrariamente grande
+(E) \(\min(|C|, |A|)\)
+[/BONUS]

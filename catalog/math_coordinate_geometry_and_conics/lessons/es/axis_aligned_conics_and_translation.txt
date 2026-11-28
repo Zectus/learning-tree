@@ -1,0 +1,207 @@
+=== SECTION 1: Traslación de ejes y completación de cuadrados ===
+
+Todas las circunferencias, parábolas, elipses e hipérbolas con ejes paralelos a los ejes coordenados se desarrollan en la única forma cuadrática
+\[
+Ax^2 + Cy^2 + Dx + Ey + F = 0,
+\]
+donde no aparece término en \(xy\) y al menos uno de \(A\) o \(C\) es distinto de cero. Completar el cuadrado ya convierte cada cónica individual en su forma ordinaria, pero existe una interpretación geométrica más limpia que unifica las cuatro figuras y prepara directamente el terreno para las cónicas rotadas: trasladar el origen del sistema coordenado a un nuevo punto \(O'(h, k)\).
+
+Suponga que un nuevo sistema de referencia \((x', y')\) tiene ejes paralelos a los ejes originales \(x\) e \(y\), con su nuevo origen \(O'\) ubicado en \((h, k)\) en el plano original. Cualquier punto \(P\) cuyas coordenadas originales son \((x, y)\) dista \(x - h\) unidades horizontalmente y \(y - k\) unidades verticalmente de \(O'\), por lo que sus nuevas coordenadas son \(x' = x - h\) e \(y' = y - k\).
+
+[CALLOUT]
+id: translation-equations
+label: Regla
+title: Traslación de ejes
+tone: key
+
+Trasladar el origen de coordenadas de \((0, 0)\) a \(O'(h, k)\) sin rotar los ejes relaciona las coordenadas originales \((x, y)\) y las coordenadas trasladadas \((x', y')\) mediante
+\[
+x = x' + h, \qquad y = y' + k
+\]
+e inversamente
+\[
+x' = x - h, \qquad y' = y - k.
+\]
+[/CALLOUT]
+
+¿Por qué al sustituir [REF: translation-equations | las ecuaciones de traslación] se simplifica \(Ax^2 + Cy^2 + Dx + Ey + F = 0\)? Desarrolle explícitamente la sustitución:
+\[
+A(x' + h)^2 + C(y' + k)^2 + D(x' + h) + E(y' + k) + F = 0,
+\]
+y agrupe las potencias de \(x'\) e \(y'\):
+\[
+Ax'^2 + Cy'^2 + (2Ah + D)x' + (2Ck + E)y' + F' = 0,
+\]
+donde el nuevo término constante es \(F' = Ah^2 + Ck^2 + Dh + Ek + F\). Observe de inmediato dos hechos estructurales:
+(1) La traslación NUNCA altera los coeficientes cuadráticos \(A\) y \(C\).
+(2) Los nuevos coeficientes lineales son \(2Ah + D\) y \(2Ck + E\), los cuales podemos anular eligiendo \(h\) y \(k\) estratégicamente.
+
+Hay dos casos según estén presentes o no ambos términos cuadráticos:
+- Cuando \(AC \neq 0\) (cónicas centrales: circunferencias, elipses e hipérbolas), imponga \(2Ah + D = 0\) y \(2Ck + E = 0\), obteniendo
+\[
+h = -\frac{D}{2A}, \qquad k = -\frac{E}{2C}.
+\]
+Ambos términos lineales desaparecen simultáneamente, dejando \(Ax'^2 + Cy'^2 + F' = 0\), centrada en el nuevo origen \(O'(h, k)\).
+- Cuando \(AC = 0\) (familia parabólica, digamos \(A \neq 0\) y \(C = 0\)), elija \(h = -\frac{D}{2A}\) para eliminar el término en \(x'\). Si \(E \neq 0\), el término en \(y'\) no puede eliminarse, así que en su lugar elija \(k\) para hacer nulo el término constante \(F' = Ah^2 + Dh + Ek + F = 0\), situando el vértice de la parábola en \(O'(h, k)\) con ecuación \(Ax'^2 + Ey' = 0\).
+
+Completar el cuadrado y trasladar los ejes son operaciones algebraicamente idénticas: completar el cuadrado halla \(h\) y \(k\) de forma implícita, mientras que la traslación muestra explícitamente el sistema de referencia desplazado. Por ejemplo, en \(4x^2 + 9y^2 - 24x + 36y + 36 = 0\), elegir \(h = -\frac{-24}{2(4)} = 3\) y \(k = -\frac{36}{2(9)} = -2\) da
+\[
+F' = 4(3)^2 + 9(-2)^2 - 24(3) + 36(-2) + 36 = 36 + 36 - 72 - 72 + 36 = -36,
+\]
+así que la ecuación trasladada es \(4x'^2 + 9y'^2 = 36\), o \(\frac{x'^2}{9} + \frac{y'^2}{4} = 1\) en el sistema desplazado \(x'y'\).
+
+[GRAPH]
+type: parametric2d
+title: Elipse \(4x^2 + 9y^2 - 24x + 36y + 36 = 0\) centrada en los ejes trasladados \(x'y'\) en \(O'(3, -2)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -2, 8
+yrange: -6, 3
+trace: 3 + 3*cos(t), -2 + 2*sin(t) | label: \(\frac{x'^2}{9} + \frac{y'^2}{4} = 1\)
+segment: -2, -2, 8, -2 | label: \(x'\) | dashed: true
+segment: 3, -6, 3, 3 | label: \(y'\) | dashed: true
+point: 0, 0 | label: \(O(0, 0)\)
+point: 3, -2 | label: \(O'(3, -2)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Bajo una traslación de ejes \(x = x' + h\), \(y = y' + k\), ¿qué nuevo origen \((h, k)\) elimina ambos términos lineales de \(3x^2 - 5y^2 + 12x + 30y - 48 = 0\), y cuál es la ecuación resultante en \((x', y')\)?
+
+(A) \((h, k) = (2, -3)\); \(3x'^2 - 5y'^2 = 15\)
+(B) \((h, k) = (-2, 3)\); \(3x'^2 - 5y'^2 = 15\)
+(C) \((h, k) = (-2, 3)\); \(3x'^2 - 5y'^2 = 81\)
+(D) \((h, k) = (-2, -3)\); \(3x'^2 - 5y'^2 = 15\)
+(E) \((h, k) = (-2, 3)\); \(3x'^2 - 5y'^2 = -15\)
+[/QUESTION]
+
+=== SECTION 2: Clasificación por coeficientes y lugares geométricos degenerados ===
+
+Como la traslación deja intactos a \(A\) y \(C\), los signos y la igualdad de \(A\) y \(C\) clasifican de inmediato toda ecuación \(Ax^2 + Cy^2 + Dx + Ey + F = 0\) (con \(A, C\) no ambos cero) en una de las cuatro familias de cónicas antes de realizar cualquier cálculo algebraico.
+
+[TABLE]
+Condición sobre los coeficientes | Cónica no degenerada | Posibles lugares geométricos degenerados
+\(A = C \neq 0\) | Circunferencia | Punto único o conjunto vacío
+\(AC > 0\) y \(A \neq C\) | Elipse | Punto único o conjunto vacío
+\(AC = 0\) (exactamente uno de \(A, C\) es \(0\)) | Parábola | Par de rectas paralelas, recta única o conjunto vacío
+\(AC < 0\) | Hipérbola | Par de rectas que se intersecan
+[/TABLE]
+
+[CALLOUT]
+id: coeff-test-caveat
+label: Error frecuente
+title: Los coeficientes identifican la familia, nunca la no degeneración
+tone: caution
+
+Inspeccionar solo \(A\) y \(C\) NO puede determinar si \(Ax^2 + Cy^2 + Dx + Ey + F = 0\) es una cónica genuina o un lugar geométrico degenerado. Siempre debe completar el cuadrado (trasladar los ejes) o factorizar la ecuación para examinar el término constante resultante o los factores lineales.
+[/CALLOUT]
+
+Cada resultado degenerado surge con claridad una vez reducida la ecuación:
+- Degeneraciones elípticas (\(AC > 0\), suponiendo \(A, C > 0\)): al trasladar se obtiene \(Ax'^2 + Cy'^2 = -F'\). Si \(-F' = 0\), únicamente \((x', y') = (0, 0)\) resuelve la ecuación, así que el lugar geométrico es el único punto \((h, k)\). Si \(-F' < 0\), el miembro izquierdo es no negativo mientras el derecho es negativo, de modo que el lugar geométrico es vacío. Por ejemplo, \(2x^2 + 3y^2 - 4x + 6y + 5 = 0\) pasa a \(2(x - 1)^2 + 3(y + 1)^2 = 0\), que es únicamente el punto \((1, -1)\).
+- Degeneraciones parabólicas (\(AC = 0\)): suponga \(A \neq 0\) y \(C = 0\). Una parábola genuina exige \(E \neq 0\) para que aparezca la variable sin cuadrado \(y\). Cuando \(E = 0\), la ecuación se reduce a una cuadrática en una sola variable \(Ax^2 + Dx + F = 0\), cuyo discriminante \(D^2 - 4AF\) decide entre tres resultados degenerados:
+  (1) \(D^2 - 4AF > 0\): dos raíces reales distintas \(x = r_1, r_2\), que dan dos rectas verticales paralelas (por ejemplo, \(x^2 - 6x + 5 = (x - 1)(x - 5) = 0\)).
+  (2) \(D^2 - 4AF = 0\): una raíz doble, que da una única recta vertical (por ejemplo, \(x^2 - 6x + 9 = (x - 3)^2 = 0\)).
+  (3) \(D^2 - 4AF < 0\): ninguna raíz real, que da el conjunto vacío (por ejemplo, \(x^2 - 6x + 10 = (x - 3)^2 + 1 = 0\)).
+- Degeneración hiperbólica (\(AC < 0\)): al trasladar se obtiene \(Ax'^2 + Cy'^2 = -F'\). Como \(A\) y \(C\) ya tienen signos opuestos, cualquier \(-F'\) distinto de cero produce una hipérbola genuina (horizontal o vertical), por lo que ÚNICAMENTE \(-F' = 0\) es degenerado, factorizándose en un par de rectas que se intersecan. Por ejemplo, \(x^2 - 4y^2 - 2x + 8y - 3 = 0\) se transforma en \((x - 1)^2 - 4(y - 1)^2 = 0\), que se factoriza como \((x - 2y + 1)(x + 2y - 3) = 0\).
+
+[QUESTION 2]
+[ANSWER: A]
+Determine los lugares geométricos exactos de las dos ecuaciones (i) \(4x^2 + 9y^2 - 24x + 36y + 72 = 0\) y (ii) \(y^2 - 8y + 12 = 0\).
+
+(A) (i) Un punto único \((3, -2)\); (ii) un par de rectas horizontales paralelas \(y = 2\) y \(y = 6\)
+(B) (i) Una elipse centrada en \((3, -2)\); (ii) una parábola que abre horizontalmente
+(C) (i) El conjunto vacío; (ii) un par de rectas horizontales paralelas \(y = 2\) y \(y = 6\)
+(D) (i) Un punto único \((3, -2)\); (ii) una parábola con vértice \((0, 4)\)
+(E) (i) Un punto único \((-3, 2)\); (ii) dos rectas que se intersecan
+[/QUESTION]
+
+=== SECTION 3: Resolución de sistemas de intersección recta-cónica y cónica-cónica ===
+
+Hallar dónde una recta corta a una cónica, o dónde se cruzan dos cónicas entre sí, convierte un problema geométrico de intersección en un sistema no lineal de dos ecuaciones en \((x, y)\).
+
+Para un sistema recta-cónica, despeje una variable en la ecuación lineal y sustitúyala en la ecuación de la cónica. El resultado es a lo sumo una ecuación cuadrática en una variable, de modo que una recta y una cónica se intersecan en a lo sumo \(2\) puntos reales:
+- Dos raíces reales distintas: una recta secante que corta dos veces a la cónica.
+- Una raíz doble (discriminante \(0\)): una recta tangente, o bien una recta paralela al eje de una parábola o a una asíntota de una hipérbola (lo que reduce el grado a \(1\) y corta una vez sin ser tangente).
+- Ninguna raíz real: la recta no corta a la cónica en absoluto.
+
+Por ejemplo, para intersecar la recta \(y = x - 1\) con la elipse \(x^2 + 2y^2 = 9\), sustituya \(y = x - 1\):
+\[
+x^2 + 2(x - 1)^2 = 9 \implies 3x^2 - 4x - 7 = 0 \implies (3x - 7)(x + 1) = 0.
+\]
+Así, \(x = -1\) da \((-1, -2)\), y \(x = \frac{7}{3}\) da \(\bigl(\frac{7}{3}, \frac{4}{3}\bigr)\).
+
+Para un sistema cónica-cónica, eliminar una variable (o eliminar \(x^2\) o \(y^2\) directamente cuando ambas ecuaciones contienen solo términos cuadráticos) conduce a una ecuación polinomial de grado hasta \(4\), por lo que dos cónicas distintas pueden intersecarse en \(0, 1, 2, 3\) o \(4\) puntos reales. Verifique siempre cada raíz algebraica en las ecuaciones originales para no conservar raíces extrañas ni omitir una rama \(\pm\).
+
+Considere la circunferencia \(x^2 + y^2 = 13\) y la hipérbola \(x^2 - y^2 = 5\). Sumar las dos ecuaciones elimina de inmediato \(y^2\):
+\[
+2x^2 = 18 \implies x^2 = 9 \implies x = \pm 3.
+\]
+Sustituir \(x^2 = 9\) de vuelta en \(x^2 + y^2 = 13\) da \(y^2 = 4 \implies y = \pm 2\). Combinar todas las elecciones de signo arroja cuatro puntos de intersección simétricos: \((3, 2)\), \((3, -2)\), \((-3, 2)\) y \((-3, -2)\).
+
+[GRAPH]
+type: parametric2d
+title: Cuatro intersecciones de la circunferencia \(x^2 + y^2 = 13\) y la hipérbola \(x^2 - y^2 = 5\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -3.1416, 3.1416
+xrange: -5.5, 5.5
+yrange: -5.5, 5.5
+trace: sqrt(13)*cos(t), sqrt(13)*sin(t) | label: \(x^2 + y^2 = 13\)
+trace: sqrt(5)*cosh(t/2), sqrt(5)*sinh(t/2) | label: \(x^2 - y^2 = 5\) (derecha)
+trace: -sqrt(5)*cosh(t/2), sqrt(5)*sinh(t/2) | label: \(x^2 - y^2 = 5\) (izquierda)
+point: 3, 2 | label: \((3, 2)\)
+point: 3, -2 | label: \((3, -2)\)
+point: -3, 2 | label: \((-3, 2)\)
+point: -3, -2 | label: \((-3, -2)\)
+[/GRAPH]
+
+Un sistema cónica-cónica también puede producir \(3\) puntos de intersección distintos cuando dos curvas son tangentes en un punto y se cruzan transversalmente en otros dos. Por ejemplo, sustituir \(x^2 = y\) de la parábola \(y = x^2\) en la circunferencia \(x^2 + (y - 2)^2 = 4\) da
+\[
+y + (y - 2)^2 = 4 \implies y^2 - 3y = 0 \implies y = 0 \text{ o } y = 3.
+\]
+Aquí \(y = 0\) da \(x^2 = 0\), un único vértice compartido \((0, 0)\) donde la parábola es tangente a la circunferencia, mientras que \(y = 3\) da \(x = \pm \sqrt{3}\), produciendo dos puntos de corte adicionales \((\sqrt{3}, 3)\) y \((-\sqrt{3}, 3)\): tres intersecciones reales en total.
+
+[QUESTION 3]
+[ANSWER: C]
+¿Cuántos puntos reales de intersección distintos comparten la elipse \(\frac{x^2}{25} + \frac{y^2}{9} = 1\) y la parábola \(y = x^2 - 3\)?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(0\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+Halle todos los puntos reales de intersección de la elipse \(x^2 + 4y^2 = 20\) y la hipérbola \(x^2 - y^2 = 5\).
+
+(A) Únicamente \((2\sqrt{2}, \sqrt{3})\) y \((-2\sqrt{2}, -\sqrt{3})\)
+(B) \((\pm \sqrt{3}, \pm 2\sqrt{2})\)
+(C) \((\pm 4, \pm 1)\)
+(D) \((\pm \sqrt{8}, 0)\) y \((0, \pm \sqrt{3})\)
+(E) \((\pm 2\sqrt{2}, \pm \sqrt{3})\) (cuatro puntos)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+¿Para qué valor o valores reales del parámetro \(m\) la ecuación \(x^2 + my^2 - 4x + 6my + 8m + 4 = 0\) deja de representar una cónica no degenerada, y cuál es el lugar geométrico degenerado resultante?
+
+(A) Todo \(m \le 0\), dando el conjunto vacío para \(m < 0\) y una recta para \(m = 0\)
+(B) Únicamente \(m = 0\), dando dos rectas verticales paralelas
+(C) Únicamente \(m = -1\), dando un par de rectas que se intersecan
+(D) Únicamente \(m = 0\), dando la única recta vertical \(x = 2\)
+(E) Ningún valor real de \(m\); es una cónica no degenerada para todo \(m\) real
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Para qué valores reales de \(b\) la recta \(y = 2x + b\) es tangente a la hipérbola \(3x^2 - y^2 = 27\)?
+
+(A) \(b = \pm \sqrt{3}\)
+(B) \(b = \pm 3\)
+(C) \(b = \pm 6\)
+(D) \(b = \pm 9\)
+(E) Ningún valor real de \(b\)
+[/BONUS]

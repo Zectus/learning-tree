@@ -1,0 +1,230 @@
+=== SECTION 1: Lectura de diagramas de dispersión y definición de la covarianza muestral ===
+
+Supongamos que medimos dos variables cuantitativas sobre las mismas \(n\) unidades de observación —digamos las horas semanales de estudio \(x_i\) y la calificación del examen \(y_i\) para cada estudiante \(i = 1, \dots, n\)—. Un resumen univariado de \(x\) por separado y un resumen univariado de \(y\) por separado pasan por alto la pregunta más importante: ¿cómo varían \(x\) e \(y\) CONJUNTAMENTE?
+
+Comience siempre el análisis cuantitativo bivariado con un diagrama de dispersión, graficando cada observación pareada \((x_i, y_i)\) en el plano coordenado. Cuando una variable desempeña de manera natural un papel explicativo (predictor) y la otra un papel de respuesta (resultado), coloque la variable explicativa en el eje horizontal \(x\) y la variable de respuesta en el eje vertical \(y\). Lea todo diagrama de dispersión sistemáticamente a lo largo de cinco dimensiones:
+- Forma: ¿siguen los puntos una línea recta, una curva suave o ningún patrón claro?
+- Dirección: al aumentar \(x\), ¿tiende \(y\) a aumentar (asociación positiva) o a disminuir (asociación negativa)?
+- Intensidad: ¿cuán estrechamente se ciñen los puntos a la forma subyacente frente a dispersarse ampliamente alrededor de ella?
+- Conglomerados o subgrupos: ¿se separan los puntos en islas distintas?
+- Valores atípicos bivariados y puntos de alto apalancamiento: ¿rompe algún punto aislado la tendencia general o se sitúa muy alejado sobre el eje \(x\)?
+
+Para resumir numéricamente el movimiento conjunto lineal, observe qué sucede cuando centramos el diagrama de dispersión en el centroide \((\bar{x}, \bar{y})\), dividiendo el plano en cuatro cuadrantes. Para cada punto \((x_i, y_i)\):
+- En el cuadrante superior derecho (\(x_i > \bar{x}\) e \(y_i > \bar{y}\)) y en el cuadrante inferior izquierdo (\(x_i < \bar{x}\) e \(y_i < \bar{y}\)), las dos desviaciones \((x_i - \bar{x})\) e \((y_i - \bar{y})\) tienen el MISMO signo, por lo que su producto \((x_i - \bar{x})(y_i - \bar{y})\) es POSITIVO.
+- En el cuadrante superior izquierdo (\(x_i < \bar{x}, y_i > \bar{y}\)) y en el cuadrante inferior derecho (\(x_i > \bar{x}, y_i < \bar{y}\)), las dos desviaciones tienen signos OPUESTOS, por lo que su producto \((x_i - \bar{x})(y_i - \bar{y})\) es NEGATIVO.
+
+Promediar estos productos con signo (usando el denominador \(n - 1\) acorde con la varianza muestral) produce la covarianza muestral.
+
+[CALLOUT]
+id: sample-covariance
+label: Definición
+title: Covarianza muestral
+tone: key
+
+Para \(n \ge 2\) observaciones cuantitativas pareadas \((x_1, y_1), \dots, (x_n, y_n)\) con medias muestrales \(\bar{x}\) y \(\bar{y}\), la covarianza muestral es
+\[
+s_{xy} = \frac{1}{n - 1} \sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y}).
+\]
+Su signo indica la dirección dominante del movimiento conjunto lineal: \(s_{xy} > 0\) cuando los puntos se concentran en los cuadrantes superior derecho e inferior izquierdo alrededor de \((\bar{x}, \bar{y})\), \(s_{xy} < 0\) cuando se concentran en los cuadrantes superior izquierdo e inferior derecho, y \(s_{xy} \approx 0\) cuando los productos positivos y negativos de cuadrante se cancelan.
+[/CALLOUT]
+
+Calculemos \(s_{xy}\) en \(n = 5\) pares de horas de estudio \(x\) y calificaciones de examen \(y\): \((1, 60), (2, 68), (3, 72), (4, 74), (5, 76)\). Aquí \(\bar{x} = 15/5 = 3\) horas y \(\bar{y} = 350/5 = 70\) puntos.
+
+[TABLE]
+Observación \(i\) | \(x_i\) | \(y_i\) | \(x_i - \bar{x}\) | \(y_i - \bar{y}\) | \((x_i - \bar{x})(y_i - \bar{y})\)
+1 | 1 | 60 | -2 | -10 | +20
+2 | 2 | 68 | -1 | -2 | +2
+3 | 3 | 72 | 0 | +2 | 0
+4 | 4 | 74 | +1 | +4 | +4
+5 | 5 | 76 | +2 | +6 | +12
+[/TABLE]
+
+Sumar los productos cruzados da \(\sum_{i=1}^5 (x_i - \bar{x})(y_i - \bar{y}) = 20 + 2 + 0 + 4 + 12 = 38\), de modo que \(s_{xy} = 38 / 4 = 9.5\) horas-punto. El gráfico siguiente muestra estos cinco puntos junto con las rectas de las medias horizontal y vertical que se intersecan en el centroide \((3, 70)\); note cómo cada punto fuera del centro se sitúa en el cuadrante superior derecho o en el inferior izquierdo, generando productos positivos.
+
+[GRAPH]
+type: function2d
+title: Diagrama de dispersión de calificaciones frente a horas de estudio centrado en \((\bar{x}, \bar{y}) = (3, 70)\)
+xlabel: Horas de estudio
+ylabel: Calificación del examen
+xrange: 0.5, 5.5
+yrange: 56, 80
+trace: 70 | label: Media \(\bar{y} = 70\) | color: #94a3b8
+segment: 3, 56, 3, 80 | label: \(\bar{x} = 3\) | dashed: true | color: #94a3b8
+point: 1, 60 | label: (1, 60) | color: #3b82f6
+point: 2, 68 | label: (2, 68) | color: #3b82f6
+point: 3, 72 | label: (3, 72) | color: #3b82f6
+point: 4, 74 | label: (4, 74) | color: #3b82f6
+point: 5, 76 | label: (5, 76) | color: #3b82f6
+point: 3, 70 | label: Centroide | color: #ef4444
+[/GRAPH]
+
+Observe ahora la principal debilidad de la covarianza: ¡su magnitud numérica depende por completo de las unidades de medición elegidas! Si convertimos el tiempo de estudio de horas \(x\) a minutos \(u = 60 x\), cada desviación \((u_i - \bar{u}) = 60(x_i - \bar{x})\) se multiplica por \(60\), por lo que \(s_{uy} = 60\, s_{xy} = 570\) minutos-punto: sesenta veces más grande aunque la relación subyacente no haya cambiado en absoluto. En general, para reescalamientos lineales \(u_i = a x_i + b\) y \(v_i = c y_i + d\), sustituir \(u_i - \bar{u} = a(x_i - \bar{x})\) y \(v_i - \bar{v} = c(y_i - \bar{y})\) en [REF: sample-covariance | la fórmula de la covarianza] da
+\[
+s_{uv} = a c \, s_{xy}.
+\]
+Como la covarianza arrastra unidades producto (como horas-punto o dólares-kilogramo), a partir de \(s_{xy} = 9.5\) por sí sola no puede saberse si una asociación lineal es fuerte o débil.
+
+=== SECTION 2: Coeficiente de correlación de Pearson, cotas e invariancia ===
+
+Para eliminar las unidades arbitrarias, estandarizamos AMBAS variables a puntuaciones \(z\) adimensionales antes de calcular su covarianza: \(z_{x,i} = (x_i - \bar{x})/s_x\) y \(z_{y,i} = (y_i - \bar{y})/s_y\) (suponiendo \(s_x > 0\) y \(s_y > 0\)).
+
+[CALLOUT]
+id: pearson-correlation
+label: Definición
+title: Coeficiente de correlación muestral de Pearson \(r\)
+tone: key
+
+Para \(n \ge 2\) observaciones pareadas \((x_1, y_1), \dots, (x_n, y_n)\) con \(s_x > 0\) y \(s_y > 0\), el coeficiente de correlación de Pearson es
+\[
+r = \frac{s_{xy}}{s_x s_y} = \frac{1}{n - 1} \sum_{i=1}^n \left(\frac{x_i - \bar{x}}{s_x}\right)\left(\frac{y_i - \bar{y}}{s_y}\right) = \frac{1}{n - 1} \sum_{i=1}^n z_{x,i} z_{y,i}.
+\]
+Equivalentemente, cancelar el factor común \(1/(n - 1)\) en el numerador y el denominador da
+\[
+r = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^n (x_i - \bar{x})^2}\;\sqrt{\sum_{i=1}^n (y_i - \bar{y})^2}}.
+\]
+Si \(s_x = 0\) o \(s_y = 0\) (todos los puntos yacen sobre una única recta vertical u horizontal), \(r\) queda indefinido.
+[/CALLOUT]
+
+Complete nuestro ejemplo de horas de estudio usando [REF: pearson-correlation | la fórmula de Pearson]:
+- A partir de las desviaciones \(x_i - \bar{x} = (-2, -1, 0, 1, 2)\), \(\sum (x_i - \bar{x})^2 = 10\), de modo que \(s_x^2 = 10 / 4 = 2.5\).
+- A partir de las desviaciones \(y_i - \bar{y} = (-10, -2, 2, 4, 6)\), \(\sum (y_i - \bar{y})^2 = 100 + 4 + 4 + 16 + 36 = 160\), de modo que \(s_y^2 = 160 / 4 = 40\).
+- Así, \(s_x s_y = \sqrt{2.5 \times 40} = \sqrt{100} = 10\), lo que da
+\[
+r = \frac{9.5}{10} = +0.95,
+\]
+una asociación lineal positiva muy fuerte.
+
+¿Por qué debe \(r\) encontrarse SIEMPRE entre \(-1\) y \(+1\)? Podemos demostrarlo directamente con álgebra elemental —sin requerir ningún teorema avanzado—. Recuerde de la estandarización que \(\frac{1}{n-1}\sum_{i=1}^n z_{x,i}^2 = 1\) y \(\frac{1}{n-1}\sum_{i=1}^n z_{y,i}^2 = 1\). Para CUALQUIER número real \(t\), una suma de cuadrados es no negativa:
+\[
+0 \le \frac{1}{n - 1} \sum_{i=1}^n (z_{y,i} - t z_{x,i})^2.
+\]
+Desarrollar el cuadrado y aplicar la linealidad de la sumatoria da
+\[
+0 \le \frac{1}{n - 1}\sum_{i=1}^n z_{y,i}^2 - 2 t \left(\frac{1}{n - 1}\sum_{i=1}^n z_{x,i} z_{y,i}\right) + t^2 \left(\frac{1}{n - 1}\sum_{i=1}^n z_{x,i}^2\right) = 1 - 2 r t + t^2.
+\]
+Ahora haga la elección estratégica \(t = r\) (que minimiza la cuadrática \(t^2 - 2 r t + 1 = (t - r)^2 + (1 - r^2)\)):
+\[
+0 \le 1 - 2 r^2 + r^2 = 1 - r^2.
+\]
+Por lo tanto, \(r^2 \le 1\), ¡lo cual demuestra \(-1 \le r \le 1\)! Más aún, la igualdad \(r^2 = 1\) (es decir, \(r = +1\) o \(r = -1\)) se cumple si y solo si la suma no negativa \(\sum_{i=1}^n (z_{y,i} - r z_{x,i})^2 = 0\), lo que obliga a CADA término a anularse: \(z_{y,i} = +z_{x,i}\) (para \(r = +1\)) o \(z_{y,i} = -z_{x,i}\) (para \(r = -1\)). Despejar \(y_i\) da \(y_i = \bar{y} \pm \frac{s_y}{s_x}(x_i - \bar{x})\): cada punto yace exactamente sobre una única línea recta ni horizontal ni vertical.
+
+Tres propiedades algebraicas adicionales se deducen directamente de [REF: pearson-correlation | la fórmula con puntuaciones \(z\)]:
+1. Simetría: como \(z_{x,i} z_{y,i} = z_{y,i} z_{x,i}\), intercambiar las dos variables nunca altera la correlación: \(r(x, y) = r(y, x)\).
+2. Invariancia ante escalamiento y traslación: bajo \(u_i = a x_i + b\) y \(v_i = c y_i + d\) (\(a \ne 0, c \ne 0\)), demostramos antes que \(z_{u,i} = \operatorname{sgn}(a)\, z_{x,i}\) y \(z_{v,i} = \operatorname{sgn}(c)\, z_{y,i}\) (donde \(\operatorname{sgn}(a)\) es \(+1\) si \(a > 0\) y \(-1\) si \(a < 0\)). Al multiplicar se obtiene
+\[
+r(u, v) = \operatorname{sgn}(a)\operatorname{sgn}(c)\, r(x, y).
+\]
+En particular, toda conversión positiva de unidades (\(a > 0, c > 0\), como pasar de horas a minutos o de Celsius a Fahrenheit) deja a \(r\) completamente SIN CAMBIO, mientras que invertir el signo de exactamente una variable invierte el signo de \(r\).
+3. Número adimensional: como \(z_{x,i}\) y \(z_{y,i}\) no tienen unidades, \(r\) es un número puro sin unidades asociadas.
+
+[QUESTION 1]
+[ANSWER: B]
+Calcule la covarianza muestral \(s_{xy}\) y el coeficiente de correlación de Pearson \(r\) para las \(n = 4\) observaciones pareadas \((2, 16), (4, 8), (6, 12), (8, 4)\).
+
+(A) \(s_{xy} = +32/3\) y \(r = +0.80\)
+(B) \(s_{xy} = -32/3\) y \(r = -0.80\)
+(C) \(s_{xy} = -8\) y \(r = -0.80\)
+(D) \(s_{xy} = -32/3\) y \(r = -0.64\)
+(E) \(s_{xy} = -40/3\) y \(r = -1.00\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: E]
+A lo largo de \(n = 60\) días de invierno, la temperatura exterior \(x\) (en \(^\circ\text{C}\)) y la factura diaria de calefacción \(y\) (en dólares) tienen covarianza muestral \(s_{xy} = -30\) y correlación de Pearson \(r = -0.85\). Si la temperatura se convierte a Fahrenheit mediante \(u = 1.8 x + 32\) y la factura diaria se convierte en un puntaje de reembolso mediante \(v = 200 - 2 y\), ¿cuáles son la nueva covarianza \(s_{uv}\) y correlación \(r(u, v)\)?
+
+(A) \(s_{uv} = -108\) y \(r(u, v) = -0.85\)
+(B) \(s_{uv} = +108\) y \(r(u, v) = -0.85\)
+(C) \(s_{uv} = -30\) y \(r(u, v) = +0.85\)
+(D) \(s_{uv} = +54\) y \(r(u, v) = +0.85\)
+(E) \(s_{uv} = +108\) y \(r(u, v) = +0.85\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+El Conjunto 1 consta de cinco puntos situados sobre la recta \(y_i = 12 - 3 x_i\) en \(x = 1, 2, 4, 5, 8\). El Conjunto 2 consta de cinco puntos situados sobre la recta horizontal \(y_i = 12\) en \(x = 1, 2, 4, 5, 8\). ¿Cuáles son los coeficientes de correlación de Pearson para el Conjunto 1 y el Conjunto 2, respectivamente?
+
+(A) \(r = -1\) para el Conjunto 1, y \(r\) está indefinido para el Conjunto 2 porque \(s_y = 0\).
+(B) \(r = -1\) para el Conjunto 1, y \(r = 0\) para el Conjunto 2.
+(C) \(r = -3\) para el Conjunto 1, y \(r = 0\) para el Conjunto 2.
+(D) \(r = +1\) para el Conjunto 1, y \(r = +1\) para el Conjunto 2.
+(E) \(r = -1\) para el Conjunto 1, y \(r = +1\) para el Conjunto 2.
+[/QUESTION]
+
+=== SECTION 3: Cuatro trampas esenciales de la \(r\) de Pearson ===
+
+Por ser tan práctica, \(r\) es uno de los números más mal empleados en el análisis de datos. Nunca reporte \(r\) sin inspeccionar el diagrama de dispersión, porque cuatro fallas clásicas pueden volver seriamente engañosa a \(r\).
+
+[CALLOUT]
+id: correlation-pitfalls
+label: Error común
+title: Cuatro trampas al interpretar la \(r\) de Pearson
+tone: caution
+
+(1) Solo linealidad: \(r\) mide ÚNICAMENTE asociación en línea recta. Un patrón curvo fuerte —como la parábola exacta \(y = x^2\) en los puntos simétricos \((-2, 4), (-1, 1), (0, 0), (1, 1), (2, 4)\)— tiene \(\sum (x_i - 0)(y_i - 2) = 0\), dando \(r = 0\) ¡a pesar de una relación determinista!
+(2) Falta de resistencia a valores atípicos: al igual que \(\bar{x}\) y \(s\), \(r\) NO es resistente. Un único punto distante de alto apalancamiento puede inflar una nube sin correlación (\(r = 0\)) hasta \(r > 0.95\), o colapsar una fuerte tendencia lineal (\(r = 0.95\)) hacia \(0\) o incluso invertir su signo.
+(3) Agregación de subgrupos (conglomerados ocultos): combinar subgrupos distintos con centroides diferentes puede crear una correlación combinada positiva fuerte incluso cuando la asociación dentro de cada subgrupo es cero o negativa.
+(4) Correlación no implica causalidad: un \(|r|\) grande entre \(x\) e \(y\) nunca demuestra por sí solo que cambiar \(x\) cause un cambio en \(y\). Una variable de confusión oculta puede impulsar a ambas, la causalidad puede ir de \(y\) hacia \(x\), o dos variables con tendencia pueden moverse juntas por coincidencia.
+[/CALLOUT]
+
+Para ver cuantitativamente [REF: correlation-pitfalls.2 | el apalancamiento de un valor atípico], tome cuatro puntos completamente sin correlación que forman un cuadrado: \((0, 0), (0, 2), (2, 0), (2, 2)\) (cuya correlación es \(r = 0\)), y agregue UN quinto punto \((a, a)\) sobre la diagonal para \(a \ge 1\). El álgebra directa muestra que la correlación resultante es
+\[
+r(a) = \frac{(a - 1)^2}{(a - 1)^2 + 5}.
+\]
+En \(a = 1\) (justo dentro del cuadrado), \(r = 0\). Lleve ese único punto a \((6, 6)\) y \(r\) salta a \(25 / 30 \approx +0.833\); llévelo a \((11, 11)\) y \(r\) alcanza \(100 / 105 \approx +0.952\), ¡aunque cuatro de los cinco puntos no tienen tendencia lineal alguna! Arrastre el deslizador \(a\) en el gráfico siguiente para observar cómo un punto de apalancamiento secuestra la \(r\) de Pearson.
+
+[GRAPH]
+type: function2d
+title: Cómo un único valor atípico \((a, a)\) infla \(r\) en un cuadrado de 4 puntos sin correlación
+xlabel: Coordenada del atípico
+ylabel: Correlación de Pearson
+xrange: 1, 12
+yrange: 0, 1.05
+trace: ((x - 1)^2) / ((x - 1)^2 + 5) | label: \(r(a) = (a-1)^2 / ((a-1)^2 + 5)\) | color: #ef4444
+point: a, ((a - 1)^2) / ((a - 1)^2 + 5) | label: \(r(a)\) | color: #1d4ed8
+segment: a, 0, a, ((a - 1)^2) / ((a - 1)^2 + 5) | dashed: true | color: #1d4ed8
+slider: a | range: 1, 12 | init: 6 | step: 0.5
+[/GRAPH]
+
+[QUESTION 4]
+[ANSWER: C]
+Un ingeniero automotriz mide el rendimiento de combustible \(y\) (en km/L) a lo largo de velocidades del vehículo \(x\) que varían uniformemente de \(20\) a \(120\text{ km/h}\). El rendimiento sube suavemente hasta un máximo cerca de \(70\text{ km/h}\) y luego desciende simétricamente a velocidades mayores, arrojando una correlación de Pearson \(r = +0.02\). Un gerente afirma: «Como \(r \approx 0\), la velocidad de conducción prácticamente no guarda relación con el rendimiento de combustible». ¿Cuál es la falla en esta afirmación?
+
+(A) La \(r\) de Pearson no puede usarse a menos que ambas variables se midan en las mismas unidades.
+(B) La media muestral de \(x\) debe ser \(0\) antes de calcular \(r\).
+(C) La \(r\) de Pearson detecta únicamente asociación lineal; una fuerte curva simétrica en forma de U invertida cancela las pendientes positivas y negativas y produce \(r \approx 0\) pese a existir una dependencia fuerte.
+(D) Como \(r > 0\), el rendimiento debe aumentar linealmente con la velocidad.
+(E) El rendimiento de combustible es una variable ordinal, de modo que la covarianza no puede definirse.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suponga que un conjunto de datos bivariado de \(n\) pares tiene valores estandarizados \(z_{x,i}\) y \(z_{y,i}\) con correlación de Pearson \(r = 0.60\). Usando la identidad \(\frac{1}{n-1}\sum_{i=1}^n (z_{y,i} - t z_{x,i})^2 = 1 - 2 r t + t^2\), ¿cuál es el valor exacto de \(\frac{1}{n-1}\sum_{i=1}^n (z_{y,i} - z_{x,i})^2\)?
+
+(A) \(0.40\)
+(B) \(0.64\)
+(C) \(1.20\)
+(D) \(0.80\)
+(E) \(1.60\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Unos biólogos miden la envergadura \(x\) y el porcentaje de grasa corporal \(y\) en dos especies distintas de aves. Dentro de la Especie 1, los puntos se agrupan alrededor de \((20, 12)\) con \(r = -0.60\). Dentro de la Especie 2, los puntos se agrupan alrededor de \((60, 38)\) con \(r = -0.60\). ¿Qué suele suceder con la \(r\) de Pearson si ambas especies se combinan en un único conjunto de datos sin separarlas?
+
+(A) La correlación combinada también debe ser igual a \(-0.60\).
+(B) La correlación combinada puede volverse fuertemente positiva porque la gran separación positiva entre los centroides de las dos especies domina las pendientes negativas dentro de cada especie.
+(C) La correlación combinada debe ser igual a \(0\) porque las dos especies se cancelan.
+(D) La correlación combinada debe volverse aún más negativa (más cercana a \(-1\)).
+(E) Combinarlas deja a \(r\) sin cambio y solo cambia \(s_{xy}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Un conjunto de datos de \(n = 10\) observaciones pareadas tiene centroide \((\bar{x}, \bar{y})\) y correlación de Pearson \(r = 0.72\). Suponga que se agrega al conjunto una nueva observación ubicada exactamente en el centroide \((\bar{x}, \bar{y})\) (completando \(n = 11\)). ¿Cuál es la nueva correlación de Pearson \(r_{\text{nueva}}\)?
+
+(A) \(0.72\)
+(B) \(0.648\)
+(C) \(0.655\)
+(D) \(0.792\)
+(E) No puede determinarse sin conocer \(s_x\) y \(s_y\).
+[/BONUS]

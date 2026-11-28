@@ -1,0 +1,221 @@
+=== SECTION 1: Ángulos directores y descomposición de vectores en componentes ===
+
+En la geometría aplicada y la física, los vectores rara vez llegan empaquetados como pares de coordenadas \(\langle v_x, v_y \rangle\). Un controlador aéreo describe un viento de \(40\text{ km/h}\) que sopla hacia el noreste; un plano mecánico especifica un tirante que ejerce \(200\text{ N}\) a \(35^\circ\) sobre la horizontal. La aritmética de componentes sigue siendo la manera más limpia de sumar tales vectores, así que necesitamos un puente confiable en ambos sentidos entre la forma magnitud-dirección y la forma en componentes rectangulares \(\langle v_x, v_y \rangle\).
+
+Coloca cualquier vector no nulo \(\mathbf{v}\) en posición estándar con su origen en \(O(0, 0)\). Su ángulo director estándar \(\theta\) es el ángulo medido en sentido antihorario desde el semieje \(x\) positivo hasta \(\mathbf{v}\), tomado por convención en el intervalo \(0^\circ \le \theta < 360^\circ\) (o equivalentemente \(0 \le \theta < 2\pi\) en radianes).
+
+Comienza por el caso especial de un vector unitario \(\hat{\mathbf{u}}\) que apunta con ángulo director estándar \(\theta\). Como \(\|\hat{\mathbf{u}}\| = 1\), su extremo yace sobre la circunferencia unitaria \(x^2 + y^2 = 1\) a un ángulo \(\theta\) desde el semieje \(x\) positivo. Por las definiciones del coseno y el seno en la circunferencia unitaria, las coordenadas de ese punto son \((\cos\theta, \sin\theta)\), lo cual da el vector unitario de dirección
+\[
+\hat{\mathbf{u}} = \langle \cos\theta,\; \sin\theta \rangle.
+\]
+Comprueba su longitud: \(\|\hat{\mathbf{u}}\| = \sqrt{\cos^2\theta + \sin^2\theta} = \sqrt{1} = 1\) para todo ángulo \(\theta\).
+
+Ahora toma cualquier vector no nulo \(\mathbf{v}\) con magnitud \(\|\mathbf{v}\|\) y ángulo director estándar \(\theta\). Como \(\mathbf{v}\) tiene longitud \(\|\mathbf{v}\|\) en la misma dirección que el vector unitario \(\hat{\mathbf{u}} = \langle \cos\theta, \sin\theta \rangle\), escalar \(\hat{\mathbf{u}}\) por \(\|\mathbf{v}\|\) entrega \(\mathbf{v}\) de inmediato:
+\[
+\mathbf{v} = \|\mathbf{v}\|\,\hat{\mathbf{u}} = \|\mathbf{v}\|\langle \cos\theta,\; \sin\theta \rangle = \langle \|\mathbf{v}\|\cos\theta,\; \|\mathbf{v}\|\sin\theta \rangle.
+\]
+Separar \(\mathbf{v}\) en su componente horizontal \(v_x = \|\mathbf{v}\|\cos\theta\) y su componente vertical \(v_y = \|\mathbf{v}\|\sin\theta\) se denomina descomponer \(\mathbf{v}\) en componentes rectangulares. Dado que el coseno y el seno llevan automáticamente los signos más y menos adecuados en los cuatro cuadrantes, esta única fórmula funciona para todo \(\theta \in [0^\circ, 360^\circ)\).
+
+[CALLOUT]
+id: polar-to-rect
+label: Fórmula
+title: De la forma magnitud-dirección a la forma en componentes (descomposición vectorial)
+tone: key
+
+Si un vector no nulo \(\mathbf{v}\) tiene magnitud \(\|\mathbf{v}\|\) y ángulo director estándar \(\theta \in [0^\circ, 360^\circ)\) medido en sentido antihorario desde el semieje \(x\) positivo, entonces:
+
+(1) El vector unitario en la dirección de \(\mathbf{v}\) es \(\hat{\mathbf{u}} = \langle \cos\theta, \sin\theta \rangle\).
+(2) La forma en componentes de \(\mathbf{v}\) es
+\[
+\mathbf{v} = \langle \|\mathbf{v}\|\cos\theta,\; \|\mathbf{v}\|\sin\theta \rangle = (\|\mathbf{v}\|\cos\theta)\mathbf{i} + (\|\mathbf{v}\|\sin\theta)\mathbf{j}.
+\]
+[/CALLOUT]
+
+Arrastra el deslizador \(a\) (que representa \(\theta\) en radianes) en la gráfica interactiva siguiente para ver cómo un vector \(\mathbf{v}\) de longitud fija \(3\) barre los cuatro cuadrantes junto con su vector unitario \(\hat{\mathbf{u}}\) sobre la circunferencia unitaria y sus componentes con signo horizontal y vertical \(3\cos a\) y \(3\sin a\).
+
+[GRAPH]
+type: parametric2d
+title: Descomposición de \(\mathbf{v}\) de longitud \(3\) con ángulo \(a\) (radianes) en \(3\cos a\) y \(3\sin a\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.6, 3.6
+yrange: -3.6, 3.6
+trace: cos(t), sin(t) | label: circunferencia unitaria | color: #94a3b8
+trace: 3*cos(t), 3*sin(t) | label: \(\text{circunferencia de radio } 3\) | color: #cbd5e1
+segment: 0, 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{v}\) | color: #2563eb
+segment: 0, 0, cos(a), sin(a) | label: \(\hat{\mathbf{u}}\) | color: #16a34a
+segment: 0, 0, 3*cos(a), 0 | label: \(v_x\) | color: #dc2626 | dashed: true
+segment: 3*cos(a), 0, 3*cos(a), 3*sin(a) | label: \(v_y\) | color: #d97706 | dashed: true
+point: 3*cos(a), 3*sin(a) | label: \(\mathbf{v}\)
+point: cos(a), sin(a) | label: \(\hat{\mathbf{u}}\)
+slider: a | range: 0, 6.2832 | init: 1.0472 | step: 0.1571
+[/GRAPH]
+
+Para una comprobación numérica rápida, toma un vector \(\mathbf{v}\) de magnitud \(10\) con ángulo director estándar \(\theta = 210^\circ\) (Cuadrante III). Como \(\cos 210^\circ = -\frac{\sqrt{3}}{2}\) y \(\sin 210^\circ = -\frac{1}{2}\), [REF: polar-to-rect | la descomposición en componentes] da
+\[
+\mathbf{v} = \left\langle 10\left(-\frac{\sqrt{3}}{2}\right),\; 10\left(-\frac{1}{2}\right) \right\rangle = \langle -5\sqrt{3},\; -5 \rangle.
+\]
+Ambas componentes resultan negativas, acorde con el Cuadrante III.
+
+[QUESTION 1]
+[ANSWER: C]
+Un vector \(\mathbf{v}\) tiene magnitud \(12\) y ángulo director estándar \(\theta = 150^\circ\). ¿Cuál es \(\mathbf{v}\) en forma en componentes?
+
+(A) \(\langle 6\sqrt{3},\; 6 \rangle\)
+(B) \(\langle -6,\; 6\sqrt{3} \rangle\)
+(C) \(\langle -6\sqrt{3},\; 6 \rangle\)
+(D) \(\langle -6\sqrt{3},\; -6 \rangle\)
+(E) \(\langle 6,\; -6\sqrt{3} \rangle\)
+[/QUESTION]
+
+=== SECTION 2: Conversión de componentes a magnitud y ángulo director ===
+
+Ahora invierte el problema: dado un vector no nulo \(\mathbf{v} = \langle v_x, v_y \rangle\), ¿cómo recuperamos su magnitud \(\|\mathbf{v}\|\) y su ángulo director estándar \(\theta \in [0^\circ, 360^\circ)\)?
+
+La magnitud es inmediata: \(\|\mathbf{v}\| = \sqrt{v_x^2 + v_y^2}\). Para el ángulo \(\theta\), dividir \(v_y = \|\mathbf{v}\|\sin\theta\) entre \(v_x = \|\mathbf{v}\|\cos\theta\) (cuando \(v_x \ne 0\)) cancela \(\|\mathbf{v}\|\) y arroja
+\[
+\tan\theta = \frac{v_y}{v_x}.
+\]
+Aquí es donde ocurren innumerables errores si recurres a ciegas a \(\theta = \arctan\left(\frac{v_y}{v_x}\right)\). La función arcotangente \(\arctan\) únicamente devuelve ángulos en el intervalo abierto \((-90^\circ, 90^\circ)\) —es decir, los cuadrantes I y IV—. Sin embargo, dos vectores que apuntan en sentidos opuestos tienen exactamente el mismo cociente \(\frac{v_y}{v_x}\). Por ejemplo, \(\mathbf{u} = \langle 1, 1 \rangle\) (Cuadrante I, \(\theta = 45^\circ\)) y \(\mathbf{w} = \langle -1, -1 \rangle\) (Cuadrante III, \(\theta = 225^\circ\)) satisfacen ambos \(\frac{v_y}{v_x} = 1\), por lo que \(\arctan(1) = 45^\circ\) entrega una respuesta errónea para \(\mathbf{w}\) por \(180^\circ\) completos.
+
+Para obtener siempre el ángulo director verdadero \(\theta \in [0^\circ, 360^\circ)\), DEBES inspeccionar los signos de \(v_x\) y \(v_y\) con el fin de identificar el cuadrante (o eje) antes de fijar \(\theta\).
+
+[CALLOUT]
+id: rect-to-polar
+label: Método
+title: De forma en componentes a magnitud y ángulo director estándar
+tone: key
+
+Dado un vector no nulo \(\mathbf{v} = \langle v_x, v_y \rangle\):
+
+(1) Calcula la magnitud \(\|\mathbf{v}\| = \sqrt{v_x^2 + v_y^2}\).
+(2) Si \(v_x = 0\), lee \(\theta\) directamente en el eje vertical: \(\theta = 90^\circ\) si \(v_y > 0\), y \(\theta = 270^\circ\) si \(v_y < 0\).
+(3) Si \(v_y = 0\), lee \(\theta\) directamente en el eje horizontal: \(\theta = 0^\circ\) si \(v_x > 0\), y \(\theta = 180^\circ\) si \(v_x < 0\).
+(4) En otro caso, calcula \(\alpha = \arctan\left(\frac{v_y}{v_x}\right) \in (-90^\circ, 90^\circ)\) y ajusta según el cuadrante:
+- Cuadrante I (\(v_x > 0, v_y > 0\)): \(\theta = \alpha\).
+- Cuadrante II (\(v_x < 0, v_y > 0\)) o Cuadrante III (\(v_x < 0, v_y < 0\)): \(\theta = \alpha + 180^\circ\).
+- Cuadrante IV (\(v_x > 0, v_y < 0\)): \(\theta = \alpha + 360^\circ\).
+[/CALLOUT]
+
+[CALLOUT]
+id: arctan-trap
+label: Error frecuente
+title: Nunca confíes en \(\arctan(v_y / v_x)\) sin verificar el cuadrante
+tone: caution
+
+Siempre que \(v_x < 0\) (Cuadrantes II y III), \(\arctan(v_y / v_x)\) apunta \(180^\circ\) lejos del vector real: debes sumar \(180^\circ\). Equivalentemente, puedes calcular el ángulo agudo de referencia \(\theta_{\mathrm{ref}} = \arctan\left(\frac{|v_y|}{|v_x|}\right)\) y ubicarlo en el cuadrante correcto (\(180^\circ - \theta_{\mathrm{ref}}\) en C II, \(180^\circ + \theta_{\mathrm{ref}}\) en C III, \(360^\circ - \theta_{\mathrm{ref}}\) en C IV).
+[/CALLOUT]
+
+[TABLE]
+Ubicación de \(\langle v_x, v_y \rangle\) | Signos de \(v_x, v_y\) | Ángulo \(\theta \in [0^\circ, 360^\circ)\) | Ejemplo resuelto
+Semieje \(x\) positivo | \(v_x > 0, v_y = 0\) | \(0^\circ\) | \(\langle 5, 0 \rangle \to 0^\circ\)
+Cuadrante I | \(v_x > 0, v_y > 0\) | \(\arctan(v_y/v_x)\) | \(\langle \sqrt{3}, 1 \rangle \to 30^\circ\)
+Semieje \(y\) positivo | \(v_x = 0, v_y > 0\) | \(90^\circ\) | \(\langle 0, 4 \rangle \to 90^\circ\)
+Cuadrante II | \(v_x < 0, v_y > 0\) | \(\arctan(v_y/v_x) + 180^\circ\) | \(\langle -1, 1 \rangle \to -45^\circ + 180^\circ = 135^\circ\)
+Semieje \(x\) negativo | \(v_x < 0, v_y = 0\) | \(180^\circ\) | \(\langle -7, 0 \rangle \to 180^\circ\)
+Cuadrante III | \(v_x < 0, v_y < 0\) | \(\arctan(v_y/v_x) + 180^\circ\) | \(\langle -\sqrt{3}, -1 \rangle \to 30^\circ + 180^\circ = 210^\circ\)
+Semieje \(y\) negativo | \(v_x = 0, v_y < 0\) | \(270^\circ\) | \(\langle 0, -2 \rangle \to 270^\circ\)
+Cuadrante IV | \(v_x > 0, v_y < 0\) | \(\arctan(v_y/v_x) + 360^\circ\) | \(\langle 1, -\sqrt{3} \rangle \to -60^\circ + 360^\circ = 300^\circ\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál es el ángulo director estándar \(\theta \in [0^\circ, 360^\circ)\) del vector \(\mathbf{v} = \langle -4,\; -4\sqrt{3} \rangle\)?
+
+(A) \(60^\circ\)
+(B) \(120^\circ\)
+(C) \(210^\circ\)
+(D) \(240^\circ\)
+(E) \(300^\circ\)
+[/QUESTION]
+
+=== SECTION 3: Rumbos de brújula y suma de vectores inclinados ===
+
+La navegación, la aviación y la topografía emplean una convención de ángulos diferente de la matemática estándar. Con el Este alineado con el semieje \(x\) positivo y el Norte con el semieje \(y\) positivo, un rumbo de brújula (o acimut) se mide en sentido horario partiendo desde el Norte franco:
+- Norte franco es \(000^\circ\) (ángulo estándar \(\theta = 90^\circ\)).
+- Este franco es \(090^\circ\) (ángulo estándar \(\theta = 0^\circ\)).
+- Sur franco es \(180^\circ\) (ángulo estándar \(\theta = 270^\circ\)).
+- Oeste franco es \(270^\circ\) (ángulo estándar \(\theta = 180^\circ\)).
+
+Los rumbos también se escriben por cuadrantes, como \(\text{N } 30^\circ \text{ E}\) (partir del Norte y girar \(30^\circ\) hacia el Este, que equivale a \(030^\circ\) en sentido horario desde el Norte y a \(\theta = 60^\circ\) en posición estándar) o \(\text{S } 40^\circ \text{ O}\) (partir del Sur y girar \(40^\circ\) hacia el Oeste, que equivale a \(220^\circ\) en sentido horario desde el Norte y a \(\theta = 230^\circ\) en posición estándar).
+
+En general, si un vector tiene rumbo de brújula de tres cifras \(\beta\) medido en sentido horario desde el Norte, su ángulo matemático estándar es
+\[
+\theta = 90^\circ - \beta \qquad (\text{sumando } 360^\circ \text{ si es negativo para caer en } [0^\circ, 360^\circ)).
+\]
+Usando las identidades de cofunciones \(\cos(90^\circ - \beta) = \sin\beta\) y \(\sin(90^\circ - \beta) = \cos\beta\), puedes o bien convertir \(\beta\) a \(\theta\) primero y aplicar [REF: polar-to-rect | la descomposición en componentes], o leer directamente que \(v_x = \|\mathbf{v}\|\sin\beta\) y \(v_y = \|\mathbf{v}\|\cos\beta\). Convertir primero a un esquema rápido con el ángulo estándar \(\theta\) es la forma más segura de evitar intercambiar seno y coseno.
+
+Con ambas conversiones aseguradas, podemos sumar limpiamente cualquier colección de vectores con distintos ángulos mediante un flujo de trabajo en tres pasos:
+1. Descomponer cada vector en componentes rectangulares \((x, y)\) usando [REF: polar-to-rect | la descomposición vectorial].
+2. Sumar todas las componentes \(x\) para obtener \(R_x\), y sumar todas las componentes \(y\) para obtener \(R_y\).
+3. Si se requiere, convertir la resultante \(\mathbf{R} = \langle R_x, R_y \rangle\) de nuevo a magnitud y dirección usando [REF: rect-to-polar | la conversión inversa].
+
+Resolvamos un ejemplo concreto: suma el vector \(\mathbf{a}\) de magnitud \(4\) y ángulo estándar \(30^\circ\) con el vector \(\mathbf{b}\) de magnitud \(3\) y ángulo estándar \(120^\circ\).
+Paso 1: Descompón ambos vectores:
+\[
+\mathbf{a} = 4\langle \cos 30^\circ, \sin 30^\circ \rangle = \langle 2\sqrt{3},\; 2 \rangle \approx \langle 3.464,\; 2.000 \rangle,
+\]
+\[
+\mathbf{b} = 3\langle \cos 120^\circ, \sin 120^\circ \rangle = \left\langle -\frac{3}{2},\; \frac{3\sqrt{3}}{2} \right\rangle \approx \langle -1.500,\; 2.598 \rangle.
+\]
+Paso 2: Suma las componentes:
+\[
+\mathbf{R} = \mathbf{a} + \mathbf{b} = \left\langle 2\sqrt{3} - \frac{3}{2},\; 2 + \frac{3\sqrt{3}}{2} \right\rangle \approx \langle 1.964,\; 4.598 \rangle.
+\]
+Paso 3: Recupera magnitud y dirección. Al desarrollar los cuadrados se obtiene
+\[
+\|\mathbf{R}\|^2 = \left(2\sqrt{3} - \frac{3}{2}\right)^2 + \left(2 + \frac{3\sqrt{3}}{2}\right)^2 = \left(12 - 6\sqrt{3} + \frac{9}{4}\right) + \left(4 + 6\sqrt{3} + \frac{27}{4}\right) = 16 + 9 = 25,
+\]
+de modo que \(\|\mathbf{R}\| = 5\). (Nota por qué: \(120^\circ - 30^\circ = 90^\circ\), así que \(\mathbf{a}\) y \(\mathbf{b}\) forman un triángulo rectángulo \(3\text{–}4\text{–}5\).) Como \(R_x > 0\) y \(R_y > 0\) (Cuadrante I), \(\theta_R = \arctan\left(\frac{4.598}{1.964}\right) \approx 66.9^\circ\).
+
+[GRAPH]
+type: parametric2d
+title: Suma de vectores inclinados \(\mathbf{a}\) (\(4\) a \(30^\circ\)) y \(\mathbf{b}\) (\(3\) a \(120^\circ\)) mediante descomposición
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 4.5
+yrange: -0.5, 5.2
+trace: 3.4641*t, 2*t | label: \(\mathbf{a}\) | color: #2563eb
+trace: 3.4641 - 1.5*t, 2 + 2.5981*t | label: \(\mathbf{b}\) | color: #d97706
+trace: 1.9641*t, 4.5981*t | label: \(\mathbf{R} = \mathbf{a} + \mathbf{b}\) | color: #16a34a
+segment: 0, 0, 1.9641, 0 | label: \(R_x\) | dashed: true
+segment: 1.9641, 0, 1.9641, 4.5981 | label: \(R_y\) | dashed: true
+point: 0, 0 | label: \(O\)
+point: 3.4641, 2 | label: \((3.46, 2)\)
+point: 1.9641, 4.5981 | label: \(\mathbf{R}\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: B]
+Un dron vuela \(10\text{ km}\) con rumbo de brújula \(030^\circ\) (\(\text{N } 30^\circ \text{ E}\)), y luego vuela \(12\text{ km}\) con rumbo de brújula \(150^\circ\) (\(\text{S } 30^\circ \text{ E}\)). Tomando el Este como el semieje \(x\) positivo y el Norte como el semieje \(y\) positivo, ¿cuál es el vector de desplazamiento neto del dron en forma en componentes (en km)?
+
+(A) \(\langle -\sqrt{3},\; 11 \rangle\)
+(B) \(\langle 11,\; -\sqrt{3} \rangle\)
+(C) \(\langle 11,\; 11\sqrt{3} \rangle\)
+(D) \(\langle 11,\; \sqrt{3} \rangle\)
+(E) \(\langle -1,\; -\sqrt{3} \rangle\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Un vector no nulo \(\mathbf{v} = \langle a, b \rangle\) tiene ángulo director estándar \(\theta = 135^\circ\) y sus componentes satisfacen \(a + 2b = 5\). ¿Cuánto vale \(\|\mathbf{v}\|\)?
+
+(A) \(5\)
+(B) \(\frac{5\sqrt{2}}{3}\)
+(C) \(5\sqrt{2}\)
+(D) \(10\)
+(E) \(10\sqrt{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+El vector \(\mathbf{u}\) tiene magnitud \(6\) y ángulo director estándar \(20^\circ\), y el vector \(\mathbf{v}\) tiene magnitud \(6\) y ángulo director estándar \(140^\circ\). ¿Cuáles son la magnitud y el ángulo director estándar de \(\mathbf{u} + \mathbf{v}\)?
+
+(A) Magnitud \(6\), ángulo director \(80^\circ\)
+(B) Magnitud \(6\sqrt{3}\), ángulo director \(80^\circ\)
+(C) Magnitud \(12\), ángulo director \(80^\circ\)
+(D) Magnitud \(6\), ángulo director \(60^\circ\)
+(E) Magnitud \(6\sqrt{2}\), ángulo director \(80^\circ\)
+[/BONUS]

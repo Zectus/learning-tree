@@ -1,0 +1,261 @@
+=== SECTION 1: Deductive arguments, validity, and soundness ===
+
+Truth tables and equivalence laws tell us when two statements carry the same meaning, or when a single statement is a tautology. In mathematics, however, we rarely stay inside one formula: we start from accepted assumptions (premises) and deduce a new claim (a conclusion). How do we decide whether a deductive step is logically airtight, independently of whether its premises happen to be true?
+
+An argument consists of a finite list of statements \(P_1, P_2, \dots, P_k\), called the premises, together with a single statement \(C\), called the conclusion. We often display an argument in vertical form, placing a horizontal line (or the symbol \(\therefore\), read "therefore") before the conclusion.
+
+[CALLOUT]
+id: def-validity
+label: Definition
+title: Valid and sound arguments
+tone: key
+
+Consider an argument with premises \(P_1, P_2, \dots, P_k\) and conclusion \(C\).
+
+(1) The argument is valid if, in every truth-value assignment where all premises \(P_1, P_2, \dots, P_k\) are simultaneously true, the conclusion \(C\) is also true. Equivalently, the single conditional statement
+\[
+(P_1 \wedge P_2 \wedge \dots \wedge P_k) \Rightarrow C
+\]
+is a tautology.
+(2) The argument is sound if it is valid AND all of its premises \(P_1, P_2, \dots, P_k\) are actually true.
+[/CALLOUT]
+
+Why is the tautology condition in [REF: def-validity.1 | the definition of validity] equivalent to "whenever all premises are true, \(C\) is true"? Recall the truth table of the material conditional: \((P_1 \wedge \dots \wedge P_k) \Rightarrow C\) fails to be true only in a row where the conjunction \(P_1 \wedge \dots \wedge P_k\) is \(T\) (meaning every premise is \(T\)) and \(C\) is \(F\). Saying that no such row exists is saying precisely that \((P_1 \wedge \dots \wedge P_k) \Rightarrow C\) is \(T\) in every row—a tautology.
+
+Notice a crucial distinction between validity and soundness. Validity tests only the logical bridge from premises to conclusion; it says nothing about whether the premises are true in the real world or in arithmetic. Look at the following argument:
+
+1. If \(4\) is an odd integer, then \(4\) is divisible by \(9\).
+2. \(4\) is an odd integer.
+3. Therefore, \(4\) is divisible by \(9\).
+
+This argument is completely VALID: its structure is \((P \Rightarrow Q)\) and \(P\), therefore \(Q\), so it is impossible for both premises to be true while the conclusion is false. Yet it is UNSOUND because its second premise ("\(4\) is an odd integer") is false (and its conclusion happens to be false as well).
+
+Conversely, having true premises and a true conclusion does NOT make an argument valid! Consider:
+
+1. If \(6\) is divisible by \(12\), then \(6\) is even. (True, vacuously.)
+2. \(6\) is even. (True.)
+3. Therefore, \(6\) is divisible by \(12\). (False!)
+
+Even if you replace \(6\) by \(24\)—so that "if \(24\) is divisible by \(12\), then \(24\) is even," "\(24\) is even," and "\(24\) is divisible by \(12\)" are ALL true—the underlying propositional argument form (\(P \Rightarrow Q\), \(Q\), therefore \(P\)) is still INVALID, because the row \(P = F, Q = T\) makes both premises true and the conclusion false.
+
+[TABLE]
+Case | Premises | Logical form | Conclusion | Valid? | Sound?
+1 | All true | Truth-preserving | Must be true | Yes | Yes
+2 | At least one false | Truth-preserving | May be true or false | Yes | No
+3 | All true | Fails on some truth row | May happen to be true or false | No | No
+4 | At least one false | Fails on some truth row | May happen to be true or false | No | No
+[/TABLE]
+
+[CALLOUT]
+id: caution-valid-sound
+label: Caution
+title: Valid does not mean "true conclusion"
+tone: caution
+
+A valid argument guarantees a true conclusion only when all of its premises are true (that is, when the argument is sound). A valid argument can have false premises and a true conclusion, or false premises and a false conclusion. The one combination a valid argument can NEVER have is all true premises with a false conclusion.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Which of the following combinations is IMPOSSIBLE for a deductive argument?
+
+(A) Valid, with at least one false premise and a true conclusion
+(B) Valid, with at least one false premise and a false conclusion
+(C) Valid, with all true premises and a false conclusion
+(D) Invalid, with all true premises and a true conclusion
+(E) Invalid, with at least one false premise and a true conclusion
+[/QUESTION]
+
+=== SECTION 2: Standard rules of propositional inference ===
+
+Just as algebraic equivalence laws saved us from drawing huge truth tables to simplify formulas, a compact list of standard valid argument forms—called rules of inference—lets us verify and build multi-step deductions cleanly. Every rule below is justified by the fact that its corresponding conditional is a tautology (which you can check directly by truth table or algebraic simplification).
+
+[CALLOUT]
+id: rules-inference
+label: Theorem
+title: Standard propositional rules of inference
+tone: key
+
+Each of the following argument schemas is valid for all statements \(P\), \(Q\), and \(R\):
+
+(1) Modus ponens: from \(P \Rightarrow Q\) and \(P\), infer \(Q\).
+(2) Modus tollens: from \(P \Rightarrow Q\) and \(\neg Q\), infer \(\neg P\).
+(3) Hypothetical syllogism: from \(P \Rightarrow Q\) and \(Q \Rightarrow R\), infer \(P \Rightarrow R\).
+(4) Disjunctive syllogism: from \(P \vee Q\) and \(\neg P\), infer \(Q\) (and similarly, from \(P \vee Q\) and \(\neg Q\), infer \(P\)).
+(5) Conjunction: from \(P\) and \(Q\), infer \(P \wedge Q\).
+(6) Simplification: from \(P \wedge Q\), infer \(P\) (and similarly, infer \(Q\)).
+(7) Addition: from \(P\), infer \(P \vee Q\) (for any statement \(Q\)).
+(8) Proof by cases: from \(P \vee Q\), \(P \Rightarrow R\), and \(Q \Rightarrow R\), infer \(R\).
+[/CALLOUT]
+
+Look closely at how [REF: rules-inference | these eight rules] work together with equivalences from earlier lessons:
+
+- [REF: rules-inference.2 | Modus tollens] is just modus ponens applied to the contrapositive \(\neg Q \Rightarrow \neg P\): knowing \(P \Rightarrow Q\) and \(\neg Q\) forces \(\neg P\), because if \(P\) were true then \(Q\) would have to be true.
+- [REF: rules-inference.4 | Disjunctive syllogism] reflects the meaning of inclusive "or": if at least one of \(P\) or \(Q\) holds and \(P\) fails, then \(Q\) must hold.
+- [REF: rules-inference.7 | Addition] sometimes surprises students because \(Q\) can be completely unrelated to \(P\). Yet if \(P\) is already true, then \(P \vee Q\) is guaranteed true regardless of whether \(Q\) is true or false.
+- [REF: rules-inference.8 | Proof by cases] (also called disjunction elimination) has the tautology form
+\[
+\bigl((P \vee Q) \wedge (P \Rightarrow R) \wedge (Q \Rightarrow R)\bigr) \Rightarrow R.
+\]
+We already proved in the previous lesson that \((P \Rightarrow R) \wedge (Q \Rightarrow R) \equiv (P \vee Q) \Rightarrow R\). Combine that equivalence with \(P \vee Q\) and apply modus ponens: \(R\) follows immediately!
+
+Let us chain several rules in a multi-step propositional deduction. Suppose we are given four premises:
+1. \(\neg P \wedge Q\)
+2. \(R \Rightarrow P\)
+3. \(\neg R \Rightarrow S\)
+4. \(S \Rightarrow (T \vee U)\)
+5. \(\neg T\)
+
+Goal: deduce \(U \wedge Q\).
+
+We construct the derivation line by line, citing the exact rule and prior lines at each step:
+
+[TABLE]
+Step | Statement | Justification
+1 | \(\neg P \wedge Q\) | Premise
+2 | \(R \Rightarrow P\) | Premise
+3 | \(\neg R \Rightarrow S\) | Premise
+4 | \(S \Rightarrow (T \vee U)\) | Premise
+5 | \(\neg T\) | Premise
+6 | \(\neg P\) | Simplification from (1)
+7 | \(\neg R\) | Modus tollens from (2) and (6)
+8 | \(S\) | Modus ponens from (3) and (7)
+9 | \(T \vee U\) | Modus ponens from (4) and (8)
+10 | \(U\) | Disjunctive syllogism from (9) and (5)
+11 | \(Q\) | Simplification from (1)
+12 | \(U \wedge Q\) | Conjunction from (10) and (11)
+[/TABLE]
+
+Notice how clean the chain is: every single line is licensed by an earlier line and a verified rule, so whenever premises (1)–(5) are all true, every subsequent line—culminating in \(U \wedge Q\)—must be true. We can also use [REF: rules-inference.3 | hypothetical syllogism] to shorten steps (8)–(9) if we first combine (3) and (4) into \(\neg R \Rightarrow (T \vee U)\).
+
+Here is a second worked deduction illustrating [REF: rules-inference.8 | proof by cases] combined with logical equivalences. Given premises:
+1. \(P \Rightarrow Q\)
+2. \(\neg P \Rightarrow R\)
+3. \(Q \Rightarrow S\)
+4. \(R \Rightarrow S\)
+
+Goal: deduce \(S\).
+
+By the law of excluded middle (a tautology we may introduce at any step), \(P \vee \neg P\) holds. By [REF: rules-inference.3 | hypothetical syllogism] on (1) and (3), we obtain \(P \Rightarrow S\). By [REF: rules-inference.3 | hypothetical syllogism] on (2) and (4), we obtain \(\neg P \Rightarrow S\). Finally, applying [REF: rules-inference.8 | proof by cases] to \(P \vee \neg P\), \(P \Rightarrow S\), and \(\neg P \Rightarrow S\) yields \(S\).
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose the following four premises are all true:
+1. \(A \vee B\)
+2. \(A \Rightarrow \neg C\)
+3. \(B \Rightarrow D\)
+4. \(C \wedge \neg E\)
+
+Which of the following statements can be validly deduced from these premises alone?
+
+(A) \(D \wedge \neg A\)
+(B) \(A \wedge \neg E\)
+(C) \(D \Rightarrow A\)
+(D) \(E \vee A\)
+(E) \(\neg B \wedge D\)
+[/QUESTION]
+
+=== SECTION 3: Refuting invalid arguments and diagnosing fallacies ===
+
+When an argument is valid, a chain of rules from [REF: rules-inference | our inference toolkit] proves it. What if an argument is INVALID? You do not need a full truth table to refute it: by [REF: def-validity.1 | the definition of validity], an argument fails to be valid as soon as there is a single truth-value assignment—called a counterassignment—that makes every premise \(T\) and the conclusion \(F\).
+
+Finding a counterassignment works best in reverse:
+1. Force the conclusion \(C\) to be \(F\).
+2. Work backward through the premises to assign the remaining variables so that every premise \(P_1, \dots, P_k\) evaluates to \(T\).
+3. Verify your final truth assignment in every premise and in \(C\).
+
+Let us apply this method to test the argument:
+- Premise 1: \(P \Rightarrow (Q \vee R)\)
+- Premise 2: \(\neg Q\)
+- Conclusion: \(R\)
+
+Try to build a counterassignment:
+- To make the conclusion \(R\) false, set \(R = F\).
+- To make Premise 2 (\(\neg Q\)) true, we must set \(Q = F\).
+- Now check Premise 1: \(P \Rightarrow (Q \vee R)\) becomes \(P \Rightarrow (F \vee F)\), which is \(P \Rightarrow F\). To make \(P \Rightarrow F\) true, simply set \(P = F\)!
+
+Check the completed assignment \(P = F\), \(Q = F\), \(R = F\): Premise 1 is \(F \Rightarrow F = T\), Premise 2 is \(\neg F = T\), and the conclusion \(R\) is \(F\). That single row refutes the argument completely. (Notice why the argument failed: Premise 1 says \(Q \vee R\) holds if \(P\) holds, but nobody gave us \(P\)!)
+
+Four recurring invalid patterns appear so often in everyday reasoning and early proof writing that they have standard names.
+
+[CALLOUT]
+id: fallacies-propositional
+label: Caution
+title: Four classic propositional fallacies
+tone: caution
+
+(1) Affirming the consequent (converse error): from \(P \Rightarrow Q\) and \(Q\), inferring \(P\). Refuted by the counterassignment \(P = F, Q = T\).
+(2) Denying the antecedent (inverse error): from \(P \Rightarrow Q\) and \(\neg P\), inferring \(\neg Q\). Refuted by the counterassignment \(P = F, Q = T\).
+(3) False dichotomy (false dilemma): asserting \(P \vee Q\) when \(P\) and \(Q\) do not actually exhaust all possibilities, then using \(\neg P\) to force \(Q\) (or using proof by cases on an incomplete split). The inference step itself may be valid, so the argument is unsound because its disjunction premise \(P \vee Q\) is false.
+(4) Circular reasoning (begging the question): assuming the conclusion \(C\) (directly or in a disguised equivalent form) among the premises used to justify \(C\). Formally, \(C \Rightarrow C\) is a tautology (valid!), yet the argument establishes nothing because the conclusion was never supported from independent premises.
+[/CALLOUT]
+
+Look closely at the first two fallacies in [REF: fallacies-propositional | this catalog]—they mirror the exact non-equivalences from the previous lesson:
+- Affirming the consequent confuses \(P \Rightarrow Q\) with its converse \(Q \Rightarrow P\). Example: "If \(x = 3\), then \(x^2 = 9\). We know \(x^2 = 9\). Therefore \(x = 3\)." Counterexample: \(x = -3\) makes \(P\) false and \(Q\) true.
+- Denying the antecedent confuses \(P \Rightarrow Q\) with its inverse \(\neg P \Rightarrow \neg Q\). Example: "If a number is divisible by \(6\), then it is even. The number \(10\) is not divisible by \(6\). Therefore \(10\) is not even." Here \(P\) is false and \(Q\) is true.
+
+Now compare the third and fourth fallacies—they show why logical form alone is not the whole story:
+- False dichotomy example: "Either \(x > 0\) or \(x < 0\). Since \(x\) is not positive, \(x < 0\)." The disjunctive syllogism step is valid, yet the hidden premise "\(x > 0\) or \(x < 0\)" omits \(x = 0\), making the argument unsound when \(x = 0\).
+- Circular reasoning example: to argue that a certain integer \(n\) is odd, a student writes "because \(n\) is not even, \(n\) is not divisible by \(2\), which means \(n\) is odd." Unless "\(n\) is not even" was established independently, the argument simply restates its target conclusion in equivalent words and moves in a circle.
+
+[QUESTION 3]
+[ANSWER: D]
+Consider the argument with premises \((P \vee Q) \Rightarrow R\) and \(\neg P\), and conclusion \(\neg R\). Which truth-value assignment is a counterassignment proving this argument invalid?
+
+(A) \(P = T, Q = T, R = T\)
+(B) \(P = T, Q = F, R = F\)
+(C) \(P = F, Q = F, R = F\)
+(D) \(P = F, Q = T, R = T\)
+(E) No counterassignment exists; the argument is valid.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Read the following reasoning about a real number \(x\):
+"If \(x > 5\), then \(x^2 > 25\). We are given that \(x \le 5\). Therefore \(x^2 \le 25\)."
+Which diagnosis best identifies the defect in this argument?
+
+(A) Affirming the consequent (converse error): it applies the converse \(x^2 > 25 \Rightarrow x > 5\).
+(B) Denying the antecedent (inverse error): it infers \(\neg Q\) from \(P \Rightarrow Q\) and \(\neg P\), which fails for instance when \(x = -6\).
+(C) False dichotomy: it omits the case \(x = 5\).
+(D) Circular reasoning: it assumes \(x^2 \le 25\) as a hidden premise.
+(E) Disjunctive syllogism error: it treats inclusive "or" as exclusive "or".
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Which of the following argument schemas is VALID?
+
+(A) Premises: \(P \Rightarrow Q\), \(R \Rightarrow Q\), \(P \vee R\). Conclusion: \(P \wedge R\).
+(B) Premises: \(P \Rightarrow (Q \vee R)\), \(Q\). Conclusion: \(P\).
+(C) Premises: \(P \Rightarrow Q\), \(\neg R \Rightarrow \neg Q\), \(P\). Conclusion: \(R\).
+(D) Premises: \(P \vee Q\), \(P \Rightarrow R\). Conclusion: \(Q \vee \neg R\).
+(E) Premises: \((P \wedge Q) \Rightarrow R\), \(\neg P\). Conclusion: \(\neg R\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suppose we are given the premises:
+1. \((P \vee Q) \Rightarrow (R \wedge S)\)
+2. \(S \Rightarrow \neg T\)
+3. \(T\)
+
+Which conclusion can be validly inferred from these three premises?
+
+(A) \(P \wedge \neg Q\)
+(B) \(Q \wedge \neg P\)
+(C) \(\neg P \vee \neg Q\), but not \(\neg P \wedge \neg Q\)
+(D) \(\neg R\)
+(E) \(\neg P \wedge \neg Q\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Consider the argument with premises \(P \Rightarrow (Q \wedge R)\), \(Q \Rightarrow S\), and \(S\), and conclusion \(P \vee R\). How many of the \(16\) rows of the truth table for \((P, Q, R, S)\) are counterassignments to this argument?
+
+(A) \(2\)
+(B) \(1\)
+(C) \(3\)
+(D) \(4\)
+(E) \(0\) (the argument is valid)
+[/BONUS]

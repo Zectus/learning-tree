@@ -1,0 +1,274 @@
+=== SECTION 1: Partitioning a problem into exhaustive cases ===
+
+Sometimes a single algebraic formula cannot handle every element in the domain at once. Try proving directly that for every integer \(n \in \mathbb{Z}\), the product \(n(n + 1)\) is even. Starting with "Let \(n \in \mathbb{Z}\) be arbitrary" leaves you with no representation \(n = 2k\) or \(n = 2k + 1\) to plug in! Yet every integer \(n\) falls into one of two concrete regimes—either \(n\) is even or \(n\) is odd—and in EACH regime a one-line direct calculation finishes the job.
+
+The logical license behind this maneuver is the propositional proof-by-cases rule we established earlier: if \(C_1 \vee C_2 \vee \dots \vee C_m\) holds (the cases are mutually exhaustive) and we prove \(C_i \Rightarrow Q\) for every \(i = 1, \dots, m\), then \(Q\) follows unconditionally.
+
+[CALLOUT]
+id: template-cases
+label: Method
+title: Proof by exhaustive cases
+tone: key
+
+To prove a conclusion \(Q\) from hypothesis \(P\) by cases:
+
+(1) Identify cases \(C_1, C_2, \dots, C_m\) and verify that they are EXHAUSTIVE: every object satisfying \(P\) must satisfy at least one \(C_i\) (that is, \(P \Rightarrow (C_1 \vee C_2 \vee \dots \vee C_m)\)). Overlapping cases are harmless; missing even a single edge case invalidates the proof.
+(2) Prove \(C_i \Rightarrow Q\) separately for each \(i = 1, \dots, m\).
+(3) Conclude that \(Q\) holds in all cases.
+[/CALLOUT]
+
+Notice what [REF: template-cases.1 | step (1)] emphasizes: cases do not need to be disjoint (though disjoint cases are clean), but they MUST be exhaustive.
+
+In integer arithmetic, our primary tool for generating guaranteed exhaustive case splits is the division algorithm on \(\mathbb{Z}\), which we explicitly accept as a supplied fact here (without proving it).
+
+[CALLOUT]
+id: fact-division-algorithm
+label: Fact
+title: Division algorithm on \(\mathbb{Z}\) (supplied input)
+tone: key
+
+For every integer \(n \in \mathbb{Z}\) and every positive integer \(d \in \mathbb{N}\), there exist unique integers \(q, r \in \mathbb{Z}\) such that
+\[
+n = dq + r \qquad \text{and} \qquad 0 \le r < d.
+\]
+[/CALLOUT]
+
+Look at the exact exhaustive partitions that [REF: fact-division-algorithm | the division algorithm] hands us:
+- For \(d = 2\): every integer \(n\) has either \(r = 0\) (\(n = 2q\), even) or \(r = 1\) (\(n = 2q + 1\), odd).
+- For \(d = 3\): every integer \(n\) has the form \(3q\), \(3q + 1\), or \(3q + 2\) for some \(q \in \mathbb{Z}\).
+- For \(d = 4\): every integer \(n\) has the form \(4q\), \(4q + 1\), \(4q + 2\), or \(4q + 3\) for some \(q \in \mathbb{Z}\).
+
+Let us apply [REF: template-cases | proof by cases] to two classical integer theorems.
+
+[CALLOUT]
+id: proof-consecutive-even
+label: Proof
+title: Theorem: For every \(n \in \mathbb{Z}\), both \(n(n + 1)\) and \(n^2 - n\) are even
+tone: note
+
+Proof for \(n(n + 1)\): Let \(n \in \mathbb{Z}\) be arbitrary. By [REF: fact-division-algorithm | the division algorithm] with \(d = 2\), either \(n\) is even or \(n\) is odd.
+
+Case 1: \(n\) is even. Then \(n = 2k\) for some \(k \in \mathbb{Z}\), so
+\[
+n(n + 1) = 2k(2k + 1) = 2\bigl(k(2k + 1)\bigr).
+\]
+Since \(k(2k + 1) \in \mathbb{Z}\), \(n(n + 1)\) is even.
+
+Case 2: \(n\) is odd. Then \(n = 2k + 1\) for some \(k \in \mathbb{Z}\), so
+\[
+n(n + 1) = (2k + 1)(2k + 2) = 2\bigl((2k + 1)(k + 1)\bigr).
+\]
+Since \((2k + 1)(k + 1) \in \mathbb{Z}\), \(n(n + 1)\) is even.
+
+Since the two cases exhaust \(\mathbb{Z}\), \(n(n + 1)\) is even for every \(n \in \mathbb{Z}\). (For \(n^2 - n = n(n - 1)\), the exact same parity split works, or simply apply the proved result to \(m = n - 1 \in \mathbb{Z}\), since \(m(m + 1) = (n - 1)n = n^2 - n\).)
+[/CALLOUT]
+
+Next, test a modulo-\(4\) case split: what remainders can a perfect square \(n^2\) leave upon division by \(4\)?
+
+[CALLOUT]
+id: proof-square-mod4
+label: Proof
+title: Theorem: Every perfect square has the form \(4m\) or \(4m + 1\) for some \(m \in \mathbb{Z}\)
+tone: note
+
+Proof: Let \(n \in \mathbb{Z}\) be arbitrary. By [REF: fact-division-algorithm | the division algorithm] with \(d = 4\), \(n\) must fall into one of four cases for some \(q \in \mathbb{Z}\):
+
+(1) \(n = 4q\): then \(n^2 = 16q^2 = 4(4q^2)\), which has the form \(4m\) with \(m = 4q^2 \in \mathbb{Z}\).
+(2) \(n = 4q + 1\): then \(n^2 = 16q^2 + 8q + 1 = 4(4q^2 + 2q) + 1\), which has the form \(4m + 1\) with \(m = 4q^2 + 2q \in \mathbb{Z}\).
+(3) \(n = 4q + 2\): then \(n^2 = 16q^2 + 16q + 4 = 4(4q^2 + 4q + 1)\), which has the form \(4m\) with \(m = 4q^2 + 4q + 1 \in \mathbb{Z}\).
+(4) \(n = 4q + 3\): then \(n^2 = 16q^2 + 24q + 9 = 4(4q^2 + 6q + 2) + 1\), which has the form \(4m + 1\) with \(m = 4q^2 + 6q + 2 \in \mathbb{Z}\).
+
+In all four exhaustive cases, \(n^2\) has the form \(4m\) or \(4m + 1\) for some \(m \in \mathbb{Z}\).
+[/CALLOUT]
+
+(Notice a nice economy in [REF: proof-square-mod4 | that proof]: we could even have split by \(d = 2\) instead of \(d = 4\)! If \(n = 2k\), \(n^2 = 4k^2\); if \(n = 2k + 1\), \(n^2 = 4k^2 + 4k + 1 = 4(k^2 + k) + 1\). Choosing the coarsest split that still resolves the algebra keeps proofs short and clean.)
+
+[QUESTION 1]
+[ANSWER: C]
+To prove that for every integer \(n \in \mathbb{Z}\), \(3 \mid (n^3 - n)\), we apply the division algorithm with \(d = 3\) and test the cases \(n = 3q\), \(n = 3q + 1\), and \(n = 3q + 2\). In the case \(n = 3q + 2\), which expression correctly shows \(n^3 - n\) as a multiple of \(3\)?
+
+(A) \(n^3 - n = 3(9q^3 + 18q^2 + 12q + 2) + 2\)
+(B) \(n^3 - n = 3(9q^3 + 9q^2 + 3q + 2)\)
+(C) \(n^3 - n = 3(9q^3 + 18q^2 + 11q + 2)\)
+(D) \(n^3 - n = 3(9q^3 + 12q^2 + 11q + 2)\)
+(E) \(n^3 - n = 3(9q^3 + 18q^2 + 11q + 1)\)
+[/QUESTION]
+
+=== SECTION 2: Sign regimes, absolute values, and boundary audits ===
+
+Case splits are equally central in real-number inequalities—especially whenever absolute values appear. Recall the piecewise definition of absolute value for \(x \in \mathbb{R}\):
+\[
+|x| = \begin{cases} x & \text{if } x \ge 0, \\ -x & \text{if } x < 0. \end{cases}
+\]
+Because the formula for \(|x|\) changes across \(x = 0\), a statement involving \(|x - a|\) naturally splits the real line at the critical point \(x = a\), and a statement involving \(|x - a|\) and \(|x - b|\) with \(a < b\) splits \(\mathbb{R}\) into three regimes: \(x < a\), \(a \le x < b\), and \(x \ge b\).
+
+To see this visually, consider the function \(f(x) = |x + 2| + |x - 1|\). At \(x = -2\) and \(x = 1\) the slope changes cleanly across the three exhaustive intervals:
+- For \(x < -2\): \(f(x) = -(x + 2) - (x - 1) = -2x - 1\).
+- For \(-2 \le x < 1\): \(f(x) = (x + 2) - (x - 1) = 3\).
+- For \(x \ge 1\): \(f(x) = (x + 2) + (x - 1) = 2x + 1\).
+
+[GRAPH]
+type: function2d
+title: Piecewise regimes of \(f(x) = |x + 2| + |x - 1|\)
+xlabel: \(x\)
+ylabel: \(f(x)\)
+xrange: -5, 4
+yrange: 0, 10
+trace: abs(x + 2) + abs(x - 1) | label: \(f(x) = |x + 2| + |x - 1|\)
+segment: -2, 0, -2, 10 | label: \(x = -2\) | dashed: true
+segment: 1, 0, 1, 10 | label: \(x = 1\) | dashed: true
+point: -2, 3 | label: \((-2, 3)\)
+point: 1, 3 | label: \((1, 3)\)
+[/GRAPH]
+
+Watching those three pieces immediately proves that \(|x + 2| + |x - 1| \ge 3\) for EVERY \(x \in \mathbb{R}\)—in Case 1 (\(x < -2\)), \(-2x - 1 > 3\); in Case 2 (\(-2 \le x < 1\)), \(f(x) = 3 \ge 3\); in Case 3 (\(x \ge 1\)), \(2x + 1 \ge 3\).
+
+Before finalizing ANY case split on \(\mathbb{R}\), perform a boundary audit! The most common error in real-number case proofs is forgetting boundary points—especially \(0\).
+
+[CALLOUT]
+id: caution-boundary-audit
+label: Caution
+title: Audit boundary points such as \(0\)
+tone: caution
+
+Splitting \(x \in \mathbb{R}\) into "\(x > 0\)" and "\(x < 0\)" leaves \(x = 0\) uncovered! That omission is not a tiny technicality—many claims (like \(x^2 > 0\) or \(x/x = 1\)) succeed for \(x > 0\) and \(x < 0\) yet FAIL at \(x = 0\). Always verify that every boundary point (such as \(x = 0\), \(x = a\), or \(x = y\)) belongs to at least one case—for instance using the trichotomy \(x < 0\), \(x = 0\), \(x > 0\), or the two-case split \(x \ge 0\) and \(x < 0\).
+[/CALLOUT]
+
+Let us now prove one of the most important inequalities in all of mathematics—the triangle inequality—by splitting into exhaustive sign regimes. First note two immediate properties from the definition of \(|t|\): for every \(t \in \mathbb{R}\), we have \(|-t| = |t|\) and \(-|t| \le t \le |t|\).
+
+Now let \(x, y \in \mathbb{R}\) be arbitrary, and consider the four exhaustive sign cases for \((x, y)\):
+- Case 1 (\(x \ge 0\) and \(y \ge 0\)): Then \(x + y \ge 0\), so \(|x + y| = x + y = |x| + |y|\).
+- Case 2 (\(x < 0\) and \(y < 0\)): Then \(x + y < 0\), so \(|x + y| = -(x + y) = (-x) + (-y) = |x| + |y|\).
+- Case 3 (\(x \ge 0\) and \(y < 0\)): Here \(|x| = x\) and \(|y| = -y > 0\). Split on the sign of \(x + y\):
+  - Subcase 3a (\(x + y \ge 0\)): \(|x + y| = x + y < x + (-y) = |x| + |y|\) (since \(y < 0 < -y\)).
+  - Subcase 3b (\(x + y < 0\)): \(|x + y| = -x - y \le x - y = |x| + |y|\) (since \(-x \le 0 \le x\)).
+- Case 4 (\(x < 0\) and \(y \ge 0\)): Here \(|x| = -x > 0\) and \(|y| = y\).
+  - Subcase 4a (\(x + y \ge 0\)): \(|x + y| = x + y < -x + y = |x| + |y|\).
+  - Subcase 4b (\(x + y < 0\)): \(|x + y| = -x - y \le -x + y = |x| + |y|\).
+
+All four cases are exhaustive (covering \(0\) cleanly via \(\ge 0\) vs \(< 0\)), and in every case \(|x + y| \le |x| + |y|\) holds!
+
+[QUESTION 2]
+[ANSWER: B]
+A student attempts to prove a claim about all real numbers \(x, y \in \mathbb{R}\) by splitting into the three cases:
+Case 1: \(x > 0\) and \(y > 0\)
+Case 2: \(x < 0\) and \(y < 0\)
+Case 3: \(x \cdot y < 0\).
+Which set of pairs \((x, y) \in \mathbb{R}^2\) has been omitted from this case split?
+
+(A) Only the single point \((0, 0)\)
+(B) All pairs \((x, y)\) where \(x = 0\) or \(y = 0\)
+(C) All pairs \((x, y)\) where \(x + y = 0\)
+(D) All pairs \((x, y)\) where \(x = y\)
+(E) No pairs are omitted; the three cases are exhaustive.
+[/QUESTION]
+
+=== SECTION 3: Disciplined symmetry and "without loss of generality" (WLOG) ===
+
+Look back at our four-case proof of the triangle inequality in Section 2. Notice something repetitive:
+- Case 2 (\(x < 0, y < 0\)) was essentially Case 1 (\(x \ge 0, y \ge 0\)) with both signs flipped.
+- Case 4 (\(x < 0, y \ge 0\)) was literally Case 3 (\(x \ge 0, y < 0\)) with the roles of \(x\) and \(y\) swapped!
+
+When two or more cases are identical up to a relabeling or symmetry transformation, mathematicians avoid copy-pasting the same algebra by writing "without loss of generality" (abbreviated WLOG). Used rigorously, WLOG makes proofs dramatically cleaner; used sloppily, it silently deletes half the theorem!
+
+[CALLOUT]
+id: rule-wlog
+label: Principle
+title: Disciplined use of "without loss of generality" (WLOG)
+tone: key
+
+A WLOG reduction from a broader set of cases to a single representative case is valid ONLY when you specify an explicit symmetry transformation (such as swapping two variables \(a \leftrightarrow b\), or negating \((x, y) \mapsto (-x, -y)\)) that:
+
+(1) Leaves BOTH the hypotheses AND the target conclusion unchanged (invariant), AND
+(2) Maps every omitted case into the representative case you actually prove.
+[/CALLOUT]
+
+Let us redo the triangle inequality proof using [REF: rule-wlog | disciplined WLOG] to see how sharp it becomes!
+
+[CALLOUT]
+id: proof-triangle-wlog
+label: Proof
+title: Theorem: Triangle inequality \(|x + y| \le |x| + |y|\) via symmetry (WLOG)
+tone: note
+
+Proof: Let \(x, y \in \mathbb{R}\) be arbitrary. We wish to prove \(|x + y| \le |x| + |y|\).
+
+First, observe that replacing \((x, y)\) by \((-x, -y)\) leaves the desired inequality unchanged because \(|(-x) + (-y)| = |-(x + y)| = |x + y|\) and \(|-x| + |-y| = |x| + |y|\). Also, swapping \(x\) and \(y\) leaves both \(|x + y|\) and \(|x| + |y|\) unchanged by commutativity of addition.
+
+Case 1: \(x\) and \(y\) have the same sign (meaning either \(x \ge 0, y \ge 0\) or \(x \le 0, y \le 0\)). By sign-negation symmetry \((x, y) \mapsto (-x, -y)\), we may assume without loss of generality that \(x \ge 0\) and \(y \ge 0\). Then \(x + y \ge 0\), so \(|x + y| = x + y = |x| + |y|\).
+
+Case 2: \(x\) and \(y\) have opposite signs (one is \(\ge 0\) and the other is \(< 0\)). By variable-swap symmetry \((x, y) \mapsto (y, x)\), we may assume without loss of generality that \(x \ge 0\) and \(y < 0\). Furthermore, by applying both sign-negation and swapping—which sends \((x, y) \mapsto (-y, -x)\), keeping the first entry positive and the second negative while negating \(x + y\)—we may assume without loss of generality that \(x + y \ge 0\). Then
+\[
+|x + y| = x + y < x + (-y) = |x| + |y|,
+\]
+since \(y < 0 < -y\).
+
+Since Cases 1 and 2 exhaust all pairs \((x, y) \in \mathbb{R}^2\), \(|x + y| \le |x| + |y|\) holds for all \(x, y \in \mathbb{R}\).
+[/CALLOUT]
+
+Every single WLOG step in [REF: proof-triangle-wlog | that proof] stated its exact symmetry map and verified invariance of the target inequality!
+
+Here is a second valid WLOG in integer arithmetic. Suppose we want to prove: "For all integers \(a, b \in \mathbb{Z}\), if \(a + b\) is odd, then \(ab\) is even."
+- If \(a\) and \(b\) had the same parity (both even or both odd), then \(a + b\) would be even. Since \(a + b\) is odd, one of \(a, b\) is even and the other is odd.
+- Check symmetry: swapping \(a\) and \(b\) leaves BOTH the hypothesis ("\(a + b\) is odd") AND the conclusion ("\(ab\) is even") completely unchanged!
+- Therefore we may assume WLOG that \(a\) is even and \(b\) is odd: write \(a = 2k\) for some \(k \in \mathbb{Z}\), giving \(ab = (2k)b = 2(kb)\), which is even because \(kb \in \mathbb{Z}\).
+
+Now contrast this with TWO ILLICIT uses of WLOG where symmetry FAILS:
+
+- Illicit WLOG 1 (Asymmetric conclusion): Claim: "For all \(a, b \in \mathbb{Z}\), if \(a + b\) is odd, then \(a^2 + 3b\) is odd." Can you assume WLOG that \(a\) is even and \(b\) is odd? NO! The hypothesis "\(a + b\) is odd" is symmetric in \(a\) and \(b\), but the conclusion "\(a^2 + 3b\) is odd" is NOT! Check: if \(a = 2\) (even) and \(b = 1\) (odd), \(a^2 + 3b = 7\) (odd), yet if \(a = 1\) (odd) and \(b = 2\) (even), \(a^2 + 3b = 7\)... wait: let us check \(a^2 + 2b\) instead! If \(a = 2, b = 1\), \(a^2 + 2b = 6\) (even), whereas if \(a = 1, b = 2\), \(a^2 + 2b = 5\) (odd)! Swapping \(a\) and \(b\) changes the expression \(a^2 + 2b\) into \(b^2 + 2a\), so WLOG is completely invalid!
+- Illicit WLOG 2 (Asymmetric hypothesis): Claim: "For all \(x, y \in \mathbb{R}\), if \(x + 2y > 0\), then \(x^2 + y^2 > 0\)." Can you assume WLOG that \(x \ge y\)? NO! Swapping \(x\) and \(y\) changes the hypothesis \(x + 2y > 0\) into \(y + 2x > 0\), which is a DIFFERENT condition (for example, \(x = -1, y = 1\) satisfies \(x + 2y = 1 > 0\), whereas swapping gives \(y = -1, x = 1\) with \(1 + 2(-1) = -1 < 0\)).
+
+[QUESTION 3]
+[ANSWER: D]
+In which of the following theorems is the proposed "without loss of generality" (WLOG) assumption VALID?
+
+(A) Theorem: "For all \(a, b \in \mathbb{R}\), if \(a \ne b\), then \(a^2 - b > b^2 - a\)." Proposed step: "WLOG assume \(a > b\)."
+(B) Theorem: "For all \(x, y \in \mathbb{R}\), if \(x + 3y = 10\), then \(x^2 + y^2 \ge 10\)." Proposed step: "WLOG assume \(x \ge y\)."
+(C) Theorem: "For all \(n \in \mathbb{Z}\), \(n^2 + n\) is even." Proposed step: "WLOG assume \(n \ge 0\)."
+(D) Theorem: "For all \(a, b \in \mathbb{R}\), if \(a \ne b\), then \(\frac{a + b}{2}\) lies strictly between \(a\) and \(b\)." Proposed step: "By swapping \(a\) and \(b\) if necessary, WLOG assume \(a < b\)."
+(E) Theorem: "For all \(x \in \mathbb{R}\), \(|x - 3| \ge 0\)." Proposed step: "By replacing \(x\) with \(-x\), WLOG assume \(x \ge 0\)."
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Consider the claim: "For all real numbers \(x\) and \(y\), \(\max(x, y) = \frac{x + y + |x - y|}{2}\)." Which case split and symmetry reduction yields a complete, airtight proof?
+
+(A) Note that both \(\max(x, y)\) and \(\frac{x + y + |x - y|}{2}\) are invariant under swapping \(x\) and \(y\); thus WLOG assume \(x \ge y\), so \(\max(x, y) = x\) and \(|x - y| = x - y\), yielding \(\frac{x + y + (x - y)}{2} = x\).
+(B) Note that both sides are invariant under \((x, y) \mapsto (-x, -y)\); thus WLOG assume \(x \ge 0\) and \(y \ge 0\).
+(C) Split into \(x > y\) and \(x < y\); check both formulas directly and conclude for all \(x, y \in \mathbb{R}\).
+(D) Assume WLOG that \(x > 0\) and \(y = 0\), and verify \(\max(x, 0) = \frac{x + |x|}{2} = x\).
+(E) Split into \(x + y \ge 0\) and \(x + y < 0\), since \(x + y\) appears in the numerator.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(n \in \mathbb{Z}\) is not divisible by \(3\). Using [REF: fact-division-algorithm | the division algorithm] with \(d = 3\), what remainder must \(n^2\) leave upon division by \(3\)?
+
+(A) \(0\) in all cases
+(B) Either \(1\) or \(2\), depending on whether \(n = 3q + 1\) or \(n = 3q + 2\)
+(C) \(2\) in all cases
+(D) \(1\) if \(n > 0\), and \(2\) if \(n < 0\)
+(E) \(1\) in all cases
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+To prove that for every \(x \in \mathbb{R}\), \(|x - 3| + |x + 1| \ge 4\), a student splits \(\mathbb{R}\) into three regimes: \(x < -1\), \(-1 \le x < 3\), and \(x \ge 3\). On the middle regime \(-1 \le x < 3\), what does \(|x - 3| + |x + 1|\) simplify to?
+
+(A) \(2x - 2\)
+(B) \(-2x + 2\)
+(C) \(4\)
+(D) \(2\)
+(E) \(2x + 4\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Consider the claim: "For any three integers \(a, b, c \in \mathbb{Z}\), at least two of \(a, b, c\) have the same parity, and hence at least one of \(a - b\), \(b - c\), or \(c - a\) is even." Can we prove that \((a - b)(b - c)(c - a)\) is always even by assuming WLOG that \(a\) and \(b\) have the same parity?
+
+(A) No, because \(a, b, c\) could be three distinct integers with three different parities.
+(B) Yes: because there are only two parities (even and odd) and three integers, some pair among \(\{a, b, c\}\) must share the same parity; permuting the labels \(a, b, c\) changes \((a - b)(b - c)(c - a)\) by at most a factor of \(\pm 1\), which preserves evenness, so WLOG \(a\) and \(b\) have the same parity, making \(a - b\) even.
+(C) No, because permuting \(a, b, c\) can change the sign of \((a - b)(b - c)(c - a)\), which destroys symmetry.
+(D) Yes, only if we also assume WLOG that \(a \ge b \ge c\).
+(E) No, because \((a - b)(b - c)(c - a)\) is odd whenever \(a, b, c\) are all odd.
+[/BONUS]

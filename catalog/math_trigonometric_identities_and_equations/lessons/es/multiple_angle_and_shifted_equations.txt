@@ -1,0 +1,208 @@
+=== SECTION 1: Por qué las ecuaciones de ángulo múltiple generan soluciones adicionales ===
+
+Supón que necesitas TODAS las soluciones de
+\[
+\sin(3x) = \frac{\sqrt{2}}{2} \qquad \text{para } x \in [0, 2\pi).
+\]
+Observa el error más común al resolver ecuaciones de ángulo múltiple:
+Un estudiante piensa: «El seno vale \(\frac{\sqrt{2}}{2}\) en \(\frac{\pi}{4}\) y \(\frac{3\pi}{4}\), así que \(3x = \frac{\pi}{4}\) o \(3x = \frac{3\pi}{4}\), lo que da \(x = \frac{\pi}{12}\) y \(x = \frac{\pi}{4}\)».
+
+Esos dos ángulos SÍ son soluciones válidas; sin embargo, ¡se descartaron silenciosamente CUATRO soluciones válidas MÁS dentro de \([0, 2\pi)\)! ¿Por qué? Porque la gráfica de \(y = \sin(3x)\) completa TRES ciclos enteros dentro de \([0, 2\pi)\) (su período es \(\frac{2\pi}{3}\), no \(2\pi\)). En CADA uno de esos tres ciclos, \(y = \sin(3x)\) cruza dos veces la recta horizontal \(y = \frac{\sqrt{2}}{2}\), produciendo \(3 \times 2 = 6\) soluciones en \([0, 2\pi)\).
+
+[GRAPH]
+type: function2d
+title: Las seis soluciones de \(\sin(3x) = \sqrt{2}/2\) en \([0, 2\pi)\) a lo largo de tres períodos completos
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2832
+yrange: -1.3, 1.3
+trace: sin(3*x) | label: \(y = \sin(3x)\)
+trace: sqrt(2)/2 | label: \(y = \sqrt{2}/2\)
+point: 0.2618, 0.7071 | label: \(\pi/12\)
+point: 0.7854, 0.7071 | label: \(\pi/4\)
+point: 2.3562, 0.7071 | label: \(3\pi/4\)
+point: 2.8798, 0.7071 | label: \(11\pi/12\)
+point: 4.4506, 0.7071 | label: \(17\pi/12\)
+point: 4.9742, 0.7071 | label: \(19\pi/12\)
+[/GRAPH]
+
+Cuando resuelves \(3x = \frac{\pi}{4}\) y \(3x = \frac{3\pi}{4}\) ÚNICAMENTE en \([0, 2\pi)\), olvidas que a medida que \(x\) recorre de \(0\) a \(2\pi\), ¡el argumento \(u = 3x\) recorre desde \(0\) hasta \(6\pi\)! Dividir entre \(3\) contrae el paso periódico \(2\pi\) hasta \(\frac{2\pi}{3}\), arrastrando dos ciclos adicionales de soluciones dentro de \([0, 2\pi)\).
+
+=== SECTION 2: El puente de sustitución \(u = kx + \varphi\) ===
+
+Existen dos maneras equivalentes e infalibles de resolver cualquier ecuación de argumento lineal \(f(kx + \varphi) = c\) (con \(k \neq 0\)) para no perder ni una sola solución.
+
+[CALLOUT]
+id: substitution-bridge
+label: Método
+title: Resolución completa de \(f(kx + \varphi) = c\) mediante \(u = kx + \varphi\)
+tone: key
+
+(1) Método de la solución general (funciona tanto en \(\mathbb{R}\) como en intervalos acotados):
+Haz \(u = kx + \varphi\). Escribe primero la solución general COMPLETA para \(u\) (incluyendo \(+2\pi n\) para \(\sin/\cos\), o \(+\pi n\) para \(\tan\), con \(n \in \mathbb{Z}\)). Sustituye de vuelta \(u = kx + \varphi\) y despeja \(x\) algebraicamente (¡dividiendo también el término periódico entre \(k\)!). Si se pide un intervalo acotado \([a, b)\), sustituye todos los enteros \(n\) que sitúen a \(x\) dentro de \([a, b)\).
+
+(2) Método de reescalado del intervalo (alternativa para un intervalo acotado \([a, b)\)):
+Para \(k > 0\), transforma \(a \le x < b\) directamente en \(ka + \varphi \le u < kb + \varphi\). Halla TODAS las soluciones \(u\) de \(f(u) = c\) en ese intervalo reescalado y luego despeja \(x\) de \(kx + \varphi = u\). (Si \(k < 0\), invierte las desigualdades al multiplicar por \(k\).)
+[/CALLOUT]
+
+Completemos \(\sin(3x) = \frac{\sqrt{2}}{2}\) usando [REF: substitution-bridge.1 | el método de la solución general].
+- Haz \(u = 3x\). La solución general de \(\sin u = \frac{\sqrt{2}}{2}\) es
+\[
+u = \frac{\pi}{4} + 2\pi n \qquad \text{o} \qquad u = \frac{3\pi}{4} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Reemplaza \(u\) por \(3x\) y divide CADA término (¡incluido \(2\pi n\)!) entre \(3\):
+\[
+x = \frac{\pi}{12} + \frac{2\pi}{3}n \qquad \text{o} \qquad x = \frac{\pi}{4} + \frac{2\pi}{3}n \qquad (n \in \mathbb{Z}).
+\]
+- Reescribe \(\frac{2\pi}{3} = \frac{8\pi}{12}\) y \(\frac{\pi}{4} = \frac{3\pi}{12}\) sobre un denominador común para recorrer los enteros \(n\) sin esfuerzo:
+  - \(n = 0\): \(x = \frac{\pi}{12}, \frac{3\pi}{12} = \frac{\pi}{4}\).
+  - \(n = 1\): \(x = \frac{9\pi}{12} = \frac{3\pi}{4}, \frac{11\pi}{12}\).
+  - \(n = 2\): \(x = \frac{17\pi}{12}, \frac{19\pi}{12}\).
+  - \(n = 3\): \(x = \frac{25\pi}{12} > 2\pi\) (detenerse), y \(n = -1\) da valores negativos (detenerse).
+Así, en \([0, 2\pi)\) el conjunto solución completo es \(\left\{\frac{\pi}{12}, \frac{\pi}{4}, \frac{3\pi}{4}, \frac{11\pi}{12}, \frac{17\pi}{12}, \frac{19\pi}{12}\right\}\), ¡coincidiendo con los seis puntos marcados en la gráfica!
+
+Ejemplo desarrollado 2 (Coseno desplazado y escalado): Resuelve \(\cos\!\left(2x - \frac{\pi}{3}\right) = -\frac{1}{2}\) en \(\mathbb{R}\) y en \([0, 2\pi)\).
+- Haz \(u = 2x - \frac{\pi}{3}\). Para \(\cos u = -\frac{1}{2}\), \(\theta_0 = \frac{2\pi}{3}\), de modo que
+\[
+u = \frac{2\pi}{3} + 2\pi n \qquad \text{o} \qquad u = \frac{4\pi}{3} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Resuelve \(2x - \frac{\pi}{3} = u\) sumando \(\frac{\pi}{3}\) primero y dividiendo luego entre \(2\):
+  - Familia 1: \(2x = \pi + 2\pi n \implies x = \frac{\pi}{2} + \pi n\).
+  - Familia 2: \(2x = \frac{5\pi}{3} + 2\pi n \implies x = \frac{5\pi}{6} + \pi n\).
+- Recorre los enteros \(n\) para \(x \in [0, 2\pi)\):
+  - \(n = 0\): \(x = \frac{\pi}{2}, \frac{5\pi}{6}\).
+  - \(n = 1\): \(x = \frac{3\pi}{2}, \frac{11\pi}{6}\).
+  - \(n = 2\) supera \(2\pi\); \(n = -1\) es negativo.
+Observa cómo [REF: substitution-bridge.2 | la verificación por reescalado de intervalo] confirma el conteo: \(0 \le x < 2\pi\) corresponde a \(-\frac{\pi}{3} \le u < \frac{11\pi}{3}\), un intervalo de longitud \(4\pi\) (dos períodos completos de \(\cos u\)), por lo que esperamos \(2 \times 2 = 4\) soluciones: ¡coincidencia exacta!
+
+Ejemplo desarrollado 3 (Multiplicador fraccionario \(0 < k < 1\)): Resuelve \(\tan\!\left(\frac{x}{2}\right) = \sqrt{3}\) en \(\mathbb{R}\) y en \([0, 2\pi)\).
+- Haz \(u = \frac{x}{2}\). La solución general de \(\tan u = \sqrt{3}\) es \(u = \frac{\pi}{3} + \pi n\) (\(n \in \mathbb{Z}\)).
+- Multiplica ambos lados por \(2\):
+\[
+x = \frac{2\pi}{3} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Para \(x \in [0, 2\pi)\), únicamente \(n = 0\) cae dentro de \([0, 2\pi)\), produciendo la ÚNICA solución \(x = \frac{2\pi}{3}\). Como \(\tan(x/2)\) está estirada horizontalmente hasta tener período \(2\pi\), alcanza \(\sqrt{3}\) una sola vez en \([0, 2\pi)\).
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuántas soluciones distintas tiene \(\cos(4x) = \dfrac{1}{2}\) en el intervalo \([0, 2\pi)\)?
+
+(A) \(2\)
+(B) \(4\)
+(C) \(8\)
+(D) \(6\)
+(E) \(16\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Halla TODAS las soluciones de \(\sin\!\left(2x + \dfrac{\pi}{6}\right) = -\dfrac{1}{2}\) en el intervalo \([0, 2\pi)\).
+
+(A) \(\frac{\pi}{2}, \frac{5\pi}{6}, \frac{3\pi}{2}, \frac{11\pi}{6}\)
+(B) \(\frac{5\pi}{6}, \frac{11\pi}{6}\)
+(C) \(\frac{\pi}{2}, \frac{5\pi}{6}\)
+(D) \(\frac{\pi}{3}, \frac{2\pi}{3}, \frac{4\pi}{3}, \frac{5\pi}{3}\)
+(E) \(\frac{\pi}{6}, \frac{5\pi}{6}, \frac{7\pi}{6}, \frac{11\pi}{6}\)
+[/QUESTION]
+
+=== SECTION 3: Resolución de problemas inversos para modelos sinusoidales ===
+
+Las ecuaciones de ángulo múltiple y argumento desplazado responden las preguntas inversas del mundo real que surgen siempre que una magnitud periódica —como las mareas oceánicas, la altura en una noria o la temperatura diaria— se modela mediante una sinusoide \(y(t) = A\sin(kt + \varphi) + D\) o \(y(t) = A\cos(kt + \varphi) + D\). En lugar de sustituir un instante \(t\) para leer una altura, especificas una altura objetivo \(y_0\) y hallas TODOS los instantes \(t\) dentro de un ciclo en que el sistema cruza \(y_0\).
+
+Ejemplo desarrollado: Una noria gira suavemente de modo que la altura \(H(t)\) de un pasajero (en metros) en el instante \(t\) (en segundos) se modela mediante
+\[
+H(t) = 15 - 12\cos\!\left(\frac{\pi}{30}t\right), \qquad 0 \le t < 60.
+\]
+Observa que el período es \(\frac{2\pi}{\pi/30} = 60\) segundos, la altura mínima es \(15 - 12 = 3\) metros (en \(t = 0\)) y la altura máxima es \(15 + 12 = 27\) metros (en \(t = 30\)). ¿En qué instantes durante la primera rotación de \(60\) segundos se encuentra el pasajero a una altura de \(21\) metros?
+
+- Iguala \(H(t) = 21\) y despeja el coseno:
+\[
+15 - 12\cos\!\left(\frac{\pi}{30}t\right) = 21 \implies -12\cos\!\left(\frac{\pi}{30}t\right) = 6 \implies \cos\!\left(\frac{\pi}{30}t\right) = -\frac{1}{2}.
+\]
+- Aplica [REF: substitution-bridge.1 | el puente de sustitución] con \(u = \frac{\pi}{30}t\):
+\[
+\frac{\pi}{30}t = \frac{2\pi}{3} + 2\pi n \qquad \text{o} \qquad \frac{\pi}{30}t = \frac{4\pi}{3} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Multiplica ambos lados por \(\frac{30}{\pi}\) (¡\(\pi\) se cancela limpiamente!):
+\[
+t = 20 + 60n \qquad \text{o} \qquad t = 40 + 60n \qquad (n \in \mathbb{Z}).
+\]
+- En el primer ciclo \(0 \le t < 60\), tomar \(n = 0\) da \(t = 20\text{ s}\) (subiendo por \(21\text{ m}\)) y \(t = 40\text{ s}\) (bajando por \(21\text{ m}\)). Observa también que el pasajero permanece a \(21\text{ m}\) o más durante todo el intervalo de \(20\) segundos desde \(t = 20\) hasta \(t = 40\).
+
+[GRAPH]
+type: function2d
+title: Altura en la noria \(H(t) = 15 - 12\cos(\pi t / 30)\) cruzando \(H = 21\) m en \(t = 20\) s y \(t = 40\) s
+xlabel: \(t\)
+ylabel: \(H(t)\)
+xrange: 0, 60
+yrange: 0, 30
+trace: 15 - 12*cos(pi*x/30) | label: \(H(t) = 15 - 12\cos(\pi t/30)\)
+trace: 21 | label: \(H = 21\text{ m}\)
+point: 20, 21 | label: \((20, 21)\)
+point: 40, 21 | label: \((40, 21)\)
+[/GRAPH]
+
+¿Qué ocurre si el modelo no produce una razón notable —por ejemplo, hallar cuándo está el pasajero a \(H = 25\text{ m}\)? Despeja \(\cos\!\left(\frac{\pi}{30}t\right) = -\frac{10}{12} = -\frac{5}{6}\), escribe la solución general exacta
+\[
+t = \frac{30}{\pi}\arccos\!\left(-\frac{5}{6}\right) + 60n \qquad \text{o} \qquad t = 60 - \frac{30}{\pi}\arccos\!\left(-\frac{5}{6}\right) + 60n,
+\]
+y redondea recién en el último paso: \(\arccos(-5/6) \approx 2.5559\), lo que da \(t \approx 24.4\text{ s}\) y \(t \approx 35.6\text{ s}\).
+
+[QUESTION 3]
+[ANSWER: E]
+La temperatura \(T(t)\) (en \(^\circ\text{C}\)) en un invernadero durante un día de \(24\) horas (\(0 \le t < 24\)) se modela mediante
+\[
+T(t) = 20 + 6\sin\!\left(\frac{\pi}{12}(t - 6)\right).
+\]
+¿En qué dos instantes \(t \in [0, 24)\) la temperatura es igual a \(23^\circ\text{C}\)?
+
+(A) \(t = 2\) y \(t = 10\)
+(B) \(t = 7\) y \(t = 17\)
+(C) \(t = 8\) y \(t = 14\)
+(D) \(t = 9\) y \(t = 15\)
+(E) \(t = 8\) y \(t = 16\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Halla la solución general completa en \(\mathbb{R}\) de \(\tan\!\left(3x - \dfrac{\pi}{4}\right) = -1\) (\(n \in \mathbb{Z}\)).
+
+(A) \(x = \pi n\)
+(B) \(x = \frac{\pi}{3}n\)
+(C) \(x = \frac{\pi}{6} + \frac{\pi}{3}n\)
+(D) \(x = \frac{2\pi}{3}n\)
+(E) \(x = -\frac{\pi}{12} + \frac{\pi}{3}n\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Halla TODAS las soluciones de \(\sec\!\left(\dfrac{x}{2} - \dfrac{\pi}{6}\right) = -2\) en el intervalo \([0, 4\pi)\).
+
+(A) \(\frac{5\pi}{3}\) únicamente
+(B) \(\frac{5\pi}{3}, \frac{7\pi}{3}\)
+(C) \(\frac{4\pi}{3}, \frac{8\pi}{3}\)
+(D) \(\frac{5\pi}{3}, 3\pi\)
+(E) \(\frac{7\pi}{3}, \frac{11\pi}{3}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Considera la ecuación \(\sin\!\left(3x - \dfrac{\pi}{2}\right) = 1\) en \([0, 2\pi)\). ¿Cuántas soluciones distintas hay en \([0, 2\pi)\) y cuál es su suma?
+
+(A) \(6\) soluciones, suma \(6\pi\)
+(B) \(3\) soluciones, suma \(2\pi\)
+(C) \(3\) soluciones, suma \(3\pi\)
+(D) \(2\) soluciones, suma \(\pi\)
+(E) \(3\) soluciones, suma \(4\pi\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Supón que resuelves \(\cos(kx) = 0.3\) en \([0, 2\pi)\), donde \(k\) es un entero positivo. Si un estudiante resuelve por error \(\cos u = 0.3\) ÚNICAMENTE en \([0, 2\pi)\) y divide esas dos raíces entre \(k\), ¿cuántas soluciones válidas en \([0, 2\pi)\) ha omitido?
+
+(A) \(2(k - 1)\)
+(B) \(k - 1\)
+(C) \(2k\)
+(D) \(k\)
+(E) \(2k - 1\)
+[/BONUS]

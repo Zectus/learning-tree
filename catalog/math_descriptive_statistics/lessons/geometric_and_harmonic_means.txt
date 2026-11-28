@@ -1,0 +1,234 @@
+=== SECTION 1: Multiplicative growth and the geometric mean ===
+
+Suppose you invest \(\$1{,}000\) in a fund that gains \(+50\%\) in Year 1 and loses \(-50\%\) in Year 2. If someone computes the arithmetic mean of the two percentage returns, \((+50\% + (-50\%)) / 2 = 0\%\), they might expect you to break even at \(\$1{,}000\). Check what actually happens to your money: after Year 1 you have \(\$1{,}000 \times 1.50 = \$1{,}500\), and after Year 2 you have \(\$1{,}500 \times 0.50 = \$750\)—a net loss of \(25\%\)!
+
+Why did the arithmetic mean fail so badly? Because successive returns do not add—their growth factors MULTIPLY. Multiplying by \(1.50\) and then by \(0.50\) yields a two-year cumulative factor of \(1.50 \times 0.50 = 0.75\). To ask what constant annual growth factor \(G\) would produce the exact same two-year result, we solve \(G^2 = 1.50 \times 0.50 = 0.75\), giving \(G = \sqrt{0.75} \approx 0.8660\), which corresponds to an equivalent constant annual return of \(0.8660 - 1 = -13.40\%\) per year. That equal-factor average is the geometric mean.
+
+[CALLOUT]
+id: geometric-mean
+label: Definition
+title: Geometric mean
+tone: key
+
+For \(n\) strictly positive ratio-scale values \(x_1, x_2, \dots, x_n > 0\), the geometric mean is the \(n\)-th root of their product:
+\[
+G = \left(\prod_{i=1}^n x_i\right)^{1/n} = (x_1 x_2 \cdots x_n)^{1/n}.
+\]
+Taking natural logarithms converts the product into a sum:
+\[
+\ln G = \frac{1}{n} \sum_{i=1}^n \ln x_i, \qquad \text{so} \qquad G = \exp\left(\frac{1}{n} \sum_{i=1}^n \ln x_i\right).
+\]
+[/CALLOUT]
+
+Look closely at the logarithmic form in [REF: geometric-mean | the definition]: \(\ln G\) is simply the ordinary arithmetic mean of the log-transformed values \(\ln x_i\). This both simplifies computation for large \(n\) (preventing overflow when multiplying many factors) and clarifies the strict domain rule: every \(x_i\) MUST be strictly positive (\(x_i > 0\)). For percentage returns \(r_1, \dots, r_n\) (with each \(r_t > -1\), i.e., above \(-100\%\)), NEVER take the geometric mean of the raw rates \(r_t\) directly (which can be negative or zero). Instead, always form the strictly positive growth factors \(x_t = 1 + r_t\), compute their geometric mean \(G = \bigl(\prod_{t=1}^n (1 + r_t)\bigr)^{1/n}\), and then subtract \(1\) to obtain the compound average growth rate \(\bar{r}_g = G - 1\).
+
+Check this on a three-year revenue sequence with growth rates \(+20\%\), \(+50\%\), and \(-10\%\): the growth factors are \(1.20\), \(1.50\), and \(0.90\), whose product is \(1.20 \times 1.50 \times 0.90 = 1.62\). The geometric mean factor is \(G = (1.62)^{1/3} \approx 1.1745\), so the true compound annual growth rate is \(+17.45\%\) per year (compared with the overstated arithmetic average \((20\% + 50\% - 10\%)/3 = +20.0\%\)).
+
+[QUESTION 1]
+[ANSWER: B]
+A stock portfolio rises by \(+60\%\) in Year 1 and falls by \(-10\%\) in Year 2. What constant annual percentage growth rate produces the exact same two-year cumulative change?
+
+(A) \(+25\%\)
+(B) \(+20\%\)
+(C) \(+22\%\)
+(D) \(+44\%\)
+(E) \(+18\%\)
+[/QUESTION]
+
+=== SECTION 2: Averaging rates and the harmonic mean ===
+
+Now consider a second everyday situation where the arithmetic mean gives the wrong answer: averaging rates (ratios of the form \(\text{numerator} / \text{denominator}\), such as kilometers per hour or dollars per share).
+
+Suppose a delivery van drives \(60\text{ km}\) from a warehouse to a store at \(60\text{ km/h}\), then returns the same \(60\text{ km}\) along congested roads at \(30\text{ km/h}\). What is the van's average speed for the entire \(120\text{ km}\) round trip? The arithmetic mean \((60 + 30)/2 = 45\text{ km/h}\) is WRONG! Calculate total distance divided by total time directly:
+- Outbound leg: \(60\text{ km}\) at \(60\text{ km/h}\) takes \(60 / 60 = 1\text{ hour}\).
+- Return leg: \(60\text{ km}\) at \(30\text{ km/h}\) takes \(60 / 30 = 2\text{ hours}\).
+- Total distance is \(60 + 60 = 120\text{ km}\) in total time \(1 + 2 = 3\text{ hours}\), so the true average speed is \(120 / 3 = 40\text{ km/h}\).
+
+Why is the true average speed \(40\text{ km/h}\) instead of \(45\text{ km/h}\)? Because average speed is a time-weighted mean of the two leg speeds, and the van spent TWICE as much time traveling at the slower speed (\(2\) hours at \(30\text{ km/h}\) versus \(1\) hour at \(60\text{ km/h}\)):
+\[
+\bar{v} = \frac{1(60) + 2(30)}{1 + 2} = 40\text{ km/h}.
+\]
+In general, when \(n\) legs each cover the SAME fixed distance \(D\) at positive speeds \(v_1, \dots, v_n\), the time on leg \(i\) is \(D / v_i\), so total distance divided by total time cancels \(D\) completely:
+\[
+\bar{v} = \frac{n D}{\sum_{i=1}^n (D / v_i)} = \frac{n}{\sum_{i=1}^n \frac{1}{v_i}}.
+\]
+That formula is the harmonic mean.
+
+[CALLOUT]
+id: harmonic-mean
+label: Definition
+title: Harmonic mean
+tone: key
+
+For \(n\) strictly positive values \(x_1, x_2, \dots, x_n > 0\), the harmonic mean is the reciprocal of the arithmetic mean of their reciprocals:
+\[
+H = \frac{n}{\sum_{i=1}^n \frac{1}{x_i}}.
+\]
+For \(n = 2\) positive values \(a\) and \(b\), this simplifies to
+\[
+H = \frac{2}{\frac{1}{a} + \frac{1}{b}} = \frac{2ab}{a + b}.
+\]
+[/CALLOUT]
+
+Knowing when to use the arithmetic mean versus [REF: harmonic-mean | the harmonic mean] for a rate \(r = \text{numerator} / \text{denominator}\) comes down to one decisive check: which quantity is held equal across the \(n\) observations?
+
+[CALLOUT]
+id: rate-selection-rule
+label: Rule
+title: Fixed-denominator versus fixed-numerator rate averaging
+tone: key
+
+Let each observation be a positive rate \(r_i = U_i / V_i\) (for example, \(\text{km} / \text{hour}\), or \(\text{dollars} / \text{share}\)):
+
+(1) Fixed denominator (\(V_1 = V_2 = \dots = V_n = V\)): The overall rate is \(\dfrac{\sum U_i}{\sum V_i} = \dfrac{\sum V r_i}{n V} = \dfrac{1}{n}\sum r_i\), the arithmetic mean. Example: driving for \(1\) hour at \(60\text{ km/h}\) and \(1\) hour at \(30\text{ km/h}\) averages \(45\text{ km/h}\).
+(2) Fixed numerator (\(U_1 = U_2 = \dots = U_n = U\)): The overall rate is \(\dfrac{\sum U_i}{\sum V_i} = \dfrac{n U}{\sum (U / r_i)} = \dfrac{n}{\sum (1/r_i)}\), the harmonic mean. Example: driving \(60\text{ km}\) at \(60\text{ km/h}\) and \(60\text{ km}\) at \(30\text{ km/h}\) averages \(40\text{ km/h}\).
+(3) Neither fixed: Compute \(\dfrac{\sum U_i}{\sum V_i}\) directly—equivalently, a weighted arithmetic mean weighted by the denominators \(V_i\) (or a weighted harmonic mean weighted by the numerators \(U_i\)).
+[/CALLOUT]
+
+Apply [REF: rate-selection-rule | this rule] to dollar-cost averaging in finance. Suppose an investor spends a fixed \(\$600\) each month buying shares of a stock: in Month 1 the price is \(\$20/\text{share}\) (buying \(30\) shares), and in Month 2 the price is \(\$30/\text{share}\) (buying \(20\) shares). Because the price rate is \(\text{dollars} / \text{share}\) and the NUMERATOR (dollars spent, \(\$600\)) is held fixed, the average price paid per share is the harmonic mean:
+\[
+H = \frac{2(20)(30)}{20 + 30} = \frac{1200}{50} = \$24/\text{share},
+\]
+matching \(\$1{,}200 / 50\text{ shares} = \$24/\text{share}\). Had the investor instead bought a fixed \(25\) shares each month (fixing the DENOMINATOR, shares), the average price would be the arithmetic mean \((\$20 + \$30)/2 = \$25/\text{share}\). Notice that spending equal dollars automatically buys more shares when the price is low, pulling the effective average price below the arithmetic mean.
+
+[QUESTION 2]
+[ANSWER: D]
+A survey drone flies \(10\text{ km}\) north into a headwind at \(20\text{ km/h}\), then immediately flies the same \(10\text{ km}\) south with a tailwind at \(60\text{ km/h}\). What is the drone's average speed over the entire \(20\text{ km}\) round trip?
+
+(A) \(40\text{ km/h}\)
+(B) \(35\text{ km/h}\)
+(C) \(34.6\text{ km/h}\)
+(D) \(30\text{ km/h}\)
+(E) \(25\text{ km/h}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Two commuters buy gasoline on two separate days when prices are \(\$3.00/\text{gal}\) and \(\$6.00/\text{gal}\). Commuter X buys exactly \(10\) gallons on each day; Commuter Y spends exactly \(\$30\) on each day. Which statement accurately gives the average price per gallon paid by each commuter?
+
+(A) Commuter X pays the arithmetic mean \(\$4.50/\text{gal}\); Commuter Y pays the harmonic mean \(\$4.00/\text{gal}\).
+(B) Commuter X pays the harmonic mean \(\$4.00/\text{gal}\); Commuter Y pays the arithmetic mean \(\$4.50/\text{gal}\).
+(C) Both commuters pay the arithmetic mean \(\$4.50/\text{gal}\) because prices are identical on both days.
+(D) Commuter X pays \(\$4.50/\text{gal}\); Commuter Y pays the geometric mean \(\sqrt{18} \approx \$4.24/\text{gal}\).
+(E) Both commuters pay the harmonic mean \(\$4.00/\text{gal}\) because price per gallon is a rate.
+[/QUESTION]
+
+=== SECTION 3: The AM-GM-HM inequality and why volatility drags down growth ===
+
+In every example above, the three means fell in the exact same order: \(H < G < A\). That ordering is not a coincidence; it is a fundamental inequality of positive numbers.
+
+[CALLOUT]
+id: am-gm-hm
+label: Theorem
+title: The AM-GM-HM inequality
+tone: key
+
+For any \(n\) strictly positive real numbers \(x_1, x_2, \dots, x_n > 0\), let \(A = \frac{1}{n}\sum x_i\), \(G = (\prod x_i)^{1/n}\), and \(H = n / \sum (1/x_i)\). Then
+\[
+H \le G \le A,
+\]
+with equality \(H = G = A\) if and only if all observations are equal (\(x_1 = x_2 = \dots = x_n\)).
+[/CALLOUT]
+
+For \(n = 2\) positive numbers \(a, b > 0\), we can prove [REF: am-gm-hm | the entire chain] in four algebraic lines. First, because the square of any real number is nonnegative,
+\[
+(\sqrt{a} - \sqrt{b})^2 \ge 0 \implies a - 2\sqrt{ab} + b \ge 0 \implies \frac{a + b}{2} \ge \sqrt{ab},
+\]
+which proves \(G \le A\), with equality if and only if \(\sqrt{a} - \sqrt{b} = 0\), i.e., \(a = b\). Second, apply that exact inequality to the positive reciprocals \(1/a\) and \(1/b\):
+\[
+\frac{\frac{1}{a} + \frac{1}{b}}{2} \ge \sqrt{\frac{1}{a} \cdot \frac{1}{b}} = \frac{1}{\sqrt{ab}}.
+\]
+Because both sides are strictly positive, taking reciprocals reverses the inequality:
+\[
+\frac{2}{\frac{1}{a} + \frac{1}{b}} \le \sqrt{ab},
+\]
+which proves \(H \le G\), again with equality if and only if \(1/a = 1/b\), i.e., \(a = b\). Notice an extra identity for \(n = 2\): multiplying \(A = (a+b)/2\) by \(H = 2ab/(a+b)\) gives \(A \cdot H = ab = G^2\), so for two positive values the geometric mean is always \(\sqrt{A H}\).
+
+The general \(n\)-variable inequality \(H \le G \le A\) holds by the same underlying principle: \(A\) gives equal weight to large values, \(G\) compresses multiplicative extremes via logarithms, and \(H\) gives greatest weight to small values via reciprocals. Check it on \(n = 4\) values \(1, 2, 4, 8\):
+- \(A = (1 + 2 + 4 + 8)/4 = 15/4 = 3.75\)
+- \(G = (1 \cdot 2 \cdot 4 \cdot 8)^{1/4} = 64^{1/4} = 2\sqrt{2} \approx 2.828\)
+- \(H = 4 / (1 + 1/2 + 1/4 + 1/8) = 4 / (15/8) = 32/15 \approx 2.133\)
+
+Indeed \(2.133 < 2.828 < 3.75\). The graph below fixes \(x_1 = 1\) and plots \(A(x)\), \(G(x)\), and \(H(x)\) as functions of the second value \(x = x_2 > 0\). Drag the slider \(b\) to see all three curves touch at \(x = 1\) (where the two values are equal) and pull further apart the more unequal \(x_1\) and \(x_2\) become.
+
+[GRAPH]
+type: function2d
+title: Comparing \(A(x) = (1+x)/2\), \(G(x) = \sqrt{x}\), and \(H(x) = 2x/(1+x)\) for pair \((1, x)\)
+xlabel: \(x\)
+ylabel: Mean value
+xrange: 0.1, 6
+yrange: 0, 3.6
+trace: (1 + x) / 2 | label: Arithmetic mean \(A\) | color: #ef4444
+trace: sqrt(x) | label: Geometric mean \(G\) | color: #3b82f6
+trace: 2*x / (1 + x) | label: Harmonic mean \(H\) | color: #10b981
+point: 1, 1 | label: \((1, 1)\)
+point: b, (1 + b) / 2 | label: \(A\) | color: #ef4444
+point: b, sqrt(b) | label: \(G\) | color: #3b82f6
+point: b, 2*b / (1 + b) | label: \(H\) | color: #10b981
+segment: b, 2*b / (1 + b), b, (1 + b) / 2 | dashed: true
+slider: b | range: 0.2, 6 | init: 4 | step: 0.2
+[/GRAPH]
+
+This inequality directly explains volatility drag in finance and population biology: whenever annual growth factors \(1 + r_t\) fluctuate from year to year instead of staying constant, \(G < A\) strictly. Therefore, the arithmetic mean of annual percentage returns ALWAYS overstates the true compound annual growth rate \(\bar{r}_g = G - 1\), and the wider the year-to-year swings, the larger the gap \(A - G\) becomes.
+
+[TABLE]
+Mean | Formula (for \(x_i > 0\)) | When to use | Ordering
+Arithmetic (\(A\)) | \(\frac{1}{n}\sum x_i\) | Additive totals; rates with equal denominators | Largest (\(A \ge G \ge H\))
+Geometric (\(G\)) | \(\left(\prod x_i\right)^{1/n}\) | Multiplicative growth factors, ratios, index numbers | Middle (\(A \ge G \ge H\))
+Harmonic (\(H\)) | \(n / \sum (1/x_i)\) | Rates with equal numerators (equal distance, equal spend) | Smallest (\(A \ge G \ge H\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: C]
+Two strictly positive numbers \(a\) and \(b\) have arithmetic mean \(A = 12.5\) and harmonic mean \(H = 8\). What is their geometric mean \(G\)?
+
+(A) \(10.25\)
+(B) \(12.0\)
+(C) \(10.0\)
+(D) \(9.5\)
+(E) Cannot be determined without knowing \(a\) and \(b\) individually.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+An investment brochure advertises that a volatile fund achieved an arithmetic mean annual return of \(+8\%\) over five years, with yearly returns varying widely from \(-30\%\) to \(+45\%\). Without seeing the exact yearly sequence, what can you conclude with certainty about the fund's true compound annual growth rate \(\bar{r}_g\) over those five years?
+
+(A) \(\bar{r}_g\) must equal \(+8\%\) because compound growth and arithmetic average returns agree over any multi-year window.
+(B) \(\bar{r}_g\) must be strictly greater than \(+8\%\) because compounding amplifies positive returns.
+(C) \(\bar{r}_g\) could be either greater than or less than \(+8\%\) depending on the order of the five years.
+(D) \(\bar{r}_g\) equals the harmonic mean of the five annual returns.
+(E) \(\bar{r}_g\) must be strictly less than \(+8\%\) because the positive growth factors \(1 + r_t\) are not all equal, so \(G < A\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Over three consecutive years, a startup's annual revenue changes by \(+25\%\), \(-20\%\), and \(0\%\). Compare the arithmetic mean of the three annual percentage changes with the true compound annual growth rate \(\bar{r}_g\).
+
+(A) Arithmetic mean is \(+1.67\%\) and \(\bar{r}_g\) is \(+1.67\%\).
+(B) Arithmetic mean is \(+1.67\%\), whereas \(\bar{r}_g\) is \(0\%\).
+(C) Arithmetic mean is \(0\%\), whereas \(\bar{r}_g\) is \(+1.67\%\).
+(D) Arithmetic mean is \(+1.67\%\), whereas \(\bar{r}_g\) is \(-1.67\%\).
+(E) Arithmetic mean is \(+5.0\%\), whereas \(\bar{r}_g\) is \(0\%\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+A cyclist rides \(30\text{ km}\) uphill at \(30\text{ km/h}\) and then \(60\text{ km}\) on a flat road at \(60\text{ km/h}\). What is the cyclist's exact average speed over the full \(90\text{ km}\) ride, and why does the unweighted harmonic mean of \(30\) and \(60\) fail here?
+
+(A) \(40\text{ km/h}\); the unweighted harmonic mean is exact whenever speeds are averaged.
+(B) \(50\text{ km/h}\); the distances are weighted \(1:2\), so the weighted arithmetic mean of speeds applies.
+(C) \(42.4\text{ km/h}\); the geometric mean is required for unequal distances.
+(D) \(45\text{ km/h}\); the two segments have unequal distances (\(30\text{ km}\) versus \(60\text{ km}\)) and equal travel times (\(1\text{ h}\) each), so the overall speed is total distance divided by total time.
+(E) \(45\text{ km/h}\); the unweighted harmonic mean always underestimates speed by exactly \(5\text{ km/h}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Suppose a dataset of \(n\) strictly positive values \(x_1, \dots, x_n\) has geometric mean \(G\). If every observation is squared to form a new dataset \(y_i = x_i^2\), what is the geometric mean of \(y_1, \dots, y_n\)?
+
+(A) \(2G\)
+(B) \(G^n\)
+(C) \(G^2\)
+(D) \(\sqrt{G}\)
+(E) It cannot be determined from \(G\) alone without knowing the individual \(x_i\).
+[/BONUS]

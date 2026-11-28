@@ -1,0 +1,233 @@
+=== SECTION 1: Shifted exponential models and Newton's Law of Cooling ===
+
+Unconstrained exponential decay \(A_0 e^{-kt}\) always approaches \(0\), yet many real processes settle toward a NONZERO equilibrium. A mug of \(90^\circ\text{C}\) coffee left in a \(22^\circ\text{C}\) room does not cool to \(0^\circ\text{C}\); it approaches the ambient room temperature \(22^\circ\text{C}\). Likewise, a cold \(4^\circ\text{C}\) drink in the same room warms upward toward \(22^\circ\text{C}\).
+
+Exponential graph transformations immediately supply the right structure. Shifting an exponential decay curve vertically by an equilibrium value \(T_{\text{env}}\) moves its horizontal asymptote from \(y = 0\) to \(y = T_{\text{env}}\). Instead of the raw temperature \(T(t)\) decaying exponentially, it is the TEMPERATURE DIFFERENCE \(D(t) = T(t) - T_{\text{env}}\) that decays exponentially toward \(0\):
+\[
+D(t) = D_0 e^{-kt} = (T_0 - T_{\text{env}}) e^{-kt} \qquad (k > 0).
+\]
+Adding \(T_{\text{env}}\) to both sides produces Newton's Law of Cooling (and Warming):
+\[
+T(t) = T_{\text{env}} + (T_0 - T_{\text{env}}) e^{-kt}.
+\]
+Notice how the sign of the initial gap \((T_0 - T_{\text{env}})\) controls the shape:
+- Cooling (\(T_0 > T_{\text{env}}\)): the coefficient \(T_0 - T_{\text{env}}\) is positive, so \(T(t)\) decreases from \(T_0\) toward the horizontal asymptote \(y = T_{\text{env}}\) from above.
+- Warming or bounded saturation (\(T_0 < T_{\text{env}}\)): the coefficient is negative (a vertical reflection of decay), so \(T(t)\) increases from \(T_0\) toward \(y = T_{\text{env}}\) from below. In saturation contexts (such as capacitor charging or bounded skill acquisition toward a ceiling \(L\)), the same shifted exponential is often written as
+\[
+y(t) = L - (L - y_0) e^{-kt} \qquad (k > 0,\; y_0 < L).
+\]
+
+[CALLOUT]
+id: shifted-exp-model
+label: Model
+title: Shifted exponential models (Newton's cooling and bounded saturation)
+tone: key
+
+For a constant equilibrium \(T_{\text{env}}\) (or ceiling \(L\)), initial value \(T_0\) (or \(y_0\)), and rate constant \(k > 0\):
+
+(1) Newton's Law of Cooling / Warming:
+\[
+T(t) = T_{\text{env}} + (T_0 - T_{\text{env}}) e^{-kt}.
+\]
+(2) Bounded saturation toward a ceiling \(L\):
+\[
+y(t) = L - (L - y_0) e^{-kt}.
+\]
+(3) Horizontal asymptote and gap decay: As \(t \to \infty\), \(e^{-kt} \to 0\), so the curve approaches the horizontal asymptote \(y = T_{\text{env}}\) (or \(y = L\)). At every step, the gap \(T(t) - T_{\text{env}}\) obeys ordinary exponential decay with constant \(k\).
+[/CALLOUT]
+
+Drag the slider for \(k\) below to compare a hot mug cooling from \(90^\circ\text{C}\) and a chilled bottle warming from \(4^\circ\text{C}\) inside the same \(22^\circ\text{C}\) room. Larger \(k\) drives both curves toward the shared asymptote \(T = 22\) more rapidly.
+
+[GRAPH]
+type: function2d
+title: Cooling and warming curves approaching ambient equilibrium \(T_{\text{env}} = 22^\circ\text{C}\)
+xlabel: Time t (minutes)
+ylabel: Temperature T (C)
+xrange: 0, 40
+yrange: 0, 100
+trace: 22 + 68 * exp(-k * x) | label: Cooling \(T(t) = 22 + 68 e^{-kt}\)
+trace: 22 - 18 * exp(-k * x) | label: Warming \(T(t) = 22 - 18 e^{-kt}\)
+trace: 22 | label: Ambient \(T_{\text{env}} = 22\)
+point: 0, 90 | label: \((0, 90)\)
+point: 0, 4 | label: \((0, 4)\)
+slider: k | range: 0.02, 0.20 | init: 0.08 | step: 0.02
+[/GRAPH]
+
+Worked example (Calibrating \(k\) and solving for time): Freshly brewed coffee starts at \(92^\circ\text{C}\) in a \(20^\circ\text{C}\) room. After \(10\text{ minutes}\), its temperature is \(56^\circ\text{C}\). How many total minutes after brewing will it take to reach \(38^\circ\text{C}\), and when will it reach \(30^\circ\text{C}\)?
+
+1. Subtract \(T_{\text{env}} = 20\) to work with the decaying gap \(D(t) = T(t) - 20\):
+\[
+D_0 = 92 - 20 = 72^\circ\text{C}, \qquad T(t) = 20 + 72 e^{-kt}.
+\]
+2. Calibrate \(k\) using \(T(10) = 56\) (so \(D(10) = 56 - 20 = 36\)):
+\[
+72 e^{-10 k} = 36 \implies e^{-10 k} = \frac{1}{2} \implies k = \frac{\ln 2}{10} \approx 0.06931\text{ min}^{-1}.
+\]
+3. Target \(T(t) = 38\) gives gap \(D(t) = 38 - 20 = 18\):
+\[
+72 e^{-kt} = 18 \implies e^{-kt} = \frac{1}{4} \implies -kt = -\ln 4 = -2\ln 2 \implies t = \frac{2\ln 2}{(\ln 2)/10} = 20\text{ minutes}.
+\]
+4. Target \(T(t) = 30\) gives gap \(D(t) = 30 - 20 = 10\):
+\[
+72 e^{-kt} = 10 \implies e^{kt} = 7.2 \implies t = \frac{\ln(7.2)}{k} = 10 \cdot \frac{\ln(7.2)}{\ln 2} \approx 28.48\text{ minutes}.
+\]
+Notice why you must ALWAYS subtract \(T_{\text{env}}\) before taking ratios: \(T(t)\) itself is not purely exponential, only \(T(t) - T_{\text{env}}\) is.
+
+[QUESTION 1]
+[ANSWER: B]
+A metal bar heated to \(125^\circ\text{C}\) is placed in a constant \(25^\circ\text{C}\) room. After \(6\text{ minutes}\), its temperature is \(75^\circ\text{C}\). According to Newton's Law of Cooling, how many total minutes after placement will it take for the bar to cool to \(50^\circ\text{C}\)?
+
+(A) \(9\text{ minutes}\)
+(B) \(12\text{ minutes}\)
+(C) \(15\text{ minutes}\)
+(D) \(18\text{ minutes}\)
+(E) \(6 \cdot \dfrac{\ln(50/125)}{\ln(75/125)}\text{ minutes}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+A capacitor charges according to \(V(t) = 12 - 9 e^{-0.4 t}\), where \(V\) is voltage in volts and \(t \ge 0\) is time in seconds. What are its initial voltage \(V(0)\) and its limiting voltage as \(t \to \infty\)?
+
+(A) \(V(0) = 9\text{ V}\), limit \(12\text{ V}\)
+(B) \(V(0) = 3\text{ V}\), limit \(12\text{ V}\)
+(C) \(V(0) = 12\text{ V}\), limit \(9\text{ V}\)
+(D) \(V(0) = 3\text{ V}\), limit \(21\text{ V}\)
+(E) \(V(0) = 0\text{ V}\), limit \(12\text{ V}\)
+[/QUESTION]
+
+=== SECTION 2: The logistic growth model and its S-shaped curve ===
+
+Shifted exponential saturation slows down right from \(t = 0\). By contrast, many populations, epidemics, and technology adoptions begin with near-exponential growth when the population is small relative to available resources, then bend over and level off as crowding sets in. This S-shaped behavior is captured by the logistic growth model, whose explicit formula (derived from differential equations in calculus, and supplied here directly) is
+\[
+P(t) = \frac{L}{1 + A e^{-kt}} \qquad (L > 0,\; A > 0,\; k > 0).
+\]
+
+Every major feature of this S-curve follows directly from exponential algebra:
+
+1. Carrying capacity (upper horizontal asymptote): As \(t \to \infty\), \(e^{-kt} \to 0\), so the denominator \(1 + A e^{-kt} \to 1\) and \(P(t) \to L\). Because \(A e^{-kt} > 0\), \(P(t)\) stays strictly below \(L\) for all finite \(t\). The ceiling \(L\) is called the carrying capacity. (As \(t \to -\infty\), \(e^{-kt} \to \infty\) and \(P(t) \to 0\), giving a lower horizontal asymptote \(y = 0\).)
+
+2. Initial population \(P_0 = P(0)\) and the meaning of \(A\): Setting \(t = 0\) yields
+\[
+P_0 = \frac{L}{1 + A} \implies 1 + A = \frac{L}{P_0} \implies A = \frac{L - P_0}{P_0}.
+\]
+Thus \(A\) is the ratio of initially unused capacity \((L - P_0)\) to the starting population \(P_0\).
+
+3. Early near-exponential phase: When \(P_0\) is very small compared with \(L\), \(A\) is large. For small \(t\) where \(A e^{-kt} \gg 1\), the "\(1+\)" in the denominator is negligible, so \(P(t) \approx \frac{L}{A} e^{kt} \approx P_0 e^{kt}\): the curve initially looks almost indistinguishable from unconstrained exponential growth at rate \(k\).
+
+4. Half-capacity point (fastest growth): When does \(P(t)\) reach half the carrying capacity, \(P = \frac{L}{2}\)? Set the formula equal to \(\frac{L}{2}\):
+\[
+\frac{L}{1 + A e^{-kt}} = \frac{L}{2} \iff 1 + A e^{-kt} = 2 \iff A e^{-kt} = 1 \iff e^{kt} = A \iff t = \frac{\ln A}{k}.
+\]
+When \(P_0 < \frac{L}{2}\) (so \(A > 1\)), this time \(t = \frac{\ln A}{k} > 0\) marks the exact transition where the curve shifts from accelerating upward to decelerating toward \(L\)—the point of fastest growth (whose exact rate-of-change proof uses derivatives in calculus). If \(P_0 \ge \frac{L}{2}\), then \(A \le 1\) and growth slows down from \(t = 0\) onward.
+
+[CALLOUT]
+id: logistic-features
+label: Model
+title: Key algebraic features of the logistic model
+tone: key
+
+For \(P(t) = \dfrac{L}{1 + A e^{-kt}}\) with \(L > 0, A > 0, k > 0\):
+
+(1) Asymptotes: Upper horizontal asymptote \(y = L\) (carrying capacity, as \(t \to \infty\)) and lower horizontal asymptote \(y = 0\) (as \(t \to -\infty\)).
+(2) Initial condition: \(P(0) = \dfrac{L}{1 + A}\), equivalently \(A = \dfrac{L - P_0}{P_0}\).
+(3) Half-capacity point: \(P(t) = \dfrac{L}{2}\) occurs at \(t = \dfrac{\ln A}{k}\), where the logistic S-curve attains its fastest growth rate (when \(P_0 < L/2\)).
+[/CALLOUT]
+
+Move the slider \(k\) below for \(P(t) = \frac{1000}{1 + 19 e^{-kt}}\) (starting at \(P_0 = 50\), carrying capacity \(L = 1000\)). Notice how increasing \(k\) steepens the S-curve and slides the marked half-capacity point \(\left(\frac{\ln 19}{k}, 500\right)\) to the left without changing either \(P_0\) or \(L\).
+
+[GRAPH]
+type: function2d
+title: Logistic S-curve \(P(t) = \frac{1000}{1 + 19 e^{-kt}}\) and its half-capacity point
+xlabel: \(t\)
+ylabel: \(P(t)\)
+xrange: 0, 20
+yrange: 0, 1100
+trace: 1000 / (1 + 19 * exp(-k * x)) | label: \(P(t) = \frac{1000}{1 + 19 e^{-kt}}\)
+trace: 1000 | label: Carrying capacity \(L = 1000\)
+trace: 500 | label: Half capacity \(L/2 = 500\)
+point: log(19) / k, 500 | label: \(((\ln 19)/k, 500)\)
+slider: k | range: 0.2, 0.9 | init: 0.5 | step: 0.05
+[/GRAPH]
+
+=== SECTION 3: Calibrating logistic models and solving for time ===
+
+To calibrate \(A\) and \(k\) when \(L\) is known, or to solve \(P(t) = P_{\text{target}}\) for elapsed time \(t\), isolate the exponential term \(A e^{-kt}\) cleanly:
+\[
+P = \frac{L}{1 + A e^{-kt}} \iff 1 + A e^{-kt} = \frac{L}{P} \iff A e^{-kt} = \frac{L - P}{P} \iff e^{-kt} = \frac{L - P}{A P}.
+\]
+Notice the structural elegance: although \(P(t)\) itself is not exponential, the ratio \(\frac{L - P(t)}{P(t)}\) (unused capacity per current individual) decays exponentially as \(A e^{-kt}\)!
+
+Worked example (Calibrating and predicting): A lake has carrying capacity \(L = 800\) trout. Initially \(P(0) = 100\) trout are stocked, and after \(2\text{ years}\) the population reaches \(P(2) = 200\). Find \(A\) and \(k\), determine when the population reaches half capacity (\(400\) trout), and find when it reaches \(640\) trout (\(80\%\) of capacity).
+
+1. Find \(A\) from [REF: logistic-features.2 | the initial condition]:
+\[
+A = \frac{800 - 100}{100} = 7, \qquad \text{so } P(t) = \frac{800}{1 + 7 e^{-kt}}.
+\]
+2. Calibrate \(k\) using \(P(2) = 200\):
+\[
+200 = \frac{800}{1 + 7 e^{-2k}} \implies 1 + 7 e^{-2k} = 4 \implies 7 e^{-2k} = 3 \implies e^{-2k} = \frac{3}{7}.
+\]
+Taking \(\ln\) gives \(-2k = \ln(3/7) = -\ln(7/3)\), so
+\[
+k = \frac{1}{2}\ln\!\left(\frac{7}{3}\right) \approx 0.4236\text{ yr}^{-1}.
+\]
+3. Time to reach half capacity \(P = 400\): By [REF: logistic-features.3 | the half-capacity formula],
+\[
+t = \frac{\ln 7}{k} = \frac{2\ln 7}{\ln(7/3)} \approx 4.59\text{ years}.
+\]
+4. Time to reach \(P = 640\):
+\[
+\frac{800}{1 + 7 e^{-kt}} = 640 \implies 1 + 7 e^{-kt} = \frac{5}{4} \implies 7 e^{-kt} = \frac{1}{4} \implies e^{kt} = 28.
+\]
+Hence
+\[
+t = \frac{\ln 28}{k} = \frac{2\ln 28}{\ln(7/3)} \approx 7.87\text{ years}.
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+A campus announcement spreads according to the logistic model
+\[
+P(t) = \frac{2400}{1 + 15 e^{-0.3 t}},
+\]
+where \(t \ge 0\) is measured in hours. What is the initial number of people \(P(0)\) who know the announcement, and at what time \(t\) does it spread most rapidly?
+
+(A) \(P(0) = 160\); fastest spread at \(t = \dfrac{\ln 15}{0.3}\text{ hours}\)
+(B) \(P(0) = 150\); fastest spread at \(t = \dfrac{\ln 15}{0.3}\text{ hours}\)
+(C) \(P(0) = 150\); fastest spread at \(t = \dfrac{\ln 16}{0.3}\text{ hours}\)
+(D) \(P(0) = 150\); fastest spread at \(t = \dfrac{\ln 2}{0.3}\text{ hours}\)
+(E) \(P(0) = 1200\); fastest spread at \(t = \dfrac{\ln 15}{0.3}\text{ hours}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+A wildlife reserve has carrying capacity \(L = 500\). Initially \(P(0) = 50\) animals are introduced, and after \(4\text{ years}\) the population has grown to \(P(4) = 125\). Under the logistic model \(P(t) = \dfrac{L}{1 + A e^{-kt}}\), after how many years will the population reach half capacity (\(250\) animals)?
+
+(A) \(6\text{ years}\)
+(B) \(8\text{ years}\)
+(C) \(10\text{ years}\)
+(D) \(12\text{ years}\)
+(E) \(16\text{ years}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+For a logistic curve \(P(t) = \dfrac{L}{1 + A e^{-kt}}\) with \(A > 1\), let \(t^* = \dfrac{\ln A}{k}\) be the half-capacity time at which \(P(t^*) = \dfrac{L}{2}\). For any time offset \(h > 0\), what is the exact value of \(P(t^* - h) + P(t^* + h)\)?
+
+(A) \(L\), for every \(h > 0\)
+(B) \(\dfrac{L}{2}\bigl(e^{kh} + e^{-kh}\bigr)\)
+(C) \(L\bigl(1 - e^{-kh}\bigr)\)
+(D) \(\dfrac{2L}{1 + A e^{-kh}}\)
+(E) \(\dfrac{L}{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+An object cools according to Newton's Law of Cooling \(T(t) = T_{\text{env}} + (T_0 - T_{\text{env}}) e^{-kt}\) inside a room of unknown constant temperature \(T_{\text{env}}\). Its temperature is \(80^\circ\text{C}\) at \(t = 0\), \(50^\circ\text{C}\) at \(t = 10\text{ minutes}\), and \(35^\circ\text{C}\) at \(t = 20\text{ minutes}\). What is the room temperature \(T_{\text{env}}\)?
+
+(A) \(15^\circ\text{C}\)
+(B) \(18^\circ\text{C}\)
+(C) \(20^\circ\text{C}\)
+(D) \(22.5^\circ\text{C}\)
+(E) \(25^\circ\text{C}\)
+[/BONUS]

@@ -1,0 +1,233 @@
+=== SECTION 1: Dos criterios para la posición relativa entre recta y circunferencia ===
+
+Cuando una recta \(L: Ax + By + C = 0\) y una circunferencia \((x - h)^2 + (y - k)^2 = r^2\) (de centro \(C(h, k)\) y radio \(r > 0\)) se encuentran en el mismo plano, son posibles exactamente tres situaciones geométricas: \(L\) puede cortar a la circunferencia en dos puntos distintos (recta secante), tocarla en un único punto (recta tangente) o no intersecarla en absoluto (recta exterior o disjunta).
+
+Disponemos de dos métodos equivalentes para distinguir estos tres casos:
+1. Criterio geométrico de distancia: calcule la distancia perpendicular \(d = d(C, L) = \frac{\lvert A h + B k + C \rvert}{\sqrt{A^2 + B^2}}\) desde el centro hasta la recta y compare \(d\) directamente con el radio \(r\). Sea \(H\) el pie de la perpendicular trazada desde \(C\) hacia \(L\). Para cualquier punto \(P\) sobre \(L\) a distancia \(s \ge 0\) de \(H\), el triángulo rectángulo \(\triangle CHP\) cumple \(CP^2 = d^2 + s^2\). Así, \(P\) pertenece a la circunferencia si y solo si \(s^2 = r^2 - d^2\), lo cual tiene dos soluciones \(s = \pm \sqrt{r^2 - d^2}\) cuando \(d < r\), una solución \(s = 0\) (en \(P = H\)) cuando \(d = r\), y ninguna solución real cuando \(d > r\).
+2. Criterio algebraico del discriminante: despeje \(y\) en la ecuación lineal \(L\) (o \(x\) si \(L\) es vertical) y sustituya en la ecuación de la circunferencia. Como la circunferencia es de grado \(2\) y la recta es de grado \(1\), esto produce una ecuación cuadrática en una variable \(a u^2 + b u + c = 0\) cuyo discriminante \(\Delta = b^2 - 4ac\) cuenta sus puntos reales de intersección: \(\Delta > 0\) da dos intersecciones (secante), \(\Delta = 0\) da una raíz doble (tangente) y \(\Delta < 0\) no da ninguna (disjunta).
+
+[CALLOUT]
+id: line-circle-criteria
+label: Teorema
+title: Criterios de clasificación entre recta y circunferencia
+tone: key
+
+Para una recta \(L\) y una circunferencia de centro \(C\) y radio \(r > 0\), sea \(d = d(C, L)\) y sea \(\Delta\) el discriminante cuadrático obtenido al sustituir \(L\) en la ecuación de la circunferencia:
+(1) Secante (2 intersecciones): \(d < r \iff \Delta > 0\).
+(2) Tangente (1 punto de contacto): \(d = r \iff \Delta = 0\).
+(3) Disjunta (0 intersecciones): \(d > r \iff \Delta < 0\).
+[/CALLOUT]
+
+[TABLE]
+Método | Paso central | Conviene usarlo cuando
+Distancia geométrica \(d(C, L)\) frente a \(r\) | Una sola evaluación lineal \(\frac{\lvert Ah + Bk + C \rvert}{\sqrt{A^2 + B^2}}\) | Se clasifica la posición, se calculan longitudes de cuerda o se hallan parámetros desconocidos de tangencia
+Sustitución algebraica y \(\Delta\) | Sustituir la recta en la circunferencia y resolver la cuadrática | Se buscan las coordenadas exactas de los puntos de intersección
+[/TABLE]
+
+Por ejemplo, analice la posición de la recta \(2x - 3y + 5 = 0\) respecto a la circunferencia \((x - 1)^2 + (y + 2)^2 = 13\). Aquí \(C(1, -2)\) y \(r = \sqrt{13}\). En lugar de sustituir \(y = \frac{2x + 5}{3}\) y operar con fracciones, aplique [REF: line-circle-criteria | el criterio de distancia]:
+\[
+d(C, L) = \frac{\lvert 2(1) - 3(-2) + 5 \rvert}{\sqrt{2^2 + (-3)^2}} = \frac{\lvert 2 + 6 + 5 \rvert}{\sqrt{13}} = \frac{13}{\sqrt{13}} = \sqrt{13} = r.
+\]
+¡En una sola línea sabemos que la recta es tangente a la circunferencia!
+
+Arrastre el deslizador de la constante \(c\) abajo para trasladar la recta \(3x + 4y = c\) a través de la circunferencia \(x^2 + y^2 = 25\) (\(r = 5\)). Observe cómo la recta es secante para \(\lvert c \rvert < 25\) (\(d = \lvert c \rvert / 5 < 5\)), se vuelve tangente en \(c = \pm 25\) (\(d = 5\)) y se separa para \(\lvert c \rvert > 25\) (\(d > 5\)).
+
+[GRAPH]
+type: parametric2d
+title: Recta \(3x + 4y = c\) barriendo la circunferencia \(x^2 + y^2 = 25\) (\(d = \lvert c \rvert / 5\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -8, 8
+yrange: -8, 8
+trace: 5*cos(t), 5*sin(t) | label: \(x^2 + y^2 = 25\)
+trace: (3*c)/25 + 4*(t - 3.1416), (4*c)/25 - 3*(t - 3.1416) | label: \(3x + 4y = c\)
+segment: 0, 0, (3*c)/25, (4*c)/25 | label: \(d\) | dashed: true
+point: 0, 0 | label: \(C(0, 0)\)
+point: (3*c)/25, (4*c)/25 | label: \(H\)
+slider: c | range: -35, 35 | init: 15 | step: 5
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: D]
+¿Para qué valores de la constante real \(k\) la recta \(4x + 3y + k = 0\) es tangente a la circunferencia \((x - 2)^2 + (y + 1)^2 = 16\)?
+
+(A) \(k = 75\) o \(k = -85\)
+(B) \(k = 25\) o \(k = -15\)
+(C) \(k = -1\) o \(k = -9\)
+(D) \(k = 15\) o \(k = -25\)
+(E) Únicamente \(k = 15\)
+[/QUESTION]
+
+=== SECTION 2: Longitud de cuerdas mediante el triángulo rectángulo perpendicular ===
+
+Cuando una recta secante \(L\) corta a una circunferencia de centro \(C\) y radio \(r\) en dos puntos \(A\) y \(B\), no necesitamos las coordenadas de \(A\) y \(B\) para determinar la longitud de la cuerda \(AB\). Trace la perpendicular desde \(C\) a \(L\), cuyo pie es \(H\) con longitud \(CH = d = d(C, L) < r\). Como \(CA = CB = r\), los triángulos rectángulos \(\triangle CHA\) y \(\triangle CHB\) son congruentes (criterio hipotenusa-cateto), por lo que \(H\) es el punto medio de la cuerda \(AB\). Por el teorema de Pitágoras en \(\triangle CHA\), la mitad de la longitud de la cuerda es \(HA = \sqrt{r^2 - d^2}\), y al duplicarla se obtiene la longitud total de la cuerda.
+
+[CALLOUT]
+id: chord-length
+label: Fórmula
+title: Longitud de una cuerda determinada por una recta secante
+tone: key
+
+Si una recta \(L\) pasa a una distancia perpendicular \(d < r\) del centro de una circunferencia de radio \(r\), la cuerda que \(L\) determina tiene longitud
+\[
+L_{\text{cuerda}} = 2\sqrt{r^2 - d^2}.
+\]
+[/CALLOUT]
+
+Por ejemplo, halle la longitud de la cuerda que corta la recta \(3x - 4y + 5 = 0\) en la circunferencia \((x + 1)^2 + (y - 3)^2 = 25\). Aquí \(C(-1, 3)\) y \(r = 5\). Calcule la distancia del centro a la recta:
+\[
+d = \frac{\lvert 3(-1) - 4(3) + 5 \rvert}{\sqrt{3^2 + (-4)^2}} = \frac{\lvert -10 \rvert}{5} = 2.
+\]
+Como \(d = 2 < 5\), [REF: chord-length | la fórmula de la longitud de cuerda] da
+\[
+L_{\text{cuerda}} = 2\sqrt{5^2 - 2^2} = 2\sqrt{21}.
+\]
+
+[QUESTION 2]
+[ANSWER: B]
+Una recta \(L\) pasa por \((0, 1)\) con pendiente \(-\frac{3}{4}\) y determina una cuerda de longitud \(8\) en la circunferencia \((x - 4)^2 + (y - 3)^2 = r^2\). ¿Cuál es el radio \(r\) de la circunferencia?
+
+(A) \(4\sqrt{5}\)
+(B) \(4\sqrt{2}\)
+(C) \(4\sqrt{3}\)
+(D) \(8\)
+(E) \(32\)
+[/QUESTION]
+
+=== SECTION 3: Tangente en un punto de la circunferencia y tangentes desde un punto exterior ===
+
+Con frecuencia necesitamos la ecuación explícita de una recta tangente en dos situaciones geométricas distintas.
+
+En primer lugar, suponga que \(P_0(x_0, y_0)\) es un punto conocido SOBRE la circunferencia \((x - h)^2 + (y - k)^2 = r^2\). En el punto de tangencia \(P_0\), la recta tangente es perpendicular al radio \(C P_0\) (ya que \(P_0\) es el pie de la perpendicular desde \(C\) hasta la tangente). El desplazamiento a lo largo del radio \(C P_0\) es \((x_0 - h, y_0 - k)\), y el desplazamiento a lo largo de la tangente desde \(P_0\) hasta cualquier otro punto \(P(x, y)\) sobre ella es \((x - x_0, y - y_0)\). Aplicando la condición general de perpendicularidad \(A_1 A_2 + B_1 B_2 = 0\) —que funciona de manera idéntica incluso cuando el radio es horizontal o vertical—, todo punto \((x, y)\) de la tangente satisface
+\[
+(x_0 - h)(x - x_0) + (y_0 - k)(y - y_0) = 0.
+\]
+Ahora reescriba \(x - x_0 = (x - h) - (x_0 - h)\) y \(y - y_0 = (y - k) - (y_0 - k)\), y desarrolle:
+\[
+(x_0 - h)(x - h) - (x_0 - h)^2 + (y_0 - k)(y - k) - (y_0 - k)^2 = 0.
+\]
+Dado que \(P_0(x_0, y_0)\) pertenece a la circunferencia, \((x_0 - h)^2 + (y_0 - k)^2 = r^2\). Trasladar esos dos términos cuadráticos al miembro derecho produce una fórmula limpia y simétrica.
+
+[CALLOUT]
+id: tangent-at-point
+label: Fórmula
+title: Recta tangente en un punto de la circunferencia
+tone: key
+
+La recta tangente a la circunferencia \((x - h)^2 + (y - k)^2 = r^2\) en un punto \(P_0(x_0, y_0)\) de la circunferencia es
+\[
+(x_0 - h)(x - h) + (y_0 - k)(y - k) = r^2.
+\]
+Observe el patrón estructural: un factor \((x - h)\) en \((x - h)^2\) se reemplaza por \((x_0 - h)\), y un factor \((y - k)\) en \((y - k)^2\) se reemplaza por \((y_0 - k)\).
+[/CALLOUT]
+
+En segundo lugar, suponga que \(Q(x_1, y_1)\) está situado estrictamente en el EXTERIOR de la circunferencia (\(CQ > r\)). Geométricamente, siempre existen exactamente DOS rectas tangentes distintas trazadas desde \(Q\) a la circunferencia. Para hallarlas, escriba una recta no vertical que pase por \(Q\) con pendiente desconocida \(m\):
+\[
+y - y_1 = m(x - x_1) \iff m x - y + (y_1 - m x_1) = 0,
+\]
+e imponga [REF: line-circle-criteria.2 | la condición de tangencia] \(d(C, L) = r\):
+\[
+\frac{\lvert m h - k + y_1 - m x_1 \rvert}{\sqrt{m^2 + 1}} = r.
+\]
+Elevar ambos miembros al cuadrado suele producir una ecuación cuadrática en \(m\) con dos raíces reales. Sin embargo, hay un caso extremo crítico que debe vigilar siempre.
+
+[CALLOUT]
+id: vertical-tangent-check
+label: Error frecuente
+title: Vigilar si hay una tangente vertical desde un punto exterior
+tone: caution
+
+Escribir la recta por \(Q(x_1, y_1)\) como \(y - y_1 = m(x - x_1)\) supone que la tangente no es vertical. Si una de las dos tangentes desde \(Q\) resulta ser la recta vertical \(x = x_1\), los términos en \(m^2\) se cancelan tras elevar al cuadrado, dejando una ecuación lineal con una SOLA pendiente \(m\). Compruebe siempre directamente si \(\lvert x_1 - h \rvert = r\): de ser así, \(x = x_1\) es una de las dos rectas tangentes.
+[/CALLOUT]
+
+Observe esto en un ejemplo concreto: halle las dos tangentes desde \(Q(5, 7)\) a la circunferencia \((x - 2)^2 + (y - 1)^2 = 9\) (centro \(C(2, 1)\), radio \(r = 3\)).
+Primero compruebe la recta vertical \(x = 5\): su distancia a \(C(2, 1)\) es \(\lvert 5 - 2 \rvert = 3 = r\), por lo que \(x = 5\) es de inmediato una de las dos tangentes (con punto de tangencia \((5, 1)\)).
+Ahora plantee una recta no vertical \(m x - y + (7 - 5m) = 0\) e iguale \(d(C, L) = 3\):
+\[
+\frac{\lvert 2m - 1 + 7 - 5m \rvert}{\sqrt{m^2 + 1}} = 3 \implies \lvert 6 - 3m \rvert = 3\sqrt{m^2 + 1} \implies \lvert 2 - m \rvert = \sqrt{m^2 + 1}.
+\]
+Al elevar al cuadrado resulta \(4 - 4m + m^2 = m^2 + 1\), donde \(m^2\) se cancela como se predijo, quedando \(-4m = -3\) y \(m = \frac{3}{4}\). Al sustituir \(m = \frac{3}{4}\) se obtiene \(y - 7 = \frac{3}{4}(x - 5)\), es decir, \(3x - 4y + 13 = 0\). En conjunto, las dos tangentes desde \(Q(5, 7)\) son \(x = 5\) y \(3x - 4y + 13 = 0\).
+
+[GRAPH]
+type: parametric2d
+title: Ambas tangentes desde \(Q(5, 7)\) a \((x - 2)^2 + (y - 1)^2 = 9\), incluida la tangente vertical \(x = 5\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -2, 7.5
+yrange: -3, 8
+trace: 2 + 3*cos(t), 1 + 3*sin(t) | label: \((x - 2)^2 + (y - 1)^2 = 9\)
+segment: 5, -2.5, 5, 7.5 | label: \(x = 5\)
+segment: -1.6667, 2, 5.6667, 7.5 | label: \(3x - 4y + 13 = 0\)
+point: 2, 1 | label: \(C(2, 1)\)
+point: 5, 7 | label: \(Q(5, 7)\)
+point: 5, 1 | label: \(T_1(5, 1)\)
+point: 0.2, 3.4 | label: \(T_2\)
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: E]
+¿Cuáles son las ecuaciones de las dos rectas tangentes a la circunferencia \((x + 1)^2 + (y - 2)^2 = 4\) que pasan por el punto exterior \(Q(1, 6)\)?
+
+(A) Únicamente \(3x - 4y + 21 = 0\)
+(B) \(x = 1\) y \(4x - 3y + 14 = 0\)
+(C) \(y = 6\) y \(3x - 4y + 21 = 0\)
+(D) \(x = 1\) y \(3x + 4y - 27 = 0\)
+(E) \(x = 1\) y \(3x - 4y + 21 = 0\)
+[/QUESTION]
+
+=== SECTION 4: Intersección de dos circunferencias mediante el eje radical ===
+
+Suponga que deseamos hallar todos los puntos de intersección de dos circunferencias distintas y no concéntricas. Escriba ambas circunferencias en forma general normalizada (de modo que \(x^2 + y^2\) tenga coeficiente \(1\) en cada ecuación):
+\[
+x^2 + y^2 + D_1 x + E_1 y + F_1 = 0, \qquad x^2 + y^2 + D_2 x + E_2 y + F_2 = 0.
+\]
+Restar la segunda ecuación de la primera elimina ambos términos cuadráticos \(x^2\) e \(y^2\) simultáneamente, dejando una sola ecuación lineal:
+\[
+(D_1 - D_2)x + (E_1 - E_2)y + (F_1 - F_2) = 0.
+\]
+Como las circunferencias no son concéntricas, \((D_1, E_1) \neq (D_2, E_2)\), por lo que esta ecuación define genuinamente una recta, denominada eje radical (o recta de la cuerda común cuando las circunferencias se cortan en dos puntos). Todo punto que pertenezca a ambas circunferencias debe satisfacer esta ecuación lineal. Al sustituirla en cualquiera de las dos circunferencias se reduce la intersección de dos circunferencias a una intersección estándar entre recta y circunferencia. (Si las circunferencias no se intersecan, el eje radical sigue existiendo geométricamente, pero sustituirlo en la primera circunferencia produce \(\Delta < 0\) sin raíces reales.)
+
+Por ejemplo, halle la intersección de \(x^2 + y^2 = 25\) y \((x - 5)^2 + (y - 5)^2 = 25\). Desarrolle la segunda circunferencia como \(x^2 + y^2 - 10x - 10y + 25 = 0\) y réstela de \(x^2 + y^2 - 25 = 0\):
+\[
+10x + 10y - 50 = 0 \implies x + y = 5 \implies y = 5 - x.
+\]
+Sustituya \(y = 5 - x\) en \(x^2 + y^2 = 25\):
+\[
+x^2 + (5 - x)^2 = 25 \implies 2x^2 - 10x = 0 \implies 2x(x - 5) = 0,
+\]
+lo que da \(x = 0\) (con \(y = 5\)) y \(x = 5\) (con \(y = 0\)). Las dos circunferencias se intersecan en \((0, 5)\) y \((5, 0)\).
+
+[QUESTION 4]
+[ANSWER: A]
+¿Cuáles son los puntos de intersección de las dos circunferencias \(x^2 + y^2 = 10\) y \(x^2 + y^2 - 4x - 4y + 6 = 0\)?
+
+(A) \((1, 3)\) y \((3, 1)\)
+(B) \((1, -3)\) y \((3, -1)\)
+(C) \((2, \sqrt{6})\) y \((2, -\sqrt{6})\)
+(D) \((0, 4)\) y \((4, 0)\)
+(E) Las dos circunferencias no se intersecan
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+¿Cuál es la ecuación de la recta tangente a la circunferencia \(x^2 + y^2 - 6x + 4y - 12 = 0\) en el punto \(P_0(6, 2)\) sobre la circunferencia?
+
+(A) \(3x - 4y - 10 = 0\)
+(B) \(4x - 3y - 18 = 0\)
+(C) \(3x + 4y - 26 = 0\)
+(D) \(6x + 2y - 40 = 0\)
+(E) \(3x + 4y + 26 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Desde el punto exterior \(Q(8, 3)\) se traza un segmento tangente \(QT\) que toca a la circunferencia \((x - 2)^2 + (y + 5)^2 = 36\) en el punto \(T\). ¿Cuál es la longitud del segmento \(QT\)?
+
+(A) \(4\)
+(B) \(6\)
+(C) \(10\)
+(D) \(8\)
+(E) \(2\sqrt{34}\)
+[/BONUS]

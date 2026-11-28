@@ -1,0 +1,299 @@
+=== SECTION 1: Vectores en \(\mathbb{R}^n\) y combinaciones lineales ===
+
+En la geometría analítica en dos y tres dimensiones, un punto o desplazamiento se expresa como un par o una terna ordenada de números reales. Cuando un sistema lineal tiene \(n\) incógnitas o \(m\) ecuaciones, resulta mucho más revelador empaquetar esos \(n\) números en un único objeto —un vector columna—, de modo que todo un sistema de ecuaciones pueda leerse como una sola pregunta geométrica sobre cómo combinar vectores.
+
+[CALLOUT]
+id: vector-ops-def
+label: Definición
+title: Vectores columna en \(\mathbb{R}^n\), suma y multiplicación por escalar
+tone: key
+
+El espacio \(\mathbb{R}^n\) consiste en todas las listas ordenadas de \(n\) números reales escritos verticalmente como vectores columna:
+\[
+\mathbf{u} = \begin{bmatrix} u_1 \\ u_2 \\ \vdots \\ u_n \end{bmatrix}, \qquad \mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}.
+\]
+Dos vectores en \(\mathbb{R}^n\) son iguales si y solo si tienen el mismo tamaño \(n\) y entradas coincidentes \(u_i = v_i\) para todo \(i = 1, \dots, n\). Para \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) y cualquier escalar \(c \in \mathbb{R}\), la suma vectorial y la multiplicación por escalar se definen entrada por entrada:
+\[
+\mathbf{u} + \mathbf{v} = \begin{bmatrix} u_1 + v_1 \\ u_2 + v_2 \\ \vdots \\ u_n + v_n \end{bmatrix}, \qquad
+c\mathbf{u} = \begin{bmatrix} c u_1 \\ c u_2 \\ \vdots \\ c u_n \end{bmatrix}.
+\]
+El vector cuyas entradas son todas cero es el vector nulo \(\mathbf{0} \in \mathbb{R}^n\).
+[/CALLOUT]
+
+Note que la suma está definida únicamente entre vectores del mismo tamaño \(n\): no se puede sumar un vector en \(\mathbb{R}^2\) con un vector en \(\mathbb{R}^3\). Como ambas operaciones actúan de forma independiente en cada coordenada, las leyes aritméticas familiares de los números reales se trasladan de inmediato a \(\mathbb{R}^n\): la suma es conmutativa (\(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\)) y asociativa (\((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})\)), \(\mathbf{u} + \mathbf{0} = \mathbf{u}\), y la multiplicación por escalar distribuye tanto sobre la suma vectorial como sobre la suma escalar: \(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\) y \((c + d)\mathbf{u} = c\mathbf{u} + d\mathbf{u}\).
+
+Combinar el escalamiento y la suma entre varios vectores produce la construcción más importante del álgebra lineal: una combinación lineal.
+
+[CALLOUT]
+id: lincomb-span-def
+label: Definición
+title: Combinación lineal y generado
+tone: key
+
+Dados vectores \(\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_k \in \mathbb{R}^m\) y escalares (llamados pesos) \(c_1, c_2, \dots, c_k \in \mathbb{R}\), el vector
+\[
+\mathbf{y} = c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_k \mathbf{v}_k
+\]
+se denomina combinación lineal de \(\mathbf{v}_1, \dots, \mathbf{v}_k\).
+
+El conjunto de todas las combinaciones lineales de \(\mathbf{v}_1, \dots, \mathbf{v}_k\) se denomina el generado (span) de esos vectores y se denota
+\[
+\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\} = \{ c_1 \mathbf{v}_1 + \dots + c_k \mathbf{v}_k : c_1, \dots, c_k \in \mathbb{R} \} \subseteq \mathbb{R}^m.
+\]
+[/CALLOUT]
+
+Para ver una combinación lineal geométricamente en \(\mathbb{R}^2\), tome \(\mathbf{v}_1 = \begin{bmatrix} 2 \\ 1 \end{bmatrix}\) y \(\mathbf{v}_2 = \begin{bmatrix} -1 \\ 2 \end{bmatrix}\). Con pesos \(c_1 = 2\) y \(c_2 = 1\), escalamos \(\mathbf{v}_1\) por \(2\) para llegar a \((4, 2)\) y luego nos desplazamos desde \((4, 2)\) según \(\mathbf{v}_2 = (-1, 2)\) para caer en
+\[
+2\mathbf{v}_1 + 1\mathbf{v}_2 = \begin{bmatrix} 4 \\ 2 \end{bmatrix} + \begin{bmatrix} -1 \\ 2 \end{bmatrix} = \begin{bmatrix} 3 \\ 4 \end{bmatrix}.
+\]
+La gráfica siguiente muestra esta construcción punta con cola; arrastre el deslizador \(s\) para observar cómo al variar el peso sobre \(\mathbf{v}_2\) el vector \(2\mathbf{v}_1 + s\mathbf{v}_2\) barre una recta paralela a \(\mathbf{v}_2\).
+
+[GRAPH]
+type: parametric2d
+title: Construcción de una combinación lineal \(2\mathbf{v}_1 + s\mathbf{v}_2\) en \(\mathbb{R}^2\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: -2, 3
+xrange: -2, 6
+yrange: -2, 6
+trace: 4 - t, 2 + 2*t | label: \(2\mathbf{v}_1 + t\mathbf{v}_2\) | color: #94a3b8
+segment: 0, 0, 2, 1 | label: \(\mathbf{v}_1\) | color: #2563eb
+segment: 0, 0, -1, 2 | label: \(\mathbf{v}_2\) | color: #059669
+segment: 0, 0, 4, 2 | label: \(2\mathbf{v}_1\) | color: #2563eb | dashed: true
+segment: 4, 2, 4 - s, 2 + 2*s | label: \(s\mathbf{v}_2\) | color: #059669 | dashed: true
+segment: 0, 0, 4 - s, 2 + 2*s | color: #dc2626
+point: 4 - s, 2 + 2*s | label: \(2\mathbf{v}_1 + s\mathbf{v}_2\)
+slider: s | range: -1.5, 2 | init: 1 | step: 0.25
+[/GRAPH]
+
+¿Qué formas geométricas puede adoptar \(\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) dentro de \(\mathbb{R}^2\) y \(\mathbb{R}^3\)? Primero observe que \(\mathbf{0}\) pertenece a TODO generado, porque elegir todos los pesos \(c_1 = \dots = c_k = 0\) siempre da \(\mathbf{0}\). Más allá del origen:
+- Para un único vector no nulo \(\mathbf{v} \in \mathbb{R}^2\) o \(\mathbb{R}^3\), \(\operatorname{Span}\{\mathbf{v}\} = \{c\mathbf{v} : c \in \mathbb{R}\}\) es la recta que pasa por el origen en la dirección de \(\mathbf{v}\).
+- Para dos vectores \(\mathbf{v}_1, \mathbf{v}_2\) en \(\mathbb{R}^2\): si ninguno es múltiplo escalar del otro (no son colineales), entonces todo punto objetivo en \(\mathbb{R}^2\) puede alcanzarse desplazándose a lo largo de \(\mathbf{v}_1\) y luego de \(\mathbf{v}_2\), por lo que \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\} = \mathbb{R}^2\). Si uno SÍ es múltiplo escalar del otro —por ejemplo, \(\mathbf{v}_2 = -2\mathbf{v}_1\) con \(\mathbf{v}_1 \neq \mathbf{0}\)—, entonces \(c_1\mathbf{v}_1 + c_2(-2\mathbf{v}_1) = (c_1 - 2c_2)\mathbf{v}_1\) nunca abandona la recta \(\operatorname{Span}\{\mathbf{v}_1\}\).
+- Para dos vectores no colineales \(\mathbf{v}_1, \mathbf{v}_2\) en \(\mathbb{R}^3\), \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\) es el plano que pasa por el origen y contiene a ambos \(\mathbf{v}_1\) y \(\mathbf{v}_2\). Agregar un tercer vector \(\mathbf{v}_3\) amplía el generado a todo \(\mathbb{R}^3\) si \(\mathbf{v}_3\) apunta fuera de ese plano, pero deja el generado sin cambios como ese mismo plano si \(\mathbf{v}_3\) ya yace dentro de \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\).
+
+Note la lección clave: contar cuántos vectores aparecen en la lista no basta para conocer la forma de su generado. Debe preguntarse si cada nuevo vector apunta realmente en una dirección que no era ya alcanzable a partir de los demás.
+
+¿Cómo comprobamos concretamente si un vector objetivo \(\mathbf{b}\) pertenece a \(\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\)? Preguntamos si existen escalares \(c_1, \dots, c_k\) que resuelvan la ecuación vectorial
+\[
+c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_k \mathbf{v}_k = \mathbf{b}.
+\]
+Comparar coordenada por coordenada convierte esta única ecuación vectorial directamente en un sistema de \(m\) ecuaciones lineales en las \(k\) incógnitas \(c_1, \dots, c_k\). Por ejemplo, para comprobar si \(\mathbf{b} = \begin{bmatrix} 5 \\ 1 \\ 7 \end{bmatrix}\) pertenece a \(\operatorname{Span}\left\{\begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix}, \begin{bmatrix} 2 \\ 1 \\ 1 \end{bmatrix}\right\}\), resolvemos
+\[
+c_1 \begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix} + c_2 \begin{bmatrix} 2 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} 5 \\ 1 \\ 7 \end{bmatrix}
+\iff
+\begin{aligned}
+c_1 + 2c_2 &= 5, \\
+c_2 &= 1, \\
+2c_1 + c_2 &= 7.
+\end{aligned}
+\]
+La segunda ecuación fija \(c_2 = 1\); la primera da entonces \(c_1 = 5 - 2(1) = 3\); al verificar la tercera se obtiene \(2(3) + 1 = 7\), lo cual coincide. Por lo tanto, \(\mathbf{b} = 3\mathbf{v}_1 + \mathbf{v}_2 \in \operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\). Si la tercera entrada de \(\mathbf{b}\) hubiera sido \(8\) en lugar de \(7\), la tercera ecuación \(2(3) + 1 = 8\) habría fallado, demostrando que \(\mathbf{b}\) queda fuera del plano \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\).
+
+[QUESTION 1]
+[ANSWER: B]
+Sean \(\mathbf{v}_1 = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\) y \(\mathbf{v}_2 = \begin{bmatrix} 0 \\ 1 \\ 3 \end{bmatrix}\). ¿Para qué número real \(h\) pertenece el vector \(\mathbf{b} = \begin{bmatrix} 2 \\ 7 \\ h \end{bmatrix}\) a \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\}\)?
+
+(A) \(h = 5\)
+(B) \(h = 7\)
+(C) \(h = 9\)
+(D) \(h = 11\)
+(E) Ningún valor real de \(h\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: B]
+Sean \(\mathbf{u} = \begin{bmatrix} 1 \\ -2 \\ 3 \end{bmatrix}\), \(\mathbf{v} = \begin{bmatrix} -2 \\ 4 \\ -6 \end{bmatrix}\) y \(\mathbf{w} = \begin{bmatrix} 3 \\ -6 \\ 9 \end{bmatrix}\). ¿Cuál es la forma geométrica de \(\operatorname{Span}\{\mathbf{u}, \mathbf{v}, \mathbf{w}\}\) en \(\mathbb{R}^3\)?
+
+(A) El único punto \(\{\mathbf{0}\}\)
+(B) Una recta que pasa por el origen en \(\mathbb{R}^3\)
+(C) Un plano que pasa por el origen en \(\mathbb{R}^3\)
+(D) Todo \(\mathbb{R}^3\)
+(E) Una recta en \(\mathbb{R}^3\) que no pasa por el origen
+[/QUESTION]
+
+=== SECTION 2: El producto matriz-vector \(A\mathbf{x}\) ===
+
+Cuando reunimos \(n\) vectores columna \(\mathbf{a}_1, \mathbf{a}_2, \dots, \mathbf{a}_n \in \mathbb{R}^m\) uno al lado del otro, forman una matriz \(m \times n\)
+\[
+A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}.
+\]
+Tomar una combinación lineal de esas columnas con pesos \(x_1, x_2, \dots, x_n\) —las entradas de un vector \(\mathbf{x} \in \mathbb{R}^n\)— ocurre tan constantemente que le damos su propia notación de multiplicación.
+
+[CALLOUT]
+id: matvec-def
+label: Definición
+title: Producto matriz-vector (definición por combinación de columnas)
+tone: key
+
+Sea \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}\) una matriz \(m \times n\) con columnas \(\mathbf{a}_1, \dots, \mathbf{a}_n \in \mathbb{R}^m\), y sea \(\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix} \in \mathbb{R}^n\). El producto matriz-vector \(A\mathbf{x}\) es el vector en \(\mathbb{R}^m\) definido como la combinación lineal de las columnas de \(A\) usando las entradas de \(\mathbf{x}\) como pesos:
+\[
+A\mathbf{x} = x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \dots + x_n \mathbf{a}_n.
+\]
+[/CALLOUT]
+
+Revise los tamaños con cuidado: \(A\mathbf{x}\) está definido ÚNICAMENTE cuando el número de columnas de \(A\) es igual al número de entradas de \(\mathbf{x}\). Una matriz \(m \times n\) multiplica a un vector columna \(n \times 1\) para producir un vector columna \(m \times 1\): las dimensiones internas \(n\) coinciden y desaparecen, dejando \(m\).
+
+Calculemos un ejemplo mediante la regla de columnas:
+\[
+\begin{bmatrix} 1 & -2 & 4 \\ 3 & 0 & -1 \end{bmatrix} \begin{bmatrix} 2 \\ 5 \\ -1 \end{bmatrix}
+= 2 \begin{bmatrix} 1 \\ 3 \end{bmatrix} + 5 \begin{bmatrix} -2 \\ 0 \end{bmatrix} + (-1) \begin{bmatrix} 4 \\ -1 \end{bmatrix}
+= \begin{bmatrix} 2 - 10 - 4 \\ 6 + 0 + 1 \end{bmatrix}
+= \begin{bmatrix} -12 \\ 7 \end{bmatrix}.
+\]
+Note un caso particular especialmente útil de [REF: matvec-def | la definición por columnas]. Sea \(\mathbf{e}_j \in \mathbb{R}^n\) el \(j\)-ésimo vector de la base estándar —el vector con \(1\) en la entrada \(j\) y \(0\) en todas las demás entradas—. Entonces
+\[
+A\mathbf{e}_j = 0\mathbf{a}_1 + \dots + 1\mathbf{a}_j + \dots + 0\mathbf{a}_n = \mathbf{a}_j.
+\]
+Multiplicar \(A\) por \(\mathbf{e}_j\) simplemente extrae la \(j\)-ésima columna de \(A\).
+
+Existe una segunda forma, equivalente, de calcular \(A\mathbf{x}\) entrada por entrada. Escriba la \(i\)-ésima coordenada de la suma \(x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\): como la \(i\)-ésima entrada de la columna \(\mathbf{a}_j\) es \(a_{ij}\), la \(i\)-ésima entrada de \(A\mathbf{x}\) es
+\[
+(A\mathbf{x})_i = x_1 a_{i1} + x_2 a_{i2} + \dots + x_n a_{in} = \sum_{j=1}^n a_{ij} x_j.
+\]
+Esa suma es precisamente el producto punto de la \(i\)-ésima fila de \(A\) con el vector columna \(\mathbf{x}\). Hemos demostrado así que la regla de combinación de columnas y la regla del producto punto fila por columna siempre producen exactamente el mismo vector.
+
+En el ejemplo anterior, la regla del producto punto por filas da:
+- Fila \(1\) en producto punto con \(\mathbf{x}\): \(1(2) + (-2)(5) + 4(-1) = 2 - 10 - 4 = -12\).
+- Fila \(2\) en producto punto con \(\mathbf{x}\): \(3(2) + 0(5) + (-1)(-1) = 6 + 0 + 1 = 7\).
+
+Ambas perspectivas son valiosas por motivos distintos. La regla fila por columna es rápida al calcular entradas numéricas individuales a mano, mientras que la definición por combinación de columnas revela de inmediato qué significa \(A\mathbf{x}\) geométrica y algebraicamente: el conjunto de todas las salidas posibles \(A\mathbf{x}\) al variar \(\mathbf{x}\) sobre \(\mathbb{R}^n\) es literalmente \(\operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\}\).
+
+[TABLE]
+Perspectiva | Fórmula | Mejor uso
+Combinación de columnas | \(A\mathbf{x} = x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\) | Entender el generado, la consistencia y las entradas nulas en \(\mathbf{x}\)
+Producto punto fila por columna | \((A\mathbf{x})_i = \sum_{j=1}^n a_{ij} x_j\) | Calcular una sola coordenada de \(A\mathbf{x}\) o leer de vuelta ecuaciones escalares
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+Sean
+\[
+A = \begin{bmatrix} 2 & -1 & 4 & 0 \\ 0 & 3 & -2 & 1 \\ -1 & 1 & 5 & -3 \end{bmatrix}, \qquad
+\mathbf{x} = \begin{bmatrix} 1 \\ 0 \\ -1 \\ 2 \end{bmatrix}.
+\]
+¿Cuál es el producto \(A\mathbf{x}\)?
+
+(A) \(\begin{bmatrix} -2 \\ 4 \\ -6 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 6 \\ 0 \\ 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -2 \\ 4 \\ -12 \end{bmatrix}\)
+(D) \(\begin{bmatrix} -2 \\ 0 \\ -12 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 \\ -4 \\ 12 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Linealidad de \(A\mathbf{x}\) y la equivalencia triple ===
+
+¿Por qué ocupa la multiplicación matriz-vector un lugar central en el álgebra lineal? Porque para cualquier matriz fija \(A\) de \(m \times n\), la operación \(\mathbf{x} \mapsto A\mathbf{x}\) obedece dos reglas algebraicas exactas llamadas linealidad.
+
+[CALLOUT]
+id: matvec-linearity
+label: Teorema
+title: Linealidad algebraica del producto matriz-vector
+tone: key
+
+Sea \(A\) una matriz \(m \times n\), sean \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) y sea \(c \in \mathbb{R}\). Entonces:
+
+(1) Aditividad: \(A(\mathbf{u} + \mathbf{v}) = A\mathbf{u} + A\mathbf{v}\).
+(2) Homogeneidad: \(A(c\mathbf{u}) = c(A\mathbf{u})\).
+
+Combinar ambas reglas produce \(A(c\mathbf{u} + d\mathbf{v}) = c(A\mathbf{u}) + d(A\mathbf{v})\) para todos los escalares \(c, d \in \mathbb{R}\), y en particular \(A\mathbf{0} = \mathbf{0}\).
+[/CALLOUT]
+
+Ambas propiedades se siguen en una línea a partir de [REF: matvec-def | la definición por columnas]. Al escribir \(\mathbf{u}\) con entradas \(u_j\) y \(\mathbf{v}\) con entradas \(v_j\), la \(j\)-ésima entrada de \(\mathbf{u} + \mathbf{v}\) es \(u_j + v_j\), de modo que
+\[
+A(\mathbf{u} + \mathbf{v})
+= \sum_{j=1}^n (u_j + v_j)\mathbf{a}_j
+= \sum_{j=1}^n u_j \mathbf{a}_j + \sum_{j=1}^n v_j \mathbf{a}_j
+= A\mathbf{u} + A\mathbf{v}.
+\]
+De manera similar, la \(j\)-ésima entrada de \(c\mathbf{u}\) es \(c u_j\), por lo que
+\[
+A(c\mathbf{u})
+= \sum_{j=1}^n (c u_j)\mathbf{a}_j
+= c \sum_{j=1}^n u_j \mathbf{a}_j
+= c(A\mathbf{u}).
+\]
+Tomar \(c = 0\) da \(A\mathbf{0} = 0(A\mathbf{u}) = \mathbf{0}\). Note cuán poderosa es [REF: matvec-linearity | la linealidad]: incluso si nunca se le informa una sola entrada de \(A\), conocer \(A\mathbf{u}\) y \(A\mathbf{v}\) determina de inmediato \(A(c\mathbf{u} + d\mathbf{v})\) para toda combinación lineal de \(\mathbf{u}\) y \(\mathbf{v}\).
+
+Ahora podemos unir los dos lenguajes que hemos construido —sistemas lineales de ecuaciones y combinaciones lineales de vectores columna— en una única equivalencia triple.
+
+[CALLOUT]
+id: three-way-equiv
+label: Teorema
+title: Equivalencia triple para sistemas lineales
+tone: key
+
+Sea \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}\) una matriz \(m \times n\) con entradas \(a_{ij}\), sea \(\mathbf{x} = \begin{bmatrix} x_1 \\ \vdots \\ x_n \end{bmatrix} \in \mathbb{R}^n\) y sea \(\mathbf{b} = \begin{bmatrix} b_1 \\ \vdots \\ b_m \end{bmatrix} \in \mathbb{R}^m\). Las tres ecuaciones siguientes tienen exactamente el mismo conjunto solución:
+
+(1) El sistema lineal de \(m\) ecuaciones en \(n\) incógnitas:
+\[
+a_{i1} x_1 + a_{i2} x_2 + \dots + a_{in} x_n = b_i \qquad (i = 1, \dots, m).
+\]
+(2) La ecuación vectorial:
+\[
+x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \dots + x_n \mathbf{a}_n = \mathbf{b}.
+\]
+(3) La ecuación matricial:
+\[
+A\mathbf{x} = \mathbf{b}.
+\]
+
+En consecuencia, la ecuación matricial \(A\mathbf{x} = \mathbf{b}\) es consistente si y solo si \(\mathbf{b} \in \operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\}\).
+[/CALLOUT]
+
+La demostración ya está en nuestras manos. Por [REF: matvec-def | la definición por columnas], \(A\mathbf{x}\) y \(x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\) son literalmente el mismo vector, de modo que (2) y (3) son idénticas. Por la fórmula del producto punto por filas demostrada en la Sección 2, la \(i\)-ésima entrada de \(A\mathbf{x}\) es \(a_{i1} x_1 + \dots + a_{in} x_n\); como dos vectores en \(\mathbb{R}^m\) son iguales si y solo si todas sus \(m\) entradas coinciden, \(A\mathbf{x} = \mathbf{b}\) se cumple si y solo si se cumple cada ecuación de (1). Finalmente, por [REF: lincomb-span-def | la definición de generado], existen pesos \(x_1, \dots, x_n\) que resuelven (2) si y solo si \(\mathbf{b} \in \operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\}\).
+
+Observe lo que logra conceptualmente esta equivalencia. Considere la matriz \(2 \times 2\) \(A = \begin{bmatrix} 1 & -2 \\ 2 & -4 \end{bmatrix}\). Su segunda columna es \(-2\) veces su primera columna, de modo que \(\operatorname{Span}\{\mathbf{a}_1, \mathbf{a}_2\}\) es simplemente la recta que pasa por el origen a lo largo de \(\begin{bmatrix} 1 \\ 2 \end{bmatrix}\). Por [REF: three-way-equiv | la equivalencia triple], el sistema \(A\mathbf{x} = \mathbf{b}\) es consistente si y solo si \(\mathbf{b}\) yace sobre esa recta (por ejemplo, \(\mathbf{b} = \begin{bmatrix} 3 \\ 6 \end{bmatrix}\) funciona, mientras que \(\mathbf{b} = \begin{bmatrix} 3 \\ 5 \end{bmatrix}\) falla).
+
+[GRAPH]
+type: parametric2d
+title: Generado de columnas colineales \(\mathbf{a}_1 = (1, 2)\) y \(\mathbf{a}_2 = (-2, -4)\) frente a \(\mathbf{b}\) alcanzable e inalcanzable
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -2.5, 3.5
+xrange: -3, 4.5
+yrange: -5, 7
+trace: t, 2*t | label: \(\operatorname{Span}\{\mathbf{a}_1, \mathbf{a}_2\}\) | color: #2563eb
+segment: 0, 0, 1, 2 | label: \(\mathbf{a}_1\) | color: #059669
+segment: 0, 0, -2, -4 | label: \(\mathbf{a}_2\) | color: #0d9488
+point: 3, 6 | label: \((3, 6)\) | color: #059669
+point: 3, 5 | label: \((3, 5)\) | color: #dc2626
+[/GRAPH]
+
+Toda pregunta sobre la resolución de un sistema lineal puede traducirse ahora de un lado a otro entre ecuaciones, generados de columnas y multiplicación matriz-vector, un puente que usaremos a lo largo de todo el resto del álgebra lineal.
+
+[QUESTION 4]
+[ANSWER: A]
+Suponga que \(A\) es una matriz \(m \times n\) y que para dos vectores \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) sabemos que
+\[
+A\mathbf{u} = \begin{bmatrix} 3 \\ -1 \end{bmatrix}, \qquad A\mathbf{v} = \begin{bmatrix} -2 \\ 4 \end{bmatrix}.
+\]
+¿Qué es \(A(2\mathbf{u} - 3\mathbf{v})\)?
+
+(A) \(\begin{bmatrix} 12 \\ -14 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0 \\ -14 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 12 \\ 10 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 \\ 3 \end{bmatrix}\)
+(E) No puede determinarse sin conocer las entradas de \(A\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Sea \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) una matriz \(3 \times 3\) cuyas columnas satisfacen la relación \(\mathbf{a}_3 = 2\mathbf{a}_1 - \mathbf{a}_2\). ¿Qué vector no nulo \(\mathbf{x} \in \mathbb{R}^3\) satisface con certeza \(A\mathbf{x} = \mathbf{0}\)?
+
+(A) \(\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 2 \\ -1 \\ -1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 \\ 1 \\ -1 \end{bmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Suponga que \(A\) es una matriz \(3 \times n\) tal que tanto el sistema \(A\mathbf{x} = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}\) como \(A\mathbf{x} = \begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix}\) son consistentes. ¿Qué vector \(\mathbf{c} \in \mathbb{R}^3\) garantiza que \(A\mathbf{x} = \mathbf{c}\) sea consistente, sin importar cuál sea \(A\)?
+
+(A) \(\begin{bmatrix} 1 \\ 2 \\ 4 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 2 \\ 3 \\ 4 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 3 \\ 4 \\ 7 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\)
+[/BONUS]

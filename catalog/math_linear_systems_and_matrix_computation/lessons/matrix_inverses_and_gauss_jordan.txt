@@ -1,0 +1,306 @@
+=== SECTION 1: Matrix inverses and their algebraic laws ===
+
+In scalar arithmetic, solving \(ax = b\) when \(a \neq 0\) is effortless: multiply both sides by the reciprocal \(a^{-1} = 1/a\) to get \(x = a^{-1} b\). For a square linear system \(A\mathbf{x} = \mathbf{b}\), is there a matrix analogue of the reciprocal that undoes multiplication by \(A\)?
+
+[CALLOUT]
+id: inverse-def
+label: Definition
+title: Invertible (nonsingular) matrix and inverse
+tone: key
+
+A square \(n \times n\) matrix \(A\) is called invertible (or nonsingular) if there exists an \(n \times n\) matrix \(B\) such that
+\[
+AB = I_n \qquad \text{and} \qquad BA = I_n.
+\]
+Such a matrix \(B\) is called an inverse of \(A\). A square matrix that has no inverse is called singular (or non-invertible).
+[/CALLOUT]
+
+Notice first that this definition applies ONLY to square \(n \times n\) matrices, and requires BOTH products \(AB\) and \(BA\) to equal \(I_n\). (We will see in the next lesson that for square matrices one side actually forces the other, whereas for rectangular matrices it does not.)
+
+Can a square matrix have two different inverses? Suppose \(B\) and \(C\) both satisfy [REF: inverse-def | the definition], so \(BA = I_n\) and \(AC = I_n\). Using associativity of matrix multiplication,
+\[
+B = B I_n = B(AC) = (BA)C = I_n C = C.
+\]
+Hence every invertible matrix has a UNIQUE inverse, which we denote unambiguously by \(A^{-1}\).
+
+How does inversion interact with matrix products, transposes, and scalar multiples? Just as with transposition, inverting a product REVERSES the order of factors!
+
+[CALLOUT]
+id: inverse-laws
+label: Theorem
+title: Algebraic properties of matrix inverses
+tone: key
+
+Let \(A\) and \(B\) be invertible \(n \times n\) matrices, let \(c \neq 0\) be a nonzero scalar, and let \(k \ge 1\) be an integer. Then:
+
+(1) Double inverse: \(A^{-1}\) is invertible, and \((A^{-1})^{-1} = A\).
+(2) Product order reversal: \(AB\) is invertible, and \((AB)^{-1} = B^{-1} A^{-1}\).
+(3) Transpose compatibility: \(A^T\) is invertible, and \((A^T)^{-1} = (A^{-1})^T\).
+(4) Scalar multiples and powers: \((cA)^{-1} = \frac{1}{c} A^{-1}\), and \((A^k)^{-1} = (A^{-1})^k\).
+[/CALLOUT]
+
+To prove each rule, we simply verify that the candidate inverse multiplies on both sides to give \(I_n\), and then invoke uniqueness of the inverse:
+- For [REF: inverse-laws.2 | product order reversal], compute
+\[
+(AB)(B^{-1} A^{-1}) = A(B B^{-1})A^{-1} = A I_n A^{-1} = A A^{-1} = I_n,
+\]
+and similarly \((B^{-1} A^{-1})(AB) = B^{-1}(A^{-1} A)B = B^{-1} I_n B = I_n\). Think of dressing in reverse: to undo "apply \(B\), then apply \(A\)," you must undo \(A\) first and then undo \(B\). Repeating this on three factors gives \((ABC)^{-1} = C^{-1} B^{-1} A^{-1}\).
+- For [REF: inverse-laws.3 | transpose compatibility], apply \((XY)^T = Y^T X^T\):
+\[
+A^T (A^{-1})^T = (A^{-1} A)^T = I_n^T = I_n, \qquad (A^{-1})^T A^T = (A A^{-1})^T = I_n^T = I_n.
+\]
+Hence \((A^T)^{-1} = (A^{-1})^T\).
+- For [REF: inverse-laws.4 | scalar multiples and powers], \((cA)(\frac{1}{c}A^{-1}) = \frac{c}{c} A A^{-1} = I_n\), and multiplying \(k\) copies of \(A\) against \(k\) copies of \(A^{-1}\) cancels pair by pair from the middle outward to \(I_n\).
+
+Beware a common trap: \((A + B)^{-1}\) is ALMOST NEVER equal to \(A^{-1} + B^{-1}\)! For example, \(I_2 + (-I_2) = 0\) is not even invertible, and \(I_2 + I_2 = 2I_2\) has inverse \(\frac{1}{2} I_2\), not \(I_2 + I_2 = 2I_2\).
+
+[QUESTION 1]
+[ANSWER: D]
+Suppose \(A\), \(B\), and \(C\) are invertible \(n \times n\) matrices satisfying the matrix equation
+\[
+A X B^T = C.
+\]
+Which expression gives the matrix \(X\)?
+
+(A) \((B^{-1})^T C A^{-1}\)
+(B) \(A^{-1} C B^T\)
+(C) \(C A^{-1} (B^{-1})^T\)
+(D) \(A^{-1} C (B^{-1})^T\)
+(E) \((A B^T)^{-1} C\)
+[/QUESTION]
+
+=== SECTION 2: The \(2 \times 2\) inverse formula and geometric collapse ===
+
+For a general \(2 \times 2\) matrix \(A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\), there is an explicit closed-form inverse criterion that we can verify purely by matrix multiplication, without needing any general theory of determinants.
+
+Consider the companion matrix \(\tilde{A} = \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}\) obtained by swapping the diagonal entries \(a, d\) and negating the off-diagonal entries \(b, c\). Multiply \(A\) and \(\tilde{A}\) in both orders:
+\[
+A \tilde{A} = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}
+= \begin{bmatrix} ad - bc & -ab + ab \\ cd - cd & -bc + ad \end{bmatrix}
+= (ad - bc) I_2,
+\]
+and likewise \(\tilde{A} A = (ad - bc) I_2\).
+
+This single identity resolves BOTH cases completely:
+1. If \(ad - bc \neq 0\), divide both sides by the nonzero scalar \(ad - bc\):
+\[
+A^{-1} = \frac{1}{ad - bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}.
+\]
+2. If \(ad - bc = 0\), then \(A \tilde{A} = 0\). Could \(A\) still be invertible? If \(A = 0\), clearly \(A B = 0 \neq I_2\) for every \(B\), so \(A\) is singular. If \(A \neq 0\), then at least one entry of \(A\) is nonzero, so \(\tilde{A} \neq 0\) as well. Yet if \(A^{-1}\) existed, left-multiplying \(A \tilde{A} = 0\) by \(A^{-1}\) would force \(\tilde{A} = I_2 \tilde{A} = A^{-1}(A \tilde{A}) = A^{-1} 0 = 0\), a contradiction! Therefore \(A\) is singular whenever \(ad - bc = 0\).
+
+[CALLOUT]
+id: inv-2x2
+label: Theorem
+title: Explicit \(2 \times 2\) invertibility criterion and inverse formula
+tone: key
+
+The \(2 \times 2\) matrix \(A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\) is invertible if and only if \(ad - bc \neq 0\), in which case
+\[
+A^{-1} = \frac{1}{ad - bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}.
+\]
+[/CALLOUT]
+
+Geometrically, the condition \(ad - bc \neq 0\) distinguishes whether \(A\) spreads the unit square in \(\mathbb{R}^2\) onto a two-dimensional parallelogram or flattens it onto a one-dimensional line. Take \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\) (\(ad - bc = 3 \neq 0\)) versus \(S = \begin{bmatrix} 2 & 1 \\ 4 & 2 \end{bmatrix}\) (\(ad - bc = 0\)). Under \(A\), the unit square maps to a parallelogram with vertices \((0, 0), (2, 1), (3, 3), (1, 2)\), so every output comes from a unique input and \(A^{-1}\) reverses the map cleanly. Under \(S\), the columns \((2, 4)\) and \((1, 2)\) lie on the exact same line \(x_2 = 2x_1\): the entire unit square collapses onto the segment from \((0, 0)\) to \((3, 6)\). Distinct inputs such as \((1, 0)\) and \((0, 2)\) land on the exact same point \((2, 4)\), making reversal impossible.
+
+[GRAPH]
+type: parametric2d
+title: Invertible \(A\) maps the unit square to a parallelogram; singular \(S\) collapses it onto a line
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.5, 4
+yrange: -0.5, 6.5
+trace: t, 0 | label: unit square | color: #64748b
+trace: 1, t | color: #64748b
+trace: 1 - t, 1 | color: #64748b
+trace: 0, 1 - t | color: #64748b
+trace: 2*t, t | label: invertible image \(A\) | color: #2563eb
+trace: 2 + t, 1 + 2*t | color: #2563eb
+trace: 3 - 2*t, 3 - t | color: #2563eb
+trace: t, 2*t | color: #2563eb
+trace: 3*t, 6*t | label: singular collapse \(S\) | color: #dc2626
+point: 2, 4 | label: \(S(1, 0) = S(0, 2)\) | color: #dc2626
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+Consider the matrix \(A = \begin{bmatrix} 3 & k \\ 2 & 4 \end{bmatrix}\). For which real value of \(k\) is \(A\) singular, and when \(k = 5\), what is \(A^{-1}\)?
+
+(A) Singular at \(k = 6\); for \(k = 5\), \(A^{-1} = \begin{bmatrix} 3/2 & -5/2 \\ -1 & 2 \end{bmatrix}\)
+(B) Singular at \(k = 6\); for \(k = 5\), \(A^{-1} = \begin{bmatrix} 2 & -5/2 \\ -1 & 3/2 \end{bmatrix}\)
+(C) Singular at \(k = 6\); for \(k = 5\), \(A^{-1} = \begin{bmatrix} 2 & 5/2 \\ 1 & 3/2 \end{bmatrix}\)
+(D) Singular at \(k = -6\); for \(k = 5\), \(A^{-1} = \begin{bmatrix} 2 & -5/2 \\ -1 & 3/2 \end{bmatrix}\)
+(E) Singular at \(k = 6\); for \(k = 5\), \(A^{-1} = \begin{bmatrix} 4 & -5 \\ -2 & 3 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: The Gauss-Jordan inversion algorithm ===
+
+For \(3 \times 3\) and larger matrices, there is no simple entry-swapping shortcut like [REF: inv-2x2 | the \(2 \times 2\) formula]. Instead, elementary matrices hand us a direct, exact algorithm that simultaneously tests invertibility AND computes \(A^{-1}\).
+
+Suppose we row-reduce an \(n \times n\) matrix \(A\) to its Reduced Row Echelon Form \(R = \operatorname{RREF}(A)\). By row factorization, there exist elementary matrices \(E_1, \dots, E_k\) such that
+\[
+P A = R, \qquad \text{where } P = E_k \cdots E_2 E_1.
+\]
+Because every elementary matrix is invertible, their product \(P\) is invertible with \(P^{-1} = E_1^{-1} \cdots E_k^{-1}\). Now inspect the two possible shapes of the square RREF matrix \(R\):
+
+Case 1: \(R = I_n\). Then \(PA = I_n\). To be certain that \(P\) is the TWO-SIDED inverse of \(A\), we must also check \(AP = I_n\)! Because \(P\) is invertible, left-multiply \(PA = I_n\) by \(P^{-1}\):
+\[
+P^{-1}(PA) = P^{-1} I_n \implies A = P^{-1}.
+\]
+Substituting \(A = P^{-1}\) into \(AP\) yields \(AP = P^{-1} P = I_n\)! Thus \(PA = I_n\) AND \(AP = I_n\), proving that \(A\) is invertible with \(A^{-1} = P = E_k \cdots E_1\).
+
+How do we compute \(P = E_k \cdots E_1\) without multiplying elementary matrices one by one? Recall that \(P = P I_n = E_k \cdots E_1 I_n\). Therefore, if we place \(A\) and \(I_n\) side by side in the \(n \times 2n\) doubly augmented block \([A \mid I_n]\) and apply the exact same sequence of row operations to every full row of length \(2n\), we transform
+\[
+[A \mid I_n] \longrightarrow [PA \mid P I_n] = [I_n \mid P] = [I_n \mid A^{-1}]!
+\]
+
+Case 2: \(R \neq I_n\). Because \(R\) is a square \(n \times n\) matrix in RREF, having fewer than \(n\) pivots forces its bottom row to consist entirely of zeros! Suppose for contradiction that \(A\) were invertible with inverse \(A^{-1}\). Right-multiplying \(PA = R\) by \(A^{-1}\) gives
+\[
+P = P(A A^{-1}) = (PA) A^{-1} = R A^{-1}.
+\]
+Wait: every row of \(R A^{-1}\) is a linear combination of the rows of \(A^{-1}\) weighted by the corresponding row of \(R\); since row \(n\) of \(R\) is all zeros, row \(n\) of \(R A^{-1} = P\) would be all zeros! Then multiplying \(P\) on the right by \(P^{-1}\) would give a zero bottom row in \(P P^{-1} = I_n\), contradicting that the \((n, n)\) entry of \(I_n\) is \(1 \neq 0\). Therefore, if \(\operatorname{RREF}(A) \neq I_n\), \(A\) CANNOT be invertible.
+
+[CALLOUT]
+id: gauss-jordan-inv
+label: Theorem
+title: Gauss-Jordan inversion theorem and algorithm
+tone: key
+
+An \(n \times n\) matrix \(A\) is invertible if and only if \(\operatorname{RREF}(A) = I_n\).
+
+To test invertibility and compute \(A^{-1}\):
+(1) Form the \(n \times 2n\) matrix \([A \mid I_n]\).
+(2) Apply Gauss-Jordan elimination to reduce the left block \(A\) to \(\operatorname{RREF}(A)\).
+(3) If the left block becomes \(I_n\), then the right block is \(A^{-1}\): \([A \mid I_n] \sim [I_n \mid A^{-1}]\).
+(4) If the left block develops a zero row (cannot reach \(I_n\)), stop: \(A\) is singular and has no inverse.
+[/CALLOUT]
+
+Let us execute [REF: gauss-jordan-inv | Gauss-Jordan inversion] on
+\[
+A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & -1 \\ 2 & 5 & -2 \end{bmatrix}.
+\]
+Form \([A \mid I_3]\):
+\[
+\left[\begin{array}{ccc|ccc}
+1 & 2 & 0 & 1 & 0 & 0 \\
+0 & 1 & -1 & 0 & 1 & 0 \\
+2 & 5 & -2 & 0 & 0 & 1
+\end{array}\right]
+\xrightarrow{R_3 \leftarrow R_3 - 2 R_1}
+\left[\begin{array}{ccc|ccc}
+1 & 2 & 0 & 1 & 0 & 0 \\
+0 & 1 & -1 & 0 & 1 & 0 \\
+0 & 1 & -2 & -2 & 0 & 1
+\end{array}\right]
+\]
+\[
+\xrightarrow{R_3 \leftarrow R_3 - R_2}
+\left[\begin{array}{ccc|ccc}
+1 & 2 & 0 & 1 & 0 & 0 \\
+0 & 1 & -1 & 0 & 1 & 0 \\
+0 & 0 & -1 & -2 & -1 & 1
+\end{array}\right]
+\xrightarrow{R_3 \leftarrow -R_3}
+\left[\begin{array}{ccc|ccc}
+1 & 2 & 0 & 1 & 0 & 0 \\
+0 & 1 & -1 & 0 & 1 & 0 \\
+0 & 0 & 1 & 2 & 1 & -1
+\end{array}\right].
+\]
+Now run the backward phase: \(R_2 \leftarrow R_2 + R_3\), then \(R_1 \leftarrow R_1 - 2 R_2\):
+\[
+\xrightarrow{R_2 \leftarrow R_2 + R_3}
+\left[\begin{array}{ccc|ccc}
+1 & 2 & 0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 2 & 2 & -1 \\
+0 & 0 & 1 & 2 & 1 & -1
+\end{array}\right]
+\xrightarrow{R_1 \leftarrow R_1 - 2 R_2}
+\left[\begin{array}{ccc|ccc}
+1 & 0 & 0 & -3 & -4 & 2 \\
+0 & 1 & 0 & 2 & 2 & -1 \\
+0 & 0 & 1 & 2 & 1 & -1
+\end{array}\right].
+\]
+We read off \(A^{-1} = \begin{bmatrix} -3 & -4 & 2 \\ 2 & 2 & -1 \\ 2 & 1 & -1 \end{bmatrix}\). Always check by multiplying \(A A^{-1}\):
+\[
+\begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & -1 \\ 2 & 5 & -2 \end{bmatrix}
+\begin{bmatrix} -3 & -4 & 2 \\ 2 & 2 & -1 \\ 2 & 1 & -1 \end{bmatrix}
+= \begin{bmatrix} -3 + 4 & -4 + 4 & 2 - 2 \\ 2 - 2 & 2 - 1 & -1 + 1 \\ -6 + 10 - 4 & -8 + 10 - 2 & 4 - 5 + 2 \end{bmatrix}
+= \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+
+[QUESTION 3]
+[ANSWER: C]
+Use the Gauss-Jordan algorithm on \([A \mid I_3]\) to find the inverse of
+\[
+A = \begin{bmatrix} 1 & 0 & 2 \\ 2 & 1 & 5 \\ 0 & -1 & 0 \end{bmatrix}.
+\]
+What is \(A^{-1}\)?
+
+(A) \(\begin{bmatrix} 5 & -2 & 2 \\ 0 & 0 & -1 \\ -2 & 1 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 5 & -2 & -2 \\ 0 & 0 & 1 \\ -2 & 1 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 5 & -2 & -2 \\ 0 & 0 & -1 \\ -2 & 1 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 5 & 2 & -2 \\ 0 & 0 & -1 \\ 2 & 1 & 1 \end{bmatrix}\)
+(E) \(A\) is singular and has no inverse
+[/QUESTION]
+
+=== SECTION 4: Solving \(A\mathbf{x} = \mathbf{b}\) via \(A^{-1}\) versus direct elimination ===
+
+When \(A\) is an invertible \(n \times n\) matrix, solving \(A\mathbf{x} = \mathbf{b}\) algebraically is one step: left-multiply both sides by \(A^{-1}\) to obtain
+\[
+\mathbf{x} = A^{-1} \mathbf{b}.
+\]
+Checking \(A(A^{-1}\mathbf{b}) = I_n \mathbf{b} = \mathbf{b}\) confirms that \(\mathbf{x} = A^{-1}\mathbf{b}\) is a solution, and left-multiplying any solution \(A\mathbf{x} = \mathbf{b}\) by \(A^{-1}\) proves it is the ONLY solution.
+
+Because \(\mathbf{x} = A^{-1}\mathbf{b}\) looks so sleek on paper, beginners often assume that the best way to solve a linear system on a computer is to compute \(A^{-1}\) first and then multiply \(A^{-1}\mathbf{b}\). In numerical practice, the opposite is true: you should almost NEVER compute \(A^{-1}\) just to solve \(A\mathbf{x} = \mathbf{b}\)!
+
+Why? Compare the arithmetic work for a large \(n \times n\) system:
+- Gaussian elimination on \([A \mid \mathbf{b}]\) reduces \(A\) to upper-triangular form once (roughly \(\frac{2}{3} n^3\) operations) and then performs back-substitution on ONE column \(\mathbf{b}\) (roughly \(n^2\) operations).
+- Gauss-Jordan inversion on \([A \mid I_n]\) must perform BOTH forward AND backward elimination across \(n\) right-hand columns simultaneously—costing roughly \(2 n^3\) operations (three times as much arithmetic!), followed by another \(2 n^2\) operations to multiply \(A^{-1}\mathbf{b}\).
+- Even when you need to solve \(A\mathbf{x} = \mathbf{b}_j\) for many different right-hand sides \(\mathbf{b}_1, \dots, \mathbf{b}_k\), keeping the triangular factors from Gaussian elimination (the \(LU\) factorization developed in a later lesson) still costs only \(\frac{2}{3} n^3\) up front plus \(2 n^2\) per right-hand side—beating explicit inversion on both speed and floating-point accuracy!
+
+Explicitly compute \(A^{-1}\) when you genuinely need the entries of \(A^{-1}\) themselves (for example, in symbolic derivations, covariance matrices in statistics, or sensitivity formulas); otherwise solve \(A\mathbf{x} = \mathbf{b}\) directly by elimination or triangular factorization.
+
+[TABLE]
+Method for solving \(A\mathbf{x} = \mathbf{b}\) | Approximate arithmetic cost (large \(n\)) | Practical recommendation
+Gaussian elimination + back-substitution | \(\approx \frac{2}{3} n^3\) | Default method for a single right-hand side \(\mathbf{b}\)
+Compute \(A^{-1}\) via \([A \mid I_n]\), then \(A^{-1}\mathbf{b}\) | \(\approx 2 n^3 + 2 n^2\) | Avoid for solving systems alone; compute \(A^{-1}\) only when its entries are needed
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose you need to solve a single \(500 \times 500\) linear system \(A\mathbf{x} = \mathbf{b}\) where \(A\) is known to be invertible. Why is direct Gaussian elimination on \([A \mid \mathbf{b}]\) preferred over computing \(A^{-1}\) by Gauss-Jordan elimination and then evaluating \(\mathbf{x} = A^{-1}\mathbf{b}\)?
+
+(A) Computing \(A^{-1}\) performs forward and backward elimination across \(500\) right-hand columns (roughly three times the arithmetic of solving for a single \(\mathbf{b}\)) without producing a more accurate solution
+(B) The formula \(\mathbf{x} = A^{-1}\mathbf{b}\) is exact only for \(2 \times 2\) and \(3 \times 3\) matrices and becomes approximate for larger \(n\)
+(C) Direct Gaussian elimination requires no row swaps, whereas Gauss-Jordan inversion always requires row swaps
+(D) Computing \(A^{-1}\mathbf{b}\) fails unless \(A\) is symmetric
+(E) Gauss-Jordan elimination cannot determine whether \(A\) is singular
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suppose a square \(n \times n\) matrix \(A\) satisfies the matrix equation
+\[
+A^2 - 3A + 2I_n = 0.
+\]
+Which statement about \(A\) is guaranteed to be true?
+
+(A) \(A\) must be singular because it satisfies a quadratic equation
+(B) \(A\) is invertible, with \(A^{-1} = \frac{3}{2} I_n - \frac{1}{2} A\)
+(C) \(A\) is invertible, with \(A^{-1} = \frac{1}{2} A - \frac{3}{2} I_n\)
+(D) \(A\) is invertible, with \(A^{-1} = 3 I_n - A\)
+(E) Invertibility of \(A\) cannot be determined without knowing the entries of \(A\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suppose \(A\) and \(B\) are invertible \(n \times n\) matrices such that \(A\) is symmetric (\(A^T = A\)) and \(B\) is skew-symmetric (\(B^T = -B\)). Which expression equals \(\bigl((AB)^{-1}\bigr)^T\)?
+
+(A) \(B^{-1} A^{-1}\)
+(B) \(-B^{-1} A^{-1}\)
+(C) \(A^{-1} B^{-1}\)
+(D) \(-(AB)^{-1}\)
+(E) \(-A^{-1} B^{-1}\)
+[/BONUS]

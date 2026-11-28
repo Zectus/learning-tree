@@ -1,0 +1,207 @@
+=== SECTION 1: The Complex Conjugate Root Theorem ===
+
+When we solved real-coefficient quadratics with negative discriminant, the two non-real roots always arrived together as a conjugate pair \(p + qi\) and \(p - qi\). Does that same pairing hold for cubics, quartics, and polynomials of arbitrary degree, or was it an accident of the quadratic formula?
+
+It is no accident—it follows directly from the fact that conjugation commutes with addition, multiplication, and powers, while leaving real numbers untouched. Consider any polynomial of degree \(n\) with REAL coefficients:
+\[
+P(z) = a_n z^n + a_{n-1} z^{n-1} + \dots + a_1 z + a_0, \qquad a_0, a_1, \dots, a_n \in \mathbb{R}.
+\]
+Take the complex conjugate of \(P(z)\) for any \(z \in \mathbb{C}\):
+\[
+\overline{P(z)} = \overline{a_n z^n + a_{n-1} z^{n-1} + \dots + a_1 z + a_0} = \overline{a_n}\,(\overline{z})^n + \overline{a_{n-1}}\,(\overline{z})^{n-1} + \dots + \overline{a_1}\,\overline{z} + \overline{a_0}.
+\]
+Because EVERY coefficient \(a_k\) is real, we have \(\overline{a_k} = a_k\) for each \(k = 0, 1, \dots, n\). Therefore
+\[
+\overline{P(z)} = a_n (\overline{z})^n + a_{n-1} (\overline{z})^{n-1} + \dots + a_1 \overline{z} + a_0 = P(\overline{z}).
+\]
+Now suppose \(z_0 \in \mathbb{C}\) is a root of \(P\), meaning \(P(z_0) = 0\). Substituting \(z = z_0\) into \(P(\overline{z}) = \overline{P(z)}\) yields
+\[
+P(\overline{z_0}) = \overline{P(z_0)} = \overline{0} = 0.
+\]
+So \(\overline{z_0}\) is automatically a root of \(P\) as well!
+
+[CALLOUT]
+id: conj-root-thm
+label: Theorem
+title: Complex Conjugate Root Theorem
+tone: key
+
+Let \(P(z) = a_n z^n + \dots + a_1 z + a_0\) be a polynomial whose coefficients \(a_0, a_1, \dots, a_n\) are all real.
+
+(1) For every \(z \in \mathbb{C}\), \(P(\overline{z}) = \overline{P(z)}\).
+(2) If \(z_0 \in \mathbb{C}\) is a root of \(P(z)\), then \(\overline{z_0}\) is also a root of \(P(z)\) (with the same multiplicity).
+[/CALLOUT]
+
+Why did the proof require real coefficients? Watch what breaks the moment even a single coefficient is non-real. Consider
+\[
+Q(z) = (z - i)(z - 2) = z^2 - (2 + i)z + 2i.
+\]
+Here \(Q(i) = 0\), so \(z_0 = i\) is a root. Test its conjugate \(\overline{z_0} = -i\):
+\[
+Q(-i) = (-i - i)(-i - 2) = (-2i)(-2 - i) = 4i + 2i^2 = -2 + 4i \ne 0.
+\]
+The conjugate \(-i\) is NOT a root! In the step \(\overline{Q(z)} = \overline{z}^2 - (2 - i)\overline{z} - 2i\), conjugation changed the non-real coefficients of \(Q\), producing a different polynomial instead of \(Q(\overline{z})\).
+
+[CALLOUT]
+id: real-coeff-caution
+label: Common pitfall
+title: The real-coefficients hypothesis is indispensable
+tone: caution
+
+Never apply [REF: conj-root-thm | the Complex Conjugate Root Theorem] without first checking that EVERY coefficient of \(P(z)\) is real. A polynomial with non-real coefficients can have isolated non-real roots whose conjugates are not roots.
+[/CALLOUT]
+
+=== SECTION 2: The Fundamental Theorem of Algebra and factorization over \(\mathbb{C}\) and \(\mathbb{R}\) ===
+
+Knowing that non-real roots of real polynomials come in pairs tells us how roots behave once we have them, but how do we know that every polynomial of degree \(n \ge 1\) has complex roots in the first place? Answering that question requires tools from analysis or topology that lie beyond algebra, so we accept the following landmark theorem as a supplied fact.
+
+[CALLOUT]
+id: fta
+label: Theorem (supplied without proof)
+title: Fundamental Theorem of Algebra
+tone: key
+
+Every polynomial \(P(z)\) of degree \(n \ge 1\) with complex coefficients has at least one root in \(\mathbb{C}\). Consequently, by repeated application of the Factor Theorem, every degree-\(n\) polynomial \(P(z)\) with leading coefficient \(a_n \ne 0\) factors completely over \(\mathbb{C}\) as
+\[
+P(z) = a_n (z - r_1)(z - r_2)\cdots(z - r_n)
+\]
+for complex numbers \(r_1, r_2, \dots, r_n \in \mathbb{C}\) (not necessarily distinct), unique up to reordering. In particular, \(P(z)\) has exactly \(n\) complex roots counting multiplicity.
+[/CALLOUT]
+
+Now combine [REF: fta | the Fundamental Theorem of Algebra] with [REF: conj-root-thm | the Complex Conjugate Root Theorem] for a polynomial \(P(z)\) with REAL coefficients. Two powerful structural consequences follow immediately.
+
+First, look at what happens when we multiply the two linear factors belonging to a non-real conjugate pair \(z_0 = p + qi\) (with \(q \ne 0\)) and \(\overline{z_0} = p - qi\):
+\[
+(z - z_0)(z - \overline{z_0}) = z^2 - (z_0 + \overline{z_0})z + z_0\overline{z_0} = z^2 - 2\operatorname{Re}(z_0)\,z + |z_0|^2.
+\]
+Look at its coefficients: \(-2\operatorname{Re}(z_0) = -2p\) and \(|z_0|^2 = p^2 + q^2\) are BOTH REAL! Moreover, its discriminant is \((-2p)^2 - 4(p^2 + q^2) = -4q^2 < 0\), so this quadratic factor is irreducible over \(\mathbb{R}\) (it has no real roots).
+
+Dividing \(P(z)\) by this real quadratic factor produces a quotient polynomial \(Q(z)\) of degree \(n - 2\) that STILL has real coefficients! Repeating this pairing step for every non-real root in the factorization from [REF: fta | the Fundamental Theorem of Algebra] proves both of the following structural theorems at once:
+1. Every non-real root \(z_0\) has the exact same multiplicity as \(\overline{z_0}\) (because each time \(z_0\) is a root of the remaining real quotient, \(\overline{z_0}\) is too, so they peel off together in pairs). Thus the total number of non-real roots, counting multiplicity, is ALWAYS EVEN.
+2. When the degree \(n\) of a real polynomial is ODD, the total number of roots counting multiplicity is odd; subtracting an even number of non-real roots leaves an odd—hence at least \(1\)—number of real roots!
+3. Grouping every conjugate pair into its real quadratic factor \(z^2 - 2\operatorname{Re}(z_0)\,z + |z_0|^2\) shows that every real polynomial factors over \(\mathbb{R}\) into real linear factors (from its real roots) and irreducible real quadratic factors (from its conjugate pairs). No irreducible real polynomial can have degree \(3\) or higher.
+
+[CALLOUT]
+id: real-factorization-thm
+label: Theorem
+title: Structure of real polynomials over \(\mathbb{R}\)
+tone: key
+
+Let \(P(z)\) be a polynomial of degree \(n \ge 1\) with real coefficients.
+
+(1) Odd-degree real root guarantee: If \(n\) is odd, \(P(z)\) has at least one real root (in fact, an odd number of real roots counting multiplicity).
+(2) Complete factorization over \(\mathbb{R}\): \(P(z)\) factors as a product of its leading coefficient, real linear factors \((z - r)\) corresponding to real roots, and irreducible real quadratic factors \((z - z_0)(z - \overline{z_0}) = z^2 - 2\operatorname{Re}(z_0)\,z + |z_0|^2\) corresponding to non-real conjugate pairs.
+[/CALLOUT]
+
+Notice how [REF: real-factorization-thm.2 | the pairing formula] makes constructing minimum-degree real polynomials effortless. Suppose we want a monic real polynomial of smallest possible degree that has \(z_1 = 2 - 3i\) and \(z_2 = 4\) as roots. By [REF: conj-root-thm.2 | conjugate pairing], \(\overline{z_1} = 2 + 3i\) must also be a root, so the minimum degree is \(3\). Pairing \(2 - 3i\) and \(2 + 3i\) gives \(z^2 - 2(2)z + (2^2 + (-3)^2) = z^2 - 4z + 13\). Multiplying by \((z - 4)\) yields
+\[
+P(z) = (z - 4)(z^2 - 4z + 13) = z^3 - 8z^2 + 29z - 52.
+\]
+Every coefficient is real, and no real polynomial of degree \(2\) can have three distinct roots \(2 - 3i\), \(2 + 3i\), and \(4\).
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(P(z)\) be the monic polynomial of minimal degree with real coefficients that has \(1 + 2i\) and \(-3\) among its roots. What is \(P(1)\)?
+
+(A) \(16\)
+(B) \(32\)
+(C) \(-16\)
+(D) \(-8\)
+(E) \(15\)
+[/QUESTION]
+
+=== SECTION 3: Finding all roots and factoring cubics and quartics ===
+
+Combining conjugate pairing with polynomial division and the Rational Root Theorem lets us completely solve and factor real cubics and quartics in two standard situations.
+
+Situation 1: One non-real root is given.
+Suppose we are told that \(z_0 = 1 + i\) is a root of the real quartic
+\[
+P(z) = z^4 - 2z^3 + 5z^2 - 6z + 6.
+\]
+Because all coefficients of \(P(z)\) are real, \(\overline{z_0} = 1 - i\) is also a root. Form the real quadratic factor:
+\[
+(z - (1 + i))(z - (1 - i)) = z^2 - 2(1)z + (1^2 + 1^2) = z^2 - 2z + 2.
+\]
+Now divide \(P(z)\) by \(z^2 - 2z + 2\) using polynomial long division (or undetermined coefficients: writing \(P(z) = (z^2 - 2z + 2)(z^2 + bz + c)\) and matching \(z^3\) and constant terms immediately gives \(b - 2 = -2 \implies b = 0\) and \(2c = 6 \implies c = 3\)). Checking the expansion confirms:
+\[
+(z^2 - 2z + 2)(z^2 + 3) = z^4 - 2z^3 + 2z^2 + 3z^2 - 6z + 6 = z^4 - 2z^3 + 5z^2 - 6z + 6.
+\]
+The remaining factor \(z^2 + 3 = 0\) gives \(z = \pm i\sqrt{3}\). Thus:
+- All four roots are \(1 + i\), \(1 - i\), \(i\sqrt{3}\), and \(-i\sqrt{3}\).
+- Complete factorization over \(\mathbb{R}\): \(P(z) = (z^2 - 2z + 2)(z^2 + 3)\).
+- Complete factorization over \(\mathbb{C}\): \(P(z) = (z - 1 - i)(z - 1 + i)(z - i\sqrt{3})(z + i\sqrt{3})\).
+
+Situation 2: No root is given, so we search for rational roots first.
+Consider \(Q(z) = 2z^3 - 3z^2 + 8z + 5\). By the Rational Root Theorem, any rational root \(p/q\) has \(p \mid 5\) and \(q \mid 2\), giving candidates \(\pm 1, \pm 5, \pm \frac{1}{2}, \pm \frac{5}{2}\). Testing \(z = -\frac{1}{2}\):
+\[
+Q\!\left(-\frac{1}{2}\right) = 2\!\left(-\frac{1}{8}\right) - 3\!\left(\frac{1}{4}\right) + 8\!\left(-\frac{1}{2}\right) + 5 = -\frac{1}{4} - \frac{3}{4} - 4 + 5 = 0.
+\]
+So \((2z + 1)\) is a factor! Dividing \(Q(z)\) by \((2z + 1)\) gives
+\[
+Q(z) = (2z + 1)(z^2 - 2z + 5).
+\]
+The quadratic factor \(z^2 - 2z + 5\) has discriminant \(\Delta = (-2)^2 - 4(1)(5) = -16 < 0\), so it is irreducible over \(\mathbb{R}\), and its complex roots are \(z = \frac{2 \pm 4i}{2} = 1 \pm 2i\).
+- Complete factorization over \(\mathbb{R}\): \(Q(z) = (2z + 1)(z^2 - 2z + 5)\).
+- Complete factorization over \(\mathbb{C}\): \(Q(z) = 2\left(z + \frac{1}{2}\right)(z - 1 - 2i)(z - 1 + 2i)\).
+
+[TABLE]
+Factorization target | Allowed irreducible factors | Example for \(z^3 - z^2 + z - 1\)
+Over \(\mathbb{R}\) | Real linear factors and real quadratics with \(\Delta < 0\) | \((z - 1)(z^2 + 1)\)
+Over \(\mathbb{C}\) | Linear factors \((z - r_k)\) only | \((z - 1)(z - i)(z + i)\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: A]
+The real polynomial \(P(z) = z^4 - 4z^3 + 9z^2 - 16z + 20\) has \(z_0 = 2 - i\) as one of its roots. What are all four complex roots of \(P(z)\)?
+
+(A) \(2 - i\), \(2 + i\), \(2i\), and \(-2i\)
+(B) \(2 - i\), \(2 + i\), \(2\), and \(-2\)
+(C) \(2 - i\), \(-2 + i\), \(2i\), and \(-2i\)
+(D) \(2 - i\), \(2 + i\), \(4i\), and \(-4i\)
+(E) \(2 - i\), \(2 + i\), \(1 + 2i\), and \(1 - 2i\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+What is the complete factorization of \(P(z) = z^3 - 5z^2 + 11z - 15\) into irreducible factors over \(\mathbb{R}\)?
+
+(A) \((z - 3)(z^2 - 2z + 5)\)
+(B) \((z - 3)(z - 1 - 2i)(z - 1 + 2i)\)
+(C) \((z + 3)(z^2 - 8z + 5)\)
+(D) \((z - 3)(z - 1)(z - 5)\)
+(E) \((z - 5)(z^2 + 3)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Which of the following statements is guaranteed to be true?
+
+(A) Every polynomial of degree \(5\) with real coefficients has an odd number of real roots counting multiplicity, and hence at least one real root.
+(B) Every polynomial of degree \(5\) with complex coefficients has at least one real root.
+(C) Every polynomial of degree \(4\) with real coefficients has at least two real roots.
+(D) If a polynomial \(P(z)\) with complex coefficients satisfies \(P(2 + 3i) = 0\), then \(P(2 - 3i) = 0\).
+(E) Every polynomial of degree \(3\) with real coefficients has either three distinct real roots or no real roots at all.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Suppose \(P(z) = z^3 + az^2 + bz - 26\) has real coefficients \(a, b \in \mathbb{R}\), and \(z_0 = 3 + 2i\) is one of its roots. What is \(a + b\)?
+
+(A) \(17\)
+(B) \(33\)
+(C) \(-17\)
+(D) \(19\)
+(E) \(9\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+The real polynomial \(P(z) = z^4 + 4\) has no real roots. Which of the following is its complete factorization into irreducible polynomials over \(\mathbb{R}\)?
+
+(A) \((z^2 - 2z + 2)(z^2 + 2z + 2)\)
+(B) \((z^2 + 2)(z^2 + 2)\)
+(C) \((z^2 - 2i)(z^2 + 2i)\)
+(D) \((z^2 - 2z - 2)(z^2 + 2z - 2)\)
+(E) \(z^4 + 4\) is already irreducible over \(\mathbb{R}\)
+[/BONUS]

@@ -1,0 +1,249 @@
+=== SECTION 1: Definiciones matemáticas y nuestra caja de herramientas aritmética ===
+
+En lecciones anteriores analizamos la estructura lógica de los argumentos proposicionales y los enunciados cuantificados. Ahora cruzamos un puente decisivo: redactar demostraciones matemáticas completas de nivel universitario en prosa clara. Casi toda demostración comienza exactamente en el mismo lugar: desglosando las definiciones de los términos del enunciado.
+
+Una definición matemática no describe un hecho empírico preexistente; fija el significado exacto de una palabra o símbolo técnico para que todo lector coincida en lo que hace falta para cumplirlo. Debido a este papel, las definiciones matemáticas conllevan una importante convención lógica.
+
+[CALLOUT]
+id: principle-def-biconditional
+label: Principio
+title: Las definiciones son siempre bicondicionales
+tone: key
+
+Incluso cuando la prosa matemática redacta una definición usando la palabra "si" —por ejemplo, "Un entero \(n\) se llama par si existe un entero \(k\) tal que \(n = 2k\)"—, toda definición es lógicamente un "si y solo si" (\(\Leftrightarrow\)). Siempre que sepa que un término se aplica, puede desglosarlo en su condición definitoria; siempre que establezca la condición definitoria, puede concluir que el término se aplica.
+[/CALLOUT]
+
+Para practicar la redacción de demostraciones sin introducir teoría formal de conjuntos, adoptamos cuatro definiciones de trabajo concretas sobre los sistemas numéricos familiares \(\mathbb{Z}\), \(\mathbb{Q}\) y \(\mathbb{R}\), junto con las propiedades aritméticas estándar de los enteros y los números reales (cerradura de \(\mathbb{Z}\) bajo suma, resta y multiplicación; conmutatividad, asociatividad, distributividad; y las propiedades estándar de orden).
+
+[CALLOUT]
+id: defs-arithmetic
+label: Definición
+title: Definiciones aritméticas fundamentales para la demostración directa
+tone: key
+
+(1) Entero par: Un entero \(n \in \mathbb{Z}\) es par si y solo si existe \(k \in \mathbb{Z}\) tal que \(n = 2k\).
+(2) Entero impar: Un entero \(n \in \mathbb{Z}\) es impar si y solo si existe \(k \in \mathbb{Z}\) tal que \(n = 2k + 1\).
+(3) Divisibilidad: Para \(a, b \in \mathbb{Z}\), decimos que "\(a\) divide a \(b\)" (escrito \(a \mid b\)) si y solo si existe \(k \in \mathbb{Z}\) tal que \(b = ak\). Escribimos \(a \nmid b\) cuando \(a\) no divide a \(b\).
+(4) Número racional: Un número real \(x \in \mathbb{R}\) es racional (escrito \(x \in \mathbb{Q}\)) si y solo si existen \(p, q \in \mathbb{Z}\) con \(q \ne 0\) tales que \(x = \frac{p}{q}\).
+[/CALLOUT]
+
+Deténgase a comprobar dos detalles de [REF: defs-arithmetic.3 | la divisibilidad], porque los principiantes tropiezan con frecuencia en ellos:
+- Primero, \(a \mid b\) es un ENUNCIADO (verdadero o falso), ¡nunca un número! No confunda la barra vertical en "\(3 \mid 12\)" (un enunciado verdadero que afirma que \(12 = 3 \cdot 4\)) con la fracción "\(3/12 = 1/4\)".
+- Segundo, compruebe los casos límite directamente con la fórmula \(b = ak\) en lugar de adivinar a partir de fracciones. ¿Se cumple \(5 \mid 0\)? Sí: \(0 = 5 \cdot 0\) con \(k = 0 \in \mathbb{Z}\). ¿Se cumple \(0 \mid 0\)? Sí: \(0 = 0 \cdot 1\) (cualquier \(k \in \mathbb{Z}\) funciona). ¿Se cumple \(0 \mid 5\)? No: \(5 = 0 \cdot k = 0\) no tiene ninguna solución entera \(k\). Observe cómo definir la divisibilidad mediante multiplicación (\(b = ak\)) en lugar de división (\(b/a \in \mathbb{Z}\)) evita dividir entre cero.
+
+Verifique también cada cláusula de [REF: defs-arithmetic.4 | la definición de número racional]: para demostrar que un número real \(x\) es racional, debe exhibir dos enteros \(p\) y \(q\), demostrar que \(q \ne 0\) y verificar \(x = p/q\). Olvidar justificar \(q \ne 0\) deja la demostración incompleta.
+
+[QUESTION 1]
+[ANSWER: D]
+Usando [REF: defs-arithmetic.3 | la definición de divisibilidad], ¿cuál de los siguientes enunciados sobre enteros es FALSO?
+
+(A) \(-4 \mid 20\)
+(B) \(7 \mid 0\)
+(C) \(0 \mid 0\)
+(D) \(0 \mid -3\)
+(E) \(-1 \mid 13\)
+[/QUESTION]
+
+=== SECTION 2: La plantilla de demostración directa ===
+
+La mayoría de los teoremas fundamentales adoptan la forma condicional universal
+\[
+\forall x \in D,\, \bigl(P(x) \implies Q(x)\bigr).
+\]
+¿Cómo puede un texto finito demostrar una afirmación sobre INFINITOS elementos \(x \in D\)? El mecanismo lógico se llama generalización universal a partir de un elemento arbitrario: tomamos un elemento simbólico \(x \in D\) del cual NO suponemos NADA excepto que \(x \in D\) y que se cumple \(P(x)\). Si nuestra cadena de deducciones válidas establece entonces \(Q(x)\) sin apoyarse nunca en ningún valor especial de \(x\), exactamente el mismo argumento se aplica a todo \(x \in D\) simultáneamente, demostrando \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\).
+
+[CALLOUT]
+id: template-direct-proof
+label: Método
+title: Plantilla de demostración directa para \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\)
+tone: key
+
+(1) Introduzca un elemento arbitrario: Comience con "Sea \(x \in D\) arbitrario y supongamos \(P(x)\)." (Para afirmaciones con varias variables como \(\forall a, b \in \mathbb{Z}\), introduzca todas las variables arbitrarias al inicio.)
+(2) Desglose la hipótesis: Reemplace los términos definidos en \(P(x)\) por sus ecuaciones o condiciones definitorias exactas, introduciendo nombres de variables NUEVOS para cualquier testigo existencial.
+(3) Tienda el puente hacia el objetivo: Use reglas de inferencia válidas, identidades algebraicas y propiedades de \(D\) para transformar las relaciones dadas hasta que coincidan con la forma definitoria de \(Q(x)\). Verifique explícitamente toda condición lateral (como la integralidad de un nuevo testigo o un denominador distinto de cero).
+(4) Concluya: Afirme con claridad que \(Q(x)\) se cumple, completando la demostración de \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\).
+[/CALLOUT]
+
+Desarrollemos tres demostraciones directas completas usando [REF: template-direct-proof | esta plantilla], destacando explícitamente cada paso puente.
+
+[CALLOUT]
+id: proof-sum-odds
+label: Demostración
+title: Teorema: La suma de dos enteros impares cualesquiera es par
+tone: note
+
+Enunciado: \(\forall m, n \in \mathbb{Z},\, (m \text{ es impar} \wedge n \text{ es impar}) \implies m + n \text{ es par}\).
+
+Demostración: Sean \(m, n \in \mathbb{Z}\) enteros impares arbitrarios. Por [REF: defs-arithmetic.2 | la definición de impar], existen enteros \(k \in \mathbb{Z}\) y \(\ell \in \mathbb{Z}\) tales que
+\[
+m = 2k + 1 \qquad \text{y} \qquad n = 2\ell + 1.
+\]
+Sumando estas dos ecuaciones se obtiene
+\[
+m + n = (2k + 1) + (2\ell + 1) = 2k + 2\ell + 2 = 2(k + \ell + 1).
+\]
+Sea \(r = k + \ell + 1\). Como \(k, \ell, 1 \in \mathbb{Z}\) y \(\mathbb{Z}\) es cerrado bajo la suma, tenemos \(r \in \mathbb{Z}\) y \(m + n = 2r\). Por [REF: defs-arithmetic.1 | la definición de par], \(m + n\) es par.
+[/CALLOUT]
+
+Observe con atención la elección de testigos en [REF: proof-sum-odds | esa demostración]: usamos DOS letras distintas \(k\) y \(\ell\) para \(m\) y \(n\). Y después de sacar factor común \(2\), señalamos explícitamente que \(r = k + \ell + 1 \in \mathbb{Z}\) para que el requisito existencial "\(\exists r \in \mathbb{Z}\)" de la definición de par quede visiblemente satisfecho.
+
+A continuación, demostremos que la divisibilidad es transitiva.
+
+[CALLOUT]
+id: proof-div-trans
+label: Demostración
+title: Teorema: Transitividad de la divisibilidad
+tone: note
+
+Enunciado: \(\forall a, b, c \in \mathbb{Z},\, (a \mid b \wedge b \mid c) \implies a \mid c\).
+
+Demostración: Sean \(a, b, c \in \mathbb{Z}\) arbitrarios, y supongamos que \(a \mid b\) y \(b \mid c\). Por [REF: defs-arithmetic.3 | la definición de divisibilidad], existen enteros \(k, m \in \mathbb{Z}\) tales que
+\[
+b = ak \qquad \text{y} \qquad c = bm.
+\]
+Sustituyendo \(b = ak\) en la segunda ecuación se obtiene
+\[
+c = (ak)m = a(km).
+\]
+Como \(k, m \in \mathbb{Z}\) y \(\mathbb{Z}\) es cerrado bajo la multiplicación, \(km \in \mathbb{Z}\). Así, existe un entero \(t = km\) con \(c = at\), por lo que \(a \mid c\).
+[/CALLOUT]
+
+En tercer lugar, demostremos que la suma de dos números racionales es racional, prestando especial atención a la condición de denominador distinto de cero.
+
+[CALLOUT]
+id: proof-sum-rationals
+label: Demostración
+title: Teorema: La suma de dos números racionales cualesquiera es racional
+tone: note
+
+Enunciado: \(\forall x, y \in \mathbb{R},\, (x \in \mathbb{Q} \wedge y \in \mathbb{Q}) \implies x + y \in \mathbb{Q}\).
+
+Demostración: Sean \(x, y \in \mathbb{Q}\) arbitrarios. Por [REF: defs-arithmetic.4 | la definición de racional], existen enteros \(p_1, q_1, p_2, q_2 \in \mathbb{Z}\) con \(q_1 \ne 0\) y \(q_2 \ne 0\) tales que
+\[
+x = \frac{p_1}{q_1} \qquad \text{y} \qquad y = \frac{p_2}{q_2}.
+\]
+Reduciendo a denominador común se obtiene
+\[
+x + y = \frac{p_1}{q_1} + \frac{p_2}{q_2} = \frac{p_1 q_2 + p_2 q_1}{q_1 q_2}.
+\]
+Sean \(p = p_1 q_2 + p_2 q_1\) y \(q = q_1 q_2\). Como \(\mathbb{Z}\) es cerrado bajo la suma y la multiplicación, tanto \(p \in \mathbb{Z}\) como \(q \in \mathbb{Z}\). Más aún, dado que \(q_1 \ne 0\) y \(q_2 \ne 0\), su producto satisface \(q = q_1 q_2 \ne 0\). Por lo tanto, \(x + y = p/q\) con \(p, q \in \mathbb{Z}\) y \(q \ne 0\), de modo que \(x + y \in \mathbb{Q}\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: C]
+Suponga que queremos demostrar directamente que para todos los enteros \(a, b, c \in \mathbb{Z}\), si \(a \mid b\) y \(a \mid c\), entonces \(a \mid (3b - 5c)\). Después de fijar \(a, b, c \in \mathbb{Z}\) arbitrarios y desglosar \(b = ak\) y \(c = am\) para algunos \(k, m \in \mathbb{Z}\), ¿qué expresión para el entero testigo \(t\) completa correctamente \(3b - 5c = at\)?
+
+(A) \(t = 3b - 5c\)
+(B) \(t = 3k - 5k\)
+(C) \(t = 3k - 5m\)
+(D) \(t = 3m - 5k\)
+(E) \(t = (3b - 5c)/a\), lo cual requiere suponer \(a \ne 0\)
+[/QUESTION]
+
+=== SECTION 3: Desglose de definiciones desconocidas y cómo evitar errores clásicos en la demostración directa ===
+
+Una de las pruebas más sólidas de que usted comprende realmente la demostración directa es trabajar con una definición completamente nueva que nunca antes haya visto. Como [REF: principle-def-biconditional | las definiciones son bicondicionales], nunca necesita intuición externa: basta con sustituir la fórmula exacta.
+
+Por ejemplo, llamemos "triangular desplazado" a un entero \(n \in \mathbb{Z}\) si existe \(k \in \mathbb{Z}\) tal que \(n = 6k + 2\). Demostremos: "Si \(n\) es triangular desplazado, entonces \(n^2 - 4\) es divisible entre \(12\)."
+- Sea \(n \in \mathbb{Z}\) arbitrario y supongamos que \(n\) es triangular desplazado.
+- Desglosamos la nueva definición: existe \(k \in \mathbb{Z}\) con \(n = 6k + 2\).
+- Calculamos \(n^2 - 4\):
+\[
+n^2 - 4 = (6k + 2)^2 - 4 = (36k^2 + 24k + 4) - 4 = 36k^2 + 24k = 12(3k^2 + 2k).
+\]
+- Como \(k \in \mathbb{Z}\), la cantidad \(3k^2 + 2k\) es un entero. Por [REF: defs-arithmetic.3 | la definición de divisibilidad], \(12 \mid (n^2 - 4)\).
+
+Observe qué sencillo resultó una vez desglosada la definición.
+
+Ahora examinemos los tres errores más perjudiciales que cometen los principiantes al redactar demostraciones directas, para que pueda reconocerlos y eliminarlos a primera vista.
+
+[CALLOUT]
+id: caution-direct-errors
+label: Precaución
+title: Tres errores críticos en las demostraciones directas
+tone: caution
+
+(1) Reutilizar el nombre de un testigo existencial: Si \(m\) y \(n\) son ambos pares, ¡escribir \(m = 2k\) y \(n = 2k\) obliga a que \(m = n\)! Eso demuestra en secreto el teorema únicamente para números iguales, no para pares arbitrarios \((m, n)\). Elija siempre una letra nueva (\(k\) y \(\ell\), o \(k_1\) y \(k_2\)) para cada instanciación existencial independiente.
+(2) Demostración por ejemplos: Comprobar que \(3 + 5 = 8\), \(7 + 11 = 18\) y \((-1) + 9 = 8\) son todos pares ilustra una afirmación universal, y comprobar ejemplos es un excelente trabajo en borrador, pero ninguna lista finita de ejemplos demuestra jamás \(\forall m, n \in \mathbb{Z}\).
+(3) Razonar hacia atrás desde la conclusión: Partir del enunciado deseado \(Q(x)\) y deducir un enunciado verdadero (como \(0 = 0\) o \((a - b)^2 \ge 0\)) demuestra \(Q(x) \Rightarrow \mathbf{V}\), ¡lo cual es siempre verdadero INCLUSO CUANDO \(Q(x)\) ES FALSO!
+[/CALLOUT]
+
+El error (3) es especialmente engañoso, así que veámoslo tanto fallar como acertar.
+
+Primero, vea cómo razonar hacia atrás puede "demostrar" una falsedad: suponga que alguien intenta demostrar \(-2 = 2\). Escribe:
+\[
+-2 = 2 \implies (-2)^2 = 2^2 \implies 4 = 4.
+\]
+Cada flecha hacia adelante \(\implies\) es válida, y la línea final \(4 = 4\) es verdadera —¡y sin embargo la línea inicial \(-2 = 2\) es FALSA!—. Elevar ambos lados al cuadrado NO es reversible (ya demostramos antes que \(P \Rightarrow Q\) no implica \(Q \Rightarrow P\)).
+
+Ahora vea cómo usar el trabajo en borrador hacia atrás DE FORMA ADECUADA para descubrir una demostración válida hacia adelante. Suponga que queremos demostrar:
+\[
+\forall a, b \in \mathbb{R},\, (a > 0 \wedge b > 0) \implies \sqrt{ab} \le \frac{a + b}{2}.
+\]
+Trabajo en borrador (NO entregue esto como demostración):
+Parta del objetivo \(\sqrt{ab} \le \frac{a + b}{2}\), multiplique por \(2\) para obtener \(2\sqrt{ab} \le a + b\), eleve ambos lados al cuadrado para obtener \(4ab \le a^2 + 2ab + b^2\) y reste \(4ab\) para llegar a \(0 \le a^2 - 2ab + b^2 = (a - b)^2\).
+
+Ahora invierta cada paso —¡y compruebe si cada paso invertido es realmente válido!—:
+- Partiendo de \((a - b)^2 \ge 0\) (verdadero para todo \(a, b \in \mathbb{R}\)), desarrolle hasta \(a^2 - 2ab + b^2 \ge 0\).
+- Sume \(4ab\) a ambos lados: \(a^2 + 2ab + b^2 \ge 4ab\), es decir, \((a + b)^2 \ge 4ab\).
+- Tome raíces cuadradas no negativas en ambos lados: como \(a > 0\) y \(b > 0\), sabemos que \(a + b > 0\) y \(ab > 0\), por lo que \(\sqrt{(a + b)^2} = a + b\) y tomar raíces cuadradas preserva la desigualdad, dando \(a + b \ge 2\sqrt{ab}\).
+- Divida entre \(2 > 0\): \(\frac{a + b}{2} \ge \sqrt{ab}\).
+
+Note la diferencia. En la demostración final hacia adelante, NUNCA suponemos la conclusión \(\sqrt{ab} \le \frac{a+b}{2}\). Comenzamos con el hecho conocido \((a - b)^2 \ge 0\) y usamos explícitamente la hipótesis \(a > 0, b > 0\) en el paso exacto en que tomar raíces cuadradas requiere no negatividad.
+
+[QUESTION 3]
+[ANSWER: B]
+Un estudiante redacta la siguiente "demostración" de la afirmación: "Para todos los enteros pares \(m\) y \(n\), \(m + n\) es divisible entre \(4\)."
+"Sean \(m\) y \(n\) enteros pares arbitrarios. Por definición de par, existe \(k \in \mathbb{Z}\) tal que \(m = 2k\) y \(n = 2k\). Entonces \(m + n = 2k + 2k = 4k\). Como \(k \in \mathbb{Z}\), \(4 \mid (m + n)\)."
+¿Cuál es el fallo lógico exacto de este argumento?
+
+(A) Razona hacia atrás desde la conclusión \(4 \mid (m + n)\).
+(B) Reutiliza el mismo testigo existencial \(k\) tanto para \(m\) como para \(n\), suponiendo en secreto \(m = n\) (y de hecho la afirmación misma es falsa, p. ej., \(m = 2, n = 4\)).
+(C) Olvida verificar que \(k \in \mathbb{Z}\).
+(D) Trata la definición de divisibilidad como una fracción en lugar de un producto.
+(E) Usa una demostración por ejemplos en lugar de enteros arbitrarios.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Llamemos "equilibrado" a un entero \(n \in \mathbb{Z}\) si existe un entero \(k \in \mathbb{Z}\) tal que \(n = 4k + 1\). ¿Cuál de los siguientes enunciados puede establecerse mediante una demostración directa a partir de esta definición?
+
+(A) Si \(m\) y \(n\) son enteros equilibrados, entonces \(mn\) es equilibrado.
+(B) Si \(m\) y \(n\) son enteros equilibrados, entonces \(m + n\) es equilibrado.
+(C) Si \(n\) es equilibrado, entonces \(3n\) es equilibrado.
+(D) Si \(m\) y \(n\) son enteros equilibrados, entonces \(m - n\) es equilibrado.
+(E) Si \(n\) es equilibrado, entonces \(-n\) es equilibrado.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suponga que queremos una demostración directa válida hacia adelante de la afirmación: "Para todo número real \(x > 0\), \(x + \frac{1}{x} \ge 2\)." ¿Cuál de los siguientes pasos iniciales y derivaciones hacia adelante es lógicamente hermético?
+
+(A) Suponga \(x + \frac{1}{x} \ge 2\). Multiplique por \(x > 0\) para obtener \(x^2 + 1 \ge 2x\), luego \((x - 1)^2 \ge 0\), que es verdadero; por tanto \(x + \frac{1}{x} \ge 2\).
+(B) Pruebe \(x = 1\) (que da \(2 \ge 2\)), \(x = 2\) (que da \(2.5 \ge 2\)) y \(x = 1/2\) (que da \(2.5 \ge 2\)); por simetría esto se cumple para todo \(x > 0\).
+(C) Como \((x - 1)^2 \ge 0\), obtenemos \(x^2 - 2x + 1 \ge 0\), así que \(x^2 + 1 \ge 2x\). Dividir ambos lados entre \(x\) da \(x + \frac{1}{x} \ge 2\) para todo número real \(x \ne 0\).
+(D) Sea \(x > 0\). Como \(x > 0\), o bien \(x \ge 2\) o bien \(\frac{1}{x} \ge 2\), así que en cualquiera de los casos \(x + \frac{1}{x} \ge 2\).
+(E) Sea \(x > 0\). Como \((x - 1)^2 \ge 0\), al desarrollar se obtiene \(x^2 - 2x + 1 \ge 0\), de modo que \(x^2 + 1 \ge 2x\). Puesto que \(x > 0\), dividir ambos lados entre \(x\) preserva la desigualdad y da \(x + \frac{1}{x} \ge 2\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Sean \(a, b, c \in \mathbb{Z}\) con \(a \mid b\) y \(b \mid (a + c)\). ¿Cuál de las siguientes conclusiones se deduce SIEMPRE mediante una demostración directa a partir de [REF: defs-arithmetic.3 | la definición de divisibilidad]?
+
+(A) \(b \mid c\)
+(B) \(c \mid a\)
+(C) \(a \mid c\)
+(D) \(a \mid (b - a)\) únicamente cuando \(b \ne 0\)
+(E) \(b \mid a\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Llamemos "diádico" a un número real \(x\) si existen enteros \(m \in \mathbb{Z}\) y \(k \in \mathbb{Z}\) con \(k \ge 0\) tales que \(x = \frac{m}{2^k}\). Suponga que \(x = \frac{m_1}{2^{k_1}}\) e \(y = \frac{m_2}{2^{k_2}}\) son números diádicos arbitrarios. ¿Qué expresión testigo demuestra directamente que \(x + y\) es diádico sin necesidad de dividir en casos según si \(k_1 \le k_2\)?
+
+(A) \(x + y = \frac{m_1 + m_2}{2^{k_1 + k_2}}\)
+(B) \(x + y = \frac{m_1 2^{k_1} + m_2 2^{k_2}}{2^{k_1 + k_2}}\)
+(C) \(x + y = \frac{m_1 + m_2}{2^{k_1} + 2^{k_2}}\)
+(D) \(x + y = \frac{m_1 2^{k_2} + m_2 2^{k_1}}{2^{k_1 + k_2}}\)
+(E) \(x + y = \frac{m_1 m_2}{2^{k_1 + k_2}}\)
+[/BONUS]

@@ -1,0 +1,280 @@
+=== SECTION 1: Cantor's diagonal argument on binary sequences ===
+
+In the previous lesson, infinite set after infinite set—\(\mathbb{Z}\), \(\mathbb{N} \times \mathbb{N}\), \(\mathbb{Q}\), finite binary strings, rational polynomials—turned out to have the EXACT SAME cardinality as \(\mathbb{N}\). It is natural to wonder: are ALL infinite sets countable? Does infinity come in only a single size?
+
+In 1874, Georg Cantor shattered that assumption forever. Even more remarkably, his 1891 diagonal argument proves the existence of UNCOUNTABLE sets in half a page, using nothing more than flipping \(0\)s and \(1\)s.
+
+Start in the cleanest possible setting: the set \(\{0, 1\}^{\mathbb{N}}\) of all INFINITE binary sequences
+\[
+s = (s_0, s_1, s_2, s_3, \dots) \qquad \text{with each } s_k \in \{0, 1\}.
+\]
+(Formally, \(\{0, 1\}^{\mathbb{N}}\) is the set of all functions \(s : \mathbb{N} \to \{0, 1\}\).) Why start here instead of real numbers? Because two infinite binary sequences are equal if and only if they agree in EVERY coordinate \(k \in \mathbb{N}\)—there are NO representation ambiguities!
+
+Suppose for the sake of contradiction that \(\{0, 1\}^{\mathbb{N}}\) WERE countable. Because \(\{0, 1\}^{\mathbb{N}}\) is nonempty, our surjection characterization of countability gives a surjection \(f : \mathbb{N} \to \{0, 1\}^{\mathbb{N}}\)—in other words, a complete numbered list \(s^{(0)}, s^{(1)}, s^{(2)}, \dots\) containing EVERY infinite binary sequence! Write the list as an infinite grid whose \(n\)-th row is the sequence \(s^{(n)} = (s^{(n)}_0, s^{(n)}_1, s^{(n)}_2, \dots)\):
+
+[TABLE]
+Row index | Position \(0\) | Position \(1\) | Position \(2\) | Position \(3\) | \(\dots\)
+\(s^{(0)}\) | \(0\) (diagonal) | \(1\) | \(1\) | \(0\) | \(\dots\)
+\(s^{(1)}\) | \(1\) | \(1\) (diagonal) | \(0\) | \(1\) | \(\dots\)
+\(s^{(2)}\) | \(0\) | \(0\) | \(0\) (diagonal) | \(1\) | \(\dots\)
+\(s^{(3)}\) | \(1\) | \(0\) | \(1\) | \(1\) (diagonal) | \(\dots\)
+[/TABLE]
+
+Now build a brand-new binary sequence \(d = (d_0, d_1, d_2, \dots) \in \{0, 1\}^{\mathbb{N}}\) by walking down the main diagonal and FLIPPING every diagonal bit:
+\[
+d_n = 1 - s^{(n)}_n = \begin{cases} 1 & \text{if } s^{(n)}_n = 0, \\ 0 & \text{if } s^{(n)}_n = 1. \end{cases}
+\]
+In the sample table above, the diagonal bits are \(0, 1, 0, 1, \dots\), so the flipped sequence starts \(d = (1, 0, 1, 0, \dots)\).
+
+Can \(d\) appear ANYWHERE in the list? Suppose \(d = s^{(m)}\) for some row index \(m \in \mathbb{N}\). Look at position \(m\) of both sequences:
+- Because \(d = s^{(m)}\), their \(m\)-th coordinates must agree: \(d_m = s^{(m)}_m\).
+- Yet by our construction of \(d\), \(d_m = 1 - s^{(m)}_m \ne s^{(m)}_m\)!
+Contradiction! Therefore \(d \ne s^{(m)}\) for EVERY \(m \in \mathbb{N}\), meaning \(d \notin \operatorname{im}(f)\). That contradicts the assumption that \(f : \mathbb{N} \to \{0, 1\}^{\mathbb{N}}\) is surjective!
+
+[CALLOUT]
+id: binary-uncountable
+label: Theorem
+title: Uncountability of \(\{0, 1\}^{\mathbb{N}}\) and \(\mathcal{P}(\mathbb{N})\)
+tone: key
+
+(1) The set \(\{0, 1\}^{\mathbb{N}}\) of all infinite binary sequences is UNCOUNTABLE.
+(2) The power set \(\mathcal{P}(\mathbb{N})\) of all subsets of \(\mathbb{N}\) is UNCOUNTABLE.
+[/CALLOUT]
+
+Why does (2) follow immediately from (1)? Recall indicator functions from our lesson on functions: the map \(\Phi : \mathcal{P}(\mathbb{N}) \to \{0, 1\}^{\mathbb{N}}\) sending each subset \(S \subseteq \mathbb{N}\) to its indicator sequence \(\chi_S : \mathbb{N} \to \{0, 1\}\) is a BIJECTION (its inverse sends a sequence \(s\) to \(\{n \in \mathbb{N} : s_n = 1\}\)). Thus \(|\mathcal{P}(\mathbb{N})| = |\{0, 1\}^{\mathbb{N}}|\), so \(\mathcal{P}(\mathbb{N})\) is uncountable! Contrast this with our previous lesson: the collection of FINITE subsets of \(\mathbb{N}\) is countable, while the collection of ALL subsets of \(\mathbb{N}\) is uncountable!
+
+[QUESTION 1]
+[ANSWER: B]
+Suppose a student attempts to list all infinite binary sequences \(s^{(0)}, s^{(1)}, s^{(2)}, \dots\) in \(\{0, 1\}^{\mathbb{N}}\), and the first four rows begin:
+\(s^{(0)} = (1, 0, 1, 0, \dots)\),
+\(s^{(1)} = (0, 0, 1, 1, \dots)\),
+\(s^{(2)} = (1, 1, 1, 0, \dots)\),
+\(s^{(3)} = (0, 1, 0, 0, \dots)\).
+What are the first four terms \((d_0, d_1, d_2, d_3)\) of Cantor's diagonal sequence \(d_n = 1 - s^{(n)}_n\), and why does inserting \(d\) at the top of the list NOT rescue countability?
+
+(A) \((1, 0, 1, 0)\); inserting \(d\) fails because \(d\) is not a binary sequence
+(B) \((0, 1, 0, 1)\); inserting \(d\) merely produces a NEW list to which the exact same diagonal construction applies, yielding another missing sequence
+(C) \((0, 1, 0, 1)\); inserting \(d\) works for one sequence, so the list misses only finitely many sequences
+(D) \((1, 1, 0, 0)\); inserting \(d\) fails because \(d\) already appeared in row \(s^{(1)}\)
+(E) \((0, 0, 1, 1)\); inserting \(d\) fails because \(\mathbb{N}\) cannot be shifted by one index
+[/QUESTION]
+
+=== SECTION 2: Uncountability of \((0, 1)\) and \(\mathbb{R}\), and the repeating-9s trap ===
+
+Now apply the same diagonal idea to the open interval \((0, 1) \subseteq \mathbb{R}\). Every real number \(x \in (0, 1)\) has a decimal expansion
+\[
+x = 0.a_1 a_2 a_3 \dots \qquad (a_k \in \{0, 1, \dots, 9\}).
+\]
+Wait—here a famous trap awaits! Unlike infinite binary sequences, decimal representations of real numbers are NOT unique! Specifically, every terminating decimal has TWO distinct decimal representations, one ending in all \(0\)s and one ending in all \(9\)s:
+\[
+0.500000\dots = 0.499999\dots, \qquad 0.270000\dots = 0.269999\dots.
+\]
+
+[CALLOUT]
+id: repeating-nines-trap
+label: Common pitfall
+title: The repeating-9s trap in decimal diagonalization
+tone: caution
+
+Suppose you assume \((0, 1)\) is listed as \(x_1, x_2, x_3, \dots\) and build a decimal \(d = 0.d_1 d_2 d_3 \dots\) by setting \(d_n = 5\) if the \(n\)-th digit of \(x_n\) is not \(5\), and \(d_n = 4\) otherwise—or even worse, \(d_n = (a_{n,n} + 1) \bmod 10\).
+
+If you use a rule that allows \(d\) to end in all \(0\)s or all \(9\)s (for example, \(d = 0.5000\dots\) while \(x_1 = 0.4999\dots\)), then \(d\) differs in EVERY decimal digit from \(x_1\), yet \(d = x_1\) as real numbers! That leaves a gap in the proof.
+
+Fix: restrict the digits of \(d\) to TWO digits far from \(0\) and \(9\)—such as \(3\) and \(7\)! A decimal built solely from \(3\)s and \(7\)s contains NO \(0\)s and NO \(9\)s, so it has a UNIQUE decimal expansion and strictly lies in \((0, 1)\).
+[/CALLOUT]
+
+Let us run the airtight proof that \((0, 1)\) is uncountable!
+
+Suppose for contradiction that \((0, 1)\) is countable. Since \((0, 1) \ne \emptyset\), there exists a surjection \(\mathbb{Z}^+ \to (0, 1)\), listing every real number in \((0, 1)\) as \(x_1, x_2, x_3, \dots\). For each \(n \in \mathbb{Z}^+\), pick ONE decimal expansion \(x_n = 0.a_{n,1} a_{n,2} a_{n,3} \dots\). Now define \(d = 0.d_1 d_2 d_3 \dots\) by
+\[
+d_n = \begin{cases} 3 & \text{if } a_{n,n} \ne 3, \\ 7 & \text{if } a_{n,n} = 3. \end{cases}
+\]
+Check three facts about \(d\):
+1. \(d \in (0, 1)\): since every digit is \(3\) or \(7\), we have \(0.333\dots = \frac{1}{3} \le d \le \frac{7}{9} = 0.777\dots\), so \(0 < d < 1\).
+2. Uniqueness of \(d\)'s expansion: because \(d\) never uses digit \(0\) or digit \(9\), \(d\) does NOT end in repeating \(0\)s or repeating \(9\)s; hence \(0.d_1 d_2 d_3 \dots\) is the ONLY decimal expansion of the real number \(d\).
+3. \(d \ne x_n\) for every \(n \in \mathbb{Z}^+\): for each \(n\), the \(n\)-th digit \(d_n\) differs from \(a_{n,n}\). Since \(d\) has no alternative decimal expansion, \(d\) CANNOT equal \(x_n\) as a real number!
+
+Therefore \(d \in (0, 1)\) is missing from the list \(x_1, x_2, \dots\), contradicting surjectivity! Thus \((0, 1)\) is UNCOUNTABLE.
+
+What about all of \(\mathbb{R}\), or any other open interval \((a, b)\) with \(a < b\)?
+- For any \(a < b\), the affine map \(\alpha : (0, 1) \to (a, b)\) given by \(\alpha(t) = a + (b - a)t\) is a bijection (with inverse \(y \mapsto \frac{y - a}{b - a}\)), so \(|(a, b)| = |(0, 1)|\).
+- To map \((0, 1)\) bijectively onto ALL of \(\mathbb{R}\), use the tangent bijection
+\[
+f : (0, 1) \to \mathbb{R}, \qquad f(x) = \tan\!\left(\pi\left(x - \frac{1}{2}\right)\right).
+\]
+As \(x\) runs across \((0, 1)\), \(\theta = \pi(x - \frac{1}{2})\) runs bijectively across \((-\frac{\pi}{2}, \frac{\pi}{2})\), where \(\tan(\theta)\) is strictly increasing and takes every real value in \((-\infty, \infty)\) exactly once (with explicit inverse \(f^{-1}(y) = \frac{1}{2} + \frac{1}{\pi}\arctan(y)\))! (If you prefer a purely algebraic bijection with no trigonometry, \(g : (0, 1) \to \mathbb{R}\) given by \(g(x) = \frac{2x - 1}{x(1 - x)}\) also maps \((0, 1)\) bijectively onto \(\mathbb{R}\).)
+
+[GRAPH]
+type: function2d
+title: Tangent bijection \(f(x) = \tan(\pi(x - 1/2))\) mapping \((0, 1)\) onto \(\mathbb{R}\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.1, 1.1
+yrange: -6, 6
+trace: tan(3.14159265*(x - 0.5)) | label: \(f(x) = \tan(\pi(x - 1/2))\) | color: #2563eb
+segment: 0, -6, 0, 6 | label: \(x = 0\) | color: #dc2626 | dashed: true
+segment: 1, -6, 1, 6 | label: \(x = 1\) | color: #dc2626 | dashed: true
+point: 0.5, 0 | label: \((0.5, 0)\) | color: #2563eb | offset: 18, -14
+point: 0.75, 1 | label: \((0.75, 1)\) | color: #2563eb | offset: 18, -10
+point: 0.25, -1 | label: \((0.25, -1)\) | color: #2563eb | offset: -26, 10
+[/GRAPH]
+
+Because \(|\mathbb{R}| = |(0, 1)|\) and \((0, 1)\) is uncountable, \(\mathbb{R}\) is UNCOUNTABLE (and so is every open interval \((a, b)\) with \(a < b\))!
+
+[QUESTION 2]
+[ANSWER: C]
+A student writes a diagonal proof that \((0, 1)\) is uncountable. Given a purported list \(x_1, x_2, x_3, \dots\) with decimal expansions \(x_n = 0.a_{n,1} a_{n,2} a_{n,3} \dots\), which rule for choosing \(d_n\) produces an AIRTIGHT contradiction (avoiding both the repeating-9s/repeating-0s trap and landing outside \((0, 1)\))?
+
+(A) \(d_n = 0\) if \(a_{n,n} \ne 0\), and \(d_n = 1\) if \(a_{n,n} = 0\)
+(B) \(d_n = 9\) if \(a_{n,n} \ne 9\), and \(d_n = 8\) if \(a_{n,n} = 9\)
+(C) \(d_n = 2\) if \(a_{n,n} \ne 2\), and \(d_n = 5\) if \(a_{n,n} = 2\)
+(D) \(d_n = 9 - a_{n,n}\) for every \(n \in \mathbb{Z}^+\)
+(E) \(d_n = 0\) if \(a_{n,n} = 9\), and \(d_n = 9\) otherwise
+[/QUESTION]
+
+=== SECTION 3: Cantor's Theorem in full generality ===
+
+We just saw that \(\mathcal{P}(\mathbb{N})\) is strictly too large to be listed by \(\mathbb{N}\). Is that a special quirk of \(\mathbb{N}\), or does the power set \(\mathcal{P}(A)\) ALWAYS outgrow \(A\), even when \(A\) is ALREADY uncountable (like \(A = \mathbb{R}\))?
+
+Before writing the general proof, test the idea on a tiny finite set \(A = \{1, 2, 3\}\) and ANY function \(f : A \to \mathcal{P}(A)\), say:
+\[
+f(1) = \{1, 3\}, \qquad f(2) = \{1\}, \qquad f(3) = \emptyset.
+\]
+Ask a single yes-or-no question about each element \(a \in A\): "Does \(a\) belong to its OWN image subset \(f(a)\)?"
+- \(1 \in f(1) = \{1, 3\}\): YES.
+- \(2 \in f(2) = \{1\}\): NO.
+- \(3 \in f(3) = \emptyset\): NO.
+
+Collect all the "NO" elements into one subset \(D \subseteq A\):
+\[
+D = \{a \in A : a \notin f(a)\} = \{2, 3\}.
+\]
+Now check whether \(D = \{2, 3\}\) appears among \(f(1), f(2), f(3)\)!
+- Can \(D = f(1)\)? No, because \(1 \in f(1)\) while \(1 \notin D\).
+- Can \(D = f(2)\)? No, because \(2 \notin f(2)\) while \(2 \in D\).
+- Can \(D = f(3)\)? No, because \(3 \notin f(3)\) while \(3 \in D\).
+For EVERY \(a \in A\), the element \(a\) itself is a witness that \(D \ne f(a)\)—on the membership question for \(a\), \(D\) ALWAYS gives the OPPOSITE answer from \(f(a)\)! That is the exact abstract generalization of flipping the diagonal bit!
+
+[CALLOUT]
+id: cantors-theorem
+label: Theorem
+title: Cantor's Theorem
+tone: key
+
+For EVERY set \(A\) (empty, finite, or infinite), there does NOT exist a surjection \(f : A \to \mathcal{P}(A)\).
+
+In particular, there is no bijection between \(A\) and \(\mathcal{P}(A)\) (so \(|A| \ne |\mathcal{P}(A)|\)).
+[/CALLOUT]
+
+Proof: Let \(A\) be any set, and let \(f : A \to \mathcal{P}(A)\) be an ARBITRARY function. We show \(f\) cannot be surjective by exhibiting an explicit subset \(D \in \mathcal{P}(A)\) that is NOT in \(\operatorname{im}(f)\).
+
+Define the Cantor diagonal subset
+\[
+D = \{a \in A : a \notin f(a)\}.
+\]
+Because \(D\) is formed by selecting elements of \(A\), we have \(D \subseteq A\), so \(D \in \mathcal{P}(A)\).
+
+Suppose for the sake of contradiction that \(D \in \operatorname{im}(f)\). Then there exists some element \(a_0 \in A\) such that \(f(a_0) = D\). Now ask: is \(a_0 \in D\)?
+- By the definition of \(D\), an element \(a \in A\) belongs to \(D\) if and only if \(a \notin f(a)\). Applying this to \(a = a_0\) gives:
+\[
+a_0 \in D \iff a_0 \notin f(a_0).
+\]
+- Substituting \(f(a_0) = D\) into the right-hand side yields:
+\[
+a_0 \in D \iff a_0 \notin D,
+\]
+which is a logical contradiction! (If \(a_0 \in D\), then \(a_0 \notin D\); if \(a_0 \notin D\), then \(a_0 \in D\).)
+
+Therefore no such \(a_0 \in A\) can exist: \(D \notin \operatorname{im}(f)\), so \(f\) is NOT surjective!
+
+Pause and admire that proof! It takes five lines, uses ZERO coordinates, ZERO numbers, ZERO decimals, and works uniformly for \(A = \emptyset\), for finite sets, for \(\mathbb{N}\), for \(\mathbb{R}\), and for every set imaginable!
+
+[QUESTION 3]
+[ANSWER: D]
+Let \(A = \{1, 2, 3, 4\}\) and define \(f : A \to \mathcal{P}(A)\) by
+\[
+f(1) = \{2, 3\}, \qquad f(2) = \{1, 2, 4\}, \qquad f(3) = \{3\}, \qquad f(4) = \{1, 2, 3\}.
+\]
+What is the Cantor diagonal subset \(D = \{a \in A : a \notin f(a)\}\) for this function \(f\)?
+
+(A) \(\{2, 3\}\)
+(B) \(\{1, 2, 3\}\)
+(C) \(\{1, 3, 4\}\)
+(D) \(\{1, 4\}\)
+(E) \(\emptyset\)
+[/QUESTION]
+
+=== SECTION 4: Endless hierarchy of infinities and Russell's paradox ===
+
+What does [REF: cantors-theorem | Cantor's Theorem] reveal about the universe of sets?
+
+First, for EVERY set \(A\), there IS a natural injection \(\sigma : A \to \mathcal{P}(A)\) sending each element \(a\) to its singleton \(\{a\}\) (if \(\{a_1\} = \{a_2\}\), then \(a_1 = a_2\)). So \(\mathcal{P}(A)\) is ALWAYS at least as large as \(A\), yet by [REF: cantors-theorem | Cantor's Theorem], \(\mathcal{P}(A)\) NEVER matches \(A\) in size! Iterating the power set operation starting from \(\mathbb{N}\) produces an endless, strictly ascending tower of infinite cardinalities:
+\[
+|\mathbb{N}| < |\mathcal{P}(\mathbb{N})| < |\mathcal{P}(\mathcal{P}(\mathbb{N}))| < |\mathcal{P}(\mathcal{P}(\mathcal{P}(\mathbb{N})))| < \cdots.
+\]
+There is NO "largest infinity" and NO "largest set"! Every time you think you have reached the biggest set \(A\), its power set \(\mathcal{P}(A)\) is strictly larger.
+
+Second, the exact same diagonal mechanism exposes a lethal flaw in naive set theory: there CANNOT exist a "set of all sets"!
+
+[CALLOUT]
+id: russell-paradox
+label: Theorem
+title: Russell's Paradox — no set of all sets exists
+tone: caution
+
+There does NOT exist a set \(V\) that contains every set as an element.
+
+Proof (two equivalent viewpoints):
+(1) Directly via Russell's subset: suppose such a universal set \(V\) existed. Form the subset \(R = \{x \in V : x \notin x\}\). Since \(R\) is a set and \(V\) contains every set, \(R \in V\). Then by definition of \(R\),
+\[
+R \in R \iff R \notin R,
+\]
+a contradiction!
+(2) Directly via [REF: cantors-theorem | Cantor's Theorem]: if \(V\) contained every set, then every subset \(S \subseteq V\) would be an element of \(V\), meaning \(\mathcal{P}(V) \subseteq V\). Defining \(f : V \to \mathcal{P}(V)\) by \(f(x) = x\) for \(x \in \mathcal{P}(V)\) and \(f(x) = \emptyset\) otherwise would produce a SURJECTION \(V \to \mathcal{P}(V)\), contradicting Cantor's Theorem!
+[/CALLOUT]
+
+Notice how deeply unified mathematics is here: Russell's subset \(R = \{x \in V : x \notin x\}\) is literally the Cantor diagonal subset \(D = \{x \in V : x \notin f(x)\}\) applied to the identity-like map \(f(x) = x\)! That is why modern axiomatic set theory (ZFC) forbids unrestricted comprehension and treats "the collection of all sets" as a proper class, never a set.
+
+[QUESTION 4]
+[ANSWER: A]
+Which statement is a valid consequence of Cantor's Theorem and the results of this lesson?
+
+(A) There is no surjection from \(\mathbb{R}\) onto \(\mathcal{P}(\mathbb{R})\), so \(\mathcal{P}(\mathbb{R})\) is strictly larger in cardinality than \(\mathbb{R}\)
+(B) Every uncountable set has the same cardinality as \(\mathbb{R}\)
+(C) If \(A\) is infinite, then \(|\mathcal{P}(A)| = |A|\), whereas for finite \(A\), \(|\mathcal{P}(A)| > |A|\)
+(D) \(\mathcal{P}(\mathbb{N})\) is countable because \(\mathbb{N}\) is countable
+(E) There exists a largest infinite set \(V\) satisfying \(|\mathcal{P}(V)| = |V|\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Let \(\mathbb{R} \setminus \mathbb{Q}\) be the set of all irrational real numbers. Using only facts established in this lesson and the previous lesson, what can we conclude about \(\mathbb{R} \setminus \mathbb{Q}\)?
+
+(A) \(\mathbb{R} \setminus \mathbb{Q}\) is countable, because \(\mathbb{Q}\) is dense in \(\mathbb{R}\)
+(B) \(\mathbb{R} \setminus \mathbb{Q}\) is countable, because every real number can be approximated by rationals
+(C) Whether \(\mathbb{R} \setminus \mathbb{Q}\) is countable cannot be determined without an explicit bijection
+(D) \(\mathbb{R} \setminus \mathbb{Q}\) is finite between \(0\) and \(1\), and countably infinite on \(\mathbb{R}\)
+(E) \(\mathbb{R} \setminus \mathbb{Q}\) MUST be uncountable, because if it were countable then \(\mathbb{R} = \mathbb{Q} \cup (\mathbb{R} \setminus \mathbb{Q})\) would be a countable union of two countable sets, contradicting the uncountability of \(\mathbb{R}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Let \(\mathbb{N}^{\mathbb{N}}\) be the set of all functions \(f : \mathbb{N} \to \mathbb{N}\) (i.e., all infinite sequences of natural numbers). Suppose someone lists a countable sequence of such functions \(f_0, f_1, f_2, \dots \in \mathbb{N}^{\mathbb{N}}\). Which definition of \(g : \mathbb{N} \to \mathbb{N}\) guarantees by diagonalization that \(g \notin \{f_0, f_1, f_2, \dots\}\), proving \(\mathbb{N}^{\mathbb{N}}\) is uncountable?
+
+(A) \(g(n) = f_n(0) + 1\) for all \(n \in \mathbb{N}\)
+(B) \(g(n) = f_0(n) + 1\) for all \(n \in \mathbb{N}\)
+(C) \(g(n) = f_n(n) + 1\) for all \(n \in \mathbb{N}\)
+(D) \(g(n) = f_n(n)\) for all \(n \in \mathbb{N}\)
+(E) \(g(n) = f_n(n) - 1\) for all \(n \in \mathbb{N}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Check [REF: cantors-theorem | Cantor's Theorem] at the extreme edge case \(A = \emptyset\). What are \(\mathcal{P}(\emptyset)\), the set of functions \(\emptyset \to \mathcal{P}(\emptyset)\), and the Cantor diagonal subset \(D = \{a \in \emptyset : a \notin f(a)\}\) for the unique function \(f : \emptyset \to \mathcal{P}(\emptyset)\)?
+
+(A) \(\mathcal{P}(\emptyset) = \emptyset\), so the empty function \(f : \emptyset \to \emptyset\) IS surjective, creating an exception to Cantor's Theorem
+(B) \(\mathcal{P}(\emptyset) = \{\emptyset\}\), the unique empty function \(f : \emptyset \to \{\emptyset\}\) has \(\operatorname{im}(f) = \emptyset\), and \(D = \emptyset \in \mathcal{P}(\emptyset) \setminus \operatorname{im}(f)\) witnesses that \(f\) is not surjective
+(C) \(\mathcal{P}(\emptyset) = \{\emptyset\}\), and there is NO function from \(\emptyset\) to \(\{\emptyset\}\)
+(D) \(\mathcal{P}(\emptyset) = \{\emptyset, \{\emptyset\}\}\), and \(D = \{\emptyset\}\)
+(E) \(D\) is undefined because \(A\) has no elements
+[/BONUS]

@@ -1,0 +1,254 @@
+=== SECTION 1: Closest point on a line via orthogonal projection ===
+
+Suppose a road runs along a straight line \(L\) in the plane, and a radio tower stands at an external point \(P\) off the road. Which point \(F\) on the road lies closest to \(P\), and how far away is it? From Euclidean geometry, the shortest segment from \(P\) to \(L\) meets \(L\) at a right angle: for any other point \(Q\) on \(L\), the triangle \(PFQ\) has a right angle at \(F\), so by the Pythagorean theorem
+\[
+\|\overrightarrow{QP}\|^2 = \|\overrightarrow{QF}\|^2 + \|\overrightarrow{FP}\|^2 > \|\overrightarrow{FP}\|^2
+\]
+whenever \(Q \ne F\). The unique closest point \(F\) is called the foot of the perpendicular (or orthogonal projection of \(P\)) onto \(L\).
+
+With normal vectors and orthogonal projections in hand, we can locate \(F\) in one direct vector step—without setting up a system of two intersecting lines! Suppose \(L\) is given in point-normal form \(\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\), where \(P_0\) (position vector \(\mathbf{r}_0\)) is any base point on \(L\) and \(\mathbf{n} = \langle a, b \rangle \ne \mathbf{0}\) is perpendicular to \(L\). Consider the displacement vector \(\mathbf{r}_P - \mathbf{r}_0 = \overrightarrow{P_0 P}\) from \(P_0\) to \(P\). By orthogonal decomposition relative to \(\mathbf{n}\), this displacement splits uniquely into two perpendicular parts:
+\[
+\mathbf{r}_P - \mathbf{r}_0 = \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) + \bigl((\mathbf{r}_P - \mathbf{r}_0) - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\bigr).
+\]
+The first term lies perpendicular to \(L\) (along \(\mathbf{n}\)), while the second term is orthogonal to \(\mathbf{n}\) and therefore points straight along \(L\)! Starting from \(P\) and subtracting that normal component slides \(P\) straight back along \(\mathbf{n}\) until it lands on \(L\):
+\[
+\mathbf{r}_F = \mathbf{r}_P - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - \left(\frac{\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)}{\mathbf{n} \cdot \mathbf{n}}\right)\mathbf{n}.
+\]
+
+Let us verify both geometric conditions algebraically. First, does \(F\) actually lie on \(L\)? Dot \(\mathbf{r}_F - \mathbf{r}_0\) with \(\mathbf{n}\):
+\[
+\mathbf{n} \cdot (\mathbf{r}_F - \mathbf{r}_0) = \mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0) - \frac{\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)}{\mathbf{n} \cdot \mathbf{n}}(\mathbf{n} \cdot \mathbf{n}) = 0,
+\]
+so \(F \in L\). Second, \(\overrightarrow{FP} = \mathbf{r}_P - \mathbf{r}_F = \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\) is a scalar multiple of \(\mathbf{n}\), so \(\overrightarrow{FP} \perp L\).
+
+Even better, when \(L\) is written in Cartesian form \(ax + by = c\), remember that \(\mathbf{n} \cdot \mathbf{r}_0 = c\) for EVERY point \(P_0\) on \(L\). Therefore
+\[
+\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0) = \mathbf{n} \cdot \mathbf{r}_P - \mathbf{n} \cdot \mathbf{r}_0 = ax_P + by_P - c,
+\]
+so you do not even need to choose a base point \(P_0\) on \(L\)! And what if \(L\) is handed to you in parametric form \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\) with direction vector \(\mathbf{d} \ne \mathbf{0}\)? Since the component of \(\mathbf{r}_P - \mathbf{r}_0\) along \(L\) is simply \(\operatorname{proj}_{\mathbf{d}}(\mathbf{r}_P - \mathbf{r}_0)\), moving from \(P_0\) along \(L\) by that projection lands on the exact same foot \(F\):
+\[
+\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{d}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_0 + \left(\frac{(\mathbf{r}_P - \mathbf{r}_0) \cdot \mathbf{d}}{\mathbf{d} \cdot \mathbf{d}}\right)\mathbf{d}.
+\]
+Because \(\mathbf{d}\) and \(\mathbf{n}\) are orthogonal in \(\mathbb{R}^2\), the two formulas give the exact same point \(F\)—pick whichever form \(L\) is already written in.
+
+[CALLOUT]
+id: foot-formula
+label: Theorem
+title: Foot of the perpendicular (closest point on a line \(L\) to \(P\))
+tone: key
+
+Let \(P(x_P, y_P)\) have position vector \(\mathbf{r}_P\), and let \(L\) be a line in \(\mathbb{R}^2\). The unique closest point \(F\) on \(L\) to \(P\) has position vector \(\mathbf{r}_F\) given by:
+
+(1) Normal / Cartesian form \(L: \mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\), or \(ax + by = c\) with \(\mathbf{n} = \langle a, b \rangle\):
+\[
+\mathbf{r}_F = \mathbf{r}_P - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - \left(\frac{ax_P + by_P - c}{a^2 + b^2}\right)\mathbf{n}.
+\]
+(2) Parametric form \(L: \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\) with \(\mathbf{d} \ne \mathbf{0}\):
+\[
+\mathbf{r}_F = \mathbf{r}_0 + \operatorname{proj}_{\mathbf{d}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_0 + \left(\frac{(\mathbf{r}_P - \mathbf{r}_0) \cdot \mathbf{d}}{\mathbf{d} \cdot \mathbf{d}}\right)\mathbf{d}.
+\]
+[/CALLOUT]
+
+Let us test both routes on the line \(L: 2x + y = 4\) and the external point \(P(5, 4)\).
+- Using [REF: foot-formula.1 | normal form]: read \(\mathbf{n} = \langle 2, 1 \rangle\), so \(a^2 + b^2 = 4 + 1 = 5\). Evaluate \(ax_P + by_P - c = 2(5) + 1(4) - 4 = 10\). Then
+\[
+\mathbf{r}_F = \langle 5, 4 \rangle - \frac{10}{5}\langle 2, 1 \rangle = \langle 5, 4 \rangle - \langle 4, 2 \rangle = \langle 1, 2 \rangle,
+\]
+so \(F = (1, 2)\). Quick check: \(2(1) + 2 = 4\), so \(F\) lies on \(L\), and \(\overrightarrow{FP} = \langle 4, 2 \rangle = 2\mathbf{n}\) is perpendicular to \(L\).
+- Using [REF: foot-formula.2 | parametric form]: pick base point \(P_0(2, 0)\) on \(L\) and direction vector \(\mathbf{d} = \langle -1, 2 \rangle\), so \(\mathbf{r}_P - \mathbf{r}_0 = \langle 3, 4 \rangle\). Compute \((\mathbf{r}_P - \mathbf{r}_0) \cdot \mathbf{d} = 3(-1) + 4(2) = 5\) and \(\mathbf{d} \cdot \mathbf{d} = 1 + 4 = 5\). Thus \(t = \frac{5}{5} = 1\), giving
+\[
+\mathbf{r}_F = \langle 2, 0 \rangle + 1\langle -1, 2 \rangle = \langle 1, 2 \rangle,
+\]
+the exact same foot \(F(1, 2)\)!
+
+Drag slider \(s\) in the interactive plot below to move a test point \(Q(2 - s, 2s)\) along the line \(L: 2x + y = 4\). Watch the right triangle \(PFQ\): whenever \(s \ne 1\) (so \(Q \ne F\)), the dashed hypotenuse \(PQ\) is strictly longer than the perpendicular segment \(PF\).
+
+[GRAPH]
+type: parametric2d
+title: Closest point \(F(1, 2)\) on \(L: 2x + y = 4\) to \(P(5, 4)\) compared with \(Q(2 - s, 2s)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.6, 3.1
+xrange: -1.5, 6.2
+yrange: -2.2, 5.8
+trace: 2 - t, 2*t | label: \(2x + y = 4\) | color: #2563eb
+segment: 1, 2, 5, 4 | label: \(\overrightarrow{FP}\) | color: #16a34a
+segment: 2 - s, 2*s, 5, 4 | label: \(PQ\) | color: #dc2626 | dashed: true
+segment: 1, 2, 2 - s, 2*s | color: #d97706
+point: 5, 4 | label: \(P(5, 4)\)
+point: 1, 2 | label: \(F(1, 2)\)
+point: 2 - s, 2*s | label: \(Q\)
+slider: s | range: -1, 2.5 | init: -0.5 | step: 0.1
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+What is the closest point (foot of the perpendicular) \(F\) on the line \(L: x - 3y = 2\) to the point \(P(7, -5)\)?
+
+(A) \((9, -11)\)
+(B) \((5, 1)\)
+(C) \((3, 7)\)
+(D) \((6, -2)\)
+(E) \((2, 0)\)
+[/QUESTION]
+
+=== SECTION 2: Exact point-to-line distance and parallel lines ===
+
+Often we do not need the coordinates of the foot \(F\) at all—we only want the shortest distance \(d(P, L) = \|\overrightarrow{FP}\|\) from \(P\) to \(L\). Look back at the displacement from \(F\) to \(P\) in [REF: foot-formula.1 | the normal-form construction]:
+\[
+\overrightarrow{FP} = \mathbf{r}_P - \mathbf{r}_F = \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0).
+\]
+What is the length of a vector projection onto \(\mathbf{n}\)? It is simply the absolute value of the scalar projection onto \(\mathbf{n}\):
+\[
+d(P, L) = \|\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\| = |\operatorname{comp}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)| = \frac{|\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)|}{\|\mathbf{n}\|}.
+\]
+Substituting \(\mathbf{n} = \langle a, b \rangle\) and \(\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0) = ax_P + by_P - c\) immediately delivers the celebrated Cartesian point-to-line distance formula:
+\[
+d(P, L) = \frac{|ax_P + by_P - c|}{\sqrt{a^2 + b^2}}.
+\]
+Notice why this formula makes total sense: the numerator \(|ax_P + by_P - c|\) measures how badly \(P\) fails the line equation \(ax + by = c\), and dividing by \(\|\mathbf{n}\| = \sqrt{a^2 + b^2}\) removes the arbitrary scale of the equation (multiplying \(ax + by = c\) by \(5\) multiplies both numerator and denominator by \(5\), leaving the distance unchanged). When \(P\) lies on \(L\), \(ax_P + by_P - c = 0\), giving \(d(P, L) = 0\).
+
+[CALLOUT]
+id: pt-line-dist
+label: Formula
+title: Point-to-line distance in \(\mathbb{R}^2\)
+tone: key
+
+The shortest (perpendicular) distance from a point \(P(x_P, y_P)\) to a line \(L\) with normal equation \(\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\), or Cartesian equation \(ax + by = c\) with \(\mathbf{n} = \langle a, b \rangle \ne \mathbf{0}\), is
+\[
+d(P, L) = |\operatorname{comp}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)| = \frac{|\mathbf{n} \cdot (\mathbf{r}_P - \mathbf{r}_0)|}{\|\mathbf{n}\|} = \frac{|ax_P + by_P - c|}{\sqrt{a^2 + b^2}}.
+\]
+[/CALLOUT]
+
+Check [REF: pt-line-dist | this formula] on our earlier example \(L: 2x + y = 4\) and \(P(5, 4)\):
+\[
+d(P, L) = \frac{|2(5) + 1(4) - 4|}{\sqrt{2^2 + 1^2}} = \frac{10}{\sqrt{5}} = 2\sqrt{5},
+\]
+matching \(\|\overrightarrow{FP}\| = \|\langle 4, 2 \rangle\| = \sqrt{16 + 4} = 2\sqrt{5}\) without ever computing \(F\)!
+
+Now specialize [REF: pt-line-dist | the point-to-line distance formula] to find the perpendicular distance between two parallel lines \(L_1\) and \(L_2\). Because \(L_1 \parallel L_2\), they share a common normal vector \(\mathbf{n} = \langle a, b \rangle\), so after scaling one equation if needed, we can write both lines with the SAME left-hand coefficients \(a\) and \(b\):
+\[
+L_1: ax + by = c_1, \qquad L_2: ax + by = c_2.
+\]
+Pick ANY point \(P(x_P, y_P)\) on \(L_1\). Since \(P \in L_1\), it satisfies \(ax_P + by_P = c_1\). Plugging \(P\) into the distance formula for \(L_2\) replaces \(ax_P + by_P\) directly by \(c_1\):
+\[
+d(L_1, L_2) = d(P, L_2) = \frac{|ax_P + by_P - c_2|}{\sqrt{a^2 + b^2}} = \frac{|c_1 - c_2|}{\sqrt{a^2 + b^2}}.
+\]
+The choice of point \(P\) on \(L_1\) vanishes completely—confirming that parallel lines stay the same perpendicular distance apart everywhere!
+
+[CALLOUT]
+id: parallel-lines-trap
+label: Common pitfall
+title: Match the normal coefficients before subtracting \(c_1\) and \(c_2\)
+tone: caution
+
+The parallel-line formula \(d(L_1, L_2) = \frac{|c_1 - c_2|}{\sqrt{a^2 + b^2}}\) ONLY applies when both lines are written with the exact same pair of coefficients \((a, b)\) on the same side of the equals sign. If you are given \(2x + 3y = 5\) and \(4x + 6y = 22\), you MUST first rewrite the second line as \(2x + 3y = 11\) (or rewrite the first as \(4x + 6y = 10\)) before subtracting constants.
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: C]
+What is the perpendicular distance between the two parallel lines \(L_1: 3x - 4y = 7\) and \(L_2: 6x - 8y = -6\)?
+
+(A) \(\frac{4}{5}\)
+(B) \(\frac{13}{10}\)
+(C) \(2\)
+(D) \(\frac{13}{5}\)
+(E) \(10\)
+[/QUESTION]
+
+=== SECTION 3: Mirror reflections across an arbitrary line ===
+
+Once you can drop a perpendicular from \(P\) to its foot \(F\) on \(L\), computing the mirror reflection \(P'\) of \(P\) across \(L\) takes almost zero extra work. What defines the reflection \(P'\) of \(P\) across a mirror line \(L\)? Two geometric conditions:
+1. The segment \(PP'\) is perpendicular to \(L\).
+2. The line \(L\) bisects \(PP'\), meaning the midpoint of \(PP'\) is the foot \(F\) on \(L\).
+
+Look at the trip from \(P\) to \(P'\) in vector steps. Moving from \(P\) to \(F\) adds the step \(\overrightarrow{PF} = -\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\). To reach the mirror image \(P'\) at the exact same distance on the opposite side of \(L\), simply take that SAME step a SECOND time! Adding \(-2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\) to \(\mathbf{r}_P\) gives
+\[
+\mathbf{r}_{P'} = \mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - 2\left(\frac{ax_P + by_P - c}{a^2 + b^2}\right)\mathbf{n}.
+\]
+Equivalently, if you already computed the foot \(\mathbf{r}_F\), the midpoint condition \(\frac{\mathbf{r}_P + \mathbf{r}_{P'}}{2} = \mathbf{r}_F\) rearranges immediately to
+\[
+\mathbf{r}_{P'} = 2\mathbf{r}_F - \mathbf{r}_P.
+\]
+
+Let us verify both reflection properties directly from \(\mathbf{r}_{P'} = \mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\):
+- Midpoint check: \(\frac{\mathbf{r}_P + \mathbf{r}_{P'}}{2} = \frac{2\mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)}{2} = \mathbf{r}_P - \operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_F\), which we already proved lies on \(L\).
+- Perpendicularity check: \(\overrightarrow{PP'} = \mathbf{r}_{P'} - \mathbf{r}_P = -2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0)\), which is a scalar multiple of \(\mathbf{n}\) and therefore perpendicular to \(L\).
+- Self-inverse check: if \(P\) already lies on \(L\), then \(ax_P + by_P - c = 0\), so \(\mathbf{r}_{P'} = \mathbf{r}_P\)—every point on the mirror stays fixed!
+
+[CALLOUT]
+id: reflect-line
+label: Formula
+title: Reflection of a point \(P\) across a 2D line \(L\)
+tone: key
+
+For a point \(P(x_P, y_P)\) and a line \(L: \mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\) (Cartesian form \(ax + by = c\) with \(\mathbf{n} = \langle a, b \rangle\)), the mirror reflection \(P'\) of \(P\) across \(L\) has position vector
+\[
+\mathbf{r}_{P'} = \mathbf{r}_P - 2\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \mathbf{r}_P - 2\left(\frac{ax_P + by_P - c}{a^2 + b^2}\right)\mathbf{n} = 2\mathbf{r}_F - \mathbf{r}_P.
+\]
+[/CALLOUT]
+
+Apply [REF: reflect-line | the reflection formula] to our running example \(L: 2x + y = 4\) and \(P(5, 4)\), where we found \(\operatorname{proj}_{\mathbf{n}}(\mathbf{r}_P - \mathbf{r}_0) = \langle 4, 2 \rangle\) and \(F = (1, 2)\):
+\[
+\mathbf{r}_{P'} = \langle 5, 4 \rangle - 2\langle 4, 2 \rangle = \langle -3, 0 \rangle,
+\]
+so \(P' = (-3, 0)\). Double-check: the midpoint of \(P(5, 4)\) and \(P'(-3, 0)\) is \(\left(\frac{5 - 3}{2}, \frac{4 + 0}{2}\right) = (1, 2) = F \in L\), and \(\overrightarrow{PP'} = \langle -8, -4 \rangle = -4\langle 2, 1 \rangle \perp L\).
+
+Drag slider \(a\) in the graph below to slide \(P(a, 4)\) horizontally across the mirror line \(L: 2x + y = 4\). Watch the foot \(F\) glide along \(L\) while \(P'\) stays symmetrically opposite \(P\) across \(L\), colliding with \(P\) at \((0, 4)\) when \(P\) crosses the mirror.
+
+[GRAPH]
+type: parametric2d
+title: Mirror reflection \(P'\) of \(P(a, 4)\) across \(L: 2x + y = 4\) with foot \(F\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -2.5, 3
+xrange: -4.2, 6
+yrange: -1.5, 6.8
+trace: 2 - t, 2*t | label: mirror \(2x + y = 4\) | color: #2563eb
+segment: a, 4, -0.6*a, 4 - 0.8*a | label: \(PP'\) | color: #d97706 | dashed: true
+segment: 0.2*a, 4 - 0.4*a, a, 4 | color: #16a34a
+point: a, 4 | label: \(P\)
+point: 0.2*a, 4 - 0.4*a | label: \(F\)
+point: -0.6*a, 4 - 0.8*a | label: \(P'\)
+slider: a | range: -3, 5 | init: 5 | step: 0.25
+[/GRAPH]
+
+[TABLE]
+Task for \(P(x_P, y_P)\) and \(L: ax + by = c\) | Vector expression (\(\mathbf{n} = \langle a, b \rangle\)) | Key geometric check
+Foot of perpendicular \(F\) | \(\mathbf{r}_P - \frac{ax_P + by_P - c}{a^2 + b^2}\mathbf{n}\) | \(F \in L\) and \(\overrightarrow{FP} \parallel \mathbf{n}\)
+Shortest distance \(d(P, L)\) | \(\frac{\lvert ax_P + by_P - c \rvert}{\sqrt{a^2 + b^2}}\) | Equals \(\lVert \overrightarrow{FP} \rVert \ge 0\)
+Mirror reflection \(P'\) | \(\mathbf{r}_P - 2\frac{ax_P + by_P - c}{a^2 + b^2}\mathbf{n}\) | Midpoint of \(PP'\) is \(F \in L\) and \(\overrightarrow{PP'} \parallel \mathbf{n}\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: D]
+What is the mirror reflection \(P'\) of the point \(P(-2, 5)\) across the line \(L: x + 2y = 3\)?
+
+(A) \((-3, 3)\)
+(B) \((0, 9)\)
+(C) \((-5, -1)\)
+(D) \((-4, 1)\)
+(E) \((2, -5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+A drone flies along the straight path \(\mathbf{r}(t) = \langle 1, 2 \rangle + t\langle 2, -1 \rangle\) (coordinates in km, \(t \in \mathbb{R}\)), while a radio tower stands at \(P(6, 7)\). At what parameter value \(t\) is the drone closest to the tower, and what is that minimum distance?
+
+(A) \(t = 1\), minimum distance \(3\sqrt{5}\text{ km}\)
+(B) \(t = 1\), minimum distance \(5\sqrt{2}\text{ km}\)
+(C) \(t = 5\), minimum distance \(3\sqrt{5}\text{ km}\)
+(D) \(t = 1\), minimum distance \(15\text{ km}\)
+(E) \(t = -1\), minimum distance \(3\sqrt{5}\text{ km}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+The point \(P'(8, 9)\) is the mirror reflection of \(P(2, 1)\) across an unknown line \(L\). What is the perpendicular distance from the origin \(O(0, 0)\) to the line \(L\)?
+
+(A) \(1\)
+(B) \(5\)
+(C) \(5\sqrt{2}\)
+(D) \(35\)
+(E) \(7\)
+[/BONUS]

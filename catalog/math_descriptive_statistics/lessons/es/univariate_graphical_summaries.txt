@@ -1,0 +1,216 @@
+=== SECTION 1: Adecuación de los gráficos univariados a la escala de la variable ===
+
+Una tabla de frecuencias conserva los números exactos, pero el ojo humano detecta patrones —picos, asimetrías, brechas y valores inusuales— mucho más rápido en una imagen que en filas de dígitos. Sin embargo, no todo gráfico sirve para toda variable. Graficar colores de ojos con barras contiguas sobre una recta numérica continua inventa un orden numérico falso, mientras que dejar espacios entre las barras de un histograma oculta la continuidad de una escala cuantitativa. Elegir la representación adecuada comienza por la escala de medición de la variable.
+
+[CALLOUT]
+id: chart-scale-match
+label: Principio
+title: Correspondencia entre geometría del gráfico y tipo de variable
+tone: key
+
+(1) Las variables categóricas emplean gráficos de barras (y diagramas de Pareto, que ordenan las categorías nominales de mayor a menor frecuencia, a menudo acompañados por una curva de porcentaje acumulado). Las barras se separan mediante espacios visibles para recalcar categorías discretas; las categorías nominales pueden ordenarse por frecuencia o convención, mientras que las categorías ordinales deben conservar su orden natural de rango.
+(2) Las variables cuantitativas emplean representaciones ancladas a un eje numérico verdadero: histogramas (barras contiguas que abarcan intervalos de clase adyacentes sin espacios, salvo cuando una clase está vacía), polígonos de frecuencias (segmentos de recta que unen las marcas de clase a la altura de cada intervalo, anclados en \(0\) a media amplitud fuera de la primera y última clase), diagramas de puntos (un punto por observación apilado sobre una recta numérica) y diagramas de tallo y hojas (separando cada valor en un tallo inicial y un dígito hoja final para conservar los valores exactos mostrando la forma).
+[/CALLOUT]
+
+Cada gráfico cuantitativo se adapta a un tamaño de datos y a un propósito ligeramente distinto. Para un conjunto pequeño (\(n = 15\) a \(40\)), un diagrama de puntos o de tallo y hojas muestra cada observación individual, haciendo visibles al instante los conglomerados, las brechas exactas y los valores extremos específicos. Por ejemplo, dadas las calificaciones \(62, 67, 71, 74, 74, 79, 83, 85, 88, 92\), un diagrama de tallo y hojas agrupa las decenas como tallos (\(6, 7, 8, 9\)) y enumera las unidades en orden ascendente como hojas (\(6 \mid 2\, 7\); \(7 \mid 1\, 4\, 4\, 9\); \(8 \mid 3\, 5\, 8\); \(9 \mid 2\)). Giradas noventa grados en sentido antihorario, esas filas de hojas forman un minihistograma que además permite recuperar cada puntaje exacto. Para conjuntos más grandes (\(n = 50\) a \(100{,}000\)), los puntos individuales se saturan, de modo que los histogramas y polígonos de frecuencias resumen con limpieza los intervalos agrupados.
+
+[TABLE]
+Gráfico | Escala de la variable | Contacto de barras/marcas | ¿Conserva valores individuales? | Más adecuado para
+Gráfico de barras | Nominal u ordinal | Barras separadas | Conteos/proporciones por categoría | Comparar tamaños entre categorías
+Diagrama de Pareto | Nominal (orden descendente) | Barras separadas | Conteos + \(\%\) acumulado | Detectar los «pocos vitales»
+Diagrama de puntos | Cuantitativa (\(n\) pequeño) | Puntos en eje numérico | Sí (exactos o redondeados) | Conjuntos pequeños, conglomerados, brechas
+Tallo y hojas | Cuantitativa (\(n\) peq./mod.) | Filas de dígitos hoja | Sí (hasta el dígito hoja) | Boceto rápido manual que conserva valores
+Histograma | Cuantitativa (cualquier \(n\)) | Clases numéricas contiguas | No (agrupados en clases) | Forma general de datos medianos/grandes
+Polígono de frecuencias | Cuantitativa (cualquier \(n\)) | Marcas de clase conectadas | No (agrupados en clases) | Superponer dos distribuciones en un eje
+[/TABLE]
+
+Tenga presente una trampa específica en los diagramas de Pareto: ordenar las barras de la más alta a la más baja resulta muy revelador para categorías nominales como tipos de defectos («Rayón», «Grieta», «Abolladura», «Pieza faltante»), porque permite ver de inmediato qué dos tipos de defectos causan el \(80\%\) de las fallas. En cambio, ordenar una variable ordinal como la calificación de dolor («Ninguno», «Leve», «Moderado», «Intenso») por frecuencia en vez de por su orden natural destruye la progresión de gravedad y dificulta la lectura del gráfico.
+
+[QUESTION 1]
+[ANSWER: C]
+Un gerente de operaciones desea visualizar dos variables de una encuesta a \(n = 450\) clientes: la Variable X es la satisfacción del cliente («Muy insatisfecho», «Insatisfecho», «Neutral», «Satisfecho», «Muy satisfecho»), y la Variable Y es la duración en caja en segundos. ¿Qué par de gráficos respeta la escala de medición y el tamaño de cada variable?
+
+(A) Un diagrama de Pareto ordenado por frecuencia para la Variable X, y un gráfico de barras con barras separadas para la Variable Y.
+(B) Un histograma para la Variable X, y un diagrama de tallo y hojas para la Variable Y.
+(C) Un gráfico de barras que conserve el orden natural de satisfacción para la Variable X, y un histograma para la Variable Y.
+(D) Un diagrama de puntos para la Variable X, y un diagrama de Pareto para la Variable Y.
+(E) Un polígono de frecuencias para la Variable X, y un gráfico de barras para la Variable Y.
+[/QUESTION]
+
+=== SECTION 2: El principio del área e histogramas con amplitudes desiguales ===
+
+En un gráfico de barras, todas las barras tienen el mismo ancho arbitrario, por lo que el lector compara los tamaños de las categorías únicamente mediante la altura de las barras. En un histograma, sin embargo, el ancho horizontal no es arbitrario: representa la amplitud de clase \(w_j\) sobre el eje numérico. Ese hecho geométrico conduce a la regla más importante en la graficación de datos cuantitativos.
+
+[CALLOUT]
+id: area-principle
+label: Principio
+title: El principio del área para histogramas
+tone: key
+
+En toda representación cuantitativa que simboliza datos mediante regiones sombreadas, el área de cada región debe ser proporcional al conteo (o frecuencia relativa) de observaciones que representa.
+
+Para un histograma con amplitudes de clase \(w_j\) y frecuencias relativas \(p_j\):
+(1) Cuando todas las amplitudes de clase son iguales (\(w_j = w\)), la altura de la barra puede ser la frecuencia \(f_j\), la frecuencia relativa \(p_j\) o la densidad de frecuencia \(d_j = p_j / w\), ya que multiplicar una amplitud constante \(w\) por la altura mantiene el área proporcional a \(f_j\) y a \(p_j\).
+(2) Cuando las amplitudes de clase son desiguales, la altura de la barra DEBE ser la densidad de frecuencia \(d_j = p_j / w_j\) (o la densidad de conteo \(f_j / w_j\)). Entonces el área de cada barra es \(\text{ancho} \times \text{altura} = w_j \cdot d_j = p_j\), y el área total de todas las barras es igual a \(1\).
+[/CALLOUT]
+
+Para ver por qué violar [REF: area-principle.2 | la regla de amplitudes desiguales] distorsiona la realidad, examine los tiempos de reparación (en minutos) de \(n = 50\) electrodomésticos agrupados en cuatro clases desiguales:
+- \([0, 10)\): amplitud \(10\), conteo \(10\), frecuencia relativa \(0.20\), densidad \(0.20 / 10 = 0.020\)
+- \([10, 20)\): amplitud \(10\), conteo \(15\), frecuencia relativa \(0.30\), densidad \(0.30 / 10 = 0.030\)
+- \([20, 40)\): amplitud \(20\), conteo \(18\), frecuencia relativa \(0.36\), densidad \(0.36 / 20 = 0.018\)
+- \([40, 80)\): amplitud \(40\), conteo \(7\), frecuencia relativa \(0.14\), densidad \(0.14 / 40 = 0.0035\)
+
+Si un analista trazara conteos brutos (\(10, 15, 18, 7\)) en el eje vertical, la barra de \([20, 40)\) aparecería como la más alta Y el doble de ancha que \([10, 20)\), otorgándole un área de \(20 \times 18 = 360\) frente a \(10 \times 15 = 150\): ¡afirmaría visualmente que \([20, 40)\) contiene \(2.4\) veces más reparaciones que \([10, 20)\) cuando en realidad solo contiene \(18/15 = 1.2\) veces más! Peor aún, la cola dispersa \([40, 80)\) tendría un área visual de \(40 \times 7 = 280\), luciendo casi el doble de voluminosa que \([10, 20)\) a pesar de contener menos de la mitad de reparaciones (\(7\) frente a \(15\)).
+
+Trazar la densidad de frecuencia \(d_j = p_j / w_j\) en el eje vertical corrige por completo la imagen, como se muestra a continuación. Ahora el área de cada rectángulo coincide exactamente con su frecuencia relativa (\(0.20, 0.30, 0.36, 0.14\)), sumando \(1.00\), y la barra más alta se ubica honestamente sobre \([10, 20)\), donde los tiempos de reparación están más densamente concentrados.
+
+[GRAPH]
+type: function2d
+title: Histograma de densidad de tiempos de reparación (\(n = 50\), amplitudes desiguales)
+xlabel: Tiempo de reparación (min)
+ylabel: Densidad de frecuencia
+xrange: 0, 82
+yrange: 0, 0.036
+fill: 0.020, 0 | range: 0, 10 | label: \([0, 10)\), área \(0.20\) | color: #3b82f6 | opacity: 0.30
+fill: 0.030, 0 | range: 10, 20 | label: \([10, 20)\), área \(0.30\) | color: #2563eb | opacity: 0.35
+fill: 0.018, 0 | range: 20, 40 | label: \([20, 40)\), área \(0.36\) | color: #60a5fa | opacity: 0.30
+fill: 0.0035, 0 | range: 40, 80 | label: \([40, 80)\), área \(0.14\) | color: #93c5fd | opacity: 0.30
+trace: x < 10 ? 0.020 : (x < 20 ? 0.030 : (x < 40 ? 0.018 : (x <= 80 ? 0.0035 : 0))) | label: Perfil de densidad
+segment: 0, 0, 0, 0.020
+segment: 10, 0, 10, 0.030
+segment: 20, 0, 20, 0.030
+segment: 40, 0, 40, 0.018
+segment: 80, 0, 80, 0.0035
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: B]
+Un histograma de densidad tiene una barra sobre el intervalo \([50, 75)\) con altura vertical (densidad de frecuencia) \(0.012\) por unidad. Si el tamaño muestral total es \(n = 160\), ¿cuántas observaciones caen en la clase \([50, 75)\)?
+
+(A) \(24\)
+(B) \(48\)
+(C) \(30\)
+(D) \(19\)
+(E) \(60\)
+[/QUESTION]
+
+=== SECTION 3: Lectura de la forma de la distribución en gráficos univariados ===
+
+Una vez dibujado honestamente un histograma, diagrama de puntos o polígono de frecuencias, nuestro objetivo principal es leer su forma general de manera sistemática. Los estadísticos describen la forma univariada en tres dimensiones: modalidad (número de picos prominentes), simetría frente a asimetría (dirección de la cola más larga) y rasgos inusuales (brechas, conglomerados y posibles valores atípicos).
+
+[CALLOUT]
+id: shape-vocabulary
+label: Definición
+title: Rasgos cualitativos fundamentales de forma
+tone: key
+
+(1) Modalidad: una distribución con un pico prominente es unimodal; con dos picos prominentes distintos es bimodal; con tres o más picos es multimodal; y una distribución con altura aproximadamente plana en todo su rango es aproximadamente uniforme.
+(2) Simetría y asimetría: una distribución es simétrica si sus mitades izquierda y derecha son imágenes especulares aproximadas. Es asimétrica a la derecha (sesgada positivamente) si la cola larga y delgada se extiende hacia valores mayores a la derecha, y asimétrica a la izquierda (sesgada negativamente) si la cola larga y delgada se extiende hacia valores menores a la izquierda.
+(3) Rasgos inusuales: las brechas son intervalos vacíos amplios que separan conglomerados de datos; los conglomerados son subgrupos distintos agrupados alrededor de valores separados (lo que a menudo indica subpoblaciones mezcladas, como combinar estaturas de adultos y niños); los posibles valores atípicos son observaciones aisladas situadas lejos del cuerpo principal de los datos.
+[/CALLOUT]
+
+Fíjese en la regla de nomenclatura para la asimetría o sesgo: ¡es la única dirección que la gente suele invertir con mayor frecuencia! La asimetría SIEMPRE recibe el nombre de la dirección de la COLA alargada, no del lado donde se asienta el montículo alto. En una distribución asimétrica a la derecha (como los ingresos familiares o los tiempos de reparación), la mayoría de las observaciones se acumula a la izquierda mientras un puñado de valores muy grandes estira una cola larga y fina hacia la derecha. En una distribución asimétrica a la izquierda (como las calificaciones de un examen fácil con tope en \(100\)), la mayoría de las observaciones se agrupa cerca del extremo alto mientras unas pocas calificaciones muy bajas estiran una cola hacia la izquierda.
+
+El gráfico siguiente superpone perfiles suaves de densidad de cuatro formas de referencia sobre un eje horizontal común para que pueda comparar directamente el número de picos y la dirección de las colas.
+
+[GRAPH]
+type: function2d
+title: Formas univariadas de referencia: simétrica, asimétrica a la derecha, asimétrica a la izquierda y bimodal
+xlabel: \(x\)
+ylabel: Densidad
+xrange: 0, 12
+yrange: 0, 0.45
+trace: 0.36 * exp(-0.5 * ((x - 6) / 1.1)^2) | label: Unimodal simétrica | color: #3b82f6
+trace: x > 0 ? 0.38 * (x / 2.5) * exp(1 - x / 2.5) : 0 | label: Asimétrica a la derecha (cola derecha larga) | color: #ef4444
+trace: x < 12 ? 0.38 * ((12 - x) / 2.5) * exp(1 - (12 - x) / 2.5) : 0 | label: Asimétrica a la izquierda (cola izquierda larga) | color: #10b981
+trace: 0.24 * exp(-0.5 * ((x - 3.5) / 0.85)^2) + 0.26 * exp(-0.5 * ((x - 8.5) / 0.9)^2) | label: Bimodal (dos conglomerados) | color: #f59e0b
+[/GRAPH]
+
+Cuando detecte un gráfico bimodal o una brecha pronunciada en datos reales, deténgase antes de resumir todo el conjunto con un único centro. La bimodalidad suele significar que se mezclaron dos grupos distintos —por ejemplo, montos de cuentas de restaurante que mezclan comensales de almuerzo y de cena, o tiempos de espera que combinan turnos entre semana y fines de semana—. Separar el gráfico por subgrupo suele descomponer una distribución bimodal confusa en dos distribuciones unimodales limpias.
+
+[QUESTION 3]
+[ANSWER: D]
+Un diagrama de puntos de las calificaciones finales (sobre \(100\)) de un curso introductorio numeroso muestra una densa acumulación de puntajes entre \(85\) y \(98\), que va adelgazándose gradualmente a lo largo de los \(70\) y \(60\), con unas pocas calificaciones dispersas que se extienden hacia abajo hasta \(32\). ¿Cómo debe describirse la forma de esta distribución?
+
+(A) Asimétrica a la derecha (sesgada positivamente), porque el pico principal se encuentra en el lado derecho de la escala.
+(B) Simétrica y bimodal, porque hay calificaciones tanto en \(95\) como en \(32\).
+(C) Uniforme, porque las calificaciones cubren casi todo el rango desde \(32\) hasta \(98\).
+(D) Asimétrica a la izquierda (sesgada negativamente), porque la cola alargada se extiende hacia los valores más bajos de la izquierda.
+(E) Asimétrica a la derecha (sesgada positivamente), porque las calificaciones altas son números positivos.
+[/QUESTION]
+
+=== SECTION 4: Diagnóstico de gráficos engañosos y artefactos por amplitud de clase ===
+
+Como las impresiones visuales son inmediatas y persuasivas, pequeñas decisiones de diseño pueden engañar fácilmente a una audiencia, ya sea por accidente o de forma deliberada. Todo lector estadístico debe revisar tres trampas gráficas recurrentes antes de confiar en la historia visual de un gráfico.
+
+[CALLOUT]
+id: deceptive-graphics
+label: Error común
+title: Tres formas en que los gráficos univariados engañan
+tone: caution
+
+(1) Ejes verticales truncados en gráficos de barras: iniciar por encima de \(0\) el eje vertical de conteos o porcentajes de un gráfico de barras recorta la misma base de cada barra, exagerando diferencias relativas pequeñas hasta convertirlas en razones de altura dramáticas.
+(2) Distorsión de área en pictogramas (2D/3D): reemplazar barras por íconos escalados (bolsas de dinero, barriles de petróleo, figuras humanas) escala tanto el ancho como la altura por la razón \(k\) de los datos, multiplicando el área visual 2D por \(k^2\) (y el volumen percibido 3D por \(k^3\)), violando [REF: area-principle | el principio del área].
+(3) Elecciones extremas de amplitud de clase en histogramas: intervalos demasiado anchos pueden ocultar una brecha genuina o fundir dos modas distintas en un solo montículo, mientras que intervalos demasiado estrechos fragmentan un conjunto unimodal suave en picos dentados carentes de sentido.
+[/CALLOUT]
+
+Cuantifiquemos concretamente las dos primeras trampas. Supongamos que la Marca A tiene un \(92\%\) de entregas puntuales y la Marca B un \(96\%\): una ventaja real de \(4\) puntos porcentuales, o una razón verdadera de \(96 / 92 \approx 1.043\) (alrededor de \(4.3\%\) superior). Si una diapositiva de mercadeo inicia el eje vertical en \(90\%\), la barra de la Marca A tiene altura \(92 - 90 = 2\) unidades mientras que la de la Marca B tiene altura \(96 - 90 = 6\) unidades. Visualmente, la Marca B parece tres veces más alta (\(6 / 2 = 3\)) en lugar de un \(4.3\%\) mayor. En todo gráfico de barras donde la longitud de la barra codifica magnitud, la línea base debe comenzar en \(0\). (Los gráficos de líneas que siguen pequeñas fluctuaciones en el tiempo, como precios diarios de acciones o temperatura corporal, son un caso distinto donde hacer acercamiento puede ser apropiado si el quiebre de eje se etiqueta claramente, porque es la posición —y no la longitud desde cero— la que codifica el valor.)
+
+Examine ahora [REF: deceptive-graphics.2 | la distorsión por pictogramas]. Supongamos que las ventas de una empresa se duplican de \(\$1\text{ millón}\) a \(\$2\text{ millones}\) (un factor de \(k = 2\)). Si un diseñador dibuja un ícono de billete el doble de alto para el segundo año manteniendo fija su relación de aspecto, su ancho también se duplica. El área del segundo ícono pasa a ser \(2 \times 2 = 4\) veces el área del primer ícono, exagerando un aumento de \(2\times\) hasta convertirlo en una impresión visual de \(4\times\). Si se dibuja como un cubo 3D o una pila de monedas escalada en las tres dimensiones, ¡el volumen visual explota \(2^3 = 8\) veces! Si se usan íconos, apile íconos idénticos de tamaño unitario (como en un diagrama de puntos) en lugar de agrandar una sola figura.
+
+Por último, la amplitud de clase en un histograma actúa como la perilla de enfoque de un microscopio. Imagine \(n = 100\) calificaciones formadas por dos conglomerados distintos: uno centrado cerca de \(62\) y otro cerca de \(78\), sin casi nadie cerca de \(70\). Con una amplitud de clase de \(5\) puntos (\([55, 60), [60, 65), [65, 70), [70, 75), [75, 80), \dots\)), la depresión en torno a \(70\) sobresale con claridad como una distribución bimodal. Cambie la amplitud a \(25\) puntos (\([50, 75)\) y \([75, 100)\)), y la brecha en \(70\) desaparece dentro de \([50, 75)\), haciendo que el histograma parezca unimodal. A la inversa, reduzca la amplitud a \(1\) punto y las fluctuaciones aleatorias de un punto crearán decenas de agujas que ocultan los dos conglomerados suaves. Revisar un histograma con dos o tres amplitudes razonables —o inspeccionar un diagrama de puntos en paralelo para muestras pequeñas— protege contra el error de confundir un artefacto de agrupamiento con un rasgo real de los datos.
+
+[QUESTION 4]
+[ANSWER: A]
+Una revista ilustra que el número anual de pasajeros de transporte público de la Ciudad B es \(3\) veces el de la Ciudad A dibujando un emblema circular de tren para la Ciudad B cuyo diámetro es \(3\) veces el diámetro del emblema de la Ciudad A. ¿Por qué factor excede el área sombreada del emblema de la Ciudad B a la de la Ciudad A?
+
+(A) \(9\) veces
+(B) \(3\) veces
+(C) \(6\) veces
+(D) \(27\) veces
+(E) \(1.5\) veces
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Un analista traza un gráfico de barras comparando la retención de clientes entre dos planes: el Plan 1 tiene \(82\%\) de retención y el Plan 2 tiene \(86\%\) de retención. El gráfico inicia su eje vertical en \(80\%\). ¿Qué enunciado diagnostica con precisión la distorsión visual resultante?
+
+(A) La distorsión visual es despreciable porque ambos porcentajes superan el \(80\%\).
+(B) El gráfico subestima la diferencia entre ambos planes al comprimir la escala vertical.
+(C) Empezar en \(80\%\) hace que la barra del Plan 2 parezca \(86/82 \approx 1.05\) veces tan alta como la del Plan 1, coincidiendo con la razón verdadera.
+(D) Empezar en \(80\%\) es exigido por el principio del área siempre que los anchos de barra son iguales.
+(E) La barra del Plan 2 parece \(3\) veces tan alta como la del Plan 1 (altura \(6\) frente a altura \(2\)), exagerando drásticamente una diferencia real de \(4\) puntos porcentuales.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Un histograma de densidad consta de exactamente tres barras contiguas: \([0, 4)\) de altura \(0.05\), \([4, 10)\) de altura \(0.10\) y \([10, 20)\) de altura \(h\). ¿Cuánto debe valer \(h\), y qué fracción de las observaciones cae por debajo de \(10\)?
+
+(A) \(h = 0.04\), y \(60\%\) cae por debajo de \(10\).
+(B) \(h = 0.03\), y \(70\%\) cae por debajo de \(10\).
+(C) \(h = 0.02\), y \(80\%\) cae por debajo de \(10\).
+(D) \(h = 0.05\), y \(50\%\) cae por debajo de \(10\).
+(E) \(h = 0.02\), y \(60\%\) cae por debajo de \(10\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suponga que un histograma de \(n = 80\) mediciones usa amplitudes desiguales \([0, 5)\) (amplitud \(5\), conteo \(20\)) y \([5, 25)\) (amplitud \(20\), conteo \(40\)), pero el programa traza por error los conteos brutos (\(20\) y \(40\)) en el eje vertical en lugar de la densidad de frecuencia. ¿Cuál es la razón entre el área dibujada de la barra \([5, 25)\) y el área dibujada de la barra \([0, 5)\), comparada con la razón verdadera de sus conteos?
+
+(A) La razón de áreas dibujadas es \(2:1\), coincidiendo con la razón verdadera de conteos \(2:1\).
+(B) La razón de áreas dibujadas es \(4:1\), mientras que la razón verdadera de conteos es \(2:1\).
+(C) La razón de áreas dibujadas es \(1:2\), mientras que la razón verdadera de conteos es \(2:1\).
+(D) La razón de áreas dibujadas es \(8:1\), mientras que la razón verdadera de conteos es \(2:1\).
+(E) La razón de áreas dibujadas es \(16:1\), mientras que la razón verdadera de conteos es \(4:1\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Un conjunto de datos de \(n = 60\) tiempos de reacción es genuinamente bimodal, con un conglomerado compacto en \([220, 240)\text{ ms}\) y un segundo conglomerado compacto en \([260, 280)\text{ ms}\), y cero observaciones en \([240, 260)\text{ ms}\). ¿Qué elección de intervalos de histograma de igual amplitud ocultaría por completo la brecha entre los dos conglomerados?
+
+(A) Intervalos de amplitud \(10\text{ ms}\) comenzando en \(220\): \([220, 230), [230, 240), [240, 250), \dots\)
+(B) Intervalos de amplitud \(50\text{ ms}\) comenzando en \(200\): \([200, 250), [250, 300)\)
+(C) Intervalos de amplitud \(20\text{ ms}\) comenzando en \(220\): \([220, 240), [240, 260), [260, 280)\)
+(D) Intervalos de amplitud \(5\text{ ms}\) comenzando en \(220\): \([220, 225), [225, 230), \dots\)
+(E) Intervalos de amplitud \(15\text{ ms}\) comenzando en \(215\): \([215, 230), [230, 245), [245, 260), [260, 275), [275, 290)\)
+[/BONUS]

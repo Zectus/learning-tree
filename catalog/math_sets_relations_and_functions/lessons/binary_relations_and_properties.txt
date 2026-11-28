@@ -1,0 +1,278 @@
+=== SECTION 1: Binary relations and concrete representations ===
+
+Mathematics is full of statements linking two objects: "\(3\) divides \(12\)," "\(x \le y\)," "\(A \subseteq B\)," "line \(\ell_1\) is parallel to line \(\ell_2\)." Each of these expresses a binary relationship that either holds or fails for a given ordered pair \((a, b)\). Using Cartesian products, we can turn any such relationship into a single mathematical object: the set of all ordered pairs for which the relationship holds.
+
+[CALLOUT]
+id: relation-def
+label: Definition
+title: Binary relation
+tone: key
+
+Let \(A\) and \(B\) be sets. A binary relation from \(A\) to \(B\) is any subset \(R \subseteq A \times B\).
+
+(1) If \((a, b) \in R\), we say \(a\) is related to \(b\) by \(R\) and often write \(a \mathrel{R} b\).
+(2) If \((a, b) \notin R\), we write \(a \not\mathrel{R} b\).
+(3) When \(A = B\), a subset \(R \subseteq A \times A\) is called a binary relation on \(A\).
+[/CALLOUT]
+
+Notice how clean and flexible this definition is: EVERY subset of \(A \times B\) is a valid binary relation, including the empty relation \(\emptyset \subseteq A \times B\) (no pairs are related) and the universal relation \(A \times B\) (every pair is related). On any set \(A\), one especially important relation is the equality (or diagonal) relation
+\[
+\Delta_A = \{(a, a) : a \in A\}.
+\]
+
+Different contexts call for different ways of representing a relation \(R \subseteq A \times A\):
+- Roster of ordered pairs: on \(A = \{1, 2, 3\}\), the divisibility relation \(D = \{(a, b) \in A \times A : a \mid b\}\) (where \(a \mid b\) means \(b = ka\) for some integer \(k\)) is
+\[
+D = \{(1, 1), (1, 2), (1, 3), (2, 2), (3, 3)\}.
+\]
+- Directed graph (digraph) on a finite set \(A\): represent each element of \(A\) as a vertex, and draw a directed arrow \(a \to b\) whenever \((a, b) \in R\). A pair \((a, a) \in R\) appears as a self-loop at vertex \(a\).
+- Boolean adjacency matrix on a finite ordered set \(A = \{a_1, \dots, a_n\}\): form the \(n \times n\) matrix \(M_R\) whose \((i, j)\)-entry is \(1\) if \((a_i, a_j) \in R\) and \(0\) otherwise. For the divisibility relation \(D\) on \(\{1, 2, 3\}\) above:
+\[
+M_D = \begin{pmatrix} 1 & 1 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}.
+\]
+- Infinite algebraic, set-theoretic, or geometric relations: on \(\mathbb{Z}\), we have divisibility \(a \mid b\) or congruence \(a \equiv b \pmod 3\); on \(\mathcal{P}(X)\), we have subset inclusion \(S \subseteq T\); on \(\mathbb{R}\), any subset of the coordinate plane \(\mathbb{R}^2\) defines a relation on \(\mathbb{R}\).
+
+For example, consider the "within distance \(1\)" relation \(W\) on \(\mathbb{R}\), defined by
+\[
+x \mathrel{W} y \iff |x - y| \le 1.
+\]
+As a subset of \(\mathbb{R}^2\), \(W\) is the diagonal strip bounded by the lines \(y = x + 1\) and \(y = x - 1\). Drawing \(W\) in \(\mathbb{R}^2\) lets us inspect its structure directly: it contains the entire main diagonal \(y = x\), it is mirror-symmetric across \(y = x\), and we can read off concrete related and unrelated pairs at a glance—for instance, \((0, 0.8) \in W\) and \((0.8, 1.6) \in W\), yet \((0, 1.6) \notin W\) because \(|0 - 1.6| = 1.6 > 1\).
+
+[GRAPH]
+type: function2d
+title: Geometric relation \(W = \{(x, y) \in \mathbb{R}^2 : \lvert x - y \rvert \le 1\}\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2, 3
+yrange: -2, 3
+aspect: equal
+fill: x + 1, x - 1 | range: -2, 3 | label: \(W\) | color: #2563eb | opacity: 0.22
+trace: x + 1 | label: \(y = x + 1\) | color: #2563eb
+trace: x - 1 | label: \(y = x - 1\) | color: #2563eb
+trace: x | label: diagonal \(y = x\) | color: #64748b
+point: 0, 0.8 | label: \((0, 0.8)\)
+point: 0.8, 1.6 | label: \((0.8, 1.6)\)
+point: 0, 1.6 | label: \((0, 1.6)\) | color: #ef4444
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(A = \{1, 2, 3, 4\}\) and let \(R \subseteq A \times A\) be the relation whose Boolean adjacency matrix (with rows and columns ordered \(1, 2, 3, 4\)) is
+\[
+M_R = \begin{pmatrix} 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 1 \end{pmatrix}.
+\]
+Which of the following statements about \(R\) is TRUE?
+
+(A) \((2, 1) \in R\) and \((4, 2) \in R\)
+(B) \(R\) has exactly \(5\) ordered pairs
+(C) \((1, 4) \in R\), \((4, 4) \in R\), and \((3, 1) \in R\)
+(D) \((4, 1) \in R\) and \((2, 3) \in R\)
+(E) \(R\) contains no pairs of the form \((a, a)\)
+[/QUESTION]
+
+=== SECTION 2: Inverse relations and relation composition ===
+
+Just as sets can be combined with union and intersection, relations support two operations built specifically around ordered pairs: reversing arrows and chaining arrows together.
+
+[CALLOUT]
+id: inverse-and-comp
+label: Definition
+title: Inverse relation and composition of relations
+tone: key
+
+Let \(R \subseteq A \times B\) and \(S \subseteq B \times C\) be binary relations.
+
+(1) The inverse (or converse) relation of \(R\) is the relation \(R^{-1} \subseteq B \times A\) defined by
+\[
+R^{-1} = \{(b, a) \in B \times A : (a, b) \in R\}.
+\]
+(2) The composition of \(S\) with \(R\) is the relation \(S \circ R \subseteq A \times C\) defined by
+\[
+S \circ R = \{(a, c) \in A \times C : \exists b \in B,\, \bigl((a, b) \in R \land (b, c) \in S\bigr)\}.
+\]
+[/CALLOUT]
+
+Pay close attention to the order in [REF: inverse-and-comp.2 | relation composition]: in \(S \circ R\), you follow \(R\) FIRST (from \(a \in A\) to an intermediate element \(b \in B\)), and then follow \(S\) SECOND (from \(b \in B\) to \(c \in C\)). This right-to-left order is chosen specifically so that later, when functions are viewed as special binary relations, relation composition \(g \circ f\) agrees identically with function composition \((g \circ f)(a) = g(f(a))\).
+
+Let us compute an example by hand. Let \(A = \{1, 2, 3\}\), \(B = \{u, v, w\}\), and \(C = \{p, q\}\), with
+\[
+R = \{(1, u), (1, v), (2, w), (3, u)\} \subseteq A \times B, \qquad S = \{(u, p), (v, q), (w, q)\} \subseteq B \times C.
+\]
+- Reversing every pair in \(R\) yields
+\[
+R^{-1} = \{(u, 1), (v, 1), (w, 2), (u, 3)\} \subseteq B \times A.
+\]
+Notice that for a relation on a finite set with adjacency matrix \(M_R\), reversing pairs swaps rows and columns, so \(M_{R^{-1}}\) is the transpose of \(M_R\).
+- To find \(S \circ R \subseteq A \times C\), trace two-step paths \(a \xrightarrow{R} b \xrightarrow{S} c\):
+  - From \(1\): \(1 \xrightarrow{R} u \xrightarrow{S} p\) gives \((1, p)\); \(1 \xrightarrow{R} v \xrightarrow{S} q\) gives \((1, q)\).
+  - From \(2\): \(2 \xrightarrow{R} w \xrightarrow{S} q\) gives \((2, q)\).
+  - From \(3\): \(3 \xrightarrow{R} u \xrightarrow{S} p\) gives \((3, p)\).
+Hence \(S \circ R = \{(1, p), (1, q), (2, q), (3, p)\}\).
+
+Two fundamental algebraic identities govern inverse and composition for any \(R \subseteq A \times B\), \(S \subseteq B \times C\), and \(T \subseteq C \times D\):
+- Associativity: \((T \circ S) \circ R = T \circ (S \circ R)\). Indeed, \((a, d)\) belongs to either side if and only if there exist \(b \in B\) and \(c \in C\) with \((a, b) \in R\), \((b, c) \in S\), and \((c, d) \in T\).
+- Reversal of inverses: \((S \circ R)^{-1} = R^{-1} \circ S^{-1}\). Let us verify this by element chasing! Take any \((c, a) \in C \times A\):
+\[
+\begin{aligned}
+(c, a) \in (S \circ R)^{-1} &\iff (a, c) \in S \circ R \\
+&\iff \exists b \in B,\, \bigl((a, b) \in R \land (b, c) \in S\bigr) \\
+&\iff \exists b \in B,\, \bigl((c, b) \in S^{-1} \land (b, a) \in R^{-1}\bigr) \\
+&\iff (c, a) \in R^{-1} \circ S^{-1}.
+\end{aligned}
+\]
+Reversing a two-step journey \(a \to b \to c\) means taking the second step backward first (\(c \to b\) via \(S^{-1}\)), and then taking the first step backward (\(b \to a\) via \(R^{-1}\)).
+
+[QUESTION 2]
+[ANSWER: D]
+On \(A = \{1, 2, 3\}\), let \(R = \{(1, 2), (2, 3), (3, 1)\}\) and \(S = \{(1, 1), (2, 1), (3, 2)\}\). What is the composite relation \(S \circ R\)?
+
+(A) \(\{(1, 2), (2, 2), (3, 3)\}\)
+(B) \(\{(1, 2), (2, 3), (3, 1)\}\)
+(C) \(\{(1, 2), (2, 1), (3, 2)\}\)
+(D) \(\{(1, 1), (2, 2), (3, 1)\}\)
+(E) \(\{(1, 3), (2, 1), (3, 2)\}\)
+[/QUESTION]
+
+=== SECTION 3: The five structural properties of relations on a set ===
+
+When \(R\) is a relation on a single set \(A\) (\(R \subseteq A \times A\)), five structural properties determine what kind of mathematical object \(R\) is—whether it groups elements into equivalence classes, orders them into a hierarchy, or behaves more wildly.
+
+[CALLOUT]
+id: five-properties
+label: Definition
+title: Five core properties of a binary relation \(R\) on \(A\)
+tone: key
+
+Let \(R \subseteq A \times A\) be a binary relation on a set \(A\).
+
+(1) Reflexive: \(\forall a \in A,\; (a, a) \in R\).
+(2) Irreflexive: \(\forall a \in A,\; (a, a) \notin R\).
+(3) Symmetric: \(\forall a, b \in A,\; \bigl((a, b) \in R \implies (b, a) \in R\bigr)\).
+(4) Antisymmetric: \(\forall a, b \in A,\; \bigl(((a, b) \in R \land (b, a) \in R) \implies a = b\bigr)\).
+(5) Transitive: \(\forall a, b, c \in A,\; \bigl(((a, b) \in R \land (b, c) \in R) \implies (a, c) \in R\bigr)\).
+[/CALLOUT]
+
+Each property has a crisp visual signature in both directed graphs and Boolean adjacency matrices, as well as a clean algebraic description using \(\Delta_A\), \(R^{-1}\), and \(R \circ R\):
+
+[TABLE]
+Property | Digraph signature | Adjacency matrix \(M_R\) | Set-relation equivalent
+Reflexive | Self-loop at EVERY vertex | All \(1\)s on main diagonal | \(\Delta_A \subseteq R\)
+Irreflexive | NO self-loops at any vertex | All \(0\)s on main diagonal | \(R \cap \Delta_A = \emptyset\)
+Symmetric | Every arrow \(a \to b\) has reverse \(b \to a\) | \(M_R\) equals its transpose | \(R^{-1} = R\) (equivalently \(R^{-1} \subseteq R\))
+Antisymmetric | No two DISTINCT vertices have arrows both ways | If \(i \ne j\) and \(M_{ij} = 1\), then \(M_{ji} = 0\) | \(R \cap R^{-1} \subseteq \Delta_A\)
+Transitive | Every two-step path \(a \to b \to c\) has shortcut \(a \to c\) | If \(M_{ij} = 1\) and \(M_{jk} = 1\), then \(M_{ik} = 1\) | \(R \circ R \subseteq R\)
+[/TABLE]
+
+Let us notice an equivalent phrasing of [REF: five-properties.4 | antisymmetry] obtained by taking the contrapositive of the implication:
+\[
+\forall a, b \in A,\; \bigl((a \ne b \land (a, b) \in R) \implies (b, a) \notin R\bigr).
+\]
+This makes the meaning transparent: antisymmetry forbids mutual arrows between TWO DISTINCT elements, while saying nothing at all about self-loops \((a, a)\)!
+
+Let us test all five properties on three diverse examples:
+1. Divisibility on \(\mathbb{Z}^+\): \(a \mid b\).
+   - Reflexive: YES, since \(a = 1 \cdot a\) for every \(a \in \mathbb{Z}^+\).
+   - Irreflexive: NO (e.g., \(1 \mid 1\)).
+   - Symmetric: NO (counterexample: \(2 \mid 4\) holds, but \(4 \nmid 2\)).
+   - Antisymmetric: YES. If \(a \mid b\) and \(b \mid a\) in \(\mathbb{Z}^+\), then \(b = ka\) and \(a = mb\) for positive integers \(k, m\). Hence \(a = mka\), and since \(a > 0\), \(mk = 1\), forcing \(k = m = 1\) and \(a = b\). (Contrast this with divisibility on ALL of \(\mathbb{Z}\): there \(2 \mid (-2)\) and \((-2) \mid 2\) while \(2 \ne -2\), so divisibility on \(\mathbb{Z}\) is NOT antisymmetric!)
+   - Transitive: YES. If \(a \mid b\) and \(b \mid c\), then \(b = ka\) and \(c = mb\) for integers \(k, m\), so \(c = (mk)a\), hence \(a \mid c\).
+2. Strict inclusion \(\subsetneq\) on \(\mathcal{P}(\{1, 2\})\):
+   - Reflexive: NO (\(\emptyset \not\subsetneq \emptyset\)).
+   - Irreflexive: YES (\(S \subsetneq S\) is impossible because \(S = S\)).
+   - Symmetric: NO (\(\emptyset \subsetneq \{1\}\), yet \(\{1\} \not\subsetneq \emptyset\)).
+   - Antisymmetric: YES! Why? Because there do NOT exist ANY \(S, T\) with both \(S \subsetneq T\) and \(T \subsetneq S\) (that would force \(S \subseteq T\) and \(T \subseteq S\), hence \(S = T\), contradicting \(S \ne T\)). So the hypothesis of antisymmetry is always false, making antisymmetry hold vacuously!
+   - Transitive: YES. If \(S \subsetneq T\) and \(T \subsetneq U\), then \(S \subseteq U\); if \(S = U\), then \(T \subseteq S \subseteq T\) would force \(S = T\), contradicting \(S \subsetneq T\). Hence \(S \subsetneq U\).
+3. The geometric band \(W = \{(x, y) \in \mathbb{R}^2 : |x - y| \le 1\}\) from Section 1:
+   - Reflexive: YES (\(|x - x| = 0 \le 1\)).
+   - Irreflexive: NO.
+   - Symmetric: YES (\(|y - x| = |x - y| \le 1\)).
+   - Antisymmetric: NO (counterexample: \((0, 1) \in W\) and \((1, 0) \in W\), yet \(0 \ne 1\)).
+   - Transitive: NO (as seen in the graph: \((0, 0.8) \in W\) and \((0.8, 1.6) \in W\), yet \((0, 1.6) \notin W\)).
+
+[QUESTION 3]
+[ANSWER: B]
+Consider the relation \(R\) on \(\mathbb{Z}\) defined by \((a, b) \in R \iff a + b \text{ is even}\). Which of the five properties does \(R\) satisfy?
+
+(A) Reflexive, antisymmetric, and transitive only
+(B) Reflexive, symmetric, and transitive only
+(C) Irreflexive, symmetric, and transitive only
+(D) Reflexive and symmetric only (not transitive)
+(E) Symmetric and transitive only (not reflexive)
+[/QUESTION]
+
+=== SECTION 4: Misconceptions and vacuous satisfaction ===
+
+Students almost always stumble on two logical traps when classifying relations. Confronting both head-on now will prevent subtle proof errors in every lesson that follows.
+
+[CALLOUT]
+id: symmetry-antisymmetry-trap
+label: Common pitfall
+title: Pairs of properties that are NOT logical opposites
+tone: caution
+
+(1) Reflexive and irreflexive are NOT opposites. On \(A = \{1, 2\}\), the relation \(R = \{(1, 1)\}\) is neither reflexive (missing \((2, 2)\)) nor irreflexive (contains \((1, 1)\)). Even more dramatically, on \(A = \emptyset\), the empty relation \(\emptyset\) is BOTH reflexive and irreflexive vacuously!
+(2) Symmetric and antisymmetric are NEITHER logical opposites NOR mutually exclusive!
+- A relation can be BOTH symmetric and antisymmetric: take the equality relation \(\Delta_A = \{(a, a) : a \in A\}\) (or any subset of \(\Delta_A\), including \(\emptyset\)). Since there are no pairs \((a, b) \in R\) with \(a \ne b\), symmetry and antisymmetry both hold automatically.
+- A relation can be NEITHER symmetric nor antisymmetric: on \(A = \{1, 2, 3\}\), take \(R = \{(1, 2), (2, 1), (1, 3)\}\). It fails symmetry because \((1, 3) \in R\) while \((3, 1) \notin R\); it fails antisymmetry because \((1, 2) \in R\) and \((2, 1) \in R\) while \(1 \ne 2\).
+[/CALLOUT]
+
+In fact, we can characterize EVERY relation on \(A\) that is simultaneously symmetric and antisymmetric! Suppose \(R \subseteq A \times A\) is both symmetric and antisymmetric, and let \((a, b) \in R\). By symmetry, \((b, a) \in R\). Now we have both \((a, b) \in R\) and \((b, a) \in R\), so antisymmetry forces \(a = b\). Thus \(R \subseteq \Delta_A\)! Conversely, any subset \(R \subseteq \Delta_A\) contains only diagonal pairs \((a, a)\), so it is immediately both symmetric and antisymmetric.
+
+The second major trap is overlooking VACUOUS satisfaction in conditional properties (symmetry, antisymmetry, and transitivity). Each of those three properties is a universally quantified implication \(\forall \dots,\, (\text{hypothesis} \implies \text{conclusion})\). Whenever NO elements of \(A\) satisfy the hypothesis, the implication is automatically TRUE—you do not need "witnesses" to make transitivity or antisymmetry hold!
+
+Let us test this on two striking small relations on \(A = \{1, 2, 3\}\):
+- Take \(R_1 = \{(1, 2)\}\).
+  - Is \(R_1\) antisymmetric? YES: the hypothesis \((a, b) \in R_1 \land (b, a) \in R_1\) is NEVER satisfied, so antisymmetry holds vacuously.
+  - Is \(R_1\) transitive? YES: the hypothesis \((a, b) \in R_1 \land (b, c) \in R_1\) requires some pair ending at \(b\) and another starting at \(b\). Since the only pair is \((1, 2)\) and no pair starts with \(2\), the hypothesis is NEVER satisfied, so transitivity holds vacuously!
+- Take \(R_2 = \{(1, 2), (2, 1)\}\).
+  - Is \(R_2\) transitive? NO! Do not assume \(a, b, c\) must be distinct in the definition of transitivity! In [REF: five-properties.5 | transitivity], \(a, b, c \in A\) are arbitrary—repetitions like \(a = c\) are completely allowed. Taking \(a = 1, b = 2, c = 1\), we have \((1, 2) \in R_2\) and \((2, 1) \in R_2\), which demands \((1, 1) \in R_2\). Because \((1, 1) \notin R_2\), transitivity FAILS.
+- Take the empty relation \(R_0 = \emptyset\) on a nonempty set \(A = \{1, 2\}\):
+  - Reflexive? NO, since \((1, 1) \notin \emptyset\).
+  - Irreflexive? YES, since no \((a, a)\) lies in \(\emptyset\).
+  - Symmetric, antisymmetric, transitive? ALL THREE YES, vacuously!
+
+When checking transitivity on a relation, always remember to test the "\(a = c\)" case (a symmetric pair \((a, b)\) and \((b, a)\) forces both \((a, a)\) and \((b, b)\) to be in \(R\))! That single check catches one of the most frequent mistakes in relation proofs.
+
+[QUESTION 4]
+[ANSWER: A]
+On \(A = \{1, 2, 3\}\), let \(R = \{(1, 2), (1, 3)\}\). Which of the five properties does \(R\) satisfy?
+
+(A) Irreflexive, antisymmetric, and transitive
+(B) Irreflexive and antisymmetric only (not transitive)
+(C) Irreflexive and transitive only (not antisymmetric)
+(D) Antisymmetric only
+(E) Reflexive, antisymmetric, and transitive
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(R\) is a binary relation on a nonempty set \(A\) that is BOTH symmetric and transitive. A student claims: "Therefore \(R\) must also be reflexive, because if \((a, b) \in R\), then by symmetry \((b, a) \in R\), and then by transitivity \((a, a) \in R\)." What is the exact flaw in this argument?
+
+(A) Transitivity requires \(a, b, c\) to be three distinct elements, so taking \(c = a\) is invalid.
+(B) Symmetry implies \((b, a) \in R\), which contradicts transitivity.
+(C) The conclusion actually IS true: every symmetric and transitive relation on a nonempty set is reflexive.
+(D) The argument fails because \((a, b) \in R\) does not imply \((b, b) \in R\).
+(E) The argument assumes that for every \(a \in A\) there exists at least one \(b \in A\) with \((a, b) \in R\), which fails if some \(a \in A\) is related to nothing at all.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Let \(R\) and \(S\) be two transitive binary relations on a set \(A\). Which of the following statements is ALWAYS true?
+
+(A) \(R \cup S\) is transitive
+(B) \(R \cap S\) is transitive
+(C) \(S \circ R\) is transitive
+(D) \(R \setminus S\) is transitive
+(E) \((A \times A) \setminus R\) is transitive
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Let \(R\) be a relation on a set \(A\). Which algebraic condition is equivalent to \(R\) being BOTH symmetric AND antisymmetric?
+
+(A) \(R = \Delta_A\)
+(B) \(R = \emptyset\)
+(C) \(R \subseteq \Delta_A\)
+(D) \(R \circ R = R\)
+(E) \(R \cup R^{-1} = A \times A\)
+[/BONUS]

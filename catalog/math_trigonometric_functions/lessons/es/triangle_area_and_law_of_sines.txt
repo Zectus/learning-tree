@@ -1,0 +1,220 @@
+=== SECTION 1: Trazado de una altura: la fórmula de área LAL para cualquier triángulo ===
+
+Todo triángulo rectángulo nos da razones trigonométricas inmediatas porque uno de sus ángulos ya mide \(90^\circ\). Sin embargo, la mayoría de los triángulos reales en topografía, navegación y geometría son oblicuángulos: no contienen ningún ángulo recto. ¿Cómo podemos calcular el área o los lados faltantes de un triángulo arbitrario \(\triangle ABC\) (con lado \(a\) opuesto al ángulo \(A\), lado \(b\) opuesto al ángulo \(B\) y lado \(c\) opuesto al ángulo \(C\)) usando únicamente trigonometría de triángulos rectángulos y lo que sabemos del seno en la circunferencia unitaria?
+
+El puente es sencillo: forme un triángulo rectángulo trazando una altura perpendicular \(h\) desde un vértice (digamos \(B\)) hasta la recta que contiene al lado opuesto \(AC\) (de longitud \(b\)). Por geometría básica, el área \(K\) de \(\triangle ABC\) es siempre
+\[
+K = \frac{1}{2}(\text{base})(\text{altura}) = \frac{1}{2}bh.
+\]
+Ahora exprese \(h\) en términos del lado \(a = BC\) y el ángulo \(C\). Hay tres posibilidades para el ángulo \(C\):
+
+1. El ángulo \(C\) es agudo (\(0^\circ < C < 90^\circ\)): la altura cae dentro del triángulo (o sobre el lado \(AC\)), formando un triángulo rectángulo con hipotenusa \(a\) y cateto opuesto \(h\). Por lo tanto \(\sin C = \frac{h}{a}\), de modo que \(h = a\sin C\).
+
+[GRAPH]
+type: parametric2d
+title: Caso agudo: altura interior \(h = a\sin C\) dentro de \(\triangle ABC\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 2.3036, 3.1416
+xrange: -0.5, 6.6
+yrange: -0.6, 3.8
+trace: 6 + 0.9*cos(t), 0.9*sin(t) | label: ángulo \(C\) | color: #dc2626
+segment: 0, 0, 6, 0 | label: \(b\) | color: #0f172a
+segment: 0, 0, 3.2, 3.1 | label: \(c\) | color: #2563eb
+segment: 6, 0, 3.2, 3.1 | label: \(a\) | color: #dc2626
+segment: 3.2, 0, 3.2, 3.1 | label: \(h\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.25, -0.25
+point: 3.2, 3.1 | label: \(B\) | offset: 0, 0.25
+point: 6, 0 | label: \(C\) | offset: 0.25, -0.25
+point: 3.2, 0 | label: \(H\) | offset: 0, -0.3
+[/GRAPH]
+
+2. El ángulo \(C\) es obtuso (\(90^\circ < C < 180^\circ\)): la altura desde \(B\) cae FUERA del triángulo sobre la prolongación del lado \(AC\), creando el triángulo rectángulo \(\triangle BHC\) con hipotenusa \(a\) y ángulo agudo interior \(180^\circ - C\). De ahí que \(h = a\sin(180^\circ - C)\). Por la identidad de ángulos suplementarios de la circunferencia unitaria, \(\sin(180^\circ - C) = \sin C\), ¡de modo que SEGUIMOS obteniendo \(h = a\sin C\)!
+
+[GRAPH]
+type: parametric2d
+title: Caso obtuso: altura exterior \(h = a\sin(180^\circ - C) = a\sin C\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0.876, 3.1416
+xrange: -0.5, 7.0
+yrange: -0.6, 3.7
+trace: 4 + 0.8*cos(t), 0.8*sin(t) | label: ángulo obtuso \(C\) | color: #dc2626
+segment: 0, 0, 4, 0 | label: \(b\) | color: #0f172a
+segment: 4, 0, 6.2, 0 | dashed: true
+segment: 0, 0, 6.2, 2.8 | label: \(c\) | color: #2563eb
+segment: 4, 0, 6.2, 2.8 | label: \(a\) | color: #dc2626
+segment: 6.2, 0, 6.2, 2.8 | label: \(h\) | color: #059669 | dashed: true
+point: 0, 0 | label: \(A\) | offset: -0.25, -0.25
+point: 4, 0 | label: \(C\) | offset: 0, -0.3
+point: 6.2, 0 | label: \(H\) | offset: 0.25, -0.25
+point: 6.2, 2.8 | label: \(B\) | offset: 0.15, 0.25
+[/GRAPH]
+
+3. El ángulo \(C\) es recto (\(C = 90^\circ\)): el propio lado \(a\) es la altura, y como \(\sin 90^\circ = 1\), \(h = a = a\sin 90^\circ\).
+
+En los tres casos \(h = a\sin C\), de modo que al sustituir en \(K = \frac{1}{2}bh\) se obtiene la fórmula de área Lado-Ángulo-Lado (LAL). Trazar una altura hacia cualquiera de los otros dos lados produce las formas cíclicas equivalentes.
+
+[CALLOUT]
+id: sas-area
+label: Teorema
+title: Fórmula de área LAL para el triángulo
+tone: key
+
+Para todo triángulo \(\triangle ABC\) con longitudes de lados \(a, b, c\) opuestos a los ángulos \(A, B, C\), el área \(K\) es igual a la mitad del producto de dos lados cualesquiera por el seno del ángulo comprendido entre ellos:
+\[
+K = \frac{1}{2}ab\sin C = \frac{1}{2}bc\sin A = \frac{1}{2}ac\sin B.
+\]
+[/CALLOUT]
+
+Por ejemplo, un triángulo con lados de \(9\text{ m}\) y \(12\text{ m}\) que forman un ángulo comprendido de \(135^\circ\) tiene área exacta
+\[
+K = \frac{1}{2}(9)(12)\sin 135^\circ = 54 \cdot \frac{\sqrt{2}}{2} = 27\sqrt{2}\text{ m}^2 \approx 38.2\text{ m}^2.
+\]
+Para hallar el área de un polígono irregular, simplemente divídalo en triángulos sin traslapes mediante diagonales y sume las áreas LAL de las piezas.
+
+[QUESTION 1]
+[ANSWER: B]
+Una parcela triangular tiene dos lados de longitudes \(10\text{ m}\) y \(14\text{ m}\) que concurren formando un ángulo comprendido de \(120^\circ\). ¿Cuál es el área exacta de la parcela?
+
+(A) \(70\sqrt{3}\text{ m}^2\)
+(B) \(35\sqrt{3}\text{ m}^2\)
+(C) \(35\text{ m}^2\)
+(D) \(70\text{ m}^2\)
+(E) \(35\sqrt{2}\text{ m}^2\)
+[/QUESTION]
+
+=== SECTION 2: Deducción de la ley de los senos ===
+
+Observe nuevamente las tres expresiones iguales de área en [REF: sas-area | la fórmula de área LAL]:
+\[
+\frac{1}{2}bc\sin A = \frac{1}{2}ac\sin B = \frac{1}{2}ab\sin C.
+\]
+Como las longitudes de los lados \(a, b, c\) son todas estrictamente positivas, podemos dividir cada expresión entre \(\frac{1}{2}abc\). En el primer término, \(\frac{1}{2}bc\) se cancela dejando \(\frac{\sin A}{a}\); en el segundo término, \(\frac{1}{2}ac\) se cancela dejando \(\frac{\sin B}{b}\); en el tercer término, \(\frac{1}{2}ab\) se cancela dejando \(\frac{\sin C}{c}\). ¡Ese único paso algebraico demuestra la ley de los senos simultáneamente para todo triángulo acutángulo, rectángulo y obtusángulo!
+
+[CALLOUT]
+id: law-of-sines
+label: Teorema
+title: La ley de los senos
+tone: key
+
+En todo triángulo \(\triangle ABC\) con longitudes de lados \(a, b, c\) opuestos a los ángulos \(A, B, C\), la razón entre el seno de cada ángulo y su lado opuesto es constante:
+\[
+\frac{\sin A}{a} = \frac{\sin B}{b} = \frac{\sin C}{c},
+\]
+o equivalentemente en forma recíproca (más cómoda al despejar un lado desconocido),
+\[
+\frac{a}{\sin A} = \frac{b}{\sin B} = \frac{c}{\sin C}.
+\]
+[/CALLOUT]
+
+¡Advierta lo que necesita para desbloquear [REF: law-of-sines | la ley de los senos]: un par opuesto completo —un ángulo junto con el lado frente a él— de modo que se conozca una razón completa \(\frac{a}{\sin A}\)! Una vez fijada esa razón común, cualquier otro ángulo determina de inmediato su lado opuesto.
+
+=== SECTION 3: Resolución unívoca de triángulos AAL y ALA ===
+
+Dos configuraciones triangulares determinan siempre un triángulo ÚNICO y ceden de inmediato ante la ley de los senos:
+- AAL (Ángulo-Ángulo-Lado): se dan dos ángulos y un lado opuesto a uno de ellos.
+- ALA (Ángulo-Lado-Ángulo): se dan dos ángulos y el lado comprendido entre ellos.
+
+En ambos casos, el primer paso es inmediato: halle el tercer ángulo mediante la suma angular \(A + B + C = 180^\circ\). (Observe que si los dos ángulos dados ya suman \(180^\circ\) o más, no existe ningún triángulo.) Una vez conocidos los tres ángulos, tiene garantizado un par opuesto completo —incluso en ALA, donde el lado dado queda opuesto al tercer ángulo que acaba de calcular—.
+
+Ejemplo resuelto (ALA): Resuelva \(\triangle ABC\) dados \(A = 42^\circ\), \(B = 75^\circ\) y el lado comprendido \(c = 18\text{ cm}\).
+1. Halle el tercer ángulo \(C\):
+\[
+C = 180^\circ - 42^\circ - 75^\circ = 63^\circ.
+\]
+Ahora \((C, c) = (63^\circ, 18\text{ cm})\) es nuestro par opuesto exacto conocido.
+2. Despeje el lado \(a\) directamente a partir del par conocido:
+\[
+\frac{a}{\sin 42^\circ} = \frac{18}{\sin 63^\circ} \implies a = \frac{18\sin 42^\circ}{\sin 63^\circ} \approx \frac{18(0.6691)}{0.8910} \approx 13.52\text{ cm}.
+\]
+3. Despeje el lado \(b\) directamente a partir del MISMO par original \((C, c)\) —nunca a partir del valor redondeado de \(a\)—:
+\[
+\frac{b}{\sin 75^\circ} = \frac{18}{\sin 63^\circ} \implies b = \frac{18\sin 75^\circ}{\sin 63^\circ} \approx \frac{18(0.9659)}{0.8910} \approx 19.51\text{ cm}.
+\]
+4. Verificación de coherencia: los ángulos satisfacen \(A = 42^\circ < C = 63^\circ < B = 75^\circ\), y los lados opuestos satisfacen \(a \approx 13.52 < c = 18 < b \approx 19.51\): ¡estrictamente en el mismo orden!
+
+[CALLOUT]
+id: ssa-deferral-note
+label: Nota de alcance
+title: Por qué nos detenemos en AAL y ALA aquí
+tone: note
+
+¿Qué ocurre si conoce dos lados y un ángulo no comprendido (LLA), de modo que debe usar la ley de los senos para despejar un ÁNGULO desconocido en lugar de un lado desconocido? Como \(\sin(180^\circ - \theta) = \sin\theta\), un mismo valor del seno puede corresponder tanto a un ángulo agudo como a su suplemento obtuso, produciendo cero, uno o dos triángulos válidos. Dedicamos toda la lección siguiente a dominar limpiamente ese caso ambiguo LLA.
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: D]
+En el triángulo \(\triangle ABC\), \(A = 30^\circ\), \(B = 45^\circ\) y el lado \(a = 8\). ¿Cuál es la longitud exacta del lado \(b\)?
+
+(A) \(4\sqrt{2}\)
+(B) \(8\sqrt{3}\)
+(C) \(16\sqrt{2}\)
+(D) \(8\sqrt{2}\)
+(E) \(4\sqrt{6}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+En el triángulo \(\triangle ABC\), se dan \(A = 40^\circ\), \(B = 65^\circ\) y el lado comprendido \(c = 20\text{ m}\). ¿Qué expresión exacta da la longitud del lado \(a\)?
+
+(A) \(\dfrac{20\sin 40^\circ}{\sin 75^\circ}\)
+(B) \(\dfrac{20\sin 75^\circ}{\sin 40^\circ}\)
+(C) \(\dfrac{20\sin 40^\circ}{\sin 65^\circ}\)
+(D) \(\dfrac{20\sin 65^\circ}{\sin 75^\circ}\)
+(E) \(\dfrac{20\sin 40^\circ}{\sin 105^\circ}\)
+[/QUESTION]
+
+=== SECTION 4: Polígonos divididos y medición indirecta ===
+
+Combinar [REF: sas-area | la fórmula de área LAL] con [REF: law-of-sines | la ley de los senos] resuelve problemas de topografía y medición de terrenos que los triángulos rectángulos por sí solos no pueden abordar directamente.
+
+Considere a un topógrafo que mide la distancia a través de un río ancho desde un punto \(A\) en una orilla hasta una referencia \(C\) en la orilla opuesta. El topógrafo marca un segundo punto \(B\) a \(120\text{ m}\) a lo largo de la orilla cercana y mide \(\angle BAC = 54^\circ\) y \(\angle ABC = 78^\circ\). Advierta que se trata de un triángulo ALA con línea base comprendida \(c = 120\text{ m}\). Primero calcule \(\angle ACB = 180^\circ - 54^\circ - 78^\circ = 48^\circ\). Luego la distancia \(b = AC\) a través del río se obtiene de inmediato por la ley de los senos:
+\[
+b = \frac{120\sin 78^\circ}{\sin 48^\circ} \approx 157.9\text{ m}.
+\]
+Y si necesitamos el área de una parcela cuadrilátera \(ABCD\) donde la diagonal \(BD\) divide el terreno en \(\triangle ABD\) y \(\triangle CBD\), aplicamos la fórmula de área LAL a cada triángulo por separado y los sumamos.
+
+[QUESTION 4]
+[ANSWER: C]
+Un campo cuadrilátero \(ABCD\) se divide mediante la diagonal \(BD = 12\text{ m}\) en dos triángulos. En \(\triangle ABD\), \(AB = 10\text{ m}\) y \(\angle ABD = 30^\circ\). En \(\triangle CBD\), \(CD = 8\text{ m}\) y \(\angle BDC = 150^\circ\). ¿Cuál es el área total exacta del cuadrilátero \(ABCD\)?
+
+(A) \(108\text{ m}^2\)
+(B) \(54\sqrt{3}\text{ m}^2\)
+(C) \(54\text{ m}^2\)
+(D) \(48\text{ m}^2\)
+(E) \(6\text{ m}^2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Un hexágono regular está inscrito en una circunferencia de radio \(6\text{ cm}\), de modo que trazar radios desde el centro hasta los seis vértices divide el hexágono en seis triángulos congruentes. ¿Cuál es el área total exacta del hexágono?
+
+(A) \(18\sqrt{3}\text{ cm}^2\)
+(B) \(27\sqrt{3}\text{ cm}^2\)
+(C) \(108\sqrt{3}\text{ cm}^2\)
+(D) \(36\sqrt{3}\text{ cm}^2\)
+(E) \(54\sqrt{3}\text{ cm}^2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+En el triángulo \(\triangle ABC\), \(A = 60^\circ\), \(C = 75^\circ\) y el lado \(b = 12\). ¿Cuál es la longitud exacta simplificada del lado \(a\)?
+
+(A) \(6\sqrt{3}\)
+(B) \(6\sqrt{6}\)
+(C) \(12\sqrt{6}\)
+(D) \(4\sqrt{6}\)
+(E) \(12\sqrt{3}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+En cualquier triángulo \(\triangle ABC\) donde se conocen los tres ángulos \(A, B, C\) y el lado \(c\), ¿qué fórmula expresa el área exacta \(K\) únicamente en términos de \(c\) y los senos de los ángulos?
+
+(A) \(K = \dfrac{c^2\sin C}{2\sin A\sin B}\)
+(B) \(K = \dfrac{c\sin A\sin B}{2\sin C}\)
+(C) \(K = \dfrac{c^2\sin A\sin C}{2\sin B}\)
+(D) \(K = \dfrac{c^2\sin A\sin B}{2\sin C}\)
+(E) \(K = \dfrac{c^2\sin A\sin B}{\sin C}\)
+[/BONUS]

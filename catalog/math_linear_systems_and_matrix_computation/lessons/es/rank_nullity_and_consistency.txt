@@ -1,0 +1,273 @@
+=== SECTION 1: El rango matricial y por qué el rango columna es igual al rango fila ===
+
+Observe nuevamente la tabla al final de la lección anterior: para CUALQUIER matriz \(m \times n\) \(A\), el conjunto generador linealmente independiente minimal de \(\operatorname{Col}(A)\) tiene \(r\) vectores (las columnas pivote de \(A\)), y el conjunto generador linealmente independiente minimal de \(\operatorname{Row}(A)\) TAMBIÉN tiene \(r\) vectores (las filas no nulas de \(\operatorname{RREF}(A)\)), donde \(r\) es el número de posiciones pivote de \(A\).
+
+Ese único entero \(r\) —que está completamente bien definido porque \(\operatorname{RREF}(A)\) es única— es uno de los invariantes más informativos de una matriz.
+
+[CALLOUT]
+id: rank-def
+label: Definición
+title: Rango y nulidad de una matriz \(m \times n\)
+tone: key
+
+Sea \(A\) una matriz \(m \times n\).
+
+(1) El rango de \(A\), escrito \(\operatorname{rank}(A)\), es el número de posiciones pivote en cualquier REF (o \(\operatorname{RREF}(A)\)).
+(2) La nulidad de \(A\), escrita \(\operatorname{nullity}(A)\), es el número de variables libres (columnas no pivote) de \(A\) —equivalentemente, el número de vectores solución especiales en el conjunto generador minimal de \(\operatorname{Null}(A)\)—.
+[/CALLOUT]
+
+De inmediato, a partir de nuestras construcciones con columnas pivote y filas no nulas, se desprenden tres hechos fundamentales:
+
+1. El rango columna es igual al rango fila: el tamaño del conjunto generador independiente minimal de \(\operatorname{Col}(A)\) (el número de columnas pivote) es igual al tamaño del conjunto generador independiente minimal de \(\operatorname{Row}(A)\) (el número de filas no nulas en \(\operatorname{RREF}(A)\)), ¡porque cada pivote ocupa una fila distinta y una columna distinta! Ambos son iguales a \(\operatorname{rank}(A)\).
+2. Cota de tamaño: como hay a lo sumo un pivote por fila y a lo sumo un pivote por columna,
+\[
+0 \le \operatorname{rank}(A) \le \min(m, n),
+\]
+con \(\operatorname{rank}(A) = 0\) si y solo si \(A\) es la matriz nula.
+3. Invariancia bajo transposición:
+\[
+\operatorname{rank}(A^T) = \operatorname{rank}(A).
+\]
+¿Por qué transponer preserva el rango? ¡Tengamos cuidado de no afirmarlo a la ligera! Las filas de \(A\) son las columnas de \(A^T\), de modo que \(\operatorname{Row}(A)\) y \(\operatorname{Col}(A^T)\) son exactamente el mismo conjunto de vectores (escritos horizontalmente frente a verticalmente). ¿Puede un conjunto de vectores en \(\mathbb{R}^n\) tener dos conjuntos generadores linealmente independientes minimales de TAMAÑOS DISTINTOS? ¡Comprobémoslo concretamente! Suponga que \(\{\mathbf{u}_1, \dots, \mathbf{u}_p\}\) y \(\{\mathbf{w}_1, \dots, \mathbf{w}_q\}\) son dos conjuntos linealmente independientes que generan el mismo conjunto \(S \subseteq \mathbb{R}^n\), y agrúpelos como las columnas de una matriz \(n \times p\) \(U\) y una matriz \(n \times q\) \(W\). Como cada \(\mathbf{w}_j\) es combinación lineal de las columnas de \(U\), podemos escribir \(W = U C\) para una matriz \(p \times q\) \(C\). Si \(q > p\), el sistema homogéneo \(C\mathbf{z} = \mathbf{0}\) es subdeterminado (más columnas que filas) y, por lo tanto, tiene una solución no nula \(\mathbf{z} \neq \mathbf{0}\); entonces \(W\mathbf{z} = U(C\mathbf{z}) = \mathbf{0}\), ¡contradiciendo la independencia lineal de las columnas de \(W\)! Por ende, \(q \le p\), y por simetría \(p \le q\), así que \(p = q\).
+Aplicar esto a \(S = \operatorname{Row}(A) = \operatorname{Col}(A^T)\) demuestra que el número de filas pivote de \(A\) (que es \(\operatorname{rank}(A)\)) DEBE ser igual al número de columnas pivote de \(A^T\) (que es \(\operatorname{rank}(A^T)\)). Así, \(\operatorname{rank}(A^T) = \operatorname{rank}(A)\) se cumple para toda matriz \(A\).
+
+Ahora cuente las columnas de \(A\). Cada una de las \(n\) columnas de \(A\) es O BIEN una columna pivote O BIEN una columna no pivote (de variable libre) —nunca ambas y nunca ninguna—. Sumar esos dos conteos produce la ley concreta de conteo Rango-Nulidad.
+
+[CALLOUT]
+id: rank-nullity-law
+label: Teorema
+title: Ley de conteo Rango-Nulidad
+tone: key
+
+Para toda matriz \(m \times n\) \(A\),
+\[
+\operatorname{rank}(A) + \operatorname{nullity}(A) = n \quad (\text{el número de columnas de } A).
+\]
+En particular, siempre que \(A\mathbf{x} = \mathbf{b}\) sea consistente, su solución general \(\mathbf{x} = \mathbf{x}_p + t_1 \mathbf{v}_1 + \cdots + t_k \mathbf{v}_k\) contiene exactamente \(k = \operatorname{nullity}(A) = n - \operatorname{rank}(A)\) parámetros libres.
+[/CALLOUT]
+
+Tenga mucho cuidado al aplicar [REF: rank-nullity-law | Rango-Nulidad] a \(A^T\): una matriz \(m \times n\) \(A\) tiene \(n\) columnas, ¡mientras que su transpuesta \(A^T\) es \(n \times m\) y tiene \(m\) columnas! Por lo tanto:
+\[
+\operatorname{rank}(A) + \operatorname{nullity}(A) = n, \qquad \text{mientras que} \qquad \operatorname{rank}(A^T) + \operatorname{nullity}(A^T) = m.
+\]
+Como \(\operatorname{rank}(A^T) = \operatorname{rank}(A)\), obtenemos \(\operatorname{nullity}(A^T) = m - \operatorname{rank}(A)\).
+
+Comprobemos los cuatro números en una matriz concreta \(3 \times 4\):
+\[
+A = \begin{bmatrix} 1 & 2 & -1 & 4 \\ 2 & 4 & 1 & 5 \\ -1 & -2 & 4 & -7 \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\begin{bmatrix} 1 & 2 & -1 & 4 \\ 0 & 0 & 3 & -3 \\ 0 & 0 & 3 & -3 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - R_2}
+\begin{bmatrix} 1 & 2 & -1 & 4 \\ 0 & 0 & 3 & -3 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Aquí \(m = 3\), \(n = 4\), y hay \(2\) pivotes (columnas \(1\) y \(3\)). Por consiguiente:
+- \(\operatorname{rank}(A) = 2\),
+- \(\operatorname{nullity}(A) = n - \operatorname{rank}(A) = 4 - 2 = 2\),
+- \(\operatorname{rank}(A^T) = 2\),
+- \(\operatorname{nullity}(A^T) = m - \operatorname{rank}(A^T) = 3 - 2 = 1\).
+
+[QUESTION 1]
+[ANSWER: B]
+Considere la matriz \(4 \times 5\)
+\[
+A = \begin{bmatrix} 1 & 3 & -2 & 1 & 0 \\ 2 & 6 & -4 & 3 & 2 \\ -1 & -3 & 2 & 0 & 2 \\ 0 & 0 & 0 & 1 & 2 \end{bmatrix}.
+\]
+¿Cuál es la terna ordenada \(\bigl(\operatorname{rank}(A),\; \operatorname{nullity}(A),\; \operatorname{nullity}(A^T)\bigr)\)?
+
+(A) \((2, 2, 3)\)
+(B) \((2, 3, 2)\)
+(C) \((2, 3, 3)\)
+(D) \((3, 2, 1)\)
+(E) \((2, 2, 2)\)
+[/QUESTION]
+
+=== SECTION 2: El teorema de consistencia de Rouché-Capelli ===
+
+Antes caracterizamos la consistencia de \(A\mathbf{x} = \mathbf{b}\) de dos maneras:
+1. Geométricamente, \(\mathbf{b} \in \operatorname{Col}(A)\).
+2. Algorítmicamente, una forma escalonada de \([A \mid \mathbf{b}]\) no tiene ningún pivote en su columna más a la derecha (aumentada) —ninguna fila de la forma \([0 \cdots 0 \mid c]\) con \(c \neq 0\)—.
+
+¡Compare el conteo de pivotes de \([A \mid \mathbf{b}]\) con el conteo de pivotes de \(A\)! Ejecutar eliminación hacia adelante sobre \([A \mid \mathbf{b}]\) reduce el bloque izquierdo \(A\) a una forma escalonada \(U\) con \(r = \operatorname{rank}(A)\) pivotes. La única columna extra \(\mathbf{b}\) puede agregar A LO SUMO UN pivote nuevo (situado en la columna más a la derecha debajo de las \(r\) filas no nulas de \(U\)). Por lo tanto, solo hay dos posibilidades:
+- \(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A)\): la columna más a la derecha NO es una columna pivote, así que el sistema es consistente.
+- \(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A) + 1\): la columna más a la derecha SÍ es una columna pivote (produciendo una fila contradictoria \([0 \cdots 0 \mid c]\) con \(c \neq 0\)), así que el sistema es inconsistente.
+
+Esto unifica consistencia, unicidad y conteos de parámetros en una única prueba limpia de rango.
+
+[CALLOUT]
+id: rouche-capelli
+label: Teorema
+title: Teorema de Consistencia de Rouché-Capelli
+tone: key
+
+Sea \(A\) una matriz \(m \times n\) y \(\mathbf{b} \in \mathbb{R}^m\).
+
+(1) El sistema lineal \(A\mathbf{x} = \mathbf{b}\) es consistente si y solo si
+\[
+\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A).
+\]
+(2) Cuando \(A\mathbf{x} = \mathbf{b}\) es consistente:
+- La solución es ÚNICA si y solo si \(\operatorname{rank}(A) = n\) (de modo que \(\operatorname{nullity}(A) = 0\)).
+- Hay INFINITAS soluciones si y solo si \(\operatorname{rank}(A) < n\), con exactamente \(n - \operatorname{rank}(A)\) parámetros libres.
+[/CALLOUT]
+
+Para ver [REF: rouche-capelli | Rouché-Capelli] geométricamente en \(\mathbb{R}^2\), tome la matriz de rango \(1\) \(A = \begin{bmatrix} 1 & 2 \\ 2 & 4 \end{bmatrix}\), cuyo espacio columna es la recta \(b_2 = 2 b_1\), y pruebe lados derechos \(\mathbf{b} = \begin{bmatrix} 1 \\ c \end{bmatrix}\) conforme varía el deslizador \(c\). Solo en el único valor \(c = 2\) cae \(\mathbf{b}\) sobre \(\operatorname{Col}(A)\), manteniendo \(\operatorname{rank}([A \mid \mathbf{b}]) = 1 = \operatorname{rank}(A)\) (consistente con \(2 - 1 = 1\) parámetro libre). Para todo \(c \neq 2\), \(\mathbf{b}\) sale de la recta, creando un segundo pivote de modo que \(\operatorname{rank}([A \mid \mathbf{b}]) = 2 > \operatorname{rank}(A)\) (inconsistente).
+
+[GRAPH]
+type: parametric2d
+title: Añadir \(\mathbf{b} = (1, c)\) eleva el rango de \(1\) a \(2\) cuando \(\mathbf{b}\) sale de \(\operatorname{Col}(A)\)
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -1, 3
+xrange: -1, 3
+yrange: -1, 5
+trace: t, 2*t | label: \(\operatorname{Col}(A)\) (\(b_2 = 2 b_1\)) | color: #2563eb
+segment: 0, 0, 1, c | label: \(\mathbf{b}\) | color: #dc2626
+segment: 1, 2, 1, c | color: #6b7280 | dashed: true
+point: 1, 2 | label: \((1, 2)\) | color: #2563eb
+point: 1, c | label: \(\mathbf{b}\) | color: #dc2626
+slider: c | range: 0, 4 | init: 3.5 | step: 0.25
+[/GRAPH]
+
+Apliquemos [REF: rouche-capelli | Rouché-Capelli] a nuestra matriz \(3 \times 4\) de la Sección 1 con un lado derecho general \(\mathbf{b} = \begin{bmatrix} b_1 \\ b_2 \\ b_3 \end{bmatrix}\):
+\[
+\begin{bmatrix} 1 & 2 & -1 & 4 & \mid & b_1 \\ 2 & 4 & 1 & 5 & \mid & b_2 \\ -1 & -2 & 4 & -7 & \mid & b_3 \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\begin{bmatrix} 1 & 2 & -1 & 4 & \mid & b_1 \\ 0 & 0 & 3 & -3 & \mid & b_2 - 2 b_1 \\ 0 & 0 & 3 & -3 & \mid & b_3 + b_1 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - R_2}
+\begin{bmatrix} 1 & 2 & -1 & 4 & \mid & b_1 \\ 0 & 0 & 3 & -3 & \mid & b_2 - 2 b_1 \\ 0 & 0 & 0 & 0 & \mid & 3 b_1 - b_2 + b_3 \end{bmatrix}.
+\]
+Aquí \(\operatorname{rank}(A) = 2\). Por lo tanto:
+- \(\operatorname{rank}([A \mid \mathbf{b}]) = 2\) si y solo si \(3 b_1 - b_2 + b_3 = 0\): para todo \(\mathbf{b}\) tal (como \(\mathbf{b} = (1, 4, 1)^T\)), el sistema es consistente con \(4 - 2 = 2\) parámetros libres.
+- Si \(3 b_1 - b_2 + b_3 \neq 0\) (como \(\mathbf{b} = (1, 4, 2)^T\)), entonces \(\operatorname{rank}([A \mid \mathbf{b}]) = 3 > 2\), y el sistema no tiene solución.
+
+[TABLE]
+Comparación de rangos para el sistema \(m \times n\) \(A\mathbf{x} = \mathbf{b}\) | Comportamiento de la solución
+\(\operatorname{rank}([A \mid \mathbf{b}]) > \operatorname{rank}(A)\) | Inconsistente (sin solución)
+\(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A) = n\) | Consistente con solución única (\(0\) parámetros libres)
+\(\operatorname{rank}([A \mid \mathbf{b}]) = \operatorname{rank}(A) < n\) | Consistente con infinitas soluciones (\(n - \operatorname{rank}(A)\) parámetros libres)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: C]
+Considere el sistema lineal representado por la matriz aumentada
+\[
+[A \mid \mathbf{b}] = \begin{bmatrix} 1 & -2 & 3 & 1 & \mid & 2 \\ 2 & -4 & 7 & 4 & \mid & 5 \\ -1 & 2 & -1 & 3 & \mid & k \end{bmatrix}.
+\]
+¿Para qué valor(es) real(es) de \(k\) es consistente este sistema, y cuántos parámetros libres aparecen en la solución general cuando es consistente?
+
+(A) Consistente para todo \(k\) real, con \(2\) parámetros libres
+(B) Consistente solo para \(k = 0\), con \(1\) parámetro libre
+(C) Consistente solo para \(k = 0\), con \(2\) parámetros libres
+(D) Consistente solo para \(k = -2\), con \(2\) parámetros libres
+(E) Consistente solo para \(k = 0\), con solución única
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Suponga que \(A\) es una matriz \(4 \times 6\) tal que \(A\mathbf{x} = \mathbf{b}\) es consistente para TODO \(\mathbf{b} \in \mathbb{R}^4\). ¿Cuáles son \(\operatorname{rank}(A)\) y \(\operatorname{nullity}(A)\)?
+
+(A) \(\operatorname{rank}(A) = 6\) y \(\operatorname{nullity}(A) = 0\)
+(B) \(\operatorname{rank}(A) = 4\) y \(\operatorname{nullity}(A) = 0\)
+(C) \(\operatorname{rank}(A) = 2\) y \(\operatorname{nullity}(A) = 4\)
+(D) \(\operatorname{rank}(A) = 4\) y \(\operatorname{nullity}(A) = 2\)
+(E) \(\operatorname{rank}(A)\) podría ser cualquier entero entre \(1\) y \(4\), según las entradas de \(A\)
+[/QUESTION]
+
+=== SECTION 3: Desigualdades de rango para productos matriciales ===
+
+¿Cómo afecta la multiplicación matricial al rango? Sean \(A\) de \(m \times n\) y \(B\) de \(n \times p\), de modo que el producto \(AB\) es \(m \times p\). Intuitivamente:
+- Toda columna de \(AB\) tiene la forma \(A\mathbf{b}_j\), que es una combinación lineal de las columnas de \(A\), por lo que \(\operatorname{Col}(AB) \subseteq \operatorname{Col}(A)\).
+- Toda fila de \(AB\) es una combinación lineal de las filas de \(B\), por lo que \(\operatorname{Row}(AB) \subseteq \operatorname{Row}(B)\).
+
+Ambas inclusiones sugieren que multiplicar dos matrices NUNCA puede aumentar el rango: solo puede mantener el rango igual o hacerlo disminuir. ¡Demostremos esto limpiamente usando ÚNICAMENTE reducción por filas e invariancia bajo transposición, sin necesitar maquinaria abstracta de dimensión de subespacios!
+
+[CALLOUT]
+id: product-rank-bounds
+label: Teorema
+title: Rango de un producto matricial e invariancia bajo factores invertibles
+tone: key
+
+Sean \(A\) de \(m \times n\) y \(B\) de \(n \times p\).
+
+(1) Cota de rango del producto:
+\[
+\operatorname{rank}(AB) \le \min\bigl(\operatorname{rank}(A),\; \operatorname{rank}(B)\bigr).
+\]
+(2) Invariancia bajo factores invertibles: si \(P\) es una matriz invertible \(m \times m\) y \(Q\) es una matriz invertible \(n \times n\), entonces
+\[
+\operatorname{rank}(PA) = \operatorname{rank}(AQ) = \operatorname{rank}(PAQ) = \operatorname{rank}(A).
+\]
+[/CALLOUT]
+
+Demostración de [REF: product-rank-bounds.1 | la parte (1)].
+Sea \(r = \operatorname{rank}(A)\), y sea \(P\) un producto invertible de matrices elementales tal que \(PA = R = \operatorname{RREF}(A)\). Entonces las últimas \(m - r\) filas de \(R\) son completamente nulas. Ahora multiplique ambos lados por la derecha por \(B\):
+\[
+P(AB) = (PA)B = RB.
+\]
+Como las últimas \(m - r\) filas de \(R\) son todas ceros, ¡las últimas \(m - r\) filas de \(RB\) TAMBIÉN son todas ceros! Por ende, \(RB\) tiene a lo sumo \(r\) filas no nulas, así que reducir aún más \(RB\) puede producir a lo sumo \(r\) pivotes: \(\operatorname{rank}(RB) \le r = \operatorname{rank}(A)\). Como \(P\) es un producto de matrices elementales, \(AB\) y \(P(AB) = RB\) son equivalentes por filas y comparten exactamente la misma RREF y el mismo rango. Por lo tanto,
+\[
+\operatorname{rank}(AB) = \operatorname{rank}(RB) \le \operatorname{rank}(A).
+\]
+Aplique ahora exactamente esa misma desigualdad a la transpuesta \((AB)^T = B^T A^T\), usando \(\operatorname{rank}(M^T) = \operatorname{rank}(M)\):
+\[
+\operatorname{rank}(AB) = \operatorname{rank}\bigl((AB)^T\bigr) = \operatorname{rank}(B^T A^T) \le \operatorname{rank}(B^T) = \operatorname{rank}(B).
+\]
+¡Combinar ambas desigualdades da \(\operatorname{rank}(AB) \le \min(\operatorname{rank}(A), \operatorname{rank}(B))\)!
+
+Demostración de [REF: product-rank-bounds.2 | la parte (2)].
+Por [REF: product-rank-bounds.1 | la parte (1)], multiplicar por CUALQUIER matriz no puede aumentar el rango, de modo que
+\[
+\operatorname{rank}(PAQ) \le \operatorname{rank}(A) = \operatorname{rank}\bigl(P^{-1}(PAQ)Q^{-1}\bigr) \le \operatorname{rank}(PAQ).
+\]
+¡Como \(\operatorname{rank}(PAQ)\) es tanto \(\le \operatorname{rank}(A)\) como \(\ge \operatorname{rank}(A)\), se cumple la igualdad: \(\operatorname{rank}(PAQ) = \operatorname{rank}(A)\)! Fijar \(Q = I_n\) da \(\operatorname{rank}(PA) = \operatorname{rank}(A)\), y fijar \(P = I_m\) da \(\operatorname{rank}(AQ) = \operatorname{rank}(A)\).
+
+Una precaución crucial: [REF: product-rank-bounds.1 | la parte (1)] es una DESIGUALDAD, no una igualdad: ¡el rango de \(AB\) puede caer estrictamente por debajo de AMBOS \(\operatorname{rank}(A)\) y \(\operatorname{rank}(B)\)!
+- Ejemplo 1 (el rango cae de \(2\) a \(1\)):
+\[
+A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\implies
+AB = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+Aquí \(\operatorname{rank}(A) = 2\) y \(\operatorname{rank}(B) = 2\), pero \(\operatorname{rank}(AB) = 1 < \min(2, 2)\).
+- Ejemplo 2 (el rango cae hasta \(0\)):
+\[
+A = \begin{bmatrix} 1 & -1 \\ 2 & -2 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 3 & 1 \\ 3 & 1 \end{bmatrix}
+\implies
+AB = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}.
+\]
+Tanto \(A\) como \(B\) tienen rango \(1\), ¡pero \(AB = 0\) tiene rango \(0\)! Observe POR QUÉ colapsó el rango: cada columna de \(B\) es un múltiplo de \(\begin{bmatrix} 1 \\ 1 \end{bmatrix}\), que yace dentro de \(\operatorname{Null}(A)\), de modo que \(A\) aniquila todo \(\operatorname{Col}(B)\).
+
+[QUESTION 4]
+[ANSWER: B]
+Suponga que \(A\) es una matriz \(6 \times 5\) con \(\operatorname{rank}(A) = 3\), \(B\) es una matriz \(5 \times 4\) con \(\operatorname{rank}(B) = 2\) y \(P\) es una matriz invertible \(6 \times 6\). ¿Qué afirmación DEBE ser verdadera sobre \(\operatorname{rank}(PAB)\)?
+
+(A) \(\operatorname{rank}(PAB) = 2\) para toda elección tal de \(A\), \(B\) y \(P\)
+(B) \(\operatorname{rank}(PAB) \le 2\), y puede ser estrictamente menor que \(2\) (incluso \(0\)) dependiendo de \(A\) y \(B\)
+(C) \(\operatorname{rank}(PAB) = 3\) porque \(P\) es invertible y \(\operatorname{rank}(A) = 3\)
+(D) \(\operatorname{rank}(PAB)\) puede llegar a valer \(4\) porque \(PAB\) tiene \(4\) columnas
+(E) \(\operatorname{rank}(PAB) \ge 2\) porque multiplicar por una matriz invertible \(P\) impide la pérdida de rango
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suponga que \(A\) es \(6 \times 2\), \(B\) es \(2 \times 7\) y \(C\) es \(7 \times 5\). ¿Cuál es el mayor valor posible de \(\operatorname{rank}(ABC)\) y cuál es el menor valor posible de \(\operatorname{nullity}(ABC)\)?
+
+(A) Rango máximo \(5\); nulidad mínima \(0\)
+(B) Rango máximo \(5\); nulidad mínima \(1\)
+(C) Rango máximo \(2\); nulidad mínima \(3\)
+(D) Rango máximo \(2\); nulidad mínima \(4\)
+(E) Rango máximo \(2\); nulidad mínima \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suponga que \(A\) y \(B\) son matrices \(5 \times 5\) tales que \(AB = 0\) y \(\operatorname{rank}(A) = 3\). ¿Cuál es el mayor valor posible de \(\operatorname{rank}(B)\)?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(5\)
+[/BONUS]

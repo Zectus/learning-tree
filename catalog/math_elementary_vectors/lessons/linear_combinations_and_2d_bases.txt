@@ -1,0 +1,209 @@
+=== SECTION 1: Linear combinations and skewed parallelogram grids ===
+
+Ever since we introduced Cartesian coordinates, we have built every planar vector \(\mathbf{w} = \langle w_x, w_y \rangle\) out of the standard perpendicular unit vectors \(\mathbf{i} = \langle 1, 0 \rangle\) and \(\mathbf{j} = \langle 0, 1 \rangle\):
+\[
+\mathbf{w} = w_x\mathbf{i} + w_y\mathbf{j}.
+\]
+Geometrically, that means walking \(w_x\) steps along \(\mathbf{i}\) and \(w_y\) steps along \(\mathbf{j}\) on a square grid. Now ask a broader question: what if a problem naturally hands us two OTHER vectors \(\mathbf{u}\) and \(\mathbf{v}\)—say the directions of two non-perpendicular cables pulling a barge, or two angled robotic arms—that are neither perpendicular nor unit length? Which target vectors \(\mathbf{w} \in \mathbb{R}^2\) can we still reach by scaling \(\mathbf{u}\) and \(\mathbf{v}\) and adding them together?
+
+Any vector built by multiplying \(\mathbf{u}\) by a real scalar \(c_1\), multiplying \(\mathbf{v}\) by a real scalar \(c_2\), and adding the results is called a linear combination of \(\mathbf{u}\) and \(\mathbf{v}\):
+\[
+\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}.
+\]
+The real numbers \(c_1\) and \(c_2\) are called the scalar weights (or coefficients) of the combination.
+
+[CALLOUT]
+id: lin-comb-def
+label: Definition
+title: Linear combination of two vectors in \(\mathbb{R}^2\)
+tone: key
+
+Given two vectors \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) and any real scalars \(c_1, c_2 \in \mathbb{R}\), the vector
+\[
+\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}
+\]
+is called a linear combination of \(\mathbf{u}\) and \(\mathbf{v}\) with weights \(c_1\) and \(c_2\). The collection of all vectors reachable as \(c_1\) and \(c_2\) range over \(\mathbb{R}\) is called the span of \(\mathbf{u}\) and \(\mathbf{v}\).
+[/CALLOUT]
+
+Geometrically, taking \(\mathbf{u}\) and \(\mathbf{v}\) as your two step vectors replaces the familiar square coordinate grid with a skewed parallelogram grid. Integer choices of \(c_1\) and \(c_2\) land on the corners of the parallelograms tiled by \(\mathbf{u}\) and \(\mathbf{v}\); fractional or negative choices slide smoothly anywhere along the tilted grid lines.
+
+Explore this skewed grid in the interactive plot below for the oblique pair \(\mathbf{u} = \langle 2, 1 \rangle\) and \(\mathbf{v} = \langle 1, 2 \rangle\). Drag sliders \(c\) (the weight \(c_1\) on \(\mathbf{u}\)) and \(d\) (the weight \(c_2\) on \(\mathbf{v}\)) to move the green resultant \(\mathbf{w} = c\mathbf{u} + d\mathbf{v}\) head-to-tail across the plane.
+
+[GRAPH]
+type: parametric2d
+title: Navigating the skewed grid of \(\mathbf{u} = \langle 2, 1 \rangle\) and \(\mathbf{v} = \langle 1, 2 \rangle\) via \(\mathbf{w} = c\mathbf{u} + d\mathbf{v}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -2.8, 2.8
+xrange: -6.5, 6.5
+yrange: -6.5, 6.5
+trace: 2*t, t | label: axis of \(\mathbf{u}\) | color: #cbd5e1
+trace: t, 2*t | label: axis of \(\mathbf{v}\) | color: #cbd5e1
+segment: 0, 0, 2, 1 | label: \(\mathbf{u}\) | color: #2563eb
+segment: 0, 0, 1, 2 | label: \(\mathbf{v}\) | color: #d97706
+segment: 0, 0, 2*c, c | label: \(c\mathbf{u}\) | color: #2563eb | dashed: true
+segment: 2*c, c, 2*c + d, c + 2*d | label: \(d\mathbf{v}\) | color: #d97706 | dashed: true
+segment: 0, 0, 2*c + d, c + 2*d | label: \(\mathbf{w}\) | color: #16a34a
+point: 2*c + d, c + 2*d | label: \(\mathbf{w}\)
+slider: c | range: -2, 2 | init: 1.5 | step: 0.5
+slider: d | range: -2, 2 | init: 1 | step: 0.5
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(\mathbf{u} = \langle 3, -1 \rangle\) and \(\mathbf{v} = \langle -2, 4 \rangle\). What is the linear combination \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\) with weights \((c_1, c_2) = (-2, 3)\)?
+
+(A) \(\langle 13, -11 \rangle\)
+(B) \(\langle -12, 10 \rangle\)
+(C) \(\langle -12, 14 \rangle\)
+(D) \(\langle 0, 10 \rangle\)
+(E) \(\langle 0, -10 \rangle\)
+[/QUESTION]
+
+=== SECTION 2: When do two vectors form a basis of \(\mathbb{R}^2\)? ===
+
+Can ANY pair of vectors \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) reach every target vector \(\mathbf{w} = \langle w_x, w_y \rangle\) in the plane—and reach it in only ONE way? Let us solve the vector equation \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) in general components to find the exact algebraic condition.
+
+Writing \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\), matching the \(x\)- and \(y\)-components turns \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) into a \(2 \times 2\) linear system for the unknowns \(c_1\) and \(c_2\):
+\[
+u_x c_1 + v_x c_2 = w_x, \qquad u_y c_1 + v_y c_2 = w_y.
+\]
+To eliminate \(c_2\), multiply the first equation by \(v_y\), multiply the second equation by \(v_x\), and subtract:
+\[
+(u_x v_y - u_y v_x)\,c_1 = w_x v_y - w_y v_x.
+\]
+Similarly, to eliminate \(c_1\), multiply the second equation by \(u_x\), multiply the first equation by \(u_y\), and subtract:
+\[
+(u_x v_y - u_y v_x)\,c_2 = u_x w_y - u_y w_x.
+\]
+Look at the single expression \(D = u_x v_y - u_y v_x\) multiplying BOTH \(c_1\) and \(c_2\)! We met this exact cross-difference before: \(u_x v_y - u_y v_x = 0\) if and only if \(\mathbf{u}\) and \(\mathbf{v}\) are parallel (or one of them is \(\mathbf{0}\)). That splits the entire behavior of planar pairs into two sharp cases:
+
+1. Non-parallel pair (\(D = u_x v_y - u_y v_x \ne 0\)): we can divide both equations by \(D\)! For EVERY target vector \(\mathbf{w} \in \mathbb{R}^2\), there is ONE AND ONLY ONE solution \((c_1, c_2)\):
+\[
+c_1 = \frac{w_x v_y - w_y v_x}{u_x v_y - u_y v_x}, \qquad c_2 = \frac{u_x w_y - u_y w_x}{u_x v_y - u_y v_x}.
+\]
+In this case, the skewed parallelogram grid covers the entire plane \(\mathbb{R}^2\) with unique grid addresses \((c_1, c_2)\), and we call the ordered pair \(\{\mathbf{u}, \mathbf{v}\}\) a basis of \(\mathbb{R}^2\).
+
+2. Parallel (linearly dependent) pair (\(D = u_x v_y - u_y v_x = 0\)): one vector is a scalar multiple of the other (or both are \(\mathbf{0}\)). Suppose \(\mathbf{u} \ne \mathbf{0}\) and \(\mathbf{v} = k\mathbf{u}\). Then EVERY linear combination collapses onto the single line spanned by \(\mathbf{u}\):
+\[
+c_1\mathbf{u} + c_2\mathbf{v} = c_1\mathbf{u} + c_2(k\mathbf{u}) = (c_1 + k c_2)\mathbf{u}.
+\]
+As a result, the skewed grid flattens into one line:
+- Any target \(\mathbf{w}\) OFF that line has NO solution at all.
+- Any target \(\mathbf{w} = m\mathbf{u}\) ON that line has INFINITELY MANY solutions, because any \((c_1, c_2)\) satisfying \(c_1 + k c_2 = m\) produces \(\mathbf{w}\)!
+
+[CALLOUT]
+id: basis-criterion
+label: Theorem
+title: Basis criterion for two vectors in \(\mathbb{R}^2\)
+tone: key
+
+Let \(\mathbf{u} = \langle u_x, u_y \rangle\) and \(\mathbf{v} = \langle v_x, v_y \rangle\) be two vectors in \(\mathbb{R}^2\), and set \(D = u_x v_y - u_y v_x\).
+
+(1) \(\{\mathbf{u}, \mathbf{v}\}\) is a basis of \(\mathbb{R}^2\)—meaning every \(\mathbf{w} \in \mathbb{R}^2\) can be written uniquely as \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\)—if and only if \(\mathbf{u}\) and \(\mathbf{v}\) are non-parallel, equivalently \(D = u_x v_y - u_y v_x \ne 0\).
+(2) If \(D = 0\), then \(\mathbf{u}\) and \(\mathbf{v}\) are parallel (linearly dependent), their span collapses to a single line (or \(\{\mathbf{0}\}\)), and the equation \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) has either NO solution (\(\mathbf{w}\) off the line) or INFINITELY MANY solutions (\(\mathbf{w}\) on the line).
+[/CALLOUT]
+
+See the collapse concretely with \(\mathbf{u} = \langle 2, 3 \rangle\) and \(\mathbf{v} = \langle -4, -6 \rangle = -2\mathbf{u}\), where \(D = 2(-6) - 3(-4) = 0\). Every combination \(c_1\mathbf{u} + c_2\mathbf{v} = (c_1 - 2c_2)\langle 2, 3 \rangle\) lies on the single line \(y = \frac{3}{2}x\).
+- Target \(\mathbf{w}_1 = \langle 4, 6 \rangle = 2\mathbf{u}\) lies ON the line and has infinitely many representations: \(2\mathbf{u} + 0\mathbf{v}\), \(0\mathbf{u} - 1\mathbf{v}\), \(4\mathbf{u} + 1\mathbf{v}\), and every pair with \(c_1 - 2c_2 = 2\).
+- Target \(\mathbf{w}_2 = \langle 5, 1 \rangle\) lies OFF the line and cannot be reached by any scalars \(c_1, c_2\).
+
+[GRAPH]
+type: parametric2d
+title: Collapsed span of parallel pair \(\mathbf{u} = \langle 2, 3 \rangle\), \(\mathbf{v} = \langle -4, -6 \rangle\) (\(D = 0\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -2.4, 2.4
+xrange: -5.5, 6.5
+yrange: -7, 7.2
+trace: 2*t, 3*t | label: collapsed span of \(\mathbf{u}, \mathbf{v}\) | color: #94a3b8
+segment: 0, 0, 2, 3 | label: \(\mathbf{u}\) | color: #2563eb
+segment: 0, 0, -4, -6 | label: \(\mathbf{v}\) | color: #d97706
+segment: 0, 0, 4, 6 | color: #16a34a | dashed: true
+segment: 0, 0, 5, 1 | label: \(\mathbf{w}_2\) | color: #dc2626
+point: 4, 6 | label: \(\mathbf{w}_1\)
+point: 5, 1 | label: \(\mathbf{w}_2\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: E]
+For which real value of \(k\) does the pair of vectors \(\mathbf{u} = \langle k,\; 6 \rangle\) and \(\mathbf{v} = \langle 3,\; 2 \rangle\) FAIL to form a basis of \(\mathbb{R}^2\)?
+
+(A) \(k = -9\)
+(B) \(k = -4\)
+(C) \(k = 1\)
+(D) \(k = 3\)
+(E) \(k = 9\)
+[/QUESTION]
+
+=== SECTION 3: Coordinates in an oblique basis and resolving forces along angled cables ===
+
+When \(\{\mathbf{u}, \mathbf{v}\}\) satisfies [REF: basis-criterion.1 | the basis criterion] (\(D \ne 0\)), the unique pair \((c_1, c_2)\) solving \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) is called the coordinate pair of \(\mathbf{w}\) relative to the basis \(\{\mathbf{u}, \mathbf{v}\}\). Finding \((c_1, c_2)\) in practice is straightforward: write out the \(2 \times 2\) component system, solve by elimination or substitution, and always verify by directly recombining \(c_1\mathbf{u} + c_2\mathbf{v}\) to confirm you recover \(\mathbf{w}\).
+
+Worked Example 1 (Oblique coordinates): Express \(\mathbf{w} = \langle 7, 5 \rangle\) in the oblique basis \(\mathbf{u} = \langle 2, 1 \rangle\), \(\mathbf{v} = \langle 1, 2 \rangle\).
+1. Check \(D = 2(2) - 1(1) = 3 \ne 0\), so a unique solution exists.
+2. Write the component equations for \(c_1\langle 2, 1 \rangle + c_2\langle 1, 2 \rangle = \langle 7, 5 \rangle\):
+\[
+2c_1 + c_2 = 7, \qquad c_1 + 2c_2 = 5.
+\]
+3. Multiply the first equation by \(2\) to get \(4c_1 + 2c_2 = 14\), and subtract the second equation: \(3c_1 = 9 \implies c_1 = 3\). Then \(c_2 = 7 - 2(3) = 1\).
+4. Recombine to verify: \(3\langle 2, 1 \rangle + 1\langle 1, 2 \rangle = \langle 6 + 1, 3 + 2 \rangle = \langle 7, 5 \rangle = \mathbf{w}\). Thus the coordinates of \(\mathbf{w}\) in the basis \(\{\mathbf{u}, \mathbf{v}\}\) are \((3, 1)\).
+
+Worked Example 2 (Resolving a force along two non-perpendicular cables): Two tugboat cables attached to a barge pull along oblique direction vectors \(\mathbf{u} = \langle 3, 1 \rangle\) and \(\mathbf{v} = \langle 1, 4 \rangle\). What vector forces \(\mathbf{F}_1 = c_1\mathbf{u}\) and \(\mathbf{F}_2 = c_2\mathbf{v}\) along these two cables produce a required net pull \(\mathbf{F}_{\mathrm{req}} = \langle 11, 11 \rangle\text{ kN}\)?
+1. Check \(D = 3(4) - 1(1) = 11 \ne 0\).
+2. Set \(c_1\langle 3, 1 \rangle + c_2\langle 1, 4 \rangle = \langle 11, 11 \rangle\), giving
+\[
+3c_1 + c_2 = 11, \qquad c_1 + 4c_2 = 11.
+\]
+3. Multiply the first equation by \(4\) (\(12c_1 + 4c_2 = 44\)) and subtract the second: \(11c_1 = 33 \implies c_1 = 3\). Then \(c_2 = 11 - 3(3) = 2\).
+4. Recombine to check: \(3\langle 3, 1 \rangle + 2\langle 1, 4 \rangle = \langle 9 + 2, 3 + 8 \rangle = \langle 11, 11 \rangle\text{ kN}\).
+Therefore Cable 1 must exert \(\mathbf{F}_1 = 3\langle 3, 1 \rangle = \langle 9, 3 \rangle\text{ kN}\) (magnitude \(3\sqrt{10}\text{ kN}\)) and Cable 2 must exert \(\mathbf{F}_2 = 2\langle 1, 4 \rangle = \langle 2, 8 \rangle\text{ kN}\) (magnitude \(2\sqrt{17}\text{ kN}\)).
+
+[CALLOUT]
+id: oblique-grid-trap
+label: Common pitfall
+title: Read oblique coordinates along lines parallel to the OTHER basis vector
+tone: caution
+
+On the standard perpendicular grid of \(\mathbf{i}\) and \(\mathbf{j}\), finding \(w_x\) and \(w_y\) means dropping straight lines perpendicular to the axes, and each coordinate depends only on one axis. On an oblique basis \(\{\mathbf{u}, \mathbf{v}\}\), dropping perpendiculars to \(\mathbf{u}\) and \(\mathbf{v}\) gives the WRONG weights! Instead, \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\) forms a parallelogram whose sides are parallel to \(\mathbf{u}\) and \(\mathbf{v}\), so \(c_1\) and \(c_2\) are coupled together and must be found by solving the \(2 \times 2\) linear system simultaneously.
+[/CALLOUT]
+
+[TABLE]
+Basis type for \(\{\mathbf{u}, \mathbf{v}\}\) | Defining condition | How to find \((c_1, c_2)\) in \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\)
+Standard basis \(\{\mathbf{i}, \mathbf{j}\}\) | \(\mathbf{i} = \langle 1, 0 \rangle, \mathbf{j} = \langle 0, 1 \rangle\) | Read directly: \(c_1 = w_x\), \(c_2 = w_y\)
+General oblique basis | \(u_x v_y - u_y v_x \ne 0\) | Solve the coupled \(2 \times 2\) system \(u_x c_1 + v_x c_2 = w_x\), \(u_y c_1 + v_y c_2 = w_y\)
+Parallel (non-basis) pair | \(u_x v_y - u_y v_x = 0\) | Fails uniqueness: either no solution or infinitely many solutions
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Express the vector \(\mathbf{w} = \langle 5, 11 \rangle\) as a linear combination \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\) of the oblique basis \(\mathbf{u} = \langle 3, 1 \rangle\) and \(\mathbf{v} = \langle -1, 2 \rangle\). What is the coordinate pair \((c_1, c_2)\)?
+
+(A) \((3, 4)\)
+(B) \((4, 3)\)
+(C) \((3, -4)\)
+(D) \(\left(\frac{13}{5},\; \frac{17}{5}\right)\)
+(E) \((2, 1)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Consider the vectors \(\mathbf{u} = \langle 4, -6 \rangle\) and \(\mathbf{v} = \langle -6, 9 \rangle\), and the target vector \(\mathbf{w} = \langle 2, -3 \rangle\). How many pairs of real scalars \((c_1, c_2)\) satisfy \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\)?
+
+(A) None, because \(u_x v_y - u_y v_x = 0\)
+(B) Exactly one, namely \(\left(\frac{1}{2}, 0\right)\)
+(C) Exactly two, because either \(\mathbf{u}\) or \(\mathbf{v}\) can be scaled to reach \(\mathbf{w}\)
+(D) Infinitely many, namely all pairs \((c_1, c_2)\) satisfying \(2c_1 - 3c_2 = 1\)
+(E) Infinitely many, namely every pair \((c_1, c_2) \in \mathbb{R}^2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Suppose \(\{\mathbf{u}, \mathbf{v}\}\) is a basis of \(\mathbb{R}^2\), and define two new vectors \(\mathbf{p} = \mathbf{u} + \mathbf{v}\) and \(\mathbf{q} = \mathbf{u} - \mathbf{v}\). If a vector \(\mathbf{w}\) satisfies \(\mathbf{w} = 5\mathbf{p} - \mathbf{q}\), what are the unique coordinates \((c_1, c_2)\) of \(\mathbf{w}\) in the original basis \(\{\mathbf{u}, \mathbf{v}\}\)?
+
+(A) \((4, 4)\)
+(B) \((6, 4)\)
+(C) \((4, 6)\)
+(D) \((2, 3)\)
+(E) They cannot be determined without knowing the Cartesian components of \(\mathbf{u}\) and \(\mathbf{v}\)
+[/BONUS]

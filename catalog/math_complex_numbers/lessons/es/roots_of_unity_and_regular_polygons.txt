@@ -1,0 +1,231 @@
+=== SECTION 1: Resolución de \(z^n = 1\) en \(\mathbb{C}\) ===
+
+Sobre los números reales, la ecuación \(z^n = 1\) posee muy pocas soluciones: solo \(z = 1\) cuando \(n\) es impar, y \(z = \pm 1\) cuando \(n\) es par. Sobre \(\mathbb{C}\), en cambio, el polinomio \(z^n - 1\) tiene grado \(n\), por lo que esperamos \(n\) soluciones distintas. ¿Cómo las hallamos todas sistemáticamente y dónde se ubican en el plano de Argand?
+
+Escribe una solución incógnita \(z \ne 0\) en forma exponencial \(z = r e^{i\theta}\) con \(r > 0\) y \(\theta \in \mathbb{R}\). Por el Teorema de De Moivre, \(z^n = r^n e^{in\theta}\). Por otra parte, \(1 = 1\cdot e^{i\cdot 0}\). Así, \(z^n = 1\) se convierte en
+\[
+r^n e^{in\theta} = 1\cdot e^{i\cdot 0}.
+\]
+Dos números complejos no nulos en forma exponencial son iguales si y solo si sus módulos positivos coinciden y sus argumentos difieren en un múltiplo entero de \(2\pi\):
+- Igualación de módulos: \(r^n = 1\) con \(r > 0\). Como \(r \mapsto r^n\) es estrictamente creciente en \((0, \infty)\), la única solución real positiva es \(r = 1\). Toda raíz \(n\)-ésima de la unidad yace sobre la circunferencia unitaria \(|z| = 1\).
+- Igualación de argumentos módulo \(2\pi\): \(n\theta = 0 + 2\pi k\) para algún entero \(k \in \mathbb{Z}\), lo cual da
+\[
+\theta_k = \frac{2\pi k}{n}, \qquad k \in \mathbb{Z}.
+\]
+Esto produce los números complejos \(\omega_k = e^{2\pi i k / n} = \cos\!\left(\frac{2\pi k}{n}\right) + i\sin\!\left(\frac{2\pi k}{n}\right)\).
+
+A primera vista, dejar que \(k\) recorra todos los enteros parece arrojar infinitas soluciones. ¿Por qué obtenemos EXACTAMENTE \(n\) raíces distintas? Comprueba ambos sentidos:
+1. Distinción para \(k = 0, 1, \dots, n - 1\): si \(0 \le j < k \le n - 1\), entonces la diferencia angular cumple \(0 < \theta_k - \theta_j = \frac{2\pi(k - j)}{n} < 2\pi\), por lo que NO es un múltiplo de \(2\pi\); en consecuencia, \(\omega_j \ne \omega_k\).
+2. Repetición para todos los demás \(k \in \mathbb{Z}\): mediante división entera por \(n\), escribe cualquier \(k = qn + r\) con \(q \in \mathbb{Z}\) y resto \(r \in \{0, 1, \dots, n - 1\}\). Entonces
+\[
+\omega_k = e^{2\pi i(qn + r)/n} = e^{2\pi i q} e^{2\pi i r / n} = 1 \cdot \omega_r = \omega_r.
+\]
+Por tanto, todo entero \(k\) repite una de las \(n\) raíces \(\omega_0, \omega_1, \dots, \omega_{n-1}\). Nota además que fijar \(\omega = \omega_1 = e^{2\pi i/n}\) da \(\omega_k = (e^{2\pi i/n})^k = \omega^k\) para todo \(k\).
+
+[CALLOUT]
+id: roots-of-unity-def
+label: Teorema
+title: Las raíces \(n\)-ésimas de la unidad
+tone: key
+
+Para todo entero \(n \ge 1\), la ecuación \(z^n = 1\) tiene exactamente \(n\) soluciones complejas distintas, denominadas las raíces \(n\)-ésimas de la unidad:
+\[
+\omega_k = e^{2\pi i k / n} = \cos\!\left(\frac{2\pi k}{n}\right) + i\sin\!\left(\frac{2\pi k}{n}\right) = \omega^k, \qquad k = 0, 1, \dots, n - 1,
+\]
+donde \(\omega = e^{2\pi i / n}\).
+
+(1) Todas las \(n\) raíces yacen sobre la circunferencia unitaria \(|z| = 1\) a ángulos espaciados por \(\frac{2\pi}{n}\).
+(2) Para \(n \ge 3\), forman los vértices de un \(n\)-ágono regular inscrito en la circunferencia unitaria con un vértice en \(\omega_0 = 1\).
+(3) Toda raíz cumple \(\overline{\omega_k} = \omega_k^{-1} = \omega_{n - k}\) (para \(1 \le k \le n - 1\)).
+[/CALLOUT]
+
+Enumeremos concretamente los primeros casos pequeños:
+- \(n = 2\): \(1\) y \(-1\).
+- \(n = 3\) (raíces cúbicas de la unidad): \(1\), \(\omega = e^{2\pi i/3} = -\frac{1}{2} + i\frac{\sqrt{3}}{2}\) y \(\omega^2 = e^{4\pi i/3} = -\frac{1}{2} - i\frac{\sqrt{3}}{2}\) (un triángulo equilátero).
+- \(n = 4\): \(1, i, -1, -i\) (un cuadrado).
+- \(n = 5\): \(1, e^{2\pi i/5}, e^{4\pi i/5}, e^{6\pi i/5}, e^{8\pi i/5}\) (un pentágono regular).
+
+La gráfica siguiente muestra las raíces quintas de la unidad inscritas en la circunferencia unitaria. Observa cómo \(\omega^1\) y \(\omega^4 = \overline{\omega^1}\) son simétricas respecto al eje real, al igual que \(\omega^2\) y \(\omega^3 = \overline{\omega^2}\), mientras que cada paso de \(\omega^k\) a \(\omega^{k+1}\) rota en sentido antihorario en \(\frac{2\pi}{5} = 72^\circ\).
+
+[GRAPH]
+type: parametric2d
+title: Las raíces quintas de la unidad formando un pentágono regular sobre la circunferencia unitaria
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.4, 1.4
+yrange: -1.4, 1.4
+trace: cos(t), sin(t) | label: \(|z| = 1\) | color: #94a3b8
+segment: 1, 0, cos(2*pi/5), sin(2*pi/5) | color: #2563eb
+segment: cos(2*pi/5), sin(2*pi/5), cos(4*pi/5), sin(4*pi/5) | color: #2563eb
+segment: cos(4*pi/5), sin(4*pi/5), cos(6*pi/5), sin(6*pi/5) | color: #2563eb
+segment: cos(6*pi/5), sin(6*pi/5), cos(8*pi/5), sin(8*pi/5) | color: #2563eb
+segment: cos(8*pi/5), sin(8*pi/5), 1, 0 | color: #2563eb
+point: 1, 0 | label: \(1\)
+point: cos(2*pi/5), sin(2*pi/5) | label: \(\omega\)
+point: cos(4*pi/5), sin(4*pi/5) | label: \(\omega^2\)
+point: cos(6*pi/5), sin(6*pi/5) | label: \(\omega^3\)
+point: cos(8*pi/5), sin(8*pi/5) | label: \(\omega^4\)
+[/GRAPH]
+
+=== SECTION 2: Sumas nulas y raíces primitivas de la unidad ===
+
+Observa el pentágono regular anterior. Si colocas cinco masas iguales en los cinco vértices sobre la circunferencia unitaria, ¿dónde está su centro de masas? ¡Por simetría rotacional, DEBE ser el origen \(0\)! Esa intuición geométrica corresponde a una de las identidades algebraicas más útiles de los números complejos.
+
+[CALLOUT]
+id: vanishing-sum-identity
+label: Teorema
+title: Suma nula de las raíces \(n\)-ésimas de la unidad
+tone: key
+
+Para todo entero \(n \ge 2\) y toda raíz \(n\)-ésima de la unidad \(\zeta\) con \(\zeta \ne 1\):
+\[
+1 + \zeta + \zeta^2 + \dots + \zeta^{n-1} = 0.
+\]
+En particular, la suma de todas las raíces \(n\)-ésimas de la unidad es \(0\): \(\sum_{k=0}^{n-1} \omega^k = 0\).
+[/CALLOUT]
+
+Podemos demostrar [REF: vanishing-sum-identity | la identidad de suma nula] de dos maneras complementarias:
+- Demostración algebraica: desarrolla \((\zeta - 1)(1 + \zeta + \zeta^2 + \dots + \zeta^{n-1})\) para ver cómo se cancelan telescópicamente todos los términos intermedios, dejando \(\zeta^n - 1\). Como \(\zeta\) es una raíz \(n\)-ésima de la unidad, \(\zeta^n - 1 = 0\). Como \(\zeta \ne 1\), tenemos \(\zeta - 1 \ne 0\), así que dividir por \(\zeta - 1\) obliga a que \(1 + \zeta + \zeta^2 + \dots + \zeta^{n-1} = 0\).
+- Demostración por simetría geométrica (para la suma completa \(S = 1 + \omega + \omega^2 + \dots + \omega^{n-1}\)): multiplicar \(S\) por \(\omega = e^{2\pi i/n}\) rota cada vértice \(\frac{2\pi}{n}\) en sentido antihorario, enviando \(\omega^k \mapsto \omega^{k+1}\) y cerrando \(\omega^{n-1} \mapsto \omega^n = 1\). Así, \(\omega S\) suma exactamente los mismos \(n\) vértices en orden desplazado, por lo que \(\omega S = S\), es decir, \((\omega - 1)S = 0\). Como \(\omega \ne 1\), concluimos \(S = 0\).
+
+Nota una distinción sutil dentro de [REF: roots-of-unity-def | el conjunto de las raíces \(n\)-ésimas de la unidad]. Toma \(n = 6\) con \(\omega = e^{2\pi i/6} = e^{i\pi/3}\). Las seis raíces son \(1, \omega, \omega^2, \omega^3, \omega^4, \omega^5\). Observa las potencias generadas por cada raíz individual:
+- Potencias de \(\omega_1 = \omega\): \(\omega^0, \omega^1, \omega^2, \omega^3, \omega^4, \omega^5\) — ¡las \(6\) raíces!
+- Potencias de \(\omega_2 = \omega^2 = e^{2\pi i/3}\): \(1, \omega^2, \omega^4\), y luego \((\omega^2)^3 = 1\) — solo \(3\) raíces (¡en realidad es una raíz cúbica de la unidad!).
+- Potencias de \(\omega_3 = \omega^3 = -1\): \(1, -1\) — solo \(2\) raíces.
+- Potencias de \(\omega_5 = \omega^5 = e^{-i\pi/3}\): \(1, \omega^5, \omega^4, \omega^3, \omega^2, \omega^1\) — ¡las \(6\) raíces!
+
+Una raíz \(n\)-ésima de la unidad \(\zeta\) se llama raíz \(n\)-ésima primitiva de la unidad si \(n\) es el MENOR entero positivo \(m\) tal que \(\zeta^m = 1\) (equivalentemente, sus potencias \(1, \zeta, \zeta^2, \dots, \zeta^{n-1}\) generan todas las \(n\) raíces de la unidad sin repetirse antes).
+
+¿Qué \(\omega_k = e^{2\pi i k/n}\) (\(0 \le k \le n - 1\)) son primitivas? Sea \(d = \operatorname{mcd}(k, n)\). Si \(d > 1\), escribe \(k = d k'\) y \(n = d n'\) con \(1 \le n' < n\); entonces
+\[
+\omega_k^{n'} = e^{2\pi i (d k') n' / (d n')} = e^{2\pi i k'} = 1,
+\]
+de modo que \(\omega_k\) ya alcanza \(1\) en el exponente menor \(n' < n\) y NO es primitiva. Recíprocamente, si \(\operatorname{mcd}(k, n) = 1\), entonces \(\omega_k^m = 1 \iff \frac{km}{n} \in \mathbb{Z} \iff n \mid km\); como \(n\) y \(k\) no comparten ningún factor común mayor que \(1\), \(n\) debe dividir a \(m\), de suerte que el menor exponente positivo es \(m = n\).
+
+[CALLOUT]
+id: primitive-roots-criterion
+label: Teorema
+title: Raíces \(n\)-ésimas primitivas de la unidad
+tone: key
+
+Una raíz \(n\)-ésima de la unidad \(\omega_k = e^{2\pi i k / n}\) (\(0 \le k \le n - 1\)) es una raíz \(n\)-ésima primitiva de la unidad si y solo si \(\operatorname{mcd}(k, n) = 1\).
+[/CALLOUT]
+
+[TABLE]
+Índice \(k\) (para \(n = 6\)) | \(\omega_k = e^{2\pi i k/6}\) | Menor \(m \ge 1\) con \(\omega_k^m = 1\) | \(\operatorname{mcd}(k, 6)\) | ¿Raíz \(6\)-ésima primitiva?
+\(0\) | \(1\) | \(1\) | \(6\) | No
+\(1\) | \(\frac{1}{2} + i\frac{\sqrt{3}}{2}\) | \(6\) | \(1\) | Sí
+\(2\) | \(-\frac{1}{2} + i\frac{\sqrt{3}}{2}\) | \(3\) | \(2\) | No (raíz \(3\)-ésima primitiva)
+\(3\) | \(-1\) | \(2\) | \(3\) | No (raíz \(2\)-ésima primitiva)
+\(4\) | \(-\frac{1}{2} - i\frac{\sqrt{3}}{2}\) | \(3\) | \(2\) | No (raíz \(3\)-ésima primitiva)
+\(5\) | \(\frac{1}{2} - i\frac{\sqrt{3}}{2}\) | \(6\) | \(1\) | Sí
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: A]
+Sea \(\omega = e^{2\pi i / 7}\). ¿Cuál es el valor de \(\omega^2 + \omega^4 + \omega^6 + \omega^8 + \omega^{10} + \omega^{12}\)?
+
+(A) \(-1\)
+(B) \(0\)
+(C) \(1\)
+(D) \(-\omega\)
+(E) \(6\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Entre las raíces \(12\)-ésimas de la unidad \(\omega_k = e^{2\pi i k / 12}\) (\(k = 0, 1, \dots, 11\)), ¿cuántas son raíces \(12\)-ésimas primitivas de la unidad y qué valores de \(k\) las producen?
+
+(A) \(4\) raíces primitivas, correspondientes a \(k = 1, 5, 7, 11\)
+(B) \(6\) raíces primitivas, correspondientes a \(k = 1, 3, 5, 7, 9, 11\)
+(C) \(2\) raíces primitivas, correspondientes a \(k = 1, 11\)
+(D) \(11\) raíces primitivas, correspondientes a \(k = 1, 2, \dots, 11\)
+(E) \(4\) raíces primitivas, correspondientes a \(k = 1, 2, 5, 7\)
+[/QUESTION]
+
+=== SECTION 3: Factorización de \(z^n - 1\) sobre \(\mathbb{C}\) y sobre \(\mathbb{R}\) ===
+
+Puesto que \(\omega_0, \omega_1, \dots, \omega_{n-1}\) son las \(n\) raíces distintas del polinomio mónico de grado \(n\) \(z^n - 1\), su factorización completa sobre \(\mathbb{C}\) es
+\[
+z^n - 1 = \prod_{k=0}^{n-1}(z - \omega_k) = (z - 1)(z - \omega_1)(z - \omega_2)\cdots(z - \omega_{n-1}).
+\]
+Emparejemos ahora las raíces conjugadas no reales para obtener la factorización completa de \(z^n - 1\) en factores irreducibles sobre \(\mathbb{R}\). Por [REF: roots-of-unity-def.3 | el emparejamiento de conjugados], para cada índice \(k\) estrictamente entre \(0\) y \(n/2\), el conjugado de \(\omega_k = e^{2\pi i k/n}\) es \(\omega_{n-k} = e^{-2\pi i k/n}\). Multiplicar sus factores lineales da
+\[
+(z - \omega_k)(z - \omega_{n-k}) = z^2 - (\omega_k + \overline{\omega_k})z + |\omega_k|^2 = z^2 - 2\cos\!\left(\frac{2\pi k}{n}\right)z + 1.
+\]
+¿Qué queda sin emparejar sobre el eje real?
+- Siempre \(k = 0\), que aporta el factor lineal real \((z - 1)\).
+- Cuando \(n\) es par, también \(k = n/2\) (\(\omega_{n/2} = e^{i\pi} = -1\)), que aporta el factor lineal real \((z + 1)\).
+
+[CALLOUT]
+id: zn-minus-1-real-factor
+label: Fórmula
+title: Factorización real completa de \(z^n - 1\)
+tone: key
+
+(1) Si \(n = 2m + 1\) es impar:
+\[
+z^n - 1 = (z - 1)\prod_{k=1}^{m}\left(z^2 - 2\cos\!\left(\frac{2\pi k}{n}\right)z + 1\right).
+\]
+(2) Si \(n = 2m\) es par:
+\[
+z^n - 1 = (z - 1)(z + 1)\prod_{k=1}^{m-1}\left(z^2 - 2\cos\!\left(\frac{2\pi k}{n}\right)z + 1\right).
+\]
+[/CALLOUT]
+
+Apliquemos [REF: zn-minus-1-real-factor | estas fórmulas] a \(n = 6\) y \(n = 5\):
+- Para \(n = 6\) (par, \(m = 3\)): las raíces reales dan \((z - 1)(z + 1)\), y los pares conjugados \(k = 1\) (\(\frac{2\pi}{6} = \frac{\pi}{3}\), \(\cos\frac{\pi}{3} = \frac{1}{2}\)) y \(k = 2\) (\(\frac{4\pi}{6} = \frac{2\pi}{3}\), \(\cos\frac{2\pi}{3} = -\frac{1}{2}\)) dan
+\[
+z^6 - 1 = (z - 1)(z + 1)(z^2 - z + 1)(z^2 + z + 1),
+\]
+que coincide con la factorización algebraica clásica \((z^3 - 1)(z^3 + 1)\).
+- Para \(n = 5\) (impar, \(m = 2\)):
+\[
+z^5 - 1 = (z - 1)\left(z^2 - 2\cos\!\left(\frac{2\pi}{5}\right)z + 1\right)\left(z^2 - 2\cos\!\left(\frac{4\pi}{5}\right)z + 1\right).
+\]
+¡Esta factorización sería casi invisible desde el álgebra elemental por sí sola, y sin embargo las raíces de la unidad la entregan en una sola línea!
+
+[QUESTION 3]
+[ANSWER: A]
+¿Cuál es la factorización completa de \(z^8 - 1\) en polinomios irreducibles sobre \(\mathbb{R}\)?
+
+(A) \((z - 1)(z + 1)(z^2 + 1)(z^2 - \sqrt{2}\,z + 1)(z^2 + \sqrt{2}\,z + 1)\)
+(B) \((z - 1)(z + 1)(z^2 + 1)(z^4 + 1)\)
+(C) \((z - 1)(z + 1)(z^2 + 1)(z^2 - z + 1)(z^2 + z + 1)\)
+(D) \((z - 1)(z + 1)(z^2 - 1)(z^2 - \sqrt{2}\,z + 1)(z^2 + \sqrt{2}\,z + 1)\)
+(E) \((z - 1)(z^2 - \sqrt{2}\,z + 1)(z^2 + 1)(z^2 + \sqrt{2}\,z + 1)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+¿Cuál es la longitud del lado del \(n\)-ágono regular formado en el plano de Argand por las raíces \(n\)-ésimas de la unidad (para \(n \ge 3\))?
+
+(A) \(2\sin\!\left(\frac{\pi}{n}\right)\)
+(B) \(2\sin\!\left(\frac{2\pi}{n}\right)\)
+(C) \(2\cos\!\left(\frac{\pi}{n}\right)\)
+(D) \(\sin\!\left(\frac{2\pi}{n}\right)\)
+(E) \(\frac{2\pi}{n}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Utilizando la suma nula de las raíces quintas de la unidad, halla el valor exacto de \(\cos\!\left(\frac{2\pi}{5}\right) + \cos\!\left(\frac{4\pi}{5}\right)\).
+
+(A) \(-\frac{1}{2}\)
+(B) \(-1\)
+(C) \(0\)
+(D) \(\frac{1}{2}\)
+(E) \(-\frac{\sqrt{5}}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Sean \(\omega_0 = 1, \omega_1, \dots, \omega_{n-1}\) las raíces \(n\)-ésimas de la unidad para un entero \(n \ge 2\). Dividiendo \(z^n - 1\) entre \(z - 1\) y evaluando en \(z = 1\), halla el producto de las distancias euclidianas desde el vértice \(1\) a todos los demás \(n - 1\) vértices del \(n\)-ágono regular inscrito, \(\prod_{k=1}^{n-1} |1 - \omega_k|\).
+
+(A) \(n\)
+(B) \(n - 1\)
+(C) \(2^{n-1}\)
+(D) \(1\)
+(E) \(\sqrt{n}\)
+[/BONUS]

@@ -1,0 +1,265 @@
+=== SECTION 1: Complex conjugates, modulus, and the bridge identity ===
+
+We can add, subtract, and multiply complex numbers in standard form, but how do we divide by a nonzero complex number such as \(2 + 3i\)? If we write a quotient \(\frac{a + bi}{c + di}\), we want to turn the denominator \(c + di\) into a positive real number so that we can split the result cleanly into a real part and an imaginary part.
+
+Look back at what happened when we multiplied \((2 + 3i)(2 - 3i)\): the cross terms \(-6i\) and \(+6i\) canceled completely, leaving \(2^2 + 3^2 = 13\), a positive real number. That partner \(2 - 3i\) obtained by flipping the sign of the imaginary part is one of the most important tools in complex algebra, and the real quantity \(\sqrt{2^2 + 3^2}\) paired with it measures the size of the complex number.
+
+[CALLOUT]
+id: conj-mod-def
+label: Definition
+title: Complex conjugate and modulus
+tone: key
+
+Let \(z = a + bi\) with \(a, b \in \mathbb{R}\).
+
+(1) The complex conjugate of \(z\), denoted \(\overline{z}\), is \(\overline{z} = a - bi\).
+(2) The modulus (or absolute value) of \(z\), denoted \(|z|\), is the nonnegative real number
+\[
+|z| = \sqrt{a^2 + b^2}.
+\]
+[/CALLOUT]
+
+For example, if \(z = 3 - 4i\), then \(\overline{z} = 3 + 4i\) and \(|z| = \sqrt{3^2 + (-4)^2} = \sqrt{25} = 5\). If \(z = -5\) is a real number, then \(\overline{z} = -5\) and \(|z| = \sqrt{(-5)^2 + 0^2} = 5\), so the complex modulus agrees with the ordinary real absolute value on \(\mathbb{R}\). Note that \(|z|\) is always a nonnegative real number, and \(|z| = 0\) if and only if \(a^2 + b^2 = 0\), which (since \(a, b \in \mathbb{R}\)) happens if and only if \(a = 0\) and \(b = 0\), i.e., \(z = 0\).
+
+Combining \(z = a + bi\) with \(\overline{z} = a - bi\) yields three fundamental algebraic identities immediately:
+- Adding cancels the imaginary parts: \(z + \overline{z} = (a + bi) + (a - bi) = 2a = 2\operatorname{Re}(z)\).
+- Subtracting cancels the real parts: \(z - \overline{z} = (a + bi) - (a - bi) = 2bi = 2i\operatorname{Im}(z)\).
+- Multiplying cancels the cross terms and turns \(-i^2\) into \(+1\):
+\[
+z\overline{z} = (a + bi)(a - bi) = a^2 - abi + abi - b^2 i^2 = a^2 + b^2 = |z|^2.
+\]
+
+[CALLOUT]
+id: bridge-identities
+label: Identities
+title: Extracting real parts, imaginary parts, and squared modulus
+tone: key
+
+For every \(z \in \mathbb{C}\):
+
+(1) \(z + \overline{z} = 2\operatorname{Re}(z)\), so \(\operatorname{Re}(z) = \frac{z + \overline{z}}{2}\).
+(2) \(z - \overline{z} = 2i\operatorname{Im}(z)\), so \(\operatorname{Im}(z) = \frac{z - \overline{z}}{2i}\).
+(3) \(z\overline{z} = |z|^2\), which is a nonnegative real number equal to \(0\) if and only if \(z = 0\).
+[/CALLOUT]
+
+The third equation, [REF: bridge-identities.3 | \(z\overline{z} = |z|^2\)], is the central bridge of complex arithmetic: it links multiplication, conjugation, and modulus in a single equation, and it gives us division at once.
+
+=== SECTION 2: Multiplicative inverses and complex division ===
+
+Suppose \(z = a + bi \ne 0\). Because \(z \ne 0\), we know \(|z|^2 = a^2 + b^2 > 0\), so we may divide both sides of \(z\overline{z} = |z|^2\) by the positive real number \(|z|^2\):
+\[
+z \cdot \left(\frac{\overline{z}}{|z|^2}\right) = 1.
+\]
+Therefore every nonzero complex number \(z\) has a unique multiplicative inverse \(z^{-1}\) given by
+\[
+z^{-1} = \frac{1}{z} = \frac{\overline{z}}{|z|^2} = \frac{a}{a^2 + b^2} - \frac{b}{a^2 + b^2}\,i.
+\]
+More generally, to write any quotient \(\frac{w}{z}\) (with \(z \ne 0\)) in standard form, multiply both numerator and denominator by \(\overline{z}\):
+\[
+\frac{w}{z} = \frac{w\overline{z}}{z\overline{z}} = \frac{w\overline{z}}{|z|^2}.
+\]
+Because the denominator \(|z|^2\) is a positive real number, expanding \(w\overline{z}\) and dividing its real and imaginary parts by \(|z|^2\) produces the standard form \(p + qi\).
+
+Let us work through \(\frac{5 - 2i}{3 + 4i}\). The conjugate of the denominator is \(3 - 4i\), and \(|3 + 4i|^2 = 3^2 + 4^2 = 25\). Multiply top and bottom by \(3 - 4i\):
+\[
+\frac{5 - 2i}{3 + 4i} = \frac{(5 - 2i)(3 - 4i)}{(3 + 4i)(3 - 4i)} = \frac{15 - 20i - 6i + 8i^2}{25} = \frac{7 - 26i}{25} = \frac{7}{25} - \frac{26}{25}i.
+\]
+A quick check confirms that \((3 + 4i)\left(\frac{7}{25} - \frac{26}{25}i\right) = \frac{(21 + 104) + (-78 + 28)i}{25} = \frac{125 - 50i}{25} = 5 - 2i\).
+
+Watch out for a common algebraic slip when computing the denominator: \((c + di)(c - di) = c^2 + d^2\), not \(c^2 - d^2\). The term \(-d^2 i^2\) becomes \(+d^2\).
+
+[QUESTION 1]
+[ANSWER: A]
+Write \(\frac{1 + 7i}{(2 - i)^2}\) in standard form \(a + bi\).
+
+(A) \(-1 + i\)
+(B) \(1 + i\)
+(C) \(-1 - i\)
+(D) \(\frac{31}{25} + \frac{17}{25}i\)
+(E) \(-\frac{25}{7} + \frac{25}{7}i\)
+[/QUESTION]
+
+=== SECTION 3: Algebraic properties of conjugation ===
+
+Rather than constantly expanding every complex number into \(a + bi\), we can often manipulate conjugates directly as a single algebraic operation. Conjugation respects every arithmetic operation in \(\mathbb{C}\).
+
+[CALLOUT]
+id: conj-laws
+label: Theorem
+title: Algebraic laws of complex conjugation
+tone: key
+
+For all \(z, w \in \mathbb{C}\):
+
+(1) Involution: \(\overline{\overline{z}} = z\).
+(2) Sums and differences: \(\overline{z \pm w} = \overline{z} \pm \overline{w}\).
+(3) Products: \(\overline{zw} = \overline{z}\,\overline{w}\), and hence \(\overline{z^n} = (\overline{z})^n\) for every integer \(n\) (with \(z \ne 0\) when \(n < 0\)).
+(4) Quotients: \(\overline{z/w} = \overline{z}/\overline{w}\) whenever \(w \ne 0\).
+(5) Real and pure imaginary tests: \(z \in \mathbb{R}\) if and only if \(\overline{z} = z\); and \(\operatorname{Re}(z) = 0\) if and only if \(\overline{z} = -z\).
+[/CALLOUT]
+
+Let us verify the key laws directly from \(z = a + bi\) and \(w = c + di\).
+- For [REF: conj-laws.1 | involution], \(\overline{\overline{z}} = \overline{a - bi} = a - (-b)i = a + bi = z\).
+- For [REF: conj-laws.2 | sums and differences], \(\overline{z + w} = \overline{(a + c) + (b + d)i} = (a + c) - (b + d)i = (a - bi) + (c - di) = \overline{z} + \overline{w}\), and the same calculation with minus signs gives \(\overline{z - w} = \overline{z} - \overline{w}\).
+- For [REF: conj-laws.3 | products], expand both sides:
+\[
+\overline{zw} = \overline{(ac - bd) + (ad + bc)i} = (ac - bd) - (ad + bc)i,
+\]
+while
+\[
+\overline{z}\,\overline{w} = (a - bi)(c - di) = (ac - bd) - (ad + bc)i.
+\]
+They match identically. Repeated multiplication extends this to \(\overline{z^n} = (\overline{z})^n\) for every nonnegative integer \(n\).
+- For [REF: conj-laws.4 | quotients], write \(q = z/w\) so that \(z = qw\). Taking conjugates of both sides and applying [REF: conj-laws.3 | the product rule] gives \(\overline{z} = \overline{qw} = \overline{q}\,\overline{w}\). Since \(w \ne 0\) implies \(\overline{w} \ne 0\), dividing by \(\overline{w}\) yields \(\overline{q} = \overline{z}/\overline{w}\), that is, \(\overline{z/w} = \overline{z}/\overline{w}\). Setting \(z = 1\) and using \(\overline{1} = 1\) gives \(\overline{w^{-1}} = (\overline{w})^{-1}\), which extends \(\overline{z^n} = (\overline{z})^n\) to negative integers \(n\) as well.
+- For [REF: conj-laws.5 | the real and pure imaginary tests], [REF: bridge-identities.2 | \(z - \overline{z} = 2i\operatorname{Im}(z)\)] shows \(\overline{z} = z \iff \operatorname{Im}(z) = 0 \iff z \in \mathbb{R}\), and [REF: bridge-identities.1 | \(z + \overline{z} = 2\operatorname{Re}(z)\)] shows \(\overline{z} = -z \iff \operatorname{Re}(z) = 0\).
+
+To see how much algebra these laws save, consider showing that \(u = z^3 + \overline{z}^3\) is always real for any \(z \in \mathbb{C}\). Without expanding \((a + bi)^3\), simply take the conjugate of \(u\) using [REF: conj-laws.2 | sums], [REF: conj-laws.3 | powers], and [REF: conj-laws.1 | involution]:
+\[
+\overline{u} = \overline{z^3 + \overline{z}^3} = \overline{z}^3 + (\overline{\overline{z}})^3 = \overline{z}^3 + z^3 = u.
+\]
+By [REF: conj-laws.5 | the real test], \(\overline{u} = u\) immediately guarantees \(u \in \mathbb{R}\).
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose \(z \in \mathbb{C}\) satisfies \(|z| = 1\) and \(z \ne -1\), and define \(w = \frac{z - 1}{z + 1}\). Which of the following is guaranteed to hold?
+
+(A) \(\operatorname{Re}(w) = 0\)
+(B) \(\operatorname{Im}(w) = 0\)
+(C) \(|w| = 1\)
+(D) \(w = 0\)
+(E) \(w + \overline{w} = 2\)
+[/QUESTION]
+
+=== SECTION 4: Multiplicative laws of the modulus ===
+
+Computing \(|zw|\) by multiplying \(z\) and \(w\) into standard form and taking a square root is tedious for large products or powers. Instead, [REF: bridge-identities.3 | the identity \(|u|^2 = u\overline{u}\)] combined with [REF: conj-laws.3 | \(\overline{zw} = \overline{z}\,\overline{w}\)] gives a two-line proof that the modulus is completely multiplicative:
+\[
+|zw|^2 = (zw)\overline{zw} = (zw)(\overline{z}\,\overline{w}) = (z\overline{z})(w\overline{w}) = |z|^2 |w|^2.
+\]
+Since \(|zw|\), \(|z|\), and \(|w|\) are all nonnegative real numbers, taking nonnegative square roots yields \(|zw| = |z|\,|w|\).
+
+The remaining modulus laws follow just as quickly. For \(w \ne 0\), writing \(z = (z/w)w\) gives \(|z| = |z/w|\,|w|\), so \(|z/w| = |z|/|w|\). Repeatedly applying the product law gives \(|z^n| = |z|^n\) for \(n \ge 0\), and applying the quotient law to \(z^{-m} = 1/z^m\) extends \(|z^n| = |z|^n\) to all negative integers \(n\) (for \(z \ne 0\)). Finally, \(|\overline{z}| = \sqrt{a^2 + (-b)^2} = \sqrt{a^2 + b^2} = |z|\).
+
+[CALLOUT]
+id: modulus-laws
+label: Theorem
+title: Multiplicative laws of the modulus
+tone: key
+
+For all \(z, w \in \mathbb{C}\):
+
+(1) Conjugate symmetry: \(|\overline{z}| = |z|\).
+(2) Product law: \(|zw| = |z|\,|w|\).
+(3) Quotient law: \(\left|\frac{z}{w}\right| = \frac{|z|}{|w|}\) whenever \(w \ne 0\).
+(4) Power law: \(|z^n| = |z|^n\) for every integer \(n \in \mathbb{Z}\) (requiring \(z \ne 0\) when \(n < 0\)).
+[/CALLOUT]
+
+Notice what is NOT in this list: in general, \(|z + w| \ne |z| + |w|\). For example, \(|1 + i| = \sqrt{2}\), whereas \(|1| + |i| = 1 + 1 = 2\), and \(|1 + (-1)| = 0\) while \(|1| + |-1| = 2\). The modulus splits cleanly across products, quotients, and powers, not across sums.
+
+[TABLE]
+Expression | Modulus rule | Warning
+\(zw\) | \(\lvert zw \rvert = \lvert z \rvert \lvert w \rvert\) | Exact for all \(z, w \in \mathbb{C}\)
+\(z / w\) | \(\lvert z / w \rvert = \lvert z \rvert / \lvert w \rvert\) | Requires \(w \ne 0\)
+\(z^n\) | \(\lvert z^n \rvert = \lvert z \rvert^n\) | Requires \(z \ne 0\) when \(n < 0\)
+\(z + w\) | No general equality with \(\lvert z \rvert + \lvert w \rvert\) | Never split a modulus across a sum or difference
+[/TABLE]
+
+Here is how [REF: modulus-laws | the modulus laws] evaluate a daunting expression in seconds without ever multiplying out a single binomial. To find the modulus of
+\[
+u = \frac{(1 - i)^6 (4 + 3i)^2}{(1 + 2i)^3},
+\]
+apply [REF: modulus-laws.2 | the product], [REF: modulus-laws.3 | quotient], and [REF: modulus-laws.4 | power] laws directly:
+\[
+|u| = \frac{|1 - i|^6 \, |4 + 3i|^2}{|1 + 2i|^3} = \frac{(\sqrt{2})^6 \cdot 5^2}{(\sqrt{5})^3} = \frac{8 \cdot 25}{5\sqrt{5}} = \frac{40}{\sqrt{5}} = 8\sqrt{5}.
+\]
+Trying to expand \((1 - i)^6(4 + 3i)^2\) and divide by \((1 + 2i)^3\) in standard form would take ten times as long and invite arithmetic mistakes.
+
+[QUESTION 3]
+[ANSWER: A]
+Compute the modulus of
+\[
+w = \frac{(3 - 4i)^3 (1 + i\sqrt{3})^2}{(2 + i)^4}.
+\]
+
+(A) \(20\)
+(B) \(100\)
+(C) \(4\sqrt{5}\)
+(D) \(10\)
+(E) \(40\)
+[/QUESTION]
+
+=== SECTION 5: Solving linear equations over \(\mathbb{C}\), including equations with \(\overline{z}\) ===
+
+A plain linear equation in \(z\) alone, such as \((2 - i)z + 3i = 7 - 2i\), is solved just as in real algebra, finishing with complex division:
+\[
+(2 - i)z = 7 - 5i \implies z = \frac{7 - 5i}{2 - i} = \frac{(7 - 5i)(2 + i)}{5} = \frac{19 - 3i}{5} = \frac{19}{5} - \frac{3}{5}i.
+\]
+
+A richer situation arises when an equation couples both \(z\) and \(\overline{z}\), such as
+\[
+3z - i\overline{z} = 7 + 5i.
+\]
+We cannot simply factor out \(z\), because \(\overline{z}\) is a different quantity from \(z\). Two clean methods handle every equation of this kind.
+
+Method 1 (rectangular substitution). Set \(z = x + yi\) with \(x, y \in \mathbb{R}\), so \(\overline{z} = x - yi\). Substitute into the equation and collect real and imaginary parts:
+\[
+3(x + yi) - i(x - yi) = (3x - y) + (3y - x)i = 7 + 5i.
+\]
+Equating real and imaginary parts gives the real system
+\[
+3x - y = 7, \qquad -x + 3y = 5.
+\]
+Multiplying the second equation by \(3\) gives \(-3x + 9y = 15\); adding to the first yields \(8y = 22\), so \(y = \frac{11}{4}\), and then \(x = 3y - 5 = \frac{33}{4} - \frac{20}{4} = \frac{13}{4}\). Thus \(z = \frac{13}{4} + \frac{11}{4}i\).
+
+Method 2 (conjugating the entire equation). Take the complex conjugate of both sides of \(3z - i\overline{z} = 7 + 5i\) using [REF: conj-laws | the conjugation laws]:
+\[
+3\overline{z} + iz = 7 - 5i.
+\]
+Now treat \(z\) and \(\overline{z}\) as two unknowns in a \(2 \times 2\) linear system:
+\[
+3z - i\overline{z} = 7 + 5i, \qquad iz + 3\overline{z} = 7 - 5i.
+\]
+To eliminate \(\overline{z}\), multiply the first equation by \(3\) and the second by \(i\), then add:
+\[
+(9z - 3i\overline{z}) + (-z + 3i\overline{z}) = 3(7 + 5i) + i(7 - 5i) \implies 8z = (21 + 15i) + (5 + 7i) = 26 + 22i.
+\]
+Dividing by \(8\) gives \(z = \frac{13}{4} + \frac{11}{4}i\), matching Method 1.
+
+Both methods always agree, and each shines in different settings: Method 1 is straightforward when coefficients are simple integers, while Method 2 avoids introducing \(x\) and \(y\) and immediately reveals when a general equation \(az + b\overline{z} = c\) has a unique solution. Indeed, taking the conjugate gives \(\overline{b}z + \overline{a}\overline{z} = \overline{c}\), and eliminating \(\overline{z}\) produces
+\[
+(|a|^2 - |b|^2)z = \overline{a}c - b\overline{c}.
+\]
+Whenever \(|a| \ne |b|\), we can divide by the nonzero real number \(|a|^2 - |b|^2\) to obtain a unique solution \(z\). When \(|a| = |b|\), the left-hand side collapses to \(0\), and the equation has either no solution or infinitely many solutions depending on \(c\).
+
+[QUESTION 4]
+[ANSWER: A]
+Solve the complex equation \(2z + (1 - i)\overline{z} = 7 - i\) for \(z \in \mathbb{C}\).
+
+(A) \(3 + 2i\)
+(B) \(3 - 2i\)
+(C) \(2 + 3i\)
+(D) \(4 + 5i\)
+(E) \(1 - 4i\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+How many complex numbers \(z \in \mathbb{C}\) satisfy \((1 + i)z + (1 - i)\overline{z} = 2i\)?
+
+(A) None
+(B) Exactly one
+(C) Exactly two
+(D) Infinitely many
+(E) Every \(z \in \mathbb{C}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose \(z, w \in \mathbb{C}\) satisfy \(|z| = 3\), \(|w| = 4\), and \(|z - w| = 6\). What is \(|z + w|\)?
+
+(A) \(\sqrt{14}\)
+(B) \(5\)
+(C) \(\sqrt{38}\)
+(D) \(14\)
+(E) It cannot be determined without knowing \(z\) and \(w\) individually
+[/BONUS]

@@ -1,0 +1,221 @@
+=== SECTION 1: Funciones como relaciones — existencia y unicidad ===
+
+En la matemática escolar, una función suele presentarse informalmente como una «fórmula» del tipo \(f(x) = x^2 + 1\) o una «regla» que envía entradas a salidas. Ese enfoque informal falla en cuanto una función carece de fórmula algebraica simple, se define a trozos, actúa sobre conjuntos de clases de equivalencia o cuando dos fórmulas distintas producen exactamente el mismo emparejamiento de entradas y salidas. Mediante relaciones binarias podemos definir una función con completo rigor conjuntista.
+
+¿Qué convierte a una relación binaria arbitraria \(R \subseteq A \times B\) en una función de \(A\) en \(B\)? Cada entrada \(a \in A\) debe emparejarse con AL MENOS UNA salida en \(B\) (para que la regla nunca deje de producir un valor) y con A LO SUMO UNA salida en \(B\) (para que la salida sea completamente unívoca). Combinar «al menos una» y «a lo sumo una» es el cuantificador de existencia y unicidad \(\exists!\) («existe un único»).
+
+[CALLOUT]
+id: function-def
+label: Definición
+title: Función, dominio, codominio e imagen (recorrido)
+tone: key
+
+Sean \(A\) y \(B\) conjuntos. Una función (o aplicación) \(f\) de \(A\) en \(B\), escrita \(f : A \to B\), es una terna formada por un dominio \(A\), un codominio \(B\) y una relación binaria (su grafo) \(\Gamma_f \subseteq A \times B\) que satisface la condición de existencia y unicidad:
+\[
+\forall a \in A,\; \exists! b \in B,\; (a, b) \in \Gamma_f.
+\]
+Equivalentemente:
+
+(1) Existencia (totalidad sobre \(A\)): para todo \(a \in A\), existe al menos un \(b \in B\) tal que \((a, b) \in \Gamma_f\).
+(2) Unicidad (univocidad): para todo \(a \in A\) y cualesquiera \(b_1, b_2 \in B\), si \((a, b_1) \in \Gamma_f\) y \((a, b_2) \in \Gamma_f\), entonces \(b_1 = b_2\).
+
+Para cada \(a \in A\), el único \(b \in B\) con \((a, b) \in \Gamma_f\) se denota \(f(a)\) y se denomina valor de \(f\) en \(a\). La imagen (o recorrido) de \(f\) es el subconjunto de \(B\) formado por todas las salidas efectivamente alcanzadas:
+\[
+\operatorname{im}(f) = \{f(a) : a \in A\} = \{b \in B : \exists a \in A,\; f(a) = b\} \subseteq B.
+\]
+[/CALLOUT]
+
+Para relaciones reales \(R \subseteq \mathbb{R} \times \mathbb{R}\), la condición de existencia y unicidad es literalmente la prueba de la recta vertical: para todo \(x\) del dominio \(A\), la recta vertical que pasa por \(x\) debe cortar al grafo en EXACTAMENTE UN punto. Compárese la parábola \(y = x^2 - 1\) frente a la circunferencia unitaria \(x^2 + y^2 = 1\) en \([-1, 1]\):
+- Para \(f : [-1, 1] \to \mathbb{R}\) dada por \(f(x) = x^2 - 1\), toda recta vertical \(x = c\) con \(c \in [-1, 1]\) corta a la parábola una sola vez —por ejemplo en \((0.6, -0.64)\). Obsérvese que el codominio es \(\mathbb{R}\), mientras que la imagen es solo \(\operatorname{im}(f) = [-1, 0]\).
+- Para la relación circunferencia \(C = \{(x, y) \in [-1, 1] \times \mathbb{R} : x^2 + y^2 = 1\}\), la recta vertical \(x = 0.6\) corta a la circunferencia DOS veces, en \((0.6, 0.8)\) y \((0.6, -0.8)\), violando la [REF: function-def.2 | unicidad]. Así pues, \(C\) es una relación binaria perfectamente válida, pero NO es una función.
+
+[GRAPH]
+type: parametric2d
+title: Parábola (función) frente a circunferencia unitaria (no es función) en \(x = 0.6\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -1.4, 1.4
+yrange: -1.4, 1.4
+trace: cos(t), sin(t) | label: circunferencia \(x^2 + y^2 = 1\) | color: #ef4444
+trace: -1 + 2*(t/6.2832), (-1 + 2*(t/6.2832))^2 - 1 | label: \(y = x^2 - 1\) | color: #2563eb
+segment: 0.6, -1.3, 0.6, 1.3 | label: \(x = 0.6\) | color: #64748b | dashed: true
+point: 0.6, 0.8 | label: \((0.6, 0.8)\) | color: #ef4444
+point: 0.6, -0.8 | label: \((0.6, -0.8)\) | color: #ef4444
+point: 0.6, -0.64 | label: \((0.6, -0.64)\) | color: #2563eb | offset: 26, 6
+[/GRAPH]
+
+Nótese la distinción tajante entre CODOMINIO e IMAGEN (recorrido):
+- El codominio \(B\) forma parte de la ESPECIFICACIÓN de \(f : A \to B\): el espacio de llegada donde se declara que viven las salidas. ¡No necesita cubrirse por completo!
+- La imagen \(\operatorname{im}(f) \subseteq B\) es el subconjunto de \(B\) al que \(f\) llega efectivamente. Por ejemplo, si \(f : \mathbb{Z} \to \mathbb{Z}\) se define mediante \(f(n) = 2n\), su codominio es \(\mathbb{Z}\), mientras que su imagen es el subconjunto propio \(2\mathbb{Z} = \{\dots, -4, -2, 0, 2, 4, \dots\} \subsetneq \mathbb{Z}\).
+
+¿Qué sucede si el dominio \(A\) es VACÍO? Compruebe la [REF: function-def | definición] para \(A = \emptyset\) y CUALQUIER conjunto \(B\): el subconjunto vacío \(\emptyset \subseteq \emptyset \times B = \emptyset\) cumple \(\forall a \in \emptyset,\, \exists! b \in B,\, (a, b) \in \emptyset\) por vacuidad. Así que para TODO conjunto \(B\) (incluso \(B = \emptyset\)), existe una única función vacía \(\emptyset \to B\). Por el contrario, si \(A \ne \emptyset\) y \(B = \emptyset\), NO existe ninguna función \(A \to \emptyset\), porque al elegir \(a \in A\) no queda ningún \(b \in \emptyset\) para satisfacer la [REF: function-def.1 | existencia].
+
+[QUESTION 1]
+[ANSWER: B]
+Sean \(A = \{1, 2, 3\}\) y \(B = \{u, v, w\}\). ¿Cuál de los siguientes subconjuntos de \(A \times B\) es el grafo de una función de \(A\) en \(B\)?
+
+(A) \(\{(1, u), (2, v)\}\)
+(B) \(\{(1, v), (2, v), (3, v)\}\)
+(C) \(\{(1, u), (1, v), (2, w), (3, u)\}\)
+(D) \(\{(u, 1), (v, 2), (w, 3)\}\)
+(E) \(\{(1, u), (2, v), (3, w), (2, u)\}\)
+[/QUESTION]
+
+=== SECTION 2: Igualdad de funciones y comprobación de buena definición ===
+
+Puesto que una función consta de TRES piezas de información —dominio, codominio y grafo—, la igualdad de funciones exige que coincidan las tres.
+
+[CALLOUT]
+id: function-equality-def
+label: Definición
+title: Igualdad de funciones
+tone: key
+
+Dos funciones \(f : A_1 \to B_1\) y \(g : A_2 \to B_2\) son iguales (escrito \(f = g\)) si y solo si se cumplen las tres condiciones siguientes:
+
+(1) Mismo dominio: \(A_1 = A_2\).
+(2) Mismo codominio: \(B_1 = B_2\).
+(3) Mismos valores (mismo grafo): \(f(a) = g(a)\) para todo \(a \in A_1\).
+[/CALLOUT]
+
+Deténgase en la [REF: function-equality-def.2 | condición (2)] —al principio sorprende a muchos estudiantes. Compárense las dos funciones
+\[
+f : \mathbb{R} \to \mathbb{R}, \quad f(x) = x^2, \qquad\text{y}\qquad g : \mathbb{R} \to [0, \infty), \quad g(x) = x^2.
+\]
+Comparten exactamente el mismo dominio \(\mathbb{R}\) y exactamente el mismo conjunto de pares ordenados \(\{(x, x^2) : x \in \mathbb{R}\}\), y sin embargo \(f \ne g\) porque sus codominios difieren (\(\mathbb{R} \ne [0, \infty)\)). ¿Por qué insiste la matemática en distinguirlas? Porque propiedades que estudiaremos enseguida —como si una función alcanza cada punto de su codominio— dependen directamente de cuál fue el codominio declarado: \(g\) alcanza todo punto de \([0, \infty)\), mientras que \(f\) deja fuera a todo número real negativo de \(\mathbb{R}\).
+
+Mientras tanto, dos fórmulas DE ASPECTO COMPLETAMENTE DISTINTO pueden definir exactamente la misma función. Por ejemplo, \(f : \mathbb{R} \to \mathbb{R}\) dada por \(f(x) = |x|\) y \(g : \mathbb{R} \to \mathbb{R}\) dada por \(g(x) = \sqrt{x^2}\) tienen el mismo dominio \(\mathbb{R}\), el mismo codominio \(\mathbb{R}\) y \(f(x) = g(x)\) para todo \(x \in \mathbb{R}\), por lo que \(f = g\).
+
+Cuando alguien propone una regla para definir una función \(f : A \to B\), ¿cómo comprobamos si está realmente bien definida? Cuatro verificaciones concretas cubren todos los modos posibles de fallo:
+
+[CALLOUT]
+id: welldefined-checklist
+label: Principio
+title: Comprobación en cuatro puntos de buena definición para \(f : A \to B\)
+tone: key
+
+Una regla propuesta define una auténtica función \(f : A \to B\) si y solo si supera las cuatro condiciones:
+
+(1) Cobertura del dominio: la regla produce un valor para TODA entrada \(a \in A\) (sin división por cero, sin raíz cuadrada de un número negativo en \(\mathbb{R}\), sin huecos descubiertos en una definición a trozos).
+(2) Pertenencia al codominio: para todo \(a \in A\), la salida producida \(f(a)\) pertenece efectivamente al codominio declarado \(B\).
+(3) Consistencia en solapamientos (para reglas a trozos): allí donde dos ramas de una definición a trozos se solapan en una misma entrada \(a \in A\), ambas ramas arrojan EXACTAMENTE el mismo valor.
+(4) Independencia de la representación: si los elementos de \(A\) pueden escribirse de más de una manera (como fracciones \(p/q \in \mathbb{Q}\) o clases de equivalencia \([a]\)), la regla da la misma salida para toda representación del mismo elemento.
+[/CALLOUT]
+
+Observemos cada uno de los cuatro modos de fallo en ejemplos concretos:
+- Fallo de (1) cobertura del dominio: \(f : \mathbb{R} \to \mathbb{R}\) por \(f(x) = \frac{1}{x - 2}\) falla en \(x = 2 \in \mathbb{R}\).
+- Fallo de (2) pertenencia al codominio: \(f : \mathbb{Z} \to \mathbb{N}\) por \(f(n) = n - 1\) falla en \(n = 0 \in \mathbb{Z}\), pues \(f(0) = -1 \notin \mathbb{N}\).
+- Fallo de (3) consistencia en solapamientos: considérese \(f : \mathbb{R} \to \mathbb{R}\) propuesta por
+\[
+f(x) = \begin{cases} x + 2 & \text{si } x \le 1, \\ 3x - 1 & \text{si } x \ge 1. \end{cases}
+\]
+En el punto de solapamiento \(x = 1\), la rama superior da \(1 + 2 = 3\) mientras que la rama inferior da \(3(1) - 1 = 2 \ne 3\). Eso asigna dos salidas distintas a \(1\), violando la unicidad. En cambio, si la rama inferior fuera \(2x + 1\) para \(x \ge 1\), ambas ramas darían \(3\) en \(x = 1\), de modo que la regla SÍ estaría bien definida.
+- Fallo de (4) independencia de la representación: considérese \(f : \mathbb{Q} \to \mathbb{Z}\) propuesta por \(f(p/q) = p + q\) (donde \(p, q \in \mathbb{Z}, q \ne 0\)). El número racional \(1/2\) es igual a \(2/4\), pero la regla da \(1 + 2 = 3\) para \(1/2\) y \(2 + 4 = 6\) para \(2/4\), de modo que \(f\) NO está bien definida. ¿Y si exigimos que \(p/q\) esté en forma irreducible con \(q > 0\) y \(\operatorname{mcd}(p, q) = 1\)? Como TODO número racional tiene una ÚNICA representación irreducible con \(q > 0\) (tomando \(0 = 0/1\)), la regla «\(f(r) = p + q\) donde \(r = p/q\) en forma irreducible con \(q > 0\)» SÍ está bien definida.
+
+[QUESTION 2]
+[ANSWER: E]
+¿Cuál de las siguientes reglas propuestas define una función BIEN DEFINIDA?
+
+(A) \(f : \mathbb{Q} \to \mathbb{Z}\) definida por \(f(p/q) = p\) para \(p \in \mathbb{Z},\; q \in \mathbb{Z} \setminus \{0\}\)
+(B) \(g : \mathbb{R} \to \mathbb{R}\) definida por \(g(x) = x^2\) si \(x \le 2\), y \(g(x) = 3x - 1\) si \(x \ge 2\)
+(C) \(h : \mathbb{Z} \to \mathbb{Z}^+\) definida por \(h(n) = n^2\)
+(D) \(k : \mathbb{R} \to \mathbb{R}\) definida por \(k(x) = \frac{x^2 - 1}{x - 1}\)
+(E) \(m : \mathbb{Q} \to \mathbb{Q}\) definida por \(m(p/q) = \frac{p^2}{p^2 + q^2}\) para \(p \in \mathbb{Z},\; q \in \mathbb{Z} \setminus \{0\}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: C]
+Considérense las cuatro funciones:
+1. \(f_1 : \mathbb{R} \to \mathbb{R}\) dada por \(f_1(x) = x^2\).
+2. \(f_2 : \mathbb{R} \to [0, \infty)\) dada por \(f_2(x) = x^2\).
+3. \(f_3 : [0, \infty) \to [0, \infty)\) dada por \(f_3(x) = x^2\).
+4. \(f_4 : \mathbb{R} \to \mathbb{R}\) dada por \(f_4(x) = |x|^2\).
+
+¿Cuál de las siguientes igualdades se cumple?
+
+(A) \(f_1 = f_2\)
+(B) \(f_2 = f_3\)
+(C) \(f_1 = f_4\)
+(D) \(f_1 = f_2 = f_4\)
+(E) Ningún par de estas cuatro funciones son iguales
+[/QUESTION]
+
+=== SECTION 3: Aplicaciones canónicas — identidad, inclusión, restricción, extensión e indicadoras ===
+
+Cinco familias sencillas de funciones reaparecen constantemente en toda la teoría de conjuntos, el álgebra y el análisis. Conocer sus dominios, codominios y notación exactos nos permite manipular funciones con limpieza en las demostraciones.
+
+[CALLOUT]
+id: canonical-maps
+label: Definición
+title: Funciones identidad, inclusión, restricción, extensión e indicadora
+tone: key
+
+Sean \(A\) y \(B\) conjuntos, y sea \(S \subseteq A\) un subconjunto.
+
+(1) Función identidad sobre \(A\): \(\operatorname{id}_A : A \to A\) definida por \(\operatorname{id}_A(a) = a\) para todo \(a \in A\). (Su grafo es la relación diagonal \(\Delta_A\).)
+(2) Aplicación de inclusión de \(S\) en \(A\): \(\iota_S : S \hookrightarrow A\) (o simplemente \(\iota : S \to A\)) definida por \(\iota_S(s) = s\) para todo \(s \in S\).
+(3) Restricción de \(f : A \to B\) a \(S\): la función \(f|_S : S \to B\) definida por \(f|_S(s) = f(s)\) para todo \(s \in S\).
+(4) Extensión de \(g : S \to B\) a \(A\): cualquier función \(f : A \to B\) cuya restricción a \(S\) es igual a \(g\) (es decir, \(f|_S = g\)).
+(5) Función indicadora (o característica) de \(S \subseteq A\): la función \(\chi_S : A \to \{0, 1\}\) definida por
+\[
+\chi_S(x) = \begin{cases} 1 & \text{si } x \in S, \\ 0 & \text{si } x \notin S. \end{cases}
+\]
+[/CALLOUT]
+
+Nótese la sutil diferencia entre [REF: canonical-maps.1 | la aplicación identidad \(\operatorname{id}_S : S \to S\)] y [REF: canonical-maps.2 | la aplicación de inclusión \(\iota_S : S \to A\)]: cuando \(S \subsetneq A\), tienen el MISMO dominio \(S\) y la MISMA fórmula \(s \mapsto s\), pero \(\operatorname{id}_S \ne \iota_S\) porque sus codominios difieren (\(S \ne A\)).
+
+Nótese también la asimetría entre [REF: canonical-maps.3 | restricción] y [REF: canonical-maps.4 | extensión]:
+- Dada \(f : A \to B\) y \(S \subseteq A\), la restricción \(f|_S : S \to B\) es ÚNICA (simplemente reducimos el dominio a \(S\) conservando el codominio \(B\) y todos los valores en \(S\)).
+- Dada \(g : S \to B\) y un conjunto mayor \(A \supseteq S\), una extensión \(f : A \to B\) típicamente NO es única. Siempre que \(A \setminus S \ne \emptyset\) y \(B\) tenga al menos dos elementos, somos completamente libres de asignar CUALQUIER elemento de \(B\) a cada \(a \in A \setminus S\). Por ejemplo, \(g : \mathbb{R} \setminus \{1\} \to \mathbb{R}\) dada por \(g(x) = \frac{x^2 - 1}{x - 1} = x + 1\) puede extenderse a todo \(\mathbb{R}\) definiendo \(f(1) = 2\) (la extensión continua), O definiendo \(f(1) = 0\), O fijando \(f(1) = 17\): las tres son extensiones conjuntistas válidas de \(g\).
+
+Por último, obsérvese [REF: canonical-maps.5 | la función indicadora \(\chi_S : A \to \{0, 1\}\)]: convierte operaciones con subconjuntos de \(A\) en aritmética ordinaria con ceros y unos. Comprobemos tres identidades útiles para cualesquiera \(S, T \subseteq A\) y todo \(x \in A\):
+- Complemento: \(\chi_{S^c}(x) = 1 - \chi_S(x)\) (si \(x \in S\), ambos lados valen \(0\); si \(x \notin S\), ambos lados valen \(1\)).
+- Intersección: \(\chi_{S \cap T}(x) = \chi_S(x) \cdot \chi_T(x)\) (un producto de dos números en \(\{0, 1\}\) vale \(1\) si y solo si AMBOS factores valen \(1\)).
+- Unión: \(\chi_{S \cup T}(x) = \chi_S(x) + \chi_T(x) - \chi_S(x)\chi_T(x)\) (compruébense los cuatro casos de \((\chi_S(x), \chi_T(x)) \in \{0, 1\}^2\): \((0, 0) \mapsto 0\), \((1, 0) \mapsto 1\), \((0, 1) \mapsto 1\), \((1, 1) \mapsto 1 + 1 - 1 = 1\)).
+
+Obsérvese también que \(\chi_S = \chi_T\) se cumple si y solo si \(S = T\): la función indicadora codifica por completo al subconjunto \(S\) sin pérdida alguna de información.
+
+[QUESTION 4]
+[ANSWER: A]
+Sean \(S\) y \(T\) subconjuntos de un universo \(U\), con funciones indicadoras \(\chi_S, \chi_T : U \to \{0, 1\}\). ¿Qué expresión es igual a \(\chi_{S \Delta T}(x)\) (la función indicadora de la diferencia simétrica \(S \Delta T\)) para todo \(x \in U\)?
+
+(A) \(\chi_S(x) + \chi_T(x) - 2\chi_S(x)\chi_T(x)\)
+(B) \(\chi_S(x) + \chi_T(x) - \chi_S(x)\chi_T(x)\)
+(C) \(\chi_S(x) - \chi_T(x)\)
+(D) \(1 - \chi_S(x)\chi_T(x)\)
+(E) \(\chi_S(x)\bigl(1 - \chi_T(x)\bigr)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Sean \(A = \{1, 2, 3, 4\}\), \(S = \{1, 2\}\) y \(B = \{u, v, w\}\). Supongamos que \(g : S \to B\) es la función \(g(1) = u,\; g(2) = v\). ¿Cuántas extensiones distintas \(f : A \to B\) de \(g\) existen?
+
+(A) \(1\)
+(B) \(3\)
+(C) \(6\)
+(D) \(9\)
+(E) \(81\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sea \(f : \mathbb{R} \to \mathbb{R}\) una función y sea \(S \subseteq \mathbb{R}\). ¿Qué afirmación sobre la restricción \(f|_S\) es SIEMPRE verdadera?
+
+(A) \(\operatorname{im}(f|_S) = \operatorname{im}(f)\)
+(B) El grafo de \(f|_S\) es igual a \(\Gamma_f \cap (S \times \mathbb{R})\), y \(\operatorname{im}(f|_S) \subseteq \operatorname{im}(f)\)
+(C) \(f|_S\) tiene codominio \(\operatorname{im}(f|_S)\)
+(D) Si \(S \subsetneq \mathbb{R}\), entonces \(\operatorname{im}(f|_S) \subsetneq \operatorname{im}(f)\)
+(E) \(f|_S\) puede tener múltiples extensiones a \(\mathbb{R}\) únicamente si \(S = \emptyset\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Sean \(S, T \subseteq U\). ¿Qué condición algebraica sobre las funciones indicadoras \(\chi_S, \chi_T : U \to \{0, 1\}\) es equivalente a \(S \subseteq T\)?
+
+(A) \(\chi_S(x) + \chi_T(x) = 1\) para todo \(x \in U\)
+(B) \(\chi_S(x) \ge \chi_T(x)\) para todo \(x \in U\)
+(C) \(\chi_S(x) \le \chi_T(x)\) para todo \(x \in U\)
+(D) \(\chi_S(x)\chi_T(x) = 0\) para todo \(x \in U\)
+(E) \(\chi_S(x) - \chi_T(x) = 0\) para todo \(x \in U\)
+[/BONUS]

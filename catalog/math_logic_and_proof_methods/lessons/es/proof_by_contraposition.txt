@@ -1,0 +1,217 @@
+=== SECTION 1: Cuando la demostración directa se estanca — la plantilla contrarrecíproca ===
+
+Intente demostrar directamente este teorema de aspecto sencillo:
+\[
+\forall n \in \mathbb{Z},\, (n^2 \text{ es par} \implies n \text{ es par}).
+\]
+Siga la plantilla de demostración directa: sea \(n \in \mathbb{Z}\) arbitrario y supongamos que \(n^2\) es par. Por la definición de par, \(n^2 = 2k\) para algún \(k \in \mathbb{Z}\). Ahora intente despejar \(n\): obtiene \(n = \pm\sqrt{2k}\). ¡De inmediato el álgebra se estanca! Tomar una raíz cuadrada nos saca de \(\mathbb{Z}\) y no nos dice nada evidente sobre si \(n\) tiene la forma \(2m\).
+
+Sin embargo, recuerde una equivalencia fundamental que demostramos en lógica proposicional: todo condicional \(P \Rightarrow Q\) es lógicamente equivalente a su contrarrecíproca \(\neg Q \Rightarrow \neg P\). Por lo tanto, para cualesquiera predicados \(P(x)\) y \(Q(x)\) sobre un dominio \(D\),
+\[
+\bigl(\forall x \in D,\, P(x) \implies Q(x)\bigr) \;\equiv\; \bigl(\forall x \in D,\, \neg Q(x) \implies \neg P(x)\bigr).
+\]
+Observe lo que ocurre con nuestro teorema estancado cuando pasamos a su contrarrecíproca:
+- Original: "Si \(n^2\) es par, entonces \(n\) es par."
+- Contrarrecíproca: "Si \(n\) NO es par (es decir, \(n\) es impar), entonces \(n^2\) NO es par (es decir, \(n^2\) es impar)."
+
+¡Ahora el álgebra fluye sin esfuerzo hacia adelante! En lugar de extraer una raíz cuadrada, simplemente ELEVAMOS AL CUADRADO \(n = 2k + 1\).
+
+[CALLOUT]
+id: template-contraposition
+label: Método
+title: Demostración por contraposición para \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\)
+tone: key
+
+(1) Fije un \(x \in D\) arbitrario y anuncie la estrategia contrarrecíproca: "Demostraremos la contrarrecíproca. Supongamos \(\neg Q(x)\)."
+(2) Simplifique \(\neg Q(x)\) con limpieza (aplicando las leyes de De Morgan o la negación de cuantificadores si \(Q(x)\) es compuesto) y desglose sus definiciones.
+(3) Deduzca \(\neg P(x)\) mediante una cadena directa de pasos válidos.
+(4) Concluya que, como \(\neg Q(x) \Rightarrow \neg P(x)\) se cumple para \(x \in D\) arbitrario, la implicación original \(P(x) \Rightarrow Q(x)\) se cumple para todo \(x \in D\).
+[/CALLOUT]
+
+Ejecutemos [REF: template-contraposition | la demostración por contraposición] en nuestro teorema inicial.
+
+[CALLOUT]
+id: proof-n2-even
+label: Demostración
+title: Teorema: Para todo \(n \in \mathbb{Z}\), si \(n^2\) es par, entonces \(n\) es par
+tone: note
+
+Demostración: Sea \(n \in \mathbb{Z}\) arbitrario. Demostraremos la contrarrecíproca: si \(n\) no es par, entonces \(n^2\) no es par.
+
+Supongamos que \(n\) no es par; entonces \(n\) es impar, por lo que existe \(k \in \mathbb{Z}\) tal que \(n = 2k + 1\). Elevando al cuadrado se obtiene
+\[
+n^2 = (2k + 1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1.
+\]
+Como \(k \in \mathbb{Z}\), tenemos \(m = 2k^2 + 2k \in \mathbb{Z}\) y \(n^2 = 2m + 1\). Por tanto, \(n^2\) es impar, lo que significa que \(n^2\) no es par. Por contraposición, si \(n^2\) es par, entonces \(n\) es par.
+[/CALLOUT]
+
+Note que [REF: proof-n2-even | esta demostración] se apoya en un hecho básico de paridad en \(\mathbb{Z}\): todo entero es par o impar, y nunca ambos (de modo que "no par" equivale a "impar"). Con eso en mano, la contraposición convirtió una incómoda raíz cuadrada en el desarrollo de un polinomio en dos líneas.
+
+[QUESTION 1]
+[ANSWER: B]
+Deseamos demostrar por contraposición: "Para todo entero \(n \in \mathbb{Z}\), si \(3n + 5\) es impar, entonces \(n\) es par." ¿Qué suposición inicial y qué objetivo corresponden a una demostración válida por contraposición?
+
+(A) Suponer que \(n\) es par; demostrar que \(3n + 5\) es impar.
+(B) Suponer que \(n\) es impar; demostrar que \(3n + 5\) es par.
+(C) Suponer que \(3n + 5\) es par; demostrar que \(n\) es impar.
+(D) Suponer que \(3n + 5\) es impar y \(n\) es impar; deducir una ecuación falsa.
+(E) Suponer que \(n\) es impar; demostrar que \(3n + 5\) es impar.
+[/QUESTION]
+
+=== SECTION 2: Indicios estructurales que apuntan a la contraposición ===
+
+Los matemáticos con experiencia no prueban la demostración directa a ciegas y cambian a contraposición solo tras atascarse; detectan de inmediato las señales estructurales en el enunciado del teorema. Tres señales apuntan con fiabilidad hacia la contraposición:
+
+1. Hipótesis compuesta, conclusión más simple. Cuando \(P(x)\) coloca a \(x\) dentro de una expresión complicada (como \(n^2\), \(n^3 + 5\) o \(ab\)) mientras \(Q(x)\) es una propiedad sencilla de \(x\), ¡suponer \(\neg Q(x)\) le entrega una fórmula limpia para \(x\) que puede sustituir directamente en la expresión compuesta!
+2. Conclusión disyuntiva (\(Q_1 \vee Q_2\)). Demostrar directamente una disyunción puede ser incómodo porque hay que decidir qué lado se cumple. Tomar la contrarrecíproca aplica la ley de De Morgan a \(\neg(Q_1 \vee Q_2) \equiv \neg Q_1 \wedge \neg Q_2\), ¡convirtiendo una disyunción débil en la conclusión en una CONJUNCIÓN RICA de dos suposiciones simultáneas!
+3. Conclusión negativa ("irracional", "no divisible entre", "\(x \ne 0\)"). Las propiedades negativas son difíciles de construir directamente —no hay ninguna fórmula sencilla para "un número irracional arbitrario"—. ¡Negar una conclusión negativa produce una suposición POSITIVA ("racional", "divisible entre", "\(x = 0\)") con una representación algebraica concreta con la que puede calcular!
+
+Desarrollemos dos demostraciones clásicas que exhiben las señales (2) y (3) simultáneamente.
+
+[CALLOUT]
+id: proof-ab-even
+label: Demostración
+title: Teorema: Para todos \(a, b \in \mathbb{Z}\), si \(ab\) es par, entonces \(a\) es par o \(b\) es par
+tone: note
+
+Demostración: Sean \(a, b \in \mathbb{Z}\) arbitrarios. Demostraremos la contrarrecíproca. La negación de "\(a\) es par o \(b\) es par" es (por la ley de De Morgan) "\(a\) es impar y \(b\) es impar".
+
+Supongamos que \(a\) es impar y \(b\) es impar. Entonces existen enteros \(k, m \in \mathbb{Z}\) tales que \(a = 2k + 1\) y \(b = 2m + 1\). Multiplicando se obtiene
+\[
+ab = (2k + 1)(2m + 1) = 4km + 2k + 2m + 1 = 2(2km + k + m) + 1.
+\]
+Como \(2km + k + m \in \mathbb{Z}\), el producto \(ab\) es impar, por lo que \(ab\) no es par. Por contraposición, si \(ab\) es par, entonces \(a\) es par o \(b\) es par.
+[/CALLOUT]
+
+Mire qué limpiamente funcionó la ley de De Morgan en [REF: proof-ab-even | esa demostración]: suponer que TANTO \(a\) como \(b\) son impares nos dio fórmulas explícitas para ambas variables a la vez.
+
+Ahora observe cómo se combinan la señal (2) y la señal (3) en los números reales. Recuerde que un número real es irracional si y solo si NO es racional (\(x \in \mathbb{R}\) y \(x \notin \mathbb{Q}\)).
+
+[CALLOUT]
+id: proof-sum-irrational
+label: Demostración
+title: Teorema: Para todos \(x, y \in \mathbb{R}\), si \(x + y\) es irracional, entonces \(x\) es irracional o \(y\) es irracional
+tone: note
+
+Demostración: Sean \(x, y \in \mathbb{R}\) arbitrarios. Demostraremos la contrarrecíproca: si NO es cierto que "\(x\) es irracional o \(y\) es irracional", entonces \(x + y\) es racional.
+
+Por la ley de De Morgan y la doble negación, la negación de "\(x\) es irracional o \(y\) es irracional" es "\(x\) es racional y \(y\) es racional". Supongamos \(x \in \mathbb{Q}\) e \(y \in \mathbb{Q}\). Como demostramos en nuestra lección anterior sobre demostración directa, la suma de dos números racionales es racional, de modo que \(x + y \in \mathbb{Q}\); es decir, \(x + y\) no es irracional. Por contraposición, si \(x + y\) es irracional, entonces \(x\) es irracional o \(y\) es irracional.
+[/CALLOUT]
+
+Note que [REF: proof-sum-irrational | esa demostración] ni siquiera necesitó desglosar fracciones desde cero: reutilizar nuestro teorema ya demostrado (cerradura de \(\mathbb{Q}\) bajo la suma) convirtió un enunciado intimidante sobre números irracionales en una demostración por contraposición de tres líneas.
+
+[QUESTION 2]
+[ANSWER: C]
+Considere el teorema: "Para todos los enteros \(a, b \in \mathbb{Z}\), si \(a + b \ge 15\), entonces \(a \ge 8\) o \(b \ge 8\)." ¿Qué argumento es una demostración completa y válida por contraposición?
+
+(A) Suponga \(a \ge 8\) y \(b \ge 8\); entonces \(a + b \ge 16 \ge 15\).
+(B) Suponga \(a < 8\) o \(b < 8\); entonces \(a + b < 15\).
+(C) Suponga \(a < 8\) y \(b < 8\). Como \(a, b \in \mathbb{Z}\), tenemos \(a \le 7\) y \(b \le 7\), por lo que \(a + b \le 14 < 15\).
+(D) Suponga \(a \le 8\) y \(b \le 8\); entonces \(a + b \le 16\), así que \(a + b\) no tiene por qué ser al menos \(15\).
+(E) Suponga \(a + b < 15\); entonces al menos uno de \(a, b\) es menor que \(8\), por lo que es falso que tanto \(a \ge 8\) como \(b \ge 8\).
+[/QUESTION]
+
+=== SECTION 3: Trampas — errores de la recíproca, hipótesis ambientales y componentes cuantificados ===
+
+Como la contraposición invierte el sentido de la flecha Y niega ambos lados, tres errores sutiles aparecen una y otra vez cuando los estudiantes la aplican.
+
+[CALLOUT]
+id: caution-contra-pitfalls
+label: Precaución
+title: Tres trampas en las demostraciones por contraposición
+tone: caution
+
+(1) El error de la recíproca: Demostrar \(Q(x) \Rightarrow P(x)\) en lugar de \(\neg Q(x) \Rightarrow \neg P(x)\). Por ejemplo, demostrar "si \(n\) es par, entonces \(n^2\) es par" NO sirve de nada para demostrar "si \(n^2\) es par, entonces \(n\) es par".
+(2) Negar con descuido una hipótesis conjuntiva: Si el teorema tiene la forma \((P_1 \wedge P_2) \Rightarrow Q\), su contrarrecíproca completa es \(\neg Q \Rightarrow (\neg P_1 \vee \neg P_2)\). Con frecuencia, sin embargo, una parte (digamos \(P_1\), como "\(x > 0\)" o "\(a \in \mathbb{Z}\)") es una suposición ambiental fija. Recuerde la equivalencia proposicional
+\[
+(P_1 \wedge P_2) \implies Q \;\equiv\; P_1 \implies (P_2 \implies Q) \;\equiv\; P_1 \implies (\neg Q \implies \neg P_2).
+\]
+¡Así que está permitido MANTENER \(P_1\) fijo como suposición permanente, suponer \(\neg Q\) y demostrar \(\neg P_2\)!
+(3) Negar mal una hipótesis o conclusión cuantificada: Cuando \(P\) o \(Q\) contiene \(\forall\) o \(\exists\), aplique estrictamente las reglas de negación de cuantificadores antes de escribir la contrarrecíproca.
+[/CALLOUT]
+
+Examinemos tanto la Trampa (2) como la Trampa (3) en teoremas concretos para que vea qué limpiamente funcionan cuando se manejan bien.
+
+Primero, observe la Trampa (2) sobre una hipótesis ambiental:
+Teorema: "Para todos los números reales \(x, y \in \mathbb{R}\), si \(x > 0\) y \(xy\) es irracional, entonces \(x\) es irracional o \(y\) es irracional."
+Espere —aquí \(x > 0\) ni siquiera hace falta, así que considere un teorema donde la hipótesis ambiental SÍ interviene—:
+Teorema: "Para todos los números reales \(x, y \in \mathbb{R}\), si \(x \ne 0\) y \(xy\) es irracional, entonces \(x\) es irracional o \(y\) es irracional." (Espere: incluso aquí, si \(x = 0\), \(xy = 0\) es racional, así que la implicación se cumple por vacuidad. ¡Veamos un teorema mejor donde \(x \ne 0\) entre genuinamente en juego!)
+Considere:
+Teorema: "Para todos \(x, y \in \mathbb{R}\), si \(x\) es racional distinto de cero y \(xy\) es irracional, entonces \(y\) es irracional."
+Aquí tenemos DOS hipótesis: \(P_1\): "\(x \in \mathbb{Q}\) y \(x \ne 0\)" (suposición ambiental sobre \(x\)), y \(P_2\): "\(xy\) es irracional", con conclusión \(Q\): "\(y\) es irracional".
+Manteniendo \(P_1\) fijo y tomando la contrarrecíproca de \(P_2 \Rightarrow Q\):
+- Fije \(x, y \in \mathbb{R}\) arbitrarios con \(x \in \mathbb{Q}\) y \(x \ne 0\).
+- Suponga \(\neg Q\): \(y \in \mathbb{Q}\).
+- Como \(x \in \mathbb{Q}\) e \(y \in \mathbb{Q}\), su producto \(xy\) es racional (si \(x = p_1/q_1\) e \(y = p_2/q_2\) con \(q_1, q_2 \ne 0\), entonces \(xy = (p_1 p_2)/(q_1 q_2) \in \mathbb{Q}\)). Así se cumple \(\neg P_2\): \(xy\) no es irracional.
+- Por contraposición (con \(P_1\) fijo), si \(x \in \mathbb{Q} \setminus \{0\}\) y \(xy\) es irracional, entonces \(y\) es irracional.
+(Note que la contrarrecíproca completa \(\neg Q \Rightarrow (\neg P_1 \vee \neg P_2)\) es lógicamente equivalente a \((P_1 \wedge \neg Q) \Rightarrow \neg P_2\), porque \(A \Rightarrow (B \vee C) \equiv (A \wedge \neg B) \Rightarrow C\).)
+
+Ahora observe la Trampa (3) sobre una hipótesis cuantificada —¡un lema angular del análisis real!—:
+Teorema: "Sea \(x \in \mathbb{R}\) fijo. Si \(|x| < \varepsilon\) para todo \(\varepsilon > 0\), entonces \(x = 0\)."
+Escriba la estructura lógica explícitamente:
+\[
+\bigl(\forall \varepsilon > 0,\, |x| < \varepsilon\bigr) \implies x = 0.
+\]
+Intentar una demostración directa resulta incómodo: ¿cómo transforma infinitas desigualdades en \(x = 0\)? ¡Ahora tome la contrarrecíproca!
+- \(\neg Q\): \(x \ne 0\).
+- \(\neg P\): \(\neg(\forall \varepsilon > 0,\, |x| < \varepsilon) \equiv \exists \varepsilon > 0,\, |x| \ge \varepsilon\).
+
+Mire qué sencilla se vuelve la demostración por contraposición:
+Suponga \(x \ne 0\). Entonces \(|x| > 0\), así que podemos elegir \(\varepsilon = \frac{|x|}{2} > 0\) (o incluso \(\varepsilon = |x| > 0\)). Para este \(\varepsilon > 0\) específico, tenemos \(|x| \ge \varepsilon\) (de hecho \(|x| > |x|/2\)), lo que muestra \(\exists \varepsilon > 0,\, |x| \ge \varepsilon\). Por contraposición, si \(|x| < \varepsilon\) para todo \(\varepsilon > 0\), entonces \(x = 0\).
+
+[QUESTION 3]
+[ANSWER: E]
+Se pide a un estudiante demostrar: "Para todo entero \(n \in \mathbb{Z}\), si \(n^2 - 6n + 5\) es par, entonces \(n\) es impar." El estudiante escribe:
+"Supongamos que \(n\) es impar. Entonces \(n = 2k + 1\) para algún \(k \in \mathbb{Z}\). Sustituyendo se obtiene \(n^2 - 6n + 5 = (2k + 1)^2 - 6(2k + 1) + 5 = 4k^2 - 8k = 2(2k^2 - 4k)\), que es par. Listo."
+¿Cómo debe evaluarse esta demostración?
+
+(A) Completamente válida: demostró la contrarrecíproca con limpieza.
+(B) Válida salvo un pequeño error algebraico al desarrollar \((2k + 1)^2 - 6(2k + 1) + 5\).
+(C) Inválida porque olvidó el caso en que \(n < 0\).
+(D) Inválida porque demostró la inversa en lugar de la contrarrecíproca.
+(E) Inválida: demostró la RECÍPROCA ("si \(n\) es impar, entonces \(n^2 - 6n + 5\) es par"); una demostración válida por contraposición debe suponer que \(n\) es PAR y demostrar que \(n^2 - 6n + 5\) es IMPAR.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Sean \(a, b \in \mathbb{R}\). Considere el teorema: "Si \(a \le b + \varepsilon\) para todo \(\varepsilon > 0\), entonces \(a \le b\)." ¿Cuál de las siguientes opciones es una demostración válida por contraposición de este teorema?
+
+(A) Suponga \(a > b\). Tome \(\varepsilon = \frac{a - b}{2}\). Como \(a > b\), tenemos \(\varepsilon > 0\), y \(b + \varepsilon = \frac{a + b}{2} < a\), de modo que es falso que \(a \le b + \varepsilon\) para todo \(\varepsilon > 0\).
+(B) Suponga \(a \le b\). Entonces para todo \(\varepsilon > 0\), \(a \le b < b + \varepsilon\).
+(C) Suponga \(a > b\). Entonces para todo \(\varepsilon > 0\), \(a > b + \varepsilon\).
+(D) Suponga que existe \(\varepsilon > 0\) con \(a > b + \varepsilon\). Entonces \(a > b\) porque \(\varepsilon > 0\).
+(E) Suponga \(a > b\). Tome \(\varepsilon = b - a\); entonces \(b + \varepsilon = 2b - a < a\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+¿Cuál de los siguientes teoremas se demuestra limpiamente por contraposición usando la suposición \(n = 3q + 1\) o \(n = 3q + 2\)?
+
+(A) Para todo \(n \in \mathbb{Z}\), si \(3 \mid n\), entonces \(3 \mid n^2\).
+(B) Para todo \(n \in \mathbb{Z}\), si \(3 \nmid n\), entonces \(3 \nmid n^2\).
+(C) Para todo \(n \in \mathbb{Z}\), si \(3 \mid n^2\), entonces \(9 \mid n\).
+(D) Para todo \(n \in \mathbb{Z}\), si \(3 \mid n^2\), entonces \(3 \mid n\).
+(E) Para todo \(n \in \mathbb{Z}\), si \(3 \mid (n^2 + 1)\), entonces \(3 \mid n\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Considere el teorema: "Para todos los números reales \(x, y \in \mathbb{R}\), si \(x + y > 2\) y \(x > 0\), entonces \(x > 1\) o \(y > 1\)." Mantener fija la hipótesis ambiental \(x > 0\) es innecesario, o podemos mantenerla fija; espere —¿cuál de las siguientes opciones es la contrarrecíproca completa exacta de \((x + y > 2 \wedge x > 0) \Rightarrow (x > 1 \vee y > 1)\)?—
+
+(A) Si \(x \le 1\) o \(y \le 1\), entonces \(x + y \le 2\) y \(x \le 0\).
+(B) Si \(x \le 1\) y \(y \le 1\), entonces \(x + y \le 2\) o \(x \le 0\).
+(C) Si \(x \le 1\) y \(y \le 1\), entonces \(x + y \le 2\) y \(x \le 0\).
+(D) Si \(x < 1\) y \(y < 1\), entonces \(x + y < 2\) o \(x < 0\).
+(E) Si \(x + y \le 2\) o \(x \le 0\), entonces \(x \le 1\) y \(y \le 1\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Sea \(n \in \mathbb{Z}\). Suponga que queremos demostrar por contraposición: "Si \(5 \nmid n^2\), entonces \(5 \nmid n\)." ¿Qué suposición inicia la demostración por contraposición y qué proporciona de inmediato?
+
+(A) Suponga \(5 \mid n^2\); entonces \(n^2 = 5k\), lo que obliga a \(5 \mid n\).
+(B) Suponga \(5 \nmid n\); pruebe los cuatro restos \(5q + 1, 5q + 2, 5q + 3, 5q + 4\) para mostrar \(5 \nmid n^2\).
+(C) Suponga \(5 \mid n\); entonces \(n = 5k\) para algún \(k \in \mathbb{Z}\), por lo que \(n^2 = 25k^2 = 5(5k^2)\), demostrando \(5 \mid n^2\).
+(D) Suponga \(5 \mid n\) y \(5 \nmid n^2\); deduzca \(0 = 1\).
+(E) La contraposición no puede aplicarse porque tanto la hipótesis como la conclusión son enunciados negativos.
+[/BONUS]

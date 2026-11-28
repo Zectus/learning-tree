@@ -1,0 +1,218 @@
+=== SECTION 1: Por qué el teorema de Pitágoras necesita un término de corrección ===
+
+La ley de los senos requiere un par opuesto completo: un ángulo y el lado frente a él. ¿Qué ocurre si conoce dos lados y su ángulo COMPRENDIDO (LAL), o las tres longitudes de los lados sin ningún ángulo (LLL)? ¡En ninguno de los dos casos cuenta con un par ángulo-lado opuesto, así que la ley de los senos ni siquiera puede comenzar!
+
+Advierta que cuando el ángulo comprendido entre los lados \(a\) y \(b\) es \(C = 90^\circ\), el teorema de Pitágoras ya determina el lado opuesto \(c\):
+\[
+c^2 = a^2 + b^2.
+\]
+¿Qué sucede cuando \(C\) NO es \(90^\circ\)? Imagine articular dos varillas de longitudes fijas \(a\) y \(b\) en el vértice \(C\). Al cerrar el ángulo \(C\) por debajo de \(90^\circ\) (agudo), los extremos se acercan entre sí, de modo que \(c^2 < a^2 + b^2\). Al abrir el ángulo \(C\) más allá de \(90^\circ\) (obtuso), los extremos se separan más, de modo que \(c^2 > a^2 + b^2\).
+
+Para hallar la fórmula exacta que funciona a la vez para ángulos \(C\) agudos, rectos Y obtusos, ubique el triángulo \(\triangle ABC\) en el plano cartesiano con una elección conveniente de coordenadas:
+- Coloque el vértice \(C\) en el origen \((0, 0)\).
+- Sitúe el lado \(b = CA\) a lo largo del semieje \(x\) positivo, de manera que el vértice \(A\) quede en \((b, 0)\).
+- Sitúe el lado \(a = CB\) formando un ángulo \(C\) en posición estándar. ¡Por las definiciones para ángulos generales del seno y el coseno sobre una circunferencia de radio \(a\), el vértice \(B\) tiene coordenadas exactas \((a\cos C, a\sin C)\) tanto si \(C\) es agudo, recto u obtuso!
+
+Arrastre el deslizador del ángulo abajo (que fija el ángulo \(C\) en radianes, desde agudo pasando por \(\frac{\pi}{2} \approx 1.57\) hasta obtuso) para observar cómo el vértice \(B\) se desliza a lo largo de la semicircunferencia de radio \(a = 4\) mientras el lado \(c = AB\) se alarga suavemente.
+
+[GRAPH]
+type: parametric2d
+title: Disposición coordenada para la ley de los cosenos (\(a = 4, b = 5\), ángulo variable \(C\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -4.6, 5.8
+yrange: -0.8, 4.8
+trace: 4*cos(t), 4*sin(t) | label: trayectoria de \(B\) (radio \(a = 4\)) | color: #94a3b8
+segment: 0, 0, 5, 0 | label: \(b = 5\) | color: #0f172a
+segment: 0, 0, 4*cos(ang), 4*sin(ang) | label: \(a = 4\) | color: #2563eb
+segment: 5, 0, 4*cos(ang), 4*sin(ang) | label: \(c\) | color: #dc2626
+point: 0, 0 | label: \(C\) | offset: -0.3, -0.35
+point: 5, 0 | label: \(A\) | offset: 0.25, -0.35
+point: 4*cos(ang), 4*sin(ang) | label: \(B\) | offset: 0.1, 0.35
+slider: ang | range: 0.35, 2.75 | init: 2.094 | step: 0.05
+[/GRAPH]
+
+Aplique ahora la fórmula pitagórica de distancia directamente a los dos puntos \(A(b, 0)\) y \(B(a\cos C, a\sin C)\):
+\[
+c^2 = (a\cos C - b)^2 + (a\sin C - 0)^2.
+\]
+Desarrolle los cuadrados con cuidado:
+\[
+c^2 = a^2\cos^2 C - 2ab\cos C + b^2 + a^2\sin^2 C.
+\]
+Agrupe los dos términos con \(a^2\) y aplique la identidad pitagórica de la circunferencia unitaria \(\cos^2 C + \sin^2 C = 1\):
+\[
+c^2 = a^2(\cos^2 C + \sin^2 C) + b^2 - 2ab\cos C = a^2 + b^2 - 2ab\cos C.
+\]
+¡Como las coordenadas \((a\cos C, a\sin C)\) son válidas para todo ángulo \(C \in (0^\circ, 180^\circ)\), esta única deducción demuestra la ley de los cosenos para TODOS los triángulos simultáneamente!
+
+[CALLOUT]
+id: law-of-cosines
+label: Teorema
+title: La ley de los cosenos
+tone: key
+
+En todo triángulo \(\triangle ABC\) con longitudes de lados \(a, b, c\) opuestos a los ángulos \(A, B, C\),
+\[
+c^2 = a^2 + b^2 - 2ab\cos C,
+\]
+\[
+a^2 = b^2 + c^2 - 2bc\cos A,
+\]
+\[
+b^2 = a^2 + c^2 - 2ac\cos B.
+\]
+Despejar el coseno en cada ecuación da la forma para hallar ángulos:
+\[
+\cos C = \frac{a^2 + b^2 - c^2}{2ab}, \qquad \cos A = \frac{b^2 + c^2 - a^2}{2bc}, \qquad \cos B = \frac{a^2 + c^2 - b^2}{2ac}.
+\]
+[/CALLOUT]
+
+Verifique los tres regímenes angulares en el término de corrección \(-2ab\cos C\):
+- Recto (\(C = 90^\circ\)): \(\cos 90^\circ = 0\), recuperando \(c^2 = a^2 + b^2\) exactamente.
+- Agudo (\(0^\circ < C < 90^\circ\)): \(\cos C > 0\), de modo que \(-2ab\cos C < 0\) y \(c^2 < a^2 + b^2\).
+- Obtuso (\(90^\circ < C < 180^\circ\)): \(\cos C < 0\), de modo que restar un número negativo SUMA \(2ab\lvert \cos C \rvert > 0\), haciendo \(c^2 > a^2 + b^2\).
+
+=== SECTION 2: Resolución de triángulos LAL y cuidado con la trampa de signo obtuso ===
+
+Cuando conoce dos lados y su ángulo comprendido (LAL), [REF: law-of-cosines | la ley de los cosenos] calcula el lado opuesto directamente en un solo paso.
+
+Ejemplo resuelto (LAL): Halle el lado \(c\) cuando \(a = 5\), \(b = 8\) y \(C = 60^\circ\).
+\[
+c^2 = 5^2 + 8^2 - 2(5)(8)\cos 60^\circ = 25 + 64 - 80\!\left(\frac{1}{2}\right) = 89 - 40 = 49 \implies c = 7.
+\]
+
+Observe ahora qué ocurre cuando el ángulo comprendido es obtuso —digamos \(a = 4\), \(b = 5\) y \(C = 120^\circ\)—. Como \(\cos 120^\circ = -\cos 60^\circ = -\frac{1}{2}\),
+\[
+c^2 = 4^2 + 5^2 - 2(4)(5)\!\left(-\frac{1}{2}\right) = 16 + 25 + 20 = 61 \implies c = \sqrt{61} \approx 7.81.
+\]
+
+[CALLOUT]
+id: obtuse-sign-caution
+label: Error frecuente
+title: Restar un producto negativo cuando \(C > 90^\circ\)
+tone: caution
+
+Cuando el ángulo comprendido \(C\) es obtuso, \(\cos C\) es negativo, por lo que \(-2ab\cos C\) es POSITIVO. Un error frecuente es omitir uno de los dos signos menos y calcular en su lugar \(a^2 + b^2 - 2ab\lvert \cos C \rvert\), lo que arroja una respuesta menor que \(\sqrt{a^2 + b^2}\): ¡geométricamente imposible frente a un ángulo obtuso! Compruebe siempre que \(c^2 > a^2 + b^2\) cuando \(C > 90^\circ\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+En el triángulo \(\triangle ABC\), \(a = 6\), \(b = 10\) y el ángulo comprendido es \(C = 120^\circ\). ¿Cuál es la longitud exacta del lado \(c\)?
+
+(A) \(2\sqrt{19}\)
+(B) \(2\sqrt{34}\)
+(C) \(14\)
+(D) \(16\)
+(E) \(4\sqrt{11}\)
+[/QUESTION]
+
+=== SECTION 3: Resolución de triángulos LLL y por qué el coseno no tiene ambigüedad ===
+
+Suponga ahora que le dan las tres longitudes de los lados \(a, b, c\) (LLL). Antes de calcular un solo coseno, verifique SIEMPRE la desigualdad triangular: la suma de los dos lados más cortos debe ser ESTRICTAMENTE mayor que el lado más largo (equivalentemente, \(a + b > c\), \(a + c > b\) y \(b + c > a\)). Si los dos lados más cortos suman menos o igual que el lado más largo, no pueden cerrarse formando un triángulo; y si los sustituye a ciegas en la ley de los cosenos, obtendrá \(\lvert \cos C \rvert \ge 1\).
+
+Cuando los lados forman un triángulo válido, ¿cómo recuperamos un ángulo \(C\) a partir de \(\cos C = \frac{a^2 + b^2 - c^2}{2ab}\)? En una calculadora científica, la búsqueda de coseno inverso \(\cos^{-1}(p)\) devuelve un ángulo en \((0^\circ, 180^\circ)\) para todo \(p \in (-1, 1)\). (Al igual que con \(\sin^{-1}\), tratamos aquí \(\cos^{-1}\) estrictamente como una búsqueda numérica en \((0^\circ, 180^\circ)\).)
+
+He aquí el contraste estructural decisivo entre la ley de los cosenos y la ley de los senos:
+- En \((0^\circ, 180^\circ)\), \(\sin\theta\) sube de \(0\) a \(1\) y vuelve a bajar a \(0\), de modo que todo valor positivo ocurre DOS VECES (agudo y obtuso), provocando la ambigüedad LLA.
+- En \((0^\circ, 180^\circ)\), \(\cos\theta\) es ESTRICTAMENTE DECRECIENTE desde \(+1\) hasta \(-1\): positivo para ángulos agudos \((0^\circ, 90^\circ)\), cero en \(90^\circ\) y negativo para ángulos obtusos \((90^\circ, 180^\circ)\).
+
+¡Por lo tanto, CADA valor de \(\cos C \in (-1, 1)\) corresponde a UNO Y SOLO UN ángulo del triángulo \(C \in (0^\circ, 180^\circ)\)! El signo del numerador \(a^2 + b^2 - c^2\) le indica a simple vista si el ángulo \(C\) es agudo, recto u obtuso.
+
+[TABLE]
+Numerador \(a^2 + b^2 - c^2\) | Signo de \(\cos C\) | Tipo de ángulo \(C\)
+\(a^2 + b^2 > c^2\) | \(\cos C > 0\) | Agudo (\(0^\circ < C < 90^\circ\))
+\(a^2 + b^2 = c^2\) | \(\cos C = 0\) | Recto (\(C = 90^\circ\))
+\(a^2 + b^2 < c^2\) | \(\cos C < 0\) | Obtuso (\(90^\circ < C < 180^\circ\))
+[/TABLE]
+
+[CALLOUT]
+id: sss-largest-first
+label: Estrategia
+title: Despeje primero el ángulo mayor en un triángulo LLL
+tone: key
+
+(1) Verifique la desigualdad triangular: los dos lados más cortos deben sumar estrictamente más que el lado más largo.
+(2) Use [REF: law-of-cosines | la ley de los cosenos] para hallar primero el ángulo opuesto al lado MÁS LARGO. Si el triángulo tiene un ángulo obtuso, SOLO puede ubicarse frente al lado más largo, y \(\cos^{-1}\) lo identifica sin ambigüedad.
+(3) Halle un segundo ángulo (nuevamente por la ley de los cosenos, o por la ley de los senos: ¡ahora \(100\%\) seguro porque todo ángulo restante es necesariamente agudo!).
+(4) Reste de \(180^\circ\) para obtener el tercer ángulo, y verifique que los ángulos mayores se opongan a los lados más largos.
+[/CALLOUT]
+
+Ejemplo resuelto (LLL): Resuelva \(\triangle ABC\) con \(a = 3\), \(b = 5\) y \(c = 7\).
+1. Verificación de la desigualdad triangular: \(3 + 5 = 8 > 7\) -> ¡triángulo válido!
+2. Ángulo mayor \(C\) (opuesto al lado más largo \(c = 7\)):
+\[
+\cos C = \frac{3^2 + 5^2 - 7^2}{2(3)(5)} = \frac{9 + 25 - 49}{30} = \frac{-15}{30} = -\frac{1}{2} \implies C = 120^\circ.
+\]
+3. Ángulo \(A\) mediante la ley de los cosenos (exacto con los lados dados, evitando redondeos intermedios):
+\[
+\cos A = \frac{5^2 + 7^2 - 3^2}{2(5)(7)} = \frac{25 + 49 - 9}{70} = \frac{65}{70} = \frac{13}{14} \implies A = \cos^{-1}\!\left(\frac{13}{14}\right) \approx 21.79^\circ.
+\]
+4. Tercer ángulo \(B = 180^\circ - 120^\circ - 21.79^\circ = 38.21^\circ\). Verificación de orden lado-ángulo: \(a = 3 < b = 5 < c = 7\) coincide con \(A \approx 21.79^\circ < B \approx 38.21^\circ < C = 120^\circ\).
+
+[QUESTION 2]
+[ANSWER: E]
+En el triángulo \(\triangle ABC\) con longitudes de lados \(a = 7\), \(b = 8\) y \(c = 13\), ¿cuál es la medida exacta del ángulo mayor \(C\)?
+
+(A) \(60^\circ\)
+(B) \(90^\circ\)
+(C) \(135^\circ\)
+(D) \(150^\circ\)
+(E) \(120^\circ\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+¿Por qué despejar un ángulo desconocido de un triángulo usando la ley de los cosenos NUNCA crea una ambigüedad de dos ángulos como en el caso LLA de la ley de los senos?
+
+(A) Porque \(\cos\theta\) es estrictamente decreciente en todo \((0^\circ, 180^\circ)\), de modo que cada valor en \((-1, 1)\) corresponde a un único ángulo del triángulo (positivo si es agudo, negativo si es obtuso)
+(B) Porque \(\cos\theta\) es siempre positivo para todo ángulo de un triángulo
+(C) Porque la ley de los cosenos solo se aplica a triángulos acutángulos
+(D) Porque \(\cos(180^\circ - \theta) = \cos\theta\) para todo ángulo \(\theta\) de un triángulo
+(E) Porque todo triángulo resuelto mediante la ley de los cosenos debe ser un triángulo rectángulo
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+¿Qué terna de longitudes de lados forma un triángulo OBTUSÁNGULO válido?
+
+(A) \(4, 5, 10\)
+(B) \(5, 12, 13\)
+(C) \(6, 7, 9\)
+(D) \(5, 7, 9\)
+(E) \(6, 8, 10\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+En el triángulo \(\triangle ABC\), \(a = 8\), \(b = 5\) y el ángulo comprendido es \(C = 60^\circ\). ¿Cuáles son la longitud exacta del lado \(c\) y el valor exacto de \(\cos A\)?
+
+(A) \(c = 7\) y \(\cos A = -\dfrac{1}{7}\)
+(B) \(c = 7\) y \(\cos A = \dfrac{1}{7}\)
+(C) \(c = \sqrt{129}\) y \(\cos A = \dfrac{1}{7}\)
+(D) \(c = 7\) y \(\cos A = \dfrac{11}{14}\)
+(E) \(c = \sqrt{49}\) y \(\cos A = \dfrac{1}{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Un paralelogramo tiene lados consecutivos de longitudes \(6\text{ cm}\) y \(10\text{ cm}\) que forman un ángulo interior agudo de \(60^\circ\). ¿Cuáles son las longitudes exactas de sus diagonales menor y mayor?
+
+(A) \(2\sqrt{19}\text{ cm}\) y \(2\sqrt{34}\text{ cm}\)
+(B) \(8\text{ cm}\) y \(14\text{ cm}\)
+(C) \(2\sqrt{19}\text{ cm}\) y \(14\text{ cm}\)
+(D) \(2\sqrt{19}\text{ cm}\) y \(16\text{ cm}\)
+(E) \(4\sqrt{7}\text{ cm}\) y \(14\text{ cm}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Un triángulo tiene longitudes de lados \(x\), \(x + 1\) y \(x + 2\). ¿Para qué intervalo abierto de números reales \(x\) forman estas longitudes un triángulo OBTUSÁNGULO válido?
+
+(A) \(1 < x < 3\)
+(B) \(0 < x < 3\)
+(C) \(x > 3\)
+(D) \(1 < x < 2\)
+(E) \(2 < x < 4\)
+[/BONUS]

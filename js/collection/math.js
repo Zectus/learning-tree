@@ -50,10 +50,11 @@ const MATH_COLLECTION = (() => {
         ]),
         secondary('Rational Expressions and Equations', 'Algebraic fractions, restrictions, simplification, rational equations, and rational-function behavior.'),
         secondary('Radicals and Rational Exponents', 'Roots, fractional powers, radical expressions, radical equations, and associated domain restrictions.'),
-        secondary('Complex Numbers', 'Complex arithmetic, geometric representation, polar form, powers, and roots.')
+        secondary('Complex Numbers', 'Complex arithmetic, geometric representation, polar and exponential forms, powers, and roots.')
       ]),
       branch('Functions and Precalculus', [
-        secondary('Function Language and Transformations', 'Domain, range, representations, composition, inverses, and transformations of established function families.'),
+        secondary('Real Numbers and Inequalities', 'Order properties of the real numbers, intervals, absolute value, and polynomial, rational, and radical inequalities.'),
+        secondary('Function Language and Transformations', 'Domain, range, piecewise and elementary families, composition, injectivity, inverses, and transformations.'),
         secondary('Exponential and Logarithmic Functions', 'Exponential growth and decay, logarithms, equations, and corresponding models.'),
         secondary('Sequences and Discrete Growth', 'Arithmetic and geometric sequences, finite sums, recursive descriptions, and compound growth.')
       ]),
@@ -93,7 +94,8 @@ const MATH_COLLECTION = (() => {
       branch('Trigonometry and Coordinate Geometry', [
         secondary('Trigonometric Functions', 'Angle measurement, the unit circle, trigonometric graphs, and solving triangles.'),
         secondary('Trigonometric Identities and Equations', 'Trigonometric identities, transformations, inverse functions, and equation solving.'),
-        secondary('Coordinate Geometry and Conics', 'Coordinate methods, distance and midpoint relationships, circles, parabolas, ellipses, and hyperbolas.')
+        secondary('Coordinate Geometry and Conics', 'Coordinate methods, lines, distance and midpoint relationships, circles, parabolas, ellipses, hyperbolas, and axis rotation.'),
+        university('Vectors and Analytic Geometry in Space', 'Three-dimensional coordinates, vectors in space, dot, cross, and triple products, lines, planes, distances, and basic surfaces.')
       ]),
       branch('Differential Geometry', [
         advanced('Curves and Surfaces', 'Parametrized curves, surfaces, curvature, fundamental forms, and classical local geometry.'),
@@ -225,6 +227,7 @@ const MATH_COLLECTION = (() => {
         ])
       ]),
       branch('Statistics', [
+        university('Descriptive Statistics', 'Frequency distributions, graphical summaries, measures of center and spread, quantiles, outliers, and bivariate correlation.'),
         branch('Statistical Inference Foundations', [
           university('Sampling and Estimation', 'Sampling distributions, point estimation, estimator properties, and confidence intervals.'),
           university('Hypothesis Testing', 'Tests, errors, power, significance, and comparisons of populations and treatments.'),

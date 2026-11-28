@@ -1,0 +1,278 @@
+=== SECTION 1: Notación de sumatoria y la media aritmética ===
+
+Supongamos que cinco ingenieros de software de una empresa emergente reportan sus horas semanales de depuración: \(4, 7, 9, 12, 18\). Para resumir un conjunto de datos con un único número «típico» representativo —su medida de tendencia central—, necesitamos una notación concisa para sumar observaciones y reglas algebraicas claras para manipular sumas.
+
+[CALLOUT]
+id: summation-linearity
+label: Definición
+title: Notación de sumatoria y linealidad
+tone: key
+
+Dados \(n\) valores numéricos \(x_1, x_2, \dots, x_n\), la suma de las \(n\) observaciones se escribe
+\[
+\sum_{i=1}^n x_i = x_1 + x_2 + \dots + x_n.
+\]
+Aquí \(i\) es el índice de sumatoria que corre desde \(1\) hasta \(n\). Para cualesquiera constantes \(a, b, c \in \mathbb{R}\) y cualesquiera valores pareados \(y_1, \dots, y_n\):
+
+(1) Suma constante: \(\sum_{i=1}^n c = n c\).
+(2) Escalamiento: \(\sum_{i=1}^n a x_i = a \sum_{i=1}^n x_i\).
+(3) Aditividad: \(\sum_{i=1}^n (x_i + y_i) = \sum_{i=1}^n x_i + \sum_{i=1}^n y_i\).
+[/CALLOUT]
+
+Combinar [REF: summation-linearity.2 | el escalamiento] y [REF: summation-linearity.3 | la aditividad] proporciona la linealidad completa: \(\sum_{i=1}^n (a x_i + b y_i) = a \sum_{i=1}^n x_i + b \sum_{i=1}^n y_i\). Note que el índice \(i\) es un contador mudo: escribir \(\sum_{j=1}^n x_j\) significa exactamente la misma suma.
+
+Con la notación de sumatoria en mano, definimos la medida de tendencia central más utilizada: la media aritmética.
+
+[CALLOUT]
+id: arithmetic-mean
+label: Definición
+title: Media muestral y media poblacional
+tone: key
+
+(1) Para una muestra de \(n\) observaciones cuantitativas \(x_1, \dots, x_n\), la media aritmética muestral es
+\[
+\bar{x} = \frac{1}{n} \sum_{i=1}^n x_i.
+\]
+(2) Para una población finita completa de \(N\) observaciones \(x_1, \dots, x_N\), la media aritmética poblacional es
+\[
+\mu = \frac{1}{N} \sum_{i=1}^N x_i.
+\]
+[/CALLOUT]
+
+Para nuestros cinco tiempos de depuración \(4, 7, 9, 12, 18\), la media muestral es \(\bar{x} = (4 + 7 + 9 + 12 + 18) / 5 = 50 / 5 = 10\) horas. Observe un reordenamiento algebraico inmediato de [REF: arithmetic-mean.1 | la media muestral]: multiplicar ambos lados por \(n\) da \(\sum_{i=1}^n x_i = n \bar{x}\), lo cual significa que la media es el valor de reparto equitativo que tomaría cada observación si el total se redistribuyera por igual.
+
+¿Qué ocurre si medimos la desviación con signo de cada observación respecto a la media, \(x_i - \bar{x}\), y sumamos las \(n\) desviaciones? Usando [REF: summation-linearity | la linealidad de la sumatoria] con la constante \(c = \bar{x}\):
+\[
+\sum_{i=1}^n (x_i - \bar{x}) = \sum_{i=1}^n x_i - \sum_{i=1}^n \bar{x} = n \bar{x} - n \bar{x} = 0.
+\]
+
+[CALLOUT]
+id: balance-point
+label: Identidad
+title: La propiedad de punto de equilibrio de la media aritmética
+tone: key
+
+Para todo conjunto de datos cuantitativo \(x_1, \dots, x_n\), las desviaciones con signo respecto a la media aritmética suman cero:
+\[
+\sum_{i=1}^n (x_i - \bar{x}) = 0.
+\]
+Físicamente, si se colocan pesos iguales sobre una recta numérica rígida en las posiciones \(x_1, \dots, x_n\), la recta queda equilibrada horizontalmente precisamente en el fulcro \(\bar{x}\).
+[/CALLOUT]
+
+Compruebe [REF: balance-point | esta identidad] en nuestros tiempos de depuración con \(\bar{x} = 10\): las desviaciones son \(4 - 10 = -6\), \(7 - 10 = -3\), \(9 - 10 = -1\), \(12 - 10 = +2\) y \(18 - 10 = +8\), cuya suma es \(-6 - 3 - 1 + 2 + 8 = 0\). Como el momento negativo \((-10)\) cancela exactamente el momento positivo \((+10)\), desplazar cualquier observación más hacia afuera del brazo de palanca obliga al punto de equilibrio \(\bar{x}\) a desplazarse hacia ella.
+
+[QUESTION 1]
+[ANSWER: B]
+Una muestra de \(n = 8\) mediciones de laboratorio tiene media muestral \(\bar{x} = 15\). Siete de las ocho desviaciones con signo \((x_i - \bar{x})\) son \(-4, -2, -1, 0, +1, +2, +3\). ¿Cuál es el valor de la octava observación \(x_8\)?
+
+(A) \(14\)
+(B) \(16\)
+(C) \(15\)
+(D) \(17\)
+(E) \(1\)
+[/QUESTION]
+
+=== SECTION 2: Mediana, moda y escala de medición ===
+
+La media aritmética exige sumar y dividir valores, lo cual solo tiene sentido en escalas de intervalo y de razón. Incluso en escalas de razón, la propiedad de punto de equilibrio puede alejar la media de donde realmente se sitúa la mayoría de las observaciones cuando un solo valor es enorme. Dos medidas alternativas de tendencia central se apoyan en el orden o en la frecuencia en lugar de sumas aritméticas.
+
+[CALLOUT]
+id: median-and-mode
+label: Definición
+title: Mediana muestral, moda y clase modal
+tone: key
+
+Sean \(x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}\) las observaciones ordenadas en orden no decreciente (los estadísticos de orden).
+
+(1) La mediana muestral \(M\) (o \(\tilde{x}\)) es el valor central del conjunto de datos ordenado:
+\[
+M = \begin{cases} x_{((n+1)/2)} & \text{si } n \text{ es impar}, \\ \dfrac{x_{(n/2)} + x_{(n/2 + 1)}}{2} & \text{si } n \text{ es par}. \end{cases}
+\]
+(2) La moda es el valor (o categoría) que ocurre con la mayor frecuencia. Un conjunto de datos puede tener una moda (unimodal), dos modas (bimodal), más de dos modas (multimodal) o ninguna moda cuando todos los valores ocurren con igual frecuencia. Para datos cuantitativos agrupados, la clase con la mayor densidad de frecuencia se denomina clase modal.
+[/CALLOUT]
+
+¡Ordene siempre los datos antes de hallar la mediana! Para nuestros \(n = 5\) tiempos de depuración \(4, 7, 9, 12, 18\) (ya ordenados), \((n + 1)/2 = 3\), de modo que \(M = x_{(3)} = 9\) horas. Si un sexto ingeniero reporta \(22\) horas, \(n = 6\) es par, y las dos posiciones centrales son \(n/2 = 3\) y \(n/2 + 1 = 4\), dando \(M = (x_{(3)} + x_{(4)}) / 2 = (9 + 12)/2 = 10.5\) horas.
+
+La escala de medición dicta cuál de estas tres medidas de tendencia central es matemáticamente legítima:
+
+[TABLE]
+Escala de medición | Moda | Mediana | Media aritmética
+Nominal | Válida | Inválida (sin orden intrínseco) | Inválida (sin diferencias numéricas)
+Ordinal | Válida | Válida (rango central) | Inválida sin supuesto de igual espaciado
+De intervalo | Válida | Válida | Válida
+De razón | Válida | Válida | Válida
+[/TABLE]
+
+Para una variable ordinal con \(n\) par, si las dos observaciones centrales caen en la misma categoría ordenada (digamos que ambas son «Buena»), la mediana es inequívocamente «Buena»; si caen en categorías adyacentes (digamos «Regular» y «Buena»), se reporta que la mediana se sitúa entre «Regular» y «Buena» en lugar de promediar códigos numéricos.
+
+=== SECTION 3: Medias ponderadas, combinación de subgrupos y datos agrupados ===
+
+En muchos cálculos reales, no todas las observaciones tienen la misma importancia. El programa de un curso puede ponderar las tareas con \(20\%\), el examen parcial con \(30\%\) y el examen final con \(50\%\), o una empresa puede necesitar combinar salarios promedio reportados por separado para dos departamentos de distinto tamaño. Ambas situaciones utilizan la media aritmética ponderada.
+
+[CALLOUT]
+id: weighted-mean
+label: Definición
+title: Media aritmética ponderada
+tone: key
+
+Dados los valores \(x_1, \dots, x_k\) con pesos no negativos \(w_1, \dots, w_k\) que satisfacen \(\sum_{j=1}^k w_j > 0\), la media aritmética ponderada es
+\[
+\bar{x}_w = \frac{\sum_{j=1}^k w_j x_j}{\sum_{j=1}^k w_j}.
+\]
+Cuando todos los pesos son iguales (\(w_j = 1\)), \(\bar{x}_w\) se reduce a la media aritmética ordinaria.
+[/CALLOUT]
+
+Uno de los errores más frecuentes en estadística aplicada es tomar un promedio no ponderado de promedios de subgrupos. Supongamos que la Sección A de un curso de estadística tiene \(n_A = 20\) estudiantes con calificación media \(\bar{x}_A = 84\), y la Sección B tiene \(n_B = 60\) estudiantes con media \(\bar{x}_B = 72\). ¿Cuál es la media combinada de los \(80\) estudiantes? Promediar \((84 + 72)/2 = 78\) es INCORRECTO porque la Sección B tiene tres veces más estudiantes que la Sección A. Aplicando \(\sum x_i = n \bar{x}\) a cada subgrupo por separado, la suma total de los \(80\) estudiantes es \(n_A \bar{x}_A + n_B \bar{x}_B\), por lo que la media combinada exacta es la media ponderada usando los tamaños de subgrupo como pesos:
+\[
+\bar{x}_{\text{combinada}} = \frac{n_A \bar{x}_A + n_B \bar{x}_B}{n_A + n_B} = \frac{20(84) + 60(72)}{20 + 60} = \frac{1680 + 4320}{80} = \frac{6000}{80} = 75.
+\]
+Note que \(75\) se ubica a tres cuartos del camino desde \(84\) hacia \(72\), reflejando que la Sección B representa el \(60/80 = 75\%\) de los estudiantes. El promedio no ponderado de las medias de subgrupo coincide con la verdadera media global únicamente cuando todos los subgrupos tienen igual tamaño (o cuando todas las medias de subgrupo resultan ser idénticas).
+
+Exactamente la misma fórmula aproxima la media de una tabla de frecuencias agrupadas cuando no se dispone de los valores individuales. Tratar todas las \(f_j\) observaciones dentro de la clase \(j\) como si se ubicaran en la marca de clase \(m_j\) produce la aproximación de la media para datos agrupados:
+\[
+\bar{x}_{\text{agrupada}} \approx \frac{\sum_{j=1}^k f_j m_j}{\sum_{j=1}^k f_j} = \frac{1}{n} \sum_{j=1}^k f_j m_j = \sum_{j=1}^k p_j m_j.
+\]
+Por ejemplo, considere una tabla agrupada de tiempos de traslado de \(n = 40\) trabajadores:
+- \([0, 10)\) (\(m_1 = 5, f_1 = 4\)): \(f_1 m_1 = 20\)
+- \([10, 20)\) (\(m_2 = 15, f_2 = 10\)): \(f_2 m_2 = 150\)
+- \([20, 30)\) (\(m_3 = 25, f_3 = 14\)): \(f_3 m_3 = 350\)
+- \([30, 40)\) (\(m_4 = 35, f_4 = 8\)): \(f_4 m_4 = 280\)
+- \([40, 50)\) (\(m_5 = 45, f_5 = 4\)): \(f_5 m_5 = 180\)
+
+Al sumar se obtiene \(\sum f_j m_j = 980\), de modo que \(\bar{x}_{\text{agrupada}} \approx 980 / 40 = 24.5\) minutos. Recuerde que esta es una aproximación: si los valores dentro de cada intervalo se concentran sistemáticamente por encima o por debajo de la marca de clase, la media exacta sin agrupar diferirá ligeramente de \(24.5\).
+
+[QUESTION 2]
+[ANSWER: C]
+La Fábrica 1 produce \(n_1 = 30\) motores eléctricos con un peso promedio de \(12.0\text{ kg}\), y la Fábrica 2 produce \(n_2 = 10\) motores eléctricos con un peso promedio de \(16.0\text{ kg}\). ¿Cuál es el peso promedio exacto de los \(40\) motores combinados?
+
+(A) \(14.0\text{ kg}\)
+(B) \(15.0\text{ kg}\)
+(C) \(13.0\text{ kg}\)
+(D) \(13.5\text{ kg}\)
+(E) \(12.5\text{ kg}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Una distribución de frecuencias agrupadas de \(n = 20\) calificaciones de prueba corta tiene tres clases: \([0, 20)\) con frecuencia \(6\), \([20, 40)\) con frecuencia \(10\) y \([40, 60)\) con frecuencia \(4\). Usando las marcas de clase, ¿cuál es la calificación media aproximada?
+
+(A) \(28\)
+(B) \(30\)
+(C) \(26\)
+(D) \(32\)
+(E) \(24\)
+[/QUESTION]
+
+=== SECTION 4: Resistencia a valores atípicos, medias recortadas y medias winsorizadas ===
+
+Supongamos que \(n = 10\) tiempos de respuesta de un servidor (en milisegundos) ordenados son
+\[
+18,\; 21,\; 22,\; 23,\; 24,\; 25,\; 26,\; 27,\; 29,\; 185.
+\]
+Nueve de las diez solicitudes terminan entre \(18\) y \(29\) ms, mientras que una sola interrupción de red tarda \(185\) ms. Compare cómo reaccionan la media aritmética y la mediana:
+- La media aritmética es \(\bar{x} = 400 / 10 = 40.0\) ms: ¡mayor que nueve de las diez observaciones!
+- La mediana es \(M = (24 + 25)/2 = 24.5\) ms: situada justo en el centro de las solicitudes típicas.
+
+En general, se dice que un resumen es resistente (o robusto) si reemplazar una pequeña fracción de observaciones por valores arbitrariamente extremos no puede desplazar el resumen arbitrariamente lejos. La media aritmética NO es resistente: cambiar tan solo el valor mayor \(x_{(n)}\) a \(x_{(n)} + \Delta\) desplaza \(\bar{x}\) en \(\Delta / n\), lo cual crece sin cota cuando \(\Delta \to \infty\). La mediana es altamente resistente: mientras menos de la mitad de las observaciones sean empujadas más allá del centro, la mediana apenas se mueve o no se mueve en absoluto.
+
+Entre la media aritmética (que usa todos los \(n\) valores numéricos por igual) y la mediana (que ignora las magnitudes exactas de todas las observaciones no centrales) se sitúan dos compromisos estructurados: la media recortada y la media winsorizada.
+
+[CALLOUT]
+id: trimmed-winsorized
+label: Definición
+title: Media \(\alpha\)-recortada y media \(\alpha\)-winsorizada
+tone: key
+
+Sean \(x_{(1)} \le x_{(2)} \le \dots \le x_{(n)}\) los datos ordenados, y elija una proporción de recorte \(\alpha \in (0, 0.5)\) tal que \(k = \alpha n\) sea un entero positivo (en la práctica, \(k = \lfloor \alpha n \rfloor\)).
+
+(1) La media \(\alpha\)-recortada elimina las \(k\) observaciones menores y las \(k\) observaciones mayores y toma la media aritmética de los \(n - 2k\) valores centrales restantes:
+\[
+\bar{x}_{\text{rec},\alpha} = \frac{1}{n - 2k} \sum_{i=k+1}^{n-k} x_{(i)}.
+\]
+(2) La media \(\alpha\)-winsorizada conserva las \(n\) observaciones, pero sustituye los \(k\) valores menores por \(x_{(k+1)}\) y los \(k\) valores mayores por \(x_{(n-k)}\), y luego promedia los \(n\) valores ajustados:
+\[
+\bar{x}_{\text{win},\alpha} = \frac{1}{n}\left(k x_{(k+1)} + \sum_{i=k+1}^{n-k} x_{(i)} + k x_{(n-k)}\right).
+\]
+[/CALLOUT]
+
+Aplique [REF: trimmed-winsorized | ambas definiciones] con \(\alpha = 0.10\) (de modo que \(k = 0.10 \times 10 = 1\) observación en cada extremo) a nuestros \(n = 10\) tiempos de respuesta \(18, 21, 22, 23, 24, 25, 26, 27, 29, 185\):
+- Para la media recortada al \(10\%\), elimine \(18\) y \(185\). Los \(8\) valores restantes suman \(21 + 22 + 23 + 24 + 25 + 26 + 27 + 29 = 197\), dando \(\bar{x}_{\text{rec}, 0.10} = 197 / 8 = 24.625\) ms.
+- Para la media winsorizada al \(10\%\), fije \(18\) hacia arriba en \(x_{(2)} = 21\) y fije \(185\) hacia abajo en \(x_{(9)} = 29\), obteniendo la lista ajustada \(21, 21, 22, 23, 24, 25, 26, 27, 29, 29\). Su suma es \(247\), dando \(\bar{x}_{\text{win}, 0.10} = 247 / 10 = 24.7\) ms.
+
+Ambos compromisos neutralizan por completo la interrupción de \(185\) ms —y note que recortar y winsorizar SIEMPRE operan simétricamente sobre AMBAS colas, nunca eliminando solo el valor atípico que nos disgusta, lo cual introduciría un sesgo unilateral—.
+
+Para observar directamente el contraste en sensibilidad, considere un pequeño conjunto de \(5\) puntos \(\{10, 12, 14, 16, t\}\) donde la quinta observación \(t \ge 16\) se arrastra arbitrariamente hacia la derecha. Conforme \(t\) aumenta, \(\bar{x}(t) = (52 + t)/5\) sube linealmente sin cota con pendiente \(1/5\). Mientras tanto, tanto la mediana como la media recortada al \(20\%\) (que elimina \(10\) y \(t\)) permanecen completamente planas en \(14\). Arrastre el deslizador \(t\) en el gráfico siguiente para ver cómo se abre esta brecha de resistencia.
+
+[GRAPH]
+type: function2d
+title: Sensibilidad de la media frente a la mediana y la media recortada al \(20\%\) al crecer un valor \(t\) en \(\{10, 12, 14, 16, t\}\)
+xlabel: \(t\)
+ylabel: Valor central
+xrange: 16, 60
+yrange: 10, 25
+trace: (52 + x) / 5 | label: Media aritmética \(\bar{x}(t) = (52 + t)/5\) | color: #ef4444
+trace: 14 | label: Mediana y media recortada al \(20\%\) (constante \(14\)) | color: #3b82f6
+point: t, (52 + t) / 5 | label: Media | color: #ef4444
+point: t, 14 | label: Mediana | color: #3b82f6
+segment: t, 14, t, (52 + t) / 5 | dashed: true
+slider: t | range: 16, 60 | init: 40 | step: 1
+[/GRAPH]
+
+¿Cuándo debe elegir la media aritmética frente a la mediana o a una media recortada?
+- Elija la media aritmética cuando los datos sean aproximadamente simétricos sin valores atípicos severos, o cuando la suma total misma sea física o financieramente central (como la nómina total dividida entre el número de empleados, o la energía total consumida por día).
+- Elija la mediana o una media \(\alpha\)-recortada cuando los datos sean fuertemente asimétricos (como ingresos familiares o precios de viviendas) o estén contaminados por mediciones extremas, y usted desee describir una observación típica en lugar de una cuota igualitaria del total.
+
+[QUESTION 4]
+[ANSWER: D]
+Considere la muestra ordenada de \(n = 5\) costos de reparación (en dólares): \(5, 12, 15, 24, 94\). ¿Cuáles son la media recortada al \(20\%\) (recortando \(k = 1\) valor de cada extremo) y la media winsorizada al \(20\%\) (ajustando \(k = 1\) valor en cada extremo), respectivamente?
+
+(A) \(30.0\) y \(17.0\)
+(B) \(17.4\) y \(17.0\)
+(C) \(15.0\) y \(17.4\)
+(D) \(17.0\) y \(17.4\)
+(E) \(17.0\) y \(30.0\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: B]
+Una agencia municipal de vivienda desea reportar el precio «típico» de venta de las viviendas unifamiliares vendidas este mes. La mayoría de las casas se vendió entre \(\$280{,}000\) y \(\$410{,}000\), pero tres mansiones frente al mar se vendieron por más de \(\$9{,}000{,}000\) cada una. ¿Qué medida de tendencia central representa mejor el precio típico de una vivienda y por qué?
+
+(A) La media aritmética, porque satisface la identidad del punto de equilibrio y utiliza por igual cada precio de venta.
+(B) La mediana (o una media recortada), porque resiste el empuje hacia arriba de las tres mansiones multimillonarias que inflan la media aritmética por encima de la mayoría de los precios reales de venta.
+(C) La moda, porque los precios de venta se miden en una escala nominal.
+(D) El promedio no ponderado del precio mínimo y máximo de venta, porque captura todo el rango de precios.
+(E) La media aritmética tras eliminar únicamente las tres mansiones de la cola derecha dejando intacta la cola izquierda.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Un conjunto de datos de \(n = 11\) observaciones tiene media aritmética \(\bar{x} = 20\). Cuando se añade una duodécima observación \(x_{12}\), la nueva media aritmética pasa a ser \(23\). ¿Cuánto vale \(x_{12}\)?
+
+(A) \(26\)
+(B) \(35\)
+(C) \(43\)
+(D) \(53\)
+(E) \(56\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Para un conjunto de datos cuantitativo de \(n = 25\) observaciones, se sabe que \(\sum_{i=1}^{25} (x_i - 12) = 75\). ¿Cuál es la media aritmética muestral \(\bar{x}\)?
+
+(A) \(3\)
+(B) \(9\)
+(C) \(15\)
+(D) \(18\)
+(E) No puede determinarse sin conocer los valores individuales \(x_i\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+En un conjunto de datos ordenado \(x_{(1)} \le x_{(2)} \le \dots \le x_{(10)}\) de \(n = 10\) números distintos, la observación mayor \(x_{(10)}\) aumenta en \(\Delta = 50\) mientras las otras \(9\) observaciones permanecen sin cambios. ¿Cómo cambian la media aritmética, la mediana y la media recortada al \(10\%\)?
+
+(A) La media aritmética aumenta en \(5\), mientras que tanto la mediana como la media recortada al \(10\%\) cambian en \(0\).
+(B) La media aritmética aumenta en \(5\), la media recortada al \(10\%\) aumenta en \(5\) y la mediana cambia en \(0\).
+(C) La media aritmética aumenta en \(50\), la media recortada al \(10\%\) aumenta en \(5\) y la mediana cambia en \(0\).
+(D) Las tres medidas aumentan en \(5\).
+(E) La media aritmética aumenta en \(5\), la mediana aumenta en \(5\) y la media recortada al \(10\%\) cambia en \(0\).
+[/BONUS]

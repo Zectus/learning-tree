@@ -1,0 +1,199 @@
+=== SECTION 1: Principio del Palomar simple y generalizado ===
+
+Las reglas de conteo de la lección anterior calculan tamaños exactos de conjuntos finitos. El Principio del Palomar usa esos conteos exactos en sentido inverso: cuando sabes que hay más objetos que recipientes, puedes demostrar que DEBE ocurrir una colisión —incluso sin saber qué objetos colisionan ni qué recipiente se desborda.
+
+Antes de enunciar la forma general, recuerda la función techo: para cualquier número real \(x\), el techo \(\lceil x \rceil\) denota el menor entero mayor o igual que \(x\). Por ejemplo, \(\lceil 4 \rceil = 4\), \(\lceil 10/3 \rceil = \lceil 3.333\dots \rceil = 4\) y \(\lceil 7/4 \rceil = 2\). Por definición, \(\lceil x \rceil - 1\) es estrictamente menor que \(x\):
+\[
+\lceil x \rceil - 1 < x \le \lceil x \rceil.
+\]
+
+[CALLOUT]
+id: gphp
+label: Principio
+title: Principio del Palomar simple y generalizado
+tone: key
+
+(1) Principio del Palomar simple: Si se colocan \(n + 1\) o más objetos («palomas») en \(n\) cajas («palomares») con \(n \ge 1\), entonces al menos una caja contiene al menos \(2\) objetos.
+(2) Principio del Palomar generalizado: Si se colocan \(N\) objetos en \(k \ge 1\) cajas, entonces al menos una caja contiene al menos \(\lceil N / k \rceil\) objetos. Equivalentemente, para garantizar que al menos una caja contenga al menos \(r\) objetos (para un entero \(r \ge 1\)), colocar \(N = k(r - 1) + 1\) objetos siempre basta.
+[/CALLOUT]
+
+Observa que [REF: gphp.1 | el Principio del Palomar simple] es simplemente el caso \(N = n + 1\) y \(k = n\) de [REF: gphp.2 | el Principio del Palomar generalizado], puesto que \(\lceil (n + 1)/n \rceil = \lceil 1 + 1/n \rceil = 2\).
+
+Demostración de [REF: gphp.2 | el Principio del Palomar generalizado] por contradicción: Supón que \(N\) objetos se reparten entre \(k\) cajas disjuntas \(B_1, \dots, B_k\), y supón por contradicción que CADA caja contiene estrictamente menos de \(\lceil N / k \rceil\) objetos. Como cada conteo de caja \(|B_i|\) es un entero, \(|B_i| \le \lceil N / k \rceil - 1\) para todo \(i = 1, \dots, k\). Por la Regla de la Suma para las cajas disjuntas,
+\[
+N = |B_1| + |B_2| + \dots + |B_k| \le k\left(\left\lceil \frac{N}{k} \right\rceil - 1\right) < k \cdot \frac{N}{k} = N,
+\]
+donde la desigualdad estricta usa \(\lceil N / k \rceil - 1 < N / k\). Esto da \(N < N\), una contradicción. Por tanto, alguna caja debe contener al menos \(\lceil N / k \rceil\) objetos.
+
+Dos hábitos lógicos críticos gobiernan todo argumento del Principio del Palomar:
+1. Existencia no constructiva: El Principio del Palomar demuestra que ALGUNA caja contiene al menos \(\lceil N / k \rceil\) objetos; NUNCA identifica qué caja se desborda ni garantiza unicidad (varias cajas podrían desbordarse).
+2. Optimalidad (verificación extremal): Mostrar que \(N = k(r - 1) + 1\) objetos fuerzan una caja de tamaño \(\ge r\) demuestra una COTA SUPERIOR sobre el umbral mínimo. Para demostrar que \(N\) es el umbral mínimo EXACTO, también debes exhibir una configuración extremal de \(N - 1\) objetos que evite que ninguna caja alcance \(r\). Cuando las cajas tienen capacidad ilimitada, colocar \(r - 1\) objetos en cada una de las \(k\) cajas da \(k(r - 1)\) objetos sin desbordamiento —demostrando que \(k(r - 1) + 1\) es óptimo. Sin embargo, ¡cuando algunas cajas tienen capacidad limitada, el umbral verdadero puede ser estrictamente menor que \(k(r - 1) + 1\)!
+
+[QUESTION 1]
+[ANSWER: C]
+Un frasco opaco contiene \(2\) canicas rojas, \(10\) canicas azules, \(10\) canicas verdes y \(10\) canicas amarillas. ¿Cuál es el menor número de canicas que debes sacar a ciegas para garantizar que hayas sacado al menos \(5\) canicas del mismo color?
+
+(A) \(13\)
+(B) \(14\)
+(C) \(15\)
+(D) \(16\)
+(E) \(17\)
+[/QUESTION]
+
+=== SECTION 2: Diseño de palomares creativos en teoría de números ===
+
+El Principio del Palomar en sí toma tres líneas de demostración. Todo su verdadero poder —y todo el trabajo creativo al resolver problemas con él— reside en decidir QUÉ deben ser las palomas y QUÉ deben ser las cajas de modo que dos palomas que caigan en la misma caja satisfagan automáticamente la propiedad matemática deseada.
+
+Ejemplo resuelto 1 (Residuos módulo \(n\)): Demuestra que entre cualesquiera \(n + 1\) enteros existen dos cuya diferencia es divisible por \(n\) (para cualquier entero \(n \ge 1\)).
+- Palomas: los \(n + 1\) enteros elegidos.
+- Cajas: los \(n\) residuos posibles \(\{0, 1, \dots, n - 1\}\) al dividir entre \(n\).
+Coloca cada entero en la caja correspondiente a su residuo. Como hay \(n + 1\) palomas y \(n\) cajas, [REF: gphp.1 | el Principio del Palomar simple] garantiza que dos enteros distintos elegidos \(a\) y \(b\) caen en la misma caja —es decir, \(a = nq_1 + r\) y \(b = nq_2 + r\) comparten el mismo residuo \(r\). Entonces \(a - b = n(q_1 - q_2)\) es divisible por \(n\).
+Optimalidad: los \(n\) enteros \(\{0, 1, \dots, n - 1\}\) tienen todas sus diferencias por pares entre \(1\) y \(n - 1\), ninguna divisible por \(n\).
+
+Ejemplo resuelto 2 (Divisibilidad en \(\{1, 2, \dots, 2n\}\)): Demuestra que si eliges cualesquiera \(n + 1\) enteros distintos de \(\{1, 2, \dots, 2n\}\), entonces uno de los enteros elegidos debe dividir a otro.
+
+A primera vista aquí no hay cajas obvias. ¿Cómo pueden dos números satisfacer automáticamente «uno divide al otro»? Observa que si dos números difieren solo por una potencia de \(2\) —digamos \(3 \cdot 2^1 = 6\) y \(3 \cdot 2^3 = 24\)—, ¡entonces el menor divide automáticamente al mayor! Todo entero positivo \(a\) puede escribirse de manera única como
+\[
+a = 2^r m, \qquad \text{donde } r \ge 0 \text{ es un entero y } m \text{ es impar}
+\]
+(basta dividir \(a\) entre \(2\) repetidamente hasta que quede un número impar \(m\), llamado la parte impar de \(a\)).
+- Palomas: los \(n + 1\) enteros elegidos de \(\{1, 2, \dots, 2n\}\).
+- Cajas: las \(n\) posibles partes impares \(\{1, 3, 5, \dots, 2n - 1\}\) en \(\{1, 2, \dots, 2n\}\).
+Coloca cada entero elegido \(a = 2^r m\) en la caja \(m\). Como hay \(n + 1\) palomas y \(n\) cajas, dos enteros distintos elegidos \(a = 2^{r_1} m\) y \(b = 2^{r_2} m\) comparten la misma parte impar \(m\). Como \(a \ne b\), tenemos \(r_1 \ne r_2\). Si \(r_1 < r_2\), entonces \(b = 2^{r_2 - r_1} a\), así que \(a \mid b\); si \(r_2 < r_1\), entonces \(b \mid a\).
+
+Verifica la optimalidad: ¿podemos elegir \(n\) enteros de \(\{1, 2, \dots, 2n\}\) SIN ningún par con divisibilidad? ¡Sí! Toma la mitad superior \(\{n + 1, n + 2, \dots, 2n\}\). Tiene exactamente \(n\) elementos, y cualquier múltiplo propio de un elemento es al menos \(2(n + 1) = 2n + 2 > 2n\), de modo que ningún elemento puede dividir a otro. Así, \(n + 1\) es el umbral óptimo exacto.
+
+Ejemplo resuelto 3 (Colisiones de sumas de subconjuntos): Demuestra que cualquier conjunto \(A\) de \(10\) enteros positivos distintos de dos dígitos (elementos de \(\{10, 11, \dots, 99\}\)) contiene dos subconjuntos no vacíos distintos con la misma suma de elementos.
+- Palomas: todos los subconjuntos no vacíos de \(A\). Por el conteo de subconjuntos \(2^{10}\) de la lección anterior (menos \(\emptyset\)), hay \(2^{10} - 1 = 1023\) subconjuntos no vacíos.
+- Cajas: todas las posibles sumas de elementos de un subconjunto no vacío de \(A\). La menor suma posible es al menos \(10\), y la mayor suma posible de a lo sumo \(10\) números distintos de \(\{10, \dots, 99\}\) es a lo sumo \(90 + 91 + \dots + 99 = 945\). Luego toda suma de subconjunto cae en \(\{10, 11, \dots, 945\}\), ¡que contiene solo \(945 - 10 + 1 = 936\) enteros!
+Como \(1023 > 936\), [REF: gphp.1 | el Principio del Palomar] garantiza dos subconjuntos no vacíos distintos \(B, C \subseteq A\) con exactamente la misma suma. (¡Más aún, eliminar cualesquiera elementos comunes \(B \cap C\) de ambos deja dos subconjuntos no vacíos DISJUNTOS \(B \setminus C\) y \(C \setminus B\) con exactamente la misma suma!).
+
+[QUESTION 2]
+[ANSWER: B]
+¿Cuál es el menor entero positivo \(m\) tal que CUALQUIER conjunto de \(m\) enteros debe contener dos enteros distintos cuya suma O cuya diferencia sea divisible por \(10\)?
+
+(A) \(6\)
+(B) \(7\)
+(C) \(10\)
+(D) \(11\)
+(E) \(12\)
+[/QUESTION]
+
+=== SECTION 3: Argumentos del palomar geométricos y en redes finitas ===
+
+Los argumentos del palomar funcionan con igual naturalidad cuando las «cajas» son regiones geométricas que particionan una figura o clases de grados en una red finita.
+
+Ejemplo resuelto 1 (Cinco puntos en un cuadrado \(2 \times 2\)): Demuestra que si se colocan \(5\) puntos en cualquier parte del interior (o sobre el borde) de un cuadrado \(2 \times 2\), entonces algún par de puntos se encuentra a distancia euclidiana a lo sumo \(\sqrt{2}\) entre sí.
+
+Particiona el cuadrado \([0, 2] \times [0, 2]\) en \(4\) subcuadrados congruentes de \(1 \times 1\) usando la recta vertical \(x = 1\) y la recta horizontal \(y = 1\) (asignando cada segmento de borde interno compartido a uno de los subcuadrados adyacentes para que las \(4\) cajas sean disjuntas).
+- Palomas: los \(5\) puntos colocados.
+- Cajas: los \(4\) subcuadrados unitarios.
+Por [REF: gphp.1 | el Principio del Palomar simple], al menos \(2\) puntos deben caer en el mismo subcuadrado \(1 \times 1\). Lo más alejados que pueden estar dos puntos en un cuadrado \(1 \times 1\) es la longitud de su diagonal, \(\sqrt{1^2 + 1^2} = \sqrt{2}\). Por tanto, esos dos puntos están a distancia a lo sumo \(\sqrt{2}\).
+
+[GRAPH]
+type: function2d
+title: Partición de un cuadrado \(2 \times 2\) en cuatro subcuadrados \(1 \times 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.2, 2.2
+yrange: -0.2, 2.2
+aspect: equal
+trace: 0 | label: borde inferior
+trace: 2 | label: borde superior
+segment: 0, 0, 0, 2
+segment: 2, 0, 2, 2
+segment: 1, 0, 1, 2 | dashed: true
+segment: 0, 1, 2, 1 | dashed: true
+segment: 0, 0, 1, 1 | label: \(\sqrt{2}\)
+point: 0, 0 | label: \((0, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+point: 0, 2 | label: \((0, 2)\)
+point: 2, 2 | label: \((2, 2)\)
+point: 1, 1 | label: \((1, 1)\)
+[/GRAPH]
+
+Observa dos verificaciones de optimalidad directamente en la figura:
+- Con solo \(4\) puntos, colocarlos en las cuatro esquinas \((0, 0), (2, 0), (0, 2), (2, 2)\) mantiene cada distancia por pares al menos \(2 > \sqrt{2}\), así que \(4\) puntos no bastan.
+- Con \(5\) puntos, colocarlos en las cuatro esquinas más el centro \((1, 1)\) alcanza una distancia mínima por pares IGUAL a \(\sqrt{2}\), ¡demostrando que la cota \(\le \sqrt{2}\) no puede ajustarse a \(< \sqrt{2}\)!
+
+Ejemplo resuelto 2 (Conocidos en una reunión): Supón que \(n \ge 2\) personas asisten a una reunión, donde conocerse es simétrico (si \(A\) conoce a \(B\), entonces \(B\) conoce a \(A\)) y nadie cuenta como conocido de sí mismo. Demuestra que al menos dos personas tienen exactamente el mismo número de conocidos en la reunión.
+
+¡Observa cómo el conteo ingenuo de cajas casi te engaña! Cada una de las \(n\) personas puede tener desde \(0\) hasta \(n - 1\) conocidos. Eso da \(n\) valores posibles \(\{0, 1, 2, \dots, n - 1\}\) para \(n\) personas —¡no hay suficientes palomas para superar \(n\) cajas!
+
+La restricción estructural oculta es que los conteos extremos \(0\) y \(n - 1\) son MUTUAMENTE EXCLUYENTES:
+- Si alguien en la reunión conoce a todas las demás \(n - 1\) personas, entonces toda otra persona conoce al menos a esa persona, ¡así que NADIE puede tener \(0\) conocidos!
+- Recíprocamente, si alguien tiene \(0\) conocidos, entonces nadie conoce a esa persona, ¡así que NADIE puede tener \(n - 1\) conocidos!
+
+Por tanto, en cualquier reunión real, el conjunto de conteos de conocidos que ocurren debe ser un subconjunto de \(\{0, 1, \dots, n - 2\}\) o de \(\{1, 2, \dots, n - 1\}\). De cualquier modo, ¡las \(n\) personas caen en a lo sumo \(n - 1\) cajas! Por [REF: gphp.1 | el Principio del Palomar simple], al menos dos personas comparten el mismo número de conocidos.
+
+[TABLE]
+Ámbito | Palomas | Cajas | Consecuencia de la colisión
+Aritmética modular | \(n + 1\) enteros | \(n\) residuos \(\{0, \dots, n - 1\}\) | La diferencia es múltiplo de \(n\)
+Divisibilidad en \(\{1, \dots, 2n\}\) | \(n + 1\) enteros elegidos | \(n\) partes impares \(\{1, 3, \dots, 2n - 1\}\) | Un entero divide al otro
+Sumas de subconjuntos | \(2^m - 1\) subconjuntos no vacíos | Intervalo de posibles sumas enteras | Dos subconjuntos tienen igual suma
+Geometría plana | \(k + 1\) puntos colocados | \(k\) subregiones congruentes | Dos puntos dentro del diámetro de la subregión
+Redes finitas | \(n\) personas (\(n \ge 2\)) | A lo sumo \(n - 1\) grados alcanzables | Dos personas tienen igual grado
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+¿Cuál es el menor número de puntos que deben colocarse dentro (o sobre el borde) de un triángulo equilátero de lado \(2\) para garantizar que al menos dos de los puntos queden a distancia a lo sumo \(1\) entre sí?
+
+(A) \(5\)
+(B) \(4\)
+(C) \(6\)
+(D) \(7\)
+(E) \(3\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+En el problema de la reunión de la Sección 3 (\(n \ge 2\) personas), demostramos que al menos dos personas tienen el mismo número de conocidos. Ahora reemplaza el conocimiento simétrico por una relación UNIDIRECCIONAL de «seguir» (como en redes sociales, donde la persona \(A\) puede seguir a la persona \(B\) sin que \(B\) siga a \(A\), y nadie se sigue a sí mismo). ¿Sigue cumpliéndose necesariamente que al menos dos personas deben seguir al mismo número de personas?
+
+(A) Sí, porque los números \(0\) y \(n - 1\) siguen siendo mutuamente excluyentes para el seguimiento unidireccional.
+(B) Sí, porque el número total de seguimientos es par por la Regla de los Apretones de Manos.
+(C) Sí, para \(n\) impar, aunque falla para \(n\) par.
+(D) No, porque alguien podría seguir a \(n\) personas, creando \(n + 1\) cajas.
+(E) No, porque sin simetría, una persona puede seguir a \(n - 1\) personas mientras otra sigue a \(0\) personas simultáneamente; por ejemplo, hacer que la persona \(i\) siga a \(\{1, \dots, i - 1\}\) produce los \(n\) conteos distintos \(0, 1, \dots, n - 1\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Para demostrar que todo entero positivo \(n\) tiene un múltiplo no nulo cuyas cifras en base \(10\) consisten únicamente en \(1\) y \(0\), considera los \(n + 1\) enteros
+\[
+R_1 = 1,\quad R_2 = 11,\quad R_3 = 111,\quad \dots,\quad R_{n+1} = \underbrace{11\cdots 1}_{n+1\text{ unos}}.
+\]
+¿Qué paso del Principio del Palomar completa la demostración?
+
+(A) Colocar \(R_1, \dots, R_{n+1}\) en cajas según la suma de sus dígitos; dos comparten la misma suma de dígitos, así que su diferencia es divisible por \(n\).
+(B) Colocar \(R_1, \dots, R_{n+1}\) en \(n\) cajas según sus partes impares; uno divide a otro, y el cociente es múltiplo de \(n\).
+(C) Colocar \(R_1, \dots, R_{n+1}\) en \(n + 1\) cajas según sus residuos módulo \(n + 1\); uno debe tener residuo \(0\).
+(D) Colocar \(R_1, \dots, R_{n+1}\) en \(n\) cajas según sus residuos módulo \(n\); dos términos distintos \(R_j > R_i\) comparten el mismo residuo, de modo que \(R_j - R_i = 11\cdots 100\cdots 0\) es un múltiplo no nulo de \(n\) que solo usa los dígitos \(1\) y \(0\).
+(E) Colocar \(R_1, \dots, R_{n+1}\) en \(10\) cajas según su último dígito; dos comparten el mismo último dígito, así que su diferencia termina en \(0\) y es divisible por \(n\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Una jugadora de ajedrez se prepara para un torneo durante \(49\) días. Juega al menos \(1\) partida cada día y a lo sumo \(77\) partidas en total durante los \(49\) días. Sea \(s_i\) el número acumulado de partidas que ha jugado desde el día \(1\) hasta el día \(i\), de modo que \(1 \le s_1 < s_2 < \dots < s_{49} \le 77\). Para demostrar que existe un tramo de días consecutivos durante el cual juega EXACTAMENTE \(20\) partidas, formamos la lista de \(98\) enteros
+\[
+s_1, s_2, \dots, s_{49}, \quad s_1 + 20, s_2 + 20, \dots, s_{49} + 20.
+\]
+¿Cuántas cajas contienen a todos estos \(98\) enteros y por qué una colisión obliga a \(s_j - s_i = 20\)?
+
+(A) \(77\) cajas (\(\{1, \dots, 77\}\)); como todo \(s_k\) es distinto, dos valores desplazados deben coincidir.
+(B) \(97\) cajas (\(\{1, \dots, 97\}\)); como \(s_1 < \dots < s_{49}\) son estrictamente crecientes y \(s_1 + 20 < \dots < s_{49} + 20\) son estrictamente crecientes, no puede ocurrir una colisión dentro de ninguna de las dos mitades, lo que obliga a \(s_j = s_i + 20\) para algún \(j > i\).
+(C) \(98\) cajas (\(\{0, \dots, 97\}\)); como \(0\) nunca se alcanza, solo se usan \(97\) cajas, lo que obliga a \(s_j + s_i = 20\).
+(D) \(49\) cajas (residuos módulo \(49\)); dos números comparten el mismo residuo, así que \(s_j - s_i = 20\).
+(E) \(96\) cajas (\(\{2, \dots, 97\}\)); como \(s_1 \ge 2\), todo entero cae en \(\{2, \dots, 97\}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+¿Cuál es el menor número de puntos con coordenadas enteras en el espacio tridimensional \(\mathbb{Z}^3\) que garantiza que algún par de puntos tenga un punto medio cuyas coordenadas sean TODAS enteras?
+
+(A) \(5\)
+(B) \(7\)
+(C) \(9\)
+(D) \(10\)
+(E) \(17\)
+[/BONUS]

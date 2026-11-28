@@ -1,0 +1,210 @@
+=== SECTION 1: Arc length in radian measure ===
+
+One of the main reasons radians replace degrees throughout higher mathematics and physics is that circular measurement formulas lose all awkward conversion constants and become as clean as linear proportions.
+
+Recall that for a circle of radius \(r > 0\), a nonnegative central angle \(\theta\) measured in radians is defined as the ratio of intercepted arc length \(s\) to radius \(r\):
+\[
+\theta = \frac{s}{r}.
+\]
+Multiplying both sides by \(r\) solves immediately for the arc length \(s\).
+
+[CALLOUT]
+id: arc-length-formula
+label: Formula
+title: Circular arc length
+tone: key
+
+On a circle of radius \(r > 0\), an arc subtended by a central angle of \(\theta \ge 0\) radians has length
+\[
+s = r\theta.
+\]
+[/CALLOUT]
+
+The condition that \(\theta\) is in radians is not a minor technicality—it is what makes the formula true. Suppose a circle has radius \(r = 10\text{ cm}\) and a central angle of \(60^\circ\). Because \(60^\circ = \frac{\pi}{3}\text{ rad}\), [REF: arc-length-formula | the arc-length formula] gives
+\[
+s = 10 \cdot \frac{\pi}{3} = \frac{10\pi}{3} \approx 10.47\text{ cm}.
+\]
+Look at what happens if you mistakenly substitute \(60\) directly without converting to radians: you get \(10 \cdot 60 = 600\text{ cm}\), which is almost ten times the entire circumference \(2\pi(10) \approx 62.83\text{ cm}\) of the circle! Whenever an angle is given in degrees, convert it to radians first by multiplying by \(\frac{\pi}{180^\circ}\).
+
+[CALLOUT]
+id: radian-unit-caution
+label: Common pitfall
+title: Always convert degrees to radians before substituting
+tone: caution
+
+Both \(s = r\theta\) and the sector-area formula \(A = \frac{1}{2}r^2\theta\) below hold exclusively when \(\theta\) is measured in radians. Substituting a degree number directly inflates the answer by a factor of \(180/\pi \approx 57.3\).
+[/CALLOUT]
+
+Because [REF: arc-length-formula | \(s = r\theta\)] connects three quantities, knowing any two determines the third. For instance, if an arc of length \(s = 18\text{ m}\) subtends a central angle of \(150^\circ\), first convert \(150^\circ = \frac{5\pi}{6}\text{ rad}\), then solve for \(r\):
+\[
+r = \frac{s}{\theta} = \frac{18}{5\pi/6} = \frac{108}{5\pi}\text{ m}.
+\]
+
+[QUESTION 1]
+[ANSWER: C]
+A pendulum of length \(90\text{ cm}\) swings through an angle of \(24^\circ\). What is the exact length of the arc traced by its tip?
+
+(A) \(2160\text{ cm}\)
+(B) \(6\pi\text{ cm}\)
+(C) \(12\pi\text{ cm}\)
+(D) \(24\pi\text{ cm}\)
+(E) \(18\pi\text{ cm}\)
+[/QUESTION]
+
+=== SECTION 2: Circular sector area ===
+
+A circular sector is the pie-slice region bounded by two radii of length \(r\) and the circular arc of length \(s\) between them. How large is its area \(A\)?
+
+Because a circle is rotationally uniform, the fraction of the full circle's area \(\pi r^2\) occupied by the sector equals the fraction of a full revolution \(2\pi\) occupied by its central angle \(\theta\) (in radians):
+\[
+\frac{A}{\pi r^2} = \frac{\theta}{2\pi}.
+\]
+Multiplying both sides by \(\pi r^2\) cancels the factor of \(\pi\) cleanly:
+\[
+A = \pi r^2 \cdot \frac{\theta}{2\pi} = \frac{1}{2}r^2\theta.
+\]
+Moreover, since \(s = r\theta\), we can rewrite \(\frac{1}{2}r^2\theta = \frac{1}{2}r(r\theta) = \frac{1}{2}rs\). Notice the geometric intuition behind \(A = \frac{1}{2}rs\): if you slice a sector into many tiny narrow wedges, each wedge looks nearly like a thin triangle of height \(r\) and base \(\Delta s\), so summing their areas produces \(\frac{1}{2}r \sum \Delta s = \frac{1}{2}rs\).
+
+[CALLOUT]
+id: sector-area-formula
+label: Formula
+title: Area of a circular sector
+tone: key
+
+A sector of a circle of radius \(r > 0\) with central angle \(\theta\) radians (\(0 \le \theta \le 2\pi\)) and arc length \(s = r\theta\) has area
+\[
+A = \frac{1}{2}r^2\theta = \frac{1}{2}rs.
+\]
+[/CALLOUT]
+
+Drag the slider \(a\) (the central angle \(\theta\) in radians) in the graph below to watch both the arc length \(s = r\theta\) and the enclosed sector grow smoothly from \(0\) to a full disk of radius \(r = 2\).
+
+[GRAPH]
+type: parametric2d
+title: Circular sector of radius \(r = 2\) and central angle \(\theta = a\) radians
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -2.4, 2.4
+yrange: -2.4, 2.4
+trace: 2*cos(6.2832*t), 2*sin(6.2832*t) | label: full circle | color: #94a3b8
+trace: 2*cos(a*t), 2*sin(a*t) | label: arc \(s = 2a\) | color: #2563eb
+segment: 0, 0, 2, 0 | label: \(r = 2\) | color: #2563eb
+segment: 0, 0, 2*cos(a), 2*sin(a) | color: #2563eb
+point: 2, 0 | label: \((2, 0)\) | offset: 0.25, -0.2
+point: 2*cos(a), 2*sin(a) | label: \(P\) | color: #2563eb | offset: 0.2, 0.2
+slider: a | range: 0.2, 6.2 | init: 1.4 | step: 0.1
+[/GRAPH]
+
+Having both forms in [REF: sector-area-formula | the sector-area formula] lets you solve direct and inverse problems without detouring through unnecessary variables:
+
+- Given \(r\) and \(\theta\), compute \(A = \frac{1}{2}r^2\theta\) directly.
+- Given \(A\) and \(r\), solve \(\theta = \frac{2A}{r^2}\) (and remember to keep the factor of \(2\), which comes from clearing the \(\frac{1}{2}\)).
+- Given \(A\) and \(s\), use \(A = \frac{1}{2}rs\) to get \(r = \frac{2A}{s}\) directly, and then \(\theta = \frac{s}{r}\) if needed.
+
+For example, suppose a circular irrigation sprinkler waters a sector of radius \(r = 12\text{ m}\) with area \(A = 54\pi\text{ m}^2\). Substituting into \(A = \frac{1}{2}r^2\theta\) gives
+\[
+54\pi = \frac{1}{2}(144)\theta = 72\theta \implies \theta = \frac{54\pi}{72} = \frac{3\pi}{4}\text{ rad} = 135^\circ,
+\]
+and the outer watered arc has length \(s = 12 \cdot \frac{3\pi}{4} = 9\pi\text{ m}\).
+
+[QUESTION 2]
+[ANSWER: A]
+A circular sector has radius \(r = 8\text{ m}\) and area \(A = 20\text{ m}^2\). What are its central angle \(\theta\) (in radians) and arc length \(s\)?
+
+(A) \(\theta = \dfrac{5}{8}\text{ rad}\), \(s = 5\text{ m}\)
+(B) \(\theta = \dfrac{5}{16}\text{ rad}\), \(s = \dfrac{5}{2}\text{ m}\)
+(C) \(\theta = \dfrac{5}{4}\text{ rad}\), \(s = 10\text{ m}\)
+(D) \(\theta = \dfrac{5\pi}{8}\text{ rad}\), \(s = 5\pi\text{ m}\)
+(E) \(\theta = \dfrac{8}{5}\text{ rad}\), \(s = \dfrac{64}{5}\text{ m}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+A circular sector has arc length \(s = 14\text{ cm}\) and area \(A = 63\text{ cm}^2\). What is the radius \(r\) of the circle?
+
+(A) \(4.5\text{ cm}\)
+(B) \(3\text{ cm}\)
+(C) \(18\text{ cm}\)
+(D) \(\dfrac{14}{9}\text{ cm}\)
+(E) \(9\text{ cm}\)
+[/QUESTION]
+
+=== SECTION 3: Compound regions and applied circular geometry ===
+
+Many physical regions are differences of concentric sectors rather than full pie slices—for instance, the glass swept by a windshield wiper blade whose rubber edge does not reach the pivot, or a curved racing lane between an inner radius \(r_1\) and an outer radius \(r_2\).
+
+Such a region is called an annular sector. It is formed by taking the outer sector of radius \(r_2\) and removing the inner sector of radius \(r_1\) with the same central angle \(\theta\) (in radians). Subtracting their areas gives
+\[
+A_{\text{ring}} = \frac{1}{2}r_2^2\theta - \frac{1}{2}r_1^2\theta = \frac{1}{2}\bigl(r_2^2 - r_1^2\bigr)\theta.
+\]
+Notice a vital algebraic warning: \(r_2^2 - r_1^2\) is NOT equal to \((r_2 - r_1)^2\). Using only the blade length \(r_2 - r_1\) as a radius pretends the wiper sweeps a small pie slice anchored at the pivot, severely undercounting the much wider outer band!
+
+[GRAPH]
+type: parametric2d
+title: Annular sector between inner radius \(r_1 = 1\) and outer radius \(r_2 = 2.5\) over \(\theta = 2\pi/3\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 2.0944
+xrange: -2.8, 2.8
+yrange: -0.4, 2.8
+trace: cos(t), sin(t) | label: inner arc (\(r_1 = 1\)) | color: #dc2626
+trace: 2.5*cos(t), 2.5*sin(t) | label: outer arc (\(r_2 = 2.5\)) | color: #2563eb
+segment: 1, 0, 2.5, 0 | label: blade | color: #0f172a
+segment: cos(2.0944), sin(2.0944), 2.5*cos(2.0944), 2.5*sin(2.0944) | color: #0f172a
+segment: 0, 0, 1, 0 | dashed: true
+segment: 0, 0, cos(2.0944), sin(2.0944) | dashed: true
+point: 0, 0 | label: pivot | offset: 0, -0.25
+[/GRAPH]
+
+To test this on numbers, suppose a curved garden path runs between inner radius \(r_1 = 4\text{ m}\) and outer radius \(r_2 = 6\text{ m}\) through a \(90^\circ = \frac{\pi}{2}\text{ rad}\) turn. Its area is
+\[
+A = \frac{1}{2}(6^2 - 4^2)\cdot\frac{\pi}{2} = \frac{1}{2}(36 - 16)\cdot\frac{\pi}{2} = 5\pi\text{ m}^2.
+\]
+By contrast, plugging \((6 - 4)^2 = 4\) would have given only \(\pi\text{ m}^2\)—off by a factor of \(5\).
+
+Arc length also models surface distances along a meridian of longitude on Earth. Because a meridian is a great circle of radius \(R\) centered at Earth's center, two cities on the same meridian have a central angle equal to the angular separation of their latitudes (subtract latitudes in the same hemisphere; add them when one is north and one is south of the equator). Converting that angle to radians and multiplying by \(R\) yields the surface arc distance \(s = R\theta\).
+
+[QUESTION 4]
+[ANSWER: B]
+A rear windshield wiper arm is \(45\text{ cm}\) long from its pivot to its outer tip, and the rubber cleaning blade covers only the outer \(30\text{ cm}\) of the arm (leaving an unwiped inner radius of \(15\text{ cm}\)). If the wiper sweeps through \(120^\circ\), what exact area does the blade clean?
+
+(A) \(300\pi\text{ cm}^2\)
+(B) \(600\pi\text{ cm}^2\)
+(C) \(675\pi\text{ cm}^2\)
+(D) \(1200\pi\text{ cm}^2\)
+(E) \(450\pi\text{ cm}^2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Model Earth as a sphere of radius \(6360\text{ km}\). City A lies on the same meridian of longitude as City B, with City A at latitude \(12^\circ\text{ S}\) and City B at latitude \(33^\circ\text{ N}\). What is the exact shortest surface distance along the meridian between the two cities?
+
+(A) \(742\pi\text{ km}\)
+(B) \(795\pi\text{ km}\)
+(C) \(3180\pi\text{ km}\)
+(D) \(1590\pi\text{ km}\)
+(E) \(286200\text{ km}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+A circular sector has total perimeter \(24\text{ cm}\) (consisting of its two straight radii and its curved arc) and central angle \(\theta = 2\text{ rad}\). What is the area of the sector?
+
+(A) \(18\text{ cm}^2\)
+(B) \(72\text{ cm}^2\)
+(C) \(36\text{ cm}^2\)
+(D) \(144\text{ cm}^2\)
+(E) \(36\pi\text{ cm}^2\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+If the radius of a circular sector is tripled while its central angle is cut in half, by what factor does the area of the sector change?
+
+(A) \(\dfrac{9}{2}\)
+(B) \(\dfrac{3}{2}\)
+(C) \(\dfrac{9}{4}\)
+(D) \(3\)
+(E) \(\dfrac{2}{9}\)
+[/BONUS]

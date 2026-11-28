@@ -1,0 +1,199 @@
+=== SECTION 1: Simple and Generalized Pigeonhole Principles ===
+
+The counting rules from the previous lesson compute exact sizes of finite sets. The Pigeonhole Principle uses those exact counts in reverse: when you know there are more objects than containers, you can prove that a collision MUST occur—even without knowing which objects collide or which container overflows.
+
+Before stating the general form, recall the ceiling function: for any real number \(x\), the ceiling \(\lceil x \rceil\) denotes the least integer greater than or equal to \(x\). For example, \(\lceil 4 \rceil = 4\), \(\lceil 10/3 \rceil = \lceil 3.333\dots \rceil = 4\), and \(\lceil 7/4 \rceil = 2\). By definition, \(\lceil x \rceil - 1\) is strictly smaller than \(x\):
+\[
+\lceil x \rceil - 1 < x \le \lceil x \rceil.
+\]
+
+[CALLOUT]
+id: gphp
+label: Principle
+title: Simple and Generalized Pigeonhole Principles
+tone: key
+
+(1) Simple Pigeonhole Principle: If \(n + 1\) or more objects ("pigeons") are placed into \(n\) boxes ("pigeonholes") with \(n \ge 1\), then at least one box contains at least \(2\) objects.
+(2) Generalized Pigeonhole Principle: If \(N\) objects are placed into \(k \ge 1\) boxes, then at least one box contains at least \(\lceil N / k \rceil\) objects. Equivalently, to guarantee that at least one box contains at least \(r\) objects (for an integer \(r \ge 1\)), placing \(N = k(r - 1) + 1\) objects always suffices.
+[/CALLOUT]
+
+Notice that [REF: gphp.1 | the Simple Pigeonhole Principle] is simply the case \(N = n + 1\) and \(k = n\) of [REF: gphp.2 | the Generalized Pigeonhole Principle], since \(\lceil (n + 1)/n \rceil = \lceil 1 + 1/n \rceil = 2\).
+
+Proof of [REF: gphp.2 | the Generalized Pigeonhole Principle] by contradiction: Suppose \(N\) objects are partitioned among \(k\) disjoint boxes \(B_1, \dots, B_k\), and suppose for contradiction that EVERY box holds strictly fewer than \(\lceil N / k \rceil\) objects. Because each box count \(|B_i|\) is an integer, \(|B_i| \le \lceil N / k \rceil - 1\) for all \(i = 1, \dots, k\). By the Sum Rule for the disjoint boxes,
+\[
+N = |B_1| + |B_2| + \dots + |B_k| \le k\left(\left\lceil \frac{N}{k} \right\rceil - 1\right) < k \cdot \frac{N}{k} = N,
+\]
+where the strict inequality uses \(\lceil N / k \rceil - 1 < N / k\). This gives \(N < N\), a contradiction. Hence some box must hold at least \(\lceil N / k \rceil\) objects.
+
+Two critical logical habits govern every Pigeonhole argument:
+1. Non-constructive existence: Pigeonhole proves that SOME box holds at least \(\lceil N / k \rceil\) objects; it NEVER identifies which box overflows, nor does it guarantee uniqueness (several boxes could overflow).
+2. Sharpness (extremal check): Showing that \(N = k(r - 1) + 1\) objects force a box of size \(\ge r\) proves an UPPER BOUND on the minimum threshold. To prove that \(N\) is the EXACT minimum threshold, you must also exhibit an extremal configuration of \(N - 1\) objects that avoids any box reaching \(r\). When boxes have unlimited capacity, placing \(r - 1\) objects in each of the \(k\) boxes gives \(k(r - 1)\) objects with no overflow—proving \(k(r - 1) + 1\) is sharp. When some boxes have limited capacity, however, the true threshold can be strictly smaller than \(k(r - 1) + 1\)!
+
+[QUESTION 1]
+[ANSWER: C]
+An opaque jar contains \(2\) red marbles, \(10\) blue marbles, \(10\) green marbles, and \(10\) yellow marbles. What is the smallest number of marbles you must draw blindly to guarantee that you have drawn at least \(5\) marbles of the same color?
+
+(A) \(13\)
+(B) \(14\)
+(C) \(15\)
+(D) \(16\)
+(E) \(17\)
+[/QUESTION]
+
+=== SECTION 2: Designing creative pigeonholes in number theory ===
+
+The Pigeonhole Principle itself takes three lines to prove. All of its real power—and all of the creative work in solving problems with it—lies in deciding WHAT should be the pigeons and WHAT should be the boxes so that two pigeons landing in the same box automatically satisfy the desired mathematical property.
+
+Worked Example 1 (Remainders modulo \(n\)): Prove that among any \(n + 1\) integers, there exist two whose difference is divisible by \(n\) (for any integer \(n \ge 1\)).
+- Pigeons: the \(n + 1\) chosen integers.
+- Boxes: the \(n\) possible remainders \(\{0, 1, \dots, n - 1\}\) upon division by \(n\).
+Place each integer into the box matching its remainder. Since there are \(n + 1\) pigeons and \(n\) boxes, [REF: gphp.1 | the Simple Pigeonhole Principle] guarantees two distinct chosen integers \(a\) and \(b\) land in the same box—meaning \(a = nq_1 + r\) and \(b = nq_2 + r\) share the same remainder \(r\). Then \(a - b = n(q_1 - q_2)\) is divisible by \(n\).
+Sharpness: the \(n\) integers \(\{0, 1, \dots, n - 1\}\) have all pairwise differences between \(1\) and \(n - 1\), none divisible by \(n\).
+
+Worked Example 2 (Divisibility in \(\{1, 2, \dots, 2n\}\)): Prove that if you choose any \(n + 1\) distinct integers from \(\{1, 2, \dots, 2n\}\), then one of the chosen integers must divide another.
+
+At first glance there are no obvious boxes here. How can two numbers automatically satisfy "one divides the other"? Notice that if two numbers differ only by a power of \(2\)—say \(3 \cdot 2^1 = 6\) and \(3 \cdot 2^3 = 24\)—then the smaller automatically divides the larger! Every positive integer \(a\) can be written uniquely as
+\[
+a = 2^r m, \qquad \text{where } r \ge 0 \text{ is an integer and } m \text{ is odd}
+\]
+(simply divide \(a\) by \(2\) repeatedly until an odd number \(m\), called the odd part of \(a\), remains).
+- Pigeons: the \(n + 1\) chosen integers from \(\{1, 2, \dots, 2n\}\).
+- Boxes: the \(n\) possible odd parts \(\{1, 3, 5, \dots, 2n - 1\}\) in \(\{1, 2, \dots, 2n\}\).
+Place each chosen integer \(a = 2^r m\) into box \(m\). Since there are \(n + 1\) pigeons and \(n\) boxes, two distinct chosen integers \(a = 2^{r_1} m\) and \(b = 2^{r_2} m\) share the same odd part \(m\). Because \(a \ne b\), we have \(r_1 \ne r_2\). If \(r_1 < r_2\), then \(b = 2^{r_2 - r_1} a\), so \(a \mid b\); if \(r_2 < r_1\), then \(b \mid a\).
+
+Check sharpness: can we pick \(n\) integers from \(\{1, 2, \dots, 2n\}\) with NO divisibility pair? Yes! Take the top half \(\{n + 1, n + 2, \dots, 2n\}\). It has exactly \(n\) elements, and any proper multiple of an element is at least \(2(n + 1) = 2n + 2 > 2n\), so no element can divide another. Thus \(n + 1\) is the exact sharp threshold.
+
+Worked Example 3 (Subset-sum collisions): Prove that any set \(A\) of \(10\) distinct two-digit positive integers (elements of \(\{10, 11, \dots, 99\}\)) contains two distinct nonempty subsets with the same sum of elements.
+- Pigeons: all nonempty subsets of \(A\). By the subset count \(2^{10}\) from the previous lesson (minus \(\emptyset\)), there are \(2^{10} - 1 = 1023\) nonempty subsets.
+- Boxes: all possible sums of elements of a nonempty subset of \(A\). The smallest possible sum is at least \(10\), and the largest possible sum of at most \(10\) distinct numbers from \(\{10, \dots, 99\}\) is at most \(90 + 91 + \dots + 99 = 945\). Hence every subset sum lies in \(\{10, 11, \dots, 945\}\), which contains only \(945 - 10 + 1 = 936\) integers!
+Because \(1023 > 936\), [REF: gphp.1 | Pigeonhole] guarantees two distinct nonempty subsets \(B, C \subseteq A\) with the exact same sum. (Moreover, deleting any common elements \(B \cap C\) from both leaves two DISJOINT nonempty subsets \(B \setminus C\) and \(C \setminus B\) with the exact same sum!)
+
+[QUESTION 2]
+[ANSWER: B]
+What is the smallest positive integer \(m\) such that ANY set of \(m\) integers must contain two distinct integers whose sum OR whose difference is divisible by \(10\)?
+
+(A) \(6\)
+(B) \(7\)
+(C) \(10\)
+(D) \(11\)
+(E) \(12\)
+[/QUESTION]
+
+=== SECTION 3: Geometric and finite-network pigeonhole arguments ===
+
+Pigeonhole arguments work just as naturally when the "boxes" are geometric regions partitioning a shape or degree classes in a finite network.
+
+Worked Example 1 (Five points in a \(2 \times 2\) square): Prove that if \(5\) points are placed anywhere in (or on the boundary of) a \(2 \times 2\) square, then some pair of points lies at Euclidean distance at most \(\sqrt{2}\) from each other.
+
+Partition the square \([0, 2] \times [0, 2]\) into \(4\) congruent \(1 \times 1\) subsquares using the vertical line \(x = 1\) and horizontal line \(y = 1\) (assigning each shared internal boundary segment to one adjacent subsquare so the \(4\) boxes are disjoint).
+- Pigeons: the \(5\) placed points.
+- Boxes: the \(4\) unit subsquares.
+By [REF: gphp.1 | the Simple Pigeonhole Principle], at least \(2\) points must land in the same \(1 \times 1\) subsquare. The farthest apart any two points in a \(1 \times 1\) square can be is the length of its diagonal, \(\sqrt{1^2 + 1^2} = \sqrt{2}\). Therefore those two points lie at distance at most \(\sqrt{2}\).
+
+[GRAPH]
+type: function2d
+title: Partition of a \(2 \times 2\) square into four \(1 \times 1\) pigeonhole subsquares
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.2, 2.2
+yrange: -0.2, 2.2
+aspect: equal
+trace: 0 | label: bottom edge
+trace: 2 | label: top edge
+segment: 0, 0, 0, 2
+segment: 2, 0, 2, 2
+segment: 1, 0, 1, 2 | dashed: true
+segment: 0, 1, 2, 1 | dashed: true
+segment: 0, 0, 1, 1 | label: \(\sqrt{2}\)
+point: 0, 0 | label: \((0, 0)\)
+point: 2, 0 | label: \((2, 0)\)
+point: 0, 2 | label: \((0, 2)\)
+point: 2, 2 | label: \((2, 2)\)
+point: 1, 1 | label: \((1, 1)\)
+[/GRAPH]
+
+Notice two sharpness checks right on the picture:
+- With only \(4\) points, placing them at the four corners \((0, 0), (2, 0), (0, 2), (2, 2)\) keeps every pairwise distance at least \(2 > \sqrt{2}\), so \(4\) points do not suffice.
+- With \(5\) points, placing them at the four corners plus the center \((1, 1)\) achieves minimum pairwise distance EQUAL to \(\sqrt{2}\), proving the bound \(\le \sqrt{2}\) cannot be tightened to \(< \sqrt{2}\)!
+
+Worked Example 2 (Acquaintances at a gathering): Suppose \(n \ge 2\) people attend a gathering, where acquaintance is symmetric (if \(A\) knows \(B\), then \(B\) knows \(A\)) and nobody counts as their own acquaintance. Prove that at least two people have the exact same number of acquaintances at the gathering.
+
+Watch how the naive box count nearly fools you! Each of the \(n\) people can have anywhere from \(0\) up to \(n - 1\) acquaintances. That gives \(n\) possible values \(\{0, 1, 2, \dots, n - 1\}\) for \(n\) people—not enough pigeons to beat \(n\) boxes!
+
+The hidden structural constraint is that the extreme counts \(0\) and \(n - 1\) are MUTUALLY EXCLUSIVE:
+- If someone at the gathering knows all \(n - 1\) other people, then every other person knows at least that one person, so NO ONE can have \(0\) acquaintances!
+- Conversely, if someone has \(0\) acquaintances, then nobody knows that person, so NO ONE can have \(n - 1\) acquaintances!
+
+Therefore, in any actual gathering, the set of acquaintance counts that occur must be a subset of either \(\{0, 1, \dots, n - 2\}\) or \(\{1, 2, \dots, n - 1\}\). Either way, all \(n\) people land in at most \(n - 1\) boxes! By [REF: gphp.1 | the Simple Pigeonhole Principle], at least two people share the same acquaintance count.
+
+[TABLE]
+Domain | Pigeons | Boxes | Collision consequence
+Modular arithmetic | \(n + 1\) integers | \(n\) remainders \(\{0, \dots, n - 1\}\) | Difference is a multiple of \(n\)
+Divisibility in \(\{1, \dots, 2n\}\) | \(n + 1\) chosen integers | \(n\) odd parts \(\{1, 3, \dots, 2n - 1\}\) | One integer divides the other
+Subset sums | \(2^m - 1\) nonempty subsets | Interval of possible integer sums | Two subsets have equal sum
+Plane geometry | \(k + 1\) placed points | \(k\) congruent subregions | Two points within subregion diameter
+Finite networks | \(n\) people (\(n \ge 2\)) | At most \(n - 1\) attainable degrees | Two people have equal degree
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+What is the smallest number of points that must be placed inside (or on the boundary of) an equilateral triangle of side length \(2\) to guarantee that at least two of the points lie at distance at most \(1\) from each other?
+
+(A) \(5\)
+(B) \(4\)
+(C) \(6\)
+(D) \(7\)
+(E) \(3\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+In the gathering problem of Section 3 (\(n \ge 2\) people), we proved that at least two people have the same number of acquaintances. Now replace symmetric acquaintance with a ONE-WAY "follows" relation (like social media, where person \(A\) may follow person \(B\) without \(B\) following \(A\), and no one follows themselves). Does it still follow that at least two people must follow the same number of others?
+
+(A) Yes, because the numbers \(0\) and \(n - 1\) are still mutually exclusive for one-way following.
+(B) Yes, because the total number of followings is even by the Handshake Rule.
+(C) Yes, for odd \(n\), though it fails for even \(n\).
+(D) No, because someone could follow \(n\) people, creating \(n + 1\) boxes.
+(E) No, because without symmetry, one person can follow \(n - 1\) others while another follows \(0\) others simultaneously; for example, having person \(i\) follow \(\{1, \dots, i - 1\}\) gives all \(n\) distinct counts \(0, 1, \dots, n - 1\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+To prove that every positive integer \(n\) has a nonzero multiple whose base-\(10\) digits consist solely of \(1\)'s and \(0\)'s, consider the \(n + 1\) integers
+\[
+R_1 = 1,\quad R_2 = 11,\quad R_3 = 111,\quad \dots,\quad R_{n+1} = \underbrace{11\cdots 1}_{n+1\text{ ones}}.
+\]
+Which Pigeonhole step completes the proof?
+
+(A) Place \(R_1, \dots, R_{n+1}\) into boxes by their digit sums; two share the same digit sum, so their difference is divisible by \(n\).
+(B) Place \(R_1, \dots, R_{n+1}\) into \(n\) boxes by their odd parts; one divides another, and the quotient is a multiple of \(n\).
+(C) Place \(R_1, \dots, R_{n+1}\) into \(n + 1\) boxes by their remainders modulo \(n + 1\); one must have remainder \(0\).
+(D) Place \(R_1, \dots, R_{n+1}\) into \(n\) boxes by their remainders modulo \(n\); two distinct terms \(R_j > R_i\) share the same remainder, so \(R_j - R_i = 11\cdots 100\cdots 0\) is a nonzero multiple of \(n\) using only digits \(1\) and \(0\).
+(E) Place \(R_1, \dots, R_{n+1}\) into \(10\) boxes by their last digit; two share the same last digit, so their difference ends in \(0\) and is divisible by \(n\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A chess player prepares for a tournament over \(49\) days. She plays at least \(1\) game every day and at most \(77\) games in total over the \(49\) days. Let \(s_i\) be the cumulative number of games she has played from day \(1\) through day \(i\), so \(1 \le s_1 < s_2 < \dots < s_{49} \le 77\). To prove there is a stretch of consecutive days during which she plays EXACTLY \(20\) games, we form the list of \(98\) integers
+\[
+s_1, s_2, \dots, s_{49}, \quad s_1 + 20, s_2 + 20, \dots, s_{49} + 20.
+\]
+How many boxes contain all \(98\) of these integers, and why does a collision force \(s_j - s_i = 20\)?
+
+(A) \(77\) boxes (\(\{1, \dots, 77\}\)); since every \(s_k\) is distinct, two shifted values must coincide.
+(B) \(97\) boxes (\(\{1, \dots, 97\}\)); since \(s_1 < \dots < s_{49}\) are strictly increasing and \(s_1 + 20 < \dots < s_{49} + 20\) are strictly increasing, a collision cannot happen within either half, forcing \(s_j = s_i + 20\) for some \(j > i\).
+(C) \(98\) boxes (\(\{0, \dots, 97\}\)); since \(0\) is never attained, only \(97\) boxes are used, forcing \(s_j + s_i = 20\).
+(D) \(49\) boxes (remainders modulo \(49\)); two numbers share the same remainder, so \(s_j - s_i = 20\).
+(E) \(96\) boxes (\(\{2, \dots, 97\}\)); since \(s_1 \ge 2\), every integer lies in \(\{2, \dots, 97\}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+What is the smallest number of points with integer coordinates in three-dimensional space \(\mathbb{Z}^3\) that guarantees some pair of points has a midpoint whose coordinates are ALL integers?
+
+(A) \(5\)
+(B) \(7\)
+(C) \(9\)
+(D) \(10\)
+(E) \(17\)
+[/BONUS]

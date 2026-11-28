@@ -1,0 +1,205 @@
+=== SECTION 1: Conversión del movimiento circular y repetitivo en un modelo sinusoidal ===
+
+Muchas magnitudes del mundo real suben y bajan suavemente con un ritmo regular: la altura de un pasajero en una rueda de la fortuna, la profundidad del agua en un puerto con mareas, las horas de luz diurna a lo largo de un año o el desplazamiento de una masa idealizada que oscila sobre un resorte. Siempre que una cantidad se repite suavemente entre un máximo fijo \(M\) y un mínimo fijo \(m\) a lo largo de un tiempo de ciclo constante \(T\), podemos modelarla con una función sinusoidal del tiempo \(t\):
+\[
+y(t) = A\cos\!\bigl(B(t - C)\bigr) + D \qquad \text{o} \qquad y(t) = A\sin\!\bigl(B(t - C)\bigr) + D.
+\]
+
+Una rueda de la fortuna vuelve concreto el significado físico de cada parámetro. Suponga que una rueda tiene radio \(r\text{ m}\), su punto más bajo se sitúa a \(2\text{ m}\) sobre el suelo y gira en sentido antihorario a rapidez constante completando una vuelta entera cada \(T = 30\text{ s}\). Un pasajero aborda justo en la parte más baja en el instante \(t = 0\).
+
+Rastree la altura \(h(t)\) (en metros) sobre el suelo:
+- Altura mínima: \(m = 2\text{ m}\) (en el punto más bajo).
+- Altura del centro (línea media): \(D = r + 2\text{ m}\) (altura del eje de la rueda).
+- Altura máxima: \(M = 2r + 2\text{ m}\) (en la cima).
+- Amplitud: \(\lvert A \rvert = r\text{ m}\) (el radio de la rueda, que mide la desviación vertical máxima por encima o por debajo del eje).
+- Frecuencia angular \(B\): una vuelta completa tarda \(T = 30\text{ s}\), por lo que \(B = \frac{2\pi}{30} = \frac{\pi}{15}\text{ rad/s}\).
+
+Como el pasajero comienza en la altura MÍNIMA en \(t = 0\), elegir un coseno reflejado (\(-\cos\)) hace que el desplazamiento de fase \(C = 0\) automáticamente:
+\[
+h(t) = -r\cos\!\left(\frac{\pi}{15} t\right) + (r + 2).
+\]
+Verifique en \(t = 0\): \(h(0) = -r(1) + r + 2 = 2\text{ m}\). Verifique media rotación después, en \(t = 15\text{ s}\): \(h(15) = -r(-1) + r + 2 = 2r + 2\text{ m}\).
+
+Arrastre el deslizador del radio de la rueda \(r\) abajo y observe cómo cambiar el radio modifica tanto la amplitud como la altura del eje \(D = r + 2\), manteniendo la altura de abordaje en \(2\text{ m}\) y el período en \(30\text{ s}\).
+
+[GRAPH]
+type: function2d
+title: Altura en la rueda de la fortuna \(h(t) = -r\cos(\pi t/15) + (r + 2)\) al variar el radio \(r\)
+xlabel: tiempo (s)
+ylabel: altura (m)
+xrange: 0, 60
+yrange: 0, 48
+trace: -r*cos(pi*x/15) + r + 2 | label: \(h(t)\) | color: #2563eb
+segment: 0, r + 2, 60, r + 2 | label: altura del eje | color: #dc2626 | dashed: true
+point: 0, 2 | label: abordaje | color: #059669
+point: 15, 2*r + 2 | label: cima | color: #2563eb
+slider: r | range: 8, 20 | init: 14 | step: 1
+[/GRAPH]
+
+[CALLOUT]
+id: modeling-workflow
+label: Procedimiento
+title: Flujo de cuatro pasos para construir un modelo sinusoidal
+tone: key
+
+(1) Geometría vertical: calcule la línea media \(D = \dfrac{M + m}{2}\) y la amplitud \(\lvert A \rvert = \dfrac{M - m}{2}\) directamente a partir del máximo \(M\) y del mínimo \(m\) (ambos conservan las mismas unidades físicas que la salida).
+(2) Período y \(B\): identifique la duración de un ciclo completo \(T\) (si le dan tiempos de cresta y valle adyacentes, duplique ese espaciado de medio ciclo), luego calcule \(B = \dfrac{2\pi}{T}\) (unidades: radianes por unidad de entrada).
+(3) Elección inteligente de plantilla en \(t = 0\): escoja la curva que elimine el desplazamiento de fase siempre que sea posible:
+- Comienza en el máximo: \(+A\cos(Bt) + D\)
+- Comienza en el mínimo: \(-A\cos(Bt) + D\)
+- Comienza en la línea media subiendo: \(+A\sin(Bt) + D\)
+- Comienza en la línea media bajando: \(-A\sin(Bt) + D\)
+(4) Desplazamiento de fase cuando sea necesario: si ningún punto de referencia cae en \(t = 0\), elija el máximo, mínimo o cruce por la línea media conocido más claro en \(t = C\) y reemplace \(Bt\) por \(B(t - C)\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Una rueda de la fortuna tiene un diámetro de \(30\text{ m}\), con su punto más bajo a \(3\text{ m}\) sobre el suelo. La rueda gira a ritmo constante completando una revolución cada \(40\text{ s}\). Si un pasajero aborda en el punto más bajo en \(t = 0\), ¿qué función da la altura \(h(t)\) del pasajero (en metros) sobre el suelo \(t\) segundos después?
+
+(A) \(h(t) = -30\cos\!\left(\dfrac{\pi}{20} t\right) + 18\)
+(B) \(h(t) = 15\cos\!\left(\dfrac{\pi}{20} t\right) + 18\)
+(C) \(h(t) = -15\cos\!\left(\dfrac{\pi}{20} t\right) + 18\)
+(D) \(h(t) = -15\cos\!\left(\dfrac{\pi}{40} t\right) + 18\)
+(E) \(h(t) = -15\sin\!\left(\dfrac{\pi}{20} t\right) + 18\)
+[/QUESTION]
+
+=== SECTION 2: Extracción de modelos a partir de tablas de extremos y datos con desplazamiento de fase ===
+
+En mediciones de campo —como tablas de mareas o registros estacionales de temperatura—, una cresta o un valle rara vez ocurren justo en \(t = 0\). En cambio, normalmente le proporcionan los instantes y valores de un punto alto y un punto bajo adyacentes.
+
+Suponga que una tabla de mareas portuaria registra pleamar de \(4.6\text{ m}\) a las \(3\text{:}00\text{ a.m.}\) (\(t = 3\text{ h}\)) y la bajamar inmediatamente siguiente de \(1.0\text{ m}\) a las \(9\text{:}00\text{ a.m.}\) (\(t = 9\text{ h}\)), modelándose sinusoidalmente la profundidad del agua \(h(t)\). Aplique [REF: modeling-workflow | nuestro flujo de cuatro pasos]:
+1. Línea media y amplitud:
+\[
+D = \frac{4.6 + 1.0}{2} = 2.8\text{ m}, \qquad \lvert A \rvert = \frac{4.6 - 1.0}{2} = 1.8\text{ m}.
+\]
+2. Período: el intervalo desde la pleamar en \(t = 3\) hasta la siguiente bajamar en \(t = 9\) es \(9 - 3 = 6\text{ h}\), que corresponde a MEDIO ciclo. Por lo tanto, el período completo es \(T = 2(6) = 12\text{ h}\), lo que da
+\[
+B = \frac{2\pi}{12} = \frac{\pi}{6}\text{ rad/h}.
+\]
+3. Plantilla y desplazamiento de fase: como ocurre un máximo en \(t = 3\), un coseno positivo desplazado \(3\) horas a la derecha coincide de inmediato:
+\[
+h(t) = 1.8\cos\!\left(\frac{\pi}{6}(t - 3)\right) + 2.8.
+\]
+Igualmente podríamos anclar un coseno negativo en la bajamar \(t = 9\), escribiendo \(h(t) = -1.8\cos\!\left(\frac{\pi}{6}(t - 9)\right) + 2.8\), o anclar un seno positivo en \(t = 0\) (¡un cuarto de período, \(3\text{ h}\), antes de la cresta!), obteniendo la fórmula aún más limpia \(h(t) = 1.8\sin\!\left(\frac{\pi}{6} t\right) + 2.8\). Al verificar \(t = 3\) se obtiene \(1.8\sin(\frac{\pi}{2}) + 2.8 = 4.6\text{ m}\), y al verificar \(t = 9\) se obtiene \(1.8\sin(\frac{3\pi}{2}) + 2.8 = 1.0\text{ m}\).
+
+[GRAPH]
+type: function2d
+title: Profundidad del agua en el puerto \(h(t) = 1.8\cos(\frac{\pi}{6}(t - 3)) + 2.8\) durante 24 horas
+xlabel: tiempo (horas)
+ylabel: profundidad (m)
+xrange: 0, 24
+yrange: 0, 5.4
+trace: 1.8*cos(pi*(x - 3)/6) + 2.8 | label: \(h(t)\) | color: #2563eb
+segment: 0, 2.8, 24, 2.8 | label: profundidad media | color: #dc2626 | dashed: true
+point: 3, 4.6 | label: pleamar (3, 4.6) | color: #059669
+point: 9, 1.0 | label: bajamar (9, 1.0) | color: #dc2626
+point: 15, 4.6 | label: pleamar (15, 4.6) | color: #059669
+point: 21, 1.0 | label: bajamar (21, 1.0) | color: #dc2626
+[/GRAPH]
+
+[CALLOUT]
+id: half-cycle-pitfall
+label: Error frecuente
+title: El tiempo de cresta a valle es MEDIO período, no un período completo
+tone: caution
+
+El tiempo desde un máximo hasta el mínimo inmediatamente siguiente es \(\frac{T}{2}\). Tomar \(T\) igual a ese intervalo duplica \(B\) y hace que el modelo oscile el doble de rápido que los datos. Duplique siempre la separación de cresta a valle antes de calcular \(B = \frac{2\pi}{T}\).
+[/CALLOUT]
+
+[QUESTION 2]
+[ANSWER: A]
+Un mareógrafo costero registra una bajamar de \(1.2\text{ m}\) en \(t = 2\text{ h}\) y la siguiente pleamar de \(5.2\text{ m}\) en \(t = 8\text{ h}\). Bajo un modelo sinusoidal de mareas, ¿cuáles son la amplitud, la profundidad de la línea media y el período completo \(T\)?
+
+(A) Amplitud \(2.0\text{ m}\), línea media \(3.2\text{ m}\), período \(12\text{ h}\)
+(B) Amplitud \(2.0\text{ m}\), línea media \(3.2\text{ m}\), período \(6\text{ h}\)
+(C) Amplitud \(4.0\text{ m}\), línea media \(3.2\text{ m}\), período \(12\text{ h}\)
+(D) Amplitud \(2.0\text{ m}\), línea media \(2.0\text{ m}\), período \(12\text{ h}\)
+(E) Amplitud \(3.2\text{ m}\), línea media \(2.0\text{ m}\), período \(6\text{ h}\)
+[/QUESTION]
+
+=== SECTION 3: Evaluación de modelos, puntos de referencia de cuarto de período e interpretación de unidades ===
+
+Una vez construido un modelo sinusoidal, lo interrogamos de tres maneras en este nivel:
+
+1. Evaluación directa en un instante especificado \(t\): ¡sustituya \(t\) en la fórmula y evalúe el seno o el coseno en radianes! Nunca cambie a grados cuando \(B = \frac{2\pi}{T}\) se construyó en radianes. Para nuestro modelo portuario \(h(t) = 1.8\cos\!\left(\frac{\pi}{6}(t - 3)\right) + 2.8\), ¿cuál es la profundidad a las \(5\text{:}00\text{ a.m.}\) (\(t = 5\))?
+\[
+h(5) = 1.8\cos\!\left(\frac{\pi}{6}(5 - 3)\right) + 2.8 = 1.8\cos\!\left(\frac{\pi}{3}\right) + 2.8 = 1.8(0.5) + 2.8 = 3.7\text{ m}.
+\]
+2. Lectura de instantes de máximos, mínimos y cruces por la línea media mediante simetría de cuartos de período: cada par adyacente de puntos de referencia (máximo a línea media, línea media a mínimo, mínimo a línea media, línea media a máximo) está separado exactamente por \(\frac{T}{4}\). En nuestro modelo de marea de \(12\) horas, \(\frac{T}{4} = 3\text{ h}\), de modo que partiendo de la pleamar en \(t = 3\text{ h}\):
+
+[TABLE]
+Tiempo \(t\) (horas) | \(0\) | \(3\) | \(6\) | \(9\) | \(12\) | \(15\)
+Estado | Línea media subiendo | Pleamar | Línea media bajando | Bajamar | Línea media subiendo | Pleamar
+Profundidad \(h(t)\) | \(2.8\text{ m}\) | \(4.6\text{ m}\) | \(2.8\text{ m}\) | \(1.0\text{ m}\) | \(2.8\text{ m}\) | \(4.6\text{ m}\)
+[/TABLE]
+
+3. Interpretación física de los parámetros con unidades:
+- \(D\) es el valor promedio (de equilibrio) a lo largo de un ciclo completo, en unidades de salida.
+- \(\lvert A \rvert\) es la desviación máxima respecto al promedio, en unidades de salida; la oscilación total de cresta a valle es \(2\lvert A \rvert\).
+- \(T = \frac{2\pi}{\lvert B \rvert}\) es la duración de una repetición completa, en unidades de entrada; su recíproco \(f = \frac{1}{T} = \frac{\lvert B \rvert}{2\pi}\) es la frecuencia (ciclos por unidad de tiempo).
+- \(C\) es el instante del punto de referencia elegido (como la fecha del día con mayor luz solar), en unidades de entrada.
+
+¿Qué ocurre si necesita hallar los instantes exactos en los que una sinusoide iguala una altura objetivo intermedia arbitraria \(k\) —por ejemplo, cuándo la marea de nuestro puerto alcanza \(3.25\text{ m}\)— que no es ni máximo, ni mínimo ni línea media? Resolver \(A\cos\!\bigl(B(t - C)\bigr) + D = k\) para valores intermedios generales \(k\) requiere ecuaciones trigonométricas inversas y familias generales de soluciones, temas que se desarrollan sistemáticamente en Identidades y ecuaciones trigonométricas. Aquí nos centramos en la evaluación directa y en la determinación de tiempos de puntos de referencia mediante simetría de cuartos de período.
+
+[QUESTION 3]
+[ANSWER: E]
+Un peso idealizado que rebota verticalmente en un resorte tiene una altura sobre el suelo (en centímetros) modelada por
+\[
+y(t) = 6\sin\!\left(\frac{\pi}{4} t\right) + 10,
+\]
+donde \(t \ge 0\) se mide en segundos. ¿Cuál es la altura en \(t = 10\text{ s}\) y en qué primer instante positivo \(t\) alcanza el peso su punto más bajo?
+
+(A) \(y(10) = 10\text{ cm}\); punto más bajo en \(t = 4\text{ s}\)
+(B) \(y(10) = 4\text{ cm}\); punto más bajo en \(t = 6\text{ s}\)
+(C) \(y(10) = 16\text{ cm}\); punto más bajo en \(t = 2\text{ s}\)
+(D) \(y(10) = 16\text{ cm}\); punto más bajo en \(t = 4\text{ s}\)
+(E) \(y(10) = 16\text{ cm}\); punto más bajo en \(t = 6\text{ s}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+En una ciudad septentrional, el número de horas de luz diurna en el día \(d\) del año se modela mediante
+\[
+L(d) = 3.5\cos\!\left(\frac{2\pi}{365}(d - 172)\right) + 12.2.
+\]
+¿Qué enunciado interpreta correctamente los parámetros de este modelo?
+
+(A) La diferencia entre el día más largo y el día más corto del año es \(3.5\text{ horas}\)
+(B) La luz diurna alcanza su máximo de \(15.7\text{ horas}\) en el día \(172\), promedia \(12.2\text{ horas}\) a lo largo del año y difiere en \(7.0\text{ horas}\) entre los días más largo y más corto
+(C) El día más corto del año ocurre en el día \(172\) y dura \(8.7\text{ horas}\)
+(D) La luz diurna se repite cada \(172\text{ días}\) con un máximo de \(12.2\text{ horas}\)
+(E) El modelo alcanza su línea media de \(12.2\text{ horas}\) en el día \(172\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+El desplazamiento horizontal \(x(t)\) de un péndulo (en centímetros, positivo hacia la derecha) oscila sinusoidalmente alrededor de \(x = 0\). En \(t = 0\text{ s}\), la pesa pasa por \(x = 0\) moviéndose hacia la izquierda y alcanza su extremo más a la izquierda de \(-12\text{ cm}\) en \(t = 0.5\text{ s}\). ¿Qué modelo sin desplazamiento de fase describe \(x(t)\) y cuál es el desplazamiento exacto en \(t = 1.25\text{ s}\)?
+
+(A) \(x(t) = -12\sin(\pi t)\), con \(x(1.25) = -6\sqrt{2}\text{ cm}\)
+(B) \(x(t) = 12\sin(\pi t)\), con \(x(1.25) = -6\sqrt{2}\text{ cm}\)
+(C) \(x(t) = -12\sin(2\pi t)\), con \(x(1.25) = -12\text{ cm}\)
+(D) \(x(t) = -12\sin(\pi t)\), con \(x(1.25) = 6\sqrt{2}\text{ cm}\)
+(E) \(x(t) = -12\cos(\pi t)\), con \(x(1.25) = 6\sqrt{2}\text{ cm}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Una rueda de la fortuna de radio \(20\text{ m}\) tiene su centro a \(24\text{ m}\) sobre el suelo y completa una revolución en sentido antihorario cada \(60\text{ s}\). Un pasajero parte en \(t = 0\) desde la posición de las 3 en punto (al nivel del centro y subiendo). ¿Cuál es la altura exacta del pasajero en \(t = 25\text{ s}\) y en qué instante durante la primera revolución alcanza por primera vez el punto más bajo?
+
+(A) \(34\text{ m}\) en \(t = 25\text{ s}\); punto más bajo en \(t = 45\text{ s}\)
+(B) \(24 + 10\sqrt{3}\text{ m}\) en \(t = 25\text{ s}\); punto más bajo en \(t = 45\text{ s}\)
+(C) \(14\text{ m}\) en \(t = 25\text{ s}\); punto más bajo en \(t = 30\text{ s}\)
+(D) \(34\text{ m}\) en \(t = 25\text{ s}\); punto más bajo en \(t = 30\text{ s}\)
+(E) \(14\text{ m}\) en \(t = 25\text{ s}\); punto más bajo en \(t = 45\text{ s}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+La temperatura exterior \(T(t)\) (en \(^\circ\text{C}\)) a lo largo de un día de \(24\) horas se modela sinusoidalmente con una mínima diaria de \(12^\circ\text{C}\) a las \(4\text{:}00\text{ a.m.}\) (\(t = 4\)) y una máxima diaria de \(28^\circ\text{C}\) a las \(4\text{:}00\text{ p.m.}\) (\(t = 16\)). ¿Qué ecuación con seno corresponde a este modelo de temperatura?
+
+(A) \(T(t) = 8\sin\!\left(\dfrac{\pi}{12}(t - 4)\right) + 20\)
+(B) \(T(t) = 8\sin\!\left(\dfrac{\pi}{12}(t - 16)\right) + 20\)
+(C) \(T(t) = 8\sin\!\left(\dfrac{\pi}{12}(t - 10)\right) + 20\)
+(D) \(T(t) = -8\sin\!\left(\dfrac{\pi}{12}(t - 10)\right) + 20\)
+(E) \(T(t) = 16\sin\!\left(\dfrac{\pi}{12}(t - 10)\right) + 20\)
+[/BONUS]

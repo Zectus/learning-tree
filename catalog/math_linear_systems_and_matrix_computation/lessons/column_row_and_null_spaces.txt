@@ -1,0 +1,303 @@
+=== SECTION 1: Three concrete spaces built from a matrix ===
+
+When we study a linear system \(A\mathbf{x} = \mathbf{b}\) for an \(m \times n\) matrix \(A\), three different questions keep returning:
+- Which right-hand sides \(\mathbf{b} \in \mathbb{R}^m\) make \(A\mathbf{x} = \mathbf{b}\) consistent?
+- Which input vectors \(\mathbf{x} \in \mathbb{R}^n\) are sent to \(\mathbf{0}\) by \(A\) (controlling uniqueness and shifting particular solutions)?
+- Which linear equations in \(\mathbb{R}^n\) can be formed by combining the equations of \(A\mathbf{x} = \mathbf{0}\)?
+
+Each question defines a concrete subset of \(\mathbb{R}^m\) or \(\mathbb{R}^n\) built directly from \(A\). Before moving on to abstract vector spaces in later courses, we can compute and understand all three spaces completely inside \(\mathbb{R}^m\) and \(\mathbb{R}^n\) using row reduction and elementary matrices.
+
+[CALLOUT]
+id: three-spaces-def
+label: Definition
+title: Column space, row space, and null space of an \(m \times n\) matrix
+tone: key
+
+Let \(A\) be an \(m \times n\) matrix with columns \(\mathbf{a}_1, \dots, \mathbf{a}_n \in \mathbb{R}^m\) and rows \(\mathbf{r}_1^T, \dots, \mathbf{r}_m^T\) (each having \(n\) entries).
+
+(1) The column space \(\operatorname{Col}(A) \subseteq \mathbb{R}^m\) is the set of all linear combinations of the columns of \(A\):
+\[
+\operatorname{Col}(A) = \operatorname{Span}\{\mathbf{a}_1, \dots, \mathbf{a}_n\} = \{A\mathbf{x} : \mathbf{x} \in \mathbb{R}^n\}.
+\]
+Equivalently, \(\mathbf{b} \in \operatorname{Col}(A)\) if and only if \(A\mathbf{x} = \mathbf{b}\) is consistent.
+
+(2) The row space \(\operatorname{Row}(A) \subseteq \mathbb{R}^n\) is the set of all linear combinations of the rows of \(A\):
+\[
+\operatorname{Row}(A) = \operatorname{Span}\{\mathbf{r}_1^T, \dots, \mathbf{r}_m^T\}.
+\]
+Writing rows as \(1 \times n\) vectors (or equivalently as \(n \times 1\) column vectors of \(A^T\)), \(\operatorname{Row}(A)\) lives in \(\mathbb{R}^n\).
+
+(3) The null space \(\operatorname{Null}(A) \subseteq \mathbb{R}^n\) is the solution set of the homogeneous system \(A\mathbf{x} = \mathbf{0}\):
+\[
+\operatorname{Null}(A) = \{\mathbf{x} \in \mathbb{R}^n : A\mathbf{x} = \mathbf{0}\}.
+\]
+[/CALLOUT]
+
+Pay close attention to where each space lives whenever \(m \neq n\):
+- Columns of \(A\) have \(m\) entries, so \(\operatorname{Col}(A)\) lives in \(\mathbb{R}^m\).
+- Rows of \(A\) have \(n\) entries, so \(\operatorname{Row}(A)\) lives in \(\mathbb{R}^n\).
+- Solutions \(\mathbf{x}\) of \(A\mathbf{x} = \mathbf{0}\) have \(n\) entries (one per column of \(A\)), so \(\operatorname{Null}(A)\) also lives in \(\mathbb{R}^n\).
+
+Notice also that all three sets are closed under linear combinations:
+- If \(\mathbf{b}_1 = A\mathbf{x}_1\) and \(\mathbf{b}_2 = A\mathbf{x}_2\) lie in \(\operatorname{Col}(A)\), then \(c\mathbf{b}_1 + d\mathbf{b}_2 = A(c\mathbf{x}_1 + d\mathbf{x}_2) \in \operatorname{Col}(A)\) by linearity of matrix-vector multiplication.
+- Any linear combination of linear combinations of rows is again a linear combination of rows, so \(\operatorname{Row}(A)\) is closed under linear combinations.
+- If \(A\mathbf{u} = \mathbf{0}\) and \(A\mathbf{v} = \mathbf{0}\), then \(A(c\mathbf{u} + d\mathbf{v}) = cA\mathbf{u} + dA\mathbf{v} = \mathbf{0}\), so \(\operatorname{Null}(A)\) is closed under linear combinations (and always contains \(\mathbf{0}\)).
+
+In every case, we want a compact description of the space: a minimal linearly independent spanning set—as few vectors as possible that still generate every vector in the space with no redundancy. To find those sets cleanly, we must first ask a crucial question: when we row-reduce \(A\) to an echelon form \(R\), which of the three spaces survive unchanged, and which one moves?
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(A\) be a \(3 \times 5\) matrix. Which statement correctly identifies the ambient spaces of \(\operatorname{Col}(A)\), \(\operatorname{Row}(A)\), and \(\operatorname{Null}(A)\)?
+
+(A) \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^5\), and \(\operatorname{Null}(A) \subseteq \mathbb{R}^5\)
+(B) \(\operatorname{Col}(A) \subseteq \mathbb{R}^5\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^3\), and \(\operatorname{Null}(A) \subseteq \mathbb{R}^3\)
+(C) \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^3\), and \(\operatorname{Null}(A) \subseteq \mathbb{R}^5\)
+(D) \(\operatorname{Col}(A) \subseteq \mathbb{R}^5\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^5\), and \(\operatorname{Null}(A) \subseteq \mathbb{R}^3\)
+(E) \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\), \(\operatorname{Row}(A) \subseteq \mathbb{R}^5\), and \(\operatorname{Null}(A) \subseteq \mathbb{R}^3\)
+[/QUESTION]
+
+=== SECTION 2: What row operations preserve—and what they change ===
+
+Suppose \(R\) is obtained from an \(m \times n\) matrix \(A\) by a sequence of elementary row operations. From elementary-matrix factorization, there exists an invertible \(m \times m\) product of elementary matrices \(P = E_k \cdots E_1\) such that
+\[
+R = PA \qquad \text{and equivalently} \qquad A = P^{-1} R.
+\]
+This single pair of equations determines completely how row operations act on all three spaces.
+
+First, check \(\operatorname{Null}(A)\). If \(A\mathbf{x} = \mathbf{0}\), then left-multiplying by \(P\) gives \(R\mathbf{x} = (PA)\mathbf{x} = P(A\mathbf{x}) = P\mathbf{0} = \mathbf{0}\). Conversely, if \(R\mathbf{x} = \mathbf{0}\), then left-multiplying by \(P^{-1}\) gives \(A\mathbf{x} = P^{-1}(R\mathbf{x}) = \mathbf{0}\). Therefore
+\[
+\operatorname{Null}(R) = \operatorname{Null}(A).
+\]
+
+Second, check \(\operatorname{Row}(A)\). By the row-combination view of matrix multiplication, every row of \(R = PA\) is a linear combination of the rows of \(A\) (using the entries of the corresponding row of \(P\) as weights). Hence every linear combination of the rows of \(R\) is also a linear combination of the rows of \(A\), which means \(\operatorname{Row}(R) \subseteq \operatorname{Row}(A)\). Reversing roles via \(A = P^{-1} R\) shows every row of \(A\) is a linear combination of the rows of \(R\), so \(\operatorname{Row}(A) \subseteq \operatorname{Row}(R)\). Together,
+\[
+\operatorname{Row}(R) = \operatorname{Row}(A).
+\]
+
+Third, check \(\operatorname{Col}(A)\)—and watch it MOVE! Consider the \(2 \times 2\) matrix
+\[
+A = \begin{bmatrix} 1 & 3 \\ 2 & 6 \end{bmatrix}
+\xrightarrow{R_2 \leftarrow R_2 - 2 R_1}
+R = \begin{bmatrix} 1 & 3 \\ 0 & 0 \end{bmatrix}.
+\]
+The columns of \(A\) are \(\begin{bmatrix} 1 \\ 2 \end{bmatrix}\) and \(\begin{bmatrix} 3 \\ 6 \end{bmatrix}\), so \(\operatorname{Col}(A)\) is the line \(y = 2x\) through the origin in \(\mathbb{R}^2\). After one row replacement, the columns of \(R\) are \(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\) and \(\begin{bmatrix} 3 \\ 0 \end{bmatrix}\), so \(\operatorname{Col}(R)\) is the horizontal axis \(y = 0\)—a completely different line! Row operations mix entries across rows, which changes the column vectors themselves and generally changes \(\operatorname{Col}(A)\).
+
+[GRAPH]
+type: parametric2d
+title: Row reduction moves \(\operatorname{Col}(A)\) onto \(\operatorname{Col}(R)\) while preserving \(\mathbf{a}_2 = 3\mathbf{a}_1\)
+xlabel: \(b_1\)
+ylabel: \(b_2\)
+trange: -1, 4
+xrange: -1, 4
+yrange: -1, 7
+trace: t, 2*t | label: \(\operatorname{Col}(A)\) (line \(b_2 = 2 b_1\)) | color: #2563eb
+trace: t, 0 | label: \(\operatorname{Col}(R)\) (line \(b_2 = 0\)) | color: #dc2626
+segment: 0, 0, 1, 2 | label: \(\mathbf{a}_1\) | color: #2563eb
+segment: 0, 0, 3, 6 | label: \(\mathbf{a}_2\) | color: #1d4ed8 | dashed: true
+segment: 0, 0, 1, 0 | label: \(\mathbf{r}_1\) | color: #dc2626
+segment: 0, 0, 3, 0 | label: \(\mathbf{r}_2\) | color: #991b1b | dashed: true
+point: 1, 2 | color: #2563eb
+point: 3, 6 | color: #1d4ed8
+point: 1, 0 | color: #dc2626
+point: 3, 0 | color: #991b1b
+[/GRAPH]
+
+Yet look closely at the graph above: even though the column space moved from \(b_2 = 2 b_1\) to \(b_2 = 0\), the RELATIONSHIP between the columns did not change at all! In \(A\), we have \(\mathbf{a}_2 = 3 \mathbf{a}_1\); in \(R\), we have \(\mathbf{r}_2 = 3 \mathbf{r}_1\). Why?
+
+Because a linear dependence relation among the columns of \(A\),
+\[
+c_1 \mathbf{a}_1 + c_2 \mathbf{a}_2 + \cdots + c_n \mathbf{a}_n = \mathbf{0},
+\]
+is literally the matrix equation \(A\mathbf{c} = \mathbf{0}\) with \(\mathbf{c} = \begin{bmatrix} c_1 & \cdots & c_n \end{bmatrix}^T\)! Since \(\operatorname{Null}(A) = \operatorname{Null}(R)\), we have
+\[
+A\mathbf{c} = \mathbf{0} \iff R\mathbf{c} = \mathbf{0}.
+\]
+In other words, row operations NEVER change which subsets of columns are linearly independent, nor which coefficients express a dependent column as a linear combination of earlier columns!
+
+[CALLOUT]
+id: row-op-invariance
+label: Theorem
+title: Effect of elementary row operations on matrix spaces
+tone: key
+
+If \(A\) and \(R\) are row-equivalent \(m \times n\) matrices (\(R = PA\) for an invertible product \(P\) of elementary matrices), then:
+
+(1) \(\operatorname{Null}(R) = \operatorname{Null}(A)\).
+(2) \(\operatorname{Row}(R) = \operatorname{Row}(A)\).
+(3) \(\operatorname{Col}(R)\) generally differs from \(\operatorname{Col}(A)\), but \(A\) and \(R\) have the EXACT same linear dependence relations among their columns: for every \(\mathbf{c} \in \mathbb{R}^n\),
+\[
+c_1 \mathbf{a}_1 + \cdots + c_n \mathbf{a}_n = \mathbf{0} \iff c_1 \mathbf{r}_1 + \cdots + c_n \mathbf{r}_n = \mathbf{0}.
+\]
+[/CALLOUT]
+
+=== SECTION 3: Extracting minimal spanning sets from RREF ===
+
+Armed with [REF: row-op-invariance | the invariance theorem], we can read off minimal linearly independent spanning sets for all three spaces from a single row reduction of \(A\) to \(R = \operatorname{RREF}(A)\). Let us prove why each recipe works, and then run all three on a concrete matrix.
+
+1. Column space \(\operatorname{Col}(A)\): take the pivot columns of the ORIGINAL matrix \(A\) (NEVER the columns of \(R\)!).
+Let \(p_1 < p_2 < \cdots < p_r\) be the pivot column indices of \(R = \operatorname{RREF}(A)\).
+- In \(R\), column \(p_k\) is the standard unit vector \(\mathbf{e}_k\) (a \(1\) in row \(k\) and \(0\)'s everywhere else). Obviously \(\{\mathbf{e}_1, \dots, \mathbf{e}_r\}\) is linearly independent. By [REF: row-op-invariance.3 | column-relation invariance], the corresponding columns \(\{\mathbf{a}_{p_1}, \dots, \mathbf{a}_{p_r}\}\) of \(A\) are ALSO linearly independent (any nontrivial relation \(\sum c_k \mathbf{a}_{p_k} = \mathbf{0}\) would force \(\sum c_k \mathbf{e}_k = \mathbf{0}\), impossible).
+- Moreover, every non-pivot column \(\mathbf{r}_j\) of \(R\) has zeros below row \(r\), so \(\mathbf{r}_j = r_{1j} \mathbf{e}_1 + \cdots + r_{rj} \mathbf{e}_r = r_{1j} \mathbf{r}_{p_1} + \cdots + r_{rj} \mathbf{r}_{p_r}\). Moving \(\mathbf{r}_j\) to the other side gives a linear dependence relation with weights \((r_{1j}, \dots, r_{rj}, -1)\). By [REF: row-op-invariance.3 | column-relation invariance], the EXACT same equation holds in \(A\):
+\[
+\mathbf{a}_j = r_{1j} \mathbf{a}_{p_1} + \cdots + r_{rj} \mathbf{a}_{p_r}.
+\]
+Hence every column of \(A\) is a linear combination of the pivot columns of \(A\), so \(\{\mathbf{a}_{p_1}, \dots, \mathbf{a}_{p_r}\}\) spans \(\operatorname{Col}(A)\)!
+
+2. Row space \(\operatorname{Row}(A)\): take the nonzero rows of any REF (or RREF) \(R\) of \(A\).
+- By [REF: row-op-invariance.2 | row-space invariance], \(\operatorname{Row}(A) = \operatorname{Row}(R)\). Dropping the all-zero rows of \(R\) changes nothing, so the \(r\) nonzero rows \(\mathbf{w}_1^T, \dots, \mathbf{w}_r^T\) of \(R\) span \(\operatorname{Row}(A)\).
+- Why are those \(r\) nonzero rows linearly independent? Suppose \(c_1 \mathbf{w}_1^T + \cdots + c_r \mathbf{w}_r^T = \mathbf{0}^T\). Look at pivot column \(p_1\): row \(1\) has a nonzero leading entry there, while rows \(2, \dots, r\) all have \(0\) in column \(p_1\). Thus the \(p_1\)-th entry of the combination forces \(c_1 = 0\)! Moving to pivot column \(p_2\), only row \(2\) survives among the remaining rows, forcing \(c_2 = 0\); continuing down the echelon staircase forces \(c_1 = c_2 = \cdots = c_r = 0\).
+
+3. Null space \(\operatorname{Null}(A)\): take the special (free-variable) solution vectors of \(R\mathbf{x} = \mathbf{0}\).
+- By [REF: row-op-invariance.1 | null-space invariance], \(\operatorname{Null}(A) = \operatorname{Null}(R)\). Solving \(R\mathbf{x} = \mathbf{0}\) in parametric vector form expresses every solution as \(\mathbf{x} = t_1 \mathbf{v}_1 + \cdots + t_{n-r} \mathbf{v}_{n-r}\), where \(\mathbf{v}_k\) is obtained by setting the \(k\)-th free variable to \(1\) and all other free variables to \(0\). Thus \(\{\mathbf{v}_1, \dots, \mathbf{v}_{n-r}\}\) spans \(\operatorname{Null}(A)\).
+- Why are \(\mathbf{v}_1, \dots, \mathbf{v}_{n-r}\) linearly independent? Suppose \(c_1 \mathbf{v}_1 + \cdots + c_{n-r} \mathbf{v}_{n-r} = \mathbf{0}\). In the entry corresponding to the \(k\)-th free variable, \(\mathbf{v}_k\) has \(1\) and EVERY other \(\mathbf{v}_j\) (\(j \neq k\)) has \(0\), so that single coordinate reads \(c_k = 0\) immediately!
+
+[CALLOUT]
+id: space-extraction-pitfall
+label: Common pitfall
+title: Never take pivot columns from \(\operatorname{RREF}(A)\) for \(\operatorname{Col}(A)\)
+tone: caution
+
+The pivot columns of \(R = \operatorname{RREF}(A)\) tell you WHICH column indices to pick, NOT the column vectors themselves. For \(\operatorname{Col}(A)\), always return to the original matrix \(A\) and copy those pivot columns. (By contrast, for \(\operatorname{Row}(A)\), taking the nonzero rows of \(R\) is completely valid because row operations leave \(\operatorname{Row}(A)\) unchanged.)
+[/CALLOUT]
+
+Let us execute all three recipes on a concrete \(3 \times 4\) matrix:
+\[
+A = \begin{bmatrix} 1 & 2 & -1 & 3 \\ 2 & 4 & 1 & 3 \\ -1 & -2 & 4 & -6 \end{bmatrix}.
+\]
+Row-reduce \(A\) to RREF:
+\[
+\begin{bmatrix} 1 & 2 & -1 & 3 \\ 2 & 4 & 1 & 3 \\ -1 & -2 & 4 & -6 \end{bmatrix}
+\xrightarrow{\substack{R_2 \leftarrow R_2 - 2 R_1 \\ R_3 \leftarrow R_3 + R_1}}
+\begin{bmatrix} 1 & 2 & -1 & 3 \\ 0 & 0 & 3 & -3 \\ 0 & 0 & 3 & -3 \end{bmatrix}
+\xrightarrow{\substack{R_3 \leftarrow R_3 - R_2 \\ R_2 \leftarrow \frac{1}{3} R_2}}
+\begin{bmatrix} 1 & 2 & -1 & 3 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}
+\xrightarrow{R_1 \leftarrow R_1 + R_2}
+R = \begin{bmatrix} 1 & 2 & 0 & 2 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+The pivots lie in columns \(1\) and \(3\) (so \(r = 2\)). We read off all three minimal linearly independent spanning sets immediately:
+- \(\operatorname{Col}(A) \subseteq \mathbb{R}^3\): columns \(1\) and \(3\) of the ORIGINAL \(A\):
+\[
+\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} \right\}.
+\]
+Check the pitfall directly: column \(1\) of \(R\) is \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\). Could \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\) lie in \(\operatorname{Col}(A)\)? Trying \(c_1 \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + c_2 \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\) forces \(c_1 = \frac{1}{3}\) and \(c_2 = -\frac{2}{3}\) from the first two rows, which gives \(-\frac{1}{3} - \frac{8}{3} = -3 \neq 0\) in row \(3\). So \(\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} \notin \operatorname{Col}(A)\)—taking pivot columns from \(R\) would produce a vector not even in the column space!
+Also verify the non-pivot column relations predicted by \(R\): column \(2\) of \(R\) is \(2\mathbf{r}_1\), and indeed \(\mathbf{a}_2 = 2\mathbf{a}_1\); column \(4\) of \(R\) is \(2\mathbf{r}_1 - \mathbf{r}_3\), and indeed \(2\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} - \begin{bmatrix} -1 \\ 1 \\ 4 \end{bmatrix} = \begin{bmatrix} 3 \\ 3 \\ -6 \end{bmatrix} = \mathbf{a}_4\).
+- \(\operatorname{Row}(A) \subseteq \mathbb{R}^4\): the two nonzero rows of \(R\):
+\[
+\left\{ \begin{bmatrix} 1 & 2 & 0 & 2 \end{bmatrix},\; \begin{bmatrix} 0 & 0 & 1 & -1 \end{bmatrix} \right\}.
+\]
+- \(\operatorname{Null}(A) \subseteq \mathbb{R}^4\): from \(R\mathbf{x} = \mathbf{0}\), we have \(x_1 = -2x_2 - 2x_4\) and \(x_3 = x_4\), with free variables \(x_2, x_4\). Setting \((x_2, x_4) = (1, 0)\) and \((0, 1)\) yields
+\[
+\left\{ \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} -2 \\ 0 \\ 1 \\ 1 \end{bmatrix} \right\}.
+\]
+
+[TABLE]
+Matrix space | Ambient space | Minimal spanning set from \(R = \operatorname{RREF}(A)\) | Count of vectors
+\(\operatorname{Col}(A)\) | \(\mathbb{R}^m\) | Pivot columns of ORIGINAL \(A\) | \(r\) (number of pivots)
+\(\operatorname{Row}(A)\) | \(\mathbb{R}^n\) | Nonzero rows of REF or RREF \(R\) | \(r\) (number of pivots)
+\(\operatorname{Null}(A)\) | \(\mathbb{R}^n\) | Special free-variable solutions of \(R\mathbf{x} = \mathbf{0}\) | \(n - r\) (number of free variables)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: C]
+Consider the matrix
+\[
+B = \begin{bmatrix} 1 & -1 & 2 & 0 \\ 2 & -2 & 5 & 3 \\ -1 & 1 & -1 & 3 \end{bmatrix},
+\qquad \text{whose RREF is} \qquad
+R = \begin{bmatrix} 1 & -1 & 0 & -6 \\ 0 & 0 & 1 & 3 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Which pair gives a valid minimal linearly independent spanning set for \(\operatorname{Col}(B)\) and a valid minimal linearly independent spanning set for \(\operatorname{Null}(B)\)?
+
+(A) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+(B) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} -1 \\ -2 \\ 1 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+(C) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} 2 \\ 5 \\ -1 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+(D) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix},\; \begin{bmatrix} 2 \\ 5 \\ -1 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} -6 \\ 0 \\ 3 \\ 1 \end{bmatrix} \right\}\)
+(E) \(\operatorname{Col}(B)\): \(\left\{ \begin{bmatrix} 1 & -1 & 0 & -6 \end{bmatrix},\; \begin{bmatrix} 0 & 0 & 1 & 3 \end{bmatrix} \right\}\); \(\operatorname{Null}(B)\): \(\left\{ \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \end{bmatrix},\; \begin{bmatrix} 6 \\ 0 \\ -3 \\ 1 \end{bmatrix} \right\}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+Suppose a \(3 \times 4\) matrix \(A\) has
+\[
+\operatorname{RREF}(A) = \begin{bmatrix} 1 & 0 & -2 & 3 \\ 0 & 1 & 4 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix},
+\]
+and its first two columns are \(\mathbf{a}_1 = \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix}\) and \(\mathbf{a}_2 = \begin{bmatrix} 1 \\ 2 \\ -2 \end{bmatrix}\). What is the fourth column \(\mathbf{a}_4\) of \(A\)?
+
+(A) \(\begin{bmatrix} 0 \\ 10 \\ -14 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 5 \\ -5 \\ 11 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 7 \\ -1 \\ 7 \end{bmatrix}\)
+(D) \(\begin{bmatrix} -5 \\ 5 \\ -11 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 3 \\ -1 \\ 0 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 4: Proving that RREF is unique ===
+
+Earlier, when we first learned Gauss-Jordan elimination, we stated that no matter which valid sequence of row operations you apply to an \(m \times n\) matrix \(A\), you always arrive at the exact same Reduced Row Echelon Form \(\operatorname{RREF}(A)\). We now have the exact tool needed to prove that theorem completely: [REF: row-op-invariance.3 | column-relation invariance]!
+
+[CALLOUT]
+id: rref-uniqueness
+label: Theorem
+title: Uniqueness of Reduced Row Echelon Form
+tone: key
+
+Every \(m \times n\) matrix \(A\) is row-equivalent to one and only one matrix in Reduced Row Echelon Form.
+[/CALLOUT]
+
+Proof. Suppose \(R = \begin{bmatrix} \mathbf{r}_1 & \cdots & \mathbf{r}_n \end{bmatrix}\) and \(R' = \begin{bmatrix} \mathbf{r}'_1 & \cdots & \mathbf{r}'_n \end{bmatrix}\) are BOTH in RREF and both row-equivalent to \(A\). By [REF: row-op-invariance.3 | column-relation invariance], \(R\) and \(R'\) share the exact same linear dependence relations among their columns (because \(R\mathbf{c} = \mathbf{0} \iff A\mathbf{c} = \mathbf{0} \iff R'\mathbf{c} = \mathbf{0}\)).
+
+First, observe a clean characterization of pivot columns inside ANY RREF matrix \(M\):
+- Column \(1\) is a pivot column of \(M\) if and only if column \(1\) is nonzero.
+- For \(j \ge 2\), column \(j\) is a pivot column of \(M\) if and only if column \(j\) is NOT a linear combination of the preceding columns \(1, \dots, j - 1\). Why? If column \(j\) IS a pivot column, its leading \(1\) sits in a new row where all earlier columns have \(0\), so no combination of earlier columns can produce that \(1\). Conversely, if column \(j\) is NOT a pivot column, all of its nonzero entries lie in rows \(1, \dots, k\) where the \(k\) preceding pivot columns equal \(\mathbf{e}_1, \dots, \mathbf{e}_k\), so column \(j\) IS a linear combination of those earlier columns!
+
+Now apply that characterization to \(R\) and \(R'\):
+1. Same pivot columns: Because \(R\) and \(R'\) satisfy the exact same column dependence relations on columns \(1, \dots, j\) for every \(j = 1, \dots, n\), column \(j\) is independent of earlier columns in \(R\) if and only if it is independent of earlier columns in \(R'\). Therefore \(R\) and \(R'\) have the EXACT same pivot column indices \(p_1 < p_2 < \cdots < p_r\).
+2. Pivot columns match: In any RREF matrix, the \(k\)-th pivot column is ALWAYS the standard unit vector \(\mathbf{e}_k\) (with \(1\) in row \(k\) and \(0\) elsewhere). Thus \(\mathbf{r}_{p_k} = \mathbf{e}_k = \mathbf{r}'_{p_k}\) for every \(k = 1, \dots, r\).
+3. Non-pivot columns match: Take any non-pivot column \(j\), and let \(p_1, \dots, p_s\) be the pivot columns strictly to the left of column \(j\) (if \(s = 0\), then column \(j\) is \(\mathbf{0}\) in both \(R\) and \(R'\)). In \(R\), column \(j\) has zeros below row \(s\), so
+\[
+\mathbf{r}_j = c_1 \mathbf{r}_{p_1} + \cdots + c_s \mathbf{r}_{p_s},
+\]
+where \(c_1, \dots, c_s\) are the top \(s\) entries of \(\mathbf{r}_j\). Because \(R\) and \(R'\) share the exact same column dependence relations, the exact same equation holds in \(R'\):
+\[
+\mathbf{r}'_j = c_1 \mathbf{r}'_{p_1} + \cdots + c_s \mathbf{r}'_{p_s} = c_1 \mathbf{e}_1 + \cdots + c_s \mathbf{e}_s = \mathbf{r}_j.
+\]
+Every column of \(R\) equals the corresponding column of \(R'\), so \(R = R'\).
+
+Look back at how much work that proof accomplishes: it shows that \(\operatorname{RREF}(A)\) is completely determined by \(\operatorname{Null}(A)\) alone—all the information in \(\operatorname{RREF}(A)\) is literally an encoded record of every linear dependence among the columns of \(A\).
+
+[QUESTION 4]
+[ANSWER: B]
+Suppose an \(m \times n\) matrix \(B\) is obtained from \(A\) by a sequence of elementary row operations (and \(B \neq A\)). Which statement MUST be true?
+
+(A) \(\operatorname{Col}(A) = \operatorname{Col}(B)\), while \(\operatorname{Row}(A)\) and \(\operatorname{Null}(A)\) may differ
+(B) \(\operatorname{Row}(A) = \operatorname{Row}(B)\) and \(\operatorname{Null}(A) = \operatorname{Null}(B)\), while \(\operatorname{Col}(A)\) need not equal \(\operatorname{Col}(B)\)
+(C) \(\operatorname{Col}(A) = \operatorname{Col}(B)\) and \(\operatorname{Null}(A) = \operatorname{Null}(B)\), while \(\operatorname{Row}(A)\) may differ
+(D) \(\operatorname{Row}(A) = \operatorname{Row}(B)\), while \(\operatorname{Null}(A)\) changes whenever two rows are swapped
+(E) All three spaces \(\operatorname{Col}(A)\), \(\operatorname{Row}(A)\), and \(\operatorname{Null}(A)\) are guaranteed to stay unchanged
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+A \(4 \times 5\) matrix \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 & \mathbf{a}_4 & \mathbf{a}_5 \end{bmatrix}\) satisfies:
+- \(\mathbf{a}_1 = \mathbf{0}\),
+- \(\mathbf{a}_2 \neq \mathbf{0}\),
+- \(\mathbf{a}_3 = -3\mathbf{a}_2\),
+- \(\mathbf{a}_4\) is not a scalar multiple of \(\mathbf{a}_2\),
+- \(\mathbf{a}_5 = 2\mathbf{a}_2 - 5\mathbf{a}_4\).
+What is the second row of \(\operatorname{RREF}(A)\)?
+
+(A) \(\begin{bmatrix} 0 & 1 & -3 & 0 & 2 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 0 & 0 & 0 & 1 & 5 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 0 & 0 & 1 & 0 & -5 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 & 0 & 0 & 1 & -5 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 & 1 & 0 & 1 & -3 \end{bmatrix}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose \(A\) and \(B\) are two \(3 \times 4\) matrices (not assumed to be related by row operations in advance) that happen to satisfy \(\operatorname{Null}(A) = \operatorname{Null}(B)\). Using the reasoning behind [REF: rref-uniqueness | the uniqueness of RREF], which conclusion MUST hold?
+
+(A) \(\operatorname{RREF}(A) = \operatorname{RREF}(B)\) and \(\operatorname{Row}(A) = \operatorname{Row}(B)\), though \(\operatorname{Col}(A)\) need not equal \(\operatorname{Col}(B)\)
+(B) \(\operatorname{Col}(A) = \operatorname{Col}(B)\), though \(\operatorname{Row}(A)\) need not equal \(\operatorname{Row}(B)\)
+(C) \(A = B\) entry by entry
+(D) \(\operatorname{RREF}(A)\) and \(\operatorname{RREF}(B)\) have the same number of pivots, but their non-pivot entries may differ
+(E) Nothing can be concluded about \(\operatorname{Row}(A)\) or \(\operatorname{RREF}(A)\) without also knowing \(\operatorname{Col}(A) = \operatorname{Col}(B)\)
+[/BONUS]

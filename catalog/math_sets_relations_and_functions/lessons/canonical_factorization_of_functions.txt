@@ -1,0 +1,240 @@
+=== SECTION 1: The kernel equivalence relation and fibers of a function ===
+
+Earlier in this tree, we studied two major structures separately: equivalence relations (with their quotient sets and partitions) and functions (with injectivity, surjectivity, and bijections). In fact, EVERY function \(f : A \to B\) automatically carries an equivalence relation inside its domain—the relation of "colliding to the same output"—and dividing \(A\) by that relation splits \(f\) into three pure, canonical pieces!
+
+[CALLOUT]
+id: kernel-relation-def
+label: Definition
+title: Kernel equivalence relation (fibers) of a function
+tone: key
+
+Let \(f : A \to B\) be any function. The kernel equivalence relation of \(f\) is the binary relation \(\sim_f\) on \(A\) defined by
+\[
+x \sim_f y \iff f(x) = f(y) \qquad \text{for all } x, y \in A.
+\]
+[/CALLOUT]
+
+Why is \(\sim_f\) ALWAYS an equivalence relation on \(A\)? Every property comes straight from equality in \(B\):
+- Reflexive: for all \(x \in A\), \(f(x) = f(x)\), so \(x \sim_f x\).
+- Symmetric: if \(x \sim_f y\), then \(f(x) = f(y)\), so \(f(y) = f(x)\), giving \(y \sim_f x\).
+- Transitive: if \(x \sim_f y\) and \(y \sim_f z\), then \(f(x) = f(y) = f(z)\), giving \(x \sim_f z\).
+
+What are the equivalence classes of \(\sim_f\)? For any \(a \in A\), let \(y = f(a) \in \operatorname{im}(f)\). Then
+\[
+[a]_{\sim_f} = \{x \in A : x \sim_f a\} = \{x \in A : f(x) = f(a)\} = f^{-1}\bigl(\{f(a)\}\bigr) = f^{-1}(\{y\}).
+\]
+In other words, the equivalence classes of \(\sim_f\) are PRECISELY the NONEMPTY fibers \(f^{-1}(\{y\})\) for \(y \in \operatorname{im}(f)\)! By the Fundamental Theorem of Equivalence Relations, these nonempty fibers partition the domain \(A\) into pairwise disjoint subsets whose union is \(A\), forming the quotient set
+\[
+A/{\sim_f} = \bigl\{f^{-1}(\{y\}) : y \in \operatorname{im}(f)\bigr\}.
+\]
+
+Look at two concrete examples:
+1. Squaring map \(f : \mathbb{R} \to \mathbb{R}\) given by \(f(x) = x^2\): here \(x \sim_f y \iff x^2 = y^2 \iff y = \pm x\). The equivalence classes are \(\{0\}\) (over \(0\)) and the two-element pairs \(\{-r, r\}\) for each \(r > 0\) (over \(r^2\)).
+2. Remainder map \(f : \mathbb{Z} \to \mathbb{Z}\) sending \(n\) to its remainder in \(\{0, 1, 2, 3\}\) upon division by \(4\): here \(m \sim_f n \iff m \equiv n \pmod 4\), so the quotient set \(\mathbb{Z}/{\sim_f}\) is literally \(\mathbb{Z}/4\mathbb{Z} = \{[0], [1], [2], [3]\}\)!
+
+Notice also an immediate link to injectivity: \(f\) is injective if and only if \(f(x) = f(y) \implies x = y\), which means \(\sim_f\) is the equality relation \(=\) on \(A\) (every equivalence class \([a]_{\sim_f} = \{a\}\) is a singleton)!
+
+[QUESTION 1]
+[ANSWER: C]
+Define \(f : \mathbb{R} \to \mathbb{R}\) by \(f(x) = |x - 3|\). What is the equivalence class \([1]_{\sim_f}\) under the kernel equivalence relation \(\sim_f\), and how many elements does a typical class \([a]_{\sim_f}\) have?
+
+(A) \([1]_{\sim_f} = \{-1, 1\}\); every class has \(2\) elements
+(B) \([1]_{\sim_f} = \{1, 2\}\); every class except \([0]_{\sim_f}\) has \(2\) elements
+(C) \([1]_{\sim_f} = \{1, 5\}\); \([3]_{\sim_f} = \{3\}\) has \(1\) element, and every other class has \(2\) elements
+(D) \([1]_{\sim_f} = \{1, 5\}\); every class has \(2\) elements
+(E) \([1]_{\sim_f} = \{x \in \mathbb{R} : |x - 3| \le 2\}\); every class is a closed interval
+[/QUESTION]
+
+=== SECTION 2: The canonical quotient map and its universal property ===
+
+Whenever a set \(A\) carries ANY equivalence relation \(\sim\) (not necessarily coming from a function beforehand), there is a built-in map collapsing each element to its equivalence class:
+\[
+\pi : A \to A/{\sim}, \qquad \pi(a) = [a].
+\]
+Called the canonical projection (or quotient map), \(\pi\) is ALWAYS SURJECTIVE (every class \([a] \in A/{\sim}\) is hit by \(a\)), and its own kernel equivalence relation is \(\sim\) itself: \(\pi(x) = \pi(y) \iff [x] = [y] \iff x \sim y\).
+
+Now ask a fundamental question: given another function \(g : A \to C\), when can we "descend" \(g\) from \(A\) to the quotient set \(A/{\sim}\)—that is, define a well-defined function \(\bar{g} : A/{\sim} \to C\) by the formula \(\bar{g}([a]) = g(a)\) so that \(g = \bar{g} \circ \pi\)?
+
+Remember well-definedness on equivalence classes! Setting \(\bar{g}([a]) = g(a)\) depends on the chosen representative \(a\) UNLESS equivalent inputs always receive the same \(g\)-output: \(x \sim y \implies g(x) = g(y)\). That single condition is BOTH necessary and sufficient!
+
+[CALLOUT]
+id: universal-property-quotient
+label: Theorem
+title: Universal property of the quotient set
+tone: key
+
+Let \(\sim\) be an equivalence relation on \(A\) with canonical projection \(\pi : A \to A/{\sim}\), and let \(g : A \to C\) be any function.
+
+(1) Existence of a factorization: there exists a function \(\bar{g} : A/{\sim} \to C\) such that \(g = \bar{g} \circ \pi\) if and only if \(g\) respects \(\sim\):
+\[
+\forall x, y \in A,\quad (x \sim y \implies g(x) = g(y)).
+\]
+(2) Uniqueness: whenever such a function \(\bar{g}\) exists, it is UNIQUE, given by \(\bar{g}([a]) = g(a)\) for all \(a \in A\).
+(3) Properties of \(\bar{g}\):
+   (a) \(\bar{g}\) is surjective if and only if \(g\) is surjective (more generally, \(\operatorname{im}(\bar{g}) = \operatorname{im}(g)\)).
+   (b) \(\bar{g}\) is injective if and only if \(\forall x, y \in A,\; (g(x) = g(y) \iff x \sim y)\), i.e., \(\sim_g\) equals \(\sim\).
+[/CALLOUT]
+
+Proof:
+- (1) (\(\implies\)): Suppose \(g = \bar{g} \circ \pi\) for some function \(\bar{g} : A/{\sim} \to C\). If \(x \sim y\), then \(\pi(x) = [x] = [y] = \pi(y)\), so \(g(x) = \bar{g}(\pi(x)) = \bar{g}(\pi(y)) = g(y)\).
+- (1) (\(\Longleftarrow\)): Assume \(x \sim y \implies g(x) = g(y)\). Define \(\bar{g} : A/{\sim} \to C\) by \(\bar{g}([a]) = g(a)\). Is \(\bar{g}\) well-defined? If \([a] = [b]\), then \(a \sim b\), so by hypothesis \(g(a) = g(b)\), proving independence of representative! And for every \(a \in A\), \((\bar{g} \circ \pi)(a) = \bar{g}([a]) = g(a)\), so \(g = \bar{g} \circ \pi\).
+- (2) Uniqueness: Suppose both \(\bar{g}_1\) and \(\bar{g}_2\) satisfy \(\bar{g}_1 \circ \pi = g = \bar{g}_2 \circ \pi\). For ANY element \([a] \in A/{\sim}\), we have
+\[
+\bar{g}_1([a]) = \bar{g}_1(\pi(a)) = g(a) = \bar{g}_2(\pi(a)) = \bar{g}_2([a]).
+\]
+Hence \(\bar{g}_1 = \bar{g}_2\)! (Notice this is just right-cancelation of the surjection \(\pi\).)
+- (3)(a): Since \(\pi\) is surjective, \(\operatorname{im}(\bar{g}) = \bar{g}(A/{\sim}) = \bar{g}(\pi(A)) = g(A) = \operatorname{im}(g)\), so \(\bar{g}\) is surjective iff \(\operatorname{im}(g) = C\) iff \(g\) is surjective.
+- (3)(b): \(\bar{g}\) is injective iff \(\forall a, b \in A,\; (\bar{g}([a]) = \bar{g}([b]) \implies [a] = [b])\), which translates directly to \(\forall a, b \in A,\; (g(a) = g(b) \implies a \sim b)\). Combined with the already-assumed forward implication \(a \sim b \implies g(a) = g(b)\), this holds iff \(g(a) = g(b) \iff a \sim b\)!
+
+Watch [REF: universal-property-quotient | the universal property] work on \(\pi : \mathbb{Z} \to \mathbb{Z}/6\mathbb{Z}\) (congruence mod \(6\)):
+- Does \(g_1 : \mathbb{Z} \to \mathbb{Z}/3\mathbb{Z}\) defined by \(g_1(n) = [n]_3\) factor through \(\pi\)? Check: if \(x \equiv y \pmod 6\), then \(6 \mid (x - y)\), so \(3 \mid (x - y)\), hence \(g_1(x) = g_1(y)\)! YES: there is a unique \(\bar{g}_1 : \mathbb{Z}/6\mathbb{Z} \to \mathbb{Z}/3\mathbb{Z}\) given by \(\bar{g}_1([n]_6) = [n]_3\). Since \(g_1\) is surjective, \(\bar{g}_1\) is surjective; since \(0 \not\equiv 3 \pmod 6\) yet \(g_1(0) = g_1(3)\), \(\bar{g}_1\) is NOT injective!
+- Does \(g_2 : \mathbb{Z} \to \mathbb{Z}/4\mathbb{Z}\) defined by \(g_2(n) = [n]_4\) factor through \(\pi\)? Check: \(0 \equiv 6 \pmod 6\), yet \(g_2(0) = [0]_4 \ne [2]_4 = g_2(6)\)! NO factorization exists!
+
+[QUESTION 2]
+[ANSWER: B]
+Let \(\pi : \mathbb{Z} \to \mathbb{Z}/12\mathbb{Z}\) be the canonical projection modulo \(12\). For which function \(g\) does there exist a well-defined function \(\bar{g} : \mathbb{Z}/12\mathbb{Z} \to C\) satisfying \(g = \bar{g} \circ \pi\)?
+
+(A) \(g : \mathbb{Z} \to \mathbb{Z}/8\mathbb{Z}\) defined by \(g(n) = [n]_8\)
+(B) \(g : \mathbb{Z} \to \mathbb{Z}/4\mathbb{Z}\) defined by \(g(n) = [3n + 1]_4\)
+(C) \(g : \mathbb{Z} \to \mathbb{Z}\) defined by \(g(n) = n^2\)
+(D) \(g : \mathbb{Z} \to \mathbb{Z}/5\mathbb{Z}\) defined by \(g(n) = [n]_5\)
+(E) \(g : \mathbb{Z} \to \mathbb{Z}/9\mathbb{Z}\) defined by \(g(n) = [n]_9\)
+[/QUESTION]
+
+=== SECTION 3: The Canonical Factorization Theorem ===
+
+Now apply [REF: universal-property-quotient | the universal property] directly to a function \(f : A \to B\) and its OWN kernel equivalence relation \(\sim_f\)!
+
+First shrink the codomain of \(f\) to its image, obtaining the surjective corestriction \(f_0 : A \to \operatorname{im}(f)\) defined by \(f_0(a) = f(a)\), so that \(f = \iota \circ f_0\) where \(\iota : \operatorname{im}(f) \hookrightarrow B\) is the injective inclusion map. Now apply [REF: universal-property-quotient | the universal property] to \(f_0 : A \to \operatorname{im}(f)\) and \(\pi : A \to A/{\sim_f}\):
+- By definition of \(\sim_f\), \(x \sim_f y \iff f(x) = f(y) \iff f_0(x) = f_0(y)\).
+- Therefore \(f_0\) respects \(\sim_f\), yielding a UNIQUE function \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\) with \(f_0 = \bar{f} \circ \pi\) (explicitly \(\bar{f}([a]) = f(a)\)).
+- By [REF: universal-property-quotient.3 | part (3)], \(\bar{f}\) is SURJECTIVE (because \(f_0\) is surjective onto \(\operatorname{im}(f)\)) AND INJECTIVE (because \(f_0(x) = f_0(y) \iff x \sim_f y\))! Thus \(\bar{f}\) is a BIJECTION!
+
+Combining \(f = \iota \circ f_0\) and \(f_0 = \bar{f} \circ \pi\) delivers one of the most illuminating structural theorems in all of mathematics.
+
+[CALLOUT]
+id: canonical-factorization-thm
+label: Theorem
+title: Canonical Factorization Theorem (Set-Theoretic First Isomorphism Theorem)
+tone: key
+
+Every function \(f : A \to B\) factors as a composite of three canonical maps:
+\[
+f = \iota \circ \bar{f} \circ \pi : \quad A \xrightarrow{\;\pi\;} A/{\sim_f} \xrightarrow{\;\bar{f}\;} \operatorname{im}(f) \xhookrightarrow{\;\iota\;} B,
+\]
+where:
+
+(1) \(\pi : A \to A/{\sim_f}\), \(\pi(a) = [a]_{\sim_f}\), is the canonical SURJECTION collapsing colliding inputs into their fibers.
+(2) \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\), \(\bar{f}([a]_{\sim_f}) = f(a)\), is the unique induced BIJECTION identifying the quotient set with the image of \(f\).
+(3) \(\iota : \operatorname{im}(f) \hookrightarrow B\), \(\iota(y) = y\), is the canonical INJECTION (inclusion) embedding the image inside the codomain \(B\).
+[/CALLOUT]
+
+Look at what [REF: canonical-factorization-thm | the Canonical Factorization Theorem] tells us conceptually: ANY function—no matter how wild, non-injective, and non-surjective—can be decomposed cleanly into three elementary stages!
+
+[TABLE]
+Stage | Map | Formula | Structural property | Conceptual role
+Stage 1 | \(\pi : A \to A/{\sim_f}\) | \(\pi(a) = [a]_{\sim_f}\) | Surjective | Glues together all inputs that collide under \(f\)
+Stage 2 | \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\) | \(\bar{f}([a]_{\sim_f}) = f(a)\) | Bijective | Relabels each fiber as its unique shared output
+Stage 3 | \(\iota : \operatorname{im}(f) \hookrightarrow B\) | \(\iota(y) = y\) | Injective | Embeds the actual image inside the full codomain \(B\)
+[/TABLE]
+
+Check what happens in the two special cases:
+- If \(f\) is ALREADY injective, then every fiber \([a]_{\sim_f} = \{a\}\) is a singleton, so \(\pi : A \to A/{\sim_f}\) is itself a bijection!
+- If \(f\) is ALREADY surjective, then \(\operatorname{im}(f) = B\), so \(\iota : B \hookrightarrow B\) is simply \(\operatorname{id}_B\), and the factorization shortens to \(f = \bar{f} \circ \pi\) with \(\bar{f} : A/{\sim_f} \xrightarrow{\sim} B\) a bijection!
+
+[QUESTION 3]
+[ANSWER: A]
+Let \(f : A \to B\) be a function with canonical factorization \(f = \iota \circ \bar{f} \circ \pi\). Which statement is ALWAYS true?
+
+(A) \(\bar{f} : A/{\sim_f} \to \operatorname{im}(f)\) is ALWAYS bijective, regardless of whether \(f\) is injective or surjective
+(B) \(\bar{f}\) is bijective only when \(f\) is bijective
+(C) \(\pi : A \to A/{\sim_f}\) is injective if and only if \(f\) is surjective
+(D) \(\iota : \operatorname{im}(f) \hookrightarrow B\) is surjective if and only if \(f\) is injective
+(E) \(A/{\sim_f}\) always has the same cardinality as \(B\)
+[/QUESTION]
+
+=== SECTION 4: Concrete factorizations and preview of isomorphism theorems ===
+
+Let us watch [REF: canonical-factorization-thm | the Canonical Factorization Theorem] dissect three classic functions from algebra and analysis!
+
+1. The squaring map \(f : \mathbb{R} \to \mathbb{R}\), \(f(x) = x^2\):
+   - Kernel relation: \(x \sim_f y \iff x^2 = y^2 \iff |x| = |y|\).
+   - Stage 1 (\(\pi : \mathbb{R} \to \mathbb{R}/{\sim_f}\)): folds the real line in half at \(0\), pairing each \(r > 0\) with \(-r\) into the fiber \(\{-r, r\}\), while leaving \(\{0\}\) alone.
+   - Stage 2 (\(\bar{f} : \mathbb{R}/{\sim_f} \to [0, \infty)\)): sends \(\{-r, r\} \mapsto r^2\) (bijection onto \(\operatorname{im}(f) = [0, \infty)\)).
+   - Stage 3 (\(\iota : [0, \infty) \hookrightarrow \mathbb{R}\)): includes the nonnegative half-line into all of \(\mathbb{R}\).
+
+[GRAPH]
+type: function2d
+title: Fibers of \(f(x) = x^2\): the pair \(\{-1.5, 1.5\}\) collapses to the single class mapping to \(2.25 \in [0, \infty) \subsetneq \mathbb{R}\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.4, 2.4
+yrange: -1.0, 4.5
+trace: x^2 | label: \(f(x) = x^2\) | color: #2563eb
+segment: -1.5, 2.25, 1.5, 2.25 | label: \(y = 2.25\) | color: #dc2626 | dashed: true
+segment: -1.5, 0, -1.5, 2.25 | color: #dc2626 | dashed: true
+segment: 1.5, 0, 1.5, 2.25 | color: #dc2626 | dashed: true
+segment: 0, 0, 0, 4.4 | label: \(\operatorname{im}(f)\) | color: #16a34a
+point: -1.5, 0 | label: \(-1.5\) | color: #dc2626 | offset: -12, -16
+point: 1.5, 0 | label: \(1.5\) | color: #dc2626 | offset: 12, -16
+point: -1.5, 2.25 | color: #dc2626
+point: 1.5, 2.25 | color: #dc2626
+point: 0, 2.25 | label: \(2.25\) | color: #16a34a | offset: 22, 8
+[/GRAPH]
+
+2. The cosine map \(f : \mathbb{R} \to \mathbb{R}\), \(f(x) = \cos(x)\):
+   - Kernel relation: \(x \sim_f y \iff \cos(x) = \cos(y) \iff y = \pm x + 2\pi k\) for some \(k \in \mathbb{Z}\).
+   - Stage 1 (\(\pi\)): collapses every infinite fiber \(\{\pm \theta + 2\pi k : k \in \mathbb{Z}\}\) (for \(\theta \in [0, \pi]\)) to a single point in \(\mathbb{R}/{\sim_f}\).
+   - Stage 2 (\(\bar{f}\)): maps \(\mathbb{R}/{\sim_f}\) bijectively onto \(\operatorname{im}(\cos) = [-1, 1]\).
+   - Stage 3 (\(\iota\)): embeds \([-1, 1]\) into \(\mathbb{R}\).
+
+3. The modular remainder map \(f : \mathbb{Z} \to \mathbb{Z}\) sending \(n\) to its remainder in \(\{0, 1, 2, 3, 4\}\) upon division by \(5\):
+   - Kernel relation: congruence modulo \(5\), so \(\mathbb{Z}/{\sim_f} = \mathbb{Z}/5\mathbb{Z}\).
+   - Stage 2: \(\bar{f} : \mathbb{Z}/5\mathbb{Z} \to \{0, 1, 2, 3, 4\}\) sends \([r]_5 \mapsto r\) bijectively.
+   - Stage 3: \(\iota : \{0, 1, 2, 3, 4\} \hookrightarrow \mathbb{Z}\) embeds the five remainders into \(\mathbb{Z}\).
+
+Why is this theorem nicknamed the Set-Theoretic First Isomorphism Theorem? In abstract algebra (groups, rings, vector spaces) and topology, every structure-preserving map \(f : A \to B\) still factors as \(A \xrightarrow{\pi} A/{\sim_f} \xrightarrow{\bar{f}} \operatorname{im}(f) \xhookrightarrow{\iota} B\)! The exact same set-theoretic bijection \(\bar{f}\) upgrades automatically to a group isomorphism, ring isomorphism, linear isomorphism, or homeomorphism (under the quotient topology). Mastering this factorization on pure sets hands you the skeleton of all isomorphism theorems across higher mathematics!
+
+[QUESTION 4]
+[ANSWER: D]
+Consider the function \(f : \mathbb{R}^2 \to \mathbb{R}\) defined by \(f(x, y) = x^2 + y^2\). In the canonical factorization \(f = \iota \circ \bar{f} \circ \pi\), what are the equivalence classes of \(\sim_f\) in \(\mathbb{R}^2\), and what is the codomain of the induced bijection \(\bar{f}\)?
+
+(A) Horizontal lines \(y = c\); codomain of \(\bar{f}\) is \(\mathbb{R}\)
+(B) Rays starting from the origin; codomain of \(\bar{f}\) is \([0, \infty)\)
+(C) Concentric circles centered at \((0, 0)\) (including the single point \(\{(0, 0)\}\)); codomain of \(\bar{f}\) is \(\mathbb{R}\)
+(D) Concentric circles centered at \((0, 0)\) (including the single point \(\{(0, 0)\}\)); codomain of \(\bar{f}\) is \([0, \infty)\)
+(E) Singleton points \(\{(x, y)\}\); codomain of \(\bar{f}\) is \([0, \infty)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose \(f : A \to B\) is factored in ANY other way as \(f = i' \circ p'\), where \(p' : A \to Q'\) is SURJECTIVE and \(i' : Q' \to B\) is INJECTIVE. How does \(Q'\) compare with the canonical quotient set \(A/{\sim_f}\)?
+
+(A) \(Q'\) can have strictly larger cardinality than \(A/{\sim_f}\)
+(B) \(Q'\) can have strictly smaller cardinality than \(A/{\sim_f}\)
+(C) \(Q'\) must equal \(A/{\sim_f}\) as a set (with the exact same elements)
+(D) There is an injection \(A/{\sim_f} \to Q'\), but it need not be surjective
+(E) There is a UNIQUE bijection \(\phi : A/{\sim_f} \to Q'\) satisfying \(\phi \circ \pi = p'\) and \(i' \circ \phi = \iota \circ \bar{f}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Let \(\sim_1\) and \(\sim_2\) be two equivalence relations on the same set \(A\) such that \(\sim_1\) is finer than \(\sim_2\) (meaning \(\forall x, y \in A,\; x \sim_1 y \implies x \sim_2 y\)). Let \(\pi_1 : A \to A/{\sim_1}\) and \(\pi_2 : A \to A/{\sim_2}\) be their canonical projections. Which statement follows directly from [REF: universal-property-quotient | the universal property of the quotient set]?
+
+(A) There exists a unique bijection \(\phi : A/{\sim_1} \to A/{\sim_2}\) with \(\phi \circ \pi_1 = \pi_2\)
+(B) There exists a unique SURJECTION \(\phi : A/{\sim_1} \to A/{\sim_2}\) satisfying \(\phi([a]_{\sim_1}) = [a]_{\sim_2}\) (i.e., \(\phi \circ \pi_1 = \pi_2\))
+(C) There exists a unique function \(\psi : A/{\sim_2} \to A/{\sim_1}\) satisfying \(\psi \circ \pi_2 = \pi_1\)
+(D) \(\pi_2\) must be injective
+(E) No well-defined map can connect \(A/{\sim_1}\) and \(A/{\sim_2}\) unless \(\sim_1 = \sim_2\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Let \(A = \{1, 2, 3, \dots, 20\}\) and define \(f : A \to \mathbb{Z}\) by \(f(n) = \lfloor n / 6 \rfloor\). How many elements does the quotient set \(A/{\sim_f}\) contain?
+
+(A) \(3\)
+(B) \(5\)
+(C) \(4\)
+(D) \(6\)
+(E) \(20\)
+[/BONUS]

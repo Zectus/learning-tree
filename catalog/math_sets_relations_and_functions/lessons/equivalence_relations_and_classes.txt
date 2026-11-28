@@ -1,0 +1,233 @@
+=== SECTION 1: Equivalence relations and invariants ===
+
+Often in mathematics we deliberately ignore irrelevant details and treat distinct objects as "the same" whenever they share a key property—an invariant. Two integers leaving the same remainder upon division by \(5\) behave identically in clock arithmetic; two fractions \(2/4\) and \(3/6\) represent the exact same rational number; two triangles with equal angles share the same geometric shape. What structural properties must a relation of "sameness" obey so that it behaves like equality?
+
+Equality on any set \(A\) is reflexive (\(a = a\)), symmetric (if \(a = b\) then \(b = a\)), and transitive (if \(a = b\) and \(b = c\) then \(a = c\)). Requiring exactly those three properties gives us the general notion of an equivalence relation.
+
+[CALLOUT]
+id: equiv-rel-def
+label: Definition
+title: Equivalence relation
+tone: key
+
+A binary relation \(\sim\) on a set \(A\) is an equivalence relation on \(A\) if it satisfies three properties for all \(a, b, c \in A\):
+
+(1) Reflexivity: \(a \sim a\).
+(2) Symmetry: if \(a \sim b\), then \(b \sim a\).
+(3) Transitivity: if \(a \sim b\) and \(b \sim c\), then \(a \sim c\).
+[/CALLOUT]
+
+Let us verify four canonical equivalence relations across mathematics, watching how each captures a natural invariant.
+
+Example 1 (Congruence modulo \(n\) on \(\mathbb{Z}\)): Fix a positive integer \(n \in \mathbb{Z}^+\). Define \(a \equiv b \pmod n\) to mean \(n \mid (a - b)\), i.e., there exists \(k \in \mathbb{Z}\) such that \(a - b = kn\).
+- Reflexive: for every \(a \in \mathbb{Z}\), \(a - a = 0 = 0 \cdot n\), so \(n \mid (a - a)\).
+- Symmetric: if \(a - b = kn\) with \(k \in \mathbb{Z}\), then \(b - a = (-k)n\) with \(-k \in \mathbb{Z}\), so \(n \mid (b - a)\).
+- Transitive: if \(a - b = kn\) and \(b - c = mn\) with \(k, m \in \mathbb{Z}\), then \(a - c = (a - b) + (b - c) = (k + m)n\) with \(k + m \in \mathbb{Z}\), so \(n \mid (a - c)\).
+By the division algorithm, \(a \equiv b \pmod n\) holds if and only if \(a\) and \(b\) leave the same remainder in \(\{0, 1, \dots, n - 1\}\) upon division by \(n\). When \(n = 2\), this is the same-parity relation ("both even or both odd").
+
+Example 2 (Geometric parallelism and similarity): On the set of all lines in the Euclidean plane \(\mathbb{R}^2\), define \(\ell_1 \parallel \ell_2\) to mean either \(\ell_1 = \ell_2\) or \(\ell_1 \cap \ell_2 = \emptyset\) (equivalently, \(\ell_1\) and \(\ell_2\) have the same direction). Including \(\ell_1 = \ell_2\) makes parallelism reflexive, and having the same direction immediately ensures symmetry and transitivity. (If you mistakenly defined parallelism as "\(\ell_1 \cap \ell_2 = \emptyset\)" without allowing \(\ell_1 = \ell_2\), it would fail BOTH reflexivity and transitivity, since \(\ell_1 \parallel \ell_2\) and \(\ell_2 \parallel \ell_1\) would not yield \(\ell_1 \parallel \ell_1\)!) Similarly, geometric similarity of triangles in the plane is an equivalence relation.
+
+Example 3 (Constructing rational numbers from integer pairs): Let \(A = \mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\), thinking of a pair \((a, b)\) as the formal fraction \(a/b\). Define
+\[
+(a, b) \sim (c, d) \iff ad = bc.
+\]
+Let us check all three axioms carefully!
+- Reflexive: for any \((a, b) \in A\), \(ab = ba\), so \((a, b) \sim (a, b)\).
+- Symmetric: if \((a, b) \sim (c, d)\), then \(ad = bc\), which rewrites as \(cb = da\), so \((c, d) \sim (a, b)\).
+- Transitive: suppose \((a, b) \sim (c, d)\) and \((c, d) \sim (e, f)\), so \(ad = bc\) and \(cf = de\). We want to deduce \(af = be\). Look at the bridge: multiply \(ad = bc\) by \(f\) to get \(adf = bcf\), and substitute \(cf = de\) to get \(adf = bde\), or equivalently
+\[
+d(af - be) = 0.
+\]
+Here is the decisive moment: because \((c, d) \in \mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\), we have \(d \ne 0\)! Cancelling \(d \ne 0\) in \(\mathbb{Z}\) forces \(af - be = 0\), i.e., \(af = be\), so \((a, b) \sim (e, f)\).
+
+Pause and appreciate why zero denominators had to be excluded from \(A\)! If we allowed \(b = 0\) and defined \((a, b) \sim (c, d) \iff ad = bc\) on all of \(\mathbb{Z} \times \mathbb{Z}\), then \((1, 2) \sim (0, 0)\) (since \(1 \cdot 0 = 2 \cdot 0\)) and \((0, 0) \sim (1, 3)\) (since \(0 \cdot 3 = 0 \cdot 1\)), yet \((1, 2) \not\sim (1, 3)\) (since \(1 \cdot 3 \ne 2 \cdot 1\))! Transitivity collapses the instant \((0, 0)\) enters the domain.
+
+[QUESTION 1]
+[ANSWER: D]
+Which of the following binary relations is an equivalence relation on the specified set?
+
+(A) On \(\mathbb{Z}\), \(a \sim b \iff a \mid b\)
+(B) On \(\mathbb{R}\), \(x \sim y \iff |x - y| \le 1\)
+(C) On \(\mathbb{Z}\), \(a \sim b \iff ab \ge 0\)
+(D) On \(\mathbb{R} \setminus \{0\}\), \(x \sim y \iff x/y \in \mathbb{Q}\)
+(E) On \(\mathbb{Z} \times \mathbb{Z}\), \((a, b) \sim (c, d) \iff a = c \lor b = d\)
+[/QUESTION]
+
+=== SECTION 2: Equivalence classes and the Fundamental Lemma ===
+
+Given an equivalence relation \(\sim\) on \(A\), we group together all elements that are equivalent to a given element \(a \in A\).
+
+[CALLOUT]
+id: equiv-class-def
+label: Definition
+title: Equivalence class
+tone: key
+
+Let \(\sim\) be an equivalence relation on a set \(A\). For each \(a \in A\), the equivalence class of \(a\), denoted \([a]\) (or \([a]_\sim\) when more than one relation is under discussion), is the subset of \(A\) consisting of all elements equivalent to \(a\):
+\[
+[a] = \{x \in A : x \sim a\}.
+\]
+Any element \(x \in [a]\) is called a representative of the class \([a]\).
+[/CALLOUT]
+
+Notice that by [REF: equiv-rel-def.2 | symmetry], \(x \sim a \iff a \sim x\), so writing \(\{x \in A : a \sim x\}\) gives the exact same set. Let us examine the equivalence classes of our earlier examples:
+- For congruence modulo \(3\) on \(\mathbb{Z}\):
+\[
+[0] = \{\dots, -6, -3, 0, 3, 6, \dots\}, \quad [1] = \{\dots, -5, -2, 1, 4, 7, \dots\}, \quad [2] = \{\dots, -4, -1, 2, 5, 8, \dots\}.
+\]
+What is \([4]\)? Since \(4 \equiv 1 \pmod 3\), \([4]\) is the EXACT same set as \([1]\): \([4] = [1] = [-2]\). Even though \(1\) and \(4\) are different integers, they represent the same equivalence class.
+- For the fraction relation \((a, b) \sim (c, d) \iff ad = bc\) on \(\mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\): the equivalence class \([(1, 2)]\) is the set \(\{(k, 2k) : k \in \mathbb{Z} \setminus \{0\}\} = \{\dots, (-2, -4), (-1, -2), (1, 2), (2, 4), (3, 6), \dots\}\). In rigorous mathematics, the rational number \(1/2\) IS defined to be this equivalence class \([(1, 2)]\)!
+
+In both examples, two classes never partially overlap: either they are completely identical, or they share no elements at all. That is not a coincidence—it holds for EVERY equivalence relation on ANY set.
+
+[CALLOUT]
+id: fundamental-lemma-classes
+label: Theorem
+title: Fundamental Lemma of Equivalence Classes
+tone: key
+
+Let \(\sim\) be an equivalence relation on a set \(A\), and let \(a, b \in A\).
+
+(1) \(a \in [a]\). (In particular, every equivalence class is nonempty.)
+(2) \(a \sim b \iff [a] = [b]\).
+(3) Either \([a] = [b]\) or \([a] \cap [b] = \emptyset\).
+[/CALLOUT]
+
+Notice how each of the three axioms in [REF: equiv-rel-def | the definition of equivalence relation] pulls its weight in the proof below.
+
+[CALLOUT]
+id: fundamental-lemma-proof
+label: Proof
+title: Proof of [REF: fundamental-lemma-classes | the Fundamental Lemma]
+tone: note
+
+(1) By [REF: equiv-rel-def.1 | reflexivity], \(a \sim a\), so \(a \in [a]\) directly by [REF: equiv-class-def | definition of equivalence class].
+
+(2) Forward direction (\(\implies\)): Assume \(a \sim b\). We prove \([a] = [b]\) by double inclusion.
+- To show \([a] \subseteq [b]\): let \(x \in [a]\). Then \(x \sim a\). Since \(x \sim a\) and \(a \sim b\), [REF: equiv-rel-def.3 | transitivity] gives \(x \sim b\), so \(x \in [b]\).
+- To show \([b] \subseteq [a]\): since \(a \sim b\), [REF: equiv-rel-def.2 | symmetry] gives \(b \sim a\). Now let \(x \in [b]\), so \(x \sim b\); by transitivity with \(b \sim a\), we obtain \(x \sim a\), so \(x \in [a]\).
+Thus \([a] = [b]\).
+
+Converse direction (\(\Longleftarrow\)): Assume \([a] = [b]\). By part (1), \(a \in [a]\). Since \([a] = [b]\), we have \(a \in [b]\), which by definition means \(a \sim b\).
+
+(3) We prove the equivalent conditional: if \([a] \cap [b] \ne \emptyset\), then \([a] = [b]\). Suppose \([a] \cap [b] \ne \emptyset\), so there exists some \(c \in [a] \cap [b]\). Then \(c \in [a]\) and \(c \in [b]\), meaning \(c \sim a\) and \(c \sim b\). By symmetry on \(c \sim a\), we have \(a \sim c\). Combining \(a \sim c\) and \(c \sim b\) via transitivity gives \(a \sim b\). By part (2), it follows immediately that \([a] = [b]\).
+[/CALLOUT]
+
+Look closely at part (2) of [REF: fundamental-lemma-classes | the Fundamental Lemma]: it gives us a powerful rule for testing equality of equivalence classes without chasing elements every time. To check whether \([a] = [b]\), you simply check whether \(a \sim b\). Equally important: if \(x \in [a]\), then \(x \sim a\), so \([x] = [a]\)—EVERY member of an equivalence class is an equally valid representative of that class!
+
+[QUESTION 2]
+[ANSWER: B]
+Define an equivalence relation \(\sim\) on \(\mathbb{R}\) by \(x \sim y \iff x^2 - y^2 = x - y\). How many elements belong to the equivalence class \([3]\)?
+
+(A) \(1\) (only \(3\))
+(B) \(2\) (namely \(3\) and \(-2\))
+(C) \(2\) (namely \(3\) and \(-3\))
+(D) \(3\) (namely \(3\), \(-2\), and \(0\))
+(E) Infinitely many
+[/QUESTION]
+
+=== SECTION 3: Well-definedness on equivalence classes ===
+
+Suppose we want to define an operation or rule on the set of equivalence classes—for instance, adding or multiplying congruence classes in \(\mathbb{Z}/n\mathbb{Z} = \{[0], [1], \dots, [n - 1]\}\) (the set of congruence classes modulo \(n\)). The natural formulas to try are
+\[
+[a] + [b] = [a + b], \qquad [a] \cdot [b] = [ab].
+\]
+Wait—there is a hidden logical obligation here! Because the same class can be written using DIFFERENT representatives (for example, in \(\mathbb{Z}/6\mathbb{Z}\), \([1] = [7]\) and \([2] = [14]\)), any formula stated in terms of a chosen representative \(a\) could accidentally give different answers depending on which name we picked for the class!
+
+[CALLOUT]
+id: well-defined-rule
+label: Principle
+title: Testing well-definedness on equivalence classes
+tone: key
+
+Suppose a rule attempts to assign an output to each equivalence class \([a]\) (or pair of classes \(([a], [b])\)) by a formula written in terms of the representative \(a\) (or \(a, b\)).
+
+(1) To prove the rule is well-defined: assume \([a] = [a']\) (and \([b] = [b']\) for a binary operation)—equivalently, \(a \sim a'\) (and \(b \sim b'\)) by [REF: fundamental-lemma-classes.2 | the Fundamental Lemma]—and prove that the formula produces the EXACT SAME output from \(a'\) (and \(b'\)) as from \(a\) (and \(b\)).
+(2) To prove the rule is ill-defined (NOT well-defined): exhibit one concrete pair of equivalent representatives \(a \sim a'\) (so \([a] = [a']\)) for which the formula gives two DIFFERENT outputs.
+[/CALLOUT]
+
+Let us prove that addition and multiplication on \(\mathbb{Z}/n\mathbb{Z}\) ARE well-defined!
+Suppose \([a] = [a']\) and \([b] = [b']\) in \(\mathbb{Z}/n\mathbb{Z}\). By [REF: fundamental-lemma-classes.2 | the Fundamental Lemma], \(a \equiv a' \pmod n\) and \(b \equiv b' \pmod n\), so there exist integers \(k, m \in \mathbb{Z}\) such that
+\[
+a' = a + kn, \qquad b' = b + mn.
+\]
+- For addition:
+\[
+a' + b' = (a + kn) + (b + mn) = (a + b) + (k + m)n.
+\]
+Since \(k + m \in \mathbb{Z}\), we have \(n \mid ((a' + b') - (a + b))\), so \(a' + b' \equiv a + b \pmod n\), which by [REF: fundamental-lemma-classes.2 | the Fundamental Lemma] means \([a' + b'] = [a + b]\). Thus addition of congruence classes is well-defined!
+- For multiplication:
+\[
+a'b' = (a + kn)(b + mn) = ab + (am + bk + kmn)n.
+\]
+Since \(am + bk + kmn \in \mathbb{Z}\), we have \(a'b' \equiv ab \pmod n\), so \([a'b'] = [ab]\). Thus multiplication of congruence classes is well-defined!
+
+Now contrast this with an ILL-DEFINED rule! Suppose someone tries to define a rule from \(\mathbb{Z}/6\mathbb{Z}\) to \(\mathbb{Z}/4\mathbb{Z}\) by sending \([a]_6 \mapsto [a]_4\) (that is, taking the remainder of \(a\) modulo \(4\)). Let us test two representatives of the same class in \(\mathbb{Z}/6\mathbb{Z}\): take \(a = 1\) and \(a' = 7\). Since \(6 \mid (7 - 1)\), we have \([1]_6 = [7]_6\). Yet the proposed rule sends \(a = 1\) to \([1]_4\) and sends \(a' = 7\) to \([7]_4 = [3]_4 \ne [1]_4\)! One single input class \([1]_6\) is assigned two different outputs, so the rule is NOT well-defined.
+
+In general, the rule \([a]_n \mapsto [a]_m\) from \(\mathbb{Z}/n\mathbb{Z}\) to \(\mathbb{Z}/m\mathbb{Z}\) is well-defined if and only if \(m \mid n\)!
+- If \(m \mid n\) (write \(n = qm\)) and \(a' = a + kn\), then \(a' = a + (kq)m\), so \(a' \equiv a \pmod m\) and \([a']_m = [a]_m\).
+- If \(m \nmid n\), take \(a = 0\) and \(a' = n\): then \([0]_n = [n]_n\), yet \([0]_m \ne [n]_m\) because \(m \nmid n\).
+
+[TABLE]
+Proposed rule on \(\mathbb{Z}/n\mathbb{Z}\) | Well-defined? | Reason or counterexample
+\([a]_n + [b]_n = [a + b]_n\) | Yes (all \(n \ge 1\)) | \(a \equiv a', b \equiv b' \implies a + b \equiv a' + b' \pmod n\)
+\([a]_n \cdot [b]_n = [ab]_n\) | Yes (all \(n \ge 1\)) | \(a \equiv a', b \equiv b' \implies ab \equiv a'b' \pmod n\)
+\([a]_n \mapsto [a]_m\) | Only when \(m \mid n\) | If \(m \nmid n\), \([0]_n = [n]_n\) gives \([0]_m \ne [n]_m\)
+\([a]_6 \mapsto a^2\) (in \(\mathbb{Z}\)) | No | \([1]_6 = [7]_6\), yet \(1^2 = 1 \ne 49 = 7^2\)
+\([a]_6 \mapsto [a^2]_3\) | Yes | Since \(3 \mid 6\), \(a' = a + 6k \implies (a')^2 = a^2 + 3(4ak + 12k^2) \equiv a^2 \pmod 3\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: C]
+Which of the following proposed rules on \(\mathbb{Z}/12\mathbb{Z}\) is WELL-DEFINED?
+
+(A) \([a]_{12} \mapsto [a]_8\) in \(\mathbb{Z}/8\mathbb{Z}\)
+(B) \([a]_{12} \mapsto [a / 2]_6\) in \(\mathbb{Z}/6\mathbb{Z}\)
+(C) \([a]_{12} \mapsto [5a + 1]_4\) in \(\mathbb{Z}/4\mathbb{Z}\)
+(D) \([a]_{12} \mapsto [2^a]_{12}\) in \(\mathbb{Z}/12\mathbb{Z}\) (restricted to \(a \ge 0\))
+(E) \([a]_{12} \mapsto |a|\) in \(\mathbb{N}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+On \(A = \mathbb{Z} \times (\mathbb{Z} \setminus \{0\})\) with the fraction equivalence relation \((a, b) \sim (c, d) \iff ad = bc\), which of the following proposed rules on equivalence classes is WELL-DEFINED?
+
+(A) \([(a, b)] \mapsto a + b\) in \(\mathbb{Z}\)
+(B) \([(a, b)] \mapsto [(a + 1, b + 1)]\)
+(C) \([(a, b)] \mapsto [(a, b^2)]\)
+(D) \([(a, b)] \mapsto a \bmod 2\) in \(\{0, 1\}\)
+(E) \([(a, b)] \mapsto [(a^2, b^2)]\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Define a relation \(\sim\) on \(\mathbb{Z}\) by \(a \sim b \iff 3a + 5b \equiv 0 \pmod 8\). Is \(\sim\) an equivalence relation on \(\mathbb{Z}\), and if so, what is the equivalence class \([1]\)?
+
+(A) Yes; \([1] = \{1 + 8k : k \in \mathbb{Z}\}\)
+(B) Yes; \([1] = \{1 + 4k : k \in \mathbb{Z}\}\)
+(C) Yes; \([1] = \{1 + 2k : k \in \mathbb{Z}\}\)
+(D) No; it is reflexive and transitive, but not symmetric
+(E) No; it is symmetric and transitive, but not reflexive
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Suppose \(\sim_1\) and \(\sim_2\) are two equivalence relations on a set \(A\). Which of the following statements is ALWAYS true?
+
+(A) \(\sim_1 \cup \sim_2\) is an equivalence relation on \(A\)
+(B) \((\sim_1 \setminus \sim_2) \cup \Delta_A\) is an equivalence relation on \(A\)
+(C) Every equivalence class of \(\sim_1 \cap \sim_2\) equals \([a]_{\sim_1} \cup [a]_{\sim_2}\)
+(D) \(\sim_1 \cap \sim_2\) is an equivalence relation on \(A\), and its equivalence class of \(a\) is \([a]_{\sim_1} \cap [a]_{\sim_2}\)
+(E) \(\sim_1 \cap \sim_2\) is an equivalence relation only when \(\sim_1 \subseteq \sim_2\) or \(\sim_2 \subseteq \sim_1\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+On \(\mathbb{Z}/10\mathbb{Z}\), a student proposes a unary operation \([a]_{10} \mapsto [k a]_{15}\) into \(\mathbb{Z}/15\mathbb{Z}\), where \(k \in \mathbb{Z}^+\) is a fixed positive integer constant. For which positive integers \(k\) is this rule well-defined?
+
+(A) All \(k \in \mathbb{Z}^+\)
+(B) Exactly the multiples of \(3\)
+(C) Exactly the multiples of \(5\)
+(D) Exactly the multiples of \(15\)
+(E) No positive integer \(k\) makes it well-defined
+[/BONUS]

@@ -1,0 +1,238 @@
+=== SECTION 1: Vector and parametric equations of lines in \(\mathbb{R}^3\) ===
+
+In the two-dimensional plane \(\mathbb{R}^2\), a single linear equation \(ax + by = c\) specifies a straight line. Moving into \(\mathbb{R}^3\), students often expect a single linear equation \(ax + by + cz = d\) to define a line as well—but it does not! One linear constraint among three variables leaves two independent degrees of freedom, which produces a flat two-dimensional plane rather than a one-dimensional line. To describe a line in \(\mathbb{R}^3\), we want a description with exactly one free parameter \(t \in \mathbb{R}\).
+
+How is a straight line \(L\) in space uniquely determined? Pick any base point \(P_0(x_0, y_0, z_0)\) on \(L\) (with position vector \(\mathbf{r}_0 = \langle x_0, y_0, z_0 \rangle\)) and any nonzero direction vector \(\mathbf{v} = \langle a, b, c \rangle\) parallel to \(L\). A point \(P(x, y, z)\) with position vector \(\mathbf{r} = \langle x, y, z \rangle\) lies on \(L\) if and only if the displacement \(\overrightarrow{P_0 P} = \mathbf{r} - \mathbf{r}_0\) is parallel to \(\mathbf{v}\)—that is, \(\mathbf{r} - \mathbf{r}_0 = t\mathbf{v}\) for some real scalar \(t\). Rearranging gives the vector equation of \(L\), and equating components yields its parametric equations.
+
+[CALLOUT]
+id: line-param
+label: Definition
+title: Vector, parametric, and segment equations of a line in \(\mathbb{R}^3\)
+tone: key
+
+Let \(P_0(x_0, y_0, z_0)\) be a point on a line \(L\) with position vector \(\mathbf{r}_0 = \langle x_0, y_0, z_0 \rangle\), and let \(\mathbf{v} = \langle a, b, c \rangle \ne \mathbf{0}\) be a direction vector of \(L\).
+
+(1) Vector equation: \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\), for \(t \in \mathbb{R}\).
+(2) Parametric equations:
+\[
+x = x_0 + at, \qquad y = y_0 + bt, \qquad z = z_0 + ct \qquad (t \in \mathbb{R}).
+\]
+(3) Line segment from \(P_0\) to \(P_1\): setting \(\mathbf{v} = \overrightarrow{P_0 P_1} = \mathbf{r}_1 - \mathbf{r}_0\) and restricting \(t\) to \([0, 1]\) gives
+\[
+\mathbf{r}(t) = \mathbf{r}_0 + t(\mathbf{r}_1 - \mathbf{r}_0) = (1 - t)\mathbf{r}_0 + t\mathbf{r}_1 \qquad (0 \le t \le 1).
+\]
+[/CALLOUT]
+
+Notice how [REF: line-param.3 | the segment parametrization] behaves: at \(t = 0\), \(\mathbf{r}(0) = \mathbf{r}_0\) (starting at \(P_0\)); at \(t = 1\), \(\mathbf{r}(1) = \mathbf{r}_1\) (arriving at \(P_1\)); and values \(t \in (0, 1)\) sweep out every interior point of the segment \(P_0 P_1\) proportionally (for instance, \(t = 1/2\) lands at the midpoint). Allowing \(t < 0\) or \(t > 1\) extends the segment infinitely past \(P_0\) and \(P_1\) along the full line.
+
+Drag the parameter slider \(t\) in the \(xy\)-plane projection below to watch \(\mathbf{r}(t) = \langle 1, 1 \rangle + t\langle 2, 1 \rangle\) move along the line through \(P_0(1, 1)\) and \(P_1(3, 2)\), crossing the highlighted segment precisely on \(0 \le t \le 1\).
+
+[GRAPH]
+type: parametric2d
+title: Tracing \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\) along a line and its segment \(0 \le t \le 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.5, 2.5
+xrange: -2.5, 6.5
+yrange: -1, 4
+trace: 1 + 2*t, 1 + t | label: full line \(t \in \mathbb{R}\)
+segment: 1, 1, 3, 2 | label: segment \(0 \le t \le 1\)
+point: 1, 1 | label: \(P_0\)
+point: 3, 2 | label: \(P_1\)
+point: 1 + 2*t0, 1 + t0 | label: \(\mathbf{r}(t_0)\)
+slider: t0 | range: -1.2, 2.2 | init: 0.5 | step: 0.1
+[/GRAPH]
+
+For a 3D example, find parametric equations for the line through \(A(2, -1, 4)\) and \(B(5, 3, 4)\). Choose \(\mathbf{v} = \overrightarrow{AB} = \langle 5 - 2, 3 - (-1), 4 - 4 \rangle = \langle 3, 4, 0 \rangle\). Using \(A\) as the base point gives
+\[
+x = 2 + 3t, \qquad y = -1 + 4t, \qquad z = 4 \qquad (t \in \mathbb{R}).
+\]
+Notice that \(z = 4\) stays constant for every \(t\): the entire line lies flat inside the horizontal plane \(z = 4\).
+
+=== SECTION 2: Symmetric equations and zero direction components ===
+
+Sometimes we want a parameter-free description of a line in \(\mathbb{R}^3\). Starting from [REF: line-param.2 | the parametric equations] \(x = x_0 + at\), \(y = y_0 + bt\), \(z = z_0 + ct\), suppose first that all three direction components \(a, b, c\) are nonzero. Solving each equation for \(t\) gives
+\[
+t = \frac{x - x_0}{a}, \qquad t = \frac{y - y_0}{b}, \qquad t = \frac{z - z_0}{c}.
+\]
+Equating the three expressions eliminates \(t\) and produces the symmetric equations of the line.
+
+What if one or two components of \(\mathbf{v} = \langle a, b, c \rangle\) equal \(0\)? You can never divide by zero! Instead, any zero direction component simply pins its coordinate to a constant value, while the remaining nonzero components stay in symmetric form.
+
+[CALLOUT]
+id: line-symm
+label: Formulas
+title: Symmetric equations of a line in \(\mathbb{R}^3\)
+tone: key
+
+For the line through \(P_0(x_0, y_0, z_0)\) with direction vector \(\mathbf{v} = \langle a, b, c \rangle \ne \mathbf{0}\):
+
+(1) If \(a \ne 0\), \(b \ne 0\), and \(c \ne 0\):
+\[
+\frac{x - x_0}{a} = \frac{y - y_0}{b} = \frac{z - z_0}{c}.
+\]
+(2) If one component vanishes—for example, \(a = 0\) with \(b, c \ne 0\)—write the constant coordinate separately alongside the remaining equality:
+\[
+x = x_0, \qquad \frac{y - y_0}{b} = \frac{z - z_0}{c}.
+\]
+(3) If two components vanish—for example, \(a = 0\) and \(b = 0\) with \(c \ne 0\)—the line is specified by two constant-coordinate equations: \(x = x_0\) and \(y = y_0\) (with \(z\) free).
+[/CALLOUT]
+
+When reading a base point and direction vector back out of symmetric equations, always make sure each numerator has the exact form \(x - x_0\), \(y - y_0\), or \(z - z_0\) with coefficient \(+1\) in front of the variable. Watch what happens on a disguised equation like
+\[
+\frac{3 - 2x}{4} = \frac{y + 1}{5}, \qquad z = 7.
+\]
+Factor \(-2\) out of the first numerator to isolate \(x\) with coefficient \(+1\):
+\[
+\frac{3 - 2x}{4} = \frac{-2(x - 3/2)}{4} = \frac{x - 3/2}{-2}.
+\]
+Now every piece is visible in [REF: line-symm.2 | standard symmetric form]: the base point is \(P_0(3/2, -1, 7)\) and a direction vector is \(\mathbf{v} = \langle -2, 5, 0 \rangle\). Reading the denominator \(4\) directly without factoring out \(-2\) would give the wrong direction vector and the wrong sign.
+
+[QUESTION 1]
+[ANSWER: B]
+Consider the line \(L\) in \(\mathbb{R}^3\) given by the equations
+\[
+\frac{2 - x}{3} = \frac{2y + 4}{6}, \qquad z = -5.
+\]
+Which of the following gives a valid point \(P_0\) on \(L\) and direction vector \(\mathbf{v}\) of \(L\)?
+
+(A) \(P_0(2, -4, -5)\) and \(\mathbf{v} = \langle 3, 6, 0 \rangle\)
+(B) \(P_0(2, -2, -5)\) and \(\mathbf{v} = \langle -1, 1, 0 \rangle\)
+(C) \(P_0(2, -2, -5)\) and \(\mathbf{v} = \langle 1, 1, 0 \rangle\)
+(D) \(P_0(2, -2, 0)\) and \(\mathbf{v} = \langle -1, 1, -5 \rangle\)
+(E) \(P_0(-2, 2, -5)\) and \(\mathbf{v} = \langle -3, 3, 0 \rangle\)
+[/QUESTION]
+
+=== SECTION 3: Non-uniqueness of parametrizations ===
+
+A single geometric line \(L\) in \(\mathbb{R}^3\) has infinitely many distinct vector and parametric equations. Why? Because two free choices enter [REF: line-param.1 | the vector equation] \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}\):
+- You may replace the base point \(P_0\) by any other point \(Q_0\) lying on \(L\).
+- You may replace the direction vector \(\mathbf{v}\) by any nonzero scalar multiple \(k\mathbf{v}\) (\(k \ne 0\)), which only changes the speed or orientation with which the parameter traces \(L\).
+
+Therefore, two parametrizations \(\mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{v}_1\) and \(\mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{v}_2\) represent the exact same geometric line if and only if two conditions hold simultaneously:
+1. Their direction vectors are parallel: \(\mathbf{v}_2 = k\mathbf{v}_1\) for some \(k \ne 0\).
+2. The base point of the second line lies on the first line: there exists a single real number \(t^*\) such that \(\mathbf{p}_2 = \mathbf{p}_1 + t^*\mathbf{v}_1\) (equivalently, \(\mathbf{p}_2 - \mathbf{p}_1\) is also parallel to \(\mathbf{v}_1\)).
+
+Checking only one of the two conditions is not enough. If \(\mathbf{v}_2 \parallel \mathbf{v}_1\) but \(\mathbf{p}_2\) does not lie on \(L_1\), the two lines are parallel and distinct. Conversely, if \(\mathbf{p}_2\) lies on \(L_1\) but \(\mathbf{v}_2\) is not parallel to \(\mathbf{v}_1\), the two lines intersect at the single point \(\mathbf{p}_2\) and then head in different directions.
+
+[QUESTION 2]
+[ANSWER: C]
+Let \(L_1\) be the line given by \(\mathbf{r}_1(t) = \langle 1, -2, 4 \rangle + t\langle 2, -3, 1 \rangle\). Which of the following parametrizations represents the exact same geometric line as \(L_1\)?
+
+(A) \(\mathbf{r}(s) = \langle 3, -5, 5 \rangle + s\langle 2, 3, 1 \rangle\)
+(B) \(\mathbf{r}(s) = \langle 1, -2, 5 \rangle + s\langle 4, -6, 2 \rangle\)
+(C) \(\mathbf{r}(s) = \langle -3, 4, 2 \rangle + s\langle -4, 6, -2 \rangle\)
+(D) \(\mathbf{r}(s) = \langle 2, -3, 1 \rangle + s\langle 1, -2, 4 \rangle\)
+(E) \(\mathbf{r}(s) = \langle 5, -8, 6 \rangle + s\langle 2, -3, 0 \rangle\)
+[/QUESTION]
+
+=== SECTION 4: Relative positions of two lines in space and skew lines ===
+
+In \(\mathbb{R}^2\), two distinct lines either are parallel or intersect at a point. In \(\mathbb{R}^3\), a genuinely new fourth possibility appears: two lines can fail to be parallel and still completely miss each other—like an east-west highway running along an overpass above a north-south road underneath it. Such lines are called skew lines.
+
+[CALLOUT]
+id: line-classify
+label: Classification
+title: Four relative positions of two lines in \(\mathbb{R}^3\)
+tone: key
+
+Given two lines \(L_1: \mathbf{r}_1(t) = \mathbf{p}_1 + t\mathbf{v}_1\) and \(L_2: \mathbf{r}_2(s) = \mathbf{p}_2 + s\mathbf{v}_2\):
+
+(1) First test whether \(\mathbf{v}_1\) and \(\mathbf{v}_2\) are parallel (\(\mathbf{v}_2 = k\mathbf{v}_1\) for some \(k \ne 0\)):
+- If \(\mathbf{v}_1 \parallel \mathbf{v}_2\) and \(\mathbf{p}_2 \in L_1\), the lines are coincident (the exact same line).
+- If \(\mathbf{v}_1 \parallel \mathbf{v}_2\) and \(\mathbf{p}_2 \notin L_1\), the lines are parallel and distinct.
+(2) If \(\mathbf{v}_1\) and \(\mathbf{v}_2\) are NOT parallel, solve the system of three linear equations \(\mathbf{r}_1(t) = \mathbf{r}_2(s)\) in the two independent parameters \(t\) and \(s\):
+- If a pair \((t^*, s^*)\) satisfies all three coordinate equations, the lines are intersecting, with unique intersection point \(\mathbf{r}_1(t^*) = \mathbf{r}_2(s^*)\).
+- If no pair \((t, s)\) satisfies all three coordinate equations, the lines are skew.
+[/CALLOUT]
+
+Why is it mandatory to assign two different parameter names—\(t\) for \(L_1\) and \(s\) for \(L_2\)—even if a problem prints \(t\) in both equations? Think of two airplanes flying along straight tracks. Setting \(\mathbf{r}_1(t) = \mathbf{r}_2(t)\) with the same parameter \(t\) checks only whether the two planes collide at the exact same instant \(t\). Geometric intersection asks whether the two flight paths share a point in space at all, which can happen when the first plane passes that point at time \(t^*\) and the second passes it at a different time \(s^*\). Reusing one letter \(t\) misses every intersection with \(t^* \ne s^*\) and misclassifies intersecting lines as skew.
+
+The diagram below illustrates the shadows in the \(xy\)-plane of two non-parallel 3D lines: \(L_1: \mathbf{r}_1(t) = \langle 0, 1, 2 \rangle + t\langle 2, 1, 1 \rangle\) and \(L_2: \mathbf{r}_2(s) = \langle 4, 0, 3 \rangle + s\langle -1, 2, 1 \rangle\). In the \(xy\)-plane their shadows cross cleanly at \((2, 2)\) (reached at \(t = 1\) on \(L_1\) and \(s = 2\) on \(L_2\)). Yet comparing their heights at those parameter values gives \(z_1(1) = 3\) versus \(z_2(2) = 5\): the two lines pass directly over one another without touching, so they are skew. Changing the base height of \(L_2\) from \(3\) to \(1\) would lower \(z_2(2)\) to \(3 = z_1(1)\), turning the same pair of \(xy\)-shadows into intersecting lines meeting at \((2, 2, 3)\).
+
+[GRAPH]
+type: parametric2d
+title: Shadows in the \(xy\)-plane of two non-parallel 3D lines crossing at \((2, 2)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -0.5, 2.5
+xrange: -1, 5
+yrange: -0.5, 5.2
+trace: 2*t, 1 + t | label: shadow of \(L_1\) (\(t = 1\) at \((2, 2)\))
+trace: 4 - t, 2*t | label: shadow of \(L_2\) (\(s = 2\) at \((2, 2)\))
+point: 2, 2 | label: \((2, 2)\)
+point: 0, 1 | label: \(P_1\)
+point: 4, 0 | label: \(P_2\)
+[/GRAPH]
+
+To carry out [REF: line-classify.2 | the 3-equation test] reliably:
+1. Pick any two of the three coordinate equations that determine a unique solution \((t^*, s^*)\).
+2. Substitute \((t^*, s^*)\) into the third coordinate equation.
+3. If the third equation holds, the lines intersect at \(\mathbf{r}_1(t^*)\); if it fails, the lines are skew.
+
+[TABLE]
+Relative position | Directions \(\mathbf{v}_1, \mathbf{v}_2\) | Solution of \(\mathbf{r}_1(t) = \mathbf{r}_2(s)\) | Lie in a common plane?
+Coincident | Parallel | Infinitely many pairs \((t, s)\) | Yes
+Parallel and distinct | Parallel | No solution | Yes
+Intersecting | Not parallel | Unique pair \((t^*, s^*)\) | Yes
+Skew | Not parallel | No solution | No
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+Classify the pair of lines
+\[
+L_1:\; x = 1 + 2t,\; y = 3 - t,\; z = 2 + 3t
+\]
+and
+\[
+L_2:\; x = 4 - s,\; y = 3 + 2s,\; z = 5 - 3s.
+\]
+
+(A) Skew, because setting \(t = s\) yields no common point
+(B) Intersecting at \((5, 1, 8)\)
+(C) Intersecting at \((3, 2, 5)\)
+(D) Parallel and distinct
+(E) Intersecting at \((5, 5, 2)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+For which value of the constant \(k\) do the lines
+\[
+L_1:\; x = 2 + t,\; y = -1 + 2t,\; z = 3 - t
+\]
+and
+\[
+L_2:\; x = 1 + 3s,\; y = 4 - s,\; z = k + 2s
+\]
+intersect instead of being skew?
+
+(A) \(k = 1\)
+(B) \(k = 3\)
+(C) \(k = -3\)
+(D) \(k = -1\)
+(E) They are skew for every real value of \(k\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Does the line segment joining \(A(3, -2, 6)\) and \(B(-1, 6, -2)\) intersect the \(xy\)-plane, and if so, at what point?
+
+(A) No, because the segment lies strictly above the \(xy\)-plane
+(B) Yes, at \((1, 2, 0)\)
+(C) Yes, at \((0, 4, 0)\)
+(D) Yes, at \((0, 2, 0)\)
+(E) No, because the line pierces the \(xy\)-plane outside the parameter interval \(0 \le t \le 1\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Consider the line \(L\) passing through \(P(1, -3, 2)\) and \(Q(3, 1, -2)\). Where does the infinite line \(L\) pierce the \(yz\)-plane, and does that intersection point lie on the line segment \(PQ\)?
+
+(A) At \((0, -1, 0)\), which lies on the segment \(PQ\)
+(B) At \((0, -5, 4)\), which lies on the segment \(PQ\)
+(C) At \((0, -1, 4)\), which lies outside the segment \(PQ\)
+(D) At \((0, -7, 6)\), which lies outside the segment \(PQ\)
+(E) At \((0, -5, 4)\), which lies outside the segment \(PQ\)
+[/BONUS]

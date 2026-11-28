@@ -1,0 +1,190 @@
+=== SECTION 1: Pure existence versus constructive witnesses ===
+
+In our earlier lesson on existence proofs, we proved \(\exists x \in D,\, P(x)\) by producing a concrete witness \(x_0 \in D\) and verifying \(P(x_0)\) directly. That is a CONSTRUCTIVE existence proof: at the end of the proof, you can point to a specific object and hand it to the reader.
+
+Remarkably, classical mathematics also allows NON-CONSTRUCTIVE (or pure) existence proofs: logically airtight arguments that establish \(\exists x \in D,\, P(x)\) WITHOUT ever pinning down which single object is the witness!
+
+The first classic pattern uses proof by cases powered by the Law of Excluded Middle: for any proposition \(Q\), the disjunction \(Q \vee \neg Q\) is a tautology (either \(Q\) is true or \(Q\) is false). Suppose we can exhibit a candidate witness \(w_1\) that works whenever \(Q\) is true, AND a different candidate witness \(w_2\) that works whenever \(Q\) is false. Then in EVERY case a valid witness exists — so \(\exists x,\, P(x)\) is undeniably proved, even if we have NO IDEA whether \(Q\) is true or false!
+
+Let us see this mechanism on one of the most celebrated gems of elementary mathematics.
+
+[CALLOUT]
+id: proof-irrat-power-rat
+label: Proof
+title: Theorem: There exist irrational numbers \(a, b \in \mathbb{R} \setminus \mathbb{Q}\) such that \(a^b\) is rational
+tone: note
+
+Proof: Consider the real number \(c = (\sqrt{2})^{\sqrt{2}}\). By the Law of Excluded Middle, either \(c\) is rational or \(c\) is irrational. We examine both cases:
+
+- Case 1: \(c = (\sqrt{2})^{\sqrt{2}}\) is rational. Take \(a = \sqrt{2}\) and \(b = \sqrt{2}\). We already proved that \(\sqrt{2}\) is irrational, so \(a, b \notin \mathbb{Q}\), while \(a^b = (\sqrt{2})^{\sqrt{2}} = c \in \mathbb{Q}\). Thus the desired pair \((a, b)\) exists.
+- Case 2: \(c = (\sqrt{2})^{\sqrt{2}}\) is irrational. Take \(a = c = (\sqrt{2})^{\sqrt{2}}\) and \(b = \sqrt{2}\). Then both \(a\) and \(b\) are irrational (by the case assumption and irrationality of \(\sqrt{2}\)), while by exponent laws,
+\[
+a^b = \bigl((\sqrt{2})^{\sqrt{2}}\bigr)^{\sqrt{2}} = (\sqrt{2})^{\sqrt{2}\cdot\sqrt{2}} = (\sqrt{2})^2 = 2,
+\]
+which is rational! Thus again the desired pair \((a, b)\) exists.
+
+Since Case 1 and Case 2 are exhaustive, there exist irrational numbers \(a\) and \(b\) with \(a^b \in \mathbb{Q}\).
+[/CALLOUT]
+
+Pause and appreciate what [REF: proof-irrat-power-rat | that proof] just accomplished! It never determines whether \((\sqrt{2})^{\sqrt{2}}\) is rational or irrational. (As a historical note outside our proof, the Gelfond–Schneider theorem from deep 20th-century number theory eventually showed that \((\sqrt{2})^{\sqrt{2}}\) is actually irrational, so Case 2 is the one that truly occurs — yet our elementary proof needs NONE of that machinery!) Notice also that the proof narrows the witness down to a TWO-ELEMENT pool: at least one of the two pairs \((\sqrt{2}, \sqrt{2})\) or \(((\sqrt{2})^{\sqrt{2}}, \sqrt{2})\) works, and classical case analysis guarantees that this suffices for \(\exists a, b\).
+
+[QUESTION 1]
+[ANSWER: C]
+In the excluded-middle proof that there exist irrational numbers \(a, b\) with \(a^b \in \mathbb{Q}\), why is the proof still completely valid even though it never decides whether \((\sqrt{2})^{\sqrt{2}}\) is rational or irrational?
+
+(A) Because the proof shows that BOTH \((\sqrt{2}, \sqrt{2})\) and \(((\sqrt{2})^{\sqrt{2}}, \sqrt{2})\) make \(a^b\) rational.
+(B) Because every real number of the form \(x^x\) with \(x\) irrational is automatically rational.
+(C) Because "\(c \in \mathbb{Q}\) or \(c \notin \mathbb{Q}\)" is exhaustive, and each case supplies a verified irrational pair \((a, b)\) with \(a^b \in \mathbb{Q}\), so the existential claim holds regardless of which case is true.
+(D) Because in Case 2 the proof assumes \((\sqrt{2})^{\sqrt{2}}\) is rational and derives a contradiction.
+(E) Because existential statements \(\exists a, b,\, P(a, b)\) only require showing that \(P(a, b)\) is plausible in at least one case.
+[/QUESTION]
+
+=== SECTION 2: Indirect existence by contradiction — primes of the form \(4k + 3\) ===
+
+A second major route to non-constructive existence uses proof by contradiction: to prove \(\exists x \in D,\, P(x)\), assume \(\forall x \in D,\, \neg P(x)\) and deduce a contradiction. When this succeeds, we know some \(x \in D\) satisfying \(P(x)\) MUST exist, even though the proof may hand us no recipe to compute \(x\) directly.
+
+We can see this in action by refining Euclid's theorem on primes. Every odd integer leaves remainder either \(1\) or \(3\) upon division by \(4\), so every prime greater than \(2\) has either the form \(4k + 1\) (like \(5, 13, 17, 29\)) or the form \(4k + 3\) (like \(3, 7, 11, 19, 23\)). Are there infinitely many primes of the form \(4k + 3\)?
+
+To answer this, we explicitly supply one standard arithmetic fact: every integer \(N > 1\) can be factored as a product of one or more prime numbers (not necessarily distinct). Now inspect how remainders modulo \(4\) behave when we multiply two odd integers:
+
+[TABLE]
+First factor | Second factor | Product | Remainder modulo \(4\)
+\(4a + 1\) | \(4b + 1\) | \(4(4ab + a + b) + 1\) | \(1\)
+\(4a + 1\) | \(4b + 3\) | \(4(4ab + 3a + b) + 3\) | \(3\)
+\(4a + 3\) | \(4b + 3\) | \(4(4ab + 3a + 3b + 2) + 1\) | \(1\)
+[/TABLE]
+
+Look at the first row of the table: the class of integers of the form \(4k + 1\) is CLOSED under multiplication! Multiplying two numbers of the form \(4k + 1\) yields a number of the form \(4k + 1\); multiplying a third factor of the form \(4k + 1\) keeps the product in the form \(4k + 1\), and so on for any finite product. Therefore, if an odd integer \(N > 1\) has remainder \(3\) modulo \(4\), it is IMPOSSIBLE for all of its prime factors to have the form \(4k + 1\); at least one prime factor of \(N\) MUST have the form \(4k + 3\)!
+
+That observation powers the following non-constructive proof by contradiction.
+
+[CALLOUT]
+id: proof-primes-4k3
+label: Proof
+title: Theorem: There are infinitely many primes of the form \(4k + 3\)
+tone: note
+
+Proof: Suppose for the sake of contradiction that there are only finitely many primes of the form \(4k + 3\). List all of them as \(p_1, p_2, \dots, p_r\) (note \(r \ge 1\), since \(3 = 4(0) + 3\) is such a prime).
+
+Consider the integer
+\[
+N = 4(p_1 p_2 \cdots p_r) - 1.
+\]
+Since \(p_1 \ge 3\), we have \(N \ge 4(3) - 1 = 11 > 1\). Writing
+\[
+N = 4(p_1 p_2 \cdots p_r - 1) + 3
+\]
+shows that \(N\) is odd and leaves remainder \(3\) upon division by \(4\).
+
+By our supplied prime-factorization fact, write \(N = q_1 q_2 \cdots q_m\) as a product of primes. Because \(N\) is odd, none of the primes \(q_j\) equals \(2\); hence every \(q_j\) has either the form \(4a + 1\) or the form \(4a + 3\).
+
+If EVERY prime factor \(q_j\) had the form \(4a + 1\), then by closure of the \(4a + 1\) class under multiplication, their product \(N\) would also have the form \(4c + 1\) — contradicting the fact that \(N\) leaves remainder \(3\) modulo \(4\). Therefore, there exists at least one prime divisor \(q\) of \(N\) of the form \(4k + 3\).
+
+Since \(p_1, p_2, \dots, p_r\) was assumed to be the complete list of all primes of the form \(4k + 3\), we must have \(q = p_j\) for some \(j \in \{1, \dots, r\}\). Then \(q \mid 4(p_1 p_2 \cdots p_r)\) and \(q \mid N\), so
+\[
+q \mid \bigl(4(p_1 p_2 \cdots p_r) - N\bigr) \implies q \mid 1,
+\]
+contradicting \(q \ge 2\). Therefore there are infinitely many primes of the form \(4k + 3\).
+[/CALLOUT]
+
+Why did [REF: proof-primes-4k3 | this proof] use \(N = 4(p_1 \cdots p_r) - 1\) rather than \(4(p_1 \cdots p_r) + 3\)? Check what happens if \(3\) is on the list (say \(p_1 = 3\)): then \(3\) ALREADY divides \(4(3 p_2 \cdots p_r) + 3 = 3(4 p_2 \cdots p_r + 1)\) — wait, that would NOT give \(q \mid 1\)! By subtracting \(1\) instead of adding \(3\), \(N = 4(p_1 \cdots p_r) - 1\) is guaranteed to be coprime to EVERY \(p_j\) on the list (including \(3\)) while still leaving remainder \(3\) modulo \(4\)!
+
+Now test the limits of the method: can we copy [REF: proof-primes-4k3 | the exact same proof] with \(M = 4(p_1 \cdots p_r) + 1\) to prove there are infinitely many primes of the form \(4k + 1\)? Look back at the third row of our multiplication table:
+\[
+(4a + 3)(4b + 3) = 4(4ab + 3a + 3b + 2) + 1.
+\]
+Two primes of the form \(4k + 3\) multiply to give remainder \(1\) modulo \(4\)! For example, \(M = 4(5) + 1 = 21 = 3 \cdot 7\) has remainder \(1\) modulo \(4\), yet ALL of its prime factors (\(3\) and \(7\)) have the form \(4k + 3\)! Because the \(4k + 3\) class is NOT closed under multiplication, knowing \(M \equiv 1 \pmod 4\) does NOT force \(M\) to have a prime factor of the form \(4k + 1\). (There ARE infinitely many primes of the form \(4k + 1\), but proving it requires a different construction such as \((2 p_1 \cdots p_r)^2 + 1\) and deeper facts about squares modulo a prime.)
+
+[QUESTION 2]
+[ANSWER: B]
+In the proof that there are infinitely many primes of the form \(4k + 3\), suppose someone replaces \(N = 4(p_1 p_2 \cdots p_r) - 1\) with \(N' = 4(p_1 p_2 \cdots p_r) + 3\) while keeping \(p_1 = 3\) on the list \(p_1, \dots, p_r\). What goes wrong with the final divisibility step?
+
+(A) \(N'\) no longer leaves remainder \(3\) upon division by \(4\).
+(B) Because \(p_1 = 3\) divides both \(4(p_1 \cdots p_r)\) and \(3\), the prime \(q = 3\) CAN divide \(N'\), yielding \(q \mid 3\) instead of \(q \mid 1\), so no contradiction is reached.
+(C) \(N'\) becomes even, so \(2\) divides \(N'\).
+(D) \(N'\) can have all of its prime factors of the form \(4a + 1\).
+(E) \(N'\) is smaller than \(1\), so it has no prime factorization.
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Why does the attempted imitation of the \(4k + 3\) proof using \(M = 4(p_1 \cdots p_r) + 1\) FAIL to prove that there are infinitely many primes of the form \(4k + 1\)?
+
+(A) Because \(M = 4(p_1 \cdots p_r) + 1\) is always divisible by \(p_1\).
+(B) Because there are only finitely many primes of the form \(4k + 1\).
+(C) Because \(M\) can be even when \(r\) is even.
+(D) Because a product of an even number of primes of the form \(4k + 3\) also leaves remainder \(1\) modulo \(4\), so \(M\) need not have ANY prime factor of the form \(4k + 1\).
+(E) Because \(M\) itself is always composite.
+[/QUESTION]
+
+=== SECTION 3: Classical validity and what construction adds ===
+
+First-time readers sometimes feel uneasy about non-constructive proofs: "Wait — if you can't tell me WHICH pair \((a, b)\) works, did you really prove one exists?"
+
+In standard (classical) mathematics, the answer is an emphatic YES! Classical logic accepts both the Law of Excluded Middle (\(Q \vee \neg Q\)) and double-negation elimination (\(\neg\neg S \equiv S\)). Under those principles, proving that \(\neg(\exists x,\, P(x))\) leads to a contradiction IS logically equivalent to proving \(\exists x,\, P(x)\), and proving \(\exists x,\, P(x)\) under both \(Q\) and \(\neg Q\) establishes \(\exists x,\, P(x)\) unconditionally.
+
+What, then, is the genuine difference between constructive and non-constructive existence proofs? It is not validity — it is INFORMATION CONTENT.
+
+[TABLE]
+Proof style | Logical mechanism | Establishes \(\exists x,\, P(x)\) in classical logic? | Extra information delivered
+Constructive witness | Exhibit a single \(x_0 \in D\) and verify \(P(x_0)\) | Yes | Exact object \(x_0\) (or an explicit recipe to compute it)
+Excluded-middle case split | Show \(Q \Rightarrow \exists x\, P(x)\) and \(\neg Q \Rightarrow \exists x\, P(x)\) | Yes | Typically narrows the witness to a small candidate pool without selecting which one
+Indirect existence (contradiction) | Assume \(\forall x,\, \neg P(x)\) and derive \(R \wedge \neg R\) | Yes | Proves non-emptiness; may yield no direct formula for a witness (though sometimes yields a finite search bound)
+[/TABLE]
+
+[CALLOUT]
+id: classical-validity-note
+label: Note
+title: Validity versus constructiveness
+tone: note
+
+(1) A non-constructive proof is every bit as rigorous and valid in classical mathematics as a constructive proof.
+(2) Whenever a constructive proof is reasonably short, mathematicians often prefer it because it delivers a concrete object, algorithm, or quantitative bound in addition to truth.
+(3) Conversely, non-constructive proofs often establish deep theorems in a few elementary lines where a constructive proof would require vastly heavier machinery (just as [REF: proof-irrat-power-rat | the \((\sqrt{2})^{\sqrt{2}}\) proof] avoids the Gelfond–Schneider theorem).
+[/CALLOUT]
+
+Notice that a non-constructive proof can still carry useful partial structure! In [REF: proof-primes-4k3 | the \(4k + 3\) prime proof], given ANY finite list \(p_1, \dots, p_r\) of \(4k + 3\) primes, the proof does not hand you a closed formula for the next prime, yet it DOES guarantee that a new prime of the form \(4k + 3\) exists somewhere among the prime factors of \(N = 4(p_1 \cdots p_r) - 1\) — so it actually gives an upper bound \(q \le 4(p_1 \cdots p_r) - 1\)! Similarly, [REF: proof-irrat-power-rat | the \((\sqrt{2})^{\sqrt{2}}\) proof] guarantees a witness among just two explicit pairs.
+
+[QUESTION 4]
+[ANSWER: A]
+Suppose someone proves the following statement: "Among any \(4\) integers \(n_1, n_2, n_3, n_4 \in \mathbb{Z}\), there exist two distinct indices \(i \ne j\) such that \(3 \mid (n_i - n_j)\)" by arguing: "Suppose for contradiction that no two have the same remainder upon division by \(3\); then the \(4\) integers must have \(4\) distinct remainders in \(\{0, 1, 2\}\), which is impossible since that set has only \(3\) elements." Which statement best describes this proof?
+
+(A) It is a valid non-constructive existence proof by contradiction: it guarantees a pair \((n_i, n_j)\) exists without specifying which pair works until concrete integers are supplied.
+(B) It is logically invalid because it never identifies the exact indices \(i\) and \(j\).
+(C) It is a constructive proof because it explicitly lists the remainders \(\{0, 1, 2\}\).
+(D) It is logically invalid because \(n_i - n_j\) might be negative.
+(E) It uses the Law of Excluded Middle rather than proof by contradiction.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Which choice of integer \(N\) allows a direct adaptation of the \(4k + 3\) prime proof to prove that there are infinitely many primes of the form \(6k + 5\), assuming \(p_1, p_2, \dots, p_r\) is a complete finite list of such primes?
+
+(A) \(N = 6(p_1 p_2 \cdots p_r) + 1\), because every prime greater than \(3\) is \(6a + 1\) or \(6a + 5\).
+(B) \(N = 6(p_1 p_2 \cdots p_r) + 5\), because \(N\) leaves remainder \(5\) modulo \(6\) and cannot be divisible by \(5\).
+(C) \(N = 6(p_1 p_2 \cdots p_r) - 1\), because \(N\) is coprime to \(2, 3,\) and every \(p_j\), leaves remainder \(5\) modulo \(6\), and the \(6a + 1\) class is closed under multiplication.
+(D) \(N = 6(p_1 p_2 \cdots p_r) + 3\), because \(N\) is odd and greater than \(1\).
+(E) No such adaptation exists because \(6\) is divisible by both \(2\) and \(3\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suppose we already know that \(\sqrt{3}\) and \(\sqrt{2}\) are both irrational. Consider the real number \(c = (\sqrt{3})^{\sqrt{2}}\). Does the excluded-middle argument from Section 1 still prove that there exist irrational numbers \(a, b\) with \(a^b \in \mathbb{Q}\) using this \(c\)?
+
+(A) No, because \(\sqrt{3}\) and \(\sqrt{2}\) are different numbers, so Case 1 fails.
+(B) No, because \((\sqrt{3})^2 = 3\) is odd rather than even.
+(C) No, because raising \(c\) to the power \(\sqrt{3}\) gives \((\sqrt{3})^{\sqrt{6}}\), which might still be irrational.
+(D) Yes, because \(c = (\sqrt{3})^{\sqrt{2}}\) is easily proved rational by squaring.
+(E) Yes: if \(c \in \mathbb{Q}\), take \(a = \sqrt{3}\) and \(b = \sqrt{2}\); if \(c \notin \mathbb{Q}\), take \(a = c\) and \(b = \sqrt{2}\), giving \(a^b = ((\sqrt{3})^{\sqrt{2}})^{\sqrt{2}} = (\sqrt{3})^2 = 3 \in \mathbb{Q}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+A student claims to have proved \(\exists x \in \mathbb{R},\, P(x)\) by writing: "By the Law of Excluded Middle, either \(Q\) holds or \(\neg Q\) holds. If \(Q\) holds, then \(x = 5\) satisfies \(P(5)\). If \(\neg Q\) holds, then \(P(5)\) might be false, so assume for contradiction that \(P(x)\) fails for all \(x\); wait, that gives no contradiction unless we also assume \(Q\)." Why does this attempted non-constructive proof fail?
+
+(A) Because non-constructive proofs are not allowed to combine case analysis with contradiction.
+(B) Because in the \(\neg Q\) case, assuming \(Q\) smuggles in an assumption forbidden in that branch, leaving the \(\neg Q\) branch unproved.
+(C) Because \(x = 5\) is a specific number, which turns the argument into an invalid proof by example.
+(D) Because \(Q \vee \neg Q\) only applies when \(Q\) is an equation about integers.
+(E) Because an excluded-middle proof must produce the EXACT SAME witness \(x\) in both cases.
+[/BONUS]

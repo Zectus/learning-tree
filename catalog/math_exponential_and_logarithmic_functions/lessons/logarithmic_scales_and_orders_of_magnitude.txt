@@ -1,0 +1,224 @@
+=== SECTION 1: Compressing orders of magnitude into additive scales ===
+
+The quietest sound a human ear can detect has physical intensity \(I_0 = 10^{-12}\text{ W/m}^2\), whereas a rock concert or jet engine can reach \(1\text{ W/m}^2\)—a ratio of \(10^{12}\) (one trillion!). Hydrogen-ion concentrations in common liquids span an even wider \(14\) orders of magnitude, from \(1\text{ mol/L}\) in strong battery acid down to \(10^{-14}\text{ mol/L}\) in strong lye. Plotting quantities that span a trillionfold range on a linear ruler crushes almost every everyday measurement into an unreadable sliver near zero.
+
+Base-10 logarithms (\(\log_{10}\), often written simply as \(\log\)) solve this compression problem by turning powers of \(10\) into small additive steps. Every increase of \(1\) in \(\log_{10}(x)\) represents a multiplication of \(x\) by \(10\) (one order of magnitude). Three scientific scales use this exact design:
+
+1. Seismic magnitude: Comparing an earthquake's measured wave intensity \(I\) to a standard reference intensity \(I_0\) defines its magnitude
+\[
+M = \log_{10}\!\left(\frac{I}{I_0}\right).
+\]
+2. Sound intensity level (decibels, \(\text{dB}\)): Multiplying \(\log_{10}(I/I_0)\) by \(10\) subdivides each order of magnitude into ten convenient steps called decibels:
+\[
+\beta = 10\log_{10}\!\left(\frac{I}{I_0}\right), \qquad I_0 = 10^{-12}\text{ W/m}^2.
+\]
+3. Acidity (\(\text{pH}\)): Because hydrogen-ion concentrations \([\text{H}^+]\) (in moles per liter, \(\text{mol/L}\)) are almost always small negative powers of \(10\) (such as \(10^{-7}\)), inserting a minus sign yields positive numbers:
+\[
+\text{pH} = -\log_{10}[\text{H}^+].
+\]
+
+[CALLOUT]
+id: log-scales-def
+label: Definition
+title: Standard base-10 logarithmic scales and their inverses
+tone: key
+
+Each scale converts between a physical ratio or concentration and a compact additive score using base-10 exponentials and logarithms:
+
+(1) Seismic magnitude:
+\[
+M = \log_{10}\!\left(\frac{I}{I_0}\right) \iff I = I_0 \cdot 10^M.
+\]
+(2) Sound intensity level (decibels):
+\[
+\beta = 10\log_{10}\!\left(\frac{I}{I_0}\right) \iff I = I_0 \cdot 10^{\beta / 10} \qquad \bigl(I_0 = 10^{-12}\text{ W/m}^2\bigr).
+\]
+(3) Acidity (\(\text{pH}\)):
+\[
+\text{pH} = -\log_{10}[\text{H}^+] \iff [\text{H}^+] = 10^{-\text{pH}}.
+\]
+[/CALLOUT]
+
+[TABLE]
+Scale | Formula | Effect of \(+1\) unit on scale | Physical direction
+Seismic magnitude \(M\) | \(\log_{10}(I/I_0)\) | Multiplies \(I\) by \(10\) | Larger \(M\) means larger \(I\)
+Sound level \(\beta\) (\(\text{dB}\)) | \(10\log_{10}(I/I_0)\) | Multiplies \(I\) by \(10^{0.1} \approx 1.26\) (\(10\text{ dB} \to 10\times\)) | Larger \(\beta\) means larger \(I\)
+Acidity \(\text{pH}\) | \(-\log_{10}[\text{H}^+]\) | Divides \([\text{H}^+]\) by \(10\) | Smaller \(\text{pH}\) means higher \([\text{H}^+]\)
+[/TABLE]
+
+The graph below shows how the decibel curve \(\beta = 10\log_{10}(I/I_0)\) bends sharply downward as \(I/I_0\) grows: jumping from \(10\text{ dB}\) to \(20\text{ dB}\) requires multiplying intensity by \(10\) (adding \(90 I_0\)), whereas jumping another \(10\text{ dB}\) to \(30\text{ dB}\) requires adding \(900 I_0\)!
+
+[GRAPH]
+type: function2d
+title: Decibel level \(\beta = 10\log_{10}(I/I_0)\) compresses tenfold jumps into equal \(10\text{ dB}\) steps
+xlabel: Intensity ratio I / I0
+ylabel: Sound level (dB)
+xrange: 1, 1000
+yrange: 0, 35
+trace: 10 * log(x) / log(10) | label: \(\beta = 10\log_{10}(I/I_0)\)
+point: 10, 10 | label: \((10, 10)\)
+point: 100, 20 | label: \((100, 20)\)
+point: 1000, 30 | label: \((1000, 30)\)
+[/GRAPH]
+
+Worked example (Inverting scale readings):
+- Lemon juice has \(\text{pH} = 2.3\). By [REF: log-scales-def.3 | the inverse pH relation],
+\[
+[\text{H}^+] = 10^{-2.3} \approx 5.01 \times 10^{-3}\text{ mol/L}.
+\]
+- A busy street measures \(\beta = 75\text{ dB}\). By [REF: log-scales-def.2 | the inverse decibel relation],
+\[
+I = 10^{-12} \cdot 10^{75/10} = 10^{-12} \cdot 10^{7.5} = 10^{-4.5} \approx 3.16 \times 10^{-5}\text{ W/m}^2.
+\]
+
+[QUESTION 1]
+[ANSWER: B]
+Using the reference intensity \(I_0 = 10^{-12}\text{ W/m}^2\), what is the physical sound intensity \(I\) (in \(\text{W/m}^2\)) of a sound measuring \(\beta = 90\text{ dB}\)?
+
+(A) \(10^{-9}\text{ W/m}^2\)
+(B) \(10^{-3}\text{ W/m}^2\)
+(C) \(10^{9}\text{ W/m}^2\)
+(D) \(9 \times 10^{-12}\text{ W/m}^2\)
+(E) \(10^{78}\text{ W/m}^2\)
+[/QUESTION]
+
+=== SECTION 2: Translating additive differences into multiplicative ratios ===
+
+When comparing two earthquakes, two sounds, or two chemical solutions, you do not even need the value of \(I_0\). The quotient law of logarithms cancels \(I_0\) completely and turns any additive scale difference directly into a multiplicative physical ratio:
+\[
+M_2 - M_1 = \log_{10}\!\left(\frac{I_2}{I_0}\right) - \log_{10}\!\left(\frac{I_1}{I_0}\right) = \log_{10}\!\left(\frac{I_2 / I_0}{I_1 / I_0}\right) = \log_{10}\!\left(\frac{I_2}{I_1}\right).
+\]
+Rewriting in exponential form gives \(\dfrac{I_2}{I_1} = 10^{M_2 - M_1}\). Performing the same subtraction for decibels and for \(\text{pH}\) yields three parallel ratio bridges.
+
+[CALLOUT]
+id: ratio-bridge
+label: Principle
+title: Converting scale differences into physical ratios
+tone: key
+
+Let \(\Delta M = M_2 - M_1\), \(\Delta\beta = \beta_2 - \beta_1\), and \(\Delta\text{pH} = \text{pH}_2 - \text{pH}_1\):
+
+(1) Seismic intensity ratio:
+\[
+\frac{I_2}{I_1} = 10^{M_2 - M_1}.
+\]
+(2) Sound intensity ratio:
+\[
+\frac{I_2}{I_1} = 10^{(\beta_2 - \beta_1) / 10}.
+\]
+(3) Hydrogen-ion concentration ratio (watch the sign reversal!):
+\[
+\text{pH}_2 - \text{pH}_1 = -\log_{10}\!\left(\frac{[\text{H}^+]_2}{[\text{H}^+]_1}\right) = \log_{10}\!\left(\frac{[\text{H}^+]_1}{[\text{H}^+]_2}\right) \implies \frac{[\text{H}^+]_1}{[\text{H}^+]_2} = 10^{\text{pH}_2 - \text{pH}_1}.
+\]
+[/CALLOUT]
+
+Worked examples:
+1. Seismic ratio: Compare a magnitude \(6.8\) earthquake to a magnitude \(5.2\) earthquake. The difference is \(\Delta M = 6.8 - 5.2 = 1.6\). By [REF: ratio-bridge.1 | the seismic ratio rule],
+\[
+\frac{I_2}{I_1} = 10^{1.6} \approx 39.8.
+\]
+A seemingly modest \(1.6\)-point increase on the magnitude scale corresponds to nearly \(40\) times the wave intensity!
+
+2. Decibel doubling benchmark: What happens when sound level increases by \(+3\text{ dB}\)? By [REF: ratio-bridge.2 | the decibel ratio rule],
+\[
+\frac{I_2}{I_1} = 10^{3/10} = 10^{0.3} \approx 1.995 \approx 2.
+\]
+Every \(+3\text{ dB}\) roughly doubles physical sound intensity, while every \(+10\text{ dB}\) multiplies intensity by \(10\).
+
+3. Acidity comparison: Black coffee has \(\text{pH} = 5.0\) while pure water has \(\text{pH} = 7.0\). Because coffee has the LOWER \(\text{pH}\), coffee is more acidic. By [REF: ratio-bridge.3 | the pH ratio rule],
+\[
+\frac{[\text{H}^+]_{\text{coffee}}}{[\text{H}^+]_{\text{water}}} = 10^{7.0 - 5.0} = 10^2 = 100.
+\]
+Coffee has \(100\) times the hydrogen-ion concentration of pure water.
+
+[QUESTION 2]
+[ANSWER: A]
+Vinegar has \(\text{pH} = 2.5\) and milk has \(\text{pH} = 6.5\). How does the hydrogen-ion concentration \([\text{H}^+]\) of vinegar compare with that of milk?
+
+(A) Vinegar has \(10{,}000\) times the \([\text{H}^+]\) of milk
+(B) Milk has \(10{,}000\) times the \([\text{H}^+]\) of vinegar
+(C) Vinegar has \(4\) times the \([\text{H}^+]\) of milk
+(D) Vinegar has \(40\) times the \([\text{H}^+]\) of milk
+(E) Milk has \(400\) times the \([\text{H}^+]\) of vinegar
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: C]
+A concert speaker system increases its sound level from \(84\text{ dB}\) to \(104\text{ dB}\). By what factor does the physical sound intensity \(I\) increase?
+
+(A) \(2\)
+(B) \(20\)
+(C) \(100\)
+(D) \(200\)
+(E) \(10^{20}\)
+[/QUESTION]
+
+=== SECTION 3: Combining independent physical sources ===
+
+If a single vacuum cleaner produces \(70\text{ dB}\), what happens when you switch on a second identical vacuum cleaner next to it? A notorious misconception adds the two decibel readings to get \(70 + 70 = 140\text{ dB}\)—which would be louder than a jet engine at takeoff!
+
+Logarithmic readings NEVER add when independent physical sources combine. Instead, the underlying PHYSICAL intensities add: \(I_{\text{total}} = I_1 + I_2\). For \(N\) identical sources, each of individual intensity \(I\) and sound level \(\beta_1 = 10\log_{10}(I / I_0)\), the combined intensity is \(N \cdot I\). Applying the product law of logarithms gives
+\[
+\beta_{\text{total}} = 10\log_{10}\!\left(\frac{N \cdot I}{I_0}\right) = 10\log_{10}\!\left(\frac{I}{I_0}\right) + 10\log_{10}(N) = \beta_1 + 10\log_{10}(N).
+\]
+For two identical \(70\text{ dB}\) machines (\(N = 2\)):
+\[
+\beta_{\text{total}} = 70 + 10\log_{10}(2) \approx 70 + 3.01 = 73.01\text{ dB}.
+\]
+Even ten identical \(70\text{ dB}\) machines running together produce only \(70 + 10\log_{10}(10) = 80\text{ dB}\).
+
+What if two combined sources have DIFFERENT levels, say a \(60\text{ dB}\) fan and a \(70\text{ dB}\) pump? Convert both back to linear multiples of \(I_0\), add the intensities, and take the logarithm again:
+- Fan: \(I_1 = 10^{60/10} I_0 = 10^6 I_0\).
+- Pump: \(I_2 = 10^{70/10} I_0 = 10^7 I_0\).
+- Total: \(I_{\text{total}} = (10^6 + 10^7) I_0 = 11 \times 10^6 I_0 = 1.1 \times 10^7 I_0\).
+- Combined level:
+\[
+\beta_{\text{total}} = 10\log_{10}(1.1 \times 10^7) = 70 + 10\log_{10}(1.1) \approx 70.41\text{ dB}.
+\]
+Notice how strongly the louder source dominates: adding a \(60\text{ dB}\) sound onto a \(70\text{ dB}\) sound raises the total by less than half a decibel!
+
+[CALLOUT]
+id: combining-sources
+label: Common Pitfall
+title: Combining physical sources without adding logarithmic readings
+tone: caution
+
+(1) Never add decibels, magnitudes, or \(\text{pH}\) values directly. Always convert each reading back to its underlying linear quantity (intensity \(I\) or concentration \([\text{H}^+]\)), combine linearly, and then reapply the logarithm.
+(2) Shortcut for \(N\) identical sound sources of level \(\beta_1\):
+\[
+\beta_{\text{total}} = \beta_1 + 10\log_{10}(N).
+\]
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: C]
+A single industrial fan produces a sound level of \(62\text{ dB}\). How many identical fans running together would be required to produce a combined sound level of \(82\text{ dB}\)?
+
+(A) \(2\text{ fans}\)
+(B) \(20\text{ fans}\)
+(C) \(100\text{ fans}\)
+(D) \(200\text{ fans}\)
+(E) \(1000\text{ fans}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Machine A alone produces \(80\text{ dB}\), Machine B alone produces \(80\text{ dB}\), and Machine C alone produces \(90\text{ dB}\). When all three independent machines run simultaneously, what is the exact combined sound level in decibels?
+
+(A) \(90 + 10\log_{10}(1.2)\text{ dB}\)
+(B) \(90 + 10\log_{10}(3)\text{ dB}\)
+(C) \(80 + 10\log_{10}(3)\text{ dB}\)
+(D) \(250\text{ dB}\)
+(E) \(90 + 10\log_{10}(2)\text{ dB}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Equal volumes of two strong-acid solutions—Solution 1 with \(\text{pH} = 3.0\) and Solution 2 with \(\text{pH} = 5.0\)—are mixed together so that the mixture's hydrogen-ion concentration \([\text{H}^+]_{\text{mix}}\) is the exact arithmetic average of the two individual concentrations. Which expression equals the exact \(\text{pH}\) of the mixture?
+
+(A) \(4.0\)
+(B) \(3 - \log_{10}(0.505)\)
+(C) \(3 + \log_{10}(0.505)\)
+(D) \(5 - \log_{10}(101)\)
+(E) \(4 - \log_{10}(2)\)
+[/BONUS]

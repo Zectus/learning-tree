@@ -1,0 +1,247 @@
+=== SECTION 1: Organizing data into cases, variables, and values ===
+
+Suppose a university health clinic logs information from \(180\) student visits during one week: each student's ID number, academic year, body temperature in degrees Celsius, self-reported pain rating on a \(1\) to \(5\) scale, number of prior visits this semester, and wait time in minutes. Before computing a single average or drawing a chart, an analyst must answer two foundational questions: how is this information structured, and which mathematical operations even make sense on each column? Computing an "average student ID number" or claiming that a \(38^\circ\text{C}\) temperature is "twice as warm" as \(19^\circ\text{C}\) yields a number that looks quantitative yet means nothing. Descriptive statistics begins by auditing the structure and measurement scale of a dataset.
+
+[CALLOUT]
+id: tidy-data-structure
+label: Definition
+title: Observational units, variables, values, and tidy layout
+tone: key
+
+A rectangular dataset organizes recorded information using three basic components:
+
+(1) An observational unit (also called a case or individual) is the person, object, event, or entity about which data are collected.
+(2) A variable is a characteristic or attribute recorded for each observational unit.
+(3) A value is the specific measurement or category taken by a variable on a single observational unit.
+
+A dataset is in tidy (case-by-variable) layout when each row corresponds to exactly one observational unit, each column corresponds to exactly one variable, and each cell holds a single value.
+[/CALLOUT]
+
+To see what [REF: tidy-data-structure | tidy layout] looks like in practice, examine a five-visit excerpt from the clinic log below. Every row represents one visit (the observational unit), every column records a single attribute (such as wait time or pain rating), and every cell contains one entry with a consistent unit.
+
+[TABLE]
+Visit ID | Academic year | Temp (\(^\circ\text{C}\)) | Pain (\(1\text{–}5\)) | Prior visits | Wait time (min)
+1041 | First-year | 36.8 | 2 | 0 | 14.5
+1042 | Junior | 38.4 | 4 | 2 | 9.0
+1043 | Senior | 37.1 | 1 | 1 | 22.0
+1044 | Sophomore | 37.9 | 3 | 0 | 11.5
+1045 | Graduate | 36.6 | 2 | 3 | 16.0
+[/TABLE]
+
+Real spreadsheets frequently violate tidy layout. For instance, a report might list clinic branches down the rows and place calendar months ("Jan", "Feb", "Mar") across the column headers, with visit counts inside the grid. In that wide summary table, the variable "month" is spread across multiple column headers instead of occupying a single column, and "visit count" is scattered across cells rather than sitting in one dedicated column. Reorganizing that table so each row represents one branch-month combination, with columns for branch, month, and visit count, restores tidy structure and ensures every variable can be audited and summarized cleanly.
+
+Equally important before summarizing any dataset is identifying whether the collected rows constitute the entire group of interest or only a subset of it.
+
+[CALLOUT]
+id: pop-vs-sample
+label: Definition
+title: Population versus sample
+tone: key
+
+(1) A population is the complete collection of all observational units of interest for a given question. Its size is denoted by \(N\), and a numerical summary computed from the entire population is called a descriptive parameter.
+(2) A sample is a subset of observational units selected from the population. Its size is denoted by \(n\) (with \(n \le N\)), and a numerical summary computed from the sample is called a sample statistic.
+[/CALLOUT]
+
+In descriptive statistics, the distinction in [REF: pop-vs-sample | population versus sample] determines both notation and scope. If a city transit agency wants to describe bus punctuality across all \(N = 3{,}600\) scheduled trips in October and downloads GPS records for every single trip, the resulting average delay is a population parameter describing October's complete schedule. If instead an auditor pulls records for \(n = 150\) trips from October to summarize typical performance, the average delay of those \(150\) trips is a sample statistic. Notice that whether a dataset is a population or a sample depends on the question being asked: all \(180\) clinic visits from one week form a population if the clinic director only wishes to describe that specific week, but form a sample if the director intends to learn about student visits across the entire academic year. How to select random samples and use sample statistics to infer unknown population parameters are topics for later courses in probability and statistical inference; here we focus strictly on describing the data in hand accurately.
+
+[QUESTION 1]
+[ANSWER: D]
+A university registrar collects the final exam scores of all \(N = 420\) students enrolled in Calculus I during the fall semester to write an internal report describing fall semester performance. A teaching assistant also selects \(n = 35\) exams from one recitation section and records the average score of those \(35\) exams. Which statement accurately identifies the structure of these two summaries?
+
+(A) Both averages are sample statistics because \(420\) students are only a subset of all students who will ever take Calculus I.
+(B) Both averages are population parameters because both are computed from exact, observed exam records with no missing scores.
+(C) The average of all \(420\) scores is a sample statistic of size \(n = 420\), and the average of the \(35\) scores is a population parameter of size \(N = 35\).
+(D) Relative to the registrar's goal of describing fall Calculus I performance, the average of all \(420\) scores is a population parameter (\(N = 420\)), whereas the average of the \(35\) scores is a sample statistic (\(n = 35\)).
+(E) Neither average is a parameter or a statistic until random sampling is used to collect the scores.
+[/QUESTION]
+
+=== SECTION 2: Categorical and quantitative variables ===
+
+Once a dataset is arranged in tidy layout, the first classification step divides variables into two broad families based on what their values represent.
+
+[CALLOUT]
+id: var-types
+label: Definition
+title: Categorical and quantitative variables
+tone: key
+
+(1) A categorical (or qualitative) variable assigns each observational unit to one of a set of non-overlapping groups or labels.
+(2) A quantitative (or numerical) variable records a numerical measurement or count for which arithmetic operations such as subtraction and averaging reflect genuine quantities.
+(3) A quantitative variable is discrete if its possible values form isolated, countable numbers (typically counts such as \(0, 1, 2, \dots\)), and continuous if it can in principle take any real value within an interval (such as time, mass, or length), limited only by instrument precision.
+[/CALLOUT]
+
+Look back at the clinic table using [REF: var-types | these definitions]. Academic year is categorical because it places each student into a named group. Prior visits (\(0, 1, 2, 3, \dots\)) is discrete quantitative: a student can have \(1\) or \(2\) prior visits, never \(1.4\) prior visits, and the difference \(3 - 1 = 2\) represents two additional visits. Wait time and body temperature are continuous quantitative: even though a clock rounds wait times to the nearest half-minute (\(14.5\) min, \(9.0\) min) and a thermometer reads to tenths of a degree (\(36.8^\circ\text{C}\)), the underlying physical quantities vary continuously along an interval. Recording a continuous variable to finite decimal precision does not make it discrete; continuity refers to the nature of the measured quantity, not the number of digits displayed by a sensor.
+
+Two frequent misclassifications show why looking at whether a column contains digits is never enough. First, Visit ID (\(1041, 1042, 1043, \dots\)), ZIP codes, jersey numbers, and phone area codes are written with digits, yet they are categorical variables, not quantitative ones. Subtracting Visit ID \(1043\) from Visit ID \(1045\) does not measure an amount of anything, and the average of ZIP codes \(02138\) and \(94305\) is meaningless. Second, discrete quantitative variables such as household size or number of defective items per batch are sometimes mistakenly labeled categorical simply because they take only a few distinct whole-number values. If a variable counts how many items occur, the spacing between \(0, 1, 2, 3\) is exact and arithmetically meaningful, making it discrete quantitative rather than categorical.
+
+[QUESTION 2]
+[ANSWER: B]
+An e-commerce analyst inspects four columns in a customer order table: (I) five-digit shipping postal code, (II) number of items in the order, (III) package weight recorded to the nearest \(0.1\text{ kg}\), and (IV) payment method ("Card", "Bank", "Wallet"). Which classification correctly matches all four variables?
+
+(A) I: discrete quantitative; II: discrete quantitative; III: continuous quantitative; IV: categorical
+(B) I: categorical; II: discrete quantitative; III: continuous quantitative; IV: categorical
+(C) I: categorical; II: categorical; III: discrete quantitative; IV: categorical
+(D) I: categorical; II: discrete quantitative; III: discrete quantitative; IV: categorical
+(E) I: discrete quantitative; II: continuous quantitative; III: continuous quantitative; IV: categorical
+[/QUESTION]
+
+=== SECTION 3: Stevens' four measurement scales ===
+
+Dividing variables into categorical and quantitative is still too coarse for statistical work. Within categorical variables, "Academic year" has a natural progression (First-year through Graduate) whereas "Blood type" does not. Within quantitative variables, wait time has a genuine zero meaning "no waiting at all," whereas Celsius temperature has an arbitrary zero set at the freezing point of water. In 1946, psychologist Stanley Smith Stevens organized these distinctions into four nested measurement scales, each adding a new meaningful mathematical operation to the ones before it.
+
+[CALLOUT]
+id: stevens-scales
+label: Definition
+title: Stevens' four measurement scales
+tone: key
+
+Each measurement scale is defined by the comparisons and operations that remain valid on its values:
+
+(1) Nominal: values are distinct labels with no intrinsic order. Only equality (\(=\) and \(\ne\)) is meaningful.
+(2) Ordinal: values are categories with a meaningful rank order, but the spacing between consecutive levels is not guaranteed to be equal. Equality and ordering (\(<, >\)) are meaningful.
+(3) Interval: values are numerical measurements with equal unit spacing, so differences (\(x_2 - x_1\)) and ratios of differences are meaningful, but the zero point is arbitrary rather than representing a complete absence of the quantity.
+(4) Ratio: values are numerical measurements with equal unit spacing and a true, non-arbitrary zero representing complete absence of the quantity. Equality, ordering, differences, and ratios (\(x_2 / x_1\) for \(x_1 \ne 0\)) are all meaningful.
+[/CALLOUT]
+
+The four scales form a hierarchy: every ratio variable is also interval, ordinal, and nominal, because you can always compare two wait times for equality, order them, subtract them, or divide them. Moving up the hierarchy grants additional arithmetic permissions; moving down strips them away.
+
+[TABLE]
+Scale | Type | True zero? | Meaningful operations | Typical examples
+Nominal | Categorical | No | \(=\), \(\ne\) (counts, proportions) | Blood type, Visit ID, ZIP code, eye color
+Ordinal | Categorical | No | Above plus \(<\), \(>\) (ranks, ordering) | Academic year, pain rating \(1\text{–}5\), letter grade, Likert scale
+Interval | Quantitative | No (arbitrary) | Above plus \(+\), \(-\) (differences) | Temperature (\(^\circ\text{C}\), \(^\circ\text{F}\)), calendar year, longitude
+Ratio | Quantitative | Yes (absence) | Above plus \(\times\), \(\div\) (ratios) | Wait time, prior visits, mass, Kelvin temperature, income
+[/TABLE]
+
+Why does the distinction between interval and ratio scales matter so much mathematically? Consider temperature measured in degrees Celsius (\(x\)) versus degrees Fahrenheit (\(y\)). Both scales measure the exact same physical thermal state, related by the linear conversion
+\[
+y = 1.8 x + 32.
+\]
+Suppose Room A is at \(x_1 = 10^\circ\text{C}\) and Room B is at \(x_2 = 20^\circ\text{C}\). Looking only at the Celsius numbers, someone might say Room B is "twice as hot" as Room A because \(20 / 10 = 2\). Convert both rooms to Fahrenheit: Room A is \(y_1 = 1.8(10) + 32 = 50^\circ\text{F}\), and Room B is \(y_2 = 1.8(20) + 32 = 68^\circ\text{F}\). Now the ratio is \(68 / 50 = 1.36\), not \(2\)! Even worse, on the Kelvin scale (\(K = x + 273.15\), which has a true physical zero at absolute zero), the ratio is \(293.15 / 283.15 \approx 1.035\). A physical claim cannot depend on which thermometer unit you picked. Because the Celsius-to-Fahrenheit line has a nonzero vertical intercept (\(32\)), it does not pass through the origin \((0, 0)\), so scaling \(x\) by \(2\) does not scale \(y\) by \(2\).
+
+By contrast, examine differences on an interval scale. Add a third room, Room C, at \(x_3 = 30^\circ\text{C}\) (\(y_3 = 86^\circ\text{F}\)). The temperature jump from Room A to Room C is \(30 - 10 = 20^\circ\text{C}\), which is twice the jump from Room A to Room B (\(20 - 10 = 10^\circ\text{C}\)). In Fahrenheit, the jumps are \(86 - 50 = 36^\circ\text{F}\) and \(68 - 50 = 18^\circ\text{F}\), and their ratio is \(36 / 18 = 2\)—identical! Algebraically, under any positive linear unit change \(y = ax + b\) (\(a > 0\)), the offset \(b\) cancels out in differences:
+\[
+\frac{y_3 - y_1}{y_2 - y_1} = \frac{a(x_3 - x_1)}{a(x_2 - x_1)} = \frac{x_3 - x_1}{x_2 - x_1},
+\]
+whereas raw ratios \(y_2 / y_1 = (a x_2 + b)/(a x_1 + b)\) match \(x_2 / x_1\) for all positive \(x_1, x_2\) only when \(b = 0\), meaning both scales share the same true zero.
+
+The graph below shows this geometry directly. On a ratio conversion such as meters to feet (\(y = 3.281 x\), or any line \(y = a x\) through the origin), doubling the horizontal coordinate always doubles the vertical coordinate. On the interval conversion \(y = 1.8 x + 32\), the vertical shift \(+32\) lifts the line off the origin, breaking raw ratios while keeping the slope constant so equal horizontal steps produce equal vertical steps.
+
+[GRAPH]
+type: function2d
+title: Interval conversion \(y = 1.8x + 32\) versus proportional ratio conversion \(y = 1.8x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 35
+yrange: 0, 100
+trace: 1.8*x + 32 | label: Interval: \(y = 1.8x + 32\)
+trace: 1.8*x | label: Ratio: \(y = 1.8x\)
+point: 10, 50 | label: \((10, 50)\)
+point: 20, 68 | label: \((20, 68)\)
+point: 10, 18 | label: \((10, 18)\)
+point: 20, 36 | label: \((20, 36)\)
+segment: 10, 50, 20, 50 | dashed: true
+segment: 20, 50, 20, 68 | label: \(\Delta y = 18\) | dashed: true
+[/GRAPH]
+
+[QUESTION 3]
+[ANSWER: C]
+A geographer records four measurements for a set of mountain weather stations: (1) station code (e.g., "MT-04"), (2) avalanche risk tier ("Low", "Moderate", "High", "Extreme"), (3) elevation in meters relative to mean sea level (where values can be negative in basins and \(0\) is sea level), and (4) total annual snowfall in centimeters. Which sequence correctly gives the measurement scales of (1), (2), (3), and (4) in order?
+
+(A) Nominal, nominal, ratio, ratio
+(B) Ordinal, ordinal, interval, ratio
+(C) Nominal, ordinal, interval, ratio
+(D) Nominal, ordinal, ratio, ratio
+(E) Nominal, ordinal, interval, interval
+[/QUESTION]
+
+=== SECTION 4: Scale pitfalls and auditing permissible summaries ===
+
+Knowing the definitions in [REF: stevens-scales | Stevens' four measurement scales] is only useful when you catch subtle misuses before running formulas. Three pitfalls appear repeatedly in applied datasets.
+
+[CALLOUT]
+id: scale-pitfalls
+label: Common pitfall
+title: Three frequent scale violations
+tone: caution
+
+(1) Numeric codes treated as quantitative: ID numbers, postal codes, and arbitrary group codes (\(1 = \text{North}, 2 = \text{South}, 3 = \text{East}\)) are nominal. Arithmetic on them reflects the coding scheme, not reality.
+(2) Ordinal ranks treated as equal-interval or ratio numbers: On a \(1\text{–}5\) pain scale or a \(1\text{–}5\) Likert survey ("Strongly Disagree" to "Strongly Agree"), \(4 > 2\), but the jump from \(1\) to \(2\) need not represent the same psychological or physical increment as the jump from \(4\) to \(5\), and a rating of \(4\) is not "twice as much pain" as a rating of \(2\).
+(3) Ratios formed on interval scales: Because \(0\) on an interval scale is a chosen reference point rather than complete absence, "twice as large" or "\(50\%\) higher" statements are invalid on Celsius temperatures, calendar years, or standardized test scores with arbitrary baselines.
+[/CALLOUT]
+
+Why does [REF: scale-pitfalls.2 | the ordinal pitfall] deserve special care? In practice, researchers often code Likert responses with the integers \(1, 2, 3, 4, 5\) for compact data entry. Those digits make it tempting to compute a difference like \(4 - 2\) or assert that a rating of \(4\) is twice a rating of \(2\). Strictly under the ordinal scale, only statements that survive any strictly increasing relabeling of the ordered categories are guaranteed valid. For example, replacing \((1, 2, 3, 4, 5)\) with \((1, 2, 5, 20, 100)\) preserves the exact order of pain severity, yet changes both differences and averages dramatically! By contrast, counts of each rating, percentages in each category, and the middle-ranked observation stay completely invariant under any strictly increasing relabeling.
+
+We can now connect measurement scale directly to the broad classes of summaries that are mathematically legitimate—leaving the exact computational formulas and chart constructions to the lessons that follow.
+
+[TABLE]
+Measurement scale | Valid comparisons | Legitimate summary families (preview)
+Nominal | Category equality (\(=\), \(\ne\)) | Category counts, proportions, most frequent category, bar charts
+Ordinal | Order (\(<, >\)) and equality | All nominal summaries plus cumulative proportions, ranks, middle rank (median)
+Interval | Differences (\(x_2 - x_1\)) and order | All ordinal summaries plus arithmetic mean, spread via differences, histograms
+Ratio | Ratios (\(x_2 / x_1\)) and differences | All interval summaries plus percentage changes, ratio-based relative spread
+[/TABLE]
+
+Let us perform a complete pre-analysis audit on a small employee wellness dataset containing five columns: Employee ID, Department, Stress Level ("Low", "Medium", "High"), Calendar Year Hired, and Weekly Exercise Hours.
+- Employee ID is categorical nominal: use it only to identify unique observational units and check for duplicate rows, never to compute sums or averages.
+- Department is categorical nominal: summarize by counts and proportions per department; ordering bars alphabetically or by frequency is a presentation choice, not an intrinsic order.
+- Stress Level is categorical ordinal: counts, proportions, cumulative proportions (such as the percentage at "Medium" or below), and the middle category are valid, while treating "High" as numerically twice "Low" is invalid.
+- Calendar Year Hired is quantitative interval (discrete by whole year): differences between hire years measure tenure differences legitimately (\(2024 - 2018 = 6\) years equals \(2018 - 2012 = 6\) years), and averaging hire years is mathematically meaningful as a midpoint on the timeline, yet claiming \(2024\) is "\(1.012\) times" \(2000\) is meaningless because year \(0\) is an arbitrary calendar epoch.
+- Weekly Exercise Hours is quantitative ratio (continuous): \(0\) hours means no exercise at all, so someone exercising \(6\) hours per week truly exercises twice as long as someone exercising \(3\) hours per week, and all standard numerical summaries and percentage comparisons are valid.
+
+Auditing every variable in this way before touching a calculator prevents mathematically meaningless results from ever entering an analysis.
+
+[QUESTION 4]
+[ANSWER: A]
+A climate researcher measures midday outdoor air temperatures on three consecutive days: Day 1 is \(5^\circ\text{C}\), Day 2 is \(15^\circ\text{C}\), and Day 3 is \(25^\circ\text{C}\). Which of the following claims remains mathematically valid regardless of whether the temperatures are expressed in Celsius or converted to Fahrenheit (\(F = 1.8 C + 32\))?
+
+(A) The temperature increase from Day 1 to Day 3 is twice the temperature increase from Day 1 to Day 2.
+(B) Day 2 was three times as warm as Day 1.
+(C) Day 3 was five times as warm as Day 1.
+(D) The percentage increase in temperature from Day 2 to Day 3 was \(66.7\%\).
+(E) Day 1 had one-third the thermal energy of Day 2.
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+A hotel chain surveys \(n = 600\) guests on room cleanliness using a four-level scale coded in the database as \(1 = \text{Poor}\), \(2 = \text{Fair}\), \(3 = \text{Good}\), and \(4 = \text{Excellent}\). A junior analyst proposes five summary statements. Which statement is strictly legitimate under the measurement scale of this variable without adding extra equal-spacing assumptions?
+
+(A) Guests who rated cleanliness \(4\) found the room twice as clean as guests who rated it \(2\).
+(B) Improving a room from \(1\) to \(2\) represents the exact same gain in cleanliness as improving it from \(3\) to \(4\).
+(C) The ratio of the average cleanliness score in Hotel A (\(3.6\)) to Hotel B (\(1.8\)) shows Hotel A is \(100\%\) cleaner.
+(D) Subtracting the minimum code from the maximum code proves the cleanliness gap between Poor and Excellent is three equal units.
+(E) At least \(75\%\) of surveyed guests rated room cleanliness as "Good" or higher, and the middle-ranked guest gave a rating of "Good".
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose an interval-scale variable \(x\) is converted to another valid interval scale by \(y = a x + b\) with \(a > 0\) and \(b \ne 0\). For three distinct observations \(x_1, x_2, x_3\) with \(x_1 > 0\), \(x_2 > 0\), and \(x_1 \ne x_2\), which quantity is guaranteed to have the exact same value on the \(y\)-scale as on the \(x\)-scale?
+
+(A) \(\dfrac{x_2}{x_1}\)
+(B) \(x_2 - x_1\)
+(C) \(\dfrac{x_3 - x_1}{x_2 - x_1}\)
+(D) \(\dfrac{x_1 + x_2}{2}\)
+(E) \(\dfrac{x_2 - x_1}{x_1}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A survey originally recorded exact annual household income in dollars (a continuous ratio variable), but for privacy the public release replaces each exact income with one of four brackets: "Under \(\$40{,}000\)", "\(\$40{,}000\text{–}\$79{,}999\)", "\(\$80{,}000\text{–}\$119{,}999\)", and "\(\$120{,}000\) or more". How does this recoding change the variable's classification and permissible operations?
+
+(A) It remains a ratio variable because income still has a true zero, so exact ratios between brackets can be computed.
+(B) It becomes an ordinal categorical variable, preserving rank order across brackets while losing exact differences and ratios between households.
+(C) It becomes an interval quantitative variable because the middle brackets have width \(\$40{,}000\).
+(D) It becomes a nominal categorical variable because the brackets are text strings, so ordering them is no longer meaningful.
+(E) It becomes a discrete ratio variable with four numeric values \(1, 2, 3, 4\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+A sports database stores marathon results in a table where each row is a city (Boston, Berlin, Tokyo) and the columns are labeled "2022_Winning_Time_Min", "2023_Winning_Time_Min", and "2024_Winning_Time_Min", with each cell holding the winning time in minutes for that city and year. If you reshape this table into tidy (case-by-variable) layout so each marathon edition is one observational unit, how many rows and columns will the tidy table have?
+
+(A) \(3\) rows and \(3\) columns
+(B) \(3\) rows and \(4\) columns
+(C) \(6\) rows and \(3\) columns
+(D) \(9\) rows and \(3\) columns
+(E) \(9\) rows and \(4\) columns
+[/BONUS]

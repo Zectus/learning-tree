@@ -1,0 +1,217 @@
+=== SECTION 1: Invariantes algebraicos bajo rotación y traslación ===
+
+En la lección anterior, eliminar el término en \(xy\) de una ecuación cuadrática general
+\[
+Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+\]
+requería calcular \(\cot 2\theta = \frac{A - C}{B}\), hallar \(\cos\theta\) y \(\sin\theta\) y sustituir en cada término. Antes de realizar todo ese trabajo, ¿existe una manera rápida de saber si la curva pertenece a la familia de la elipse, la parábola o la hipérbola, así como una comprobación independiente de que sus coeficientes rotados \(A'\) y \(C'\) están libres de errores aritméticos?
+
+Sí: ciertas combinaciones algebraicas de \(A\), \(B\) y \(C\) permanecen completamente inalteradas —invariantes— bajo TODA rotación y traslación de los ejes coordenados.
+
+Recuerde los coeficientes cuadráticos rotados obtenidos al sustituir \(x = x'\cos\theta - y'\sin\theta\) e \(y = x'\sin\theta + y'\cos\theta\):
+\[
+A' = A\cos^2\theta + B\sin\theta\cos\theta + C\sin^2\theta,
+\]
+\[
+C' = A\sin^2\theta - B\sin\theta\cos\theta + C\cos^2\theta,
+\]
+\[
+B' = B\cos 2\theta + (C - A)\sin 2\theta.
+\]
+Primero, sume \(A'\) y \(C'\). Los términos \(\pm B\sin\theta\cos\theta\) se cancelan de inmediato, y \(\cos^2\theta + \sin^2\theta = 1\) deja
+\[
+A' + C' = A(\cos^2\theta + \sin^2\theta) + C(\sin^2\theta + \cos^2\theta) = A + C.
+\]
+La suma \(A + C\) (la traza de la parte cuadrática) es nuestro primer invariante bajo rotación.
+
+Para descubrir el segundo invariante, reste \(C'\) de \(A'\) y aplique las identidades de ángulo doble \(\cos^2\theta - \sin^2\theta = \cos 2\theta\) y \(2\sin\theta\cos\theta = \sin 2\theta\):
+\[
+A' - C' = (A - C)\cos 2\theta + B\sin 2\theta.
+\]
+Compare esto lado a lado con \(B' = B\cos 2\theta - (A - C)\sin 2\theta\). Eleve ambas ecuaciones al cuadrado y súmelas:
+\[
+B'^2 + (A' - C')^2 = \bigl(B\cos 2\theta - (A - C)\sin 2\theta\bigr)^2 + \bigl((A - C)\cos 2\theta + B\sin 2\theta\bigr)^2.
+\]
+Al desarrollar el miembro derecho, los términos cruzados \(-2B(A - C)\sin 2\theta\cos 2\theta\) y \(+2B(A - C)\sin 2\theta\cos 2\theta\) se cancelan idénticamente, mientras que \(\cos^2 2\theta + \sin^2 2\theta = 1\) colapsa los términos restantes a
+\[
+B'^2 + (A' - C')^2 = B^2 + (A - C)^2.
+\]
+Por último, reste de ambos miembros el cuadrado del invariante traza \((A' + C')^2 = (A + C)^2\). Como \((u - v)^2 - (u + v)^2 = -4uv\) para cualesquiera números reales \(u\) y \(v\), obtenemos
+\[
+B'^2 - 4A'C' = B^2 - 4AC.
+\]
+¿Qué ocurre con las traslaciones de ejes \(x = x' + h\), \(y = y' + k\)? Desarrollar \(A(x' + h)^2 + B(x' + h)(y' + k) + C(y' + k)^2\) cambia únicamente los términos lineales y el término constante; \(A\), \(B\) y \(C\) mismos no cambian en absoluto. En consecuencia, ambos invariantes sobreviven a todo movimiento rígido (rotación o traslación) en el plano.
+
+[CALLOUT]
+id: quadratic-invariants
+label: Teorema
+title: Invariantes bajo movimientos rígidos de una cuadrática general en 2D
+tone: key
+
+Bajo cualquier rotación o traslación de los ejes coordenados, los coeficientes de \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) preservan dos invariantes algebraicos:
+(1) La traza \(A' + C' = A + C\).
+(2) El discriminante cuadrático \(\Delta = B'^2 - 4A'C' = B^2 - 4AC\).
+[/CALLOUT]
+
+Observe un potente atajo contenido en [REF: quadratic-invariants | estos dos invariantes]: siempre que rote para eliminar el término cruzado (\(B' = 0\)), los coeficientes rotados \(A'\) y \(C'\) satisfacen
+\[
+A' + C' = A + C \qquad \text{y} \qquad -4A'C' = B^2 - 4AC \implies A'C' = \frac{4AC - B^2}{4}.
+\]
+Esto no solo verifica en segundos cualquier cálculo explícito de rotación, sino que también permite recuperar el par no ordenado \(\{A', C'\}\) directamente como las dos raíces de \(t^2 - (A + C)t + \frac{4AC - B^2}{4} = 0\) sin calcular \(\sin\theta\) ni \(\cos\theta\).
+
+[QUESTION 1]
+[ANSWER: C]
+La ecuación \(3x^2 + 4xy + 6y^2 - 10x + 8y - 5 = 0\) se rota en un ángulo \(\theta\) que elimina el término en \(xy\) (\(B' = 0\)). ¿Cuáles son los dos coeficientes cuadráticos resultantes \(A'\) y \(C'\) (salvo el orden)?
+
+(A) \(3\) y \(6\)
+(B) \(1\) y \(8\)
+(C) \(2\) y \(7\)
+(D) \(-2\) y \(11\)
+(E) \(4\) y \(5\)
+[/QUESTION]
+
+=== SECTION 2: El criterio de clasificación por discriminante y las advertencias sobre degeneración ===
+
+Elija el ángulo de rotación eliminatorio \(\theta\) de modo que \(B' = 0\). Por [REF: quadratic-invariants.2 | la invariancia del discriminante],
+\[
+\Delta = B^2 - 4AC = B'^2 - 4A'C' = -4A'C'.
+\]
+El signo de \(\Delta\) es por tanto OPUESTO al signo de \(A'C'\), reduciendo de inmediato la clasificación de cualquier cuadrática inclinada al criterio de clasificación alineado con los ejes que ya conocemos.
+
+[TABLE]
+Discriminante \(\Delta = B^2 - 4AC\) | \(A'C'\) equivalente (con \(B' = 0\)) | Cónica no degenerada | Posibles lugares geométricos degenerados
+\(\Delta < 0\) | \(A'C' > 0\) (mismo signo) | Elipse (circunferencia si \(A = C\) y \(B = 0\)) | Punto único o conjunto vacío
+\(\Delta = 0\) | \(A'C' = 0\) (uno se anula) | Parábola | Par de rectas paralelas, recta única o conjunto vacío
+\(\Delta > 0\) | \(A'C' < 0\) (signos opuestos) | Hipérbola | Par de rectas que se intersecan
+[/TABLE]
+
+Para ver los tres regímenes del discriminante en una sola imagen, compare la familia \(x^2 + Bxy + y^2 = 4\) (donde \(\Delta = B^2 - 4\)) para tres valores de \(B\):
+- \(B = 1\): \(\Delta = -3 < 0\), que produce la elipse inclinada \(x^2 + xy + y^2 = 4\).
+- \(B = 2\): \(\Delta = 0\), que produce \((x + y)^2 = 4\), el par parabólico degenerado de rectas paralelas \(x + y = \pm 2\).
+- \(B = 3\): \(\Delta = 5 > 0\), que produce la hipérbola inclinada \(x^2 + 3xy + y^2 = 4\).
+
+[GRAPH]
+type: parametric2d
+title: Familia \(x^2 + Bxy + y^2 = 4\) en los casos \(\Delta < 0\) (\(B = 1\)), \(\Delta = 0\) (\(B = 2\)) y \(\Delta > 0\) (\(B = 3\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -3.1416, 3.1416
+xrange: -5, 5
+yrange: -5, 5
+trace: (2/sqrt(3))*cos(t) - 2*sin(t), (2/sqrt(3))*cos(t) + 2*sin(t) | label: \(B = 1\) (\(\Delta = -3\), elipse)
+trace: (2/sqrt(5))*cosh(t/2) - 2*sinh(t/2), (2/sqrt(5))*cosh(t/2) + 2*sinh(t/2) | label: \(B = 3\) (\(\Delta = 5\), hipérbola)
+trace: -(2/sqrt(5))*cosh(t/2) - 2*sinh(t/2), -(2/sqrt(5))*cosh(t/2) + 2*sinh(t/2) | label: \(B = 3\) (segunda rama)
+segment: -3, 5, 5, -3 | label: \(x + y = 2\) | dashed: true
+segment: -5, 3, 3, -5 | label: \(x + y = -2\) | dashed: true
+[/GRAPH]
+
+[CALLOUT]
+id: discriminant-caveat
+label: Error frecuente
+title: El discriminante clasifica la familia, nunca la no degeneración
+tone: caution
+
+El signo de \(\Delta = B^2 - 4AC\) depende ÚNICAMENTE de \(A\), \(B\) y \(C\); ignora los coeficientes lineales y constante \(D\), \(E\) y \(F\). En consecuencia, \(\Delta\) NUNCA puede distinguir por sí solo una cónica no degenerada de un lugar geométrico degenerado de la misma familia. Complete siempre la reducción (rotación más traslación) o verifique si hay factorización algebraica directa antes de declarar que un lugar geométrico es una elipse, parábola o hipérbola genuina.
+[/CALLOUT]
+
+Considere \(x^2 - xy - 2y^2 + x + y = 0\). Su discriminante es \(\Delta = (-1)^2 - 4(1)(-2) = 9 > 0\), lo que la ubica en la familia hiperbólica. Sin embargo, observe con atención la parte cuadrática: \(x^2 - xy - 2y^2 = (x - 2y)(x + y)\). Agrupar con los términos lineales da
+\[
+(x - 2y)(x + y) + (x + y) = (x + y)(x - 2y + 1) = 0.
+\]
+En lugar de una hipérbola, la gráfica es un par degenerado de rectas que se intersecan: \(x + y = 0\) y \(x - 2y + 1 = 0\).
+
+[QUESTION 2]
+[ANSWER: B]
+Calcule el discriminante \(\Delta = B^2 - 4AC\) de \(4x^2 - 12xy + 9y^2 + 2x - 3y - 6 = 0\) y determine su lugar geométrico exacto.
+
+(A) \(\Delta = 0\); una parábola rotada no degenerada
+(B) \(\Delta = 0\); un par degenerado de rectas paralelas
+(C) \(\Delta = 0\); una única recta
+(D) \(\Delta = 0\); el conjunto vacío
+(E) \(\Delta = 144\); una hipérbola no degenerada
+[/QUESTION]
+
+=== SECTION 3: Reducción completa mediante rotación seguida de traslación ===
+
+Cuando una cuadrática general \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) tiene tanto un término en \(xy\) como términos lineales y no se factoriza a simple vista, reducirla a la forma ordinaria sigue un proceso claro en dos etapas:
+(1) Clasifique primero la familia con \(\Delta = B^2 - 4AC\) para saber qué figura esperar.
+(2) Rote los ejes un ángulo \(\theta \in (0, \frac{\pi}{2})\) que satisfaga \(\cot 2\theta = \frac{A - C}{B}\) para eliminar \(B'\), produciendo \(A'x'^2 + C'y'^2 + D'x' + E'y' + F = 0\). Verifique de inmediato \(A' + C' = A + C\) y \(-4A'C' = \Delta\).
+(3) Traslade los ejes rotados (complete el cuadrado en \(x'\) e \(y'\)) para desplazar el centro o el vértice al nuevo origen \((x'', y'')\), revelando tanto las dimensiones ordinarias exactas como si el lugar geométrico es no degenerado o degenerado.
+
+Realice la reducción completa en \(x^2 + xy + y^2 - 4x - 2y + 1 = 0\).
+
+Primero, verifique el discriminante: \(\Delta = 1^2 - 4(1)(1) = -3 < 0\), de modo que la ecuación pertenece a la familia elíptica (elipse, punto o conjunto vacío).
+
+Segundo, rote para eliminar el término en \(xy\). Como \(A = C = 1\), \(\cot 2\theta = 0 \implies \theta = 45^\circ\), lo que da \(x = \frac{x' - y'}{\sqrt{2}}\) e \(y = \frac{x' + y'}{\sqrt{2}}\). Sustituir en las partes cuadrática y lineal da:
+\[
+x^2 + xy + y^2 = \frac{(x' - y')^2 + (x'^2 - y'^2) + (x' + y')^2}{2} = \frac{3}{2}x'^2 + \frac{1}{2}y'^2,
+\]
+\[
+-4x - 2y = -4\left(\frac{x' - y'}{\sqrt{2}}\right) - 2\left(\frac{x' + y'}{\sqrt{2}}\right) = -3\sqrt{2}\,x' + \sqrt{2}\,y'.
+\]
+Verifique los invariantes antes de continuar: \(A' + C' = \frac{3}{2} + \frac{1}{2} = 2 = A + C\), y \(-4A'C' = -4\bigl(\frac{3}{2}\bigr)\bigl(\frac{1}{2}\bigr) = -3 = \Delta\). ¡Ambos coinciden!
+
+Multiplicar la ecuación rotada \(\frac{3}{2}x'^2 + \frac{1}{2}y'^2 - 3\sqrt{2}\,x' + \sqrt{2}\,y' + 1 = 0\) por \(2\) da
+\[
+3x'^2 + y'^2 - 6\sqrt{2}\,x' + 2\sqrt{2}\,y' + 2 = 0.
+\]
+Tercero, traslade completando el cuadrado en \(x'\) e \(y'\):
+\[
+3(x'^2 - 2\sqrt{2}\,x') + (y'^2 + 2\sqrt{2}\,y') = -2,
+\]
+\[
+3(x' - \sqrt{2})^2 + (y' + \sqrt{2})^2 = -2 + 3(2) + 2 = 6.
+\]
+Dividir entre \(6\) produce la forma ordinaria en las coordenadas rotadas y trasladadas \(x'' = x' - \sqrt{2}\) e \(y'' = y' + \sqrt{2}\):
+\[
+\frac{(x' - \sqrt{2})^2}{2} + \frac{(y' + \sqrt{2})^2}{6} = 1.
+\]
+Como el miembro derecho es estrictamente positivo, se trata de una elipse rotada no degenerada con semieje mayor \(\sqrt{6}\) (paralelo al eje \(y'\)) y semieje menor \(\sqrt{2}\) (paralelo al eje \(x'\)). Su centro \((x', y') = (\sqrt{2}, -\sqrt{2})\) se convierte de vuelta a las coordenadas originales como
+\[
+x = \frac{\sqrt{2} - (-\sqrt{2})}{\sqrt{2}} = 2, \qquad y = \frac{\sqrt{2} + (-\sqrt{2})}{\sqrt{2}} = 0.
+\]
+Así, la elipse está centrada en \((2, 0)\) e inclinada \(45^\circ\).
+
+[QUESTION 3]
+[ANSWER: A]
+¿Para qué valores reales de \(k\) la ecuación \(2x^2 + kxy + 8y^2 - 4x + 5 = 0\) pertenece a la familia hiperbólica (\(\Delta > 0\))?
+
+(A) \(k < -8\) o \(k > 8\)
+(B) Únicamente \(k > 8\)
+(C) \(-8 < k < 8\)
+(D) \(k < -4\) o \(k > 4\)
+(E) \(k < -16\) o \(k > 16\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Rote los ejes en \(\theta = 45^\circ\) y luego traslade para reducir \(x^2 - 2xy + y^2 - 4\sqrt{2}\,x - 4\sqrt{2}\,y + 8 = 0\) a la forma ordinaria en \((x', y')\). ¿Cuál es la ecuación resultante y su lugar geométrico?
+
+(A) \(y'^2 = 4(x' + 1)\); una parábola que abre a lo largo del semieje \(x'\) positivo
+(B) \(x'^2 = 4(y' - 1)\); una parábola que abre a lo largo del semieje \(y'\) positivo
+(C) \(2y'^2 + 8 = 0\); el conjunto vacío
+(D) \(y'^2 = 4(x' - 1)\); una parábola con vértice \((x', y') = (1, 0)\) que abre a lo largo del semieje \(x'\) positivo
+(E) \(y'^2 = 4\); un par degenerado de rectas paralelas
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Determine el lugar geométrico exacto de \(2x^2 + 3xy - 2y^2 - 5x + 5y - 3 = 0\).
+
+(A) Una hipérbola no degenerada
+(B) Una elipse no degenerada
+(C) Un par degenerado de rectas paralelas
+(D) Una única recta
+(E) Un par degenerado de rectas perpendiculares que se intersecan: \(2x - y + 1 = 0\) y \(x + 2y - 3 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Tras rotar \(Ax^2 + Bxy + Cy^2 = 30\) (con \(A = 3\) y \(B > 0\)) para eliminar el término en \(xy\), la ecuación se convierte en \(5x'^2 - 3y'^2 = 30\). Usando invariantes, halle los valores exactos de \(C\) y \(B\).
+
+(A) \(C = 1\), \(B = 4\sqrt{3}\)
+(B) \(C = -1\), \(B = 4\sqrt{3}\)
+(C) \(C = -1\), \(B = 2\sqrt{15}\)
+(D) \(C = 5\), \(B = 4\sqrt{3}\)
+(E) \(C = -1\), \(B = 6\sqrt{2}\)
+[/BONUS]

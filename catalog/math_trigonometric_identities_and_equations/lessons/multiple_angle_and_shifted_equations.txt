@@ -1,0 +1,208 @@
+=== SECTION 1: Why multiple-angle equations create extra solutions ===
+
+Suppose you need ALL solutions to
+\[
+\sin(3x) = \frac{\sqrt{2}}{2} \qquad \text{for } x \in [0, 2\pi).
+\]
+Watch the single most common mistake in solving multiple-angle equations:
+A student thinks, "The sine equals \(\frac{\sqrt{2}}{2}\) at \(\frac{\pi}{4}\) and \(\frac{3\pi}{4}\), so \(3x = \frac{\pi}{4}\) or \(3x = \frac{3\pi}{4}\), giving \(x = \frac{\pi}{12}\) and \(x = \frac{\pi}{4}\)."
+
+Those two angles ARE valid solutions—yet FOUR MORE valid solutions inside \([0, 2\pi)\) were silently dropped! Why? Because the graph of \(y = \sin(3x)\) completes THREE full cycles inside \([0, 2\pi)\) (its period is \(\frac{2\pi}{3}\), not \(2\pi\)). In EVERY one of those three cycles, \(y = \sin(3x)\) crosses the horizontal line \(y = \frac{\sqrt{2}}{2}\) twice, producing \(3 \times 2 = 6\) solutions in \([0, 2\pi)\).
+
+[GRAPH]
+type: function2d
+title: All six solutions of \(\sin(3x) = \sqrt{2}/2\) on \([0, 2\pi)\) across three full periods
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2832
+yrange: -1.3, 1.3
+trace: sin(3*x) | label: \(y = \sin(3x)\)
+trace: sqrt(2)/2 | label: \(y = \sqrt{2}/2\)
+point: 0.2618, 0.7071 | label: \(\pi/12\)
+point: 0.7854, 0.7071 | label: \(\pi/4\)
+point: 2.3562, 0.7071 | label: \(3\pi/4\)
+point: 2.8798, 0.7071 | label: \(11\pi/12\)
+point: 4.4506, 0.7071 | label: \(17\pi/12\)
+point: 4.9742, 0.7071 | label: \(19\pi/12\)
+[/GRAPH]
+
+When you solve \(3x = \frac{\pi}{4}\) and \(3x = \frac{3\pi}{4}\) ONLY in \([0, 2\pi)\), you forget that as \(x\) ranges from \(0\) to \(2\pi\), the argument \(u = 3x\) ranges all the way from \(0\) to \(6\pi\)! Dividing by \(3\) shrinks the periodic step \(2\pi\) down to \(\frac{2\pi}{3}\), pulling two extra cycles of solutions inside \([0, 2\pi)\).
+
+=== SECTION 2: The substitution bridge \(u = kx + \varphi\) ===
+
+There are two equivalent, foolproof ways to solve any linear-argument equation \(f(kx + \varphi) = c\) (with \(k \neq 0\)) so you never drop a single solution.
+
+[CALLOUT]
+id: substitution-bridge
+label: Method
+title: Solving \(f(kx + \varphi) = c\) completely via \(u = kx + \varphi\)
+tone: key
+
+(1) General-solution method (works for both \(\mathbb{R}\) and bounded intervals):
+Set \(u = kx + \varphi\). Write the COMPLETE general solution for \(u\) first (including \(+2\pi n\) for \(\sin/\cos\), or \(+\pi n\) for \(\tan\), with \(n \in \mathbb{Z}\)). Substitute \(u = kx + \varphi\) back and solve algebraically for \(x\) (dividing the periodic term by \(k\) as well!). If a bounded interval \([a, b)\) is requested, plug in every integer \(n\) that places \(x\) inside \([a, b)\).
+
+(2) Interval-rescaling method (alternative for a bounded interval \([a, b)\)):
+For \(k > 0\), transform \(a \le x < b\) directly into \(ka + \varphi \le u < kb + \varphi\). Find ALL solutions \(u\) of \(f(u) = c\) in that rescaled interval, then solve \(kx + \varphi = u\) for \(x\). (If \(k < 0\), reverse the inequalities when multiplying by \(k\).)
+[/CALLOUT]
+
+Let us finish \(\sin(3x) = \frac{\sqrt{2}}{2}\) using [REF: substitution-bridge.1 | the general-solution method].
+- Set \(u = 3x\). The general solution of \(\sin u = \frac{\sqrt{2}}{2}\) is
+\[
+u = \frac{\pi}{4} + 2\pi n \qquad \text{or} \qquad u = \frac{3\pi}{4} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Replace \(u\) with \(3x\) and divide EVERY term (including \(2\pi n\)!) by \(3\):
+\[
+x = \frac{\pi}{12} + \frac{2\pi}{3}n \qquad \text{or} \qquad x = \frac{\pi}{4} + \frac{2\pi}{3}n \qquad (n \in \mathbb{Z}).
+\]
+- Rewrite \(\frac{2\pi}{3} = \frac{8\pi}{12}\) and \(\frac{\pi}{4} = \frac{3\pi}{12}\) over a common denominator so scanning integers \(n\) is effortless:
+  - \(n = 0\): \(x = \frac{\pi}{12}, \frac{3\pi}{12} = \frac{\pi}{4}\).
+  - \(n = 1\): \(x = \frac{9\pi}{12} = \frac{3\pi}{4}, \frac{11\pi}{12}\).
+  - \(n = 2\): \(x = \frac{17\pi}{12}, \frac{19\pi}{12}\).
+  - \(n = 3\): \(x = \frac{25\pi}{12} > 2\pi\) (stop), and \(n = -1\) gives negative values (stop).
+Thus on \([0, 2\pi)\) the complete solution set is \(\left\{\frac{\pi}{12}, \frac{\pi}{4}, \frac{3\pi}{4}, \frac{11\pi}{12}, \frac{17\pi}{12}, \frac{19\pi}{12}\right\}\), matching all six marked points on the graph!
+
+Worked example 2 (Shifted and scaled cosine): Solve \(\cos\!\left(2x - \frac{\pi}{3}\right) = -\frac{1}{2}\) on \(\mathbb{R}\) and on \([0, 2\pi)\).
+- Set \(u = 2x - \frac{\pi}{3}\). For \(\cos u = -\frac{1}{2}\), \(\theta_0 = \frac{2\pi}{3}\), so
+\[
+u = \frac{2\pi}{3} + 2\pi n \qquad \text{or} \qquad u = \frac{4\pi}{3} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Solve \(2x - \frac{\pi}{3} = u\) by adding \(\frac{\pi}{3}\) first, then dividing by \(2\):
+  - Family 1: \(2x = \pi + 2\pi n \implies x = \frac{\pi}{2} + \pi n\).
+  - Family 2: \(2x = \frac{5\pi}{3} + 2\pi n \implies x = \frac{5\pi}{6} + \pi n\).
+- Sweep integers \(n\) for \(x \in [0, 2\pi)\):
+  - \(n = 0\): \(x = \frac{\pi}{2}, \frac{5\pi}{6}\).
+  - \(n = 1\): \(x = \frac{3\pi}{2}, \frac{11\pi}{6}\).
+  - \(n = 2\) exceeds \(2\pi\); \(n = -1\) is negative.
+Notice how [REF: substitution-bridge.2 | the interval-rescaling check] confirms the count: \(0 \le x < 2\pi\) corresponds to \(-\frac{\pi}{3} \le u < \frac{11\pi}{3}\), an interval of length \(4\pi\) (two full periods of \(\cos u\)), so we expect \(2 \times 2 = 4\) solutions—exact match!
+
+Worked example 3 (Fractional multiplier \(0 < k < 1\)): Solve \(\tan\!\left(\frac{x}{2}\right) = \sqrt{3}\) on \(\mathbb{R}\) and on \([0, 2\pi)\).
+- Set \(u = \frac{x}{2}\). The general solution of \(\tan u = \sqrt{3}\) is \(u = \frac{\pi}{3} + \pi n\) (\(n \in \mathbb{Z}\)).
+- Multiply both sides by \(2\):
+\[
+x = \frac{2\pi}{3} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- For \(x \in [0, 2\pi)\), only \(n = 0\) lands inside \([0, 2\pi)\), yielding the SINGLE solution \(x = \frac{2\pi}{3}\). Because \(\tan(x/2)\) is stretched horizontally to period \(2\pi\), it hits \(\sqrt{3}\) only once on \([0, 2\pi)\).
+
+[QUESTION 1]
+[ANSWER: C]
+How many distinct solutions does \(\cos(4x) = \dfrac{1}{2}\) have in the interval \([0, 2\pi)\)?
+
+(A) \(2\)
+(B) \(4\)
+(C) \(8\)
+(D) \(6\)
+(E) \(16\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+Find ALL solutions of \(\sin\!\left(2x + \dfrac{\pi}{6}\right) = -\dfrac{1}{2}\) in the interval \([0, 2\pi)\).
+
+(A) \(\frac{\pi}{2}, \frac{5\pi}{6}, \frac{3\pi}{2}, \frac{11\pi}{6}\)
+(B) \(\frac{5\pi}{6}, \frac{11\pi}{6}\)
+(C) \(\frac{\pi}{2}, \frac{5\pi}{6}\)
+(D) \(\frac{\pi}{3}, \frac{2\pi}{3}, \frac{4\pi}{3}, \frac{5\pi}{3}\)
+(E) \(\frac{\pi}{6}, \frac{5\pi}{6}, \frac{7\pi}{6}, \frac{11\pi}{6}\)
+[/QUESTION]
+
+=== SECTION 3: Solving inverse problems for sinusoidal models ===
+
+Multiple-angle and phase-shifted equations answer the real-world inverse questions that arise whenever a periodic quantity—like ocean tides, a Ferris wheel's height, or daily temperature—is modeled by a sinusoid \(y(t) = A\sin(kt + \varphi) + D\) or \(y(t) = A\cos(kt + \varphi) + D\). Instead of plugging in a time \(t\) to read a height, you specify a target height \(y_0\) and find EVERY time \(t\) in one cycle when the system crosses \(y_0\).
+
+Worked example: A Ferris wheel rotates smoothly so that a passenger's height \(H(t)\) (in meters) at time \(t\) (in seconds) is modeled by
+\[
+H(t) = 15 - 12\cos\!\left(\frac{\pi}{30}t\right), \qquad 0 \le t < 60.
+\]
+Notice the period is \(\frac{2\pi}{\pi/30} = 60\) seconds, the minimum height is \(15 - 12 = 3\) meters (at \(t = 0\)), and the maximum height is \(15 + 12 = 27\) meters (at \(t = 30\)). At what times during the first \(60\)-second rotation is the passenger at a height of \(21\) meters?
+
+- Set \(H(t) = 21\) and isolate the cosine:
+\[
+15 - 12\cos\!\left(\frac{\pi}{30}t\right) = 21 \implies -12\cos\!\left(\frac{\pi}{30}t\right) = 6 \implies \cos\!\left(\frac{\pi}{30}t\right) = -\frac{1}{2}.
+\]
+- Apply [REF: substitution-bridge.1 | the substitution bridge] with \(u = \frac{\pi}{30}t\):
+\[
+\frac{\pi}{30}t = \frac{2\pi}{3} + 2\pi n \qquad \text{or} \qquad \frac{\pi}{30}t = \frac{4\pi}{3} + 2\pi n \qquad (n \in \mathbb{Z}).
+\]
+- Multiply both sides by \(\frac{30}{\pi}\) (the \(\pi\) cancels cleanly!):
+\[
+t = 20 + 60n \qquad \text{or} \qquad t = 40 + 60n \qquad (n \in \mathbb{Z}).
+\]
+- On the first cycle \(0 \le t < 60\), setting \(n = 0\) gives \(t = 20\text{ s}\) (rising past \(21\text{ m}\)) and \(t = 40\text{ s}\) (descending past \(21\text{ m}\)). Notice also that the passenger stays at or above \(21\text{ m}\) for the entire \(20\)-second interval from \(t = 20\) to \(t = 40\).
+
+[GRAPH]
+type: function2d
+title: Ferris wheel height \(H(t) = 15 - 12\cos(\pi t / 30)\) crossing \(H = 21\) m at \(t = 20\) s and \(t = 40\) s
+xlabel: \(t\)
+ylabel: \(H(t)\)
+xrange: 0, 60
+yrange: 0, 30
+trace: 15 - 12*cos(pi*x/30) | label: \(H(t) = 15 - 12\cos(\pi t/30)\)
+trace: 21 | label: \(H = 21\text{ m}\)
+point: 20, 21 | label: \((20, 21)\)
+point: 40, 21 | label: \((40, 21)\)
+[/GRAPH]
+
+What if the model does not yield a special ratio—for example, finding when the passenger is at \(H = 25\text{ m}\)? Isolate \(\cos\!\left(\frac{\pi}{30}t\right) = -\frac{10}{12} = -\frac{5}{6}\), write the exact general solution
+\[
+t = \frac{30}{\pi}\arccos\!\left(-\frac{5}{6}\right) + 60n \qquad \text{or} \qquad t = 60 - \frac{30}{\pi}\arccos\!\left(-\frac{5}{6}\right) + 60n,
+\]
+and only round at the very final step: \(\arccos(-5/6) \approx 2.5559\), giving \(t \approx 24.4\text{ s}\) and \(t \approx 35.6\text{ s}\).
+
+[QUESTION 3]
+[ANSWER: E]
+The temperature \(T(t)\) (in \(^\circ\text{C}\)) in a greenhouse over a \(24\)-hour day (\(0 \le t < 24\)) is modeled by
+\[
+T(t) = 20 + 6\sin\!\left(\frac{\pi}{12}(t - 6)\right).
+\]
+At which two times \(t \in [0, 24)\) does the temperature equal \(23^\circ\text{C}\)?
+
+(A) \(t = 2\) and \(t = 10\)
+(B) \(t = 7\) and \(t = 17\)
+(C) \(t = 8\) and \(t = 14\)
+(D) \(t = 9\) and \(t = 15\)
+(E) \(t = 8\) and \(t = 16\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+Find the complete general solution on \(\mathbb{R}\) of \(\tan\!\left(3x - \dfrac{\pi}{4}\right) = -1\) (\(n \in \mathbb{Z}\)).
+
+(A) \(x = \pi n\)
+(B) \(x = \frac{\pi}{3}n\)
+(C) \(x = \frac{\pi}{6} + \frac{\pi}{3}n\)
+(D) \(x = \frac{2\pi}{3}n\)
+(E) \(x = -\frac{\pi}{12} + \frac{\pi}{3}n\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Find ALL solutions of \(\sec\!\left(\dfrac{x}{2} - \dfrac{\pi}{6}\right) = -2\) in the interval \([0, 4\pi)\).
+
+(A) \(\frac{5\pi}{3}\) only
+(B) \(\frac{5\pi}{3}, \frac{7\pi}{3}\)
+(C) \(\frac{4\pi}{3}, \frac{8\pi}{3}\)
+(D) \(\frac{5\pi}{3}, 3\pi\)
+(E) \(\frac{7\pi}{3}, \frac{11\pi}{3}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Consider the equation \(\sin\!\left(3x - \dfrac{\pi}{2}\right) = 1\) on \([0, 2\pi)\). How many distinct solutions lie in \([0, 2\pi)\), and what is their sum?
+
+(A) \(6\) solutions, sum \(6\pi\)
+(B) \(3\) solutions, sum \(2\pi\)
+(C) \(3\) solutions, sum \(3\pi\)
+(D) \(2\) solutions, sum \(\pi\)
+(E) \(3\) solutions, sum \(4\pi\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Suppose you solve \(\cos(kx) = 0.3\) on \([0, 2\pi)\) where \(k\) is a positive integer. If a student mistakenly solves \(\cos u = 0.3\) ONLY on \([0, 2\pi)\) and divides those two roots by \(k\), how many valid solutions in \([0, 2\pi)\) has the student missed?
+
+(A) \(2(k - 1)\)
+(B) \(k - 1\)
+(C) \(2k\)
+(D) \(k\)
+(E) \(2k - 1\)
+[/BONUS]

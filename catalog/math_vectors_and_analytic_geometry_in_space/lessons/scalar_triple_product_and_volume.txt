@@ -1,0 +1,224 @@
+=== SECTION 1: The scalar triple product and its determinant formula ===
+
+With both the dot product and the cross product in hand, we can combine three spatial vectors \(\mathbf{u}\), \(\mathbf{v}\), and \(\mathbf{w}\) into a single scalar:
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}).
+\]
+This combination is called the scalar triple product of \(\mathbf{u}\), \(\mathbf{v}\), and \(\mathbf{w}\). Notice first why the parentheses around \(\mathbf{v} \times \mathbf{w}\) are structurally forced: \(\mathbf{v} \times \mathbf{w}\) is a vector, so dotting it with \(\mathbf{u}\) makes sense and yields a real number. By contrast, \((\mathbf{u} \cdot \mathbf{v}) \times \mathbf{w}\) is completely meaningless—\(\mathbf{u} \cdot \mathbf{v}\) is a scalar, and the cross product is defined only between two vectors.
+
+How do we compute \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) directly from the components \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\), \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\), and \(\mathbf{w} = \langle w_1, w_2, w_3 \rangle\)? Recall that \(\mathbf{v} \times \mathbf{w}\) is formed by expanding a \(3 \times 3\) determinant with \(\mathbf{i}, \mathbf{j}, \mathbf{k}\) in the top row:
+\[
+\mathbf{v} \times \mathbf{w} = (v_2 w_3 - v_3 w_2)\mathbf{i} - (v_1 w_3 - v_3 w_1)\mathbf{j} + (v_1 w_2 - v_2 w_1)\mathbf{k}.
+\]
+Dotting this vector with \(\mathbf{u} = u_1\mathbf{i} + u_2\mathbf{j} + u_3\mathbf{k}\) simply replaces \(\mathbf{i}, \mathbf{j}, \mathbf{k}\) with \(u_1, u_2, u_3\):
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = u_1(v_2 w_3 - v_3 w_2) - u_2(v_1 w_3 - v_3 w_1) + u_3(v_1 w_2 - v_2 w_1).
+\]
+That sum is precisely the \(3 \times 3\) determinant whose three rows are \(\mathbf{u}\), \(\mathbf{v}\), and \(\mathbf{w}\).
+
+[CALLOUT]
+id: stp-det
+label: Theorem
+title: Determinant formula and permutation symmetries of the scalar triple product
+tone: key
+
+For any three vectors \(\mathbf{u} = \langle u_1, u_2, u_3 \rangle\), \(\mathbf{v} = \langle v_1, v_2, v_3 \rangle\), and \(\mathbf{w} = \langle w_1, w_2, w_3 \rangle\) in \(\mathbb{R}^3\):
+
+(1) Determinant formula:
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = \begin{vmatrix} u_1 & u_2 & u_3 \\ v_1 & v_2 & v_3 \\ w_1 & w_2 & w_3 \end{vmatrix}.
+\]
+(2) Cyclic invariance: rotating the three vectors cyclically preserves the value:
+\[
+\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = \mathbf{v} \cdot (\mathbf{w} \times \mathbf{u}) = \mathbf{w} \cdot (\mathbf{u} \times \mathbf{v}).
+\]
+(3) Swapping sign rule: exchanging any two of the three vectors negates the scalar triple product; for example, \(\mathbf{v} \cdot (\mathbf{u} \times \mathbf{w}) = -\,\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\).
+(4) Dot-cross interchange: \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = (\mathbf{u} \times \mathbf{v}) \cdot \mathbf{w}\).
+[/CALLOUT]
+
+Check [REF: stp-det.2 | cyclic invariance] algebraically: expanding \(\mathbf{v} \cdot (\mathbf{w} \times \mathbf{u})\) gives the exact same six triple products (three positive, three negative) as \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\), merely grouped by \(v_1, v_2, v_3\) instead of \(u_1, u_2, u_3\). Meanwhile, [REF: stp-det.3 | swapping any two vectors] follows from anti-commutativity of the cross product together with cyclic invariance: swapping \(\mathbf{v}\) and \(\mathbf{w}\) directly turns \(\mathbf{v} \times \mathbf{w}\) into \(-(\mathbf{w} \times \mathbf{v})\), and swapping \(\mathbf{u}\) and \(\mathbf{v}\) is equivalent to cycling \((\mathbf{v}, \mathbf{u}, \mathbf{w})\) to \((\mathbf{w}, \mathbf{v}, \mathbf{u})\) and swapping the last two slots. Finally, [REF: stp-det.4 | dot-cross interchange] follows immediately by cycling \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = \mathbf{w} \cdot (\mathbf{u} \times \mathbf{v})\) and using commutativity of the dot product.
+
+Observe one immediate consequence: if any two of the three vectors are equal (or parallel), swapping them must both leave the determinant unchanged and reverse its sign, forcing \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\).
+
+[QUESTION 1]
+[ANSWER: B]
+Let \(\mathbf{u} = \langle 2, 1, -1 \rangle\), \(\mathbf{v} = \langle 1, 3, 2 \rangle\), and \(\mathbf{w} = \langle 4, 0, -3 \rangle\). What are the values of \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) and \(\mathbf{v} \cdot (\mathbf{u} \times \mathbf{w})\), in that order?
+
+(A) \(5\) and \(5\)
+(B) \(5\) and \(-5\)
+(C) \(-5\) and \(5\)
+(D) \(-17\) and \(17\)
+(E) \(35\) and \(-35\)
+[/QUESTION]
+
+=== SECTION 2: Volumes of parallelepipeds and tetrahedra ===
+
+What does the number \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) measure geometrically? Anchor three non-coplanar vectors \(\mathbf{u}\), \(\mathbf{v}\), and \(\mathbf{w}\) at a common corner \(A\). They form the three adjacent edges of a slanted three-dimensional box called a parallelepiped.
+
+Treat the parallelogram spanned by \(\mathbf{v}\) and \(\mathbf{w}\) as the base of the box. From the previous lesson, the area of this base is
+\[
+A_{\text{base}} = \|\mathbf{v} \times \mathbf{w}\|,
+\]
+and the vector \(\mathbf{v} \times \mathbf{w}\) stands perpendicular to the base plane. What is the perpendicular height \(h\) of the parallelepiped above this base? It is the magnitude of the scalar projection of the slanted edge \(\mathbf{u}\) onto the normal direction \(\mathbf{v} \times \mathbf{w}\):
+\[
+h = \left|\operatorname{comp}_{\mathbf{v} \times \mathbf{w}} \mathbf{u}\right| = \frac{|\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|}{\|\mathbf{v} \times \mathbf{w}\|}.
+\]
+Multiplying base area by perpendicular height cancels \(\|\mathbf{v} \times \mathbf{w}\|\) completely:
+\[
+V_{\text{box}} = A_{\text{base}} \cdot h = \|\mathbf{v} \times \mathbf{w}\| \cdot \frac{|\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|}{\|\mathbf{v} \times \mathbf{w}\|} = |\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|.
+\]
+
+The side-view diagram below shows a plane containing the normal \(\mathbf{v} \times \mathbf{w}\) and the third edge \(\mathbf{u}\) (tilted at angle \(\phi\) from the normal). Drag the tilt slider \(p\) to see how \(h = \|\mathbf{u}\||\cos p|\) shrinks as \(\mathbf{u}\) leans toward the base plane and vanishes completely when \(p = \pi/2 \approx 1.57\), where \(\mathbf{u}\) lies flat in the plane of \(\mathbf{v}\) and \(\mathbf{w}\).
+
+[GRAPH]
+type: parametric2d
+title: Side view of parallelepiped height \(h = \|\mathbf{u}\|\lvert\cos p\rvert\) along the normal \(\mathbf{v} \times \mathbf{w}\)
+xlabel: base plane direction
+ylabel: normal direction
+trange: 0, 1
+xrange: -0.5, 5.5
+yrange: -0.5, 3.8
+trace: 3*t, 0 | label: base edge
+trace: 3*sin(p)*t, 3*cos(p)*t | label: slanted edge \(\mathbf{u}\)
+segment: 0, 0, 0, 3.2 | label: \(\mathbf{v} \times \mathbf{w}\) | dashed: true
+segment: 3*sin(p), 0, 3*sin(p), 3*cos(p) | label: \(h\)
+segment: 3, 0, 3 + 3*sin(p), 3*cos(p) | dashed: true
+segment: 3*sin(p), 3*cos(p), 3 + 3*sin(p), 3*cos(p) | dashed: true
+point: 0, 0 | label: \(A\)
+point: 3*sin(p), 3*cos(p) | label: tip of \(\mathbf{u}\)
+slider: p | range: 0.05, 1.52 | init: 0.55 | step: 0.05
+[/GRAPH]
+
+What about the volume of a tetrahedron (a triangular pyramid) with four vertices \(A, B, C, D \in \mathbb{R}^3\)? Anchor three edge vectors at one shared vertex, say \(\mathbf{u} = \overrightarrow{AB}\), \(\mathbf{v} = \overrightarrow{AC}\), and \(\mathbf{w} = \overrightarrow{AD}\). Compared to the parallelepiped spanned by \(\mathbf{u}, \mathbf{v}, \mathbf{w}\):
+- The triangular base \(\triangle ACD\) has exactly \(\frac{1}{2}\) the area of the base parallelogram spanned by \(\overrightarrow{AC}\) and \(\overrightarrow{AD}\).
+- Every pyramid has volume \(\frac{1}{3} \times (\text{base area}) \times (\text{perpendicular height})\) (the same perpendicular height \(h\) as the parallelepiped).
+
+Combining these two factors yields \(\frac{1}{3} \cdot \frac{1}{2} = \frac{1}{6}\) of the parallelepiped's volume!
+
+[CALLOUT]
+id: volume-formulas
+label: Formulas
+title: Parallelepiped and tetrahedron volumes
+tone: key
+
+(1) The volume of the parallelepiped spanned by adjacent edge vectors \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\) is
+\[
+V_{\text{box}} = |\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})|.
+\]
+(2) The volume of the tetrahedron with vertices \(A, B, C, D \in \mathbb{R}^3\) is
+\[
+V_{\text{tet}} = \frac{1}{6}\left|\overrightarrow{AB} \cdot \bigl(\overrightarrow{AC} \times \overrightarrow{AD}\bigr)\right|.
+\]
+[/CALLOUT]
+
+Notice a crucial geometric detail when using [REF: volume-formulas.2 | the tetrahedron formula]: all three vectors must emanate from the SAME vertex (here \(A\)). Using raw point coordinates instead of edge differences \(\overrightarrow{AB}, \overrightarrow{AC}, \overrightarrow{AD}\) computes the volume of a different tetrahedron anchored at the origin \(O(0, 0, 0)\).
+
+=== SECTION 3: Orientation of 3D frames and algebraic coplanarity ===
+
+In [REF: volume-formulas.1 | the volume formula], taking absolute value discards the sign of \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\). What geometric information does that sign carry before you take its absolute value?
+
+Write \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = (\mathbf{u} \times \mathbf{v}) \cdot \mathbf{w}\) via [REF: stp-det.4 | dot-cross interchange]. By the right-hand rule, \(\mathbf{u} \times \mathbf{v}\) points in the direction of your right thumb when your fingers curl from \(\mathbf{u}\) to \(\mathbf{v}\). Therefore:
+- \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) > 0 \iff (\mathbf{u} \times \mathbf{v}) \cdot \mathbf{w} > 0\): the angle between \(\mathbf{w}\) and \(\mathbf{u} \times \mathbf{v}\) is acute, meaning \(\mathbf{w}\) lies on the right-hand side of the plane of \(\mathbf{u}\) and \(\mathbf{v}\). We call the ordered triple \((\mathbf{u}, \mathbf{v}, \mathbf{w})\) right-handed (just like \((\mathbf{i}, \mathbf{j}, \mathbf{k})\), where \(\mathbf{i} \cdot (\mathbf{j} \times \mathbf{k}) = +1\)).
+- \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) < 0\): \(\mathbf{w}\) points to the opposite side of the plane of \(\mathbf{u}\) and \(\mathbf{v}\), so the ordered triple \((\mathbf{u}, \mathbf{v}, \mathbf{w})\) is left-handed (like \((\mathbf{j}, \mathbf{i}, \mathbf{k})\), where \(\mathbf{j} \cdot (\mathbf{i} \times \mathbf{k}) = -1\)).
+- \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\): the parallelepiped has zero volume, which happens if and only if the three vectors flatten into a single plane!
+
+[CALLOUT]
+id: coplanar-test
+label: Theorem
+title: Orientation and coplanarity criterion
+tone: key
+
+For three vectors \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\):
+
+(1) Orientation: the ordered triple \((\mathbf{u}, \mathbf{v}, \mathbf{w})\) is right-handed if \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) > 0\) and left-handed if \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) < 0\).
+(2) Coplanar vectors: \(\mathbf{u}\), \(\mathbf{v}\), and \(\mathbf{w}\) lie in a common plane through the origin (are coplanar) if and only if \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\).
+(3) Coplanar points: four points \(A, B, C, D \in \mathbb{R}^3\) lie in a single plane if and only if
+\[
+\overrightarrow{AB} \cdot \bigl(\overrightarrow{AC} \times \overrightarrow{AD}\bigr) = 0.
+\]
+[/CALLOUT]
+
+Why does [REF: coplanar-test.2 | the coplanarity criterion] work in both directions? If \(\mathbf{v}\) and \(\mathbf{w}\) are already parallel, then \(\mathbf{v} \times \mathbf{w} = \mathbf{0}\), so \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\), and indeed any single line containing \(\mathbf{v}\) and \(\mathbf{w}\) together with \(\mathbf{u}\) fits inside a plane. If \(\mathbf{v}\) and \(\mathbf{w}\) are non-parallel, then \(\mathbf{v} \times \mathbf{w} \ne \mathbf{0}\) is perpendicular to the unique plane they span; therefore \(\mathbf{u}\) lies in that plane if and only if \(\mathbf{u}\) is orthogonal to \(\mathbf{v} \times \mathbf{w}\), i.e., \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w}) = 0\).
+
+[TABLE]
+Value of \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) | Parallelepiped volume | Geometric configuration of \((\mathbf{u}, \mathbf{v}, \mathbf{w})\)
+Positive (\(> 0\)) | \(\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) | Non-coplanar, right-handed 3D frame
+Negative (\(< 0\)) | \(-\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})\) | Non-coplanar, left-handed 3D frame
+Zero (\(= 0\)) | \(0\) | Coplanar (all three lie in a common plane)
+[/TABLE]
+
+Let us test four concrete points: \(P(1, 0, -1)\), \(Q(2, 2, 1)\), \(R(0, 1, 2)\), and \(S(3, 3, 0)\). Build three edges from \(P\):
+\[
+\overrightarrow{PQ} = \langle 1, 2, 2 \rangle, \qquad \overrightarrow{PR} = \langle -1, 1, 3 \rangle, \qquad \overrightarrow{PS} = \langle 2, 3, 1 \rangle.
+\]
+Compute the determinant:
+\[
+\begin{vmatrix} 1 & 2 & 2 \\ -1 & 1 & 3 \\ 2 & 3 & 1 \end{vmatrix} = 1(1 - 9) - 2(-1 - 6) + 2(-3 - 2) = -8 + 14 - 10 = -4 \ne 0.
+\]
+Because the scalar triple product is \(-4 \ne 0\), the four points are NOT coplanar: they form a genuine tetrahedron of volume \(\frac{1}{6}|-4| = \frac{2}{3}\), and the ordered edge triple \((\overrightarrow{PQ}, \overrightarrow{PR}, \overrightarrow{PS})\) is left-handed.
+
+[QUESTION 2]
+[ANSWER: A]
+Suppose three vectors \(\mathbf{a}, \mathbf{b}, \mathbf{c} \in \mathbb{R}^3\) satisfy \(\mathbf{a} \cdot (\mathbf{b} \times \mathbf{c}) = -12\). What is the value of \(\mathbf{c} \cdot (\mathbf{a} \times \mathbf{b})\), and is the ordered triple \((\mathbf{a}, \mathbf{b}, \mathbf{c})\) right-handed or left-handed?
+
+(A) \(-12\); left-handed
+(B) \(12\); left-handed
+(C) \(-12\); right-handed
+(D) \(12\); right-handed
+(E) \(0\); coplanar
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+What is the exact volume of the tetrahedron in \(\mathbb{R}^3\) with vertices \(A(1, 0, 1)\), \(B(3, 1, 2)\), \(C(2, 4, 1)\), and \(D(1, 2, 5)\)?
+
+(A) \(30\)
+(B) \(15\)
+(C) \(10\)
+(D) \(5\)
+(E) \(6\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+For which value of the real constant \(k\) do the four points \(A(1, 2, 0)\), \(B(2, 1, 3)\), \(C(0, 4, 1)\), and \(D(3, k, 2)\) lie in a single plane?
+
+(A) \(k = -1\)
+(B) \(k = 1\)
+(C) \(k = -3\)
+(D) \(k = 5\)
+(E) \(k = 2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose three vectors \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\) span a parallelepiped of volume \(7\). What is the volume of the parallelepiped spanned by \(\mathbf{u} + 3\mathbf{v} - 2\mathbf{w}\), \(2\mathbf{v}\), and \(\mathbf{w}\)?
+
+(A) \(7\)
+(B) \(21\)
+(C) \(14\)
+(D) \(42\)
+(E) \(28\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+A parallelepiped has adjacent edges \(\mathbf{v} = \langle 1, 2, 0 \rangle\), \(\mathbf{w} = \langle 0, 2, 1 \rangle\), and \(\mathbf{u} = \langle 4, 2, 3 \rangle\). What is its perpendicular height measured above the base face spanned by \(\mathbf{v}\) and \(\mathbf{w}\)?
+
+(A) \(3\)
+(B) \(4\)
+(C) \(6\)
+(D) \(12\)
+(E) \(\frac{12}{\sqrt{5}}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Which of the following expressions is mathematically well-defined as a vector or scalar in \(\mathbb{R}^3\) for arbitrary vectors \(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathbb{R}^3\)?
+
+(A) \((\mathbf{u} \cdot \mathbf{v}) \times \mathbf{w}\)
+(B) \(\mathbf{u} \cdot (\mathbf{v} \cdot \mathbf{w})\)
+(C) \((\mathbf{u} \times \mathbf{v}) + (\mathbf{v} \cdot \mathbf{w})\)
+(D) \(\mathbf{u} \times (\mathbf{v} \cdot \mathbf{w})\)
+(E) \((\mathbf{u} \cdot \mathbf{v})\mathbf{w} + (\mathbf{v} \times \mathbf{w})\)
+[/BONUS]

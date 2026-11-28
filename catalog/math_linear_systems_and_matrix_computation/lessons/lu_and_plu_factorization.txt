@@ -1,0 +1,301 @@
+=== SECTION 1: Packaging Gaussian elimination as \(A = LU\) ===
+
+Suppose an engineering simulation needs to solve \(A\mathbf{x} = \mathbf{b}_1\), then \(A\mathbf{x} = \mathbf{b}_2\), and eventually \(A\mathbf{x} = \mathbf{b}_{100}\), where the coefficient matrix \(A\) stays fixed and only the right-hand side \(\mathbf{b}_j\) arrives one at a time. Running Gaussian elimination from scratch on \([A \mid \mathbf{b}_j]\) repeats the exact same work on \(A\) a hundred times! On the other hand, we already saw that computing \(A^{-1}\) explicitly costs three times as much arithmetic up front as a single Gaussian elimination. Is there a way to record the elimination steps performed on \(A\) ONCE, in a compact triangular factorization, so that every new right-hand side \(\mathbf{b}_j\) can be solved quickly without ever reducing \(A\) again?
+
+That factorization is \(A = LU\).
+
+Suppose first that forward Gaussian elimination reduces an \(m \times n\) (or square \(n \times n\)) matrix \(A\) to an upper-triangular row-echelon matrix \(U\) using ONLY downward row-replacement operations—no row swaps and no scaling of pivot rows. Specifically, at column \(1\) we clear below pivot \(a_{11}\) by applying \(R_i \leftarrow R_i - l_{i1} R_1\) for \(i = 2, \dots, m\), where \(l_{i1} = a_{i1} / a_{11}\) is the elimination multiplier; then at column \(2\) we clear below the updated pivot \(u_{22}\) by applying \(R_i \leftarrow R_i - l_{i2} R_2\) for \(i = 3, \dots, m\); and so on from left to right.
+
+Translate those \(k\) downward row replacements into elementary matrices \(E_1, E_2, \dots, E_k\):
+\[
+E_k \cdots E_2 E_1 A = U.
+\]
+Each \(E_r\) is unit lower-triangular (\(1\)'s on the main diagonal, \(0\)'s above, and a single entry \(-l_{ij}\) below the diagonal in slot \((i, j)\) with \(i > j\)). Inverting both sides gives
+\[
+A = L U, \qquad \text{where } L = E_1^{-1} E_2^{-1} \cdots E_k^{-1}.
+\]
+Each inverse elementary matrix \(E_r^{-1}\) simply flips the sign of its single off-diagonal entry from \(-l_{ij}\) to \(+l_{ij}\)!
+
+Now comes the crucial algebraic miracle that makes \(LU\) factorization effortless by hand and in code: when you multiply \(E_1^{-1} E_2^{-1} \cdots E_k^{-1}\) in that exact forward-elimination order, NO cross-terms ever form—every multiplier \(l_{ij}\) simply drops directly into slot \((i, j)\) of \(L\) untouched!
+
+Let us prove WHY no cross-terms corrupt \(L\) (and why they DO appear if you multiply in the opposite order \(E_k \cdots E_1\)). Consider the \(3 \times 3\) case, where elimination applies:
+1. \(E_1\) (\(R_2 \leftarrow R_2 - l_{21} R_1\)),
+2. \(E_2\) (\(R_3 \leftarrow R_3 - l_{31} R_1\)),
+3. \(E_3\) (\(R_3 \leftarrow R_3 - l_{32} R_2\)).
+
+Then
+\[
+L = E_1^{-1} E_2^{-1} E_3^{-1}
+= \begin{bmatrix} 1 & 0 & 0 \\ l_{21} & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+  \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ l_{31} & 0 & 1 \end{bmatrix}
+  \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & l_{32} & 1 \end{bmatrix}.
+\]
+Multiply from right to left and watch what each left-multiplication does:
+- First, \(E_2^{-1}\) acts on \(E_3^{-1}\) by adding \(l_{31}\) times ROW \(1\) of \(E_3^{-1}\) to row \(3\) of \(E_3^{-1}\). Because row \(1\) of \(E_3^{-1}\) is \(\begin{bmatrix} 1 & 0 & 0 \end{bmatrix}\)—it has ZERO in column \(2\)!—adding \(l_{31}\) times row \(1\) places \(l_{31}\) in slot \((3, 1)\) while leaving \(l_{32}\) in slot \((3, 2)\) completely undisturbed:
+\[
+E_2^{-1} E_3^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ l_{31} & l_{32} & 1 \end{bmatrix}.
+\]
+- Next, \(E_1^{-1}\) acts on \(E_2^{-1} E_3^{-1}\) by adding \(l_{21}\) times ROW \(1\) to row \(2\). Again row \(1\) is \(\begin{bmatrix} 1 & 0 & 0 \end{bmatrix}\), so it puts \(l_{21}\) into slot \((2, 1)\) and touches nothing else:
+\[
+L = E_1^{-1} E_2^{-1} E_3^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ l_{21} & 1 & 0 \\ l_{31} & l_{32} & 1 \end{bmatrix}!
+\]
+The exact same proof works for any size \(m \times m\): whenever an earlier factor \(E_{\text{early}}^{-1}\) (operating from column \(p\)) left-multiplies the accumulated product of all later factors (which only hold multipliers in columns \(q \ge p\), never in row \(p\)), row \(p\) of that right-hand product is STILL the untouched standard row \(\mathbf{e}_p^T\). Therefore adding \(l_{ip}\) times row \(p\) to row \(i\) writes \(l_{ip}\) into slot \((i, p)\) and adds \(0\) everywhere else!
+
+By contrast, if you compute \(L^{-1} = E_3 E_2 E_1\), \(E_3\) acts on the left by subtracting \(l_{32}\) times row \(2\) (which ALREADY contains \(-l_{21}\) in column \(1\)!) from row \(3\), creating a cross-term \(+l_{32} l_{21}\) in entry \((3, 1)\). That is why we factor \(A = LU\) rather than storing \(L^{-1} A = U\): \(L\) keeps every elimination multiplier clean in place.
+
+[CALLOUT]
+id: lu-theorem
+label: Theorem
+title: \(LU\) factorization without row swaps
+tone: key
+
+If forward Gaussian elimination reduces \(A\) to an upper-triangular (row-echelon) matrix \(U\) using ONLY downward row replacements \(R_i \leftarrow R_i - l_{ij} R_j\) (\(i > j\), moving left to right across columns), then
+\[
+A = LU,
+\]
+where \(L\) is the unit lower-triangular matrix (\(1\)'s on the main diagonal, \(0\)'s above) whose entry in position \((i, j)\) for \(i > j\) is simply the multiplier \(l_{ij}\) used to eliminate position \((i, j)\).
+[/CALLOUT]
+
+Let us compute an \(LU\) factorization by hand for
+\[
+A = \begin{bmatrix} 2 & 4 & -2 \\ 4 & 9 & -3 \\ -2 & -3 & 7 \end{bmatrix}.
+\]
+Column \(1\) (pivot \(2\)):
+- To eliminate \(4\) in \((2, 1)\): multiplier \(l_{21} = 4/2 = 2\), perform \(R_2 \leftarrow R_2 - 2 R_1\).
+- To eliminate \(-2\) in \((3, 1)\): multiplier \(l_{31} = -2/2 = -1\), perform \(R_3 \leftarrow R_3 - (-1) R_1 = R_3 + R_1\).
+Intermediate matrix:
+\[
+\begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 1 & 5 \end{bmatrix}.
+\]
+Column \(2\) (pivot \(1\)):
+- To eliminate \(1\) in \((3, 2)\): multiplier \(l_{32} = 1/1 = 1\), perform \(R_3 \leftarrow R_3 - 1 R_2\).
+We obtain
+\[
+U = \begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 0 & 4 \end{bmatrix}, \qquad
+L = \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 1 & 1 \end{bmatrix}.
+\]
+Verify by multiplying \(LU\):
+\[
+\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 1 & 1 \end{bmatrix}
+\begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 0 & 4 \end{bmatrix}
+= \begin{bmatrix} 2 & 4 & -2 \\ 4 & 9 & -3 \\ -2 & -3 & 7 \end{bmatrix} = A.
+\]
+Watch the sign convention carefully: the multiplier recorded in \(L\) is the number SUBTRACTED in \(R_i \leftarrow R_i - l_{ij} R_j\). Because row \(3\) used \(R_3 + R_1 = R_3 - (-1) R_1\), the entry \(l_{31}\) is \(-1\), NOT \(+1\)!
+
+[QUESTION 1]
+[ANSWER: B]
+Compute the \(LU\) factorization (with unit lower-triangular \(L\)) of
+\[
+A = \begin{bmatrix} 2 & -1 & 3 \\ 4 & 1 & 5 \\ -2 & 7 & -4 \end{bmatrix}.
+\]
+What is the lower-triangular factor \(L\)?
+
+(A) \(\begin{bmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ 1 & -2 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 2 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 1 & 2 & 1 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 7 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 2 & 0 & 0 \\ 4 & 3 & 0 \\ -2 & 6 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Solving \(A\mathbf{x} = \mathbf{b}\) via triangular solves and cost analysis ===
+
+Once \(A = LU\) is known, solving \(A\mathbf{x} = \mathbf{b}\) splits cleanly into two fast triangular systems. Rewrite \(LU\mathbf{x} = \mathbf{b}\) by defining the intermediate vector \(\mathbf{y} = U\mathbf{x}\):
+
+1. Forward substitution: solve the lower-triangular system \(L\mathbf{y} = \mathbf{b}\) from top to bottom (\(y_1\), then \(y_2\), ..., up to \(y_n\)).
+2. Back substitution: solve the upper-triangular system \(U\mathbf{x} = \mathbf{y}\) from bottom to top (\(x_n\), then \(x_{n-1}\), ..., up to \(x_1\)).
+
+Verify why this solves the original system: \(A\mathbf{x} = (LU)\mathbf{x} = L(U\mathbf{x}) = L\mathbf{y} = \mathbf{b}\).
+
+Let us solve \(A\mathbf{x} = \begin{bmatrix} 2 \\ 8 \\ 6 \end{bmatrix}\) using the \(L\) and \(U\) we found in Section 1:
+- Forward substitution \(L\mathbf{y} = \mathbf{b}\):
+\[
+\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 1 & 1 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix} = \begin{bmatrix} 2 \\ 8 \\ 6 \end{bmatrix}
+\implies
+\begin{aligned}
+y_1 &= 2, \\
+2(2) + y_2 &= 8 \implies y_2 = 4, \\
+-1(2) + 1(4) + y_3 &= 6 \implies y_3 = 4.
+\end{aligned}
+\]
+- Back substitution \(U\mathbf{x} = \mathbf{y}\):
+\[
+\begin{bmatrix} 2 & 4 & -2 \\ 0 & 1 & 1 \\ 0 & 0 & 4 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 2 \\ 4 \\ 4 \end{bmatrix}
+\implies
+\begin{aligned}
+4x_3 &= 4 \implies x_3 = 1, \\
+x_2 + 1 &= 4 \implies x_2 = 3, \\
+2x_1 + 4(3) - 2(1) &= 2 \implies 2x_1 = -8 \implies x_1 = -4.
+\end{aligned}
+\]
+Check directly: \(A\mathbf{x} = \begin{bmatrix} 2(-4) + 4(3) - 2(1) \\ 4(-4) + 9(3) - 3(1) \\ -2(-4) - 3(3) + 7(1) \end{bmatrix} = \begin{bmatrix} 2 \\ 8 \\ 6 \end{bmatrix}\). Exact!
+
+Now count the floating-point operations (additions, subtractions, multiplications, and divisions) for a large \(n \times n\) system:
+- Computing \(A = LU\) once takes roughly \(\frac{2}{3} n^3\) operations—growing cubically, written \(O(n^3)\).
+- Each forward substitution \(L\mathbf{y} = \mathbf{b}\) takes roughly \(n^2\) operations, and each back substitution \(U\mathbf{x} = \mathbf{y}\) takes roughly \(n^2\) operations—together about \(2 n^2\) operations per right-hand side, written \(O(n^2)\).
+
+When you solve \(A\mathbf{x}_j = \mathbf{b}_j\) for \(k\) different right-hand sides:
+- Fresh Gaussian elimination each time costs \(\approx \frac{2}{3} k n^3\).
+- Factoring \(A = LU\) ONCE and running \(k\) triangular solve pairs costs \(\approx \frac{2}{3} n^3 + 2 k n^2\).
+
+For \(n = 1000\) and \(k = 20\), repeated elimination needs \(\approx 1.33 \times 10^{10}\) operations, whereas one \(LU\) plus \(20\) triangular solves needs only \(\approx 7.07 \times 10^8\) operations—nearly \(19\) times faster! Even compared to computing \(A^{-1}\) once (\(\approx 2 n^3\)) plus \(k\) matrix-vector products (\(\approx 2 k n^2\)), \(LU\) saves roughly \(\frac{4}{3} n^3\) operations up front while having the same \(2 n^2\) cost per extra right-hand side.
+
+Drag the slider \(k\) in the graph below to compare total work (in thousands of operations) as a function of matrix size \(n\) from \(10\) to \(80\).
+
+[GRAPH]
+type: function2d
+title: Total arithmetic cost (thousands of operations) for \(k\) right-hand sides
+xlabel: \(n\)
+ylabel: thousands of ops
+xrange: 10, 80
+trace: (2/3) * k * x^3 / 1000 | label: Repeated elimination \(\frac{2}{3} k n^3\) | color: #dc2626
+trace: ((2/3) * x^3 + 2 * k * x^2) / 1000 | label: One \(LU\) + \(k\) solves \(\frac{2}{3} n^3 + 2 k n^2\) | color: #2563eb
+slider: k | range: 1, 20 | init: 10 | step: 1
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: C]
+An invertible matrix \(A\) has the factorization \(A = LU\), where
+\[
+L = \begin{bmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ 3 & 1 & 1 \end{bmatrix}, \qquad
+U = \begin{bmatrix} 2 & 1 & -1 \\ 0 & 3 & 2 \\ 0 & 0 & 4 \end{bmatrix}.
+\]
+To solve \(A\mathbf{x} = \mathbf{b}\) with \(\mathbf{b} = \begin{bmatrix} -1 \\ 3 \\ 6 \end{bmatrix}\), what are the intermediate vector \(\mathbf{y}\) (from \(L\mathbf{y} = \mathbf{b}\)) and the final solution \(\mathbf{x}\) (from \(U\mathbf{x} = \mathbf{y}\))?
+
+(A) \(\mathbf{y} = \begin{bmatrix} -1 \\ 5 \\ 4 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix}\)
+(B) \(\mathbf{y} = \begin{bmatrix} -1 \\ 1 \\ 8 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 2 \\ -1 \\ 2 \end{bmatrix}\)
+(C) \(\mathbf{y} = \begin{bmatrix} -1 \\ 1 \\ 8 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 1 \\ -1 \\ 2 \end{bmatrix}\)
+(D) \(\mathbf{y} = \begin{bmatrix} -1 \\ 1 \\ 10 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} 1 \\ -1 \\ 2 \end{bmatrix}\)
+(E) \(\mathbf{y} = \begin{bmatrix} 1 \\ -1 \\ 2 \end{bmatrix},\; \mathbf{x} = \begin{bmatrix} -1 \\ 1 \\ 8 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Permutation matrices and \(PA = LU\) factorization ===
+
+Not every invertible matrix admits a swap-free factorization \(A = LU\). Take the simplest possible example:
+\[
+A = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}.
+\]
+If \(A = LU\) with unit lower-triangular \(L = \begin{bmatrix} 1 & 0 \\ l & 1 \end{bmatrix}\) and upper-triangular \(U = \begin{bmatrix} u_{11} & u_{12} \\ 0 & u_{22} \end{bmatrix}\), then entry \((1, 1)\) forces \(u_{11} = 0\), which then makes entry \((2, 1) = l u_{11} = 0 \neq 1\)—impossible! Forward elimination requires a row swap whenever a zero sits in a needed pivot position (and, as we will see in numerical conditioning, row swaps are also used to avoid tiny pivots).
+
+To incorporate row swaps cleanly inside matrix factorization, we track all swaps using a permutation matrix.
+
+[CALLOUT]
+id: perm-matrix-def
+label: Definition
+title: Permutation matrix and its inverse
+tone: key
+
+An \(m \times m\) permutation matrix \(P\) is any matrix obtained from \(I_m\) by reordering its rows (equivalently, any product \(P = E_r \cdots E_1\) of row-swap elementary matrices). Every row and every column of \(P\) contains a single \(1\) and zeros elsewhere.
+
+Every permutation matrix \(P\) is invertible, and its inverse is simply its transpose:
+\[
+P^{-1} = P^T.
+\]
+[/CALLOUT]
+
+Let us prove \(P^{-1} = P^T\) in one line! Every single row-swap elementary matrix \(E\) is both symmetric (\(E^T = E\)) and its own inverse (\(E^{-1} = E\)). Writing \(P = E_r \cdots E_2 E_1\) and applying order reversal for both inverses and transposes gives
+\[
+P^{-1} = E_1^{-1} E_2^{-1} \cdots E_r^{-1} = E_1^T E_2^T \cdots E_r^T = (E_r \cdots E_2 E_1)^T = P^T.
+\]
+Beware: while a SINGLE swap satisfies \(P^{-1} = P\), a product of two or more swaps need NOT satisfy \(P^{-1} = P\)—you must take the transpose \(P^T\)!
+
+Now suppose we perform Gaussian elimination on a general matrix \(A\), swapping rows whenever a zero pivot is encountered. The result is a factorization
+\[
+P A = L U,
+\]
+where \(P\) records the cumulative row swaps, \(L\) is unit lower-triangular, and \(U\) is in row-echelon (upper-triangular) form. Think of \(PA = LU\) as saying: "if we had known all the needed row swaps in advance and pre-permuted the rows of \(A\) into \(PA\), then \(PA\) would have reduced cleanly to \(U\) without any swaps at all!"
+
+There is ONE crucial bookkeeping rule when building \(P\), \(L\), and \(U\) simultaneously on the fly: whenever you swap rows \(i\) and \(j\) at step \(k\), you MUST swap:
+1. Rows \(i\) and \(j\) of the working matrix \(U\);
+2. Rows \(i\) and \(j\) of \(P\) (starting from \(P = I_m\));
+3. The ALREADY-RECORDED subdiagonal multipliers in rows \(i\) and \(j\) of \(L\) (entries in columns \(1, \dots, k - 1\) only—keep the \(1\)'s on the main diagonal and \(0\)'s above untouched!).
+
+Let us watch WHY rule 3 matters on a concrete \(3 \times 3\) example where the swap happens in column \(2\), AFTER column \(1\) multipliers have already been recorded:
+\[
+A = \begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 5 \\ -1 & 1 & 3 \end{bmatrix}.
+\]
+Start with \(P = I_3\) and \(L\) having \(1\)'s on the diagonal and blank subdiagonal slots.
+- Column \(1\): multipliers \(l_{21} = 2\) and \(l_{31} = -1\). Perform \(R_2 \leftarrow R_2 - 2 R_1\) and \(R_3 \leftarrow R_3 + R_1\):
+\[
+U^{(1)} = \begin{bmatrix} 1 & 2 & 1 \\ 0 & 0 & 3 \\ 0 & 3 & 4 \end{bmatrix}, \qquad
+\text{recorded col 1 of } L: \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & * & 1 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+- Column \(2\): entry \((2, 2)\) is \(0\), so we must swap \(R_2 \leftrightarrow R_3\)! Applying all three swap updates (including swapping \(2\) and \(-1\) in column \(1\) of \(L\), while leaving the diagonal \(1\)'s in place!) gives:
+\[
+U = \begin{bmatrix} 1 & 2 & 1 \\ 0 & 3 & 4 \\ 0 & 0 & 3 \end{bmatrix}, \qquad
+L = \begin{bmatrix} 1 & 0 & 0 \\ -1 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix}, \qquad
+P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}.
+\]
+Notice that after the swap, entry \((3, 2)\) of \(U\) is already \(0\), so \(l_{32} = 0\). Check \(PA = LU\) directly:
+\[
+PA = \begin{bmatrix} 1 & 2 & 1 \\ -1 & 1 & 3 \\ 2 & 4 & 5 \end{bmatrix}, \qquad
+LU = \begin{bmatrix} 1 & 0 & 0 \\ -1 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 2 & 1 \\ 0 & 3 & 4 \\ 0 & 0 & 3 \end{bmatrix}
+= \begin{bmatrix} 1 & 2 & 1 \\ -1 & 1 & 3 \\ 2 & 4 & 5 \end{bmatrix} = PA!
+\]
+Had we forgotten to swap the already-recorded multipliers \(2\) and \(-1\) in column \(1\) of \(L\), \(LU\) would have failed to match \(PA\).
+
+Finally, how do we solve \(A\mathbf{x} = \mathbf{b}\) once we have \(PA = LU\)? Multiply both sides of \(A\mathbf{x} = \mathbf{b}\) on the left by \(P\):
+\[
+PA\mathbf{x} = P\mathbf{b} \implies LU\mathbf{x} = P\mathbf{b}.
+\]
+Thus you simply permute the right-hand side into \(P\mathbf{b}\), solve \(L\mathbf{y} = P\mathbf{b}\) by forward substitution, and solve \(U\mathbf{x} = \mathbf{y}\) by back substitution!
+
+[TABLE]
+Stage of solving \(A\mathbf{x} = \mathbf{b}\) via \(PA = LU\) | Operation | Cost
+1. Factor once | Find \(P, L, U\) with \(PA = LU\) | \(\approx \frac{2}{3} n^3\)
+2. Permute right-hand side | Compute \(\tilde{\mathbf{b}} = P\mathbf{b}\) (reorder entries) | Negligible (\(n\) moves)
+3. Forward substitution | Solve \(L\mathbf{y} = \tilde{\mathbf{b}}\) | \(\approx n^2\)
+4. Back substitution | Solve \(U\mathbf{x} = \mathbf{y}\) | \(\approx n^2\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: D]
+Consider the matrix
+\[
+A = \begin{bmatrix} 1 & -1 & 2 \\ 3 & -3 & 7 \\ 2 & 1 & 5 \end{bmatrix}.
+\]
+Using forward elimination with a row swap \(R_2 \leftrightarrow R_3\) when a zero pivot appears in column \(2\), we obtain \(PA = LU\) with \(P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}\) and \(U = \begin{bmatrix} 1 & -1 & 2 \\ 0 & 3 & 1 \\ 0 & 0 & 1 \end{bmatrix}\). What is the unit lower-triangular factor \(L\)?
+
+(A) \(\begin{bmatrix} 1 & 0 & 0 \\ 3 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & 0 & 0 \\ -2 & 1 & 0 \\ -3 & 0 & 1 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 0 & 1 \\ 3 & 1 & 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 3 & 0 & 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 3 & -1 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+You must solve \(A\mathbf{x}_j = \mathbf{b}_j\) for \(k = 40\) different right-hand sides \(\mathbf{b}_1, \dots, \mathbf{b}_{40}\) using the same invertible \(1000 \times 1000\) matrix \(A\). Comparing the approximate arithmetic cost of three methods, which statement is accurate?
+
+(A) Repeated Gaussian elimination on each \([A \mid \mathbf{b}_j]\) has the same order of cost as one \(PA = LU\) factorization plus \(40\) triangular solves
+(B) One \(PA = LU\) factorization (\(\approx \frac{2}{3} n^3\)) plus \(40\) triangular solves (\(\approx 40 \cdot 2 n^2\)) is roughly \(36\) times faster than repeated Gaussian elimination (\(\approx 40 \cdot \frac{2}{3} n^3\)) and also uses roughly one-third the upfront cubic work of computing \(A^{-1}\)
+(C) Computing \(A^{-1}\) via \([A \mid I_n]\) costs only \(O(n^2)\) operations, beating \(PA = LU\) once \(k > 2\)
+(D) Because \(P\) is involved, each new right-hand side \(\mathbf{b}_j\) requires recomputing \(L\) and \(U\) from scratch
+(E) Forward and back substitution each cost \(O(n^3)\) operations, so reusing \(L\) and \(U\) saves no asymptotic work
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Let
+\[
+L = \begin{bmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ -1 & 3 & 1 \end{bmatrix}.
+\]
+Notice that \(L\) records the elimination multipliers directly in place, whereas \(L^{-1}\) accumulates cross-terms. What is the \((3, 1)\) entry of \(L^{-1}\)?
+
+(A) \(1\)
+(B) \(-5\)
+(C) \(7\)
+(D) \(-7\)
+(E) \(5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Let \(P\) be the \(4 \times 4\) permutation matrix formed by applying \(R_1 \leftrightarrow R_3\) and then \(R_3 \leftrightarrow R_4\) to \(I_4\) (so \(P = E_{34} E_{13}\)). For any vector \(\mathbf{v} = \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix} \in \mathbb{R}^4\), what is \(P^{-1} \mathbf{v}\)?
+
+(A) \(\begin{bmatrix} c \\ b \\ d \\ a \end{bmatrix}\)
+(B) \(\begin{bmatrix} d \\ b \\ a \\ c \end{bmatrix}\)
+(C) \(\begin{bmatrix} c \\ b \\ a \\ d \end{bmatrix}\)
+(D) \(\begin{bmatrix} a \\ b \\ d \\ c \end{bmatrix}\)
+(E) \(\begin{bmatrix} b \\ c \\ d \\ a \end{bmatrix}\)
+[/BONUS]

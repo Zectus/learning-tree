@@ -1,0 +1,251 @@
+=== SECTION 1: Argument loci — open rays, sectors, and circular arcs ===
+
+In our earlier lesson on the Argand plane, modulus equations like \(|z - z_0| = r\) and \(|z - a| = |z - b|\) described circles and perpendicular bisectors. Now that we have polar form and the principal argument \(\operatorname{Arg}(z) \in (-\pi, \pi]\), what geometric figures arise when we constrain ARGUMENTS instead of distances?
+
+Start with the simplest argument constraint:
+\[
+\operatorname{Arg}(z - z_0) = \alpha, \qquad \alpha \in (-\pi, \pi].
+\]
+Geometrically, \(z - z_0\) is the vector pointing FROM the fixed point \(z_0\) TO the variable point \(z\). Requiring \(\operatorname{Arg}(z - z_0) = \alpha\) fixes the exact direction of that vector — angle \(\alpha\) counterclockwise from the positive real direction — while leaving its positive length \(r = |z - z_0| > 0\) completely free. Therefore the locus is the OPEN RAY starting at \(z_0\) and heading infinitely in direction \(\alpha\).
+- Crucially, the vertex \(z_0\) itself is EXCLUDED from the locus, because at \(z = z_0\) we have \(z - z_0 = 0\), and \(\arg(0)\) is undefined!
+- Similarly, an inequality such as \(\alpha \le \operatorname{Arg}(z - z_0) \le \beta\) (with \(-\pi < \alpha < \beta \le \pi\)) describes an angular sector (wedge) with vertex \(z_0\) excluded, bounded by the two rays at angles \(\alpha\) and \(\beta\).
+
+Now take the next step: what is the locus of a QUOTIENT argument constraint
+\[
+\operatorname{Arg}\!\left(\frac{z - a}{z - b}\right) = \alpha
+\]
+for two distinct fixed points \(a, b \in \mathbb{C}\)? Recall the polar quotient law:
+\[
+\arg\!\left(\frac{z - a}{z - b}\right) \equiv \arg(z - a) - \arg(z - b) \pmod{2\pi}.
+\]
+Interpret that difference geometrically! The vector \(z - b\) points from \(b\) to \(z\), and \(z - a\) points from \(a\) to \(z\). Turning from the direction of \(z - b\) to the direction of \(z - a\) is the exact same angle as standing at \(z\) and turning counterclockwise from the ray \(\overrightarrow{zb}\) to the ray \(\overrightarrow{za}\) — that is, the directed inscribed angle \(\angle bza\)!
+
+From Euclidean geometry (the Inscribed Angle Theorem), the set of points \(z\) on one side of the chord \(ab\) that see the chord at a constant inscribed angle \(|\alpha|\) (for \(0 < |\alpha| < \pi\)) is an OPEN CIRCULAR ARC joining \(a\) and \(b\) (with both endpoints \(a\) and \(b\) EXCLUDED, since at \(z = a\) the numerator is \(0\) and at \(z = b\) we divide by \(0\)).
+
+Let us check a concrete example carefully so we get the orientation and major/minor arc distinction 100% right! Take \(a = 1\), \(b = -1\), and consider points \(z = iy\) on the positive imaginary axis (\(y > 0\)):
+- \(z - a = -1 + iy\) sits in Quadrant II with angle \(\pi - \arctan(y)\).
+- \(z - b = 1 + iy\) sits in Quadrant I with angle \(\arctan(y)\).
+- Hence \(\operatorname{Arg}\!\left(\frac{z - 1}{z + 1}\right) = \pi - 2\arctan(y)\).
+
+Plug in \(\alpha = \frac{\pi}{3}\): solving \(\pi - 2\arctan(y) = \frac{\pi}{3}\) gives \(\arctan(y) = \frac{\pi}{3}\), so \(y = \sqrt{3} > 1\). This arc arches HIGH above the unit circle — it is a MAJOR arc (greater than a semicircle)! By contrast, what happens on the LOWER portion of the EXACT SAME circle (centered at \((0, \frac{1}{\sqrt{3}})\) with radius \(\frac{2}{\sqrt{3}}\), passing through \(1, -1,\) and \(i\sqrt{3}\))? At its lowest point \(z = -\frac{i}{\sqrt{3}}\), we compute \(\arg(-1 - \frac{i}{\sqrt{3}}) = -\frac{5\pi}{6}\) and \(\arg(1 - \frac{i}{\sqrt{3}}) = -\frac{\pi}{6}\), so
+\[
+\operatorname{Arg}\!\left(\frac{z - 1}{z + 1}\right) = -\frac{5\pi}{6} - \left(-\frac{\pi}{6}\right) = -\frac{2\pi}{3} = \frac{\pi}{3} - \pi!
+\]
+That lower piece is the COMPLEMENTARY MINOR arc of the same circle! Why did the principal argument jump by \(-\pi\) when crossing the chord \(ab\)? Because an inscribed quadrilateral's opposite angles sum to \(\pi\), AND crossing the chord reverses whether the turn from \(\overrightarrow{zb}\) to \(\overrightarrow{za}\) is counterclockwise (positive) or clockwise (negative), flipping \(\alpha\) to \(\alpha - \pi\)!
+
+The plot below shows both complementary arcs on the circle centered at \((0, \frac{1}{\sqrt{3}})\) of radius \(\frac{2}{\sqrt{3}}\), along with the sample point \(z = i\sqrt{3}\) where the counterclockwise angle from \(\overrightarrow{zb}\) to \(\overrightarrow{za}\) is \(\frac{\pi}{3}\). (Note that the continuous curves visually meet at \(a = 1\) and \(b = -1\), even though both endpoints are excluded from the argument loci.)
+
+[GRAPH]
+type: parametric2d
+title: Complementary arcs \(\operatorname{Arg}\!\left(\frac{z-1}{z+1}\right) = \frac{\pi}{3}\) (major) and \(-\frac{2\pi}{3}\) (minor)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 1
+xrange: -1.6, 1.6
+yrange: -0.9, 2.0
+trace: (2/sqrt(3))*cos(-pi/6 + t*4*pi/3), 1/sqrt(3) + (2/sqrt(3))*sin(-pi/6 + t*4*pi/3) | label: \(\operatorname{Arg}((z-1)/(z+1)) = \pi/3\) | color: #2563eb
+trace: (2/sqrt(3))*cos(7*pi/6 + t*2*pi/3), 1/sqrt(3) + (2/sqrt(3))*sin(7*pi/6 + t*2*pi/3) | label: \(\operatorname{Arg}((z-1)/(z+1)) = -2\pi/3\) | color: #d97706
+segment: 0, sqrt(3), -1, 0 | color: #64748b | dashed: true
+segment: 0, sqrt(3), 1, 0 | color: #64748b | dashed: true
+point: 1, 0 | label: \(a = 1\) | color: #dc2626
+point: -1, 0 | label: \(b = -1\) | color: #dc2626
+point: 0, sqrt(3) | label: \(z = i\sqrt{3}\) | color: #2563eb
+[/GRAPH]
+
+[CALLOUT]
+id: arg-loci-catalog
+label: Summary
+title: Geometric loci of \(\operatorname{Arg}\!\left(\frac{z - a}{z - b}\right) = \alpha\) (\(a \ne b\), endpoints \(a, b\) always excluded)
+tone: key
+
+(1) \(\alpha = 0\): the two open rays on the line through \(a\) and \(b\) OUTSIDE the segment \(ab\) (where \(z - a\) and \(z - b\) point in the same direction).
+(2) \(\alpha = \pi\): the open line segment STRICTLY BETWEEN \(a\) and \(b\) (where \(z - a\) and \(z - b\) point in opposite directions).
+(3) \(|\alpha| = \frac{\pi}{2}\): an open semicircle having \(ab\) as diameter.
+(4) \(0 < |\alpha| < \frac{\pi}{2}\) (acute inscribed angle): an open MAJOR circular arc joining \(a\) and \(b\).
+(5) \(\frac{\pi}{2} < |\alpha| < \pi\) (obtuse inscribed angle): an open MINOR circular arc joining \(a\) and \(b\).
+(6) Replacing \(\alpha > 0\) by \(\alpha - \pi\) (or \(\alpha < 0\) by \(\alpha + \pi\)) gives the complementary open arc on the exact same circle.
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+Which geometric figure is described by the equation \(\operatorname{Arg}\!\left(\frac{z - 2}{z + 2}\right) = \frac{3\pi}{4}\)?
+
+(A) The entire circle passing through \(-2\) and \(2\) with center \((0, -2)\).
+(B) The open major circular arc in the upper half-plane joining \(-2\) and \(2\), excluding \(-2\) and \(2\).
+(C) The open minor circular arc in the upper half-plane joining \(-2\) and \(2\), excluding \(-2\) and \(2\).
+(D) The open minor circular arc in the lower half-plane joining \(-2\) and \(2\), excluding \(-2\) and \(2\).
+(E) The open semicircle of radius \(2\) in the upper half-plane joining \(-2\) and \(2\).
+[/QUESTION]
+
+=== SECTION 2: Planar transformations and spiral similarities in \(\mathbb{C}\) ===
+
+Complex arithmetic encodes every rigid motion and similarity of the Euclidean plane into a single line of algebra! We already know that adding \(b\) translates every point by \(b\), and multiplying by \(r e^{i\theta}\) (\(r > 0\)) scales by \(r\) and rotates counterclockwise by \(\theta\) around the origin \(0\).
+
+How do we rotate a point \(z\) counterclockwise by an angle \(\theta\) around an ARBITRARY pivot point \(z_0 \ne 0\)? Do it in three elementary steps:
+1. Translate the plane by \(-z_0\) so the pivot moves to the origin: \(z \mapsto z - z_0\).
+2. Rotate around the origin by \(\theta\): \((z - z_0) \mapsto e^{i\theta}(z - z_0)\).
+3. Translate back by \(+z_0\) to restore the pivot:
+\[
+z' = z_0 + e^{i\theta}(z - z_0).
+\]
+Notice the exact same three-step conjugation works for scaling (dilation) by a positive factor \(k > 0\) from a pivot \(z_0\): \(z' = z_0 + k(z - z_0)\).
+
+Drag the slider \(\theta\) in the plot below to watch \(z = 3 + i\) rotate around the pivot \(z_0 = 1 + i\) along the circle \(|z - z_0| = 2\) via \(z' = z_0 + e^{i\theta}(z - z_0)\).
+
+[GRAPH]
+type: parametric2d
+title: Rotation of \(z = 3 + i\) about pivot \(z_0 = 1 + i\) by angle \(\theta\)
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.5, 3.6
+yrange: -1.5, 3.6
+trace: 1 + 2*cos(t), 1 + 2*sin(t) | label: \(|z - z_0| = 2\) | color: #94a3b8
+segment: 1, 1, 3, 1 | color: #64748b | dashed: true
+segment: 1, 1, 1 + 2*cos(theta), 1 + 2*sin(theta) | color: #2563eb
+point: 1, 1 | label: \(z_0\) | color: #dc2626
+point: 3, 1 | label: \(z\) | color: #64748b
+point: 1 + 2*cos(theta), 1 + 2*sin(theta) | label: \(z'\) | color: #2563eb
+slider: theta | range: 0, 6.283 | init: 1.57 | step: 0.05
+[/GRAPH]
+
+What about reflections? Conjugation \(z \mapsto \bar{z}\) reflects across the real axis, and \(z \mapsto -\bar{z}\) reflects across the imaginary axis. To reflect across a line through the origin making angle \(\theta\) with the positive real axis, rotate the line onto the real axis (\(e^{-i\theta} z\)), conjugate (\(\overline{e^{-i\theta} z} = e^{i\theta}\bar{z}\)), and rotate back by \(e^{i\theta}\):
+\[
+z' = e^{2i\theta}\bar{z}.
+\]
+
+Finally, combine scaling, rotation, and translation into the general linear map
+\[
+T(z) = a z + b, \qquad a, b \in \mathbb{C},\quad a \ne 0.
+\]
+Writing \(a = r e^{i\theta}\) (\(r = |a| > 0\), \(\theta = \arg(a)\)), \(T\) scales every distance by \(|a|\), rotates every direction counterclockwise by \(\arg(a)\), and shifts by \(b\) — it is an orientation-preserving (direct) similarity, also called a SPIRAL SIMILARITY. Whenever \(a \ne 1\), \(T\) has a UNIQUE fixed point \(z_0\) satisfying \(a z_0 + b = z_0\), namely \(z_0 = \frac{b}{1 - a}\). Subtracting \(z_0 = a z_0 + b\) from \(T(z) = a z + b\) gives
+\[
+T(z) - z_0 = a(z - z_0) \implies T(z) = z_0 + a(z - z_0),
+\]
+proving that EVERY direct similarity with \(a \ne 1\) is simply a scaling by \(|a|\) combined with a rotation by \(\arg(a)\) centered at its fixed point \(z_0\)! (When \(a = 1\), \(T(z) = z + b\) is a pure translation.)
+
+[TABLE]
+Planar transformation | Complex formula | Key invariants or parameters
+Translation by \(b\) | \(z \mapsto z + b\) | Preserves lengths, angles, orientation; no fixed point if \(b \ne 0\)
+Rotation by \(\theta\) about \(z_0\) | \(z \mapsto z_0 + e^{i\theta}(z - z_0)\) | Fixes \(z_0\); preserves distances and orientation
+Dilation by \(k > 0\) from \(z_0\) | \(z \mapsto z_0 + k(z - z_0)\) | Fixes \(z_0\); scales all lengths by \(k\); preserves directions
+Reflection across line through \(0\) at angle \(\theta\) | \(z \mapsto e^{2i\theta}\bar{z}\) | Preserves lengths; reverses orientation
+Direct (spiral) similarity (\(a \ne 0, 1\)) | \(z \mapsto a z + b\) | Fixed center \(z_0 = \frac{b}{1 - a}\); scale \(\lvert a \rvert\), rotation \(\arg(a)\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: A]
+What is the image of the point \(z = 4 - i\) when rotated \(90^\circ\) counterclockwise about the pivot point \(z_0 = 1 + 2i\)?
+
+(A) \(4 + 5i\)
+(B) \(1 + 4i\)
+(C) \(-2 - i\)
+(D) \(4 - 5i\)
+(E) \(-2 + 5i\)
+[/QUESTION]
+
+=== SECTION 3: Solving Euclidean geometry problems with complex rotation ===
+
+Because multiplying a vector by \(i = e^{i\pi/2}\) rotates it \(90^\circ\) counterclockwise and multiplying by \(e^{\pm i\pi/3} = \frac{1 \pm i\sqrt{3}}{2}\) rotates it \(\pm 60^\circ\), many classical Euclidean coordinate-geometry problems collapse into two lines of complex arithmetic!
+
+Worked example (locating vertices of a square): Suppose \(z_1 = 1 + i\) and \(z_2 = 4 + 3i\) are two adjacent vertices of a square listed in counterclockwise order \(z_1, z_2, z_3, z_4\). Find \(z_3\) and \(z_4\).
+1. Compute the edge vector from \(z_1\) to \(z_2\): \(v = z_2 - z_1 = (4 + 3i) - (1 + i) = 3 + 2i\).
+2. Rotate \(v\) counterclockwise by \(90^\circ\) to get the adjacent edge vector from \(z_1\) to \(z_4\) (and equally from \(z_2\) to \(z_3\)):
+   \[
+   i v = i(3 + 2i) = -2 + 3i.
+   \]
+3. Add \(i v\) to \(z_1\) and \(z_2\):
+   \[
+   z_4 = z_1 + i v = (1 + i) + (-2 + 3i) = -1 + 4i, \qquad z_3 = z_2 + i v = (4 + 3i) + (-2 + 3i) = 2 + 6i.
+   \]
+No slopes, no distance formulas, no quadratic equations — just one multiplication by \(i\)! (If the vertices were listed clockwise instead, we would multiply by \(-i\) rather than \(+i\).)
+
+Now apply complex rotation to prove one of the most elegant algebraic characterizations in planar geometry: when do three complex numbers \(z_1, z_2, z_3\) form an equilateral triangle?
+
+[CALLOUT]
+id: equilateral-criterion
+label: Theorem
+title: Algebraic criterion for an equilateral triangle in \(\mathbb{C}\)
+tone: key
+
+Three distinct complex numbers \(z_1, z_2, z_3 \in \mathbb{C}\) are the vertices of an equilateral triangle if and only if
+\[
+z_1^2 + z_2^2 + z_3^2 = z_1 z_2 + z_2 z_3 + z_3 z_1.
+\]
+(If we allow repeated vertices, the equation also holds for the degenerate triple \(z_1 = z_2 = z_3\).)
+[/CALLOUT]
+
+Let us derive [REF: equilateral-criterion | this criterion] directly from \(60^\circ\) rotation!
+- First observe that the two \(60^\circ\) rotation factors \(e^{i\pi/3} = \frac{1 + i\sqrt{3}}{2}\) and \(e^{-i\pi/3} = \frac{1 - i\sqrt{3}}{2}\) are the exact two complex roots of the quadratic equation \(\lambda^2 - \lambda + 1 = 0\) (since their sum is \(1\) and their product is \(1\)).
+- Now take three distinct points \(z_1, z_2, z_3 \in \mathbb{C}\) (so \(z_2 - z_1 \ne 0\)). They form an equilateral triangle (either counterclockwise or clockwise) if and only if rotating the side vector \(z_2 - z_1\) by \(+\frac{\pi}{3}\) or \(-\frac{\pi}{3}\) produces the side vector \(z_3 - z_1\); that is,
+  \[
+  \frac{z_3 - z_1}{z_2 - z_1} = e^{\pm i\pi/3}.
+  \]
+- Setting \(\lambda = \frac{z_3 - z_1}{z_2 - z_1}\), this holds if and only if \(\lambda^2 - \lambda + 1 = 0\). Because \(z_2 - z_1 \ne 0\), multiplying through by \((z_2 - z_1)^2\) is completely reversible:
+  \[
+  (z_3 - z_1)^2 - (z_3 - z_1)(z_2 - z_1) + (z_2 - z_1)^2 = 0.
+  \]
+- Expand each term carefully:
+  \[
+  (z_3^2 - 2z_1 z_3 + z_1^2) - (z_2 z_3 - z_1 z_3 - z_1 z_2 + z_1^2) + (z_2^2 - 2z_1 z_2 + z_1^2) = 0.
+  \]
+- Collecting like terms cancels one \(z_1^2\), simplifies \(-2z_1 z_3 + z_1 z_3 = -z_1 z_3\), and simplifies \(z_1 z_2 - 2z_1 z_2 = -z_1 z_2\), leaving
+  \[
+  z_1^2 + z_2^2 + z_3^2 - z_1 z_2 - z_2 z_3 - z_3 z_1 = 0 \iff z_1^2 + z_2^2 + z_3^2 = z_1 z_2 + z_2 z_3 + z_3 z_1!
+  \]
+Every single step is reversible for distinct points, so both directions of the biconditional are established in one clean derivation!
+
+[QUESTION 3]
+[ANSWER: B]
+Two vertices of an equilateral triangle in the Argand plane are located at \(z_1 = 0\) and \(z_2 = 2\sqrt{3} + 2i\). What are the two possible locations for the third vertex \(z_3\)?
+
+(A) \(4i\) and \(-4i\)
+(B) \(4i\) and \(2\sqrt{3} - 2i\)
+(C) \(-2\sqrt{3} + 2i\) and \(2\sqrt{3} - 2i\)
+(D) \(2i\) and \(2\sqrt{3} - 2i\)
+(E) \(4 + 4i\) and \(4 - 4i\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Suppose three distinct complex numbers \(z_1, z_2, z_3\) form an equilateral triangle whose centroid (center) is at the origin, meaning \(z_1 + z_2 + z_3 = 0\). What must the value of \(z_1^2 + z_2^2 + z_3^2\) be?
+
+(A) \(3\)
+(B) \(-3\)
+(C) \(z_1 z_2 z_3\)
+(D) \(0\)
+(E) It depends on the side length of the triangle.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Consider the direct (spiral) similarity \(T(z) = (1 + i)z + (2 - 3i)\). What are its unique fixed center \(z_0\), its scale factor \(r\), and its counterclockwise rotation angle \(\theta\)?
+
+(A) \(z_0 = -3 - 2i\), \(r = \sqrt{2}\), \(\theta = \frac{\pi}{4}\)
+(B) \(z_0 = 3 + 2i\), \(r = 2\), \(\theta = \frac{\pi}{4}\)
+(C) \(z_0 = 3 + 2i\), \(r = \sqrt{2}\), \(\theta = \frac{\pi}{4}\)
+(D) \(z_0 = 2 - 3i\), \(r = \sqrt{2}\), \(\theta = \frac{\pi}{2}\)
+(E) \(z_0 = -2 + 3i\), \(r = \sqrt{2}\), \(\theta = -\frac{\pi}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+The locus \(\operatorname{Arg}\!\left(\frac{z - 2}{z + 2}\right) = \frac{\pi}{4}\) is an open major arc of a circle in the Argand plane. What are the Cartesian center and radius of that circle?
+
+(A) Center \((0, 0)\), radius \(2\)
+(B) Center \((0, -2)\), radius \(2\sqrt{2}\)
+(C) Center \((0, 2)\), radius \(2\)
+(D) Center \((0, 2\sqrt{2})\), radius \(2\sqrt{2}\)
+(E) Center \((0, 2)\), radius \(2\sqrt{2}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Using the reflection formula \(z \mapsto e^{2i\theta}\bar{z}\) across a line through the origin at angle \(\theta\), which complex formula reflects every point \(z \in \mathbb{C}\) across the line \(y = \sqrt{3}\,x\)?
+
+(A) \(\left(-\frac{1}{2} + i\frac{\sqrt{3}}{2}\right)\bar{z}\)
+(B) \(\left(\frac{1}{2} + i\frac{\sqrt{3}}{2}\right)\bar{z}\)
+(C) \(\left(-\frac{1}{2} - i\frac{\sqrt{3}}{2}\right)\bar{z}\)
+(D) \(\left(\frac{\sqrt{3}}{2} + \frac{1}{2}i\right)\bar{z}\)
+(E) \(\left(-\frac{1}{2} + i\frac{\sqrt{3}}{2}\right)z\)
+[/BONUS]

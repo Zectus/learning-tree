@@ -1,0 +1,320 @@
+=== SECTION 1: Lifting a function from elements to subsets ===
+
+A function \(f : A \to B\) maps individual elements of \(A\) to individual elements of \(B\). In almost every branch of mathematics, however, we need to push entire SUBSETS of \(A\) forward through \(f\), or pull entire SUBSETS of \(B\) backward through \(f\). In analysis, continuity is defined by pulling open sets backward; in algebra, kernels are pullbacks of the identity element; in probability, events are pullbacks of numerical intervals. These two subset-level operations are the direct image and the preimage.
+
+[CALLOUT]
+id: image-preimage-def
+label: Definition
+title: Direct image and preimage (inverse image) of a subset
+tone: key
+
+Let \(f : A \to B\) be a function.
+
+(1) Direct image: for any subset \(S \subseteq A\), the direct image (or simply image) of \(S\) under \(f\) is the subset of \(B\) defined by
+\[
+f(S) = \{f(x) : x \in S\} = \{y \in B : \exists x \in S,\; f(x) = y\}.
+\]
+(2) Preimage (inverse image): for any subset \(T \subseteq B\), the preimage of \(T\) under \(f\) is the subset of \(A\) defined by
+\[
+f^{-1}(T) = \{x \in A : f(x) \in T\}.
+\]
+[/CALLOUT]
+
+Read the two membership equivalences carefully, because every proof in this lesson flows directly from them:
+- For any \(y \in B\) and \(S \subseteq A\): \(y \in f(S) \iff \exists x \in S,\; f(x) = y\).
+- For any \(x \in A\) and \(T \subseteq B\): \(x \in f^{-1}(T) \iff f(x) \in T\).
+
+Notice two immediate special cases. Taking \(S = A\) gives \(f(A) = \operatorname{im}(f)\), the image (range) of \(f\); taking \(S = \emptyset\) gives \(f(\emptyset) = \emptyset\). On the preimage side, taking \(T = B\) gives \(f^{-1}(B) = A\) (every \(x \in A\) satisfies \(f(x) \in B\)), while \(f^{-1}(\emptyset) = \emptyset\). Even more importantly, \(f^{-1}(T)\) can be empty for a NONEMPTY subset \(T \subseteq B\): specifically, \(f^{-1}(T) = \emptyset\) whenever \(T\) misses \(\operatorname{im}(f)\) completely (\(T \cap \operatorname{im}(f) = \emptyset\)).
+
+[CALLOUT]
+id: preimage-not-inverse
+label: Common pitfall
+title: \(f^{-1}(T)\) does NOT require an inverse function
+tone: caution
+
+The notation \(f^{-1}(T)\) for a subset \(T \subseteq B\) is defined for EVERY function \(f : A \to B\), whether or not \(f\) has an inverse function!
+
+(1) \(f^{-1}(T)\) is a SUBSET of \(A\), never a single element (even when \(T = \{y\}\) is a singleton, \(f^{-1}(\{y\}) = \{x \in A : f(x) = y\}\) is a subset—called the fiber over \(y\)—which may have zero, one, or infinitely many elements).
+(2) Writing \(f^{-1}(y)\) as an ELEMENT of \(A\) requires \(f\) to be invertible, a much stronger condition studied in later lessons. To avoid ambiguity, always write \(f^{-1}(\{y\})\) for the preimage of a single output \(y\).
+[/CALLOUT]
+
+Let us see both operations visually on the non-invertible real function \(f : \mathbb{R} \to \mathbb{R}\) given by \(f(x) = x^2 - 1\).
+- Take \(S = [0.5, 1.5] \subseteq \mathbb{R}\). As \(x\) moves from \(0.5\) to \(1.5\), \(x^2 - 1\) increases from \(0.25 - 1 = -0.75\) to \(2.25 - 1 = 1.25\). Therefore \(f([0.5, 1.5]) = [-0.75, 1.25]\).
+- Now take \(T = [0, 3] \subseteq \mathbb{R}\) on the vertical axis and ask which inputs \(x \in \mathbb{R}\) satisfy \(0 \le x^2 - 1 \le 3\). Adding \(1\) yields \(1 \le x^2 \le 4\), so \(1 \le |x| \le 2\). Hence the preimage splits into TWO disjoint intervals:
+\[
+f^{-1}([0, 3]) = [-2, -1] \cup [1, 2].
+\]
+- What about \(T' = [-3, -2]\)? Since \(x^2 - 1 \ge -1\) for all \(x \in \mathbb{R}\), no input lands in \([-3, -2]\), so \(f^{-1}([-3, -2]) = \emptyset\).
+- What about the fiber over \(0\)? Solving \(x^2 - 1 = 0\) gives \(f^{-1}(\{0\}) = \{-1, 1\}\), a two-element set.
+
+[GRAPH]
+type: function2d
+title: Direct image \(f([0.5, 1.5]) = [-0.75, 1.25]\) and preimage \(f^{-1}([0, 3]) = [-2, -1] \cup [1, 2]\) for \(f(x) = x^2 - 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 2.5
+yrange: -1.4, 3.6
+trace: x^2 - 1 | label: \(f(x) = x^2 - 1\) | color: #2563eb
+segment: 0.5, 0, 1.5, 0 | label: \(S\) | color: #16a34a
+segment: 0, -0.75, 0, 1.25 | label: \(f(S)\) | color: #16a34a
+segment: -2, 3, 2, 3 | color: #dc2626 | dashed: true
+segment: -2, 0, -1, 0 | color: #dc2626
+segment: 1, 0, 2, 0 | color: #dc2626
+point: 0.5, -0.75 | label: \((0.5, -0.75)\) | color: #16a34a | offset: 18, -14
+point: 1.5, 1.25 | label: \((1.5, 1.25)\) | color: #16a34a | offset: 18, 8
+point: -2, 3 | label: \((-2, 3)\) | color: #dc2626 | offset: -20, 10
+point: 2, 3 | label: \((2, 3)\) | color: #dc2626 | offset: 16, 10
+point: -1, 0 | color: #dc2626
+point: 1, 0 | color: #dc2626
+[/GRAPH]
+
+Be careful when finding \(f(S)\) for a non-monotonic function! It is NOT enough to plug in the endpoints of an interval \(S\). For the same function \(f(x) = x^2 - 1\), take \(S = [-1, 2]\). The endpoints give \(f(-1) = 0\) and \(f(2) = 3\), which might tempt you to guess \([0, 3]\). Yet \(0 \in [-1, 2]\) gives \(f(0) = -1\), the true minimum on \(S\), so \(f([-1, 2]) = [-1, 3]\). Always track ALL values \(f(x)\) attained as \(x\) ranges over \(S\).
+
+[QUESTION 1]
+[ANSWER: C]
+Let \(f : \mathbb{R} \to \mathbb{R}\) be defined by \(f(x) = (x - 1)^2\). What are the direct image \(f([-1, 2])\) and the preimage \(f^{-1}([1, 9])\)?
+
+(A) \(f([-1, 2]) = [1, 4]\) and \(f^{-1}([1, 9]) = [2, 4]\)
+(B) \(f([-1, 2]) = [0, 4]\) and \(f^{-1}([1, 9]) = [2, 4]\)
+(C) \(f([-1, 2]) = [0, 4]\) and \(f^{-1}([1, 9]) = [-2, 0] \cup [2, 4]\)
+(D) \(f([-1, 2]) = [1, 4]\) and \(f^{-1}([1, 9]) = [-2, 0] \cup [2, 4]\)
+(E) \(f([-1, 2]) = [0, 1]\) and \(f^{-1}([1, 9]) = [-3, -1] \cup [1, 3]\)
+[/QUESTION]
+
+=== SECTION 2: Preimages preserve all set operations ===
+
+A remarkable asymmetry separates preimages from direct images: preimages commute cleanly with EVERY set operation—arbitrary unions, arbitrary intersections, set differences, and complements—for EVERY function \(f : A \to B\), with zero extra assumptions on \(f\). Why? Look back at [REF: image-preimage-def.2 | the membership test for a preimage]:
+\[
+x \in f^{-1}(T) \iff f(x) \in T.
+\]
+No new quantifier appears! Testing whether \(x\) belongs to a preimage simply tests whether the SINGLE element \(f(x)\) satisfies the set condition in \(B\). Consequently, every logical connective (\(\exists\), \(\forall\), \(\land\), \(\lor\), \(\neg\)) passes straight through \(f^{-1}\) without distortion.
+
+[CALLOUT]
+id: preimage-algebra
+label: Theorem
+title: Exact algebraic laws for preimages
+tone: key
+
+Let \(f : A \to B\) be any function, let \(T, T_1, T_2 \subseteq B\), and let \(\{T_i\}_{i \in I}\) be any indexed family of subsets of \(B\) (with \(I\) finite, infinite, or empty, taking intersections inside the ambient codomain \(B\) and domain \(A\)). Then:
+
+(1) Monotonicity: if \(T_1 \subseteq T_2\), then \(f^{-1}(T_1) \subseteq f^{-1}(T_2)\).
+(2) Arbitrary unions: \(f^{-1}\!\left(\bigcup_{i \in I} T_i\right) = \bigcup_{i \in I} f^{-1}(T_i)\).
+(3) Arbitrary intersections: \(f^{-1}\!\left(\bigcap_{i \in I} T_i\right) = \bigcap_{i \in I} f^{-1}(T_i)\).
+(4) Set differences: \(f^{-1}(T_1 \setminus T_2) = f^{-1}(T_1) \setminus f^{-1}(T_2)\).
+(5) Complements: \(f^{-1}(T^c) = \bigl(f^{-1}(T)\bigr)^c\) (where \(T^c = B \setminus T\) and \((f^{-1}(T))^c = A \setminus f^{-1}(T)\)).
+[/CALLOUT]
+
+Let us write out the element-chasing proofs of (2), (3), and (4) so the quantifier mechanics are completely transparent.
+
+Proof of (2): Let \(x \in A\) be arbitrary. Then
+\[
+\begin{aligned}
+x \in f^{-1}\!\left(\bigcup_{i \in I} T_i\right)
+&\iff f(x) \in \bigcup_{i \in I} T_i \\
+&\iff \exists i \in I,\; f(x) \in T_i \\
+&\iff \exists i \in I,\; x \in f^{-1}(T_i) \\
+&\iff x \in \bigcup_{i \in I} f^{-1}(T_i).
+\end{aligned}
+\]
+Because every step is a biconditional (\(\iff\)), extensionality gives equality directly in a single chain!
+
+Proof of (3): Let \(x \in A\) be arbitrary. Then
+\[
+\begin{aligned}
+x \in f^{-1}\!\left(\bigcap_{i \in I} T_i\right)
+&\iff f(x) \in \bigcap_{i \in I} T_i \\
+&\iff \forall i \in I,\; f(x) \in T_i \\
+&\iff \forall i \in I,\; x \in f^{-1}(T_i) \\
+&\iff x \in \bigcap_{i \in I} f^{-1}(T_i).
+\end{aligned}
+\]
+Check the empty-index convention \(I = \emptyset\) too: the empty intersection in \(B\) is \(B\), whose preimage is \(f^{-1}(B) = A\), matching the empty intersection in \(A\)!
+
+Proof of (4): Let \(x \in A\) be arbitrary. Then
+\[
+\begin{aligned}
+x \in f^{-1}(T_1 \setminus T_2)
+&\iff f(x) \in T_1 \setminus T_2 \\
+&\iff f(x) \in T_1 \land f(x) \notin T_2 \\
+&\iff x \in f^{-1}(T_1) \land x \notin f^{-1}(T_2) \\
+&\iff x \in f^{-1}(T_1) \setminus f^{-1}(T_2).
+\end{aligned}
+\]
+Part (5) is immediate from (4) by taking \(T_1 = B\) and \(T_2 = T\), since \(f^{-1}(B) = A\). Part (1) is just as short: if \(T_1 \subseteq T_2\) and \(x \in f^{-1}(T_1)\), then \(f(x) \in T_1 \subseteq T_2\), so \(x \in f^{-1}(T_2)\).
+
+Why are these identities so useful in practice? Often computing \(f^{-1}(T_i)\) separately for each \(i\) is messy, whereas combining the \(T_i\) first inside \(B\) collapses the problem to a single elementary equation. For instance, if \(f(x) = \sin(\pi x)\) and \(T_n = [1/n, 1]\) for \(n \in \mathbb{Z}^+\), finding each \(f^{-1}(T_n)\) requires inverse sine intervals, but [REF: preimage-algebra.2 | the union law] says
+\[
+\bigcup_{n=1}^{\infty} f^{-1}\!\left(\left[\frac{1}{n}, 1\right]\right) = f^{-1}\!\left(\bigcup_{n=1}^{\infty} \left[\frac{1}{n}, 1\right]\right) = f^{-1}((0, 1]) = \{x \in \mathbb{R} : \sin(\pi x) > 0\},
+\]
+which is immediately the union of all open intervals \((2k, 2k + 1)\) for \(k \in \mathbb{Z}\).
+
+[QUESTION 2]
+[ANSWER: D]
+Let \(f : \mathbb{R} \to \mathbb{R}\) be defined by \(f(x) = x^2 - 4\), and for each \(n \in \mathbb{Z}^+\) let \(T_n = \left(-\frac{1}{n}, \frac{1}{n}\right)\). What is the set \(\bigcap_{n=1}^{\infty} f^{-1}(T_n)\)?
+
+(A) \(\emptyset\)
+(B) \(\{0\}\)
+(C) \(\{2\}\)
+(D) \(\{-2, 2\}\)
+(E) \([-2, 2]\)
+[/QUESTION]
+
+=== SECTION 3: Direct images — exact on unions, one-sided on intersections ===
+
+Now try the exact same element-chasing on DIRECT IMAGES. Recall [REF: image-preimage-def.1 | the membership equivalence for a direct image]:
+\[
+y \in f(S) \iff \exists x \in S,\; f(x) = y.
+\]
+Here an existential quantifier \(\exists x\) IS introduced! How does \(\exists x\) interact with another existential quantifier (from a union) versus a universal quantifier (from an intersection)?
+- Two existential quantifiers commute freely: \(\exists x\, \exists i\) is logically equivalent to \(\exists i\, \exists x\). Therefore direct images preserve ARBITRARY UNIONS with exact equality!
+- An existential quantifier and a universal quantifier do NOT commute: \(\exists x\, \forall i\) implies \(\forall i\, \exists x\) (one single \(x\) that works for all \(i\) certainly supplies an \(x\) for each \(i\)), but \(\forall i\, \exists x\) does NOT imply \(\exists x\, \forall i\) (different indices \(i\) may use DIFFERENT witnesses \(x_i\) that all happen to share the same output \(y\))! Therefore direct images give ONLY a one-sided inclusion for intersections!
+
+[CALLOUT]
+id: direct-image-algebra
+label: Theorem
+title: Algebraic laws for direct images
+tone: key
+
+Let \(f : A \to B\) be any function, let \(S_1, S_2 \subseteq A\), and let \(\{S_i\}_{i \in I}\) be any indexed family of subsets of \(A\). Then:
+
+(1) Monotonicity: if \(S_1 \subseteq S_2\), then \(f(S_1) \subseteq f(S_2)\).
+(2) Arbitrary unions (exact equality):
+\[
+f\!\left(\bigcup_{i \in I} S_i\right) = \bigcup_{i \in I} f(S_i).
+\]
+(3) Arbitrary intersections (one-sided inclusion):
+\[
+f\!\left(\bigcap_{i \in I} S_i\right) \subseteq \bigcap_{i \in I} f(S_i).
+\]
+In general, the reverse inclusion \(\bigcap_{i \in I} f(S_i) \subseteq f(\bigcap_{i \in I} S_i)\) FAILS!
+[/CALLOUT]
+
+Let us prove (2) and (3) explicitly and then build a minimal counterexample to the reverse of (3).
+
+Proof of (2): Let \(y \in B\) be arbitrary. Then
+\[
+\begin{aligned}
+y \in f\!\left(\bigcup_{i \in I} S_i\right)
+&\iff \exists x \in \bigcup_{i \in I} S_i,\; f(x) = y \\
+&\iff \exists x \in A,\; \bigl((\exists i \in I,\; x \in S_i) \land f(x) = y\bigr) \\
+&\iff \exists i \in I,\; \exists x \in S_i,\; f(x) = y \\
+&\iff \exists i \in I,\; y \in f(S_i) \\
+&\iff y \in \bigcup_{i \in I} f(S_i).
+\end{aligned}
+\]
+
+Proof of (3): Let \(y \in f\bigl(\bigcap_{i \in I} S_i\bigr)\). Then there exists ONE element \(x \in \bigcap_{i \in I} S_i\) such that \(f(x) = y\). Since \(x \in \bigcap_{i \in I} S_i\), we have \(x \in S_i\) for EVERY \(i \in I\). Hence for every \(i \in I\), \(y = f(x) \in f(S_i)\), which means \(y \in \bigcap_{i \in I} f(S_i)\). (Notice how cleanly monotonicity also proves (3): for every \(j \in I\), \(\bigcap_{i \in I} S_i \subseteq S_j\), so \(f(\bigcap_{i \in I} S_i) \subseteq f(S_j)\) for all \(j \in I\), hence \(f(\bigcap_{i \in I} S_i) \subseteq \bigcap_{j \in I} f(S_j)\).)
+
+Where does the reverse inclusion fail? Whenever two DISTINCT inputs \(x_1 \in S_1\) and \(x_2 \in S_2\) collide at the same output \(f(x_1) = f(x_2) = y\)! Take \(f : \mathbb{R} \to \mathbb{R}\) given by \(f(x) = x^2\), with \(S_1 = \{-1\}\) and \(S_2 = \{1\}\):
+- \(S_1 \cap S_2 = \emptyset\), so \(f(S_1 \cap S_2) = f(\emptyset) = \emptyset\).
+- Yet \(f(S_1) = \{1\}\) and \(f(S_2) = \{1\}\), so \(f(S_1) \cap f(S_2) = \{1\} \ne \emptyset\).
+Thus \(f(S_1 \cap S_2) = \emptyset \subsetneq \{1\} = f(S_1) \cap f(S_2)\)!
+
+Even when \(S_1\) and \(S_2\) overlap, strict inclusion still occurs: with \(f(x) = x^2\), \(S_1 = [-2, 0]\), and \(S_2 = [0, 2]\), we get \(S_1 \cap S_2 = \{0\}\), so \(f(S_1 \cap S_2) = \{0\}\), whereas \(f(S_1) \cap f(S_2) = [0, 4] \cap [0, 4] = [0, 4]\).
+
+Let us summarize the comparison we have established so far across unions, intersections, and monotonicity:
+
+[TABLE]
+Operation | Preimage \(f^{-1}\) on subsets of \(B\) | Direct image \(f\) on subsets of \(A\)
+Monotonicity | \(T_1 \subseteq T_2 \implies f^{-1}(T_1) \subseteq f^{-1}(T_2)\) | \(S_1 \subseteq S_2 \implies f(S_1) \subseteq f(S_2)\)
+Arbitrary union | \(f^{-1}(\bigcup_{i \in I} T_i) = \bigcup_{i \in I} f^{-1}(T_i)\) (exact) | \(f(\bigcup_{i \in I} S_i) = \bigcup_{i \in I} f(S_i)\) (exact)
+Arbitrary intersection | \(f^{-1}(\bigcap_{i \in I} T_i) = \bigcap_{i \in I} f^{-1}(T_i)\) (exact) | \(f(\bigcap_{i \in I} S_i) \subseteq \bigcap_{i \in I} f(S_i)\) (may be strict)
+Empty set | \(f^{-1}(\emptyset) = \emptyset\) (also \(f^{-1}(T) = \emptyset\) if \(T \cap \operatorname{im}(f) = \emptyset\)) | \(f(\emptyset) = \emptyset\) (and \(f(S) = \emptyset \iff S = \emptyset\))
+[/TABLE]
+
+What about set difference under direct images—comparing \(f(S_1 \setminus S_2)\) with \(f(S_1) \setminus f(S_2)\)? Element chasing (and testing a small colliding example like \(f(x) = x^2\)) settles which inclusion holds in general!
+
+[QUESTION 3]
+[ANSWER: C]
+Let \(f : A \to B\) be an arbitrary function and let \(S_1, S_2 \subseteq A\). Which statement about \(f(S_1 \setminus S_2)\) and \(f(S_1) \setminus f(S_2)\) is ALWAYS true?
+
+(A) \(f(S_1 \setminus S_2) = f(S_1) \setminus f(S_2)\) for all \(f, S_1, S_2\)
+(B) \(f(S_1 \setminus S_2) \subseteq f(S_1) \setminus f(S_2)\) always holds, while the reverse inclusion can fail
+(C) \(f(S_1) \setminus f(S_2) \subseteq f(S_1 \setminus S_2)\) always holds, while the reverse inclusion can fail
+(D) Neither \(f(S_1 \setminus S_2) \subseteq f(S_1) \setminus f(S_2)\) nor \(f(S_1) \setminus f(S_2) \subseteq f(S_1 \setminus S_2)\) holds in general
+(E) \(f(S_1 \setminus S_2) = f(S_1) \setminus f(S_2)\) holds whenever \(S_2 \subseteq S_1\)
+[/QUESTION]
+
+=== SECTION 4: Round trips — pushing forward and pulling back ===
+
+What happens when we apply \(f\) and \(f^{-1}\) one after the other? Starting with \(S \subseteq A\), we can push forward to \(f(S) \subseteq B\) and pull back to \(f^{-1}(f(S)) \subseteq A\). Starting with \(T \subseteq B\), we can pull back to \(f^{-1}(T) \subseteq A\) and push forward to \(f(f^{-1}(T)) \subseteq B\). Neither round trip returns the original subset in general—instead, they point in OPPOSITE inclusion directions!
+
+[CALLOUT]
+id: round-trip-inclusions
+label: Theorem
+title: Round-trip inclusions for images and preimages
+tone: key
+
+Let \(f : A \to B\) be any function.
+
+(1) For every subset \(S \subseteq A\):
+\[
+S \subseteq f^{-1}\bigl(f(S)\bigr).
+\]
+(2) For every subset \(T \subseteq B\):
+\[
+f\bigl(f^{-1}(T)\bigr) \subseteq T.
+\]
+More precisely, \(f\bigl(f^{-1}(T)\bigr) = T \cap \operatorname{im}(f)\).
+[/CALLOUT]
+
+Let us prove both parts directly by element chasing, and see why the exact equality in (2) is even more informative than the inclusion alone.
+
+Proof of (1): Let \(x \in S\). By definition of direct image, \(f(x) \in f(S)\). By [REF: image-preimage-def.2 | definition of preimage], \(f(x) \in f(S)\) means precisely that \(x \in f^{-1}(f(S))\). Thus \(S \subseteq f^{-1}(f(S))\).
+
+Why can \(f^{-1}(f(S))\) be STRICTLY LARGER than \(S\)? Because pulling back \(f(S)\) collects EVERY input in \(A\) whose output lands in \(f(S)\)—including outsiders \(x' \in A \setminus S\) that happen to collide with some \(x \in S\) (i.e., \(f(x') = f(x)\))! On \(f : \mathbb{R} \to \mathbb{R}\) with \(f(x) = x^2\), take \(S = [0, 2]\). Pushing forward gives \(f([0, 2]) = [0, 4]\); pulling back gives \(f^{-1}([0, 4]) = [-2, 2] \supsetneq [0, 2]\). Every negative number in \([-2, 0)\) was dragged into the pullback because its square matched the square of a point in \(S\).
+
+Proof of (2): We prove \(f(f^{-1}(T)) = T \cap \operatorname{im}(f)\) directly (from which \(f(f^{-1}(T)) \subseteq T\) follows immediately):
+- (\(\subseteq\)): Let \(y \in f(f^{-1}(T))\). Then \(y = f(x)\) for some \(x \in f^{-1}(T)\). Since \(x \in A\), we have \(y = f(x) \in \operatorname{im}(f)\); since \(x \in f^{-1}(T)\), we have \(y = f(x) \in T\). Hence \(y \in T \cap \operatorname{im}(f)\).
+- (\(\supseteq\)): Let \(y \in T \cap \operatorname{im}(f)\). Because \(y \in \operatorname{im}(f)\), there exists \(x \in A\) with \(f(x) = y\). Because \(f(x) = y \in T\), we have \(x \in f^{-1}(T)\). Therefore \(y = f(x) \in f(f^{-1}(T))\).
+
+Why can \(f(f^{-1}(T))\) be STRICTLY SMALLER than \(T\)? Because any element of \(T\) that lies OUTSIDE \(\operatorname{im}(f)\) has no preimage at all, so it is lost on the pullback and cannot be recovered on the push-forward! On \(f : \mathbb{R} \to \mathbb{R}\) with \(f(x) = x^2\), take \(T = [-1, 4]\). Pulling back gives \(f^{-1}([-1, 4]) = [-2, 2]\) (the negative values in \([-1, 0)\) have no real square roots); pushing forward gives \(f([-2, 2]) = [0, 4] \subsetneq [-1, 4]\).
+
+Notice the clean structural symmetry between the two failures:
+- \(S \subseteq f^{-1}(f(S))\) becomes strict when distinct inputs collide (the failure of one-to-oneness).
+- \(f(f^{-1}(T)) \subseteq T\) becomes strict when outputs in \(B\) are missed by \(f\) (the failure of ontoness).
+In the next lesson, we will turn these two observations into exact biconditional characterizations of injectivity and surjectivity.
+
+[QUESTION 4]
+[ANSWER: B]
+Define \(f : \mathbb{Z} \to \mathbb{Z}\) by setting \(f(n)\) equal to the remainder in \(\{0, 1, 2, 3\}\) when \(n\) is divided by \(4\) (for example, \(f(7) = 3\) and \(f(-1) = 3\)). Let \(S = \{1, 2\} \subseteq \mathbb{Z}\) and \(T = \{1, 5\} \subseteq \mathbb{Z}\). What are \(f^{-1}(f(S))\) and \(f(f^{-1}(T))\)?
+
+(A) \(f^{-1}(f(S)) = \{1, 2\}\) and \(f(f^{-1}(T)) = \{1, 5\}\)
+(B) \(f^{-1}(f(S)) = \{n \in \mathbb{Z} : n \equiv 1 \text{ or } 2 \pmod{4}\}\) and \(f(f^{-1}(T)) = \{1\}\)
+(C) \(f^{-1}(f(S)) = \{n \in \mathbb{Z} : n \equiv 1 \text{ or } 2 \pmod{4}\}\) and \(f(f^{-1}(T)) = \{1, 5\}\)
+(D) \(f^{-1}(f(S)) = \{1, 2, 5, 6\}\) and \(f(f^{-1}(T)) = \{1\}\)
+(E) \(f^{-1}(f(S)) = \{n \in \mathbb{Z} : n \equiv 1 \text{ or } 2 \pmod{4}\}\) and \(f(f^{-1}(T)) = \emptyset\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Let \(f : A \to B\) be any function, and let \(S \subseteq A\) and \(T \subseteq B\). Which expression is ALWAYS equal to \(f\bigl(S \cap f^{-1}(T)\bigr)\)?
+
+(A) \(f(S) \cap T\)
+(B) \(f(S) \cup T\)
+(C) \(f(S) \cap f(A \setminus f^{-1}(T))\)
+(D) \(T \setminus f(S)\)
+(E) \(f(S)\) whenever \(T \ne \emptyset\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Let \(f : A \to B\) be any function, \(S \subseteq A\), and \(T \subseteq B\). Consider the triple round trips \(f\bigl(f^{-1}(f(S))\bigr)\) and \(f^{-1}\bigl(f(f^{-1}(T))\bigr)\). Which statement is ALWAYS true?
+
+(A) \(f(f^{-1}(f(S))) \supsetneq f(S)\) can occur, and \(f^{-1}(f(f^{-1}(T))) \subsetneq f^{-1}(T)\) can occur
+(B) \(f(f^{-1}(f(S))) = f(S)\) always holds, but \(f^{-1}(f(f^{-1}(T))) \subsetneq f^{-1}(T)\) can occur
+(C) \(f^{-1}(f(f^{-1}(T))) = f^{-1}(T)\) always holds, but \(f(f^{-1}(f(S))) \supsetneq f(S)\) can occur
+(D) Both \(f\bigl(f^{-1}(f(S))\bigr) = f(S)\) and \(f^{-1}\bigl(f(f^{-1}(T))\bigr) = f^{-1}(T)\) ALWAYS hold
+(E) Neither equality holds unless \(f(A) = B\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Let \(f : \mathbb{R} \to \mathbb{R}\) be defined by \(f(x) = \lfloor x \rfloor\) (the greatest integer less than or equal to \(x\)). For each \(n \in \mathbb{Z}^+\), let \(S_n = \left(0, \frac{1}{n}\right)\). Compare \(f\!\left(\bigcap_{n=1}^{\infty} S_n\right)\) with \(\bigcap_{n=1}^{\infty} f(S_n)\).
+
+(A) Both sets equal \(\emptyset\)
+(B) Both sets equal \(\{0\}\)
+(C) \(f\bigl(\bigcap_{n=1}^{\infty} S_n\bigr) = \{0\}\) and \(\bigcap_{n=1}^{\infty} f(S_n) = \{0, 1\}\)
+(D) \(f\bigl(\bigcap_{n=1}^{\infty} S_n\bigr) = \emptyset\) and \(\bigcap_{n=1}^{\infty} f(S_n) = \{0, 1\}\)
+(E) \(f\bigl(\bigcap_{n=1}^{\infty} S_n\bigr) = \emptyset\) and \(\bigcap_{n=1}^{\infty} f(S_n) = \{0\}\)
+[/BONUS]

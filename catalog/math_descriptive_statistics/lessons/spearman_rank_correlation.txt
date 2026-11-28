@@ -1,0 +1,194 @@
+=== SECTION 1: From linear to monotonic association via rank transformation ===
+
+Pearson's correlation coefficient \(r\) excels when two quantitative variables follow a straight-line trend without severe outliers. Three everyday situations break those assumptions:
+- Ordinal data: two critics rank five films from \(1\) to \(5\), or patients rate pain severity on an ordered scale where differences between categories are not equally spaced.
+- Nonlinear monotonic relationships: as \(x\) increases, \(y\) ALWAYS increases (or ALWAYS decreases), but along a steep curve such as \(y = e^x\) or \(y = x^3\) rather than a straight line, so Pearson's \(r\) falls noticeably below \(1\).
+- Skewed quantitative data with extreme outliers: one distant point can swing Pearson's \(r\) across the entire range from \(-1\) to \(+1\).
+
+Replacing raw values by their ranks solves all three problems at once. Instead of asking whether \((x_i, y_i)\) hug a straight line, rank correlation asks whether larger values of \(x\) consistently pair with larger (or consistently smaller) values of \(y\)—a monotonic association.
+
+[CALLOUT]
+id: spearman-definition
+label: Definition
+title: Rank transformation, midranks, and Spearman's rank correlation \(\rho_s\)
+tone: key
+
+Given \(n \ge 2\) paired observations \((x_1, y_1), \dots, (x_n, y_n)\) measured on at least an ordinal scale:
+
+(1) Rank \(x_1, \dots, x_n\) from smallest (\(1\)) to largest (\(n\)) to obtain \(R(x_1), \dots, R(x_n)\), and independently rank \(y_1, \dots, y_n\) from smallest (\(1\)) to largest (\(n\)) to obtain \(R(y_1), \dots, R(y_n)\).
+(2) Whenever \(t \ge 2\) observations share an identical value (a tie), assign EVERY tied observation their midrank—the arithmetic mean of the rank positions they jointly occupy. For example, if two observations tie for positions \(2\) and \(3\), both receive rank \((2 + 3)/2 = 2.5\); if three tie for positions \(4, 5, 6\), all three receive rank \((4 + 5 + 6)/3 = 5\).
+(3) Spearman's rank correlation coefficient \(\rho_s\) is defined as Pearson's correlation coefficient computed on the ranked pairs \((R(x_i), R(y_i))\):
+\[
+\rho_s = r\big(R(x), R(y)\big) = \frac{\sum_{i=1}^n \big(R(x_i) - \bar{R}_x\big)\big(R(y_i) - \bar{R}_y\big)}{\sqrt{\sum_{i=1}^n \big(R(x_i) - \bar{R}_x\big)^2}\;\sqrt{\sum_{i=1}^n \big(R(y_i) - \bar{R}_y\big)^2}},
+\]
+provided not all \(x\)-values are identical and not all \(y\)-values are identical.
+[/CALLOUT]
+
+Because [REF: spearman-definition.3 | Spearman's \(\rho_s\)] IS Pearson's correlation on the rank vectors, it automatically inherits Pearson's core bounds and symmetry: \(-1 \le \rho_s \le +1\) and \(\rho_s(x, y) = \rho_s(y, x)\). Moreover, notice what happens when we apply ANY strictly increasing transformation \(g\) to \(x\) or \(h\) to \(y\) (such as \(\sqrt{x}\), \(\ln x\), \(e^x\), or \(x^3\) on positive data): because \(x_i < x_j\) if and only if \(g(x_i) < g(x_j)\), every rank stays IDENTICAL (\(R(g(x_i)) = R(x_i)\))! Thus:
+- \(\rho_s\) is COMPLETELY INVARIANT under every strictly increasing transformation of \(x\) or \(y\) (not merely linear ones).
+- Applying a strictly DECREASING transformation to exactly one variable reverses its ranks (\(R \mapsto n + 1 - R\)), which simply flips the sign of \(\rho_s\).
+
+=== SECTION 2: Deriving the no-ties shortcut (and why ties break it) ===
+
+When there are NO ties in \(x\) and NO ties in \(y\), both \(R(x_1), \dots, R(x_n)\) and \(R(y_1), \dots, R(y_n)\) are simply reorderings of the integers \(1, 2, \dots, n\). That lets us evaluate the mean and sum of squared deviations in closed form once and for all, using two standard summation identities:
+\[
+\sum_{k=1}^n k = \frac{n(n + 1)}{2}, \qquad \sum_{k=1}^n k^2 = \frac{n(n + 1)(2n + 1)}{6}.
+\]
+First, both rank lists share the exact same mean:
+\[
+\bar{R}_x = \bar{R}_y = \bar{R} = \frac{1}{n}\sum_{k=1}^n k = \frac{n + 1}{2}.
+\]
+Second, using the variance shortcut \(\sum (k - \bar{R})^2 = \sum k^2 - n \bar{R}^2\), both rank lists share the exact same sum of squared deviations \(S_{RR}\):
+\[
+S_{RR} = \frac{n(n + 1)(2n + 1)}{6} - n\left(\frac{n + 1}{2}\right)^2 = \frac{n(n + 1)\big(2(2n + 1) - 3(n + 1)\big)}{12} = \frac{n(n + 1)(n - 1)}{12} = \frac{n(n^2 - 1)}{12}.
+\]
+Now define each pair's rank difference \(d_i = R(x_i) - R(y_i)\). Because \(\bar{R}_x = \bar{R}_y = \bar{R}\), we can write \(d_i = (R(x_i) - \bar{R}) - (R(y_i) - \bar{R})\). Squaring and summing over \(i = 1, \dots, n\) yields
+\[
+\sum_{i=1}^n d_i^2 = \sum_{i=1}^n (R(x_i) - \bar{R})^2 + \sum_{i=1}^n (R(y_i) - \bar{R})^2 - 2\sum_{i=1}^n (R(x_i) - \bar{R})(R(y_i) - \bar{R}) = 2 S_{RR} - 2 S_{R_x R_y}.
+\]
+Since \(\rho_s = S_{R_x R_y} / \sqrt{S_{RR}\cdot S_{RR}} = S_{R_x R_y} / S_{RR}\), dividing both sides by \(2 S_{RR}\) gives \(\frac{\sum d_i^2}{2 S_{RR}} = 1 - \rho_s\). Substituting \(2 S_{RR} = \frac{n(n^2 - 1)}{6}\) produces the classic no-ties shortcut.
+
+[CALLOUT]
+id: spearman-shortcut
+label: Identity
+title: Spearman's no-ties shortcut formula
+tone: key
+
+When there are NO tied values in \(x\) and NO tied values in \(y\), letting \(d_i = R(x_i) - R(y_i)\), Spearman's rank correlation simplifies exactly to
+\[
+\rho_s = 1 - \frac{6 \sum_{i=1}^n d_i^2}{n(n^2 - 1)}.
+\]
+When ANY ties are present, this shortcut is INACCURATE and must NOT be used; compute Pearson's correlation directly on the midranks via [REF: spearman-definition.3 | the defining formula].
+[/CALLOUT]
+
+Why exactly does [REF: spearman-shortcut | the shortcut formula] fail when ties appear? Notice what midranking does to a tie group: replacing distinct ranks \(2\) and \(3\) by their average \((2.5, 2.5)\) leaves the sum of ranks unchanged (\(2 + 3 = 2.5 + 2.5 = 5\), so \(\bar{R} = (n + 1)/2\) still holds), BUT it STRICTLY REDUCES the sum of squared ranks (\(2^2 + 3^2 = 13 > 2.5^2 + 2.5^2 = 12.5\)). Consequently, the rank sum of squares \(S_{R_x R_x}\) (or \(S_{R_y R_y}\)) drops strictly below \(n(n^2 - 1)/12\), breaking the substitution \(2 S_{RR} = n(n^2 - 1)/6\)!
+
+Verify this directly on a small \(n = 4\) dataset with one tie in \(x\): \(x = (10, 10, 20, 30)\) and \(y = (5, 8, 6, 9)\).
+
+[TABLE]
+Observation \(i\) | \(x_i\) | \(y_i\) | \(R(x_i)\) | \(R(y_i)\) | \(R(x_i) - 2.5\) | \(R(y_i) - 2.5\) | \(d_i\)
+1 | 10 | 5 | 1.5 | 1 | -1.0 | -1.5 | +0.5
+2 | 10 | 8 | 1.5 | 3 | -1.0 | +0.5 | -1.5
+3 | 20 | 6 | 3 | 2 | +0.5 | -0.5 | +1.0
+4 | 30 | 9 | 4 | 4 | +1.5 | +1.5 | 0.0
+[/TABLE]
+
+Compute exact \(\rho_s\) from [REF: spearman-definition.3 | Pearson on the midranks]:
+- \(S_{R_x R_x} = (-1)^2 + (-1)^2 + 0.5^2 + 1.5^2 = 4.5\) (strictly less than \(4(15)/12 = 5.0\) because of the tie!).
+- \(S_{R_y R_y} = (-1.5)^2 + 0.5^2 + (-0.5)^2 + 1.5^2 = 5.0\).
+- \(S_{R_x R_y} = (-1)(-1.5) + (-1)(0.5) + (0.5)(-0.5) + (1.5)(1.5) = 1.5 - 0.5 - 0.25 + 2.25 = 3.0\).
+- Exact Spearman correlation: \(\rho_s = \dfrac{3.0}{\sqrt{4.5 \times 5.0}} = \dfrac{3.0}{\sqrt{22.5}} \approx +0.6325\).
+
+Meanwhile, misapplying the no-ties shortcut with \(\sum d_i^2 = 0.25 + 2.25 + 1.0 + 0 = 3.5\) yields \(1 - \frac{6(3.5)}{4(15)} = 1 - 0.35 = +0.650\), which is WRONG—and the error worsens rapidly as ties proliferate.
+
+[QUESTION 1]
+[ANSWER: C]
+Five paired quantitative observations \((x_i, y_i)\) have no ties: \((14, 70), (22, 95), (10, 82), (18, 65), (26, 99)\). What is Spearman's rank correlation \(\rho_s\)?
+
+(A) \(0.40\)
+(B) \(0.80\)
+(C) \(0.60\)
+(D) \(0.50\)
+(E) \(0.20\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Compute the exact Spearman rank correlation \(\rho_s\) for the tied dataset of \(n = 4\) pairs: \(x = (5, 5, 12, 20)\) and \(y = (10, 30, 30, 40)\).
+
+(A) \(0.850\)
+(B) \(0.750\)
+(C) \(0.800\)
+(D) \(5/6 \approx 0.833\)
+(E) \(1.000\)
+[/QUESTION]
+
+=== SECTION 3: Contrasting Spearman's \(\rho_s\) against Pearson's \(r\) ===
+
+Knowing when to report \(\rho_s\) versus \(r\)—and when NEITHER is enough—comes down to three classic diagnostic patterns.
+
+1. Strictly increasing nonlinear curves: Consider the \(n = 5\) pairs \((1, 1), (2, 2), (3, 4), (4, 8), (5, 64)\). As \(x\) rises, \(y\) rises strictly at every step, so \(R(x) = R(y) = (1, 2, 3, 4, 5)\) and \(\rho_s = +1.00\) exactly. Yet because the curve accelerates sharply upward, the points bend far away from any straight line, dropping Pearson's \(r\) down to \(+0.771\).
+2. Outlier resistance: Take five points descending along an exact straight line: \((1, 10), (2, 8), (3, 6), (4, 4), (5, 2)\) (where \(r = \rho_s = -1\)), and contaminate the sample with one distant high-leverage outlier \((21, 24)\). Computing directly on all \(6\) points gives \(\bar{x} = 6\), \(\bar{y} = 9\), \(S_{xx} = 280\), \(S_{yy} = 310\), and \(S_{xy} = +250\), so Pearson's \(r\) flips wildly from \(-1.00\) all the way to \(+0.849\)! In stark contrast, the ranks are \(R(x) = (1, 2, 3, 4, 5, 6)\) and \(R(y) = (5, 4, 3, 2, 1, 6)\), giving \(\sum d_i^2 = 16 + 4 + 0 + 4 + 16 + 0 = 40\) and \(\rho_s = 1 - \frac{240}{210} = -1/7 \approx -0.143\). Even if that single outlier is dragged to \((2100, 2400)\), its rank remains \(6\) on both axes, so \(\rho_s\) NEVER BUDGES from \(-0.143\), while Pearson's \(r\) rushes to \(+1.000\).
+3. Non-monotonic U-shaped patterns: Consider the exact symmetric parabola \(\{(-2, 4), (-1, 1), (0, 0), (1, 1), (2, 4)\}\). Its ranks are \(R(x) = (1, 2, 3, 4, 5)\) and \(R(y) = (4.5, 2.5, 1, 2.5, 4.5)\), giving \(\sum (R(x_i) - 3)(R(y_i) - 3) = (-2)(1.5) + (-1)(-0.5) + 0 + (1)(-0.5) + (2)(1.5) = 0\), so BOTH \(r = 0\) AND \(\rho_s = 0\)! Neither coefficient detects symmetric non-monotonic dependence; plotting the scatterplot remains indispensable.
+
+The graph below illustrates the first two patterns visually: a steep strictly increasing exponential curve (where \(\rho_s = 1\) even though the points deviate sharply from the dashed straight chord) alongside a second reference line showing how curved monotonicity departs from linearity.
+
+[GRAPH]
+type: function2d
+title: Strictly increasing nonlinear curve (\(\rho_s = 1\), \(r < 1\)) versus straight chord
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.5, 5.5
+yrange: 0, 70
+trace: exp(0.8318 * (x - 1)) | label: Exponential trend (\(\rho_s = +1.00\)) | color: #3b82f6
+segment: 1, 1, 5, 27.85 | label: Straight chord | dashed: true | color: #94a3b8
+point: 1, 1 | label: (1, 1) | color: #ef4444
+point: 2, 2 | label: (2, 2) | color: #ef4444
+point: 3, 4 | label: (3, 4) | color: #ef4444
+point: 4, 8 | label: (4, 8) | color: #ef4444
+point: 5, 64 | label: (5, 64) | color: #ef4444
+[/GRAPH]
+
+[TABLE]
+Property | Pearson's \(r\) | Spearman's \(\rho_s\)
+What it measures | Linear (straight-line) association | Monotonic (consistently rising or falling) association
+Minimum valid scale | Interval or ratio | Ordinal, interval, or ratio
+Invariance | Positive linear transformations \(a x + b\) (\(a > 0\)) | Any strictly increasing transformation \(g(x)\)
+Outlier resistance | Low (single leverage outlier can flip sign) | High (ranks bound every outlier's influence)
+Detects symmetric U-shape? | No (\(r \approx 0\)) | No (\(\rho_s \approx 0\))
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+A dataset of strictly positive pairs \((x_i, y_i)\) has Pearson correlation \(r = +0.78\) and Spearman rank correlation \(\rho_s = +0.92\). Every observation is transformed to \((u_i, v_i) = (\ln x_i,\; 1 / y_i)\). What is guaranteed about the transformed correlations?
+
+(A) \(\rho_s(u, v) = -0.92\) exactly, while Pearson's \(r(u, v)\) cannot be determined from \(r = +0.78\) alone.
+(B) Both \(r(u, v) = -0.78\) and \(\rho_s(u, v) = -0.92\).
+(C) \(\rho_s(u, v) = +0.92\) because both transformations are monotonic.
+(D) Both \(r(u, v)\) and \(\rho_s(u, v)\) remain unchanged because taking logs and reciprocals are smooth functions.
+(E) Neither \(r(u, v)\) nor \(\rho_s(u, v)\) can be determined without the raw data.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+On a dataset of \(n = 25\) paired measurements \((x_i, y_i)\), an analyst computes Pearson's \(r = +0.74\) and Spearman's \(\rho_s = +1.00\). Which scatterplot pattern is fully consistent with both values?
+
+(A) All \(25\) points lie exactly on a straight line with positive slope.
+(B) The points form a symmetric U-shaped parabola.
+(C) The points scatter randomly in a circular cloud with no trend.
+(D) All \(25\) points lie on a horizontal line \(y_i = 10\).
+(E) Every observation lies along a strictly increasing nonlinear curve (such as \(y = x^4\) for \(x > 0\)), so rank order agrees perfectly while the points bend away from a straight line.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+For a dataset of \(n = 6\) paired observations with no ties in \(x\) or \(y\), what is the largest mathematically possible value of \(\sum_{i=1}^6 d_i^2\) (where \(d_i = R(x_i) - R(y_i)\)), and when is it achieved?
+
+(A) \(35\), when \(R(y_i) = R(x_i)\) for every \(i\).
+(B) \(70\), when \(y\) is ranked in exact reverse order of \(x\) (\(R(y_i) = 7 - R(x_i)\)), giving \(\rho_s = -1\).
+(C) \(105\), when half the ranks agree and half reverse.
+(D) \(210\), when all values of \(x\) are tied.
+(E) \(60\), when \(\rho_s = 0\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+A student computes Spearman's rank correlation for \(n = 5\) pairs with no ties and writes \(\sum_{i=1}^5 d_i^2 = 15\). Without seeing the original data, why can you immediately prove that \(\sum_{i=1}^5 d_i^2 = 15\) contains an arithmetic error?
+
+(A) Because \(\sum d_i^2\) can never exceed \(n = 5\).
+(B) Because \(\sum d_i^2\) must be divisible by \(6\) whenever there are no ties.
+(C) Because \(\sum d_i = \sum R(x_i) - \sum R(y_i) = 0\) is even and \(d_i^2\) has the same parity (even or odd) as \(d_i\), so \(\sum d_i^2\) must always be an even integer.
+(D) Because \(\sum d_i^2 = 15\) makes \(\rho_s < -1\).
+(E) Because \(d_i^2\) must be a multiple of \(5\) when \(n = 5\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suppose \(n = 5\) pairs have NO ties in \(y\) (so \(R(y) = (1, 2, 3, 4, 5)\)), while EVERY observation of \(x\) is identical (\(x = (7, 7, 7, 7, 7)\), so every midrank is \(R(x_i) = 3\)). What is the true Spearman correlation \(\rho_s\), and what misleading value would the invalid no-ties shortcut \(1 - \frac{6\sum d_i^2}{n(n^2 - 1)}\) produce?
+
+(A) True \(\rho_s = 0\); shortcut gives \(0\).
+(B) True \(\rho_s = 0\); shortcut gives \(+0.50\).
+(C) True \(\rho_s\) is undefined; shortcut gives \(0\).
+(D) True \(\rho_s\) is undefined (since \(s_{R_x} = 0\)); shortcut mistakenly gives \(+0.50\).
+(E) True \(\rho_s = +0.50\); shortcut gives \(+0.50\).
+[/BONUS]

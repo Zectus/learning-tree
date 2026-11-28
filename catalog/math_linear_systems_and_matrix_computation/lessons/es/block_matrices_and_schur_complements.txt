@@ -1,0 +1,392 @@
+=== SECTION 1: Matrices particionadas, multiplicación por bloques y transposición por bloques ===
+
+Las matrices grandes en física, ingeniería y optimización rara vez consisten en números sin estructura: se dividen naturalmente en submatrices significativas —por ejemplo, separando variables de posición de variables de velocidad, o nodos interiores de la malla de nodos de frontera—. Trazar líneas divisorias horizontales y verticales particiona una matriz en bloques, lo que permite llevar a cabo el álgebra matricial y la eliminación a nivel de bloques en lugar de entrada escalar por entrada escalar.
+
+Una matriz particionada (o por bloques) se escribe como una cuadrícula de submatrices, tal como
+\[
+M = \begin{bmatrix} A & B \\ C & D \end{bmatrix},
+\]
+donde todos los bloques en la misma fila de bloques comparten el mismo número de filas, y todos los bloques en la misma columna de bloques comparten el mismo número de columnas. En concreto, si \(A\) es \(m_1 \times n_1\), \(B\) es \(m_1 \times n_2\), \(C\) es \(m_2 \times n_1\) y \(D\) es \(m_2 \times n_2\), entonces \(M\) es una matriz \((m_1 + m_2) \times (n_1 + n_2)\).
+
+¿Cómo multiplicamos dos matrices particionadas \(M\) y \(N\)? Suponga que \(M\) tiene anchos de bloques de columna \(n_1, n_2\) y \(N\) tiene alturas de bloques de fila \(n_1, n_2\) (llamamos conformes a tales particiones: la división por columnas del factor izquierdo coincide con la división por filas del factor derecho). Escriba
+\[
+M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}, \qquad
+N = \begin{bmatrix} E & F \\ G & H \end{bmatrix},
+\]
+donde \(E, F\) tienen \(n_1\) filas y \(G, H\) tienen \(n_2\) filas. Observe cualquier entrada individual \((i, j)\) en el bloque superior izquierdo del producto ordinario \(MN\): su producto punto fila por columna se separa en los primeros \(n_1\) términos más los \(n_2\) términos restantes:
+\[
+(MN)_{ij} = \sum_{k=1}^{n_1} m_{ik} n_{kj} + \sum_{k=n_1+1}^{n_1+n_2} m_{ik} n_{kj} = (AE)_{ij} + (BG)_{ij} = (AE + BG)_{ij}.
+\]
+¡Exactamente la misma separación se cumple en los cuatro cuadrantes! Por lo tanto, la multiplicación por bloques sigue exactamente la misma fórmula fila por columna que la multiplicación ordinaria de matrices \(2 \times 2\), con UNA regla innegociable: mantenga intacto el orden de izquierda a derecha de cada producto de bloques, ¡porque los bloques matriciales NO conmutan en general (\(AE \neq EA\))!
+
+[CALLOUT]
+id: block-rules
+label: Teorema
+title: Multiplicación por bloques conforme y transposición por bloques
+tone: key
+
+Sean \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) y \(N = \begin{bmatrix} E & F \\ G & H \end{bmatrix}\) particionadas de forma conforme (la partición por columnas de \(M\) coincide con la partición por filas de \(N\)).
+
+(1) Multiplicación por bloques:
+\[
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+\begin{bmatrix} E & F \\ G & H \end{bmatrix}
+=
+\begin{bmatrix} AE + BG & AF + BH \\ CE + DG & CF + DH \end{bmatrix}.
+\]
+(2) Transposición por bloques:
+\[
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}^T
+=
+\begin{bmatrix} A^T & C^T \\ B^T & D^T \end{bmatrix}.
+\]
+Note que tomar la transpuesta de una matriz por bloques TANTO transpone la disposición de los bloques (intercambiando las posiciones fuera de la diagonal \(B\) y \(C\)) COMO transpone cada submatriz individual en su interior.
+[/CALLOUT]
+
+¿Por qué exige [REF: block-rules.2 | la regla de transposición por bloques] transponer cada submatriz individual? ¡Compruebe las dimensiones! Si \(B\) es \(m_1 \times n_2\) y ocupa la posición de bloque \((1, 2)\) de \(M\), entonces la entrada \((i, n_1 + j)\) de \(M\) pasa a la entrada \((n_1 + j, i)\) de \(M^T\), que ocupa la posición de bloque \((2, 1)\) con los índices de fila y columna intercambiados: eso es literalmente \(B^T\) (de tamaño \(n_2 \times m_1\)). ¡Dejar \(B\) sin transponer en la posición \((2, 1)\) ni siquiera tendría las dimensiones correctas cuando \(m_1 \neq n_2\)!
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) una matriz particionada \(5 \times 5\) donde \(A\) es \(2 \times 2\), \(B\) es \(2 \times 3\), \(C\) es \(3 \times 2\) y \(D\) es \(3 \times 3\). ¿Qué es \(M^T\)?
+
+(A) \(\begin{bmatrix} A & C \\ B & D \end{bmatrix}\)
+(B) \(\begin{bmatrix} A^T & B^T \\ C^T & D^T \end{bmatrix}\)
+(C) \(\begin{bmatrix} A^T & C^T \\ B^T & D^T \end{bmatrix}\)
+(D) \(\begin{bmatrix} D^T & B^T \\ C^T & A^T \end{bmatrix}\)
+(E) \(\begin{bmatrix} D^T & C^T \\ B^T & A^T \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 2: Invertir matrices diagonales por bloques y triangulares por bloques ===
+
+Antes de abordar una matriz por bloques \(2 \times 2\) general, deduzcamos fórmulas exactas de inversión para las dos formas estructuradas de bloques más simples: las matrices diagonales por bloques y triangulares por bloques, donde los bloques diagonales \(A\) (\(p \times p\)) y \(D\) (\(q \times q\)) son CUADRADOS.
+
+Primero, considere una matriz diagonal por bloques \(M = \begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix}\). Si tanto \(A\) como \(D\) son invertibles, la multiplicación directa por bloques da
+\[
+\begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix}
+\begin{bmatrix} A^{-1} & 0 \\ 0 & D^{-1} \end{bmatrix}
+=
+\begin{bmatrix} A A^{-1} & 0 \\ 0 & D D^{-1} \end{bmatrix}
+=
+\begin{bmatrix} I_p & 0 \\ 0 & I_q \end{bmatrix}
+= I_{p+q}.
+\]
+Recíprocamente, si \(M\) es invertible con inversa particionada \(\begin{bmatrix} W & X \\ Y & Z \end{bmatrix}\), entonces \(\begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix} \begin{bmatrix} W & X \\ Y & Z \end{bmatrix} = \begin{bmatrix} AW & AX \\ DY & DZ \end{bmatrix} = \begin{bmatrix} I_p & 0 \\ 0 & I_q \end{bmatrix}\) produce \(AW = I_p\) y \(DZ = I_q\). Como \(A\) y \(D\) son cuadradas, ¡las inversas unilaterales garantizan que TANTO \(A\) como \(D\) son invertibles! Así, una matriz diagonal por bloques es invertible si y solo si cada bloque diagonal es invertible.
+
+Segundo, considere una matriz triangular superior por bloques
+\[
+M = \begin{bmatrix} A & B \\ 0 & D \end{bmatrix},
+\]
+donde \(A\) (\(p \times p\)) y \(D\) (\(q \times q\)) son cuadradas e invertibles, y \(B\) es \(p \times q\). En lugar de adivinar su inversa, DESPEJEMOS los bloques desconocidos de \(M^{-1} = \begin{bmatrix} W & X \\ Y & Z \end{bmatrix}\) directamente a partir de \(M M^{-1} = I_{p+q}\):
+\[
+\begin{bmatrix} A & B \\ 0 & D \end{bmatrix}
+\begin{bmatrix} W & X \\ Y & Z \end{bmatrix}
+=
+\begin{bmatrix} AW + BY & AX + BZ \\ DY & DZ \end{bmatrix}
+=
+\begin{bmatrix} I_p & 0 \\ 0 & I_q \end{bmatrix}.
+\]
+Resuelva desde la fila de bloques inferior hacia arriba:
+1. \(DY = 0\): multiplique por la izquierda por \(D^{-1}\) para obtener \(Y = 0\).
+2. \(DZ = I_q\): multiplique por la izquierda por \(D^{-1}\) para obtener \(Z = D^{-1}\).
+3. \(AW + BY = I_p\): como \(Y = 0\), esto se simplifica a \(AW = I_p\), así que \(W = A^{-1}\).
+4. \(AX + BZ = 0\): sustituya \(Z = D^{-1}\) para obtener \(AX = -B D^{-1}\), luego multiplique por la izquierda por \(A^{-1}\) (¡preservando cuidadosamente el orden!) para obtener
+\[
+X = -A^{-1} B D^{-1}.
+\]
+¡Observe el orden exacto: \(A^{-1}\) queda a la IZQUIERDA de \(B\) y \(D^{-1}\) queda a la DERECHA de \(B\)! Incluso cuando \(p = q\), invertirlos a \(-D^{-1} B A^{-1}\) es en general INCORRECTO porque las matrices no conmutan.
+
+Una deducción idéntica de arriba hacia abajo para una matriz triangular inferior por bloques \(\begin{bmatrix} A & 0 \\ C & D \end{bmatrix}\) produce el bloque inferior izquierdo \(-D^{-1} C A^{-1}\).
+
+[CALLOUT]
+id: block-tri-inv
+label: Teorema
+title: Inversas de matrices diagonales por bloques y triangulares por bloques
+tone: key
+
+Sean \(A\) (\(p \times p\)) y \(D\) (\(q \times q\)) matrices cuadradas. Cada matriz por bloques siguiente es invertible si y solo si AMBAS \(A\) y \(D\) son invertibles, en cuyo caso:
+
+(1) Diagonal por bloques:
+\[
+\begin{bmatrix} A & 0 \\ 0 & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} A^{-1} & 0 \\ 0 & D^{-1} \end{bmatrix}.
+\]
+(2) Triangular superior por bloques:
+\[
+\begin{bmatrix} A & B \\ 0 & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} A^{-1} & -A^{-1} B D^{-1} \\ 0 & D^{-1} \end{bmatrix}.
+\]
+(3) Triangular inferior por bloques:
+\[
+\begin{bmatrix} A & 0 \\ C & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} A^{-1} & 0 \\ -D^{-1} C A^{-1} & D^{-1} \end{bmatrix}.
+\]
+En particular, las matrices triangulares por bloques unitarias (con \(A = I_p\) y \(D = I_q\)) son SIEMPRE invertibles, e invertirlas simplemente cambia el signo del bloque fuera de la diagonal:
+\[
+\begin{bmatrix} I_p & B \\ 0 & I_q \end{bmatrix}^{-1} = \begin{bmatrix} I_p & -B \\ 0 & I_q \end{bmatrix}, \qquad
+\begin{bmatrix} I_p & 0 \\ C & I_q \end{bmatrix}^{-1} = \begin{bmatrix} I_p & 0 \\ -C & I_q \end{bmatrix}.
+\]
+[/CALLOUT]
+
+Verifiquemos [REF: block-tri-inv.2 | la fórmula triangular superior por bloques] en un ejemplo \(4 \times 4\) con bloques \(2 \times 2\):
+\[
+A = \begin{bmatrix} 1 & 2 \\ 0 & 1 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 1 & 0 \\ -1 & 2 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 2 & 1 \\ 1 & 1 \end{bmatrix}.
+\]
+Primero invierta los dos pequeños bloques diagonales \(2 \times 2\):
+\[
+A^{-1} = \begin{bmatrix} 1 & -2 \\ 0 & 1 \end{bmatrix}, \qquad
+D^{-1} = \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix}.
+\]
+Ahora calcule \(-A^{-1} B D^{-1}\) en el orden exacto:
+\[
+A^{-1} B = \begin{bmatrix} 1 & -2 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ -1 & 2 \end{bmatrix} = \begin{bmatrix} 3 & -4 \\ -1 & 2 \end{bmatrix},
+\qquad
+-A^{-1} B D^{-1} = -\begin{bmatrix} 3 & -4 \\ -1 & 2 \end{bmatrix} \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix} = \begin{bmatrix} -7 & 11 \\ 3 & -5 \end{bmatrix}.
+\]
+Por lo tanto,
+\[
+\begin{bmatrix} A & B \\ 0 & D \end{bmatrix}^{-1}
+=
+\begin{bmatrix} 1 & -2 & -7 & 11 \\ 0 & 1 & 3 & -5 \\ 0 & 0 & 1 & -1 \\ 0 & 0 & -1 & 2 \end{bmatrix}.
+\]
+¡Invertimos una matriz \(4 \times 4\) usando únicamente dos inversas \(2 \times 2\) y dos multiplicaciones \(2 \times 2\)!
+
+[QUESTION 2]
+[ANSWER: B]
+Considere la matriz triangular superior por bloques \(4 \times 4\) \(M = \begin{bmatrix} A & B \\ 0 & D \end{bmatrix}\), donde
+\[
+A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 2 & 1 \\ 1 & 0 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}.
+\]
+¿Cuál es el bloque superior derecho \(2 \times 2\) de \(M^{-1}\)?
+
+(A) \(\begin{bmatrix} -2 & 1 \\ 3 & -1 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 1 & -1 \\ -1 & 0 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -1 & 1 \\ 1 & 0 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 0 & -1 \\ -1 & 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} -2 & -1 \\ -1 & 0 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Eliminación gaussiana por bloques, complementos de Schur y LDU por bloques ===
+
+Ahora tome una matriz por bloques \(2 \times 2\) general
+\[
+M = \begin{bmatrix} A & B \\ C & D \end{bmatrix},
+\]
+donde el bloque diagonal principal \(A\) (\(p \times p\)) es cuadrado e INVERTIBLE, \(D\) es \(q \times q\), \(B\) es \(p \times q\) y \(C\) es \(q \times p\).
+
+¿Cómo eliminamos el bloque inferior izquierdo \(C\), tal como la eliminación gaussiana escalar elimina la entrada \(c\) debajo del pivote \(a\) restando \((c/a)\) veces la fila \(1\) de la fila \(2\)? En forma de bloques, dividir por la derecha entre \(a\) se convierte en multiplicar por la derecha por \(A^{-1}\), ¡de modo que el multiplicador de bloques es \(C A^{-1}\)! Multiplique \(M\) por la izquierda por la matriz triangular inferior por bloques unitaria \(\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}\):
+\[
+\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+=
+\begin{bmatrix} A & B \\ -C A^{-1} A + C & -C A^{-1} B + D \end{bmatrix}
+=
+\begin{bmatrix} A & B \\ 0 & D - C A^{-1} B \end{bmatrix}.
+\]
+El bloque inferior izquierdo desaparece limpiamente, y en la esquina inferior derecha queda una matriz \(q \times q\) con un nombre célebre:
+\[
+S = D - C A^{-1} B,
+\]
+llamada el complemento de Schur de \(A\) en \(M\).
+
+¡Ahora dé un paso más! Para despejar también el bloque superior derecho \(B\), multiplique por la derecha por la matriz triangular superior por bloques unitaria \(\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}\):
+\[
+\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}
+=
+\begin{bmatrix} A & B \\ 0 & S \end{bmatrix}
+\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}
+=
+\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}!
+\]
+Observe lo que acabamos de producir: pasar las dos matrices triangulares por bloques unitarias exteriores al lado derecho usando [REF: block-tri-inv | sus inversas por cambio de signo] entrega la factorización exacta \(LDU\) por bloques de \(M\):
+\[
+M =
+\begin{bmatrix} I_p & 0 \\ C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}
+\begin{bmatrix} I_p & A^{-1} B \\ 0 & I_q \end{bmatrix}.
+\]
+
+¡A partir de esa única factorización, TANTO el criterio de invertibilidad COMO la fórmula completa de la inversa por bloques \(2 \times 2\) caen directamente en nuestras manos!
+1. Criterio de invertibilidad: los factores exteriores \(L_B = \begin{bmatrix} I_p & 0 \\ C A^{-1} & I_q \end{bmatrix}\) y \(U_B = \begin{bmatrix} I_p & A^{-1} B \\ 0 & I_q \end{bmatrix}\) son SIEMPRE invertibles. Por lo tanto, \(M = L_B \begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix} U_B\) es invertible si y solo si el factor diagonal por bloques central \(\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}\) es invertible. Como \(A\) ya es invertible, ¡\(M\) es invertible si y solo si el complemento de Schur \(S\) es invertible!
+2. Inversa explícita por bloques \(2 \times 2\): cuando \(S\) es invertible, invierta \(M = L_B \begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix} U_B\) en orden inverso:
+\[
+M^{-1} = U_B^{-1} \begin{bmatrix} A^{-1} & 0 \\ 0 & S^{-1} \end{bmatrix} L_B^{-1}
+=
+\begin{bmatrix} I_p & -A^{-1} B \\ 0 & I_q \end{bmatrix}
+\begin{bmatrix} A^{-1} & 0 \\ 0 & S^{-1} \end{bmatrix}
+\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}.
+\]
+Multiplicar los dos primeros factores da \(\begin{bmatrix} A^{-1} & -A^{-1} B S^{-1} \\ 0 & S^{-1} \end{bmatrix}\), y multiplicar por el tercer factor entrega la inversa exacta por bloques \(2 \times 2\):
+\[
+M^{-1} =
+\begin{bmatrix} A^{-1} + A^{-1} B S^{-1} C A^{-1} & -A^{-1} B S^{-1} \\ -S^{-1} C A^{-1} & S^{-1} \end{bmatrix}.
+\]
+
+[CALLOUT]
+id: schur-theorem
+label: Teorema
+title: Factorización LDU por bloques, complemento de Schur e inversa por bloques \(2 \times 2\)
+tone: key
+
+Sea \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) con bloques diagonales cuadrados \(A\) (\(p \times p\)) y \(D\) (\(q \times q\)), con \(A\) invertible. Defina el complemento de Schur de \(A\) en \(M\) mediante
+\[
+S = D - C A^{-1} B.
+\]
+
+(1) Factorización \(LDU\) por bloques:
+\[
+M =
+\begin{bmatrix} I_p & 0 \\ C A^{-1} & I_q \end{bmatrix}
+\begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix}
+\begin{bmatrix} I_p & A^{-1} B \\ 0 & I_q \end{bmatrix}.
+\]
+(2) Criterio de invertibilidad: \(M\) es invertible si y solo si \(S\) es invertible.
+(3) Inversa explícita por bloques (cuando \(S\) es invertible):
+\[
+M^{-1} =
+\begin{bmatrix} A^{-1} + A^{-1} B S^{-1} C A^{-1} & -A^{-1} B S^{-1} \\ -S^{-1} C A^{-1} & S^{-1} \end{bmatrix}.
+\]
+[/CALLOUT]
+
+¡Note cómo [REF: schur-theorem.3 | la inversa explícita por bloques] generaliza la fórmula inversa escalar \(2 \times 2\) \(\frac{1}{ad - bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}\)! Cuando \(p = q = 1\), \(S = d - c a^{-1} b = (ad - bc)/a\), así que \(S^{-1} = a/(ad - bc)\), \(-S^{-1} c a^{-1} = -c/(ad - bc)\), \(-a^{-1} b S^{-1} = -b/(ad - bc)\), ¡y \(a^{-1} + a^{-1} b S^{-1} c a^{-1} = d/(ad - bc)\)!
+
+[QUESTION 3]
+[ANSWER: D]
+Considere la matriz particionada \(4 \times 4\) \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\), donde
+\[
+A = \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 1 & 2 \\ 2 & 0 \end{bmatrix}, \qquad
+C = \begin{bmatrix} 1 & 2 \\ 2 & 2 \end{bmatrix}, \qquad
+D = \begin{bmatrix} 4 & 3 \\ 6 & k \end{bmatrix}.
+\]
+¿Para qué valores reales de \(k\) es invertible \(M\)?
+
+(A) Todo \(k \neq 4\) real
+(B) Todo \(k \neq 2\) real
+(C) Solamente \(k = 6\)
+(D) Todo \(k \neq 6\) real
+(E) Todo \(k \neq 0\) real
+[/QUESTION]
+
+=== SECTION 4: Reducir sistemas lineales acoplados por bloques ===
+
+En la práctica, rara vez necesita formar la inversa completa \(M^{-1}\): igual que en la factorización \(LU\) ordinaria, ¡la eliminación por bloques resuelve directamente un sistema lineal acoplado por bloques reduciéndolo a un sistema más pequeño del complemento de Schur!
+
+Considere el sistema acoplado
+\[
+\begin{bmatrix} A & B \\ C & D \end{bmatrix}
+\begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix}
+=
+\begin{bmatrix} \mathbf{f} \\ \mathbf{g} \end{bmatrix},
+\qquad \text{es decir,} \qquad
+\begin{aligned}
+A\mathbf{x} + B\mathbf{y} &= \mathbf{f}, \\
+C\mathbf{x} + D\mathbf{y} &= \mathbf{g},
+\end{aligned}
+\]
+donde \(A\) es invertible (y a menudo diagonal, triangular o fácil de resolver). Aplicar la matriz de eliminación por bloques \(\begin{bmatrix} I_p & 0 \\ -C A^{-1} & I_q \end{bmatrix}\) a ambos lados da
+\[
+\begin{bmatrix} A & B \\ 0 & S \end{bmatrix}
+\begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix}
+=
+\begin{bmatrix} \mathbf{f} \\ \mathbf{g} - C A^{-1} \mathbf{f} \end{bmatrix}.
+\]
+Esto desacopla el sistema en dos resoluciones más pequeñas:
+1. Resolver el sistema más pequeño \(q \times q\) del complemento de Schur \(S \mathbf{y} = \mathbf{g} - C A^{-1} \mathbf{f}\) para \(\mathbf{y}\).
+2. Sustituir hacia atrás \(\mathbf{y}\) en la primera ecuación de bloques y resolver \(A \mathbf{x} = \mathbf{f} - B \mathbf{y}\) para \(\mathbf{x}\).
+
+[TABLE]
+Etapa al resolver un sistema acoplado por bloques | Ecuación | Tamaño
+1. Eliminar \(\mathbf{x}\) del bloque inferior | Formar \(S = D - C A^{-1} B\) y \(\tilde{\mathbf{g}} = \mathbf{g} - C A^{-1} \mathbf{f}\) | matriz \(q \times q\), vector \(q \times 1\)
+2. Resolver para \(\mathbf{y}\) | Resolver \(S \mathbf{y} = \tilde{\mathbf{g}}\) | sistema \(q \times q\)
+3. Despejar hacia atrás \(\mathbf{x}\) | Resolver \(A \mathbf{x} = \mathbf{f} - B \mathbf{y}\) | sistema \(p \times p\)
+[/TABLE]
+
+Ejecutemos las tres etapas en un sistema concreto \(4 \times 4\) con bloques \(2 \times 2\):
+\[
+A = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}, \quad
+B = \begin{bmatrix} 2 & -2 \\ 1 & 0 \end{bmatrix}, \quad
+C = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}, \quad
+D = \begin{bmatrix} 4 & 1 \\ 3 & 2 \end{bmatrix}, \quad
+\mathbf{f} = \begin{bmatrix} 2 \\ 1 \end{bmatrix}, \quad
+\mathbf{g} = \begin{bmatrix} 7 \\ 5 \end{bmatrix}.
+\]
+Etapa 1: Como \(A\) es diagonal, \(A^{-1} = \begin{bmatrix} 1/2 & 0 \\ 0 & 1 \end{bmatrix}\). Calcule primero \(C A^{-1}\) para poder reutilizarlo tanto sobre \(B\) como sobre \(\mathbf{f}\):
+\[
+C A^{-1} = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 1/2 & 0 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix}.
+\]
+Entonces
+\[
+S = D - (C A^{-1}) B = \begin{bmatrix} 4 & 1 \\ 3 & 2 \end{bmatrix} - \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 2 & -2 \\ 1 & 0 \end{bmatrix}
+= \begin{bmatrix} 4 & 1 \\ 3 & 2 \end{bmatrix} - \begin{bmatrix} 3 & -2 \\ 2 & 0 \end{bmatrix}
+= \begin{bmatrix} 1 & 3 \\ 1 & 2 \end{bmatrix},
+\]
+y el lado derecho reducido es
+\[
+\tilde{\mathbf{g}} = \mathbf{g} - (C A^{-1}) \mathbf{f} = \begin{bmatrix} 7 \\ 5 \end{bmatrix} - \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix} \begin{bmatrix} 2 \\ 1 \end{bmatrix}
+= \begin{bmatrix} 7 \\ 5 \end{bmatrix} - \begin{bmatrix} 3 \\ 2 \end{bmatrix}
+= \begin{bmatrix} 4 \\ 3 \end{bmatrix}.
+\]
+Etapa 2: Resuelva \(S \mathbf{y} = \tilde{\mathbf{g}}\), es decir, \(\begin{bmatrix} 1 & 3 \\ 1 & 2 \end{bmatrix} \mathbf{y} = \begin{bmatrix} 4 \\ 3 \end{bmatrix}\). Restar la fila \(2\) de la fila \(1\) da \(y_2 = 1\), y luego \(y_1 = 4 - 3(1) = 1\), así que \(\mathbf{y} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\).
+
+Etapa 3: Despeje hacia atrás \(A \mathbf{x} = \mathbf{f} - B \mathbf{y}\):
+\[
+\mathbf{f} - B \mathbf{y} = \begin{bmatrix} 2 \\ 1 \end{bmatrix} - \begin{bmatrix} 2 & -2 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 1 \end{bmatrix} - \begin{bmatrix} 0 \\ 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 0 \end{bmatrix}
+\implies
+\mathbf{x} = A^{-1} \begin{bmatrix} 2 \\ 0 \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}.
+\]
+Compruebe en las ecuaciones originales: \(A\mathbf{x} + B\mathbf{y} = \begin{bmatrix} 2 \\ 0 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \end{bmatrix} = \begin{bmatrix} 2 \\ 1 \end{bmatrix} = \mathbf{f}\) y \(C\mathbf{x} + D\mathbf{y} = \begin{bmatrix} 2 \\ 0 \end{bmatrix} + \begin{bmatrix} 5 \\ 5 \end{bmatrix} = \begin{bmatrix} 7 \\ 5 \end{bmatrix} = \mathbf{g}\). ¡Exacto!
+
+[QUESTION 4]
+[ANSWER: A]
+Resuelva el sistema lineal acoplado por bloques \(\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix} = \begin{bmatrix} \mathbf{f} \\ \mathbf{g} \end{bmatrix}\), donde
+\[
+A = \begin{bmatrix} 1 & 0 \\ 0 & 3 \end{bmatrix}, \quad
+B = \begin{bmatrix} 1 & 1 \\ 3 & 0 \end{bmatrix}, \quad
+C = \begin{bmatrix} 2 & 3 \\ 1 & 0 \end{bmatrix}, \quad
+D = \begin{bmatrix} 6 & 3 \\ 2 & 3 \end{bmatrix}, \quad
+\mathbf{f} = \begin{bmatrix} 2 \\ 3 \end{bmatrix}, \quad
+\mathbf{g} = \begin{bmatrix} 11 \\ 7 \end{bmatrix}.
+\]
+¿Cuál es el par solución \((\mathbf{x}, \mathbf{y})\)?
+
+(A) \(\mathbf{x} = \begin{bmatrix} -2 \\ -2 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 3 \\ 1 \end{bmatrix}\)
+(B) \(\mathbf{x} = \begin{bmatrix} 3 \\ 1 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} -2 \\ -2 \end{bmatrix}\)
+(C) \(\mathbf{x} = \begin{bmatrix} -2 \\ -6 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 3 \\ 1 \end{bmatrix}\)
+(D) \(\mathbf{x} = \begin{bmatrix} 1 \\ -1 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 1 \\ 3 \end{bmatrix}\)
+(E) \(\mathbf{x} = \begin{bmatrix} -1 \\ -1 \end{bmatrix},\; \mathbf{y} = \begin{bmatrix} 2 \\ 2 \end{bmatrix}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Sea \(A\) una matriz invertible \(n \times n\), sean \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^n\) vectores columna, y forme la matriz bordeada \((n + 1) \times (n + 1)\)
+\[
+M = \begin{bmatrix} A & \mathbf{u} \\ \mathbf{v}^T & 0 \end{bmatrix}.
+\]
+¿Cuál es la condición necesaria y suficiente exacta para que \(M\) sea invertible?
+
+(A) \(\mathbf{v}^T \mathbf{u} \neq 0\)
+(B) \(\mathbf{u} \neq \mathbf{0}\) y \(\mathbf{v} \neq \mathbf{0}\)
+(C) \(\mathbf{v}^T A^{-1} \mathbf{u} \neq 0\)
+(D) \(\mathbf{u}^T A^{-1} \mathbf{v} = 0\)
+(E) \(M\) es siempre singular porque su entrada inferior derecha es \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Suponga que \(M = \begin{bmatrix} A & B \\ C & D \end{bmatrix}\) tiene bloques diagonales cuadrados \(A\) (\(p \times p\)) y \(D\) (\(q \times q\)), donde \(D\) es invertible (mientras que \(A\) puede ser singular). ¿Qué matriz de eliminación por bloques multiplica a \(M\) por la izquierda para anular el bloque superior derecho \(B\), y cuál es el complemento de Schur resultante de \(D\) en \(M\)?
+
+(A) \(\begin{bmatrix} I_p & -D^{-1} B \\ 0 & I_q \end{bmatrix}\); complemento de Schur \(A - D^{-1} B C\)
+(B) \(\begin{bmatrix} I_p & B D^{-1} \\ 0 & I_q \end{bmatrix}\); complemento de Schur \(A + B D^{-1} C\)
+(C) \(\begin{bmatrix} I_p & 0 \\ -C D^{-1} & I_q \end{bmatrix}\); complemento de Schur \(A - C D^{-1} B\)
+(D) \(\begin{bmatrix} I_p & -B D^{-1} \\ 0 & I_q \end{bmatrix}\); complemento de Schur \(D - C A^{-1} B\)
+(E) \(\begin{bmatrix} I_p & -B D^{-1} \\ 0 & I_q \end{bmatrix}\); complemento de Schur \(A - B D^{-1} C\)
+[/BONUS]

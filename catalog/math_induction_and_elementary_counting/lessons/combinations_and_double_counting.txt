@@ -1,0 +1,262 @@
+=== SECTION 1: Binomial coefficients and their three core interpretations ===
+
+In the previous lesson, \(P(n, k) = \frac{n!}{(n - k)!}\) counted ordered \(k\)-tuples of distinct objects chosen from \(n\) objects. Now drop the ordering: how many UNORDERED \(k\)-element subsets can be selected from an \(n\)-element set?
+
+The Division Rule answers this in one step. Every \(k\)-element subset \(S\) of an \(n\)-element set can be listed in \(k!\) distinct orders, producing \(k!\) different \(k\)-permutations. Since this multiplicity \(k!\) is identical for every \(k\)-element subset, dividing \(P(n, k)\) by \(k!\) gives the number of \(k\)-element subsets—called a combination or binomial coefficient, written \(\binom{n}{k}\) or \(C(n, k)\) (read "\(n\) choose \(k\)"):
+\[
+C(n, k) = \binom{n}{k} = \frac{P(n, k)}{k!} = \frac{n!}{k!\,(n - k)!} \qquad (0 \le k \le n).
+\]
+Check the boundary conventions: \(\binom{n}{0} = \frac{n!}{0!\,n!} = 1\) (there is one \(0\)-element subset, \(\emptyset\)), and \(\binom{n}{n} = \frac{n!}{n!\,0!} = 1\) (the entire set itself). Whenever \(k < 0\) or \(k > n\), there are no \(k\)-element subsets of an \(n\)-element set, so we adopt the standard convention
+\[
+\binom{n}{k} = 0 \qquad \text{for } k < 0 \text{ or } k > n.
+\]
+
+What makes \(\binom{n}{k}\) ubiquitous across mathematics is that three seemingly different finite objects are in explicit bijection with one another and therefore share the exact same count.
+
+[CALLOUT]
+id: binom-interpretations
+label: Equivalence
+title: Three core interpretations of \(\binom{n}{k}\)
+tone: key
+
+For integers \(0 \le k \le n\), the binomial coefficient \(\binom{n}{k} = \frac{n!}{k!(n - k)!}\) counts each of the following:
+
+(1) Subsets: The \(k\)-element subsets of an \(n\)-element set \(\{1, 2, \dots, n\}\).
+(2) Bitstrings of weight \(k\): The length-\(n\) binary strings over \(\{0, 1\}\) containing exactly \(k\) ones and \(n - k\) zeros (also matching the multiset permutation count \(\frac{n!}{k!(n - k)!}\)).
+(3) Northeast lattice paths: The shortest grid paths from \((0, 0)\) to \((k, n - k)\) using only unit East steps \((+1, 0)\) and unit North steps \((0, +1)\).
+[/CALLOUT]
+
+Why does [REF: binom-interpretations.3 | the lattice-path interpretation] match [REF: binom-interpretations.2 | weight-\(k\) bitstrings]? Every northeast path from \((0, 0)\) to \((k, n - k)\) must take exactly \(k\) East steps and \(n - k\) North steps in some order—a total of \(n\) steps. Encoding each East step as \(1\) and each North step as \(0\) gives a bijection between northeast lattice paths to \((k, n - k)\) and length-\(n\) bitstrings with \(k\) ones. Equivalently, to reach \((a, b)\) from \((0, 0)\) using East and North steps, there are \(\binom{a + b}{a} = \binom{a + b}{b}\) paths.
+
+For instance, moving from \((0, 0)\) to \((4, 3)\) requires \(4\) East steps and \(3\) North steps (\(7\) steps total), so there are \(\binom{7}{4} = \frac{7 \cdot 6 \cdot 5}{3 \cdot 2 \cdot 1} = 35\) northeast paths. The figure below shows the grid and one such path: \(E, N, E, E, N, N, E\) (corresponding to the weight-\(4\) bitstring \(1011001\) and the \(4\)-subset \(\{1, 3, 4, 7\}\) of \(\{1, \dots, 7\}\)).
+
+[GRAPH]
+type: function2d
+title: A northeast lattice path from \((0, 0)\) to \((4, 3)\) encoding \(1011001\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -0.3, 4.3
+yrange: -0.3, 3.3
+aspect: equal
+trace: 0 | label: grid boundary
+segment: 0, 1, 4, 1 | dashed: true
+segment: 0, 2, 4, 2 | dashed: true
+segment: 0, 3, 4, 3 | dashed: true
+segment: 0, 0, 0, 3 | dashed: true
+segment: 1, 0, 1, 3 | dashed: true
+segment: 2, 0, 2, 3 | dashed: true
+segment: 3, 0, 3, 3 | dashed: true
+segment: 4, 0, 4, 3 | dashed: true
+segment: 0, 0, 1, 0 | color: #2563eb
+segment: 1, 0, 1, 1 | color: #2563eb
+segment: 1, 1, 3, 1 | color: #2563eb
+segment: 3, 1, 3, 3 | color: #2563eb
+segment: 3, 3, 4, 3 | color: #2563eb
+point: 0, 0 | label: \((0, 0)\)
+point: 4, 3 | label: \((4, 3)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+How many northeast lattice paths from \((0, 0)\) to \((6, 4)\) (taking only unit East and North steps) pass through the point \((2, 2)\)?
+
+(A) \(21\)
+(B) \(60\)
+(C) \(90\)
+(D) \(120\)
+(E) \(210\)
+[/QUESTION]
+
+=== SECTION 2: Combinatorial proofs by double counting ===
+
+Many remarkable identities relate binomial coefficients to one another. You can sometimes verify an identity by grinding through factorials, yet algebraic manipulation often hides WHY the identity is true—and becomes hopelessly messy on sums. A combinatorial proof (or double-counting proof) reveals the structure directly.
+
+[CALLOUT]
+id: double-counting
+label: Method
+title: Combinatorial proof by double counting
+tone: key
+
+To prove an identity \(L = R\) combinatorially:
+
+(1) Explicitly define a single finite set \(S\) of combinatorial objects (such as subsets, committees, bitstrings, or paths).
+(2) Count \(|S|\) in one way to show \(|S| = L\).
+(3) Count the exact same set \(S\) in a second, independent way to show \(|S| = R\).
+(4) Conclude \(L = R\), since both expressions equal \(|S|\).
+[/CALLOUT]
+
+Let us prove three core identities using [REF: double-counting | double counting].
+
+1. Symmetry: \(\binom{n}{k} = \binom{n}{n - k}\) for \(0 \le k \le n\).
+   Count the set \(S\) of \(k\)-element subsets of \(\{1, \dots, n\}\). Way 1: directly, \(|S| = \binom{n}{k}\). Way 2: specify each \(k\)-subset uniquely by choosing the \(n - k\) elements to LEAVE OUT; there are \(\binom{n}{n - k}\) ways to choose the complement. Thus \(\binom{n}{k} = \binom{n}{n - k}\).
+
+2. Pascal's Identity: For all integers \(1 \le k \le n\),
+   \[
+   \binom{n}{k} = \binom{n - 1}{k - 1} + \binom{n - 1}{k}.
+   \]
+   Let \(S\) be the set of \(k\)-element subsets of \(\{1, 2, \dots, n\}\). Way 1: \(|S| = \binom{n}{k}\). Way 2: fix the specific element \(n\) and partition \(S\) into two disjoint collections:
+   - Subsets containing \(n\): we must choose the remaining \(k - 1\) elements from \(\{1, \dots, n - 1\}\), giving \(\binom{n - 1}{k - 1}\) subsets.
+   - Subsets NOT containing \(n\): we must choose all \(k\) elements from \(\{1, \dots, n - 1\}\), giving \(\binom{n - 1}{k}\) subsets.
+   By the Sum Rule, \(|S| = \binom{n - 1}{k - 1} + \binom{n - 1}{k}\), proving Pascal's identity.
+
+Pascal's identity generates Pascal's triangle row by row: every interior entry equals the sum of the two entries directly above it in the previous row.
+
+[TABLE]
+Row \(n\) | \(k = 0\) | \(k = 1\) | \(k = 2\) | \(k = 3\) | \(k = 4\) | \(k = 5\)
+\(n = 0\) | \(1\) | — | — | — | — | —
+\(n = 1\) | \(1\) | \(1\) | — | — | — | —
+\(n = 2\) | \(1\) | \(2\) | \(1\) | — | — | —
+\(n = 3\) | \(1\) | \(3\) | \(3\) | \(1\) | — | —
+\(n = 4\) | \(1\) | \(4\) | \(6\) | \(4\) | \(1\) | —
+\(n = 5\) | \(1\) | \(5\) | \(10\) | \(10\) | \(5\) | \(1\)
+[/TABLE]
+
+3. Committee-Chair (Absorption) Identity: For all integers \(1 \le k \le n\),
+   \[
+   k \binom{n}{k} = n \binom{n - 1}{k - 1}.
+   \]
+   Let \(S\) be the set of all pairs \((C, c)\) where \(C\) is a \(k\)-person committee chosen from \(n\) people and \(c \in C\) is designated as its chair.
+   - Way 1: First choose the \(k\)-person committee \(C\) in \(\binom{n}{k}\) ways, then select one of its \(k\) members to be the chair \(c\) in \(k\) ways. By the Product Rule, \(|S| = k \binom{n}{k}\).
+   - Way 2: First choose the chair \(c\) from all \(n\) people in \(n\) ways, then choose the remaining \(k - 1\) committee members from the remaining \(n - 1\) people in \(\binom{n - 1}{k - 1}\) ways. By the Product Rule, \(|S| = n \binom{n - 1}{k - 1}\).
+   Therefore \(k \binom{n}{k} = n \binom{n - 1}{k - 1}\).
+
+[QUESTION 2]
+[ANSWER: D]
+Consider the identity \(\binom{n}{r}\binom{r}{k} = \binom{n}{k}\binom{n - k}{r - k}\) for integers \(0 \le k \le r \le n\). Which finite set \(S\) is counted by both sides to give a valid combinatorial double-counting proof?
+
+(A) The set of ordered pairs \((A, B)\) of disjoint subsets of \(\{1, \dots, n\}\) with \(|A| = r\) and \(|B| = k\).
+(B) The set of \((r + k)\)-element subsets of \(\{1, \dots, n\}\) containing the element \(k\).
+(C) The set of functions from an \(r\)-element set to a \(k\)-element set whose image has size \(n\).
+(D) The set of pairs \((A, B)\) of subsets of \(\{1, \dots, n\}\) satisfying \(B \subseteq A\), \(|A| = r\), and \(|B| = k\) (for instance, choosing an \(r\)-person committee \(A\) and a \(k\)-person subcommittee \(B\) inside it).
+(E) The set of length-\(n\) bitstrings with either \(r\) ones or \(k\) ones.
+[/QUESTION]
+
+=== SECTION 3: The Hockey-Stick and Vandermonde Identities ===
+
+Double counting truly shines on summation identities, where expanding factorials would be painful. Two classic summation identities belong in every combinatorial toolkit.
+
+[CALLOUT]
+id: hockey-vandermonde
+label: Theorems
+title: Hockey-Stick Identity and Vandermonde's Identity
+tone: key
+
+(1) Hockey-Stick Identity: For all integers \(0 \le r \le n\),
+\[
+\sum_{m=r}^n \binom{m}{r} = \binom{n + 1}{r + 1}.
+\]
+(2) Vandermonde's Identity: For all nonnegative integers \(m, n, r\),
+\[
+\sum_{k=0}^r \binom{m}{k}\binom{n}{r - k} = \binom{m + n}{r}.
+\]
+[/CALLOUT]
+
+Combinatorial proof of [REF: hockey-vandermonde.1 | the Hockey-Stick Identity]: Let \(S\) be the set of all \((r + 1)\)-element subsets of \(\{1, 2, \dots, n + 1\}\).
+- Way 1: Directly, \(|S| = \binom{n + 1}{r + 1}\).
+- Way 2: Partition \(S\) into disjoint cases according to the LARGEST element of the subset! Since a subset of size \(r + 1\) must have at least \(r\) smaller elements beneath its maximum, its largest element must be \(m + 1\) for some integer \(m\) with \(r \le m \le n\). Once the largest element \(m + 1\) is fixed, the remaining \(r\) elements are an arbitrary \(r\)-element subset of \(\{1, 2, \dots, m\}\), which can be chosen in \(\binom{m}{r}\) ways. Summing over all disjoint values \(m = r, r + 1, \dots, n\) yields \(|S| = \sum_{m=r}^n \binom{m}{r}\).
+
+Look back at Pascal's triangle in Section 2 to see the name's origin: summing down column \(r = 2\) from row \(2\) to row \(5\) gives \(\binom{2}{2} + \binom{3}{2} + \binom{4}{2} + \binom{5}{2} = 1 + 3 + 6 + 10 = 20 = \binom{6}{3}\), which bends one step to the right on row \(6\) like the blade of a hockey stick!
+
+Combinatorial proof of [REF: hockey-vandermonde.2 | Vandermonde's Identity]: Suppose a club consists of \(m\) physicists and \(n\) chemists (\(m + n\) members total), and let \(S\) be the set of all \(r\)-person committees chosen from the club.
+- Way 1: Ignoring department labels, \(|S| = \binom{m + n}{r}\).
+- Way 2: Partition \(S\) by the exact number \(k\) of physicists on the committee, where \(k\) ranges from \(0\) to \(r\). For a fixed \(k\), choose \(k\) physicists from \(m\) in \(\binom{m}{k}\) ways and independently choose the remaining \(r - k\) chemists from \(n\) in \(\binom{n}{r - k}\) ways (our convention \(\binom{a}{b} = 0\) for \(b > a\) automatically drops impossible cases where \(k > m\) or \(r - k > n\)). By the Product and Sum Rules, \(|S| = \sum_{k=0}^r \binom{m}{k}\binom{n}{r - k}\).
+
+One famous corollary appears immediately by setting \(m = n = r\) in [REF: hockey-vandermonde.2 | Vandermonde's Identity] and applying symmetry \(\binom{n}{n - k} = \binom{n}{k}\):
+\[
+\sum_{k=0}^n \binom{n}{k}^2 = \sum_{k=0}^n \binom{n}{k}\binom{n}{n - k} = \binom{2n}{n}.
+\]
+
+[QUESTION 3]
+[ANSWER: B]
+For any positive integer \(n\), what is the exact closed-form value of the sum
+\[
+\sum_{k=0}^{n-1} \binom{n}{k}\binom{n}{k + 1}?
+\]
+
+(A) \(\binom{2n}{n}\)
+(B) \(\binom{2n}{n - 1}\)
+(C) \(\binom{2n + 1}{n}\)
+(D) \(\binom{2n - 1}{n}\)
+(E) \(n \binom{2n}{n}\)
+[/QUESTION]
+
+=== SECTION 4: Diagnosing the "at least \(k\)" committee overcounting trap ===
+
+Just as "at least one" strings created a classic overcounting trap under the Product Rule, "at least one" and "at least \(k\)" subset selections create the single most common error with binomial coefficients.
+
+[CALLOUT]
+id: overcounting-trap
+label: Common Pitfall
+title: The "pick required representatives first, then any remaining" trap
+tone: caution
+
+Problem: From \(6\) women and \(5\) men, how many \(4\)-person committees contain AT LEAST \(1\) woman?
+
+Broken attempt: "Pick \(1\) woman first to satisfy the requirement (\(\binom{6}{1} = 6\) ways), then pick any \(3\) more people from the remaining \(10\) people (\(\binom{10}{3} = 120\) ways), giving \(6 \cdot 120 = 720\)."
+
+Why it fails: The total number of \(4\)-person committees from all \(11\) people is only \(\binom{11}{4} = 330\), so \(720\) is impossible! The broken product treats the first chosen woman as a labeled "designated representative," so a committee containing \(w\) women is counted \(w\) different times (once for each woman who could have been chosen in stage \(1\)). Because \(w\) varies from \(1\) to \(4\), you cannot even fix it by dividing by a single constant!
+[/CALLOUT]
+
+Let us verify the exact anatomy of that overcount:
+- \(1\) woman, \(3\) men: \(\binom{6}{1}\binom{5}{3} = 60\) committees, each counted \(1\) time \(\to 60\).
+- \(2\) women, \(2\) men: \(\binom{6}{2}\binom{5}{2} = 150\) committees, each counted \(2\) times \(\to 300\).
+- \(3\) women, \(1\) man: \(\binom{6}{3}\binom{5}{1} = 100\) committees, each counted \(3\) times \(\to 300\).
+- \(4\) women, \(0\) men: \(\binom{6}{4}\binom{5}{0} = 15\) committees, each counted \(4\) times \(\to 60\).
+Sure enough, \(60 + 300 + 300 + 60 = 720\), whereas the true count is \(60 + 150 + 100 + 15 = 325\)!
+
+There are two completely reliable ways to avoid [REF: overcounting-trap | this trap]:
+1. Partition into disjoint exact-count cases (Sum Rule): add the counts for exactly \(1\), exactly \(2\), exactly \(3\), and exactly \(4\) women (\(60 + 150 + 100 + 15 = 325\)).
+2. Subtract the complement (Complement Rule): all \(4\)-person committees minus all-men committees, \(\binom{11}{4} - \binom{5}{4} = 330 - 5 = 325\).
+
+Always check for one red flag whenever you multiply two binomial coefficients: do the two stages draw from OVERLAPPING pools into the SAME unordered subset? If yes, you are silently imposing an artificial stage-label on elements and overcounting!
+
+[QUESTION 4]
+[ANSWER: E]
+From \(5\) seniors and \(7\) juniors, we want to count all \(5\)-person committees that include AT LEAST \(2\) seniors. A student writes \(\binom{5}{2}\binom{10}{3} = 1200\). How many times does the student's formula count a particular committee containing \(3\) seniors and \(2\) juniors, and what is the TRUE number of valid committees?
+
+(A) Counted \(2\) times; true number of valid committees is \(596\).
+(B) Counted \(3\) times; true number of valid committees is \(617\).
+(C) Counted \(6\) times; true number of valid committees is \(596\).
+(D) Counted \(3\) times; true number of valid committees is \(400\).
+(E) Counted \(3\) times; true number of valid committees is \(596\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Which finite set \(S\) gives a direct combinatorial double-counting proof of the identity
+\[
+k(k - 1)\binom{n}{k} = n(n - 1)\binom{n - 2}{k - 2} \qquad (2 \le k \le n)?
+\]
+
+(A) The set of \(k\)-person committees from \(n\) people with two identical co-chairs.
+(B) The set of pairs of disjoint committees of sizes \(k\) and \(2\) chosen from \(n\) people.
+(C) The set of \(k\)-person committees from \(n\) people together with an ordered pair (chair, vice-chair) of two distinct officers chosen from the committee.
+(D) The set of \((k - 2)\)-person committees from \(n\) people with \(2\) advisors chosen from outside the committee.
+(E) The set of ordered \(k\)-permutations of \(n\) people whose first two entries are fixed.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Using [REF: hockey-vandermonde.1 | the Hockey-Stick Identity], what is the exact closed-form value of the sum
+\[
+\sum_{k=1}^n \frac{k(k + 1)}{2}
+\]
+for every positive integer \(n\)?
+
+(A) \(\binom{n + 2}{3}\)
+(B) \(\binom{n + 1}{3}\)
+(C) \(\binom{n + 2}{2}\)
+(D) \(\binom{n + 3}{3}\)
+(E) \(\binom{n + 1}{2}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+How many northeast lattice paths from \((0, 0)\) to \((5, 4)\) (using only unit East and North steps) AVOID passing through the point \((2, 2)\)?
+
+(A) \(56\)
+(B) \(60\)
+(C) \(64\)
+(D) \(66\)
+(E) \(126\)
+[/BONUS]

@@ -1,0 +1,244 @@
+=== SECTION 1: The two-variable AM-GM inequality and exact extrema ===
+
+Everything in this lesson grows out of a single elementary fact about real numbers: the square of any real number is non-negative (\(u^2 \ge 0\)), and equals \(0\) if and only if \(u = 0\).
+
+Suppose \(a\) and \(b\) are two non-negative real numbers (\(a, b \ge 0\)). Then \(\sqrt{a}\) and \(\sqrt{b}\) are both real, so the square of their difference cannot be negative:
+\[
+(\sqrt{a} - \sqrt{b})^2 \ge 0.
+\]
+Expand the left side:
+\[
+a - 2\sqrt{ab} + b \ge 0 \iff a + b \ge 2\sqrt{ab} \iff \frac{a + b}{2} \ge \sqrt{ab}.
+\]
+The left-hand side \(\dfrac{a + b}{2}\) is the ARITHMETIC MEAN (AM) of \(a\) and \(b\), and the right-hand side \(\sqrt{ab}\) is their GEOMETRIC MEAN (GM). Because \((\sqrt{a} - \sqrt{b})^2 = 0\) if and only if \(\sqrt{a} = \sqrt{b}\), equality holds if and only if \(a = b\).
+
+[CALLOUT]
+id: am-gm-two
+label: Theorem
+title: Two-variable AM-GM inequality
+tone: key
+
+For all non-negative real numbers \(a, b \ge 0\):
+(1) \(\dfrac{a + b}{2} \ge \sqrt{ab}\) (equivalently, \(a + b \ge 2\sqrt{ab}\)).
+(2) Equality holds if and only if \(a = b\).
+[/CALLOUT]
+
+Why is [REF: am-gm-two | AM-GM] so powerful? Whenever a sum contains two positive terms whose PRODUCT is a constant (independent of \(x\)), AM-GM immediately bounds the sum from below—finding an exact minimum without calculus!
+
+Example 1: Find the minimum value of \(f(x) = x + \dfrac{4}{x}\) for \(x > 0\).
+Since \(x > 0\), both \(x\) and \(\dfrac{4}{x}\) are positive. Applying [REF: am-gm-two.1 | AM-GM]:
+\[
+x + \frac{4}{x} \ge 2\sqrt{x \cdot \frac{4}{x}} = 2\sqrt{4} = 4.
+\]
+We are NOT finished yet! Showing \(f(x) \ge 4\) only proves that \(4\) is a lower bound; to prove \(4\) is the TRUE MINIMUM, we must verify that some admissible \(x > 0\) achieves equality. By [REF: am-gm-two.2 | the equality condition], equality holds when
+\[
+x = \frac{4}{x} \iff x^2 = 4 \iff x = 2 \quad (\text{since } x > 0).
+\]
+Indeed, \(f(2) = 2 + 2 = 4\). Therefore the minimum value of \(f(x)\) on \((0, \infty)\) is \(4\), attained uniquely at \(x = 2\).
+
+[GRAPH]
+type: function2d
+title: Curve \(y = x + \frac{4}{x}\) on \((0, 8)\) touching its AM-GM lower bound \(y = 4\) at \((2, 4)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0.4, 8
+yrange: 0, 12
+trace: x + 4/x | label: \(y = x + \frac{4}{x}\)
+trace: 4 | label: \(y = 4\)
+point: 2, 4 | label: \((2, 4)\)
+[/GRAPH]
+
+Never skip the attainability check! Look at what happens if we restrict a similar function to a domain that EXCLUDES the equality point. Consider \(g(x) = x + \dfrac{2}{x}\) for \(x \ge 2\). AM-GM gives the true inequality
+\[
+x + \frac{2}{x} \ge 2\sqrt{2} \approx 2.828,
+\]
+with equality at \(x = \sqrt{2} \approx 1.414\). Because \(\sqrt{2}\) does NOT belong to the allowed domain \(x \ge 2\), \(2\sqrt{2}\) is ONLY a loose lower bound—not the minimum! On \(x \ge 2\), \(g(x)\) is strictly increasing, and its actual minimum is \(g(2) = 3\).
+
+[CALLOUT]
+id: attainability-rule
+label: Common pitfall
+title: A lower bound is not automatically a minimum
+tone: caution
+
+Proving \(f(x) \ge M\) on a domain \(D\) establishes that \(M\) is the MINIMUM of \(f\) on \(D\) if and only if there exists at least one point \(x_0 \in D\) where \(f(x_0) = M\) (meaning the equality condition of the inequality is actually reachable inside \(D\)).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: D]
+What is the minimum value of \(f(x) = 3x + \dfrac{12}{x}\) for \(x > 0\), and at what value of \(x\) is it attained?
+
+(A) Minimum \(6\), attained at \(x = 1\)
+(B) Minimum \(12\), attained at \(x = 4\)
+(C) Minimum \(15\), attained at \(x = 1\)
+(D) Minimum \(12\), attained at \(x = 2\)
+(E) Minimum \(6\sqrt{2}\), attained at \(x = 2\)
+[/QUESTION]
+
+=== SECTION 2: Extending AM-GM to four and three variables ===
+
+Can we extend AM-GM beyond two variables using only what we already know? Watch a celebrated trick—forward doubling to four variables, then backward stepping to three!
+
+Step 1 (Four variables by pairing): Let \(a, b, c, d \ge 0\). Apply [REF: am-gm-two | two-variable AM-GM] first to the pairs \((a, b)\) and \((c, d)\), and then once more to the two resulting geometric means \(\sqrt{ab}\) and \(\sqrt{cd}\):
+\[
+\frac{a + b + c + d}{4} = \frac{\frac{a + b}{2} + \frac{c + d}{2}}{2} \ge \frac{\sqrt{ab} + \sqrt{cd}}{2} \ge \sqrt{\sqrt{ab}\cdot\sqrt{cd}} = \sqrt[4]{abcd}.
+\]
+Equality holds across all steps if and only if \(a = b\), \(c = d\), and \(\sqrt{ab} = \sqrt{cd}\), which simplifies to \(a = b = c = d\).
+
+Step 2 (Three variables by backward induction): Now let \(a, b, c \ge 0\). If \(a = b = c = 0\), both sides of \(\dfrac{a + b + c}{3} \ge \sqrt[3]{abc}\) equal \(0\). Otherwise, the arithmetic mean \(A = \dfrac{a + b + c}{3}\) is strictly positive. Feed \(a, b, c\) together with a fourth copy \(d = A\) into the four-variable inequality! Watch how the left side stays equal to \(A\):
+\[
+\frac{a + b + c + A}{4} = \frac{3A + A}{4} = A.
+\]
+Therefore four-variable AM-GM gives
+\[
+A \ge \sqrt[4]{abcA}.
+\]
+Raise both non-negative sides to the fourth power:
+\[
+A^4 \ge abcA.
+\]
+Since \(A > 0\), divide both sides by \(A\) to obtain \(A^3 \ge abc\), and take the cube root:
+\[
+\frac{a + b + c}{3} \ge \sqrt[3]{abc}.
+\]
+Equality holds if and only if \(a = b = c = A\), that is, \(a = b = c\).
+
+[CALLOUT]
+id: am-gm-three-identity
+label: Alternative proof
+title: Algebraic identity proof of three-variable AM-GM
+tone: note
+collapsed: true
+
+Let \(x = \sqrt[3]{a}\), \(y = \sqrt[3]{b}\), and \(z = \sqrt[3]{c}\) (all \(\ge 0\)). Direct expansion verifies the symmetric identity
+\[
+x^3 + y^3 + z^3 - 3xyz = \frac{1}{2}(x + y + z)\bigl[(x - y)^2 + (y - z)^2 + (z - x)^2\bigr].
+\]
+Every factor on the right is non-negative, so \(x^3 + y^3 + z^3 \ge 3xyz\), which is \(a + b + c \ge 3\sqrt[3]{abc}\). Equality holds if and only if either \(x + y + z = 0\) (forcing \(x = y = z = 0\)) or all three squares vanish (forcing \(x = y = z\)), so in every case \(a = b = c\).
+[/CALLOUT]
+
+Notice how three-variable AM-GM lets us minimize expressions where a single term must be SPLIT into two equal pieces so the variable cancels! For example, to minimize \(x + \dfrac{1}{x^2}\) for \(x > 0\), the product \(x \cdot \dfrac{1}{x^2} = \dfrac{1}{x}\) does NOT cancel \(x\). Split \(x = \dfrac{x}{2} + \dfrac{x}{2}\) into three positive terms whose product IS constant:
+\[
+\frac{x}{2} + \frac{x}{2} + \frac{1}{x^2} \ge 3\sqrt[3]{\frac{x}{2} \cdot \frac{x}{2} \cdot \frac{1}{x^2}} = 3\sqrt[3]{\frac{1}{4}} = \frac{3}{\sqrt[3]{4}},
+\]
+with equality when \(\dfrac{x}{2} = \dfrac{1}{x^2} \iff x^3 = 2 \iff x = \sqrt[3]{2}\).
+
+[QUESTION 2]
+[ANSWER: B]
+For \(x > 0\), what is the minimum value of \(f(x) = x^2 + \dfrac{16}{x}\), and at what value of \(x\) is it attained?
+
+(A) Minimum \(8\), attained at \(x = 2\)
+(B) Minimum \(12\), attained at \(x = 2\)
+(C) Minimum \(12\), attained at \(x = 4\)
+(D) Minimum \(16\), attained at \(x = 1\)
+(E) Minimum \(6\sqrt[3]{4}\), attained at \(x = 2\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: E]
+To minimize \(h(x) = \dfrac{x^2 + 10}{\sqrt{x^2 + 9}}\) over \(x \in \mathbb{R}\), a student rewrites \(h(x) = \sqrt{x^2 + 9} + \dfrac{1}{\sqrt{x^2 + 9}}\), applies AM-GM to write \(h(x) \ge 2\sqrt{1} = 2\), and concludes that the minimum value of \(h(x)\) is \(2\). Which assessment is correct?
+
+(A) The conclusion is correct; the minimum \(2\) is attained at \(x = 0\).
+(B) The inequality \(h(x) \ge 2\) is false because \(x\) can be negative.
+(C) The conclusion is correct; the minimum \(2\) is attained at \(x = \pm 3\).
+(D) The rewrite \(h(x) = \sqrt{x^2 + 9} + \dfrac{1}{\sqrt{x^2 + 9}}\) is algebraically invalid.
+(E) The inequality \(h(x) \ge 2\) is true, but \(2\) is not the minimum because equality requires \(\sqrt{x^2 + 9} = 1\), which has no real solution.
+[/QUESTION]
+
+=== SECTION 3: The Cauchy-Schwarz inequality via a non-negative quadratic ===
+
+Suppose you are given two lists of \(n\) real numbers, \(a_1, a_2, \dots, a_n\) and \(b_1, b_2, \dots, b_n\) (which may be positive, negative, or zero!). How large can the paired sum \(a_1 b_1 + a_2 b_2 + \dots + a_n b_n\) be compared with the sums of squares \(a_1^2 + \dots + a_n^2\) and \(b_1^2 + \dots + b_n^2\)?
+
+To derive the exact bound from quadratic sign-definiteness, build a function of one real variable \(t\) by summing squares:
+\[
+P(t) = \sum_{i=1}^{n} (a_i t - b_i)^2 = (a_1 t - b_1)^2 + (a_2 t - b_2)^2 + \dots + (a_n t - b_n)^2.
+\]
+Because every term is a square of a real number, \(P(t) \ge 0\) for EVERY \(t \in \mathbb{R}\)!
+
+Now expand each square and group powers of \(t\):
+\[
+P(t) = \left(\sum_{i=1}^{n} a_i^2\right) t^2 - 2\left(\sum_{i=1}^{n} a_i b_i\right) t + \left(\sum_{i=1}^{n} b_i^2\right) = A t^2 - 2B t + C,
+\]
+where \(A = \sum_{i=1}^{n} a_i^2\), \(B = \sum_{i=1}^{n} a_i b_i\), and \(C = \sum_{i=1}^{n} b_i^2\).
+
+- Degenerate case (\(A = 0\)): Every \(a_i = 0\), so \(B = 0\), and \(B^2 \le AC\) holds trivially as \(0 \le 0\).
+- Main case (\(A > 0\)): Now \(P(t) = A t^2 - 2B t + C\) is a genuine upward-opening quadratic that NEVER goes negative on \(\mathbb{R}\). From quadratic sign-definiteness, an upward-opening quadratic satisfies \(P(t) \ge 0\) for all \(t \in \mathbb{R}\) if and only if its discriminant is non-positive:
+\[
+\Delta = (-2B)^2 - 4AC \le 0 \iff 4(B^2 - AC) \le 0 \iff B^2 \le AC.
+\]
+When does equality \(B^2 = AC\) hold? Exactly when \(\Delta = 0\), which means \(P(t)\) has a real root \(t = \lambda \in \mathbb{R}\). Since \(P(\lambda) = \sum_{i=1}^{n} (a_i \lambda - b_i)^2 = 0\) is a sum of squares, every term must vanish individually: \(b_i = \lambda a_i\) for all \(i = 1, \dots, n\).
+
+[CALLOUT]
+id: cauchy-schwarz
+label: Theorem
+title: The finite-sum Cauchy-Schwarz inequality
+tone: key
+
+For all real numbers \(a_1, \dots, a_n\) and \(b_1, \dots, b_n\):
+(1) \(\left(\displaystyle\sum_{i=1}^{n} a_i b_i\right)^2 \le \left(\displaystyle\sum_{i=1}^{n} a_i^2\right)\left(\displaystyle\sum_{i=1}^{n} b_i^2\right)\).
+(2) Equality holds if and only if the two tuples are proportional—either all \(a_i = 0\), or there exists \(\lambda \in \mathbb{R}\) such that \(b_i = \lambda a_i\) for every \(i = 1, \dots, n\).
+[/CALLOUT]
+
+The graph below illustrates this quadratic proof on two two-term examples. For \((a_1, a_2) = (1, 2)\) and \((b_1, b_2) = (2, 1)\) (NOT proportional), \(P(t) = (t - 2)^2 + (2t - 1)^2 = 5t^2 - 8t + 5\) stays strictly above the \(t\)-axis (\(\Delta < 0\), giving strict inequality \(4^2 < 5 \cdot 5\)). For the proportional pair \((a_1, a_2) = (1, 2)\) and \((b_1, b_2) = (2, 4)\), \(Q(t) = (t - 2)^2 + (2t - 4)^2 = 5(t - 2)^2\) touches the \(t\)-axis at \(t = 2\) (\(\Delta = 0\), giving exact equality \(10^2 = 5 \cdot 20\)).
+
+[GRAPH]
+type: function2d
+title: Non-proportional \(P(t) > 0\) versus proportional \(Q(t)\) touching the \(t\)-axis at \(t = 2\)
+xlabel: \(t\)
+ylabel: \(y\)
+xrange: -0.4, 3.4
+yrange: -1, 14
+trace: (x - 2)^2 + (2*x - 1)^2 | label: \(P(t) = (t - 2)^2 + (2t - 1)^2\)
+trace: (x - 2)^2 + (2*x - 4)^2 | label: \(Q(t) = (t - 2)^2 + (2t - 4)^2\)
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+Now let us see how [REF: cauchy-schwarz | Cauchy-Schwarz] solves constrained optimization problems in seconds.
+
+Example 2: Find the maximum and minimum values of \(a + 2b\) subject to \(a^2 + b^2 = 1\).
+Match \(a + 2b = 1 \cdot a + 2 \cdot b\) to [REF: cauchy-schwarz.1 | Cauchy-Schwarz] with \((1, 2)\) and \((a, b)\):
+\[
+(1 \cdot a + 2 \cdot b)^2 \le (1^2 + 2^2)(a^2 + b^2) = 5 \cdot 1 = 5.
+\]
+Taking square roots yields \(-\sqrt{5} \le a + 2b \le \sqrt{5}\). Check attainability via [REF: cauchy-schwarz.2 | proportionality]: set \((a, b) = (\lambda, 2\lambda)\). Substituting into \(a^2 + b^2 = 1\) gives \(5\lambda^2 = 1 \iff \lambda = \pm \dfrac{1}{\sqrt{5}}\).
+- At \(\left(\dfrac{1}{\sqrt{5}}, \dfrac{2}{\sqrt{5}}\right)\), \(a + 2b = \sqrt{5}\) (the exact maximum).
+- At \(\left(-\dfrac{1}{\sqrt{5}}, -\dfrac{2}{\sqrt{5}}\right)\), \(a + 2b = -\sqrt{5}\) (the exact minimum).
+
+Example 3 (square-root pairing): Prove that \((x + y)\!\left(\dfrac{1}{x} + \dfrac{1}{y}\right) \ge 4\) for all \(x, y > 0\).
+Choose \(a_1 = \sqrt{x}\), \(a_2 = \sqrt{y}\) and \(b_1 = \dfrac{1}{\sqrt{x}}\), \(b_2 = \dfrac{1}{\sqrt{y}}\). Then \(a_1 b_1 + a_2 b_2 = 1 + 1 = 2\), and [REF: cauchy-schwarz.1 | Cauchy-Schwarz] gives
+\[
+(x + y)\!\left(\frac{1}{x} + \frac{1}{y}\right) \ge (1 + 1)^2 = 4,
+\]
+with equality if and only if \(\dfrac{1/\sqrt{x}}{\sqrt{x}} = \dfrac{1/\sqrt{y}}{\sqrt{y}} \iff \dfrac{1}{x} = \dfrac{1}{y} \iff x = y\).
+
+[QUESTION 4]
+[ANSWER: C]
+Suppose real numbers \(x\) and \(y\) satisfy \(x^2 + y^2 = 25\). What is the maximum possible value of \(3x - 4y\), and at what point \((x, y)\) is it attained?
+
+(A) Maximum \(5\), attained at \((3, -4)\)
+(B) Maximum \(25\), attained at \((3, 4)\)
+(C) Maximum \(25\), attained at \((3, -4)\)
+(D) Maximum \(25\), attained at \((-3, 4)\)
+(E) Maximum \(35\), attained at \((5, -5)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+If \(a, b, c\) are positive real numbers satisfying \(a + b + c = 12\), what is the minimum possible value of \(\dfrac{1}{a} + \dfrac{4}{b} + \dfrac{9}{c}\)?
+
+(A) \(3\)
+(B) \(\dfrac{7}{6}\)
+(C) \(\dfrac{9}{4}\)
+(D) \(4\)
+(E) \(6\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+For \(x > 1\), what is the minimum value of \(f(x) = x + \dfrac{9}{x - 1}\), and at what value of \(x\) is it attained?
+
+(A) Minimum \(6\), attained at \(x = 4\)
+(B) Minimum \(6\), attained at \(x = 3\)
+(C) Minimum \(7\), attained at \(x = 3\)
+(D) Minimum \(7\), attained at \(x = 4\)
+(E) Minimum \(8\), attained at \(x = 4\)
+[/BONUS]

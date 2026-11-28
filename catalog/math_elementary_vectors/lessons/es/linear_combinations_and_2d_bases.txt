@@ -1,0 +1,209 @@
+=== SECTION 1: Combinaciones lineales y retículas oblicuas de paralelogramos ===
+
+Desde que introdujimos las coordenadas cartesianas, hemos construido todo vector plano \(\mathbf{w} = \langle w_x, w_y \rangle\) a partir de los vectores unitarios perpendiculares estándar \(\mathbf{i} = \langle 1, 0 \rangle\) y \(\mathbf{j} = \langle 0, 1 \rangle\):
+\[
+\mathbf{w} = w_x\mathbf{i} + w_y\mathbf{j}.
+\]
+Geométricamente, eso significa dar \(w_x\) pasos a lo largo de \(\mathbf{i}\) y \(w_y\) pasos a lo largo de \(\mathbf{j}\) sobre una cuadrícula. Ahora hazte una pregunta más amplia: ¿qué pasa si un problema nos da de forma natural OTROS dos vectores \(\mathbf{u}\) y \(\mathbf{v}\) —por ejemplo, las direcciones de dos cables no perpendiculares que tiran de una barcaza, o dos brazos robóticos inclinados— que no son ni perpendiculares ni de longitud unitaria? ¿Qué vectores objetivo \(\mathbf{w} \in \mathbb{R}^2\) podemos seguir alcanzando al escalar \(\mathbf{u}\) y \(\mathbf{v}\) y sumarlos?
+
+Todo vector construido multiplicando \(\mathbf{u}\) por un escalar real \(c_1\), multiplicando \(\mathbf{v}\) por un escalar real \(c_2\) y sumando los resultados se denomina combinación lineal de \(\mathbf{u}\) y \(\mathbf{v}\):
+\[
+\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}.
+\]
+Los números reales \(c_1\) y \(c_2\) se llaman los pesos escalares (o coeficientes) de la combinación.
+
+[CALLOUT]
+id: lin-comb-def
+label: Definición
+title: Combinación lineal de dos vectores en \(\mathbb{R}^2\)
+tone: key
+
+Dados dos vectores \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) y cualesquiera escalares reales \(c_1, c_2 \in \mathbb{R}\), el vector
+\[
+\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}
+\]
+se denomina combinación lineal de \(\mathbf{u}\) y \(\mathbf{v}\) con pesos \(c_1\) y \(c_2\). La colección de todos los vectores alcanzables conforme \(c_1\) y \(c_2\) recorren \(\mathbb{R}\) se denomina el espacio generado (span) por \(\mathbf{u}\) y \(\mathbf{v}\).
+[/CALLOUT]
+
+Geométricamente, tomar \(\mathbf{u}\) y \(\mathbf{v}\) como tus dos vectores de paso reemplaza la familiar cuadrícula de coordenadas por una retícula oblicua de paralelogramos. Las elecciones enteras de \(c_1\) y \(c_2\) caen en los vértices de los paralelogramos teselados por \(\mathbf{u}\) y \(\mathbf{v}\); las elecciones fraccionarias o negativas se deslizan suavemente por cualquier lugar a lo largo de las líneas inclinadas de la retícula.
+
+Explora esta retícula oblicua en la gráfica interactiva siguiente para el par oblicuo \(\mathbf{u} = \langle 2, 1 \rangle\) y \(\mathbf{v} = \langle 1, 2 \rangle\). Arrastra los deslizadores \(c\) (el peso \(c_1\) sobre \(\mathbf{u}\)) y \(d\) (el peso \(c_2\) sobre \(\mathbf{v}\)) para mover la resultante verde \(\mathbf{w} = c\mathbf{u} + d\mathbf{v}\) cabeza con cola por todo el plano.
+
+[GRAPH]
+type: parametric2d
+title: Recorriendo la retícula oblicua de \(\mathbf{u} = \langle 2, 1 \rangle\) y \(\mathbf{v} = \langle 1, 2 \rangle\) mediante \(\mathbf{w} = c\mathbf{u} + d\mathbf{v}\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -2.8, 2.8
+xrange: -6.5, 6.5
+yrange: -6.5, 6.5
+trace: 2*t, t | label: \(\text{eje de } \mathbf{u}\) | color: #cbd5e1
+trace: t, 2*t | label: \(\text{eje de } \mathbf{v}\) | color: #cbd5e1
+segment: 0, 0, 2, 1 | label: \(\mathbf{u}\) | color: #2563eb
+segment: 0, 0, 1, 2 | label: \(\mathbf{v}\) | color: #d97706
+segment: 0, 0, 2*c, c | label: \(c\mathbf{u}\) | color: #2563eb | dashed: true
+segment: 2*c, c, 2*c + d, c + 2*d | label: \(d\mathbf{v}\) | color: #d97706 | dashed: true
+segment: 0, 0, 2*c + d, c + 2*d | label: \(\mathbf{w}\) | color: #16a34a
+point: 2*c + d, c + 2*d | label: \(\mathbf{w}\)
+slider: c | range: -2, 2 | init: 1.5 | step: 0.5
+slider: d | range: -2, 2 | init: 1 | step: 0.5
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Sean \(\mathbf{u} = \langle 3, -1 \rangle\) y \(\mathbf{v} = \langle -2, 4 \rangle\). ¿Cuál es la combinación lineal \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\) con pesos \((c_1, c_2) = (-2, 3)\)?
+
+(A) \(\langle 13, -11 \rangle\)
+(B) \(\langle -12, 10 \rangle\)
+(C) \(\langle -12, 14 \rangle\)
+(D) \(\langle 0, 10 \rangle\)
+(E) \(\langle 0, -10 \rangle\)
+[/QUESTION]
+
+=== SECTION 2: ¿Cuándo forman dos vectores una base de \(\mathbb{R}^2\)? ===
+
+¿Puede CUALQUIER par de vectores \(\mathbf{u}, \mathbf{v} \in \mathbb{R}^2\) alcanzar todo vector objetivo \(\mathbf{w} = \langle w_x, w_y \rangle\) del plano —y alcanzarlo de UNA sola manera? Resolvamos la ecuación vectorial \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) en componentes generales para hallar la condición algebraica exacta.
+
+Escribiendo \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\), igualar las componentes \(x\) e \(y\) convierte \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) en un sistema lineal \(2 \times 2\) para las incógnitas \(c_1\) y \(c_2\):
+\[
+u_x c_1 + v_x c_2 = w_x, \qquad u_y c_1 + v_y c_2 = w_y.
+\]
+Para eliminar \(c_2\), multiplica la primera ecuación por \(v_y\), multiplica la segunda ecuación por \(v_x\) y resta:
+\[
+(u_x v_y - u_y v_x)\,c_1 = w_x v_y - w_y v_x.
+\]
+Análogamente, para eliminar \(c_1\), multiplica la segunda ecuación por \(u_x\), multiplica la primera ecuación por \(u_y\) y resta:
+\[
+(u_x v_y - u_y v_x)\,c_2 = u_x w_y - u_y w_x.
+\]
+¡Mira la única expresión \(D = u_x v_y - u_y v_x\) que multiplica TANTO a \(c_1\) como a \(c_2\)! Ya nos encontramos antes con esta diferencia cruzada exacta: \(u_x v_y - u_y v_x = 0\) si y solo si \(\mathbf{u}\) y \(\mathbf{v}\) son paralelos (o uno de ellos es \(\mathbf{0}\)). Eso divide todo el comportamiento de los pares planos en dos casos tajantes:
+
+1. Par no paralelo (\(D = u_x v_y - u_y v_x \ne 0\)): ¡podemos dividir ambas ecuaciones entre \(D\)! Para TODO vector objetivo \(\mathbf{w} \in \mathbb{R}^2\), existe UNA Y SOLO UNA solución \((c_1, c_2)\):
+\[
+c_1 = \frac{w_x v_y - w_y v_x}{u_x v_y - u_y v_x}, \qquad c_2 = \frac{u_x w_y - u_y w_x}{u_x v_y - u_y v_x}.
+\]
+En este caso, la retícula oblicua de paralelogramos cubre todo el plano \(\mathbb{R}^2\) con direcciones de retícula únicas \((c_1, c_2)\), y llamamos al par ordenado \(\{\mathbf{u}, \mathbf{v}\}\) una base de \(\mathbb{R}^2\).
+
+2. Par paralelo (linealmente dependiente) (\(D = u_x v_y - u_y v_x = 0\)): un vector es múltiplo escalar del otro (o ambos son \(\mathbf{0}\)). Supongamos \(\mathbf{u} \ne \mathbf{0}\) y \(\mathbf{v} = k\mathbf{u}\). Entonces TODA combinación lineal colapsa sobre la única recta generada por \(\mathbf{u}\):
+\[
+c_1\mathbf{u} + c_2\mathbf{v} = c_1\mathbf{u} + c_2(k\mathbf{u}) = (c_1 + k c_2)\mathbf{u}.
+\]
+Como resultado, la retícula oblicua se aplana en una sola recta:
+- Cualquier objetivo \(\mathbf{w}\) FUERA de esa recta no tiene NINGUNA solución.
+- Cualquier objetivo \(\mathbf{w} = m\mathbf{u}\) SOBRE esa recta tiene INFINITAS soluciones, porque todo \((c_1, c_2)\) que satisfaga \(c_1 + k c_2 = m\) produce \(\mathbf{w}\).
+
+[CALLOUT]
+id: basis-criterion
+label: Teorema
+title: Criterio de base para dos vectores en \(\mathbb{R}^2\)
+tone: key
+
+Sean \(\mathbf{u} = \langle u_x, u_y \rangle\) y \(\mathbf{v} = \langle v_x, v_y \rangle\) dos vectores en \(\mathbb{R}^2\), y define \(D = u_x v_y - u_y v_x\).
+
+(1) \(\{\mathbf{u}, \mathbf{v}\}\) es una base de \(\mathbb{R}^2\) —es decir, todo \(\mathbf{w} \in \mathbb{R}^2\) puede escribirse de manera única como \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\)— si y solo si \(\mathbf{u}\) y \(\mathbf{v}\) no son paralelos, equivalentemente \(D = u_x v_y - u_y v_x \ne 0\).
+(2) Si \(D = 0\), entonces \(\mathbf{u}\) y \(\mathbf{v}\) son paralelos (linealmente dependientes), su espacio generado colapsa a una única recta (o a \(\{\mathbf{0}\}\)), y la ecuación \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) tiene o bien NINGUNA solución (\(\mathbf{w}\) fuera de la recta) o INFINITAS soluciones (\(\mathbf{w}\) sobre la recta).
+[/CALLOUT]
+
+Observa el colapso concretamente con \(\mathbf{u} = \langle 2, 3 \rangle\) y \(\mathbf{v} = \langle -4, -6 \rangle = -2\mathbf{u}\), donde \(D = 2(-6) - 3(-4) = 0\). Toda combinación \(c_1\mathbf{u} + c_2\mathbf{v} = (c_1 - 2c_2)\langle 2, 3 \rangle\) yace sobre la única recta \(y = \frac{3}{2}x\).
+- El objetivo \(\mathbf{w}_1 = \langle 4, 6 \rangle = 2\mathbf{u}\) está SOBRE la recta y tiene infinitas representaciones: \(2\mathbf{u} + 0\mathbf{v}\), \(0\mathbf{u} - 1\mathbf{v}\), \(4\mathbf{u} + 1\mathbf{v}\), y todo par con \(c_1 - 2c_2 = 2\).
+- El objetivo \(\mathbf{w}_2 = \langle 5, 1 \rangle\) está FUERA de la recta y no puede alcanzarse con ningún par de escalares \(c_1, c_2\).
+
+[GRAPH]
+type: parametric2d
+title: Generado colapsado del par paralelo \(\mathbf{u} = \langle 2, 3 \rangle\), \(\mathbf{v} = \langle -4, -6 \rangle\) (\(D = 0\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -2.4, 2.4
+xrange: -5.5, 6.5
+yrange: -7, 7.2
+trace: 2*t, 3*t | label: \(\text{generado colapsado de } \mathbf{u}, \mathbf{v}\) | color: #94a3b8
+segment: 0, 0, 2, 3 | label: \(\mathbf{u}\) | color: #2563eb
+segment: 0, 0, -4, -6 | label: \(\mathbf{v}\) | color: #d97706
+segment: 0, 0, 4, 6 | color: #16a34a | dashed: true
+segment: 0, 0, 5, 1 | label: \(\mathbf{w}_2\) | color: #dc2626
+point: 4, 6 | label: \(\mathbf{w}_1\)
+point: 5, 1 | label: \(\mathbf{w}_2\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: E]
+¿Para qué valor real de \(k\) el par de vectores \(\mathbf{u} = \langle k,\; 6 \rangle\) y \(\mathbf{v} = \langle 3,\; 2 \rangle\) NO logra formar una base de \(\mathbb{R}^2\)?
+
+(A) \(k = -9\)
+(B) \(k = -4\)
+(C) \(k = 1\)
+(D) \(k = 3\)
+(E) \(k = 9\)
+[/QUESTION]
+
+=== SECTION 3: Coordenadas en una base oblicua y descomposición de fuerzas según cables inclinados ===
+
+Cuando \(\{\mathbf{u}, \mathbf{v}\}\) satisface [REF: basis-criterion.1 | el criterio de base] (\(D \ne 0\)), el único par \((c_1, c_2)\) que resuelve \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\) se llama el par de coordenadas de \(\mathbf{w}\) respecto a la base \(\{\mathbf{u}, \mathbf{v}\}\). Hallar \((c_1, c_2)\) en la práctica es directo: escribe el sistema de componentes \(2 \times 2\), resuélvelo por reducción o sustitución, y verifica siempre recombinando directamente \(c_1\mathbf{u} + c_2\mathbf{v}\) para confirmar que recuperas \(\mathbf{w}\).
+
+Ejemplo resuelto 1 (Coordenadas oblicuas): Expresa \(\mathbf{w} = \langle 7, 5 \rangle\) en la base oblicua \(\mathbf{u} = \langle 2, 1 \rangle\), \(\mathbf{v} = \langle 1, 2 \rangle\).
+1. Verifica \(D = 2(2) - 1(1) = 3 \ne 0\), así que existe solución única.
+2. Escribe las ecuaciones de componentes para \(c_1\langle 2, 1 \rangle + c_2\langle 1, 2 \rangle = \langle 7, 5 \rangle\):
+\[
+2c_1 + c_2 = 7, \qquad c_1 + 2c_2 = 5.
+\]
+3. Multiplica la primera ecuación por \(2\) para obtener \(4c_1 + 2c_2 = 14\), y resta la segunda ecuación: \(3c_1 = 9 \implies c_1 = 3\). Entonces \(c_2 = 7 - 2(3) = 1\).
+4. Recombina para comprobar: \(3\langle 2, 1 \rangle + 1\langle 1, 2 \rangle = \langle 6 + 1, 3 + 2 \rangle = \langle 7, 5 \rangle = \mathbf{w}\). Por tanto, las coordenadas de \(\mathbf{w}\) en la base \(\{\mathbf{u}, \mathbf{v}\}\) son \((3, 1)\).
+
+Ejemplo resuelto 2 (Descomposición de una fuerza según dos cables no perpendiculares): Dos cables de remolcador sujetos a una barcaza tiran a lo largo de los vectores de dirección oblicuos \(\mathbf{u} = \langle 3, 1 \rangle\) y \(\mathbf{v} = \langle 1, 4 \rangle\). ¿Qué fuerzas vectoriales \(\mathbf{F}_1 = c_1\mathbf{u}\) y \(\mathbf{F}_2 = c_2\mathbf{v}\) a lo largo de estos dos cables producen una tracción neta requerida \(\mathbf{F}_{\mathrm{req}} = \langle 11, 11 \rangle\text{ kN}\)?
+1. Verifica \(D = 3(4) - 1(1) = 11 \ne 0\).
+2. Plantea \(c_1\langle 3, 1 \rangle + c_2\langle 1, 4 \rangle = \langle 11, 11 \rangle\), lo que da
+\[
+3c_1 + c_2 = 11, \qquad c_1 + 4c_2 = 11.
+\]
+3. Multiplica la primera ecuación por \(4\) (\(12c_1 + 4c_2 = 44\)) y resta la segunda: \(11c_1 = 33 \implies c_1 = 3\). Luego \(c_2 = 11 - 3(3) = 2\).
+4. Recombina para comprobar: \(3\langle 3, 1 \rangle + 2\langle 1, 4 \rangle = \langle 9 + 2, 3 + 8 \rangle = \langle 11, 11 \rangle\text{ kN}\).
+Por lo tanto, el cable 1 debe ejercer \(\mathbf{F}_1 = 3\langle 3, 1 \rangle = \langle 9, 3 \rangle\text{ kN}\) (magnitud \(3\sqrt{10}\text{ kN}\)) y el cable 2 debe ejercer \(\mathbf{F}_2 = 2\langle 1, 4 \rangle = \langle 2, 8 \rangle\text{ kN}\) (magnitud \(2\sqrt{17}\text{ kN}\)).
+
+[CALLOUT]
+id: oblique-grid-trap
+label: Error frecuente
+title: Lee las coordenadas oblicuas siguiendo rectas paralelas al OTRO vector de la base
+tone: caution
+
+En la retícula perpendicular estándar de \(\mathbf{i}\) y \(\mathbf{j}\), hallar \(w_x\) y \(w_y\) consiste en trazar rectas perpendiculares a los ejes, y cada coordenada depende solo de un eje. En una base oblicua \(\{\mathbf{u}, \mathbf{v}\}\), ¡trazar perpendiculares sobre \(\mathbf{u}\) y \(\mathbf{v}\) da los pesos INCORRECTOS! En cambio, \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\) forma un paralelogramo cuyos lados son paralelos a \(\mathbf{u}\) y \(\mathbf{v}\), por lo que \(c_1\) y \(c_2\) están acoplados y deben hallarse resolviendo simultáneamente el sistema lineal \(2 \times 2\).
+[/CALLOUT]
+
+[TABLE]
+Tipo de base para \(\{\mathbf{u}, \mathbf{v}\}\) | Condición definitoria | Cómo hallar \((c_1, c_2)\) en \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\)
+Base estándar \(\{\mathbf{i}, \mathbf{j}\}\) | \(\mathbf{i} = \langle 1, 0 \rangle, \mathbf{j} = \langle 0, 1 \rangle\) | Lectura directa: \(c_1 = w_x\), \(c_2 = w_y\)
+Base oblicua general | \(u_x v_y - u_y v_x \ne 0\) | Resolver el sistema acoplado \(2 \times 2\): \(u_x c_1 + v_x c_2 = w_x\), \(u_y c_1 + v_y c_2 = w_y\)
+Par paralelo (no base) | \(u_x v_y - u_y v_x = 0\) | Falla la unicidad: o bien no hay solución o hay infinitas soluciones
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Expresa el vector \(\mathbf{w} = \langle 5, 11 \rangle\) como combinación lineal \(\mathbf{w} = c_1\mathbf{u} + c_2\mathbf{v}\) de la base oblicua \(\mathbf{u} = \langle 3, 1 \rangle\) y \(\mathbf{v} = \langle -1, 2 \rangle\). ¿Cuál es el par de coordenadas \((c_1, c_2)\)?
+
+(A) \((3, 4)\)
+(B) \((4, 3)\)
+(C) \((3, -4)\)
+(D) \(\left(\frac{13}{5},\; \frac{17}{5}\right)\)
+(E) \((2, 1)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Considera los vectores \(\mathbf{u} = \langle 4, -6 \rangle\) y \(\mathbf{v} = \langle -6, 9 \rangle\), y el vector objetivo \(\mathbf{w} = \langle 2, -3 \rangle\). ¿Cuántos pares de escalares reales \((c_1, c_2)\) satisfacen \(c_1\mathbf{u} + c_2\mathbf{v} = \mathbf{w}\)?
+
+(A) Ninguno, porque \(u_x v_y - u_y v_x = 0\)
+(B) Exactamente uno, a saber \(\left(\frac{1}{2}, 0\right)\)
+(C) Exactamente dos, porque se puede escalar \(\mathbf{u}\) o \(\mathbf{v}\) para alcanzar \(\mathbf{w}\)
+(D) Infinitos, a saber todos los pares \((c_1, c_2)\) que satisfacen \(2c_1 - 3c_2 = 1\)
+(E) Infinitos, a saber todo par \((c_1, c_2) \in \mathbb{R}^2\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Supongamos que \(\{\mathbf{u}, \mathbf{v}\}\) es una base de \(\mathbb{R}^2\), y define dos nuevos vectores \(\mathbf{p} = \mathbf{u} + \mathbf{v}\) y \(\mathbf{q} = \mathbf{u} - \mathbf{v}\). Si un vector \(\mathbf{w}\) satisface \(\mathbf{w} = 5\mathbf{p} - \mathbf{q}\), ¿cuáles son las coordenadas únicas \((c_1, c_2)\) de \(\mathbf{w}\) en la base original \(\{\mathbf{u}, \mathbf{v}\}\)?
+
+(A) \((4, 4)\)
+(B) \((6, 4)\)
+(C) \((4, 6)\)
+(D) \((2, 3)\)
+(E) No pueden determinarse sin conocer las componentes cartesianas de \(\mathbf{u}\) y \(\mathbf{v}\)
+[/BONUS]

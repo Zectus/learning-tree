@@ -1,0 +1,278 @@
+=== SECTION 1: Reading, evaluating, and validating piecewise rules ===
+
+Real-world rules rarely follow a single formula everywhere. A courier might charge a flat \(\$8\) for packages up to \(2\text{ kg}\), then \(\$8\) plus \(\$3\) per kilogram above \(2\text{ kg}\) up to \(10\text{ kg}\), and refuse heavier parcels. A thermostat, an income tax table, or even the absolute value function \(|x|\) switches formulas depending on where the input \(x\) falls. A function built by gluing different formulas onto different subsets of its domain is called a piecewise-defined function.
+
+We write a piecewise function using a large left brace listing each branch formula alongside its domain condition:
+\[
+f(x) = \begin{cases}
+x + 3, & x < -1, \\
+x^2, & -1 \le x \le 2, \\
+\dfrac{8}{x}, & x > 2.
+\end{cases}
+\]
+To evaluate \(f(a)\) for a specific number \(a\), do NOT plug \(a\) into every formula. First test the domain conditions on the right to find the unique branch that contains \(a\), and then substitute \(a\) into that branch alone:
+- \(f(-4)\): since \(-4 < -1\), use the top branch: \(f(-4) = -4 + 3 = -1\).
+- \(f(-1)\): the inequality \(-1 \le x \le 2\) includes \(-1\) (while \(x < -1\) excludes it), so use the middle branch: \(f(-1) = (-1)^2 = 1\).
+- \(f(2)\): since \(2\) satisfies \(-1 \le x \le 2\), use the middle branch: \(f(2) = 2^2 = 4\).
+- \(f(4)\): since \(4 > 2\), use the bottom branch: \(f(4) = \frac{8}{4} = 2\).
+
+Because a piecewise rule must still satisfy the basic definition of a function—each input in the domain gets exactly one output—its branch conditions must be checked carefully at boundary points.
+
+[CALLOUT]
+id: piecewise-well-defined
+label: Criterion
+title: Well-definedness of a piecewise function
+tone: key
+
+A piecewise formula defines a valid function on the union of its branch domains if and only if no input \(x\) is assigned two conflicting outputs. In particular:
+
+(1) If the branch intervals are pairwise disjoint (no overlap, even at boundary endpoints), conflicts are impossible.
+(2) If two branches both include a shared boundary point \(x = c\), the rule is well-defined if and only if both branch formulas produce the exact same value at \(x = c\).
+(3) Every branch formula must itself be defined on its assigned piece (for example, a branch \(\frac{1}{x - 3}\) on \(x \ge 2\) excludes \(x = 3\) unless \(x = 3\) is omitted from that branch condition).
+[/CALLOUT]
+
+Compare two candidate rules at the shared boundary \(x = 1\):
+- Rule A: \(g(x) = 2x + 1\) for \(x \le 1\), and \(g(x) = x^2 + 2\) for \(x \ge 1\). At \(x = 1\), the first branch gives \(2(1) + 1 = 3\) and the second gives \(1^2 + 2 = 3\). Because both branches agree on \(3\), Rule A is well-defined.
+- Rule B: \(h(x) = 2x + 1\) for \(x \le 1\), and \(h(x) = x^2 + 5\) for \(x \ge 1\). At \(x = 1\), the first branch assigns \(3\) while the second assigns \(6\). By [REF: piecewise-well-defined.2 | condition (2)], Rule B fails to define a function.
+
+[QUESTION 1]
+[ANSWER: D]
+Let
+\[
+p(x) = \begin{cases}
+|x + 2|, & x < 0, \\
+3 - x^2, & 0 \le x < 3, \\
+\sqrt{x + 1}, & x \ge 3.
+\end{cases}
+\]
+What is the value of \(p(-5) + p(0) + p(3)\)?
+
+(A) \(5\)
+(B) \(10\)
+(C) \(11\)
+(D) \(8\)
+(E) \(6\)
+[/QUESTION]
+
+=== SECTION 2: Graphing piecewise functions: joins, jumps, and features ===
+
+To graph a piecewise function, sketch each parent-family or algebraic branch ONLY over its assigned \(x\)-interval, and pay close attention to each boundary endpoint \(x = c\):
+- If the branch condition includes \(c\) (\(\le\) or \(\ge\)), draw a solid dot at \((c, y_{\text{branch}})\).
+- If the branch condition excludes \(c\) (\(<\) or \(>\)), draw an open circle at the limiting height \((c, y_{\text{branch}})\).
+
+Look at what happens at a boundary \(x = c\) where a left branch meets a right branch:
+- If the left branch approaches the exact same height as the right branch (and that point is included by one of the branches), the two pieces meet seamlessly in a connected join.
+- If the two branches approach different heights at \(x = c\), the graph leaps vertically across a jump gap. (Formal definitions of limits and continuity belong to calculus; here we distinguish connected joins from jump gaps directly by comparing the branch endpoint values.)
+
+Consider the three-piece function
+\[
+f(x) = \begin{cases}
+x + 2, & -3 \le x < 0, \\
+2 - x^2, & 0 \le x \le 2, \\
+1, & 2 < x \le 4.
+\end{cases}
+\]
+Check the two boundaries:
+- At \(x = 0\): the left branch \(x + 2\) approaches \(0 + 2 = 2\) (open endpoint \((0, 2)\)), and the middle branch \(2 - x^2\) starts at \(2 - 0^2 = 2\) (solid dot \((0, 2)\)). Because the solid dot fills the open circle, the pieces meet in a connected join at \((0, 2)\).
+- At \(x = 2\): the middle branch ends at the solid dot \((2, 2 - 4) = (2, -2)\), whereas the right branch begins at the open circle \((2, 1)\). That vertical leap from \(-2\) to \(1\) is a jump gap.
+
+In the graph below, every branch is plotted over its exact interval; because the plot marks points with uniform dots, the open endpoint at \((2, 1)\) is labeled explicitly as open.
+
+[GRAPH]
+type: function2d
+title: Connected join at \((0, 2)\) and jump gap at \(x = 2\) for \(f(x)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.5, 4.5
+yrange: -3, 3.5
+trace: (x >= -3 and x < 0) ? (x + 2) : (0/0) | label: \(x + 2\) on \([-3, 0)\)
+trace: (x >= 0 and x <= 2) ? (2 - x^2) : (0/0) | label: \(2 - x^2\) on \([0, 2]\)
+trace: (x > 2 and x <= 4) ? 1 : (0/0) | label: \(1\) on \((2, 4]\)
+point: -3, -1 | label: \((-3, -1)\)
+point: 0, 2 | label: \((0, 2)\)
+point: 2, -2 | label: \((2, -2)\)
+point: 2, 1 | label: open (2, 1)
+point: 4, 1 | label: \((4, 1)\)
+[/GRAPH]
+
+Now read the overall qualitative profile directly from the graph:
+- Domain: \([-3, 0) \cup [0, 2] \cup (2, 4] = [-3, 4]\), with no missing \(x\)-values inside \([-3, 4]\).
+- Range: the first branch covers \([-1, 2)\), the middle branch covers \([-2, 2]\), and the third branch produces only \(y = 1\) (already inside \([-2, 2]\)). Taking the union gives \(\operatorname{Range}(f) = [-2, 2]\).
+- Monotonicity: strictly increasing on \((-3, 0)\), strictly decreasing on \((0, 2)\), and constant on \((2, 4)\).
+
+[QUESTION 2]
+[ANSWER: B]
+Consider the function
+\[
+g(x) = \begin{cases}
+x^2 - 1, & -2 \le x < 1, \\
+3, & x = 1, \\
+4 - x, & 1 < x \le 4.
+\end{cases}
+\]
+What is the range of \(g\)?
+
+(A) \([-1, 3)\)
+(B) \([-1, 3]\)
+(C) \([0, 3]\)
+(D) \([-1, 4]\)
+(E) \([0, 4]\)
+[/QUESTION]
+
+=== SECTION 3: Rewriting absolute value expressions as piecewise linear functions ===
+
+The absolute value function itself is the most famous piecewise function in algebra:
+\[
+|u| = \begin{cases}
+u, & u \ge 0, \\
+-u, & u < 0.
+\end{cases}
+\]
+Using this definition, any expression built from linear absolute values can be rewritten cleanly without absolute-value bars by finding the split points where each inside expression equals \(0\).
+
+Start with a single absolute value: \(h(x) = |x - 3|\). The inside expression \(x - 3\) equals \(0\) at \(x = 3\). For \(x \ge 3\), we have \(x - 3 \ge 0\), so \(|x - 3| = x - 3\). For \(x < 3\), we have \(x - 3 < 0\), so \(|x - 3| = -(x - 3) = 3 - x\). Thus
+\[
+|x - 3| = \begin{cases}
+3 - x, & x < 3, \\
+x - 3, & x \ge 3.
+\end{cases}
+\]
+
+Now take a sum of two absolute values, such as \(k(x) = |x| + |x - 2|\). The two inside expressions \(x\) and \(x - 2\) vanish at \(x = 0\) and \(x = 2\). Those two split points divide the number line into three intervals: \(x < 0\), \(0 \le x < 2\), and \(x \ge 2\). Build a quick sign table to drop each pair of bars without guessing.
+
+[TABLE]
+Interval | Sign of \(x\) | \(\lvert x \rvert\) | Sign of \(x - 2\) | \(\lvert x - 2 \rvert\) | Sum \(k(x) = \lvert x \rvert + \lvert x - 2 \rvert\)
+\(x < 0\) | negative | \(-x\) | negative | \(-(x - 2) = 2 - x\) | \(-2x + 2\)
+\(0 \le x < 2\) | nonnegative | \(x\) | negative | \(-(x - 2) = 2 - x\) | \(2\)
+\(x \ge 2\) | nonnegative | \(x\) | nonnegative | \(x - 2\) | \(2x - 2\)
+[/TABLE]
+
+Writing the result in standard piecewise notation gives
+\[
+k(x) = \begin{cases}
+-2x + 2, & x < 0, \\
+2, & 0 \le x < 2, \\
+2x - 2, & x \ge 2.
+\end{cases}
+\]
+Check the joins at \(x = 0\) and \(x = 2\): at \(x = 0\), \(-2(0) + 2 = 2\); at \(x = 2\), \(2(2) - 2 = 2\). Both corners connect cleanly, producing a flat trough of height \(2\) across \([0, 2]\)!
+
+[GRAPH]
+type: function2d
+title: Piecewise linear graph of \(k(x) = |x| + |x - 2|\) with flat trough on \([0, 2]\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 4.5
+yrange: 0, 7
+trace: abs(x) + abs(x - 2) | label: \(k(x) = |x| + |x - 2|\)
+point: 0, 2 | label: \((0, 2)\)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+From that piecewise breakdown, features that looked opaque in the formula \(|x| + |x - 2|\) become instant: the global minimum is \(2\) (attained at every \(x \in [0, 2]\)), the range is \([2, \infty)\), and \(k\) is strictly decreasing on \((-\infty, 0)\), constant on \((0, 2)\), and strictly increasing on \((2, \infty)\).
+
+[QUESTION 3]
+[ANSWER: C]
+Which piecewise formula is equivalent to \(m(x) = |x + 1| - |x - 3|\)?
+
+(A) \(m(x) = \begin{cases} -4, & x < -1 \\ 2x + 4, & -1 \le x < 3 \\ 4, & x \ge 3 \end{cases}\)
+(B) \(m(x) = \begin{cases} 4, & x < -1 \\ 2x - 2, & -1 \le x < 3 \\ -4, & x \ge 3 \end{cases}\)
+(C) \(m(x) = \begin{cases} -4, & x < -1 \\ 2x - 2, & -1 \le x < 3 \\ 4, & x \ge 3 \end{cases}\)
+(D) \(m(x) = \begin{cases} -2x + 2, & x < -1 \\ 4, & -1 \le x < 3 \\ 2x - 2, & x \ge 3 \end{cases}\)
+(E) \(m(x) = \begin{cases} -2, & x < -1 \\ 2x - 2, & -1 \le x < 3 \\ 2, & x \ge 3 \end{cases}\)
+[/QUESTION]
+
+=== SECTION 4: Step functions, tiered schedules, and reconstructing formulas ===
+
+A step function is a piecewise function whose branches are all constant on intervals, so its graph looks like a staircase of horizontal line segments separated by jumps.
+
+The prototype mathematical step function is the greatest integer function (also called the floor function), denoted \(\lfloor x \rfloor\): it outputs the greatest integer less than or equal to \(x\).
+- For positive numbers, \(\lfloor x \rfloor\) simply drops the fractional part: \(\lfloor 2.7 \rfloor = 2\) and \(\lfloor 3 \rfloor = 3\).
+- For negative non-integers, be careful—always round DOWN (left on the number line), not toward zero! Since \(-2 < -1.3 < -1\), the greatest integer less than or equal to \(-1.3\) is \(\lfloor -1.3 \rfloor = -2\), not \(-1\).
+
+On every integer interval \([n, n + 1)\), the floor function equals the constant \(n\), with a solid dot at the left endpoint \((n, n)\) and an open circle at the right endpoint \((n + 1, n)\).
+
+[GRAPH]
+type: function2d
+title: Greatest integer (floor) function \(f(x) = \lfloor x \rfloor\) on \([-2, 3)\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 3.5
+yrange: -2.5, 3
+trace: (x >= -2 and x < -1) ? -2 : (0/0) | label: \(-2\) on \([-2, -1)\)
+trace: (x >= -1 and x < 0) ? -1 : (0/0) | label: \(-1\) on \([-1, 0)\)
+trace: (x >= 0 and x < 1) ? 0 : (0/0) | label: \(0\) on \([0, 1)\)
+trace: (x >= 1 and x < 2) ? 1 : (0/0) | label: \(1\) on \([1, 2)\)
+trace: (x >= 2 and x < 3) ? 2 : (0/0) | label: \(2\) on \([2, 3)\)
+point: -2, -2 | label: \((-2, -2)\)
+point: -1, -1 | label: \((-1, -1)\)
+point: 0, 0 | label: \((0, 0)\)
+point: 1, 1 | label: \((1, 1)\)
+point: 2, 2 | label: \((2, 2)\)
+[/GRAPH]
+
+Notice that \(\lfloor x \rfloor\) has domain \((-\infty, \infty)\), while its range is the discrete set of all integers \(\{\dots, -2, -1, 0, 1, 2, \dots\}\)—not an interval!
+
+Step and piecewise linear functions model two distinct kinds of tiered pricing:
+1. Flat-tier (jump) schedule: A parking garage charges \(\$5\) for up to \(1\) hour (\(0 < t \le 1\)), \(\$9\) for over \(1\) hour up to \(2\) hours (\(1 < t \le 2\)), and \(\$13\) for over \(2\) hours up to \(3\) hours (\(2 < t \le 3\)). Crossing \(t = 1\) immediately jumps the fee from \(\$5\) to \(\$9\).
+2. Marginal-rate (connected) schedule: Suppose a state taxes the first \(\$10{,}000\) of income \(x\) at \(5\%\) and only the portion of income ABOVE \(\$10{,}000\) at \(10\%\). Then for \(0 \le x \le 10{,}000\), the tax is \(T(x) = 0.05x\). For \(x > 10{,}000\), you pay \(0.05(10{,}000) = 500\) on the first bracket plus \(0.10(x - 10{,}000)\) on the excess:
+\[
+T(x) = \begin{cases}
+0.05x, & 0 \le x \le 10{,}000, \\
+500 + 0.10(x - 10{,}000), & x > 10{,}000.
+\end{cases}
+\]
+Check the join at \(x = 10{,}000\): both branches give \(\$500\). Crossing into the higher marginal bracket increases the slope from \(0.05\) to \(0.10\), without creating a sudden jump in tax owed!
+
+Finally, to reconstruct a piecewise formula from a graph, break the \(x\)-axis into subintervals at every corner, jump, or change of shape, find the formula of each piece using two anchor points (for a line, slope \(m = \frac{y_2 - y_1}{x_2 - x_1}\) and point-slope form \(y - y_1 = m(x - x_1)\)), and match solid versus open dots to \(\le/\ge\) versus \(</>\).
+
+[QUESTION 4]
+[ANSWER: A]
+A utility company charges \(\$0.12\) per kWh for the first \(500\text{ kWh}\) of electricity used in a month, and \(\$0.20\) per kWh for each kWh above \(500\). Which piecewise function gives the monthly bill \(B(x)\) in dollars for \(x \ge 0\) kWh?
+
+(A) \(B(x) = \begin{cases} 0.12x, & 0 \le x \le 500 \\ 60 + 0.20(x - 500), & x > 500 \end{cases}\)
+(B) \(B(x) = \begin{cases} 0.12x, & 0 \le x \le 500 \\ 0.20x, & x > 500 \end{cases}\)
+(C) \(B(x) = \begin{cases} 0.12x, & 0 \le x \le 500 \\ 60 + 0.20x, & x > 500 \end{cases}\)
+(D) \(B(x) = \begin{cases} 0.12x, & 0 \le x < 500 \\ 100 + 0.20(x - 500), & x \ge 500 \end{cases}\)
+(E) \(B(x) = \begin{cases} 60, & 0 \le x \le 500 \\ 60 + 0.20(x - 500), & x > 500 \end{cases}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+For what value of the constant \(c\) do the two pieces of
+\[
+f(x) = \begin{cases}
+x^2 - 4x + c, & x \le 3, \\
+2x - 5, & x > 3
+\end{cases}
+\]
+meet in a connected join (no jump gap) at \(x = 3\)?
+
+(A) \(c = 1\)
+(B) \(c = 2\)
+(C) \(c = 3\)
+(D) \(c = 4\)
+(E) \(c = 5\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+What is the value of \(\lfloor -3.2 \rfloor + \lfloor 2.9 \rfloor - \lfloor -1 \rfloor\)?
+
+(A) \(0\)
+(B) \(-2\)
+(C) \(1\)
+(D) \(-3\)
+(E) \(-1\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+A piecewise linear graph on \([-2, 4]\) consists of the straight segment from the solid dot \((-2, 5)\) to the open circle \((1, -1)\), followed by the straight segment from the solid dot \((1, 2)\) to the solid dot \((4, 2)\). Which piecewise rule matches this graph?
+
+(A) \(f(x) = \begin{cases} -2x + 1, & -2 \le x \le 1 \\ 2, & 1 < x \le 4 \end{cases}\)
+(B) \(f(x) = \begin{cases} -2x + 1, & -2 \le x < 1 \\ 2, & 1 \le x \le 4 \end{cases}\)
+(C) \(f(x) = \begin{cases} 2x + 1, & -2 \le x < 1 \\ 2, & 1 \le x \le 4 \end{cases}\)
+(D) \(f(x) = \begin{cases} -2x - 1, & -2 \le x < 1 \\ 2x, & 1 \le x \le 4 \end{cases}\)
+(E) \(f(x) = \begin{cases} -\frac{1}{2}x + 4, & -2 \le x < 1 \\ 2, & 1 \le x \le 4 \end{cases}\)
+[/BONUS]

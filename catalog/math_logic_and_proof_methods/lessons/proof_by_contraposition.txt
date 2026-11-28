@@ -1,0 +1,217 @@
+=== SECTION 1: When direct proof stalls — the contrapositive template ===
+
+Try to prove this simple-looking theorem directly:
+\[
+\forall n \in \mathbb{Z},\, (n^2 \text{ is even} \implies n \text{ is even}).
+\]
+Follow the direct proof template: let \(n \in \mathbb{Z}\) be arbitrary and assume \(n^2\) is even. By the definition of even, \(n^2 = 2k\) for some \(k \in \mathbb{Z}\). Now try to solve for \(n\): you get \(n = \pm\sqrt{2k}\). Immediately the algebra stalls! Taking a square root drags us out of \(\mathbb{Z}\) and tells us nothing obvious about whether \(n\) has the form \(2m\).
+
+Yet recall a fundamental equivalence we proved in propositional logic: every conditional \(P \Rightarrow Q\) is logically equivalent to its contrapositive \(\neg Q \Rightarrow \neg P\). Therefore, for any predicates \(P(x)\) and \(Q(x)\) over a domain \(D\),
+\[
+\bigl(\forall x \in D,\, P(x) \implies Q(x)\bigr) \;\equiv\; \bigl(\forall x \in D,\, \neg Q(x) \implies \neg P(x)\bigr).
+\]
+Watch what happens to our stalled theorem when we flip to its contrapositive:
+- Original: "If \(n^2\) is even, then \(n\) is even."
+- Contrapositive: "If \(n\) is NOT even (i.e., \(n\) is odd), then \(n^2\) is NOT even (i.e., \(n^2\) is odd)."
+
+Now the algebra flows effortlessly in the forward direction! Instead of taking a square root, we simply SQUARE \(n = 2k + 1\).
+
+[CALLOUT]
+id: template-contraposition
+label: Method
+title: Proof by contraposition for \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\)
+tone: key
+
+(1) Fix an arbitrary \(x \in D\) and announce the contrapositive strategy: "We prove the contrapositive. Assume \(\neg Q(x)\)."
+(2) Simplify \(\neg Q(x)\) cleanly (applying De Morgan's laws or quantifier negation if \(Q(x)\) is compound) and unpack its definitions.
+(3) Deduce \(\neg P(x)\) by a direct chain of valid steps.
+(4) Conclude that because \(\neg Q(x) \Rightarrow \neg P(x)\) holds for arbitrary \(x \in D\), the original implication \(P(x) \Rightarrow Q(x)\) holds for all \(x \in D\).
+[/CALLOUT]
+
+Let us execute [REF: template-contraposition | proof by contraposition] on our opening theorem.
+
+[CALLOUT]
+id: proof-n2-even
+label: Proof
+title: Theorem: For every \(n \in \mathbb{Z}\), if \(n^2\) is even, then \(n\) is even
+tone: note
+
+Proof: Let \(n \in \mathbb{Z}\) be arbitrary. We prove the contrapositive: if \(n\) is not even, then \(n^2\) is not even.
+
+Assume \(n\) is not even; then \(n\) is odd, so there exists \(k \in \mathbb{Z}\) such that \(n = 2k + 1\). Squaring gives
+\[
+n^2 = (2k + 1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1.
+\]
+Since \(k \in \mathbb{Z}\), we have \(m = 2k^2 + 2k \in \mathbb{Z}\) and \(n^2 = 2m + 1\). Hence \(n^2\) is odd, which means \(n^2\) is not even. By contraposition, if \(n^2\) is even, then \(n\) is even.
+[/CALLOUT]
+
+Notice that [REF: proof-n2-even | this proof] relies on one basic parity fact about \(\mathbb{Z}\): every integer is either even or odd, and never both (so "not even" is equivalent to "odd"). With that in hand, contraposition turned an awkward square root into a two-line polynomial expansion.
+
+[QUESTION 1]
+[ANSWER: B]
+We wish to prove by contraposition: "For every integer \(n \in \mathbb{Z}\), if \(3n + 5\) is odd, then \(n\) is even." Which opening assumption and target goal correspond to a valid proof by contraposition?
+
+(A) Assume \(n\) is even; prove \(3n + 5\) is odd.
+(B) Assume \(n\) is odd; prove \(3n + 5\) is even.
+(C) Assume \(3n + 5\) is even; prove \(n\) is odd.
+(D) Assume \(3n + 5\) is odd and \(n\) is odd; derive a false equation.
+(E) Assume \(n\) is odd; prove \(3n + 5\) is odd.
+[/QUESTION]
+
+=== SECTION 2: Structural clues that signal contraposition ===
+
+Experienced mathematicians do not try direct proof blindly and switch to contraposition only after getting stuck; they spot structural signatures in the theorem statement immediately. Three signatures reliably point to contraposition:
+
+1. Composite hypothesis, simpler conclusion. When \(P(x)\) puts \(x\) inside a complicated expression (like \(n^2\), \(n^3 + 5\), or \(ab\)) while \(Q(x)\) is a simple property of \(x\), assuming \(\neg Q(x)\) gives you a clean formula for \(x\) that you can plug directly into the composite expression!
+2. Disjunctive conclusion (\(Q_1 \vee Q_2\)). Proving a disjunction directly can be awkward because you must decide which side holds. Taking the contrapositive applies De Morgan's law to \(\neg(Q_1 \vee Q_2) \equiv \neg Q_1 \wedge \neg Q_2\), turning a weak disjunction in the conclusion into a RICH CONJUNCTION of two simultaneous assumptions!
+3. Negative conclusion ("irrational," "not divisible by," "\(x \ne 0\)"). Negative properties are hard to construct directly—there is no simple formula for "an arbitrary irrational number." Negating a negative conclusion yields a POSITIVE assumption ("rational," "divisible by," "\(x = 0\)") with a concrete algebraic representation you can compute with!
+
+Let us work through two classic proofs showcasing signatures (2) and (3) simultaneously.
+
+[CALLOUT]
+id: proof-ab-even
+label: Proof
+title: Theorem: For all \(a, b \in \mathbb{Z}\), if \(ab\) is even, then \(a\) is even or \(b\) is even
+tone: note
+
+Proof: Let \(a, b \in \mathbb{Z}\) be arbitrary. We prove the contrapositive. The negation of "\(a\) is even or \(b\) is even" is (by De Morgan's law) "\(a\) is odd and \(b\) is odd."
+
+Assume \(a\) is odd and \(b\) is odd. Then there exist integers \(k, m \in \mathbb{Z}\) such that \(a = 2k + 1\) and \(b = 2m + 1\). Multiplying gives
+\[
+ab = (2k + 1)(2m + 1) = 4km + 2k + 2m + 1 = 2(2km + k + m) + 1.
+\]
+Since \(2km + k + m \in \mathbb{Z}\), the product \(ab\) is odd, so \(ab\) is not even. By contraposition, if \(ab\) is even, then \(a\) is even or \(b\) is even.
+[/CALLOUT]
+
+Look how cleanly De Morgan's law worked in [REF: proof-ab-even | that proof]: assuming BOTH \(a\) and \(b\) are odd gave us explicit formulas for both variables at once!
+
+Now watch signature (2) and signature (3) combine on real numbers. Recall that a real number is irrational if and only if it is NOT rational (\(x \in \mathbb{R}\) and \(x \notin \mathbb{Q}\)).
+
+[CALLOUT]
+id: proof-sum-irrational
+label: Proof
+title: Theorem: For all \(x, y \in \mathbb{R}\), if \(x + y\) is irrational, then \(x\) is irrational or \(y\) is irrational
+tone: note
+
+Proof: Let \(x, y \in \mathbb{R}\) be arbitrary. We prove the contrapositive: if it is NOT the case that "\(x\) is irrational or \(y\) is irrational," then \(x + y\) is rational.
+
+By De Morgan's law and double negation, the negation of "\(x\) is irrational or \(y\) is irrational" is "\(x\) is rational and \(y\) is rational." Assume \(x \in \mathbb{Q}\) and \(y \in \mathbb{Q}\). As we proved in our earlier lesson on direct proof, the sum of two rational numbers is rational, so \(x + y \in \mathbb{Q}\); that is, \(x + y\) is not irrational. By contraposition, if \(x + y\) is irrational, then \(x\) is irrational or \(y\) is irrational.
+[/CALLOUT]
+
+Notice how [REF: proof-sum-irrational | that proof] did not even need to unpack fractions from scratch—reusing our previously proved theorem (closure of \(\mathbb{Q}\) under addition) turned a scary statement about irrational numbers into a three-line contrapositive proof!
+
+[QUESTION 2]
+[ANSWER: C]
+Consider the theorem: "For all integers \(a, b \in \mathbb{Z}\), if \(a + b \ge 15\), then \(a \ge 8\) or \(b \ge 8\)." Which argument is a complete, valid proof by contraposition?
+
+(A) Assume \(a \ge 8\) and \(b \ge 8\); then \(a + b \ge 16 \ge 15\).
+(B) Assume \(a < 8\) or \(b < 8\); then \(a + b < 15\).
+(C) Assume \(a < 8\) and \(b < 8\). Because \(a, b \in \mathbb{Z}\), we have \(a \le 7\) and \(b \le 7\), so \(a + b \le 14 < 15\).
+(D) Assume \(a \le 8\) and \(b \le 8\); then \(a + b \le 16\), so \(a + b\) need not be at least \(15\).
+(E) Assume \(a + b < 15\); then at least one of \(a, b\) is less than \(8\), so it is false that both \(a \ge 8\) and \(b \ge 8\).
+[/QUESTION]
+
+=== SECTION 3: Pitfalls — converse errors, ambient hypotheses, and quantified components ===
+
+Because contraposition reverses the direction of the arrow AND negates both sides, three subtle errors show up repeatedly when students apply it.
+
+[CALLOUT]
+id: caution-contra-pitfalls
+label: Caution
+title: Three pitfalls in contrapositive proofs
+tone: caution
+
+(1) The converse error: Proving \(Q(x) \Rightarrow P(x)\) instead of \(\neg Q(x) \Rightarrow \neg P(x)\). For instance, proving "if \(n\) is even, then \(n^2\) is even" does NOTHING to prove "if \(n^2\) is even, then \(n\) is even."
+(2) Negating a conjunction hypothesis carelessly: If the theorem has the shape \((P_1 \wedge P_2) \Rightarrow Q\), its full contrapositive is \(\neg Q \Rightarrow (\neg P_1 \vee \neg P_2)\). Often, however, one part (say \(P_1\), such as "\(x > 0\)" or "\(a \in \mathbb{Z}\)") is an ambient standing assumption! Remember the propositional equivalence
+\[
+(P_1 \wedge P_2) \implies Q \;\equiv\; P_1 \implies (P_2 \implies Q) \;\equiv\; P_1 \implies (\neg Q \implies \neg P_2).
+\]
+Thus you are allowed to KEEP \(P_1\) fixed as a standing assumption, assume \(\neg Q\), and prove \(\neg P_2\)!
+(3) Mis-negating a quantified hypothesis or conclusion: When \(P\) or \(Q\) itself contains \(\forall\) or \(\exists\), apply the quantifier negation rules strictly before writing the contrapositive.
+[/CALLOUT]
+
+Let us examine both Pitfall (2) and Pitfall (3) on concrete theorems so you can see how cleanly they work when handled properly.
+
+First, look at Pitfall (2) on an ambient hypothesis:
+Theorem: "For all real numbers \(x, y \in \mathbb{R}\), if \(x > 0\) and \(xy\) is irrational, then \(x\) is irrational or \(y\) is irrational."
+Wait—here \(x > 0\) is not even needed, so consider a theorem where the ambient hypothesis IS needed:
+Theorem: "For all real numbers \(x, y \in \mathbb{R}\), if \(x \ne 0\) and \(xy\) is irrational, then \(x\) is irrational or \(y\) is irrational." (Wait—even here if \(x = 0\), \(xy = 0\) is rational, so the implication holds vacuously. Look at a better theorem where \(x \ne 0\) genuinely enters!)
+Consider:
+Theorem: "For all \(x, y \in \mathbb{R}\), if \(x\) is nonzero and rational and \(xy\) is irrational, then \(y\) is irrational."
+Here we have TWO hypotheses: \(P_1\): "\(x \in \mathbb{Q}\) and \(x \ne 0\)" (ambient assumption about \(x\)), and \(P_2\): "\(xy\) is irrational," with conclusion \(Q\): "\(y\) is irrational."
+Keeping \(P_1\) fixed and taking the contrapositive of \(P_2 \Rightarrow Q\):
+- Fix arbitrary \(x, y \in \mathbb{R}\) with \(x \in \mathbb{Q}\) and \(x \ne 0\).
+- Assume \(\neg Q\): \(y \in \mathbb{Q}\).
+- Since \(x \in \mathbb{Q}\) and \(y \in \mathbb{Q}\), their product \(xy\) is rational (if \(x = p_1/q_1\) and \(y = p_2/q_2\) with \(q_1, q_2 \ne 0\), then \(xy = (p_1 p_2)/(q_1 q_2) \in \mathbb{Q}\)). Thus \(\neg P_2\) holds: \(xy\) is not irrational.
+- By contraposition (with \(P_1\) fixed), if \(x \in \mathbb{Q} \setminus \{0\}\) and \(xy\) is irrational, then \(y\) is irrational.
+(Notice that the full contrapositive \(\neg Q \Rightarrow (\neg P_1 \vee \neg P_2)\) is logically equivalent to \((P_1 \wedge \neg Q) \Rightarrow \neg P_2\), because \(A \Rightarrow (B \vee C) \equiv (A \wedge \neg B) \Rightarrow C\).)
+
+Now look at Pitfall (3) on a quantified hypothesis—a cornerstone lemma in real analysis!
+Theorem: "Let \(x \in \mathbb{R}\) be fixed. If \(|x| < \varepsilon\) for every \(\varepsilon > 0\), then \(x = 0\)."
+Write the logical structure explicitly:
+\[
+\bigl(\forall \varepsilon > 0,\, |x| < \varepsilon\bigr) \implies x = 0.
+\]
+Trying a direct proof is awkward: how do you turn infinitely many inequalities into \(x = 0\)? Now take the contrapositive!
+- \(\neg Q\): \(x \ne 0\).
+- \(\neg P\): \(\neg(\forall \varepsilon > 0,\, |x| < \varepsilon) \equiv \exists \varepsilon > 0,\, |x| \ge \varepsilon\).
+
+Look how effortless the contrapositive proof becomes:
+Assume \(x \ne 0\). Then \(|x| > 0\), so we may choose \(\varepsilon = \frac{|x|}{2} > 0\) (or even \(\varepsilon = |x| > 0\)). For this specific \(\varepsilon > 0\), we have \(|x| \ge \varepsilon\) (indeed \(|x| > |x|/2\)), which shows \(\exists \varepsilon > 0,\, |x| \ge \varepsilon\). By contraposition, if \(|x| < \varepsilon\) for every \(\varepsilon > 0\), then \(x = 0\).
+
+[QUESTION 3]
+[ANSWER: E]
+A student is asked to prove: "For every integer \(n \in \mathbb{Z}\), if \(n^2 - 6n + 5\) is even, then \(n\) is odd." The student writes:
+"Assume \(n\) is odd. Then \(n = 2k + 1\) for some \(k \in \mathbb{Z}\). Substituting gives \(n^2 - 6n + 5 = (2k + 1)^2 - 6(2k + 1) + 5 = 4k^2 - 8k = 2(2k^2 - 4k)\), which is even. Done."
+How should this proof be evaluated?
+
+(A) Completely valid: it proved the contrapositive cleanly.
+(B) Valid except for a small algebra error in expanding \((2k + 1)^2 - 6(2k + 1) + 5\).
+(C) Invalid because it forgot the case where \(n < 0\).
+(D) Invalid because it proved the inverse instead of the contrapositive.
+(E) Invalid: it proved the CONVERSE ("if \(n\) is odd, then \(n^2 - 6n + 5\) is even"); a valid contrapositive proof must assume \(n\) is EVEN and prove \(n^2 - 6n + 5\) is ODD.
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(a, b \in \mathbb{R}\). Consider the theorem: "If \(a \le b + \varepsilon\) for every \(\varepsilon > 0\), then \(a \le b\)." Which of the following is a valid contrapositive proof of this theorem?
+
+(A) Assume \(a > b\). Set \(\varepsilon = \frac{a - b}{2}\). Since \(a > b\), we have \(\varepsilon > 0\), and \(b + \varepsilon = \frac{a + b}{2} < a\), so it is false that \(a \le b + \varepsilon\) for all \(\varepsilon > 0\).
+(B) Assume \(a \le b\). Then for every \(\varepsilon > 0\), \(a \le b < b + \varepsilon\).
+(C) Assume \(a > b\). Then for every \(\varepsilon > 0\), \(a > b + \varepsilon\).
+(D) Assume there exists \(\varepsilon > 0\) with \(a > b + \varepsilon\). Then \(a > b\) because \(\varepsilon > 0\).
+(E) Assume \(a > b\). Set \(\varepsilon = b - a\); then \(b + \varepsilon = 2b - a < a\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Which of the following theorems is proved cleanly by contraposition using the assumption \(n = 3q + 1\) or \(n = 3q + 2\)?
+
+(A) For all \(n \in \mathbb{Z}\), if \(3 \mid n\), then \(3 \mid n^2\).
+(B) For all \(n \in \mathbb{Z}\), if \(3 \nmid n\), then \(3 \nmid n^2\).
+(C) For all \(n \in \mathbb{Z}\), if \(3 \mid n^2\), then \(9 \mid n\).
+(D) For all \(n \in \mathbb{Z}\), if \(3 \mid n^2\), then \(3 \mid n\).
+(E) For all \(n \in \mathbb{Z}\), if \(3 \mid (n^2 + 1)\), then \(3 \mid n\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Consider the theorem: "For all real numbers \(x, y \in \mathbb{R}\), if \(x + y > 2\) and \(x > 0\), then \(x > 1\) or \(y > 1\)." Keeping the ambient hypothesis \(x > 0\) fixed is unnecessary, or we may keep it fixed; wait—which of the following is the exact full contrapositive of \((x + y > 2 \wedge x > 0) \Rightarrow (x > 1 \vee y > 1)\)?
+
+(A) If \(x \le 1\) or \(y \le 1\), then \(x + y \le 2\) and \(x \le 0\).
+(B) If \(x \le 1\) and \(y \le 1\), then \(x + y \le 2\) or \(x \le 0\).
+(C) If \(x \le 1\) and \(y \le 1\), then \(x + y \le 2\) and \(x \le 0\).
+(D) If \(x < 1\) and \(y < 1\), then \(x + y < 2\) or \(x < 0\).
+(E) If \(x + y \le 2\) or \(x \le 0\), then \(x \le 1\) and \(y \le 1\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Let \(n \in \mathbb{Z}\). Suppose we want to prove by contraposition: "If \(5 \nmid n^2\), then \(5 \nmid n\)." Which assumption starts the contrapositive proof, and what does it immediately give?
+
+(A) Assume \(5 \mid n^2\); then \(n^2 = 5k\), which forces \(5 \mid n\).
+(B) Assume \(5 \nmid n\); test the four remainders \(5q + 1, 5q + 2, 5q + 3, 5q + 4\) to show \(5 \nmid n^2\).
+(C) Assume \(5 \mid n\); then \(n = 5k\) for some \(k \in \mathbb{Z}\), so \(n^2 = 25k^2 = 5(5k^2)\), proving \(5 \mid n^2\).
+(D) Assume \(5 \mid n\) and \(5 \nmid n^2\); derive \(0 = 1\).
+(E) Contraposition cannot be applied because both the hypothesis and conclusion are negative statements.
+[/BONUS]

@@ -1,0 +1,211 @@
+=== SECTION 1: Factorials, \(k\)-permutations, and injective functions ===
+
+When order matters and objects cannot be repeated—ranking finalists on a podium, assigning distinct tasks to distinct workers, or arranging books in a row—the Product Rule produces a recurring descending product. Factorial notation packages that product compactly.
+
+For every positive integer \(n\), define \(n\)-factorial by
+\[
+n! = n(n - 1)(n - 2) \cdots 2 \cdot 1.
+\]
+Thus \(1! = 1\), \(2! = 2\), \(3! = 6\), \(4! = 24\), \(5! = 120\), and \(n! = n \cdot (n - 1)!\) for \(n \ge 2\). By the Product Rule, \(n!\) counts the linear arrangements (permutations) of \(n\) distinct objects: \(n\) choices for position \(1\), \(n - 1\) for position \(2\), and so on down to \(1\) choice for position \(n\).
+
+What should \(0!\) be? Combinatorially, how many ways are there to arrange \(0\) objects in a row? Exactly \(1\) way: the single empty arrangement (doing nothing). Algebraically, setting
+\[
+0! = 1
+\]
+also preserves the recurrence \(n! = n \cdot (n - 1)!\) at \(n = 1\) (since \(1! = 1 \cdot 0!\)) and makes our \(k\)-permutation formula below work cleanly when \(k = 0\) or \(k = n\).
+
+Now suppose we have \(n\) distinct objects and want to form an ordered list of length \(k\) without repetition, where \(0 \le k \le n\). Such an ordered selection is called a \(k\)-permutation of \(n\) objects, and its count is denoted \(P(n, k)\).
+
+[CALLOUT]
+id: k-perm
+label: Theorem
+title: Formula for \(k\)-permutations and injective maps
+tone: key
+
+For integers \(0 \le k \le n\), the number of ordered selections of \(k\) distinct objects from \(n\) distinct objects is
+\[
+P(n, k) = n(n - 1)(n - 2) \cdots (n - k + 1) = \frac{n!}{(n - k)!}.
+\]
+Equivalently, if \(|A| = k\) and \(|B| = n\), then \(P(n, k)\) is the number of injective (one-to-one) functions \(f : A \to B\). (For \(k > n\), \(P(n, k) = 0\).)
+[/CALLOUT]
+
+The derivation is direct from the Product Rule: position \(1\) has \(n\) choices, position \(2\) has \(n - 1\) choices, ..., and position \(k\) has \(n - (k - 1) = n - k + 1\) choices. Multiplying numerator and denominator by \((n - k)!\) condenses the product to \(\frac{n!}{(n - k)!}\). Check the boundary cases:
+- \(k = 0\): \(P(n, 0) = \frac{n!}{n!} = 1\) (the single empty list).
+- \(k = n\): \(P(n, n) = \frac{n!}{0!} = n!\) (all full permutations of \(n\) objects).
+- \(k > n\): by the Pigeonhole Principle, no function from a \(k\)-element set to an \(n\)-element set can be injective, so \(P(n, k) = 0\).
+
+Why does [REF: k-perm | \(P(n, k)\)] count injective functions \(f : A \to B\)? Write \(A = \{a_1, \dots, a_k\}\). Specifying an injective function \(f\) is bijectively equivalent to choosing an ordered \(k\)-tuple \(\bigl(f(a_1), \dots, f(a_k)\bigr)\) of \(k\) DISTINCT elements of \(B\)—precisely a \(k\)-permutation of \(B\). Compare this with the \(n^k\) total functions \(A \to B\) from the previous lesson: dropping injectivity allows repetition and changes \(P(n, k)\) into \(n^k\).
+
+[QUESTION 1]
+[ANSWER: B]
+How many injective functions \(f : \{1, 2, 3, 4\} \to \{1, 2, 3, 4, 5, 6\}\) satisfy BOTH "\(f(1)\) is even" AND "\(f(2)\) is odd"?
+
+(A) \(72\)
+(B) \(108\)
+(C) \(144\)
+(D) \(180\)
+(E) \(324\)
+[/QUESTION]
+
+=== SECTION 2: Multiset permutations via the Division Rule ===
+
+What happens when some of the \(n\) objects we are arranging are indistinguishable? Consider counting the distinct anagrams of the \(6\)-letter word BANANA, which consists of \(1\) B, \(3\) A's, and \(2\) N's. If all \(6\) letters were distinct, there would be \(6! = 720\) arrangements, yet swapping two A's produces the exact same word.
+
+The Division Rule resolves this immediately. Temporarily attach distinct subscripts to identical letters: \(\text{B}, \text{A}_1, \text{A}_2, \text{A}_3, \text{N}_1, \text{N}_2\). Now all \(6\) symbols are distinct, giving \(6! = 720\) labeled arrangements. Take any single unlabeled anagram—say \(\text{A N A B N A}\)—and ask how many labeled arrangements erase down to it:
+- The three A slots can be assigned \(\text{A}_1, \text{A}_2, \text{A}_3\) in \(3! = 6\) ways.
+- Independently, the two N slots can be assigned \(\text{N}_1, \text{N}_2\) in \(2! = 2\) ways.
+- The single B slot has \(1! = 1\) way.
+By the Product Rule, EVERY unlabeled anagram corresponds to exactly \(k = 1! \cdot 3! \cdot 2! = 12\) labeled arrangements! Because this multiplicity \(k = 12\) is strictly uniform across every anagram, the Division Rule gives
+\[
+\frac{6!}{1!\,3!\,2!} = \frac{720}{12} = 60 \text{ distinct anagrams of BANANA.}
+\]
+
+The exact same Division Rule proof generalizes to any number of repeated types.
+
+[CALLOUT]
+id: multiset-perm
+label: Theorem
+title: Multiset permutation formula
+tone: key
+
+Suppose a collection of \(n\) objects consists of \(r\) distinct types, with \(n_1\) indistinguishable objects of type \(1\), \(n_2\) of type \(2\), ..., and \(n_r\) of type \(r\), so that \(n_1 + n_2 + \dots + n_r = n\). Then the number of distinct linear arrangements of all \(n\) objects is
+\[
+\frac{n!}{n_1!\, n_2!\, \cdots\, n_r!}.
+\]
+[/CALLOUT]
+
+For example, the \(11\)-letter word MISSISSIPPI has \(1\) M, \(4\) I's, \(4\) S's, and \(2\) P's (\(1 + 4 + 4 + 2 = 11\)). By [REF: multiset-perm | the multiset permutation formula], the number of distinct anagrams is
+\[
+\frac{11!}{1!\,4!\,4!\,2!} = \frac{39{,}916{,}800}{1 \cdot 24 \cdot 24 \cdot 2} = 34{,}650.
+\]
+Watch for one sanity check: the denominators' arguments \(n_1, \dots, n_r\) must ALWAYS sum to \(n\) (including any \(1!\)'s for singleton items, which equal \(1\) and do not change the fraction).
+
+[QUESTION 2]
+[ANSWER: A]
+How many distinct \(6\)-letter arrangements of the letters of PEPPER begin and end with the SAME letter?
+
+(A) \(16\)
+(B) \(20\)
+(C) \(24\)
+(D) \(32\)
+(E) \(60\)
+[/QUESTION]
+
+=== SECTION 3: Circular permutations and reflection symmetry ===
+
+So far we have arranged objects along a line, where there is a clear first position and last position. Now seat \(n \ge 1\) distinct people around an unlabeled round table, where two seatings are considered identical if one can be rotated into the other (only each person's clockwise neighbor matters).
+
+Two independent arguments yield the exact same count:
+1. Division Rule: Arrange the \(n\) people in a line in \(n!\) ways, then bend the line into a circle. Every circular seating corresponds to exactly \(n\) linear arrangements—obtained by cutting the circle at any of the \(n\) gaps between adjacent people (equivalently, the \(n\) cyclic shifts). Since the \(n\) people are distinct, all \(n\) shifts of a given circular seating are distinct linear lists. By the Division Rule, the number of circular seatings is \(n! / n = (n - 1)!\).
+2. Anchoring: Because rotations do not matter, rotate the table until person \(1\) sits at the \(12\)-o'clock seat. Once person \(1\) is anchored, no rotational symmetry remains, and the remaining \(n - 1\) seats are completely distinguished by their clockwise distance from person \(1\). Arranging the other \(n - 1\) people in those \(n - 1\) seats gives \((n - 1)!\) seatings.
+
+What if we string \(n\) distinct beads onto a flexible bracelet or necklace that can not only be rotated, but also flipped upside down (reflected)? Reversing the cyclic order of a circular arrangement pairs each circular arrangement with its mirror reflection. Can a circular arrangement of \(n\) distinct beads equal its own reflection?
+- For \(n = 1\) or \(n = 2\): there is only \((1 - 1)! = 1\) or \((2 - 1)! = 1\) circular arrangement, which is ALREADY identical to its own reflection! Dividing by \(2\) would give the invalid non-integer \(1/2\).
+- For \(n \ge 3\): fix bead \(1\) at the top. Its clockwise neighbor \(b_{\text{cw}}\) and its counterclockwise neighbor \(b_{\text{ccw}}\) are two DIFFERENT beads (because \(n \ge 3\)). Flipping the necklace swaps them, so the reflection has a different clockwise neighbor for bead \(1\) and is genuinely a distinct circular arrangement! Thus for \(n \ge 3\), flipping pairs the \((n - 1)!\) circular arrangements uniformly \(2\)-to-\(1\), giving \(\frac{(n - 1)!}{2}\) necklaces.
+
+[CALLOUT]
+id: circular-perm
+label: Theorem
+title: Circular permutations and reversible necklaces
+tone: key
+
+For \(n\) distinct objects:
+
+(1) Circular permutations (distinct up to rotation): \((n - 1)!\) for all \(n \ge 1\).
+(2) Necklace / bracelet permutations (distinct up to rotation AND reflection): \(\frac{(n - 1)!}{2}\) for \(n \ge 3\) (and \(1\) for \(n = 1, 2\)).
+[/CALLOUT]
+
+Be careful: [REF: circular-perm | both formulas] assume all \(n\) objects are distinct! If beads repeat (for example, \(2\) red and \(2\) blue beads on a circle), different circular patterns can have different rotational symmetries, so the naive Division Rule breaks—just as palindromes broke naive reversal division in the previous lesson.
+
+[QUESTION 3]
+[ANSWER: C]
+Six distinct people, including Alice and Bob, are seated at a round table with \(6\) equally spaced seats. How many distinct circular seatings (up to rotation) place Alice and Bob directly opposite each other?
+
+(A) \(6\)
+(B) \(12\)
+(C) \(24\)
+(D) \(48\)
+(E) \(120\)
+[/QUESTION]
+
+=== SECTION 4: Adjacency constraints — bundling, gaps, and complement ===
+
+Real arrangement problems almost always impose side constraints: certain items must sit together, or no two items from a restricted group may sit next to each other. Three systematic modeling tools handle nearly every adjacency constraint without overcounting.
+
+[CALLOUT]
+id: adjacency-toolkit
+label: Techniques
+title: Three tools for adjacency constraints
+tone: key
+
+(1) Bundling (super-elements): When a specified group of \(g\) items must appear consecutively, glue them into a single super-element, arrange the super-element together with the remaining items, and multiply by the \(g!\) internal orderings of the bundle.
+(2) Gap (insertion) method: When NO TWO items from a group of \(k\) restricted items may be adjacent, first arrange the \(m\) unrestricted items (creating \(m + 1\) gaps: before, between, and after them), then place the \(k\) restricted items into \(k\) distinct gaps.
+(3) Complement counting: When a forbidden pattern is simpler than the allowed pattern (especially "not all together" or "at least two adjacent"), subtract the forbidden arrangements from the total arrangements.
+[/CALLOUT]
+
+Let us watch all three tools in action on a shelf holding \(4\) distinct Math books and \(2\) distinct Physics books (\(6\) books total).
+
+1. The \(2\) Physics books MUST be adjacent: Use [REF: adjacency-toolkit.1 | bundling]. Glue the two Physics books into one block \(P\). We now arrange \(5\) objects (the \(4\) Math books plus block \(P\)) in \(5! = 120\) ways, and order the two Physics books inside \(P\) in \(2! = 2\) ways. Total: \(5! \cdot 2! = 240\).
+
+2. The \(2\) Physics books MUST NOT be adjacent: Two methods agree!
+   - By [REF: adjacency-toolkit.3 | complement counting]: Total arrangements minus adjacent arrangements \(= 6! - 5! \cdot 2! = 720 - 240 = 480\).
+   - By [REF: adjacency-toolkit.2 | the gap method]: Arrange the \(4\) Math books first in \(4! = 24\) ways, creating \(5\) gaps (\(\_ M \_ M \_ M \_ M \_\)). Place the \(2\) distinct Physics books into \(2\) distinct gaps in \(P(5, 2) = 5 \cdot 4 = 20\) ways. Total: \(24 \cdot 20 = 480\).
+
+Now increase the shelf to \(4\) distinct Math books and \(3\) distinct Physics books, and require that NO TWO Physics books be adjacent. Here is where beginners get burned by misusing complement counting: computing \(7! - 5! \cdot 3!\) only subtracts arrangements where ALL THREE Physics books form one consecutive block! It completely fails to exclude arrangements where two Physics books touch and the third sits elsewhere (such as \(P_1 P_2 M_1 M_2 P_3 M_3 M_4\)).
+
+[REF: adjacency-toolkit.2 | The gap method], by contrast, handles "no two adjacent" cleanly for ANY number \(k\) of restricted items:
+- Arrange the \(4\) Math books first: \(4! = 24\) ways, creating \(5\) gaps.
+- Place the \(3\) distinct Physics books into \(3\) of the \(5\) gaps (at most one per gap): \(P(5, 3) = 5 \cdot 4 \cdot 3 = 60\) ways.
+Total: \(24 \cdot 60 = 1440\) arrangements!
+
+[TABLE]
+Constraint on \(k\) special items among \(m\) others | Recommended tool | Formula (distinct items, linear)
+All \(k\) special items must form one consecutive block | Bundling | \((m + 1)!\, k!\)
+Not all \(k\) special items together in one block | Complement + Bundling | \((m + k)! - (m + 1)!\, k!\)
+No two of the \(k\) special items may be adjacent | Gap / Insertion | \(m!\, P(m + 1, k)\) (valid for \(k \le m + 1\))
+At least two of the \(k\) special items are adjacent | Complement + Gap | \((m + k)! - m!\, P(m + 1, k)\)
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: D]
+Six distinct people \(A, B, C, D, E, F\) stand in a straight line so that \(A\) and \(B\) stand next to each other, while \(C\) does NOT stand next to either \(A\) or \(B\). How many valid lineups are possible?
+
+(A) \(72\)
+(B) \(96\)
+(C) \(120\)
+(D) \(144\)
+(E) \(240\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Six distinct colored beads (including one red bead and one blue bead) are strung onto a reversible bracelet (rotations and reflections produce the same bracelet). How many distinct bracelets have the red and blue beads adjacent to each other?
+
+(A) \(12\)
+(B) \(24\)
+(C) \(48\)
+(D) \(60\)
+(E) \(120\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+Four married couples (\(8\) distinct people) sit around an unlabeled round table (distinct up to rotation) so that each person sits directly next to their spouse. How many valid circular seatings exist?
+
+(A) \(24\)
+(B) \(48\)
+(C) \(96\)
+(D) \(384\)
+(E) \(768\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+How many distinct \(6\)-letter arrangements of the letters of BANANA have NO TWO A's adjacent to each other?
+
+(A) \(12\)
+(B) \(18\)
+(C) \(24\)
+(D) \(36\)
+(E) \(72\)
+[/BONUS]

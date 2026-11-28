@@ -1,0 +1,217 @@
+=== SECTION 1: Algebraic invariants under rotation and translation ===
+
+In the previous lesson, eliminating the \(xy\)-term from a general quadratic equation
+\[
+Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+\]
+required computing \(\cot 2\theta = \frac{A - C}{B}\), finding \(\cos\theta\) and \(\sin\theta\), and substituting into every term. Before doing all that work, is there a fast way to tell whether the curve belongs to the ellipse, parabola, or hyperbola family—and an independent check that your rotated coefficients \(A'\) and \(C'\) are free of arithmetic errors?
+
+Yes: certain algebraic combinations of \(A\), \(B\), and \(C\) remain completely unchanged—invariant—under EVERY rotation and translation of the coordinate axes.
+
+Recall the rotated quadratic coefficients obtained by substituting \(x = x'\cos\theta - y'\sin\theta\) and \(y = x'\sin\theta + y'\cos\theta\):
+\[
+A' = A\cos^2\theta + B\sin\theta\cos\theta + C\sin^2\theta,
+\]
+\[
+C' = A\sin^2\theta - B\sin\theta\cos\theta + C\cos^2\theta,
+\]
+\[
+B' = B\cos 2\theta + (C - A)\sin 2\theta.
+\]
+First, add \(A'\) and \(C'\). The \(\pm B\sin\theta\cos\theta\) terms cancel immediately, and \(\cos^2\theta + \sin^2\theta = 1\) leaves
+\[
+A' + C' = A(\cos^2\theta + \sin^2\theta) + C(\sin^2\theta + \cos^2\theta) = A + C.
+\]
+The sum \(A + C\) (the trace of the quadratic part) is our first rotation invariant.
+
+To discover the second invariant, subtract \(C'\) from \(A'\) instead and apply the double-angle identities \(\cos^2\theta - \sin^2\theta = \cos 2\theta\) and \(2\sin\theta\cos\theta = \sin 2\theta\):
+\[
+A' - C' = (A - C)\cos 2\theta + B\sin 2\theta.
+\]
+Compare this side by side with \(B' = B\cos 2\theta - (A - C)\sin 2\theta\). Square both equations and add them:
+\[
+B'^2 + (A' - C')^2 = \bigl(B\cos 2\theta - (A - C)\sin 2\theta\bigr)^2 + \bigl((A - C)\cos 2\theta + B\sin 2\theta\bigr)^2.
+\]
+When you expand the right-hand side, the cross terms \(-2B(A - C)\sin 2\theta\cos 2\theta\) and \(+2B(A - C)\sin 2\theta\cos 2\theta\) cancel identically, while \(\cos^2 2\theta + \sin^2 2\theta = 1\) collapses the remaining terms to
+\[
+B'^2 + (A' - C')^2 = B^2 + (A - C)^2.
+\]
+Finally, subtract the squared trace invariant \((A' + C')^2 = (A + C)^2\) from both sides. Because \((u - v)^2 - (u + v)^2 = -4uv\) for any real numbers \(u\) and \(v\), we obtain
+\[
+B'^2 - 4A'C' = B^2 - 4AC.
+\]
+What about translations of axes \(x = x' + h\), \(y = y' + k\)? Expanding \(A(x' + h)^2 + B(x' + h)(y' + k) + C(y' + k)^2\) changes only the linear and constant terms—\(A\), \(B\), and \(C\) themselves do not change at all. Consequently, both invariants survive every rigid motion (rotation or translation) in the plane.
+
+[CALLOUT]
+id: quadratic-invariants
+label: Theorem
+title: Rigid-motion invariants of a general 2D quadratic
+tone: key
+
+Under any rotation or translation of the coordinate axes, the coefficients of \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) preserve two algebraic invariants:
+(1) The trace \(A' + C' = A + C\).
+(2) The quadratic discriminant \(\Delta = B'^2 - 4A'C' = B^2 - 4AC\).
+[/CALLOUT]
+
+Notice a powerful shortcut built into [REF: quadratic-invariants | these two invariants]: whenever you rotate to eliminate the cross term (\(B' = 0\)), the rotated coefficients \(A'\) and \(C'\) satisfy
+\[
+A' + C' = A + C \qquad \text{and} \qquad -4A'C' = B^2 - 4AC \implies A'C' = \frac{4AC - B^2}{4}.
+\]
+This not only verifies any explicit rotation calculation in seconds, it also lets you recover the unordered pair \(\{A', C'\}\) directly as the two roots of \(t^2 - (A + C)t + \frac{4AC - B^2}{4} = 0\) without computing \(\sin\theta\) or \(\cos\theta\)!
+
+[QUESTION 1]
+[ANSWER: C]
+The equation \(3x^2 + 4xy + 6y^2 - 10x + 8y - 5 = 0\) is rotated by an angle \(\theta\) that eliminates the \(xy\)-term (\(B' = 0\)). What are the two resulting quadratic coefficients \(A'\) and \(C'\) (up to order)?
+
+(A) \(3\) and \(6\)
+(B) \(1\) and \(8\)
+(C) \(2\) and \(7\)
+(D) \(-2\) and \(11\)
+(E) \(4\) and \(5\)
+[/QUESTION]
+
+=== SECTION 2: The discriminant classification test and degenerate caveats ===
+
+Choose the elimination rotation angle \(\theta\) so that \(B' = 0\). By [REF: quadratic-invariants.2 | discriminant invariance],
+\[
+\Delta = B^2 - 4AC = B'^2 - 4A'C' = -4A'C'.
+\]
+The sign of \(\Delta\) is therefore the OPPOSITE of the sign of \(A'C'\), immediately reducing classification of any tilted quadratic to the axis-aligned classification test we already know!
+
+[TABLE]
+Discriminant \(\Delta = B^2 - 4AC\) | Equivalent \(A'C'\) (with \(B' = 0\)) | Nondegenerate conic | Possible degenerate loci
+\(\Delta < 0\) | \(A'C' > 0\) (same sign) | Ellipse (circle when \(A = C\) and \(B = 0\)) | Single point or empty set
+\(\Delta = 0\) | \(A'C' = 0\) (one vanishes) | Parabola | Pair of parallel lines, single line, or empty set
+\(\Delta > 0\) | \(A'C' < 0\) (opposite signs) | Hyperbola | Pair of intersecting lines
+[/TABLE]
+
+To see all three discriminant regimes in one picture, compare the family \(x^2 + Bxy + y^2 = 4\) (where \(\Delta = B^2 - 4\)) at three values of \(B\):
+- \(B = 1\): \(\Delta = -3 < 0\), producing the tilted ellipse \(x^2 + xy + y^2 = 4\).
+- \(B = 2\): \(\Delta = 0\), producing \((x + y)^2 = 4\), the degenerate parabolic pair of parallel lines \(x + y = \pm 2\).
+- \(B = 3\): \(\Delta = 5 > 0\), producing the tilted hyperbola \(x^2 + 3xy + y^2 = 4\).
+
+[GRAPH]
+type: parametric2d
+title: Family \(x^2 + Bxy + y^2 = 4\) across \(\Delta < 0\) (\(B = 1\)), \(\Delta = 0\) (\(B = 2\)), and \(\Delta > 0\) (\(B = 3\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -3.1416, 3.1416
+xrange: -5, 5
+yrange: -5, 5
+trace: (2/sqrt(3))*cos(t) - 2*sin(t), (2/sqrt(3))*cos(t) + 2*sin(t) | label: \(B = 1\) (\(\Delta = -3\), ellipse)
+trace: (2/sqrt(5))*cosh(t/2) - 2*sinh(t/2), (2/sqrt(5))*cosh(t/2) + 2*sinh(t/2) | label: \(B = 3\) (\(\Delta = 5\), hyperbola)
+trace: -(2/sqrt(5))*cosh(t/2) - 2*sinh(t/2), -(2/sqrt(5))*cosh(t/2) + 2*sinh(t/2) | label: \(B = 3\) (second branch)
+segment: -3, 5, 5, -3 | label: \(x + y = 2\) | dashed: true
+segment: -5, 3, 3, -5 | label: \(x + y = -2\) | dashed: true
+[/GRAPH]
+
+[CALLOUT]
+id: discriminant-caveat
+label: Common pitfall
+title: The discriminant classifies the family, never nondegeneracy
+tone: caution
+
+The sign of \(\Delta = B^2 - 4AC\) depends ONLY on \(A\), \(B\), and \(C\); it ignores the linear and constant coefficients \(D\), \(E\), and \(F\). Consequently, \(\Delta\) can NEVER by itself distinguish a nondegenerate conic from a degenerate locus in the same family. Always complete the reduction (rotation plus translation) or check for direct algebraic factorization before declaring a locus to be an actual ellipse, parabola, or hyperbola.
+[/CALLOUT]
+
+Consider \(x^2 - xy - 2y^2 + x + y = 0\). Its discriminant is \(\Delta = (-1)^2 - 4(1)(-2) = 9 > 0\), placing it in the hyperbolic family. Yet look closely at the quadratic part: \(x^2 - xy - 2y^2 = (x - 2y)(x + y)\). Grouping with the linear terms gives
+\[
+(x - 2y)(x + y) + (x + y) = (x + y)(x - 2y + 1) = 0.
+\]
+Rather than a hyperbola, the graph is a degenerate pair of intersecting lines: \(x + y = 0\) and \(x - 2y + 1 = 0\).
+
+[QUESTION 2]
+[ANSWER: B]
+Compute the discriminant \(\Delta = B^2 - 4AC\) of \(4x^2 - 12xy + 9y^2 + 2x - 3y - 6 = 0\) and determine its exact geometric locus.
+
+(A) \(\Delta = 0\); a nondegenerate rotated parabola
+(B) \(\Delta = 0\); a degenerate pair of parallel lines
+(C) \(\Delta = 0\); a single straight line
+(D) \(\Delta = 0\); the empty set
+(E) \(\Delta = 144\); a nondegenerate hyperbola
+[/QUESTION]
+
+=== SECTION 3: Full reduction by rotation followed by translation ===
+
+When a general quadratic \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) has both an \(xy\)-term and linear terms and does not factor by inspection, reducing it to standard form follows a clean two-stage pipeline:
+(1) Classify the family first with \(\Delta = B^2 - 4AC\) so you know what shape to expect.
+(2) Rotate the axes by \(\theta \in (0, \frac{\pi}{2})\) satisfying \(\cot 2\theta = \frac{A - C}{B}\) to eliminate \(B'\), producing \(A'x'^2 + C'y'^2 + D'x' + E'y' + F = 0\). Check \(A' + C' = A + C\) and \(-4A'C' = \Delta\) immediately!
+(3) Translate the rotated axes (complete the square in \(x'\) and \(y'\)) to shift the center or vertex to the new origin \((x'', y'')\), revealing both the exact standard dimensions and whether the locus is nondegenerate or degenerate.
+
+Carry out the complete reduction on \(x^2 + xy + y^2 - 4x - 2y + 1 = 0\).
+
+First, check the discriminant: \(\Delta = 1^2 - 4(1)(1) = -3 < 0\), so the equation belongs to the elliptic family (ellipse, point, or empty set).
+
+Second, rotate to kill the \(xy\)-term. Since \(A = C = 1\), \(\cot 2\theta = 0 \implies \theta = 45^\circ\), giving \(x = \frac{x' - y'}{\sqrt{2}}\) and \(y = \frac{x' + y'}{\sqrt{2}}\). Substituting into the quadratic and linear parts:
+\[
+x^2 + xy + y^2 = \frac{(x' - y')^2 + (x'^2 - y'^2) + (x' + y')^2}{2} = \frac{3}{2}x'^2 + \frac{1}{2}y'^2,
+\]
+\[
+-4x - 2y = -4\left(\frac{x' - y'}{\sqrt{2}}\right) - 2\left(\frac{x' + y'}{\sqrt{2}}\right) = -3\sqrt{2}\,x' + \sqrt{2}\,y'.
+\]
+Verify the invariants before proceeding: \(A' + C' = \frac{3}{2} + \frac{1}{2} = 2 = A + C\), and \(-4A'C' = -4\bigl(\frac{3}{2}\bigr)\bigl(\frac{1}{2}\bigr) = -3 = \Delta\). Both match!
+
+Multiplying the rotated equation \(\frac{3}{2}x'^2 + \frac{1}{2}y'^2 - 3\sqrt{2}\,x' + \sqrt{2}\,y' + 1 = 0\) by \(2\) gives
+\[
+3x'^2 + y'^2 - 6\sqrt{2}\,x' + 2\sqrt{2}\,y' + 2 = 0.
+\]
+Third, translate by completing the square in \(x'\) and \(y'\):
+\[
+3(x'^2 - 2\sqrt{2}\,x') + (y'^2 + 2\sqrt{2}\,y') = -2,
+\]
+\[
+3(x' - \sqrt{2})^2 + (y' + \sqrt{2})^2 = -2 + 3(2) + 2 = 6.
+\]
+Dividing by \(6\) yields the standard form in the shifted rotated coordinates \(x'' = x' - \sqrt{2}\) and \(y'' = y' + \sqrt{2}\):
+\[
+\frac{(x' - \sqrt{2})^2}{2} + \frac{(y' + \sqrt{2})^2}{6} = 1.
+\]
+Because the right-hand side is strictly positive, this is a nondegenerate rotated ellipse with semi-major axis \(\sqrt{6}\) (parallel to the \(y'\)-axis) and semi-minor axis \(\sqrt{2}\) (parallel to the \(x'\)-axis). Its center \((x', y') = (\sqrt{2}, -\sqrt{2})\) converts back to original coordinates as
+\[
+x = \frac{\sqrt{2} - (-\sqrt{2})}{\sqrt{2}} = 2, \qquad y = \frac{\sqrt{2} + (-\sqrt{2})}{\sqrt{2}} = 0.
+\]
+So the ellipse is centered at \((2, 0)\) and tilted by \(45^\circ\).
+
+[QUESTION 3]
+[ANSWER: A]
+For which real values of \(k\) does the equation \(2x^2 + kxy + 8y^2 - 4x + 5 = 0\) belong to the hyperbolic family (\(\Delta > 0\))?
+
+(A) \(k < -8\) or \(k > 8\)
+(B) \(k > 8\) only
+(C) \(-8 < k < 8\)
+(D) \(k < -4\) or \(k > 4\)
+(E) \(k < -16\) or \(k > 16\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Rotate the axes by \(\theta = 45^\circ\) and then translate to reduce \(x^2 - 2xy + y^2 - 4\sqrt{2}\,x - 4\sqrt{2}\,y + 8 = 0\) to standard form in \((x', y')\). What is the resulting equation and geometric locus?
+
+(A) \(y'^2 = 4(x' + 1)\); a parabola opening along the positive \(x'\)-axis
+(B) \(x'^2 = 4(y' - 1)\); a parabola opening along the positive \(y'\)-axis
+(C) \(2y'^2 + 8 = 0\); the empty set
+(D) \(y'^2 = 4(x' - 1)\); a parabola with vertex \((x', y') = (1, 0)\) opening along the positive \(x'\)-axis
+(E) \(y'^2 = 4\); a degenerate pair of parallel lines
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Determine the exact geometric locus of \(2x^2 + 3xy - 2y^2 - 5x + 5y - 3 = 0\).
+
+(A) A nondegenerate hyperbola
+(B) A nondegenerate ellipse
+(C) A degenerate pair of parallel lines
+(D) A single straight line
+(E) A degenerate pair of perpendicular intersecting lines: \(2x - y + 1 = 0\) and \(x + 2y - 3 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+After rotating \(Ax^2 + Bxy + Cy^2 = 30\) (with \(A = 3\) and \(B > 0\)) to eliminate the \(xy\)-term, the equation becomes \(5x'^2 - 3y'^2 = 30\). Using invariants, find the exact values of \(C\) and \(B\).
+
+(A) \(C = 1\), \(B = 4\sqrt{3}\)
+(B) \(C = -1\), \(B = 4\sqrt{3}\)
+(C) \(C = -1\), \(B = 2\sqrt{15}\)
+(D) \(C = 5\), \(B = 4\sqrt{3}\)
+(E) \(C = -1\), \(B = 6\sqrt{2}\)
+[/BONUS]

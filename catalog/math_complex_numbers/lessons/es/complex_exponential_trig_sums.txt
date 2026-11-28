@@ -1,0 +1,233 @@
+=== SECTION 1: Elevación a \(\mathbb{C}\) de sumas trigonométricas en progresión aritmética ===
+
+Supón que necesitas una única expresión en forma cerrada para una suma larga de cosenos o senos cuyos ángulos aumentan en pasos iguales \(\beta\):
+\[
+C = \sum_{k=0}^{n-1} \cos(\alpha + k\beta), \qquad S = \sum_{k=0}^{n-1} \sin(\alpha + k\beta),
+\]
+donde \(n \ge 1\) es un entero y \(\alpha, \beta \in \mathbb{R}\). Intentar colapsar \(C\) o \(S\) mediante identidades reales de suma a producto exige tediosos trucos telescópicos en los que es muy fácil equivocar un signo.
+
+¡La fórmula de Euler \(e^{i\theta} = \cos\theta + i\sin\theta\) transforma este problema trigonométrico en una serie geométrica elemental! Combina \(C\) y \(S\) en una sola suma compleja \(C + iS\):
+\[
+C + iS = \sum_{k=0}^{n-1} \bigl(\cos(\alpha + k\beta) + i\sin(\alpha + k\beta)\bigr) = \sum_{k=0}^{n-1} e^{i(\alpha + k\beta)} = e^{i\alpha} \sum_{k=0}^{n-1} \bigl(e^{i\beta}\bigr)^k.
+\]
+¡Observa lo que acaba de ocurrir: \(C + iS\) es una serie geométrica finita de razón común \(r = e^{i\beta}\)!
+
+Antes de aplicar la fórmula de la serie geométrica finita \(\sum_{k=0}^{n-1} r^k = \frac{1 - r^n}{1 - r}\), DEBEMOS separar el caso degenerado \(r = 1\) (que ocurre siempre que \(\beta = 2\pi m\) para algún entero \(m \in \mathbb{Z}\)):
+- Caso degenerado (\(\beta \equiv 0 \pmod{2\pi}\)): aquí \(e^{i\beta} = 1\), de modo que cada término individual vale \(e^{i\alpha}\). Por tanto, \(C + iS = n e^{i\alpha}\), lo que da
+  \[
+  C = n\cos\alpha, \qquad S = n\sin\alpha.
+  \]
+- Caso no degenerado (\(\beta \not\equiv 0 \pmod{2\pi}\)): aquí \(e^{i\beta} \ne 1\), así que la fórmula de la serie geométrica finita se aplica limpiamente:
+  \[
+  C + iS = e^{i\alpha}\,\frac{1 - e^{in\beta}}{1 - e^{i\beta}}.
+  \]
+
+Ahora llega el paso clave de simplificación: ¡el puente de factorización de ángulo mitad de nuestra lección sobre la fórmula de Euler! Para cualquier ángulo real \(\varphi\), saca factor común \(e^{i\varphi/2}\):
+\[
+1 - e^{i\varphi} = e^{i\varphi/2}\bigl(e^{-i\varphi/2} - e^{i\varphi/2}\bigr) = -2i\sin\!\left(\frac{\varphi}{2}\right) e^{i\varphi/2}.
+\]
+Aplica exactamente esta identidad TANTO al numerador (\(\varphi = n\beta\)) como al denominador (\(\varphi = \beta\)):
+\[
+C + iS = e^{i\alpha}\,\frac{-2i\sin\!\left(\frac{n\beta}{2}\right) e^{in\beta/2}}{-2i\sin\!\left(\frac{\beta}{2}\right) e^{i\beta/2}}.
+\]
+¡Los factores \(-2i\) se cancelan por completo! Combina los factores exponenciales restantes:
+\[
+e^{i\alpha}\,e^{in\beta/2}\,e^{-i\beta/2} = e^{i\left(\alpha + \frac{n - 1}{2}\beta\right)}.
+\]
+Como \(\frac{\sin(n\beta/2)}{\sin(\beta/2)}\) es PURAMENTE REAL (y \(\sin(\beta/2) \ne 0\) porque \(\beta \not\equiv 0 \pmod{2\pi}\)), ¡tomar partes real e imaginaria arroja AMBAS formas cerradas simultáneamente!
+
+[CALLOUT]
+id: trig-progression-closed-form
+label: Teorema
+title: Formas cerradas para sumas finitas de cosenos y senos en progresión aritmética
+tone: key
+
+Sea \(n \ge 1\) un entero y \(\alpha, \beta \in \mathbb{R}\).
+
+(1) Si \(\beta \not\equiv 0 \pmod{2\pi}\):
+\[
+\sum_{k=0}^{n-1} \cos(\alpha + k\beta) = \frac{\sin\!\left(\frac{n\beta}{2}\right)}{\sin\!\left(\frac{\beta}{2}\right)} \cos\!\left(\alpha + \frac{n - 1}{2}\beta\right),
+\]
+\[
+\sum_{k=0}^{n-1} \sin(\alpha + k\beta) = \frac{\sin\!\left(\frac{n\beta}{2}\right)}{\sin\!\left(\frac{\beta}{2}\right)} \sin\!\left(\alpha + \frac{n - 1}{2}\beta\right).
+\]
+(2) Si \(\beta \equiv 0 \pmod{2\pi}\) (el caso degenerado \(e^{i\beta} = 1\)):
+\[
+\sum_{k=0}^{n-1} \cos(\alpha + k\beta) = n\cos\alpha, \qquad \sum_{k=0}^{n-1} \sin(\alpha + k\beta) = n\sin\alpha.
+\]
+[/CALLOUT]
+
+Observa la belleza geométrica encerrada en [REF: trig-progression-closed-form.1 | la fórmula en forma cerrada]: ¡el ángulo \(\alpha + \frac{n - 1}{2}\beta\) es exactamente el PROMEDIO del primer ángulo \(\alpha\) y del último ángulo \(\alpha + (n - 1)\beta\)! Mientras tanto, la suma compleja \(\sum_{k=0}^{n-1} e^{ik\beta}\) suma \(n\) vectores unitarios punta con cola, girando \(\beta\) en cada vértice. Arrastra el deslizador \(b\) en la gráfica siguiente para \(n = 4\) y observa cómo se enrollan los cuatro vectores unitarios: ¡fíjate en que la cadena se cierra de vuelta en el origen siempre que \(b = \frac{\pi}{2}\) o \(b = \pi\) (lo que coincide con \(\sin(4b/2) = \sin(2b) = 0\))!
+
+[GRAPH]
+type: parametric2d
+title: Cadena de fasores punta con cola para \(1 + e^{ib} + e^{2ib} + e^{3ib}\) y la curva de su extremo
+xlabel: \(\operatorname{Re}(z)\)
+ylabel: \(\operatorname{Im}(z)\)
+trange: 0, 6.2832
+xrange: -1.6, 4.3
+yrange: -2.6, 2.6
+trace: 1 + cos(t) + cos(2*t) + cos(3*t), sin(t) + sin(2*t) + sin(3*t) | label: trayectoria del extremo al variar b | color: #94a3b8
+segment: 0, 0, 1, 0 | color: #2563eb
+segment: 1, 0, 1 + cos(b), sin(b) | color: #2563eb
+segment: 1 + cos(b), sin(b), 1 + cos(b) + cos(2*b), sin(b) + sin(2*b) | color: #2563eb
+segment: 1 + cos(b) + cos(2*b), sin(b) + sin(2*b), 1 + cos(b) + cos(2*b) + cos(3*b), sin(b) + sin(2*b) + sin(3*b) | color: #2563eb
+segment: 0, 0, 1 + cos(b) + cos(2*b) + cos(3*b), sin(b) + sin(2*b) + sin(3*b) | color: #dc2626 | dashed: true
+point: 1 + cos(b) + cos(2*b) + cos(3*b), sin(b) + sin(2*b) + sin(3*b) | label: \(S_4(b)\) | color: #dc2626
+slider: b | range: 0.3, 3.14 | init: 0.9 | step: 0.05
+[/GRAPH]
+
+Observa ahora las partes real e imaginaria como funciones del ángulo de paso \(x = \beta\) para \(n = 6\) y \(\alpha = 0\):
+\[
+C_6(x) = \sum_{k=0}^{5} \cos(kx) = \frac{\sin(3x)}{\sin(x/2)}\cos\!\left(\frac{5x}{2}\right), \qquad S_6(x) = \sum_{k=0}^{5} \sin(kx) = \frac{\sin(3x)}{\sin(x/2)}\sin\!\left(\frac{5x}{2}\right).
+\]
+En \(x = 0\), el caso degenerado da \(C_6(0) = 6\) y \(S_6(0) = 0\), coincidiendo con el pico central elevado y el cruce mostrados a continuación.
+
+[GRAPH]
+type: function2d
+title: Suma de cosenos \(C_6(x)\) y suma de senos \(S_6(x)\) frente al ángulo de paso \(x\)
+xlabel: \(x\)
+ylabel: valor de la suma
+xrange: -3.1416, 3.1416
+trace: abs(x) < 0.0001 ? 6 : sin(3*x)/sin(x/2)*cos(2.5*x) | label: \(C_6(x) = \sum_{k=0}^{5} \cos(kx)\) | color: #2563eb
+trace: abs(x) < 0.0001 ? 0 : sin(3*x)/sin(x/2)*sin(2.5*x) | label: \(S_6(x) = \sum_{k=0}^{5} \sin(kx)\) | color: #d97706
+point: 0, 6 | label: \((0, 6)\) | color: #2563eb
+[/GRAPH]
+
+Pongamos a prueba [REF: trig-progression-closed-form.1 | el teorema en forma cerrada] en dos evaluaciones concretas:
+- Ejemplo 1: Evalúa \(\sum_{k=0}^{5} \cos\!\left(\frac{k\pi}{6}\right)\). Aquí \(n = 6\), \(\alpha = 0\) y \(\beta = \frac{\pi}{6} \not\equiv 0 \pmod{2\pi}\). Sustituir da
+  \[
+  \frac{\sin\!\left(\frac{6\pi}{12}\right)}{\sin\!\left(\frac{\pi}{12}\right)} \cos\!\left(\frac{5\pi}{12}\right) = \frac{\sin(\pi/2)}{\sin(\pi/12)}\cos\!\left(\frac{\pi}{2} - \frac{\pi}{12}\right) = \frac{1}{\sin(\pi/12)}\sin\!\left(\frac{\pi}{12}\right) = 1.
+  \]
+- Ejemplo 2: Evalúa \(\sum_{k=0}^{4} \cos\!\left(\frac{\pi}{5} + \frac{2k\pi}{5}\right)\). Aquí \(n = 5\), \(\alpha = \frac{\pi}{5}\), \(\beta = \frac{2\pi}{5}\). Como \(\frac{n\beta}{2} = \pi\), se cumple \(\sin(\pi) = 0\) mientras \(\sin(\pi/5) \ne 0\), ¡de modo que toda la suma colapsa al instante en \(0\)! (Eso equivale a rotar las raíces quintas de la unidad en \(\frac{\pi}{5}\): su suma sigue siendo \(0\).)
+
+[QUESTION 1]
+[ANSWER: B]
+Usando la fórmula de suma en progresión aritmética, ¿cuál es la forma cerrada de la suma de cosenos de múltiplos impares
+\[
+\sum_{k=1}^{n} \cos\bigl((2k - 1)\theta\bigr) = \cos\theta + \cos(3\theta) + \dots + \cos\bigl((2n - 1)\theta\bigr)
+\]
+para cualquier entero \(n \ge 1\) y \(\theta \not\equiv 0 \pmod{\pi}\) real?
+
+(A) \(\frac{\sin(n\theta)}{2\sin\theta}\)
+(B) \(\frac{\sin(2n\theta)}{2\sin\theta}\)
+(C) \(\frac{\sin(2n\theta)}{\sin\theta}\)
+(D) \(\frac{\cos(2n\theta)}{2\sin\theta}\)
+(E) \(\frac{\sin(n\theta)\cos(n\theta)}{\sin(\theta/2)}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+¿Cuál es el valor exacto de \(\sum_{k=0}^{9} \sin\!\left(\frac{\pi}{6} + 2k\pi\right)\), y por qué no puede sustituirse directamente en la fórmula del cociente \(\frac{\sin(n\beta/2)}{\sin(\beta/2)}\sin\!\left(\alpha + \frac{n-1}{2}\beta\right)\)?
+
+(A) La suma es \(0\), porque \(\sin(10\pi) = 0\) en el numerador.
+(B) La suma es \(10\), porque \(e^{2\pi i} = 1\).
+(C) La suma es \(\frac{1}{2}\), porque solo sobrevive el término \(k = 0\).
+(D) La suma es \(5\), porque \(\beta = 2\pi\) es el caso degenerado donde \(e^{i\beta} = 1\) (lo que hace \(\sin(\beta/2) = 0\) en el denominador), así que los \(10\) términos valen todos \(\sin(\frac{\pi}{6}) = \frac{1}{2}\).
+(E) La suma no está definida, porque la razón de la serie geométrica \(r = e^{2\pi i} = 1\) diverge.
+[/QUESTION]
+
+=== SECTION 2: Sumas trigonométricas ponderadas con coeficientes binomiales ===
+
+La misma estrategia de elevar y factorizar evalúa sumas trigonométricas ponderadas con coeficientes binomiales que parecerían por completo intratables usando únicamente trigonometría real:
+\[
+\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta) \qquad \text{y} \qquad \sum_{k=0}^{n} \binom{n}{k} \sin(k\theta).
+\]
+Eleva ambas sumas a \(\mathbb{C}\) y reconoce el Teorema del Binomio \((1 + w)^n = \sum_{k=0}^{n} \binom{n}{k} w^k\) con \(w = e^{i\theta}\):
+\[
+\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta) + i\sum_{k=0}^{n} \binom{n}{k} \sin(k\theta) = \sum_{k=0}^{n} \binom{n}{k} e^{ik\theta} = \bigl(1 + e^{i\theta}\bigr)^n.
+\]
+Aplica ahora el puente complementario de factorización de ángulo mitad para \(1 + e^{i\theta}\):
+\[
+1 + e^{i\theta} = e^{i\theta/2}\bigl(e^{-i\theta/2} + e^{i\theta/2}\bigr) = 2\cos\!\left(\frac{\theta}{2}\right) e^{i\theta/2}.
+\]
+Eleva ambos miembros a la potencia \(n\)-ésima (usando el Teorema de De Moivre sobre \(e^{i\theta/2}\)):
+\[
+\bigl(1 + e^{i\theta}\bigr)^n = 2^n \cos^n\!\left(\frac{\theta}{2}\right) e^{in\theta/2} = 2^n \cos^n\!\left(\frac{\theta}{2}\right)\left(\cos\!\left(\frac{n\theta}{2}\right) + i\sin\!\left(\frac{n\theta}{2}\right)\right).
+\]
+Observa una ventaja extraordinaria: como \(2\cos(\theta/2)\) es SIEMPRE real (sea positivo, cero o negativo), aquí NO hay ningún caso degenerado de denominador: ¡la fórmula es válida para TODO \(\theta \in \mathbb{R}\) real!
+
+[CALLOUT]
+id: binomial-trig-sum
+label: Teorema
+title: Sumas de cosenos y senos ponderadas con coeficientes binomiales
+tone: key
+
+Para todo entero \(n \ge 0\) y todo ángulo real \(\theta \in \mathbb{R}\):
+\[
+\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta) = 2^n \cos^n\!\left(\frac{\theta}{2}\right) \cos\!\left(\frac{n\theta}{2}\right),
+\]
+\[
+\sum_{k=0}^{n} \binom{n}{k} \sin(k\theta) = 2^n \cos^n\!\left(\frac{\theta}{2}\right) \sin\!\left(\frac{n\theta}{2}\right).
+\]
+[/CALLOUT]
+
+¿Y si la suma binomial alterna de signo, \(\sum_{k=0}^{n} (-1)^k \binom{n}{k} \cos(k\theta)\)? NO memorices una fórmula aparte: ¡reutiliza exactamente la misma elevación! Como \((-1)^k e^{ik\theta} = (-e^{i\theta})^k\), la suma compleja es simplemente \((1 - e^{i\theta})^n\), donde aplicamos el puente de ángulo mitad para \(1 - e^{i\theta}\). La tabla siguiente resume lado a lado las tres plantillas fundamentales de elevación:
+
+[TABLE]
+Familia de sumas trigonométricas | Elevación compleja | Puente de ángulo mitad empleado
+\(\sum_{k=0}^{n-1} \cos(\alpha + k\beta)\) o \(\sin(\alpha + k\beta)\) | \(e^{i\alpha} \frac{1 - e^{in\beta}}{1 - e^{i\beta}}\) (para \(\beta \not\equiv 0 \pmod{2\pi}\)) | \(1 - e^{i\varphi} = -2i\sin(\varphi/2)e^{i\varphi/2}\)
+\(\sum_{k=0}^{n} \binom{n}{k} \cos(k\theta)\) o \(\sin(k\theta)\) | \((1 + e^{i\theta})^n\) | \(1 + e^{i\theta} = 2\cos(\theta/2)e^{i\theta/2}\)
+\(\sum_{k=0}^{n} (-1)^k \binom{n}{k} \cos(k\theta)\) o \(\sin(k\theta)\) | \((1 - e^{i\theta})^n\) | \(1 - e^{i\theta} = -2i\sin(\theta/2)e^{i\theta/2}\)
+[/TABLE]
+
+Realicemos una comprobación numérica de [REF: binomial-trig-sum | el teorema de la suma binomial]: evalúa \(\sum_{k=0}^{6} \binom{6}{k} \cos\!\left(\frac{k\pi}{3}\right)\). Sustituir \(n = 6\) y \(\theta = \frac{\pi}{3}\) da
+\[
+2^6 \cos^6\!\left(\frac{\pi}{6}\right) \cos\!\left(\frac{6\pi}{6}\right) = 64 \left(\frac{\sqrt{3}}{2}\right)^6 \cos(\pi) = 64 \cdot \frac{27}{64} \cdot (-1) = -27.
+\]
+Comprobación directa: \(1(1) + 6(\frac{1}{2}) + 15(-\frac{1}{2}) + 20(-1) + 15(-\frac{1}{2}) + 6(\frac{1}{2}) + 1(1) = 1 + 3 - 7.5 - 20 - 7.5 + 3 + 1 = -27\). El método de exponenciales complejas entregó la respuesta en una línea, ¡y funciona igual de sin esfuerzo cuando \(n = 12\) o \(n = 100\)!
+
+[QUESTION 3]
+[ANSWER: C]
+Evalúa el valor exacto de \(\sum_{k=0}^{12} \binom{12}{k} \cos\!\left(\frac{k\pi}{3}\right)\).
+
+(A) \(-729\)
+(B) \(0\)
+(C) \(729\)
+(D) \(4096\)
+(E) \(729\sqrt{3}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Evalúa la suma binomial alternante de cosenos \(\sum_{k=0}^{8} (-1)^k \binom{8}{k} \cos\!\left(\frac{k\pi}{3}\right)\).
+
+(A) \(-\frac{1}{2}\)
+(B) \(\frac{1}{2}\)
+(C) \(-\frac{\sqrt{3}}{2}\)
+(D) \(81\)
+(E) \(-81\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Para cualquier entero \(n \ge 2\), aplica el método de sumas mediante exponenciales complejas para evaluar \(\sum_{k=1}^{n-1} \sin\!\left(\frac{k\pi}{n}\right)\) en forma cerrada.
+
+(A) \(\tan\!\left(\frac{\pi}{2n}\right)\)
+(B) \(\csc\!\left(\frac{\pi}{2n}\right)\)
+(C) \(\cot\!\left(\frac{\pi}{n}\right)\)
+(D) \(n\cot\!\left(\frac{\pi}{2n}\right)\)
+(E) \(\cot\!\left(\frac{\pi}{2n}\right)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Al elevar \(\sum_{k=0}^{n} \binom{n}{k} \sin(\alpha + k\theta)\) a \(\operatorname{Im}\!\left(e^{i\alpha}(1 + e^{i\theta})^n\right)\), ¿cuál es su forma cerrada exacta para todo entero \(n \ge 0\) y reales \(\alpha, \theta \in \mathbb{R}\)?
+
+(A) \(2^n \cos^n\!\left(\frac{\theta}{2}\right) \sin(\alpha + n\theta)\)
+(B) \(2^n \cos^n\!\left(\frac{\theta}{2}\right) \sin\!\left(\alpha + \frac{n\theta}{2}\right)\)
+(C) \(2^n \sin^n\!\left(\frac{\theta}{2}\right) \sin\!\left(\alpha + \frac{n\theta}{2}\right)\)
+(D) \(2^n \cos^n\!\left(\frac{\theta}{2}\right) \cos\!\left(\alpha + \frac{n\theta}{2}\right)\)
+(E) \(2^n \cos^n(\theta) \sin\!\left(\alpha + \frac{n\theta}{2}\right)\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Evalúa el valor exacto de \(\sum_{k=0}^{15} \binom{15}{k} \sin\!\left(\frac{k\pi}{2}\right)\).
+
+(A) \(0\)
+(B) \(128\)
+(C) \(-256\)
+(D) \(-128\)
+(E) \(-128\sqrt{2}\)
+[/BONUS]

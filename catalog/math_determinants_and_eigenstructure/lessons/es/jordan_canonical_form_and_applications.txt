@@ -1,0 +1,265 @@
+=== SECTION 1: El Teorema de la Forma Canónica de Jordan y su diccionario algebraico ===
+
+Cada pieza de nuestra maquinaria estructural ya está en su lugar. Observe cómo la Descomposición Primaria y las Cadenas de Jordan Nilpotentes encajan en cuatro líneas para clasificar TODO operador lineal cuyo polinomio característico se escinda sobre \(F\) (en particular, TODA matriz compleja \(A \in M_n(\mathbb{C})\)):
+
+1. Por Descomposición Primaria, \(V = K_{\lambda_1} \oplus K_{\lambda_2} \oplus \dots \oplus K_{\lambda_s}\), donde cada \(K_{\lambda_i}\) es \(T\)-invariante de dimensión \(m_a(\lambda_i)\) y \(T|_{K_{\lambda_i}} = \lambda_i I + N_i\) con \(N_i = (T - \lambda_i I)|_{K_{\lambda_i}}\) nilpotente.
+2. Por el Teorema de la Forma Canónica Nilpotente, cada \(K_{\lambda_i}\) admite una base \(\mathcal{B}_i\) de cadenas de Jordan para \(N_i\), poniendo \([N_i]_{\mathcal{B}_i}\) en \(J_{k_1}(0) \oplus \dots \oplus J_{k_m}(0)\).
+3. Sumar \(\lambda_i I\) desplaza cada entrada diagonal de \(0\) a \(\lambda_i\) dejando intactos los \(1\) de la superdiagonal, convirtiendo cada bloque nilpotente \(J_k(0)\) en el bloque de Jordan \(k \times k\)
+\[
+J_k(\lambda) = \lambda I_k + J_k(0) = \begin{bmatrix} \lambda & 1 & 0 & \cdots & 0 \\ 0 & \lambda & 1 & \cdots & 0 \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & \cdots & 1 \\ 0 & 0 & 0 & \cdots & \lambda \end{bmatrix}.
+\]
+4. ¿Por qué la lista resultante de bloques de Jordan es única salvo reordenamiento? Para CUALQUIER valor propio \(\lambda_i\), el operador \((T - \lambda_i I)^k\) es INVERTIBLE sobre todo otro bloque primario \(K_{\lambda_j}\) (\(j \neq i\)), por lo que su espacio nulo en todo el espacio \(V\) coincide con su espacio nulo en \(K_{\lambda_i}\):
+\[
+\operatorname{nullity}\bigl((T - \lambda_i I)^k\bigr) = \operatorname{nullity}\bigl(N_i^k\bigr) \qquad \text{para todo } k \ge 0.
+\]
+Por nuestra fórmula de conteo de bloques nilpotentes, ¡el número exacto de bloques de Jordan \(J_k(\lambda_i)\) de tamaño \(k\) queda determinado únicamente por los invariantes por semejanza \(\operatorname{nullity}((T - \lambda_i I)^j)\)!
+
+[CALLOUT]
+id: jcf-theorem
+label: Teorema
+title: Teorema de la Forma Canónica de Jordan
+tone: key
+
+Sea \(T : V \to V\) un operador lineal sobre un espacio \(n\)-dimensional sobre \(F\) cuyo polinomio característico se escinde en factores lineales sobre \(F\) (en particular, CUALQUIER \(A \in M_n(\mathbb{C})\)).
+
+(1) Existencia: Existe una base \(\mathcal{B}\) de \(V\) (equivalentemente, una matriz invertible \(P \in M_n(F)\)) tal que \(J = [T]_{\mathcal{B}} = P^{-1} A P\) es una matriz de Jordan diagonal por bloques
+\[
+J = J_{k_1}(\lambda_1) \oplus J_{k_2}(\lambda_2) \oplus \dots \oplus J_{k_t}(\lambda_t),
+\]
+donde los \(\lambda_j\) no tienen por qué ser distintos (un mismo valor propio puede poseer múltiples bloques de Jordan).
+(2) Unicidad: \(J\) es ÚNICA salvo permutar el orden de sus bloques de Jordan. Para todo valor propio \(\lambda\) y todo tamaño \(k \ge 1\), el número exacto de bloques \(J_k(\lambda)\) en \(J\) es
+\[
+b_k(\lambda) = 2\,\operatorname{nullity}\bigl((A - \lambda I)^k\bigr) - \operatorname{nullity}\bigl((A - \lambda I)^{k-1}\bigr) - \operatorname{nullity}\bigl((A - \lambda I)^{k+1}\bigr).
+\]
+[/CALLOUT]
+
+¡Observe con qué transparencia muestra una matriz de Jordan \(J\) TODOS los invariantes algebraicos de \(A\) a simple vista! Como el polinomio mínimo de una matriz diagonal por bloques es el mínimo común múltiplo de los polinomios mínimos de sus bloques, y \(m_{J_k(\lambda)}(x) = (x - \lambda)^k\), el exponente de \((x - \lambda)\) en \(m_A(x)\) es simplemente el tamaño del MAYOR bloque para \(\lambda\). La tabla siguiente recoge este diccionario completo.
+
+[TABLE]
+Invariante algebraico de \(A\) para el valor propio \(\lambda\) | Lectura geométrica en la matriz de Jordan \(J\)
+Multiplicidad algebraica \(m_a(\lambda)\) | Suma de los tamaños de todos los bloques de Jordan para \(\lambda\)
+Multiplicidad geométrica \(m_g(\lambda) = \operatorname{nullity}(A - \lambda I)\) | NÚMERO total de bloques de Jordan para \(\lambda\)
+Multiplicidad de \((x - \lambda)\) en el polinomio mínimo \(m_A(x)\) | Tamaño del MAYOR bloque de Jordan para \(\lambda\)
+Número de bloques de Jordan para \(\lambda\) de tamaño \(\ge k\) | \(d_k(\lambda) = \operatorname{nullity}((A - \lambda I)^k) - \operatorname{nullity}((A - \lambda I)^{k-1})\)
+\(A\) es diagonalizable sobre \(F\) | Todo bloque de Jordan tiene tamaño \(1\) (para todo \(\lambda\))
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+Suponga que una matriz \(A \in M_7(\mathbb{C})\) tiene Forma Canónica de Jordan
+\[
+J = J_3(2) \oplus J_2(2) \oplus J_1(2) \oplus J_1(-5).
+\]
+¿Cuáles son \(p_A(x)\), \(m_A(x)\) y la multiplicidad geométrica \(m_g(2)\)?
+
+(A) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^6(x + 5),\quad m_g(2) = 1\)
+(B) \(p_A(x) = (x - 2)^3(x + 5),\quad m_A(x) = (x - 2)^3(x + 5),\quad m_g(2) = 3\)
+(C) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^3(x + 5),\quad m_g(2) = 3\)
+(D) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^3(x + 5),\quad m_g(2) = 6\)
+(E) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^2(x + 5),\quad m_g(2) = 2\)
+[/QUESTION]
+
+=== SECTION 2: Cálculo manual de \(J\) y de una base de Jordan \(P\) ===
+
+Para hallar TANTO la forma de Jordan \(J\) como una matriz de transición \(P\) que satisfaga \(P^{-1} A P = J\) (equivalentemente \(AP = PJ\)) para una matriz concreta \(2 \times 2\), \(3 \times 3\) o \(4 \times 4\) \(A\), combine nuestros dos algoritmos:
+
+1. Factorice \(p_A(x)\) para enumerar todos los valores propios distintos \(\lambda_1, \dots, \lambda_s\) con sus multiplicidades algebraicas \(m_a(\lambda_i)\).
+2. Para cada \(\lambda_i\), tome \(N_i = A - \lambda_i I\) y calcule \(\operatorname{nullity}(N_i), \operatorname{nullity}(N_i^2), \dots\) hasta alcanzar \(\operatorname{nullity}(N_i^{r_i}) = m_a(\lambda_i)\). Use los saltos de capa \(d_k = \operatorname{nullity}(N_i^k) - \operatorname{nullity}(N_i^{k-1})\) para leer los tamaños exactos de los bloques para \(\lambda_i\), ensamblando \(J\).
+3. En cada espacio propio generalizado \(K_{\lambda_i} = \ker(N_i^{r_i})\), ejecute el algoritmo descendente de cadenas de Jordan para \(N_i\): cada cadena \((\mathbf{w}_1, \dots, \mathbf{w}_k) = (N_i^{k-1}\mathbf{v}, \dots, N_i\mathbf{v}, \mathbf{v})\) satisface
+\[
+A\mathbf{w}_1 = \lambda_i\mathbf{w}_1, \qquad A\mathbf{w}_j = \mathbf{w}_{j-1} + \lambda_i\mathbf{w}_j \quad (2 \le j \le k).
+\]
+Coloque todas las cadenas como columnas de \(P\) exactamente en el MISMO orden que los bloques de \(J\), ¡y verifique \(AP = PJ\)!
+
+Ejemplo resuelto \(3 \times 3\): Halle \(J\) y \(P\) para
+\[
+A = \begin{bmatrix} 4 & 1 & -1 \\ -1 & 2 & 1 \\ 0 & 0 & 3 \end{bmatrix}.
+\]
+- Paso 1: Expandir \(\det(xI_3 - A)\) a lo largo de la fila \(3\) da \((x - 3)\bigl((x - 4)(x - 2) + 1\bigr) = (x - 3)(x^2 - 6x + 9) = (x - 3)^3\). Hay un único valor propio \(\lambda = 3\) con \(m_a(3) = 3\).
+- Paso 2: Tome \(N = A - 3I_3\):
+\[
+N = \begin{bmatrix} 1 & 1 & -1 \\ -1 & -1 & 1 \\ 0 & 0 & 0 \end{bmatrix}, \qquad N^2 = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+  Aquí \(\operatorname{rank}(N) = 1 \implies \operatorname{nullity}(N) = 2\), y \(\operatorname{nullity}(N^2) = 3\). Los saltos de capa son \(d_1 = 2\) y \(d_2 = 3 - 2 = 1\), dando un bloque de tamaño \(2\) y un bloque de tamaño \(1\):
+\[
+J = J_2(3) \oplus J_1(3) = \begin{bmatrix} 3 & 1 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 3 \end{bmatrix}.
+\]
+- Paso 3: Halle \(\ker(N) = \{x_1 + x_2 - x_3 = 0\} = \operatorname{span}\{(1, -1, 0)^T,\; (1, 0, 1)^T\}\) y \(\ker(N^2) = \mathbb{R}^3\).
+  - Capa \(2\): elija cualquier vector fuera de \(\ker(N)\), por ejemplo \(\mathbf{w}_2 = (1, 0, 0)^T\).
+  - Capa \(1\): empuje hacia abajo \(\mathbf{w}_1 = N\mathbf{w}_2 = (1, -1, 0)^T \in \ker(N)\). Extienda \(\{\mathbf{w}_1\}\) a una base de \(\ker(N)\) añadiendo \(\mathbf{w}_3 = (1, 0, 1)^T\).
+  - Ensamble \(P = \begin{bmatrix} 1 & 1 & 1 \\ -1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}\). Compruebe columna por columna: \(A\mathbf{w}_1 = 3\mathbf{w}_1\), \(A\mathbf{w}_2 = (4, -1, 0)^T = \mathbf{w}_1 + 3\mathbf{w}_2\), y \(A\mathbf{w}_3 = (3, 0, 3)^T = 3\mathbf{w}_3\), ¡confirmando \(AP = PJ\)!
+
+Ejemplo resuelto \(4 \times 4\) con dos valores propios: Halle \(J\) y \(P\) para
+\[
+B = \begin{bmatrix} 1 & 1 & 0 & 0 \\ 0 & 1 & 0 & 3 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 4 \end{bmatrix}.
+\]
+- Paso 1: \(p_B(x) = (x - 1)^3(x - 4)\), por lo que \(\dim(K_1) = 3\) y \(\dim(K_4) = 1\).
+- Paso 2: Para \(\lambda = 1\), tome \(N_1 = B - I_4\):
+\[
+N_1 = \begin{bmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 3 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 3 \end{bmatrix}, \qquad N_1^2 = \begin{bmatrix} 0 & 0 & 0 & 3 \\ 0 & 0 & 0 & 9 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 9 \end{bmatrix}.
+\]
+  Aquí \(\operatorname{rank}(N_1) = 2 \implies \operatorname{nullity}(N_1) = 2\), ¡y \(\operatorname{rank}(N_1^2) = 1 \implies \operatorname{nullity}(N_1^2) = 3 = m_a(1)\)! Así, \(d_1(1) = 2,\; d_2(1) = 1\), dando \(J_2(1) \oplus J_1(1)\) en \(K_1\), junto con \(J_1(4)\) en \(K_4\):
+\[
+J = J_2(1) \oplus J_1(1) \oplus J_1(4) = \begin{bmatrix} 1 & 1 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 4 \end{bmatrix}.
+\]
+- Paso 3: En \(K_1 = \ker(N_1^2) = \operatorname{span}\{\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3\}\) con \(\ker(N_1) = \operatorname{span}\{\mathbf{e}_1, \mathbf{e}_3\}\), elija el vector superior \(\mathbf{w}_2 = \mathbf{e}_2 \in K_1 \setminus \ker(N_1)\), empuje hacia abajo \(\mathbf{w}_1 = N_1\mathbf{e}_2 = \mathbf{e}_1\), y extienda \(\{\mathbf{e}_1\}\) en \(\ker(N_1)\) con \(\mathbf{w}_3 = \mathbf{e}_3\). Para \(\lambda = 4\), resolver \((B - 4I_4)\mathbf{x} = \mathbf{0}\) da \(\mathbf{w}_4 = (1, 3, 0, 3)^T\). Ensamblar \(P = \begin{bmatrix} 1 & 0 & 0 & 1 \\ 0 & 1 & 0 & 3 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 3 \end{bmatrix}\) arroja \(P^{-1} B P = J\).
+
+[QUESTION 2]
+[ANSWER: D]
+Halle la Forma Canónica de Jordan \(J\) (salvo reordenamiento de bloques) de la matriz
+\[
+A = \begin{bmatrix} 4 & 1 & 0 \\ -1 & 6 & 0 \\ 0 & 1 & 5 \end{bmatrix}.
+\]
+
+(A) \(J_1(5) \oplus J_1(5) \oplus J_1(5)\)
+(B) \(J_2(5) \oplus J_1(5)\)
+(C) \(J_2(4) \oplus J_1(6)\)
+(D) \(J_3(5)\)
+(E) \(J_2(5) \oplus J_1(4)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+Considere la matriz
+\[
+A = \begin{bmatrix} 5 & -1 \\ 1 & 3 \end{bmatrix},
+\]
+cuya Forma Canónica de Jordan es \(J = \begin{bmatrix} 4 & 1 \\ 0 & 4 \end{bmatrix}\). ¿Qué matriz invertible \(P\) satisface \(P^{-1} A P = J\)?
+
+(A) \(P = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\)
+(B) \(P = \begin{bmatrix} 1 & 1 \\ 1 & 0 \end{bmatrix}\)
+(C) \(P = \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix}\)
+(D) \(P = \begin{bmatrix} 1 & 1 \\ -1 & 0 \end{bmatrix}\)
+(E) \(P = \begin{bmatrix} 1 & 2 \\ 1 & 2 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Decidir la semejanza sobre \(\mathbb{C}\) ===
+
+¡Una de las mayores recompensas de [REF: jcf-theorem | el Teorema de la Forma Canónica de Jordan] es que resuelve por completo el problema de la semejanza para matrices complejas!
+
+[CALLOUT]
+id: jcf-similarity
+label: Corolario
+title: Clasificación completa por semejanza sobre \(\mathbb{C}\)
+tone: key
+
+Dos matrices complejas \(A, B \in M_n(\mathbb{C})\) son semejantes sobre \(\mathbb{C}\) (\(B = Q^{-1} A Q\) para alguna \(Q \in M_n(\mathbb{C})\) invertible) si y solo si tienen EXACTAMENTE la misma Forma Canónica de Jordan salvo permutar los bloques —equivalentemente, si y solo si tienen los mismos valores propios y \(\operatorname{nullity}((A - \lambda I)^k) = \operatorname{nullity}((B - \lambda I)^k)\) para todo valor propio \(\lambda\) y todo \(k \ge 1\).
+[/CALLOUT]
+
+Note un umbral crucial en dimensión \(n = 4\):
+- Para \(n = 2\) o \(n = 3\), ¡conocer \(p_A(x)\) Y \(m_A(x)\) SIEMPRE determina de manera única la Forma Canónica de Jordan! (Compruebe \(n = 3\) con un único valor propio \(\lambda\): las tres particiones de \(3\) son \(3\) con \(m_A = (x - \lambda)^3\), \(2 + 1\) con \(m_A = (x - \lambda)^2\) y \(1 + 1 + 1\) con \(m_A = x - \lambda\): no hay dos que compartan el mismo polinomio mínimo.)
+- ¡A partir de \(n = 4\), tener polinomios característicos IDÉNTICOS Y polinomios mínimos IDÉNTICOS YA NO garantiza la semejanza! Compare las dos matrices de Jordan \(4 \times 4\)
+\[
+J^{(1)} = J_2(\lambda) \oplus J_2(\lambda) = \begin{bmatrix} \lambda & 1 & 0 & 0 \\ 0 & \lambda & 0 & 0 \\ 0 & 0 & \lambda & 1 \\ 0 & 0 & 0 & \lambda \end{bmatrix}, \qquad J^{(2)} = J_2(\lambda) \oplus J_1(\lambda) \oplus J_1(\lambda) = \begin{bmatrix} \lambda & 1 & 0 & 0 \\ 0 & \lambda & 0 & 0 \\ 0 & 0 & \lambda & 0 \\ 0 & 0 & 0 & \lambda \end{bmatrix}.
+\]
+¡AMBAS tienen \(p(x) = (x - \lambda)^4\) Y \(m(x) = (x - \lambda)^2\)! Sin embargo, NO son semejantes sobre \(\mathbb{C}\), ¡porque \(J^{(1)}\) tiene \(2\) bloques (\(\operatorname{nullity}(J^{(1)} - \lambda I_4) = 2\)), mientras que \(J^{(2)}\) tiene \(3\) bloques (\(\operatorname{nullity}(J^{(2)} - \lambda I_4) = 3\))! Verifique siempre los conteos completos de bloques de Jordan: nunca se detenga en \(p_A\) y \(m_A\) cuando \(n \ge 4\).
+
+[QUESTION 4]
+[ANSWER: E]
+Compare las dos matrices complejas \(4 \times 4\)
+\[
+A = \begin{bmatrix} -1 & 1 & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & -1 & 1 \\ 0 & 0 & 0 & -1 \end{bmatrix}, \qquad B = \begin{bmatrix} -1 & 1 & 1 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & -1 & 0 \\ 0 & 0 & 0 & -1 \end{bmatrix}.
+\]
+¿Qué enunciado es VERDADERO?
+
+(A) \(A\) y \(B\) son semejantes sobre \(\mathbb{C}\), porque ambas tienen \(p(x) = (x + 1)^4\) y \(m(x) = (x + 1)^2\).
+(B) \(A\) y \(B\) NO son semejantes, porque \(m_A(x) = (x + 1)^2\) mientras que \(m_B(x) = (x + 1)^3\).
+(C) \(A\) y \(B\) son semejantes sobre \(\mathbb{C}\), porque ambas matrices contienen exactamente dos \(1\) por encima de la diagonal principal.
+(D) \(A\) y \(B\) NO son semejantes, porque \(m_A(x) = (x + 1)^4\) mientras que \(m_B(x) = (x + 1)^2\).
+(E) \(A\) y \(B\) comparten TANTO \(p(x) = (x + 1)^4\) como \(m(x) = (x + 1)^2\), pero NO son semejantes sobre \(\mathbb{C}\) porque \(\operatorname{nullity}(A + I_4) = 2 \neq 3 = \operatorname{nullity}(B + I_4)\).
+[/QUESTION]
+
+=== SECTION 4: Potencias de matrices defectivas mediante el desarrollo binomial ===
+
+Para una matriz diagonalizable \(A = P D P^{-1}\), las potencias altas \(A^m = P D^m P^{-1}\) eran triviales porque \(D^m\) se limitaba a elevar cada entrada diagonal a la potencia \(m\)-ésima. ¿Qué ocurre cuando \(A = P J P^{-1}\) es defectiva? Seguimos obteniendo \(A^m = P J^m P^{-1}\), donde \(J^m\) es diagonal por bloques con bloques \(J_k(\lambda)^m\), ¡y calcular \(J_k(\lambda)^m\) es sorprendentemente sencillo!
+
+Separe el bloque de Jordan \(k \times k\) como \(J_k(\lambda) = \lambda I_k + N\), donde \(N = J_k(0)\). Como \(\lambda I_k\) conmuta con TODA matriz, \(\lambda I_k\) y \(N\) CONMUTAN, ¡por lo que el teorema del binomio ordinario se aplica tal cual! Aún mejor, como \(N^j = 0\) para todo \(j \ge k\), ¡el desarrollo binomial TERMINA tras a lo sumo \(k\) términos!
+
+[CALLOUT]
+id: jordan-powers
+label: Teorema
+title: Potencias exactas de un bloque de Jordan
+tone: key
+
+Para cualquier bloque de Jordan \(k \times k\) \(J_k(\lambda) = \lambda I_k + N\) (con \(N = J_k(0)\)) y cualquier entero \(m \ge 1\),
+\[
+J_k(\lambda)^m = (\lambda I_k + N)^m = \sum_{j=0}^{k-1} \binom{m}{j} \lambda^{m-j} N^j,
+\]
+usando la convención estándar \(\binom{m}{j} = 0\) cuando \(j > m\) (y \(0^0 = 1\) cuando \(\lambda = 0\) y \(j = m\)). En particular,
+\[
+J_2(\lambda)^m = \begin{bmatrix} \lambda^m & m\lambda^{m-1} \\ 0 & \lambda^m \end{bmatrix}, \qquad J_3(\lambda)^m = \begin{bmatrix} \lambda^m & m\lambda^{m-1} & \binom{m}{2}\lambda^{m-2} \\ 0 & \lambda^m & m\lambda^{m-1} \\ 0 & 0 & \lambda^m \end{bmatrix}.
+\]
+[/CALLOUT]
+
+Calculemos una fórmula cerrada exacta para \(A^m\) en una matriz defectiva \(2 \times 2\) \(A = \begin{bmatrix} 3 & 1 \\ -1 & 1 \end{bmatrix}\). Aquí \(p_A(x) = (x - 2)^2\), y \(N = A - 2I_2 = \begin{bmatrix} 1 & 1 \\ -1 & -1 \end{bmatrix}\) tiene \(N^2 = 0\). Elegir \(\mathbf{w}_2 = (1, 0)^T\) da \(\mathbf{w}_1 = N\mathbf{w}_2 = (1, -1)^T\), de modo que
+\[
+P = \begin{bmatrix} 1 & 1 \\ -1 & 0 \end{bmatrix}, \qquad P^{-1} = \begin{bmatrix} 0 & -1 \\ 1 & 1 \end{bmatrix}, \qquad J = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}.
+\]
+Aplicar [REF: jordan-powers | la fórmula de potencias de un bloque de Jordan] produce
+\[
+A^m = P J^m P^{-1} = \begin{bmatrix} 1 & 1 \\ -1 & 0 \end{bmatrix}\begin{bmatrix} 2^m & m \cdot 2^{m-1} \\ 0 & 2^m \end{bmatrix}\begin{bmatrix} 0 & -1 \\ 1 & 1 \end{bmatrix} = 2^{m-1}\begin{bmatrix} m + 2 & m \\ -m & 2 - m \end{bmatrix}.
+\]
+¡Comprobación rápida: \(m = 0\) da \(I_2\), \(m = 1\) da \(A\), y \(m = 2\) da \(2\begin{bmatrix} 4 & 2 \\ -2 & 0 \end{bmatrix} = \begin{bmatrix} 8 & 4 \\ -4 & 0 \end{bmatrix} = A^2\)!
+
+Note la notable diferencia cualitativa entre potencias diagonalizables y defectivas. En [REF: jordan-powers | \(J_2(\lambda)^m\)], la superdiagonal lleva un factor polinómico \(m\lambda^{m-1}\) (y un bloque \(k \times k\) lleva términos hasta \(\binom{m}{k-1}\lambda^{m-k+1}\)). Incluso cuando \(|\lambda| < 1\) garantiza el decaimiento final a \(0\) cuando \(m \to \infty\), la entrada superdiagonal \(m\lambda^{m-1}\) exhibe un CRECIMIENTO transitorio antes de decaer. Arrastre el deslizador \(\lambda\) en la gráfica siguiente para observar cómo la joroba transitoria crece en altura y se desplaza hacia la derecha conforme \(\lambda\) se acerca a \(1\) (¡y en \(\lambda = 1\), la superdiagonal crece linealmente como \(m\) sin cota!).
+
+[GRAPH]
+type: function2d
+title: Entrada diagonal \(\lambda^m\) frente al crecimiento transitorio superdiagonal \(m\lambda^{m-1}\) en \(J_2(\lambda)^m\)
+xlabel: \(m\)
+ylabel: Valor de la entrada
+xrange: 0, 20
+trace: lam^x | label: diagonal \(\lambda^m\)
+trace: x * lam^(x - 1) | label: superdiagonal \(m\lambda^{m-1}\)
+slider: lam | range: 0.5, 0.95 | init: 0.8 | step: 0.05
+[/GRAPH]
+
+Finalmente, note que exactamente la misma descomposición que conmuta \(J_k(\lambda) = \lambda I_k + N\) sustenta la exponencial matricial en ecuaciones diferenciales lineales \(\mathbf{x}'(t) = A\mathbf{x}(t)\): como \(\lambda I_k\) y \(N\) conmutan y \(N^k = 0\), la serie infinita de potencias colapsa a la suma finita \(e^{t J_k(\lambda)} = e^{\lambda t}\sum_{j=0}^{k-1} \frac{t^j}{j!} N^j\), explicando directamente de dónde provienen los términos \(t e^{\lambda t}, t^2 e^{\lambda t}, \dots\) cuando un sistema diferencial tiene valores propios defectivos.
+
+[QUESTION 5]
+[ANSWER: A]
+Suponga que \(A = P J P^{-1}\), donde
+\[
+J = \begin{bmatrix} 3 & 1 & 0 \\ 0 & 3 & 1 \\ 0 & 0 & 3 \end{bmatrix}, \qquad P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+¿Cuál es la \((1, 3)\)-entrada de \(A^5\)?
+
+(A) \(-135\)
+(B) \(270\)
+(C) \(135\)
+(D) \(675\)
+(E) \(405\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+¿Es toda matriz cuadrada compleja \(A \in M_n(\mathbb{C})\) semejante sobre \(\mathbb{C}\) a su traspuesta \(A^T\)?
+
+(A) No: solo las matrices diagonalizables son semejantes a sus traspuestas.
+(B) No: \(J_2(\lambda)\) tiene un \(1\) en la superdiagonal mientras que \(J_2(\lambda)^T\) tiene un \(1\) en la subdiagonal, por lo que no pueden ser semejantes.
+(C) Sí, pero solo cuando \(\det(A) \neq 0\).
+(D) Sí: todo bloque de Jordan \(J_k(\lambda)\) es semejante a \(J_k(\lambda)^T\) mediante la matriz de inversión de base, por lo que \(J \sim J^T\) y por tanto \(A \sim J \sim J^T \sim A^T\).
+(E) No: la semejanza con \(A^T\) se cumple para \(n \le 3\) pero falla a partir de \(n = 4\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Para qué matrices complejas \(A \in M_n(\mathbb{C})\) permanecen acotadas las entradas de \(A^m\) cuando \(m \to \infty\)?
+
+(A) Si y solo si todo valor propio \(\lambda\) de \(A\) satisface \(|\lambda| \le 1\).
+(B) Si y solo si todo valor propio \(\lambda\) satisface \(|\lambda| \le 1\), Y todo valor propio con \(|\lambda| = 1\) tiene todos sus bloques de Jordan de tamaño \(1\).
+(C) Si y solo si todo valor propio \(\lambda\) satisface \(|\lambda| < 1\).
+(D) Si y solo si \(A\) es diagonalizable sobre \(\mathbb{C}\) con \(|\det(A)| \le 1\).
+(E) Si y solo si todo valor propio con \(|\lambda| < 1\) tiene bloques de Jordan de tamaño \(1\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+¿Cuántas clases de semejanza distintas de matrices en \(M_5(\mathbb{C})\) tienen polinomio característico \(p(x) = (x - 4)^3(x + 1)^2\)?
+
+(A) \(2\)
+(B) \(5\)
+(C) \(6\)
+(D) \(4\)
+(E) \(9\)
+[/BONUS]

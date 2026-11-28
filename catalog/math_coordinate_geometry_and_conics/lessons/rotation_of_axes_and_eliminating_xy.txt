@@ -1,0 +1,264 @@
+=== SECTION 1: Rotating the coordinate axes ===
+
+Every axis-aligned conic we have analyzed so far lacked a cross-product \(xy\)-term. Now consider the simple equation \(xy = 4\), or more generally the full second-degree equation
+\[
+Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0 \qquad (B \neq 0).
+\]
+Can a translation \(x = x' + h\), \(y = y' + k\) remove the \(xy\)-term? Substituting gives \(B(x' + h)(y' + k) = Bx'y' + Bkx' + Bhy' + Bhk\): the coefficient \(B\) on \(x'y'\) does not budge at all! Geometrically, a nonzero \(xy\)-term signals that the conic's symmetry axes are tilted relative to the \(x\)- and \(y\)-axes. To align the coordinate axes with the conic, we must rotate the coordinate frame.
+
+Keep the origin fixed at \((0, 0)\) and rotate the positive \(x\)- and \(y\)-axes counterclockwise through an angle \(\theta\) to form new perpendicular axes \(x'\) and \(y'\):
+- One unit along the positive \(x'\)-axis lands at the unit-circle point \((\cos\theta, \sin\theta)\) in the original plane.
+- Because the positive \(y'\)-axis sits \(90^\circ\) counterclockwise from the positive \(x'\)-axis (at angle \(\theta + \frac{\pi}{2}\)), one unit along the positive \(y'\)-axis lands at \((\cos(\theta + \frac{\pi}{2}), \sin(\theta + \frac{\pi}{2})) = (-\sin\theta, \cos\theta)\).
+
+Now take any point \(P\) whose coordinates in the rotated frame are \((x', y')\). Starting from the origin, we reach \(P\) by moving \(x'\) units in the \(x'\)-direction \((\cos\theta, \sin\theta)\) and then \(y'\) units in the \(y'\)-direction \((-\sin\theta, \cos\theta)\). Adding the horizontal and vertical displacements gives \(x\) and \(y\) directly!
+
+[CALLOUT]
+id: rotation-equations
+label: Rule
+title: Rotation of axes through counterclockwise angle \(\theta\)
+tone: key
+
+When the \(x\)- and \(y\)-axes are rotated counterclockwise by angle \(\theta\) about the origin to form the \(x'y'\)-axes, original coordinates \((x, y)\) and rotated coordinates \((x', y')\) are related by
+\[
+x = x'\cos\theta - y'\sin\theta, \qquad y = x'\sin\theta + y'\cos\theta.
+\]
+Solving this \(2 \times 2\) linear system using \(\cos^2\theta + \sin^2\theta = 1\) (equivalently, rotating back by \(-\theta\)) yields the inverse equations:
+\[
+x' = x\cos\theta + y\sin\theta, \qquad y' = -x\sin\theta + y\cos\theta.
+\]
+[/CALLOUT]
+
+Drag the angle slider \(a\) (in radians, representing \(\theta\)) below to rotate the dashed \(x'\)- and \(y'\)-axes counterclockwise around the origin. The point \(P\) keeps fixed rotated coordinates \((x', y') = (2, 1)\), so you can watch how stepping \(2\) units along \((\cos a, \sin a)\) and \(1\) unit along \((-\sin a, \cos a)\) locates \(P\) in the original \(xy\)-plane.
+
+[GRAPH]
+type: parametric2d
+title: Rotated \(x'y'\)-axes at angle \(\theta = a\) and the point with \((x', y') = (2, 1)\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.5, 3.5
+yrange: -3.5, 3.5
+trace: cos(t), sin(t) | label: unit circle
+segment: -3*cos(a), -3*sin(a), 3*cos(a), 3*sin(a) | label: \(x'\) | dashed: true
+segment: 3*sin(a), -3*cos(a), -3*sin(a), 3*cos(a) | label: \(y'\) | dashed: true
+segment: 0, 0, 2*cos(a), 2*sin(a)
+segment: 2*cos(a), 2*sin(a), 2*cos(a) - sin(a), 2*sin(a) + cos(a)
+point: cos(a), sin(a) | label: \(u\)
+point: -sin(a), cos(a) | label: \(v\)
+point: 2*cos(a) - sin(a), 2*sin(a) + cos(a) | label: \(P\)
+slider: a | range: 0, 1.57 | init: 0.6 | step: 0.05
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: D]
+The coordinate axes are rotated counterclockwise through \(\theta = 60^\circ\). A point has rotated coordinates \((x', y') = (4, -2\sqrt{3})\). What are its original \((x, y)\) coordinates?
+
+(A) \((-1, 3\sqrt{3})\)
+(B) \((5, 3\sqrt{3})\)
+(C) \((-1, \sqrt{3})\)
+(D) \((5, \sqrt{3})\)
+(E) \((2\sqrt{3} - 1, 2 + \sqrt{3})\)
+[/QUESTION]
+
+=== SECTION 2: Eliminating the xy-term and special-angle rotations ===
+
+To find which angle \(\theta\) eliminates the \(x'y'\)-term from \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) (\(B \neq 0\)), we need two compact trigonometric bridges linking \(\theta\) and \(2\theta\).
+
+[CALLOUT]
+id: trig-bridges
+label: Reference
+title: Double-angle and acute half-angle identities
+tone: note
+
+For any angle \(\theta\), the double-angle identities relate products and squares of \(\sin\theta\) and \(\cos\theta\) to \(2\theta\):
+(1) \(\sin 2\theta = 2\sin\theta\cos\theta\).
+(2) \(\cos 2\theta = \cos^2\theta - \sin^2\theta = 2\cos^2\theta - 1 = 1 - 2\sin^2\theta\).
+
+Solving the last two forms for \(\cos\theta\) and \(\sin\theta\) when \(\theta \in \bigl(0, \frac{\pi}{2}\bigr)\) (so both \(\cos\theta > 0\) and \(\sin\theta > 0\)) yields the acute half-angle formulas:
+(3) \(\cos\theta = \sqrt{\frac{1 + \cos 2\theta}{2}}, \qquad \sin\theta = \sqrt{\frac{1 - \cos 2\theta}{2}}\).
+[/CALLOUT]
+
+Now substitute [REF: rotation-equations | the forward rotation formulas] \(x = x'\cos\theta - y'\sin\theta\) and \(y = x'\sin\theta + y'\cos\theta\) into \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\):
+\[
+A(x'\cos\theta - y'\sin\theta)^2 + B(x'\cos\theta - y'\sin\theta)(x'\sin\theta + y'\cos\theta) + C(x'\sin\theta + y'\cos\theta)^2 + D(x'\cos\theta - y'\sin\theta) + E(x'\sin\theta + y'\cos\theta) + F = 0.
+\]
+Expanding and grouping like terms produces the transformed equation
+\[
+A'x'^2 + B'x'y' + C'y'^2 + D'x' + E'y' + F' = 0,
+\]
+with new coefficients
+\[
+A' = A\cos^2\theta + B\sin\theta\cos\theta + C\sin^2\theta,
+\]
+\[
+B' = B(\cos^2\theta - \sin^2\theta) + (C - A)(2\sin\theta\cos\theta),
+\]
+\[
+C' = A\sin^2\theta - B\sin\theta\cos\theta + C\cos^2\theta,
+\]
+along with \(D' = D\cos\theta + E\sin\theta\), \(E' = -D\sin\theta + E\cos\theta\), and \(F' = F\).
+
+Apply [REF: trig-bridges.1 | the double-angle sine] and [REF: trig-bridges.2 | double-angle cosine] to \(B'\):
+\[
+B' = B\cos 2\theta + (C - A)\sin 2\theta.
+\]
+To eliminate the cross-product term, set \(B' = 0\):
+\[
+B\cos 2\theta = (A - C)\sin 2\theta.
+\]
+Can \(\sin 2\theta = 0\)? No: if \(\sin 2\theta = 0\), then \(\cos 2\theta = \pm 1\), forcing \(B = 0\) contrary to \(B \neq 0\). We may therefore divide safely by \(B\sin 2\theta\) to obtain the elimination condition.
+
+[CALLOUT]
+id: elimination-angle
+label: Theorem
+title: Angle that eliminates the \(xy\)-term
+tone: key
+
+Given \(Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0\) with \(B \neq 0\), the rotated cross-term coefficient \(B'\) vanishes if and only if the rotation angle \(\theta\) satisfies
+\[
+\cot 2\theta = \frac{A - C}{B}.
+\]
+Choosing \(2\theta \in (0, \pi)\) uniquely fixes an acute counterclockwise rotation angle \(\theta \in \bigl(0, \frac{\pi}{2}\bigr)\). In particular, whenever \(A = C\), we have \(\cot 2\theta = 0\), so \(2\theta = \frac{\pi}{2}\) and \(\theta = \frac{\pi}{4}\) (\(45^\circ\)).
+[/CALLOUT]
+
+Test [REF: elimination-angle | this condition] immediately on \(xy = 4\). Here \(A = 0\), \(B = 1\), and \(C = 0\), so \(A = C\) gives \(\theta = 45^\circ\), with \(\cos 45^\circ = \sin 45^\circ = \frac{\sqrt{2}}{2}\). Substituting \(x = \frac{x' - y'}{\sqrt{2}}\) and \(y = \frac{x' + y'}{\sqrt{2}}\) turns \(xy = 4\) into
+\[
+\left(\frac{x' - y'}{\sqrt{2}}\right)\left(\frac{x' + y'}{\sqrt{2}}\right) = 4 \implies \frac{x'^2 - y'^2}{2} = 4 \implies \frac{x'^2}{8} - \frac{y'^2}{8} = 1.
+\]
+In the rotated frame, \(xy = 4\) is simply a rectangular hyperbola with \(a = b = 2\sqrt{2}\) opening along the \(x'\)-axis (the line \(y = x\)). Its vertices \((x', y') = (\pm 2\sqrt{2}, 0)\) translate back via \(x = \frac{x' - y'}{\sqrt{2}}, y = \frac{x' + y'}{\sqrt{2}}\) to \((2, 2)\) and \((-2, -2)\) in the original plane!
+
+[GRAPH]
+type: parametric2d
+title: Hyperbola \(xy = 4\) aligned with the \(45^\circ\)-rotated \(x'y'\)-axes
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.5, 1.5
+xrange: -6, 6
+yrange: -6, 6
+trace: 2*cosh(t) - 2*sinh(t), 2*cosh(t) + 2*sinh(t) | label: \(xy = 4\) (first quadrant)
+trace: -2*cosh(t) - 2*sinh(t), -2*cosh(t) + 2*sinh(t) | label: \(xy = 4\) (third quadrant)
+segment: -5.5, -5.5, 5.5, 5.5 | label: \(x'\) | dashed: true
+segment: -5.5, 5.5, 5.5, -5.5 | label: \(y'\) | dashed: true
+point: 2, 2 | label: \((2, 2)\)
+point: -2, -2 | label: \((-2, -2)\)
+[/GRAPH]
+
+When \(\frac{A - C}{B}\) equals \(\pm \sqrt{3}\), \(\pm \frac{1}{\sqrt{3}}\), or \(0\), the rotation lands on one of the special angles \(15^\circ\), \(30^\circ\), \(45^\circ\), \(60^\circ\), or \(75^\circ\). Watch the sign of \(\cot 2\theta\) carefully! On \(7x^2 - 6\sqrt{3}xy + 13y^2 = 16\), we have \(A = 7\), \(B = -6\sqrt{3}\), and \(C = 13\), so
+\[
+\cot 2\theta = \frac{7 - 13}{-6\sqrt{3}} = \frac{-6}{-6\sqrt{3}} = \frac{1}{\sqrt{3}}.
+\]
+Because \(\cot 2\theta > 0\) and \(2\theta \in (0^\circ, 180^\circ)\), \(2\theta\) lies in Quadrant I: \(2\theta = 60^\circ\), so \(\theta = 30^\circ\), with \(\cos 30^\circ = \frac{\sqrt{3}}{2}\) and \(\sin 30^\circ = \frac{1}{2}\). Computing the rotated coefficients directly gives
+\[
+A' = 7\left(\frac{3}{4}\right) - 6\sqrt{3}\left(\frac{\sqrt{3}}{4}\right) + 13\left(\frac{1}{4}\right) = \frac{21 - 18 + 13}{4} = 4,
+\]
+\[
+C' = 7\left(\frac{1}{4}\right) + 6\sqrt{3}\left(\frac{\sqrt{3}}{4}\right) + 13\left(\frac{3}{4}\right) = \frac{7 + 18 + 39}{4} = 16.
+\]
+Thus \(4x'^2 + 16y'^2 = 16\), or \(\frac{x'^2}{4} + \frac{y'^2}{1} = 1\)—an ellipse tilted by \(30^\circ\) with semi-major axis \(2\) along the \(x'\)-axis and semi-minor axis \(1\) along the \(y'\)-axis.
+
+[QUESTION 2]
+[ANSWER: C]
+Which acute rotation angle \(\theta \in (0^\circ, 90^\circ)\) eliminates the \(xy\)-term from \(5x^2 + 2\sqrt{3}xy + 7y^2 = 32\), and what is the resulting standard equation in \((x', y')\)?
+
+(A) \(\theta = 30^\circ\); \(\frac{x'^2}{4} + \frac{y'^2}{8} = 1\)
+(B) \(\theta = 60^\circ\); \(\frac{x'^2}{8} + \frac{y'^2}{4} = 1\)
+(C) \(\theta = 60^\circ\); \(\frac{x'^2}{4} + \frac{y'^2}{8} = 1\)
+(D) \(\theta = 30^\circ\); \(\frac{x'^2}{8} + \frac{y'^2}{4} = 1\)
+(E) \(\theta = 45^\circ\); \(\frac{x'^2}{4} + \frac{y'^2}{8} = 1\)
+[/QUESTION]
+
+=== SECTION 3: Exact non-special rotations via reference triangles and half-angles ===
+
+Most quadratic equations produce a rational value of \(\cot 2\theta = \frac{A - C}{B}\) that does not correspond to a special angle—such as \(\frac{5}{12}\) or \(-\frac{3}{4}\). You never need a calculator or inverse trigonometric approximation! Because we only ever substitute \(\cos\theta\) and \(\sin\theta\) (never \(\theta\) itself), a signed reference triangle for \(2\theta\) combined with [REF: trig-bridges.3 | the acute half-angle formulas] delivers exact radical values every time:
+(1) Compute \(\cot 2\theta = \frac{A - C}{B}\) and reduce it to lowest terms.
+(2) Remember that \(2\theta \in (0, \pi)\), so \(\sin 2\theta > 0\) ALWAYS. Therefore \(\cos 2\theta\) has the EXACT SAME SIGN as \(\cot 2\theta\): positive when \(\cot 2\theta > 0\) (Quadrant I), and negative when \(\cot 2\theta < 0\) (Quadrant II).
+(3) Form a right triangle with adjacent leg \(\lvert p \rvert\), opposite leg \(\lvert q \rvert\) (where \(\cot 2\theta = \frac{p}{q}\)), and hypotenuse \(r = \sqrt{p^2 + q^2}\). Then \(\cos 2\theta = \pm \frac{\lvert p \rvert}{r}\), keeping the sign of \(\cot 2\theta\).
+(4) Evaluate \(\cos\theta = \sqrt{\frac{1 + \cos 2\theta}{2}}\) and \(\sin\theta = \sqrt{\frac{1 - \cos 2\theta}{2}}\), both positive since \(\theta \in (0, \frac{\pi}{2})\).
+(5) Substitute \(x = x'\cos\theta - y'\sin\theta\) and \(y = x'\sin\theta + y'\cos\theta\) into the equation, simplify, and sketch the conic relative to the rotated \(x'\)-axis (direction \((\cos\theta, \sin\theta)\)) and \(y'\)-axis (direction \((-\sin\theta, \cos\theta)\)).
+
+Work through a complete Quadrant II example: \(4x^2 + 4xy + 7y^2 = 24\).
+Here \(A = 4\), \(B = 4\), and \(C = 7\), so
+\[
+\cot 2\theta = \frac{4 - 7}{4} = -\frac{3}{4}.
+\]
+The reference triangle has legs \(3\) and \(4\) and hypotenuse \(5\). Because \(\cot 2\theta < 0\), the angle \(2\theta\) lies in Quadrant II, giving
+\[
+\cos 2\theta = -\frac{3}{5}.
+\]
+Applying [REF: trig-bridges.3 | the acute half-angle formulas]:
+\[
+\cos\theta = \sqrt{\frac{1 + (-3/5)}{2}} = \sqrt{\frac{1}{5}} = \frac{1}{\sqrt{5}}, \qquad \sin\theta = \sqrt{\frac{1 - (-3/5)}{2}} = \sqrt{\frac{4}{5}} = \frac{2}{\sqrt{5}}.
+\]
+Now compute \(A'\) and \(C'\) (knowing \(B' = 0\) by construction):
+\[
+A' = 4\left(\frac{1}{5}\right) + 4\left(\frac{2}{5}\right) + 7\left(\frac{4}{5}\right) = \frac{4 + 8 + 28}{5} = 8,
+\]
+\[
+C' = 4\left(\frac{4}{5}\right) - 4\left(\frac{2}{5}\right) + 7\left(\frac{1}{5}\right) = \frac{16 - 8 + 7}{5} = 3.
+\]
+The equation simplifies to \(8x'^2 + 3y'^2 = 24\), or
+\[
+\frac{x'^2}{3} + \frac{y'^2}{8} = 1.
+\]
+To sketch this ellipse in the original \(xy\)-plane, draw the positive \(x'\)-axis through the origin in the direction \((\cos\theta, \sin\theta) \parallel (1, 2)\) (slope \(2\)), draw the perpendicular positive \(y'\)-axis in the direction \((-2, 1)\) (slope \(-\frac{1}{2}\)), and plot the ellipse with semi-axis \(\sqrt{3}\) along \(x'\) and semi-major axis \(2\sqrt{2}\) along \(y'\).
+
+[GRAPH]
+type: parametric2d
+title: Rotated ellipse \(4x^2 + 4xy + 7y^2 = 24\) (\(\frac{x'^2}{3} + \frac{y'^2}{8} = 1\) in the \(x'y'\)-frame)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -3.5, 3.5
+yrange: -3.5, 3.5
+trace: (sqrt(3)*cos(t) - 4*sqrt(2)*sin(t))/sqrt(5), (2*sqrt(3)*cos(t) + 2*sqrt(2)*sin(t))/sqrt(5) | label: \(4x^2 + 4xy + 7y^2 = 24\)
+segment: -1.5, -3, 1.5, 3 | label: \(x'\) | dashed: true
+segment: 3, -1.5, -3, 1.5 | label: \(y'\) | dashed: true
+point: -4*sqrt(2/5), 2*sqrt(2/5) | label: \(V_1\)
+point: 4*sqrt(2/5), -2*sqrt(2/5) | label: \(V_2\)
+[/GRAPH]
+
+When linear terms \(Dx + Ey\) are also present, substitute the exact same \(x = x'\cos\theta - y'\sin\theta\) and \(y = x'\sin\theta + y'\cos\theta\) into \(Dx + Ey\) as well—producing \(D'x' + E'y'\), which you can then simplify by completing the square if needed.
+
+[QUESTION 3]
+[ANSWER: A]
+To eliminate the \(xy\)-term from \(8x^2 + 12xy + 3y^2 = 10\) using an acute rotation \(\theta \in (0^\circ, 90^\circ)\), what are the exact values of \(\cos\theta\) and \(\sin\theta\)?
+
+(A) \(\cos\theta = \frac{3}{\sqrt{13}}\), \(\sin\theta = \frac{2}{\sqrt{13}}\)
+(B) \(\cos\theta = \frac{2}{\sqrt{13}}\), \(\sin\theta = \frac{3}{\sqrt{13}}\)
+(C) \(\cos\theta = \frac{5}{13}\), \(\sin\theta = \frac{12}{13}\)
+(D) \(\cos\theta = \frac{12}{13}\), \(\sin\theta = \frac{5}{13}\)
+(E) \(\cos\theta = \frac{3}{\sqrt{26}}\), \(\sin\theta = \frac{2}{\sqrt{26}}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+Rotate the coordinate axes by the acute angle \(\theta \in (0^\circ, 90^\circ)\) that eliminates the \(xy\)-term from \(9x^2 - 24xy + 16y^2 - 40x - 30y = 0\). What is the resulting simplified equation in \((x', y')\)?
+
+(A) \(x'^2 = 2y'\)
+(B) \(y'^2 = -2x'\)
+(C) \(25y'^2 - 50y' = 0\)
+(D) \(25x'^2 - 50y' = 0\)
+(E) \(y'^2 = 2x'\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Eliminate the \(xy\)-term from \(2x^2 + 4xy - y^2 = 12\) using an acute rotation \(\theta \in (0^\circ, 90^\circ)\). What is the resulting standard equation in \((x', y')\)?
+
+(A) \(\frac{y'^2}{4} - \frac{x'^2}{6} = 1\)
+(B) \(\frac{x'^2}{4} - \frac{y'^2}{6} = 1\)
+(C) \(\frac{x'^2}{6} - \frac{y'^2}{4} = 1\)
+(D) \(\frac{x'^2}{4} + \frac{y'^2}{6} = 1\)
+(E) \(\frac{x'^2}{3} - \frac{y'^2}{2} = 1\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+In the original \(xy\)-plane, what are the coordinates of the two vertices of the rotated hyperbola \(xy = -9\)?
+
+(A) \((3, 3)\) and \((-3, -3)\)
+(B) \((3\sqrt{2}, 0)\) and \((-3\sqrt{2}, 0)\)
+(C) \((-3, 3)\) and \((3, -3)\)
+(D) \((0, 3\sqrt{2})\) and \((0, -3\sqrt{2})\)
+(E) \((-9, 1)\) and \((9, -1)\)
+[/BONUS]

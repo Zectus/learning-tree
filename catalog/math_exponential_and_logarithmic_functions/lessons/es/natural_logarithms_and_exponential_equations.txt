@@ -1,0 +1,195 @@
+=== SECTION 1: El logaritmo natural y el puente universal de conversión de base ===
+
+Cuando introdujimos el número de Euler \(e \approx 2.71828\) y la función exponencial natural \(e^x\), dejamos pendiente cómo despejar \(x\) en \(e^x = 10\) o cómo reescribir una exponencial general \(b^x\) usando la base \(e\). Con los logaritmos generales y el cambio de base ya disponibles, simplemente elegimos la base especial \(b = e\).
+
+El logaritmo en base \(e\) se denomina logaritmo natural y se escribe \(\ln(x) = \log_e(x)\). Toda propiedad de \(\log_b(x)\) se aplica directamente a \(\ln(x)\) con \(b = e > 1\): tiene dominio \((0, \infty)\), rango \((-\infty, \infty)\), asíntota vertical \(x = 0\), intersección con el eje \(x\) en \((1, 0)\), y es estrictamente creciente e inyectiva.
+
+[CALLOUT]
+id: ln-bridge
+label: Identidades
+title: Identidades del logaritmo natural y conversión universal de base
+tone: key
+
+Para \(x > 0\) (donde aparece \(\ln(x)\)) y cualquier real \(t\):
+
+(1) Equivalencia definitoria: \(y = \ln(x) \iff e^y = x\), con \(\ln(1) = 0\) y \(\ln(e) = 1\).
+(2) Cancelación inversa: \(\ln(e^t) = t\) para todo \(t \in \mathbb{R}\), y \(e^{\ln(x)} = x\) para todo \(x > 0\).
+(3) Puente universal de conversión de base: para todo \(b > 0\) y todo \(t \in \mathbb{R}\),
+\[
+b^t = e^{t \ln b}.
+\]
+[/CALLOUT]
+
+Para deducir [REF: ln-bridge.3 | el puente de conversión de base], reescribe la constante positiva \(b\) usando [REF: ln-bridge.2 | la cancelación inversa] como \(b = e^{\ln b}\), y luego eleva ambos lados a la potencia \(t\):
+\[
+b^t = \left(e^{\ln b}\right)^t = e^{t \ln b}.
+\]
+Lee lo que esto expresa estructuralmente: toda función exponencial \(b^t\) es simplemente la exponencial natural \(e^{kt}\) con constante de escalamiento horizontal \(k = \ln b\). Cuando \(b > 1\), tenemos \(\ln b > 0\) (crecimiento); cuando \(0 < b < 1\), tenemos \(\ln b < 0\) (decrecimiento). Por ejemplo, \(2^x = e^{x \ln 2} \approx e^{0.6931x}\) y \((1/3)^x = e^{x \ln(1/3)} = e^{-x \ln 3} \approx e^{-1.0986x}\). Asimismo, el cambio de base nos permite convertir cualquier logaritmo en logaritmos naturales mediante \(\log_b(x) = \dfrac{\ln(x)}{\ln(b)}\).
+
+[GRAPH]
+type: function2d
+title: Exponencial natural \(y = e^x\) y logaritmo natural \(y = \ln(x)\) como reflexiones respecto a \(y = x\)
+xlabel: \(x\)
+ylabel: \(y\)
+aspect: equal
+xrange: -3, 5
+yrange: -3, 5
+trace: exp(x) | label: \(y = e^x\)
+trace: log(x) | label: \(y = \ln(x)\)
+trace: x | label: \(y = x\)
+point: 0, 1 | label: \((0, 1)\)
+point: 1, 0 | label: \((1, 0)\)
+point: 1, exp(1) | label: \((1, e)\)
+point: exp(1), 1 | label: \((e, 1)\)
+segment: 1, exp(1), exp(1), 1 | dashed: true
+[/GRAPH]
+
+Combinar las leyes de los logaritmos con [REF: ln-bridge.2 | la cancelación inversa] también simplifica limpiamente expresiones anidadas de exponenciales y logaritmos. Por ejemplo, para simplificar \(e^{3\ln 2 - \ln 5}\), primero condensa el exponente en un solo logaritmo: \(3\ln 2 - \ln 5 = \ln(2^3) - \ln 5 = \ln(8/5)\). Luego \(e^{\ln(8/5)} = 8/5\).
+
+[QUESTION 1]
+[ANSWER: A]
+¿Qué expresión es idénticamente igual a \(3 \cdot 5^{-2x}\) para todo número real \(x\)?
+
+(A) \(3 e^{-2x \ln 5}\)
+(B) \(3 e^{x \ln(-10)}\)
+(C) \(e^{x \ln(3/25)}\)
+(D) \(3 e^{(x \ln 5)^{-2}}\)
+(E) \(e^{-2x \ln 15}\)
+[/QUESTION]
+
+=== SECTION 2: Resolución de ecuaciones exponenciales: bases comunes, aislamiento y bases distintas ===
+
+Una ecuación exponencial es una ecuación en la que la incógnita \(x\) aparece en uno o más exponentes. En lugar de memorizar una única receta, aprende a reconocer qué estructura algebraica está presente y aplica el método más limpio. Siempre hallamos soluciones simbólicas exactas (en términos de \(\ln\) o \(\log\)) antes de tomar cualquier aproximación decimal opcional.
+
+Estrategia 1: Igualar una base común.
+Siempre que ambos lados puedan escribirse como potencias de la misma base \(b\), usa la propiedad de inyectividad \(b^u = b^v \implies u = v\), sin necesidad de logaritmos.
+Ejemplo: Resuelve \(4^{x + 1} = 8^{2x - 3}\). Como \(4 = 2^2\) y \(8 = 2^3\),
+\[
+\left(2^2\right)^{x + 1} = \left(2^3\right)^{2x - 3} \implies 2^{2x + 2} = 2^{6x - 9}.
+\]
+Igualar los exponentes da \(2x + 2 = 6x - 9 \implies 4x = 11 \implies x = \frac{11}{4}\).
+
+Estrategia 2: Aislar un único término exponencial.
+Cuando solo aparece un término exponencial y su valor no es una potencia directa de la base, aísla primero la exponencial y luego aplica \(\ln\) (o \(\log_b\)) a ambos lados.
+Ejemplo: Resuelve \(5 \cdot 3^{2x - 1} = 20\). Primero divide entre \(5\):
+\[
+3^{2x - 1} = 4.
+\]
+Toma \(\ln\) de ambos lados y baja el exponente con la regla de la potencia:
+\[
+(2x - 1)\ln 3 = \ln 4 \implies 2x - 1 = \frac{\ln 4}{\ln 3} \implies x = \frac{1}{2}\!\left(1 + \frac{\ln 4}{\ln 3}\right) \approx 1.1309.
+\]
+Mantente atento al diagnóstico de ausencia de solución justo después de aislar: en \(2e^{3x} + 10 = 4\), aislar la exponencial da \(e^{3x} = -3\). Como \(e^{3x} > 0\) para todo número real \(x\), esta ecuación no tiene solución real; no tomes \(\ln(-3)\).
+
+Estrategia 3: Tomar \(\ln\) de ambos lados con bases distintas.
+Cuando dos bases diferentes llevan exponentes variables, como \(2^{x + 1} = 5^{2x - 3}\), no hay una base racional común. Aplica \(\ln\) a ambos lados de inmediato, distribuye para separar los términos en \(x\) de las constantes, factoriza \(x\) y divide:
+\[
+(x + 1)\ln 2 = (2x - 3)\ln 5
+\]
+\[
+x\ln 2 + \ln 2 = 2x\ln 5 - 3\ln 5
+\]
+\[
+\ln 2 + 3\ln 5 = x(2\ln 5 - \ln 2) \implies x = \frac{\ln 2 + 3\ln 5}{2\ln 5 - \ln 2}.
+\]
+Usando las leyes de los logaritmos, esta respuesta exacta también puede condensarse a \(x = \dfrac{\ln(2 \cdot 5^3)}{\ln(5^2 / 2)} = \dfrac{\ln(250)}{\ln(25/2)} \approx 2.1869\).
+
+[QUESTION 2]
+[ANSWER: A]
+¿Cuál es la solución exacta de \(3^{2x - 1} = 7^{x + 2}\)?
+
+(A) \(\dfrac{\ln 3 + 2\ln 7}{2\ln 3 - \ln 7}\)
+(B) \(\dfrac{2\ln 7 - \ln 3}{2\ln 3 - \ln 7}\)
+(C) \(\dfrac{\ln 3 + 2\ln 7}{2\ln 3 + \ln 7}\)
+(D) \(\dfrac{\ln 3 + \ln 7}{2\ln 3 - \ln 7}\)
+(E) \(\dfrac{3}{2\ln 3 - \ln 7}\)
+[/QUESTION]
+
+=== SECTION 3: Factorización y ecuaciones exponenciales de tipo cuadrático ===
+
+Cuando una ecuación contiene sumas o restas de términos exponenciales, aplicar \(\ln\) a ambos lados de inmediato falla porque \(\ln(A + B) \ne \ln A + \ln B\). En su lugar, dos estructuras algebraicas manejan limpiamente estas sumas.
+
+Estrategia 4: Factorizar un factor exponencial común.
+Cuando varios términos comparten la misma base con exponentes que difieren por constantes, factoriza la menor potencia de esa base.
+Ejemplo: Resuelve \(3^{x + 2} - 3^x = 72\). Reescribe \(3^{x + 2} = 3^2 \cdot 3^x = 9 \cdot 3^x\) y luego factoriza \(3^x\):
+\[
+3^x(9 - 1) = 72 \implies 8 \cdot 3^x = 72 \implies 3^x = 9 = 3^2 \implies x = 2.
+\]
+
+Estrategia 5: Sustitución cuadrática \(u = b^x > 0\).
+Cuando un término exponencial es el cuadrado de otro —como \(e^{2x} = (e^x)^2\) o \(4^x = (2^2)^x = (2^x)^2\)—, introduce \(u = b^x\), resuelve la cuadrática resultante en \(u\), descarta toda raíz con \(u \le 0\) y resuelve \(b^x = u\) para cada raíz positiva.
+
+Ejemplo A: Resuelve \(e^{2x} - 5e^x + 6 = 0\). Hacer \(u = e^x > 0\) da \(u^2 - 5u + 6 = 0\), que se factoriza como \((u - 2)(u - 3) = 0\). Tanto \(u = 2\) como \(u = 3\) son positivos, dando dos soluciones exactas: \(x = \ln 2\) y \(x = \ln 3\).
+
+Ejemplo B: Resuelve \(4^x - 3 \cdot 2^x - 4 = 0\). Como \(4^x = (2^x)^2\), hacer \(u = 2^x > 0\) da
+\[
+u^2 - 3u - 4 = 0 \implies (u - 4)(u + 1) = 0 \implies u = 4 \text{ o } u = -1.
+\]
+Como \(2^x > 0\) para todo \(x \in \mathbb{R}\), la raíz \(u = -1\) no produce ninguna solución real y debe descartarse. Solo sobrevive \(2^x = 4\), dando la única solución real \(x = 2\).
+
+[GRAPH]
+type: function2d
+title: Gráfica de \(y = 4^x - 3 \cdot 2^x - 4\) que confirma una única raíz real en \(x = 2\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.5, 2.5
+yrange: -7, 8
+trace: 4^x - 3 * 2^x - 4 | label: \(y = 4^x - 3 \cdot 2^x - 4\)
+segment: -2.5, -4, 2.5, -4 | label: \(y = -4\) | dashed: true
+point: 2, 0 | label: \((2, 0)\)
+[/GRAPH]
+
+La siguiente tabla resume los cinco métodos para que puedas emparejar de un vistazo cada ecuación con su estrategia más limpia:
+
+[TABLE]
+Patrón de la ecuación | Ejemplo | Primer paso
+Misma base o potencia de una base común | \(4^{x+1} = 8^{2x-3}\) | Reescribir en base común; igualar exponentes
+Un solo término exponencial | \(5 \cdot 3^{2x-1} = 20\) | Aislar \(b^{\text{expr}}\); verificar lado derecho \(> 0\); aplicar \(\ln\)
+Dos bases distintas, exponentes variables | \(2^{x+1} = 5^{2x-3}\) | Aplicar \(\ln\) en ambos lados; agrupar términos en \(x\)
+Suma/resta con igual base, exponentes desplazados | \(3^{x+2} - 3^x = 72\) | Factorizar el menor término \(b^x\)
+Una exponencial es el cuadrado de otra | \(4^x - 3 \cdot 2^x - 4 = 0\) | Definir \(u = b^x > 0\); resolver cuadrática; descartar \(u \le 0\)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+¿Cuál es la solución exacta de \(2^{x + 3} - 2^{x + 1} = 48\)?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(4\)
+(D) \(\log_2(24)\)
+(E) \(5\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+¿Cuántas soluciones reales tiene la ecuación \(9^x - 2 \cdot 3^x - 15 = 0\), y cuáles son?
+
+(A) Dos soluciones reales: \(x = \dfrac{\ln 5}{\ln 3}\) y \(x = \dfrac{\ln(-3)}{\ln 3}\)
+(B) Una solución real: \(x = \dfrac{\ln 5}{\ln 3}\)
+(C) Dos soluciones reales: \(x = \dfrac{\ln 5}{\ln 3}\) y \(x = 1\)
+(D) Una solución real: \(x = \dfrac{\ln 3}{\ln 5}\)
+(E) Ninguna solución real
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+¿Cuáles son todas las soluciones reales de \(e^x - 6e^{-x} = 1\)?
+
+(A) \(x = \ln 2\) y \(x = \ln 3\)
+(B) Únicamente \(x = \ln 3\)
+(C) \(x = -\ln 2\) y \(x = \ln 3\)
+(D) Únicamente \(x = \ln 2\)
+(E) Ninguna solución real
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+¿Para qué valores reales de la constante \(k\) la ecuación \(e^{2x} - 4e^x + k = 0\) tiene exactamente dos soluciones reales distintas?
+
+(A) \(k < 4\)
+(B) \(0 < k < 4\)
+(C) \(0 \le k \le 4\)
+(D) \(k > 0\)
+(E) \(k > 4\)
+[/BONUS]

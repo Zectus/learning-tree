@@ -1,0 +1,206 @@
+=== SECTION 1: Connecting visual shape to the mean-median heuristic (and its failure) ===
+
+Visual displays such as histograms and boxplots give an immediate qualitative sense of whether a distribution is symmetric, right-skewed, left-skewed, heavy-tailed, or multimodal. Yet visual judgments can vary from person to person—and when comparing dozens of variables or defending a choice of summary statistics, we need quantitative shape diagnostics that measure asymmetry and tail behavior on a consistent, unit-free scale.
+
+First, examine the most widely cited numerical clue for skewness: comparing the arithmetic mean \(\bar{x}\) with the median \(M\). In a smooth, unimodal right-skewed distribution (such as household incomes), the long right tail exerts heavy leverage on the balance point \(\bar{x}\) while leaving the middle rank \(M\) near the bulk of the data, producing the classic ordering \(\text{mode} < M < \bar{x}\). Conversely, in a smooth, unimodal left-skewed distribution, the long left tail pulls the mean downward, giving \(\bar{x} < M < \text{mode}\).
+
+[CALLOUT]
+id: mean-median-caution
+label: Common pitfall
+title: The mean-median ordering is a heuristic, NOT a theorem
+tone: caution
+
+For smooth, unimodal distributions, \(\bar{x} > M\) typically accompanies right-skewness and \(\bar{x} < M\) typically accompanies left-skewness. However, on discrete, multimodal, or asymmetric-body distributions, the mean-median sign CAN disagree with the direction of the longer tail and with third-moment skewness! Always inspect the distribution visually or compute dedicated skewness indices rather than treating \(\bar{x} > M\) as a mathematical proof of right-skewness.
+[/CALLOUT]
+
+See [REF: mean-median-caution | this failure] on an elementary \(n = 10\) discrete dataset:
+\[
+0,\; 0,\; 0,\; 5,\; 5,\; 5,\; 5,\; 5,\; 5,\; 10.
+\]
+Here six observations pile up at \(5\), three sit at \(0\), and one isolated observation stretches out to \(10\) on the right. Compute its summaries directly:
+- Median \(M = 5\) and mode \(= 5\).
+- Arithmetic mean \(\bar{x} = (0 + 0 + 0 + 30 + 10) / 10 = 40 / 10 = 4\).
+- Deviations from \(\bar{x} = 4\): three \(-4\text{s}\), six \(+1\text{s}\), and one \(+6\).
+- Sum of squared deviations: \(3(-4)^2 + 6(1)^2 + 1(6)^2 = 48 + 6 + 36 = 90\), so the population-style standard deviation is \(\sigma = \sqrt{90 / 10} = 3\).
+- Notice what happens when we cube the standardized deviations \(z_i = (x_i - 4)/3\): the three \(-4/3\) values contribute \(3(-64/27) = -192/27\), the six \(+1/3\) values contribute \(6(1/27) = +6/27\), and the single \(+6/3 = +2\) value contributes \(+216/27\). Their average is \((-192 + 6 + 216)/(10 \cdot 27) = +30 / 270 = +1/9 > 0\)!
+
+Even though the standardized third moment is strictly positive (\(+1/9\)) due to the stretched upper value at \(10\), the mean (\(\bar{x} = 4\)) sits BELOW the median (\(M = 5\))! A reliable shape audit therefore uses explicit skewness indices alongside plots.
+
+=== SECTION 2: Three scale-free skewness indices and tail weight ===
+
+To measure skewness without units getting in the way, every quantitative skewness index divides an asymmetry measure by a matching spread measure. Three indices appear widely across statistics, each probing a slightly different aspect of asymmetry.
+
+[CALLOUT]
+id: skewness-indices
+label: Definition
+title: Pearson, Bowley, and third-moment skewness indices
+tone: key
+
+For a quantitative dataset \(x_1, \dots, x_n\) with mean \(\bar{x}\), median \(M = Q_2\), quartiles \(Q_1, Q_3\) (\(\text{IQR} = Q_3 - Q_1 > 0\)), and standard deviation \(s > 0\):
+
+(1) Pearson's second skewness coefficient compares the mean-median gap to the standard deviation:
+\[
+\text{Sk}_P = \frac{3(\bar{x} - M)}{s}.
+\]
+(2) Bowley's (quartile) skewness coefficient compares the upper half of the boxplot box to the lower half, normalized by \(\text{IQR}\):
+\[
+\text{Sk}_B = \frac{(Q_3 - Q_2) - (Q_2 - Q_1)}{Q_3 - Q_1} = \frac{Q_3 + Q_1 - 2 Q_2}{\text{IQR}}.
+\]
+Because \(Q_1 \le Q_2 \le Q_3\), Bowley's index always satisfies \(-1 \le \text{Sk}_B \le 1\).
+(3) The sample third standardized moment averages the cubes of the standardized deviations \(z_i = (x_i - \bar{x}) / s_p\), where \(s_p = \sqrt{\frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^2}\):
+\[
+g_1 = \frac{1}{n} \sum_{i=1}^n z_i^3 = \frac{\frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^3}{\left(\frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^2\right)^{3/2}}.
+\]
+(Software often reports the adjusted Fisher-Pearson skewness \(G_1 = \frac{\sqrt{n(n-1)}}{n-2}\,g_1 = \frac{n}{(n-1)(n-2)}\sum_{i=1}^n \left(\frac{x_i - \bar{x}}{s}\right)^3\) for \(n \ge 3\), which agrees with \(g_1\) in sign and approaches \(g_1\) as \(n\) grows.)
+[/CALLOUT]
+
+Why does cubing \(z_i\) in [REF: skewness-indices.3 | the third standardized moment \(g_1\)] detect skewness? Squaring \(z_i^2\) destroys sign information, while taking first powers \(\sum z_i = 0\) cancels out completely. Raising \(z_i\) to the odd third power \(z_i^3\) PRESERVES the sign (positive for observations above the mean, negative below) while strongly weighting distant tail values (\((+3)^3 = +27\) versus \((+1)^3 = +1\)). In a perfectly symmetric distribution, every \(+z\) pairs with a matching \(-z\), so \(g_1 = 0\) (and \(\text{Sk}_P = \text{Sk}_B = 0\)). A long right tail produces large positive cubes, yielding \(g_1 > 0\); a long left tail produces large negative cubes, yielding \(g_1 < 0\).
+
+Let us compute all three indices on \(n = 9\) annual salaries (in thousands of dollars):
+\[
+20,\; 22,\; 24,\; 26,\; 28,\; 30,\; 34,\; 42,\; 98.
+\]
+Here \(\bar{x} = 324 / 9 = 36\), \(Q_1 = 23\), \(Q_2 = 28\), \(Q_3 = 38\) (\(\text{IQR} = 15\)), \(\sum (x_i - 36)^2 = 4680\) (giving \(s = \sqrt{4680 / 8} \approx 24.19\) and \(s_p = \sqrt{4680 / 9} = \sqrt{520} \approx 22.80\)), and \(\sum (x_i - 36)^3 = +228{,}240\). Plugging in:
+- Pearson: \(\text{Sk}_P = \dfrac{3(36 - 28)}{24.19} \approx +0.99\).
+- Bowley: \(\text{Sk}_B = \dfrac{38 + 23 - 2(28)}{15} = \dfrac{5}{15} = +\dfrac{1}{3} \approx +0.33\).
+- Third standardized moment: \(g_1 = \dfrac{228{,}240 / 9}{(520)^{3/2}} \approx +2.14\).
+
+All three indices are positive, confirming right-skewness, yet compare their sensitivity to the single outlier \(98\): cubing \((98 - 36)/22.80 \approx +2.72\) sends \(g_1\) up to \(+2.14\), whereas Bowley's \(\text{Sk}_B = +0.33\) relies purely on the quartiles and resists extreme outliers completely—though Bowley only sees asymmetry inside the central \(50\%\) box and ignores extreme tails beyond \(Q_1\) and \(Q_3\).
+
+Now check how all three skewness indices behave under a linear transformation \(y_i = a x_i + b\) (\(a \ne 0\)):
+- If \(a > 0\), we proved in the previous lesson that \(z_{y,i} = z_{x,i}\), \(\bar{y} - M_y = a(\bar{x} - M_x)\), \(s_y = a s_x\), and \(Q_{k,y} = a Q_{k,x} + b\). Every factor of \(a\) cancels in numerator and denominator, so \(\text{Sk}_P\), \(\text{Sk}_B\), and \(g_1\) are ALL COMPLETELY INVARIANT under positive linear rescaling (changing units from dollars to euros or Celsius to Fahrenheit never changes skewness!).
+- If \(a < 0\), the distribution mirrors left-to-right: \(z_{y,i} = -z_{x,i}\), \(Q_{1,y}\) and \(Q_{3,y}\) swap roles, and \(s_y = -a s_x > 0\), so ALL THREE indices simply FLIP SIGN (\(\text{Sk}(y) = -\text{Sk}(x)\)).
+
+What if two distributions are BOTH perfectly symmetric (\(g_1 = 0\)) with the SAME mean \(0\) and standard deviation \(1\), yet one has far heavier tails (more extreme observations far from \(0\)) than the other? Because fourth powers \(z_i^4\) are always nonnegative and explode for extreme \(|z_i|\), the fourth standardized moment \(\frac{1}{n}\sum_{i=1}^n z_i^4\) (kurtosis) captures tail heaviness: a benchmark bell-shaped normal distribution has fourth standardized moment equal to \(3\), so distributions with excess kurtosis \(\frac{1}{n}\sum z_i^4 - 3 > 0\) carry heavier tails (more extreme outliers) than a bell curve, while negative excess kurtosis signals lighter, shorter tails (such as a flat uniform distribution).
+
+The graph below contrasts a symmetric bell curve against a right-skewed distribution (showing \(\bar{x}\) pulled right of \(M\)) and a symmetric heavy-tailed distribution sharing the same center \(0\).
+
+[GRAPH]
+type: function2d
+title: Comparing symmetric bell-shaped, right-skewed, and symmetric heavy-tailed shapes
+xlabel: \(x\)
+ylabel: Density
+xrange: -4, 6
+yrange: 0, 0.55
+trace: 0.399 * exp(-0.5 * x^2) | label: Symmetric bell-shaped (\(g_1 = 0\)) | color: #3b82f6
+trace: x > -2 ? 0.45 * ((x + 2) / 1.5) * exp(1 - (x + 2) / 1.5) : 0 | label: Right-skewed (\(g_1 > 0\)) | color: #ef4444
+trace: 0.318 / (1 + x^2) | label: Symmetric heavy-tailed (elevated tails) | color: #10b981
+segment: -0.5, 0, -0.5, 0.45 | label: Mode | dashed: true | color: #ef4444
+segment: 0.52, 0, 0.52, 0.34 | label: Median | dashed: true | color: #f59e0b
+segment: 1.0, 0, 1.0, 0.25 | label: Mean | dashed: true | color: #991b1b
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+A dataset of exam scores has five-number summary \((10, 22, 32, 36, 50)\). What is Bowley's quartile skewness coefficient \(\text{Sk}_B\), and what shape does it indicate inside the central \(50\%\) of the data?
+
+(A) \(+3/7 \approx +0.43\), right-skewed
+(B) \(-3/7 \approx -0.43\), left-skewed
+(C) \(-6/40 = -0.15\), left-skewed
+(D) \(-3/5 = -0.60\), left-skewed
+(E) \(+3/5 = +0.60\), right-skewed
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+A dataset of \(n = 5\) observations has standardized values \(z_1 = -0.5\), \(z_2 = -0.5\), \(z_3 = -0.5\), \(z_4 = -0.5\), and \(z_5 = +2.0\) (which satisfy \(\frac{1}{5}\sum z_i = 0\) and \(\frac{1}{5}\sum z_i^2 = 1\)). What is the sample third standardized moment \(g_1 = \frac{1}{n}\sum_{i=1}^n z_i^3\)?
+
+(A) \(+1.60\)
+(B) \(+1.70\)
+(C) \(+7.50\)
+(D) \(+1.50\)
+(E) \(+1.25\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+A dataset \(x_1, \dots, x_n\) of reaction times has sample third standardized moment \(g_1 = +1.40\) and Bowley skewness \(\text{Sk}_B = +0.40\). Every observation is converted to a speed-bonus score by \(y_i = 100 - 2 x_i\). What are the resulting values of \(g_1\) and \(\text{Sk}_B\) for the transformed variable \(y\)?
+
+(A) \(g_1 = -1.40\) and \(\text{Sk}_B = -0.40\)
+(B) \(g_1 = +1.40\) and \(\text{Sk}_B = +0.40\)
+(C) \(g_1 = -2.80\) and \(\text{Sk}_B = -0.80\)
+(D) \(g_1 = -11.20\) and \(\text{Sk}_B = -0.40\)
+(E) \(g_1 = +1.40\) and \(\text{Sk}_B = -0.40\)
+[/QUESTION]
+
+=== SECTION 3: A principled decision protocol for choosing center and spread ===
+
+Every previous lesson in univariate descriptive statistics converges on one practical judgment: given a new quantitative dataset, WHICH pair of center and spread summaries should you report? Reporting an inappropriate pair—such as mean and standard deviation on heavily skewed housing prices—can mislead readers about both typical values and typical variability.
+
+[CALLOUT]
+id: summary-protocol
+label: Principle
+title: Decision protocol for reporting center and spread
+tone: key
+
+Always inspect a visual display (histogram, dotplot, or boxplot) together with shape diagnostics before choosing summary statistics:
+
+(1) Roughly symmetric, unimodal, and free of severe outliers (\(|g_1|\) small, no extreme fence flags): report the arithmetic mean \(\bar{x}\) and standard deviation \(s\). Together they use all data efficiently and connect directly to \(z\)-scores and later statistical models.
+(2) Noticeably skewed (right or left) OR containing extreme outliers / heavy tails: report the median \(M\) (or a trimmed mean) together with the interquartile range \(\text{IQR}\) (and the full five-number summary), because both resist tail distortion. If totals matter (e.g., total expenditure), report \(\bar{x}\) alongside \(M\) and \(\text{IQR}\), never alone.
+(3) Clearly bimodal or multimodal with distinct clusters: do NOT rely on a single center and spread for the pooled data—a single mean or median can land right inside an empty valley! Identify the lurking grouping variable, split the dataset into its subpopulations, and summarize each subgroup separately.
+[/CALLOUT]
+
+Notice how [REF: summary-protocol | this protocol] pairs center and spread as matched partners: \(\bar{x}\) goes with \(s\) (both built from arithmetic sums and sensitive to tails), while \(M\) goes with \(\text{IQR}\) (both built from order statistics and resistant to tails).
+
+[TABLE]
+Observed distribution shape | Recommended center | Recommended spread | Action / caution
+Unimodal, roughly symmetric, no severe outliers | Mean (\(\bar{x}\)) | Standard deviation (\(s\)) | Verify visually; note any mild outliers
+Strongly skewed (right or left) | Median (\(M\)) or trimmed mean | \(\text{IQR}\) (plus five-number summary) | Avoid reporting \(\bar{x} \pm s\) alone
+Symmetric with heavy tails / extreme outliers | Median (\(M\)) or trimmed mean | \(\text{IQR}\) (or \(\text{MAD}\)) | Investigate outliers; report with/without
+Bimodal / distinct clusters | Separate centers per subgroup | Separate spreads per subgroup | Do not hide two groups behind one average
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: C]
+An operations analyst measures hospital length-of-stay (in days) for \(n = 320\) patients. The histogram is strongly unimodal and right-skewed (\(g_1 = +2.8\)), with \(Q_1 = 2\), \(M = 3\), \(Q_3 = 5\), \(\bar{x} = 6.2\), \(s = 9.4\), and several complicated surgical stays exceeding \(45\) days. A colleague proposes reporting "typical stay is \(6.2 \pm 9.4\) days." What is the strongest critique and recommended correction?
+
+(A) Report only the range and mode, because length-of-stay is measured on an ordinal scale.
+(B) Delete every stay over \(10\) days so that \(\bar{x}\) and \(s\) become symmetric.
+(C) Using \(\bar{x} \pm s\) on strongly right-skewed data inflates center above \(75\%\) of patients and implies an impossible negative lower bound (\(6.2 - 9.4 = -3.2\) days); report the median (\(3\) days) and \(\text{IQR}\) (\(3\) days, from \(2\) to \(5\)), noting the long upper tail separately.
+(D) Use Pearson's skewness coefficient in place of the standard deviation.
+(E) Standardize the stays to \(z\)-scores first so the distribution becomes symmetric, then report \(\bar{x}\) and \(s\).
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+A retail analytics team plots daily transaction amounts across \(n = 1{,}000\) sales and sees two crisp, well-separated peaks: one centered around \(\$18\) (walk-in coffee and pastry purchases) and another centered around \(\$145\) (catering box orders), with almost no transactions between \(\$50\) and \(\$100\). Why is reporting only the pooled median and \(\text{IQR}\) still an inadequate summary?
+
+(A) Because medians and IQRs are undefined for bimodal datasets.
+(B) Because the arithmetic mean would automatically separate the two peaks.
+(C) Because Bowley's skewness equals \(0\) whenever two peaks are present.
+(D) Because \(g_1\) cannot be computed on bimodal data.
+(E) Because any single center and spread hides the two-subpopulation structure and can place the reported center in the sparse valley between groups; the team should stratify by order type (walk-in versus catering) and summarize each group separately.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Under what condition on the quartiles \(Q_1 \le Q_2 \le Q_3\) (with \(\text{IQR} = Q_3 - Q_1 > 0\)) does Bowley's quartile skewness \(\text{Sk}_B = \frac{Q_3 + Q_1 - 2 Q_2}{Q_3 - Q_1}\) attain its maximum possible value of \(+1\)?
+
+(A) Whenever \(\bar{x} > Q_3\)
+(B) Whenever \(Q_2 = Q_1\) (and \(Q_3 > Q_1\)), meaning the entire lower half of the central box has collapsed to width \(0\)
+(C) Whenever \(Q_2 = Q_3\) (and \(Q_3 > Q_1\)), meaning the entire upper half of the central box has collapsed to width \(0\)
+(D) Whenever \(Q_3 = 2 Q_1\)
+(E) Whenever the maximum observation goes to \(+\infty\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Consider the discrete sample of \(n = 10\) observations: \(0, 10, 10, 10, 10, 10, 10, 15, 15, 15\). Compare the sign of \((\bar{x} - M)\) with the sign of the third standardized moment \(g_1\).
+
+(A) Both \((\bar{x} - M)\) and \(g_1\) are positive.
+(B) Both \((\bar{x} - M)\) and \(g_1\) are negative.
+(C) \((\bar{x} - M) < 0\), whereas \(g_1 > 0\).
+(D) \((\bar{x} - M) > 0\) (since \(\bar{x} = 10.5 > M = 10\)), whereas \(g_1 < 0\) because the single distant low value at \(0\) dominates the sum of cubed deviations.
+(E) Both \((\bar{x} - M)\) and \(g_1\) equal \(0\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Two symmetric datasets X and Y both have mean \(0\), standard deviation \(1\), and third standardized moment \(g_1 = 0\). However, Dataset X has fourth standardized moment \(\frac{1}{n}\sum z_i^4 = 1.8\) while Dataset Y has \(\frac{1}{n}\sum z_i^4 = 8.4\). How do Datasets X and Y differ structurally?
+
+(A) Dataset Y has much heavier tails (more extreme observations far from \(0\)) than a bell-shaped curve, whereas Dataset X has lighter, shorter tails.
+(B) Dataset Y is right-skewed and Dataset X is left-skewed.
+(C) Dataset Y has a larger standard deviation than Dataset X.
+(D) Dataset X has heavier tails and more outliers than Dataset Y.
+(E) Dataset X and Dataset Y must have identical boxplots because both have \(g_1 = 0\), mean \(0\), and standard deviation \(1\).
+[/BONUS]

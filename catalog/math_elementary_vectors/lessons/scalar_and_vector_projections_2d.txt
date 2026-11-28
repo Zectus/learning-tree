@@ -1,0 +1,188 @@
+=== SECTION 1: Scalar projection along an arbitrary direction ===
+
+Resolving a vector \(\mathbf{u}\) along the horizontal and vertical axes gave us \(u_x = \|\mathbf{u}\|\cos\theta\) and \(u_y = \|\mathbf{u}\|\sin\theta\). Now suppose the natural direction of a problem is NOT horizontal or vertical—for example, a tilted ramp, a straight road, or a second vector \(\mathbf{v} \ne \mathbf{0}\). How much of \(\mathbf{u}\) points along the direction of \(\mathbf{v}\), and how do we split \(\mathbf{u}\) cleanly into one piece parallel to \(\mathbf{v}\) and one piece perpendicular to \(\mathbf{v}\)?
+
+Place \(\mathbf{u}\) and the nonzero reference vector \(\mathbf{v}\) tail-to-tail at the origin, with included angle \(\theta \in [0, \pi]\), and drop a perpendicular from the head of \(\mathbf{u}\) onto the infinite line spanned by \(\mathbf{v}\). Think of shining a light straight down at \(90^\circ\) to the line of \(\mathbf{v}\): \(\mathbf{u}\) casts a shadow along that line.
+- When \(0 \le \theta < 90^\circ\), the shadow points in the same direction as \(\mathbf{v}\), and by right-triangle trigonometry its length is \(\|\mathbf{u}\|\cos\theta > 0\).
+- When \(\theta = 90^\circ\), \(\mathbf{u}\) is perpendicular to \(\mathbf{v}\), so the shadow collapses to a point of length \(0 = \|\mathbf{u}\|\cos 90^\circ\).
+- When \(90^\circ < \theta \le 180^\circ\), the shadow points in the OPPOSITE direction to \(\mathbf{v}\), with length \(\|\mathbf{u}\|\cos(180^\circ - \theta) = -\|\mathbf{u}\|\cos\theta\), so the signed shadow coordinate along \(\mathbf{v}\) is \(\|\mathbf{u}\|\cos\theta < 0\).
+
+In every case, the signed scalar projection (also called the component of \(\mathbf{u}\) along \(\mathbf{v}\)) is \(\|\mathbf{u}\|\cos\theta\). To compute it directly from components without ever finding \(\theta\), substitute \(\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\) from the dot product formula:
+\[
+\|\mathbf{u}\|\cos\theta = \|\mathbf{u}\|\left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}\right) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|} = \mathbf{u} \cdot \left(\frac{\mathbf{v}}{\|\mathbf{v}\|}\right) = \mathbf{u} \cdot \hat{\mathbf{v}},
+\]
+where \(\hat{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}\|}\) is the unit vector in the direction of \(\mathbf{v}\). Notice that if \(\mathbf{u} = \mathbf{0}\), \(\frac{\mathbf{0} \cdot \mathbf{v}}{\|\mathbf{v}\|} = 0\), so the formula works for all \(\mathbf{u} \in \mathbb{R}^2\) as long as \(\mathbf{v} \ne \mathbf{0}\).
+
+[CALLOUT]
+id: scalar-proj
+label: Definition
+title: Scalar projection (component of \(\mathbf{u}\) along \(\mathbf{v}\))
+tone: key
+
+For any vector \(\mathbf{u} \in \mathbb{R}^2\) and any nonzero vector \(\mathbf{v} \in \mathbb{R}^2\), the scalar projection of \(\mathbf{u}\) onto \(\mathbf{v}\) is the signed real number
+\[
+\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|} = \mathbf{u} \cdot \hat{\mathbf{v}}.
+\]
+Its sign tells the orientation of the shadow: positive if \(\mathbf{u}\) leans with \(\mathbf{v}\) (acute angle), zero if \(\mathbf{u} \perp \mathbf{v}\), and negative if \(\mathbf{u}\) leans against \(\mathbf{v}\) (obtuse angle).
+[/CALLOUT]
+
+Notice how [REF: scalar-proj | scalar projection] generalizes ordinary rectangular coordinates: taking \(\mathbf{v} = \mathbf{i}\) gives \(\operatorname{comp}_{\mathbf{i}} \mathbf{u} = \mathbf{u} \cdot \mathbf{i} = u_x\), and taking \(\mathbf{v} = \mathbf{j}\) gives \(\operatorname{comp}_{\mathbf{j}} \mathbf{u} = \mathbf{u} \cdot \mathbf{j} = u_y\).
+
+=== SECTION 2: Vector projection and avoiding the two classic pitfalls ===
+
+The scalar projection \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\) is only a signed number. To build the actual shadow vector—the vector projection of \(\mathbf{u}\) onto \(\mathbf{v}\), written \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\)—we multiply that signed scalar by the unit vector \(\hat{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}\|}\) pointing along \(\mathbf{v}\):
+\[
+\operatorname{proj}_{\mathbf{v}} \mathbf{u} = (\operatorname{comp}_{\mathbf{v}} \mathbf{u})\,\hat{\mathbf{v}} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|}\right)\left(\frac{\mathbf{v}}{\|\mathbf{v}\|}\right) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|^2}\,\mathbf{v} = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\,\mathbf{v}.
+\]
+Notice how clean that last form is: you do not even need a square root to compute \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\), because \(\|\mathbf{v}\|^2 = \mathbf{v} \cdot \mathbf{v} = v_x^2 + v_y^2\)!
+
+[CALLOUT]
+id: vector-proj
+label: Formula
+title: Vector projection of \(\mathbf{u}\) onto \(\mathbf{v}\)
+tone: key
+
+For any \(\mathbf{u} \in \mathbb{R}^2\) and any nonzero \(\mathbf{v} \in \mathbb{R}^2\), the vector projection of \(\mathbf{u}\) onto \(\mathbf{v}\) is
+\[
+\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|^2}\right)\mathbf{v}.
+\]
+The vector \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) always lies along the line spanned by \(\mathbf{v}\), and its length is \(|\operatorname{comp}_{\mathbf{v}} \mathbf{u}|\).
+[/CALLOUT]
+
+[CALLOUT]
+id: proj-pitfalls
+label: Common pitfall
+title: Two mistakes to guard against in vector projections
+tone: caution
+
+(1) Dividing by \(\|\mathbf{v}\|\) instead of \(\|\mathbf{v}\|^2 = \mathbf{v} \cdot \mathbf{v}\): geometrically, doubling \(\mathbf{v}\) to \(2\mathbf{v}\) does not change the line of \(\mathbf{v}\), so the shadow vector \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) MUST stay unchanged. In \(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\), replacing \(\mathbf{v}\) by \(2\mathbf{v}\) multiplies the numerator by \(2 \cdot 2 = 4\) and the denominator by \(2 \cdot 2 = 4\), canceling completely. If you accidentally write \(\|\mathbf{v}\|\) in the denominator, \(\mathbf{v}\) is NOT normalized, and the scale invariance breaks!
+(2) Swapping \(\mathbf{u}\) and \(\mathbf{v}\): \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) is a multiple of the SUBSCRIPT vector \(\mathbf{v}\) (it sits ON the line of \(\mathbf{v}\)), whereas \(\operatorname{proj}_{\mathbf{u}} \mathbf{v}\) is a multiple of \(\mathbf{u}\) (it sits ON the line of \(\mathbf{u}\)). In general, \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} \ne \operatorname{proj}_{\mathbf{u}} \mathbf{v}\).
+[/CALLOUT]
+
+Explore the geometry in the interactive plot below. The fixed reference vector is \(\mathbf{v} = \langle 4, 2 \rangle\) (dashed line through the origin), and dragging slider \(a\) rotates \(\mathbf{u}\) of length \(3\) around the origin. Watch the green shadow \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) slide along the line of \(\mathbf{v}\)—flipping to the negative side whenever the angle between \(\mathbf{u}\) and \(\mathbf{v}\) becomes obtuse—while the dashed orange drop segment from \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) to the head of \(\mathbf{u}\) always stays perpendicular to \(\mathbf{v}\).
+
+[GRAPH]
+type: parametric2d
+title: Vector projection \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\) onto \(\mathbf{v} = \langle 4, 2 \rangle\) as \(\mathbf{u}\) rotates
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.1, 1.3
+xrange: -4.2, 4.8
+yrange: -3.6, 3.6
+trace: 4*t, 2*t | label: line of \(\mathbf{v}\) | color: #cbd5e1
+segment: 0, 0, 4, 2 | label: \(\mathbf{v}\) | color: #2563eb
+segment: 0, 0, 3*cos(a), 3*sin(a) | label: \(\mathbf{u}\) | color: #dc2626
+segment: 0, 0, 2.4*cos(a) + 1.2*sin(a), 1.2*cos(a) + 0.6*sin(a) | label: \(\mathbf{u}_\parallel\) | color: #16a34a
+segment: 2.4*cos(a) + 1.2*sin(a), 1.2*cos(a) + 0.6*sin(a), 3*cos(a), 3*sin(a) | label: \(\mathbf{u}_\perp\) | color: #d97706 | dashed: true
+point: 4, 2 | label: \(\mathbf{v}\)
+point: 3*cos(a), 3*sin(a) | label: \(\mathbf{u}\)
+point: 2.4*cos(a) + 1.2*sin(a), 1.2*cos(a) + 0.6*sin(a) | label: \(F\)
+slider: a | range: 0, 6.2832 | init: 1.2 | step: 0.1571
+[/GRAPH]
+
+Let us run a concrete calculation for \(\mathbf{u} = \langle 2, 5 \rangle\) and \(\mathbf{v} = \langle 4, 2 \rangle\):
+- Dot product: \(\mathbf{u} \cdot \mathbf{v} = (2)(4) + (5)(2) = 18\).
+- Denominators: \(\mathbf{v} \cdot \mathbf{v} = 4^2 + 2^2 = 20\), so \(\|\mathbf{v}\| = \sqrt{20} = 2\sqrt{5}\).
+- Scalar projection: \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = \frac{18}{2\sqrt{5}} = \frac{9}{\sqrt{5}} = \frac{9\sqrt{5}}{5}\).
+- Vector projection: \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \frac{18}{20}\langle 4, 2 \rangle = \frac{9}{10}\langle 4, 2 \rangle = \left\langle \frac{18}{5}, \frac{9}{5} \right\rangle\).
+
+[QUESTION 1]
+[ANSWER: A]
+Let \(\mathbf{u} = \langle -2, 1 \rangle\) and \(\mathbf{v} = \langle 3, -4 \rangle\). What are \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\) and \(\operatorname{proj}_{\mathbf{v}} \mathbf{u}\)?
+
+(A) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) and \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left\langle -\frac{6}{5},\; \frac{8}{5} \right\rangle\)
+(B) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) and \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \langle -6,\; 8 \rangle\)
+(C) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) and \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \langle 4,\; -2 \rangle\)
+(D) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = 2\) and \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left\langle \frac{6}{5},\; -\frac{8}{5} \right\rangle\)
+(E) \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -2\) and \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left\langle \frac{6}{5},\; -\frac{8}{5} \right\rangle\)
+[/QUESTION]
+
+=== SECTION 3: Orthogonal decomposition and the Pythagorean check ===
+
+Look back at the dashed orange segment in the graph above: it runs from the head of \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) to the head of \(\mathbf{u}\). By tail-to-tail subtraction, that vector is
+\[
+\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}.
+\]
+Adding \(\mathbf{u}_\parallel\) and \(\mathbf{u}_\perp\) gives \(\mathbf{u}_\parallel + \mathbf{u}_\perp = \operatorname{proj}_{\mathbf{v}} \mathbf{u} + (\mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}) = \mathbf{u}\) automatically. Now let us prove algebraically that \(\mathbf{u}_\perp\) really is perpendicular to \(\mathbf{v}\) (and therefore to \(\mathbf{u}_\parallel\)):
+\[
+\mathbf{u}_\perp \cdot \mathbf{v} = \left(\mathbf{u} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\,\mathbf{v}\right) \cdot \mathbf{v} = \mathbf{u} \cdot \mathbf{v} - \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}(\mathbf{v} \cdot \mathbf{v}) = \mathbf{u} \cdot \mathbf{v} - \mathbf{u} \cdot \mathbf{v} = 0.
+\]
+Because \(\mathbf{u}_\parallel\) is a scalar multiple of \(\mathbf{v}\), we immediately obtain \(\mathbf{u}_\parallel \cdot \mathbf{u}_\perp = 0\) as well.
+
+This splitting \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\) is also unique: if \(\mathbf{u} = \mathbf{a} + \mathbf{b}\) for ANY vector \(\mathbf{a} = c\mathbf{v}\) parallel to \(\mathbf{v}\) and ANY vector \(\mathbf{b}\) orthogonal to \(\mathbf{v}\), dotting both sides with \(\mathbf{v}\) kills \(\mathbf{b} \cdot \mathbf{v} = 0\) and leaves \(\mathbf{u} \cdot \mathbf{v} = c(\mathbf{v} \cdot \mathbf{v})\), uniquely forcing \(c = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\) and hence \(\mathbf{a} = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) and \(\mathbf{b} = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\).
+
+Finally, because \(\mathbf{u}_\parallel \cdot \mathbf{u}_\perp = 0\), expanding \(\|\mathbf{u}\|^2 = (\mathbf{u}_\parallel + \mathbf{u}_\perp) \cdot (\mathbf{u}_\parallel + \mathbf{u}_\perp)\) eliminates the cross term and yields the Pythagorean identity
+\[
+\|\mathbf{u}\|^2 = \|\mathbf{u}_\parallel\|^2 + \|\mathbf{u}_\perp\|^2.
+\]
+This gives both a fast way to find \(\|\mathbf{u}_\perp\|\) from \(\|\mathbf{u}\|\) and \(|\operatorname{comp}_{\mathbf{v}} \mathbf{u}|\), and an instant check on every decomposition calculation.
+
+[CALLOUT]
+id: orthog-decomp
+label: Theorem
+title: Orthogonal decomposition relative to a nonzero vector \(\mathbf{v}\)
+tone: key
+
+Every vector \(\mathbf{u} \in \mathbb{R}^2\) decomposes uniquely as \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\), where:
+
+(1) \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u} = \left(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\right)\mathbf{v}\) is parallel to \(\mathbf{v}\) (or \(\mathbf{0}\)).
+(2) \(\mathbf{u}_\perp = \mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) is orthogonal to \(\mathbf{v}\) (\(\mathbf{u}_\perp \cdot \mathbf{v} = 0\) and \(\mathbf{u}_\parallel \cdot \mathbf{u}_\perp = 0\)).
+(3) Pythagorean relation: \(\|\mathbf{u}\|^2 = \|\mathbf{u}_\parallel\|^2 + \|\mathbf{u}_\perp\|^2\).
+[/CALLOUT]
+
+Check our earlier example \(\mathbf{u} = \langle 2, 5 \rangle\), \(\mathbf{v} = \langle 4, 2 \rangle\), where \(\mathbf{u}_\parallel = \langle \frac{18}{5}, \frac{9}{5} \rangle\):
+\[
+\mathbf{u}_\perp = \langle 2, 5 \rangle - \left\langle \frac{18}{5}, \frac{9}{5} \right\rangle = \left\langle -\frac{8}{5}, \frac{16}{5} \right\rangle.
+\]
+Verify orthogonality: \(\mathbf{u}_\perp \cdot \mathbf{v} = -\frac{32}{5} + \frac{32}{5} = 0\). Verify Pythagoras: \(\|\mathbf{u}_\parallel\|^2 + \|\mathbf{u}_\perp\|^2 = \frac{324 + 81}{25} + \frac{64 + 256}{25} = \frac{405 + 320}{25} = \frac{725}{25} = 29 = 2^2 + 5^2 = \|\mathbf{u}\|^2\).
+
+[TABLE]
+Quantity | Symbol | Type | Formula | Geometric role
+Scalar projection | \(\operatorname{comp}_{\mathbf{v}} \mathbf{u}\) | Real scalar | \(\frac{\mathbf{u} \cdot \mathbf{v}}{\lVert \mathbf{v} \rVert}\) | Signed length of shadow along \(\mathbf{v}\)
+Vector projection | \(\mathbf{u}_\parallel = \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) | 2D vector | \(\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}\) | Shadow vector lying on the line of \(\mathbf{v}\)
+Orthogonal component | \(\mathbf{u}_\perp\) | 2D vector | \(\mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\) | Perpendicular remainder from shadow tip to head of \(\mathbf{u}\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: B]
+Decompose \(\mathbf{u} = \langle 8, 1 \rangle\) into \(\mathbf{u} = \mathbf{u}_\parallel + \mathbf{u}_\perp\) relative to \(\mathbf{v} = \langle 1, 2 \rangle\). What is the orthogonal component \(\mathbf{u}_\perp\)?
+
+(A) \(\langle 2, 4 \rangle\)
+(B) \(\langle 6, -3 \rangle\)
+(C) \(\langle -6, 3 \rangle\)
+(D) \(\langle 6, 3 \rangle\)
+(E) \(\langle 4, -2 \rangle\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Suppose \(\mathbf{u}\) and \(\mathbf{v}\) are nonzero vectors in \(\mathbb{R}^2\) such that \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = 6\) and \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \mathbf{p}\). If we replace \(\mathbf{v}\) by \(\mathbf{w} = -3\mathbf{v}\), what are \(\operatorname{comp}_{\mathbf{w}} \mathbf{u}\) and \(\operatorname{proj}_{\mathbf{w}} \mathbf{u}\)?
+
+(A) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -6\) and \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = \mathbf{p}\)
+(B) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -6\) and \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = -\mathbf{p}\)
+(C) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = 6\) and \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = \mathbf{p}\)
+(D) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -18\) and \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = -3\mathbf{p}\)
+(E) \(\operatorname{comp}_{\mathbf{w}} \mathbf{u} = -2\) and \(\operatorname{proj}_{\mathbf{w}} \mathbf{u} = -\frac{1}{3}\mathbf{p}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Suppose \(\mathbf{u}\) and \(\mathbf{v}\) are nonzero vectors in \(\mathbb{R}^2\) with \(\|\mathbf{u}\| = 13\) and \(\operatorname{comp}_{\mathbf{v}} \mathbf{u} = -5\). What is \(\|\mathbf{u} - \operatorname{proj}_{\mathbf{v}} \mathbf{u}\|\)?
+
+(A) \(8\)
+(B) \(\sqrt{194}\)
+(C) \(-12\)
+(D) \(12\)
+(E) It cannot be determined without knowing \(\|\mathbf{v}\|\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+For two nonzero vectors \(\mathbf{u}\) and \(\mathbf{v}\) in \(\mathbb{R}^2\), suppose that \(\operatorname{proj}_{\mathbf{v}} \mathbf{u} = \mathbf{u}\). Which statement must be true?
+
+(A) \(\mathbf{u}\) and \(\mathbf{v}\) must point in the exact same direction
+(B) \(\mathbf{u} = \mathbf{v}\)
+(C) \(\mathbf{u}\) and \(\mathbf{v}\) are parallel (either the same direction or opposite directions)
+(D) \(\mathbf{u}\) and \(\mathbf{v}\) are orthogonal
+(E) \(\|\mathbf{v}\| = 1\)
+[/BONUS]

@@ -1,0 +1,261 @@
+=== SECTION 1: Homogeneous systems and parametric vector form ===
+
+Every linear system \(A\mathbf{x} = \mathbf{b}\) has a quieter twin obtained by replacing every right-hand constant with zero: the equation \(A\mathbf{x} = \mathbf{0}\). At first glance, setting the right-hand side to zero might look like a narrow special case. In reality, the solutions of \(A\mathbf{x} = \mathbf{0}\) govern the shape, size, and uniqueness of the solution set of \(A\mathbf{x} = \mathbf{b}\) for every possible \(\mathbf{b}\).
+
+[CALLOUT]
+id: homogeneous-def
+label: Definition
+title: Homogeneous linear system and trivial solution
+tone: key
+
+A linear system is called homogeneous if it can be written in the form
+\[
+A\mathbf{x} = \mathbf{0},
+\]
+where \(A\) is an \(m \times n\) matrix and \(\mathbf{0} \in \mathbb{R}^m\) is the zero vector.
+
+Every homogeneous system is automatically consistent because \(\mathbf{x} = \mathbf{0} \in \mathbb{R}^n\) always satisfies \(A\mathbf{0} = \mathbf{0}\); this solution is called the trivial solution. Any solution \(\mathbf{x} \neq \mathbf{0}\) is called a nontrivial solution.
+[/CALLOUT]
+
+When we row-reduce the augmented matrix \([A \mid \mathbf{0}]\), every elementary row operation leaves the last column all zeros: swapping two zeros, scaling zero, or adding a multiple of zero to zero always yields zero. Thus we can reduce \(A\) alone, and the consistency criterion from Gaussian elimination confirms that \([A \mid \mathbf{0}]\) never acquires a pivot in the rightmost column. Consequently, \(A\mathbf{x} = \mathbf{0}\) has nontrivial solutions if and only if \(A\) has at least one free variable (at least one non-pivot column).
+
+To see the exact algebraic structure of those solutions, reduce a concrete \(2 \times 4\) homogeneous system \(A\mathbf{x} = \mathbf{0}\) where
+\[
+A = \begin{bmatrix} 1 & 2 & -3 & 1 \\ 2 & 4 & -5 & 4 \end{bmatrix}.
+\]
+Applying \(R_2 \leftarrow R_2 - 2 R_1\) and then \(R_1 \leftarrow R_1 + 3 R_2\) yields
+\[
+\operatorname{RREF}(A) = \begin{bmatrix} 1 & 2 & 0 & 7 \\ 0 & 0 & 1 & 2 \end{bmatrix}.
+\]
+The pivot columns are \(1\) and \(3\), so \(x_1\) and \(x_3\) are basic variables while \(x_2\) and \(x_4\) are free variables. Solving the basic variables in terms of the free ones gives \(x_1 = -2x_2 - 7x_4\) and \(x_3 = -2x_4\). Now assemble all four coordinates into a single column vector \(\mathbf{x} \in \mathbb{R}^4\) and split apart the terms multiplying each free parameter:
+\[
+\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ x_3 \\ x_4 \end{bmatrix}
+= \begin{bmatrix} -2x_2 - 7x_4 \\ x_2 \\ -2x_4 \\ x_4 \end{bmatrix}
+= x_2 \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + x_4 \begin{bmatrix} -7 \\ 0 \\ -2 \\ 1 \end{bmatrix}.
+\]
+Writing \(\mathbf{v}_1 = \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix}\) and \(\mathbf{v}_2 = \begin{bmatrix} -7 \\ 0 \\ -2 \\ 1 \end{bmatrix}\), the complete solution set of \(A\mathbf{x} = \mathbf{0}\) is
+\[
+\mathbf{x} = s\mathbf{v}_1 + t\mathbf{v}_2 \qquad (s, t \in \mathbb{R}),
+\]
+which is simply \(\operatorname{Span}\{\mathbf{v}_1, \mathbf{v}_2\} \subseteq \mathbb{R}^4\)!
+
+This representation is called parametric vector form, and the vectors \(\mathbf{v}_1, \mathbf{v}_2\) are called the special (free-variable) solutions. Notice how each special solution is constructed directly from \(\operatorname{RREF}(A)\): set one free variable equal to \(1\) and all other free variables equal to \(0\), then read off the basic variables. Here setting \((x_2, x_4) = (1, 0)\) produces \(\mathbf{v}_1\), and setting \((x_2, x_4) = (0, 1)\) produces \(\mathbf{v}_2\). Because linearity gives \(A(s\mathbf{v}_1 + t\mathbf{v}_2) = s(A\mathbf{v}_1) + t(A\mathbf{v}_2) = s\mathbf{0} + t\mathbf{0} = \mathbf{0}\), every linear combination of solutions of \(A\mathbf{x} = \mathbf{0}\) is again a solution of \(A\mathbf{x} = \mathbf{0}\).
+
+A simple pivot count immediately yields a powerful theorem whenever a homogeneous system has more unknowns than equations (an underdetermined homogeneous system).
+
+[CALLOUT]
+id: underdetermined-homog
+label: Theorem
+title: Underdetermined homogeneous systems always have nontrivial solutions
+tone: key
+
+If \(A\) is an \(m \times n\) matrix with \(n > m\) (strictly more unknowns than equations), then the homogeneous system \(A\mathbf{x} = \mathbf{0}\) always has infinitely many nontrivial solutions.
+[/CALLOUT]
+
+The proof takes two sentences. Because each pivot position sits in its own row of \(\operatorname{RREF}(A)\), an \(m \times n\) matrix can have at most \(m\) pivot positions—and therefore at most \(m\) pivot columns. Since \(A\) has \(n > m\) columns in total, at least \(n - m \ge 1\) columns cannot contain a pivot, which guarantees at least \(n - m\) free variables and hence infinitely many nontrivial solutions.
+
+[QUESTION 1]
+[ANSWER: C]
+Suppose the coefficient matrix \(A\) of a homogeneous system \(A\mathbf{x} = \mathbf{0}\) reduces to
+\[
+\operatorname{RREF}(A) = \begin{bmatrix} 1 & -2 & 0 & 3 \\ 0 & 0 & 1 & -5 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Which expression gives the complete solution set of \(A\mathbf{x} = \mathbf{0}\) in parametric vector form (with \(s, t \in \mathbb{R}\))?
+
+(A) \(s \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + t \begin{bmatrix} 3 \\ 0 \\ -5 \\ 1 \end{bmatrix}\)
+(B) \(s \begin{bmatrix} 2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + t \begin{bmatrix} 3 \\ 0 \\ 5 \\ 1 \end{bmatrix}\)
+(C) \(s \begin{bmatrix} 2 \\ 1 \\ 0 \\ 0 \end{bmatrix} + t \begin{bmatrix} -3 \\ 0 \\ 5 \\ 1 \end{bmatrix}\)
+(D) \(s \begin{bmatrix} 2 \\ 0 \\ 1 \\ 0 \end{bmatrix} + t \begin{bmatrix} -3 \\ 0 \\ 5 \\ 1 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 0 \\ 0 \\ 0 \\ 0 \end{bmatrix}\) only
+[/QUESTION]
+
+=== SECTION 2: Linear independence in \(\mathbb{R}^m\) ===
+
+Earlier we saw that adding a redundant vector to a list does not enlarge its span—for instance, if \(\mathbf{a}_3 = 2\mathbf{a}_1 - \mathbf{a}_2\), then \(\mathbf{a}_3\) contributes no new direction beyond \(\mathbf{a}_1\) and \(\mathbf{a}_2\). Notice that rewriting \(\mathbf{a}_3 = 2\mathbf{a}_1 - \mathbf{a}_2\) as
+\[
+2\mathbf{a}_1 - 1\mathbf{a}_2 - 1\mathbf{a}_3 = \mathbf{0}
+\]
+produces a nontrivial solution \(\mathbf{x} = \begin{bmatrix} 2 \\ -1 \\ -1 \end{bmatrix} \neq \mathbf{0}\) of the homogeneous equation \(A\mathbf{x} = \mathbf{0}\), where \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\). This observation turns the geometric idea of "no redundant vectors" into an exact algebraic test.
+
+[CALLOUT]
+id: lin-indep-def
+label: Definition
+title: Linear independence and linear dependence in \(\mathbb{R}^m\)
+tone: key
+
+A finite list of vectors \(\{\mathbf{a}_1, \mathbf{a}_2, \dots, \mathbf{a}_n\}\) in \(\mathbb{R}^m\) is called linearly independent if the vector equation
+\[
+x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \dots + x_n \mathbf{a}_n = \mathbf{0}
+\]
+has ONLY the trivial solution \(x_1 = x_2 = \dots = x_n = 0\).
+
+The list is called linearly dependent if there exist weights \(c_1, \dots, c_n \in \mathbb{R}\), NOT all zero, such that
+\[
+c_1 \mathbf{a}_1 + c_2 \mathbf{a}_2 + \dots + c_n \mathbf{a}_n = \mathbf{0}.
+\]
+Such an equation with at least one \(c_j \neq 0\) is called a linear dependence relation among \(\mathbf{a}_1, \dots, \mathbf{a}_n\).
+[/CALLOUT]
+
+Why does linear dependence capture redundancy? Suppose \(c_1 \mathbf{a}_1 + \dots + c_n \mathbf{a}_n = \mathbf{0}\) with some \(c_k \neq 0\). Dividing by \(c_k\) isolates \(\mathbf{a}_k\) as a linear combination of the remaining vectors:
+\[
+\mathbf{a}_k = -\frac{c_1}{c_k}\mathbf{a}_1 - \dots - \frac{c_{k-1}}{c_k}\mathbf{a}_{k-1} - \frac{c_{k+1}}{c_k}\mathbf{a}_{k+1} - \dots - \frac{c_n}{c_k}\mathbf{a}_n.
+\]
+Conversely, if one vector in the list is a linear combination of the others, subtracting it to the other side produces a nontrivial dependence relation with coefficient \(-1\) on that vector.
+
+Now translate [REF: lin-indep-def | the definition] through the matrix-vector product \(A\mathbf{x} = x_1 \mathbf{a}_1 + \dots + x_n \mathbf{a}_n\) for \(A = \begin{bmatrix} \mathbf{a}_1 & \cdots & \mathbf{a}_n \end{bmatrix}\): the columns of \(A\) are linearly independent if and only if \(A\mathbf{x} = \mathbf{0}\) has only the trivial solution! Combined with Gaussian elimination, this gives the exact computational test for linear independence.
+
+[CALLOUT]
+id: indep-pivot-test
+label: Theorem
+title: Pivot test for linear independence
+tone: key
+
+Let \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}\) be an \(m \times n\) matrix. The columns \(\mathbf{a}_1, \dots, \mathbf{a}_n\) are linearly independent if and only if \(A\) has a pivot position in EVERY column (equivalently, \(A\mathbf{x} = \mathbf{0}\) has no free variables).
+[/CALLOUT]
+
+Several quick structural shortcuts follow immediately without any row reduction at all:
+1. A single vector \(\{\mathbf{v}\}\) is linearly independent if and only if \(\mathbf{v} \neq \mathbf{0}\).
+2. Two vectors \(\{\mathbf{u}, \mathbf{v}\}\) are linearly dependent if and only if one is a scalar multiple of the other. (Beware: for three or more vectors, pairwise non-proportionality does NOT guarantee independence—for example, \(\begin{bmatrix} 1 \\ 0 \end{bmatrix}, \begin{bmatrix} 0 \\ 1 \end{bmatrix}, \begin{bmatrix} 1 \\ 1 \end{bmatrix}\) has no pair of scalar multiples, yet \(\mathbf{v}_3 = \mathbf{v}_1 + \mathbf{v}_2\)!)
+3. Any list containing the zero vector \(\mathbf{0}\) is automatically linearly dependent, because \(1 \cdot \mathbf{0} + 0\mathbf{v}_2 + \dots + 0\mathbf{v}_n = \mathbf{0}\) has a nonzero weight on \(\mathbf{0}\).
+4. If \(n > m\) (more vectors than coordinates), the list \(\{\mathbf{a}_1, \dots, \mathbf{a}_n\} \subseteq \mathbb{R}^m\) is ALWAYS linearly dependent, directly by [REF: underdetermined-homog | the underdetermined homogeneous theorem]. For instance, any four vectors in \(\mathbb{R}^3\) must be linearly dependent.
+
+Let us test a concrete list in \(\mathbb{R}^3\): are \(\mathbf{a}_1 = \begin{bmatrix} 1 \\ 0 \\ 2 \end{bmatrix}\), \(\mathbf{a}_2 = \begin{bmatrix} -1 \\ 3 \\ 1 \end{bmatrix}\), and \(\mathbf{a}_3 = \begin{bmatrix} 0 \\ 3 \\ 3 \end{bmatrix}\) linearly independent? Form \(A = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \mathbf{a}_3 \end{bmatrix}\) and row-reduce:
+\[
+\begin{bmatrix} 1 & -1 & 0 \\ 0 & 3 & 3 \\ 2 & 1 & 3 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - 2 R_1}
+\begin{bmatrix} 1 & -1 & 0 \\ 0 & 3 & 3 \\ 0 & 3 & 3 \end{bmatrix}
+\xrightarrow{R_3 \leftarrow R_3 - R_2}
+\begin{bmatrix} 1 & -1 & 0 \\ 0 & 3 & 3 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+Column \(3\) has no pivot! By [REF: indep-pivot-test | the pivot test], the vectors are linearly dependent. Continuing to \(\operatorname{RREF}(A) = \begin{bmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{bmatrix}\) gives \(x_1 = -x_3, x_2 = -x_3\); setting \(x_3 = 1\) reveals the explicit dependence relation \(-\mathbf{a}_1 - \mathbf{a}_2 + \mathbf{a}_3 = \mathbf{0}\), i.e., \(\mathbf{a}_3 = \mathbf{a}_1 + \mathbf{a}_2\).
+
+[QUESTION 2]
+[ANSWER: D]
+For which real value(s) of \(k\) are the three vectors
+\[
+\mathbf{v}_1 = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}, \qquad
+\mathbf{v}_2 = \begin{bmatrix} 2 \\ 5 \\ 0 \end{bmatrix}, \qquad
+\mathbf{v}_3 = \begin{bmatrix} 1 \\ 4 \\ k \end{bmatrix}
+\]
+linearly dependent in \(\mathbb{R}^3\)?
+
+(A) \(k = 0\) only
+(B) \(k = -3\) only
+(C) \(k = 1\) only
+(D) \(k = 3\) only
+(E) Every real number \(k\)
+[/QUESTION]
+
+=== SECTION 3: Structure of nonhomogeneous solution sets ===
+
+Now return to a general consistent nonhomogeneous system \(A\mathbf{x} = \mathbf{b}\) with \(\mathbf{b} \neq \mathbf{0}\). How is its solution set related to the solution set of the associated homogeneous system \(A\mathbf{x} = \mathbf{0}\)?
+
+Suppose we have found even ONE particular solution \(\mathbf{x}_p\) satisfying \(A\mathbf{x}_p = \mathbf{b}\). Let \(\mathbf{x}\) be any other solution of \(A\mathbf{x} = \mathbf{b}\), and consider the difference \(\mathbf{x}_h = \mathbf{x} - \mathbf{x}_p\). By linearity of matrix-vector multiplication,
+\[
+A\mathbf{x}_h = A(\mathbf{x} - \mathbf{x}_p) = A\mathbf{x} - A\mathbf{x}_p = \mathbf{b} - \mathbf{b} = \mathbf{0}.
+\]
+So the difference between ANY two solutions of \(A\mathbf{x} = \mathbf{b}\) is a solution of the homogeneous system \(A\mathbf{x} = \mathbf{0}\)! Rewriting \(\mathbf{x} - \mathbf{x}_p = \mathbf{x}_h\) as \(\mathbf{x} = \mathbf{x}_p + \mathbf{x}_h\) shows that every solution of \(A\mathbf{x} = \mathbf{b}\) is obtained by adding some homogeneous solution to \(\mathbf{x}_p\).
+
+Conversely, take ANY homogeneous solution \(\mathbf{x}_h\) (so \(A\mathbf{x}_h = \mathbf{0}\)) and form \(\mathbf{x} = \mathbf{x}_p + \mathbf{x}_h\). Applying linearity again gives
+\[
+A\mathbf{x} = A(\mathbf{x}_p + \mathbf{x}_h) = A\mathbf{x}_p + A\mathbf{x}_h = \mathbf{b} + \mathbf{0} = \mathbf{b}.
+\]
+We have just proved both directions of one of the most illuminating theorems in all of linear algebra.
+
+[CALLOUT]
+id: structure-theorem
+label: Theorem
+title: Structure of nonhomogeneous solution sets
+tone: key
+
+Suppose the linear system \(A\mathbf{x} = \mathbf{b}\) is consistent, and let \(\mathbf{x}_p\) be ANY particular solution (so \(A\mathbf{x}_p = \mathbf{b}\)). Then the complete solution set of \(A\mathbf{x} = \mathbf{b}\) is
+\[
+\{ \mathbf{x}_p + \mathbf{x}_h : A\mathbf{x}_h = \mathbf{0} \}.
+\]
+In particular:
+(1) Geometrically, the solution set of \(A\mathbf{x} = \mathbf{b}\) is a parallel translate of the homogeneous solution set of \(A\mathbf{x} = \mathbf{0}\), shifted away from the origin by the vector \(\mathbf{x}_p\).
+(2) Uniqueness criterion: a consistent system \(A\mathbf{x} = \mathbf{b}\) has a UNIQUE solution if and only if the homogeneous system \(A\mathbf{x} = \mathbf{0}\) has only the trivial solution \(\mathbf{x}_h = \mathbf{0}\) (equivalently, the columns of \(A\) are linearly independent).
+[/CALLOUT]
+
+Let us visualize [REF: structure-theorem.1 | this parallel translation] directly in \(\mathbb{R}^2\). Take
+\[
+A = \begin{bmatrix} 1 & -2 \\ -2 & 4 \end{bmatrix}, \qquad \mathbf{b} = \begin{bmatrix} 3 \\ -6 \end{bmatrix}.
+\]
+Reducing \(A\) leaves the single equation \(x_1 - 2x_2 = 0\) for \(A\mathbf{x} = \mathbf{0}\), so the homogeneous solution set is the line \(\mathbf{x}_h = t\mathbf{v}\) with \(\mathbf{v} = \begin{bmatrix} 2 \\ 1 \end{bmatrix}\) passing through the origin. For \(A\mathbf{x} = \mathbf{b}\), reducing \([A \mid \mathbf{b}]\) leaves \(x_1 - 2x_2 = 3\), giving \(x_1 = 3 + 2x_2\). In parametric vector form:
+\[
+\mathbf{x} = \begin{bmatrix} 3 + 2x_2 \\ x_2 \end{bmatrix} = \begin{bmatrix} 3 \\ 0 \end{bmatrix} + x_2 \begin{bmatrix} 2 \\ 1 \end{bmatrix} = \mathbf{x}_p + t\mathbf{v}.
+\]
+Drag the slider \(t\) in the graph below to watch \(\mathbf{x}_h = t\mathbf{v}\) move along the homogeneous line while \(\mathbf{x}_p + t\mathbf{v}\) tracks it along the parallel shifted line, always separated by the exact same vector \(\mathbf{x}_p = (3, 0)\).
+
+[GRAPH]
+type: parametric2d
+title: Nonhomogeneous solution set \(\mathbf{x}_p + t\mathbf{v}\) as a parallel translate of \(t\mathbf{v}\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: -2.5, 2.5
+xrange: -4, 8
+yrange: -3, 3.5
+trace: 2*t, t | label: Homogeneous \(A\mathbf{x} = \mathbf{0}\): \(t\mathbf{v}\) | color: #2563eb
+trace: 3 + 2*t, t | label: Nonhomogeneous \(A\mathbf{x} = \mathbf{b}\): \(\mathbf{x}_p + t\mathbf{v}\) | color: #059669
+segment: 0, 0, 3, 0 | label: \(\mathbf{x}_p\) | color: #dc2626
+segment: 2*s, s, 3 + 2*s, s | color: #dc2626 | dashed: true
+point: 2*s, s | label: \(s\mathbf{v}\) | color: #2563eb
+point: 3 + 2*s, s | label: \(\mathbf{x}_p + s\mathbf{v}\) | color: #059669
+slider: s | range: -2, 2 | init: 1 | step: 0.25
+[/GRAPH]
+
+Notice an important consequence of [REF: structure-theorem | the structure theorem]: the particular solution \(\mathbf{x}_p\) is NOT unique when there are free variables! In the example above, choosing \(t = 1\) gives another particular solution \(\tilde{\mathbf{x}}_p = \begin{bmatrix} 5 \\ 1 \end{bmatrix}\), and \(\begin{bmatrix} 5 \\ 1 \end{bmatrix} + t\begin{bmatrix} 2 \\ 1 \end{bmatrix}\) traces out the exact same shifted line. What IS unique is the homogeneous direction set \(\{t\mathbf{v}\}\) and the resulting affine line as a whole.
+
+Notice also how [REF: structure-theorem | this theorem] finally explains why every linear system over \(\mathbb{R}\) has \(0\), \(1\), or infinitely many solutions—never \(2\) or \(5\): if a system has two distinct solutions \(\mathbf{x}_1 \neq \mathbf{x}_2\), then \(\mathbf{v} = \mathbf{x}_2 - \mathbf{x}_1 \neq \mathbf{0}\) satisfies \(A\mathbf{v} = \mathbf{0}\), so \(\mathbf{x}_1 + t\mathbf{v}\) produces infinitely many distinct solutions as \(t\) ranges over \(\mathbb{R}\).
+
+[TABLE]
+System | Pivot condition on \(A\) | Solution set form
+\(A\mathbf{x} = \mathbf{0}\) | Pivot in every column (\(n\) pivots) | Unique trivial solution \(\{\mathbf{0}\}\) (columns linearly independent)
+\(A\mathbf{x} = \mathbf{0}\) | \(k \ge 1\) non-pivot columns | \(\operatorname{Span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) through the origin (columns dependent)
+Consistent \(A\mathbf{x} = \mathbf{b}\) | Pivot in every column (\(n\) pivots) | Unique solution \(\{\mathbf{x}_p\}\)
+Consistent \(A\mathbf{x} = \mathbf{b}\) | \(k \ge 1\) non-pivot columns | \(\mathbf{x}_p + t_1 \mathbf{v}_1 + \dots + t_k \mathbf{v}_k\) (shifted parallel to homogeneous set)
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: B]
+Suppose \(A\) is a \(3 \times 4\) matrix and \(\mathbf{b} \in \mathbb{R}^3\) is a nonzero vector. Both \(\mathbf{u}_1 = \begin{bmatrix} 1 \\ 0 \\ 2 \\ -1 \end{bmatrix}\) and \(\mathbf{u}_2 = \begin{bmatrix} 3 \\ 1 \\ 0 \\ 1 \end{bmatrix}\) satisfy \(A\mathbf{x} = \mathbf{b}\). Which vector is guaranteed to satisfy the homogeneous equation \(A\mathbf{x} = \mathbf{0}\)?
+
+(A) \(\begin{bmatrix} 4 \\ 1 \\ 2 \\ 0 \end{bmatrix}\)
+(B) \(\begin{bmatrix} 2 \\ 1 \\ -2 \\ 2 \end{bmatrix}\)
+(C) \(\begin{bmatrix} -1 \\ -1 \\ 4 \\ -3 \end{bmatrix}\)
+(D) \(\begin{bmatrix} 2 \\ 1/2 \\ 1 \\ 0 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 7 \\ 2 \\ 2 \\ 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(A\) be a \(4 \times 3\) matrix whose columns are linearly independent, and suppose \(\mathbf{x}_0 \in \mathbb{R}^3\) is a solution of \(A\mathbf{x} = \mathbf{b}\). What can be concluded about the solution set of \(A\mathbf{x} = \mathbf{b}\)?
+
+(A) \(\mathbf{x}_0\) is the unique solution of \(A\mathbf{x} = \mathbf{b}\)
+(B) \(A\mathbf{x} = \mathbf{b}\) has infinitely many solutions forming a line through \(\mathbf{x}_0\)
+(C) \(A\mathbf{x} = \mathbf{b}\) must be inconsistent unless \(\mathbf{b} = \mathbf{0}\)
+(D) \(A\mathbf{x} = \mathbf{b}\) has exactly \(1\) free variable because \(4 - 3 = 1\)
+(E) Uniqueness cannot be decided without knowing \(\mathbf{b}\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Let \(A\) be any \(3 \times 5\) matrix with real entries. Which statement MUST be true regardless of the specific entries of \(A\)?
+
+(A) \(A\mathbf{x} = \mathbf{b}\) is consistent for every \(\mathbf{b} \in \mathbb{R}^3\)
+(B) The columns of \(A\) are linearly independent
+(C) \(A\mathbf{x} = \mathbf{0}\) has at least two free variables, hence infinitely many nontrivial solutions
+(D) \(A\mathbf{x} = \mathbf{0}\) has exactly two free variables
+(E) Every consistent system \(A\mathbf{x} = \mathbf{b}\) has a unique solution
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suppose \(A\) is a \(3 \times 3\) matrix with exactly \(2\) pivot columns, and suppose both \(\mathbf{p} = \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\) and \(\mathbf{q} = \begin{bmatrix} 4 \\ 0 \\ 3 \end{bmatrix}\) are solutions of \(A\mathbf{x} = \mathbf{b}\). Which expression gives the complete solution set of \(A\mathbf{x} = \mathbf{b}\) (for \(s, t \in \mathbb{R}\))?
+
+(A) \(\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + t \begin{bmatrix} 3 \\ -2 \\ 4 \end{bmatrix}\)
+(B) \(t \begin{bmatrix} 3 \\ -2 \\ 4 \end{bmatrix}\)
+(C) \(\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + t \begin{bmatrix} 5 \\ 2 \\ 2 \end{bmatrix}\)
+(D) \(s \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix} + t \begin{bmatrix} 4 \\ 0 \\ 3 \end{bmatrix}\)
+(E) \(\begin{bmatrix} 3 \\ -2 \\ 4 \end{bmatrix} + t \begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\)
+[/BONUS]

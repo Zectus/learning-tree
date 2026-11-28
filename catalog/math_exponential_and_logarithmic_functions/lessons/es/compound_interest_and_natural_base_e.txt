@@ -1,0 +1,196 @@
+=== SECTION 1: Interés compuesto periódico y tasa anual efectiva ===
+
+Supón que depositas un capital inicial \(P\) en una cuenta que paga una tasa de interés anual nominal \(r\) (escrita como decimal, de modo que \(12\%\) significa \(r = 0.12\)). Si el interés se paga una vez al año, el saldo al cabo de \(1\) año es \(P + rP = P(1 + r)\), y tras \(t\) años de reinvertir los intereses es \(P(1 + r)^t\).
+
+Sin embargo, los bancos rara vez esperan un año entero para abonar intereses. Si la misma tasa nominal \(r\) se capitaliza \(n\) veces al año —trimestralmente (\(n = 4\)), mensualmente (\(n = 12\)) o diariamente (\(n = 365\))—, cada período de capitalización genera una fracción \(r/n\) del saldo actual. Eso multiplica el saldo por \(1 + r/n\) al final de cada período. A lo largo de \(t\) años hay \(nt\) períodos de capitalización, por lo que el crecimiento multiplicativo repetido produce la fórmula del interés compuesto.
+
+[CALLOUT]
+id: compound-formula
+label: Fórmula
+title: Capitalización periódica discreta y tasa anual efectiva
+tone: key
+
+Para un capital inicial \(P > 0\), una tasa anual nominal \(r > 0\) y \(n\) períodos de capitalización por año:
+
+(1) El saldo al cabo de \(t\) años es
+\[
+A(t) = P\left(1 + \frac{r}{n}\right)^{nt}.
+\]
+(2) La tasa anual efectiva (APY, por sus siglas en inglés) es la tasa equivalente anual única \(r_{\mathrm{eff}}\) que produce el mismo crecimiento anual:
+\[
+r_{\mathrm{eff}} = \left(1 + \frac{r}{n}\right)^n - 1.
+\]
+[/CALLOUT]
+
+¿De dónde proviene [REF: compound-formula.2 | la fórmula de la APY]? Reescribe \(A(t)\) usando la ley de potencia de una potencia:
+\[
+A(t) = P\left[\left(1 + \frac{r}{n}\right)^n\right]^t = P(1 + r_{\mathrm{eff}})^t.
+\]
+La cantidad dentro de los corchetes, \((1 + r/n)^n\), es el factor exacto de crecimiento anual. Restar \(1\) aísla la ganancia porcentual neta a lo largo de un año completo.
+
+Para ver concretamente el efecto de la frecuencia de capitalización, deposita \(P = \$1{,}000\) a una tasa nominal \(r = 12\% = 0.12\) durante \(t = 1\) año:
+- Anualmente (\(n = 1\)): \(1{,}000(1 + 0.12)^1 = \$1{,}120.00\) (APY \(12.00\%\)).
+- Trimestralmente (\(n = 4\)): \(1{,}000(1 + 0.03)^4 \approx \$1{,}125.51\) (APY \(12.55\%\)).
+- Mensualmente (\(n = 12\)): \(1{,}000(1 + 0.01)^{12} \approx \$1{,}126.83\) (APY \(12.68\%\)).
+
+Como el interés ganado en períodos anteriores genera intereses a su vez durante períodos posteriores del mismo año, aumentar \(n\) eleva el rendimiento efectivo por encima de la tasa nominal \(r\). La APY proporciona una medida uniforme y directa para comparar dos cuentas con distintas tasas nominales y calendarios de capitalización.
+
+[QUESTION 1]
+[ANSWER: A]
+La Cuenta X paga una tasa anual nominal de \(10\%\) capitalizada semestralmente (\(n = 2\)). La Cuenta Y paga una tasa anual nominal de \(10.2\%\) capitalizada anualmente (\(n = 1\)). ¿Qué cuenta obtiene mayor tasa anual efectiva, y por qué?
+
+(A) La Cuenta X, porque su tasa anual efectiva es \(10.25\%\) frente a \(10.20\%\) de la Cuenta Y
+(B) La Cuenta Y, porque su tasa nominal \(10.2\%\) supera la tasa nominal \(10\%\) de la Cuenta X
+(C) La Cuenta X, porque su tasa anual efectiva es \(10.50\%\) frente a \(10.20\%\) de la Cuenta Y
+(D) La Cuenta Y, porque la capitalización semestral divide el rendimiento anual a \(5\%\)
+(E) Ambas cuentas obtienen exactamente la misma tasa anual efectiva de \(10.20\%\)
+[/QUESTION]
+
+=== SECTION 2: El número de Euler \(e\) y la capitalización continua ===
+
+En el ejemplo anterior de \(\$1{,}000\), pasar de capitalización anual a trimestral añadió \(\$5.51\), mientras que pasar de trimestral a mensual añadió solo \(\$1.32\). Si seguimos aumentando \(n\) —capitalizando diariamente, cada hora, cada segundo y más allá—, ¿el saldo crece sin cota o alcanza un techo finito?
+
+Para aislar el comportamiento esencial, fija \(P = 1\), \(r = 1\) (tasa anual nominal de \(100\%\)) y \(t = 1\) año. El saldo final es
+\[
+\left(1 + \frac{1}{n}\right)^n.
+\]
+Dos fuerzas opuestas compiten a medida que \(n\) crece: la base \(1 + 1/n\) se encoge hacia \(1\), mientras que el exponente \(n\) crece hacia \(\infty\). Calcular valores para \(n\) cada vez mayores revela una estabilización sorprendente:
+
+[TABLE]
+Frecuencia de capitalización \(n\) | Factor de crecimiento \(\left(1 + \frac{1}{n}\right)^n\)
+\(1\) (anual) | \(2.000000\)
+\(2\) (semestral) | \(2.250000\)
+\(4\) (trimestral) | \(2.441406\)
+\(12\) (mensual) | \(2.613035\)
+\(365\) (diaria) | \(2.714567\)
+\(1{,}000\) | \(2.716924\)
+\(1{,}000{,}000\) | \(2.718280\)
+[/TABLE]
+
+En lugar de divergir a \(\infty\), la sucesión sube de manera constante y se estabiliza contra un techo irracional exacto. Aceptamos como un hecho matemático dado (cuya demostración rigurosa mediante límites pertenece al cálculo y al análisis real) que cuando \(n \to \infty\), \(\left(1 + \frac{1}{n}\right)^n\) converge al número de Euler, denotado \(e\):
+\[
+e \approx 2.718281828459\dots
+\]
+
+[GRAPH]
+type: function2d
+title: Estabilización de \((1 + 1/x)^x\) hacia el número de Euler \(e \approx 2.7183\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 1, 50
+yrange: 1.8, 2.9
+trace: (1 + 1/x)^x | label: \(y = (1 + 1/x)^x\)
+trace: exp(1) | label: \(y = e \approx 2.7183\)
+point: 1, 2 | label: \((1, 2)\)
+point: 12, (1 + 1/12)^12 | label: \(n = 12\)
+[/GRAPH]
+
+Aplica ahora este límite a una tasa nominal arbitraria \(r > 0\) y tiempo \(t\). Para que la fracción \(r/n\) coincida con la forma \(1/m\), introduce la sustitución \(m = n/r\), de modo que \(r/n = 1/m\) y \(n = mr\). Entonces el exponente \(nt\) se convierte en \(mrt\), y [REF: compound-formula.1 | la fórmula de capitalización periódica] se reordena como
+\[
+A(t) = P\left(1 + \frac{r}{n}\right)^{nt} = P\left(1 + \frac{1}{m}\right)^{mrt} = P\left[\left(1 + \frac{1}{m}\right)^m\right]^{rt}.
+\]
+Como \(r > 0\) es fija, hacer que \(n \to \infty\) obliga a que \(m = n/r \to \infty\). Como resultado, la base entre corchetes se aproxima a \(e\), y aceptamos el límite continuo de que toda la expresión se aproxima a \(P e^{rt}\).
+
+[CALLOUT]
+id: continuous-formula
+label: Modelo
+title: Capitalización continua
+tone: key
+
+Cuando un capital inicial \(P > 0\) devenga una tasa de interés anual nominal \(r\) capitalizada continuamente, el saldo al cabo de \(t\) años es
+\[
+A(t) = P e^{rt}.
+\]
+Su factor efectivo de crecimiento anual es \(e^r\), y su tasa anual efectiva es \(r_{\mathrm{eff}} = e^r - 1\).
+[/CALLOUT]
+
+Observa cómo [REF: continuous-formula | la capitalización continua] convierte el factor discreto de dos parámetros \((1 + r/n)^n\) en la base única \(e^r\). En una lección posterior, una vez disponible el logaritmo natural, también despejaremos el tiempo transcurrido \(t\) en \(A(t) = P e^{rt}\) y convertiremos cualquier exponencial general \(b^x\) a base \(e\).
+
+[QUESTION 2]
+[ANSWER: D]
+Cuando \(n \to \infty\), ¿a qué valor exacto se aproxima la expresión \(\left(1 + \frac{3}{n}\right)^{2n}\)?
+
+(A) \(e^2\)
+(B) \(e^3\)
+(C) \(e^5\)
+(D) \(e^6\)
+(E) \(6e\)
+[/QUESTION]
+
+=== SECTION 3: La función exponencial natural \(e^x\) y crecimiento discreto frente a continuo ===
+
+Como \(e \approx 2.71828\) satisface \(2 < e < 3\), la función exponencial natural \(f(x) = e^x\) es una función de crecimiento exponencial ordinaria situada limpiamente entre \(2^x\) y \(3^x\). Todas las propiedades base de las funciones exponenciales se aplican directamente a \(f(x) = e^x\):
+
+- Dominio: \((-\infty, \infty)\).
+- Rango: \((0, \infty)\).
+- Intersección con el eje \(y\): \((0, 1)\), sin intersección con el eje \(x\).
+- Asíntota horizontal: \(y = 0\) cuando \(x \to -\infty\).
+- Monotonía estricta: estrictamente creciente en \(\mathbb{R}\), por ende inyectiva (\(e^{x_1} = e^{x_2} \implies x_1 = x_2\)).
+
+Comparar \(2^x\), \(e^x\) y \(3^x\) exige cuidado a ambos lados de \(x = 0\). Para \(x > 0\), bases mayores producen salidas mayores, por lo que \(1 < 2^x < e^x < 3^x\). En \(x = 0\), las tres curvas se cruzan en \((0, 1)\). Para \(x < 0\), tomar potencias negativas invierte el orden: \(0 < 3^x < e^x < 2^x < 1\).
+
+[GRAPH]
+type: function2d
+title: Exponencial natural \(y = e^x\) entre \(y = 2^x\) y \(y = 3^x\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2.2, 2.2
+yrange: -0.5, 10
+trace: 3^x | label: \(y = 3^x\)
+trace: exp(x) | label: \(y = e^x\)
+trace: 2^x | label: \(y = 2^x\)
+point: 0, 1 | label: \((0, 1)\)
+point: 1, exp(1) | label: \((1, e)\)
+[/GRAPH]
+
+En el modelado financiero y científico, comparar la capitalización periódica discreta con [REF: continuous-formula | la capitalización continua] pone de relieve cuán rápido se acerca la curva discreta a su límite superior continuo. Considera \(P = \$5{,}000\) invertidos a una tasa nominal \(r = 6\% = 0.06\) durante \(t = 5\) años:
+- Capitalización anual (\(n = 1\)): \(5{,}000(1.06)^5 \approx \$6{,}691.13\).
+- Capitalización mensual (\(n = 12\)): \(5{,}000(1.005)^{60} \approx \$6{,}744.25\).
+- Capitalización diaria (\(n = 365\)): \(5{,}000(1 + 0.06/365)^{1825} \approx \$6{,}749.13\).
+- Capitalización continua: \(5{,}000 e^{0.06 \cdot 5} = 5{,}000 e^{0.3} \approx \$6{,}749.29\).
+
+Para cualquier \(P > 0\), \(r > 0\) y \(t > 0\) fijos, la capitalización continua \(P e^{rt}\) supera estrictamente a toda frecuencia finita de capitalización \(P(1 + r/n)^{nt}\), porque \((1 + r/n)^n\) crece estrictamente hacia \(e^r\) cuando \(n \to \infty\). Al mismo tiempo, la capitalización diaria ya captura casi toda la brecha entre la capitalización anual y la continua: la diferencia a lo largo de cinco años es de apenas \(16\) centavos sobre \(\$5{,}000\).
+
+[QUESTION 3]
+[ANSWER: B]
+Para todo número real negativo \(x < 0\), ¿qué ordenamiento de \(2^x\), \(e^x\) y \(3^x\) es correcto?
+
+(A) \(0 < 2^x < e^x < 3^x < 1\)
+(B) \(0 < 3^x < e^x < 2^x < 1\)
+(C) \(1 < 2^x < e^x < 3^x\)
+(D) \(1 < 3^x < e^x < 2^x\)
+(E) \(3^x < e^x < 2^x < 0\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: E]
+Dos cuentas comienzan cada una con el mismo capital inicial \(P > 0\) a la misma tasa anual nominal \(r > 0\) y operan durante \(t > 0\) años. La Cuenta 1 capitaliza diariamente (\(n = 365\)) y la Cuenta 2 capitaliza continuamente. ¿Qué enunciado es verdadero?
+
+(A) La Cuenta 1 termina con un saldo estrictamente mayor porque capitaliza \(365t\) veces por separado.
+(B) Ambas cuentas terminan exactamente con el mismo saldo siempre que \(t\) sea un número entero.
+(C) La Cuenta 2 termina por delante solo si \(r \ge 1\).
+(D) La Cuenta 1 termina por delante para valores pequeños de \(t\), y la Cuenta 2 la alcanza solo después de \(t > 1\).
+(E) La Cuenta 2 termina con un saldo estrictamente mayor para todos \(P > 0\), \(r > 0\) y \(t > 0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Una cuenta crece continuamente según \(A(t) = P e^{rt}\) con \(P > 0\) y \(r > 0\). Supón que el saldo se triplica cada \(T\) años. ¿Cuál es el valor exacto de \(e^{2rT}\)?
+
+(A) \(6\)
+(B) \(9\)
+(C) \(e^6\)
+(D) \(3^e\)
+(E) \(27\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+El inversionista A deposita \(\$2{,}000\) al \(6\%\) de interés anual nominal capitalizado continuamente durante \(4\) años. El inversionista B deposita \(\$2{,}000\) al \(12\%\) de interés anual nominal capitalizado continuamente durante \(2\) años. ¿Cómo se comparan sus saldos finales?
+
+(A) El inversionista A termina por delante porque la inversión capitaliza durante el doble de años.
+(B) El inversionista B termina por delante porque la tasa de interés es el doble de alta.
+(C) Ambos inversionistas terminan exactamente con el mismo saldo, \(\$2{,}000\,e^{0.24}\).
+(D) El inversionista B termina con el doble del saldo final del inversionista A.
+(E) La comparación no puede determinarse sin una aproximación decimal de \(e\).
+[/BONUS]

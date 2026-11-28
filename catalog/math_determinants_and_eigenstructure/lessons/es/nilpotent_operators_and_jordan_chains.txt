@@ -1,0 +1,251 @@
+=== SECTION 1: Cadenas de Jordan y bloques de Jordan nilpotentes ===
+
+La descomposición primaria dividió cualquier operador \(T\) (cuyo polinomio característico se escinde sobre \(F\)) en bloques independientes \(T|_{K_{\lambda_i}} = \lambda_i I + N_i\), donde cada \(N_i = (T - \lambda_i I)|_{K_{\lambda_i}}\) es NILPOTENTE. Para llevar \(T\) a su forma matricial más simple posible, solo necesitamos clasificar operadores nilpotentes \(N : W \to W\) (es decir, \(N^r = 0\) y \(N^{r-1} \neq 0\) para algún entero \(r \ge 1\), llamado índice de nilpotencia).
+
+Elija un vector no nulo \(\mathbf{v} \in W\) y aplique \(N\) repetidamente. Como \(N^r = 0\), la órbita \(\mathbf{v}, N\mathbf{v}, N^2\mathbf{v}, \dots\) debe acabar alcanzando \(\mathbf{0}\): existe un único entero \(k\) (\(1 \le k \le r\)) tal que \(N^k \mathbf{v} = \mathbf{0}\) mientras que \(N^{k-1}\mathbf{v} \neq \mathbf{0}\). Enumerar estos \(k\) vectores no nulos en orden INVERSO —desde el vector propio en la base hasta el vector generador \(\mathbf{v}\) en la cima— produce una cadena de Jordan.
+
+[CALLOUT]
+id: jordan-chain-def
+label: Definición y lema
+title: Cadena de Jordan (ciclo) y bloque de Jordan nilpotente \(J_k(0)\)
+tone: key
+
+Sea \(N : W \to W\) un operador nilpotente, y sea \(\mathbf{v} \in W\) tal que \(N^k \mathbf{v} = \mathbf{0}\) y \(N^{k-1}\mathbf{v} \neq \mathbf{0}\) (con \(k \ge 1\)).
+
+(1) La lista ordenada de \(k\) vectores
+\[
+\mathcal{C}(\mathbf{v}) = \bigl(\mathbf{w}_1,\; \mathbf{w}_2,\; \dots,\; \mathbf{w}_k\bigr) = \bigl(N^{k-1}\mathbf{v},\; N^{k-2}\mathbf{v},\; \dots,\; N\mathbf{v},\; \mathbf{v}\bigr)
+\]
+se llama cadena de Jordan (o ciclo) de longitud \(k\) con vector superior \(\mathbf{v}\) y vector inferior \(\mathbf{w}_1 = N^{k-1}\mathbf{v} \in \ker(N)\). Satisface \(N\mathbf{w}_1 = \mathbf{0}\) y \(N\mathbf{w}_j = \mathbf{w}_{j-1}\) para \(2 \le j \le k\).
+(2) Los vectores de \(\mathcal{C}(\mathbf{v})\) son linealmente independientes y generan un subespacio \(N\)-invariante \(k\)-dimensional \(U = \operatorname{span}(\mathcal{C}(\mathbf{v}))\).
+(3) En la base ordenada \(\mathcal{C}(\mathbf{v})\), la matriz de \(N|_U\) es el bloque de Jordan nilpotente \(k \times k\) \(J_k(0)\), con unos en la superdiagonal y ceros en el resto:
+\[
+[N|_U]_{\mathcal{C}(\mathbf{v})} = J_k(0) = \begin{bmatrix} 0 & 1 & 0 & \cdots & 0 \\ 0 & 0 & 1 & \cdots & 0 \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & \cdots & 1 \\ 0 & 0 & 0 & \cdots & 0 \end{bmatrix}
+\]
+(para \(k = 1\), \(J_1(0) = [0]\)).
+[/CALLOUT]
+
+Verifiquemos [REF: jordan-chain-def.2 | la independencia lineal] y [REF: jordan-chain-def.3 | la matriz del bloque]:
+- Independencia lineal: suponga \(c_1 N^{k-1}\mathbf{v} + c_2 N^{k-2}\mathbf{v} + \dots + c_{k-1} N\mathbf{v} + c_k \mathbf{v} = \mathbf{0}\). Aplique \(N^{k-1}\) a ambos lados. Como \(N^m \mathbf{v} = \mathbf{0}\) para todo \(m \ge k\), TODOS los términos se anulan excepto el último, dejando \(c_k N^{k-1}\mathbf{v} = \mathbf{0}\). Como \(N^{k-1}\mathbf{v} \neq \mathbf{0}\), ¡obtenemos \(c_k = 0\)! Aplique ahora \(N^{k-2}\) a la suma restante para obligar a \(c_{k-1} = 0\). Repetir paso a paso fuerza \(c_k = c_{k-1} = \dots = c_1 = 0\).
+- Representación matricial: como \(N\mathbf{w}_1 = \mathbf{0}\) y \(N\mathbf{w}_j = \mathbf{w}_{j-1}\) para \(j = 2, \dots, k\), la columna \(1\) de \([N|_U]_{\mathcal{C}(\mathbf{v})}\) es \(\mathbf{0}\), y la columna \(j\) tiene \(1\) en la fila \(j - 1\) y \(0\) en el resto, ¡produciendo \(J_k(0)\)! (Note cómo importa el ordenamiento: de abajo hacia arriba coloca los \(1\) en la SUPERDIAGONAL; invertir la lista de arriba hacia abajo pondría los \(1\) en la subdiagonal.)
+
+Observe qué hacen las potencias de \(J_k(0)\): \(J_k(0)\) desplaza cada vector un paso hacia abajo en la cadena (\(\mathbf{w}_j \mapsto \mathbf{w}_{j-1}\)), por lo que \(J_k(0)^m\) desplaza los vectores \(m\) pasos hacia abajo en la cadena, ¡empujando los \(1\) \(m\) diagonales arriba a la derecha! Por ejemplo, para \(k = 3\):
+\[
+J_3(0) = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}, \qquad J_3(0)^2 = \begin{bmatrix} 0 & 0 & 1 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}, \qquad J_3(0)^3 = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+En general, \(J_k(0)^m\) anula los \(\min(m, k)\) vectores inferiores de la cadena y desplaza los \(\max(k - m, 0)\) vectores restantes a vectores básicos distintos, de modo que
+\[
+\operatorname{nullity}\bigl(J_k(0)^m\bigr) = \min(m, k), \qquad \operatorname{rank}\bigl(J_k(0)^m\bigr) = \max(k - m, 0).
+\]
+
+[QUESTION 1]
+[ANSWER: B]
+Suponga que \(\mathbf{v} \in W\) genera una cadena de Jordan de longitud \(4\) para un operador nilpotente \(N\), ordenada de abajo hacia arriba como \(\mathcal{B} = (N^3\mathbf{v},\; N^2\mathbf{v},\; N\mathbf{v},\; \mathbf{v})\) de modo que \([N]_{\mathcal{B}} = J_4(0)\). ¿Cuáles son \(\operatorname{rank}(J_4(0)^2)\) y \(\ker(N^2)\) en \(\operatorname{span}(\mathcal{B})\)?
+
+(A) \(\operatorname{rank}(J_4(0)^2) = 1\) y \(\ker(N^2) = \operatorname{span}\{N^3\mathbf{v},\; N^2\mathbf{v},\; N\mathbf{v}\}\)
+(B) \(\operatorname{rank}(J_4(0)^2) = 2\) y \(\ker(N^2) = \operatorname{span}\{N^3\mathbf{v},\; N^2\mathbf{v}\}\)
+(C) \(\operatorname{rank}(J_4(0)^2) = 2\) y \(\ker(N^2) = \operatorname{span}\{N\mathbf{v},\; \mathbf{v}\}\)
+(D) \(\operatorname{rank}(J_4(0)^2) = 3\) y \(\ker(N^2) = \operatorname{span}\{N^3\mathbf{v}\}\)
+(E) \(\operatorname{rank}(J_4(0)^2) = 0\) y \(\ker(N^2) = \operatorname{span}(\mathcal{B})\)
+[/QUESTION]
+
+=== SECTION 2: El algoritmo descendente de bandera de núcleos y existencia de una base de Jordan ===
+
+¿Puede TODO operador nilpotente \(N : W \to W\) descomponerse en suma directa de cadenas de Jordan disjuntas? Sí, y la forma más limpia de construir una base de Jordan NO es de abajo hacia arriba (eligiendo primero vectores propios en \(\ker(N)\)), sino de ARRIBA HACIA ABAJO a través de la bandera ascendente de núcleos
+\[
+\{\mathbf{0}\} = \ker(N^0) \subsetneq \ker(N) \subsetneq \ker(N^2) \subsetneq \dots \subsetneq \ker(N^r) = W.
+\]
+
+[CALLOUT]
+id: nilpotent-canonical
+label: Teorema
+title: Forma Canónica Nilpotente (descomposición en cadenas de Jordan)
+tone: key
+
+Sea \(N : W \to W\) un operador lineal nilpotente sobre un espacio vectorial de dimensión finita \(W\) sobre \(F\). Entonces \(W\) admite una base \(\mathcal{B}\) que es una unión disjunta de cadenas de Jordan de \(N\), poniendo a \([N]_{\mathcal{B}}\) en la forma diagonal por bloques
+\[
+[N]_{\mathcal{B}} = J_{k_1}(0) \oplus J_{k_2}(0) \oplus \dots \oplus J_{k_m}(0).
+\]
+[/CALLOUT]
+
+¿Por qué funciona tan sin esfuerzo la construcción descendente? Todo gira en torno a un breve lema de independencia lineal sobre empujar vectores una capa hacia abajo en la bandera de núcleos. Diremos que un conjunto finito \(S \subset \ker(N^j)\) es linealmente independiente módulo \(\ker(N^{j-1})\) si ninguna combinación lineal no trivial de vectores de \(S\) cae en \(\ker(N^{j-1})\); equivalentemente, \(\operatorname{span}(S) \cap \ker(N^{j-1}) = \{\mathbf{0}\}\) y los vectores de \(S\) son linealmente independientes.
+
+[CALLOUT]
+id: pushdown-lemma
+label: Lema
+title: Empujar un complemento una capa hacia abajo preserva la independencia
+tone: note
+
+Sea \(j \ge 2\), y suponga que \(S = \{\mathbf{u}_1, \dots, \mathbf{u}_t\} \subset \ker(N^j)\) es linealmente independiente módulo \(\ker(N^{j-1})\). Entonces su imagen \(N(S) = \{N\mathbf{u}_1, \dots, N\mathbf{u}_t\} \subset \ker(N^{j-1})\) es linealmente independiente módulo \(\ker(N^{j-2})\) (y en particular tiene exactamente el mismo tamaño \(t\)).
+[/CALLOUT]
+
+Demostración de [REF: pushdown-lemma | el lema de descenso]: Claramente \(N^{j-1}(N\mathbf{u}_i) = N^j\mathbf{u}_i = \mathbf{0}\), por lo que \(N(S) \subset \ker(N^{j-1})\). Suponga ahora que una combinación lineal de \(N(S)\) cae en \(\ker(N^{j-2})\):
+\[
+c_1 N\mathbf{u}_1 + c_2 N\mathbf{u}_2 + \dots + c_t N\mathbf{u}_t \in \ker(N^{j-2}).
+\]
+Aplique \(N^{j-2}\) a ambos lados:
+\[
+\mathbf{0} = N^{j-2}\bigl(N(c_1\mathbf{u}_1 + \dots + c_t\mathbf{u}_t)\bigr) = N^{j-1}(c_1\mathbf{u}_1 + \dots + c_t\mathbf{u}_t).
+\]
+¡Eso dice que \(c_1\mathbf{u}_1 + \dots + c_t\mathbf{u}_t \in \ker(N^{j-1})\)! Como \(S\) es linealmente independiente módulo \(\ker(N^{j-1})\), TODO coeficiente \(c_1, \dots, c_t\) debe ser igual a \(0\).
+
+Con [REF: pushdown-lemma | el lema de descenso] en la mano, construya una base de Jordan de \(W\) desde la capa \(r\) hacia abajo hasta la capa \(1\):
+- Capa \(r\) (cima): elija un conjunto \(B_r \subset \ker(N^r) = W\) que forme una base de un complemento de \(\ker(N^{r-1})\) en \(\ker(N^r)\) (de modo que \(\ker(N^r) = \ker(N^{r-1}) \oplus \operatorname{span}(B_r)\)). Tome \(S_r = B_r\). Cada vector de \(B_r\) es la cima de una cadena de longitud \(r\).
+- Capa \(r - 1\): empuje \(S_r\) hacia abajo para obtener \(N(S_r) \subset \ker(N^{r-1})\). Por [REF: pushdown-lemma | el lema de descenso], \(N(S_r)\) es linealmente independiente módulo \(\ker(N^{r-2})\). Extienda \(N(S_r)\) añadiendo un conjunto (posiblemente vacío) \(B_{r-1} \subset \ker(N^{r-1})\) de modo que \(S_{r-1} = N(S_r) \cup B_{r-1}\) forme una base de un complemento de \(\ker(N^{r-2})\) en \(\ker(N^{r-1})\). ¡Cada vector recién añadido en \(B_{r-1}\) inicia una nueva cadena de longitud \(r - 1\)!
+- Repita hacia abajo para \(j = r - 2, r - 3, \dots, 1\): en la capa \(j\), empuje hacia abajo \(S_{j+1}\) para obtener \(N(S_{j+1})\) (automáticamente linealmente independiente módulo \(\ker(N^{j-1})\)), y extienda con un nuevo conjunto \(B_j\) de modo que \(S_j = N(S_{j+1}) \cup B_j\) sea una base de un complemento de \(\ker(N^{j-1})\) dentro de \(\ker(N^j)\).
+- Termine en la capa \(1\): como \(\ker(N^0) = \{\mathbf{0}\}\), \(S_1\) es una base de \(\ker(N)\). Puesto que \(S_j\) genera un complemento de \(\ker(N^{j-1})\) dentro de \(\ker(N^j)\) para todo \(j = 1, \dots, r\), la unión \(S_1 \cup S_2 \cup \dots \cup S_r\) es una BASE de \(\ker(N^r) = W\). Reagrupar exactamente estos mismos vectores en las cadenas de Jordan disjuntas generadas por los vectores superiores en \(B_r, B_{r-1}, \dots, B_1\) produce la base de Jordan deseada \(\mathcal{B}\), demostrando [REF: nilpotent-canonical | el Teorema de la Forma Canónica Nilpotente].
+
+Ejecute este algoritmo sobre la matriz nilpotente concreta \(4 \times 4\)
+\[
+N = \begin{bmatrix} 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+Calcule sus potencias:
+\[
+N^2 = \begin{bmatrix} 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{bmatrix}, \qquad N^3 = 0 \qquad (r = 3).
+\]
+Halle la bandera de núcleos:
+- \(\ker(N) = \{x_2 + x_4 = 0,\; x_3 = 0\} = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_2 - \mathbf{e}_4\}\) (dimensión \(2\)).
+- \(\ker(N^2) = \{x_3 = 0\} = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_2,\; \mathbf{e}_4\}\) (dimensión \(3\)).
+- \(\ker(N^3) = \mathbb{R}^4\) (dimensión \(4\)).
+
+Ejecute ahora el algoritmo descendente:
+1. Capa \(3\): \(\dim(\ker N^3) - \dim(\ker N^2) = 4 - 3 = 1\). Elija \(\mathbf{e}_3 \notin \ker(N^2)\), así que \(S_3 = B_3 = \{\mathbf{e}_3\}\).
+2. Capa \(2\): empuje hacia abajo \(N(\mathbf{e}_3) = \mathbf{e}_2 \in \ker(N^2)\). Como \(\dim(\ker N^2) - \dim(\ker N) = 3 - 2 = 1\), ¡el único vector empujado \(\mathbf{e}_2\) YA llena un complemento de \(\ker(N)\) en \(\ker(N^2)\)! Así que \(B_2 = \emptyset\) y \(S_2 = \{\mathbf{e}_2\}\).
+3. Capa \(1\): empuje hacia abajo \(N(\mathbf{e}_2) = \mathbf{e}_1 \in \ker(N)\). Como \(\dim(\ker N) = 2\), extienda \(\{\mathbf{e}_1\}\) a una base de \(\ker(N)\) añadiendo \(B_1 = \{\mathbf{e}_2 - \mathbf{e}_4\}\), dando \(S_1 = \{\mathbf{e}_1,\; \mathbf{e}_2 - \mathbf{e}_4\}\).
+4. Reagrupe en cadenas: la Cadena 1 (longitud \(3\)) es \((\mathbf{e}_1,\; \mathbf{e}_2,\; \mathbf{e}_3)\) y la Cadena 2 (longitud \(1\)) es \((\mathbf{e}_2 - \mathbf{e}_4)\). Ensamblar \(P = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & -1 \end{bmatrix}\) arroja
+\[
+P^{-1} N P = \begin{bmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{bmatrix} = J_3(0) \oplus J_1(0).
+\]
+
+[QUESTION 2]
+[ANSWER: A]
+Considere la matriz nilpotente
+\[
+N = \begin{bmatrix} 0 & 1 & 2 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+¿Qué base ordenada \((\mathbf{w}_1, \mathbf{w}_2, \mathbf{w}_3)\) de \(\mathbb{R}^3\) pone a \(N\) exactamente en la forma de Jordan \(J_2(0) \oplus J_1(0) = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}\)?
+
+(A) \(\mathbf{w}_1 = (1, 0, 0)^T,\quad \mathbf{w}_2 = (0, 1, 0)^T,\quad \mathbf{w}_3 = (0, -2, 1)^T\)
+(B) \(\mathbf{w}_1 = (0, 1, 0)^T,\quad \mathbf{w}_2 = (1, 0, 0)^T,\quad \mathbf{w}_3 = (0, -2, 1)^T\)
+(C) \(\mathbf{w}_1 = (1, 0, 0)^T,\quad \mathbf{w}_2 = (0, 0, 1)^T,\quad \mathbf{w}_3 = (0, -2, 1)^T\)
+(D) \(\mathbf{w}_1 = (1, 0, 0)^T,\quad \mathbf{w}_2 = (0, 1, 0)^T,\quad \mathbf{w}_3 = (0, 0, 1)^T\)
+(E) \(\mathbf{w}_1 = (1, 0, 0)^T,\quad \mathbf{w}_2 = (0, 1, 0)^T,\quad \mathbf{w}_3 = (2, 0, 0)^T\)
+[/QUESTION]
+
+=== SECTION 3: Diagramas de puntos y unicidad de los tamaños de bloques de Jordan ===
+
+En el algoritmo descendente, hicimos elecciones libres de vectores complementarios \(B_r, \dots, B_1\) en cada capa. ¿Podría un conjunto diferente de elecciones producir tamaños de bloques de Jordan DIFERENTES? ¡No! Observe con atención cuántos vectores se ubican en cada capa \(S_k\):
+\[
+|S_k| = \dim\bigl(\ker(N^k)\bigr) - \dim\bigl(\ker(N^{k-1})\bigr) = \operatorname{nullity}(N^k) - \operatorname{nullity}(N^{k-1})
+\]
+(con \(\operatorname{nullity}(N^0) = 0\)). Imagine ahora las cadenas de Jordan como columnas verticales de puntos —un diagrama de puntos (tablero de Ferrers)— ordenadas de la columna más alta a la izquierda a la más corta a la derecha. Cada punto de la fila \(k\) (contando desde la fila inferior \(k = 1\) hacia arriba) corresponde a UN vector en \(S_k\), equivalentemente, a UN bloque de Jordan de tamaño AL MENOS \(k\).
+
+Observe cuán limpiamente cuenta esto todo:
+- Como \(S_k = N(S_{k+1}) \cup B_k\) es una unión disjunta y \(|N(S_{k+1})| = |S_{k+1}|\) por [REF: pushdown-lemma | el lema de descenso], los anchos de capa \(d_k = |S_k|\) forman SIEMPRE una sucesión no creciente:
+\[
+d_1 \ge d_2 \ge \dots \ge d_r > 0 = d_{r+1}.
+\]
+- El número de NUEVAS cadenas iniciadas a altura \(k\) —es decir, el número EXACTO \(b_k = |B_k|\) de bloques de Jordan de tamaño \(k\)— es simplemente la diferencia entre la fila \(k\) y la fila \(k + 1\):
+\[
+b_k = d_k - d_{k+1} = \bigl(\operatorname{nullity}(N^k) - \operatorname{nullity}(N^{k-1})\bigr) - \bigl(\operatorname{nullity}(N^{k+1}) - \operatorname{nullity}(N^k)\bigr).
+\]
+
+[CALLOUT]
+id: block-count-formula
+label: Teorema
+title: Invariantes de conteo de bloques y unicidad de la forma de Jordan nilpotente
+tone: key
+
+Sea \(N : W \to W\) un operador nilpotente con \(\nu_k = \operatorname{nullity}(N^k)\) (y \(\nu_0 = 0\)). Defina los saltos de capa \(d_k = \nu_k - \nu_{k-1}\) para \(k \ge 1\).
+
+(1) La sucesión \(d_1 \ge d_2 \ge d_3 \ge \dots\) es no creciente, y \(d_k\) es igual al número de bloques de Jordan de \(N\) de tamaño \(\ge k\). (En particular, \(d_1 = \operatorname{nullity}(N)\) es el número TOTAL de bloques de Jordan.)
+(2) El número exacto de bloques de Jordan de tamaño \(k\) es
+\[
+b_k = d_k - d_{k+1} = 2\,\operatorname{nullity}(N^k) - \operatorname{nullity}(N^{k-1}) - \operatorname{nullity}(N^{k+1}).
+\]
+(3) Unicidad: Como \(\operatorname{nullity}(N^k)\) depende únicamente de \(N\) (y es invariante por semejanza), el multiconjunto de tamaños de bloques de Jordan de \(N\) está ÚNICAMENTE determinado por \(N\).
+[/CALLOUT]
+
+Lea un diagrama de puntos concreto para un operador nilpotente \(7 \times 7\) con \(\nu_1 = 3,\; \nu_2 = 6,\; \nu_3 = 7\). Calcular los saltos da \(d_1 = 3,\; d_2 = 6 - 3 = 3,\; d_3 = 7 - 6 = 1,\; d_4 = 0\). Apile \(d_1 = 3\) puntos en la fila \(1\), \(d_2 = 3\) puntos en la fila \(2\), y \(d_3 = 1\) punto en la fila \(3\):
+
+[TABLE]
+Capa \(k\) | \(\operatorname{nullity}(N^k)\) | Ancho de fila \(d_k\) (bloques \(\ge k\)) | Cadena 1 | Cadena 2 | Cadena 3 | Nuevas cimas \(b_k = d_k - d_{k+1}\)
+Capa \(3\) | \(7\) | \(1\) | punto | — | — | \(b_3 = 1 - 0 = 1\)
+Capa \(2\) | \(6\) | \(3\) | punto | punto | punto | \(b_2 = 3 - 1 = 2\)
+Capa \(1\) | \(3\) | \(3\) | punto | punto | punto | \(b_1 = 3 - 3 = 0\)
+[/TABLE]
+
+¡Leer las tres columnas verticalmente da alturas de columna \(3, 2, 2\), de modo que la forma de Jordan nilpotente única es \(J_3(0) \oplus J_2(0) \oplus J_2(0)\)! Ni siquiera hace falta memorizar la fórmula \(2\nu_k - \nu_{k-1} - \nu_{k+1}\) si recuerda la receta en dos pasos del diagrama de puntos: tome primeras diferencias \(d_k = \nu_k - \nu_{k-1}\) (anchos de fila), y luego tome diferencias \(b_k = d_k - d_{k+1}\) (o lea las alturas de las columnas).
+
+[QUESTION 3]
+[ANSWER: D]
+Un operador nilpotente \(N : \mathbb{C}^7 \to \mathbb{C}^7\) tiene dimensiones de núcleos
+\[
+\operatorname{nullity}(N) = 3, \qquad \operatorname{nullity}(N^2) = 5, \qquad \operatorname{nullity}(N^3) = 6, \qquad \operatorname{nullity}(N^4) = 7.
+\]
+¿Cuál es su forma canónica de Jordan nilpotente única (salvo reordenamiento de bloques)?
+
+(A) \(J_4(0) \oplus J_3(0)\)
+(B) \(J_4(0) \oplus J_1(0) \oplus J_1(0) \oplus J_1(0)\)
+(C) \(J_3(0) \oplus J_2(0) \oplus J_2(0)\)
+(D) \(J_4(0) \oplus J_2(0) \oplus J_1(0)\)
+(E) \(J_3(0) \oplus J_3(0) \oplus J_1(0)\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+¿Qué sucesión de dimensiones de núcleos \(\bigl(\operatorname{nullity}(N),\; \operatorname{nullity}(N^2),\; \operatorname{nullity}(N^3),\; \operatorname{nullity}(N^4)\bigr)\) es IMPOSIBLE para cualquier matriz nilpotente \(N \in M_6(\mathbb{C})\)?
+
+(A) \((2, 4, 5, 6)\)
+(B) \((3, 5, 6, 6)\)
+(C) \((2, 3, 5, 6)\)
+(D) \((4, 6, 6, 6)\)
+(E) \((2, 4, 6, 6)\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: B]
+Calcule la forma canónica de Jordan nilpotente exacta de la matriz \(4 \times 4\)
+\[
+N = \begin{bmatrix} 0 & 1 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & -1 \\ 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+
+(A) \(J_3(0) \oplus J_1(0)\)
+(B) \(J_2(0) \oplus J_2(0)\)
+(C) \(J_2(0) \oplus J_1(0) \oplus J_1(0)\)
+(D) \(J_4(0)\)
+(E) \(J_1(0) \oplus J_1(0) \oplus J_1(0) \oplus J_1(0)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suponga que \(N \in M_8(\mathbb{C})\) tiene forma canónica de Jordan nilpotente \(J_4(0) \oplus J_3(0) \oplus J_1(0)\). ¿Cuál es la forma canónica de Jordan de \(N^2\)?
+
+(A) \(J_3(0) \oplus J_2(0) \oplus J_1(0) \oplus J_1(0) \oplus J_1(0)\)
+(B) \(J_2(0) \oplus J_2(0) \oplus J_1(0) \oplus J_1(0) \oplus J_1(0) \oplus J_1(0)\)
+(C) \(J_4(0) \oplus J_2(0) \oplus J_1(0) \oplus J_1(0)\)
+(D) \(J_2(0) \oplus J_2(0) \oplus J_2(0) \oplus J_2(0)\)
+(E) \(J_2(0) \oplus J_2(0) \oplus J_2(0) \oplus J_1(0) \oplus J_1(0)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Suponga que \(N \in M_5(\mathbb{C})\) es nilpotente con \(\operatorname{rank}(N) = 3\) y \(N^3 = 0\). ¿Cuál es la forma canónica de Jordan nilpotente única de \(N\)?
+
+(A) \(J_3(0) \oplus J_2(0)\)
+(B) \(J_3(0) \oplus J_1(0) \oplus J_1(0)\)
+(C) \(J_2(0) \oplus J_2(0) \oplus J_1(0)\)
+(D) \(J_4(0) \oplus J_1(0)\)
+(E) No puede determinarse sin conocer también \(\operatorname{rank}(N^2)\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Un estudiante propone un atajo ascendente para construir una base de Jordan de un operador nilpotente \(N : W \to W\) (con \(N^2 \neq 0\)): «Primero elija CUALQUIER base de \(\ker(N)\), y luego para cada vector básico \(\mathbf{v}\) resuelva \(N\mathbf{x} = \mathbf{v}\) repetidamente para hacer crecer una cadena hacia arriba». ¿Por qué falla en general esta estrategia ascendente?
+
+(A) Porque \(\ker(N)\) puede ser \(\{\mathbf{0}\}\) cuando \(N^2 \neq 0\).
+(B) Porque resolver \(N\mathbf{x} = \mathbf{v}\) siempre produce un vector linealmente dependiente de \(\mathbf{v}\).
+(C) Porque un vector \(\mathbf{v} \in \ker(N)\) puede situarse en la base de una cadena de longitud \(k\) solo si \(\mathbf{v} \in \operatorname{im}(N^{k-1}) \cap \ker(N)\); una base arbitraria de \(\ker(N)\) puede no respetar estos subespacios imagen o mezclar vectores de distintas alturas máximas de cadena.
+(D) Porque \(N\) no preserva la independencia lineal al aplicarse hacia abajo.
+(E) Porque el número de cadenas puede ser estrictamente mayor que \(\dim(\ker N)\).
+[/BONUS]

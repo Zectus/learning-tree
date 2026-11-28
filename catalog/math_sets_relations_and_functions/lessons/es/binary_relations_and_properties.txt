@@ -1,0 +1,278 @@
+=== SECTION 1: Relaciones binarias y representaciones concretas ===
+
+La matemática abunda en enunciados que vinculan dos objetos: «\(3\) divide a \(12\)», «\(x \le y\)», «\(A \subseteq B\)», «la recta \(\ell_1\) es paralela a la recta \(\ell_2\)». Cada uno expresa una relación binaria que se cumple o falla para un par ordenado dado \((a, b)\). Mediante los productos cartesianos podemos convertir cualquier relación de este tipo en un único objeto matemático: el conjunto de todos los pares ordenados para los cuales la relación se cumple.
+
+[CALLOUT]
+id: relation-def
+label: Definición
+title: Relación binaria
+tone: key
+
+Sean \(A\) y \(B\) conjuntos. Una relación binaria de \(A\) en \(B\) es cualquier subconjunto \(R \subseteq A \times B\).
+
+(1) Si \((a, b) \in R\), decimos que \(a\) está relacionado con \(b\) mediante \(R\) y a menudo escribimos \(a \mathrel{R} b\).
+(2) Si \((a, b) \notin R\), escribimos \(a \not\mathrel{R} b\).
+(3) Cuando \(A = B\), un subconjunto \(R \subseteq A \times A\) se denomina relación binaria sobre \(A\).
+[/CALLOUT]
+
+Obsérvese cuán limpia y flexible es esta definición: TODO subconjunto de \(A \times B\) es una relación binaria válida, incluida la relación vacía \(\emptyset \subseteq A \times B\) (ningún par está relacionado) y la relación universal \(A \times B\) (todo par está relacionado). Sobre cualquier conjunto \(A\), una relación especialmente importante es la relación de igualdad (o diagonal)
+\[
+\Delta_A = \{(a, a) : a \in A\}.
+\]
+
+Distintos contextos requieren distintas formas de representar una relación \(R \subseteq A \times A\):
+- Lista por extensión de pares ordenados: en \(A = \{1, 2, 3\}\), la relación de divisibilidad \(D = \{(a, b) \in A \times A : a \mid b\}\) (donde \(a \mid b\) significa \(b = ka\) para algún entero \(k\)) es
+\[
+D = \{(1, 1), (1, 2), (1, 3), (2, 2), (3, 3)\}.
+\]
+- Grafo dirigido (digrafo) sobre un conjunto finito \(A\): represéntese cada elemento de \(A\) como un vértice y trácese una flecha dirigida \(a \to b\) siempre que \((a, b) \in R\). Un par \((a, a) \in R\) aparece como un bucle en el vértice \(a\).
+- Matriz de adyacencia booleana sobre un conjunto finito ordenado \(A = \{a_1, \dots, a_n\}\): fórmese la matriz \(M_R\) de tamaño \(n \times n\) cuya entrada \((i, j)\) es \(1\) si \((a_i, a_j) \in R\) y \(0\) en caso contrario. Para la relación de divisibilidad \(D\) sobre \(\{1, 2, 3\}\) anterior:
+\[
+M_D = \begin{pmatrix} 1 & 1 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}.
+\]
+- Relaciones infinitas algebraicas, conjuntistas o geométricas: en \(\mathbb{Z}\), tenemos la divisibilidad \(a \mid b\) o la congruencia \(a \equiv b \pmod 3\); en \(\mathcal{P}(X)\), tenemos la inclusión de subconjuntos \(S \subseteq T\); en \(\mathbb{R}\), cualquier subconjunto del plano coordenado \(\mathbb{R}^2\) define una relación sobre \(\mathbb{R}\).
+
+Por ejemplo, considérese la relación «a distancia a lo sumo \(1\)» \(W\) sobre \(\mathbb{R}\), definida por
+\[
+x \mathrel{W} y \iff |x - y| \le 1.
+\]
+Como subconjunto de \(\mathbb{R}^2\), \(W\) es la franja diagonal acotada por las rectas \(y = x + 1\) e \(y = x - 1\). Dibujar \(W\) en \(\mathbb{R}^2\) nos permite inspeccionar su estructura directamente: contiene toda la diagonal principal \(y = x\), es simétrica respecto a \(y = x\) y podemos leer de un vistazo pares concretos relacionados y no relacionados —por ejemplo, \((0, 0.8) \in W\) y \((0.8, 1.6) \in W\), pero \((0, 1.6) \notin W\) porque \(|0 - 1.6| = 1.6 > 1\).
+
+[GRAPH]
+type: function2d
+title: Relación geométrica \(W = \{(x, y) \in \mathbb{R}^2 : \lvert x - y \rvert \le 1\}\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -2, 3
+yrange: -2, 3
+aspect: equal
+fill: x + 1, x - 1 | range: -2, 3 | label: \(W\) | color: #2563eb | opacity: 0.22
+trace: x + 1 | label: \(y = x + 1\) | color: #2563eb
+trace: x - 1 | label: \(y = x - 1\) | color: #2563eb
+trace: x | label: diagonal \(y = x\) | color: #64748b
+point: 0, 0.8 | label: \((0, 0.8)\)
+point: 0.8, 1.6 | label: \((0.8, 1.6)\)
+point: 0, 1.6 | label: \((0, 1.6)\) | color: #ef4444
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Sea \(A = \{1, 2, 3, 4\}\) y sea \(R \subseteq A \times A\) la relación cuya matriz de adyacencia booleana (con filas y columnas ordenadas \(1, 2, 3, 4\)) es
+\[
+M_R = \begin{pmatrix} 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 1 \end{pmatrix}.
+\]
+¿Cuál de las siguientes afirmaciones sobre \(R\) es VERDADERA?
+
+(A) \((2, 1) \in R\) y \((4, 2) \in R\)
+(B) \(R\) tiene exactamente \(5\) pares ordenados
+(C) \((1, 4) \in R\), \((4, 4) \in R\) y \((3, 1) \in R\)
+(D) \((4, 1) \in R\) y \((2, 3) \in R\)
+(E) \(R\) no contiene pares de la forma \((a, a)\)
+[/QUESTION]
+
+=== SECTION 2: Relaciones inversas y composición de relaciones ===
+
+Así como los conjuntos pueden combinarse con unión e intersección, las relaciones admiten dos operaciones construidas específicamente en torno a los pares ordenados: invertir flechas y encadenar flechas.
+
+[CALLOUT]
+id: inverse-and-comp
+label: Definición
+title: Relación inversa y composición de relaciones
+tone: key
+
+Sean \(R \subseteq A \times B\) y \(S \subseteq B \times C\) relaciones binarias.
+
+(1) La relación inversa (o recíproca) de \(R\) es la relación \(R^{-1} \subseteq B \times A\) definida por
+\[
+R^{-1} = \{(b, a) \in B \times A : (a, b) \in R\}.
+\]
+(2) La composición de \(S\) con \(R\) es la relación \(S \circ R \subseteq A \times C\) definida por
+\[
+S \circ R = \{(a, c) \in A \times C : \exists b \in B,\, \bigl((a, b) \in R \land (b, c) \in S\bigr)\}.
+\]
+[/CALLOUT]
+
+Préstese mucha atención al orden en la [REF: inverse-and-comp.2 | composición de relaciones]: en \(S \circ R\), se sigue PRIMERO \(R\) (de \(a \in A\) a un elemento intermedio \(b \in B\)) y DESPUÉS se sigue \(S\) (de \(b \in B\) a \(c \in C\)). Este orden de derecha a izquierda se elige específicamente para que más adelante, cuando las funciones se consideren como relaciones binarias especiales, la composición de relaciones \(g \circ f\) coincida idénticamente con la composición de funciones \((g \circ f)(a) = g(f(a))\).
+
+Calculemos un ejemplo a mano. Sean \(A = \{1, 2, 3\}\), \(B = \{u, v, w\}\) y \(C = \{p, q\}\), con
+\[
+R = \{(1, u), (1, v), (2, w), (3, u)\} \subseteq A \times B, \qquad S = \{(u, p), (v, q), (w, q)\} \subseteq B \times C.
+\]
+- Invertir cada par de \(R\) produce
+\[
+R^{-1} = \{(u, 1), (v, 1), (w, 2), (u, 3)\} \subseteq B \times A.
+\]
+Obsérvese que para una relación sobre un conjunto finito con matriz de adyacencia \(M_R\), invertir los pares intercambia filas y columnas, de modo que \(M_{R^{-1}}\) es la traspuesta de \(M_R\).
+- Para hallar \(S \circ R \subseteq A \times C\), síganse los caminos de dos pasos \(a \xrightarrow{R} b \xrightarrow{S} c\):
+  - Desde \(1\): \(1 \xrightarrow{R} u \xrightarrow{S} p\) da \((1, p)\); \(1 \xrightarrow{R} v \xrightarrow{S} q\) da \((1, q)\).
+  - Desde \(2\): \(2 \xrightarrow{R} w \xrightarrow{S} q\) da \((2, q)\).
+  - Desde \(3\): \(3 \xrightarrow{R} u \xrightarrow{S} p\) da \((3, p)\).
+Por lo tanto \(S \circ R = \{(1, p), (1, q), (2, q), (3, p)\}\).
+
+Dos identidades algebraicas fundamentales rigen la inversa y la composición para cualesquiera \(R \subseteq A \times B\), \(S \subseteq B \times C\) y \(T \subseteq C \times D\):
+- Asociatividad: \((T \circ S) \circ R = T \circ (S \circ R)\). En efecto, \((a, d)\) pertenece a cualquiera de los dos lados si y solo si existen \(b \in B\) y \(c \in C\) con \((a, b) \in R\), \((b, c) \in S\) y \((c, d) \in T\).
+- Inversión de la composición: \((S \circ R)^{-1} = R^{-1} \circ S^{-1}\). Verifiquemos esto por seguimiento de elementos. Tómese cualquier \((c, a) \in C \times A\):
+\[
+\begin{aligned}
+(c, a) \in (S \circ R)^{-1} &\iff (a, c) \in S \circ R \\
+&\iff \exists b \in B,\, \bigl((a, b) \in R \land (b, c) \in S\bigr) \\
+&\iff \exists b \in B,\, \bigl((c, b) \in S^{-1} \land (b, a) \in R^{-1}\bigr) \\
+&\iff (c, a) \in R^{-1} \circ S^{-1}.
+\end{aligned}
+\]
+Invertir un recorrido de dos pasos \(a \to b \to c\) significa dar primero el segundo paso hacia atrás (\(c \to b\) vía \(S^{-1}\)), y luego dar el primer paso hacia atrás (\(b \to a\) vía \(R^{-1}\)).
+
+[QUESTION 2]
+[ANSWER: D]
+En \(A = \{1, 2, 3\}\), sean \(R = \{(1, 2), (2, 3), (3, 1)\}\) y \(S = \{(1, 1), (2, 1), (3, 2)\}\). ¿Cuál es la relación compuesta \(S \circ R\)?
+
+(A) \(\{(1, 2), (2, 2), (3, 3)\}\)
+(B) \(\{(1, 2), (2, 3), (3, 1)\}\)
+(C) \(\{(1, 2), (2, 1), (3, 2)\}\)
+(D) \(\{(1, 1), (2, 2), (3, 1)\}\)
+(E) \(\{(1, 3), (2, 1), (3, 2)\}\)
+[/QUESTION]
+
+=== SECTION 3: Las cinco propiedades estructurales de las relaciones sobre un conjunto ===
+
+Cuando \(R\) es una relación sobre un único conjunto \(A\) (\(R \subseteq A \times A\)), cinco propiedades estructurales determinan qué clase de objeto matemático es \(R\): si agrupa elementos en clases de equivalencia, si los ordena en una jerarquía o si se comporta de manera más irregular.
+
+[CALLOUT]
+id: five-properties
+label: Definición
+title: Cinco propiedades fundamentales de una relación binaria \(R\) sobre \(A\)
+tone: key
+
+Sea \(R \subseteq A \times A\) una relación binaria sobre un conjunto \(A\).
+
+(1) Reflexiva: \(\forall a \in A,\; (a, a) \in R\).
+(2) Irreflexiva: \(\forall a \in A,\; (a, a) \notin R\).
+(3) Simétrica: \(\forall a, b \in A,\; \bigl((a, b) \in R \implies (b, a) \in R\bigr)\).
+(4) Antisimétrica: \(\forall a, b \in A,\; \bigl(((a, b) \in R \land (b, a) \in R) \implies a = b\bigr)\).
+(5) Transitiva: \(\forall a, b, c \in A,\; \bigl(((a, b) \in R \land (b, c) \in R) \implies (a, c) \in R\bigr)\).
+[/CALLOUT]
+
+Cada propiedad posee una firma visual nítida tanto en grafos dirigidos como en matrices de adyacencia booleanas, así como una descripción algebraica limpia usando \(\Delta_A\), \(R^{-1}\) y \(R \circ R\):
+
+[TABLE]
+Propiedad | Firma en el digrafo | Matriz de adyacencia \(M_R\) | Equivalente en álgebra de relaciones
+Reflexiva | Bucle en TODO vértice | Todos \(1\) en la diagonal principal | \(\Delta_A \subseteq R\)
+Irreflexiva | SIN bucles en ningún vértice | Todos \(0\) en la diagonal principal | \(R \cap \Delta_A = \emptyset\)
+Simétrica | Toda flecha \(a \to b\) tiene inversa \(b \to a\) | \(M_R\) igual a su traspuesta | \(R^{-1} = R\) (equivalentemente \(R^{-1} \subseteq R\))
+Antisimétrica | Ningún par de vértices DISTINTOS tiene flechas en ambos sentidos | Si \(i \ne j\) y \(M_{ij} = 1\), entonces \(M_{ji} = 0\) | \(R \cap R^{-1} \subseteq \Delta_A\)
+Transitiva | Todo camino de dos pasos \(a \to b \to c\) tiene atajo \(a \to c\) | Si \(M_{ij} = 1\) y \(M_{jk} = 1\), entonces \(M_{ik} = 1\) | \(R \circ R \subseteq R\)
+[/TABLE]
+
+Obsérvese una formulación equivalente de la [REF: five-properties.4 | antisimetría] obtenida tomando la contrarrecíproca de la implicación:
+\[
+\forall a, b \in A,\; \bigl((a \ne b \land (a, b) \in R) \implies (b, a) \notin R\bigr).
+\]
+Esto vuelve transparente el significado: la antisimetría prohíbe flechas mutuas entre DOS elementos DISTINTOS, mientras que no dice absolutamente nada sobre bucles \((a, a)\).
+
+Comprobemos las cinco propiedades en tres ejemplos diversos:
+1. Divisibilidad en \(\mathbb{Z}^+\): \(a \mid b\).
+   - Reflexiva: SÍ, ya que \(a = 1 \cdot a\) para todo \(a \in \mathbb{Z}^+\).
+   - Irreflexiva: NO (p. ej., \(1 \mid 1\)).
+   - Simétrica: NO (contraejemplo: \(2 \mid 4\) se cumple, pero \(4 \nmid 2\)).
+   - Antisimétrica: SÍ. Si \(a \mid b\) y \(b \mid a\) en \(\mathbb{Z}^+\), entonces \(b = ka\) y \(a = mb\) para enteros positivos \(k, m\). Luego \(a = mka\), y como \(a > 0\), \(mk = 1\), forzando \(k = m = 1\) y \(a = b\). (Contraste esto con la divisibilidad en TODO \(\mathbb{Z}\): allí \(2 \mid (-2)\) y \((-2) \mid 2\) mientras \(2 \ne -2\), por lo que la divisibilidad en \(\mathbb{Z}\) NO es antisimétrica.)
+   - Transitiva: SÍ. Si \(a \mid b\) y \(b \mid c\), entonces \(b = ka\) y \(c = mb\) para enteros \(k, m\), luego \(c = (mk)a\), por lo que \(a \mid c\).
+2. Inclusión estricta \(\subsetneq\) en \(\mathcal{P}(\{1, 2\})\):
+   - Reflexiva: NO (\(\emptyset \not\subsetneq \emptyset\)).
+   - Irreflexiva: SÍ (\(S \subsetneq S\) es imposible porque \(S = S\)).
+   - Simétrica: NO (\(\emptyset \subsetneq \{1\}\), pero \(\{1\} \not\subsetneq \emptyset\)).
+   - Antisimétrica: SÍ. ¿Por qué? Porque NO existen NINGUNOS \(S, T\) con ambos \(S \subsetneq T\) y \(T \subsetneq S\) (eso forzaría \(S \subseteq T\) y \(T \subseteq S\), luego \(S = T\), contradiciendo \(S \ne T\)). Así la hipótesis de la antisimetría es siempre falsa, de modo que la antisimetría se cumple por vacuidad.
+   - Transitiva: SÍ. Si \(S \subsetneq T\) y \(T \subsetneq U\), entonces \(S \subseteq U\); si \(S = U\), entonces \(T \subseteq S \subseteq T\) forzaría \(S = T\), contradiciendo \(S \subsetneq T\). Luego \(S \subsetneq U\).
+3. La banda geométrica \(W = \{(x, y) \in \mathbb{R}^2 : |x - y| \le 1\}\) de la Sección 1:
+   - Reflexiva: SÍ (\(|x - x| = 0 \le 1\)).
+   - Irreflexiva: NO.
+   - Simétrica: SÍ (\(|y - x| = |x - y| \le 1\)).
+   - Antisimétrica: NO (contraejemplo: \((0, 1) \in W\) y \((1, 0) \in W\), pero \(0 \ne 1\)).
+   - Transitiva: NO (como se ve en la gráfica: \((0, 0.8) \in W\) y \((0.8, 1.6) \in W\), pero \((0, 1.6) \notin W\)).
+
+[QUESTION 3]
+[ANSWER: B]
+Considérese la relación \(R\) sobre \(\mathbb{Z}\) definida por \((a, b) \in R \iff a + b \text{ es par}\). ¿Cuáles de las cinco propiedades satisface \(R\)?
+
+(A) Reflexiva, antisimétrica y transitiva solamente
+(B) Reflexiva, simétrica y transitiva solamente
+(C) Irreflexiva, simétrica y transitiva solamente
+(D) Reflexiva y simétrica solamente (no transitiva)
+(E) Simétrica y transitiva solamente (no reflexiva)
+[/QUESTION]
+
+=== SECTION 4: Errores conceptuales y satisfacción por vacuidad ===
+
+Al clasificar relaciones, casi siempre se tropieza con dos trampas lógicas. Enfrentar ambas de frente ahora evitará errores sutiles de demostración en todas las lecciones siguientes.
+
+[CALLOUT]
+id: symmetry-antisymmetry-trap
+label: Error frecuente
+title: Pares de propiedades que NO son opuestos lógicos
+tone: caution
+
+(1) Reflexiva e irreflexiva NO son opuestos. En \(A = \{1, 2\}\), la relación \(R = \{(1, 1)\}\) no es ni reflexiva (falta \((2, 2)\)) ni irreflexiva (contiene \((1, 1)\)). De manera aún más llamativa, en \(A = \emptyset\), la relación vacía \(\emptyset\) es TANTO reflexiva como irreflexiva por vacuidad.
+(2) Simétrica y antisimétrica NO son NI opuestos lógicos NI mutuamente excluyentes.
+- Una relación puede ser A LA VEZ simétrica y antisimétrica: tómese la relación de igualdad \(\Delta_A = \{(a, a) : a \in A\}\) (o cualquier subconjunto de \(\Delta_A\), incluido \(\emptyset\)). Como no hay pares \((a, b) \in R\) con \(a \ne b\), tanto la simetría como la antisimetría se cumplen automáticamente.
+- Una relación puede NO ser ni simétrica ni antisimétrica: en \(A = \{1, 2, 3\}\), tómese \(R = \{(1, 2), (2, 1), (1, 3)\}\). Falla la simetría porque \((1, 3) \in R\) mientras \((3, 1) \notin R\); falla la antisimetría porque \((1, 2) \in R\) y \((2, 1) \in R\) mientras \(1 \ne 2\).
+[/CALLOUT]
+
+De hecho, podemos caracterizar TODA relación sobre \(A\) que sea simultáneamente simétrica y antisimétrica. Supóngase que \(R \subseteq A \times A\) es a la vez simétrica y antisimétrica, y sea \((a, b) \in R\). Por simetría, \((b, a) \in R\). Ahora tenemos tanto \((a, b) \in R\) como \((b, a) \in R\), de modo que la antisimetría fuerza \(a = b\). ¡Así \(R \subseteq \Delta_A\)! Recíprocamente, cualquier subconjunto \(R \subseteq \Delta_A\) contiene únicamente pares diagonales \((a, a)\), por lo que es de inmediato simétrico y antisimétrico a la vez.
+
+La segunda gran trampa es pasar por alto la satisfacción POR VACUIDAD en propiedades condicionales (simetría, antisimetría y transitividad). Cada una de esas tres propiedades es una implicación cuantificada universalmente \(\forall \dots,\, (\text{hipótesis} \implies \text{conclusión})\). Siempre que NINGÚN elemento de \(A\) satisfaga la hipótesis, la implicación es automáticamente VERDADERA: ¡no hacen falta «testigos» para que valgan la transitividad o la antisimetría!
+
+Pongamos esto a prueba en dos relaciones pequeñas y llamativas sobre \(A = \{1, 2, 3\}\):
+- Tómese \(R_1 = \{(1, 2)\}\).
+  - ¿Es \(R_1\) antisimétrica? SÍ: la hipótesis \((a, b) \in R_1 \land (b, a) \in R_1\) NUNCA se cumple, por lo que la antisimetría vale por vacuidad.
+  - ¿Es \(R_1\) transitiva? SÍ: la hipótesis \((a, b) \in R_1 \land (b, c) \in R_1\) exige algún par que termine en \(b\) y otro que comience en \(b\). Como el único par es \((1, 2)\) y ningún par comienza con \(2\), la hipótesis NUNCA se cumple, así que la transitividad vale por vacuidad.
+- Tómese \(R_2 = \{(1, 2), (2, 1)\}\).
+  - ¿Es \(R_2\) transitiva? NO. No se suponga que \(a, b, c\) deban ser distintos en la definición de transitividad. En la [REF: five-properties.5 | transitividad], \(a, b, c \in A\) son arbitrarios: las repeticiones como \(a = c\) están completamente permitidas. Tomando \(a = 1, b = 2, c = 1\), tenemos \((1, 2) \in R_2\) y \((2, 1) \in R_2\), lo que exige \((1, 1) \in R_2\). Como \((1, 1) \notin R_2\), la transitividad FALLA.
+- Tómese la relación vacía \(R_0 = \emptyset\) sobre un conjunto no vacío \(A = \{1, 2\}\):
+  - ¿Reflexiva? NO, ya que \((1, 1) \notin \emptyset\).
+  - ¿Irreflexiva? SÍ, ya que ningún \((a, a)\) pertenece a \(\emptyset\).
+  - ¿Simétrica, antisimétrica, transitiva? LAS TRES SÍ, por vacuidad.
+
+Al comprobar la transitividad de una relación, recuérdese siempre probar el caso «\(a = c\)» (un par simétrico \((a, b)\) y \((b, a)\) obliga a que tanto \((a, a)\) como \((b, b)\) estén en \(R\)). Esa sola comprobación detecta uno de los errores más frecuentes en demostraciones sobre relaciones.
+
+[QUESTION 4]
+[ANSWER: A]
+En \(A = \{1, 2, 3\}\), sea \(R = \{(1, 2), (1, 3)\}\). ¿Cuáles de las cinco propiedades satisface \(R\)?
+
+(A) Irreflexiva, antisimétrica y transitiva
+(B) Irreflexiva y antisimétrica solamente (no transitiva)
+(C) Irreflexiva y transitiva solamente (no antisimétrica)
+(D) Antisimétrica solamente
+(E) Reflexiva, antisimétrica y transitiva
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Supóngase que \(R\) es una relación binaria sobre un conjunto no vacío \(A\) que es TANTO simétrica COMO transitiva. Un estudiante afirma: «Por lo tanto \(R\) también debe ser reflexiva, porque si \((a, b) \in R\), entonces por simetría \((b, a) \in R\), y luego por transitividad \((a, a) \in R\)». ¿Cuál es el fallo exacto de este argumento?
+
+(A) La transitividad exige que \(a, b, c\) sean tres elementos distintos, de modo que tomar \(c = a\) es inválido.
+(B) La simetría implica \((b, a) \in R\), lo cual contradice la transitividad.
+(C) La conclusión en realidad SÍ es verdadera: toda relación simétrica y transitiva sobre un conjunto no vacío es reflexiva.
+(D) El argumento falla porque \((a, b) \in R\) no implica \((b, b) \in R\).
+(E) El argumento supone que para todo \(a \in A\) existe al menos un \(b \in A\) con \((a, b) \in R\), lo cual falla si algún \(a \in A\) no está relacionado con ningún elemento.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Sean \(R\) y \(S\) dos relaciones binarias transitivas sobre un conjunto \(A\). ¿Cuál de los siguientes enunciados es SIEMPRE verdadero?
+
+(A) \(R \cup S\) es transitiva
+(B) \(R \cap S\) es transitiva
+(C) \(S \circ R\) es transitiva
+(D) \(R \setminus S\) es transitiva
+(E) \((A \times A) \setminus R\) es transitiva
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Sea \(R\) una relación sobre un conjunto \(A\). ¿Qué condición algebraica es equivalente a que \(R\) sea A LA VEZ simétrica Y antisimétrica?
+
+(A) \(R = \Delta_A\)
+(B) \(R = \emptyset\)
+(C) \(R \subseteq \Delta_A\)
+(D) \(R \circ R = R\)
+(E) \(R \cup R^{-1} = A \times A\)
+[/BONUS]

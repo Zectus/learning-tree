@@ -1,0 +1,265 @@
+=== SECTION 1: The Jordan Canonical Form Theorem and its algebraic dictionary ===
+
+Every piece of our structural machinery is now in place. Watch how Primary Decomposition and Nilpotent Jordan Chains snap together in four lines to classify EVERY linear operator whose characteristic polynomial splits over \(F\) (in particular, EVERY complex matrix \(A \in M_n(\mathbb{C})\)):
+
+1. By Primary Decomposition, \(V = K_{\lambda_1} \oplus K_{\lambda_2} \oplus \dots \oplus K_{\lambda_s}\), where each \(K_{\lambda_i}\) is \(T\)-invariant of dimension \(m_a(\lambda_i)\) and \(T|_{K_{\lambda_i}} = \lambda_i I + N_i\) with \(N_i = (T - \lambda_i I)|_{K_{\lambda_i}}\) nilpotent.
+2. By the Nilpotent Canonical Form Theorem, each \(K_{\lambda_i}\) admits a basis \(\mathcal{B}_i\) of Jordan chains for \(N_i\), putting \([N_i]_{\mathcal{B}_i}\) into \(J_{k_1}(0) \oplus \dots \oplus J_{k_m}(0)\).
+3. Adding \(\lambda_i I\) shifts every diagonal entry from \(0\) to \(\lambda_i\) while leaving the superdiagonal \(1\)s untouched, turning each nilpotent block \(J_k(0)\) into the \(k \times k\) Jordan block
+\[
+J_k(\lambda) = \lambda I_k + J_k(0) = \begin{bmatrix} \lambda & 1 & 0 & \cdots & 0 \\ 0 & \lambda & 1 & \cdots & 0 \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & \cdots & 1 \\ 0 & 0 & 0 & \cdots & \lambda \end{bmatrix}.
+\]
+4. Why is the resulting list of Jordan blocks unique up to reordering? For ANY eigenvalue \(\lambda_i\), the operator \((T - \lambda_i I)^k\) is INVERTIBLE on every other primary block \(K_{\lambda_j}\) (\(j \neq i\)), so its nullspace on the entire space \(V\) coincides with its nullspace on \(K_{\lambda_i}\):
+\[
+\operatorname{nullity}\bigl((T - \lambda_i I)^k\bigr) = \operatorname{nullity}\bigl(N_i^k\bigr) \qquad \text{for every } k \ge 0.
+\]
+By our nilpotent block-counting formula, the exact number of Jordan blocks \(J_k(\lambda_i)\) of size \(k\) is determined solely by the similarity invariants \(\operatorname{nullity}((T - \lambda_i I)^j)\)!
+
+[CALLOUT]
+id: jcf-theorem
+label: Theorem
+title: Jordan Canonical Form Theorem
+tone: key
+
+Let \(T : V \to V\) be a linear operator on an \(n\)-dimensional space over \(F\) whose characteristic polynomial splits into linear factors over \(F\) (in particular, ANY \(A \in M_n(\mathbb{C})\)).
+
+(1) Existence: There exists a basis \(\mathcal{B}\) of \(V\) (equivalently, an invertible matrix \(P \in M_n(F)\)) such that \(J = [T]_{\mathcal{B}} = P^{-1} A P\) is a block-diagonal Jordan matrix
+\[
+J = J_{k_1}(\lambda_1) \oplus J_{k_2}(\lambda_2) \oplus \dots \oplus J_{k_t}(\lambda_t),
+\]
+where the \(\lambda_j\) need not be distinct (a single eigenvalue can own multiple Jordan blocks).
+(2) Uniqueness: \(J\) is UNIQUE up to permuting the order of its Jordan blocks. For every eigenvalue \(\lambda\) and every size \(k \ge 1\), the exact number of blocks \(J_k(\lambda)\) in \(J\) is
+\[
+b_k(\lambda) = 2\,\operatorname{nullity}\bigl((A - \lambda I)^k\bigr) - \operatorname{nullity}\bigl((A - \lambda I)^{k-1}\bigr) - \operatorname{nullity}\bigl((A - \lambda I)^{k+1}\bigr).
+\]
+[/CALLOUT]
+
+Notice how transparently a Jordan matrix \(J\) displays EVERY algebraic invariant of \(A\) at a single glance! Because the minimal polynomial of a block-diagonal matrix is the least common multiple of the minimal polynomials of its blocks, and \(m_{J_k(\lambda)}(x) = (x - \lambda)^k\), the exponent of \((x - \lambda)\) in \(m_A(x)\) is simply the LARGEST block size for \(\lambda\). The table below collects this complete dictionary.
+
+[TABLE]
+Algebraic invariant of \(A\) for eigenvalue \(\lambda\) | Geometric reading in Jordan matrix \(J\)
+Algebraic multiplicity \(m_a(\lambda)\) | Sum of sizes of all Jordan blocks for \(\lambda\)
+Geometric multiplicity \(m_g(\lambda) = \operatorname{nullity}(A - \lambda I)\) | Total NUMBER of Jordan blocks for \(\lambda\)
+Multiplicity of \((x - \lambda)\) in minimal polynomial \(m_A(x)\) | Size of the LARGEST Jordan block for \(\lambda\)
+Number of Jordan blocks for \(\lambda\) of size \(\ge k\) | \(d_k(\lambda) = \operatorname{nullity}((A - \lambda I)^k) - \operatorname{nullity}((A - \lambda I)^{k-1})\)
+\(A\) is diagonalizable over \(F\) | Every Jordan block has size \(1\) (for every \(\lambda\))
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: C]
+Suppose a matrix \(A \in M_7(\mathbb{C})\) has Jordan Canonical Form
+\[
+J = J_3(2) \oplus J_2(2) \oplus J_1(2) \oplus J_1(-5).
+\]
+What are \(p_A(x)\), \(m_A(x)\), and the geometric multiplicity \(m_g(2)\)?
+
+(A) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^6(x + 5),\quad m_g(2) = 1\)
+(B) \(p_A(x) = (x - 2)^3(x + 5),\quad m_A(x) = (x - 2)^3(x + 5),\quad m_g(2) = 3\)
+(C) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^3(x + 5),\quad m_g(2) = 3\)
+(D) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^3(x + 5),\quad m_g(2) = 6\)
+(E) \(p_A(x) = (x - 2)^6(x + 5),\quad m_A(x) = (x - 2)^2(x + 5),\quad m_g(2) = 2\)
+[/QUESTION]
+
+=== SECTION 2: Computing \(J\) and a Jordan basis \(P\) by hand ===
+
+To find BOTH the Jordan form \(J\) and a transition matrix \(P\) satisfying \(P^{-1} A P = J\) (equivalently \(AP = PJ\)) for a concrete \(2 \times 2\), \(3 \times 3\), or \(4 \times 4\) matrix \(A\), combine our two algorithms:
+
+1. Factor \(p_A(x)\) to list all distinct eigenvalues \(\lambda_1, \dots, \lambda_s\) with algebraic multiplicities \(m_a(\lambda_i)\).
+2. For each \(\lambda_i\), set \(N_i = A - \lambda_i I\) and compute \(\operatorname{nullity}(N_i), \operatorname{nullity}(N_i^2), \dots\) until reaching \(\operatorname{nullity}(N_i^{r_i}) = m_a(\lambda_i)\). Use the layer jumps \(d_k = \operatorname{nullity}(N_i^k) - \operatorname{nullity}(N_i^{k-1})\) to read off the exact block sizes for \(\lambda_i\), assembling \(J\).
+3. On each generalized eigenspace \(K_{\lambda_i} = \ker(N_i^{r_i})\), run the top-down Jordan-chain algorithm for \(N_i\): each chain \((\mathbf{w}_1, \dots, \mathbf{w}_k) = (N_i^{k-1}\mathbf{v}, \dots, N_i\mathbf{v}, \mathbf{v})\) satisfies
+\[
+A\mathbf{w}_1 = \lambda_i\mathbf{w}_1, \qquad A\mathbf{w}_j = \mathbf{w}_{j-1} + \lambda_i\mathbf{w}_j \quad (2 \le j \le k).
+\]
+Place all chains as the columns of \(P\) in the EXACT same order as the blocks of \(J\), and verify \(AP = PJ\)!
+
+Worked \(3 \times 3\) example: Find \(J\) and \(P\) for
+\[
+A = \begin{bmatrix} 4 & 1 & -1 \\ -1 & 2 & 1 \\ 0 & 0 & 3 \end{bmatrix}.
+\]
+- Step 1: Expanding \(\det(xI_3 - A)\) along row \(3\) gives \((x - 3)\bigl((x - 4)(x - 2) + 1\bigr) = (x - 3)(x^2 - 6x + 9) = (x - 3)^3\). There is one eigenvalue \(\lambda = 3\) with \(m_a(3) = 3\).
+- Step 2: Set \(N = A - 3I_3\):
+\[
+N = \begin{bmatrix} 1 & 1 & -1 \\ -1 & -1 & 1 \\ 0 & 0 & 0 \end{bmatrix}, \qquad N^2 = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}.
+\]
+  Here \(\operatorname{rank}(N) = 1 \implies \operatorname{nullity}(N) = 2\), and \(\operatorname{nullity}(N^2) = 3\). The layer jumps are \(d_1 = 2\) and \(d_2 = 3 - 2 = 1\), giving one block of size \(2\) and one block of size \(1\):
+\[
+J = J_2(3) \oplus J_1(3) = \begin{bmatrix} 3 & 1 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 3 \end{bmatrix}.
+\]
+- Step 3: Find \(\ker(N) = \{x_1 + x_2 - x_3 = 0\} = \operatorname{span}\{(1, -1, 0)^T,\; (1, 0, 1)^T\}\) and \(\ker(N^2) = \mathbb{R}^3\).
+  - Layer \(2\): pick any vector outside \(\ker(N)\), say \(\mathbf{w}_2 = (1, 0, 0)^T\).
+  - Layer \(1\): push down \(\mathbf{w}_1 = N\mathbf{w}_2 = (1, -1, 0)^T \in \ker(N)\). Extend \(\{\mathbf{w}_1\}\) to a basis of \(\ker(N)\) by adding \(\mathbf{w}_3 = (1, 0, 1)^T\).
+  - Assemble \(P = \begin{bmatrix} 1 & 1 & 1 \\ -1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}\). Check column by column: \(A\mathbf{w}_1 = 3\mathbf{w}_1\), \(A\mathbf{w}_2 = (4, -1, 0)^T = \mathbf{w}_1 + 3\mathbf{w}_2\), and \(A\mathbf{w}_3 = (3, 0, 3)^T = 3\mathbf{w}_3\), confirming \(AP = PJ\)!
+
+Worked \(4 \times 4\) example with two eigenvalues: Find \(J\) and \(P\) for
+\[
+B = \begin{bmatrix} 1 & 1 & 0 & 0 \\ 0 & 1 & 0 & 3 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 4 \end{bmatrix}.
+\]
+- Step 1: \(p_B(x) = (x - 1)^3(x - 4)\), so \(\dim(K_1) = 3\) and \(\dim(K_4) = 1\).
+- Step 2: For \(\lambda = 1\), set \(N_1 = B - I_4\):
+\[
+N_1 = \begin{bmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 3 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 3 \end{bmatrix}, \qquad N_1^2 = \begin{bmatrix} 0 & 0 & 0 & 3 \\ 0 & 0 & 0 & 9 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 9 \end{bmatrix}.
+\]
+  Here \(\operatorname{rank}(N_1) = 2 \implies \operatorname{nullity}(N_1) = 2\), and \(\operatorname{rank}(N_1^2) = 1 \implies \operatorname{nullity}(N_1^2) = 3 = m_a(1)\)! Thus \(d_1(1) = 2,\; d_2(1) = 1\), giving \(J_2(1) \oplus J_1(1)\) on \(K_1\), together with \(J_1(4)\) on \(K_4\):
+\[
+J = J_2(1) \oplus J_1(1) \oplus J_1(4) = \begin{bmatrix} 1 & 1 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 4 \end{bmatrix}.
+\]
+- Step 3: On \(K_1 = \ker(N_1^2) = \operatorname{span}\{\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3\}\) with \(\ker(N_1) = \operatorname{span}\{\mathbf{e}_1, \mathbf{e}_3\}\), pick top vector \(\mathbf{w}_2 = \mathbf{e}_2 \in K_1 \setminus \ker(N_1)\), push down \(\mathbf{w}_1 = N_1\mathbf{e}_2 = \mathbf{e}_1\), and extend \(\{\mathbf{e}_1\}\) in \(\ker(N_1)\) by \(\mathbf{w}_3 = \mathbf{e}_3\). For \(\lambda = 4\), solving \((B - 4I_4)\mathbf{x} = \mathbf{0}\) gives \(\mathbf{w}_4 = (1, 3, 0, 3)^T\). Assembling \(P = \begin{bmatrix} 1 & 0 & 0 & 1 \\ 0 & 1 & 0 & 3 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 3 \end{bmatrix}\) yields \(P^{-1} B P = J\).
+
+[QUESTION 2]
+[ANSWER: D]
+Find the Jordan Canonical Form \(J\) (up to reordering of blocks) of the matrix
+\[
+A = \begin{bmatrix} 4 & 1 & 0 \\ -1 & 6 & 0 \\ 0 & 1 & 5 \end{bmatrix}.
+\]
+
+(A) \(J_1(5) \oplus J_1(5) \oplus J_1(5)\)
+(B) \(J_2(5) \oplus J_1(5)\)
+(C) \(J_2(4) \oplus J_1(6)\)
+(D) \(J_3(5)\)
+(E) \(J_2(5) \oplus J_1(4)\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+Consider the matrix
+\[
+A = \begin{bmatrix} 5 & -1 \\ 1 & 3 \end{bmatrix},
+\]
+whose Jordan Canonical Form is \(J = \begin{bmatrix} 4 & 1 \\ 0 & 4 \end{bmatrix}\). Which invertible matrix \(P\) satisfies \(P^{-1} A P = J\)?
+
+(A) \(P = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\)
+(B) \(P = \begin{bmatrix} 1 & 1 \\ 1 & 0 \end{bmatrix}\)
+(C) \(P = \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix}\)
+(D) \(P = \begin{bmatrix} 1 & 1 \\ -1 & 0 \end{bmatrix}\)
+(E) \(P = \begin{bmatrix} 1 & 2 \\ 1 & 2 \end{bmatrix}\)
+[/QUESTION]
+
+=== SECTION 3: Deciding similarity over \(\mathbb{C}\) ===
+
+One of the deepest payoffs of [REF: jcf-theorem | the Jordan Canonical Form Theorem] is that it completely solves the similarity problem for complex matrices!
+
+[CALLOUT]
+id: jcf-similarity
+label: Corollary
+title: Complete similarity classification over \(\mathbb{C}\)
+tone: key
+
+Two complex matrices \(A, B \in M_n(\mathbb{C})\) are similar over \(\mathbb{C}\) (\(B = Q^{-1} A Q\) for some invertible \(Q \in M_n(\mathbb{C})\)) if and only if they have the EXACT same Jordan Canonical Form up to permuting the blocks—equivalently, if and only if they have the same eigenvalues and \(\operatorname{nullity}((A - \lambda I)^k) = \operatorname{nullity}((B - \lambda I)^k)\) for every eigenvalue \(\lambda\) and every \(k \ge 1\).
+[/CALLOUT]
+
+Notice a crucial threshold at dimension \(n = 4\):
+- For \(n = 2\) or \(n = 3\), knowing \(p_A(x)\) AND \(m_A(x)\) ALWAYS determines the Jordan Canonical Form uniquely! (Check \(n = 3\) with a single eigenvalue \(\lambda\): the three partitions of \(3\) are \(3\) with \(m_A = (x - \lambda)^3\), \(2 + 1\) with \(m_A = (x - \lambda)^2\), and \(1 + 1 + 1\) with \(m_A = x - \lambda\)—no two share the same minimal polynomial.)
+- Starting at \(n = 4\), having IDENTICAL characteristic polynomials AND IDENTICAL minimal polynomials NO LONGER guarantees similarity! Compare the two \(4 \times 4\) Jordan matrices
+\[
+J^{(1)} = J_2(\lambda) \oplus J_2(\lambda) = \begin{bmatrix} \lambda & 1 & 0 & 0 \\ 0 & \lambda & 0 & 0 \\ 0 & 0 & \lambda & 1 \\ 0 & 0 & 0 & \lambda \end{bmatrix}, \qquad J^{(2)} = J_2(\lambda) \oplus J_1(\lambda) \oplus J_1(\lambda) = \begin{bmatrix} \lambda & 1 & 0 & 0 \\ 0 & \lambda & 0 & 0 \\ 0 & 0 & \lambda & 0 \\ 0 & 0 & 0 & \lambda \end{bmatrix}.
+\]
+BOTH have \(p(x) = (x - \lambda)^4\) AND \(m(x) = (x - \lambda)^2\)! Yet they are NOT similar over \(\mathbb{C}\), because \(J^{(1)}\) has \(2\) blocks (\(\operatorname{nullity}(J^{(1)} - \lambda I_4) = 2\)), whereas \(J^{(2)}\) has \(3\) blocks (\(\operatorname{nullity}(J^{(2)} - \lambda I_4) = 3\))! Always check the full Jordan block counts—never stop at \(p_A\) and \(m_A\) once \(n \ge 4\).
+
+[QUESTION 4]
+[ANSWER: E]
+Compare the two \(4 \times 4\) complex matrices
+\[
+A = \begin{bmatrix} -1 & 1 & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & -1 & 1 \\ 0 & 0 & 0 & -1 \end{bmatrix}, \qquad B = \begin{bmatrix} -1 & 1 & 1 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & -1 & 0 \\ 0 & 0 & 0 & -1 \end{bmatrix}.
+\]
+Which statement is TRUE?
+
+(A) \(A\) and \(B\) are similar over \(\mathbb{C}\), because both have \(p(x) = (x + 1)^4\) and \(m(x) = (x + 1)^2\).
+(B) \(A\) and \(B\) are NOT similar, because \(m_A(x) = (x + 1)^2\) whereas \(m_B(x) = (x + 1)^3\).
+(C) \(A\) and \(B\) are similar over \(\mathbb{C}\), because both matrices contain exactly two \(1\)s above the main diagonal.
+(D) \(A\) and \(B\) are NOT similar, because \(m_A(x) = (x + 1)^4\) whereas \(m_B(x) = (x + 1)^2\).
+(E) \(A\) and \(B\) share BOTH \(p(x) = (x + 1)^4\) and \(m(x) = (x + 1)^2\), yet are NOT similar over \(\mathbb{C}\) because \(\operatorname{nullity}(A + I_4) = 2 \neq 3 = \operatorname{nullity}(B + I_4)\).
+[/QUESTION]
+
+=== SECTION 4: Powers of defective matrices via the binomial expansion ===
+
+For a diagonalizable matrix \(A = P D P^{-1}\), high powers \(A^m = P D^m P^{-1}\) were trivial because \(D^m\) merely raised each diagonal entry to the \(m\)-th power. What happens when \(A = P J P^{-1}\) is defective? We still get \(A^m = P J^m P^{-1}\), where \(J^m\) is block diagonal with blocks \(J_k(\lambda)^m\)—and computing \(J_k(\lambda)^m\) is surprisingly simple!
+
+Split the \(k \times k\) Jordan block as \(J_k(\lambda) = \lambda I_k + N\), where \(N = J_k(0)\). Because \(\lambda I_k\) commutes with EVERY matrix, \(\lambda I_k\) and \(N\) COMMUTE, so the ordinary binomial theorem applies verbatim! Even better, because \(N^j = 0\) for all \(j \ge k\), the binomial expansion TERMINATES after at most \(k\) terms!
+
+[CALLOUT]
+id: jordan-powers
+label: Theorem
+title: Exact powers of a Jordan block
+tone: key
+
+For any \(k \times k\) Jordan block \(J_k(\lambda) = \lambda I_k + N\) (with \(N = J_k(0)\)) and any integer \(m \ge 1\),
+\[
+J_k(\lambda)^m = (\lambda I_k + N)^m = \sum_{j=0}^{k-1} \binom{m}{j} \lambda^{m-j} N^j,
+\]
+using the standard convention \(\binom{m}{j} = 0\) when \(j > m\) (and \(0^0 = 1\) when \(\lambda = 0\) and \(j = m\)). In particular,
+\[
+J_2(\lambda)^m = \begin{bmatrix} \lambda^m & m\lambda^{m-1} \\ 0 & \lambda^m \end{bmatrix}, \qquad J_3(\lambda)^m = \begin{bmatrix} \lambda^m & m\lambda^{m-1} & \binom{m}{2}\lambda^{m-2} \\ 0 & \lambda^m & m\lambda^{m-1} \\ 0 & 0 & \lambda^m \end{bmatrix}.
+\]
+[/CALLOUT]
+
+Let us compute an exact closed-form formula for \(A^m\) on a defective \(2 \times 2\) matrix \(A = \begin{bmatrix} 3 & 1 \\ -1 & 1 \end{bmatrix}\). Here \(p_A(x) = (x - 2)^2\), and \(N = A - 2I_2 = \begin{bmatrix} 1 & 1 \\ -1 & -1 \end{bmatrix}\) has \(N^2 = 0\). Picking \(\mathbf{w}_2 = (1, 0)^T\) gives \(\mathbf{w}_1 = N\mathbf{w}_2 = (1, -1)^T\), so
+\[
+P = \begin{bmatrix} 1 & 1 \\ -1 & 0 \end{bmatrix}, \qquad P^{-1} = \begin{bmatrix} 0 & -1 \\ 1 & 1 \end{bmatrix}, \qquad J = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}.
+\]
+Applying [REF: jordan-powers | the Jordan-block power formula] yields
+\[
+A^m = P J^m P^{-1} = \begin{bmatrix} 1 & 1 \\ -1 & 0 \end{bmatrix}\begin{bmatrix} 2^m & m \cdot 2^{m-1} \\ 0 & 2^m \end{bmatrix}\begin{bmatrix} 0 & -1 \\ 1 & 1 \end{bmatrix} = 2^{m-1}\begin{bmatrix} m + 2 & m \\ -m & 2 - m \end{bmatrix}.
+\]
+Quick check: \(m = 0\) gives \(I_2\), \(m = 1\) gives \(A\), and \(m = 2\) gives \(2\begin{bmatrix} 4 & 2 \\ -2 & 0 \end{bmatrix} = \begin{bmatrix} 8 & 4 \\ -4 & 0 \end{bmatrix} = A^2\)!
+
+Notice the striking qualitative difference between diagonalizable and defective powers! In [REF: jordan-powers | \(J_2(\lambda)^m\)], the superdiagonal carries a polynomial factor \(m\lambda^{m-1}\) (and a \(k \times k\) block carries terms up to \(\binom{m}{k-1}\lambda^{m-k+1}\)). Even when \(|\lambda| < 1\) guarantees eventual decay to \(0\) as \(m \to \infty\), the superdiagonal entry \(m\lambda^{m-1}\) exhibits transient GROWTH before decaying! Drag the slider \(\lambda\) in the graph below to watch the transient hump grow taller and shift rightward as \(\lambda\) approaches \(1\) (and at \(\lambda = 1\), the superdiagonal grows linearly as \(m\) without bound!).
+
+[GRAPH]
+type: function2d
+title: Diagonal entry \(\lambda^m\) versus superdiagonal transient growth \(m\lambda^{m-1}\) in \(J_2(\lambda)^m\)
+xlabel: \(m\)
+ylabel: Entry value
+xrange: 0, 20
+trace: lam^x | label: diagonal \(\lambda^m\)
+trace: x * lam^(x - 1) | label: superdiagonal \(m\lambda^{m-1}\)
+slider: lam | range: 0.5, 0.95 | init: 0.8 | step: 0.05
+[/GRAPH]
+
+Finally, note that the exact same commuting decomposition \(J_k(\lambda) = \lambda I_k + N\) underpins the matrix exponential in linear differential equations \(\mathbf{x}'(t) = A\mathbf{x}(t)\): because \(\lambda I_k\) and \(N\) commute and \(N^k = 0\), the infinite power series collapses to the finite sum \(e^{t J_k(\lambda)} = e^{\lambda t}\sum_{j=0}^{k-1} \frac{t^j}{j!} N^j\), explaining directly where the \(t e^{\lambda t}, t^2 e^{\lambda t}, \dots\) terms come from when a differential system has defective eigenvalues.
+
+[QUESTION 5]
+[ANSWER: A]
+Suppose \(A = P J P^{-1}\), where
+\[
+J = \begin{bmatrix} 3 & 1 & 0 \\ 0 & 3 & 1 \\ 0 & 0 & 3 \end{bmatrix}, \qquad P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{bmatrix}.
+\]
+What is the \((1, 3)\)-entry of \(A^5\)?
+
+(A) \(-135\)
+(B) \(270\)
+(C) \(135\)
+(D) \(675\)
+(E) \(405\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Is every square complex matrix \(A \in M_n(\mathbb{C})\) similar over \(\mathbb{C}\) to its transpose \(A^T\)?
+
+(A) No: only diagonalizable matrices are similar to their transposes.
+(B) No: \(J_2(\lambda)\) has a \(1\) on the superdiagonal while \(J_2(\lambda)^T\) has a \(1\) on the subdiagonal, so they cannot be similar.
+(C) Yes, but only when \(\det(A) \neq 0\).
+(D) Yes: every Jordan block \(J_k(\lambda)\) is similar to \(J_k(\lambda)^T\) via the basis-reversal matrix, so \(J \sim J^T\) and hence \(A \sim J \sim J^T \sim A^T\).
+(E) No: similarity to \(A^T\) holds for \(n \le 3\) but fails starting at \(n = 4\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+For which complex matrices \(A \in M_n(\mathbb{C})\) do the entries of \(A^m\) remain bounded as \(m \to \infty\)?
+
+(A) If and only if every eigenvalue \(\lambda\) of \(A\) satisfies \(|\lambda| \le 1\).
+(B) If and only if every eigenvalue \(\lambda\) satisfies \(|\lambda| \le 1\), AND every eigenvalue with \(|\lambda| = 1\) has all its Jordan blocks of size \(1\).
+(C) If and only if every eigenvalue \(\lambda\) satisfies \(|\lambda| < 1\).
+(D) If and only if \(A\) is diagonalizable over \(\mathbb{C}\) with \(|\det(A)| \le 1\).
+(E) If and only if every eigenvalue with \(|\lambda| < 1\) has Jordan blocks of size \(1\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+How many distinct similarity classes of matrices in \(M_5(\mathbb{C})\) have characteristic polynomial \(p(x) = (x - 4)^3(x + 1)^2\)?
+
+(A) \(2\)
+(B) \(5\)
+(C) \(6\)
+(D) \(4\)
+(E) \(9\)
+[/BONUS]

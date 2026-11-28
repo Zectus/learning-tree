@@ -1,0 +1,221 @@
+=== SECTION 1: Functions as relations — existence and uniqueness ===
+
+In school mathematics, a function is usually introduced informally as a "formula" like \(f(x) = x^2 + 1\) or a "rule" that sends inputs to outputs. That informal view breaks down as soon as a function has no simple algebraic formula, or is defined piecewise, or acts on sets of equivalence classes, or when two different formulas produce the exact same input-output pairing. Using binary relations, we can define a function with complete set-theoretic rigor.
+
+What turns an arbitrary binary relation \(R \subseteq A \times B\) into a function from \(A\) to \(B\)? Every input \(a \in A\) must be paired with AT LEAST ONE output in \(B\) (so the rule never fails to produce a value), and with AT MOST ONE output in \(B\) (so the output is completely unambiguous). Combining "at least one" and "at most one" is the unique-existence quantifier \(\exists!\) ("there exists a unique").
+
+[CALLOUT]
+id: function-def
+label: Definition
+title: Function, domain, codomain, and image (range)
+tone: key
+
+Let \(A\) and \(B\) be sets. A function (or map) \(f\) from \(A\) to \(B\), written \(f : A \to B\), is a triple consisting of a domain \(A\), a codomain \(B\), and a binary relation (its graph) \(\Gamma_f \subseteq A \times B\) satisfying the existence-and-uniqueness condition:
+\[
+\forall a \in A,\; \exists! b \in B,\; (a, b) \in \Gamma_f.
+\]
+Equivalently:
+
+(1) Existence (totality on \(A\)): for every \(a \in A\), there exists at least one \(b \in B\) such that \((a, b) \in \Gamma_f\).
+(2) Uniqueness (single-valuedness): for every \(a \in A\) and all \(b_1, b_2 \in B\), if \((a, b_1) \in \Gamma_f\) and \((a, b_2) \in \Gamma_f\), then \(b_1 = b_2\).
+
+For each \(a \in A\), the unique \(b \in B\) with \((a, b) \in \Gamma_f\) is denoted \(f(a)\), called the value of \(f\) at \(a\). The image (or range) of \(f\) is the subset of \(B\) consisting of all outputs actually attained:
+\[
+\operatorname{im}(f) = \{f(a) : a \in A\} = \{b \in B : \exists a \in A,\; f(a) = b\} \subseteq B.
+\]
+[/CALLOUT]
+
+For real-valued relations \(R \subseteq \mathbb{R} \times \mathbb{R}\), the existence-and-uniqueness condition is literally the vertical-line test: for every \(x\) in the domain \(A\), the vertical line through \(x\) must intersect the graph in EXACTLY ONE point. Consider the parabola \(y = x^2 - 1\) versus the unit circle \(x^2 + y^2 = 1\) on \([-1, 1]\):
+- For \(f : [-1, 1] \to \mathbb{R}\) given by \(f(x) = x^2 - 1\), every vertical line \(x = c\) with \(c \in [-1, 1]\) hits the parabola once—for instance at \((0.6, -0.64)\). Notice that the codomain is \(\mathbb{R}\), while the image is only \(\operatorname{im}(f) = [-1, 0]\).
+- For the circle relation \(C = \{(x, y) \in [-1, 1] \times \mathbb{R} : x^2 + y^2 = 1\}\), the vertical line \(x = 0.6\) hits the circle TWICE, at \((0.6, 0.8)\) and \((0.6, -0.8)\), violating [REF: function-def.2 | uniqueness]! So \(C\) is a perfectly valid binary relation, but NOT a function.
+
+[GRAPH]
+type: parametric2d
+title: Parabola (function) versus unit circle (not a function) at \(x = 0.6\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 6.2832
+xrange: -1.4, 1.4
+yrange: -1.4, 1.4
+trace: cos(t), sin(t) | label: circle \(x^2 + y^2 = 1\) | color: #ef4444
+trace: -1 + 2*(t/6.2832), (-1 + 2*(t/6.2832))^2 - 1 | label: \(y = x^2 - 1\) | color: #2563eb
+segment: 0.6, -1.3, 0.6, 1.3 | label: \(x = 0.6\) | color: #64748b | dashed: true
+point: 0.6, 0.8 | label: \((0.6, 0.8)\) | color: #ef4444
+point: 0.6, -0.8 | label: \((0.6, -0.8)\) | color: #ef4444
+point: 0.6, -0.64 | label: \((0.6, -0.64)\) | color: #2563eb | offset: 26, 6
+[/GRAPH]
+
+Notice the sharp distinction between CODOMAIN and IMAGE (range):
+- The codomain \(B\) is part of the SPECIFICATION of \(f : A \to B\)—the target space where outputs are declared to live. It does NOT need to be filled completely!
+- The image \(\operatorname{im}(f) \subseteq B\) is the subset of \(B\) that \(f\) actually hits. For example, if \(f : \mathbb{Z} \to \mathbb{Z}\) is defined by \(f(n) = 2n\), its codomain is \(\mathbb{Z}\), while its image is the proper subset \(2\mathbb{Z} = \{\dots, -4, -2, 0, 2, 4, \dots\} \subsetneq \mathbb{Z}\).
+
+What if the domain \(A\) is EMPTY? Check [REF: function-def | the definition] for \(A = \emptyset\) and ANY set \(B\): the empty subset \(\emptyset \subseteq \emptyset \times B = \emptyset\) satisfies \(\forall a \in \emptyset,\, \exists! b \in B,\, (a, b) \in \emptyset\) vacuously! So for EVERY set \(B\) (even \(B = \emptyset\)), there is a unique empty function \(\emptyset \to B\). By contrast, if \(A \ne \emptyset\) and \(B = \emptyset\), NO function \(A \to \emptyset\) exists, because choosing \(a \in A\) leaves no \(b \in \emptyset\) to satisfy [REF: function-def.1 | existence].
+
+[QUESTION 1]
+[ANSWER: B]
+Let \(A = \{1, 2, 3\}\) and \(B = \{u, v, w\}\). Which of the following subsets of \(A \times B\) is the graph of a function from \(A\) to \(B\)?
+
+(A) \(\{(1, u), (2, v)\}\)
+(B) \(\{(1, v), (2, v), (3, v)\}\)
+(C) \(\{(1, u), (1, v), (2, w), (3, u)\}\)
+(D) \(\{(u, 1), (v, 2), (w, 3)\}\)
+(E) \(\{(1, u), (2, v), (3, w), (2, u)\}\)
+[/QUESTION]
+
+=== SECTION 2: Function equality and testing well-definedness ===
+
+Because a function consists of THREE pieces of data—domain, codomain, and graph—equality of functions requires all three to match.
+
+[CALLOUT]
+id: function-equality-def
+label: Definition
+title: Equality of functions
+tone: key
+
+Two functions \(f : A_1 \to B_1\) and \(g : A_2 \to B_2\) are equal (written \(f = g\)) if and only if all three conditions hold:
+
+(1) Same domain: \(A_1 = A_2\).
+(2) Same codomain: \(B_1 = B_2\).
+(3) Same values (same graph): \(f(a) = g(a)\) for every \(a \in A_1\).
+[/CALLOUT]
+
+Pause on [REF: function-equality-def.2 | condition (2)]—it surprises many students at first! Compare the two functions
+\[
+f : \mathbb{R} \to \mathbb{R}, \quad f(x) = x^2, \qquad\text{and}\qquad g : \mathbb{R} \to [0, \infty), \quad g(x) = x^2.
+\]
+They share the exact same domain \(\mathbb{R}\) and the exact same set of ordered pairs \(\{(x, x^2) : x \in \mathbb{R}\}\), yet \(f \ne g\) because their codomains differ (\(\mathbb{R} \ne [0, \infty)\))! Why does mathematics insist on distinguishing them? Because properties you will study shortly—such as whether a function hits every point of its codomain—depend directly on which codomain was declared: \(g\) hits every point of \([0, \infty)\), while \(f\) misses every negative real number in \(\mathbb{R}\).
+
+Meanwhile, two COMPLETELY DIFFERENT-LOOKING formulas CAN define the exact same function! For instance, \(f : \mathbb{R} \to \mathbb{R}\) given by \(f(x) = |x|\) and \(g : \mathbb{R} \to \mathbb{R}\) given by \(g(x) = \sqrt{x^2}\) have the same domain \(\mathbb{R}\), the same codomain \(\mathbb{R}\), and \(f(x) = g(x)\) for every \(x \in \mathbb{R}\), so \(f = g\).
+
+When someone proposes a rule to define a function \(f : A \to B\), how do we test whether it is actually well-defined? Four concrete checks cover every failure mode:
+
+[CALLOUT]
+id: welldefined-checklist
+label: Principle
+title: Four-point well-definedness check for \(f : A \to B\)
+tone: key
+
+A proposed rule defines a genuine function \(f : A \to B\) if and only if all four conditions pass:
+
+(1) Domain coverage: the rule produces a value for EVERY input \(a \in A\) (no division by zero, no square root of a negative number in \(\mathbb{R}\), no uncovered gap in a piecewise rule).
+(2) Target membership: for every \(a \in A\), the produced output \(f(a)\) actually lies in the declared codomain \(B\).
+(3) Overlap consistency (for piecewise rules): wherever two branches of a piecewise definition overlap at the same input \(a \in A\), both branches yield the EXACT same value.
+(4) Independence of representation: if elements of \(A\) can be written in more than one way (such as fractions \(p/q \in \mathbb{Q}\) or equivalence classes \([a]\)), the rule gives the same output for every representation of the same element.
+[/CALLOUT]
+
+Let us watch each of the four failure modes happen on concrete examples!
+- Failure of (1) domain coverage: \(f : \mathbb{R} \to \mathbb{R}\) by \(f(x) = \frac{1}{x - 2}\) fails at \(x = 2 \in \mathbb{R}\).
+- Failure of (2) target membership: \(f : \mathbb{Z} \to \mathbb{N}\) by \(f(n) = n - 1\) fails at \(n = 0 \in \mathbb{Z}\), because \(f(0) = -1 \notin \mathbb{N}\).
+- Failure of (3) overlap consistency: consider \(f : \mathbb{R} \to \mathbb{R}\) proposed by
+\[
+f(x) = \begin{cases} x + 2 & \text{if } x \le 1, \\ 3x - 1 & \text{if } x \ge 1. \end{cases}
+\]
+At the overlap point \(x = 1\), the top branch gives \(1 + 2 = 3\) while the bottom branch gives \(3(1) - 1 = 2 \ne 3\)! That assigns two different outputs to \(1\), violating uniqueness. By contrast, if the bottom branch were \(2x + 1\) for \(x \ge 1\), both branches give \(3\) at \(x = 1\), so the rule IS well-defined.
+- Failure of (4) independence of representation: consider \(f : \mathbb{Q} \to \mathbb{Z}\) proposed by \(f(p/q) = p + q\) (where \(p, q \in \mathbb{Z}, q \ne 0\)). The rational number \(1/2\) equals \(2/4\), yet the rule gives \(1 + 2 = 3\) for \(1/2\) and \(2 + 4 = 6\) for \(2/4\)! So \(f\) is NOT well-defined. What if we instead require \(p/q\) to be in lowest terms with \(q > 0\) and \(\gcd(p, q) = 1\)? Because EVERY rational number has a UNIQUE reduced representation with \(q > 0\) (taking \(0 = 0/1\)), the rule "\(f(r) = p + q\) where \(r = p/q\) in lowest terms with \(q > 0\)" IS well-defined!
+
+[QUESTION 2]
+[ANSWER: E]
+Which of the following proposed rules defines a WELL-DEFINED function?
+
+(A) \(f : \mathbb{Q} \to \mathbb{Z}\) defined by \(f(p/q) = p\) for \(p \in \mathbb{Z},\; q \in \mathbb{Z} \setminus \{0\}\)
+(B) \(g : \mathbb{R} \to \mathbb{R}\) defined by \(g(x) = x^2\) if \(x \le 2\), and \(g(x) = 3x - 1\) if \(x \ge 2\)
+(C) \(h : \mathbb{Z} \to \mathbb{Z}^+\) defined by \(h(n) = n^2\)
+(D) \(k : \mathbb{R} \to \mathbb{R}\) defined by \(k(x) = \frac{x^2 - 1}{x - 1}\)
+(E) \(m : \mathbb{Q} \to \mathbb{Q}\) defined by \(m(p/q) = \frac{p^2}{p^2 + q^2}\) for \(p \in \mathbb{Z},\; q \in \mathbb{Z} \setminus \{0\}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: C]
+Consider the four functions:
+1. \(f_1 : \mathbb{R} \to \mathbb{R}\) given by \(f_1(x) = x^2\).
+2. \(f_2 : \mathbb{R} \to [0, \infty)\) given by \(f_2(x) = x^2\).
+3. \(f_3 : [0, \infty) \to [0, \infty)\) given by \(f_3(x) = x^2\).
+4. \(f_4 : \mathbb{R} \to \mathbb{R}\) given by \(f_4(x) = |x|^2\).
+
+Which of the following equalities holds?
+
+(A) \(f_1 = f_2\)
+(B) \(f_2 = f_3\)
+(C) \(f_1 = f_4\)
+(D) \(f_1 = f_2 = f_4\)
+(E) No two of these four functions are equal
+[/QUESTION]
+
+=== SECTION 3: Canonical maps — identity, inclusion, restriction, extension, and indicators ===
+
+Five simple families of functions recur constantly throughout set theory, algebra, and analysis. Knowing their exact domains, codomains, and notation lets us manipulate functions cleanly in proofs.
+
+[CALLOUT]
+id: canonical-maps
+label: Definition
+title: Identity, inclusion, restriction, extension, and indicator functions
+tone: key
+
+Let \(A\) and \(B\) be sets, and let \(S \subseteq A\) be a subset.
+
+(1) Identity function on \(A\): \(\operatorname{id}_A : A \to A\) defined by \(\operatorname{id}_A(a) = a\) for all \(a \in A\). (Its graph is the diagonal relation \(\Delta_A\).)
+(2) Inclusion map of \(S\) into \(A\): \(\iota_S : S \hookrightarrow A\) (or simply \(\iota : S \to A\)) defined by \(\iota_S(s) = s\) for all \(s \in S\).
+(3) Restriction of \(f : A \to B\) to \(S\): the function \(f|_S : S \to B\) defined by \(f|_S(s) = f(s)\) for all \(s \in S\).
+(4) Extension of \(g : S \to B\) to \(A\): any function \(f : A \to B\) whose restriction to \(S\) equals \(g\) (i.e., \(f|_S = g\)).
+(5) Indicator (or characteristic) function of \(S \subseteq A\): the function \(\chi_S : A \to \{0, 1\}\) defined by
+\[
+\chi_S(x) = \begin{cases} 1 & \text{if } x \in S, \\ 0 & \text{if } x \notin S. \end{cases}
+\]
+[/CALLOUT]
+
+Notice the subtle difference between [REF: canonical-maps.1 | the identity map \(\operatorname{id}_S : S \to S\)] and [REF: canonical-maps.2 | the inclusion map \(\iota_S : S \to A\)]: when \(S \subsetneq A\), they have the SAME domain \(S\) and the SAME formula \(s \mapsto s\), yet \(\operatorname{id}_S \ne \iota_S\) because their codomains differ (\(S \ne A\))!
+
+Notice also the asymmetry between [REF: canonical-maps.3 | restriction] and [REF: canonical-maps.4 | extension]:
+- Given \(f : A \to B\) and \(S \subseteq A\), the restriction \(f|_S : S \to B\) is UNIQUE (we simply shrink the domain to \(S\) while keeping the codomain \(B\) and all values on \(S\)).
+- Given \(g : S \to B\) and a larger set \(A \supseteq S\), an extension \(f : A \to B\) is typically NOT unique! Whenever \(A \setminus S \ne \emptyset\) and \(B\) has at least two elements, we are completely free to assign ANY element of \(B\) to each \(a \in A \setminus S\). For example, \(g : \mathbb{R} \setminus \{1\} \to \mathbb{R}\) given by \(g(x) = \frac{x^2 - 1}{x - 1} = x + 1\) can be extended to all of \(\mathbb{R}\) by defining \(f(1) = 2\) (the continuous extension), OR by defining \(f(1) = 0\), OR by setting \(f(1) = 17\)—all three are valid set-theoretic extensions of \(g\)!
+
+Finally, look at [REF: canonical-maps.5 | the indicator function \(\chi_S : A \to \{0, 1\}\)]: it turns set operations on subsets of \(A\) into ordinary arithmetic on \(0\)s and \(1\)s! Let us verify three handy identities for any \(S, T \subseteq A\) and any \(x \in A\):
+- Complement: \(\chi_{S^c}(x) = 1 - \chi_S(x)\) (if \(x \in S\), both sides are \(0\); if \(x \notin S\), both sides are \(1\)).
+- Intersection: \(\chi_{S \cap T}(x) = \chi_S(x) \cdot \chi_T(x)\) (a product of two numbers in \(\{0, 1\}\) equals \(1\) iff BOTH factors equal \(1\)).
+- Union: \(\chi_{S \cup T}(x) = \chi_S(x) + \chi_T(x) - \chi_S(x)\chi_T(x)\) (check all four cases of \((\chi_S(x), \chi_T(x)) \in \{0, 1\}^2\): \((0, 0) \mapsto 0\), \((1, 0) \mapsto 1\), \((0, 1) \mapsto 1\), \((1, 1) \mapsto 1 + 1 - 1 = 1\)).
+
+Notice also that \(\chi_S = \chi_T\) holds if and only if \(S = T\): the indicator function encodes the subset \(S\) completely with zero loss of information!
+
+[QUESTION 4]
+[ANSWER: A]
+Let \(S\) and \(T\) be subsets of a universe \(U\), with indicator functions \(\chi_S, \chi_T : U \to \{0, 1\}\). Which expression equals \(\chi_{S \Delta T}(x)\) (the indicator function of the symmetric difference \(S \Delta T\)) for every \(x \in U\)?
+
+(A) \(\chi_S(x) + \chi_T(x) - 2\chi_S(x)\chi_T(x)\)
+(B) \(\chi_S(x) + \chi_T(x) - \chi_S(x)\chi_T(x)\)
+(C) \(\chi_S(x) - \chi_T(x)\)
+(D) \(1 - \chi_S(x)\chi_T(x)\)
+(E) \(\chi_S(x)\bigl(1 - \chi_T(x)\bigr)\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Let \(A = \{1, 2, 3, 4\}\), \(S = \{1, 2\}\), and \(B = \{u, v, w\}\). Suppose \(g : S \to B\) is the function \(g(1) = u,\; g(2) = v\). How many distinct extensions \(f : A \to B\) of \(g\) exist?
+
+(A) \(1\)
+(B) \(3\)
+(C) \(6\)
+(D) \(9\)
+(E) \(81\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Let \(f : \mathbb{R} \to \mathbb{R}\) be a function and let \(S \subseteq \mathbb{R}\). Which statement about the restriction \(f|_S\) is ALWAYS true?
+
+(A) \(\operatorname{im}(f|_S) = \operatorname{im}(f)\)
+(B) The graph of \(f|_S\) equals \(\Gamma_f \cap (S \times \mathbb{R})\), and \(\operatorname{im}(f|_S) \subseteq \operatorname{im}(f)\)
+(C) \(f|_S\) has codomain \(\operatorname{im}(f|_S)\)
+(D) If \(S \subsetneq \mathbb{R}\), then \(\operatorname{im}(f|_S) \subsetneq \operatorname{im}(f)\)
+(E) \(f|_S\) can have multiple extensions to \(\mathbb{R}\) only if \(S = \emptyset\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Let \(S, T \subseteq U\). Which algebraic condition on the indicator functions \(\chi_S, \chi_T : U \to \{0, 1\}\) is equivalent to \(S \subseteq T\)?
+
+(A) \(\chi_S(x) + \chi_T(x) = 1\) for all \(x \in U\)
+(B) \(\chi_S(x) \ge \chi_T(x)\) for all \(x \in U\)
+(C) \(\chi_S(x) \le \chi_T(x)\) for all \(x \in U\)
+(D) \(\chi_S(x)\chi_T(x) = 0\) for all \(x \in U\)
+(E) \(\chi_S(x) - \chi_T(x) = 0\) for all \(x \in U\)
+[/BONUS]

@@ -31,6 +31,18 @@ function catalogVersionSuffix(meta) {
   return meta && meta.v != null ? `?v=${encodeURIComponent(meta.v)}` : '';
 }
 
+function catalogLocaleFor(meta) {
+  const lang = typeof uiLanguage === 'string' ? uiLanguage : 'en';
+  if (lang !== 'en' && meta?.locales && Object.hasOwn(meta.locales, lang)) return lang;
+  return 'en';
+}
+
+function getCatalogSignature(meta) {
+  if (!meta) return null;
+  const locale = catalogLocaleFor(meta);
+  return (locale !== 'en' ? meta.locales?.[locale]?.signature : null) || meta.signature || null;
+}
+
 function getCatalogEntry(id) {
   if (!id || !catalogIndex?.trees) return null;
   return Object.hasOwn(catalogIndex.trees, id) ? catalogIndex.trees[id] : null;
@@ -63,12 +75,14 @@ function loadCatalogIndex() {
   return catalogIndexPromise;
 }
 
-function fetchBuiltinTree(id) {
+function fetchBuiltinTree(id, locale) {
   const meta = getCatalogEntry(id);
   if (!meta) return Promise.reject(new Error(`No built-in tree for ${id}`));
-  const cacheKey = `${id}@${meta.v ?? 1}`;
+  const loc = locale || catalogLocaleFor(meta);
+  const cacheKey = `${id}@${meta.v ?? 1}::${loc}`;
   if (!catalogTreeCache.has(cacheKey)) {
-    const url = `catalog/${catalogDirFor(id, meta)}/tree.json${catalogVersionSuffix(meta)}`;
+    const fileName = loc === 'en' ? 'tree.json' : `tree.${encodeURIComponent(loc)}.json`;
+    const url = `catalog/${catalogDirFor(id, meta)}/${fileName}${catalogVersionSuffix(meta)}`;
     const p = fetch(url)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -90,12 +104,16 @@ function fetchBuiltinTree(id) {
   });
 }
 
-function fetchBuiltinLesson(builtinId, slug) {
+function fetchBuiltinLesson(builtinId, slug, locale) {
   const meta = getCatalogEntry(builtinId);
   if (!meta) return Promise.reject(new Error(`No built-in tree for ${builtinId}`));
-  const cacheKey = `${builtinId}@${meta.v ?? 1}::${slug}`;
+  const loc = locale || catalogLocaleFor(meta);
+  const cacheKey = `${builtinId}@${meta.v ?? 1}::${loc}::${slug}`;
   if (!catalogLessonCache.has(cacheKey)) {
-    const url = `catalog/${catalogDirFor(builtinId, meta)}/lessons/${encodeURIComponent(slug)}.txt${catalogVersionSuffix(meta)}`;
+    const lessonPath = loc === 'en'
+      ? `lessons/${encodeURIComponent(slug)}.txt`
+      : `lessons/${encodeURIComponent(loc)}/${encodeURIComponent(slug)}.txt`;
+    const url = `catalog/${catalogDirFor(builtinId, meta)}/${lessonPath}${catalogVersionSuffix(meta)}`;
     const p = fetch(url)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -144,9 +162,10 @@ async function openBuiltinTree(id, libraryId = null) {
     showToast("Couldn't find this built-in tree.");
     return false;
   }
+  const locale = catalogLocaleFor(meta);
   let treeData;
   try {
-    treeData = await fetchBuiltinTree(id);
+    treeData = await fetchBuiltinTree(id, locale);
   } catch (e) {
     console.error('Could not load built-in tree:', e);
     showToast("Couldn't load this tree — check your connection and try again.");
@@ -154,13 +173,15 @@ async function openBuiltinTree(id, libraryId = null) {
   }
   if (typeof preserveCurrentTreeBeforeReplace === 'function') preserveCurrentTreeBeforeReplace();
   if (!loadFromJSON(treeData)) return false;
-  const lessonSet = new Set(Array.isArray(meta.lessons) ? meta.lessons : []);
+  const rawLessons = locale !== 'en' ? meta.locales?.[locale]?.lessons : meta.lessons;
+  const lessonSet = new Set(Array.isArray(rawLessons) ? rawLessons : []);
+  state.collectionId = id;
   state.builtinId = id;
   state.builtinVersion = meta.v ?? 1;
   state.builtinBaseKey = builtinStructureKey(buildTreeJSON(false));
   state.nodes.forEach(node => {
     if (lessonSet.has(node.slug) && !node._sessionTxt) {
-      node._builtinLesson = { builtinId: id, slug: node.slug, loadedTxt: null };
+      node._builtinLesson = { builtinId: id, slug: node.slug, locale, loadedTxt: null };
       refreshNodeLessonIndicator(node);
     }
   });
@@ -170,8 +191,8 @@ async function openBuiltinTree(id, libraryId = null) {
 
 function prefetchBuiltinNodeLesson(node) {
   if (!node?._builtinLesson || node._sessionTxt) return;
-  const { builtinId, slug } = node._builtinLesson;
-  fetchBuiltinLesson(builtinId, slug).then(txt => {
+  const { builtinId, slug, locale } = node._builtinLesson;
+  fetchBuiltinLesson(builtinId, slug, locale).then(txt => {
     if (node._builtinLesson && !node._sessionTxt) {
       node._builtinLesson.loadedTxt = txt;
     }
@@ -181,9 +202,9 @@ function prefetchBuiltinNodeLesson(node) {
 async function openBuiltinNodeLesson(node) {
   if (!node?._builtinLesson) return;
   if (node._sessionTxt) { continueViewer(node.id); return; }
-  const { builtinId, slug } = node._builtinLesson;
+  const { builtinId, slug, locale } = node._builtinLesson;
   try {
-    const txt = node._builtinLesson.loadedTxt || await fetchBuiltinLesson(builtinId, slug);
+    const txt = node._builtinLesson.loadedTxt || await fetchBuiltinLesson(builtinId, slug, locale);
     if (!state.nodes.has(node.id) || state.nodes.get(node.id) !== node) return;
     node._builtinLesson.loadedTxt = txt;
     node._sessionTxt = txt;

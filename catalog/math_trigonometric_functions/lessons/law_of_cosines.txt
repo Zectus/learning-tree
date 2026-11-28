@@ -1,0 +1,218 @@
+=== SECTION 1: Why the Pythagorean theorem needs a correction term ===
+
+The Law of Sines requires one complete opposite pair—an angle and the side across from it. What if you know two sides and their INCLUDED angle (SAS), or all three side lengths with no angles at all (SSS)? In neither case do you have an opposite angle-side pair, so the Law of Sines cannot even get started!
+
+Notice that when the included angle between sides \(a\) and \(b\) is \(C = 90^\circ\), the Pythagorean theorem already finds the opposite side \(c\):
+\[
+c^2 = a^2 + b^2.
+\]
+What happens when \(C\) is NOT \(90^\circ\)? Imagine hinging two rods of fixed lengths \(a\) and \(b\) at vertex \(C\). As you close angle \(C\) below \(90^\circ\) (acute), the endpoints move closer together, so \(c^2 < a^2 + b^2\). As you open angle \(C\) past \(90^\circ\) (obtuse), the endpoints swing farther apart, so \(c^2 > a^2 + b^2\).
+
+To find the exact formula that works for acute, right, AND obtuse angles \(C\) all at once, place triangle \(\triangle ABC\) on the Cartesian plane with a smart choice of coordinates:
+- Put vertex \(C\) at the origin \((0, 0)\).
+- Place side \(b = CA\) along the positive \(x\)-axis, so vertex \(A\) lies at \((b, 0)\).
+- Place side \(a = CB\) at angle \(C\) in standard position. By the general-angle definitions of sine and cosine on a circle of radius \(a\), vertex \(B\) has exact coordinates \((a\cos C, a\sin C)\) whether \(C\) is acute, right, or obtuse!
+
+Drag the angle slider (which sets angle \(C\) in radians, from acute through \(\frac{\pi}{2} \approx 1.57\) to obtuse) below to watch vertex \(B\) glide along the semicircle of radius \(a = 4\) while side \(c = AB\) lengthens smoothly.
+
+[GRAPH]
+type: parametric2d
+title: Coordinate setup for the Law of Cosines (\(a = 4, b = 5\), varying angle \(C\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 3.1416
+xrange: -4.6, 5.8
+yrange: -0.8, 4.8
+trace: 4*cos(t), 4*sin(t) | label: path of \(B\) (radius \(a = 4\)) | color: #94a3b8
+segment: 0, 0, 5, 0 | label: \(b = 5\) | color: #0f172a
+segment: 0, 0, 4*cos(ang), 4*sin(ang) | label: \(a = 4\) | color: #2563eb
+segment: 5, 0, 4*cos(ang), 4*sin(ang) | label: \(c\) | color: #dc2626
+point: 0, 0 | label: \(C\) | offset: -0.3, -0.35
+point: 5, 0 | label: \(A\) | offset: 0.25, -0.35
+point: 4*cos(ang), 4*sin(ang) | label: \(B\) | offset: 0.1, 0.35
+slider: ang | range: 0.35, 2.75 | init: 2.094 | step: 0.05
+[/GRAPH]
+
+Now apply the Pythagorean distance formula directly to the two points \(A(b, 0)\) and \(B(a\cos C, a\sin C)\):
+\[
+c^2 = (a\cos C - b)^2 + (a\sin C - 0)^2.
+\]
+Expand the squares carefully:
+\[
+c^2 = a^2\cos^2 C - 2ab\cos C + b^2 + a^2\sin^2 C.
+\]
+Group the two \(a^2\) terms and apply the unit-circle Pythagorean identity \(\cos^2 C + \sin^2 C = 1\):
+\[
+c^2 = a^2(\cos^2 C + \sin^2 C) + b^2 - 2ab\cos C = a^2 + b^2 - 2ab\cos C.
+\]
+Because the coordinates \((a\cos C, a\sin C)\) hold for every angle \(C \in (0^\circ, 180^\circ)\), this single derivation proves the Law of Cosines for ALL triangles simultaneously!
+
+[CALLOUT]
+id: law-of-cosines
+label: Theorem
+title: The Law of Cosines
+tone: key
+
+In any triangle \(\triangle ABC\) with side lengths \(a, b, c\) opposite angles \(A, B, C\),
+\[
+c^2 = a^2 + b^2 - 2ab\cos C,
+\]
+\[
+a^2 = b^2 + c^2 - 2bc\cos A,
+\]
+\[
+b^2 = a^2 + c^2 - 2ac\cos B.
+\]
+Solving each equation for the cosine gives the angle-finding form:
+\[
+\cos C = \frac{a^2 + b^2 - c^2}{2ab}, \qquad \cos A = \frac{b^2 + c^2 - a^2}{2bc}, \qquad \cos B = \frac{a^2 + c^2 - b^2}{2ac}.
+\]
+[/CALLOUT]
+
+Check the three angle regimes in the correction term \(-2ab\cos C\):
+- Right (\(C = 90^\circ\)): \(\cos 90^\circ = 0\), recovering \(c^2 = a^2 + b^2\) exactly.
+- Acute (\(0^\circ < C < 90^\circ\)): \(\cos C > 0\), so \(-2ab\cos C < 0\) and \(c^2 < a^2 + b^2\).
+- Obtuse (\(90^\circ < C < 180^\circ\)): \(\cos C < 0\), so subtracting a negative number ADDS \(2ab\lvert \cos C \rvert > 0\), making \(c^2 > a^2 + b^2\).
+
+=== SECTION 2: Solving SAS triangles and watching the obtuse sign trap ===
+
+When you know two sides and their included angle (SAS), [REF: law-of-cosines | the Law of Cosines] computes the opposite side directly in one step.
+
+Worked example (SAS): Solve for side \(c\) when \(a = 5\), \(b = 8\), and \(C = 60^\circ\).
+\[
+c^2 = 5^2 + 8^2 - 2(5)(8)\cos 60^\circ = 25 + 64 - 80\!\left(\frac{1}{2}\right) = 89 - 40 = 49 \implies c = 7.
+\]
+
+Now watch what happens when the included angle is obtuse—say \(a = 4\), \(b = 5\), and \(C = 120^\circ\). Since \(\cos 120^\circ = -\cos 60^\circ = -\frac{1}{2}\),
+\[
+c^2 = 4^2 + 5^2 - 2(4)(5)\!\left(-\frac{1}{2}\right) = 16 + 25 + 20 = 61 \implies c = \sqrt{61} \approx 7.81.
+\]
+
+[CALLOUT]
+id: obtuse-sign-caution
+label: Common pitfall
+title: Subtracting a negative product when \(C > 90^\circ\)
+tone: caution
+
+When the included angle \(C\) is obtuse, \(\cos C\) is negative, so \(-2ab\cos C\) is POSITIVE. A frequent mistake is dropping one of the two minus signs and computing \(a^2 + b^2 - 2ab\lvert \cos C \rvert\) instead, which gives an answer shorter than \(\sqrt{a^2 + b^2}\)—geometrically impossible opposite an obtuse angle! Always check that \(c^2 > a^2 + b^2\) whenever \(C > 90^\circ\).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: C]
+In triangle \(\triangle ABC\), \(a = 6\), \(b = 10\), and the included angle is \(C = 120^\circ\). What is the exact length of side \(c\)?
+
+(A) \(2\sqrt{19}\)
+(B) \(2\sqrt{34}\)
+(C) \(14\)
+(D) \(16\)
+(E) \(4\sqrt{11}\)
+[/QUESTION]
+
+=== SECTION 3: Solving SSS triangles and why cosine has no ambiguity ===
+
+Now suppose you are given all three side lengths \(a, b, c\) (SSS). Before computing a single cosine, ALWAYS verify the triangle inequality: the sum of the two shorter sides must be STRICTLY greater than the longest side (equivalently, \(a + b > c\), \(a + c > b\), and \(b + c > a\)). If the two shorter sides add up to less than or equal to the longest side, they cannot close into a triangle—and if you blindly plug them into the Law of Cosines, you will get \(\lvert \cos C \rvert \ge 1\).
+
+When the sides form a valid triangle, how do we recover an angle \(C\) from \(\cos C = \frac{a^2 + b^2 - c^2}{2ab}\)? On a scientific calculator, the inverse-cosine lookup \(\cos^{-1}(p)\) returns an angle in \((0^\circ, 180^\circ)\) for any \(p \in (-1, 1)\). (As with \(\sin^{-1}\), we treat \(\cos^{-1}\) here strictly as a numerical lookup on \((0^\circ, 180^\circ)\).)
+
+Here is the decisive structural contrast between the Law of Cosines and the Law of Sines:
+- On \((0^\circ, 180^\circ)\), \(\sin\theta\) rises from \(0\) to \(1\) and falls back to \(0\), so every positive value occurs TWICE (acute and obtuse), causing the SSA ambiguity.
+- On \((0^\circ, 180^\circ)\), \(\cos\theta\) is STRICTLY DECREASING from \(+1\) down to \(-1\): positive for acute angles \((0^\circ, 90^\circ)\), zero at \(90^\circ\), and negative for obtuse angles \((90^\circ, 180^\circ)\).
+
+Therefore EVERY value of \(\cos C \in (-1, 1)\) corresponds to ONE AND ONLY ONE triangle angle \(C \in (0^\circ, 180^\circ)\)! The sign of the numerator \(a^2 + b^2 - c^2\) tells you on sight whether angle \(C\) is acute, right, or obtuse.
+
+[TABLE]
+Numerator \(a^2 + b^2 - c^2\) | Sign of \(\cos C\) | Type of angle \(C\)
+\(a^2 + b^2 > c^2\) | \(\cos C > 0\) | Acute (\(0^\circ < C < 90^\circ\))
+\(a^2 + b^2 = c^2\) | \(\cos C = 0\) | Right (\(C = 90^\circ\))
+\(a^2 + b^2 < c^2\) | \(\cos C < 0\) | Obtuse (\(90^\circ < C < 180^\circ\))
+[/TABLE]
+
+[CALLOUT]
+id: sss-largest-first
+label: Strategy
+title: Solve for the largest angle first in an SSS triangle
+tone: key
+
+(1) Check the triangle inequality: the two shorter sides must sum to strictly more than the longest side.
+(2) Use [REF: law-of-cosines | the Law of Cosines] to find the angle opposite the LONGEST side first. If the triangle has an obtuse angle, it can ONLY sit opposite the longest side, and \(\cos^{-1}\) identifies it without ambiguity.
+(3) Find a second angle (via Law of Cosines again, or via Law of Sines—now 100% safe because every remaining angle is guaranteed acute!).
+(4) Subtract from \(180^\circ\) to get the third angle, and check that larger angles sit opposite longer sides.
+[/CALLOUT]
+
+Worked example (SSS): Solve \(\triangle ABC\) with \(a = 3\), \(b = 5\), and \(c = 7\).
+1. Triangle inequality check: \(3 + 5 = 8 > 7\) -> valid triangle!
+2. Largest angle \(C\) (opposite longest side \(c = 7\)):
+\[
+\cos C = \frac{3^2 + 5^2 - 7^2}{2(3)(5)} = \frac{9 + 25 - 49}{30} = \frac{-15}{30} = -\frac{1}{2} \implies C = 120^\circ.
+\]
+3. Angle \(A\) using Law of Cosines (exact from given sides, avoiding intermediate rounding):
+\[
+\cos A = \frac{5^2 + 7^2 - 3^2}{2(5)(7)} = \frac{25 + 49 - 9}{70} = \frac{65}{70} = \frac{13}{14} \implies A = \cos^{-1}\!\left(\frac{13}{14}\right) \approx 21.79^\circ.
+\]
+4. Third angle \(B = 180^\circ - 120^\circ - 21.79^\circ = 38.21^\circ\). Check side-angle order: \(a = 3 < b = 5 < c = 7\) matches \(A \approx 21.79^\circ < B \approx 38.21^\circ < C = 120^\circ\).
+
+[QUESTION 2]
+[ANSWER: E]
+In triangle \(\triangle ABC\) with side lengths \(a = 7\), \(b = 8\), and \(c = 13\), what is the exact measure of the largest angle \(C\)?
+
+(A) \(60^\circ\)
+(B) \(90^\circ\)
+(C) \(135^\circ\)
+(D) \(150^\circ\)
+(E) \(120^\circ\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: A]
+Why does solving for an unknown triangle angle using the Law of Cosines NEVER create a two-angle ambiguity like the SSA case of the Law of Sines?
+
+(A) Because \(\cos\theta\) is strictly decreasing across \((0^\circ, 180^\circ)\), so every value in \((-1, 1)\) corresponds to a unique triangle angle (positive for acute, negative for obtuse)
+(B) Because \(\cos\theta\) is always positive for every angle in a triangle
+(C) Because the Law of Cosines only applies to acute triangles
+(D) Because \(\cos(180^\circ - \theta) = \cos\theta\) for every triangle angle \(\theta\)
+(E) Because every triangle solved by the Law of Cosines must be a right triangle
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: D]
+Which triple of side lengths forms a valid OBTUSE triangle?
+
+(A) \(4, 5, 10\)
+(B) \(5, 12, 13\)
+(C) \(6, 7, 9\)
+(D) \(5, 7, 9\)
+(E) \(6, 8, 10\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+In triangle \(\triangle ABC\), \(a = 8\), \(b = 5\), and the included angle is \(C = 60^\circ\). What are the exact length of side \(c\) and the exact value of \(\cos A\)?
+
+(A) \(c = 7\) and \(\cos A = -\dfrac{1}{7}\)
+(B) \(c = 7\) and \(\cos A = \dfrac{1}{7}\)
+(C) \(c = \sqrt{129}\) and \(\cos A = \dfrac{1}{7}\)
+(D) \(c = 7\) and \(\cos A = \dfrac{11}{14}\)
+(E) \(c = \sqrt{49}\) and \(\cos A = \dfrac{1}{2}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+A parallelogram has consecutive sides of lengths \(6\text{ cm}\) and \(10\text{ cm}\) enclosing an acute interior angle of \(60^\circ\). What are the exact lengths of its shorter and longer diagonals?
+
+(A) \(2\sqrt{19}\text{ cm}\) and \(2\sqrt{34}\text{ cm}\)
+(B) \(8\text{ cm}\) and \(14\text{ cm}\)
+(C) \(2\sqrt{19}\text{ cm}\) and \(14\text{ cm}\)
+(D) \(2\sqrt{19}\text{ cm}\) and \(16\text{ cm}\)
+(E) \(4\sqrt{7}\text{ cm}\) and \(14\text{ cm}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+A triangle has side lengths \(x\), \(x + 1\), and \(x + 2\). For which open interval of real numbers \(x\) do these lengths form a valid OBTUSE triangle?
+
+(A) \(1 < x < 3\)
+(B) \(0 < x < 3\)
+(C) \(x > 3\)
+(D) \(1 < x < 2\)
+(E) \(2 < x < 4\)
+[/BONUS]

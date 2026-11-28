@@ -1,0 +1,212 @@
+=== SECTION 1: Bounding concentration without knowing distribution shape ===
+
+Suppose a logistics manager tells you only two numbers for a shipment of \(N = 400\) packages: the mean weight is \(\mu = 50\text{ kg}\) and the standard deviation is \(\sigma = 4\text{ kg}\). You have no histogram, no boxplot, and no skewness index—the weights could be bell-shaped, strongly skewed, or split into two distant clusters. Even with zero information about shape, can \(90\%\) of the packages lie more than \(2\) standard deviations away from the mean?
+
+No. Remember how variance is defined: \(\sigma^2 = \frac{1}{N} \sum_{i=1}^N (x_i - \mu)^2\) is the average squared distance from the mean. If too many observations sat far from \(\mu\), their large squared deviations would force the average squared deviation to exceed \(\sigma^2\), contradicting the given standard deviation. Turning that elementary observation into an exact inequality gives Chebyshev's inequality.
+
+Let \(k > 1\) be any real number, and split the \(N\) observations \(x_1, \dots, x_N\) (with \(\sigma > 0\)) into two groups: those at distance at least \(k\sigma\) from the mean,
+\[
+S = \{i \in \{1, \dots, N\} : |x_i - \mu| \ge k\sigma\},
+\]
+and those strictly closer than \(k\sigma\) to the mean. Let \(m\) be the count of observations in \(S\). Because every squared deviation \((x_i - \mu)^2\) is nonnegative, dropping all observations outside \(S\) can only make the total sum of squares smaller or equal:
+\[
+N \sigma^2 = \sum_{i=1}^N (x_i - \mu)^2 \ge \sum_{i \in S} (x_i - \mu)^2.
+\]
+For every observation \(i \in S\), we have \(|x_i - \mu| \ge k\sigma\), so \((x_i - \mu)^2 \ge k^2 \sigma^2\). Summing this lower bound over all \(m\) observations in \(S\) yields
+\[
+N \sigma^2 \ge \sum_{i \in S} k^2 \sigma^2 = m k^2 \sigma^2.
+\]
+Dividing both sides by the positive quantity \(N k^2 \sigma^2\) bounds the outer fraction directly:
+\[
+\frac{m}{N} \le \frac{1}{k^2}.
+\]
+Because the remaining \(N - m\) observations satisfy \(|x_i - \mu| < k\sigma\) (equivalently \(|z_i| < k\) in standardized units), subtracting both sides from \(1\) establishes the central guarantee.
+
+[CALLOUT]
+id: chebyshev-inequality
+label: Theorem
+title: Chebyshev's inequality for finite datasets
+tone: key
+
+For ANY finite quantitative dataset \(x_1, \dots, x_N\) with mean \(\mu\) and standard deviation \(\sigma > 0\), and for every real number \(k > 1\):
+
+(1) At most the fraction \(\dfrac{1}{k^2}\) of the observations lie at distance \(k\sigma\) or farther from the mean: \(\dfrac{\#\{i : |x_i - \mu| \ge k\sigma\}}{N} \le \dfrac{1}{k^2}\).
+(2) Equivalently, at least the fraction \(1 - \dfrac{1}{k^2}\) of the observations lie strictly within \(k\) standard deviations of the mean:
+\[
+\frac{\#\{i : |x_i - \mu| < k\sigma\}}{N} \ge 1 - \frac{1}{k^2} \quad \text{(equivalently } |z_i| < k\text{)}.
+\]
+(3) When spread is measured by the sample standard deviation \(s = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (x_i - \bar{x})^2} > 0\), repeating the exact same steps with \(\sum_{i=1}^n (x_i - \bar{x})^2 = (n - 1) s^2\) yields \(\frac{m}{n} \le \frac{n-1}{n k^2} < \frac{1}{k^2}\), so the floor \(1 - \frac{1}{k^2}\) holds conservatively for sample \(s\) as well (and is even slightly tighter: at least \(1 - \frac{n-1}{n k^2}\) lie strictly within \(ks\) of \(\bar{x}\)).
+[/CALLOUT]
+
+Notice why [REF: chebyshev-inequality | Chebyshev's inequality] is restricted to \(k > 1\): when \(k = 1\), \(1 - 1/1^2 = 0\), which merely says at least \(0\%\) of the data lie within \(1\sigma\) of the mean—true, because every dataset can place all its points at \(\mu \pm \sigma\) (for instance, \(\{-1, +1\}\) has \(\mu = 0\), \(\sigma = 1\), and zero observations strictly inside \((-1, 1)\)). For \(k > 1\), however, the bound immediately becomes informative:
+- At \(k = 2\): at least \(1 - 1/4 = 3/4 = 75\%\) lie strictly inside \((\mu - 2\sigma, \mu + 2\sigma)\), and at most \(25\%\) lie at or beyond \(2\sigma\).
+- At \(k = 3\): at least \(1 - 1/9 = 8/9 \approx 88.89\%\) lie strictly inside \((\mu - 3\sigma, \mu + 3\sigma)\), and at most \(11.11\%\) lie at or beyond \(3\sigma\).
+- At \(k = 4\): at least \(1 - 1/16 = 15/16 = 93.75\%\) lie strictly inside \((\mu - 4\sigma, \mu + 4\sigma)\), and at most \(6.25\%\) lie at or beyond \(4\sigma\).
+
+Also check whether the bound \(1 - 1/k^2\) is artificially loose or actually reachable. Consider the \(N = 18\) dataset with one observation at \(-3\), sixteen observations at \(0\), and one observation at \(+3\). Its mean is \(\mu = 0\) and its variance is \(\sigma^2 = (9 + 0 + 9)/18 = 1\), so \(\sigma = 1\). At \(k = 3\), exactly \(m = 2\) observations satisfy \(|x_i - 0| \ge 3\), giving \(m/N = 2/18 = 1/9 = 1/k^2\), and exactly \(16/18 = 8/9 = 1 - 1/k^2\) lie strictly inside \((-3, 3)\). Without shape assumptions, no stronger general floor is mathematically possible.
+
+Watch out for one crucial symmetry trap in [REF: chebyshev-inequality.1 | item (1)]: Chebyshev's upper bound \(1/k^2\) covers BOTH tails combined (\(|x_i - \mu| \ge k\sigma\)), and because the distribution need not be symmetric, you CANNOT halve \(1/k^2\) to claim at most \(1/(2k^2)\) lie in one particular tail. A skewed dataset can place nearly all of its outer observations on one side of the mean.
+
+Let us work through a concrete calculation. Suppose \(N = 250\) customer support wait times (shape unknown) have \(\mu = 14\text{ min}\) and \(\sigma = 3\text{ min}\). What is the minimum number of calls with wait times strictly between \(8\text{ min}\) and \(20\text{ min}\)? First express the interval's half-width in standard deviation units: both \(8\) and \(20\) sit \(6\text{ min}\) from \(\mu = 14\), so \(k = 6 / 3 = 2\). By [REF: chebyshev-inequality.2 | Chebyshev's central bound], at least \(1 - 1/2^2 = 0.75\) of the calls fall in \((8, 20)\), which is at least \(0.75 \times 250 = 187.5\) calls. Because a count of calls must be a whole number, at least \(188\) calls lasted strictly between \(8\) and \(20\) minutes, and at most \(250 - 188 = 62\) calls lasted \(8\) minutes or less or \(20\) minutes or more.
+
+[QUESTION 1]
+[ANSWER: C]
+A warehouse tracks the weights of \(N = 400\) outgoing pallets with \(\mu = 50\text{ kg}\) and \(\sigma = 4\text{ kg}\), but nothing is known about the shape of the weight distribution. At minimum, how many pallets must have weights strictly between \(40\text{ kg}\) and \(60\text{ kg}\)?
+
+(A) \(300\)
+(B) \(356\)
+(C) \(336\)
+(D) \(380\)
+(E) \(64\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: A]
+A dataset of \(N = 450\) delivery durations has \(\mu = 32\text{ min}\) and \(\sigma = 5\text{ min}\), with an unknown, possibly strongly skewed distribution. What is the maximum possible number of deliveries whose duration is either \(17\text{ min}\) or less, or \(47\text{ min}\) or more?
+
+(A) \(50\)
+(B) \(25\)
+(C) \(112\)
+(D) \(400\)
+(E) \(2\)
+[/QUESTION]
+
+=== SECTION 2: The Empirical Rule for bell-shaped distributions ===
+
+Chebyshev's inequality is rock-solid because it works for EVERY finite dataset, including bizarre spikes and extreme skew. Yet that universality comes at a price: for tidy, unimodal, symmetric, bell-shaped datasets (such as measurement errors, adult heights within a biological sex, or tightly controlled manufacturing dimensions), actual concentration around the mean is much higher than Chebyshev's worst-case floor. In those specific bell-shaped cases, the Empirical Rule (also called the \(68\text{–}95\text{–}99.7\) rule) provides far sharper approximations.
+
+[CALLOUT]
+id: empirical-rule
+label: Approximation
+title: The Empirical Rule (68–95–99.7 rule)
+tone: key
+
+When a dataset's distribution is unimodal, roughly symmetric, and bell-shaped (closely following a normal curve), with mean \(\bar{x}\) and standard deviation \(s\) (or \(\mu\) and \(\sigma\)):
+
+(1) Approximately \(68\%\) of observations lie within \(1\) standard deviation of the mean: \((\bar{x} - s,\; \bar{x} + s)\).
+(2) Approximately \(95\%\) of observations lie within \(2\) standard deviations of the mean: \((\bar{x} - 2s,\; \bar{x} + 2s)\).
+(3) Approximately \(99.7\%\) of observations lie within \(3\) standard deviations of the mean: \((\bar{x} - 3s,\; \bar{x} + 3s)\).
+
+Because the bell shape is symmetric around the mean, each band splits into two equal halves on the left and right of \(\bar{x}\) (for example, about \(34\%\) in \((\bar{x}, \bar{x} + s)\), about \(13.5\%\) in \((\bar{x} + s, \bar{x} + 2s)\), about \(2.35\%\) in \((\bar{x} + 2s, \bar{x} + 3s)\), and about \(0.15\%\) beyond \(\bar{x} + 3s\)).
+[/CALLOUT]
+
+Notice the distinction in status between our two tools. [REF: chebyshev-inequality | Chebyshev's inequality] is a proved mathematical guarantee for every finite dataset. [REF: empirical-rule | The Empirical Rule] is an empirical and normal-model approximation whose exact underlying area integrals belong to Probability; it is NEVER a universal theorem, and its numbers are licensed ONLY after verifying from a histogram, dotplot, or shape diagnostics that the data are genuinely unimodal, symmetric, and bell-shaped.
+
+The first graph below shades the nested \(68\%\), \(95\%\), and \(99.7\%\) regions under a standardized bell-shaped curve in \(z\)-score units. The second graph compares Chebyshev's universal lower bound \(1 - 1/k^2\) against the Empirical Rule benchmarks as \(k\) varies—drag the slider \(k\) to see how wide the gap is between worst-case guarantee and bell-shaped expectation.
+
+[GRAPH]
+type: function2d
+title: Empirical Rule regions on a standardized bell-shaped distribution (\(z\)-units)
+xlabel: \(z\)
+ylabel: Density
+xrange: -3.6, 3.6
+yrange: 0, 0.45
+trace: 0.3989 * exp(-0.5 * x^2) | label: Bell-shaped curve | color: #1e293b
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: -1, 1 | label: Central \(68\%\) (\(\pm 1\sigma\)) | color: #3b82f6 | opacity: 0.35
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: -2, -1 | label: Next \(27\%\) (\(\pm 2\sigma\) total \(95\%\)) | color: #10b981 | opacity: 0.25
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: 1, 2 | color: #10b981 | opacity: 0.25
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: -3, -2 | label: Outer \(4.7\%\) (\(\pm 3\sigma\) total \(99.7\%\)) | color: #f59e0b | opacity: 0.25
+fill: 0.3989 * exp(-0.5 * x^2), 0 | range: 2, 3 | color: #f59e0b | opacity: 0.25
+segment: 0, 0, 0, 0.3989 | dashed: true | color: #64748b
+[/GRAPH]
+
+[GRAPH]
+type: function2d
+title: Chebyshev's universal lower bound \(1 - 1/k^2\) versus Empirical Rule benchmarks
+xlabel: \(k\)
+ylabel: Proportion within k SDs
+xrange: 1, 4.5
+yrange: 0, 1.05
+trace: 1 - 1 / (x^2) | label: Chebyshev lower bound \(1 - 1/k^2\) | color: #ef4444
+point: 1, 0.68 | label: Empirical 68% | color: #3b82f6
+point: 2, 0.95 | label: Empirical 95% | color: #3b82f6
+point: 3, 0.997 | label: Empirical 99.7% | color: #3b82f6
+point: k, 1 - 1 / (k^2) | label: Chebyshev floor | color: #ef4444
+segment: k, 0, k, 1 - 1 / (k^2) | dashed: true | color: #ef4444
+slider: k | range: 1.1, 4.5 | init: 2.0 | step: 0.1
+[/GRAPH]
+
+See how symmetry makes [REF: empirical-rule | the Empirical Rule] flexible for asymmetric intervals around \(\bar{x}\). Suppose a bell-shaped dataset of adult male heights has \(\bar{x} = 175\text{ cm}\) and \(s = 7\text{ cm}\), and we want the approximate percentage of men taller than \(189\text{ cm}\). Converting to a \(z\)-score gives \(z = (189 - 175)/7 = +2\). Since roughly \(95\%\) lie within \(\pm 2s\), roughly \(5\%\) lie outside \(\pm 2s\); splitting that \(5\%\) equally across both symmetric tails leaves about \(2.5\%\) above \(189\text{ cm}\) (and \(2.5\%\) below \(161\text{ cm}\)). Similarly, the percentage between \(161\text{ cm}\) (\(z = -2\)) and \(182\text{ cm}\) (\(z = +1\)) equals the left half of \(95\%\) (\(47.5\%\)) plus the right half of \(68\%\) (\(34\%\)), totaling approximately \(81.5\%\).
+
+[QUESTION 3]
+[ANSWER: D]
+A large manufacturing dataset of machined steel rod diameters has been verified by histogram and skewness checks to be unimodal, symmetric, and bell-shaped with \(\bar{x} = 10.00\text{ mm}\) and \(s = 0.20\text{ mm}\). Using the Empirical Rule, approximately what percentage of rods have diameters between \(9.80\text{ mm}\) and \(10.40\text{ mm}\)?
+
+(A) \(68\%\)
+(B) \(95\%\)
+(C) \(84\%\)
+(D) \(81.5\%\)
+(E) \(13.5\%\)
+[/QUESTION]
+
+=== SECTION 3: Choosing the valid rule and diagnosing misuse ===
+
+Comparing both tools side by side clarifies exactly when each one applies.
+
+[TABLE]
+Criterion | Chebyshev's inequality | Empirical Rule
+Required distribution shape | None (any finite dataset with \(\sigma > 0\)) | Unimodal, roughly symmetric, bell-shaped
+Within \(\pm 1\) SD | No useful bound (\(\ge 0\%\)) | \(\approx 68\%\)
+Within \(\pm 2\) SDs | At least \(75\%\) | \(\approx 95\%\)
+Within \(\pm 3\) SDs | At least \(88.9\%\) | \(\approx 99.7\%\)
+Can outer tail be split \(50/50\)? | No (asymmetry allowed) | Yes (symmetry required)
+Nature of claim | Exact worst-case mathematical guarantee | Approximate bell-curve benchmark
+[/TABLE]
+
+Where does the Empirical Rule fail most severely in practice? Three common non-bell shapes expose the danger immediately:
+- Strongly skewed data (such as incomes, claim sizes, or server stall durations): here \(\bar{x} - 2s\) often falls below zero even for strictly positive measurements, immediately exposing that the symmetric bell assumption is broken. Meanwhile, far more than \(2.5\%\)—or far fewer, depending on tail shape—can sit above \(\bar{x} + 2s\).
+- Bimodal or clustered data: suppose half of a dataset sits tightly around \(10\) and half sits tightly around \(30\). Then \(\bar{x} = 20\) and \(s \approx 10\), so almost ZERO observations lie near the mean inside \((12, 28)\), shattering the Empirical Rule's \(68\%\) claim within \(\pm 1s\) (while Chebyshev's \(\ge 0\%\) at \(k = 1\) and \(\ge 75\%\) at \(k = 2\) remain completely true!).
+- Symmetric heavy-tailed data: even when skewness is \(g_1 = 0\), elevated fourth moments (kurtosis) pack far more than \(0.3\%\) of observations beyond \(\pm 3s\), understating extreme-event frequency if you trust the Empirical Rule blindly.
+
+[CALLOUT]
+id: concentration-choice
+label: Common pitfall
+title: Never apply the Empirical Rule without checking shape first
+tone: caution
+
+Before citing \(68\%\), \(95\%\), or \(99.7\%\)—or halving tail percentages by symmetry—confirm from a plot and shape diagnostics that the dataset is unimodal, roughly symmetric, and bell-shaped. If the distribution is skewed, bimodal, heavy-tailed, or of unknown shape, use Chebyshev's inequality for guaranteed bounds (or report empirical quantiles and the five-number summary directly).
+[/CALLOUT]
+
+[QUESTION 4]
+[ANSWER: B]
+An economics report summarizes \(n = 600\) household net worth values that are strongly right-skewed (\(g_1 = +4.1\)), with \(\bar{x} = \$120{,}000\) and \(s = \$90{,}000\). The report states: "By the Empirical Rule, roughly \(95\%\) of households have net worth between \(-\$60{,}000\) and \(\$300{,}000\), with about \(2.5\%\) below \(-\$60{,}000\) and \(2.5\%\) above \(\$300{,}000\)." Which critique is mathematically sound?
+
+(A) Both the Empirical Rule and Chebyshev's inequality are invalid whenever a dataset is skewed.
+(B) The Empirical Rule's \(95\%\) and symmetric \(2.5\%\) tail claims are invalid because the distribution is strongly right-skewed rather than bell-shaped; however, Chebyshev's inequality still guarantees that at least \(75\%\) of households lie strictly between \(-\$60{,}000\) and \(\$300{,}000\).
+(C) Chebyshev's inequality guarantees that at most \(12.5\%\) of households exceed \(\$300{,}000\) by halving the \(25\%\) outer bound.
+(D) The Empirical Rule is valid here because \(n = 600\) is a large sample size.
+(E) The Empirical Rule is valid as long as the lower endpoint is truncated at \(\$0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose a finite dataset of \(N = 80\) values has population mean \(\mu = 50\) and population standard deviation \(\sigma = 10\). Is it possible for exactly \(20\) of the \(80\) observations to satisfy \(|x_i - 50| \ge 20\), leaving only \(60\) observations (\(75\%\)) strictly inside \((30, 70)\)?
+
+(A) No, because at least \(95\%\) of observations must lie within \(2\sigma\) of the mean.
+(B) No, because the proof of Chebyshev's inequality uses a strict inequality so equality can never occur.
+(C) Only if the dataset has negative values below \(0\).
+(D) Only if \(N\) is infinite.
+(E) Yes: placing \(10\) observations at \(30\), \(60\) observations at \(50\), and \(10\) observations at \(70\) gives \(\mu = 50\), \(\sigma = 10\), and exactly \(20\) observations at distance \(20 = 2\sigma\) from the mean.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+In a sample of \(n = 16\) measurements with sample mean \(\bar{x}\) and sample standard deviation \(s > 0\), remember that \(\sum_{i=1}^{16} (x_i - \bar{x})^2 = (n - 1) s^2 = 15 s^2\). Using the sample-SD form of Chebyshev's bound directly, what is the largest integer number of observations \(m\) that can satisfy \(|x_i - \bar{x}| \ge 2s\)?
+
+(A) \(1\)
+(B) \(2\)
+(C) \(3\)
+(D) \(4\)
+(E) \(5\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+A quality engineer wants a symmetric interval around the mean \(\mu = 100\text{ ms}\) (with \(\sigma = 6\text{ ms}\)) that is guaranteed to contain strictly at least \(96\%\) of observations, regardless of distribution shape. What is the narrowest interval that Chebyshev's inequality guarantees?
+
+(A) \((70,\; 130)\)
+(B) \((82,\; 118)\)
+(C) \((88,\; 112)\)
+(D) \((64,\; 136)\)
+(E) \((76,\; 124)\)
+[/BONUS]

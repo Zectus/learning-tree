@@ -1,0 +1,247 @@
+=== SECTION 1: Position vectors, the section formula, and centroids ===
+
+So far we have used vectors mainly to describe displacements. Now we turn vectors into a sharp tool for planar geometry itself—locating points that divide a segment in any ratio, describing entire lines without worrying about vertical slopes, and proving classical Euclidean theorems in a few algebraic lines without ever picking coordinate axes.
+
+Fix an arbitrary reference origin \(O\) in the plane, and represent each point \(P\) by its position vector \(\mathbf{r}_P = \overrightarrow{OP}\). Notice how every displacement between two points \(A\) and \(B\) immediately becomes a difference of position vectors:
+\[
+\overrightarrow{AB} = \mathbf{r}_B - \mathbf{r}_A.
+\]
+Now ask a concrete geometric question: given two distinct points \(A\) and \(B\), what is the position vector \(\mathbf{r}_P\) of the point \(P\) that lies on segment \(AB\) and divides it internally in the ratio \(m : n\) (with \(m > 0\) and \(n > 0\)), meaning that the lengths satisfy \(AP : PB = m : n\)?
+
+Because \(P\) lies on the directed segment from \(A\) to \(B\), the vectors \(\overrightarrow{AP}\) and \(\overrightarrow{AB}\) point in the exact same direction, and \(AP\) is the fraction \(\frac{m}{m + n}\) of the total length \(AB\). Setting \(t = \frac{m}{m + n} \in (0, 1)\), we have
+\[
+\overrightarrow{AP} = t\,\overrightarrow{AB} = \frac{m}{m + n}(\mathbf{r}_B - \mathbf{r}_A).
+\]
+Since \(\mathbf{r}_P = \mathbf{r}_A + \overrightarrow{AP}\), we substitute and collect terms:
+\[
+\mathbf{r}_P = \mathbf{r}_A + \frac{m}{m + n}(\mathbf{r}_B - \mathbf{r}_A) = \left(1 - \frac{m}{m + n}\right)\mathbf{r}_A + \frac{m}{m + n}\mathbf{r}_B = \frac{n\mathbf{r}_A + m\mathbf{r}_B}{m + n}.
+\]
+In terms of the fraction \(t = \frac{m}{m + n}\), the exact same point is written as the weighted average \((1 - t)\mathbf{r}_A + t\mathbf{r}_B\). Notice that even without computing any lengths or angles, pure vector addition and scaling locate \(P\) exactly.
+
+[CALLOUT]
+id: section-formula
+label: Theorem
+title: Internal section formula, midpoint, and centroid
+tone: key
+
+Let \(A, B, C\) be points in the plane with position vectors \(\mathbf{r}_A, \mathbf{r}_B, \mathbf{r}_C\).
+
+(1) Internal division: the point \(P\) dividing segment \(AB\) internally in the ratio \(AP : PB = m : n\) (\(m, n > 0\)) has position vector
+\[
+\mathbf{r}_P = \frac{n\mathbf{r}_A + m\mathbf{r}_B}{m + n} = (1 - t)\mathbf{r}_A + t\mathbf{r}_B, \qquad t = \frac{m}{m + n} \in (0, 1).
+\]
+(2) Midpoint: setting \(m = n = 1\) (\(t = \frac{1}{2}\)) gives the midpoint \(M\) of \(AB\):
+\[
+\mathbf{r}_M = \frac{\mathbf{r}_A + \mathbf{r}_B}{2}.
+\]
+(3) Centroid of \(\triangle ABC\): the point \(G\) dividing each median in the ratio \(2 : 1\) from vertex to opposite midpoint has position vector
+\[
+\mathbf{r}_G = \frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}.
+\]
+[/CALLOUT]
+
+[CALLOUT]
+id: weight-swap
+label: Common pitfall
+title: The weights \(n\) and \(m\) cross over in the section formula
+tone: caution
+
+When \(AP : PB = m : n\), the larger share \(n\) goes on \(\mathbf{r}_A\) and \(m\) goes on \(\mathbf{r}_B\)—not the other way around. Check by extreme intuition: if \(AP : PB = 1 : 9\), then \(P\) sits very close to \(A\), so \(\mathbf{r}_P = \frac{9\mathbf{r}_A + 1\mathbf{r}_B}{10}\) must weight \(\mathbf{r}_A\) heavily (nine-tenths) and \(\mathbf{r}_B\) lightly (one-tenth).
+[/CALLOUT]
+
+Drag the slider \(t\) in the graph below to watch the point \(P(t) = (1 - t)\mathbf{r}_A + t\mathbf{r}_B\) glide smoothly along segment \(AB\) from \(A(1, 1)\) at \(t = 0\) to \(B(5, 3)\) at \(t = 1\), passing through the midpoint \((3, 2)\) at \(t = 0.5\).
+
+[GRAPH]
+type: parametric2d
+title: Position vector \(\mathbf{r}_P = (1 - t)\mathbf{r}_A + t\mathbf{r}_B\) sweeping along segment \(AB\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1
+xrange: -0.5, 6
+yrange: -0.5, 4
+trace: 1 + 4*t, 1 + 2*t | label: segment \(AB\) | color: #2563eb
+segment: 0, 0, 1, 1 | label: \(\mathbf{r}_A\) | color: #64748b | dashed: true
+segment: 0, 0, 5, 3 | label: \(\mathbf{r}_B\) | color: #64748b | dashed: true
+segment: 0, 0, 1 + 4*s, 1 + 2*s | label: \(\mathbf{r}_P\) | color: #dc2626
+point: 0, 0 | label: \(O\)
+point: 1, 1 | label: \(A(1, 1)\)
+point: 5, 3 | label: \(B(5, 3)\)
+point: 1 + 4*s, 1 + 2*s | label: \(P\)
+slider: s | range: 0, 1 | init: 0.25 | step: 0.05
+[/GRAPH]
+
+Wait—where did [REF: section-formula.3 | the centroid formula] come from? Let us derive it right now from [REF: section-formula.1 | the section formula] and [REF: section-formula.2 | the midpoint formula]. In \(\triangle ABC\), let \(M_A\) be the midpoint of side \(BC\), so \(\mathbf{r}_{M_A} = \frac{\mathbf{r}_B + \mathbf{r}_C}{2}\). Now find the point \(G\) on the median \(AM_A\) that divides \(AM_A\) in the ratio \(AG : GM_A = 2 : 1\):
+\[
+\mathbf{r}_G = \frac{1 \cdot \mathbf{r}_A + 2 \cdot \mathbf{r}_{M_A}}{2 + 1} = \frac{\mathbf{r}_A + 2\left(\frac{\mathbf{r}_B + \mathbf{r}_C}{2}\right)}{3} = \frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}.
+\]
+Pause and admire the symmetry of that answer: \(\frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}\) treats \(A, B,\) and \(C\) identically. If we instead took the \(2 : 1\) point along the median from \(B\) to the midpoint of \(AC\), or from \(C\) to the midpoint of \(AB\), we would get the exact same position vector \(\frac{\mathbf{r}_A + \mathbf{r}_B + \mathbf{r}_C}{3}\). Therefore all three medians of any triangle are concurrent—they meet at one single point \(G\), the centroid, two-thirds of the way from every vertex to the midpoint of the opposite side!
+
+[QUESTION 1]
+[ANSWER: C]
+Point \(P\) divides the line segment \(AB\) internally in the ratio \(AP : PB = 3 : 2\), where \(A(-4, 7)\) and \(B(6, -3)\). What are the coordinates of \(P\)?
+
+(A) \((0, 3)\)
+(B) \((1, 2)\)
+(C) \((2, 1)\)
+(D) \((2, -1)\)
+(E) \((10, 5)\)
+[/QUESTION]
+
+=== SECTION 2: Vector and parametric equations of 2D lines ===
+
+In [REF: section-formula.1 | the section formula], restricting \(t\) to \([0, 1]\) traced out the finite segment \(AB\). What happens if we let the real parameter \(t\) run freely over all real numbers \((-\infty, \infty)\) instead? Starting at a fixed base point \(P_0\) with position vector \(\mathbf{r}_0 = \langle x_0, y_0 \rangle\) and moving any scalar multiple \(t\mathbf{d}\) along a nonzero direction vector \(\mathbf{d} = \langle d_x, d_y \rangle\) sweeps out the entire infinite line through \(P_0\) parallel to \(\mathbf{d}\).
+
+[CALLOUT]
+id: param-line
+label: Definition
+title: Vector and parametric equations of a 2D line
+tone: key
+
+Let \(P_0(x_0, y_0)\) be a point on a line \(L\) with position vector \(\mathbf{r}_0 = \langle x_0, y_0 \rangle\), and let \(\mathbf{d} = \langle d_x, d_y \rangle \ne \mathbf{0}\) be a direction vector parallel to \(L\).
+
+(1) The vector equation of \(L\) is
+\[
+\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}, \qquad t \in \mathbb{R}.
+\]
+(2) Writing out \(\mathbf{r}(t) = \langle x(t), y(t) \rangle\) component by component gives the parametric equations of \(L\):
+\[
+x(t) = x_0 + t d_x, \qquad y(t) = y_0 + t d_y, \qquad t \in \mathbb{R}.
+\]
+[/CALLOUT]
+
+How does a direction vector \(\mathbf{d} = \langle d_x, d_y \rangle\) relate to ordinary slope? Whenever \(d_x \ne 0\), increasing \(t\) by \(1\) changes \(x\) by \(d_x\) and \(y\) by \(d_y\), so the slope of the line is simply \(m = \frac{d_y}{d_x}\). And when \(d_x = 0\) (for example, \(\mathbf{d} = \langle 0, 1 \rangle\)), the vector equation \(\mathbf{r}(t) = \langle x_0, y_0 \rangle + t\langle 0, 1 \rangle\) describes the vertical line \(x = x_0\) effortlessly, with no undefined slope and no special-case equation needed.
+
+Notice also that a line has infinitely many valid vector equations: you may pick any point on \(L\) as \(\mathbf{r}_0\), and any nonzero scalar multiple \(k\mathbf{d}\) as the direction vector. To write the vector equation of the line through two distinct points \(A\) and \(B\), pick \(\mathbf{r}_0 = \mathbf{r}_A\) and \(\mathbf{d} = \overrightarrow{AB} = \mathbf{r}_B - \mathbf{r}_A\).
+
+Two practical tasks arise constantly with [REF: param-line | parametric lines]:
+1. Point-on-line test: does a given point \(Q(x_Q, y_Q)\) lie on \(\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{d}\)? It does if and only if there is ONE single value of \(t\) satisfying both \(x_Q = x_0 + t d_x\) and \(y_Q = y_0 + t d_y\). For example, to test whether \(Q(7, 3)\) lies on \(\mathbf{r}(t) = \langle 1, 0 \rangle + t\langle 2, 1 \rangle\), solve \(1 + 2t = 7 \implies t = 3\) and \(0 + t = 3 \implies t = 3\). Both give the same \(t = 3\), so \(Q\) lies on the line. For \(R(7, 4)\), the first gives \(t = 3\) while the second gives \(t = 4\), so \(R\) is not on the line.
+2. Intersection of two lines: suppose \(L_1\) is given by \(\mathbf{r}_1(s) = \langle 1, 0 \rangle + s\langle 2, 1 \rangle\) and \(L_2\) is given by \(\mathbf{r}_2(t) = \langle 0, 4 \rangle + t\langle 1, -1 \rangle\). They intersect where \(\mathbf{r}_1(s) = \mathbf{r}_2(t)\), which gives the \(2 \times 2\) linear system
+\[
+1 + 2s = t, \qquad s = 4 - t.
+\]
+Substituting \(t = 1 + 2s\) into the second equation gives \(s = 4 - (1 + 2s) = 3 - 2s\), so \(3s = 3 \implies s = 1\), and then \(t = 1 + 2(1) = 3\). Checking both lines yields \(\mathbf{r}_1(1) = \langle 3, 1 \rangle\) and \(\mathbf{r}_2(3) = \langle 3, 1 \rangle\), confirming the intersection point \((3, 1)\).
+
+[CALLOUT]
+id: two-params
+label: Common pitfall
+title: Use two distinct parameter letters when intersecting two lines
+tone: caution
+
+Even if two lines are both written with the letter \(t\) in the problem statement, rename one parameter to \(s\) before setting \(\mathbf{r}_1(s) = \mathbf{r}_2(t)\). Setting \(\mathbf{r}_1(t) = \mathbf{r}_2(t)\) asks whether two particles arrive at the same point at the same time \(t\), which misses almost every geometric intersection! In the example above, the lines cross at \((3, 1)\) with \(s = 1\) on \(L_1\) and \(t = 3\) on \(L_2\).
+[/CALLOUT]
+
+The plot below shows \(L_1\) and \(L_2\) crossing at \((3, 1)\), along with their base points \(P_1(1, 0)\) and \(P_2(0, 4)\) and direction arrows \(\mathbf{d}_1 = \langle 2, 1 \rangle\) and \(\mathbf{d}_2 = \langle 1, -1 \rangle\).
+
+[GRAPH]
+type: parametric2d
+title: Intersecting parametric lines \(L_1\) and \(L_2\) at \((3, 1)\) (\(s = 1, t = 3\))
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -1.5, 4.5
+xrange: -1.5, 6.5
+yrange: -1, 5.5
+trace: 1 + 2*t, t | label: \(L_1: \langle 1, 0 \rangle + s\langle 2, 1 \rangle\) | color: #2563eb
+trace: t, 4 - t | label: \(L_2: \langle 0, 4 \rangle + t\langle 1, -1 \rangle\) | color: #d97706
+point: 1, 0 | label: \(P_1(1, 0)\)
+point: 0, 4 | label: \(P_2(0, 4)\)
+point: 3, 1 | label: \((3, 1)\)
+[/GRAPH]
+
+[QUESTION 2]
+[ANSWER: A]
+Find the point of intersection of the two lines
+\[
+L_1: \mathbf{r}_1(s) = \langle -1, 2 \rangle + s\langle 3, 1 \rangle \qquad \text{and} \qquad L_2: \mathbf{r}_2(t) = \langle 7, 1 \rangle + t\langle -2, 3 \rangle.
+\]
+
+(A) \((5, 4)\)
+(B) \((2, 3)\)
+(C) \((1, 2)\)
+(D) \((7, 4)\)
+(E) The two lines do not intersect
+[/QUESTION]
+
+=== SECTION 3: Coordinate-free vector proofs in planar geometry ===
+
+Earlier we proved that the medians of any triangle meet at a single point \(G\) without ever introducing \(x\)- and \(y\)-coordinates. That same approach—writing points as position vectors relative to an arbitrary origin \(O\) and translating geometric hypotheses into vector equations—turns many classical Euclidean geometry theorems into short, transparent calculations.
+
+[TABLE]
+Geometric statement | Position-vector translation
+\(M\) is the midpoint of segment \(AB\) | \(\mathbf{r}_M = \frac{1}{2}(\mathbf{r}_A + \mathbf{r}_B)\)
+\(P\) divides segment \(AB\) in ratio \(m : n\) | \(\mathbf{r}_P = \frac{n\mathbf{r}_A + m\mathbf{r}_B}{m + n}\)
+\(ABCD\) (in order) is a parallelogram | \(\mathbf{r}_B - \mathbf{r}_A = \mathbf{r}_C - \mathbf{r}_D\) (equivalently \(\mathbf{r}_A + \mathbf{r}_C = \mathbf{r}_B + \mathbf{r}_D\))
+Segments \(PQ\) and \(RS\) are parallel with \(PQ = k \cdot RS\) | \(\mathbf{r}_Q - \mathbf{r}_P = \pm k(\mathbf{r}_S - \mathbf{r}_R)\)
+Points \(A, B, C\) are collinear | \(\mathbf{r}_C - \mathbf{r}_A = t(\mathbf{r}_B - \mathbf{r}_A)\) for some \(t \in \mathbb{R}\)
+[/TABLE]
+
+Let us demonstrate two classic coordinate-free proofs using this dictionary.
+
+First, prove the Triangle Midsegment Theorem: in any triangle \(\triangle ABC\), the segment joining the midpoints \(M\) of \(AB\) and \(N\) of \(AC\) is parallel to the third side \(BC\) and half as long.
+By [REF: section-formula.2 | the midpoint formula],
+\[
+\mathbf{r}_M = \frac{\mathbf{r}_A + \mathbf{r}_B}{2}, \qquad \mathbf{r}_N = \frac{\mathbf{r}_A + \mathbf{r}_C}{2}.
+\]
+Subtracting to form the segment vector \(\overrightarrow{MN}\) causes \(\mathbf{r}_A\) to cancel cleanly:
+\[
+\overrightarrow{MN} = \mathbf{r}_N - \mathbf{r}_M = \frac{\mathbf{r}_A + \mathbf{r}_C}{2} - \frac{\mathbf{r}_A + \mathbf{r}_B}{2} = \frac{1}{2}(\mathbf{r}_C - \mathbf{r}_B) = \frac{1}{2}\overrightarrow{BC}.
+\]
+Because \(\overrightarrow{MN} = \frac{1}{2}\overrightarrow{BC}\) is a scalar multiple of \(\overrightarrow{BC}\) with scalar \(\frac{1}{2}\), segment \(MN\) is parallel to \(BC\) and has length \(\frac{1}{2}BC\).
+
+Second, prove that the diagonals of any parallelogram \(ABCD\) (with vertices in order around the boundary) bisect each other.
+Because \(ABCD\) is a parallelogram, opposite sides represent the same vector: \(\overrightarrow{AB} = \overrightarrow{DC}\), so
+\[
+\mathbf{r}_B - \mathbf{r}_A = \mathbf{r}_C - \mathbf{r}_D.
+\]
+Rearranging terms puts each diagonal's endpoints on the same side:
+\[
+\mathbf{r}_A + \mathbf{r}_C = \mathbf{r}_B + \mathbf{r}_D.
+\]
+Dividing both sides by \(2\) gives
+\[
+\frac{\mathbf{r}_A + \mathbf{r}_C}{2} = \frac{\mathbf{r}_B + \mathbf{r}_D}{2}.
+\]
+The left-hand side is the position vector of the midpoint of diagonal \(AC\); the right-hand side is the position vector of the midpoint of diagonal \(BD\). Since their position vectors are equal, the two midpoints are the exact same point—so the diagonals bisect each other.
+
+[CALLOUT]
+id: vector-proof-strategy
+label: Strategy
+title: Blueprint for coordinate-free vector proofs
+tone: note
+
+(1) Fix an arbitrary origin \(O\) (or place \(O\) at one vertex of the figure to set its position vector to \(\mathbf{0}\)) and assign position vectors \(\mathbf{r}_A, \mathbf{r}_B, \dots\) to the main vertices.
+(2) Express derived points (midpoints, division points) in terms of the vertex position vectors via [REF: section-formula | the section formula].
+(3) Form the displacement vector or midpoint expression corresponding to the desired geometric claim, simplify algebraically, and translate the final vector identity back into geometry.
+[/CALLOUT]
+
+[QUESTION 3]
+[ANSWER: A]
+Let \(ABCD\) be an arbitrary quadrilateral in the plane (not necessarily a parallelogram), and let \(P, Q, R, S\) be the midpoints of sides \(AB, BC, CD, DA\), respectively. Using position vectors, what can you conclude about quadrilateral \(PQRS\)?
+
+(A) \(PQRS\) is always a parallelogram, because \(\overrightarrow{PQ} = \overrightarrow{SR} = \frac{1}{2}\overrightarrow{AC}\)
+(B) \(PQRS\) is a parallelogram only when \(ABCD\) is already a parallelogram
+(C) \(PQRS\) is always a parallelogram, because \(\overrightarrow{PQ} = \overrightarrow{RS} = \frac{1}{2}\overrightarrow{BD}\)
+(D) Segments \(PQ\) and \(SR\) are parallel, but \(PQ = 2\,SR\) unless \(AB = CD\)
+(E) \(PQRS\) is always a parallelogram whose diagonals are equal in length to \(AC\) and \(BD\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+In triangle \(ABC\), point \(D\) lies on side \(BC\) such that \(BD : DC = 1 : 2\), and point \(E\) is the midpoint of segment \(AD\). Express the position vector \(\mathbf{r}_E\) in terms of \(\mathbf{r}_A, \mathbf{r}_B,\) and \(\mathbf{r}_C\).
+
+(A) \(\frac{1}{2}\mathbf{r}_A + \frac{1}{6}\mathbf{r}_B + \frac{1}{3}\mathbf{r}_C\)
+(B) \(\frac{1}{3}\mathbf{r}_A + \frac{1}{3}\mathbf{r}_B + \frac{1}{3}\mathbf{r}_C\)
+(C) \(\frac{1}{2}\mathbf{r}_A + \frac{1}{4}\mathbf{r}_B + \frac{1}{4}\mathbf{r}_C\)
+(D) \(\frac{1}{2}\mathbf{r}_A + \frac{1}{3}\mathbf{r}_B + \frac{1}{6}\mathbf{r}_C\)
+(E) \(\frac{1}{3}\mathbf{r}_A + \frac{1}{2}\mathbf{r}_B + \frac{1}{6}\mathbf{r}_C\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Triangle \(ABC\) has vertices \(A(1, 4)\) and \(B(7, -2)\), and its centroid is \(G(2, 3)\). What are the coordinates of the third vertex \(C\)?
+
+(A) \((-4, 5)\)
+(B) \((-2, 7)\)
+(C) \((2, 7)\)
+(D) \((-2, 5)\)
+(E) \((4, 1)\)
+[/BONUS]

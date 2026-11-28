@@ -1,0 +1,258 @@
+=== SECTION 1: Cuantificadores anidados y dependencia del orden ===
+
+Los enunciados con un solo cuantificador describen propiedades de una variable cada vez. Sin embargo, la mayoría de los enunciados matemáticos serios relacionan dos o más variables simultáneamente: "todo entero tiene un entero mayor", "existe un número real que actúa como neutro aditivo para todo número real" o "entre cualesquiera dos números reales distintos se encuentra un número racional". Para escribir y evaluar con precisión tales enunciados, apilamos dos o más cuantificadores delante de un predicado multivariable \(P(x, y)\).
+
+Lea los cuantificadores anidados estrictamente de izquierda a derecha. En \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\), primero nos encontramos con un \(x \in D_1\) arbitrario, y luego preguntamos si existe un \(y \in D_2\) —que SÍ PUEDE depender de \(x\)— tal que se cumpla \(P(x, y)\). En \(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\), debemos elegir primero UN único \(y \in D_2\) fijo que funcione simultáneamente para TODOS los \(x \in D_1\).
+
+¿Importa el orden de dos cuantificadores adyacentes? Eso depende por completo de si son del mismo tipo o de tipos mixtos.
+
+[CALLOUT]
+id: thm-quantifier-order
+label: Teorema
+title: Conmutación y no conmutación de cuantificadores anidados
+tone: key
+
+Sea \(P(x, y)\) un predicado con \(x \in D_1\) e \(y \in D_2\).
+
+(1) Los cuantificadores del mismo tipo conmutan:
+\[
+\forall x \in D_1\,\forall y \in D_2,\, P(x, y) \equiv \forall y \in D_2\,\forall x \in D_1,\, P(x, y),
+\]
+\[
+\exists x \in D_1\,\exists y \in D_2,\, P(x, y) \equiv \exists y \in D_2\,\exists x \in D_1,\, P(x, y).
+\]
+(2) Los cuantificadores mixtos NO conmutan en general, aunque una dirección siempre se cumple:
+\[
+\bigl(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\bigr) \implies \bigl(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\bigr),
+\]
+mientras que la recíproca \(\bigl(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\bigr) \implies \bigl(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\bigr)\) NO es válida en general.
+[/CALLOUT]
+
+¿Por qué se cumple siempre la implicación unidireccional de [REF: thm-quantifier-order.2 | la parte (2)]? Suponga que \(\exists y \in D_2\,\forall x \in D_1,\, P(x, y)\) es verdadero. Entonces hay un único "campeón universal" \(y_0 \in D_2\) tal que \(P(x, y_0)\) se cumple para todo \(x \in D_1\). Ahora compruebe \(\forall x \in D_1\,\exists y \in D_2,\, P(x, y)\): dado cualquier \(x \in D_1\), simplemente elegimos \(y = y_0\), ¡y \(P(x, y_0)\) se cumple! Tener un único \(y_0\) que funciona para todo \(x\) ciertamente implica que cada \(x\) tiene algún \(y\) que le funciona.
+
+Para ver por qué la recíproca falla de forma espectacular, compare dos enunciados sobre el dominio \(\mathbb{Z}\) donde \(P(x, y)\) es "\(y > x\)":
+- \(\forall x \in \mathbb{Z}\,\exists y \in \mathbb{Z},\, y > x\): "Todo entero tiene un entero mayor." ¡VERDADERO! Dado cualquier entero \(x\), podemos elegir \(y = x + 1\), que depende de \(x\) y satisface \(x + 1 > x\).
+- \(\exists y \in \mathbb{Z}\,\forall x \in \mathbb{Z},\, y > x\): "Existe un entero mayor que todo entero." ¡FALSO! Tome cualquier entero candidato \(y_0\); entonces elegir \(x = y_0\) (o \(x = y_0 + 1\)) viola \(y_0 > x\). Ningún \(y_0\) único puede superar a todos los \(x\) a la vez.
+
+Una forma concreta de mantener clara la dependencia entre variables —incluso con tres o cuatro cuantificadores— es el juego Demostrador–Retador. Imagine dos jugadores comprobando si un enunciado cuantificado es verdadero:
+- Siempre que el enunciado dice \(\forall x \in D\), el Retador elige el elemento \(x \in D\) que prefiera, intentando hacer falso el predicado interior.
+- Siempre que el enunciado dice \(\exists y \in D\), el Demostrador elige un elemento \(y \in D\), intentando hacer verdadero el predicado interior.
+- Los jugadores mueven en el orden exacto de izquierda a derecha de los cuantificadores. Así, cada jugador puede ver —y hacer depender su elección de— ÚNICAMENTE las variables ya elegidas a la izquierda.
+- El enunciado es VERDADERO si y solo si el Demostrador tiene una estrategia ganadora que satisface el predicado interior frente a toda elección válida del Retador.
+
+Pruebe el juego Demostrador–Retador en \(\forall x \in \mathbb{R}\,\exists y \in \mathbb{R},\, x + y = 0\) frente a \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, x + y = 0\):
+- En el primer enunciado, el Retador elige primero \(x\); el Demostrador ve \(x\) y responde con \(y = -x\), ganando cada ronda (\(x + (-x) = 0\)). Por tanto, el enunciado es VERDADERO.
+- En el segundo enunciado, el Demostrador debe anunciar \(y\) ANTES de conocer \(x\); el Retador elige entonces \(x = 1 - y\), lo que da \(x + y = 1 \ne 0\). El Retador siempre gana, por lo que el enunciado es FALSO.
+
+Ahora pruebe los mismos dos órdenes en \(x \cdot y = 0\) sobre \(\mathbb{R}\):
+- \(\exists y \in \mathbb{R}\,\forall x \in \mathbb{R},\, x \cdot y = 0\): El Demostrador anuncia \(y = 0\) de entrada. Sea cual sea el \(x \in \mathbb{R}\) que elija el Retador, \(x \cdot 0 = 0\). Así que TANTO \(\exists y\,\forall x,\, xy = 0\) como \(\forall x\,\exists y,\, xy = 0\) son VERDADEROS. (Recuerde: la no conmutación significa que los dos órdenes no son equivalentes en general, no que deban tener siempre valores de verdad opuestos.)
+
+[TABLE]
+Fórmula (dominio \(\mathbb{R}\)) | Orden Demostrador–Retador | Valor de verdad | Motivo
+\(\forall x\,\exists y,\, x + y = 0\) | Retador \(x\), luego Demostrador \(y\) | \(V\) | El Demostrador elige \(y = -x\)
+\(\exists y\,\forall x,\, x + y = 0\) | Demostrador \(y\), luego Retador \(x\) | \(F\) | El Retador elige \(x = 1 - y\)
+\(\exists y\,\forall x,\, x \cdot y = 0\) | Demostrador \(y\), luego Retador \(x\) | \(V\) | El Demostrador elige \(y = 0\)
+\(\forall x\,\exists y,\, x \cdot y = 1\) | Retador \(x\), luego Demostrador \(y\) | \(F\) | El Retador elige \(x = 0\); ningún \(y\) funciona
+\(\forall x \ne 0\,\exists y,\, x \cdot y = 1\) | Retador \(x \ne 0\), luego Demostrador \(y\) | \(V\) | El Demostrador elige \(y = 1/x\)
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: B]
+Sobre el dominio \(\mathbb{N} = \{1, 2, 3, \dots\}\), considere los dos enunciados:
+\(S_1\): \(\exists m \in \mathbb{N}\,\forall n \in \mathbb{N},\, m \le n\)
+\(S_2\): \(\forall n \in \mathbb{N}\,\exists m \in \mathbb{N},\, m < n\).
+¿Cuáles son los valores de verdad de \(S_1\) y \(S_2\), respectivamente?
+
+(A) \(S_1\) es \(V\), \(S_2\) es \(V\)
+(B) \(S_1\) es \(V\), \(S_2\) es \(F\)
+(C) \(S_1\) es \(F\), \(S_2\) es \(V\)
+(D) \(S_1\) es \(F\), \(S_2\) es \(F\)
+(E) \(S_1\) y \(S_2\) deben tener el mismo valor de verdad porque ambos involucran un \(\forall\) y un \(\exists\).
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Considere un enunciado con tres cuantificadores de la forma
+\[
+\forall a \in \mathbb{R}\,\exists b \in \mathbb{R}\,\forall c \in \mathbb{R},\, P(a, b, c).
+\]
+En el juego Demostrador–Retador para este enunciado, ¿de qué variables puede depender la elección de \(b\)?
+
+(A) Ni de \(a\) ni de \(c\): \(b\) debe ser una única constante.
+(B) Tanto de \(a\) como de \(c\).
+(C) Solo de \(c\).
+(D) Solo de \(a\).
+(E) De \(a\) y \(c\) siempre que \(c > a\).
+[/QUESTION]
+
+=== SECTION 2: Negación de cuantificadores anidados ===
+
+Negar un enunciado con cuantificadores anidados sigue una regla completamente mecánica: empuje el símbolo de negación \(\neg\) hacia adentro cruzando un cuantificador a la vez, cambiando cada \(\forall\) por \(\exists\) y cada \(\exists\) por \(\forall\) mientras mantiene intactos los nombres de las variables, su orden y sus dominios. Una vez que \(\neg\) supera todos los cuantificadores y alcanza la fórmula proposicional interior, aplique las leyes de De Morgan y la regla de negación del condicional \(\neg(A \Rightarrow B) \equiv A \wedge \neg B\).
+
+[CALLOUT]
+id: proc-nested-negation
+label: Método
+title: Negación paso a paso de cuantificadores anidados
+tone: key
+
+Para negar un prefijo de cuantificadores \(Q_1 x_1 \in D_1\, Q_2 x_2 \in D_2 \cdots Q_k x_k \in D_k,\, \Phi(x_1, \dots, x_k)\):
+
+(1) Invierta cada cuantificador en orden de izquierda a derecha (\(\forall \leftrightarrow \exists\)), manteniendo sin cambios cada variable y su dominio.
+(2) Coloque \(\neg\) directamente delante de la fórmula interior \(\Phi(x_1, \dots, x_k)\).
+(3) Simplifique \(\neg \Phi\) usando las leyes de De Morgan, doble negación y \(\neg(A \Rightarrow B) \equiv A \wedge \neg B\), preservando la convención de emparejamiento en cualquier cuantificador restringido dentro del prefijo.
+[/CALLOUT]
+
+Observe cómo [REF: proc-nested-negation | esta regla] coincide con el juego Demostrador–Retador: ¡negar un enunciado intercambia los papeles del Demostrador y el Retador! Cada jugada que antes correspondía al Retador (\(\forall\)) ahora corresponde al Demostrador (\(\exists\)), cada jugada que antes correspondía al Demostrador (\(\exists\)) ahora corresponde al Retador (\(\forall\)), y la condición de victoria se invierte de \(\Phi\) a \(\neg \Phi\).
+
+¡Tenga cuidado con los cuantificadores restringidos en el prefijo! Suponga que un enunciado comienza con \(\forall \varepsilon > 0\) (abreviatura de \(\forall \varepsilon \in \mathbb{R},\, \varepsilon > 0 \Rightarrow \dots\)) o \(\exists \delta > 0\) (abreviatura de \(\exists \delta \in \mathbb{R},\, \delta > 0 \wedge \dots\)). ¿Qué ocurre cuando \(\neg\) cruza un cuantificador restringido?
+- \(\neg\bigl(\forall \varepsilon > 0,\, \Phi(\varepsilon)\bigr) \equiv \neg\bigl(\forall \varepsilon \in \mathbb{R},\, (\varepsilon > 0 \Rightarrow \Phi(\varepsilon))\bigr) \equiv \exists \varepsilon \in \mathbb{R},\, (\varepsilon > 0 \wedge \neg \Phi(\varepsilon)) \equiv \exists \varepsilon > 0,\, \neg \Phi(\varepsilon)\).
+- \(\neg\bigl(\exists \delta > 0,\, \Phi(\delta)\bigr) \equiv \neg\bigl(\exists \delta \in \mathbb{R},\, (\delta > 0 \wedge \Phi(\delta))\bigr) \equiv \forall \delta \in \mathbb{R},\, (\delta > 0 \Rightarrow \neg \Phi(\delta)) \equiv \forall \delta > 0,\, \neg \Phi(\delta)\).
+
+Mire qué limpio es eso: la restricción "\(\varepsilon > 0\)" o "\(\delta > 0\)" actúa exactamente igual que un dominio —NO cambia a "\(\varepsilon \le 0\)" ni a "\(\delta \le 0\)"—. Solo cambia el cuantificador (\(\forall \leftrightarrow \exists\)) y \(\neg\) pasa más allá hacia \(\Phi\).
+
+Apliquemos [REF: proc-nested-negation | la negación paso a paso] a dos enunciados matemáticos realistas inspirados en la sintaxis del análisis real (aquí los tratamos puramente como estructuras lógicas sin necesitar nada de cálculo).
+
+Ejemplo 1 (Acotación de una sucesión). Sea \((a_n)\) una sucesión de números reales. El enunciado "\(a_n\) está acotada superiormente" se escribe
+\[
+\exists M \in \mathbb{R}\,\forall n \in \mathbb{N},\, a_n \le M.
+\]
+Empuje \(\neg\) hacia adentro paso a paso:
+\[
+\begin{aligned}
+\neg\bigl(\exists M \in \mathbb{R}\,\forall n \in \mathbb{N},\, a_n \le M\bigr)
+&\equiv \forall M \in \mathbb{R}\,\neg\bigl(\forall n \in \mathbb{N},\, a_n \le M\bigr) \\
+&\equiv \forall M \in \mathbb{R}\,\exists n \in \mathbb{N},\, \neg(a_n \le M) \\
+&\equiv \forall M \in \mathbb{R}\,\exists n \in \mathbb{N},\, a_n > M.
+\end{aligned}
+\]
+Léalo en voz alta: una sucesión deja de estar acotada superiormente precisamente cuando, para todo umbral real \(M\), existe algún índice \(n \in \mathbb{N}\) (que puede depender de \(M\)) donde \(a_n\) supera a \(M\).
+
+Ejemplo 2 (Una condición \(\varepsilon\)–\(\delta\)). Considere el enunciado con tres cuantificadores sobre una función \(f : \mathbb{R} \to \mathbb{R}\) y números \(a, L \in \mathbb{R}\):
+\[
+\forall \varepsilon > 0\,\exists \delta > 0\,\forall x \in \mathbb{R},\, \bigl(0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon\bigr).
+\]
+Niéguelo línea por línea sin apresurarse:
+\[
+\begin{aligned}
+&\neg\Bigl(\forall \varepsilon > 0\,\exists \delta > 0\,\forall x \in \mathbb{R},\, \bigl(0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon\bigr)\Bigr) \\
+&\equiv \exists \varepsilon > 0\,\forall \delta > 0\,\exists x \in \mathbb{R},\, \neg\bigl(0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon\bigr) \\
+&\equiv \exists \varepsilon > 0\,\forall \delta > 0\,\exists x \in \mathbb{R},\, \bigl(0 < |x - a| < \delta \;\wedge\; |f(x) - L| \ge \varepsilon\bigr).
+\end{aligned}
+\]
+Compruebe los tres rasgos críticos de esa última línea:
+1. Cada cuantificador cambió (\(\forall \to \exists\), \(\exists \to \forall\), \(\forall \to \exists\)), mientras que las restricciones \(\varepsilon > 0\), \(\delta > 0\) y \(x \in \mathbb{R}\) permanecieron sin cambios.
+2. El condicional interior \(A \Rightarrow B\) se convirtió en la conjunción \(A \wedge \neg B\), NO en otro condicional.
+3. La desigualdad estricta \(|f(x) - L| < \varepsilon\) se negó a \(|f(x) - L| \ge \varepsilon\) (¡incluyendo la igualdad!).
+
+[QUESTION 3]
+[ANSWER: C]
+Sea \((x_n)\) una sucesión de números reales y sea \(L \in \mathbb{R}\). Considere el enunciado:
+\[
+\forall \varepsilon > 0\,\exists N \in \mathbb{N}\,\forall n \in \mathbb{N},\, \bigl(n \ge N \implies |x_n - L| < \varepsilon\bigr).
+\]
+¿Cuál de las siguientes opciones es lógicamente equivalente a su negación?
+
+(A) \(\exists \varepsilon \le 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n \ge N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+(B) \(\exists \varepsilon > 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n \ge N \implies |x_n - L| \ge \varepsilon\bigr)\)
+(C) \(\exists \varepsilon > 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n \ge N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+(D) \(\exists \varepsilon > 0\,\forall N \in \mathbb{N}\,\exists n \in \mathbb{N},\, \bigl(n < N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+(E) \(\forall \varepsilon > 0\,\exists N \in \mathbb{N}\,\forall n \in \mathbb{N},\, \bigl(n \ge N \wedge |x_n - L| \ge \varepsilon\bigr)\)
+[/QUESTION]
+
+=== SECTION 3: El cuantificador de unicidad \(\exists!\) ===
+
+En álgebra a menudo nos importa no solo si existe una solución, sino si hay EXACTAMENTE UNA solución. Decir \(\exists x \in \mathbb{R},\, x^2 = 9\) es verdadero, aunque haya dos soluciones (\(x = 3\) y \(x = -3\)). En cambio, la ecuación lineal \(2x - 6 = 0\) tiene una y solo una solución real (\(x = 3\)). La matemática captura "existe un único" con el cuantificador especial \(\exists!\).
+
+[CALLOUT]
+id: def-uniqueness
+label: Definición
+title: El cuantificador de unicidad \(\exists!\)
+tone: key
+
+Sea \(P(x)\) un predicado sobre un dominio \(D\). El enunciado \(\exists! x \in D,\, P(x)\) (se lee "existe un único \(x \in D\) tal que \(P(x)\)" o "hay exactamente un \(x \in D\) con \(P(x)\)") afirma dos cosas simultáneamente:
+
+(1) Existencia: \(\exists x \in D,\, P(x)\) (al menos un elemento satisface \(P\)).
+(2) Unicidad: \(\forall x \in D\,\forall y \in D,\, \bigl((P(x) \wedge P(y)) \implies x = y\bigr)\) (como máximo un elemento satisface \(P\): cualesquiera dos elementos que satisfagan \(P\) deben ser en realidad el mismo elemento).
+
+Equivalentemente, \(\exists! x \in D,\, P(x)\) puede escribirse en una única fórmula anidada:
+\[
+\exists x \in D,\, \Bigl(P(x) \;\wedge\; \forall y \in D,\, \bigl(P(y) \implies y = x\bigr)\Bigr).
+\]
+[/CALLOUT]
+
+Observe con cuidado [REF: def-uniqueness.2 | la cláusula de unicidad] por sí sola:
+\[
+\forall x \in D\,\forall y \in D,\, \bigl((P(x) \wedge P(y)) \implies x = y\bigr).
+\]
+¿Por qué esta cláusula significa "como máximo uno" en lugar de "exactamente uno"? Pruébela cuando NINGÚN elemento de \(D\) satisface \(P\) —por ejemplo, \(P(x)\) es "\(x^2 = -1\)" sobre \(D = \mathbb{R}\)—. Entonces para todo \(x, y \in \mathbb{R}\), la hipótesis \(P(x) \wedge P(y)\) es FALSA, de modo que la implicación \((P(x) \wedge P(y)) \implies x = y\) es ¡VERDADERA POR VACUIDAD! Así, la unicidad por sí sola permite \(0\) soluciones; debe combinarla con [REF: def-uniqueness.1 | la existencia] para obtener "exactamente \(1\) solución".
+
+¿Y por qué son equivalentes las dos formas de [REF: def-uniqueness | la definición]?
+- Si la existencia aporta algún \(x_0 \in D\) con \(P(x_0)\) y la unicidad se cumple, entonces para cualquier \(y \in D\) con \(P(y)\), tanto \(P(x_0)\) como \(P(y)\) se cumplen, lo que obliga a \(y = x_0\).
+- Recíprocamente, si hay un \(x_0 \in D\) con \(P(x_0)\) tal que todo \(y\) que satisface \(P(y)\) cumple \(y = x_0\), entonces la existencia se cumple (mediante \(x_0\)), y para cualesquiera \(x, y \in D\) con \(P(x) \wedge P(y)\) obtenemos \(x = x_0\) e \(y = x_0\), luego \(x = y\).
+
+¿Cuál es la negación de \(\exists! x \in D,\, P(x)\)? Como \(\exists!\) es la conjunción "(al menos uno) Y (como máximo uno)", por la ley de De Morgan su negación es la disyunción "(ninguno) O (al menos dos elementos distintos)":
+\[
+\neg\bigl(\exists! x \in D,\, P(x)\bigr) \;\equiv\; \bigl(\forall x \in D,\, \neg P(x)\bigr) \;\vee\; \bigl(\exists x \in D\,\exists y \in D,\, P(x) \wedge P(y) \wedge x \ne y\bigr).
+\]
+Note qué natural es eso: hay dos maneras completamente distintas de que falle "exactamente uno": o bien hay CERO soluciones (como en \(\exists! x \in \mathbb{R},\, x^2 = -1\)), o bien hay DOS O MÁS soluciones distintas (como en \(\exists! x \in \mathbb{R},\, x^2 = 9\)).
+
+Por último, observe cómo interactúa \(\exists!\) con otros cuantificadores:
+- \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, x + y = 0\) es VERDADERO: para cada real \(x\), hay un único \(y\) (a saber, \(y = -x\)) que resuelve \(x + y = 0\).
+- \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, x \cdot y = 0\) es FALSO: cuando el Retador elige \(x = 0\), TODO número real \(y\) satisface \(0 \cdot y = 0\), ¡así que la unicidad falla!
+
+[QUESTION 4]
+[ANSWER: E]
+¿Cuál de los siguientes enunciados que utilizan el cuantificador de unicidad \(\exists!\) es VERDADERO?
+
+(A) \(\exists! x \in \mathbb{R},\, x^2 = 4\)
+(B) \(\exists! x \in \mathbb{Q},\, x^2 = 2\)
+(C) \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, x^2 = y^2\)
+(D) \(\forall x \in \mathbb{Z}\,\exists! y \in \mathbb{Z},\, x \cdot y = 1\)
+(E) \(\forall x \in \mathbb{R}\,\exists! y \in \mathbb{R},\, y^3 = x\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Sea \(D = \mathbb{R}\) y considere el enunciado:
+\[
+S: \forall x \in \mathbb{R}\,\forall y \in \mathbb{R},\, \bigl(x < y \implies \exists z \in \mathbb{Q},\, (x < z \wedge z < y)\bigr).
+\]
+¿Cuál de las siguientes opciones es lógicamente equivalente a \(\neg S\)?
+
+(A) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x < y \wedge \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+(B) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x \ge y \wedge \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+(C) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x < y \wedge \forall z \in \mathbb{Q},\, (z \le x \wedge z \ge y)\bigr)\)
+(D) \(\exists x \in \mathbb{R}\,\exists y \in \mathbb{R},\, \bigl(x < y \implies \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+(E) \(\forall x \in \mathbb{R}\,\forall y \in \mathbb{R},\, \bigl(x < y \wedge \forall z \in \mathbb{Q},\, (z \le x \vee z \ge y)\bigr)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: D]
+Sea \(P(x, y)\) el predicado "\(x + y\) es un entero par" sobre el dominio \(D = \mathbb{Z}\). Evalúe los cuatro enunciados:
+(i) \(\forall x \in \mathbb{Z}\,\forall y \in \mathbb{Z},\, P(x, y)\)
+(ii) \(\forall x \in \mathbb{Z}\,\exists y \in \mathbb{Z},\, P(x, y)\)
+(iii) \(\exists x \in \mathbb{Z}\,\forall y \in \mathbb{Z},\, P(x, y)\)
+(iv) \(\exists x \in \mathbb{Z}\,\exists y \in \mathbb{Z},\, P(x, y)\).
+¿Cuáles de estos cuatro enunciados son VERDADEROS?
+
+(A) Solo (ii)
+(B) Solo (iv)
+(C) (ii), (iii) y (iv)
+(D) Solo (ii) y (iv)
+(E) Los cuatro son verdaderos.
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+Suponga que un predicado \(P(x)\) sobre un dominio \(D\) hace que la cláusula de unicidad
+\[
+U: \forall x \in D\,\forall y \in D,\, \bigl((P(x) \wedge P(y)) \implies x = y\bigr)
+\]
+sea VERDADERA, mientras que \(\exists! x \in D,\, P(x)\) es FALSO. ¿Qué puede concluir con certeza sobre la cantidad de elementos \(x \in D\) que satisfacen \(P(x)\)?
+
+(A) Hay al menos \(2\) elementos que satisfacen \(P(x)\).
+(B) Hay \(0\) elementos que satisfacen \(P(x)\).
+(C) Hay exactamente \(1\) elemento que satisface \(P(x)\).
+(D) O bien \(0\) o bien al menos \(2\) elementos satisfacen \(P(x)\), y ambos casos son posibles.
+(E) Esta combinación es lógicamente imposible.
+[/BONUS]

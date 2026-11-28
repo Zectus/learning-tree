@@ -1,0 +1,250 @@
+=== SECTION 1: Shared eigenbases, commutativity, and eigenspace invariance ===
+
+Two linear operators \(S, T : V \to V\) may each be diagonalizable on their own, meaning \(S\) has an eigenbasis \(\mathcal{B}_1\) and \(T\) has an eigenbasis \(\mathcal{B}_2\). Yet changing to \(\mathcal{B}_1\) typically scrambles \(T\) into a non-diagonal matrix, and changing to \(\mathcal{B}_2\) scrambles \(S\). When can we find ONE SINGLE basis of \(V\) that diagonalizes BOTH \(S\) and \(T\) at the same time?
+
+[CALLOUT]
+id: sim-diag-def
+label: Definition
+title: Simultaneous diagonalizability
+tone: key
+
+Two linear operators \(S, T : V \to V\) on an \(n\)-dimensional space over \(F\) are simultaneously diagonalizable over \(F\) if there exists a single basis \(\mathcal{B} = \{\mathbf{v}_1, \dots, \mathbf{v}_n\}\) of \(V\) such that every \(\mathbf{v}_j\) is an eigenvector of BOTH \(S\) and \(T\) (a joint eigenbasis).
+
+In matrix terms, \(A, B \in M_n(F)\) are simultaneously diagonalizable over \(F\) if there exists a single invertible matrix \(P \in M_n(F)\) such that BOTH \(P^{-1} A P\) and \(P^{-1} B P\) are diagonal.
+[/CALLOUT]
+
+One necessary condition jumps out immediately. If \(A = P D_1 P^{-1}\) and \(B = P D_2 P^{-1}\) for diagonal matrices \(D_1\) and \(D_2\), then because diagonal matrices ALWAYS commute (\(D_1 D_2 = D_2 D_1\)), we get
+\[
+AB = (P D_1 P^{-1})(P D_2 P^{-1}) = P D_1 D_2 P^{-1} = P D_2 D_1 P^{-1} = (P D_2 P^{-1})(P D_1 P^{-1}) = BA.
+\]
+So simultaneous diagonalizability FORCES \(S\) and \(T\) to commute: \(ST = TS\).
+
+Remarkably, commutativity creates an immediate structural link between the eigenspaces of \(T\) and the action of \(S\).
+
+[CALLOUT]
+id: commute-invariance
+label: Lemma
+title: Commuting operators preserve each other's eigenspaces
+tone: key
+
+If \(S, T : V \to V\) commute (\(ST = TS\)), then for every eigenvalue \(\lambda\) of \(T\), the eigenspace \(E_\lambda(T)\) is \(S\)-invariant:
+\[
+S\bigl(E_\lambda(T)\bigr) \subseteq E_\lambda(T).
+\]
+[/CALLOUT]
+
+The proof of [REF: commute-invariance | this invariance lemma] takes just one line. Pick any \(\mathbf{v} \in E_\lambda(T)\), so \(T\mathbf{v} = \lambda\mathbf{v}\). Apply \(T\) to the vector \(S\mathbf{v}\) and use \(TS = ST\):
+\[
+T(S\mathbf{v}) = S(T\mathbf{v}) = S(\lambda\mathbf{v}) = \lambda(S\mathbf{v}).
+\]
+That equation says \(S\mathbf{v} \in E_\lambda(T)\)—whether \(S\mathbf{v}\) is nonzero or \(\mathbf{0}\).
+
+Watch geometrically what fails when two diagonalizable matrices do NOT commute. Take \(T = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}\) and \(S = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}\). Both are diagonalizable over \(\mathbb{R}\), yet \(ST = \begin{bmatrix} 2 & 1 \\ 2 & 1 \end{bmatrix} \neq \begin{bmatrix} 2 & 2 \\ 1 & 1 \end{bmatrix} = TS\). The eigenspace \(E_2(T)\) is the horizontal axis \(\operatorname{span}\{\mathbf{e}_1\}\), whereas \(S\mathbf{e}_1 = (1, 1)^T\) jumps OFF the horizontal axis into the diagonal line \(y = x\). Because \(S\) fails to keep \(E_2(T)\) invariant, \(S\) and \(T\) cannot share an eigenbasis.
+
+[GRAPH]
+type: parametric2d
+title: Failure of \(S\)-invariance for \(E_2(T)\) when \(ST \neq TS\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -0.4, 2.4
+yrange: -0.4, 2.0
+trace: 2*t, 0 | label: \(E_2(T)\) along \(x_1\)-axis
+trace: 1.5*t, 1.5*t | label: \(E_2(S)\) along \(y = x\)
+segment: 0, 0, 1, 1 | label: \(S\mathbf{e}_1\) | dashed: true
+point: 1, 0 | label: \(\mathbf{e}_1\)
+point: 1, 1 | label: \(S\mathbf{e}_1\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: C]
+Suppose \(S, T : \mathbb{R}^3 \to \mathbb{R}^3\) commute (\(ST = TS\)), and \(T\) has an eigenvalue \(\lambda = 4\) whose eigenspace \(E_4(T) = \operatorname{span}\{\mathbf{v}\}\) is \(1\)-dimensional. Which statement MUST be true?
+
+(A) \(S\mathbf{v} = 4\mathbf{v}\).
+(B) \(S\mathbf{v} = \mathbf{0}\).
+(C) \(\mathbf{v}\) is an eigenvector of \(S\) (for some real eigenvalue \(\mu\), possibly \(\mu = 0\)).
+(D) \(S\) must be a scalar multiple of \(T\).
+(E) \(S\) cannot have \(4\) as an eigenvalue.
+[/QUESTION]
+
+=== SECTION 2: The hereditary lemma and the simultaneous diagonalization theorem ===
+
+Suppose now that BOTH \(S\) and \(T\) are diagonalizable over \(F\) and commute (\(ST = TS\)). Because \(T\) is diagonalizable, \(V\) splits as a direct sum of its eigenspaces:
+\[
+V = E_{\lambda_1}(T) \oplus E_{\lambda_2}(T) \oplus \dots \oplus E_{\lambda_r}(T).
+\]
+By [REF: commute-invariance | eigenspace invariance], each summand \(E_{\lambda_i}(T)\) is \(S\)-invariant, so the restriction \(S|_{E_{\lambda_i}(T)} : E_{\lambda_i}(T) \to E_{\lambda_i}(T)\) is a well-defined linear operator. If we can find an eigenbasis of \(S|_{E_{\lambda_i}(T)}\) inside EACH \(E_{\lambda_i}(T)\), then concatenating those bases gives a basis of \(V\) whose vectors are eigenvectors of \(S\)—and already belong to \(E_{\lambda_i}(T)\), so they are eigenvectors of \(T\) as well!
+
+There is just ONE missing bridge: knowing that \(S\) is diagonalizable on the whole space \(V\), must its restriction \(S|_W\) to an \(S\)-invariant subspace \(W \subseteq V\) ALSO be diagonalizable? Without the minimal polynomial, proving that directly from eigenvectors is surprisingly awkward (an eigenvector of \(S\) on \(V\) might not lie inside \(W\)!). With the minimal-polynomial criterion from the previous lesson, the proof takes three lines!
+
+[CALLOUT]
+id: hereditary-diag
+label: Lemma
+title: Restriction of a diagonalizable operator
+tone: key
+
+Let \(S : V \to V\) be diagonalizable over \(F\), and let \(W \subseteq V\) be any nonzero \(S\)-invariant subspace. Then the restriction \(S|_W : W \to W\) is also diagonalizable over \(F\).
+[/CALLOUT]
+
+Proof of [REF: hereditary-diag | the hereditary lemma]: Because \(S\) is diagonalizable over \(F\), its minimal polynomial \(m_S(x)\) splits into DISTINCT linear factors over \(F\). For every \(\mathbf{w} \in W\), \(S|_W(\mathbf{w}) = S(\mathbf{w})\), and by induction \((S|_W)^k(\mathbf{w}) = S^k(\mathbf{w})\) for all \(k \ge 0\). Consequently,
+\[
+m_S(S|_W)(\mathbf{w}) = m_S(S)(\mathbf{w}) = \mathbf{0} \qquad \text{for every } \mathbf{w} \in W,
+\]
+meaning \(m_S(S|_W) = 0\). By the divisibility property of minimal polynomials, \(m_{S|_W}(x)\) divides \(m_S(x)\). Any divisor of a polynomial that splits into distinct linear factors over \(F\) MUST ITSELF split into distinct linear factors over \(F\)! By the minimal-polynomial criterion, \(S|_W\) is diagonalizable over \(F\).
+
+Combining [REF: commute-invariance | eigenspace invariance] with [REF: hereditary-diag | the hereditary lemma] completes the proof of the main theorem.
+
+[CALLOUT]
+id: sim-diag-thm
+label: Theorem
+title: Simultaneous Diagonalization Theorem
+tone: key
+
+Let \(S, T : V \to V\) be two diagonalizable linear operators on a finite-dimensional vector space \(V\) over \(F\). Then \(S\) and \(T\) are simultaneously diagonalizable over \(F\) if and only if they commute (\(ST = TS\)).
+
+More generally, a finite family \(\{T_1, T_2, \dots, T_m\}\) of diagonalizable operators on \(V\) is simultaneously diagonalizable over \(F\) if and only if the operators commute pairwise (\(T_i T_j = T_j T_i\) for all \(i, j\)).
+[/CALLOUT]
+
+The extension to a finite pairwise-commuting family \(\{T_1, \dots, T_m\}\) follows immediately by induction on \(m\):
+- Base case \(m = 1\): \(T_1\) is diagonalizable by hypothesis.
+- Inductive step: decompose \(V = E_{\lambda_1}(T_1) \oplus \dots \oplus E_{\lambda_r}(T_1)\). Because every \(T_j\) (\(j \ge 2\)) commutes with \(T_1\), each subspace \(W_i = E_{\lambda_i}(T_1)\) is invariant under ALL of \(T_2, \dots, T_m\). By [REF: hereditary-diag | the hereditary lemma], the \(m - 1\) restrictions \(T_2|_{W_i}, \dots, T_m|_{W_i}\) remain diagonalizable on \(W_i\), and they still commute pairwise. By the induction hypothesis, each \(W_i\) admits a joint eigenbasis for \(T_2|_{W_i}, \dots, T_m|_{W_i}\), whose vectors are automatically eigenvectors of \(T_1\) (with eigenvalue \(\lambda_i\)). Concatenating these bases across \(i = 1, \dots, r\) gives a joint eigenbasis of \(V\) for the whole family!
+
+Be careful NOT to drop either hypothesis of [REF: sim-diag-thm | the Simultaneous Diagonalization Theorem].
+
+[CALLOUT]
+id: sim-diag-caution
+label: Common pitfall
+title: Both hypotheses—commutativity AND individual diagonalizability—are essential
+tone: caution
+
+(1) Commuting alone does NOT imply simultaneous diagonalizability: \(I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}\) and the shear \(B = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) satisfy \(I_2 B = B I_2\), yet \(B\) is defective and cannot be diagonalized in ANY basis.
+(2) Individual diagonalizability alone does NOT imply simultaneous diagonalizability: \(A = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}\) and \(B = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\) are both diagonalizable over \(\mathbb{R}\), yet \(AB = \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \neq \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} = BA\), so they share no eigenbasis.
+(3) Field dependence still matters: two commuting real rotations such as \(R_{\pi/2} = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}\) and \(2 R_{\pi/2}\) are simultaneously diagonalizable over \(\mathbb{C}\), but NOT over \(\mathbb{R}\), because neither is diagonalizable over \(\mathbb{R}\).
+[/CALLOUT]
+
+[TABLE]
+Both diagonalizable over \(F\)? | Commute (\(AB = BA\))? | Simultaneously diagonalizable over \(F\)? | Representative pair (\(F = \mathbb{R}\))
+Yes | Yes | Always YES | \(\operatorname{diag}(1, 1, 4)\) and \(\operatorname{diag}(2, 5, -1)\)
+Yes | No | Always NO | \(\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}\) and \(\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\)
+No | Yes | Always NO | \(I_2\) and \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\)
+No | No | Always NO | \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) and \(\begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix}\)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: D]
+Which pair of real matrices \((A, B)\) is simultaneously diagonalizable OVER \(\mathbb{R}\)?
+
+(A) \(A = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}, \quad B = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\)
+(B) \(A = \begin{bmatrix} 2 & 0 \\ 0 & 2 \end{bmatrix}, \quad B = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\)
+(C) \(A = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}, \quad B = \begin{bmatrix} 0 & -2 \\ 2 & 0 \end{bmatrix}\)
+(D) \(A = \begin{bmatrix} 1 & 2 \\ 2 & 1 \end{bmatrix}, \quad B = \begin{bmatrix} 3 & -1 \\ -1 & 3 \end{bmatrix}\)
+(E) \(A = \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix}, \quad B = \begin{bmatrix} 2 & 0 \\ 1 & 1 \end{bmatrix}\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: B]
+Suppose \(S : V \to V\) is diagonalizable over \(F\) and \(W \subseteq V\) is a nonzero \(S\)-invariant subspace. Which argument correctly proves that the restriction \(S|_W : W \to W\) is diagonalizable over \(F\)?
+
+(A) Every eigenvector of \(S\) in \(V\) automatically belongs to \(W\), so an eigenbasis of \(S\) restricts to an eigenbasis of \(S|_W\).
+(B) Because \(m_S(S|_W) = 0\), the minimal polynomial \(m_{S|_W}(x)\) divides \(m_S(x)\) and therefore still splits into distinct linear factors over \(F\).
+(C) Because \(p_{S|_W}(x)\) divides \(p_S(x)\), \(S|_W\) must have \(\dim(W)\) distinct eigenvalues.
+(D) Because \(S\) is diagonalizable, every subspace \(W \subseteq V\) is \(S\)-invariant and has a basis of eigenvectors of \(S\).
+(E) Because \(S\) is invertible, \(S|_W\) is invertible and hence diagonalizable.
+[/QUESTION]
+
+=== SECTION 3: Constructing a joint eigenbasis in practice ===
+
+The proof of [REF: sim-diag-thm | the Simultaneous Diagonalization Theorem] is completely constructive—it hands us a direct three-step recipe to compute an invertible matrix \(P\) that simultaneously diagonalizes two commuting diagonalizable matrices \(A, B \in M_n(F)\):
+
+1. Diagonalize \(A\) first: find its distinct eigenvalues \(\lambda_1, \dots, \lambda_r\) and a basis \(\mathcal{U}_i\) of each eigenspace \(E_{\lambda_i}(A)\). (Tip: start with whichever matrix has MORE distinct eigenvalues, because every \(1\)-dimensional eigenspace ALREADY consists of joint eigenvectors and requires zero extra work!)
+2. Restrict \(B\) to each multi-dimensional eigenspace \(E_{\lambda_i}(A)\): if \(\mathcal{U}_i = \{\mathbf{u}_1, \dots, \mathbf{u}_d\}\) with \(d > 1\), compute \(B\mathbf{u}_1, \dots, B\mathbf{u}_d\) and express each as a linear combination of \(\mathbf{u}_1, \dots, \mathbf{u}_d\) (guaranteed possible because \(E_{\lambda_i}(A)\) is \(B\)-invariant!). Placing these coordinate columns side by side gives the \(d \times d\) restriction matrix \(M_i = [B|_{E_{\lambda_i}(A)}]_{\mathcal{U}_i}\).
+3. Diagonalize each \(M_i\): find an eigenbasis \(\{\mathbf{c}^{(1)}, \dots, \mathbf{c}^{(d)}\}\) of \(M_i\) in \(F^d\), lift each coordinate vector back into \(F^n\) via \(\mathbf{v}^{(k)} = c_1^{(k)}\mathbf{u}_1 + \dots + c_d^{(k)}\mathbf{u}_d\), and assemble all resulting joint eigenvectors as the columns of \(P\).
+
+Let us carry out this procedure on the pair
+\[
+A = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 3 & 1 \\ 0 & 1 & 3 \end{bmatrix}, \qquad B = \begin{bmatrix} 4 & 1 & -1 \\ 2 & 3 & -1 \\ -2 & -1 & 3 \end{bmatrix}.
+\]
+First check commutativity: direct multiplication confirms
+\[
+AB = BA = \begin{bmatrix} 8 & 2 & -2 \\ 4 & 8 & 0 \\ -4 & 0 & 8 \end{bmatrix}.
+\]
+- Step 1 (eigenspaces of \(A\)): \(p_A(\lambda) = (\lambda - 2)\bigl((\lambda - 3)^2 - 1\bigr) = (\lambda - 2)^2(\lambda - 4)\).
+  - Solving \((A - 2I_3)\mathbf{x} = \mathbf{0}\) gives \(x_2 + x_3 = 0\), so \(E_2(A)\) is \(2\)-dimensional with basis \(\mathbf{u}_1 = (1, 0, 0)^T\) and \(\mathbf{u}_2 = (0, 1, -1)^T\).
+  - Solving \((A - 4I_3)\mathbf{x} = \mathbf{0}\) gives \(x_1 = 0\) and \(x_2 = x_3\), so \(E_4(A)\) is \(1\)-dimensional with basis \(\mathbf{u}_3 = (0, 1, 1)^T\).
+  - Check \(B\mathbf{u}_3 = (0, 2, 2)^T = 2\mathbf{u}_3\): as guaranteed for a \(1\)-dimensional eigenspace, \(\mathbf{v}_3 = \mathbf{u}_3 = (0, 1, 1)^T\) is ALREADY a joint eigenvector (eigenvalue \(4\) for \(A\), \(2\) for \(B\))!
+- Step 2 (restrict \(B\) to \(E_2(A)\)): compute the action of \(B\) on \(\mathbf{u}_1\) and \(\mathbf{u}_2\) and write the outputs in the basis \(\{\mathbf{u}_1, \mathbf{u}_2\}\):
+\[
+B\mathbf{u}_1 = \begin{bmatrix} 4 \\ 2 \\ -2 \end{bmatrix} = 4\mathbf{u}_1 + 2\mathbf{u}_2, \qquad B\mathbf{u}_2 = \begin{bmatrix} 2 \\ 4 \\ -4 \end{bmatrix} = 2\mathbf{u}_1 + 4\mathbf{u}_2.
+\]
+Hence the \(2 \times 2\) restriction matrix is \(M = \begin{bmatrix} 4 & 2 \\ 2 & 4 \end{bmatrix}\).
+- Step 3 (diagonalize \(M\) and lift back): \(p_M(\mu) = (\mu - 4)^2 - 4 = (\mu - 6)(\mu - 2)\), giving eigenvalues \(\mu_1 = 6\) with coordinate eigenvector \((1, 1)^T\) and \(\mu_2 = 2\) with coordinate eigenvector \((1, -1)^T\). Lifting back to \(\mathbb{R}^3\) produces
+\[
+\mathbf{v}_1 = \mathbf{u}_1 + \mathbf{u}_2 = \begin{bmatrix} 1 \\ 1 \\ -1 \end{bmatrix}, \qquad \mathbf{v}_2 = \mathbf{u}_1 - \mathbf{u}_2 = \begin{bmatrix} 1 \\ -1 \\ 1 \end{bmatrix}.
+\]
+Quick verification: \(B\mathbf{v}_1 = (6, 6, -6)^T = 6\mathbf{v}_1\) and \(B\mathbf{v}_2 = (2, -2, 2)^T = 2\mathbf{v}_2\), while both lie in \(E_2(A)\) so \(A\mathbf{v}_1 = 2\mathbf{v}_1\) and \(A\mathbf{v}_2 = 2\mathbf{v}_2\). Assembling \(P = \begin{bmatrix} 1 & 1 & 0 \\ 1 & -1 & 1 \\ -1 & 1 & 1 \end{bmatrix}\) yields
+\[
+P^{-1} A P = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 4 \end{bmatrix}, \qquad P^{-1} B P = \begin{bmatrix} 6 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{bmatrix}.
+\]
+
+[QUESTION 4]
+[ANSWER: A]
+Consider the commuting diagonalizable matrices
+\[
+A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 4 \end{bmatrix}, \qquad B = \begin{bmatrix} 2 & 3 & 0 \\ 3 & 2 & 0 \\ 0 & 0 & -1 \end{bmatrix}.
+\]
+Which vector \(\mathbf{v} \in \mathbb{R}^3\) is a joint eigenvector satisfying BOTH \(A\mathbf{v} = \mathbf{v}\) and \(B\mathbf{v} = -\mathbf{v}\)?
+
+(A) \((1, -1, 0)^T\)
+(B) \((0, 0, 1)^T\)
+(C) \((1, 1, 0)^T\)
+(D) \((1, -1, 1)^T\)
+(E) \((1, 0, 0)^T\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+For which real value(s) of \(c\) are the two matrices
+\[
+A = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 5 \end{bmatrix}, \qquad B(c) = \begin{bmatrix} 1 & 1 & c \\ 1 & 1 & 0 \\ 0 & 0 & 3 \end{bmatrix}
+\]
+simultaneously diagonalizable over \(\mathbb{R}\)?
+
+(A) All \(c \in \mathbb{R}\)
+(B) No value of \(c \in \mathbb{R}\)
+(C) \(c = 1\) only
+(D) \(c = -1\) only
+(E) \(c = 0\) only
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suppose \(A, B \in M_2(\mathbb{C})\) are commuting diagonalizable matrices, where \(A\) has eigenvalues \(1\) and \(4\), and \(B\) has eigenvalues \(2\) and \(5\). What are ALL possible values of \(\operatorname{tr}(AB)\)?
+
+(A) \(22\) only
+(B) \(13\) only
+(C) Either \(13\) or \(22\)
+(D) Any complex number between \(13\) and \(22\)
+(E) \(35\) only
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose \(T \in M_3(\mathbb{R})\) has three DISTINCT real eigenvalues \(\lambda_1, \lambda_2, \lambda_3\), and \(S \in M_3(\mathbb{R})\) satisfies \(ST = TS\) (with NO prior assumption that \(S\) is diagonalizable). Which conclusion MUST hold?
+
+(A) \(S\) could still be defective if \(S\) has a repeated eigenvalue.
+(B) \(S\) is automatically diagonalizable over \(\mathbb{R}\), and every eigenbasis of \(T\) is also an eigenbasis of \(S\).
+(C) \(S\) is diagonalizable over \(\mathbb{C}\), but need not be diagonalizable over \(\mathbb{R}\).
+(D) \(S\) must also have three distinct real eigenvalues.
+(E) \(S\) must be a scalar multiple of \(I_3\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Suppose \(S, T \in M_n(\mathbb{C})\) commute (\(ST = TS\)) and satisfy \(S^2 = S\) and \(T^2 = I_n\). What is the MAXIMUM possible degree of the minimal polynomial \(m_{S+T}(x)\)?
+
+(A) \(2\)
+(B) \(3\)
+(C) \(n\) (with no fixed upper bound independent of \(n\))
+(D) \(4\)
+(E) \(6\)
+[/BONUS]

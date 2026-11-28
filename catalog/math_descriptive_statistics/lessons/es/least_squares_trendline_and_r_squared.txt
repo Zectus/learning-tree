@@ -1,0 +1,257 @@
+=== SECTION 1: Ajuste de una recta descriptiva por mínimos cuadrados ===
+
+La correlación de Pearson \(r\) nos indica cuán estrechamente se ciñe un diagrama de dispersión a una línea recta, pero no nos da la ecuación de esa recta ni nos permite predecir una respuesta \(y\) a partir de un valor explicativo \(x\). Dadas \(n \ge 2\) observaciones pareadas \((x_1, y_1), \dots, (x_n, y_n)\) (con \(s_x > 0\)), buscamos una recta de tendencia lineal descriptiva
+\[
+\hat{y} = b_0 + b_1 x,
+\]
+donde \(b_0\) es la ordenada en el origen (intercepto vertical), \(b_1\) es la pendiente y \(\hat{y}_i = b_0 + b_1 x_i\) denota el valor ajustado (predicho) en \(x_i\). Para cada observación, la discrepancia vertical entre la respuesta observada y la recta es el residuo
+\[
+e_i = y_i - \hat{y}_i = y_i - (b_0 + b_1 x_i).
+\]
+Note la convención de signos: \(e_i > 0\) cuando el punto observado queda POR ENCIMA de la recta, y \(e_i < 0\) cuando queda POR DEBAJO de la recta.
+
+¿Cómo debemos elegir \(b_0\) y \(b_1\) para que la recta ajuste mejor a la nube de puntos? Minimizar simplemente \(\sum e_i\) falla porque los residuos grandes positivos y negativos se cancelan entre sí. En cambio, el criterio de mínimos cuadrados ordinarios (MCO) elige \((b_0, b_1)\) para minimizar la suma de cuadrados de los residuos verticales (suma de cuadrados de los errores):
+\[
+\text{SCE}(b_0, b_1) = \sum_{i=1}^n e_i^2 = \sum_{i=1}^n (y_i - b_0 - b_1 x_i)^2.
+\]
+Podemos hallar la única pareja minimizadora \((b_0, b_1)\) de forma completamente algebraica —sin cálculo diferencial— completando el cuadrado dos veces. Primero reescriba cada residuo sumando y restando \(\bar{y}\) y \(b_1 \bar{x}\), y defina \(c = \bar{y} - b_0 - b_1 \bar{x}\):
+\[
+y_i - b_0 - b_1 x_i = \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big] + c.
+\]
+Eleve al cuadrado ambos lados y sume sobre \(i = 1, \dots, n\). Como \(\sum_{i=1}^n (y_i - \bar{y}) = 0\) y \(\sum_{i=1}^n (x_i - \bar{x}) = 0\), el término cruzado \(2 c \sum_{i=1}^n \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big]\) se anula idénticamente, dejando
+\[
+\text{SCE}(b_0, b_1) = \sum_{i=1}^n \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big]^2 + n c^2.
+\]
+Observe los dos términos no negativos:
+1. Para CUALQUIER pendiente \(b_1\), el término \(n c^2 \ge 0\) se minimiza únicamente cuando \(c = 0\), lo cual fuerza
+\[
+b_0 = \bar{y} - b_1 \bar{x}.
+\]
+2. Con \(c = 0\), introduzca la notación abreviada \(S_{xx} = \sum_{i=1}^n (x_i - \bar{x})^2 > 0\), \(S_{yy} = \sum_{i=1}^n (y_i - \bar{y})^2\) y \(S_{xy} = \sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})\). Desarrollar la suma restante y completar el cuadrado en \(b_1\) produce
+\[
+S_{yy} - 2 b_1 S_{xy} + b_1^2 S_{xx} = S_{xx}\left(b_1 - \frac{S_{xy}}{S_{xx}}\right)^2 + \left(S_{yy} - \frac{S_{xy}^2}{S_{xx}}\right).
+\]
+Como \(S_{xx} > 0\), el término cuadrático es \(\ge 0\) y se anula únicamente en \(b_1 = S_{xy} / S_{xx}\). Dividir numerador y denominador entre \(n - 1\) y recordar que \(s_{xy} = r s_x s_y\) produce las fórmulas de MCO (exactamente la misma solución que se obtiene a partir de las ecuaciones normales del cálculo \(\sum e_i = 0\) y \(\sum x_i e_i = 0\)).
+
+[CALLOUT]
+id: ols-formulas
+label: Teorema
+title: Recta de tendencia descriptiva por mínimos cuadrados ordinarios (MCO)
+tone: key
+
+Para \(n \ge 2\) observaciones pareadas \((x_1, y_1), \dots, (x_n, y_n)\) con \(s_x > 0\), la única recta \(\hat{y} = b_0 + b_1 x\) que minimiza \(\text{SCE} = \sum_{i=1}^n (y_i - b_0 - b_1 x_i)^2\) tiene pendiente y ordenada en el origen:
+
+(1) Pendiente:
+\[
+b_1 = \frac{S_{xy}}{S_{xx}} = \frac{s_{xy}}{s_x^2} = r\,\frac{s_y}{s_x}.
+\]
+(2) Ordenada en el origen:
+\[
+b_0 = \bar{y} - b_1 \bar{x}.
+\]
+(3) Centroide y ortogonalidad de los residuos: la recta ajustada SIEMPRE pasa por \((\bar{x}, \bar{y})\), y sus residuos \(e_i = y_i - \hat{y}_i\) satisfacen tanto \(\sum_{i=1}^n e_i = 0\) como \(\sum_{i=1}^n x_i e_i = 0\) (y por ende \(\sum_{i=1}^n \hat{y}_i e_i = 0\)).
+[/CALLOUT]
+
+Verifiquemos [REF: ols-formulas.3 | las dos identidades de los residuos] directamente a partir de \(b_0 = \bar{y} - b_1 \bar{x}\) y \(b_1 = S_{xy} / S_{xx}\):
+- \(\sum_{i=1}^n e_i = \sum_{i=1}^n \big[(y_i - \bar{y}) - b_1(x_i - \bar{x})\big] = 0 - b_1(0) = 0\).
+- \(\sum_{i=1}^n (x_i - \bar{x}) e_i = \sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y}) - b_1 \sum_{i=1}^n (x_i - \bar{x})^2 = S_{xy} - \frac{S_{xy}}{S_{xx}} S_{xx} = 0\).
+Sumar \(\bar{x} \sum_{i=1}^n e_i = 0\) da inmediatamente \(\sum_{i=1}^n x_i e_i = 0\) también.
+
+Desarrollemos un ejemplo numérico completo con \(n = 5\) pares de gasto semanal en publicidad \(x\) e ingreso \(y\) (en miles de dólares): \((1, 9), (2, 11), (3, 12), (4, 17), (5, 21)\). Aquí \(\bar{x} = 3\) e \(\bar{y} = 70 / 5 = 14\), con \(S_{xx} = (-2)^2 + (-1)^2 + 0^2 + 1^2 + 2^2 = 10\) y \(S_{xy} = (-2)(-5) + (-1)(-3) + 0(-2) + 1(3) + 2(7) = 30\). Por lo tanto,
+\[
+b_1 = \frac{30}{10} = 3, \qquad b_0 = 14 - 3(3) = 5, \qquad \hat{y} = 5 + 3 x.
+\]
+
+[TABLE]
+\(x_i\) | \(y_i\) | \(\hat{y}_i = 5 + 3x_i\) | Residuo \(e_i = y_i - \hat{y}_i\) | \(e_i^2\)
+1 | 9 | 8 | +1 | 1
+2 | 11 | 11 | 0 | 0
+3 | 12 | 14 | -2 | 4
+4 | 17 | 17 | 0 | 0
+5 | 21 | 20 | +1 | 1
+[/TABLE]
+
+Compruebe ambas restricciones: \(\sum e_i = 1 + 0 - 2 + 0 + 1 = 0\), y \(\sum x_i e_i = 1(1) + 2(0) + 3(-2) + 4(0) + 5(1) = 0\), con el mínimo \(\text{SCE} = 1 + 0 + 4 + 0 + 1 = 6\). En el gráfico interactivo siguiente, la recta pivota alrededor del centroide \((3, 14)\); arrastre el deslizador de pendiente de prueba \(m\) alejándolo del óptimo de MCO \(b_1 = 3\) para observar cómo se estiran los segmentos verticales de residuo.
+
+[GRAPH]
+type: function2d
+title: Recta de mínimos cuadrados pivotada en \((3, 14)\) con residuos verticales (óptimo \(m = 3\))
+xlabel: Gasto en publicidad (miles de $)
+ylabel: Ingreso semanal (miles de $)
+xrange: 0.5, 5.5
+yrange: 4, 25
+trace: 14 + m * (x - 3) | label: Recta de prueba \(\hat{y} = 14 + m(x - 3)\) | color: #3b82f6
+point: 1, 9 | label: (1, 9) | color: #1e293b
+point: 2, 11 | label: (2, 11) | color: #1e293b
+point: 3, 12 | label: (3, 12) | color: #1e293b
+point: 4, 17 | label: (4, 17) | color: #1e293b
+point: 5, 21 | label: (5, 21) | color: #1e293b
+point: 3, 14 | label: Centroide | color: #ef4444
+segment: 1, 9, 1, 14 + m * (1 - 3) | dashed: true | color: #ef4444
+segment: 2, 11, 2, 14 + m * (2 - 3) | dashed: true | color: #ef4444
+segment: 3, 12, 3, 14 + m * (3 - 3) | dashed: true | color: #ef4444
+segment: 4, 17, 4, 14 + m * (4 - 3) | dashed: true | color: #ef4444
+segment: 5, 21, 5, 14 + m * (5 - 3) | dashed: true | color: #ef4444
+slider: m | range: 0, 5 | init: 3 | step: 0.2
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Entre \(n = 40\) apartamentos, la superficie \(x\) (en \(\text{m}^2\)) tiene \(\bar{x} = 70\) y \(s_x = 15\); el alquiler mensual \(y\) (en dólares) tiene \(\bar{y} = 1800\) y \(s_y = 300\); y la correlación de Pearson es \(r = 0.80\). ¿Cuál es la recta de tendencia descriptiva por MCO \(\hat{y} = b_0 + b_1 x\) y cuál es el residuo \(e\) para un apartamento de \(80\text{ m}^2\) que se alquila por \(\$1900\)?
+
+(A) \(\hat{y} = 680 + 16 x\) y \(e = +60\)
+(B) \(\hat{y} = 680 + 16 x\) y \(e = -60\)
+(C) \(\hat{y} = 1520 + 4 x\) y \(e = +60\)
+(D) \(\hat{y} = 680 + 16 x\) y \(e = -100\)
+(E) \(\hat{y} = 400 + 20 x\) y \(e = -100\)
+[/QUESTION]
+
+=== SECTION 2: Forma estandarizada, regresión hacia la media y no invertibilidad ===
+
+Sustituya \(b_0 = \bar{y} - b_1 \bar{x}\) y \(b_1 = r(s_y / s_x)\) en \(\hat{y} = b_0 + b_1 x\), reste \(\bar{y}\) y divida ambos lados entre \(s_y\) (cuando \(s_y > 0\)):
+\[
+\frac{\hat{y} - \bar{y}}{s_y} = r \left(\frac{x - \bar{x}}{s_x}\right), \qquad \text{o simplemente} \qquad z_{\hat{y}} = r\, z_x.
+\]
+Esta ecuación estandarizada notablemente compacta explica dos fenómenos que sorprenden con frecuencia a quienes se inician.
+
+Primero, la regresión hacia la media: siempre que \(|r| < 1\), ¡multiplicar \(z_x\) por \(r\) encoge la magnitud hacia cero! Si \(r = 0.50\) entre la estatura de los padres \(x\) y la estatura adulta de los hijos \(y\), un padre que mide \(z_x = +2.0\) desviaciones estándar por encima del promedio tiene una estatura predicha para el hijo de solo \(z_{\hat{y}} = 0.50(2.0) = +1.0\) desviación estándar por encima del promedio: más cerca de la media en unidades estandarizadas. Esta es una propiedad puramente matemática de la correlación lineal imperfecta (\(|r| < 1\)), no una fuerza biológica que empuje las estaturas hacia la homogeneidad.
+
+Segundo, ¡intercambiar los papeles de \(x\) e \(y\) produce una recta DISTINTA! Regresar \(y\) sobre \(x\) minimiza los residuos cuadráticos VERTICALES y da \(z_{\hat{y}} = r\, z_x\) (pendiente \(r\) en coordenadas estandarizadas). Regresar \(x\) sobre \(y\) minimiza los residuos cuadráticos HORIZONTALES y da \(z_{\hat{x}} = r\, z_y\), que al reordenar da \(z_y = (1 / r)\, z_{\hat{x}}\) (pendiente \(1 / r\) en coordenadas estandarizadas). Como \(r \ne 1 / r\) siempre que \(0 < |r| < 1\), NUNCA debe despejar algebraicamente \(x\) hacia atrás en \(\hat{y} = b_0 + b_1 x\) para predecir \(x\) a partir de \(y\): ajuste siempre de nuevo \(x\) sobre \(y\) usando \(b_{x|y} = r (s_x / s_y)\).
+
+[QUESTION 2]
+[ANSWER: D]
+En un curso, las calificaciones del examen parcial \(x\) tienen \(\bar{x} = 75, s_x = 10\), las calificaciones del examen final \(y\) tienen \(\bar{y} = 80, s_y = 8\) y \(r = 0.60\). Un estudiante obtiene \(x = 95\) en el parcial. ¿Cuál es su calificación final predicha por MCO \(\hat{y}\), y por qué invertir algebraicamente \(\hat{y} = b_0 + b_1 x\) es la forma incorrecta de predecir la calificación del parcial de un estudiante a partir de su calificación del examen final?
+
+(A) \(\hat{y} = 96.0\); invertir falla porque \(s_x \ne s_y\).
+(B) \(\hat{y} = 89.6\); invertir en realidad da exactamente la misma recta siempre que \(r > 0\).
+(C) \(\hat{y} = 92.0\); invertir falla porque ignora \(\bar{x}\).
+(D) \(\hat{y} = 89.6\); invertir minimiza errores verticales en \(y\) en lugar de errores horizontales en \(x\), produciendo una pendiente estandarizada \(1 / r = 5 / 3\) en vez de \(r = 0.60\) y prediciendo alejándose de la media en lugar de acercarse a ella.
+(E) \(\hat{y} = 84.8\); invertir cambia el signo de \(r\).
+[/QUESTION]
+
+=== SECTION 3: Descomposición de la varianza, \(R^2\), gráficos de residuos y extrapolación ===
+
+¿Qué tan bien captura la recta de MCO la variabilidad global en \(y\)? Divida la desviación total de cada observación respecto a \(\bar{y}\) en dos piezas: la parte capturada por la recta ajustada más el residuo sobrante:
+\[
+y_i - \bar{y} = (\hat{y}_i - \bar{y}) + (y_i - \hat{y}_i) = (\hat{y}_i - \bar{y}) + e_i.
+\]
+Eleve al cuadrado ambos lados y sume sobre \(i = 1, \dots, n\):
+\[
+\underbrace{\sum_{i=1}^n (y_i - \bar{y})^2}_{\text{SCT}} = \underbrace{\sum_{i=1}^n (\hat{y}_i - \bar{y})^2}_{\text{SCR}} + \underbrace{\sum_{i=1}^n e_i^2}_{\text{SCE}} + 2\sum_{i=1}^n (\hat{y}_i - \bar{y}) e_i.
+\]
+Ahora examine el término cruzado: como \(\hat{y}_i - \bar{y} = b_1 (x_i - \bar{x})\), tenemos \(\sum_{i=1}^n (\hat{y}_i - \bar{y}) e_i = b_1 \sum_{i=1}^n (x_i - \bar{x}) e_i = 0\) por [REF: ols-formulas.3 | la ortogonalidad de los residuos]. El término cruzado se anula por completo, arrojando la descomposición exacta de sumas de cuadrados \(\text{SCT} = \text{SCR} + \text{SCE}\).
+
+Además, a partir de nuestro mínimo al completar el cuadrado en la Sección 1, la suma de cuadrados de los residuos minimizada es
+\[
+\text{SCE} = S_{yy} - \frac{S_{xy}^2}{S_{xx}} = S_{yy}\left(1 - \frac{S_{xy}^2}{S_{xx} S_{yy}}\right) = \text{SCT}\,(1 - r^2).
+\]
+Por lo tanto, \(\text{SCR} = \text{SCT} - \text{SCE} = r^2\,\text{SCT}\).
+
+[CALLOUT]
+id: r-squared-decomp
+label: Identidad
+title: Descomposición de la suma de cuadrados y coeficiente de determinación \(R^2\)
+tone: key
+
+Para la regresión lineal simple descriptiva (con \(S_{yy} = \text{SCT} > 0\)):
+
+(1) La variación total se divide ortogonalmente en variación explicada más variación residual:
+\[
+\text{SCT} = \text{SCR} + \text{SCE},
+\]
+donde \(\text{SCT} = \sum (y_i - \bar{y})^2\), \(\text{SCR} = \sum (\hat{y}_i - \bar{y})^2\) y \(\text{SCE} = \sum (y_i - \hat{y}_i)^2\).
+(2) El coeficiente de determinación \(R^2\) es la fracción de la variación total de \(y\) explicada por la recta de tendencia lineal, y en regresión lineal simple equivale al cuadrado de la correlación de Pearson:
+\[
+R^2 = \frac{\text{SCR}}{\text{SCT}} = 1 - \frac{\text{SCE}}{\text{SCT}} = r^2 \in [0, 1].
+\]
+[/CALLOUT]
+
+Compruebe [REF: r-squared-decomp | esta identidad] en nuestro ejemplo de ingresos de la Sección 1: \(\text{SCT} = \sum (y_i - 14)^2 = 25 + 9 + 4 + 9 + 49 = 96\), \(\text{SCR} = \sum (\hat{y}_i - 14)^2 = 36 + 9 + 0 + 9 + 36 = 90\) y \(\text{SCE} = 6\). En efecto \(90 + 6 = 96\), y \(R^2 = 90 / 96 = 15 / 16 = 0.9375\) (el \(93.75\%\) de la variación del ingreso semanal es capturado por la recta de tendencia lineal), con \(r = +\sqrt{15/16} \approx +0.9682\). Recuerde que como \(R^2 = r^2\) borra el signo, debe revisar el signo de \(b_1\) para recuperar el signo de \(r\).
+
+¡Incluso un \(R^2\) alto (como \(0.92\)) NO demuestra que una línea recta sea el resumen adecuado! Grafique siempre los residuos \(e_i\) frente a \(x_i\) (o \(\hat{y}_i\)) alrededor de la recta horizontal \(e = 0\). Ampliar los errores verticales expone de inmediato cuatro patologías críticas:
+- Banda horizontal sin patrón alrededor de \(0\): respalda una tendencia descriptiva lineal con dispersión aproximadamente uniforme.
+- Curvatura sistemática (forma de U o arco descendente): señala una tendencia curva no lineal; ajustar una línea recta pierde la forma real (y apunta hacia la reexpresión en la siguiente lección).
+- Forma de embudo o abanico (residuos que se ensanchan o estrechan a lo largo de \(x\)): señala dispersión vertical no constante.
+- Valores atípicos, puntos de alto apalancamiento y puntos influyentes: un valor atípico vertical tiene un \(|e_i|\) grande cerca del centro de \(x\) (inflando \(\text{SCE}\) sin mucho poder para inclinar la pendiente); un punto de alto apalancamiento tiene un \(x_i\) extremo lejos de \(\bar{x}\); un punto influyente desplaza sustancialmente \(b_1\) o \(b_0\) al eliminarlo (combinando típicamente alto apalancamiento con una desviación respecto al resto de la recta).
+
+El gráfico de residuos siguiente muestra qué sucede cuando se ajusta una línea recta a una tendencia cuadrática suavemente curva: aunque el diagrama de dispersión bruto pueda mostrar un \(R^2\) alto, el gráfico de residuos revela una inconfundible curva en forma de U alrededor de \(e = 0\).
+
+[GRAPH]
+type: function2d
+title: Gráfico de residuos que expone curvatura sistemática al ajustar una recta a datos curvos
+xlabel: Variable explicativa x
+ylabel: Residuo e
+xrange: 0.5, 5.5
+yrange: -2.0, 2.2
+trace: 0 | label: Recta de residuo cero \(e = 0\) | color: #94a3b8
+trace: 0.6 * (x - 3)^2 - 1.2 | label: Patrón curvo en los residuos | color: #ef4444
+point: 1, 1.2 | label: e1 | color: #1d4ed8
+point: 2, -0.6 | label: e2 | color: #1d4ed8
+point: 3, -1.2 | label: e3 | color: #1d4ed8
+point: 4, -0.6 | label: e4 | color: #1d4ed8
+point: 5, 1.2 | label: e5 | color: #1d4ed8
+segment: 1, 0, 1, 1.2 | dashed: true | color: #1d4ed8
+segment: 2, 0, 2, -0.6 | dashed: true | color: #1d4ed8
+segment: 3, 0, 3, -1.2 | dashed: true | color: #1d4ed8
+segment: 4, 0, 4, -0.6 | dashed: true | color: #1d4ed8
+segment: 5, 0, 5, 1.2 | dashed: true | color: #1d4ed8
+[/GRAPH]
+
+Por último, respete dos límites claros del MCO descriptivo:
+1. Nunca extrapole a ciegas: la recta de tendencia resume el comportamiento lineal ÚNICAMENTE dentro del rango observado de \(x\); fuera de ese rango, las curvas físicas o económicas suelen doblarse bruscamente, volviendo poco fiables o imposibles los valores extrapolados \(\hat{y}\).
+2. Alcance descriptivo frente a inferencial: todo aquí describe exclusivamente el conjunto de datos observado. Tratar \((b_0, b_1)\) como estimadores aleatorios de parámetros poblacionales, construir intervalos de confianza para pendientes y realizar pruebas de hipótesis pertenecen estrictamente a la Inferencia Estadística.
+
+[QUESTION 3]
+[ANSWER: C]
+Una recta de tendencia descriptiva por MCO ajustada a \(n = 30\) vehículos relaciona el rendimiento de combustible en carretera \(y\) (en mpg) con el peso del vehículo \(x\) (en libras). La pendiente ajustada es negativa (\(b_1 < 0\)), la suma total de cuadrados es \(\text{SCT} = 800\) y la suma de cuadrados de los residuos es \(\text{SCE} = 288\). ¿Cuáles son \(R^2\) y la \(r\) de Pearson?
+
+(A) \(R^2 = 0.36\) y \(r = -0.60\)
+(B) \(R^2 = 0.64\) y \(r = +0.80\)
+(C) \(R^2 = 0.64\) y \(r = -0.80\)
+(D) \(R^2 = 0.80\) y \(r = -0.80\)
+(E) \(R^2 = 0.64\) y \(r = -0.64\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Un ingeniero ajusta una recta descriptiva por MCO que relaciona la vida útil en ciclos de una batería \(y\) con la temperatura ambiente \(x\) sobre datos observados en el rango \(x \in [15^\circ\text{C}, 45^\circ\text{C}]\). El ajuste alcanza \(R^2 = 0.91\), pero el gráfico de residuos exhibe un arco pronunciado que abre hacia abajo (residuos negativos cerca de \(15^\circ\text{C}\) y \(45^\circ\text{C}\), residuos positivos cerca de \(30^\circ\text{C}\)). El ingeniero anuncia: «Como \(R^2 = 0.91\) es alto, la relación es lineal y podemos introducir con seguridad \(x = 85^\circ\text{C}\) para predecir la vida de la batería». ¿Qué crítica identifica AMBAS fallas?
+
+(A) Un \(R^2\) alto no demuestra linealidad cuando el gráfico de residuos muestra curvatura sistemática, y predecir en \(85^\circ\text{C}\) es una extrapolación insegura muy por fuera del rango observado \([15^\circ\text{C}, 45^\circ\text{C}]\).
+(B) \(R^2 = 0.91\) es inválido porque todos los residuos deben ser positivos para un ajuste lineal.
+(C) Únicamente la extrapolación a \(85^\circ\text{C}\) es errónea; un arco en el gráfico de residuos es normal siempre que \(R^2 > 0.90\).
+(D) Únicamente la afirmación de linealidad es errónea; una vez ajustada una curva, la extrapolación a \(85^\circ\text{C}\) es automáticamente confiable.
+(E) La recta de MCO debió ajustarse sin ordenada en el origen para que \(\sum e_i > 0\).
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Se ajusta una recta de tendencia por MCO \(\hat{y} = b_0 + b_1 x\) a \(n = 4\) observaciones situadas en \(x_1 = 1, x_2 = 2, x_3 = 4, x_4 = 5\). Los dos primeros residuos son \(e_1 = +2\) y \(e_2 = -3\). Usando las condiciones exactas de ortogonalidad de los residuos de MCO, ¿qué DEBEN valer \(e_3\) y \(e_4\)?
+
+(A) \(e_3 = +2\) y \(e_4 = -1\)
+(B) \(e_3 = 0\) y \(e_4 = +1\)
+(C) \(e_3 = -1\) y \(e_4 = +2\)
+(D) \(e_3 = +3\) y \(e_4 = -2\)
+(E) \(e_3 = +1\) y \(e_4 = 0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+En un único conjunto de datos con \(s_x > 0\) y \(s_y > 0\), la regresión por MCO de \(y\) sobre \(x\) tiene pendiente \(b_{y|x} = +1.6\), y la regresión por MCO de \(x\) sobre \(y\) tiene pendiente \(b_{x|y} = +0.4\). ¿Cuál es el coeficiente de correlación de Pearson \(r\) para este conjunto de datos?
+
+(A) \(+0.64\)
+(B) \(+0.80\)
+(C) \(+1.00\)
+(D) \(-0.80\)
+(E) No puede determinarse sin conocer \(s_x\) y \(s_y\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Una nube de puntos abarca \(x \in [0, 10]\) con centroide \((\bar{x}, \bar{y}) = (5, 7)\) y recta de tendencia por MCO \(\hat{y} = 2 + x\). Compare agregar UN punto adicional en dos escenarios separados: el Punto P en \((5, 22)\) (directamente encima de \(\bar{x} = 5\) con residuo vertical \(+15\)) frente al Punto Q en \((25, 2)\) (muy por fuera del rango observado de \(x\) y muy por debajo de la recta). ¿En qué difieren P y Q en su efecto sobre la pendiente \(b_1\) de MCO?
+
+(A) Tanto P como Q dejan la pendiente \(b_1\) completamente sin cambio.
+(B) El Punto P inclina la pendiente bruscamente hacia arriba mientras el Punto Q la deja sin cambio.
+(C) Tanto P como Q rotan la pendiente bruscamente hacia arriba.
+(D) El Punto P se sitúa en \(x = \bar{x}\) y tiene apalancamiento horizontal nulo, por lo que deja la pendiente \(b_1 = 1\) sin cambio (desplazando únicamente la ordenada en el origen hacia arriba y aumentando \(\text{SCE}\)), mientras que el Punto Q combina un apalancamiento horizontal extremo con un gran residuo negativo e inclina fuertemente la pendiente \(b_1\) hacia abajo.
+(E) El Punto Q aumenta \(R^2\) a \(1\) mientras el Punto P reduce \(R^2\) a \(0\).
+[/BONUS]

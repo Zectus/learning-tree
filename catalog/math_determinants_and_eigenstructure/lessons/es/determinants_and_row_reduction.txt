@@ -1,0 +1,317 @@
+=== SECTION 1: Medición de la invertibilidad mediante tres axiomas ===
+
+Dada una matriz \(A\) de tamaño \(n \times n\) con entradas en un cuerpo \(F\) (a lo largo de este árbol, \(F = \mathbb{R}\) o \(F = \mathbb{C}\)), la eliminación gaussiana reduce \(A\) a la forma escalonada reducida por filas y nos indica si \(A\) es invertible: \(A\) es invertible si y solo si cada fila produce un pivote, de modo que su forma escalonada reducida por filas es la matriz identidad \(I_n\). Sin embargo, ejecutar todo el algoritmo cada vez que queremos comprobar la invertibilidad —o seguir cómo depende la invertibilidad de un parámetro dentro de \(A\)— resulta engorroso. ¿Podemos asociar un único escalar \(\det(A) \in F\) a cada matriz \(A\) de tamaño \(n \times n\) que resuma limpiamente su estructura de filas y cambie de manera completamente predecible bajo operaciones elementales de fila?
+
+Para matrices \(2 \times 2\), quizá ya conozca la expresión \(ad - bc\) para \(A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}\). En lugar de adivinar fórmulas en dimensiones superiores buscando patrones, preguntémonos qué reglas algebraicas debería satisfacer una función escalar sobre las filas de una matriz \(n \times n\). Escriba \(M_n(F)\) para el conjunto de todas las matrices \(n \times n\) con entradas en \(F\), y exprese una matriz \(A \in M_n(F)\) mediante sus filas \(\mathbf{r}_1, \mathbf{r}_2, \dots, \mathbf{r}_n \in F^{1 \times n}\) como
+\[
+A = \begin{bmatrix} \mathbf{r}_1 \\ \mathbf{r}_2 \\ \vdots \\ \mathbf{r}_n \end{bmatrix}.
+\]
+Al tratar el determinante como una función de los \(n\) vectores fila \(\det(\mathbf{r}_1, \dots, \mathbf{r}_n)\), lo caracterizamos mediante solo tres axiomas.
+
+[CALLOUT]
+id: det-axioms
+label: Definición
+title: Caracterización axiomática del determinante
+tone: key
+
+Una función determinante sobre \(M_n(F)\) es una aplicación \(\det : M_n(F) \to F\) que satisface tres propiedades:
+
+(1) Multilinealidad en las filas: manteniendo fijas todas las demás filas, \(\det\) es lineal en cada fila \(i \in \{1, \dots, n\}\) por separado. Es decir, para cualesquiera filas \(\mathbf{u}, \mathbf{v} \in F^{1 \times n}\) y escalares \(\alpha, \beta \in F\),
+\[
+\det(\mathbf{r}_1, \dots, \alpha \mathbf{u} + \beta \mathbf{v}, \dots, \mathbf{r}_n) = \alpha \det(\mathbf{r}_1, \dots, \mathbf{u}, \dots, \mathbf{r}_n) + \beta \det(\mathbf{r}_1, \dots, \mathbf{v}, \dots, \mathbf{r}_n).
+\]
+(2) Propiedad alternante: si dos filas cualesquiera de \(A\) son iguales (\(\mathbf{r}_i = \mathbf{r}_j\) para algún \(i \neq j\)), entonces \(\det(A) = 0\).
+(3) Normalización: \(\det(I_n) = 1\).
+[/CALLOUT]
+
+Preste mucha atención a lo que dice [REF: det-axioms.1 | la multilinealidad] y a lo que no dice. Es lineal en UNA fila a la vez mientras las otras \(n - 1\) filas permanecen congeladas. NO afirma que \(\det(A + B) = \det(A) + \det(B)\) ni que \(\det(cA) = c \det(A)\). Por ejemplo, escalar una sola fila por \(c\) multiplica el determinante por \(c\); escalar TODAS las \(n\) filas por \(c\) aplica esa regla \(n\) veces por separado, multiplicando el determinante por \(c^n\), no por \(c\).
+
+Una consecuencia inmediata de [REF: det-axioms.1 | la multilinealidad] es que toda matriz que contenga una fila completa de ceros tiene determinante \(0\): escriba la fila nula como \(0 \cdot \mathbf{0}\), extraiga el escalar \(0\) de esa fila y obtenga \(\det(A) = 0 \cdot \det(A) = 0\).
+
+Una segunda consecuencia conecta [REF: det-axioms.2 | la propiedad alternante] con el intercambio de filas. Suponga que \(A\) tiene filas \(\mathbf{r}_1, \dots, \mathbf{r}_n\), y elija dos índices de fila distintos \(i < j\). Reemplace tanto la fila \(i\) como la fila \(j\) por su suma \(\mathbf{r}_i + \mathbf{r}_j\) manteniendo fijas todas las demás filas. Como la matriz resultante tiene dos filas idénticas, [REF: det-axioms.2 | la propiedad alternante] obliga a que su determinante sea \(0\). Ahora desarrolle usando [REF: det-axioms.1 | la multilinealidad] primero en la fila \(i\) y luego en la fila \(j\):
+\[
+\begin{aligned}
+0 &= \det(\dots, \mathbf{r}_i + \mathbf{r}_j, \dots, \mathbf{r}_i + \mathbf{r}_j, \dots) \\
+  &= \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_i, \dots) + \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_j, \dots) \\
+  &\quad + \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_i, \dots) + \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_j, \dots).
+\end{aligned}
+\]
+El primer y el cuarto término se anulan porque cada uno tiene una fila repetida. Lo que queda es
+\[
+0 = \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_j, \dots) + \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_i, \dots),
+\]
+de modo que intercambiar las filas \(i\) y \(j\) multiplica el determinante por \(-1\). Recíprocamente, si una función cambia de signo siempre que se intercambian dos filas y \(A\) tiene \(\mathbf{r}_i = \mathbf{r}_j\) (\(i \neq j\)), intercambiar esas filas idénticas deja a \(A\) intacta mientras niega su valor, dando \(\det(A) = -\det(A)\), o bien \(2\det(A) = 0\). Como \(F = \mathbb{R}\) o \(\mathbb{C}\) cumple \(2 \neq 0\), dividimos por \(2\) para concluir \(\det(A) = 0\). Así, sobre \(\mathbb{R}\) o \(\mathbb{C}\), la propiedad alternante es completamente equivalente al cambio de signo bajo cualquier intercambio de filas (antisimetría).
+
+=== SECTION 2: Operaciones elementales de fila y matrices elementales ===
+
+Ya sabemos cómo afectan a \(\det(A)\) el escalamiento de filas y el intercambio de filas. ¿Qué ocurre con la tercera operación elemental de fila, el reemplazo de fila, en el cual sustituimos la fila \(i\) por \(\mathbf{r}_i + c \mathbf{r}_j\) para algún \(j \neq i\) y un escalar \(c \in F\)? Desarrolle en la fila \(i\) usando [REF: det-axioms.1 | la multilinealidad]:
+\[
+\det(\dots, \mathbf{r}_i + c\mathbf{r}_j, \dots, \mathbf{r}_j, \dots) = \det(\dots, \mathbf{r}_i, \dots, \mathbf{r}_j, \dots) + c \det(\dots, \mathbf{r}_j, \dots, \mathbf{r}_j, \dots).
+\]
+La segunda matriz tiene a \(\mathbf{r}_j\) tanto en la fila \(i\) como en la fila \(j\), por lo que su determinante se anula por [REF: det-axioms.2 | la propiedad alternante]. Por lo tanto, el reemplazo de fila deja el determinante completamente invariante.
+
+En \(\mathbb{R}^2\), esta invariancia tiene una imagen geométrica directa. Considere la matriz \(2 \times 2\) \(A(s) = \begin{bmatrix} 2 & 0 \\ s & 1 \end{bmatrix}\), obtenida a partir de \(\begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}\) sumando \(s\) veces la fila \(1\)? Más precisamente, parta de las filas \(\mathbf{r}_1 = (2, 0)\) y \(\mathbf{r}_2 = (0, 1)\), y reemplace \(\mathbf{r}_2\) por \(\mathbf{r}_2 + s \mathbf{r}_1 = (2s, 1)\). A medida que el parámetro de cizallamiento \(s\) se desliza de un lado a otro, el paralelogramo generado por los dos vectores fila se inclina lateralmente conservando la misma longitud de base \(2\) sobre el eje horizontal y la misma altura vertical \(1\), por lo que su área permanece fija en \(2\).
+
+[GRAPH]
+type: parametric2d
+title: El reemplazo de fila \(\mathbf{r}_2 \leftarrow \mathbf{r}_2 + s\,\mathbf{r}_1\) cizalla el paralelogramo de filas sin cambiar la base ni la altura
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -3.5, 5.5
+yrange: -0.5, 2.2
+trace: 2*t, 0*t | label: \(\mathbf{r}_1 = (2, 0)\)
+trace: 2*s*t, t | label: \(\mathbf{r}_2 + s\mathbf{r}_1 = (2s, 1)\)
+segment: 2, 0, 2 + 2*s, 1 | dashed: true
+segment: 2*s, 1, 2 + 2*s, 1 | dashed: true
+segment: 2*s, 0, 2*s, 1 | label: altura | dashed: true
+point: 2, 0 | label: \((2, 0)\)
+point: 2*s, 1 | label: \((2s, 1)\)
+slider: s | range: -1.5, 1.5 | init: 0.5 | step: 0.1
+[/GRAPH]
+
+Registremos el comportamiento exacto de las tres operaciones elementales de fila, junto con los determinantes de las matrices elementales correspondientes. Recuerde que una matriz elemental \(E\) se obtiene realizando una única operación elemental de fila sobre \(I_n\), y multiplicar \(A\) por la izquierda por \(E\) ejecuta exactamente esa operación de fila sobre \(A\). Aplicar cada regla primero a \(I_n\) (usando [REF: det-axioms.3 | \(\det(I_n) = 1\)]) y luego a una matriz arbitraria \(A\) produce el siguiente resumen.
+
+[TABLE]
+Operación elemental de fila | Efecto sobre \(\det(A)\) | Matriz elemental \(E\) | \(\det(E)\)
+Reemplazo de fila: \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) | Sin cambio: \(\det(EA) = \det(A)\) | \(I_n\) con \(c\) en la entrada \((i, j)\) | \(1\)
+Escalamiento de fila: \(R_i \leftarrow c R_i\) (\(c \neq 0\)) | Multiplicado por \(c\): \(\det(EA) = c \det(A)\) | \(I_n\) con \(c\) en la entrada \((i, i)\) | \(c\)
+Intercambio de filas: \(R_i \leftrightarrow R_j\) (\(i \neq j\)) | Cambia de signo: \(\det(EA) = -\det(A)\) | \(I_n\) con filas \(i, j\) intercambiadas | \(-1\)
+[/TABLE]
+
+Comparar la segunda y la cuarta columna de la tabla proporciona una ley estructural clave: para toda matriz elemental \(E\) y toda matriz \(A \in M_n(F)\),
+\[
+\det(EA) = \det(E)\det(A).
+\]
+Por inducción, para cualquier producto finito de matrices elementales \(E_1, \dots, E_k\),
+\[
+\det(E_k \cdots E_2 E_1 A) = \det(E_k) \cdots \det(E_2)\det(E_1)\det(A).
+\]
+Extenderemos esta regla multiplicativa de las matrices elementales a pares arbitrarios de matrices \(AB\) en la próxima lección. Por ahora, ya nos permite obtener los determinantes de todas las matrices triangulares y demostrar que los tres axiomas determinan \(\det(A)\) de forma única.
+
+[QUESTION 1]
+[ANSWER: B]
+Sea \(A\) una matriz \(3 \times 3\) con \(\det(A) = 5\). Se forma una matriz \(B\) a partir de \(A\) intercambiando las filas \(1\) y \(3\), luego escalando la fila \(2\) por \(-3\) y finalmente reemplazando la fila \(3\) por la fila \(3\) más \(4\) veces la fila \(1\). ¿Cuál es \(\det(B)\)?
+
+(A) \(-15\)
+(B) \(15\)
+(C) \(60\)
+(D) \(-60\)
+(E) \(-5\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Suponga que \(A \in M_3(\mathbb{R})\) tiene filas \(\mathbf{r}_1, \mathbf{r}_2, \mathbf{r}_3\) y \(\det(A) = 4\). ¿Cuál es el determinante de la matriz
+\[
+B = \begin{bmatrix} \mathbf{r}_1 + 2\mathbf{r}_2 \\ 3\mathbf{r}_2 - \mathbf{r}_3 \\ \mathbf{r}_3 + \mathbf{r}_1 \end{bmatrix}?
+\]
+
+(A) \(0\)
+(B) \(12\)
+(C) \(20\)
+(D) \(4\)
+(E) \(-4\)
+[/QUESTION]
+
+=== SECTION 3: Matrices triangulares, unicidad y fórmulas pequeñas ===
+
+¿Cómo obligan los tres axiomas a fijar el determinante de una matriz triangular superior \(U = [u_{ij}]\) (donde \(u_{ij} = 0\) siempre que \(i > j\))? Considere dos casos para las entradas diagonales \(u_{11}, u_{22}, \dots, u_{nn}\):
+
+1. Suponga que toda entrada diagonal \(u_{ii}\) es distinta de cero. Trabajando desde la última fila hacia arriba, podemos usar cada pivote \(u_{jj} \neq 0\) para eliminar toda entrada no nula directamente encima de él mediante reemplazos de fila \(R_i \leftarrow R_i - (u_{ij}/u_{jj}) R_j\) para \(i < j\). Ninguno de estos reemplazos de fila altera el determinante, y reducen \(U\) a la matriz diagonal \(\operatorname{diag}(u_{11}, u_{22}, \dots, u_{nn})\). Extraer el factor \(u_{ii}\) de cada fila \(i\) mediante [REF: det-axioms.1 | la multilinealidad] y aplicar [REF: det-axioms.3 | \(\det(I_n) = 1\)] da
+\[
+\det(U) = u_{11} u_{22} \cdots u_{nn} \det(I_n) = \prod_{i=1}^n u_{ii}.
+\]
+2. Suponga que al menos una entrada diagonal cumple \(u_{kk} = 0\). Elija el MAYOR índice \(k \in \{1, \dots, n\}\) con \(u_{kk} = 0\). Entonces toda entrada diagonal por debajo de la fila \(k\) (es decir, \(u_{k+1,k+1}, \dots, u_{nn}\)) es distinta de cero. Usando las filas \(k+1, \dots, n\) de abajo hacia arriba, los reemplazos de fila anulan TODA entrada en las columnas \(k+1, \dots, n\) de la fila \(k\). Como \(U\) ya era triangular superior con \(u_{kk} = 0\), la fila \(k\) ya tenía ceros en las columnas \(1, \dots, k\), y ahora también tiene ceros en las columnas \(k+1, \dots, n\). Así, la fila \(k\) se convierte en una fila nula completa sin cambiar el determinante, lo que obliga a que \(\det(U) = 0 = \prod_{i=1}^n u_{ii}\).
+
+¡Note lo limpia que es la elección del mayor índice \(k\)! Y exactamente el mismo razonamiento funciona para una matriz triangular inferior \(L\) (donde \(l_{ij} = 0\) para \(i < j\)): si todos los \(l_{ii} \neq 0\), elimine hacia abajo hasta obtener \(\operatorname{diag}(l_{11}, \dots, l_{nn})\); si algún \(l_{kk} = 0\), elija el menor índice \(k\) con \(l_{kk} = 0\) y use los pivotes no nulos \(l_{11}, \dots, l_{k-1,k-1}\) por encima de él para anular las columnas \(1, \dots, k-1\) de la fila \(k\), produciendo una fila nula.
+
+[CALLOUT]
+id: triangular-det
+label: Teorema
+title: Determinante de una matriz triangular
+tone: key
+
+Si \(T = [t_{ij}] \in M_n(F)\) es triangular superior o triangular inferior, entonces
+\[
+\det(T) = t_{11} t_{22} \cdots t_{nn} = \prod_{i=1}^n t_{ii}.
+\]
+[/CALLOUT]
+
+Con [REF: triangular-det | la fórmula triangular] en nuestras manos, podemos demostrar de inmediato que a lo sumo una función sobre \(M_n(F)\) satisface [REF: det-axioms | los tres axiomas del determinante].
+
+[CALLOUT]
+id: det-uniqueness
+label: Teorema
+title: Unicidad del determinante
+tone: key
+
+Para cada entero \(n \ge 1\), existe a lo sumo una función \(D : M_n(F) \to F\) que satisface multilinealidad en las filas, la propiedad alternante y \(D(I_n) = 1\).
+[/CALLOUT]
+
+Para demostrar [REF: det-uniqueness | la unicidad], sea \(D : M_n(F) \to F\) cualquier función que satisfaga [REF: det-axioms | los tres axiomas], y sea \(A \in M_n(F)\) arbitraria. Aplique eliminación gaussiana para reducir \(A\) a una matriz escalonada triangular superior \(U\), registrando cada matriz elemental \(E_1, \dots, E_k\) empleada en el proceso de modo que \(U = E_k \cdots E_1 A\). Como \(D\) satisface los axiomas, ya demostramos que
+\[
+D(U) = D(E_k) \cdots D(E_1) D(A),
+\]
+donde cada \(D(E_m)\) queda completamente fijado como \(1\), \(c \neq 0\) o \(-1\) según el tipo de operación. En particular, todo \(D(E_m)\) es distinto de cero, por lo que
+\[
+D(A) = \frac{D(U)}{D(E_k) \cdots D(E_1)} = \frac{\prod_{i=1}^n u_{ii}}{D(E_k) \cdots D(E_1)}.
+\]
+El lado derecho depende ÚNICAMENTE de las entradas de \(A\) y de las operaciones de fila elegidas, no de propiedades ocultas de \(D\). Por ende, cualesquiera dos funciones \(D_1, D_2\) que satisfagan los axiomas deben coincidir en toda \(A \in M_n(F)\). Observe también qué ocurre si omitimos la normalización y solo sabemos que \(D(I_n) = \alpha\) para cierta constante \(\alpha \in F\): exactamente la misma reducción da \(D(U) = \alpha \prod_{i=1}^n u_{ii}\), de modo que \(D(A) = \alpha \det(A)\) para toda \(A \in M_n(F)\).
+
+¿Existe realmente una función que satisfaga los tres axiomas para todo \(n \ge 1\)? Todavía no hemos demostrado la existencia en dimensión general \(n\): la unicidad por sí sola no descarta una contradicción entre los axiomas cuando \(n\) es grande. Para \(n = 1, 2, 3\) podemos verificar la existencia directamente escribiendo las fórmulas explícitas; para \(n \ge 1\) arbitrario, la existencia se establecerá rigurosamente mediante expansión recursiva por cofactores en una lección posterior.
+
+Deduzcamos las fórmulas explícitas \(2 \times 2\) y \(3 \times 3\) directamente de [REF: det-axioms | los tres axiomas] desarrollando cada fila en términos de los vectores fila de la base estándar \(\mathbf{e}_1, \dots, \mathbf{e}_n\). Para \(n = 2\), escriba \(\mathbf{r}_1 = a \mathbf{e}_1 + b \mathbf{e}_2\) y \(\mathbf{r}_2 = c \mathbf{e}_1 + d \mathbf{e}_2\). Desarrollar por [REF: det-axioms.1 | multilinealidad] en ambas filas produce cuatro términos:
+\[
+\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ac\det(\mathbf{e}_1, \mathbf{e}_1) + ad\det(\mathbf{e}_1, \mathbf{e}_2) + bc\det(\mathbf{e}_2, \mathbf{e}_1) + bd\det(\mathbf{e}_2, \mathbf{e}_2).
+\]
+Por [REF: det-axioms.2 | la propiedad alternante], \(\det(\mathbf{e}_1, \mathbf{e}_1) = \det(\mathbf{e}_2, \mathbf{e}_2) = 0\). Por [REF: det-axioms.3 | la normalización], \(\det(\mathbf{e}_1, \mathbf{e}_2) = \det(I_2) = 1\), e intercambiar filas da \(\det(\mathbf{e}_2, \mathbf{e}_1) = -1\). Por lo tanto,
+\[
+\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc.
+\]
+La sustitución directa confirma que \(ad - bc\) satisface efectivamente los tres axiomas, lo que demuestra la existencia para \(n = 2\).
+
+Para \(n = 3\), escriba cada fila \(\mathbf{r}_i = a_{i1}\mathbf{e}_1 + a_{i2}\mathbf{e}_2 + a_{i3}\mathbf{e}_3\). Desarrollar multilinealmente en las tres filas genera \(3^3 = 27\) términos, de los cuales todo término con un vector básico repetido se anula. Solo sobreviven las \(3! = 6\) permutaciones de \((\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3)\). Contando intercambios desde \((\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3)\):
+- Permutaciones pares (signo \(+1\)): \((\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3)\) (0 intercambios), \((\mathbf{e}_2, \mathbf{e}_3, \mathbf{e}_1)\) (2 intercambios) y \((\mathbf{e}_3, \mathbf{e}_1, \mathbf{e}_2)\) (2 intercambios).
+- Permutaciones impares (signo \(-1\)): \((\mathbf{e}_1, \mathbf{e}_3, \mathbf{e}_2)\), \((\mathbf{e}_3, \mathbf{e}_2, \mathbf{e}_1)\) y \((\mathbf{e}_2, \mathbf{e}_1, \mathbf{e}_3)\) (cada una con 1 intercambio).
+
+Reunir esos seis productos con signo produce la fórmula explícita \(3 \times 3\):
+\[
+\det\begin{bmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33} \end{bmatrix} = a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32} - a_{11}a_{23}a_{32} - a_{12}a_{21}a_{33} - a_{13}a_{22}a_{31}.
+\]
+De nuevo, verificar los tres axiomas en este polinomio es directo (y coincide con la conocida regla de Sarrus \(3 \times 3\), la cual funciona ÚNICAMENTE para matrices \(3 \times 3\) y falla por completo para \(n \ge 4\), donde \(n!\) salta a \(24, 120, \dots\)).
+
+[QUESTION 3]
+[ANSWER: A]
+Suponga que \(D : M_3(\mathbb{R}) \to \mathbb{R}\) es multilineal en las filas y se anula siempre que dos filas son iguales, pero NO se asume que cumpla \(D(I_3) = 1\). Si
+\[
+D\begin{bmatrix} 0 & 2 & 1 \\ 1 & 0 & 3 \\ 0 & 0 & -2 \end{bmatrix} = -12,
+\]
+¿cuál es \(D(I_3)\)?
+
+(A) \(-3\)
+(B) \(3\)
+(C) \(-4\)
+(D) \(4\)
+(E) \(12\)
+[/QUESTION]
+
+=== SECTION 4: Cálculo eficiente de determinantes mediante eliminación gaussiana ===
+
+Para cualquier matriz de tamaño \(4 \times 4\) o mayor —e incluso para la mayoría de las matrices \(3 \times 3\)—, desarrollar \(n!\) términos de permutación resulta poco práctico. En cambio, la demostración de [REF: det-uniqueness | la unicidad] nos brinda un algoritmo computacional eficiente: reducir \(A\) a una matriz triangular superior \(U\) mediante operaciones elementales de fila, contabilizando con cuidado cada cambio de signo y cada factor de escalamiento de fila.
+
+[CALLOUT]
+id: elim-bookkeeping
+label: Procedimiento
+title: Determinante mediante eliminación gaussiana
+tone: note
+
+Para calcular \(\det(A)\) para \(A \in M_n(F)\):
+
+(1) Reduzca \(A\) a una matriz triangular superior \(U\) utilizando solo reemplazos de fila, intercambios de filas y (si conviene) extracción de factores escalares de filas.
+(2) Cada reemplazo de fila \(R_i \leftarrow R_i + c R_j\) (\(i \neq j\)) multiplica el factor acumulado por \(1\).
+(3) Cada intercambio de filas \(R_i \leftrightarrow R_j\) multiplica el factor acumulado por \(-1\).
+(4) Factorizar un escalar no nulo \(c\) FUERA de una fila reemplaza \(\det(\text{ant})\) por \(c \det(\text{nueva})\). De forma equivalente, si usted escala una fila de la matriz de trabajo por \(c\), debe compensar afuera multiplicando por \(1/c\).
+(5) Una vez alcanzada la forma triangular superior, multiplique el factor externo acumulado por \(\prod_{i=1}^n u_{ii}\).
+[/CALLOUT]
+
+Cuídese del error de registro más frecuente en [REF: elim-bookkeeping.4 | el paso (4)]: confundir «factorizar \(c\) fuera de una fila» con «escalar una fila por \(c\)». Si una fila de \(A\) es \((4, 8, -12)\), factorizar \(4\) escribe
+\[
+\det\begin{bmatrix} 4 & 8 & -12 \\ \dots \end{bmatrix} = 4 \det\begin{bmatrix} 1 & 2 & -3 \\ \dots \end{bmatrix},
+\]
+de modo que el \(4\) queda AFUERA como multiplicador. Por el contrario, si usted multiplica una fila por \(2\) para eliminar fracciones dentro de la matriz, ha duplicado el determinante de la matriz, por lo que debe colocar \(\frac{1}{2}\) afuera para preservar la igualdad. También tenga cuidado con pasos compuestos como \(R_2 \leftarrow 2R_2 - 3R_1\): ¡ese NO es un reemplazo de fila puro! Escala \(R_2\) por \(2\) y luego resta \(3R_1\), lo cual duplica el determinante. Para ir sobre seguro, realice reemplazos de fila puros \(R_i \leftarrow R_i + c R_j\) (con coeficiente \(1\) en \(R_i\)), o bien factorice escalares explícitamente en un paso aparte.
+
+Resolvamos paso a paso un ejemplo \(4 \times 4\):
+\[
+A = \begin{bmatrix} 2 & 4 & -2 & 2 \\ 1 & 3 & 0 & 2 \\ -1 & -1 & 3 & 1 \\ 0 & 2 & 2 & 5 \end{bmatrix}.
+\]
+Primero factorice \(2\) de la fila \(1\) para que nuestro pivote superior izquierdo sea \(1\) sin introducir fracciones:
+\[
+\det(A) = 2 \det\begin{bmatrix} 1 & 2 & -1 & 1 \\ 1 & 3 & 0 & 2 \\ -1 & -1 & 3 & 1 \\ 0 & 2 & 2 & 5 \end{bmatrix}.
+\]
+Ahora utilice reemplazos de fila puros \(R_2 \leftarrow R_2 - R_1\) y \(R_3 \leftarrow R_3 + R_1\) para anular la columna \(1\) debajo del pivote:
+\[
+\det(A) = 2 \det\begin{bmatrix} 1 & 2 & -1 & 1 \\ 0 & 1 & 1 & 1 \\ 0 & 1 & 2 & 2 \\ 0 & 2 & 2 & 5 \end{bmatrix}.
+\]
+Luego anule la columna \(2\) debajo del pivote en la fila \(2\) mediante \(R_3 \leftarrow R_3 - R_2\) y \(R_4 \leftarrow R_4 - 2R_2\):
+\[
+\det(A) = 2 \det\begin{bmatrix} 1 & 2 & -1 & 1 \\ 0 & 1 & 1 & 1 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 3 \end{bmatrix}.
+\]
+¡La matriz ya es triangular superior! Por [REF: triangular-det | la fórmula del determinante triangular], su determinante es el producto de sus entradas diagonales \(1 \cdot 1 \cdot 1 \cdot 3 = 3\), de modo que
+\[
+\det(A) = 2 \cdot 3 = 6.
+\]
+
+Cuando una matriz contiene un parámetro desconocido \(t\), la eliminación gaussiana funciona con la misma limpieza, siempre que evite dividir por una expresión que pueda ser cero (o separe en casos si la división es inevitable). A menudo los reemplazos de fila puros eliminan por completo la necesidad de dividir.
+
+[QUESTION 4]
+[ANSWER: C]
+Calcule el determinante de
+\[
+M = \begin{bmatrix} 0 & 2 & 1 & 0 \\ 1 & -1 & 2 & 3 \\ 2 & 0 & 3 & 4 \\ 0 & 4 & 3 & -3 \end{bmatrix}.
+\]
+
+(A) \(16\)
+(B) \(-8\)
+(C) \(-16\)
+(D) \(8\)
+(E) \(0\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+¿Para qué valores reales de \(t\) la matriz
+\[
+A(t) = \begin{bmatrix} 1 & 2 & 1 \\ 2 & t & 3 \\ 1 & 2 & t - 1 \end{bmatrix}
+\]
+satisface \(\det(A(t)) = 0\)?
+
+(A) \(t = 4\) únicamente
+(B) \(t = 2\) únicamente
+(C) \(t = -2\) y \(t = 4\)
+(D) \(t = 1\) y \(t = 4\)
+(E) \(t = 2\) y \(t = 4\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Sea \(J\) la matriz antidiagonal \(5 \times 5\) cuyas entradas son \(J_{i, 6-i} = i\) para \(i = 1, 2, 3, 4, 5\) y \(0\) en el resto:
+\[
+J = \begin{bmatrix} 0 & 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 2 & 0 \\ 0 & 0 & 3 & 0 & 0 \\ 0 & 4 & 0 & 0 & 0 \\ 5 & 0 & 0 & 0 & 0 \end{bmatrix}.
+\]
+¿Cuál es \(\det(J)\)?
+
+(A) \(-120\)
+(B) \(120\)
+(C) \(15\)
+(D) \(-24\)
+(E) \(0\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+¿Cuál es el determinante de la matriz \(4 \times 4\)
+\[
+A = \begin{bmatrix} 2 & 1 & 1 & 1 \\ 1 & 2 & 1 & 1 \\ 1 & 1 & 2 & 1 \\ 1 & 1 & 1 & 2 \end{bmatrix}?
+\]
+
+(A) \(5\)
+(B) \(16\)
+(C) \(1\)
+(D) \(4\)
+(E) \(9\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Sean \(a, b, c \in \mathbb{R}\). Al aplicar operaciones elementales de fila para reducir a forma triangular superior, ¿qué expresión es igual a
+\[
+\det\begin{bmatrix} 1 & a & a^2 \\ 1 & b & b^2 \\ 1 & c & c^2 \end{bmatrix}?
+\]
+
+(A) \((b - a)(c - b)(a - c)\)
+(B) \((b - a)(c - a)(a + b + c)\)
+(C) \((a + b)(b + c)(c + a)\)
+(D) \((b - a)(c - a)(c - b)\)
+(E) \((b - a)^2(c - b)\)
+[/BONUS]

@@ -1,0 +1,221 @@
+=== SECTION 1: Explorar primero — probar casos pequeños antes de elegir un método de demostración ===
+
+En la matemática real, los problemas rara vez llegan con una etiqueta como "Demuestre por contraposición" o "Encuentre un contraejemplo". A usted le entregan una conjetura sin etiqueta —"Para todo entero \(n\), \(n^2 + n + 17\) es primo", o "Para todos los números reales \(x, y\), si \(x + y \ge 2\), entonces \(x \ge 1\) o \(y \ge 1\)"— y debe decidir TANTO si es verdadera COMO de qué modo demostrarla o refutarla.
+
+Lanzarse de inmediato a símbolos abstractos es la manera más rápida de perder veinte minutos intentando demostrar un enunciado FALSO. Comience siempre con una breve fase de exploración: pruebe valores pequeños y casos frontera (\(0, 1, -1, 2\), fracciones como \(\frac{1}{2}\), números negativos, variables iguales \(x = y\)).
+- Si un único caso de prueba hace verdadera la hipótesis y falsa la conclusión, DETÉNGASE: ¡acaba de encontrar un contraejemplo a una afirmación universal!
+- Si varios casos pequeños y frontera confirman la afirmación, observe POR QUÉ funcionaron: el cálculo concreto casi siempre revela el mecanismo algebraico de la demostración general.
+
+Pruebe esto ahora mismo con dos conjeturas sin etiqueta:
+1. Conjetura A: "Para todo entero \(n \ge 0\), el número \(n^2 + n + 17\) es primo."
+   Pruebe valores pequeños: \(n = 0 \to 17\) (primo), \(n = 1 \to 19\) (primo), \(n = 2 \to 23\) (primo), \(n = 3 \to 29\) (primo). No se detenga en cuatro aciertos: ¡pruebe un valor frontera estructural! ¿Qué ocurre si \(n = 17\) (o incluso \(n = 16\))? En \(n = 16\), \(16^2 + 16 + 17 = 16(17) + 17 = 17 \cdot 17 = 289\), ¡que NO es primo! Una prueba estratégica de frontera refutó la conjetura de inmediato.
+2. Conjetura B: "Para todos los números reales \(x, y \in \mathbb{R}\), si \(x + y \ge 2\), entonces \(x \ge 1\) o \(y \ge 1\)."
+   Pruebe fronteras: \((1, 1)\) funciona; \((2, 0)\) funciona; \((1.5, 0.5)\) funciona. Intentar construir un contraejemplo obliga a \(x < 1\) E \(y < 1\), ¡lo cual al sumarse da de inmediato \(x + y < 2\), contradiciendo \(x + y \ge 2\)! Esa búsqueda fallida de un contraejemplo literalmente nos entregó en bandeja la demostración por contraposición.
+
+[CALLOUT]
+id: workflow-unlabeled-claim
+label: Flujo de trabajo
+title: Flujo de trabajo sistemático para una afirmación matemática sin etiqueta
+tone: key
+
+(1) Analice la forma lógica exterior y el dominio: identifique todos los cuantificadores (\(\forall, \exists, \exists!\)), su orden y el conectivo principal (\(\Rightarrow\), \(\Leftrightarrow\), \(\vee\), \(\wedge\) o negación).
+(2) Sondee con casos pequeños y extremos (\(0, \pm 1, 2\), no enteros en \(\mathbb{Q}\) o \(\mathbb{R}\), entradas iguales, signos extremos) para comprobar si la afirmación es plausible o falsa.
+(3) Si una afirmación universal falla en un caso de prueba, redacte un contraejemplo nítido y verificado (comprobando la pertenencia al dominio, la hipótesis y el fallo de la conclusión).
+(4) Si la afirmación parece verdadera, empareje su estructura lógica exterior con el método de demostración más limpio en lugar de recurrir automáticamente a la contradicción.
+[/CALLOUT]
+
+La tabla siguiente resume cómo la forma lógica exterior de una afirmación verdadera se corresponde con su estrategia principal de demostración:
+
+[TABLE]
+Forma lógica exterior o indicio | Método principal a intentar primero | Detonante clave
+\(\forall x \in D,\, P(x) \Rightarrow Q(x)\) con \(P(x)\) algebraico explícito | Demostración directa | Desglosar \(P(x)\) da fórmulas que conducen limpiamente a \(Q(x)\)
+\(\forall x \in D,\, P(x) \Rightarrow Q(x)\) donde \(Q(x)\) es negativo o \(Q_1 \vee Q_2\), o \(P(x)\) es compuesto | Demostración por contraposición | \(\neg Q(x)\) da una fórmula positiva o una conjunción rica \(\neg Q_1 \wedge \neg Q_2\)
+La hipótesis o el dominio se divide naturalmente (paridad, signo, \(\lvert x \rvert\), restos mód \(m\)) | Demostración por casos exhaustivos (con SPDG si hay simetría) | Distintos regímenes requieren distintas fórmulas algebraicas
+No existencia (\(\neg\exists\)), irracionalidad, infinitud o \(P \Rightarrow Q\) que necesita TANTO \(P\) como \(\neg Q\) | Demostración por contradicción | Suponer \(\neg S\) produce objetos concretos que fuerzan \(R \wedge \neg R\)
+\(\exists x,\, P(x)\) o \(\forall x \exists y,\, P(x, y)\) | Existencia constructiva | Despejar hacia atrás en borrador para construir el testigo \(x\) (o \(y\) que dependa solo de \(x\))
+\(\exists! x,\, P(x)\) | Existencia más unicidad | Mostrar que existe al menos un testigo, luego suponer \(P(x_1) \wedge P(x_2)\) y deducir \(x_1 = x_2\)
+\(P \Leftrightarrow Q\) o TFAE para \(k\) enunciados | Dos direcciones o ciclo estratégico de longitud \(k\) | Combinar métodos entre direcciones; ordenar un ciclo de \(k\) para minimizar el álgebra
+[/TABLE]
+
+[QUESTION 1]
+[ANSWER: B]
+Considere la conjetura sin etiqueta: "Para todos los números reales \(x, y \in \mathbb{R}\), si \(x^2 > y^2\), entonces \(x > y\)." Siguiendo el flujo de trabajo de explorar primero, ¿cuál es el veredicto y la justificación correctos?
+
+(A) Verdadera; se demuestra directamente tomando la raíz cuadrada de ambos lados de \(x^2 > y^2\).
+(B) Falsa; refutada por el contraejemplo \(x = -3, y = 2\), ya que \((-3)^2 = 9 > 4 = 2^2\) y sin embargo \(-3 \not> 2\).
+(C) Verdadera; se demuestra por contraposición suponiendo \(x \le y\) y elevando ambos lados al cuadrado para obtener \(x^2 \le y^2\).
+(D) Falsa; refutada por el contraejemplo \(x = 0, y = 0\).
+(E) Verdadera; se demuestra por casos en \(x \ge 0\) y \(x < 0\).
+[/QUESTION]
+
+=== SECTION 2: Elección del método de demostración más limpio ===
+
+Incluso cuando una afirmación es VERDADERA, varios métodos de demostración válidos pueden funcionar; sin embargo, uno es drásticamente más limpio, breve y menos propenso a errores que los demás. El buen criterio matemático consiste en emparejar el método con la estructura del problema en lugar de forzar todo teorema a pasar por la demostración por contradicción.
+
+Compare dos enfoques para el teorema:
+"Para todo entero \(n \in \mathbb{Z}\), \(n^3 - n\) es divisible entre \(3\)."
+- Intento torpe (contradicción): "Supongamos \(3 \nmid (n^3 - n)\)... espere, ¿y ahora qué? Saber que \(n^3 - n = 3q + 1\) o \(3q + 2\) le deja una ecuación cúbica que no puede factorizar para \(n\)."
+- Elección limpia (demostración directa más casos): Primero factorice \(n^3 - n = n(n - 1)(n + 1) = (n - 1)n(n + 1)\), un producto de tres enteros consecutivos. Ahora divida según el resto de \(n\) módulo \(3\):
+  - Si \(n = 3q\), entonces \(3 \mid n\), luego \(3 \mid (n - 1)n(n + 1)\).
+  - Si \(n = 3q + 1\), entonces \(n - 1 = 3q\), luego \(3 \mid (n - 1)n(n + 1)\).
+  - Si \(n = 3q + 2\), entonces \(n + 1 = 3(q + 1)\), luego \(3 \mid (n - 1)n(n + 1)\).
+  ¡Cada caso termina en una línea!
+
+Ahora compare dos enfoques para:
+"Para todos los números reales \(a, b \in \mathbb{R}\), si \(a \ne b\), entonces \(a^2 + b^2 > 2ab\)."
+- Contraposición innecesaria: suponer \(a^2 + b^2 \le 2ab\) da \((a - b)^2 \le 0\), lo que obliga a \((a - b)^2 = 0\), luego \(a = b\) (¡esto también funciona limpiamente!).
+- Aún más directo: suponga \(a \ne b\). Entonces \(a - b \ne 0\), por lo que \((a - b)^2 > 0\). Al desarrollar se obtiene \(a^2 - 2ab + b^2 > 0\), luego \(a^2 + b^2 > 2ab\).
+
+¿Y qué hay de una afirmación con cuantificadores mixtos como:
+"Para todo número racional \(r \in \mathbb{Q}\), existe un número racional \(s \in \mathbb{Q}\) tal que \(r < s < r + 1\)"?
+Aquí el cuantificador exterior es \(\forall r \in \mathbb{Q}\) y el cuantificador interior es \(\exists s \in \mathbb{Q}\), de modo que \(s\) puede depender de \(r\). El cálculo en borrador sugiere el punto medio \(s = r + \frac{1}{2}\): compruebe la pertenencia al dominio (\(r \in \mathbb{Q} \Rightarrow r + \frac{1}{2} \in \mathbb{Q}\)) y compruebe ambas desigualdades (\(r < r + \frac{1}{2} < r + 1\)). ¡La existencia constructiva lo resuelve en dos líneas, sin necesitar ninguna contradicción!
+
+[QUESTION 2]
+[ANSWER: E]
+Considere el teorema verdadero: "Para todos los enteros \(a, b \in \mathbb{Z}\), si \(a^2 + b^2\) es impar, entonces \(a\) y \(b\) tienen paridad opuesta (uno es par y el otro es impar)." ¿Qué plan de demostración es A LA VEZ válido y el que mejor encaja con la estructura del teorema?
+
+(A) Demostración por contradicción suponiendo \(a = 2k\) y \(b = 2k\) (el mismo entero \(k\)).
+(B) Demostración directa suponiendo \(a^2 + b^2 = 2k + 1\) y tomando raíces cuadradas para despejar \(a\) y \(b\).
+(C) Demostración constructiva de existencia exhibiendo \(a = 2\) y \(b = 3\), ya que \(2^2 + 3^2 = 13\) es impar.
+(D) Demostración de equivalencia en cadena única elevando al cuadrado \(a \ne b\).
+(E) Demostración por contraposición combinada con dos casos: suponer que \(a\) y \(b\) tienen la MISMA paridad (o bien ambos pares, \(a = 2k, b = 2m\), o bien ambos impares, \(a = 2k + 1, b = 2m + 1\)), y verificar en cada caso que \(a^2 + b^2\) es par.
+[/QUESTION]
+
+=== SECTION 3: Auditoría línea por línea de demostraciones — diagnóstico de defectos y rescatabilidad ===
+
+Leer una demostración de forma crítica es tan importante como redactarla. Una sola línea defectuosa puede ocultarse dentro de un párrafo por lo demás convincente —y peor aún, una demostración defectuosa puede estar adjunta tanto a un teorema VERDADERO (rescatable reparando la demostración) como a una afirmación FALSA (que debe refutarse mediante un contraejemplo)—.
+
+Al auditar una demostración, inspeccione cada línea frente a los siete defectos clásicos catalogados a continuación.
+
+[CALLOUT]
+id: audit-checklist
+label: Lista de verificación
+title: Siete defectos clásicos de demostración para auditar línea por línea
+tone: caution
+
+(1) Razonamiento circular (suponer la conclusión): usar el enunciado objetivo \(Q\) —o un enunciado equivalente a \(Q\)— antes de haberlo demostrado, o razonar hacia atrás desde \(Q\) usando pasos irreversibles.
+(2) Error de la recíproca o de la inversa: demostrar \(Q \Rightarrow P\) o \(\neg P \Rightarrow \neg Q\) cuando el teorema requiere \(P \Rightarrow Q\).
+(3) Operación algebraica ilegal: dividir entre una expresión que podría ser \(0\), multiplicar una desigualdad por una cantidad potencialmente negativa sin comprobar el signo, o tratar el elevar al cuadrado como reversible.
+(4) Reutilización de testigos o instanciación no verificada: usar la MISMA variable existencial \(k\) para dos objetos independientes (p. ej., escribir dos números pares arbitrarios como \(2k\) y \(2k\)), o afirmar que un objeto existe sin verificar la pertenencia al dominio.
+(5) Dependencia invertida de cuantificadores: demostrar \(\exists y \forall x\, P(x, y)\) dejando que \(y\) dependa de \(x\) (lo que solo demuestra \(\forall x \exists y\, P(x, y)\)).
+(6) Partición por casos incompleta o SPDG ilícito: pasar por alto un caso frontera (como \(x = 0\) o una clase de resto) o invocar SPDG cuando el enunciado NO es simétrico en las variables intercambiadas.
+(7) Negación defectuosa de enunciados compuestos o cuantificados: negar \(P \Rightarrow Q\) como \(\neg P \Rightarrow \neg Q\), omitir invertir \(\wedge/\vee\) bajo las leyes de De Morgan, o negar mal cuantificadores anidados en un planteamiento por contradicción o contraposición.
+[/CALLOUT]
+
+Auditemos dos demostraciones defectuosas realistas línea por línea, identificando TANTO el defecto exacto COMO si la afirmación subyacente es verdadera (rescatable) o falsa.
+
+Caso de auditoría 1:
+Afirmación: "Para todo número real \(x \in \mathbb{R}\), si \(x^2 = 3x\), entonces \(x = 3\)."
+Supuesta demostración:
+- Línea 1: Sea \(x \in \mathbb{R}\) arbitrario y supongamos \(x^2 = 3x\).
+- Línea 2: Dividimos ambos lados entre \(x\) para obtener \(x = 3\).
+- Línea 3: Por lo tanto, \(x = 3\).
+
+Diagnóstico:
+- Paso roto: La Línea 2 comete [REF: audit-checklist.3 | una división ilegal entre cero] porque \(x\) podría valer \(0\).
+- ¿Rescatable o falsa? Pruebe el caso frontera \(x = 0\): \(0^2 = 3(0)\) es VERDADERO, ¡y sin embargo \(0 = 3\) es FALSO! La afirmación subyacente es FALSA (refutada por \(x = 0\)). Para hacerla verdadera, hay que reforzar la hipótesis a \(x \ne 0\) o debilitar la conclusión a "\(x = 0\) o \(x = 3\)".
+
+Caso de auditoría 2:
+Afirmación: "Para todos los enteros \(a, b \in \mathbb{Z}\), si \(a\) es par y \(b\) es par, entonces \(a + b\) es par."
+Supuesta demostración:
+- Línea 1: Sean \(a, b \in \mathbb{Z}\) arbitrarios y supongamos que \(a\) es par y \(b\) es par.
+- Línea 2: Por definición de par, existe \(k \in \mathbb{Z}\) tal que \(a = 2k\) y \(b = 2k\).
+- Línea 3: Entonces \(a + b = 2k + 2k = 4k = 2(2k)\), que es par.
+
+Diagnóstico:
+- Paso roto: La Línea 2 comete [REF: audit-checklist.4 | reutilización de testigo existencial], forzando \(a = b\) y demostrando el teorema únicamente cuando ambos enteros resultan ser iguales.
+- ¿Rescatable o falsa? El teorema subyacente es VERDADERO e inmediatamente rescatable: introduzca DOS testigos enteros independientes \(a = 2k\) y \(b = 2m\) (\(k, m \in \mathbb{Z}\)), lo que da \(a + b = 2(k + m)\), que es par porque \(k + m \in \mathbb{Z}\). (Note también que la demostración defectuosa parecía demostrar falsamente \(4 \mid (a + b)\), ¡lo cual falla para \(a = 2, b = 4\)!)
+
+Caso de auditoría 3 (trampa sutil de dependencia de cuantificadores):
+Afirmación: "Existe un número real \(M \in \mathbb{R}\) tal que para todo número real \(x \in \mathbb{R}\), \(x < M\)."
+Supuesta demostración:
+- Línea 1: Sea \(x \in \mathbb{R}\) arbitrario.
+- Línea 2: Fijemos \(M = x + 1 \in \mathbb{R}\).
+- Línea 3: Claramente \(x < x + 1 = M\), luego tal \(M\) existe.
+
+Diagnóstico:
+- Paso roto: Las Líneas 1–2 cometen [REF: audit-checklist.5 | dependencia invertida de cuantificadores]: ¡la afirmación tiene \(\exists M\) exterior y \(\forall x\) interior, de modo que UN único \(M\) fijo debe funcionar simultáneamente para TODO \(x\), pero la Línea 2 deja que \(M\) dependa de \(x\)!
+- ¿Rescatable o falsa? La afirmación es FALSA: su negación \(\forall M \in \mathbb{R},\, \exists x \in \mathbb{R},\, x \ge M\) se demuestra tomando \(x = M\) (o \(x = M + 1\)).
+
+[QUESTION 3]
+[ANSWER: C]
+Audite la siguiente supuesta demostración de la afirmación: "Para todos los números reales \(a, b \in \mathbb{R}\), si \(a + b > 0\), entonces \(a > 0\) y \(b > 0\)."
+Línea 1: Sean \(a, b \in \mathbb{R}\) arbitrarios.
+Línea 2: Supongamos \(a > 0\) y \(b > 0\).
+Línea 3: Sumar estas dos desigualdades da \(a + b > 0\).
+Línea 4: Por lo tanto, si \(a + b > 0\), entonces \(a > 0\) y \(b > 0\).
+
+¿Qué diagnóstico es completamente exacto?
+
+(A) Demostración válida por contraposición; la afirmación es verdadera.
+(B) Inválida debido a una división ilegal entre cero en la Línea 3; la afirmación es verdadera y rescatable.
+(C) Inválida debido al error de la recíproca (las Líneas 2–3 demuestran la recíproca "\(a > 0 \wedge b > 0 \Rightarrow a + b > 0\)"); la afirmación misma es FALSA (contraejemplo: \(a = 5, b = -1\)).
+(D) Inválida debido a reutilización de testigos en la Línea 2; la afirmación es verdadera y rescatable.
+(E) Inválida debido a una partición por casos incompleta que omite \(a = b\); la afirmación es verdadera para todos \(a \ne b\).
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Audite la siguiente supuesta demostración de la afirmación: "Para todo número real \(x > 0\), \(x + \frac{1}{x} \ge 2\)."
+Línea 1: Supongamos \(x + \frac{1}{x} \ge 2\).
+Línea 2: Multipliquemos ambos lados por \(x > 0\) para obtener \(x^2 + 1 \ge 2x\).
+Línea 3: Restemos \(2x\) de ambos lados para obtener \(x^2 - 2x + 1 \ge 0\), es decir, \((x - 1)^2 \ge 0\).
+Línea 4: Como \((x - 1)^2 \ge 0\) es verdadero para todo \(x \in \mathbb{R}\), la afirmación queda demostrada.
+
+¿Qué diagnóstico es completamente exacto?
+
+(A) Inválida tal como está redactada porque razona hacia atrás desde la conclusión (razonamiento circular: deducir un enunciado verdadero a partir de \(Q\) no demuestra \(Q\)), PERO el teorema es VERDADERO y rescatable invirtiendo los pasos a partir de \((x - 1)^2 \ge 0\) y dividiendo entre \(x > 0\).
+(B) Completamente válida, porque deducir una desigualdad verdadera a partir de una suposición demuestra que la suposición es verdadera.
+(C) Inválida porque multiplicar por \(x > 0\) invierte la desigualdad; la afirmación es falsa para \(x = \frac{1}{2}\).
+(D) Inválida porque \((x - 1)^2 \ge 0\) falla cuando \(x = 1\); la afirmación es falsa.
+(E) Inválida porque la demostración debe usar demostración por contradicción; no es posible ninguna demostración directa.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: D]
+Audite la siguiente supuesta demostración de la afirmación: "Para todo entero \(n \in \mathbb{Z}\), si \(n^2 + 2n\) es impar, entonces \(n\) es impar."
+Línea 1: Sea \(n \in \mathbb{Z}\) arbitrario. Demostraremos la contrarrecíproca.
+Línea 2: Supongamos que \(n\) es par, de modo que \(n = 2k\) para algún \(k \in \mathbb{Z}\).
+Línea 3: Entonces \(n^2 + 2n = 4k^2 + 4k = 2(2k^2 + 2k)\), que es par.
+Línea 4: Por contraposición, si \(n^2 + 2n\) es impar, entonces \(n\) es impar.
+
+¿Qué evaluación de esta demostración y este teorema es exacta?
+
+(A) Inválida: la Línea 3 cometió un error algebraico porque \((2k)^2 = 2k^2\).
+(B) Inválida: la afirmación es falsa porque \(n^2 + 2n\) es impar cuando \(n = 1\).
+(C) Inválida: la Línea 1 cometió el error de la recíproca.
+(D) Completamente válida: la demostración por contraposición en las Líneas 1–4 es lógicamente hermética, y la hipótesis no es vacua (por ejemplo, \(n = 1\) da \(1^2 + 2(1) = 3\), que es impar).
+(E) Inválida: la demostración olvidó el caso en que \(n < 0\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Audite la siguiente supuesta demostración de la afirmación: "Para todos los enteros \(a, b \in \mathbb{Z}\), si \(a \mid b\), entonces \(a \le b\)."
+Línea 1: Sean \(a, b \in \mathbb{Z}\) arbitrarios y supongamos \(a \mid b\).
+Línea 2: Por definición, \(b = ak\) para algún entero \(k \in \mathbb{Z}\).
+Línea 3: Como \(k \ge 1\), multiplicar ambos lados por \(a\) da \(b = ak \ge a\), por lo que \(a \le b\).
+
+¿Qué diagnóstico identifica TODOS los defectos y el valor de verdad de la afirmación?
+
+(A) Solo la Línea 2 está mal porque la divisibilidad significa \(a = bk\); la afirmación es verdadera.
+(B) La Línea 3 hace DOS suposiciones injustificadas: \(k\) no tiene por qué ser \(\ge 1\) (p. ej., \(k = 0\) cuando \(b = 0\), o \(k < 0\)), Y multiplicar una desigualdad por \(a\) invierte su sentido cuando \(a < 0\); la afirmación es FALSA (p. ej., \(a = 5, b = 0\) cumple \(5 \mid 0\) y sin embargo \(5 > 0\), o \(a = 2, b = -4\)).
+(C) La Línea 3 falla únicamente cuando \(a < 0\); la afirmación es verdadera para todo \(a > 0\) y todo \(b \in \mathbb{Z}\).
+(D) La demostración es válida para todos los enteros distintos de cero \(a, b \in \mathbb{Z} \setminus \{0\}\).
+(E) La demostración es inválida por razonamiento circular, pero la afirmación es verdadera para todos \(a, b \in \mathbb{Z}\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: E]
+Audite la siguiente supuesta demostración de la afirmación: "Para todos los números reales \(x, y \in \mathbb{R}\), si \(x^2 + y = 0\), entonces \(x \le 0\) o \(y \le 0\)."
+Línea 1: Sean \(x, y \in \mathbb{R}\) con \(x^2 + y = 0\).
+Línea 2: Por SPDG, supongamos \(x \le y\).
+Línea 3: Como \(x^2 + y = 0\), tenemos \(y = -x^2 \le 0\), por lo que \(x \le y \le 0\), dando \(x \le 0\) o \(y \le 0\).
+
+¿Qué evaluación es más exacta?
+
+(A) Completamente válida: SPDG \(x \le y\) está justificado porque \(x\) e \(y\) son ambos números reales.
+(B) Inválida porque \(y = -x^2 \le 0\) es falso cuando \(x < 0\).
+(C) Inválida porque la afirmación misma es falsa (contraejemplo: \(x = 2, y = -4\)).
+(D) Completamente válida, porque la Línea 3 nunca contradice realmente \(x > y\).
+(E) La Línea 2 invoca SPDG ILÍCITAMENTE porque la hipótesis \(x^2 + y = 0\) NO es simétrica en \(x\) e \(y\) (intercambiar \(x\) e \(y\) cambia la ecuación a \(y^2 + x = 0\)); sin embargo, la afirmación es VERDADERA y fácilmente rescatable eliminando la Línea 2 por completo, ¡ya que \(y = -x^2 \le 0\) por sí solo ya hace verdadero a "\(x \le 0\) o \(y \le 0\)"!
+[/BONUS]

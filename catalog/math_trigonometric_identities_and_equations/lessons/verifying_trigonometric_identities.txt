@@ -1,0 +1,246 @@
+=== SECTION 1: Identities versus conditional equations, and the logic of proof ===
+
+Before you prove a trigonometric identity, you need to separate two kinds of equations that look identical on paper:
+- A conditional equation holds only for specific values of \(x\). For example, \(\sin x = \frac{1}{2}\) is true at \(x = \frac{\pi}{6}\) and \(x = \frac{5\pi}{6}\) (plus multiples of \(2\pi\)), but false at \(x = 0\).
+- An identity holds for every \(x\) in the common domain of both sides. For example, \(\sec^2 x - \tan^2 x = 1\) holds at every angle \(x\) where \(\cos x \neq 0\).
+
+Because verifying an identity means proving that an equality holds everywhere on the common domain, the logical rules are stricter than those for solving a conditional equation. When you solve a conditional equation, you assume \(x\) is a solution and manipulate both sides to find candidate values of \(x\). When you verify an identity, the equality itself is what you are trying to prove—you may NOT assume it is true at step 1!
+
+Consider what goes wrong if someone tries to "verify" the false statement \(\sin x = -\sin x\) by squaring both sides:
+\[
+(\sin x)^2 = (-\sin x)^2 \implies \sin^2 x = \sin^2 x.
+\]
+Arriving at a true statement \(\sin^2 x = \sin^2 x\) proves nothing at all, because squaring is not reversible: \(-1 = 1\) also becomes \(1 = 1\) when squared! Multiplying both sides by a quantity that can be zero suffers from the same fatal logical flaw.
+
+[CALLOUT]
+id: verification-rules
+label: Principle
+title: Valid logical structures for verifying an identity \(L(x) = R(x)\)
+tone: key
+
+(1) One-sided proof (preferred): Begin with ONE side (usually the more complicated side) and transform it through a chain of valid algebraic and trigonometric equalities until it matches the other side identically: \(L(x) = E_1(x) = E_2(x) = \cdots = R(x)\).
+(2) Independent two-sided proof: Transform \(L(x)\) into an intermediate expression \(M(x)\) and independently transform \(R(x)\) into the exact same expression \(M(x)\). Because every equality step is symmetric and transitive on the common domain, \(L(x) = M(x) = R(x)\) establishes the identity.
+(3) Never operate across the equals sign (such as squaring both sides, multiplying across by a denominator, or adding terms to both sides) while trying to prove an identity.
+[/CALLOUT]
+
+Notice why [REF: verification-rules.1 | starting on the more complicated side] is almost always easier than starting on the simple side: it is far easier to simplify and combine terms than to guess how to expand a compact expression like \(\sec x\) into the exact multi-term fraction you want.
+
+Let us verify the identity
+\[
+\frac{\cos x}{1 - \sin x} - \tan x = \sec x
+\]
+for all \(x\) with \(\cos x \neq 0\) (which also ensures \(1 - \sin x \neq 0\)). Start with the left-hand side (LHS), since it has two terms and a denominator \(1 - \sin x\):
+\[
+\text{LHS} = \frac{\cos x}{1 - \sin x} - \frac{\sin x}{\cos x} = \frac{\cos^2 x - \sin x(1 - \sin x)}{\cos x(1 - \sin x)}.
+\]
+Expand the numerator carefully:
+\[
+\text{LHS} = \frac{\cos^2 x - \sin x + \sin^2 x}{\cos x(1 - \sin x)} = \frac{1 - \sin x}{\cos x(1 - \sin x)}.
+\]
+Because \(1 - \sin x \neq 0\) on the common domain, cancel the common factor \(1 - \sin x\):
+\[
+\text{LHS} = \frac{1}{\cos x} = \sec x = \text{RHS}.
+\]
+Every step is a genuine equality on the common domain, and we never assumed the conclusion.
+
+[QUESTION 1]
+[ANSWER: B]
+A student is asked to prove whether \(\cos x - \sin x = \sqrt{1 - 2\sin x \cos x}\) is an identity on \(\mathbb{R}\). The student squares both sides to get \(\cos^2 x - 2\sin x \cos x + \sin^2 x = 1 - 2\sin x \cos x\), simplifies the left side to \(1 - 2\sin x \cos x\), and concludes the identity is proved. What is wrong with this argument?
+
+(A) The expansion of \((\cos x - \sin x)^2\) is wrong; it should equal \(\cos^2 x - \sin^2 x\).
+(B) Squaring both sides is not reversible; the original statement is actually false whenever \(\cos x < \sin x\) (for example, at \(x = \frac{\pi}{2}\), where the left side is \(-1\) and the right side is \(+1\)).
+(C) You can never apply \(\sin^2 x + \cos^2 x = 1\) inside an identity proof.
+(D) The square root \(\sqrt{1 - 2\sin x \cos x}\) is undefined whenever \(\sin x \cos x > 0\).
+(E) Nothing is wrong; obtaining a true equation after squaring both sides always proves an identity.
+[/QUESTION]
+
+=== SECTION 2: Multiplying by conjugates to trigger Pythagorean substitutions ===
+
+Suppose you are asked to prove
+\[
+\frac{\cos x}{1 + \sin x} = \frac{1 - \sin x}{\cos x}
+\]
+for all \(x\) with \(\cos x \neq 0\). Notice that the denominator \(1 + \sin x\) has no squares in it, so none of the Pythagorean identities applies immediately. Yet you know that \(1 - \sin^2 x = \cos^2 x\), and \(1 - \sin^2 x\) factors as \((1 + \sin x)(1 - \sin x)\). That factorization points straight to the move: multiply numerator and denominator of the left-hand side by the conjugate \(1 - \sin x\) (which is equivalent to multiplying by \(1\), provided \(1 - \sin x \neq 0\), i.e., \(\cos x \neq 0\)):
+\[
+\text{LHS} = \frac{\cos x}{1 + \sin x} \cdot \frac{1 - \sin x}{1 - \sin x} = \frac{\cos x(1 - \sin x)}{1 - \sin^2 x} = \frac{\cos x(1 - \sin x)}{\cos^2 x} = \frac{1 - \sin x}{\cos x} = \text{RHS}.
+\]
+Notice one subtle algebraic habit that kept the proof short: we did NOT distribute \(\cos x(1 - \sin x)\) in the numerator. Leaving the numerator factored allowed \(\cos x\) to cancel immediately against \(\cos^2 x\) in the denominator.
+
+Conjugate multiplication works for every Pythagorean difference of squares:
+- \(1 \pm \sin x\) pairs with \(1 \mp \sin x\) to produce \(1 - \sin^2 x = \cos^2 x\).
+- \(1 \pm \cos x\) pairs with \(1 \mp \cos x\) to produce \(1 - \cos^2 x = \sin^2 x\).
+- \(\sec x \pm \tan x\) pairs with \(\sec x \mp \tan x\) to produce \(\sec^2 x - \tan^2 x = 1\).
+- \(\csc x \pm \cot x\) pairs with \(\csc x \mp \cot x\) to produce \(\csc^2 x - \cot^2 x = 1\).
+
+Watch the secant-tangent conjugate in action on a slightly harder identity:
+\[
+\frac{1}{\sec x - \tan x} - \frac{1}{\sec x + \tan x} = 2\tan x.
+\]
+Here you could either multiply each fraction by its conjugate separately or combine them directly over the common denominator \((\sec x - \tan x)(\sec x + \tan x) = \sec^2 x - \tan^2 x = 1\). Doing the conjugate multiplication on each fraction gives
+\[
+\frac{1}{\sec x - \tan x} = \frac{\sec x + \tan x}{\sec^2 x - \tan^2 x} = \sec x + \tan x, \qquad \frac{1}{\sec x + \tan x} = \frac{\sec x - \tan x}{\sec^2 x - \tan^2 x} = \sec x - \tan x.
+\]
+Subtracting the two yields
+\[
+\text{LHS} = (\sec x + \tan x) - (\sec x - \tan x) = 2\tan x = \text{RHS}.
+\]
+In fact, the identities \(\frac{1}{\sec x - \tan x} = \sec x + \tan x\) and \(\frac{1}{\csc x - \cot x} = \csc x + \cot x\) are so clean that recognizing them immediately simplifies many rational expressions involving \(\sec, \tan, \csc,\) and \(\cot\).
+
+[QUESTION 2]
+[ANSWER: D]
+To verify the identity \(\dfrac{\sin x}{1 - \cos x} = \csc x + \cot x\) (for \(\sin x \neq 0\)) by transforming the left-hand side, which first step leads most directly to the right-hand side?
+
+(A) Replace \(\sin x\) with \(\sqrt{1 - \cos^2 x}\) in the numerator.
+(B) Split \(\frac{\sin x}{1 - \cos x}\) into \(\frac{\sin x}{1} - \frac{\sin x}{\cos x}\).
+(C) Multiply both sides of the equation by \(1 - \cos x\).
+(D) Multiply numerator and denominator of the left-hand side by \(1 + \cos x\) to produce \(\sin^2 x\) in the denominator, cancel \(\sin x\), and split the resulting numerator over \(\sin x\).
+(E) Square the left-hand side and simplify using \(\sin^2 x = 1 - \cos^2 x\).
+[/QUESTION]
+
+=== SECTION 3: Strategic verification toolkit ===
+
+When you face an unfamiliar identity, resist the urge to rewrite randomly. Instead, read the structure of both sides and pick the move that closes the gap between them.
+
+[TABLE]
+What you see in the identity | Best strategic move | Why it helps
+One side has two fractions; the other is a single term | Combine over a common denominator | Often creates \(\sin^2 x + \cos^2 x = 1\) or a cancellation
+One side has a single denominator; the other is a sum/difference | Split the fraction \(\frac{A + B}{C} = \frac{A}{C} + \frac{B}{C}\) | Separates terms into individual quotient/reciprocal functions
+A denominator contains \(1 \pm \sin x\), \(1 \pm \cos x\), \(\sec x \pm \tan x\), or \(\csc x \pm \cot x\) | Multiply top and bottom by the conjugate | Triggers a Pythagorean substitution
+Higher powers or repeated trig functions appear | Factor (GCF, difference of squares, or trinomial) | Exposes Pythagorean factors or common cancellations
+Mixed functions (\(\tan, \cot, \sec, \csc\)) resist direct shortcuts | Rewrite everything in terms of \(\sin x\) and \(\cos x\) | Reduces six functions to two with familiar algebra
+Both sides look equally complicated | Transform LHS and RHS independently to a common form \(M(x)\) | Avoids guessing how to re-expand a simplified expression
+[/TABLE]
+
+Let us apply two of these strategies to trickier identities.
+
+Example 1 (Factoring plus Pythagorean substitution): Verify
+\[
+\tan^4 x + \tan^2 x = \sec^4 x - \sec^2 x
+\]
+for \(\cos x \neq 0\). Notice the left side is purely in \(\tan x\) and the right side is purely in \(\sec x\). Starting from the LHS, factor out \(\tan^2 x\):
+\[
+\text{LHS} = \tan^2 x(\tan^2 x + 1).
+\]
+Now substitute \(\tan^2 x + 1 = \sec^2 x\) and \(\tan^2 x = \sec^2 x - 1\):
+\[
+\text{LHS} = (\sec^2 x - 1)\sec^2 x = \sec^4 x - \sec^2 x = \text{RHS}.
+\]
+Trying to convert everything to \(\sin x\) and \(\cos x\) here would have produced fourth-power fractions; reading the function pair \((\tan, \sec)\) and factoring finished the proof in two lines.
+
+Example 2 (Independent two-sided verification): Verify
+\[
+\frac{\cot x - 1}{1 - \tan x} = \frac{\csc x}{\sec x}
+\]
+for \(\sin x \neq 0\), \(\cos x \neq 0\), and \(\tan x \neq 1\). Transform each side separately into \(\sin x\) and \(\cos x\):
+\[
+\text{LHS} = \frac{\frac{\cos x}{\sin x} - 1}{1 - \frac{\sin x}{\cos x}} = \frac{\frac{\cos x - \sin x}{\sin x}}{\frac{\cos x - \sin x}{\cos x}} = \frac{\cos x - \sin x}{\sin x} \cdot \frac{\cos x}{\cos x - \sin x} = \frac{\cos x}{\sin x} = \cot x.
+\]
+Here canceling \(\cos x - \sin x\) is valid because \(\tan x \neq 1\) means \(\sin x \neq \cos x\). Independently,
+\[
+\text{RHS} = \frac{\frac{1}{\sin x}}{\frac{1}{\cos x}} = \frac{\cos x}{\sin x} = \cot x.
+\]
+Since both sides equal \(\cot x\) on the common domain, [REF: verification-rules.2 | independent two-sided verification] proves \(\text{LHS} = \text{RHS}\).
+
+[QUESTION 3]
+[ANSWER: A]
+In verifying the identity \(\dfrac{\sin x + \tan x}{1 + \cos x} = \tan x\) (for \(\cos x \neq 0\) and \(\cos x \neq -1\)), a student begins with the left-hand side and writes:
+Step 1: \(\dfrac{\sin x + \frac{\sin x}{\cos x}}{1 + \cos x}\).
+Which continuation finishes the proof cleanly in the fewest valid steps?
+
+(A) Factor \(\sin x\) from the numerator to get \(\frac{\sin x\left(1 + \frac{1}{\cos x}\right)}{1 + \cos x}\), combine \(1 + \frac{1}{\cos x} = \frac{\cos x + 1}{\cos x}\), and cancel \(1 + \cos x\) to get \(\frac{\sin x}{\cos x} = \tan x\).
+(B) Cancel \(1\) in \(1 + \cos x\) against \(\frac{1}{\cos x}\) to leave \(\frac{\sin x}{\cos x} = \tan x\).
+(C) Multiply numerator and denominator by \(1 - \cos x\) and replace \(\sin x + \frac{\sin x}{\cos x}\) with \(\frac{\sin^2 x}{\cos x}\).
+(D) Multiply both sides by \(1 + \cos x\) to obtain \(\sin x + \tan x = \tan x + \tan x \cos x = \tan x + \sin x\).
+(E) Split the fraction into \(\frac{\sin x}{1} + \frac{\tan x}{\cos x}\) and simplify each term.
+[/QUESTION]
+
+=== SECTION 4: Disproving false identities with counterexamples ===
+
+Not every equation you are handed is actually an identity. How do you distinguish a true identity from a convincing-looking counterfeit?
+
+A crucial logical asymmetry governs universal statements:
+- Checking one, two, or even ten numerical angles can NEVER prove an identity, because two different functions can agree at many points and still disagree elsewhere.
+- Exhibiting a SINGLE concrete angle \(x_0\) in the common domain of both sides where \(\text{LHS}(x_0) \neq \text{RHS}(x_0)\) completely disproves the claim that the equation is an identity.
+
+[CALLOUT]
+id: counterexample-rule
+label: Principle
+title: Disproving a candidate identity
+tone: key
+
+To prove that \(L(x) = R(x)\) is NOT an identity, exhibit one specific angle \(x_0\) such that:
+(1) both \(L(x_0)\) and \(R(x_0)\) are defined, and
+(2) \(L(x_0) \neq R(x_0)\).
+[/CALLOUT]
+
+Take the classic false candidate
+\[
+\sqrt{1 - \sin^2 x} \stackrel{?}{=} \cos x.
+\]
+If you test only first-quadrant angles like \(x = 0\), \(x = \frac{\pi}{6}\), and \(x = \frac{\pi}{4}\), both sides match perfectly: at \(x = \frac{\pi}{6}\), \(\sqrt{1 - (1/2)^2} = \frac{\sqrt{3}}{2} = \cos\!\left(\frac{\pi}{6}\right)\). Yet the principal square root \(\sqrt{\cdot}\) is ALWAYS nonnegative, so \(\sqrt{1 - \sin^2 x} = \sqrt{\cos^2 x} = |\cos x|\), whereas \(\cos x\) turns negative in Quadrants II and III. Testing \(x_0 = \pi\) gives
+\[
+\text{LHS}(\pi) = \sqrt{1 - \sin^2 \pi} = \sqrt{1 - 0} = 1, \qquad \text{RHS}(\pi) = \cos \pi = -1.
+\]
+Since \(1 \neq -1\), this single counterexample disproves \(\sqrt{1 - \sin^2 x} = \cos x\) as an identity on \(\mathbb{R}\).
+
+The graph below shows exactly why testing only a few Quadrant I angles can fool you: the two curves coincide identically on \(\left[0, \frac{\pi}{2}\right]\) and \(\left[\frac{3\pi}{2}, 2\pi\right]\), yet split apart across the entire interval \(\left(\frac{\pi}{2}, \frac{3\pi}{2}\right)\).
+
+[GRAPH]
+type: function2d
+title: Counterexample to \(\sqrt{1 - \sin^2 x} = \cos x\): agreement in Quadrants I and IV, disagreement in Quadrants II and III
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: 0, 6.2832
+yrange: -1.3, 1.3
+trace: sqrt(1 - sin(x)^2) | label: \(y = \sqrt{1 - \sin^2 x} = |\cos x|\)
+trace: cos(x) | label: \(y = \cos x\)
+point: 3.1416, 1 | label: \((\pi, 1)\)
+point: 3.1416, -1 | label: \((\pi, -1)\)
+segment: 3.1416, -1, 3.1416, 1 | dashed: true
+[/GRAPH]
+
+Watch one subtle trap in [REF: counterexample-rule.1 | condition (1)]: your counterexample \(x_0\) MUST lie in the common domain of both sides. For instance, you cannot use \(x_0 = \frac{\pi}{2}\) to disprove \(\tan^2 x + 1 = \sec^2 x\), because neither side is defined at \(x_0 = \frac{\pi}{2}\)—and that equation IS a genuine identity on its domain! Similarly, when choosing a test angle to probe a suspicious claim like \(\sin(2x) \stackrel{?}{=} 2\sin x\), avoid angles like \(x = 0\) or \(x = \pi\) where both sides accidentally equal \(0\); testing \(x_0 = \frac{\pi}{2}\) immediately yields \(\sin(\pi) = 0 \neq 2 = 2\sin\!\left(\frac{\pi}{2}\right)\), disproving the claim cleanly.
+
+[QUESTION 4]
+[ANSWER: C]
+Which of the following equations is NOT a trigonometric identity on its common domain?
+
+(A) \(\dfrac{\sec x - \cos x}{\sin x} = \tan x\)
+(B) \(\dfrac{1 + \tan^2 x}{\csc^2 x} = \tan^2 x\)
+(C) \(\sqrt{\sec^2 x - 1} = \tan x\)
+(D) \(\cos^2 x - \sin^2 x = 1 - 2\sin^2 x\)
+(E) \(\dfrac{\cot x}{\csc x - \sin x} = \sec x\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Which single angle \(x_0\) is a valid counterexample proving that \(\dfrac{\sin x + \cos x}{\sin x} = 1 + \cos x\) is NOT an identity?
+
+(A) \(x_0 = 0\)
+(B) \(x_0 = \pi\)
+(C) \(x_0 = \frac{\pi}{2}\)
+(D) \(x_0 = \frac{3\pi}{2}\)
+(E) \(x_0 = \frac{\pi}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Consider the identity \(\dfrac{\tan x + \sec x - 1}{\tan x - \sec x + 1} = \tan x + \sec x\) (where both sides are defined). If you start on the left-hand side and replace the constant \(1\) in the numerator with \(\sec^2 x - \tan^2 x\), which factorization finishes the proof in one cancellation?
+
+(A) \(\dfrac{(\tan x + \sec x)(1 + \sec x - \tan x)}{\tan x - \sec x + 1}\)
+(B) \(\dfrac{(\tan x + \sec x)(1 - \sec x + \tan x)}{\tan x - \sec x + 1}\)
+(C) \(\dfrac{(\tan x - \sec x)(1 + \sec x + \tan x)}{\tan x - \sec x + 1}\)
+(D) \(\dfrac{(\sec x - \tan x)(\sec x + \tan x - 1)}{\tan x - \sec x + 1}\)
+(E) \(\dfrac{(\tan x + \sec x)(\sec x - \tan x - 1)}{\tan x - \sec x + 1}\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Suppose a candidate equation \(L(x) = R(x)\) holds at \(x = 0, \frac{\pi}{6}, \frac{\pi}{4}, \frac{\pi}{3},\) and \(\frac{\pi}{2}\). Which conclusion is logically justified?
+
+(A) None of these five checks proves the equation is an identity; it could still be a conditional equation or fail in another quadrant.
+(B) The equation must be an identity because it holds at five distinct points in \(\left[0, \frac{\pi}{2}\right]\).
+(C) The equation must be an identity on \(\left[0, \frac{\pi}{2}\right]\) and therefore on all of \(\mathbb{R}\) by periodicity.
+(D) The equation is definitely not an identity because identities must be checked at negative angles first.
+(E) The equation is proved once we also check \(x = \pi\).
+[/BONUS]

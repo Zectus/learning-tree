@@ -1,0 +1,225 @@
+=== SECTION 1: Defining a plane with a point and a normal vector ===
+
+In the plane \(\mathbb{R}^2\), a single direction vector fixes a line completely because only one line passes through a given point in that direction. In three-dimensional space \(\mathbb{R}^3\), however, specifying one direction parallel to a flat sheet is not enough—infinitely many planes can hinge around that single direction like pages of an open book. What DOES pin down the tilt of a plane uniquely? The single direction perpendicular to it.
+
+Fix a point \(P_0(x_0, y_0, z_0)\) on a plane \(\Pi\) (with position vector \(\mathbf{r}_0 = \langle x_0, y_0, z_0 \rangle\)) and a nonzero vector \(\mathbf{n} = \langle a, b, c \rangle\) perpendicular to \(\Pi\), called a normal vector. A point \(P(x, y, z)\) with position vector \(\mathbf{r} = \langle x, y, z \rangle\) lies on \(\Pi\) if and only if the displacement vector \(\overrightarrow{P_0 P} = \mathbf{r} - \mathbf{r}_0\) lies inside the plane—meaning it is orthogonal to \(\mathbf{n}\). Translating orthogonality via the dot product gives
+\[
+\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0.
+\]
+Writing this dot product in components expands directly to
+\[
+a(x - x_0) + b(y - y_0) + c(z - z_0) = 0.
+\]
+Distributing the coefficients and collecting the constant terms into \(d = ax_0 + by_0 + cz_0 = \mathbf{n} \cdot \mathbf{r}_0\) produces the linear Cartesian equation \(ax + by + cz = d\).
+
+[CALLOUT]
+id: plane-eq
+label: Definition
+title: Vector, scalar, and Cartesian equations of a plane in \(\mathbb{R}^3\)
+tone: key
+
+Let \(\Pi\) be the plane passing through \(P_0(x_0, y_0, z_0)\) with position vector \(\mathbf{r}_0 = \langle x_0, y_0, z_0 \rangle\) and nonzero normal vector \(\mathbf{n} = \langle a, b, c \rangle\).
+
+(1) Vector equation: \(\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0\), or equivalently \(\mathbf{n} \cdot \mathbf{r} = \mathbf{n} \cdot \mathbf{r}_0\).
+(2) Scalar point-normal equation:
+\[
+a(x - x_0) + b(y - y_0) + c(z - z_0) = 0.
+\]
+(3) Linear Cartesian form:
+\[
+ax + by + cz = d, \qquad \text{where } d = ax_0 + by_0 + cz_0.
+\]
+(4) Reading the normal: in any linear equation \(ax + by + cz = d\) with \((a, b, c) \ne (0, 0, 0)\), the coefficient triple \(\mathbf{n} = \langle a, b, c \rangle\) is automatically a normal vector to the plane.
+[/CALLOUT]
+
+Any nonzero scalar multiple \(k\mathbf{n}\) (\(k \ne 0\)) points along the exact same perpendicular line, so multiplying a plane's equation by a nonzero constant changes the coefficients without changing the plane. Conversely, a single linear equation in \(x\), \(y\), and \(z\) ALWAYS defines a plane in \(\mathbb{R}^3\) (never a line).
+
+Solving \(2x + 3y + 6z = 12\) for \(z\) gives \(z = 2 - \frac{x}{3} - \frac{y}{2}\). Its normal vector \(\mathbf{n} = \langle 2, 3, 6 \rangle\) tilts upward into the first octant, perpendicular to the flat surface plotted below.
+
+[GRAPH]
+type: surface3d
+title: Plane \(2x + 3y + 6z = 12\) with normal \(\mathbf{n} = \langle 2, 3, 6 \rangle\)
+xlabel: \(x\)
+ylabel: \(y\)
+zlabel: z
+xrange: -1, 6
+yrange: -1, 5
+z: 2 - x/3 - y/2
+[/GRAPH]
+
+Let us apply [REF: plane-eq.2 | the scalar point-normal equation] to find the plane through \(P_0(1, -2, 3)\) with normal \(\mathbf{n} = \langle 4, -1, 2 \rangle\):
+\[
+4(x - 1) - 1(y + 2) + 2(z - 3) = 0 \implies 4x - 4 - y - 2 + 2z - 6 = 0 \implies 4x - y + 2z = 12.
+\]
+Checking by substituting \(P_0(1, -2, 3)\) back into the final equation gives \(4(1) - (-2) + 2(3) = 4 + 2 + 6 = 12\), an effortless safeguard against sign errors.
+
+What if a variable is missing from a linear equation, such as \(5x - 2z = 9\)? Rewrite it as \(5x + 0y - 2z = 9\). By [REF: plane-eq.4 | reading the normal], \(\mathbf{n} = \langle 5, 0, -2 \rangle\). Because the \(y\)-component of \(\mathbf{n}\) is \(0\), we have \(\mathbf{n} \cdot \mathbf{j} = 0\): the normal is perpendicular to the \(y\)-axis, which means the plane itself runs parallel to the \(y\)-axis (forming a flat vertical wall swept parallel to \(y\)).
+
+[QUESTION 1]
+[ANSWER: B]
+Find the linear Cartesian equation of the plane passing through \(P_0(3, -1, 2)\) that is perpendicular to the displacement vector \(\overrightarrow{AB}\) from \(A(1, 2, -1)\) to \(B(4, 0, 3)\).
+
+(A) \(3x - 2y + 4z = 15\)
+(B) \(3x - 2y + 4z = 19\)
+(C) \(3x + 2y + 4z = 15\)
+(D) \(x + 2y - z = -1\)
+(E) \(5x + 2y + 2z = 17\)
+[/QUESTION]
+
+=== SECTION 2: Constructing planes from points and lines ===
+
+In practice, a geometric description of a plane rarely hands you a normal vector \(\mathbf{n}\) outright. Instead, it gives points or lines lying in (or parallel to) the plane. The strategy in every such problem is identical:
+1. Extract two non-parallel direction vectors \(\mathbf{u}\) and \(\mathbf{v}\) that are parallel to the plane.
+2. Compute a normal vector via the cross product \(\mathbf{n} = \mathbf{u} \times \mathbf{v}\).
+3. Combine \(\mathbf{n}\) with any known point \(P_0\) on the plane using [REF: plane-eq.2 | the scalar point-normal equation].
+
+First, consider three points \(P\), \(Q\), and \(R\) in \(\mathbb{R}^3\). Anchor two displacement vectors at a shared vertex, \(\overrightarrow{PQ}\) and \(\overrightarrow{PR}\), and take \(\mathbf{n} = \overrightarrow{PQ} \times \overrightarrow{PR}\). If \(\mathbf{n} \ne \mathbf{0}\), the three points are non-collinear and uniquely determine a plane. If \(\mathbf{n} = \mathbf{0}\), then \(\overrightarrow{PQ}\) and \(\overrightarrow{PR}\) are parallel, meaning \(P\), \(Q\), and \(R\) lie on a single straight line—infinitely many planes contain them, so no unique plane is determined.
+
+For example, find the plane through \(P(1, 0, 2)\), \(Q(3, 1, 1)\), and \(R(2, -2, 4)\). Compute
+\[
+\overrightarrow{PQ} = \langle 2, 1, -1 \rangle, \qquad \overrightarrow{PR} = \langle 1, -2, 2 \rangle.
+\]
+Taking their cross product gives
+\[
+\mathbf{n} = \overrightarrow{PQ} \times \overrightarrow{PR} = \begin{vmatrix} \mathbf{i} & \mathbf{j} & \mathbf{k} \\ 2 & 1 & -1 \\ 1 & -2 & 2 \end{vmatrix} = \langle 2 - 2,\; -(4 + 1),\; -4 - 1 \rangle = \langle 0, -5, -5 \rangle.
+\]
+Since any nonzero scalar multiple of \(\mathbf{n}\) is equally valid, dividing by \(-5\) yields the cleaner normal \(\mathbf{n}' = \langle 0, 1, 1 \rangle\). Using \(P(1, 0, 2)\) gives
+\[
+0(x - 1) + 1(y - 0) + 1(z - 2) = 0 \implies y + z = 2.
+\]
+Quick verification on the other two points: for \(Q(3, 1, 1)\), \(1 + 1 = 2\); for \(R(2, -2, 4)\), \(-2 + 4 = 2\). Both satisfy the equation.
+
+Next, recall how a line \(L\) in \(\mathbb{R}^3\) is written in vector form: \(\mathbf{r}(t) = \mathbf{p}_0 + t\mathbf{v}\), which traces all points reached from a base point \(P_0\) (position vector \(\mathbf{p}_0\)) by moving along a nonzero direction vector \(\mathbf{v}\). Three standard line-based specifications of a plane follow the exact same cross-product recipe:
+
+[CALLOUT]
+id: plane-specs
+label: Methods
+title: Finding a normal vector from standard geometric data
+tone: key
+
+To build the equation of a plane from geometric data, obtain two non-parallel vectors \(\mathbf{u}, \mathbf{v}\) parallel to the plane and set \(\mathbf{n} = \mathbf{u} \times \mathbf{v}\):
+
+(1) Three non-collinear points \(P, Q, R\): use \(\mathbf{u} = \overrightarrow{PQ}\) and \(\mathbf{v} = \overrightarrow{PR}\) (collinear if \(\overrightarrow{PQ} \times \overrightarrow{PR} = \mathbf{0}\)).
+(2) A point \(Q\) and a line \(L: \mathbf{r}(t) = \mathbf{p}_0 + t\mathbf{v}\) with \(Q \notin L\): use the line's direction \(\mathbf{v}\) and the bridge vector \(\overrightarrow{P_0 Q}\), giving \(\mathbf{n} = \mathbf{v} \times \overrightarrow{P_0 Q}\).
+(3) Two intersecting lines with non-parallel directions \(\mathbf{v}_1\) and \(\mathbf{v}_2\): both directions lie in the plane, so \(\mathbf{n} = \mathbf{v}_1 \times \mathbf{v}_2\), paired with their intersection point (or any point on either line).
+(4) Two parallel distinct lines \(L_1\) (through \(P_1\)) and \(L_2\) (through \(P_2\)) with common direction \(\mathbf{v}\): use \(\mathbf{v}\) and the bridge vector \(\overrightarrow{P_1 P_2}\) connecting one line to the other, giving \(\mathbf{n} = \mathbf{v} \times \overrightarrow{P_1 P_2}\).
+[/CALLOUT]
+
+Watch out for the trap in [REF: plane-specs.4 | two parallel distinct lines]. Because the direction vectors \(\mathbf{v}_1\) and \(\mathbf{v}_2\) are proportional, taking \(\mathbf{v}_1 \times \mathbf{v}_2\) always produces \(\mathbf{0}\)! That vanishing cross product does NOT mean the lines fail to determine a plane—it simply means \(\mathbf{v}_1\) and \(\mathbf{v}_2\) supply only one direction in the plane. You obtain the second independent direction by forming the bridge vector \(\overrightarrow{P_1 P_2}\) from a point on \(L_1\) to a point on \(L_2\). Only if \(\mathbf{v} \times \overrightarrow{P_1 P_2} = \mathbf{0}\) as well are the two lines actually the same coincident line (leaving infinitely many planes).
+
+[TABLE]
+Geometric specification | Known point \(P_0\) | Two in-plane vectors | Normal vector \(\mathbf{n}\) | Degeneracy check
+Point \(P_0\) and normal \(\mathbf{n}\) | \(P_0\) | Not needed | \(\mathbf{n}\) directly | \(\mathbf{n} = \mathbf{0}\)
+Three points \(P, Q, R\) | \(P\) | \(\overrightarrow{PQ},\; \overrightarrow{PR}\) | \(\overrightarrow{PQ} \times \overrightarrow{PR}\) | \(\mathbf{n} = \mathbf{0}\) (collinear)
+Point \(Q\) and line \((P_0, \mathbf{v})\) | \(Q\) or \(P_0\) | \(\mathbf{v},\; \overrightarrow{P_0 Q}\) | \(\mathbf{v} \times \overrightarrow{P_0 Q}\) | \(\mathbf{n} = \mathbf{0}\) (\(Q \in L\))
+Two intersecting lines | Common point | \(\mathbf{v}_1,\; \mathbf{v}_2\) | \(\mathbf{v}_1 \times \mathbf{v}_2\) | \(\mathbf{v}_1 \parallel \mathbf{v}_2\)
+Two parallel lines \((P_1, \mathbf{v})\), \((P_2, \mathbf{v})\) | \(P_1\) or \(P_2\) | \(\mathbf{v},\; \overrightarrow{P_1 P_2}\) | \(\mathbf{v} \times \overrightarrow{P_1 P_2}\) | \(\mathbf{n} = \mathbf{0}\) (coincident)
+[/TABLE]
+
+[QUESTION 2]
+[ANSWER: A]
+What is a linear Cartesian equation of the plane passing through the three points \(A(1, 1, 2)\), \(B(2, 3, 1)\), and \(C(0, 2, 4)\)?
+
+(A) \(5x - y + 3z = 10\)
+(B) \(5x + y + 3z = 12\)
+(C) \(5x - y + 3z = 8\)
+(D) \(3x - y + 5z = 12\)
+(E) \(5x - y - 3z = -2\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: C]
+Consider the two lines \(L_1: \mathbf{r}_1(t) = \langle 1, 0, -1 \rangle + t\langle 2, -1, 3 \rangle\) and \(L_2: \mathbf{r}_2(s) = \langle 2, 1, 0 \rangle + s\langle -4, 2, -6 \rangle\). Which statement correctly describes the plane containing both \(L_1\) and \(L_2\)?
+
+(A) No unique plane exists because \(\langle 2, -1, 3 \rangle \times \langle -4, 2, -6 \rangle = \mathbf{0}\)
+(B) The unique plane is \(2x - y + 3z = -1\)
+(C) The unique plane is \(4x - y - 3z = 7\)
+(D) The unique plane is \(4x - y - 3z = 1\)
+(E) The unique plane is \(4x + y - 3z = 7\)
+[/QUESTION]
+
+=== SECTION 3: Intercept form, planar traces, and parallel planes ===
+
+How do you sketch a plane \(Ax + By + Cz = d\) quickly by hand? When all four numbers \(A, B, C, d\) are nonzero, locate where the plane cuts each coordinate axis:
+- Set \(y = 0\) and \(z = 0\) to get the \(x\)-intercept \((a, 0, 0)\), where \(a = d/A\).
+- Set \(x = 0\) and \(z = 0\) to get the \(y\)-intercept \((0, b, 0)\), where \(b = d/B\).
+- Set \(x = 0\) and \(y = 0\) to get the \(z\)-intercept \((0, 0, c)\), where \(c = d/C\).
+
+Dividing \(Ax + By + Cz = d\) through by \(d\) rewrites the equation directly in terms of these three intercepts:
+\[
+\frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1.
+\]
+The straight lines connecting the intercepts in pairs are the traces of the plane in the three coordinate planes (\(xy\)-, \(yz\)-, and \(xz\)-planes). When \(a, b, c > 0\), those three trace segments bound a triangle in the first octant that immediately shows the plane's slant. For instance, the plane \(2x + 3y + 6z = 12\) plotted in Section 1 divides by \(12\) to become
+\[
+\frac{x}{6} + \frac{y}{4} + \frac{z}{2} = 1,
+\]
+so its intercepts are \((6, 0, 0)\), \((0, 4, 0)\), and \((0, 0, 2)\).
+
+Now compare two planes \(\Pi_1: a_1 x + b_1 y + c_1 z = d_1\) and \(\Pi_2: a_2 x + b_2 y + c_2 z = d_2\) with normal vectors \(\mathbf{n}_1 = \langle a_1, b_1, c_1 \rangle\) and \(\mathbf{n}_2 = \langle a_2, b_2, c_2 \rangle\). Because a plane's orientation is fixed entirely by its normal direction, two planes are parallel if and only if their normal vectors are parallel (\(\mathbf{n}_2 = k\mathbf{n}_1\) for some nonzero scalar \(k\)). Among parallel planes, the constant term decides whether they are the same plane or distinct parallel sheets.
+
+[CALLOUT]
+id: plane-intercept-parallel
+label: Formulas
+title: Intercept form and parallel vs. coincident planes
+tone: key
+
+(1) Intercept form: if a plane has nonzero intercepts \((a, 0, 0)\), \((0, b, 0)\), and \((0, 0, c)\) on the coordinate axes, its equation is
+\[
+\frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1.
+\]
+(2) Parallel planes: two planes \(\Pi_1\) and \(\Pi_2\) with normals \(\mathbf{n}_1\) and \(\mathbf{n}_2\) are parallel if and only if \(\mathbf{n}_2 = k\mathbf{n}_1\) for some scalar \(k \ne 0\).
+(3) Coincident vs. parallel and distinct: when \(\mathbf{n}_2 = k\mathbf{n}_1\), the two planes are coincident (the exact same plane) if \(d_2 = kd_1\), and parallel and distinct if \(d_2 \ne kd_1\).
+[/CALLOUT]
+
+Notice what happens geometrically when you fix a normal vector—say \(\mathbf{n} = \langle 2, 1, 2 \rangle\)—and vary only the constant \(d\) in the family of planes \(2x + y + 2z = d\). Setting \(z = 0\) reveals each plane's trace \(2x + y = d\) in the \(xy\)-plane. Drag the slider \(d\) below to watch the \(xy\)-trace slide parallel to itself while remaining perpendicular to the projected normal direction \(\langle 2, 1 \rangle\); at \(d = 0\) the plane passes through the origin.
+
+[GRAPH]
+type: parametric2d
+title: Shifting \(xy\)-traces \(2x + y = d\) of the parallel plane family \(2x + y + 2z = d\)
+xlabel: \(x\)
+ylabel: \(y\)
+trange: -4, 5
+xrange: -3.5, 5.5
+yrange: -3.5, 5.5
+trace: t, d - 2*t | label: \(xy\)-trace \(2x + y = d\)
+trace: t, 4 - 2*t | label: reference trace \(d = 4\)
+segment: 0, 0, 2, 1 | label: \(\langle 2, 1 \rangle\)
+point: d/2, 0 | label: x-int
+point: 0, d | label: y-int
+slider: d | range: -2, 6 | init: 2 | step: 0.5
+[/GRAPH]
+
+Observe also why the reciprocal structure in [REF: plane-intercept-parallel.1 | intercept form] matters: a larger intercept produces a SMALLER coefficient in the Cartesian equation. Confusing the intercepts \((a, b, c)\) with the normal vector \(\langle a, b, c \rangle\) tilts the plane in the wrong direction unless \(a = b = c\).
+
+[QUESTION 4]
+[ANSWER: D]
+A plane \(\Pi_1\) cuts the coordinate axes at \((4, 0, 0)\), \((0, -2, 0)\), and \((0, 0, 6)\). What is the linear Cartesian equation of the plane \(\Pi_2\) that is parallel to \(\Pi_1\) and passes through \((1, 1, 1)\)?
+
+(A) \(3x - 6y + 2z = 12\)
+(B) \(4x - 2y + 6z = 8\)
+(C) \(3x + 6y + 2z = 11\)
+(D) \(3x - 6y + 2z = -1\)
+(E) \(3x - 6y + 2z = 1\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+For which real value of \(k\) do the three points \(P(1, 2, 1)\), \(Q(3, 0, 5)\), and \(R(2, k, 3)\) fail to determine a unique plane in \(\mathbb{R}^3\)?
+
+(A) \(k = 0\)
+(B) \(k = -1\)
+(C) \(k = 1\)
+(D) \(k = 2\)
+(E) They determine a unique plane for every real value of \(k\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Find the linear Cartesian equation of the plane that passes through \(P(2, -1, 3)\) and \(Q(5, 3, 1)\) and is parallel to the \(x\)-axis.
+
+(A) \(2y - z = -5\)
+(B) \(y + 2z = 5\)
+(C) \(4x - 3y = 11\)
+(D) \(x + 2z = 8\)
+(E) \(y - 2z = -7\)
+[/BONUS]

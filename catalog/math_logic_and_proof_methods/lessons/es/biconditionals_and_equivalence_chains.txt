@@ -1,0 +1,257 @@
+=== SECTION 1: Demostración de bicondicionales en dos direcciones ===
+
+Muchos de los teoremas más potentes de la matemática son caracterizaciones: afirman que dos condiciones aparentemente distintas se cumplen exactamente para los mismos objetos. Por ejemplo, para un entero \(n \in \mathbb{Z}\), "\(n\) es impar si y solo si \(n^2\) es impar", o para un número real \(x \in \mathbb{R}\), "\(x\) es racional si y solo si \(3x - 5\) es racional".
+
+Recuerde de la lógica proposicional que un bicondicional \(P \Leftrightarrow Q\) es lógicamente equivalente a la conjunción de dos implicaciones opuestas:
+\[
+(P \iff Q) \;\equiv\; (P \implies Q) \;\wedge\; (Q \implies P).
+\]
+En consecuencia, una demostración completa de un bicondicional DEBE establecer AMBAS direcciones:
+- La dirección hacia adelante (\(\Rightarrow\)): suponer \(P\) y demostrar \(Q\).
+- La dirección inversa o recíproca (\(\Leftarrow\)): suponer \(Q\) y demostrar \(P\).
+
+Una observación práctica fundamental: ¡las dos direcciones NO tienen por qué usar el mismo método de demostración! Muy a menudo una dirección es una demostración directa rápida, mientras que la dirección opuesta resulta más limpia por contraposición o contradicción.
+
+[CALLOUT]
+id: template-biconditional
+label: Método
+title: Demostración en dos direcciones de \(\forall x \in D,\, (P(x) \Leftrightarrow Q(x))\)
+tone: key
+
+(1) Fije un \(x \in D\) arbitrario.
+(2) Etiquete y demuestre la dirección hacia adelante (\(\Rightarrow\)): pruebe \(P(x) \Rightarrow Q(x)\) usando el método que mejor encaje (directo, por casos, contraposición o contradicción).
+(3) Etiquete y demuestre la dirección inversa (\(\Leftarrow\)): pruebe \(Q(x) \Rightarrow P(x)\) de manera independiente, eligiendo de nuevo el método más limpio para esa dirección.
+(4) Nunca suponga que una dirección implica la otra: un enunciado y su recíproca son lógicamente independientes.
+[/CALLOUT]
+
+Apliquemos [REF: template-biconditional | la plantilla de dos direcciones] a una caracterización clásica de divisibilidad en la que combinar demostración directa y contraposición rinde fruto de inmediato. Recuerde de nuestra lección sobre demostración por casos que todo entero \(n \in \mathbb{Z}\) deja resto \(0, 1\) o \(2\) al dividirlo entre \(3\).
+
+[CALLOUT]
+id: proof-div-by-3-iff
+label: Demostración
+title: Teorema: Para todo \(n \in \mathbb{Z}\), \(3 \mid n\) si y solo si \(3 \mid n^2\)
+tone: note
+
+Demostración: Sea \(n \in \mathbb{Z}\) arbitrario.
+
+(\(\Rightarrow\)) Supongamos \(3 \mid n\). Por definición de divisibilidad, \(n = 3k\) para algún \(k \in \mathbb{Z}\). Elevando al cuadrado se obtiene
+\[
+n^2 = (3k)^2 = 9k^2 = 3(3k^2).
+\]
+Como \(3k^2 \in \mathbb{Z}\), tenemos \(3 \mid n^2\).
+
+(\(\Leftarrow\)) Demostraremos la contrarrecíproca: si \(3 \nmid n\), entonces \(3 \nmid n^2\). Supongamos \(3 \nmid n\). Por el algoritmo de la división módulo \(3\), o bien \(n = 3q + 1\) o bien \(n = 3q + 2\) para algún \(q \in \mathbb{Z}\).
+- Caso 1: \(n = 3q + 1\). Entonces \(n^2 = 9q^2 + 6q + 1 = 3(3q^2 + 2q) + 1\), que deja resto \(1\) al dividirlo entre \(3\), por lo que \(3 \nmid n^2\).
+- Caso 2: \(n = 3q + 2\). Entonces \(n^2 = 9q^2 + 12q + 4 = 3(3q^2 + 4q + 1) + 1\), que también deja resto \(1\) al dividirlo entre \(3\), por lo que \(3 \nmid n^2\).
+
+En ambos casos \(3 \nmid n^2\). Por contraposición, si \(3 \mid n^2\), entonces \(3 \mid n\). Combinar ambas direcciones establece \(3 \mid n \iff 3 \mid n^2\).
+[/CALLOUT]
+
+Mire qué limpiamente [REF: proof-div-by-3-iff | esa demostración] emparejó una demostración directa de dos líneas para (\(\Rightarrow\)) con una contrarrecíproca más partición por casos para (\(\Leftarrow\)). Note también que podríamos haber demostrado igualmente (\(\Rightarrow\)) de forma directa y (\(\Leftarrow\)) por contradicción: lo que importa es que cada dirección sea hermética por separado.
+
+[QUESTION 1]
+[ANSWER: D]
+Deseamos demostrar: "Para todo número real \(x \in \mathbb{R}\), \(x\) es irracional si y solo si \(5x - 2\) es irracional." ¿Qué par de subdemostraciones establece el teorema por completo?
+
+(A) Suponer \(x \in \mathbb{Q}\) y demostrar \(5x - 2 \in \mathbb{Q}\); luego suponer \(x \notin \mathbb{Q}\) y demostrar \(x \notin \mathbb{Q}\).
+(B) Suponer \(x \notin \mathbb{Q}\) y demostrar \(5x - 2 \notin \mathbb{Q}\); esto ya cubre la dirección inversa porque \(5x - 2\) es lineal.
+(C) Suponer \(5x - 2 \in \mathbb{Q}\) y demostrar \(x \in \mathbb{Q}\); luego suponer \(x \notin \mathbb{Q}\) y demostrar \(5x - 2 \notin \mathbb{Q}\) (note que son contrarrecíprocas una de la otra).
+(D) Demostrar (\(\Rightarrow\)) por contraposición: suponer \(5x - 2 \in \mathbb{Q}\) y deducir \(x = \frac{(5x - 2) + 2}{5} \in \mathbb{Q}\); demostrar (\(\Leftarrow\)) por contraposición: suponer \(x \in \mathbb{Q}\) y deducir \(5x - 2 \in \mathbb{Q}\).
+(E) Suponer \(x \in \mathbb{Q}\) y \(5x - 2 \notin \mathbb{Q}\) para llegar a una contradicción; no hace falta una segunda dirección una vez alcanzada una contradicción.
+[/QUESTION]
+
+=== SECTION 2: Derivaciones en cadena única \(\iff\) y pasos irreversibles ===
+
+En ocasiones, un bicondicional puede demostrarse en una única cadena de equivalencias:
+\[
+P \iff R_1 \iff R_2 \iff \dots \iff Q.
+\]
+Por ejemplo, para \(x, y \in \mathbb{R}\) arbitrarios:
+\[
+x^2 + y^2 = 2xy \iff x^2 - 2xy + y^2 = 0 \iff (x - y)^2 = 0 \iff x - y = 0 \iff x = y.
+\]
+¿Por qué es completamente válida esa cadena única? Compruebe CADA flecha en AMBOS sentidos:
+- Restar \(2xy\) en ambos lados se invierte sumando \(2xy\).
+- Reescribir \(x^2 - 2xy + y^2\) como \((x - y)^2\) es una identidad algebraica (reversible).
+- Sobre \(\mathbb{R}\), \(u^2 = 0\) se cumple si y solo si \(u = 0\) (ambas direcciones se cumplen).
+- Sumar \(y\) invierte restar \(y\).
+
+Sin embargo, las demostraciones en cadena única \(\iff\) son trampas célebres siempre que INCLUSO UN SOLO paso sea únicamente unidireccional (se cumple \(\Rightarrow\), pero falla \(\Leftarrow\)). Compare las operaciones reversibles frente a las unidireccionales sobre \(\mathbb{R}\):
+
+[TABLE]
+Operación algebraica sobre \(A = B\) | Hacia adelante (\(\Rightarrow\)) | Hacia atrás (\(\Leftarrow\)) | ¿Segura para \(\iff\)?
+Sumar o restar la misma expresión real \(C\) | Siempre válida | Siempre válida | Sí
+Multiplicar o dividir ambos lados entre un número conocido DISTINTO DE CERO \(c \ne 0\) | Siempre válida | Siempre válida | Sí
+Multiplicar ambos lados por una expresión \(E(x)\) que podría valer \(0\) | Válida | FALLA cuando \(E(x) = 0\) | No
+Elevar ambos lados al cuadrado (\(A = B \to A^2 = B^2\)) | Válida | FALLA cuando \(A = -B \ne 0\) | No
+Elevar ambos lados al cubo sobre \(\mathbb{R}\) (\(A = B \to A^3 = B^3\)) | Válida | Siempre válida (ya que \(t \mapsto t^3\) es estrictamente creciente en \(\mathbb{R}\)) | Sí
+[/TABLE]
+
+[CALLOUT]
+id: caution-irreversible-steps
+label: Precaución
+title: Los pasos irreversibles destruyen silenciosamente una demostración en cadena única \(\iff\)
+tone: caution
+
+(1) Si una cadena contiene siquiera un único paso donde solo se cumple \(\Rightarrow\) (como elevar ambos lados al cuadrado sin restricciones de signo, o multiplicar por una expresión que puede anularse), la cadena demuestra ÚNICAMENTE \(P \Rightarrow Q\), no \(P \Leftrightarrow Q\).
+(2) Ponga a prueba los eslabones sospechosos comprobando si pueden aparecer soluciones extrañas en la dirección inversa.
+(3) Siempre que un paso sea reversible únicamente bajo condiciones adicionales (por ejemplo, \(A = B \iff A^2 = B^2\) SOLO cuando \(A \ge 0\) y \(B \ge 0\)), arrastre esas condiciones laterales explícitamente en cada línea o cambie a [REF: template-biconditional | una demostración en dos direcciones].
+[/CALLOUT]
+
+Vea [REF: caution-irreversible-steps.1 | este fallo] en acción en la ecuación real \(\sqrt{x + 2} = x\):
+\[
+\sqrt{x + 2} = x \;\stackrel{?}{\iff}\; x + 2 = x^2 \iff x^2 - x - 2 = 0 \iff (x - 2)(x + 1) = 0 \iff x \in \{-1, 2\}.
+\]
+Compruebe \(x = -1\): el lado izquierdo es \(\sqrt{-1 + 2} = 1\), ¡mientras que el lado derecho es \(-1 \ne 1\)! La primera flecha era ÚNICAMENTE \(\Rightarrow\), NO \(\iff\), porque elevar al cuadrado borró la restricción de signo \(x \ge 0\). Mantener explícita la condición lateral restaura la equivalencia verdadera:
+\[
+\sqrt{x + 2} = x \iff \bigl(x \ge 0 \text{ y } x + 2 = x^2\bigr) \iff \bigl(x \ge 0 \text{ y } x \in \{-1, 2\}\bigr) \iff x = 2.
+\]
+
+[QUESTION 2]
+[ANSWER: B]
+Un estudiante intenta demostrar para todos \(x, y \in \mathbb{R}\) que \(x = y \iff x^2 = xy\) escribiendo:
+Paso 1: \(x = y\)
+Paso 2: Multiplicar ambos lados por \(x\) para obtener \(x^2 = xy\).
+Paso 3: Concluir \(x = y \iff x^2 = xy\).
+¿Dónde falla la demostración, y es verdadero el bicondicional afirmado?
+
+(A) El Paso 2 es inválido en la dirección hacia adelante cuando \(x = 0\); el bicondicional es verdadero.
+(B) El Paso 2 es irreversible cuando \(x = 0\) (solo demuestra \(x = y \Rightarrow x^2 = xy\)); el bicondicional es FALSO, como muestra \(x = 0, y = 5\).
+(C) El Paso 2 es reversible, por lo que la demostración es válida y el bicondicional es verdadero.
+(D) El Paso 2 falla únicamente cuando \(y = 0\); el bicondicional es falso para \(x = 3, y = 0\).
+(E) El Paso 2 es irreversible únicamente cuando \(x < 0\); el bicondicional se cumple para todos \(x, y \ge 0\).
+[/QUESTION]
+
+=== SECTION 3: Cadenas de equivalencias (TFAE) y estrategias cíclicas de implicación ===
+
+Con frecuencia un teorema afirma no solo que dos enunciados son equivalentes, sino que tres, cuatro o \(k\) enunciados son TODOS equivalentes por pares. Los matemáticos introducen tales resultados con la frase "Las siguientes afirmaciones son equivalentes" (abreviada en inglés como TFAE, por "The following are equivalent"):
+"Para todo \(x \in D\), las siguientes afirmaciones son equivalentes: (1) \(P_1(x)\), (2) \(P_2(x)\), ..., (k) \(P_k(x)\)."
+
+¿Qué significa TFAE lógicamente? ¡Afirma que para TODO par de índices \(i, j \in \{1, \dots, k\}\) con \(i \ne j\), se cumple la implicación \(P_i(x) \Rightarrow P_j(x)\)! Para \(k = 3\) enunciados, hay \(3 \times 2 = 6\) implicaciones ordenadas; para \(k = 4\), hay \(4 \times 3 = 12\); en general, hay \(k(k - 1)\) implicaciones ordenadas.
+
+Demostrar todas las \(k(k - 1)\) implicaciones por separado sería penosamente repetitivo. En su lugar, recuerde el silogismo hipotético (transitividad de la implicación): si \(A \Rightarrow B\) y \(B \Rightarrow C\), entonces \(A \Rightarrow C\). Por lo tanto, si demostramos apenas \(k\) implicaciones dispuestas en un único ciclo cerrado,
+\[
+(1) \implies (2) \implies (3) \implies \dots \implies (k) \implies (1),
+\]
+¡entonces podemos alcanzar CUALQUIER enunciado \(P_j\) desde CUALQUIER enunciado \(P_i\) simplemente avanzando por el ciclo! Por ejemplo, en el ciclo de 4 enunciados \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (4) \Rightarrow (1)\), obtenemos automáticamente \((3) \Rightarrow (1)\) mediante \((3) \Rightarrow (4) \Rightarrow (1)\), y \((4) \Rightarrow (2)\) mediante \((4) \Rightarrow (1) \Rightarrow (2)\). ¡Apenas \(k\) demostraciones establecen todas las \(k(k - 1)\) implicaciones!
+
+En general, cualquier conjunto de implicaciones demostradas establece TFAE si y solo si su grafo dirigido es FUERTEMENTE CONEXO, es decir, existe un camino dirigido de flechas desde cada enunciado \(P_i\) hasta cada otro enunciado \(P_j\). Un único ciclo de longitud \(k\) utiliza el número mínimo posible de implicaciones (\(k\)), aunque otros patrones fuertemente conexos (como un "centro" \((1) \iff (2)\) y \((1) \iff (3)\), usando \(4\) implicaciones para \(k = 3\), o dos ciclos solapados) también son completamente válidos cuando simplifican el álgebra.
+
+[CALLOUT]
+id: template-tfae-cycle
+label: Método
+title: Demostraciones cíclicas y fuertemente conexas para TFAE
+tone: key
+
+(1) Para demostrar que \(k\) enunciados \((1), (2), \dots, (k)\) son equivalentes, NO necesita demostrar las \(k(k - 1)\) implicaciones.
+(2) Demostrar un único ciclo cerrado —en CUALQUIER orden que elija, como \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\)— requiere solo \(k\) implicaciones y establece cada equivalencia por pares por transitividad.
+(3) Más en general, cualquier colección de implicaciones funciona si y solo si todo enunciado puede alcanzar a todo otro enunciado siguiendo flechas dirigidas. ¡Si siquiera un enunciado carece de camino saliente hacia otro, TFAE NO queda demostrado!
+[/CALLOUT]
+
+Observe la libertad estratégica en [REF: template-tfae-cycle.2 | elegir el orden del ciclo]: ¡NO tiene por qué seguir la numeración \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (1)\)! Reordenar el ciclo a menudo elimina álgebra engorrosa. Vea esto en una caracterización entera de 3 enunciados:
+"Para todo entero \(n \in \mathbb{Z}\), las siguientes afirmaciones son equivalentes:
+(1) \(n\) es impar;
+(2) \(n^2\) es impar;
+(3) \(8 \mid (n^2 - 1)\)."
+
+Compare los dos ciclos posibles:
+- Orden ingenuo \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (1)\): ¡demostrar \((2) \Rightarrow (3)\) directamente ("si \(n^2\) es impar, entonces \(8 \mid (n^2 - 1)\)") le obliga a demostrar primero que \(n\) es impar de todos modos!
+- Orden inteligente \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\): ¡observe cómo cada eslabón se vuelve facilísimo!
+
+[CALLOUT]
+id: proof-tfae-odd-mod8
+label: Demostración
+title: Teorema: Para \(n \in \mathbb{Z}\), (1) \(n\) es impar, (2) \(n^2\) es impar y (3) \(8 \mid (n^2 - 1)\) son equivalentes
+tone: note
+
+Demostración: Sea \(n \in \mathbb{Z}\) arbitrario. Demostraremos el ciclo \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\).
+
+\((1) \Rightarrow (3)\): Supongamos que \(n\) es impar, de modo que \(n = 2k + 1\) para algún \(k \in \mathbb{Z}\). Entonces
+\[
+n^2 - 1 = (2k + 1)^2 - 1 = 4k^2 + 4k = 4k(k + 1).
+\]
+Como \(k\) y \(k + 1\) son enteros consecutivos, uno de ellos es par, por lo que \(k(k + 1) = 2m\) para algún \(m \in \mathbb{Z}\) (como establecimos en nuestra lección sobre demostración por casos). Así, \(n^2 - 1 = 4(2m) = 8m\), de modo que \(8 \mid (n^2 - 1)\).
+
+\((3) \Rightarrow (2)\): Supongamos \(8 \mid (n^2 - 1)\). Entonces \(n^2 - 1 = 8m\) para algún \(m \in \mathbb{Z}\), por lo que
+\[
+n^2 = 8m + 1 = 2(4m) + 1.
+\]
+Como \(4m \in \mathbb{Z}\), \(n^2\) es impar.
+
+\((2) \Rightarrow (1)\): Demostraremos la contrarrecíproca. Supongamos que \(n\) es par, de modo que \(n = 2k\) para algún \(k \in \mathbb{Z}\). Entonces \(n^2 = 4k^2 = 2(2k^2)\), que es par. Por contraposición, si \(n^2\) es impar, entonces \(n\) es impar.
+
+Como \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\) forma un ciclo cerrado, los tres enunciados son equivalentes.
+[/CALLOUT]
+
+Mire qué limpiamente [REF: proof-tfae-odd-mod8 | elegir el ciclo \((1) \Rightarrow (3) \Rightarrow (2) \Rightarrow (1)\)] evitó duplicar trabajo: \((1) \Rightarrow (3)\) usó la suposición fuerte \(n = 2k + 1\), \((3) \Rightarrow (2)\) fue una reescritura de una línea, y \((2) \Rightarrow (1)\) fue una contrarrecíproca de dos líneas.
+
+Ahora contraste un ciclo válido con un error clásico de TFAE. Suponga que para cuatro enunciados \((1), (2), (3), (4)\), una demostración establece:
+\[
+(1) \implies (2), \qquad (2) \implies (3), \qquad (3) \implies (4), \qquad (1) \implies (4).
+\]
+Hay \(4\) implicaciones, igual que en un ciclo de 4 —¡y sin embargo esto FALLA por completo para demostrar TFAE!—. Siga las flechas: NUNCA puede salir de \((4)\) (no tiene ninguna flecha saliente), de modo que \((4) \Rightarrow (1)\), \((4) \Rightarrow (2)\) y \((4) \Rightarrow (3)\) quedan todas sin demostrar. Contar \(k\) flechas nunca basta; debe verificar que las flechas formen realmente un lazo cerrado (o una red fuertemente conexa) que alcance cada enunciado desde cualquier otro.
+
+[QUESTION 3]
+[ANSWER: E]
+Para demostrar que cuatro enunciados \((1), (2), (3), (4)\) son equivalentes por pares (TFAE), ¿cuál de las siguientes colecciones de implicaciones demostradas es SUFICIENTE?
+
+(A) \((1) \Rightarrow (2)\), \((2) \Rightarrow (3)\), \((3) \Rightarrow (1)\) y \((1) \Rightarrow (4)\).
+(B) \((1) \Rightarrow (2)\), \((2) \Rightarrow (3)\), \((3) \Rightarrow (4)\) y \((2) \Rightarrow (4)\).
+(C) \((1) \Leftrightarrow (2)\) y \((3) \Leftrightarrow (4)\).
+(D) \((1) \Rightarrow (2)\), \((2) \Rightarrow (1)\), \((2) \Rightarrow (3)\) y \((4) \Rightarrow (3)\).
+(E) \((1) \Rightarrow (3)\), \((3) \Rightarrow (4)\), \((4) \Rightarrow (2)\) y \((2) \Rightarrow (1)\).
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Considere tres enunciados sobre un entero fijo \(n \in \mathbb{Z}\):
+(1) \(n\) es par;
+(2) \(n^3\) es par;
+(3) \(n^2 + 3n\) es par.
+¿Qué valoración de la afirmación "Los enunciados (1), (2) y (3) son equivalentes para todo \(n \in \mathbb{Z}\)" es correcta?
+
+(A) FALSA: el enunciado (3) se cumple para TODO entero \(n \in \mathbb{Z}\) (ya que \(n^2 + 3n = n(n + 3)\) es siempre par), por lo que \((3) \Rightarrow (1)\) falla (p. ej., para \(n = 1\)), aunque \((1) \Leftrightarrow (2)\) sea verdadero.
+(B) VERDADERA: el ciclo \((1) \Rightarrow (2) \Rightarrow (3) \Rightarrow (1)\) se cumple para todo entero \(n \in \mathbb{Z}\).
+(C) FALSA: \((1) \Rightarrow (2)\) falla para enteros \(n\) negativos.
+(D) VERDADERA: los tres enunciados se cumplen si y solo si \(2 \mid n\).
+(E) FALSA: \((2) \Rightarrow (1)\) falla porque \(n^3\) puede ser par mientras \(n\) es impar.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Suponga que una demostración establece las cinco implicaciones siguientes entre cuatro enunciados \((1), (2), (3), (4)\):
+\((1) \Rightarrow (2)\), \((2) \Rightarrow (3)\), \((3) \Rightarrow (1)\), \((2) \Rightarrow (4)\) y \((4) \Rightarrow (3)\).
+¿Establece esta colección que los cuatro enunciados son equivalentes (TFAE)?
+
+(A) No, porque no hay ninguna flecha directa que vaya de \((4)\) a \((1)\).
+(B) No, porque \((1), (2), (3)\) forman un ciclo cerrado que deja atrapado afuera a \((4)\).
+(C) Sí: todo enunciado tiene un camino dirigido hacia todo otro enunciado (por ejemplo, \((4) \Rightarrow (3) \Rightarrow (1) \Rightarrow (2)\) y \((1) \Rightarrow (2) \Rightarrow (4)\)).
+(D) No, porque una demostración válida de TFAE para \(4\) enunciados debe usar un único ciclo de exactamente \(4\) implicaciones.
+(E) Sí, pero únicamente si también demostramos \((3) \Rightarrow (2)\) directamente.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Para números reales positivos \(a > 0\) y \(b > 0\), considere tres enunciados:
+(1) \(a = b\);
+(2) \(a^2 + b^2 = 2ab\);
+(3) \(\frac{a + b}{2} = \sqrt{ab}\).
+¿Qué equivalencia en cadena única es válida para todos \(a, b > 0\) sin introducir ningún paso irreversible?
+
+(A) \(\frac{a + b}{2} = \sqrt{ab} \iff a + b = 2\sqrt{ab} \iff a^2 + b^2 = 4ab \iff a = b\).
+(B) \(\frac{a + b}{2} = \sqrt{ab} \iff a + b = 2\sqrt{ab} \iff (\sqrt{a} - \sqrt{b})^2 = 0 \iff \sqrt{a} = \sqrt{b} \iff a = b\).
+(C) \(a = b \iff a^2 = ab \iff a^2 + b^2 = 2ab\), lo cual requiere \(a > 0\) únicamente en el primer paso y falla si \(a = b = 1\).
+(D) \(\frac{a + b}{2} = \sqrt{ab} \iff \frac{a^2 + b^2}{4} = ab \iff a^2 + b^2 = 4ab \iff (a - b)^2 = 2ab\).
+(E) Ninguna de las anteriores, porque \(\frac{a + b}{2} = \sqrt{ab}\) puede cumplirse cuando \(a \ne b\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+¿Cuál es el número MÍNIMO de implicaciones individuales \(P_i \Rightarrow P_j\) (\(i \ne j\)) que puede bastar jamás para establecer TFAE entre \(k \ge 2\) enunciados \((1), (2), \dots, (k)\) únicamente por transitividad?
+
+(A) \(k - 1\), porque un camino generador \((1) \Rightarrow (2) \Rightarrow \dots \Rightarrow (k)\) toca los \(k\) enunciados.
+(B) \(2(k - 1)\), porque cada enunciado debe emparejarse bidireccionalmente con el enunciado \((1)\).
+(C) \(\frac{k(k - 1)}{2}\), porque la mitad de los pares determinan la otra mitad.
+(D) \(k\), porque cada uno de los \(k\) enunciados debe tener al menos una flecha saliente (de modo que se requieren al menos \(k\) flechas), y un único ciclo de longitud \(k\) alcanza este mínimo.
+(E) \(k(k - 1)\), porque la transitividad no puede reemplazar a las implicaciones directas.
+[/BONUS]

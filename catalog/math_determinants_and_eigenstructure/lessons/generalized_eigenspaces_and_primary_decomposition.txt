@@ -1,0 +1,301 @@
+=== SECTION 1: Generalized eigenvectors and the stabilizing kernel chain ===
+
+When the characteristic polynomial \(p_T(x)\) of an operator \(T : V \to V\) splits completely into linear factors over \(F\), diagonalization succeeds if and only if the ordinary eigenspaces \(E_{\lambda_i} = \ker(T - \lambda_i I)\) span all of \(V\). Whenever an eigenvalue \(\lambda\) is defective (\(m_g(\lambda) < m_a(\lambda)\)), \(\ker(T - \lambda I)\) is simply too small—it misses vectors that are "almost" eigenvectors.
+
+Watch what happens for the \(2 \times 2\) shear \(A = \begin{bmatrix} 2 & 1 \\ 0 & 2 \end{bmatrix}\). Here \(p_A(x) = (x - 2)^2\), yet \((A - 2I_2)\mathbf{e}_1 = \mathbf{0}\) gives only a \(1\)-dimensional eigenspace \(E_2 = \operatorname{span}\{\mathbf{e}_1\}\). Look at the missing basis vector \(\mathbf{e}_2\): although \((A - 2I_2)\mathbf{e}_2 = \mathbf{e}_1 \neq \mathbf{0}\), applying \((A - 2I_2)\) ONE MORE TIME kills it: \((A - 2I_2)^2\mathbf{e}_2 = \mathbf{0}\)! Raising \((T - \lambda I)\) to higher powers captures the missing dimensions.
+
+[CALLOUT]
+id: gen-eig-def
+label: Definition
+title: Generalized eigenvectors and generalized eigenspaces
+tone: key
+
+Let \(T : V \to V\) be a linear operator on a finite-dimensional space over \(F\), and let \(\lambda \in F\) be an eigenvalue of \(T\).
+
+(1) A nonzero vector \(\mathbf{v} \in V\) is a generalized eigenvector of \(T\) for \(\lambda\) of rank (or order) \(k \ge 1\) if
+\[
+(T - \lambda I)^k \mathbf{v} = \mathbf{0} \qquad \text{and} \qquad (T - \lambda I)^{k-1}\mathbf{v} \neq \mathbf{0}.
+\]
+(Thus a generalized eigenvector of rank \(1\) is simply an ordinary eigenvector.)
+(2) The generalized eigenspace of \(T\) corresponding to \(\lambda\) is the union of all these kernels:
+\[
+K_\lambda = \bigcup_{k=1}^{\infty} \ker\bigl((T - \lambda I)^k\bigr).
+\]
+[/CALLOUT]
+
+At first glance, \(K_\lambda\) looks like an infinite union of subspaces. Because \(\dim(V) = n\) is finite, however, the ascending sequence of kernels CANNOT grow forever—and even better, the moment two consecutive kernels match, the entire infinite chain freezes permanently!
+
+[CALLOUT]
+id: kernel-stabilization
+label: Lemma
+title: Stabilization of the ascending kernel chain
+tone: key
+
+Let \(S = T - \lambda I\) on an \(n\)-dimensional vector space \(V\).
+
+(1) The kernels form an ascending chain of subspaces:
+\[
+\{\mathbf{0}\} \subseteq \ker(S) \subseteq \ker(S^2) \subseteq \ker(S^3) \subseteq \dots
+\]
+(2) Freeze property: if \(\ker(S^m) = \ker(S^{m+1})\) for some integer \(m \ge 0\), then \(\ker(S^m) = \ker(S^{m+j})\) for EVERY \(j \ge 1\).
+(3) Finite stabilization: there exists a unique smallest integer \(r \le n\) (the stabilization index) such that
+\[
+\{\mathbf{0}\} \subsetneq \ker(S) \subsetneq \ker(S^2) \subsetneq \dots \subsetneq \ker(S^r) = \ker(S^{r+1}) = \dots = K_\lambda.
+\]
+(4) In particular, \(K_\lambda = \ker((T - \lambda I)^r) = \ker((T - \lambda I)^n)\) is a \(T\)-invariant subspace of \(V\), and the restriction \(N_\lambda = (T - \lambda I)|_{K_\lambda}\) is nilpotent (with \(N_\lambda^r = 0\)).
+[/CALLOUT]
+
+Let us verify the key steps of [REF: kernel-stabilization | the stabilization lemma]:
+- Inclusion (1): if \(S^k \mathbf{v} = \mathbf{0}\), then \(S^{k+1}\mathbf{v} = S(S^k\mathbf{v}) = S(\mathbf{0}) = \mathbf{0}\), so \(\ker(S^k) \subseteq \ker(S^{k+1})\).
+- Freeze property (2): suppose \(\ker(S^m) = \ker(S^{m+1})\), and let \(\mathbf{v} \in \ker(S^{m+2})\). Then \(S^{m+1}(S\mathbf{v}) = S^{m+2}\mathbf{v} = \mathbf{0}\), so \(S\mathbf{v} \in \ker(S^{m+1}) = \ker(S^m)\). That means \(S^{m+1}\mathbf{v} = S^m(S\mathbf{v}) = \mathbf{0}\), hence \(\mathbf{v} \in \ker(S^{m+1}) = \ker(S^m)\)! Therefore \(\ker(S^{m+2}) = \ker(S^m)\), and induction on \(j\) freezes the chain forever.
+- Bound \(r \le n\) (3): every strict inclusion \(\ker(S^{k-1}) \subsetneq \ker(S^k)\) increases the dimension by at least \(1\). Because \(\dim(\ker(S^k)) \le \dim(V) = n\), strict growth can occur at most \(n\) times, so stabilization must happen by index \(r \le n\).
+- Subspace, \(T\)-invariance, and nilpotency (4): because \(K_\lambda\) equals the single kernel \(\ker(S^r)\), it is a subspace of \(V\). Because \(T\) commutes with \(S^r = (T - \lambda I)^r\), any \(\mathbf{v} \in K_\lambda\) satisfies \(S^r(T\mathbf{v}) = T(S^r\mathbf{v}) = \mathbf{0}\), so \(T\mathbf{v} \in K_\lambda\). Finally, by definition every \(\mathbf{v} \in K_\lambda\) satisfies \((T - \lambda I)^r\mathbf{v} = \mathbf{0}\), so \(N_\lambda = (T - \lambda I)|_{K_\lambda}\) satisfies \(N_\lambda^r = 0\) (and \(N_\lambda^{r-1} \neq 0\) since \(\ker(S^{r-1}) \subsetneq \ker(S^r)\)).
+
+Compute this chain concretely for
+\[
+A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 1 & 4 \end{bmatrix},
+\]
+whose eigenvalues are \(\lambda_1 = 1\) (\(m_a = 2\)) and \(\lambda_2 = 4\) (\(m_a = 1\)). Set \(S = A - I_3\):
+\[
+S = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 1 & 3 \end{bmatrix}, \qquad S^2 = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 3 & 9 \end{bmatrix}, \qquad S^3 = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 9 & 27 \end{bmatrix} = 3S^2.
+\]
+Read off the kernels:
+- \(\ker(S) = \operatorname{span}\{\mathbf{e}_1\}\) (dimension \(1\)).
+- \(\ker(S^2) = \{(x_1, x_2, x_3)^T : 3x_2 + 9x_3 = 0\} = \operatorname{span}\{\mathbf{e}_1,\; (0, -3, 1)^T\}\) (dimension \(2\)).
+- Since \(S^3 = 3S^2\), \(\ker(S^3) = \ker(S^2)\), so the chain stabilizes at \(r = 2\)!
+Notice that \(\mathbf{v} = (0, -3, 1)^T\) satisfies \(S\mathbf{v} = (-3, 0, 0)^T \neq \mathbf{0}\) and \(S^2\mathbf{v} = \mathbf{0}\), making \(\mathbf{v}\) a generalized eigenvector for \(\lambda = 1\) of rank \(2\). And notice that \(\dim(K_1) = 2 = m_a(1)\), whereas \(\dim(E_1) = 1 < m_a(1)\)!
+
+[QUESTION 1]
+[ANSWER: C]
+Consider the matrix
+\[
+A = \begin{bmatrix} 2 & 0 & 1 \\ 0 & 2 & 0 \\ 0 & 1 & 2 \end{bmatrix}.
+\]
+What is the stabilization index \(r\) of the ascending kernel chain \(\ker((A - 2I_3)^k)\), and what is the rank of \(\mathbf{v} = (0, 1, 0)^T\) as a generalized eigenvector of \(A\) for \(\lambda = 2\)?
+
+(A) \(r = 1\) and \(\mathbf{v}\) has rank \(1\)
+(B) \(r = 2\) and \(\mathbf{v}\) has rank \(2\)
+(C) \(r = 3\) and \(\mathbf{v}\) has rank \(3\)
+(D) \(r = 3\) and \(\mathbf{v}\) has rank \(2\)
+(E) \(r = 2\) and \(\mathbf{v}\) is not a generalized eigenvector for \(\lambda = 2\)
+[/QUESTION]
+
+=== SECTION 2: The Primary Decomposition Theorem via Bézout's identity ===
+
+For diagonalizable operators, Lagrange interpolation polynomials built projections \(L_i(T)\) that decomposed \(V\) into the direct sum of ordinary eigenspaces \(E_{\lambda_1} \oplus \dots \oplus E_{\lambda_s}\). What replaces Lagrange interpolation when the minimal polynomial \(m_T(x)\) has REPEATED linear factors \((x - \lambda_i)^{r_i}\)? The polynomial tool that plays the exact same role is Bézout's identity for relatively prime polynomials in \(F[x]\)!
+
+[CALLOUT]
+id: primary-decomp
+label: Theorem
+title: Primary Decomposition Theorem
+tone: key
+
+Let \(T : V \to V\) be a linear operator on a finite-dimensional space over \(F\) whose minimal polynomial splits into linear factors over \(F\):
+\[
+m_T(x) = (x - \lambda_1)^{r_1}(x - \lambda_2)^{r_2}\cdots(x - \lambda_s)^{r_s},
+\]
+where \(\lambda_1, \dots, \lambda_s \in F\) are pairwise distinct and \(r_i \ge 1\). Then:
+
+(1) \(V\) decomposes as the direct sum of the generalized eigenspaces:
+\[
+V = K_{\lambda_1} \oplus K_{\lambda_2} \oplus \dots \oplus K_{\lambda_s}, \qquad \text{with } K_{\lambda_i} = \ker\bigl((T - \lambda_i I)^{r_i}\bigr).
+\]
+(2) There exist polynomials \(h_1(x), \dots, h_s(x) \in F[x]\) such that the operators \(E_i = h_i(T)\) are projections onto \(K_{\lambda_i}\) satisfying
+\[
+E_1 + E_2 + \dots + E_s = I, \qquad E_i^2 = E_i, \qquad E_i E_j = 0 \quad (i \neq j), \qquad \operatorname{im}(E_i) = K_{\lambda_i}.
+\]
+(3) For every \(i = 1, \dots, s\), the stabilization index of the kernel chain \(\ker((T - \lambda_i I)^k)\) is EXACTLY \(r_i\) (the multiplicity of \(\lambda_i\) in \(m_T(x)\)).
+[/CALLOUT]
+
+Let us construct the projections \(E_i\) and prove [REF: primary-decomp | the Primary Decomposition Theorem] step by step. (If \(s = 1\), then \(m_T(x) = (x - \lambda_1)^{r_1}\) gives \(V = \ker((T - \lambda_1 I)^{r_1}) = K_{\lambda_1}\) immediately, so assume \(s \ge 2\).)
+
+1. Form the complementary polynomial products: for each \(i = 1, \dots, s\), omit the \(i\)-th primary factor from \(m_T(x)\):
+\[
+q_i(x) = \frac{m_T(x)}{(x - \lambda_i)^{r_i}} = \prod_{j \neq i} (x - \lambda_j)^{r_j}.
+\]
+2. Verify coprimality: the polynomials \(q_1(x), \dots, q_s(x)\) have \(\gcd(q_1, \dots, q_s) = 1\). Why? Any common irreducible factor would divide \(q_1 \mid m_T\), so it would have to be \((x - \lambda_k)\) for some \(k \in \{1, \dots, s\}\); yet by construction \((x - \lambda_k)\) does NOT divide \(q_k(x)\)!
+3. Apply Bézout's identity in \(F[x]\): because \(\gcd(q_1, \dots, q_s) = 1\), there exist polynomials \(a_1(x), \dots, a_s(x) \in F[x]\) such that
+\[
+a_1(x)\,q_1(x) + a_2(x)\,q_2(x) + \dots + a_s(x)\,q_s(x) = 1.
+\]
+Define \(h_i(x) = a_i(x)\,q_i(x)\) and set \(E_i = h_i(T)\) for \(i = 1, \dots, s\).
+4. Evaluate at \(T\) to obtain the sum and projection identities:
+   - Evaluating the Bézout identity at \(T\) gives \(E_1 + E_2 + \dots + E_s = I\), so every \(\mathbf{v} \in V\) decomposes as \(\mathbf{v} = E_1\mathbf{v} + \dots + E_s\mathbf{v}\).
+   - For each \(i\), \((x - \lambda_i)^{r_i} h_i(x) = a_i(x) m_T(x)\), so \((T - \lambda_i I)^{r_i}(E_i\mathbf{v}) = a_i(T) m_T(T)\mathbf{v} = \mathbf{0}\). Thus \(E_i\mathbf{v} \in W_i := \ker((T - \lambda_i I)^{r_i})\) for EVERY \(\mathbf{v} \in V\), proving \(V = W_1 + \dots + W_s\).
+   - For \(i \neq j\), \(q_i(x) q_j(x)\) contains ALL factors \((x - \lambda_k)^{r_k}\) of \(m_T(x)\) (every factor except \((x - \lambda_i)^{r_i}\) sits in \(q_i\), and \((x - \lambda_i)^{r_i}\) sits in \(q_j\)). Hence \(m_T(x) \mid h_i(x) h_j(x)\), giving \(E_i E_j = 0\)! Multiplying \(E_1 + \dots + E_s = I\) by \(E_i\) then yields \(E_i^2 = E_i\).
+5. Verify the direct sum: suppose \(\mathbf{w}_1 + \dots + \mathbf{w}_s = \mathbf{0}\) with \(\mathbf{w}_j \in W_j = \ker((T - \lambda_j I)^{r_j})\). For any \(j \neq i\), \((x - \lambda_j)^{r_j}\) divides \(q_i(x)\) and hence divides \(h_i(x)\), so \(E_i \mathbf{w}_j = \mathbf{0}\). Meanwhile, on \(W_i\), \(\mathbf{w}_i = (E_1 + \dots + E_s)\mathbf{w}_i = E_i\mathbf{w}_i\). Applying \(E_i\) to \(\mathbf{w}_1 + \dots + \mathbf{w}_s = \mathbf{0}\) therefore leaves \(\mathbf{w}_i = \mathbf{0}\) for every \(i\)! Thus \(V = W_1 \oplus \dots \oplus W_s\) and \(\operatorname{im}(E_i) = W_i\).
+6. Identify \(W_i = K_{\lambda_i}\) and prove exact stabilization at \(r_i\):
+   - First, why can no vector outside \(W_i\) lie in \(\ker((T - \lambda_i I)^k)\) for larger \(k\)? Take any \(j \neq i\). Because \((x - \lambda_i)\) and \((x - \lambda_j)^{r_j}\) are coprime, Bézout's identity gives \(u(x)(x - \lambda_i) + w(x)(x - \lambda_j)^{r_j} = 1\). Evaluating on \(W_j = \ker((T - \lambda_j I)^{r_j})\) kills the second term and leaves \(u(T)(T - \lambda_i I)|_{W_j} = I|_{W_j}\), proving that \((T - \lambda_i I)\) is INVERTIBLE on every \(W_j\) with \(j \neq i\)! Hence if \(\mathbf{v} = \mathbf{w}_1 + \dots + \mathbf{w}_s \in \ker((T - \lambda_i I)^k)\), applying \((T - \lambda_i I)^k\) componentwise forces \((T - \lambda_i I)^k \mathbf{w}_j = \mathbf{0} \implies \mathbf{w}_j = \mathbf{0}\) for all \(j \neq i\), so \(\mathbf{v} = \mathbf{w}_i \in W_i\). Thus \(K_{\lambda_i} = W_i = \ker((T - \lambda_i I)^{r_i})\)!
+   - Second, why is the stabilization index EQUAL to \(r_i\) rather than strictly smaller? If \(\ker((T - \lambda_i I)^{r_i - 1}) = K_{\lambda_i}\), then \((T - \lambda_i I)^{r_i - 1} q_i(T)\) would annihilate \(K_{\lambda_i}\) (via the first factor) AND annihilate every \(K_{\lambda_j}\) for \(j \neq i\) (via \(q_i(T)\)), so it would annihilate all of \(V\)—contradicting the minimality of \(\deg m_T\)!
+
+Watch how concretely Bézout's identity produces the projections \(E_i\) for \(m_T(x) = (x - 1)^2(x - 3)\). Here \(q_1(x) = x - 3\) and \(q_2(x) = (x - 1)^2\). Rewrite \(x - 3 = (x - 1) - 2\), and multiply by \((x - 1) + 2 = x + 1\):
+\[
+(x + 1)(x - 3) = \bigl((x - 1) + 2\bigr)\bigl((x - 1) - 2\bigr) = (x - 1)^2 - 4.
+\]
+Rearranging and dividing by \(4\) gives the exact Bézout identity
+\[
+\frac{1}{4}(x - 1)^2 - \frac{1}{4}(x + 1)(x - 3) = 1.
+\]
+Thus \(E_1 = -\frac{1}{4}(T + I)(T - 3I)\) projects every vector onto \(K_1 = \ker((T - I)^2)\) along \(K_3\), while \(E_2 = \frac{1}{4}(T - I)^2\) projects every vector onto \(K_3 = \ker(T - 3I)\) along \(K_1\)!
+
+[QUESTION 2]
+[ANSWER: B]
+Suppose \(T : V \to V\) has minimal polynomial \(m_T(x) = (x - 2)^2(x + 1)\). Which polynomial in \(T\) equals the primary projection \(E_2\) onto \(K_{-1} = \ker(T + I)\) along \(K_2 = \ker((T - 2I)^2)\)?
+
+(A) \(\frac{1}{3}(T - 2I)\)
+(B) \(\frac{1}{9}(T - 2I)^2\)
+(C) \(-\frac{1}{9}(T - 5I)(T + I)\)
+(D) \(\frac{1}{9}(T + I)^2\)
+(E) \(\frac{1}{3}(T - 2I)^2\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Suppose \(T : \mathbb{C}^6 \to \mathbb{C}^6\) has characteristic polynomial \(p_T(x) = (x - 1)^4(x + 3)^2\) and minimal polynomial \(m_T(x) = (x - 1)^2(x + 3)^2\). Which statement about the kernel chain for \(\lambda = 1\) MUST be true?
+
+(A) \(\ker(T - I) = \ker((T - I)^2) = K_1\).
+(B) \(\ker((T - I)^2) \subsetneq \ker((T - I)^3) \subsetneq \ker((T - I)^4) = K_1\).
+(C) \(\ker((T - I)^2) = \mathbb{C}^6\).
+(D) \(\ker(T - I) \subsetneq \ker((T - I)^2) = \ker((T - I)^3) = \dots = K_1\).
+(E) \(K_1\) cannot be determined without knowing whether \(T\) is invertible.
+[/QUESTION]
+
+=== SECTION 3: Dimension of \(K_{\lambda_i}\) and reduction to nilpotent blocks ===
+
+We now know that \(V = K_{\lambda_1} \oplus \dots \oplus K_{\lambda_s}\) whenever \(p_T(x)\) splits over \(F\). How large is each generalized eigenspace \(K_{\lambda_i}\)? Unlike ordinary eigenspaces \(E_{\lambda_i}\) (whose dimension \(m_g(\lambda_i)\) can fall strictly short of \(m_a(\lambda_i)\)), generalized eigenspaces ALWAYS hit the exact algebraic multiplicity!
+
+[CALLOUT]
+id: dim-gen-eig
+label: Theorem
+title: Dimension of generalized eigenspaces and primary block form
+tone: key
+
+Let \(T : V \to V\) have characteristic polynomial \(p_T(x) = \prod_{i=1}^s (x - \lambda_i)^{m_a(\lambda_i)}\) over \(F\) (\(\lambda_1, \dots, \lambda_s\) distinct).
+
+(1) For every \(i = 1, \dots, s\),
+\[
+\dim(K_{\lambda_i}) = m_a(\lambda_i).
+\]
+(2) Concatenating bases \(\mathcal{B}_1, \dots, \mathcal{B}_s\) of \(K_{\lambda_1}, \dots, K_{\lambda_s}\) into a basis \(\mathcal{B}\) of \(V\) puts \([T]_{\mathcal{B}}\) into block-diagonal form
+\[
+[T]_{\mathcal{B}} = \begin{bmatrix} \lambda_1 I_{d_1} + N_1 & 0 & \cdots & 0 \\ 0 & \lambda_2 I_{d_2} + N_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & \lambda_s I_{d_s} + N_s \end{bmatrix},
+\]
+where \(d_i = m_a(\lambda_i)\) and each \(N_i = [(T - \lambda_i I)|_{K_{\lambda_i}}]_{\mathcal{B}_i}\) is a \(d_i \times d_i\) nilpotent matrix with \(N_i^{r_i} = 0\) and \(N_i^{r_i - 1} \neq 0\).
+[/CALLOUT]
+
+Proof of [REF: dim-gen-eig.1 | \(\dim(K_{\lambda_i}) = m_a(\lambda_i)\)]: Because \(V = K_{\lambda_1} \oplus \dots \oplus K_{\lambda_s}\) is a direct sum of \(T\)-invariant subspaces, the block-diagonal characteristic polynomial formula gives
+\[
+p_T(x) = p_{T|_{K_{\lambda_1}}}(x)\,p_{T|_{K_{\lambda_2}}}(x)\cdots p_{T|_{K_{\lambda_s}}}(x).
+\]
+On each \(K_{\lambda_i}\), the operator \(T|_{K_{\lambda_i}}\) satisfies \((T|_{K_{\lambda_i}} - \lambda_i I)^{r_i} = 0\), so its minimal polynomial divides \((x - \lambda_i)^{r_i}\). Since the characteristic and minimal polynomials of \(T|_{K_{\lambda_i}}\) share the exact same roots, the ONLY root of \(p_{T|_{K_{\lambda_i}}}(x)\) is \(\lambda_i\)! Because \(p_{T|_{K_{\lambda_i}}}(x)\) is monic of degree \(d_i = \dim(K_{\lambda_i})\), it MUST equal
+\[
+p_{T|_{K_{\lambda_i}}}(x) = (x - \lambda_i)^{d_i}.
+\]
+Substituting this into the product yields
+\[
+\prod_{i=1}^s (x - \lambda_i)^{m_a(\lambda_i)} = p_T(x) = \prod_{i=1}^s (x - \lambda_i)^{d_i}.
+\]
+By unique factorization in \(F[x]\), the exponents match: \(\dim(K_{\lambda_i}) = d_i = m_a(\lambda_i)\) for every \(i = 1, \dots, s\)!
+
+[REF: dim-gen-eig.2 | The primary block form] is the central structural breakthrough toward Jordan canonical form: it completely decouples distinct eigenvalues and reduces understanding ANY operator whose characteristic polynomial splits to understanding a NILPOTENT operator \(N_i = (T - \lambda_i I)|_{K_{\lambda_i}}\) on each primary block!
+
+Let us perform a complete primary decomposition on
+\[
+A = \begin{bmatrix} 2 & 1 & 0 & 0 \\ 0 & 2 & 1 & 0 \\ 0 & 0 & 2 & 1 \\ 0 & 0 & 0 & 3 \end{bmatrix}.
+\]
+Because \(A\) is upper triangular, \(p_A(x) = (x - 2)^3(x - 3)\), so \(\dim(K_2) = 3\) and \(\dim(K_3) = 1\).
+- Compute \(K_2\): form \(S = A - 2I_4\) and its powers until the nullity reaches \(m_a(2) = 3\):
+\[
+S = \begin{bmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \qquad S^2 = \begin{bmatrix} 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}, \qquad S^3 = \begin{bmatrix} 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}.
+\]
+  The nullities grow as \(1 \to 2 \to 3 = m_a(2)\), stabilizing at \(r_1 = 3\) with \(K_2 = \ker(S^3) = \operatorname{span}\{\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3\}\).
+- Compute \(K_3\): since \(m_a(3) = 1\), \(K_3 = E_3 = \ker(A - 3I_4)\). Solving
+\[
+(A - 3I_4)\mathbf{x} = \begin{bmatrix} -1 & 1 & 0 & 0 \\ 0 & -1 & 1 & 0 \\ 0 & 0 & -1 & 1 \\ 0 & 0 & 0 & 0 \end{bmatrix}\mathbf{x} = \mathbf{0}
+\]
+  gives \(x_1 = x_2 = x_3 = x_4\), so \(K_3 = \operatorname{span}\{(1, 1, 1, 1)^T\}\).
+- Assemble the primary basis \(P = \begin{bmatrix} 1 & 0 & 0 & 1 \\ 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1 \end{bmatrix}\): the coupling entry \(1\) in the \((3, 4)\)-position disappears completely, yielding the block-diagonal primary form
+\[
+P^{-1} A P = \begin{bmatrix} 2 & 1 & 0 & 0 \\ 0 & 2 & 1 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 3 \end{bmatrix} = (2I_3 + N_1) \oplus [3],
+\]
+where \(N_1 = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}\) satisfies \(N_1^3 = 0\) and \(N_1^2 \neq 0\).
+
+[TABLE]
+Property | Ordinary eigenspace \(E_\lambda\) | Generalized eigenspace \(K_\lambda\)
+Definition | \(\ker(T - \lambda I)\) | \(\ker((T - \lambda I)^r)\) where \(r\) is multiplicity of \(\lambda\) in \(m_T\)
+Dimension | \(m_g(\lambda)\) (can be \(< m_a(\lambda)\)) | Always \(m_a(\lambda)\)
+\(T\)-invariant? | Yes | Yes
+Sum \(\bigoplus E_{\lambda_i}\) or \(\bigoplus K_{\lambda_i}\) equals \(V\)? | Only when \(T\) is diagonalizable | Always (whenever \(p_T\) splits over \(F\))
+Action of \(T\) restricted to subspace | Scalar multiple \(\lambda I\) | \(\lambda I + N_\lambda\) with \(N_\lambda\) nilpotent (\(N_\lambda^r = 0\))
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Consider the matrix
+\[
+A = \begin{bmatrix} 3 & 1 & 0 \\ 0 & 3 & 2 \\ 0 & 0 & 5 \end{bmatrix}.
+\]
+Which pair gives a basis of \(K_3\) and a basis of \(K_5\)?
+
+(A) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_2\}\) and \(K_5 = \operatorname{span}\{(1, 2, 2)^T\}\)
+(B) \(K_3 = \operatorname{span}\{\mathbf{e}_1\}\) and \(K_5 = \operatorname{span}\{\mathbf{e}_2,\; \mathbf{e}_3\}\)
+(C) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_2\}\) and \(K_5 = \operatorname{span}\{\mathbf{e}_3\}\)
+(D) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; (0, 2, 1)^T\}\) and \(K_5 = \operatorname{span}\{(1, 2, 2)^T\}\)
+(E) \(K_3 = \operatorname{span}\{\mathbf{e}_1,\; \mathbf{e}_3\}\) and \(K_5 = \operatorname{span}\{(2, 1, 1)^T\}\)
+[/QUESTION]
+
+[QUESTION 5]
+[ANSWER: E]
+Suppose \(T : V \to V\) splits over \(F\) with primary decomposition \(V = K_{\lambda_1} \oplus K_{\lambda_2} \oplus \dots \oplus K_{\lambda_s}\) for distinct eigenvalues \(\lambda_1, \dots, \lambda_s\). Which statement accurately describes the restrictions of the shifted operator \(S = T - \lambda_1 I\) to \(K_{\lambda_1}\) and to \(K_{\lambda_2}\)?
+
+(A) \(S|_{K_{\lambda_1}}\) is the zero operator, and \(S|_{K_{\lambda_2}}\) is nilpotent.
+(B) \(S|_{K_{\lambda_1}}\) is nilpotent, and \(S|_{K_{\lambda_2}}\) is scalar multiplication by \(\lambda_2 - \lambda_1\).
+(C) Both \(S|_{K_{\lambda_1}}\) and \(S|_{K_{\lambda_2}}\) are invertible.
+(D) \(S|_{K_{\lambda_1}}\) is diagonalizable, and \(S|_{K_{\lambda_2}}\) is singular.
+(E) \(S|_{K_{\lambda_1}}\) is nilpotent, and \(S|_{K_{\lambda_2}}\) is invertible.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Let
+\[
+B = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 3 \\ 0 & 0 & 4 \end{bmatrix},
+\]
+so \(\mathbb{R}^3 = K_1 \oplus K_4\). Writing \(\mathbf{v} = (2, 5, 6)^T = \mathbf{v}_1 + \mathbf{v}_4\) with \(\mathbf{v}_1 \in K_1\) and \(\mathbf{v}_4 \in K_4\), what is the \(K_1\)-component \(\mathbf{v}_1\)?
+
+(A) \((2, 5, 0)^T\)
+(B) \((0, 1, 0)^T\)
+(C) \((0, -1, 0)^T\)
+(D) \((1, 2, 0)^T\)
+(E) \((-2, -1, 0)^T\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Suppose \(T : \mathbb{C}^7 \to \mathbb{C}^7\) has characteristic polynomial \(p_T(x) = (x - 1)^4(x + 2)^3\), and the first two kernel dimensions for each eigenvalue are
+\[
+\dim \ker(T - I) = 2, \qquad \dim \ker\bigl((T - I)^2\bigr) = 4, \qquad \dim \ker(T + 2I) = 2, \qquad \dim \ker\bigl((T + 2I)^2\bigr) = 3.
+\]
+What is the minimal polynomial \(m_T(x)\)?
+
+(A) \((x - 1)(x + 2)\)
+(B) \((x - 1)^2(x + 2)^2\)
+(C) \((x - 1)^4(x + 2)^3\)
+(D) \((x - 1)^2(x + 2)^3\)
+(E) Cannot be determined without computing \(\dim \ker((T - I)^3)\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+Let \(T : V \to V\) have minimal polynomial \(m_T(x) = \prod_{i=1}^s (x - \lambda_i)^{r_i}\) over \(F\), and let \(E_i = h_i(T)\) be the Bézout primary projections onto \(K_{\lambda_i}\). Define the two operators
+\[
+D = \lambda_1 E_1 + \lambda_2 E_2 + \dots + \lambda_s E_s, \qquad N = T - D.
+\]
+Which statement is ALWAYS true?
+
+(A) \(D\) is diagonalizable, \(N\) is nilpotent, \(DN = ND\), and both \(D\) and \(N\) are polynomials in \(T\).
+(B) \(D\) is diagonalizable and \(N\) is nilpotent, but \(DN = ND\) holds only when \(T\) is diagonalizable.
+(C) \(D\) is invertible and \(N = 0\) whenever \(p_T(x)\) splits over \(F\).
+(D) \(D\) is diagonalizable and \(N\) is nilpotent, but \(D\) and \(N\) cannot in general be expressed as polynomials in \(T\).
+(E) \(N\) is diagonalizable while \(D\) is nilpotent.
+[/BONUS]

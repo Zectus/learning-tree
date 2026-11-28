@@ -1,0 +1,201 @@
+=== SECTION 1: Enderezamiento de curvas exponenciales en una gráfica semilogarítmica ===
+
+Supongamos que un experimento produce una tabla de mediciones positivas \((x, y)\) cuyo diagrama de dispersión se curva bruscamente hacia arriba. ¿La relación subyacente es una ley exponencial \(y = a \cdot b^x\) o una ley de potencias \(y = a \cdot x^p\)? A simple vista, ambas curvas se curvan suavemente hacia arriba y pueden parecer casi indistinguibles en una ventana modesta. Sin embargo, nuestros ojos —y el álgebra lineal— son extraordinariamente buenos para detectar una LÍNEA RECTA. Al aplicar logaritmos a uno o ambos ejes, podemos enderezar cada tipo de modelo en una ecuación lineal \(Y = m X + c\), diagnosticar qué modelo se ajusta a los datos y leer sus parámetros exactos a partir de la pendiente y la ordenada al origen.
+
+Comienza con una relación exponencial \(y = a \cdot b^x\) (con \(a > 0, b > 0\)). Tomar el logaritmo natural \(\ln\) en ambos lados y aplicar las leyes del producto y de la potencia de los logaritmos da
+\[
+\ln y = \ln(a \cdot b^x) = \ln a + \ln(b^x) = (\ln b)\, x + \ln a.
+\]
+Si fijamos \(Y = \ln y\) manteniendo sin transformar la coordenada horizontal \(x\), esta ecuación toma la forma lineal exacta
+\[
+Y = m x + c, \qquad \text{donde } m = \ln b \text{ y } c = \ln a.
+\]
+Una gráfica de \((x, \ln y)\) (o equivalentemente \((x, \log_{10} y)\)) se denomina gráfica SEMILOGARÍTMICA porque solo UN eje (el eje vertical) es logarítmico. Toda función exponencial se convierte en una línea recta en una gráfica semilogarítmica, y aplicar la transformación inversa a la pendiente \(m\) y a la ordenada al origen \(c\) de la recta recupera exactamente los parámetros originales:
+\[
+a = e^c \qquad \text{y} \qquad b = e^m \qquad (\text{de modo que } y = e^c \cdot (e^m)^x = e^c e^{mx}).
+\]
+Observa que si escribes el modelo exponencial en forma continua \(y = a e^{kx}\), entonces \(\ln y = kx + \ln a\), por lo que la pendiente semilogarítmica es igual directamente a \(k\) mientras que \(a = e^c\). Si en cambio se utilizan logaritmos en base 10 (\(\log_{10} y = m x + c\)), exactamente la misma deducción da \(a = 10^c\) y \(b = 10^m\).
+
+[CALLOUT]
+id: semilog-bridge
+label: Método
+title: Linealización semilogarítmica para modelos exponenciales
+tone: key
+
+Un modelo exponencial \(y = a \cdot b^x\) (\(a > 0, b > 0\)) se linealiza en una gráfica semilogarítmica así:
+
+(1) Recta semilogarítmica con logaritmo natural: Graficar \(Y = \ln y\) frente a \(x\) da \(Y = m x + c\) con \(m = \ln b\) y \(c = \ln a\).
+(2) Transformación inversa: Recupera \(a = e^c\) y \(b = e^m\) (o \(y = e^c e^{mx}\) en forma continua).
+(3) Variante en base 10: Graficar \(Y = \log_{10} y\) frente a \(x\) da \(Y = m x + c\) con \(a = 10^c\) y \(b = 10^m\).
+[/CALLOUT]
+
+La gráfica semilogarítmica siguiente representa \(Y = \ln y\) frente a \(x\) para dos curvas en competencia: la exponencial \(y = 2(1.6)^x\) se convierte en una línea perfectamente recta de pendiente \(\ln(1.6)\) y ordenada al origen \(\ln 2\), mientras que la ley de potencias \(y = 2 x^2\) se curva visiblemente hacia abajo como \(Y = \ln 2 + 2\ln x\).
+
+[GRAPH]
+type: function2d
+title: Gráfica semilogarítmica \((x, \ln y)\): la exponencial se vuelve lineal mientras la ley de potencias se curva
+xlabel: \(x\)
+ylabel: \(\ln y\)
+xrange: 0.5, 5
+yrange: -1, 5
+trace: log(2) + x * log(1.6) | label: \(\text{Exponencial } y = 2(1.6)^x \text{ (recta)}\)
+trace: log(2) + 2 * log(x) | label: \(\text{Ley de potencias } y = 2x^2 \text{ (curva)}\)
+point: 1, log(3.2) | label: \((1, \ln 3.2)\)
+point: 3, log(2 * 1.6^3) | label: \((3, \ln 8.192)\)
+[/GRAPH]
+
+Ejemplo resuelto (Recuperación de una fórmula exponencial desde una recta semilogarítmica): Supongamos que una gráfica semilogarítmica de \((x, \ln y)\) produce una línea recta que pasa por \((0, 1.5)\) y \((4, 3.5)\). Halla la ecuación exacta para \(y\) en términos de \(x\).
+
+1. Calcula la pendiente y la ordenada al origen de la recta \(Y = m x + c\):
+\[
+m = \frac{3.5 - 1.5}{4 - 0} = 0.5, \qquad c = 1.5.
+\]
+2. Aplica la transformación inversa usando [REF: semilog-bridge.2 | la transformación inversa semilogarítmica]:
+\[
+a = e^{1.5} \approx 4.482, \qquad b = e^{0.5} \approx 1.649.
+\]
+Por lo tanto \(y = e^{1.5} e^{0.5 x} \approx 4.482 (1.649)^x\). Resiste la tentación de leer \(c = 1.5\) directamente como \(a\): en \(x = 0\), \(\ln y = 1.5\) significa \(y = e^{1.5}\), ¡no \(y = 1.5\)!
+
+[QUESTION 1]
+[ANSWER: B]
+En una gráfica semilogarítmica en base 10 de \((x, \log_{10} y)\), un conjunto de datos yace exactamente sobre la línea recta que pasa por \((0, 2)\) y \((3, 5)\). ¿Cuál es la fórmula exacta de \(y\) como función de \(x\)?
+
+(A) \(y = 2 \cdot 10^x\)
+(B) \(y = 100 \cdot 10^x\)
+(C) \(y = 100 x\)
+(D) \(y = x + 2\)
+(E) \(y = 10 \cdot 100^x\)
+[/QUESTION]
+
+=== SECTION 2: Enderezamiento de leyes de potencias en una gráfica log-log ===
+
+¿Por qué \(y = 2 x^2\) siguió curvada en la gráfica semilogarítmica? Porque tomar \(\ln\) de una ley de potencias \(y = a \cdot x^p\) (para \(a > 0\) y \(x > 0\)) produce un logaritmo en AMBOS lados:
+\[
+\ln y = \ln(a \cdot x^p) = \ln a + p \ln x.
+\]
+Ahora fija \(X = \ln x\) Y \(Y = \ln y\). En las coordenadas transformadas \((X, Y)\), la ecuación se convierte en una línea recta:
+\[
+Y = p X + \ln a.
+\]
+Una gráfica de \((\ln x, \ln y)\) (o \((\log_{10} x, \log_{10} y)\)) se llama gráfica LOG-LOG porque AMBOS ejes son logarítmicos. Compara cuidadosamente la recuperación de parámetros con el caso semilogarítmico:
+- La pendiente \(m\) de la recta log-log es igual DIRECTAMENTE al exponente \(p\) (\(p = m\)): ¡NO exponencies \(m\)! Observa también que \(p\) es idéntico tanto si usas \(\ln\) como si usas \(\log_{10}\).
+- La ordenada al origen \(c\) (evaluada en \(X = 0\), que corresponde a \(x = 1\) porque \(\ln 1 = 0\)) es igual a \(\ln a\) (o \(\log_{10} a\)), de modo que aún aplicas la transformación inversa \(a = e^c\) (o \(a = 10^c\) en base \(10\)).
+
+[CALLOUT]
+id: loglog-bridge
+label: Método
+title: Linealización log-log para modelos de ley de potencias
+tone: key
+
+Un modelo potencial \(y = a \cdot x^p\) (\(a > 0, x > 0\)) se linealiza en una gráfica log-log así:
+
+(1) Forma lineal: Fijar \(X = \ln x\) y \(Y = \ln y\) produce \(Y = m X + c\), donde \(m = p\) y \(c = \ln a\).
+(2) Transformación inversa: Recupera \(p = m\) directamente y \(a = e^c\) (o \(a = 10^c\) si se grafican logaritmos en base \(10\) en ambos ejes).
+[/CALLOUT]
+
+Compara ahora exactamente las mismas dos funciones \(y = 2 x^2\) e \(y = 2(1.6)^x\) en coordenadas log-log \((X, Y) = (\ln x, \ln y)\). Aquí \(x = e^X\), así que la ley de potencias se convierte en la línea recta \(Y = \ln 2 + 2 X\), mientras que la exponencial se convierte en la gráfica curvada hacia arriba \(Y = \ln 2 + \ln(1.6)\, e^X\).
+
+[GRAPH]
+type: function2d
+title: Gráfica log-log \((\ln x, \ln y)\): la ley de potencias se vuelve lineal mientras la exponencial se curva
+xlabel: \(\ln x\)
+ylabel: \(\ln y\)
+xrange: -0.5, 2.2
+yrange: -1, 6
+trace: log(2) + 2 * x | label: \(\text{Ley de potencias } y = 2x^2 \text{ (recta)}\)
+trace: log(2) + log(1.6) * exp(x) | label: \(\text{Exponencial } y = 2(1.6)^x \text{ (curva)}\)
+point: 0, log(2) | label: \((0, \ln 2)\)
+point: 1, log(2) + 2 | label: \((1, \ln 2 + 2)\)
+[/GRAPH]
+
+[CALLOUT]
+id: intercept-pitfall
+label: Error frecuente
+title: Dos trampas muy comunes en la transformación inversa
+tone: caution
+
+(1) Nunca leas la ordenada al origen \(c\) directamente como \(a\): tanto en gráficas semilogarítmicas como log-log, \(c = \ln a\) (o \(\log_{10} a\)), así que \(a = e^c\) (o \(10^c\)). En una gráfica log-log, recuerda que el eje vertical \(X = 0\) corresponde a \(x = 1\), no a \(x = 0\).
+(2) Mantén diferenciados los papeles de la pendiente: en una gráfica semilogarítmica, \(b = e^m\) (exponencia la pendiente para obtener la base \(b\)); en una gráfica log-log, \(p = m\) directamente (nunca calcules \(e^m\)).
+[/CALLOUT]
+
+Ejemplo resuelto (Recuperación de una ley de potencias desde una recta log-log): Las mediciones del período orbital \(y\) frente al radio orbital \(x\) producen una recta log-log \((\ln x, \ln y)\) que pasa por \((0, \ln 5)\) y \((2, \ln 5 + 3)\). Halla \(y\) en función de \(x\).
+
+La pendiente es
+\[
+p = m = \frac{(\ln 5 + 3) - \ln 5}{2 - 0} = \frac{3}{2},
+\]
+y la ordenada al origen es \(c = \ln 5\), de modo que \(a = e^{\ln 5} = 5\). Por [REF: loglog-bridge.2 | la regla de recuperación log-log], \(y = 5 x^{3/2}\).
+
+[QUESTION 2]
+[ANSWER: B]
+En una gráfica log-log de \((\ln x, \ln y)\) para puntos de datos positivos, los puntos yacen sobre la línea recta \(\ln y = -2 \ln x + 3\). ¿Qué ecuación expresa \(y\) directamente en términos de \(x\)?
+
+(A) \(y = 3 x^{-2}\)
+(B) \(y = e^3 x^{-2}\)
+(C) \(y = e^3 e^{-2x}\)
+(D) \(y = 3 e^{-2x}\)
+(E) \(y = e^3 x^{e^{-2}}\)
+[/QUESTION]
+
+=== SECTION 3: Diagnóstico entre comportamiento exponencial y potencial a partir de tablas ===
+
+Cuando te entregan una tabla de pares brutos \((x, y)\), puedes probar directamente la linealidad en ejes semilogarítmicos y log-log calculando pendientes consecutivas:
+- Prueba de pendiente semilogarítmica (para la exponencial \(y = a b^x\)): verifica si \(\dfrac{\ln y_2 - \ln y_1}{x_2 - x_1} = \dfrac{\ln(y_2 / y_1)}{x_2 - x_1}\) permanece constante en todos los pares de puntos. Equivalentemente, pasos ADITIVOS iguales en \(x\) producen razones MULTIPLICATIVAS iguales en \(y\).
+- Prueba de pendiente log-log (para la ley de potencias \(y = a x^p\)): verifica si \(\dfrac{\ln y_2 - \ln y_1}{\ln x_2 - \ln x_1} = \dfrac{\ln(y_2 / y_1)}{\ln(x_2 / x_1)}\) permanece constante en todos los pares de puntos. Equivalentemente, razones MULTIPLICATIVAS iguales en \(x\) producen razones MULTIPLICATIVAS iguales en \(y\).
+
+[TABLE]
+Modelo | Gráfica linealizante | Ecuación lineal | Pendiente \(m\) | Ordenada \(c\) | Firma en datos brutos
+Exponencial \(y = a b^x\) | Semilogarítmica \((x, \ln y)\) | \(\ln y = (\ln b) x + \ln a\) | \(\ln b\) (luego \(b = e^m\)) | \(\ln a\) (luego \(a = e^c\)) | Igual \(\Delta x \implies\) igual razón en \(y\)
+Ley de potencias \(y = a x^p\) | Log-log \((\ln x, \ln y)\) | \(\ln y = p \ln x + \ln a\) | \(p\) directamente | \(\ln a\) (luego \(a = e^c\)) | Igual razón en \(x \implies\) igual razón en \(y\)
+[/TABLE]
+
+Comparación diagnóstica resuelta: Pon a prueba los dos conjuntos de datos siguientes para ver cuál es exponencial y cuál es una ley de potencias:
+- Conjunto 1: \((1, 4),\; (2, 16),\; (4, 64)\).
+  - Pendientes semilogarítmicas: de \(x = 1\) a \(2\), \(\frac{\ln(16/4)}{2 - 1} = \ln 4\); de \(x = 2\) a \(4\), \(\frac{\ln(64/16)}{4 - 2} = \frac{\ln 4}{2}\). No es constante: ¡NO es exponencial!
+  - Pendientes log-log: de \(x = 1\) a \(2\), \(\frac{\ln(16/4)}{\ln(2/1)} = \frac{\ln 4}{\ln 2} = 2\); de \(x = 2\) a \(4\), \(\frac{\ln(64/16)}{\ln(4/2)} = \frac{\ln 4}{\ln 2} = 2\). ¡Constante! Así que \(p = 2\), y sustituir \((1, 4)\) en \(y = a x^2\) da \(a = 4\), por lo tanto \(y = 4 x^2\).
+- Conjunto 2: \((1, 6),\; (2, 18),\; (4, 162)\).
+  - Pendientes semilogarítmicas: de \(x = 1\) a \(2\), \(\frac{\ln(18/6)}{2 - 1} = \ln 3\); de \(x = 2\) a \(4\), \(\frac{\ln(162/18)}{4 - 2} = \frac{\ln 9}{2} = \ln 3\). ¡Constante! Así que \(b = e^{\ln 3} = 3\), y sustituir \((1, 6)\) en \(y = a \cdot 3^x\) da \(a = 2\), por lo tanto \(y = 2 \cdot 3^x\).
+
+[QUESTION 3]
+[ANSWER: C]
+Un experimento registra tres puntos de datos positivos exactos: \((x, y) = (1, 3),\; (2, 24),\; (3, 81)\). ¿Qué modelo se ajusta exactamente a los tres puntos?
+
+(A) Exponencial: \(y = 3 \cdot 8^x\)
+(B) Exponencial: \(y = \dfrac{3}{8} \cdot 8^x\)
+(C) Ley de potencias: \(y = 3 x^3\)
+(D) Ley de potencias: \(y = x^3 + 2\)
+(E) Ley de potencias: \(y = 3 x^8\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Supongamos que una magnitud física obedece \(y = 7 e^{0.4 x}\) para \(x > 0\). ¿Cómo aparece su gráfica en una gráfica semilogarítmica con logaritmo natural \((x, \ln y)\) en comparación con una gráfica log-log con logaritmo natural \((\ln x, \ln y)\)?
+
+(A) Una línea recta con pendiente \(0.4\) y ordenada al origen \(\ln 7\) en la gráfica semilogarítmica; curvada en la gráfica log-log
+(B) Una línea recta con pendiente \(0.4\) y ordenada al origen \(7\) en la gráfica semilogarítmica; curvada en la gráfica log-log
+(C) Curvada en la gráfica semilogarítmica; una línea recta con pendiente \(0.4\) y ordenada al origen \(\ln 7\) en la gráfica log-log
+(D) Una línea recta en ambas gráficas, con pendiente \(0.4\) en la semilogarítmica y pendiente \(e^{0.4}\) en la log-log
+(E) Una línea recta con pendiente \(\ln(0.4)\) y ordenada al origen \(\ln 7\) en la gráfica semilogarítmica; curvada en la gráfica log-log
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: A]
+Un conjunto de datos obedece una ley de potencias \(y = a x^p\) (\(a > 0, x > 0\)). Alicia grafica \((\ln x, \ln y)\) y obtiene una línea recta con pendiente \(m_A\) y ordenada al origen \(c_A\). Bernardo grafica \((\log_{10} x, \log_{10} y)\) para exactamente el mismo conjunto de datos y obtiene pendiente \(m_B\) y ordenada al origen \(c_B\). ¿Cómo se relacionan \((m_B, c_B)\) con \((m_A, c_A)\)?
+
+(A) \(m_B = m_A\) y \(c_B = \dfrac{c_A}{\ln 10}\)
+(B) \(m_B = \dfrac{m_A}{\ln 10}\) y \(c_B = \dfrac{c_A}{\ln 10}\)
+(C) \(m_B = m_A\) y \(c_B = c_A\)
+(D) \(m_B = m_A \ln 10\) y \(c_B = c_A \ln 10\)
+(E) \(m_B = \dfrac{m_A}{\ln 10}\) y \(c_B = c_A\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Una relación potencial \(y = a x^p\) (\(x > 0\)) pasa por \((2, 12)\) y \((8, 3)\). ¿Cuál es el valor exacto de \(y\) cuando \(x = 32\)?
+
+(A) \(\dfrac{3}{16}\)
+(B) \(\dfrac{3}{4}\)
+(C) \(\dfrac{3}{2}\)
+(D) \(1\)
+(E) \(\dfrac{3}{8}\)
+[/BONUS]

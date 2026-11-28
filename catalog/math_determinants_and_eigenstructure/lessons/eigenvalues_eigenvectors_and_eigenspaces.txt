@@ -1,0 +1,256 @@
+=== SECTION 1: Invariant directions, eigenvalues, and eigenvectors ===
+
+When a linear operator \(T : V \to V\) acts on a vector \(\mathbf{v} \in V\), it generally changes both the vector's direction and its magnitude. Watching \(T(\mathbf{v})\) move in a general basis can look tangled and opaque—every coordinate mixes into every other coordinate. Yet for many operators, certain special nonzero directions behave with extreme simplicity: applying \(T\) leaves those lines completely invariant, merely stretching, shrinking, flipping, or crushing vectors along the same line. Those invariant directions are the eigenvectors of \(T\).
+
+Throughout this lesson, \(V\) is a finite-dimensional vector space over \(F = \mathbb{R}\) or \(F = \mathbb{C}\), and \(T : V \to V\) is a linear operator (or concretely, \(T(\mathbf{x}) = A\mathbf{x}\) for a square matrix \(A \in M_n(F)\)).
+
+[CALLOUT]
+id: eigen-def
+label: Definition
+title: Eigenvalue and eigenvector
+tone: key
+
+Let \(T : V \to V\) be a linear operator over \(F\).
+
+(1) A scalar \(\lambda \in F\) is an eigenvalue of \(T\) if there exists a NONZERO vector \(\mathbf{v} \in V \setminus \{\mathbf{0}\}\) such that
+\[
+T(\mathbf{v}) = \lambda \mathbf{v}.
+\]
+(2) Any nonzero vector \(\mathbf{v} \neq \mathbf{0}\) satisfying \(T(\mathbf{v}) = \lambda \mathbf{v}\) is called an eigenvector of \(T\) corresponding to the eigenvalue \(\lambda\).
+[/CALLOUT]
+
+Pause on the asymmetry between \(\mathbf{v} = \mathbf{0}\) and \(\lambda = 0\)—it is one of the most important distinctions in linear algebra.
+
+[CALLOUT]
+id: zero-distinction
+label: Common pitfall
+title: Zero vector versus zero eigenvalue
+tone: caution
+
+(1) The zero vector \(\mathbf{v} = \mathbf{0}\) is NEVER an eigenvector! Because \(T(\mathbf{0}) = \mathbf{0} = \lambda \mathbf{0}\) holds for EVERY scalar \(\lambda \in F\) and EVERY operator \(T\), allowing \(\mathbf{v} = \mathbf{0}\) would make every scalar an eigenvalue of every operator and make the concept vacuous.
+(2) The scalar \(\lambda = 0\) IS a perfectly valid eigenvalue: \(\lambda = 0\) is an eigenvalue of \(T\) if and only if there exists \(\mathbf{v} \neq \mathbf{0}\) with \(T(\mathbf{v}) = 0 \cdot \mathbf{v} = \mathbf{0}\), that is, if and only if \(\ker(T) \neq \{\mathbf{0}\}\) (equivalently, \(T\) is singular / not invertible).
+[/CALLOUT]
+
+Notice also that if \(\mathbf{v}\) is an eigenvector for \(\lambda\), then every nonzero scalar multiple \(c\mathbf{v}\) (\(c \neq 0\)) is also an eigenvector for the SAME \(\lambda\), because \(T(c\mathbf{v}) = c T(\mathbf{v}) = c(\lambda \mathbf{v}) = \lambda(c\mathbf{v})\). Even better, the sum of two eigenvectors for the same \(\lambda\) satisfies \(T(\mathbf{v}_1 + \mathbf{v}_2) = \lambda \mathbf{v}_1 + \lambda \mathbf{v}_2 = \lambda(\mathbf{v}_1 + \mathbf{v}_2)\). Rewriting \(T(\mathbf{v}) = \lambda \mathbf{v}\) as \((T - \lambda I)(\mathbf{v}) = \mathbf{0}\) (where \(I\) is the identity operator on \(V\)) puts all eigenvectors for \(\lambda\), together with \(\mathbf{0}\), into a single subspace.
+
+[CALLOUT]
+id: eigenspace-def
+label: Definition
+title: Eigenspace
+tone: key
+
+For an eigenvalue \(\lambda \in F\) of \(T : V \to V\), the eigenspace associated with \(\lambda\) is
+\[
+E_\lambda = \ker(T - \lambda I) = \{\mathbf{v} \in V : T(\mathbf{v}) = \lambda \mathbf{v}\}.
+\]
+Because \(E_\lambda\) is the kernel of the linear operator \(T - \lambda I\), it is a subspace of \(V\); because \(\lambda\) is an eigenvalue, \(E_\lambda\) contains at least one nonzero vector, so \(\dim(E_\lambda) \ge 1\). Moreover, \(E_\lambda\) is \(T\)-invariant: for every \(\mathbf{v} \in E_\lambda\), \(T(\mathbf{v}) = \lambda \mathbf{v} \in E_\lambda\).
+[/CALLOUT]
+
+For a matrix \(A \in M_n(F)\) and a given candidate scalar \(\lambda \in F\), checking whether \(\lambda\) is an eigenvalue—and finding a basis for \(E_\lambda\)—requires nothing beyond solving the homogeneous linear system \((A - \lambda I)\mathbf{x} = \mathbf{0}\) by row reduction! If the system has only the trivial solution \(\mathbf{x} = \mathbf{0}\), then \(\lambda\) is NOT an eigenvalue; if there are free variables, then \(\lambda\) IS an eigenvalue and the basic null-space solutions form a basis of \(E_\lambda\).
+
+Let us verify this on \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\). Test \(\lambda = 3\):
+\[
+A - 3I = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix} \sim \begin{bmatrix} 1 & -1 \\ 0 & 0 \end{bmatrix},
+\]
+so \(x_1 = x_2\) and \(E_3 = \operatorname{span}\{(1, 1)^T\}\). Test \(\lambda = 1\):
+\[
+A - I = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix} \sim \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix},
+\]
+so \(x_1 = -x_2\) and \(E_1 = \operatorname{span}\{(-1, 1)^T\}\). In the graph below, watch how \(A\) deforms the unit circle into an ellipse: the unit vector along \(E_3\) stretches by a factor of \(3\) along its OWN line, the unit vector along \(E_1\) stays completely fixed along its OWN line, while a non-eigenvector such as \(\mathbf{e}_1 = (1, 0)^T\) maps to \((2, 1)^T\), rotating off the horizontal axis!
+
+[GRAPH]
+type: parametric2d
+title: Action of \(A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}\) on the unit circle, eigenlines \(E_3\) and \(E_1\), and non-eigenvector \(\mathbf{e}_1\)
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 6.2832
+xrange: -3.2, 3.2
+yrange: -3.2, 3.2
+trace: cos(t), sin(t) | label: unit circle
+trace: 2*cos(t) + sin(t), cos(t) + 2*sin(t) | label: image ellipse \(A(S^1)\)
+segment: 0, 0, 2.1213, 2.1213 | label: \(E_3\)
+segment: 0, 0, -0.7071, 0.7071 | label: \(E_1\)
+segment: 0, 0, 1, 0 | dashed: true
+segment: 0, 0, 2, 1 | label: \(A\mathbf{e}_1\) | dashed: true
+point: 0.7071, 0.7071 | label: \(\mathbf{v}_1\)
+point: 2.1213, 2.1213 | label: \(3\mathbf{v}_1\)
+point: -0.7071, 0.7071 | label: \(\mathbf{v}_2 = A\mathbf{v}_2\)
+point: 2, 1 | label: \((2, 1)\)
+[/GRAPH]
+
+[QUESTION 1]
+[ANSWER: B]
+Consider the matrix
+\[
+A = \begin{bmatrix} 4 & -2 & 2 \\ 2 & 0 & 2 \\ -1 & 1 & 1 \end{bmatrix}.
+\]
+Which of the following gives a valid eigenvector \(\mathbf{v}\) of \(A\) together with its corresponding eigenvalue \(\lambda\)?
+
+(A) \(\mathbf{v} = (0, 0, 0)^T\), \(\lambda = 2\)
+(B) \(\mathbf{v} = (1, 1, 0)^T\), \(\lambda = 2\)
+(C) \(\mathbf{v} = (1, 1, 0)^T\), \(\lambda = 3\)
+(D) \(\mathbf{v} = (1, 1, 1)^T\), \(\lambda = 4\)
+(E) \(\mathbf{v} = (0, 1, 1)^T\), \(\lambda = 2\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Let
+\[
+A = \begin{bmatrix} 3 & -1 & 1 \\ 0 & 2 & 0 \\ 1 & -1 & 3 \end{bmatrix},
+\]
+and suppose you are given that \(\lambda = 2\) is an eigenvalue of \(A\). Which set is a basis for the eigenspace \(E_2\)?
+
+(A) \(\{(1, 1, 0)^T\}\)
+(B) \(\{(1, 0, -1)^T\}\)
+(C) \(\{(1, 0, 1)^T,\; (0, 1, 0)^T\}\)
+(D) \(\{(1, 1, 0)^T,\; (-1, 0, 1)^T\}\)
+(E) \(\{(1, 1, 0)^T,\; (-1, 0, 1)^T,\; (0, 1, 1)^T\}\)
+[/QUESTION]
+
+=== SECTION 2: Geometric eigenstructure before determinants ===
+
+Before we ever touch determinants to compute unknown eigenvalues algebraically, we can read off the ENTIRE eigenstructure of standard geometric operators straight from their geometry! Doing so builds intuition that algebraic formulas alone rarely supply.
+
+1. Projections: Let \(P : \mathbb{R}^n \to \mathbb{R}^n\) be the orthogonal projection onto a proper nonzero subspace \(W \subset \mathbb{R}^n\). Every nonzero vector \(\mathbf{w} \in W\) satisfies \(P(\mathbf{w}) = \mathbf{w}\), so \(\lambda = 1\) is an eigenvalue with \(E_1 = W\). Every nonzero vector \(\mathbf{u} \in W^\perp\) (perpendicular to \(W\)) satisfies \(P(\mathbf{u}) = \mathbf{0}\), so \(\lambda = 0\) is an eigenvalue with \(E_0 = W^\perp\). Can \(P\) have any other eigenvalue \(\lambda\)? Because \(P^2 = P\), any eigenvector \(P(\mathbf{v}) = \lambda \mathbf{v}\) satisfies \(\lambda^2 \mathbf{v} = P^2(\mathbf{v}) = P(\mathbf{v}) = \lambda \mathbf{v}\), so \((\lambda^2 - \lambda)\mathbf{v} = \mathbf{0}\). Since \(\mathbf{v} \neq \mathbf{0}\), \(\lambda \in \{0, 1\}\).
+2. Reflections: Let \(R : \mathbb{R}^n \to \mathbb{R}^n\) reflect across a hyperplane \(H\). Every nonzero vector in \(H\) is fixed (\(R(\mathbf{v}) = \mathbf{v}\), giving \(E_1 = H\)), while every nonzero vector perpendicular to \(H\) is negated (\(R(\mathbf{v}) = -\mathbf{v}\), giving \(E_{-1} = H^\perp\)). Since \(R^2 = I\), any eigenvalue satisfies \(\lambda^2 = 1\), so \(\lambda \in \{1, -1\}\).
+3. Scalings: \(T(\mathbf{v}) = c\mathbf{v}\) has every nonzero vector in \(V\) as an eigenvector with \(\lambda = c\), so \(E_c = V\) and there are no other eigenvalues.
+4. Horizontal shear in \(\mathbb{R}^2\): Consider \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\), which maps \((x, y)^T \mapsto (x + y, y)^T\). If \(S(x, y)^T = \lambda(x, y)^T\), then \(x + y = \lambda x\) and \(y = \lambda y\). From the second equation, either \(y = 0\) or \(\lambda = 1\):
+   - If \(\lambda = 1\), the first equation becomes \(x + y = x \implies y = 0\).
+   - If \(y = 0\) (and \(x \neq 0\) so the vector is nonzero), the first equation becomes \(x = \lambda x \implies \lambda = 1\).
+   In EITHER case, \(\lambda = 1\) and \(y = 0\)! Thus \(S\) has ONLY ONE eigenvalue \(\lambda = 1\) and ONLY ONE invariant line \(E_1 = \operatorname{span}\{(1, 0)^T\}\)—even though \(\mathbb{R}^2\) is \(2\)-dimensional! Every vector off the \(x\)-axis tilts horizontally and fails to stay on its line.
+5. Counterclockwise rotation by \(90^\circ\) in \(\mathbb{R}^2\): Consider \(R_{\pi/2} = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}\). Over \(\mathbb{R}\), every nonzero vector in \(\mathbb{R}^2\) is rotated by \(90^\circ\), so NO nonzero real vector can be a real scalar multiple of itself—\(R_{\pi/2}\) has NO real eigenvalues! Yet view the EXACT SAME matrix as an operator on \(\mathbb{C}^2\): test \(\mathbf{v}_1 = (1, -i)^T\) and \(\mathbf{v}_2 = (1, i)^T\):
+\[
+\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ -i \end{bmatrix} = \begin{bmatrix} i \\ 1 \end{bmatrix} = i \begin{bmatrix} 1 \\ -i \end{bmatrix}, \qquad \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ i \end{bmatrix} = \begin{bmatrix} -i \\ 1 \end{bmatrix} = -i \begin{bmatrix} 1 \\ i \end{bmatrix}.
+\]
+Over \(\mathbb{C}\), \(R_{\pi/2}\) acquires TWO eigenvalues \(\lambda = i\) and \(\lambda = -i\)! This illustrates a crucial lesson: the existence of eigenvalues depends on the scalar field \(F\).
+
+[GRAPH]
+type: parametric2d
+title: Horizontal shear \(S = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\): only the horizontal axis \(E_1\) remains invariant
+xlabel: \(x_1\)
+ylabel: \(x_2\)
+trange: 0, 1
+xrange: -2.2, 2.8
+yrange: -1.6, 1.8
+trace: -2 + 4.5*t, 0 | label: invariant line \(E_1\)
+trace: 0, t | label: \(\mathbf{e}_2 = (0, 1)\)
+trace: t, t | label: \(S\mathbf{e}_2 = (1, 1)\)
+segment: -1, 1, 0, 1 | dashed: true
+segment: 0, 0, -1, 1 | dashed: true
+point: 1, 0 | label: \(\mathbf{e}_1 = S\mathbf{e}_1\)
+point: 0, 1 | label: \(\mathbf{e}_2\)
+point: 1, 1 | label: \(S\mathbf{e}_2\)
+[/GRAPH]
+
+[TABLE]
+Operator in \(\mathbb{R}^2\) or \(\mathbb{R}^n\) | Real eigenvalues | Eigenspaces | Geometric takeaway
+Projection onto subspace \(W\) | \(1, 0\) | \(E_1 = W\), \(E_0 = W^\perp\) | Splits space into fixed vectors and killed vectors
+Reflection across hyperplane \(H\) | \(1, -1\) | \(E_1 = H\), \(E_{-1} = H^\perp\) | Mirror fixed, normal reversed
+Horizontal shear \(\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}\) | \(1\) only | \(E_1 = \operatorname{span}\{(1, 0)^T\}\) | Shortage of eigenlines (\(\dim E_1 = 1 < 2\))
+Rotation \(R_{\pi/2}\) in \(\mathbb{R}^2\) | None over \(\mathbb{R}\) (\(\pm i\) over \(\mathbb{C}\)) | None over \(\mathbb{R}\) | Real invariant lines need not exist
+[/TABLE]
+
+[QUESTION 3]
+[ANSWER: A]
+Let \(T : \mathbb{R}^3 \to \mathbb{R}^3\) be the orthogonal projection onto the plane \(W = \{(x, y, z)^T \in \mathbb{R}^3 : x + y + z = 0\}\). What are all eigenvalues of \(T\) and the dimensions of their corresponding eigenspaces?
+
+(A) \(\lambda = 1\) with \(\dim(E_1) = 2\), and \(\lambda = 0\) with \(\dim(E_0) = 1\)
+(B) \(\lambda = 1\) with \(\dim(E_1) = 1\), and \(\lambda = 0\) with \(\dim(E_0) = 2\)
+(C) \(\lambda = 1\) with \(\dim(E_1) = 2\), and \(\lambda = -1\) with \(\dim(E_{-1}) = 1\)
+(D) \(\lambda = 1\) only, with \(\dim(E_1) = 2\)
+(E) \(\lambda = 0\) with \(\dim(E_0) = 1\), \(\lambda = 1\) with \(\dim(E_1) = 1\), and \(\lambda = -1\) with \(\dim(E_{-1}) = 1\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+For which angles \(\theta \in [0, 2\pi)\) does the counterclockwise rotation operator \(R_\theta : \mathbb{R}^2 \to \mathbb{R}^2\), represented by \(\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}\), possess at least one REAL eigenvalue?
+
+(A) \(\theta = 0\) only
+(B) \(\theta = 0, \pi/2, \pi, 3\pi/2\)
+(C) \(\theta = 0\) and \(\theta = \pi\) only
+(D) Every \(\theta \in [0, 2\pi)\)
+(E) No \(\theta \in [0, 2\pi)\)
+[/QUESTION]
+
+=== SECTION 3: Linear independence of eigenvectors and direct sums ===
+
+Suppose an operator \(T : V \to V\) has several distinct eigenvalues \(\lambda_1, \dots, \lambda_k\). Could an eigenvector for \(\lambda_3\) accidentally be a linear combination of eigenvectors for \(\lambda_1\) and \(\lambda_2\)? The following foundational theorem proves that this is impossible: distinct eigenvalues force their eigenvectors—and in fact their entire eigenspaces—to stay linearly independent.
+
+[CALLOUT]
+id: eigen-independence
+label: Theorem
+title: Independence of eigenvectors for distinct eigenvalues
+tone: key
+
+Let \(T : V \to V\) be a linear operator over \(F\), and let \(\lambda_1, \dots, \lambda_k \in F\) be PAIRWISE DISTINCT eigenvalues of \(T\).
+
+(1) If \(\mathbf{v}_1, \dots, \mathbf{v}_k\) are eigenvectors with \(T(\mathbf{v}_i) = \lambda_i \mathbf{v}_i\) for each \(i = 1, \dots, k\), then \(\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) is linearly independent.
+(2) More generally, the sum of eigenspaces \(E_{\lambda_1} + E_{\lambda_2} + \dots + E_{\lambda_k}\) is a direct sum \(E_{\lambda_1} \oplus E_{\lambda_2} \oplus \dots \oplus E_{\lambda_k}\). Consequently,
+\[
+\dim(E_{\lambda_1}) + \dim(E_{\lambda_2}) + \dots + \dim(E_{\lambda_k}) \le \dim(V),
+\]
+and an operator on an \(n\)-dimensional space \(V\) has at most \(n\) distinct eigenvalues.
+[/CALLOUT]
+
+Let us prove [REF: eigen-independence.1 | part (1)] by induction on \(k\), using a clean elimination trick that reappears throughout operator theory.
+- Base case \(k = 1\): a single eigenvector \(\mathbf{v}_1\) is nonzero by [REF: eigen-def.2 | definition], so \(\{\mathbf{v}_1\}\) is linearly independent.
+- Inductive step: assume that any \(k - 1\) eigenvectors belonging to pairwise distinct eigenvalues are linearly independent, and suppose
+\[
+c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \dots + c_{k-1} \mathbf{v}_{k-1} + c_k \mathbf{v}_k = \mathbf{0}
+\]
+for scalars \(c_1, \dots, c_k \in F\). We want to eliminate the last term \(c_k \mathbf{v}_k\) without losing track of the other terms. Apply the operator \(T - \lambda_k I\) to both sides! Because \((T - \lambda_k I)(\mathbf{v}_i) = T(\mathbf{v}_i) - \lambda_k \mathbf{v}_i = (\lambda_i - \lambda_k)\mathbf{v}_i\) for every \(i\), the last term becomes \((\lambda_k - \lambda_k)\mathbf{v}_k = \mathbf{0}\) and vanishes completely, leaving
+\[
+c_1(\lambda_1 - \lambda_k)\mathbf{v}_1 + c_2(\lambda_2 - \lambda_k)\mathbf{v}_2 + \dots + c_{k-1}(\lambda_{k-1} - \lambda_k)\mathbf{v}_{k-1} = \mathbf{0}.
+\]
+By the induction hypothesis, \(\{\mathbf{v}_1, \dots, \mathbf{v}_{k-1}\}\) is linearly independent, so every coefficient vanishes: \(c_i(\lambda_i - \lambda_k) = 0\) for \(i = 1, \dots, k - 1\). Because the eigenvalues are pairwise distinct, \(\lambda_i - \lambda_k \neq 0\) for all \(i < k\), which forces \(c_1 = c_2 = \dots = c_{k-1} = 0\). Substituting those zeros back into the original relation leaves \(c_k \mathbf{v}_k = \mathbf{0}\), and since \(\mathbf{v}_k \neq \mathbf{0}\), we conclude \(c_k = 0\). Thus \(\{\mathbf{v}_1, \dots, \mathbf{v}_k\}\) is linearly independent!
+
+Now deduce [REF: eigen-independence.2 | the direct-sum property] directly from part (1). Recall that a sum \(E_{\lambda_1} + \dots + E_{\lambda_k}\) is a direct sum if and only if whenever \(\mathbf{w}_1 + \dots + \mathbf{w}_k = \mathbf{0}\) with each \(\mathbf{w}_i \in E_{\lambda_i}\), every \(\mathbf{w}_i = \mathbf{0}\). Suppose to the contrary that \(\mathbf{w}_1 + \dots + \mathbf{w}_k = \mathbf{0}\) with at least one \(\mathbf{w}_i \neq \mathbf{0}\). Keep ONLY the nonzero vectors in that sum: each nonzero \(\mathbf{w}_i\) is an eigenvector for \(\lambda_i\), and their eigenvalues are pairwise distinct, so part (1) says those nonzero vectors are linearly independent—making it impossible for their sum to equal \(\mathbf{0}\)! Therefore every \(\mathbf{w}_i = \mathbf{0}\), proving the sum is direct.
+
+Because the dimension of a direct sum is the sum of the dimensions of its summands, and \(E_{\lambda_1} \oplus \dots \oplus E_{\lambda_k} \subseteq V\), we immediately obtain \(\sum_{i=1}^k \dim(E_{\lambda_i}) \le \dim(V)\). Since each \(\dim(E_{\lambda_i}) \ge 1\), we have \(k \le \sum_{i=1}^k \dim(E_{\lambda_i}) \le n\): an operator on an \(n\)-dimensional space cannot have more than \(n\) distinct eigenvalues. Furthermore, concatenating bases from the separate eigenspaces \(E_{\lambda_1}, \dots, E_{\lambda_k}\) automatically yields a linearly independent set of eigenvectors!
+
+How do we systematically find ALL unknown eigenvalues of a general matrix \(A\) without guessing? That is the exact problem we solve in the next lesson by uniting \(E_\lambda = \ker(A - \lambda I)\) with the determinant invertibility test.
+
+[QUESTION 5]
+[ANSWER: E]
+Suppose \(T : V \to V\) is a linear operator on a \(5\)-dimensional vector space \(V\), and \(T\) has distinct eigenvalues \(\lambda_1 = -1\), \(\lambda_2 = 2\), and \(\lambda_3 = 4\), with \(\dim(E_{-1}) = 2\) and \(\dim(E_2) = 2\). Which statement MUST be true?
+
+(A) \(\dim(E_4)\) can be either \(1\) or \(2\), and \(T\) cannot have a fourth distinct eigenvalue
+(B) \(\dim(E_4) = 1\), and \(T\) may still have a fourth distinct eigenvalue \(\lambda_4 = 7\)
+(C) \(\dim(E_4)\) could be \(0\) if \(E_{-1} + E_2\) already has dimension \(4\)
+(D) \(E_{-1} \cap E_2\) must be \(1\)-dimensional
+(E) \(\dim(E_4) = 1\), and \(T\) cannot have any fourth distinct eigenvalue
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+Suppose \(A \in M_n(\mathbb{R})\) satisfies the matrix equation \(A^2 - 3A + 2I_n = 0\). Which set contains ALL possible eigenvalues of \(A\)?
+
+(A) \(\{-1, -2\}\)
+(B) \(\{1, 2\}\)
+(C) \(\{0, 1, 2\}\)
+(D) \(\{1, 2, 3\}\)
+(E) \(\{-2, 1\}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: A]
+Let \(\mathbf{v}_1\) and \(\mathbf{v}_2\) be eigenvectors of a linear operator \(T : V \to V\) corresponding to two DISTINCT eigenvalues \(\lambda_1 \neq \lambda_2\). When is the sum \(\mathbf{v}_1 + \mathbf{v}_2\) also an eigenvector of \(T\)?
+
+(A) Never, for any choice of \(\lambda_1 \neq \lambda_2\)
+(B) Whenever \(\lambda_1 + \lambda_2 \neq 0\)
+(C) Whenever \(\lambda_1 = -\lambda_2\)
+(D) Always, with eigenvalue \(\lambda_1 + \lambda_2\)
+(E) Only when one of \(\lambda_1\) or \(\lambda_2\) equals \(0\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Let \(\mathcal{P}_3(\mathbb{R})\) be the \(4\)-dimensional vector space of real polynomials of degree at most \(3\), and let \(D : \mathcal{P}_3(\mathbb{R}) \to \mathcal{P}_3(\mathbb{R})\) be the differentiation operator \(D(p) = p'\). What are all eigenvalues of \(D\) and the dimension of each eigenspace?
+
+(A) \(\lambda = 0, 1, 2, 3\), each with a \(1\)-dimensional eigenspace
+(B) No real eigenvalues at all
+(C) \(\lambda = 0\) only, with \(\dim(E_0) = 3\)
+(D) \(\lambda = 0\) only, with \(\dim(E_0) = 1\)
+(E) \(\lambda = 0\) and \(\lambda = 1\), each with a \(1\)-dimensional eigenspace
+[/BONUS]

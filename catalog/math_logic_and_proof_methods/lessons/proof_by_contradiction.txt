@@ -1,0 +1,239 @@
+=== SECTION 1: The logic of reductio ad absurdum ===
+
+Consider the statement: "There is no largest integer." Try to prove it directly as a conditional \(P \Rightarrow Q\): there is no obvious hypothesis \(P\) to unpack, and you cannot inspect every integer one by one to check that none of them is the maximum. Similarly, try to prove that \(\sqrt{2}\) is irrational: the definition of "irrational" is purely negative (\(\sqrt{2} \notin \mathbb{Q}\)), so there is no algebraic formula for an arbitrary irrational number to construct.
+
+When a statement asserts that something does NOT exist, is NOT of a certain form, or holds universally without a convenient conditional handle, we can invert the problem: assume the statement is FALSE, and show that this assumption forces an impossible clash with a known truth or with our own hypotheses. This method is proof by contradiction (also called reductio ad absurdum).
+
+Why is it logically valid? Recall from propositional logic that a contradiction is a compound statement of the form \(R \wedge \neg R\), which is false under every truth assignment. For any statement \(S\), the implication \((\neg S) \Rightarrow (R \wedge \neg R)\) can be true ONLY if \(\neg S\) is false — because if \(\neg S\) were true, a true premise would imply a false conclusion. Therefore \(\neg S\) must be false, which by double negation means \(S\) is true!
+
+What if \(S\) is itself a conditional statement \(P \Rightarrow Q\)? Recall the negation law \(\neg(P \Rightarrow Q) \equiv P \wedge \neg Q\). To prove \(P \Rightarrow Q\) by contradiction, you do NOT assume \(\neg P \Rightarrow \neg Q\); you assume BOTH \(P\) AND \(\neg Q\), and deduce a contradiction \(R \wedge \neg R\).
+
+[CALLOUT]
+id: template-contradiction
+label: Method
+title: Proof by contradiction
+tone: key
+
+(1) For a general statement \(S\): announce the strategy ("Suppose for the sake of contradiction that \(\neg S\)"), simplify \(\neg S\) accurately using De Morgan's laws and quantifier negation, deduce an explicit contradiction \(R \wedge \neg R\), and conclude \(S\).
+(2) For a universal conditional \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\): fix an arbitrary \(x \in D\), assume BOTH \(P(x)\) and \(\neg Q(x)\), deduce a contradiction \(R \wedge \neg R\), and conclude \(P(x) \Rightarrow Q(x)\) for all \(x \in D\).
+(3) Always name the exact contradiction \(R \wedge \neg R\) explicitly before closing the proof.
+[/CALLOUT]
+
+Notice how [REF: template-contradiction.1 | the general contradiction template] resolves our opening claim in three lines. To prove "There is no largest integer" — symbolically \(\neg(\exists M \in \mathbb{Z},\, \forall n \in \mathbb{Z},\, n \le M)\) — we assume its negation: there exists an integer \(M \in \mathbb{Z}\) such that \(n \le M\) for every \(n \in \mathbb{Z}\). Set \(n = M + 1\). Since \(M \in \mathbb{Z}\), we have \(M + 1 \in \mathbb{Z}\), so by assumption \(M + 1 \le M\), which gives \(1 \le 0\). This contradicts the true fact \(1 > 0\). Therefore no largest integer exists.
+
+Now watch [REF: template-contradiction.2 | the conditional contradiction template] work on a statement mixing rational and irrational numbers: "For every \(r \in \mathbb{Q}\) and every \(x \in \mathbb{R}\), if \(x\) is irrational, then \(r + x\) is irrational."
+- Fix arbitrary \(r \in \mathbb{Q}\) and \(x \in \mathbb{R}\).
+- Suppose for the sake of contradiction that \(x\) is irrational AND \(r + x\) is rational.
+- Because \(r + x \in \mathbb{Q}\) and \(r \in \mathbb{Q}\), and \(\mathbb{Q}\) is closed under subtraction (so \((r + x) - r \in \mathbb{Q}\)), it follows that \(x = (r + x) - r\) is rational.
+- This contradicts our assumption that \(x\) is irrational (the explicit clash is "\(x \in \mathbb{Q}\) and \(x \notin \mathbb{Q}\)").
+- Hence \(r + x\) must be irrational.
+
+[QUESTION 1]
+[ANSWER: C]
+To prove by contradiction the statement "For every real number \(x > 0\), if \(x\) is irrational, then \(\sqrt{x}\) is irrational," what should the opening assumption be?
+
+(A) Assume there exists \(x > 0\) such that \(x\) is rational and \(\sqrt{x}\) is irrational.
+(B) Assume that for every \(x > 0\), if \(x\) is rational, then \(\sqrt{x}\) is rational.
+(C) Fix an arbitrary \(x > 0\), and assume that \(x\) is irrational and \(\sqrt{x}\) is rational.
+(D) Fix an arbitrary \(x > 0\), and assume that \(x\) is irrational or \(\sqrt{x}\) is rational.
+(E) Assume that for every \(x > 0\), \(x\) is irrational and \(\sqrt{x}\) is rational.
+[/QUESTION]
+
+=== SECTION 2: Irrationality of \(\sqrt{2}\) and nonexistence proofs ===
+
+One of the most famous proofs in all of mathematics establishes that \(\sqrt{2}\) is irrational. Why is contradiction almost unavoidable here? Because rational numbers come equipped with a concrete formula — a ratio of integers \(a/b\) — whereas irrational numbers are defined only by the absence of such a ratio. Assuming \(\sqrt{2} \in \mathbb{Q}\) immediately hands us integer equations to manipulate!
+
+To keep our proof completely self-contained without importing induction or full number theory, we explicitly supply one standard arithmetic fact about fractions: every rational number \(q \in \mathbb{Q}\) can be written in lowest terms as \(q = \frac{a}{b}\) with \(a, b \in \mathbb{Z}\), \(b \ne 0\), where \(a\) and \(b\) are NOT both even (otherwise we divide numerator and denominator repeatedly by \(2\) until at least one is odd). We also reuse the lemma proved in our lesson on contraposition: for every integer \(n \in \mathbb{Z}\), if \(n^2\) is even, then \(n\) is even.
+
+[CALLOUT]
+id: proof-sqrt2-irrational
+label: Proof
+title: Theorem: \(\sqrt{2}\) is irrational
+tone: note
+
+Proof: Suppose for the sake of contradiction that \(\sqrt{2}\) is rational. By the lowest-terms representation of rational numbers, there exist integers \(a, b \in \mathbb{Z}\) with \(b \ne 0\) such that
+\[
+\sqrt{2} = \frac{a}{b},
+\]
+and \(a\) and \(b\) are not both even.
+
+Squaring both sides and clearing the denominator gives
+\[
+2 = \frac{a^2}{b^2} \implies a^2 = 2b^2.
+\]
+Since \(b^2 \in \mathbb{Z}\), the equation \(a^2 = 2b^2\) shows that \(a^2\) is even. By our earlier contrapositive theorem, \(a\) must be even, so there exists an integer \(k \in \mathbb{Z}\) such that \(a = 2k\).
+
+Substituting \(a = 2k\) into \(a^2 = 2b^2\) yields
+\[
+(2k)^2 = 2b^2 \implies 4k^2 = 2b^2 \implies b^2 = 2k^2.
+\]
+Since \(k^2 \in \mathbb{Z}\), \(b^2\) is even, which again implies that \(b\) is even.
+
+Thus both \(a\) and \(b\) are even. This contradicts our assumption that \(a\) and \(b\) are not both even. Therefore \(\sqrt{2}\) is irrational.
+[/CALLOUT]
+
+Look closely at the exact engine inside [REF: proof-sqrt2-irrational | the proof that \(\sqrt{2}\) is irrational]. The clash \(R \wedge \neg R\) is:
+- \(R\): \(a\) and \(b\) are both even (deduced from \(a^2 = 2b^2\)),
+- \(\neg R\): \(a\) and \(b\) are NOT both even (secured at the start by writing the fraction in lowest terms).
+Without the lowest-terms step, finding that \(a\) and \(b\) are even would produce NO contradiction at all!
+
+Contradiction is equally sharp for nonexistence claims involving nested quantifiers. Consider the statement:
+"There is no smallest positive rational number."
+Let \(\mathbb{Q}^+ = \{q \in \mathbb{Q} : q > 0\}\) denote the set of positive rational numbers. In symbols, the theorem claims:
+\[
+\neg\bigl(\exists r \in \mathbb{Q}^+,\, \forall q \in \mathbb{Q}^+,\, r \le q\bigr).
+\]
+Watch how cleanly the negation sets up the contradiction proof.
+
+[CALLOUT]
+id: proof-no-smallest-rational
+label: Proof
+title: Theorem: There is no smallest positive rational number
+tone: note
+
+Proof: Suppose for the sake of contradiction that there exists a smallest positive rational number; that is, there exists \(r \in \mathbb{Q}^+\) such that \(r \le q\) for every \(q \in \mathbb{Q}^+\).
+
+Define \(q_0 = \frac{r}{2}\). Since \(r\) is rational and \(2\) is a nonzero integer, \(q_0 = \frac{r}{2}\) is rational. Moreover, since \(r > 0\), dividing by \(2 > 0\) gives \(0 < \frac{r}{2} < r\). Thus \(q_0 \in \mathbb{Q}^+\), so by our assumption on \(r\) we must have \(r \le q_0 = \frac{r}{2}\).
+
+However, we just showed \(\frac{r}{2} < r\), which contradicts \(r \le \frac{r}{2}\). Therefore no smallest positive rational number exists.
+[/CALLOUT]
+
+Notice a crucial verification step inside [REF: proof-no-smallest-rational | that proof]: before applying the universal assumption \(\forall q \in \mathbb{Q}^+,\, r \le q\) to \(q_0 = \frac{r}{2}\), we explicitly checked BOTH that \(q_0 \in \mathbb{Q}\) AND that \(q_0 > 0\). If we had tried the same move on positive INTEGERS \(\mathbb{Z}^+\), setting \(q_0 = r/2\) would fail domain membership whenever \(r\) is odd (for \(r = 1\), \(1/2 \notin \mathbb{Z}^+\)) — which is why \(\mathbb{Z}^+\) DOES have a smallest element while \(\mathbb{Q}^+\) does not!
+
+[QUESTION 2]
+[ANSWER: D]
+Suppose we imitate the proof that \(\sqrt{2}\) is irrational to test whether \(\sqrt{4}\) is irrational: assume \(\sqrt{4} = \frac{a}{b}\) in lowest terms (so \(a\) and \(b\) share no common factor greater than \(1\)), square to get \(a^2 = 4b^2\), and deduce that \(a\) is even, say \(a = 2k\). Why does the attempted contradiction FAIL to prove \(\sqrt{4}\) is irrational?
+
+(A) Because \(\sqrt{4}\) is not a real number, so squaring \(\sqrt{4} = \frac{a}{b}\) is invalid.
+(B) Because \(a^2 = 4b^2\) does not imply that \(a\) is even.
+(C) Because the lowest-terms representation applies only to fractions with odd denominators.
+(D) Substituting \(a = 2k\) gives \(4k^2 = 4b^2\), which simplifies to \(b^2 = k^2\), leaving no reason for \(b\) to be even (indeed \(a = 2, b = 1\) satisfies it with no contradiction).
+(E) Because \(4\) is composite, proof by contradiction cannot be applied to \(\sqrt{n}\) for any composite integer \(n\).
+[/QUESTION]
+
+=== SECTION 3: Euclid's proof of the infinitude of primes ===
+
+Recall that an integer \(p > 1\) is prime if its only positive divisors are \(1\) and \(p\). Listing the first several primes — \(2, 3, 5, 7, 11, 13, 17, 19, \dots\) — suggests they never run out, even though gaps between consecutive primes can grow arbitrarily large. How can we prove that the list of primes is infinite?
+
+Trying to write down a single algebraic formula that generates infinitely many primes directly is notoriously difficult. Instead, Euclid (circa 300 BCE) flipped the claim using contradiction: assume there are only FINITELY many primes, collect ALL of them into one finite list \(p_1, p_2, \dots, p_k\), and construct a single integer \(N > 1\) that none of those primes can divide!
+
+To keep our argument self-contained without needing induction or full unique factorization, we explicitly supply one basic divisibility fact: every integer \(N > 1\) has at least one prime divisor. (Intuitively, the smallest divisor of \(N\) greater than \(1\) cannot be factored further, so it is prime.)
+
+[CALLOUT]
+id: proof-euclid-primes
+label: Proof
+title: Theorem (Euclid): There are infinitely many prime numbers
+tone: note
+
+Proof: Suppose for the sake of contradiction that there are only finitely many prime numbers. List all of them as \(p_1, p_2, \dots, p_k\) (note \(k \ge 1\), since \(2\) is prime).
+
+Form the integer
+\[
+N = p_1 p_2 \cdots p_k + 1.
+\]
+Since \(p_1 \ge 2\) and every prime is positive, we have \(N \ge 2 + 1 = 3 > 1\). By our supplied divisibility fact, \(N\) has at least one prime divisor \(q\).
+
+Because \(p_1, p_2, \dots, p_k\) is assumed to be the complete list of ALL primes, \(q\) must equal \(p_j\) for some index \(j \in \{1, 2, \dots, k\}\). Therefore \(q\) divides the product \(p_1 p_2 \cdots p_k\). Since \(q\) also divides \(N = p_1 p_2 \cdots p_k + 1\), it must divide their difference:
+\[
+q \mid \bigl(N - p_1 p_2 \cdots p_k\bigr) \implies q \mid 1.
+\]
+However, every prime satisfies \(q \ge 2\), so \(q\) cannot divide \(1\) (the only positive divisor of \(1\) is \(1\)). This yields the contradiction \(q \mid 1\) and \(q \nmid 1\). Hence there are infinitely many prime numbers.
+[/CALLOUT]
+
+Watch out for the single most common misreading of [REF: proof-euclid-primes | Euclid's proof]: students frequently claim that \(N = p_1 p_2 \cdots p_k + 1\) MUST ITSELF BE PRIME. That is FALSE! For example, multiplying the first six primes and adding \(1\) produces
+\[
+2 \cdot 3 \cdot 5 \cdot 7 \cdot 11 \cdot 13 + 1 = 30031 = 59 \cdot 509,
+\]
+which is composite! Euclid's proof does NOT claim that \(N\) is prime; it only uses the fact that \(N > 1\) has SOME prime divisor \(q\), and shows that \(q\) cannot appear among \(p_1, \dots, p_k\). In the example above, the prime divisors \(59\) and \(509\) are indeed both missing from \(\{2, 3, 5, 7, 11, 13\}\).
+
+[QUESTION 3]
+[ANSWER: B]
+In Euclid's proof of the infinitude of primes, after assuming \(p_1, p_2, \dots, p_k\) are all the primes and setting \(N = p_1 p_2 \cdots p_k + 1\), which statement accurately describes the logical step that creates the contradiction?
+
+(A) Because \(N\) is larger than every \(p_j\), \(N\) itself must be prime, contradicting the assumption that \(p_k\) is the largest prime.
+(B) Because \(N > 1\), \(N\) has some prime divisor \(q\); assuming \(q\) is on the list forces \(q \mid (p_1 \cdots p_k)\) and \(q \mid N\), hence \(q \mid 1\), which is impossible for a prime \(q \ge 2\).
+(C) Because \(N\) is odd, \(2\) cannot divide \(N\), contradicting the fact that \(2\) is on the list of primes.
+(D) Because \(N\) is not divisible by \(p_1\), \(N\) has no prime divisors at all, contradicting the assumption that every integer has a prime divisor.
+(E) Because \(p_1 p_2 \cdots p_k\) is even and \(N\) is odd, \(N\) must equal a negative prime, contradicting \(q > 1\).
+[/QUESTION]
+
+=== SECTION 4: Proof hygiene — disguised contraposition and false contradictions ===
+
+Proof by contradiction is so flexible that beginners often reach for it on EVERY theorem. That habit creates two problems: cluttered arguments ("disguised contraposition") and outright invalid arguments ("false contradictions").
+
+First, compare our three core proof methods for a conditional \(\forall x \in D,\, (P(x) \Rightarrow Q(x))\):
+
+[TABLE]
+Method | Starting assumptions | Target goal | Best fit
+Direct proof | Assume \(P(x)\) | Derive \(Q(x)\) | \(P(x)\) gives concrete algebraic formulas leading straight to \(Q(x)\)
+Contraposition | Assume \(\neg Q(x)\) | Derive \(\neg P(x)\) | \(Q(x)\) is negative or disjunctive, or \(P(x)\) wraps \(x\) inside a compound expression
+Contradiction | Assume \(P(x)\) and \(\neg Q(x)\) | Derive any explicit \(R \wedge \neg R\) | Both \(P(x)\) and \(\neg Q(x)\) must interact to clash, or the theorem is not a conditional
+[/TABLE]
+
+Now look closely at what happens when someone writes a "disguised contrapositive" proof. Suppose a student wants to prove: "For every \(n \in \mathbb{Z}\), if \(n^2\) is even, then \(n\) is even," and writes:
+"Suppose for contradiction that \(n^2\) is even AND \(n\) is odd. Since \(n\) is odd, \(n = 2k + 1\), so \(n^2 = 2(2k^2 + 2k) + 1\) is odd. This contradicts our assumption that \(n^2\) is even. Hence \(n\) is even."
+
+Is this logically valid? YES — it genuinely reaches the contradiction "\(n^2\) is odd and \(n^2\) is even." Yet look at how the hypothesis "\(n^2\) is even" was used: it sat completely untouched on the shelf while \(\neg Q\) ("\(n\) is odd") directly produced \(\neg P\) ("\(n^2\) is odd")! That proof is simply a contrapositive proof wrapped in unnecessary contradiction machinery. Whenever your proof assumes \(P\) and \(\neg Q\), never uses \(P\) during the algebra, and only pulls \(P\) off the shelf at the very last line to clash with \(\neg P\), rewrite it directly as a proof by contraposition. True contradiction proofs genuinely combine BOTH \(P\) and \(\neg Q\) (or negate a non-conditional claim) to collide on some third fact \(R\).
+
+A far more dangerous error is a FALSE contradiction — deriving a contradiction not from \(\neg S\), but from an unjustified extra assumption smuggled in alongside \(\neg S\).
+
+[CALLOUT]
+id: caution-contradiction-hygiene
+label: Caution
+title: Three hygiene checks for contradiction proofs
+tone: caution
+
+(1) Check the negation \(\neg S\) carefully: for \(P \Rightarrow Q\), \(\neg(P \Rightarrow Q)\) is \(P \wedge \neg Q\); for \(\forall x,\, P(x)\), it is \(\exists x,\, \neg P(x)\); for \(\exists x,\, P(x)\), it is \(\forall x,\, \neg P(x)\).
+(2) Audit every extra assumption: if you assume \(\neg S\) AND an unproved extra condition \(E\) (for example, assuming a rational number \(x\) is an integer, or assuming two witnesses are equal), then deriving \(R \wedge \neg R\) only proves \(\neg(\neg S \wedge E)\), NOT \(S\)!
+(3) Avoid disguised contraposition: when proving \(P \Rightarrow Q\), if \(P\) is never used until the final line contradicts \(\neg P\), drop the contradiction wrapper and state it cleanly as a contrapositive proof.
+[/CALLOUT]
+
+Look at a concrete example of [REF: caution-contradiction-hygiene.2 | smuggling an unjustified extra assumption]. Suppose someone tries to "prove" the FALSE claim "There is no rational number \(x\) with \(x^2 = \frac{9}{4}\)" as follows:
+"Suppose for contradiction that \(x \in \mathbb{Q}\) satisfies \(x^2 = \frac{9}{4}\). Write \(x\) as an integer \(x = k \in \mathbb{Z}\). Then \(4k^2 = 9\), so the left side is even while the right side is odd — contradiction! Thus no such rational \(x\) exists."
+The contradiction \(4k^2 = 9\) is real, but it only refuted the extra illegal assumption \(x \in \mathbb{Z}\) — it never refuted \(x \in \mathbb{Q}\) (indeed \(x = \frac{3}{2}\) satisfies \(x^2 = \frac{9}{4}\)). Every property you attach to an assumed object must be logically forced by \(\neg S\) or by a valid theorem (such as lowest-terms reduction for fractions).
+
+[QUESTION 4]
+[ANSWER: A]
+Consider the theorem: "For all \(a, b \in \mathbb{Z}\), if \(a + b\) is odd, then \(a\) is odd or \(b\) is odd." A student writes:
+"Suppose for contradiction that \(a + b\) is odd, while \(a\) is even and \(b\) is even. Write \(a = 2k\) and \(b = 2m\) for \(k, m \in \mathbb{Z}\). Then \(a + b = 2(k + m)\), which is even, contradicting that \(a + b\) is odd."
+Which assessment of this proof is most accurate?
+
+(A) It is logically valid, but it is a disguised proof by contraposition because the hypothesis "\(a + b\) is odd" is never used until it clashes with the derived negation "\(a + b\) is even."
+(B) It is logically invalid because it forgot to write \(a\) and \(b\) in lowest terms.
+(C) It is logically invalid because assuming "\(a\) is even and \(b\) is even" is not the negation of "\(a\) is odd or \(b\) is odd."
+(D) It is logically invalid because it smuggled in an unjustified extra assumption by choosing two different letters \(k\) and \(m\).
+(E) It is a genuinely essential contradiction proof that cannot be rewritten as a contrapositive proof.
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+Suppose we want to prove by contradiction that there are no integers \(m, n \in \mathbb{Z}\) such that \(6m + 15n = 2\). Which argument delivers a valid contradiction?
+
+(A) Assume \(m = 1\) and \(n = 0\); then \(6(1) + 15(0) = 6 \ne 2\), contradiction.
+(B) Assume \(6m + 15n \ne 2\) for some \(m, n \in \mathbb{Z}\); taking \(m = n = 0\) gives \(0 \ne 2\), contradiction.
+(C) Assume \(6m + 15n = 2\) with \(m, n \in \mathbb{Z}\) and assume \(m = n\); then \(21m = 2\), which has no integer solution, contradiction.
+(D) Assume \(6m + 15n = 2\) with \(m, n \in \mathbb{Z}\); dividing by \(2\) gives \(3m + \frac{15}{2}n = 1\), so \(n\) cannot be \(1\), contradiction.
+(E) Assume there exist \(m, n \in \mathbb{Z}\) with \(6m + 15n = 2\). Factoring the left side gives \(3(2m + 5n) = 2\), which implies \(3 \mid 2\) (since \(2m + 5n \in \mathbb{Z}\)), contradicting \(3 \nmid 2\).
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+Using the known fact that \(\sqrt{2}\) is irrational, consider proving by contradiction that \(\sqrt{2} + \sqrt{3}\) is irrational. If we assume \(\sqrt{2} + \sqrt{3} = r\) for some \(r \in \mathbb{Q}\), which single algebraic move cleanly isolates a contradiction with the irrationality of \(\sqrt{2}\) (or \(\sqrt{3}\))?
+
+(A) Cube both sides to obtain \(2\sqrt{2} + 3\sqrt{3} = r^3\), contradicting \(r^3 \in \mathbb{Q}\).
+(B) Note \(r > 0\), square both sides to get \(5 + 2\sqrt{6} = r^2\), or better isolate \(\sqrt{3} = r - \sqrt{2}\) and square to get \(3 = r^2 - 2r\sqrt{2} + 2\), hence \(\sqrt{2} = \frac{r^2 - 1}{2r} \in \mathbb{Q}\), contradicting \(\sqrt{2} \notin \mathbb{Q}\).
+(C) Subtract \(\sqrt{2}\) from both sides to get \(\sqrt{3} = r - \sqrt{2}\), which immediately forces \(r = 0\) because \(\sqrt{2} \ne \sqrt{3}\).
+(D) Write \(r = \frac{a}{b}\) in lowest terms and conclude \(a\) and \(b\) must both be divisible by \(6\).
+(E) Multiply both sides by \(\sqrt{2} - \sqrt{3}\) to get \(-1 = r(\sqrt{2} - \sqrt{3})\), which already contradicts \(r > 0\).
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: C]
+Consider the statement: "There is no real number \(x \in \mathbb{R}\) such that \(x^2 + 1 = 0\)." Now consider a different statement: "For every real number \(x > 0\), there exists \(y \in \mathbb{R}\) such that \(0 < y < x\)." Suppose a student tries to prove the SECOND statement by contradiction. What is the exact negation they must assume?
+
+(A) For every \(x > 0\) and every \(y \in \mathbb{R}\), \(y \le 0\) or \(y \ge x\).
+(B) There exists \(x > 0\) and there exists \(y \in \mathbb{R}\) such that \(y \le 0\) or \(y \ge x\).
+(C) There exists \(x > 0\) such that for every \(y \in \mathbb{R}\), either \(y \le 0\) or \(y \ge x\).
+(D) There exists \(x \le 0\) such that for every \(y \in \mathbb{R}\), \(0 < y < x\).
+(E) For every \(x > 0\), there exists \(y \in \mathbb{R}\) such that \(y \le 0\) and \(y \ge x\).
+[/BONUS]

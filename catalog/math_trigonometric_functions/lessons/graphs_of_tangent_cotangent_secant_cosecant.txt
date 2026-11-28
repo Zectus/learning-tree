@@ -1,0 +1,237 @@
+=== SECTION 1: Tangent and cotangent—period \(\pi\), vertical asymptotes, and guide points ===
+
+Unlike sine and cosine, which stay bounded inside \([-1, 1]\) for every real input, the remaining four trigonometric functions are quotients with \(\cos x\) or \(\sin x\) in their denominators. Whenever a denominator approaches zero, the output grows without bound, creating vertical asymptotes that break the graph into repeating branches.
+
+Start with \(y = \tan x = \frac{\sin x}{\cos x}\). Where is \(\tan x\) undefined? Exactly where \(\cos x = 0\), namely at the odd multiples of \(\frac{\pi}{2}\):
+\[
+x = \frac{\pi}{2} + k\pi \qquad (k \in \mathbb{Z}).
+\]
+On the central open interval \(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\), trace the ratio \(\frac{\sin x}{\cos x}\) from left to right:
+- As \(x \to -\frac{\pi}{2}^+\), \(\sin x \to -1\) and \(\cos x \to 0^+\), so \(\tan x \to -\infty\).
+- At \(x = -\frac{\pi}{4}\), \(\tan\!\left(-\frac{\pi}{4}\right) = -1\).
+- At \(x = 0\), \(\tan 0 = 0\).
+- At \(x = \frac{\pi}{4}\), \(\tan\!\left(\frac{\pi}{4}\right) = 1\).
+- As \(x \to \frac{\pi}{2}^-\), \(\sin x \to 1\) and \(\cos x \to 0^+\), so \(\tan x \to +\infty\).
+
+Now check what happens when \(x\) advances by \(\pi\) (half a turn on the unit circle): both \(\sin x\) and \(\cos x\) negate, so their ratio is unchanged:
+\[
+\tan(x + \pi) = \frac{\sin(x + \pi)}{\cos(x + \pi)} = \frac{-\sin x}{-\cos x} = \tan x.
+\]
+Therefore the fundamental period of \(y = \tan x\) is \(\pi\), NOT \(2\pi\)! Its range is \((-\infty, \infty)\), it is strictly increasing on every branch between consecutive asymptotes, and it is an odd function (\(\tan(-x) = -\tan x\)).
+
+Drag the vertical-scaling slider \(A\) below to watch how \(y = A\tan x\) stretches vertically and flips from increasing to decreasing when \(A < 0\), while its vertical asymptotes at \(x = \pm\frac{\pi}{2}, \pm\frac{3\pi}{2}\) never move.
+
+[GRAPH]
+type: function2d
+title: Vertical stretch and reflection in \(y = A\tan x\) with fixed asymptotes
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4.5, 4.5
+yrange: -5, 5
+trace: A*tan(x) | label: \(y = A\tan x\) | color: #2563eb
+segment: -1.5708, -5, -1.5708, 5 | color: #dc2626 | dashed: true
+segment: 1.5708, -5, 1.5708, 5 | color: #dc2626 | dashed: true
+point: -0.7854, -A | label: \((-\pi/4, -A)\) | color: #059669
+point: 0, 0 | label: \((0, 0)\) | color: #0f172a
+point: 0.7854, A | label: \((\pi/4, A)\) | color: #059669
+slider: A | range: -2.5, 2.5 | init: 1 | step: 0.25
+[/GRAPH]
+
+Because the range of \(y = A\tan\!\bigl(B(x - C)\bigr) + D\) is all real numbers \((-\infty, \infty)\), tangent has NO amplitude; instead, \(\lvert A \rvert\) acts purely as a vertical stretch factor setting the height of the two quarter-period guide points at \(D \pm A\).
+
+Now compare \(y = \cot x = \frac{\cos x}{\sin x}\). It is undefined wherever \(\sin x = 0\), giving vertical asymptotes at every integer multiple of \(\pi\): \(x = k\pi\) (\(k \in \mathbb{Z}\)). On the basic branch \((0, \pi)\), \(\cot x \to +\infty\) as \(x \to 0^+\), passes through \(\left(\frac{\pi}{4}, 1\right)\), \(\left(\frac{\pi}{2}, 0\right)\), and \(\left(\frac{3\pi}{4}, -1\right)\), and drops to \(-\infty\) as \(x \to \pi^-\). Like tangent, cotangent has fundamental period \(\pi\), range \((-\infty, \infty)\), and odd symmetry, but each basic branch is strictly DECREASING from left to right.
+
+[GRAPH]
+type: function2d
+title: Basic cotangent \(y = \cot x\) with vertical asymptotes at \(x = k\pi\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -3.0, 6.1
+yrange: -5, 5
+trace: 1/tan(x) | label: \(y = \cot x\) | color: #059669
+segment: 0, -5, 0, 5 | color: #dc2626 | dashed: true
+segment: 3.1416, -5, 3.1416, 5 | color: #dc2626 | dashed: true
+point: 0.7854, 1 | label: \((\pi/4, 1)\) | color: #0f172a
+point: 1.5708, 0 | label: \((\pi/2, 0)\) | color: #0f172a
+point: 2.3562, -1 | label: \((3\pi/4, -1)\) | color: #0f172a
+[/GRAPH]
+
+=== SECTION 2: Transforming tangent and cotangent graphs ===
+
+For any general tangent or cotangent function
+\[
+y = A\tan(Bx - \phi) + D \qquad \text{or} \qquad y = A\cot(Bx - \phi) + D \qquad (A, B \ne 0),
+\]
+the fundamental period is
+\[
+T = \frac{\pi}{\lvert B \rvert}.
+\]
+To locate one pair of consecutive vertical asymptotes directly—without memorizing separate shift formulas—set the entire inside argument equal to the endpoints of the parent function's basic branch:
+
+[CALLOUT]
+id: tan-cot-sketch
+label: Procedure
+title: Locating asymptotes and guide points for tangent and cotangent
+tone: key
+
+(1) Period: \(T = \dfrac{\pi}{\lvert B \rvert}\) (half as large as the sinusoidal period formula).
+(2) Consecutive vertical asymptotes:
+- For \(y = A\tan(Bx - \phi) + D\), solve \(Bx - \phi = -\dfrac{\pi}{2}\) and \(Bx - \phi = \dfrac{\pi}{2}\).
+- For \(y = A\cot(Bx - \phi) + D\), solve \(Bx - \phi = 0\) and \(Bx - \phi = \pi\).
+(3) Three guide points inside that branch:
+- Halfway between the two asymptotes lies the center (inflection) point at height \(y = D\).
+- At the quarter-period and three-quarter-period marks, the curve hits heights \(D - A\) and \(D + A\) (for \(\tan\) with \(B > 0\): \(D - A\) on the left, \(D + A\) on the right; for \(\cot\) with \(B > 0\): \(D + A\) on the left, \(D - A\) on the right).
+[/CALLOUT]
+
+[CALLOUT]
+id: tan-period-caution
+label: Common pitfall
+title: Do not use \(\frac{2\pi}{\lvert B \rvert}\) for tangent or cotangent
+tone: caution
+
+Because the parent period of \(\tan x\) and \(\cot x\) is \(\pi\), dividing \(2\pi\) by \(\lvert B \rvert\) produces twice the true period. Double-check your period by subtracting the two consecutive asymptote \(x\)-values you solved for in [REF: tan-cot-sketch.2 | step 2]: their difference must always equal \(\frac{\pi}{\lvert B \rvert}\).
+[/CALLOUT]
+
+Let us apply this to \(y = 2\tan\!\left(\frac{x}{2} - \frac{\pi}{4}\right) - 1\). Here \(A = 2\), \(B = \frac{1}{2}\), and \(D = -1\), so the period is \(T = \frac{\pi}{1/2} = 2\pi\). Solving \(\frac{x}{2} - \frac{\pi}{4} = -\frac{\pi}{2}\) gives \(x = -\frac{\pi}{2}\), and solving \(\frac{x}{2} - \frac{\pi}{4} = \frac{\pi}{2}\) gives \(x = \frac{3\pi}{2}\) (check: \(\frac{3\pi}{2} - \left(-\frac{\pi}{2}\right) = 2\pi = T\)). Midpoint \(x = \frac{\pi}{2}\) has \(y = -1\); quarter-period points \(x = 0\) and \(x = \pi\) have \(y = -1 - 2 = -3\) and \(y = -1 + 2 = 1\).
+
+[QUESTION 1]
+[ANSWER: A]
+What are the fundamental period and one pair of consecutive vertical asymptotes for \(y = 3\tan\!\left(2x - \dfrac{\pi}{2}\right) + 1\)?
+
+(A) Period \(\dfrac{\pi}{2}\); consecutive asymptotes \(x = 0\) and \(x = \dfrac{\pi}{2}\)
+(B) Period \(\pi\); consecutive asymptotes \(x = 0\) and \(x = \pi\)
+(C) Period \(\dfrac{\pi}{2}\); consecutive asymptotes \(x = -\dfrac{\pi}{4}\) and \(x = \dfrac{\pi}{4}\)
+(D) Period \(\pi\); consecutive asymptotes \(x = -\dfrac{\pi}{2}\) and \(x = \dfrac{\pi}{2}\)
+(E) Period \(\dfrac{\pi}{2}\); consecutive asymptotes \(x = \dfrac{\pi}{4}\) and \(x = \dfrac{3\pi}{4}\)
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+Consider the function \(y = -2\cot\!\left(\dfrac{x}{2}\right)\). Which description correctly states its period, range, and behavior on the open interval \((0, 2\pi)\)?
+
+(A) Period \(4\pi\), range \((-\infty, \infty)\), strictly increasing on \((0, 2\pi)\)
+(B) Period \(2\pi\), range \([-2, 2]\), strictly increasing on \((0, 2\pi)\)
+(C) Period \(2\pi\), range \((-\infty, \infty)\), strictly decreasing on \((0, 2\pi)\)
+(D) Period \(2\pi\), range \((-\infty, \infty)\), strictly increasing on \((0, 2\pi)\)
+(E) Period \(\pi\), range \((-\infty, \infty)\), strictly increasing on \((0, 2\pi)\)
+[/QUESTION]
+
+=== SECTION 3: Secant and cosecant via the reciprocal guide-curve bridge ===
+
+Now turn to \(y = \sec x = \frac{1}{\cos x}\) and \(y = \csc x = \frac{1}{\sin x}\). Rather than memorizing them separately, build both directly from the cosine and sine waves you already know!
+
+Think about taking the reciprocal of a number \(u\) that stays inside \([-1, 1]\):
+- Whenever \(u = 1\), \(\frac{1}{u} = 1\); whenever \(u = -1\), \(\frac{1}{u} = -1\). So \(y = \sec x\) touches \(y = \cos x\) at every peak and trough!
+- Whenever \(0 < u < 1\), \(\frac{1}{u} > 1\); as \(u \to 0^+\), \(\frac{1}{u} \to +\infty\).
+- Whenever \(-1 < u < 0\), \(\frac{1}{u} < -1\); as \(u \to 0^-\), \(\frac{1}{u} \to -\infty\).
+- Because \(\lvert u \rvert \le 1\) always, \(\left\lvert \frac{1}{u} \right\rvert \ge 1\) always: NO values ever fall strictly inside \((-1, 1)\).
+
+Thus \(y = \sec x\) consists of alternating upward and downward U-shaped branches that kiss the peaks and troughs of \(y = \cos x\) and shoot off along vertical asymptotes wherever \(\cos x = 0\) (\(x = \frac{\pi}{2} + k\pi\)). Likewise, \(y = \csc x\) kisses the peaks and troughs of \(y = \sin x\) and has vertical asymptotes wherever \(\sin x = 0\) (\(x = k\pi\)). Both inherit the full period \(2\pi\) from cosine and sine.
+
+This exact geometric link carries over to EVERY transformed secant and cosecant function:
+\[
+y = A\sec\!\bigl(B(x - C)\bigr) + D \qquad \text{and} \qquad y = A\csc\!\bigl(B(x - C)\bigr) + D.
+\]
+To graph either function, first lightly sketch its reciprocal guide curve \(y = A\cos\!\bigl(B(x - C)\bigr) + D\) (for secant) or \(y = A\sin\!\bigl(B(x - C)\bigr) + D\) (for cosecant). Notice why the midline shift \(D\) works identically on both curves: the guide wave equals \(D\) exactly when \(\cos\!\bigl(B(x - C)\bigr) = 0\) (or \(\sin\!\bigl(B(x - C)\bigr) = 0\)), which is precisely where the secant or cosecant denominator vanishes! And at each extremum of the guide wave, \(\cos\) or \(\sin\) equals \(\pm 1\), so \(\sec\) or \(\csc\) ALSO equals \(\pm 1\), giving the exact same \(y\)-value \(D \pm \lvert A \rvert\).
+
+Drag the slider \(A\) below to watch how \(y = A\sec x + 1\) remains anchored to the peaks and troughs of its dashed guide wave \(y = A\cos x + 1\) while the forbidden middle band \((1 - A, 1 + A)\) widens and narrows.
+
+[GRAPH]
+type: function2d
+title: Reciprocal guide curve \(y = A\cos x + 1\) and secant \(y = A\sec x + 1\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4.5, 4.5
+yrange: -5.5, 6.5
+trace: A*cos(x) + 1 | label: guide \(y = A\cos x + 1\) | color: #94a3b8
+trace: A/cos(x) + 1 | label: \(y = A\sec x + 1\) | color: #2563eb
+segment: -1.5708, -5.5, -1.5708, 6.5 | color: #dc2626 | dashed: true
+segment: 1.5708, -5.5, 1.5708, 6.5 | color: #dc2626 | dashed: true
+point: 0, A + 1 | label: \((0, 1+A)\) | color: #059669
+point: 3.1416, 1 - A | label: \((\pi, 1-A)\) | color: #059669
+slider: A | range: 0.5, 2.5 | init: 1.5 | step: 0.25
+[/GRAPH]
+
+[CALLOUT]
+id: sec-csc-bridge
+label: Summary
+title: Features of \(y = A\sec(B(x - C)) + D\) and \(y = A\csc(B(x - C)) + D\)
+tone: key
+
+(1) Period: \(T = \dfrac{2\pi}{\lvert B \rvert}\), identical to the cosine or sine guide curve.
+(2) Vertical asymptotes: occur at every midline crossing of the guide curve (where \(\cos(B(x - C)) = 0\) for \(\sec\), or \(\sin(B(x - C)) = 0\) for \(\csc\)).
+(3) Vertices of the U-shaped branches: sit directly at the local maxima (\(y = D + \lvert A \rvert\), opening upward) and local minima (\(y = D - \lvert A \rvert\), opening downward) of the guide curve.
+(4) Range: \((-\infty, D - \lvert A \rvert] \cup [D + \lvert A \rvert, \infty)\). The open strip \((D - \lvert A \rvert, D + \lvert A \rvert)\) contains no points of the graph.
+[/CALLOUT]
+
+Here is a complete comparison of all four non-sinusoidal basic functions:
+
+[TABLE]
+Function | Period | Vertical asymptotes (\(k \in \mathbb{Z}\)) | Range | Symmetry
+\(y = \tan x\) | \(\pi\) | \(x = \dfrac{\pi}{2} + k\pi\) | \((-\infty, \infty)\) | Odd
+\(y = \cot x\) | \(\pi\) | \(x = k\pi\) | \((-\infty, \infty)\) | Odd
+\(y = \sec x\) | \(2\pi\) | \(x = \dfrac{\pi}{2} + k\pi\) | \((-\infty, -1] \cup [1, \infty)\) | Even
+\(y = \csc x\) | \(2\pi\) | \(x = k\pi\) | \((-\infty, -1] \cup [1, \infty)\) | Odd
+[/TABLE]
+
+=== SECTION 4: Recovering equations from asymptotes and branch vertices ===
+
+To recover an equation for a transformed secant or cosecant graph, reconstruct its invisible guide wave first using [REF: sec-csc-bridge | the guide-curve bridge]:
+1. From the lowest vertex of the upward branches (\(M_{\text{guide}} = D + \lvert A \rvert\)) and the highest vertex of the downward branches (\(m_{\text{guide}} = D - \lvert A \rvert\)), recover the midline \(D = \frac{M_{\text{guide}} + m_{\text{guide}}}{2}\) and stretch factor \(\lvert A \rvert = \frac{M_{\text{guide}} - m_{\text{guide}}}{2}\).
+2. Measure the horizontal spacing between two adjacent vertical asymptotes; that gap is HALF a period (\(\frac{T}{2}\)), so double it to obtain \(T\) and set \(B = \frac{2\pi}{T}\).
+3. Check whether \(x = 0\) (or a clean shift \(x = C\)) is a vertical asymptote (use \(\csc\)) or a branch vertex (use \(\sec\)), and match the sign of \(A\) to whether the branch opens upward or downward there.
+
+[QUESTION 3]
+[ANSWER: B]
+For \(y = 3\sec\!\left(\dfrac{\pi}{2}x\right) - 2\), what are the fundamental period, the range, and the locations of the vertical asymptotes (for all integers \(k\))?
+
+(A) Period \(2\), range \((-\infty, -5] \cup [1, \infty)\), asymptotes \(x = 1 + 2k\)
+(B) Period \(4\), range \((-\infty, -5] \cup [1, \infty)\), asymptotes \(x = 1 + 2k\)
+(C) Period \(4\), range \([-5, 1]\), asymptotes \(x = 1 + 2k\)
+(D) Period \(4\), range \((-\infty, -5] \cup [1, \infty)\), asymptotes \(x = 2k\)
+(E) Period \(4\), range \((-\infty, -3] \cup [3, \infty)\), asymptotes \(x = 1 + 2k\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: C]
+A cosecant graph has period \(4\pi\), vertical asymptotes at \(x = 0, 2\pi, 4\pi, \dots\), an upward-opening branch with vertex at \((\pi, 5)\), and a downward-opening branch with vertex at \((3\pi, -1)\). Which equation matches this graph?
+
+(A) \(y = 3\csc(2x) + 2\)
+(B) \(y = -3\csc\!\left(\dfrac{x}{2}\right) + 2\)
+(C) \(y = 3\csc\!\left(\dfrac{x}{2}\right) + 2\)
+(D) \(y = 3\sec\!\left(\dfrac{x}{2}\right) + 2\)
+(E) \(y = 6\csc\!\left(\dfrac{x}{2}\right) + 2\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: E]
+For the branch of \(y = 4\tan\!\left(\dfrac{\pi}{4}(x - 1)\right) - 3\) lying between its consecutive vertical asymptotes \(x = -1\) and \(x = 3\), what are the coordinates of the two quarter-period guide points?
+
+(A) \((0, -4)\) and \((2, 4)\)
+(B) \((0, 1)\) and \((2, -7)\)
+(C) \((-0.5, -7)\) and \((2.5, 1)\)
+(D) \((0, -3)\) and \((2, 1)\)
+(E) \((0, -7)\) and \((2, 1)\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+How many vertical asymptotes does the graph of \(y = 2\csc\!\left(3x + \dfrac{\pi}{2}\right)\) have inside the open interval \((0, 2\pi)\)?
+
+(A) \(3\)
+(B) \(6\)
+(C) \(5\)
+(D) \(7\)
+(E) \(12\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: A]
+A graph of the form \(y = A\sec(Bx) + D\) (with \(B > 0\)) has range \((-\infty, -3] \cup [7, \infty)\) and passes through the point \((0, -3)\). What are the values of \(A\) and \(D\)?
+
+(A) \(A = -5\) and \(D = 2\)
+(B) \(A = 5\) and \(D = 2\)
+(C) \(A = -5\) and \(D = -2\)
+(D) \(A = -10\) and \(D = 7\)
+(E) \(A = 5\) and \(D = -3\)
+[/BONUS]

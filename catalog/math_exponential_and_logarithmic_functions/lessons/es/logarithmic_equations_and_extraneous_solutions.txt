@@ -1,0 +1,176 @@
+=== SECTION 1: Por qué las ecuaciones logarítmicas producen soluciones extrañas ===
+
+Considera la ecuación logarítmica
+\[
+\log_2(x) + \log_2(x - 2) = 3.
+\]
+Para resolverla, condensamos el lado izquierdo en un solo logaritmo usando la regla del producto, convertimos a forma exponencial y resolvemos el polinomio resultante:
+\[
+\log_2\!\bigl(x(x - 2)\bigr) = 3 \implies x(x - 2) = 2^3 = 8 \implies x^2 - 2x - 8 = 0 \implies (x - 4)(x + 2) = 0.
+\]
+Cada paso algebraico fue completamente válido; sin embargo, prueba ambos candidatos en la ecuación original:
+- En \(x = 4\): \(\log_2(4) + \log_2(2) = 2 + 1 = 3\). ¡Válida!
+- En \(x = -2\): \(\log_2(-2) + \log_2(-4)\) no está definida en \(\mathbb{R}\), porque ambos argumentos son negativos.
+
+¿Cómo inventó un álgebra válida una raíz falsa \(x = -2\)? La culpable es la ampliación del dominio. El lado izquierdo original \(\log_2(x) + \log_2(x - 2)\) exige tanto \(x > 0\) como \(x - 2 > 0\), por lo que su dominio es \((2, \infty)\). Cuando lo condensamos a \(\log_2(x(x - 2))\), el producto \(x(x - 2)\) es positivo en \((-\infty, 0) \cup (2, \infty)\), creando una rama izquierda totalmente nueva donde dos factores negativos se multiplican para dar un número positivo. En \(x = -2\), la expresión condensada vale \(\log_2((-2)(-4)) = \log_2(8) = 3\), de modo que \(x = -2\) resuelve genuinamente la ecuación condensada, ¡pero no la original!
+
+[GRAPH]
+type: function2d
+title: Curva original \(\log_2(x) + \log_2(x - 2)\) frente a la curva ampliada \(\log_2(x(x - 2))\) cortando \(y = 3\)
+xlabel: \(x\)
+ylabel: \(y\)
+xrange: -4, 6
+yrange: -2, 5
+trace: log(x * (x - 2)) / log(2) | label: \(\log_2(x(x - 2))\) (dominio ampliado)
+trace: log(x) / log(2) + log(x - 2) / log(2) | label: \(\log_2(x) + \log_2(x - 2)\) (solo rama derecha)
+trace: 3 | label: \(y = 3\)
+point: 4, 3 | label: \((4, 3)\)
+point: -2, 3 | label: \((-2, 3)\)
+[/GRAPH]
+
+En la gráfica anterior, la curva ampliada interseca a \(y = 3\) dos veces, en \((-2, 3)\) y \((4, 3)\), mientras que la expresión original existe únicamente para \(x > 2\) e interseca a \(y = 3\) solo en \((4, 3)\).
+
+[CALLOUT]
+id: domain-verify
+label: Verificación obligatoria
+title: Verificación de dominio en ecuaciones logarítmicas
+tone: caution
+
+Toda solución candidata obtenida tras condensar, cancelar o convertir una ecuación logarítmica DEBE comprobarse en la ecuación ORIGINAL:
+
+(1) Cada argumento logarítmico en la ecuación original debe evaluarse a un número real estrictamente positivo.
+(2) Si la variable \(x\) aparece en alguna base logarítmica \(b(x)\), dicha base debe cumplir \(b(x) > 0\) y \(b(x) \ne 1\).
+
+Presta mucha atención: NO descartes a ciegas los valores negativos de \(x\). ¡Un \(x\) negativo es completamente válido siempre que cada argumento (y base) en la ecuación original permanezca válido!
+[/CALLOUT]
+
+=== SECTION 2: Emparejamiento inyectivo, condensación y ecuaciones de bases mixtas ===
+
+Tres clases fundamentales abarcan la mayoría de las ecuaciones logarítmicas algebraicas.
+
+Clase 1: Emparejamiento inyectivo, \(\log_b(A(x)) = \log_b(B(x))\).
+Como \(\log_b\) es inyectiva, logaritmos iguales de base \(b\) obligan a argumentos iguales: \(A(x) = B(x)\). Después, verifica \(A(x) > 0\) (lo que garantiza automáticamente \(B(x) > 0\) cuando \(A(x) = B(x)\)).
+
+Ejemplo: Resuelve \(\ln(2x + 3) = \ln(x^2)\).
+Igualar los argumentos da \(x^2 = 2x + 3 \implies x^2 - 2x - 3 = 0 \implies (x - 3)(x + 1) = 0\), por lo que \(x = 3\) o \(x = -1\).
+Comprueba ambos en la ecuación original:
+- En \(x = 3\): \(2(3) + 3 = 9 > 0\) y \(3^2 = 9 > 0\). ¡Válida!
+- En \(x = -1\): \(2(-1) + 3 = 1 > 0\) y \((-1)^2 = 1 > 0\). ¡También válida! Tanto \(x = 3\) como \(x = -1\) son soluciones genuinas, lo que ilustra la advertencia final en [REF: domain-verify | la regla de verificación].
+
+Clase 2: Condensar sumas y diferencias y luego exponenciar.
+Agrupa todos los logaritmos de la misma base en un lado, condensa en \(\log_b(A(x)) = c\), convierte a \(A(x) = b^c\), despeja \(x\) y comprueba los argumentos originales.
+
+Ejemplo: Resuelve \(\ln(x + 1) - \ln(x - 1) = 2\).
+Condensa mediante la regla del cociente:
+\[
+\ln\!\left(\frac{x + 1}{x - 1}\right) = 2 \implies \frac{x + 1}{x - 1} = e^2.
+\]
+Multiplica por \(x - 1\) y agrupa los términos en \(x\):
+\[
+x + 1 = e^2 x - e^2 \implies e^2 + 1 = x(e^2 - 1) \implies x = \frac{e^2 + 1}{e^2 - 1}.
+\]
+Comprueba el dominio original (\(x > 1\)): como \(e^2 + 1 > e^2 - 1 > 0\), el cociente \(x = \frac{e^2 + 1}{e^2 - 1} \approx 1.313\) es estrictamente mayor que \(1\), por lo que tanto \(x + 1\) como \(x - 1\) son positivos. La solución es válida.
+
+Clase 3: Ecuaciones de bases mixtas mediante cambio de base.
+Cuando una ecuación mezcla bases distintas —en especial potencias de una base común—, cambia todos los logaritmos a una misma base antes de combinarlos.
+
+Ejemplo: Resuelve \(\log_2(x) + \log_4(x) = 6\).
+Usando \(\log_4(x) = \log_{2^2}(x) = \frac{1}{2}\log_2(x)\), la ecuación se convierte en
+\[
+\log_2(x) + \frac{1}{2}\log_2(x) = 6 \implies \frac{3}{2}\log_2(x) = 6 \implies \log_2(x) = 4 \implies x = 2^4 = 16.
+\]
+Comprobando \(x = 16 > 0\): \(\log_2(16) + \log_4(16) = 4 + 2 = 6\).
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuál es el conjunto completo de soluciones reales de \(\log_3(x + 6) + \log_3(x - 2) = 2\)?
+
+(A) \(x = -7\) y \(x = 3\)
+(B) Únicamente \(x = -7\)
+(C) Únicamente \(x = 3\)
+(D) \(x = 2\) y \(x = 3\)
+(E) Ninguna solución real
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: C]
+¿Cuál es la solución exacta de \(\log_3(x) + \log_9(x) + \log_{27}(x) = 11\)?
+
+(A) \(81\)
+(B) \(243\)
+(C) \(729\)
+(D) \(3^{11}\)
+(E) \(6\)
+[/QUESTION]
+
+=== SECTION 3: Ecuaciones cuadráticas en logaritmos y de exponente variable ===
+
+Otros dos tipos de ecuaciones conectan directamente la resolución logarítmica con las ecuaciones cuadráticas.
+
+Clase 4: Sustitución cuadrática \(u = \log_b(x)\).
+Ten cuidado de distinguir \((\log_b x)^2\) (el cuadrado del logaritmo) de \(\log_b(x^2) = 2\log_b(x)\) (el logaritmo del cuadrado, para \(x > 0\)). Cuando una ecuación contiene \((\log_b x)^2\) y \(\log_b(x)\), sustituye \(u = \log_b(x)\).
+
+A diferencia de \(u = b^x\) en ecuaciones exponenciales —que debía ser estrictamente positivo—, el rango de \(u = \log_b(x)\) es TODO \((-\infty, \infty)\). Por lo tanto, los valores negativos de \(u\) son completamente válidos y simplemente producen \(x = b^u \in (0, 1)\) (para \(b > 1\)).
+
+Ejemplo: Resuelve \((\log_2 x)^2 + \log_2(x) - 6 = 0\).
+Define \(u = \log_2(x)\):
+\[
+u^2 + u - 6 = 0 \implies (u + 3)(u - 2) = 0 \implies u = -3 \text{ o } u = 2.
+\]
+Convertir ambos valores de vuelta a \(x\) da \(x = 2^{-3} = \frac{1}{8}\) y \(x = 2^2 = 4\). Ambos son estrictamente positivos y satisfacen la ecuación original.
+
+Clase 5: Ecuaciones con exponente variable de la forma \(x^{\log_b(x)} = \dots\) (con \(x > 0\)).
+Cuando \(x\) aparece tanto en la base como en el exponente, aplica el logaritmo correspondiente \(\log_b\) (o \(\ln\)) a ambos lados para que la regla de la potencia baje el exponente al frente.
+
+Ejemplo: Resuelve \(x^{\ln x} = e^4\) para \(x > 0\).
+Toma \(\ln\) de ambos lados:
+\[
+\ln\!\left(x^{\ln x}\right) = \ln(e^4) \implies (\ln x)(\ln x) = 4 \implies (\ln x)^2 = 4.
+\]
+Sacar raíces cuadradas da \(\ln x = 2\) o \(\ln x = -2\), de modo que \(x = e^2\) o \(x = e^{-2}\). Comprobando \(x = e^{-2} > 0\): \((e^{-2})^{\ln(e^{-2})} = (e^{-2})^{-2} = e^4\). Ambas soluciones son válidas.
+
+Por último, presta atención a ecuaciones donde \(x\) se encuentra en la base de un logaritmo, como \(\log_x(16) = 2\). Al convertir se obtiene \(x^2 = 16 \implies x = 4\) o \(x = -4\). Por [REF: domain-verify.2 | la condición (2)], la base debe cumplir \(x > 0\) y \(x \ne 1\), así que \(x = -4\) se descarta y solo sobrevive \(x = 4\).
+
+[QUESTION 3]
+[ANSWER: D]
+¿Cuáles son todas las soluciones reales de \((\ln x)^2 + \ln(x^2) - 8 = 0\)?
+
+(A) Únicamente \(x = e^2\)
+(B) \(x = e^{-2}\) y \(x = e^4\)
+(C) Únicamente \(x = e^4\)
+(D) \(x = e^{-4}\) y \(x = e^2\)
+(E) \(x = -4\) y \(x = 2\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: B]
+¿Cuáles son todas las soluciones reales positivas de \(x^{\log_2 x} = 16x^3\)?
+
+(A) Únicamente \(x = 16\)
+(B) \(x = \frac{1}{2}\) y \(x = 16\)
+(C) \(x = 2\) y \(x = 16\)
+(D) \(x = \frac{1}{16}\) y \(x = 2\)
+(E) Únicamente \(x = 4\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: B]
+¿Cuál es el conjunto completo de soluciones reales de \(\log_x(4x + 5) = 2\)?
+
+(A) \(x = -1\) y \(x = 5\)
+(B) Únicamente \(x = 5\)
+(C) Únicamente \(x = -1\)
+(D) \(x = 1\) y \(x = 5\)
+(E) Ninguna solución real
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: C]
+¿Cuál es el conjunto completo de soluciones reales de \(\ln(x^2 + 3x) = \ln(x + 8)\)?
+
+(A) Únicamente \(x = 2\)
+(B) Únicamente \(x = -4\)
+(C) \(x = -4\) y \(x = 2\)
+(D) \(x = -2\) y \(x = 4\)
+(E) Ninguna solución real
+[/BONUS]

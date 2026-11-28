@@ -1,0 +1,212 @@
+=== SECTION 1: Las reglas de la suma y del producto en el conteo ===
+
+Todo problema de conteo finito pide la cardinalidad \(|A|\) de cierto conjunto finito \(A\) de configuraciones. Enumerar cada elemento uno por uno fracasa en cuanto \(|A|\) alcanza unas cuantas decenas; en su lugar, descomponemos \(A\) en piezas más simples cuyos tamaños se combinan aritméticamente. Dos reglas fundamentales gobiernan las dos formas básicas de combinar elecciones: alternativas mutuamente excluyentes («o esto o aquello») y etapas secuenciales («primero esto, luego aquello»).
+
+[CALLOUT]
+id: sum-product-rules
+label: Principios
+title: Regla de la Suma y Regla del Producto
+tone: key
+
+(1) Regla de la Adición (Suma): Si \(A_1, A_2, \dots, A_m\) son conjuntos finitos disjuntos dos a dos (es decir, \(A_i \cap A_j = \emptyset\) siempre que \(i \ne j\)), entonces
+\[
+|A_1 \cup A_2 \cup \dots \cup A_m| = |A_1| + |A_2| + \dots + |A_m|.
+\]
+(2) Regla de la Multiplicación (Producto): Para conjuntos finitos \(A_1, \dots, A_m\), el producto cartesiano \(A_1 \times \dots \times A_m\) de \(m\)-tuplas ordenadas satisface
+\[
+|A_1 \times A_2 \times \dots \times A_m| = |A_1| \cdot |A_2| \cdots |A_m|.
+\]
+Más en general, si un conjunto finito de resultados puede construirse de manera única mediante una secuencia de \(m\) etapas tal que la etapa \(i\) ofrece siempre exactamente \(n_i\) opciones —sin importar qué elecciones se hicieron en las etapas \(1, \dots, i - 1\)—, entonces el número total de resultados es \(n_1 n_2 \cdots n_m\).
+[/CALLOUT]
+
+Presta mucha atención a las dos condiciones clave ocultas dentro de [REF: sum-product-rules | estas reglas]:
+- En [REF: sum-product-rules.1 | la Regla de la Suma], los conjuntos DEBEN ser disjuntos dos a dos. Supón que cuentas los enteros en \(\{1, 2, \dots, 30\}\) divisibles por \(2\) o por \(3\). Hay \(15\) múltiplos de \(2\) y \(10\) múltiplos de \(3\), pero la respuesta NO es \(15 + 10 = 25\): los cinco múltiplos de \(6\) (\(6, 12, 18, 24, 30\)) están en ambos conjuntos y se contaron dos veces. Cuando los conjuntos se traslapen, particiona primero en subcasos genuinamente disjuntos (aquí: múltiplos de \(2\) da \(15\), más múltiplos impares de \(3\), es decir \(3, 9, 15, 21, 27\), dando \(15 + 5 = 20\)) o espera a la maquinaria general de inclusión-exclusión desarrollada más adelante en esta secuencia.
+- En [REF: sum-product-rules.2 | la Regla del Producto], el número de opciones en la etapa \(i\) DEBE ser independiente de las elecciones anteriores. El conjunto concreto de opciones disponibles en la etapa \(i\) puede cambiar (por ejemplo, elegir sin reemplazo deja distintos elementos restantes), siempre que el CONTEO \(n_i\) de opciones disponibles sea el mismo en toda rama.
+
+Observa qué sucede cuando falla esa condición de invarianza.
+
+Ejemplo resuelto: ¿Cuántos enteros positivos de \(3\) dígitos (de \(100\) a \(999\)) son pares y tienen sus tres dígitos distintos?
+
+Si intentas elegir de izquierda a derecha —centenas, luego unidades, luego decenas—, el dígito de las centenas tiene \(9\) opciones (del \(1\) al \(9\)). Ahora intenta elegir el dígito de las unidades (que debe ser par, de \(\{0, 2, 4, 6, 8\}\), y distinto del de las centenas):
+- Si el dígito de las centenas fue impar (\(1, 3, 5, 7, 9\)), los \(5\) dígitos pares siguen disponibles para el lugar de las unidades.
+- Si el dígito de las centenas fue par (\(2, 4, 6, 8\)), solo \(4\) dígitos pares siguen disponibles para el lugar de las unidades.
+Como el número de opciones en la etapa \(2\) depende de lo ocurrido en la etapa \(1\), NO puedes colapsar esto en un único producto.
+
+El remedio es combinar [REF: sum-product-rules.1 | la Regla de la Suma] con [REF: sum-product-rules.2 | la Regla del Producto]: particiona el problema en casos disjuntos dentro de los cuales cada conteo por etapa SÍ sea constante. Aquí podemos dividir según la paridad del dígito de las centenas:
+- Caso 1 (dígito de las centenas impar): \(5\) opciones para las centenas (\(1, 3, 5, 7, 9\)), luego \(5\) opciones para las unidades (\(0, 2, 4, 6, 8\)), luego \(8\) opciones para las decenas (cualquiera de los \(10\) dígitos aún no usados). Conteo: \(5 \cdot 5 \cdot 8 = 200\).
+- Caso 2 (dígito de las centenas par): \(4\) opciones para las centenas (\(2, 4, 6, 8\)), luego \(4\) opciones para las unidades (los cuatro dígitos pares restantes), luego \(8\) opciones para las decenas. Conteo: \(4 \cdot 4 \cdot 8 = 128\).
+Como ambos casos son disjuntos y cubren todo entero válido, la Regla de la Suma da \(200 + 128 = 328\).
+
+Como verificación de cordura, divide según el dígito de las unidades en su lugar:
+- Caso A (el dígito de las unidades es \(0\)): \(1\) opción para unidades, \(9\) opciones para centenas (\(1\)–\(9\)), \(8\) opciones para decenas \(\implies 1 \cdot 9 \cdot 8 = 72\).
+- Caso B (dígito de las unidades en \(\{2, 4, 6, 8\}\)): \(4\) opciones para unidades, \(8\) opciones para centenas (\(1\)–\(9\) salvo el dígito de las unidades), \(8\) opciones para decenas (\(0\)–\(9\) salvo los dos dígitos ya usados) \(\implies 4 \cdot 8 \cdot 8 = 256\).
+Total: \(72 + 256 = 328\), confirmando la respuesta de forma independiente.
+
+[QUESTION 1]
+[ANSWER: C]
+¿Cuántos enteros positivos de \(3\) dígitos (de \(100\) a \(999\)) son divisibles por \(5\) y tienen sus tres dígitos distintos?
+
+(A) \(128\)
+(B) \(132\)
+(C) \(136\)
+(D) \(144\)
+(E) \(162\)
+[/QUESTION]
+
+=== SECTION 2: La Regla del Complemento y la Regla de la División ===
+
+Muchos problemas de conteo son incómodos de contar directamente porque sus condiciones se dividen en posibilidades solapadas («contiene al menos una vocal») o porque un procedimiento secuencial natural genera múltiples veces cada configuración objetivo. Otras dos reglas fundamentales resuelven exactamente estas situaciones.
+
+[CALLOUT]
+id: comp-div-rules
+label: Principios
+title: Regla del Complemento (Resta) y Regla de la División
+tone: key
+
+(1) Regla del Complemento (Resta): Si \(A\) es un subconjunto de un universo finito \(U\), entonces
+\[
+|A| = |U| - |U \setminus A|.
+\]
+(2) Regla de la División: Supón que un conjunto finito \(X\) de configuraciones intermedias se proyecta sobre un conjunto finito objetivo \(Y\) de tal manera que CADA elemento \(y \in Y\) proviene de exactamente \(k\) elementos de \(X\) (una correspondencia uniforme de \(k\) a \(1\), con \(k \ge 1\)). Entonces
+\[
+|Y| = \frac{|X|}{k}.
+\]
+[/CALLOUT]
+
+Considera [REF: comp-div-rules.1 | la Regla del Complemento] en una restricción de «al menos uno»: ¿cuántas cadenas de \(4\) letras sobre el alfabeto \(\{A, B, C, D, E\}\) contienen al menos una vocal (\(A\) o \(E\))?
+
+Observa primero el error más frecuente de principiantes: el sobreconteo oculto. Alguien podría decir: «Elige una de las \(4\) posiciones para poner una vocal (\(4\) maneras), elige una vocal para esa posición (\(2\) maneras) y llena las \(3\) posiciones restantes con cualquiera de las \(5\) letras (\(5^3 = 125\) maneras), dando \(4 \cdot 2 \cdot 125 = 1000\)». ¡Esa respuesta es imposible: el universo ENTERO de cadenas de \(4\) letras sobre un alfabeto de \(5\) letras tiene tamaño solo \(5^4 = 625\)! ¿Por qué se pasó la fórmula? Porque una cadena como \(AABE\) tiene tres vocales, así que se generó tres veces distintas: una con la posición \(1\) designada como «la casilla vocal elegida», otra con la posición \(2\) y otra con la posición \(4\).
+
+Usar [REF: comp-div-rules.1 | la Regla del Complemento] vuelve el problema inmediato. El universo \(U\) de todas las cadenas de \(4\) letras tiene tamaño \(|U| = 5^4 = 625\). El complemento \(U \setminus A\) consta de cadenas SIN vocales —construidas estrictamente con \(\{B, C, D\}\)—, así que \(|U \setminus A| = 3^4 = 81\). Por tanto,
+\[
+|A| = 625 - 81 = 544.
+\]
+
+Considera ahora [REF: comp-div-rules.2 | la Regla de la División]. Su poder proviene de permitirte contar de una manera sobreespecificada cómoda (por ejemplo, con un orden artificial) y luego dividir por el factor exacto de simetría \(k\) —¡siempre que \(k\) sea estrictamente constante en toda configuración objetivo!
+
+Ejemplo resuelto 1 (Apretones de manos): En una reunión de \(n\) personas, cada par de personas distintas se da la mano una vez. ¿Cuántos apretones de manos ocurren?
+Forma un par ordenado \((u, v)\) de personas distintas: \(n\) opciones para \(u\) y \(n - 1\) opciones para \(v\), dando \(|X| = n(n - 1)\) pares ordenados. Cada apretón no ordenado \(\{u, v\}\) corresponde exactamente a \(k = 2\) pares ordenados, \((u, v)\) y \((v, u)\). Por [REF: comp-div-rules.2 | la Regla de la División], hay \(\frac{n(n - 1)}{2}\) apretones de manos.
+
+Ejemplo resuelto 2 (Emparejamientos sin etiquetar): ¿De cuántas maneras pueden dividirse \(4\) jugadores distintos \(\{1, 2, 3, 4\}\) en \(2\) equipos de dobles sin etiquetar de \(2\) jugadores cada uno?
+Enlista los \(4\) jugadores en fila \((p_1, p_2 \mid p_3, p_4)\) para formar el equipo \(\{p_1, p_2\}\) y el equipo \(\{p_3, p_4\}\). Por la Regla del Producto, hay \(|X| = 4 \cdot 3 \cdot 2 \cdot 1 = 24\) listados ordenados. ¿Cuántos listados producen exactamente el mismo emparejamiento sin etiquetar?
+- Intercambiar a los dos jugadores dentro del primer equipo: factor \(2\).
+- Intercambiar a los dos jugadores dentro del segundo equipo: factor \(2\).
+- Intercambiar qué equipo se escribe primero y cuál segundo: factor \(2\).
+Cada emparejamiento proviene de exactamente \(k = 2 \cdot 2 \cdot 2 = 8\) listados. Por la Regla de la División, el número de emparejamientos es \(24 / 8 = 3\) —lo que podemos verificar a mano: \(\{\{1, 2\}, \{3, 4\}\}\), \(\{\{1, 3\}, \{2, 4\}\}\) y \(\{\{1, 4\}, \{2, 3\}\}\).
+
+[QUESTION 2]
+[ANSWER: B]
+¿Cuántos códigos de \(4\) dígitos formados con los dígitos \(\{1, 2, 3, 4, 5, 6\}\) contienen al menos un dígito repetido?
+
+(A) \(360\)
+(B) \(936\)
+(C) \(1080\)
+(D) \(1260\)
+(E) \(1290\)
+[/QUESTION]
+
+[QUESTION 3]
+[ANSWER: D]
+Supón que queremos contar cadenas de \(4\) letras sobre \(\{R, B\}\) salvo inversión —es decir, una cadena \(w\) y su reversa \(w^R\) se consideran el mismo patrón (por ejemplo, \(RRRB\) y \(BRRR\) cuentan como un patrón). Un estudiante argumenta: «Hay \(2^4 = 16\) cadenas; emparejar cada cadena con su reversa da \(16 / 2 = 8\) patrones». ¿Por qué es inválida esta aplicación de [REF: comp-div-rules.2 | la Regla de la División] y cuál es el verdadero número de patrones?
+
+(A) La Regla de la División falla porque \(w\) y \(w^R\) nunca son distintas, así que el verdadero número de patrones es \(16\).
+(B) La Regla de la División debería dividir por \(4\) en lugar de \(2\), dando \(4\) patrones.
+(C) La Regla de la División falla porque las cadenas de longitud \(4\) tienen \(2\) palíndromos; dividir da \(2 + (14 / 2) = 9\) patrones.
+(D) La Regla de la División exige una multiplicidad constante \(k\), pero los \(4\) palíndromos (\(RRRR, RBBR, BRRB, BBBB\)) son iguales a sus propias reversas (\(k = 1\)) mientras que los \(12\) no palíndromos se emparejan (\(k = 2\)); separar casos da \(4 + (12 / 2) = 10\) patrones.
+(E) La Regla de la División falla porque \(4\) es par, y el verdadero número de patrones es \(12\).
+[/QUESTION]
+
+=== SECTION 3: Conteo por biyección, subconjuntos y funciones ===
+
+A menudo, la manera más aguda de determinar \(|A|\) no es contar \(A\) directamente, sino construir un diccionario exacto uno a uno entre \(A\) y otro conjunto finito \(B\) cuyo tamaño ya conoces.
+
+Recuerda que una función \(f : A \to B\) es una biyección (correspondencia uno a uno) si es tanto inyectiva (entradas distintas en \(A\) producen salidas distintas en \(B\)) como sobreyectiva (todo elemento de \(B\) es la salida \(f(a)\) para algún \(a \in A\)). Equivalentemente, \(f\) posee una función inversa \(f^{-1} : B \to A\) que revierte limpiamente la codificación.
+
+[CALLOUT]
+id: bijection-rule
+label: Principio
+title: Regla de la Biyección
+tone: key
+
+Si existe una biyección \(f : A \to B\) entre dos conjuntos finitos \(A\) y \(B\), entonces
+\[
+|A| = |B|.
+\]
+[/CALLOUT]
+
+Dos fórmulas fundamentales de la matemática discreta salen directamente de [REF: bijection-rule | la Regla de la Biyección] combinada con [REF: sum-product-rules.2 | la Regla del Producto].
+
+1. Contar subconjuntos de un conjunto de \(n\) elementos: Sea \(S = \{s_1, s_2, \dots, s_n\}\) un conjunto finito de tamaño \(n \ge 0\), y denota por \(\mathcal{P}(S)\) el conjunto de todos los subconjuntos de \(S\) (incluidos \(\emptyset\) y el propio \(S\)). Define una aplicación \(f\) de \(\mathcal{P}(S)\) al conjunto \(\{0, 1\}^n\) de cadenas binarias de longitud \(n\), \((b_1, b_2, \dots, b_n)\), poniendo
+\[
+b_i = \begin{cases} 1 & \text{si } s_i \in T, \\ 0 & \text{si } s_i \notin T \end{cases} \qquad \text{para cada } i = 1, 2, \dots, n.
+\]
+Por ejemplo, cuando \(S = \{s_1, s_2, s_3\}\), el subconjunto \(\{s_1, s_3\}\) corresponde a \(101\), el conjunto vacío \(\emptyset\) corresponde a \(000\) y el propio \(S\) corresponde a \(111\). Cada subconjunto produce una única cadena binaria, y recíprocamente cada cadena binaria \((b_1, \dots, b_n)\) reconstruye el único subconjunto \(\{s_i \in S : b_i = 1\}\). ¡Así que \(f\) es una biyección! Por la Regla del Producto, \(|\{0, 1\}^n| = 2 \cdot 2 \cdots 2 = 2^n\) (para \(n = 0\), la única cadena vacía corresponde al único subconjunto \(\emptyset\), concordando con \(2^0 = 1\)). Por tanto, un conjunto de \(n\) elementos tiene exactamente \(2^n\) subconjuntos.
+
+2. Contar funciones entre conjuntos finitos: Sea \(A = \{a_1, a_2, \dots, a_m\}\) de tamaño \(|A| = m\) y sea \(B\) de tamaño \(|B| = n\). Toda función \(g : A \to B\) asigna una salida \(g(a_i) \in B\) a cada entrada \(a_i \in A\), de modo que la aplicación
+\[
+g \longmapsto \bigl(g(a_1), g(a_2), \dots, g(a_m)\bigr)
+\]
+es una biyección del conjunto de todas las funciones \(A \to B\) sobre el producto cartesiano \(B^m = B \times B \times \dots \times B\) (\(m\) copias de \(B\)). Por la Regla del Producto, \(|B^m| = |B|^m = n^m\), de modo que hay exactamente
+\[
+n^m = |B|^{|A|}
+\]
+funciones de un dominio \(A\) de \(m\) elementos a un codominio \(B\) de \(n\) elementos.
+
+Cuídate del desliz entre base y exponente: los principiantes intercambian habitualmente \(n^m\) y \(m^n\). Haz siempre una pequeña comprobación de cordura: si \(|A| = 1\) y \(|B| = 3\), ¿cuántas funciones envían un elemento a un conjunto de \(3\) elementos? Claramente \(3\) (elegir cuál de las \(3\) salidas alcanza esa única entrada), concordando con \(|B|^{|A|} = 3^1 = 3\) en lugar de \(1^3 = 1\). Cada uno de los \(m\) elementos del dominio elige independientemente entre los \(n\) elementos del codominio, dando \(n \cdot n \cdots n = n^m\).
+
+[TABLE]
+Regla de conteo | Fórmula central | Cuándo aplica | Error principal a evitar
+Regla de la Suma | \(\lvert A_1 \cup \dots \cup A_m \rvert = \sum \lvert A_i \rvert\) | Casos disjuntos dos a dos | Sumar conjuntos solapados sin eliminar el solapamiento
+Regla del Producto | \(\lvert A_1 \times \dots \times A_m \rvert = \prod n_i\) | \(m\) etapas con conteos de opciones invariantes \(n_i\) | Multiplicar cuando conteos posteriores dependen de elecciones previas
+Regla del Complemento | \(\lvert A \rvert = \lvert U \rvert - \lvert U \setminus A \rvert\) | Restricciones «al menos uno» o negadas | Sobreconteo directo al «elegir primero un elemento obligatorio y luego cualesquiera otros»
+Regla de la División | \(\lvert Y \rvert = \lvert X \rvert / k\) | Aplicación uniforme \(k\) a \(1\) \(X \to Y\) | Dividir por \(k\) cuando ciertas configuraciones tienen multiplicidades distintas
+Regla de la Biyección | \(\lvert A \rvert = \lvert B \rvert\) | Codificación invertible explícita \(A \leftrightarrow B\) | Olvidar verificar tanto inyectividad como sobreyectividad
+[/TABLE]
+
+[QUESTION 4]
+[ANSWER: A]
+Sean \(A = \{1, 2, 3, 4, 5\}\) y \(B = \{x, y, z\}\). ¿Cuántas funciones \(f : A \to B\) satisfacen TANTO \(f(1) \ne f(2)\) COMO \(f(5) \in \{x, y\}\)?
+
+(A) \(108\)
+(B) \(125\)
+(C) \(144\)
+(D) \(162\)
+(E) \(243\)
+[/QUESTION]
+
+[BONUS 1]
+[ANSWER: C]
+Sea \(S = \{1, 2, \dots, n\}\) con \(n \ge 1\). Sea \(\mathcal{E}\) la colección de subconjuntos de \(S\) que tienen un número par de elementos, y sea \(\mathcal{O}\) la colección de subconjuntos de \(S\) que tienen un número impar de elementos. Define una aplicación \(\phi : \mathcal{E} \to \mathcal{O}\) alternando el elemento \(1\):
+\[
+\phi(T) = \begin{cases} T \cup \{1\} & \text{si } 1 \notin T, \\ T \setminus \{1\} & \text{si } 1 \in T. \end{cases}
+\]
+Usando esta aplicación junto con las reglas de esta lección, ¿cuánto vale \(|\mathcal{E}|\) y por qué?
+
+(A) \(|\mathcal{E}| = 2^n / n\), porque alternar cada uno de los \(n\) elementos da una aplicación de \(n\) a \(1\).
+(B) \(|\mathcal{E}| = 2^{n-1} - 1\), porque el conjunto vacío \(\emptyset\) no tiene imagen bajo \(\phi\).
+(C) \(|\mathcal{E}| = 2^{n-1}\), porque \(\phi\) es su propia inversa y por tanto una biyección entre \(\mathcal{E}\) y \(\mathcal{O}\), de modo que \(|\mathcal{E}| = |\mathcal{O}|\) y la Regla de la Suma sobre la partición disjunta \(\mathcal{P}(S) = \mathcal{E} \cup \mathcal{O}\) da \(2|\mathcal{E}| = 2^n\).
+(D) \(|\mathcal{E}| = 2^{n-1}\) cuando \(n\) es par, y \(|\mathcal{E}| = 2^{n-1} + 1\) cuando \(n\) es impar.
+(E) \(|\mathcal{E}| = 2^{n-2}\), porque tanto el elemento \(1\) como el elemento \(n\) deben alternarse juntos.
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: E]
+Sea \(S = \{1, 2, \dots, n\}\) con \(n \ge 1\). ¿Cuántos pares ordenados de subconjuntos \((A, B)\) de \(S\) satisfacen \(A \subseteq B\)?
+
+(A) \(2^n\)
+(B) \(2^{2n}\)
+(C) \(2^{n+1} - 1\)
+(D) \(n^3\)
+(E) \(3^n\)
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: B]
+El entero positivo \(720\) tiene factorización prima \(720 = 2^4 \cdot 3^2 \cdot 5^1\), de modo que todo divisor positivo de \(720\) corresponde biyectivamente a una terna entera \((a, b, c)\) con \(0 \le a \le 4\), \(0 \le b \le 2\) y \(0 \le c \le 1\) mediante \(d = 2^a 3^b 5^c\). ¿Cuántos divisores positivos de \(720\) son divisibles por \(2\) O divisibles por \(3\) (o por ambos)?
+
+(A) \(20\)
+(B) \(28\)
+(C) \(29\)
+(D) \(30\)
+(E) \(34\)
+[/BONUS]

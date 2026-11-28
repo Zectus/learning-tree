@@ -1,0 +1,193 @@
+=== SECTION 1: A complete decision framework for oblique triangles ===
+
+You now hold the full oblique-triangle toolkit: the Law of Sines (including its ambiguous SSA resolution), the Law of Cosines, and the SAS area formula. In real geometry, surveying, and navigation problems, nobody labels the diagram "use Law of Sines" or "use Law of Cosines." Your first job is to classify the given measurements and select the right starting law immediately.
+
+Every solvable oblique triangle falls into one of five three-piece configurations (note that AAA—three angles alone—determines only similarity, never side lengths):
+
+[TABLE]
+Given data | Opposite pair known? | Starting law | Possible triangles | Watch out for
+AAS or ASA | Yes (after \(180^\circ\) sum for ASA) | Law of Sines | \(1\) (if angle sum \(< 180^\circ\)) | Keep exact original pair; avoid rounding reuse
+SSA | Yes (one pair + second side) | Law of Sines | \(0, 1,\) or \(2\) | Always test supplement \(B_2 = 180^\circ - B_1\)
+SAS | No | Law of Cosines (for opposite side) | \(1\) | Watch sign of \(-2ab\cos C\) if \(C > 90^\circ\); avoid Law of Sines on longest side next
+SSS | No | Law of Cosines (for largest angle) | \(0\) or \(1\) | Check triangle inequality first
+[/TABLE]
+
+Notice the single binary decision rule that governs the whole table:
+- Do you know a complete opposite pair (an angle AND its opposite side, or two angles that immediately yield the third angle opposite the given side)? Start with the Law of Sines.
+- Do you have NO opposite pair (SAS or SSS)? Start with the Law of Cosines.
+
+=== SECTION 2: Avoiding the hybrid SAS trap ===
+
+One of the subtlest mistakes in oblique-triangle solving happens halfway through an SAS problem. Suppose you are given \(a = 5\), \(b = 12\), and \(C = 40^\circ\). You correctly start with the Law of Cosines to find the third side \(c\):
+\[
+c^2 = 5^2 + 12^2 - 2(5)(12)\cos 40^\circ \approx 169 - 120(0.7660) \approx 77.08 \implies c \approx 8.78.
+\]
+Now you have all three sides (\(a = 5, c \approx 8.78, b = 12\)) and angle \(C = 40^\circ\). It is tempting to switch to the faster Law of Sines to find one of the remaining angles \(A\) or \(B\). Which one is SAFE to find with the Law of Sines?
+
+Look at what happens if you blindly solve for angle \(B\) (opposite the LONGEST side \(b = 12\)):
+\[
+\sin B = \frac{12\sin 40^\circ}{8.78} \approx 0.8785 \implies \sin^{-1}(0.8785) \approx 61.5^\circ.
+\]
+Then subtracting from \(180^\circ\) gives \(A \approx 180^\circ - 40^\circ - 61.5^\circ = 78.5^\circ\). Wait a second! Look at that result: \(A \approx 78.5^\circ > B \approx 61.5^\circ\), even though side \(a = 5\) is LESS than HALF as long as side \(b = 12\)! That is impossible!
+
+Why did it fail? Because \(b = 12\) is the longest side and \(a^2 + c^2 \approx 25 + 77.08 = 102.08 < 144 = b^2\), angle \(B\) is actually OBTUSE: \(B \approx 180^\circ - 61.5^\circ = 118.5^\circ\), giving \(A \approx 180^\circ - 40^\circ - 118.5^\circ = 21.5^\circ\). The calculator key \(\sin^{-1}\) can NEVER output an obtuse angle!
+
+Now see what happens if you solve for the SMALLER remaining angle \(A\) (opposite \(a = 5\)) instead:
+\[
+\sin A = \frac{5\sin 40^\circ}{8.78} \approx 0.3661 \implies A = \sin^{-1}(0.3661) \approx 21.5^\circ.
+\]
+Because \(a = 5\) is NOT the longest side of the triangle, angle \(A\) is GUARANTEED to be acute—a triangle can have at most one obtuse angle, and it MUST sit opposite the longest side! Subtracting then gives the true obtuse angle \(B = 180^\circ - 40^\circ - 21.5^\circ = 118.5^\circ\) automatically!
+
+[CALLOUT]
+id: hybrid-sas-rule
+label: Critical rule
+title: Safe second step after the Law of Cosines in an SAS triangle
+tone: caution
+
+After using the Law of Cosines to find the third side of an SAS triangle, you have two completely ambiguity-free options for the next angle:
+(1) Apply the Law of Sines ONLY to the SHORTER of the two originally given sides (whose opposite angle is guaranteed to be acute).
+(2) Or stay with the Law of Cosines to find either remaining angle, since \(\cos^{-1}\) distinguishes acute from obtuse angles automatically.
+
+Never apply the Law of Sines blindly to the angle opposite the longest side of the triangle, and ALWAYS finish with the side-angle order check (largest angle opposite longest side, smallest angle opposite shortest side).
+[/CALLOUT]
+
+[QUESTION 1]
+[ANSWER: B]
+You are solving \(\triangle ABC\) with \(a = 5\), \(b = 11\), and \(C = 42^\circ\). After using the Law of Cosines to find \(c \approx 7.99\), which next step is guaranteed to avoid returning a false acute angle?
+
+(A) Use the Law of Sines to find angle \(B\), then compute \(A = 180^\circ - B - C\)
+(B) Use the Law of Sines to find angle \(A\) (opposite the shorter side \(a = 5\)), then compute \(B = 180^\circ - A - C\)
+(C) Use \(\sin B = \frac{b\sin C}{c}\) and assume \(B < 90^\circ\) because \(C < 90^\circ\)
+(D) Set \(B = 90^\circ - C\) and find \(A\) from the Law of Sines
+(E) Average angles \(A\) and \(B\) to get \(69^\circ\) each
+[/QUESTION]
+
+[QUESTION 2]
+[ANSWER: D]
+For a triangle with given measurements \(a = 9\), \(b = 14\), and \(C = 52^\circ\), which strategy starts cleanly and safely solves the triangle without risking SSA ambiguity?
+
+(A) Classify as SSA; start with the Law of Sines to find \(A\) and test two triangles
+(B) Classify as ASA; find \(B = 180^\circ - 52^\circ\) first, then use the Law of Sines
+(C) Classify as SAS; start with the Law of Sines to find \(c\), then use the Law of Cosines
+(D) Classify as SAS; start with the Law of Cosines to find \(c\), then find angle \(A\) via the Law of Sines (or either angle via the Law of Cosines)
+(E) Classify as SSS; check the triangle inequality and start with the Law of Cosines for \(B\)
+[/QUESTION]
+
+=== SECTION 3: Navigation bearings, surveying, and triangulation ===
+
+Real-world geometry problems rarely hand you a pre-labeled triangle; instead, they give bearings, baselines, and sight lines that you translate into an SAS, ASA, or AAS model.
+
+Consider a two-leg navigation course. A vessel leaves port \(P\) and sails \(10\text{ km}\) on a compass bearing of \(\mathrm{N}\,40^\circ\,\mathrm{E}\) to waypoint \(Q\), then turns onto a bearing of \(\mathrm{S}\,70^\circ\,\mathrm{E}\) and sails \(14\text{ km}\) to island \(R\). How far is the island directly from port?
+
+Draw vertical North-South reference lines at both \(P\) and \(Q\). By alternate interior angles, looking back from \(Q\) toward \(P\) runs \(40^\circ\) west of due South (\(\mathrm{S}\,40^\circ\,\mathrm{W}\)). Leg 2 runs \(70^\circ\) east of due South (\(\mathrm{S}\,70^\circ\,\mathrm{E}\)). Because one ray lies \(40^\circ\) west of South and the other lies \(70^\circ\) east of South, the interior angle at waypoint \(Q\) is
+\[
+\angle PQR = 40^\circ + 70^\circ = 110^\circ.
+\]
+
+[GRAPH]
+type: parametric2d
+title: Two-leg compass course forming SAS triangle \(\triangle PQR\) with \(\angle Q = 110^\circ\)
+xlabel: East-West (km)
+ylabel: North-South (km)
+trange: 4.014, 5.934
+xrange: -2.0, 21.5
+yrange: -1.5, 10.0
+trace: 6.428 + 1.8*cos(t), 7.660 + 1.8*sin(t) | label: \(\angle Q = 110^\circ\) | color: #059669
+segment: 0, -1, 0, 9.5 | dashed: true
+segment: 6.428, 1.5, 6.428, 9.5 | dashed: true
+segment: 0, 0, 6.428, 7.660 | label: \(10\) | color: #2563eb
+segment: 6.428, 7.660, 19.584, 2.872 | label: \(14\) | color: #dc2626
+segment: 0, 0, 19.584, 2.872 | label: \(d\) | color: #0f172a
+point: 0, 0 | label: \(P\) | offset: -0.6, -0.5
+point: 6.428, 7.660 | label: \(Q\) | offset: 0, 0.6
+point: 19.584, 2.872 | label: \(R\) | offset: 0.6, -0.4
+[/GRAPH]
+
+Now \(\triangle PQR\) is an SAS triangle with sides \(10\text{ km}\) and \(14\text{ km}\) enclosing \(110^\circ\). The Law of Cosines gives the straight-line distance \(d = PR\):
+\[
+d = \sqrt{10^2 + 14^2 - 2(10)(14)\cos 110^\circ} \approx \sqrt{296 - 280(-0.3420)} \approx \sqrt{391.77} \approx 19.8\text{ km}.
+\]
+To find the direct return or outbound bearing from \(P\) to \(R\), apply [REF: hybrid-sas-rule | our safe second-step rule]: find the acute angle \(\angle QPR\) (opposite \(14 < 19.8\), so guaranteed acute) via the Law of Sines (\(\sin\angle QPR = \frac{14\sin 110^\circ}{19.8} \approx 0.664 \implies \angle QPR \approx 41.6^\circ\)), then add it to the first leg's \(40^\circ\) east of North to get \(\mathrm{N}\,81.6^\circ\,\mathrm{E}\).
+
+By contrast, triangulation across an obstacle (such as a canyon or bay) measures a known baseline \(AB\) and the two sighting angles \(\angle CAB\) and \(\angle CBA\) to a distant target \(C\). That creates an ASA triangle: subtract from \(180^\circ\) to get \(\angle ACB\), then apply the Law of Sines to find the distance from either station to \(C\).
+
+[QUESTION 3]
+[ANSWER: C]
+A cargo ship leaves harbor \(H\) and sails \(8\text{ km}\) on a bearing of \(\mathrm{N}\,30^\circ\,\mathrm{E}\) to buoy \(B\). At buoy \(B\), it turns onto a bearing of \(\mathrm{S}\,30^\circ\,\mathrm{E}\) and sails \(15\text{ km}\) to port \(P\). What is the exact straight-line distance from harbor \(H\) to port \(P\)?
+
+(A) \(17\text{ km}\)
+(B) \(\sqrt{409}\text{ km}\)
+(C) \(13\text{ km}\)
+(D) \(\sqrt{109}\text{ km}\)
+(E) \(23\text{ km}\)
+[/QUESTION]
+
+[QUESTION 4]
+[ANSWER: A]
+Two coastal observation stations \(A\) and \(B\) lie \(200\text{ m}\) apart along a straight shoreline. Both stations sight an offshore lighthouse \(C\), measuring \(\angle CAB = 45^\circ\) and \(\angle CBA = 75^\circ\). What is the exact distance from station \(B\) to lighthouse \(C\)?
+
+(A) \(\dfrac{200\sqrt{6}}{3}\text{ m}\)
+(B) \(100\sqrt{6}\text{ m}\)
+(C) \(\dfrac{200\sqrt{3}}{3}\text{ m}\)
+(D) \(200\sqrt{2}\text{ m}\)
+(E) \(100\sqrt{2}\text{ m}\)
+[/QUESTION]
+
+=== SECTION 4: Multi-stage geometry—irregular quadrilaterals ===
+
+When a problem involves a four-sided figure \(ABCD\) with no parallel sides or right angles, draw ONE diagonal (say \(BD\)) that splits \(ABCD\) into two triangles sharing that diagonal as a common bridge side.
+
+[GRAPH]
+type: parametric2d
+title: Splitting irregular quadrilateral \(ABCD\) along diagonal \(BD\) into two solvable triangles
+xlabel: \(x\)
+ylabel: \(y\)
+trange: 0, 1.0472
+xrange: -0.8, 9.2
+yrange: -0.8, 7.6
+trace: 1.4*cos(t), 1.4*sin(t) | label: \(\angle A\) | color: #2563eb
+segment: 0, 0, 8, 0 | label: \(AD\) | color: #0f172a
+segment: 0, 0, 3, 5.196 | label: \(AB\) | color: #0f172a
+segment: 3, 5.196, 8, 0 | label: \(BD\) | color: #dc2626 | dashed: true
+segment: 3, 5.196, 8.6, 6.2 | label: \(BC\) | color: #059669
+segment: 8, 0, 8.6, 6.2 | label: \(CD\) | color: #059669
+point: 0, 0 | label: \(A\) | offset: -0.35, -0.35
+point: 3, 5.196 | label: \(B\) | offset: -0.35, 0.35
+point: 8.6, 6.2 | label: \(C\) | offset: 0.3, 0.25
+point: 8, 0 | label: \(D\) | offset: 0.3, -0.35
+[/GRAPH]
+
+Always pick the diagonal that cuts off a triangle where THREE measurements are already known! Solve that first triangle to find the exact length of the shared diagonal \(BD\) (usually via SAS Law of Cosines or ASA Law of Sines), and then pass \(BD\) into the second triangle as a known side to unlock its remaining angles, sides, and area. Add the areas of both triangles to get the total area of the quadrilateral.
+
+[BONUS 1]
+[ANSWER: E]
+In quadrilateral \(ABCD\), diagonal \(BD\) divides the figure into \(\triangle ABD\) and \(\triangle BCD\). You are given \(AB = 5\), \(AD = 8\), \(\angle BAD = 60^\circ\), \(BC = 7\), and \(CD = 7\). What are the exact length of diagonal \(BD\) and the exact total area of quadrilateral \(ABCD\)?
+
+(A) \(BD = 7\) and total area \(10\sqrt{3}\)
+(B) \(BD = \sqrt{129}\) and total area \(\dfrac{89\sqrt{3}}{4}\)
+(C) \(BD = 7\) and total area \(\dfrac{69\sqrt{3}}{4}\)
+(D) \(BD = 7\) and total area \(\dfrac{49\sqrt{3}}{2}\)
+(E) \(BD = 7\) and total area \(\dfrac{89\sqrt{3}}{4}\)
+[/BONUS]
+
+[BONUS 2]
+[ANSWER: B]
+To solve \(\triangle ABC\) with \(a = 3\), \(b = 8\), and \(C = 60^\circ\), a student correctly finds \(c = 7\) using the Law of Cosines, then computes \(\sin B = \frac{8\sin 60^\circ}{7} \approx 0.9897\), sets \(B = \sin^{-1}(0.9897) \approx 81.8^\circ\), and finishes with \(A = 180^\circ - 60^\circ - 81.8^\circ = 38.2^\circ\). Which statement accurately diagnoses the student's work?
+
+(A) The work is completely correct because \(38.2^\circ + 81.8^\circ + 60^\circ = 180^\circ\) and \(A < C < B\)
+(B) Angle \(B\) is actually obtuse (\(B \approx 98.2^\circ\) and \(A \approx 21.8^\circ\)); because \(a^2 + c^2 = 58 < 64 = b^2\), applying \(\sin^{-1}\) to the longest side's angle returned the acute supplement instead of the true obtuse angle
+(C) The student made an error finding \(c\); the true value is \(c = \sqrt{97}\)
+(D) Two different triangles exist for this SAS data, so both \(B \approx 81.8^\circ\) and \(B \approx 98.2^\circ\) are valid solutions
+(E) Angle \(A\) should be obtuse because \(a = 3\) is the shortest side
+[/BONUS]
+
+[BONUS 3]
+[ANSWER: D]
+Two straight hiking trails start at a ranger station \(R\). Trail 1 runs \(6\text{ km}\) on a bearing of \(\mathrm{N}\,20^\circ\,\mathrm{W}\) to Camp \(P\), and Trail 2 runs \(10\text{ km}\) on a bearing of \(\mathrm{S}\,40^\circ\,\mathrm{W}\) to Camp \(Q\). What are the interior angle \(\angle PRQ\) at the ranger station and the exact straight-line distance between Camp \(P\) and Camp \(Q\)?
+
+(A) \(\angle PRQ = 60^\circ\) and \(PQ = 2\sqrt{19}\text{ km}\)
+(B) \(\angle PRQ = 120^\circ\) and \(PQ = 2\sqrt{19}\text{ km}\)
+(C) \(\angle PRQ = 140^\circ\) and \(PQ = 14\text{ km}\)
+(D) \(\angle PRQ = 120^\circ\) and \(PQ = 14\text{ km}\)
+(E) \(\angle PRQ = 60^\circ\) and \(PQ = 14\text{ km}\)
+[/BONUS]
